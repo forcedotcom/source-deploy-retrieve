@@ -44,7 +44,7 @@ jobs:
 
 workflows:
   version: 2
-  'salesforcedx-templates':
+  'deploy-and-retrieve':
     jobs:
       - node-latest
       - node-12

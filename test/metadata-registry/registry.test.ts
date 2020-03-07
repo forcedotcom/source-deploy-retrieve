@@ -11,6 +11,9 @@ import * as fs from 'fs';
 import { createSandbox, SinonStub } from 'sinon';
 import { RegistryAccess, registryData } from '../../src/metadata-registry';
 import { META_XML_SUFFIX } from '../../src/metadata-registry/constants';
+import { nls } from '../../src/i18n';
+import { mockRegistry } from '../mock/registry';
+import { join } from 'path';
 
 const env = createSandbox();
 
@@ -70,66 +73,50 @@ describe('Metadata Registry', () => {
           fail('should have thrown an error');
         } catch (e) {
           expect(e.message).to.equal(
-            'missing metadata type definition for typewithnodefinition'
+            nls.localize(
+              'registry_error_missing_type_definition',
+              'typewithnodefinition'
+            )
           );
         }
       });
     });
 
     describe('getComponentsFromPath', () => {
-      const data = {
-        types: {
-          kathybates: {
-            directoryName: 'kathys',
-            inFolder: true,
-            name: 'KathyBates',
-            suffix: 'kathy'
-          },
-          keanureeves: {
-            directoryName: 'keanus',
-            inFolder: false,
-            name: 'KeanuReeves',
-            suffix: 'keanu'
-          },
-          dwaynejohnson: {
-            directoryName: 'dwaynes',
-            inFolder: false,
-            name: 'DwayneJohnson'
-          }
-        },
-        suffixes: {
-          kathy: 'kathybates',
-          keanu: 'keanureeves',
-          missing: 'typewithoutdef'
-        },
-        mixedContent: { dwaynes: 'dwaynejohnson' }
-      };
-      const registry = new RegistryAccess(data);
+      const registry = new RegistryAccess(mockRegistry);
       let existsStub: SinonStub;
 
       beforeEach(() => (existsStub = env.stub(fs, 'existsSync')));
       afterEach(() => env.restore());
 
       it('should throw file not found error if given path does not exist', () => {
-        const cmpPath = '/path/to/keanus/MyKeanu.keanu';
+        const cmpPath = join('path', 'to', 'keanus', 'MyKeanu.keanu');
         existsStub.withArgs(cmpPath).returns(false);
         try {
           registry.getComponentsFromPath(cmpPath);
           fail(`should have thrown a file not found error`);
         } catch (e) {
-          expect(e.message).to.equal(`file not found ${cmpPath}`);
+          expect(e.message).to.equal(
+            nls.localize('registry_error_file_not_found', cmpPath)
+          );
         }
       });
 
       it('should throw unsupported type error for types missing a suffix', () => {
-        const sourcePath = '/path/to/dwaynes/TestDwayne/TestDwayne.js';
+        const sourcePath = join(
+          'path',
+          'to',
+          'dwayne',
+          'TestDwayne',
+          'TestDwayne.js'
+        );
         existsStub.withArgs(sourcePath).returns(true);
         try {
           registry.getComponentsFromPath(sourcePath);
           fail('should have thrown an unsupported type error');
         } catch (e) {
           expect(e.message).to.equal(
-            'types missing a defined suffix are currently unsupported'
+            nls.localize('registry_error_unsupported_type')
           );
         }
       });
@@ -142,13 +129,16 @@ describe('Metadata Registry', () => {
           fail('should have thrown an unsupported type error');
         } catch (e) {
           expect(e.message).to.equal(
-            `missing metadata type definition for ${data.suffixes.missing}`
+            nls.localize(
+              'registry_error_missing_type_definition',
+              mockRegistry.suffixes.missing
+            )
           );
         }
       });
 
       describe('Types with no mixed content', () => {
-        const cmpPath = '/path/to/keanus/MyKeanu.keanu';
+        const cmpPath = join('path', 'to', 'keanus', 'MyKeanu.keanu');
         const metaXml = `${cmpPath}${META_XML_SUFFIX}`;
 
         it(`should return a component when given a ${META_XML_SUFFIX} file`, () => {
@@ -156,7 +146,7 @@ describe('Metadata Registry', () => {
           existsStub.withArgs(metaXml).returns(true);
           expect(registry.getComponentsFromPath(metaXml)[0]).to.deep.equal({
             fullName: 'MyKeanu',
-            type: data.types.keanureeves,
+            type: mockRegistry.types.keanureeves,
             metaXml,
             sources: []
           });
@@ -167,7 +157,7 @@ describe('Metadata Registry', () => {
           existsStub.withArgs(metaXml).returns(true);
           expect(registry.getComponentsFromPath(metaXml)[0]).to.deep.equal({
             fullName: 'MyKeanu',
-            type: data.types.keanureeves,
+            type: mockRegistry.types.keanureeves,
             metaXml,
             sources: [cmpPath]
           });
@@ -178,7 +168,7 @@ describe('Metadata Registry', () => {
           existsStub.withArgs(metaXml).returns(true);
           expect(registry.getComponentsFromPath(cmpPath)[0]).to.deep.equal({
             fullName: 'MyKeanu',
-            type: data.types.keanureeves,
+            type: mockRegistry.types.keanureeves,
             metaXml,
             sources: [cmpPath]
           });
@@ -192,13 +182,22 @@ describe('Metadata Registry', () => {
             fail(`should have thrown a missing ${META_XML_SUFFIX} file error`);
           } catch (e) {
             expect(e.message).to.equal(
-              'metadata xml file missing for MyKeanu.keanu'
+              nls.localize(
+                'registry_error_missing_metadata_xml',
+                'MyKeanu.keanu'
+              )
             );
           }
         });
 
         it('should format fullName for folder types correctly', () => {
-          const path = '/path/to/kathys/A_Folder/TestKathy.kathy-meta.xml';
+          const path = join(
+            'path',
+            'to',
+            'kathys',
+            'A_Folder',
+            'TestKathy.kathy-meta.xml'
+          );
           existsStub.withArgs(path).returns(true);
           const cmp = registry.getComponentsFromPath(path)[0];
           expect(cmp.fullName).to.equal('A_Folder/TestKathy');

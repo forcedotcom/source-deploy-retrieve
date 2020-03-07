@@ -2,7 +2,7 @@ const fs = require('fs');
 const { join } = require('path');
 
 // Prep the registry
-const REGISTRY_FILE = '../data/registry.json';
+const REGISTRY_FILE = '../src/metadata-registry/data/registry.json';
 const EMPTY_REGISTRY = { types: {}, suffixes: {}, mixedContent: {} };
 const registryPath = join(__dirname, REGISTRY_FILE);
 const registry = fs.existsSync(registryPath)
@@ -11,7 +11,9 @@ const registry = fs.existsSync(registryPath)
 
 // TODO: Replace with api call
 const describe = JSON.parse(
-  fs.readFileSync(join(__dirname, '../data/describe.json'))
+  fs.readFileSync(
+    join(__dirname, '../src/metadata-registry/data/describe.json')
+  )
 );
 
 for (const object of describe.metadataObjects) {

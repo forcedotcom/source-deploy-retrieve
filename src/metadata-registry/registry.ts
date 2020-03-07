@@ -6,7 +6,7 @@
  */
 
 import { existsSync } from 'fs';
-import { sep } from 'path';
+import { sep, parse, basename } from 'path';
 import * as data from './data/registry.json';
 import { META_XML_SUFFIX } from './constants';
 import {
@@ -15,6 +15,7 @@ import {
   MetadataType,
   SourcePath
 } from './types';
+import { nls } from '../i18n';
 
 /**
  * Direct access to the JSON registry data
@@ -43,7 +44,7 @@ export class RegistryAccess {
   public getTypeFromName(name: string): MetadataType {
     const lower = name.toLowerCase().replace(/ /g, '');
     if (!this.data.types[lower]) {
-      throw new Error(`missing metadata type definition for ${lower}`);
+      this.error('registry_error_missing_type_definition', lower);
     }
     return this.data.types[lower];
   }
@@ -59,40 +60,36 @@ export class RegistryAccess {
    * @param fsPath File path for a piece of metadata
    */
   public getComponentsFromPath(fsPath: string): MetadataComponent[] {
-    const pathParts = fsPath.split(sep);
-    const file = pathParts[pathParts.length - 1];
-    const extensionIndex = file.indexOf('.');
-    const fileName = file.substring(0, extensionIndex);
-    const fileExtension = file.substring(extensionIndex + 1);
-
     if (!existsSync(fsPath)) {
-      throw new Error(`file not found ${fsPath}`);
+      this.error('registry_error_file_not_found', fsPath);
     }
 
-    let typeId: string;
-    let fullName = fileName;
-    let xmlPath: SourcePath;
+    const parsedPath = parse(fsPath);
     const sources = new Set<SourcePath>();
+    let fullName: string;
+    let xmlPath: SourcePath;
 
-    // attempt 1 - try treating the file extension as a suffix
-    if (this.data.suffixes[fileExtension]) {
+    // attempt 1 - try treating the file extension name as a suffix
+    let typeId = this.data.suffixes[parsedPath.ext.slice(1)];
+    if (typeId) {
       xmlPath = `${fsPath}${META_XML_SUFFIX}`;
       if (!existsSync(xmlPath)) {
-        throw new Error(`metadata xml file missing for ${file}`);
+        this.error('registry_error_missing_metadata_xml', parsedPath.base);
       }
-      typeId = this.data.suffixes[fileExtension];
       sources.add(fsPath);
+      fullName = parsedPath.name;
     }
     // attempt 2 - check if it's a metadata xml file
     if (!typeId) {
-      const match = fileExtension.match(/(.+)-meta\.xml/);
+      const match = parsedPath.base.match(/(.+)\.(.+)-meta\.xml/);
       if (match) {
         const sourcePath = fsPath.slice(0, fsPath.lastIndexOf(META_XML_SUFFIX));
         if (existsSync(sourcePath)) {
           sources.add(sourcePath);
         }
-        typeId = this.data.suffixes[match[1]];
         xmlPath = fsPath;
+        fullName = match[1];
+        typeId = this.data.suffixes[match[2]];
       }
     }
     // attempt 3 - check if the file is part of a mixed content type
@@ -110,17 +107,15 @@ export class RegistryAccess {
     // }
 
     if (!typeId) {
-      throw new Error(
-        'types missing a defined suffix are currently unsupported'
-      );
+      this.error('registry_error_unsupported_type');
     } else if (!this.data.types[typeId]) {
-      throw new Error(`missing metadata type definition for ${typeId}`);
+      this.error('registry_error_missing_type_definition', typeId);
     }
 
     const type = this.data.types[typeId] as MetadataType;
     if (type.inFolder) {
       // component names of types with folders have the format folderName/componentName
-      fullName = `${pathParts[pathParts.length - 2]}/${fileName}`;
+      fullName = `${basename(parsedPath.dir)}/${fullName}`;
     }
 
     return [
@@ -131,5 +126,9 @@ export class RegistryAccess {
         sources: Array.from(sources)
       }
     ];
+  }
+
+  private error(messageKey: string, args?: string[] | string) {
+    throw new Error(nls.localize(messageKey, args));
   }
 }

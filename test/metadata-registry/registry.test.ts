@@ -18,6 +18,8 @@ import { join } from 'path';
 const env = createSandbox();
 
 describe('Metadata Registry', () => {
+  const registry = new RegistryAccess(mockRegistry);
+
   describe('Registry Data', () => {
     it('should not allow adding new properties', () => {
       try {
@@ -46,25 +48,13 @@ describe('Metadata Registry', () => {
 
   describe('RegistryAccess', () => {
     describe('getTypeFromName', () => {
-      const registry = new RegistryAccess({
-        types: {
-          testtype: {
-            directoryName: 'tests',
-            inFolder: false,
-            name: 'TestType'
-          }
-        },
-        suffixes: {},
-        mixedContent: {}
-      });
-
       it('should fetch type regardless of casing', () => {
         // throws an error if it doesn't exist
-        registry.getTypeFromName('TEstTyPE');
+        registry.getTypeFromName('KeAnUReeVes');
       });
 
       it('should fetch type regardless of spaces', () => {
-        registry.getTypeFromName('test type');
+        registry.getTypeFromName('kathy Bates');
       });
 
       it('should throw an error if definition missing', () => {
@@ -83,7 +73,6 @@ describe('Metadata Registry', () => {
     });
 
     describe('getComponentsFromPath', () => {
-      const registry = new RegistryAccess(mockRegistry);
       let existsStub: SinonStub;
 
       beforeEach(() => (existsStub = env.stub(fs, 'existsSync')));

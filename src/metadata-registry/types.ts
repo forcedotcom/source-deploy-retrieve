@@ -32,6 +32,8 @@ export type MetadataType = {
    * Names of the subtypes if the type has any.
    */
   childXmlNames?: string[];
+
+  adapterId?: string;
 };
 
 /**
@@ -79,4 +81,15 @@ export type MetadataRegistry = {
   mixedContent: {
     [directoryName: string]: string;
   };
+
+  adapters: {
+    [adapterId: string]: string;
+  };
 };
+
+export interface SourceAdapter {
+  getComponent(
+    type: MetadataType,
+    fsPath: SourcePath
+  ): MetadataComponent | undefined;
+}

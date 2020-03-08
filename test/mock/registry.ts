@@ -23,5 +23,6 @@ export const mockRegistry = {
     keanu: 'keanureeves',
     missing: 'typewithoutdef'
   },
-  mixedContent: { dwaynes: 'dwaynejohnson' }
+  mixedContent: { dwaynes: 'dwaynejohnson' },
+  adapters: {}
 };

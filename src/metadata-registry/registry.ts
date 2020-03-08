@@ -6,16 +6,19 @@
  */
 
 import { existsSync } from 'fs';
-import { sep, parse, basename } from 'path';
+import { sep, parse, basename, extname } from 'path';
 import * as data from './data/registry.json';
 import { META_XML_SUFFIX } from './constants';
 import {
   MetadataComponent,
   MetadataRegistry,
   MetadataType,
-  SourcePath
+  SourcePath,
+  SourceAdapter
 } from './types';
 import { nls } from '../i18n';
+import { adapterIndex } from './adapters';
+import { parseMetadataXml, registryError } from './util';
 
 /**
  * Direct access to the JSON registry data
@@ -34,6 +37,10 @@ export class RegistryAccess {
    */
   constructor(customData: MetadataRegistry = registryData) {
     this.data = customData;
+  }
+
+  public get(): MetadataRegistry {
+    return data;
   }
 
   /**
@@ -64,47 +71,32 @@ export class RegistryAccess {
       this.error('registry_error_file_not_found', fsPath);
     }
 
-    const parsedPath = parse(fsPath);
-    const sources = new Set<SourcePath>();
-    let fullName: string;
-    let xmlPath: SourcePath;
+    let typeId: string;
 
-    // attempt 1 - try treating the file extension name as a suffix
-    let typeId = this.data.suffixes[parsedPath.ext.slice(1)];
-    if (typeId) {
-      xmlPath = `${fsPath}${META_XML_SUFFIX}`;
-      if (!existsSync(xmlPath)) {
-        this.error('registry_error_missing_metadata_xml', parsedPath.base);
-      }
-      sources.add(fsPath);
-      fullName = parsedPath.name;
+    // attempt 1 - check if it's a metadata xml file
+    const parsedMetaXml = parseMetadataXml(fsPath);
+    if (parsedMetaXml) {
+      typeId = this.data.suffixes[parsedMetaXml.suffix];
     }
-    // attempt 2 - check if it's a metadata xml file
+    // attempt 2 - try treating the file extension name as a suffix
     if (!typeId) {
-      const match = parsedPath.base.match(/(.+)\.(.+)-meta\.xml/);
-      if (match) {
-        const sourcePath = fsPath.slice(0, fsPath.lastIndexOf(META_XML_SUFFIX));
-        if (existsSync(sourcePath)) {
-          sources.add(sourcePath);
-        }
-        xmlPath = fsPath;
-        fullName = match[1];
-        typeId = this.data.suffixes[match[2]];
-      }
+      const base = basename(fsPath);
+      const suffix = base.substring(base.indexOf('.') + 1);
+      typeId = this.data.suffixes[suffix];
     }
     // attempt 3 - check if the file is part of a mixed content type
-    // if (!typeId) {
-    //   const pathPartsSet = new Set(pathParts);
-    //   for (const directoryName of Object.keys(registry.mixedContent)) {
-    //     if (pathPartsSet.has(directoryName)) {
-    //       typeId = registry.mixedContent[directoryName];
-    //       // components of a bundle type are assumed to have their direct parent be the type's directoryName
-    //       componentName =
-    //         pathParts[pathParts.findIndex(part => part === directoryName) + 1];
-    //       break;
-    //     }
-    //   }
-    // }
+    if (!typeId) {
+      const pathParts = new Set(fsPath.split(sep));
+      for (const directoryName of Object.keys(registryData.mixedContent)) {
+        if (pathParts.has(directoryName)) {
+          typeId = this.get().mixedContent[directoryName];
+          // components of a bundle type are assumed to have their direct parent be the type's directoryName
+          // componentName =
+          //   pathParts[pathParts.findIndex(part => part === directoryName) + 1];
+          break;
+        }
+      }
+    }
 
     if (!typeId) {
       this.error('registry_error_unsupported_type');
@@ -113,19 +105,23 @@ export class RegistryAccess {
     }
 
     const type = this.data.types[typeId] as MetadataType;
-    if (type.inFolder) {
-      // component names of types with folders have the format folderName/componentName
-      fullName = `${basename(parsedPath.dir)}/${fullName}`;
+    let adapter = adapterIndex[this.get().adapters[typeId]];
+    if (adapter) {
+      return [adapter.getComponent(type, fsPath)];
+    } else if (type.inFolder) {
+      adapter = adapterIndex.inFolders;
+    } else {
+      adapter = adapterIndex.simple;
     }
-
-    return [
-      {
-        fullName,
-        type,
-        metaXml: xmlPath,
-        sources: Array.from(sources)
-      }
-    ];
+    const component = adapter.getComponent(type, fsPath);
+    if (!component) {
+      registryError('registry_error_unparsable_patsh');
+    }
+    return [component];
+    // if (type.inFolder) {
+    //   // component names of types with folders have the format folderName/componentName
+    //   fullName = `${basename(parsedPath.dir)}/${fullName}`;
+    // }
   }
 
   private error(messageKey: string, args?: string[] | string) {

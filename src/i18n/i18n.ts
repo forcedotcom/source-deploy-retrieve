@@ -17,5 +17,11 @@
  */
 export const messages = {
   md_request_fail: 'Metadata API request failed',
-  md_request_timeout: 'Metadata API request timed out'
+  md_request_timeout: 'Metadata API request timed out',
+  registry_error_missing_type_definition:
+    'Missing metadata type definition for %s',
+  registry_error_file_not_found: 'File not found %s',
+  registry_error_missing_metadata_xml: 'Metadata xml file missing for %s',
+  registry_error_unsupported_type:
+    'Types missing a defined suffix are currently unsupported'
 };

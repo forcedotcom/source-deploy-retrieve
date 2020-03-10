@@ -30,8 +30,12 @@
     "@types/chai": "^4",
     "@types/mocha": "^5",
     "@types/node": "^10",
-    "@types/sinon": "^7.5.2",
+	"@types/sinon": "^7.5.2",
+    "@typescript-eslint/eslint-plugin": "^2.22.0",
+    "@typescript-eslint/parser": "^2.22.0",
     "chai": "^4",
+    "eslint": "^6.8.0",
+    "eslint-plugin-jsdoc": "^19.1.0",
     "mocha": "^5",
     "nyc": "^14.1.1",
     "prettier": "1.16.4",
@@ -41,7 +45,7 @@
   "scripts": {
     "build": "rm -rf lib && tsc -b",
     "format": "prettier --config ../../.prettierrc --write './**/*.{js,json}'",
-    "lint": "echo 'no lint'",
+    "lint": "eslint -c .eslintrc.json --ext .ts ./src ./test",
     "test": "mocha --recursive lib/test/*.test.js lib/test/**/*.test.js"
   }
 }

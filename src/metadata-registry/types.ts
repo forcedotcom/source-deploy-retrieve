@@ -88,8 +88,5 @@ export type MetadataRegistry = {
 };
 
 export interface SourceAdapter {
-  getComponent(
-    type: MetadataType,
-    fsPath: SourcePath
-  ): MetadataComponent | undefined;
+  getComponent(fsPath: SourcePath): MetadataComponent | undefined;
 }

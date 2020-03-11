@@ -1269,9 +1269,10 @@
   "adapters": {
     "apexclass": "matchingContentFile",
     "apexpage": "matchingContentFile",
-    "apexpage": "matchingContentFile",
+    "apexcomponent": "matchingContentFile",
     "apextrigger": "matchingContentFile",
     "lightningcomponentbundle": "bundle",
-    "auradefinitionbundle": "bundle"
+    "auradefinitionbundle": "bundle",
+    "customobject": "bundle"
   }
 }

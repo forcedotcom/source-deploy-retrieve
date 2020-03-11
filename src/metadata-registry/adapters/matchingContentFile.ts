@@ -6,38 +6,28 @@ import {
   MetadataType
 } from '../types';
 import { registryData, RegistryAccess } from '../registry';
-import { parse } from 'path';
+import { parse, extname } from 'path';
 import { META_XML_SUFFIX } from '../constants';
 import { existsSync } from 'fs';
 import { registryError, parseMetadataXml } from '../util';
+import { BaseSourceAdapter } from './base';
 
-export class MatchingContentFile implements SourceAdapter {
-  public getComponent(
-    type: MetadataType,
-    fsPath: SourcePath
-  ): MetadataComponent {
-    const registry = new RegistryAccess();
-    const parsedPath = parse(fsPath);
-    const parsedXml = parseMetadataXml(fsPath);
-
-    if (parsedXml) {
-      const sourcePath = fsPath.slice(0, fsPath.lastIndexOf(META_XML_SUFFIX));
-      if (!existsSync(sourcePath)) {
-        registryError('registry_error_missing_source_path');
-      }
-      return {
-        fullName: parsedXml.fullName,
-        type,
-        metaXml: fsPath,
-        sources: [sourcePath]
-      };
-    } else if (registry.get().suffixes[parsedPath.ext.slice(1)]) {
-      return {
-        fullName: parsedPath.name,
-        type,
-        metaXml: `${fsPath}${META_XML_SUFFIX}`,
-        sources: [fsPath]
-      };
+export class MatchingContentFile extends BaseSourceAdapter {
+  protected getSourcePaths(fsPath: SourcePath, isMetaXml: boolean) {
+    if (isMetaXml) {
+      return [fsPath.slice(0, fsPath.lastIndexOf(META_XML_SUFFIX))];
     }
+
+    const registry = new RegistryAccess();
+    const suffix = extname(fsPath).slice(1);
+    if (registry.get().suffixes[suffix]) {
+      return [fsPath];
+    }
+
+    throw new Error('expected a source file');
+  }
+
+  protected getMetadataXmlPath(pathToSource: SourcePath): SourcePath {
+    return `${pathToSource}${META_XML_SUFFIX}`;
   }
 }

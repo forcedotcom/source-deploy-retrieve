@@ -17,7 +17,7 @@ import {
   SourceAdapter
 } from './types';
 import { nls } from '../i18n';
-import { adapterIndex } from './adapters';
+import { getAdapter } from './adapters';
 import { parseMetadataXml, registryError } from './util';
 
 /**
@@ -90,9 +90,6 @@ export class RegistryAccess {
       for (const directoryName of Object.keys(registryData.mixedContent)) {
         if (pathParts.has(directoryName)) {
           typeId = this.get().mixedContent[directoryName];
-          // components of a bundle type are assumed to have their direct parent be the type's directoryName
-          // componentName =
-          //   pathParts[pathParts.findIndex(part => part === directoryName) + 1];
           break;
         }
       }
@@ -104,24 +101,12 @@ export class RegistryAccess {
       this.error('registry_error_missing_type_definition', typeId);
     }
 
-    const type = this.data.types[typeId] as MetadataType;
-    let adapter = adapterIndex[this.get().adapters[typeId]];
-    if (adapter) {
-      return [adapter.getComponent(type, fsPath)];
-    } else if (type.inFolder) {
-      adapter = adapterIndex.inFolders;
-    } else {
-      adapter = adapterIndex.simple;
-    }
-    const component = adapter.getComponent(type, fsPath);
+    const adapter = getAdapter(typeId);
+    const component = adapter.getComponent(fsPath);
     if (!component) {
-      registryError('registry_error_unparsable_patsh');
+      this.error('registry_error_unparsable_path');
     }
     return [component];
-    // if (type.inFolder) {
-    //   // component names of types with folders have the format folderName/componentName
-    //   fullName = `${basename(parsedPath.dir)}/${fullName}`;
-    // }
   }
 
   private error(messageKey: string, args?: string[] | string) {

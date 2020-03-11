@@ -7,44 +7,34 @@ import {
 import { RegistryAccess } from '../registry';
 import { sep, join, dirname } from 'path';
 import { readdirSync, lstatSync } from 'fs';
-import { parseMetadataXml } from '../util';
+import { parseMetadataXml, walk } from '../util';
 import { META_XML_SUFFIX } from '../constants';
+import { BaseSourceAdapter } from './base';
 
-export class Bundle implements SourceAdapter {
-  public getComponent(
-    type: MetadataType,
-    fsPath: SourcePath
-  ): MetadataComponent {
-    const dir = dirname(fsPath);
-    const pathParts = fsPath.split(sep);
-    const fullName =
-      pathParts[pathParts.findIndex(part => part === type.directoryName) + 1];
-
-    let metaXml: string;
-    if (parseMetadataXml(fsPath)) {
-      metaXml = fsPath;
-    } else {
-      const name = readdirSync(dir).find(f => !!parseMetadataXml(join(dir, f)));
-      metaXml = join(dir, name);
-    }
-    return {
-      fullName,
-      type,
-      metaXml,
-      sources: this.walk(dir)
-    };
+export class Bundle extends BaseSourceAdapter {
+  protected getSourcePaths(
+    fsPath: SourcePath,
+    isMetaXml: boolean
+  ): SourcePath[] {
+    const bundleRootPath = this.getBundleRootPath(fsPath);
+    const ignore = isMetaXml ? fsPath : this.getMetadataXmlPath(fsPath);
+    return walk(bundleRootPath, new Set([ignore]));
   }
 
-  private walk(dir: SourcePath): SourcePath[] {
-    const paths: SourcePath[] = [];
-    for (const file of readdirSync(dir)) {
-      const path = join(dir, file);
-      if (lstatSync(path).isDirectory()) {
-        paths.concat(...this.walk(path));
-      } else if (!file.endsWith(META_XML_SUFFIX)) {
-        paths.push(path);
-      }
+  protected getMetadataXmlPath(pathToSource: SourcePath): SourcePath {
+    const bundleRootPath = this.getBundleRootPath(pathToSource);
+    const xmlFileName = readdirSync(bundleRootPath).find(
+      f => !!parseMetadataXml(join(bundleRootPath, f))
+    );
+    if (xmlFileName) {
+      return join(bundleRootPath, xmlFileName);
     }
-    return paths;
+  }
+
+  private getBundleRootPath(fsPath: SourcePath): SourcePath {
+    const pathParts = fsPath.split(sep);
+    const bundleIndex =
+      pathParts.findIndex(part => part === this.type.directoryName) + 1;
+    return pathParts.slice(0, bundleIndex + 1).join(sep);
   }
 }

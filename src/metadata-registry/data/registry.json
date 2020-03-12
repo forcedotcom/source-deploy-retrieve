@@ -1271,8 +1271,11 @@
     "apexpage": "matchingContentFile",
     "apexcomponent": "matchingContentFile",
     "apextrigger": "matchingContentFile",
-    "lightningcomponentbundle": "bundle",
     "auradefinitionbundle": "bundle",
-    "customobject": "bundle"
+    "customobject": "bundle",
+    "document": "mixedContent",
+    "lightningcomponentbundle": "bundle",
+    "staticresource": "mixedContent",
+    "waveTemplates": "bundle"
   }
 }

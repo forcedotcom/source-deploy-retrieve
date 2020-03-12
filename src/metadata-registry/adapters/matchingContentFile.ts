@@ -3,16 +3,21 @@ import {
   SourcePath,
   MetadataComponent,
   MetadataRegistry,
-  MetadataType
+  MetadataType,
+  MetadataXml
 } from '../types';
 import { registryData, RegistryAccess } from '../registry';
 import { parse, extname } from 'path';
 import { META_XML_SUFFIX } from '../constants';
 import { existsSync } from 'fs';
-import { registryError, parseMetadataXml } from '../util';
+import { parseMetadataXml } from '../util';
 import { BaseSourceAdapter } from './base';
 
 export class MatchingContentFile extends BaseSourceAdapter {
+  protected getMetadataXmlPath(pathToSource: SourcePath): SourcePath {
+    return `${pathToSource}${META_XML_SUFFIX}`;
+  }
+
   protected getSourcePaths(fsPath: SourcePath, isMetaXml: boolean) {
     if (isMetaXml) {
       return [fsPath.slice(0, fsPath.lastIndexOf(META_XML_SUFFIX))];
@@ -25,9 +30,5 @@ export class MatchingContentFile extends BaseSourceAdapter {
     }
 
     throw new Error('expected a source file');
-  }
-
-  protected getMetadataXmlPath(pathToSource: SourcePath): SourcePath {
-    return `${pathToSource}${META_XML_SUFFIX}`;
   }
 }

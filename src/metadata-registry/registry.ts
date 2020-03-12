@@ -18,7 +18,7 @@ import {
 } from './types';
 import { nls } from '../i18n';
 import { getAdapter } from './adapters';
-import { parseMetadataXml, registryError } from './util';
+import { parseMetadataXml } from './util';
 
 /**
  * Direct access to the JSON registry data

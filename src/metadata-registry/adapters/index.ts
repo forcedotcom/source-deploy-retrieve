@@ -3,6 +3,7 @@ import { SourceAdapter, MetadataType } from '../types';
 import { Bundle } from './bundle';
 import { BaseSourceAdapter } from './base';
 import { RegistryAccess } from '../registry';
+import { MixedContent } from './anyContent';
 
 type AdapterIndex = {
   [adapterId: string]: SourceAdapter;
@@ -15,10 +16,10 @@ export const getAdapter = (typeId: string): SourceAdapter => {
   switch (adapter) {
     case 'bundle':
       return new Bundle(type);
-      break;
     case 'matchingContentFile':
       return new MatchingContentFile(type);
-      break;
+    case 'mixedContent':
+      return new MixedContent(type);
     default:
       return new BaseSourceAdapter(type);
   }

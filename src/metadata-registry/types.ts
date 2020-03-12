@@ -32,8 +32,6 @@ export type MetadataType = {
    * Names of the subtypes if the type has any.
    */
   childXmlNames?: string[];
-
-  adapterId?: string;
 };
 
 /**
@@ -85,6 +83,11 @@ export type MetadataRegistry = {
   adapters: {
     [adapterId: string]: string;
   };
+};
+
+export type MetadataXml = {
+  fullName: string;
+  suffix: string;
 };
 
 export interface SourceAdapter {

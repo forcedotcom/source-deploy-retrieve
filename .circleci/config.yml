@@ -1,5 +1,9 @@
 ---
 version: 2
+
+orbs:
+  win: circleci/windows@2.2.0
+
 jobs:
   node-latest: &test
     docker:

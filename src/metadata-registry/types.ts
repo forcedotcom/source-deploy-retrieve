@@ -91,5 +91,5 @@ export type MetadataXml = {
 };
 
 export interface SourceAdapter {
-  getComponent(fsPath: SourcePath): MetadataComponent | undefined;
+  getComponent(fsPath: SourcePath): MetadataComponent;
 }

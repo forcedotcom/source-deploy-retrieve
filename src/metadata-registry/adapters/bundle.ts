@@ -11,7 +11,7 @@ import { readdirSync, lstatSync } from 'fs';
 import { parseMetadataXml, walk } from '../util';
 import { META_XML_SUFFIX } from '../constants';
 import { BaseSourceAdapter } from './base';
-import { MixedContent } from './anyContent';
+import { MixedContent } from './mixedContent';
 
 export class Bundle extends MixedContent {
   protected getMetadataXmlPath(pathToSource: SourcePath): SourcePath {

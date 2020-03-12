@@ -12,6 +12,7 @@ import { META_XML_SUFFIX } from '../constants';
 import { existsSync } from 'fs';
 import { parseMetadataXml } from '../util';
 import { BaseSourceAdapter } from './base';
+import { ExpectedSourceFilesError } from '../../errors';
 
 export class MatchingContentFile extends BaseSourceAdapter {
   protected getMetadataXmlPath(pathToSource: SourcePath): SourcePath {
@@ -22,13 +23,11 @@ export class MatchingContentFile extends BaseSourceAdapter {
     if (isMetaXml) {
       return [fsPath.slice(0, fsPath.lastIndexOf(META_XML_SUFFIX))];
     }
-
     const registry = new RegistryAccess();
     const suffix = extname(fsPath).slice(1);
     if (registry.get().suffixes[suffix]) {
       return [fsPath];
     }
-
-    throw new Error('expected a source file');
+    throw new ExpectedSourceFilesError(this.type, fsPath);
   }
 }

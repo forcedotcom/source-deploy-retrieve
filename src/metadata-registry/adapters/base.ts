@@ -7,6 +7,7 @@ import {
 import { parseMetadataXml } from '../util';
 import { basename, dirname } from 'path';
 import { RegistryAccess } from '../registry';
+import { RegistryError } from '../../errors';
 
 /**
  * The default source adapter.
@@ -48,7 +49,10 @@ export class BaseSourceAdapter implements SourceAdapter {
     if (!parsedMetaXml || !inRootTypeFolder) {
       metaXmlPath = this.getMetadataXmlPath(fsPath);
       if (!metaXmlPath) {
-        throw new Error('missing metadata xml file');
+        throw new RegistryError('error_missing_metadata_xml', [
+          fsPath,
+          this.type.name
+        ]);
       }
       parsedMetaXml = parseMetadataXml(metaXmlPath);
       isMetaXml = false;

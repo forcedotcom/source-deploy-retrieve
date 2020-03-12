@@ -3,6 +3,7 @@ import { SourcePath, MetadataXml } from '../types';
 import { sep, basename, dirname, join } from 'path';
 import { readdirSync, lstatSync } from 'fs';
 import { parseMetadataXml, walk, parseBaseName } from '../util';
+import { ExpectedSourceFilesError } from '../../errors';
 
 export class MixedContent extends BaseSourceAdapter {
   protected getMetadataXmlPath(pathToSource: SourcePath): SourcePath {
@@ -37,10 +38,14 @@ export class MixedContent extends BaseSourceAdapter {
       contentPath = join(dir, contentFile);
       ignore.add(fsPath);
     }
-    if (lstatSync(contentPath).isDirectory()) {
-      return walk(contentPath, ignore);
+
+    const sources = lstatSync(contentPath).isDirectory()
+      ? walk(contentPath, ignore)
+      : [contentPath];
+    if (sources.length === 0) {
+      throw new ExpectedSourceFilesError(this.type, fsPath);
     }
-    return [contentPath];
+    return sources;
   }
 
   protected getPathToContent(fsPath: SourcePath): SourcePath {

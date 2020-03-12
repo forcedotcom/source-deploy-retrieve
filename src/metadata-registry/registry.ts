@@ -19,6 +19,7 @@ import {
 import { nls } from '../i18n';
 import { getAdapter } from './adapters';
 import { parseMetadataXml } from './util';
+import { RegistryError, TypeInferenceError } from '../errors';
 
 /**
  * Direct access to the JSON registry data
@@ -51,7 +52,7 @@ export class RegistryAccess {
   public getTypeFromName(name: string): MetadataType {
     const lower = name.toLowerCase().replace(/ /g, '');
     if (!this.data.types[lower]) {
-      this.error('registry_error_missing_type_definition', lower);
+      throw new TypeInferenceError('error_missing_type_definition', lower);
     }
     return this.data.types[lower];
   }
@@ -68,7 +69,7 @@ export class RegistryAccess {
    */
   public getComponentsFromPath(fsPath: string): MetadataComponent[] {
     if (!existsSync(fsPath)) {
-      this.error('registry_error_file_not_found', fsPath);
+      throw new TypeInferenceError('error_path_not_found', fsPath);
     }
 
     let typeId: string;
@@ -96,20 +97,8 @@ export class RegistryAccess {
     }
 
     if (!typeId) {
-      this.error('registry_error_unsupported_type');
-    } else if (!this.data.types[typeId]) {
-      this.error('registry_error_missing_type_definition', typeId);
+      throw new TypeInferenceError('error_finding_type_id', fsPath);
     }
-
-    const adapter = getAdapter(typeId);
-    const component = adapter.getComponent(fsPath);
-    if (!component) {
-      this.error('registry_error_unparsable_path');
-    }
-    return [component];
-  }
-
-  private error(messageKey: string, args?: string[] | string) {
-    throw new Error(nls.localize(messageKey, args));
+    return [getAdapter(typeId).getComponent(fsPath)];
   }
 }

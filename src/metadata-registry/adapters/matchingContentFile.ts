@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
 import {
   SourceAdapter,
   SourcePath,
@@ -41,7 +48,7 @@ export class MatchingContentFile extends BaseSourceAdapter {
     }
     const registry = new RegistryAccess();
     const suffix = extname(fsPath).slice(1);
-    if (registry.get().suffixes[suffix]) {
+    if (registry.data.suffixes[suffix]) {
       return [fsPath];
     }
     throw new ExpectedSourceFilesError(this.type, fsPath);

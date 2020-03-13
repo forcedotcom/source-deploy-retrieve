@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
 import { BaseSourceAdapter } from './base';
 import { SourcePath, MetadataXml } from '../types';
 import { sep, basename, dirname, join } from 'path';
@@ -32,7 +39,7 @@ import { ExpectedSourceFilesError } from '../../errors';
  * ├── myFoo.ext-meta.xml
  * bars/
  * ├── myBar.xyz
- * ├── myBar.ext-meta.xml
+ * ├── myBar.ext2-meta.xml
  *```
  */
 export class MixedContent extends BaseSourceAdapter {

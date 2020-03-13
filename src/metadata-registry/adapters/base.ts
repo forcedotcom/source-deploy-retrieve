@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
 import {
   SourceAdapter,
   MetadataType,
@@ -12,10 +19,9 @@ import { RegistryError } from '../../errors';
 /**
  * The default source adapter.
  *
- * Direct usage of this adapter is for simple
- * types with no additional content. Unless there's a particular reason not to,
- * other adapters will extend this one. It handles shared functionality amongst
- * the other adapters.
+ * Direct usage of this adapter is for simple types with no additional content.
+ * Unless there's a particular reason not to, other adapters will extend this one.
+ * It handles shared functionality amongst the other adapters.
  *
  * __Example Types__:
  *
@@ -36,12 +42,10 @@ export class BaseSourceAdapter implements SourceAdapter {
   }
 
   /**
-   * Get the MetadataComponent representation from a file path.
-   *
    * At the time of writing, Typescript does not have a `final` keyword so
    * nothing is stopping you from overriding this method. It's best if you don't
    * because this handles shared functionality across adapters. If you must,
-   * create a new implementation of SourceAdapter.
+   * create a new implementation of `SourceAdapter`.
    *
    * @param fsPath File path for a piece of metadata
    */

@@ -73,8 +73,6 @@ export type MetadataRegistry = {
   };
   /**
    * Index mapping directoryNames to type ids for types with mixed content.
-   *
-   * __Examples:__ LightningComponentBundles, Documents, StaticResources
    */
   mixedContent: {
     [directoryName: string]: string;
@@ -90,6 +88,9 @@ export type MetadataXml = {
   suffix: string;
 };
 
+/**
+ * Infers the source format structure of a metadata component when given a file path
+ */
 export interface SourceAdapter {
   getComponent(fsPath: SourcePath): MetadataComponent;
 }

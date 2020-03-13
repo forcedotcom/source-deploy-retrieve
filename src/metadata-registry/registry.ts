@@ -22,7 +22,8 @@ import { parseMetadataXml, isDirectory } from './util';
 import { RegistryError, TypeInferenceError } from '../errors';
 
 /**
- * Direct access to the JSON registry data
+ * Direct access to the JSON registry data. Useful for autocompletions
+ * on the data entries themselves.
  */
 export const registryData = Object.freeze(data);
 
@@ -31,17 +32,17 @@ export const registryData = Object.freeze(data);
  * types and components based on source paths.
  */
 export class RegistryAccess {
-  private data: MetadataRegistry;
+  private _data: MetadataRegistry;
 
   /**
-   * @param customData Optional custom registry data.
+   * @param data Optional custom registry data.
    */
-  constructor(customData: MetadataRegistry = registryData) {
-    this.data = customData;
+  constructor(data: MetadataRegistry = registryData) {
+    this._data = data;
   }
 
-  public get(): MetadataRegistry {
-    return data;
+  get data(): MetadataRegistry {
+    return this._data;
   }
 
   /**
@@ -86,7 +87,7 @@ export class RegistryAccess {
       const pathParts = new Set(fsPath.split(sep));
       for (const directoryName of Object.keys(registryData.mixedContent)) {
         if (pathParts.has(directoryName)) {
-          typeId = this.get().mixedContent[directoryName];
+          typeId = this.data.mixedContent[directoryName];
           break;
         }
       }

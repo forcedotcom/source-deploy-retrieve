@@ -2,21 +2,45 @@ import { BaseSourceAdapter } from './base';
 import { SourcePath, MetadataXml } from '../types';
 import { sep, basename, dirname, join } from 'path';
 import { readdirSync, lstatSync } from 'fs';
-import { parseMetadataXml, walk, parseBaseName } from '../util';
+import {
+  parseMetadataXml,
+  walk,
+  parseBaseName,
+  isDirectory,
+  findMetadataXml
+} from '../util';
 import { ExpectedSourceFilesError } from '../../errors';
 
+/**
+ * Handles types with mixed content. Mixed content means there are one or more source
+ * file(s) associated with a component with any file extension. Even an entire folder
+ * can be considered "the content".
+ *
+ * __Example Types__:
+ *
+ * StaticResources, Documents, Bundle Types
+ *
+ * __Example Structures__:
+ *
+ *```text
+ * foos/
+ * ├── myFoo/
+ * |   ├── fooFolder/
+ * |      ├── foofighters.x
+ * |   ├── foo.y
+ * |   ├── fooBar.z
+ * ├── myFoo.ext-meta.xml
+ * bars/
+ * ├── myBar.xyz
+ * ├── myBar.ext-meta.xml
+ *```
+ */
 export class MixedContent extends BaseSourceAdapter {
   protected getMetadataXmlPath(pathToSource: SourcePath): SourcePath {
     const contentPath = this.getPathToContent(pathToSource);
-    const contentName = parseBaseName(contentPath);
-    const contentPathDir = dirname(contentPath);
-    const xmlFileName = readdirSync(contentPathDir).find(
-      f =>
-        f.startsWith(contentName) && !!parseMetadataXml(join(contentPathDir, f))
-    );
-    if (xmlFileName) {
-      return join(contentPathDir, xmlFileName);
-    }
+    const rootTypeDirectory = dirname(contentPath);
+    const contentFullName = parseBaseName(contentPath);
+    return findMetadataXml(rootTypeDirectory, contentFullName);
   }
 
   protected getSourcePaths(
@@ -29,6 +53,7 @@ export class MixedContent extends BaseSourceAdapter {
       contentPath = this.getPathToContent(fsPath);
       ignore.add(this.getMetadataXmlPath(fsPath));
     } else {
+      // use getPathToContent here
       const metadataXml = parseMetadataXml(fsPath);
       const dir = dirname(fsPath);
       const contentFile = readdirSync(dir).find(
@@ -39,7 +64,7 @@ export class MixedContent extends BaseSourceAdapter {
       ignore.add(fsPath);
     }
 
-    const sources = lstatSync(contentPath).isDirectory()
+    const sources = isDirectory(contentPath)
       ? walk(contentPath, ignore)
       : [contentPath];
     if (sources.length === 0) {

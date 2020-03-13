@@ -12,12 +12,21 @@ import { RegistryError } from '../../errors';
 /**
  * The default source adapter.
  *
- * __Type Varients__: Simple types with no additional content.
+ * Direct usage of this adapter is for simple
+ * types with no additional content. Unless there's a particular reason not to,
+ * other adapters will extend this one. It handles shared functionality amongst
+ * the other adapters.
  *
- * __Examples__: Layouts, PermissionSets, FlexiPages
+ * __Example Types__:
  *
- * Unless there's a particular reason, most adapters will extend this one. It handles
- * shared functionality amongst the other adapters.
+ * Layouts, PermissionSets, FlexiPages
+ *
+ * __Example Structure__:
+ * ```text
+ * foos/
+ * ├── foo.ext-meta.xml
+ * ├── bar.ext-meta.xml
+ *```
  */
 export class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;
@@ -74,12 +83,25 @@ export class BaseSourceAdapter implements SourceAdapter {
     return component;
   }
 
+  /**
+   * Override this method to tell the adapter how to locate a component's
+   * `-meta.xml` file.
+   *
+   * @param pathToSource Path to a non `-meta.xml` file
+   */
   protected getMetadataXmlPath(
     pathToSource: SourcePath
   ): SourcePath | undefined {
     return undefined;
   }
 
+  /**
+   * Override this method to tell the adapter how to locate a component's
+   * source files.
+   *
+   * @param fsPath File path to base the inference of other source files
+   * @param isMetaXml Whether or not the provided file path is a `-meta.xml` file
+   */
   protected getSourcePaths(
     fsPath: SourcePath,
     isMetaXml: boolean

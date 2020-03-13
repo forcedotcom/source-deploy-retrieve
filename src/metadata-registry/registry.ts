@@ -18,7 +18,7 @@ import {
 } from './types';
 import { nls } from '../i18n';
 import { getAdapter } from './adapters';
-import { parseMetadataXml } from './util';
+import { parseMetadataXml, isDirectory } from './util';
 import { RegistryError, TypeInferenceError } from '../errors';
 
 /**
@@ -60,16 +60,13 @@ export class RegistryAccess {
   /**
    * Get the metadata component(s) from a file path.
    *
-   * __Current limitations:__
-   * - `fsPath` must be a single file - no directories.
-   * - Only one component can be returned at a time.
-   * - Only types with file suffixes, non-decomposed, single SourcePath
-   *
    * @param fsPath File path for a piece of metadata
    */
   public getComponentsFromPath(fsPath: string): MetadataComponent[] {
     if (!existsSync(fsPath)) {
       throw new TypeInferenceError('error_path_not_found', fsPath);
+    } else if (isDirectory(fsPath)) {
+      throw new TypeInferenceError('error_directories_not_supported', fsPath);
     }
 
     let typeId: string;
@@ -81,9 +78,8 @@ export class RegistryAccess {
     }
     // attempt 2 - try treating the file extension name as a suffix
     if (!typeId) {
-      const base = basename(fsPath);
-      const suffix = base.substring(base.indexOf('.') + 1);
-      typeId = this.data.suffixes[suffix];
+      const extName = extname(fsPath).split('.')[1];
+      typeId = this.data.suffixes[extName];
     }
     // attempt 3 - check if the file is part of a mixed content type
     if (!typeId) {
@@ -99,6 +95,7 @@ export class RegistryAccess {
     if (!typeId) {
       throw new TypeInferenceError('error_finding_type_id', fsPath);
     }
+
     return [getAdapter(typeId).getComponent(fsPath)];
   }
 }

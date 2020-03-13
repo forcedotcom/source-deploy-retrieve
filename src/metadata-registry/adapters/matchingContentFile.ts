@@ -14,6 +14,22 @@ import { parseMetadataXml } from '../util';
 import { BaseSourceAdapter } from './base';
 import { ExpectedSourceFilesError } from '../../errors';
 
+/**
+ * Handles types with a single content file with a matching file extension.
+ * These tend to be the programmatic types.
+ *
+ * __Example Types__:
+ *
+ * ApexClass, ApexTrigger, ApexComponent
+ *
+ * __Example Structure__:
+ *
+ * ```text
+ * foos/
+ * ├── foobar.ext
+ * ├── foobar.ext-meta.xml
+ *```
+ */
 export class MatchingContentFile extends BaseSourceAdapter {
   protected getMetadataXmlPath(pathToSource: SourcePath): SourcePath {
     return `${pathToSource}${META_XML_SUFFIX}`;

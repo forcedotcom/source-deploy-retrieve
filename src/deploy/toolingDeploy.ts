@@ -22,9 +22,9 @@ const CONTAINER_ASYNC_REQUEST = 'ContainerAsyncRequest';
 const METADATA_CONTAINER = 'MetadataContainer';
 
 export class ToolingDeploy {
-  public metadataType: string;
+  public metadataType?: string;
   public connection: Connection;
-  private apiVersion: string;
+  private apiVersion?: string;
   private registryAccess: RegistryAccess;
 
   public constructor(connection: Connection, apiVersion?: string) {

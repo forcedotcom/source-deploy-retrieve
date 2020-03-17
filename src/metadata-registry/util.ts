@@ -6,7 +6,7 @@ import { META_XML_SUFFIX } from './constants';
 
 /**
  * Returns the `MetadataXml` info from a given file path. If the path is not a
- * `-meta.xml` file, returns `undefined`
+ * metadata xml file (-meta.xml), returns `undefined`
  *
  * @param fsPath
  */
@@ -19,6 +19,16 @@ export const parseMetadataXml = (
   }
 };
 
+/**
+ * Get the file or directory name at the end of a path. This custom verison of
+ * path.basename ensures no suffixes at the end.
+ *
+ * @param fsPath
+ */
+export const parseBaseName = (fsPath: SourcePath): string => {
+  return basename(fsPath).split('.')[0];
+};
+
 export const findMetadataXml = (
   directory: SourcePath,
   fullName: string
@@ -29,16 +39,6 @@ export const findMetadataXml = (
   if (fileName) {
     return join(directory, fileName);
   }
-};
-
-/**
- * Get the file or directory name at the end of a path. This custom verison of
- * path.basename ensures no suffixes at the end.
- *
- * @param fsPath
- */
-export const parseBaseName = (fsPath: SourcePath): string => {
-  return basename(fsPath).split('.')[0];
 };
 
 export const isDirectory = (fsPath: SourcePath): boolean =>

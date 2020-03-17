@@ -50,13 +50,12 @@ export class BaseSourceAdapter implements SourceAdapter {
    * @param fsPath File path for a piece of metadata
    */
   public getComponent(fsPath: SourcePath): MetadataComponent {
-    const registry = new RegistryAccess();
     let metaXmlPath = fsPath;
     let isMetaXml = true;
     let parsedMetaXml = parseMetadataXml(fsPath);
 
     // If the path is not a metadata xml, or the metadata xml is not in the root
-    // of the type directory, differ fetching the file to the child adapter
+    // of the type directory, defer fetching the file to the child adapter
     const rootTypePath = dirname(this.type.inFolder ? dirname(fsPath) : fsPath);
     const inRootTypeFolder = basename(rootTypePath) === this.type.directoryName;
     if (!parsedMetaXml || !inRootTypeFolder) {
@@ -89,9 +88,9 @@ export class BaseSourceAdapter implements SourceAdapter {
 
   /**
    * Override this method to tell the adapter how to locate a component's
-   * `-meta.xml` file.
+   * root metadata xml file.
    *
-   * @param pathToSource Path to a non `-meta.xml` file
+   * @param pathToSource Path to a non root metadata xml file
    */
   protected getMetadataXmlPath(
     pathToSource: SourcePath
@@ -104,7 +103,7 @@ export class BaseSourceAdapter implements SourceAdapter {
    * source files.
    *
    * @param fsPath File path to base the inference of other source files
-   * @param isMetaXml Whether or not the provided file path is a `-meta.xml` file
+   * @param isMetaXml Whether or not the provided file path is a root metadata xml file
    */
   protected getSourcePaths(
     fsPath: SourcePath,

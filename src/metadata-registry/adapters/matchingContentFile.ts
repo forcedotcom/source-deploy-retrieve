@@ -43,13 +43,21 @@ export class MatchingContentFile extends BaseSourceAdapter {
   }
 
   protected getSourcePaths(fsPath: SourcePath, isMetaXml: boolean) {
+    let sourcePath: SourcePath;
     if (isMetaXml) {
-      return [fsPath.slice(0, fsPath.lastIndexOf(META_XML_SUFFIX))];
+      const path = fsPath.slice(0, fsPath.lastIndexOf(META_XML_SUFFIX));
+      if (existsSync(path)) {
+        sourcePath = path;
+      }
+    } else {
+      const registry = new RegistryAccess();
+      const suffix = extname(fsPath).slice(1);
+      if (registry.data.suffixes[suffix]) {
+        sourcePath = fsPath;
+      }
     }
-    const registry = new RegistryAccess();
-    const suffix = extname(fsPath).slice(1);
-    if (registry.data.suffixes[suffix]) {
-      return [fsPath];
+    if (sourcePath) {
+      return [sourcePath];
     }
     throw new ExpectedSourceFilesError(this.type, fsPath);
   }

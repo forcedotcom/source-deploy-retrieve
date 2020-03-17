@@ -21,8 +21,8 @@ import { BaseSourceAdapter } from './base';
 import { MixedContent } from './mixedContent';
 
 /**
- * Handles _bundle_ types. A bundle is a component that has all its source files, including the
- * `-meta.xml` file, contained in its own directory.
+ * Handles _bundle_ types. A component bundle has all its source files, including the
+ * root metadata xml, contained in its own directory.
  *
  * __Example Types__:
  *
@@ -40,8 +40,7 @@ import { MixedContent } from './mixedContent';
  */
 export class Bundle extends MixedContent {
   protected getMetadataXmlPath(pathToSource: SourcePath): SourcePath {
-    // Bundles are basically just MixedContent, but the -meta.xml is located in the
-    // component's folder.
+    // Bundles are MixedContent, but the -meta.xml is located in the component's folder.
     const bundleRootPath = this.getPathToContent(pathToSource);
     return findMetadataXml(bundleRootPath, basename(bundleRootPath));
   }

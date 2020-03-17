@@ -18,10 +18,12 @@
 export const messages = {
   md_request_fail: 'Metadata API request failed',
   md_request_timeout: 'Metadata API request timed out',
-  error_missing_type_definition:
-    "Missing metadata type definition in registry for id '%s'",
-  error_path_not_found: '%s: File or folder not found',
+  error_directories_not_supported:
+    'Paths to directories are currently not supported',
   error_expected_source_files: "%s: Expected source files for '%s'",
   error_missing_adapter: "Missing adapter '%s' for metadata type '%s'",
-  error_missing_metadata_xml: "%s: Metadata xml file missing for '%s'"
+  error_missing_metadata_xml: "%s: Metadata xml file missing for '%s'",
+  error_missing_type_definition:
+    "Missing metadata type definition in registry for id '%s'",
+  error_path_not_found: '%s: File or folder not found'
 };

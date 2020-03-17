@@ -67,7 +67,7 @@ export class RegistryAccess {
     if (!existsSync(fsPath)) {
       throw new TypeInferenceError('error_path_not_found', fsPath);
     } else if (isDirectory(fsPath)) {
-      throw new TypeInferenceError('error_directories_not_supported', fsPath);
+      throw new TypeInferenceError('error_directories_not_supported');
     }
 
     let typeId: string;

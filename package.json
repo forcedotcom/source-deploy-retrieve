@@ -42,6 +42,6 @@
     "build": "rm -rf lib && tsc -b",
     "format": "prettier --config ../../.prettierrc --write './**/*.{js,json}'",
     "lint": "echo 'no lint'",
-    "test": "mocha --recursive lib/test/*.test.js lib/test/**/*.test.js"
+    "test": "mocha --recursive \"lib/test/**/*.test.js\""
   }
 }

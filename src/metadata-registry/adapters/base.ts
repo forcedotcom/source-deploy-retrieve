@@ -9,11 +9,13 @@ import {
   SourceAdapter,
   MetadataType,
   SourcePath,
-  MetadataComponent
+  MetadataComponent,
+  MetadataRegistry
 } from '../types';
 import { parseMetadataXml } from '../util';
 import { basename, dirname } from 'path';
-import { RegistryAccess } from '../registry';
+import { registryData } from '../registry';
+import * as data from '../data/registry.json';
 import { RegistryError } from '../../errors';
 
 /**
@@ -36,9 +38,11 @@ import { RegistryError } from '../../errors';
  */
 export class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;
+  protected registry: MetadataRegistry;
 
-  constructor(type: MetadataType) {
+  constructor(type: MetadataType, registry: MetadataRegistry = data) {
     this.type = type;
+    this.registry = registry;
   }
 
   /**

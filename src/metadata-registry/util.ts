@@ -29,18 +29,6 @@ export const parseBaseName = (fsPath: SourcePath): string => {
   return basename(fsPath).split('.')[0];
 };
 
-export const findMetadataXml = (
-  directory: SourcePath,
-  fullName: string
-): SourcePath | undefined => {
-  const fileName = readdirSync(directory).find(
-    f => f.startsWith(fullName) && !!parseMetadataXml(join(directory, f))
-  );
-  if (fileName) {
-    return join(directory, fileName);
-  }
-};
-
 export const isDirectory = (fsPath: SourcePath): boolean =>
   lstatSync(fsPath).isDirectory();
 
@@ -58,4 +46,25 @@ export const walk = (
     }
   }
   return paths;
+};
+
+export const findMetadataXml = (
+  directory: SourcePath,
+  fullName: string
+): SourcePath | undefined => find(directory, fullName, true);
+
+export const findMetadataContent = (
+  directory: SourcePath,
+  fullName: string
+): SourcePath | undefined => find(directory, fullName, false);
+
+const find = (directory: SourcePath, fullName: string, metaXml: boolean) => {
+  const fileName = readdirSync(directory).find(f => {
+    const parsed = parseMetadataXml(join(directory, f));
+    const metaXmlCondition = metaXml ? !!parsed : !parsed;
+    return f.startsWith(fullName) && metaXmlCondition;
+  });
+  if (fileName) {
+    return join(directory, fileName);
+  }
 };

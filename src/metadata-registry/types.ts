@@ -85,7 +85,7 @@ export type MetadataXml = {
 };
 
 /**
- * Infers the source format structure of a metadata component when given a file path
+ * Infers the source format structure of a metadata component when given a file path.
  */
 export interface SourceAdapter {
   getComponent(fsPath: SourcePath): MetadataComponent;

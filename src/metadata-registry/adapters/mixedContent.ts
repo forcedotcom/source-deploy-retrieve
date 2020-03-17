@@ -14,7 +14,8 @@ import {
   walk,
   parseBaseName,
   isDirectory,
-  findMetadataXml
+  findMetadataXml,
+  findMetadataContent
 } from '../util';
 import { ExpectedSourceFilesError } from '../../errors';
 
@@ -56,32 +57,29 @@ export class MixedContent extends BaseSourceAdapter {
   ): SourcePath[] {
     let contentPath;
     const ignore = new Set<SourcePath>();
+
     if (!isMetaXml) {
       contentPath = this.getPathToContent(fsPath);
       ignore.add(this.getMetadataXmlPath(fsPath));
     } else {
-      // use getPathToContent here
       const metadataXml = parseMetadataXml(fsPath);
       const dir = dirname(fsPath);
-      const contentFile = readdirSync(dir).find(
-        f =>
-          f.startsWith(metadataXml.fullName) && !parseMetadataXml(join(dir, f))
-      );
-      contentPath = join(dir, contentFile);
+      contentPath = findMetadataContent(dirname(fsPath), metadataXml.fullName);
       ignore.add(fsPath);
     }
 
     const sources = isDirectory(contentPath)
       ? walk(contentPath, ignore)
       : [contentPath];
+
     if (sources.length === 0) {
       throw new ExpectedSourceFilesError(this.type, fsPath);
     }
     return sources;
   }
 
-  protected getPathToContent(fsPath: SourcePath): SourcePath {
-    const pathParts = fsPath.split(sep);
+  protected getPathToContent(source: SourcePath): SourcePath {
+    const pathParts = source.split(sep);
     let typeFolderIndex = pathParts.findIndex(
       part => part === this.type.directoryName
     );

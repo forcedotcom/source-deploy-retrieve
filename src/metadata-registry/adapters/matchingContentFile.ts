@@ -50,9 +50,8 @@ export class MatchingContentFile extends BaseSourceAdapter {
         sourcePath = path;
       }
     } else {
-      const registry = new RegistryAccess();
       const suffix = extname(fsPath).slice(1);
-      if (registry.data.suffixes[suffix]) {
+      if (this.registry.suffixes[suffix]) {
         sourcePath = fsPath;
       }
     }

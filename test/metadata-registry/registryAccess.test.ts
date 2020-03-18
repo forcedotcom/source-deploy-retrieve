@@ -5,15 +5,24 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { assert } from 'chai';
+import { assert, expect } from 'chai';
 import * as fs from 'fs';
 import { createSandbox, SinonStub } from 'sinon';
 import { RegistryAccess } from '../../src/metadata-registry';
 import { nls } from '../../src/i18n';
-import { mockRegistry } from '../mock/registry';
+import {
+  mockRegistry,
+  KEANU_SOURCE,
+  DWAYNE_DIR,
+  KEANU_XML,
+  KEANU_COMPONENT,
+  TARAJI_SOURCE_2,
+  TARAJI_COMPONENT
+} from '../mock/registry';
 import { join } from 'path';
 import { TypeInferenceError } from '../../src/errors';
 import * as util from '../../src/metadata-registry/util';
+import * as adapters from '../../src/metadata-registry/adapters';
 
 const env = createSandbox();
 
@@ -22,18 +31,25 @@ describe('RegistryAccess', () => {
 
   describe('getTypeFromName', () => {
     it('Should fetch type regardless of casing', () => {
-      // throws an error if it doesn't exist
-      registry.getTypeFromName('KeAnUReeVes');
+      expect(registry.getTypeFromName('KeAnUReeVes')).to.deep.equal(
+        mockRegistry.types.keanureeves
+      );
     });
 
     it('Should fetch type regardless of spaces', () => {
-      registry.getTypeFromName('kathy Bates');
+      expect(registry.getTypeFromName('kathy Bates')).to.deep.equal(
+        mockRegistry.types.kathybates
+      );
     });
 
     it('Should throw an error if definition missing', () => {
       assert.throws(
-        () => registry.getTypeFromName('TypeWithNoDefinition'),
-        TypeInferenceError
+        () => registry.getTypeFromName('TypeWithoutDef'),
+        TypeInferenceError,
+        nls.localize(
+          'error_missing_type_definition',
+          mockRegistry.suffixes.missing
+        )
       );
     });
   });
@@ -41,43 +57,81 @@ describe('RegistryAccess', () => {
   describe('getComponentsFromPath', () => {
     let existsStub: SinonStub;
     let directoryStub: SinonStub;
+    let getAdapterStub: SinonStub;
 
     beforeEach(() => {
       existsStub = env.stub(fs, 'existsSync');
       directoryStub = env.stub(util, 'isDirectory').returns(false);
+      getAdapterStub = env.stub(adapters, 'getAdapter');
     });
     afterEach(() => env.restore());
 
     it('Should throw file not found error if given path does not exist', () => {
-      const cmpPath = join('path', 'to', 'keanus', 'MyKeanu.keanu');
-      existsStub.withArgs(cmpPath).returns(false);
+      existsStub.withArgs(KEANU_SOURCE).returns(false);
+
       assert.throws(
-        () => registry.getComponentsFromPath(cmpPath),
-        TypeInferenceError
+        () => registry.getComponentsFromPath(KEANU_SOURCE),
+        TypeInferenceError,
+        nls.localize('error_path_not_found', [KEANU_SOURCE])
       );
     });
 
     it('Should throw directories not supported error for paths to directories', () => {
-      const sourcePath = join('path', 'to', 'dwayne');
-      existsStub.withArgs(sourcePath).returns(true);
+      existsStub.withArgs(DWAYNE_DIR).returns(true);
       directoryStub.returns(true);
+
       assert.throws(
-        () => registry.getComponentsFromPath(sourcePath),
+        () => registry.getComponentsFromPath(DWAYNE_DIR),
         TypeInferenceError,
         nls.localize('error_directories_not_supported')
       );
     });
 
-    it('Should throw missing type definition error for types without an entry (rare)', () => {
-      const metaXml = join('path', 'to', 'missing', 'TypeDef.missing-meta.xml');
-      existsStub.withArgs(metaXml).returns(true);
+    it('Should determine type for metadata file with known suffix', () => {
+      existsStub.withArgs(KEANU_XML).returns(true);
+      directoryStub.withArgs(KEANU_XML).returns(false);
+      getAdapterStub.withArgs('keanureeves').returns({
+        getComponent: () => KEANU_COMPONENT
+      });
+
+      expect(registry.getComponentsFromPath(KEANU_XML)).to.deep.equal([
+        KEANU_COMPONENT
+      ]);
+    });
+
+    it('Should determine type for source file with known suffix', () => {
+      existsStub.withArgs(KEANU_SOURCE).returns(true);
+      directoryStub.withArgs(KEANU_SOURCE).returns(false);
+      getAdapterStub.withArgs('keanureeves').returns({
+        getComponent: () => KEANU_COMPONENT
+      });
+
+      expect(registry.getComponentsFromPath(KEANU_SOURCE)).to.deep.equal([
+        KEANU_COMPONENT
+      ]);
+    });
+
+    it('Should determine type for path of mixed content type', () => {
+      existsStub.withArgs(TARAJI_SOURCE_2).returns(true);
+      directoryStub.withArgs(TARAJI_SOURCE_2).returns(false);
+      getAdapterStub.withArgs('tarajihenson').returns({
+        getComponent: () => TARAJI_COMPONENT
+      });
+
+      expect(registry.getComponentsFromPath(TARAJI_SOURCE_2)).to.deep.equal([
+        TARAJI_COMPONENT
+      ]);
+    });
+
+    it('Should throw type id error if one could not be determined', () => {
+      const missing = join('path', 'to', 'whatever', 'a.b-meta.xml');
+      existsStub.withArgs(missing).returns(true);
+      directoryStub.withArgs(missing).returns(false);
+
       assert.throws(
-        () => registry.getComponentsFromPath(metaXml),
+        () => registry.getComponentsFromPath(missing),
         TypeInferenceError,
-        nls.localize(
-          'error_missing_type_definition',
-          mockRegistry.suffixes.missing
-        )
+        nls.localize('error_finding_type_id', [missing])
       );
     });
   });

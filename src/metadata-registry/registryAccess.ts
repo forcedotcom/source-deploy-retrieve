@@ -66,7 +66,7 @@ export class RegistryAccess {
     // attempt 2 - check if the file is part of a mixed content type
     if (!typeId) {
       const pathParts = new Set(fsPath.split(sep));
-      for (const directoryName of Object.keys(registryData.mixedContent)) {
+      for (const directoryName of Object.keys(this.data.mixedContent)) {
         if (pathParts.has(directoryName)) {
           typeId = this.data.mixedContent[directoryName];
           break;

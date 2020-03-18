@@ -47,6 +47,12 @@ export const mockRegistry = {
 export const KEANUS_DIR = join('path', 'to', 'keanus');
 export const KEANU_XML = join(KEANUS_DIR, 'a.keanu-meta.xml');
 export const KEANU_SOURCE = join(KEANUS_DIR, 'a.keanu');
+export const KEANU_COMPONENT = {
+  fullName: 'a',
+  type: mockRegistry.types.keanureeves,
+  metaXml: KEANU_XML,
+  sources: [KEANU_SOURCE]
+};
 
 // Mixed content
 export const DWAYNE_DIR = join('path', 'to', 'dwaynes');
@@ -60,6 +66,12 @@ export const TARAJI_CONTENT = join(TARAJI_DIR, 'a');
 export const TARAJI_SOURCE_1 = join(TARAJI_CONTENT, 'test.xyz');
 export const TARAJI_SOURCE_2 = join(TARAJI_CONTENT, 'b', 'test.g');
 export const TARAJI_SOURCE_3 = join(TARAJI_CONTENT, 'b', 'test2.w');
+export const TARAJI_COMPONENT = {
+  fullName: 'a',
+  type: mockRegistry.types.tarajihenson,
+  metaXml: TARAJI_XML,
+  sources: [TARAJI_SOURCE_1, TARAJI_SOURCE_2, TARAJI_SOURCE_3]
+};
 
 // Bundle content
 export const SIMON_DIR = join('path', 'to', 'simons');

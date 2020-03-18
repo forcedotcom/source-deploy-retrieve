@@ -1,5 +1,5 @@
 {
-  "name": "deploy-and-retrieve",
+  "name": "@salesforce/deploy-and-retrieve",
   "version": "1.0.0",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "index.js",

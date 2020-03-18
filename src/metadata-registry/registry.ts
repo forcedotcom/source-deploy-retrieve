@@ -6,7 +6,7 @@
  */
 
 import { existsSync } from 'fs';
-import { sep, parse, basename } from 'path';
+import { parse, basename } from 'path';
 import * as data from './data/registry.json';
 import { META_XML_SUFFIX } from './constants';
 import {
@@ -128,7 +128,7 @@ export class RegistryAccess {
     ];
   }
 
-  private error(messageKey: string, args?: string[] | string) {
+  private error(messageKey: string, args?: string[] | string): Error {
     throw new Error(nls.localize(messageKey, args));
   }
 }

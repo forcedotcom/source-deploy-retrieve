@@ -12,7 +12,7 @@ import {
   MetadataComponent,
   MetadataXml
 } from '../types';
-import { RegistryAccess } from '../registry';
+import { RegistryAccess } from '../registryAccess';
 import { sep, join, dirname, basename } from 'path';
 import { readdirSync } from 'fs';
 import { parseMetadataXml, walk, findMetadataXml } from '../util';

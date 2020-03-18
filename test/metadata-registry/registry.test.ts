@@ -9,7 +9,7 @@ import { fail } from 'assert';
 import { expect, assert } from 'chai';
 import * as fs from 'fs';
 import { createSandbox, SinonStub } from 'sinon';
-import { RegistryAccess, registryData } from '../../src/metadata-registry';
+import { RegistryAccess } from '../../src/metadata-registry';
 import { META_XML_SUFFIX } from '../../src/metadata-registry/constants';
 import { nls } from '../../src/i18n';
 import { mockRegistry } from '../mock/registry';
@@ -21,32 +21,6 @@ const env = createSandbox();
 
 describe('Metadata Registry', () => {
   const registry = new RegistryAccess(mockRegistry);
-
-  describe('Registry Data', () => {
-    it('Should not allow adding new properties', () => {
-      try {
-        // Ignoring this because typescript does catch this problem since it's a frozen object,
-        // but still want to verify this won't work.
-        // @ts-ignore
-        registryData.suffixes.sample = 'new';
-        fail('Should not have been able to add a property');
-      } catch (e) {}
-    });
-
-    it('Should not allow changing existing properties', () => {
-      try {
-        registryData.types.apexclass.inFolder = false;
-        fail('Should not have been able to change a property');
-      } catch (e) {}
-    });
-
-    it('Should not allow deleting properties', () => {
-      try {
-        delete registryData.types.apexclass;
-        fail('Should not have been able to delete a property');
-      } catch (e) {}
-    });
-  });
 
   describe('RegistryAccess', () => {
     describe('getTypeFromName', () => {
@@ -114,73 +88,6 @@ describe('Metadata Registry', () => {
           )
         );
       });
-
-      // describe('Types with no mixed content', () => {
-      //   const cmpPath = join('path', 'to', 'keanus', 'MyKeanu.keanu');
-      //   const metaXml = `${cmpPath}${META_XML_SUFFIX}`;
-
-      //   it(`Should return a component when given a ${META_XML_SUFFIX} file`, () => {
-      //     existsStub.withArgs(cmpPath).returns(false);
-      //     existsStub.withArgs(metaXml).returns(true);
-      //     expect(registry.getComponentsFromPath(metaXml)[0]).to.deep.equal({
-      //       fullName: 'MyKeanu',
-      //       type: mockRegistry.types.keanureeves,
-      //       metaXml,
-      //       sources: []
-      //     });
-      //   });
-
-      //   it(`Should return a component w/ source file when given a ${META_XML_SUFFIX} file`, () => {
-      //     existsStub.withArgs(cmpPath).returns(true);
-      //     existsStub.withArgs(metaXml).returns(true);
-      //     expect(registry.getComponentsFromPath(metaXml)[0]).to.deep.equal({
-      //       fullName: 'MyKeanu',
-      //       type: mockRegistry.types.keanureeves,
-      //       metaXml,
-      //       sources: [cmpPath]
-      //     });
-      //   });
-
-      //   it(`Should return a component w/ ${META_XML_SUFFIX} file when given a source path`, () => {
-      //     existsStub.withArgs(cmpPath).returns(true);
-      //     existsStub.withArgs(metaXml).returns(true);
-      //     expect(registry.getComponentsFromPath(cmpPath)[0]).to.deep.equal({
-      //       fullName: 'MyKeanu',
-      //       type: mockRegistry.types.keanureeves,
-      //       metaXml,
-      //       sources: [cmpPath]
-      //     });
-      //   });
-
-      //   it(`Should throw missing ${META_XML_SUFFIX} file error when given a source path and the xml is missing`, () => {
-      //     existsStub.withArgs(cmpPath).returns(true);
-      //     existsStub.withArgs(metaXml).returns(false);
-      //     try {
-      //       registry.getComponentsFromPath(cmpPath);
-      //       fail(`Should have thrown a missing ${META_XML_SUFFIX} file error`);
-      //     } catch (e) {
-      //       expect(e.message).to.equal(
-      //         nls.localize(
-      //           'registry_error_missing_metadata_xml',
-      //           'MyKeanu.keanu'
-      //         )
-      //       );
-      //     }
-      //   });
-
-      //   it('Should format fullName for folder types correctly', () => {
-      //     const path = join(
-      //       'path',
-      //       'to',
-      //       'kathys',
-      //       'A_Folder',
-      //       'TestKathy.kathy-meta.xml'
-      //     );
-      //     existsStub.withArgs(path).returns(true);
-      //     const cmp = registry.getComponentsFromPath(path)[0];
-      //     expect(cmp.fullName).to.equal('A_Folder/TestKathy');
-      //   });
-      // });
     });
   });
 });

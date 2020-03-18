@@ -13,7 +13,7 @@ import {
   MetadataType,
   MetadataXml
 } from '../types';
-import { registryData, RegistryAccess } from '../registry';
+import { RegistryAccess } from '../registryAccess';
 import { parse, extname } from 'path';
 import { META_XML_SUFFIX } from '../constants';
 import { existsSync } from 'fs';

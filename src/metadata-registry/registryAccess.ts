@@ -7,7 +7,7 @@
 
 import { existsSync } from 'fs';
 import { sep, parse, basename, extname } from 'path';
-import * as data from './data/registry.json';
+import * as registryData from './data/registry.json';
 import { META_XML_SUFFIX } from './constants';
 import {
   MetadataComponent,
@@ -20,12 +20,6 @@ import { nls } from '../i18n';
 import { getAdapter } from './adapters';
 import { parseMetadataXml, isDirectory } from './util';
 import { RegistryError, TypeInferenceError } from '../errors';
-
-/**
- * Direct access to the JSON registry data. Useful for autocompletions
- * on the data entries themselves.
- */
-export const registryData = Object.freeze(data);
 
 /**
  * Primary interface for the metadata registry data. Used to infer information about metadata

@@ -14,8 +14,7 @@ import {
 } from '../types';
 import { parseMetadataXml } from '../util';
 import { basename, dirname } from 'path';
-import { registryData } from '../registry';
-import * as data from '../data/registry.json';
+import * as registryData from '../data/registry.json';
 import { RegistryError } from '../../errors';
 
 /**
@@ -40,7 +39,7 @@ export class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;
   protected registry: MetadataRegistry;
 
-  constructor(type: MetadataType, registry: MetadataRegistry = data) {
+  constructor(type: MetadataType, registry: MetadataRegistry = registryData) {
     this.type = type;
     this.registry = registry;
   }

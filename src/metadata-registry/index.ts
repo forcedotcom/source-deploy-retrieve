@@ -1,4 +1,4 @@
-export { RegistryAccess, registryData } from './registry';
+export { RegistryAccess } from './registryAccess';
 export {
   MetadataRegistry,
   MetadataType,

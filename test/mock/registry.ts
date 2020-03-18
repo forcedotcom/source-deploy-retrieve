@@ -60,3 +60,11 @@ export const TARAJI_CONTENT = join(TARAJI_DIR, 'a');
 export const TARAJI_SOURCE_1 = join(TARAJI_CONTENT, 'test.xyz');
 export const TARAJI_SOURCE_2 = join(TARAJI_CONTENT, 'b', 'test.g');
 export const TARAJI_SOURCE_3 = join(TARAJI_CONTENT, 'b', 'test2.w');
+
+// Bundle content
+export const SIMON_DIR = join('path', 'to', 'simons');
+export const SIMON_BUNDLE = join(SIMON_DIR, 'a');
+export const SIMON_XML = join(SIMON_BUNDLE, 'a.js-meta.xml');
+export const SIMON_SOURCE_1 = join(SIMON_BUNDLE, 'a.js');
+export const SIMON_SOURCE_2 = join(SIMON_BUNDLE, 'a.css');
+export const SIMON_SOURCE_3 = join(SIMON_BUNDLE, 'a.html');

@@ -71,12 +71,7 @@ export class RegistryAccess {
     if (parsedMetaXml) {
       typeId = this.data.suffixes[parsedMetaXml.suffix];
     }
-    // attempt 2 - try treating the file extension name as a suffix
-    if (!typeId) {
-      const extName = extname(fsPath).split('.')[1];
-      typeId = this.data.suffixes[extName];
-    }
-    // attempt 3 - check if the file is part of a mixed content type
+    // attempt 2 - check if the file is part of a mixed content type
     if (!typeId) {
       const pathParts = new Set(fsPath.split(sep));
       for (const directoryName of Object.keys(registryData.mixedContent)) {
@@ -85,6 +80,11 @@ export class RegistryAccess {
           break;
         }
       }
+    }
+    // attempt 3 - try treating the file extension name as a suffix
+    if (!typeId) {
+      const extName = extname(fsPath).split('.')[1];
+      typeId = this.data.suffixes[extName];
     }
 
     if (!typeId) {

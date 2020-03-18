@@ -6,7 +6,8 @@
  */
 
 export const supportedToolingTypes = new Map([
-  ['Apexclass', 'ApexClassMember']
+  ['Apexclass', 'ApexClassMember'], 
+  ['ApexTrigger', 'ApexTriggerMember']
 ]);
 
 /**

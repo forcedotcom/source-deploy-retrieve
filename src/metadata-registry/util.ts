@@ -5,11 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { nls } from '../i18n';
 import { SourcePath, MetadataXml } from './types';
-import { basename, join, extname } from 'path';
+import { basename, join } from 'path';
 import { readdirSync, lstatSync } from 'fs';
-import { META_XML_SUFFIX } from './constants';
 
 /**
  * Returns the `MetadataXml` info from a given file path. If the path is not a
@@ -55,6 +53,21 @@ export const walk = (
   return paths;
 };
 
+const find = (
+  directory: SourcePath,
+  fullName: string,
+  metaXml: boolean
+): SourcePath => {
+  const fileName = readdirSync(directory).find(f => {
+    const parsed = parseMetadataXml(join(directory, f));
+    const metaXmlCondition = metaXml ? !!parsed : !parsed;
+    return f.startsWith(fullName) && metaXmlCondition;
+  });
+  if (fileName) {
+    return join(directory, fileName);
+  }
+};
+
 export const findMetadataXml = (
   directory: SourcePath,
   fullName: string
@@ -68,14 +81,3 @@ export const findMetadataContent = (
   directory: SourcePath,
   fullName: string
 ): SourcePath | undefined => find(directory, fullName, false);
-
-const find = (directory: SourcePath, fullName: string, metaXml: boolean) => {
-  const fileName = readdirSync(directory).find(f => {
-    const parsed = parseMetadataXml(join(directory, f));
-    const metaXmlCondition = metaXml ? !!parsed : !parsed;
-    return f.startsWith(fullName) && metaXmlCondition;
-  });
-  if (fileName) {
-    return join(directory, fileName);
-  }
-};

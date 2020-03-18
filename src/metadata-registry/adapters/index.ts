@@ -6,7 +6,7 @@
  */
 
 import { MatchingContentFile } from './matchingContentFile';
-import { SourceAdapter, MetadataType } from '../types';
+import { SourceAdapter } from '../types';
 import { Bundle } from './bundle';
 import { BaseSourceAdapter } from './base';
 import { RegistryAccess } from '../registryAccess';

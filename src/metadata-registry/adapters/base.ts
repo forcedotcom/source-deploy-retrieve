@@ -96,7 +96,7 @@ export class BaseSourceAdapter implements SourceAdapter {
    * @param pathToSource Path to a non root metadata xml file
    */
   protected getMetadataXmlPath(
-    pathToSource: SourcePath
+    pathToSource: SourcePath // eslint-disable-line @typescript-eslint/no-unused-vars
   ): SourcePath | undefined {
     return undefined;
   }
@@ -109,8 +109,8 @@ export class BaseSourceAdapter implements SourceAdapter {
    * @param isMetaXml Whether or not the provided file path is a root metadata xml file
    */
   protected getSourcePaths(
-    fsPath: SourcePath,
-    isMetaXml: boolean
+    fsPath: SourcePath, // eslint-disable-line @typescript-eslint/no-unused-vars
+    isMetaXml: boolean // eslint-disable-line @typescript-eslint/no-unused-vars
   ): SourcePath[] {
     return [];
   }

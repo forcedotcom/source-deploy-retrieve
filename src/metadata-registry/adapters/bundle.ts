@@ -5,19 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import {
-  SourceAdapter,
-  MetadataType,
-  SourcePath,
-  MetadataComponent,
-  MetadataXml
-} from '../types';
-import { RegistryAccess } from '../registryAccess';
-import { sep, join, dirname, basename } from 'path';
-import { readdirSync } from 'fs';
-import { parseMetadataXml, walk, findMetadataXml } from '../util';
-import { META_XML_SUFFIX } from '../constants';
-import { BaseSourceAdapter } from './base';
+import { SourcePath } from '../types';
+import { basename } from 'path';
+import { findMetadataXml } from '../util';
 import { MixedContent } from './mixedContent';
 
 /**

@@ -55,7 +55,13 @@ export type MetadataComponent = {
  */
 export type SourcePath = string;
 
+/**
+ * Describes the shape of the registry data.
+ */
 export type MetadataRegistry = {
+  /**
+   * Metadata type definitions
+   */
   types: {
     [metadataId: string]: MetadataType;
   };

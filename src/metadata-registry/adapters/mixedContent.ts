@@ -6,9 +6,8 @@
  */
 
 import { BaseSourceAdapter } from './base';
-import { SourcePath, MetadataXml } from '../types';
-import { sep, basename, dirname, join } from 'path';
-import { readdirSync, lstatSync } from 'fs';
+import { SourcePath } from '../types';
+import { sep, dirname } from 'path';
 import {
   parseMetadataXml,
   walk,
@@ -63,7 +62,6 @@ export class MixedContent extends BaseSourceAdapter {
       ignore.add(this.getMetadataXmlPath(fsPath));
     } else {
       const metadataXml = parseMetadataXml(fsPath);
-      const dir = dirname(fsPath);
       contentPath = findMetadataContent(dirname(fsPath), metadataXml.fullName);
       ignore.add(fsPath);
     }
@@ -80,7 +78,7 @@ export class MixedContent extends BaseSourceAdapter {
 
   protected getPathToContent(source: SourcePath): SourcePath {
     const pathParts = source.split(sep);
-    let typeFolderIndex = pathParts.findIndex(
+    const typeFolderIndex = pathParts.findIndex(
       part => part === this.type.directoryName
     );
     const offset = this.type.inFolder ? 3 : 2;

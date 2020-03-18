@@ -5,19 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import {
-  SourceAdapter,
-  SourcePath,
-  MetadataComponent,
-  MetadataRegistry,
-  MetadataType,
-  MetadataXml
-} from '../types';
-import { RegistryAccess } from '../registryAccess';
-import { parse, extname } from 'path';
+import { SourcePath } from '../types';
+import { extname } from 'path';
 import { META_XML_SUFFIX } from '../constants';
 import { existsSync } from 'fs';
-import { parseMetadataXml } from '../util';
 import { BaseSourceAdapter } from './base';
 import { ExpectedSourceFilesError } from '../../errors';
 
@@ -42,7 +33,10 @@ export class MatchingContentFile extends BaseSourceAdapter {
     return `${pathToSource}${META_XML_SUFFIX}`;
   }
 
-  protected getSourcePaths(fsPath: SourcePath, isMetaXml: boolean) {
+  protected getSourcePaths(
+    fsPath: SourcePath,
+    isMetaXml: boolean
+  ): SourcePath[] {
     let sourcePath: SourcePath;
     if (isMetaXml) {
       const path = fsPath.slice(0, fsPath.lastIndexOf(META_XML_SUFFIX));

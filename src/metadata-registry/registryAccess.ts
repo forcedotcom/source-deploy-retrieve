@@ -6,20 +6,12 @@
  */
 
 import { existsSync } from 'fs';
-import { sep, parse, basename, extname } from 'path';
+import { sep, extname } from 'path';
 import * as registryData from './data/registry.json';
-import { META_XML_SUFFIX } from './constants';
-import {
-  MetadataComponent,
-  MetadataRegistry,
-  MetadataType,
-  SourcePath,
-  SourceAdapter
-} from './types';
-import { nls } from '../i18n';
+import { MetadataComponent, MetadataRegistry, MetadataType } from './types';
 import { getAdapter } from './adapters';
 import { parseMetadataXml, isDirectory } from './util';
-import { RegistryError, TypeInferenceError } from '../errors';
+import { TypeInferenceError } from '../errors';
 
 /**
  * Primary interface for the metadata registry data. Used to infer information about metadata

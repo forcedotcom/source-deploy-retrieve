@@ -7,8 +7,6 @@
 
 import {
   mockRegistry,
-  KEANU_XML,
-  KEANU_SOURCE,
   DWAYNE_SOURCE,
   DWAYNE_XML,
   DWAYNE_DIR,
@@ -20,7 +18,6 @@ import {
   TARAJI_CONTENT
 } from '../../mock/registry';
 import { expect } from 'chai';
-import { join } from 'path';
 import { createSandbox, SinonStub } from 'sinon';
 import * as fs from 'fs';
 import * as util from '../../../src/metadata-registry/util';
@@ -29,13 +26,11 @@ import { MixedContent } from '../../../src/metadata-registry/adapters/mixedConte
 const env = createSandbox();
 
 describe('MixedContent', () => {
-  let existsStub: SinonStub;
   let findXmlStub: SinonStub;
   let findContentStub: SinonStub;
   let dirStub: SinonStub;
 
   beforeEach(() => {
-    existsStub = env.stub(fs, 'existsSync');
     findXmlStub = env.stub(util, 'findMetadataXml');
     findContentStub = env.stub(util, 'findMetadataContent');
     dirStub = env.stub(util, 'isDirectory');

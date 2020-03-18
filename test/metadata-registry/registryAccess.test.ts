@@ -5,12 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { fail } from 'assert';
-import { expect, assert } from 'chai';
+import { assert } from 'chai';
 import * as fs from 'fs';
 import { createSandbox, SinonStub } from 'sinon';
 import { RegistryAccess } from '../../src/metadata-registry';
-import { META_XML_SUFFIX } from '../../src/metadata-registry/constants';
 import { nls } from '../../src/i18n';
 import { mockRegistry } from '../mock/registry';
 import { join } from 'path';

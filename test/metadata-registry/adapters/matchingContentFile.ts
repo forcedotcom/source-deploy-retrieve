@@ -8,7 +8,6 @@
 import { MatchingContentFile } from '../../../src/metadata-registry/adapters/matchingContentFile';
 import { mockRegistry, KEANU_XML, KEANU_SOURCE } from '../../mock/registry';
 import { expect } from 'chai';
-import { join } from 'path';
 import { createSandbox, SinonStub } from 'sinon';
 import * as fs from 'fs';
 

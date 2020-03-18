@@ -7,8 +7,6 @@
 
 import {
   mockRegistry,
-  KEANU_XML,
-  KEANU_SOURCE,
   SIMON_XML,
   SIMON_SOURCE_1,
   SIMON_SOURCE_2,
@@ -17,9 +15,7 @@ import {
   SIMON_DIR
 } from '../../mock/registry';
 import { expect } from 'chai';
-import { join } from 'path';
-import { createSandbox, SinonStub } from 'sinon';
-import * as fs from 'fs';
+import { createSandbox } from 'sinon';
 import * as util from '../../../src/metadata-registry/util';
 import { Bundle } from '../../../src/metadata-registry/adapters/bundle';
 
@@ -37,7 +33,6 @@ describe('Bundle', () => {
   };
 
   before(() => {
-    const existsStub = env.stub(fs, 'existsSync');
     const walkStub = env.stub(util, 'walk');
     const findXmlStub = env.stub(util, 'findMetadataXml');
     const findContentStub = env.stub(util, 'findMetadataContent');

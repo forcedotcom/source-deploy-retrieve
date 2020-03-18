@@ -2,20 +2,26 @@ import { join } from 'path';
 import { mockRegistry } from '../../mock/registry';
 import { BaseSourceAdapter } from '../../../src/metadata-registry/adapters/base';
 import { expect, assert } from 'chai';
-import { createSandbox, SinonStub } from 'sinon';
-import * as fs from 'fs';
 import { SourcePath } from '../../../src/metadata-registry';
 import { RegistryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 
-const env = createSandbox();
+class TestChildAdapter extends BaseSourceAdapter {
+  public static readonly xmlPath = join(
+    'path',
+    'to',
+    'dwaynes',
+    'a.dwayne-meta.xml'
+  );
+  protected getMetadataXmlPath(): SourcePath {
+    return TestChildAdapter.xmlPath;
+  }
+  protected getSourcePaths(fsPath: SourcePath): SourcePath[] {
+    return [fsPath];
+  }
+}
 
 describe('BaseSourceAdapter', () => {
-  let existsStub: SinonStub;
-
-  beforeEach(() => (existsStub = env.stub(fs, 'existsSync')));
-  afterEach(() => env.restore());
-
   it('Should return a MetadataComponent when given a metadata xml file', () => {
     const path = join('path', 'to', 'keanus', 'My_Test.keanu-meta.xml');
     const type = mockRegistry.types.keanureeves;
@@ -87,18 +93,3 @@ describe('BaseSourceAdapter', () => {
     );
   });
 });
-
-class TestChildAdapter extends BaseSourceAdapter {
-  public static readonly xmlPath = join(
-    'path',
-    'to',
-    'dwaynes',
-    'a.dwayne-meta.xml'
-  );
-  protected getMetadataXmlPath(pathToSource: string) {
-    return TestChildAdapter.xmlPath;
-  }
-  protected getSourcePaths(fsPath: SourcePath, isMetaXml: boolean) {
-    return [fsPath];
-  }
-}

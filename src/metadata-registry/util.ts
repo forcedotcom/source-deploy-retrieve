@@ -60,6 +60,10 @@ export const findMetadataXml = (
   fullName: string
 ): SourcePath | undefined => find(directory, fullName, true);
 
+/**
+ * If there's more than one content file with the same fullName, it will
+ * return the first one found.
+ */
 export const findMetadataContent = (
   directory: SourcePath,
   fullName: string

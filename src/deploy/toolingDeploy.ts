@@ -15,7 +15,7 @@ import {
   ToolingCreateResult,
   ToolingRetrieveResult
 } from './index';
-//import { RegistryAccess } from '../metadata-registry/index';
+import { RegistryAccess } from '../metadata-registry/index';
 // tslint:disable-next-line:no-var-requires
 const DOMParser = require('xmldom-sfdx-encoding').DOMParser;
 const CONTAINER_ASYNC_REQUEST = 'ContainerAsyncRequest';
@@ -25,19 +25,18 @@ export class ToolingDeploy {
   public metadataType: string;
   public connection: Connection;
   private apiVersion: string;
-  // private registryAccess: RegistryAccess;
+  private registryAccess: RegistryAccess;
 
   public constructor(connection: Connection, apiVersion?: string) {
     this.connection = connection;
     this.apiVersion = apiVersion;
-    //   this.registryAccess = new RegistryAccess();
+    this.registryAccess = new RegistryAccess();
   }
 
   public async deploy(filePath: string): Promise<ToolingRetrieveResult> {
-    // this.metadataType = this.registryAccess.getComponentsFromPath(
-    //   filePath
-    // )[0].type.name;
-    this.metadataType = 'ApexTrigger';
+    this.metadataType = this.registryAccess.getComponentsFromPath(
+      filePath
+    )[0].type.name;
     const sourcePath = filePath.replace('-meta.xml', '');
     const metadataPath = `${sourcePath}-meta.xml`;
 

@@ -1,9 +1,5 @@
 {
-<<<<<<< HEAD
   "name": "@salesforce/source-deploy-retrieve",
-=======
-  "name": "@salesforce/deploy-and-retrieve",
->>>>>>> @W-6531281@ Adding deploy logic - 2
   "version": "1.0.0",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "index.js",

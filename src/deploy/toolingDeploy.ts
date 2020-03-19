@@ -37,7 +37,7 @@ export class ToolingDeploy {
     // this.metadataType = this.registryAccess.getComponentsFromPath(
     //   filePath
     // )[0].type.name;
-    this.metadataType = 'Apexclass';
+    this.metadataType = 'ApexTrigger';
     const sourcePath = filePath.replace('-meta.xml', '');
     const metadataPath = `${sourcePath}-meta.xml`;
 

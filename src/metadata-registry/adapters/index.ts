@@ -6,23 +6,22 @@
  */
 
 import { MatchingContentFile } from './matchingContentFile';
-import { SourceAdapter } from '../types';
+import { SourceAdapter, MetadataType } from '../types';
 import { Bundle } from './bundle';
 import { BaseSourceAdapter } from './base';
-import { RegistryAccess } from '../registryAccess';
 import { MixedContent } from './mixedContent';
 import { RegistryError } from '../../errors';
 
-enum AdapterId {
+export enum AdapterId {
   Bundle = 'bundle',
   MatchingContentFile = 'matchingContentFile',
   MixedContent = 'mixedContent'
 }
 
-export const getAdapter = (typeId: string): SourceAdapter => {
-  const registry = new RegistryAccess();
-  const type = registry.getTypeFromName(typeId);
-  const adapterId = registry.data.adapters[typeId];
+export const getAdapter = (
+  type: MetadataType,
+  adapterId: AdapterId
+): SourceAdapter => {
   switch (adapterId) {
     case AdapterId.Bundle:
       return new Bundle(type);

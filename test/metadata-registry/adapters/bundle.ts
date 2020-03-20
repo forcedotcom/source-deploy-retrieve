@@ -18,6 +18,7 @@ import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import * as util from '../../../src/metadata-registry/util';
 import { Bundle } from '../../../src/metadata-registry/adapters/bundle';
+import * as fs from 'fs';
 
 const env = createSandbox();
 
@@ -37,8 +38,10 @@ describe('Bundle', () => {
     const findXmlStub = env.stub(util, 'findMetadataXml');
     const findContentStub = env.stub(util, 'findMetadataContent');
     const isDirStub = env.stub(util, 'isDirectory');
+    const existsStub = env.stub(fs, 'existsSync');
     findXmlStub.withArgs(SIMON_BUNDLE, 'a').returns(SIMON_XML);
     findContentStub.withArgs(SIMON_DIR, 'a').returns(SIMON_BUNDLE);
+    existsStub.withArgs(SIMON_BUNDLE).returns(true);
     isDirStub.withArgs(SIMON_BUNDLE).returns(true);
     walkStub.withArgs(SIMON_BUNDLE, new Set([SIMON_XML])).returns(sources);
   });

@@ -90,9 +90,14 @@ describe('RegistryAccess', () => {
     it('Should determine type for metadata file with known suffix', () => {
       existsStub.withArgs(KEANU_XML).returns(true);
       directoryStub.withArgs(KEANU_XML).returns(false);
-      getAdapterStub.withArgs('keanureeves').returns({
-        getComponent: () => KEANU_COMPONENT
-      });
+      getAdapterStub
+        .withArgs(
+          mockRegistry.types.keanureeves,
+          mockRegistry.adapters.keanureeves
+        )
+        .returns({
+          getComponent: () => KEANU_COMPONENT
+        });
 
       expect(registry.getComponentsFromPath(KEANU_XML)).to.deep.equal([
         KEANU_COMPONENT
@@ -102,9 +107,14 @@ describe('RegistryAccess', () => {
     it('Should determine type for source file with known suffix', () => {
       existsStub.withArgs(KEANU_SOURCE).returns(true);
       directoryStub.withArgs(KEANU_SOURCE).returns(false);
-      getAdapterStub.withArgs('keanureeves').returns({
-        getComponent: () => KEANU_COMPONENT
-      });
+      getAdapterStub
+        .withArgs(
+          mockRegistry.types.keanureeves,
+          mockRegistry.adapters.keanureeves
+        )
+        .returns({
+          getComponent: () => KEANU_COMPONENT
+        });
 
       expect(registry.getComponentsFromPath(KEANU_SOURCE)).to.deep.equal([
         KEANU_COMPONENT
@@ -114,9 +124,14 @@ describe('RegistryAccess', () => {
     it('Should determine type for path of mixed content type', () => {
       existsStub.withArgs(TARAJI_SOURCE_2).returns(true);
       directoryStub.withArgs(TARAJI_SOURCE_2).returns(false);
-      getAdapterStub.withArgs('tarajihenson').returns({
-        getComponent: () => TARAJI_COMPONENT
-      });
+      getAdapterStub
+        .withArgs(
+          mockRegistry.types.tarajihenson,
+          mockRegistry.adapters.tarajihenson
+        )
+        .returns({
+          getComponent: () => TARAJI_COMPONENT
+        });
 
       expect(registry.getComponentsFromPath(TARAJI_SOURCE_2)).to.deep.equal([
         TARAJI_COMPONENT

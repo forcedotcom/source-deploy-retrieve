@@ -17,6 +17,7 @@ import {
   findMetadataContent
 } from '../util';
 import { ExpectedSourceFilesError } from '../../errors';
+import { existsSync } from 'fs';
 
 /**
  * Handles types with mixed content. Mixed content means there are one or more source
@@ -66,16 +67,22 @@ export class MixedContent extends BaseSourceAdapter {
       ignore.add(fsPath);
     }
 
+    if (!existsSync(contentPath)) {
+      throw new ExpectedSourceFilesError(this.type, fsPath);
+    }
+
     const sources = isDirectory(contentPath)
       ? walk(contentPath, ignore)
       : [contentPath];
 
-    if (sources.length === 0) {
-      throw new ExpectedSourceFilesError(this.type, fsPath);
-    }
     return sources;
   }
 
+  /**
+   * "Content" can either be a single file or an entire folder. This will slice
+   * the source path accordingly.
+   * @param source
+   */
   protected getPathToContent(source: SourcePath): SourcePath {
     const pathParts = source.split(sep);
     const typeFolderIndex = pathParts.findIndex(

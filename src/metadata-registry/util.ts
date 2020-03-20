@@ -56,11 +56,11 @@ export const walk = (
 const find = (
   directory: SourcePath,
   fullName: string,
-  metaXml: boolean
-): SourcePath => {
+  findMetaXml: boolean
+): SourcePath | undefined => {
   const fileName = readdirSync(directory).find(f => {
     const parsed = parseMetadataXml(join(directory, f));
-    const metaXmlCondition = metaXml ? !!parsed : !parsed;
+    const metaXmlCondition = findMetaXml ? !!parsed : !parsed;
     return f.startsWith(fullName) && metaXmlCondition;
   });
   if (fileName) {

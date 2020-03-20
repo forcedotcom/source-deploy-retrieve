@@ -63,7 +63,7 @@ export type MetadataRegistry = {
    * Metadata type definitions
    */
   types: {
-    [metadataId: string]: MetadataType;
+    [typeId: string]: MetadataType;
   };
   /**
    * Index mapping file suffixes to type ids.
@@ -81,7 +81,7 @@ export type MetadataRegistry = {
    * SourceAdapter mappings for types that need an explicit definition.
    */
   adapters: {
-    [adapterId: string]: string;
+    [typeId: string]: string;
   };
 };
 

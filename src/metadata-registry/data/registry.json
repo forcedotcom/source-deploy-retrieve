@@ -1272,8 +1272,10 @@
     "apexcomponent": "matchingContentFile",
     "apextrigger": "matchingContentFile",
     "auradefinitionbundle": "bundle",
+    "contentasset": "matchingContentFile",
     "customobject": "bundle",
     "document": "mixedContent",
+    "emailtemplate": "matchingContentFile",
     "lightningcomponentbundle": "bundle",
     "staticresource": "mixedContent",
     "waveTemplates": "bundle"

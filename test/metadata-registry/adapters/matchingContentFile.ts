@@ -6,10 +6,17 @@
  */
 
 import { MatchingContentFile } from '../../../src/metadata-registry/adapters/matchingContentFile';
-import { mockRegistry, KEANU_XML, KEANU_SOURCE } from '../../mock/registry';
-import { expect } from 'chai';
+import {
+  mockRegistry,
+  KEANU_XML,
+  KEANU_SOURCE,
+  KEANUS_DIR
+} from '../../mock/registry';
+import { expect, assert } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
 import * as fs from 'fs';
+import { ExpectedSourceFilesError } from '../../../src/errors';
+import { join } from 'path';
 
 const env = createSandbox();
 
@@ -37,5 +44,19 @@ describe('MatchingContentFile', () => {
 
   it('Should return expected MetadataComponent when given a source path', () => {
     expect(adapter.getComponent(KEANU_SOURCE)).to.deep.equal(expectedComponent);
+  });
+
+  it('Should throw an ExpectedSourceFilesError if no source is found from xml', () => {
+    existsStub.withArgs(KEANU_SOURCE).returns(false);
+    assert.throws(
+      () => adapter.getComponent(KEANU_XML),
+      ExpectedSourceFilesError
+    );
+  });
+
+  it('Should throw an ExpectedSourceFilesError if source and suffix not found', () => {
+    const path = join(KEANUS_DIR, 'b.xyz');
+    existsStub.withArgs(path).returns(true);
+    assert.throws(() => adapter.getComponent(path), ExpectedSourceFilesError);
   });
 });

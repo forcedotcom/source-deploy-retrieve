@@ -9,7 +9,7 @@ import { existsSync } from 'fs';
 import { sep, extname } from 'path';
 import * as registryData from './data/registry.json';
 import { MetadataComponent, MetadataRegistry, MetadataType } from './types';
-import { getAdapter } from './adapters';
+import { getAdapter, AdapterId } from './adapters';
 import { parseMetadataXml, isDirectory } from './util';
 import { TypeInferenceError } from '../errors';
 
@@ -18,17 +18,13 @@ import { TypeInferenceError } from '../errors';
  * types and components based on source paths.
  */
 export class RegistryAccess {
-  private _data: MetadataRegistry;
+  public readonly data: MetadataRegistry;
 
   /**
    * @param data Optional custom registry data.
    */
   constructor(data: MetadataRegistry = registryData) {
-    this._data = data;
-  }
-
-  get data(): MetadataRegistry {
-    return this._data;
+    this.data = data;
   }
 
   /**
@@ -75,6 +71,7 @@ export class RegistryAccess {
     }
     // attempt 3 - try treating the file extension name as a suffix
     if (!typeId) {
+      // extname include the dot, so we have to remove it to index the suffixes
       const extName = extname(fsPath).split('.')[1];
       typeId = this.data.suffixes[extName];
     }
@@ -83,6 +80,8 @@ export class RegistryAccess {
       throw new TypeInferenceError('error_finding_type_id', fsPath);
     }
 
-    return [getAdapter(typeId).getComponent(fsPath)];
+    const adapterId = this.data.adapters[typeId] as AdapterId;
+    const adapter = getAdapter(this.getTypeFromName(typeId), adapterId);
+    return [adapter.getComponent(fsPath)];
   }
 }

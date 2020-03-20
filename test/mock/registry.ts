@@ -40,7 +40,12 @@ export const mockRegistry = {
     tarajis: 'tarajihenson',
     simons: 'simonpegg'
   },
-  adapters: {}
+  adapters: {
+    keanureeves: 'matchingContentFile',
+    tarajihenson: 'mixedContent',
+    dwaynejohnson: 'mixedContent',
+    simonpegg: 'bundle'
+  }
 };
 
 // Matching content file

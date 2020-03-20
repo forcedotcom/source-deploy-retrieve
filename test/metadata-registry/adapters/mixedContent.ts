@@ -60,7 +60,7 @@ describe('MixedContent', () => {
     const expectedComponent = {
       fullName: 'a',
       type,
-      metaXml: DWAYNE_XML,
+      xml: DWAYNE_XML,
       sources: [DWAYNE_SOURCE]
     };
 
@@ -92,7 +92,7 @@ describe('MixedContent', () => {
     const expectedComponent = {
       fullName: 'a',
       type,
-      metaXml: TARAJI_XML,
+      xml: TARAJI_XML,
       sources
     };
 

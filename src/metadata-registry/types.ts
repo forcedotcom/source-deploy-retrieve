@@ -41,9 +41,9 @@ export type MetadataComponent = {
   fullName: string;
   type: MetadataType;
   /**
-   * Path to the -meta.xml file.
+   * Path to the root metadata xml file.
    */
-  metaXml: SourcePath;
+  xml: SourcePath;
   /**
    * Paths to additional source files, if any.
    */

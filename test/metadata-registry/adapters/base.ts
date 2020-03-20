@@ -35,7 +35,7 @@ describe('BaseSourceAdapter', () => {
     expect(adapter.getComponent(path)).to.deep.equal({
       fullName: 'My_Test',
       type,
-      metaXml: path,
+      xml: path,
       sources: []
     });
   });
@@ -53,7 +53,7 @@ describe('BaseSourceAdapter', () => {
     expect(adapter.getComponent(path)).to.deep.equal({
       fullName: 'A_Folder/My_Test',
       type,
-      metaXml: path,
+      xml: path,
       sources: []
     });
   });
@@ -65,7 +65,7 @@ describe('BaseSourceAdapter', () => {
     expect(adapter.getComponent(path)).to.deep.equal({
       fullName: 'a',
       type,
-      metaXml: TestChildAdapter.xmlPath,
+      xml: TestChildAdapter.xmlPath,
       sources: [path]
     });
   });
@@ -83,7 +83,7 @@ describe('BaseSourceAdapter', () => {
     expect(adapter.getComponent(path)).to.deep.equal({
       fullName: 'a',
       type,
-      metaXml: TestChildAdapter.xmlPath,
+      xml: TestChildAdapter.xmlPath,
       sources: [path]
     });
   });

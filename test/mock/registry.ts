@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
+import { MetadataComponent } from '../../src/metadata-registry/types';
 
 export const mockRegistry = {
   types: {
@@ -58,10 +59,10 @@ export const mockRegistry = {
 export const KEANUS_DIR = join('path', 'to', 'keanus');
 export const KEANU_XML = join(KEANUS_DIR, 'a.keanu-meta.xml');
 export const KEANU_SOURCE = join(KEANUS_DIR, 'a.keanu');
-export const KEANU_COMPONENT = {
+export const KEANU_COMPONENT: MetadataComponent = {
   fullName: 'a',
   type: mockRegistry.types.keanureeves,
-  metaXml: KEANU_XML,
+  xml: KEANU_XML,
   sources: [KEANU_SOURCE]
 };
 
@@ -77,10 +78,10 @@ export const TARAJI_CONTENT = join(TARAJI_DIR, 'a');
 export const TARAJI_SOURCE_1 = join(TARAJI_CONTENT, 'test.xyz');
 export const TARAJI_SOURCE_2 = join(TARAJI_CONTENT, 'b', 'test.g');
 export const TARAJI_SOURCE_3 = join(TARAJI_CONTENT, 'b', 'test2.w');
-export const TARAJI_COMPONENT = {
+export const TARAJI_COMPONENT: MetadataComponent = {
   fullName: 'a',
   type: mockRegistry.types.tarajihenson,
-  metaXml: TARAJI_XML,
+  xml: TARAJI_XML,
   sources: [TARAJI_SOURCE_1, TARAJI_SOURCE_2, TARAJI_SOURCE_3]
 };
 
@@ -91,3 +92,9 @@ export const SIMON_XML = join(SIMON_BUNDLE, 'a.js-meta.xml');
 export const SIMON_SOURCE_1 = join(SIMON_BUNDLE, 'a.js');
 export const SIMON_SOURCE_2 = join(SIMON_BUNDLE, 'a.css');
 export const SIMON_SOURCE_3 = join(SIMON_BUNDLE, 'a.html');
+export const SIMON_COMPONENT: MetadataComponent = {
+  fullName: 'a',
+  type: mockRegistry.types.simonpegg,
+  xml: SIMON_XML,
+  sources: [SIMON_SOURCE_1, SIMON_SOURCE_2, SIMON_SOURCE_3]
+};

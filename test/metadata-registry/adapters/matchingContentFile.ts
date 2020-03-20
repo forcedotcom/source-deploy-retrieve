@@ -10,7 +10,8 @@ import {
   mockRegistry,
   KEANU_XML,
   KEANU_SOURCE,
-  KEANUS_DIR
+  KEANUS_DIR,
+  KEANU_COMPONENT
 } from '../../mock/registry';
 import { expect, assert } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
@@ -30,20 +31,14 @@ describe('MatchingContentFile', () => {
     mockRegistry.types.keanureeves,
     mockRegistry
   );
-  const expectedComponent = {
-    fullName: 'a',
-    type: mockRegistry.types.keanureeves,
-    metaXml: KEANU_XML,
-    sources: [KEANU_SOURCE]
-  };
 
   it('Should return expected MetadataComponent when given a root metadata xml path', () => {
     existsStub.withArgs(KEANU_SOURCE).returns(true);
-    expect(adapter.getComponent(KEANU_XML)).to.deep.equal(expectedComponent);
+    expect(adapter.getComponent(KEANU_XML)).to.deep.equal(KEANU_COMPONENT);
   });
 
   it('Should return expected MetadataComponent when given a source path', () => {
-    expect(adapter.getComponent(KEANU_SOURCE)).to.deep.equal(expectedComponent);
+    expect(adapter.getComponent(KEANU_SOURCE)).to.deep.equal(KEANU_COMPONENT);
   });
 
   it('Should throw an ExpectedSourceFilesError if no source is found from xml', () => {

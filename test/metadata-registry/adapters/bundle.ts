@@ -12,7 +12,8 @@ import {
   SIMON_SOURCE_2,
   SIMON_SOURCE_3,
   SIMON_BUNDLE,
-  SIMON_DIR
+  SIMON_DIR,
+  SIMON_COMPONENT
 } from '../../mock/registry';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
@@ -26,12 +27,6 @@ describe('Bundle', () => {
   const type = mockRegistry.types.simonpegg;
   const adapter = new Bundle(type, mockRegistry);
   const sources = [SIMON_SOURCE_1, SIMON_SOURCE_2, SIMON_SOURCE_3];
-  const expectedComponent = {
-    fullName: 'a',
-    type,
-    metaXml: SIMON_XML,
-    sources
-  };
 
   before(() => {
     const walkStub = env.stub(util, 'walk');
@@ -49,12 +44,12 @@ describe('Bundle', () => {
   after(() => env.restore());
 
   it('Should return expected MetadataComponent when given a root metadata xml path', () => {
-    expect(adapter.getComponent(SIMON_XML)).to.deep.equal(expectedComponent);
+    expect(adapter.getComponent(SIMON_XML)).to.deep.equal(SIMON_COMPONENT);
   });
 
   it('Should return expected MetadataComponent when given a source path', () => {
     const randomSource =
       sources[Math.floor(Math.random() * Math.floor(sources.length))];
-    expect(adapter.getComponent(randomSource)).to.deep.equal(expectedComponent);
+    expect(adapter.getComponent(randomSource)).to.deep.equal(SIMON_COMPONENT);
   });
 });

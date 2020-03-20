@@ -76,12 +76,12 @@ export class BaseSourceAdapter implements SourceAdapter {
     const component: MetadataComponent = {
       fullName: parsedMetaXml.fullName,
       type: this.type,
-      metaXml: metaXmlPath,
+      xml: metaXmlPath,
       sources: this.getSourcePaths(fsPath, isMetaXml)
     };
 
     if (this.type.inFolder) {
-      component.fullName = `${basename(dirname(component.metaXml))}/${
+      component.fullName = `${basename(dirname(component.xml))}/${
         component.fullName
       }`;
     }

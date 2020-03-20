@@ -81,3 +81,19 @@ export const findMetadataContent = (
   directory: SourcePath,
   fullName: string
 ): SourcePath | undefined => find(directory, fullName, false);
+
+/**
+ * Deeply freezes an object, making the entire thing immutable.
+ * @param object Object to deep freeze
+ */
+export const deepFreeze = <T>(object: T): Readonly<T> => {
+  const propNames = Object.getOwnPropertyNames(object);
+  for (const name of propNames) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const val = ((object as unknown) as any)[name];
+    if (val && typeof val === 'object') {
+      deepFreeze(val);
+    }
+  }
+  return Object.freeze(object);
+};

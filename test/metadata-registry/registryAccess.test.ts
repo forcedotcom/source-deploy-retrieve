@@ -29,6 +29,11 @@ const env = createSandbox();
 describe('RegistryAccess', () => {
   const registry = new RegistryAccess(mockRegistry);
 
+  it('Should freeze the registry data parameter', () => {
+    expect(Object.isFrozen(registry.data)).to.be.true;
+    expect(Object.isFrozen(mockRegistry)).to.be.false;
+  });
+
   describe('getTypeFromName', () => {
     it('Should fetch type regardless of casing', () => {
       expect(registry.getTypeFromName('KeAnUReeVes')).to.deep.equal(

@@ -7,11 +7,11 @@
 
 import { existsSync } from 'fs';
 import { sep, extname } from 'path';
-import * as registryData from './data/registry.json';
 import { MetadataComponent, MetadataRegistry, MetadataType } from './types';
 import { getAdapter, AdapterId } from './adapters';
-import { parseMetadataXml, isDirectory } from './util';
+import { parseMetadataXml, isDirectory, deepFreeze } from './util';
 import { TypeInferenceError } from '../errors';
+import { registryData } from '.';
 
 /**
  * Primary interface for the metadata registry data. Used to infer information about metadata
@@ -23,8 +23,12 @@ export class RegistryAccess {
   /**
    * @param data Optional custom registry data.
    */
-  constructor(data: MetadataRegistry = registryData) {
-    this.data = data;
+  constructor(data?: MetadataRegistry) {
+    this.data = data
+      ? // deep freeze a copy, not the original object
+        deepFreeze(JSON.parse(JSON.stringify(data)) as MetadataRegistry)
+      : // registryData is already frozen
+        registryData;
   }
 
   /**

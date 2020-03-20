@@ -29,9 +29,7 @@ export class TypeInferenceError extends RegistryError {
 }
 
 export class ExpectedSourceFilesError extends RegistryError {
-  public readonly data: any;
   constructor(type: MetadataType, originalPath: SourcePath) {
     super('error_expected_source_files', [originalPath, type.name]);
-    this.data = { type, originalPath };
   }
 }

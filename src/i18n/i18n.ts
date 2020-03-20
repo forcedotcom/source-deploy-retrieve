@@ -25,5 +25,6 @@ export const messages = {
   error_missing_metadata_xml: "%s: Metadata xml file missing for '%s'",
   error_missing_type_definition:
     "Missing metadata type definition in registry for id '%s'",
+  error_could_not_infer_type: '%s: A type could not be inferred',
   error_path_not_found: '%s: File or folder not found'
 };

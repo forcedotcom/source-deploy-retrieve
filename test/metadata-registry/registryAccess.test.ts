@@ -146,7 +146,7 @@ describe('RegistryAccess', () => {
       assert.throws(
         () => registry.getComponentsFromPath(missing),
         TypeInferenceError,
-        nls.localize('error_finding_type_id', [missing])
+        nls.localize('error_could_not_infer_type', [missing])
       );
     });
   });

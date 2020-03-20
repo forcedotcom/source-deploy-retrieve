@@ -77,7 +77,7 @@ export class RegistryAccess {
     }
 
     if (!typeId) {
-      throw new TypeInferenceError('error_finding_type_id', fsPath);
+      throw new TypeInferenceError('error_could_not_infer_type', fsPath);
     }
 
     const adapterId = this.data.adapters[typeId] as AdapterId;

@@ -25,7 +25,7 @@ export const parseMetadataXml = (
 };
 
 /**
- * Get the file or directory name at the end of a path. This custom verison of
+ * Get the file or directory name at the end of a path. This custom version of
  * path.basename ensures no suffixes at the end.
  *
  * @param fsPath

@@ -27,6 +27,7 @@
     "@salesforce/core": "2.2.0"
   },
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/chai": "^4",
     "@types/mocha": "^5",
     "@types/node": "^10",
@@ -40,12 +41,27 @@
     "nyc": "^14.1.1",
     "prettier": "1.16.4",
     "sinon": "^7.3.1",
+    "source-map-support": "^0.5.16",
+    "ts-node": "^8.7.0",
     "typescript": "~3.3"
   },
   "scripts": {
     "build": "rm -rf lib && tsc -b",
     "format": "prettier --config ../../.prettierrc --write './**/*.{js,json}'",
     "lint": "eslint -c .eslintrc.json --ext .ts ./src ./test",
-    "test": "mocha --recursive lib/test/*.test.js lib/test/**/*.test.js"
+    "test": "mocha",
+    "coverage": "nyc mocha"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "sourceMap": true
   }
 }

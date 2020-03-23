@@ -41,9 +41,9 @@ export type MetadataComponent = {
   fullName: string;
   type: MetadataType;
   /**
-   * Path to the -meta.xml file.
+   * Path to the root metadata xml file.
    */
-  metaXml: SourcePath;
+  xml: SourcePath;
   /**
    * Paths to additional source files, if any.
    */
@@ -63,7 +63,7 @@ export type MetadataRegistry = {
    * Metadata type definitions
    */
   types: {
-    [metadataId: string]: MetadataType;
+    [typeId: string]: MetadataType;
   };
   /**
    * Index mapping file suffixes to type ids.
@@ -73,10 +73,26 @@ export type MetadataRegistry = {
   };
   /**
    * Index mapping directoryNames to type ids for types with mixed content.
-   *
-   * __Examples:__ LightningComponentBundles, Documents, StaticResources
    */
   mixedContent: {
     [directoryName: string]: string;
   };
+  /**
+   * SourceAdapter mappings for types that need an explicit definition.
+   */
+  adapters: {
+    [typeId: string]: string;
+  };
 };
+
+export type MetadataXml = {
+  fullName: string;
+  suffix: string;
+};
+
+/**
+ * Infers the source format structure of a metadata component when given a file path.
+ */
+export interface SourceAdapter {
+  getComponent(fsPath: SourcePath): MetadataComponent;
+}

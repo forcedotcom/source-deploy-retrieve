@@ -34,11 +34,10 @@ export class ToolingDeploy {
   }
 
   public async deploy(filePath: string): Promise<ToolingRetrieveResult> {
-    this.metadataType = this.registryAccess.getComponentsFromPath(
-      filePath
-    )[0].type.name;
-    const sourcePath = filePath.replace('-meta.xml', '');
-    const metadataPath = `${sourcePath}-meta.xml`;
+    const component = this.registryAccess.getComponentsFromPath(filePath)[0];
+    this.metadataType = component.type.name;
+    const sourcePath = component.sources[0];
+    const metadataPath = component.metaXml;
 
     const container = await this.createMetadataContainer();
     await this.createContainerMember([sourcePath, metadataPath], container);
@@ -115,7 +114,7 @@ export class ToolingDeploy {
       const deployFailed = new Error();
       deployFailed.message = nls.localize(
         'beta_tapi_membertype_error',
-        'apex class'
+        this.metadataType
       );
       deployFailed.name = 'ApexClassMemberCreationFailed';
       throw deployFailed;

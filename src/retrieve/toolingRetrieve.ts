@@ -36,6 +36,8 @@ export class ToolingRetrieve {
       }
 
       createMetadataFile(mdSourcePath, queryResult.records[0].Body);
+      const metaXMLFile = `<ApexClass></ApexClass>`;
+      createMetadataFile(`${mdSourcePath}-meta.xml`, metaXMLFile);
     } catch (err) {
       throw new Error(nls.localize('error_in_tooling_retrieve', err));
     }
@@ -44,7 +46,7 @@ export class ToolingRetrieve {
   }
 
   public buildQuery(): string {
-    return `Select Id, Name, NamespacePrefix, Body from ${
+    return `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ${
       this.mdComponent[0].type.name
     } where Name = '${this.mdComponent[0].fullName}'`;
   }

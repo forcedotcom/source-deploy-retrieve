@@ -11,6 +11,13 @@ import { RegistryAccess, MetadataComponent } from '../metadata-registry';
 import { QueryResult } from '../types';
 import { createMetadataFile } from '../utils';
 
+export type ToolingRetrieveResult = {
+  size: number;
+  done: boolean;
+  entityTypeName: string;
+  records: string[];
+};
+
 export class Retrieve {
   private connection: Connection;
   private mdComponent: MetadataComponent[];
@@ -19,11 +26,11 @@ export class Retrieve {
     this.connection = connection;
   }
 
-  public async getMetadata(sourcePath: string): Promise<string> {
+  public async getMetadata(sourcePath: string): Promise<ToolingRetrieveResult> {
+    let retrieveResult: ToolingRetrieveResult;
     const registry = new RegistryAccess();
     this.mdComponent = registry.getComponentsFromPath(sourcePath);
 
-    const mdSourcePath = this.mdComponent[0].sources[0];
     try {
       const queryResult = (await this.connection.tooling.query(
         this.buildQuery()
@@ -35,14 +42,22 @@ export class Retrieve {
         );
       }
 
+      const mdSourcePath = this.mdComponent[0].sources[0];
       createMetadataFile(mdSourcePath, queryResult.records[0].Body);
       const metaXMLFile = `<ApexClass></ApexClass>`;
       createMetadataFile(`${mdSourcePath}-meta.xml`, metaXMLFile);
+
+      retrieveResult = {
+        size: this.mdComponent[0].sources.length,
+        done: true,
+        entityTypeName: this.mdComponent[0].type.name,
+        records: this.mdComponent[0].sources
+      };
     } catch (err) {
       throw new Error(nls.localize('error_in_tooling_retrieve', err));
     }
 
-    return mdSourcePath;
+    return retrieveResult;
   }
 
   public buildQuery(): string {

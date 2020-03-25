@@ -24,7 +24,8 @@
     "node": ">=10.5.0"
   },
   "dependencies": {
-    "@salesforce/core": "2.2.0"
+    "@salesforce/core": "2.2.0",
+    "xmldom-sfdx-encoding": "^0.1.29"
   },
   "devDependencies": {
     "@types/chai": "^4",

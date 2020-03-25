@@ -21,7 +21,7 @@ const DOMParser = require('xmldom-sfdx-encoding').DOMParser;
 const CONTAINER_ASYNC_REQUEST = 'ContainerAsyncRequest';
 const METADATA_CONTAINER = 'MetadataContainer';
 
-export class ToolingDeploy {
+export class Deploy {
   public metadataType: string;
   public connection: Connection;
   private apiVersion: string;
@@ -42,15 +42,14 @@ export class ToolingDeploy {
     const container = await this.createMetadataContainer();
     await this.createContainerMember([sourcePath, metadataPath], container);
     const asyncRequest = await this.createContainerAsyncRequest(container);
-    const output = await this.toolingRetrieve(asyncRequest);
+    const output = await this.toolingStatusCheck(asyncRequest);
     return output;
   }
 
   public async createMetadataContainer(): Promise<ToolingCreateResult> {
-    const metadataContainer = (await this.connection.tooling.create(
-      METADATA_CONTAINER,
-      { Name: `VSCode_MDC_${Date.now()}` }
-    )) as ToolingCreateResult;
+    const metadataContainer = await this.toolingCreate(METADATA_CONTAINER, {
+      Name: `VSCode_MDC_${Date.now()}`
+    });
 
     if (!metadataContainer.success) {
       const deployFailed = new Error();
@@ -59,6 +58,16 @@ export class ToolingDeploy {
       throw deployFailed;
     }
     return metadataContainer;
+  }
+
+  public async toolingCreate(
+    type: string,
+    record: object
+  ): Promise<ToolingCreateResult> {
+    return (await this.connection.tooling.create(
+      type,
+      record
+    )) as ToolingCreateResult;
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -94,9 +103,10 @@ export class ToolingDeploy {
       path.extname(outboundFiles[0])
     );
 
-    const contentEntity = (await this.connection.tooling
-      .sobject(this.metadataType)
-      .find({ Name: fileName }))[0];
+    const contentEntity = await this.getContentEntity(
+      this.metadataType,
+      fileName
+    );
 
     const containerMemberObject = {
       MetadataContainerId: id,
@@ -105,10 +115,11 @@ export class ToolingDeploy {
       Metadata: metadataField,
       ...(contentEntity ? { contentEntityId: contentEntity.Id } : {})
     };
-    const containerMember = (await this.connection.tooling.create(
+
+    const containerMember = await this.toolingCreate(
       supportedToolingTypes.get(this.metadataType),
       containerMemberObject
-    )) as ToolingCreateResult;
+    );
 
     if (!containerMember.success) {
       const deployFailed = new Error();
@@ -116,19 +127,27 @@ export class ToolingDeploy {
         'beta_tapi_membertype_error',
         this.metadataType
       );
-      deployFailed.name = 'ApexClassMemberCreationFailed';
+      deployFailed.name = this.metadataType.concat('MemberCreationFailed');
       throw deployFailed;
     }
     return containerMember;
   }
 
+  public async getContentEntity(
+    metadataType: string,
+    fileName: string
+  ): Promise<{ Id?: string | unknown }> {
+    return (await this.connection.tooling
+      .sobject(metadataType)
+      .find({ Name: fileName }))[0];
+  }
+
   public async createContainerAsyncRequest(
     container: ToolingCreateResult
   ): Promise<ToolingCreateResult> {
-    const contAsyncRequest = (await this.connection.tooling.create(
-      CONTAINER_ASYNC_REQUEST,
-      { MetadataContainerId: container.id }
-    )) as ToolingCreateResult;
+    const contAsyncRequest = await this.toolingCreate(CONTAINER_ASYNC_REQUEST, {
+      MetadataContainerId: container.id
+    });
 
     if (!contAsyncRequest.success) {
       const deployFailed = new Error();
@@ -143,13 +162,13 @@ export class ToolingDeploy {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  public async toolingRetrieve(
+  public async toolingStatusCheck(
     asyncRequest: ToolingCreateResult
   ): Promise<ToolingRetrieveResult> {
-    let retrieveResult = (await this.connection.tooling.retrieve(
+    let retrieveResult: ToolingRetrieveResult = await this.toolingRetrieve(
       CONTAINER_ASYNC_REQUEST,
       asyncRequest.id
-    )) as ToolingRetrieveResult;
+    );
     let count = 0;
     while (retrieveResult.State === DeployStatusEnum.Queued && count <= 30) {
       await this.sleep(100);
@@ -159,7 +178,16 @@ export class ToolingDeploy {
       )) as ToolingRetrieveResult;
       count++;
     }
-
     return retrieveResult;
+  }
+
+  public async toolingRetrieve(
+    type: string,
+    id: string
+  ): Promise<ToolingRetrieveResult> {
+    return (await this.connection.tooling.retrieve(
+      type,
+      id
+    )) as ToolingRetrieveResult;
   }
 }

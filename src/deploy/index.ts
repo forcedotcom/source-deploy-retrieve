@@ -13,4 +13,4 @@ export {
   ToolingCreateResult,
   ToolingRetrieveResult
 } from './deployUtil';
-export { ToolingDeploy } from './toolingDeploy';
+export { Deploy } from './toolingDeploy';

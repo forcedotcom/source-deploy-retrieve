@@ -11,7 +11,7 @@ import { RegistryAccess, MetadataComponent } from '../metadata-registry';
 import { QueryResult } from '../types';
 import { createMetadataFile } from '../utils';
 
-export class ToolingRetrieve {
+export class Retrieve {
   private connection: Connection;
   private mdComponent: MetadataComponent[];
 

@@ -6,7 +6,7 @@
  */
 
 export const supportedToolingTypes = new Map([
-  ['Apexclass', 'ApexClassMember'],
+  ['ApexClass', 'ApexClassMember'],
   ['ApexTrigger', 'ApexTriggerMember'],
   ['ApexPage', 'ApexPageMember'],
   ['ApexComponent', 'ApexComponentMember']
@@ -47,7 +47,7 @@ export interface ToolingCreateResult {
 }
 
 export interface ToolingRetrieveResult {
-  State: string;
+  State: DeployStatusEnum;
   ErrorMsg: string | null;
   isDeleted: boolean;
   DeployDetails: DeployDetailsResult | null;

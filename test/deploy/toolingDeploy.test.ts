@@ -17,6 +17,7 @@ import {
   DeployStatusEnum
 } from '../../src/deploy';
 import { nls } from '../../src/i18n';
+import { RegistryAccess } from '../../src/metadata-registry';
 
 const $$ = testSetup();
 
@@ -112,9 +113,10 @@ describe('Tooling Deploys', () => {
       name: 'VSCode_MDC_',
       message: ''
     };
-
     mockToolingCreate.resolves(result);
+
     const container = await deployLibrary.createMetadataContainer();
+
     expect(container.id).to.equal('1dcxxx000000034');
     expect(container.success).to.be.equal(true);
     // tslint:disable-next-line:no-unused-expression
@@ -172,7 +174,7 @@ describe('Tooling Deploys', () => {
         errors: []
       } as ToolingCreateResult);
 
-    deployLibrary.metadataType = 'Apexclass';
+    deployLibrary.metadataType = 'ApexClass';
     const containerMember = await deployLibrary.createContainerMember(
       ['file/path/one.cls', 'file/path/one.cls-meta.xml'],
       successfulContainerResult
@@ -266,7 +268,7 @@ describe('Tooling Deploys', () => {
         errors: []
       } as ToolingCreateResult);
 
-    deployLibrary.metadataType = 'Apexclass';
+    deployLibrary.metadataType = 'ApexClass';
     await deployLibrary.createContainerMember(
       ['file/path/one.cls', 'file/path/one.cls-meta.xml'],
       successfulContainerResult
@@ -305,7 +307,7 @@ describe('Tooling Deploys', () => {
         errors: []
       } as ToolingCreateResult);
 
-    deployLibrary.metadataType = 'Apexclass';
+    deployLibrary.metadataType = 'ApexClass';
     await deployLibrary.createContainerMember(
       ['file/path/one.cls', 'file/path/one.cls-meta.xml'],
       successfulContainerResult
@@ -333,7 +335,6 @@ describe('Tooling Deploys', () => {
 
   it('should throw error when failing to create a metadata member type', async () => {
     const deployLibrary = new Deploy(mockConnection);
-
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
     sandboxStub.stub(deployLibrary, 'toolingCreate').resolves({
       success: false,
@@ -341,13 +342,7 @@ describe('Tooling Deploys', () => {
       errors: ['Unexpected error while creating record']
     } as ToolingCreateResult);
 
-    deployLibrary.metadataType = 'Apexclass';
-    await deployLibrary.createContainerMember(
-      ['file/path/one.cls', 'file/path/one.cls-meta.xml'],
-      successfulContainerResult
-    );
-
-    deployLibrary.metadataType = 'Apexclass';
+    deployLibrary.metadataType = 'ApexClass';
     try {
       await deployLibrary.createContainerMember(
         ['file/path/one.cls', 'file/path/one.cls-meta.xml'],
@@ -459,5 +454,55 @@ describe('Tooling Deploys', () => {
     };
     const pollCAR = await deployLibrary.toolingStatusCheck(asyncRequestMock);
     expect(pollCAR.State).to.equal('Completed');
+  });
+
+  it('should go ahead with deploy for supported types', async () => {
+    const registryAccess = new RegistryAccess();
+    const deployLibrary = new Deploy(mockConnection, '', registryAccess);
+    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns([
+      {
+        type: { name: 'ApexClass', directoryName: '', inFolder: false },
+        fullName: '',
+        metaXml: '',
+        sources: []
+      }
+    ]);
+    const mockToolingCreate = sandboxStub.stub(deployLibrary, 'toolingCreate');
+
+    mockToolingCreate.resolves({
+      success: true,
+      id: '1dcxxx000000034',
+      errors: [],
+      name: 'VSCode_MDC_',
+      message: ''
+    } as ToolingCreateResult);
+    sandboxStub.stub(deployLibrary, 'createContainerMember');
+    sandboxStub.stub(deployLibrary, 'createContainerAsyncRequest');
+    sandboxStub.stub(deployLibrary, 'toolingStatusCheck');
+
+    await deployLibrary.deploy('dummypath/dummyfile.extension');
+
+    expect(mockToolingCreate.getCall(0).args[0]).to.equal('MetadataContainer');
+  });
+
+  it('should exit deploy for unsupported types', async () => {
+    const registryAccess = new RegistryAccess();
+    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns([
+      {
+        type: { name: 'FlexiPage', directoryName: '', inFolder: false },
+        fullName: '',
+        metaXml: '',
+        sources: []
+      }
+    ]);
+    const deployLibrary = new Deploy(mockConnection, '', registryAccess);
+
+    try {
+      await deployLibrary.deploy('dummypath/dummyfile.extension');
+      expect.fail('Should have failed');
+    } catch (e) {
+      expect(e.message).to.equal('FlexiPage type not supported');
+      expect(e.name).to.be.equal('MetadataTypeUnsupported');
+    }
   });
 });

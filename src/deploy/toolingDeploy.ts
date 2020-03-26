@@ -27,10 +27,18 @@ export class Deploy {
   private apiVersion: string;
   private registryAccess: RegistryAccess;
 
-  public constructor(connection: Connection, apiVersion?: string) {
+  public constructor(
+    connection: Connection,
+    apiVersion?: string,
+    registryAccess?: RegistryAccess
+  ) {
     this.connection = connection;
     this.apiVersion = apiVersion;
-    this.registryAccess = new RegistryAccess();
+    if (registryAccess) {
+      this.registryAccess = registryAccess;
+    } else {
+      this.registryAccess = new RegistryAccess();
+    }
   }
 
   public async deploy(filePath: string): Promise<ToolingRetrieveResult> {
@@ -38,6 +46,16 @@ export class Deploy {
     this.metadataType = component.type.name;
     const sourcePath = component.sources[0];
     const metadataPath = component.metaXml;
+
+    if (supportedToolingTypes.get(this.metadataType) === undefined) {
+      const deployFailed = new Error();
+      deployFailed.message = nls.localize(
+        'beta_tapi_membertype_unsupported_error',
+        this.metadataType
+      );
+      deployFailed.name = 'MetadataTypeUnsupported';
+      throw deployFailed;
+    }
 
     const container = await this.createMetadataContainer();
     await this.createContainerMember([sourcePath, metadataPath], container);
@@ -70,8 +88,14 @@ export class Deploy {
     )) as ToolingCreateResult;
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  public buildMetadataField(metadataContent: string) {
+  public buildMetadataField(
+    metadataContent: string
+  ): {
+    label?: string;
+    packageVersions?: string;
+    status?: string;
+    apiVersion: string;
+  } {
     const parser = new DOMParser();
     const document = parser.parseFromString(metadataContent, 'text/xml');
     const apiVersion =
@@ -172,7 +196,7 @@ export class Deploy {
     let count = 0;
     while (retrieveResult.State === DeployStatusEnum.Queued && count <= 30) {
       await this.sleep(100);
-      retrieveResult = (await this.connection.tooling.retrieve(
+      retrieveResult = (await this.toolingRetrieve(
         CONTAINER_ASYNC_REQUEST,
         asyncRequest.id
       )) as ToolingRetrieveResult;

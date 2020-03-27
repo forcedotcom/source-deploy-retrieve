@@ -5,13 +5,19 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { existsSync } from 'fs';
-import { sep, extname } from 'path';
-import { MetadataComponent, MetadataRegistry, MetadataType } from './types';
+import { existsSync, readdirSync } from 'fs';
+import { sep, extname, join } from 'path';
+import {
+  MetadataComponent,
+  MetadataRegistry,
+  MetadataType,
+  SourcePath
+} from './types';
 import { getAdapter, AdapterId } from './adapters';
 import { parseMetadataXml, isDirectory, deepFreeze } from './util';
 import { TypeInferenceError } from '../errors';
 import { registryData } from '.';
+import { META_XML_SUFFIX } from './constants';
 
 /**
  * Primary interface for the metadata registry data. Used to infer information about metadata
@@ -50,12 +56,26 @@ export class RegistryAccess {
    * @param fsPath File path for a piece of metadata
    */
   public getComponentsFromPath(fsPath: string): MetadataComponent[] {
+    const components = [];
     if (!existsSync(fsPath)) {
       throw new TypeInferenceError('error_path_not_found', fsPath);
     } else if (isDirectory(fsPath)) {
-      throw new TypeInferenceError('error_directories_not_supported');
+      for (const file of readdirSync(fsPath)) {
+        const path = join(fsPath, file);
+        if (isDirectory(path) || file.endsWith(META_XML_SUFFIX)) {
+          components.push(...this.getComponentsFromPath(path));
+        }
+      }
+    } else {
+      const component = this.fetchComponent(fsPath);
+      if (component) {
+        components.push(component);
+      }
     }
+    return components;
+  }
 
+  private fetchComponent(fsPath: SourcePath): MetadataComponent {
     let typeId: string;
 
     // attempt 1 - check if it's a metadata xml file
@@ -86,6 +106,6 @@ export class RegistryAccess {
 
     const adapterId = this.data.adapters[typeId] as AdapterId;
     const adapter = getAdapter(this.getTypeFromName(typeId), adapterId);
-    return [adapter.getComponent(fsPath)];
+    return adapter.getComponent(fsPath);
   }
 }

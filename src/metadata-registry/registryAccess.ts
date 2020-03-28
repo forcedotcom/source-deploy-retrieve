@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { existsSync, readdirSync } from 'fs';
-import { sep, extname, join } from 'path';
+import { existsSync, readdirSync, readdir } from 'fs';
+import { sep, extname, join, dirname, basename } from 'path';
 import {
   MetadataComponent,
   MetadataRegistry,
@@ -59,13 +59,10 @@ export class RegistryAccess {
     const components = [];
     if (!existsSync(fsPath)) {
       throw new TypeInferenceError('error_path_not_found', fsPath);
-    } else if (isDirectory(fsPath)) {
-      for (const file of readdirSync(fsPath)) {
-        const path = join(fsPath, file);
-        if (isDirectory(path) || file.endsWith(META_XML_SUFFIX)) {
-          components.push(...this.getComponentsFromPath(path));
-        }
-      }
+    }
+
+    if (isDirectory(fsPath)) {
+      return this.getComponentsFromPathInternal(fsPath);
     } else {
       const component = this.fetchComponent(fsPath);
       if (component) {
@@ -75,7 +72,53 @@ export class RegistryAccess {
     return components;
   }
 
+  private getComponentsFromPathInternal(fsPath: string): MetadataComponent[] {
+    const dirQueue = [];
+    const components = [];
+    const types = new Set();
+
+    if (isDirectory(fsPath)) {
+      for (const file of readdirSync(fsPath)) {
+        const path = join(fsPath, file);
+        if (isDirectory(path)) {
+          dirQueue.push(path);
+        } else if (path.endsWith(META_XML_SUFFIX)) {
+          const c = this.fetchComponent(path);
+          types.add(c.type.name);
+          components.push(c);
+
+          const dir = basename(dirname(path));
+          if (!types.has(dir)) {
+            return components;
+          }
+        }
+      }
+    } else if (fsPath.endsWith(META_XML_SUFFIX)) {
+      const c = this.fetchComponent(fsPath);
+      types.add(c.type.name);
+      components.push(c);
+
+      const dir = basename(dirname(fsPath));
+      if (!types.has(dir)) {
+        return components;
+      }
+    }
+
+    for (const dir of dirQueue) {
+      components.push(...this.getComponentsFromPathInternal(dir));
+    }
+
+    return components;
+  }
+
   private fetchComponent(fsPath: SourcePath): MetadataComponent {
+    const typeId = this.determineTypeId(fsPath);
+    const adapterId = this.data.adapters[typeId] as AdapterId;
+    const adapter = getAdapter(this.getTypeFromName(typeId), adapterId);
+    return adapter.getComponent(fsPath);
+  }
+
+  private determineTypeId(fsPath: SourcePath): string {
     let typeId: string;
 
     // attempt 1 - check if it's a metadata xml file
@@ -104,8 +147,6 @@ export class RegistryAccess {
       throw new TypeInferenceError('error_could_not_infer_type', fsPath);
     }
 
-    const adapterId = this.data.adapters[typeId] as AdapterId;
-    const adapter = getAdapter(this.getTypeFromName(typeId), adapterId);
-    return adapter.getComponent(fsPath);
+    return typeId;
   }
 }

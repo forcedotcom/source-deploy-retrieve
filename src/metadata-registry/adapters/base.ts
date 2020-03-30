@@ -61,7 +61,10 @@ export class BaseSourceAdapter implements SourceAdapter {
     // of the type directory, defer fetching the file to the child adapter
     const rootTypePath = dirname(this.type.inFolder ? dirname(fsPath) : fsPath);
     const inRootTypeFolder = basename(rootTypePath) === this.type.directoryName;
-    if (!parsedMetaXml || !inRootTypeFolder) {
+    const requireStrictParent = !!this.registry.mixedContent[
+      this.type.directoryName
+    ];
+    if (!parsedMetaXml || (requireStrictParent && !inRootTypeFolder)) {
       metaXmlPath = this.getMetadataXmlPath(fsPath);
       if (!metaXmlPath) {
         throw new RegistryError('error_missing_metadata_xml', [

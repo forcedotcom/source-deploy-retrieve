@@ -1091,7 +1091,6 @@
     "navigationMenu": "navigationmenu",
     "resource": "staticresource",
     "scf": "scontrol",
-    "undefined": "wavetemplatebundle",
     "crt": "certificate",
     "messageChannel": "lightningmessagechannel",
     "component": "apexcomponent",

@@ -54,7 +54,7 @@ describe('MixedContent', () => {
     );
   });
 
-  describe('Content as single file', () => {
+  describe('File Content', () => {
     const type = mockRegistry.types.dwaynejohnson;
     const adapter = new MixedContent(type, mockRegistry);
     const expectedComponent = {
@@ -83,7 +83,7 @@ describe('MixedContent', () => {
     });
   });
 
-  describe('Content as directory', () => {
+  describe('Directory Content', () => {
     let walkStub: SinonStub;
 
     const type = mockRegistry.types.tarajihenson;

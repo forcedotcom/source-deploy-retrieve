@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { existsSync, readdirSync, readdir } from 'fs';
+import { existsSync, readdirSync } from 'fs';
 import { sep, extname, join, dirname, basename } from 'path';
 import {
   MetadataComponent,
@@ -14,10 +14,14 @@ import {
   SourcePath
 } from './types';
 import { getAdapter, AdapterId } from './adapters';
-import { parseMetadataXml, isDirectory, deepFreeze } from './util';
+import {
+  parseMetadataXml,
+  isDirectory,
+  deepFreeze,
+  findMetadataXml
+} from './util';
 import { TypeInferenceError } from '../errors';
 import { registryData } from '.';
-import { META_XML_SUFFIX } from './constants';
 
 /**
  * Primary interface for the metadata registry data. Used to infer information about metadata
@@ -56,51 +60,56 @@ export class RegistryAccess {
    * @param fsPath File path for a piece of metadata
    */
   public getComponentsFromPath(fsPath: string): MetadataComponent[] {
-    const components = [];
     if (!existsSync(fsPath)) {
       throw new TypeInferenceError('error_path_not_found', fsPath);
     }
 
     if (isDirectory(fsPath)) {
+      // first check if this directory is actually content
+      try {
+        // clean this up...it's basically just findMetadataXml for the mixed content adapter.
+        const typeId = this.determineTypeId(fsPath);
+        const type = this.getTypeFromName(typeId);
+        const pathParts = fsPath.split(sep);
+        const typeDirIndex = pathParts.findIndex(
+          part => part === type.directoryName
+        );
+        const xml = findMetadataXml(
+          pathParts.slice(0, typeDirIndex + 1).join(sep),
+          pathParts[typeDirIndex + 1]
+        );
+        if (xml) {
+          return [this.fetchComponent(xml)];
+        }
+      } catch (e) {}
       return this.getComponentsFromPathInternal(fsPath);
-    } else {
-      const component = this.fetchComponent(fsPath);
-      if (component) {
-        components.push(component);
-      }
     }
-    return components;
+    return [this.fetchComponent(fsPath)];
   }
 
-  private getComponentsFromPathInternal(fsPath: string): MetadataComponent[] {
+  private getComponentsFromPathInternal(
+    directory: SourcePath
+  ): MetadataComponent[] {
     const dirQueue = [];
     const components = [];
-    const types = new Set();
+    const typeDirectories = new Set();
 
-    if (isDirectory(fsPath)) {
-      for (const file of readdirSync(fsPath)) {
-        const path = join(fsPath, file);
-        if (isDirectory(path)) {
-          dirQueue.push(path);
-        } else if (path.endsWith(META_XML_SUFFIX)) {
-          const c = this.fetchComponent(path);
-          types.add(c.type.name);
-          components.push(c);
+    for (const file of readdirSync(directory)) {
+      const path = join(directory, file);
+      if (isDirectory(path)) {
+        dirQueue.push(path);
+      } else if (parseMetadataXml(path)) {
+        const c = this.fetchComponent(path);
+        typeDirectories.add(c.type.directoryName);
+        components.push(c);
 
-          const dir = basename(dirname(path));
-          if (!types.has(dir)) {
-            return components;
-          }
+        // don't traverse further if not in a root type directory
+        // performance optimization for mixed content types
+        const isMixedContent = !!this.data.mixedContent[c.type.directoryName];
+        const dir = basename(dirname(c.type.inFolder ? dirname(path) : path));
+        if (isMixedContent && !typeDirectories.has(dir)) {
+          return components;
         }
-      }
-    } else if (fsPath.endsWith(META_XML_SUFFIX)) {
-      const c = this.fetchComponent(fsPath);
-      types.add(c.type.name);
-      components.push(c);
-
-      const dir = basename(dirname(fsPath));
-      if (!types.has(dir)) {
-        return components;
       }
     }
 

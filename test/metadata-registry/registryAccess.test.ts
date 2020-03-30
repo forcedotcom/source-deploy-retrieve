@@ -13,7 +13,6 @@ import { nls } from '../../src/i18n';
 import {
   mockRegistry,
   KEANU_SOURCE,
-  DWAYNE_DIR,
   KEANU_XML,
   KEANU_COMPONENT,
   TARAJI_SOURCE_2,
@@ -78,17 +77,6 @@ describe('RegistryAccess', () => {
         () => registry.getComponentsFromPath(KEANU_SOURCE),
         TypeInferenceError,
         nls.localize('error_path_not_found', [KEANU_SOURCE])
-      );
-    });
-
-    it('Should throw directories not supported error for paths to directories', () => {
-      existsStub.withArgs(DWAYNE_DIR).returns(true);
-      directoryStub.returns(true);
-
-      assert.throws(
-        () => registry.getComponentsFromPath(DWAYNE_DIR),
-        TypeInferenceError,
-        nls.localize('error_directories_not_supported')
       );
     });
 

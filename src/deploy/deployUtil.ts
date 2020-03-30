@@ -46,7 +46,7 @@ export interface ToolingCreateResult {
   message: string;
 }
 
-export interface ToolingRetrieveResult {
+export interface ToolingDeployResult {
   State: DeployStatusEnum;
   ErrorMsg: string | null;
   isDeleted: boolean;

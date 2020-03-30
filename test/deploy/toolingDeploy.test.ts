@@ -13,11 +13,11 @@ import { createSandbox, SinonSandbox } from 'sinon';
 import {
   ToolingCreateResult,
   Deploy,
-  ToolingRetrieveResult,
   DeployStatusEnum
 } from '../../src/deploy';
 import { nls } from '../../src/i18n';
 import { RegistryAccess } from '../../src/metadata-registry';
+import { RecordResult, Record } from 'jsforce';
 
 const $$ = testSetup();
 
@@ -104,16 +104,16 @@ describe('Tooling Deploys', () => {
 
   it('should create a metadata container', async () => {
     const deployLibrary = new Deploy(mockConnection);
-    const mockToolingCreate = sandboxStub.stub(deployLibrary, 'toolingCreate');
+    const mockToolingCreate = sandboxStub.stub(
+      mockConnection.tooling,
+      'create'
+    );
 
-    const result: ToolingCreateResult = {
+    mockToolingCreate.resolves({
       success: true,
       id: '1dcxxx000000034',
-      errors: [],
-      name: 'VSCode_MDC_',
-      message: ''
-    };
-    mockToolingCreate.resolves(result);
+      errors: []
+    } as RecordResult);
 
     const container = await deployLibrary.createMetadataContainer();
 
@@ -127,11 +127,11 @@ describe('Tooling Deploys', () => {
 
   it('should throw an error when creating a metadata container fails', async () => {
     const deployLibrary = new Deploy(mockConnection);
-    sandboxStub.stub(deployLibrary, 'toolingCreate').resolves({
+    sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',
       errors: ['Unexpected error while creating record']
-    } as ToolingCreateResult);
+    } as RecordResult);
     try {
       await deployLibrary.createMetadataContainer();
       expect.fail('Should have failed');
@@ -167,12 +167,12 @@ describe('Tooling Deploys', () => {
     const deployLibrary = new Deploy(mockConnection);
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
     const mockToolingCreate = sandboxStub
-      .stub(deployLibrary, 'toolingCreate')
+      .stub(mockConnection.tooling, 'create')
       .resolves({
         success: true,
         id: '400xxx000000034',
         errors: []
-      } as ToolingCreateResult);
+      } as RecordResult);
 
     deployLibrary.metadataType = 'ApexClass';
     const containerMember = await deployLibrary.createContainerMember(
@@ -190,12 +190,12 @@ describe('Tooling Deploys', () => {
     const deployLibrary = new Deploy(mockConnection);
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
     const mockToolingCreate = sandboxStub
-      .stub(deployLibrary, 'toolingCreate')
+      .stub(mockConnection.tooling, 'create')
       .resolves({
         success: true,
         id: '400xxx000000034',
         errors: []
-      } as ToolingCreateResult);
+      } as RecordResult);
 
     deployLibrary.metadataType = 'ApexTrigger';
     const containerMember = await deployLibrary.createContainerMember(
@@ -213,12 +213,12 @@ describe('Tooling Deploys', () => {
     const deployLibrary = new Deploy(mockConnection);
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
     const mockToolingCreate = sandboxStub
-      .stub(deployLibrary, 'toolingCreate')
+      .stub(mockConnection.tooling, 'create')
       .resolves({
         success: true,
         id: '400xxx000000034',
         errors: []
-      } as ToolingCreateResult);
+      } as RecordResult);
 
     deployLibrary.metadataType = 'ApexPage';
     const containerMember = await deployLibrary.createContainerMember(
@@ -236,12 +236,12 @@ describe('Tooling Deploys', () => {
     const deployLibrary = new Deploy(mockConnection);
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
     const mockToolingCreate = sandboxStub
-      .stub(deployLibrary, 'toolingCreate')
+      .stub(mockConnection.tooling, 'create')
       .resolves({
         success: true,
         id: '400xxx000000034',
         errors: []
-      } as ToolingCreateResult);
+      } as RecordResult);
 
     deployLibrary.metadataType = 'ApexComponent';
     const containerMember = await deployLibrary.createContainerMember(
@@ -261,12 +261,12 @@ describe('Tooling Deploys', () => {
     const deployLibrary = new Deploy(mockConnection);
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
     const mockToolingCreate = sandboxStub
-      .stub(deployLibrary, 'toolingCreate')
+      .stub(mockConnection.tooling, 'create')
       .resolves({
         success: true,
         id: '400xxx000000034',
         errors: []
-      } as ToolingCreateResult);
+      } as RecordResult);
 
     deployLibrary.metadataType = 'ApexClass';
     await deployLibrary.createContainerMember(
@@ -300,12 +300,12 @@ describe('Tooling Deploys', () => {
       .stub(deployLibrary, 'getContentEntity')
       .resolves({ Id: 'a00xxx000000034' });
     const mockToolingCreate = sandboxStub
-      .stub(deployLibrary, 'toolingCreate')
+      .stub(mockConnection.tooling, 'create')
       .resolves({
         success: true,
         id: '400xxx000000034',
         errors: []
-      } as ToolingCreateResult);
+      } as RecordResult);
 
     deployLibrary.metadataType = 'ApexClass';
     await deployLibrary.createContainerMember(
@@ -336,11 +336,11 @@ describe('Tooling Deploys', () => {
   it('should throw error when failing to create a metadata member type', async () => {
     const deployLibrary = new Deploy(mockConnection);
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
-    sandboxStub.stub(deployLibrary, 'toolingCreate').resolves({
+    sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',
       errors: ['Unexpected error while creating record']
-    } as ToolingCreateResult);
+    } as RecordResult);
 
     deployLibrary.metadataType = 'ApexClass';
     try {
@@ -360,12 +360,12 @@ describe('Tooling Deploys', () => {
   it('should create a container async request', async () => {
     const deployLibrary = new Deploy(mockConnection);
     const mockToolingCreate = sandboxStub
-      .stub(deployLibrary, 'toolingCreate')
+      .stub(mockConnection.tooling, 'create')
       .resolves({
         success: true,
         id: '1drxxx000000034',
         errors: []
-      } as ToolingCreateResult);
+      } as RecordResult);
 
     const car = await deployLibrary.createContainerAsyncRequest(
       successfulContainerResult
@@ -384,11 +384,11 @@ describe('Tooling Deploys', () => {
 
   it('should throw an error when creating a container async request fails', async () => {
     const deployLibrary = new Deploy(mockConnection);
-    sandboxStub.stub(deployLibrary, 'toolingCreate').resolves({
+    sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',
       errors: ['Unexpected error while creating record']
-    } as ToolingCreateResult);
+    } as RecordResult);
 
     try {
       await deployLibrary.createContainerAsyncRequest(
@@ -403,7 +403,7 @@ describe('Tooling Deploys', () => {
 
   it('should throw an error when creating a container async request', async () => {
     const deployLibrary = new Deploy(mockConnection);
-    sandboxStub.stub(deployLibrary, 'toolingCreate').throwsException({
+    sandboxStub.stub(mockConnection.tooling, 'create').throwsException({
       message:
         'insufficient access rights on cross-reference id: 1drxx000000xUHs',
       errorCode: 'INSUFFICIENT_ACCESS_ON_CROSS_REFERENCE_ENTITY',
@@ -428,14 +428,14 @@ describe('Tooling Deploys', () => {
   it('should poll for a container async request', async () => {
     const deployLibrary = new Deploy(mockConnection);
     const mockToolingRetrieve = sandboxStub.stub(
-      deployLibrary,
-      'toolingRetrieve'
+      mockConnection.tooling,
+      'retrieve'
     );
     mockToolingRetrieve.onCall(0).resolves({
-      State: DeployStatusEnum.Queued,
+      State: 'Queued',
       isDeleted: false,
       DeployDetails: null
-    } as ToolingRetrieveResult);
+    } as Record);
 
     mockToolingRetrieve.onCall(1).resolves({
       State: DeployStatusEnum.Completed,
@@ -444,7 +444,7 @@ describe('Tooling Deploys', () => {
         componentFailures: [],
         componentSuccesses: []
       }
-    } as ToolingRetrieveResult);
+    } as Record);
     const asyncRequestMock: ToolingCreateResult = {
       success: true,
       id: '1drxxx000000034',
@@ -467,7 +467,10 @@ describe('Tooling Deploys', () => {
         sources: []
       }
     ]);
-    const mockToolingCreate = sandboxStub.stub(deployLibrary, 'toolingCreate');
+    const mockToolingCreate = sandboxStub.stub(
+      mockConnection.tooling,
+      'create'
+    );
 
     mockToolingCreate.resolves({
       success: true,
@@ -475,7 +478,7 @@ describe('Tooling Deploys', () => {
       errors: [],
       name: 'VSCode_MDC_',
       message: ''
-    } as ToolingCreateResult);
+    } as RecordResult);
     sandboxStub.stub(deployLibrary, 'createContainerMember');
     sandboxStub.stub(deployLibrary, 'createContainerAsyncRequest');
     sandboxStub.stub(deployLibrary, 'toolingStatusCheck');

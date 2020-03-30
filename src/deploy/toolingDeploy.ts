@@ -13,7 +13,7 @@ import {
   DeployStatusEnum,
   supportedToolingTypes,
   ToolingCreateResult,
-  ToolingRetrieveResult
+  ToolingDeployResult
 } from './index';
 import { RegistryAccess } from '../metadata-registry/index';
 // tslint:disable-next-line:no-var-requires
@@ -41,7 +41,7 @@ export class Deploy {
     }
   }
 
-  public async deploy(filePath: string): Promise<ToolingRetrieveResult> {
+  public async deploy(filePath: string): Promise<ToolingDeployResult> {
     const component = this.registryAccess.getComponentsFromPath(filePath)[0];
     this.metadataType = component.type.name;
     const sourcePath = component.sources[0];
@@ -78,7 +78,7 @@ export class Deploy {
     return metadataContainer;
   }
 
-  public async toolingCreate(
+  private async toolingCreate(
     type: string,
     record: object
   ): Promise<ToolingCreateResult> {
@@ -188,8 +188,8 @@ export class Deploy {
 
   public async toolingStatusCheck(
     asyncRequest: ToolingCreateResult
-  ): Promise<ToolingRetrieveResult> {
-    let retrieveResult: ToolingRetrieveResult = await this.toolingRetrieve(
+  ): Promise<ToolingDeployResult> {
+    let retrieveResult: ToolingDeployResult = await this.toolingRetrieve(
       CONTAINER_ASYNC_REQUEST,
       asyncRequest.id
     );
@@ -199,19 +199,19 @@ export class Deploy {
       retrieveResult = (await this.toolingRetrieve(
         CONTAINER_ASYNC_REQUEST,
         asyncRequest.id
-      )) as ToolingRetrieveResult;
+      )) as ToolingDeployResult;
       count++;
     }
     return retrieveResult;
   }
 
-  public async toolingRetrieve(
+  private async toolingRetrieve(
     type: string,
     id: string
-  ): Promise<ToolingRetrieveResult> {
+  ): Promise<ToolingDeployResult> {
     return (await this.connection.tooling.retrieve(
       type,
       id
-    )) as ToolingRetrieveResult;
+    )) as ToolingDeployResult;
   }
 }

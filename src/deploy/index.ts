@@ -11,6 +11,6 @@ export {
   FilePathOpts,
   supportedToolingTypes,
   ToolingCreateResult,
-  ToolingRetrieveResult
+  ToolingDeployResult
 } from './deployUtil';
 export { Deploy } from './toolingDeploy';

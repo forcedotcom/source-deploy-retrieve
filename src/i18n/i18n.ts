@@ -28,7 +28,7 @@ export const messages = {
   beta_tapi_membertype_error: 'Unexpected error creating %s member',
   beta_tapi_car_error: 'Unexpected error creating container async request',
   beta_tapi_queue_status: 'The deploy is still in the queue',
-  beta_tapi_membertype_unsupported_error: '%s type not supported'
+  beta_tapi_membertype_unsupported_error: '%s type not supported',
   error_directories_not_supported:
     'Paths to directories are currently not supported',
   error_expected_source_files: "%s: Expected source files for '%s'",

@@ -10,9 +10,7 @@
       "name": "CustomLabels",
       "suffix": "labels",
       "directoryName": "labels",
-      "childXmlNames": [
-        "CustomLabel"
-      ],
+      "childXmlNames": ["CustomLabel"],
       "inFolder": false
     },
     "navigationmenu": {
@@ -249,9 +247,7 @@
       "name": "Form",
       "suffix": "form",
       "directoryName": "forms",
-      "childXmlNames": [
-        "FormSection"
-      ],
+      "childXmlNames": ["FormSection"],
       "inFolder": false
     },
     "flexipage": {
@@ -363,27 +359,21 @@
       "name": "AssignmentRules",
       "suffix": "assignmentRules",
       "directoryName": "assignmentRules",
-      "childXmlNames": [
-        "AssignmentRule"
-      ],
+      "childXmlNames": ["AssignmentRule"],
       "inFolder": false
     },
     "autoresponserules": {
       "name": "AutoResponseRules",
       "suffix": "autoResponseRules",
       "directoryName": "autoResponseRules",
-      "childXmlNames": [
-        "AutoResponseRule"
-      ],
+      "childXmlNames": ["AutoResponseRule"],
       "inFolder": false
     },
     "escalationrules": {
       "name": "EscalationRules",
       "suffix": "escalationRules",
       "directoryName": "escalationRules",
-      "childXmlNames": [
-        "EscalationRule"
-      ],
+      "childXmlNames": ["EscalationRule"],
       "inFolder": false
     },
     "posttemplate": {
@@ -510,9 +500,7 @@
       "name": "MatchingRules",
       "suffix": "matchingRule",
       "directoryName": "matchingRules",
-      "childXmlNames": [
-        "MatchingRule"
-      ],
+      "childXmlNames": ["MatchingRule"],
       "inFolder": false
     },
     "duplicaterule": {
@@ -1051,9 +1039,7 @@
       "name": "Bot",
       "suffix": "bot",
       "directoryName": "bots",
-      "childXmlNames": [
-        "BotVersion"
-      ],
+      "childXmlNames": ["BotVersion"],
       "inFolder": false
     },
     "animationrule": {
@@ -1279,5 +1265,19 @@
     "waveTemplates": "wavetemplatebundle",
     "objects": "customobject",
     "staticresources": "staticresource"
+  },
+  "adapters": {
+    "apexclass": "matchingContentFile",
+    "apexpage": "matchingContentFile",
+    "apexcomponent": "matchingContentFile",
+    "apextrigger": "matchingContentFile",
+    "auradefinitionbundle": "bundle",
+    "contentasset": "matchingContentFile",
+    "customobject": "bundle",
+    "document": "mixedContent",
+    "emailtemplate": "matchingContentFile",
+    "lightningcomponentbundle": "bundle",
+    "staticresource": "mixedContent",
+    "waveTemplates": "bundle"
   }
 }

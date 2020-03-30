@@ -463,7 +463,7 @@ describe('Tooling Deploys', () => {
       {
         type: { name: 'ApexClass', directoryName: '', inFolder: false },
         fullName: '',
-        metaXml: '',
+        xml: '',
         sources: []
       }
     ]);
@@ -494,7 +494,7 @@ describe('Tooling Deploys', () => {
       {
         type: { name: 'FlexiPage', directoryName: '', inFolder: false },
         fullName: '',
-        metaXml: '',
+        xml: '',
         sources: []
       }
     ]);

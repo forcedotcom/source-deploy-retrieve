@@ -45,7 +45,7 @@ export class Deploy {
     const component = this.registryAccess.getComponentsFromPath(filePath)[0];
     this.metadataType = component.type.name;
     const sourcePath = component.sources[0];
-    const metadataPath = component.metaXml;
+    const metadataPath = component.xml;
 
     if (supportedToolingTypes.get(this.metadataType) === undefined) {
       const deployFailed = new Error();

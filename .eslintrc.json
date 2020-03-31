@@ -8,6 +8,8 @@
   "plugins": ["@typescript-eslint", "jsdoc"],
   "extends": ["plugin:@typescript-eslint/recommended"],
   "rules": {
+    "ban-ts-ignore": "off",
+    "@typescript-eslint/ban-ts-ignore": "off",
     "camelcase": "off",
     "@typescript-eslint/camelcase": "off",
     "constructor-super": "warn",

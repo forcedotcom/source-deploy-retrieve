@@ -5,13 +5,13 @@
   "main": "lib/index.js",
   "author": "Salesforce",
   "license": "BSD-3-Clause",
-  "homepage": "https://github.com/forcedotcom/deploy-and-retrieve#readme",
+  "homepage": "https://github.com/forcedotcom/source-deploy-retrieve#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/forcedotcom/deploy-and-retrieve.git"
+    "url": "git+https://github.com/forcedotcom/source-deploy-retrieve.git"
   },
   "bugs": {
-    "url": "https://github.com/forcedotcom/deploy-and-retrieve/issues"
+    "url": "https://github.com/forcedotcom/source-deploy-retrieve/issues"
   },
   "keywords": [
     "Salesforce",

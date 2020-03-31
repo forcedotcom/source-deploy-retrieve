@@ -6,7 +6,7 @@
  */
 
 import { existsSync, readdirSync } from 'fs';
-import { sep, extname, join, dirname, basename } from 'path';
+import { sep, extname, join, basename, dirname } from 'path';
 import {
   MetadataComponent,
   MetadataRegistry,
@@ -24,8 +24,7 @@ import { TypeInferenceError } from '../errors';
 import { registryData } from '.';
 
 /**
- * Primary interface for the metadata registry data. Used to infer information about metadata
- * types and components based on source paths.
+ * Infer information about metadata types and components based on source paths.
  */
 export class RegistryAccess {
   public readonly data: MetadataRegistry;
@@ -67,7 +66,7 @@ export class RegistryAccess {
     if (isDirectory(fsPath)) {
       // first check if this directory is actually content
       try {
-        // clean this up...it's basically just findMetadataXml for the mixed content adapter.
+        // TODO: clean this up...it's basically just findMetadataXml for the mixed content adapter.
         const typeId = this.determineTypeId(fsPath);
         const type = this.getTypeFromName(typeId);
         const pathParts = fsPath.split(sep);
@@ -92,7 +91,6 @@ export class RegistryAccess {
   ): MetadataComponent[] {
     const dirQueue = [];
     const components = [];
-    const typeDirectories = new Set();
 
     for (const file of readdirSync(directory)) {
       const path = join(directory, file);
@@ -100,14 +98,15 @@ export class RegistryAccess {
         dirQueue.push(path);
       } else if (parseMetadataXml(path)) {
         const c = this.fetchComponent(path);
-        typeDirectories.add(c.type.directoryName);
         components.push(c);
 
-        // don't traverse further if not in a root type directory
-        // performance optimization for mixed content types
+        // don't traverse further if not in a root type directory. performance optimization
+        // for mixed content types and ensures we don't add duplicates of the component.
         const isMixedContent = !!this.data.mixedContent[c.type.directoryName];
-        const dir = basename(dirname(c.type.inFolder ? dirname(path) : path));
-        if (isMixedContent && !typeDirectories.has(dir)) {
+        const typeDir = basename(
+          dirname(c.type.inFolder ? dirname(path) : path)
+        );
+        if (isMixedContent && typeDir !== c.type.directoryName) {
           return components;
         }
       }

@@ -21,6 +21,11 @@ export const mockRegistry = {
       name: 'KeanuReeves',
       suffix: 'keanu'
     },
+    tinafey: {
+      directoryName: 'tinas',
+      inFolder: true,
+      name: 'TinaFey'
+    },
     dwaynejohnson: {
       directoryName: 'dwaynes',
       inFolder: false,
@@ -45,14 +50,41 @@ export const mockRegistry = {
   mixedContent: {
     dwaynes: 'dwaynejohnson',
     tarajis: 'tarajihenson',
-    simons: 'simonpegg'
+    simons: 'simonpegg',
+    tinas: 'tinafey'
   },
   adapters: {
     keanureeves: 'matchingContentFile',
+    tinafey: 'mixedContent',
     tarajihenson: 'mixedContent',
     dwaynejohnson: 'mixedContent',
     simonpegg: 'bundle'
   }
+};
+
+// Base functionality
+export const KATHYS_DIR = join('path', 'to', 'kathys');
+export const KATHY_FOLDER = join(KATHYS_DIR, 'A_Folder');
+export const KATHY_XML = join(KATHY_FOLDER, 'a.kathy-meta.xml');
+export const KATHY_XML_2 = join(KATHY_FOLDER, 'b.kathy-meta.xml');
+export const KATHY_XML_3 = join(KATHY_FOLDER, 'c.kathy-meta.xml');
+export const KATHY_COMPONENT: MetadataComponent = {
+  fullName: `A_Folder/a`,
+  type: mockRegistry.types.kathybates,
+  xml: KATHY_XML,
+  sources: []
+};
+export const KATHY_COMPONENT_2: MetadataComponent = {
+  fullName: 'b',
+  type: mockRegistry.types.kathybates,
+  xml: KATHY_XML_2,
+  sources: []
+};
+export const KATHY_COMPONENT_3: MetadataComponent = {
+  fullName: 'b',
+  type: mockRegistry.types.kathybates,
+  xml: KATHY_XML_3,
+  sources: []
 };
 
 // Matching content file
@@ -70,6 +102,26 @@ export const KEANU_COMPONENT: MetadataComponent = {
 export const DWAYNE_DIR = join('path', 'to', 'dwaynes');
 export const DWAYNE_XML = join(DWAYNE_DIR, 'a.dwayne-meta.xml');
 export const DWAYNE_SOURCE = join(DWAYNE_DIR, 'a.xyz');
+
+// Mixed content type in folders
+export const TINA_DIR = join('path', 'to', 'tinas');
+export const TINA_FOLDER = join(TINA_DIR, 'A_Folder');
+export const TINA_XML = join(TINA_FOLDER, 'a.tina-meta.xml');
+export const TINA_XML_2 = join(TINA_FOLDER, 'b.tina-meta.xml');
+export const TINA_SOURCE = join(TINA_FOLDER, 'a.x');
+export const TINA_SOURCE_2 = join(TINA_FOLDER, 'b.y');
+export const TINA_COMPONENT: MetadataComponent = {
+  fullName: 'A_Folder/a',
+  type: mockRegistry.types.tinafey,
+  xml: TINA_XML,
+  sources: [TINA_SOURCE]
+};
+export const TINA_COMPONENT_2: MetadataComponent = {
+  fullName: 'A_Folder/a',
+  type: mockRegistry.types.tinafey,
+  xml: TINA_XML,
+  sources: [TINA_SOURCE]
+};
 
 // Mixed content with directory as content
 export const TARAJI_DIR = join('path', 'to', 'tarajis');
@@ -89,6 +141,7 @@ export const TARAJI_COMPONENT: MetadataComponent = {
 export const SIMON_DIR = join('path', 'to', 'simons');
 export const SIMON_BUNDLE = join(SIMON_DIR, 'a');
 export const SIMON_XML = join(SIMON_BUNDLE, 'a.js-meta.xml');
+export const SIMON_SUBTYPE = join(SIMON_BUNDLE, 'b.z-meta.xml');
 export const SIMON_SOURCE_1 = join(SIMON_BUNDLE, 'a.js');
 export const SIMON_SOURCE_2 = join(SIMON_BUNDLE, 'a.css');
 export const SIMON_SOURCE_3 = join(SIMON_BUNDLE, 'a.html');

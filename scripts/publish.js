@@ -25,7 +25,7 @@ const [version, major, minor, patch] = process.version.match(
 );
 if (
   parseInt(major) !== parseInt(NODE_VERSION.split('.')[0]) ||
-  parseInt(minor) < NODE_VERSION.split('.')[1]
+  parseInt(minor) < parseInt(NODE_VERSION.split('.')[1])
 ) {
   console.log(
     'Please update from node version ' + process.version + ' to ' + NODE_VERSION
@@ -57,12 +57,14 @@ shell.exec(`yarn version --new-version ${LIB_VERSION} --no-git-tag-version`);
 console.log('\nBuild project');
 shell.exec('yarn build');
 
+// Commit version changes in package.json
 console.log('\nGit add package.json');
 shell.exec(`git add package.json`);
 
 console.log('\nRunning commit.');
 shell.exec(`git commit -m "Updated version"`);
 
+// Create git tag for the release
 const gitTagName = `v${LIB_VERSION}`;
 console.log(`\nCreating the git tag (e.g. v1.1.0): ${gitTagName}`);
 shell.exec(`git tag ${gitTagName}`);
@@ -70,5 +72,9 @@ shell.exec(`git tag ${gitTagName}`);
 console.log('\nPushing git tag to remote.');
 shell.exec(`git push origin ${gitTagName}`);
 
+// Publish library to npm registry
 console.log('\nPublishing to npm');
 shell.exec(`yarn publish --new-version ${LIB_VERSION}`);
+
+console.log('\nPush package.json changes to repo');
+shell.exec(`git push origin master`);

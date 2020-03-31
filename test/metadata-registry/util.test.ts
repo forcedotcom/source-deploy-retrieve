@@ -52,12 +52,6 @@ describe('Metadata Registry Util', () => {
 
   describe('find', () => {
     let readStub: SinonStub;
-    before(() => {
-      readStub = env.stub(fs, 'readdirSync');
-      readStub.withArgs(root).returns(files);
-    });
-    after(() => env.restore());
-
     const files = [
       'a.q',
       'a.x-meta.xml',
@@ -66,6 +60,11 @@ describe('Metadata Registry Util', () => {
       'c.z',
       'c.x-meta.xml'
     ];
+    before(() => {
+      readStub = env.stub(fs, 'readdirSync');
+      readStub.withArgs(root).returns(files);
+    });
+    after(() => env.restore());
 
     it('Should find a metadata xml file by fullName in a directory', () => {
       expect(util.findMetadataXml(root, 'b')).to.equal(

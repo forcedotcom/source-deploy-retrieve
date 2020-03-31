@@ -18,10 +18,11 @@ import {
   parseMetadataXml,
   isDirectory,
   deepFreeze,
-  findMetadataXml
+  parseBaseName
 } from './util';
 import { TypeInferenceError } from '../errors';
 import { registryData } from '.';
+import { MixedContent } from './adapters/mixedContent';
 
 /**
  * Infer information about metadata types and components based on source paths.
@@ -65,25 +66,58 @@ export class RegistryAccess {
 
     if (isDirectory(fsPath)) {
       // first check if this directory is actually content
-      try {
-        // TODO: clean this up...it's basically just findMetadataXml for the mixed content adapter.
-        const typeId = this.determineTypeId(fsPath);
+      const typeId = this.determineTypeId(fsPath);
+      if (typeId) {
         const type = this.getTypeFromName(typeId);
-        const pathParts = fsPath.split(sep);
-        const typeDirIndex = pathParts.findIndex(
-          part => part === type.directoryName
-        );
-        const xml = findMetadataXml(
-          pathParts.slice(0, typeDirIndex + 1).join(sep),
-          pathParts[typeDirIndex + 1]
-        );
-        if (xml) {
-          return [this.fetchComponent(xml)];
+        const { directoryName, inFolder } = type;
+        if (!inFolder || directoryName !== parseBaseName(dirname(fsPath))) {
+          const xml = MixedContent.findXmlFromContentPath(fsPath, type);
+          if (xml) {
+            return [this.fetchComponent(xml)];
+          }
         }
-      } catch (e) {}
+      }
       return this.getComponentsFromPathInternal(fsPath);
     }
     return [this.fetchComponent(fsPath)];
+  }
+
+  private determineTypeId(fsPath: SourcePath): string | undefined {
+    let typeId: string;
+
+    // attempt 1 - check if it's a metadata xml file
+    const parsedMetaXml = parseMetadataXml(fsPath);
+    if (parsedMetaXml) {
+      typeId = this.data.suffixes[parsedMetaXml.suffix];
+    }
+    // attempt 2 - check if the file is part of a mixed content type
+    if (!typeId) {
+      const pathParts = new Set(fsPath.split(sep));
+      for (const directoryName of Object.keys(this.data.mixedContent)) {
+        if (pathParts.has(directoryName)) {
+          typeId = this.data.mixedContent[directoryName];
+          break;
+        }
+      }
+    }
+    // attempt 3 - try treating the file extension name as a suffix
+    if (!typeId) {
+      // extname include the dot, so we have to remove it to index the suffixes
+      const extName = extname(fsPath).split('.')[1];
+      typeId = this.data.suffixes[extName];
+    }
+
+    return typeId;
+  }
+
+  private fetchComponent(fsPath: SourcePath): MetadataComponent {
+    const typeId = this.determineTypeId(fsPath);
+    if (typeId) {
+      const adapterId = this.data.adapters[typeId] as AdapterId;
+      const adapter = getAdapter(this.getTypeFromName(typeId), adapterId);
+      return adapter.getComponent(fsPath);
+    }
+    throw new TypeInferenceError('error_could_not_infer_type', fsPath);
   }
 
   private getComponentsFromPathInternal(
@@ -117,44 +151,5 @@ export class RegistryAccess {
     }
 
     return components;
-  }
-
-  private fetchComponent(fsPath: SourcePath): MetadataComponent {
-    const typeId = this.determineTypeId(fsPath);
-    const adapterId = this.data.adapters[typeId] as AdapterId;
-    const adapter = getAdapter(this.getTypeFromName(typeId), adapterId);
-    return adapter.getComponent(fsPath);
-  }
-
-  private determineTypeId(fsPath: SourcePath): string {
-    let typeId: string;
-
-    // attempt 1 - check if it's a metadata xml file
-    const parsedMetaXml = parseMetadataXml(fsPath);
-    if (parsedMetaXml) {
-      typeId = this.data.suffixes[parsedMetaXml.suffix];
-    }
-    // attempt 2 - check if the file is part of a mixed content type
-    if (!typeId) {
-      const pathParts = new Set(fsPath.split(sep));
-      for (const directoryName of Object.keys(this.data.mixedContent)) {
-        if (pathParts.has(directoryName)) {
-          typeId = this.data.mixedContent[directoryName];
-          break;
-        }
-      }
-    }
-    // attempt 3 - try treating the file extension name as a suffix
-    if (!typeId) {
-      // extname include the dot, so we have to remove it to index the suffixes
-      const extName = extname(fsPath).split('.')[1];
-      typeId = this.data.suffixes[extName];
-    }
-
-    if (!typeId) {
-      throw new TypeInferenceError('error_could_not_infer_type', fsPath);
-    }
-
-    return typeId;
   }
 }

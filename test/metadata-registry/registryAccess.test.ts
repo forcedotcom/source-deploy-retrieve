@@ -46,7 +46,8 @@ import {
   SIMON_SUBTYPE,
   SIMON_SOURCE_1,
   SIMON_SOURCE_2,
-  SIMON_SOURCE_3
+  SIMON_SOURCE_3,
+  SIMON_DIR
 } from '../mock/registry';
 import { join, basename } from 'path';
 import { TypeInferenceError } from '../../src/errors';
@@ -329,6 +330,7 @@ describe('RegistryAccess', () => {
       });
 
       it('Should not add duplicates of a component when the content has multiple -meta.xmls', () => {
+        readDirStub.withArgs(SIMON_DIR).returns([basename(SIMON_BUNDLE)]);
         existsStub.withArgs(SIMON_BUNDLE).returns(true);
         directoryStub.withArgs(SIMON_BUNDLE).returns(true);
         const filenames = [

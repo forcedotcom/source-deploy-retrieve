@@ -6,13 +6,7 @@
  */
 
 import { MatchingContentFile } from '../../../src/metadata-registry/adapters/matchingContentFile';
-import {
-  mockRegistry,
-  KEANU_XML,
-  KEANU_SOURCE,
-  KEANUS_DIR,
-  KEANU_COMPONENT
-} from '../../mock/registry';
+import { mockRegistry, keanu } from '../../mock/registry';
 import { expect, assert } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
 import * as fs from 'fs';
@@ -32,19 +26,30 @@ describe('MatchingContentFile', () => {
     mockRegistry
   );
 
+  const {
+    KEANU_SOURCE_PATHS,
+    KEANU_XML_PATHS,
+    KEANU_COMPONENT,
+    KEANUS_DIR
+  } = keanu;
+
   it('Should return expected MetadataComponent when given a root metadata xml path', () => {
-    existsStub.withArgs(KEANU_SOURCE).returns(true);
-    expect(adapter.getComponent(KEANU_XML)).to.deep.equal(KEANU_COMPONENT);
+    existsStub.withArgs(KEANU_SOURCE_PATHS[0]).returns(true);
+    expect(adapter.getComponent(KEANU_XML_PATHS[0])).to.deep.equal(
+      KEANU_COMPONENT
+    );
   });
 
   it('Should return expected MetadataComponent when given a source path', () => {
-    expect(adapter.getComponent(KEANU_SOURCE)).to.deep.equal(KEANU_COMPONENT);
+    expect(adapter.getComponent(KEANU_SOURCE_PATHS[0])).to.deep.equal(
+      KEANU_COMPONENT
+    );
   });
 
   it('Should throw an ExpectedSourceFilesError if no source is found from xml', () => {
-    existsStub.withArgs(KEANU_SOURCE).returns(false);
+    existsStub.withArgs(KEANU_SOURCE_PATHS[0]).returns(false);
     assert.throws(
-      () => adapter.getComponent(KEANU_XML),
+      () => adapter.getComponent(KEANU_XML_PATHS[0]),
       ExpectedSourceFilesError
     );
   });

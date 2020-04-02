@@ -10,12 +10,7 @@ import {
   DWAYNE_SOURCE,
   DWAYNE_XML,
   DWAYNE_DIR,
-  TARAJI_XML,
-  TARAJI_SOURCE_1,
-  TARAJI_SOURCE_2,
-  TARAJI_SOURCE_3,
-  TARAJI_DIR,
-  TARAJI_CONTENT
+  taraji
 } from '../../mock/registry';
 import { expect, assert } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
@@ -88,35 +83,45 @@ describe('MixedContent', () => {
 
     const type = mockRegistry.types.tarajihenson;
     const adapter = new MixedContent(type, mockRegistry);
-    const sources = [TARAJI_SOURCE_1, TARAJI_SOURCE_2, TARAJI_SOURCE_3];
-    const expectedComponent = {
-      fullName: 'a',
-      type,
-      xml: TARAJI_XML,
-      sources
-    };
+
+    const {
+      TARAJI_COMPONENT,
+      TARAJI_CONTENT_PATH,
+      TARAJI_SOURCE_PATHS,
+      TARAJI_XML_PATHS
+    } = taraji;
 
     beforeEach(() => (walkStub = env.stub(util, 'walk')));
 
     it('Should return expected MetadataComponent when given a root metadata xml path', () => {
-      findContentStub.withArgs(TARAJI_DIR, 'a').returns(TARAJI_CONTENT);
+      findContentStub
+        .withArgs(taraji.TARAJI_DIR, 'a')
+        .returns(TARAJI_CONTENT_PATH);
       dirStub.returns(true);
-      existsStub.withArgs(TARAJI_CONTENT).returns(true);
-      walkStub.withArgs(TARAJI_CONTENT, new Set([TARAJI_XML])).returns(sources);
+      existsStub.withArgs(TARAJI_CONTENT_PATH).returns(true);
+      walkStub
+        .withArgs(TARAJI_CONTENT_PATH, new Set([TARAJI_XML_PATHS[0]]))
+        .returns(TARAJI_SOURCE_PATHS);
 
-      expect(adapter.getComponent(TARAJI_XML)).to.deep.equal(expectedComponent);
+      expect(adapter.getComponent(TARAJI_XML_PATHS[0])).to.deep.equal(
+        TARAJI_COMPONENT
+      );
     });
 
     it('Should return expected MetadataComponent when given a source path', () => {
-      findXmlStub.returns(TARAJI_XML);
+      findXmlStub.returns(TARAJI_XML_PATHS[0]);
       dirStub.returns(true);
-      existsStub.withArgs(TARAJI_CONTENT).returns(true);
-      walkStub.withArgs(TARAJI_CONTENT, new Set([TARAJI_XML])).returns(sources);
+      existsStub.withArgs(TARAJI_CONTENT_PATH).returns(true);
+      walkStub
+        .withArgs(TARAJI_CONTENT_PATH, new Set([TARAJI_XML_PATHS[0]]))
+        .returns(TARAJI_SOURCE_PATHS);
 
       const randomSource =
-        sources[Math.floor(Math.random() * Math.floor(sources.length))];
+        TARAJI_SOURCE_PATHS[
+          Math.floor(Math.random() * Math.floor(TARAJI_SOURCE_PATHS.length))
+        ];
       expect(adapter.getComponent(randomSource)).to.deep.equal(
-        expectedComponent
+        TARAJI_COMPONENT
       );
     });
   });

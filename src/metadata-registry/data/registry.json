@@ -1279,5 +1279,6 @@
     "lightningcomponentbundle": "bundle",
     "staticresource": "mixedContent",
     "waveTemplates": "bundle"
-  }
+  },
+  "apiversion": "48.0"
 }

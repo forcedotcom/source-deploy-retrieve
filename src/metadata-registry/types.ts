@@ -83,6 +83,11 @@ export type MetadataRegistry = {
   adapters: {
     [typeId: string]: string;
   };
+
+  /**
+   * API Version
+   */
+  apiversion: string;
 };
 
 export type MetadataXml = {

@@ -52,7 +52,8 @@ export const mockRegistry = {
     tarajihenson: 'mixedContent',
     dwaynejohnson: 'mixedContent',
     simonpegg: 'bundle'
-  }
+  },
+  apiversion: '48.0'
 };
 
 // Matching content file

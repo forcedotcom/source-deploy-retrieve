@@ -1,0 +1,22 @@
+import { join } from 'path';
+import { MetadataComponent } from '../../../src/metadata-registry';
+import { mockRegistry } from '.';
+
+// Mixed content with directory as content
+const type = mockRegistry.types.tarajihenson;
+
+export const TARAJI_DIR = join('path', 'to', 'tarajis');
+export const TARAJI_CONTENT_PATH = join(TARAJI_DIR, 'a');
+export const TARAJI_XML_NAMES = ['a.taraji-meta.xml'];
+export const TARAJI_XML_PATHS = TARAJI_XML_NAMES.map(n => join(TARAJI_DIR, n));
+export const TARAJI_SOURCE_PATHS = [
+  join(TARAJI_CONTENT_PATH, 'test.xyz'),
+  join(TARAJI_CONTENT_PATH, 'b', 'test.g'),
+  join(TARAJI_CONTENT_PATH, 'b', 'test2.w')
+];
+export const TARAJI_COMPONENT: MetadataComponent = {
+  fullName: 'a',
+  type,
+  xml: TARAJI_XML_PATHS[0],
+  sources: TARAJI_SOURCE_PATHS
+};

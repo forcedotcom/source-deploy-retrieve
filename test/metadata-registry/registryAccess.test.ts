@@ -11,43 +11,17 @@ import { createSandbox, SinonStub } from 'sinon';
 import {
   RegistryAccess,
   SourcePath,
-  MetadataComponent
+  MetadataComponent,
+  MetadataType
 } from '../../src/metadata-registry';
 import { nls } from '../../src/i18n';
-// TODO: this import statement makes me vomit
 import {
   mockRegistry,
-  KEANU_SOURCE,
-  KEANU_XML,
-  KEANU_COMPONENT,
-  TARAJI_SOURCE_2,
-  TARAJI_COMPONENT,
-  KATHY_XML,
-  KATHY_XML_2,
-  KATHY_XML_3,
-  KATHY_COMPONENT,
-  KATHY_COMPONENT_2,
-  KATHY_COMPONENT_3,
-  KEANUS_DIR,
-  TARAJI_CONTENT,
-  TARAJI_DIR,
-  TARAJI_XML,
-  KATHY_FOLDER,
-  TINA_FOLDER,
-  TINA_XML,
-  TINA_SOURCE,
-  TINA_XML_2,
-  TINA_SOURCE_2,
-  TINA_COMPONENT,
-  TINA_COMPONENT_2,
-  SIMON_BUNDLE,
-  SIMON_COMPONENT,
-  SIMON_XML,
-  SIMON_SUBTYPE,
-  SIMON_SOURCE_1,
-  SIMON_SOURCE_2,
-  SIMON_SOURCE_3,
-  SIMON_DIR
+  kathy,
+  keanu,
+  taraji,
+  tina,
+  simon
 } from '../mock/registry';
 import { join, basename } from 'path';
 import { TypeInferenceError } from '../../src/errors';
@@ -55,6 +29,43 @@ import * as util from '../../src/metadata-registry/util';
 import * as adapters from '../../src/metadata-registry/adapters';
 
 const env = createSandbox();
+
+let existsStub: SinonStub;
+let isDirectoryStub: SinonStub;
+
+function stubDirectories(
+  structure: { directory: SourcePath; files: SourcePath[] }[]
+): void {
+  const readDirStub: SinonStub = env.stub(fs, 'readdirSync');
+
+  for (const part of structure) {
+    existsStub.withArgs(part.directory).returns(true);
+    isDirectoryStub.withArgs(part.directory).returns(true);
+    readDirStub
+      .withArgs(part.directory)
+      .returns(part.files.map(f => basename(f)));
+  }
+}
+
+function stubAdapters(
+  config: {
+    type: MetadataType;
+    componentMappings: { path: SourcePath; component: MetadataComponent }[];
+  }[]
+): void {
+  const getAdapterStub = env.stub(adapters, 'getAdapter');
+  for (const entry of config) {
+    // @ts-ignore
+    const adapterId = mockRegistry.adapters[entry.type.name.toLowerCase()];
+    const componentMap: { [path: string]: MetadataComponent } = {};
+    for (const c of entry.componentMappings) {
+      componentMap[c.path] = c.component;
+    }
+    getAdapterStub.withArgs(entry.type, adapterId).returns({
+      getComponent: (path: SourcePath) => componentMap[path]
+    });
+  }
+}
 
 describe('RegistryAccess', () => {
   const registry = new RegistryAccess(mockRegistry);
@@ -90,83 +101,76 @@ describe('RegistryAccess', () => {
   });
 
   describe('getComponentsFromPath', () => {
-    let existsStub: SinonStub;
-    let directoryStub: SinonStub;
-    let getAdapterStub: SinonStub;
-
     beforeEach(() => {
       existsStub = env.stub(fs, 'existsSync');
-      directoryStub = env.stub(util, 'isDirectory').returns(false);
-      getAdapterStub = env.stub(adapters, 'getAdapter');
+      isDirectoryStub = env.stub(util, 'isDirectory');
+      isDirectoryStub.returns(false);
     });
     afterEach(() => env.restore());
 
     describe('File Paths', () => {
       it('Should throw file not found error if given path does not exist', () => {
-        existsStub.withArgs(KEANU_SOURCE).returns(false);
+        const path = keanu.KEANU_SOURCE_PATHS[0];
+        existsStub.withArgs(path).returns(false);
 
         assert.throws(
-          () => registry.getComponentsFromPath(KEANU_SOURCE),
+          () => registry.getComponentsFromPath(path),
           TypeInferenceError,
-          nls.localize('error_path_not_found', [KEANU_SOURCE])
+          nls.localize('error_path_not_found', [path])
         );
       });
 
       it('Should determine type for metadata file with known suffix', () => {
-        existsStub.withArgs(KEANU_XML).returns(true);
-        directoryStub.withArgs(KEANU_XML).returns(false);
-        getAdapterStub
-          .withArgs(
-            mockRegistry.types.keanureeves,
-            mockRegistry.adapters.keanureeves
-          )
-          .returns({
-            getComponent: () => KEANU_COMPONENT
-          });
-
-        expect(registry.getComponentsFromPath(KEANU_XML)).to.deep.equal([
-          KEANU_COMPONENT
+        const path = keanu.KEANU_XML_PATHS[0];
+        existsStub.withArgs(path).returns(true);
+        stubAdapters([
+          {
+            type: mockRegistry.types.keanureeves,
+            componentMappings: [
+              {
+                path,
+                component: keanu.KEANU_COMPONENT
+              }
+            ]
+          }
+        ]);
+        expect(registry.getComponentsFromPath(path)).to.deep.equal([
+          keanu.KEANU_COMPONENT
         ]);
       });
 
       it('Should determine type for source file with known suffix', () => {
-        existsStub.withArgs(KEANU_SOURCE).returns(true);
-        directoryStub.withArgs(KEANU_SOURCE).returns(false);
-        getAdapterStub
-          .withArgs(
-            mockRegistry.types.keanureeves,
-            mockRegistry.adapters.keanureeves
-          )
-          .returns({
-            getComponent: () => KEANU_COMPONENT
-          });
-
-        expect(registry.getComponentsFromPath(KEANU_SOURCE)).to.deep.equal([
-          KEANU_COMPONENT
+        const path = keanu.KEANU_SOURCE_PATHS[0];
+        existsStub.withArgs(path).returns(true);
+        stubAdapters([
+          {
+            type: mockRegistry.types.keanureeves,
+            componentMappings: [{ path, component: keanu.KEANU_COMPONENT }]
+          }
+        ]);
+        expect(registry.getComponentsFromPath(path)).to.deep.equal([
+          keanu.KEANU_COMPONENT
         ]);
       });
 
       it('Should determine type for path of mixed content type', () => {
-        existsStub.withArgs(TARAJI_SOURCE_2).returns(true);
-        directoryStub.withArgs(TARAJI_SOURCE_2).returns(false);
-        getAdapterStub
-          .withArgs(
-            mockRegistry.types.tarajihenson,
-            mockRegistry.adapters.tarajihenson
-          )
-          .returns({
-            getComponent: () => TARAJI_COMPONENT
-          });
+        const path = taraji.TARAJI_SOURCE_PATHS[1];
+        existsStub.withArgs(path).returns(true);
+        stubAdapters([
+          {
+            type: mockRegistry.types.tarajihenson,
+            componentMappings: [{ path, component: taraji.TARAJI_COMPONENT }]
+          }
+        ]);
 
-        expect(registry.getComponentsFromPath(TARAJI_SOURCE_2)).to.deep.equal([
-          TARAJI_COMPONENT
+        expect(registry.getComponentsFromPath(path)).to.deep.equal([
+          taraji.TARAJI_COMPONENT
         ]);
       });
 
       it('Should throw type id error if one could not be determined', () => {
         const missing = join('path', 'to', 'whatever', 'a.b-meta.xml');
         existsStub.withArgs(missing).returns(true);
-        directoryStub.withArgs(missing).returns(false);
 
         assert.throws(
           () => registry.getComponentsFromPath(missing),
@@ -176,182 +180,194 @@ describe('RegistryAccess', () => {
       });
     });
 
-    // TODO: Tidy these fools up. and those imports are digusting bruh fix those too.
-    // make a utility or something dang.
     describe('Directory Paths', () => {
-      let readDirStub: SinonStub;
-
-      beforeEach(() => (readDirStub = env.stub(fs, 'readdirSync')));
-
       it('Should return all components in a directory', () => {
-        const fileNames = [KATHY_XML, KATHY_XML_2, KATHY_XML_3].map(p =>
-          basename(p)
+        const {
+          KATHY_XML_PATHS: KATHY_XMLS,
+          KATHY_FOLDER,
+          KATHY_COMPONENTS
+        } = kathy;
+        const componentMappings = kathy.KATHY_XML_PATHS.map(
+          (p: string, i: number) => ({
+            path: p,
+            component: KATHY_COMPONENTS[i]
+          })
         );
-        existsStub.withArgs(KATHY_FOLDER).returns(true);
-        directoryStub.withArgs(KATHY_FOLDER).returns(true);
-        readDirStub.withArgs(KATHY_FOLDER).returns(fileNames);
-        getAdapterStub
-          .withArgs(mockRegistry.types.kathybates, undefined)
-          .returns({
-            getComponent: (path: SourcePath) => {
-              switch (path) {
-                case KATHY_XML:
-                  return KATHY_COMPONENT;
-                case KATHY_XML_2:
-                  return KATHY_COMPONENT_2;
-                case KATHY_XML_3:
-                  return KATHY_COMPONENT_3;
-              }
-            }
-          });
-        expect(registry.getComponentsFromPath(KATHY_FOLDER)).to.deep.equal([
-          KATHY_COMPONENT,
-          KATHY_COMPONENT_2,
-          KATHY_COMPONENT_3
+        stubDirectories([
+          {
+            directory: KATHY_FOLDER,
+            files: KATHY_XMLS
+          }
         ]);
+        stubAdapters([
+          {
+            type: mockRegistry.types.kathybates,
+            componentMappings
+          }
+        ]);
+        expect(registry.getComponentsFromPath(KATHY_FOLDER)).to.deep.equal(
+          KATHY_COMPONENTS
+        );
       });
 
       it('Should walk all file and directory children', () => {
-        const STUFF_DIR = join(KEANUS_DIR, 'hasStuff');
-        const NO_STUFF_DIR = join(KEANUS_DIR, 'noStuff');
-        const KEANU_COMPONENT_2: MetadataComponent = {
+        const { KEANUS_DIR } = keanu;
+        const stuffDir = join(KEANUS_DIR, 'hasStuff');
+        const noStuffDir = join(KEANUS_DIR, 'noStuff');
+        const kathyXml = join(KEANUS_DIR, kathy.KATHY_XML_NAMES[0]);
+        const keanuXml = keanu.KEANU_XML_PATHS[0];
+        const keanuSrc = keanu.KEANU_SOURCE_PATHS[0];
+        const keanuXml2 = join(stuffDir, keanu.KEANU_XML_NAMES[1]);
+        const keanuSrc2 = join(stuffDir, keanu.KEANU_SOURCE_NAMES[1]);
+        const keanuComponent2: MetadataComponent = {
           fullName: 'b',
           type: mockRegistry.types.keanureeves,
-          xml: join(STUFF_DIR, 'b.keanu-meta.xml'),
-          sources: [join(STUFF_DIR, 'b.keanu')]
+          xml: keanuXml2,
+          sources: [keanuSrc2]
         };
-        const KATHY_COMPONENT_2: MetadataComponent = {
+        const kathyComponent2: MetadataComponent = {
           fullName: 'a',
           type: mockRegistry.types.kathybates,
-          xml: join(KEANUS_DIR, 'a.kathy-meta.xml'),
+          xml: kathyXml,
           sources: []
         };
         existsStub.withArgs(KEANUS_DIR).returns(true);
-        readDirStub
-          .withArgs(KEANUS_DIR)
-          .returns([
-            'a.keanu-meta.xml',
-            'a.keanu',
-            'a.kathy-meta.xml',
-            'hasStuff',
-            'noStuff'
-          ]);
-        readDirStub.withArgs(NO_STUFF_DIR).returns([]);
-        readDirStub
-          .withArgs(STUFF_DIR)
-          .returns(['b.keanu-meta.xml', 'b.keanu']);
-        directoryStub.withArgs(KEANUS_DIR).returns(true);
-        directoryStub.withArgs(STUFF_DIR).returns(true);
-        directoryStub.withArgs(NO_STUFF_DIR).returns(true);
-        getAdapterStub
-          .withArgs(mockRegistry.types.kathybates, undefined)
-          .returns({
-            getComponent: (path: SourcePath) => {
-              if (path === join(KEANUS_DIR, 'a.kathy-meta.xml')) {
-                const sources: string[] = [];
-                return {
-                  fullName: 'a',
-                  type: mockRegistry.types.kathybates,
-                  xml: join(KEANUS_DIR, 'a.kathy-meta.xml'),
-                  sources
-                };
+        stubDirectories([
+          {
+            directory: KEANUS_DIR,
+            files: [
+              keanuXml,
+              keanuSrc,
+              kathy.KATHY_XML_NAMES[0],
+              'hasStuff',
+              'noStuff'
+            ]
+          },
+          {
+            directory: noStuffDir,
+            files: []
+          },
+          {
+            directory: stuffDir,
+            files: [keanuSrc2, keanuXml2]
+          }
+        ]);
+        stubAdapters([
+          {
+            type: mockRegistry.types.kathybates,
+            componentMappings: [
+              {
+                path: join(KEANUS_DIR, kathy.KATHY_XML_NAMES[0]),
+                component: kathyComponent2
               }
-            }
-          });
-        getAdapterStub
-          .withArgs(
-            mockRegistry.types.keanureeves,
-            mockRegistry.adapters.keanureeves
-          )
-          .returns({
-            getComponent: (path: SourcePath) => {
-              switch (path) {
-                case KEANU_XML:
-                  return KEANU_COMPONENT;
-                case join(STUFF_DIR, 'b.keanu-meta.xml'):
-                  return KEANU_COMPONENT_2;
+            ]
+          },
+          {
+            type: mockRegistry.types.keanureeves,
+            componentMappings: [
+              {
+                path: keanuXml,
+                component: keanu.KEANU_COMPONENT
+              },
+              {
+                path: keanuXml2,
+                component: keanuComponent2
               }
-            }
-          });
+            ]
+          }
+        ]);
         expect(registry.getComponentsFromPath(KEANUS_DIR)).to.deep.equal([
-          KEANU_COMPONENT,
-          KATHY_COMPONENT_2,
-          KEANU_COMPONENT_2
+          keanu.KEANU_COMPONENT,
+          kathyComponent2,
+          keanuComponent2
         ]);
       });
 
       it('Should handle the folder of a mixed content folder type', () => {
-        existsStub.withArgs(TINA_FOLDER).returns(true);
-        directoryStub.withArgs(TINA_FOLDER).returns(true);
-        const filenames = [
-          TINA_XML,
-          TINA_SOURCE,
-          TINA_XML_2,
-          TINA_SOURCE_2
-        ].map(f => basename(f));
-        readDirStub.withArgs(TINA_FOLDER).returns(filenames);
-        getAdapterStub
-          .withArgs(mockRegistry.types.tinafey, mockRegistry.adapters.tinafey)
-          .returns({
-            getComponent: (path: SourcePath) => {
-              switch (path) {
-                case TINA_XML:
-                  return TINA_COMPONENT;
-                case TINA_XML_2:
-                  return TINA_COMPONENT_2;
+        existsStub.withArgs(tina.TINA_FOLDER).returns(true);
+        stubDirectories([
+          {
+            directory: tina.TINA_FOLDER,
+            files: tina.TINA_XML_NAMES.concat(tina.TINA_SOURCE_NAMES)
+          }
+        ]);
+        stubAdapters([
+          {
+            type: mockRegistry.types.tinafey,
+            componentMappings: [
+              {
+                path: tina.TINA_XML_PATHS[0],
+                component: tina.TINA_COMPONENTS[0]
+              },
+              {
+                path: tina.TINA_XML_PATHS[1],
+                component: tina.TINA_COMPONENTS[1]
               }
-            }
-          });
-        expect(registry.getComponentsFromPath(TINA_FOLDER)).to.deep.equal([
-          TINA_COMPONENT,
-          TINA_COMPONENT_2
+            ]
+          }
+        ]);
+        expect(registry.getComponentsFromPath(tina.TINA_FOLDER)).to.deep.equal([
+          tina.TINA_COMPONENTS[0],
+          tina.TINA_COMPONENTS[1]
         ]);
       });
 
       it('Should return a component for a directory that is content or a child of content', () => {
-        existsStub.withArgs(TARAJI_CONTENT).returns(true);
-        directoryStub.withArgs(TARAJI_CONTENT).returns(true);
-        readDirStub.withArgs(TARAJI_DIR).returns(['a.taraji-meta.xml', 'a']);
-        getAdapterStub
-          .withArgs(
-            mockRegistry.types.tarajihenson,
-            mockRegistry.adapters.tarajihenson
-          )
-          .returns({
-            getComponent: (path: SourcePath) => {
-              if (path === TARAJI_XML) {
-                return TARAJI_COMPONENT;
-              }
-            }
-          });
-        expect(registry.getComponentsFromPath(TARAJI_CONTENT)).to.deep.equal([
-          TARAJI_COMPONENT
+        const { TARAJI_CONTENT_PATH } = taraji;
+        existsStub.withArgs(TARAJI_CONTENT_PATH).returns(true);
+        stubDirectories([
+          {
+            directory: TARAJI_CONTENT_PATH,
+            files: []
+          },
+          {
+            directory: taraji.TARAJI_DIR,
+            files: [taraji.TARAJI_XML_NAMES[0], basename(TARAJI_CONTENT_PATH)]
+          }
         ]);
+        stubAdapters([
+          {
+            type: mockRegistry.types.tarajihenson,
+            componentMappings: [
+              {
+                path: taraji.TARAJI_XML_PATHS[0],
+                component: taraji.TARAJI_COMPONENT
+              }
+            ]
+          }
+        ]);
+        expect(
+          registry.getComponentsFromPath(TARAJI_CONTENT_PATH)
+        ).to.deep.equal([taraji.TARAJI_COMPONENT]);
       });
 
       it('Should not add duplicates of a component when the content has multiple -meta.xmls', () => {
-        readDirStub.withArgs(SIMON_DIR).returns([basename(SIMON_BUNDLE)]);
-        existsStub.withArgs(SIMON_BUNDLE).returns(true);
-        directoryStub.withArgs(SIMON_BUNDLE).returns(true);
-        const filenames = [
-          SIMON_XML,
-          SIMON_SUBTYPE,
-          SIMON_SOURCE_1,
-          SIMON_SOURCE_2,
-          SIMON_SOURCE_3
-        ].map(f => basename(f));
-        readDirStub.withArgs(SIMON_BUNDLE).returns(filenames);
-        getAdapterStub
-          .withArgs(
-            mockRegistry.types.simonpegg,
-            mockRegistry.adapters.simonpegg
-          )
-          .returns({
-            getComponent: () => SIMON_COMPONENT
-          });
-        expect(registry.getComponentsFromPath(SIMON_BUNDLE)).to.deep.equal([
-          SIMON_COMPONENT
+        const { SIMON_COMPONENT, SIMON_BUNDLE_PATH } = simon;
+        stubDirectories([
+          {
+            directory: simon.SIMON_DIR,
+            files: [basename(SIMON_BUNDLE_PATH)]
+          },
+          {
+            directory: SIMON_BUNDLE_PATH,
+            files: simon.SIMON_SOURCE_PATHS.concat(simon.SIMON_XML_PATH)
+          }
         ]);
+        stubAdapters([
+          {
+            type: mockRegistry.types.simonpegg,
+            componentMappings: [
+              { path: simon.SIMON_XML_PATH, component: SIMON_COMPONENT },
+              {
+                path: simon.SIMON_SUBTYPE_PATH,
+                component: SIMON_COMPONENT
+              }
+            ]
+          }
+        ]);
+        expect(registry.getComponentsFromPath(SIMON_BUNDLE_PATH)).to.deep.equal(
+          [SIMON_COMPONENT]
+        );
       });
     });
   });

@@ -39,6 +39,7 @@
     "no-var": "error",
     "jsdoc/no-types": "warn",
     "@typescript-eslint/semi": "warn",
-    "@typescript-eslint/class-name-casing": "warn"
+    "@typescript-eslint/class-name-casing": "warn",
+    "@typescript-eslint/ban-ts-ignore": "off"
   }
 }

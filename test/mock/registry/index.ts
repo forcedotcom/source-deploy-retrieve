@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { MetadataComponent } from '../../src/metadata-registry/types';
+import { MetadataComponent } from '../../../src/metadata-registry/types';
 
 export const mockRegistry = {
   types: {
@@ -61,6 +61,13 @@ export const mockRegistry = {
     simonpegg: 'bundle'
   }
 };
+
+import * as keanu from './keanuConstants';
+import * as kathy from './kathyConstants';
+import * as simon from './simonConstants';
+import * as taraji from './tarajiConstants';
+import * as tina from './tinaConstants';
+export { kathy, keanu, simon, taraji, tina };
 
 // Base functionality
 export const KATHYS_DIR = join('path', 'to', 'kathys');

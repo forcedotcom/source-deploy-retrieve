@@ -6,3 +6,4 @@
  */
 
 export { Retrieve } from './retrieve';
+export { ToolingApi } from './toolingApi';

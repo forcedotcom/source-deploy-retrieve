@@ -58,7 +58,8 @@ export const mockRegistry = {
     tarajihenson: 'mixedContent',
     dwaynejohnson: 'mixedContent',
     simonpegg: 'bundle'
-  }
+  },
+  apiVersion: '48.0'
 };
 
 import * as keanu from './keanuConstants';

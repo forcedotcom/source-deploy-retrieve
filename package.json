@@ -1,17 +1,17 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
-  "main": "index.js",
+  "main": "lib/index.js",
   "author": "Salesforce",
   "license": "BSD-3-Clause",
-  "homepage": "https://github.com/forcedotcom/deploy-and-retrieve#readme",
+  "homepage": "https://github.com/forcedotcom/source-deploy-retrieve#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/forcedotcom/deploy-and-retrieve.git"
+    "url": "git+https://github.com/forcedotcom/source-deploy-retrieve.git"
   },
   "bugs": {
-    "url": "https://github.com/forcedotcom/deploy-and-retrieve/issues"
+    "url": "https://github.com/forcedotcom/source-deploy-retrieve/issues"
   },
   "keywords": [
     "Salesforce",
@@ -20,11 +20,15 @@
     "deploy",
     "retrieve"
   ],
+  "files": [
+    "lib"
+  ],
   "engines": {
     "node": ">=10.5.0"
   },
   "dependencies": {
-    "@salesforce/core": "2.2.0"
+    "@salesforce/core": "2.2.0",
+    "xmldom-sfdx-encoding": "^0.1.29"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
@@ -40,6 +44,7 @@
     "mocha": "^5",
     "nyc": "^14.1.1",
     "prettier": "1.16.4",
+    "shelljs": "0.8.3",
     "sinon": "^7.3.1",
     "source-map-support": "^0.5.16",
     "ts-node": "^8.7.0",

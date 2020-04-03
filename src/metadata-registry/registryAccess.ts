@@ -152,4 +152,8 @@ export class RegistryAccess {
 
     return components;
   }
+
+  public getApiVersion(): string {
+    return this.data.apiVersion;
+  }
 }

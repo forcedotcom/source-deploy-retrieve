@@ -88,4 +88,8 @@ export class RegistryAccess {
     const adapter = getAdapter(this.getTypeFromName(typeId), adapterId);
     return [adapter.getComponent(fsPath)];
   }
+
+  public getApiVersion(): string {
+    return this.data.apiversion;
+  }
 }

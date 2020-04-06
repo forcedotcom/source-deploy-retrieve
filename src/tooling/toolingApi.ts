@@ -9,21 +9,19 @@ import {
   BaseApi,
   RetrievePathOptions,
   ApiResult,
-  RetrieveOptions
-} from '../client/client';
-import { RegistryAccess, MetadataComponent } from '../metadata-registry';
-import { QueryResult } from '../types';
+  RetrieveOptions,
+  QueryResult,
+  MetadataComponent
+} from '../types';
+import { RegistryAccess } from '../metadata-registry';
 import { nls } from '../i18n';
 import { createMetadataFile } from '../utils';
-
-const metaXMLTemplate = `<{typeName}></{typeName}>`;
 
 export class ToolingApi extends BaseApi {
   public async retrieveWithPaths(
     options: RetrievePathOptions
   ): Promise<ApiResult> {
     let retrieveResult: ApiResult;
-    console.log('options ', options);
     const retrievePaths = options.paths[0];
     const registry = new RegistryAccess();
     const mdComponent = registry.getComponentsFromPath(retrievePaths);
@@ -41,13 +39,18 @@ export class ToolingApi extends BaseApi {
 
       const mdSourcePath = mdComponent[0].sources[0];
       createMetadataFile(mdSourcePath, queryResult.records[0].Body);
-      const metaXMLFile = metaXMLTemplate.replace('{typeName}', 'ApexClass');
-      createMetadataFile(`${mdSourcePath}-meta.xml`, metaXMLFile);
+      createMetadataFile(
+        `${mdSourcePath}-meta.xml`,
+        this.generateMetaXML(
+          mdComponent[0].type.name,
+          queryResult.records[0].ApiVersion,
+          queryResult.records[0].Status
+        )
+      );
 
       retrieveResult = {
         success: true,
-        components: mdComponent,
-        message: 'success and not less'
+        components: mdComponent
       };
     } catch (err) {
       throw new Error(nls.localize('error_in_tooling_retrieve', err));
@@ -61,9 +64,16 @@ export class ToolingApi extends BaseApi {
     throw new Error('Method not implemented.');
   }
 
+  public generateMetaXML(typeName: string, apiVersion: string, status: string) {
+    let templateResult = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    templateResult += `<${typeName} xmlns="http://soap.sforce.com/2006/04/metadata">\n`;
+    templateResult += `\t<apiVersion>${apiVersion}.0</apiVersion>\n`;
+    templateResult += `\t<status>${status}</status>\n`;
+    templateResult += `</${typeName}>`;
+    return templateResult;
+  }
+
   public buildQuery(mdComponent: MetadataComponent[]): string {
-    return `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ${
-      mdComponent[0].type.name
-    } where Name = '${mdComponent[0].fullName}'`;
+    return `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ${mdComponent[0].type.name} where Name = '${mdComponent[0].fullName}'`;
   }
 }

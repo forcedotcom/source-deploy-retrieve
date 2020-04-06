@@ -24,10 +24,11 @@ export {
   supportedToolingTypes
 } from './deploy';
 
+export { ApiResult, RetrievePathOptions } from './types';
 /**
  * Transfer SFDX source to and from a Salesforce org.
  */
-export class SourceClient {
+export default class SourceClient {
   public readonly connection: Connection;
   public readonly apiVersion: string;
   /**

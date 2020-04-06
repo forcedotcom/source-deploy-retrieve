@@ -20,4 +20,6 @@ export type QueryRecord = {
   NamespacePrefix: string;
   Body?: string;
   Markup?: string;
+  ApiVersion?: string;
+  Status?: string;
 };

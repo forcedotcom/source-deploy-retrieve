@@ -6,3 +6,11 @@
  */
 
 export { QueryRecord, QueryResult } from './query';
+export {
+  BaseApi,
+  RetrievePathOptions,
+  ApiResult,
+  RetrieveOptions,
+  MetadataComponent,
+  SourceAdapter
+} from './client';

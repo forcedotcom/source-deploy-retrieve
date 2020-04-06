@@ -35,22 +35,6 @@ export type MetadataType = {
 };
 
 /**
- * Source information about a single metadata component.
- */
-export type MetadataComponent = {
-  fullName: string;
-  type: MetadataType;
-  /**
-   * Path to the root metadata xml file.
-   */
-  xml: SourcePath;
-  /**
-   * Paths to additional source files, if any.
-   */
-  sources: SourcePath[];
-};
-
-/**
  * File system path to a source file of a metadata component.
  */
 export type SourcePath = string;
@@ -93,10 +77,3 @@ export type MetadataXml = {
   fullName: string;
   suffix: string;
 };
-
-/**
- * Infers the source format structure of a metadata component when given a file path.
- */
-export interface SourceAdapter {
-  getComponent(fsPath: SourcePath): MetadataComponent;
-}

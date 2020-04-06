@@ -31,9 +31,20 @@ export type MetadataType = {
   childXmlNames?: string[];
 };
 
-type MetadataComponent = {
+/**
+ * Source information about a single metadata component.
+ */
+export type MetadataComponent = {
   fullName: string;
   type: MetadataType;
+  /**
+   * Path to the root metadata xml file.
+   */
+  xml: SourcePath;
+  /**
+   * Paths to additional source files, if any.
+   */
+  sources: SourcePath[];
 };
 
 type CommonOptions = {
@@ -78,6 +89,13 @@ export type ApiResult = {
   components: MetadataComponent[];
   message?: string;
 };
+
+/**
+ * Infers the source format structure of a metadata component when given a file path.
+ */
+export interface SourceAdapter {
+  getComponent(fsPath: SourcePath): MetadataComponent;
+}
 
 export interface DeployRetrieveClient {
   /**

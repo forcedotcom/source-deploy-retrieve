@@ -64,7 +64,11 @@ export class ToolingApi extends BaseApi {
     throw new Error('Method not implemented.');
   }
 
-  public generateMetaXML(typeName: string, apiVersion: string, status: string) {
+  public generateMetaXML(
+    typeName: string,
+    apiVersion: string,
+    status: string
+  ): string {
     let templateResult = '<?xml version="1.0" encoding="UTF-8"?>\n';
     templateResult += `<${typeName} xmlns="http://soap.sforce.com/2006/04/metadata">\n`;
     templateResult += `\t<apiVersion>${apiVersion}.0</apiVersion>\n`;

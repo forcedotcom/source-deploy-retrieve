@@ -8,12 +8,7 @@ import * as data from './data/registry.json';
 import { deepFreeze } from './util';
 export { RegistryAccess } from './registryAccess';
 export { ManifestGenerator } from './manifestGenerator';
-export {
-  MetadataRegistry,
-  MetadataType,
-  MetadataComponent,
-  SourcePath
-} from './types';
+export { MetadataRegistry, MetadataType, SourcePath } from './types';
 
 /**
  * Direct access to the JSON registry data. Useful for autocompletions.

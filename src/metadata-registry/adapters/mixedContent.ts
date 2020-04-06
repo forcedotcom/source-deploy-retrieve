@@ -6,7 +6,7 @@
  */
 
 import { BaseSourceAdapter } from './base';
-import { SourcePath } from '../types';
+import { SourcePath, MetadataType } from '../types';
 import { sep, dirname } from 'path';
 import {
   parseMetadataXml,
@@ -45,10 +45,7 @@ import { existsSync } from 'fs';
  */
 export class MixedContent extends BaseSourceAdapter {
   protected getMetadataXmlPath(pathToSource: SourcePath): SourcePath {
-    const contentPath = this.getPathToContent(pathToSource);
-    const rootTypeDirectory = dirname(contentPath);
-    const contentFullName = parseBaseName(contentPath);
-    return findMetadataXml(rootTypeDirectory, contentFullName);
+    return MixedContent.findXmlFromContentPath(pathToSource, this.type);
   }
 
   protected getSourcePaths(
@@ -78,11 +75,6 @@ export class MixedContent extends BaseSourceAdapter {
     return sources;
   }
 
-  /**
-   * "Content" can either be a single file or an entire folder. This will slice
-   * the source path accordingly.
-   * @param source
-   */
   protected getPathToContent(source: SourcePath): SourcePath {
     const pathParts = source.split(sep);
     const typeFolderIndex = pathParts.findIndex(
@@ -90,5 +82,28 @@ export class MixedContent extends BaseSourceAdapter {
     );
     const offset = this.type.inFolder ? 3 : 2;
     return pathParts.slice(0, typeFolderIndex + offset).join(sep);
+  }
+
+  /**
+   * A utility for finding a component's root metadata xml from a path to a component's
+   * content. "Content" can either be a single file or an entire directory. If the content
+   * is a directory, the path can be files or other directories inside of it.
+   * @param source
+   */
+  public static findXmlFromContentPath(
+    contentPath: SourcePath,
+    type: MetadataType
+  ): SourcePath {
+    const pathParts = contentPath.split(sep);
+    const typeFolderIndex = pathParts.findIndex(
+      part => part === type.directoryName
+    );
+    const offset = type.inFolder ? 3 : 2;
+    const rootContentPath = pathParts
+      .slice(0, typeFolderIndex + offset)
+      .join(sep);
+    const rootTypeDirectory = dirname(rootContentPath);
+    const contentFullName = parseBaseName(rootContentPath);
+    return findMetadataXml(rootTypeDirectory, contentFullName);
   }
 }

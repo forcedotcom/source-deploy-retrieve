@@ -5,17 +5,27 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { existsSync } from 'fs';
-import { sep, extname } from 'path';
-import { MetadataComponent, MetadataRegistry, MetadataType } from './types';
+import { existsSync, readdirSync } from 'fs';
+import { sep, extname, join, basename, dirname } from 'path';
+import {
+  MetadataComponent,
+  MetadataRegistry,
+  MetadataType,
+  SourcePath
+} from './types';
 import { getAdapter, AdapterId } from './adapters';
-import { parseMetadataXml, isDirectory, deepFreeze } from './util';
+import {
+  parseMetadataXml,
+  isDirectory,
+  deepFreeze,
+  parseBaseName
+} from './util';
 import { TypeInferenceError } from '../errors';
 import { registryData } from '.';
+import { MixedContent } from './adapters/mixedContent';
 
 /**
- * Primary interface for the metadata registry data. Used to infer information about metadata
- * types and components based on source paths.
+ * Infer information about metadata types and components based on source paths.
  */
 export class RegistryAccess {
   public readonly data: MetadataRegistry;
@@ -52,10 +62,27 @@ export class RegistryAccess {
   public getComponentsFromPath(fsPath: string): MetadataComponent[] {
     if (!existsSync(fsPath)) {
       throw new TypeInferenceError('error_path_not_found', fsPath);
-    } else if (isDirectory(fsPath)) {
-      throw new TypeInferenceError('error_directories_not_supported');
     }
 
+    if (isDirectory(fsPath)) {
+      // first check if this directory is actually content
+      const typeId = this.determineTypeId(fsPath);
+      if (typeId) {
+        const type = this.getTypeFromName(typeId);
+        const { directoryName, inFolder } = type;
+        if (!inFolder || directoryName !== parseBaseName(dirname(fsPath))) {
+          const xml = MixedContent.findXmlFromContentPath(fsPath, type);
+          if (xml) {
+            return [this.fetchComponent(xml)];
+          }
+        }
+      }
+      return this.getComponentsFromPathInternal(fsPath);
+    }
+    return [this.fetchComponent(fsPath)];
+  }
+
+  private determineTypeId(fsPath: SourcePath): string | undefined {
     let typeId: string;
 
     // attempt 1 - check if it's a metadata xml file
@@ -80,16 +107,53 @@ export class RegistryAccess {
       typeId = this.data.suffixes[extName];
     }
 
-    if (!typeId) {
-      throw new TypeInferenceError('error_could_not_infer_type', fsPath);
+    return typeId;
+  }
+
+  private fetchComponent(fsPath: SourcePath): MetadataComponent {
+    const typeId = this.determineTypeId(fsPath);
+    if (typeId) {
+      const adapterId = this.data.adapters[typeId] as AdapterId;
+      const adapter = getAdapter(this.getTypeFromName(typeId), adapterId);
+      return adapter.getComponent(fsPath);
+    }
+    throw new TypeInferenceError('error_could_not_infer_type', fsPath);
+  }
+
+  private getComponentsFromPathInternal(
+    directory: SourcePath
+  ): MetadataComponent[] {
+    const dirQueue = [];
+    const components = [];
+
+    for (const file of readdirSync(directory)) {
+      const path = join(directory, file);
+      if (isDirectory(path)) {
+        dirQueue.push(path);
+      } else if (parseMetadataXml(path)) {
+        const c = this.fetchComponent(path);
+        components.push(c);
+
+        // don't traverse further if not in a root type directory. performance optimization
+        // for mixed content types and ensures we don't add duplicates of the component.
+        const isMixedContent = !!this.data.mixedContent[c.type.directoryName];
+        const typeDir = basename(
+          dirname(c.type.inFolder ? dirname(path) : path)
+        );
+        if (isMixedContent && typeDir !== c.type.directoryName) {
+          return components;
+        }
+      }
     }
 
-    const adapterId = this.data.adapters[typeId] as AdapterId;
-    const adapter = getAdapter(this.getTypeFromName(typeId), adapterId);
-    return [adapter.getComponent(fsPath)];
+    for (const dir of dirQueue) {
+      components.push(...this.getComponentsFromPathInternal(dir));
+    }
+
+    return components;
   }
 
   public getApiVersion(): string {
-    return this.data.apiversion;
+    return this.data.apiVersion;
   }
 }

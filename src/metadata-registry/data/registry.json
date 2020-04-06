@@ -1091,7 +1091,6 @@
     "navigationMenu": "navigationmenu",
     "resource": "staticresource",
     "scf": "scontrol",
-    "undefined": "wavetemplatebundle",
     "crt": "certificate",
     "messageChannel": "lightningmessagechannel",
     "component": "apexcomponent",
@@ -1280,5 +1279,5 @@
     "staticresource": "mixedContent",
     "waveTemplates": "bundle"
   },
-  "apiversion": "48.0"
+  "apiVersion": "48.0"
 }

@@ -31,7 +31,7 @@ describe('BaseSourceAdapter', () => {
   it('Should return a MetadataComponent when given a metadata xml file', () => {
     const path = join('path', 'to', 'keanus', 'My_Test.keanu-meta.xml');
     const type = mockRegistry.types.keanureeves;
-    const adapter = new BaseSourceAdapter(type);
+    const adapter = new BaseSourceAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.deep.equal({
       fullName: 'My_Test',
       type,
@@ -49,7 +49,7 @@ describe('BaseSourceAdapter', () => {
       'My_Test.kathy-meta.xml'
     );
     const type = mockRegistry.types.kathybates;
-    const adapter = new BaseSourceAdapter(type);
+    const adapter = new BaseSourceAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.deep.equal({
       fullName: 'A_Folder/My_Test',
       type,
@@ -61,7 +61,7 @@ describe('BaseSourceAdapter', () => {
   it('Should defer parsing metadata xml to child adapter if path is not a metadata xml', () => {
     const path = join('path', 'to', 'dwaynes', 'My_Test.js');
     const type = mockRegistry.types.dwaynejohnson;
-    const adapter = new TestChildAdapter(type);
+    const adapter = new TestChildAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.deep.equal({
       fullName: 'a',
       type,
@@ -79,7 +79,7 @@ describe('BaseSourceAdapter', () => {
       'b.small-meta.xml'
     );
     const type = mockRegistry.types.dwaynejohnson;
-    const adapter = new TestChildAdapter(type);
+    const adapter = new TestChildAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.deep.equal({
       fullName: 'a',
       type,
@@ -91,7 +91,7 @@ describe('BaseSourceAdapter', () => {
   it('Should throw an error if directly using adapter and path is not a root metadata xml', () => {
     const path = join('path', 'to', 'dwaynes', 'My_Test.js');
     const type = mockRegistry.types.dwaynejohnson;
-    const adapter = new BaseSourceAdapter(type);
+    const adapter = new BaseSourceAdapter(type, mockRegistry);
     assert.throws(
       () => adapter.getComponent(path),
       RegistryError,

@@ -16,6 +16,3 @@ export {
 } from './tooling/deployStrategies';
 
 export { ApiResult } from './types';
-/**
- * Transfer SFDX source to and from a Salesforce org.
- */

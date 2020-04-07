@@ -1279,5 +1279,5 @@
     "staticresource": "mixedContent",
     "waveTemplates": "bundle"
   },
-  "apiversion": "48.0"
+  "apiVersion": "48.0"
 }

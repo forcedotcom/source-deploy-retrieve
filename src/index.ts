@@ -4,23 +4,18 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
+export { RegistryAccess, registryData } from './metadata-registry';
 export {
-  RegistryAccess,
-  registryData,
-  ManifestGenerator
-} from './metadata-registry';
-
-export {
-  Deploy,
   DeployResult,
   DeployStatusEnum,
   FilePathOpts,
+  getDeployStrategy,
   ToolingCreateResult,
   ToolingDeployResult,
   supportedToolingTypes
-} from './deploy/tooling/deployStrategies';
+} from './tooling/deployStrategies';
 
-export { ApiResult, RetrievePathOptions } from './types';
-
-export { SourceClient } from './client';
+export { ApiResult } from './types';
+/**
+ * Transfer SFDX source to and from a Salesforce org.
+ */

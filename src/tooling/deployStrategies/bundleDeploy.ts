@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { MetadataComponent } from '../../../metadata-registry/index';
+import { MetadataComponent } from '../../metadata-registry/index';
 import * as fs from 'fs';
 import * as path from 'path';
 import { BaseDeploy } from './baseDeploy';

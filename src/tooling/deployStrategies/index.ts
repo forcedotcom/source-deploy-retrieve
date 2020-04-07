@@ -8,7 +8,7 @@
 import { BaseDeploy } from './baseDeploy';
 import { BundleTypes } from './deployUtil';
 import { BundleDeploy } from './bundleDeploy';
-import { ApexDeploy } from './apexDeploy';
+import { ContainerDeploy } from './containerDeploy';
 import { Connection } from '@salesforce/core';
 
 export {
@@ -20,8 +20,7 @@ export {
   ToolingDeployResult,
   BundleTypes
 } from './deployUtil';
-export { Deploy } from '../toolingDeploy';
-export { ApexDeploy } from './apexDeploy';
+export { ContainerDeploy } from './containerDeploy';
 export { BundleDeploy } from './bundleDeploy';
 
 export const getDeployStrategy = (
@@ -31,6 +30,6 @@ export const getDeployStrategy = (
 ): BaseDeploy => {
   const deployStrategy = BundleTypes.includes(type)
     ? new BundleDeploy(connection, apiVersion)
-    : new ApexDeploy(connection, apiVersion);
+    : new ContainerDeploy(connection, apiVersion);
   return deployStrategy;
 };

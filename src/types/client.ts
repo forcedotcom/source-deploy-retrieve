@@ -6,6 +6,7 @@
  */
 
 import { Connection } from '@salesforce/core';
+import { RegistryAccess } from '../index';
 
 /**
  * File system path to a source file of a metadata component.
@@ -117,13 +118,20 @@ export interface DeployRetrieveClient {
    * @param options Specify `paths`, `output` and other optionals
    */
   retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult>;
+  /* Infer metadata components from source path and deploy them.
+   *
+   * @param filePath Paths to source files to deploy
+   */
+  deploy(filePath: string): Promise<ApiResult>;
 }
 
 export abstract class BaseApi implements DeployRetrieveClient {
   protected connection: Connection;
+  protected registryAccess: RegistryAccess;
 
-  constructor(connection: Connection) {
+  constructor(connection: Connection, registryAccess?: RegistryAccess) {
     this.connection = connection;
+    this.registryAccess = registryAccess || new RegistryAccess();
   }
 
   /**
@@ -132,4 +140,6 @@ export abstract class BaseApi implements DeployRetrieveClient {
   abstract retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult>;
 
   abstract retrieve(options: RetrieveOptions): Promise<ApiResult>;
+
+  abstract deploy(filePath: string): Promise<ApiResult>;
 }

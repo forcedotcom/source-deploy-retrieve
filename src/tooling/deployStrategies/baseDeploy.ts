@@ -1,5 +1,5 @@
 import { ToolingCreateResult, ToolingDeployResult } from './index';
-import { MetadataComponent } from '../../../metadata-registry';
+import { MetadataComponent } from '../../metadata-registry';
 import { Connection } from '@salesforce/core';
 
 const DOMParser = require('xmldom-sfdx-encoding').DOMParser;

@@ -8,18 +8,18 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { BaseDeploy } from './baseDeploy';
-import { nls } from '../../../i18n';
+import { nls } from '../../i18n';
 import {
   DeployStatusEnum,
   supportedToolingTypes,
   ToolingCreateResult,
   ToolingDeployResult
 } from './index';
-import { MetadataComponent } from '../../../metadata-registry/index';
+import { MetadataComponent } from '../../metadata-registry/index';
 const CONTAINER_ASYNC_REQUEST = 'ContainerAsyncRequest';
 const METADATA_CONTAINER = 'MetadataContainer';
 
-export class ApexDeploy extends BaseDeploy {
+export class ContainerDeploy extends BaseDeploy {
   public async deploy(
     component: MetadataComponent
   ): Promise<ToolingDeployResult> {

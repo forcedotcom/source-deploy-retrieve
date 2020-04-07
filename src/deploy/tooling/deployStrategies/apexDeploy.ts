@@ -5,44 +5,24 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { Connection } from '@salesforce/core';
 import * as fs from 'fs';
 import * as path from 'path';
-import { nls } from '../i18n';
+import { BaseDeploy } from './baseDeploy';
+import { nls } from '../../../i18n';
 import {
   DeployStatusEnum,
   supportedToolingTypes,
   ToolingCreateResult,
   ToolingDeployResult
 } from './index';
-import { RegistryAccess } from '../metadata-registry/index';
-// tslint:disable-next-line:no-var-requires
-const DOMParser = require('xmldom-sfdx-encoding').DOMParser;
+import { MetadataComponent } from '../../../metadata-registry/index';
 const CONTAINER_ASYNC_REQUEST = 'ContainerAsyncRequest';
 const METADATA_CONTAINER = 'MetadataContainer';
 
-export class Deploy {
-  public metadataType: string;
-  public connection: Connection;
-  private apiVersion: string;
-  private registryAccess: RegistryAccess;
-
-  public constructor(
-    connection: Connection,
-    apiVersion?: string,
-    registryAccess?: RegistryAccess
-  ) {
-    this.connection = connection;
-    this.apiVersion = apiVersion;
-    if (registryAccess) {
-      this.registryAccess = registryAccess;
-    } else {
-      this.registryAccess = new RegistryAccess();
-    }
-  }
-
-  public async deploy(filePath: string): Promise<ToolingDeployResult> {
-    const component = this.registryAccess.getComponentsFromPath(filePath)[0];
+export class ApexDeploy extends BaseDeploy {
+  public async deploy(
+    component: MetadataComponent
+  ): Promise<ToolingDeployResult> {
     this.metadataType = component.type.name;
     const sourcePath = component.sources[0];
     const metadataPath = component.xml;
@@ -76,42 +56,6 @@ export class Deploy {
       throw deployFailed;
     }
     return metadataContainer;
-  }
-
-  private async toolingCreate(
-    type: string,
-    record: object
-  ): Promise<ToolingCreateResult> {
-    return (await this.connection.tooling.create(
-      type,
-      record
-    )) as ToolingCreateResult;
-  }
-
-  public buildMetadataField(
-    metadataContent: string
-  ): {
-    label?: string;
-    packageVersions?: string;
-    status?: string;
-    apiVersion: string;
-  } {
-    const parser = new DOMParser();
-    const document = parser.parseFromString(metadataContent, 'text/xml');
-    const apiVersion =
-      this.apiVersion ||
-      document.getElementsByTagName('apiVersion')[0].textContent;
-    const statusNode = document.getElementsByTagName('status')[0];
-    const packageNode = document.getElementsByTagName('packageVersions')[0];
-    const labelNode = document.getElementsByTagName('label')[0];
-
-    const metadataField = {
-      apiVersion,
-      ...(statusNode ? { status: statusNode.textContent } : {}),
-      ...(packageNode ? { packageVersions: packageNode.textContent } : {}),
-      ...(labelNode ? { label: labelNode.textContent } : {})
-    };
-    return metadataField;
   }
 
   public async createContainerMember(

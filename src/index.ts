@@ -19,7 +19,7 @@ export {
   ToolingCreateResult,
   ToolingDeployResult,
   supportedToolingTypes
-} from './deploy';
+} from './deploy/tooling/deployStrategies';
 
 export { ApiResult, RetrievePathOptions } from './types';
 

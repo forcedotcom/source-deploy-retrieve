@@ -9,8 +9,12 @@ export const supportedToolingTypes = new Map([
   ['ApexClass', 'ApexClassMember'],
   ['ApexTrigger', 'ApexTriggerMember'],
   ['ApexPage', 'ApexPageMember'],
-  ['ApexComponent', 'ApexComponentMember']
+  ['ApexComponent', 'ApexComponentMember'],
+  ['AuraDefinitionBundle', 'AuraDefinition'],
+  ['LightningComponentBundle', 'LightningComponentResource']
 ]);
+
+export const BundleTypes = ['LightningComponentBundle', 'AuraDefinitionBundle'];
 
 /**
  * Enum that represents the status of a Tooling Container Deploy
@@ -71,4 +75,12 @@ export interface DeployResult {
   changed: boolean;
   created: boolean;
   deleted: boolean;
+}
+
+export interface BundleMetadataObj {
+  FilePath: string;
+  DefType?: string;
+  Source: string;
+  Format: string;
+  Id?: string;
 }

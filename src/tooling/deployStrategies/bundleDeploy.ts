@@ -15,6 +15,7 @@ import {
   ToolingDeployResult
 } from './deployUtil';
 import { ToolingCreateResult } from './index';
+import { nls } from '../../i18n';
 
 export class BundleDeploy extends BaseDeploy {
   public async deploy(
@@ -102,7 +103,10 @@ export class BundleDeploy extends BaseDeploy {
     );
     if (!newBundle.success) {
       const deployFailed = new Error();
-      // deployFailed.message = nls.localize('beta_tapi_mdcontainer_error');
+      deployFailed.message = nls.localize(
+        'error_creating_metadata_type',
+        this.metadataType
+      );
       deployFailed.name = `${this.metadataType}CreationFailed`;
       throw deployFailed;
     }
@@ -123,17 +127,20 @@ export class BundleDeploy extends BaseDeploy {
         Format: resource.Format,
         Source: resource.Source
       };
+      const resourceType = supportedToolingTypes.get(this.metadataType);
+
       const createdResource = await this.toolingCreate(
-        supportedToolingTypes.get(this.metadataType),
+        resourceType,
         bundleObject
       );
 
       if (!createdResource.success) {
         const deployFailed = new Error();
-        // deployFailed.message = nls.localize('beta_tapi_mdcontainer_error');
-        deployFailed.name = `${supportedToolingTypes.get(
-          this.metadataType
-        )}CreationFailed`;
+        deployFailed.message = nls.localize(
+          'error_creating_metadata_type',
+          resourceType
+        );
+        deployFailed.name = `${resourceType}CreationFailed`;
         throw deployFailed;
       }
     }
@@ -145,17 +152,17 @@ export class BundleDeploy extends BaseDeploy {
         Source: resource.Source,
         Id: resource.Id
       };
+      const resourceType = supportedToolingTypes.get(this.metadataType);
+
       const updatedResource = (await this.connection.tooling.update(
-        supportedToolingTypes.get(this.metadataType),
+        resourceType,
         auraDef
       )) as ToolingCreateResult;
 
       if (!updatedResource.success) {
         const deployFailed = new Error();
-        // deployFailed.message = nls.localize('beta_tapi_mdcontainer_error');
-        deployFailed.name = `${supportedToolingTypes.get(
-          this.metadataType
-        )}UpdateFailed`;
+        deployFailed.message = nls.localize('error_updating_metadata_type');
+        deployFailed.name = `${resourceType}UpdateFailed`;
         throw deployFailed;
       }
     }

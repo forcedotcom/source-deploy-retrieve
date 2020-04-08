@@ -38,7 +38,7 @@ export default class SourceClient {
 
   constructor(
     connection: Connection,
-    apiVersion: string = registryData.apiversion
+    apiVersion: string = registryData.apiVersion
   ) {
     this.connection = connection;
     this.apiVersion = apiVersion;

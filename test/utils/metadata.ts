@@ -5,7 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { generateMetaXML } from '../../src/utils';
+import { generateMetaXML, generateMetaXMLPath } from '../../src/utils';
+import * as path from 'path';
 import { expect } from 'chai';
 
 describe('Metadata Utils', () => {
@@ -15,8 +16,18 @@ describe('Metadata Utils', () => {
   metaXMLFile += '\t<apiVersion>32.0</apiVersion>\n';
   metaXMLFile += '\t<status>Active</status>\n';
   metaXMLFile += '</ApexClass>';
+
   it('should generate a meta-xml blob', () => {
     const metaXMLBlob = generateMetaXML('ApexClass', '32', 'Active');
     expect(metaXMLBlob).to.equals(metaXMLFile);
+  });
+
+  it('should generate a meta-xml path', () => {
+    const genericFilePath = generateMetaXMLPath(
+      path.join('some', 'file', 'path.cls')
+    );
+    expect(genericFilePath).to.equals(
+      path.join('some', 'file', 'path.cls-meta.xml')
+    );
   });
 });

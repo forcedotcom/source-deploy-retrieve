@@ -14,7 +14,8 @@ import * as stream from 'stream';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ToolingApi } from '../../src/client';
 import { RegistryAccess } from '../../src/metadata-registry';
-import { ApiResult } from '../../src/types';
+import { ApiResult, QueryResult, MetadataComponent } from '../../src/types';
+import { nls } from '../../src/i18n';
 
 const $$ = testSetup();
 describe('Tooling Retrieve', () => {
@@ -27,6 +28,31 @@ describe('Tooling Retrieve', () => {
   metaXMLFile += '\t<apiVersion>32.0</apiVersion>\n';
   metaXMLFile += '\t<status>Active</status>\n';
   metaXMLFile += '</ApexClass>';
+  const mdComponents: MetadataComponent[] = [
+    {
+      type: { name: 'ApexClass', directoryName: '', inFolder: false },
+      fullName: '',
+      xml: '',
+      sources: []
+    }
+  ];
+  const apexClassQueryResult: QueryResult = {
+    done: true,
+    entityTypeName: 'ApexClass',
+    records: [
+      {
+        ApiVersion: '32',
+        Body: 'public with sharing class myTestClass {}',
+        Id: '01pxxx000000034',
+        Name: 'myTestClass',
+        NamespacePrefix: null,
+        Status: 'Active'
+      }
+    ],
+    size: 1,
+    totalSize: 1,
+    queryLocator: null
+  };
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
@@ -55,53 +81,49 @@ describe('Tooling Retrieve', () => {
     sandboxStub.restore();
   });
 
-  it('should create a tooling query', () => {
+  it('should generate correct query to retrieve an ApexClass', async () => {
+    const registryAccess = new RegistryAccess();
+    sandboxStub
+      .stub(registryAccess, 'getComponentsFromPath')
+      .returns(mdComponents);
+    const toolingQueryStub = sandboxStub.stub(mockConnection.tooling, 'query');
+    // @ts-ignore
+    toolingQueryStub.returns(apexClassQueryResult);
+
+    const stubCreateMetadataFile = sandboxStub.stub(fs, 'createWriteStream');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    stubCreateMetadataFile.onCall(0).returns(new stream.PassThrough() as any);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    stubCreateMetadataFile.onCall(1).returns(new stream.PassThrough() as any);
+
     const toolingAPI = new ToolingApi(mockConnection);
-    const mdComponents = [
-      {
-        fullName: 'MyTestClass',
-        sources: [path.join('file', 'path', 'MyTestClass.cls')],
-        type: {
-          directoryName: 'classes',
-          inFolder: false,
-          name: 'ApexClass',
-          suffix: 'cls'
-        },
-        xml: path.join('file', 'path', 'MyTestClass.cls-meta.xml')
-      }
-    ];
-    const query = toolingAPI.buildQuery(mdComponents);
-    expect(query).to.equals(
-      `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'MyTestClass'`
+    const retrieveOpts = {
+      paths: [path.join('file', 'path', 'MyTestClass.cls')],
+      output: path.join('file', 'path')
+    };
+    const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(
+      retrieveOpts
     );
+
+    expect(retrieveResults).to.be.a('object');
+    expect(retrieveResults.success).to.equal(true);
+    expect(
+      toolingQueryStub.calledOnceWith(
+        `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'MyTestClass'`
+      )
+    ).to.equal(true);
   });
 
   it('should retrieve an ApexClass', async () => {
     const registryAccess = new RegistryAccess();
-    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns([
-      {
-        type: { name: 'ApexClass', directoryName: '', inFolder: false },
-        fullName: '',
-        xml: '',
-        sources: []
-      }
-    ]);
+    sandboxStub
+      .stub(registryAccess, 'getComponentsFromPath')
+      .returns(mdComponents);
 
-    sandboxStub.stub(mockConnection.tooling, 'query').returns({
+    sandboxStub
+      .stub(mockConnection.tooling, 'query')
       // @ts-ignore
-      done: true,
-      entityTypeName: 'ApexClass',
-      records: [
-        {
-          ApiVersion: 32,
-          Body: 'public with sharing class myTestClass {}',
-          Id: '01pxxx000000034',
-          Name: 'myTestClass',
-          NamespacePrefix: null,
-          Status: 'Active'
-        }
-      ]
-    });
+      .returns(apexClassQueryResult);
 
     const stubCreateMetadataFile = sandboxStub.stub(fs, 'createWriteStream');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -136,6 +158,37 @@ describe('Tooling Retrieve', () => {
     expect(retrieveResults.components[0].sources.length).to.equal(1);
     expect(retrieveResults.components[0].sources[0]).to.equal(
       path.join('file', 'path', 'MyTestClass.cls')
+    );
+  });
+
+  it('should return empty result when metadata is not in org', async () => {
+    const registryAccess = new RegistryAccess();
+    sandboxStub
+      .stub(registryAccess, 'getComponentsFromPath')
+      .returns(mdComponents);
+
+    sandboxStub
+      .stub(mockConnection.tooling, 'query')
+      // @ts-ignore
+      .returns({ done: true, entityTypeName: 'ApexClass', records: [] });
+
+    const toolingAPI = new ToolingApi(mockConnection);
+    const retrieveOpts = {
+      paths: [path.join('file', 'path', 'MyTestClass.cls')],
+      output: path.join('file', 'path')
+    };
+    const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(
+      retrieveOpts
+    );
+    expect(retrieveResults).to.be.a('object');
+    expect(retrieveResults.success).to.equal(true);
+    expect(retrieveResults.components).to.be.a('Array');
+    expect(retrieveResults.components.length).to.equal(0);
+    expect(retrieveResults.message).to.equal(
+      nls.localize(
+        'error_md_not_present_in_org',
+        path.join('file', 'path', 'MyTestClass.cls')
+      )
     );
   });
 });

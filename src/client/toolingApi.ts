@@ -15,34 +15,42 @@ import {
 } from '../types';
 import { RegistryAccess } from '../metadata-registry';
 import { nls } from '../i18n';
-import { createMetadataFile, generateMetaXML } from '../utils';
+import {
+  createMetadataFile,
+  generateMetaXML,
+  generateMetaXMLPath
+} from '../utils';
 
 export class ToolingApi extends BaseApi {
+  protected mdComponent: MetadataComponent[];
+
   public async retrieveWithPaths(
     options: RetrievePathOptions
   ): Promise<ApiResult> {
     let retrieveResult: ApiResult;
     const retrievePaths = options.paths[0];
     const registry = new RegistryAccess();
-    const mdComponent = registry.getComponentsFromPath(retrievePaths);
+    this.mdComponent = registry.getComponentsFromPath(retrievePaths);
 
     try {
       const queryResult = (await this.connection.tooling.query(
-        this.buildQuery(mdComponent)
+        this.buildQuery()
       )) as QueryResult;
 
       if (queryResult && queryResult.records.length === 0) {
-        throw new Error(
-          nls.localize('error_md_not_present_in_org', retrievePaths)
-        );
+        return {
+          success: true,
+          components: [],
+          message: nls.localize('error_md_not_present_in_org', retrievePaths)
+        };
       }
 
-      const mdSourcePath = mdComponent[0].sources[0];
+      const mdSourcePath = this.mdComponent[0].sources[0];
       createMetadataFile(mdSourcePath, queryResult.records[0].Body);
       createMetadataFile(
-        `${mdSourcePath}-meta.xml`,
+        generateMetaXMLPath(mdSourcePath),
         generateMetaXML(
-          mdComponent[0].type.name,
+          this.mdComponent[0].type.name,
           queryResult.records[0].ApiVersion,
           queryResult.records[0].Status
         )
@@ -50,7 +58,7 @@ export class ToolingApi extends BaseApi {
 
       retrieveResult = {
         success: true,
-        components: mdComponent
+        components: this.mdComponent
       };
     } catch (err) {
       throw new Error(nls.localize('error_in_tooling_retrieve', err));
@@ -64,7 +72,7 @@ export class ToolingApi extends BaseApi {
     throw new Error('Method not implemented.');
   }
 
-  public buildQuery(mdComponent: MetadataComponent[]): string {
-    return `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ${mdComponent[0].type.name} where Name = '${mdComponent[0].fullName}'`;
+  protected buildQuery(): string {
+    return `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ${this.mdComponent[0].type.name} where Name = '${this.mdComponent[0].fullName}'`;
   }
 }

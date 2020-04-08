@@ -17,3 +17,7 @@ export function generateMetaXML(
   templateResult += `</${typeName}>`;
   return templateResult;
 }
+
+export function generateMetaXMLPath(sourcePath: string): string {
+  return `${sourcePath}-meta.xml`;
+}

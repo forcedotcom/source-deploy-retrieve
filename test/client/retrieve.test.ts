@@ -12,7 +12,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as stream from 'stream';
 import { createSandbox, SinonSandbox } from 'sinon';
-import { ToolingApi } from '../../src/tooling';
+import { ToolingApi } from '../../src/client';
 import { RegistryAccess } from '../../src/metadata-registry';
 import { ApiResult } from '../../src/types';
 
@@ -56,7 +56,7 @@ describe('Tooling Retrieve', () => {
   });
 
   it('should create a tooling query', () => {
-    const toolingAPI = new ToolingApi(mockConnection, '48.0');
+    const toolingAPI = new ToolingApi(mockConnection);
     const mdComponents = [
       {
         fullName: 'MyTestClass',
@@ -74,12 +74,6 @@ describe('Tooling Retrieve', () => {
     expect(query).to.equals(
       `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'MyTestClass'`
     );
-  });
-
-  it('should generate a meta-xml blob', () => {
-    const toolingAPI = new ToolingApi(mockConnection, '48.0');
-    const metaXMLBlob = toolingAPI.generateMetaXML('ApexClass', '32', 'Active');
-    expect(metaXMLBlob).to.equals(metaXMLFile);
   });
 
   it('should retrieve an ApexClass', async () => {
@@ -115,7 +109,7 @@ describe('Tooling Retrieve', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     stubCreateMetadataFile.onCall(1).returns(new stream.PassThrough() as any);
 
-    const toolingAPI = new ToolingApi(mockConnection, '48.0');
+    const toolingAPI = new ToolingApi(mockConnection);
     const retrieveOpts = {
       paths: [path.join('file', 'path', 'MyTestClass.cls')],
       output: path.join('file', 'path')

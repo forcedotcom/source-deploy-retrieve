@@ -74,7 +74,7 @@ type CommonRetrieveOptions = {
   /**
    * The directory to retrieve the components to.
    */
-  output: SourcePath;
+  output?: SourcePath;
 };
 
 type CommonPathOptions = {
@@ -121,11 +121,9 @@ export interface DeployRetrieveClient {
 
 export abstract class BaseApi implements DeployRetrieveClient {
   protected connection: Connection;
-  private apiVersion: string;
 
-  constructor(connection: Connection, apiVersion: string) {
+  constructor(connection: Connection) {
     this.connection = connection;
-    this.apiVersion = apiVersion;
   }
 
   /**

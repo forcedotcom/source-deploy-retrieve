@@ -6,3 +6,4 @@
  */
 
 export { createMetadataFile } from './fileSystemHandler';
+export { generateMetaXML } from './metadata';

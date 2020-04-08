@@ -15,7 +15,7 @@ import {
 } from '../types';
 import { RegistryAccess } from '../metadata-registry';
 import { nls } from '../i18n';
-import { createMetadataFile } from '../utils';
+import { createMetadataFile, generateMetaXML } from '../utils';
 
 export class ToolingApi extends BaseApi {
   public async retrieveWithPaths(
@@ -41,7 +41,7 @@ export class ToolingApi extends BaseApi {
       createMetadataFile(mdSourcePath, queryResult.records[0].Body);
       createMetadataFile(
         `${mdSourcePath}-meta.xml`,
-        this.generateMetaXML(
+        generateMetaXML(
           mdComponent[0].type.name,
           queryResult.records[0].ApiVersion,
           queryResult.records[0].Status
@@ -62,19 +62,6 @@ export class ToolingApi extends BaseApi {
   retrieve(options: RetrieveOptions): ApiResult {
     console.log('options ', options);
     throw new Error('Method not implemented.');
-  }
-
-  public generateMetaXML(
-    typeName: string,
-    apiVersion: string,
-    status: string
-  ): string {
-    let templateResult = '<?xml version="1.0" encoding="UTF-8"?>\n';
-    templateResult += `<${typeName} xmlns="http://soap.sforce.com/2006/04/metadata">\n`;
-    templateResult += `\t<apiVersion>${apiVersion}.0</apiVersion>\n`;
-    templateResult += `\t<status>${status}</status>\n`;
-    templateResult += `</${typeName}>`;
-    return templateResult;
   }
 
   public buildQuery(mdComponent: MetadataComponent[]): string {

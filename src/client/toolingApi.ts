@@ -27,10 +27,17 @@ export class ToolingApi extends BaseApi {
   public async retrieveWithPaths(
     options: RetrievePathOptions
   ): Promise<ApiResult> {
-    let retrieveResult: ApiResult;
     const retrievePaths = options.paths[0];
     const registry = new RegistryAccess();
-    this.mdComponent = registry.getComponentsFromPath(retrievePaths);
+    return await this.retrieve({
+      output: options.paths[0],
+      components: registry.getComponentsFromPath(retrievePaths)
+    });
+  }
+
+  public async retrieve(options: RetrieveOptions): Promise<ApiResult> {
+    let retrieveResult: ApiResult;
+    this.mdComponent = options.components;
 
     try {
       const queryResult = (await this.connection.tooling.query(
@@ -41,7 +48,7 @@ export class ToolingApi extends BaseApi {
         return {
           success: true,
           components: [],
-          message: nls.localize('error_md_not_present_in_org', retrievePaths)
+          message: nls.localize('error_md_not_present_in_org', options.output)
         };
       }
 
@@ -65,11 +72,6 @@ export class ToolingApi extends BaseApi {
     }
 
     return retrieveResult;
-  }
-
-  retrieve(options: RetrieveOptions): ApiResult {
-    console.log('options ', options);
-    throw new Error('Method not implemented.');
   }
 
   protected buildQuery(): string {

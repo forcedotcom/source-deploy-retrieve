@@ -30,10 +30,15 @@ describe('Tooling Retrieve', () => {
   metaXMLFile += '</ApexClass>';
   const mdComponents: MetadataComponent[] = [
     {
-      type: { name: 'ApexClass', directoryName: '', inFolder: false },
-      fullName: '',
-      xml: '',
-      sources: []
+      type: {
+        name: 'ApexClass',
+        directoryName: 'classes',
+        inFolder: false,
+        suffix: 'cls'
+      },
+      fullName: 'myTestClass',
+      xml: path.join('file', 'path', 'myTestClass.cls-meta.xml'),
+      sources: [path.join('file', 'path', 'myTestClass.cls')]
     }
   ];
   const apexClassQueryResult: QueryResult = {
@@ -98,7 +103,7 @@ describe('Tooling Retrieve', () => {
 
     const toolingAPI = new ToolingApi(mockConnection);
     const retrieveOpts = {
-      paths: [path.join('file', 'path', 'MyTestClass.cls')],
+      paths: [path.join('file', 'path', 'myTestClass.cls')],
       output: path.join('file', 'path')
     };
     const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(
@@ -109,12 +114,12 @@ describe('Tooling Retrieve', () => {
     expect(retrieveResults.success).to.equal(true);
     expect(
       toolingQueryStub.calledOnceWith(
-        `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'MyTestClass'`
+        `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'myTestClass'`
       )
     ).to.equal(true);
   });
 
-  it('should retrieve an ApexClass', async () => {
+  it('should retrieve an ApexClass using filepath', async () => {
     const registryAccess = new RegistryAccess();
     sandboxStub
       .stub(registryAccess, 'getComponentsFromPath')
@@ -133,7 +138,7 @@ describe('Tooling Retrieve', () => {
 
     const toolingAPI = new ToolingApi(mockConnection);
     const retrieveOpts = {
-      paths: [path.join('file', 'path', 'MyTestClass.cls')],
+      paths: [path.join('file', 'path', 'myTestClass.cls')],
       output: path.join('file', 'path')
     };
     const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(
@@ -143,7 +148,7 @@ describe('Tooling Retrieve', () => {
     expect(retrieveResults.success).to.equal(true);
     expect(retrieveResults.components).to.be.a('Array');
     expect(retrieveResults.components.length).to.equal(1);
-    expect(retrieveResults.components[0].fullName).to.equal('MyTestClass');
+    expect(retrieveResults.components[0].fullName).to.equal('myTestClass');
     expect(retrieveResults.components[0].type).to.be.a('object');
     expect(retrieveResults.components[0].type.name).to.equal('ApexClass');
     expect(retrieveResults.components[0].type.suffix).to.equal('cls');
@@ -152,12 +157,59 @@ describe('Tooling Retrieve', () => {
     );
     expect(retrieveResults.components[0].type.inFolder).to.equal(false);
     expect(retrieveResults.components[0].xml).to.equal(
-      path.join('file', 'path', 'MyTestClass.cls-meta.xml')
+      path.join('file', 'path', 'myTestClass.cls-meta.xml')
     );
     expect(retrieveResults.components[0].sources).to.be.a('Array');
     expect(retrieveResults.components[0].sources.length).to.equal(1);
     expect(retrieveResults.components[0].sources[0]).to.equal(
-      path.join('file', 'path', 'MyTestClass.cls')
+      path.join('file', 'path', 'myTestClass.cls')
+    );
+  });
+
+  it('should retrieve an ApexClass using metadatacomponents', async () => {
+    const registryAccess = new RegistryAccess();
+    /*sandboxStub
+      .stub(registryAccess, 'getComponentsFromPath')
+      .returns(mdComponents); */
+
+    sandboxStub
+      .stub(mockConnection.tooling, 'query')
+      // @ts-ignore
+      .returns(apexClassQueryResult);
+
+    const stubCreateMetadataFile = sandboxStub.stub(fs, 'createWriteStream');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    stubCreateMetadataFile.onCall(0).returns(new stream.PassThrough() as any);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    stubCreateMetadataFile.onCall(1).returns(new stream.PassThrough() as any);
+
+    const toolingAPI = new ToolingApi(mockConnection);
+    /* const retrieveOpts = {
+      paths: [path.join('file', 'path', 'MyTestClass.cls')],
+      output: path.join('file', 'path')
+    }; */
+    const retrieveResults: ApiResult = await toolingAPI.retrieve({
+      components: mdComponents
+    });
+    expect(retrieveResults).to.be.a('object');
+    expect(retrieveResults.success).to.equal(true);
+    expect(retrieveResults.components).to.be.a('Array');
+    expect(retrieveResults.components.length).to.equal(1);
+    expect(retrieveResults.components[0].fullName).to.equal('myTestClass');
+    expect(retrieveResults.components[0].type).to.be.a('object');
+    expect(retrieveResults.components[0].type.name).to.equal('ApexClass');
+    expect(retrieveResults.components[0].type.suffix).to.equal('cls');
+    expect(retrieveResults.components[0].type.directoryName).to.equal(
+      'classes'
+    );
+    expect(retrieveResults.components[0].type.inFolder).to.equal(false);
+    expect(retrieveResults.components[0].xml).to.equal(
+      path.join('file', 'path', 'myTestClass.cls-meta.xml')
+    );
+    expect(retrieveResults.components[0].sources).to.be.a('Array');
+    expect(retrieveResults.components[0].sources.length).to.equal(1);
+    expect(retrieveResults.components[0].sources[0]).to.equal(
+      path.join('file', 'path', 'myTestClass.cls')
     );
   });
 
@@ -174,7 +226,7 @@ describe('Tooling Retrieve', () => {
 
     const toolingAPI = new ToolingApi(mockConnection);
     const retrieveOpts = {
-      paths: [path.join('file', 'path', 'MyTestClass.cls')],
+      paths: [path.join('file', 'path', 'myTestClass.cls')],
       output: path.join('file', 'path')
     };
     const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(
@@ -187,7 +239,7 @@ describe('Tooling Retrieve', () => {
     expect(retrieveResults.message).to.equal(
       nls.localize(
         'error_md_not_present_in_org',
-        path.join('file', 'path', 'MyTestClass.cls')
+        path.join('file', 'path', 'myTestClass.cls')
       )
     );
   });

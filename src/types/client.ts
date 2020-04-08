@@ -110,7 +110,7 @@ export interface DeployRetrieveClient {
    *
    * @param options Specify `components`, `output` and other optionals
    */
-  retrieve(options: RetrieveOptions): ApiResult;
+  retrieve(options: RetrieveOptions): Promise<ApiResult>;
   /**
    * Infer metadata components from source paths, retrieve them, and wait for the result.
    *
@@ -131,5 +131,5 @@ export abstract class BaseApi implements DeployRetrieveClient {
    */
   abstract retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult>;
 
-  abstract retrieve(options: RetrieveOptions): ApiResult;
+  abstract retrieve(options: RetrieveOptions): Promise<ApiResult>;
 }

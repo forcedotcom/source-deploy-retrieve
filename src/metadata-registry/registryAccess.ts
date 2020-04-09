@@ -68,9 +68,12 @@ export class RegistryAccess {
       // first check if this directory is actually content
       const typeId = this.determineTypeId(fsPath);
       if (typeId) {
+        // If we can determine a type from a directory path, we know it's specified as mixedContent
         const type = this.getTypeFromName(typeId);
         const { directoryName, inFolder } = type;
-        if (!inFolder || directoryName !== parseBaseName(dirname(fsPath))) {
+        const parts = fsPath.split(sep);
+        const folderOffset = inFolder ? 2 : 1;
+        if (parts[parts.length - folderOffset] !== directoryName) {
           const xml = MixedContent.findXmlFromContentPath(fsPath, type);
           if (xml) {
             return [this.fetchComponent(xml)];
@@ -85,19 +88,19 @@ export class RegistryAccess {
   private determineTypeId(fsPath: SourcePath): string | undefined {
     let typeId: string;
 
-    // attempt 1 - check if it's a metadata xml file
-    const parsedMetaXml = parseMetadataXml(fsPath);
-    if (parsedMetaXml) {
-      typeId = this.data.suffixes[parsedMetaXml.suffix];
+    // attempt 1 - check if the file is part of a mixed content type
+    const pathParts = new Set(fsPath.split(sep));
+    for (const directoryName of Object.keys(this.data.mixedContent)) {
+      if (pathParts.has(directoryName)) {
+        typeId = this.data.mixedContent[directoryName];
+        break;
+      }
     }
-    // attempt 2 - check if the file is part of a mixed content type
+    // attempt 2 - check if it's a metadata xml file
     if (!typeId) {
-      const pathParts = new Set(fsPath.split(sep));
-      for (const directoryName of Object.keys(this.data.mixedContent)) {
-        if (pathParts.has(directoryName)) {
-          typeId = this.data.mixedContent[directoryName];
-          break;
-        }
+      const parsedMetaXml = parseMetadataXml(fsPath);
+      if (parsedMetaXml) {
+        typeId = this.data.suffixes[parsedMetaXml.suffix];
       }
     }
     // attempt 3 - try treating the file extension name as a suffix

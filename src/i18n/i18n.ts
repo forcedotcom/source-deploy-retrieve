@@ -31,7 +31,7 @@ export const messages = {
   beta_tapi_membertype_unsupported_error: '%s type not supported',
   error_directories_not_supported:
     'Paths to directories are currently not supported',
-  error_expected_source_files: "%s: Expected source files for '%s'",
+  error_expected_source_files: "%s: Expected source files for type '%s'",
   error_missing_adapter: "Missing adapter '%s' for metadata type '%s'",
   error_missing_metadata_xml: "%s: Metadata xml file missing for '%s'",
   error_missing_type_definition:

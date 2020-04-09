@@ -941,7 +941,6 @@
     },
     "emailservicesfunction": {
       "name": "EmailServicesFunction",
-      "suffix": "xml",
       "directoryName": "emailservices",
       "inFolder": false
     },
@@ -1232,7 +1231,6 @@
     "assistantRecommendationType": "assistantrecommendationtype",
     "insightType": "insighttype",
     "topicsForObjects": "topicsforobjects",
-    "xml": "emailservicesfunction",
     "type": "integrationhubsettingstype",
     "settings": "settings",
     "orchestrationContext": "orchestrationcontext",
@@ -1275,6 +1273,7 @@
     "customobject": "bundle",
     "document": "mixedContent",
     "emailtemplate": "matchingContentFile",
+    "experiencebundle": "mixedContent",
     "lightningcomponentbundle": "bundle",
     "staticresource": "mixedContent",
     "waveTemplates": "bundle"

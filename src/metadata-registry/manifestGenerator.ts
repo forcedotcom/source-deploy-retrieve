@@ -13,10 +13,11 @@ export class ManifestGenerator {
   packageModuleStart =
     '<Package xmlns="http://soap.sforce.com/2006/04/metadata">';
   packageModuleEnd = '</Package>';
+  registryAccess = new RegistryAccess();
 
   public createManifest(
     components: MetadataComponent[],
-    apiVersion = new RegistryAccess().getApiVersion()
+    apiVersion = this.registryAccess.getApiVersion()
   ): string {
     let output = this.xmlDef.concat(this.packageModuleStart);
     const metadataMap = this.createMetadataMap(components);
@@ -43,7 +44,9 @@ export class ManifestGenerator {
       Set<string>
     >();
     for (const component of components) {
-      const metadataType = component.type.name;
+      const metadataType = this.registryAccess.getTypeFromName(
+        component.type.name
+      ).name;
       const metadataName = component.fullName;
       if (metadataMap.has(metadataType)) {
         const metadataNames = metadataMap.get(metadataType);

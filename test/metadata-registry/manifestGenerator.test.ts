@@ -8,6 +8,7 @@
 import { ManifestGenerator } from '../../src/metadata-registry/manifestGenerator';
 import { MetadataComponent } from '../../src/metadata-registry/types';
 import { expect } from 'chai';
+import { AssertionError } from 'assert';
 
 describe('ManifestGenerator', () => {
   const manifestGenerator = new ManifestGenerator();
@@ -112,5 +113,22 @@ describe('ManifestGenerator', () => {
     expect(manifestGenerator.createManifest([component], '45.0')).to.equal(
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Package xmlns="http://soap.sforce.com/2006/04/metadata"><types><members>someName</members><name>ApexClass</name></types><version>45.0</version></Package>'
     );
+  });
+
+  it('should throw error for non valid type', () => {
+    const component = {
+      fullName: 'someName',
+      type: { name: 'someveryunknowntype' },
+      xml: '',
+      sources: []
+    } as MetadataComponent;
+    try {
+      manifestGenerator.createManifest([component]);
+      expect.fail('should have failed');
+    } catch (e) {
+      expect(e.message).to.equal(
+        "Missing metadata type definition in registry for id 'someveryunknowntype'"
+      );
+    }
   });
 });

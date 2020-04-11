@@ -16,6 +16,7 @@ import { ToolingApi } from '../../src/client';
 import { RegistryAccess } from '../../src/metadata-registry';
 import { ApiResult, QueryResult, MetadataComponent } from '../../src/types';
 import { nls } from '../../src/i18n';
+import { fail } from 'assert';
 
 const $$ = testSetup();
 describe('Tooling Retrieve', () => {
@@ -167,11 +168,6 @@ describe('Tooling Retrieve', () => {
   });
 
   it('should retrieve an ApexClass using metadatacomponents', async () => {
-    const registryAccess = new RegistryAccess();
-    /*sandboxStub
-      .stub(registryAccess, 'getComponentsFromPath')
-      .returns(mdComponents); */
-
     sandboxStub
       .stub(mockConnection.tooling, 'query')
       // @ts-ignore
@@ -184,10 +180,6 @@ describe('Tooling Retrieve', () => {
     stubCreateMetadataFile.onCall(1).returns(new stream.PassThrough() as any);
 
     const toolingAPI = new ToolingApi(mockConnection);
-    /* const retrieveOpts = {
-      paths: [path.join('file', 'path', 'MyTestClass.cls')],
-      output: path.join('file', 'path')
-    }; */
     const retrieveResults: ApiResult = await toolingAPI.retrieve({
       components: mdComponents
     });
@@ -242,5 +234,63 @@ describe('Tooling Retrieve', () => {
         path.join('file', 'path', 'myTestClass.cls')
       )
     );
+  });
+
+  it('should throw an error when trying to retrieve more than one type at a time', async () => {
+    mdComponents.push({
+      type: {
+        name: 'ApexClass',
+        directoryName: 'classes',
+        inFolder: false,
+        suffix: 'cls'
+      },
+      fullName: 'anotherClass',
+      xml: path.join('file', 'path', 'anotherClass.cls-meta.xml'),
+      sources: [path.join('file', 'path', 'anotherClass.cls')]
+    });
+
+    const toolingAPI = new ToolingApi(mockConnection);
+
+    try {
+      await toolingAPI.retrieve({
+        components: mdComponents
+      });
+      fail('Retrieve should have thrown an error');
+    } catch (e) {
+      expect(e.message).to.equals(
+        nls.localize('tapi_retrieve_component_limit_error')
+      );
+      expect(e.name).to.equals('MetadataRetrieveLimit');
+    }
+  });
+
+  it('should throw an error when trying to retrieve an unsupported type', async () => {
+    const unsupportedComponent: MetadataComponent[] = [
+      {
+        type: {
+          name: 'FancyType',
+          directoryName: 'fancy',
+          inFolder: false,
+          suffix: 'b'
+        },
+        fullName: 'anotherOne',
+        xml: path.join('file', 'path', 'anotherOne.b-meta.xml'),
+        sources: [path.join('file', 'path', 'anotherOne.b')]
+      }
+    ];
+
+    const toolingAPI = new ToolingApi(mockConnection);
+
+    try {
+      await toolingAPI.retrieve({
+        components: unsupportedComponent
+      });
+      fail('Retrieve should have thrown an error');
+    } catch (e) {
+      expect(e.message).to.equals(
+        nls.localize('beta_tapi_membertype_unsupported_error', 'FancyType')
+      );
+      expect(e.name).to.equals('MetadataTypeUnsupported');
+    }
   });
 });

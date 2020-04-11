@@ -5,5 +5,5 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-export { createMetadataFile } from './fileSystemHandler';
+export { createFiles } from './fileSystemHandler';
 export { generateMetaXML, generateMetaXMLPath } from './metadata';

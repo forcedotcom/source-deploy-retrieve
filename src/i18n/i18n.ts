@@ -40,5 +40,7 @@ export const messages = {
   error_path_not_found: '%s: File or folder not found',
   error_md_not_present_in_org: '%s was not found in org',
   error_in_tooling_retrieve:
-    'Unexpected error while retrieving using Tooling API. Stack trace: %s'
+    'Unexpected error while retrieving using Tooling API. Stack trace: %s',
+  tapi_retrieve_component_limit_error:
+    'This retrieve method only supports retrieving one Metadata Type'
 };

@@ -15,15 +15,17 @@ import {
 } from '../types';
 import { RegistryAccess } from '../metadata-registry';
 import { nls } from '../i18n';
-import {
-  createMetadataFile,
-  generateMetaXML,
-  generateMetaXMLPath
-} from '../utils';
+import { generateMetaXML, generateMetaXMLPath, createFiles } from '../utils';
+
+// TODO: consolidate this with supported types in deploy
+const supportedTypes = new Set([
+  'ApexClass',
+  'ApexTrigger',
+  'ApexPage',
+  'ApexComponent'
+]);
 
 export class ToolingApi extends BaseApi {
-  protected mdComponent: MetadataComponent[];
-
   public async retrieveWithPaths(
     options: RetrievePathOptions
   ): Promise<ApiResult> {
@@ -37,11 +39,29 @@ export class ToolingApi extends BaseApi {
 
   public async retrieve(options: RetrieveOptions): Promise<ApiResult> {
     let retrieveResult: ApiResult;
-    this.mdComponent = options.components;
+    if (options.components.length > 1) {
+      const retrieveError = new Error();
+      retrieveError.message = nls.localize(
+        'tapi_retrieve_component_limit_error'
+      );
+      retrieveError.name = 'MetadataRetrieveLimit';
+      throw retrieveError;
+    }
+    const mdComponent: MetadataComponent = options.components[0];
+
+    if (!supportedTypes.has(mdComponent.type.name)) {
+      const retrieveError = new Error();
+      retrieveError.message = nls.localize(
+        'beta_tapi_membertype_unsupported_error',
+        mdComponent.type.name
+      );
+      retrieveError.name = 'MetadataTypeUnsupported';
+      throw retrieveError;
+    }
 
     try {
       const queryResult = (await this.connection.tooling.query(
-        this.buildQuery()
+        this.buildQuery(mdComponent.type.name, mdComponent.fullName)
       )) as QueryResult;
 
       if (queryResult && queryResult.records.length === 0) {
@@ -52,20 +72,26 @@ export class ToolingApi extends BaseApi {
         };
       }
 
-      const mdSourcePath = this.mdComponent[0].sources[0];
-      createMetadataFile(mdSourcePath, queryResult.records[0].Body);
-      createMetadataFile(
+      // If output is defined it overrides where the component will be stored
+      const mdSourcePath = options.output
+        ? options.output
+        : mdComponent.sources[0];
+
+      const saveFilesMap = new Map();
+      saveFilesMap.set(mdSourcePath, queryResult.records[0].Body);
+      saveFilesMap.set(
         generateMetaXMLPath(mdSourcePath),
         generateMetaXML(
-          this.mdComponent[0].type.name,
+          mdComponent.type.name,
           queryResult.records[0].ApiVersion,
           queryResult.records[0].Status
         )
       );
+      createFiles(saveFilesMap);
 
       retrieveResult = {
         success: true,
-        components: this.mdComponent
+        components: [mdComponent]
       };
     } catch (err) {
       throw new Error(nls.localize('error_in_tooling_retrieve', err));
@@ -74,7 +100,7 @@ export class ToolingApi extends BaseApi {
     return retrieveResult;
   }
 
-  protected buildQuery(): string {
-    return `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ${this.mdComponent[0].type.name} where Name = '${this.mdComponent[0].fullName}'`;
+  protected buildQuery(typeName: string, fullName: string): string {
+    return `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ${typeName} where Name = '${fullName}'`;
   }
 }

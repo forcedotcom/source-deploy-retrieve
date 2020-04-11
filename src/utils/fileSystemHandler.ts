@@ -17,15 +17,12 @@ export function ensureDirectoryExists(filePath: string): void {
   fs.mkdirSync(dirname);
 }
 
-export function createMetadataFile(
-  cacheFilePath: string,
-  fileContent: string
-): string {
-  ensureDirectoryExists(cacheFilePath);
+export function createFiles(fileMap: Map<string, string>): void {
+  for (const filePath of fileMap.keys()) {
+    ensureDirectoryExists(filePath);
 
-  const writeStream = fs.createWriteStream(cacheFilePath);
-  writeStream.write(fileContent);
-  writeStream.end();
-
-  return cacheFilePath;
+    const writeStream = fs.createWriteStream(filePath);
+    writeStream.write(fileMap.get(filePath));
+    writeStream.end();
+  }
 }

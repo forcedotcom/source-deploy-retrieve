@@ -6,9 +6,8 @@
  */
 
 import { ManifestGenerator } from '../../src/metadata-registry/manifestGenerator';
-import { MetadataComponent } from '../../src/metadata-registry/types';
+import { MetadataComponent } from '../../src/types';
 import { expect } from 'chai';
-import { AssertionError } from 'assert';
 
 describe('ManifestGenerator', () => {
   const manifestGenerator = new ManifestGenerator();

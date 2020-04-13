@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { MetadataComponent } from '../../../src/metadata-registry';
+import { MetadataComponent } from '../../../src/types';
 import { mockRegistry } from '.';
 
 // Constants for a matching content file type

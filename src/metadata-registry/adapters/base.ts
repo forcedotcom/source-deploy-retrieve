@@ -5,13 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import {
-  SourceAdapter,
-  MetadataType,
-  SourcePath,
-  MetadataComponent,
-  MetadataRegistry
-} from '../types';
+import { SourceAdapter, MetadataComponent } from '../../types';
+import { MetadataType, SourcePath, MetadataRegistry } from '../types';
 import { parseMetadataXml } from '../util';
 import { basename, dirname } from 'path';
 import * as registryData from '../data/registry.json';

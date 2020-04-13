@@ -8,10 +8,10 @@
 import { assert, expect } from 'chai';
 import * as fs from 'fs';
 import { createSandbox, SinonStub } from 'sinon';
+import { MetadataComponent } from '../../src/types';
 import {
   RegistryAccess,
   SourcePath,
-  MetadataComponent,
   MetadataType
 } from '../../src/metadata-registry';
 import { nls } from '../../src/i18n';

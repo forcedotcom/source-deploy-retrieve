@@ -7,12 +7,8 @@
 
 import { existsSync, readdirSync } from 'fs';
 import { sep, extname, join, basename, dirname } from 'path';
-import {
-  MetadataComponent,
-  MetadataRegistry,
-  MetadataType,
-  SourcePath
-} from './types';
+import { MetadataComponent } from '../types';
+import { MetadataRegistry, MetadataType, SourcePath } from './types';
 import { getAdapter, AdapterId } from './adapters';
 import {
   parseMetadataXml,

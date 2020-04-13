@@ -1269,6 +1269,7 @@
     "apexcomponent": "matchingContentFile",
     "apextrigger": "matchingContentFile",
     "auradefinitionbundle": "bundle",
+    "certificate": "matchingContentFile",
     "contentasset": "matchingContentFile",
     "customobject": "bundle",
     "document": "mixedContent",

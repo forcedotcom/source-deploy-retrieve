@@ -42,5 +42,5 @@ export const messages = {
   error_in_tooling_retrieve:
     'Unexpected error while retrieving using Tooling API. Stack trace: %s',
   tapi_retrieve_component_limit_error:
-    'This retrieve method only supports retrieving one Metadata Type'
+    'This retrieve method only supports retrieving one metadata component at a time'
 };

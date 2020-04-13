@@ -34,16 +34,17 @@ let existsStub: SinonStub;
 let isDirectoryStub: SinonStub;
 
 function stubDirectories(
-  structure: { directory: SourcePath; files: SourcePath[] }[]
+  structure: { directory: SourcePath; fileNames: SourcePath[] }[]
 ): void {
   const readDirStub: SinonStub = env.stub(fs, 'readdirSync');
 
   for (const part of structure) {
     existsStub.withArgs(part.directory).returns(true);
     isDirectoryStub.withArgs(part.directory).returns(true);
-    readDirStub
-      .withArgs(part.directory)
-      .returns(part.files.map(f => basename(f)));
+    for (const name of part.fileNames) {
+      existsStub.withArgs(join(part.directory, name)).returns(true);
+    }
+    readDirStub.withArgs(part.directory).returns(part.fileNames);
   }
 }
 
@@ -182,11 +183,7 @@ describe('RegistryAccess', () => {
 
     describe('Directory Paths', () => {
       it('Should return all components in a directory', () => {
-        const {
-          KATHY_XML_PATHS: KATHY_XMLS,
-          KATHY_FOLDER,
-          KATHY_COMPONENTS
-        } = kathy;
+        const { KATHY_FOLDER, KATHY_COMPONENTS } = kathy;
         const componentMappings = kathy.KATHY_XML_PATHS.map(
           (p: string, i: number) => ({
             path: p,
@@ -196,7 +193,7 @@ describe('RegistryAccess', () => {
         stubDirectories([
           {
             directory: KATHY_FOLDER,
-            files: KATHY_XMLS
+            fileNames: kathy.KATHY_XML_NAMES
           }
         ]);
         stubAdapters([
@@ -235,9 +232,9 @@ describe('RegistryAccess', () => {
         stubDirectories([
           {
             directory: KEANUS_DIR,
-            files: [
-              keanuXml,
-              keanuSrc,
+            fileNames: [
+              basename(keanuXml),
+              basename(keanuSrc),
               kathy.KATHY_XML_NAMES[0],
               'hasStuff',
               'noStuff'
@@ -245,11 +242,11 @@ describe('RegistryAccess', () => {
           },
           {
             directory: noStuffDir,
-            files: []
+            fileNames: []
           },
           {
             directory: stuffDir,
-            files: [keanuSrc2, keanuXml2]
+            fileNames: [basename(keanuSrc2), basename(keanuXml2)]
           }
         ]);
         stubAdapters([
@@ -288,7 +285,7 @@ describe('RegistryAccess', () => {
         stubDirectories([
           {
             directory: tina.TINA_FOLDER,
-            files: tina.TINA_XML_NAMES.concat(tina.TINA_SOURCE_NAMES)
+            fileNames: tina.TINA_XML_NAMES.concat(tina.TINA_SOURCE_NAMES)
           }
         ]);
         stubAdapters([
@@ -318,11 +315,14 @@ describe('RegistryAccess', () => {
         stubDirectories([
           {
             directory: TARAJI_CONTENT_PATH,
-            files: []
+            fileNames: []
           },
           {
             directory: taraji.TARAJI_DIR,
-            files: [taraji.TARAJI_XML_NAMES[0], basename(TARAJI_CONTENT_PATH)]
+            fileNames: [
+              taraji.TARAJI_XML_NAMES[0],
+              basename(TARAJI_CONTENT_PATH)
+            ]
           }
         ]);
         stubAdapters([
@@ -346,11 +346,13 @@ describe('RegistryAccess', () => {
         stubDirectories([
           {
             directory: simon.SIMON_DIR,
-            files: [basename(SIMON_BUNDLE_PATH)]
+            fileNames: [basename(SIMON_BUNDLE_PATH)]
           },
           {
             directory: SIMON_BUNDLE_PATH,
-            files: simon.SIMON_SOURCE_PATHS.concat(simon.SIMON_XML_PATH)
+            fileNames: simon.SIMON_SOURCE_PATHS.concat(
+              simon.SIMON_XML_PATH
+            ).map(p => basename(p))
           }
         ]);
         stubAdapters([
@@ -368,6 +370,38 @@ describe('RegistryAccess', () => {
         expect(registry.getComponentsFromPath(SIMON_BUNDLE_PATH)).to.deep.equal(
           [SIMON_COMPONENT]
         );
+      });
+
+      /**
+       * Because files of a mixed content type could have any suffix, they might collide
+       * with a type that uses the "suffix index" in the registry and be assigned the incorrect type.
+       *
+       * Pretend that this bundle's root xml suffix is the same as KeanuReeves - still should be
+       * identified as SimonPegg type
+       */
+      it('Should handle suffix collision for mixed content types', () => {
+        existsStub.withArgs(simon.SIMON_DIR).returns(true);
+        stubDirectories([
+          {
+            directory: simon.SIMON_DIR,
+            fileNames: [basename(simon.SIMON_BUNDLE_PATH)]
+          },
+          {
+            directory: simon.SIMON_BUNDLE_PATH,
+            fileNames: [
+              keanu.KEANU_XML_NAMES[0],
+              basename(simon.SIMON_SOURCE_PATHS[0])
+            ]
+          }
+        ]);
+        expect(registry.getComponentsFromPath(simon.SIMON_DIR)).to.deep.equal([
+          {
+            fullName: 'a',
+            type: mockRegistry.types.simonpegg,
+            xml: join(simon.SIMON_BUNDLE_PATH, keanu.KEANU_XML_NAMES[0]),
+            sources: [simon.SIMON_SOURCE_PATHS[0]]
+          }
+        ]);
       });
     });
   });

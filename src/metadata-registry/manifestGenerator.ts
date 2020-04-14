@@ -7,6 +7,8 @@
 
 import { MetadataComponent } from '../types';
 import { RegistryAccess } from '../metadata-registry/index';
+import { createFiles } from '../utils';
+import { RegistryError } from '../errors';
 
 export class ManifestGenerator {
   xmlDef = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
@@ -15,11 +17,19 @@ export class ManifestGenerator {
   packageModuleEnd = '</Package>\n';
   registryAccess = new RegistryAccess();
 
-  public createManifestFromPath(sourcePath: string): string {
-    const mdComponents: MetadataComponent[] = this.registryAccess.getComponentsFromPath(
-      sourcePath
-    );
-    return this.createManifest(mdComponents);
+  public createManifestFromPath(sourcePath: string): void {
+    try {
+      const mdComponents: MetadataComponent[] = this.registryAccess.getComponentsFromPath(
+        sourcePath
+      );
+      const manifestMap = new Map().set(
+        sourcePath,
+        this.createManifest(mdComponents)
+      );
+      createFiles(manifestMap);
+    } catch (err) {
+      throw new RegistryError('error_on_manifest_creation', [sourcePath, err]);
+    }
   }
 
   public createManifest(

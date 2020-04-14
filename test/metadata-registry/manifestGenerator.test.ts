@@ -8,9 +8,25 @@
 import { ManifestGenerator } from '../../src/metadata-registry/manifestGenerator';
 import { MetadataComponent } from '../../src/types';
 import { expect } from 'chai';
+import { RegistryAccess } from '../../src/metadata-registry';
+import { SinonSandbox, createSandbox } from 'sinon';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as stream from 'stream';
+import { createFiles } from '../../src/utils';
+import { fail } from 'assert';
 
 describe('ManifestGenerator', () => {
+  let sandboxStub: SinonSandbox;
   const manifestGenerator = new ManifestGenerator();
+
+  beforeEach(async () => {
+    sandboxStub = createSandbox();
+  });
+
+  afterEach(() => {
+    sandboxStub.restore();
+  });
 
   it('should generate manifest for one type', () => {
     const component = {
@@ -171,6 +187,78 @@ describe('ManifestGenerator', () => {
     } catch (e) {
       expect(e.message).to.equal(
         "Missing metadata type definition in registry for id 'someveryunknowntype'"
+      );
+    }
+  });
+
+  it('should successfully create a manifest with a sourcepath', () => {
+    const mdComponents: MetadataComponent[] = [
+      {
+        type: {
+          name: 'ApexClass',
+          directoryName: 'classes',
+          inFolder: false,
+          suffix: 'cls'
+        },
+        fullName: 'myTestClass',
+        xml: path.join('file', 'path', 'myTestClass.cls-meta.xml'),
+        sources: [path.join('file', 'path', 'myTestClass.cls')]
+      }
+    ];
+    const registryAccess = new RegistryAccess();
+    sandboxStub
+      .stub(registryAccess, 'getComponentsFromPath')
+      .returns(mdComponents);
+    sandboxStub.stub(fs, 'existsSync').returns(true);
+    // @ts-ignore
+    sandboxStub.stub(fs, 'lstatSync').returns({ isDirectory: () => false });
+    const stubCreateMetadataFile = sandboxStub.stub(fs, 'createWriteStream');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    stubCreateMetadataFile.onCall(0).returns(new stream.PassThrough() as any);
+
+    manifestGenerator.createManifestFromPath(
+      path.join('file', 'path', 'myTestClass.cls-meta.xml')
+    );
+
+    expect(stubCreateMetadataFile.callCount).to.equal(1);
+    expect(stubCreateMetadataFile.getCall(0).args[0]).to.equal(
+      path.join('file', 'path', 'myTestClass.cls-meta.xml')
+    );
+  });
+
+  it('should throw error when handling unexpected errors on creating a manifest with a sourcepath', () => {
+    const mdComponents: MetadataComponent[] = [
+      {
+        type: {
+          name: 'ApexClass',
+          directoryName: 'classes',
+          inFolder: false,
+          suffix: 'cls'
+        },
+        fullName: 'myTestClass',
+        xml: path.join('file', 'path', 'myTestClass.cls-meta.xml'),
+        sources: [path.join('file', 'path', 'myTestClass.cls')]
+      }
+    ];
+    const registryAccess = new RegistryAccess();
+    sandboxStub
+      .stub(registryAccess, 'getComponentsFromPath')
+      .returns(mdComponents);
+    sandboxStub.stub(fs, 'existsSync').returns(true);
+    // @ts-ignore
+    sandboxStub.stub(fs, 'lstatSync').returns({ isDirectory: () => false });
+    const stubCreateMetadataFile = sandboxStub.stub(fs, 'createWriteStream');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    stubCreateMetadataFile
+      .onCall(0)
+      .throwsException('Unexpected error when creating file');
+    const filePath = path.join('file', 'path', 'myTestClass.cls-meta.xml');
+    try {
+      manifestGenerator.createManifestFromPath(filePath);
+      fail('Test should have thrown an error before this line');
+    } catch (e) {
+      expect(e.message).to.contain(
+        `Unexpected error while creating manifest for '${filePath}'. Stack trace: Unexpected error when creating file`
       );
     }
   });

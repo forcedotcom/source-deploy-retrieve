@@ -10,12 +10,7 @@ import { sep, extname, join, basename, dirname } from 'path';
 import { MetadataComponent } from '../types';
 import { MetadataRegistry, MetadataType, SourcePath } from './types';
 import { getAdapter, AdapterId } from './adapters';
-import {
-  parseMetadataXml,
-  isDirectory,
-  deepFreeze,
-  parseBaseName
-} from './util';
+import { parseMetadataXml, isDirectory, deepFreeze } from './util';
 import { TypeInferenceError } from '../errors';
 import { registryData } from '.';
 import { MixedContent } from './adapters/mixedContent';

@@ -42,5 +42,7 @@ export const messages = {
   error_in_tooling_retrieve:
     'Unexpected error while retrieving using Tooling API. Stack trace: %s',
   tapi_retrieve_component_limit_error:
-    'This retrieve method only supports retrieving one metadata component at a time'
+    'This retrieve method only supports retrieving one metadata component at a time',
+  error_on_manifest_creation:
+    "Unexpected error while creating manifest for '%s'. Stack trace: %s"
 };

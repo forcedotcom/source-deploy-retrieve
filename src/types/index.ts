@@ -12,5 +12,9 @@ export {
   ApiResult,
   RetrieveOptions,
   MetadataComponent,
-  SourceAdapter
+  SourceAdapter,
+  ToolingDeployResult,
+  DeployDetailsResult,
+  DeployResult,
+  DeployStatusEnum
 } from './client';

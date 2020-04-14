@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+// should we move this somewhere else
 export const supportedToolingTypes = new Map([
   ['ApexClass', 'ApexClassMember'],
   ['ApexTrigger', 'ApexTriggerMember'],
@@ -15,32 +16,6 @@ export const supportedToolingTypes = new Map([
 ]);
 
 export const BundleTypes = ['LightningComponentBundle', 'AuraDefinitionBundle'];
-
-/**
- * Enum that represents the status of a Tooling Container Deploy
- */
-export enum DeployStatusEnum {
-  Completed = 'Completed',
-  Queued = 'Queued',
-  Error = 'Error',
-  Failed = 'Failed'
-}
-
-// what other parameters would be necessary
-export interface FilePathOpts {
-  filepath: string;
-  wait?: string;
-}
-
-export interface ManifestOpts {
-  manifestPath: string;
-  wait: string;
-}
-
-export interface DirectoryOpts {
-  directory: string;
-  wait: string;
-}
 
 export interface ToolingCreateResult {
   id: string;
@@ -58,14 +33,21 @@ export interface ToolingDeployResult {
   outboundFiles?: string[];
 }
 
+export enum DeployStatusEnum {
+  Completed = 'Completed',
+  Queued = 'Queued',
+  Error = 'Error',
+  Failed = 'Failed'
+}
+
 export interface DeployDetailsResult {
   componentFailures: DeployResult[];
   componentSuccesses: DeployResult[];
 }
 
 export interface DeployResult {
-  columnNumber: number | null;
-  lineNumber: number | null;
+  columnNumber?: number;
+  lineNumber?: number;
   problem?: string;
   problemType?: string;
   fileName?: string;

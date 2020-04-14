@@ -30,3 +30,11 @@ export function createFiles(fileMap: Map<string, string>): void {
     writeStream.end();
   }
 }
+
+export function parseBaseName(fsPath: string): string {
+  return path.basename(fsPath).split('.')[0];
+}
+
+export function getSuffix(fsPath: string): string {
+  return path.extname(fsPath).split('.')[1];
+}

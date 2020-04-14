@@ -6,7 +6,7 @@
  */
 
 import { Connection } from '@salesforce/core';
-import { RegistryAccess } from '../index';
+import { RegistryAccess } from '../index'; // do i need this
 
 /**
  * File system path to a source file of a metadata component.
@@ -98,6 +98,40 @@ export type ApiResult = {
   message?: string;
 };
 
+export type ToolingDeployResult = {
+  State: DeployStatusEnum;
+  ErrorMsg: string | null;
+  isDeleted: boolean;
+  DeployDetails: DeployDetailsResult | null;
+  outboundFiles?: string[];
+};
+
+export type DeployDetailsResult = {
+  componentFailures: DeployResult[];
+  componentSuccesses: DeployResult[];
+};
+
+export type DeployResult = {
+  columnNumber?: number;
+  lineNumber?: number;
+  problem?: string;
+  problemType?: string;
+  fileName?: string;
+  fullName?: string;
+  componentType: string;
+  success?: boolean;
+  changed: boolean;
+  created: boolean;
+  deleted: boolean;
+};
+
+export enum DeployStatusEnum {
+  Completed = 'Completed',
+  Queued = 'Queued',
+  Error = 'Error',
+  Failed = 'Failed'
+}
+
 /**
  * Infers the source format structure of a metadata component when given a file path.
  */
@@ -122,16 +156,14 @@ export interface DeployRetrieveClient {
    *
    * @param filePath Paths to source files to deploy
    */
-  deploy(filePath: string): Promise<ApiResult>;
+  deploy(filePath: string): Promise<ToolingDeployResult>;
 }
 
 export abstract class BaseApi implements DeployRetrieveClient {
   protected connection: Connection;
-  protected registryAccess: RegistryAccess;
 
-  constructor(connection: Connection, registryAccess?: RegistryAccess) {
+  constructor(connection: Connection) {
     this.connection = connection;
-    this.registryAccess = registryAccess || new RegistryAccess();
   }
 
   /**
@@ -141,5 +173,5 @@ export abstract class BaseApi implements DeployRetrieveClient {
 
   abstract retrieve(options: RetrieveOptions): Promise<ApiResult>;
 
-  abstract deploy(filePath: string): Promise<ApiResult>;
+  abstract deploy(filePath: string): Promise<ToolingDeployResult>;
 }

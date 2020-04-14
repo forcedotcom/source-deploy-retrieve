@@ -13,7 +13,7 @@ import { ToolingApi } from './toolingApi';
 export class SourceClient {
   public readonly connection: Connection;
   /**
-   * Perform operations using the tooling api.
+   * Perform operations using the tooling api
    */
   public readonly tooling: ToolingApi;
 

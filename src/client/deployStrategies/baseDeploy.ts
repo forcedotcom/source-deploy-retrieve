@@ -1,22 +1,30 @@
-import { ToolingCreateResult, ToolingDeployResult } from './index';
-import { MetadataComponent } from '../../metadata-registry';
-import { Connection } from '@salesforce/core';
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
 
+import { Connection } from '@salesforce/core';
+import { MetadataComponent } from '../../types';
+import { ToolingCreateResult, ToolingDeployResult } from './index';
+
+// tslint:disable-next-line:no-var-requires
 const DOMParser = require('xmldom-sfdx-encoding').DOMParser;
 
 export abstract class BaseDeploy {
   public connection: Connection;
-  public metadataType: string;
-  protected apiVersion?: string;
+  public component: MetadataComponent;
 
-  constructor(connection: Connection, apiVersion?: string) {
+  constructor(connection: Connection) {
     this.connection = connection;
-    this.apiVersion = apiVersion;
   }
 
-  abstract deploy(component: MetadataComponent): Promise<ToolingDeployResult>;
+  public abstract deploy(
+    component: MetadataComponent
+  ): Promise<ToolingDeployResult>;
 
-  protected buildMetadataField(
+  public buildMetadataField(
     metadataContent: string
   ): {
     label?: string;
@@ -26,9 +34,8 @@ export abstract class BaseDeploy {
   } {
     const parser = new DOMParser();
     const document = parser.parseFromString(metadataContent, 'text/xml');
-    const apiVersion =
-      this.apiVersion ||
-      document.getElementsByTagName('apiVersion')[0].textContent;
+    const apiVersion = document.getElementsByTagName('apiVersion')[0]
+      .textContent;
     const statusNode = document.getElementsByTagName('status')[0];
     const packageNode = document.getElementsByTagName('packageVersions')[0];
     const descriptionNode = document.getElementsByTagName('description')[0];

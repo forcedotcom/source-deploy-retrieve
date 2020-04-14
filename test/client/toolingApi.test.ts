@@ -9,13 +9,11 @@ import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import { createSandbox, SinonSandbox } from 'sinon';
-import { RegistryAccess } from '../../../src/metadata-registry';
-import { ToolingApi } from '../../../src/client';
-import {
-  BaseDeploy,
-  ContainerDeploy
-} from '../../../src/client/deployStrategies';
-import { DeployStatusEnum, ToolingDeployResult } from '../../../src';
+import { RegistryAccess } from '../../src/metadata-registry';
+import { ToolingApi } from '../../src/client';
+import { ContainerDeploy } from '../../src/client/deployStrategies';
+import { DeployStatusEnum, ToolingDeployResult } from '../../src';
+import { nls } from '../../src/i18n';
 
 const $$ = testSetup();
 
@@ -58,7 +56,7 @@ describe('Tooling API tests', () => {
         }
       ]);
     sandboxStub
-      .stub(BaseDeploy.prototype, 'buildMetadataField')
+      .stub(ContainerDeploy.prototype, 'buildMetadataField')
       .returns(testMetadataField);
     const mockContainerDeploy = sandboxStub
       .stub(ContainerDeploy.prototype, 'deploy')
@@ -90,8 +88,10 @@ describe('Tooling API tests', () => {
       await deployLibrary.deploy('dummypath/dummyfile.extension');
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal('FlexiPage type not supported');
-      expect(e.name).to.be.equal('MetadataTypeUnsupported');
+      expect(e.message).to.equal(
+        nls.localize('beta_tapi_membertype_unsupported_error', 'FlexiPage')
+      );
+      expect(e.name).to.be.equal('SourceClientError');
     }
   });
 });

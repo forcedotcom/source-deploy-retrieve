@@ -25,7 +25,6 @@ export {
   CONTAINER_ASYNC_REQUEST,
   METADATA_CONTAINER
 } from './constants';
-export { BaseDeploy } from './baseDeploy';
 export { ContainerDeploy } from './containerDeploy';
 export { BundleDeploy } from './bundleDeploy';
 

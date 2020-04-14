@@ -88,6 +88,15 @@ describe('Container Deploy Strategy', () => {
     mockFS
       .withArgs('file/path/one.cls-meta.xml', 'utf8')
       .returns(simpleMetaXMLString);
+    mockFS
+      .withArgs('file/path/one.component-meta.xml', 'utf8')
+      .returns(simpleMetaXMLString);
+    mockFS
+      .withArgs('file/path/one.page-meta.xml', 'utf8')
+      .returns(simpleMetaXMLString);
+    mockFS
+      .withArgs('file/path/one.trigger-meta.xml', 'utf8')
+      .returns(simpleMetaXMLString);
   });
 
   afterEach(() => {
@@ -129,7 +138,7 @@ describe('Container Deploy Strategy', () => {
       expect.fail('Should have failed');
     } catch (e) {
       expect(e.message).to.equal(nls.localize('beta_tapi_mdcontainer_error'));
-      expect(e.name).to.be.equal('MetadataContainerCreationFailed');
+      expect(e.name).to.be.equal('DeployError');
     }
   });
 
@@ -345,7 +354,7 @@ describe('Container Deploy Strategy', () => {
       expect(e.message).to.equal(
         nls.localize('beta_tapi_membertype_error', 'ApexClass')
       );
-      expect(e.name).to.be.equal('ApexClassMemberCreationFailed');
+      expect(e.name).to.be.equal('DeployError');
     }
   });
 
@@ -389,7 +398,7 @@ describe('Container Deploy Strategy', () => {
       expect.fail('Should have failed');
     } catch (e) {
       expect(e.message).to.equal(nls.localize('beta_tapi_car_error'));
-      expect(e.name).to.be.equal('ContainerAsyncRequestFailed');
+      expect(e.name).to.be.equal('DeployError');
     }
   });
 

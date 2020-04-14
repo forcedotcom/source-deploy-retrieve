@@ -118,7 +118,7 @@ export class ToolingApi extends BaseApi {
 
     if (supportedToolingTypes.get(metadataType) === undefined) {
       throw new SourceClientError(
-        nls.localize('beta_tapi_membertype_unsupported_error'),
+        'beta_tapi_membertype_unsupported_error',
         metadataType
       );
     }

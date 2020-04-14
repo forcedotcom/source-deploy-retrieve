@@ -7,12 +7,10 @@
 import { readFileSync } from 'fs';
 import { sep } from 'path';
 import { DeployError } from '../../errors';
-import { nls } from '../../i18n';
 import { MetadataComponent } from '../../types';
 import { getSuffix, parseBaseName } from '../../utils';
 import {
   AURA_DEF_BUNDLE,
-  BaseDeploy,
   BundleMetadataObj,
   DeployDetailsResult,
   DeployResult,
@@ -21,6 +19,7 @@ import {
   ToolingCreateResult,
   ToolingDeployResult
 } from './index';
+import { BaseDeploy } from './baseDeploy';
 
 export class BundleDeploy extends BaseDeploy {
   public async deploy(
@@ -139,7 +138,7 @@ export class BundleDeploy extends BaseDeploy {
     );
     if (!newBundle.success) {
       throw new DeployError(
-        nls.localize('error_creating_metadata_type'),
+        'error_creating_metadata_type',
         this.component.type.name
       );
     }

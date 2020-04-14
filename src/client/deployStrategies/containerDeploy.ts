@@ -10,7 +10,6 @@ import { DeployError } from '../../errors';
 import { MetadataComponent } from '../../types';
 import { parseBaseName } from '../../utils';
 import {
-  BaseDeploy,
   CONTAINER_ASYNC_REQUEST,
   DeployStatusEnum,
   METADATA_CONTAINER,
@@ -18,6 +17,7 @@ import {
   ToolingCreateResult,
   ToolingDeployResult
 } from './index';
+import { BaseDeploy } from './baseDeploy';
 
 export class ContainerDeploy extends BaseDeploy {
   public async deploy(

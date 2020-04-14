@@ -17,6 +17,7 @@ import {
   DeployStatusEnum,
   ToolingDeployResult
 } from '../../../src/client/deployStrategies';
+import { nls } from '../../../src/i18n';
 
 const $$ = testSetup();
 
@@ -367,7 +368,9 @@ describe('Bundle Deploy Strategy', () => {
       await bundleDeploy.createBundle(auraComponent);
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal('error_creating_metadata_type');
+      expect(e.message).to.equal(
+        nls.localize('error_creating_metadata_type', 'AuraDefinitionBundle')
+      );
       expect(e.name).to.be.equal('DeployError');
     }
   });

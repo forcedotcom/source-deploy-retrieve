@@ -11,6 +11,7 @@ import { expect } from 'chai';
 import * as fs from 'fs';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ContainerDeploy } from '../../../src/client/deployStrategies';
+import { nls } from '../../../src/i18n';
 
 const $$ = testSetup();
 
@@ -86,5 +87,16 @@ describe('Base Deploy Strategy', () => {
 
     const metadataField = deployLibrary.buildMetadataField(metaXMLString);
     expect(metadataField).to.deep.equals(testMetadataField);
+  });
+
+  it('should throw an error for incorrect metadata file', () => {
+    const deployLibrary = new ContainerDeploy(mockConnection);
+    const metaXMLString = 'Incorrect metadata file';
+
+    try {
+      deployLibrary.buildMetadataField(metaXMLString);
+    } catch (e) {
+      expect(e.message).to.equal(nls.localize('error_parsing_metadata_file'));
+    }
   });
 });

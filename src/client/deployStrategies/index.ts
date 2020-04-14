@@ -26,6 +26,8 @@ export {
   METADATA_CONTAINER
 } from './constants';
 export { BaseDeploy } from './baseDeploy';
+export { ContainerDeploy } from './containerDeploy';
+export { BundleDeploy } from './bundleDeploy';
 
 export const getDeployStrategy = (
   type: string,

@@ -23,7 +23,6 @@ import { nls } from '../i18n';
 import { generateMetaXML, generateMetaXMLPath, createFiles } from '../utils';
 
 // TODO: consolidate this with supported types in deploy
-// ananya do this too
 const supportedTypes = new Set([
   'ApexClass',
   'ApexTrigger',

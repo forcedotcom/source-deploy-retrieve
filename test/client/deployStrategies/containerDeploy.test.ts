@@ -9,19 +9,18 @@ import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import * as fs from 'fs';
+import { Record, RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import {
-  ToolingCreateResult,
-  Deploy,
-  DeployStatusEnum
-} from '../../src/deploy';
-import { nls } from '../../src/i18n';
-import { RegistryAccess } from '../../src/metadata-registry';
-import { RecordResult, Record } from 'jsforce';
+  ContainerDeploy,
+  DeployStatusEnum,
+  ToolingCreateResult
+} from '../../../src/client/deployStrategies';
+import { nls } from '../../../src/i18n';
 
 const $$ = testSetup();
 
-describe('Tooling Deploys', () => {
+describe('Container Deploy Strategy', () => {
   let simpleMetaXMLString = '<?xml version="1.0" encoding="UTF-8"?>';
   simpleMetaXMLString +=
     '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">';
@@ -34,6 +33,38 @@ describe('Tooling Deploys', () => {
     errors: [],
     name: 'VSCode_MDC_',
     message: ''
+  };
+  const apexClassCmp = {
+    type: {
+      name: 'ApexClass',
+      directoryName: 'classes',
+      inFolder: false
+    },
+    fullName: 'one',
+    sources: ['file/path/one.cls'],
+    xml: 'file/path/one.cls-meta.xml'
+  };
+  const apexTriggerCmp = {
+    type: { name: 'ApexTrigger', directoryName: 'triggers', inFolder: false },
+    fullName: 'one',
+    sources: ['file/path/one.trigger'],
+    xml: 'file/path/one.trigger-meta.xml'
+  };
+  const apexPageCmp = {
+    type: { name: 'ApexPage', directoryName: 'pages', inFolder: false },
+    fullName: 'one',
+    sources: ['file/path/one.page'],
+    xml: 'file/path/one.page-meta.xml'
+  };
+  const apexComponent = {
+    type: {
+      name: 'ApexComponent',
+      directoryName: 'components',
+      inFolder: false
+    },
+    fullName: 'one',
+    sources: ['file/path/one.component'],
+    xml: 'file/path/one.component-meta.xml'
   };
   const testData = new MockTestOrgData();
   let mockConnection: Connection;
@@ -63,47 +94,8 @@ describe('Tooling Deploys', () => {
     sandboxStub.restore();
   });
 
-  it('should create a metadata field', () => {
-    const deployLibrary = new Deploy(mockConnection);
-    const testMetadataField = {
-      apiVersion: '32.0',
-      status: 'Active'
-    };
-    const metadataField = deployLibrary.buildMetadataField(simpleMetaXMLString);
-    expect(metadataField).to.deep.equals(testMetadataField);
-  });
-
-  // Looks like we do not process more than one package version in -meta.xml
-  it('should create a metadata field with package versions', () => {
-    const deployLibrary = new Deploy(mockConnection);
-    const testMetadataField = {
-      apiVersion: '47.0',
-      status: 'Active',
-      packageVersions: '      1      0      packageA    '
-    };
-    let metaXMLString = '<?xml version="1.0" encoding="UTF-8"?>';
-    metaXMLString +=
-      '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">';
-    metaXMLString += '    <apiVersion>47.0</apiVersion>';
-    metaXMLString += '    <packageVersions>';
-    metaXMLString += '      <majorNumber>1</majorNumber>';
-    metaXMLString += '      <minorNumber>0</minorNumber>';
-    metaXMLString += '      <namespace>packageA</namespace>';
-    metaXMLString += '    </packageVersions>';
-    metaXMLString += '    <packageVersions>';
-    metaXMLString += '      <majorNumber>8</majorNumber>';
-    metaXMLString += '      <minorNumber>21</minorNumber>';
-    metaXMLString += '      <namespace>packageB</namespace>';
-    metaXMLString += '    </packageVersions>';
-    metaXMLString += '    <status>Active</status>';
-    metaXMLString += '</ApexClass>';
-
-    const metadataField = deployLibrary.buildMetadataField(metaXMLString);
-    expect(metadataField).to.deep.equals(testMetadataField);
-  });
-
   it('should create a metadata container', async () => {
-    const deployLibrary = new Deploy(mockConnection);
+    const deployLibrary = new ContainerDeploy(mockConnection);
     const mockToolingCreate = sandboxStub.stub(
       mockConnection.tooling,
       'create'
@@ -126,7 +118,7 @@ describe('Tooling Deploys', () => {
   });
 
   it('should throw an error when creating a metadata container fails', async () => {
-    const deployLibrary = new Deploy(mockConnection);
+    const deployLibrary = new ContainerDeploy(mockConnection);
     sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',
@@ -151,7 +143,7 @@ describe('Tooling Deploys', () => {
         'DUPLICATE_VALUE: duplicate value found: Name duplicates value on record with id : 1dcxxx000000034'
     };
     sandboxStub.stub(mockConnection.tooling, 'create').throws(errorObj);
-    const deployLibrary = new Deploy(mockConnection);
+    const deployLibrary = new ContainerDeploy(mockConnection);
     try {
       await deployLibrary.createMetadataContainer();
       expect.fail('Should have failed');
@@ -164,7 +156,7 @@ describe('Tooling Deploys', () => {
   });
 
   it('should create a metadata member type for Apex Class', async () => {
-    const deployLibrary = new Deploy(mockConnection);
+    const deployLibrary = new ContainerDeploy(mockConnection);
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
     const mockToolingCreate = sandboxStub
       .stub(mockConnection.tooling, 'create')
@@ -174,7 +166,7 @@ describe('Tooling Deploys', () => {
         errors: []
       } as RecordResult);
 
-    deployLibrary.metadataType = 'ApexClass';
+    deployLibrary.component = apexClassCmp;
     const containerMember = await deployLibrary.createContainerMember(
       ['file/path/one.cls', 'file/path/one.cls-meta.xml'],
       successfulContainerResult
@@ -187,7 +179,7 @@ describe('Tooling Deploys', () => {
   });
 
   it('should create a metadata member type for Apex Trigger', async () => {
-    const deployLibrary = new Deploy(mockConnection);
+    const deployLibrary = new ContainerDeploy(mockConnection);
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
     const mockToolingCreate = sandboxStub
       .stub(mockConnection.tooling, 'create')
@@ -197,9 +189,9 @@ describe('Tooling Deploys', () => {
         errors: []
       } as RecordResult);
 
-    deployLibrary.metadataType = 'ApexTrigger';
+    deployLibrary.component = apexTriggerCmp;
     const containerMember = await deployLibrary.createContainerMember(
-      ['file/path/one.cls', 'file/path/one.cls-meta.xml'],
+      ['file/path/one.trigger', 'file/path/one.trigger-meta.xml'],
       successfulContainerResult
     );
     expect(containerMember.id).to.equal('400xxx000000034');
@@ -210,7 +202,7 @@ describe('Tooling Deploys', () => {
   });
 
   it('should create a metadata member type for VisualForce Page', async () => {
-    const deployLibrary = new Deploy(mockConnection);
+    const deployLibrary = new ContainerDeploy(mockConnection);
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
     const mockToolingCreate = sandboxStub
       .stub(mockConnection.tooling, 'create')
@@ -220,9 +212,9 @@ describe('Tooling Deploys', () => {
         errors: []
       } as RecordResult);
 
-    deployLibrary.metadataType = 'ApexPage';
+    deployLibrary.component = apexPageCmp;
     const containerMember = await deployLibrary.createContainerMember(
-      ['file/path/one.cls', 'file/path/one.cls-meta.xml'],
+      ['file/path/one.page', 'file/path/one.page-meta.xml'],
       successfulContainerResult
     );
     expect(containerMember.id).to.equal('400xxx000000034');
@@ -233,7 +225,7 @@ describe('Tooling Deploys', () => {
   });
 
   it('should create a metadata member type for VisualForce Component', async () => {
-    const deployLibrary = new Deploy(mockConnection);
+    const deployLibrary = new ContainerDeploy(mockConnection);
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
     const mockToolingCreate = sandboxStub
       .stub(mockConnection.tooling, 'create')
@@ -243,9 +235,9 @@ describe('Tooling Deploys', () => {
         errors: []
       } as RecordResult);
 
-    deployLibrary.metadataType = 'ApexComponent';
+    deployLibrary.component = apexComponent;
     const containerMember = await deployLibrary.createContainerMember(
-      ['file/path/one.cls', 'file/path/one.cls-meta.xml'],
+      ['file/path/one.component', 'file/path/one.component-meta.xml'],
       successfulContainerResult
     );
     expect(containerMember.id).to.equal('400xxx000000034');
@@ -258,7 +250,7 @@ describe('Tooling Deploys', () => {
   });
 
   it('should call tooling api with the correct params when creating a metadata member type for new type', async () => {
-    const deployLibrary = new Deploy(mockConnection);
+    const deployLibrary = new ContainerDeploy(mockConnection);
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
     const mockToolingCreate = sandboxStub
       .stub(mockConnection.tooling, 'create')
@@ -268,7 +260,7 @@ describe('Tooling Deploys', () => {
         errors: []
       } as RecordResult);
 
-    deployLibrary.metadataType = 'ApexClass';
+    deployLibrary.component = apexClassCmp;
     await deployLibrary.createContainerMember(
       ['file/path/one.cls', 'file/path/one.cls-meta.xml'],
       successfulContainerResult
@@ -295,7 +287,7 @@ describe('Tooling Deploys', () => {
   });
 
   it('should call tooling api with the correct params when creating a metadata member type for existing type', async () => {
-    const deployLibrary = new Deploy(mockConnection);
+    const deployLibrary = new ContainerDeploy(mockConnection);
     sandboxStub
       .stub(deployLibrary, 'getContentEntity')
       .resolves({ Id: 'a00xxx000000034' });
@@ -307,7 +299,7 @@ describe('Tooling Deploys', () => {
         errors: []
       } as RecordResult);
 
-    deployLibrary.metadataType = 'ApexClass';
+    deployLibrary.component = apexClassCmp;
     await deployLibrary.createContainerMember(
       ['file/path/one.cls', 'file/path/one.cls-meta.xml'],
       successfulContainerResult
@@ -334,7 +326,7 @@ describe('Tooling Deploys', () => {
   });
 
   it('should throw error when failing to create a metadata member type', async () => {
-    const deployLibrary = new Deploy(mockConnection);
+    const deployLibrary = new ContainerDeploy(mockConnection);
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
     sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
@@ -342,7 +334,7 @@ describe('Tooling Deploys', () => {
       errors: ['Unexpected error while creating record']
     } as RecordResult);
 
-    deployLibrary.metadataType = 'ApexClass';
+    deployLibrary.component = apexClassCmp;
     try {
       await deployLibrary.createContainerMember(
         ['file/path/one.cls', 'file/path/one.cls-meta.xml'],
@@ -358,7 +350,7 @@ describe('Tooling Deploys', () => {
   });
 
   it('should create a container async request', async () => {
-    const deployLibrary = new Deploy(mockConnection);
+    const deployLibrary = new ContainerDeploy(mockConnection);
     const mockToolingCreate = sandboxStub
       .stub(mockConnection.tooling, 'create')
       .resolves({
@@ -383,7 +375,7 @@ describe('Tooling Deploys', () => {
   });
 
   it('should throw an error when creating a container async request fails', async () => {
-    const deployLibrary = new Deploy(mockConnection);
+    const deployLibrary = new ContainerDeploy(mockConnection);
     sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',
@@ -402,7 +394,7 @@ describe('Tooling Deploys', () => {
   });
 
   it('should throw an error when creating a container async request', async () => {
-    const deployLibrary = new Deploy(mockConnection);
+    const deployLibrary = new ContainerDeploy(mockConnection);
     sandboxStub.stub(mockConnection.tooling, 'create').throwsException({
       message:
         'insufficient access rights on cross-reference id: 1drxx000000xUHs',
@@ -426,7 +418,7 @@ describe('Tooling Deploys', () => {
   });
 
   it('should poll for a container async request', async () => {
-    const deployLibrary = new Deploy(mockConnection);
+    const deployLibrary = new ContainerDeploy(mockConnection);
     const mockToolingRetrieve = sandboxStub.stub(
       mockConnection.tooling,
       'retrieve'
@@ -454,58 +446,5 @@ describe('Tooling Deploys', () => {
     };
     const pollCAR = await deployLibrary.toolingStatusCheck(asyncRequestMock);
     expect(pollCAR.State).to.equal('Completed');
-  });
-
-  it('should go ahead with deploy for supported types', async () => {
-    const registryAccess = new RegistryAccess();
-    const deployLibrary = new Deploy(mockConnection, '', registryAccess);
-    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns([
-      {
-        type: { name: 'ApexClass', directoryName: '', inFolder: false },
-        fullName: '',
-        xml: '',
-        sources: []
-      }
-    ]);
-    const mockToolingCreate = sandboxStub.stub(
-      mockConnection.tooling,
-      'create'
-    );
-
-    mockToolingCreate.resolves({
-      success: true,
-      id: '1dcxxx000000034',
-      errors: [],
-      name: 'VSCode_MDC_',
-      message: ''
-    } as RecordResult);
-    sandboxStub.stub(deployLibrary, 'createContainerMember');
-    sandboxStub.stub(deployLibrary, 'createContainerAsyncRequest');
-    sandboxStub.stub(deployLibrary, 'toolingStatusCheck');
-
-    await deployLibrary.deploy('dummypath/dummyfile.extension');
-
-    expect(mockToolingCreate.getCall(0).args[0]).to.equal('MetadataContainer');
-  });
-
-  it('should exit deploy for unsupported types', async () => {
-    const registryAccess = new RegistryAccess();
-    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns([
-      {
-        type: { name: 'FlexiPage', directoryName: '', inFolder: false },
-        fullName: '',
-        xml: '',
-        sources: []
-      }
-    ]);
-    const deployLibrary = new Deploy(mockConnection, '', registryAccess);
-
-    try {
-      await deployLibrary.deploy('dummypath/dummyfile.extension');
-      expect.fail('Should have failed');
-    } catch (e) {
-      expect(e.message).to.equal('FlexiPage type not supported');
-      expect(e.name).to.be.equal('MetadataTypeUnsupported');
-    }
   });
 });

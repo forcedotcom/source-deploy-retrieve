@@ -13,7 +13,6 @@ import { SinonSandbox, createSandbox } from 'sinon';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as stream from 'stream';
-import { createFiles } from '../../src/utils';
 import { fail } from 'assert';
 
 describe('ManifestGenerator', () => {
@@ -217,12 +216,13 @@ describe('ManifestGenerator', () => {
     stubCreateMetadataFile.onCall(0).returns(new stream.PassThrough() as any);
 
     manifestGenerator.createManifestFromPath(
-      path.join('file', 'path', 'myTestClass.cls-meta.xml')
+      path.join('file', 'path', 'myTestClass.cls-meta.xml'),
+      path.join('file', 'path', 'manifest', 'package.xml')
     );
 
     expect(stubCreateMetadataFile.callCount).to.equal(1);
     expect(stubCreateMetadataFile.getCall(0).args[0]).to.equal(
-      path.join('file', 'path', 'myTestClass.cls-meta.xml')
+      path.join('file', 'path', 'manifest', 'package.xml')
     );
   });
 
@@ -254,7 +254,10 @@ describe('ManifestGenerator', () => {
       .throwsException('Unexpected error when creating file');
     const filePath = path.join('file', 'path', 'myTestClass.cls-meta.xml');
     try {
-      manifestGenerator.createManifestFromPath(filePath);
+      manifestGenerator.createManifestFromPath(
+        filePath,
+        path.join('file', 'path', 'manifest', 'package.xml')
+      );
       fail('Test should have thrown an error before this line');
     } catch (e) {
       expect(e.message).to.contain(

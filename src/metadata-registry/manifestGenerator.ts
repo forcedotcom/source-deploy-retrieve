@@ -17,13 +17,13 @@ export class ManifestGenerator {
   packageModuleEnd = '</Package>\n';
   registryAccess = new RegistryAccess();
 
-  public createManifestFromPath(sourcePath: string): void {
+  public createManifestFromPath(sourcePath: string, outputPath: string): void {
     try {
       const mdComponents: MetadataComponent[] = this.registryAccess.getComponentsFromPath(
         sourcePath
       );
       const manifestMap = new Map().set(
-        sourcePath,
+        outputPath,
         this.createManifest(mdComponents)
       );
       createFiles(manifestMap);

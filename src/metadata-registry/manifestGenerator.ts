@@ -7,13 +7,30 @@
 
 import { MetadataComponent } from '../types';
 import { RegistryAccess } from '../metadata-registry/index';
+import { createFiles } from '../utils';
+import { RegistryError } from '../errors';
 
 export class ManifestGenerator {
-  xmlDef = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+  xmlDef = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
   packageModuleStart =
-    '<Package xmlns="http://soap.sforce.com/2006/04/metadata">';
-  packageModuleEnd = '</Package>';
+    '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
+  packageModuleEnd = '</Package>\n';
   registryAccess = new RegistryAccess();
+
+  public createManifestFromPath(sourcePath: string, outputPath: string): void {
+    try {
+      const mdComponents: MetadataComponent[] = this.registryAccess.getComponentsFromPath(
+        sourcePath
+      );
+      const manifestMap = new Map().set(
+        outputPath,
+        this.createManifest(mdComponents)
+      );
+      createFiles(manifestMap);
+    } catch (err) {
+      throw new RegistryError('error_on_manifest_creation', [sourcePath, err]);
+    }
+  }
 
   public createManifest(
     components: MetadataComponent[],
@@ -22,15 +39,15 @@ export class ManifestGenerator {
     let output = this.xmlDef.concat(this.packageModuleStart);
     const metadataMap = this.createMetadataMap(components);
     for (const metadataType of metadataMap.keys()) {
-      output = output.concat('<types>');
+      output = output.concat('\t<types>\n');
       for (const metadataName of metadataMap.get(metadataType)) {
-        output = output.concat(`<members>${metadataName}</members>`);
+        output = output.concat(`\t\t<members>${metadataName}</members>\n`);
       }
-      output = output.concat(`<name>${metadataType}</name>`);
-      output = output.concat('</types>');
+      output = output.concat(`\t\t<name>${metadataType}</name>\n`);
+      output = output.concat('\t</types>\n');
     }
     output = output.concat(
-      `<version>${apiVersion}</version>`,
+      `\t<version>${apiVersion}</version>\n`,
       this.packageModuleEnd
     );
     return output;

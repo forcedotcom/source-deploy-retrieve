@@ -17,6 +17,10 @@ export function ensureDirectoryExists(filePath: string): void {
   fs.mkdirSync(dirname);
 }
 
+/**
+ * Method to save multiple files on disk
+ * @param fileMap key = filePath, value = file contents
+ */
 export function createFiles(fileMap: Map<string, string>): void {
   for (const filePath of fileMap.keys()) {
     ensureDirectoryExists(filePath);

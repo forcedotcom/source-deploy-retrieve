@@ -62,22 +62,25 @@ export class BundleDeploy extends BaseDeploy {
   public buildBundleList(): BundleMetadataObj[] {
     const sourceFiles = this.component.sources;
     const bundleMetadataList: BundleMetadataObj[] = [];
+    const auraType = this.component.type.name === AURA_DEF_BUNDLE;
+
     for (const sourceFile of sourceFiles) {
       const source = readFileSync(sourceFile, 'utf8');
       const suffix = getSuffix(sourceFile);
-      const format =
-        this.component.type.name === AURA_DEF_BUNDLE
-          ? this.getAuraFormat(suffix)
-          : suffix;
+      const format = auraType ? this.getAuraFormat(suffix) : suffix;
+
       const bundleMetadata = {
         FilePath: sourceFile,
-        ...(this.component.type.name === AURA_DEF_BUNDLE
+        ...(auraType
           ? { DefType: this.getAuraDefType(sourceFile, suffix) }
           : {}),
         Source: source,
         Format: format
       };
-      bundleMetadataList.push(bundleMetadata);
+
+      !auraType && bundleMetadata.Format === 'js'
+        ? bundleMetadataList.unshift(bundleMetadata)
+        : bundleMetadataList.push(bundleMetadata);
     }
     return bundleMetadataList;
   }
@@ -88,15 +91,17 @@ export class BundleDeploy extends BaseDeploy {
     defToUpdate: BundleMetadataObj[],
     defToCreate: BundleMetadataObj[]
   ): Promise<void> {
-    const auraType = this.component.type.name === AURA_DEF_BUNDLE;
+    const type = this.component.type.name;
 
     const queryString = ['Format, Source'];
-    auraType ? queryString.push('DefType') : queryString.push('FilePath');
+    type === AURA_DEF_BUNDLE
+      ? queryString.push('DefType')
+      : queryString.push('FilePath');
 
     const queryResult = (await this.connection.tooling.query(
       this.buildQuery(
-        `${this.component.type.name}Id = '${bundleId}'`,
-        supportedToolingTypes.get(this.component.type.name),
+        `${type}Id = '${bundleId}'`,
+        supportedToolingTypes.get(type),
         queryString
       )
     )) as { records: BundleMetadataObj[] };
@@ -104,7 +109,7 @@ export class BundleDeploy extends BaseDeploy {
 
     for (const bundleMetadata of bundleMetadataList) {
       let match: BundleMetadataObj | undefined;
-      if (auraType) {
+      if (type === AURA_DEF_BUNDLE) {
         match = existingSources.find(
           obj => obj.DefType === bundleMetadata.DefType
         );
@@ -116,9 +121,7 @@ export class BundleDeploy extends BaseDeploy {
       if (match) {
         defToUpdate.push(Object.assign(bundleMetadata, { Id: match.Id }));
       } else {
-        !auraType && bundleMetadata.Format === 'js'
-          ? defToCreate.unshift(bundleMetadata)
-          : defToCreate.push(bundleMetadata);
+        defToCreate.push(bundleMetadata);
       }
     }
   }
@@ -186,9 +189,9 @@ export class BundleDeploy extends BaseDeploy {
     const successes: DeployResult[] = [];
     const failures: DeployResult[] = [];
     let filepath: string;
-
     try {
       for (const resource of defToCreate) {
+        console.log(resource.FilePath);
         filepath = resource.FilePath;
         const type = this.component.type.name;
         const bundlePath = this.getBundlePath(filepath);
@@ -328,7 +331,7 @@ export class BundleDeploy extends BaseDeploy {
 
     if (componentFailures.length > 0) {
       toolingDeployResult = {
-        State: DeployStatusEnum.Error,
+        State: DeployStatusEnum.Failed,
         ErrorMsg: componentFailures[0].problem,
         DeployDetails: deployDetailsResult,
         isDeleted: false

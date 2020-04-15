@@ -229,7 +229,7 @@ describe('Bundle Deploy Strategy', () => {
     expect(defToCreate.length).to.equal(5);
   });
 
-  it('should filter existing sources by def type for lwc and put matches in update list', async () => {
+  it('should filter existing sources by filePath for lwc and put matches in update list', async () => {
     const mockToolingQuery = sandboxStub.stub(mockConnection.tooling, 'query');
     const defToUpdate: BundleMetadataObj[] = [];
     const defToCreate: BundleMetadataObj[] = [];

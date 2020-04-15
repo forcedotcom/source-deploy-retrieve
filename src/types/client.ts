@@ -6,7 +6,6 @@
  */
 
 import { Connection } from '@salesforce/core';
-import { RegistryAccess } from '../index'; // do i need this
 
 /**
  * File system path to a source file of a metadata component.

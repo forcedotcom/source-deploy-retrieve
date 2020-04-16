@@ -191,7 +191,6 @@ export class BundleDeploy extends BaseDeploy {
     let filepath: string;
     try {
       for (const resource of defToCreate) {
-        console.log(resource.FilePath);
         filepath = resource.FilePath;
         const type = this.component.type.name;
         const bundlePath = this.getBundlePath(filepath);
@@ -310,8 +309,7 @@ export class BundleDeploy extends BaseDeploy {
     const typeFolderIndex = pathParts.findIndex(
       part => part === this.component.type.directoryName
     );
-    console.log('this is the index of the type' + typeFolderIndex);
-    console.log('this is what is at the index ' + pathParts[typeFolderIndex]);
+
     return [
       pathParts.slice(typeFolderIndex).join(sep),
       pathParts.slice(typeFolderIndex + 1).join(sep)

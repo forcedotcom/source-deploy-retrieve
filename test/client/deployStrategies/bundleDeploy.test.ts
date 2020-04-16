@@ -9,6 +9,7 @@ import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import * as fs from 'fs';
+import { join } from 'path';
 import { RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import {
@@ -36,14 +37,14 @@ describe('Bundle Deploy Strategy', () => {
   simpleMetaXMLString += '</ApexClass>';
 
   const auraFiles = [
-    'file/path/aura/mockAuraCmp/mockAuraCmp.auradoc',
-    'file/path/aura/mockAuraCmp/mockAuraCmp.cmp',
-    'file/path/aura/mockAuraCmp/mockAuraCmp.css',
-    'file/path/aura/mockAuraCmp/mockAuraCmp.design',
-    'file/path/aura/mockAuraCmp/mockAuraCmp.svg',
-    'file/path/aura/mockAuraCmp/mockAuraCmpController.js',
-    'file/path/aura/mockAuraCmp/mockAuraCmpHelper.js',
-    'file/path/aura/mockAuraCmp/mockAuraCmpRenderer.js'
+    join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.auradoc'),
+    join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.cmp'),
+    join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.css'),
+    join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.design'),
+    join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.svg'),
+    join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmpController.js'),
+    join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmpHelper.js'),
+    join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmpRenderer.js')
   ];
   const auraContents = [
     '<aura:documentation><aura:description>Documentation</aura:description><aura:example name="ExampleName" ref="exampleComponentName" label="Label">Example Description</aura:example></aura:documentation>',
@@ -63,7 +64,7 @@ describe('Bundle Deploy Strategy', () => {
     },
     fullName: 'mockAuraCmp',
     sources: auraFiles,
-    xml: 'file/path/aura/mockAuraCmp/mockAuraCmp.cmp-meta.xml'
+    xml: join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.cmp-meta.xml')
   };
   const testAuraList = [
     {
@@ -117,8 +118,8 @@ describe('Bundle Deploy Strategy', () => {
   ] as BundleMetadataObj[];
 
   const lwcFiles = [
-    'file/path/lwc/mockLwcCmp/mockLwcCmp.html',
-    'file/path/lwc/mockLwcCmp/mockLwcCmp.js'
+    join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.html'),
+    join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js')
   ];
   const lwcContents = [
     `<template></template>`,
@@ -132,7 +133,7 @@ describe('Bundle Deploy Strategy', () => {
     },
     fullName: 'mockLwcCmp',
     sources: lwcFiles,
-    xml: 'file/path/lwc/mockLwcCmp/mockLwcCmp.js-meta.xml'
+    xml: join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js-meta.xml')
   };
   const testLwcList = [
     { FilePath: lwcFiles[0], Format: 'html', Source: lwcContents[0] },
@@ -164,7 +165,10 @@ describe('Bundle Deploy Strategy', () => {
     mockFS.withArgs(lwcFiles[0], 'utf8').returns(lwcContents[0]);
     mockFS.withArgs(lwcFiles[1], 'utf8').returns(lwcContents[1]);
     mockFS
-      .withArgs('file/path/aura/mockAuraCmp/mockAuraCmp.cmp-meta.xml', 'utf8')
+      .withArgs(
+        join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.cmp-meta.xml'),
+        'utf8'
+      )
       .returns(simpleMetaXMLString);
   });
 
@@ -268,7 +272,7 @@ describe('Bundle Deploy Strategy', () => {
     const matches = [
       {
         Id: '1dcxxx000000035',
-        FilePath: 'path/to/wrong/lwc/lwcFile/lwcFile.html',
+        FilePath: join('path', 'to', 'wrong', 'lwc', 'lwcFile', 'lwcFile.html'),
         Format: 'html',
         Source: lwcContents[0]
       },
@@ -390,8 +394,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: true,
         created: false,
         deleted: false,
-        fileName: 'lwc/mockLwcCmp/mockLwcCmp.js',
-        fullName: 'mockLwcCmp/mockLwcCmp.js',
+        fileName: join('lwc', 'mockLwcCmp', 'mockLwcCmp.js'),
+        fullName: join('mockLwcCmp', 'mockLwcCmp.js'),
         success: true,
         componentType: 'LightningComponentBundle'
       },
@@ -399,8 +403,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: true,
         created: false,
         deleted: false,
-        fileName: 'lwc/mockLwcCmp/mockLwcCmp.html',
-        fullName: 'mockLwcCmp/mockLwcCmp.html',
+        fileName: join('lwc', 'mockLwcCmp', 'mockLwcCmp.html'),
+        fullName: join('mockLwcCmp', 'mockLwcCmp.html'),
         success: true,
         componentType: 'LightningComponentBundle'
       }
@@ -430,8 +434,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: false,
         created: true,
         deleted: false,
-        fileName: 'lwc/mockLwcCmp/mockLwcCmp.js',
-        fullName: 'mockLwcCmp/mockLwcCmp.js',
+        fileName: join('lwc', 'mockLwcCmp', 'mockLwcCmp.js'),
+        fullName: join('mockLwcCmp', 'mockLwcCmp.js'),
         success: true,
         componentType: 'LightningComponentBundle'
       },
@@ -439,8 +443,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: false,
         created: true,
         deleted: false,
-        fileName: 'lwc/mockLwcCmp/mockLwcCmp.html',
-        fullName: 'mockLwcCmp/mockLwcCmp.html',
+        fileName: join('lwc', 'mockLwcCmp', 'mockLwcCmp.html'),
+        fullName: join('mockLwcCmp', 'mockLwcCmp.html'),
         success: true,
         componentType: 'LightningComponentBundle'
       }
@@ -470,8 +474,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: false,
         created: false,
         deleted: false,
-        fileName: 'lwc/mockLwcCmp/mockLwcCmp.js',
-        fullName: 'mockLwcCmp/mockLwcCmp.js',
+        fileName: join('lwc', 'mockLwcCmp', 'mockLwcCmp.js'),
+        fullName: join('mockLwcCmp', 'mockLwcCmp.js'),
         success: false,
         problem: 'Unexpected error while creating sources',
         componentType: 'LightningComponentBundle'
@@ -512,8 +516,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: false,
         created: true,
         deleted: false,
-        fileName: 'aura/mockAuraCmp/mockAuraCmp.auradoc',
-        fullName: 'mockAuraCmp/mockAuraCmp.auradoc',
+        fileName: join('aura', 'mockAuraCmp', 'mockAuraCmp.auradoc'),
+        fullName: join('mockAuraCmp', 'mockAuraCmp.auradoc'),
         success: true,
         componentType: 'AuraDefinitionBundle'
       },
@@ -521,8 +525,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: false,
         created: true,
         deleted: false,
-        fileName: 'aura/mockAuraCmp/mockAuraCmp.cmp',
-        fullName: 'mockAuraCmp/mockAuraCmp.cmp',
+        fileName: join('aura', 'mockAuraCmp', 'mockAuraCmp.cmp'),
+        fullName: join('mockAuraCmp', 'mockAuraCmp.cmp'),
         success: true,
         componentType: 'AuraDefinitionBundle'
       },
@@ -530,8 +534,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: false,
         created: true,
         deleted: false,
-        fileName: 'aura/mockAuraCmp/mockAuraCmp.css',
-        fullName: 'mockAuraCmp/mockAuraCmp.css',
+        fileName: join('aura', 'mockAuraCmp', 'mockAuraCmp.css'),
+        fullName: join('mockAuraCmp', 'mockAuraCmp.css'),
         success: true,
         componentType: 'AuraDefinitionBundle'
       },
@@ -539,8 +543,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: false,
         created: true,
         deleted: false,
-        fileName: 'aura/mockAuraCmp/mockAuraCmp.design',
-        fullName: 'mockAuraCmp/mockAuraCmp.design',
+        fileName: join('aura/mockAuraCmp/mockAuraCmp.design'),
+        fullName: join('mockAuraCmp', 'mockAuraCmp.design'),
         success: true,
         componentType: 'AuraDefinitionBundle'
       },
@@ -548,8 +552,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: false,
         created: true,
         deleted: false,
-        fileName: 'aura/mockAuraCmp/mockAuraCmp.svg',
-        fullName: 'mockAuraCmp/mockAuraCmp.svg',
+        fileName: join('aura', 'mockAuraCmp', 'mockAuraCmp.svg'),
+        fullName: join('mockAuraCmp', 'mockAuraCmp.svg'),
         success: true,
         componentType: 'AuraDefinitionBundle'
       },
@@ -557,8 +561,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: false,
         created: true,
         deleted: false,
-        fileName: 'mockAuraCmp/mockAuraCmpController.js',
-        fullName: 'aura/mockAuraCmp/mockAuraCmpController.js',
+        fileName: join('mockAuraCmp', 'mockAuraCmpController.js'),
+        fullName: join('aura', 'mockAuraCmp', 'mockAuraCmpController.js'),
         success: true,
         componentType: 'AuraDefinitionBundle'
       },
@@ -566,8 +570,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: false,
         created: true,
         deleted: false,
-        fileName: 'aura/mockAuraCmp/mockAuraCmpHelper.js',
-        fullName: 'mockAuraCmp/mockAuraCmpHelper.js',
+        fileName: join('aura/mockAuraCmp/mockAuraCmpHelper.js'),
+        fullName: join('mockAuraCmp', 'mockAuraCmpHelper.js'),
         success: true,
         componentType: 'AuraDefinitionBundle'
       },
@@ -575,8 +579,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: false,
         created: true,
         deleted: false,
-        fileName: 'aura/mockAuraCmp/mockAuraCmpRenderer.js',
-        fullName: 'mockAuraCmp/mockAuraCmpRenderer.js',
+        fileName: join('aura', 'mockAuraCmp', 'mockAuraCmpRenderer.js'),
+        fullName: join('mockAuraCmp', 'mockAuraCmpRenderer.js'),
         success: true,
         componentType: 'AuraDefinitionBundle'
       }
@@ -643,8 +647,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: false,
         created: false,
         deleted: false,
-        fileName: 'aura/mockAuraCmp/mockAuraCmp.auradoc',
-        fullName: 'mockAuraCmp/mockAuraCmp.auradoc',
+        fileName: join('aura', 'mockAuraCmp', 'mockAuraCmp.auradoc'),
+        fullName: join('mockAuraCmp', 'mockAuraCmp.auradoc'),
         success: true,
         componentType: 'AuraDefinitionBundle',
         problem: 'Unexpected error while creating sources'
@@ -722,8 +726,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: true,
         created: false,
         deleted: false,
-        fileName: 'aura/mockAuraCmp/mockAuraCmp.cmp',
-        fullName: 'mockAuraCmp/mockAuraCmp.cmp',
+        fileName: join('aura', 'mockAuraCmp', 'mockAuraCmp.cmp'),
+        fullName: join('mockAuraCmp', 'mockAuraCmp.cmp'),
         success: true,
         componentType: 'AuraDefinitionBundle'
       },
@@ -731,8 +735,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: true,
         created: false,
         deleted: false,
-        fileName: 'aura/mockAuraCmp/mockAuraCmp.css',
-        fullName: 'mockAuraCmp/mockAuraCmp.css',
+        fileName: join('aura', 'mockAuraCmp', 'mockAuraCmp.css'),
+        fullName: join('mockAuraCmp', 'mockAuraCmp.css'),
         success: true,
         componentType: 'AuraDefinitionBundle'
       },
@@ -740,8 +744,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: true,
         created: false,
         deleted: false,
-        fileName: 'mockAuraCmp/mockAuraCmp.design',
-        fullName: 'aura/mockAuraCmp/mockAuraCmp.design',
+        fileName: join('mockAuraCmp/mockAuraCmp.design'),
+        fullName: join('aura', 'mockAuraCmp', 'mockAuraCmp.design'),
         success: true,
         componentType: 'AuraDefinitionBundle'
       }
@@ -756,8 +760,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: false,
         created: true,
         deleted: false,
-        fileName: 'aura/mockAuraCmp/mockAuraCmp.auradoc',
-        fullName: 'mockAuraCmp/mockAuraCmp.auradoc',
+        fileName: join('aura', 'mockAuraCmp', 'mockAuraCmp.auradoc'),
+        fullName: join('mockAuraCmp', 'mockAuraCmp.auradoc'),
         success: true,
         componentType: 'AuraDefinitionBundle'
       },
@@ -765,8 +769,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: false,
         created: true,
         deleted: false,
-        fileName: 'aura/mockAuraCmp/mockAuraCmp.svg',
-        fullName: 'mockAuraCmp/mockAuraCmp.svg',
+        fileName: join('aura', 'mockAuraCmp', 'mockAuraCmp.svg'),
+        fullName: join('mockAuraCmp', 'mockAuraCmp.svg'),
         success: true,
         componentType: 'AuraDefinitionBundle'
       },
@@ -774,8 +778,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: false,
         created: true,
         deleted: false,
-        fileName: 'aura/mockAuraCmp/mockAuraCmpController.js',
-        fullName: 'mockAuraCmp/mockAuraCmpController.js',
+        fileName: join('aura', 'mockAuraCmp', 'mockAuraCmpController.js'),
+        fullName: join('mockAuraCmp', 'mockAuraCmpController.js'),
         success: true,
         componentType: 'AuraDefinitionBundle'
       },
@@ -783,8 +787,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: false,
         created: true,
         deleted: false,
-        fileName: 'aura/mockAuraCmp/mockAuraCmpHelper.js',
-        fullName: 'mockAuraCmp/mockAuraCmpHelper.js',
+        fileName: join('aura', 'mockAuraCmp', 'mockAuraCmpHelper.js'),
+        fullName: join('mockAuraCmp', 'mockAuraCmpHelper.js'),
         success: true,
         componentType: 'AuraDefinitionBundle'
       },
@@ -792,8 +796,8 @@ describe('Bundle Deploy Strategy', () => {
         changed: false,
         created: true,
         deleted: false,
-        fileName: 'mockAuraCmp/mockAuraCmpRenderer.js',
-        fullName: 'aura/mockAuraCmp/mockAuraCmpRenderer.js',
+        fileName: join('aura', 'mockAuraCmp', 'mockAuraCmpRenderer.js'),
+        fullName: join('mockAuraCmp', 'mockAuraCmpRenderer.js'),
         success: true,
         componentType: 'AuraDefinitionBundle'
       }

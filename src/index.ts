@@ -12,9 +12,9 @@ export {
 export {
   ApiResult,
   RetrievePathOptions,
-  ToolingDeployResult,
-  DeployDetailsResult,
   DeployResult,
+  DeployDetails,
+  SourceResult,
   DeployStatusEnum
 } from './types';
 export { SourceClient } from './client';

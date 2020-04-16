@@ -6,7 +6,7 @@
  */
 
 import { Connection } from '@salesforce/core';
-import { MetadataComponent, ToolingDeployResult } from '../../types';
+import { MetadataComponent, DeployResult } from '../../types';
 import { ToolingCreateResult } from './index';
 import { DeployError } from '../../errors';
 
@@ -21,9 +21,7 @@ export abstract class BaseDeploy {
     this.connection = connection;
   }
 
-  public abstract deploy(
-    component: MetadataComponent
-  ): Promise<ToolingDeployResult>;
+  public abstract deploy(component: MetadataComponent): Promise<DeployResult>;
 
   public buildMetadataField(
     metadataContent: string

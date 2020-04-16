@@ -102,20 +102,20 @@ export type DeployOptions = CommonOptions & { components: MetadataComponent[] };
 
 export type DeployPathOptions = CommonOptions & CommonPathOptions;
 
-export type ToolingDeployResult = {
+export type DeployResult = {
   State: DeployStatusEnum;
   ErrorMsg: string | null;
   isDeleted: boolean;
-  DeployDetails: DeployDetailsResult | null;
+  DeployDetails: DeployDetails | null;
   outboundFiles?: string[];
 };
 
-export type DeployDetailsResult = {
-  componentFailures: DeployResult[];
-  componentSuccesses: DeployResult[];
+export type DeployDetails = {
+  componentFailures: SourceResult[];
+  componentSuccesses: SourceResult[];
 };
 
-export type DeployResult = {
+export type SourceResult = {
   columnNumber?: number;
   lineNumber?: number;
   problem?: string;
@@ -160,12 +160,12 @@ export interface DeployRetrieveClient {
    *
    * @param filePath Paths to source files to deploy
    */
-  deploy(options: DeployOptions): Promise<ToolingDeployResult>;
+  deploy(options: DeployOptions): Promise<DeployResult>;
   /* Infer metadata components from source path, deploy them, and wait for results.
    *
    * @param filePath Paths to source files to deploy
    */
-  deployWithPaths(options: DeployPathOptions): Promise<ToolingDeployResult>;
+  deployWithPaths(options: DeployPathOptions): Promise<DeployResult>;
 }
 
 export abstract class BaseApi implements DeployRetrieveClient {
@@ -184,9 +184,7 @@ export abstract class BaseApi implements DeployRetrieveClient {
 
   abstract retrieve(options: RetrieveOptions): Promise<ApiResult>;
 
-  abstract deploy(options: DeployOptions): Promise<ToolingDeployResult>;
+  abstract deploy(options: DeployOptions): Promise<DeployResult>;
 
-  abstract deployWithPaths(
-    options: DeployPathOptions
-  ): Promise<ToolingDeployResult>;
+  abstract deployWithPaths(options: DeployPathOptions): Promise<DeployResult>;
 }

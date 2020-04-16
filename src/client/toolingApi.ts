@@ -15,7 +15,7 @@ import {
   RetrieveOptions,
   QueryResult,
   MetadataComponent,
-  ToolingDeployResult
+  DeployResult
 } from '../types';
 import { nls } from '../i18n';
 import { generateMetaXML, generateMetaXMLPath, createFiles } from '../utils';
@@ -106,7 +106,7 @@ export class ToolingApi extends BaseApi {
     return `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ${typeName} where Name = '${fullName}'`;
   }
 
-  public async deploy(options: DeployOptions): Promise<ToolingDeployResult> {
+  public async deploy(options: DeployOptions): Promise<DeployResult> {
     if (options.components.length > 1) {
       const deployError = new SourceClientError(
         'tapi_deploy_component_limit_error'
@@ -129,7 +129,7 @@ export class ToolingApi extends BaseApi {
 
   public async deployWithPaths(
     options: DeployPathOptions
-  ): Promise<ToolingDeployResult> {
+  ): Promise<DeployResult> {
     const deployPaths = options.paths[0];
     return await this.deploy({
       components: this.registry.getComponentsFromPath(deployPaths)

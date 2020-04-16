@@ -12,7 +12,7 @@ import { createSandbox, SinonSandbox } from 'sinon';
 import { RegistryAccess } from '../../src/metadata-registry';
 import { ToolingApi } from '../../src/client';
 import { ContainerDeploy } from '../../src/client/deployStrategies';
-import { DeployStatusEnum, ToolingDeployResult } from '../../src/types';
+import { DeployStatusEnum, DeployResult } from '../../src/types';
 import { nls } from '../../src/i18n';
 
 const $$ = testSetup();
@@ -62,7 +62,7 @@ describe('Tooling API tests', () => {
       .resolves({
         State: DeployStatusEnum.Completed,
         ErrorMsg: null
-      } as ToolingDeployResult);
+      } as DeployResult);
 
     const deployOpts = {
       paths: ['file/path/myTestClass.cls']

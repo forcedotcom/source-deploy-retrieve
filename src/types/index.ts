@@ -15,8 +15,8 @@ export {
   RetrieveOptions,
   MetadataComponent,
   SourceAdapter,
-  ToolingDeployResult,
-  DeployDetailsResult,
   DeployResult,
+  DeployDetails,
+  SourceResult,
   DeployStatusEnum
 } from './client';

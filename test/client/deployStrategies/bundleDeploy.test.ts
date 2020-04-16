@@ -16,7 +16,7 @@ import {
   BundleMetadataObj
 } from '../../../src/client/deployStrategies';
 import { nls } from '../../../src/i18n';
-import { DeployStatusEnum, ToolingDeployResult } from '../../../src/types';
+import { DeployResult, DeployStatusEnum } from '../../../src/types';
 
 const $$ = testSetup();
 
@@ -590,7 +590,7 @@ describe('Bundle Deploy Strategy', () => {
       componentFailures: []
     });
 
-    const testToolingDeployResult = {
+    const testDeployResult = {
       State: DeployStatusEnum.Completed,
       DeployDetails: {
         componentSuccesses: createTestSuccesses,
@@ -599,25 +599,21 @@ describe('Bundle Deploy Strategy', () => {
       isDeleted: false,
       outboundFiles: auraFiles,
       ErrorMsg: null
-    } as ToolingDeployResult;
+    } as DeployResult;
 
     const bundleDeploy = new BundleDeploy(mockConnection);
     bundleDeploy.component = auraComponent;
-    const toolingDeployResult = await bundleDeploy.deploy(auraComponent);
+    const DeployResult = await bundleDeploy.deploy(auraComponent);
 
-    expect(toolingDeployResult.DeployDetails.componentSuccesses).to.deep.equal(
-      testToolingDeployResult.DeployDetails.componentSuccesses
+    expect(DeployResult.DeployDetails.componentSuccesses).to.deep.equal(
+      testDeployResult.DeployDetails.componentSuccesses
     );
-    expect(toolingDeployResult.ErrorMsg).to.equal(
-      testToolingDeployResult.ErrorMsg
+    expect(DeployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
+    expect(DeployResult.isDeleted).to.equal(testDeployResult.isDeleted);
+    expect(DeployResult.outboundFiles).to.deep.equal(
+      testDeployResult.outboundFiles
     );
-    expect(toolingDeployResult.isDeleted).to.equal(
-      testToolingDeployResult.isDeleted
-    );
-    expect(toolingDeployResult.outboundFiles).to.deep.equal(
-      testToolingDeployResult.outboundFiles
-    );
-    expect(toolingDeployResult.State).to.equal(testToolingDeployResult.State);
+    expect(DeployResult.State).to.equal(testDeployResult.State);
   });
 
   it('should format output for creation only failures correctly', async () => {
@@ -663,7 +659,7 @@ describe('Bundle Deploy Strategy', () => {
       componentFailures: []
     });
 
-    const testToolingDeployResult = {
+    const testDeployResult = {
       State: DeployStatusEnum.Failed,
       DeployDetails: {
         componentSuccesses: [],
@@ -671,22 +667,18 @@ describe('Bundle Deploy Strategy', () => {
       },
       isDeleted: false,
       ErrorMsg: createTestFailures[0].problem
-    } as ToolingDeployResult;
+    } as DeployResult;
 
     const bundleDeploy = new BundleDeploy(mockConnection);
     bundleDeploy.component = auraComponent;
-    const toolingDeployResult = await bundleDeploy.deploy(auraComponent);
+    const DeployResult = await bundleDeploy.deploy(auraComponent);
 
-    expect(toolingDeployResult.DeployDetails.componentFailures).to.deep.equal(
-      testToolingDeployResult.DeployDetails.componentFailures
+    expect(DeployResult.DeployDetails.componentFailures).to.deep.equal(
+      testDeployResult.DeployDetails.componentFailures
     );
-    expect(toolingDeployResult.ErrorMsg).to.equal(
-      testToolingDeployResult.ErrorMsg
-    );
-    expect(toolingDeployResult.isDeleted).to.equal(
-      testToolingDeployResult.isDeleted
-    );
-    expect(toolingDeployResult.State).to.equal(testToolingDeployResult.State);
+    expect(DeployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
+    expect(DeployResult.isDeleted).to.equal(testDeployResult.isDeleted);
+    expect(DeployResult.State).to.equal(testDeployResult.State);
   });
 
   it('should format output for create and update successes correctly', async () => {
@@ -811,7 +803,7 @@ describe('Bundle Deploy Strategy', () => {
       componentFailures: []
     });
 
-    const testToolingDeployResult = {
+    const testDeployResult = {
       State: DeployStatusEnum.Completed,
       DeployDetails: {
         componentSuccesses: testUpdateSuccesses.concat(testCreateSuccesses),
@@ -820,24 +812,20 @@ describe('Bundle Deploy Strategy', () => {
       isDeleted: false,
       outboundFiles: auraFiles,
       ErrorMsg: null
-    } as ToolingDeployResult;
+    } as DeployResult;
 
     const bundleDeploy = new BundleDeploy(mockConnection);
     bundleDeploy.component = auraComponent;
-    const toolingDeployResult = await bundleDeploy.deploy(auraComponent);
+    const DeployResult = await bundleDeploy.deploy(auraComponent);
 
-    expect(toolingDeployResult.DeployDetails.componentSuccesses).to.deep.equal(
-      testToolingDeployResult.DeployDetails.componentSuccesses
+    expect(DeployResult.DeployDetails.componentSuccesses).to.deep.equal(
+      testDeployResult.DeployDetails.componentSuccesses
     );
-    expect(toolingDeployResult.ErrorMsg).to.equal(
-      testToolingDeployResult.ErrorMsg
+    expect(DeployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
+    expect(DeployResult.isDeleted).to.equal(testDeployResult.isDeleted);
+    expect(DeployResult.outboundFiles).to.deep.equal(
+      testDeployResult.outboundFiles
     );
-    expect(toolingDeployResult.isDeleted).to.equal(
-      testToolingDeployResult.isDeleted
-    );
-    expect(toolingDeployResult.outboundFiles).to.deep.equal(
-      testToolingDeployResult.outboundFiles
-    );
-    expect(toolingDeployResult.State).to.equal(testToolingDeployResult.State);
+    expect(DeployResult.State).to.equal(testDeployResult.State);
   });
 });

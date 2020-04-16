@@ -9,9 +9,9 @@ import { sep } from 'path';
 import { DeployError } from '../../errors';
 import {
   MetadataComponent,
-  ToolingDeployResult,
-  DeployDetailsResult,
   DeployResult,
+  DeployDetails,
+  SourceResult,
   DeployStatusEnum
 } from '../../types';
 import { getSuffix, parseBaseName } from '../../utils';
@@ -24,9 +24,7 @@ import {
 import { BaseDeploy } from './baseDeploy';
 
 export class BundleDeploy extends BaseDeploy {
-  public async deploy(
-    component: MetadataComponent
-  ): Promise<ToolingDeployResult> {
+  public async deploy(component: MetadataComponent): Promise<DeployResult> {
     this.component = component;
     const bundleMetadataList = this.buildBundleList();
     const defToUpdate: BundleMetadataObj[] = [];
@@ -152,9 +150,9 @@ export class BundleDeploy extends BaseDeploy {
 
   public async updateSources(
     defToUpdate: BundleMetadataObj[]
-  ): Promise<DeployDetailsResult> {
-    const successes: DeployResult[] = [];
-    const failures: DeployResult[] = [];
+  ): Promise<DeployDetails> {
+    const successes: SourceResult[] = [];
+    const failures: SourceResult[] = [];
     let filepath: string;
     try {
       for (const resource of defToUpdate) {
@@ -187,9 +185,9 @@ export class BundleDeploy extends BaseDeploy {
   public async createSources(
     defToCreate: BundleMetadataObj[],
     bundleId: string
-  ): Promise<DeployDetailsResult> {
-    const successes: DeployResult[] = [];
-    const failures: DeployResult[] = [];
+  ): Promise<DeployDetails> {
+    const successes: SourceResult[] = [];
+    const failures: SourceResult[] = [];
     let filepath: string;
     try {
       for (const resource of defToCreate) {
@@ -285,7 +283,7 @@ export class BundleDeploy extends BaseDeploy {
     success: boolean,
     created: boolean,
     problem?: string
-  ): DeployResult {
+  ): SourceResult {
     const bundlePath = this.getBundlePath(filepath);
     const result = {
       success,
@@ -293,7 +291,7 @@ export class BundleDeploy extends BaseDeploy {
       fileName: bundlePath[0],
       fullName: bundlePath[1],
       componentType: this.component.type.name
-    } as DeployResult;
+    } as SourceResult;
 
     if (success) {
       result['created'] = created;
@@ -321,9 +319,9 @@ export class BundleDeploy extends BaseDeploy {
   }
 
   private formatBundleOutput(
-    updateResult: DeployDetailsResult,
-    createResult: DeployDetailsResult
-  ): ToolingDeployResult {
+    updateResult: DeployDetails,
+    createResult: DeployDetails
+  ): DeployResult {
     const componentSuccesses = updateResult.componentSuccesses.concat(
       createResult.componentSuccesses
     );
@@ -334,9 +332,9 @@ export class BundleDeploy extends BaseDeploy {
     const deployDetailsResult = {
       componentSuccesses,
       componentFailures
-    } as DeployDetailsResult;
+    } as DeployDetails;
 
-    let toolingDeployResult: ToolingDeployResult;
+    let toolingDeployResult: DeployResult;
 
     if (componentFailures.length > 0) {
       toolingDeployResult = {

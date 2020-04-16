@@ -7,11 +7,7 @@
 
 import { readFileSync } from 'fs';
 import { DeployError } from '../../errors';
-import {
-  MetadataComponent,
-  DeployStatusEnum,
-  ToolingDeployResult
-} from '../../types';
+import { MetadataComponent, DeployStatusEnum, DeployResult } from '../../types';
 import { parseBaseName } from '../../utils';
 import {
   CONTAINER_ASYNC_REQUEST,
@@ -22,9 +18,7 @@ import {
 import { BaseDeploy } from './baseDeploy';
 
 export class ContainerDeploy extends BaseDeploy {
-  public async deploy(
-    component: MetadataComponent
-  ): Promise<ToolingDeployResult> {
+  public async deploy(component: MetadataComponent): Promise<DeployResult> {
     this.component = component;
     const sourcePath = component.sources[0];
     const metadataPath = component.xml;
@@ -112,8 +106,8 @@ export class ContainerDeploy extends BaseDeploy {
 
   public async toolingStatusCheck(
     asyncRequest: ToolingCreateResult
-  ): Promise<ToolingDeployResult> {
-    let retrieveResult: ToolingDeployResult = await this.toolingRetrieve(
+  ): Promise<DeployResult> {
+    let retrieveResult: DeployResult = await this.toolingRetrieve(
       CONTAINER_ASYNC_REQUEST,
       asyncRequest.id
     );
@@ -132,10 +126,7 @@ export class ContainerDeploy extends BaseDeploy {
   private async toolingRetrieve(
     type: string,
     id: string
-  ): Promise<ToolingDeployResult> {
-    return (await this.connection.tooling.retrieve(
-      type,
-      id
-    )) as ToolingDeployResult;
+  ): Promise<DeployResult> {
+    return (await this.connection.tooling.retrieve(type, id)) as DeployResult;
   }
 }

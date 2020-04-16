@@ -6,6 +6,7 @@
  */
 
 import { Connection } from '@salesforce/core';
+import { RegistryAccess } from '../metadata-registry';
 
 /**
  * File system path to a source file of a metadata component.
@@ -97,6 +98,10 @@ export type ApiResult = {
   message?: string;
 };
 
+export type DeployOptions = CommonOptions & { components: MetadataComponent[] };
+
+export type DeployPathOptions = CommonOptions & CommonPathOptions;
+
 export type ToolingDeployResult = {
   State: DeployStatusEnum;
   ErrorMsg: string | null;
@@ -151,18 +156,25 @@ export interface DeployRetrieveClient {
    * @param options Specify `paths`, `output` and other optionals
    */
   retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult>;
-  /* Infer metadata components from source path and deploy them.
+  /* Deploy metadata components and wait for result.
    *
    * @param filePath Paths to source files to deploy
    */
-  deploy(filePath: string): Promise<ToolingDeployResult>;
+  deploy(options: DeployOptions): Promise<ToolingDeployResult>;
+  /* Infer metadata components from source path, deploy them, and wait for results.
+   *
+   * @param filePath Paths to source files to deploy
+   */
+  deployWithPaths(options: DeployPathOptions): Promise<ToolingDeployResult>;
 }
 
 export abstract class BaseApi implements DeployRetrieveClient {
   protected connection: Connection;
+  protected registry: RegistryAccess;
 
-  constructor(connection: Connection) {
+  constructor(connection: Connection, registry?: RegistryAccess) {
     this.connection = connection;
+    this.registry = registry || new RegistryAccess();
   }
 
   /**
@@ -172,5 +184,9 @@ export abstract class BaseApi implements DeployRetrieveClient {
 
   abstract retrieve(options: RetrieveOptions): Promise<ApiResult>;
 
-  abstract deploy(filePath: string): Promise<ToolingDeployResult>;
+  abstract deploy(options: DeployOptions): Promise<ToolingDeployResult>;
+
+  abstract deployWithPaths(
+    options: DeployPathOptions
+  ): Promise<ToolingDeployResult>;
 }

@@ -8,6 +8,8 @@
 export { QueryRecord, QueryResult } from './query';
 export {
   BaseApi,
+  DeployOptions,
+  DeployPathOptions,
   RetrievePathOptions,
   ApiResult,
   RetrieveOptions,

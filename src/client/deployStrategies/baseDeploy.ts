@@ -6,8 +6,8 @@
  */
 
 import { Connection } from '@salesforce/core';
-import { MetadataComponent } from '../../types';
-import { ToolingCreateResult, ToolingDeployResult } from './index';
+import { MetadataComponent, ToolingDeployResult } from '../../types';
+import { ToolingCreateResult } from './index';
 import { DeployError } from '../../errors';
 
 // tslint:disable-next-line:no-var-requires

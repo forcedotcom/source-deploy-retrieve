@@ -43,9 +43,11 @@ export const messages = {
     'Unexpected error while retrieving using Tooling API. Stack trace: %s',
   tapi_retrieve_component_limit_error:
     'This retrieve method only supports retrieving one metadata component at a time',
+  error_creating_metadata_type: "Unexpected error creating '%s'",
+  error_updating_metadata_type: "Unexpected error updating '%s'",
+  error_parsing_metadata_file: 'Error parsing metadata file',
+  tapi_deploy_component_limit_error:
+    'This deploy method only supports deploying one metadata component at a time',
   error_on_manifest_creation:
-    "Unexpected error while creating manifest for '%s'. Stack trace: %s",
-  error_creating_metadata_type: 'Unexpected error creating %s',
-  error_updating_metadata_type: 'Unexpected error updating %s',
-  error_parsing_metadata_file: 'Error parsing metadata file'
+    "Unexpected error while creating manifest for '%s'. Stack trace: %s"
 };

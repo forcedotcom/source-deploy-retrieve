@@ -7,7 +7,7 @@
 
 import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import * as fs from 'fs';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ContainerDeploy } from '../../../src/client/deployStrategies';
@@ -93,10 +93,9 @@ describe('Base Deploy Strategy', () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
     const metaXMLString = 'Incorrect metadata file';
 
-    try {
-      deployLibrary.buildMetadataField(metaXMLString);
-    } catch (e) {
-      expect(e.message).to.equal(nls.localize('error_parsing_metadata_file'));
-    }
+    assert.throws(
+      () => deployLibrary.buildMetadataField(metaXMLString),
+      nls.localize('error_parsing_metadata_file')
+    );
   });
 });

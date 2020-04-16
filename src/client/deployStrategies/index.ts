@@ -13,11 +13,7 @@ import { BundleTypes } from './deployUtils';
 export {
   supportedToolingTypes,
   BundleTypes,
-  DeployStatusEnum,
   ToolingCreateResult,
-  ToolingDeployResult,
-  DeployDetailsResult,
-  DeployResult,
   BundleMetadataObj
 } from './deployUtils';
 export {

@@ -13,10 +13,10 @@ import { Record, RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import {
   ContainerDeploy,
-  DeployStatusEnum,
   ToolingCreateResult
 } from '../../../src/client/deployStrategies';
 import { nls } from '../../../src/i18n';
+import { DeployStatusEnum } from '../../../src/types';
 
 const $$ = testSetup();
 

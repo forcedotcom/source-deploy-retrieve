@@ -7,15 +7,17 @@
 
 import { readFileSync } from 'fs';
 import { DeployError } from '../../errors';
-import { MetadataComponent } from '../../types';
+import {
+  MetadataComponent,
+  DeployStatusEnum,
+  ToolingDeployResult
+} from '../../types';
 import { parseBaseName } from '../../utils';
 import {
   CONTAINER_ASYNC_REQUEST,
-  DeployStatusEnum,
   METADATA_CONTAINER,
   supportedToolingTypes,
-  ToolingCreateResult,
-  ToolingDeployResult
+  ToolingCreateResult
 } from './index';
 import { BaseDeploy } from './baseDeploy';
 

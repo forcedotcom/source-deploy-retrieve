@@ -7,17 +7,19 @@
 import { readFileSync } from 'fs';
 import { sep } from 'path';
 import { DeployError } from '../../errors';
-import { MetadataComponent } from '../../types';
+import {
+  MetadataComponent,
+  ToolingDeployResult,
+  DeployDetailsResult,
+  DeployResult,
+  DeployStatusEnum
+} from '../../types';
 import { getSuffix, parseBaseName } from '../../utils';
 import {
   AURA_DEF_BUNDLE,
   BundleMetadataObj,
-  DeployDetailsResult,
-  DeployResult,
-  DeployStatusEnum,
   supportedToolingTypes,
-  ToolingCreateResult,
-  ToolingDeployResult
+  ToolingCreateResult
 } from './index';
 import { BaseDeploy } from './baseDeploy';
 
@@ -284,11 +286,12 @@ export class BundleDeploy extends BaseDeploy {
     created: boolean,
     problem?: string
   ): DeployResult {
+    const bundlePath = this.getBundlePath(filepath);
     const result = {
       success,
       deleted: false,
-      fileName: parseBaseName(filepath),
-      fullName: this.getBundlePath(filepath),
+      fileName: bundlePath[0],
+      fullName: bundlePath[1],
       componentType: this.component.type.name
     } as DeployResult;
 
@@ -303,12 +306,18 @@ export class BundleDeploy extends BaseDeploy {
     return result;
   }
 
-  private getBundlePath(filepath: string): string {
+  private getBundlePath(filepath: string): string[] {
     const pathParts = filepath.split(sep);
+
     const typeFolderIndex = pathParts.findIndex(
       part => part === this.component.type.directoryName
     );
-    return pathParts.slice(typeFolderIndex).join(sep);
+    console.log('this is the index of the type' + typeFolderIndex);
+    console.log('this is what is at the index ' + pathParts[typeFolderIndex]);
+    return [
+      pathParts.slice(typeFolderIndex).join(sep),
+      pathParts.slice(typeFolderIndex + 1).join(sep)
+    ];
   }
 
   private formatBundleOutput(

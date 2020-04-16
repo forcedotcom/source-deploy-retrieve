@@ -12,7 +12,7 @@ import { createSandbox, SinonSandbox } from 'sinon';
 import { RegistryAccess } from '../../src/metadata-registry';
 import { ToolingApi } from '../../src/client';
 import { ContainerDeploy } from '../../src/client/deployStrategies';
-import { DeployStatusEnum, ToolingDeployResult } from '../../src';
+import { DeployStatusEnum, ToolingDeployResult } from '../../src/types';
 import { nls } from '../../src/i18n';
 
 const $$ = testSetup();
@@ -23,7 +23,6 @@ describe('Tooling API tests', () => {
     status: 'Active'
   };
   const testData = new MockTestOrgData();
-  const filepath = 'file/path/one.cls';
   let mockConnection: Connection;
   let sandboxStub: SinonSandbox;
 
@@ -50,9 +49,9 @@ describe('Tooling API tests', () => {
       .returns([
         {
           type: { name: 'ApexClass', directoryName: '', inFolder: false },
-          fullName: '',
-          xml: '',
-          sources: []
+          fullName: 'myTestClass',
+          xml: 'myTestClass.cls-meta.xml',
+          sources: ['file/path/myTestClass.cls']
         }
       ]);
     sandboxStub
@@ -65,7 +64,10 @@ describe('Tooling API tests', () => {
         ErrorMsg: null
       } as ToolingDeployResult);
 
-    await deployLibrary.deploy('dummypath/dummyfile.extension');
+    const deployOpts = {
+      paths: ['file/path/myTestClass.cls']
+    };
+    await deployLibrary.deployWithPaths(deployOpts);
 
     expect(mockContainerDeploy.callCount).to.equal(1);
   });
@@ -82,10 +84,12 @@ describe('Tooling API tests', () => {
         }
       ]);
     const deployLibrary = new ToolingApi(mockConnection);
-    deployLibrary.deploy(filepath);
+    const deployOpts = {
+      paths: ['file/path/myTestClass.flexipage']
+    };
 
     try {
-      await deployLibrary.deploy('dummypath/dummyfile.extension');
+      await deployLibrary.deployWithPaths(deployOpts);
       expect.fail('Should have failed');
     } catch (e) {
       expect(e.message).to.equal(

@@ -8,12 +8,8 @@
 import { assert, expect } from 'chai';
 import * as fs from 'fs';
 import { createSandbox, SinonStub } from 'sinon';
-import { MetadataComponent } from '../../src/types';
-import {
-  RegistryAccess,
-  SourcePath,
-  MetadataType
-} from '../../src/metadata-registry';
+import { MetadataComponent, SourcePath, MetadataType } from '../../src/types';
+import { RegistryAccess } from '../../src/metadata-registry';
 import { nls } from '../../src/i18n';
 import {
   mockRegistry,
@@ -25,7 +21,6 @@ import {
 } from '../mock/registry';
 import { join, basename } from 'path';
 import { TypeInferenceError } from '../../src/errors';
-import * as util from '../../src/metadata-registry/util';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import * as adapters from '../../src/metadata-registry/adapters';
 
@@ -171,6 +166,7 @@ describe('RegistryAccess', () => {
       });
 
       it('Should not mistake folder component of a mixed content type as that type', () => {
+        // this test has coveage on non-mixedContent types as well by nature of the execution path
         const path = tina.TINA_FOLDER_XML;
         existsStub.withArgs(path).returns(true);
         stubAdapters([

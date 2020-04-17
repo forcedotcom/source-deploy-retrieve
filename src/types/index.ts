@@ -14,3 +14,4 @@ export {
   SourceAdapter
 } from './client';
 export { MetadataType, MetadataComponent, SourcePath } from './common';
+export { MetadataRegistry, MetadataXml } from './registry';

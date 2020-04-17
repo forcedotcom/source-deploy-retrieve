@@ -8,7 +8,7 @@
 import { mockRegistry, simon } from '../../mock/registry';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
-import * as util from '../../../src/metadata-registry/util';
+import * as util from '../../../src/utils/registry';
 import * as fsUtil from '../../../src/utils/fileSystemHandler';
 import { Bundle } from '../../../src/metadata-registry/adapters/bundle';
 import * as fs from 'fs';
@@ -30,7 +30,7 @@ describe('Bundle', () => {
   const bundleName = basename(SIMON_BUNDLE_PATH);
 
   before(() => {
-    const walkStub = env.stub(util, 'walk');
+    const walkStub = env.stub(fsUtil, 'walk');
     const findXmlStub = env.stub(util, 'findMetadataXml');
     const findContentStub = env.stub(util, 'findMetadataContent');
     const isDirStub = env.stub(fsUtil, 'isDirectory');

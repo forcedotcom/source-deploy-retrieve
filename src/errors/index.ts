@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { SourcePath, MetadataType } from '../metadata-registry';
 import { nls } from '../i18n';
+import { MetadataType, SourcePath } from '../types';
 
 export class LibraryError extends Error {
   constructor(messageKey: string, args?: string | string[]) {

@@ -5,10 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { SourcePath } from '../types';
 import { basename } from 'path';
-import { findMetadataXml } from '../util';
+import { findMetadataXml } from '../../utils/registry';
 import { MixedContent } from './mixedContent';
+import { SourcePath } from '../../types';
 
 /**
  * Handles _bundle_ types. A component bundle has all its source files, including the

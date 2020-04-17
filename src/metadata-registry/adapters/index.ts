@@ -6,8 +6,7 @@
  */
 
 import { MatchingContentFile } from './matchingContentFile';
-import { SourceAdapter } from '../../types';
-import { MetadataType } from '../types';
+import { SourceAdapter, MetadataType } from '../../types';
 import { Bundle } from './bundle';
 import { BaseSourceAdapter } from './base';
 import { MixedContent } from './mixedContent';

@@ -15,7 +15,7 @@ import {
 import { expect, assert } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
 import * as fs from 'fs';
-import * as util from '../../../src/metadata-registry/util';
+import * as util from '../../../src/utils/registry';
 import * as fsUtil from '../../../src/utils/fileSystemHandler';
 import { MixedContent } from '../../../src/metadata-registry/adapters/mixedContent';
 import { ExpectedSourceFilesError } from '../../../src/errors';
@@ -92,7 +92,7 @@ describe('MixedContent', () => {
       TARAJI_XML_PATHS
     } = taraji;
 
-    beforeEach(() => (walkStub = env.stub(util, 'walk')));
+    beforeEach(() => (walkStub = env.stub(fsUtil, 'walk')));
 
     it('Should return expected MetadataComponent when given a root metadata xml path', () => {
       findContentStub

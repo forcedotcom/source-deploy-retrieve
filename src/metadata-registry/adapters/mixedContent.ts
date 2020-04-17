@@ -6,18 +6,17 @@
  */
 
 import { BaseSourceAdapter } from './base';
-import { SourcePath, MetadataType } from '../types';
 import { sep, dirname } from 'path';
 import {
   parseMetadataXml,
-  walk,
   findMetadataXml,
   findMetadataContent
-} from '../util';
+} from '../../utils/registry';
 import { ExpectedSourceFilesError } from '../../errors';
 import { existsSync } from 'fs';
-import { isDirectory } from '../../utils/fileSystemHandler';
+import { isDirectory, walk } from '../../utils/fileSystemHandler';
 import { baseName } from '../../utils/path';
+import { SourcePath, MetadataType } from '../../types';
 
 /**
  * Handles types with mixed content. Mixed content means there are one or more source

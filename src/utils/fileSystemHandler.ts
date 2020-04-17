@@ -7,6 +7,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { SourcePath } from '../types';
 
 export function ensureDirectoryExists(filePath: string): void {
   const dirname = path.dirname(filePath);
@@ -29,4 +30,8 @@ export function createFiles(fileMap: Map<string, string>): void {
     writeStream.write(fileMap.get(filePath));
     writeStream.end();
   }
+}
+
+export function isDirectory(fsPath: SourcePath): boolean {
+  return fs.lstatSync(fsPath).isDirectory();
 }

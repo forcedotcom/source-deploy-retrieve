@@ -11,6 +11,7 @@ import { parseMetadataXml } from '../util';
 import { basename, dirname } from 'path';
 import * as registryData from '../data/registry.json';
 import { RegistryError } from '../../errors';
+import { parentName } from '../../utils/path';
 
 /**
  * The default source adapter.
@@ -79,9 +80,7 @@ export class BaseSourceAdapter implements SourceAdapter {
     };
 
     if (this.type.inFolder) {
-      component.fullName = `${basename(dirname(component.xml))}/${
-        component.fullName
-      }`;
+      component.fullName = `${parentName(component.xml)}/${component.fullName}`;
     }
 
     return component;

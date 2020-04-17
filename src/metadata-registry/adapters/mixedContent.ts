@@ -12,12 +12,12 @@ import {
   parseMetadataXml,
   walk,
   parseBaseName,
-  isDirectory,
   findMetadataXml,
   findMetadataContent
 } from '../util';
 import { ExpectedSourceFilesError } from '../../errors';
 import { existsSync } from 'fs';
+import { isDirectory } from '../../utils/fileSystemHandler';
 
 /**
  * Handles types with mixed content. Mixed content means there are one or more source

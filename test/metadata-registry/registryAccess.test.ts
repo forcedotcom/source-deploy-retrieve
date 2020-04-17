@@ -26,6 +26,7 @@ import {
 import { join, basename } from 'path';
 import { TypeInferenceError } from '../../src/errors';
 import * as util from '../../src/metadata-registry/util';
+import * as fsUtil from '../../src/utils/fileSystemHandler';
 import * as adapters from '../../src/metadata-registry/adapters';
 
 const env = createSandbox();
@@ -104,7 +105,7 @@ describe('RegistryAccess', () => {
   describe('getComponentsFromPath', () => {
     beforeEach(() => {
       existsStub = env.stub(fs, 'existsSync');
-      isDirectoryStub = env.stub(util, 'isDirectory');
+      isDirectoryStub = env.stub(fsUtil, 'isDirectory');
       isDirectoryStub.returns(false);
     });
     afterEach(() => env.restore());

@@ -16,6 +16,7 @@ import { expect, assert } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
 import * as fs from 'fs';
 import * as util from '../../../src/metadata-registry/util';
+import * as fsUtil from '../../../src/utils/fileSystemHandler';
 import { MixedContent } from '../../../src/metadata-registry/adapters/mixedContent';
 import { ExpectedSourceFilesError } from '../../../src/errors';
 
@@ -30,7 +31,7 @@ describe('MixedContent', () => {
   beforeEach(() => {
     findXmlStub = env.stub(util, 'findMetadataXml');
     findContentStub = env.stub(util, 'findMetadataContent');
-    dirStub = env.stub(util, 'isDirectory');
+    dirStub = env.stub(fsUtil, 'isDirectory');
     existsStub = env.stub(fs, 'existsSync');
   });
 

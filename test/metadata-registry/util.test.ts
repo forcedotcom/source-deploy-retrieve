@@ -7,6 +7,7 @@
 import { join } from 'path';
 import { expect } from 'chai';
 import * as util from '../../src/metadata-registry/util';
+import { isDirectory } from '../../src/utils/fileSystemHandler';
 import { createSandbox, SinonStub } from 'sinon';
 import * as fs from 'fs';
 
@@ -46,7 +47,7 @@ describe('Metadata Registry Util', () => {
       const statStub = env.stub(fs, 'lstatSync');
       // @ts-ignore
       statStub.withArgs(root).returns({ isDirectory: () => true });
-      expect(util.isDirectory(root)).to.be.true;
+      expect(isDirectory(root)).to.be.true;
     });
   });
 

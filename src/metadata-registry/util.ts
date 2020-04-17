@@ -7,7 +7,8 @@
 
 import { SourcePath, MetadataXml } from './types';
 import { basename, join } from 'path';
-import { readdirSync, lstatSync } from 'fs';
+import { readdirSync } from 'fs';
+import { isDirectory } from '../utils/fileSystemHandler';
 
 /**
  * Returns the `MetadataXml` info from a given file path. If the path is not a
@@ -33,9 +34,6 @@ export const parseMetadataXml = (
 export const parseBaseName = (fsPath: SourcePath): string => {
   return basename(fsPath).split('.')[0];
 };
-
-export const isDirectory = (fsPath: SourcePath): boolean =>
-  lstatSync(fsPath).isDirectory();
 
 export const walk = (
   dir: SourcePath,

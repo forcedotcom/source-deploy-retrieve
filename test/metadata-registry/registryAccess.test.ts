@@ -170,6 +170,20 @@ describe('RegistryAccess', () => {
         ]);
       });
 
+      it('Should not mistake folder component of a mixed content type as that type', () => {
+        const path = tina.TINA_FOLDER_XML;
+        existsStub.withArgs(path).returns(true);
+        stubAdapters([
+          {
+            type: mockRegistry.types.tinafeyfolder,
+            componentMappings: [{ path, component: tina.TINA_FOLDER_COMPONENT }]
+          }
+        ]);
+        expect(registry.getComponentsFromPath(path)).to.deep.equal([
+          tina.TINA_FOLDER_COMPONENT
+        ]);
+      });
+
       it('Should throw type id error if one could not be determined', () => {
         const missing = join('path', 'to', 'whatever', 'a.b-meta.xml');
         existsStub.withArgs(missing).returns(true);

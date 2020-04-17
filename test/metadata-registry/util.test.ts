@@ -8,6 +8,7 @@ import { join } from 'path';
 import { expect } from 'chai';
 import * as util from '../../src/metadata-registry/util';
 import { isDirectory } from '../../src/utils/fileSystemHandler';
+import { baseName } from '../../src/utils/path';
 import { createSandbox, SinonStub } from 'sinon';
 import * as fs from 'fs';
 
@@ -30,15 +31,15 @@ describe('Metadata Registry Util', () => {
     });
   });
 
-  describe('parseBaseName', () => {
+  describe('baseName', () => {
     it('Should strip all suffixes of a file path and return just the name', () => {
       const path = join(root, 'a.ext.xyz');
-      expect(util.parseBaseName(path)).to.equal('a');
+      expect(baseName(path)).to.equal('a');
     });
 
     it('Should handle paths with no suffixes', () => {
       const path = join(root, 'a');
-      expect(util.parseBaseName(path)).to.equal('a');
+      expect(baseName(path)).to.equal('a');
     });
   });
 

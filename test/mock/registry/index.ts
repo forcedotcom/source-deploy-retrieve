@@ -39,12 +39,19 @@ export const mockRegistry = {
       directoryName: 'simons',
       inFolder: false,
       name: 'SimonPegg'
+    },
+    tinafeyfolder: {
+      directoryName: 'tinas',
+      inFolder: false,
+      name: 'TinaFeyFolder',
+      suffix: 'tinafeyFolder'
     }
   },
   suffixes: {
     kathy: 'kathybates',
     keanu: 'keanureeves',
-    missing: 'typewithoutdef'
+    missing: 'typewithoutdef',
+    tinafeyFolder: 'tinafeyfolder'
   },
   mixedContent: {
     dwaynes: 'dwaynejohnson',

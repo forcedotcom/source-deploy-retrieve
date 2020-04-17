@@ -11,13 +11,13 @@ import { sep, dirname } from 'path';
 import {
   parseMetadataXml,
   walk,
-  parseBaseName,
   findMetadataXml,
   findMetadataContent
 } from '../util';
 import { ExpectedSourceFilesError } from '../../errors';
 import { existsSync } from 'fs';
 import { isDirectory } from '../../utils/fileSystemHandler';
+import { baseName } from '../../utils/path';
 
 /**
  * Handles types with mixed content. Mixed content means there are one or more source
@@ -103,7 +103,7 @@ export class MixedContent extends BaseSourceAdapter {
       .slice(0, typeFolderIndex + offset)
       .join(sep);
     const rootTypeDirectory = dirname(rootContentPath);
-    const contentFullName = parseBaseName(rootContentPath);
+    const contentFullName = baseName(rootContentPath);
     return findMetadataXml(rootTypeDirectory, contentFullName);
   }
 }

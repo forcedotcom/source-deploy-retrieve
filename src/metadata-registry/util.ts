@@ -25,16 +25,6 @@ export const parseMetadataXml = (
   }
 };
 
-/**
- * Get the file or directory name at the end of a path. This custom version of
- * path.basename ensures no suffixes at the end.
- *
- * @param fsPath
- */
-export const parseBaseName = (fsPath: SourcePath): string => {
-  return basename(fsPath).split('.')[0];
-};
-
 export const walk = (
   dir: SourcePath,
   ignorePaths?: Set<SourcePath>

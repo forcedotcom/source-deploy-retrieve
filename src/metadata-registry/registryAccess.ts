@@ -84,6 +84,12 @@ export class RegistryAccess {
     for (const directoryName of Object.keys(this.data.mixedContent)) {
       if (pathParts.has(directoryName)) {
         typeId = this.data.mixedContent[directoryName];
+        if (
+          this.getTypeFromName(typeId).inFolder &&
+          basename(dirname(fsPath)) === directoryName
+        ) {
+          typeId = undefined;
+        }
         break;
       }
     }

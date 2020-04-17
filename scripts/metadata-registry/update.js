@@ -28,6 +28,18 @@ for (const object of describe.metadataObjects) {
     inFolder,
     childXmlNames
   } = object;
+
+  // If it's a type with folders, process the folder type later
+  if (inFolder === 'true') {
+    describe.metadataObjects.push({
+      xmlName: `${name}Folder`,
+      suffix: `${typeId}Folder`,
+      directoryName,
+      inFolder: false
+    });
+  }
+
+  // populate the type
   registry.types[typeId] = {
     name,
     suffix,
@@ -38,8 +50,11 @@ for (const object of describe.metadataObjects) {
         : childXmlNames,
     inFolder: inFolder === 'true'
   };
+
+  // populate suffix index
   registry.suffixes[suffix] = typeId;
 
+  // populate mixedContent index
   if (!suffix) {
     registry.mixedContent[directoryName] = typeId;
   }

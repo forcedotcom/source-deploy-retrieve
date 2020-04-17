@@ -1082,6 +1082,30 @@
       "suffix": "lightningOnboardingConfig",
       "directoryName": "lightningOnboardingConfigs",
       "inFolder": false
+    },
+    "reportfolder": {
+      "name": "ReportFolder",
+      "suffix": "reportFolder",
+      "directoryName": "reports",
+      "inFolder": false
+    },
+    "dashboardfolder": {
+      "name": "DashboardFolder",
+      "suffix": "dashboardFolder",
+      "directoryName": "dashboards",
+      "inFolder": false
+    },
+    "documentfolder": {
+      "name": "DocumentFolder",
+      "suffix": "documentFolder",
+      "directoryName": "documents",
+      "inFolder": false
+    },
+    "emailfolder": {
+      "name": "EmailFolder",
+      "suffix": "emailFolder",
+      "directoryName": "email",
+      "inFolder": false
     }
   },
   "suffixes": {
@@ -1252,7 +1276,11 @@
     "platformEventChannelMember": "platformeventchannelmember",
     "Canvas": "canvasmetadata",
     "MobileApplicationDetail": "mobileapplicationdetail",
-    "lightningOnboardingConfig": "lightningonboardingconfig"
+    "lightningOnboardingConfig": "lightningonboardingconfig",
+    "reportFolder": "reportfolder",
+    "dashboardFolder": "dashboardfolder",
+    "documentFolder": "documentfolder",
+    "emailFolder": "emailFolder"
   },
   "mixedContent": {
     "experiences": "experiencebundle",

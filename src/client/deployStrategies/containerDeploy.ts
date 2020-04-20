@@ -28,7 +28,7 @@ export class ContainerDeploy extends BaseDeploy {
 
   public async createMetadataContainer(): Promise<ToolingCreateResult> {
     const metadataContainer = await this.toolingCreate(METADATA_CONTAINER, {
-      Name: `Deploy_MDC_${Date.now()}`
+      Name: `VSCode_MDC_${Date.now()}`
     });
 
     if (!metadataContainer.success) {

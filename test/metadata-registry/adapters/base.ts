@@ -8,9 +8,9 @@ import { join } from 'path';
 import { mockRegistry } from '../../mock/registry';
 import { BaseSourceAdapter } from '../../../src/metadata-registry/adapters/base';
 import { expect, assert } from 'chai';
-import { SourcePath } from '../../../src/metadata-registry';
 import { RegistryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
+import { SourcePath } from '../../../src/types';
 
 class TestChildAdapter extends BaseSourceAdapter {
   public static readonly xmlPath = join(

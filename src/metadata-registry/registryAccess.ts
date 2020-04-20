@@ -6,14 +6,20 @@
  */
 
 import { existsSync, readdirSync } from 'fs';
-import { sep, extname, join, basename, dirname } from 'path';
-import { MetadataComponent } from '../types';
-import { MetadataRegistry, MetadataType, SourcePath } from './types';
+import { sep, join, basename, dirname } from 'path';
+import {
+  MetadataComponent,
+  MetadataRegistry,
+  MetadataType,
+  SourcePath
+} from '../types';
 import { getAdapter, AdapterId } from './adapters';
-import { parseMetadataXml, isDirectory, deepFreeze } from './util';
+import { parseMetadataXml, deepFreeze } from '../utils/registry';
 import { TypeInferenceError } from '../errors';
 import { registryData } from '.';
 import { MixedContent } from './adapters/mixedContent';
+import { parentName, extName } from '../utils/path';
+import { isDirectory } from '../utils/fileSystemHandler';
 
 /**
  * Infer information about metadata types and components based on source paths.
@@ -84,6 +90,12 @@ export class RegistryAccess {
     for (const directoryName of Object.keys(this.data.mixedContent)) {
       if (pathParts.has(directoryName)) {
         typeId = this.data.mixedContent[directoryName];
+        // types with folders only have folder components living at the top level.
+        // if the fsPath is a folder component, let a future strategy deal with it
+        const isFolderType = this.getTypeFromName(typeId).inFolder;
+        if (isFolderType && parentName(fsPath) === directoryName) {
+          typeId = undefined;
+        }
         break;
       }
     }
@@ -96,9 +108,7 @@ export class RegistryAccess {
     }
     // attempt 3 - try treating the file extension name as a suffix
     if (!typeId) {
-      // extname include the dot, so we have to remove it to index the suffixes
-      const extName = extname(fsPath).split('.')[1];
-      typeId = this.data.suffixes[extName];
+      typeId = this.data.suffixes[extName(fsPath)];
     }
 
     return typeId;

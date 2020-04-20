@@ -5,12 +5,18 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { SourceAdapter, MetadataComponent } from '../../types';
-import { MetadataType, SourcePath, MetadataRegistry } from '../types';
-import { parseMetadataXml } from '../util';
+import {
+  SourceAdapter,
+  MetadataComponent,
+  MetadataType,
+  MetadataRegistry,
+  SourcePath
+} from '../../types';
+import { parseMetadataXml } from '../../utils/registry';
 import { basename, dirname } from 'path';
 import * as registryData from '../data/registry.json';
 import { RegistryError } from '../../errors';
+import { parentName } from '../../utils/path';
 
 /**
  * The default source adapter.
@@ -79,9 +85,7 @@ export class BaseSourceAdapter implements SourceAdapter {
     };
 
     if (this.type.inFolder) {
-      component.fullName = `${basename(dirname(component.xml))}/${
-        component.fullName
-      }`;
+      component.fullName = `${parentName(component.xml)}/${component.fullName}`;
     }
 
     return component;

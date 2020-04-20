@@ -5,12 +5,12 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { SourcePath } from '../types';
 import { extname } from 'path';
 import { META_XML_SUFFIX } from '../constants';
 import { existsSync } from 'fs';
 import { BaseSourceAdapter } from './base';
 import { ExpectedSourceFilesError } from '../../errors';
+import { SourcePath } from '../../types';
 
 /**
  * Handles types with a single content file with a matching file extension.

@@ -11,6 +11,7 @@ export {
   RetrievePathOptions,
   ApiResult,
   RetrieveOptions,
-  MetadataComponent,
   SourceAdapter
 } from './client';
+export { MetadataType, MetadataComponent, SourcePath } from './common';
+export { MetadataRegistry, MetadataXml } from './registry';

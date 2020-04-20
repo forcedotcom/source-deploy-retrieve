@@ -5,10 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as data from './data/registry.json';
-import { deepFreeze } from './util';
+import { deepFreeze } from '../utils/registry';
 export { RegistryAccess } from './registryAccess';
 export { ManifestGenerator } from './manifestGenerator';
-export { MetadataRegistry, MetadataType, SourcePath } from './types';
 
 /**
  * Direct access to the JSON registry data. Useful for autocompletions.

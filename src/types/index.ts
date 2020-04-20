@@ -7,11 +7,17 @@
 
 export { QueryRecord, QueryResult } from './query';
 export {
-  BaseApi,
-  RetrievePathOptions,
   ApiResult,
+  BaseApi,
+  DeployDetails,
+  DeployResult,
+  DeployStatusEnum,
+  DeployOptions,
+  DeployPathOptions,
+  RetrievePathOptions,
   RetrieveOptions,
-  SourceAdapter
+  SourceAdapter,
+  SourceResult
 } from './client';
 export { MetadataType, MetadataComponent, SourcePath } from './common';
 export { MetadataRegistry, MetadataXml } from './registry';

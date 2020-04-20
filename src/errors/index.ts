@@ -33,3 +33,15 @@ export class ExpectedSourceFilesError extends RegistryError {
     super('error_expected_source_files', [originalPath, type.name]);
   }
 }
+
+export class SourceClientError extends LibraryError {
+  constructor(messageKey: string, args?: string | string[]) {
+    super(messageKey, args);
+  }
+}
+
+export class DeployError extends SourceClientError {
+  constructor(messageKey: string, args?: string | string[]) {
+    super(messageKey, args);
+  }
+}

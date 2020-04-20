@@ -12,15 +12,12 @@ export {
 } from './metadata-registry';
 
 export {
-  Deploy,
+  ApiResult,
+  RetrievePathOptions,
   DeployResult,
-  DeployStatusEnum,
-  FilePathOpts,
-  ToolingCreateResult,
-  ToolingDeployResult,
-  supportedToolingTypes
-} from './deploy';
-
-export { ApiResult, RetrievePathOptions } from './types';
+  DeployDetails,
+  SourceResult,
+  DeployStatusEnum
+} from './types';
 
 export { SourceClient } from './client';

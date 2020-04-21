@@ -9,7 +9,8 @@ export const supportedToolingTypes = new Map([
   ['ApexClass', 'ApexClassMember'],
   ['ApexTrigger', 'ApexTriggerMember'],
   ['ApexPage', 'ApexPageMember'],
-  ['ApexComponent', 'ApexComponentMember']
+  ['ApexComponent', 'ApexComponentMember'],
+  ['AuraDefinitionBundle', 'AuraDefinition']
 ]);
 
 export interface ToolingCreateResult {
@@ -18,4 +19,12 @@ export interface ToolingCreateResult {
   errors: string[];
   name: string;
   message: string;
+}
+
+export interface BundleMetadataObj {
+  FilePath: string;
+  DefType?: string;
+  Source: string;
+  Format: string;
+  Id?: string;
 }

@@ -18,8 +18,8 @@ export class SourceClient {
    */
   public readonly tooling: ToolingApi;
 
-  constructor(connection: Connection, registry?: RegistryAccess) {
+  constructor(connection: Connection, registry = new RegistryAccess()) {
     this.connection = connection;
-    this.tooling = new ToolingApi(connection, registry || new RegistryAccess());
+    this.tooling = new ToolingApi(connection, registry);
   }
 }

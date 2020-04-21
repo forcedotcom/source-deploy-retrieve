@@ -25,6 +25,7 @@ describe('Tooling API tests', () => {
   const testData = new MockTestOrgData();
   let mockConnection: Connection;
   let sandboxStub: SinonSandbox;
+  const registryAccess = new RegistryAccess();
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
@@ -43,7 +44,7 @@ describe('Tooling API tests', () => {
   });
 
   it('should go ahead with deploy for supported types', async () => {
-    const deployLibrary = new ToolingApi(mockConnection);
+    const deployLibrary = new ToolingApi(mockConnection, registryAccess);
     sandboxStub
       .stub(RegistryAccess.prototype, 'getComponentsFromPath')
       .returns([
@@ -83,7 +84,7 @@ describe('Tooling API tests', () => {
           sources: []
         }
       ]);
-    const deployLibrary = new ToolingApi(mockConnection);
+    const deployLibrary = new ToolingApi(mockConnection, registryAccess);
     const deployOpts = {
       paths: ['file/path/myTestClass.flexipage']
     };

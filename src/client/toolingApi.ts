@@ -18,7 +18,6 @@ import {
   QueryResult,
   MetadataComponent
 } from '../types';
-import { RegistryAccess } from '../metadata-registry';
 import { nls } from '../i18n';
 import { generateMetaXML, generateMetaXMLPath, createFiles } from '../utils';
 import { supportedToolingTypes } from '../utils/deploy';

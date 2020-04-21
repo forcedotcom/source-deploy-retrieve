@@ -125,9 +125,9 @@ export abstract class BaseApi implements DeployRetrieveClient {
   protected connection: Connection;
   protected registry: RegistryAccess;
 
-  constructor(connection: Connection, registry?: RegistryAccess) {
+  constructor(connection: Connection, registry: RegistryAccess) {
     this.connection = connection;
-    this.registry = registry || new RegistryAccess();
+    this.registry = registry;
   }
 
   /**

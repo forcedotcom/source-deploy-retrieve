@@ -10,7 +10,11 @@ import { BundleDeploy } from './bundleDeploy';
 import { ContainerDeploy } from './containerDeploy';
 import { AURA_DEF_BUNDLE } from './constants';
 
-export { CONTAINER_ASYNC_REQUEST, METADATA_CONTAINER } from './constants';
+export {
+  AURA_TYPES,
+  CONTAINER_ASYNC_REQUEST,
+  METADATA_CONTAINER
+} from './constants';
 export { ContainerDeploy } from './containerDeploy';
 export { BundleDeploy } from './bundleDeploy';
 

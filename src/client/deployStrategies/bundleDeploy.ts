@@ -21,6 +21,7 @@ import {
 } from '../../types';
 import { extName, baseName } from '../../utils/path';
 import { BaseDeploy } from './baseDeploy';
+import { AURA_TYPES } from './index';
 
 export class BundleDeploy extends BaseDeploy {
   public async deploy(component: MetadataComponent): Promise<DeployResult> {
@@ -52,9 +53,12 @@ export class BundleDeploy extends BaseDeploy {
       const newBundle = await this.createBundle(component);
       bundleId = newBundle.id;
     }
-    // const updateResult = await this.updateSources(defToUpdate);
-    const createResult = await this.createSources(defToCreate, bundleId);
-    const output = this.formatBundleOutput([createResult]);
+
+    const deployResults = await Promise.all([
+      this.createSources(defToCreate, bundleId),
+      this.updateSources(defToUpdate)
+    ]);
+    const output = this.formatBundleOutput(deployResults);
     return output;
   }
 
@@ -74,7 +78,9 @@ export class BundleDeploy extends BaseDeploy {
         Format: format
       };
 
-      bundleMetadataList.push(bundleMetadata);
+      AURA_TYPES.includes(bundleMetadata.DefType)
+        ? bundleMetadataList.unshift(bundleMetadata)
+        : bundleMetadataList.push(bundleMetadata);
     }
     return bundleMetadataList;
   }
@@ -137,9 +143,8 @@ export class BundleDeploy extends BaseDeploy {
     bundleId: string
   ): Promise<DeployDetails> {
     let successes: SourceResult[] = [];
-    const failures: SourceResult[] = [];
+    let failures: SourceResult[] = [];
     const type = this.component.type.name;
-    let filepath: string;
 
     const promiseArray = defToCreate.map(async def => {
       const formattedDef = {
@@ -150,13 +155,54 @@ export class BundleDeploy extends BaseDeploy {
       };
 
       await this.toolingCreate(supportedToolingTypes.get(type), formattedDef);
-      const createResult = this.createDeployResult(def.FilePath, true, true);
-      return createResult;
+      return this.createDeployResult(def.FilePath, true, true);
     });
 
     try {
       successes = await Promise.all(promiseArray);
-    } catch (e) {}
+    } catch (e) {
+      failures = [
+        this.createDeployResult(
+          defToCreate[0].FilePath,
+          false,
+          false,
+          e.message
+        )
+      ];
+    }
+
+    return { componentSuccesses: successes, componentFailures: failures };
+  }
+
+  public async updateSources(
+    defToUpdate: BundleMetadataObj[]
+  ): Promise<DeployDetails> {
+    let successes: SourceResult[] = [];
+    let failures: SourceResult[] = [];
+    const type = this.component.type.name;
+
+    const promiseArray = defToUpdate.map(async def => {
+      const formattedDef = { Source: def.Source, Id: def.Id };
+
+      await this.connection.tooling.update(
+        supportedToolingTypes.get(type),
+        formattedDef
+      );
+      return this.createDeployResult(def.FilePath, true, false);
+    });
+
+    try {
+      successes = await Promise.all(promiseArray);
+    } catch (e) {
+      failures = [
+        this.createDeployResult(
+          defToUpdate[0].FilePath,
+          false,
+          false,
+          e.message
+        )
+      ];
+    }
 
     return { componentSuccesses: successes, componentFailures: failures };
   }

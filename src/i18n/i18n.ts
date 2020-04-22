@@ -28,7 +28,7 @@ export const messages = {
   beta_tapi_membertype_error: 'Unexpected error creating %s member',
   beta_tapi_car_error: 'Unexpected error creating container async request',
   beta_tapi_queue_status: 'The deploy is still in the queue',
-  beta_tapi_membertype_unsupported_error: '%s type not supported',
+  beta_tapi_membertype_unsupported_error: "'%s' type not supported",
   error_directories_not_supported:
     'Paths to directories are currently not supported',
   error_expected_source_files: "%s: Expected source files for type '%s'",
@@ -44,5 +44,10 @@ export const messages = {
   tapi_retrieve_component_limit_error:
     'This retrieve method only supports retrieving one metadata component at a time',
   error_on_manifest_creation:
-    "Unexpected error while creating manifest for '%s'. Stack trace: %s"
+    "Unexpected error while creating manifest for '%s'. Stack trace: %s",
+  error_creating_metadata_type: "Unexpected error creating '%s'",
+  error_updating_metadata_type: "Unexpected error updating '%s'",
+  error_parsing_metadata_file: 'Error parsing metadata file',
+  tapi_deploy_component_limit_error:
+    'This deploy method only supports deploying one metadata component at a time'
 };

@@ -5,17 +5,22 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { getDeployStrategy } from './deployStrategies';
+import { SourceClientError } from '../errors';
 import {
   BaseApi,
   RetrievePathOptions,
   ApiResult,
+  DeployOptions,
+  DeployPathOptions,
+  DeployResult,
   RetrieveOptions,
   QueryResult,
   MetadataComponent
 } from '../types';
-import { RegistryAccess } from '../metadata-registry';
 import { nls } from '../i18n';
 import { generateMetaXML, generateMetaXMLPath, createFiles } from '../utils';
+import { supportedToolingTypes } from '../utils/deploy';
 
 // TODO: consolidate this with supported types in deploy
 const supportedTypes = new Set([
@@ -30,10 +35,9 @@ export class ToolingApi extends BaseApi {
     options: RetrievePathOptions
   ): Promise<ApiResult> {
     const retrievePaths = options.paths[0];
-    const registry = new RegistryAccess();
     return await this.retrieve({
       output: options.paths[0],
-      components: registry.getComponentsFromPath(retrievePaths)
+      components: this.registry.getComponentsFromPath(retrievePaths)
     });
   }
 
@@ -102,5 +106,35 @@ export class ToolingApi extends BaseApi {
 
   protected buildQuery(typeName: string, fullName: string): string {
     return `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ${typeName} where Name = '${fullName}'`;
+  }
+
+  public async deploy(options: DeployOptions): Promise<DeployResult> {
+    if (options.components.length > 1) {
+      const deployError = new SourceClientError(
+        'tapi_deploy_component_limit_error'
+      );
+      throw deployError;
+    }
+    const mdComponent: MetadataComponent = options.components[0];
+    const metadataType = mdComponent.type.name;
+
+    if (supportedToolingTypes.get(metadataType) === undefined) {
+      throw new SourceClientError(
+        'beta_tapi_membertype_unsupported_error',
+        metadataType
+      );
+    }
+
+    const deployStrategy = getDeployStrategy(metadataType, this.connection);
+    return deployStrategy.deploy(mdComponent);
+  }
+
+  public async deployWithPaths(
+    options: DeployPathOptions
+  ): Promise<DeployResult> {
+    const deployPaths = options.paths[0];
+    return await this.deploy({
+      components: this.registry.getComponentsFromPath(deployPaths)
+    });
   }
 }

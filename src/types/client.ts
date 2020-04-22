@@ -7,6 +7,7 @@
 
 import { Connection } from '@salesforce/core';
 import { MetadataComponent, SourcePath } from './common';
+import { RegistryAccess } from '../metadata-registry';
 
 type CommonOptions = {
   /**
@@ -51,6 +52,43 @@ export type ApiResult = {
   message?: string;
 };
 
+export type DeployOptions = CommonOptions & { components: MetadataComponent[] };
+
+export type DeployPathOptions = CommonOptions & CommonPathOptions;
+
+export type DeployResult = {
+  State: DeployStatusEnum;
+  ErrorMsg: string | null;
+  isDeleted: boolean;
+  DeployDetails: DeployDetails | null;
+  outboundFiles?: string[];
+};
+
+export type DeployDetails = {
+  componentFailures: SourceResult[];
+  componentSuccesses: SourceResult[];
+};
+
+export type SourceResult = {
+  columnNumber?: number;
+  lineNumber?: number;
+  problem?: string;
+  problemType?: string;
+  fileName?: string;
+  fullName?: string;
+  componentType: string;
+  success?: boolean;
+  changed: boolean;
+  created: boolean;
+  deleted: boolean;
+};
+
+export enum DeployStatusEnum {
+  Completed = 'Completed',
+  Queued = 'Queued',
+  Error = 'Error',
+  Failed = 'Failed'
+}
 /**
  * Infers the source format structure of a metadata component when given a file path.
  */
@@ -71,13 +109,25 @@ export interface DeployRetrieveClient {
    * @param options Specify `paths`, `output` and other optionals
    */
   retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult>;
+  /* Deploy metadata components and wait for result.
+   *
+   * @param filePath Paths to source files to deploy
+   */
+  deploy(options: DeployOptions): Promise<DeployResult>;
+  /* Infer metadata components from source path, deploy them, and wait for results.
+   *
+   * @param filePath Paths to source files to deploy
+   */
+  deployWithPaths(options: DeployPathOptions): Promise<DeployResult>;
 }
 
 export abstract class BaseApi implements DeployRetrieveClient {
   protected connection: Connection;
+  protected registry: RegistryAccess;
 
-  constructor(connection: Connection) {
+  constructor(connection: Connection, registry: RegistryAccess) {
     this.connection = connection;
+    this.registry = registry;
   }
 
   /**
@@ -86,4 +136,8 @@ export abstract class BaseApi implements DeployRetrieveClient {
   abstract retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult>;
 
   abstract retrieve(options: RetrieveOptions): Promise<ApiResult>;
+
+  abstract deploy(options: DeployOptions): Promise<DeployResult>;
+
+  abstract deployWithPaths(options: DeployPathOptions): Promise<DeployResult>;
 }

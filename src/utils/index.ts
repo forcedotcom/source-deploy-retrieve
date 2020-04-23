@@ -7,8 +7,8 @@
 
 export { createFiles } from './fileSystemHandler';
 export {
-  cleanSourcePath,
   generateMetaXML,
-  generateMetaXMLPath
+  generateMetaXMLPath,
+  trimMetaXmlSuffix
 } from './metadata';
 export { META_XML_SUFFIX } from './constants';

@@ -9,7 +9,7 @@ import { QueryResult, MetadataComponent } from '../types';
 import {
   generateMetaXML,
   generateMetaXMLPath,
-  cleanSourcePath
+  trimMetaXmlSuffix
 } from '../utils';
 
 export function buildQuery(mdComponent: MetadataComponent): string {
@@ -59,7 +59,7 @@ export function queryToFileMap(
 
   // If output is defined it overrides where the component will be stored
   const mdSourcePath = overrideOutputPath
-    ? cleanSourcePath(overrideOutputPath)
+    ? trimMetaXmlSuffix(overrideOutputPath)
     : mdComponent.sources[0];
 
   const saveFilesMap = new Map();

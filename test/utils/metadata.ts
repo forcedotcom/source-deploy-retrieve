@@ -8,7 +8,7 @@
 import {
   generateMetaXML,
   generateMetaXMLPath,
-  cleanSourcePath
+  trimMetaXmlSuffix
 } from '../../src/utils';
 import * as path from 'path';
 import { expect } from 'chai';
@@ -55,14 +55,14 @@ describe('Metadata Utils', () => {
   });
 
   it('should return filepath without meta-xml ', () => {
-    const genericFilePath = cleanSourcePath(
+    const genericFilePath = trimMetaXmlSuffix(
       path.join('some', 'file', 'path.cls-meta.xml')
     );
     expect(genericFilePath).to.equals(path.join('some', 'file', 'path.cls'));
   });
 
   it('should return filepath without meta-xml when path without meta-xml is provided', () => {
-    const genericFilePath = cleanSourcePath(
+    const genericFilePath = trimMetaXmlSuffix(
       path.join('some', 'file', 'path.cls')
     );
     expect(genericFilePath).to.equals(path.join('some', 'file', 'path.cls'));

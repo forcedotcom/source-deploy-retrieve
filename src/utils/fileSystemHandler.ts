@@ -19,7 +19,8 @@ export function ensureDirectoryExists(filePath: string): void {
 }
 
 /**
- * Method to save multiple files on disk
+ * Method to save multiple files on disk.
+ *
  * @param fileMap key = filePath, value = file contents
  */
 export function createFiles(fileMap: Map<string, string>): void {
@@ -37,7 +38,29 @@ export function isDirectory(fsPath: SourcePath): boolean {
 }
 
 /**
- * Walk a given directory path and collect the files
+ * Traverse up a file path and search for the given file name.
+ *
+ * @param start File or folder path to start searching from
+ * @param fileName File name to search for
+ */
+export function searchUp(
+  start: SourcePath,
+  fileName: string
+): string | undefined {
+  const filePath = path.join(start, fileName);
+  if (fs.existsSync(filePath)) {
+    return filePath;
+  }
+  const parent = path.resolve(start, '..');
+  if (parent === start) {
+    return;
+  }
+  return searchUp(parent, fileName);
+}
+
+/**
+ * Walk a given directory path and collect the files.
+ *
  * @param dir Directory to walk
  * @param ignore Optional paths to ignore
  */

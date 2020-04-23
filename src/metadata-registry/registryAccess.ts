@@ -20,12 +20,14 @@ import { registryData } from '.';
 import { MixedContent } from './adapters/mixedContent';
 import { parentName, extName } from '../utils/path';
 import { isDirectory } from '../utils/fileSystemHandler';
+import { ForceIgnore } from './forceIgnore';
 
 /**
  * Infer information about metadata types and components based on source paths.
  */
 export class RegistryAccess {
   public readonly data: MetadataRegistry;
+  private forceIgnore: ForceIgnore;
 
   /**
    * @param data Optional custom registry data.
@@ -61,11 +63,13 @@ export class RegistryAccess {
       throw new TypeInferenceError('error_path_not_found', fsPath);
     }
 
+    this.forceIgnore = ForceIgnore.findAndCreate(fsPath);
+
     if (isDirectory(fsPath)) {
-      // first check if this directory is actually content
+      // If we can determine a type from a directory path, and the end part of the path isn't
+      // the directoryName of the type itself, we know the path is part of a mixedContent component
       const typeId = this.determineTypeId(fsPath);
       if (typeId) {
-        // If we can determine a type from a directory path, we know it's specified as mixedContent
         const type = this.getTypeFromName(typeId);
         const { directoryName, inFolder } = type;
         const parts = fsPath.split(sep);
@@ -77,7 +81,7 @@ export class RegistryAccess {
           }
         }
       }
-      return this.getComponentsFromPathInternal(fsPath);
+      return this.getComponentsFromPathRecursive(fsPath);
     }
     return [this.fetchComponent(fsPath)];
   }
@@ -115,26 +119,38 @@ export class RegistryAccess {
   }
 
   private fetchComponent(fsPath: SourcePath): MetadataComponent {
+    if (parseMetadataXml(fsPath) && this.forceIgnore.denies(fsPath)) {
+      // don't bother fetching the component if the meta xml is denied
+      return;
+    }
     const typeId = this.determineTypeId(fsPath);
     if (typeId) {
       const adapterId = this.data.adapters[typeId] as AdapterId;
-      const adapter = getAdapter(this.getTypeFromName(typeId), adapterId);
+      const adapter = getAdapter(
+        this.getTypeFromName(typeId),
+        adapterId,
+        this.forceIgnore
+      );
       return adapter.getComponent(fsPath);
     }
     throw new TypeInferenceError('error_could_not_infer_type', fsPath);
   }
 
-  private getComponentsFromPathInternal(
+  private getComponentsFromPathRecursive(
     directory: SourcePath
   ): MetadataComponent[] {
-    const dirQueue = [];
-    const components = [];
+    const dirQueue: SourcePath[] = [];
+    const components: MetadataComponent[] = [];
+
+    if (this.forceIgnore.denies(directory)) {
+      return components;
+    }
 
     for (const file of readdirSync(directory)) {
       const path = join(directory, file);
       if (isDirectory(path)) {
         dirQueue.push(path);
-      } else if (parseMetadataXml(path)) {
+      } else if (this.forceIgnore.accepts(path) && parseMetadataXml(path)) {
         const c = this.fetchComponent(path);
         components.push(c);
 
@@ -151,7 +167,7 @@ export class RegistryAccess {
     }
 
     for (const dir of dirQueue) {
-      components.push(...this.getComponentsFromPathInternal(dir));
+      components.push(...this.getComponentsFromPathRecursive(dir));
     }
 
     return components;

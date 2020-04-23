@@ -17,6 +17,7 @@ import { basename, dirname } from 'path';
 import * as registryData from '../data/registry.json';
 import { RegistryError } from '../../errors';
 import { parentName } from '../../utils/path';
+import { ForceIgnore } from '../forceIgnore';
 
 /**
  * The default source adapter.
@@ -39,10 +40,16 @@ import { parentName } from '../../utils/path';
 export class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;
   protected registry: MetadataRegistry;
+  protected forceIgnore: ForceIgnore;
 
-  constructor(type: MetadataType, registry: MetadataRegistry = registryData) {
+  constructor(
+    type: MetadataType,
+    registry: MetadataRegistry = registryData,
+    forceIgnore: ForceIgnore
+  ) {
     this.type = type;
     this.registry = registry;
+    this.forceIgnore = forceIgnore;
   }
 
   /**

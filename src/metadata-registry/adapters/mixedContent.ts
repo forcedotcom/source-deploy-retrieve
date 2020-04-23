@@ -71,7 +71,8 @@ export class MixedContent extends BaseSourceAdapter {
       ? walk(contentPath, ignore)
       : [contentPath];
 
-    return sources;
+    // TODO: don't make two passes just to filter forceIgnore
+    return sources.filter(s => this.forceIgnore.accepts(s));
   }
 
   protected getPathToContent(source: SourcePath): SourcePath {

@@ -36,7 +36,7 @@ export function buildQuery(mdComponent: MetadataComponent): string {
 export function queryToFileMap(
   queryResult: QueryResult,
   mdComponent: MetadataComponent,
-  overrideOutput?: string
+  overrideOutputPath?: string
 ): Map<string, string> {
   const typeName = mdComponent.type.name;
   const apiVersion = queryResult.records[0].ApiVersion;
@@ -58,8 +58,8 @@ export function queryToFileMap(
   }
 
   // If output is defined it overrides where the component will be stored
-  const mdSourcePath = overrideOutput
-    ? cleanSourcePath(overrideOutput)
+  const mdSourcePath = overrideOutputPath
+    ? cleanSourcePath(overrideOutputPath)
     : mdComponent.sources[0];
 
   const saveFilesMap = new Map();

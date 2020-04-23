@@ -5,7 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { generateMetaXML, generateMetaXMLPath } from '../../src/utils';
+import {
+  generateMetaXML,
+  generateMetaXMLPath,
+  cleanSourcePath
+} from '../../src/utils';
 import * as path from 'path';
 import { expect } from 'chai';
 
@@ -22,6 +26,16 @@ describe('Metadata Utils', () => {
     expect(metaXMLBlob).to.equals(metaXMLFile);
   });
 
+  it('should generate a meta-xml blob without status', () => {
+    let expectedMetaXMLFile = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    expectedMetaXMLFile +=
+      '<ApexComponent xmlns="http://soap.sforce.com/2006/04/metadata">\n';
+    expectedMetaXMLFile += '\t<apiVersion>43.0</apiVersion>\n';
+    expectedMetaXMLFile += '</ApexComponent>';
+    const metaXMLBlob = generateMetaXML('ApexComponent', '43', '');
+    expect(metaXMLBlob).to.equals(expectedMetaXMLFile);
+  });
+
   it('should generate a meta-xml path', () => {
     const genericFilePath = generateMetaXMLPath(
       path.join('some', 'file', 'path.cls')
@@ -29,5 +43,28 @@ describe('Metadata Utils', () => {
     expect(genericFilePath).to.equals(
       path.join('some', 'file', 'path.cls-meta.xml')
     );
+  });
+
+  it('should generate correct meta-xml path when meta-xml path is provided', () => {
+    const genericFilePath = generateMetaXMLPath(
+      path.join('some', 'file', 'path.cls-meta.xml')
+    );
+    expect(genericFilePath).to.equals(
+      path.join('some', 'file', 'path.cls-meta.xml')
+    );
+  });
+
+  it('should return filepath without meta-xml ', () => {
+    const genericFilePath = cleanSourcePath(
+      path.join('some', 'file', 'path.cls-meta.xml')
+    );
+    expect(genericFilePath).to.equals(path.join('some', 'file', 'path.cls'));
+  });
+
+  it('should return filepath without meta-xml when path without meta-xml is provided', () => {
+    const genericFilePath = cleanSourcePath(
+      path.join('some', 'file', 'path.cls')
+    );
+    expect(genericFilePath).to.equals(path.join('some', 'file', 'path.cls'));
   });
 });

@@ -15,12 +15,13 @@ import {
   DeployPathOptions,
   DeployResult,
   RetrieveOptions,
-  QueryResult,
-  MetadataComponent
+  MetadataComponent,
+  QueryResult
 } from '../types';
 import { nls } from '../i18n';
-import { generateMetaXML, generateMetaXMLPath, createFiles } from '../utils';
+import { createFiles } from '../utils';
 import { supportedToolingTypes } from '../utils/deploy';
+import { buildQuery, queryToFileMap } from './retrieveUtil';
 
 // TODO: consolidate this with supported types in deploy
 const supportedTypes = new Set([
@@ -36,7 +37,7 @@ export class ToolingApi extends BaseApi {
   ): Promise<ApiResult> {
     const retrievePaths = options.paths[0];
     return await this.retrieve({
-      output: options.paths[0],
+      output: options.output,
       components: this.registry.getComponentsFromPath(retrievePaths)
     });
   }
@@ -65,31 +66,24 @@ export class ToolingApi extends BaseApi {
 
     try {
       const queryResult = (await this.connection.tooling.query(
-        this.buildQuery(mdComponent.type.name, mdComponent.fullName)
+        buildQuery(mdComponent)
       )) as QueryResult;
 
       if (queryResult && queryResult.records.length === 0) {
         return {
           success: true,
           components: [],
-          message: nls.localize('error_md_not_present_in_org', options.output)
+          message: nls.localize(
+            'error_md_not_present_in_org',
+            mdComponent.fullName
+          )
         };
       }
 
-      // If output is defined it overrides where the component will be stored
-      const mdSourcePath = options.output
-        ? options.output
-        : mdComponent.sources[0];
-
-      const saveFilesMap = new Map();
-      saveFilesMap.set(mdSourcePath, queryResult.records[0].Body);
-      saveFilesMap.set(
-        generateMetaXMLPath(mdSourcePath),
-        generateMetaXML(
-          mdComponent.type.name,
-          queryResult.records[0].ApiVersion,
-          queryResult.records[0].Status
-        )
+      const saveFilesMap = queryToFileMap(
+        queryResult,
+        mdComponent,
+        options.output
       );
       createFiles(saveFilesMap);
 
@@ -102,10 +96,6 @@ export class ToolingApi extends BaseApi {
     }
 
     return retrieveResult;
-  }
-
-  protected buildQuery(typeName: string, fullName: string): string {
-    return `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ${typeName} where Name = '${fullName}'`;
   }
 
   public async deploy(options: DeployOptions): Promise<DeployResult> {

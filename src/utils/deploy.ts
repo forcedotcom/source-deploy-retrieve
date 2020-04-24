@@ -5,14 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-export const supportedToolingTypes = new Map([
-  ['ApexClass', 'ApexClassMember'],
-  ['ApexTrigger', 'ApexTriggerMember'],
-  ['ApexPage', 'ApexPageMember'],
-  ['ApexComponent', 'ApexComponentMember'],
-  ['AuraDefinitionBundle', 'AuraDefinition']
-]);
-
 export interface ToolingCreateResult {
   id: string;
   success: boolean;
@@ -24,6 +16,14 @@ export interface ToolingCreateResult {
 export interface BundleMetadataObj {
   FilePath: string;
   DefType?: string;
+  Source: string;
+  Format: string;
+  Id?: string;
+}
+
+export interface AuraDefinition {
+  FilePath: string;
+  DefType: string;
   Source: string;
   Format: string;
   Id?: string;

@@ -9,3 +9,10 @@ export const CONTAINER_ASYNC_REQUEST = 'ContainerAsyncRequest';
 export const METADATA_CONTAINER = 'MetadataContainer';
 export const AURA_DEF_BUNDLE = 'AuraDefinitionBundle';
 export const AURA_TYPES = ['APPLICATION', 'COMPONENT', 'EVENT', 'INTERFACE'];
+export interface AuraDefinition {
+  FilePath: string;
+  DefType: string;
+  Source: string;
+  Format: string;
+  Id?: string;
+}

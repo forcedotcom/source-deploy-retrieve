@@ -6,12 +6,9 @@
  */
 import { readFileSync } from 'fs';
 import { sep } from 'path';
+import { deployTypes } from '../toolingApi';
 import { DeployError } from '../../errors';
-import {
-  BundleMetadataObj,
-  supportedToolingTypes,
-  ToolingCreateResult
-} from '../../utils/deploy';
+import { BundleMetadataObj, ToolingCreateResult } from '../../utils/deploy';
 import {
   MetadataComponent,
   DeployResult,
@@ -37,7 +34,7 @@ export class BundleDeploy extends BaseDeploy {
         this.component.type.name
       )
     );
-    // tslint:disable-next-line:array-type
+
     const existingBundle = queryResult.records as { Id: string }[];
 
     if (existingBundle.length > 0) {
@@ -97,7 +94,7 @@ export class BundleDeploy extends BaseDeploy {
     const queryResult = (await this.connection.tooling.query(
       this.buildQuery(
         `${type}Id = '${bundleId}'`,
-        supportedToolingTypes.get(type),
+        deployTypes.get(type),
         queryString
       )
     )) as { records: BundleMetadataObj[] };
@@ -154,7 +151,7 @@ export class BundleDeploy extends BaseDeploy {
         Source: def.Source
       };
 
-      await this.toolingCreate(supportedToolingTypes.get(type), formattedDef);
+      await this.toolingCreate(deployTypes.get(type), formattedDef);
       return this.createDeployResult(def.FilePath, true, true);
     });
 
@@ -184,10 +181,7 @@ export class BundleDeploy extends BaseDeploy {
     const promiseArray = defToUpdate.map(async def => {
       const formattedDef = { Source: def.Source, Id: def.Id };
 
-      await this.connection.tooling.update(
-        supportedToolingTypes.get(type),
-        formattedDef
-      );
+      await this.connection.tooling.update(deployTypes.get(type), formattedDef);
       return this.createDeployResult(def.FilePath, true, false);
     });
 
@@ -321,7 +315,8 @@ export class BundleDeploy extends BaseDeploy {
         State: DeployStatusEnum.Failed,
         ErrorMsg: componentFailures[0].problem,
         DeployDetails: deployDetailsResult,
-        isDeleted: false
+        isDeleted: false,
+        metadataFile: this.component.xml
       };
     } else {
       toolingDeployResult = {
@@ -329,7 +324,8 @@ export class BundleDeploy extends BaseDeploy {
         DeployDetails: deployDetailsResult,
         isDeleted: false,
         outboundFiles: this.component.sources,
-        ErrorMsg: null
+        ErrorMsg: null,
+        metadataFile: this.component.xml
       };
     }
 

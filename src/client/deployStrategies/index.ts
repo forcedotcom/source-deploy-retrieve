@@ -8,6 +8,7 @@ import { Connection } from '@salesforce/core';
 import { BaseDeploy } from './baseDeploy';
 import { BundleDeploy } from './bundleDeploy';
 import { ContainerDeploy } from './containerDeploy';
+import { AuraDeploy } from './auraDeploy';
 import { AURA_DEF_BUNDLE } from './constants';
 
 export {
@@ -17,6 +18,7 @@ export {
 } from './constants';
 export { ContainerDeploy } from './containerDeploy';
 export { BundleDeploy } from './bundleDeploy';
+export { AuraDeploy } from './auraDeploy';
 
 export const getDeployStrategy = (
   type: string,
@@ -24,7 +26,7 @@ export const getDeployStrategy = (
 ): BaseDeploy => {
   const deployStrategy =
     type === AURA_DEF_BUNDLE
-      ? new BundleDeploy(connection)
+      ? new AuraDeploy(connection)
       : new ContainerDeploy(connection);
   return deployStrategy;
 };

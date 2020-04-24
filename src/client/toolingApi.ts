@@ -19,18 +19,24 @@ import {
   QueryResult
 } from '../types';
 import { nls } from '../i18n';
-import { createFiles } from '../utils';
-import { supportedToolingTypes } from '../utils/deploy';
 import { buildQuery, queryToFileMap } from './retrieveUtil';
+import { createFiles } from '../utils';
 
-// TODO: consolidate this with supported types in deploy
-const supportedTypes = new Set([
+const retrieveTypes = new Set([
   'ApexClass',
   'ApexTrigger',
   'ApexPage',
   'ApexComponent',
   'AuraDefinitionBundle',
   'LightningComponentBundle'
+]);
+
+export const deployTypes = new Map([
+  ['ApexClass', 'ApexClassMember'],
+  ['ApexTrigger', 'ApexTriggerMember'],
+  ['ApexPage', 'ApexPageMember'],
+  ['ApexComponent', 'ApexComponentMember'],
+  ['AuraDefinitionBundle', 'AuraDefinition']
 ]);
 
 export class ToolingApi extends BaseApi {
@@ -56,7 +62,7 @@ export class ToolingApi extends BaseApi {
     }
     const mdComponent: MetadataComponent = options.components[0];
 
-    if (!supportedTypes.has(mdComponent.type.name)) {
+    if (!retrieveTypes.has(mdComponent.type.name)) {
       const retrieveError = new Error();
       retrieveError.message = nls.localize(
         'beta_tapi_membertype_unsupported_error',
@@ -110,7 +116,7 @@ export class ToolingApi extends BaseApi {
     const mdComponent: MetadataComponent = options.components[0];
     const metadataType = mdComponent.type.name;
 
-    if (supportedToolingTypes.get(metadataType) === undefined) {
+    if (!deployTypes.get(metadataType)) {
       throw new SourceClientError(
         'beta_tapi_membertype_unsupported_error',
         metadataType

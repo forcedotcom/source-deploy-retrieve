@@ -426,6 +426,7 @@ describe('Container Deploy Strategy', () => {
 
   it('should poll for a container async request', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
+    deployLibrary.component = apexClassCmp;
     const mockToolingRetrieve = sandboxStub.stub(
       mockConnection.tooling,
       'retrieve'

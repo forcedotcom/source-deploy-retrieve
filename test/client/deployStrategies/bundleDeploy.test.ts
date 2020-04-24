@@ -699,7 +699,8 @@ describe('Bundle Deploy Strategy', () => {
       },
       isDeleted: false,
       outboundFiles: auraFiles,
-      ErrorMsg: null
+      ErrorMsg: null,
+      metadataFile: auraComponent.xml
     } as DeployResult;
 
     const bundleDeploy = new BundleDeploy(mockConnection);

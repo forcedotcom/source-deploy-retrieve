@@ -28,7 +28,9 @@ const supportedTypes = new Set([
   'ApexClass',
   'ApexTrigger',
   'ApexPage',
-  'ApexComponent'
+  'ApexComponent',
+  'AuraDefinitionBundle',
+  'LightningComponentBundle'
 ]);
 
 export class ToolingApi extends BaseApi {

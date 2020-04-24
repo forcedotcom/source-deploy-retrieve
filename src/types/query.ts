@@ -16,10 +16,17 @@ export type QueryResult = {
 
 export type QueryRecord = {
   Id: string;
-  Name: string;
-  NamespacePrefix: string;
+  Name?: string;
+  NamespacePrefix?: string;
   Body?: string;
   Markup?: string;
   ApiVersion?: string;
   Status?: string;
+  DefType?: string;
+  Source?: string;
+  AuraDefinitionBundle?: {
+    ApiVersion: string;
+    DeveloperName: string;
+    NamespacePrefix: string;
+  };
 };

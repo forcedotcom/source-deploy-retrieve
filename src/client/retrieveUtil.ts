@@ -5,12 +5,14 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { dirname, join } from 'path';
 import { QueryResult, MetadataComponent } from '../types';
 import {
   generateMetaXML,
   generateMetaXMLPath,
   trimMetaXmlSuffix
 } from '../utils';
+import { baseName } from '../utils/path';
 
 export function buildQuery(mdComponent: MetadataComponent): string {
   let queryString = '';
@@ -27,7 +29,9 @@ export function buildQuery(mdComponent: MetadataComponent): string {
       queryString = `Select Id, ApiVersion, Name, NamespacePrefix, Markup from ${typeName} where Name = '${fullName}'`;
       break;
     case 'AuraDefinitionBundle':
-      queryString = `Select Id, AuraDefinitionBundleId, AuraDefinitionBundle.DeveloperName, AuraDefinitionBundle.NamespacePrefix, DefType, Source from AuraDefinition where AuraDefinitionBundle.DeveloperName = '${fullName}'`;
+      queryString =
+        'Select Id, AuraDefinitionBundle.ApiVersion, AuraDefinitionBundle.DeveloperName, ';
+      queryString += `AuraDefinitionBundle.NamespacePrefix, DefType, Source from AuraDefinition where AuraDefinitionBundle.DeveloperName = '${fullName}'`;
       break;
     default:
       queryString = '';
@@ -36,76 +40,85 @@ export function buildQuery(mdComponent: MetadataComponent): string {
   return queryString;
 }
 
+function getAuraSourceName(
+  componentPath: string,
+  fileNamePrefix: string,
+  defType: string
+): string {
+  const cmpParentName = join(dirname(componentPath), fileNamePrefix);
+
+  switch (defType) {
+    case 'APPLICATION':
+      return `${cmpParentName}.app`;
+    case 'COMPONENT':
+      return `${cmpParentName}.cmp`;
+    case 'DOCUMENTATION':
+      return `${cmpParentName}.auradoc`;
+    case 'STYLE':
+      return `${cmpParentName}.css`;
+    case 'EVENT':
+      return `${cmpParentName}.evt`;
+    case 'DESIGN':
+      return `${cmpParentName}.design`;
+    case 'SVG':
+      return `${cmpParentName}.svg`;
+    case 'CONTROLLER':
+      return `${cmpParentName}Controller.js`;
+    case 'HELPER':
+      return `${cmpParentName}Helper.js`;
+    case 'RENDERER':
+      return `${cmpParentName}Renderer.js`;
+    case 'TOKENS':
+      return `${cmpParentName}.tokens`;
+    case 'INTERFACE':
+      return `${cmpParentName}.intf`;
+    default:
+      return '';
+  }
+}
+
 export function queryToFileMap(
   queryResult: QueryResult,
   mdComponent: MetadataComponent,
   overrideOutputPath?: string
 ): Map<string, string> {
   const typeName = mdComponent.type.name;
-  const apiVersion = queryResult.records[0].ApiVersion;
-  let source: string[] = [];
+  let apiVersion: string;
   let status: string;
-
-  switch (typeName) {
-    case 'ApexClass':
-    case 'ApexTrigger':
-      status = queryResult.records[0].Status;
-      source = [queryResult.records[0].Body];
-      break;
-    case 'ApexComponent':
-    case 'ApexPage':
-      source = [queryResult.records[0].Markup];
-      break;
-    default:
-      source = [];
-  }
-
   // If output is defined it overrides where the component will be stored
   const mdSourcePath = overrideOutputPath
     ? trimMetaXmlSuffix(overrideOutputPath)
     : mdComponent.sources[0];
-
   const saveFilesMap = new Map();
-  saveFilesMap.set(mdSourcePath, source[0]);
+  switch (typeName) {
+    case 'ApexClass':
+    case 'ApexTrigger':
+      status = queryResult.records[0].Status;
+      apiVersion = queryResult.records[0].ApiVersion;
+      saveFilesMap.set(mdSourcePath, queryResult.records[0].Body);
+      break;
+    case 'ApexComponent':
+    case 'ApexPage':
+      apiVersion = queryResult.records[0].ApiVersion;
+      saveFilesMap.set(mdSourcePath, queryResult.records[0].Markup);
+      break;
+    case 'AuraDefinitionBundle':
+      apiVersion = queryResult.records[0].AuraDefinitionBundle.ApiVersion;
+      queryResult.records.forEach(item => {
+        const cmpName = getAuraSourceName(
+          mdSourcePath,
+          mdComponent.fullName,
+          item.DefType
+        );
+        saveFilesMap.set(cmpName, item.Source);
+      });
+      break;
+    default:
+  }
+
   saveFilesMap.set(
     generateMetaXMLPath(mdSourcePath),
     generateMetaXML(typeName, apiVersion, status)
   );
   return saveFilesMap;
-}
-
-// run Select Id, AuraDefinitionBundleId, AuraDefinitionBundle.DeveloperName, AuraDefinitionBundle.NamespacePrefix,
-// DefType, Source from AuraDefinition where AuraDefinitionBundle.DeveloperName = 'testApp'
-// in sutro
-
-function getAuraSourceName(componentName: string, defType: string): string {
-  // const fileName = baseName(sourcePath);
-  switch (defType) {
-    case 'APPLICATION':
-      return `${componentName}.app`;
-    case 'COMPONENT':
-      return `${componentName}.cmp`;
-    case 'DOCUMENTATION':
-      return `${componentName}.auradoc`;
-    case 'STYLE':
-      return `${componentName}.css`;
-    case 'EVENT':
-      return `${componentName}.evt`;
-    case 'DESIGN':
-      return `${componentName}.design`;
-    case 'SVG':
-      return `${componentName}.svg`;
-    case 'CONTROLLER':
-      return `${componentName}Controller.js`;
-    case 'HELPER':
-      return `${componentName}Helper.js`;
-    case 'RENDERER':
-      return `${componentName}Renderer.js`;
-    case 'TOKENS':
-      return `${componentName}.tokens`;
-    case 'INTERFACE':
-      return `${componentName}.intf`;
-    default:
-      return '';
-  }
 }

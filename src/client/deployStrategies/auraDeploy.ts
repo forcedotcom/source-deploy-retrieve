@@ -22,23 +22,10 @@ import { AURA_TYPES } from './index';
 export class AuraDeploy extends BaseDeploy {
   public async deploy(component: MetadataComponent): Promise<DeployResult> {
     this.component = component;
-    let bundleId: string;
-    let auraDefinitions: AuraDefinition[];
-
-    const existingBundle = await this.findExistingBundle();
-    if (existingBundle.length > 0) {
-      bundleId = existingBundle[0].Id;
-      auraDefinitions = await this.buildDefList(bundleId);
-    } else {
-      auraDefinitions = await this.buildDefList();
-      const newBundle = await this.createBundle();
-      bundleId = newBundle.id;
-    }
+    const auraDefinitions = await this.buildDefList();
 
     try {
-      const promiseArray = auraDefinitions.map(async def =>
-        this.upsert(def, bundleId)
-      );
+      const promiseArray = auraDefinitions.map(async def => this.upsert(def));
       const results = await Promise.all(promiseArray);
       return this.formatBundleOutput(results);
     } catch (e) {
@@ -54,13 +41,17 @@ export class AuraDeploy extends BaseDeploy {
     }
   }
 
-  public async buildDefList(bundleId?: string): Promise<AuraDefinition[]> {
+  public async buildDefList(): Promise<AuraDefinition[]> {
     const sourceFiles = this.component.sources;
     const auraDefinitions: AuraDefinition[] = [];
 
-    let existingDefinitions: AuraDefinition[] = [];
-    if (bundleId) {
-      existingDefinitions = await this.findExistingDefinitions(bundleId);
+    const existingDefinitions = await this.findExistingDefinitions();
+    let bundleId: string;
+    if (existingDefinitions.length > 0) {
+      bundleId = existingDefinitions[0].AuraDefinitionBundleId;
+    } else {
+      const newBundle = await this.createBundle();
+      bundleId = newBundle.id;
     }
 
     sourceFiles.forEach(async sourceFile => {
@@ -81,7 +72,7 @@ export class AuraDeploy extends BaseDeploy {
         DefType: defType,
         Source: source,
         Format: format,
-        ...(match ? { Id: match.Id } : {})
+        ...(match ? { Id: match.Id } : { AuraDefinitionBundleId: bundleId })
       };
 
       AURA_TYPES.includes(auraDef.DefType)
@@ -115,10 +106,7 @@ export class AuraDeploy extends BaseDeploy {
     return newBundle;
   }
 
-  public async upsert(
-    auraDef: AuraDefinition,
-    bundleId: string
-  ): Promise<SourceResult> {
+  public async upsert(auraDef: AuraDefinition): Promise<SourceResult> {
     const type = this.component.type.name;
 
     if (auraDef.Id) {
@@ -131,7 +119,7 @@ export class AuraDeploy extends BaseDeploy {
       return this.createDeployResult(auraDef.FilePath, true, false);
     } else {
       const formattedDef = {
-        AuraDefinitionBundleId: bundleId,
+        AuraDefinitionBundleId: auraDef.AuraDefinitionBundleId,
         DefType: auraDef.DefType,
         Format: auraDef.Format,
         Source: auraDef.Source
@@ -229,14 +217,14 @@ export class AuraDeploy extends BaseDeploy {
     return auraDefBundlesResult.records as { Id: string }[];
   }
 
-  private async findExistingDefinitions(
-    bundleId: string
-  ): Promise<AuraDefinition[]> {
+  private async findExistingDefinitions(): Promise<AuraDefinition[]> {
     const type = this.component.type.name;
     const auraDefResult = await this.connection.tooling.query(
-      `Select Id, Format, Source, DefType from ${deployTypes.get(
+      `Select AuraDefinitionBundleId, Id, Format, Source, DefType from ${deployTypes.get(
         type
-      )} where ${type}Id = '${bundleId}'`
+      )} where AuraDefinitionBundle.DeveloperName = '${
+        this.component.fullName
+      }'`
     );
     return auraDefResult.records as AuraDefinition[];
   }

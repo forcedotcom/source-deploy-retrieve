@@ -45,49 +45,57 @@ export const testAuraList = [
     DefType: 'COMPONENT',
     FilePath: auraFiles[1],
     Format: 'XML',
-    Source: auraContents[1]
+    Source: auraContents[1],
+    AuraDefinitionBundleId: '1dcxxx000000060'
   },
   {
     DefType: 'DOCUMENTATION',
     FilePath: auraFiles[0],
     Format: 'XML',
-    Source: auraContents[0]
+    Source: auraContents[0],
+    AuraDefinitionBundleId: '1dcxxx000000060'
   },
   {
     DefType: 'STYLE',
     FilePath: auraFiles[2],
     Format: 'CSS',
-    Source: auraContents[2]
+    Source: auraContents[2],
+    AuraDefinitionBundleId: '1dcxxx000000060'
   },
   {
     DefType: 'DESIGN',
     FilePath: auraFiles[3],
     Format: 'XML',
-    Source: auraContents[3]
+    Source: auraContents[3],
+    AuraDefinitionBundleId: '1dcxxx000000060'
   },
   {
     DefType: 'SVG',
     FilePath: auraFiles[4],
     Format: 'XML',
-    Source: auraContents[4]
+    Source: auraContents[4],
+    AuraDefinitionBundleId: '1dcxxx000000060'
   },
   {
     DefType: 'CONTROLLER',
     FilePath: auraFiles[5],
     Format: 'JS',
-    Source: auraContents[5]
+    Source: auraContents[5],
+    AuraDefinitionBundleId: '1dcxxx000000060'
   },
   {
     DefType: 'HELPER',
     FilePath: auraFiles[6],
     Format: 'JS',
-    Source: auraContents[6]
+    Source: auraContents[6],
+    AuraDefinitionBundleId: '1dcxxx000000060'
   },
   {
     DefType: 'RENDERER',
     FilePath: auraFiles[7],
     Format: 'JS',
-    Source: auraContents[7]
+    Source: auraContents[7],
+    AuraDefinitionBundleId: '1dcxxx000000060'
   }
 ] as AuraDefinition[];
 

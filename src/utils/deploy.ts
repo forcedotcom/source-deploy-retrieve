@@ -13,18 +13,11 @@ export interface ToolingCreateResult {
   message: string;
 }
 
-export interface BundleMetadataObj {
-  FilePath: string;
-  DefType?: string;
-  Source: string;
-  Format: string;
-  Id?: string;
-}
-
 export interface AuraDefinition {
   FilePath: string;
   DefType: string;
   Source: string;
   Format: string;
   Id?: string;
+  AuraDefinitionBundleId?: string;
 }

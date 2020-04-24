@@ -75,6 +75,20 @@ describe('Aura Deploy Strategy', () => {
   });
 
   it('should build list of aura definition objects with correct properties', async () => {
+    sandboxStub
+      .stub(mockConnection.tooling, 'query')
+      // @ts-ignore
+      .resolves({ records: [] });
+    const mockToolingCreate = sandboxStub.stub(
+      mockConnection.tooling,
+      'create'
+    );
+    mockToolingCreate.resolves({
+      success: true,
+      id: '1dcxxx000000060',
+      errors: []
+    } as RecordResult);
+
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
     const auraDefinitions = await auraDeploy.buildDefList();
@@ -111,7 +125,7 @@ describe('Aura Deploy Strategy', () => {
 
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
-    const auraResults = await auraDeploy.buildDefList('1dcxxx000000034');
+    const auraResults = await auraDeploy.buildDefList();
     expect(auraResults).to.deep.include.members(matches);
   });
 
@@ -130,14 +144,16 @@ describe('Aura Deploy Strategy', () => {
         ),
         Format: 'html',
         DefType: 'wrongType',
-        Source: auraContents[0]
+        Source: auraContents[0],
+        AuraDefinitionBundleId: '1dcxxx000000060'
       },
       {
         Id: '1dcxxx000000036',
         FilePath: 'path/to/wrong/aura/auraFile/auraFile.js',
         Format: 'js',
         DefType: 'wrongType',
-        Source: auraContents[1]
+        Source: auraContents[1],
+        AuraDefinitionBundleId: '1dcxxx000000060'
       }
     ];
     // @ts-ignore
@@ -145,7 +161,7 @@ describe('Aura Deploy Strategy', () => {
 
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
-    const auraResults = await auraDeploy.buildDefList('1dcxxx000000034');
+    const auraResults = await auraDeploy.buildDefList();
     expect(auraResults).to.not.deep.include.members(matches);
   });
 
@@ -259,13 +275,14 @@ describe('Aura Deploy Strategy', () => {
     const updateAuraList = [...testAuraList];
     updateAuraList.forEach(el => {
       el.Id = '1dcxxx000000034';
+      delete el.AuraDefinitionBundleId;
     });
 
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
     const results = await Promise.all(
       updateAuraList.map(async def => {
-        return auraDeploy.upsert(def, '1dcxxx000000035');
+        return auraDeploy.upsert(def);
       })
     );
 
@@ -380,11 +397,6 @@ describe('Aura Deploy Strategy', () => {
     sandboxStub
       .stub(AuraDeploy.prototype, 'buildDefList')
       .resolves(testAuraList);
-    const toolingQueryStub = sandboxStub
-      .stub(mockConnection.tooling, 'query')
-      .onFirstCall()
-      // @ts-ignore
-      .resolves({ records: [{ Id: '1dcxxx000000039' }] });
 
     const matches = [
       {
@@ -392,25 +404,30 @@ describe('Aura Deploy Strategy', () => {
         DefType: 'COMPONENT',
         Format: 'XML',
         FilePath: auraFiles[1],
-        Source: auraContents[1]
+        Source: auraContents[1],
+        AuraDefinitionBundleId: '1dcxxx000000060'
       },
       {
         Id: '1dcxxx000000035',
         DefType: 'STYLE',
         Format: 'CSS',
         FilePath: auraFiles[2],
-        Source: auraContents[2]
+        Source: auraContents[2],
+        AuraDefinitionBundleId: '1dcxxx000000060'
       },
       {
         Id: '1dcxxx000000036',
         DefType: 'DESIGN',
         Format: 'XML',
         FilePath: auraFiles[3],
-        Source: auraContents[3]
+        Source: auraContents[3],
+        AuraDefinitionBundleId: '1dcxxx000000060'
       }
     ];
-    // @ts-ignore
-    toolingQueryStub.onSecondCall().resolves({ records: matches });
+    sandboxStub
+      .stub(mockConnection.tooling, 'query')
+      // @ts-ignore
+      .resolves({ records: matches });
 
     const upsertStub = sandboxStub.stub(AuraDeploy.prototype, 'upsert');
     for (let i = 0; i < 8; i++) {

@@ -23,13 +23,14 @@ export class AuraDeploy extends BaseDeploy {
   public async deploy(component: MetadataComponent): Promise<DeployResult> {
     this.component = component;
     let bundleId: string;
-    const auraDefinitions = this.buildDefList();
+    let auraDefinitions: AuraDefinition[];
 
     const existingBundle = await this.findExistingBundle();
     if (existingBundle.length > 0) {
       bundleId = existingBundle[0].Id;
-      await this.filterExistingSources(bundleId, auraDefinitions);
+      auraDefinitions = await this.buildDefList(bundleId);
     } else {
+      auraDefinitions = await this.buildDefList();
       const newBundle = await this.createBundle();
       bundleId = newBundle.id;
     }
@@ -53,9 +54,14 @@ export class AuraDeploy extends BaseDeploy {
     }
   }
 
-  public buildDefList(): AuraDefinition[] {
+  public async buildDefList(bundleId?: string): Promise<AuraDefinition[]> {
     const sourceFiles = this.component.sources;
     const auraDefinitions: AuraDefinition[] = [];
+
+    let existingDefinitions: AuraDefinition[] = [];
+    if (bundleId) {
+      existingDefinitions = await this.findExistingDefinitions(bundleId);
+    }
 
     sourceFiles.forEach(async sourceFile => {
       const source = readFileSync(sourceFile, 'utf8');
@@ -63,11 +69,19 @@ export class AuraDeploy extends BaseDeploy {
       const defType = this.getAuraDefType(sourceFile, suffix);
       const format = this.getAuraFormat(suffix);
 
+      let match: AuraDefinition;
+      if (existingDefinitions.length > 0) {
+        match = existingDefinitions.find(
+          definition => definition.DefType === defType
+        );
+      }
+
       const auraDef = {
         FilePath: sourceFile,
         DefType: defType,
         Source: source,
-        Format: format
+        Format: format,
+        ...(match ? { Id: match.Id } : {})
       };
 
       AURA_TYPES.includes(auraDef.DefType)
@@ -76,22 +90,6 @@ export class AuraDeploy extends BaseDeploy {
     });
 
     return auraDefinitions;
-  }
-
-  public async filterExistingSources(
-    bundleId: string,
-    auraDefinitions: AuraDefinition[]
-  ): Promise<void> {
-    const existingDefinitions = await this.findExistingDefinitions(bundleId);
-
-    for (const auraDef of auraDefinitions) {
-      const match = existingDefinitions.find(
-        definition => definition.DefType === auraDef.DefType
-      );
-      if (match) {
-        auraDef.Id = match.Id;
-      }
-    }
   }
 
   public async createBundle(): Promise<ToolingCreateResult> {

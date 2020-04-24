@@ -77,7 +77,7 @@ describe('Aura Deploy Strategy', () => {
   it('should build list of aura definition objects with correct properties', async () => {
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
-    const auraDefinitions = auraDeploy.buildDefList();
+    const auraDefinitions = await auraDeploy.buildDefList();
     expect(auraDefinitions).to.deep.include.members(testAuraList);
   });
 
@@ -111,8 +111,8 @@ describe('Aura Deploy Strategy', () => {
 
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
-    await auraDeploy.filterExistingSources('1dcxxx000000034', testAuraList);
-    expect(testAuraList).to.deep.include.members(matches);
+    const auraResults = await auraDeploy.buildDefList('1dcxxx000000034');
+    expect(auraResults).to.deep.include.members(matches);
   });
 
   it('should filter existing sources and keep list unchanged if there are no matches', async () => {
@@ -145,8 +145,8 @@ describe('Aura Deploy Strategy', () => {
 
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
-    await auraDeploy.filterExistingSources('1dcxxx000000034', testAuraList);
-    expect(testAuraList).to.not.deep.include.members(matches);
+    const auraResults = await auraDeploy.buildDefList('1dcxxx000000034');
+    expect(auraResults).to.not.deep.include.members(matches);
   });
 
   it('should create an auradefinitionbundle given the fullname and metadata', async () => {
@@ -215,7 +215,9 @@ describe('Aura Deploy Strategy', () => {
       .stub(AuraDeploy.prototype, 'buildMetadataField')
       .returns(testMetadataField);
 
-    sandboxStub.stub(AuraDeploy.prototype, 'filterExistingSources');
+    sandboxStub
+      .stub(AuraDeploy.prototype, 'buildDefList')
+      .resolves(testAuraList);
 
     const mockToolingQuery = sandboxStub.stub(mockConnection.tooling, 'query');
     // @ts-ignore
@@ -273,7 +275,7 @@ describe('Aura Deploy Strategy', () => {
   it('should format output for creation only successes correctly', async () => {
     sandboxStub
       .stub(AuraDeploy.prototype, 'buildDefList')
-      .returns(testAuraList);
+      .resolves(testAuraList);
     sandboxStub
       .stub(mockConnection.tooling, 'query')
       // @ts-ignore
@@ -321,7 +323,7 @@ describe('Aura Deploy Strategy', () => {
   it('should format output for creation only failures correctly', async () => {
     sandboxStub
       .stub(AuraDeploy.prototype, 'buildDefList')
-      .returns(testAuraList);
+      .resolves(testAuraList);
     sandboxStub
       .stub(mockConnection.tooling, 'query')
       // @ts-ignore
@@ -377,7 +379,7 @@ describe('Aura Deploy Strategy', () => {
   it('should format output for create and update successes correctly', async () => {
     sandboxStub
       .stub(AuraDeploy.prototype, 'buildDefList')
-      .returns(testAuraList);
+      .resolves(testAuraList);
     const toolingQueryStub = sandboxStub
       .stub(mockConnection.tooling, 'query')
       .onFirstCall()

@@ -6,7 +6,6 @@
  */
 import { Connection } from '@salesforce/core';
 import { BaseDeploy } from './baseDeploy';
-import { BundleDeploy } from './bundleDeploy';
 import { ContainerDeploy } from './containerDeploy';
 import { AuraDeploy } from './auraDeploy';
 import { AURA_DEF_BUNDLE } from './constants';
@@ -17,7 +16,6 @@ export {
   METADATA_CONTAINER
 } from './constants';
 export { ContainerDeploy } from './containerDeploy';
-export { BundleDeploy } from './bundleDeploy';
 export { AuraDeploy } from './auraDeploy';
 
 export const getDeployStrategy = (

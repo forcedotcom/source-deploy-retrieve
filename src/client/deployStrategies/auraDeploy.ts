@@ -208,15 +208,6 @@ export class AuraDeploy extends BaseDeploy {
     }
   }
 
-  private async findExistingBundle(): Promise<{ Id: string }[]> {
-    const auraDefBundlesResult = await this.connection.tooling.query(
-      `Select Id from ${this.component.type.name} where DeveloperName = '${
-        this.component.fullName
-      }'`
-    );
-    return auraDefBundlesResult.records as { Id: string }[];
-  }
-
   private async findExistingDefinitions(): Promise<AuraDefinition[]> {
     const type = this.component.type.name;
     const auraDefResult = await this.connection.tooling.query(

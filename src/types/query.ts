@@ -24,8 +24,13 @@ export type QueryRecord = {
   Status?: string;
   DefType?: string;
   Source?: string;
+  FilePath?: string;
   AuraDefinitionBundle?: {
     ApiVersion: string;
+    DeveloperName: string;
+    NamespacePrefix: string;
+  };
+  LightningComponentBundle?: {
     DeveloperName: string;
     NamespacePrefix: string;
   };

@@ -16,6 +16,7 @@ import {
   auraInterface,
   auraTokens
 } from './auraDefinitionMocks';
+import { lwcComponentMock } from './lightningComponentMocks';
 
 describe('Tooling Retrieve Util', () => {
   const classMDComponent: MetadataComponent = {
@@ -46,8 +47,7 @@ describe('Tooling Retrieve Util', () => {
     type: {
       name: 'AuraDefinitionBundle',
       directoryName: 'aura',
-      inFolder: false,
-      suffix: 'app'
+      inFolder: false
     },
     fullName: 'testApp',
     xml: path.join('file', 'path', 'testApp.app-meta.xml'),
@@ -261,8 +261,7 @@ describe('Tooling Retrieve Util', () => {
       type: {
         name: 'AuraDefinitionBundle',
         directoryName: 'aura',
-        inFolder: false,
-        suffix: 'cmp'
+        inFolder: false
       },
       fullName: 'myAuraCmp',
       xml: cmpMetaPath,
@@ -338,8 +337,7 @@ describe('Tooling Retrieve Util', () => {
       type: {
         name: 'AuraDefinitionBundle',
         directoryName: 'aura',
-        inFolder: false,
-        suffix: 'app'
+        inFolder: false
       },
       fullName: 'myAuraApp',
       xml: appMetaPath,
@@ -380,8 +378,7 @@ describe('Tooling Retrieve Util', () => {
       type: {
         name: 'AuraDefinitionBundle',
         directoryName: 'aura',
-        inFolder: false,
-        suffix: 'evt'
+        inFolder: false
       },
       fullName: 'myAuraEvent',
       xml: eventMetaPath,
@@ -422,8 +419,7 @@ describe('Tooling Retrieve Util', () => {
       type: {
         name: 'AuraDefinitionBundle',
         directoryName: 'aura',
-        inFolder: false,
-        suffix: 'intf'
+        inFolder: false
       },
       fullName: 'myAuraInterface',
       xml: interfaceMetaPath,
@@ -464,8 +460,7 @@ describe('Tooling Retrieve Util', () => {
       type: {
         name: 'AuraDefinitionBundle',
         directoryName: 'aura',
-        inFolder: false,
-        suffix: 'tokens'
+        inFolder: false
       },
       fullName: 'myAuraToken',
       xml: tokensMetaPath,
@@ -484,6 +479,64 @@ describe('Tooling Retrieve Util', () => {
     expect(resultMap.has(tokensPath)).to.be.true;
     expect(resultMap.get(tokensPath)).to.equal(
       '<aura:tokens>\n\t\n</aura:tokens>'
+    );
+  });
+
+  it('should generate correct file map for LightningComponentBundle metadata', () => {
+    const htmlPath = path.join(
+      'file',
+      'path',
+      'lwc',
+      'myLWCComponent',
+      'myLWCComponent.html'
+    );
+    const jsPath = path.join(
+      'file',
+      'path',
+      'lwc',
+      'myLWCComponent',
+      'myLWCComponent.js'
+    );
+    const cssPath = path.join(
+      'file',
+      'path',
+      'lwc',
+      'myLWCComponent',
+      'myLWCComponent.css'
+    );
+    const metaPath = path.join(
+      'file',
+      'path',
+      'lwc',
+      'myLWCComponent',
+      'myLWCComponent.js-meta.xml'
+    );
+    const lwcMD: MetadataComponent = {
+      type: {
+        name: 'LightningComponentBundle',
+        directoryName: 'lwc',
+        inFolder: false
+      },
+      fullName: 'myLWCComponent',
+      xml: metaPath,
+      sources: [htmlPath, jsPath, cssPath]
+    };
+
+    const resultMap = queryToFileMap(lwcComponentMock, lwcMD);
+    expect(resultMap.size).to.equal(4);
+    expect(resultMap.has(htmlPath)).to.be.true;
+    expect(resultMap.get(htmlPath)).to.equal('<template>\n    \n</template>');
+    expect(resultMap.has(jsPath)).to.be.true;
+    expect(resultMap.get(jsPath)).to.equal(
+      "import { LightningElement } from 'lwc';\n\nexport default class myLWCComponent extends LightningElement {}"
+    );
+    expect(resultMap.has(cssPath)).to.be.true;
+    expect(resultMap.get(cssPath)).to.equal(
+      ':host {\n    position: relative;\n    display: block;\n}\n\nimg,\nvideo {\n    position: relative;\n    width: 100%;\n}'
+    );
+    expect(resultMap.has(metaPath)).to.be.true;
+    expect(resultMap.get(metaPath)).to.equal(
+      '<?xml version="1.0" encoding="UTF-8" ?>\n<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">\n    <apiVersion>46.0</apiVersion>\n</LightningComponentBundle>'
     );
   });
 });

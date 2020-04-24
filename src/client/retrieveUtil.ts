@@ -5,14 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { dirname, join } from 'path';
+import { dirname, join, sep } from 'path';
 import { QueryResult, MetadataComponent } from '../types';
 import {
   generateMetaXML,
   generateMetaXMLPath,
   trimMetaXmlSuffix
 } from '../utils';
-import { baseName } from '../utils/path';
 
 export function buildQuery(mdComponent: MetadataComponent): string {
   let queryString = '';
@@ -32,6 +31,11 @@ export function buildQuery(mdComponent: MetadataComponent): string {
       queryString =
         'Select Id, AuraDefinitionBundle.ApiVersion, AuraDefinitionBundle.DeveloperName, ';
       queryString += `AuraDefinitionBundle.NamespacePrefix, DefType, Source from AuraDefinition where AuraDefinitionBundle.DeveloperName = '${fullName}'`;
+      break;
+    case 'LightningComponentBundle':
+      queryString =
+        'Select Id, LightningComponentBundle.DeveloperName, LightningComponentBundle.NamespacePrefix, FilePath, Source from LightningComponentResource ';
+      queryString += `where LightningComponentBundle.DeveloperName = '${fullName}'`;
       break;
     default:
       queryString = '';
@@ -113,12 +117,26 @@ export function queryToFileMap(
         saveFilesMap.set(cmpName, item.Source);
       });
       break;
+    case 'LightningComponentBundle':
+      const bundleParentPath = mdSourcePath.substring(
+        0,
+        mdSourcePath.lastIndexOf(`${sep}lwc`)
+      );
+      queryResult.records.forEach(item => {
+        const cmpName = join(bundleParentPath, item.FilePath);
+        saveFilesMap.set(cmpName, item.Source);
+      });
+      break;
     default:
   }
 
-  saveFilesMap.set(
-    generateMetaXMLPath(mdSourcePath),
-    generateMetaXML(typeName, apiVersion, status)
-  );
+  // NOTE: LightningComponentBundle query results returns the -meta.xml file
+  if (typeName !== 'LightningComponentBundle') {
+    saveFilesMap.set(
+      generateMetaXMLPath(mdSourcePath),
+      generateMetaXML(typeName, apiVersion, status)
+    );
+  }
+
   return saveFilesMap;
 }

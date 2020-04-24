@@ -11,26 +11,42 @@ export type QueryResult = {
   done: boolean;
   queryLocator: string;
   entityTypeName: string;
-  records: QueryRecord[];
+  records: ApexRecord[] | AuraRecord[] | LWCRecord[] | VFRecord[];
 };
 
-export type QueryRecord = {
+export type ApexRecord = {
   Id: string;
-  Name?: string;
-  NamespacePrefix?: string;
-  Body?: string;
-  Markup?: string;
-  ApiVersion?: string;
-  Status?: string;
-  DefType?: string;
-  Source?: string;
-  FilePath?: string;
-  AuraDefinitionBundle?: {
+  Name: string;
+  NamespacePrefix: string;
+  Body: string;
+  ApiVersion: string;
+  Status: string;
+};
+
+export type VFRecord = {
+  Id: string;
+  Name: string;
+  NamespacePrefix: string;
+  Markup: string;
+  ApiVersion: string;
+};
+
+export type AuraRecord = {
+  Id: string;
+  DefType: string;
+  Source: string;
+  AuraDefinitionBundle: {
     ApiVersion: string;
     DeveloperName: string;
     NamespacePrefix: string;
   };
-  LightningComponentBundle?: {
+};
+
+export type LWCRecord = {
+  Id: string;
+  FilePath: string;
+  Source: string;
+  LightningComponentBundle: {
     DeveloperName: string;
     NamespacePrefix: string;
   };

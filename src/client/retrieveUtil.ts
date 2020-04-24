@@ -12,6 +12,7 @@ import {
   generateMetaXMLPath,
   trimMetaXmlSuffix
 } from '../utils';
+import { ApexRecord, AuraRecord, LWCRecord, VFRecord } from '../types/query';
 
 export function buildQuery(mdComponent: MetadataComponent): string {
   let queryString = '';
@@ -97,18 +98,21 @@ export function queryToFileMap(
   switch (typeName) {
     case 'ApexClass':
     case 'ApexTrigger':
-      status = queryResult.records[0].Status;
-      apiVersion = queryResult.records[0].ApiVersion;
-      saveFilesMap.set(mdSourcePath, queryResult.records[0].Body);
+      const apexRecord = queryResult.records[0] as ApexRecord;
+      status = apexRecord.Status;
+      apiVersion = apexRecord.ApiVersion;
+      saveFilesMap.set(mdSourcePath, apexRecord.Body);
       break;
     case 'ApexComponent':
     case 'ApexPage':
-      apiVersion = queryResult.records[0].ApiVersion;
-      saveFilesMap.set(mdSourcePath, queryResult.records[0].Markup);
+      const vfRecord = queryResult.records[0] as VFRecord;
+      apiVersion = vfRecord.ApiVersion;
+      saveFilesMap.set(mdSourcePath, vfRecord.Markup);
       break;
     case 'AuraDefinitionBundle':
-      apiVersion = queryResult.records[0].AuraDefinitionBundle.ApiVersion;
-      queryResult.records.forEach(item => {
+      const auraRecord = queryResult.records as AuraRecord[];
+      apiVersion = auraRecord[0].AuraDefinitionBundle.ApiVersion;
+      auraRecord.forEach(item => {
         const cmpName = getAuraSourceName(
           mdSourcePath,
           mdComponent.fullName,
@@ -118,11 +122,12 @@ export function queryToFileMap(
       });
       break;
     case 'LightningComponentBundle':
+      const lwcRecord = queryResult.records as LWCRecord[];
       const bundleParentPath = mdSourcePath.substring(
         0,
         mdSourcePath.lastIndexOf(`${sep}lwc`)
       );
-      queryResult.records.forEach(item => {
+      lwcRecord.forEach(item => {
         const cmpName = join(bundleParentPath, item.FilePath);
         saveFilesMap.set(cmpName, item.Source);
       });

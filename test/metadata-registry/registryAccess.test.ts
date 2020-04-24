@@ -23,6 +23,7 @@ import { join, basename } from 'path';
 import { TypeInferenceError } from '../../src/errors';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import * as adapters from '../../src/metadata-registry/adapters';
+import { ForceIgnore } from '../../src/metadata-registry/forceIgnore';
 
 const env = createSandbox();
 
@@ -62,6 +63,30 @@ function stubAdapters(
       getComponent: (path: SourcePath) => componentMap[path]
     });
   }
+}
+
+function stubForceIgnore(config: {
+  seed: SourcePath;
+  accept?: SourcePath[];
+  deny?: SourcePath[];
+}): void {
+  const forceIgnore = new ForceIgnore();
+  const acceptStub = env.stub(forceIgnore, 'accepts');
+  const denyStub = env.stub(forceIgnore, 'denies');
+  if (config.deny) {
+    config.deny.forEach(path => {
+      denyStub.withArgs(path).returns(true);
+      acceptStub.withArgs(path).returns(false);
+    });
+  }
+  if (config.accept) {
+    config.accept.forEach(path => {
+      acceptStub.withArgs(path).returns(true);
+      denyStub.withArgs(path).returns(false);
+    });
+  }
+  const createIgnoreStub = env.stub(ForceIgnore, 'findAndCreate');
+  createIgnoreStub.withArgs(config.seed).returns(forceIgnore);
 }
 
 describe('RegistryAccess', () => {
@@ -189,6 +214,20 @@ describe('RegistryAccess', () => {
           TypeInferenceError,
           nls.localize('error_could_not_infer_type', [missing])
         );
+      });
+
+      it('Should not return a component if path to metadata xml is forceignored', () => {
+        const path = keanu.KEANU_XML_PATHS[0];
+        existsStub.withArgs(path).returns(true);
+        stubForceIgnore({ seed: path, deny: [path] });
+        stubAdapters([
+          {
+            type: mockRegistry.types.keanureeves,
+            // should not be returned
+            componentMappings: [{ path, component: keanu.KEANU_COMPONENT }]
+          }
+        ]);
+        expect(registry.getComponentsFromPath(path).length).to.equal(0);
       });
     });
 
@@ -413,6 +452,33 @@ describe('RegistryAccess', () => {
             sources: [simon.SIMON_SOURCE_PATHS[0]]
           }
         ]);
+      });
+
+      it('Should not return components if the directory is forceignored', () => {
+        const path = kathy.KATHY_FOLDER;
+        stubForceIgnore({ seed: path, deny: [path] });
+        stubDirectories([
+          {
+            directory: path,
+            fileNames: [kathy.KATHY_XML_NAMES[0], kathy.KATHY_XML_NAMES[1]]
+          }
+        ]);
+        stubAdapters([
+          {
+            type: mockRegistry.types.kathybates,
+            componentMappings: [
+              {
+                path: kathy.KATHY_XML_PATHS[0],
+                component: kathy.KATHY_COMPONENTS[0]
+              },
+              {
+                path: kathy.KATHY_XML_PATHS[1],
+                component: kathy.KATHY_COMPONENTS[1]
+              }
+            ]
+          }
+        ]);
+        expect(registry.getComponentsFromPath(path).length).to.equal(0);
       });
     });
   });

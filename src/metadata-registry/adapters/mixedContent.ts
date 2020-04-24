@@ -70,8 +70,6 @@ export class MixedContent extends BaseSourceAdapter {
     const sources = isDirectory(contentPath)
       ? walk(contentPath, ignore)
       : [contentPath];
-
-    // TODO: don't make two passes just to filter forceIgnore
     return sources.filter(s => this.forceIgnore.accepts(s));
   }
 

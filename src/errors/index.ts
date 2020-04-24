@@ -29,7 +29,17 @@ export class TypeInferenceError extends RegistryError {
 }
 
 export class ExpectedSourceFilesError extends RegistryError {
-  constructor(type: MetadataType, originalPath: SourcePath) {
-    super('error_expected_source_files', [originalPath, type.name]);
+  constructor(
+    type: MetadataType,
+    originalPath: SourcePath,
+    messageKey = 'error_expected_source_files'
+  ) {
+    super(messageKey, [originalPath, type.name]);
+  }
+}
+
+export class UnexpectedForceIgnore extends RegistryError {
+  constructor(messageKey: string, args?: string | string[]) {
+    super(messageKey, args);
   }
 }

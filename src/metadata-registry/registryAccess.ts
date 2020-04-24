@@ -63,6 +63,7 @@ export class RegistryAccess {
       throw new TypeInferenceError('error_path_not_found', fsPath);
     }
 
+    let pathForFetch = fsPath;
     this.forceIgnore = ForceIgnore.findAndCreate(fsPath);
 
     if (isDirectory(fsPath)) {
@@ -75,15 +76,17 @@ export class RegistryAccess {
         const parts = fsPath.split(sep);
         const folderOffset = inFolder ? 2 : 1;
         if (parts[parts.length - folderOffset] !== directoryName) {
-          const xml = MixedContent.findXmlFromContentPath(fsPath, type);
-          if (xml) {
-            return [this.fetchComponent(xml)];
-          }
+          pathForFetch =
+            MixedContent.findXmlFromContentPath(fsPath, type) || fsPath;
         }
       }
-      return this.getComponentsFromPathRecursive(fsPath);
+      if (pathForFetch === fsPath) {
+        return this.getComponentsFromPathRecursive(fsPath);
+      }
     }
-    return [this.fetchComponent(fsPath)];
+
+    const component = this.fetchComponent(pathForFetch);
+    return component ? [component] : [];
   }
 
   private determineTypeId(fsPath: SourcePath): string | undefined {
@@ -150,18 +153,21 @@ export class RegistryAccess {
       const path = join(directory, file);
       if (isDirectory(path)) {
         dirQueue.push(path);
-      } else if (this.forceIgnore.accepts(path) && parseMetadataXml(path)) {
-        const c = this.fetchComponent(path);
-        components.push(c);
-
-        // don't traverse further if not in a root type directory. performance optimization
-        // for mixed content types and ensures we don't add duplicates of the component.
-        const isMixedContent = !!this.data.mixedContent[c.type.directoryName];
-        const typeDir = basename(
-          dirname(c.type.inFolder ? dirname(path) : path)
-        );
-        if (isMixedContent && typeDir !== c.type.directoryName) {
-          return components;
+      } else if (parseMetadataXml(path)) {
+        const component = this.fetchComponent(path);
+        if (component) {
+          components.push(component);
+          // don't traverse further if not in a root type directory. performance optimization
+          // for mixed content types and ensures we don't add duplicates of the component.
+          const isMixedContent = !!this.data.mixedContent[
+            component.type.directoryName
+          ];
+          const typeDir = basename(
+            dirname(component.type.inFolder ? dirname(path) : path)
+          );
+          if (isMixedContent && typeDir !== component.type.directoryName) {
+            return components;
+          }
         }
       }
     }

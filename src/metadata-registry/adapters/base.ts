@@ -15,7 +15,7 @@ import {
 import { parseMetadataXml } from '../../utils/registry';
 import { basename, dirname } from 'path';
 import * as registryData from '../data/registry.json';
-import { RegistryError } from '../../errors';
+import { RegistryError, UnexpectedForceIgnore } from '../../errors';
 import { parentName } from '../../utils/path';
 import { ForceIgnore } from '../forceIgnore';
 
@@ -45,7 +45,7 @@ export class BaseSourceAdapter implements SourceAdapter {
   constructor(
     type: MetadataType,
     registry: MetadataRegistry = registryData,
-    forceIgnore: ForceIgnore
+    forceIgnore: ForceIgnore = new ForceIgnore()
   ) {
     this.type = type;
     this.registry = registry;
@@ -78,6 +78,11 @@ export class BaseSourceAdapter implements SourceAdapter {
         throw new RegistryError('error_missing_metadata_xml', [
           fsPath,
           this.type.name
+        ]);
+      } else if (this.forceIgnore.denies(metaXmlPath)) {
+        throw new UnexpectedForceIgnore('error_no_metadata_xml_ignore', [
+          metaXmlPath,
+          fsPath
         ]);
       }
       parsedMetaXml = parseMetadataXml(metaXmlPath);

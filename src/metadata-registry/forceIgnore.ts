@@ -6,7 +6,7 @@
  */
 //@ts-ignore
 import * as gitignore from 'gitignore-parser';
-import { sep, relative, join, dirname } from 'path';
+import { sep, relative, join, dirname, basename } from 'path';
 import { readFileSync } from 'fs';
 import { FORCE_IGNORE_FILE, SFDX_PROJECT_JSON } from './constants';
 import { SourcePath } from '../types';
@@ -16,7 +16,7 @@ export class ForceIgnore {
   private parser: any;
   private forceIgnoreDirectory: string;
 
-  constructor(forceIgnorePath: string) {
+  constructor(forceIgnorePath = '') {
     try {
       const forceIgnoreDirectory = dirname(forceIgnorePath);
       const forceIgnoreContents = this.parseContents(
@@ -24,9 +24,8 @@ export class ForceIgnore {
       );
       this.parser = gitignore.compile(forceIgnoreContents);
       this.forceIgnoreDirectory = forceIgnoreDirectory;
-    } catch (err) {
+    } catch (e) {
       // log no force ignore
-      console.log(err);
     }
   }
 
@@ -55,7 +54,9 @@ export class ForceIgnore {
   public denies(fsPath: SourcePath): boolean {
     let denies = false;
     if (this.parser) {
-      denies = this.parser.denies(relative(this.forceIgnoreDirectory, fsPath));
+      denies =
+        this.parser.denies(relative(this.forceIgnoreDirectory, fsPath)) ||
+        !this.isValidAgainstDefaults(fsPath);
     }
     return denies;
   }
@@ -63,11 +64,25 @@ export class ForceIgnore {
   public accepts(fsPath: SourcePath): boolean {
     let accepts = true;
     if (this.parser) {
-      accepts = this.parser.accepts(
-        relative(this.forceIgnoreDirectory, fsPath)
-      );
+      accepts =
+        this.parser.accepts(relative(this.forceIgnoreDirectory, fsPath)) &&
+        this.isValidAgainstDefaults(fsPath);
     }
     return accepts;
+  }
+
+  /**
+   * This is not how we should ultimately test a path against default ignores.
+   * TODO: When we utilize a new matching module this should be replaced.
+   */
+  private isValidAgainstDefaults(fsPath: SourcePath): boolean {
+    const name = basename(fsPath);
+    return (
+      !name.startsWith('.') &&
+      !name.endsWith('.dup') &&
+      name !== 'package2-descriptor.json' &&
+      name !== 'package2-manifest.json'
+    );
   }
 
   private parseContents(contents: string): string {

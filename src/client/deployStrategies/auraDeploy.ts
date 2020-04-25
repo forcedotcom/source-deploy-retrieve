@@ -75,6 +75,8 @@ export class AuraDeploy extends BaseDeploy {
         ...(match ? { Id: match.Id } : { AuraDefinitionBundleId: bundleId })
       };
 
+      // This is to ensure we return the correct project path when reporting errors
+      // must be the file associated with the specified aura type
       AURA_TYPES.includes(auraDef.DefType)
         ? auraDefinitions.unshift(auraDef)
         : auraDefinitions.push(auraDef);
@@ -209,11 +211,8 @@ export class AuraDeploy extends BaseDeploy {
   }
 
   private async findExistingDefinitions(): Promise<AuraDefinition[]> {
-    const type = this.component.type.name;
     const auraDefResult = await this.connection.tooling.query(
-      `Select AuraDefinitionBundleId, Id, Format, Source, DefType from ${deployTypes.get(
-        type
-      )} where AuraDefinitionBundle.DeveloperName = '${
+      `Select AuraDefinitionBundleId, Id, Format, Source, DefType from AuraDefinition where AuraDefinitionBundle.DeveloperName = '${
         this.component.fullName
       }'`
     );

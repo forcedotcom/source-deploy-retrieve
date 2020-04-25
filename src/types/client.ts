@@ -62,6 +62,7 @@ export type DeployResult = {
   isDeleted: boolean;
   DeployDetails: DeployDetails | null;
   outboundFiles?: string[];
+  metadataFile: string;
 };
 
 export type DeployDetails = {

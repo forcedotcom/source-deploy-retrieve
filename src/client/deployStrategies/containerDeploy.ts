@@ -6,10 +6,11 @@
  */
 
 import { readFileSync } from 'fs';
+import { deployTypes } from '../toolingApi';
 import { DeployError } from '../../errors';
 import { MetadataComponent, DeployStatusEnum, DeployResult } from '../../types';
 import { baseName } from '../../utils/path';
-import { supportedToolingTypes, ToolingCreateResult } from '../../utils/deploy';
+import { ToolingCreateResult } from '../../utils/deploy';
 import { CONTAINER_ASYNC_REQUEST, METADATA_CONTAINER } from './index';
 import { BaseDeploy } from './baseDeploy';
 
@@ -61,7 +62,7 @@ export class ContainerDeploy extends BaseDeploy {
     };
 
     const containerMember = await this.toolingCreate(
-      supportedToolingTypes.get(this.component.type.name),
+      deployTypes.get(this.component.type.name),
       containerMemberObject
     );
 
@@ -116,6 +117,7 @@ export class ContainerDeploy extends BaseDeploy {
       );
       count++;
     }
+    retrieveResult.metadataFile = this.component.xml;
     return retrieveResult;
   }
 

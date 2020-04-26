@@ -227,10 +227,7 @@ describe('Tooling Retrieve', () => {
     expect(retrieveResults.components).to.be.a('Array');
     expect(retrieveResults.components.length).to.equal(0);
     expect(retrieveResults.message).to.equal(
-      nls.localize(
-        'error_md_not_present_in_org',
-        path.join('file', 'path', 'myTestClass.cls')
-      )
+      nls.localize('error_md_not_present_in_org', 'myTestClass')
     );
   });
 

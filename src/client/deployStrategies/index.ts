@@ -7,14 +7,24 @@
 import { Connection } from '@salesforce/core';
 import { BaseDeploy } from './baseDeploy';
 import { ContainerDeploy } from './containerDeploy';
+import { AuraDeploy } from './auraDeploy';
+import { AURA_DEF_BUNDLE } from './constants';
 
-export { CONTAINER_ASYNC_REQUEST, METADATA_CONTAINER } from './constants';
+export {
+  AURA_TYPES,
+  CONTAINER_ASYNC_REQUEST,
+  METADATA_CONTAINER
+} from './constants';
 export { ContainerDeploy } from './containerDeploy';
+export { AuraDeploy } from './auraDeploy';
 
 export const getDeployStrategy = (
   type: string,
   connection: Connection
 ): BaseDeploy => {
-  const deployStrategy = new ContainerDeploy(connection);
+  const deployStrategy =
+    type === AURA_DEF_BUNDLE
+      ? new AuraDeploy(connection)
+      : new ContainerDeploy(connection);
   return deployStrategy;
 };

@@ -12,9 +12,8 @@ const { run, execSilent } = require('./util');
  *
  * 1) `yarn local:install /path/to/module`
  *
- * Generate and install a tarball package and installs it to a local npm module. Useful for
- * locally testing a build that will be sent to NPM. Accepts a relative or absolute
- * path.
+ * Generate and install a tarball package to a local npm module. Useful for locally
+ * testing a build that will be sent to NPM. Accepts a relative or absolute path.
  *
  * 2) `yarn local:link /path/to/target`.
  *

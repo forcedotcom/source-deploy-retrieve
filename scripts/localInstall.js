@@ -24,12 +24,35 @@ const { run, execSilent } = require('./util');
  *
  * Unlink the library from another project.
  */
+
+const COMMANDS = ['install', 'link', 'unlink'];
+
+function showHelp() {
+  console.log('Commands:');
+  console.log(
+    '  install [path to target module]\tCreates an NPM package of the project and installs it to the target module'
+  );
+  console.log(
+    '  link [path to target module]\t\tLink the project to another module for quick development'
+  );
+  console.log(
+    '  unlink [path to target module]\tUnlink the project from the target module'
+  );
+}
+
 function main() {
-  console.log();
-  let targetPackagePath = process.argv[3];
+  const command = process.argv[2];
+  if (!COMMANDS.includes(command)) {
+    showHelp();
+    process.exit(0);
+  }
+
+  const targetPackagePath = !path.isAbsolute(process.argv[3])
+    ? path.resolve(process.cwd(), process.argv[3])
+    : process.argv[3];
 
   if (!fs.existsSync(targetPackagePath)) {
-    console.log(`${targetPackagePath} does not exist`);
+    console.log(`A valid target package path is required`);
     process.exit(1);
   }
 
@@ -40,56 +63,56 @@ function main() {
     process.exit(1);
   }
 
-  if (!path.isAbsolute(targetPackagePath)) {
-    targetPackagePath = path.resolve(process.cwd(), targetPackagePath);
-  }
-
-  const command = process.argv[2];
   const localPackagePath = path.join(__dirname, '..');
   const { name, version } = JSON.parse(
     fs.readFileSync(path.join(localPackagePath, 'package.json')).toString()
   );
 
-  if (command === 'install') {
-    let tarballPath;
-    run('Building project and creating package', () => {
-      shell.cd(localPackagePath);
-      execSilent('yarn build');
-      execSilent('yarn pack');
-      tarballPath = execSilent('find $(pwd) -type f -iname *.tgz').replace(
-        '\n',
-        ''
-      );
-    });
+  switch (command) {
+    case COMMANDS[0]: // install
+      let tarballPath;
+      run('Building project and creating package', () => {
+        shell.cd(localPackagePath);
+        execSilent('yarn build');
+        execSilent('yarn pack');
+        tarballPath = execSilent('find $(pwd) -type f -iname *.tgz').replace(
+          '\n',
+          ''
+        );
+      });
 
-    run(`Installing v${version} to ${targetPackagePath}`, () => {
-      shell.cd(targetPackagePath);
-      const yarnLockPath = path.join(targetPackagePath, 'yarn.lock');
-      if (fs.existsSync(yarnLockPath)) {
-        execSilent(`yarn remove ${name}`, true);
-        execSilent(`yarn cache clean`);
-        execSilent(`yarn add ${tarballPath}`);
-      } else {
-        execSilent(`npm uninstall ${name}`);
-        execSilent(`npm install ${tarballPath}`);
-      }
-    });
-  } else if (command === 'unlink') {
-    run(`Unlinking ${name} from ${targetPackagePath}`, () => {
-      shell.cd(targetPackagePath);
-      execSilent(`yarn unlink ${name}`);
-      shell.cd(localPackagePath);
-      execSilent('yarn unlink');
-    });
-  } else {
-    run(`Linking ${name} to ${targetPackagePath}`, () => {
-      shell.cd(localPackagePath);
-      execSilent('yarn link');
-      shell.cd(targetPackagePath);
-      execSilent(`yarn link ${name}`);
-    });
+      run(`Installing v${version} to ${targetPackagePath}`, () => {
+        shell.cd(targetPackagePath);
+        const yarnLockPath = path.join(targetPackagePath, 'yarn.lock');
+        if (fs.existsSync(yarnLockPath)) {
+          execSilent(`yarn remove ${name}`, true);
+          execSilent(`yarn cache clean`);
+          execSilent(`yarn add ${tarballPath}`);
+        } else {
+          execSilent(`npm uninstall ${name}`);
+          execSilent(`npm install ${tarballPath}`);
+        }
+      });
+      break;
+    case COMMANDS[1]: // link
+      run(`Linking ${name} to ${targetPackagePath}`, () => {
+        shell.cd(localPackagePath);
+        execSilent('yarn link');
+        shell.cd(targetPackagePath);
+        execSilent(`yarn link ${name}`);
+      });
+      break;
+    case COMMANDS[2]: // unlink
+      run(`Unlinking ${name} from ${targetPackagePath}`, () => {
+        shell.cd(targetPackagePath);
+        execSilent(`yarn unlink ${name}`);
+        shell.cd(localPackagePath);
+        execSilent('yarn unlink');
+      });
+      break;
+    default:
+      showHelp();
   }
-  console.log();
 }
 
 main();

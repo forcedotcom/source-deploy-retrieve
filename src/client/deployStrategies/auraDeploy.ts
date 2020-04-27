@@ -170,6 +170,8 @@ export class AuraDeploy extends BaseDeploy {
         return 'JS';
       case 'css':
         return 'CSS';
+      case 'svg':
+        return 'SVG';
       default:
         return 'XML';
     }

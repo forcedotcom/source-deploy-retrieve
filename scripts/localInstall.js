@@ -10,17 +10,17 @@ const { run, execSilent } = require('./util');
  *
  * ### Usage
  *
- * 1) `yarn local:install /path/to/target`
+ * 1) `./localInstall install /path/to/target`
  *
  * Generate and install a tarball package to a target npm module. Useful for locally
  * testing a build that will be sent to NPM. Accepts a relative or absolute path.
  *
- * 2) `yarn local:link /path/to/target`.
+ * 2) `./localInstall.js link /path/to/target`.
  *
  * Link the library to another project for development purposes. Changes made in this
  * project will be automatically reflected in the target module.
  *
- * 3) `yarn local:unlink /path/to/target`
+ * 3) `./localInstall.js unlink /path/to/target`
  *
  * Unlink the library from another project.
  */

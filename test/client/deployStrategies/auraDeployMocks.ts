@@ -72,7 +72,7 @@ export const testAuraList = [
   {
     DefType: 'SVG',
     FilePath: auraFiles[4],
-    Format: 'XML',
+    Format: 'SVG',
     Source: auraContents[4],
     AuraDefinitionBundleId: '1dcxxx000000060'
   },

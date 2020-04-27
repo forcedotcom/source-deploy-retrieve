@@ -17,7 +17,8 @@ export {
   DeployResult,
   DeployDetails,
   SourceResult,
-  DeployStatusEnum
+  DeployStatusEnum,
+  DeployPathOptions
 } from './types';
 
 export { SourceClient } from './client';

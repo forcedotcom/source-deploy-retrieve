@@ -33,7 +33,7 @@ jobs:
     working_directory: ~/cli
     steps:
       - checkout
-      - restore_cache: *restore-cache
+      - restore_cache: *restore_cache
       - run: *install
       - run: *build
       - run:
@@ -91,7 +91,7 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - restore_cache: *restore-cache
+      - restore_cache: *restore_cache
       - run: *gh-config
       - run: *install
       - run: *build

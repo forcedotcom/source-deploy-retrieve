@@ -29,8 +29,6 @@ export const messages = {
   beta_tapi_car_error: 'Unexpected error creating container async request',
   beta_tapi_queue_status: 'The deploy is still in the queue',
   beta_tapi_membertype_unsupported_error: "'%s' type not supported",
-  error_directories_not_supported:
-    'Paths to directories are currently not supported',
   error_expected_source_files: "%s: Expected source files for type '%s'",
   error_in_tooling_retrieve:
     'Unexpected error while retrieving using Tooling API. Stack trace: %s',

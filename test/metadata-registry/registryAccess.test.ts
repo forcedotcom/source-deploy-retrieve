@@ -6,9 +6,7 @@
  */
 
 import { assert, expect } from 'chai';
-import * as fs from 'fs';
-import { createSandbox, SinonStub } from 'sinon';
-import { MetadataComponent, SourcePath, MetadataType } from '../../src/types';
+import { MetadataComponent } from '../../src/types';
 import { RegistryAccess } from '../../src/metadata-registry';
 import { nls } from '../../src/i18n';
 import {
@@ -21,73 +19,9 @@ import {
 } from '../mock/registry';
 import { join, basename } from 'path';
 import { TypeInferenceError } from '../../src/errors';
-import * as fsUtil from '../../src/utils/fileSystemHandler';
-import * as adapters from '../../src/metadata-registry/adapters';
-import { ForceIgnore } from '../../src/metadata-registry/forceIgnore';
+import { RegistryTestUtil } from './registryTestUtil';
 
-const env = createSandbox();
-
-let existsStub: SinonStub;
-let isDirectoryStub: SinonStub;
-
-function stubDirectories(
-  structure: { directory: SourcePath; fileNames: SourcePath[] }[]
-): void {
-  const readDirStub: SinonStub = env.stub(fs, 'readdirSync');
-
-  for (const part of structure) {
-    existsStub.withArgs(part.directory).returns(true);
-    isDirectoryStub.withArgs(part.directory).returns(true);
-    for (const name of part.fileNames) {
-      existsStub.withArgs(join(part.directory, name)).returns(true);
-    }
-    readDirStub.withArgs(part.directory).returns(part.fileNames);
-  }
-}
-
-function stubAdapters(
-  config: {
-    type: MetadataType;
-    componentMappings: { path: SourcePath; component: MetadataComponent }[];
-  }[]
-): void {
-  const getAdapterStub = env.stub(adapters, 'getAdapter');
-  for (const entry of config) {
-    // @ts-ignore
-    const adapterId = mockRegistry.adapters[entry.type.name.toLowerCase()];
-    const componentMap: { [path: string]: MetadataComponent } = {};
-    for (const c of entry.componentMappings) {
-      componentMap[c.path] = c.component;
-    }
-    getAdapterStub.withArgs(entry.type, adapterId).returns({
-      getComponent: (path: SourcePath) => componentMap[path]
-    });
-  }
-}
-
-function stubForceIgnore(config: {
-  seed: SourcePath;
-  accept?: SourcePath[];
-  deny?: SourcePath[];
-}): void {
-  const forceIgnore = new ForceIgnore();
-  const acceptStub = env.stub(forceIgnore, 'accepts');
-  const denyStub = env.stub(forceIgnore, 'denies');
-  if (config.deny) {
-    config.deny.forEach(path => {
-      denyStub.withArgs(path).returns(true);
-      acceptStub.withArgs(path).returns(false);
-    });
-  }
-  if (config.accept) {
-    config.accept.forEach(path => {
-      acceptStub.withArgs(path).returns(true);
-      denyStub.withArgs(path).returns(false);
-    });
-  }
-  const createIgnoreStub = env.stub(ForceIgnore, 'findAndCreate');
-  createIgnoreStub.withArgs(config.seed).returns(forceIgnore);
-}
+const testUtil = new RegistryTestUtil();
 
 describe('RegistryAccess', () => {
   const registry = new RegistryAccess(mockRegistry);
@@ -123,17 +57,13 @@ describe('RegistryAccess', () => {
   });
 
   describe('getComponentsFromPath', () => {
-    beforeEach(() => {
-      existsStub = env.stub(fs, 'existsSync');
-      isDirectoryStub = env.stub(fsUtil, 'isDirectory');
-      isDirectoryStub.returns(false);
-    });
-    afterEach(() => env.restore());
+    beforeEach(() => testUtil.initStubs());
+    afterEach(() => testUtil.restore());
 
     describe('File Paths', () => {
       it('Should throw file not found error if given path does not exist', () => {
         const path = keanu.KEANU_SOURCE_PATHS[0];
-        existsStub.withArgs(path).returns(false);
+        testUtil.exists(path, false);
 
         assert.throws(
           () => registry.getComponentsFromPath(path),
@@ -144,8 +74,8 @@ describe('RegistryAccess', () => {
 
       it('Should determine type for metadata file with known suffix', () => {
         const path = keanu.KEANU_XML_PATHS[0];
-        existsStub.withArgs(path).returns(true);
-        stubAdapters([
+        testUtil.exists(path, true);
+        testUtil.stubAdapters([
           {
             type: mockRegistry.types.keanureeves,
             componentMappings: [
@@ -163,8 +93,8 @@ describe('RegistryAccess', () => {
 
       it('Should determine type for source file with known suffix', () => {
         const path = keanu.KEANU_SOURCE_PATHS[0];
-        existsStub.withArgs(path).returns(true);
-        stubAdapters([
+        testUtil.exists(path, true);
+        testUtil.stubAdapters([
           {
             type: mockRegistry.types.keanureeves,
             componentMappings: [{ path, component: keanu.KEANU_COMPONENT }]
@@ -177,8 +107,8 @@ describe('RegistryAccess', () => {
 
       it('Should determine type for path of mixed content type', () => {
         const path = taraji.TARAJI_SOURCE_PATHS[1];
-        existsStub.withArgs(path).returns(true);
-        stubAdapters([
+        testUtil.exists(path, true);
+        testUtil.stubAdapters([
           {
             type: mockRegistry.types.tarajihenson,
             componentMappings: [{ path, component: taraji.TARAJI_COMPONENT }]
@@ -193,8 +123,8 @@ describe('RegistryAccess', () => {
       it('Should not mistake folder component of a mixed content type as that type', () => {
         // this test has coveage on non-mixedContent types as well by nature of the execution path
         const path = tina.TINA_FOLDER_XML;
-        existsStub.withArgs(path).returns(true);
-        stubAdapters([
+        testUtil.exists(path, true);
+        testUtil.stubAdapters([
           {
             type: mockRegistry.types.tinafeyfolder,
             componentMappings: [{ path, component: tina.TINA_FOLDER_COMPONENT }]
@@ -207,7 +137,7 @@ describe('RegistryAccess', () => {
 
       it('Should throw type id error if one could not be determined', () => {
         const missing = join('path', 'to', 'whatever', 'a.b-meta.xml');
-        existsStub.withArgs(missing).returns(true);
+        testUtil.exists(missing, true);
 
         assert.throws(
           () => registry.getComponentsFromPath(missing),
@@ -218,9 +148,9 @@ describe('RegistryAccess', () => {
 
       it('Should not return a component if path to metadata xml is forceignored', () => {
         const path = keanu.KEANU_XML_PATHS[0];
-        existsStub.withArgs(path).returns(true);
-        stubForceIgnore({ seed: path, deny: [path] });
-        stubAdapters([
+        testUtil.exists(path, true);
+        testUtil.stubForceIgnore({ seed: path, deny: [path] });
+        testUtil.stubAdapters([
           {
             type: mockRegistry.types.keanureeves,
             // should not be returned
@@ -240,13 +170,13 @@ describe('RegistryAccess', () => {
             component: KATHY_COMPONENTS[i]
           })
         );
-        stubDirectories([
+        testUtil.stubDirectories([
           {
             directory: KATHY_FOLDER,
             fileNames: kathy.KATHY_XML_NAMES
           }
         ]);
-        stubAdapters([
+        testUtil.stubAdapters([
           {
             type: mockRegistry.types.kathybates,
             componentMappings
@@ -278,8 +208,8 @@ describe('RegistryAccess', () => {
           xml: kathyXml,
           sources: []
         };
-        existsStub.withArgs(KEANUS_DIR).returns(true);
-        stubDirectories([
+        testUtil.exists(KEANUS_DIR, true);
+        testUtil.stubDirectories([
           {
             directory: KEANUS_DIR,
             fileNames: [
@@ -299,7 +229,7 @@ describe('RegistryAccess', () => {
             fileNames: [basename(keanuSrc2), basename(keanuXml2)]
           }
         ]);
-        stubAdapters([
+        testUtil.stubAdapters([
           {
             type: mockRegistry.types.kathybates,
             componentMappings: [
@@ -331,14 +261,14 @@ describe('RegistryAccess', () => {
       });
 
       it('Should handle the folder of a mixed content folder type', () => {
-        existsStub.withArgs(tina.TINA_FOLDER).returns(true);
-        stubDirectories([
+        testUtil.exists(tina.TINA_FOLDER, true);
+        testUtil.stubDirectories([
           {
             directory: tina.TINA_FOLDER,
             fileNames: tina.TINA_XML_NAMES.concat(tina.TINA_SOURCE_NAMES)
           }
         ]);
-        stubAdapters([
+        testUtil.stubAdapters([
           {
             type: mockRegistry.types.tinafey,
             componentMappings: [
@@ -361,8 +291,8 @@ describe('RegistryAccess', () => {
 
       it('Should return a component for a directory that is content or a child of content', () => {
         const { TARAJI_CONTENT_PATH } = taraji;
-        existsStub.withArgs(TARAJI_CONTENT_PATH).returns(true);
-        stubDirectories([
+        testUtil.exists(TARAJI_CONTENT_PATH, true);
+        testUtil.stubDirectories([
           {
             directory: TARAJI_CONTENT_PATH,
             fileNames: []
@@ -375,7 +305,7 @@ describe('RegistryAccess', () => {
             ]
           }
         ]);
-        stubAdapters([
+        testUtil.stubAdapters([
           {
             type: mockRegistry.types.tarajihenson,
             componentMappings: [
@@ -393,7 +323,7 @@ describe('RegistryAccess', () => {
 
       it('Should not add duplicates of a component when the content has multiple -meta.xmls', () => {
         const { SIMON_COMPONENT, SIMON_BUNDLE_PATH } = simon;
-        stubDirectories([
+        testUtil.stubDirectories([
           {
             directory: simon.SIMON_DIR,
             fileNames: [basename(SIMON_BUNDLE_PATH)]
@@ -405,7 +335,7 @@ describe('RegistryAccess', () => {
             ).map(p => basename(p))
           }
         ]);
-        stubAdapters([
+        testUtil.stubAdapters([
           {
             type: mockRegistry.types.simonpegg,
             componentMappings: [
@@ -430,8 +360,8 @@ describe('RegistryAccess', () => {
        * identified as SimonPegg type
        */
       it('Should handle suffix collision for mixed content types', () => {
-        existsStub.withArgs(simon.SIMON_DIR).returns(true);
-        stubDirectories([
+        testUtil.exists(simon.SIMON_DIR, true);
+        testUtil.stubDirectories([
           {
             directory: simon.SIMON_DIR,
             fileNames: [basename(simon.SIMON_BUNDLE_PATH)]
@@ -456,14 +386,14 @@ describe('RegistryAccess', () => {
 
       it('Should not return components if the directory is forceignored', () => {
         const path = kathy.KATHY_FOLDER;
-        stubForceIgnore({ seed: path, deny: [path] });
-        stubDirectories([
+        testUtil.stubForceIgnore({ seed: path, deny: [path] });
+        testUtil.stubDirectories([
           {
             directory: path,
             fileNames: [kathy.KATHY_XML_NAMES[0], kathy.KATHY_XML_NAMES[1]]
           }
         ]);
-        stubAdapters([
+        testUtil.stubAdapters([
           {
             type: mockRegistry.types.kathybates,
             componentMappings: [

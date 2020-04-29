@@ -4,26 +4,27 @@ version: 2.1
 orbs:
   win: circleci/windows@2.2.0
 
-defaults: &defaults
-  working_directory: ~/cli
-  docker:
-    - image: node:12
-restore_cache: &restore_cache
-  keys:
-    - v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "yarn.lock"}}
-    - v1-npm-{{checksum ".circleci/config.yml"}}
-gh-config: &gh-config
-  name: Configuring GitHub
-  command: |
-    git config credential.helper 'cache --timeout=120'
-    git config user.email "$GH_EMAIL"
-    git config user.name "Release Bot"
-install: &install
-  name: Install dependencies
-  command: yarn
-build: &build
-  name: Build project
-  command: yarn build
+_refs:
+  defaults: &defaults
+    working_directory: ~/cli
+    docker:
+      - image: node:12
+  restore_cache: &restore_cache
+    keys:
+      - v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "yarn.lock"}}
+      - v1-npm-{{checksum ".circleci/config.yml"}}
+  gh-config: &gh-config
+    name: Configuring GitHub
+    command: |
+      git config credential.helper 'cache --timeout=120'
+      git config user.email "$GH_EMAIL"
+      git config user.name "Release Bot"
+  install: &install
+    name: Install dependencies
+    command: yarn
+  build: &build
+    name: Build project
+    command: yarn build
 
 jobs:
   node-latest: &test

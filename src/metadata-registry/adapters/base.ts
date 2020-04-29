@@ -79,14 +79,16 @@ export class BaseSourceAdapter implements SourceAdapter {
           fsPath,
           this.type.name
         ]);
-      } else if (this.forceIgnore.denies(metaXmlPath)) {
-        throw new UnexpectedForceIgnore('error_no_metadata_xml_ignore', [
-          metaXmlPath,
-          fsPath
-        ]);
       }
       parsedMetaXml = parseMetadataXml(metaXmlPath);
       isMetaXml = false;
+    }
+
+    if (this.forceIgnore.denies(metaXmlPath)) {
+      throw new UnexpectedForceIgnore('error_no_metadata_xml_ignore', [
+        metaXmlPath,
+        fsPath
+      ]);
     }
 
     const component: MetadataComponent = {

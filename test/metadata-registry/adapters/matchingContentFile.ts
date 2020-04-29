@@ -8,24 +8,20 @@
 import { MatchingContentFile } from '../../../src/metadata-registry/adapters/matchingContentFile';
 import { mockRegistry, keanu } from '../../mock/registry';
 import { expect, assert } from 'chai';
-import { createSandbox, SinonStub } from 'sinon';
 import * as fs from 'fs';
-import { ExpectedSourceFilesError } from '../../../src/errors';
+import {
+  ExpectedSourceFilesError,
+  UnexpectedForceIgnore
+} from '../../../src/errors';
 import { join } from 'path';
+import { RegistryTestUtil } from '../registryTestUtil';
+import { nls } from '../../../src/i18n';
 
-const env = createSandbox();
+const testUtil = new RegistryTestUtil();
 
 describe('MatchingContentFile', () => {
-  let existsStub: SinonStub;
-
-  beforeEach(() => (existsStub = env.stub(fs, 'existsSync')));
-  afterEach(() => existsStub.restore());
-
-  const adapter = new MatchingContentFile(
-    mockRegistry.types.keanureeves,
-    mockRegistry
-  );
-
+  let adapter: MatchingContentFile;
+  const type = mockRegistry.types.keanureeves;
   const {
     KEANU_SOURCE_PATHS,
     KEANU_XML_PATHS,
@@ -33,8 +29,14 @@ describe('MatchingContentFile', () => {
     KEANUS_DIR
   } = keanu;
 
+  beforeEach(() => {
+    adapter = new MatchingContentFile(type, mockRegistry);
+    testUtil.initStubs();
+  });
+  afterEach(() => testUtil.restore());
+
   it('Should return expected MetadataComponent when given a root metadata xml path', () => {
-    existsStub.withArgs(KEANU_SOURCE_PATHS[0]).returns(true);
+    testUtil.exists(KEANU_SOURCE_PATHS[0], true);
     expect(adapter.getComponent(KEANU_XML_PATHS[0])).to.deep.equal(
       KEANU_COMPONENT
     );
@@ -47,7 +49,7 @@ describe('MatchingContentFile', () => {
   });
 
   it('Should throw an ExpectedSourceFilesError if no source is found from xml', () => {
-    existsStub.withArgs(KEANU_SOURCE_PATHS[0]).returns(false);
+    testUtil.exists(KEANU_SOURCE_PATHS[0], false);
     assert.throws(
       () => adapter.getComponent(KEANU_XML_PATHS[0]),
       ExpectedSourceFilesError
@@ -56,7 +58,21 @@ describe('MatchingContentFile', () => {
 
   it('Should throw an ExpectedSourceFilesError if source and suffix not found', () => {
     const path = join(KEANUS_DIR, 'b.xyz');
-    existsStub.withArgs(path).returns(true);
+    testUtil.exists(path, true);
     assert.throws(() => adapter.getComponent(path), ExpectedSourceFilesError);
+  });
+
+  it('Should throw an error if content file is forceignored', () => {
+    const path = KEANU_SOURCE_PATHS[0];
+    const forceIgnore = testUtil.stubForceIgnore({
+      seed: KEANU_XML_PATHS[0],
+      deny: [path]
+    });
+    adapter = new MatchingContentFile(type, mockRegistry, forceIgnore);
+    assert.throws(
+      () => adapter.getComponent(path),
+      UnexpectedForceIgnore,
+      nls.localize('error_no_source_ignore', [type.name, path])
+    );
   });
 });

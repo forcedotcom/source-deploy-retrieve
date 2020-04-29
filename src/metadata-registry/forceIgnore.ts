@@ -8,7 +8,7 @@
 import * as gitignore from 'gitignore-parser';
 import { sep, relative, join, dirname, basename } from 'path';
 import { readFileSync } from 'fs';
-import { FORCE_IGNORE_FILE, SFDX_PROJECT_JSON } from './constants';
+import { FORCE_IGNORE_FILE, SFDX_PROJECT_JSON } from '../utils/constants';
 import { SourcePath } from '../types';
 import { searchUp } from '../utils/fileSystemHandler';
 

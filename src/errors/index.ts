@@ -43,3 +43,15 @@ export class UnexpectedForceIgnore extends RegistryError {
     super(messageKey, args);
   }
 }
+
+export class SourceClientError extends LibraryError {
+  constructor(messageKey: string, args?: string | string[]) {
+    super(messageKey, args);
+  }
+}
+
+export class DeployError extends SourceClientError {
+  constructor(messageKey: string, args?: string | string[]) {
+    super(messageKey, args);
+  }
+}

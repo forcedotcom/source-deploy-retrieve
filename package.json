@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/index.js",
   "author": "Salesforce",
@@ -56,6 +56,9 @@
     "coverage": "nyc mocha",
     "format": "prettier --config ../../.prettierrc --write './**/*.{js,json}'",
     "lint": "eslint -c .eslintrc.json --ext .ts ./src ./test",
+    "local:install": "./scripts/localInstall.js install",
+    "local:link": "./scripts/localInstall.js link",
+    "local:unlink": "./scripts/localInstall.js unlink",
     "test": "mocha",
     "update:registry": "node ./scripts/metadata-registry/update.js"
   },

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { META_XML_SUFFIX } from '../constants';
+import { META_XML_SUFFIX } from '../../utils';
 import { existsSync } from 'fs';
 import { BaseSourceAdapter } from './base';
 import { ExpectedSourceFilesError, UnexpectedForceIgnore } from '../../errors';

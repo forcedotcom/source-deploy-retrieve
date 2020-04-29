@@ -28,8 +28,9 @@ export const messages = {
   beta_tapi_membertype_error: 'Unexpected error creating %s member',
   beta_tapi_car_error: 'Unexpected error creating container async request',
   beta_tapi_queue_status: 'The deploy is still in the queue',
-  beta_tapi_membertype_unsupported_error: '%s type not supported',
-  error_could_not_infer_type: '%s: A type could not be inferred',
+  beta_tapi_membertype_unsupported_error: "'%s' type not supported",
+  error_directories_not_supported:
+    'Paths to directories are currently not supported',
   error_expected_source_files: "%s: Expected source files for type '%s'",
   error_in_tooling_retrieve:
     'Unexpected error while retrieving using Tooling API. Stack trace: %s',
@@ -42,9 +43,14 @@ export const messages = {
     'Metadata xml file %s is forceignored but is required for %s',
   error_no_source_ignore:
     '%s types require source to be present and %s is forceignored.',
-  error_on_manifest_creation:
-    "Unexpected error while creating manifest for '%s'. Stack trace: %s",
   error_path_not_found: '%s: File or folder not found',
   tapi_retrieve_component_limit_error:
-    'This retrieve method only supports retrieving one metadata component at a time'
+    'This retrieve method only supports retrieving one metadata component at a time',
+  error_on_manifest_creation:
+    "Unexpected error while creating manifest for '%s'. Stack trace: %s",
+  error_creating_metadata_type: "Unexpected error creating '%s'",
+  error_updating_metadata_type: "Unexpected error updating '%s'",
+  error_parsing_metadata_file: 'Error parsing metadata file',
+  tapi_deploy_component_limit_error:
+    'This deploy method only supports deploying one metadata component at a time'
 };

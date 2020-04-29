@@ -5,13 +5,27 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-export { QueryRecord, QueryResult } from './query';
 export {
-  BaseApi,
-  RetrievePathOptions,
+  ApexRecord,
+  AuraRecord,
+  LWCRecord,
+  QueryResult,
+  VFRecord
+} from './query';
+
+export {
   ApiResult,
+  BaseApi,
+  DeployDetails,
+  DeployResult,
+  DeployStatusEnum,
+  DeployOptions,
+  DeployPathOptions,
+  RetrievePathOptions,
   RetrieveOptions,
-  SourceAdapter
+  SourceAdapter,
+  SourceResult
 } from './client';
+
 export { MetadataType, MetadataComponent, SourcePath } from './common';
 export { MetadataRegistry, MetadataXml } from './registry';

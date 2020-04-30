@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { walk, isDirectory } from '../../src/utils/fileSystemHandler';
+import { walk, isDirectory, searchUp } from '../../src/utils/fileSystemHandler';
 import { SinonStub, createSandbox } from 'sinon';
 import { expect } from 'chai';
 import { join } from 'path';
@@ -15,6 +15,8 @@ const env = createSandbox();
 describe('File System Utils', () => {
   const root = join('path', 'to', 'whatever');
 
+  afterEach(() => env.restore());
+
   describe('walk', () => {
     let readStub: SinonStub;
     let statStub: SinonStub;
@@ -23,7 +25,6 @@ describe('File System Utils', () => {
       readStub = env.stub(fs, 'readdirSync');
       statStub = env.stub(fs, 'lstatSync');
     });
-    afterEach(() => env.restore());
 
     const files = ['a.x', 'b.y', 'c.z'];
 
@@ -75,6 +76,31 @@ describe('File System Utils', () => {
       // @ts-ignore
       statStub.withArgs(root).returns({ isDirectory: () => true });
       expect(isDirectory(root)).to.be.true;
+    });
+  });
+
+  describe('searchUp', () => {
+    let existsStub: SinonStub;
+    const filePath = '/path/test.x';
+    const startPath = '/path/to/a/more/nested/file.y';
+
+    beforeEach(() => {
+      existsStub = env.stub(fs, 'existsSync');
+      existsStub.returns(false);
+    });
+
+    it('Should traverse up and find a file with the given file name', () => {
+      existsStub.withArgs(filePath).returns(true);
+      expect(searchUp(startPath, 'test.x')).to.equal(filePath);
+    });
+
+    it('Should return start path if it is the file being searched for', () => {
+      existsStub.withArgs(filePath).returns(true);
+      expect(searchUp(filePath, 'test.x')).to.equal(filePath);
+    });
+
+    it('Should return undefined if file not found', () => {
+      expect(searchUp(startPath, 'asdf')).to.be.undefined;
     });
   });
 });

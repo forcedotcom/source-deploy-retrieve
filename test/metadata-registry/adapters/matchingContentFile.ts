@@ -8,7 +8,6 @@
 import { MatchingContentFile } from '../../../src/metadata-registry/adapters/matchingContentFile';
 import { mockRegistry, keanu } from '../../mock/registry';
 import { expect, assert } from 'chai';
-import * as fs from 'fs';
 import {
   ExpectedSourceFilesError,
   UnexpectedForceIgnore

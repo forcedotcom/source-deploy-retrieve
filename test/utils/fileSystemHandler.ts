@@ -7,13 +7,13 @@
 import { walk, isDirectory, searchUp } from '../../src/utils/fileSystemHandler';
 import { SinonStub, createSandbox } from 'sinon';
 import { expect } from 'chai';
-import { join } from 'path';
+import { join, sep } from 'path';
 import * as fs from 'fs';
 
 const env = createSandbox();
 
 describe('File System Utils', () => {
-  const root = join('path', 'to', 'whatever');
+  const root = join(sep, 'path', 'to', 'whatever');
 
   afterEach(() => env.restore());
 
@@ -81,8 +81,8 @@ describe('File System Utils', () => {
 
   describe('searchUp', () => {
     let existsStub: SinonStub;
-    const filePath = '/path/test.x';
-    const startPath = '/path/to/a/more/nested/file.y';
+    const filePath = join(root, 'test.x');
+    const startPath = join(root, 'a', 'more', 'nested', 'file.y');
 
     beforeEach(() => {
       existsStub = env.stub(fs, 'existsSync');

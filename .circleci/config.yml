@@ -24,19 +24,25 @@ _refs:
       git config user.name "Release Bot"
   install: &install
     name: Install dependencies
-    command: yarn
+    command: |
+      yarn --version
+      node --version
+      yarn
   build: &build
     name: Build project
     command: yarn build
+  test: &test
+    name: Run tests with coverage
+    command: yarn coverage
   gus: &gus-change-mgmt
     name: 'Gus change case management'
     command: |
-      yarn install global @salesforce/change-case-management
+      yarn global add @salesforce/change-case-management
       sfchangecase create -i 500B0000005jCcNIAU --release offcore.tooling.48.13.0
       sfchangecase check --release offcore.tooling.48.13.0
 
 jobs:
-  node-latest: &test
+  node-latest: &node-test
     docker:
       - image: node:latest
     working_directory: ~/cli
@@ -45,19 +51,17 @@ jobs:
       - restore_cache: *restore_cache
       - run: *install
       - run: *build
-      - run:
-          name: Run tests
-          command: yarn coverage
+      - run: *test
   node-12:
-    <<: *test
+    <<: *node-test
     docker:
       - image: node:12
   node-10:
-    <<: *test
+    <<: *node-test
     docker:
       - image: node:10
   cache:
-    <<: *test
+    <<: *node-test
     steps:
       - checkout
       - run: *install
@@ -78,24 +82,13 @@ jobs:
             - dependency-cache-win1-{{checksum ".circleci/config.yml"}}-{{checksum "yarn.lock"}}
             # if cache for exact version of 'package.json' is not present, then load the most recent cache
             - dependency-cache-win1-
-      - run:
-          name: 'Install dependencies'
-          command: |
-            yarn --version
-            node --version
-            yarn
+      - run: *install
       - save_cache:
           key: dependency-cache-win1-{{checksum ".circleci/config.yml"}}-{{checksum "yarn.lock"}}
           paths:
             - node_modules
-      - run:
-          name: 'Compile'
-          command: |
-            yarn build
-      - run:
-          name: 'Running unit tests'
-          command: |
-            yarn coverage
+      - run: *build
+      - run: *test
   release:
     <<: *defaults
     steps:

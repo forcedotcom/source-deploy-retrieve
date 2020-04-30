@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
 import { createSandbox, SinonSandbox, SinonStub } from 'sinon';
 import { SourcePath, MetadataType, MetadataComponent } from '../../src/types';
 import * as fs from 'fs';
@@ -39,7 +46,8 @@ export class RegistryTestUtil {
       this.existsStub.withArgs(part.directory).returns(true);
       this.isDirectoryStub.withArgs(part.directory).returns(true);
       for (const name of part.fileNames) {
-        this.existsStub.withArgs(join(part.directory, name)).returns(true);
+        const fullPath = join(part.directory, name);
+        this.existsStub.withArgs(fullPath).returns(true);
       }
       readDirStub.withArgs(part.directory).returns(part.fileNames);
     }
@@ -69,7 +77,7 @@ export class RegistryTestUtil {
     seed: SourcePath;
     accept?: SourcePath[];
     deny?: SourcePath[];
-  }): void {
+  }): ForceIgnore {
     const forceIgnore = new ForceIgnore();
     const acceptStub = this.env.stub(forceIgnore, 'accepts');
     const denyStub = this.env.stub(forceIgnore, 'denies');
@@ -87,5 +95,6 @@ export class RegistryTestUtil {
     }
     const createIgnoreStub = this.env.stub(ForceIgnore, 'findAndCreate');
     createIgnoreStub.withArgs(config.seed).returns(forceIgnore);
+    return forceIgnore;
   }
 }

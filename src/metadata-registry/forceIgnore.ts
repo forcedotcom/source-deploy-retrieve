@@ -8,7 +8,7 @@
 import * as gitignore from 'gitignore-parser';
 import { sep, relative, join, dirname, basename } from 'path';
 import { readFileSync } from 'fs';
-import { FORCE_IGNORE_FILE, SFDX_PROJECT_JSON } from '../utils/constants';
+import { FORCE_IGNORE_FILE } from '../utils/constants';
 import { SourcePath } from '../types';
 import { searchUp } from '../utils/fileSystemHandler';
 
@@ -18,12 +18,11 @@ export class ForceIgnore {
 
   constructor(forceIgnorePath = '') {
     try {
-      const forceIgnoreDirectory = dirname(forceIgnorePath);
       const forceIgnoreContents = this.parseContents(
-        readFileSync(join(forceIgnoreDirectory, FORCE_IGNORE_FILE), 'utf8')
+        readFileSync(forceIgnorePath, 'utf8')
       );
       this.parser = gitignore.compile(forceIgnoreContents);
-      this.forceIgnoreDirectory = forceIgnoreDirectory;
+      this.forceIgnoreDirectory = dirname(forceIgnorePath);
     } catch (e) {
       // log no force ignore
     }
@@ -31,17 +30,14 @@ export class ForceIgnore {
 
   /**
    * Performs an upward directory search for a `.forceignore` file and returns a
-   * `ForceIgnore` object based on the result. Assumes the file lives in the same
-   * directory as an `sfdx-project.json` file.
-   *
-   * If there is no `sfdx-project.json` or `.forceignore` file, the returned `ForceIgnore`
-   * object will accept everything.
+   * `ForceIgnore` object based on the result. If there is no `.forceignore` file,
+   * the returned `ForceIgnore` object will accept everything.
    *
    * @param seed Path to begin the `.forceignore` search from
    */
   public static findAndCreate(seed: SourcePath): ForceIgnore {
     let potentialForceIgnorePath = '';
-    const projectConfigPath = searchUp(seed, SFDX_PROJECT_JSON);
+    const projectConfigPath = searchUp(seed, FORCE_IGNORE_FILE);
     if (projectConfigPath) {
       potentialForceIgnorePath = join(
         dirname(projectConfigPath),
@@ -54,21 +50,19 @@ export class ForceIgnore {
   public denies(fsPath: SourcePath): boolean {
     let denies = false;
     if (this.parser) {
-      denies =
-        this.parser.denies(relative(this.forceIgnoreDirectory, fsPath)) ||
-        !this.isValidAgainstDefaults(fsPath);
+      denies = this.parser.denies(relative(this.forceIgnoreDirectory, fsPath));
     }
-    return denies;
+    return denies || !this.isValidAgainstDefaults(fsPath);
   }
 
   public accepts(fsPath: SourcePath): boolean {
     let accepts = true;
     if (this.parser) {
-      accepts =
-        this.parser.accepts(relative(this.forceIgnoreDirectory, fsPath)) &&
-        this.isValidAgainstDefaults(fsPath);
+      accepts = this.parser.accepts(
+        relative(this.forceIgnoreDirectory, fsPath)
+      );
     }
-    return accepts;
+    return accepts && this.isValidAgainstDefaults(fsPath);
   }
 
   /**

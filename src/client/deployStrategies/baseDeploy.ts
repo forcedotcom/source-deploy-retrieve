@@ -138,7 +138,7 @@ export abstract class BaseDeploy {
     const result = {
       success,
       deleted: false,
-      fileName: formattedPaths[0],
+      fileName: filepath,
       fullName: formattedPaths[1],
       componentType: this.component.type.name
     } as SourceResult;

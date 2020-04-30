@@ -115,7 +115,7 @@ jobs:
           git add package.json
           git commit -m "[skip ci] Updated version"
       - run:
-          name: set-npmrc
+          name: Set .npmrc
           command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
       # - run: yarn publish --non-interactive
       - run: git push origin lcampos/release-circleci # TODO: switch this to point to master branch

@@ -13,7 +13,7 @@ import * as fs from 'fs';
 const env = createSandbox();
 
 describe('File System Utils', () => {
-  const root = join(sep, 'path', 'to', 'whatever');
+  const root = join(process.cwd(), 'path', 'to', 'whatever');
 
   afterEach(() => env.restore());
 

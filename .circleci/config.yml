@@ -38,12 +38,12 @@ _refs:
     name: 'Gus create change case management'
     command: |
       yarn global add @salesforce/change-case-management
-      sfchangecase create -i 500B0000005jCcNIAU --release offcore.tooling.${GUS_BUILD} --location 'https://github.com/forcedotcom/source-deploy-retrieve'
-      sfchangecase check --release offcore.tooling.${GUS_BUILD} --location 'https://github.com/forcedotcom/source-deploy-retrieve'
+      sfchangecase create -i 500B0000005jCcNIAU --release offcore.tooling.${GUS_BUILD} --location '${REPO_LOCATION}'
+      sfchangecase check --release offcore.tooling.${GUS_BUILD} --location '${REPO_LOCATION}'
   gus-close-change-mgmt: &gus-close-change-mgmt
     name: 'Gus close change case management'
     command: |
-      sfchangecase update --location 'https://github.com/forcedotcom/source-deploy-retrieve' --release offcore.tooling.${GUS_BUILD} --status 'Closed - Deploy Successful'
+      sfchangecase update --location '${REPO_LOCATION}' --release offcore.tooling.${GUS_BUILD} --status 'Closed - Deploy Successful'
 
 jobs:
   node-latest: &node-test
@@ -146,8 +146,6 @@ workflows:
             branches:
               only:
                 - master
-              ignore:
-                - develop
           requires:
             - node-latest
             - node-12

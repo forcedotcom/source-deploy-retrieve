@@ -9,6 +9,9 @@ _refs:
     working_directory: ~/cli
     docker:
       - image: node:12
+  ssh-config: &ssh-config
+    fingerprints:
+      - '1d:a9:9c:29:62:13:c9:db:f6:df:06:89:02:24:40:4a'
   restore_cache: &restore_cache
     keys:
       - v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "yarn.lock"}}
@@ -90,6 +93,7 @@ jobs:
   release:
     <<: *defaults
     steps:
+      - add_ssh_keys: *ssh-config
       - checkout
       - restore_cache: *restore_cache
       - run: *gh-config
@@ -117,7 +121,11 @@ workflows:
       - run-win-tests
       - release:
           filters:
-            branches: { only: 'lcampos/release-circleci' } # will change to master after done testing
+            branches:
+              only:
+                - lcampos/release-circleci # will change to master after done testing
+              ignore:
+                - develop
           requires:
             - node-latest
             - node-12

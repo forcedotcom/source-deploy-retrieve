@@ -7,7 +7,7 @@
 import { walk, isDirectory, searchUp } from '../../src/utils/fileSystemHandler';
 import { SinonStub, createSandbox } from 'sinon';
 import { expect } from 'chai';
-import { join, sep } from 'path';
+import { join } from 'path';
 import * as fs from 'fs';
 
 const env = createSandbox();

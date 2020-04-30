@@ -19,6 +19,8 @@ import * as util from '../../../src/utils/registry';
 import * as fsUtil from '../../../src/utils/fileSystemHandler';
 import { MixedContent } from '../../../src/metadata-registry/adapters/mixedContent';
 import { ExpectedSourceFilesError } from '../../../src/errors';
+import { RegistryTestUtil } from '../registryTestUtil';
+import { MetadataComponent } from '../../../src/types';
 
 const env = createSandbox();
 
@@ -83,7 +85,7 @@ describe('MixedContent', () => {
     let walkStub: SinonStub;
 
     const type = mockRegistry.types.tarajihenson;
-    const adapter = new MixedContent(type, mockRegistry);
+    let adapter = new MixedContent(type, mockRegistry);
 
     const {
       TARAJI_COMPONENT,
@@ -124,6 +126,29 @@ describe('MixedContent', () => {
       expect(adapter.getComponent(randomSource)).to.deep.equal(
         TARAJI_COMPONENT
       );
+    });
+
+    it('Should not include source paths that are forceignored', () => {
+      const testUtil = new RegistryTestUtil(env);
+      const path = TARAJI_SOURCE_PATHS[0];
+      findXmlStub.returns(TARAJI_XML_PATHS[0]);
+      dirStub.returns(true);
+      existsStub.withArgs(TARAJI_CONTENT_PATH).returns(true);
+      walkStub
+        .withArgs(TARAJI_CONTENT_PATH, new Set([TARAJI_XML_PATHS[0]]))
+        .returns(TARAJI_SOURCE_PATHS);
+      const forceIgnore = testUtil.stubForceIgnore({
+        seed: path,
+        accept: [TARAJI_SOURCE_PATHS[1]],
+        deny: [TARAJI_SOURCE_PATHS[0], TARAJI_SOURCE_PATHS[2]]
+      });
+      adapter = new MixedContent(type, mockRegistry, forceIgnore);
+      // copy the object but change the expected sources
+      const filteredComponent: MetadataComponent = JSON.parse(
+        JSON.stringify(TARAJI_COMPONENT)
+      );
+      filteredComponent.sources = [TARAJI_SOURCE_PATHS[1]];
+      expect(adapter.getComponent(path)).to.deep.equal(filteredComponent);
     });
   });
 });

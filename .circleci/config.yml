@@ -28,6 +28,12 @@ _refs:
   build: &build
     name: Build project
     command: yarn build
+  gus: &gus-change-mgmt
+    name: 'Gus change case management'
+    command: |
+      yarn install --global @salesforce/change-case-management
+      sfchangecase create -i 500B0000005jCcNIAU --release offcore.tooling.48.13.0
+      sfchangecase check --release offcore.tooling.48.13.0
 
 jobs:
   node-latest: &test
@@ -98,12 +104,17 @@ jobs:
       - restore_cache: *restore_cache
       - run: *gh-config
       - run: *install
+      - run: *gus-change-mgmt
       - run: *build
-      - run: yarn version --patch --no-git-tag-version
+      - run: yarn version --patch --no-git-tag-version # TODO: remove no-git-tag and push the tag that gets generated
       - run: git status
       - run: git add package.json
       - run: git commit -m "[skip ci] Updated version"
-      - run: git push origin lcampos/release-circleci
+      - run:
+          name: set-npmrc
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+      # - run: yarn publish --non-interactive
+      - run: git push origin lcampos/release-circleci # TODO: switch this to point to master branch
 
 workflows:
   version: 2
@@ -123,7 +134,7 @@ workflows:
           filters:
             branches:
               only:
-                - lcampos/release-circleci # will change to master after done testing
+                - lcampos/release-circleci # TODO: change to master after done testing
               ignore:
                 - develop
           requires:

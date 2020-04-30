@@ -109,11 +109,11 @@ jobs:
       - run: *gus-create-change-mgmt
       - run: *build
       - run:
-        name: 'Bump package version'
-        command: |
-          yarn version --patch --no-git-tag-version
-          git add package.json
-          git commit -m "[skip ci] Updated version"
+          name: Bump package version
+          command: |
+            yarn version --patch --no-git-tag-version
+            git add package.json
+            git commit -m "[skip ci] Updated version"
       - run:
           name: Set .npmrc
           command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc

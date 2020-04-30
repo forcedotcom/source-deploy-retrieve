@@ -21,3 +21,11 @@ export interface AuraDefinition {
   Id?: string;
   AuraDefinitionBundleId?: string;
 }
+
+export interface LightningComponentResource {
+  FilePath: string;
+  Source: string;
+  Format: string;
+  Id?: string;
+  LightningComponentBundleId?: string;
+}

@@ -8,7 +8,8 @@ import { Connection } from '@salesforce/core';
 import { BaseDeploy } from './baseDeploy';
 import { ContainerDeploy } from './containerDeploy';
 import { AuraDeploy } from './auraDeploy';
-import { AURA_DEF_BUNDLE } from './constants';
+import { LwcDeploy } from './lwcDeploy';
+import { AURA_DEF_BUNDLE, LIGHTNING_CMP_BUNDLE } from './constants';
 
 export {
   AURA_TYPES,
@@ -22,9 +23,12 @@ export const getDeployStrategy = (
   type: string,
   connection: Connection
 ): BaseDeploy => {
-  const deployStrategy =
-    type === AURA_DEF_BUNDLE
-      ? new AuraDeploy(connection)
-      : new ContainerDeploy(connection);
-  return deployStrategy;
+  switch (type) {
+    case AURA_DEF_BUNDLE:
+      return new AuraDeploy(connection);
+    case LIGHTNING_CMP_BUNDLE:
+      return new LwcDeploy(connection);
+    default:
+      return new ContainerDeploy(connection);
+  }
 };

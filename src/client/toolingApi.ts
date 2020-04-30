@@ -36,7 +36,8 @@ export const deployTypes = new Map([
   ['ApexTrigger', 'ApexTriggerMember'],
   ['ApexPage', 'ApexPageMember'],
   ['ApexComponent', 'ApexComponentMember'],
-  ['AuraDefinitionBundle', 'AuraDefinition']
+  ['AuraDefinitionBundle', 'AuraDefinition'],
+  ['LightningComponentBundle', 'LightningComponentResource']
 ]);
 
 export class ToolingApi extends BaseApi {

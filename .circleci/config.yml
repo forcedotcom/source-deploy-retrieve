@@ -38,11 +38,15 @@ _refs:
     name: 'Gus create change case management'
     command: |
       yarn global add @salesforce/change-case-management
+      export GUS_BUILD="$(node -pe "require('./package.json').gusBuild")"
+      echo "Gus build is ${GUS_BUILD}"
       sfchangecase create -i 500B0000005jCcNIAU --release offcore.tooling.${GUS_BUILD} --location ${REPO_LOCATION}
       sfchangecase check --release offcore.tooling.${GUS_BUILD} --location ${REPO_LOCATION}
   gus-close-change-mgmt: &gus-close-change-mgmt
     name: 'Gus close change case management'
     command: |
+      export GUS_BUILD="$(node -pe "require('./package.json').gusBuild")"
+      echo "Gus build is ${GUS_BUILD}"
       sfchangecase update --location ${REPO_LOCATION} --release offcore.tooling.${GUS_BUILD} --status 'Closed - Deploy Successful'
 
 jobs:
@@ -101,11 +105,6 @@ jobs:
       - restore_cache: *restore_cache
       - run: *gh-config
       - run: *install
-      - run:
-          name: Get gus build version
-          command: |
-            export GUS_BUILD="$(node -pe "require('./package.json').gusBuild")"
-            echo "Gus build is ${GUS_BUILD}"
       - run: *gus-create-change-mgmt
       - run: *build
       - run:

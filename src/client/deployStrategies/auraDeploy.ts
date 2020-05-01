@@ -158,4 +158,11 @@ export class AuraDeploy extends BaseDeploy {
     );
     return auraDefResult.records as AuraDefinition[];
   }
+
+  private parseAuraError(error: string): void {
+    const errLocation = error.slice(
+      error.lastIndexOf('[') + 1,
+      error.lastIndexOf(']')
+    );
+  }
 }

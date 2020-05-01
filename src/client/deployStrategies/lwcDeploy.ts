@@ -20,7 +20,7 @@ export class LwcDeploy extends BaseDeploy {
       const results = await this.upsert(lightningResources);
       return this.formatBundleOutput(results);
     } catch (e) {
-      const failures = [this.parseError(e.message)];
+      const failures = [this.parseLwcError(e.message)];
       return this.formatBundleOutput(failures, true);
     }
   }
@@ -109,7 +109,7 @@ export class LwcDeploy extends BaseDeploy {
     return lightningResourceResult.records as LightningComponentResource[];
   }
 
-  private parseError(error: string): SourceResult {
+  private parseLwcError(error: string): SourceResult {
     const pathParts = error.split(/[\s\n\t]+/);
     const msgStartIndex = pathParts.findIndex(part => part.includes(':'));
     const fileObject = pathParts[msgStartIndex];

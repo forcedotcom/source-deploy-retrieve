@@ -18,6 +18,7 @@ export {
 } from './constants';
 export { ContainerDeploy } from './containerDeploy';
 export { AuraDeploy } from './auraDeploy';
+export { LwcDeploy } from './lwcDeploy';
 
 export const getDeployStrategy = (
   type: string,

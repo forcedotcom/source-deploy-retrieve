@@ -73,7 +73,7 @@ export abstract class BaseDeploy {
     )) as ToolingCreateResult;
   }
 
-  protected async createBundle(): Promise<ToolingCreateResult> {
+  public async createBundle(): Promise<ToolingCreateResult> {
     const metadataContent = readFileSync(this.component.xml, 'utf8');
     const metadataField = this.buildMetadataField(metadataContent);
     const bundleObject = {

@@ -9,7 +9,7 @@ import { BaseDeploy } from './baseDeploy';
 import { ContainerDeploy } from './containerDeploy';
 import { AuraDeploy } from './auraDeploy';
 import { LwcDeploy } from './lwcDeploy';
-import { AURA_DEF_BUNDLE, LIGHTNING_CMP_BUNDLE } from './constants';
+import { registryData } from '../../metadata-registry';
 
 export {
   AURA_TYPES,
@@ -25,9 +25,9 @@ export const getDeployStrategy = (
   connection: Connection
 ): BaseDeploy => {
   switch (type) {
-    case AURA_DEF_BUNDLE:
+    case registryData.types.auradefinitionbundle.name:
       return new AuraDeploy(connection);
-    case LIGHTNING_CMP_BUNDLE:
+    case registryData.types.lightningcomponentbundle.name:
       return new LwcDeploy(connection);
     default:
       return new ContainerDeploy(connection);

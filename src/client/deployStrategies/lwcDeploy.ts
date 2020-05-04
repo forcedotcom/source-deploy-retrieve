@@ -20,7 +20,9 @@ export class LwcDeploy extends BaseDeploy {
       const results = await this.upsert(lightningResources);
       return this.formatBundleOutput(results);
     } catch (e) {
-      const failures = [this.parseLwcError(e.message)];
+      const failures = [
+        this.parseLwcError(e.message, lightningResources[0].FilePath)
+      ];
       return this.formatBundleOutput(failures, true);
     }
   }
@@ -109,30 +111,45 @@ export class LwcDeploy extends BaseDeploy {
     return lightningResourceResult.records as LightningComponentResource[];
   }
 
-  private parseLwcError(error: string): SourceResult {
-    const pathParts = error.split(/[\s\n\t]+/);
-    const msgStartIndex = pathParts.findIndex(part => part.includes(':'));
-    const fileObject = pathParts[msgStartIndex];
+  private parseLwcError(error: string, defaultPath: string): SourceResult {
+    try {
+      const pathParts = error.split(/[\s\n\t]+/);
+      const msgStartIndex = pathParts.findIndex(part => part.includes(':'));
+      const fileObject = pathParts[msgStartIndex];
 
-    const fileName = fileObject.slice(0, fileObject.indexOf(':'));
-    const errLocation = fileObject.slice(fileObject.indexOf(':') + 1);
+      const fileName = fileObject.slice(0, fileObject.indexOf(':'));
+      const errLocation = fileObject.slice(fileObject.indexOf(':') + 1);
 
-    const errorMessage = pathParts.slice(msgStartIndex + 2).join(' ');
+      const errorMessage = pathParts.slice(msgStartIndex + 2).join(' ');
 
-    const file = this.component.sources.find(s => s.includes(fileName));
+      const file = this.component.sources.find(s => s.includes(fileName));
 
-    const errObj = {
-      lineNumber: errLocation.split(',')[0],
-      columnNumber: errLocation.split(',')[1],
-      problem: errorMessage,
-      fileName: file,
-      fullName: this.getFormattedPaths(file)[1],
-      componentType: this.component.type.name,
-      success: false,
-      changed: false,
-      created: false,
-      deleted: false
-    } as SourceResult;
-    return errObj;
+      const errObj = {
+        ...(errLocation ? { lineNumber: errLocation.split(',')[0] } : {}),
+        ...(errLocation ? { columnNumber: errLocation.split(',')[1] } : {}),
+        problem: errorMessage,
+        fileName: file,
+        fullName: this.getFormattedPaths(file)[1],
+        componentType: this.component.type.name,
+        success: false,
+        changed: false,
+        created: false,
+        deleted: false
+      } as SourceResult;
+      return errObj;
+    } catch (e) {
+      //log error with parsing error message
+      const errObj = {
+        problem: error,
+        fileName: defaultPath,
+        fullName: this.getFormattedPaths(defaultPath)[1],
+        componentType: this.component.type.name,
+        success: false,
+        changed: false,
+        created: false,
+        deleted: false
+      } as SourceResult;
+      return errObj;
+    }
   }
 }

@@ -352,11 +352,10 @@ describe('LWC Deploy Strategy', () => {
     expect(DeployResult.State).to.equal(testDeployResult.State);
   });
 
-  // commenting failure related output out while error parsing is being worked on
-  /*it('should format output for creation only failures correctly', async () => {
+  it('should format output for creation only failures correctly', async () => {
     sandboxStub
-      .stub(AuraDeploy.prototype, 'buildDefList')
-      .resolves(testAuraList);
+      .stub(LwcDeploy.prototype, 'buildResourceList')
+      .resolves(testLwcList);
     sandboxStub
       .stub(mockConnection.tooling, 'query')
       // @ts-ignore
@@ -372,29 +371,27 @@ describe('LWC Deploy Strategy', () => {
     } as RecordResult);
 
     sandboxStub
-      .stub(AuraDeploy.prototype, 'upsert')
-      .throws(new Error('Unexpected error while creating sources'));
+      .stub(LwcDeploy.prototype, 'upsert')
+      .throws(
+        new Error('mockLwcCmp.js:1,1 : Unexpected error while creating sources')
+      );
 
     const createTestFailures = [
       {
         changed: false,
         created: false,
         deleted: false,
-        fileName: join(
-          'file',
-          'path',
-          'aura',
-          'mockAuraCmp',
-          'mockAuraCmp.cmp'
-        ),
-        fullName: join('mockAuraCmp', 'mockAuraCmp.cmp'),
+        fileName: join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js'),
+        fullName: join('mockLwcCmp', 'mockLwcCmp.js'),
         success: false,
-        componentType: 'AuraDefinitionBundle',
-        problem: 'Unexpected error while creating sources'
+        componentType: 'LightningComponentBundle',
+        problem: 'Unexpected error while creating sources',
+        lineNumber: '1',
+        columnNumber: '1'
       }
     ];
 
-        const testDeployResult = {
+    const testDeployResult = {
       State: DeployStatusEnum.Failed,
       DeployDetails: {
         componentSuccesses: [],
@@ -404,80 +401,14 @@ describe('LWC Deploy Strategy', () => {
       ErrorMsg: createTestFailures[0].problem
     } as DeployResult;
 
-    const auraDeploy = new AuraDeploy(mockConnection);
-    const DeployResult = await auraDeploy.deploy(auraComponent);
+    const lwcDeploy = new LwcDeploy(mockConnection);
+    const DeployResult = await lwcDeploy.deploy(lwcComponent);
 
     expect(DeployResult.DeployDetails.componentFailures).to.deep.equal(
       testDeployResult.DeployDetails.componentFailures
     );
     expect(DeployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
     expect(DeployResult.isDeleted).to.equal(testDeployResult.isDeleted);
-    expect(DeployResult.State).to.equal(testDeployResult.State);*/
-
-  /* it('should format output for create and update successes correctly', async () => {
-        sandboxStub
-          .stub(AuraDeploy.prototype, 'buildDefList')
-          .resolves(testAuraList);
-    
-        const matches = [
-          {
-            Id: '1dcxxx000000034',
-            DefType: 'COMPONENT',
-            Format: 'XML',
-            FilePath: auraFiles[1],
-            Source: auraContents[1],
-            AuraDefinitionBundleId: '1dcxxx000000060'
-          },
-          {
-            Id: '1dcxxx000000035',
-            DefType: 'STYLE',
-            Format: 'CSS',
-            FilePath: auraFiles[2],
-            Source: auraContents[2],
-            AuraDefinitionBundleId: '1dcxxx000000060'
-          },
-          {
-            Id: '1dcxxx000000036',
-            DefType: 'DESIGN',
-            Format: 'XML',
-            FilePath: auraFiles[3],
-            Source: auraContents[3],
-            AuraDefinitionBundleId: '1dcxxx000000060'
-          }
-        ];
-        sandboxStub
-          .stub(mockConnection.tooling, 'query')
-          // @ts-ignore
-          .resolves({ records: matches });
-    
-        const upsertStub = sandboxStub.stub(AuraDeploy.prototype, 'upsert');
-        for (let i = 0; i < 8; i++) {
-          upsertStub.onCall(i).resolves(updateCreateSuccesses[i]);
-        }
-    
-        const testDeployResult = {
-          State: DeployStatusEnum.Completed,
-          DeployDetails: {
-            componentSuccesses: updateCreateSuccesses,
-            componentFailures: []
-          },
-          isDeleted: false,
-          outboundFiles: auraFiles,
-          ErrorMsg: null,
-          metadataFile: auraComponent.xml
-        } as DeployResult;
-    
-        const bundleDeploy = new AuraDeploy(mockConnection);
-        const DeployResult = await bundleDeploy.deploy(auraComponent);
-    
-        expect(DeployResult.DeployDetails.componentSuccesses).to.deep.equal(
-          testDeployResult.DeployDetails.componentSuccesses
-        );
-        expect(DeployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
-        expect(DeployResult.isDeleted).to.equal(testDeployResult.isDeleted);
-        expect(DeployResult.outboundFiles).to.deep.equal(
-          testDeployResult.outboundFiles
-        );
-        expect(DeployResult.State).to.equal(testDeployResult.State);
-      });*/
+    expect(DeployResult.State).to.equal(testDeployResult.State);
+  });
 });

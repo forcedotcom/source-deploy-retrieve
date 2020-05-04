@@ -23,12 +23,7 @@ export class AuraDeploy extends BaseDeploy {
       return this.formatBundleOutput(results);
     } catch (e) {
       const failures = [
-        this.createDeployResult(
-          auraDefinitions[0].FilePath,
-          false,
-          false,
-          e.message
-        )
+        this.parseAuraError(e.message, auraDefinitions[0].FilePath)
       ];
       return this.formatBundleOutput(failures, true);
     }
@@ -159,10 +154,57 @@ export class AuraDeploy extends BaseDeploy {
     return auraDefResult.records as AuraDefinition[];
   }
 
-  private parseAuraError(error: string): void {
-    const errLocation = error.slice(
-      error.lastIndexOf('[') + 1,
-      error.lastIndexOf(']')
-    );
+  private parseAuraError(error: string, defaultPath: string): SourceResult {
+    try {
+      const errLocation = error.slice(
+        error.lastIndexOf('[') + 1,
+        error.lastIndexOf(']')
+      );
+
+      const errorParts = error.split(' ');
+      const fileType = errorParts.find(part => {
+        part = part.toLowerCase();
+        return (
+          part.includes('controller') ||
+          part.includes('renderer') ||
+          part.includes('helper')
+        );
+      });
+      let fileName: string;
+      if (fileType) {
+        fileName = this.component.sources.find(s =>
+          s.toLowerCase().includes(fileType.toLowerCase())
+        );
+      } else {
+        fileName = defaultPath;
+      }
+
+      const errObj = {
+        ...(errLocation ? { lineNumber: errLocation.split(',')[0] } : {}),
+        ...(errLocation ? { columnNumber: errLocation.split(',')[1] } : {}),
+        problem: error,
+        fileName: fileName,
+        fullName: this.getFormattedPaths(fileName)[1],
+        componentType: this.component.type.name,
+        success: false,
+        changed: false,
+        created: false,
+        deleted: false
+      } as SourceResult;
+      return errObj;
+    } catch (e) {
+      // log error with parsing error message
+      const errObj = {
+        problem: error,
+        fileName: defaultPath,
+        fullName: this.getFormattedPaths(defaultPath)[1],
+        componentType: this.component.type.name,
+        success: false,
+        changed: false,
+        created: false,
+        deleted: false
+      } as SourceResult;
+      return errObj;
+    }
   }
 }

@@ -7,3 +7,4 @@
 
 export { SourceClient } from './sourceClient';
 export { ToolingApi } from './toolingApi';
+export { MetadataApi } from './metadataApi';

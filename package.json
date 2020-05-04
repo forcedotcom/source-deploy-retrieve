@@ -29,10 +29,14 @@
   },
   "dependencies": {
     "@salesforce/core": "2.4.0",
+    "adm-zip": "0.4.14",
+    "archiver": "4.0.1",
     "xmldom-sfdx-encoding": "^0.1.29"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@types/adm-zip": "^0.4.33",
+    "@types/archiver": "^3.1.0",
     "@types/chai": "^4",
     "@types/mocha": "^5",
     "@types/node": "^10",

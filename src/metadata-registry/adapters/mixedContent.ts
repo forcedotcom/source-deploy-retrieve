@@ -70,8 +70,7 @@ export class MixedContent extends BaseSourceAdapter {
     const sources = isDirectory(contentPath)
       ? walk(contentPath, ignore)
       : [contentPath];
-
-    return sources;
+    return sources.filter(s => this.forceIgnore.accepts(s));
   }
 
   protected getPathToContent(source: SourcePath): SourcePath {

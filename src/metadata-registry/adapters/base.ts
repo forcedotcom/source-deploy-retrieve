@@ -15,8 +15,9 @@ import {
 import { parseMetadataXml } from '../../utils/registry';
 import { basename, dirname } from 'path';
 import * as registryData from '../data/registry.json';
-import { RegistryError } from '../../errors';
+import { RegistryError, UnexpectedForceIgnore } from '../../errors';
 import { parentName } from '../../utils/path';
+import { ForceIgnore } from '../forceIgnore';
 
 /**
  * The default source adapter.
@@ -39,10 +40,16 @@ import { parentName } from '../../utils/path';
 export class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;
   protected registry: MetadataRegistry;
+  protected forceIgnore: ForceIgnore;
 
-  constructor(type: MetadataType, registry: MetadataRegistry = registryData) {
+  constructor(
+    type: MetadataType,
+    registry: MetadataRegistry = registryData,
+    forceIgnore: ForceIgnore = new ForceIgnore()
+  ) {
     this.type = type;
     this.registry = registry;
+    this.forceIgnore = forceIgnore;
   }
 
   /**
@@ -75,6 +82,13 @@ export class BaseSourceAdapter implements SourceAdapter {
       }
       parsedMetaXml = parseMetadataXml(metaXmlPath);
       isMetaXml = false;
+    }
+
+    if (this.forceIgnore.denies(metaXmlPath)) {
+      throw new UnexpectedForceIgnore('error_no_metadata_xml_ignore', [
+        metaXmlPath,
+        fsPath
+      ]);
     }
 
     const component: MetadataComponent = {

@@ -8,9 +8,10 @@ import { join } from 'path';
 import { mockRegistry } from '../../mock/registry';
 import { BaseSourceAdapter } from '../../../src/metadata-registry/adapters/base';
 import { expect, assert } from 'chai';
-import { RegistryError } from '../../../src/errors';
+import { RegistryError, UnexpectedForceIgnore } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { SourcePath } from '../../../src/types';
+import { RegistryTestUtil } from '../registryTestUtil';
 
 class TestChildAdapter extends BaseSourceAdapter {
   public static readonly xmlPath = join(
@@ -97,5 +98,23 @@ describe('BaseSourceAdapter', () => {
       RegistryError,
       nls.localize('error_missing_metadata_xml', [path, type.name])
     );
+  });
+
+  it('Should throw an error if a metadata xml file is forceignored', () => {
+    const testUtil = new RegistryTestUtil();
+    testUtil.initStubs();
+    const path = join('path', 'to', 'keanus', 'My_Test.keanu-meta.xml');
+    const type = mockRegistry.types.keanureeves;
+    const forceIgnore = testUtil.stubForceIgnore({
+      seed: path,
+      deny: [path]
+    });
+    const adapter = new BaseSourceAdapter(type, mockRegistry, forceIgnore);
+    assert.throws(
+      () => adapter.getComponent(path),
+      UnexpectedForceIgnore,
+      nls.localize('error_no_metadata_xml_ignore', [path, path])
+    );
+    testUtil.restore();
   });
 });

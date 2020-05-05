@@ -6,3 +6,4 @@
  */
 
 export const META_XML_SUFFIX = '-meta.xml';
+export const FORCE_IGNORE_FILE = '.forceignore';

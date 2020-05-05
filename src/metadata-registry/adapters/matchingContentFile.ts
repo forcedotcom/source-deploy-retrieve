@@ -5,12 +5,12 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { extname } from 'path';
 import { META_XML_SUFFIX } from '../../utils';
 import { existsSync } from 'fs';
 import { BaseSourceAdapter } from './base';
-import { ExpectedSourceFilesError } from '../../errors';
+import { ExpectedSourceFilesError, UnexpectedForceIgnore } from '../../errors';
 import { SourcePath } from '../../types';
+import { extName } from '../../utils/path';
 
 /**
  * Handles types with a single content file with a matching file extension.
@@ -43,15 +43,17 @@ export class MatchingContentFile extends BaseSourceAdapter {
       if (existsSync(path)) {
         sourcePath = path;
       }
-    } else {
-      const suffix = extname(fsPath).slice(1);
-      if (this.registry.suffixes[suffix]) {
-        sourcePath = fsPath;
-      }
+    } else if (this.registry.suffixes[extName(fsPath)]) {
+      sourcePath = fsPath;
     }
-    if (sourcePath) {
-      return [sourcePath];
+    if (!sourcePath) {
+      throw new ExpectedSourceFilesError(this.type, fsPath);
+    } else if (this.forceIgnore.denies(sourcePath)) {
+      throw new UnexpectedForceIgnore('error_no_source_ignore', [
+        this.type.name,
+        sourcePath
+      ]);
     }
-    throw new ExpectedSourceFilesError(this.type, fsPath);
+    return [sourcePath];
   }
 }

@@ -15,7 +15,10 @@ import { createSandbox, SinonSandbox } from 'sinon';
 import { nls } from '../../../src/i18n';
 import { DeployResult, DeployStatusEnum } from '../../../src/types';
 import { LwcDeploy } from '../../../src/client/deployStrategies';
-import { LightningComponentResource } from '../../../src/utils/deploy';
+import {
+  LightningComponentResource,
+  ToolingCreateResult
+} from '../../../src/utils/deploy';
 
 const $$ = testSetup();
 
@@ -151,6 +154,11 @@ describe('LWC Deploy Strategy', () => {
     ];
     // @ts-ignore
     mockToolingQuery.resolves({ records: matches });
+    sandboxStub.stub(LwcDeploy.prototype, 'upsertBundle').resolves({
+      success: true,
+      id: '1dcxxx000000033',
+      errors: []
+    } as ToolingCreateResult);
 
     const lwcDeploy = new LwcDeploy(mockConnection);
     lwcDeploy.component = lwcComponent;
@@ -178,6 +186,11 @@ describe('LWC Deploy Strategy', () => {
     ];
     // @ts-ignore
     mockToolingQuery.resolves({ records: matches });
+    sandboxStub.stub(LwcDeploy.prototype, 'upsertBundle').resolves({
+      success: true,
+      id: '1dcxxx000000033',
+      errors: []
+    } as ToolingCreateResult);
 
     const lwcDeploy = new LwcDeploy(mockConnection);
     lwcDeploy.component = lwcComponent;
@@ -335,7 +348,8 @@ describe('LWC Deploy Strategy', () => {
       },
       isDeleted: false,
       outboundFiles: lwcFiles,
-      ErrorMsg: null
+      ErrorMsg: null,
+      metadataFile: lwcComponent.xml
     } as DeployResult;
 
     const lwcDeploy = new LwcDeploy(mockConnection);
@@ -386,8 +400,8 @@ describe('LWC Deploy Strategy', () => {
         success: false,
         componentType: 'LightningComponentBundle',
         problem: 'Unexpected error while creating sources',
-        lineNumber: '1',
-        columnNumber: '1'
+        lineNumber: 1,
+        columnNumber: 1
       }
     ];
 
@@ -398,7 +412,8 @@ describe('LWC Deploy Strategy', () => {
         componentFailures: createTestFailures
       },
       isDeleted: false,
-      ErrorMsg: createTestFailures[0].problem
+      ErrorMsg: createTestFailures[0].problem,
+      metadataFile: lwcComponent.xml
     } as DeployResult;
 
     const lwcDeploy = new LwcDeploy(mockConnection);

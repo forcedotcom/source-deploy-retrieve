@@ -23,6 +23,7 @@ import {
   testAuraList
 } from './auraDeployMocks';
 import { AuraDeploy } from '../../../src/client/deployStrategies';
+import { ToolingCreateResult } from '../../../src/utils/deploy';
 
 const $$ = testSetup();
 
@@ -123,6 +124,12 @@ describe('Aura Deploy Strategy', () => {
     // @ts-ignore
     mockToolingQuery.resolves({ records: matches });
 
+    sandboxStub.stub(AuraDeploy.prototype, 'upsertBundle').resolves({
+      success: true,
+      id: '1dcxxx000000033',
+      errors: []
+    } as ToolingCreateResult);
+
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
     const auraResults = await auraDeploy.buildDefList();
@@ -158,6 +165,11 @@ describe('Aura Deploy Strategy', () => {
     ];
     // @ts-ignore
     mockToolingQuery.resolves({ records: matches });
+    sandboxStub.stub(AuraDeploy.prototype, 'upsertBundle').resolves({
+      success: true,
+      id: '1dcxxx000000033',
+      errors: []
+    } as ToolingCreateResult);
 
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
@@ -320,7 +332,8 @@ describe('Aura Deploy Strategy', () => {
       },
       isDeleted: false,
       outboundFiles: auraFiles,
-      ErrorMsg: null
+      ErrorMsg: null,
+      metadataFile: auraComponent.xml
     } as DeployResult;
 
     const auraDeploy = new AuraDeploy(mockConnection);
@@ -375,8 +388,8 @@ describe('Aura Deploy Strategy', () => {
         success: false,
         componentType: 'AuraDefinitionBundle',
         problem: 'Unexpected error while creating sources: [1,1]',
-        columnNumber: '1',
-        lineNumber: '1'
+        columnNumber: 1,
+        lineNumber: 1
       }
     ];
 
@@ -387,7 +400,8 @@ describe('Aura Deploy Strategy', () => {
         componentFailures: createTestFailures
       },
       isDeleted: false,
-      ErrorMsg: createTestFailures[0].problem
+      ErrorMsg: createTestFailures[0].problem,
+      metadataFile: auraComponent.xml
     } as DeployResult;
 
     const auraDeploy = new AuraDeploy(mockConnection);
@@ -441,8 +455,8 @@ describe('Aura Deploy Strategy', () => {
         success: false,
         componentType: 'AuraDefinitionBundle',
         problem: 'Unexpected error while creating sources in HELPER : [1,1]',
-        columnNumber: '1',
-        lineNumber: '1'
+        columnNumber: 1,
+        lineNumber: 1
       }
     ];
 
@@ -453,7 +467,8 @@ describe('Aura Deploy Strategy', () => {
         componentFailures: createTestFailures
       },
       isDeleted: false,
-      ErrorMsg: createTestFailures[0].problem
+      ErrorMsg: createTestFailures[0].problem,
+      metadataFile: auraComponent.xml
     } as DeployResult;
 
     const auraDeploy = new AuraDeploy(mockConnection);

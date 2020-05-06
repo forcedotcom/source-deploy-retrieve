@@ -34,13 +34,10 @@ export class AuraDeploy extends BaseDeploy {
     const auraDefinitions: AuraDefinition[] = [];
 
     const existingDefinitions = await this.findAuraDefinitions();
-    let bundleId: string;
-    if (existingDefinitions.length > 0) {
-      bundleId = existingDefinitions[0].AuraDefinitionBundleId;
-    } else {
-      const newBundle = await this.createBundle();
-      bundleId = newBundle.id;
-    }
+    const auraBundle = existingDefinitions[0]
+      ? await this.upsertBundle(existingDefinitions[0].AuraDefinitionBundleId)
+      : await this.upsertBundle();
+    const bundleId = auraBundle.id;
 
     sourceFiles.forEach(async sourceFile => {
       const source = readFileSync(sourceFile, 'utf8');
@@ -55,6 +52,8 @@ export class AuraDeploy extends BaseDeploy {
         );
       }
 
+      // If definition exists in org, assign the matching Id
+      // else, assign the id of the bundle it's associated with
       const auraDef = {
         FilePath: sourceFile,
         DefType: defType,
@@ -180,8 +179,12 @@ export class AuraDeploy extends BaseDeploy {
       }
 
       const errObj = {
-        ...(errLocation ? { lineNumber: errLocation.split(',')[0] } : {}),
-        ...(errLocation ? { columnNumber: errLocation.split(',')[1] } : {}),
+        ...(errLocation
+          ? { lineNumber: Number(errLocation.split(',')[0]) }
+          : {}),
+        ...(errLocation
+          ? { columnNumber: Number(errLocation.split(',')[1]) }
+          : {}),
         problem: error,
         fileName: fileName,
         fullName: this.getFormattedPaths(fileName)[1],

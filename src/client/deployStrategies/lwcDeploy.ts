@@ -32,13 +32,10 @@ export class LwcDeploy extends BaseDeploy {
     const lightningResources: LightningComponentResource[] = [];
 
     const existingResources = await this.findLightningResources();
-    let bundleId: string;
-    if (existingResources.length > 0) {
-      bundleId = existingResources[0].LightningComponentBundleId;
-    } else {
-      const newBundle = await this.createBundle();
-      bundleId = newBundle.id;
-    }
+    const lightningBundle = existingResources[0]
+      ? await this.upsertBundle(existingResources[0].LightningComponentBundleId)
+      : await this.upsertBundle();
+    const bundleId = lightningBundle.id;
 
     sourceFiles.forEach(async sourceFile => {
       const source = readFileSync(sourceFile, 'utf8');
@@ -51,6 +48,8 @@ export class LwcDeploy extends BaseDeploy {
         );
       }
 
+      // If resource exists in org, assign the matching Id
+      // else, assign the id of the bundle it's associated with
       const lightningResource = {
         FilePath: sourceFile,
         Source: source,
@@ -125,8 +124,12 @@ export class LwcDeploy extends BaseDeploy {
       const file = this.component.sources.find(s => s.includes(fileName));
 
       const errObj = {
-        ...(errLocation ? { lineNumber: errLocation.split(',')[0] } : {}),
-        ...(errLocation ? { columnNumber: errLocation.split(',')[1] } : {}),
+        ...(errLocation
+          ? { lineNumber: Number(errLocation.split(',')[0]) }
+          : {}),
+        ...(errLocation
+          ? { columnNumber: Number(errLocation.split(',')[1]) }
+          : {}),
         problem: errorMessage,
         fileName: file,
         fullName: this.getFormattedPaths(file)[1],

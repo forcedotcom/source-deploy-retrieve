@@ -71,8 +71,8 @@ export type DeployDetails = {
 };
 
 export type SourceResult = {
-  columnNumber?: string;
-  lineNumber?: string;
+  columnNumber?: number;
+  lineNumber?: number;
   problem?: string;
   problemType?: string;
   fileName?: string;

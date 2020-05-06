@@ -73,6 +73,40 @@ export abstract class BaseDeploy {
     )) as ToolingCreateResult;
   }
 
+  public async upsertBundle(Id?: string): Promise<ToolingCreateResult> {
+    const metadataContent = readFileSync(this.component.xml, 'utf8');
+    const metadataField = this.buildMetadataField(metadataContent);
+
+    let bundleResult: ToolingCreateResult;
+    if (Id) {
+      const bundleObject = { Id, Metadata: metadataField };
+
+      bundleResult = (await this.connection.tooling.update(
+        this.component.type.name,
+        bundleObject
+      )) as ToolingCreateResult;
+    } else {
+      const bundleObject = {
+        FullName: this.component.fullName,
+        Metadata: metadataField
+      };
+
+      bundleResult = await this.toolingCreate(
+        this.component.type.name,
+        bundleObject
+      );
+    }
+
+    if (!bundleResult.success) {
+      throw new DeployError(
+        'error_creating_metadata_type',
+        this.component.type.name
+      );
+    }
+
+    return bundleResult;
+  }
+
   public async createBundle(): Promise<ToolingCreateResult> {
     const metadataContent = readFileSync(this.component.xml, 'utf8');
     const metadataField = this.buildMetadataField(metadataContent);

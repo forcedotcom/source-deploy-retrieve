@@ -73,6 +73,8 @@ export abstract class BaseDeploy {
     )) as ToolingCreateResult;
   }
 
+  // If bundle already exists then use Id and update existing
+  // else, create a new bundle
   public async upsertBundle(Id?: string): Promise<ToolingCreateResult> {
     const metadataContent = readFileSync(this.component.xml, 'utf8');
     const metadataField = this.buildMetadataField(metadataContent);
@@ -105,29 +107,6 @@ export abstract class BaseDeploy {
     }
 
     return bundleResult;
-  }
-
-  public async createBundle(): Promise<ToolingCreateResult> {
-    const metadataContent = readFileSync(this.component.xml, 'utf8');
-    const metadataField = this.buildMetadataField(metadataContent);
-    const bundleObject = {
-      FullName: this.component.fullName,
-      Metadata: metadataField
-    };
-
-    const newBundle = await this.toolingCreate(
-      this.component.type.name,
-      bundleObject
-    );
-
-    if (!newBundle.success) {
-      throw new DeployError(
-        'error_creating_metadata_type',
-        this.component.type.name
-      );
-    }
-
-    return newBundle;
   }
 
   protected formatBundleOutput(

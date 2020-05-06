@@ -193,7 +193,7 @@ describe('Aura Deploy Strategy', () => {
       .returns(testMetadataField);
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
-    const bundle = await auraDeploy.createBundle();
+    const bundle = await auraDeploy.upsertBundle();
 
     expect(bundle.id).to.equal('1dcxxx000000034');
     expect(bundle.success).to.be.equal(true);
@@ -203,6 +203,34 @@ describe('Aura Deploy Strategy', () => {
       auraComponent.type.name
     );
     expect(mockToolingCreate.getCall(0).args[1]).to.be.an('object');
+  });
+
+  it('should create an auradefinitionbundle given the fullname and metadata', async () => {
+    const mockToolingUpdate = sandboxStub.stub(
+      mockConnection.tooling,
+      'update'
+    );
+    mockToolingUpdate.resolves({
+      success: true,
+      id: '1dcxxx000000034',
+      errors: []
+    } as RecordResult);
+
+    sandboxStub
+      .stub(AuraDeploy.prototype, 'buildMetadataField')
+      .returns(testMetadataField);
+    const auraDeploy = new AuraDeploy(mockConnection);
+    auraDeploy.component = auraComponent;
+    const bundle = await auraDeploy.upsertBundle('1dcxxx000000034');
+
+    expect(bundle.id).to.equal('1dcxxx000000034');
+    expect(bundle.success).to.be.equal(true);
+    // tslint:disable-next-line:no-unused-expression
+    expect(bundle.errors).to.be.an('array').that.is.empty;
+    expect(mockToolingUpdate.getCall(0).args[0]).to.equal(
+      auraComponent.type.name
+    );
+    expect(mockToolingUpdate.getCall(0).args[1]).to.be.an('object');
   });
 
   it('should throw an error if there is a problem creating the bundle', async () => {
@@ -218,7 +246,7 @@ describe('Aura Deploy Strategy', () => {
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
     try {
-      await auraDeploy.createBundle();
+      await auraDeploy.upsertBundle();
       expect.fail('Should have failed');
     } catch (e) {
       expect(e.message).to.equal(

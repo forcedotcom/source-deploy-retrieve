@@ -48,7 +48,7 @@ export class LwcDeploy extends BaseDeploy {
         );
       }
 
-      // If definition exists in org, assign the matching Id
+      // If resource exists in org, assign the matching Id
       // else, assign the id of the bundle it's associated with
       const lightningResource = {
         FilePath: sourceFile,

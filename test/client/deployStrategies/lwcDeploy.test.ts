@@ -214,7 +214,7 @@ describe('LWC Deploy Strategy', () => {
       .returns(testMetadataField);
     const lwcDeploy = new LwcDeploy(mockConnection);
     lwcDeploy.component = lwcComponent;
-    const bundle = await lwcDeploy.createBundle();
+    const bundle = await lwcDeploy.upsertBundle();
 
     expect(bundle.id).to.equal('1dcxxx000000034');
     expect(bundle.success).to.be.equal(true);
@@ -224,6 +224,34 @@ describe('LWC Deploy Strategy', () => {
       lwcComponent.type.name
     );
     expect(mockToolingCreate.getCall(0).args[1]).to.be.an('object');
+  });
+
+  it('should update lightningcomponentbundle given the id and metadata', async () => {
+    const mockToolingUpdate = sandboxStub.stub(
+      mockConnection.tooling,
+      'update'
+    );
+    mockToolingUpdate.resolves({
+      success: true,
+      id: '1dcxxx000000034',
+      errors: []
+    } as RecordResult);
+
+    sandboxStub
+      .stub(LwcDeploy.prototype, 'buildMetadataField')
+      .returns(testMetadataField);
+    const lwcDeploy = new LwcDeploy(mockConnection);
+    lwcDeploy.component = lwcComponent;
+    const bundle = await lwcDeploy.upsertBundle('1dcxxx000000034');
+
+    expect(bundle.id).to.equal('1dcxxx000000034');
+    expect(bundle.success).to.be.equal(true);
+    // tslint:disable-next-line:no-unused-expression
+    expect(bundle.errors).to.be.an('array').that.is.empty;
+    expect(mockToolingUpdate.getCall(0).args[0]).to.equal(
+      lwcComponent.type.name
+    );
+    expect(mockToolingUpdate.getCall(0).args[1]).to.be.an('object');
   });
 
   it('should throw an error if there is a problem creating the bundle', async () => {
@@ -239,7 +267,7 @@ describe('LWC Deploy Strategy', () => {
     const lwcDeploy = new LwcDeploy(mockConnection);
     lwcDeploy.component = lwcComponent;
     try {
-      await lwcDeploy.createBundle();
+      await lwcDeploy.upsertBundle();
       expect.fail('Should have failed');
     } catch (e) {
       expect(e.message).to.equal(

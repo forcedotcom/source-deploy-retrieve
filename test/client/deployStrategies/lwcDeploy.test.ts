@@ -39,11 +39,13 @@ describe('LWC Deploy Strategy', () => {
 
   const lwcFiles = [
     join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js'),
-    join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.html')
+    join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.html'),
+    join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js-meta.xml')
   ];
   const lwcContents = [
     `import { LightningElement } from 'lwc';export default class TestLwc extends LightningElement {}`,
-    `<template></template>`
+    `<template></template>`,
+    simpleMetaXMLString
   ];
   const lwcComponent = {
     type: {
@@ -67,6 +69,12 @@ describe('LWC Deploy Strategy', () => {
       Format: 'html',
       Source: lwcContents[1],
       LightningComponentBundleId: '1dcxxx000000060'
+    },
+    {
+      FilePath: lwcFiles[2],
+      Format: 'xml',
+      Source: lwcContents[2],
+      LightningComponentBundleId: '1dcxxx000000060'
     }
   ] as LightningComponentResource[];
   const createLwcSuccesses = [
@@ -85,6 +93,21 @@ describe('LWC Deploy Strategy', () => {
       deleted: false,
       fileName: join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.html'),
       fullName: join('mockLwcCmp', 'mockLwcCmp.html'),
+      success: true,
+      componentType: 'LightningComponentBundle'
+    },
+    {
+      changed: false,
+      created: true,
+      deleted: false,
+      fileName: join(
+        'file',
+        'path',
+        'lwc',
+        'mockLwcCmp',
+        'mockLwcCmp.js-meta.xml'
+      ),
+      fullName: join('mockLwcCmp', 'mockLwcCmp.js-meta.xml'),
       success: true,
       componentType: 'LightningComponentBundle'
     }

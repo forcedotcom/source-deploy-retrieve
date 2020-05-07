@@ -29,6 +29,7 @@ export class LwcDeploy extends BaseDeploy {
 
   public async buildResourceList(): Promise<LightningComponentResource[]> {
     const sourceFiles = this.component.sources;
+    sourceFiles.push(this.component.xml);
     const lightningResources: LightningComponentResource[] = [];
 
     const existingResources = await this.findLightningResources();

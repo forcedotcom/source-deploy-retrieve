@@ -6,7 +6,14 @@
  */
 
 import { Connection } from '@salesforce/core';
-import { DeployResult, MetadataComponent } from '../../types';
+import { readFileSync } from 'fs';
+import { sep } from 'path';
+import {
+  DeployResult,
+  MetadataComponent,
+  SourceResult,
+  DeployStatusEnum
+} from '../../types';
 import { ToolingCreateResult } from '../../utils/deploy';
 import { DeployError } from '../../errors';
 
@@ -64,5 +71,112 @@ export abstract class BaseDeploy {
       type,
       record
     )) as ToolingCreateResult;
+  }
+
+  // If bundle already exists then use Id and update existing
+  // else, create a new bundle
+  public async upsertBundle(Id?: string): Promise<ToolingCreateResult> {
+    const metadataContent = readFileSync(this.component.xml, 'utf8');
+    const metadataField = this.buildMetadataField(metadataContent);
+
+    let bundleResult: ToolingCreateResult;
+    if (Id) {
+      const bundleObject = { Id, Metadata: metadataField };
+
+      bundleResult = (await this.connection.tooling.update(
+        this.component.type.name,
+        bundleObject
+      )) as ToolingCreateResult;
+    } else {
+      const bundleObject = {
+        FullName: this.component.fullName,
+        Metadata: metadataField
+      };
+
+      bundleResult = await this.toolingCreate(
+        this.component.type.name,
+        bundleObject
+      );
+    }
+
+    if (!bundleResult.success) {
+      throw new DeployError(
+        'error_creating_metadata_type',
+        this.component.type.name
+      );
+    }
+
+    return bundleResult;
+  }
+
+  protected formatBundleOutput(
+    deployResults: SourceResult[],
+    failure?: boolean
+  ): DeployResult {
+    let toolingDeployResult: DeployResult;
+    if (failure) {
+      toolingDeployResult = {
+        State: DeployStatusEnum.Failed,
+        ErrorMsg: deployResults[0].problem,
+        DeployDetails: {
+          componentSuccesses: [],
+          componentFailures: deployResults
+        },
+        isDeleted: false,
+        metadataFile: this.component.xml
+      };
+    } else {
+      toolingDeployResult = {
+        State: DeployStatusEnum.Completed,
+        DeployDetails: {
+          componentSuccesses: deployResults,
+          componentFailures: []
+        },
+        isDeleted: false,
+        outboundFiles: this.component.sources,
+        ErrorMsg: null,
+        metadataFile: this.component.xml
+      };
+    }
+    return toolingDeployResult;
+  }
+
+  protected createDeployResult(
+    filepath: string,
+    success: boolean,
+    created: boolean,
+    problem?: string
+  ): SourceResult {
+    const formattedPaths = this.getFormattedPaths(filepath);
+    const result = {
+      success,
+      deleted: false,
+      fileName: filepath,
+      fullName: formattedPaths[1],
+      componentType: this.component.type.name
+    } as SourceResult;
+
+    if (success) {
+      result['created'] = created;
+      result['changed'] = !created;
+    } else {
+      result['problem'] = problem;
+      result['changed'] = false;
+      result['created'] = false;
+    }
+    return result;
+  }
+
+  protected getFormattedPaths(filepath: string): string[] {
+    const pathParts = filepath.split(sep);
+
+    const typeFolderIndex = pathParts.findIndex(
+      part => part === this.component.type.directoryName
+    );
+
+    return [
+      pathParts.slice(typeFolderIndex).join(sep),
+      pathParts.slice(typeFolderIndex + 1).join(sep)
+    ];
   }
 }

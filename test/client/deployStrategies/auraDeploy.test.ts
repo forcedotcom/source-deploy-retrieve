@@ -23,6 +23,7 @@ import {
   testAuraList
 } from './auraDeployMocks';
 import { AuraDeploy } from '../../../src/client/deployStrategies';
+import { ToolingCreateResult } from '../../../src/utils/deploy';
 
 const $$ = testSetup();
 
@@ -123,6 +124,12 @@ describe('Aura Deploy Strategy', () => {
     // @ts-ignore
     mockToolingQuery.resolves({ records: matches });
 
+    sandboxStub.stub(AuraDeploy.prototype, 'upsertBundle').resolves({
+      success: true,
+      id: '1dcxxx000000033',
+      errors: []
+    } as ToolingCreateResult);
+
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
     const auraResults = await auraDeploy.buildDefList();
@@ -158,6 +165,11 @@ describe('Aura Deploy Strategy', () => {
     ];
     // @ts-ignore
     mockToolingQuery.resolves({ records: matches });
+    sandboxStub.stub(AuraDeploy.prototype, 'upsertBundle').resolves({
+      success: true,
+      id: '1dcxxx000000033',
+      errors: []
+    } as ToolingCreateResult);
 
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
@@ -181,7 +193,7 @@ describe('Aura Deploy Strategy', () => {
       .returns(testMetadataField);
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
-    const bundle = await auraDeploy.createBundle();
+    const bundle = await auraDeploy.upsertBundle();
 
     expect(bundle.id).to.equal('1dcxxx000000034');
     expect(bundle.success).to.be.equal(true);
@@ -191,6 +203,34 @@ describe('Aura Deploy Strategy', () => {
       auraComponent.type.name
     );
     expect(mockToolingCreate.getCall(0).args[1]).to.be.an('object');
+  });
+
+  it('should create an auradefinitionbundle given the fullname and metadata', async () => {
+    const mockToolingUpdate = sandboxStub.stub(
+      mockConnection.tooling,
+      'update'
+    );
+    mockToolingUpdate.resolves({
+      success: true,
+      id: '1dcxxx000000034',
+      errors: []
+    } as RecordResult);
+
+    sandboxStub
+      .stub(AuraDeploy.prototype, 'buildMetadataField')
+      .returns(testMetadataField);
+    const auraDeploy = new AuraDeploy(mockConnection);
+    auraDeploy.component = auraComponent;
+    const bundle = await auraDeploy.upsertBundle('1dcxxx000000034');
+
+    expect(bundle.id).to.equal('1dcxxx000000034');
+    expect(bundle.success).to.be.equal(true);
+    // tslint:disable-next-line:no-unused-expression
+    expect(bundle.errors).to.be.an('array').that.is.empty;
+    expect(mockToolingUpdate.getCall(0).args[0]).to.equal(
+      auraComponent.type.name
+    );
+    expect(mockToolingUpdate.getCall(0).args[1]).to.be.an('object');
   });
 
   it('should throw an error if there is a problem creating the bundle', async () => {
@@ -206,7 +246,7 @@ describe('Aura Deploy Strategy', () => {
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
     try {
-      await auraDeploy.createBundle();
+      await auraDeploy.upsertBundle();
       expect.fail('Should have failed');
     } catch (e) {
       expect(e.message).to.equal(
@@ -320,7 +360,8 @@ describe('Aura Deploy Strategy', () => {
       },
       isDeleted: false,
       outboundFiles: auraFiles,
-      ErrorMsg: null
+      ErrorMsg: null,
+      metadataFile: auraComponent.xml
     } as DeployResult;
 
     const auraDeploy = new AuraDeploy(mockConnection);
@@ -337,7 +378,7 @@ describe('Aura Deploy Strategy', () => {
     expect(DeployResult.State).to.equal(testDeployResult.State);
   });
 
-  it('should format output for creation only failures correctly', async () => {
+  it('should format output for creation only failures with no specified file location correctly', async () => {
     sandboxStub
       .stub(AuraDeploy.prototype, 'buildDefList')
       .resolves(testAuraList);
@@ -357,18 +398,26 @@ describe('Aura Deploy Strategy', () => {
 
     sandboxStub
       .stub(AuraDeploy.prototype, 'upsert')
-      .throws(new Error('Unexpected error while creating sources'));
+      .throws(new Error('Unexpected error while creating sources: [1,1]'));
 
     const createTestFailures = [
       {
         changed: false,
         created: false,
         deleted: false,
-        fileName: join('aura', 'mockAuraCmp', 'mockAuraCmp.cmp'),
+        fileName: join(
+          'file',
+          'path',
+          'aura',
+          'mockAuraCmp',
+          'mockAuraCmp.cmp'
+        ),
         fullName: join('mockAuraCmp', 'mockAuraCmp.cmp'),
         success: false,
         componentType: 'AuraDefinitionBundle',
-        problem: 'Unexpected error while creating sources'
+        problem: 'Unexpected error while creating sources: [1,1]',
+        columnNumber: 1,
+        lineNumber: 1
       }
     ];
 
@@ -379,7 +428,75 @@ describe('Aura Deploy Strategy', () => {
         componentFailures: createTestFailures
       },
       isDeleted: false,
-      ErrorMsg: createTestFailures[0].problem
+      ErrorMsg: createTestFailures[0].problem,
+      metadataFile: auraComponent.xml
+    } as DeployResult;
+
+    const auraDeploy = new AuraDeploy(mockConnection);
+    const DeployResult = await auraDeploy.deploy(auraComponent);
+
+    expect(DeployResult.DeployDetails.componentFailures).to.deep.equal(
+      testDeployResult.DeployDetails.componentFailures
+    );
+    expect(DeployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
+    expect(DeployResult.isDeleted).to.equal(testDeployResult.isDeleted);
+    expect(DeployResult.State).to.equal(testDeployResult.State);
+  });
+
+  it('should format output for creation only failures with specified file correctly', async () => {
+    sandboxStub
+      .stub(AuraDeploy.prototype, 'buildDefList')
+      .resolves(testAuraList);
+    sandboxStub
+      .stub(mockConnection.tooling, 'query')
+      // @ts-ignore
+      .resolves({ records: [] });
+    const mockToolingCreate = sandboxStub.stub(
+      mockConnection.tooling,
+      'create'
+    );
+    mockToolingCreate.onFirstCall().resolves({
+      success: true,
+      id: '1dcxxx000000034',
+      errors: []
+    } as RecordResult);
+
+    sandboxStub
+      .stub(AuraDeploy.prototype, 'upsert')
+      .throws(
+        new Error('Unexpected error while creating sources in HELPER : [1,1]')
+      );
+
+    const createTestFailures = [
+      {
+        changed: false,
+        created: false,
+        deleted: false,
+        fileName: join(
+          'file',
+          'path',
+          'aura',
+          'mockAuraCmp',
+          'mockAuraCmpHelper.js'
+        ),
+        fullName: join('mockAuraCmp', 'mockAuraCmpHelper.js'),
+        success: false,
+        componentType: 'AuraDefinitionBundle',
+        problem: 'Unexpected error while creating sources in HELPER : [1,1]',
+        columnNumber: 1,
+        lineNumber: 1
+      }
+    ];
+
+    const testDeployResult = {
+      State: DeployStatusEnum.Failed,
+      DeployDetails: {
+        componentSuccesses: [],
+        componentFailures: createTestFailures
+      },
+      isDeleted: false,
+      ErrorMsg: createTestFailures[0].problem,
+      metadataFile: auraComponent.xml
     } as DeployResult;
 
     const auraDeploy = new AuraDeploy(mockConnection);

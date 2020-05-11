@@ -8,7 +8,8 @@ import { Connection } from '@salesforce/core';
 import { BaseDeploy } from './baseDeploy';
 import { ContainerDeploy } from './containerDeploy';
 import { AuraDeploy } from './auraDeploy';
-import { AURA_DEF_BUNDLE } from './constants';
+import { LwcDeploy } from './lwcDeploy';
+import { registryData } from '../../metadata-registry';
 
 export {
   AURA_TYPES,
@@ -17,14 +18,18 @@ export {
 } from './constants';
 export { ContainerDeploy } from './containerDeploy';
 export { AuraDeploy } from './auraDeploy';
+export { LwcDeploy } from './lwcDeploy';
 
 export const getDeployStrategy = (
   type: string,
   connection: Connection
 ): BaseDeploy => {
-  const deployStrategy =
-    type === AURA_DEF_BUNDLE
-      ? new AuraDeploy(connection)
-      : new ContainerDeploy(connection);
-  return deployStrategy;
+  switch (type) {
+    case registryData.types.auradefinitionbundle.name:
+      return new AuraDeploy(connection);
+    case registryData.types.lightningcomponentbundle.name:
+      return new LwcDeploy(connection);
+    default:
+      return new ContainerDeploy(connection);
+  }
 };

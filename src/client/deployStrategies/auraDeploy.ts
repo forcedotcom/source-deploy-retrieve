@@ -5,16 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { readFileSync } from 'fs';
-import { sep } from 'path';
-import { DeployError } from '../../errors';
-import { AuraDefinition, ToolingCreateResult } from '../../utils/deploy';
+import { AuraDefinition } from '../../utils/deploy';
 import { extName, baseName } from '../../utils';
-import {
-  MetadataComponent,
-  DeployResult,
-  SourceResult,
-  DeployStatusEnum
-} from '../../types';
+import { MetadataComponent, DeployResult, SourceResult } from '../../types';
 import { deployTypes } from '../toolingApi';
 import { BaseDeploy } from './baseDeploy';
 import { AURA_TYPES } from './index';
@@ -30,12 +23,7 @@ export class AuraDeploy extends BaseDeploy {
       return this.formatBundleOutput(results);
     } catch (e) {
       const failures = [
-        this.createDeployResult(
-          auraDefinitions[0].FilePath,
-          false,
-          false,
-          e.message
-        )
+        this.parseAuraError(e.message, auraDefinitions[0].FilePath)
       ];
       return this.formatBundleOutput(failures, true);
     }
@@ -45,14 +33,11 @@ export class AuraDeploy extends BaseDeploy {
     const sourceFiles = this.component.sources;
     const auraDefinitions: AuraDefinition[] = [];
 
-    const existingDefinitions = await this.findExistingDefinitions();
-    let bundleId: string;
-    if (existingDefinitions.length > 0) {
-      bundleId = existingDefinitions[0].AuraDefinitionBundleId;
-    } else {
-      const newBundle = await this.createBundle();
-      bundleId = newBundle.id;
-    }
+    const existingDefinitions = await this.findAuraDefinitions();
+    const auraBundle = existingDefinitions[0]
+      ? await this.upsertBundle(existingDefinitions[0].AuraDefinitionBundleId)
+      : await this.upsertBundle();
+    const bundleId = auraBundle.id;
 
     sourceFiles.forEach(async sourceFile => {
       const source = readFileSync(sourceFile, 'utf8');
@@ -67,6 +52,8 @@ export class AuraDeploy extends BaseDeploy {
         );
       }
 
+      // If definition exists in org, assign the matching Id
+      // else, assign the id of the bundle it's associated with
       const auraDef = {
         FilePath: sourceFile,
         DefType: defType,
@@ -83,29 +70,6 @@ export class AuraDeploy extends BaseDeploy {
     });
 
     return auraDefinitions;
-  }
-
-  public async createBundle(): Promise<ToolingCreateResult> {
-    const metadataContent = readFileSync(this.component.xml, 'utf8');
-    const metadataField = this.buildMetadataField(metadataContent);
-    const bundleObject = {
-      FullName: this.component.fullName,
-      Metadata: metadataField
-    };
-
-    const newBundle = await this.toolingCreate(
-      this.component.type.name,
-      bundleObject
-    );
-
-    if (!newBundle.success) {
-      throw new DeployError(
-        'error_creating_metadata_type',
-        this.component.type.name
-      );
-    }
-
-    return newBundle;
   }
 
   public async upsert(auraDef: AuraDefinition): Promise<SourceResult> {
@@ -130,38 +94,6 @@ export class AuraDeploy extends BaseDeploy {
       await this.toolingCreate(deployTypes.get(type), formattedDef);
       return this.createDeployResult(auraDef.FilePath, true, true);
     }
-  }
-
-  public formatBundleOutput(
-    deployResults: SourceResult[],
-    failure?: boolean
-  ): DeployResult {
-    let toolingDeployResult: DeployResult;
-    if (failure) {
-      toolingDeployResult = {
-        State: DeployStatusEnum.Failed,
-        ErrorMsg: deployResults[0].problem,
-        DeployDetails: {
-          componentSuccesses: [],
-          componentFailures: deployResults
-        },
-        isDeleted: false,
-        metadataFile: this.component.xml
-      };
-    } else {
-      toolingDeployResult = {
-        State: DeployStatusEnum.Completed,
-        DeployDetails: {
-          componentSuccesses: deployResults,
-          componentFailures: []
-        },
-        isDeleted: false,
-        outboundFiles: this.component.sources,
-        ErrorMsg: null,
-        metadataFile: this.component.xml
-      };
-    }
-    return toolingDeployResult;
   }
 
   private getAuraFormat(suffix: string): string {
@@ -212,7 +144,7 @@ export class AuraDeploy extends BaseDeploy {
     }
   }
 
-  private async findExistingDefinitions(): Promise<AuraDefinition[]> {
+  private async findAuraDefinitions(): Promise<AuraDefinition[]> {
     const auraDefResult = await this.connection.tooling.query(
       `Select AuraDefinitionBundleId, Id, Format, Source, DefType from AuraDefinition where AuraDefinitionBundle.DeveloperName = '${
         this.component.fullName
@@ -221,42 +153,61 @@ export class AuraDeploy extends BaseDeploy {
     return auraDefResult.records as AuraDefinition[];
   }
 
-  private createDeployResult(
-    filepath: string,
-    success: boolean,
-    created: boolean,
-    problem?: string
-  ): SourceResult {
-    const formattedPaths = this.getFormattedPaths(filepath);
-    const result = {
-      success,
-      deleted: false,
-      fileName: formattedPaths[0],
-      fullName: formattedPaths[1],
-      componentType: this.component.type.name
-    } as SourceResult;
+  private parseAuraError(error: string, defaultPath: string): SourceResult {
+    try {
+      const errLocation = error.slice(
+        error.lastIndexOf('[') + 1,
+        error.lastIndexOf(']')
+      );
 
-    if (success) {
-      result['created'] = created;
-      result['changed'] = !created;
-    } else {
-      result['problem'] = problem;
-      result['changed'] = false;
-      result['created'] = false;
+      const errorParts = error.split(' ');
+      const fileType = errorParts.find(part => {
+        part = part.toLowerCase();
+        return (
+          part.includes('controller') ||
+          part.includes('renderer') ||
+          part.includes('helper')
+        );
+      });
+      let fileName: string;
+      if (fileType) {
+        fileName = this.component.sources.find(s =>
+          s.toLowerCase().includes(fileType.toLowerCase())
+        );
+      } else {
+        fileName = defaultPath;
+      }
+
+      const errObj = {
+        ...(errLocation
+          ? { lineNumber: Number(errLocation.split(',')[0]) }
+          : {}),
+        ...(errLocation
+          ? { columnNumber: Number(errLocation.split(',')[1]) }
+          : {}),
+        problem: error,
+        fileName: fileName,
+        fullName: this.getFormattedPaths(fileName)[1],
+        componentType: this.component.type.name,
+        success: false,
+        changed: false,
+        created: false,
+        deleted: false
+      } as SourceResult;
+      return errObj;
+    } catch (e) {
+      // log error with parsing error message
+      const errObj = {
+        problem: error,
+        fileName: defaultPath,
+        fullName: this.getFormattedPaths(defaultPath)[1],
+        componentType: this.component.type.name,
+        success: false,
+        changed: false,
+        created: false,
+        deleted: false
+      } as SourceResult;
+      return errObj;
     }
-    return result;
-  }
-
-  private getFormattedPaths(filepath: string): string[] {
-    const pathParts = filepath.split(sep);
-
-    const typeFolderIndex = pathParts.findIndex(
-      part => part === this.component.type.directoryName
-    );
-
-    return [
-      pathParts.slice(typeFolderIndex).join(sep),
-      pathParts.slice(typeFolderIndex + 1).join(sep)
-    ];
   }
 }

@@ -11,10 +11,10 @@ import { createFiles } from '../utils';
 import { RegistryError } from '../errors';
 
 export class ManifestGenerator {
-  xmlDef = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+  xmlDef = '<?xml version="1.0" encoding="UTF-8"?>\n';
   packageModuleStart =
     '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
-  packageModuleEnd = '</Package>\n';
+  packageModuleEnd = '</Package>';
   registryAccess = new RegistryAccess();
 
   public createManifestFromPath(sourcePath: string, outputPath: string): void {
@@ -39,15 +39,15 @@ export class ManifestGenerator {
     let output = this.xmlDef.concat(this.packageModuleStart);
     const metadataMap = this.createMetadataMap(components);
     for (const metadataType of metadataMap.keys()) {
-      output = output.concat('\t<types>\n');
+      output = output.concat('  <types>\n');
+      output = output.concat(`    <name>${metadataType}</name>\n`);
       for (const metadataName of metadataMap.get(metadataType)) {
-        output = output.concat(`\t\t<members>${metadataName}</members>\n`);
+        output = output.concat(`    <members>${metadataName}</members>\n`);
       }
-      output = output.concat(`\t\t<name>${metadataType}</name>\n`);
-      output = output.concat('\t</types>\n');
+      output = output.concat('  </types>\n');
     }
     output = output.concat(
-      `\t<version>${apiVersion}</version>\n`,
+      `  <version>${apiVersion}</version>\n`,
       this.packageModuleEnd
     );
     return output;

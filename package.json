@@ -25,7 +25,7 @@
     "lib"
   ],
   "engines": {
-    "node": ">=10.5.0"
+    "node": ">=10.17.0"
   },
   "dependencies": {
     "@salesforce/core": "2.4.1",

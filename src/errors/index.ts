@@ -55,3 +55,9 @@ export class DeployError extends SourceClientError {
     super(messageKey, args);
   }
 }
+
+export class ConversionError extends LibraryError {
+  constructor(type: 'toSource' | 'toApi') {
+    super('error_failed_convert', type);
+  }
+}

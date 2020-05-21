@@ -1,5 +1,5 @@
 import { MetadataComponent } from '../../types';
-import { WriterFormat } from '../defaultWriter';
+import { WriterFormat } from '../streams';
 
 export interface MetadataTransformer {
   toApiFormat(component: MetadataComponent): WriterFormat;

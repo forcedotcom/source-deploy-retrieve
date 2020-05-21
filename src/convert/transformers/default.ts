@@ -1,6 +1,6 @@
 import { MetadataTransformer } from '.';
 import { MetadataComponent } from '../../types';
-import { WriterFormat } from '../defaultWriter';
+import { WriterFormat } from '../streams';
 import { META_XML_SUFFIX } from '../../utils';
 import { createReadStream } from 'fs';
 import { sep } from 'path';
@@ -8,10 +8,9 @@ import { sep } from 'path';
 /**
  * The default metadata transformer.
  *
- * If a metadata type doesn't have a transformer assigned to it, this transformer
- * is used during the conversion process. It leaves the component's metadata xml and
- * source files as-is. Other transformers should extend this one and override the
- * `toApiFormat` and `toSourceFormat` methods.
+ * If a metadata type doesn't have a transformer assigned to it, this one is used
+ * during the conversion process. It leaves the component's metadata xml and source
+ * files as-is.
  */
 export class DefaultTransformer implements MetadataTransformer {
   public toApiFormat(component: MetadataComponent): WriterFormat {
@@ -25,7 +24,7 @@ export class DefaultTransformer implements MetadataTransformer {
       source: createReadStream(component.xml),
       relativeDestination: xmlDest
     });
-    // variable, can this be improved?
+    // can this be improved?
     for (const source of component.sources) {
       result.writeInfos.push({
         source: createReadStream(source),

@@ -4,13 +4,11 @@ import { writeFile as cbWriteFile } from 'fs';
 import { join } from 'path';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
 import { promisify } from 'util';
-import { ComponentConverter } from './componentConverter';
-import { DefaultWriter } from './defaultWriter';
 import { pipeline as cbPipeline } from 'stream';
-import { ComponentReader } from './componentReader';
+import { ComponentReader, ComponentConverter, DefaultWriter } from './streams';
 
-const pipeline = promisify(cbPipeline);
 const writeFile = promisify(cbWriteFile);
+export const pipeline = promisify(cbPipeline);
 
 export async function convertSource(
   sourceFormat: MetadataComponent[],

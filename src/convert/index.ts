@@ -4,7 +4,7 @@ import { writeFile as cbWriteFile } from 'fs';
 import { join } from 'path';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
 import { promisify } from 'util';
-import { DefaultTransformer } from './defaultTransformer';
+import { ComponentConverter } from './componentConverter';
 import { DefaultWriter } from './defaultWriter';
 import { pipeline as cbPipeline } from 'stream';
 import { ComponentReader } from './componentReader';
@@ -26,7 +26,7 @@ export async function convertSource(
   const writeManifest = writeFile(manifestPath, manifestGenerator.createManifest(sourceFormat));
   const conversionPipeline = pipeline(
     new ComponentReader(sourceFormat),
-    new DefaultTransformer('toApi'),
+    new ComponentConverter('toApi'),
     new DefaultWriter(output)
   );
   await Promise.all([conversionPipeline, writeManifest]);

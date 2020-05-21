@@ -1,9 +1,9 @@
-import { Transform } from 'stream';
-import { MetadataComponent, ConversionType } from '../types';
-import { sep } from 'path';
-import { META_XML_SUFFIX } from '../utils';
+import { MetadataTransformer } from '.';
+import { MetadataComponent } from '../../types';
+import { WriterFormat } from '../defaultWriter';
+import { META_XML_SUFFIX } from '../../utils';
 import { createReadStream } from 'fs';
-import { WriterFormat } from './defaultWriter';
+import { sep } from 'path';
 
 /**
  * The default metadata transformer.
@@ -13,40 +13,8 @@ import { WriterFormat } from './defaultWriter';
  * source files as-is. Other transformers should extend this one and override the
  * `toApiFormat` and `toSourceFormat` methods.
  */
-export class DefaultTransformer extends Transform {
-  private conversionType: ConversionType;
-
-  constructor(conversionType: ConversionType) {
-    super({ objectMode: true });
-    this.conversionType = conversionType;
-  }
-
-  _transform(
-    chunk: MetadataComponent,
-    encoding: string,
-    callback: (err: Error, data: WriterFormat) => void
-  ): void {
-    let result: WriterFormat;
-    let err: Error;
-    try {
-      switch (this.conversionType) {
-        case 'toApi':
-          result = this.toApiFormat(chunk);
-          break;
-        case 'toSource':
-          result = this.toSourceFormat(chunk);
-          break;
-        default:
-          // TODO: Improve error
-          throw new Error('unsupported conversion type');
-      }
-    } catch (e) {
-      err = e;
-    }
-    callback(err, result);
-  }
-
-  protected toApiFormat(component: MetadataComponent): WriterFormat {
+export class DefaultTransformer implements MetadataTransformer {
+  public toApiFormat(component: MetadataComponent): WriterFormat {
     const result: WriterFormat = { component, writeInfos: [] };
     const { directoryName } = component.type;
     let xmlDest = this.trimUntil(component.xml, directoryName);
@@ -67,7 +35,7 @@ export class DefaultTransformer extends Transform {
     return result;
   }
 
-  protected toSourceFormat(component: MetadataComponent): WriterFormat {
+  public toSourceFormat(component: MetadataComponent): WriterFormat {
     // TODO: Improve error
     throw new Error('Source format conversion not yet supported');
   }

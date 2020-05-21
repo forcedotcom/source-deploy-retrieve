@@ -1,4 +1,4 @@
-import { MetadataComponent, ConvertSourceOptions, ConversionResult } from '../types';
+import { MetadataComponent, ConvertSourceOptions } from '../types';
 import { ManifestGenerator } from '../metadata-registry';
 import { writeFile as cbWriteFile } from 'fs';
 import { join } from 'path';
@@ -13,7 +13,7 @@ export const pipeline = promisify(cbPipeline);
 export async function convertSource(
   sourceFormat: MetadataComponent[],
   options: ConvertSourceOptions
-): Promise<ConversionResult> {
+): Promise<[void, void]> {
   const { output } = options;
   const manifestGenerator = new ManifestGenerator();
   const manifestPath = join(output, 'package.xml');
@@ -27,12 +27,5 @@ export async function convertSource(
     new ComponentConverter('toApi'),
     new DefaultWriter(output)
   );
-  await Promise.all([conversionPipeline, writeManifest]);
-
-  return {
-    // TODO: these components should be in the new metadata format
-    components: sourceFormat,
-    type: 'toApi',
-    manifest: manifestPath
-  };
+  return Promise.all([conversionPipeline, writeManifest]);
 }

@@ -1,15 +1,4 @@
-import { MetadataComponent, SourcePath } from './common';
-
-export type ConversionType = 'toApi' | 'toSource';
-
-export type ConversionResult = {
-  components: MetadataComponent[];
-  type: ConversionType;
-  /**
-   * Path to the generated package xml manifest
-   */
-  manifest?: SourcePath;
-};
+import { SourcePath } from './common';
 
 export type ConvertSourceOptions = {
   /**

@@ -1,4 +1,4 @@
-const { convertSource, RegistryAccess } = require('../lib');
+const { convertSource, RegistryAccess, MetadataConvert } = require('../lib');
 const { existsSync, rmdirSync } = require('fs');
 
 async function time(f) {
@@ -21,6 +21,16 @@ async function test(forceApp) {
     components = registry.getComponentsFromPath(forceApp);
   });
   const convertTime = await time(async () => {
+    // const convert = new MetadataConvert();
+    let progress = 0;
+    // convert.on('converted', () => {
+    //   progress += 1;
+    //   percent = Math.round((progress / components.length) * 100);
+    //   shell.exec(`printf "\\rConversion Progress: ${percent}"`, {
+    //     async: true
+    //   });
+    // });
+    // await convert.convertSource(components, { output: destination });
     return convertSource(components, { output: destination });
   });
   console.log(`Resolving Components: ${resolveTime} ms`);

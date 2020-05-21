@@ -23,4 +23,4 @@ export {
 
 export { MetadataType, MetadataComponent, SourcePath } from './common';
 export { MetadataRegistry, MetadataXml } from './registry';
-export { ConversionResult, ConversionType, ConvertSourceOptions } from './conversion';
+export { ConvertSourceOptions } from './conversion';

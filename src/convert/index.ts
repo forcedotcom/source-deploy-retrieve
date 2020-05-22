@@ -16,12 +16,13 @@ export async function convertSource(
 ): Promise<[void, void]> {
   const { output } = options;
   const manifestGenerator = new ManifestGenerator();
-  const manifestPath = join(output, 'package.xml');
   ensureDirectoryExists(output);
 
-  // adopt builder pattern for manifest creation so that we don't have to
-  // iterate twice for large collections
-  const writeManifest = writeFile(manifestPath, manifestGenerator.createManifest(sourceFormat));
+  // TODO: evaluate if a builder pattern for manifest creation is more effecient here
+  const writeManifest = writeFile(
+    join(output, 'package.xml'),
+    manifestGenerator.createManifest(sourceFormat)
+  );
   const conversionPipeline = pipeline(
     new ComponentReader(sourceFormat),
     new ComponentConverter('toApi'),

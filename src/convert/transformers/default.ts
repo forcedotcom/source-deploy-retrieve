@@ -4,6 +4,7 @@ import { WriterFormat } from '../streams';
 import { META_XML_SUFFIX } from '../../utils';
 import { createReadStream } from 'fs';
 import { sep } from 'path';
+import { LibraryError } from '../../errors';
 
 /**
  * The default metadata transformer.
@@ -24,7 +25,6 @@ export class DefaultTransformer implements MetadataTransformer {
       source: createReadStream(component.xml),
       relativeDestination: xmlDest
     });
-    // can this be improved?
     for (const source of component.sources) {
       result.writeInfos.push({
         source: createReadStream(source),
@@ -35,8 +35,7 @@ export class DefaultTransformer implements MetadataTransformer {
   }
 
   public toSourceFormat(component: MetadataComponent): WriterFormat {
-    // TODO: Improve error
-    throw new Error('Source format conversion not yet supported');
+    throw new LibraryError('error_convert_not_implemented', ['source', component.type.name]);
   }
 
   protected trimUntil(path: string, name: string): string {

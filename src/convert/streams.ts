@@ -5,6 +5,7 @@ import { join } from 'path';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { createWriteStream } from 'fs';
 import { pipeline } from '.';
+import { ConversionError, LibraryError } from '../errors';
 
 type ConversionType = 'toApi' | 'toSource';
 type WriteInfo = { relativeDestination: SourcePath; source: NodeJS.ReadableStream };
@@ -19,7 +20,7 @@ export class ComponentReader extends Readable {
     this.components = components;
   }
 
-  _read(size: number): void {
+  _read(): void {
     if (this.i < this.components.length - 1) {
       const c = this.components[this.i];
       this.i += 1;
@@ -55,11 +56,10 @@ export class ComponentConverter extends Transform {
           result = transformer.toSourceFormat(chunk);
           break;
         default:
-          // TODO: Improve error
-          throw new Error('unsupported conversion type');
+          throw new LibraryError('error_convert_invalid_format', this.conversionType);
       }
     } catch (e) {
-      err = e;
+      err = new ConversionError(e);
     }
     callback(err, result);
   }
@@ -78,20 +78,19 @@ export class DefaultWriter extends Writable {
     encoding: string,
     callback: (err?: Error) => void
   ): Promise<void> {
-    const writeTasks = [];
     let err: Error;
     try {
-      for (const info of chunk.writeInfos) {
+      const writeTasks = chunk.writeInfos.map((info: WriteInfo) => {
         const fullDest = join(this.rootDestination, info.relativeDestination);
         ensureFileExists(fullDest);
-        writeTasks.push(pipeline(info.source, createWriteStream(fullDest)));
-      }
-      // the write of a component isn't considered finished until all the sub jobs are done,
-      // so wait here until they are. otherwise the macrotask may report the conversion as done
-      // before all the file writes are finished in the microtask queue.
+        return pipeline(info.source, createWriteStream(fullDest));
+      });
+      // it is a reasonable expectation that when a conversion call exits, the files of
+      // every component has been written to the destination. This await ensures the microtask
+      // queue is empty when that call exits.
       await Promise.all(writeTasks);
     } catch (e) {
-      err = e;
+      err = new ConversionError(e);
     }
     callback(err);
   }

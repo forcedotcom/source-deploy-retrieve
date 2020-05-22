@@ -57,7 +57,8 @@ export class DeployError extends SourceClientError {
 }
 
 export class ConversionError extends LibraryError {
-  constructor(type: 'toSource' | 'toApi') {
-    super('error_failed_convert', type);
+  constructor(originalError: Error) {
+    super('error_failed_convert', originalError.message);
+    this.stack = originalError.stack;
   }
 }

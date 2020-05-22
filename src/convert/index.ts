@@ -18,7 +18,7 @@ export async function convertSource(
   const manifestGenerator = new ManifestGenerator();
   ensureDirectoryExists(output);
 
-  // TODO: evaluate if a builder pattern for manifest creation is more effecient here
+  // TODO: evaluate if a builder pattern for manifest creation is more efficient here
   const writeManifest = writeFile(
     join(output, 'package.xml'),
     manifestGenerator.createManifest(sourceFormat)

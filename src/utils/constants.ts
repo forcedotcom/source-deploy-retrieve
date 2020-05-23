@@ -5,5 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-export const META_XML_SUFFIX = '-meta.xml';
 export const FORCE_IGNORE_FILE = '.forceignore';
+export const META_XML_SUFFIX = '-meta.xml';
+export const PACKAGE_XML_FILE = 'package.xml';

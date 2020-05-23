@@ -6,6 +6,7 @@ import { ensureDirectoryExists } from '../utils/fileSystemHandler';
 import { promisify } from 'util';
 import { pipeline as cbPipeline } from 'stream';
 import { ComponentReader, ComponentConverter, DefaultWriter } from './streams';
+import { PACKAGE_XML_FILE } from '../utils/constants';
 
 const writeFile = promisify(cbWriteFile);
 export const pipeline = promisify(cbPipeline);
@@ -20,7 +21,7 @@ export async function convertSource(
 
   // TODO: evaluate if a builder pattern for manifest creation is more efficient here
   const writeManifest = writeFile(
-    join(output, 'package.xml'),
+    join(output, PACKAGE_XML_FILE),
     manifestGenerator.createManifest(sourceFormat)
   );
   const conversionPipeline = pipeline(

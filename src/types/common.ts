@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { TypeIndex, SuffixIndex } from './registry';
+
 /**
  * File system path to a source file of a metadata component.
  */
@@ -21,7 +23,7 @@ export type MetadataType = {
    *
    * __Examples:__ Reports, Dashboards, Documents, EmailTemplates
    */
-  inFolder: boolean;
+  inFolder?: boolean;
   /**
    * File suffix
    *
@@ -34,8 +36,12 @@ export type MetadataType = {
    * Names of the subtypes if the type has any.
    */
   childXmlNames?: string[];
-};
 
+  children?: {
+    types: TypeIndex;
+    suffixes: SuffixIndex;
+  };
+};
 /**
  * Source information about a single metadata component.
  */
@@ -50,4 +56,6 @@ export type MetadataComponent = {
    * Paths to additional source files, if any.
    */
   sources: SourcePath[];
+
+  children?: MetadataComponent[];
 };

@@ -158,6 +158,30 @@
       "name": "CustomObject",
       "suffix": "object",
       "directoryName": "objects",
+      "children": {
+        "types": {
+          "compactlayout": {
+            "name": "CompactLayout",
+            "directoryName": "compactLayouts",
+            "suffix": "compactLayout"
+          },
+          "customfield": {
+            "name": "CustomField",
+            "directoryName": "fields",
+            "suffix": "field"
+          },
+          "listview": {
+            "name": "ListView",
+            "directoryName": "listViews",
+            "suffix": "listView"
+          }
+        },
+        "suffixes": {
+          "compactLayout": "compactlayout",
+          "field": "customfield",
+          "listView": "listview"
+        }
+      },
       "childXmlNames": [
         "CustomField",
         "Index",
@@ -1299,7 +1323,7 @@
     "auradefinitionbundle": "bundle",
     "certificate": "matchingContentFile",
     "contentasset": "matchingContentFile",
-    "customobject": "bundle",
+    "customobject": "decomposed",
     "document": "mixedContent",
     "emailtemplate": "matchingContentFile",
     "experiencebundle": "mixedContent",

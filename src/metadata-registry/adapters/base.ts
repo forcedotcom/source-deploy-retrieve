@@ -95,7 +95,8 @@ export class BaseSourceAdapter implements SourceAdapter {
       fullName: parsedMetaXml.fullName,
       type: this.type,
       xml: metaXmlPath,
-      sources: this.getSourcePaths(fsPath, isMetaXml)
+      sources: this.getSourcePaths(fsPath, isMetaXml),
+      children: this.getChildren(metaXmlPath)
     };
 
     if (this.type.inFolder) {
@@ -129,5 +130,9 @@ export class BaseSourceAdapter implements SourceAdapter {
     isMetaXml: boolean // eslint-disable-line @typescript-eslint/no-unused-vars
   ): SourcePath[] {
     return [];
+  }
+
+  protected getChildren(xmlPath: SourcePath): MetadataComponent[] | undefined {
+    return undefined;
   }
 }

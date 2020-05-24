@@ -5,7 +5,7 @@ import { join } from 'path';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
 import { promisify } from 'util';
 import { pipeline as cbPipeline } from 'stream';
-import { ComponentReader, ComponentConverter, DefaultWriter } from './streams';
+import { ComponentReader, ComponentConverter, StandardWriter } from './streams';
 import { PACKAGE_XML_FILE } from '../utils/constants';
 
 const writeFile = promisify(cbWriteFile);
@@ -27,7 +27,7 @@ export async function convertSource(
   const conversionPipeline = pipeline(
     new ComponentReader(sourceFormat),
     new ComponentConverter('toApi'),
-    new DefaultWriter(output)
+    new StandardWriter(output)
   );
   return Promise.all([conversionPipeline, writeManifest]);
 }

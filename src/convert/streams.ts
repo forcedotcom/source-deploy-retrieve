@@ -65,7 +65,7 @@ export class ComponentConverter extends Transform {
   }
 }
 
-export class DefaultWriter extends Writable {
+export class StandardWriter extends Writable {
   private rootDestination: SourcePath;
 
   constructor(rootDestination: SourcePath) {

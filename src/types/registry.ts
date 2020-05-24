@@ -12,7 +12,7 @@ import { MetadataType } from './common';
  */
 export type TypeIndex = { [typeId: string]: MetadataType };
 /**
- * Index mapping file suffixes to type ids.
+ * Mapping of metadata suffixes -> type ids.
  */
 export type SuffixIndex = { [suffix: string]: string };
 
@@ -40,6 +40,9 @@ export type MetadataRegistry = {
   apiVersion: string;
 };
 
+/**
+ * Properties of a metadata xml's file name
+ */
 export type MetadataXml = {
   fullName: string;
   suffix: string;

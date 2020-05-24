@@ -34,14 +34,21 @@ export type MetadataType = {
   suffix?: string;
   /**
    * Names of the subtypes if the type has any.
+   *
+   * // TODO: Remove
    */
   childXmlNames?: string[];
-
+  /**
+   * Type definitions for child types, if the type has any.
+   *
+   * __Examples:__ `CustomField` and `CompactLayout` on `CustomObject`
+   */
   children?: {
     types: TypeIndex;
     suffixes: SuffixIndex;
   };
 };
+
 /**
  * Source information about a single metadata component.
  */
@@ -54,8 +61,8 @@ export type MetadataComponent = {
   xml: SourcePath;
   /**
    * Paths to additional source files, if any.
+   * // TODO: Mark optional like children
    */
   sources: SourcePath[];
-
   children?: MetadataComponent[];
 };

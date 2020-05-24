@@ -37,6 +37,7 @@ export class Decomposed extends MixedContent {
       } else {
         const childXml = parseMetadataXml(fileName);
         if (childXml && childXml.suffix !== this.type.suffix) {
+          // TODO: Warn if missing child type definition
           const childTypeId = this.type.children.suffixes[childXml.suffix];
           children.push({
             fullName: baseName(fileName),

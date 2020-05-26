@@ -40,12 +40,13 @@ export class LwcDeploy extends BaseDeploy {
 
     sourceFiles.forEach(async sourceFile => {
       const source = readFileSync(sourceFile, 'utf8');
-      const format = extName(sourceFile);
+      const isMetaSource = sourceFile === this.component.xml;
+      const format = isMetaSource ? 'js' : extName(sourceFile);
 
       let match: LightningComponentResource;
       if (existingResources.length > 0) {
         match = existingResources.find(resource =>
-          sourceFile.includes(resource.FilePath)
+          sourceFile.endsWith(resource.FilePath)
         );
       }
 
@@ -60,7 +61,7 @@ export class LwcDeploy extends BaseDeploy {
 
       // This is to ensure that the base file is deployed first for lwc
       // otherwise there is a `no base file found` error
-      lightningResource.Format === 'js'
+      lightningResource.Format === 'js' && !isMetaSource
         ? lightningResources.unshift(lightningResource)
         : lightningResources.push(lightningResource);
     });

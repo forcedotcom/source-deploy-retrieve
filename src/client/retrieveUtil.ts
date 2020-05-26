@@ -10,7 +10,10 @@ import { QueryResult, MetadataComponent } from '../types';
 import { generateMetaXML, generateMetaXMLPath, trimMetaXmlSuffix } from '../utils';
 import { ApexRecord, AuraRecord, LWCRecord, VFRecord } from '../types/query';
 
-export function buildQuery(mdComponent: MetadataComponent): string {
+export function buildQuery(
+  mdComponent: MetadataComponent,
+  namespace: string = ''
+): string {
   let queryString = '';
   const typeName = mdComponent.type.name;
   const fullName = mdComponent.fullName;
@@ -18,21 +21,21 @@ export function buildQuery(mdComponent: MetadataComponent): string {
   switch (typeName) {
     case 'ApexClass':
     case 'ApexTrigger':
-      queryString = `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ${typeName} where Name = '${fullName}'`;
+      queryString = `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ${typeName} where Name = '${fullName}' and NamespacePrefix = '${namespace}'`;
       break;
     case 'ApexComponent':
     case 'ApexPage':
-      queryString = `Select Id, ApiVersion, Name, NamespacePrefix, Markup from ${typeName} where Name = '${fullName}'`;
+      queryString = `Select Id, ApiVersion, Name, NamespacePrefix, Markup from ${typeName} where Name = '${fullName}' and NamespacePrefix = '${namespace}'`;
       break;
     case 'AuraDefinitionBundle':
       queryString =
         'Select Id, AuraDefinitionBundle.ApiVersion, AuraDefinitionBundle.DeveloperName, ';
-      queryString += `AuraDefinitionBundle.NamespacePrefix, DefType, Source from AuraDefinition where AuraDefinitionBundle.DeveloperName = '${fullName}'`;
+      queryString += `AuraDefinitionBundle.NamespacePrefix, DefType, Source from AuraDefinition where AuraDefinitionBundle.DeveloperName = '${fullName}' and AuraDefinitionBundle.NamespacePrefix = '${namespace}'`;
       break;
     case 'LightningComponentBundle':
       queryString =
         'Select Id, LightningComponentBundle.DeveloperName, LightningComponentBundle.NamespacePrefix, FilePath, Source from LightningComponentResource ';
-      queryString += `where LightningComponentBundle.DeveloperName = '${fullName}'`;
+      queryString += `where LightningComponentBundle.DeveloperName = '${fullName}' and AuraDefinitionBundle.NamespacePrefix = '${namespace}'`;
       break;
     default:
       queryString = '';

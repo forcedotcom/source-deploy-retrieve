@@ -114,7 +114,40 @@ describe('Tooling Retrieve', () => {
     expect(retrieveResults.success).to.equal(true);
     expect(
       toolingQueryStub.calledOnceWith(
-        `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'myTestClass'`
+        `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'myTestClass' and NamespacePrefix = ''`
+      )
+    ).to.equal(true);
+  });
+
+  it('should generate correct query to retrieve an ApexClass using namespace', async () => {
+    sandboxStub
+      .stub(registryAccess, 'getComponentsFromPath')
+      .returns(mdComponents);
+    const toolingQueryStub = sandboxStub.stub(mockConnection.tooling, 'query');
+    // @ts-ignore
+    toolingQueryStub.returns(apexClassQueryResult);
+
+    const stubCreateMetadataFile = sandboxStub.stub(fs, 'createWriteStream');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    stubCreateMetadataFile.onCall(0).returns(new stream.PassThrough() as any);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    stubCreateMetadataFile.onCall(1).returns(new stream.PassThrough() as any);
+
+    const toolingAPI = new ToolingApi(mockConnection, registryAccess);
+    const retrieveOpts = {
+      paths: [path.join('file', 'path', 'myTestClass.cls')],
+      namespace: 'tstr',
+      output: path.join('file', 'path')
+    };
+    const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(
+      retrieveOpts
+    );
+
+    expect(retrieveResults).to.be.a('object');
+    expect(retrieveResults.success).to.equal(true);
+    expect(
+      toolingQueryStub.calledOnceWith(
+        `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'myTestClass' and NamespacePrefix = 'tstr'`
       )
     ).to.equal(true);
   });

@@ -1,5 +1,5 @@
 import { Readable, Transform, Writable } from 'stream';
-import { MetadataComponent, SourcePath } from '../types';
+import { MetadataComponent, SourcePath, SfdxFileFormat } from '../types';
 import { DefaultTransformer } from './transformers/default';
 import { join } from 'path';
 import { ensureFileExists } from '../utils/fileSystemHandler';
@@ -7,13 +7,12 @@ import { createWriteStream } from 'fs';
 import { pipeline } from '.';
 import { ConversionError, LibraryError } from '../errors';
 
-type ConversionType = 'toApi' | 'toSource';
 type WriteInfo = { relativeDestination: SourcePath; source: NodeJS.ReadableStream };
 export type WriterFormat = { component: MetadataComponent; writeInfos: WriteInfo[] };
 
 export class ComponentReader extends Readable {
+  private currentIndex = 0;
   private components: MetadataComponent[];
-  private i = 0;
 
   constructor(components: MetadataComponent[]) {
     super({ objectMode: true });
@@ -21,9 +20,9 @@ export class ComponentReader extends Readable {
   }
 
   _read(): void {
-    if (this.i < this.components.length - 1) {
-      const c = this.components[this.i];
-      this.i += 1;
+    if (this.currentIndex < this.components.length - 1) {
+      const c = this.components[this.currentIndex];
+      this.currentIndex += 1;
       this.push(c);
     } else {
       this.push(null);
@@ -32,11 +31,11 @@ export class ComponentReader extends Readable {
 }
 
 export class ComponentConverter extends Transform {
-  private conversionType: ConversionType;
+  private targetFormat: SfdxFileFormat;
 
-  constructor(conversionType: ConversionType) {
+  constructor(targetFormat: SfdxFileFormat) {
     super({ objectMode: true });
-    this.conversionType = conversionType;
+    this.targetFormat = targetFormat;
   }
 
   _transform(
@@ -48,15 +47,15 @@ export class ComponentConverter extends Transform {
     let err: Error;
     const transformer = new DefaultTransformer();
     try {
-      switch (this.conversionType) {
-        case 'toApi':
+      switch (this.targetFormat) {
+        case 'api':
           result = transformer.toApiFormat(chunk);
           break;
-        case 'toSource':
+        case 'source':
           result = transformer.toSourceFormat(chunk);
           break;
         default:
-          throw new LibraryError('error_convert_invalid_format', this.conversionType);
+          throw new LibraryError('error_convert_invalid_format', this.targetFormat);
       }
     } catch (e) {
       err = new ConversionError(e);
@@ -87,7 +86,7 @@ export class StandardWriter extends Writable {
       });
       // it is a reasonable expectation that when a conversion call exits, the files of
       // every component has been written to the destination. This await ensures the microtask
-      // queue is empty when that call exits.
+      // queue is empty when that call exits and overall less memory is consumed.
       await Promise.all(writeTasks);
     } catch (e) {
       err = new ConversionError(e);

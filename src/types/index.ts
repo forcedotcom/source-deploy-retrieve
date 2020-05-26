@@ -23,4 +23,4 @@ export {
 
 export { MetadataType, MetadataComponent, SourcePath } from './common';
 export { MetadataRegistry, MetadataXml } from './registry';
-export { ConvertSourceOptions } from './conversion';
+export { ConvertOptions, SfdxFileFormat } from './conversion';

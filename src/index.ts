@@ -19,4 +19,4 @@ export {
 
 export { SourceClient } from './client';
 
-export { convertSource } from './convert';
+export { convert } from './convert';

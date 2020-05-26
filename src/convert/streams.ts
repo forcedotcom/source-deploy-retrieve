@@ -1,6 +1,6 @@
 import { Readable, Transform, Writable } from 'stream';
 import { MetadataComponent, SourcePath, SfdxFileFormat } from '../types';
-import { DefaultTransformer } from './transformers/default';
+import { DefaultTransformer } from './transformers';
 import { join } from 'path';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { createWriteStream } from 'fs';
@@ -48,8 +48,8 @@ export class ComponentConverter extends Transform {
     const transformer = new DefaultTransformer();
     try {
       switch (this.targetFormat) {
-        case 'api':
-          result = transformer.toApiFormat(chunk);
+        case 'metadata':
+          result = transformer.toMetadataFormat(chunk);
           break;
         case 'source':
           result = transformer.toSourceFormat(chunk);

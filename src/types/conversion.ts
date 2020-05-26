@@ -3,11 +3,11 @@ import { SourcePath } from './common';
 /**
  * The file format for a set of metadata components.
  *
- * `api` - Structure for use with the metadata api.
+ * `metadata` - Structure for use with the metadata api.
  *
  * `source` - Friendly for local editing and comitting files to source control.
  */
-export type SfdxFileFormat = 'api' | 'source';
+export type SfdxFileFormat = 'metadata' | 'source';
 
 export type ConvertOptions = {
   /**

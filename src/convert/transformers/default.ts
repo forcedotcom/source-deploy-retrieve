@@ -14,7 +14,7 @@ import { LibraryError } from '../../errors';
  * files as-is.
  */
 export class DefaultTransformer implements MetadataTransformer {
-  public toApiFormat(component: MetadataComponent): WriterFormat {
+  public toMetadataFormat(component: MetadataComponent): WriterFormat {
     const result: WriterFormat = { component, writeInfos: [] };
     const { directoryName } = component.type;
     let xmlDest = this.trimUntil(component.xml, directoryName);

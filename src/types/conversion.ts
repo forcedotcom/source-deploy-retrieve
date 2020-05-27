@@ -15,7 +15,7 @@ type PackageName = {
    */
   packageName?: string;
 };
-type DirectoryOptions = PackageName & {
+type DirectoryOutputOptions = PackageName & {
   /**
    * Directory path to output the converted package to.
    */
@@ -25,7 +25,7 @@ type DirectoryOptions = PackageName & {
 // type MergeOptions = { defaultDirectory: SourcePath; merge?: MetadataComponent[] };
 
 export type OutputOptions = {
-  directory: DirectoryOptions;
+  directory: DirectoryOutputOptions;
   // merge: MergeOptions;
   // zip: ZipOptions | undefined;
 };

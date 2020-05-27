@@ -10,7 +10,8 @@ import { PACKAGE_XML_FILE, DEFAULT_PACKAGE_PREFIX } from '../utils/constants';
 
 export const pipeline = promisify(cbPipeline);
 
-type OutputConfig<T extends keyof OutputOptions> = { type: T; options: OutputOptions[T] };
+type OutputOptionKeys = keyof OutputOptions;
+type OutputConfig<T extends OutputOptionKeys> = { type: T; options: OutputOptions[T] };
 
 /**
  * Convert metadata components to another SFDX file format.
@@ -19,10 +20,10 @@ type OutputConfig<T extends keyof OutputOptions> = { type: T; options: OutputOpt
  * @param targetFormat Format to convert the component files to
  * @param outputConfig Configuration for outputting the converted files
  */
-export async function convert<T extends keyof OutputOptions>(
+export async function convert(
   components: MetadataComponent[],
   targetFormat: SfdxFileFormat,
-  outputConfig: OutputConfig<T>
+  outputConfig: OutputConfig<OutputOptionKeys>
 ): Promise<void> {
   let writer: Writable;
   const tasks: Promise<void>[] = [];

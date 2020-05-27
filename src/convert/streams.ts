@@ -43,8 +43,8 @@ export class ComponentConverter extends Transform {
     encoding: string,
     callback: (err: Error, data: WriterFormat) => void
   ): void {
-    let result: WriterFormat;
     let err: Error;
+    let result: WriterFormat;
     const transformer = new DefaultTransformer();
     try {
       switch (this.targetFormat) {

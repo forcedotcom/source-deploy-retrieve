@@ -9,9 +9,23 @@ import { SourcePath } from './common';
  */
 export type SfdxFileFormat = 'metadata' | 'source';
 
-export type ConvertOptions = {
+type PackageName = {
   /**
-   * Path to output the converted package to.
+   * Optional name to give to the package output, otherwise one is generated.
    */
-  output: SourcePath;
+  packageName?: string;
+};
+type DirectoryOptions = PackageName & {
+  /**
+   * Directory path to output the converted package to.
+   */
+  outputDirectory: SourcePath;
+};
+// type ZipOptions = PackageName & { outputDirectory?: SourcePath; compressionLevel?: number };
+// type MergeOptions = { defaultDirectory: SourcePath; merge?: MetadataComponent[] };
+
+export type OutputOptions = {
+  directory: DirectoryOptions;
+  // merge: MergeOptions;
+  // zip: ZipOptions | undefined;
 };

@@ -8,3 +8,4 @@
 export const FORCE_IGNORE_FILE = '.forceignore';
 export const META_XML_SUFFIX = '-meta.xml';
 export const PACKAGE_XML_FILE = 'package.xml';
+export const DEFAULT_PACKAGE_PREFIX = 'metadataPackage';

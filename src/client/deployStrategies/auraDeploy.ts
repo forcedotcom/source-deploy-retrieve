@@ -10,7 +10,7 @@ import { extName, baseName } from '../../utils';
 import { MetadataComponent, DeployResult, SourceResult } from '../../types';
 import { deployTypes } from '../toolingApi';
 import { BaseDeploy } from './baseDeploy';
-import { AURA_TYPES } from './index';
+import { AURA_TYPES } from './constants';
 
 export class AuraDeploy extends BaseDeploy {
   public async deploy(component: MetadataComponent): Promise<DeployResult> {

@@ -1,11 +1,6 @@
-import { MetadataComponent } from '../../types';
-import { WriterFormat } from '../streams';
-export { DefaultTransformer } from './default';
+import { MetadataTransformer, MetadataComponent } from '../../types';
+import { DefaultTransformer } from './default';
 
-/**
- * Transforms metadata component files into different SFDX file formats
- */
-export interface MetadataTransformer {
-  toMetadataFormat(component: MetadataComponent): WriterFormat;
-  toSourceFormat(component: MetadataComponent): WriterFormat;
+export function getTransformer(component: MetadataComponent): MetadataTransformer {
+  return new DefaultTransformer(component);
 }

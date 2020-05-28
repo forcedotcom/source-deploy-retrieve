@@ -6,14 +6,13 @@
  */
 
 import { MetadataComponent } from '../types';
-import { RegistryAccess } from '../metadata-registry/index';
+import { RegistryAccess } from './registryAccess';
 import { createFiles } from '../utils';
 import { RegistryError } from '../errors';
 
 export class ManifestGenerator {
   xmlDef = '<?xml version="1.0" encoding="UTF-8"?>\n';
-  packageModuleStart =
-    '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
+  packageModuleStart = '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
   packageModuleEnd = '</Package>';
   registryAccess = new RegistryAccess();
 
@@ -22,10 +21,7 @@ export class ManifestGenerator {
       const mdComponents: MetadataComponent[] = this.registryAccess.getComponentsFromPath(
         sourcePath
       );
-      const manifestMap = new Map().set(
-        outputPath,
-        this.createManifest(mdComponents)
-      );
+      const manifestMap = new Map().set(outputPath, this.createManifest(mdComponents));
       createFiles(manifestMap);
     } catch (err) {
       throw new RegistryError('error_on_manifest_creation', [sourcePath, err]);
@@ -46,24 +42,14 @@ export class ManifestGenerator {
       }
       output = output.concat('  </types>\n');
     }
-    output = output.concat(
-      `  <version>${apiVersion}</version>\n`,
-      this.packageModuleEnd
-    );
+    output = output.concat(`  <version>${apiVersion}</version>\n`, this.packageModuleEnd);
     return output;
   }
 
-  private createMetadataMap(
-    components: MetadataComponent[]
-  ): Map<string, Set<string>> {
-    const metadataMap: Map<string, Set<string>> = new Map<
-      string,
-      Set<string>
-    >();
+  private createMetadataMap(components: MetadataComponent[]): Map<string, Set<string>> {
+    const metadataMap: Map<string, Set<string>> = new Map<string, Set<string>>();
     for (const component of components) {
-      const metadataType = this.registryAccess.getTypeFromName(
-        component.type.name
-      ).name;
+      const metadataType = this.registryAccess.getTypeFromName(component.type.name).name;
       const metadataName = component.fullName;
       if (metadataMap.has(metadataType)) {
         const metadataNames = metadataMap.get(metadataType);

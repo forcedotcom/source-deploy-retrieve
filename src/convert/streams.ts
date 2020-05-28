@@ -1,14 +1,13 @@
-import { Readable, Transform, Writable } from 'stream';
-import { MetadataComponent, SourcePath, SfdxFileFormat } from '../types';
-import { DefaultTransformer } from './transformers';
+import { Readable, Transform, Writable, pipeline as cbPipeline } from 'stream';
+import { MetadataComponent, SourcePath, SfdxFileFormat, WriterFormat, WriteInfo } from '../types';
 import { join } from 'path';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { createWriteStream } from 'fs';
-import { pipeline } from '.';
+import { promisify } from 'util';
 import { ConversionError, LibraryError } from '../errors';
+import { getTransformer } from './transformers';
 
-type WriteInfo = { relativeDestination: SourcePath; source: NodeJS.ReadableStream };
-export type WriterFormat = { component: MetadataComponent; writeInfos: WriteInfo[] };
+const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
   private currentIndex = 0;
@@ -45,14 +44,14 @@ export class ComponentConverter extends Transform {
   ): void {
     let err: Error;
     let result: WriterFormat;
-    const transformer = new DefaultTransformer();
     try {
+      const transformer = getTransformer(chunk);
       switch (this.targetFormat) {
         case 'metadata':
-          result = transformer.toMetadataFormat(chunk);
+          result = transformer.toMetadataFormat();
           break;
         case 'source':
-          result = transformer.toSourceFormat(chunk);
+          result = transformer.toSourceFormat();
           break;
         default:
           throw new LibraryError('error_convert_invalid_format', this.targetFormat);

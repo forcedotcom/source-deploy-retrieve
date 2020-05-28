@@ -1,4 +1,15 @@
-import { SourcePath } from './common';
+import { SourcePath, MetadataComponent } from './common';
+
+export type WriteInfo = { relativeDestination: SourcePath; source: NodeJS.ReadableStream };
+export type WriterFormat = { component: MetadataComponent; writeInfos: WriteInfo[] };
+
+/**
+ * Transforms metadata component files into different SFDX file formats
+ */
+export interface MetadataTransformer {
+  toMetadataFormat(): WriterFormat;
+  toSourceFormat(): WriterFormat;
+}
 
 /**
  * The file format for a set of metadata components.
@@ -15,6 +26,7 @@ type PackageName = {
    */
   packageName?: string;
 };
+
 type DirectoryOutputOptions = PackageName & {
   /**
    * Directory path to output the converted package to.

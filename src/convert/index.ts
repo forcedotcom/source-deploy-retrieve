@@ -8,7 +8,7 @@ import { pipeline as cbPipeline, Writable } from 'stream';
 import { ComponentReader, ComponentConverter, StandardWriter } from './streams';
 import { PACKAGE_XML_FILE, DEFAULT_PACKAGE_PREFIX } from '../utils/constants';
 
-export const pipeline = promisify(cbPipeline);
+const pipeline = promisify(cbPipeline);
 
 type OutputOptionKeys = keyof OutputOptions;
 type OutputConfig<T extends OutputOptionKeys> = { type: T; options: OutputOptions[T] };

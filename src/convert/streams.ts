@@ -7,7 +7,7 @@ import { promisify } from 'util';
 import { ConversionError, LibraryError } from '../errors';
 import { getTransformer } from './transformers';
 
-const pipeline = promisify(cbPipeline);
+export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
   private currentIndex = 0;

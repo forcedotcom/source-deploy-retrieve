@@ -72,7 +72,7 @@ describe('LWC Deploy Strategy', () => {
     },
     {
       FilePath: lwcFiles[2],
-      Format: 'xml',
+      Format: 'js',
       Source: lwcContents[2],
       LightningComponentBundleId: '1dcxxx000000060'
     }

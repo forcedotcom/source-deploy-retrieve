@@ -11,7 +11,7 @@ import { DeployError } from '../../errors';
 import { MetadataComponent, DeployStatusEnum, DeployResult } from '../../types';
 import { baseName } from '../../utils/path';
 import { ToolingCreateResult } from '../../utils/deploy';
-import { CONTAINER_ASYNC_REQUEST, METADATA_CONTAINER } from './index';
+import { CONTAINER_ASYNC_REQUEST, METADATA_CONTAINER } from './constants';
 import { BaseDeploy } from './baseDeploy';
 
 export class ContainerDeploy extends BaseDeploy {

@@ -6,7 +6,7 @@
  */
 
 import { MetadataComponent } from '../types';
-import { RegistryAccess } from '../metadata-registry/index';
+import { RegistryAccess } from './registryAccess';
 import { createFiles } from '../utils';
 import { RegistryError } from '../errors';
 

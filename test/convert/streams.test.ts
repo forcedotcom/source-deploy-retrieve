@@ -53,14 +53,13 @@ describe('Streams', () => {
       env.stub(transformers, 'getTransformer').returns(transformer);
     });
 
-    it('should wrap errors in a ConversionError object', () => {
+    it('should throw error for unexpected conversion format', () => {
       // @ts-ignore thank you ts, but i want this to fail
       const converter = new streams.ComponentConverter('badformat');
       converter._transform(component, '', (err: Error) => {
-        const expectedError = new ConversionError(
-          new LibraryError('error_convert_invalid_format', 'badformat')
-        );
+        const expectedError = new LibraryError('error_convert_invalid_format', 'badformat');
         expect(err.message).to.equal(expectedError.message);
+        expect(err.name).to.equal(expectedError.name);
       });
     });
 
@@ -113,13 +112,13 @@ describe('Streams', () => {
         .returns(fsWritableMock);
     });
 
-    it('should wrap errors in a ConversionError object', async () => {
+    it('should pass error to callback function', async () => {
       const whoops = new Error('whoops!');
       pipeline.rejects(whoops);
 
       await writer._write(chunk, '', (err: Error) => {
-        const expectedError = new ConversionError(whoops);
-        expect(err.message).to.equal(expectedError.message);
+        expect(err.message).to.equal(whoops.message);
+        expect(err.name).to.equal(whoops.name);
       });
     });
 

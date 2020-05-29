@@ -11,10 +11,14 @@ import { createFiles } from '../utils';
 import { RegistryError } from '../errors';
 
 export class ManifestGenerator {
-  xmlDef = '<?xml version="1.0" encoding="UTF-8"?>\n';
-  packageModuleStart = '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
-  packageModuleEnd = '</Package>';
-  registryAccess = new RegistryAccess();
+  private xmlDef = '<?xml version="1.0" encoding="UTF-8"?>\n';
+  private packageModuleStart = '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
+  private packageModuleEnd = '</Package>';
+  private registryAccess = new RegistryAccess();
+
+  constructor(registryAccess = new RegistryAccess()) {
+    this.registryAccess = registryAccess;
+  }
 
   public createManifestFromPath(sourcePath: string, outputPath: string): void {
     try {

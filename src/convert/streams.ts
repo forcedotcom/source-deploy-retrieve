@@ -57,7 +57,7 @@ export class ComponentConverter extends Transform {
           throw new LibraryError('error_convert_invalid_format', this.targetFormat);
       }
     } catch (e) {
-      err = new ConversionError(e);
+      err = e;
     }
     callback(err, result);
   }
@@ -88,7 +88,7 @@ export class StandardWriter extends Writable {
       // queue is empty when that call exits and overall less memory is consumed.
       await Promise.all(writeTasks);
     } catch (e) {
-      err = new ConversionError(e);
+      err = e;
     }
     callback(err);
   }

@@ -33,6 +33,7 @@ _refs:
     command: yarn build
   test: &test
     name: Run tests
+    shell: bash.exe
     command: |
       yarn test
       TEST_ARTIFACTS=./test-results/test-results.xml
@@ -75,7 +76,7 @@ jobs:
       - run: *build
       - run: *test
       - store_test_results:
-          path: ./test-results/test-results.xml
+          path: test-results
   node-12:
     <<: *node-test
     docker:

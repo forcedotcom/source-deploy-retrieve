@@ -19,4 +19,4 @@ export {
 
 export { SourceClient } from './client';
 
-export { convert } from './convert';
+export { MetadataConverter } from './convert';

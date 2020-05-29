@@ -34,8 +34,10 @@ _refs:
   test: &test
     name: Run tests
     shell: bash.exe
+    command: yarn test
+  verify-test-artifacts: &verify-test-artifacts
+    name: Verify test artifacts
     command: |
-      yarn test
       TEST_ARTIFACTS=./test-results/test-results.xml
       if [ ! -f "$TEST_ARTIFACTS" ]; then
         echo "Test artifacts are missing!"
@@ -75,6 +77,7 @@ jobs:
       - run: *install
       - run: *build
       - run: *test
+      - run: *verify-test-artifacts
       - store_test_results:
           path: test-results
   node-12:
@@ -114,6 +117,8 @@ jobs:
             - node_modules
       - run: *build
       - run: *test
+      - run: *verify-test-artifacts
+          shell: bash.exe
   release:
     <<: *defaults
     steps:

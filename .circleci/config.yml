@@ -33,7 +33,13 @@ _refs:
     command: yarn build
   test: &test
     name: Run tests
-    command: yarn test
+    command: |
+      yarn test
+      TEST_ARTIFACTS=./test-results/test-results.xml
+      if [ ! -f "$TEST_ARTIFACTS" ]; then
+        echo "Test artifacts are missing!"
+        exit 1
+      fi
   gus-create-change-mgmt: &gus-create-change-mgmt
     name: 'Gus create change case management'
     command: |

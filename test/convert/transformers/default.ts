@@ -1,4 +1,4 @@
-import { simon } from '../../mock/registry';
+import { simon, kathy, keanu } from '../../mock/registry';
 import { DefaultTransformer } from '../../../src/convert/transformers/default';
 import { WriteInfo } from '../../../src/types';
 import { join, basename } from 'path';
@@ -20,15 +20,19 @@ class TestReadable extends Readable {
 }
 
 describe('DefaultTransformer', () => {
-  const component = simon.SIMON_COMPONENT;
-  const transformer = new DefaultTransformer(component);
+  beforeEach(() =>
+    // @ts-ignore
+    env.stub(fs, 'createReadStream').callsFake((fsPath: string) => new TestReadable(fsPath))
+  );
+
+  afterEach(() => env.restore());
 
   describe('toMetadataFormat', () => {
-    it('Should create a WriteInfo for each file in the component', () => {
+    it('should create a WriteInfo for each file in the component', () => {
+      const component = simon.SIMON_COMPONENT;
+      const transformer = new DefaultTransformer(component);
       const { directoryName } = component.type;
       const relativeBundle = join(directoryName, basename(simon.SIMON_BUNDLE_PATH));
-      // @ts-ignore
-      env.stub(fs, 'createReadStream').callsFake((fsPath: string) => new TestReadable(fsPath));
       const expectedInfos: WriteInfo[] = [
         {
           relativeDestination: join(relativeBundle, simon.SIMON_XML_NAME),
@@ -47,10 +51,51 @@ describe('DefaultTransformer', () => {
         writeInfos: expectedInfos
       });
     });
+
+    it('should handle folder type components', () => {
+      const component = kathy.KATHY_COMPONENTS[0];
+      const transformer = new DefaultTransformer(component);
+      const { directoryName } = component.type;
+      const fileName = `${component.fullName}.${component.type.suffix}`;
+      const expectedInfos: WriteInfo[] = [
+        {
+          relativeDestination: join(directoryName, fileName),
+          source: fs.createReadStream(component.xml)
+        }
+      ];
+
+      expect(transformer.toMetadataFormat()).to.deep.equal({
+        component,
+        writeInfos: expectedInfos
+      });
+    });
+
+    it('should strip the -meta.xml suffix for components with no content', () => {
+      const component = keanu.KEANU_COMPONENT;
+      const { directoryName } = component.type;
+      const transformer = new DefaultTransformer(component);
+      const expectedInfos: WriteInfo[] = [
+        {
+          relativeDestination: join(directoryName, keanu.KEANU_XML_NAMES[0]),
+          source: fs.createReadStream(component.xml)
+        },
+        {
+          relativeDestination: join(directoryName, keanu.KEANU_SOURCE_NAMES[0]),
+          source: fs.createReadStream(component.sources[0])
+        }
+      ];
+
+      expect(transformer.toMetadataFormat()).to.deep.equal({
+        component,
+        writeInfos: expectedInfos
+      });
+    });
   });
 
   describe('toSourceFormat', () => {
-    it('Should throw an not implemented error', () => {
+    it('should throw an not implemented error', () => {
+      const component = simon.SIMON_COMPONENT;
+      const transformer = new DefaultTransformer(component);
       assert.throws(
         () => transformer.toSourceFormat(),
         LibraryError,

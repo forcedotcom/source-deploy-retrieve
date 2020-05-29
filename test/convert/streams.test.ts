@@ -35,7 +35,7 @@ describe('Streams', () => {
   afterEach(() => env.restore());
 
   describe('ComponentReader', () => {
-    it('Should read metadata components one at a time', async () => {
+    it('should read metadata components one at a time', async () => {
       const reader = new streams.ComponentReader(KATHY_COMPONENTS);
       let currentIndex = 0;
       for await (const component of reader) {
@@ -53,7 +53,7 @@ describe('Streams', () => {
       env.stub(transformers, 'getTransformer').returns(transformer);
     });
 
-    it('Should wrap errors in a ConversionError object', () => {
+    it('should wrap errors in a ConversionError object', () => {
       // @ts-ignore thank you ts, but i want this to fail
       const converter = new streams.ComponentConverter('badformat');
       converter._transform(component, '', (err: Error) => {
@@ -64,7 +64,7 @@ describe('Streams', () => {
       });
     });
 
-    it('Should transform to metadata format', () => {
+    it('should transform to metadata format', () => {
       const converter = new streams.ComponentConverter('metadata');
 
       converter._transform(component, '', (err: Error, data: WriterFormat) => {
@@ -73,7 +73,7 @@ describe('Streams', () => {
       });
     });
 
-    it('Should transform to source format', () => {
+    it('should transform to source format', () => {
       const converter = new streams.ComponentConverter('source');
 
       converter._transform(component, '', (err: Error, data: WriterFormat) => {
@@ -113,7 +113,7 @@ describe('Streams', () => {
         .returns(fsWritableMock);
     });
 
-    it('Should wrap errors in a ConversionError object', async () => {
+    it('should wrap errors in a ConversionError object', async () => {
       const whoops = new Error('whoops!');
       pipeline.rejects(whoops);
 
@@ -123,7 +123,7 @@ describe('Streams', () => {
       });
     });
 
-    it('Should perform file copies based on given write infos', async () => {
+    it('should perform file copies based on given write infos', async () => {
       pipeline.resolves();
 
       await writer._write(chunk, '', (err: Error) => {

@@ -32,8 +32,16 @@ _refs:
     name: Build project
     command: yarn build
   test: &test
-    name: Run tests with coverage
-    command: yarn coverage
+    name: Run tests
+    command: yarn test
+  verify-test-artifacts: &verify-test-artifacts
+    name: Verify test artifacts
+    command: |
+      TEST_ARTIFACTS=./test-results/test-results.xml
+      if [ ! -f "$TEST_ARTIFACTS" ]; then
+        echo "Test artifacts are missing!"
+        exit 1
+      fi
   gus-create-change-mgmt: &gus-create-change-mgmt
     name: 'Gus create change case management'
     command: |
@@ -68,6 +76,9 @@ jobs:
       - run: *install
       - run: *build
       - run: *test
+      - run: *verify-test-artifacts
+      - store_test_results:
+          path: test-results
   node-12:
     <<: *node-test
     docker:
@@ -105,6 +116,17 @@ jobs:
             - node_modules
       - run: *build
       - run: *test
+      - run:
+          name: Verify test artifacts
+          shell: bash.exe
+          command: |
+            TEST_ARTIFACTS=./test-results/test-results.xml
+            if [ ! -f "$TEST_ARTIFACTS" ]; then
+              echo "Test artifacts are missing!"
+              exit 1
+            fi
+      - store_test_results:
+          path: test-results
   release:
     <<: *defaults
     steps:

@@ -33,7 +33,6 @@
     "xmldom-sfdx-encoding": "^0.1.29"
   },
   "devDependencies": {
-    "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@salesforce/ts-sinon": "^1.1.2",
     "@types/chai": "^4",
     "@types/mocha": "^5",
@@ -45,23 +44,25 @@
     "eslint": "^6.8.0",
     "eslint-plugin-jsdoc": "^19.1.0",
     "mocha": "^5",
+    "mocha-junit-reporter": "^1.23.3",
     "nyc": "^14.1.1",
     "prettier": "1.16.4",
     "shelljs": "0.8.3",
+    "shx": "^0.3.2",
     "sinon": "^7.3.1",
     "source-map-support": "^0.5.16",
     "ts-node": "^8.7.0",
     "typescript": "~3.3"
   },
   "scripts": {
-    "build": "rm -rf lib && tsc -b",
-    "coverage": "nyc mocha",
+    "build": "shx rm -rf ./lib && tsc -b",
     "format": "prettier --config ../../.prettierrc --write './**/*.{js,json}'",
     "lint": "eslint -c .eslintrc.json --ext .ts ./src ./test",
     "local:install": "./scripts/localInstall.js install",
     "local:link": "./scripts/localInstall.js link",
     "local:unlink": "./scripts/localInstall.js unlink",
-    "test": "mocha",
+    "test": "shx rm -rf ./test-results && nyc mocha",
+    "coverage": "nyc report --reporter=lcov",
     "update:registry": "node ./scripts/metadata-registry/update.js"
   },
   "nyc": {
@@ -74,6 +75,12 @@
     "require": [
       "ts-node/register"
     ],
-    "sourceMap": true
+    "reporter": [
+      "text",
+      "text-summary"
+    ],
+    "sourceMap": true,
+    "report-dir": "./test-results/coverage",
+    "temp-dir": "./test-results/coverage/.nyc_output"
   }
 }

@@ -33,7 +33,6 @@ _refs:
     command: yarn build
   test: &test
     name: Run tests
-    shell: bash.exe
     command: yarn test
   verify-test-artifacts: &verify-test-artifacts
     name: Verify test artifacts

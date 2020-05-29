@@ -67,37 +67,3 @@ export class MetadataConverter {
     }
   }
 }
-
-// export async function convert(
-//   components: MetadataComponent[],
-//   targetFormat: SfdxFileFormat,
-//   outputConfig: OutputConfig<OutputOptionKeys>
-// ): Promise<void> {
-//   let writer: Writable;
-//   const tasks: Promise<void>[] = [];
-//   const manifestGenerator = new ManifestGenerator();
-
-//   if (outputConfig.type === 'directory') {
-//     const { options } = outputConfig;
-//     const packageName = options.packageName || `${DEFAULT_PACKAGE_PREFIX}_${Date.now()}`;
-//     const packagePath = join(options.outputDirectory, packageName);
-//     ensureDirectoryExists(packagePath);
-
-//     // TODO: evaluate if a builder pattern for manifest creation is more efficient here
-//     // TODO: maybe the writers should do this instead?
-//     const manifestTask = promises.writeFile(
-//       join(packagePath, PACKAGE_XML_FILE),
-//       manifestGenerator.createManifest(components)
-//     );
-//     tasks.push(manifestTask);
-//     writer = new StandardWriter(packagePath);
-//   }
-
-//   const conversionPipeline = pipeline(
-//     new ComponentReader(components),
-//     new ComponentConverter(targetFormat),
-//     writer
-//   );
-//   tasks.push(conversionPipeline);
-//   await Promise.all(tasks);
-// }

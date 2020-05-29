@@ -1,10 +1,16 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
 import { Readable, Transform, Writable, pipeline as cbPipeline } from 'stream';
 import { MetadataComponent, SourcePath, SfdxFileFormat, WriterFormat, WriteInfo } from '../types';
 import { join } from 'path';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { createWriteStream } from 'fs';
 import { promisify } from 'util';
-import { ConversionError, LibraryError } from '../errors';
+import { LibraryError } from '../errors';
 import { getTransformer } from './transformers';
 
 export const pipeline = promisify(cbPipeline);

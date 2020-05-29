@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
 import * as streams from '../../src/convert/streams';
 import { KATHY_COMPONENTS } from '../mock/registry/kathyConstants';
 import { expect } from 'chai';
@@ -5,7 +11,7 @@ import * as transformers from '../../src/convert/transformers';
 import { createSandbox, SinonStub } from 'sinon';
 import { WriterFormat, MetadataTransformer, MetadataComponent } from '../../src/types';
 import { Readable, Writable } from 'stream';
-import { ConversionError, LibraryError } from '../../src/errors';
+import { LibraryError } from '../../src/errors';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import * as fs from 'fs';
 import { join } from 'path';

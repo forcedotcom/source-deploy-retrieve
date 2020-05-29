@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
 import { simon, kathy, keanu } from '../../mock/registry';
 import { DefaultTransformer } from '../../../src/convert/transformers/default';
 import { WriteInfo } from '../../../src/types';

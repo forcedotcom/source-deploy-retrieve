@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
 import { MetadataComponent, SfdxFileFormat, OutputOptions } from '../types';
 import { ManifestGenerator, RegistryAccess } from '../metadata-registry';
 import { promises } from 'fs';
@@ -6,7 +12,7 @@ import { ensureDirectoryExists } from '../utils/fileSystemHandler';
 import { Writable } from 'stream';
 import { ComponentReader, ComponentConverter, StandardWriter, pipeline } from './streams';
 import { PACKAGE_XML_FILE, DEFAULT_PACKAGE_PREFIX } from '../utils/constants';
-import { ConversionError, LibraryError } from '../errors';
+import { ConversionError } from '../errors';
 
 type OutputOptionKeys = keyof OutputOptions;
 type OutputConfig<T extends OutputOptionKeys> = { type: T; options: OutputOptions[T] };

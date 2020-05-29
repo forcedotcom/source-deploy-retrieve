@@ -26,9 +26,7 @@ to unlink the library:
 
 ### Running the test suite
 
-`yarn test`
-
-`yarn coverage` will also run the test suite but displays code coverage results at the end of a run. Run this to make sure your tests are providing adequate coverage.
+`yarn test` runs the suite and outputs code coverage as a text summary
 
 > When running tests, code changes don't need to be built with `yarn build` first since the test suite uses ts-node as its runtime environment. Otherwise, you should run `yarn build` before manually testing changes.
 

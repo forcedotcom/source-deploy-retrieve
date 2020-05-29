@@ -32,8 +32,8 @@ _refs:
     name: Build project
     command: yarn build
   test: &test
-    name: Run tests with coverage
-    command: yarn coverage
+    name: Run tests
+    command: yarn test
   gus-create-change-mgmt: &gus-create-change-mgmt
     name: 'Gus create change case management'
     command: |
@@ -68,6 +68,8 @@ jobs:
       - run: *install
       - run: *build
       - run: *test
+      - store_test_results:
+          path: ./test-results/test-results.xml
   node-12:
     <<: *node-test
     docker:

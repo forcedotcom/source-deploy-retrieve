@@ -42,5 +42,6 @@
     "jsdoc/no-types": "warn",
     "@typescript-eslint/semi": "warn",
     "@typescript-eslint/class-name-casing": "warn"
-  }
+  },
+  "ignorePatterns": ["*.js"]
 }

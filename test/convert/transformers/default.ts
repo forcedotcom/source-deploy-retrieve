@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { simon, kathy, keanu } from '../../mock/registry';
+import { simon, kathy } from '../../mock/registry';
 import { DefaultTransformer } from '../../../src/convert/transformers/default';
 import { WriteInfo } from '../../../src/types';
 import { join, basename } from 'path';
@@ -27,7 +27,7 @@ class TestReadable extends Readable {
 
 describe('DefaultTransformer', () => {
   beforeEach(() =>
-    // @ts-ignore
+    // @ts-ignore mock readable isn't an fs readable specifically
     env.stub(fs, 'createReadStream').callsFake((fsPath: string) => new TestReadable(fsPath))
   );
 
@@ -77,17 +77,18 @@ describe('DefaultTransformer', () => {
     });
 
     it('should strip the -meta.xml suffix for components with no content', () => {
-      const component = keanu.KEANU_COMPONENT;
+      const component = kathy.KATHY_COMPONENTS[0];
+      const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;
       const transformer = new DefaultTransformer(component);
       const expectedInfos: WriteInfo[] = [
         {
-          relativeDestination: join(directoryName, keanu.KEANU_XML_NAMES[0]),
+          relativeDestination: join(
+            directoryName,
+            fullNameParts[0],
+            `${fullNameParts[1]}.${component.type.suffix}`
+          ),
           source: fs.createReadStream(component.xml)
-        },
-        {
-          relativeDestination: join(directoryName, keanu.KEANU_SOURCE_NAMES[0]),
-          source: fs.createReadStream(component.sources[0])
         }
       ];
 
@@ -99,9 +100,10 @@ describe('DefaultTransformer', () => {
   });
 
   describe('toSourceFormat', () => {
-    it('should throw an not implemented error', () => {
+    it('should throw a not implemented error', () => {
       const component = simon.SIMON_COMPONENT;
       const transformer = new DefaultTransformer(component);
+
       assert.throws(
         () => transformer.toSourceFormat(),
         LibraryError,

@@ -18,15 +18,15 @@ import { ConversionError } from '../../src/errors';
 
 const env = createSandbox();
 
-describe('Convert', () => {
-  let ensureDir: SinonStub;
-  let pipeline: SinonStub;
-  let writeFile: SinonStub;
+describe('MetadataConverter', () => {
+  let ensureDirectoryStub: SinonStub;
+  let pipelineStub: SinonStub;
+  let writeFileStub: SinonStub;
 
   beforeEach(() => {
-    ensureDir = env.stub(fsUtil, 'ensureDirectoryExists');
-    pipeline = env.stub(streams, 'pipeline').resolves();
-    writeFile = env.stub(promises, 'writeFile').resolves();
+    ensureDirectoryStub = env.stub(fsUtil, 'ensureDirectoryExists');
+    pipelineStub = env.stub(streams, 'pipeline').resolves();
+    writeFileStub = env.stub(promises, 'writeFile').resolves();
   });
   afterEach(() => env.restore());
 
@@ -46,7 +46,7 @@ describe('Convert', () => {
       options: { outputDirectory, packageName }
     });
 
-    expect(writeFile.firstCall.args).to.deep.equal([expectedPath, expectedContents]);
+    expect(writeFileStub.firstCall.args).to.deep.equal([expectedPath, expectedContents]);
   });
 
   it('should generate package name using timestamp when option omitted', async () => {
@@ -59,7 +59,7 @@ describe('Convert', () => {
       options: { outputDirectory }
     });
 
-    expect(pipeline.firstCall.args[2].rootDestination).to.equal(packagePath);
+    expect(pipelineStub.firstCall.args[2].rootDestination).to.equal(packagePath);
   });
 
   it('should ensure directory exists before starting conversion', async () => {
@@ -68,8 +68,8 @@ describe('Convert', () => {
       options: { outputDirectory, packageName }
     });
 
-    expect(ensureDir.calledBefore(pipeline)).to.be.true;
-    expect(ensureDir.firstCall.args[0]).to.equal(packageOutput);
+    expect(ensureDirectoryStub.calledBefore(pipelineStub)).to.be.true;
+    expect(ensureDirectoryStub.firstCall.args[0]).to.equal(packageOutput);
   });
 
   it('should create a pipeline with proper stream configuration', async () => {
@@ -78,7 +78,7 @@ describe('Convert', () => {
       options: { outputDirectory, packageName }
     });
 
-    const pipelineArgs = pipeline.firstCall.args;
+    const pipelineArgs = pipelineStub.firstCall.args;
     expect(pipelineArgs[0].components).to.deep.equal(components);
     expect(pipelineArgs[1].targetFormat).to.equal('metadata');
     expect(pipelineArgs[2].rootDestination).to.equal(packageOutput);
@@ -86,7 +86,7 @@ describe('Convert', () => {
 
   it('should throw ConversionError when an error occurs', async () => {
     const error = new Error('whoops!');
-    pipeline.rejects(error);
+    pipelineStub.rejects(error);
     const expectedError = new ConversionError(error);
     try {
       await converter.convert(components, 'metadata', {
@@ -102,7 +102,7 @@ describe('Convert', () => {
 
   it('should initialize with default RegistryAccess by default', () => {
     const defaultConverter = new MetadataConverter();
-    // @ts-ignore
+    // @ts-ignore registryAccess is private
     expect(defaultConverter.registryAccess.data).to.deep.equal(registryData);
   });
 });

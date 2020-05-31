@@ -60,7 +60,7 @@ describe('Streams', () => {
     });
 
     it('should throw error for unexpected conversion format', () => {
-      // @ts-ignore thank you ts, but i want this to fail
+      // @ts-ignore constructor argument invalid
       const converter = new streams.ComponentConverter('badformat');
       converter._transform(component, '', (err: Error) => {
         const expectedError = new LibraryError('error_convert_invalid_format', 'badformat');
@@ -105,22 +105,22 @@ describe('Streams', () => {
 
     const writer = new streams.StandardWriter(packageRoot);
 
-    let ensureFile: SinonStub;
-    let pipeline: SinonStub;
+    let ensureFileStub: SinonStub;
+    let pipelineStub: SinonStub;
 
     beforeEach(() => {
-      ensureFile = env.stub(fsUtil, 'ensureFileExists');
-      pipeline = env.stub(streams, 'pipeline');
+      ensureFileStub = env.stub(fsUtil, 'ensureFileExists');
+      pipelineStub = env.stub(streams, 'pipeline');
       env
         .stub(fs, 'createWriteStream')
         .withArgs(fullPath)
-        // @ts-ignore
+        // @ts-ignore the mock isn't an fs writabale specifically.
         .returns(fsWritableMock);
     });
 
     it('should pass error to callback function', async () => {
       const whoops = new Error('whoops!');
-      pipeline.rejects(whoops);
+      pipelineStub.rejects(whoops);
 
       await writer._write(chunk, '', (err: Error) => {
         expect(err.message).to.equal(whoops.message);
@@ -129,12 +129,23 @@ describe('Streams', () => {
     });
 
     it('should perform file copies based on given write infos', async () => {
-      pipeline.resolves();
+      pipelineStub.resolves();
 
       await writer._write(chunk, '', (err: Error) => {
         expect(err).to.be.undefined;
-        expect(ensureFile.firstCall.args).to.deep.equal([fullPath]);
-        expect(pipeline.firstCall.args).to.deep.equal([chunk.writeInfos[0].source, fsWritableMock]);
+        expect(pipelineStub.firstCall.args).to.deep.equal([
+          chunk.writeInfos[0].source,
+          fsWritableMock
+        ]);
+      });
+    });
+
+    it('should ensure a file exists before writing', async () => {
+      pipelineStub.resolves();
+
+      await writer._write(chunk, '', (err: Error) => {
+        expect(err).to.be.undefined;
+        expect(ensureFileStub.calledBefore(pipelineStub)).to.be.true;
       });
     });
   });

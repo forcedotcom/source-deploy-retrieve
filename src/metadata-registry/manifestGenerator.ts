@@ -14,7 +14,7 @@ export class ManifestGenerator {
   private xmlDef = '<?xml version="1.0" encoding="UTF-8"?>\n';
   private packageModuleStart = '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
   private packageModuleEnd = '</Package>';
-  private registryAccess = new RegistryAccess();
+  private registryAccess: RegistryAccess;
 
   constructor(registryAccess = new RegistryAccess()) {
     this.registryAccess = registryAccess;

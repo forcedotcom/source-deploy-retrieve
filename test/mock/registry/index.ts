@@ -45,13 +45,20 @@ export const mockRegistry = {
       inFolder: false,
       name: 'TinaFeyFolder',
       suffix: 'tinafeyFolder'
+    },
+    genewilder: {
+      directoryName: 'genes',
+      inFolder: false,
+      name: 'GeneWilder',
+      suffix: 'gene'
     }
   },
   suffixes: {
     kathy: 'kathybates',
     keanu: 'keanureeves',
     missing: 'typewithoutdef',
-    tinafeyFolder: 'tinafeyfolder'
+    tinafeyFolder: 'tinafeyfolder',
+    genewilder: 'gene'
   },
   mixedContent: {
     dwaynes: 'dwaynejohnson',
@@ -74,7 +81,8 @@ import * as kathy from './kathyConstants';
 import * as simon from './simonConstants';
 import * as taraji from './tarajiConstants';
 import * as tina from './tinaConstants';
-export { kathy, keanu, simon, taraji, tina };
+import * as gene from './geneConstants';
+export { kathy, keanu, simon, taraji, tina, gene };
 
 // Mixed content
 export const DWAYNE_DIR = join('path', 'to', 'dwaynes');

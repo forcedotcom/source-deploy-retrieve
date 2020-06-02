@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { simon, kathy } from '../../mock/registry';
+import { simon, kathy, gene } from '../../mock/registry';
 import { DefaultTransformer } from '../../../src/convert/transformers/default';
 import { WriteInfo } from '../../../src/types';
 import { join, basename } from 'path';
@@ -58,8 +58,8 @@ describe('DefaultTransformer', () => {
       });
     });
 
-    it('should handle folder type components', () => {
-      const component = kathy.KATHY_COMPONENTS[0];
+    it('should strip the -meta.xml suffix for components with no content', () => {
+      const component = gene.GENE_COMPONENT;
       const transformer = new DefaultTransformer(component);
       const { directoryName } = component.type;
       const fileName = `${component.fullName}.${component.type.suffix}`;
@@ -76,7 +76,7 @@ describe('DefaultTransformer', () => {
       });
     });
 
-    it('should strip the -meta.xml suffix for components with no content', () => {
+    it('should handle folder type components', () => {
       const component = kathy.KATHY_COMPONENTS[0];
       const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;

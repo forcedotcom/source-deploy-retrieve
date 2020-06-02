@@ -1,6 +1,7 @@
 import { SourcePath, MetadataComponent } from './common';
+import { Readable } from 'stream';
 
-export type WriteInfo = { relativeDestination: SourcePath; source: NodeJS.ReadableStream };
+export type WriteInfo = { relativeDestination: SourcePath; source: Readable };
 export type WriterFormat = { component: MetadataComponent; writeInfos: WriteInfo[] };
 
 /**
@@ -33,11 +34,13 @@ type DirectoryOutputOptions = PackageName & {
    */
   outputDirectory: SourcePath;
 };
-// type ZipOptions = PackageName & { outputDirectory?: SourcePath; compressionLevel?: number };
+type ZipOptions = PackageName & {
+  outputDirectory?: SourcePath;
+};
 // type MergeOptions = { defaultDirectory: SourcePath; merge?: MetadataComponent[] };
 
 export type OutputOptions = {
   directory: DirectoryOutputOptions;
+  zip: ZipOptions | undefined;
   // merge: MergeOptions;
-  // zip: ZipOptions | undefined;
 };

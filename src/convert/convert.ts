@@ -8,9 +8,15 @@ import { MetadataComponent, SfdxFileFormat, OutputOptions } from '../types';
 import { ManifestGenerator, RegistryAccess } from '../metadata-registry';
 import { promises } from 'fs';
 import { join } from 'path';
-import { ensureDirectoryExists } from '../utils/fileSystemHandler';
+import { ensureFileExists } from '../utils/fileSystemHandler';
 import { Writable } from 'stream';
-import { ComponentReader, ComponentConverter, StandardWriter, pipeline } from './streams';
+import {
+  ComponentReader,
+  ComponentConverter,
+  StandardWriter,
+  pipeline,
+  ZipWriter
+} from './streams';
 import { PACKAGE_XML_FILE, DEFAULT_PACKAGE_PREFIX } from '../utils/constants';
 import { ConversionError } from '../errors';
 
@@ -36,31 +42,31 @@ export class MetadataConverter {
     targetFormat: SfdxFileFormat,
     outputConfig: OutputConfig<OutputOptionKeys>
   ): Promise<void> {
-    let writer: Writable;
-    const tasks: Promise<void>[] = [];
+    const tasks = [];
+    const { options } = outputConfig;
+    const packageName = options.packageName || `${DEFAULT_PACKAGE_PREFIX}_${Date.now()}`;
     const manifestGenerator = new ManifestGenerator(this.registryAccess);
 
+    let writer: Writable;
     try {
-      const { options } = outputConfig;
-      const packageName = options.packageName || `${DEFAULT_PACKAGE_PREFIX}_${Date.now()}`;
-      const packagePath = join(options.outputDirectory, packageName);
-      ensureDirectoryExists(packagePath);
-
       // TODO: evaluate if a builder pattern for manifest creation is more efficient here
-      // TODO: maybe the writers should do this instead?
-      const manifestTask = promises.writeFile(
-        join(packagePath, PACKAGE_XML_FILE),
-        manifestGenerator.createManifest(components)
+      const manifestContents = manifestGenerator.createManifest(components);
+      switch (outputConfig.type) {
+        case 'directory':
+          const manifestPath = join(options.outputDirectory, packageName, PACKAGE_XML_FILE);
+          ensureFileExists(manifestPath);
+          tasks.push(promises.writeFile(manifestPath, manifestContents));
+          writer = new StandardWriter(packageName, options.outputDirectory);
+          break;
+        case 'zip':
+          writer = new ZipWriter(packageName, options.outputDirectory);
+          (writer as ZipWriter).zip.append(manifestContents, { name: PACKAGE_XML_FILE });
+          break;
+      }
+      tasks.push(
+        pipeline(new ComponentReader(components), new ComponentConverter(targetFormat), writer)
       );
-      tasks.push(manifestTask);
-      writer = new StandardWriter(packagePath);
 
-      const conversionPipeline = pipeline(
-        new ComponentReader(components),
-        new ComponentConverter(targetFormat),
-        writer
-      );
-      tasks.push(conversionPipeline);
       await Promise.all(tasks);
     } catch (e) {
       throw new ConversionError(e);

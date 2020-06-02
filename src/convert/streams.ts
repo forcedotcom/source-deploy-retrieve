@@ -12,6 +12,7 @@ import { createWriteStream } from 'fs';
 import { promisify } from 'util';
 import { LibraryError } from '../errors';
 import { getTransformer } from './transformers';
+import { Archiver, create as createArchive } from 'archiver';
 
 export const pipeline = promisify(cbPipeline);
 
@@ -69,12 +70,23 @@ export class ComponentConverter extends Transform {
   }
 }
 
-export class StandardWriter extends Writable {
+abstract class BaseWriter extends Writable {
+  protected outputDirectory?: SourcePath;
+  protected packageName: string;
+
+  constructor(packageName: string, outputDirectory?: SourcePath) {
+    super({ objectMode: true });
+    this.packageName = packageName;
+    this.outputDirectory = outputDirectory;
+  }
+}
+
+export class StandardWriter extends BaseWriter {
   private rootDestination: SourcePath;
 
-  constructor(rootDestination: SourcePath) {
-    super({ objectMode: true });
-    this.rootDestination = rootDestination;
+  constructor(packageName: string, outputDirectory: SourcePath) {
+    super(packageName, outputDirectory);
+    this.rootDestination = join(this.outputDirectory, this.packageName);
   }
 
   async _write(
@@ -97,5 +109,61 @@ export class StandardWriter extends Writable {
       err = e;
     }
     callback(err);
+  }
+}
+
+export class ZipWriter extends BaseWriter {
+  public readonly zip: Archiver;
+  private buffers: Buffer[];
+
+  constructor(packageName?: string, outputDirectory?: SourcePath) {
+    super(packageName, outputDirectory);
+    this.zip = createArchive('zip', { zlib: { level: 3 } });
+    this.buffers = [];
+    pipeline(this.zip, this.getOutputStream());
+  }
+
+  async _write(
+    chunk: WriterFormat,
+    encoding: string,
+    callback: (err?: Error) => void
+  ): Promise<void> {
+    let err: Error;
+    try {
+      for (const writeInfo of chunk.writeInfos) {
+        this.zip.append(writeInfo.source, { name: writeInfo.relativeDestination });
+      }
+    } catch (e) {
+      err = e;
+    }
+    callback(err);
+  }
+
+  async _final(callback: (err?: Error) => void): Promise<void> {
+    let err: Error;
+    try {
+      await this.zip.finalize();
+    } catch (e) {
+      err = e;
+    }
+    callback(err);
+  }
+
+  private getOutputStream(): Writable {
+    if (this.outputDirectory) {
+      const zipOutput = join(this.outputDirectory, `${this.packageName}.zip`);
+      return createWriteStream(zipOutput);
+    } else {
+      const bufferWritable = new Writable();
+      bufferWritable._write = (chunk: Buffer, encoding: string, cb: () => void) => {
+        this.buffers.push(chunk);
+        cb();
+      };
+      return bufferWritable;
+    }
+  }
+
+  get buffer(): Buffer | undefined {
+    return Buffer.concat(this.buffers);
   }
 }

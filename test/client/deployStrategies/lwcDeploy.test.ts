@@ -447,7 +447,7 @@ describe('LWC Deploy Strategy', () => {
         created: false,
         deleted: false,
         fileName: join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js'),
-        fullName: join('mockLwcCmp', 'mockLwcCmp.js'),
+        fullName: 'mockLwcCmp/mockLwcCmp.js',
         success: false,
         componentType: 'LightningComponentBundle',
         problem: 'Unexpected error while creating sources',

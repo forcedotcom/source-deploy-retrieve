@@ -204,7 +204,7 @@ export const updateCreateSuccesses = [
     created: false,
     deleted: false,
     fileName: join('aura', 'mockAuraCmp', 'mockAuraCmp.cmp'),
-    fullName: join('mockAuraCmp', 'mockAuraCmp.cmp'),
+    fullName: 'mockAuraCmp/mockAuraCmp.cmp',
     success: true,
     componentType: 'AuraDefinitionBundle'
   },
@@ -213,7 +213,7 @@ export const updateCreateSuccesses = [
     created: false,
     deleted: false,
     fileName: join('aura', 'mockAuraCmp', 'mockAuraCmp.css'),
-    fullName: join('mockAuraCmp', 'mockAuraCmp.css'),
+    fullName: 'mockAuraCmp/mockAuraCmp.css',
     success: true,
     componentType: 'AuraDefinitionBundle'
   },
@@ -222,7 +222,7 @@ export const updateCreateSuccesses = [
     created: false,
     deleted: false,
     fileName: join('mockAuraCmp/mockAuraCmp.design'),
-    fullName: join('aura', 'mockAuraCmp', 'mockAuraCmp.design'),
+    fullName: 'aura/mockAuraCmp/mockAuraCmp.design',
     success: true,
     componentType: 'AuraDefinitionBundle'
   },
@@ -231,7 +231,7 @@ export const updateCreateSuccesses = [
     created: true,
     deleted: false,
     fileName: join('aura', 'mockAuraCmp', 'mockAuraCmp.auradoc'),
-    fullName: join('mockAuraCmp', 'mockAuraCmp.auradoc'),
+    fullName: 'mockAuraCmp/mockAuraCmp.auradoc',
     success: true,
     componentType: 'AuraDefinitionBundle'
   },
@@ -240,7 +240,7 @@ export const updateCreateSuccesses = [
     created: true,
     deleted: false,
     fileName: join('aura', 'mockAuraCmp', 'mockAuraCmp.svg'),
-    fullName: join('mockAuraCmp', 'mockAuraCmp.svg'),
+    fullName: 'mockAuraCmp/mockAuraCmp.svg',
     success: true,
     componentType: 'AuraDefinitionBundle'
   },
@@ -249,7 +249,7 @@ export const updateCreateSuccesses = [
     created: true,
     deleted: false,
     fileName: join('aura', 'mockAuraCmp', 'mockAuraCmpController.js'),
-    fullName: join('mockAuraCmp', 'mockAuraCmpController.js'),
+    fullName: 'mockAuraCmp/mockAuraCmpController.js',
     success: true,
     componentType: 'AuraDefinitionBundle'
   },
@@ -258,7 +258,7 @@ export const updateCreateSuccesses = [
     created: true,
     deleted: false,
     fileName: join('aura', 'mockAuraCmp', 'mockAuraCmpHelper.js'),
-    fullName: join('mockAuraCmp', 'mockAuraCmpHelper.js'),
+    fullName: 'mockAuraCmp/mockAuraCmpHelper.js',
     success: true,
     componentType: 'AuraDefinitionBundle'
   },
@@ -267,7 +267,7 @@ export const updateCreateSuccesses = [
     created: true,
     deleted: false,
     fileName: join('aura', 'mockAuraCmp', 'mockAuraCmpRenderer.js'),
-    fullName: join('mockAuraCmp', 'mockAuraCmpRenderer.js'),
+    fullName: 'mockAuraCmp/mockAuraCmpRenderer.js',
     success: true,
     componentType: 'AuraDefinitionBundle'
   }

@@ -35,17 +35,13 @@ describe('ManifestGenerator', () => {
       sources: []
     } as MetadataComponent;
 
-    let expectedManifest =
-      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+    let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedManifest +=
-      '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
-    expectedManifest +=
-      '\t<types>\n\t\t<members>someName</members>\n\t\t<name>ApexClass</name>\n\t</types>\n';
-    expectedManifest += '\t<version>48.0</version>\n</Package>\n';
+      '  <types>\n    <name>ApexClass</name>\n    <members>someName</members>\n  </types>\n';
+    expectedManifest += '  <version>48.0</version>\n</Package>';
 
-    expect(manifestGenerator.createManifest([component])).to.equal(
-      expectedManifest
-    );
+    expect(manifestGenerator.createManifest([component])).to.equal(expectedManifest);
   });
 
   it('should generate manifest for multiple types', () => {
@@ -63,19 +59,15 @@ describe('ManifestGenerator', () => {
       sources: []
     } as MetadataComponent;
 
-    let expectedManifest =
-      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+    let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedManifest +=
-      '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
+      '  <types>\n    <name>ApexClass</name>\n    <members>apexClass1</members>\n  </types>\n';
     expectedManifest +=
-      '\t<types>\n\t\t<members>apexClass1</members>\n\t\t<name>ApexClass</name>\n\t</types>\n';
-    expectedManifest +=
-      '\t<types>\n\t\t<members>apexTrigger1</members>\n\t\t<name>ApexTrigger</name>\n\t</types>\n';
-    expectedManifest += '\t<version>48.0</version>\n</Package>\n';
+      '  <types>\n    <name>ApexTrigger</name>\n    <members>apexTrigger1</members>\n  </types>\n';
+    expectedManifest += '  <version>48.0</version>\n</Package>';
 
-    expect(manifestGenerator.createManifest([component1, component2])).to.equal(
-      expectedManifest
-    );
+    expect(manifestGenerator.createManifest([component1, component2])).to.equal(expectedManifest);
   });
 
   it('should generate manifest for multiple components', () => {
@@ -100,19 +92,17 @@ describe('ManifestGenerator', () => {
       sources: []
     } as MetadataComponent;
 
-    let expectedManifest =
-      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+    let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedManifest +=
-      '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
+      '  <types>\n    <name>ApexClass</name>\n    <members>apexClass1</members>\n    <members>apexClass2</members>\n  </types>\n';
     expectedManifest +=
-      '\t<types>\n\t\t<members>apexClass1</members>\n\t\t<members>apexClass2</members>\n\t\t<name>ApexClass</name>\n\t</types>\n';
-    expectedManifest +=
-      '\t<types>\n\t\t<members>apexTrigger1</members>\n\t\t<name>ApexTrigger</name>\n\t</types>\n';
-    expectedManifest += '\t<version>48.0</version>\n</Package>\n';
+      '  <types>\n    <name>ApexTrigger</name>\n    <members>apexTrigger1</members>\n  </types>\n';
+    expectedManifest += '  <version>48.0</version>\n</Package>';
 
-    expect(
-      manifestGenerator.createManifest([component1, component2, component3])
-    ).to.equal(expectedManifest);
+    expect(manifestGenerator.createManifest([component1, component2, component3])).to.equal(
+      expectedManifest
+    );
   });
 
   it('should generate manifest for multiple components passed in different order', () => {
@@ -137,19 +127,17 @@ describe('ManifestGenerator', () => {
       sources: []
     } as MetadataComponent;
 
-    let expectedManifest =
-      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+    let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedManifest +=
-      '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
+      '  <types>\n    <name>ApexClass</name>\n    <members>apexClass1</members>\n    <members>apexClass2</members>\n  </types>\n';
     expectedManifest +=
-      '\t<types>\n\t\t<members>apexClass1</members>\n\t\t<members>apexClass2</members>\n\t\t<name>ApexClass</name>\n\t</types>\n';
-    expectedManifest +=
-      '\t<types>\n\t\t<members>apexTrigger1</members>\n\t\t<name>ApexTrigger</name>\n\t</types>\n';
-    expectedManifest += '\t<version>48.0</version>\n</Package>\n';
+      '  <types>\n    <name>ApexTrigger</name>\n    <members>apexTrigger1</members>\n  </types>\n';
+    expectedManifest += '  <version>48.0</version>\n</Package>';
 
-    expect(
-      manifestGenerator.createManifest([component1, component3, component2])
-    ).to.equal(expectedManifest);
+    expect(manifestGenerator.createManifest([component1, component3, component2])).to.equal(
+      expectedManifest
+    );
   });
 
   it('should generate manifest by overriding apiversion', () => {
@@ -160,17 +148,13 @@ describe('ManifestGenerator', () => {
       sources: []
     } as MetadataComponent;
 
-    let expectedManifest =
-      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+    let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedManifest +=
-      '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
-    expectedManifest +=
-      '\t<types>\n\t\t<members>someName</members>\n\t\t<name>ApexClass</name>\n\t</types>\n';
-    expectedManifest += '\t<version>45.0</version>\n</Package>\n';
+      '  <types>\n    <name>ApexClass</name>\n    <members>someName</members>\n  </types>\n';
+    expectedManifest += '  <version>45.0</version>\n</Package>';
 
-    expect(manifestGenerator.createManifest([component], '45.0')).to.equal(
-      expectedManifest
-    );
+    expect(manifestGenerator.createManifest([component], '45.0')).to.equal(expectedManifest);
   });
 
   it('should throw error for non valid type', () => {
@@ -205,9 +189,7 @@ describe('ManifestGenerator', () => {
       }
     ];
     const registryAccess = new RegistryAccess();
-    sandboxStub
-      .stub(registryAccess, 'getComponentsFromPath')
-      .returns(mdComponents);
+    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(mdComponents);
     sandboxStub.stub(fs, 'existsSync').returns(true);
     // @ts-ignore
     sandboxStub.stub(fs, 'lstatSync').returns({ isDirectory: () => false });
@@ -241,17 +223,13 @@ describe('ManifestGenerator', () => {
       }
     ];
     const registryAccess = new RegistryAccess();
-    sandboxStub
-      .stub(registryAccess, 'getComponentsFromPath')
-      .returns(mdComponents);
+    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(mdComponents);
     sandboxStub.stub(fs, 'existsSync').returns(true);
     // @ts-ignore
     sandboxStub.stub(fs, 'lstatSync').returns({ isDirectory: () => false });
     const stubCreateMetadataFile = sandboxStub.stub(fs, 'createWriteStream');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    stubCreateMetadataFile
-      .onCall(0)
-      .throwsException('Unexpected error when creating file');
+    stubCreateMetadataFile.onCall(0).throwsException('Unexpected error when creating file');
     const filePath = path.join('file', 'path', 'myTestClass.cls-meta.xml');
     try {
       manifestGenerator.createManifestFromPath(

@@ -10,12 +10,16 @@ import * as path from 'path';
 import { SourcePath } from '../types';
 
 export function ensureDirectoryExists(filePath: string): void {
-  const dirname = path.dirname(filePath);
-  if (fs.existsSync(dirname)) {
+  if (fs.existsSync(filePath)) {
     return;
   }
-  ensureDirectoryExists(dirname);
-  fs.mkdirSync(dirname);
+  ensureDirectoryExists(path.dirname(filePath));
+  fs.mkdirSync(filePath);
+}
+
+export function ensureFileExists(filePath: string): void {
+  ensureDirectoryExists(path.dirname(filePath));
+  fs.closeSync(fs.openSync(filePath, 'w'));
 }
 
 /**

@@ -5,11 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-export {
-  RegistryAccess,
-  registryData,
-  ManifestGenerator
-} from './metadata-registry';
+export { RegistryAccess, registryData, ManifestGenerator } from './metadata-registry';
 
 export {
   ApiResult,
@@ -22,3 +18,5 @@ export {
 } from './types';
 
 export { SourceClient } from './client';
+
+export { MetadataConverter } from './convert';

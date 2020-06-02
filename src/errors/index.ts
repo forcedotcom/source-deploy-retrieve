@@ -55,3 +55,13 @@ export class DeployError extends SourceClientError {
     super(messageKey, args);
   }
 }
+
+/**
+ * A wrapper for any errors thrown in the conversion pipeline
+ */
+export class ConversionError extends LibraryError {
+  constructor(originalError: Error) {
+    super('error_failed_convert', originalError.message);
+    this.stack = originalError.stack;
+  }
+}

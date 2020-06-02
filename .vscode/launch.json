@@ -14,14 +14,6 @@
       "remoteRoot": "${workspaceFolder}"
     },
     {
-      "args": [
-        "-u",
-        "tdd",
-        "--timeout",
-        "999999",
-        "--colors",
-        "${workspaceFolder}/lib/test/**/*.test.js"
-      ],
       "internalConsoleOptions": "openOnSessionStart",
       "name": "Run Tests",
       "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",

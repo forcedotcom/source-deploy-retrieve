@@ -8,14 +8,15 @@
 import { Connection } from '@salesforce/core';
 import { readFileSync } from 'fs';
 import { sep } from 'path';
+import { DeployError } from '../../errors';
 import {
   DeployResult,
+  DeployStatusEnum,
   MetadataComponent,
-  SourceResult,
-  DeployStatusEnum
+  SourceResult
 } from '../../types';
 import { ToolingCreateResult } from '../../utils/deploy';
-import { DeployError } from '../../errors';
+import { TOOLING_PATH_SEP } from './constants';
 
 // tslint:disable-next-line:no-var-requires
 const DOMParser = require('xmldom-sfdx-encoding').DOMParser;
@@ -175,8 +176,8 @@ export abstract class BaseDeploy {
     );
 
     return [
-      pathParts.slice(typeFolderIndex).join(sep),
-      pathParts.slice(typeFolderIndex + 1).join(sep)
+      pathParts.slice(typeFolderIndex).join(TOOLING_PATH_SEP),
+      pathParts.slice(typeFolderIndex + 1).join(TOOLING_PATH_SEP)
     ];
   }
 }

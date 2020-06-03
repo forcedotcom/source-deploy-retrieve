@@ -412,7 +412,7 @@ describe('Aura Deploy Strategy', () => {
           'mockAuraCmp',
           'mockAuraCmp.cmp'
         ),
-        fullName: join('mockAuraCmp', 'mockAuraCmp.cmp'),
+        fullName: 'mockAuraCmp/mockAuraCmp.cmp',
         success: false,
         componentType: 'AuraDefinitionBundle',
         problem: 'Unexpected error while creating sources: [1,1]',
@@ -479,7 +479,7 @@ describe('Aura Deploy Strategy', () => {
           'mockAuraCmp',
           'mockAuraCmpHelper.js'
         ),
-        fullName: join('mockAuraCmp', 'mockAuraCmpHelper.js'),
+        fullName: 'mockAuraCmp/mockAuraCmpHelper.js',
         success: false,
         componentType: 'AuraDefinitionBundle',
         problem: 'Unexpected error while creating sources in HELPER : [1,1]',

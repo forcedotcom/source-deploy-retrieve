@@ -9,8 +9,7 @@ import {
   SfdxFileFormat,
   ConvertOutputConfig,
   SourcePath,
-  ConvertResult,
-  ConvertOutputTypes
+  ConvertResult
 } from '../types';
 import { ManifestGenerator, RegistryAccess } from '../metadata-registry';
 import { promises } from 'fs';
@@ -39,23 +38,23 @@ export class MetadataConverter {
    *
    * @param components Components to convert to the target format
    * @param targetFormat Format to convert the component files to
-   * @param outputConfig Configuration for outputting the converted files
+   * @param output Configuration for outputting the converted files
    */
   public async convert(
     components: MetadataComponent[],
     targetFormat: SfdxFileFormat,
-    outputConfig: ConvertOutputConfig<ConvertOutputTypes>
+    output: ConvertOutputConfig
   ): Promise<ConvertResult> {
     try {
       // TODO: evaluate if a builder pattern for manifest creation is more efficient here
       const manifestGenerator = new ManifestGenerator(this.registryAccess);
       const manifestContents = manifestGenerator.createManifest(components);
-      const packagePath = this.getPackagePath(outputConfig);
+      const packagePath = this.getPackagePath(output);
       const tasks = [];
 
       // initialize writer
       let writer: Writable;
-      switch (outputConfig.type) {
+      switch (output.type) {
         case 'directory':
           writer = new StandardWriter(packagePath);
           const manifestPath = join(packagePath, PACKAGE_XML_FILE);
@@ -77,7 +76,7 @@ export class MetadataConverter {
       await Promise.all(tasks);
 
       const result: ConvertResult = { packagePath };
-      if (outputConfig.type === 'zip' && !packagePath) {
+      if (output.type === 'zip' && !packagePath) {
         result.zipBuffer = (writer as ZipWriter).buffer;
       }
       return result;
@@ -86,14 +85,12 @@ export class MetadataConverter {
     }
   }
 
-  private getPackagePath(
-    outputConfig: ConvertOutputConfig<ConvertOutputTypes>
-  ): SourcePath | undefined {
+  private getPackagePath(outputConfig: ConvertOutputConfig): SourcePath | undefined {
     let packagePath: SourcePath;
-    const { options } = outputConfig;
-    if (options.outputDirectory) {
-      const packageName = options.packageName || `${DEFAULT_PACKAGE_PREFIX}_${Date.now()}`;
-      packagePath = join(options.outputDirectory, packageName);
+    const { outputDirectory, packageName } = outputConfig;
+    if (outputDirectory) {
+      const name = packageName || `${DEFAULT_PACKAGE_PREFIX}_${Date.now()}`;
+      packagePath = join(outputDirectory, name);
     }
     return packagePath;
   }

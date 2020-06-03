@@ -1,6 +1,33 @@
 import { SourcePath, MetadataComponent } from './common';
 import { Readable } from 'stream';
 
+// --------------
+// INTERNAL
+// --------------
+
+type PackageName = {
+  /**
+   * Optional name to give to the package, otherwise one is generated.
+   */
+  packageName?: string;
+};
+
+type DirectoryConfig = PackageName & {
+  type: 'directory';
+  /**
+   * Directory path to output the converted package to.
+   */
+  outputDirectory: SourcePath;
+};
+
+type ZipConfig = PackageName & {
+  type: 'zip';
+  /**
+   * Directory path to output the zip package to.
+   */
+  outputDirectory?: SourcePath;
+};
+
 export type WriteInfo = { relativeDestination: SourcePath; source: Readable };
 export type WriterFormat = { component: MetadataComponent; writeInfos: WriteInfo[] };
 
@@ -12,34 +39,9 @@ export interface MetadataTransformer {
   toSourceFormat(): WriterFormat;
 }
 
-type PackageName = {
-  /**
-   * Optional name to give to the package, otherwise one is generated.
-   */
-  packageName?: string;
-};
-
-type DirectoryOutputOptions = PackageName & {
-  /**
-   * Directory path to output the converted package to.
-   */
-  outputDirectory: SourcePath;
-};
-
-type ZipOptions = PackageName & {
-  /**
-   * Directory path to output the zip package to.
-   */
-  outputDirectory?: SourcePath;
-};
-
-// type MergeOptions = { defaultDirectory: SourcePath; merge?: MetadataComponent[] };
-
-type ConvertOutputOptions = {
-  directory: DirectoryOutputOptions;
-  zip: ZipOptions | undefined;
-  // merge: MergeOptions;
-};
+// --------------
+// PUBLIC
+// --------------
 
 /**
  * The file format for a set of metadata components.
@@ -50,12 +52,7 @@ type ConvertOutputOptions = {
  */
 export type SfdxFileFormat = 'metadata' | 'source';
 
-export type ConvertOutputTypes = keyof ConvertOutputOptions;
-
-export type ConvertOutputConfig<T extends ConvertOutputTypes> = {
-  type: T;
-  options: ConvertOutputOptions[T];
-};
+export type ConvertOutputConfig = DirectoryConfig | ZipConfig;
 
 export type ConvertResult = {
   /**

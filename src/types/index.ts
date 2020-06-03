@@ -23,7 +23,6 @@ export {
 export {
   ConvertResult,
   ConvertOutputConfig,
-  ConvertOutputTypes,
   SfdxFileFormat,
   WriteInfo,
   WriterFormat,

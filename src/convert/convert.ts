@@ -14,7 +14,7 @@ import {
 import { ManifestGenerator, RegistryAccess } from '../metadata-registry';
 import { promises } from 'fs';
 import { join } from 'path';
-import { ensureFileExists } from '../utils/fileSystemHandler';
+import { ensureFileExists, ensureDirectoryExists } from '../utils/fileSystemHandler';
 import { Writable } from 'stream';
 import {
   ComponentReader,
@@ -58,7 +58,7 @@ export class MetadataConverter {
         case 'directory':
           writer = new StandardWriter(packagePath);
           const manifestPath = join(packagePath, PACKAGE_XML_FILE);
-          ensureFileExists(manifestPath);
+          ensureDirectoryExists(packagePath);
           tasks.push(promises.writeFile(manifestPath, manifestContents));
           break;
         case 'zip':

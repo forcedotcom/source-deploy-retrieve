@@ -89,10 +89,9 @@ describe('Streams', () => {
   });
 
   describe('StandardWriter', () => {
-    const outputDirectory = join('path', 'to');
-    const packageName = 'test-package';
+    const rootDestination = join('path', 'to', 'test-package');
     const relativeDestination = join('type', 'file.x');
-    const fullPath = join(outputDirectory, packageName, relativeDestination);
+    const fullPath = join(rootDestination, relativeDestination);
     const fsWritableMock = new Writable();
     const chunk: WriterFormat = {
       component: KATHY_COMPONENTS[0],
@@ -104,7 +103,7 @@ describe('Streams', () => {
       ]
     };
 
-    const writer = new streams.StandardWriter(outputDirectory, packageName);
+    const writer = new streams.StandardWriter(rootDestination);
 
     let ensureFile: SinonStub;
     let pipeline: SinonStub;

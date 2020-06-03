@@ -73,17 +73,15 @@ export class ComponentConverter extends Transform {
 abstract class BaseWriter extends Writable {
   protected rootDestination?: SourcePath;
 
-  constructor(outputDirectory?: SourcePath, packageName?: string) {
+  constructor(rootDestination?: SourcePath) {
     super({ objectMode: true });
-    if (outputDirectory && packageName) {
-      this.rootDestination = join(outputDirectory, packageName);
-    }
+    this.rootDestination = rootDestination;
   }
 }
 
 export class StandardWriter extends BaseWriter {
-  constructor(outputDirectory: SourcePath, packageName: string) {
-    super(outputDirectory, packageName);
+  constructor(rootDestination: SourcePath) {
+    super(rootDestination);
   }
 
   async _write(
@@ -113,8 +111,8 @@ export class ZipWriter extends BaseWriter {
   public readonly zip: Archiver;
   private buffers: Buffer[];
 
-  constructor(outputDirectory?: SourcePath, packageName?: string) {
-    super(outputDirectory, packageName);
+  constructor(rootDestination?: SourcePath) {
+    super(rootDestination);
     this.buffers = [];
     this.zip = createArchive('zip', { zlib: { level: 3 } });
     pipeline(this.zip, this.getOutputStream());

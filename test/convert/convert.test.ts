@@ -19,12 +19,12 @@ import { ConversionError } from '../../src/errors';
 const env = createSandbox();
 
 describe('MetadataConverter', () => {
-  let ensureFileStub: SinonStub;
+  let ensureDirectoryStub: SinonStub;
   let pipelineStub: SinonStub;
   let writeFileStub: SinonStub;
 
   beforeEach(() => {
-    ensureFileStub = env.stub(fsUtil, 'ensureFileExists');
+    ensureDirectoryStub = env.stub(fsUtil, 'ensureDirectoryExists');
     pipelineStub = env.stub(streams, 'pipeline').resolves();
     writeFileStub = env.stub(promises, 'writeFile').resolves();
   });
@@ -47,8 +47,6 @@ describe('MetadataConverter', () => {
       packageName
     });
 
-    expect(ensureFileStub.calledBefore(writeFileStub)).to.be.true;
-    expect(ensureFileStub.firstCall.args[0]).to.equal(expectedPath);
     expect(writeFileStub.firstCall.args).to.deep.equal([expectedPath, expectedContents]);
   });
 
@@ -63,6 +61,17 @@ describe('MetadataConverter', () => {
     });
 
     expect(pipelineStub.firstCall.args[2].rootDestination).to.equal(packagePath);
+  });
+
+  it('should ensure directory exists before starting conversion', async () => {
+    await converter.convert(components, 'metadata', {
+      type: 'directory',
+      outputDirectory,
+      packageName
+    });
+
+    expect(ensureDirectoryStub.calledBefore(pipelineStub)).to.be.true;
+    expect(ensureDirectoryStub.firstCall.args[0]).to.equal(packageOutput);
   });
 
   it('should create a pipeline with proper stream configuration', async () => {

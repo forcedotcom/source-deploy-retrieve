@@ -5,9 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { readFileSync } from 'fs';
-import { LightningComponentResource } from '../../utils/deploy';
+import { normalize } from 'path';
+import { DeployResult, MetadataComponent, SourceResult } from '../../types';
 import { extName } from '../../utils';
-import { MetadataComponent, DeployResult, SourceResult } from '../../types';
+import { LightningComponentResource } from '../../utils/deploy';
 import { deployTypes } from '../toolingApi';
 import { BaseDeploy } from './baseDeploy';
 
@@ -46,7 +47,7 @@ export class LwcDeploy extends BaseDeploy {
       let match: LightningComponentResource;
       if (existingResources.length > 0) {
         match = existingResources.find(resource =>
-          sourceFile.endsWith(resource.FilePath)
+          sourceFile.endsWith(normalize(resource.FilePath))
         );
       }
 

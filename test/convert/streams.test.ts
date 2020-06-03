@@ -61,7 +61,7 @@ describe('Streams', () => {
     });
 
     it('should throw error for unexpected conversion format', () => {
-      // @ts-ignore thank you ts, but i want this to fail
+      // @ts-ignore constructor argument invalid
       const converter = new streams.ComponentConverter('badformat');
       converter._transform(component, '', (err: Error) => {
         const expectedError = new LibraryError('error_convert_invalid_format', 'badformat');

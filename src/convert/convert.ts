@@ -36,7 +36,7 @@ export class MetadataConverter {
   /**
    * Convert metadata components to another SFDX file format.
    *
-   * @param components Components to convert to the target format
+   * @param components Components to convert
    * @param targetFormat Format to convert the component files to
    * @param output Configuration for outputting the converted files
    */

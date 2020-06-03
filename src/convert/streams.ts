@@ -71,22 +71,19 @@ export class ComponentConverter extends Transform {
 }
 
 abstract class BaseWriter extends Writable {
-  protected outputDirectory?: SourcePath;
-  protected packageName: string;
+  protected rootDestination?: SourcePath;
 
-  constructor(packageName: string, outputDirectory?: SourcePath) {
+  constructor(outputDirectory?: SourcePath, packageName?: string) {
     super({ objectMode: true });
-    this.packageName = packageName;
-    this.outputDirectory = outputDirectory;
+    if (outputDirectory && packageName) {
+      this.rootDestination = join(outputDirectory, packageName);
+    }
   }
 }
 
 export class StandardWriter extends BaseWriter {
-  private rootDestination: SourcePath;
-
-  constructor(packageName: string, outputDirectory: SourcePath) {
-    super(packageName, outputDirectory);
-    this.rootDestination = join(this.outputDirectory, this.packageName);
+  constructor(outputDirectory: SourcePath, packageName: string) {
+    super(outputDirectory, packageName);
   }
 
   async _write(
@@ -116,10 +113,10 @@ export class ZipWriter extends BaseWriter {
   public readonly zip: Archiver;
   private buffers: Buffer[];
 
-  constructor(packageName?: string, outputDirectory?: SourcePath) {
-    super(packageName, outputDirectory);
-    this.zip = createArchive('zip', { zlib: { level: 3 } });
+  constructor(outputDirectory?: SourcePath, packageName?: string) {
+    super(outputDirectory, packageName);
     this.buffers = [];
+    this.zip = createArchive('zip', { zlib: { level: 3 } });
     pipeline(this.zip, this.getOutputStream());
   }
 
@@ -150,12 +147,11 @@ export class ZipWriter extends BaseWriter {
   }
 
   private getOutputStream(): Writable {
-    if (this.outputDirectory) {
-      const zipOutput = join(this.outputDirectory, `${this.packageName}.zip`);
-      return createWriteStream(zipOutput);
+    if (this.rootDestination) {
+      return createWriteStream(`${this.rootDestination}.zip`);
     } else {
       const bufferWritable = new Writable();
-      bufferWritable._write = (chunk: Buffer, encoding: string, cb: () => void) => {
+      bufferWritable._write = (chunk: Buffer, encoding: string, cb: () => void): void => {
         this.buffers.push(chunk);
         cb();
       };

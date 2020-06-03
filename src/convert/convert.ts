@@ -56,10 +56,10 @@ export class MetadataConverter {
           const manifestPath = join(options.outputDirectory, packageName, PACKAGE_XML_FILE);
           ensureFileExists(manifestPath);
           tasks.push(promises.writeFile(manifestPath, manifestContents));
-          writer = new StandardWriter(packageName, options.outputDirectory);
+          writer = new StandardWriter(options.outputDirectory, packageName);
           break;
         case 'zip':
-          writer = new ZipWriter(packageName, options.outputDirectory);
+          writer = new ZipWriter(options.outputDirectory, packageName);
           (writer as ZipWriter).zip.append(manifestContents, { name: PACKAGE_XML_FILE });
           break;
       }

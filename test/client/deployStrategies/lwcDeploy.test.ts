@@ -83,7 +83,7 @@ describe('LWC Deploy Strategy', () => {
       created: true,
       deleted: false,
       fileName: join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js'),
-      fullName: join('mockLwcCmp', 'mockLwcCmp.js'),
+      fullName: 'mockLwcCmp/mockLwcCmp.js',
       success: true,
       componentType: 'LightningComponentBundle'
     },
@@ -92,7 +92,7 @@ describe('LWC Deploy Strategy', () => {
       created: true,
       deleted: false,
       fileName: join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.html'),
-      fullName: join('mockLwcCmp', 'mockLwcCmp.html'),
+      fullName: 'mockLwcCmp/mockLwcCmp.html',
       success: true,
       componentType: 'LightningComponentBundle'
     },
@@ -107,7 +107,7 @@ describe('LWC Deploy Strategy', () => {
         'mockLwcCmp',
         'mockLwcCmp.js-meta.xml'
       ),
-      fullName: join('mockLwcCmp', 'mockLwcCmp.js-meta.xml'),
+      fullName: 'mockLwcCmp/mockLwcCmp.js-meta.xml',
       success: true,
       componentType: 'LightningComponentBundle'
     }
@@ -447,7 +447,7 @@ describe('LWC Deploy Strategy', () => {
         created: false,
         deleted: false,
         fileName: join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js'),
-        fullName: join('mockLwcCmp', 'mockLwcCmp.js'),
+        fullName: 'mockLwcCmp/mockLwcCmp.js',
         success: false,
         componentType: 'LightningComponentBundle',
         problem: 'Unexpected error while creating sources',

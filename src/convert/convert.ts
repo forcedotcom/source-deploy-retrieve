@@ -63,7 +63,7 @@ export class MetadataConverter {
           break;
         case 'zip':
           writer = new ZipWriter(packagePath);
-          (writer as ZipWriter).zip.append(manifestContents, { name: PACKAGE_XML_FILE });
+          (writer as ZipWriter).addToZip(manifestContents, PACKAGE_XML_FILE);
           break;
       }
 

@@ -25,7 +25,7 @@ export class ComponentReader extends Readable {
     this.components = components;
   }
 
-  _read(): void {
+  public _read(): void {
     if (this.currentIndex < this.components.length - 1) {
       const c = this.components[this.currentIndex];
       this.currentIndex += 1;
@@ -44,7 +44,7 @@ export class ComponentConverter extends Transform {
     this.targetFormat = targetFormat;
   }
 
-  _transform(
+  public _transform(
     chunk: MetadataComponent,
     encoding: string,
     callback: (err: Error, data: WriterFormat) => void
@@ -70,7 +70,7 @@ export class ComponentConverter extends Transform {
   }
 }
 
-abstract class BaseWriter extends Writable {
+abstract class ComponentWriter extends Writable {
   protected rootDestination?: SourcePath;
 
   constructor(rootDestination?: SourcePath) {
@@ -79,12 +79,12 @@ abstract class BaseWriter extends Writable {
   }
 }
 
-export class StandardWriter extends BaseWriter {
+export class StandardWriter extends ComponentWriter {
   constructor(rootDestination: SourcePath) {
     super(rootDestination);
   }
 
-  async _write(
+  public async _write(
     chunk: WriterFormat,
     encoding: string,
     callback: (err?: Error) => void
@@ -107,8 +107,8 @@ export class StandardWriter extends BaseWriter {
   }
 }
 
-export class ZipWriter extends BaseWriter {
-  public readonly zip: Archiver;
+export class ZipWriter extends ComponentWriter {
+  private zip: Archiver;
   private buffers: Buffer[];
 
   constructor(rootDestination?: SourcePath) {
@@ -118,7 +118,7 @@ export class ZipWriter extends BaseWriter {
     pipeline(this.zip, this.getOutputStream());
   }
 
-  async _write(
+  public async _write(
     chunk: WriterFormat,
     encoding: string,
     callback: (err?: Error) => void
@@ -134,7 +134,7 @@ export class ZipWriter extends BaseWriter {
     callback(err);
   }
 
-  async _final(callback: (err?: Error) => void): Promise<void> {
+  public async _final(callback: (err?: Error) => void): Promise<void> {
     let err: Error;
     try {
       await this.zip.finalize();
@@ -142,6 +142,10 @@ export class ZipWriter extends BaseWriter {
       err = e;
     }
     callback(err);
+  }
+
+  public addToZip(contents: string | Readable | Buffer, path: SourcePath): void {
+    this.zip.append(contents, { name: path });
   }
 
   private getOutputStream(): Writable {

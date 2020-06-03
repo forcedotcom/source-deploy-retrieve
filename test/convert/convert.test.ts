@@ -18,7 +18,7 @@ import { ConversionError } from '../../src/errors';
 
 const env = createSandbox();
 
-describe('Convert', () => {
+describe('MetadataConverter', () => {
   let ensureFileStub: SinonStub;
   let pipelineStub: SinonStub;
   let writeFileStub: SinonStub;
@@ -43,7 +43,8 @@ describe('Convert', () => {
 
     await converter.convert(components, 'metadata', {
       type: 'directory',
-      options: { outputDirectory, packageName }
+      outputDirectory,
+      packageName
     });
 
     expect(ensureFileStub.calledBefore(writeFileStub)).to.be.true;
@@ -58,7 +59,7 @@ describe('Convert', () => {
 
     await converter.convert(components, 'metadata', {
       type: 'directory',
-      options: { outputDirectory }
+      outputDirectory
     });
 
     expect(pipelineStub.firstCall.args[2].rootDestination).to.equal(packagePath);
@@ -67,7 +68,8 @@ describe('Convert', () => {
   it('should create a pipeline with proper stream configuration', async () => {
     await converter.convert(components, 'metadata', {
       type: 'directory',
-      options: { outputDirectory, packageName }
+      outputDirectory,
+      packageName
     });
 
     const pipelineArgs = pipelineStub.firstCall.args;
@@ -83,7 +85,7 @@ describe('Convert', () => {
     try {
       await converter.convert(components, 'metadata', {
         type: 'directory',
-        options: { outputDirectory }
+        outputDirectory
       });
       assert.fail('an error should have been thrown');
     } catch (e) {

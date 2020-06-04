@@ -157,20 +157,19 @@ describe('Streams', () => {
       beforeEach(() => {
         archive = archiver.create('zip', { zlib: { level: 3 } });
         env.stub(archiver, 'create').returns(archive);
-        writer = new streams.ZipWriter();
-      });
-
-      it('should add entries to zip based on given write infos', async () => {
-        writer = new streams.ZipWriter(rootDestination);
-        const appendStub = env.stub(archive, 'append');
         env
           .stub(fs, 'createWriteStream')
           .withArgs(`${rootDestination}.zip`)
           // @ts-ignore
           .returns(fsWritableMock);
+        writer = new streams.ZipWriter();
+      });
+
+      it('should add entries to zip based on given write infos', async () => {
+        writer = new streams.ZipWriter(`${rootDestination}.zip`);
+        const appendStub = env.stub(archive, 'append');
 
         await writer._write(chunk, '', (err: Error) => {
-          // TODO: try to assert this better
           expect(err).to.be.undefined;
           expect(appendStub.firstCall.args).to.deep.equal([
             chunk.writeInfos[0].source,

@@ -70,7 +70,7 @@ export class ComponentConverter extends Transform {
   }
 }
 
-abstract class ComponentWriter extends Writable {
+export abstract class ComponentWriter extends Writable {
   protected rootDestination?: SourcePath;
 
   constructor(rootDestination?: SourcePath) {
@@ -126,7 +126,7 @@ export class ZipWriter extends ComponentWriter {
     let err: Error;
     try {
       for (const writeInfo of chunk.writeInfos) {
-        this.zip.append(writeInfo.source, { name: writeInfo.relativeDestination });
+        this.addToZip(writeInfo.source, writeInfo.relativeDestination);
       }
     } catch (e) {
       err = e;
@@ -150,7 +150,7 @@ export class ZipWriter extends ComponentWriter {
 
   private getOutputStream(): Writable {
     if (this.rootDestination) {
-      return createWriteStream(`${this.rootDestination}.zip`);
+      return createWriteStream(this.rootDestination);
     } else {
       const bufferWritable = new Writable();
       bufferWritable._write = (chunk: Buffer, encoding: string, cb: () => void): void => {

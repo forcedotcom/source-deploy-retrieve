@@ -5,6 +5,10 @@ import { Readable } from 'stream';
 // INTERNAL
 // --------------
 
+export type WriteInfo = { relativeDestination: SourcePath; source: Readable };
+
+export type WriterFormat = { component: MetadataComponent; writeInfos: WriteInfo[] };
+
 type PackageName = {
   /**
    * Optional name to give to the package, otherwise one is generated.
@@ -27,9 +31,6 @@ type ZipConfig = PackageName & {
    */
   outputDirectory?: SourcePath;
 };
-
-export type WriteInfo = { relativeDestination: SourcePath; source: Readable };
-export type WriterFormat = { component: MetadataComponent; writeInfos: WriteInfo[] };
 
 /**
  * Transforms metadata component files into different SFDX file formats

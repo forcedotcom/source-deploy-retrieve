@@ -14,7 +14,7 @@ import {
 import { ManifestGenerator, RegistryAccess } from '../metadata-registry';
 import { promises } from 'fs';
 import { join } from 'path';
-import { ensureFileExists, ensureDirectoryExists } from '../utils/fileSystemHandler';
+import { ensureDirectoryExists } from '../utils/fileSystemHandler';
 import { Writable } from 'stream';
 import {
   ComponentReader,
@@ -52,7 +52,7 @@ export class MetadataConverter {
       const packagePath = this.getPackagePath(output);
       const tasks = [];
 
-      // initialize writer
+      // initialize writer and create manifest
       let writer: Writable;
       switch (output.type) {
         case 'directory':
@@ -91,6 +91,7 @@ export class MetadataConverter {
     if (outputDirectory) {
       const name = packageName || `${DEFAULT_PACKAGE_PREFIX}_${Date.now()}`;
       packagePath = join(outputDirectory, name);
+      packagePath += outputConfig.type === 'zip' ? '.zip' : '';
     }
     return packagePath;
   }

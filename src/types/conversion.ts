@@ -57,11 +57,11 @@ export type ConvertOutputConfig = DirectoryConfig | ZipConfig;
 
 export type ConvertResult = {
   /**
-   * Location of converted package. Present if an `outputDirectory` was specified.
+   * Location of converted package. `Undefined` if `outputDirectory` is omitted from output config.
    */
   packagePath?: SourcePath;
   /**
-   * Buffer of converted package. Present if components were zipped with no `outputDirectory`.
+   * Buffer of converted package. `Undefined` if `outputDirectory` is omitted from zip output config.
    */
   zipBuffer?: Buffer;
 };

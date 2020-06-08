@@ -69,26 +69,18 @@ export class BaseSourceAdapter implements SourceAdapter {
     // of the type directory, defer fetching the file to the child adapter
     const rootTypePath = dirname(this.type.inFolder ? dirname(fsPath) : fsPath);
     const inRootTypeFolder = basename(rootTypePath) === this.type.directoryName;
-    const requireStrictParent = !!this.registry.mixedContent[
-      this.type.directoryName
-    ];
+    const requireStrictParent = !!this.registry.mixedContent[this.type.directoryName];
     if (!parsedMetaXml || (requireStrictParent && !inRootTypeFolder)) {
       metaXmlPath = this.getMetadataXmlPath(fsPath);
       if (!metaXmlPath) {
-        throw new RegistryError('error_missing_metadata_xml', [
-          fsPath,
-          this.type.name
-        ]);
+        throw new RegistryError('error_missing_metadata_xml', [fsPath, this.type.name]);
       }
       parsedMetaXml = parseMetadataXml(metaXmlPath);
       isMetaXml = false;
     }
 
     if (this.forceIgnore.denies(metaXmlPath)) {
-      throw new UnexpectedForceIgnore('error_no_metadata_xml_ignore', [
-        metaXmlPath,
-        fsPath
-      ]);
+      throw new UnexpectedForceIgnore('error_no_metadata_xml_ignore', [metaXmlPath, fsPath]);
     }
 
     const component: MetadataComponent = {
@@ -129,7 +121,7 @@ export class BaseSourceAdapter implements SourceAdapter {
     fsPath: SourcePath, // eslint-disable-line @typescript-eslint/no-unused-vars
     isMetaXml: boolean // eslint-disable-line @typescript-eslint/no-unused-vars
   ): SourcePath[] {
-    return [];
+    return undefined;
   }
 
   protected getChildren(xmlPath: SourcePath): MetadataComponent[] | undefined {

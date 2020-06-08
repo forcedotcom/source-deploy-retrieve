@@ -61,8 +61,7 @@ export type MetadataComponent = {
   xml: SourcePath;
   /**
    * Paths to additional source files, if any.
-   * // TODO: Mark optional like children
    */
-  sources: SourcePath[];
+  sources?: SourcePath[];
   children?: MetadataComponent[];
 };

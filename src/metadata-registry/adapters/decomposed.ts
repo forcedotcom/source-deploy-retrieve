@@ -8,16 +8,13 @@ import { baseName } from '../../utils';
 
 export class Decomposed extends MixedContent {
   protected getMetadataXmlPath(pathToSource: SourcePath): SourcePath {
-    // Bundles are MixedContent, but the -meta.xml is located in the component's folder.
+    // TODO: reuse logic from bundle
     const bundleRootPath = this.getPathToContent(pathToSource);
     return findMetadataXml(bundleRootPath, basename(bundleRootPath));
   }
 
-  protected getSourcePaths(
-    fsPath: SourcePath,
-    isMetaXml: boolean
-  ): SourcePath[] {
-    return [];
+  protected getSourcePaths(): SourcePath[] | undefined {
+    return undefined;
   }
 
   protected getChildren(xmlPath: SourcePath): MetadataComponent[] | undefined {
@@ -42,8 +39,7 @@ export class Decomposed extends MixedContent {
           children.push({
             fullName: baseName(fileName),
             type: this.type.children.types[childTypeId],
-            xml: currentPath,
-            sources: []
+            xml: currentPath
           });
         }
       }

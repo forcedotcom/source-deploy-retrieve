@@ -49,6 +49,7 @@ describe('Streams', () => {
         expect(component).to.deep.equal(KATHY_COMPONENTS[currentIndex]);
         currentIndex += 1;
       }
+      expect(currentIndex).to.equal(KATHY_COMPONENTS.length);
     });
   });
 

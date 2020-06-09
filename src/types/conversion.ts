@@ -5,9 +5,38 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { SourcePath, MetadataComponent } from './common';
+import { Readable } from 'stream';
 
-export type WriteInfo = { relativeDestination: SourcePath; source: NodeJS.ReadableStream };
+// --------------
+// INTERNAL
+// --------------
+
+export type WriteInfo = { relativeDestination: SourcePath; source: Readable };
+
 export type WriterFormat = { component: MetadataComponent; writeInfos: WriteInfo[] };
+
+type PackageName = {
+  /**
+   * Optional name to give to the package, otherwise one is generated.
+   */
+  packageName?: string;
+};
+
+type DirectoryConfig = PackageName & {
+  type: 'directory';
+  /**
+   * Directory path to output the converted package to.
+   */
+  outputDirectory: SourcePath;
+};
+
+type ZipConfig = PackageName & {
+  type: 'zip';
+  /**
+   * Directory path to output the zip package to.
+   */
+  outputDirectory?: SourcePath;
+};
 
 /**
  * Transforms metadata component files into different SFDX file formats
@@ -16,6 +45,10 @@ export interface MetadataTransformer {
   toMetadataFormat(): WriterFormat;
   toSourceFormat(): WriterFormat;
 }
+
+// --------------
+// PUBLIC
+// --------------
 
 /**
  * The file format for a set of metadata components.
@@ -26,24 +59,15 @@ export interface MetadataTransformer {
  */
 export type SfdxFileFormat = 'metadata' | 'source';
 
-type PackageName = {
-  /**
-   * Optional name to give to the package output, otherwise one is generated.
-   */
-  packageName?: string;
-};
+export type ConvertOutputConfig = DirectoryConfig | ZipConfig;
 
-type DirectoryOutputOptions = PackageName & {
+export type ConvertResult = {
   /**
-   * Directory path to output the converted package to.
+   * Location of converted package. `Undefined` if `outputDirectory` is omitted from output config.
    */
-  outputDirectory: SourcePath;
-};
-// type ZipOptions = PackageName & { outputDirectory?: SourcePath; compressionLevel?: number };
-// type MergeOptions = { defaultDirectory: SourcePath; merge?: MetadataComponent[] };
-
-export type OutputOptions = {
-  directory: DirectoryOutputOptions;
-  // merge: MergeOptions;
-  // zip: ZipOptions | undefined;
+  packagePath?: SourcePath;
+  /**
+   * Buffer of converted package. `Undefined` if `outputDirectory` is omitted from zip output config.
+   */
+  zipBuffer?: Buffer;
 };

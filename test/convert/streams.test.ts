@@ -15,6 +15,7 @@ import { LibraryError } from '../../src/errors';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import * as fs from 'fs';
 import { join } from 'path';
+import * as archiver from 'archiver';
 
 const env = createSandbox();
 
@@ -88,64 +89,131 @@ describe('Streams', () => {
     });
   });
 
-  describe('StandardWriter', () => {
-    const packageRoot = join('path', 'to', 'test-package');
+  describe('ComponentWriters', () => {
+    const rootDestination = join('path', 'to', 'test-package');
     const relativeDestination = join('type', 'file.x');
-    const fullPath = join(packageRoot, relativeDestination);
+    const fullPath = join(rootDestination, relativeDestination);
     const fsWritableMock = new Writable();
+    const readableMock = new Readable();
+    readableMock._read = (): void => {
+      readableMock.push('hi');
+      readableMock.push(null);
+    };
     const chunk: WriterFormat = {
       component: KATHY_COMPONENTS[0],
       writeInfos: [
         {
           relativeDestination,
-          source: new Readable()
+          source: readableMock
         }
       ]
     };
 
-    const writer = new streams.StandardWriter(packageRoot);
-
-    let ensureFileStub: SinonStub;
     let pipelineStub: SinonStub;
 
-    beforeEach(() => {
-      ensureFileStub = env.stub(fsUtil, 'ensureFileExists');
-      pipelineStub = env.stub(streams, 'pipeline');
-      env
-        .stub(fs, 'createWriteStream')
-        .withArgs(fullPath)
-        // @ts-ignore the mock isn't an fs writabale specifically.
-        .returns(fsWritableMock);
-    });
+    describe('StandardWriter', () => {
+      const writer = new streams.StandardWriter(rootDestination);
 
-    it('should pass error to callback function', async () => {
-      const whoops = new Error('whoops!');
-      pipelineStub.rejects(whoops);
+      let ensureFile: SinonStub;
 
-      await writer._write(chunk, '', (err: Error) => {
-        expect(err.message).to.equal(whoops.message);
-        expect(err.name).to.equal(whoops.name);
+      beforeEach(() => {
+        ensureFile = env.stub(fsUtil, 'ensureFileExists');
+        pipelineStub = env.stub(streams, 'pipeline');
+        env
+          .stub(fs, 'createWriteStream')
+          .withArgs(fullPath)
+          // @ts-ignore
+          .returns(fsWritableMock);
+      });
+
+      it('should pass errors to _write callback', async () => {
+        const whoops = new Error('whoops!');
+        pipelineStub.rejects(whoops);
+
+        await writer._write(chunk, '', (err: Error) => {
+          expect(err.message).to.equal(whoops.message);
+          expect(err.name).to.equal(whoops.name);
+        });
+      });
+
+      it('should perform file copies based on given write infos', async () => {
+        pipelineStub.resolves();
+
+        await writer._write(chunk, '', (err: Error) => {
+          expect(err).to.be.undefined;
+          expect(ensureFile.firstCall.args).to.deep.equal([fullPath]);
+          expect(pipelineStub.firstCall.args).to.deep.equal([
+            chunk.writeInfos[0].source,
+            fsWritableMock
+          ]);
+        });
       });
     });
 
-    it('should perform file copies based on given write infos', async () => {
-      pipelineStub.resolves();
+    describe('ZipWriter', () => {
+      let archive: archiver.Archiver;
+      let writer: streams.ZipWriter;
 
-      await writer._write(chunk, '', (err: Error) => {
-        expect(err).to.be.undefined;
-        expect(pipelineStub.firstCall.args).to.deep.equal([
-          chunk.writeInfos[0].source,
-          fsWritableMock
-        ]);
+      beforeEach(() => {
+        archive = archiver.create('zip', { zlib: { level: 3 } });
+        env.stub(archiver, 'create').returns(archive);
+        env
+          .stub(fs, 'createWriteStream')
+          .withArgs(`${rootDestination}.zip`)
+          // @ts-ignore
+          .returns(fsWritableMock);
+        writer = new streams.ZipWriter();
       });
-    });
 
-    it('should ensure a file exists before writing', async () => {
-      pipelineStub.resolves();
+      it('should add entries to zip based on given write infos', async () => {
+        writer = new streams.ZipWriter(`${rootDestination}.zip`);
+        const appendStub = env.stub(archive, 'append');
 
-      await writer._write(chunk, '', (err: Error) => {
-        expect(err).to.be.undefined;
-        expect(ensureFileStub.calledBefore(pipelineStub)).to.be.true;
+        await writer._write(chunk, '', (err: Error) => {
+          expect(err).to.be.undefined;
+          expect(appendStub.firstCall.args).to.deep.equal([
+            chunk.writeInfos[0].source,
+            { name: chunk.writeInfos[0].relativeDestination }
+          ]);
+        });
+      });
+
+      it('should finalize zip when stream is finished', async () => {
+        const finalizeStub = env.stub(archive, 'finalize').resolves();
+
+        await writer._final((err: Error) => {
+          expect(err).to.be.undefined;
+          expect(finalizeStub.calledOnce).to.be.true;
+        });
+      });
+
+      it('should write zip to buffer if no fs destination given', async () => {
+        await writer._write(chunk, '', (err: Error) => {
+          expect(err).to.be.undefined;
+        });
+        await writer._final(() => {
+          expect(writer.buffer).to.not.be.empty;
+        });
+      });
+
+      it('should pass errors to _write callback', async () => {
+        const whoops = new Error('whoops!');
+        env.stub(archive, 'append').throws(whoops);
+
+        await writer._write(chunk, '', (err: Error) => {
+          expect(err.message).to.equal(whoops.message);
+          expect(err.name).to.equal(whoops.name);
+        });
+      });
+
+      it('should pass errors to _final callback', async () => {
+        const whoops = new Error('whoops!');
+        env.stub(archive, 'finalize').throws(whoops);
+
+        await writer._final((err: Error) => {
+          expect(err.message).to.equal(whoops.message);
+          expect(err.name).to.equal(whoops.name);
+        });
       });
     });
   });

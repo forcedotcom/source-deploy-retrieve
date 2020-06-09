@@ -48,10 +48,7 @@ export class ContainerDeploy extends BaseDeploy {
     const body = readFileSync(outboundFiles[0], 'utf8');
     const fileName = baseName(outboundFiles[0]);
 
-    const contentEntity = await this.getContentEntity(
-      this.component.type.name,
-      fileName
-    );
+    const contentEntity = await this.getContentEntity(this.component.type.name, fileName);
 
     const containerMemberObject = {
       MetadataContainerId: id,
@@ -67,10 +64,7 @@ export class ContainerDeploy extends BaseDeploy {
     );
 
     if (!containerMember.success) {
-      throw new DeployError(
-        'beta_tapi_membertype_error',
-        this.component.type.name
-      );
+      throw new DeployError('beta_tapi_membertype_error', this.component.type.name);
     }
     return containerMember;
   }
@@ -79,9 +73,7 @@ export class ContainerDeploy extends BaseDeploy {
     metadataType: string,
     fileName: string
   ): Promise<{ Id?: string | unknown }> {
-    return (await this.connection.tooling
-      .sobject(metadataType)
-      .find({ Name: fileName }))[0];
+    return (await this.connection.tooling.sobject(metadataType).find({ Name: fileName }))[0];
   }
 
   public async createContainerAsyncRequest(
@@ -101,9 +93,7 @@ export class ContainerDeploy extends BaseDeploy {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  public async toolingStatusCheck(
-    asyncRequest: ToolingCreateResult
-  ): Promise<DeployResult> {
+  public async toolingStatusCheck(asyncRequest: ToolingCreateResult): Promise<DeployResult> {
     let retrieveResult: DeployResult = await this.toolingRetrieve(
       CONTAINER_ASYNC_REQUEST,
       asyncRequest.id
@@ -111,20 +101,16 @@ export class ContainerDeploy extends BaseDeploy {
     let count = 0;
     while (retrieveResult.State === DeployStatusEnum.Queued && count <= 30) {
       await this.sleep(100);
-      retrieveResult = await this.toolingRetrieve(
-        CONTAINER_ASYNC_REQUEST,
-        asyncRequest.id
-      );
+      retrieveResult = await this.toolingRetrieve(CONTAINER_ASYNC_REQUEST, asyncRequest.id);
       count++;
     }
     retrieveResult.metadataFile = this.component.xml;
+    retrieveResult.outboundFiles = this.component.sources;
+    retrieveResult.outboundFiles.push(this.component.xml);
     return retrieveResult;
   }
 
-  private async toolingRetrieve(
-    type: string,
-    id: string
-  ): Promise<DeployResult> {
+  private async toolingRetrieve(type: string, id: string): Promise<DeployResult> {
     return (await this.connection.tooling.retrieve(type, id)) as DeployResult;
   }
 }

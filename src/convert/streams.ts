@@ -12,6 +12,7 @@ import { createWriteStream } from 'fs';
 import { promisify } from 'util';
 import { LibraryError } from '../errors';
 import { getTransformer } from './transformers';
+import { Archiver, create as createArchive } from 'archiver';
 
 export const pipeline = promisify(cbPipeline);
 
@@ -24,7 +25,7 @@ export class ComponentReader extends Readable {
     this.components = components;
   }
 
-  _read(): void {
+  public _read(): void {
     if (this.currentIndex < this.components.length - 1) {
       const c = this.components[this.currentIndex];
       this.currentIndex += 1;
@@ -43,7 +44,7 @@ export class ComponentConverter extends Transform {
     this.targetFormat = targetFormat;
   }
 
-  _transform(
+  public _transform(
     chunk: MetadataComponent,
     encoding: string,
     callback: (err: Error, data: WriterFormat) => void
@@ -69,15 +70,21 @@ export class ComponentConverter extends Transform {
   }
 }
 
-export class StandardWriter extends Writable {
-  private rootDestination: SourcePath;
+export abstract class ComponentWriter extends Writable {
+  protected rootDestination?: SourcePath;
 
-  constructor(rootDestination: SourcePath) {
+  constructor(rootDestination?: SourcePath) {
     super({ objectMode: true });
     this.rootDestination = rootDestination;
   }
+}
 
-  async _write(
+export class StandardWriter extends ComponentWriter {
+  constructor(rootDestination: SourcePath) {
+    super(rootDestination);
+  }
+
+  public async _write(
     chunk: WriterFormat,
     encoding: string,
     callback: (err?: Error) => void
@@ -97,5 +104,65 @@ export class StandardWriter extends Writable {
       err = e;
     }
     callback(err);
+  }
+}
+
+export class ZipWriter extends ComponentWriter {
+  // compression-/speed+ (0)<---(3)---------->(9) compression+/speed-
+  // 3 appears to be a decent balance of compression and speed. It felt like
+  // higher values = diminishing returns on compression and made conversion slower
+  private zip: Archiver = createArchive('zip', { zlib: { level: 3 } });
+  private buffers: Buffer[] = [];
+
+  constructor(rootDestination?: SourcePath) {
+    super(rootDestination);
+    pipeline(this.zip, this.getOutputStream());
+  }
+
+  public async _write(
+    chunk: WriterFormat,
+    encoding: string,
+    callback: (err?: Error) => void
+  ): Promise<void> {
+    let err: Error;
+    try {
+      for (const writeInfo of chunk.writeInfos) {
+        this.addToZip(writeInfo.source, writeInfo.relativeDestination);
+      }
+    } catch (e) {
+      err = e;
+    }
+    callback(err);
+  }
+
+  public async _final(callback: (err?: Error) => void): Promise<void> {
+    let err: Error;
+    try {
+      await this.zip.finalize();
+    } catch (e) {
+      err = e;
+    }
+    callback(err);
+  }
+
+  public addToZip(contents: string | Readable | Buffer, path: SourcePath): void {
+    this.zip.append(contents, { name: path });
+  }
+
+  private getOutputStream(): Writable {
+    if (this.rootDestination) {
+      return createWriteStream(this.rootDestination);
+    } else {
+      const bufferWritable = new Writable();
+      bufferWritable._write = (chunk: Buffer, encoding: string, cb: () => void): void => {
+        this.buffers.push(chunk);
+        cb();
+      };
+      return bufferWritable;
+    }
+  }
+
+  get buffer(): Buffer | undefined {
+    return Buffer.concat(this.buffers);
   }
 }

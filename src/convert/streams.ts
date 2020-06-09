@@ -26,7 +26,7 @@ export class ComponentReader extends Readable {
   }
 
   public _read(): void {
-    if (this.currentIndex < this.components.length - 1) {
+    if (this.currentIndex < this.components.length) {
       const c = this.components[this.currentIndex];
       this.currentIndex += 1;
       this.push(c);

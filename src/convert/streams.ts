@@ -108,13 +108,14 @@ export class StandardWriter extends ComponentWriter {
 }
 
 export class ZipWriter extends ComponentWriter {
-  private zip: Archiver;
-  private buffers: Buffer[];
+  // compression-/speed+ (0)<---(3)---------->(9) compression+/speed-
+  // 3 appears to be a decent balance of compression and speed. It felt like
+  // higher values = diminishing returns on compression and made conversion slower
+  private zip: Archiver = createArchive('zip', { zlib: { level: 3 } });
+  private buffers: Buffer[] = [];
 
   constructor(rootDestination?: SourcePath) {
     super(rootDestination);
-    this.buffers = [];
-    this.zip = createArchive('zip', { zlib: { level: 3 } });
     pipeline(this.zip, this.getOutputStream());
   }
 

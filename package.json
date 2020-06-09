@@ -29,11 +29,13 @@
   },
   "dependencies": {
     "@salesforce/core": "2.4.1",
+    "archiver": "4.0.1",
     "gitignore-parser": "^0.0.2",
     "xmldom-sfdx-encoding": "^0.1.29"
   },
   "devDependencies": {
     "@salesforce/ts-sinon": "^1.1.2",
+    "@types/archiver": "^3.1.0",
     "@types/chai": "^4",
     "@types/mocha": "^5",
     "@types/node": "^10",

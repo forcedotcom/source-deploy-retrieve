@@ -1,6 +1,11 @@
 const shell = require('shelljs');
 require('shelljs/global');
 
+const terminalCodes = {
+  FgRed: '\x1b[31m',
+  FgWhite: '\x1b[37m'
+};
+
 module.exports = {
   run: (status, f) => {
     shell.exec(`printf "🐎 ${status}..."`);
@@ -26,5 +31,6 @@ module.exports = {
     } finally {
       config.fatal = prevConfig;
     }
-  }
+  },
+  terminalCodes
 };

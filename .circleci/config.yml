@@ -37,6 +37,7 @@ _refs:
   coverage: &coverage
     name: Upload coverage to codecov.io
     command: yarn coverage
+    shell: bash.exe
   gus-create-change-mgmt: &gus-create-change-mgmt
     name: 'Gus create change case management'
     command: |
@@ -111,7 +112,6 @@ jobs:
       - run: *build
       - run: *test
       - run: *coverage
-          shell: bash.exe
       - store_test_results:
           path: test-results
   release:

@@ -83,13 +83,20 @@ export class BaseSourceAdapter implements SourceAdapter {
       throw new UnexpectedForceIgnore('error_no_metadata_xml_ignore', [metaXmlPath, fsPath]);
     }
 
+    // TODO: Rework pattern for populating a component.
     const component: MetadataComponent = {
       fullName: parsedMetaXml.fullName,
       type: this.type,
-      xml: metaXmlPath,
-      sources: this.getSourcePaths(fsPath, isMetaXml),
-      children: this.getChildren(metaXmlPath)
+      xml: metaXmlPath
     };
+    const sources = this.getSourcePaths(fsPath, isMetaXml);
+    const children = this.getChildren(metaXmlPath);
+    if (sources) {
+      component.sources = sources;
+    }
+    if (children) {
+      component.children = children;
+    }
 
     if (this.type.inFolder) {
       component.fullName = `${parentName(component.xml)}/${component.fullName}`;
@@ -124,6 +131,11 @@ export class BaseSourceAdapter implements SourceAdapter {
     return undefined;
   }
 
+  /**
+   * Override this method to tell the adapter how to locate child components.
+   *
+   * @param xmlPath Path to root metadata xml
+   */
   protected getChildren(xmlPath: SourcePath): MetadataComponent[] | undefined {
     return undefined;
   }

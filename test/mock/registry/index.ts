@@ -51,6 +51,29 @@ export const mockRegistry = {
       inFolder: false,
       name: 'GeneWilder',
       suffix: 'gene'
+    },
+    reginaking: {
+      directoryName: 'reginas',
+      inFolder: false,
+      name: 'ReginaKing',
+      suffix: 'regina',
+      children: {
+        types: {
+          x: {
+            directoryName: 'xs',
+            name: 'X',
+            suffix: 'x'
+          },
+          y: {
+            name: 'Y',
+            suffix: 'y'
+          }
+        },
+        suffixes: {
+          x: 'x',
+          y: 'y'
+        }
+      }
     }
   },
   suffixes: {
@@ -58,20 +81,23 @@ export const mockRegistry = {
     keanu: 'keanureeves',
     missing: 'typewithoutdef',
     tinafeyFolder: 'tinafeyfolder',
-    genewilder: 'gene'
+    genewilder: 'gene',
+    reginaking: 'regina'
   },
   mixedContent: {
     dwaynes: 'dwaynejohnson',
     tarajis: 'tarajihenson',
     simons: 'simonpegg',
-    tinas: 'tinafey'
+    tinas: 'tinafey',
+    reginas: 'reginaking'
   },
   adapters: {
     keanureeves: 'matchingContentFile',
     tinafey: 'mixedContent',
     tarajihenson: 'mixedContent',
     dwaynejohnson: 'mixedContent',
-    simonpegg: 'bundle'
+    simonpegg: 'bundle',
+    reginaking: 'decomposed'
   },
   apiVersion: '48.0'
 };
@@ -82,7 +108,8 @@ import * as simon from './simonConstants';
 import * as taraji from './tarajiConstants';
 import * as tina from './tinaConstants';
 import * as gene from './geneConstants';
-export { kathy, keanu, simon, taraji, tina, gene };
+import * as regina from './reginaConstants';
+export { kathy, keanu, simon, taraji, tina, gene, regina };
 
 // Mixed content
 export const DWAYNE_DIR = join('path', 'to', 'dwaynes');

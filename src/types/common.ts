@@ -17,7 +17,7 @@ export type MetadataType = {
   /**
    * Name of the directory where components are located in a package
    */
-  directoryName: string;
+  directoryName?: string;
   /**
    * Whether or not components are stored in folders.
    *
@@ -32,12 +32,6 @@ export type MetadataType = {
    * __Examples:__ LightningComponentBundles, Documents, StaticResources
    */
   suffix?: string;
-  /**
-   * Names of the subtypes if the type has any.
-   *
-   * // TODO: Remove
-   */
-  childXmlNames?: string[];
   /**
    * Type definitions for child types, if the type has any.
    *
@@ -63,5 +57,10 @@ export type MetadataComponent = {
    * Paths to additional source files, if any.
    */
   sources?: SourcePath[];
+  /**
+   * Decomposed child components.
+   *
+   * __Examples:__ `CustomField` and `CompactLayout` on `CustomObject`
+   */
   children?: MetadataComponent[];
 };

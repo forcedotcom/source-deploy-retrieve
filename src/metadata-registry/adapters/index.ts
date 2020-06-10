@@ -14,7 +14,6 @@ import { RegistryError } from '../../errors';
 import { ForceIgnore } from '../forceIgnore';
 import { Decomposed } from './decomposed';
 
-// TODO: Should convert this to plain type?
 export enum AdapterId {
   Bundle = 'bundle',
   Decomposed = 'decomposed',

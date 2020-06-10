@@ -8,9 +8,8 @@ import { baseName } from '../../utils';
 
 export class Decomposed extends MixedContent {
   protected getMetadataXmlPath(pathToSource: SourcePath): SourcePath {
-    // TODO: reuse logic from bundle
-    const bundleRootPath = this.getPathToContent(pathToSource);
-    return findMetadataXml(bundleRootPath, basename(bundleRootPath));
+    const componentRoot = this.getPathToContent(pathToSource);
+    return findMetadataXml(componentRoot, basename(componentRoot));
   }
 
   protected getSourcePaths(): SourcePath[] | undefined {

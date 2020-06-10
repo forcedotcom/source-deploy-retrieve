@@ -64,7 +64,7 @@
     "local:link": "./scripts/localInstall.js link",
     "local:unlink": "./scripts/localInstall.js unlink",
     "test": "shx rm -rf ./test-results && nyc mocha && node ./scripts/verifyTestArtifacts",
-    "coverage": "nyc report --reporter=lcov && curl -s https://codecov.io/bash | bash",
+    "coverage": "nyc report --reporter=lcov && curl -s https://codecov.io/bash | bash -s ./test-results",
     "update:registry": "node ./scripts/metadata-registry/update.js"
   },
   "nyc": {

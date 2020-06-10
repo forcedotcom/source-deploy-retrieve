@@ -34,14 +34,11 @@ _refs:
   test: &test
     name: Run tests
     command: yarn test
-  verify-test-artifacts: &verify-test-artifacts
-    name: Verify test artifacts
+  coverage: &coverage
+    name: Upload coverage to codecov.io
     command: |
-      TEST_ARTIFACTS=./test-results/test-results.xml
-      if [ ! -f "$TEST_ARTIFACTS" ]; then
-        echo "Test artifacts are missing!"
-        exit 1
-      fi
+      ./node_modules/nyc/bin/nyc.js report --reporter=lcov
+      curl -s https://codecov.io/bash | bash -s -- -f ./test-results/coverage/lcov.info
   gus-create-change-mgmt: &gus-create-change-mgmt
     name: 'Gus create change case management'
     command: |
@@ -76,7 +73,7 @@ jobs:
       - run: *install
       - run: *build
       - run: *test
-      - run: *verify-test-artifacts
+      - run: *coverage
       - store_test_results:
           path: test-results
   node-12:
@@ -117,14 +114,8 @@ jobs:
       - run: *build
       - run: *test
       - run:
-          name: Verify test artifacts
+          <<: *coverage
           shell: bash.exe
-          command: |
-            TEST_ARTIFACTS=./test-results/test-results.xml
-            if [ ! -f "$TEST_ARTIFACTS" ]; then
-              echo "Test artifacts are missing!"
-              exit 1
-            fi
       - store_test_results:
           path: test-results
   release:

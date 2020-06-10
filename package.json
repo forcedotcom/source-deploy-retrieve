@@ -63,8 +63,7 @@
     "local:install": "./scripts/localInstall.js install",
     "local:link": "./scripts/localInstall.js link",
     "local:unlink": "./scripts/localInstall.js unlink",
-    "test": "shx rm -rf ./test-results && nyc mocha",
-    "coverage": "nyc report --reporter=lcov",
+    "test": "shx rm -rf ./test-results && nyc mocha && node ./scripts/verifyTestArtifacts",
     "update:registry": "node ./scripts/metadata-registry/update.js"
   },
   "nyc": {

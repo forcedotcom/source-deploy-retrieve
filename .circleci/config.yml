@@ -73,6 +73,7 @@ jobs:
       - run: *install
       - run: *build
       - run: *test
+      - run: *coverage
       - store_test_results:
           path: test-results
   node-12:

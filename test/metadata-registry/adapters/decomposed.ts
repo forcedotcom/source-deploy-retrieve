@@ -48,6 +48,8 @@ describe('Decomposed', () => {
       fullName: regina.REGINA_COMPONENT.fullName,
       type: regina.REGINA_COMPONENT.type,
       xml: regina.REGINA_COMPONENT.xml,
+      // we know there is a child
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       children: [regina.REGINA_COMPONENT.children![0]]
     });
   });

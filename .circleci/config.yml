@@ -36,7 +36,9 @@ _refs:
     command: yarn test
   coverage: &coverage
     name: Upload coverage to codecov.io
-    command: yarn coverage
+    command: |
+      ./node_modules/nyc/bin/nyc.js report --reporter=lcov
+      curl -s https://codecov.io/bash | bash -s -- -f ./test-results/coverage/lcov.info
   gus-create-change-mgmt: &gus-create-change-mgmt
     name: 'Gus create change case management'
     command: |

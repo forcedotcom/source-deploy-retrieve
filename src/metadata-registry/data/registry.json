@@ -158,18 +158,72 @@
       "name": "CustomObject",
       "suffix": "object",
       "directoryName": "objects",
-      "childXmlNames": [
-        "CustomField",
-        "Index",
-        "BusinessProcess",
-        "CompactLayout",
-        "RecordType",
-        "WebLink",
-        "ValidationRule",
-        "SharingReason",
-        "ListView",
-        "FieldSet"
-      ],
+      "children": {
+        "types": {
+          "businessprocess": {
+            "name": "BusinessProcess",
+            "directoryName": "businessProcesses",
+            "suffix": "businessProcess"
+          },
+          "compactlayout": {
+            "name": "CompactLayout",
+            "directoryName": "compactLayouts",
+            "suffix": "compactLayout"
+          },
+          "customfield": {
+            "name": "CustomField",
+            "directoryName": "fields",
+            "suffix": "field"
+          },
+          "fieldset": {
+            "name": "FieldSet",
+            "directoryName": "fieldSets",
+            "suffix": "fieldSet"
+          },
+          "index": {
+            "name": "Index",
+            "directoryName": "indexes",
+            "suffix": "index"
+          },
+          "listview": {
+            "name": "ListView",
+            "directoryName": "listViews",
+            "suffix": "listView"
+          },
+          "recordtype": {
+            "name": "RecordType",
+            "directoryName": "recordTypes",
+            "suffix": "recordType"
+          },
+          "sharingreason": {
+            "name": "SharingReason",
+            "directoryName": "sharingReasons",
+            "suffix": "sharingReason"
+          },
+          "validationrule": {
+            "name": "ValidationRule",
+            "directoryName": "validationRules",
+            "suffix": "validationRule"
+          },
+          "weblink": {
+            "name": "WebLink",
+            "directoryName": "webLinks",
+            "suffix": "webLink"
+          }
+        },
+        "suffixes": {
+          "businessProcess": "businessprocess",
+          "compactLayout": "compactlayout",
+          "field": "customfield",
+          "fieldSet": "fieldset",
+          "index": "index",
+          "listView": "listview",
+          "recordType": "recordtype",
+          "sharingReason": "sharingreason",
+          "validationRule": "validationrule",
+          "webLink": "weblink"
+        }
+      },
       "inFolder": false
     },
     "reporttype": {
@@ -1299,7 +1353,7 @@
     "auradefinitionbundle": "bundle",
     "certificate": "matchingContentFile",
     "contentasset": "matchingContentFile",
-    "customobject": "bundle",
+    "customobject": "decomposed",
     "document": "mixedContent",
     "emailtemplate": "matchingContentFile",
     "experiencebundle": "mixedContent",

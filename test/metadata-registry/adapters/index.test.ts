@@ -14,6 +14,7 @@ import { MatchingContentFile } from '../../../src/metadata-registry/adapters/mat
 import { Bundle } from '../../../src/metadata-registry/adapters/bundle';
 import { RegistryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
+import { Decomposed } from '../../../src/metadata-registry/adapters/decomposed';
 
 describe('SourceAdapters', () => {
   describe('getAdapter', () => {
@@ -43,6 +44,12 @@ describe('SourceAdapters', () => {
       expect(adapter).to.deep.equal(new Bundle(type));
     });
 
+    it('Should return Decomposed for decomposed AdapterId', () => {
+      const type = mockRegistry.types.reginaking;
+      const adapter = getAdapter(type, AdapterId.Decomposed);
+      expect(adapter).to.deep.equal(new Decomposed(type));
+    });
+
     it('Should throw RegistryError for missing adapter', () => {
       const type = mockRegistry.types.tarajihenson;
       const invalidId = 'asdf' as AdapterId;
@@ -58,4 +65,5 @@ describe('SourceAdapters', () => {
   require('./matchingContentFile');
   require('./mixedContent');
   require('./bundle');
+  require('./decomposed');
 });

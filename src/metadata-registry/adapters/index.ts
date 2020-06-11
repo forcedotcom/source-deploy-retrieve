@@ -12,9 +12,11 @@ import { BaseSourceAdapter } from './base';
 import { MixedContent } from './mixedContent';
 import { RegistryError } from '../../errors';
 import { ForceIgnore } from '../forceIgnore';
+import { Decomposed } from './decomposed';
 
 export enum AdapterId {
   Bundle = 'bundle',
+  Decomposed = 'decomposed',
   MatchingContentFile = 'matchingContentFile',
   MixedContent = 'mixedContent'
 }
@@ -27,6 +29,8 @@ export const getAdapter = (
   switch (adapterId) {
     case AdapterId.Bundle:
       return new Bundle(type, undefined, forceIgnore);
+    case AdapterId.Decomposed:
+      return new Decomposed(type, undefined, forceIgnore);
     case AdapterId.MatchingContentFile:
       return new MatchingContentFile(type, undefined, forceIgnore);
     case AdapterId.MixedContent:

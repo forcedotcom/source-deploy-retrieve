@@ -8,21 +8,20 @@
 import { MetadataType } from './common';
 
 /**
+ * Metadata type definitions
+ */
+export type TypeIndex = { [typeId: string]: MetadataType };
+/**
+ * Mapping of metadata suffixes -> type ids.
+ */
+export type SuffixIndex = { [suffix: string]: string };
+
+/**
  * Describes the shape of the registry data.
  */
 export type MetadataRegistry = {
-  /**
-   * Metadata type definitions
-   */
-  types: {
-    [typeId: string]: MetadataType;
-  };
-  /**
-   * Index mapping file suffixes to type ids.
-   */
-  suffixes: {
-    [suffix: string]: string;
-  };
+  types: TypeIndex;
+  suffixes?: SuffixIndex;
   /**
    * Index mapping directoryNames to type ids for types with mixed content.
    */
@@ -41,6 +40,9 @@ export type MetadataRegistry = {
   apiVersion: string;
 };
 
+/**
+ * Properties of a metadata xml's file name
+ */
 export type MetadataXml = {
   fullName: string;
   suffix: string;

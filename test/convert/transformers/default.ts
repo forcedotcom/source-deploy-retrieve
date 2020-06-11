@@ -39,18 +39,17 @@ describe('DefaultTransformer', () => {
       const transformer = new DefaultTransformer(component);
       const { directoryName } = component.type;
       const relativeBundle = join(directoryName, basename(simon.SIMON_BUNDLE_PATH));
-      const expectedInfos: WriteInfo[] = [
-        {
-          relativeDestination: join(relativeBundle, simon.SIMON_XML_NAME),
-          source: fs.createReadStream(component.xml)
-        }
-      ];
+      const expectedInfos: WriteInfo[] = [];
       for (const source of component.sources) {
         expectedInfos.push({
           relativeDestination: join(relativeBundle, basename(source)),
           source: fs.createReadStream(source)
         });
       }
+      expectedInfos.push({
+        relativeDestination: join(relativeBundle, simon.SIMON_XML_NAME),
+        source: fs.createReadStream(component.xml)
+      });
 
       expect(transformer.toMetadataFormat()).to.deep.equal({
         component,

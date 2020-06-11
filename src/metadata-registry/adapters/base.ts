@@ -69,34 +69,34 @@ export class BaseSourceAdapter implements SourceAdapter {
     // of the type directory, defer fetching the file to the child adapter
     const rootTypePath = dirname(this.type.inFolder ? dirname(fsPath) : fsPath);
     const inRootTypeFolder = basename(rootTypePath) === this.type.directoryName;
-    const requireStrictParent = !!this.registry.mixedContent[
-      this.type.directoryName
-    ];
+    const requireStrictParent = !!this.registry.mixedContent[this.type.directoryName];
     if (!parsedMetaXml || (requireStrictParent && !inRootTypeFolder)) {
       metaXmlPath = this.getMetadataXmlPath(fsPath);
       if (!metaXmlPath) {
-        throw new RegistryError('error_missing_metadata_xml', [
-          fsPath,
-          this.type.name
-        ]);
+        throw new RegistryError('error_missing_metadata_xml', [fsPath, this.type.name]);
       }
       parsedMetaXml = parseMetadataXml(metaXmlPath);
       isMetaXml = false;
     }
 
     if (this.forceIgnore.denies(metaXmlPath)) {
-      throw new UnexpectedForceIgnore('error_no_metadata_xml_ignore', [
-        metaXmlPath,
-        fsPath
-      ]);
+      throw new UnexpectedForceIgnore('error_no_metadata_xml_ignore', [metaXmlPath, fsPath]);
     }
 
+    // TODO: Rework pattern for populating a component.
     const component: MetadataComponent = {
       fullName: parsedMetaXml.fullName,
       type: this.type,
-      xml: metaXmlPath,
-      sources: this.getSourcePaths(fsPath, isMetaXml)
+      xml: metaXmlPath
     };
+    const sources = this.getSourcePaths(fsPath, isMetaXml);
+    const children = this.getChildren(metaXmlPath);
+    if (sources) {
+      component.sources = sources;
+    }
+    if (children) {
+      component.children = children;
+    }
 
     if (this.type.inFolder) {
       component.fullName = `${parentName(component.xml)}/${component.fullName}`;
@@ -111,9 +111,8 @@ export class BaseSourceAdapter implements SourceAdapter {
    *
    * @param pathToSource Path to a non root metadata xml file
    */
-  protected getMetadataXmlPath(
-    pathToSource: SourcePath // eslint-disable-line @typescript-eslint/no-unused-vars
-  ): SourcePath | undefined {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected getMetadataXmlPath(pathToSource: SourcePath): SourcePath | undefined {
     return undefined;
   }
 
@@ -124,10 +123,18 @@ export class BaseSourceAdapter implements SourceAdapter {
    * @param fsPath File path to base the inference of other source files
    * @param isMetaXml Whether or not the provided file path is a root metadata xml file
    */
-  protected getSourcePaths(
-    fsPath: SourcePath, // eslint-disable-line @typescript-eslint/no-unused-vars
-    isMetaXml: boolean // eslint-disable-line @typescript-eslint/no-unused-vars
-  ): SourcePath[] {
-    return [];
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected getSourcePaths(fsPath: SourcePath, isMetaXml: boolean): SourcePath[] {
+    return undefined;
+  }
+
+  /**
+   * Override this method to tell the adapter how to locate child components.
+   *
+   * @param xmlPath Path to root metadata xml
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected getChildren(xmlPath: SourcePath): MetadataComponent[] | undefined {
+    return undefined;
   }
 }

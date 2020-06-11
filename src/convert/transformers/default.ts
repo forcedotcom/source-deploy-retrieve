@@ -27,19 +27,21 @@ export class DefaultTransformer implements MetadataTransformer {
   public toMetadataFormat(): WriterFormat {
     const result: WriterFormat = { component: this.component, writeInfos: [] };
     let xmlDest = this.getRelativeDestination(this.component.xml);
-    if (this.component.sources.length === 0) {
+    const { sources } = this.component;
+    if (sources && sources.length > 0) {
+      for (const source of this.component.sources) {
+        result.writeInfos.push({
+          source: createReadStream(source),
+          relativeDestination: this.getRelativeDestination(source)
+        });
+      }
+    } else {
       xmlDest = xmlDest.slice(0, xmlDest.lastIndexOf(META_XML_SUFFIX));
     }
     result.writeInfos.push({
       source: createReadStream(this.component.xml),
       relativeDestination: xmlDest
     });
-    for (const source of this.component.sources) {
-      result.writeInfos.push({
-        source: createReadStream(source),
-        relativeDestination: this.getRelativeDestination(source)
-      });
-    }
     return result;
   }
 

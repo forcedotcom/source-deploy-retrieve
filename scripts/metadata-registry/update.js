@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const fs = require('fs');
 const { join } = require('path');
 
@@ -19,47 +21,60 @@ const registry = fs.existsSync(REGISTRY_PATH)
 // TODO: Replace with api call
 const describe = JSON.parse(fs.readFileSync(join(__dirname, 'describe.json')));
 
-for (const object of describe.metadataObjects) {
-  const typeId = object.xmlName.toLowerCase();
-  const {
-    xmlName: name,
-    suffix,
-    directoryName,
-    inFolder,
-    childXmlNames
-  } = object;
-
-  // If it's a type with folders, process the folder type later
-  if (inFolder === 'true') {
-    describe.metadataObjects.push({
-      xmlName: `${name}Folder`,
-      suffix: `${typeId}Folder`,
-      directoryName,
-      inFolder: false
-    });
-  }
-
-  // populate the type
-  registry.types[typeId] = {
-    name,
-    suffix,
-    directoryName,
-    childXmlNames:
-      childXmlNames && !(childXmlNames instanceof Array)
-        ? [childXmlNames]
-        : childXmlNames,
-    inFolder: inFolder === 'true'
+function createChildType(childXmlName) {
+  const camelCase = childXmlName.substring(0, 1).toLowerCase() + childXmlName.substring(1);
+  return {
+    name: childXmlName,
+    directoryName: `${camelCase}s`,
+    suffix: camelCase
   };
-
-  // populate suffix index
-  registry.suffixes[suffix] = typeId;
-
-  // populate mixedContent index
-  if (!suffix) {
-    registry.mixedContent[directoryName] = typeId;
-  }
 }
 
-fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2));
+function update() {
+  for (const object of describe.metadataObjects) {
+    const typeId = object.xmlName.toLowerCase();
+    const { xmlName: name, suffix, directoryName, inFolder, childXmlNames } = object;
 
-console.log('Registry updated');
+    // If it's a type with folders, process the folder type later
+    if (inFolder === 'true') {
+      describe.metadataObjects.push({
+        xmlName: `${name}Folder`,
+        suffix: `${typeId}Folder`,
+        directoryName,
+        inFolder: false
+      });
+    }
+
+    // populate the type
+    registry.types[typeId] = {
+      name,
+      suffix,
+      directoryName,
+      inFolder: inFolder === 'true'
+    };
+    if (childXmlNames) {
+      registry.types[typeId].children = { types: {}, suffixes: {} };
+      const childNames = !(childXmlNames instanceof Array) ? [childXmlNames] : childXmlNames;
+      for (const child of childNames) {
+        const childTypeId = child.toLowerCase();
+        const childType = createChildType(child);
+        registry.types[typeId].children.types[childTypeId] = childType;
+        registry.types[typeId].children.suffixes[childType.suffix] = childTypeId;
+      }
+    }
+
+    // populate suffix index
+    registry.suffixes[suffix] = typeId;
+
+    // populate mixedContent index
+    if (!suffix) {
+      registry.mixedContent[directoryName] = typeId;
+    }
+  }
+
+  fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2));
+
+  console.log('Registry updated');
+}
+
+update();

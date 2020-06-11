@@ -14,12 +14,7 @@ import { SourcePath } from '../../../src/types';
 import { RegistryTestUtil } from '../registryTestUtil';
 
 class TestChildAdapter extends BaseSourceAdapter {
-  public static readonly xmlPath = join(
-    'path',
-    'to',
-    'dwaynes',
-    'a.dwayne-meta.xml'
-  );
+  public static readonly xmlPath = join('path', 'to', 'dwaynes', 'a.dwayne-meta.xml');
   protected getMetadataXmlPath(): SourcePath {
     return TestChildAdapter.xmlPath;
   }
@@ -36,26 +31,18 @@ describe('BaseSourceAdapter', () => {
     expect(adapter.getComponent(path)).to.deep.equal({
       fullName: 'My_Test',
       type,
-      xml: path,
-      sources: []
+      xml: path
     });
   });
 
   it('Should reformat the fullName for folder types', () => {
-    const path = join(
-      'path',
-      'to',
-      'kathys',
-      'A_Folder',
-      'My_Test.kathy-meta.xml'
-    );
+    const path = join('path', 'to', 'kathys', 'A_Folder', 'My_Test.kathy-meta.xml');
     const type = mockRegistry.types.kathybates;
     const adapter = new BaseSourceAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.deep.equal({
       fullName: 'A_Folder/My_Test',
       type,
-      xml: path,
-      sources: []
+      xml: path
     });
   });
 
@@ -72,13 +59,7 @@ describe('BaseSourceAdapter', () => {
   });
 
   it('Should defer parsing metadata xml to child adapter if path is not a root metadata xml', () => {
-    const path = join(
-      'path',
-      'to',
-      'dwaynes',
-      'smallDwaynes',
-      'b.small-meta.xml'
-    );
+    const path = join('path', 'to', 'dwaynes', 'smallDwaynes', 'b.small-meta.xml');
     const type = mockRegistry.types.dwaynejohnson;
     const adapter = new TestChildAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.deep.equal({

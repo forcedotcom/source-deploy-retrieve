@@ -4,12 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
 import { META_XML_SUFFIX } from '../../utils';
 import { existsSync } from 'fs';
-import { BaseSourceAdapter } from './base';
+import { BaseSourceAdapter } from './baseSourceAdapter';
 import { ExpectedSourceFilesError, UnexpectedForceIgnore } from '../../errors';
-import { SourcePath } from '../../types';
+import { SourcePath, MetadataComponent } from '../../types';
 import { extName } from '../../utils/path';
 
 /**
@@ -28,32 +27,28 @@ import { extName } from '../../utils/path';
  * ├── foobar.ext-meta.xml
  *```
  */
-export class MatchingContentFile extends BaseSourceAdapter {
-  protected getMetadataXmlPath(pathToSource: SourcePath): SourcePath {
-    return `${pathToSource}${META_XML_SUFFIX}`;
+export class MatchingContentSourceAdapter extends BaseSourceAdapter {
+  protected getRootMetadataXmlPath(trigger: SourcePath): SourcePath {
+    return `${trigger}${META_XML_SUFFIX}`;
   }
 
-  protected getSourcePaths(
-    fsPath: SourcePath,
-    isMetaXml: boolean
-  ): SourcePath[] {
+  protected populate(component: MetadataComponent, trigger: SourcePath): MetadataComponent {
     let sourcePath: SourcePath;
-    if (isMetaXml) {
-      const path = fsPath.slice(0, fsPath.lastIndexOf(META_XML_SUFFIX));
+    if (component.xml === trigger) {
+      const path = trigger.slice(0, trigger.lastIndexOf(META_XML_SUFFIX));
       if (existsSync(path)) {
         sourcePath = path;
       }
-    } else if (this.registry.suffixes[extName(fsPath)]) {
-      sourcePath = fsPath;
+    } else if (this.registry.suffixes[extName(trigger)]) {
+      sourcePath = trigger;
     }
     if (!sourcePath) {
-      throw new ExpectedSourceFilesError(this.type, fsPath);
+      throw new ExpectedSourceFilesError(this.type, trigger);
     } else if (this.forceIgnore.denies(sourcePath)) {
-      throw new UnexpectedForceIgnore('error_no_source_ignore', [
-        this.type.name,
-        sourcePath
-      ]);
+      throw new UnexpectedForceIgnore('error_no_source_ignore', [this.type.name, sourcePath]);
     }
-    return [sourcePath];
+
+    component.sources = [sourcePath];
+    return component;
   }
 }

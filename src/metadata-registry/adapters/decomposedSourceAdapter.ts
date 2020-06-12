@@ -4,26 +4,21 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { MixedContent } from './mixedContent';
+import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { SourcePath, MetadataComponent } from '../../types';
-import { findMetadataXml, parseMetadataXml } from '../../utils/registry';
-import { basename, join, dirname } from 'path';
+import { parseMetadataXml } from '../../utils/registry';
+import { join, dirname } from 'path';
 import { readdirSync } from 'fs';
 import { isDirectory } from '../../utils/fileSystemHandler';
 import { baseName } from '../../utils';
 
-export class Decomposed extends MixedContent {
-  protected getMetadataXmlPath(pathToSource: SourcePath): SourcePath {
-    const componentRoot = this.getPathToContent(pathToSource);
-    return findMetadataXml(componentRoot, basename(componentRoot));
-  }
+export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
+  protected ownFolder = true;
 
-  protected getSourcePaths(): SourcePath[] | undefined {
-    return undefined;
-  }
-
-  protected getChildren(xmlPath: SourcePath): MetadataComponent[] | undefined {
-    return this._getChildren(dirname(xmlPath));
+  protected populate(component: MetadataComponent): MetadataComponent {
+    const parentPath = dirname(component.xml);
+    component.children = this._getChildren(parentPath);
+    return component;
   }
 
   private _getChildren(dirPath: SourcePath): MetadataComponent[] {

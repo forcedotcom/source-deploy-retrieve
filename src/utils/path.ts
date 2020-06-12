@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { basename, dirname, extname } from 'path';
-import { SourcePath } from '../types';
+import { basename, dirname, extname, sep } from 'path';
+import { SourcePath, MetadataType } from '../types';
 
 /**
  * Get the file or directory name at the end of a path. Different from `path.basename`
@@ -34,4 +34,11 @@ export function extName(fsPath: SourcePath): string {
  */
 export function parentName(fsPath: SourcePath): string {
   return basename(dirname(fsPath));
+}
+
+export function getPathToContent(path: SourcePath, type: MetadataType): SourcePath {
+  const pathParts = path.split(sep);
+  const typeFolderIndex = pathParts.findIndex(part => part === type.directoryName);
+  const offset = type.inFolder ? 3 : 2;
+  return pathParts.slice(0, typeFolderIndex + offset).join(sep);
 }

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { MetadataType } from './common';
+import { MetadataType, SourcePath } from './common';
 
 /**
  * Metadata type definitions
@@ -46,4 +46,5 @@ export type MetadataRegistry = {
 export type MetadataXml = {
   fullName: string;
   suffix: string;
+  path: SourcePath;
 };

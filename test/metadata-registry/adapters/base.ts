@@ -10,7 +10,7 @@ import { BaseSourceAdapter } from '../../../src/metadata-registry/adapters/base'
 import { expect, assert } from 'chai';
 import { RegistryError, UnexpectedForceIgnore } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
-import { SourcePath } from '../../../src/types';
+import { SourcePath, MetadataComponent } from '../../../src/types';
 import { RegistryTestUtil } from '../registryTestUtil';
 
 class TestChildAdapter extends BaseSourceAdapter {
@@ -18,8 +18,9 @@ class TestChildAdapter extends BaseSourceAdapter {
   protected getMetadataXmlPath(): SourcePath {
     return TestChildAdapter.xmlPath;
   }
-  protected getSourcePaths(fsPath: SourcePath): SourcePath[] {
-    return [fsPath];
+  protected populate(component: MetadataComponent, trigger: SourcePath): MetadataComponent {
+    component.sources = [trigger];
+    return component;
   }
 }
 

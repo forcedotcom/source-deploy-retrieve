@@ -5,14 +5,15 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { MatchingContentFile } from './matchingContentFile';
+import { MatchingContentSourceAdapter } from './matchingContentSourceAdapter';
 import { SourceAdapter, MetadataType } from '../../types';
-import { Bundle } from './bundle';
-import { BaseSourceAdapter } from './base';
-import { MixedContent } from './mixedContent';
+import { BundleSourceAdapter } from './bundleSourceAdapter';
+// import { BaseSourceAdapter } from './baseSourceAdapter';
+import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { RegistryError } from '../../errors';
 import { ForceIgnore } from '../forceIgnore';
-import { Decomposed } from './decomposed';
+import { DecomposedSourceAdapter } from './decomposedSourceAdapter';
+import { DefaultSourceAdapter } from './defaultSourceAdapter';
 
 export enum AdapterId {
   Bundle = 'bundle',
@@ -28,15 +29,15 @@ export const getAdapter = (
 ): SourceAdapter => {
   switch (adapterId) {
     case AdapterId.Bundle:
-      return new Bundle(type, undefined, forceIgnore);
+      return new BundleSourceAdapter(type, undefined, forceIgnore);
     case AdapterId.Decomposed:
-      return new Decomposed(type, undefined, forceIgnore);
+      return new DecomposedSourceAdapter(type, undefined, forceIgnore);
     case AdapterId.MatchingContentFile:
-      return new MatchingContentFile(type, undefined, forceIgnore);
+      return new MatchingContentSourceAdapter(type, undefined, forceIgnore);
     case AdapterId.MixedContent:
-      return new MixedContent(type, undefined, forceIgnore);
+      return new MixedContentSourceAdapter(type, undefined, forceIgnore);
     case undefined:
-      return new BaseSourceAdapter(type, undefined, forceIgnore);
+      return new DefaultSourceAdapter(type, undefined, forceIgnore);
     default:
       throw new RegistryError('error_missing_adapter', [type.name, adapterId]);
   }

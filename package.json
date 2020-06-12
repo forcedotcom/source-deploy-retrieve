@@ -31,7 +31,8 @@
     "@salesforce/core": "2.4.1",
     "archiver": "4.0.1",
     "gitignore-parser": "^0.0.2",
-    "xmldom-sfdx-encoding": "^0.1.29"
+    "xmldom-sfdx-encoding": "^0.1.29",
+    "snyk": "^1.339.2"
   },
   "devDependencies": {
     "@salesforce/ts-sinon": "^1.1.2",
@@ -64,7 +65,9 @@
     "local:link": "./scripts/localInstall.js link",
     "local:unlink": "./scripts/localInstall.js unlink",
     "test": "shx rm -rf ./test-results && nyc mocha && node ./scripts/verifyTestArtifacts",
-    "update:registry": "node ./scripts/metadata-registry/update.js"
+    "update:registry": "node ./scripts/metadata-registry/update.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "yarn run snyk-protect"
   },
   "nyc": {
     "include": [
@@ -83,5 +86,6 @@
     "sourceMap": true,
     "report-dir": "./test-results/coverage",
     "temp-dir": "./test-results/coverage/.nyc_output"
-  }
+  },
+  "snyk": true
 }

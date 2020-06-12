@@ -196,6 +196,8 @@ describe('ManifestGenerator', () => {
     const stubCreateMetadataFile = sandboxStub.stub(fs, 'createWriteStream');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     stubCreateMetadataFile.onCall(0).returns(new stream.PassThrough() as any);
+    sandboxStub.stub(fs, 'closeSync');
+    sandboxStub.stub(fs, 'openSync').returns(123);
 
     manifestGenerator.createManifestFromPath(
       path.join('file', 'path', 'myTestClass.cls-meta.xml'),
@@ -225,6 +227,8 @@ describe('ManifestGenerator', () => {
     const registryAccess = new RegistryAccess();
     sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(mdComponents);
     sandboxStub.stub(fs, 'existsSync').returns(true);
+    sandboxStub.stub(fs, 'closeSync');
+    sandboxStub.stub(fs, 'openSync').returns(123);
     // @ts-ignore
     sandboxStub.stub(fs, 'lstatSync').returns({ isDirectory: () => false });
     const stubCreateMetadataFile = sandboxStub.stub(fs, 'createWriteStream');

@@ -25,8 +25,7 @@ describe('Tooling Retrieve', () => {
   let mockConnection: Connection;
   let sandboxStub: SinonSandbox;
   let metaXMLFile = '<?xml version="1.0" encoding="UTF-8"?>\n';
-  metaXMLFile +=
-    '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">\n';
+  metaXMLFile += '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">\n';
   metaXMLFile += '\t<apiVersion>32.0</apiVersion>\n';
   metaXMLFile += '\t<status>Active</status>\n';
   metaXMLFile += '</ApexClass>';
@@ -89,14 +88,15 @@ describe('Tooling Retrieve', () => {
   });
 
   it('should generate correct query to retrieve an ApexClass', async () => {
-    sandboxStub
-      .stub(registryAccess, 'getComponentsFromPath')
-      .returns(mdComponents);
+    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(mdComponents);
     const toolingQueryStub = sandboxStub.stub(mockConnection.tooling, 'query');
     // @ts-ignore
     toolingQueryStub.returns(apexClassQueryResult);
 
     const stubCreateMetadataFile = sandboxStub.stub(fs, 'createWriteStream');
+    sandboxStub.stub(fs, 'closeSync');
+    sandboxStub.stub(fs, 'openSync');
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     stubCreateMetadataFile.onCall(0).returns(new stream.PassThrough() as any);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -107,9 +107,7 @@ describe('Tooling Retrieve', () => {
       paths: [path.join('file', 'path', 'myTestClass.cls')],
       output: path.join('file', 'path')
     };
-    const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(
-      retrieveOpts
-    );
+    const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
 
     expect(retrieveResults).to.be.a('object');
     expect(retrieveResults.success).to.equal(true);
@@ -121,9 +119,7 @@ describe('Tooling Retrieve', () => {
   });
 
   it('should retrieve an ApexClass using filepath', async () => {
-    sandboxStub
-      .stub(registryAccess, 'getComponentsFromPath')
-      .returns(mdComponents);
+    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(mdComponents);
 
     sandboxStub
       .stub(mockConnection.tooling, 'query')
@@ -135,15 +131,15 @@ describe('Tooling Retrieve', () => {
     stubCreateMetadataFile.onCall(0).returns(new stream.PassThrough() as any);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     stubCreateMetadataFile.onCall(1).returns(new stream.PassThrough() as any);
+    sandboxStub.stub(fs, 'closeSync');
+    sandboxStub.stub(fs, 'openSync');
 
     const toolingAPI = new ToolingApi(mockConnection, registryAccess);
     const retrieveOpts = {
       paths: [path.join('file', 'path', 'myTestClass.cls')],
       output: path.join('file', 'path')
     };
-    const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(
-      retrieveOpts
-    );
+    const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
     expect(retrieveResults).to.be.a('object');
     expect(retrieveResults.success).to.equal(true);
     expect(retrieveResults.components).to.be.a('Array');
@@ -152,9 +148,7 @@ describe('Tooling Retrieve', () => {
     expect(retrieveResults.components[0].type).to.be.a('object');
     expect(retrieveResults.components[0].type.name).to.equal('ApexClass');
     expect(retrieveResults.components[0].type.suffix).to.equal('cls');
-    expect(retrieveResults.components[0].type.directoryName).to.equal(
-      'classes'
-    );
+    expect(retrieveResults.components[0].type.directoryName).to.equal('classes');
     expect(retrieveResults.components[0].type.inFolder).to.equal(false);
     expect(retrieveResults.components[0].xml).to.equal(
       path.join('file', 'path', 'myTestClass.cls-meta.xml')
@@ -177,6 +171,8 @@ describe('Tooling Retrieve', () => {
     stubCreateMetadataFile.onCall(0).returns(new stream.PassThrough() as any);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     stubCreateMetadataFile.onCall(1).returns(new stream.PassThrough() as any);
+    sandboxStub.stub(fs, 'closeSync');
+    sandboxStub.stub(fs, 'openSync');
 
     const toolingAPI = new ToolingApi(mockConnection, registryAccess);
     const retrieveResults: ApiResult = await toolingAPI.retrieve({
@@ -190,9 +186,7 @@ describe('Tooling Retrieve', () => {
     expect(retrieveResults.components[0].type).to.be.a('object');
     expect(retrieveResults.components[0].type.name).to.equal('ApexClass');
     expect(retrieveResults.components[0].type.suffix).to.equal('cls');
-    expect(retrieveResults.components[0].type.directoryName).to.equal(
-      'classes'
-    );
+    expect(retrieveResults.components[0].type.directoryName).to.equal('classes');
     expect(retrieveResults.components[0].type.inFolder).to.equal(false);
     expect(retrieveResults.components[0].xml).to.equal(
       path.join('file', 'path', 'myTestClass.cls-meta.xml')
@@ -205,9 +199,7 @@ describe('Tooling Retrieve', () => {
   });
 
   it('should return empty result when metadata is not in org', async () => {
-    sandboxStub
-      .stub(registryAccess, 'getComponentsFromPath')
-      .returns(mdComponents);
+    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(mdComponents);
 
     sandboxStub
       .stub(mockConnection.tooling, 'query')
@@ -219,9 +211,7 @@ describe('Tooling Retrieve', () => {
       paths: [path.join('file', 'path', 'myTestClass.cls')],
       output: path.join('file', 'path')
     };
-    const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(
-      retrieveOpts
-    );
+    const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
     expect(retrieveResults).to.be.a('object');
     expect(retrieveResults.success).to.equal(true);
     expect(retrieveResults.components).to.be.a('Array');
@@ -252,9 +242,7 @@ describe('Tooling Retrieve', () => {
       });
       fail('Retrieve should have thrown an error');
     } catch (e) {
-      expect(e.message).to.equals(
-        nls.localize('tapi_retrieve_component_limit_error')
-      );
+      expect(e.message).to.equals(nls.localize('tapi_retrieve_component_limit_error'));
       expect(e.name).to.equals('MetadataRetrieveLimit');
     }
   });

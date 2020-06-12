@@ -29,7 +29,7 @@ export function ensureFileExists(filePath: string): void {
  */
 export function createFiles(fileMap: Map<string, string>): void {
   for (const filePath of fileMap.keys()) {
-    ensureDirectoryExists(filePath);
+    ensureFileExists(filePath);
 
     const writeStream = fs.createWriteStream(filePath);
     writeStream.write(fileMap.get(filePath));
@@ -47,10 +47,7 @@ export function isDirectory(fsPath: SourcePath): boolean {
  * @param start File or folder path to start searching from
  * @param fileName File name to search for
  */
-export function searchUp(
-  start: SourcePath,
-  fileName: string
-): string | undefined {
+export function searchUp(start: SourcePath, fileName: string): string | undefined {
   const filePath = path.join(start, fileName);
   if (fs.existsSync(filePath)) {
     return filePath;

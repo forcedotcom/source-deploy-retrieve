@@ -8,7 +8,6 @@
 import { MatchingContentSourceAdapter } from './matchingContentSourceAdapter';
 import { SourceAdapter, MetadataType } from '../../types';
 import { BundleSourceAdapter } from './bundleSourceAdapter';
-// import { BaseSourceAdapter } from './baseSourceAdapter';
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { RegistryError } from '../../errors';
 import { ForceIgnore } from '../forceIgnore';

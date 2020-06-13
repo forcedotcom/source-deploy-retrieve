@@ -13,7 +13,6 @@ import { extName } from '../../utils/path';
 
 /**
  * Handles types with a single content file with a matching file extension.
- * These tend to be the programmatic types.
  *
  * __Example Types__:
  *

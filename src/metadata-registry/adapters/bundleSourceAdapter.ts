@@ -7,7 +7,7 @@
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 
 /**
- * Handles _bundle_ types. A component bundle has all its source files, including the
+ * Handles _bundle_ types. A bundle component has all its source files, including the
  * root metadata xml, contained in its own directory.
  *
  * __Example Types__:

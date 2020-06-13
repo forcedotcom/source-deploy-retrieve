@@ -25,7 +25,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   protected forceIgnore: ForceIgnore;
 
   /**
-   * Whether or not the adapter should expect a component to be in its own folder.
+   * Whether or not the adapter should expect a component to be in its own, self-contained folder.
    */
   protected ownFolder = false;
 

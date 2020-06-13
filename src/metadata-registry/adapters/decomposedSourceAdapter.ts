@@ -12,23 +12,44 @@ import { readdirSync } from 'fs';
 import { isDirectory } from '../../utils/fileSystemHandler';
 import { baseName } from '../../utils';
 
+/**
+ * Handles decomposed types. A flavor of mixed content where a component can
+ * have additional -meta.xml files that represent child components of the main
+ * component.
+ *
+ * __Example Types__:
+ *
+ * CustomObject, CustomObjectTranslation
+ *
+ * __Example Structures__:
+ *
+ *```text
+ * foos/
+ * ├── MyFoo__c/
+ * |   ├── MyFoo__c.foo-meta.xml
+ * |   ├── bars/
+ * |      ├── a.bar-meta.xml
+ * |      ├── b.bar-meta.xml
+ * |      ├── c.bar-meta.xml
+ *```
+ */
 export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
   protected ownFolder = true;
 
   protected populate(component: MetadataComponent): MetadataComponent {
     const parentPath = dirname(component.xml);
-    component.children = this._getChildren(parentPath);
+    component.children = this.getChildren(parentPath);
     return component;
   }
 
-  private _getChildren(dirPath: SourcePath): MetadataComponent[] {
+  private getChildren(dirPath: SourcePath): MetadataComponent[] {
     const children: MetadataComponent[] = [];
     for (const fileName of readdirSync(dirPath)) {
       const currentPath = join(dirPath, fileName);
       if (this.forceIgnore.denies(currentPath)) {
         continue;
       } else if (isDirectory(currentPath)) {
-        children.push(...this._getChildren(currentPath));
+        children.push(...this.getChildren(currentPath));
       } else {
         const childXml = parseMetadataXml(fileName);
         // second condition ensures we don't add the parent's metadata xml as a child

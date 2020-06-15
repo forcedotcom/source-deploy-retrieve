@@ -8,46 +8,46 @@
 import { getAdapter, AdapterId } from '../../../src/metadata-registry/adapters';
 import { expect, assert } from 'chai';
 import { mockRegistry } from '../../mock/registry';
-import { BaseSourceAdapter } from '../../../src/metadata-registry/adapters/base';
-import { MixedContent } from '../../../src/metadata-registry/adapters/mixedContent';
-import { MatchingContentFile } from '../../../src/metadata-registry/adapters/matchingContentFile';
-import { Bundle } from '../../../src/metadata-registry/adapters/bundle';
+import { DefaultSourceAdapter } from '../../../src/metadata-registry/adapters/defaultSourceAdapter';
+import { MixedContentSourceAdapter } from '../../../src/metadata-registry/adapters/mixedContentSourceAdapter';
+import { MatchingContentSourceAdapter } from '../../../src/metadata-registry/adapters/matchingContentSourceAdapter';
+import { BundleSourceAdapter } from '../../../src/metadata-registry/adapters/bundleSourceAdapter';
 import { RegistryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
-import { Decomposed } from '../../../src/metadata-registry/adapters/decomposed';
+import { DecomposedSourceAdapter } from '../../../src/metadata-registry/adapters/decomposedSourceAdapter';
 
 describe('SourceAdapters', () => {
   describe('getAdapter', () => {
     // the types being passed to getAdapter don't really matter in these tests. We're
     // just making sure that the adapter is instantiated correctly based on given inputs
-    it('Should return BaseSourceAdapter for undefined AdapterId', () => {
+    it('Should return DefaultSourceAdapter for undefined AdapterId', () => {
       const type = mockRegistry.types.kathybates;
       const adapter = getAdapter(type, undefined);
-      expect(adapter).to.deep.equal(new BaseSourceAdapter(type));
+      expect(adapter).to.deep.equal(new DefaultSourceAdapter(type));
     });
 
-    it('Should return MixedContent for mixedContent AdapterId', () => {
+    it('Should return MixedContentSourceAdapter for mixedContent AdapterId', () => {
       const type = mockRegistry.types.dwaynejohnson;
       const adapter = getAdapter(type, AdapterId.MixedContent);
-      expect(adapter).to.deep.equal(new MixedContent(type));
+      expect(adapter).to.deep.equal(new MixedContentSourceAdapter(type));
     });
 
-    it('Should return MatchingContentFile for matchingContentFile AdapterId', () => {
+    it('Should return MatchingContentSourceAdapter for matchingContentFile AdapterId', () => {
       const type = mockRegistry.types.keanureeves;
       const adapter = getAdapter(type, AdapterId.MatchingContentFile);
-      expect(adapter).to.deep.equal(new MatchingContentFile(type));
+      expect(adapter).to.deep.equal(new MatchingContentSourceAdapter(type));
     });
 
-    it('Should return Bundle for bundle AdapterId', () => {
+    it('Should return BundleSourceAdapter for bundle AdapterId', () => {
       const type = mockRegistry.types.simonpegg;
       const adapter = getAdapter(type, AdapterId.Bundle);
-      expect(adapter).to.deep.equal(new Bundle(type));
+      expect(adapter).to.deep.equal(new BundleSourceAdapter(type));
     });
 
-    it('Should return Decomposed for decomposed AdapterId', () => {
+    it('Should return DecomposedSourceAdapter for decomposed AdapterId', () => {
       const type = mockRegistry.types.reginaking;
       const adapter = getAdapter(type, AdapterId.Decomposed);
-      expect(adapter).to.deep.equal(new Decomposed(type));
+      expect(adapter).to.deep.equal(new DecomposedSourceAdapter(type));
     });
 
     it('Should throw RegistryError for missing adapter', () => {
@@ -61,9 +61,9 @@ describe('SourceAdapters', () => {
     });
   });
 
-  require('./base');
-  require('./matchingContentFile');
-  require('./mixedContent');
-  require('./bundle');
-  require('./decomposed');
+  require('./defaultSourceAdapter');
+  require('./matchingContentSourceAdapter');
+  require('./mixedContentSourceAdapter');
+  require('./bundleSourceAdapter');
+  require('./decomposedSourceAdapter');
 });

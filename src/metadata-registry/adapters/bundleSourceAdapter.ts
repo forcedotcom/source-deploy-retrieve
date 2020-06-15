@@ -25,6 +25,5 @@ import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
  *```
  */
 export class BundleSourceAdapter extends MixedContentSourceAdapter {
-  // Bundles are mixed content, they just have their own folder.
   protected ownFolder = true;
 }

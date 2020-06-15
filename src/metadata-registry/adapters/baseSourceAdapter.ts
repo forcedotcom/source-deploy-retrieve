@@ -61,10 +61,9 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
 
   /**
    * Override this method to determine the related root metadata xml when
-   * given a path that isn't to a metadata xml.
+   * the path given to `getComponent` isn't one.
    *
-   * @param component Component to populate properties on
-   * @param trigger Path that `SourceAdapter.getComponent` was called with
+   * @param trigger Path that `getComponent` was called with
    */
   protected abstract getRootMetadataXmlPath(trigger: SourcePath): SourcePath;
 
@@ -73,15 +72,14 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    * as source files and child components.
    *
    * @param component Component to populate properties on
-   * @param trigger Path that `SourceAdapter.getComponent` was called with
+   * @param trigger Path that `getComponent` was called with
    */
   protected abstract populate(component: MetadataComponent, trigger: SourcePath): MetadataComponent;
 
   /**
-   * If the given path is the root metadata xml file for the component,
-   * parse the name and return it. This is an optimization to not make a child
-   * source adapter do anymore work to find the root xml if it was the path that
-   * was passed to `getComponent`.
+   * If the path given to `getComponent` is the root metadata xml file for a component,
+   * parse the name and return it. This is an optimization to not make a child adapter do
+   * anymore work to find it.
    *
    * @param path File path of a metadata component
    */

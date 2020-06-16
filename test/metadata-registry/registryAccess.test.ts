@@ -326,6 +326,7 @@ describe('RegistryAccess', () => {
        * Pretend that this bundle's root xml suffix is the same as KeanuReeves - still should be
        * identified as SimonPegg type
        */
+      // TODO: Add this test back in when TreeContainers are implemented
       // it('Should handle suffix collision for mixed content types', () => {
       //   testUtil.exists(simon.SIMON_DIR, true);
       //   testUtil.stubDirectories([

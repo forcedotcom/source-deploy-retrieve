@@ -4,13 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Decomposed } from '../../../src/metadata-registry/adapters/decomposed';
+import { DecomposedSourceAdapter } from '../../../src/metadata-registry/adapters/decomposedSourceAdapter';
 import { mockRegistry, regina } from '../../mock/registry';
 import { RegistryTestUtil } from '../registryTestUtil';
 import { expect } from 'chai';
 
 describe('Decomposed', () => {
-  let adapter = new Decomposed(mockRegistry.types.reginaking, mockRegistry);
+  let adapter = new DecomposedSourceAdapter(mockRegistry.types.reginaking, mockRegistry);
   const testUtil = new RegistryTestUtil();
 
   beforeEach(() => {
@@ -49,7 +49,7 @@ describe('Decomposed', () => {
       seed: regina.REGINA_XML_PATH,
       deny: [regina.REGINA_CHILD_XML_PATH_2]
     });
-    adapter = new Decomposed(mockRegistry.types.reginaking, mockRegistry, forceIgnore);
+    adapter = new DecomposedSourceAdapter(mockRegistry.types.reginaking, mockRegistry, forceIgnore);
     expect(adapter.getComponent(regina.REGINA_XML_PATH)).to.deep.equal({
       fullName: regina.REGINA_COMPONENT.fullName,
       type: regina.REGINA_COMPONENT.type,

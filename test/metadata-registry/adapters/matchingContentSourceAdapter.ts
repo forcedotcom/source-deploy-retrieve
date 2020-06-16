@@ -5,13 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { MatchingContentFile } from '../../../src/metadata-registry/adapters/matchingContentFile';
+import { MatchingContentSourceAdapter } from '../../../src/metadata-registry/adapters/matchingContentSourceAdapter';
 import { mockRegistry, keanu } from '../../mock/registry';
 import { expect, assert } from 'chai';
-import {
-  ExpectedSourceFilesError,
-  UnexpectedForceIgnore
-} from '../../../src/errors';
+import { ExpectedSourceFilesError, UnexpectedForceIgnore } from '../../../src/errors';
 import { join } from 'path';
 import { RegistryTestUtil } from '../registryTestUtil';
 import { nls } from '../../../src/i18n';
@@ -19,40 +16,28 @@ import { nls } from '../../../src/i18n';
 const testUtil = new RegistryTestUtil();
 
 describe('MatchingContentFile', () => {
-  let adapter: MatchingContentFile;
+  let adapter: MatchingContentSourceAdapter;
   const type = mockRegistry.types.keanureeves;
-  const {
-    KEANU_SOURCE_PATHS,
-    KEANU_XML_PATHS,
-    KEANU_COMPONENT,
-    KEANUS_DIR
-  } = keanu;
+  const { KEANU_SOURCE_PATHS, KEANU_XML_PATHS, KEANU_COMPONENT, KEANUS_DIR } = keanu;
 
   beforeEach(() => {
-    adapter = new MatchingContentFile(type, mockRegistry);
+    adapter = new MatchingContentSourceAdapter(type, mockRegistry);
     testUtil.initStubs();
   });
   afterEach(() => testUtil.restore());
 
   it('Should return expected MetadataComponent when given a root metadata xml path', () => {
     testUtil.exists(KEANU_SOURCE_PATHS[0], true);
-    expect(adapter.getComponent(KEANU_XML_PATHS[0])).to.deep.equal(
-      KEANU_COMPONENT
-    );
+    expect(adapter.getComponent(KEANU_XML_PATHS[0])).to.deep.equal(KEANU_COMPONENT);
   });
 
   it('Should return expected MetadataComponent when given a source path', () => {
-    expect(adapter.getComponent(KEANU_SOURCE_PATHS[0])).to.deep.equal(
-      KEANU_COMPONENT
-    );
+    expect(adapter.getComponent(KEANU_SOURCE_PATHS[0])).to.deep.equal(KEANU_COMPONENT);
   });
 
   it('Should throw an ExpectedSourceFilesError if no source is found from xml', () => {
     testUtil.exists(KEANU_SOURCE_PATHS[0], false);
-    assert.throws(
-      () => adapter.getComponent(KEANU_XML_PATHS[0]),
-      ExpectedSourceFilesError
-    );
+    assert.throws(() => adapter.getComponent(KEANU_XML_PATHS[0]), ExpectedSourceFilesError);
   });
 
   it('Should throw an ExpectedSourceFilesError if source and suffix not found', () => {
@@ -67,7 +52,7 @@ describe('MatchingContentFile', () => {
       seed: KEANU_XML_PATHS[0],
       deny: [path]
     });
-    adapter = new MatchingContentFile(type, mockRegistry, forceIgnore);
+    adapter = new MatchingContentSourceAdapter(type, mockRegistry, forceIgnore);
     assert.throws(
       () => adapter.getComponent(path),
       UnexpectedForceIgnore,

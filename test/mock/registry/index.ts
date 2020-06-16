@@ -113,5 +113,7 @@ export { kathy, keanu, simon, taraji, tina, gene, regina };
 
 // Mixed content
 export const DWAYNE_DIR = join('path', 'to', 'dwaynes');
-export const DWAYNE_XML = join(DWAYNE_DIR, 'a.dwayne-meta.xml');
-export const DWAYNE_SOURCE = join(DWAYNE_DIR, 'a.xyz');
+export const DWAYNE_XML_NAME = 'a.dwayne-meta.xml';
+export const DWAYNE_XML = join(DWAYNE_DIR, DWAYNE_XML_NAME);
+export const DWAYNE_SOURCE_NAME = 'a.xyz';
+export const DWAYNE_SOURCE = join(DWAYNE_DIR, DWAYNE_SOURCE_NAME);

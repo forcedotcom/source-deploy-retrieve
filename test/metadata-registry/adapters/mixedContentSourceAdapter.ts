@@ -10,21 +10,23 @@ import {
   DWAYNE_SOURCE,
   DWAYNE_XML,
   DWAYNE_DIR,
-  taraji
+  taraji,
+  DWAYNE_XML_NAME,
+  DWAYNE_SOURCE_NAME
 } from '../../mock/registry';
 import { expect, assert } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
 import * as fs from 'fs';
 import * as util from '../../../src/utils/registry';
 import * as fsUtil from '../../../src/utils/fileSystemHandler';
-import { MixedContent } from '../../../src/metadata-registry/adapters/mixedContent';
+import { MixedContentSourceAdapter } from '../../../src/metadata-registry/adapters/mixedContentSourceAdapter';
 import { ExpectedSourceFilesError } from '../../../src/errors';
 import { RegistryTestUtil } from '../registryTestUtil';
 import { MetadataComponent } from '../../../src/types';
 
 const env = createSandbox();
 
-describe('MixedContent', () => {
+describe('MixedContentSourceAdapter', () => {
   let findXmlStub: SinonStub;
   let findContentStub: SinonStub;
   let dirStub: SinonStub;
@@ -40,21 +42,15 @@ describe('MixedContent', () => {
   afterEach(() => env.restore());
 
   it('Should throw ExpectedSourceFilesError if content does not exist', () => {
-    const adapter = new MixedContent(
-      mockRegistry.types.dwaynejohnson,
-      mockRegistry
-    );
+    const adapter = new MixedContentSourceAdapter(mockRegistry.types.dwaynejohnson, mockRegistry);
     existsStub.withArgs(DWAYNE_SOURCE).returns(false);
     findXmlStub.returns(DWAYNE_XML);
-    assert.throws(
-      () => adapter.getComponent(DWAYNE_SOURCE),
-      ExpectedSourceFilesError
-    );
+    assert.throws(() => adapter.getComponent(DWAYNE_SOURCE), ExpectedSourceFilesError);
   });
 
   describe('File Content', () => {
     const type = mockRegistry.types.dwaynejohnson;
-    const adapter = new MixedContent(type, mockRegistry);
+    const adapter = new MixedContentSourceAdapter(type, mockRegistry);
     const expectedComponent = {
       fullName: 'a',
       type,
@@ -71,13 +67,17 @@ describe('MixedContent', () => {
     });
 
     it('Should return expected MetadataComponent when given a source path', () => {
-      findXmlStub.returns(DWAYNE_XML);
-      dirStub.returns(false);
-      existsStub.withArgs(DWAYNE_SOURCE).returns(true);
+      const testUtil = new RegistryTestUtil(env);
+      testUtil.restore();
+      testUtil.initStubs();
+      testUtil.stubDirectories([
+        {
+          directory: DWAYNE_DIR,
+          fileNames: [DWAYNE_XML_NAME, DWAYNE_SOURCE_NAME]
+        }
+      ]);
 
-      expect(adapter.getComponent(DWAYNE_SOURCE)).to.deep.equal(
-        expectedComponent
-      );
+      expect(adapter.getComponent(DWAYNE_SOURCE)).to.deep.equal(expectedComponent);
     });
   });
 
@@ -85,30 +85,21 @@ describe('MixedContent', () => {
     let walkStub: SinonStub;
 
     const type = mockRegistry.types.tarajihenson;
-    let adapter = new MixedContent(type, mockRegistry);
+    let adapter = new MixedContentSourceAdapter(type, mockRegistry);
 
-    const {
-      TARAJI_COMPONENT,
-      TARAJI_CONTENT_PATH,
-      TARAJI_SOURCE_PATHS,
-      TARAJI_XML_PATHS
-    } = taraji;
+    const { TARAJI_COMPONENT, TARAJI_CONTENT_PATH, TARAJI_SOURCE_PATHS, TARAJI_XML_PATHS } = taraji;
 
     beforeEach(() => (walkStub = env.stub(fsUtil, 'walk')));
 
     it('Should return expected MetadataComponent when given a root metadata xml path', () => {
-      findContentStub
-        .withArgs(taraji.TARAJI_DIR, 'a')
-        .returns(TARAJI_CONTENT_PATH);
+      findContentStub.withArgs(taraji.TARAJI_DIR, 'a').returns(TARAJI_CONTENT_PATH);
       dirStub.returns(true);
       existsStub.withArgs(TARAJI_CONTENT_PATH).returns(true);
       walkStub
         .withArgs(TARAJI_CONTENT_PATH, new Set([TARAJI_XML_PATHS[0]]))
         .returns(TARAJI_SOURCE_PATHS);
 
-      expect(adapter.getComponent(TARAJI_XML_PATHS[0])).to.deep.equal(
-        TARAJI_COMPONENT
-      );
+      expect(adapter.getComponent(TARAJI_XML_PATHS[0])).to.deep.equal(TARAJI_COMPONENT);
     });
 
     it('Should return expected MetadataComponent when given a source path', () => {
@@ -120,12 +111,8 @@ describe('MixedContent', () => {
         .returns(TARAJI_SOURCE_PATHS);
 
       const randomSource =
-        TARAJI_SOURCE_PATHS[
-          Math.floor(Math.random() * Math.floor(TARAJI_SOURCE_PATHS.length))
-        ];
-      expect(adapter.getComponent(randomSource)).to.deep.equal(
-        TARAJI_COMPONENT
-      );
+        TARAJI_SOURCE_PATHS[Math.floor(Math.random() * Math.floor(TARAJI_SOURCE_PATHS.length))];
+      expect(adapter.getComponent(randomSource)).to.deep.equal(TARAJI_COMPONENT);
     });
 
     it('Should not include source paths that are forceignored', () => {
@@ -142,11 +129,9 @@ describe('MixedContent', () => {
         accept: [TARAJI_SOURCE_PATHS[1]],
         deny: [TARAJI_SOURCE_PATHS[0], TARAJI_SOURCE_PATHS[2]]
       });
-      adapter = new MixedContent(type, mockRegistry, forceIgnore);
+      adapter = new MixedContentSourceAdapter(type, mockRegistry, forceIgnore);
       // copy the object but change the expected sources
-      const filteredComponent: MetadataComponent = JSON.parse(
-        JSON.stringify(TARAJI_COMPONENT)
-      );
+      const filteredComponent: MetadataComponent = JSON.parse(JSON.stringify(TARAJI_COMPONENT));
       filteredComponent.sources = [TARAJI_SOURCE_PATHS[1]];
       expect(adapter.getComponent(path)).to.deep.equal(filteredComponent);
     });

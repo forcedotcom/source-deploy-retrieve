@@ -7,10 +7,7 @@
 import { join } from 'path';
 import { mockRegistry } from '../../mock/registry';
 import { DefaultSourceAdapter } from '../../../src/metadata-registry/adapters/defaultSourceAdapter';
-import { expect, assert } from 'chai';
-import { RegistryError, UnexpectedForceIgnore } from '../../../src/errors';
-import { nls } from '../../../src/i18n';
-import { RegistryTestUtil } from '../registryTestUtil';
+import { expect } from 'chai';
 
 describe('DefaultSourceAdapter', () => {
   it('Should return a MetadataComponent when given a metadata xml file', () => {
@@ -22,34 +19,5 @@ describe('DefaultSourceAdapter', () => {
       type,
       xml: path
     });
-  });
-
-  it('Should throw an error if directly using adapter and path is not a root metadata xml', () => {
-    const path = join('path', 'to', 'dwaynes', 'My_Test.js');
-    const type = mockRegistry.types.dwaynejohnson;
-    const adapter = new DefaultSourceAdapter(type, mockRegistry);
-    assert.throws(
-      () => adapter.getComponent(path),
-      RegistryError,
-      nls.localize('error_missing_metadata_xml', [path, type.name])
-    );
-  });
-
-  it('Should throw an error if a metadata xml file is forceignored', () => {
-    const testUtil = new RegistryTestUtil();
-    testUtil.initStubs();
-    const path = join('path', 'to', 'keanus', 'My_Test.keanu-meta.xml');
-    const type = mockRegistry.types.keanureeves;
-    const forceIgnore = testUtil.stubForceIgnore({
-      seed: path,
-      deny: [path]
-    });
-    const adapter = new DefaultSourceAdapter(type, mockRegistry, forceIgnore);
-    assert.throws(
-      () => adapter.getComponent(path),
-      UnexpectedForceIgnore,
-      nls.localize('error_no_metadata_xml_ignore', [path, path])
-    );
-    testUtil.restore();
   });
 });

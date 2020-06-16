@@ -13,14 +13,12 @@ import { readdirSync } from 'fs';
  * Returns the `MetadataXml` info from a given file path. If the path is not a
  * metadata xml file (-meta.xml), returns `undefined`
  *
- * @param fsPath
+ * @param path
  */
-export const parseMetadataXml = (
-  fsPath: SourcePath
-): MetadataXml | undefined => {
-  const match = basename(fsPath).match(/(.+)\.(.+)-meta\.xml/);
+export const parseMetadataXml = (path: SourcePath): MetadataXml | undefined => {
+  const match = basename(path).match(/(.+)\.(.+)-meta\.xml/);
   if (match) {
-    return { fullName: match[1], suffix: match[2] };
+    return { fullName: match[1], suffix: match[2], path: path };
   }
 };
 
@@ -39,10 +37,8 @@ const find = (
   }
 };
 
-export const findMetadataXml = (
-  directory: SourcePath,
-  fullName: string
-): SourcePath | undefined => find(directory, fullName, true);
+export const findMetadataXml = (directory: SourcePath, fullName: string): SourcePath | undefined =>
+  find(directory, fullName, true);
 
 /**
  * If there's more than one content file with the same fullName, it will

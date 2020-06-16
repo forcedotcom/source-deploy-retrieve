@@ -19,6 +19,7 @@ describe('Registry Utils', () => {
       const path = join(root, 'a.ext-meta.xml');
       expect(util.parseMetadataXml(path)).to.deep.equal({
         fullName: 'a',
+        path,
         suffix: 'ext'
       });
     });
@@ -31,14 +32,7 @@ describe('Registry Utils', () => {
 
   describe('find', () => {
     let readStub: SinonStub;
-    const files = [
-      'a.q',
-      'a.x-meta.xml',
-      'b',
-      'b.x-meta.xml',
-      'c.z',
-      'c.x-meta.xml'
-    ];
+    const files = ['a.q', 'a.x-meta.xml', 'b', 'b.x-meta.xml', 'c.z', 'c.x-meta.xml'];
     before(() => {
       readStub = env.stub(fs, 'readdirSync');
       readStub.withArgs(root).returns(files);
@@ -46,9 +40,7 @@ describe('Registry Utils', () => {
     after(() => env.restore());
 
     it('Should find a metadata xml file by fullName in a directory', () => {
-      expect(util.findMetadataXml(root, 'b')).to.equal(
-        join(root, 'b.x-meta.xml')
-      );
+      expect(util.findMetadataXml(root, 'b')).to.equal(join(root, 'b.x-meta.xml'));
     });
 
     it('Should find a content file by fullName in a directory', () => {

@@ -60,16 +60,15 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   }
 
   /**
-   * Override this method to determine the related root metadata xml when
-   * the path given to `getComponent` isn't one.
+   * Determine the related root metadata xml when the path given to `getComponent` isn't one.
    *
    * @param trigger Path that `getComponent` was called with
    */
   protected abstract getRootMetadataXmlPath(trigger: SourcePath): SourcePath;
 
   /**
-   * Override this method to populate additional properties on a MetadataComponent, such
-   * as source files and child components.
+   * Populate additional properties on a MetadataComponent, such as source files and child components.
+   * The component passed to `populate` has its fullName, xml, and type properties already set.
    *
    * @param component Component to populate properties on
    * @param trigger Path that `getComponent` was called with

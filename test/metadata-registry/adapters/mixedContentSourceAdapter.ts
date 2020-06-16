@@ -5,7 +5,15 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { mockRegistry, DWAYNE_SOURCE, DWAYNE_XML, DWAYNE_DIR, taraji } from '../../mock/registry';
+import {
+  mockRegistry,
+  DWAYNE_SOURCE,
+  DWAYNE_XML,
+  DWAYNE_DIR,
+  taraji,
+  DWAYNE_XML_NAME,
+  DWAYNE_SOURCE_NAME
+} from '../../mock/registry';
 import { expect, assert } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
 import * as fs from 'fs';
@@ -18,7 +26,7 @@ import { MetadataComponent } from '../../../src/types';
 
 const env = createSandbox();
 
-describe('MixedContent', () => {
+describe('MixedContentSourceAdapter', () => {
   let findXmlStub: SinonStub;
   let findContentStub: SinonStub;
   let dirStub: SinonStub;
@@ -59,9 +67,15 @@ describe('MixedContent', () => {
     });
 
     it('Should return expected MetadataComponent when given a source path', () => {
-      findXmlStub.returns(DWAYNE_XML);
-      dirStub.returns(false);
-      existsStub.withArgs(DWAYNE_SOURCE).returns(true);
+      const testUtil = new RegistryTestUtil(env);
+      testUtil.restore();
+      testUtil.initStubs();
+      testUtil.stubDirectories([
+        {
+          directory: DWAYNE_DIR,
+          fileNames: [DWAYNE_XML_NAME, DWAYNE_SOURCE_NAME]
+        }
+      ]);
 
       expect(adapter.getComponent(DWAYNE_SOURCE)).to.deep.equal(expectedComponent);
     });

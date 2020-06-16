@@ -61,6 +61,7 @@ describe('SourceAdapters', () => {
     });
   });
 
+  require('./baseSourceAdapter');
   require('./defaultSourceAdapter');
   require('./matchingContentSourceAdapter');
   require('./mixedContentSourceAdapter');

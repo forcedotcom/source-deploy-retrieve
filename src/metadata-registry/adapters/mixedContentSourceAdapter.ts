@@ -49,8 +49,7 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
 
   protected populate(component: MetadataComponent, trigger: SourcePath): MetadataComponent {
     let contentPath = MixedContentSourceAdapter.trimPathToContent(trigger, this.type);
-    if (!this.ownFolder) {
-      // if content isn't self contained, we need to search for it in the parent
+    if (contentPath === component.xml) {
       contentPath = findMetadataContent(dirname(contentPath), baseName(contentPath));
     }
 

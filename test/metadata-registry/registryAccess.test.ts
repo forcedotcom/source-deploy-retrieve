@@ -9,14 +9,7 @@ import { assert, expect } from 'chai';
 import { MetadataComponent } from '../../src/types';
 import { RegistryAccess } from '../../src/metadata-registry';
 import { nls } from '../../src/i18n';
-import {
-  mockRegistry,
-  kathy,
-  keanu,
-  taraji,
-  tina,
-  simon
-} from '../mock/registry';
+import { mockRegistry, kathy, keanu, taraji, tina, simon } from '../mock/registry';
 import { join, basename } from 'path';
 import { TypeInferenceError } from '../../src/errors';
 import { RegistryTestUtil } from './registryTestUtil';
@@ -33,25 +26,18 @@ describe('RegistryAccess', () => {
 
   describe('getTypeFromName', () => {
     it('Should fetch type regardless of casing', () => {
-      expect(registry.getTypeFromName('KeAnUReeVes')).to.deep.equal(
-        mockRegistry.types.keanureeves
-      );
+      expect(registry.getTypeFromName('KeAnUReeVes')).to.deep.equal(mockRegistry.types.keanureeves);
     });
 
     it('Should fetch type regardless of spaces', () => {
-      expect(registry.getTypeFromName('kathy Bates')).to.deep.equal(
-        mockRegistry.types.kathybates
-      );
+      expect(registry.getTypeFromName('kathy Bates')).to.deep.equal(mockRegistry.types.kathybates);
     });
 
     it('Should throw an error if definition missing', () => {
       assert.throws(
         () => registry.getTypeFromName('TypeWithoutDef'),
         TypeInferenceError,
-        nls.localize(
-          'error_missing_type_definition',
-          mockRegistry.suffixes.missing
-        )
+        nls.localize('error_missing_type_definition', mockRegistry.suffixes.missing)
       );
     });
   });
@@ -86,9 +72,7 @@ describe('RegistryAccess', () => {
             ]
           }
         ]);
-        expect(registry.getComponentsFromPath(path)).to.deep.equal([
-          keanu.KEANU_COMPONENT
-        ]);
+        expect(registry.getComponentsFromPath(path)).to.deep.equal([keanu.KEANU_COMPONENT]);
       });
 
       it('Should determine type for source file with known suffix', () => {
@@ -100,9 +84,7 @@ describe('RegistryAccess', () => {
             componentMappings: [{ path, component: keanu.KEANU_COMPONENT }]
           }
         ]);
-        expect(registry.getComponentsFromPath(path)).to.deep.equal([
-          keanu.KEANU_COMPONENT
-        ]);
+        expect(registry.getComponentsFromPath(path)).to.deep.equal([keanu.KEANU_COMPONENT]);
       });
 
       it('Should determine type for path of mixed content type', () => {
@@ -115,9 +97,7 @@ describe('RegistryAccess', () => {
           }
         ]);
 
-        expect(registry.getComponentsFromPath(path)).to.deep.equal([
-          taraji.TARAJI_COMPONENT
-        ]);
+        expect(registry.getComponentsFromPath(path)).to.deep.equal([taraji.TARAJI_COMPONENT]);
       });
 
       it('Should not mistake folder component of a mixed content type as that type', () => {
@@ -130,9 +110,7 @@ describe('RegistryAccess', () => {
             componentMappings: [{ path, component: tina.TINA_FOLDER_COMPONENT }]
           }
         ]);
-        expect(registry.getComponentsFromPath(path)).to.deep.equal([
-          tina.TINA_FOLDER_COMPONENT
-        ]);
+        expect(registry.getComponentsFromPath(path)).to.deep.equal([tina.TINA_FOLDER_COMPONENT]);
       });
 
       it('Should throw type id error if one could not be determined', () => {
@@ -164,12 +142,10 @@ describe('RegistryAccess', () => {
     describe('Directory Paths', () => {
       it('Should return all components in a directory', () => {
         const { KATHY_FOLDER, KATHY_COMPONENTS } = kathy;
-        const componentMappings = kathy.KATHY_XML_PATHS.map(
-          (p: string, i: number) => ({
-            path: p,
-            component: KATHY_COMPONENTS[i]
-          })
-        );
+        const componentMappings = kathy.KATHY_XML_PATHS.map((p: string, i: number) => ({
+          path: p,
+          component: KATHY_COMPONENTS[i]
+        }));
         testUtil.stubDirectories([
           {
             directory: KATHY_FOLDER,
@@ -182,9 +158,7 @@ describe('RegistryAccess', () => {
             componentMappings
           }
         ]);
-        expect(registry.getComponentsFromPath(KATHY_FOLDER)).to.deep.equal(
-          KATHY_COMPONENTS
-        );
+        expect(registry.getComponentsFromPath(KATHY_FOLDER)).to.deep.equal(KATHY_COMPONENTS);
       });
 
       it('Should walk all file and directory children', () => {
@@ -299,10 +273,7 @@ describe('RegistryAccess', () => {
           },
           {
             directory: taraji.TARAJI_DIR,
-            fileNames: [
-              taraji.TARAJI_XML_NAMES[0],
-              basename(TARAJI_CONTENT_PATH)
-            ]
+            fileNames: [taraji.TARAJI_XML_NAMES[0], basename(TARAJI_CONTENT_PATH)]
           }
         ]);
         testUtil.stubAdapters([
@@ -316,9 +287,9 @@ describe('RegistryAccess', () => {
             ]
           }
         ]);
-        expect(
-          registry.getComponentsFromPath(TARAJI_CONTENT_PATH)
-        ).to.deep.equal([taraji.TARAJI_COMPONENT]);
+        expect(registry.getComponentsFromPath(TARAJI_CONTENT_PATH)).to.deep.equal([
+          taraji.TARAJI_COMPONENT
+        ]);
       });
 
       it('Should not add duplicates of a component when the content has multiple -meta.xmls', () => {
@@ -330,9 +301,7 @@ describe('RegistryAccess', () => {
           },
           {
             directory: SIMON_BUNDLE_PATH,
-            fileNames: simon.SIMON_SOURCE_PATHS.concat(
-              simon.SIMON_XML_PATH
-            ).map(p => basename(p))
+            fileNames: simon.SIMON_SOURCE_PATHS.concat(simon.SIMON_XML_PATH).map(p => basename(p))
           }
         ]);
         testUtil.stubAdapters([
@@ -347,9 +316,7 @@ describe('RegistryAccess', () => {
             ]
           }
         ]);
-        expect(registry.getComponentsFromPath(SIMON_BUNDLE_PATH)).to.deep.equal(
-          [SIMON_COMPONENT]
-        );
+        expect(registry.getComponentsFromPath(SIMON_BUNDLE_PATH)).to.deep.equal([SIMON_COMPONENT]);
       });
 
       /**
@@ -359,30 +326,31 @@ describe('RegistryAccess', () => {
        * Pretend that this bundle's root xml suffix is the same as KeanuReeves - still should be
        * identified as SimonPegg type
        */
-      it('Should handle suffix collision for mixed content types', () => {
-        testUtil.exists(simon.SIMON_DIR, true);
-        testUtil.stubDirectories([
-          {
-            directory: simon.SIMON_DIR,
-            fileNames: [basename(simon.SIMON_BUNDLE_PATH)]
-          },
-          {
-            directory: simon.SIMON_BUNDLE_PATH,
-            fileNames: [
-              keanu.KEANU_XML_NAMES[0],
-              basename(simon.SIMON_SOURCE_PATHS[0])
-            ]
-          }
-        ]);
-        expect(registry.getComponentsFromPath(simon.SIMON_DIR)).to.deep.equal([
-          {
-            fullName: 'a',
-            type: mockRegistry.types.simonpegg,
-            xml: join(simon.SIMON_BUNDLE_PATH, keanu.KEANU_XML_NAMES[0]),
-            sources: [simon.SIMON_SOURCE_PATHS[0]]
-          }
-        ]);
-      });
+      // TODO: Add this test back in when TreeContainers are implemented
+      // it('Should handle suffix collision for mixed content types', () => {
+      //   testUtil.exists(simon.SIMON_DIR, true);
+      //   testUtil.stubDirectories([
+      //     {
+      //       directory: simon.SIMON_DIR,
+      //       fileNames: [basename(simon.SIMON_BUNDLE_PATH)]
+      //     },
+      //     {
+      //       directory: simon.SIMON_BUNDLE_PATH,
+      //       fileNames: [
+      //         keanu.KEANU_XML_NAMES[0],
+      //         basename(simon.SIMON_SOURCE_PATHS[0])
+      //       ]
+      //     }
+      //   ]);
+      //   expect(registry.getComponentsFromPath(simon.SIMON_DIR)).to.deep.equal([
+      //     {
+      //       fullName: 'a',
+      //       type: mockRegistry.types.simonpegg,
+      //       xml: join(simon.SIMON_BUNDLE_PATH, keanu.KEANU_XML_NAMES[0]),
+      //       sources: [simon.SIMON_SOURCE_PATHS[0]]
+      //     }
+      //   ]);
+      // });
 
       it('Should not return components if the directory is forceignored', () => {
         const path = kathy.KATHY_FOLDER;

@@ -10,7 +10,7 @@ import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import * as util from '../../../src/utils/registry';
 import * as fsUtil from '../../../src/utils/fileSystemHandler';
-import { Bundle } from '../../../src/metadata-registry/adapters/bundle';
+import { BundleSourceAdapter } from '../../../src/metadata-registry/adapters/bundleSourceAdapter';
 import * as fs from 'fs';
 import { basename } from 'path';
 
@@ -18,7 +18,7 @@ const env = createSandbox();
 
 describe('Bundle', () => {
   const type = mockRegistry.types.simonpegg;
-  const adapter = new Bundle(type, mockRegistry);
+  const adapter = new BundleSourceAdapter(type, mockRegistry);
 
   const {
     SIMON_BUNDLE_PATH,
@@ -39,9 +39,7 @@ describe('Bundle', () => {
     findContentStub.withArgs(SIMON_DIR, bundleName).returns(SIMON_BUNDLE_PATH);
     existsStub.withArgs(SIMON_BUNDLE_PATH).returns(true);
     isDirStub.withArgs(SIMON_BUNDLE_PATH).returns(true);
-    walkStub
-      .withArgs(SIMON_BUNDLE_PATH, new Set([SIMON_XML_PATH]))
-      .returns(SIMON_SOURCE_PATHS);
+    walkStub.withArgs(SIMON_BUNDLE_PATH, new Set([SIMON_XML_PATH])).returns(SIMON_SOURCE_PATHS);
   });
 
   after(() => env.restore());
@@ -52,9 +50,7 @@ describe('Bundle', () => {
 
   it('Should return expected MetadataComponent when given a source path', () => {
     const randomSource =
-      SIMON_SOURCE_PATHS[
-        Math.floor(Math.random() * Math.floor(SIMON_SOURCE_PATHS.length))
-      ];
+      SIMON_SOURCE_PATHS[Math.floor(Math.random() * Math.floor(SIMON_SOURCE_PATHS.length))];
     expect(adapter.getComponent(randomSource)).to.deep.equal(SIMON_COMPONENT);
   });
 });

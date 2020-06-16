@@ -7,17 +7,12 @@
 
 import { existsSync, readdirSync } from 'fs';
 import { sep, join, basename, dirname } from 'path';
-import {
-  MetadataComponent,
-  MetadataRegistry,
-  MetadataType,
-  SourcePath
-} from '../types';
+import { MetadataComponent, MetadataRegistry, MetadataType, SourcePath } from '../types';
 import { getAdapter, AdapterId } from './adapters';
 import { parseMetadataXml, deepFreeze } from '../utils/registry';
 import { TypeInferenceError } from '../errors';
 import { registryData } from '.';
-import { MixedContent } from './adapters/mixedContent';
+import { MixedContentSourceAdapter } from './adapters/mixedContentSourceAdapter';
 import { parentName, extName } from '../utils/path';
 import { isDirectory } from '../utils/fileSystemHandler';
 import { ForceIgnore } from './forceIgnore';
@@ -76,8 +71,7 @@ export class RegistryAccess {
         const parts = fsPath.split(sep);
         const folderOffset = inFolder ? 2 : 1;
         if (parts[parts.length - folderOffset] !== directoryName) {
-          pathForFetch =
-            MixedContent.findXmlFromContentPath(fsPath, type) || fsPath;
+          pathForFetch = MixedContentSourceAdapter.findXmlFromContentPath(fsPath, type) || fsPath;
         }
       }
       if (pathForFetch === fsPath) {
@@ -129,19 +123,13 @@ export class RegistryAccess {
     const typeId = this.determineTypeId(fsPath);
     if (typeId) {
       const adapterId = this.data.adapters[typeId] as AdapterId;
-      const adapter = getAdapter(
-        this.getTypeFromName(typeId),
-        adapterId,
-        this.forceIgnore
-      );
+      const adapter = getAdapter(this.getTypeFromName(typeId), adapterId, this.forceIgnore);
       return adapter.getComponent(fsPath);
     }
     throw new TypeInferenceError('error_could_not_infer_type', fsPath);
   }
 
-  private getComponentsFromPathRecursive(
-    directory: SourcePath
-  ): MetadataComponent[] {
+  private getComponentsFromPathRecursive(directory: SourcePath): MetadataComponent[] {
     const dirQueue: SourcePath[] = [];
     const components: MetadataComponent[] = [];
 
@@ -159,12 +147,8 @@ export class RegistryAccess {
           components.push(component);
           // don't traverse further if not in a root type directory. performance optimization
           // for mixed content types and ensures we don't add duplicates of the component.
-          const isMixedContent = !!this.data.mixedContent[
-            component.type.directoryName
-          ];
-          const typeDir = basename(
-            dirname(component.type.inFolder ? dirname(path) : path)
-          );
+          const isMixedContent = !!this.data.mixedContent[component.type.directoryName];
+          const typeDir = basename(dirname(component.type.inFolder ? dirname(path) : path));
           if (isMixedContent && typeDir !== component.type.directoryName) {
             return components;
           }

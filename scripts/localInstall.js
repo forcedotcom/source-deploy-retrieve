@@ -35,9 +35,7 @@ function showHelp() {
   console.log(
     '  link [path to target module]\t\tLink the project to another module for quick development'
   );
-  console.log(
-    '  unlink [path to target module]\tUnlink the project from the target module'
-  );
+  console.log('  unlink [path to target module]\tUnlink the project from the target module');
 }
 
 function main() {
@@ -75,10 +73,7 @@ function main() {
         shell.cd(localPackagePath);
         execSilent('yarn build');
         execSilent('yarn pack');
-        tarballPath = execSilent('find $(pwd) -type f -iname *.tgz').replace(
-          '\n',
-          ''
-        );
+        tarballPath = execSilent('find $(pwd) -type f -iname *.tgz').replace('\n', '');
       });
 
       run(`Installing v${version} to ${targetPackagePath}`, () => {

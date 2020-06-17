@@ -37,9 +37,7 @@ export class RegistryTestUtil {
     this.existsStub.withArgs(fsPath).returns(exists);
   }
 
-  public stubDirectories(
-    structure: { directory: SourcePath; fileNames: SourcePath[] }[]
-  ): void {
+  public stubDirectories(structure: { directory: SourcePath; fileNames: SourcePath[] }[]): void {
     const readDirStub: SinonStub = this.env.stub(fs, 'readdirSync');
 
     for (const part of structure) {

@@ -13,11 +13,7 @@ const type = mockRegistry.types.kathybates;
 
 export const KATHYS_DIR = join('path', 'to', 'kathys');
 export const KATHY_FOLDER = join(KATHYS_DIR, 'A_Folder');
-export const KATHY_XML_NAMES = [
-  'a.kathy-meta.xml',
-  'b.kathy-meta.xml',
-  'c.kathy-meta.xml'
-];
+export const KATHY_XML_NAMES = ['a.kathy-meta.xml', 'b.kathy-meta.xml', 'c.kathy-meta.xml'];
 export const KATHY_XML_PATHS = [
   join(KATHY_FOLDER, 'a.kathy-meta.xml'),
   join(KATHY_FOLDER, 'b.kathy-meta.xml'),

@@ -9,12 +9,7 @@ import { Connection } from '@salesforce/core';
 import { readFileSync } from 'fs';
 import { sep } from 'path';
 import { DeployError } from '../../errors';
-import {
-  DeployResult,
-  DeployStatusEnum,
-  MetadataComponent,
-  SourceResult
-} from '../../types';
+import { DeployResult, DeployStatusEnum, MetadataComponent, SourceResult } from '../../types';
 import { ToolingCreateResult } from '../../utils/deploy';
 import { TOOLING_PATH_SEP } from './constants';
 
@@ -42,8 +37,7 @@ export abstract class BaseDeploy {
     try {
       const parser = new DOMParser();
       const document = parser.parseFromString(metadataContent, 'text/xml');
-      const apiVersion = document.getElementsByTagName('apiVersion')[0]
-        .textContent;
+      const apiVersion = document.getElementsByTagName('apiVersion')[0].textContent;
       const statusNode = document.getElementsByTagName('status')[0];
       const packageNode = document.getElementsByTagName('packageVersions')[0];
       const descriptionNode = document.getElementsByTagName('description')[0];
@@ -53,9 +47,7 @@ export abstract class BaseDeploy {
         apiVersion,
         ...(statusNode ? { status: statusNode.textContent } : {}),
         ...(packageNode ? { packageVersions: packageNode.textContent } : {}),
-        ...(descriptionNode
-          ? { description: descriptionNode.textContent }
-          : {}),
+        ...(descriptionNode ? { description: descriptionNode.textContent } : {}),
         ...(labelNode ? { label: labelNode.textContent } : {})
       };
       return metadataField;
@@ -64,14 +56,8 @@ export abstract class BaseDeploy {
     }
   }
 
-  protected async toolingCreate(
-    type: string,
-    record: object
-  ): Promise<ToolingCreateResult> {
-    return (await this.connection.tooling.create(
-      type,
-      record
-    )) as ToolingCreateResult;
+  protected async toolingCreate(type: string, record: object): Promise<ToolingCreateResult> {
+    return (await this.connection.tooling.create(type, record)) as ToolingCreateResult;
   }
 
   // If bundle already exists then use Id and update existing
@@ -94,26 +80,17 @@ export abstract class BaseDeploy {
         Metadata: metadataField
       };
 
-      bundleResult = await this.toolingCreate(
-        this.component.type.name,
-        bundleObject
-      );
+      bundleResult = await this.toolingCreate(this.component.type.name, bundleObject);
     }
 
     if (!bundleResult.success) {
-      throw new DeployError(
-        'error_creating_metadata_type',
-        this.component.type.name
-      );
+      throw new DeployError('error_creating_metadata_type', this.component.type.name);
     }
 
     return bundleResult;
   }
 
-  protected formatBundleOutput(
-    deployResults: SourceResult[],
-    failure?: boolean
-  ): DeployResult {
+  protected formatBundleOutput(deployResults: SourceResult[], failure?: boolean): DeployResult {
     let toolingDeployResult: DeployResult;
     if (failure) {
       toolingDeployResult = {
@@ -171,9 +148,7 @@ export abstract class BaseDeploy {
   protected getFormattedPaths(filepath: string): string[] {
     const pathParts = filepath.split(sep);
 
-    const typeFolderIndex = pathParts.findIndex(
-      part => part === this.component.type.directoryName
-    );
+    const typeFolderIndex = pathParts.findIndex(part => part === this.component.type.directoryName);
 
     return [
       pathParts.slice(typeFolderIndex).join(TOOLING_PATH_SEP),

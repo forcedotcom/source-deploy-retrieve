@@ -24,9 +24,7 @@ describe('Localization tests', () => {
 
   it('Should not fail if a key is missing in default locale', () => {
     const nls = new Localization(loadMessageBundle());
-    expect(nls.localize('non_existent_key')).to.be.equals(
-      '!!! MISSING LABEL !!! non_existent_key'
-    );
+    expect(nls.localize('non_existent_key')).to.be.equals('!!! MISSING LABEL !!! non_existent_key');
   });
 
   it('Should not error if arg counts do no match', () => {
@@ -41,9 +39,7 @@ describe('Localization tests', () => {
 
   it('Should perform substitution in default locale if args >=1 with an array', () => {
     const nls = new Localization(loadMessageBundle());
-    expect(nls.localize('key_3_with_args', ['John'])).to.be.equals(
-      'Hello John'
-    );
+    expect(nls.localize('key_3_with_args', ['John'])).to.be.equals('Hello John');
   });
 
   it('Should append args for missing label', () => {

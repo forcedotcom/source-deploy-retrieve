@@ -20,24 +20,18 @@ const NODE_VERSION = '12.4.0';
 const LIB_VERSION = process.env['LIB_VERSION'];
 
 console.log('\nVerifying node version ' + NODE_VERSION + ' is installed.');
-const [version, major, minor, patch] = process.version.match(
-  /^v(\d+)\.?(\d+)\.?(\*|\d+)$/
-);
+const [version, major, minor, patch] = process.version.match(/^v(\d+)\.?(\d+)\.?(\*|\d+)$/);
 if (
   parseInt(major) !== parseInt(NODE_VERSION.split('.')[0]) ||
   parseInt(minor) < parseInt(NODE_VERSION.split('.')[1])
 ) {
-  console.log(
-    'Please update from node version ' + process.version + ' to ' + NODE_VERSION
-  );
+  console.log('Please update from node version ' + process.version + ' to ' + NODE_VERSION);
   process.exit(-1);
 }
 
 if (!LIB_VERSION) {
   console.log(`You must set environment variable 'LIB_VERSION'.`);
-  console.log(
-    `To set: 'export LIB_VERSION=x.y.z'. Where xx.yy.zz is the release number.`
-  );
+  console.log(`To set: 'export LIB_VERSION=x.y.z'. Where xx.yy.zz is the release number.`);
   process.exit(-1);
 }
 

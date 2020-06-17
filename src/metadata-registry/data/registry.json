@@ -686,11 +686,7 @@
       "name": "SharingRules",
       "suffix": "sharingRules",
       "directoryName": "sharingRules",
-      "childXmlNames": [
-        "SharingOwnerRule",
-        "SharingCriteriaRule",
-        "SharingTerritoryRule"
-      ],
+      "childXmlNames": ["SharingOwnerRule", "SharingCriteriaRule", "SharingTerritoryRule"],
       "inFolder": false
     },
     "sharingset": {

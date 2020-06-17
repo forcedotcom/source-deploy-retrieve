@@ -29,7 +29,7 @@ describe('MetadataConverter', () => {
   const packageName = 'test';
   const outputDirectory = join('path', 'to', 'output');
   const packageOutput = join(outputDirectory, packageName);
-
+  /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
   function validatePipelineArgs(pipelineArgs: any[]): void {
     expect(pipelineArgs[0] instanceof streams.ComponentReader).to.be.true;
     expect(pipelineArgs[0].components).to.deep.equal(components);

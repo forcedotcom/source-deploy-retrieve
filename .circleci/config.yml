@@ -3,6 +3,7 @@ version: 2.1
 
 orbs:
   win: circleci/windows@2.2.0
+  sfchangecase: salesforce/change-case-management@3.1.0
 
 _refs:
   defaults: &defaults
@@ -39,28 +40,11 @@ _refs:
     command: |
       ./node_modules/nyc/bin/nyc.js report --reporter=lcov
       curl -s https://codecov.io/bash | bash -s -- -f ./test-results/coverage/lcov.info
-  gus-create-change-mgmt: &gus-create-change-mgmt
-    name: 'Gus create change case management'
+  gus-prepare-environment-variables: &gus-prepare-environment-variables
+    name: 'Prepare environment variables for GUS Change Case Management'
     command: |
-      if [ "$GUS_SKIP" == "false" ]; then
-        yarn global add @salesforce/change-case-management
-        export GUS_BUILD="$(node -pe "require('./package.json').gusBuild")"
-        echo "Gus build is ${GUS_BUILD}"
-        sfchangecase create -i ${GUS_TEMPLATE_ID} --release offcore.tooling.${GUS_BUILD} --location ${REPO_LOCATION}
-        sfchangecase check --release offcore.tooling.${GUS_BUILD} --location ${REPO_LOCATION}
-      else
-        echo "Gus change case management was skipped because GUS_SKIP is true"
-      fi
-  gus-close-change-mgmt: &gus-close-change-mgmt
-    name: 'Gus close change case management'
-    command: |
-      if [ "$GUS_SKIP" == "false" ]; then
-        export GUS_BUILD="$(node -pe "require('./package.json').gusBuild")"
-        echo "Gus build is ${GUS_BUILD}"
-        sfchangecase update --location ${REPO_LOCATION} --release offcore.tooling.${GUS_BUILD} --status 'Closed - Deploy Successful'
-      else
-        echo "Gus change case management was skipped because GUS_SKIP is true"
-      fi
+      export GUS_BUILD="47.1.0"
+      echo "export GUS_RELEASE=offcore.tooling.$GUS_BUILD" >> $BASH_ENV
 
 jobs:
   node-latest: &node-test
@@ -126,26 +110,35 @@ jobs:
       - restore_cache: *restore_cache
       - run: *gh-config
       - run: *install
-      - run: *gus-create-change-mgmt
+      - sfchangecase/install
+      - run: *gus-prepare-environment-variables
+      - sfchangecase/create:
+          location: REPO_LOCATION
+          release: GUS_RELEASE
+      - sfchangecase/check:
+          location: REPO_LOCATION
+          release: GUS_RELEASE
       - run: *build
-      - run:
-          name: Bump package version
-          command: |
-            yarn version --patch --no-git-tag-version
-            git add package.json
-            git commit -m "[skip ci] Updated version"
-      - run:
-          name: Set .npmrc
-          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-      - run: yarn publish --non-interactive
-      - run: git push origin master
-      - run:
-          name: Tag the release and push to repo
-          command: |
-            export RELEASE_TAG="$(node -pe "require('./package.json').version")"
-            git tag v${RELEASE_TAG}
-            git push --tags
-      - run: *gus-close-change-mgmt
+      # - run:
+      #     name: Bump package version
+      #     command: |
+      #       yarn version --patch --no-git-tag-version
+      #       git add package.json
+      #       git commit -m "[skip ci] Updated version"
+      # - run:
+      #     name: Set .npmrc
+      #     command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+      # - run: yarn publish --non-interactive
+      # - run: git push origin master
+      # - run:
+      #     name: Tag the release and push to repo
+      #     command: |
+      #       export RELEASE_TAG="$(node -pe "require('./package.json').version")"
+      #       git tag v${RELEASE_TAG}
+      #       git push --tags
+      - sfchangecase/update:
+          location: REPO_LOCATION
+          release: GUS_RELEASE
 
 workflows:
   version: 2
@@ -162,10 +155,10 @@ workflows:
               ignore: /.*/
       - run-win-tests
       - release:
-          filters:
-            branches:
-              only:
-                - master
+          # filters:
+          #   branches:
+          #     only:
+          #       - master
           requires:
             - node-latest
             - node-12

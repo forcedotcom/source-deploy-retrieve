@@ -3,7 +3,7 @@ version: 2.1
 
 orbs:
   win: circleci/windows@2.2.0
-  sfchangecase: salesforce/change-case-management@3.1.0
+  sfchangecase: salesforce/change-case-management@3
 
 _refs:
   defaults: &defaults
@@ -43,7 +43,7 @@ _refs:
   gus-prepare-environment-variables: &gus-prepare-environment-variables
     name: 'Prepare environment variables for GUS Change Case Management'
     command: |
-      export GUS_BUILD="47.1.0"
+      export GUS_BUILD="47.2.0"
       echo "export GUS_RELEASE=offcore.tooling.$GUS_BUILD" >> $BASH_ENV
 
 jobs:

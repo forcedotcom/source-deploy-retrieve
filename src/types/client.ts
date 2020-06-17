@@ -42,9 +42,7 @@ type CommonPathOptions = {
 export type RetrieveOptions = CommonOptions &
   CommonRetrieveOptions & { components: MetadataComponent[] };
 
-export type RetrievePathOptions = CommonOptions &
-  CommonRetrieveOptions &
-  CommonPathOptions;
+export type RetrievePathOptions = CommonOptions & CommonRetrieveOptions & CommonPathOptions;
 
 export type ApiResult = {
   success: boolean;

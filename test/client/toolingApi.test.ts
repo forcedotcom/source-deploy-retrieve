@@ -45,25 +45,19 @@ describe('Tooling API tests', () => {
 
   it('should go ahead with deploy for supported types', async () => {
     const deployLibrary = new ToolingApi(mockConnection, registryAccess);
-    sandboxStub
-      .stub(RegistryAccess.prototype, 'getComponentsFromPath')
-      .returns([
-        {
-          type: { name: 'ApexClass', directoryName: '', inFolder: false },
-          fullName: 'myTestClass',
-          xml: 'myTestClass.cls-meta.xml',
-          sources: ['file/path/myTestClass.cls']
-        }
-      ]);
-    sandboxStub
-      .stub(ContainerDeploy.prototype, 'buildMetadataField')
-      .returns(testMetadataField);
-    const mockContainerDeploy = sandboxStub
-      .stub(ContainerDeploy.prototype, 'deploy')
-      .resolves({
-        State: DeployStatusEnum.Completed,
-        ErrorMsg: null
-      } as DeployResult);
+    sandboxStub.stub(RegistryAccess.prototype, 'getComponentsFromPath').returns([
+      {
+        type: { name: 'ApexClass', directoryName: '', inFolder: false },
+        fullName: 'myTestClass',
+        xml: 'myTestClass.cls-meta.xml',
+        sources: ['file/path/myTestClass.cls']
+      }
+    ]);
+    sandboxStub.stub(ContainerDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
+    const mockContainerDeploy = sandboxStub.stub(ContainerDeploy.prototype, 'deploy').resolves({
+      State: DeployStatusEnum.Completed,
+      ErrorMsg: null
+    } as DeployResult);
 
     const deployOpts = {
       paths: ['file/path/myTestClass.cls']
@@ -74,16 +68,14 @@ describe('Tooling API tests', () => {
   });
 
   it('should exit deploy for unsupported types', async () => {
-    sandboxStub
-      .stub(RegistryAccess.prototype, 'getComponentsFromPath')
-      .returns([
-        {
-          type: { name: 'FlexiPage', directoryName: '', inFolder: false },
-          fullName: '',
-          xml: '',
-          sources: []
-        }
-      ]);
+    sandboxStub.stub(RegistryAccess.prototype, 'getComponentsFromPath').returns([
+      {
+        type: { name: 'FlexiPage', directoryName: '', inFolder: false },
+        fullName: '',
+        xml: '',
+        sources: []
+      }
+    ]);
     const deployLibrary = new ToolingApi(mockConnection, registryAccess);
     const deployOpts = {
       paths: ['file/path/myTestClass.flexipage']

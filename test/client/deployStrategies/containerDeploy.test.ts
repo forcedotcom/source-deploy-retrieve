@@ -20,8 +20,7 @@ const $$ = testSetup();
 
 describe('Container Deploy Strategy', () => {
   let simpleMetaXMLString = '<?xml version="1.0" encoding="UTF-8"?>';
-  simpleMetaXMLString +=
-    '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">';
+  simpleMetaXMLString += '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">';
   simpleMetaXMLString += '    <apiVersion>32.0</apiVersion>';
   simpleMetaXMLString += '    <status>Active</status>';
   simpleMetaXMLString += '</ApexClass>';
@@ -79,22 +78,12 @@ describe('Container Deploy Strategy', () => {
       })
     });
     const mockFS = sandboxStub.stub(fs, 'readFileSync');
-    mockFS
-      .withArgs('file/path/one.cls', 'utf8')
-      .returns('public with sharing class TestAPI {}');
+    mockFS.withArgs('file/path/one.cls', 'utf8').returns('public with sharing class TestAPI {}');
 
-    mockFS
-      .withArgs('file/path/one.cls-meta.xml', 'utf8')
-      .returns(simpleMetaXMLString);
-    mockFS
-      .withArgs('file/path/one.component-meta.xml', 'utf8')
-      .returns(simpleMetaXMLString);
-    mockFS
-      .withArgs('file/path/one.page-meta.xml', 'utf8')
-      .returns(simpleMetaXMLString);
-    mockFS
-      .withArgs('file/path/one.trigger-meta.xml', 'utf8')
-      .returns(simpleMetaXMLString);
+    mockFS.withArgs('file/path/one.cls-meta.xml', 'utf8').returns(simpleMetaXMLString);
+    mockFS.withArgs('file/path/one.component-meta.xml', 'utf8').returns(simpleMetaXMLString);
+    mockFS.withArgs('file/path/one.page-meta.xml', 'utf8').returns(simpleMetaXMLString);
+    mockFS.withArgs('file/path/one.trigger-meta.xml', 'utf8').returns(simpleMetaXMLString);
   });
 
   afterEach(() => {
@@ -103,10 +92,7 @@ describe('Container Deploy Strategy', () => {
 
   it('should create a metadata container', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
-    const mockToolingCreate = sandboxStub.stub(
-      mockConnection.tooling,
-      'create'
-    );
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create');
 
     mockToolingCreate.resolves({
       success: true,
@@ -143,8 +129,7 @@ describe('Container Deploy Strategy', () => {
   it('should throw an error when creating a duplicate metadata container', async () => {
     const errorObj = {
       errorCode: 'DUPLICATE_VALUE',
-      message:
-        'duplicate value found: Name duplicates value on record with id : 1dcxxx000000034',
+      message: 'duplicate value found: Name duplicates value on record with id : 1dcxxx000000034',
       name: 'DUPLICATE_VALUE',
       stack:
         'DUPLICATE_VALUE: duplicate value found: Name duplicates value on record with id : 1dcxxx000000034'
@@ -165,13 +150,11 @@ describe('Container Deploy Strategy', () => {
   it('should create a metadata member type for Apex Class', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
-    const mockToolingCreate = sandboxStub
-      .stub(mockConnection.tooling, 'create')
-      .resolves({
-        success: true,
-        id: '400xxx000000034',
-        errors: []
-      } as RecordResult);
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
+      success: true,
+      id: '400xxx000000034',
+      errors: []
+    } as RecordResult);
 
     deployLibrary.component = apexClassCmp;
     const containerMember = await deployLibrary.createContainerMember(
@@ -188,13 +171,11 @@ describe('Container Deploy Strategy', () => {
   it('should create a metadata member type for Apex Trigger', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
-    const mockToolingCreate = sandboxStub
-      .stub(mockConnection.tooling, 'create')
-      .resolves({
-        success: true,
-        id: '400xxx000000034',
-        errors: []
-      } as RecordResult);
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
+      success: true,
+      id: '400xxx000000034',
+      errors: []
+    } as RecordResult);
 
     deployLibrary.component = apexTriggerCmp;
     const containerMember = await deployLibrary.createContainerMember(
@@ -211,13 +192,11 @@ describe('Container Deploy Strategy', () => {
   it('should create a metadata member type for VisualForce Page', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
-    const mockToolingCreate = sandboxStub
-      .stub(mockConnection.tooling, 'create')
-      .resolves({
-        success: true,
-        id: '400xxx000000034',
-        errors: []
-      } as RecordResult);
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
+      success: true,
+      id: '400xxx000000034',
+      errors: []
+    } as RecordResult);
 
     deployLibrary.component = apexPageCmp;
     const containerMember = await deployLibrary.createContainerMember(
@@ -234,13 +213,11 @@ describe('Container Deploy Strategy', () => {
   it('should create a metadata member type for VisualForce Component', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
-    const mockToolingCreate = sandboxStub
-      .stub(mockConnection.tooling, 'create')
-      .resolves({
-        success: true,
-        id: '400xxx000000034',
-        errors: []
-      } as RecordResult);
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
+      success: true,
+      id: '400xxx000000034',
+      errors: []
+    } as RecordResult);
 
     deployLibrary.component = apexComponent;
     const containerMember = await deployLibrary.createContainerMember(
@@ -251,21 +228,17 @@ describe('Container Deploy Strategy', () => {
     expect(containerMember.success).to.be.equal(true);
     // tslint:disable-next-line:no-unused-expression
     expect(containerMember.errors).to.be.an('array').that.is.empty;
-    expect(mockToolingCreate.getCall(0).args[0]).to.equal(
-      'ApexComponentMember'
-    );
+    expect(mockToolingCreate.getCall(0).args[0]).to.equal('ApexComponentMember');
   });
 
   it('should call tooling api with the correct params when creating a metadata member type for new type', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
     sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
-    const mockToolingCreate = sandboxStub
-      .stub(mockConnection.tooling, 'create')
-      .resolves({
-        success: true,
-        id: '400xxx000000034',
-        errors: []
-      } as RecordResult);
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
+      success: true,
+      id: '400xxx000000034',
+      errors: []
+    } as RecordResult);
 
     deployLibrary.component = apexClassCmp;
     await deployLibrary.createContainerMember(
@@ -281,9 +254,7 @@ describe('Container Deploy Strategy', () => {
       contentEntityId: string;
     };
     expect(secondParam).to.be.an('object');
-    expect(secondParam.MetadataContainerId).to.equal(
-      successfulContainerResult.id
-    );
+    expect(secondParam.MetadataContainerId).to.equal(successfulContainerResult.id);
     expect(secondParam.FullName).to.equal('one');
     expect(secondParam.Body).to.equal('public with sharing class TestAPI {}');
     expect(secondParam.Metadata).to.deep.equal({
@@ -295,16 +266,12 @@ describe('Container Deploy Strategy', () => {
 
   it('should call tooling api with the correct params when creating a metadata member type for existing type', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
-    sandboxStub
-      .stub(deployLibrary, 'getContentEntity')
-      .resolves({ Id: 'a00xxx000000034' });
-    const mockToolingCreate = sandboxStub
-      .stub(mockConnection.tooling, 'create')
-      .resolves({
-        success: true,
-        id: '400xxx000000034',
-        errors: []
-      } as RecordResult);
+    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({ Id: 'a00xxx000000034' });
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
+      success: true,
+      id: '400xxx000000034',
+      errors: []
+    } as RecordResult);
 
     deployLibrary.component = apexClassCmp;
     await deployLibrary.createContainerMember(
@@ -320,9 +287,7 @@ describe('Container Deploy Strategy', () => {
       contentEntityId: string;
     };
     expect(secondParam).to.be.an('object');
-    expect(secondParam.MetadataContainerId).to.equal(
-      successfulContainerResult.id
-    );
+    expect(secondParam.MetadataContainerId).to.equal(successfulContainerResult.id);
     expect(secondParam.FullName).to.equal('one');
     expect(secondParam.Body).to.equal('public with sharing class TestAPI {}');
     expect(secondParam.Metadata).to.deep.equal({
@@ -349,33 +314,25 @@ describe('Container Deploy Strategy', () => {
       );
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal(
-        nls.localize('beta_tapi_membertype_error', 'ApexClass')
-      );
+      expect(e.message).to.equal(nls.localize('beta_tapi_membertype_error', 'ApexClass'));
       expect(e.name).to.be.equal('DeployError');
     }
   });
 
   it('should create a container async request', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
-    const mockToolingCreate = sandboxStub
-      .stub(mockConnection.tooling, 'create')
-      .resolves({
-        success: true,
-        id: '1drxxx000000034',
-        errors: []
-      } as RecordResult);
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
+      success: true,
+      id: '1drxxx000000034',
+      errors: []
+    } as RecordResult);
 
-    const car = await deployLibrary.createContainerAsyncRequest(
-      successfulContainerResult
-    );
+    const car = await deployLibrary.createContainerAsyncRequest(successfulContainerResult);
     expect(car.id).to.equal('1drxxx000000034');
     expect(car.success).to.be.equal(true);
     // tslint:disable-next-line:no-unused-expression
     expect(car.errors).to.be.an('array').that.is.empty;
-    expect(mockToolingCreate.getCall(0).args[0]).to.equal(
-      'ContainerAsyncRequest'
-    );
+    expect(mockToolingCreate.getCall(0).args[0]).to.equal('ContainerAsyncRequest');
     expect(mockToolingCreate.getCall(0).args[1]).to.deep.equal({
       MetadataContainerId: successfulContainerResult.id
     });
@@ -390,9 +347,7 @@ describe('Container Deploy Strategy', () => {
     } as RecordResult);
 
     try {
-      await deployLibrary.createContainerAsyncRequest(
-        successfulContainerResult
-      );
+      await deployLibrary.createContainerAsyncRequest(successfulContainerResult);
       expect.fail('Should have failed');
     } catch (e) {
       expect(e.message).to.equal(nls.localize('beta_tapi_car_error'));
@@ -403,34 +358,26 @@ describe('Container Deploy Strategy', () => {
   it('should throw an error when creating a container async request', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
     sandboxStub.stub(mockConnection.tooling, 'create').throwsException({
-      message:
-        'insufficient access rights on cross-reference id: 1drxx000000xUHs',
+      message: 'insufficient access rights on cross-reference id: 1drxx000000xUHs',
       errorCode: 'INSUFFICIENT_ACCESS_ON_CROSS_REFERENCE_ENTITY',
       fields: [],
       name: 'INSUFFICIENT_ACCESS_ON_CROSS_REFERENCE_ENTITY'
     });
     try {
-      await deployLibrary.createContainerAsyncRequest(
-        successfulContainerResult
-      );
+      await deployLibrary.createContainerAsyncRequest(successfulContainerResult);
       expect.fail('Should have failed');
     } catch (e) {
       expect(e.message).to.equal(
         'insufficient access rights on cross-reference id: 1drxx000000xUHs'
       );
-      expect(e.name).to.be.equal(
-        'INSUFFICIENT_ACCESS_ON_CROSS_REFERENCE_ENTITY'
-      );
+      expect(e.name).to.be.equal('INSUFFICIENT_ACCESS_ON_CROSS_REFERENCE_ENTITY');
     }
   });
 
   it('should poll for a container async request', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
     deployLibrary.component = apexClassCmp;
-    const mockToolingRetrieve = sandboxStub.stub(
-      mockConnection.tooling,
-      'retrieve'
-    );
+    const mockToolingRetrieve = sandboxStub.stub(mockConnection.tooling, 'retrieve');
     mockToolingRetrieve.onCall(0).resolves({
       State: 'Queued',
       isDeleted: false,

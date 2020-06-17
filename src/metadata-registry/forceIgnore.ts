@@ -13,14 +13,13 @@ import { SourcePath } from '../types';
 import { searchUp } from '../utils/fileSystemHandler';
 
 export class ForceIgnore {
+  /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
   private parser: any;
   private forceIgnoreDirectory: string;
 
   constructor(forceIgnorePath = '') {
     try {
-      const forceIgnoreContents = this.parseContents(
-        readFileSync(forceIgnorePath, 'utf8')
-      );
+      const forceIgnoreContents = this.parseContents(readFileSync(forceIgnorePath, 'utf8'));
       this.parser = gitignore.compile(forceIgnoreContents);
       this.forceIgnoreDirectory = dirname(forceIgnorePath);
     } catch (e) {
@@ -39,10 +38,7 @@ export class ForceIgnore {
     let potentialForceIgnorePath = '';
     const projectConfigPath = searchUp(seed, FORCE_IGNORE_FILE);
     if (projectConfigPath) {
-      potentialForceIgnorePath = join(
-        dirname(projectConfigPath),
-        FORCE_IGNORE_FILE
-      );
+      potentialForceIgnorePath = join(dirname(projectConfigPath), FORCE_IGNORE_FILE);
     }
     return new ForceIgnore(potentialForceIgnorePath);
   }
@@ -58,9 +54,7 @@ export class ForceIgnore {
   public accepts(fsPath: SourcePath): boolean {
     let accepts = true;
     if (this.parser) {
-      accepts = this.parser.accepts(
-        relative(this.forceIgnoreDirectory, fsPath)
-      );
+      accepts = this.parser.accepts(relative(this.forceIgnoreDirectory, fsPath));
     }
     return accepts && this.isValidAgainstDefaults(fsPath);
   }

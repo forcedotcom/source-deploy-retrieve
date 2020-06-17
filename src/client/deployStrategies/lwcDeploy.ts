@@ -21,9 +21,7 @@ export class LwcDeploy extends BaseDeploy {
       const results = await this.upsert(lightningResources);
       return this.formatBundleOutput(results);
     } catch (e) {
-      const failures = [
-        this.parseLwcError(e.message, lightningResources[0].FilePath)
-      ];
+      const failures = [this.parseLwcError(e.message, lightningResources[0].FilePath)];
       return this.formatBundleOutput(failures, true);
     }
   }
@@ -70,9 +68,7 @@ export class LwcDeploy extends BaseDeploy {
     return lightningResources;
   }
 
-  public async upsert(
-    lightningResources: LightningComponentResource[]
-  ): Promise<SourceResult[]> {
+  public async upsert(lightningResources: LightningComponentResource[]): Promise<SourceResult[]> {
     const type = this.component.type.name;
     const successes: SourceResult[] = [];
     for (const resource of lightningResources) {
@@ -82,10 +78,7 @@ export class LwcDeploy extends BaseDeploy {
           Id: resource.Id
         };
 
-        await this.connection.tooling.update(
-          deployTypes.get(type),
-          formattedDef
-        );
+        await this.connection.tooling.update(deployTypes.get(type), formattedDef);
         successes.push(this.createDeployResult(resource.FilePath, true, false));
       } else {
         const formattedDef = {
@@ -102,9 +95,7 @@ export class LwcDeploy extends BaseDeploy {
     return successes;
   }
 
-  private async findLightningResources(): Promise<
-    LightningComponentResource[]
-  > {
+  private async findLightningResources(): Promise<LightningComponentResource[]> {
     const lightningResourceResult = await this.connection.tooling.query(
       `Select LightningComponentBundleId, Id, Format, Source, FilePath from LightningComponentResource where LightningComponentBundle.DeveloperName = '${
         this.component.fullName
@@ -127,12 +118,8 @@ export class LwcDeploy extends BaseDeploy {
       const file = this.component.sources.find(s => s.includes(fileName));
 
       const errObj = {
-        ...(errLocation
-          ? { lineNumber: Number(errLocation.split(',')[0]) }
-          : {}),
-        ...(errLocation
-          ? { columnNumber: Number(errLocation.split(',')[1]) }
-          : {}),
+        ...(errLocation ? { lineNumber: Number(errLocation.split(',')[0]) } : {}),
+        ...(errLocation ? { columnNumber: Number(errLocation.split(',')[1]) } : {}),
         problem: errorMessage,
         fileName: file,
         fullName: this.getFormattedPaths(file)[1],

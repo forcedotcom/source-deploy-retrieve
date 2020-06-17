@@ -13,12 +13,9 @@ import { join } from 'path';
 import { RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { nls } from '../../../src/i18n';
-import { DeployResult, DeployStatusEnum } from '../../../src/types';
+import { DeployStatusEnum, DeployResult } from '../../../src/types';
 import { LwcDeploy } from '../../../src/client/deployStrategies';
-import {
-  LightningComponentResource,
-  ToolingCreateResult
-} from '../../../src/utils/deploy';
+import { LightningComponentResource, ToolingCreateResult } from '../../../src/utils/deploy';
 
 const $$ = testSetup();
 
@@ -31,8 +28,7 @@ describe('LWC Deploy Strategy', () => {
   let mockConnection: Connection;
   let sandboxStub: SinonSandbox;
   let simpleMetaXMLString = '<?xml version="1.0" encoding="UTF-8"?>';
-  simpleMetaXMLString +=
-    '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">';
+  simpleMetaXMLString += '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">';
   simpleMetaXMLString += '    <apiVersion>32.0</apiVersion>';
   simpleMetaXMLString += '    <status>Active</status>';
   simpleMetaXMLString += '</ApexClass>';
@@ -100,13 +96,7 @@ describe('LWC Deploy Strategy', () => {
       changed: false,
       created: true,
       deleted: false,
-      fileName: join(
-        'file',
-        'path',
-        'lwc',
-        'mockLwcCmp',
-        'mockLwcCmp.js-meta.xml'
-      ),
+      fileName: join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js-meta.xml'),
       fullName: 'mockLwcCmp/mockLwcCmp.js-meta.xml',
       success: true,
       componentType: 'LightningComponentBundle'
@@ -128,9 +118,7 @@ describe('LWC Deploy Strategy', () => {
     mockFS.withArgs(lwcFiles[0], 'utf8').returns(lwcContents[0]);
     mockFS.withArgs(lwcFiles[1], 'utf8').returns(lwcContents[1]);
     mockFS
-      .withArgs(
-        join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js-meta.xml')
-      )
+      .withArgs(join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js-meta.xml'))
       .returns(simpleMetaXMLString);
   });
 
@@ -143,10 +131,7 @@ describe('LWC Deploy Strategy', () => {
       .stub(mockConnection.tooling, 'query')
       // @ts-ignore
       .resolves({ records: [] });
-    const mockToolingCreate = sandboxStub.stub(
-      mockConnection.tooling,
-      'create'
-    );
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create');
     mockToolingCreate.resolves({
       success: true,
       id: '1dcxxx000000060',
@@ -222,19 +207,14 @@ describe('LWC Deploy Strategy', () => {
   });
 
   it('should create a lightningcomponentbundle given the fullname and metadata', async () => {
-    const mockToolingCreate = sandboxStub.stub(
-      mockConnection.tooling,
-      'create'
-    );
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create');
     mockToolingCreate.resolves({
       success: true,
       id: '1dcxxx000000034',
       errors: []
     } as RecordResult);
 
-    sandboxStub
-      .stub(LwcDeploy.prototype, 'buildMetadataField')
-      .returns(testMetadataField);
+    sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const lwcDeploy = new LwcDeploy(mockConnection);
     lwcDeploy.component = lwcComponent;
     const bundle = await lwcDeploy.upsertBundle();
@@ -243,26 +223,19 @@ describe('LWC Deploy Strategy', () => {
     expect(bundle.success).to.be.equal(true);
     // tslint:disable-next-line:no-unused-expression
     expect(bundle.errors).to.be.an('array').that.is.empty;
-    expect(mockToolingCreate.getCall(0).args[0]).to.equal(
-      lwcComponent.type.name
-    );
+    expect(mockToolingCreate.getCall(0).args[0]).to.equal(lwcComponent.type.name);
     expect(mockToolingCreate.getCall(0).args[1]).to.be.an('object');
   });
 
   it('should update lightningcomponentbundle given the id and metadata', async () => {
-    const mockToolingUpdate = sandboxStub.stub(
-      mockConnection.tooling,
-      'update'
-    );
+    const mockToolingUpdate = sandboxStub.stub(mockConnection.tooling, 'update');
     mockToolingUpdate.resolves({
       success: true,
       id: '1dcxxx000000034',
       errors: []
     } as RecordResult);
 
-    sandboxStub
-      .stub(LwcDeploy.prototype, 'buildMetadataField')
-      .returns(testMetadataField);
+    sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const lwcDeploy = new LwcDeploy(mockConnection);
     lwcDeploy.component = lwcComponent;
     const bundle = await lwcDeploy.upsertBundle('1dcxxx000000034');
@@ -271,9 +244,7 @@ describe('LWC Deploy Strategy', () => {
     expect(bundle.success).to.be.equal(true);
     // tslint:disable-next-line:no-unused-expression
     expect(bundle.errors).to.be.an('array').that.is.empty;
-    expect(mockToolingUpdate.getCall(0).args[0]).to.equal(
-      lwcComponent.type.name
-    );
+    expect(mockToolingUpdate.getCall(0).args[0]).to.equal(lwcComponent.type.name);
     expect(mockToolingUpdate.getCall(0).args[1]).to.be.an('object');
   });
 
@@ -284,9 +255,7 @@ describe('LWC Deploy Strategy', () => {
       errors: ['Unexpected error while creating record']
     } as RecordResult);
 
-    sandboxStub
-      .stub(LwcDeploy.prototype, 'buildMetadataField')
-      .returns(testMetadataField);
+    sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const lwcDeploy = new LwcDeploy(mockConnection);
     lwcDeploy.component = lwcComponent;
     try {
@@ -301,23 +270,16 @@ describe('LWC Deploy Strategy', () => {
   });
 
   it('should create sources in bundle and return successes in correct shape', async () => {
-    const mockToolingCreate = sandboxStub.stub(
-      mockConnection.tooling,
-      'create'
-    );
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create');
     mockToolingCreate.resolves({
       success: true,
       id: '1dcxxx000000034',
       errors: []
     } as RecordResult);
 
-    sandboxStub
-      .stub(LwcDeploy.prototype, 'buildMetadataField')
-      .returns(testMetadataField);
+    sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
 
-    sandboxStub
-      .stub(LwcDeploy.prototype, 'buildResourceList')
-      .resolves(testLwcList);
+    sandboxStub.stub(LwcDeploy.prototype, 'buildResourceList').resolves(testLwcList);
 
     const mockToolingQuery = sandboxStub.stub(mockConnection.tooling, 'query');
     // @ts-ignore
@@ -326,26 +288,19 @@ describe('LWC Deploy Strategy', () => {
     const auraDeploy = new LwcDeploy(mockConnection);
     const deployResults = await auraDeploy.deploy(lwcComponent);
 
-    expect(deployResults.DeployDetails.componentSuccesses).to.deep.equal(
-      createLwcSuccesses
-    );
+    expect(deployResults.DeployDetails.componentSuccesses).to.deep.equal(createLwcSuccesses);
     expect(deployResults.DeployDetails.componentFailures.length).to.equal(0);
   });
 
   it('should update sources in bundle and return successes in correct shape', async () => {
-    const mockToolingUpdate = sandboxStub.stub(
-      mockConnection.tooling,
-      'update'
-    );
+    const mockToolingUpdate = sandboxStub.stub(mockConnection.tooling, 'update');
     mockToolingUpdate.resolves({
       success: true,
       id: '1dcxxx000000034',
       errors: []
     } as RecordResult);
 
-    sandboxStub
-      .stub(LwcDeploy.prototype, 'buildMetadataField')
-      .returns(testMetadataField);
+    sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
 
     const mockToolingQuery = sandboxStub.stub(mockConnection.tooling, 'query');
     // @ts-ignore
@@ -370,28 +325,21 @@ describe('LWC Deploy Strategy', () => {
   });
 
   it('should format output for creation only successes correctly', async () => {
-    sandboxStub
-      .stub(LwcDeploy.prototype, 'buildResourceList')
-      .resolves(testLwcList);
+    sandboxStub.stub(LwcDeploy.prototype, 'buildResourceList').resolves(testLwcList);
     sandboxStub
       .stub(mockConnection.tooling, 'query')
       // @ts-ignore
       .resolves({ records: [] });
-    const mockToolingCreate = sandboxStub.stub(
-      mockConnection.tooling,
-      'create'
-    );
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create');
     mockToolingCreate.resolves({
       success: true,
       id: '1dcxxx000000034',
       errors: []
     } as RecordResult);
 
-    sandboxStub
-      .stub(LwcDeploy.prototype, 'upsert')
-      .resolves(createLwcSuccesses);
+    sandboxStub.stub(LwcDeploy.prototype, 'upsert').resolves(createLwcSuccesses);
 
-    const testDeployResult = {
+    const testDeployResult: DeployResult = {
       State: DeployStatusEnum.Completed,
       DeployDetails: {
         componentSuccesses: createLwcSuccesses,
@@ -401,34 +349,27 @@ describe('LWC Deploy Strategy', () => {
       outboundFiles: lwcFiles,
       ErrorMsg: null,
       metadataFile: lwcComponent.xml
-    } as DeployResult;
+    };
 
     const lwcDeploy = new LwcDeploy(mockConnection);
-    const DeployResult = await lwcDeploy.deploy(lwcComponent);
+    const deployResult = await lwcDeploy.deploy(lwcComponent);
 
-    expect(DeployResult.DeployDetails.componentSuccesses).to.deep.equal(
+    expect(deployResult.DeployDetails.componentSuccesses).to.deep.equal(
       testDeployResult.DeployDetails.componentSuccesses
     );
-    expect(DeployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
-    expect(DeployResult.isDeleted).to.equal(testDeployResult.isDeleted);
-    expect(DeployResult.outboundFiles).to.deep.equal(
-      testDeployResult.outboundFiles
-    );
-    expect(DeployResult.State).to.equal(testDeployResult.State);
+    expect(deployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
+    expect(deployResult.isDeleted).to.equal(testDeployResult.isDeleted);
+    expect(deployResult.outboundFiles).to.deep.equal(testDeployResult.outboundFiles);
+    expect(deployResult.State).to.equal(testDeployResult.State);
   });
 
   it('should format output for creation only failures correctly', async () => {
-    sandboxStub
-      .stub(LwcDeploy.prototype, 'buildResourceList')
-      .resolves(testLwcList);
+    sandboxStub.stub(LwcDeploy.prototype, 'buildResourceList').resolves(testLwcList);
     sandboxStub
       .stub(mockConnection.tooling, 'query')
       // @ts-ignore
       .resolves({ records: [] });
-    const mockToolingCreate = sandboxStub.stub(
-      mockConnection.tooling,
-      'create'
-    );
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create');
     mockToolingCreate.onFirstCall().resolves({
       success: true,
       id: '1dcxxx000000034',
@@ -437,9 +378,7 @@ describe('LWC Deploy Strategy', () => {
 
     sandboxStub
       .stub(LwcDeploy.prototype, 'upsert')
-      .throws(
-        new Error('mockLwcCmp.js:1,1 : Unexpected error while creating sources')
-      );
+      .throws(new Error('mockLwcCmp.js:1,1 : Unexpected error while creating sources'));
 
     const createTestFailures = [
       {
@@ -456,7 +395,7 @@ describe('LWC Deploy Strategy', () => {
       }
     ];
 
-    const testDeployResult = {
+    const testDeployResult: DeployResult = {
       State: DeployStatusEnum.Failed,
       DeployDetails: {
         componentSuccesses: [],
@@ -465,16 +404,16 @@ describe('LWC Deploy Strategy', () => {
       isDeleted: false,
       ErrorMsg: createTestFailures[0].problem,
       metadataFile: lwcComponent.xml
-    } as DeployResult;
+    };
 
     const lwcDeploy = new LwcDeploy(mockConnection);
-    const DeployResult = await lwcDeploy.deploy(lwcComponent);
+    const deployResult = await lwcDeploy.deploy(lwcComponent);
 
-    expect(DeployResult.DeployDetails.componentFailures).to.deep.equal(
+    expect(deployResult.DeployDetails.componentFailures).to.deep.equal(
       testDeployResult.DeployDetails.componentFailures
     );
-    expect(DeployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
-    expect(DeployResult.isDeleted).to.equal(testDeployResult.isDeleted);
-    expect(DeployResult.State).to.equal(testDeployResult.State);
+    expect(deployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
+    expect(deployResult.isDeleted).to.equal(testDeployResult.isDeleted);
+    expect(deployResult.State).to.equal(testDeployResult.State);
   });
 });

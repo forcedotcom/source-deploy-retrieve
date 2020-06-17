@@ -101,8 +101,7 @@ describe('Tooling Retrieve Util', () => {
     expect(resultMap.size).to.equal(2);
     expect(resultMap.has(classMDComponent.xml)).to.be.true;
     let expectedMetaXML = '<?xml version="1.0" encoding="UTF-8"?>\n';
-    expectedMetaXML +=
-      '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">\n';
+    expectedMetaXML += '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedMetaXML += '\t<apiVersion>32.0</apiVersion>\n';
     expectedMetaXML += '\t<status>Active</status>\n';
     expectedMetaXML += '</ApexClass>';
@@ -134,8 +133,7 @@ describe('Tooling Retrieve Util', () => {
     expect(resultMap.size).to.equal(2);
     expect(resultMap.has(pageMDComponent.xml)).to.be.true;
     let expectedMetaXML = '<?xml version="1.0" encoding="UTF-8"?>\n';
-    expectedMetaXML +=
-      '<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">\n';
+    expectedMetaXML += '<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedMetaXML += '\t<apiVersion>45.0</apiVersion>\n';
     expectedMetaXML += '</ApexPage>';
     expect(resultMap.get(pageMDComponent.xml)).to.equal(expectedMetaXML);
@@ -168,95 +166,29 @@ describe('Tooling Retrieve Util', () => {
       'path',
       'myTestClass.cls-meta.xml'
     );
-    const overrideOutputPath = path.join(
-      'file',
-      'different',
-      'path',
-      'myTestClass.cls'
-    );
-    const resultMap = queryToFileMap(
-      apexPageQueryResult,
-      pageMDComponent,
-      overrideOutputPathMeta
-    );
+    const overrideOutputPath = path.join('file', 'different', 'path', 'myTestClass.cls');
+    const resultMap = queryToFileMap(apexPageQueryResult, pageMDComponent, overrideOutputPathMeta);
     expect(resultMap.size).to.equal(2);
     expect(resultMap.has(overrideOutputPathMeta)).to.be.true;
     let expectedMetaXML = '<?xml version="1.0" encoding="UTF-8"?>\n';
-    expectedMetaXML +=
-      '<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">\n';
+    expectedMetaXML += '<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedMetaXML += '\t<apiVersion>45.0</apiVersion>\n';
     expectedMetaXML += '</ApexPage>';
     expect(resultMap.get(overrideOutputPathMeta)).to.equal(expectedMetaXML);
     expect(resultMap.has(overrideOutputPath)).to.be.true;
-    expect(resultMap.get(overrideOutputPath)).to.equal(
-      '<apex:page>\n<h1>Hello</h1>\n</apex:page>'
-    );
+    expect(resultMap.get(overrideOutputPath)).to.equal('<apex:page>\n<h1>Hello</h1>\n</apex:page>');
   });
 
   it('should generate correct file map for AuraDefinition component metadata', () => {
-    const cmpPath = path.join(
-      'file',
-      'path',
-      'aura',
-      'myAuraCmp',
-      'myAuraCmp.cmp'
-    );
-    const auraDocPath = path.join(
-      'file',
-      'path',
-      'aura',
-      'myAuraCmp',
-      'myAuraCmp.auradoc'
-    );
-    const cmpMetaPath = path.join(
-      'file',
-      'path',
-      'aura',
-      'myAuraCmp',
-      'myAuraCmp.cmp-meta.xml'
-    );
-    const cssPath = path.join(
-      'file',
-      'path',
-      'aura',
-      'myAuraCmp',
-      'myAuraCmp.css'
-    );
-    const designPath = path.join(
-      'file',
-      'path',
-      'aura',
-      'myAuraCmp',
-      'myAuraCmp.design'
-    );
-    const svgPath = path.join(
-      'file',
-      'path',
-      'aura',
-      'myAuraCmp',
-      'myAuraCmp.svg'
-    );
-    const controllerPath = path.join(
-      'file',
-      'path',
-      'aura',
-      'myAuraCmp',
-      'myAuraCmpController.js'
-    );
-    const helperPath = path.join(
-      'file',
-      'path',
-      'aura',
-      'myAuraCmp',
-      'myAuraCmpHelper.js'
-    );
-    const rendererPath = path.join(
-      'file',
-      'path',
-      'aura',
-      'myAuraCmp',
-      'myAuraCmpRenderer.js'
-    );
+    const cmpPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmp.cmp');
+    const auraDocPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmp.auradoc');
+    const cmpMetaPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmp.cmp-meta.xml');
+    const cssPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmp.css');
+    const designPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmp.design');
+    const svgPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmp.svg');
+    const controllerPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmpController.js');
+    const helperPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmpHelper.js');
+    const rendererPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmpRenderer.js');
     const auraComponentMD: MetadataComponent = {
       type: {
         name: 'AuraDefinitionBundle',
@@ -281,8 +213,7 @@ describe('Tooling Retrieve Util', () => {
     expect(resultMap.size).to.equal(9);
     expect(resultMap.has(cmpMetaPath)).to.be.true;
     let expectedMetaXML = '<?xml version="1.0" encoding="UTF-8"?>\n';
-    expectedMetaXML +=
-      '<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">\n';
+    expectedMetaXML += '<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedMetaXML += '\t<apiVersion>48.0</apiVersion>\n';
     expectedMetaXML += '</AuraDefinitionBundle>';
     expect(resultMap.get(cmpMetaPath)).to.equal(expectedMetaXML);
@@ -297,9 +228,7 @@ describe('Tooling Retrieve Util', () => {
     expect(resultMap.has(cssPath)).to.be.true;
     expect(resultMap.get(cssPath)).to.equal('.THIS {\n}');
     expect(resultMap.has(designPath)).to.be.true;
-    expect(resultMap.get(designPath)).to.equal(
-      '<design:component >\n\n</design:component>'
-    );
+    expect(resultMap.get(designPath)).to.equal('<design:component >\n\n</design:component>');
     expect(resultMap.has(svgPath)).to.be.true;
     expect(resultMap.get(svgPath)).to.equal(
       '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n<svg width="120px" height="120px" viewBox="0 0 120 120" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n\t<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">\n\t\t<path d="M120,108 C120,114.6 114.6,120 108,120 L12,120 C5.4,120 0,114.6 0,108 L0,12 C0,5.4 5.4,0 12,0 L108,0 C114.6,0 120,5.4 120,12 L120,108 L120,108 Z" id="Shape" fill="#2A739E"/>\n\t\t<path d="M77.7383308,20 L61.1640113,20 L44.7300055,63.2000173 L56.0543288,63.2000173 L40,99.623291 L72.7458388,54.5871812 L60.907727,54.5871812 L77.7383308,20 Z" id="Path-1" fill="#FFFFFF"/>\n\t</g>\n</svg>'
@@ -309,9 +238,7 @@ describe('Tooling Retrieve Util', () => {
       '({\n    myAction : function(component, event, helper) {\n\n    }\n})'
     );
     expect(resultMap.has(helperPath)).to.be.true;
-    expect(resultMap.get(helperPath)).to.equal(
-      '({\n    helperMethod : function() {\n\n    }\n})'
-    );
+    expect(resultMap.get(helperPath)).to.equal('({\n    helperMethod : function() {\n\n    }\n})');
     expect(resultMap.has(rendererPath)).to.be.true;
     expect(resultMap.get(rendererPath)).to.equal(
       '({\n\n// Your renderer method overrides go here\n\n})'
@@ -319,20 +246,8 @@ describe('Tooling Retrieve Util', () => {
   });
 
   it('should generate correct file map for AuraDefinition application metadata', () => {
-    const appPath = path.join(
-      'file',
-      'path',
-      'aura',
-      'myAuraApp',
-      'myAuraApp.app'
-    );
-    const appMetaPath = path.join(
-      'file',
-      'path',
-      'aura',
-      'myAuraApp',
-      'myAuraApp.app-meta.xml'
-    );
+    const appPath = path.join('file', 'path', 'aura', 'myAuraApp', 'myAuraApp.app');
+    const appMetaPath = path.join('file', 'path', 'aura', 'myAuraApp', 'myAuraApp.app-meta.xml');
     const auraApplicationMD: MetadataComponent = {
       type: {
         name: 'AuraDefinitionBundle',
@@ -348,25 +263,16 @@ describe('Tooling Retrieve Util', () => {
     expect(resultMap.size).to.equal(2);
     expect(resultMap.has(appMetaPath)).to.be.true;
     let expectedMetaXML = '<?xml version="1.0" encoding="UTF-8"?>\n';
-    expectedMetaXML +=
-      '<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">\n';
+    expectedMetaXML += '<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedMetaXML += '\t<apiVersion>35.0</apiVersion>\n';
     expectedMetaXML += '</AuraDefinitionBundle>';
     expect(resultMap.get(appMetaPath)).to.equal(expectedMetaXML);
     expect(resultMap.has(appPath)).to.be.true;
-    expect(resultMap.get(appPath)).to.equal(
-      '<aura:application>\n\n</aura:application>'
-    );
+    expect(resultMap.get(appPath)).to.equal('<aura:application>\n\n</aura:application>');
   });
 
   it('should generate correct file map for AuraDefinition event metadata', () => {
-    const eventPath = path.join(
-      'file',
-      'path',
-      'aura',
-      'myAuraEvent',
-      'myAuraEvent.evt'
-    );
+    const eventPath = path.join('file', 'path', 'aura', 'myAuraEvent', 'myAuraEvent.evt');
     const eventMetaPath = path.join(
       'file',
       'path',
@@ -389,8 +295,7 @@ describe('Tooling Retrieve Util', () => {
     expect(resultMap.size).to.equal(2);
     expect(resultMap.has(eventMetaPath)).to.be.true;
     let expectedMetaXML = '<?xml version="1.0" encoding="UTF-8"?>\n';
-    expectedMetaXML +=
-      '<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">\n';
+    expectedMetaXML += '<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedMetaXML += '\t<apiVersion>43.0</apiVersion>\n';
     expectedMetaXML += '</AuraDefinitionBundle>';
     expect(resultMap.get(eventMetaPath)).to.equal(expectedMetaXML);
@@ -430,8 +335,7 @@ describe('Tooling Retrieve Util', () => {
     expect(resultMap.size).to.equal(2);
     expect(resultMap.has(interfaceMetaPath)).to.be.true;
     let expectedMetaXML = '<?xml version="1.0" encoding="UTF-8"?>\n';
-    expectedMetaXML +=
-      '<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">\n';
+    expectedMetaXML += '<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedMetaXML += '\t<apiVersion>46.0</apiVersion>\n';
     expectedMetaXML += '</AuraDefinitionBundle>';
     expect(resultMap.get(interfaceMetaPath)).to.equal(expectedMetaXML);
@@ -442,13 +346,7 @@ describe('Tooling Retrieve Util', () => {
   });
 
   it('should generate correct file map for AuraDefinition tokens metadata', () => {
-    const tokensPath = path.join(
-      'file',
-      'path',
-      'aura',
-      'myAuraToken',
-      'myAuraToken.tokens'
-    );
+    const tokensPath = path.join('file', 'path', 'aura', 'myAuraToken', 'myAuraToken.tokens');
     const tokensMetaPath = path.join(
       'file',
       'path',
@@ -471,39 +369,18 @@ describe('Tooling Retrieve Util', () => {
     expect(resultMap.size).to.equal(2);
     expect(resultMap.has(tokensMetaPath)).to.be.true;
     let expectedMetaXML = '<?xml version="1.0" encoding="UTF-8"?>\n';
-    expectedMetaXML +=
-      '<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">\n';
+    expectedMetaXML += '<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedMetaXML += '\t<apiVersion>46.0</apiVersion>\n';
     expectedMetaXML += '</AuraDefinitionBundle>';
     expect(resultMap.get(tokensMetaPath)).to.equal(expectedMetaXML);
     expect(resultMap.has(tokensPath)).to.be.true;
-    expect(resultMap.get(tokensPath)).to.equal(
-      '<aura:tokens>\n\t\n</aura:tokens>'
-    );
+    expect(resultMap.get(tokensPath)).to.equal('<aura:tokens>\n\t\n</aura:tokens>');
   });
 
   it('should generate correct file map for LightningComponentBundle metadata', () => {
-    const htmlPath = path.join(
-      'file',
-      'path',
-      'lwc',
-      'myLWCComponent',
-      'myLWCComponent.html'
-    );
-    const jsPath = path.join(
-      'file',
-      'path',
-      'lwc',
-      'myLWCComponent',
-      'myLWCComponent.js'
-    );
-    const cssPath = path.join(
-      'file',
-      'path',
-      'lwc',
-      'myLWCComponent',
-      'myLWCComponent.css'
-    );
+    const htmlPath = path.join('file', 'path', 'lwc', 'myLWCComponent', 'myLWCComponent.html');
+    const jsPath = path.join('file', 'path', 'lwc', 'myLWCComponent', 'myLWCComponent.js');
+    const cssPath = path.join('file', 'path', 'lwc', 'myLWCComponent', 'myLWCComponent.css');
     const metaPath = path.join(
       'file',
       'path',

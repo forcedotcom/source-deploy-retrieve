@@ -17,8 +17,7 @@ const $$ = testSetup();
 
 describe('Base Deploy Strategy', () => {
   let simpleMetaXMLString = '<?xml version="1.0" encoding="UTF-8"?>';
-  simpleMetaXMLString +=
-    '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">';
+  simpleMetaXMLString += '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">';
   simpleMetaXMLString += '    <apiVersion>32.0</apiVersion>';
   simpleMetaXMLString += '    <status>Active</status>';
   simpleMetaXMLString += '</ApexClass>';
@@ -37,13 +36,9 @@ describe('Base Deploy Strategy', () => {
       })
     });
     const mockFS = sandboxStub.stub(fs, 'readFileSync');
-    mockFS
-      .withArgs('file/path/one.cls', 'utf8')
-      .returns('public with sharing class TestAPI {}');
+    mockFS.withArgs('file/path/one.cls', 'utf8').returns('public with sharing class TestAPI {}');
 
-    mockFS
-      .withArgs('file/path/one.cls-meta.xml', 'utf8')
-      .returns(simpleMetaXMLString);
+    mockFS.withArgs('file/path/one.cls-meta.xml', 'utf8').returns(simpleMetaXMLString);
   });
 
   afterEach(() => {
@@ -58,8 +53,7 @@ describe('Base Deploy Strategy', () => {
       packageVersions: '      1      0      packageA    '
     };
     let metaXMLString = '<?xml version="1.0" encoding="UTF-8"?>';
-    metaXMLString +=
-      '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">';
+    metaXMLString += '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">';
     metaXMLString += '    <apiVersion>47.0</apiVersion>';
     metaXMLString += '    <packageVersions>';
     metaXMLString += '      <majorNumber>1</majorNumber>';

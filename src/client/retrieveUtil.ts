@@ -7,11 +7,7 @@
 
 import { dirname, join, sep } from 'path';
 import { QueryResult, MetadataComponent } from '../types';
-import {
-  generateMetaXML,
-  generateMetaXMLPath,
-  trimMetaXmlSuffix
-} from '../utils';
+import { generateMetaXML, generateMetaXMLPath, trimMetaXmlSuffix } from '../utils';
 import { ApexRecord, AuraRecord, LWCRecord, VFRecord } from '../types/query';
 
 export function buildQuery(mdComponent: MetadataComponent): string {
@@ -45,11 +41,7 @@ export function buildQuery(mdComponent: MetadataComponent): string {
   return queryString;
 }
 
-function getAuraSourceName(
-  componentPath: string,
-  fileNamePrefix: string,
-  defType: string
-): string {
+function getAuraSourceName(componentPath: string, fileNamePrefix: string, defType: string): string {
   const cmpParentName = join(dirname(componentPath), fileNamePrefix);
 
   switch (defType) {
@@ -113,20 +105,13 @@ export function queryToFileMap(
       const auraRecord = queryResult.records as AuraRecord[];
       apiVersion = auraRecord[0].AuraDefinitionBundle.ApiVersion;
       auraRecord.forEach(item => {
-        const cmpName = getAuraSourceName(
-          mdSourcePath,
-          mdComponent.fullName,
-          item.DefType
-        );
+        const cmpName = getAuraSourceName(mdSourcePath, mdComponent.fullName, item.DefType);
         saveFilesMap.set(cmpName, item.Source);
       });
       break;
     case 'LightningComponentBundle':
       const lwcRecord = queryResult.records as LWCRecord[];
-      const bundleParentPath = mdSourcePath.substring(
-        0,
-        mdSourcePath.lastIndexOf(`${sep}lwc`)
-      );
+      const bundleParentPath = mdSourcePath.substring(0, mdSourcePath.lastIndexOf(`${sep}lwc`));
       lwcRecord.forEach(item => {
         const cmpName = join(bundleParentPath, item.FilePath);
         saveFilesMap.set(cmpName, item.Source);

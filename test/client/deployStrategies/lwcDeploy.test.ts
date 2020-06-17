@@ -13,7 +13,7 @@ import { join } from 'path';
 import { RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { nls } from '../../../src/i18n';
-import { DeployStatusEnum } from '../../../src/types';
+import { DeployStatusEnum, DeployResult } from '../../../src/types';
 import { LwcDeploy } from '../../../src/client/deployStrategies';
 import { LightningComponentResource, ToolingCreateResult } from '../../../src/utils/deploy';
 
@@ -339,7 +339,7 @@ describe('LWC Deploy Strategy', () => {
 
     sandboxStub.stub(LwcDeploy.prototype, 'upsert').resolves(createLwcSuccesses);
 
-    const testDeployResult = {
+    const testDeployResult: DeployResult = {
       State: DeployStatusEnum.Completed,
       DeployDetails: {
         componentSuccesses: createLwcSuccesses,
@@ -349,18 +349,18 @@ describe('LWC Deploy Strategy', () => {
       outboundFiles: lwcFiles,
       ErrorMsg: null,
       metadataFile: lwcComponent.xml
-    } as DeployResult;
+    };
 
     const lwcDeploy = new LwcDeploy(mockConnection);
-    const DeployResult = await lwcDeploy.deploy(lwcComponent);
+    const deployResult = await lwcDeploy.deploy(lwcComponent);
 
-    expect(DeployResult.DeployDetails.componentSuccesses).to.deep.equal(
+    expect(deployResult.DeployDetails.componentSuccesses).to.deep.equal(
       testDeployResult.DeployDetails.componentSuccesses
     );
-    expect(DeployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
-    expect(DeployResult.isDeleted).to.equal(testDeployResult.isDeleted);
-    expect(DeployResult.outboundFiles).to.deep.equal(testDeployResult.outboundFiles);
-    expect(DeployResult.State).to.equal(testDeployResult.State);
+    expect(deployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
+    expect(deployResult.isDeleted).to.equal(testDeployResult.isDeleted);
+    expect(deployResult.outboundFiles).to.deep.equal(testDeployResult.outboundFiles);
+    expect(deployResult.State).to.equal(testDeployResult.State);
   });
 
   it('should format output for creation only failures correctly', async () => {
@@ -395,7 +395,7 @@ describe('LWC Deploy Strategy', () => {
       }
     ];
 
-    const testDeployResult = {
+    const testDeployResult: DeployResult = {
       State: DeployStatusEnum.Failed,
       DeployDetails: {
         componentSuccesses: [],
@@ -404,16 +404,16 @@ describe('LWC Deploy Strategy', () => {
       isDeleted: false,
       ErrorMsg: createTestFailures[0].problem,
       metadataFile: lwcComponent.xml
-    } as DeployResult;
+    };
 
     const lwcDeploy = new LwcDeploy(mockConnection);
-    const DeployResult = await lwcDeploy.deploy(lwcComponent);
+    const deployResult = await lwcDeploy.deploy(lwcComponent);
 
-    expect(DeployResult.DeployDetails.componentFailures).to.deep.equal(
+    expect(deployResult.DeployDetails.componentFailures).to.deep.equal(
       testDeployResult.DeployDetails.componentFailures
     );
-    expect(DeployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
-    expect(DeployResult.isDeleted).to.equal(testDeployResult.isDeleted);
-    expect(DeployResult.State).to.equal(testDeployResult.State);
+    expect(deployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
+    expect(deployResult.isDeleted).to.equal(testDeployResult.isDeleted);
+    expect(deployResult.State).to.equal(testDeployResult.State);
   });
 });

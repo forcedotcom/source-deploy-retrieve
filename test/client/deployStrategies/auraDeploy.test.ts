@@ -13,7 +13,7 @@ import { join } from 'path';
 import { RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { nls } from '../../../src/i18n';
-import { DeployStatusEnum } from '../../../src/types';
+import { DeployStatusEnum, DeployResult } from '../../../src/types';
 import {
   auraContents,
   auraComponent,
@@ -303,7 +303,7 @@ describe('Aura Deploy Strategy', () => {
       upsertStub.onCall(i).resolves(createAuraSuccesses[i]);
     }
 
-    const testDeployResult = {
+    const testDeployResult: DeployResult = {
       State: DeployStatusEnum.Completed,
       DeployDetails: {
         componentSuccesses: createAuraSuccesses,
@@ -313,18 +313,18 @@ describe('Aura Deploy Strategy', () => {
       outboundFiles: auraFiles,
       ErrorMsg: null,
       metadataFile: auraComponent.xml
-    } as DeployResult;
+    };
 
     const auraDeploy = new AuraDeploy(mockConnection);
-    const DeployResult = await auraDeploy.deploy(auraComponent);
+    const deployResult = await auraDeploy.deploy(auraComponent);
 
-    expect(DeployResult.DeployDetails.componentSuccesses).to.deep.equal(
+    expect(deployResult.DeployDetails.componentSuccesses).to.deep.equal(
       testDeployResult.DeployDetails.componentSuccesses
     );
-    expect(DeployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
-    expect(DeployResult.isDeleted).to.equal(testDeployResult.isDeleted);
-    expect(DeployResult.outboundFiles).to.deep.equal(testDeployResult.outboundFiles);
-    expect(DeployResult.State).to.equal(testDeployResult.State);
+    expect(deployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
+    expect(deployResult.isDeleted).to.equal(testDeployResult.isDeleted);
+    expect(deployResult.outboundFiles).to.deep.equal(testDeployResult.outboundFiles);
+    expect(deployResult.State).to.equal(testDeployResult.State);
   });
 
   it('should format output for creation only failures with no specified file location correctly', async () => {

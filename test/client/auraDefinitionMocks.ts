@@ -32,8 +32,7 @@ export const auraComponent: QueryResult = {
         NamespacePrefix: ''
       },
       DefType: 'CONTROLLER',
-      Source:
-        '({\n    myAction : function(component, event, helper) {\n\n    }\n})'
+      Source: '({\n    myAction : function(component, event, helper) {\n\n    }\n})'
     },
     {
       Id: '0Adxx000001YuCPOP3',

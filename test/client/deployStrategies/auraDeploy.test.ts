@@ -13,7 +13,7 @@ import { join } from 'path';
 import { RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { nls } from '../../../src/i18n';
-import { DeployResult, DeployStatusEnum } from '../../../src/types';
+import { DeployStatusEnum, DeployResult } from '../../../src/types';
 import {
   auraContents,
   auraComponent,
@@ -36,8 +36,7 @@ describe('Aura Deploy Strategy', () => {
   let mockConnection: Connection;
   let sandboxStub: SinonSandbox;
   let simpleMetaXMLString = '<?xml version="1.0" encoding="UTF-8"?>';
-  simpleMetaXMLString +=
-    '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">';
+  simpleMetaXMLString += '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">';
   simpleMetaXMLString += '    <apiVersion>32.0</apiVersion>';
   simpleMetaXMLString += '    <status>Active</status>';
   simpleMetaXMLString += '</ApexClass>';
@@ -64,10 +63,7 @@ describe('Aura Deploy Strategy', () => {
     mockFS.withArgs(auraFiles[6], 'utf8').returns(auraContents[6]);
     mockFS.withArgs(auraFiles[7], 'utf8').returns(auraContents[7]);
     mockFS
-      .withArgs(
-        join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.cmp-meta.xml'),
-        'utf8'
-      )
+      .withArgs(join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.cmp-meta.xml'), 'utf8')
       .returns(simpleMetaXMLString);
   });
 
@@ -80,10 +76,7 @@ describe('Aura Deploy Strategy', () => {
       .stub(mockConnection.tooling, 'query')
       // @ts-ignore
       .resolves({ records: [] });
-    const mockToolingCreate = sandboxStub.stub(
-      mockConnection.tooling,
-      'create'
-    );
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create');
     mockToolingCreate.resolves({
       success: true,
       id: '1dcxxx000000060',
@@ -141,14 +134,7 @@ describe('Aura Deploy Strategy', () => {
     const matches = [
       {
         Id: '1dcxxx000000035',
-        FilePath: join(
-          'path',
-          'to',
-          'wrong',
-          'aura',
-          'auraFile',
-          'auraFile.html'
-        ),
+        FilePath: join('path', 'to', 'wrong', 'aura', 'auraFile', 'auraFile.html'),
         Format: 'html',
         DefType: 'wrongType',
         Source: auraContents[0],
@@ -178,19 +164,14 @@ describe('Aura Deploy Strategy', () => {
   });
 
   it('should create an auradefinitionbundle given the fullname and metadata', async () => {
-    const mockToolingCreate = sandboxStub.stub(
-      mockConnection.tooling,
-      'create'
-    );
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create');
     mockToolingCreate.resolves({
       success: true,
       id: '1dcxxx000000034',
       errors: []
     } as RecordResult);
 
-    sandboxStub
-      .stub(AuraDeploy.prototype, 'buildMetadataField')
-      .returns(testMetadataField);
+    sandboxStub.stub(AuraDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
     const bundle = await auraDeploy.upsertBundle();
@@ -199,26 +180,19 @@ describe('Aura Deploy Strategy', () => {
     expect(bundle.success).to.be.equal(true);
     // tslint:disable-next-line:no-unused-expression
     expect(bundle.errors).to.be.an('array').that.is.empty;
-    expect(mockToolingCreate.getCall(0).args[0]).to.equal(
-      auraComponent.type.name
-    );
+    expect(mockToolingCreate.getCall(0).args[0]).to.equal(auraComponent.type.name);
     expect(mockToolingCreate.getCall(0).args[1]).to.be.an('object');
   });
 
   it('should create an auradefinitionbundle given the fullname and metadata', async () => {
-    const mockToolingUpdate = sandboxStub.stub(
-      mockConnection.tooling,
-      'update'
-    );
+    const mockToolingUpdate = sandboxStub.stub(mockConnection.tooling, 'update');
     mockToolingUpdate.resolves({
       success: true,
       id: '1dcxxx000000034',
       errors: []
     } as RecordResult);
 
-    sandboxStub
-      .stub(AuraDeploy.prototype, 'buildMetadataField')
-      .returns(testMetadataField);
+    sandboxStub.stub(AuraDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
     const bundle = await auraDeploy.upsertBundle('1dcxxx000000034');
@@ -227,9 +201,7 @@ describe('Aura Deploy Strategy', () => {
     expect(bundle.success).to.be.equal(true);
     // tslint:disable-next-line:no-unused-expression
     expect(bundle.errors).to.be.an('array').that.is.empty;
-    expect(mockToolingUpdate.getCall(0).args[0]).to.equal(
-      auraComponent.type.name
-    );
+    expect(mockToolingUpdate.getCall(0).args[0]).to.equal(auraComponent.type.name);
     expect(mockToolingUpdate.getCall(0).args[1]).to.be.an('object');
   });
 
@@ -240,9 +212,7 @@ describe('Aura Deploy Strategy', () => {
       errors: ['Unexpected error while creating record']
     } as RecordResult);
 
-    sandboxStub
-      .stub(AuraDeploy.prototype, 'buildMetadataField')
-      .returns(testMetadataField);
+    sandboxStub.stub(AuraDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
     try {
@@ -257,23 +227,16 @@ describe('Aura Deploy Strategy', () => {
   });
 
   it('should create sources in bundle and return successes in correct shape', async () => {
-    const mockToolingCreate = sandboxStub.stub(
-      mockConnection.tooling,
-      'create'
-    );
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create');
     mockToolingCreate.resolves({
       success: true,
       id: '1dcxxx000000034',
       errors: []
     } as RecordResult);
 
-    sandboxStub
-      .stub(AuraDeploy.prototype, 'buildMetadataField')
-      .returns(testMetadataField);
+    sandboxStub.stub(AuraDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
 
-    sandboxStub
-      .stub(AuraDeploy.prototype, 'buildDefList')
-      .resolves(testAuraList);
+    sandboxStub.stub(AuraDeploy.prototype, 'buildDefList').resolves(testAuraList);
 
     const mockToolingQuery = sandboxStub.stub(mockConnection.tooling, 'query');
     // @ts-ignore
@@ -282,26 +245,19 @@ describe('Aura Deploy Strategy', () => {
     const auraDeploy = new AuraDeploy(mockConnection);
     const deployResults = await auraDeploy.deploy(auraComponent);
 
-    expect(deployResults.DeployDetails.componentSuccesses).to.deep.equal(
-      createAuraSuccesses
-    );
+    expect(deployResults.DeployDetails.componentSuccesses).to.deep.equal(createAuraSuccesses);
     expect(deployResults.DeployDetails.componentFailures.length).to.equal(0);
   });
 
   it('should update sources in bundle and return successes in correct shape', async () => {
-    const mockToolingUpdate = sandboxStub.stub(
-      mockConnection.tooling,
-      'update'
-    );
+    const mockToolingUpdate = sandboxStub.stub(mockConnection.tooling, 'update');
     mockToolingUpdate.resolves({
       success: true,
       id: '1dcxxx000000034',
       errors: []
     } as RecordResult);
 
-    sandboxStub
-      .stub(AuraDeploy.prototype, 'buildMetadataField')
-      .returns(testMetadataField);
+    sandboxStub.stub(AuraDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
 
     const mockToolingQuery = sandboxStub.stub(mockConnection.tooling, 'query');
     // @ts-ignore
@@ -330,17 +286,12 @@ describe('Aura Deploy Strategy', () => {
   });
 
   it('should format output for creation only successes correctly', async () => {
-    sandboxStub
-      .stub(AuraDeploy.prototype, 'buildDefList')
-      .resolves(testAuraList);
+    sandboxStub.stub(AuraDeploy.prototype, 'buildDefList').resolves(testAuraList);
     sandboxStub
       .stub(mockConnection.tooling, 'query')
       // @ts-ignore
       .resolves({ records: [] });
-    const mockToolingCreate = sandboxStub.stub(
-      mockConnection.tooling,
-      'create'
-    );
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create');
     mockToolingCreate.resolves({
       success: true,
       id: '1dcxxx000000034',
@@ -352,7 +303,7 @@ describe('Aura Deploy Strategy', () => {
       upsertStub.onCall(i).resolves(createAuraSuccesses[i]);
     }
 
-    const testDeployResult = {
+    const testDeployResult: DeployResult = {
       State: DeployStatusEnum.Completed,
       DeployDetails: {
         componentSuccesses: createAuraSuccesses,
@@ -362,34 +313,27 @@ describe('Aura Deploy Strategy', () => {
       outboundFiles: auraFiles,
       ErrorMsg: null,
       metadataFile: auraComponent.xml
-    } as DeployResult;
+    };
 
     const auraDeploy = new AuraDeploy(mockConnection);
-    const DeployResult = await auraDeploy.deploy(auraComponent);
+    const deployResult = await auraDeploy.deploy(auraComponent);
 
-    expect(DeployResult.DeployDetails.componentSuccesses).to.deep.equal(
+    expect(deployResult.DeployDetails.componentSuccesses).to.deep.equal(
       testDeployResult.DeployDetails.componentSuccesses
     );
-    expect(DeployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
-    expect(DeployResult.isDeleted).to.equal(testDeployResult.isDeleted);
-    expect(DeployResult.outboundFiles).to.deep.equal(
-      testDeployResult.outboundFiles
-    );
-    expect(DeployResult.State).to.equal(testDeployResult.State);
+    expect(deployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
+    expect(deployResult.isDeleted).to.equal(testDeployResult.isDeleted);
+    expect(deployResult.outboundFiles).to.deep.equal(testDeployResult.outboundFiles);
+    expect(deployResult.State).to.equal(testDeployResult.State);
   });
 
   it('should format output for creation only failures with no specified file location correctly', async () => {
-    sandboxStub
-      .stub(AuraDeploy.prototype, 'buildDefList')
-      .resolves(testAuraList);
+    sandboxStub.stub(AuraDeploy.prototype, 'buildDefList').resolves(testAuraList);
     sandboxStub
       .stub(mockConnection.tooling, 'query')
       // @ts-ignore
       .resolves({ records: [] });
-    const mockToolingCreate = sandboxStub.stub(
-      mockConnection.tooling,
-      'create'
-    );
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create');
     mockToolingCreate.onFirstCall().resolves({
       success: true,
       id: '1dcxxx000000034',
@@ -405,13 +349,7 @@ describe('Aura Deploy Strategy', () => {
         changed: false,
         created: false,
         deleted: false,
-        fileName: join(
-          'file',
-          'path',
-          'aura',
-          'mockAuraCmp',
-          'mockAuraCmp.cmp'
-        ),
+        fileName: join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.cmp'),
         fullName: 'mockAuraCmp/mockAuraCmp.cmp',
         success: false,
         componentType: 'AuraDefinitionBundle',
@@ -444,17 +382,12 @@ describe('Aura Deploy Strategy', () => {
   });
 
   it('should format output for creation only failures with specified file correctly', async () => {
-    sandboxStub
-      .stub(AuraDeploy.prototype, 'buildDefList')
-      .resolves(testAuraList);
+    sandboxStub.stub(AuraDeploy.prototype, 'buildDefList').resolves(testAuraList);
     sandboxStub
       .stub(mockConnection.tooling, 'query')
       // @ts-ignore
       .resolves({ records: [] });
-    const mockToolingCreate = sandboxStub.stub(
-      mockConnection.tooling,
-      'create'
-    );
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create');
     mockToolingCreate.onFirstCall().resolves({
       success: true,
       id: '1dcxxx000000034',
@@ -463,22 +396,14 @@ describe('Aura Deploy Strategy', () => {
 
     sandboxStub
       .stub(AuraDeploy.prototype, 'upsert')
-      .throws(
-        new Error('Unexpected error while creating sources in HELPER : [1,1]')
-      );
+      .throws(new Error('Unexpected error while creating sources in HELPER : [1,1]'));
 
     const createTestFailures = [
       {
         changed: false,
         created: false,
         deleted: false,
-        fileName: join(
-          'file',
-          'path',
-          'aura',
-          'mockAuraCmp',
-          'mockAuraCmpHelper.js'
-        ),
+        fileName: join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmpHelper.js'),
         fullName: 'mockAuraCmp/mockAuraCmpHelper.js',
         success: false,
         componentType: 'AuraDefinitionBundle',
@@ -511,9 +436,7 @@ describe('Aura Deploy Strategy', () => {
   });
 
   it('should format output for create and update successes correctly', async () => {
-    sandboxStub
-      .stub(AuraDeploy.prototype, 'buildDefList')
-      .resolves(testAuraList);
+    sandboxStub.stub(AuraDeploy.prototype, 'buildDefList').resolves(testAuraList);
 
     const matches = [
       {
@@ -571,9 +494,7 @@ describe('Aura Deploy Strategy', () => {
     );
     expect(DeployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
     expect(DeployResult.isDeleted).to.equal(testDeployResult.isDeleted);
-    expect(DeployResult.outboundFiles).to.deep.equal(
-      testDeployResult.outboundFiles
-    );
+    expect(DeployResult.outboundFiles).to.deep.equal(testDeployResult.outboundFiles);
     expect(DeployResult.State).to.equal(testDeployResult.State);
   });
 });

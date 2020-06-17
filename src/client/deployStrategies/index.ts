@@ -11,19 +11,12 @@ import { AuraDeploy } from './auraDeploy';
 import { LwcDeploy } from './lwcDeploy';
 import { registryData } from '../../metadata-registry';
 
-export {
-  AURA_TYPES,
-  CONTAINER_ASYNC_REQUEST,
-  METADATA_CONTAINER
-} from './constants';
+export { AURA_TYPES, CONTAINER_ASYNC_REQUEST, METADATA_CONTAINER } from './constants';
 export { ContainerDeploy } from './containerDeploy';
 export { AuraDeploy } from './auraDeploy';
 export { LwcDeploy } from './lwcDeploy';
 
-export const getDeployStrategy = (
-  type: string,
-  connection: Connection
-): BaseDeploy => {
+export const getDeployStrategy = (type: string, connection: Connection): BaseDeploy => {
   switch (type) {
     case registryData.types.auradefinitionbundle.name:
       return new AuraDeploy(connection);

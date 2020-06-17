@@ -22,9 +22,7 @@ export class AuraDeploy extends BaseDeploy {
       const results = await Promise.all(promiseArray);
       return this.formatBundleOutput(results);
     } catch (e) {
-      const failures = [
-        this.parseAuraError(e.message, auraDefinitions[0].FilePath)
-      ];
+      const failures = [this.parseAuraError(e.message, auraDefinitions[0].FilePath)];
       return this.formatBundleOutput(failures, true);
     }
   }
@@ -47,9 +45,7 @@ export class AuraDeploy extends BaseDeploy {
 
       let match: AuraDefinition;
       if (existingDefinitions.length > 0) {
-        match = existingDefinitions.find(
-          definition => definition.DefType === defType
-        );
+        match = existingDefinitions.find(definition => definition.DefType === defType);
       }
 
       // If definition exists in org, assign the matching Id
@@ -155,19 +151,12 @@ export class AuraDeploy extends BaseDeploy {
 
   private parseAuraError(error: string, defaultPath: string): SourceResult {
     try {
-      const errLocation = error.slice(
-        error.lastIndexOf('[') + 1,
-        error.lastIndexOf(']')
-      );
+      const errLocation = error.slice(error.lastIndexOf('[') + 1, error.lastIndexOf(']'));
 
       const errorParts = error.split(' ');
       const fileType = errorParts.find(part => {
         part = part.toLowerCase();
-        return (
-          part.includes('controller') ||
-          part.includes('renderer') ||
-          part.includes('helper')
-        );
+        return part.includes('controller') || part.includes('renderer') || part.includes('helper');
       });
       let fileName: string;
       if (fileType) {
@@ -179,12 +168,8 @@ export class AuraDeploy extends BaseDeploy {
       }
 
       const errObj = {
-        ...(errLocation
-          ? { lineNumber: Number(errLocation.split(',')[0]) }
-          : {}),
-        ...(errLocation
-          ? { columnNumber: Number(errLocation.split(',')[1]) }
-          : {}),
+        ...(errLocation ? { lineNumber: Number(errLocation.split(',')[0]) } : {}),
+        ...(errLocation ? { columnNumber: Number(errLocation.split(',')[1]) } : {}),
         problem: error,
         fileName: fileName,
         fullName: this.getFormattedPaths(fileName)[1],

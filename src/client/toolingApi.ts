@@ -41,9 +41,7 @@ export const deployTypes = new Map([
 ]);
 
 export class ToolingApi extends BaseApi {
-  public async retrieveWithPaths(
-    options: RetrievePathOptions
-  ): Promise<ApiResult> {
+  public async retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult> {
     const retrievePaths = options.paths[0];
     return await this.retrieve({
       output: options.output,
@@ -55,9 +53,7 @@ export class ToolingApi extends BaseApi {
     let retrieveResult: ApiResult;
     if (options.components.length > 1) {
       const retrieveError = new Error();
-      retrieveError.message = nls.localize(
-        'tapi_retrieve_component_limit_error'
-      );
+      retrieveError.message = nls.localize('tapi_retrieve_component_limit_error');
       retrieveError.name = 'MetadataRetrieveLimit';
       throw retrieveError;
     }
@@ -82,18 +78,11 @@ export class ToolingApi extends BaseApi {
         return {
           success: true,
           components: [],
-          message: nls.localize(
-            'error_md_not_present_in_org',
-            mdComponent.fullName
-          )
+          message: nls.localize('error_md_not_present_in_org', mdComponent.fullName)
         };
       }
 
-      const saveFilesMap = queryToFileMap(
-        queryResult,
-        mdComponent,
-        options.output
-      );
+      const saveFilesMap = queryToFileMap(queryResult, mdComponent, options.output);
       createFiles(saveFilesMap);
 
       retrieveResult = {
@@ -109,28 +98,21 @@ export class ToolingApi extends BaseApi {
 
   public async deploy(options: DeployOptions): Promise<DeployResult> {
     if (options.components.length > 1) {
-      const deployError = new SourceClientError(
-        'tapi_deploy_component_limit_error'
-      );
+      const deployError = new SourceClientError('tapi_deploy_component_limit_error');
       throw deployError;
     }
     const mdComponent: MetadataComponent = options.components[0];
     const metadataType = mdComponent.type.name;
 
     if (!deployTypes.get(metadataType)) {
-      throw new SourceClientError(
-        'beta_tapi_membertype_unsupported_error',
-        metadataType
-      );
+      throw new SourceClientError('beta_tapi_membertype_unsupported_error', metadataType);
     }
 
     const deployStrategy = getDeployStrategy(metadataType, this.connection);
     return deployStrategy.deploy(mdComponent);
   }
 
-  public async deployWithPaths(
-    options: DeployPathOptions
-  ): Promise<DeployResult> {
+  public async deployWithPaths(options: DeployPathOptions): Promise<DeployResult> {
     const deployPaths = options.paths[0];
     return await this.deploy({
       components: this.registry.getComponentsFromPath(deployPaths)

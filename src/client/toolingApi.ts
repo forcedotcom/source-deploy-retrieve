@@ -110,13 +110,15 @@ export class ToolingApi extends BaseApi {
     }
 
     const deployStrategy = getDeployStrategy(metadataType, this.connection);
-    return deployStrategy.deploy(mdComponent);
+    return deployStrategy.deploy(mdComponent, options.namespace);
   }
 
   public async deployWithPaths(options: DeployPathOptions): Promise<DeployResult> {
     const deployPaths = options.paths[0];
+    const namespace = options.namespace ? options.namespace : '';
     return await this.deploy({
-      components: this.registry.getComponentsFromPath(deployPaths)
+      components: this.registry.getComponentsFromPath(deployPaths),
+      namespace
     });
   }
 }

@@ -8,15 +8,16 @@
 import { readFileSync } from 'fs';
 import { deployTypes } from '../toolingApi';
 import { DeployError } from '../../errors';
-import { MetadataComponent, DeployStatusEnum, DeployResult } from '../../types';
+import { MetadataComponent, DeployStatusEnum, DeployResult, QueryResult } from '../../types';
 import { baseName } from '../../utils/path';
 import { ToolingCreateResult } from '../../utils/deploy';
 import { CONTAINER_ASYNC_REQUEST, METADATA_CONTAINER } from './constants';
 import { BaseDeploy } from './baseDeploy';
 
 export class ContainerDeploy extends BaseDeploy {
-  public async deploy(component: MetadataComponent): Promise<DeployResult> {
+  public async deploy(component: MetadataComponent, namespace: string): Promise<DeployResult> {
     this.component = component;
+    this.namespace = namespace;
     const sourcePath = component.sources[0];
     const metadataPath = component.xml;
 
@@ -48,14 +49,18 @@ export class ContainerDeploy extends BaseDeploy {
     const body = readFileSync(outboundFiles[0], 'utf8');
     const fileName = baseName(outboundFiles[0]);
 
-    const contentEntity = await this.getContentEntity(this.component.type.name, fileName);
+    const entityId = await this.getContentEntity(
+      this.component.type.name,
+      fileName,
+      this.namespace
+    );
 
     const containerMemberObject = {
       MetadataContainerId: id,
       FullName: fileName,
       Body: body,
       Metadata: metadataField,
-      ...(contentEntity ? { contentEntityId: contentEntity.Id } : {})
+      ...(entityId ? { contentEntityId: entityId } : {})
     };
 
     const containerMember = await this.toolingCreate(
@@ -71,9 +76,14 @@ export class ContainerDeploy extends BaseDeploy {
 
   public async getContentEntity(
     metadataType: string,
-    fileName: string
-  ): Promise<{ Id?: string | unknown }> {
-    return (await this.connection.tooling.sobject(metadataType).find({ Name: fileName }))[0];
+    fileName: string,
+    namespace: string
+  ): Promise<string | undefined> {
+    const queryResult = (await this.connection.tooling.query(
+      `Select Id from ${metadataType} where Name = '${fileName}' and NamespacePrefix = '${namespace}'`
+    )) as QueryResult;
+
+    return queryResult && queryResult.records.length === 1 ? queryResult.records[0].Id : undefined;
   }
 
   public async createContainerAsyncRequest(

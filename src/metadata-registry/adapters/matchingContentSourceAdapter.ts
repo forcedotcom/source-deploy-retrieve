@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { META_XML_SUFFIX } from '../../utils';
-import { existsSync } from 'fs';
 import { BaseSourceAdapter } from './baseSourceAdapter';
 import { ExpectedSourceFilesError, UnexpectedForceIgnore } from '../../errors';
 import { SourcePath, MetadataComponent } from '../../types';
@@ -35,7 +34,7 @@ export class MatchingContentSourceAdapter extends BaseSourceAdapter {
     let sourcePath: SourcePath;
     if (component.xml === trigger) {
       const path = trigger.slice(0, trigger.lastIndexOf(META_XML_SUFFIX));
-      if (existsSync(path)) {
+      if (this.tree.exists(path)) {
         sourcePath = path;
       }
     } else if (this.registry.suffixes[extName(trigger)]) {

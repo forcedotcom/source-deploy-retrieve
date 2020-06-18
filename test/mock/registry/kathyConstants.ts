@@ -23,19 +23,16 @@ export const KATHY_COMPONENTS: MetadataComponent[] = [
   {
     fullName: `A_Folder/a`,
     type,
-    xml: KATHY_XML_PATHS[0],
-    sources: []
+    xml: KATHY_XML_PATHS[0]
   },
   {
     fullName: 'A_Folder/b',
     type,
-    xml: KATHY_XML_PATHS[1],
-    sources: []
+    xml: KATHY_XML_PATHS[1]
   },
   {
     fullName: 'A_Folder/c',
     type,
-    xml: KATHY_XML_PATHS[2],
-    sources: []
+    xml: KATHY_XML_PATHS[2]
   }
 ];

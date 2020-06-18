@@ -8,8 +8,6 @@ import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { SourcePath, MetadataComponent } from '../../types';
 import { parseMetadataXml } from '../../utils/registry';
 import { join, dirname } from 'path';
-import { readdirSync } from 'fs';
-import { isDirectory } from '../../utils/fileSystemHandler';
 import { baseName } from '../../utils';
 
 /**
@@ -44,11 +42,11 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
 
   private getChildren(dirPath: SourcePath): MetadataComponent[] {
     const children: MetadataComponent[] = [];
-    for (const fileName of readdirSync(dirPath)) {
+    for (const fileName of this.tree.readDir(dirPath)) {
       const currentPath = join(dirPath, fileName);
       if (this.forceIgnore.denies(currentPath)) {
         continue;
-      } else if (isDirectory(currentPath)) {
+      } else if (this.tree.isDirectory(currentPath)) {
         children.push(...this.getChildren(currentPath));
       } else {
         const childXml = parseMetadataXml(fileName);

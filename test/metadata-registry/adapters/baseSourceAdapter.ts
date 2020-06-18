@@ -74,7 +74,6 @@ describe('BaseSourceAdapter', () => {
 
   it('Should throw an error if a metadata xml file is forceignored', () => {
     const testUtil = new RegistryTestUtil();
-    testUtil.initStubs();
     const path = join('path', 'to', 'keanus', 'My_Test.keanu-meta.xml');
     const type = mockRegistry.types.keanureeves;
     const forceIgnore = testUtil.stubForceIgnore({

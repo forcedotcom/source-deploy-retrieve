@@ -6,12 +6,10 @@
  */
 import { BaseSourceAdapter } from './baseSourceAdapter';
 import { dirname, basename, sep } from 'path';
-import { findMetadataXml, findMetadataContent } from '../../utils/registry';
 import { ExpectedSourceFilesError } from '../../errors';
-import { existsSync } from 'fs';
-import { isDirectory, walk } from '../../utils/fileSystemHandler';
 import { baseName } from '../../utils/path';
 import { SourcePath, MetadataType, MetadataComponent } from '../../types';
+import { TreeContainer } from '../treeContainers';
 
 /**
  * Handles types with mixed content. Mixed content means there are one or more additional
@@ -42,23 +40,25 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
     if (this.ownFolder) {
       // self contained components have all their files in their own folder
       const componentRoot = MixedContentSourceAdapter.trimPathToContent(trigger, this.type);
-      return findMetadataXml(componentRoot, basename(componentRoot));
+      return this.tree.findMetadataXml(componentRoot, basename(componentRoot));
     }
-    return MixedContentSourceAdapter.findXmlFromContentPath(trigger, this.type);
+    return MixedContentSourceAdapter.findXmlFromContentPath(trigger, this.type, this.tree);
   }
 
   protected populate(component: MetadataComponent, trigger: SourcePath): MetadataComponent {
     let contentPath = MixedContentSourceAdapter.trimPathToContent(trigger, this.type);
     if (contentPath === component.xml) {
-      contentPath = findMetadataContent(dirname(contentPath), baseName(contentPath));
+      contentPath = this.tree.findMetadataContent(dirname(contentPath), baseName(contentPath));
     }
 
-    if (!existsSync(contentPath)) {
+    if (!this.tree.exists(contentPath)) {
       throw new ExpectedSourceFilesError(this.type, trigger);
     }
 
     const ignore = new Set<SourcePath>([component.xml]);
-    const sources = isDirectory(contentPath) ? walk(contentPath, ignore) : [contentPath];
+    const sources = this.tree.isDirectory(contentPath)
+      ? this.tree.walk(contentPath, ignore)
+      : [contentPath];
     component.sources = sources.filter(s => this.forceIgnore.accepts(s));
     return component;
   }
@@ -85,10 +85,14 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
    *
    * @param path Path to content or a child of the content
    */
-  public static findXmlFromContentPath(path: SourcePath, type: MetadataType): SourcePath {
+  public static findXmlFromContentPath(
+    path: SourcePath,
+    type: MetadataType,
+    tree: TreeContainer
+  ): SourcePath {
     const rootContentPath = MixedContentSourceAdapter.trimPathToContent(path, type);
     const rootTypeDirectory = dirname(rootContentPath);
     const contentFullName = baseName(rootContentPath);
-    return findMetadataXml(rootTypeDirectory, contentFullName);
+    return tree.findMetadataXml(rootTypeDirectory, contentFullName);
   }
 }

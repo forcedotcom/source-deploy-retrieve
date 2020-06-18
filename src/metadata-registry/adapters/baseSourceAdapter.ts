@@ -18,11 +18,13 @@ import { RegistryError, UnexpectedForceIgnore } from '../../errors';
 import { parentName } from '../../utils/path';
 import { ForceIgnore } from '../forceIgnore';
 import { dirname, basename } from 'path';
+import { NodeFSContainer, TreeContainer } from '../treeContainers';
 
 export abstract class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;
   protected registry: MetadataRegistry;
   protected forceIgnore: ForceIgnore;
+  protected tree: TreeContainer;
 
   /**
    * Whether or not the adapter should expect a component to be in its own, self-contained folder.
@@ -32,14 +34,17 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   constructor(
     type: MetadataType,
     registry: MetadataRegistry = registryData,
-    forceIgnore: ForceIgnore = new ForceIgnore()
+    forceIgnore: ForceIgnore = new ForceIgnore(),
+    tree: TreeContainer = new NodeFSContainer()
   ) {
     this.type = type;
     this.registry = registry;
     this.forceIgnore = forceIgnore;
+    this.tree = tree;
   }
 
   public getComponent(path: SourcePath): MetadataComponent {
+    // TODO: check if getRootMeta.. returns a valid path
     const metaXml =
       this.parseAsRootMetadataXml(path) || parseMetadataXml(this.getRootMetadataXmlPath(path));
     if (!metaXml) {

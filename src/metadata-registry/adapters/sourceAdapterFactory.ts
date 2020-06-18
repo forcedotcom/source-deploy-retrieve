@@ -12,6 +12,8 @@ import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { DefaultSourceAdapter } from './defaultSourceAdapter';
 import { RegistryError } from '../../errors';
 import { ForceIgnore } from '../forceIgnore';
+import { NodeFSContainer, TreeContainer } from '../treeContainers';
+import { registryData } from '..';
 
 enum AdapterId {
   Bundle = 'bundle',
@@ -22,24 +24,29 @@ enum AdapterId {
 
 export class SourceAdapterFactory {
   private registry: MetadataRegistry;
+  private tree: TreeContainer;
 
-  constructor(registry: MetadataRegistry) {
+  constructor(
+    registry: MetadataRegistry = registryData,
+    tree: TreeContainer = new NodeFSContainer()
+  ) {
     this.registry = registry;
+    this.tree = tree;
   }
 
   public getAdapter(type: MetadataType, forceIgnore = new ForceIgnore()): SourceAdapter {
     const adapterId = this.registry.adapters[type.id] as AdapterId;
     switch (adapterId) {
       case AdapterId.Bundle:
-        return new BundleSourceAdapter(type, this.registry, forceIgnore);
+        return new BundleSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case AdapterId.Decomposed:
-        return new DecomposedSourceAdapter(type, this.registry, forceIgnore);
+        return new DecomposedSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case AdapterId.MatchingContentFile:
-        return new MatchingContentSourceAdapter(type, this.registry, forceIgnore);
+        return new MatchingContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case AdapterId.MixedContent:
-        return new MixedContentSourceAdapter(type, this.registry, forceIgnore);
+        return new MixedContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case undefined:
-        return new DefaultSourceAdapter(type, this.registry, forceIgnore);
+        return new DefaultSourceAdapter(type, this.registry, forceIgnore, this.tree);
       default:
         throw new RegistryError('error_missing_adapter', [type.name, adapterId]);
     }

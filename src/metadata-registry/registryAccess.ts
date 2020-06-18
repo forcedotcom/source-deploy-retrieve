@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { existsSync, readdirSync } from 'fs';
 import { sep, join, basename, dirname } from 'path';
 import { MetadataComponent, MetadataRegistry, MetadataType, SourcePath } from '../types';
 import { parseMetadataXml, deepFreeze } from '../utils/registry';
@@ -12,9 +11,9 @@ import { TypeInferenceError } from '../errors';
 import { registryData } from '.';
 import { MixedContentSourceAdapter } from './adapters/mixedContentSourceAdapter';
 import { parentName, extName } from '../utils/path';
-import { isDirectory } from '../utils/fileSystemHandler';
 import { ForceIgnore } from './forceIgnore';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
+import { TreeContainer, NodeFSContainer } from './treeContainers';
 
 /**
  * Infer information about metadata types and components based on source paths.
@@ -23,17 +22,20 @@ export class RegistryAccess {
   public readonly registry: MetadataRegistry;
   private forceIgnore: ForceIgnore;
   private sourceAdapterFactory: SourceAdapterFactory;
+  private tree: TreeContainer;
 
   /**
-   * @param registry Optional custom registry data.
+   * @param registry Custom registry data
+   * @param tree `TreeContainer` to traverse with
    */
-  constructor(registry?: MetadataRegistry) {
+  constructor(registry?: MetadataRegistry, tree: TreeContainer = new NodeFSContainer()) {
     this.registry = registry
       ? // deep freeze a copy, not the original object
         deepFreeze(JSON.parse(JSON.stringify(registry)) as MetadataRegistry)
       : // registryData is already frozen
         registryData;
-    this.sourceAdapterFactory = new SourceAdapterFactory(this.registry);
+    this.sourceAdapterFactory = new SourceAdapterFactory(this.registry, tree);
+    this.tree = tree;
   }
 
   public getApiVersion(): string {
@@ -59,14 +61,14 @@ export class RegistryAccess {
    * @param fsPath File path for a piece of metadata
    */
   public getComponentsFromPath(fsPath: string): MetadataComponent[] {
-    if (!existsSync(fsPath)) {
+    if (!this.tree.exists(fsPath)) {
       throw new TypeInferenceError('error_path_not_found', fsPath);
     }
 
     let pathForFetch = fsPath;
     this.forceIgnore = ForceIgnore.findAndCreate(fsPath);
 
-    if (isDirectory(fsPath)) {
+    if (this.tree.isDirectory(fsPath)) {
       // If we can determine a type from a directory path, and the end part of the path isn't
       // the directoryName of the type itself, we know the path is part of a mixedContent component
       const type = this.resolveType(fsPath);
@@ -75,7 +77,8 @@ export class RegistryAccess {
         const parts = fsPath.split(sep);
         const folderOffset = inFolder ? 2 : 1;
         if (parts[parts.length - folderOffset] !== directoryName) {
-          pathForFetch = MixedContentSourceAdapter.findXmlFromContentPath(fsPath, type) || fsPath;
+          pathForFetch =
+            MixedContentSourceAdapter.findXmlFromContentPath(fsPath, type, this.tree) || fsPath;
         }
       }
       if (pathForFetch === fsPath) {
@@ -95,9 +98,9 @@ export class RegistryAccess {
       return components;
     }
 
-    for (const file of readdirSync(directory)) {
+    for (const file of this.tree.readDir(directory)) {
       const path = join(directory, file);
-      if (isDirectory(path)) {
+      if (this.tree.isDirectory(path)) {
         dirQueue.push(path);
       } else if (parseMetadataXml(path)) {
         const component = this.resolveComponent(path);

@@ -1,3 +1,11 @@
+# 1.0.13 - June 18, 2020
+
+## Fixed
+
+- Corrected file creation for retrieve ([PR #56](https://github.com/forcedotcom/source-deploy-retrieve/pull/56))
+
+- Fixed formatting and linting issues ([PR #59](https://github.com/forcedotcom/source-deploy-retrieve/pull/59))
+
 # 1.0.12 - June 11, 2020
 
 ## Fixed

@@ -243,7 +243,7 @@ describe('Aura Deploy Strategy', () => {
     mockToolingQuery.resolves({ records: [] });
 
     const auraDeploy = new AuraDeploy(mockConnection);
-    const deployResults = await auraDeploy.deploy(auraComponent);
+    const deployResults = await auraDeploy.deploy(auraComponent, '');
 
     expect(deployResults.DeployDetails.componentSuccesses).to.deep.equal(createAuraSuccesses);
     expect(deployResults.DeployDetails.componentFailures.length).to.equal(0);
@@ -316,7 +316,7 @@ describe('Aura Deploy Strategy', () => {
     };
 
     const auraDeploy = new AuraDeploy(mockConnection);
-    const deployResult = await auraDeploy.deploy(auraComponent);
+    const deployResult = await auraDeploy.deploy(auraComponent, '');
 
     expect(deployResult.DeployDetails.componentSuccesses).to.deep.equal(
       testDeployResult.DeployDetails.componentSuccesses
@@ -349,8 +349,8 @@ describe('Aura Deploy Strategy', () => {
         changed: false,
         created: false,
         deleted: false,
-        fileName: join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.cmp'),
-        fullName: 'mockAuraCmp/mockAuraCmp.cmp',
+        fileName: 'mockAuraCmp',
+        fullName: 'mockAuraCmp',
         success: false,
         componentType: 'AuraDefinitionBundle',
         problem: 'Unexpected error while creating sources: [1,1]',
@@ -371,7 +371,7 @@ describe('Aura Deploy Strategy', () => {
     } as DeployResult;
 
     const auraDeploy = new AuraDeploy(mockConnection);
-    const DeployResult = await auraDeploy.deploy(auraComponent);
+    const DeployResult = await auraDeploy.deploy(auraComponent, '');
 
     expect(DeployResult.DeployDetails.componentFailures).to.deep.equal(
       testDeployResult.DeployDetails.componentFailures
@@ -425,7 +425,7 @@ describe('Aura Deploy Strategy', () => {
     } as DeployResult;
 
     const auraDeploy = new AuraDeploy(mockConnection);
-    const DeployResult = await auraDeploy.deploy(auraComponent);
+    const DeployResult = await auraDeploy.deploy(auraComponent, '');
 
     expect(DeployResult.DeployDetails.componentFailures).to.deep.equal(
       testDeployResult.DeployDetails.componentFailures
@@ -487,7 +487,7 @@ describe('Aura Deploy Strategy', () => {
     } as DeployResult;
 
     const bundleDeploy = new AuraDeploy(mockConnection);
-    const DeployResult = await bundleDeploy.deploy(auraComponent);
+    const DeployResult = await bundleDeploy.deploy(auraComponent, '');
 
     expect(DeployResult.DeployDetails.componentSuccesses).to.deep.equal(
       testDeployResult.DeployDetails.componentSuccesses

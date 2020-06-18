@@ -120,14 +120,14 @@ describe('Tooling Retrieve', () => {
   });
 
   it('should generate correct query to retrieve an ApexClass using namespace', async () => {
-    sandboxStub
-      .stub(registryAccess, 'getComponentsFromPath')
-      .returns(mdComponents);
+    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(mdComponents);
     const toolingQueryStub = sandboxStub.stub(mockConnection.tooling, 'query');
     // @ts-ignore
     toolingQueryStub.returns(apexClassQueryResult);
 
     const stubCreateMetadataFile = sandboxStub.stub(fs, 'createWriteStream');
+    sandboxStub.stub(fs, 'closeSync');
+    sandboxStub.stub(fs, 'openSync');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     stubCreateMetadataFile.onCall(0).returns(new stream.PassThrough() as any);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -139,9 +139,7 @@ describe('Tooling Retrieve', () => {
       namespace: 'tstr',
       output: path.join('file', 'path')
     };
-    const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(
-      retrieveOpts
-    );
+    const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
 
     expect(retrieveResults).to.be.a('object');
     expect(retrieveResults.success).to.equal(true);

@@ -287,7 +287,7 @@ describe('LWC Deploy Strategy', () => {
     mockToolingQuery.resolves({ records: [] });
 
     const auraDeploy = new LwcDeploy(mockConnection);
-    const deployResults = await auraDeploy.deploy(lwcComponent);
+    const deployResults = await auraDeploy.deploy(lwcComponent, '');
 
     expect(deployResults.DeployDetails.componentSuccesses).to.deep.equal(createLwcSuccesses);
     expect(deployResults.DeployDetails.componentFailures.length).to.equal(0);
@@ -353,7 +353,7 @@ describe('LWC Deploy Strategy', () => {
     };
 
     const lwcDeploy = new LwcDeploy(mockConnection);
-    const deployResult = await lwcDeploy.deploy(lwcComponent);
+    const deployResult = await lwcDeploy.deploy(lwcComponent, '');
 
     expect(deployResult.DeployDetails.componentSuccesses).to.deep.equal(
       testDeployResult.DeployDetails.componentSuccesses
@@ -408,7 +408,7 @@ describe('LWC Deploy Strategy', () => {
     };
 
     const lwcDeploy = new LwcDeploy(mockConnection);
-    const deployResult = await lwcDeploy.deploy(lwcComponent);
+    const deployResult = await lwcDeploy.deploy(lwcComponent, '');
 
     expect(deployResult.DeployDetails.componentFailures).to.deep.equal(
       testDeployResult.DeployDetails.componentFailures

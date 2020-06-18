@@ -161,7 +161,7 @@ describe('Container Deploy Strategy', () => {
 
   it('should create a metadata member type for Apex Class', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
-    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
+    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves(undefined);
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
@@ -182,7 +182,7 @@ describe('Container Deploy Strategy', () => {
 
   it('should create a metadata member type for Apex Trigger', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
-    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
+    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves(undefined);
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
@@ -203,7 +203,7 @@ describe('Container Deploy Strategy', () => {
 
   it('should create a metadata member type for VisualForce Page', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
-    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
+    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves(undefined);
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
@@ -224,7 +224,7 @@ describe('Container Deploy Strategy', () => {
 
   it('should create a metadata member type for VisualForce Component', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
-    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
+    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves(undefined);
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
@@ -245,7 +245,7 @@ describe('Container Deploy Strategy', () => {
 
   it('should call tooling api with the correct params when creating a metadata member type for new type', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
-    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
+    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves(undefined);
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
@@ -278,7 +278,7 @@ describe('Container Deploy Strategy', () => {
 
   it('should call tooling api with the correct params when creating a metadata member type for existing type', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
-    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({ Id: 'a00xxx000000034' });
+    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves('a00xxx000000034');
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
@@ -311,7 +311,7 @@ describe('Container Deploy Strategy', () => {
 
   it('should throw error when failing to create a metadata member type', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
-    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
+    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves(undefined);
     sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',

@@ -32,6 +32,7 @@ describe('Tooling Retrieve', () => {
   const mdComponents: MetadataComponent[] = [
     {
       type: {
+        id: 'apexclass',
         name: 'ApexClass',
         directoryName: 'classes',
         inFolder: false,
@@ -224,6 +225,7 @@ describe('Tooling Retrieve', () => {
   it('should throw an error when trying to retrieve more than one type at a time', async () => {
     mdComponents.push({
       type: {
+        id: 'apexclass',
         name: 'ApexClass',
         directoryName: 'classes',
         inFolder: false,
@@ -251,6 +253,7 @@ describe('Tooling Retrieve', () => {
     const unsupportedComponent: MetadataComponent[] = [
       {
         type: {
+          id: 'fancytype',
           name: 'FancyType',
           directoryName: 'fancy',
           inFolder: false,

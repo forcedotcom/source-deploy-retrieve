@@ -21,6 +21,7 @@ import { lwcComponentMock } from './lightningComponentMocks';
 describe('Tooling Retrieve Util', () => {
   const classMDComponent: MetadataComponent = {
     type: {
+      id: 'apexclass',
       name: 'ApexClass',
       directoryName: 'classes',
       inFolder: false,
@@ -33,6 +34,7 @@ describe('Tooling Retrieve Util', () => {
 
   const pageMDComponent: MetadataComponent = {
     type: {
+      id: 'apexpage',
       name: 'ApexPage',
       directoryName: 'pages',
       inFolder: false,
@@ -45,6 +47,7 @@ describe('Tooling Retrieve Util', () => {
 
   const auraMDComponent: MetadataComponent = {
     type: {
+      id: 'auradefinitionbundle',
       name: 'AuraDefinitionBundle',
       directoryName: 'aura',
       inFolder: false
@@ -191,6 +194,7 @@ describe('Tooling Retrieve Util', () => {
     const rendererPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmpRenderer.js');
     const auraComponentMD: MetadataComponent = {
       type: {
+        id: 'auradefinitionbundle',
         name: 'AuraDefinitionBundle',
         directoryName: 'aura',
         inFolder: false
@@ -250,6 +254,7 @@ describe('Tooling Retrieve Util', () => {
     const appMetaPath = path.join('file', 'path', 'aura', 'myAuraApp', 'myAuraApp.app-meta.xml');
     const auraApplicationMD: MetadataComponent = {
       type: {
+        id: 'auradefinitionbundle',
         name: 'AuraDefinitionBundle',
         directoryName: 'aura',
         inFolder: false
@@ -282,6 +287,7 @@ describe('Tooling Retrieve Util', () => {
     );
     const auraEventMD: MetadataComponent = {
       type: {
+        id: 'auradefinitionbundle',
         name: 'AuraDefinitionBundle',
         directoryName: 'aura',
         inFolder: false
@@ -322,6 +328,7 @@ describe('Tooling Retrieve Util', () => {
     );
     const auraInterfaceMD: MetadataComponent = {
       type: {
+        id: 'auradefinitionbundle',
         name: 'AuraDefinitionBundle',
         directoryName: 'aura',
         inFolder: false
@@ -356,6 +363,7 @@ describe('Tooling Retrieve Util', () => {
     );
     const auraTokenMD: MetadataComponent = {
       type: {
+        id: 'auradefinitionbundle',
         name: 'AuraDefinitionBundle',
         directoryName: 'aura',
         inFolder: false
@@ -390,6 +398,7 @@ describe('Tooling Retrieve Util', () => {
     );
     const lwcMD: MetadataComponent = {
       type: {
+        id: 'lightningcomponentbundle',
         name: 'LightningComponentBundle',
         directoryName: 'lwc',
         inFolder: false

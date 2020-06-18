@@ -47,7 +47,12 @@ describe('Tooling API tests', () => {
     const deployLibrary = new ToolingApi(mockConnection, registryAccess);
     sandboxStub.stub(RegistryAccess.prototype, 'getComponentsFromPath').returns([
       {
-        type: { name: 'ApexClass', directoryName: '', inFolder: false },
+        type: {
+          id: 'apexclass',
+          name: 'ApexClass',
+          directoryName: '',
+          inFolder: false
+        },
         fullName: 'myTestClass',
         xml: 'myTestClass.cls-meta.xml',
         sources: ['file/path/myTestClass.cls']
@@ -70,7 +75,12 @@ describe('Tooling API tests', () => {
   it('should exit deploy for unsupported types', async () => {
     sandboxStub.stub(RegistryAccess.prototype, 'getComponentsFromPath').returns([
       {
-        type: { name: 'FlexiPage', directoryName: '', inFolder: false },
+        type: {
+          id: 'flexipage',
+          name: 'FlexiPage',
+          directoryName: '',
+          inFolder: false
+        },
         fullName: '',
         xml: '',
         sources: []

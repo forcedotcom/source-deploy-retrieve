@@ -13,6 +13,7 @@ import { TypeIndex, SuffixIndex } from './registry';
 export type SourcePath = string;
 
 export type MetadataType = {
+  id: string;
   name: string;
   /**
    * Name of the directory where components are located in a package

@@ -121,17 +121,17 @@ export class RegistryAccess {
     return components;
   }
 
-  private resolveComponent(fsPath: SourcePath): MetadataComponent {
-    if (parseMetadataXml(fsPath) && this.forceIgnore.denies(fsPath)) {
+  private resolveComponent(path: SourcePath): MetadataComponent {
+    if (parseMetadataXml(path) && this.forceIgnore.denies(path)) {
       // don't bother fetching the component if the meta xml is denied
       return;
     }
-    const type = this.resolveType(fsPath);
+    const type = this.resolveType(path);
     if (type) {
       const adapter = this.sourceAdapterFactory.getAdapter(type, this.forceIgnore);
-      return adapter.getComponent(fsPath);
+      return adapter.getComponent(path);
     }
-    throw new TypeInferenceError('error_could_not_infer_type', fsPath);
+    throw new TypeInferenceError('error_could_not_infer_type', path);
   }
 
   private resolveType(path: SourcePath): MetadataType | undefined {

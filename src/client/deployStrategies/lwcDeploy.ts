@@ -16,13 +16,17 @@ export class LwcDeploy extends BaseDeploy {
   public async deploy(component: MetadataComponent, namespace: string): Promise<DeployResult> {
     this.component = component;
     this.namespace = namespace;
-
+    let lightningResources;
     try {
-      const lightningResources = await this.buildResourceList();
+      lightningResources = await this.buildResourceList();
       const results = await this.upsert(lightningResources);
       return this.formatBundleOutput(results);
     } catch (e) {
-      const failures = [this.parseLwcError(e.message, component.fullName)];
+      const filePath =
+        lightningResources && lightningResources.length > 0
+          ? lightningResources[0].FilePath
+          : component.fullName;
+      const failures = [this.parseLwcError(e.message, filePath)];
       return this.formatBundleOutput(failures, true);
     }
   }

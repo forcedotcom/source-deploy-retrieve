@@ -16,14 +16,18 @@ export class AuraDeploy extends BaseDeploy {
   public async deploy(component: MetadataComponent, namespace: string): Promise<DeployResult> {
     this.component = component;
     this.namespace = namespace;
-
+    let auraDefinitions;
     try {
-      const auraDefinitions = await this.buildDefList();
+      auraDefinitions = await this.buildDefList();
       const promiseArray = auraDefinitions.map(async def => this.upsert(def));
       const results = await Promise.all(promiseArray);
       return this.formatBundleOutput(results);
     } catch (e) {
-      const failures = [this.parseAuraError(e.message, component.fullName)];
+      const filePath =
+        auraDefinitions && auraDefinitions.length > 0
+          ? auraDefinitions[0].FilePath
+          : component.fullName;
+      const failures = [this.parseAuraError(e.message, filePath)];
       return this.formatBundleOutput(failures, true);
     }
   }

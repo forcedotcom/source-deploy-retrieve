@@ -42,7 +42,7 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
 
   private getChildren(dirPath: SourcePath): MetadataComponent[] {
     const children: MetadataComponent[] = [];
-    for (const fileName of this.tree.readDir(dirPath)) {
+    for (const fileName of this.tree.readDirectory(dirPath)) {
       const currentPath = join(dirPath, fileName);
       if (this.forceIgnore.denies(currentPath)) {
         continue;
@@ -50,8 +50,8 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
         children.push(...this.getChildren(currentPath));
       } else {
         const childXml = parseMetadataXml(fileName);
-        // second condition ensures we don't add the parent's metadata xml as a child
-        if (childXml && childXml.suffix !== this.type.suffix) {
+        const fileIsRootXml = childXml.suffix === this.type.suffix;
+        if (childXml && !fileIsRootXml) {
           // TODO: Log warning if missing child type definition
           const childTypeId = this.type.children.suffixes[childXml.suffix];
           children.push({

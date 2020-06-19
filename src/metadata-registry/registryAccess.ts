@@ -5,15 +5,20 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { sep, join, basename, dirname } from 'path';
-import { MetadataComponent, MetadataRegistry, MetadataType, SourcePath } from '../types';
+import {
+  MetadataComponent,
+  MetadataRegistry,
+  MetadataType,
+  SourcePath,
+  TreeContainer
+} from '../types';
 import { parseMetadataXml, deepFreeze } from '../utils/registry';
 import { TypeInferenceError } from '../errors';
-import { registryData } from '.';
+import { registryData, NodeFSContainer } from '.';
 import { MixedContentSourceAdapter } from './adapters/mixedContentSourceAdapter';
 import { parentName, extName } from '../utils/path';
 import { ForceIgnore } from './forceIgnore';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
-import { TreeContainer, NodeFSContainer } from './treeContainers';
 
 /**
  * Infer information about metadata types and components based on source paths.
@@ -78,7 +83,7 @@ export class RegistryAccess {
         const folderOffset = inFolder ? 2 : 1;
         if (parts[parts.length - folderOffset] !== directoryName) {
           pathForFetch =
-            MixedContentSourceAdapter.findXmlFromContentPath(fsPath, type, this.tree) || fsPath;
+            MixedContentSourceAdapter.findMetadataFromContent(fsPath, type, this.tree) || fsPath;
         }
       }
       if (pathForFetch === fsPath) {
@@ -98,7 +103,7 @@ export class RegistryAccess {
       return components;
     }
 
-    for (const file of this.tree.readDir(directory)) {
+    for (const file of this.tree.readDirectory(directory)) {
       const path = join(directory, file);
       if (this.tree.isDirectory(path)) {
         dirQueue.push(path);

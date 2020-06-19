@@ -5,12 +5,12 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { createSandbox, SinonSandbox } from 'sinon';
-import { SourcePath, MetadataType, MetadataComponent } from '../../src/types';
+import { SourcePath, MetadataType, MetadataComponent, VirtualDirectory } from '../../src/types';
 import { ForceIgnore } from '../../src/metadata-registry/forceIgnore';
 import { SourceAdapterFactory } from '../../src/metadata-registry/adapters/sourceAdapterFactory';
-import { VirtualDirectory, VirtualTreeContainer } from '../../src/metadata-registry/treeContainers';
-import { RegistryAccess } from '../../src/metadata-registry';
+import { VirtualTreeContainer } from '../../src/metadata-registry/treeContainers';
 import { mockRegistry } from '../mock/registry';
+import { RegistryAccess } from '../../src/metadata-registry';
 
 export class RegistryTestUtil {
   private env: SinonSandbox;

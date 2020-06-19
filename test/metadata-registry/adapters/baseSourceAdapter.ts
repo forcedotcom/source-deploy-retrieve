@@ -62,9 +62,17 @@ describe('BaseSourceAdapter', () => {
   });
 
   it('Should throw an error if no valid root metadata xml found', () => {
+    class MissingMetadataChildAdapter extends BaseSourceAdapter {
+      protected getRootMetadataXmlPath(): SourcePath {
+        return undefined;
+      }
+      protected populate(component: MetadataComponent): MetadataComponent {
+        return component;
+      }
+    }
     const path = join('path', 'to', 'dwaynes', 'My_Test.js');
     const type = mockRegistry.types.dwaynejohnson;
-    const adapter = new DefaultSourceAdapter(type, mockRegistry);
+    const adapter = new MissingMetadataChildAdapter(type, mockRegistry);
     assert.throws(
       () => adapter.getComponent(path),
       RegistryError,

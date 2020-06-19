@@ -8,8 +8,7 @@ import { BaseSourceAdapter } from './baseSourceAdapter';
 import { dirname, basename, sep, join } from 'path';
 import { ExpectedSourceFilesError } from '../../errors';
 import { baseName } from '../../utils/path';
-import { SourcePath, MetadataType, MetadataComponent } from '../../types';
-import { TreeContainer } from '../treeContainers';
+import { SourcePath, MetadataType, MetadataComponent, TreeContainer } from '../../types';
 
 /**
  * Handles types with mixed content. Mixed content means there are one or more additional
@@ -40,15 +39,15 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
     if (this.ownFolder) {
       // self contained components have all their files in their own folder
       const componentRoot = MixedContentSourceAdapter.trimPathToContent(trigger, this.type);
-      return this.tree.findMetadataXml(componentRoot, basename(componentRoot));
+      return this.tree.find('metadata', basename(componentRoot), componentRoot);
     }
-    return MixedContentSourceAdapter.findXmlFromContentPath(trigger, this.type, this.tree);
+    return MixedContentSourceAdapter.findMetadataFromContent(trigger, this.type, this.tree);
   }
 
   protected populate(component: MetadataComponent, trigger: SourcePath): MetadataComponent {
     let contentPath = MixedContentSourceAdapter.trimPathToContent(trigger, this.type);
     if (contentPath === component.xml) {
-      contentPath = this.tree.findMetadataContent(dirname(contentPath), baseName(contentPath));
+      contentPath = this.tree.find('content', baseName(contentPath), dirname(contentPath));
     }
 
     if (!this.tree.exists(contentPath)) {
@@ -68,7 +67,7 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
     if (!this.tree.isDirectory(path)) {
       yield path;
     } else {
-      for (const child of this.tree.readDir(path)) {
+      for (const child of this.tree.readDirectory(path)) {
         const childPath = join(path, child);
         if (this.tree.isDirectory(childPath)) {
           yield* this.walk(childPath);
@@ -80,28 +79,13 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
   }
 
   /**
-   * Trim a path up until the root of a component's content. If the content is a file,
-   * the given path will be returned back. If the content is a folder, the path to that
-   * folder will be returned. Intended to be used exclusively for MixedContent types.
-   *
-   * @param path Path to trim
-   * @param type MetadataType to determine content for
-   */
-  public static trimPathToContent(path: SourcePath, type: MetadataType): SourcePath {
-    const pathParts = path.split(sep);
-    const typeFolderIndex = pathParts.findIndex(part => part === type.directoryName);
-    const offset = type.inFolder ? 3 : 2;
-    return pathParts.slice(0, typeFolderIndex + offset).join(sep);
-  }
-
-  /**
    * A utility for finding a component's root metadata xml from a path to a component's
    * content. "Content" can either be a single file or an entire directory. If the content
    * is a directory, the path can be files or other directories inside of it.
    *
    * @param path Path to content or a child of the content
    */
-  public static findXmlFromContentPath(
+  public static findMetadataFromContent(
     path: SourcePath,
     type: MetadataType,
     tree: TreeContainer
@@ -109,6 +93,21 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
     const rootContentPath = MixedContentSourceAdapter.trimPathToContent(path, type);
     const rootTypeDirectory = dirname(rootContentPath);
     const contentFullName = baseName(rootContentPath);
-    return tree.findMetadataXml(rootTypeDirectory, contentFullName);
+    return tree.find('metadata', contentFullName, rootTypeDirectory);
+  }
+
+  /**
+   * Trim a path up until the root of a component's content. If the content is a file,
+   * the given path will be returned back. If the content is a folder, the path to that
+   * folder will be returned. Intended to be used exclusively for MixedContent types.
+   *
+   * @param path Path to trim
+   * @param type MetadataType to determine content for
+   */
+  private static trimPathToContent(path: SourcePath, type: MetadataType): SourcePath {
+    const pathParts = path.split(sep);
+    const typeFolderIndex = pathParts.findIndex(part => part === type.directoryName);
+    const offset = type.inFolder ? 3 : 2;
+    return pathParts.slice(0, typeFolderIndex + offset).join(sep);
   }
 }

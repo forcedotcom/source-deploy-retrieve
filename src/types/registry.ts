@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { MetadataType, SourcePath } from './common';
+import { MetadataType, SourcePath, MetadataComponent } from './common';
 
 /**
  * Metadata type definitions
@@ -48,3 +48,27 @@ export type MetadataXml = {
   suffix: string;
   path: SourcePath;
 };
+
+export type VirtualDirectory = {
+  path: SourcePath;
+  children: string[];
+};
+
+/**
+ * Infers the source format structure of a metadata component when given a file path.
+ */
+export interface SourceAdapter {
+  /**
+   * Get the MetadataComponent of a file path.
+   *
+   * @param fsPath Path to resolve
+   */
+  getComponent(fsPath: SourcePath): MetadataComponent;
+}
+
+export interface TreeContainer {
+  isDirectory(path: SourcePath): boolean;
+  exists(path: SourcePath): boolean;
+  readDirectory(path: SourcePath): string[];
+  find(fileType: 'content' | 'metadata', fullName: string, dir: SourcePath): SourcePath | undefined;
+}

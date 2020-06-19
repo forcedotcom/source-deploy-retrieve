@@ -71,4 +71,4 @@ console.log('\nPublishing to npm');
 shell.exec(`yarn publish --new-version ${LIB_VERSION}`);
 
 console.log('\nPush package.json changes to repo');
-shell.exec(`git push origin master`);
+shell.exec(`git push origin main`);

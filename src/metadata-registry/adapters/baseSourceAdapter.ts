@@ -19,7 +19,7 @@ import { RegistryError, UnexpectedForceIgnore } from '../../errors';
 import { parentName } from '../../utils/path';
 import { ForceIgnore } from '../forceIgnore';
 import { dirname, basename } from 'path';
-import { NodeFSContainer } from '../treeContainers';
+import { NodeFSTreeContainer } from '../treeContainers';
 
 export abstract class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;
@@ -36,7 +36,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     type: MetadataType,
     registry: MetadataRegistry = registryData,
     forceIgnore: ForceIgnore = new ForceIgnore(),
-    tree: TreeContainer = new NodeFSContainer()
+    tree: TreeContainer = new NodeFSTreeContainer()
   ) {
     this.type = type;
     this.registry = registry;

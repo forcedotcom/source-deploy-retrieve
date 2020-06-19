@@ -14,7 +14,7 @@ import {
 } from '../types';
 import { parseMetadataXml, deepFreeze } from '../utils/registry';
 import { TypeInferenceError } from '../errors';
-import { registryData, NodeFSContainer } from '.';
+import { registryData, NodeFSTreeContainer } from '.';
 import { MixedContentSourceAdapter } from './adapters/mixedContentSourceAdapter';
 import { parentName, extName } from '../utils/path';
 import { ForceIgnore } from './forceIgnore';
@@ -33,7 +33,7 @@ export class RegistryAccess {
    * @param registry Custom registry data
    * @param tree `TreeContainer` to traverse with
    */
-  constructor(registry?: MetadataRegistry, tree: TreeContainer = new NodeFSContainer()) {
+  constructor(registry?: MetadataRegistry, tree: TreeContainer = new NodeFSTreeContainer()) {
     this.registry = registry
       ? // deep freeze a copy, not the original object
         deepFreeze(JSON.parse(JSON.stringify(registry)) as MetadataRegistry)

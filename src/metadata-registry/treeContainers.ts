@@ -3,6 +3,7 @@ import { join, dirname, basename } from 'path';
 import { baseName } from '../utils';
 import { parseMetadataXml } from '../utils/registry';
 import { lstatSync, existsSync, readdirSync } from 'fs';
+import { LibraryError } from '../errors';
 
 export abstract class BaseTreeContainer implements TreeContainer {
   public find(
@@ -25,7 +26,7 @@ export abstract class BaseTreeContainer implements TreeContainer {
   public abstract readDirectory(path: SourcePath): string[];
 }
 
-export class NodeFSContainer extends BaseTreeContainer {
+export class NodeFSTreeContainer extends BaseTreeContainer {
   public isDirectory(path: SourcePath): boolean {
     return lstatSync(path).isDirectory();
   }
@@ -48,27 +49,20 @@ export class VirtualTreeContainer extends BaseTreeContainer {
   }
 
   public isDirectory(path: string): boolean {
-    const normalized = this.normalizePath(path);
-    if (this.exists(normalized)) {
-      return this.tree.has(normalized);
+    if (this.exists(path)) {
+      return this.tree.has(path);
     }
-    throw new Error(path + ' does not exist');
+    throw new LibraryError('error_path_not_found', path);
   }
 
   public exists(path: string): boolean {
-    const normalized = this.normalizePath(path);
-    const files = this.tree.get(dirname(normalized));
-    const isFile = files && files.has(normalized);
-    return isFile || this.tree.has(normalized);
+    const files = this.tree.get(dirname(path));
+    const isFile = files && files.has(path);
+    return isFile || this.tree.has(path);
   }
 
   public readDirectory(path: string): string[] {
-    const normalized = this.normalizePath(path);
-    return Array.from(this.tree.get(normalized)).map(p => basename(p));
-  }
-
-  private normalizePath(path: string): string {
-    return path.replace(/\\/g, '/');
+    return Array.from(this.tree.get(path)).map(p => basename(p));
   }
 
   private populate(virtualFs: VirtualDirectory[]): void {

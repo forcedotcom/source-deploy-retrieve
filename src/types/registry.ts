@@ -66,6 +66,9 @@ export interface SourceAdapter {
   getComponent(fsPath: SourcePath): MetadataComponent;
 }
 
+/**
+ * A tree abstraction for the registry to traverse when inferring components
+ */
 export interface TreeContainer {
   isDirectory(path: SourcePath): boolean;
   exists(path: SourcePath): boolean;

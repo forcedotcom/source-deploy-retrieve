@@ -11,23 +11,9 @@ export interface TreeContainer {
   findMetadataXml(dir: SourcePath, fullName: string): SourcePath | undefined;
   findXmlFromContentPath(contentPath: SourcePath, type: MetadataType): SourcePath | undefined;
   readDir(path: SourcePath): string[];
-  walk(dir: SourcePath, ignore?: Set<SourcePath>): SourcePath[];
 }
 
 export abstract class BaseTreeContainer implements TreeContainer {
-  public walk(dir: SourcePath, ignore?: Set<SourcePath>): SourcePath[] {
-    const paths: SourcePath[] = [];
-    for (const file of this.readDir(dir)) {
-      const p = join(dir, file);
-      if (this.isDirectory(p)) {
-        paths.push(...this.walk(p, ignore));
-      } else if (!ignore || !ignore.has(p)) {
-        paths.push(p);
-      }
-    }
-    return paths;
-  }
-
   public findMetadataContent(dir: SourcePath, fullName: string): SourcePath | undefined {
     return this._find(dir, fullName, false);
   }

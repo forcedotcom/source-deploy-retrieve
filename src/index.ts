@@ -6,7 +6,12 @@
  */
 export { SourceClient } from './client';
 export { MetadataConverter } from './convert';
-export { RegistryAccess, registryData, ManifestGenerator } from './metadata-registry';
+export {
+  RegistryAccess,
+  registryData,
+  ManifestGenerator,
+  BaseTreeContainer
+} from './metadata-registry';
 export {
   ApiResult,
   ConvertOutputConfig,
@@ -16,5 +21,6 @@ export {
   DeployDetails,
   SourceResult,
   DeployStatusEnum,
-  DeployPathOptions
+  DeployPathOptions,
+  TreeContainer
 } from './types';

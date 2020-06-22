@@ -21,7 +21,7 @@ import { ForceIgnore } from './forceIgnore';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 
 /**
- * Infer information about metadata types and components based on source paths.
+ * Resolver for metadata type and component objects.
  */
 export class RegistryAccess {
   public readonly registry: MetadataRegistry;
@@ -39,8 +39,8 @@ export class RegistryAccess {
         deepFreeze(JSON.parse(JSON.stringify(registry)) as MetadataRegistry)
       : // registryData is already frozen
         registryData;
-    this.sourceAdapterFactory = new SourceAdapterFactory(this.registry, tree);
     this.tree = tree;
+    this.sourceAdapterFactory = new SourceAdapterFactory(this.registry, tree);
   }
 
   public getApiVersion(): string {

@@ -22,6 +22,9 @@ import { MetadataComponent, SourcePath } from '../../types';
  *```
  */
 export class DefaultSourceAdapter extends BaseSourceAdapter {
+  /* istanbul ignore next */
+  // ignored for code coverage since this method won't ever be executed, unless future
+  // changes permit otherwise. Remove the comments if this method is expected to be entered.
   protected getRootMetadataXmlPath(trigger: string): SourcePath {
     return trigger;
   }

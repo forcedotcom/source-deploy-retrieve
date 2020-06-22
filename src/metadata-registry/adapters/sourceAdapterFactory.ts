@@ -12,7 +12,6 @@ import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { DefaultSourceAdapter } from './defaultSourceAdapter';
 import { RegistryError } from '../../errors';
 import { ForceIgnore } from '../forceIgnore';
-import { registryData, NodeFSTreeContainer } from '..';
 
 enum AdapterId {
   Bundle = 'bundle',
@@ -25,10 +24,7 @@ export class SourceAdapterFactory {
   private registry: MetadataRegistry;
   private tree: TreeContainer;
 
-  constructor(
-    registry: MetadataRegistry = registryData,
-    tree: TreeContainer = new NodeFSTreeContainer()
-  ) {
+  constructor(registry: MetadataRegistry, tree: TreeContainer) {
     this.registry = registry;
     this.tree = tree;
   }

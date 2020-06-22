@@ -57,30 +57,30 @@ export class RegistryAccess {
   /**
    * Get the metadata component(s) from a file path.
    *
-   * @param path File path for a piece of metadata
+   * @param fsPath File path for a piece of metadata
    */
-  public getComponentsFromPath(path: string): MetadataComponent[] {
-    if (!existsSync(path)) {
-      throw new TypeInferenceError('error_path_not_found', path);
+  public getComponentsFromPath(fsPath: string): MetadataComponent[] {
+    if (!existsSync(fsPath)) {
+      throw new TypeInferenceError('error_path_not_found', fsPath);
     }
 
-    let pathForFetch = path;
-    this.forceIgnore = ForceIgnore.findAndCreate(path);
+    let pathForFetch = fsPath;
+    this.forceIgnore = ForceIgnore.findAndCreate(fsPath);
 
-    if (isDirectory(path)) {
+    if (isDirectory(fsPath)) {
       // If we can determine a type from a directory path, and the end part of the path isn't
       // the directoryName of the type itself, we know the path is part of a mixedContent component
-      const type = this.resolveType(path);
+      const type = this.resolveType(fsPath);
       if (type) {
         const { directoryName, inFolder } = type;
-        const parts = path.split(sep);
+        const parts = fsPath.split(sep);
         const folderOffset = inFolder ? 2 : 1;
         if (parts[parts.length - folderOffset] !== directoryName) {
-          pathForFetch = MixedContentSourceAdapter.findXmlFromContentPath(path, type) || path;
+          pathForFetch = MixedContentSourceAdapter.findXmlFromContentPath(fsPath, type) || fsPath;
         }
       }
-      if (pathForFetch === path) {
-        return this.getComponentsFromPathRecursive(path);
+      if (pathForFetch === fsPath) {
+        return this.getComponentsFromPathRecursive(fsPath);
       }
     }
 

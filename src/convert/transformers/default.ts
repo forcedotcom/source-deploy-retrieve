@@ -63,8 +63,8 @@ export class DefaultTransformer implements MetadataTransformer {
     return join(directoryName, basename(fsPath));
   }
 
-  private trimUntil(path: string, name: string): string {
-    const parts = path.split(sep);
+  private trimUntil(fsPath: string, name: string): string {
+    const parts = fsPath.split(sep);
     const index = parts.findIndex(part => name === part);
     return parts.slice(index).join(sep);
   }

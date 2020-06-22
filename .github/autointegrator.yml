@@ -1,2 +1,2 @@
 triggers:
-  master: [develop]
+  main: [develop]

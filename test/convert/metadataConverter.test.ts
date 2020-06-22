@@ -49,7 +49,7 @@ describe('MetadataConverter', () => {
   it('should initialize with default RegistryAccess by default', () => {
     const defaultConverter = new MetadataConverter();
     // @ts-ignore registryAccess private
-    expect(defaultConverter.registryAccess.data).to.deep.equal(registryData);
+    expect(defaultConverter.registryAccess.registry).to.deep.equal(registryData);
   });
 
   it('should generate package name using timestamp when option omitted', async () => {

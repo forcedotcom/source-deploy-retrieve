@@ -45,6 +45,7 @@ describe('LWC Deploy Strategy', () => {
   ];
   const lwcComponent = {
     type: {
+      id: 'lightningcomponentbundle',
       name: 'LightningComponentBundle',
       directoryName: 'lwc',
       inFolder: false

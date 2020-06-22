@@ -33,6 +33,7 @@ describe('Container Deploy Strategy', () => {
   };
   const apexClassCmp = {
     type: {
+      id: 'apexclass',
       name: 'ApexClass',
       directoryName: 'classes',
       inFolder: false
@@ -42,19 +43,30 @@ describe('Container Deploy Strategy', () => {
     xml: 'file/path/one.cls-meta.xml'
   };
   const apexTriggerCmp = {
-    type: { name: 'ApexTrigger', directoryName: 'triggers', inFolder: false },
+    type: {
+      id: 'apextrigger',
+      name: 'ApexTrigger',
+      directoryName: 'triggers',
+      inFolder: false
+    },
     fullName: 'one',
     sources: ['file/path/one.trigger'],
     xml: 'file/path/one.trigger-meta.xml'
   };
   const apexPageCmp = {
-    type: { name: 'ApexPage', directoryName: 'pages', inFolder: false },
+    type: {
+      id: 'apexpage',
+      name: 'ApexPage',
+      directoryName: 'pages',
+      inFolder: false
+    },
     fullName: 'one',
     sources: ['file/path/one.page'],
     xml: 'file/path/one.page-meta.xml'
   };
   const apexComponent = {
     type: {
+      id: 'apexcomponent',
       name: 'ApexComponent',
       directoryName: 'components',
       inFolder: false

@@ -30,7 +30,7 @@ describe('ManifestGenerator', () => {
   it('should generate manifest for one type', () => {
     const component = {
       fullName: 'someName',
-      type: { name: 'ApexClass' },
+      type: { id: 'apexclass', name: 'ApexClass' },
       xml: '',
       sources: []
     } as MetadataComponent;
@@ -47,14 +47,14 @@ describe('ManifestGenerator', () => {
   it('should generate manifest for multiple types', () => {
     const component1 = {
       fullName: 'apexClass1',
-      type: { name: 'ApexClass' },
+      type: { id: 'apexclass', name: 'ApexClass' },
       xml: '',
       sources: []
     } as MetadataComponent;
 
     const component2 = {
       fullName: 'apexTrigger1',
-      type: { name: 'ApexTrigger' },
+      type: { id: 'apextrigger', name: 'ApexTrigger' },
       xml: '',
       sources: []
     } as MetadataComponent;
@@ -178,6 +178,7 @@ describe('ManifestGenerator', () => {
     const mdComponents: MetadataComponent[] = [
       {
         type: {
+          id: 'apexclass',
           name: 'ApexClass',
           directoryName: 'classes',
           inFolder: false,
@@ -214,6 +215,7 @@ describe('ManifestGenerator', () => {
     const mdComponents: MetadataComponent[] = [
       {
         type: {
+          id: 'apexclass',
           name: 'ApexClass',
           directoryName: 'classes',
           inFolder: false,

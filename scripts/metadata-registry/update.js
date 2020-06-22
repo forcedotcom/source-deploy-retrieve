@@ -24,6 +24,7 @@ const describe = JSON.parse(fs.readFileSync(join(__dirname, 'describe.json')));
 function createChildType(childXmlName) {
   const camelCase = childXmlName.substring(0, 1).toLowerCase() + childXmlName.substring(1);
   return {
+    id: childXmlName.toLowerCase(),
     name: childXmlName,
     directoryName: `${camelCase}s`,
     suffix: camelCase
@@ -47,6 +48,7 @@ function update() {
 
     // populate the type
     registry.types[typeId] = {
+      id: typeId,
       name,
       suffix,
       directoryName,

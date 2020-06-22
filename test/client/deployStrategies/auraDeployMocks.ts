@@ -31,6 +31,7 @@ export const auraContents = [
 
 export const auraComponent = {
   type: {
+    id: 'auradefinitionbundle',
     name: 'AuraDefinitionBundle',
     directoryName: 'aura',
     inFolder: false

@@ -13,6 +13,7 @@ import * as adapters from '../../src/metadata-registry/adapters';
 import { join } from 'path';
 import { ForceIgnore } from '../../src/metadata-registry/forceIgnore';
 import { mockRegistry } from '../mock/registry';
+import { SourceAdapterFactory } from '../../src/metadata-registry/adapters/sourceAdapterFactory';
 
 export class RegistryTestUtil {
   private env: SinonSandbox;
@@ -57,15 +58,13 @@ export class RegistryTestUtil {
       componentMappings: { path: SourcePath; component: MetadataComponent }[];
     }[]
   ): void {
-    const getAdapterStub = this.env.stub(adapters, 'getAdapter');
+    const getAdapterStub = this.env.stub(SourceAdapterFactory.prototype, 'getAdapter');
     for (const entry of config) {
-      // @ts-ignore
-      const adapterId = mockRegistry.adapters[entry.type.name.toLowerCase()];
       const componentMap: { [path: string]: MetadataComponent } = {};
       for (const c of entry.componentMappings) {
         componentMap[c.path] = c.component;
       }
-      getAdapterStub.withArgs(entry.type, adapterId).returns({
+      getAdapterStub.withArgs(entry.type).returns({
         getComponent: (path: SourcePath) => componentMap[path]
       });
     }

@@ -17,25 +17,25 @@ import { RegistryTestUtil } from './registryTestUtil';
 const testUtil = new RegistryTestUtil();
 
 describe('RegistryAccess', () => {
-  const registry = new RegistryAccess(mockRegistry);
+  const access = new RegistryAccess(mockRegistry);
 
   it('Should freeze the registry data parameter', () => {
-    expect(Object.isFrozen(registry.data)).to.be.true;
+    expect(Object.isFrozen(access.registry)).to.be.true;
     expect(Object.isFrozen(mockRegistry)).to.be.false;
   });
 
   describe('getTypeFromName', () => {
     it('Should fetch type regardless of casing', () => {
-      expect(registry.getTypeFromName('KeAnUReeVes')).to.deep.equal(mockRegistry.types.keanureeves);
+      expect(access.getTypeFromName('KeAnUReeVes')).to.deep.equal(mockRegistry.types.keanureeves);
     });
 
     it('Should fetch type regardless of spaces', () => {
-      expect(registry.getTypeFromName('kathy Bates')).to.deep.equal(mockRegistry.types.kathybates);
+      expect(access.getTypeFromName('kathy Bates')).to.deep.equal(mockRegistry.types.kathybates);
     });
 
     it('Should throw an error if definition missing', () => {
       assert.throws(
-        () => registry.getTypeFromName('TypeWithoutDef'),
+        () => access.getTypeFromName('TypeWithoutDef'),
         TypeInferenceError,
         nls.localize('error_missing_type_definition', mockRegistry.suffixes.missing)
       );
@@ -52,7 +52,7 @@ describe('RegistryAccess', () => {
         testUtil.exists(path, false);
 
         assert.throws(
-          () => registry.getComponentsFromPath(path),
+          () => access.getComponentsFromPath(path),
           TypeInferenceError,
           nls.localize('error_path_not_found', [path])
         );
@@ -72,7 +72,7 @@ describe('RegistryAccess', () => {
             ]
           }
         ]);
-        expect(registry.getComponentsFromPath(path)).to.deep.equal([keanu.KEANU_COMPONENT]);
+        expect(access.getComponentsFromPath(path)).to.deep.equal([keanu.KEANU_COMPONENT]);
       });
 
       it('Should determine type for source file with known suffix', () => {
@@ -84,7 +84,7 @@ describe('RegistryAccess', () => {
             componentMappings: [{ path, component: keanu.KEANU_COMPONENT }]
           }
         ]);
-        expect(registry.getComponentsFromPath(path)).to.deep.equal([keanu.KEANU_COMPONENT]);
+        expect(access.getComponentsFromPath(path)).to.deep.equal([keanu.KEANU_COMPONENT]);
       });
 
       it('Should determine type for path of mixed content type', () => {
@@ -97,7 +97,7 @@ describe('RegistryAccess', () => {
           }
         ]);
 
-        expect(registry.getComponentsFromPath(path)).to.deep.equal([taraji.TARAJI_COMPONENT]);
+        expect(access.getComponentsFromPath(path)).to.deep.equal([taraji.TARAJI_COMPONENT]);
       });
 
       it('Should not mistake folder component of a mixed content type as that type', () => {
@@ -110,7 +110,7 @@ describe('RegistryAccess', () => {
             componentMappings: [{ path, component: tina.TINA_FOLDER_COMPONENT }]
           }
         ]);
-        expect(registry.getComponentsFromPath(path)).to.deep.equal([tina.TINA_FOLDER_COMPONENT]);
+        expect(access.getComponentsFromPath(path)).to.deep.equal([tina.TINA_FOLDER_COMPONENT]);
       });
 
       it('Should throw type id error if one could not be determined', () => {
@@ -118,7 +118,7 @@ describe('RegistryAccess', () => {
         testUtil.exists(missing, true);
 
         assert.throws(
-          () => registry.getComponentsFromPath(missing),
+          () => access.getComponentsFromPath(missing),
           TypeInferenceError,
           nls.localize('error_could_not_infer_type', [missing])
         );
@@ -135,7 +135,7 @@ describe('RegistryAccess', () => {
             componentMappings: [{ path, component: keanu.KEANU_COMPONENT }]
           }
         ]);
-        expect(registry.getComponentsFromPath(path).length).to.equal(0);
+        expect(access.getComponentsFromPath(path).length).to.equal(0);
       });
     });
 
@@ -158,7 +158,7 @@ describe('RegistryAccess', () => {
             componentMappings
           }
         ]);
-        expect(registry.getComponentsFromPath(KATHY_FOLDER)).to.deep.equal(KATHY_COMPONENTS);
+        expect(access.getComponentsFromPath(KATHY_FOLDER)).to.deep.equal(KATHY_COMPONENTS);
       });
 
       it('Should walk all file and directory children', () => {
@@ -227,7 +227,7 @@ describe('RegistryAccess', () => {
             ]
           }
         ]);
-        expect(registry.getComponentsFromPath(KEANUS_DIR)).to.deep.equal([
+        expect(access.getComponentsFromPath(KEANUS_DIR)).to.deep.equal([
           keanu.KEANU_COMPONENT,
           kathyComponent2,
           keanuComponent2
@@ -257,7 +257,7 @@ describe('RegistryAccess', () => {
             ]
           }
         ]);
-        expect(registry.getComponentsFromPath(tina.TINA_FOLDER)).to.deep.equal([
+        expect(access.getComponentsFromPath(tina.TINA_FOLDER)).to.deep.equal([
           tina.TINA_COMPONENTS[0],
           tina.TINA_COMPONENTS[1]
         ]);
@@ -287,7 +287,7 @@ describe('RegistryAccess', () => {
             ]
           }
         ]);
-        expect(registry.getComponentsFromPath(TARAJI_CONTENT_PATH)).to.deep.equal([
+        expect(access.getComponentsFromPath(TARAJI_CONTENT_PATH)).to.deep.equal([
           taraji.TARAJI_COMPONENT
         ]);
       });
@@ -316,7 +316,7 @@ describe('RegistryAccess', () => {
             ]
           }
         ]);
-        expect(registry.getComponentsFromPath(SIMON_BUNDLE_PATH)).to.deep.equal([SIMON_COMPONENT]);
+        expect(access.getComponentsFromPath(SIMON_BUNDLE_PATH)).to.deep.equal([SIMON_COMPONENT]);
       });
 
       /**
@@ -376,7 +376,7 @@ describe('RegistryAccess', () => {
             ]
           }
         ]);
-        expect(registry.getComponentsFromPath(path).length).to.equal(0);
+        expect(access.getComponentsFromPath(path).length).to.equal(0);
       });
     });
   });

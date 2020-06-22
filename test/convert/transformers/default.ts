@@ -18,10 +18,10 @@ import { nls } from '../../../src/i18n';
 const env = createSandbox();
 
 class TestReadable extends Readable {
-  private path: string;
-  constructor(path: string) {
+  private fsPath: string;
+  constructor(fsPath: string) {
     super();
-    this.path = path;
+    this.fsPath = fsPath;
   }
 }
 

@@ -9,50 +9,59 @@ import { join } from 'path';
 export const mockRegistry = {
   types: {
     kathybates: {
+      id: 'kathybates',
       directoryName: 'kathys',
       inFolder: true,
       name: 'KathyBates',
       suffix: 'kathy'
     },
     keanureeves: {
+      id: 'keanureeves',
       directoryName: 'keanus',
       inFolder: false,
       name: 'KeanuReeves',
       suffix: 'keanu'
     },
     tinafey: {
+      id: 'tinafey',
       directoryName: 'tinas',
       inFolder: true,
       name: 'TinaFey'
     },
     dwaynejohnson: {
+      id: 'dwaynejohnson',
       directoryName: 'dwaynes',
       inFolder: false,
       name: 'DwayneJohnson'
     },
     tarajihenson: {
+      id: 'tarajihenson',
       directoryName: 'tarajis',
       inFolder: false,
       name: 'TarajiHenson'
     },
     simonpegg: {
+      id: 'simonpegg',
       directoryName: 'simons',
       inFolder: false,
       name: 'SimonPegg'
     },
     tinafeyfolder: {
+      id: 'tinafeyfolder',
       directoryName: 'tinas',
       inFolder: false,
       name: 'TinaFeyFolder',
       suffix: 'tinafeyFolder'
     },
     genewilder: {
+      id: 'genewilder',
       directoryName: 'genes',
       inFolder: false,
       name: 'GeneWilder',
       suffix: 'gene'
     },
     reginaking: {
+      id: 'reginaking',
       directoryName: 'reginas',
       inFolder: false,
       name: 'ReginaKing',
@@ -60,11 +69,13 @@ export const mockRegistry = {
       children: {
         types: {
           x: {
+            id: 'x',
             directoryName: 'xs',
             name: 'X',
             suffix: 'x'
           },
           y: {
+            id: 'y',
             name: 'Y',
             suffix: 'y'
           }
@@ -97,7 +108,8 @@ export const mockRegistry = {
     tarajihenson: 'mixedContent',
     dwaynejohnson: 'mixedContent',
     simonpegg: 'bundle',
-    reginaking: 'decomposed'
+    reginaking: 'decomposed',
+    genewilder: 'badAdapterId'
   },
   apiVersion: '48.0'
 };

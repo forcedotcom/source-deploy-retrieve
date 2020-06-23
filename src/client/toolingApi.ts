@@ -116,10 +116,9 @@ export class ToolingApi extends BaseApi {
 
   public async deployWithPaths(options: DeployPathOptions): Promise<DeployResult> {
     const deployPaths = options.paths[0];
-    const namespace = options.namespace ? options.namespace : '';
     return await this.deploy({
       components: this.registry.getComponentsFromPath(deployPaths),
-      namespace
+      namespace: options.namespace
     });
   }
 }

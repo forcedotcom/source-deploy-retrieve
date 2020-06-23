@@ -72,10 +72,6 @@ export class MetadataApi extends BaseApi {
     });
     return deployID;
   }
-  // stub convert for random buffer (buffer.from (string))
-  // metadata deploy called with same buffer
-  // deployWithPaths - path returns expected components (use registry)
-  // test polling (last)
   public async metadataDeployStatusPoll(
     deployID: string,
     timeout?: number,

@@ -60,7 +60,7 @@
   },
   "scripts": {
     "build": "shx rm -rf ./lib && tsc -b",
-    "format": "prettier --config .prettierrc --write './**/*.{js,json,ts}'",
+    "format": "prettier --config .prettierrc --write './{src,test,scripts}/**/*.{js,json,ts}'",
     "lint": "eslint -c .eslintrc.json --ext .ts ./src ./test",
     "local:install": "./scripts/localInstall.js install",
     "local:link": "./scripts/localInstall.js link",
@@ -70,7 +70,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn lint"
+      "pre-commit": "yarn lint && yarn format"
     }
   },
   "nyc": {

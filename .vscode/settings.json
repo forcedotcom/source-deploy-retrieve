@@ -10,5 +10,6 @@
     "**/lib": true,
     "**/bin": true
   },
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "eslint.format.enable": true
 }

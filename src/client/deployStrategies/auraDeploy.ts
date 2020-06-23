@@ -24,7 +24,7 @@ export class AuraDeploy extends BaseDeploy {
       return this.formatBundleOutput(results);
     } catch (e) {
       const filePath =
-        auraDefinitions && auraDefinitions.length > 0
+        Array.isArray(auraDefinitions) && auraDefinitions.length > 0
           ? auraDefinitions[0].FilePath
           : component.fullName;
       const failures = [this.parseAuraError(e.message, filePath)];

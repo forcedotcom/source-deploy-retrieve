@@ -23,7 +23,7 @@ export class LwcDeploy extends BaseDeploy {
       return this.formatBundleOutput(results);
     } catch (e) {
       const filePath =
-        lightningResources && lightningResources.length > 0
+        Array.isArray(lightningResources) && lightningResources.length > 0
           ? lightningResources[0].FilePath
           : component.fullName;
       const failures = [this.parseLwcError(e.message, filePath)];

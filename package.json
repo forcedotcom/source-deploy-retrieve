@@ -44,7 +44,12 @@
     "@typescript-eslint/parser": "^2.22.0",
     "chai": "^4",
     "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-header": "^3.0.0",
     "eslint-plugin-jsdoc": "^19.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.11",
     "mocha": "^5",
     "mocha-junit-reporter": "^1.23.3",
     "nyc": "^14.1.1",
@@ -58,13 +63,23 @@
   },
   "scripts": {
     "build": "shx rm -rf ./lib && tsc -b",
-    "format": "prettier --config .prettierrc --write './**/*.{js,json,ts}'",
+    "format": "prettier --config .prettierrc --loglevel warn --write './{src,test,scripts}/**/*.{js,json,ts}'",
     "lint": "eslint -c .eslintrc.json --ext .ts ./src ./test",
     "local:install": "./scripts/localInstall.js install",
     "local:link": "./scripts/localInstall.js link",
     "local:unlink": "./scripts/localInstall.js unlink",
     "test": "shx rm -rf ./test-results && nyc mocha && node ./scripts/verifyTestArtifacts",
     "update:registry": "node ./scripts/metadata-registry/update.js"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint-staged"
+    }
+  },
+  "lint-staged": {
+    "./{src,test}/**/*.{ts,js}": [
+      "eslint -c .eslintrc.json --fix"
+    ]
   },
   "nyc": {
     "include": [

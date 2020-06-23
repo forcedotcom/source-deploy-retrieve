@@ -23,6 +23,9 @@ _refs:
       git config credential.helper 'cache --timeout=120'
       git config user.email "$GH_EMAIL"
       git config user.name "Release Bot"
+  lint: &lint
+    name: Lint source files
+    command: yarn lint
   install: &install
     name: Install dependencies
     command: |
@@ -55,6 +58,7 @@ jobs:
       - checkout
       - restore_cache: *restore_cache
       - run: *install
+      - run: *lint
       - run: *build
       - run: *test
       - run: *coverage
@@ -95,6 +99,7 @@ jobs:
           key: dependency-cache-win1-{{checksum ".circleci/config.yml"}}-{{checksum "yarn.lock"}}
           paths:
             - node_modules
+      - run: *lint
       - run: *build
       - run: *test
       - run:

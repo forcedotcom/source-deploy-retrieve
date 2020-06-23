@@ -10,7 +10,8 @@ export {
   RegistryAccess,
   registryData,
   ManifestGenerator,
-  BaseTreeContainer
+  BaseTreeContainer,
+  VirtualTreeContainer
 } from './metadata-registry';
 export {
   ApiResult,
@@ -22,5 +23,6 @@ export {
   SourceResult,
   DeployStatusEnum,
   DeployPathOptions,
-  TreeContainer
+  TreeContainer,
+  VirtualDirectory
 } from './types';

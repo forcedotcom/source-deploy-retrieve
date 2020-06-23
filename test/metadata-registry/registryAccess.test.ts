@@ -43,7 +43,6 @@ describe('RegistryAccess', () => {
   });
 
   describe('getComponentsFromPath', () => {
-    // beforeEach(() => testUtil.initStubs());
     afterEach(() => testUtil.restore());
 
     describe('File Paths', () => {

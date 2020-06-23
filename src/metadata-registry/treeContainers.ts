@@ -36,16 +36,16 @@ export abstract class BaseTreeContainer implements TreeContainer {
 }
 
 export class NodeFSTreeContainer extends BaseTreeContainer {
-  public isDirectory(path: SourcePath): boolean {
-    return lstatSync(path).isDirectory();
+  public isDirectory(fsPath: SourcePath): boolean {
+    return lstatSync(fsPath).isDirectory();
   }
 
-  public exists(path: SourcePath): boolean {
-    return existsSync(path);
+  public exists(fsPath: SourcePath): boolean {
+    return existsSync(fsPath);
   }
 
-  public readDirectory(path: SourcePath): string[] {
-    return readdirSync(path);
+  public readDirectory(fsPath: SourcePath): string[] {
+    return readdirSync(fsPath);
   }
 }
 
@@ -57,21 +57,21 @@ export class VirtualTreeContainer extends BaseTreeContainer {
     this.populate(virtualFs);
   }
 
-  public isDirectory(path: string): boolean {
-    if (this.exists(path)) {
-      return this.tree.has(path);
+  public isDirectory(fsPath: string): boolean {
+    if (this.exists(fsPath)) {
+      return this.tree.has(fsPath);
     }
-    throw new LibraryError('error_path_not_found', path);
+    throw new LibraryError('error_path_not_found', fsPath);
   }
 
-  public exists(path: string): boolean {
-    const files = this.tree.get(dirname(path));
-    const isFile = files && files.has(path);
-    return isFile || this.tree.has(path);
+  public exists(fsPath: string): boolean {
+    const files = this.tree.get(dirname(fsPath));
+    const isFile = files && files.has(fsPath);
+    return isFile || this.tree.has(fsPath);
   }
 
-  public readDirectory(path: string): string[] {
-    return Array.from(this.tree.get(path)).map(p => basename(p));
+  public readDirectory(fsPath: string): string[] {
+    return Array.from(this.tree.get(fsPath)).map(p => basename(p));
   }
 
   private populate(virtualFs: VirtualDirectory[]): void {

@@ -13,16 +13,21 @@ import { BaseDeploy } from './baseDeploy';
 import { AURA_TYPES } from './constants';
 
 export class AuraDeploy extends BaseDeploy {
-  public async deploy(component: MetadataComponent): Promise<DeployResult> {
+  public async deploy(component: MetadataComponent, namespace: string): Promise<DeployResult> {
     this.component = component;
-    const auraDefinitions = await this.buildDefList();
-
+    this.namespace = namespace;
+    let auraDefinitions;
     try {
+      auraDefinitions = await this.buildDefList();
       const promiseArray = auraDefinitions.map(async def => this.upsert(def));
       const results = await Promise.all(promiseArray);
       return this.formatBundleOutput(results);
     } catch (e) {
-      const failures = [this.parseAuraError(e.message, auraDefinitions[0].FilePath)];
+      const filePath =
+        Array.isArray(auraDefinitions) && auraDefinitions.length > 0
+          ? auraDefinitions[0].FilePath
+          : component.fullName;
+      const failures = [this.parseAuraError(e.message, filePath)];
       return this.formatBundleOutput(failures, true);
     }
   }
@@ -144,7 +149,7 @@ export class AuraDeploy extends BaseDeploy {
     const auraDefResult = await this.connection.tooling.query(
       `Select AuraDefinitionBundleId, Id, Format, Source, DefType from AuraDefinition where AuraDefinitionBundle.DeveloperName = '${
         this.component.fullName
-      }'`
+      }' and AuraDefinitionBundle.NamespacePrefix = '${this.namespace}'`
     );
     return auraDefResult.records as AuraDefinition[];
   }

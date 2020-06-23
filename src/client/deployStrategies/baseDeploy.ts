@@ -19,12 +19,13 @@ const DOMParser = require('xmldom-sfdx-encoding').DOMParser;
 export abstract class BaseDeploy {
   public connection: Connection;
   public component: MetadataComponent;
+  public namespace: string;
 
   constructor(connection: Connection) {
     this.connection = connection;
   }
 
-  public abstract deploy(component: MetadataComponent): Promise<DeployResult>;
+  public abstract deploy(component: MetadataComponent, namespace: string): Promise<DeployResult>;
 
   public buildMetadataField(
     metadataContent: string

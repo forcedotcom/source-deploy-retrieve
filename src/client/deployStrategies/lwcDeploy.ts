@@ -13,15 +13,20 @@ import { deployTypes } from '../toolingApi';
 import { BaseDeploy } from './baseDeploy';
 
 export class LwcDeploy extends BaseDeploy {
-  public async deploy(component: MetadataComponent): Promise<DeployResult> {
+  public async deploy(component: MetadataComponent, namespace: string): Promise<DeployResult> {
     this.component = component;
-    const lightningResources = await this.buildResourceList();
-
+    this.namespace = namespace;
+    let lightningResources;
     try {
+      lightningResources = await this.buildResourceList();
       const results = await this.upsert(lightningResources);
       return this.formatBundleOutput(results);
     } catch (e) {
-      const failures = [this.parseLwcError(e.message, lightningResources[0].FilePath)];
+      const filePath =
+        Array.isArray(lightningResources) && lightningResources.length > 0
+          ? lightningResources[0].FilePath
+          : component.fullName;
+      const failures = [this.parseLwcError(e.message, filePath)];
       return this.formatBundleOutput(failures, true);
     }
   }
@@ -99,7 +104,7 @@ export class LwcDeploy extends BaseDeploy {
     const lightningResourceResult = await this.connection.tooling.query(
       `Select LightningComponentBundleId, Id, Format, Source, FilePath from LightningComponentResource where LightningComponentBundle.DeveloperName = '${
         this.component.fullName
-      }'`
+      }' and LightningComponentBundle.NamespacePrefix = '${this.namespace}'`
     );
     return lightningResourceResult.records as LightningComponentResource[];
   }

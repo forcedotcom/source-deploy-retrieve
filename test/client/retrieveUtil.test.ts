@@ -58,27 +58,36 @@ describe('Tooling Retrieve Util', () => {
   };
 
   it('should generate correct query to retrieve an ApexClass', () => {
-    const queryString = buildQuery(classMDComponent);
+    const queryString = buildQuery(classMDComponent, '');
 
     expect(queryString).to.equal(
-      `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'myTestClass'`
+      `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'myTestClass' and NamespacePrefix = ''`
     );
   });
 
   it('should generate correct query to retrieve an ApexPage', () => {
-    const queryString = buildQuery(pageMDComponent);
+    const queryString = buildQuery(pageMDComponent, '');
 
     expect(queryString).to.equal(
-      `Select Id, ApiVersion, Name, NamespacePrefix, Markup from ApexPage where Name = 'myPage'`
+      `Select Id, ApiVersion, Name, NamespacePrefix, Markup from ApexPage where Name = 'myPage' and NamespacePrefix = ''`
     );
   });
 
   it('should generate correct query to retrieve an AuraDefinition', () => {
-    const queryString = buildQuery(auraMDComponent);
+    const queryString = buildQuery(auraMDComponent, '');
     let expectedQuery =
       'Select Id, AuraDefinitionBundle.ApiVersion, AuraDefinitionBundle.DeveloperName, ';
     expectedQuery += 'AuraDefinitionBundle.NamespacePrefix, DefType, Source ';
-    expectedQuery += `from AuraDefinition where AuraDefinitionBundle.DeveloperName = 'testApp'`;
+    expectedQuery += `from AuraDefinition where AuraDefinitionBundle.DeveloperName = 'testApp' and AuraDefinitionBundle.NamespacePrefix = ''`;
+    expect(queryString).to.equal(expectedQuery);
+  });
+
+  it('should generate correct query to retrieve an AuraDefinition with namespace', () => {
+    const queryString = buildQuery(auraMDComponent, 't3str');
+    let expectedQuery =
+      'Select Id, AuraDefinitionBundle.ApiVersion, AuraDefinitionBundle.DeveloperName, ';
+    expectedQuery += 'AuraDefinitionBundle.NamespacePrefix, DefType, Source ';
+    expectedQuery += `from AuraDefinition where AuraDefinitionBundle.DeveloperName = 'testApp' and AuraDefinitionBundle.NamespacePrefix = 't3str'`;
     expect(queryString).to.equal(expectedQuery);
   });
 

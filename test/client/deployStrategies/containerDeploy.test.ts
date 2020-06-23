@@ -14,7 +14,7 @@ import { createSandbox, SinonSandbox } from 'sinon';
 import { ContainerDeploy } from '../../../src/client/deployStrategies';
 import { ToolingCreateResult } from '../../../src/utils/deploy';
 import { nls } from '../../../src/i18n';
-import { DeployStatusEnum } from '../../../src/types';
+import { DeployStatusEnum, QueryResult } from '../../../src/types';
 
 const $$ = testSetup();
 
@@ -161,7 +161,7 @@ describe('Container Deploy Strategy', () => {
 
   it('should create a metadata member type for Apex Class', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
-    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
+    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves(undefined);
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
@@ -182,7 +182,7 @@ describe('Container Deploy Strategy', () => {
 
   it('should create a metadata member type for Apex Trigger', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
-    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
+    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves(undefined);
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
@@ -203,7 +203,7 @@ describe('Container Deploy Strategy', () => {
 
   it('should create a metadata member type for VisualForce Page', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
-    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
+    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves(undefined);
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
@@ -224,7 +224,7 @@ describe('Container Deploy Strategy', () => {
 
   it('should create a metadata member type for VisualForce Component', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
-    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
+    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves(undefined);
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
@@ -245,7 +245,7 @@ describe('Container Deploy Strategy', () => {
 
   it('should call tooling api with the correct params when creating a metadata member type for new type', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
-    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
+    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves(undefined);
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
@@ -278,7 +278,7 @@ describe('Container Deploy Strategy', () => {
 
   it('should call tooling api with the correct params when creating a metadata member type for existing type', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
-    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({ Id: 'a00xxx000000034' });
+    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves('a00xxx000000034');
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
@@ -311,7 +311,7 @@ describe('Container Deploy Strategy', () => {
 
   it('should throw error when failing to create a metadata member type', async () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
-    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves({});
+    sandboxStub.stub(deployLibrary, 'getContentEntity').resolves(undefined);
     sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',
@@ -413,5 +413,96 @@ describe('Container Deploy Strategy', () => {
     };
     const pollCAR = await deployLibrary.toolingStatusCheck(asyncRequestMock);
     expect(pollCAR.State).to.equal('Completed');
+  });
+
+  it('should deploy successfully when namespace is defined', async () => {
+    const deployLibrary = new ContainerDeploy(mockConnection);
+    // mock container creation
+    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create');
+    mockToolingCreate.onCall(0).resolves({
+      success: true,
+      id: '1dcxxx000000034',
+      errors: []
+    } as RecordResult);
+
+    // mock tooling query
+    const mockToolingQuery = sandboxStub.stub(mockConnection.tooling, 'query');
+    mockToolingQuery.resolves({
+      size: 1,
+      totalSize: 1,
+      done: true,
+      queryLocator: '',
+      entityTypeName: 'ApexClass',
+      records: [{ Id: '00' }]
+    } as QueryResult);
+
+    // mock container member creation
+    mockToolingCreate.onCall(1).resolves({
+      success: true,
+      id: '400xxx000000034',
+      errors: []
+    } as RecordResult);
+
+    // mock container async request creation
+    mockToolingCreate.onCall(2).resolves({
+      success: true,
+      id: '1drxxx000000034',
+      errors: []
+    } as RecordResult);
+
+    // mock status check
+    sandboxStub.stub(mockConnection.tooling, 'retrieve').resolves({
+      State: DeployStatusEnum.Completed,
+      isDeleted: false,
+      DeployDetails: {
+        componentFailures: [],
+        componentSuccesses: [
+          {
+            changed: true,
+            componentType: 'ApexComponent',
+            created: true,
+            createdDate: '2020-06-19T00:30:38.152+0000',
+            deleted: false,
+            fileName: 'component/one.component',
+            fullName: 'one',
+            id: '0992M000000uLGTQA2',
+            success: true,
+            warning: false
+          }
+        ]
+      }
+    } as Record);
+    const result = await deployLibrary.deploy(apexComponent, 't5tr');
+    expect(mockToolingCreate.calledThrice).to.be.true;
+    expect(mockToolingQuery.calledOnce).to.be.true;
+    expect(
+      mockToolingQuery.calledWith(
+        `Select Id from ApexComponent where Name = 'one' and NamespacePrefix = 't5tr'`
+      )
+    ).to.be.true;
+    console.log(result);
+    expect(result).to.deep.equals({
+      State: 'Completed',
+      isDeleted: false,
+      DeployDetails: {
+        componentFailures: [],
+        componentSuccesses: [
+          {
+            changed: true,
+            componentType: 'ApexComponent',
+            created: true,
+            createdDate: '2020-06-19T00:30:38.152+0000',
+            deleted: false,
+            fileName: 'component/one.component',
+            fullName: 'one',
+            id: '0992M000000uLGTQA2',
+            success: true,
+            warning: false
+          }
+        ]
+      },
+      metadataFile: 'file/path/one.component-meta.xml',
+      outboundFiles: ['file/path/one.component', 'file/path/one.component-meta.xml']
+    });
   });
 });

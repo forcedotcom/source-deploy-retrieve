@@ -14,6 +14,7 @@ type CommonOptions = {
    * Set the max number of seconds to wait for the operation.
    */
   wait?: number;
+  namespace?: string;
 };
 
 type CommonRetrieveOptions = {

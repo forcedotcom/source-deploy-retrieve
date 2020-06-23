@@ -45,6 +45,7 @@ export class ToolingApi extends BaseApi {
     const retrievePaths = options.paths[0];
     return await this.retrieve({
       output: options.output,
+      namespace: options.namespace,
       components: this.registry.getComponentsFromPath(retrievePaths)
     });
   }
@@ -71,7 +72,7 @@ export class ToolingApi extends BaseApi {
 
     try {
       const queryResult = (await this.connection.tooling.query(
-        buildQuery(mdComponent)
+        buildQuery(mdComponent, options.namespace)
       )) as QueryResult;
 
       if (queryResult && queryResult.records.length === 0) {
@@ -109,13 +110,15 @@ export class ToolingApi extends BaseApi {
     }
 
     const deployStrategy = getDeployStrategy(metadataType, this.connection);
-    return deployStrategy.deploy(mdComponent);
+    const namespace = options.namespace ? options.namespace : '';
+    return deployStrategy.deploy(mdComponent, namespace);
   }
 
   public async deployWithPaths(options: DeployPathOptions): Promise<DeployResult> {
     const deployPaths = options.paths[0];
     return await this.deploy({
-      components: this.registry.getComponentsFromPath(deployPaths)
+      components: this.registry.getComponentsFromPath(deployPaths),
+      namespace: options.namespace
     });
   }
 }

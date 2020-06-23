@@ -110,7 +110,8 @@ export class ToolingApi extends BaseApi {
     }
 
     const deployStrategy = getDeployStrategy(metadataType, this.connection);
-    return deployStrategy.deploy(mdComponent, options.namespace);
+    const namespace = options.namespace ? options.namespace : '';
+    return deployStrategy.deploy(mdComponent, namespace);
   }
 
   public async deployWithPaths(options: DeployPathOptions): Promise<DeployResult> {

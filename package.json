@@ -44,14 +44,16 @@
     "@typescript-eslint/parser": "^2.22.0",
     "chai": "^4",
     "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-header": "^3.0.0",
     "eslint-plugin-jsdoc": "^19.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
     "husky": "^4.2.5",
+    "lint-staged": "^10.2.11",
     "mocha": "^5",
     "mocha-junit-reporter": "^1.23.3",
     "nyc": "^14.1.1",
     "prettier": "1.16.4",
-    "pretty-quick": "^2.0.1",
     "shelljs": "0.8.3",
     "shx": "^0.3.2",
     "sinon": "^7.3.1",
@@ -71,8 +73,13 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn lint && pretty-quick --staged"
+      "pre-commit": "yarn lint-staged"
     }
+  },
+  "lint-staged": {
+    "./{src,test}/**/*.{ts,js}": [
+      "eslint -c .eslintrc.json --fix"
+    ]
   },
   "nyc": {
     "include": [

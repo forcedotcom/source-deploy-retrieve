@@ -9,10 +9,8 @@ import { createSandbox, SinonSandbox, SinonStub } from 'sinon';
 import { SourcePath, MetadataType, MetadataComponent } from '../../src/types';
 import * as fs from 'fs';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
-import * as adapters from '../../src/metadata-registry/adapters';
 import { join } from 'path';
 import { ForceIgnore } from '../../src/metadata-registry/forceIgnore';
-import { mockRegistry } from '../mock/registry';
 import { SourceAdapterFactory } from '../../src/metadata-registry/adapters/sourceAdapterFactory';
 
 export class RegistryTestUtil {

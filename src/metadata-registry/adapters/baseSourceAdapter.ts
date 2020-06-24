@@ -28,7 +28,8 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   protected tree: TreeContainer;
 
   /**
-   * Whether or not the adapter should expect a component to be in its own, self-contained folder.
+   * Whether or not an adapter should expect a component to be in its own, self-named
+   * folder, including its root metadata xml file.
    */
   protected ownFolder = false;
 

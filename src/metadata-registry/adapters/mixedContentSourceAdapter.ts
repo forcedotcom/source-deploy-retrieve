@@ -37,7 +37,6 @@ import { SourcePath, MetadataType, MetadataComponent, TreeContainer } from '../.
 export class MixedContentSourceAdapter extends BaseSourceAdapter {
   protected getRootMetadataXmlPath(trigger: SourcePath): SourcePath {
     if (this.ownFolder) {
-      // self contained components have all their files in their own folder
       const componentRoot = MixedContentSourceAdapter.trimPathToContent(trigger, this.type);
       return this.tree.find('metadata', basename(componentRoot), componentRoot);
     }

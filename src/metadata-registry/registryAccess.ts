@@ -95,16 +95,16 @@ export class RegistryAccess {
     return component ? [component] : [];
   }
 
-  private getComponentsFromPathRecursive(directory: SourcePath): MetadataComponent[] {
+  private getComponentsFromPathRecursive(dir: SourcePath): MetadataComponent[] {
     const dirQueue: SourcePath[] = [];
     const components: MetadataComponent[] = [];
 
-    if (this.forceIgnore.denies(directory)) {
+    if (this.forceIgnore.denies(dir)) {
       return components;
     }
 
-    for (const file of this.tree.readDirectory(directory)) {
-      const path = join(directory, file);
+    for (const file of this.tree.readDirectory(dir)) {
+      const path = join(dir, file);
       if (this.tree.isDirectory(path)) {
         dirQueue.push(path);
       } else if (parseMetadataXml(path)) {
@@ -129,31 +129,31 @@ export class RegistryAccess {
     return components;
   }
 
-  private resolveComponent(path: SourcePath): MetadataComponent {
-    if (parseMetadataXml(path) && this.forceIgnore.denies(path)) {
-      // don't bother fetching the component if the meta xml is denied
+  private resolveComponent(fsPath: SourcePath): MetadataComponent {
+    if (parseMetadataXml(fsPath) && this.forceIgnore.denies(fsPath)) {
+      // don't fetch the component if the metadata xml is denied
       return;
     }
-    const type = this.resolveType(path);
+    const type = this.resolveType(fsPath);
     if (type) {
       const adapter = this.sourceAdapterFactory.getAdapter(type, this.forceIgnore);
-      return adapter.getComponent(path);
+      return adapter.getComponent(fsPath);
     }
-    throw new TypeInferenceError('error_could_not_infer_type', path);
+    throw new TypeInferenceError('error_could_not_infer_type', fsPath);
   }
 
-  private resolveType(path: SourcePath): MetadataType | undefined {
+  private resolveType(fsPath: SourcePath): MetadataType | undefined {
     let typeId: string;
 
     // attempt 1 - check if the file is part of a mixed content type
-    const pathParts = new Set(path.split(sep));
+    const pathParts = new Set(fsPath.split(sep));
     for (const directoryName of Object.keys(this.registry.mixedContent)) {
       if (pathParts.has(directoryName)) {
         typeId = this.registry.mixedContent[directoryName];
         // types with folders only have folder components living at the top level.
         // if the fsPath is a folder component, let a future strategy deal with it
         const isFolderType = this.getTypeFromName(typeId).inFolder;
-        if (isFolderType && parentName(path) === directoryName) {
+        if (isFolderType && parentName(fsPath) === directoryName) {
           typeId = undefined;
         }
         break;
@@ -161,14 +161,14 @@ export class RegistryAccess {
     }
     // attempt 2 - check if it's a metadata xml file
     if (!typeId) {
-      const parsedMetaXml = parseMetadataXml(path);
+      const parsedMetaXml = parseMetadataXml(fsPath);
       if (parsedMetaXml) {
         typeId = this.registry.suffixes[parsedMetaXml.suffix];
       }
     }
     // attempt 3 - try treating the file extension name as a suffix
     if (!typeId) {
-      typeId = this.registry.suffixes[extName(path)];
+      typeId = this.registry.suffixes[extName(fsPath)];
     }
 
     if (typeId) {

@@ -9,9 +9,10 @@ import { expect } from 'chai';
 import { testSetup, MockTestOrgData } from '@salesforce/core/lib/testSetup';
 import { createSandbox } from 'sinon';
 import { RegistryAccess, registryData } from '../../src/metadata-registry';
-import { MetadataComponent } from '../../src/types';
+import { MetadataComponent, DeployStatusEnum, DeployResult } from '../../src/types';
 import { MetadataApi } from '../../src/client/metadataApi';
 import { ContainerDeploy } from '../../src/client/deployStrategies';
+import { MetadataConverter } from '../../src/convert';
 
 // stub convert for random buffer (buffer.from (string))
 // verify metadata deploy called with same buffer
@@ -35,15 +36,8 @@ describe('Metadata Api', () => {
       })
     });
   });
-
   afterEach(() => {
     sandboxStub.restore();
-  });
-  it('Should correctly convert metatdata with buffer', () => {
-    // const testBuffer = Buffer.from('buffer');
-    // const deployMetadata = new MetadataApi(mockConnection, registryAccess);
-    // // stub conversion with buffer
-    // const metadataStub = sandboxStub.stub(deployMetadata.metadataDeployID(testBuffer));
   });
   it('Should correctly deploy metatdata components from paths', async () => {
     const components: MetadataComponent[] = [
@@ -54,16 +48,63 @@ describe('Metadata Api', () => {
         sources: ['file/path/myTestClass.cls', 'file/path/myTestClass.cls-meta.xml']
       }
     ];
-    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(components);
+    const testingBuffer = Buffer.from('testingBuffer');
+    const registryStub = sandboxStub
+      .stub(registryAccess, 'getComponentsFromPath')
+      .returns(components);
+    const converter = new MetadataConverter();
     const deployMetadata = new MetadataApi(mockConnection, registryAccess);
+    const conversionCallStub = sandboxStub
+      .stub(converter, 'convert')
+      .withArgs(components, 'metadata', { type: 'zip' })
+      .returns(
+        new Promise(resolve => {
+          resolve({
+            packagePath: 'file/path',
+            zipBuffer: testingBuffer
+          });
+        })
+      );
+    const deployIdStub = sandboxStub
+      .stub(deployMetadata, 'metadataDeployID')
+      .withArgs(testingBuffer)
+      .returns(
+        new Promise(resolve => {
+          resolve('testing');
+        })
+      );
+    const deployPollStub = sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').returns(
+      new Promise(resolve => {
+        resolve({
+          id: 'testing',
+          checkOnly: true,
+          completedDate: '',
+          createdDate: '',
+          done: true,
+          errorMessage: '',
+          errorStatusCode: '',
+          ignoreWarnings: true,
+          lastModifiedDate: '',
+          numberComponentErrors: 0,
+          numberComponentsDeployed: 1,
+          numberComponentsTotal: 1,
+          numberTestErrors: 0,
+          numberTestsCompleted: 1,
+          numberTestsTotal: 0,
+          rollbackOnError: true,
+          startDate: '',
+          status: 'Succeeded',
+          success: true
+        });
+      })
+    );
     const delpoyOptions = {
       paths: ['file/path/myTestClass.cls']
     };
-    console.log('deploys:');
     const deploys = await deployMetadata.deployWithPaths(delpoyOptions);
-    console.log(deploys);
-    console.log(deploys.outboundFiles);
     expect(deploys.outboundFiles).to.equal(['file/path/myTestClass.cls']);
+    expect(registryStub.calledImmediatelyBefore(conversionCallStub)).to.be.true;
+    expect(conversionCallStub.calledImmediatelyBefore(deployPollStub)).to.be.true;
   });
   it('Should correcly poll', () => {});
 });

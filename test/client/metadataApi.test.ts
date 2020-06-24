@@ -40,13 +40,12 @@ describe('Metadata Api', () => {
     sandboxStub.restore();
   });
   it('Should correctly convert metatdata with buffer', () => {
-    const testBuffer = Buffer.from('buffer');
-    const deployMetadata = new MetadataApi(mockConnection, registryAccess);
-    // stub conversion with buffer
-    const metadataStub = sandboxStub.stub(deployMetadata.metadataDeployID(testBuffer));
+    // const testBuffer = Buffer.from('buffer');
+    // const deployMetadata = new MetadataApi(mockConnection, registryAccess);
+    // // stub conversion with buffer
+    // const metadataStub = sandboxStub.stub(deployMetadata.metadataDeployID(testBuffer));
   });
   it('Should correctly deploy metatdata components from paths', async () => {
-    const deployMetadata = new MetadataApi(mockConnection, registryAccess);
     const components: MetadataComponent[] = [
       {
         fullName: 'myTestClass',
@@ -55,7 +54,8 @@ describe('Metadata Api', () => {
         sources: ['file/path/myTestClass.cls', 'file/path/myTestClass.cls-meta.xml']
       }
     ];
-    sandboxStub.stub(RegistryAccess.prototype, 'getComponentsFromPath').returns(components);
+    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(components);
+    const deployMetadata = new MetadataApi(mockConnection, registryAccess);
     const delpoyOptions = {
       paths: ['file/path/myTestClass.cls']
     };
@@ -65,8 +65,5 @@ describe('Metadata Api', () => {
     console.log(deploys.outboundFiles);
     expect(deploys.outboundFiles).to.equal(['file/path/myTestClass.cls']);
   });
-  it('Should correcly poll', () => {
-    {
-    }
-  });
+  it('Should correcly poll', () => {});
 });

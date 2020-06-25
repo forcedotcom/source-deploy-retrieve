@@ -76,10 +76,10 @@ export class VirtualTreeContainer extends BaseTreeContainer {
 
   private populate(virtualFs: VirtualDirectory[]): void {
     for (const dir of virtualFs) {
-      const { path, children } = dir;
-      this.tree.set(path, new Set());
+      const { dirPath, children } = dir;
+      this.tree.set(dirPath, new Set());
       for (const child of children) {
-        this.tree.get(path).add(join(path, child));
+        this.tree.get(dirPath).add(join(dirPath, child));
       }
     }
   }

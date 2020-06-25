@@ -78,11 +78,11 @@ describe('Tree Containers', () => {
   describe('VirtualTreeContainer', () => {
     const virtualFS = [
       {
-        path: '.',
+        dirPath: '.',
         children: ['test.txt', 'test2.txt', 'files']
       },
       {
-        path: join('.', 'files'),
+        dirPath: join('.', 'files'),
         children: ['test3.txt']
       }
     ];

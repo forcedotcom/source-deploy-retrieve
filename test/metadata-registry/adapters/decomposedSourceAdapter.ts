@@ -10,15 +10,15 @@ import { RegistryTestUtil } from '../registryTestUtil';
 import { expect } from 'chai';
 import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
 
-describe('Decomposed', () => {
+describe('DecomposedSourceAdapter', () => {
   const type = mockRegistry.types.reginaking;
   const tree = new VirtualTreeContainer([
     {
-      path: regina.REGINA_PATH,
+      dirPath: regina.REGINA_PATH,
       children: [regina.REGINA_XML_NAME, regina.REGINA_CHILD_XML_NAME_1, regina.REGINA_CHILD_DIR]
     },
     {
-      path: regina.REGINA_CHILD_DIR_PATH,
+      dirPath: regina.REGINA_CHILD_DIR_PATH,
       children: [regina.REGINA_CHILD_XML_NAME_2]
     }
   ]);

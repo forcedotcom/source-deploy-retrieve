@@ -50,7 +50,7 @@ export type MetadataXml = {
 };
 
 export type VirtualDirectory = {
-  path: SourcePath;
+  dirPath: SourcePath;
   children: string[];
 };
 

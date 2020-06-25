@@ -12,7 +12,7 @@ import { basename } from 'path';
 import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
 import { SIMON_XML_NAME } from '../../mock/registry/simonConstants';
 
-describe('Bundle', () => {
+describe('BundleSourceAdapter', () => {
   const {
     SIMON_BUNDLE_PATH,
     SIMON_XML_PATH,
@@ -23,11 +23,11 @@ describe('Bundle', () => {
   const type = mockRegistry.types.simonpegg;
   const tree = new VirtualTreeContainer([
     {
-      path: SIMON_DIR,
+      dirPath: SIMON_DIR,
       children: [basename(SIMON_BUNDLE_PATH)]
     },
     {
-      path: SIMON_BUNDLE_PATH,
+      dirPath: SIMON_BUNDLE_PATH,
       children: [SIMON_XML_NAME, ...SIMON_SOURCE_PATHS.map(p => basename(p))]
     }
   ]);

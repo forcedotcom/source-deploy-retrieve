@@ -60,7 +60,7 @@ describe('RegistryAccess', () => {
         const path = keanu.KEANU_XML_PATHS[0];
         const access = testUtil.createRegistryAccess([
           {
-            path: keanu.KEANUS_DIR,
+            dirPath: keanu.KEANUS_DIR,
             children: [keanu.KEANU_SOURCE_NAMES[0], keanu.KEANU_XML_NAMES[0]]
           }
         ]);
@@ -82,7 +82,7 @@ describe('RegistryAccess', () => {
         const path = keanu.KEANU_SOURCE_PATHS[0];
         const access = testUtil.createRegistryAccess([
           {
-            path: keanu.KEANUS_DIR,
+            dirPath: keanu.KEANUS_DIR,
             children: [keanu.KEANU_SOURCE_NAMES[0], keanu.KEANU_XML_NAMES[0]]
           }
         ]);
@@ -99,7 +99,7 @@ describe('RegistryAccess', () => {
         const path = taraji.TARAJI_SOURCE_PATHS[1];
         const access = testUtil.createRegistryAccess([
           {
-            path: dirname(path),
+            dirPath: dirname(path),
             children: [basename(path)]
           }
         ]);
@@ -117,7 +117,7 @@ describe('RegistryAccess', () => {
         const path = tina.TINA_FOLDER_XML;
         const access = testUtil.createRegistryAccess([
           {
-            path: tina.TINA_DIR,
+            dirPath: tina.TINA_DIR,
             children: [basename(path)]
           }
         ]);
@@ -134,7 +134,7 @@ describe('RegistryAccess', () => {
         const missing = join('path', 'to', 'whatever', 'a.b-meta.xml');
         const access = testUtil.createRegistryAccess([
           {
-            path: dirname(missing),
+            dirPath: dirname(missing),
             children: [basename(missing)]
           }
         ]);
@@ -149,7 +149,7 @@ describe('RegistryAccess', () => {
         const path = keanu.KEANU_XML_PATHS[0];
         const access = testUtil.createRegistryAccess([
           {
-            path: dirname(path),
+            dirPath: dirname(path),
             children: [basename(path)]
           }
         ]);
@@ -169,7 +169,7 @@ describe('RegistryAccess', () => {
       it('Should return all components in a directory', () => {
         const access = testUtil.createRegistryAccess([
           {
-            path: kathy.KATHY_FOLDER,
+            dirPath: kathy.KATHY_FOLDER,
             children: kathy.KATHY_XML_NAMES
           }
         ]);
@@ -211,7 +211,7 @@ describe('RegistryAccess', () => {
         };
         const access = testUtil.createRegistryAccess([
           {
-            path: KEANUS_DIR,
+            dirPath: KEANUS_DIR,
             children: [
               basename(keanuXml),
               basename(keanuSrc),
@@ -221,11 +221,11 @@ describe('RegistryAccess', () => {
             ]
           },
           {
-            path: noStuffDir,
+            dirPath: noStuffDir,
             children: []
           },
           {
-            path: stuffDir,
+            dirPath: stuffDir,
             children: [basename(keanuSrc2), basename(keanuXml2)]
           }
         ]);
@@ -263,7 +263,7 @@ describe('RegistryAccess', () => {
       it('Should handle the folder of a mixed content folder type', () => {
         const access = testUtil.createRegistryAccess([
           {
-            path: tina.TINA_FOLDER,
+            dirPath: tina.TINA_FOLDER,
             children: tina.TINA_XML_NAMES.concat(tina.TINA_SOURCE_NAMES)
           }
         ]);
@@ -292,11 +292,11 @@ describe('RegistryAccess', () => {
         const { TARAJI_CONTENT_PATH } = taraji;
         const access = testUtil.createRegistryAccess([
           {
-            path: TARAJI_CONTENT_PATH,
+            dirPath: TARAJI_CONTENT_PATH,
             children: []
           },
           {
-            path: taraji.TARAJI_DIR,
+            dirPath: taraji.TARAJI_DIR,
             children: [taraji.TARAJI_XML_NAMES[0], basename(TARAJI_CONTENT_PATH)]
           }
         ]);
@@ -320,11 +320,11 @@ describe('RegistryAccess', () => {
         const { SIMON_COMPONENT, SIMON_BUNDLE_PATH } = simon;
         const access = testUtil.createRegistryAccess([
           {
-            path: simon.SIMON_DIR,
+            dirPath: simon.SIMON_DIR,
             children: [basename(SIMON_BUNDLE_PATH)]
           },
           {
-            path: SIMON_BUNDLE_PATH,
+            dirPath: SIMON_BUNDLE_PATH,
             children: simon.SIMON_SOURCE_PATHS.concat(simon.SIMON_XML_PATH).map(p => basename(p))
           }
         ]);
@@ -353,11 +353,11 @@ describe('RegistryAccess', () => {
       it('Should handle suffix collision for mixed content types', () => {
         const access = testUtil.createRegistryAccess([
           {
-            path: simon.SIMON_DIR,
+            dirPath: simon.SIMON_DIR,
             children: [basename(simon.SIMON_BUNDLE_PATH)]
           },
           {
-            path: simon.SIMON_BUNDLE_PATH,
+            dirPath: simon.SIMON_BUNDLE_PATH,
             children: [keanu.KEANU_XML_NAMES[0], basename(simon.SIMON_SOURCE_PATHS[0])]
           }
         ]);
@@ -372,11 +372,11 @@ describe('RegistryAccess', () => {
       });
 
       it('Should not return components if the directory is forceignored', () => {
-        const path = kathy.KATHY_FOLDER;
-        testUtil.stubForceIgnore({ seed: path, deny: [path] });
+        const dirPath = kathy.KATHY_FOLDER;
+        testUtil.stubForceIgnore({ seed: dirPath, deny: [dirPath] });
         const access = testUtil.createRegistryAccess([
           {
-            path,
+            dirPath,
             children: [kathy.KATHY_XML_NAMES[0], kathy.KATHY_XML_NAMES[1]]
           }
         ]);
@@ -395,7 +395,7 @@ describe('RegistryAccess', () => {
             ]
           }
         ]);
-        expect(access.getComponentsFromPath(path).length).to.equal(0);
+        expect(access.getComponentsFromPath(dirPath).length).to.equal(0);
       });
     });
   });

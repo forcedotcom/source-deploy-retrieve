@@ -104,17 +104,17 @@ export class RegistryAccess {
     }
 
     for (const file of this.tree.readDirectory(dir)) {
-      const path = join(dir, file);
-      if (this.tree.isDirectory(path)) {
-        dirQueue.push(path);
-      } else if (parseMetadataXml(path)) {
-        const component = this.resolveComponent(path);
+      const fsPath = join(dir, file);
+      if (this.tree.isDirectory(fsPath)) {
+        dirQueue.push(fsPath);
+      } else if (parseMetadataXml(fsPath)) {
+        const component = this.resolveComponent(fsPath);
         if (component) {
           components.push(component);
           // don't traverse further if not in a root type directory. performance optimization
           // for mixed content types and ensures we don't add duplicates of the component.
           const isMixedContent = !!this.registry.mixedContent[component.type.directoryName];
-          const typeDir = basename(dirname(component.type.inFolder ? dirname(path) : path));
+          const typeDir = basename(dirname(component.type.inFolder ? dirname(fsPath) : fsPath));
           if (isMixedContent && typeDir !== component.type.directoryName) {
             return components;
           }

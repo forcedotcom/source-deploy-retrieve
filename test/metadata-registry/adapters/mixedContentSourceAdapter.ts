@@ -28,7 +28,7 @@ describe('MixedContentSourceAdapter', () => {
     const type = mockRegistry.types.dwaynejohnson;
     const tree = new VirtualTreeContainer([
       {
-        path: DWAYNE_DIR,
+        dirPath: DWAYNE_DIR,
         children: [DWAYNE_XML_NAME]
       }
     ]);
@@ -40,7 +40,7 @@ describe('MixedContentSourceAdapter', () => {
     const type = mockRegistry.types.dwaynejohnson;
     const tree = new VirtualTreeContainer([
       {
-        path: DWAYNE_DIR,
+        dirPath: DWAYNE_DIR,
         children: [DWAYNE_XML_NAME, DWAYNE_SOURCE_NAME]
       }
     ]);
@@ -66,15 +66,15 @@ describe('MixedContentSourceAdapter', () => {
     const type = mockRegistry.types.tarajihenson;
     const tree = new VirtualTreeContainer([
       {
-        path: taraji.TARAJI_DIR,
+        dirPath: taraji.TARAJI_DIR,
         children: [TARAJI_XML_NAMES[0], basename(TARAJI_CONTENT_PATH)]
       },
       {
-        path: TARAJI_CONTENT_PATH,
+        dirPath: TARAJI_CONTENT_PATH,
         children: [basename(TARAJI_SOURCE_PATHS[0]), basename(dirname(TARAJI_SOURCE_PATHS[1]))]
       },
       {
-        path: dirname(TARAJI_SOURCE_PATHS[1]),
+        dirPath: dirname(TARAJI_SOURCE_PATHS[1]),
         children: [basename(TARAJI_SOURCE_PATHS[1]), basename(TARAJI_SOURCE_PATHS[2])]
       }
     ]);

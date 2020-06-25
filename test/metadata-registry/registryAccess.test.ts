@@ -10,7 +10,7 @@ import { MetadataComponent } from '../../src/types';
 import { RegistryAccess } from '../../src/metadata-registry';
 import { nls } from '../../src/i18n';
 import { mockRegistry, kathy, keanu, taraji, tina, simon } from '../mock/registry';
-import { join, basename } from 'path';
+import { join, basename, dirname } from 'path';
 import { TypeInferenceError } from '../../src/errors';
 import { RegistryTestUtil } from './registryTestUtil';
 
@@ -43,13 +43,11 @@ describe('RegistryAccess', () => {
   });
 
   describe('getComponentsFromPath', () => {
-    beforeEach(() => testUtil.initStubs());
     afterEach(() => testUtil.restore());
 
     describe('File Paths', () => {
       it('Should throw file not found error if given path does not exist', () => {
         const path = keanu.KEANU_SOURCE_PATHS[0];
-        testUtil.exists(path, false);
 
         assert.throws(
           () => access.getComponentsFromPath(path),
@@ -60,7 +58,12 @@ describe('RegistryAccess', () => {
 
       it('Should determine type for metadata file with known suffix', () => {
         const path = keanu.KEANU_XML_PATHS[0];
-        testUtil.exists(path, true);
+        const access = testUtil.createRegistryAccess([
+          {
+            dirPath: keanu.KEANUS_DIR,
+            children: [keanu.KEANU_SOURCE_NAMES[0], keanu.KEANU_XML_NAMES[0]]
+          }
+        ]);
         testUtil.stubAdapters([
           {
             type: mockRegistry.types.keanureeves,
@@ -77,7 +80,12 @@ describe('RegistryAccess', () => {
 
       it('Should determine type for source file with known suffix', () => {
         const path = keanu.KEANU_SOURCE_PATHS[0];
-        testUtil.exists(path, true);
+        const access = testUtil.createRegistryAccess([
+          {
+            dirPath: keanu.KEANUS_DIR,
+            children: [keanu.KEANU_SOURCE_NAMES[0], keanu.KEANU_XML_NAMES[0]]
+          }
+        ]);
         testUtil.stubAdapters([
           {
             type: mockRegistry.types.keanureeves,
@@ -89,21 +97,30 @@ describe('RegistryAccess', () => {
 
       it('Should determine type for path of mixed content type', () => {
         const path = taraji.TARAJI_SOURCE_PATHS[1];
-        testUtil.exists(path, true);
+        const access = testUtil.createRegistryAccess([
+          {
+            dirPath: dirname(path),
+            children: [basename(path)]
+          }
+        ]);
         testUtil.stubAdapters([
           {
             type: mockRegistry.types.tarajihenson,
             componentMappings: [{ path, component: taraji.TARAJI_COMPONENT }]
           }
         ]);
-
         expect(access.getComponentsFromPath(path)).to.deep.equal([taraji.TARAJI_COMPONENT]);
       });
 
       it('Should not mistake folder component of a mixed content type as that type', () => {
         // this test has coveage on non-mixedContent types as well by nature of the execution path
         const path = tina.TINA_FOLDER_XML;
-        testUtil.exists(path, true);
+        const access = testUtil.createRegistryAccess([
+          {
+            dirPath: tina.TINA_DIR,
+            children: [basename(path)]
+          }
+        ]);
         testUtil.stubAdapters([
           {
             type: mockRegistry.types.tinafeyfolder,
@@ -115,8 +132,12 @@ describe('RegistryAccess', () => {
 
       it('Should throw type id error if one could not be determined', () => {
         const missing = join('path', 'to', 'whatever', 'a.b-meta.xml');
-        testUtil.exists(missing, true);
-
+        const access = testUtil.createRegistryAccess([
+          {
+            dirPath: dirname(missing),
+            children: [basename(missing)]
+          }
+        ]);
         assert.throws(
           () => access.getComponentsFromPath(missing),
           TypeInferenceError,
@@ -126,7 +147,12 @@ describe('RegistryAccess', () => {
 
       it('Should not return a component if path to metadata xml is forceignored', () => {
         const path = keanu.KEANU_XML_PATHS[0];
-        testUtil.exists(path, true);
+        const access = testUtil.createRegistryAccess([
+          {
+            dirPath: dirname(path),
+            children: [basename(path)]
+          }
+        ]);
         testUtil.stubForceIgnore({ seed: path, deny: [path] });
         testUtil.stubAdapters([
           {
@@ -141,24 +167,25 @@ describe('RegistryAccess', () => {
 
     describe('Directory Paths', () => {
       it('Should return all components in a directory', () => {
-        const { KATHY_FOLDER, KATHY_COMPONENTS } = kathy;
-        const componentMappings = kathy.KATHY_XML_PATHS.map((p: string, i: number) => ({
-          path: p,
-          component: KATHY_COMPONENTS[i]
-        }));
-        testUtil.stubDirectories([
+        const access = testUtil.createRegistryAccess([
           {
-            directory: KATHY_FOLDER,
-            fileNames: kathy.KATHY_XML_NAMES
+            dirPath: kathy.KATHY_FOLDER,
+            children: kathy.KATHY_XML_NAMES
           }
         ]);
+        const componentMappings = kathy.KATHY_XML_PATHS.map((p: string, i: number) => ({
+          path: p,
+          component: kathy.KATHY_COMPONENTS[i]
+        }));
         testUtil.stubAdapters([
           {
             type: mockRegistry.types.kathybates,
             componentMappings
           }
         ]);
-        expect(access.getComponentsFromPath(KATHY_FOLDER)).to.deep.equal(KATHY_COMPONENTS);
+        expect(access.getComponentsFromPath(kathy.KATHY_FOLDER)).to.deep.equal(
+          kathy.KATHY_COMPONENTS
+        );
       });
 
       it('Should walk all file and directory children', () => {
@@ -182,11 +209,10 @@ describe('RegistryAccess', () => {
           xml: kathyXml,
           sources: []
         };
-        testUtil.exists(KEANUS_DIR, true);
-        testUtil.stubDirectories([
+        const access = testUtil.createRegistryAccess([
           {
-            directory: KEANUS_DIR,
-            fileNames: [
+            dirPath: KEANUS_DIR,
+            children: [
               basename(keanuXml),
               basename(keanuSrc),
               kathy.KATHY_XML_NAMES[0],
@@ -195,12 +221,12 @@ describe('RegistryAccess', () => {
             ]
           },
           {
-            directory: noStuffDir,
-            fileNames: []
+            dirPath: noStuffDir,
+            children: []
           },
           {
-            directory: stuffDir,
-            fileNames: [basename(keanuSrc2), basename(keanuXml2)]
+            dirPath: stuffDir,
+            children: [basename(keanuSrc2), basename(keanuXml2)]
           }
         ]);
         testUtil.stubAdapters([
@@ -235,11 +261,10 @@ describe('RegistryAccess', () => {
       });
 
       it('Should handle the folder of a mixed content folder type', () => {
-        testUtil.exists(tina.TINA_FOLDER, true);
-        testUtil.stubDirectories([
+        const access = testUtil.createRegistryAccess([
           {
-            directory: tina.TINA_FOLDER,
-            fileNames: tina.TINA_XML_NAMES.concat(tina.TINA_SOURCE_NAMES)
+            dirPath: tina.TINA_FOLDER,
+            children: tina.TINA_XML_NAMES.concat(tina.TINA_SOURCE_NAMES)
           }
         ]);
         testUtil.stubAdapters([
@@ -265,15 +290,14 @@ describe('RegistryAccess', () => {
 
       it('Should return a component for a directory that is content or a child of content', () => {
         const { TARAJI_CONTENT_PATH } = taraji;
-        testUtil.exists(TARAJI_CONTENT_PATH, true);
-        testUtil.stubDirectories([
+        const access = testUtil.createRegistryAccess([
           {
-            directory: TARAJI_CONTENT_PATH,
-            fileNames: []
+            dirPath: TARAJI_CONTENT_PATH,
+            children: []
           },
           {
-            directory: taraji.TARAJI_DIR,
-            fileNames: [taraji.TARAJI_XML_NAMES[0], basename(TARAJI_CONTENT_PATH)]
+            dirPath: taraji.TARAJI_DIR,
+            children: [taraji.TARAJI_XML_NAMES[0], basename(TARAJI_CONTENT_PATH)]
           }
         ]);
         testUtil.stubAdapters([
@@ -294,14 +318,14 @@ describe('RegistryAccess', () => {
 
       it('Should not add duplicates of a component when the content has multiple -meta.xmls', () => {
         const { SIMON_COMPONENT, SIMON_BUNDLE_PATH } = simon;
-        testUtil.stubDirectories([
+        const access = testUtil.createRegistryAccess([
           {
-            directory: simon.SIMON_DIR,
-            fileNames: [basename(SIMON_BUNDLE_PATH)]
+            dirPath: simon.SIMON_DIR,
+            children: [basename(SIMON_BUNDLE_PATH)]
           },
           {
-            directory: SIMON_BUNDLE_PATH,
-            fileNames: simon.SIMON_SOURCE_PATHS.concat(simon.SIMON_XML_PATH).map(p => basename(p))
+            dirPath: SIMON_BUNDLE_PATH,
+            children: simon.SIMON_SOURCE_PATHS.concat(simon.SIMON_XML_PATH).map(p => basename(p))
           }
         ]);
         testUtil.stubAdapters([
@@ -326,39 +350,34 @@ describe('RegistryAccess', () => {
        * Pretend that this bundle's root xml suffix is the same as KeanuReeves - still should be
        * identified as SimonPegg type
        */
-      // TODO: Add this test back in when TreeContainers are implemented
-      // it('Should handle suffix collision for mixed content types', () => {
-      //   testUtil.exists(simon.SIMON_DIR, true);
-      //   testUtil.stubDirectories([
-      //     {
-      //       directory: simon.SIMON_DIR,
-      //       fileNames: [basename(simon.SIMON_BUNDLE_PATH)]
-      //     },
-      //     {
-      //       directory: simon.SIMON_BUNDLE_PATH,
-      //       fileNames: [
-      //         keanu.KEANU_XML_NAMES[0],
-      //         basename(simon.SIMON_SOURCE_PATHS[0])
-      //       ]
-      //     }
-      //   ]);
-      //   expect(registry.getComponentsFromPath(simon.SIMON_DIR)).to.deep.equal([
-      //     {
-      //       fullName: 'a',
-      //       type: mockRegistry.types.simonpegg,
-      //       xml: join(simon.SIMON_BUNDLE_PATH, keanu.KEANU_XML_NAMES[0]),
-      //       sources: [simon.SIMON_SOURCE_PATHS[0]]
-      //     }
-      //   ]);
-      // });
+      it('Should handle suffix collision for mixed content types', () => {
+        const access = testUtil.createRegistryAccess([
+          {
+            dirPath: simon.SIMON_DIR,
+            children: [basename(simon.SIMON_BUNDLE_PATH)]
+          },
+          {
+            dirPath: simon.SIMON_BUNDLE_PATH,
+            children: [keanu.KEANU_XML_NAMES[0], basename(simon.SIMON_SOURCE_PATHS[0])]
+          }
+        ]);
+        expect(access.getComponentsFromPath(simon.SIMON_DIR)).to.deep.equal([
+          {
+            fullName: 'a',
+            type: mockRegistry.types.simonpegg,
+            xml: join(simon.SIMON_BUNDLE_PATH, keanu.KEANU_XML_NAMES[0]),
+            sources: [simon.SIMON_SOURCE_PATHS[0]]
+          }
+        ]);
+      });
 
       it('Should not return components if the directory is forceignored', () => {
-        const path = kathy.KATHY_FOLDER;
-        testUtil.stubForceIgnore({ seed: path, deny: [path] });
-        testUtil.stubDirectories([
+        const dirPath = kathy.KATHY_FOLDER;
+        testUtil.stubForceIgnore({ seed: dirPath, deny: [dirPath] });
+        const access = testUtil.createRegistryAccess([
           {
-            directory: path,
-            fileNames: [kathy.KATHY_XML_NAMES[0], kathy.KATHY_XML_NAMES[1]]
+            dirPath,
+            children: [kathy.KATHY_XML_NAMES[0], kathy.KATHY_XML_NAMES[1]]
           }
         ]);
         testUtil.stubAdapters([
@@ -376,7 +395,7 @@ describe('RegistryAccess', () => {
             ]
           }
         ]);
-        expect(access.getComponentsFromPath(path).length).to.equal(0);
+        expect(access.getComponentsFromPath(dirPath).length).to.equal(0);
       });
     });
   });

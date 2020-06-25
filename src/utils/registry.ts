@@ -6,8 +6,7 @@
  */
 
 import { SourcePath, MetadataXml } from '../types';
-import { basename, join } from 'path';
-import { readdirSync } from 'fs';
+import { basename } from 'path';
 
 /**
  * Returns the `MetadataXml` info from a given file path. If the path is not a
@@ -21,33 +20,6 @@ export const parseMetadataXml = (path: SourcePath): MetadataXml | undefined => {
     return { fullName: match[1], suffix: match[2], path: path };
   }
 };
-
-const find = (
-  directory: SourcePath,
-  fullName: string,
-  findMetaXml: boolean
-): SourcePath | undefined => {
-  const fileName = readdirSync(directory).find(f => {
-    const parsed = parseMetadataXml(join(directory, f));
-    const metaXmlCondition = findMetaXml ? !!parsed : !parsed;
-    return f.startsWith(fullName) && metaXmlCondition;
-  });
-  if (fileName) {
-    return join(directory, fileName);
-  }
-};
-
-export const findMetadataXml = (directory: SourcePath, fullName: string): SourcePath | undefined =>
-  find(directory, fullName, true);
-
-/**
- * If there's more than one content file with the same fullName, it will
- * return the first one found.
- */
-export const findMetadataContent = (
-  directory: SourcePath,
-  fullName: string
-): SourcePath | undefined => find(directory, fullName, false);
 
 /**
  * Deeply freezes an object, making the entire thing immutable.

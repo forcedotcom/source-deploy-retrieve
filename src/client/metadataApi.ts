@@ -62,15 +62,8 @@ export class MetadataApi extends BaseApi {
       checkOnly: false,
       singlePackage: true
     };
-    let deployID = '';
-
-    await this.connection.metadata.deploy(zipBuffer, deployOpts, (err, res) => {
-      if (err) {
-        throw new Error(err.message);
-      }
-      deployID = res.id;
-    });
-    return deployID;
+    const result = await this.connection.metadata.deploy(zipBuffer, deployOpts);
+    return result.id;
   }
   public async metadataDeployStatusPoll(
     deployID: string,
@@ -84,14 +77,10 @@ export class MetadataApi extends BaseApi {
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     const checkDeploy = async (resolve, reject) => {
-      const result = this.connection.metadata.checkDeployStatus(deployID);
+      const result = await this.connection.metadata.checkDeployStatus(deployID);
 
       if (result) {
-        let status = '';
-        await result.then(res => {
-          // @ts-ignore
-          status = res.status;
-        });
+        const status = result.status;
         // test to make sure this works
         switch (status) {
           case DeployStatusEnum.Succeeded:

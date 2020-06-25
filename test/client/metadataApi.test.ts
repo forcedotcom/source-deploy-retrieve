@@ -9,9 +9,8 @@ import { expect } from 'chai';
 import { testSetup, MockTestOrgData } from '@salesforce/core/lib/testSetup';
 import { createSandbox } from 'sinon';
 import { RegistryAccess, registryData } from '../../src/metadata-registry';
-import { MetadataComponent, DeployStatusEnum, DeployResult } from '../../src/types';
+import { MetadataComponent } from '../../src/types';
 import { MetadataApi } from '../../src/client/metadataApi';
-import { ContainerDeploy } from '../../src/client/deployStrategies';
 import { MetadataConverter } from '../../src/convert';
 
 // stub convert for random buffer (buffer.from (string))
@@ -52,52 +51,22 @@ describe('Metadata Api', () => {
     const registryStub = sandboxStub
       .stub(registryAccess, 'getComponentsFromPath')
       .returns(components);
-    const converter = new MetadataConverter();
     const deployMetadata = new MetadataApi(mockConnection, registryAccess);
     const conversionCallStub = sandboxStub
-      .stub(converter, 'convert')
+      .stub(MetadataConverter.prototype, 'convert')
       .withArgs(components, 'metadata', { type: 'zip' })
-      .returns(
-        new Promise(resolve => {
-          resolve({
-            packagePath: 'file/path',
-            zipBuffer: testingBuffer
-          });
-        })
-      );
-    const deployIdStub = sandboxStub
-      .stub(deployMetadata, 'metadataDeployID')
-      .withArgs(testingBuffer)
-      .returns(
-        new Promise(resolve => {
-          resolve('testing');
-        })
-      );
-    const deployPollStub = sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').returns(
-      new Promise(resolve => {
-        resolve({
-          id: 'testing',
-          checkOnly: true,
-          completedDate: '',
-          createdDate: '',
-          done: true,
-          errorMessage: '',
-          errorStatusCode: '',
-          ignoreWarnings: true,
-          lastModifiedDate: '',
-          numberComponentErrors: 0,
-          numberComponentsDeployed: 1,
-          numberComponentsTotal: 1,
-          numberTestErrors: 0,
-          numberTestsCompleted: 1,
-          numberTestsTotal: 0,
-          rollbackOnError: true,
-          startDate: '',
-          status: 'Succeeded',
-          success: true
-        });
-      })
-    );
+      // @ts-ignore
+      .resolves({
+        zipBuffer: testingBuffer
+      });
+    // @ts-ignore
+    const deployIdStub = sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
+      id: '12345'
+    });
+    // @ts-ignore
+    const deployPollStub = sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves({
+      success: true
+    });
     const delpoyOptions = {
       paths: ['file/path/myTestClass.cls']
     };

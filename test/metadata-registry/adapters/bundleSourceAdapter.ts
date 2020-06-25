@@ -7,19 +7,12 @@
 
 import { mockRegistry, simon } from '../../mock/registry';
 import { expect } from 'chai';
-import { createSandbox } from 'sinon';
-import * as util from '../../../src/utils/registry';
-import * as fsUtil from '../../../src/utils/fileSystemHandler';
 import { BundleSourceAdapter } from '../../../src/metadata-registry/adapters/bundleSourceAdapter';
-import * as fs from 'fs';
 import { basename } from 'path';
+import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
+import { SIMON_XML_NAME } from '../../mock/registry/simonConstants';
 
-const env = createSandbox();
-
-describe('Bundle', () => {
-  const type = mockRegistry.types.simonpegg;
-  const adapter = new BundleSourceAdapter(type, mockRegistry);
-
+describe('BundleSourceAdapter', () => {
   const {
     SIMON_BUNDLE_PATH,
     SIMON_XML_PATH,
@@ -27,22 +20,18 @@ describe('Bundle', () => {
     SIMON_DIR,
     SIMON_COMPONENT
   } = simon;
-  const bundleName = basename(SIMON_BUNDLE_PATH);
-
-  before(() => {
-    const walkStub = env.stub(fsUtil, 'walk');
-    const findXmlStub = env.stub(util, 'findMetadataXml');
-    const findContentStub = env.stub(util, 'findMetadataContent');
-    const isDirStub = env.stub(fsUtil, 'isDirectory');
-    const existsStub = env.stub(fs, 'existsSync');
-    findXmlStub.withArgs(SIMON_BUNDLE_PATH, bundleName).returns(SIMON_XML_PATH);
-    findContentStub.withArgs(SIMON_DIR, bundleName).returns(SIMON_BUNDLE_PATH);
-    existsStub.withArgs(SIMON_BUNDLE_PATH).returns(true);
-    isDirStub.withArgs(SIMON_BUNDLE_PATH).returns(true);
-    walkStub.withArgs(SIMON_BUNDLE_PATH, new Set([SIMON_XML_PATH])).returns(SIMON_SOURCE_PATHS);
-  });
-
-  after(() => env.restore());
+  const type = mockRegistry.types.simonpegg;
+  const tree = new VirtualTreeContainer([
+    {
+      dirPath: SIMON_DIR,
+      children: [basename(SIMON_BUNDLE_PATH)]
+    },
+    {
+      dirPath: SIMON_BUNDLE_PATH,
+      children: [SIMON_XML_NAME, ...SIMON_SOURCE_PATHS.map(p => basename(p))]
+    }
+  ]);
+  const adapter = new BundleSourceAdapter(type, mockRegistry, undefined, tree);
 
   it('Should return expected MetadataComponent when given a root metadata xml path', () => {
     expect(adapter.getComponent(SIMON_XML_PATH)).to.deep.equal(SIMON_COMPONENT);

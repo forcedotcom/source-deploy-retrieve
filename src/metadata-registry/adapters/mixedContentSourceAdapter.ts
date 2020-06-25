@@ -5,13 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { BaseSourceAdapter } from './baseSourceAdapter';
-import { dirname, basename, sep } from 'path';
-import { findMetadataXml, findMetadataContent } from '../../utils/registry';
+import { dirname, basename, sep, join } from 'path';
 import { ExpectedSourceFilesError } from '../../errors';
-import { existsSync } from 'fs';
-import { isDirectory, walk } from '../../utils/fileSystemHandler';
 import { baseName } from '../../utils/path';
-import { SourcePath, MetadataType, MetadataComponent } from '../../types';
+import { SourcePath, MetadataType, MetadataComponent, TreeContainer } from '../../types';
 
 /**
  * Handles types with mixed content. Mixed content means there are one or more additional
@@ -40,27 +37,62 @@ import { SourcePath, MetadataType, MetadataComponent } from '../../types';
 export class MixedContentSourceAdapter extends BaseSourceAdapter {
   protected getRootMetadataXmlPath(trigger: SourcePath): SourcePath {
     if (this.ownFolder) {
-      // self contained components have all their files in their own folder
       const componentRoot = MixedContentSourceAdapter.trimPathToContent(trigger, this.type);
-      return findMetadataXml(componentRoot, basename(componentRoot));
+      return this.tree.find('metadata', basename(componentRoot), componentRoot);
     }
-    return MixedContentSourceAdapter.findXmlFromContentPath(trigger, this.type);
+    return MixedContentSourceAdapter.findMetadataFromContent(trigger, this.type, this.tree);
   }
 
   protected populate(component: MetadataComponent, trigger: SourcePath): MetadataComponent {
     let contentPath = MixedContentSourceAdapter.trimPathToContent(trigger, this.type);
     if (contentPath === component.xml) {
-      contentPath = findMetadataContent(dirname(contentPath), baseName(contentPath));
+      contentPath = this.tree.find('content', baseName(contentPath), dirname(contentPath));
     }
 
-    if (!existsSync(contentPath)) {
+    if (!this.tree.exists(contentPath)) {
       throw new ExpectedSourceFilesError(this.type, trigger);
     }
 
-    const ignore = new Set<SourcePath>([component.xml]);
-    const sources = isDirectory(contentPath) ? walk(contentPath, ignore) : [contentPath];
-    component.sources = sources.filter(s => this.forceIgnore.accepts(s));
+    component.sources = [];
+    for (const path of this.walk(contentPath)) {
+      if (path !== component.xml && this.forceIgnore.accepts(path)) {
+        component.sources.push(path);
+      }
+    }
     return component;
+  }
+
+  private *walk(path: SourcePath): IterableIterator<SourcePath> {
+    if (!this.tree.isDirectory(path)) {
+      yield path;
+    } else {
+      for (const child of this.tree.readDirectory(path)) {
+        const childPath = join(path, child);
+        if (this.tree.isDirectory(childPath)) {
+          yield* this.walk(childPath);
+        } else {
+          yield childPath;
+        }
+      }
+    }
+  }
+
+  /**
+   * A utility for finding a component's root metadata xml from a path to a component's
+   * content. "Content" can either be a single file or an entire directory. If the content
+   * is a directory, the path can be files or other directories inside of it.
+   *
+   * @param path Path to content or a child of the content
+   */
+  public static findMetadataFromContent(
+    path: SourcePath,
+    type: MetadataType,
+    tree: TreeContainer
+  ): SourcePath {
+    const rootContentPath = MixedContentSourceAdapter.trimPathToContent(path, type);
+    const rootTypeDirectory = dirname(rootContentPath);
+    const contentFullName = baseName(rootContentPath);
+    return tree.find('metadata', contentFullName, rootTypeDirectory);
   }
 
   /**
@@ -71,24 +103,10 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
    * @param path Path to trim
    * @param type MetadataType to determine content for
    */
-  public static trimPathToContent(path: SourcePath, type: MetadataType): SourcePath {
+  private static trimPathToContent(path: SourcePath, type: MetadataType): SourcePath {
     const pathParts = path.split(sep);
     const typeFolderIndex = pathParts.findIndex(part => part === type.directoryName);
     const offset = type.inFolder ? 3 : 2;
     return pathParts.slice(0, typeFolderIndex + offset).join(sep);
-  }
-
-  /**
-   * A utility for finding a component's root metadata xml from a path to a component's
-   * content. "Content" can either be a single file or an entire directory. If the content
-   * is a directory, the path can be files or other directories inside of it.
-   *
-   * @param path Path to content or a child of the content
-   */
-  public static findXmlFromContentPath(path: SourcePath, type: MetadataType): SourcePath {
-    const rootContentPath = MixedContentSourceAdapter.trimPathToContent(path, type);
-    const rootTypeDirectory = dirname(rootContentPath);
-    const contentFullName = baseName(rootContentPath);
-    return findMetadataXml(rootTypeDirectory, contentFullName);
   }
 }

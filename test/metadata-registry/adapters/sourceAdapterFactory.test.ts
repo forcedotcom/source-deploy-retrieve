@@ -14,40 +14,47 @@ import { DecomposedSourceAdapter } from '../../../src/metadata-registry/adapters
 import { RegistryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { SourceAdapterFactory } from '../../../src/metadata-registry/adapters/sourceAdapterFactory';
+import { VirtualTreeContainer } from '../../../src/metadata-registry';
 
 describe('SourceAdapterFactory', () => {
-  const factory = new SourceAdapterFactory(mockRegistry);
+  const tree = new VirtualTreeContainer([]);
+  const factory = new SourceAdapterFactory(mockRegistry, tree);
 
   // the types being passed to getAdapter don't really matter in these tests. We're
   // just making sure that the adapter is instantiated correctly based on given inputs
   it('Should return DefaultSourceAdapter for type with no assigned AdapterId', () => {
     const type = mockRegistry.types.kathybates;
     const adapter = factory.getAdapter(type);
-    expect(adapter).to.deep.equal(new DefaultSourceAdapter(type, mockRegistry));
+    expect(adapter).to.deep.equal(new DefaultSourceAdapter(type, mockRegistry, undefined, tree));
   });
 
   it('Should return MixedContentSourceAdapter for mixedContent AdapterId', () => {
     const type = mockRegistry.types.dwaynejohnson;
     const adapter = factory.getAdapter(type);
-    expect(adapter).to.deep.equal(new MixedContentSourceAdapter(type, mockRegistry));
+    expect(adapter).to.deep.equal(
+      new MixedContentSourceAdapter(type, mockRegistry, undefined, tree)
+    );
+    tree;
   });
 
   it('Should return MatchingContentSourceAdapter for matchingContentFile AdapterId', () => {
     const type = mockRegistry.types.keanureeves;
     const adapter = factory.getAdapter(type);
-    expect(adapter).to.deep.equal(new MatchingContentSourceAdapter(type, mockRegistry));
+    expect(adapter).to.deep.equal(
+      new MatchingContentSourceAdapter(type, mockRegistry, undefined, tree)
+    );
   });
 
   it('Should return BundleSourceAdapter for bundle AdapterId', () => {
     const type = mockRegistry.types.simonpegg;
     const adapter = factory.getAdapter(type);
-    expect(adapter).to.deep.equal(new BundleSourceAdapter(type, mockRegistry));
+    expect(adapter).to.deep.equal(new BundleSourceAdapter(type, mockRegistry, undefined, tree));
   });
 
   it('Should return DecomposedSourceAdapter for decomposed AdapterId', () => {
     const type = mockRegistry.types.reginaking;
     const adapter = factory.getAdapter(type);
-    expect(adapter).to.deep.equal(new DecomposedSourceAdapter(type, mockRegistry));
+    expect(adapter).to.deep.equal(new DecomposedSourceAdapter(type, mockRegistry, undefined, tree));
   });
 
   it('Should throw RegistryError for missing adapter', () => {

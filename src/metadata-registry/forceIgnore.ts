@@ -23,7 +23,7 @@ export class ForceIgnore {
       this.parser = gitignore.compile(forceIgnoreContents);
       this.forceIgnoreDirectory = dirname(forceIgnorePath);
     } catch (e) {
-      // log no force ignore
+      // TODO: log no force ignore
     }
   }
 

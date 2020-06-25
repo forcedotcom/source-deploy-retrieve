@@ -10,7 +10,8 @@ import {
   MetadataType,
   MetadataRegistry,
   SourcePath,
-  MetadataXml
+  MetadataXml,
+  TreeContainer
 } from '../../types';
 import { parseMetadataXml } from '../../utils/registry';
 import * as registryData from '../data/registry.json';
@@ -18,42 +19,51 @@ import { RegistryError, UnexpectedForceIgnore } from '../../errors';
 import { parentName } from '../../utils/path';
 import { ForceIgnore } from '../forceIgnore';
 import { dirname, basename } from 'path';
+import { NodeFSTreeContainer } from '../treeContainers';
 
 export abstract class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;
   protected registry: MetadataRegistry;
   protected forceIgnore: ForceIgnore;
+  protected tree: TreeContainer;
 
   /**
-   * Whether or not the adapter should expect a component to be in its own, self-contained folder.
+   * Whether or not an adapter should expect a component to be in its own, self-named
+   * folder, including its root metadata xml file.
    */
   protected ownFolder = false;
 
   constructor(
     type: MetadataType,
     registry: MetadataRegistry = registryData,
-    forceIgnore: ForceIgnore = new ForceIgnore()
+    forceIgnore: ForceIgnore = new ForceIgnore(),
+    tree: TreeContainer = new NodeFSTreeContainer()
   ) {
     this.type = type;
     this.registry = registry;
     this.forceIgnore = forceIgnore;
+    this.tree = tree;
   }
 
   public getComponent(path: SourcePath): MetadataComponent {
-    const metaXml =
-      this.parseAsRootMetadataXml(path) || parseMetadataXml(this.getRootMetadataXmlPath(path));
-    if (!metaXml) {
-      throw new RegistryError('error_missing_metadata_xml', [path, this.type.name]);
-    } else if (this.forceIgnore.denies(metaXml.path)) {
-      throw new UnexpectedForceIgnore('error_no_metadata_xml_ignore', [metaXml.path, path]);
+    let rootMetadata = this.parseAsRootMetadataXml(path);
+    if (!rootMetadata) {
+      const rootMetadataPath = this.getRootMetadataXmlPath(path);
+      if (!rootMetadataPath) {
+        throw new RegistryError('error_missing_metadata_xml', [path, this.type.name]);
+      }
+      rootMetadata = parseMetadataXml(rootMetadataPath);
+    }
+    if (this.forceIgnore.denies(rootMetadata.path)) {
+      throw new UnexpectedForceIgnore('error_no_metadata_xml_ignore', [rootMetadata.path, path]);
     }
 
     const component: MetadataComponent = {
       fullName: this.type.inFolder
-        ? `${parentName(metaXml.path)}/${metaXml.fullName}`
-        : metaXml.fullName,
+        ? `${parentName(rootMetadata.path)}/${rootMetadata.fullName}`
+        : rootMetadata.fullName,
       type: this.type,
-      xml: metaXml.path
+      xml: rootMetadata.path
     };
 
     return this.populate(component, path);

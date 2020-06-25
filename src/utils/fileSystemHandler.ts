@@ -58,22 +58,3 @@ export function searchUp(start: SourcePath, fileName: string): string | undefine
   }
   return searchUp(parent, fileName);
 }
-
-/**
- * Walk a given directory path and collect the files.
- *
- * @param dir Directory to walk
- * @param ignore Optional paths to ignore
- */
-export function walk(dir: SourcePath, ignore?: Set<SourcePath>): SourcePath[] {
-  const paths: SourcePath[] = [];
-  for (const file of fs.readdirSync(dir)) {
-    const p = path.join(dir, file);
-    if (isDirectory(p)) {
-      paths.push(...walk(p, ignore));
-    } else if (!ignore || !ignore.has(p)) {
-      paths.push(p);
-    }
-  }
-  return paths;
-}

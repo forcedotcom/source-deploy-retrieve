@@ -45,14 +45,14 @@ export class MetadataApi extends BaseApi {
     const conversionCall = await Converter.convert(metadataComponents, 'metadata', { type: 'zip' });
     const conversionBuffer = conversionCall.zipBuffer;
     const deployID = await this.metadataDeployID(conversionBuffer);
-    const deployResult = await this.metadataDeployStatusPoll(deployID);
+    const deployResult = await this.metadataDeployStatusPoll(deployID, options.wait);
     return deployResult;
   }
 
   public async deployWithPaths(options: DeployPathOptions): Promise<DeployResult> {
     const paths = options.paths[0];
     const components = this.registry.getComponentsFromPath(paths);
-    return this.deploy({ components });
+    return this.deploy({ components, wait: options.wait });
   }
 
   public async metadataDeployID(zipBuffer: Buffer): Promise<string> {
@@ -79,36 +79,22 @@ export class MetadataApi extends BaseApi {
     const checkDeploy = async (resolve, reject) => {
       const result = await this.connection.metadata.checkDeployStatus(deployID);
 
-      if (result) {
-        const status = result.status;
-        // test to make sure this works
-        switch (status) {
-          case DeployStatusEnum.Succeeded:
-            resolve(result);
-            break;
-          case DeployStatusEnum.InProgress:
-          case DeployStatusEnum.Pending:
-          case '':
-            if (Number(new Date()) < endTime) {
-              setTimeout(checkDeploy, interval, resolve, reject);
-            } else {
-              reject(new Error(nls.localize('md_request_timeout')));
-            }
-            break;
-          case DeployStatusEnum.Failed:
-            reject(new Error(nls.localize('md_request_fail')));
-            break;
-          default:
-            if (Number(new Date()) < endTime) {
-              setTimeout(checkDeploy, interval, resolve, reject);
-            } else {
-              reject(new Error(nls.localize('md_request_timeout')));
-            }
-        }
-      } else if (Number(new Date()) < endTime) {
-        setTimeout(checkDeploy, interval, resolve, reject);
-      } else {
-        reject(new Error(nls.localize('md_request_timeout')));
+      switch (result.status) {
+        case DeployStatusEnum.Succeeded:
+          resolve(result);
+          break;
+        case DeployStatusEnum.Failed:
+          reject(new Error(nls.localize('md_request_fail')));
+          break;
+        case DeployStatusEnum.InProgress:
+        case DeployStatusEnum.Pending:
+        case '':
+        default:
+          if (Number(new Date()) < endTime) {
+            setTimeout(checkDeploy, interval, resolve, reject);
+          } else {
+            reject(new Error(nls.localize('md_request_timeout')));
+          }
       }
     };
 

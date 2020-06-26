@@ -1,3 +1,13 @@
+# 1.0.14 - June 26, 2020
+
+## Fixed
+
+- Add namespace support for Tooling API deploy and retrieve operations ([PR #66](https://github.com/forcedotcom/source-deploy-retrieve/pull/66))
+
+## Added
+
+- Introduce TreeContainer interface on Metadata Registry ([PR #68](https://github.com/forcedotcom/source-deploy-retrieve/pull/68))
+
 # 1.0.13 - June 18, 2020
 
 ## Fixed

@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "gusBuild": "48.22.0",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/index.js",

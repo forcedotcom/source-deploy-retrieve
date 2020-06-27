@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import {
-  MetadataComponent,
+  SourceComponent,
   SfdxFileFormat,
   ConvertOutputConfig,
   SourcePath,
@@ -41,7 +41,7 @@ export class MetadataConverter {
    * @param output Configuration for outputting the converted files
    */
   public async convert(
-    components: MetadataComponent[],
+    components: SourceComponent[],
     targetFormat: SfdxFileFormat,
     output: ConvertOutputConfig
   ): Promise<ConvertResult> {

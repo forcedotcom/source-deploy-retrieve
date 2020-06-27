@@ -6,7 +6,7 @@
  */
 
 import { assert, expect } from 'chai';
-import { MetadataComponent } from '../../src/types';
+import { SourceComponent } from '../../src/types';
 import { RegistryAccess } from '../../src/metadata-registry';
 import { nls } from '../../src/i18n';
 import { mockRegistry, kathy, keanu, taraji, tina, simon } from '../mock/registry';
@@ -197,13 +197,13 @@ describe('RegistryAccess', () => {
         const keanuSrc = keanu.KEANU_SOURCE_PATHS[0];
         const keanuXml2 = join(stuffDir, keanu.KEANU_XML_NAMES[1]);
         const keanuSrc2 = join(stuffDir, keanu.KEANU_SOURCE_NAMES[1]);
-        const keanuComponent2: MetadataComponent = {
+        const keanuComponent2: SourceComponent = {
           fullName: 'b',
           type: mockRegistry.types.keanureeves,
           xml: keanuXml2,
           sources: [keanuSrc2]
         };
-        const kathyComponent2: MetadataComponent = {
+        const kathyComponent2: SourceComponent = {
           fullName: 'a',
           type: mockRegistry.types.kathybates,
           xml: kathyXml,

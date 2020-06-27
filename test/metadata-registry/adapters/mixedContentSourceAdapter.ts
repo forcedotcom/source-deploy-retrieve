@@ -18,7 +18,7 @@ import { expect, assert } from 'chai';
 import { MixedContentSourceAdapter } from '../../../src/metadata-registry/adapters/mixedContentSourceAdapter';
 import { ExpectedSourceFilesError } from '../../../src/errors';
 import { RegistryTestUtil } from '../registryTestUtil';
-import { MetadataComponent } from '../../../src/types';
+import { SourceComponent } from '../../../src/types';
 import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
 import { TARAJI_XML_NAMES } from '../../mock/registry/tarajiConstants';
 import { basename, dirname } from 'path';
@@ -52,11 +52,11 @@ describe('MixedContentSourceAdapter', () => {
       sources: [DWAYNE_SOURCE]
     };
 
-    it('Should return expected MetadataComponent when given a root metadata xml path', () => {
+    it('Should return expected SourceComponent when given a root metadata xml path', () => {
       expect(adapter.getComponent(DWAYNE_XML)).to.deep.equal(expectedComponent);
     });
 
-    it('Should return expected MetadataComponent when given a source path', () => {
+    it('Should return expected SourceComponent when given a source path', () => {
       expect(adapter.getComponent(DWAYNE_SOURCE)).to.deep.equal(expectedComponent);
     });
   });
@@ -80,11 +80,11 @@ describe('MixedContentSourceAdapter', () => {
     ]);
     let adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
 
-    it('Should return expected MetadataComponent when given a root metadata xml path', () => {
+    it('Should return expected SourceComponent when given a root metadata xml path', () => {
       expect(adapter.getComponent(TARAJI_XML_PATHS[0])).to.deep.equal(TARAJI_COMPONENT);
     });
 
-    it('Should return expected MetadataComponent when given a source path', () => {
+    it('Should return expected SourceComponent when given a source path', () => {
       const randomSource =
         TARAJI_SOURCE_PATHS[Math.floor(Math.random() * Math.floor(TARAJI_SOURCE_PATHS.length))];
       expect(adapter.getComponent(randomSource)).to.deep.equal(TARAJI_COMPONENT);
@@ -99,7 +99,7 @@ describe('MixedContentSourceAdapter', () => {
         deny: [TARAJI_SOURCE_PATHS[0], TARAJI_SOURCE_PATHS[2]]
       });
       adapter = new MixedContentSourceAdapter(type, mockRegistry, forceIgnore, tree);
-      const filteredComponent: MetadataComponent = JSON.parse(JSON.stringify(TARAJI_COMPONENT));
+      const filteredComponent: SourceComponent = JSON.parse(JSON.stringify(TARAJI_COMPONENT));
       filteredComponent.sources = [TARAJI_SOURCE_PATHS[1]];
       expect(adapter.getComponent(path)).to.deep.equal(filteredComponent);
       testUtil.restore();

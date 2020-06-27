@@ -9,7 +9,7 @@ import { KATHY_COMPONENTS } from '../mock/registry/kathyConstants';
 import { expect } from 'chai';
 import { RegistryAccess } from '../../src/metadata-registry/registryAccess';
 import { createSandbox, SinonStub } from 'sinon';
-import { WriterFormat, MetadataTransformer, MetadataComponent } from '../../src/types';
+import { WriterFormat, MetadataTransformer, SourceComponent } from '../../src/types';
 import { Readable, Writable } from 'stream';
 import { LibraryError } from '../../src/errors';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
@@ -20,8 +20,8 @@ import * as archiver from 'archiver';
 const env = createSandbox();
 
 class TestTransformer implements MetadataTransformer {
-  private component: MetadataComponent;
-  constructor(component: MetadataComponent) {
+  private component: SourceComponent;
+  constructor(component: SourceComponent) {
     this.component = component;
   }
   toMetadataFormat(): WriterFormat {

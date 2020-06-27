@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { createSandbox, SinonSandbox } from 'sinon';
-import { SourcePath, MetadataType, MetadataComponent, VirtualDirectory } from '../../src/types';
+import { SourcePath, MetadataType, SourceComponent, VirtualDirectory } from '../../src/types';
 import { ForceIgnore } from '../../src/metadata-registry/forceIgnore';
 import { SourceAdapterFactory } from '../../src/metadata-registry/adapters/sourceAdapterFactory';
 import { VirtualTreeContainer } from '../../src/metadata-registry/treeContainers';
@@ -30,12 +30,12 @@ export class RegistryTestUtil {
   public stubAdapters(
     config: {
       type: MetadataType;
-      componentMappings: { path: SourcePath; component: MetadataComponent }[];
+      componentMappings: { path: SourcePath; component: SourceComponent }[];
     }[]
   ): void {
     const getAdapterStub = this.env.stub(SourceAdapterFactory.prototype, 'getAdapter');
     for (const entry of config) {
-      const componentMap: { [path: string]: MetadataComponent } = {};
+      const componentMap: { [path: string]: SourceComponent } = {};
       for (const c of entry.componentMappings) {
         componentMap[c.path] = c.component;
       }

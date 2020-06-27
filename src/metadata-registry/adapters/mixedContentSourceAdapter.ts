@@ -8,7 +8,7 @@ import { BaseSourceAdapter } from './baseSourceAdapter';
 import { dirname, basename, sep, join } from 'path';
 import { ExpectedSourceFilesError } from '../../errors';
 import { baseName } from '../../utils/path';
-import { SourcePath, MetadataType, MetadataComponent, TreeContainer } from '../../types';
+import { SourcePath, MetadataType, TreeContainer, SourceComponent } from '../../types';
 
 /**
  * Handles types with mixed content. Mixed content means there are one or more additional
@@ -43,7 +43,7 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
     return MixedContentSourceAdapter.findMetadataFromContent(trigger, this.type, this.tree);
   }
 
-  protected populate(component: MetadataComponent, trigger: SourcePath): MetadataComponent {
+  protected populate(component: SourceComponent, trigger: SourcePath): SourceComponent {
     let contentPath = MixedContentSourceAdapter.trimPathToContent(trigger, this.type);
     if (contentPath === component.xml) {
       contentPath = this.tree.find('content', baseName(contentPath), dirname(contentPath));
@@ -53,12 +53,14 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
       throw new ExpectedSourceFilesError(this.type, trigger);
     }
 
-    component.sources = [];
-    for (const path of this.walk(contentPath)) {
-      if (path !== component.xml && this.forceIgnore.accepts(path)) {
-        component.sources.push(path);
-      }
-    }
+    component.content = contentPath;
+
+    // component.sources = [];
+    // for (const path of this.walk(contentPath)) {
+    //   if (path !== component.xml && this.forceIgnore.accepts(path)) {
+    //     component.sources.push(path);
+    //   }
+    // }
     return component;
   }
 

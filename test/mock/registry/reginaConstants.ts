@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { MetadataComponent } from '../../../src/types';
+import { SourceComponent } from '../../../src/types';
 import { mockRegistry } from '.';
 import { baseName } from '../../../src/utils';
 
@@ -21,7 +21,7 @@ export const REGINA_CHILD_DIR = 'xs';
 export const REGINA_CHILD_DIR_PATH = join(REGINA_PATH, REGINA_CHILD_DIR);
 export const REGINA_CHILD_XML_NAME_2 = 'w.x-meta.xml';
 export const REGINA_CHILD_XML_PATH_2 = join(REGINA_CHILD_DIR_PATH, REGINA_CHILD_XML_NAME_2);
-export const REGINA_COMPONENT: MetadataComponent = {
+export const REGINA_COMPONENT: SourceComponent = {
   fullName: baseName(REGINA_XML_PATH),
   type,
   xml: REGINA_XML_PATH,

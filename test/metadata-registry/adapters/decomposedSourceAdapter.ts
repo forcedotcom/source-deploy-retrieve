@@ -24,17 +24,17 @@ describe('DecomposedSourceAdapter', () => {
   ]);
   let adapter = new DecomposedSourceAdapter(type, mockRegistry, undefined, tree);
 
-  it('should return expected MetadataComponent when given a root metadata xml path', () => {
+  it('should return expected SourceComponent when given a root metadata xml path', () => {
     expect(adapter.getComponent(regina.REGINA_XML_PATH)).to.deep.equal(regina.REGINA_COMPONENT);
   });
 
-  it('should return expected MetadataComponent when given a child xml', () => {
+  it('should return expected SourceComponent when given a child xml', () => {
     expect(adapter.getComponent(regina.REGINA_CHILD_XML_PATH_1)).to.deep.equal(
       regina.REGINA_COMPONENT
     );
   });
 
-  it('should return expected MetadataComponent when given a child xml in its decomposed folder', () => {
+  it('should return expected SourceComponent when given a child xml in its decomposed folder', () => {
     expect(adapter.getComponent(regina.REGINA_CHILD_XML_PATH_2)).to.deep.equal(
       regina.REGINA_COMPONENT
     );

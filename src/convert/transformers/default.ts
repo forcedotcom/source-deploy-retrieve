@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { MetadataComponent, MetadataTransformer, WriterFormat, SourcePath } from '../../types';
+import { SourceComponent, MetadataTransformer, WriterFormat, SourcePath } from '../../types';
 import { META_XML_SUFFIX } from '../../utils';
 import { createReadStream } from 'fs';
 import { sep, join, basename } from 'path';
@@ -18,18 +18,17 @@ import { LibraryError } from '../../errors';
  * files as-is.
  */
 export class DefaultTransformer implements MetadataTransformer {
-  private component: MetadataComponent;
+  private component: SourceComponent;
 
-  constructor(component: MetadataComponent) {
+  constructor(component: SourceComponent) {
     this.component = component;
   }
 
   public toMetadataFormat(): WriterFormat {
     const result: WriterFormat = { component: this.component, writeInfos: [] };
     let xmlDest = this.getRelativeDestination(this.component.xml);
-    const { sources } = this.component;
-    if (sources && sources.length > 0) {
-      for (const source of this.component.sources) {
+    if (this.component.content) {
+      for (const source of this.component.walkContent()) {
         result.writeInfos.push({
           source: createReadStream(source),
           relativeDestination: this.getRelativeDestination(source)

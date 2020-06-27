@@ -6,7 +6,7 @@
  */
 
 import { Connection } from '@salesforce/core';
-import { MetadataComponent, SourcePath } from './common';
+import { SourceComponent, SourcePath } from './common';
 import { RegistryAccess } from '../metadata-registry';
 
 type CommonOptions = {
@@ -41,13 +41,13 @@ type CommonPathOptions = {
 };
 
 export type RetrieveOptions = CommonOptions &
-  CommonRetrieveOptions & { components: MetadataComponent[] };
+  CommonRetrieveOptions & { components: SourceComponent[] };
 
 export type RetrievePathOptions = CommonOptions & CommonRetrieveOptions & CommonPathOptions;
 
 export type ApiResult = {
   success: boolean;
-  components: MetadataComponent[];
+  components: SourceComponent[];
   message?: string;
 };
 

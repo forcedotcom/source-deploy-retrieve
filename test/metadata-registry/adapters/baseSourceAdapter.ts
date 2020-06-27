@@ -9,7 +9,7 @@ import { mockRegistry } from '../../mock/registry';
 import { DefaultSourceAdapter } from '../../../src/metadata-registry/adapters/defaultSourceAdapter';
 import { expect, assert } from 'chai';
 import { BaseSourceAdapter } from '../../../src/metadata-registry/adapters/baseSourceAdapter';
-import { SourcePath, MetadataComponent } from '../../../src/types';
+import { SourcePath, SourceComponent } from '../../../src/types';
 import { RegistryError, UnexpectedForceIgnore } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { RegistryTestUtil } from '../registryTestUtil';
@@ -19,7 +19,7 @@ class TestChildAdapter extends BaseSourceAdapter {
   protected getRootMetadataXmlPath(): SourcePath {
     return TestChildAdapter.xmlPath;
   }
-  protected populate(component: MetadataComponent, trigger: SourcePath): MetadataComponent {
+  protected populate(component: SourceComponent, trigger: SourcePath): SourceComponent {
     component.sources = [trigger];
     return component;
   }
@@ -66,7 +66,7 @@ describe('BaseSourceAdapter', () => {
       protected getRootMetadataXmlPath(): SourcePath {
         return undefined;
       }
-      protected populate(component: MetadataComponent): MetadataComponent {
+      protected populate(component: SourceComponent): SourceComponent {
         return component;
       }
     }

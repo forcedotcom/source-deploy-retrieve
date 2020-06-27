@@ -18,9 +18,9 @@ export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
   private currentIndex = 0;
-  private components: MetadataComponent[];
+  private components: SourceComponent[];
 
-  constructor(components: MetadataComponent[]) {
+  constructor(components: SourceComponent[]) {
     super({ objectMode: true });
     this.components = components;
   }
@@ -47,7 +47,7 @@ export class ComponentConverter extends Transform {
   }
 
   public _transform(
-    chunk: MetadataComponent,
+    chunk: SourceComponent,
     encoding: string,
     callback: (err: Error, data: WriterFormat) => void
   ): void {

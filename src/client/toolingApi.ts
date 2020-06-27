@@ -58,7 +58,7 @@ export class ToolingApi extends BaseApi {
       retrieveError.name = 'MetadataRetrieveLimit';
       throw retrieveError;
     }
-    const mdComponent: MetadataComponent = options.components[0];
+    const mdComponent: SourceComponent = options.components[0];
 
     if (!retrieveTypes.has(mdComponent.type.name)) {
       const retrieveError = new Error();

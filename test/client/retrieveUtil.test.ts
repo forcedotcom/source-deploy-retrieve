@@ -8,7 +8,7 @@
 import * as path from 'path';
 import { expect } from 'chai';
 import { buildQuery, queryToFileMap } from '../../src/client/retrieveUtil';
-import { MetadataComponent, QueryResult } from '../../src/types';
+import { SourceComponent, QueryResult } from '../../src/types';
 import {
   auraComponent,
   auraApplication,
@@ -19,7 +19,7 @@ import {
 import { lwcComponentMock } from './lightningComponentMocks';
 
 describe('Tooling Retrieve Util', () => {
-  const classMDComponent: MetadataComponent = {
+  const classMDComponent: SourceComponent = {
     type: {
       id: 'apexclass',
       name: 'ApexClass',
@@ -32,7 +32,7 @@ describe('Tooling Retrieve Util', () => {
     sources: [path.join('file', 'path', 'myTestClass.cls')]
   };
 
-  const pageMDComponent: MetadataComponent = {
+  const pageMDComponent: SourceComponent = {
     type: {
       id: 'apexpage',
       name: 'ApexPage',
@@ -45,7 +45,7 @@ describe('Tooling Retrieve Util', () => {
     sources: [path.join('file', 'path', 'myPage.page')]
   };
 
-  const auraMDComponent: MetadataComponent = {
+  const auraMDComponent: SourceComponent = {
     type: {
       id: 'auradefinitionbundle',
       name: 'AuraDefinitionBundle',
@@ -201,7 +201,7 @@ describe('Tooling Retrieve Util', () => {
     const controllerPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmpController.js');
     const helperPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmpHelper.js');
     const rendererPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmpRenderer.js');
-    const auraComponentMD: MetadataComponent = {
+    const auraComponentMD: SourceComponent = {
       type: {
         id: 'auradefinitionbundle',
         name: 'AuraDefinitionBundle',
@@ -261,7 +261,7 @@ describe('Tooling Retrieve Util', () => {
   it('should generate correct file map for AuraDefinition application metadata', () => {
     const appPath = path.join('file', 'path', 'aura', 'myAuraApp', 'myAuraApp.app');
     const appMetaPath = path.join('file', 'path', 'aura', 'myAuraApp', 'myAuraApp.app-meta.xml');
-    const auraApplicationMD: MetadataComponent = {
+    const auraApplicationMD: SourceComponent = {
       type: {
         id: 'auradefinitionbundle',
         name: 'AuraDefinitionBundle',
@@ -294,7 +294,7 @@ describe('Tooling Retrieve Util', () => {
       'myAuraEvent',
       'myAuraEvent.evt-meta.xml'
     );
-    const auraEventMD: MetadataComponent = {
+    const auraEventMD: SourceComponent = {
       type: {
         id: 'auradefinitionbundle',
         name: 'AuraDefinitionBundle',
@@ -335,7 +335,7 @@ describe('Tooling Retrieve Util', () => {
       'myAuraInterface',
       'myAuraInterface.intf-meta.xml'
     );
-    const auraInterfaceMD: MetadataComponent = {
+    const auraInterfaceMD: SourceComponent = {
       type: {
         id: 'auradefinitionbundle',
         name: 'AuraDefinitionBundle',
@@ -370,7 +370,7 @@ describe('Tooling Retrieve Util', () => {
       'myAuraToken',
       'myAuraToken.tokens-meta.xml'
     );
-    const auraTokenMD: MetadataComponent = {
+    const auraTokenMD: SourceComponent = {
       type: {
         id: 'auradefinitionbundle',
         name: 'AuraDefinitionBundle',
@@ -405,7 +405,7 @@ describe('Tooling Retrieve Util', () => {
       'myLWCComponent',
       'myLWCComponent.js-meta.xml'
     );
-    const lwcMD: MetadataComponent = {
+    const lwcMD: SourceComponent = {
       type: {
         id: 'lightningcomponentbundle',
         name: 'LightningComponentBundle',

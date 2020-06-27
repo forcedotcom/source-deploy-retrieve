@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { BaseSourceAdapter } from './baseSourceAdapter';
-import { MetadataComponent, SourcePath } from '../../types';
+import { SourceComponent, SourcePath } from '../../types';
 
 /**
  * The default source adapter. Handles simple types with no additional content.
@@ -30,7 +30,7 @@ export class DefaultSourceAdapter extends BaseSourceAdapter {
     return trigger;
   }
 
-  protected populate(component: MetadataComponent): MetadataComponent {
+  protected populate(component: SourceComponent): SourceComponent {
     return component;
   }
 }

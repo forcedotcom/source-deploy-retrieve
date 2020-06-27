@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { MetadataComponent } from '../../../src/types';
+import { SourceComponent } from '../../../src/types';
 import { mockRegistry } from '.';
 
 // Mixed content with directory as content
@@ -20,7 +20,7 @@ export const TARAJI_SOURCE_PATHS = [
   join(TARAJI_CONTENT_PATH, 'b', 'test.g'),
   join(TARAJI_CONTENT_PATH, 'b', 'test2.w')
 ];
-export const TARAJI_COMPONENT: MetadataComponent = {
+export const TARAJI_COMPONENT: SourceComponent = {
   fullName: 'a',
   type,
   xml: TARAJI_XML_PATHS[0],

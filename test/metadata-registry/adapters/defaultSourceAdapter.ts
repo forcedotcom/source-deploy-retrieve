@@ -10,7 +10,7 @@ import { DefaultSourceAdapter } from '../../../src/metadata-registry/adapters/de
 import { expect } from 'chai';
 
 describe('DefaultSourceAdapter', () => {
-  it('should return a MetadataComponent when given a metadata xml file', () => {
+  it('should return a SourceComponent when given a metadata xml file', () => {
     const path = join('path', 'to', 'keanus', 'My_Test.keanu-meta.xml');
     const type = mockRegistry.types.keanureeves;
     const adapter = new DefaultSourceAdapter(type, mockRegistry);

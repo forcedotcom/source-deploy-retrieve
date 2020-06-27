@@ -9,12 +9,12 @@ import { NodeFSTreeContainer, registryData } from '.';
 import { MetadataTransformerFactory } from '../convert/transformers';
 import { TypeInferenceError } from '../errors';
 import {
-  MetadataComponent,
   MetadataRegistry,
   MetadataTransformer,
   MetadataType,
   SourcePath,
-  TreeContainer
+  TreeContainer,
+  SourceComponent
 } from '../types';
 import { extName, parentName } from '../utils/path';
 import { deepFreeze, parseMetadataXml } from '../utils/registry';
@@ -69,7 +69,7 @@ export class RegistryAccess {
    *
    * @param fsPath File path for a piece of metadata
    */
-  public getComponentsFromPath(fsPath: string): MetadataComponent[] {
+  public getComponentsFromPath(fsPath: string): SourceComponent[] {
     if (!this.tree.exists(fsPath)) {
       throw new TypeInferenceError('error_path_not_found', fsPath);
     }
@@ -105,7 +105,7 @@ export class RegistryAccess {
 
   private getComponentsFromPathRecursive(dir: SourcePath): MetadataComponent[] {
     const dirQueue: SourcePath[] = [];
-    const components: MetadataComponent[] = [];
+    const components: SourceComponent[] = [];
 
     if (this.forceIgnore.denies(dir)) {
       return components;
@@ -137,7 +137,7 @@ export class RegistryAccess {
     return components;
   }
 
-  private resolveComponent(fsPath: SourcePath): MetadataComponent {
+  private resolveComponent(fsPath: SourcePath): SourceComponent {
     if (parseMetadataXml(fsPath) && this.forceIgnore.denies(fsPath)) {
       // don't fetch the component if the metadata xml is denied
       return;

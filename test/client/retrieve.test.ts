@@ -14,7 +14,7 @@ import * as stream from 'stream';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ToolingApi } from '../../src/client';
 import { RegistryAccess } from '../../src/metadata-registry';
-import { ApiResult, QueryResult, MetadataComponent } from '../../src/types';
+import { ApiResult, QueryResult, SourceComponent } from '../../src/types';
 import { nls } from '../../src/i18n';
 import { fail } from 'assert';
 
@@ -29,7 +29,7 @@ describe('Tooling Retrieve', () => {
   metaXMLFile += '\t<apiVersion>32.0</apiVersion>\n';
   metaXMLFile += '\t<status>Active</status>\n';
   metaXMLFile += '</ApexClass>';
-  const mdComponents: MetadataComponent[] = [
+  const mdComponents: SourceComponent[] = [
     {
       type: {
         id: 'apexclass',
@@ -192,7 +192,7 @@ describe('Tooling Retrieve', () => {
     );
   });
 
-  it('should retrieve an ApexClass using metadatacomponents', async () => {
+  it('should retrieve an ApexClass using SourceComponents', async () => {
     sandboxStub
       .stub(mockConnection.tooling, 'query')
       // @ts-ignore
@@ -281,7 +281,7 @@ describe('Tooling Retrieve', () => {
   });
 
   it('should throw an error when trying to retrieve an unsupported type', async () => {
-    const unsupportedComponent: MetadataComponent[] = [
+    const unsupportedComponent: SourceComponent[] = [
       {
         type: {
           id: 'fancytype',

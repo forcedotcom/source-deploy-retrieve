@@ -6,7 +6,7 @@
  */
 import {
   SourceAdapter,
-  MetadataComponent,
+  SourceComponent,
   MetadataType,
   MetadataRegistry,
   SourcePath,
@@ -20,6 +20,7 @@ import { parentName } from '../../utils/path';
 import { ForceIgnore } from '../forceIgnore';
 import { dirname, basename } from 'path';
 import { NodeFSTreeContainer } from '../treeContainers';
+import { DefaultSourceComponent } from '../sourceComponent';
 
 export abstract class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;
@@ -45,7 +46,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     this.tree = tree;
   }
 
-  public getComponent(path: SourcePath): MetadataComponent {
+  public getComponent(path: SourcePath): SourceComponent {
     let rootMetadata = this.parseAsRootMetadataXml(path);
     if (!rootMetadata) {
       const rootMetadataPath = this.getRootMetadataXmlPath(path);
@@ -58,13 +59,13 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       throw new UnexpectedForceIgnore('error_no_metadata_xml_ignore', [rootMetadata.path, path]);
     }
 
-    const component: MetadataComponent = {
+    const component = new DefaultSourceComponent(this.tree, this.registry, this.forceIgnore, {
       fullName: this.type.inFolder
         ? `${parentName(rootMetadata.path)}/${rootMetadata.fullName}`
         : rootMetadata.fullName,
-      type: this.type,
-      xml: rootMetadata.path
-    };
+      type: this.type
+    });
+    component.xml = rootMetadata.path;
 
     return this.populate(component, path);
   }
@@ -77,13 +78,13 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   protected abstract getRootMetadataXmlPath(trigger: SourcePath): SourcePath;
 
   /**
-   * Populate additional properties on a MetadataComponent, such as source files and child components.
+   * Populate additional properties on a SourceComponent, such as source files and child components.
    * The component passed to `populate` has its fullName, xml, and type properties already set.
    *
    * @param component Component to populate properties on
    * @param trigger Path that `getComponent` was called with
    */
-  protected abstract populate(component: MetadataComponent, trigger: SourcePath): MetadataComponent;
+  protected abstract populate(component: SourceComponent, trigger: SourcePath): SourceComponent;
 
   /**
    * If the path given to `getComponent` is the root metadata xml file for a component,

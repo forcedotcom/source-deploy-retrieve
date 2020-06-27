@@ -6,7 +6,7 @@
  */
 import { join } from 'path';
 import { mockRegistry } from '.';
-import { MetadataComponent } from '../../../src/types';
+import { SourceComponent } from '../../../src/types';
 
 // Mixed content type in folders
 const type = mockRegistry.types.tinafey;
@@ -18,7 +18,7 @@ export const TINA_XML_NAMES = ['a.tina-meta.xml', 'b.tina-meta.xml'];
 export const TINA_XML_PATHS = TINA_XML_NAMES.map(n => join(TINA_FOLDER, n));
 export const TINA_SOURCE_NAMES = ['a.x', 'b.y'];
 export const TINA_SOURCE_PATHS = TINA_SOURCE_NAMES.map(n => join(TINA_FOLDER, n));
-export const TINA_FOLDER_COMPONENT: MetadataComponent = {
+export const TINA_FOLDER_COMPONENT: SourceComponent = {
   fullName: 'A_Folder',
   type: mockRegistry.types.tinafeyfolder,
   xml: TINA_FOLDER_XML,

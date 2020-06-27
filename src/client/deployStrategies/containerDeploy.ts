@@ -8,17 +8,17 @@
 import { readFileSync } from 'fs';
 import { deployTypes } from '../toolingApi';
 import { DeployError } from '../../errors';
-import { MetadataComponent, DeployStatusEnum, DeployResult, QueryResult } from '../../types';
+import { SourceComponent, DeployStatusEnum, DeployResult, QueryResult } from '../../types';
 import { baseName } from '../../utils/path';
 import { ToolingCreateResult } from '../../utils/deploy';
 import { CONTAINER_ASYNC_REQUEST, METADATA_CONTAINER } from './constants';
 import { BaseDeploy } from './baseDeploy';
 
 export class ContainerDeploy extends BaseDeploy {
-  public async deploy(component: MetadataComponent, namespace: string): Promise<DeployResult> {
+  public async deploy(component: SourceComponent, namespace: string): Promise<DeployResult> {
     this.component = component;
     this.namespace = namespace;
-    const sourcePath = component.sources[0];
+    const sourcePath = component.content;
     const metadataPath = component.xml;
 
     const container = await this.createMetadataContainer();
@@ -115,7 +115,7 @@ export class ContainerDeploy extends BaseDeploy {
       count++;
     }
     retrieveResult.metadataFile = this.component.xml;
-    retrieveResult.outboundFiles = this.component.sources;
+    retrieveResult.outboundFiles = [this.component.content];
     retrieveResult.outboundFiles.push(this.component.xml);
     return retrieveResult;
   }

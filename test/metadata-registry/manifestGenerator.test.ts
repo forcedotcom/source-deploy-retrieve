@@ -6,7 +6,7 @@
  */
 
 import { ManifestGenerator } from '../../src/metadata-registry/manifestGenerator';
-import { MetadataComponent } from '../../src/types';
+import { SourceComponent } from '../../src/types';
 import { expect } from 'chai';
 import { RegistryAccess } from '../../src/metadata-registry';
 import { SinonSandbox, createSandbox } from 'sinon';
@@ -33,7 +33,7 @@ describe('ManifestGenerator', () => {
       type: { id: 'apexclass', name: 'ApexClass' },
       xml: '',
       sources: []
-    } as MetadataComponent;
+    } as SourceComponent;
 
     let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
     expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
@@ -50,14 +50,14 @@ describe('ManifestGenerator', () => {
       type: { id: 'apexclass', name: 'ApexClass' },
       xml: '',
       sources: []
-    } as MetadataComponent;
+    } as SourceComponent;
 
     const component2 = {
       fullName: 'apexTrigger1',
       type: { id: 'apextrigger', name: 'ApexTrigger' },
       xml: '',
       sources: []
-    } as MetadataComponent;
+    } as SourceComponent;
 
     let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
     expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
@@ -76,21 +76,21 @@ describe('ManifestGenerator', () => {
       type: { name: 'ApexClass' },
       xml: '',
       sources: []
-    } as MetadataComponent;
+    } as SourceComponent;
 
     const component2 = {
       fullName: 'apexClass2',
       type: { name: 'ApexClass' },
       xml: '',
       sources: []
-    } as MetadataComponent;
+    } as SourceComponent;
 
     const component3 = {
       fullName: 'apexTrigger1',
       type: { name: 'ApexTrigger' },
       xml: '',
       sources: []
-    } as MetadataComponent;
+    } as SourceComponent;
 
     let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
     expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
@@ -111,21 +111,21 @@ describe('ManifestGenerator', () => {
       type: { name: 'ApexClass' },
       xml: '',
       sources: []
-    } as MetadataComponent;
+    } as SourceComponent;
 
     const component2 = {
       fullName: 'apexClass2',
       type: { name: 'ApexClass' },
       xml: '',
       sources: []
-    } as MetadataComponent;
+    } as SourceComponent;
 
     const component3 = {
       fullName: 'apexTrigger1',
       type: { name: 'ApexTrigger' },
       xml: '',
       sources: []
-    } as MetadataComponent;
+    } as SourceComponent;
 
     let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
     expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
@@ -146,7 +146,7 @@ describe('ManifestGenerator', () => {
       type: { name: 'ApexClass' },
       xml: '',
       sources: []
-    } as MetadataComponent;
+    } as SourceComponent;
 
     let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
     expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
@@ -163,7 +163,7 @@ describe('ManifestGenerator', () => {
       type: { name: 'someveryunknowntype' },
       xml: '',
       sources: []
-    } as MetadataComponent;
+    } as SourceComponent;
     try {
       manifestGenerator.createManifest([component]);
       expect.fail('should have failed');
@@ -175,7 +175,7 @@ describe('ManifestGenerator', () => {
   });
 
   it('should successfully create a manifest with a sourcepath', () => {
-    const mdComponents: MetadataComponent[] = [
+    const mdComponents: SourceComponent[] = [
       {
         type: {
           id: 'apexclass',
@@ -212,7 +212,7 @@ describe('ManifestGenerator', () => {
   });
 
   it('should throw error when handling unexpected errors on creating a manifest with a sourcepath', () => {
-    const mdComponents: MetadataComponent[] = [
+    const mdComponents: SourceComponent[] = [
       {
         type: {
           id: 'apexclass',

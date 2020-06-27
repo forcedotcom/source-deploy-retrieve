@@ -33,11 +33,11 @@ describe('BundleSourceAdapter', () => {
   ]);
   const adapter = new BundleSourceAdapter(type, mockRegistry, undefined, tree);
 
-  it('Should return expected MetadataComponent when given a root metadata xml path', () => {
+  it('Should return expected SourceComponent when given a root metadata xml path', () => {
     expect(adapter.getComponent(SIMON_XML_PATH)).to.deep.equal(SIMON_COMPONENT);
   });
 
-  it('Should return expected MetadataComponent when given a source path', () => {
+  it('Should return expected SourceComponent when given a source path', () => {
     const randomSource =
       SIMON_SOURCE_PATHS[Math.floor(Math.random() * Math.floor(SIMON_SOURCE_PATHS.length))];
     expect(adapter.getComponent(randomSource)).to.deep.equal(SIMON_COMPONENT);

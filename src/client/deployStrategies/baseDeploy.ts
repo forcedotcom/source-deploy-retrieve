@@ -9,7 +9,7 @@ import { Connection } from '@salesforce/core';
 import { readFileSync } from 'fs';
 import { sep } from 'path';
 import { DeployError } from '../../errors';
-import { DeployResult, DeployStatusEnum, MetadataComponent, SourceResult } from '../../types';
+import { DeployResult, DeployStatusEnum, SourceComponent, SourceResult } from '../../types';
 import { ToolingCreateResult } from '../../utils/deploy';
 import { TOOLING_PATH_SEP } from './constants';
 
@@ -18,14 +18,14 @@ const DOMParser = require('xmldom-sfdx-encoding').DOMParser;
 
 export abstract class BaseDeploy {
   public connection: Connection;
-  public component: MetadataComponent;
+  public component: SourceComponent;
   public namespace: string;
 
   constructor(connection: Connection) {
     this.connection = connection;
   }
 
-  public abstract deploy(component: MetadataComponent, namespace: string): Promise<DeployResult>;
+  public abstract deploy(component: SourceComponent, namespace: string): Promise<DeployResult>;
 
   public buildMetadataField(
     metadataContent: string
@@ -112,7 +112,7 @@ export abstract class BaseDeploy {
           componentFailures: []
         },
         isDeleted: false,
-        outboundFiles: this.component.sources,
+        outboundFiles: Array.from(this.component.walkContent()),
         ErrorMsg: null,
         metadataFile: this.component.xml
       };

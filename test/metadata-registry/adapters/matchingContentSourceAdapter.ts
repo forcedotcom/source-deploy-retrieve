@@ -25,11 +25,11 @@ describe('MatchingContentSourceAdapter', () => {
   ]);
   const adapter = new MatchingContentSourceAdapter(type, mockRegistry, undefined, tree);
 
-  it('Should return expected MetadataComponent when given a root metadata xml path', () => {
+  it('Should return expected SourceComponent when given a root metadata xml path', () => {
     expect(adapter.getComponent(KEANU_XML_PATHS[0])).to.deep.equal(KEANU_COMPONENT);
   });
 
-  it('Should return expected MetadataComponent when given a source path', () => {
+  it('Should return expected SourceComponent when given a source path', () => {
     expect(adapter.getComponent(KEANU_SOURCE_PATHS[0])).to.deep.equal(KEANU_COMPONENT);
   });
 

@@ -29,7 +29,6 @@ export enum DeployStatusEnum {
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export class MetadataApi extends BaseApi {
   private startTime: [number, number];
-  private telemetryMsg: string;
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult> {
     throw new Error('Method not implemented.');
   }

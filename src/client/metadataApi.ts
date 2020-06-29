@@ -18,7 +18,7 @@ import {
 import { nls } from '../i18n';
 import { MetadataConverter } from '../convert';
 
-export enum DeployStatusEnum {
+export const enum DeployStatusEnum {
   Succeeded = 'Succeeded',
   InProgress = 'InProgress',
   Pending = 'Pending',

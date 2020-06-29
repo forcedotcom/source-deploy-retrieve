@@ -24,7 +24,7 @@ describe('Metadata Api', () => {
       fullName: 'myTestClass',
       type: registryData.types.apexclass,
       xml: 'myTestClass.cls-meta.xml',
-      sources: ['file/path/myTestClass.cls', 'file/path/myTestClass.cls-meta.xml']
+      sources: ['myTestClass.cls']
     }
   ];
   const testingBuffer = Buffer.from('testingBuffer');
@@ -69,7 +69,10 @@ describe('Metadata Api', () => {
     expect(registryStub.calledImmediatelyBefore(conversionCallStub)).to.be.true;
     expect(conversionCallStub.calledImmediatelyBefore(deployIdStub)).to.be.true;
     expect(deployIdStub.calledImmediatelyBefore(deployPollStub)).to.be.true;
-    expect(deploys).to.deep.equal({ status: 'Succeeded' });
+    expect(deploys).to.deep.equal({
+      outboundFiles: ['myTestClass.cls', 'myTestClass.cls-meta.xml'],
+      status: 'Succeeded'
+    });
   });
 
   describe('Metadata Status Poll', () => {
@@ -81,7 +84,10 @@ describe('Metadata Api', () => {
           status: 'Succeeded'
         });
       const deploys = await deployMetadata.deployWithPaths(delpoyOptions);
-      expect(deploys).to.deep.equal({ status: 'Succeeded' });
+      expect(deploys).to.deep.equal({
+        outboundFiles: ['myTestClass.cls', 'myTestClass.cls-meta.xml'],
+        status: 'Succeeded'
+      });
     });
     it('should verify failed status poll', async () => {
       sandboxStub

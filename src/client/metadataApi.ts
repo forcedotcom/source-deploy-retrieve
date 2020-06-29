@@ -38,8 +38,15 @@ export class MetadataApi extends BaseApi {
     const metadataComponents: MetadataComponent[] = options.components;
     const converter = new MetadataConverter();
     const conversionCall = await converter.convert(metadataComponents, 'metadata', { type: 'zip' });
-    const deployID = await this.metadataDeployID(conversionCall.zipBuffer);
-    return this.metadataDeployStatusPoll(deployID, options.wait);
+    const deployID = await this.metadataDeployID(conversionCall.zipBuffer, options);
+    const deploy = this.metadataDeployStatusPoll(deployID, options.wait);
+    let files: string[] = [];
+    metadataComponents.forEach(file => {
+      files = files.concat(file.sources);
+      files.push(file.xml);
+    });
+    (await deploy).outboundFiles = files;
+    return deploy;
   }
 
   public async deployWithPaths(options: DeployPathOptions): Promise<DeployResult> {
@@ -48,7 +55,7 @@ export class MetadataApi extends BaseApi {
     return this.deploy({ components, wait: options.wait });
   }
 
-  public async metadataDeployID(zipBuffer: Buffer): Promise<string> {
+  public async metadataDeployID(zipBuffer: Buffer, options: DeployOptions): Promise<string> {
     const deployOpts = {
       rollbackOnError: true,
       ignoreWarnings: false,

@@ -18,7 +18,7 @@ import {
 import { nls } from '../i18n';
 import { MetadataConverter } from '../convert';
 
-export const enum DeployStatusEnum {
+export enum DeployStatusEnum {
   Succeeded = 'Succeeded',
   InProgress = 'InProgress',
   Pending = 'Pending',
@@ -66,7 +66,8 @@ export class MetadataApi extends BaseApi {
     timeout = timeout || 10000;
     interval = interval || 100;
 
-    const endTime = Date.now() + timeout;
+    const endTime = Number(new Date()) + timeout;
+    // @ts-ignore
     const checkDeploy = async (resolve, reject): Promise<DeployResult> => {
       const result = await this.connection.metadata.checkDeployStatus(deployID);
 

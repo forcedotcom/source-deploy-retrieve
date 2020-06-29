@@ -42,8 +42,7 @@ export class MetadataApi extends BaseApi {
     const conversionCall = await converter.convert(metadataComponents, 'metadata', { type: 'zip' });
     const conversionBuffer = conversionCall.zipBuffer;
     const deployID = await this.metadataDeployID(conversionBuffer);
-    const deployResult = await this.metadataDeployStatusPoll(deployID, options.wait);
-    return deployResult;
+    return this.metadataDeployStatusPoll(deployID, options.wait);
   }
 
   public async deployWithPaths(options: DeployPathOptions): Promise<DeployResult> {

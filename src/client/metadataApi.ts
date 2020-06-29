@@ -19,8 +19,6 @@ import * as util from 'util';
 import { nls } from '../i18n';
 import { MetadataConverter } from '../convert';
 
-//  * Enum that represents the status of a Metadata Retrieve
-//  */
 export enum DeployStatusEnum {
   Succeeded = 'Succeeded',
   InProgress = 'InProgress',

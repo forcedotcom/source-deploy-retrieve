@@ -60,13 +60,10 @@ export class MetadataApi extends BaseApi {
   }
   public async metadataDeployStatusPoll(
     deployID: string,
-    timeout?: number,
-    interval?: number
+    timeout = 10000,
+    interval = 100
   ): Promise<DeployResult> {
-    timeout = timeout || 10000;
-    interval = interval || 100;
-
-    const endTime = Date.now() + timeout;
+    const endTime = Number(new Date()) + timeout;
     // @ts-ignore
     const checkDeploy = async (resolve, reject): Promise<DeployResult> => {
       const result = await this.connection.metadata.checkDeployStatus(deployID);

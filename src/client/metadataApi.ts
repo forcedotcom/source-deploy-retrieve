@@ -15,7 +15,6 @@ import {
   DeployPathOptions,
   MetadataComponent
 } from '../types';
-import * as util from 'util';
 import { nls } from '../i18n';
 import { MetadataConverter } from '../convert';
 
@@ -71,8 +70,7 @@ export class MetadataApi extends BaseApi {
 
     const endTime = Number(new Date()) + timeout;
     // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    const checkDeploy = async (resolve, reject) => {
+    const checkDeploy = async (resolve, reject): Promise<DeployResult> => {
       const result = await this.connection.metadata.checkDeployStatus(deployID);
 
       switch (result.status) {
@@ -96,5 +94,4 @@ export class MetadataApi extends BaseApi {
 
     return new Promise(checkDeploy);
   }
-
 }

@@ -42,11 +42,11 @@ describe('Metadata Api', () => {
         username: testData.username
       })
     });
-    // @ts-ignore
   });
   afterEach(() => {
     sandboxStub.restore();
   });
+
   it('Should correctly deploy metatdata components from paths', async () => {
     deployMetadata = new MetadataApi(mockConnection, registryAccess);
     registryStub = sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(components);
@@ -71,6 +71,7 @@ describe('Metadata Api', () => {
     expect(deployIdStub.calledImmediatelyBefore(deployPollStub)).to.be.true;
     expect(deploys).to.deep.equal({ status: 'Succeeded' });
   });
+
   describe('Metadata Status Poll', () => {
     it('should verify successful status poll', async () => {
       deployMetadata = new MetadataApi(mockConnection, registryAccess);
@@ -92,9 +93,8 @@ describe('Metadata Api', () => {
         .resolves({
           status: 'Succeeded'
         });
-      const poll = await mockConnection.metadata.checkDeployStatus('12345');
-      await deployMetadata.deployWithPaths(delpoyOptions);
-      expect(poll.status).to.equal('Succeeded');
+      const deploy = await deployMetadata.deployWithPaths(delpoyOptions);
+      expect(deploy.status).to.equal('Succeeded');
     });
     it('should verify failed status poll', async () => {
       deployMetadata = new MetadataApi(mockConnection, registryAccess);
@@ -150,6 +150,7 @@ describe('Metadata Api', () => {
         fail('request should have timed out');
       } catch (err) {
         expect(err.message).contains('Metadata API request timed out');
+        expect(deployPollStub.callCount).to.be.above(1);
       }
     });
   });

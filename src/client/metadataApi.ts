@@ -83,7 +83,7 @@ export class MetadataApi extends BaseApi {
         case DeployStatusEnum.Pending:
         case '':
         default:
-          if (Number(new Date()) < endTime) {
+          if (Date.now() < endTime) {
             setTimeout(checkDeploy, interval, resolve, reject);
           } else {
             reject(new Error(nls.localize('md_request_timeout')));

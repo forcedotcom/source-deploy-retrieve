@@ -31,10 +31,10 @@ describe('Metadata Api', () => {
   const delpoyOptions = {
     paths: ['file/path/myTestClass.cls']
   };
-  let deployMetadata;
-  let registryStub;
-  let conversionCallStub;
-  let deployIdStub;
+  let deployMetadata: MetadataApi;
+  let registryStub = sandboxStub.stub();
+  let conversionCallStub = sandboxStub.stub();
+  let deployIdStub = sandboxStub.stub();
   beforeEach(async () => {
     sandboxStub = createSandbox();
     mockConnection = await Connection.create({
@@ -42,12 +42,6 @@ describe('Metadata Api', () => {
         username: testData.username
       })
     });
-  });
-  afterEach(() => {
-    sandboxStub.restore();
-  });
-
-  it('Should correctly deploy metatdata components from paths', async () => {
     deployMetadata = new MetadataApi(mockConnection, registryAccess);
     registryStub = sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(components);
     conversionCallStub = sandboxStub
@@ -61,6 +55,12 @@ describe('Metadata Api', () => {
     deployIdStub = sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
       id: '12345'
     });
+  });
+  afterEach(() => {
+    sandboxStub.restore();
+  });
+
+  it('Should correctly deploy metatdata components from paths', async () => {
     // @ts-ignore
     const deployPollStub = sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves({
       status: 'Succeeded'
@@ -74,42 +74,16 @@ describe('Metadata Api', () => {
 
   describe('Metadata Status Poll', () => {
     it('should verify successful status poll', async () => {
-      deployMetadata = new MetadataApi(mockConnection, registryAccess);
-      registryStub = sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(components);
-      conversionCallStub = sandboxStub
-        .stub(MetadataConverter.prototype, 'convert')
-        .withArgs(components, 'metadata', { type: 'zip' })
-        // @ts-ignore
-        .resolves({
-          zipBuffer: testingBuffer
-        });
-      // @ts-ignore
-      deployIdStub = sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
-        id: '12345'
-      });
       sandboxStub
         .stub(mockConnection.metadata, 'checkDeployStatus')
         // @ts-ignore
         .resolves({
           status: 'Succeeded'
         });
-      const deploy = await deployMetadata.deployWithPaths(delpoyOptions);
-      expect(deploy.status).to.equal('Succeeded');
+      const deploys = await deployMetadata.deployWithPaths(delpoyOptions);
+      expect(deploys).to.deep.equal({ status: 'Succeeded' });
     });
     it('should verify failed status poll', async () => {
-      deployMetadata = new MetadataApi(mockConnection, registryAccess);
-      registryStub = sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(components);
-      conversionCallStub = sandboxStub
-        .stub(MetadataConverter.prototype, 'convert')
-        .withArgs(components, 'metadata', { type: 'zip' })
-        // @ts-ignore
-        .resolves({
-          zipBuffer: testingBuffer
-        });
-      // @ts-ignore
-      deployIdStub = sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
-        id: '12345'
-      });
       sandboxStub
         .stub(mockConnection.metadata, 'checkDeployStatus')
         // @ts-ignore
@@ -118,24 +92,12 @@ describe('Metadata Api', () => {
         });
       try {
         await deployMetadata.deployWithPaths(delpoyOptions);
+        fail('request should have failed');
       } catch (err) {
         expect(err.message).contains('Metadata API request failed');
       }
     });
     it('should verify timeout status poll', async () => {
-      deployMetadata = new MetadataApi(mockConnection, registryAccess);
-      registryStub = sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(components);
-      conversionCallStub = sandboxStub
-        .stub(MetadataConverter.prototype, 'convert')
-        .withArgs(components, 'metadata', { type: 'zip' })
-        // @ts-ignore
-        .resolves({
-          zipBuffer: testingBuffer
-        });
-      // @ts-ignore
-      deployIdStub = sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
-        id: '12345'
-      });
       // @ts-ignore
       const delpoyOptions = {
         wait: 100,
@@ -145,7 +107,6 @@ describe('Metadata Api', () => {
       // @ts-ignore
       deployPollStub.resolves({ status: 'Pending' });
       try {
-        // @ts-ignore
         await deployMetadata.deployWithPaths(delpoyOptions);
         fail('request should have timed out');
       } catch (err) {

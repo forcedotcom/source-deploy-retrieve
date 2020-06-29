@@ -38,8 +38,7 @@ export class MetadataApi extends BaseApi {
     const metadataComponents: MetadataComponent[] = options.components;
     const converter = new MetadataConverter();
     const conversionCall = await converter.convert(metadataComponents, 'metadata', { type: 'zip' });
-    const conversionBuffer = conversionCall.zipBuffer;
-    const deployID = await this.metadataDeployID(conversionBuffer);
+    const deployID = await this.metadataDeployID(conversionCall.zipBuffer);
     return this.metadataDeployStatusPoll(deployID, options.wait);
   }
 

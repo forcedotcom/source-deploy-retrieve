@@ -13,6 +13,7 @@ import { MetadataComponent } from '../../src/types';
 import { MetadataApi } from '../../src/client/metadataApi';
 import { MetadataConverter } from '../../src/convert';
 import { fail } from 'assert';
+import * as path from 'path';
 
 describe('Metadata Api', () => {
   let mockConnection: Connection;
@@ -29,7 +30,7 @@ describe('Metadata Api', () => {
   ];
   const testingBuffer = Buffer.from('testingBuffer');
   const delpoyOptions = {
-    paths: ['file/path/myTestClass.cls']
+    paths: [path.join('file', 'path', 'myTestClass.cls')]
   };
   let deployMetadata: MetadataApi;
   let registryStub = sandboxStub.stub();
@@ -107,7 +108,7 @@ describe('Metadata Api', () => {
       // @ts-ignore
       const delpoyOptions = {
         wait: 100,
-        paths: ['file/path/myTestClass.cls']
+        paths: [path.join('file', 'path', 'myTestClass.cls')]
       };
       const deployPollStub = sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus');
       // @ts-ignore

@@ -105,7 +105,6 @@ describe('Metadata Api', () => {
       }
     });
     it('should verify timeout status poll', async () => {
-      // @ts-ignore
       const delpoyOptions = {
         wait: 100,
         paths: [path.join('file', 'path', 'myTestClass.cls')]

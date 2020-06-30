@@ -38,7 +38,7 @@ export class MetadataApi extends BaseApi {
     const metadataComponents: MetadataComponent[] = options.components;
     const converter = new MetadataConverter();
     const conversionCall = await converter.convert(metadataComponents, 'metadata', { type: 'zip' });
-    const deployID = await this.metadataDeployID(conversionCall.zipBuffer, options);
+    const deployID = await this.metadataDeployID(conversionCall.zipBuffer);
     const deploy = this.metadataDeployStatusPoll(deployID, options.wait);
     let files: string[] = [];
     metadataComponents.forEach(file => {
@@ -55,7 +55,7 @@ export class MetadataApi extends BaseApi {
     return this.deploy({ components, wait: options.wait });
   }
 
-  public async metadataDeployID(zipBuffer: Buffer, options: DeployOptions): Promise<string> {
+  public async metadataDeployID(zipBuffer: Buffer): Promise<string> {
     const deployOpts = {
       rollbackOnError: true,
       ignoreWarnings: false,

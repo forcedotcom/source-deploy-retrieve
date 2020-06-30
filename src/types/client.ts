@@ -8,14 +8,12 @@
 import { Connection } from '@salesforce/core';
 import { MetadataComponent, SourcePath } from './common';
 import { RegistryAccess } from '../metadata-registry';
-import { DeployOptions as JSForceDeployOptions } from 'jsforce';
 
-type CommonOptions = JSForceDeployOptions & {
+type CommonOptions = {
   /**
    * Set the max number of seconds to wait for the operation.
    */
   wait?: number;
-  namespace?: string;
 };
 
 type CommonRetrieveOptions = {

@@ -8,6 +8,7 @@
 import { Connection } from '@salesforce/core';
 import { ToolingApi } from './toolingApi';
 import { RegistryAccess } from '../metadata-registry';
+import { MetadataApi } from './metadataApi';
 /**
  * Transfer SFDX source to and from a Salesforce org.
  */
@@ -17,9 +18,11 @@ export class SourceClient {
    * Perform operations using the tooling api.
    */
   public readonly tooling: ToolingApi;
+  public readonly metadata: MetadataApi;
 
   constructor(connection: Connection, registry = new RegistryAccess()) {
     this.connection = connection;
     this.tooling = new ToolingApi(connection, registry);
+    this.metadata = new MetadataApi(connection, registry);
   }
 }

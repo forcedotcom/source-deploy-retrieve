@@ -46,7 +46,15 @@ export class MetadataApi extends BaseApi {
       files.push(file.xml);
     });
     (await deploy).outboundFiles = files;
-    return deploy;
+    try{
+      return deploy;
+    }
+   catch(err){
+    const deployError = new Error();
+    deployError.message = nls.localize((await deploy).ErrorMsg)
+    deployError.name = 'MetadataDeployError'
+    throw deployError;
+   }
   }
 
   public async deployWithPaths(options: DeployPathOptions): Promise<DeployResult> {

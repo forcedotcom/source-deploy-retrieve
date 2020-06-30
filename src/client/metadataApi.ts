@@ -30,7 +30,7 @@ export class MetadataApi extends BaseApi {
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult> {
     throw new Error('Method not implemented.');
   }
-  public async retrieve(options: RetrieveOptions): Promise<import('../types').ApiResult> {
+  public async retrieve(options: RetrieveOptions): Promise<ApiResult> {
     throw new Error('Method not implemented.');
   }
 

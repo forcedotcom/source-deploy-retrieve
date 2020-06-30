@@ -48,7 +48,6 @@ describe('Metadata Api', () => {
     conversionCallStub = sandboxStub
       .stub(MetadataConverter.prototype, 'convert')
       .withArgs(components, 'metadata', { type: 'zip' })
-      // @ts-ignore
       .resolves({
         zipBuffer: testingBuffer
       });

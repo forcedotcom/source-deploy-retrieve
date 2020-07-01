@@ -91,12 +91,12 @@ describe('Metadata Api', () => {
       });
     });
     it('should verify failed status poll', async () => {
-     const errorMessage = 'Failed deploy';
+      const errorMessage = 'Failed deploy';
       sandboxStub
         .stub(mockConnection.metadata, 'checkDeployStatus')
         // @ts-ignore
         .resolves({
-          status: 'Failed',   
+          status: 'Failed',
           errorMessage
         });
       try {

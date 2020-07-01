@@ -17,6 +17,7 @@ import {
 } from '../types';
 import { nls } from '../i18n';
 import { MetadataConverter } from '../convert';
+import { DeployError } from '../errors';
 
 export const enum DeployStatusEnum {
   Succeeded = 'Succeeded',
@@ -80,7 +81,8 @@ export class MetadataApi extends BaseApi {
           resolve(result);
           break;
         case DeployStatusEnum.Failed:
-          reject(new Error(nls.localize('md_request_fail')));
+          const deployError = new DeployError('md_request_fail', result.errorMessage);
+          reject(deployError);
           break;
         case DeployStatusEnum.InProgress:
         case DeployStatusEnum.Pending:

@@ -14,6 +14,7 @@ import { MetadataApi } from '../../src/client/metadataApi';
 import { MetadataConverter } from '../../src/convert';
 import { fail } from 'assert';
 import * as path from 'path';
+import { nls } from '../../src/i18n';
 
 describe('Metadata Api', () => {
   let mockConnection: Connection;
@@ -90,17 +91,19 @@ describe('Metadata Api', () => {
       });
     });
     it('should verify failed status poll', async () => {
+      const errorMessage = 'Failed deploy';
       sandboxStub
         .stub(mockConnection.metadata, 'checkDeployStatus')
         // @ts-ignore
         .resolves({
-          status: 'Failed'
+          status: 'Failed',
+          errorMessage
         });
       try {
         await deployMetadata.deployWithPaths(delpoyOptions);
         fail('request should have failed');
       } catch (err) {
-        expect(err.message).contains('Metadata API request failed');
+        expect(err.message).contains(nls.localize('md_request_fail', errorMessage));
       }
     });
     it('should verify timeout status poll', async () => {
@@ -115,7 +118,7 @@ describe('Metadata Api', () => {
         await deployMetadata.deployWithPaths(delpoyOptions);
         fail('request should have timed out');
       } catch (err) {
-        expect(err.message).contains('Metadata API request timed out');
+        expect(err.message).contains(nls.localize('md_request_timeout'));
         expect(deployPollStub.callCount).to.be.above(1);
       }
     });

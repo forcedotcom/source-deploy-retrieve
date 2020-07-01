@@ -81,7 +81,7 @@ export class MetadataApi extends BaseApi {
           resolve(result);
           break;
         case DeployStatusEnum.Failed:
-          const deployError = new DeployError('md_request_fail',result.errorMessage)
+          const deployError = new DeployError('md_request_fail',result.errorMessage);
           reject(deployError);
           break;
         case DeployStatusEnum.InProgress:

@@ -17,6 +17,7 @@ import {
 } from '../types';
 import { nls } from '../i18n';
 import { MetadataConverter } from '../convert';
+import { DeployError } from '../errors';
 
 export const enum DeployStatusEnum {
   Succeeded = 'Succeeded',
@@ -46,15 +47,7 @@ export class MetadataApi extends BaseApi {
       files.push(file.xml);
     });
     (await deploy).outboundFiles = files;
-    try{
-      return deploy;
-    }
-   catch(err){
-    const deployError = new Error();
-    deployError.message = nls.localize((await deploy).ErrorMsg)
-    deployError.name = 'MetadataDeployError'
-    throw deployError;
-   }
+    return deploy;
   }
 
   public async deployWithPaths(options: DeployPathOptions): Promise<DeployResult> {
@@ -88,7 +81,8 @@ export class MetadataApi extends BaseApi {
           resolve(result);
           break;
         case DeployStatusEnum.Failed:
-          reject(new Error(nls.localize('md_request_fail')));
+          const deployError = new DeployError('md_request_fail',result.errorMessage)
+          reject(deployError);
           break;
         case DeployStatusEnum.InProgress:
         case DeployStatusEnum.Pending:

@@ -16,7 +16,7 @@
  * If ommitted, we will assume _message.
  */
 export const messages = {
-  md_request_fail: 'Metadata API request failed',
+  md_request_fail: 'Metadata API request failed: %s',
   md_request_timeout: 'Metadata API request timed out',
   registry_error_missing_type_definition: 'Missing metadata type definition for %s',
   registry_error_file_not_found: 'File not found %s',

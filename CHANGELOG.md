@@ -1,3 +1,9 @@
+# 1.0.15 - July 2, 2020
+
+## Added
+
+- Metadata API deploy for types with no special transformation ([PR #70](https://github.com/forcedotcom/source-deploy-retrieve/pull/70))
+
 # 1.0.14 - June 26, 2020
 
 ## Fixed

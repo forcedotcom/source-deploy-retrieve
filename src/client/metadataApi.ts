@@ -39,7 +39,7 @@ export class MetadataApi extends BaseApi {
     const metadataComponents: MetadataComponent[] = options.components;
     const converter = new MetadataConverter();
     const conversionCall = await converter.convert(metadataComponents, 'metadata', { type: 'zip' });
-    const deployID = await this.metadataDeployID(conversionCall.zipBuffer);
+    const deployID = await this.metadataDeployID(conversionCall.zipBuffer, options);
     const deploy = this.metadataDeployStatusPoll(deployID, options.wait);
     let files: string[] = [];
     metadataComponents.forEach(file => {
@@ -53,17 +53,18 @@ export class MetadataApi extends BaseApi {
   public async deployWithPaths(options: DeployPathOptions): Promise<DeployResult> {
     const paths = options.paths[0];
     const components = this.registry.getComponentsFromPath(paths);
+    //@ts-ignore
     return this.deploy({ components, wait: options.wait });
   }
 
-  public async metadataDeployID(zipBuffer: Buffer): Promise<string> {
-    const deployOpts = {
-      rollbackOnError: true,
-      ignoreWarnings: false,
-      checkOnly: false,
-      singlePackage: true
-    };
-    const result = await this.connection.metadata.deploy(zipBuffer, deployOpts);
+  public async metadataDeployID(zipBuffer: Buffer, options: DeployOptions): Promise<string> {
+    // const deployOpts = {
+    //   rollbackOnError: true,
+    //   ignoreWarnings: false,
+    //   checkOnly: false,
+    //   singlePackage: true
+    // };
+    const result = await this.connection.metadata.deploy(zipBuffer, options);
     return result.id;
   }
   public async metadataDeployStatusPoll(

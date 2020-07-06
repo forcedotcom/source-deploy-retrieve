@@ -51,7 +51,15 @@ export type ApiResult = {
   message?: string;
 };
 
-export type DeployOptions = CommonOptions & { components: MetadataComponent[] };
+export type DeployOptions = {
+  components: MetadataComponent[];
+  wait?: number;
+  namespace?: string;
+  rollbackOnError: boolean;
+  ignoreWarnings: boolean;
+  checkOnly: boolean;
+  singlePackage: boolean;
+};
 
 export type DeployPathOptions = CommonOptions & CommonPathOptions;
 

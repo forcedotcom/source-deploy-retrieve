@@ -18,8 +18,9 @@ import { parseMetadataXml } from '../utils/registry';
 import { baseName } from '../utils';
 
 export class DefaultSourceComponent implements SourceComponent {
-  public readonly fullName: string;
+  public readonly name: string;
   public readonly type: MetadataType;
+  public readonly parent?: SourceComponent;
 
   public xml: SourcePath;
   public content?: SourcePath;
@@ -32,32 +33,37 @@ export class DefaultSourceComponent implements SourceComponent {
     tree: TreeContainer,
     registry: MetadataRegistry,
     forceIgnore: ForceIgnore,
-    component: MetadataComponent
+    component: MetadataComponent,
+    parent?: SourceComponent
   ) {
     // can this use expansion?
     this.tree = tree;
     this.registry = registry;
     this.forceIgnore = forceIgnore;
-    this.fullName = component.fullName;
+    this.name = component.fullName;
     this.type = component.type;
+    this.parent = parent;
   }
 
   public *walkContent(): IterableIterator<SourcePath> {
-    // throw error if content undefined
-    return this.walk(this.content);
+    for (const fsPath of this.walk(this.content)) {
+      if (fsPath !== this.xml) {
+        yield* fsPath;
+      }
+    }
   }
 
-  public *walkChildren(): IterableIterator<DefaultSourceComponent> {
+  public *getChildren(): IterableIterator<DefaultSourceComponent> {
     const parentPath = dirname(this.xml);
-    return this.walkChildrenInternal(parentPath);
+    yield* this.getChildrenInternal(parentPath);
   }
 
-  private *walkChildrenInternal(dirPath: SourcePath): IterableIterator<DefaultSourceComponent> {
+  private *getChildrenInternal(dirPath: SourcePath): IterableIterator<DefaultSourceComponent> {
     for (const fsPath of this.walk(dirPath)) {
       if (this.forceIgnore.denies(fsPath)) {
         continue;
       } else if (this.tree.isDirectory(fsPath)) {
-        yield* this.walkChildrenInternal(fsPath);
+        yield* this.getChildrenInternal(fsPath);
       } else {
         const childXml = parseMetadataXml(fsPath);
         const fileIsRootXml = childXml.suffix === this.type.suffix;
@@ -71,7 +77,8 @@ export class DefaultSourceComponent implements SourceComponent {
             {
               fullName: baseName(fsPath),
               type: this.type.children.types[childTypeId]
-            }
+            },
+            this
           );
           childComponent.xml = fsPath;
           yield childComponent;
@@ -93,5 +100,9 @@ export class DefaultSourceComponent implements SourceComponent {
         }
       }
     }
+  }
+
+  get fullName(): string {
+    return `${this.parent ? `${this.parent.fullName}.` : ''}${this.name}`;
   }
 }

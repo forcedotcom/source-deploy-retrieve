@@ -7,7 +7,7 @@
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { SourcePath, SourceComponent } from '../../types';
 import { parseMetadataXml } from '../../utils/registry';
-import { DefaultSourceComponent } from '../sourceComponent';
+import { StandardSourceComponent } from '../sourceComponent';
 
 /**
  * Handles decomposed types. A flavor of mixed content where a component can
@@ -33,13 +33,18 @@ import { DefaultSourceComponent } from '../sourceComponent';
 export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
   protected ownFolder = true;
 
+  /**
+   * If the trigger turns out to be part of a child component, `populate` will build
+   * the child component, set its parent property to the one created by the
+   * `BaseSourceAdapter`, and return the child component instead.
+   */
   protected populate(component: SourceComponent, trigger: SourcePath): SourceComponent {
     const metaXml = parseMetadataXml(trigger);
     if (metaXml) {
       const childTypeId = this.type.children.suffixes[metaXml.suffix];
       const triggerIsAChild = !!childTypeId;
       if (triggerIsAChild) {
-        return new DefaultSourceComponent(
+        return new StandardSourceComponent(
           this.tree,
           this.registry,
           this.forceIgnore,

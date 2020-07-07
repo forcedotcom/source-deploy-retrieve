@@ -17,7 +17,7 @@ import { ForceIgnore } from './forceIgnore';
 import { parseMetadataXml } from '../utils/registry';
 import { baseName } from '../utils';
 
-export class DefaultSourceComponent implements SourceComponent {
+export class StandardSourceComponent implements SourceComponent {
   public readonly name: string;
   public readonly type: MetadataType;
   public readonly parent?: SourceComponent;
@@ -53,12 +53,12 @@ export class DefaultSourceComponent implements SourceComponent {
     }
   }
 
-  public *getChildren(): IterableIterator<DefaultSourceComponent> {
+  public *getChildren(): IterableIterator<StandardSourceComponent> {
     const parentPath = dirname(this.xml);
     yield* this.getChildrenInternal(parentPath);
   }
 
-  private *getChildrenInternal(dirPath: SourcePath): IterableIterator<DefaultSourceComponent> {
+  private *getChildrenInternal(dirPath: SourcePath): IterableIterator<StandardSourceComponent> {
     for (const fsPath of this.walk(dirPath)) {
       if (this.forceIgnore.denies(fsPath)) {
         continue;
@@ -70,7 +70,7 @@ export class DefaultSourceComponent implements SourceComponent {
         if (childXml && !fileIsRootXml) {
           // TODO: Log warning if missing child type definition
           const childTypeId = this.type.children.suffixes[childXml.suffix];
-          const childComponent = new DefaultSourceComponent(
+          const childComponent = new StandardSourceComponent(
             this.tree,
             this.registry,
             this.forceIgnore,

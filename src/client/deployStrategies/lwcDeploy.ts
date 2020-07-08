@@ -32,7 +32,7 @@ export class LwcDeploy extends BaseDeploy {
   }
 
   public async buildResourceList(): Promise<LightningComponentResource[]> {
-    const sourceFiles = Array.from(this.component.walkContent());
+    const sourceFiles = this.component.walkContent();
     sourceFiles.push(this.component.xml);
     const lightningResources: LightningComponentResource[] = [];
 
@@ -120,7 +120,7 @@ export class LwcDeploy extends BaseDeploy {
 
       const errorMessage = pathParts.slice(msgStartIndex + 2).join(' ');
 
-      const file = Array.from(this.component.walkContent()).find(s => s.includes(fileName));
+      const file = this.component.walkContent().find(s => s.includes(fileName));
 
       const errObj = {
         ...(errLocation ? { lineNumber: Number(errLocation.split(',')[0]) } : {}),

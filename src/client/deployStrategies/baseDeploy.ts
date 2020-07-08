@@ -112,7 +112,7 @@ export abstract class BaseDeploy {
           componentFailures: []
         },
         isDeleted: false,
-        outboundFiles: Array.from(this.component.walkContent()),
+        outboundFiles: this.component.walkContent(),
         ErrorMsg: null,
         metadataFile: this.component.xml
       };

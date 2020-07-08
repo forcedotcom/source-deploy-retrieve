@@ -33,7 +33,7 @@ export class AuraDeploy extends BaseDeploy {
   }
 
   public async buildDefList(): Promise<AuraDefinition[]> {
-    const sourceFiles = Array.from(this.component.walkContent());
+    const sourceFiles = this.component.walkContent();
     const auraDefinitions: AuraDefinition[] = [];
 
     const existingDefinitions = await this.findAuraDefinitions();
@@ -165,7 +165,7 @@ export class AuraDeploy extends BaseDeploy {
       });
       let fileName: string;
       if (fileType) {
-        const sources = Array.from(this.component.walkContent());
+        const sources = this.component.walkContent();
         fileName = sources.find(s => s.toLowerCase().includes(fileType.toLowerCase()));
       } else {
         fileName = defaultPath;

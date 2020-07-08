@@ -97,12 +97,15 @@ export class ToolingApi extends BaseApi {
     return retrieveResult;
   }
 
-  public async deploy(options: DeployOptions): Promise<DeployResult> {
-    if (options.components.length > 1) {
+  public async deploy(
+    options: DeployOptions,
+    components: MetadataComponent[]
+  ): Promise<DeployResult> {
+    if (components.length > 1) {
       const deployError = new SourceClientError('tapi_deploy_component_limit_error');
       throw deployError;
     }
-    const mdComponent: MetadataComponent = options.components[0];
+    const mdComponent: MetadataComponent = components[0];
     const metadataType = mdComponent.type.name;
 
     if (!deployTypes.get(metadataType)) {
@@ -110,16 +113,20 @@ export class ToolingApi extends BaseApi {
     }
 
     const deployStrategy = getDeployStrategy(metadataType, this.connection);
-    const namespace = options.namespace ? options.namespace : '';
+    const namespace = options.CommonOptions.namespace ? options.CommonOptions.namespace : '';
     return deployStrategy.deploy(mdComponent, namespace);
   }
 
   public async deployWithPaths(options: DeployPathOptions): Promise<DeployResult> {
     const deployPaths = options.paths[0];
-    //@ts-ignore
-    return await this.deploy({
-      components: this.registry.getComponentsFromPath(deployPaths),
-      namespace: options.namespace
-    });
+    return await this.deploy(
+      //@ts-ignore
+      {
+        CommonOptions: {
+          namespace: options.namespace
+        }
+      },
+      this.registry.getComponentsFromPath(deployPaths)
+    );
   }
 }

@@ -52,13 +52,21 @@ export type ApiResult = {
 };
 
 export type DeployOptions = {
-  components: MetadataComponent[];
-  wait?: number;
-  namespace?: string;
-  rollbackOnError: boolean;
-  ignoreWarnings: boolean;
-  checkOnly: boolean;
-  singlePackage: boolean;
+  CommonOptions?: CommonOptions;
+  DeployDetailedOptions?: DeployDetailedOptions;
+};
+
+export type DeployDetailedOptions = {
+  allowMissingFiles?: boolean;
+  autoUpdatePackage?: boolean;
+  checkOnly?: boolean;
+  ignoreWarnings?: boolean;
+  performRetrieve?: boolean;
+  purgeOnDelete?: boolean;
+  rollbackOnError?: boolean;
+  runAllTests?: boolean;
+  runTests?: string[];
+  singlePackage?: boolean;
 };
 
 export type DeployPathOptions = CommonOptions & CommonPathOptions;
@@ -115,7 +123,7 @@ export interface DeployRetrieveClient {
    *
    * @param filePath Paths to source files to deploy
    */
-  deploy(options: DeployOptions): Promise<DeployResult>;
+  deploy(options: DeployOptions, components: MetadataComponent[]): Promise<DeployResult>;
   /* Infer metadata components from source path, deploy them, and wait for results.
    *
    * @param filePath Paths to source files to deploy
@@ -139,7 +147,7 @@ export abstract class BaseApi implements DeployRetrieveClient {
 
   abstract retrieve(options: RetrieveOptions): Promise<ApiResult>;
 
-  abstract deploy(options: DeployOptions): Promise<DeployResult>;
+  abstract deploy(options: DeployOptions, components: MetadataComponent[]): Promise<DeployResult>;
 
   abstract deployWithPaths(options: DeployPathOptions): Promise<DeployResult>;
 }

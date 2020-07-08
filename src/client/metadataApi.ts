@@ -35,12 +35,15 @@ export class MetadataApi extends BaseApi {
     throw new Error('Method not implemented.');
   }
 
-  public async deploy(options: DeployOptions): Promise<DeployResult> {
-    const metadataComponents: MetadataComponent[] = options.components;
+  public async deploy(
+    options: DeployOptions,
+    components: MetadataComponent[]
+  ): Promise<DeployResult> {
+    const metadataComponents: MetadataComponent[] = components;
     const converter = new MetadataConverter();
     const conversionCall = await converter.convert(metadataComponents, 'metadata', { type: 'zip' });
     const deployID = await this.metadataDeployID(conversionCall.zipBuffer, options);
-    const deploy = this.metadataDeployStatusPoll(deployID, options.wait);
+    const deploy = this.metadataDeployStatusPoll(deployID, options.CommonOptions.wait);
     let files: string[] = [];
     metadataComponents.forEach(file => {
       files = files.concat(file.sources);
@@ -54,17 +57,11 @@ export class MetadataApi extends BaseApi {
     const paths = options.paths[0];
     const components = this.registry.getComponentsFromPath(paths);
     //@ts-ignore
-    return this.deploy({ components, wait: options.wait });
+    return this.deploy({ CommonOptions: { wait: options.wait } }, components);
   }
 
   public async metadataDeployID(zipBuffer: Buffer, options: DeployOptions): Promise<string> {
-    // const deployOpts = {
-    //   rollbackOnError: true,
-    //   ignoreWarnings: false,
-    //   checkOnly: false,
-    //   singlePackage: true
-    // };
-    const result = await this.connection.metadata.deploy(zipBuffer, options);
+    const result = await this.connection.metadata.deploy(zipBuffer, options.DeployDetailedOptions);
     return result.id;
   }
   public async metadataDeployStatusPoll(

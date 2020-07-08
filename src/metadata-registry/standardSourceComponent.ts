@@ -35,16 +35,16 @@ export class StandardSourceComponent implements SourceComponent {
     this.parent = parent;
   }
 
-  public walkContent(): SourcePath[] | undefined {
+  public walkContent(): SourcePath[] {
+    const sources: SourcePath[] = [];
     if (this.content) {
-      const sources: SourcePath[] = [];
       for (const fsPath of this.walk(this.content)) {
         if (fsPath !== this.xml) {
           sources.push(fsPath);
         }
       }
-      return sources;
     }
+    return sources;
   }
 
   public getChildren(): SourceComponent[] {

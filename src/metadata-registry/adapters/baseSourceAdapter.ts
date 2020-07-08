@@ -20,7 +20,7 @@ import { parentName } from '../../utils/path';
 import { ForceIgnore } from '../forceIgnore';
 import { dirname, basename } from 'path';
 import { NodeFSTreeContainer } from '../treeContainers';
-import { StandardSourceComponent } from '../sourceComponent';
+import { StandardSourceComponent } from '../standardSourceComponent';
 
 export abstract class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;
@@ -59,13 +59,16 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       throw new UnexpectedForceIgnore('error_no_metadata_xml_ignore', [rootMetadata.path, path]);
     }
 
-    const component = new StandardSourceComponent(this.tree, this.registry, this.forceIgnore, {
-      fullName: this.type.inFolder
-        ? `${parentName(rootMetadata.path)}/${rootMetadata.fullName}`
-        : rootMetadata.fullName,
-      type: this.type
-    });
-    component.xml = rootMetadata.path;
+    const componentName = this.type.inFolder
+      ? `${parentName(rootMetadata.path)}/${rootMetadata.fullName}`
+      : rootMetadata.fullName;
+    const component = new StandardSourceComponent(
+      this.tree,
+      this.forceIgnore,
+      componentName,
+      this.type,
+      rootMetadata.path
+    );
 
     return this.populate(component, path);
   }

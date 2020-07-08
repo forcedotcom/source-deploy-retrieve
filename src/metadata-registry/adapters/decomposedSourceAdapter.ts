@@ -7,7 +7,7 @@
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { SourcePath, SourceComponent } from '../../types';
 import { parseMetadataXml } from '../../utils/registry';
-import { StandardSourceComponent } from '../sourceComponent';
+import { StandardSourceComponent } from '../standardSourceComponent';
 
 /**
  * Handles decomposed types. A flavor of mixed content where a component can
@@ -46,12 +46,10 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
       if (triggerIsAChild) {
         return new StandardSourceComponent(
           this.tree,
-          this.registry,
           this.forceIgnore,
-          {
-            fullName: metaXml.fullName,
-            type: this.type.children.types[childTypeId]
-          },
+          metaXml.fullName,
+          this.type.children.types[childTypeId],
+          trigger,
           component
         );
       }

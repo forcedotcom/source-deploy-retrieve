@@ -51,7 +51,7 @@ export class MetadataApi extends BaseApi {
     const deploy = this.metadataDeployStatusPoll(deployID, options);
     let files: string[] = [];
     metadataComponents.forEach(file => {
-      files = files.concat(file.sources);
+      files = files.concat(file.walkContent());
       files.push(file.xml);
     });
     (await deploy).outboundFiles = files;

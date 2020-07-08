@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { BaseSourceAdapter } from './baseSourceAdapter';
-import { dirname, basename, sep, join } from 'path';
+import { dirname, basename, sep } from 'path';
 import { ExpectedSourceFilesError } from '../../errors';
 import { baseName } from '../../utils/path';
 import { SourcePath, MetadataType, TreeContainer, SourceComponent } from '../../types';
@@ -55,28 +55,7 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
 
     component.content = contentPath;
 
-    // component.sources = [];
-    // for (const path of this.walk(contentPath)) {
-    //   if (path !== component.xml && this.forceIgnore.accepts(path)) {
-    //     component.sources.push(path);
-    //   }
-    // }
     return component;
-  }
-
-  private *walk(path: SourcePath): IterableIterator<SourcePath> {
-    if (!this.tree.isDirectory(path)) {
-      yield path;
-    } else {
-      for (const child of this.tree.readDirectory(path)) {
-        const childPath = join(path, child);
-        if (this.tree.isDirectory(childPath)) {
-          yield* this.walk(childPath);
-        } else {
-          yield childPath;
-        }
-      }
-    }
   }
 
   /**

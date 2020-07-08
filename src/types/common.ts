@@ -53,7 +53,7 @@ export interface MetadataComponent {
 }
 
 /**
- * Representation of a MetadataComponent in the file system.
+ * Representation of a MetadataComponent in a file tree.
  */
 export interface SourceComponent extends MetadataComponent {
   /**
@@ -70,11 +70,11 @@ export interface SourceComponent extends MetadataComponent {
    *
    * @returns {IterableIterator<SourcePath>} Iterator for traversing content
    */
-  walkContent(): IterableIterator<SourcePath>;
+  walkContent(): SourcePath[];
   /**
    * Traverse a component's children if it has any.
    *
    * @returns {IterableIterator<SourceComponent>} Iterator for traversing child components
    */
-  getChildren(): IterableIterator<SourceComponent>;
+  getChildren(): SourceComponent[];
 }

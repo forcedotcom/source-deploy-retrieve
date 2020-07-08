@@ -4,14 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import {
-  MetadataComponent,
-  MetadataType,
-  SourcePath,
-  TreeContainer,
-  MetadataRegistry,
-  SourceComponent
-} from '../types';
+import { MetadataType, SourcePath, TreeContainer, SourceComponent } from '../types';
 import { join, dirname } from 'path';
 import { ForceIgnore } from './forceIgnore';
 import { parseMetadataXml } from '../utils/registry';
@@ -20,50 +13,52 @@ import { baseName } from '../utils';
 export class StandardSourceComponent implements SourceComponent {
   public readonly name: string;
   public readonly type: MetadataType;
+  public readonly xml: SourcePath;
   public readonly parent?: SourceComponent;
-
-  public xml: SourcePath;
   public content?: SourcePath;
-
   private tree: TreeContainer;
-  private registry: MetadataRegistry;
   private forceIgnore: ForceIgnore;
 
   constructor(
     tree: TreeContainer,
-    registry: MetadataRegistry,
     forceIgnore: ForceIgnore,
-    component: MetadataComponent,
+    name: string,
+    type: MetadataType,
+    xml: SourcePath,
     parent?: SourceComponent
   ) {
-    // can this use expansion?
     this.tree = tree;
-    this.registry = registry;
     this.forceIgnore = forceIgnore;
-    this.name = component.fullName;
-    this.type = component.type;
+    this.name = name;
+    this.type = type;
+    this.xml = xml;
     this.parent = parent;
   }
 
-  public *walkContent(): IterableIterator<SourcePath> {
-    for (const fsPath of this.walk(this.content)) {
-      if (fsPath !== this.xml) {
-        yield* fsPath;
+  public walkContent(): SourcePath[] | undefined {
+    if (this.content) {
+      const sources: SourcePath[] = [];
+      for (const fsPath of this.walk(this.content)) {
+        if (fsPath !== this.xml) {
+          sources.push(fsPath);
+        }
       }
+      return sources;
     }
   }
 
-  public *getChildren(): IterableIterator<StandardSourceComponent> {
+  public getChildren(): SourceComponent[] {
     const parentPath = dirname(this.xml);
-    yield* this.getChildrenInternal(parentPath);
+    return this.getChildrenInternal(parentPath);
   }
 
-  private *getChildrenInternal(dirPath: SourcePath): IterableIterator<StandardSourceComponent> {
+  private getChildrenInternal(dirPath: SourcePath): SourceComponent[] {
+    const children: SourceComponent[] = [];
     for (const fsPath of this.walk(dirPath)) {
       if (this.forceIgnore.denies(fsPath)) {
         continue;
       } else if (this.tree.isDirectory(fsPath)) {
-        yield* this.getChildrenInternal(fsPath);
+        children.push(...this.getChildrenInternal(fsPath));
       } else {
         const childXml = parseMetadataXml(fsPath);
         const fileIsRootXml = childXml.suffix === this.type.suffix;
@@ -72,19 +67,17 @@ export class StandardSourceComponent implements SourceComponent {
           const childTypeId = this.type.children.suffixes[childXml.suffix];
           const childComponent = new StandardSourceComponent(
             this.tree,
-            this.registry,
             this.forceIgnore,
-            {
-              fullName: baseName(fsPath),
-              type: this.type.children.types[childTypeId]
-            },
+            baseName(fsPath),
+            this.type.children.types[childTypeId],
+            fsPath,
             this
           );
-          childComponent.xml = fsPath;
-          yield childComponent;
+          children.push(childComponent);
         }
       }
     }
+    return children;
   }
 
   private *walk(fsPath: SourcePath): IterableIterator<SourcePath> {

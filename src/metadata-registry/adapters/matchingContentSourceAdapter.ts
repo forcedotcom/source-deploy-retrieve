@@ -47,8 +47,8 @@ export class MatchingContentSourceAdapter extends BaseSourceAdapter {
     } else if (this.forceIgnore.denies(sourcePath)) {
       throw new UnexpectedForceIgnore('error_no_source_ignore', [this.type.name, sourcePath]);
     }
+
     component.content = sourcePath;
-    // component.sources = [sourcePath];
     return component;
   }
 

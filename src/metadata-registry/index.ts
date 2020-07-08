@@ -9,7 +9,7 @@ import { deepFreeze } from '../utils/registry';
 export { RegistryAccess } from './registryAccess';
 export { ManifestGenerator } from './manifestGenerator';
 export { BaseTreeContainer, NodeFSTreeContainer, VirtualTreeContainer } from './treeContainers';
-export { StandardSourceComponent } from './sourceComponent';
+export { StandardSourceComponent } from './standardSourceComponent';
 
 /**
  * Direct access to the JSON registry data. Useful for autocompletions.

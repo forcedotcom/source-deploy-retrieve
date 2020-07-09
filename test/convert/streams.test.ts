@@ -7,7 +7,7 @@
 import * as streams from '../../src/convert/streams';
 import { KATHY_COMPONENTS } from '../mock/registry/kathyConstants';
 import { expect } from 'chai';
-import * as transformers from '../../src/convert/transformers';
+import { RegistryAccess } from '../../src/metadata-registry/registryAccess';
 import { createSandbox, SinonStub } from 'sinon';
 import { WriterFormat, MetadataTransformer, MetadataComponent } from '../../src/types';
 import { Readable, Writable } from 'stream';
@@ -56,14 +56,16 @@ describe('Streams', () => {
   describe('ComponentConverter', () => {
     const component = KATHY_COMPONENTS[0];
     const transformer = new TestTransformer(component);
+    let registryMock: RegistryAccess;
 
     beforeEach(() => {
-      env.stub(transformers, 'getTransformer').returns(transformer);
+      registryMock = new RegistryAccess();
+      env.stub(registryMock, 'getTransformer').returns(transformer);
     });
 
     it('should throw error for unexpected conversion format', () => {
       // @ts-ignore constructor argument invalid
-      const converter = new streams.ComponentConverter('badformat');
+      const converter = new streams.ComponentConverter('badformat', registryMock);
       converter._transform(component, '', (err: Error) => {
         const expectedError = new LibraryError('error_convert_invalid_format', 'badformat');
         expect(err.message).to.equal(expectedError.message);
@@ -72,7 +74,7 @@ describe('Streams', () => {
     });
 
     it('should transform to metadata format', () => {
-      const converter = new streams.ComponentConverter('metadata');
+      const converter = new streams.ComponentConverter('metadata', registryMock);
 
       converter._transform(component, '', (err: Error, data: WriterFormat) => {
         expect(err).to.be.undefined;
@@ -81,7 +83,7 @@ describe('Streams', () => {
     });
 
     it('should transform to source format', () => {
-      const converter = new streams.ComponentConverter('source');
+      const converter = new streams.ComponentConverter('source', registryMock);
 
       converter._transform(component, '', (err: Error, data: WriterFormat) => {
         expect(err).to.be.undefined;

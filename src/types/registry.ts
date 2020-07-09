@@ -16,6 +16,11 @@ export type TypeIndex = { [typeId: string]: MetadataType };
  */
 export type SuffixIndex = { [suffix: string]: string };
 
+export type Strategy = {
+  adapter: string;
+  transformer: string;
+};
+
 /**
  * Describes the shape of the registry data.
  */
@@ -31,8 +36,8 @@ export type MetadataRegistry = {
   /**
    * SourceAdapter mappings for types that need an explicit definition.
    */
-  adapters: {
-    [typeId: string]: string;
+  strategies: {
+    [typeId: string]: Strategy;
   };
   /**
    * API Version

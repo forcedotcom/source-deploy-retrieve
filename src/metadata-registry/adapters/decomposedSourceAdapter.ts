@@ -45,12 +45,14 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
       const triggerIsAChild = !!childTypeId;
       if (triggerIsAChild) {
         return new StandardSourceComponent(
+          {
+            name: metaXml.fullName,
+            type: this.type.children.types[childTypeId],
+            xml: trigger,
+            parent: component
+          },
           this.tree,
-          this.forceIgnore,
-          metaXml.fullName,
-          this.type.children.types[childTypeId],
-          trigger,
-          component
+          this.forceIgnore
         );
       }
     }

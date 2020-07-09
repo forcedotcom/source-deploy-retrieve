@@ -9,30 +9,37 @@ import { join, dirname } from 'path';
 import { ForceIgnore } from './forceIgnore';
 import { parseMetadataXml } from '../utils/registry';
 import { baseName } from '../utils';
+import { NodeFSTreeContainer } from './treeContainers';
+
+type ComponentProperties = {
+  name: string;
+  type: MetadataType;
+  xml: SourcePath;
+  content?: SourcePath;
+  parent?: SourceComponent;
+};
 
 export class StandardSourceComponent implements SourceComponent {
   public readonly name: string;
   public readonly type: MetadataType;
   public readonly xml: SourcePath;
+  public readonly content?: SourcePath;
   public readonly parent?: SourceComponent;
-  public content?: SourcePath;
   private tree: TreeContainer;
   private forceIgnore: ForceIgnore;
 
   constructor(
-    tree: TreeContainer,
-    forceIgnore: ForceIgnore,
-    name: string,
-    type: MetadataType,
-    xml: SourcePath,
-    parent?: SourceComponent
+    props: ComponentProperties,
+    tree: TreeContainer = new NodeFSTreeContainer(),
+    forceIgnore = new ForceIgnore()
   ) {
+    this.name = props.name;
+    this.type = props.type;
+    this.xml = props.xml;
+    this.parent = props.parent;
+    this.content = props.content;
     this.tree = tree;
     this.forceIgnore = forceIgnore;
-    this.name = name;
-    this.type = type;
-    this.xml = xml;
-    this.parent = parent;
   }
 
   public walkContent(): SourcePath[] {
@@ -66,12 +73,14 @@ export class StandardSourceComponent implements SourceComponent {
           // TODO: Log warning if missing child type definition
           const childTypeId = this.type.children.suffixes[childXml.suffix];
           const childComponent = new StandardSourceComponent(
+            {
+              name: baseName(fsPath),
+              type: this.type.children.types[childTypeId],
+              xml: fsPath,
+              parent: this
+            },
             this.tree,
-            this.forceIgnore,
-            baseName(fsPath),
-            this.type.children.types[childTypeId],
-            fsPath,
-            this
+            this.forceIgnore
           );
           children.push(childComponent);
         }
@@ -96,6 +105,6 @@ export class StandardSourceComponent implements SourceComponent {
   }
 
   get fullName(): string {
-    return `${this.parent ? `${this.parent.fullName}.` : ''}${this.name}`;
+    return `${this.parent ? `${this.parent.fullName}.` : ''}${this.fullName}`;
   }
 }

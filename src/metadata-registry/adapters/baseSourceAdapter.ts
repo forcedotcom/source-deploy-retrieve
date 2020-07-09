@@ -63,11 +63,13 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       ? `${parentName(rootMetadata.path)}/${rootMetadata.fullName}`
       : rootMetadata.fullName;
     const component = new StandardSourceComponent(
+      {
+        name: componentName,
+        type: this.type,
+        xml: rootMetadata.path
+      },
       this.tree,
-      this.forceIgnore,
-      componentName,
-      this.type,
-      rootMetadata.path
+      this.forceIgnore
     );
 
     return this.populate(component, path);

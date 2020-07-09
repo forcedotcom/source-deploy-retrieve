@@ -50,6 +50,7 @@ export interface MetadataComponent {
    */
   fullName: string;
   type: MetadataType;
+  parent?: MetadataComponent;
 }
 
 /**
@@ -64,17 +65,18 @@ export interface SourceComponent extends MetadataComponent {
    * Path to the component's content.
    */
   content?: SourcePath;
+  parent?: SourceComponent;
   /**
    * Traverse a component's content if it is a directory, otherwise only the `content`
    * property is resolved.
    *
-   * @returns {IterableIterator<SourcePath>} Iterator for traversing content
+   * @returns {SourcePath[]}
    */
   walkContent(): SourcePath[];
   /**
    * Traverse a component's children if it has any.
    *
-   * @returns {IterableIterator<SourceComponent>} Iterator for traversing child components
+   * @returns {SourceComponent[]}
    */
   getChildren(): SourceComponent[];
 }

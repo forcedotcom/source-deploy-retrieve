@@ -51,12 +51,10 @@ export type ApiResult = {
   message?: string;
 };
 
-export type DeployOptions = {
-  CommonOptions?: CommonOptions;
-  DeployDetailedOptions?: DeployDetailedOptions;
-};
+type WaitFlag = { wait?: number };
+type NamespaceFlag = { namespace?: string };
 
-export type DeployDetailedOptions = {
+export type MetadataApiDeployOptions = {
   allowMissingFiles?: boolean;
   autoUpdatePackage?: boolean;
   checkOnly?: boolean;
@@ -68,6 +66,12 @@ export type DeployDetailedOptions = {
   runTests?: string[];
   singlePackage?: boolean;
 };
+
+export type MetadataDeployOptions = WaitFlag & {
+  apiOptions?: MetadataApiDeployOptions;
+};
+
+export type ToolingDeployOptions = NamespaceFlag;
 
 export type DeployPathOptions = CommonOptions & CommonPathOptions;
 
@@ -119,16 +123,18 @@ export interface DeployRetrieveClient {
    * @param options Specify `paths`, `output` and other optionals
    */
   retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult>;
-  /* Deploy metadata components and wait for result.
+  /**
+   * Deploy metadata components and wait for result.
    *
    * @param filePath Paths to source files to deploy
    */
-  deploy(options: DeployOptions, components: MetadataComponent[]): Promise<DeployResult>;
-  /* Infer metadata components from source path, deploy them, and wait for results.
+  deploy(components: MetadataComponent | MetadataComponent[]): Promise<DeployResult>;
+  /**
+   * Infer metadata components from source path, deploy them, and wait for results.
    *
    * @param filePath Paths to source files to deploy
    */
-  deployWithPaths(options: DeployPathOptions): Promise<DeployResult>;
+  deployWithPaths(paths: SourcePath | SourcePath[]): Promise<DeployResult>;
 }
 
 export abstract class BaseApi implements DeployRetrieveClient {
@@ -147,7 +153,7 @@ export abstract class BaseApi implements DeployRetrieveClient {
 
   abstract retrieve(options: RetrieveOptions): Promise<ApiResult>;
 
-  abstract deploy(options: DeployOptions, components: MetadataComponent[]): Promise<DeployResult>;
+  abstract deploy(components: MetadataComponent | MetadataComponent[]): Promise<DeployResult>;
 
-  abstract deployWithPaths(options: DeployPathOptions): Promise<DeployResult>;
+  abstract deployWithPaths(paths: SourcePath | SourcePath[]): Promise<DeployResult>;
 }

@@ -6,18 +6,18 @@
  */
 
 import {
-  DeployOptions,
   DeployResult,
   BaseApi,
   RetrieveOptions,
   RetrievePathOptions,
   ApiResult,
-  DeployPathOptions,
-  MetadataComponent
+  MetadataComponent,
+  SourcePath
 } from '../types';
 import { nls } from '../i18n';
 import { MetadataConverter } from '../convert';
 import { DeployError } from '../errors';
+import { MetadataDeployOptions, MetadataApiDeployOptions } from '../types/client';
 
 export const enum DeployStatusEnum {
   Succeeded = 'Succeeded',
@@ -36,14 +36,14 @@ export class MetadataApi extends BaseApi {
   }
 
   public async deploy(
-    options: DeployOptions,
-    components: MetadataComponent[]
+    components: MetadataComponent | MetadataComponent[],
+    options?: MetadataDeployOptions
   ): Promise<DeployResult> {
-    const metadataComponents: MetadataComponent[] = components;
+    const metadataComponents = Array.isArray(components) ? components : [components];
     const converter = new MetadataConverter();
     const conversionCall = await converter.convert(metadataComponents, 'metadata', { type: 'zip' });
-    const deployID = await this.metadataDeployID(conversionCall.zipBuffer, options);
-    const deploy = this.metadataDeployStatusPoll(deployID, options.CommonOptions.wait);
+    const deployID = await this.metadataDeployID(conversionCall.zipBuffer, options.apiOptions);
+    const deploy = this.metadataDeployStatusPoll(deployID, options.wait);
     let files: string[] = [];
     metadataComponents.forEach(file => {
       files = files.concat(file.sources);
@@ -53,15 +53,19 @@ export class MetadataApi extends BaseApi {
     return deploy;
   }
 
-  public async deployWithPaths(options: DeployPathOptions): Promise<DeployResult> {
-    const paths = options.paths[0];
+  public async deployWithPaths(
+    paths: SourcePath,
+    options?: MetadataDeployOptions
+  ): Promise<DeployResult> {
     const components = this.registry.getComponentsFromPath(paths);
-    //@ts-ignore
-    return this.deploy({ CommonOptions: { wait: options.wait } }, components);
+    return this.deploy(components, options);
   }
 
-  public async metadataDeployID(zipBuffer: Buffer, options: DeployOptions): Promise<string> {
-    const result = await this.connection.metadata.deploy(zipBuffer, options.DeployDetailedOptions);
+  public async metadataDeployID(
+    zipBuffer: Buffer,
+    options?: MetadataApiDeployOptions
+  ): Promise<string> {
+    const result = await this.connection.metadata.deploy(zipBuffer, options);
     return result.id;
   }
   public async metadataDeployStatusPoll(

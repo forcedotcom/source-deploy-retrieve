@@ -30,9 +30,7 @@ describe('Metadata Api', () => {
     }
   ];
   const testingBuffer = Buffer.from('testingBuffer');
-  const delpoyOptions = {
-    paths: [path.join('file', 'path', 'myTestClass.cls')]
-  };
+  const deployPath = path.join('file', 'path', 'myTestClass.cls');
   let deployMetadata: MetadataApi;
   let registryStub = sandboxStub.stub();
   let conversionCallStub = sandboxStub.stub();
@@ -66,7 +64,9 @@ describe('Metadata Api', () => {
     const deployPollStub = sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves({
       status: 'Succeeded'
     });
-    const deploys = await deployMetadata.deployWithPaths(delpoyOptions);
+    const deploys = await deployMetadata.deployWithPaths(
+      path.join('file', 'path', 'myTestClass.cls')
+    );
     expect(registryStub.calledImmediatelyBefore(conversionCallStub)).to.be.true;
     expect(conversionCallStub.calledImmediatelyBefore(deployIdStub)).to.be.true;
     expect(deployIdStub.calledImmediatelyBefore(deployPollStub)).to.be.true;
@@ -84,7 +84,7 @@ describe('Metadata Api', () => {
         .resolves({
           status: 'Succeeded'
         });
-      const deploys = await deployMetadata.deployWithPaths(delpoyOptions);
+      const deploys = await deployMetadata.deployWithPaths(deployPath);
       expect(deploys).to.deep.equal({
         outboundFiles: ['myTestClass.cls', 'myTestClass.cls-meta.xml'],
         status: 'Succeeded'
@@ -100,7 +100,7 @@ describe('Metadata Api', () => {
           errorMessage
         });
       try {
-        await deployMetadata.deployWithPaths(delpoyOptions);
+        await deployMetadata.deployWithPaths(deployPath);
         fail('request should have failed');
       } catch (err) {
         expect(err.message).contains(nls.localize('md_request_fail', errorMessage));
@@ -115,7 +115,7 @@ describe('Metadata Api', () => {
       // @ts-ignore
       deployPollStub.resolves({ status: 'Pending' });
       try {
-        await deployMetadata.deployWithPaths(delpoyOptions);
+        await deployMetadata.deployWithPaths(deployPath);
         fail('request should have timed out');
       } catch (err) {
         expect(err.message).contains(nls.localize('md_request_timeout'));

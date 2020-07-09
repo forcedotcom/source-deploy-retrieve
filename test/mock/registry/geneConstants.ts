@@ -7,6 +7,7 @@
 import { mockRegistry } from '.';
 import { join } from 'path';
 import { SourceComponent } from '../../../src/types';
+import { StandardSourceComponent } from '../../../src/metadata-registry';
 
 // Constants for a type that uses the BaseSourceAdapter
 const type = mockRegistry.types.genewilder;
@@ -14,9 +15,8 @@ const type = mockRegistry.types.genewilder;
 export const GENE_DIR = join('path', 'to', 'genes');
 export const GENE_XML_NAME = 'a.gene-meta.xml';
 export const GENE_XML_PATH = join(GENE_DIR, GENE_XML_NAME);
-export const GENE_COMPONENT: SourceComponent = {
-  fullName: 'a',
+export const GENE_COMPONENT: SourceComponent = new StandardSourceComponent({
+  name: 'a',
   type,
-  xml: GENE_XML_PATH,
-  sources: []
-};
+  xml: GENE_XML_PATH
+});

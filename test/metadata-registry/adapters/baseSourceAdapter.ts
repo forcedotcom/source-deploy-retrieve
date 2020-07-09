@@ -13,6 +13,7 @@ import { SourcePath, SourceComponent } from '../../../src/types';
 import { RegistryError, UnexpectedForceIgnore } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { RegistryTestUtil } from '../registryTestUtil';
+import { StandardSourceComponent } from '../../../src/metadata-registry';
 
 class TestChildAdapter extends BaseSourceAdapter {
   public static readonly xmlPath = join('path', 'to', 'dwaynes', 'a.dwayne-meta.xml');
@@ -20,7 +21,7 @@ class TestChildAdapter extends BaseSourceAdapter {
     return TestChildAdapter.xmlPath;
   }
   protected populate(component: SourceComponent, trigger: SourcePath): SourceComponent {
-    component.sources = [trigger];
+    component.content = trigger;
     return component;
   }
 }
@@ -30,35 +31,41 @@ describe('BaseSourceAdapter', () => {
     const path = join('path', 'to', 'kathys', 'A_Folder', 'My_Test.kathy-meta.xml');
     const type = mockRegistry.types.kathybates;
     const adapter = new DefaultSourceAdapter(type, mockRegistry);
-    expect(adapter.getComponent(path)).to.deep.equal({
-      fullName: 'A_Folder/My_Test',
-      type,
-      xml: path
-    });
+    expect(adapter.getComponent(path)).to.deep.equal(
+      new StandardSourceComponent({
+        name: 'A_Folder/My_Test',
+        type,
+        xml: path
+      })
+    );
   });
 
   it('Should defer parsing metadata xml to child adapter if path is not a metadata xml', () => {
     const path = join('path', 'to', 'dwaynes', 'My_Test.js');
     const type = mockRegistry.types.dwaynejohnson;
     const adapter = new TestChildAdapter(type, mockRegistry);
-    expect(adapter.getComponent(path)).to.deep.equal({
-      fullName: 'a',
-      type,
-      xml: TestChildAdapter.xmlPath,
-      sources: [path]
-    });
+    expect(adapter.getComponent(path)).to.deep.equal(
+      new StandardSourceComponent({
+        name: 'a',
+        type,
+        xml: TestChildAdapter.xmlPath,
+        content: path
+      })
+    );
   });
 
   it('Should defer parsing metadata xml to child adapter if path is not a root metadata xml', () => {
     const path = join('path', 'to', 'dwaynes', 'smallDwaynes', 'b.small-meta.xml');
     const type = mockRegistry.types.dwaynejohnson;
     const adapter = new TestChildAdapter(type, mockRegistry);
-    expect(adapter.getComponent(path)).to.deep.equal({
-      fullName: 'a',
-      type,
-      xml: TestChildAdapter.xmlPath,
-      sources: [path]
-    });
+    expect(adapter.getComponent(path)).to.deep.equal(
+      new StandardSourceComponent({
+        name: 'a',
+        type,
+        xml: TestChildAdapter.xmlPath,
+        content: path
+      })
+    );
   });
 
   it('Should throw an error if no valid root metadata xml found', () => {

@@ -22,14 +22,19 @@ describe('Metadata Api', () => {
   let sandboxStub = createSandbox();
   const testData = new MockTestOrgData();
   const registryAccess = new RegistryAccess();
-  const components: MetadataComponent[] = [
+  const rootPath = path.join('file', 'path');
+  const props = {
+    name: 'myTestClass',
+    type: registryData.types.apexclass,
+    xml: path.join(rootPath, 'myTestClass.cls-meta.xml'),
+    content: path.join(rootPath, 'myTestClass.cls')
+  };
+  const component = StandardSourceComponent.createVirtualComponent(props, [
     {
-      fullName: 'myTestClass',
-      type: registryData.types.apexclass,
-      xml: 'myTestClass.cls-meta.xml',
-      sources: ['myTestClass.cls']
+      dirPath: rootPath,
+      children: [path.basename(props.xml), path.basename(props.content)]
     }
-  ];
+  ]);
   const testingBuffer = Buffer.from('testingBuffer');
   const deployPath = path.join('file', 'path', 'myTestClass.cls');
   let deployMetadata: MetadataApi;
@@ -44,10 +49,10 @@ describe('Metadata Api', () => {
       })
     });
     deployMetadata = new MetadataApi(mockConnection, registryAccess);
-    registryStub = sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(components);
+    registryStub = sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns([component]);
     conversionCallStub = sandboxStub
       .stub(MetadataConverter.prototype, 'convert')
-      .withArgs(components, 'metadata', { type: 'zip' })
+      .withArgs([component], 'metadata', { type: 'zip' })
       .resolves({
         zipBuffer: testingBuffer
       });
@@ -80,7 +85,7 @@ describe('Metadata Api', () => {
     expect(conversionCallStub.calledImmediatelyBefore(deployIdStub)).to.be.true;
     expect(deployIdStub.calledImmediatelyBefore(deployPollStub)).to.be.true;
     expect(deploys).to.deep.equal({
-      outboundFiles: ['myTestClass.cls', 'myTestClass.cls-meta.xml'],
+      outboundFiles: [component.content, component.xml],
       status: 'Succeeded'
     });
   });
@@ -168,7 +173,7 @@ describe('Metadata Api', () => {
         });
       const deploys = await deployMetadata.deployWithPaths(deployPath);
       expect(deploys).to.deep.equal({
-        outboundFiles: ['myTestClass.cls', 'myTestClass.cls-meta.xml'],
+        outboundFiles: [component.content, component.xml],
         status: 'Succeeded'
       });
     });

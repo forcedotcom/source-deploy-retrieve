@@ -85,7 +85,7 @@ export function queryToFileMap(
   // If output is defined it overrides where the component will be stored
   const mdSourcePath = overrideOutputPath
     ? trimMetaXmlSuffix(overrideOutputPath)
-    : mdComponent.content;
+    : mdComponent.walkContent()[0];
   const saveFilesMap = new Map();
   switch (typeName) {
     case 'ApexClass':
@@ -105,7 +105,7 @@ export function queryToFileMap(
       const auraRecord = queryResult.records as AuraRecord[];
       apiVersion = auraRecord[0].AuraDefinitionBundle.ApiVersion;
       auraRecord.forEach(item => {
-        const cmpName = getAuraSourceName(mdSourcePath, mdComponent.fullName, item.DefType);
+        const cmpName = getAuraSourceName(mdSourcePath, mdComponent.name, item.DefType);
         saveFilesMap.set(cmpName, item.Source);
       });
       break;

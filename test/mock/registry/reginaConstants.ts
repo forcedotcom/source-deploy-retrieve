@@ -8,6 +8,7 @@ import { join } from 'path';
 import { SourceComponent } from '../../../src/types';
 import { mockRegistry } from '.';
 import { baseName } from '../../../src/utils';
+import { StandardSourceComponent } from '../../../src/metadata-registry';
 
 // Constants for a decomposed type
 const type = mockRegistry.types.reginaking;
@@ -21,20 +22,8 @@ export const REGINA_CHILD_DIR = 'xs';
 export const REGINA_CHILD_DIR_PATH = join(REGINA_PATH, REGINA_CHILD_DIR);
 export const REGINA_CHILD_XML_NAME_2 = 'w.x-meta.xml';
 export const REGINA_CHILD_XML_PATH_2 = join(REGINA_CHILD_DIR_PATH, REGINA_CHILD_XML_NAME_2);
-export const REGINA_COMPONENT: SourceComponent = {
-  fullName: baseName(REGINA_XML_PATH),
+export const REGINA_COMPONENT: SourceComponent = new StandardSourceComponent({
+  name: baseName(REGINA_XML_PATH),
   type,
-  xml: REGINA_XML_PATH,
-  children: [
-    {
-      fullName: baseName(REGINA_CHILD_XML_NAME_1),
-      type: type.children.types.y,
-      xml: REGINA_CHILD_XML_PATH_1
-    },
-    {
-      fullName: baseName(REGINA_CHILD_XML_NAME_2),
-      type: type.children.types.x,
-      xml: REGINA_CHILD_XML_PATH_2
-    }
-  ]
-};
+  xml: REGINA_XML_PATH
+});

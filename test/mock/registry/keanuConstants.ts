@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { SourceComponent } from '../../../src/types';
 import { mockRegistry } from '.';
+import { StandardSourceComponent } from '../../../src/metadata-registry';
 
 // Constants for a matching content file type
 const type = mockRegistry.types.keanureeves;
@@ -16,9 +16,9 @@ export const KEANU_XML_NAMES = ['a.keanu-meta.xml', 'b.keanu-meta.xml'];
 export const KEANU_SOURCE_NAMES = ['a.keanu', 'b.keanu'];
 export const KEANU_XML_PATHS = KEANU_XML_NAMES.map(n => join(KEANUS_DIR, n));
 export const KEANU_SOURCE_PATHS = KEANU_SOURCE_NAMES.map(n => join(KEANUS_DIR, n));
-export const KEANU_COMPONENT: SourceComponent = {
-  fullName: 'a',
+export const KEANU_COMPONENT = new StandardSourceComponent({
+  name: 'a',
   type,
   xml: KEANU_XML_PATHS[0],
-  sources: [KEANU_SOURCE_PATHS[0]]
-};
+  content: KEANU_SOURCE_PATHS[0]
+});

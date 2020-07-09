@@ -9,7 +9,7 @@ import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import { createSandbox, SinonSandbox } from 'sinon';
-import { RegistryAccess } from '../../src/metadata-registry';
+import { RegistryAccess, registryData, StandardSourceComponent } from '../../src/metadata-registry';
 import { ToolingApi } from '../../src/client';
 import { ContainerDeploy } from '../../src/client/deployStrategies';
 import { DeployStatusEnum, DeployResult } from '../../src/types';
@@ -46,17 +46,12 @@ describe('Tooling API tests', () => {
   it('should go ahead with deploy for supported types', async () => {
     const deployLibrary = new ToolingApi(mockConnection, registryAccess);
     sandboxStub.stub(RegistryAccess.prototype, 'getComponentsFromPath').returns([
-      {
-        type: {
-          id: 'apexclass',
-          name: 'ApexClass',
-          directoryName: '',
-          inFolder: false
-        },
-        fullName: 'myTestClass',
+      new StandardSourceComponent({
+        type: registryData.types.apexclass,
+        name: 'myTestClass',
         xml: 'myTestClass.cls-meta.xml',
-        sources: ['file/path/myTestClass.cls']
-      }
+        content: 'file/path/myTestClass.cls'
+      })
     ]);
     sandboxStub.stub(ContainerDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const mockContainerDeploy = sandboxStub.stub(ContainerDeploy.prototype, 'deploy').resolves({
@@ -71,17 +66,11 @@ describe('Tooling API tests', () => {
 
   it('should exit deploy for unsupported types', async () => {
     sandboxStub.stub(RegistryAccess.prototype, 'getComponentsFromPath').returns([
-      {
-        type: {
-          id: 'flexipage',
-          name: 'FlexiPage',
-          directoryName: '',
-          inFolder: false
-        },
-        fullName: '',
-        xml: '',
-        sources: []
-      }
+      new StandardSourceComponent({
+        type: registryData.types.flexipage,
+        name: '',
+        xml: ''
+      })
     ]);
     const deployLibrary = new ToolingApi(mockConnection, registryAccess);
 

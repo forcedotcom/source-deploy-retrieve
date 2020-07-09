@@ -4,12 +4,18 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { MetadataType, SourcePath, TreeContainer, SourceComponent } from '../types';
+import {
+  MetadataType,
+  SourcePath,
+  TreeContainer,
+  SourceComponent,
+  VirtualDirectory
+} from '../types';
 import { join, dirname } from 'path';
 import { ForceIgnore } from './forceIgnore';
 import { parseMetadataXml } from '../utils/registry';
 import { baseName } from '../utils';
-import { NodeFSTreeContainer } from './treeContainers';
+import { NodeFSTreeContainer, VirtualTreeContainer } from './treeContainers';
 
 type ComponentProperties = {
   name: string;
@@ -25,7 +31,7 @@ export class StandardSourceComponent implements SourceComponent {
   public readonly xml: SourcePath;
   public readonly content?: SourcePath;
   public readonly parent?: SourceComponent;
-  private tree: TreeContainer;
+  private _tree: TreeContainer;
   private forceIgnore: ForceIgnore;
 
   constructor(
@@ -38,8 +44,16 @@ export class StandardSourceComponent implements SourceComponent {
     this.xml = props.xml;
     this.parent = props.parent;
     this.content = props.content;
-    this.tree = tree;
+    this._tree = tree;
     this.forceIgnore = forceIgnore;
+  }
+
+  public static createVirtualComponent(
+    props: ComponentProperties,
+    fs: VirtualDirectory[]
+  ): StandardSourceComponent {
+    const tree = new VirtualTreeContainer(fs);
+    return new StandardSourceComponent(props, tree);
   }
 
   public walkContent(): SourcePath[] {
@@ -64,7 +78,7 @@ export class StandardSourceComponent implements SourceComponent {
     for (const fsPath of this.walk(dirPath)) {
       if (this.forceIgnore.denies(fsPath)) {
         continue;
-      } else if (this.tree.isDirectory(fsPath)) {
+      } else if (this._tree.isDirectory(fsPath)) {
         children.push(...this.getChildrenInternal(fsPath));
       } else {
         const childXml = parseMetadataXml(fsPath);
@@ -79,7 +93,7 @@ export class StandardSourceComponent implements SourceComponent {
               xml: fsPath,
               parent: this
             },
-            this.tree,
+            this._tree,
             this.forceIgnore
           );
           children.push(childComponent);
@@ -90,12 +104,12 @@ export class StandardSourceComponent implements SourceComponent {
   }
 
   private *walk(fsPath: SourcePath): IterableIterator<SourcePath> {
-    if (!this.tree.isDirectory(fsPath)) {
+    if (!this._tree.isDirectory(fsPath)) {
       yield fsPath;
     } else {
-      for (const child of this.tree.readDirectory(fsPath)) {
+      for (const child of this._tree.readDirectory(fsPath)) {
         const childPath = join(fsPath, child);
-        if (this.tree.isDirectory(childPath)) {
+        if (this._tree.isDirectory(childPath)) {
           yield* this.walk(childPath);
         } else {
           yield childPath;
@@ -105,6 +119,6 @@ export class StandardSourceComponent implements SourceComponent {
   }
 
   get fullName(): string {
-    return `${this.parent ? `${this.parent.fullName}.` : ''}${this.fullName}`;
+    return `${this.parent ? `${this.parent.fullName}.` : ''}${this.name}`;
   }
 }

@@ -7,6 +7,7 @@
 import { join } from 'path';
 import { mockRegistry } from '.';
 import { SourceComponent } from '../../../src/types';
+import { StandardSourceComponent } from '../../../src/metadata-registry';
 
 // Mixed content type in folders
 const type = mockRegistry.types.tinafey;
@@ -18,23 +19,22 @@ export const TINA_XML_NAMES = ['a.tina-meta.xml', 'b.tina-meta.xml'];
 export const TINA_XML_PATHS = TINA_XML_NAMES.map(n => join(TINA_FOLDER, n));
 export const TINA_SOURCE_NAMES = ['a.x', 'b.y'];
 export const TINA_SOURCE_PATHS = TINA_SOURCE_NAMES.map(n => join(TINA_FOLDER, n));
-export const TINA_FOLDER_COMPONENT: SourceComponent = {
-  fullName: 'A_Folder',
+export const TINA_FOLDER_COMPONENT: SourceComponent = new StandardSourceComponent({
+  name: 'A_Folder',
   type: mockRegistry.types.tinafeyfolder,
-  xml: TINA_FOLDER_XML,
-  sources: []
-};
+  xml: TINA_FOLDER_XML
+});
 export const TINA_COMPONENTS = [
-  {
-    fullName: 'A_Folder/a',
+  new StandardSourceComponent({
+    name: 'A_Folder/a',
     type,
     xml: TINA_XML_PATHS[0],
-    sources: [TINA_SOURCE_PATHS[0]]
-  },
-  {
-    fullName: 'A_Folder/a',
+    content: TINA_SOURCE_PATHS[0]
+  }),
+  new StandardSourceComponent({
+    name: 'A_Folder/b',
     type,
     xml: TINA_XML_PATHS[1],
-    sources: [TINA_SOURCE_PATHS[1]]
-  }
+    content: TINA_SOURCE_PATHS[1]
+  })
 ];

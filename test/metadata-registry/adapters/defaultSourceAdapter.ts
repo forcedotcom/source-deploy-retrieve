@@ -8,16 +8,19 @@ import { join } from 'path';
 import { mockRegistry } from '../../mock/registry';
 import { DefaultSourceAdapter } from '../../../src/metadata-registry/adapters/defaultSourceAdapter';
 import { expect } from 'chai';
+import { StandardSourceComponent } from '../../../src/metadata-registry';
 
 describe('DefaultSourceAdapter', () => {
   it('should return a SourceComponent when given a metadata xml file', () => {
     const path = join('path', 'to', 'keanus', 'My_Test.keanu-meta.xml');
     const type = mockRegistry.types.keanureeves;
     const adapter = new DefaultSourceAdapter(type, mockRegistry);
-    expect(adapter.getComponent(path)).to.deep.equal({
-      fullName: 'My_Test',
-      type,
-      xml: path
-    });
+    expect(adapter.getComponent(path)).to.deep.equal(
+      new StandardSourceComponent({
+        name: 'My_Test',
+        type,
+        xml: path
+      })
+    );
   });
 });

@@ -9,13 +9,18 @@ import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import * as fs from 'fs';
-import { join } from 'path';
+import { join, basename } from 'path';
 import { RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { nls } from '../../../src/i18n';
 import { DeployStatusEnum, DeployResult } from '../../../src/types';
 import { LwcDeploy } from '../../../src/client/deployStrategies';
 import { LightningComponentResource, ToolingCreateResult } from '../../../src/utils/deploy';
+import {
+  StandardSourceComponent,
+  registryData,
+  VirtualTreeContainer
+} from '../../../src/metadata-registry';
 
 const $$ = testSetup();
 
@@ -33,27 +38,32 @@ describe('LWC Deploy Strategy', () => {
   simpleMetaXMLString += '    <status>Active</status>';
   simpleMetaXMLString += '</ApexClass>';
 
+  const bundlePath = join('file', 'path', 'lwc', 'mockLwcCmp');
   const lwcFiles = [
-    join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js'),
-    join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.html'),
-    join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js-meta.xml')
+    join(bundlePath, 'mockLwcCmp.js'),
+    join(bundlePath, 'mockLwcCmp.html'),
+    join(bundlePath, 'mockLwcCmp.js-meta.xml')
   ];
   const lwcContents = [
     `import { LightningElement } from 'lwc';export default class TestLwc extends LightningElement {}`,
     `<template></template>`,
     simpleMetaXMLString
   ];
-  const lwcComponent = {
-    type: {
-      id: 'lightningcomponentbundle',
-      name: 'LightningComponentBundle',
-      directoryName: 'lwc',
-      inFolder: false
+  const tree = new VirtualTreeContainer([
+    {
+      dirPath: bundlePath,
+      children: lwcFiles.map(f => basename(f))
+    }
+  ]);
+  const lwcComponent = new StandardSourceComponent(
+    {
+      type: registryData.types.lightningcomponentbundle,
+      name: 'mockLwcCmp',
+      content: bundlePath,
+      xml: join(bundlePath, 'mockLwcCmp.js-meta.xml')
     },
-    fullName: 'mockLwcCmp',
-    sources: lwcFiles,
-    xml: join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js-meta.xml')
-  };
+    tree
+  );
   const testLwcList = [
     {
       FilePath: lwcFiles[0],
@@ -79,7 +89,7 @@ describe('LWC Deploy Strategy', () => {
       changed: false,
       created: true,
       deleted: false,
-      fileName: join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js'),
+      fileName: join(bundlePath, 'mockLwcCmp.js'),
       fullName: 'mockLwcCmp/mockLwcCmp.js',
       success: true,
       componentType: 'LightningComponentBundle'
@@ -88,7 +98,7 @@ describe('LWC Deploy Strategy', () => {
       changed: false,
       created: true,
       deleted: false,
-      fileName: join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.html'),
+      fileName: join(bundlePath, 'mockLwcCmp.html'),
       fullName: 'mockLwcCmp/mockLwcCmp.html',
       success: true,
       componentType: 'LightningComponentBundle'
@@ -97,7 +107,7 @@ describe('LWC Deploy Strategy', () => {
       changed: false,
       created: true,
       deleted: false,
-      fileName: join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js-meta.xml'),
+      fileName: join(bundlePath, 'mockLwcCmp.js-meta.xml'),
       fullName: 'mockLwcCmp/mockLwcCmp.js-meta.xml',
       success: true,
       componentType: 'LightningComponentBundle'
@@ -118,9 +128,7 @@ describe('LWC Deploy Strategy', () => {
     const mockFS = sandboxStub.stub(fs, 'readFileSync');
     mockFS.withArgs(lwcFiles[0], 'utf8').returns(lwcContents[0]);
     mockFS.withArgs(lwcFiles[1], 'utf8').returns(lwcContents[1]);
-    mockFS
-      .withArgs(join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js-meta.xml'))
-      .returns(simpleMetaXMLString);
+    mockFS.withArgs(join(bundlePath, 'mockLwcCmp.js-meta.xml')).returns(simpleMetaXMLString);
   });
 
   afterEach(() => {

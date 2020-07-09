@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { SourceComponent } from '../types';
+import { SourceComponent, MetadataComponent } from '../types';
 import { RegistryAccess } from './registryAccess';
 import { createFiles } from '../utils';
 import { RegistryError } from '../errors';
@@ -31,7 +31,7 @@ export class ManifestGenerator {
   }
 
   public createManifest(
-    components: SourceComponent[],
+    components: MetadataComponent[],
     apiVersion = this.registryAccess.getApiVersion()
   ): string {
     let output = this.xmlDef.concat(this.packageModuleStart);
@@ -48,7 +48,7 @@ export class ManifestGenerator {
     return output;
   }
 
-  private createMetadataMap(components: SourceComponent[]): Map<string, Set<string>> {
+  private createMetadataMap(components: MetadataComponent[]): Map<string, Set<string>> {
     const metadataMap: Map<string, Set<string>> = new Map<string, Set<string>>();
     for (const component of components) {
       const metadataType = this.registryAccess.getTypeFromName(component.type.name).name;

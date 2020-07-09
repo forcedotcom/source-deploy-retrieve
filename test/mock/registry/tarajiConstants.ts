@@ -7,6 +7,7 @@
 import { join } from 'path';
 import { SourceComponent } from '../../../src/types';
 import { mockRegistry } from '.';
+import { StandardSourceComponent } from '../../../src/metadata-registry';
 
 // Mixed content with directory as content
 const type = mockRegistry.types.tarajihenson;
@@ -20,9 +21,9 @@ export const TARAJI_SOURCE_PATHS = [
   join(TARAJI_CONTENT_PATH, 'b', 'test.g'),
   join(TARAJI_CONTENT_PATH, 'b', 'test2.w')
 ];
-export const TARAJI_COMPONENT: SourceComponent = {
-  fullName: 'a',
+export const TARAJI_COMPONENT: SourceComponent = new StandardSourceComponent({
+  name: 'a',
   type,
   xml: TARAJI_XML_PATHS[0],
-  sources: TARAJI_SOURCE_PATHS
-};
+  content: TARAJI_CONTENT_PATH
+});

@@ -17,11 +17,10 @@ import {
 import { expect, assert } from 'chai';
 import { MixedContentSourceAdapter } from '../../../src/metadata-registry/adapters/mixedContentSourceAdapter';
 import { ExpectedSourceFilesError } from '../../../src/errors';
-import { RegistryTestUtil } from '../registryTestUtil';
-import { SourceComponent } from '../../../src/types';
 import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
 import { TARAJI_XML_NAMES } from '../../mock/registry/tarajiConstants';
 import { basename, dirname } from 'path';
+import { StandardSourceComponent } from '../../../src/metadata-registry';
 
 describe('MixedContentSourceAdapter', () => {
   it('Should throw ExpectedSourceFilesError if content does not exist', () => {
@@ -45,12 +44,15 @@ describe('MixedContentSourceAdapter', () => {
       }
     ]);
     const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
-    const expectedComponent = {
-      fullName: 'a',
-      type,
-      xml: DWAYNE_XML,
-      sources: [DWAYNE_SOURCE]
-    };
+    const expectedComponent = new StandardSourceComponent(
+      {
+        name: 'a',
+        type,
+        xml: DWAYNE_XML,
+        content: DWAYNE_SOURCE
+      },
+      tree
+    );
 
     it('Should return expected SourceComponent when given a root metadata xml path', () => {
       expect(adapter.getComponent(DWAYNE_XML)).to.deep.equal(expectedComponent);
@@ -78,31 +80,34 @@ describe('MixedContentSourceAdapter', () => {
         children: [basename(TARAJI_SOURCE_PATHS[1]), basename(TARAJI_SOURCE_PATHS[2])]
       }
     ]);
-    let adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
+    const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
+    const expectedComponent = new StandardSourceComponent(TARAJI_COMPONENT, tree);
 
     it('Should return expected SourceComponent when given a root metadata xml path', () => {
-      expect(adapter.getComponent(TARAJI_XML_PATHS[0])).to.deep.equal(TARAJI_COMPONENT);
+      expect(adapter.getComponent(TARAJI_XML_PATHS[0])).to.deep.equal(expectedComponent);
     });
 
     it('Should return expected SourceComponent when given a source path', () => {
       const randomSource =
         TARAJI_SOURCE_PATHS[Math.floor(Math.random() * Math.floor(TARAJI_SOURCE_PATHS.length))];
-      expect(adapter.getComponent(randomSource)).to.deep.equal(TARAJI_COMPONENT);
+      expect(adapter.getComponent(randomSource)).to.deep.equal(expectedComponent);
     });
 
-    it('Should not include source paths that are forceignored', () => {
-      const testUtil = new RegistryTestUtil();
-      const path = TARAJI_SOURCE_PATHS[0];
-      const forceIgnore = testUtil.stubForceIgnore({
-        seed: path,
-        accept: [TARAJI_SOURCE_PATHS[1]],
-        deny: [TARAJI_SOURCE_PATHS[0], TARAJI_SOURCE_PATHS[2]]
-      });
-      adapter = new MixedContentSourceAdapter(type, mockRegistry, forceIgnore, tree);
-      const filteredComponent: SourceComponent = JSON.parse(JSON.stringify(TARAJI_COMPONENT));
-      filteredComponent.sources = [TARAJI_SOURCE_PATHS[1]];
-      expect(adapter.getComponent(path)).to.deep.equal(filteredComponent);
-      testUtil.restore();
-    });
+    // TODO: Move to StandardSourceComponent tests
+    // it('Should not include source paths that are forceignored', () => {
+    //   const testUtil = new RegistryTestUtil();
+    //   const path = TARAJI_SOURCE_PATHS[0];
+    //   const forceIgnore = testUtil.stubForceIgnore({
+    //     seed: path,
+    //     accept: [TARAJI_SOURCE_PATHS[1]],
+    //     deny: [TARAJI_SOURCE_PATHS[0], TARAJI_SOURCE_PATHS[2]]
+    //   });
+    //   const adapter = new MixedContentSourceAdapter(type, mockRegistry, forceIgnore, tree);
+    //   const expectedComponent = new StandardSourceComponent()
+    //   const filteredComponent: SourceComponent = JSON.parse(JSON.stringify(TARAJI_COMPONENT));
+    //   filteredComponent.sources = [TARAJI_SOURCE_PATHS[1]];
+    //   expect(adapter.getComponent(path)).to.deep.equal(filteredComponent);
+    //   testUtil.restore();
+    // });
   });
 });

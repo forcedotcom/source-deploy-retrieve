@@ -105,6 +105,8 @@ export abstract class BaseDeploy {
         metadataFile: this.component.xml
       };
     } else {
+      const outboundFiles = this.component.walkContent();
+      outboundFiles.push(this.component.xml);
       toolingDeployResult = {
         State: DeployStatusEnum.Completed,
         DeployDetails: {
@@ -112,7 +114,7 @@ export abstract class BaseDeploy {
           componentFailures: []
         },
         isDeleted: false,
-        outboundFiles: this.component.walkContent(),
+        outboundFiles,
         ErrorMsg: null,
         metadataFile: this.component.xml
       };

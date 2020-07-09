@@ -13,7 +13,7 @@ import * as path from 'path';
 import * as stream from 'stream';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ToolingApi } from '../../src/client';
-import { RegistryAccess } from '../../src/metadata-registry';
+import { RegistryAccess, StandardSourceComponent, registryData } from '../../src/metadata-registry';
 import { ApiResult, QueryResult, SourceComponent } from '../../src/types';
 import { nls } from '../../src/i18n';
 import { fail } from 'assert';
@@ -30,7 +30,7 @@ describe('Tooling Retrieve', () => {
   metaXMLFile += '\t<status>Active</status>\n';
   metaXMLFile += '</ApexClass>';
   const mdComponents: SourceComponent[] = [
-    {
+    new StandardSourceComponent({
       type: {
         id: 'apexclass',
         name: 'ApexClass',
@@ -38,10 +38,10 @@ describe('Tooling Retrieve', () => {
         inFolder: false,
         suffix: 'cls'
       },
-      fullName: 'myTestClass',
+      name: 'myTestClass',
       xml: path.join('file', 'path', 'myTestClass.cls-meta.xml'),
-      sources: [path.join('file', 'path', 'myTestClass.cls')]
-    }
+      content: path.join('file', 'path', 'myTestClass.cls')
+    })
   ];
   const apexClassQueryResult: QueryResult = {
     done: true,
@@ -185,9 +185,8 @@ describe('Tooling Retrieve', () => {
     expect(retrieveResults.components[0].xml).to.equal(
       path.join('file', 'path', 'myTestClass.cls-meta.xml')
     );
-    expect(retrieveResults.components[0].sources).to.be.a('Array');
-    expect(retrieveResults.components[0].sources.length).to.equal(1);
-    expect(retrieveResults.components[0].sources[0]).to.equal(
+    expect(retrieveResults.components[0].walkContent().length).to.equal(1);
+    expect(retrieveResults.components[0].walkContent()[0]).to.equal(
       path.join('file', 'path', 'myTestClass.cls')
     );
   });
@@ -223,9 +222,8 @@ describe('Tooling Retrieve', () => {
     expect(retrieveResults.components[0].xml).to.equal(
       path.join('file', 'path', 'myTestClass.cls-meta.xml')
     );
-    expect(retrieveResults.components[0].sources).to.be.a('Array');
-    expect(retrieveResults.components[0].sources.length).to.equal(1);
-    expect(retrieveResults.components[0].sources[0]).to.equal(
+    expect(retrieveResults.components[0].walkContent().length).to.equal(1);
+    expect(retrieveResults.components[0].walkContent()[0]).to.equal(
       path.join('file', 'path', 'myTestClass.cls')
     );
   });
@@ -254,18 +252,14 @@ describe('Tooling Retrieve', () => {
   });
 
   it('should throw an error when trying to retrieve more than one type at a time', async () => {
-    mdComponents.push({
-      type: {
-        id: 'apexclass',
-        name: 'ApexClass',
-        directoryName: 'classes',
-        inFolder: false,
-        suffix: 'cls'
-      },
-      fullName: 'anotherClass',
-      xml: path.join('file', 'path', 'anotherClass.cls-meta.xml'),
-      sources: [path.join('file', 'path', 'anotherClass.cls')]
-    });
+    mdComponents.push(
+      new StandardSourceComponent({
+        type: registryData.types.apexclass,
+        name: 'anotherClass',
+        xml: path.join('file', 'path', 'anotherClass.cls-meta.xml'),
+        content: path.join('file', 'path', 'anotherClass.cls')
+      })
+    );
 
     const toolingAPI = new ToolingApi(mockConnection, registryAccess);
 
@@ -282,7 +276,7 @@ describe('Tooling Retrieve', () => {
 
   it('should throw an error when trying to retrieve an unsupported type', async () => {
     const unsupportedComponent: SourceComponent[] = [
-      {
+      new StandardSourceComponent({
         type: {
           id: 'fancytype',
           name: 'FancyType',
@@ -290,10 +284,10 @@ describe('Tooling Retrieve', () => {
           inFolder: false,
           suffix: 'b'
         },
-        fullName: 'anotherOne',
+        name: 'anotherOne',
         xml: path.join('file', 'path', 'anotherOne.b-meta.xml'),
-        sources: [path.join('file', 'path', 'anotherOne.b')]
-      }
+        content: path.join('file', 'path', 'anotherOne.b')
+      })
     ];
 
     const toolingAPI = new ToolingApi(mockConnection, registryAccess);

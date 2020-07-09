@@ -15,6 +15,7 @@ import { ContainerDeploy } from '../../../src/client/deployStrategies';
 import { ToolingCreateResult } from '../../../src/utils/deploy';
 import { nls } from '../../../src/i18n';
 import { DeployStatusEnum, QueryResult } from '../../../src/types';
+import { StandardSourceComponent, registryData } from '../../../src/metadata-registry';
 
 const $$ = testSetup();
 
@@ -31,50 +32,30 @@ describe('Container Deploy Strategy', () => {
     name: 'VSCode_MDC_',
     message: ''
   };
-  const apexClassCmp = {
-    type: {
-      id: 'apexclass',
-      name: 'ApexClass',
-      directoryName: 'classes',
-      inFolder: false
-    },
-    fullName: 'one',
-    sources: ['file/path/one.cls'],
+  const apexClassCmp = new StandardSourceComponent({
+    type: registryData.types.apexclass,
+    name: 'one',
+    content: 'file/path/one.cls',
     xml: 'file/path/one.cls-meta.xml'
-  };
-  const apexTriggerCmp = {
-    type: {
-      id: 'apextrigger',
-      name: 'ApexTrigger',
-      directoryName: 'triggers',
-      inFolder: false
-    },
-    fullName: 'one',
-    sources: ['file/path/one.trigger'],
+  });
+  const apexTriggerCmp = new StandardSourceComponent({
+    type: registryData.types.apextrigger,
+    name: 'one',
+    content: 'file/path/one.trigger',
     xml: 'file/path/one.trigger-meta.xml'
-  };
-  const apexPageCmp = {
-    type: {
-      id: 'apexpage',
-      name: 'ApexPage',
-      directoryName: 'pages',
-      inFolder: false
-    },
-    fullName: 'one',
-    sources: ['file/path/one.page'],
+  });
+  const apexPageCmp = new StandardSourceComponent({
+    type: registryData.types.apexpage,
+    name: 'one',
+    content: 'file/path/one.page',
     xml: 'file/path/one.page-meta.xml'
-  };
-  const apexComponent = {
-    type: {
-      id: 'apexcomponent',
-      name: 'ApexComponent',
-      directoryName: 'components',
-      inFolder: false
-    },
-    fullName: 'one',
-    sources: ['file/path/one.component'],
+  });
+  const apexComponent = new StandardSourceComponent({
+    type: registryData.types.apexcomponent,
+    name: 'one',
+    content: 'file/path/one.component',
     xml: 'file/path/one.component-meta.xml'
-  };
+  });
   const testData = new MockTestOrgData();
   let mockConnection: Connection;
   let sandboxStub: SinonSandbox;
@@ -480,7 +461,6 @@ describe('Container Deploy Strategy', () => {
         `Select Id from ApexComponent where Name = 'one' and NamespacePrefix = 't5tr'`
       )
     ).to.be.true;
-    console.log(result);
     expect(result).to.deep.equals({
       State: 'Completed',
       isDeleted: false,

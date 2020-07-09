@@ -42,8 +42,8 @@ export class MetadataApi extends BaseApi {
     const metadataComponents = Array.isArray(components) ? components : [components];
     const converter = new MetadataConverter();
     const conversionCall = await converter.convert(metadataComponents, 'metadata', { type: 'zip' });
-    const deployID = await this.metadataDeployID(conversionCall.zipBuffer, options.apiOptions);
-    const deploy = this.metadataDeployStatusPoll(deployID, options.wait);
+    const deployID = await this.metadataDeployID(conversionCall.zipBuffer, options);
+    const deploy = this.metadataDeployStatusPoll(deployID, options);
     let files: string[] = [];
     metadataComponents.forEach(file => {
       files = files.concat(file.sources);
@@ -63,16 +63,43 @@ export class MetadataApi extends BaseApi {
 
   public async metadataDeployID(
     zipBuffer: Buffer,
-    options?: MetadataApiDeployOptions
+    options?: MetadataDeployOptions
   ): Promise<string> {
-    const result = await this.connection.metadata.deploy(zipBuffer, options);
+    const defaults = {
+      rollbackOnError: true,
+      ignoreWarnings: false,
+      checkOnly: false
+    };
+    if (!options || !options.apiOptions) {
+      options = {
+        apiOptions: {
+          rollbackOnError: true,
+          ignoreWarnings: false,
+          checkOnly: false
+        }
+      };
+    } else {
+      for (const [property, value] of Object.entries(defaults)) {
+        if (!(property in options.apiOptions)) {
+          //@ts-ignore ignore while dynamically building the defaults
+          options.apiOptions[property] = value;
+        }
+      }
+    }
+    const result = await this.connection.metadata.deploy(zipBuffer, options.apiOptions);
     return result.id;
   }
   public async metadataDeployStatusPoll(
     deployID: string,
-    timeout = 10000,
+    options: MetadataDeployOptions,
     interval = 100
   ): Promise<DeployResult> {
+    let timeout;
+    if (!options || !options.wait) {
+      timeout = 10000;
+    } else {
+      timeout = options.wait;
+    }
     const endTime = Date.now() + timeout;
     // @ts-ignore
     const checkDeploy = async (resolve, reject): Promise<DeployResult> => {

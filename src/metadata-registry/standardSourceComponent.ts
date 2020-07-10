@@ -50,10 +50,11 @@ export class StandardSourceComponent implements SourceComponent {
 
   public static createVirtualComponent(
     props: ComponentProperties,
-    fs: VirtualDirectory[]
+    fs: VirtualDirectory[],
+    forceIgnore?: ForceIgnore
   ): StandardSourceComponent {
     const tree = new VirtualTreeContainer(fs);
-    return new StandardSourceComponent(props, tree);
+    return new StandardSourceComponent(props, tree, forceIgnore);
   }
 
   public walkContent(): SourcePath[] {
@@ -76,28 +77,22 @@ export class StandardSourceComponent implements SourceComponent {
   private getChildrenInternal(dirPath: SourcePath): SourceComponent[] {
     const children: SourceComponent[] = [];
     for (const fsPath of this.walk(dirPath)) {
-      if (this.forceIgnore.denies(fsPath)) {
-        continue;
-      } else if (this._tree.isDirectory(fsPath)) {
-        children.push(...this.getChildrenInternal(fsPath));
-      } else {
-        const childXml = parseMetadataXml(fsPath);
-        const fileIsRootXml = childXml.suffix === this.type.suffix;
-        if (childXml && !fileIsRootXml) {
-          // TODO: Log warning if missing child type definition
-          const childTypeId = this.type.children.suffixes[childXml.suffix];
-          const childComponent = new StandardSourceComponent(
-            {
-              name: baseName(fsPath),
-              type: this.type.children.types[childTypeId],
-              xml: fsPath,
-              parent: this
-            },
-            this._tree,
-            this.forceIgnore
-          );
-          children.push(childComponent);
-        }
+      const childXml = parseMetadataXml(fsPath);
+      const fileIsRootXml = childXml.suffix === this.type.suffix;
+      if (childXml && !fileIsRootXml) {
+        // TODO: Log warning if missing child type definition
+        const childTypeId = this.type.children.suffixes[childXml.suffix];
+        const childComponent = new StandardSourceComponent(
+          {
+            name: baseName(fsPath),
+            type: this.type.children.types[childTypeId],
+            xml: fsPath,
+            parent: this
+          },
+          this._tree,
+          this.forceIgnore
+        );
+        children.push(childComponent);
       }
     }
     return children;
@@ -109,7 +104,9 @@ export class StandardSourceComponent implements SourceComponent {
     } else {
       for (const child of this._tree.readDirectory(fsPath)) {
         const childPath = join(fsPath, child);
-        if (this._tree.isDirectory(childPath)) {
+        if (this.forceIgnore.denies(childPath)) {
+          continue;
+        } else if (this._tree.isDirectory(childPath)) {
           yield* this.walk(childPath);
         } else {
           yield childPath;

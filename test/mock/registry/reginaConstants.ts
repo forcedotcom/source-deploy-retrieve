@@ -22,8 +22,21 @@ export const REGINA_CHILD_DIR = 'xs';
 export const REGINA_CHILD_DIR_PATH = join(REGINA_PATH, REGINA_CHILD_DIR);
 export const REGINA_CHILD_XML_NAME_2 = 'w.x-meta.xml';
 export const REGINA_CHILD_XML_PATH_2 = join(REGINA_CHILD_DIR_PATH, REGINA_CHILD_XML_NAME_2);
-export const REGINA_COMPONENT: SourceComponent = new StandardSourceComponent({
-  name: baseName(REGINA_XML_PATH),
-  type,
-  xml: REGINA_XML_PATH
-});
+export const REGINA_VIRTUAL_FS = [
+  {
+    dirPath: REGINA_PATH,
+    children: [REGINA_XML_NAME, REGINA_CHILD_XML_NAME_1, REGINA_CHILD_DIR]
+  },
+  {
+    dirPath: REGINA_CHILD_DIR_PATH,
+    children: [REGINA_CHILD_XML_NAME_2]
+  }
+];
+export const REGINA_COMPONENT: SourceComponent = StandardSourceComponent.createVirtualComponent(
+  {
+    name: baseName(REGINA_XML_PATH),
+    type,
+    xml: REGINA_XML_PATH
+  },
+  REGINA_VIRTUAL_FS
+);

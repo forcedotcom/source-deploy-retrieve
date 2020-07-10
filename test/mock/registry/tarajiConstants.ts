@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join } from 'path';
+import { join, basename, dirname } from 'path';
 import { SourceComponent } from '../../../src/types';
 import { mockRegistry } from '.';
 import { StandardSourceComponent } from '../../../src/metadata-registry';
@@ -27,3 +27,17 @@ export const TARAJI_COMPONENT: SourceComponent = new StandardSourceComponent({
   xml: TARAJI_XML_PATHS[0],
   content: TARAJI_CONTENT_PATH
 });
+export const TARAJI_VIRTUAL_FS = [
+  {
+    dirPath: TARAJI_DIR,
+    children: [TARAJI_XML_NAMES[0], basename(TARAJI_CONTENT_PATH)]
+  },
+  {
+    dirPath: TARAJI_CONTENT_PATH,
+    children: [basename(TARAJI_SOURCE_PATHS[0]), basename(dirname(TARAJI_SOURCE_PATHS[1]))]
+  },
+  {
+    dirPath: dirname(TARAJI_SOURCE_PATHS[1]),
+    children: [basename(TARAJI_SOURCE_PATHS[1]), basename(TARAJI_SOURCE_PATHS[2])]
+  }
+];

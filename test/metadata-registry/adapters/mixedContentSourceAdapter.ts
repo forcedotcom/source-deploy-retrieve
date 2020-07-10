@@ -18,8 +18,6 @@ import { expect, assert } from 'chai';
 import { MixedContentSourceAdapter } from '../../../src/metadata-registry/adapters/mixedContentSourceAdapter';
 import { ExpectedSourceFilesError } from '../../../src/errors';
 import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
-import { TARAJI_XML_NAMES } from '../../mock/registry/tarajiConstants';
-import { basename, dirname } from 'path';
 import { StandardSourceComponent } from '../../../src/metadata-registry';
 
 describe('MixedContentSourceAdapter', () => {
@@ -64,22 +62,9 @@ describe('MixedContentSourceAdapter', () => {
   });
 
   describe('Directory Content', () => {
-    const { TARAJI_COMPONENT, TARAJI_CONTENT_PATH, TARAJI_SOURCE_PATHS, TARAJI_XML_PATHS } = taraji;
+    const { TARAJI_COMPONENT, TARAJI_SOURCE_PATHS, TARAJI_XML_PATHS, TARAJI_VIRTUAL_FS } = taraji;
     const type = mockRegistry.types.tarajihenson;
-    const tree = new VirtualTreeContainer([
-      {
-        dirPath: taraji.TARAJI_DIR,
-        children: [TARAJI_XML_NAMES[0], basename(TARAJI_CONTENT_PATH)]
-      },
-      {
-        dirPath: TARAJI_CONTENT_PATH,
-        children: [basename(TARAJI_SOURCE_PATHS[0]), basename(dirname(TARAJI_SOURCE_PATHS[1]))]
-      },
-      {
-        dirPath: dirname(TARAJI_SOURCE_PATHS[1]),
-        children: [basename(TARAJI_SOURCE_PATHS[1]), basename(TARAJI_SOURCE_PATHS[2])]
-      }
-    ]);
+    const tree = new VirtualTreeContainer(TARAJI_VIRTUAL_FS);
     const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
     const expectedComponent = new StandardSourceComponent(TARAJI_COMPONENT, tree);
 
@@ -92,22 +77,5 @@ describe('MixedContentSourceAdapter', () => {
         TARAJI_SOURCE_PATHS[Math.floor(Math.random() * Math.floor(TARAJI_SOURCE_PATHS.length))];
       expect(adapter.getComponent(randomSource)).to.deep.equal(expectedComponent);
     });
-
-    // TODO: Move to StandardSourceComponent tests
-    // it('Should not include source paths that are forceignored', () => {
-    //   const testUtil = new RegistryTestUtil();
-    //   const path = TARAJI_SOURCE_PATHS[0];
-    //   const forceIgnore = testUtil.stubForceIgnore({
-    //     seed: path,
-    //     accept: [TARAJI_SOURCE_PATHS[1]],
-    //     deny: [TARAJI_SOURCE_PATHS[0], TARAJI_SOURCE_PATHS[2]]
-    //   });
-    //   const adapter = new MixedContentSourceAdapter(type, mockRegistry, forceIgnore, tree);
-    //   const expectedComponent = new StandardSourceComponent()
-    //   const filteredComponent: SourceComponent = JSON.parse(JSON.stringify(TARAJI_COMPONENT));
-    //   filteredComponent.sources = [TARAJI_SOURCE_PATHS[1]];
-    //   expect(adapter.getComponent(path)).to.deep.equal(filteredComponent);
-    //   testUtil.restore();
-    // });
   });
 });

@@ -18,7 +18,7 @@ export type SuffixIndex = { [suffix: string]: string };
 
 export type Strategy = {
   adapter: string;
-  transformer: string;
+  transformer?: string;
 };
 
 /**

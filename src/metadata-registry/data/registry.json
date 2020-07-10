@@ -1689,20 +1689,20 @@
     "staticresources": "staticresource"
   },
   "strategies": {
-    "apexclass": { "adapter": "matchingContentFile", "transformer": "standard"},
-    "apexpage": { "adapter": "matchingContentFile", "transformer": "standard"},
-    "apexcomponent": { "adapter": "matchingContentFile", "transformer": "standard"},
-    "apextrigger": { "adapter": "matchingContentFile", "transformer": "standard"},
-    "auradefinitionbundle": { "adapter": "bundle", "transformer": "standard"},
-    "certificate": { "adapter": "matchingContentFile", "transformer": "standard"},
-    "contentasset": { "adapter": "matchingContentFile", "transformer": "standard"},
-    "customobject": { "adapter": "decomposed", "transformer": "standard"},
-    "document": { "adapter": "mixedContent", "transformer": "standard"},
-    "emailtemplate": { "adapter": "matchingContentFile", "transformer": "standard"},
-    "experiencebundle": { "adapter": "mixedContent", "transformer": "standard"},
-    "lightningcomponentbundle": { "adapter": "bundle", "transformer": "standard"},
-    "staticresource": { "adapter": "mixedContent", "transformer": "standard"},
-    "waveTemplates": { "adapter": "bundle", "transformer": "standard"}
+    "apexclass": { "adapter": "matchingContentFile" },
+    "apexpage": { "adapter": "matchingContentFile" },
+    "apexcomponent": { "adapter": "matchingContentFile" },
+    "apextrigger": { "adapter": "matchingContentFile" },
+    "auradefinitionbundle": { "adapter": "bundle" },
+    "certificate": { "adapter": "matchingContentFile" },
+    "contentasset": { "adapter": "matchingContentFile" },
+    "customobject": { "adapter": "decomposed" },
+    "document": { "adapter": "mixedContent" },
+    "emailtemplate": { "adapter": "matchingContentFile" },
+    "experiencebundle": { "adapter": "mixedContent" },
+    "lightningcomponentbundle": { "adapter": "bundle" },
+    "staticresource": { "adapter": "mixedContent" },
+    "waveTemplates": { "adapter": "bundle" }
   },
   "apiVersion": "48.0"
 }

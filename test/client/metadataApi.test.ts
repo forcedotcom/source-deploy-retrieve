@@ -10,7 +10,7 @@ import { MockTestOrgData } from '@salesforce/core/lib/testSetup';
 import { createSandbox } from 'sinon';
 import { RegistryAccess, registryData } from '../../src/metadata-registry';
 import { MetadataComponent } from '../../src/types';
-import { MetadataApi } from '../../src/client/metadataApi';
+import { MetadataApi, defaults } from '../../src/client/metadataApi';
 import { MetadataConverter } from '../../src/convert';
 import { fail } from 'assert';
 import * as path from 'path';
@@ -74,6 +74,7 @@ describe('Metadata Api', () => {
       status: 'Succeeded'
     });
   });
+
   it('Should correctly deploy metatdata components with custom deploy options', async () => {
     const apiOptions: MetadataApiDeployOptions = {
       allowMissingFiles: true,
@@ -95,32 +96,29 @@ describe('Metadata Api', () => {
         id: '12345'
       });
     // @ts-ignore
-    const deployPollStub = sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves({
+    sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves({
       status: 'Succeeded'
     });
-    const deploys = await deployMetadata.deployWithPaths(deployPath, { apiOptions });
+    await deployMetadata.deployWithPaths(deployPath, { apiOptions });
     expect(deployIdStub.args).to.deep.equal([[testingBuffer, apiOptions]]);
   });
+
   it('Should correctly deploy metatdata components with default deploy options', async () => {
-    const apiOptions: MetadataApiDeployOptions = {
-      rollbackOnError: true,
-      ignoreWarnings: false,
-      checkOnly: false
-    };
     deployIdStub = sandboxStub
       .stub(mockConnection.metadata, 'deploy')
-      .withArgs(testingBuffer, apiOptions)
+      .withArgs(testingBuffer, defaults)
       // @ts-ignore
       .resolves({
         id: '12345'
       });
     // @ts-ignore
-    const deployPollStub = sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves({
+    sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves({
       status: 'Succeeded'
     });
-    const deploys = await deployMetadata.deployWithPaths(deployPath);
-    expect(deployIdStub.args).to.deep.equal([[testingBuffer, apiOptions]]);
+    await deployMetadata.deployWithPaths(deployPath);
+    expect(deployIdStub.args).to.deep.equal([[testingBuffer, defaults]]);
   });
+
   it('Should correctly deploy metatdata components with default and custom deploy options', async () => {
     const apiOptions: MetadataApiDeployOptions = {
       rollbackOnError: true,
@@ -136,10 +134,10 @@ describe('Metadata Api', () => {
         id: '12345'
       });
     // @ts-ignore
-    const deployPollStub = sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves({
+    sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves({
       status: 'Succeeded'
     });
-    const deploys = await deployMetadata.deployWithPaths(deployPath, {
+    await deployMetadata.deployWithPaths(deployPath, {
       apiOptions: { checkOnly: true, autoUpdatePackage: true }
     });
     expect(deployIdStub.args).to.deep.equal([[testingBuffer, apiOptions]]);

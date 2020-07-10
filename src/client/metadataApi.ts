@@ -17,7 +17,7 @@ import {
 import { nls } from '../i18n';
 import { MetadataConverter } from '../convert';
 import { DeployError } from '../errors';
-import { MetadataDeployOptions, MetadataApiDeployOptions } from '../types/client';
+import { MetadataDeployOptions } from '../types/client';
 
 export const enum DeployStatusEnum {
   Succeeded = 'Succeeded',
@@ -25,7 +25,11 @@ export const enum DeployStatusEnum {
   Pending = 'Pending',
   Failed = 'Failed'
 }
-
+export const defaults = {
+  rollbackOnError: true,
+  ignoreWarnings: false,
+  checkOnly: false
+};
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export class MetadataApi extends BaseApi {
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult> {
@@ -65,18 +69,9 @@ export class MetadataApi extends BaseApi {
     zipBuffer: Buffer,
     options?: MetadataDeployOptions
   ): Promise<string> {
-    const defaults = {
-      rollbackOnError: true,
-      ignoreWarnings: false,
-      checkOnly: false
-    };
     if (!options || !options.apiOptions) {
       options = {
-        apiOptions: {
-          rollbackOnError: true,
-          ignoreWarnings: false,
-          checkOnly: false
-        }
+        apiOptions: defaults
       };
     } else {
       for (const [property, value] of Object.entries(defaults)) {
@@ -94,12 +89,7 @@ export class MetadataApi extends BaseApi {
     options: MetadataDeployOptions,
     interval = 100
   ): Promise<DeployResult> {
-    let timeout;
-    if (!options || !options.wait) {
-      timeout = 10000;
-    } else {
-      timeout = options.wait;
-    }
+    const timeout = !options || !options.wait ? 10000 : options.wait;
     const endTime = Date.now() + timeout;
     // @ts-ignore
     const checkDeploy = async (resolve, reject): Promise<DeployResult> => {

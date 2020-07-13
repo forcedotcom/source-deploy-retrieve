@@ -10,11 +10,12 @@ import { MockTestOrgData } from '@salesforce/core/lib/testSetup';
 import { createSandbox } from 'sinon';
 import { RegistryAccess, registryData } from '../../src/metadata-registry';
 import { MetadataComponent } from '../../src/types';
-import { MetadataApi } from '../../src/client/metadataApi';
+import { MetadataApi, DEFAULT_API_OPTIONS } from '../../src/client/metadataApi';
 import { MetadataConverter } from '../../src/convert';
 import { fail } from 'assert';
 import * as path from 'path';
 import { nls } from '../../src/i18n';
+import { MetadataApiDeployOptions } from '../../src/types/client';
 
 describe('Metadata Api', () => {
   let mockConnection: Connection;
@@ -30,9 +31,7 @@ describe('Metadata Api', () => {
     }
   ];
   const testingBuffer = Buffer.from('testingBuffer');
-  const delpoyOptions = {
-    paths: [path.join('file', 'path', 'myTestClass.cls')]
-  };
+  const deployPath = path.join('file', 'path', 'myTestClass.cls');
   let deployMetadata: MetadataApi;
   let registryStub = sandboxStub.stub();
   let conversionCallStub = sandboxStub.stub();
@@ -52,21 +51,21 @@ describe('Metadata Api', () => {
       .resolves({
         zipBuffer: testingBuffer
       });
-    // @ts-ignore
-    deployIdStub = sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
-      id: '12345'
-    });
   });
   afterEach(() => {
     sandboxStub.restore();
   });
 
-  it('Should correctly deploy metatdata components from paths', async () => {
+  it('Should correctly deploy metadata components from paths', async () => {
+    // @ts-ignore
+    deployIdStub = sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
+      id: '12345'
+    });
     // @ts-ignore
     const deployPollStub = sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves({
       status: 'Succeeded'
     });
-    const deploys = await deployMetadata.deployWithPaths(delpoyOptions);
+    const deploys = await deployMetadata.deployWithPaths(deployPath);
     expect(registryStub.calledImmediatelyBefore(conversionCallStub)).to.be.true;
     expect(conversionCallStub.calledImmediatelyBefore(deployIdStub)).to.be.true;
     expect(deployIdStub.calledImmediatelyBefore(deployPollStub)).to.be.true;
@@ -76,21 +75,97 @@ describe('Metadata Api', () => {
     });
   });
 
+  it('Should correctly deploy metadata components with custom deploy options', async () => {
+    const apiOptions: MetadataApiDeployOptions = {
+      allowMissingFiles: true,
+      autoUpdatePackage: true,
+      checkOnly: true,
+      ignoreWarnings: true,
+      performRetrieve: true,
+      purgeOnDelete: true,
+      rollbackOnError: true,
+      runAllTests: true,
+      runTests: ['test1', 'test2'],
+      singlePackage: true
+    };
+    deployIdStub = sandboxStub
+      .stub(mockConnection.metadata, 'deploy')
+      .withArgs(testingBuffer, apiOptions)
+      // @ts-ignore
+      .resolves({
+        id: '12345'
+      });
+    // @ts-ignore
+    sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves({
+      status: 'Succeeded'
+    });
+    await deployMetadata.deployWithPaths(deployPath, { apiOptions });
+    expect(deployIdStub.args).to.deep.equal([[testingBuffer, apiOptions]]);
+  });
+
+  it('Should correctly deploy metadata components with default deploy options', async () => {
+    deployIdStub = sandboxStub
+      .stub(mockConnection.metadata, 'deploy')
+      .withArgs(testingBuffer, DEFAULT_API_OPTIONS)
+      // @ts-ignore
+      .resolves({
+        id: '12345'
+      });
+    // @ts-ignore
+    sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves({
+      status: 'Succeeded'
+    });
+    await deployMetadata.deployWithPaths(deployPath);
+    expect(deployIdStub.args).to.deep.equal([[testingBuffer, DEFAULT_API_OPTIONS]]);
+  });
+
+  it('Should correctly deploy metadata components with default and custom deploy options', async () => {
+    const apiOptions: MetadataApiDeployOptions = {
+      rollbackOnError: true,
+      ignoreWarnings: false,
+      checkOnly: true,
+      autoUpdatePackage: true
+    };
+    deployIdStub = sandboxStub
+      .stub(mockConnection.metadata, 'deploy')
+      .withArgs(testingBuffer, apiOptions)
+      // @ts-ignore
+      .resolves({
+        id: '12345'
+      });
+    // @ts-ignore
+    sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves({
+      status: 'Succeeded'
+    });
+    await deployMetadata.deployWithPaths(deployPath, {
+      apiOptions: { checkOnly: true, autoUpdatePackage: true }
+    });
+    expect(deployIdStub.args).to.deep.equal([[testingBuffer, apiOptions]]);
+  });
+
   describe('Metadata Status Poll', () => {
     it('should verify successful status poll', async () => {
+      // @ts-ignore
+      deployIdStub = sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
+        id: '12345'
+      });
       sandboxStub
         .stub(mockConnection.metadata, 'checkDeployStatus')
         // @ts-ignore
         .resolves({
           status: 'Succeeded'
         });
-      const deploys = await deployMetadata.deployWithPaths(delpoyOptions);
+      const deploys = await deployMetadata.deployWithPaths(deployPath);
       expect(deploys).to.deep.equal({
         outboundFiles: ['myTestClass.cls', 'myTestClass.cls-meta.xml'],
         status: 'Succeeded'
       });
     });
     it('should verify failed status poll', async () => {
+      // @ts-ignore
+      deployIdStub = sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
+        id: '12345'
+      });
       const errorMessage = 'Failed deploy';
       sandboxStub
         .stub(mockConnection.metadata, 'checkDeployStatus')
@@ -100,22 +175,25 @@ describe('Metadata Api', () => {
           errorMessage
         });
       try {
-        await deployMetadata.deployWithPaths(delpoyOptions);
+        await deployMetadata.deployWithPaths(deployPath);
         fail('request should have failed');
       } catch (err) {
         expect(err.message).contains(nls.localize('md_request_fail', errorMessage));
       }
     });
     it('should verify timeout status poll', async () => {
-      const delpoyOptions = {
-        wait: 100,
-        paths: [path.join('file', 'path', 'myTestClass.cls')]
+      // @ts-ignore
+      deployIdStub = sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
+        id: '12345'
+      });
+      const deployOptionWait = {
+        wait: 100
       };
       const deployPollStub = sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus');
       // @ts-ignore
       deployPollStub.resolves({ status: 'Pending' });
       try {
-        await deployMetadata.deployWithPaths(delpoyOptions);
+        await deployMetadata.deployWithPaths(deployPath, deployOptionWait);
         fail('request should have timed out');
       } catch (err) {
         expect(err.message).contains(nls.localize('md_request_timeout'));

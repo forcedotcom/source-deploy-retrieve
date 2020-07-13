@@ -64,10 +64,7 @@ describe('Tooling API tests', () => {
       ErrorMsg: null
     } as DeployResult);
 
-    const deployOpts = {
-      paths: ['file/path/myTestClass.cls']
-    };
-    await deployLibrary.deployWithPaths(deployOpts);
+    await deployLibrary.deployWithPaths('file/path/myTestClass.cls');
 
     expect(mockContainerDeploy.callCount).to.equal(1);
   });
@@ -87,12 +84,9 @@ describe('Tooling API tests', () => {
       }
     ]);
     const deployLibrary = new ToolingApi(mockConnection, registryAccess);
-    const deployOpts = {
-      paths: ['file/path/myTestClass.flexipage']
-    };
 
     try {
-      await deployLibrary.deployWithPaths(deployOpts);
+      await deployLibrary.deployWithPaths('file/path/myTestClass.flexipage');
       expect.fail('Should have failed');
     } catch (e) {
       expect(e.message).to.equal(

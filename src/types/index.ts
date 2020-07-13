@@ -19,11 +19,11 @@ export {
   DeployDetails,
   DeployResult,
   DeployStatusEnum,
-  DeployOptions,
   DeployPathOptions,
   RetrievePathOptions,
   RetrieveOptions,
-  SourceResult
+  SourceResult,
+  ToolingDeployOptions
 } from './client';
 export {
   ConvertResult,

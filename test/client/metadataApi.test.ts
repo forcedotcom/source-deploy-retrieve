@@ -103,6 +103,7 @@ describe('Metadata Api', () => {
     expect(deployIdStub.args).to.deep.equal([[testingBuffer, apiOptions]]);
   });
 
+  
   it('Should correctly deploy metatdata components with default deploy options', async () => {
     deployIdStub = sandboxStub
       .stub(mockConnection.metadata, 'deploy')

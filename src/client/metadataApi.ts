@@ -6,18 +6,18 @@
  */
 
 import {
-  DeployOptions,
   DeployResult,
   BaseApi,
   RetrieveOptions,
   RetrievePathOptions,
   ApiResult,
-  DeployPathOptions,
-  MetadataComponent
+  MetadataComponent,
+  SourcePath
 } from '../types';
 import { nls } from '../i18n';
 import { MetadataConverter } from '../convert';
 import { DeployError } from '../errors';
+import { MetadataDeployOptions } from '../types/client';
 
 export const enum DeployStatusEnum {
   Succeeded = 'Succeeded',
@@ -25,7 +25,11 @@ export const enum DeployStatusEnum {
   Pending = 'Pending',
   Failed = 'Failed'
 }
-
+export const DEFAULT_API_OPTIONS = {
+  rollbackOnError: true,
+  ignoreWarnings: false,
+  checkOnly: false
+};
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export class MetadataApi extends BaseApi {
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult> {
@@ -35,12 +39,15 @@ export class MetadataApi extends BaseApi {
     throw new Error('Method not implemented.');
   }
 
-  public async deploy(options: DeployOptions): Promise<DeployResult> {
-    const metadataComponents: MetadataComponent[] = options.components;
+  public async deploy(
+    components: MetadataComponent | MetadataComponent[],
+    options?: MetadataDeployOptions
+  ): Promise<DeployResult> {
+    const metadataComponents = Array.isArray(components) ? components : [components];
     const converter = new MetadataConverter();
     const conversionCall = await converter.convert(metadataComponents, 'metadata', { type: 'zip' });
-    const deployID = await this.metadataDeployID(conversionCall.zipBuffer);
-    const deploy = this.metadataDeployStatusPoll(deployID, options.wait);
+    const deployID = await this.metadataDeployID(conversionCall.zipBuffer, options);
+    const deploy = this.metadataDeployStatusPoll(deployID, options);
     let files: string[] = [];
     metadataComponents.forEach(file => {
       files = files.concat(file.sources);
@@ -50,27 +57,39 @@ export class MetadataApi extends BaseApi {
     return deploy;
   }
 
-  public async deployWithPaths(options: DeployPathOptions): Promise<DeployResult> {
-    const paths = options.paths[0];
+  public async deployWithPaths(
+    paths: SourcePath,
+    options?: MetadataDeployOptions
+  ): Promise<DeployResult> {
     const components = this.registry.getComponentsFromPath(paths);
-    return this.deploy({ components, wait: options.wait });
+    return this.deploy(components, options);
   }
 
-  public async metadataDeployID(zipBuffer: Buffer): Promise<string> {
-    const deployOpts = {
-      rollbackOnError: true,
-      ignoreWarnings: false,
-      checkOnly: false,
-      singlePackage: true
-    };
-    const result = await this.connection.metadata.deploy(zipBuffer, deployOpts);
+  public async metadataDeployID(
+    zipBuffer: Buffer,
+    options?: MetadataDeployOptions
+  ): Promise<string> {
+    if (!options || !options.apiOptions) {
+      options = {
+        apiOptions: DEFAULT_API_OPTIONS
+      };
+    } else {
+      for (const [property, value] of Object.entries(DEFAULT_API_OPTIONS)) {
+        if (!(property in options.apiOptions)) {
+          //@ts-ignore ignore while dynamically building the defaults
+          options.apiOptions[property] = value;
+        }
+      }
+    }
+    const result = await this.connection.metadata.deploy(zipBuffer, options.apiOptions);
     return result.id;
   }
   public async metadataDeployStatusPoll(
     deployID: string,
-    timeout = 10000,
+    options: MetadataDeployOptions,
     interval = 100
   ): Promise<DeployResult> {
+    const timeout = !options || !options.wait ? 10000 : options.wait;
     const endTime = Date.now() + timeout;
     // @ts-ignore
     const checkDeploy = async (resolve, reject): Promise<DeployResult> => {

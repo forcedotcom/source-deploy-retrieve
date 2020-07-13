@@ -11,12 +11,12 @@ import {
   BaseApi,
   RetrievePathOptions,
   ApiResult,
-  DeployOptions,
-  DeployPathOptions,
   DeployResult,
   RetrieveOptions,
   MetadataComponent,
-  QueryResult
+  QueryResult,
+  SourcePath,
+  ToolingDeployOptions
 } from '../types';
 import { nls } from '../i18n';
 import { buildQuery, queryToFileMap } from './retrieveUtil';
@@ -97,12 +97,20 @@ export class ToolingApi extends BaseApi {
     return retrieveResult;
   }
 
-  public async deploy(options: DeployOptions): Promise<DeployResult> {
-    if (options.components.length > 1) {
-      const deployError = new SourceClientError('tapi_deploy_component_limit_error');
-      throw deployError;
+  public async deploy(
+    components: MetadataComponent | MetadataComponent[],
+    options?: ToolingDeployOptions
+  ): Promise<DeployResult> {
+    let mdComponent: MetadataComponent;
+    if (Array.isArray(components)) {
+      if (components.length > 1) {
+        const deployError = new SourceClientError('tapi_deploy_component_limit_error');
+        throw deployError;
+      }
+      mdComponent = components[0];
+    } else {
+      mdComponent = components;
     }
-    const mdComponent: MetadataComponent = options.components[0];
     const metadataType = mdComponent.type.name;
 
     if (!deployTypes.get(metadataType)) {
@@ -110,15 +118,14 @@ export class ToolingApi extends BaseApi {
     }
 
     const deployStrategy = getDeployStrategy(metadataType, this.connection);
-    const namespace = options.namespace ? options.namespace : '';
+    const namespace = options && options.namespace ? options.namespace : '';
     return deployStrategy.deploy(mdComponent, namespace);
   }
 
-  public async deployWithPaths(options: DeployPathOptions): Promise<DeployResult> {
-    const deployPaths = options.paths[0];
-    return await this.deploy({
-      components: this.registry.getComponentsFromPath(deployPaths),
-      namespace: options.namespace
-    });
+  public async deployWithPaths(
+    path: SourcePath,
+    options?: ToolingDeployOptions
+  ): Promise<DeployResult> {
+    return this.deploy(this.registry.getComponentsFromPath(path), options);
   }
 }

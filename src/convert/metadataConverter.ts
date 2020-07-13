@@ -69,7 +69,7 @@ export class MetadataConverter {
 
       const conversionPipeline = pipeline(
         new ComponentReader(components),
-        new ComponentConverter(targetFormat),
+        new ComponentConverter(targetFormat, this.registryAccess),
         writer
       );
       tasks.push(conversionPipeline);

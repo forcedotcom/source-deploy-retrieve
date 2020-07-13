@@ -35,6 +35,7 @@ export const messages = {
   error_in_tooling_retrieve: 'Unexpected error while retrieving using Tooling API. Stack trace: %s',
   error_md_not_present_in_org: '%s was not found in org',
   error_missing_adapter: "Missing adapter '%s' for metadata type '%s'",
+  error_missing_transformer: "Missing transformer '%s' for metadata type '%s'",
   error_missing_metadata_xml: "%s: Metadata xml file missing for '%s'",
   error_missing_type_definition: "Missing metadata type definition in registry for id '%s'",
   error_no_metadata_xml_ignore: 'Metadata xml file %s is forceignored but is required for %s',

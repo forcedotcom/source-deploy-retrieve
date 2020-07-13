@@ -102,14 +102,14 @@ export const mockRegistry = {
     tinas: 'tinafey',
     reginas: 'reginaking'
   },
-  adapters: {
-    keanureeves: 'matchingContentFile',
-    tinafey: 'mixedContent',
-    tarajihenson: 'mixedContent',
-    dwaynejohnson: 'mixedContent',
-    simonpegg: 'bundle',
-    reginaking: 'decomposed',
-    genewilder: 'badAdapterId'
+  strategies: {
+    keanureeves: { adapter: 'matchingContentFile', transformer: 'standard' },
+    tinafey: { adapter: 'mixedContent', transformer: 'mixedContent' },
+    tarajihenson: { adapter: 'mixedContent', transformer: 'mixedContent' },
+    dwaynejohnson: { adapter: 'mixedContent', transformer: 'mixedContent' },
+    simonpegg: { adapter: 'bundle', transformer: 'bundle' },
+    reginaking: { adapter: 'decomposed', transformer: 'decomposed' },
+    genewilder: { adapter: 'badAdapterId', transformer: 'badAdapterId' }
   },
   apiVersion: '48.0'
 };

@@ -4,15 +4,15 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Readable, Transform, Writable, pipeline as cbPipeline } from 'stream';
-import { MetadataComponent, SourcePath, SfdxFileFormat, WriterFormat, WriteInfo } from '../types';
-import { join } from 'path';
-import { ensureFileExists } from '../utils/fileSystemHandler';
+import { Archiver, create as createArchive } from 'archiver';
 import { createWriteStream } from 'fs';
+import { join } from 'path';
+import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
 import { LibraryError } from '../errors';
-import { getTransformer } from './transformers';
-import { Archiver, create as createArchive } from 'archiver';
+import { RegistryAccess } from '../metadata-registry';
+import { MetadataComponent, SfdxFileFormat, SourcePath, WriteInfo, WriterFormat } from '../types';
+import { ensureFileExists } from '../utils/fileSystemHandler';
 
 export const pipeline = promisify(cbPipeline);
 
@@ -38,10 +38,12 @@ export class ComponentReader extends Readable {
 
 export class ComponentConverter extends Transform {
   private targetFormat: SfdxFileFormat;
+  private registryAccess: RegistryAccess;
 
-  constructor(targetFormat: SfdxFileFormat) {
+  constructor(targetFormat: SfdxFileFormat, registryAccess: RegistryAccess) {
     super({ objectMode: true });
     this.targetFormat = targetFormat;
+    this.registryAccess = registryAccess;
   }
 
   public _transform(
@@ -52,7 +54,7 @@ export class ComponentConverter extends Transform {
     let err: Error;
     let result: WriterFormat;
     try {
-      const transformer = getTransformer(chunk);
+      const transformer = this.registryAccess.getTransformer(chunk);
       switch (this.targetFormat) {
         case 'metadata':
           result = transformer.toMetadataFormat();

@@ -30,7 +30,9 @@ export class SourceAdapterFactory {
   }
 
   public getAdapter(type: MetadataType, forceIgnore = new ForceIgnore()): SourceAdapter {
-    const adapterId = this.registry.adapters[type.id] as AdapterId;
+    const adapterId = this.registry.strategies.hasOwnProperty(type.id)
+      ? (this.registry.strategies[type.id].adapter as AdapterId)
+      : undefined;
     switch (adapterId) {
       case AdapterId.Bundle:
         return new BundleSourceAdapter(type, this.registry, forceIgnore, this.tree);

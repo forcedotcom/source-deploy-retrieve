@@ -4,21 +4,23 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { sep, join, basename, dirname } from 'path';
+import { basename, dirname, join, sep } from 'path';
+import { NodeFSTreeContainer, registryData } from '.';
+import { MetadataTransformerFactory } from '../convert/transformers';
+import { TypeInferenceError } from '../errors';
 import {
   MetadataComponent,
   MetadataRegistry,
+  MetadataTransformer,
   MetadataType,
   SourcePath,
   TreeContainer
 } from '../types';
-import { parseMetadataXml, deepFreeze } from '../utils/registry';
-import { TypeInferenceError } from '../errors';
-import { registryData, NodeFSTreeContainer } from '.';
+import { extName, parentName } from '../utils/path';
+import { deepFreeze, parseMetadataXml } from '../utils/registry';
 import { MixedContentSourceAdapter } from './adapters/mixedContentSourceAdapter';
-import { parentName, extName } from '../utils/path';
-import { ForceIgnore } from './forceIgnore';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
+import { ForceIgnore } from './forceIgnore';
 
 /**
  * Resolver for metadata type and component objects.
@@ -26,6 +28,7 @@ import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 export class RegistryAccess {
   public readonly registry: MetadataRegistry;
   private forceIgnore: ForceIgnore;
+  private metadataTransformerFactory: MetadataTransformerFactory;
   private sourceAdapterFactory: SourceAdapterFactory;
   private tree: TreeContainer;
 
@@ -41,6 +44,7 @@ export class RegistryAccess {
         registryData;
     this.tree = tree;
     this.sourceAdapterFactory = new SourceAdapterFactory(this.registry, tree);
+    this.metadataTransformerFactory = new MetadataTransformerFactory(this.registry);
   }
 
   public getApiVersion(): string {
@@ -93,6 +97,10 @@ export class RegistryAccess {
 
     const component = this.resolveComponent(pathForFetch);
     return component ? [component] : [];
+  }
+
+  public getTransformer(component: MetadataComponent): MetadataTransformer {
+    return this.metadataTransformerFactory.getTransformer(component);
   }
 
   private getComponentsFromPathRecursive(dir: SourcePath): MetadataComponent[] {

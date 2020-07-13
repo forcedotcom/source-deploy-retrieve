@@ -25,7 +25,7 @@ export const enum DeployStatusEnum {
   Pending = 'Pending',
   Failed = 'Failed'
 }
-export const defaults = {
+export const DEFAULT_API_OPTIONS = {
   rollbackOnError: true,
   ignoreWarnings: false,
   checkOnly: false
@@ -71,10 +71,10 @@ export class MetadataApi extends BaseApi {
   ): Promise<string> {
     if (!options || !options.apiOptions) {
       options = {
-        apiOptions: defaults
+        apiOptions: DEFAULT_API_OPTIONS
       };
     } else {
-      for (const [property, value] of Object.entries(defaults)) {
+      for (const [property, value] of Object.entries(DEFAULT_API_OPTIONS)) {
         if (!(property in options.apiOptions)) {
           //@ts-ignore ignore while dynamically building the defaults
           options.apiOptions[property] = value;

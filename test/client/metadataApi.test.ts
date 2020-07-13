@@ -10,7 +10,7 @@ import { MockTestOrgData } from '@salesforce/core/lib/testSetup';
 import { createSandbox } from 'sinon';
 import { RegistryAccess, registryData } from '../../src/metadata-registry';
 import { MetadataComponent } from '../../src/types';
-import { MetadataApi, defaults } from '../../src/client/metadataApi';
+import { MetadataApi, DEFAULT_API_OPTIONS } from '../../src/client/metadataApi';
 import { MetadataConverter } from '../../src/convert';
 import { fail } from 'assert';
 import * as path from 'path';
@@ -56,7 +56,7 @@ describe('Metadata Api', () => {
     sandboxStub.restore();
   });
 
-  it('Should correctly deploy metatdata components from paths', async () => {
+  it('Should correctly deploy metadata components from paths', async () => {
     // @ts-ignore
     deployIdStub = sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
       id: '12345'
@@ -75,7 +75,7 @@ describe('Metadata Api', () => {
     });
   });
 
-  it('Should correctly deploy metatdata components with custom deploy options', async () => {
+  it('Should correctly deploy metadata components with custom deploy options', async () => {
     const apiOptions: MetadataApiDeployOptions = {
       allowMissingFiles: true,
       autoUpdatePackage: true,
@@ -103,11 +103,10 @@ describe('Metadata Api', () => {
     expect(deployIdStub.args).to.deep.equal([[testingBuffer, apiOptions]]);
   });
 
-  
-  it('Should correctly deploy metatdata components with default deploy options', async () => {
+  it('Should correctly deploy metadata components with default deploy options', async () => {
     deployIdStub = sandboxStub
       .stub(mockConnection.metadata, 'deploy')
-      .withArgs(testingBuffer, defaults)
+      .withArgs(testingBuffer, DEFAULT_API_OPTIONS)
       // @ts-ignore
       .resolves({
         id: '12345'
@@ -117,10 +116,10 @@ describe('Metadata Api', () => {
       status: 'Succeeded'
     });
     await deployMetadata.deployWithPaths(deployPath);
-    expect(deployIdStub.args).to.deep.equal([[testingBuffer, defaults]]);
+    expect(deployIdStub.args).to.deep.equal([[testingBuffer, DEFAULT_API_OPTIONS]]);
   });
 
-  it('Should correctly deploy metatdata components with default and custom deploy options', async () => {
+  it('Should correctly deploy metadata components with default and custom deploy options', async () => {
     const apiOptions: MetadataApiDeployOptions = {
       rollbackOnError: true,
       ignoreWarnings: false,

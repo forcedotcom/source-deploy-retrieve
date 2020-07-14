@@ -28,7 +28,8 @@ export const enum DeployStatusEnum {
 export const DEFAULT_API_OPTIONS = {
   rollbackOnError: true,
   ignoreWarnings: false,
-  checkOnly: false
+  checkOnly: false,
+  singlePackage: true
 };
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export class MetadataApi extends BaseApi {

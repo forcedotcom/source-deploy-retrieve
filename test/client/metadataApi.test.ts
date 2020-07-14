@@ -56,6 +56,16 @@ describe('Metadata Api', () => {
     sandboxStub.restore();
   });
 
+  it('Should check that the default options are correct', async () => {
+    const defaultOptions = {
+      rollbackOnError: true,
+      ignoreWarnings: false,
+      checkOnly: false,
+      singlePackage: true
+    };
+    expect(DEFAULT_API_OPTIONS).to.deep.equal(defaultOptions);
+  });
+
   it('Should correctly deploy metadata components from paths', async () => {
     // @ts-ignore
     deployIdStub = sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
@@ -124,7 +134,8 @@ describe('Metadata Api', () => {
       rollbackOnError: true,
       ignoreWarnings: false,
       checkOnly: true,
-      autoUpdatePackage: true
+      autoUpdatePackage: true,
+      singlePackage: false
     };
     deployIdStub = sandboxStub
       .stub(mockConnection.metadata, 'deploy')
@@ -138,7 +149,7 @@ describe('Metadata Api', () => {
       status: 'Succeeded'
     });
     await deployMetadata.deployWithPaths(deployPath, {
-      apiOptions: { checkOnly: true, autoUpdatePackage: true }
+      apiOptions: { checkOnly: true, autoUpdatePackage: true, singlePackage: false }
     });
     expect(deployIdStub.args).to.deep.equal([[testingBuffer, apiOptions]]);
   });

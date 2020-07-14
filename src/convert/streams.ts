@@ -14,6 +14,7 @@ import { RegistryAccess, SourceComponent } from '../metadata-registry';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from '../types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { SourcePath } from '../common';
+import { ConvertTransaction } from './convertTransaction';
 
 export const pipeline = promisify(cbPipeline);
 
@@ -40,6 +41,7 @@ export class ComponentReader extends Readable {
 export class ComponentConverter extends Transform {
   private targetFormat: SfdxFileFormat;
   private registryAccess: RegistryAccess;
+  private transaction = new ConvertTransaction();
 
   constructor(targetFormat: SfdxFileFormat, registryAccess: RegistryAccess) {
     super({ objectMode: true });
@@ -70,6 +72,24 @@ export class ComponentConverter extends Transform {
       err = e;
     }
     callback(err, result);
+  }
+
+  public _flush(callback: (err: Error, data?: WriterFormat) => void): void {
+    let err: Error;
+    try {
+      for (const finalizerResult of this.transaction.executeFinalizers()) {
+        if (finalizerResult) {
+          if (Array.isArray(finalizerResult)) {
+            finalizerResult.forEach((result) => this.push(result));
+          } else {
+            this.push(finalizerResult);
+          }
+        }
+      }
+    } catch (e) {
+      err = e;
+    }
+    callback(err);
   }
 }
 

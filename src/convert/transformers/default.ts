@@ -4,13 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { MetadataTransformer, WriterFormat } from '../../types';
 import { META_XML_SUFFIX } from '../../utils';
 import { createReadStream } from 'fs';
-import { sep, join, basename } from 'path';
 import { LibraryError } from '../../errors';
-import { SourceComponent } from '../../metadata-registry';
-import { SourcePath } from '../../common';
+import { BaseMetadataTransformer } from './baseMetadataTransformer';
+import { WriterFormat } from '../../types';
 
 /**
  * The default metadata transformer.
@@ -19,21 +17,15 @@ import { SourcePath } from '../../common';
  * during the conversion process. It leaves the component's metadata xml and source
  * files as-is.
  */
-export class DefaultTransformer implements MetadataTransformer {
-  private component: SourceComponent;
-
-  constructor(component: SourceComponent) {
-    this.component = component;
-  }
-
+export class DefaultTransformer extends BaseMetadataTransformer {
   public toMetadataFormat(): WriterFormat {
     const result: WriterFormat = { component: this.component, writeInfos: [] };
-    let xmlDest = this.getRelativeDestination(this.component.xml);
+    let xmlDest = this.component.getPackageRelativePath(this.component.xml);
     if (this.component.content) {
       for (const source of this.component.walkContent()) {
         result.writeInfos.push({
           source: createReadStream(source),
-          relativeDestination: this.getRelativeDestination(source),
+          relativeDestination: this.component.getPackageRelativePath(source),
         });
       }
     } else {
@@ -48,25 +40,5 @@ export class DefaultTransformer implements MetadataTransformer {
 
   public toSourceFormat(): WriterFormat {
     throw new LibraryError('error_convert_not_implemented', ['source', this.component.type.name]);
-  }
-
-  private getRelativeDestination(fsPath: SourcePath): SourcePath {
-    const { directoryName, suffix, inFolder } = this.component.type;
-    // if there isn't a suffix, assume this is a mixed content component that must
-    // reside in the directoryName of its type. trimUntil maintains the folder structure
-    // the file resides in for the new destination.
-    if (!suffix) {
-      return this.trimUntil(fsPath, directoryName);
-    } else if (inFolder) {
-      const folderName = this.component.fullName.split('/')[0];
-      return join(directoryName, folderName, basename(fsPath));
-    }
-    return join(directoryName, basename(fsPath));
-  }
-
-  private trimUntil(fsPath: string, name: string): string {
-    const parts = fsPath.split(sep);
-    const index = parts.findIndex((part) => name === part);
-    return parts.slice(index).join(sep);
   }
 }

@@ -4,8 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SourcePath, MetadataComponent } from './common';
+import { SourcePath } from './common';
 import { Readable } from 'stream';
+import { SourceComponent } from '../metadata-registry';
 
 // --------------
 // INTERNAL
@@ -13,7 +14,7 @@ import { Readable } from 'stream';
 
 export type WriteInfo = { relativeDestination: SourcePath; source: Readable };
 
-export type WriterFormat = { component: MetadataComponent; writeInfos: WriteInfo[] };
+export type WriterFormat = { component: SourceComponent; writeInfos: WriteInfo[] };
 
 type PackageName = {
   /**

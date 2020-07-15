@@ -5,10 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
-import { SourcePath, MetadataComponent } from '../../types';
+import { SourcePath } from '../../types';
 import { parseMetadataXml } from '../../utils/registry';
-import { join, dirname } from 'path';
-import { baseName } from '../../utils';
+import { SourceComponent } from '../sourceComponent';
 
 /**
  * Handles decomposed types. A flavor of mixed content where a component can
@@ -34,34 +33,29 @@ import { baseName } from '../../utils';
 export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
   protected ownFolder = true;
 
-  protected populate(component: MetadataComponent): MetadataComponent {
-    const parentPath = dirname(component.xml);
-    component.children = this.getChildren(parentPath);
-    return component;
-  }
-
-  private getChildren(dirPath: SourcePath): MetadataComponent[] {
-    const children: MetadataComponent[] = [];
-    for (const fileName of this.tree.readDirectory(dirPath)) {
-      const currentPath = join(dirPath, fileName);
-      if (this.forceIgnore.denies(currentPath)) {
-        continue;
-      } else if (this.tree.isDirectory(currentPath)) {
-        children.push(...this.getChildren(currentPath));
-      } else {
-        const childXml = parseMetadataXml(fileName);
-        const fileIsRootXml = childXml.suffix === this.type.suffix;
-        if (childXml && !fileIsRootXml) {
-          // TODO: Log warning if missing child type definition
-          const childTypeId = this.type.children.suffixes[childXml.suffix];
-          children.push({
-            fullName: baseName(fileName),
+  /**
+   * If the trigger turns out to be part of a child component, `populate` will build
+   * the child component, set its parent property to the one created by the
+   * `BaseSourceAdapter`, and return the child component instead.
+   */
+  protected populate(component: SourceComponent, trigger: SourcePath): SourceComponent {
+    const metaXml = parseMetadataXml(trigger);
+    if (metaXml) {
+      const childTypeId = this.type.children.suffixes[metaXml.suffix];
+      const triggerIsAChild = !!childTypeId;
+      if (triggerIsAChild) {
+        return new SourceComponent(
+          {
+            name: metaXml.fullName,
             type: this.type.children.types[childTypeId],
-            xml: currentPath
-          });
-        }
+            xml: trigger,
+            parent: component
+          },
+          this.tree,
+          this.forceIgnore
+        );
       }
     }
-    return children;
+    return component;
   }
 }

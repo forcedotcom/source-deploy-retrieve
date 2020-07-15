@@ -6,11 +6,12 @@
  */
 
 import { dirname, join, sep } from 'path';
-import { QueryResult, MetadataComponent } from '../types';
+import { QueryResult } from '../types';
 import { generateMetaXML, generateMetaXMLPath, trimMetaXmlSuffix } from '../utils';
 import { ApexRecord, AuraRecord, LWCRecord, VFRecord } from '../types/query';
+import { SourceComponent } from '../metadata-registry';
 
-export function buildQuery(mdComponent: MetadataComponent, namespace = ''): string {
+export function buildQuery(mdComponent: SourceComponent, namespace = ''): string {
   let queryString = '';
   const typeName = mdComponent.type.name;
   const fullName = mdComponent.fullName;
@@ -76,7 +77,7 @@ function getAuraSourceName(componentPath: string, fileNamePrefix: string, defTyp
 
 export function queryToFileMap(
   queryResult: QueryResult,
-  mdComponent: MetadataComponent,
+  mdComponent: SourceComponent,
   overrideOutputPath?: string
 ): Map<string, string> {
   const typeName = mdComponent.type.name;
@@ -85,7 +86,7 @@ export function queryToFileMap(
   // If output is defined it overrides where the component will be stored
   const mdSourcePath = overrideOutputPath
     ? trimMetaXmlSuffix(overrideOutputPath)
-    : mdComponent.sources[0];
+    : mdComponent.walkContent()[0];
   const saveFilesMap = new Map();
   switch (typeName) {
     case 'ApexClass':
@@ -105,7 +106,7 @@ export function queryToFileMap(
       const auraRecord = queryResult.records as AuraRecord[];
       apiVersion = auraRecord[0].AuraDefinitionBundle.ApiVersion;
       auraRecord.forEach(item => {
-        const cmpName = getAuraSourceName(mdSourcePath, mdComponent.fullName, item.DefType);
+        const cmpName = getAuraSourceName(mdSourcePath, mdComponent.name, item.DefType);
         saveFilesMap.set(cmpName, item.Source);
       });
       break;

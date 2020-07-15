@@ -11,13 +11,13 @@ import {
   RetrieveOptions,
   RetrievePathOptions,
   ApiResult,
-  MetadataComponent,
   SourcePath
 } from '../types';
 import { nls } from '../i18n';
 import { MetadataConverter } from '../convert';
 import { DeployError } from '../errors';
 import { MetadataDeployOptions } from '../types/client';
+import { SourceComponent } from '../metadata-registry';
 
 export const enum DeployStatusEnum {
   Succeeded = 'Succeeded',
@@ -41,7 +41,7 @@ export class MetadataApi extends BaseApi {
   }
 
   public async deploy(
-    components: MetadataComponent | MetadataComponent[],
+    components: SourceComponent | SourceComponent[],
     options?: MetadataDeployOptions
   ): Promise<DeployResult> {
     const metadataComponents = Array.isArray(components) ? components : [components];
@@ -51,7 +51,7 @@ export class MetadataApi extends BaseApi {
     const deploy = this.metadataDeployStatusPoll(deployID, options);
     let files: string[] = [];
     metadataComponents.forEach(file => {
-      files = files.concat(file.sources);
+      files = files.concat(file.walkContent());
       files.push(file.xml);
     });
     (await deploy).outboundFiles = files;

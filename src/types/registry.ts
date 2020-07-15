@@ -5,7 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { MetadataType, SourcePath, MetadataComponent } from './common';
+import { MetadataType, SourcePath } from './common';
+import { SourceComponent } from '../metadata-registry';
 
 /**
  * Metadata type definitions
@@ -64,11 +65,11 @@ export type VirtualDirectory = {
  */
 export interface SourceAdapter {
   /**
-   * Get the MetadataComponent of a file path.
+   * Create a metadata component object from a file path.
    *
    * @param fsPath Path to resolve
    */
-  getComponent(fsPath: SourcePath): MetadataComponent;
+  getComponent(fsPath: SourcePath): SourceComponent;
 }
 
 /**

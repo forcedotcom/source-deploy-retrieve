@@ -11,7 +11,8 @@ export {
   registryData,
   ManifestGenerator,
   BaseTreeContainer,
-  VirtualTreeContainer
+  VirtualTreeContainer,
+  SourceComponent
 } from './metadata-registry';
 export {
   ApiResult,
@@ -24,5 +25,6 @@ export {
   DeployStatusEnum,
   DeployPathOptions,
   TreeContainer,
-  VirtualDirectory
+  VirtualDirectory,
+  MetadataComponent
 } from './types';

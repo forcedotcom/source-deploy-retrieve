@@ -6,8 +6,8 @@
  */
 
 import { Connection } from '@salesforce/core';
-import { MetadataComponent, SourcePath } from './common';
-import { RegistryAccess } from '../metadata-registry';
+import { SourcePath } from './common';
+import { RegistryAccess, SourceComponent } from '../metadata-registry';
 
 type CommonOptions = {
   /**
@@ -41,13 +41,13 @@ type CommonPathOptions = {
 };
 
 export type RetrieveOptions = CommonOptions &
-  CommonRetrieveOptions & { components: MetadataComponent[] };
+  CommonRetrieveOptions & { components: SourceComponent[] };
 
 export type RetrievePathOptions = CommonOptions & CommonRetrieveOptions & CommonPathOptions;
 
 export type ApiResult = {
   success: boolean;
-  components: MetadataComponent[];
+  components: SourceComponent[];
   message?: string;
 };
 
@@ -128,7 +128,7 @@ export interface DeployRetrieveClient {
    *
    * @param filePath Paths to source files to deploy
    */
-  deploy(components: MetadataComponent | MetadataComponent[]): Promise<DeployResult>;
+  deploy(components: SourceComponent | SourceComponent[]): Promise<DeployResult>;
   /**
    * Infer metadata components from source path, deploy them, and wait for results.
    *
@@ -153,7 +153,7 @@ export abstract class BaseApi implements DeployRetrieveClient {
 
   abstract retrieve(options: RetrieveOptions): Promise<ApiResult>;
 
-  abstract deploy(components: MetadataComponent | MetadataComponent[]): Promise<DeployResult>;
+  abstract deploy(components: SourceComponent | SourceComponent[]): Promise<DeployResult>;
 
   abstract deployWithPaths(paths: SourcePath | SourcePath[]): Promise<DeployResult>;
 }

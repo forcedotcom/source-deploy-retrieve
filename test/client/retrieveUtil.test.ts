@@ -8,7 +8,7 @@
 import * as path from 'path';
 import { expect } from 'chai';
 import { buildQuery, queryToFileMap } from '../../src/client/retrieveUtil';
-import { MetadataComponent, QueryResult } from '../../src/types';
+import { QueryResult } from '../../src/types';
 import {
   auraComponent,
   auraApplication,
@@ -17,45 +17,52 @@ import {
   auraTokens
 } from './auraDefinitionMocks';
 import { lwcComponentMock } from './lightningComponentMocks';
+import { SourceComponent, registryData, VirtualTreeContainer } from '../../src/metadata-registry';
 
 describe('Tooling Retrieve Util', () => {
-  const classMDComponent: MetadataComponent = {
-    type: {
-      id: 'apexclass',
-      name: 'ApexClass',
-      directoryName: 'classes',
-      inFolder: false,
-      suffix: 'cls'
+  const rootPath = path.join('file', 'path');
+  const classMDComponent: SourceComponent = SourceComponent.createVirtualComponent(
+    {
+      type: registryData.types.apexclass,
+      name: 'myTestClass',
+      xml: path.join(rootPath, 'myTestClass.cls-meta.xml'),
+      content: path.join(rootPath, 'myTestClass.cls')
     },
-    fullName: 'myTestClass',
-    xml: path.join('file', 'path', 'myTestClass.cls-meta.xml'),
-    sources: [path.join('file', 'path', 'myTestClass.cls')]
-  };
-
-  const pageMDComponent: MetadataComponent = {
-    type: {
-      id: 'apexpage',
-      name: 'ApexPage',
-      directoryName: 'pages',
-      inFolder: false,
-      suffix: 'page'
+    [
+      {
+        dirPath: rootPath,
+        children: ['myTestClass.cls-meta.xml', 'myTestClass.cls']
+      }
+    ]
+  );
+  const pageMDComponent: SourceComponent = SourceComponent.createVirtualComponent(
+    {
+      type: registryData.types.apexpage,
+      name: 'myPage',
+      xml: path.join(rootPath, 'myPage.page-meta.xml'),
+      content: path.join(rootPath, 'myPage.page')
     },
-    fullName: 'myPage',
-    xml: path.join('file', 'path', 'myPage.page-meta.xml'),
-    sources: [path.join('file', 'path', 'myPage.page')]
-  };
-
-  const auraMDComponent: MetadataComponent = {
-    type: {
-      id: 'auradefinitionbundle',
-      name: 'AuraDefinitionBundle',
-      directoryName: 'aura',
-      inFolder: false
+    [
+      {
+        dirPath: rootPath,
+        children: ['myPage.page', 'myPage.page-meta.xml']
+      }
+    ]
+  );
+  const auraMDComponent: SourceComponent = SourceComponent.createVirtualComponent(
+    {
+      type: registryData.types.auradefinitionbundle,
+      name: 'testApp',
+      xml: path.join(rootPath, 'testApp.app-meta.xml'),
+      content: path.join(rootPath, 'testApp.app')
     },
-    fullName: 'testApp',
-    xml: path.join('file', 'path', 'testApp.app-meta.xml'),
-    sources: [path.join('file', 'path', 'testApp.app')]
-  };
+    [
+      {
+        dirPath: rootPath,
+        children: ['testApp.app', 'testApp.app-meta.xml']
+      }
+    ]
+  );
 
   it('should generate correct query to retrieve an ApexClass', () => {
     const queryString = buildQuery(classMDComponent, '');
@@ -118,8 +125,8 @@ describe('Tooling Retrieve Util', () => {
     expectedMetaXML += '\t<status>Active</status>\n';
     expectedMetaXML += '</ApexClass>';
     expect(resultMap.get(classMDComponent.xml)).to.equal(expectedMetaXML);
-    expect(resultMap.has(classMDComponent.sources[0])).to.be.true;
-    expect(resultMap.get(classMDComponent.sources[0])).to.equal(
+    expect(resultMap.has(classMDComponent.content)).to.be.true;
+    expect(resultMap.get(classMDComponent.content)).to.equal(
       'public with sharing class myTestClass {}'
     );
   });
@@ -149,8 +156,8 @@ describe('Tooling Retrieve Util', () => {
     expectedMetaXML += '\t<apiVersion>45.0</apiVersion>\n';
     expectedMetaXML += '</ApexPage>';
     expect(resultMap.get(pageMDComponent.xml)).to.equal(expectedMetaXML);
-    expect(resultMap.has(pageMDComponent.sources[0])).to.be.true;
-    expect(resultMap.get(pageMDComponent.sources[0])).to.equal(
+    expect(resultMap.has(pageMDComponent.content)).to.be.true;
+    expect(resultMap.get(pageMDComponent.content)).to.equal(
       '<apex:page>\n<h1>Hello</h1>\n</apex:page>'
     );
   });
@@ -192,35 +199,40 @@ describe('Tooling Retrieve Util', () => {
   });
 
   it('should generate correct file map for AuraDefinition component metadata', () => {
-    const cmpPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmp.cmp');
-    const auraDocPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmp.auradoc');
-    const cmpMetaPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmp.cmp-meta.xml');
-    const cssPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmp.css');
-    const designPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmp.design');
-    const svgPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmp.svg');
-    const controllerPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmpController.js');
-    const helperPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmpHelper.js');
-    const rendererPath = path.join('file', 'path', 'aura', 'myAuraCmp', 'myAuraCmpRenderer.js');
-    const auraComponentMD: MetadataComponent = {
-      type: {
-        id: 'auradefinitionbundle',
-        name: 'AuraDefinitionBundle',
-        directoryName: 'aura',
-        inFolder: false
+    const bundlePath = path.join('file', 'path', 'aura', 'myAuraCmp');
+    const cmpPath = path.join(bundlePath, 'myAuraCmp.cmp');
+    const auraDocPath = path.join(bundlePath, 'myAuraCmp.auradoc');
+    const cmpMetaPath = path.join(bundlePath, 'myAuraCmp.cmp-meta.xml');
+    const cssPath = path.join(bundlePath, 'myAuraCmp.css');
+    const designPath = path.join(bundlePath, 'myAuraCmp.design');
+    const svgPath = path.join(bundlePath, 'myAuraCmp.svg');
+    const controllerPath = path.join(bundlePath, 'myAuraCmpController.js');
+    const helperPath = path.join(bundlePath, 'myAuraCmpHelper.js');
+    const rendererPath = path.join(bundlePath, 'myAuraCmpRenderer.js');
+    const auraComponentMD = SourceComponent.createVirtualComponent(
+      {
+        type: registryData.types.auradefinitionbundle,
+        name: 'myAuraCmp',
+        xml: cmpMetaPath,
+        content: bundlePath
       },
-      fullName: 'myAuraCmp',
-      xml: cmpMetaPath,
-      sources: [
-        cmpPath,
-        auraDocPath,
-        cssPath,
-        designPath,
-        svgPath,
-        controllerPath,
-        helperPath,
-        rendererPath
+      [
+        {
+          dirPath: bundlePath,
+          children: [
+            'myAuraCmp.cmp',
+            'myAuraCmp.auradoc',
+            'myAuraCmp.cmp-meta.xml',
+            'myAuraCmp.css',
+            'myAuraCmp.design',
+            'myAuraCmp.svg',
+            'myAuraCmpController.js',
+            'myAuraCmpHelper.js',
+            'myAuraCmpRenderer.js'
+          ]
+        }
       ]
-    };
+    );
 
     const resultMap = queryToFileMap(auraComponent, auraComponentMD);
     expect(resultMap.size).to.equal(9);
@@ -259,19 +271,24 @@ describe('Tooling Retrieve Util', () => {
   });
 
   it('should generate correct file map for AuraDefinition application metadata', () => {
-    const appPath = path.join('file', 'path', 'aura', 'myAuraApp', 'myAuraApp.app');
-    const appMetaPath = path.join('file', 'path', 'aura', 'myAuraApp', 'myAuraApp.app-meta.xml');
-    const auraApplicationMD: MetadataComponent = {
-      type: {
-        id: 'auradefinitionbundle',
-        name: 'AuraDefinitionBundle',
-        directoryName: 'aura',
-        inFolder: false
+    const bundlePath = path.join('file', 'path', 'aura', 'myAuraApp');
+    const appPath = path.join(bundlePath, 'myAuraApp.app');
+    const appMetaPath = path.join(bundlePath, 'myAuraApp.app-meta.xml');
+    const tree = new VirtualTreeContainer([
+      {
+        dirPath: bundlePath,
+        children: [path.basename(appPath), path.basename(appMetaPath)]
+      }
+    ]);
+    const auraApplicationMD: SourceComponent = new SourceComponent(
+      {
+        type: registryData.types.auradefinitionbundle,
+        name: 'myAuraApp',
+        xml: appMetaPath,
+        content: bundlePath
       },
-      fullName: 'myAuraApp',
-      xml: appMetaPath,
-      sources: [appPath]
-    };
+      tree
+    );
 
     const resultMap = queryToFileMap(auraApplication, auraApplicationMD);
     expect(resultMap.size).to.equal(2);
@@ -286,25 +303,24 @@ describe('Tooling Retrieve Util', () => {
   });
 
   it('should generate correct file map for AuraDefinition event metadata', () => {
-    const eventPath = path.join('file', 'path', 'aura', 'myAuraEvent', 'myAuraEvent.evt');
-    const eventMetaPath = path.join(
-      'file',
-      'path',
-      'aura',
-      'myAuraEvent',
-      'myAuraEvent.evt-meta.xml'
-    );
-    const auraEventMD: MetadataComponent = {
-      type: {
-        id: 'auradefinitionbundle',
-        name: 'AuraDefinitionBundle',
-        directoryName: 'aura',
-        inFolder: false
+    const bundlePath = path.join('file', 'path', 'aura', 'myAuraEvent');
+    const eventPath = path.join(bundlePath, 'myAuraEvent.evt');
+    const eventMetaPath = path.join(bundlePath, 'myAuraEvent.evt-meta.xml');
+    const tree = new VirtualTreeContainer([
+      {
+        dirPath: bundlePath,
+        children: [path.basename(eventPath), path.basename(eventMetaPath)]
+      }
+    ]);
+    const auraEventMD: SourceComponent = new SourceComponent(
+      {
+        type: registryData.types.auradefinitionbundle,
+        name: 'myAuraEvent',
+        xml: eventMetaPath,
+        content: bundlePath
       },
-      fullName: 'myAuraEvent',
-      xml: eventMetaPath,
-      sources: [eventPath]
-    };
+      tree
+    );
 
     const resultMap = queryToFileMap(auraEvent, auraEventMD);
     expect(resultMap.size).to.equal(2);
@@ -321,31 +337,24 @@ describe('Tooling Retrieve Util', () => {
   });
 
   it('should generate correct file map for AuraDefinition interface metadata', () => {
-    const interfacePath = path.join(
-      'file',
-      'path',
-      'aura',
-      'myAuraInterface',
-      'myAuraInterface.intf'
-    );
-    const interfaceMetaPath = path.join(
-      'file',
-      'path',
-      'aura',
-      'myAuraInterface',
-      'myAuraInterface.intf-meta.xml'
-    );
-    const auraInterfaceMD: MetadataComponent = {
-      type: {
-        id: 'auradefinitionbundle',
-        name: 'AuraDefinitionBundle',
-        directoryName: 'aura',
-        inFolder: false
+    const bundlePath = path.join('file', 'path', 'aura', 'myAuraInterface');
+    const interfacePath = path.join(bundlePath, 'myAuraInterface.intf');
+    const interfaceMetaPath = path.join(bundlePath, 'myAuraInterface.intf-meta.xml');
+    const tree = new VirtualTreeContainer([
+      {
+        dirPath: bundlePath,
+        children: [path.basename(interfacePath), path.basename(interfaceMetaPath)]
+      }
+    ]);
+    const auraInterfaceMD: SourceComponent = new SourceComponent(
+      {
+        type: registryData.types.auradefinitionbundle,
+        name: 'myAuraInterface',
+        xml: interfaceMetaPath,
+        content: bundlePath
       },
-      fullName: 'myAuraInterface',
-      xml: interfaceMetaPath,
-      sources: [interfacePath]
-    };
+      tree
+    );
 
     const resultMap = queryToFileMap(auraInterface, auraInterfaceMD);
     expect(resultMap.size).to.equal(2);
@@ -362,25 +371,23 @@ describe('Tooling Retrieve Util', () => {
   });
 
   it('should generate correct file map for AuraDefinition tokens metadata', () => {
-    const tokensPath = path.join('file', 'path', 'aura', 'myAuraToken', 'myAuraToken.tokens');
-    const tokensMetaPath = path.join(
-      'file',
-      'path',
-      'aura',
-      'myAuraToken',
-      'myAuraToken.tokens-meta.xml'
-    );
-    const auraTokenMD: MetadataComponent = {
-      type: {
-        id: 'auradefinitionbundle',
-        name: 'AuraDefinitionBundle',
-        directoryName: 'aura',
-        inFolder: false
+    const bundlePath = path.join('file', 'path', 'aura', 'myAuraToken');
+    const tokensPath = path.join(bundlePath, 'myAuraToken.tokens');
+    const tokensMetaPath = path.join(bundlePath, 'myAuraToken.tokens-meta.xml');
+    const auraTokenMD: SourceComponent = SourceComponent.createVirtualComponent(
+      {
+        type: registryData.types.auradefinitionbundle,
+        name: 'myAuraToken',
+        xml: tokensMetaPath,
+        content: bundlePath
       },
-      fullName: 'myAuraToken',
-      xml: tokensMetaPath,
-      sources: [tokensPath]
-    };
+      [
+        {
+          dirPath: bundlePath,
+          children: [path.basename(tokensPath), path.basename(tokensMetaPath)]
+        }
+      ]
+    );
 
     const resultMap = queryToFileMap(auraTokens, auraTokenMD);
     expect(resultMap.size).to.equal(2);
@@ -395,27 +402,30 @@ describe('Tooling Retrieve Util', () => {
   });
 
   it('should generate correct file map for LightningComponentBundle metadata', () => {
-    const htmlPath = path.join('file', 'path', 'lwc', 'myLWCComponent', 'myLWCComponent.html');
-    const jsPath = path.join('file', 'path', 'lwc', 'myLWCComponent', 'myLWCComponent.js');
-    const cssPath = path.join('file', 'path', 'lwc', 'myLWCComponent', 'myLWCComponent.css');
-    const metaPath = path.join(
-      'file',
-      'path',
-      'lwc',
-      'myLWCComponent',
-      'myLWCComponent.js-meta.xml'
-    );
-    const lwcMD: MetadataComponent = {
-      type: {
-        id: 'lightningcomponentbundle',
-        name: 'LightningComponentBundle',
-        directoryName: 'lwc',
-        inFolder: false
+    const bundlePath = path.join('file', 'path', 'lwc', 'myLWCComponent');
+    const htmlPath = path.join(bundlePath, 'myLWCComponent.html');
+    const jsPath = path.join(bundlePath, 'myLWCComponent.js');
+    const cssPath = path.join(bundlePath, 'myLWCComponent.css');
+    const metaPath = path.join(bundlePath, 'myLWCComponent.js-meta.xml');
+    const lwcMD: SourceComponent = SourceComponent.createVirtualComponent(
+      {
+        type: registryData.types.lightningcomponentbundle,
+        name: 'myLWCComponent',
+        xml: metaPath,
+        content: bundlePath
       },
-      fullName: 'myLWCComponent',
-      xml: metaPath,
-      sources: [htmlPath, jsPath, cssPath]
-    };
+      [
+        {
+          dirPath: bundlePath,
+          children: [
+            path.basename(htmlPath),
+            path.basename(jsPath),
+            path.basename(cssPath),
+            path.basename(metaPath)
+          ]
+        }
+      ]
+    );
 
     const resultMap = queryToFileMap(lwcComponentMock, lwcMD);
     expect(resultMap.size).to.equal(4);

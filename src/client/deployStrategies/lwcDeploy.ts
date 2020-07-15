@@ -6,14 +6,15 @@
  */
 import { readFileSync } from 'fs';
 import { normalize } from 'path';
-import { DeployResult, MetadataComponent, SourceResult } from '../../types';
+import { DeployResult, SourceResult } from '../../types';
 import { extName } from '../../utils';
 import { LightningComponentResource } from '../../utils/deploy';
 import { deployTypes } from '../toolingApi';
 import { BaseDeploy } from './baseDeploy';
+import { SourceComponent } from '../../metadata-registry';
 
 export class LwcDeploy extends BaseDeploy {
-  public async deploy(component: MetadataComponent, namespace: string): Promise<DeployResult> {
+  public async deploy(component: SourceComponent, namespace: string): Promise<DeployResult> {
     this.component = component;
     this.namespace = namespace;
     let lightningResources;
@@ -32,7 +33,7 @@ export class LwcDeploy extends BaseDeploy {
   }
 
   public async buildResourceList(): Promise<LightningComponentResource[]> {
-    const sourceFiles = this.component.sources;
+    const sourceFiles = this.component.walkContent();
     sourceFiles.push(this.component.xml);
     const lightningResources: LightningComponentResource[] = [];
 
@@ -120,7 +121,7 @@ export class LwcDeploy extends BaseDeploy {
 
       const errorMessage = pathParts.slice(msgStartIndex + 2).join(' ');
 
-      const file = this.component.sources.find(s => s.includes(fileName));
+      const file = this.component.walkContent().find(s => s.includes(fileName));
 
       const errObj = {
         ...(errLocation ? { lineNumber: Number(errLocation.split(',')[0]) } : {}),

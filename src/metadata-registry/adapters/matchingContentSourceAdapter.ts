@@ -7,8 +7,9 @@
 import { META_XML_SUFFIX } from '../../utils';
 import { BaseSourceAdapter } from './baseSourceAdapter';
 import { ExpectedSourceFilesError, UnexpectedForceIgnore } from '../../errors';
-import { SourcePath, MetadataComponent } from '../../types';
+import { SourcePath } from '../../types';
 import { extName } from '../../utils/path';
+import { SourceComponent } from '../sourceComponent';
 
 /**
  * Handles types with a single content file with a matching file extension.
@@ -30,23 +31,33 @@ export class MatchingContentSourceAdapter extends BaseSourceAdapter {
     return `${trigger}${META_XML_SUFFIX}`;
   }
 
-  protected populate(component: MetadataComponent, trigger: SourcePath): MetadataComponent {
+  protected populate(component: SourceComponent, trigger: SourcePath): SourceComponent {
     let sourcePath: SourcePath;
+
     if (component.xml === trigger) {
-      const path = trigger.slice(0, trigger.lastIndexOf(META_XML_SUFFIX));
-      if (this.tree.exists(path)) {
-        sourcePath = path;
+      const fsPath = this.removeMetaXmlSuffix(trigger);
+      if (this.tree.exists(fsPath)) {
+        sourcePath = fsPath;
       }
-    } else if (this.registry.suffixes[extName(trigger)]) {
+    } else if (this.fileSuffixIndexed(trigger)) {
       sourcePath = trigger;
     }
+
     if (!sourcePath) {
       throw new ExpectedSourceFilesError(this.type, trigger);
     } else if (this.forceIgnore.denies(sourcePath)) {
       throw new UnexpectedForceIgnore('error_no_source_ignore', [this.type.name, sourcePath]);
     }
 
-    component.sources = [sourcePath];
+    component.content = sourcePath;
     return component;
+  }
+
+  private removeMetaXmlSuffix(fsPath: SourcePath): SourcePath {
+    return fsPath.slice(0, fsPath.lastIndexOf(META_XML_SUFFIX));
+  }
+
+  private fileSuffixIndexed(fsPath: SourcePath): boolean {
+    return !!this.registry.suffixes[extName(fsPath)];
   }
 }

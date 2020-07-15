@@ -40,7 +40,7 @@ describe('DefaultTransformer', () => {
       const { directoryName } = component.type;
       const relativeBundle = join(directoryName, basename(simon.SIMON_BUNDLE_PATH));
       const expectedInfos: WriteInfo[] = [];
-      for (const source of component.sources) {
+      for (const source of component.walkContent()) {
         expectedInfos.push({
           relativeDestination: join(relativeBundle, basename(source)),
           source: fs.createReadStream(source)

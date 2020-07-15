@@ -7,13 +7,14 @@
 import { readFileSync } from 'fs';
 import { AuraDefinition } from '../../utils/deploy';
 import { extName, baseName } from '../../utils';
-import { MetadataComponent, DeployResult, SourceResult } from '../../types';
+import { DeployResult, SourceResult, SourcePath } from '../../types';
 import { deployTypes } from '../toolingApi';
 import { BaseDeploy } from './baseDeploy';
 import { AURA_TYPES } from './constants';
+import { SourceComponent } from '../../metadata-registry';
 
 export class AuraDeploy extends BaseDeploy {
-  public async deploy(component: MetadataComponent, namespace: string): Promise<DeployResult> {
+  public async deploy(component: SourceComponent, namespace: string): Promise<DeployResult> {
     this.component = component;
     this.namespace = namespace;
     let auraDefinitions;
@@ -33,7 +34,7 @@ export class AuraDeploy extends BaseDeploy {
   }
 
   public async buildDefList(): Promise<AuraDefinition[]> {
-    const sourceFiles = this.component.sources;
+    const sourceFiles = this.component.walkContent();
     const auraDefinitions: AuraDefinition[] = [];
 
     const existingDefinitions = await this.findAuraDefinitions();
@@ -42,7 +43,7 @@ export class AuraDeploy extends BaseDeploy {
       : await this.upsertBundle();
     const bundleId = auraBundle.id;
 
-    sourceFiles.forEach(async sourceFile => {
+    sourceFiles.forEach(async (sourceFile: SourcePath) => {
       const source = readFileSync(sourceFile, 'utf8');
       const suffix = extName(sourceFile);
       const defType = this.getAuraDefType(sourceFile, suffix);
@@ -165,9 +166,8 @@ export class AuraDeploy extends BaseDeploy {
       });
       let fileName: string;
       if (fileType) {
-        fileName = this.component.sources.find(s =>
-          s.toLowerCase().includes(fileType.toLowerCase())
-        );
+        const sources = this.component.walkContent();
+        fileName = sources.find(s => s.toLowerCase().includes(fileType.toLowerCase()));
       } else {
         fileName = defaultPath;
       }

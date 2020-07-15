@@ -6,8 +6,7 @@
  */
 
 import { assert, expect } from 'chai';
-import { MetadataComponent } from '../../src/types';
-import { RegistryAccess } from '../../src/metadata-registry';
+import { RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../src/metadata-registry';
 import { nls } from '../../src/i18n';
 import { mockRegistry, kathy, keanu, taraji, tina, simon } from '../mock/registry';
 import { join, basename, dirname } from 'path';
@@ -197,19 +196,7 @@ describe('RegistryAccess', () => {
         const keanuSrc = keanu.KEANU_SOURCE_PATHS[0];
         const keanuXml2 = join(stuffDir, keanu.KEANU_XML_NAMES[1]);
         const keanuSrc2 = join(stuffDir, keanu.KEANU_SOURCE_NAMES[1]);
-        const keanuComponent2: MetadataComponent = {
-          fullName: 'b',
-          type: mockRegistry.types.keanureeves,
-          xml: keanuXml2,
-          sources: [keanuSrc2]
-        };
-        const kathyComponent2: MetadataComponent = {
-          fullName: 'a',
-          type: mockRegistry.types.kathybates,
-          xml: kathyXml,
-          sources: []
-        };
-        const access = testUtil.createRegistryAccess([
+        const tree = new VirtualTreeContainer([
           {
             dirPath: KEANUS_DIR,
             children: [
@@ -229,6 +216,24 @@ describe('RegistryAccess', () => {
             children: [basename(keanuSrc2), basename(keanuXml2)]
           }
         ]);
+        const keanuComponent2: SourceComponent = new SourceComponent(
+          {
+            name: 'b',
+            type: mockRegistry.types.keanureeves,
+            xml: keanuXml2,
+            content: keanuSrc2
+          },
+          tree
+        );
+        const kathyComponent2 = new SourceComponent(
+          {
+            name: 'a',
+            type: mockRegistry.types.kathybates,
+            xml: kathyXml
+          },
+          tree
+        );
+        const access = new RegistryAccess(mockRegistry, tree);
         testUtil.stubAdapters([
           {
             type: mockRegistry.types.kathybates,
@@ -351,7 +356,7 @@ describe('RegistryAccess', () => {
        * identified as SimonPegg type
        */
       it('Should handle suffix collision for mixed content types', () => {
-        const access = testUtil.createRegistryAccess([
+        const tree = new VirtualTreeContainer([
           {
             dirPath: simon.SIMON_DIR,
             children: [basename(simon.SIMON_BUNDLE_PATH)]
@@ -361,13 +366,17 @@ describe('RegistryAccess', () => {
             children: [keanu.KEANU_XML_NAMES[0], basename(simon.SIMON_SOURCE_PATHS[0])]
           }
         ]);
+        const access = new RegistryAccess(mockRegistry, tree);
         expect(access.getComponentsFromPath(simon.SIMON_DIR)).to.deep.equal([
-          {
-            fullName: 'a',
-            type: mockRegistry.types.simonpegg,
-            xml: join(simon.SIMON_BUNDLE_PATH, keanu.KEANU_XML_NAMES[0]),
-            sources: [simon.SIMON_SOURCE_PATHS[0]]
-          }
+          new SourceComponent(
+            {
+              name: 'a',
+              type: mockRegistry.types.simonpegg,
+              xml: join(simon.SIMON_BUNDLE_PATH, keanu.KEANU_XML_NAMES[0]),
+              content: simon.SIMON_BUNDLE_PATH
+            },
+            tree
+          )
         ]);
       });
 

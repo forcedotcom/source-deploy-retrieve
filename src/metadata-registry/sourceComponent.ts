@@ -25,6 +25,9 @@ type ComponentProperties = {
   parent?: SourceComponent;
 };
 
+/**
+ * Representation of a MetadataComponent in a file tree.
+ */
 export class SourceComponent implements MetadataComponent {
   public readonly name: string;
   public readonly type: MetadataType;

@@ -52,32 +52,3 @@ export interface MetadataComponent {
   type: MetadataType;
   parent?: MetadataComponent;
 }
-
-/**
- * Representation of a MetadataComponent in a file tree.
- */
-// export interface SourceComponent extends MetadataComponent {
-//   name: string;
-//   /**
-//    * Path to the root metadata xml file.
-//    */
-//   xml: SourcePath;
-//   /**
-//    * Path to the component's content.
-//    */
-//   content?: SourcePath;
-//   parent?: SourceComponent;
-//   /**
-//    * Traverse a component's content if it is a directory, otherwise only the `content`
-//    * property is resolved.
-//    *
-//    * @returns {Array<SourcePath>}
-//    */
-//   walkContent(): SourcePath[];
-//   /**
-//    * Traverse a component's children if it has any.
-//    *
-//    * @returns {Array<SourceComponent>}
-//    */
-//   getChildren(): SourceComponent[];
-// }

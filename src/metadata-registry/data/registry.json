@@ -1696,7 +1696,10 @@
     "auradefinitionbundle": { "adapter": "bundle" },
     "certificate": { "adapter": "matchingContentFile" },
     "contentasset": { "adapter": "matchingContentFile" },
-    "customobject": { "adapter": "decomposed" },
+    "customobject": {
+      "adapter": "decomposed",
+      "transformer": "decomposed"
+    },
     "document": { "adapter": "mixedContent" },
     "emailtemplate": { "adapter": "matchingContentFile" },
     "experiencebundle": { "adapter": "mixedContent" },

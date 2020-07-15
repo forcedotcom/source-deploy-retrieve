@@ -9,9 +9,12 @@ import { MetadataTransformer } from '../../types';
 import { DefaultTransformer } from './default';
 import { SourceComponent } from '../../metadata-registry/sourceComponent';
 import { MetadataRegistry } from '../../metadata-registry';
+import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
+import { ConvertTransaction } from '../convertTransaction';
 
 const enum TransformerId {
   Standard = 'standard',
+  Decomposed = 'decomposed',
 }
 
 export class MetadataTransformerFactory {
@@ -21,15 +24,21 @@ export class MetadataTransformerFactory {
     this.registry = registry;
   }
 
-  public getTransformer(component: SourceComponent): MetadataTransformer {
-    const type = component.type;
+  public getTransformer(
+    component: SourceComponent,
+    convertTransaction: ConvertTransaction
+  ): MetadataTransformer {
+    // transformer is determined by the parent, if the component has one
+    const type = component.parent ? component.parent.type : component.type;
     const transformerId = this.registry.strategies.hasOwnProperty(type.id)
       ? (this.registry.strategies[type.id].transformer as TransformerId)
       : undefined;
     switch (transformerId) {
+      case TransformerId.Decomposed:
+        return new DecomposedMetadataTransformer(component, convertTransaction);
       case TransformerId.Standard:
       case undefined:
-        return new DefaultTransformer(component);
+        return new DefaultTransformer(component, convertTransaction);
       default:
         throw new RegistryError('error_missing_transformer', [type.name, transformerId]);
     }

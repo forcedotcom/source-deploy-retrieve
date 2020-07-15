@@ -10,9 +10,9 @@ import { RegistryAccess } from './registryAccess';
 import { RegistryError } from '../errors';
 import { SourceComponent } from './sourceComponent';
 import { writeFileSync } from 'fs';
+import { XML_DECL } from '../utils/constants';
 
 export class ManifestGenerator {
-  private xmlDef = '<?xml version="1.0" encoding="UTF-8"?>\n';
   private packageModuleStart = '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
   private packageModuleEnd = '</Package>';
   private registryAccess: RegistryAccess;
@@ -34,7 +34,7 @@ export class ManifestGenerator {
     components: MetadataComponent[],
     apiVersion = this.registryAccess.getApiVersion()
   ): string {
-    let output = this.xmlDef.concat(this.packageModuleStart);
+    let output = XML_DECL.concat(this.packageModuleStart);
     const metadataMap = this.createMetadataMap(components);
     for (const metadataType of metadataMap.keys()) {
       output = output.concat('  <types>\n');

@@ -10,11 +10,12 @@ import { join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
 import { LibraryError } from '../errors';
-import { RegistryAccess, SourceComponent } from '../metadata-registry';
+import { SourceComponent } from '../metadata-registry';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from '../types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { SourcePath } from '../common';
 import { ConvertTransaction } from './convertTransaction';
+import { MetadataTransformerFactory } from './transformers';
 
 export const pipeline = promisify(cbPipeline);
 
@@ -40,13 +41,13 @@ export class ComponentReader extends Readable {
 
 export class ComponentConverter extends Transform {
   private targetFormat: SfdxFileFormat;
-  private registryAccess: RegistryAccess;
   private transaction = new ConvertTransaction();
+  private transformerFactory: MetadataTransformerFactory;
 
-  constructor(targetFormat: SfdxFileFormat, registryAccess: RegistryAccess) {
+  constructor(targetFormat: SfdxFileFormat, registry: MetadataRegistry) {
     super({ objectMode: true });
     this.targetFormat = targetFormat;
-    this.registryAccess = registryAccess;
+    this.transformerFactory = new MetadataTransformerFactory(registry);
   }
 
   public _transform(
@@ -57,7 +58,7 @@ export class ComponentConverter extends Transform {
     let err: Error;
     let result: WriterFormat;
     try {
-      const transformer = this.registryAccess.getTransformer(chunk);
+      const transformer = this.transformerFactory.getTransformer(chunk, this.transaction);
       switch (this.targetFormat) {
         case 'metadata':
           result = transformer.toMetadataFormat();

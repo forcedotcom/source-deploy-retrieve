@@ -4,13 +4,15 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { WriterFormat, SourceComponent } from '../../types';
-import * as xmlParser from 'fast-xml-parser';
+import { WriterFormat } from '../../types';
+import { parse as parseXml, j2xParser } from 'fast-xml-parser';
 import { readFileSync } from 'fs';
 import { Readable } from 'stream';
 import { META_XML_SUFFIX } from '../../utils';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { RecompositionFinalizer, ConvertTransaction } from '../convertTransaction';
+import { SourceComponent } from '../../metadata-registry';
+import { XML_NS, XML_NS_KEY, XML_DECL } from '../../utils/constants';
 
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   constructor(component: SourceComponent, convertTransaction: ConvertTransaction) {
@@ -33,7 +35,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       return { component: this.component, writeInfos: [] };
     }
 
-    const baseXmlObj = xmlParser.parse(readFileSync(this.component.xml).toString());
+    const baseXmlObj = parseXml(readFileSync(this.component.xml).toString());
     const recomposedXmlObj = DecomposedMetadataTransformer.recompose(
       this.component.getChildren(),
       baseXmlObj
@@ -48,23 +50,28 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   public static recompose(children: SourceComponent[], baseXmlObj: any = {}): any {
     for (const child of children) {
       const { directoryName: groupNode } = child.type;
-      const parsedChild = xmlParser.parse(readFileSync(child.xml).toString());
+      const { name: parentName } = child.parent.type;
+      const parsedChild = parseXml(readFileSync(child.xml).toString());
       const childContents = parsedChild[child.type.name];
-      if (!baseXmlObj[child.parent.type.name]) {
-        baseXmlObj[child.parent.type.name] = {};
+
+      if (!baseXmlObj[parentName]) {
+        baseXmlObj[parentName] = { '@_xmlns': XML_NS };
+      } else if (!baseXmlObj[parentName][XML_NS_KEY]) {
+        baseXmlObj[parentName][XML_NS_KEY] = XML_NS;
       }
-      if (!baseXmlObj[child.parent.type.name][groupNode]) {
-        baseXmlObj[child.parent.type.name][groupNode] = [];
+
+      if (!baseXmlObj[parentName][groupNode]) {
+        baseXmlObj[parentName][groupNode] = [];
       }
-      baseXmlObj[child.parent.type.name][groupNode].push(childContents);
+      baseXmlObj[parentName][groupNode].push(childContents);
     }
     return baseXmlObj;
   }
 
   public static createWriterFormat(trigger: SourceComponent, xmlJson: any): WriterFormat {
-    const js2Xml = new xmlParser.j2xParser({ format: true, indentBy: '  ' });
+    const js2Xml = new j2xParser({ format: true, indentBy: '  ', ignoreAttributes: false });
     const source = new Readable();
-    source.push(js2Xml.parse(xmlJson));
+    source.push(XML_DECL.concat(js2Xml.parse(xmlJson)));
     source.push(null);
     let xmlDest = trigger.getPackageRelativePath(trigger.xml);
     xmlDest = xmlDest.slice(0, xmlDest.lastIndexOf(META_XML_SUFFIX));

@@ -4,8 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SourceComponent, WriterFormat } from '../types';
+import { WriterFormat } from '../types';
 import { DecomposedMetadataTransformer } from './transformers/DecomposedMetadataTransformer';
+import { SourceComponent } from '../metadata-registry';
 
 export type ConvertTransactionState = {
   recompose: {

@@ -5,9 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join, basename, dirname } from 'path';
-import { SourceComponent } from '../../../src/types';
 import { mockRegistry } from '.';
-import { StandardSourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src/metadata-registry';
 
 // Mixed content with directory as content
 const type = mockRegistry.types.tarajihenson;
@@ -21,7 +20,7 @@ export const TARAJI_SOURCE_PATHS = [
   join(TARAJI_CONTENT_PATH, 'b', 'test.g'),
   join(TARAJI_CONTENT_PATH, 'b', 'test2.w')
 ];
-export const TARAJI_COMPONENT: SourceComponent = new StandardSourceComponent({
+export const TARAJI_COMPONENT: SourceComponent = new SourceComponent({
   name: 'a',
   type,
   xml: TARAJI_XML_PATHS[0],

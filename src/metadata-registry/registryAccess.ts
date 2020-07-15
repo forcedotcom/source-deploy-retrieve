@@ -13,14 +13,14 @@ import {
   MetadataTransformer,
   MetadataType,
   SourcePath,
-  TreeContainer,
-  SourceComponent
+  TreeContainer
 } from '../types';
 import { extName, parentName } from '../utils/path';
 import { deepFreeze, parseMetadataXml } from '../utils/registry';
 import { MixedContentSourceAdapter } from './adapters/mixedContentSourceAdapter';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
+import { SourceComponent } from './sourceComponent';
 
 /**
  * Resolver for metadata type and component objects.
@@ -99,11 +99,11 @@ export class RegistryAccess {
     return component ? [component] : [];
   }
 
-  public getTransformer(component: MetadataComponent): MetadataTransformer {
+  public getTransformer(component: SourceComponent): MetadataTransformer {
     return this.metadataTransformerFactory.getTransformer(component);
   }
 
-  private getComponentsFromPathRecursive(dir: SourcePath): MetadataComponent[] {
+  private getComponentsFromPathRecursive(dir: SourcePath): SourceComponent[] {
     const dirQueue: SourcePath[] = [];
     const components: SourceComponent[] = [];
 

@@ -4,20 +4,20 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { StandardSourceComponent } from '../../src/metadata-registry';
+import { SourceComponent } from '../../src/metadata-registry';
 import { RegistryTestUtil } from './registryTestUtil';
 import { mockRegistry, kathy, regina, taraji, keanu } from '../mock/registry';
 import { expect } from 'chai';
 import { REGINA_COMPONENT } from '../mock/registry/reginaConstants';
 
-describe('StandardSourceComponent', () => {
+describe('SourceComponent', () => {
   it('should return correct fullName for components without a parent', () => {
     expect(REGINA_COMPONENT.fullName).to.equal(REGINA_COMPONENT.name);
   });
 
   describe('walkContent', () => {
     it('should return empty array if no content is set', () => {
-      const component = new StandardSourceComponent({
+      const component = new SourceComponent({
         name: 'a',
         type: mockRegistry.types.kathybates,
         xml: kathy.KATHY_XML_PATHS[0]
@@ -26,7 +26,7 @@ describe('StandardSourceComponent', () => {
     });
 
     it('should return content if content is a file', () => {
-      const component = StandardSourceComponent.createVirtualComponent(keanu.KEANU_COMPONENT, [
+      const component = SourceComponent.createVirtualComponent(keanu.KEANU_COMPONENT, [
         {
           dirPath: keanu.KEANUS_DIR,
           children: [keanu.KEANU_SOURCE_NAMES[0]]
@@ -36,7 +36,7 @@ describe('StandardSourceComponent', () => {
     });
 
     it('should collect all files if content is directory', () => {
-      const component = StandardSourceComponent.createVirtualComponent(
+      const component = SourceComponent.createVirtualComponent(
         {
           name: 'a',
           type: mockRegistry.types.tarajihenson,
@@ -56,7 +56,7 @@ describe('StandardSourceComponent', () => {
         accept: [taraji.TARAJI_SOURCE_PATHS[1]],
         deny: [taraji.TARAJI_SOURCE_PATHS[0], taraji.TARAJI_SOURCE_PATHS[2]]
       });
-      const component = StandardSourceComponent.createVirtualComponent(
+      const component = SourceComponent.createVirtualComponent(
         taraji.TARAJI_COMPONENT,
         taraji.TARAJI_VIRTUAL_FS,
         forceIgnore
@@ -68,7 +68,7 @@ describe('StandardSourceComponent', () => {
 
   describe('Child Components', () => {
     const type = mockRegistry.types.reginaking;
-    const expectedChild = StandardSourceComponent.createVirtualComponent(
+    const expectedChild = SourceComponent.createVirtualComponent(
       {
         name: 'z',
         type: type.children.types.y,
@@ -77,7 +77,7 @@ describe('StandardSourceComponent', () => {
       },
       regina.REGINA_VIRTUAL_FS
     );
-    const expectedChild2 = StandardSourceComponent.createVirtualComponent(
+    const expectedChild2 = SourceComponent.createVirtualComponent(
       {
         name: 'w',
         type: type.children.types.x,
@@ -97,7 +97,7 @@ describe('StandardSourceComponent', () => {
         seed: regina.REGINA_XML_PATH,
         deny: [regina.REGINA_CHILD_XML_PATH_2]
       });
-      const component = StandardSourceComponent.createVirtualComponent(
+      const component = SourceComponent.createVirtualComponent(
         regina.REGINA_COMPONENT,
         regina.REGINA_VIRTUAL_FS,
         forceIgnore

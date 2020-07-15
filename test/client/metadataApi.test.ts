@@ -8,8 +8,7 @@ import { AuthInfo, Connection } from '@salesforce/core';
 import { expect } from 'chai';
 import { MockTestOrgData } from '@salesforce/core/lib/testSetup';
 import { createSandbox } from 'sinon';
-import { RegistryAccess, registryData } from '../../src/metadata-registry';
-import { MetadataComponent } from '../../src/types';
+import { RegistryAccess, registryData, SourceComponent } from '../../src/metadata-registry';
 import { MetadataApi, DEFAULT_API_OPTIONS } from '../../src/client/metadataApi';
 import { MetadataConverter } from '../../src/convert';
 import { fail } from 'assert';
@@ -29,7 +28,7 @@ describe('Metadata Api', () => {
     xml: path.join(rootPath, 'myTestClass.cls-meta.xml'),
     content: path.join(rootPath, 'myTestClass.cls')
   };
-  const component = StandardSourceComponent.createVirtualComponent(props, [
+  const component = SourceComponent.createVirtualComponent(props, [
     {
       dirPath: rootPath,
       children: [path.basename(props.xml), path.basename(props.content)]

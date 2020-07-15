@@ -7,8 +7,9 @@
 import { META_XML_SUFFIX } from '../../utils';
 import { BaseSourceAdapter } from './baseSourceAdapter';
 import { ExpectedSourceFilesError, UnexpectedForceIgnore } from '../../errors';
-import { SourcePath, SourceComponent } from '../../types';
+import { SourcePath } from '../../types';
 import { extName } from '../../utils/path';
+import { SourceComponent } from '../sourceComponent';
 
 /**
  * Handles types with a single content file with a matching file extension.

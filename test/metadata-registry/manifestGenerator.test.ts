@@ -7,7 +7,7 @@
 
 import { ManifestGenerator } from '../../src/metadata-registry/manifestGenerator';
 import { expect } from 'chai';
-import { RegistryAccess, StandardSourceComponent, registryData } from '../../src/metadata-registry';
+import { RegistryAccess, SourceComponent, registryData } from '../../src/metadata-registry';
 import { SinonSandbox, createSandbox } from 'sinon';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -130,7 +130,7 @@ describe('ManifestGenerator', () => {
 
   const rootPath = path.join('file', 'path');
   const mdComponents = [
-    StandardSourceComponent.createVirtualComponent(
+    SourceComponent.createVirtualComponent(
       {
         type: registryData.types.apexclass,
         name: 'myTestClass',

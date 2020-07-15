@@ -8,7 +8,8 @@ import { BaseSourceAdapter } from './baseSourceAdapter';
 import { dirname, basename, sep } from 'path';
 import { ExpectedSourceFilesError } from '../../errors';
 import { baseName } from '../../utils/path';
-import { SourcePath, MetadataType, TreeContainer, SourceComponent } from '../../types';
+import { SourcePath, MetadataType, TreeContainer } from '../../types';
+import { SourceComponent } from '../sourceComponent';
 
 /**
  * Handles types with mixed content. Mixed content means there are one or more additional

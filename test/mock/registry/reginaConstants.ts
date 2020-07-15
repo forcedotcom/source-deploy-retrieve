@@ -5,10 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { SourceComponent } from '../../../src/types';
 import { mockRegistry } from '.';
 import { baseName } from '../../../src/utils';
-import { StandardSourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src/metadata-registry';
 
 // Constants for a decomposed type
 const type = mockRegistry.types.reginaking;
@@ -32,7 +31,7 @@ export const REGINA_VIRTUAL_FS = [
     children: [REGINA_CHILD_XML_NAME_2]
   }
 ];
-export const REGINA_COMPONENT: SourceComponent = StandardSourceComponent.createVirtualComponent(
+export const REGINA_COMPONENT = SourceComponent.createVirtualComponent(
   {
     name: baseName(REGINA_XML_PATH),
     type,

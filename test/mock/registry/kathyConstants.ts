@@ -5,9 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { SourceComponent } from '../../../src/types';
 import { mockRegistry } from '.';
-import { StandardSourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src/metadata-registry';
 
 // Constants for a type that uses the BaseSourceAdapter and is inFolder
 const type = mockRegistry.types.kathybates;
@@ -21,17 +20,17 @@ export const KATHY_XML_PATHS = [
   join(KATHY_FOLDER, 'c.kathy-meta.xml')
 ];
 export const KATHY_COMPONENTS: SourceComponent[] = [
-  new StandardSourceComponent({
+  new SourceComponent({
     name: `A_Folder/a`,
     type,
     xml: KATHY_XML_PATHS[0]
   }),
-  new StandardSourceComponent({
+  new SourceComponent({
     name: 'A_Folder/b',
     type,
     xml: KATHY_XML_PATHS[1]
   }),
-  new StandardSourceComponent({
+  new SourceComponent({
     name: 'A_Folder/c',
     type,
     xml: KATHY_XML_PATHS[2]

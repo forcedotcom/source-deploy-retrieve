@@ -6,8 +6,8 @@
  */
 
 import { Connection } from '@salesforce/core';
-import { SourcePath, SourceComponent } from './common';
-import { RegistryAccess } from '../metadata-registry';
+import { SourcePath } from './common';
+import { RegistryAccess, SourceComponent } from '../metadata-registry';
 
 type CommonOptions = {
   /**

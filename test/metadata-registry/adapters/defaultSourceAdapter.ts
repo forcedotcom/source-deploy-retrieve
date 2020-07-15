@@ -8,7 +8,7 @@ import { join } from 'path';
 import { mockRegistry } from '../../mock/registry';
 import { DefaultSourceAdapter } from '../../../src/metadata-registry/adapters/defaultSourceAdapter';
 import { expect } from 'chai';
-import { StandardSourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src/metadata-registry';
 
 describe('DefaultSourceAdapter', () => {
   it('should return a SourceComponent when given a metadata xml file', () => {
@@ -16,7 +16,7 @@ describe('DefaultSourceAdapter', () => {
     const type = mockRegistry.types.keanureeves;
     const adapter = new DefaultSourceAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.deep.equal(
-      new StandardSourceComponent({
+      new SourceComponent({
         name: 'My_Test',
         type,
         xml: path

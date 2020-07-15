@@ -4,8 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SourcePath, SourceComponent } from './common';
+import { SourcePath } from './common';
 import { Readable } from 'stream';
+import { SourceComponent } from '../metadata-registry';
 
 // --------------
 // INTERNAL

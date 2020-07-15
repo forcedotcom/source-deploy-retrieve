@@ -8,13 +8,13 @@ import { DecomposedSourceAdapter } from '../../../src/metadata-registry/adapters
 import { mockRegistry, regina } from '../../mock/registry';
 import { expect } from 'chai';
 import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
-import { StandardSourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src/metadata-registry';
 
 describe('DecomposedSourceAdapter', () => {
   const type = mockRegistry.types.reginaking;
   const tree = new VirtualTreeContainer(regina.REGINA_VIRTUAL_FS);
   const adapter = new DecomposedSourceAdapter(type, mockRegistry, undefined, tree);
-  const expectedComponent = new StandardSourceComponent(regina.REGINA_COMPONENT, tree);
+  const expectedComponent = new SourceComponent(regina.REGINA_COMPONENT, tree);
   const children = expectedComponent.getChildren();
 
   it('should return expected SourceComponent when given a root metadata xml path', () => {

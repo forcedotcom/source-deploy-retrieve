@@ -6,7 +6,7 @@
  */
 import { mockRegistry } from '.';
 import { join } from 'path';
-import { StandardSourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src/metadata-registry';
 
 // Bundle content
 const type = mockRegistry.types.simonpegg;
@@ -21,7 +21,7 @@ export const SIMON_SOURCE_PATHS = [
   join(SIMON_BUNDLE_PATH, 'a.css'),
   join(SIMON_BUNDLE_PATH, 'a.html')
 ];
-export const SIMON_COMPONENT = StandardSourceComponent.createVirtualComponent(
+export const SIMON_COMPONENT = SourceComponent.createVirtualComponent(
   {
     name: 'a',
     type,

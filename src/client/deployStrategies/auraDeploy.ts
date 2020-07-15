@@ -7,10 +7,11 @@
 import { readFileSync } from 'fs';
 import { AuraDefinition } from '../../utils/deploy';
 import { extName, baseName } from '../../utils';
-import { SourceComponent, DeployResult, SourceResult } from '../../types';
+import { DeployResult, SourceResult, SourcePath } from '../../types';
 import { deployTypes } from '../toolingApi';
 import { BaseDeploy } from './baseDeploy';
 import { AURA_TYPES } from './constants';
+import { SourceComponent } from '../../metadata-registry';
 
 export class AuraDeploy extends BaseDeploy {
   public async deploy(component: SourceComponent, namespace: string): Promise<DeployResult> {
@@ -42,7 +43,7 @@ export class AuraDeploy extends BaseDeploy {
       : await this.upsertBundle();
     const bundleId = auraBundle.id;
 
-    sourceFiles.forEach(async sourceFile => {
+    sourceFiles.forEach(async (sourceFile: SourcePath) => {
       const source = readFileSync(sourceFile, 'utf8');
       const suffix = extName(sourceFile);
       const defType = this.getAuraDefType(sourceFile, suffix);

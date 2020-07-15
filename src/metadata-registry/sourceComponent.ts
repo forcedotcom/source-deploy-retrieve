@@ -8,8 +8,8 @@ import {
   MetadataType,
   SourcePath,
   TreeContainer,
-  SourceComponent,
-  VirtualDirectory
+  VirtualDirectory,
+  MetadataComponent
 } from '../types';
 import { join, dirname } from 'path';
 import { ForceIgnore } from './forceIgnore';
@@ -25,12 +25,12 @@ type ComponentProperties = {
   parent?: SourceComponent;
 };
 
-export class StandardSourceComponent implements SourceComponent {
+export class SourceComponent implements MetadataComponent {
   public readonly name: string;
   public readonly type: MetadataType;
   public readonly xml: SourcePath;
-  public readonly content?: SourcePath;
   public readonly parent?: SourceComponent;
+  public content?: SourcePath;
   private _tree: TreeContainer;
   private forceIgnore: ForceIgnore;
 
@@ -52,9 +52,9 @@ export class StandardSourceComponent implements SourceComponent {
     props: ComponentProperties,
     fs: VirtualDirectory[],
     forceIgnore?: ForceIgnore
-  ): StandardSourceComponent {
+  ): SourceComponent {
     const tree = new VirtualTreeContainer(fs);
-    return new StandardSourceComponent(props, tree, forceIgnore);
+    return new SourceComponent(props, tree, forceIgnore);
   }
 
   public walkContent(): SourcePath[] {
@@ -82,7 +82,7 @@ export class StandardSourceComponent implements SourceComponent {
       if (childXml && !fileIsRootXml) {
         // TODO: Log warning if missing child type definition
         const childTypeId = this.type.children.suffixes[childXml.suffix];
-        const childComponent = new StandardSourceComponent(
+        const childComponent = new SourceComponent(
           {
             name: baseName(fsPath),
             type: this.type.children.types[childTypeId],

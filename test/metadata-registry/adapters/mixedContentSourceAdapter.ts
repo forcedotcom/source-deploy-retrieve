@@ -18,7 +18,7 @@ import { expect, assert } from 'chai';
 import { MixedContentSourceAdapter } from '../../../src/metadata-registry/adapters/mixedContentSourceAdapter';
 import { ExpectedSourceFilesError } from '../../../src/errors';
 import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
-import { StandardSourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src/metadata-registry';
 
 describe('MixedContentSourceAdapter', () => {
   it('Should throw ExpectedSourceFilesError if content does not exist', () => {
@@ -42,7 +42,7 @@ describe('MixedContentSourceAdapter', () => {
       }
     ]);
     const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
-    const expectedComponent = new StandardSourceComponent(
+    const expectedComponent = new SourceComponent(
       {
         name: 'a',
         type,
@@ -66,7 +66,7 @@ describe('MixedContentSourceAdapter', () => {
     const type = mockRegistry.types.tarajihenson;
     const tree = new VirtualTreeContainer(TARAJI_VIRTUAL_FS);
     const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
-    const expectedComponent = new StandardSourceComponent(TARAJI_COMPONENT, tree);
+    const expectedComponent = new SourceComponent(TARAJI_COMPONENT, tree);
 
     it('Should return expected SourceComponent when given a root metadata xml path', () => {
       expect(adapter.getComponent(TARAJI_XML_PATHS[0])).to.deep.equal(expectedComponent);

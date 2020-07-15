@@ -15,7 +15,7 @@ import { ContainerDeploy } from '../../../src/client/deployStrategies';
 import { ToolingCreateResult } from '../../../src/utils/deploy';
 import { nls } from '../../../src/i18n';
 import { DeployStatusEnum, QueryResult } from '../../../src/types';
-import { StandardSourceComponent, registryData } from '../../../src/metadata-registry';
+import { SourceComponent, registryData } from '../../../src/metadata-registry';
 
 const $$ = testSetup();
 
@@ -32,25 +32,25 @@ describe('Container Deploy Strategy', () => {
     name: 'VSCode_MDC_',
     message: ''
   };
-  const apexClassCmp = new StandardSourceComponent({
+  const apexClassCmp = new SourceComponent({
     type: registryData.types.apexclass,
     name: 'one',
     content: 'file/path/one.cls',
     xml: 'file/path/one.cls-meta.xml'
   });
-  const apexTriggerCmp = new StandardSourceComponent({
+  const apexTriggerCmp = new SourceComponent({
     type: registryData.types.apextrigger,
     name: 'one',
     content: 'file/path/one.trigger',
     xml: 'file/path/one.trigger-meta.xml'
   });
-  const apexPageCmp = new StandardSourceComponent({
+  const apexPageCmp = new SourceComponent({
     type: registryData.types.apexpage,
     name: 'one',
     content: 'file/path/one.page',
     xml: 'file/path/one.page-meta.xml'
   });
-  const apexComponent = new StandardSourceComponent({
+  const apexComponent = new SourceComponent({
     type: registryData.types.apexcomponent,
     name: 'one',
     content: 'file/path/one.component',

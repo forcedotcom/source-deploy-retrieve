@@ -6,7 +6,6 @@
  */
 import {
   SourceAdapter,
-  SourceComponent,
   MetadataType,
   MetadataRegistry,
   SourcePath,
@@ -20,7 +19,7 @@ import { parentName } from '../../utils/path';
 import { ForceIgnore } from '../forceIgnore';
 import { dirname, basename } from 'path';
 import { NodeFSTreeContainer } from '../treeContainers';
-import { StandardSourceComponent } from '../standardSourceComponent';
+import { SourceComponent } from '../sourceComponent';
 
 export abstract class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;
@@ -62,7 +61,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     const componentName = this.type.inFolder
       ? `${parentName(rootMetadata.path)}/${rootMetadata.fullName}`
       : rootMetadata.fullName;
-    const component = new StandardSourceComponent(
+    const component = new SourceComponent(
       {
         name: componentName,
         type: this.type,

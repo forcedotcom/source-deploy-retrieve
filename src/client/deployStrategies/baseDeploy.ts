@@ -9,9 +9,10 @@ import { Connection } from '@salesforce/core';
 import { readFileSync } from 'fs';
 import { sep } from 'path';
 import { DeployError } from '../../errors';
-import { DeployResult, DeployStatusEnum, SourceComponent, SourceResult } from '../../types';
+import { DeployResult, DeployStatusEnum, SourceResult } from '../../types';
 import { ToolingCreateResult } from '../../utils/deploy';
 import { TOOLING_PATH_SEP } from './constants';
+import { SourceComponent } from '../../metadata-registry';
 
 // tslint:disable-next-line:no-var-requires
 const DOMParser = require('xmldom-sfdx-encoding').DOMParser;

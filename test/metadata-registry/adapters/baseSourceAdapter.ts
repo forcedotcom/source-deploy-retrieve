@@ -9,11 +9,11 @@ import { mockRegistry } from '../../mock/registry';
 import { DefaultSourceAdapter } from '../../../src/metadata-registry/adapters/defaultSourceAdapter';
 import { expect, assert } from 'chai';
 import { BaseSourceAdapter } from '../../../src/metadata-registry/adapters/baseSourceAdapter';
-import { SourcePath, SourceComponent } from '../../../src/types';
+import { SourcePath } from '../../../src/types';
 import { RegistryError, UnexpectedForceIgnore } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { RegistryTestUtil } from '../registryTestUtil';
-import { StandardSourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src/metadata-registry';
 
 class TestChildAdapter extends BaseSourceAdapter {
   public static readonly xmlPath = join('path', 'to', 'dwaynes', 'a.dwayne-meta.xml');
@@ -32,7 +32,7 @@ describe('BaseSourceAdapter', () => {
     const type = mockRegistry.types.kathybates;
     const adapter = new DefaultSourceAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.deep.equal(
-      new StandardSourceComponent({
+      new SourceComponent({
         name: 'A_Folder/My_Test',
         type,
         xml: path
@@ -45,7 +45,7 @@ describe('BaseSourceAdapter', () => {
     const type = mockRegistry.types.dwaynejohnson;
     const adapter = new TestChildAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.deep.equal(
-      new StandardSourceComponent({
+      new SourceComponent({
         name: 'a',
         type,
         xml: TestChildAdapter.xmlPath,
@@ -59,7 +59,7 @@ describe('BaseSourceAdapter', () => {
     const type = mockRegistry.types.dwaynejohnson;
     const adapter = new TestChildAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.deep.equal(
-      new StandardSourceComponent({
+      new SourceComponent({
         name: 'a',
         type,
         xml: TestChildAdapter.xmlPath,

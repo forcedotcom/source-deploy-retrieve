@@ -4,14 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import {
-  SourceComponent,
-  SfdxFileFormat,
-  ConvertOutputConfig,
-  SourcePath,
-  ConvertResult
-} from '../types';
-import { ManifestGenerator, RegistryAccess } from '../metadata-registry';
+import { SfdxFileFormat, ConvertOutputConfig, SourcePath, ConvertResult } from '../types';
+import { ManifestGenerator, RegistryAccess, SourceComponent } from '../metadata-registry';
 import { promises } from 'fs';
 import { join } from 'path';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';

@@ -13,14 +13,19 @@ import {
   ApiResult,
   DeployResult,
   RetrieveOptions,
+<<<<<<< HEAD
   MetadataComponent,
   QueryResult,
   SourcePath,
   ToolingDeployOptions
+=======
+  QueryResult
+>>>>>>> remove middle interface
 } from '../types';
 import { nls } from '../i18n';
 import { buildQuery, queryToFileMap } from './retrieveUtil';
 import { createFiles } from '../utils';
+import { SourceComponent } from '../metadata-registry';
 
 const retrieveTypes = new Set([
   'ApexClass',

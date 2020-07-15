@@ -6,12 +6,7 @@
  */
 
 import { assert, expect } from 'chai';
-import { SourceComponent } from '../../src/types';
-import {
-  RegistryAccess,
-  StandardSourceComponent,
-  VirtualTreeContainer
-} from '../../src/metadata-registry';
+import { RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../src/metadata-registry';
 import { nls } from '../../src/i18n';
 import { mockRegistry, kathy, keanu, taraji, tina, simon } from '../mock/registry';
 import { join, basename, dirname } from 'path';
@@ -221,7 +216,7 @@ describe('RegistryAccess', () => {
             children: [basename(keanuSrc2), basename(keanuXml2)]
           }
         ]);
-        const keanuComponent2: SourceComponent = new StandardSourceComponent(
+        const keanuComponent2: SourceComponent = new SourceComponent(
           {
             name: 'b',
             type: mockRegistry.types.keanureeves,
@@ -230,7 +225,7 @@ describe('RegistryAccess', () => {
           },
           tree
         );
-        const kathyComponent2 = new StandardSourceComponent(
+        const kathyComponent2 = new SourceComponent(
           {
             name: 'a',
             type: mockRegistry.types.kathybates,
@@ -373,7 +368,7 @@ describe('RegistryAccess', () => {
         ]);
         const access = new RegistryAccess(mockRegistry, tree);
         expect(access.getComponentsFromPath(simon.SIMON_DIR)).to.deep.equal([
-          new StandardSourceComponent(
+          new SourceComponent(
             {
               name: 'a',
               type: mockRegistry.types.simonpegg,

@@ -5,10 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { SourceComponent, MetadataComponent } from '../types';
+import { MetadataComponent } from '../types';
 import { RegistryAccess } from './registryAccess';
 import { createFiles } from '../utils';
 import { RegistryError } from '../errors';
+import { SourceComponent } from './sourceComponent';
 
 export class ManifestGenerator {
   private xmlDef = '<?xml version="1.0" encoding="UTF-8"?>\n';

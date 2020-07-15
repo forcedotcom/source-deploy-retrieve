@@ -11,7 +11,7 @@ import { BundleSourceAdapter } from '../../../src/metadata-registry/adapters/bun
 import { basename } from 'path';
 import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
 import { SIMON_XML_NAME } from '../../mock/registry/simonConstants';
-import { StandardSourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src/metadata-registry';
 
 describe('BundleSourceAdapter', () => {
   const {
@@ -33,7 +33,7 @@ describe('BundleSourceAdapter', () => {
     }
   ]);
   const adapter = new BundleSourceAdapter(type, mockRegistry, undefined, tree);
-  const expectedComponent = new StandardSourceComponent(SIMON_COMPONENT, tree);
+  const expectedComponent = new SourceComponent(SIMON_COMPONENT, tree);
 
   it('Should return expected SourceComponent when given a root metadata xml path', () => {
     expect(adapter.getComponent(SIMON_XML_PATH)).to.deep.equal(expectedComponent);

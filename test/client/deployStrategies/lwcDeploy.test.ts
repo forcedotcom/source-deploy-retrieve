@@ -17,7 +17,7 @@ import { DeployStatusEnum, DeployResult } from '../../../src/types';
 import { LwcDeploy } from '../../../src/client/deployStrategies';
 import { LightningComponentResource, ToolingCreateResult } from '../../../src/utils/deploy';
 import {
-  StandardSourceComponent,
+  SourceComponent,
   registryData,
   VirtualTreeContainer
 } from '../../../src/metadata-registry';
@@ -55,7 +55,7 @@ describe('LWC Deploy Strategy', () => {
       children: lwcFiles.map(f => basename(f))
     }
   ]);
-  const lwcComponent = new StandardSourceComponent(
+  const lwcComponent = new SourceComponent(
     {
       type: registryData.types.lightningcomponentbundle,
       name: 'mockLwcCmp',

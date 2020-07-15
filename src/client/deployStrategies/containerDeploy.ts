@@ -8,11 +8,12 @@
 import { readFileSync } from 'fs';
 import { deployTypes } from '../toolingApi';
 import { DeployError } from '../../errors';
-import { SourceComponent, DeployStatusEnum, DeployResult, QueryResult } from '../../types';
+import { DeployStatusEnum, DeployResult, QueryResult } from '../../types';
 import { baseName } from '../../utils/path';
 import { ToolingCreateResult } from '../../utils/deploy';
 import { CONTAINER_ASYNC_REQUEST, METADATA_CONTAINER } from './constants';
 import { BaseDeploy } from './baseDeploy';
+import { SourceComponent } from '../../metadata-registry';
 
 export class ContainerDeploy extends BaseDeploy {
   public async deploy(component: SourceComponent, namespace: string): Promise<DeployResult> {

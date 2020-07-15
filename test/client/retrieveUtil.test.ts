@@ -8,7 +8,7 @@
 import * as path from 'path';
 import { expect } from 'chai';
 import { buildQuery, queryToFileMap } from '../../src/client/retrieveUtil';
-import { SourceComponent, QueryResult } from '../../src/types';
+import { QueryResult } from '../../src/types';
 import {
   auraComponent,
   auraApplication,
@@ -17,15 +17,11 @@ import {
   auraTokens
 } from './auraDefinitionMocks';
 import { lwcComponentMock } from './lightningComponentMocks';
-import {
-  StandardSourceComponent,
-  registryData,
-  VirtualTreeContainer
-} from '../../src/metadata-registry';
+import { SourceComponent, registryData, VirtualTreeContainer } from '../../src/metadata-registry';
 
 describe('Tooling Retrieve Util', () => {
   const rootPath = path.join('file', 'path');
-  const classMDComponent: SourceComponent = StandardSourceComponent.createVirtualComponent(
+  const classMDComponent: SourceComponent = SourceComponent.createVirtualComponent(
     {
       type: registryData.types.apexclass,
       name: 'myTestClass',
@@ -39,7 +35,7 @@ describe('Tooling Retrieve Util', () => {
       }
     ]
   );
-  const pageMDComponent: SourceComponent = StandardSourceComponent.createVirtualComponent(
+  const pageMDComponent: SourceComponent = SourceComponent.createVirtualComponent(
     {
       type: registryData.types.apexpage,
       name: 'myPage',
@@ -53,7 +49,7 @@ describe('Tooling Retrieve Util', () => {
       }
     ]
   );
-  const auraMDComponent: SourceComponent = StandardSourceComponent.createVirtualComponent(
+  const auraMDComponent: SourceComponent = SourceComponent.createVirtualComponent(
     {
       type: registryData.types.auradefinitionbundle,
       name: 'testApp',
@@ -213,7 +209,7 @@ describe('Tooling Retrieve Util', () => {
     const controllerPath = path.join(bundlePath, 'myAuraCmpController.js');
     const helperPath = path.join(bundlePath, 'myAuraCmpHelper.js');
     const rendererPath = path.join(bundlePath, 'myAuraCmpRenderer.js');
-    const auraComponentMD = StandardSourceComponent.createVirtualComponent(
+    const auraComponentMD = SourceComponent.createVirtualComponent(
       {
         type: registryData.types.auradefinitionbundle,
         name: 'myAuraCmp',
@@ -284,7 +280,7 @@ describe('Tooling Retrieve Util', () => {
         children: [path.basename(appPath), path.basename(appMetaPath)]
       }
     ]);
-    const auraApplicationMD: SourceComponent = new StandardSourceComponent(
+    const auraApplicationMD: SourceComponent = new SourceComponent(
       {
         type: registryData.types.auradefinitionbundle,
         name: 'myAuraApp',
@@ -316,7 +312,7 @@ describe('Tooling Retrieve Util', () => {
         children: [path.basename(eventPath), path.basename(eventMetaPath)]
       }
     ]);
-    const auraEventMD: SourceComponent = new StandardSourceComponent(
+    const auraEventMD: SourceComponent = new SourceComponent(
       {
         type: registryData.types.auradefinitionbundle,
         name: 'myAuraEvent',
@@ -350,7 +346,7 @@ describe('Tooling Retrieve Util', () => {
         children: [path.basename(interfacePath), path.basename(interfaceMetaPath)]
       }
     ]);
-    const auraInterfaceMD: SourceComponent = new StandardSourceComponent(
+    const auraInterfaceMD: SourceComponent = new SourceComponent(
       {
         type: registryData.types.auradefinitionbundle,
         name: 'myAuraInterface',
@@ -378,7 +374,7 @@ describe('Tooling Retrieve Util', () => {
     const bundlePath = path.join('file', 'path', 'aura', 'myAuraToken');
     const tokensPath = path.join(bundlePath, 'myAuraToken.tokens');
     const tokensMetaPath = path.join(bundlePath, 'myAuraToken.tokens-meta.xml');
-    const auraTokenMD: SourceComponent = StandardSourceComponent.createVirtualComponent(
+    const auraTokenMD: SourceComponent = SourceComponent.createVirtualComponent(
       {
         type: registryData.types.auradefinitionbundle,
         name: 'myAuraToken',
@@ -411,7 +407,7 @@ describe('Tooling Retrieve Util', () => {
     const jsPath = path.join(bundlePath, 'myLWCComponent.js');
     const cssPath = path.join(bundlePath, 'myLWCComponent.css');
     const metaPath = path.join(bundlePath, 'myLWCComponent.js-meta.xml');
-    const lwcMD: SourceComponent = StandardSourceComponent.createVirtualComponent(
+    const lwcMD: SourceComponent = SourceComponent.createVirtualComponent(
       {
         type: registryData.types.lightningcomponentbundle,
         name: 'myLWCComponent',

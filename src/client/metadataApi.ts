@@ -11,13 +11,21 @@ import {
   RetrieveOptions,
   RetrievePathOptions,
   ApiResult,
+<<<<<<< HEAD
   MetadataComponent,
   SourcePath
+=======
+  DeployPathOptions
+>>>>>>> remove middle interface
 } from '../types';
 import { nls } from '../i18n';
 import { MetadataConverter } from '../convert';
 import { DeployError } from '../errors';
+<<<<<<< HEAD
 import { MetadataDeployOptions } from '../types/client';
+=======
+import { SourceComponent } from '../metadata-registry';
+>>>>>>> remove middle interface
 
 export const enum DeployStatusEnum {
   Succeeded = 'Succeeded',

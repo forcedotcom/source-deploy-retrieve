@@ -6,11 +6,12 @@
  */
 import { readFileSync } from 'fs';
 import { normalize } from 'path';
-import { DeployResult, SourceComponent, SourceResult } from '../../types';
+import { DeployResult, SourceResult } from '../../types';
 import { extName } from '../../utils';
 import { LightningComponentResource } from '../../utils/deploy';
 import { deployTypes } from '../toolingApi';
 import { BaseDeploy } from './baseDeploy';
+import { SourceComponent } from '../../metadata-registry';
 
 export class LwcDeploy extends BaseDeploy {
   public async deploy(component: SourceComponent, namespace: string): Promise<DeployResult> {

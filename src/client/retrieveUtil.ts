@@ -6,9 +6,10 @@
  */
 
 import { dirname, join, sep } from 'path';
-import { QueryResult, SourceComponent } from '../types';
+import { QueryResult } from '../types';
 import { generateMetaXML, generateMetaXMLPath, trimMetaXmlSuffix } from '../utils';
 import { ApexRecord, AuraRecord, LWCRecord, VFRecord } from '../types/query';
+import { SourceComponent } from '../metadata-registry';
 
 export function buildQuery(mdComponent: SourceComponent, namespace = ''): string {
   let queryString = '';

@@ -13,8 +13,8 @@ import * as path from 'path';
 import * as stream from 'stream';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ToolingApi } from '../../src/client';
-import { RegistryAccess, StandardSourceComponent, registryData } from '../../src/metadata-registry';
-import { ApiResult, QueryResult, SourceComponent } from '../../src/types';
+import { RegistryAccess, SourceComponent, registryData } from '../../src/metadata-registry';
+import { ApiResult, QueryResult } from '../../src/types';
 import { nls } from '../../src/i18n';
 import { fail } from 'assert';
 
@@ -30,7 +30,7 @@ describe('Tooling Retrieve', () => {
   metaXMLFile += '\t<status>Active</status>\n';
   metaXMLFile += '</ApexClass>';
   const mdComponents: SourceComponent[] = [
-    new StandardSourceComponent({
+    new SourceComponent({
       type: {
         id: 'apexclass',
         name: 'ApexClass',
@@ -253,7 +253,7 @@ describe('Tooling Retrieve', () => {
 
   it('should throw an error when trying to retrieve more than one type at a time', async () => {
     mdComponents.push(
-      new StandardSourceComponent({
+      new SourceComponent({
         type: registryData.types.apexclass,
         name: 'anotherClass',
         xml: path.join('file', 'path', 'anotherClass.cls-meta.xml'),
@@ -276,7 +276,7 @@ describe('Tooling Retrieve', () => {
 
   it('should throw an error when trying to retrieve an unsupported type', async () => {
     const unsupportedComponent: SourceComponent[] = [
-      new StandardSourceComponent({
+      new SourceComponent({
         type: {
           id: 'fancytype',
           name: 'FancyType',

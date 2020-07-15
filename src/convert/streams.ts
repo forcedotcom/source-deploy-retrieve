@@ -10,8 +10,8 @@ import { join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
 import { LibraryError } from '../errors';
-import { RegistryAccess } from '../metadata-registry';
-import { MetadataComponent, SfdxFileFormat, SourcePath, WriteInfo, WriterFormat } from '../types';
+import { RegistryAccess, SourceComponent } from '../metadata-registry';
+import { SfdxFileFormat, SourcePath, WriteInfo, WriterFormat } from '../types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 
 export const pipeline = promisify(cbPipeline);

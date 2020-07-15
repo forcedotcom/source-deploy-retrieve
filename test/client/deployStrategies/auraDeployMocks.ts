@@ -7,7 +7,7 @@
 import { join, basename } from 'path';
 import { AuraDefinition } from '../../../src/utils/deploy';
 import {
-  StandardSourceComponent,
+  SourceComponent,
   VirtualTreeContainer,
   registryData
 } from '../../../src/metadata-registry';
@@ -43,7 +43,7 @@ const tree = new VirtualTreeContainer([
     children: auraFiles.map(f => basename(f))
   }
 ]);
-export const auraComponent = new StandardSourceComponent(
+export const auraComponent = new SourceComponent(
   {
     type: registryData.types.auradefinitionbundle,
     name: 'mockAuraCmp',

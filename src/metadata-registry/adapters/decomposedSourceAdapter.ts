@@ -5,9 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
-import { SourcePath, SourceComponent } from '../../types';
+import { SourcePath } from '../../types';
 import { parseMetadataXml } from '../../utils/registry';
-import { StandardSourceComponent } from '../standardSourceComponent';
+import { SourceComponent } from '../sourceComponent';
 
 /**
  * Handles decomposed types. A flavor of mixed content where a component can
@@ -44,7 +44,7 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
       const childTypeId = this.type.children.suffixes[metaXml.suffix];
       const triggerIsAChild = !!childTypeId;
       if (triggerIsAChild) {
-        return new StandardSourceComponent(
+        return new SourceComponent(
           {
             name: metaXml.fullName,
             type: this.type.children.types[childTypeId],

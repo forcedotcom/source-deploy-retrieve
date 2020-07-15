@@ -128,7 +128,7 @@ export interface DeployRetrieveClient {
    *
    * @param filePath Paths to source files to deploy
    */
-  deploy(components: MetadataComponent | MetadataComponent[]): Promise<DeployResult>;
+  deploy(components: SourceComponent | SourceComponent[]): Promise<DeployResult>;
   /**
    * Infer metadata components from source path, deploy them, and wait for results.
    *
@@ -153,7 +153,7 @@ export abstract class BaseApi implements DeployRetrieveClient {
 
   abstract retrieve(options: RetrieveOptions): Promise<ApiResult>;
 
-  abstract deploy(components: MetadataComponent | MetadataComponent[]): Promise<DeployResult>;
+  abstract deploy(components: SourceComponent | SourceComponent[]): Promise<DeployResult>;
 
   abstract deployWithPaths(paths: SourcePath | SourcePath[]): Promise<DeployResult>;
 }

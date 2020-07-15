@@ -13,6 +13,7 @@ import { RegistryTestUtil } from '../registryTestUtil';
 import { nls } from '../../../src/i18n';
 import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
 import { KEANU_SOURCE_NAMES, KEANU_XML_NAMES } from '../../mock/registry/keanuConstants';
+import { SourceComponent } from '../../../src/metadata-registry';
 
 describe('MatchingContentSourceAdapter', () => {
   const type = mockRegistry.types.keanureeves;
@@ -23,14 +24,15 @@ describe('MatchingContentSourceAdapter', () => {
       children: [KEANU_SOURCE_NAMES[0], KEANU_XML_NAMES[0]]
     }
   ]);
+  const expectedComponent = new SourceComponent(KEANU_COMPONENT, tree);
   const adapter = new MatchingContentSourceAdapter(type, mockRegistry, undefined, tree);
 
-  it('Should return expected MetadataComponent when given a root metadata xml path', () => {
-    expect(adapter.getComponent(KEANU_XML_PATHS[0])).to.deep.equal(KEANU_COMPONENT);
+  it('Should return expected SourceComponent when given a root metadata xml path', () => {
+    expect(adapter.getComponent(KEANU_XML_PATHS[0])).to.deep.equal(expectedComponent);
   });
 
-  it('Should return expected MetadataComponent when given a source path', () => {
-    expect(adapter.getComponent(KEANU_SOURCE_PATHS[0])).to.deep.equal(KEANU_COMPONENT);
+  it('Should return expected SourceComponent when given a source path', () => {
+    expect(adapter.getComponent(KEANU_SOURCE_PATHS[0])).to.deep.equal(expectedComponent);
   });
 
   it('Should throw an ExpectedSourceFilesError if no source is found from xml', () => {

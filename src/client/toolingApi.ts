@@ -13,7 +13,6 @@ import {
   ApiResult,
   DeployResult,
   RetrieveOptions,
-  MetadataComponent,
   QueryResult,
   SourcePath,
   ToolingDeployOptions
@@ -21,6 +20,7 @@ import {
 import { nls } from '../i18n';
 import { buildQuery, queryToFileMap } from './retrieveUtil';
 import { createFiles } from '../utils';
+import { SourceComponent } from '../metadata-registry';
 
 const retrieveTypes = new Set([
   'ApexClass',
@@ -58,7 +58,7 @@ export class ToolingApi extends BaseApi {
       retrieveError.name = 'MetadataRetrieveLimit';
       throw retrieveError;
     }
-    const mdComponent: MetadataComponent = options.components[0];
+    const mdComponent: SourceComponent = options.components[0];
 
     if (!retrieveTypes.has(mdComponent.type.name)) {
       const retrieveError = new Error();
@@ -98,10 +98,10 @@ export class ToolingApi extends BaseApi {
   }
 
   public async deploy(
-    components: MetadataComponent | MetadataComponent[],
+    components: SourceComponent | SourceComponent[],
     options?: ToolingDeployOptions
   ): Promise<DeployResult> {
-    let mdComponent: MetadataComponent;
+    let mdComponent: SourceComponent;
     if (Array.isArray(components)) {
       if (components.length > 1) {
         const deployError = new SourceClientError('tapi_deploy_component_limit_error');

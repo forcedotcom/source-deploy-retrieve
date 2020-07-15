@@ -9,7 +9,6 @@ import { NodeFSTreeContainer, registryData } from '.';
 import { MetadataTransformerFactory } from '../convert/transformers';
 import { TypeInferenceError } from '../errors';
 import {
-  MetadataComponent,
   MetadataRegistry,
   MetadataTransformer,
   MetadataType,
@@ -21,6 +20,7 @@ import { deepFreeze, parseMetadataXml } from '../utils/registry';
 import { MixedContentSourceAdapter } from './adapters/mixedContentSourceAdapter';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
+import { SourceComponent } from './sourceComponent';
 
 /**
  * Resolver for metadata type and component objects.
@@ -69,7 +69,7 @@ export class RegistryAccess {
    *
    * @param fsPath File path for a piece of metadata
    */
-  public getComponentsFromPath(fsPath: string): MetadataComponent[] {
+  public getComponentsFromPath(fsPath: string): SourceComponent[] {
     if (!this.tree.exists(fsPath)) {
       throw new TypeInferenceError('error_path_not_found', fsPath);
     }
@@ -99,13 +99,13 @@ export class RegistryAccess {
     return component ? [component] : [];
   }
 
-  public getTransformer(component: MetadataComponent): MetadataTransformer {
+  public getTransformer(component: SourceComponent): MetadataTransformer {
     return this.metadataTransformerFactory.getTransformer(component);
   }
 
-  private getComponentsFromPathRecursive(dir: SourcePath): MetadataComponent[] {
+  private getComponentsFromPathRecursive(dir: SourcePath): SourceComponent[] {
     const dirQueue: SourcePath[] = [];
-    const components: MetadataComponent[] = [];
+    const components: SourceComponent[] = [];
 
     if (this.forceIgnore.denies(dir)) {
       return components;
@@ -137,7 +137,7 @@ export class RegistryAccess {
     return components;
   }
 
-  private resolveComponent(fsPath: SourcePath): MetadataComponent {
+  private resolveComponent(fsPath: SourcePath): SourceComponent {
     if (parseMetadataXml(fsPath) && this.forceIgnore.denies(fsPath)) {
       // don't fetch the component if the metadata xml is denied
       return;

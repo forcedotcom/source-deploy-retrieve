@@ -44,24 +44,11 @@ export type MetadataType = {
   };
 };
 
-/**
- * Source information about a single metadata component.
- */
-export type MetadataComponent = {
+export interface MetadataComponent {
+  /**
+   * Fully qualified name of the component.
+   */
   fullName: string;
   type: MetadataType;
-  /**
-   * Path to the root metadata xml file.
-   */
-  xml: SourcePath;
-  /**
-   * Paths to additional source files, if any.
-   */
-  sources?: SourcePath[];
-  /**
-   * Decomposed child components.
-   *
-   * __Examples:__ `CustomField` and `CompactLayout` on `CustomObject`
-   */
-  children?: MetadataComponent[];
-};
+  parent?: MetadataComponent;
+}

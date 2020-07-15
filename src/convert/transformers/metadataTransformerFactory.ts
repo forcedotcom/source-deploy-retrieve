@@ -5,8 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { RegistryError } from '../../errors';
-import { MetadataComponent, MetadataRegistry, MetadataTransformer } from '../../types';
+import { MetadataRegistry, MetadataTransformer } from '../../types';
 import { DefaultTransformer } from './default';
+import { SourceComponent } from '../../metadata-registry/sourceComponent';
 
 const enum TransformerId {
   Standard = 'standard'
@@ -19,7 +20,7 @@ export class MetadataTransformerFactory {
     this.registry = registry;
   }
 
-  public getTransformer(component: MetadataComponent): MetadataTransformer {
+  public getTransformer(component: SourceComponent): MetadataTransformer {
     const type = component.type;
     const transformerId = this.registry.strategies.hasOwnProperty(type.id)
       ? (this.registry.strategies[type.id].transformer as TransformerId)

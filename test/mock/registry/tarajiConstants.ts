@@ -4,9 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join } from 'path';
-import { MetadataComponent } from '../../../src/types';
+import { join, basename, dirname } from 'path';
 import { mockRegistry } from '.';
+import { SourceComponent } from '../../../src/metadata-registry';
 
 // Mixed content with directory as content
 const type = mockRegistry.types.tarajihenson;
@@ -20,9 +20,23 @@ export const TARAJI_SOURCE_PATHS = [
   join(TARAJI_CONTENT_PATH, 'b', 'test.g'),
   join(TARAJI_CONTENT_PATH, 'b', 'test2.w')
 ];
-export const TARAJI_COMPONENT: MetadataComponent = {
-  fullName: 'a',
+export const TARAJI_COMPONENT: SourceComponent = new SourceComponent({
+  name: 'a',
   type,
   xml: TARAJI_XML_PATHS[0],
-  sources: TARAJI_SOURCE_PATHS
-};
+  content: TARAJI_CONTENT_PATH
+});
+export const TARAJI_VIRTUAL_FS = [
+  {
+    dirPath: TARAJI_DIR,
+    children: [TARAJI_XML_NAMES[0], basename(TARAJI_CONTENT_PATH)]
+  },
+  {
+    dirPath: TARAJI_CONTENT_PATH,
+    children: [basename(TARAJI_SOURCE_PATHS[0]), basename(dirname(TARAJI_SOURCE_PATHS[1]))]
+  },
+  {
+    dirPath: dirname(TARAJI_SOURCE_PATHS[1]),
+    children: [basename(TARAJI_SOURCE_PATHS[1]), basename(TARAJI_SOURCE_PATHS[2])]
+  }
+];

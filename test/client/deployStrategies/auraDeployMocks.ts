@@ -4,18 +4,26 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join } from 'path';
+import { join, basename } from 'path';
 import { AuraDefinition } from '../../../src/utils/deploy';
+import {
+  SourceComponent,
+  VirtualTreeContainer,
+  registryData
+} from '../../../src/metadata-registry';
 
+const bundlePath = join('file', 'path', 'aura', 'mockAuraCmp');
+const auraXml = join(bundlePath, 'mockAuraCmp.cmp-meta.xml');
 export const auraFiles = [
-  join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.auradoc'),
-  join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.cmp'),
-  join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.css'),
-  join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.design'),
-  join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.svg'),
-  join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmpController.js'),
-  join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmpHelper.js'),
-  join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmpRenderer.js')
+  join(bundlePath, 'mockAuraCmp.auradoc'),
+  join(bundlePath, 'mockAuraCmp.cmp'),
+  join(bundlePath, 'mockAuraCmp.css'),
+  join(bundlePath, 'mockAuraCmp.design'),
+  join(bundlePath, 'mockAuraCmp.svg'),
+  join(bundlePath, 'mockAuraCmpController.js'),
+  join(bundlePath, 'mockAuraCmpHelper.js'),
+  join(bundlePath, 'mockAuraCmpRenderer.js'),
+  auraXml
 ];
 
 export const auraContents = [
@@ -29,17 +37,21 @@ export const auraContents = [
   '({})'
 ];
 
-export const auraComponent = {
-  type: {
-    id: 'auradefinitionbundle',
-    name: 'AuraDefinitionBundle',
-    directoryName: 'aura',
-    inFolder: false
+const tree = new VirtualTreeContainer([
+  {
+    dirPath: bundlePath,
+    children: auraFiles.map(f => basename(f))
+  }
+]);
+export const auraComponent = new SourceComponent(
+  {
+    type: registryData.types.auradefinitionbundle,
+    name: 'mockAuraCmp',
+    content: bundlePath,
+    xml: auraXml
   },
-  fullName: 'mockAuraCmp',
-  sources: auraFiles,
-  xml: join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.cmp-meta.xml')
-};
+  tree
+);
 
 export const testAuraList = [
   {
@@ -105,7 +117,7 @@ export const createAuraSuccesses = [
     changed: false,
     created: true,
     deleted: false,
-    fileName: join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.cmp'),
+    fileName: join(bundlePath, 'mockAuraCmp.cmp'),
     fullName: 'mockAuraCmp/mockAuraCmp.cmp',
     success: true,
     componentType: 'AuraDefinitionBundle'
@@ -114,7 +126,7 @@ export const createAuraSuccesses = [
     changed: false,
     created: true,
     deleted: false,
-    fileName: join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.auradoc'),
+    fileName: join(bundlePath, 'mockAuraCmp.auradoc'),
     fullName: 'mockAuraCmp/mockAuraCmp.auradoc',
     success: true,
     componentType: 'AuraDefinitionBundle'
@@ -123,7 +135,7 @@ export const createAuraSuccesses = [
     changed: false,
     created: true,
     deleted: false,
-    fileName: join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.css'),
+    fileName: join(bundlePath, 'mockAuraCmp.css'),
     fullName: 'mockAuraCmp/mockAuraCmp.css',
     success: true,
     componentType: 'AuraDefinitionBundle'
@@ -141,7 +153,7 @@ export const createAuraSuccesses = [
     changed: false,
     created: true,
     deleted: false,
-    fileName: join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.svg'),
+    fileName: join(bundlePath, 'mockAuraCmp.svg'),
     fullName: 'mockAuraCmp/mockAuraCmp.svg',
     success: true,
     componentType: 'AuraDefinitionBundle'
@@ -150,7 +162,7 @@ export const createAuraSuccesses = [
     changed: false,
     created: true,
     deleted: false,
-    fileName: join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmpController.js'),
+    fileName: join(bundlePath, 'mockAuraCmpController.js'),
     fullName: 'mockAuraCmp/mockAuraCmpController.js',
     success: true,
     componentType: 'AuraDefinitionBundle'
@@ -159,7 +171,7 @@ export const createAuraSuccesses = [
     changed: false,
     created: true,
     deleted: false,
-    fileName: join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmpHelper.js'),
+    fileName: join(bundlePath, 'mockAuraCmpHelper.js'),
     fullName: 'mockAuraCmp/mockAuraCmpHelper.js',
     success: true,
     componentType: 'AuraDefinitionBundle'
@@ -168,7 +180,7 @@ export const createAuraSuccesses = [
     changed: false,
     created: true,
     deleted: false,
-    fileName: join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmpRenderer.js'),
+    fileName: join(bundlePath, 'mockAuraCmpRenderer.js'),
     fullName: 'mockAuraCmp/mockAuraCmpRenderer.js',
     success: true,
     componentType: 'AuraDefinitionBundle'

@@ -31,7 +31,7 @@ describe('ManifestGenerator', () => {
     let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
     expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedManifest +=
-      '  <types>\n    <name>ApexClass</name>\n    <members>someName</members>\n  </types>\n';
+      '  <types>\n    <members>someName</members>\n    <name>ApexClass</name>\n  </types>\n';
     expectedManifest += '  <version>48.0</version>\n</Package>';
     expect(manifestGenerator.createManifest([component])).to.equal(expectedManifest);
   });
@@ -47,9 +47,9 @@ describe('ManifestGenerator', () => {
     let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
     expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedManifest +=
-      '  <types>\n    <name>ApexClass</name>\n    <members>apexClass1</members>\n  </types>\n';
+      '  <types>\n    <members>apexClass1</members>\n    <name>ApexClass</name>\n  </types>\n';
     expectedManifest +=
-      '  <types>\n    <name>ApexTrigger</name>\n    <members>apexTrigger1</members>\n  </types>\n';
+      '  <types>\n    <members>apexTrigger1</members>\n    <name>ApexTrigger</name>\n  </types>\n';
     expectedManifest += '  <version>48.0</version>\n</Package>';
     expect(manifestGenerator.createManifest([component1, component2])).to.equal(expectedManifest);
   });
@@ -69,9 +69,9 @@ describe('ManifestGenerator', () => {
     let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
     expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedManifest +=
-      '  <types>\n    <name>ApexClass</name>\n    <members>apexClass1</members>\n    <members>apexClass2</members>\n  </types>\n';
+      '  <types>\n    <members>apexClass1</members>\n    <members>apexClass2</members>\n    <name>ApexClass</name>\n  </types>\n';
     expectedManifest +=
-      '  <types>\n    <name>ApexTrigger</name>\n    <members>apexTrigger1</members>\n  </types>\n';
+      '  <types>\n    <members>apexTrigger1</members>\n    <name>ApexTrigger</name>\n  </types>\n';
     expectedManifest += '  <version>48.0</version>\n</Package>';
     expect(manifestGenerator.createManifest([component1, component2, component3])).to.equal(
       expectedManifest
@@ -93,9 +93,9 @@ describe('ManifestGenerator', () => {
     let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
     expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedManifest +=
-      '  <types>\n    <name>ApexClass</name>\n    <members>apexClass1</members>\n    <members>apexClass2</members>\n  </types>\n';
+      '  <types>\n    <members>apexClass1</members>\n    <members>apexClass2</members>\n    <name>ApexClass</name>\n  </types>\n';
     expectedManifest +=
-      '  <types>\n    <name>ApexTrigger</name>\n    <members>apexTrigger1</members>\n  </types>\n';
+      '  <types>\n    <members>apexTrigger1</members>\n    <name>ApexTrigger</name>\n  </types>\n';
     expectedManifest += '  <version>48.0</version>\n</Package>';
     expect(manifestGenerator.createManifest([component1, component3, component2])).to.equal(
       expectedManifest
@@ -109,7 +109,7 @@ describe('ManifestGenerator', () => {
     let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
     expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedManifest +=
-      '  <types>\n    <name>ApexClass</name>\n    <members>someName</members>\n  </types>\n';
+      '  <types>\n    <members>someName</members>\n    <name>ApexClass</name>\n  </types>\n';
     expectedManifest += '  <version>45.0</version>\n</Package>';
     expect(manifestGenerator.createManifest([component], '45.0')).to.equal(expectedManifest);
   });

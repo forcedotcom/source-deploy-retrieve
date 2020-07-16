@@ -39,10 +39,10 @@ export class ManifestGenerator {
     const metadataMap = this.createMetadataMap(components);
     for (const metadataType of metadataMap.keys()) {
       output = output.concat('  <types>\n');
-      output = output.concat(`    <name>${metadataType}</name>\n`);
       for (const metadataName of metadataMap.get(metadataType)) {
         output = output.concat(`    <members>${metadataName}</members>\n`);
       }
+      output = output.concat(`    <name>${metadataType}</name>\n`);
       output = output.concat('  </types>\n');
     }
     output = output.concat(`  <version>${apiVersion}</version>\n`, this.packageModuleEnd);

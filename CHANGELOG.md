@@ -1,3 +1,13 @@
+# 1.0.16 - July 16, 2020
+
+## Added
+
+- Support configuration options on Metadata API deploys ([PR #78](https://github.com/forcedotcom/source-deploy-retrieve/pull/78), [PR #80](https://github.com/forcedotcom/source-deploy-retrieve/pull/80))
+
+## Fixed
+
+- Update output format for generated manifest ([PR #81](https://github.com/forcedotcom/source-deploy-retrieve/pull/81))
+
 # 1.0.15 - July 2, 2020
 
 ## Added

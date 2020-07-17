@@ -8,7 +8,7 @@
 import { SourceComponent } from '../metadata-registry';
 
 // ------------------------------------------------
-// API Results reformatted for source development
+// API results reformatted for source development
 // ------------------------------------------------
 
 export type Id = string;
@@ -47,7 +47,7 @@ export interface MetadataSourceDeployResult extends SourceDeployResult {
 // }
 
 // ------------------------------
-// Metadata API Response types
+// Metadata API result types
 // ------------------------------
 
 export type DeployResult = {
@@ -88,7 +88,7 @@ export type DeployStatus =
   | 'Canceling'
   | 'Canceled';
 
-type DeployDetails = {
+export type DeployDetails = {
   componentFailures?: DeployMessage[];
   componentSuccesses?: DeployMessage[];
   // TODO: Add types for RetrieveResult and RunTestsResult
@@ -116,7 +116,7 @@ export type DeployMessage = {
 };
 
 // ------------------------------
-// Tooling API Response types
+// Tooling API result types
 // ------------------------------
 
 // export type ContainerAsyncRequest = {

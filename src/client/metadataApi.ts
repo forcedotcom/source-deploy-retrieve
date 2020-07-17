@@ -15,7 +15,8 @@ import {
   Id,
   DeployResult,
   ComponentDeployment,
-  DeployMessage
+  DeployMessage,
+  DeployDetails
 } from '../types/newClient';
 
 export const DEFAULT_API_OPTIONS = {
@@ -56,7 +57,7 @@ export class MetadataApi extends BaseApi {
 
     const result = await deployStatusPoll;
 
-    return this.buildResult(componentDeploymentMap, result);
+    return this.buildSourceDeployResult(componentDeploymentMap, result);
   }
 
   public async deployWithPaths(
@@ -97,6 +98,7 @@ export class MetadataApi extends BaseApi {
     ): Promise<void> => {
       let result;
       try {
+        // Recasting to use the library's DeployResult type
         result = ((await this.connection.metadata.checkDeployStatus(
           deployID,
           true
@@ -123,7 +125,7 @@ export class MetadataApi extends BaseApi {
     return new Promise(checkDeploy);
   }
 
-  private buildResult(
+  private buildSourceDeployResult(
     componentDeploymentMap: Map<string, ComponentDeployment>,
     result: DeployResult
   ): MetadataSourceDeployResult {
@@ -133,22 +135,7 @@ export class MetadataApi extends BaseApi {
       success: result.success
     };
 
-    const { componentSuccesses, componentFailures } = result.details;
-    const messages: DeployMessage[] = [];
-    if (componentSuccesses) {
-      if (Array.isArray(componentSuccesses)) {
-        messages.push(...componentSuccesses);
-      } else {
-        messages.push(componentSuccesses);
-      }
-    }
-    if (componentFailures) {
-      if (Array.isArray(componentFailures)) {
-        messages.push(...componentFailures);
-      } else {
-        messages.push(componentFailures);
-      }
-    }
+    const messages = this.getDeployMessages(result.details);
 
     if (messages.length > 0) {
       deployResult.components = [];
@@ -181,5 +168,25 @@ export class MetadataApi extends BaseApi {
     }
 
     return deployResult;
+  }
+
+  private getDeployMessages(details: DeployDetails): DeployMessage[] {
+    const { componentSuccesses, componentFailures } = details;
+    const messages: DeployMessage[] = [];
+    if (componentSuccesses) {
+      if (Array.isArray(componentSuccesses)) {
+        messages.push(...componentSuccesses);
+      } else {
+        messages.push(componentSuccesses);
+      }
+    }
+    if (componentFailures) {
+      if (Array.isArray(componentFailures)) {
+        messages.push(...componentFailures);
+      } else {
+        messages.push(componentFailures);
+      }
+    }
+    return messages;
   }
 }

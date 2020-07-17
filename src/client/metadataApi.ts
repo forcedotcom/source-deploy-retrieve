@@ -14,7 +14,6 @@ import {
   MetadataSourceDeployResult,
   Id,
   DeployResult,
-  ComponentDeploymentStatus,
   ComponentDeployment,
   DeployMessage
 } from '../types/newClient';

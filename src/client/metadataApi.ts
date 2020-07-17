@@ -88,13 +88,14 @@ export class MetadataApi extends BaseApi {
     options: MetadataDeployOptions,
     interval = 100
   ): Promise<DeployResult> {
-    const wait = (): Promise<void> => {
+    let result;
+
+    const wait = (interval: number): Promise<void> => {
       return new Promise(resolve => {
         setTimeout(resolve, interval);
       });
     };
 
-    let result;
     const timeout = !options || !options.wait ? 10000 : options.wait;
     const endTime = Date.now() + timeout;
     do {
@@ -115,7 +116,7 @@ export class MetadataApi extends BaseApi {
           return result;
       }
 
-      await wait();
+      await wait(interval);
     } while (Date.now() < endTime);
 
     return result;

@@ -15,6 +15,7 @@ import { fail } from 'assert';
 import * as path from 'path';
 import { nls } from '../../src/i18n';
 import { MetadataApiDeployOptions } from '../../src/types/client';
+import { DeployResult, MetadataSourceDeployResult } from '../../src/types/newClient';
 
 describe('Metadata Api', () => {
   let mockConnection: Connection;
@@ -34,6 +35,32 @@ describe('Metadata Api', () => {
       children: [path.basename(props.xml), path.basename(props.content)]
     }
   ]);
+  const deployResult: DeployResult = {
+    id: '12345',
+    status: 'Succeeded',
+    success: true,
+    details: {
+      componentSuccesses: [
+        // @ts-ignore
+        {
+          fullName: component.fullName,
+          success: 'true'
+        }
+      ]
+    }
+  };
+  const sourceDeployResult: MetadataSourceDeployResult = {
+    id: '12345',
+    success: true,
+    status: 'Succeeded',
+    components: [
+      {
+        component,
+        status: 'Unchanged',
+        diagnostics: []
+      }
+    ]
+  };
   const testingBuffer = Buffer.from('testingBuffer');
   const deployPath = path.join('file', 'path', 'myTestClass.cls');
   let deployMetadata: MetadataApi;
@@ -71,22 +98,21 @@ describe('Metadata Api', () => {
   });
 
   it('Should correctly deploy metadata components from paths', async () => {
-    // @ts-ignore
+    // @ts-ignore minimum info required
     deployIdStub = sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
       id: '12345'
     });
-    // @ts-ignore
-    const deployPollStub = sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves({
-      status: 'Succeeded'
-    });
+
+    const deployPollStub = sandboxStub
+      .stub(mockConnection.metadata, 'checkDeployStatus')
+      .withArgs('12345', true)
+      // @ts-ignore minimum info required
+      .resolves(deployResult);
     const deploys = await deployMetadata.deployWithPaths(deployPath);
     expect(registryStub.calledImmediatelyBefore(conversionCallStub)).to.be.true;
     expect(conversionCallStub.calledImmediatelyBefore(deployIdStub)).to.be.true;
     expect(deployIdStub.calledImmediatelyBefore(deployPollStub)).to.be.true;
-    expect(deploys).to.deep.equal({
-      outboundFiles: [component.content, component.xml],
-      status: 'Succeeded'
-    });
+    expect(deploys).to.deep.equal(sourceDeployResult);
   });
 
   it('Should correctly deploy metadata components with custom deploy options', async () => {
@@ -110,9 +136,7 @@ describe('Metadata Api', () => {
         id: '12345'
       });
     // @ts-ignore
-    sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves({
-      status: 'Succeeded'
-    });
+    sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves(deployResult);
     await deployMetadata.deployWithPaths(deployPath, { apiOptions });
     expect(deployIdStub.args).to.deep.equal([[testingBuffer, apiOptions]]);
   });
@@ -126,9 +150,7 @@ describe('Metadata Api', () => {
         id: '12345'
       });
     // @ts-ignore
-    sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves({
-      status: 'Succeeded'
-    });
+    sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves(deployResult);
     await deployMetadata.deployWithPaths(deployPath);
     expect(deployIdStub.args).to.deep.equal([[testingBuffer, DEFAULT_API_OPTIONS]]);
   });
@@ -149,9 +171,7 @@ describe('Metadata Api', () => {
         id: '12345'
       });
     // @ts-ignore
-    sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves({
-      status: 'Succeeded'
-    });
+    sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves(deployResult);
     await deployMetadata.deployWithPaths(deployPath, {
       apiOptions: { checkOnly: true, autoUpdatePackage: true, singlePackage: false }
     });
@@ -167,35 +187,24 @@ describe('Metadata Api', () => {
       sandboxStub
         .stub(mockConnection.metadata, 'checkDeployStatus')
         // @ts-ignore
-        .resolves({
-          status: 'Succeeded'
-        });
+        .resolves(deployResult);
       const deploys = await deployMetadata.deployWithPaths(deployPath);
-      expect(deploys).to.deep.equal({
-        outboundFiles: [component.content, component.xml],
-        status: 'Succeeded'
-      });
+      expect(deploys).to.deep.equal(sourceDeployResult);
     });
-    it('should verify failed status poll', async () => {
+    it('should throw correct error for unexpected issue', async () => {
       // @ts-ignore
       deployIdStub = sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
         id: '12345'
       });
-      const errorMessage = 'Failed deploy';
-      sandboxStub
-        .stub(mockConnection.metadata, 'checkDeployStatus')
-        // @ts-ignore
-        .resolves({
-          status: 'Failed',
-          errorMessage
-        });
+      sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').throws('unexpected error');
       try {
         await deployMetadata.deployWithPaths(deployPath);
         fail('request should have failed');
-      } catch (err) {
-        expect(err.message).contains(nls.localize('md_request_fail', errorMessage));
+      } catch (e) {
+        expect(e.message).contains(nls.localize('md_request_fail', 'unexpected error'));
       }
     });
+
     it('should verify timeout status poll', async () => {
       // @ts-ignore
       deployIdStub = sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
@@ -206,14 +215,10 @@ describe('Metadata Api', () => {
       };
       const deployPollStub = sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus');
       // @ts-ignore
-      deployPollStub.resolves({ status: 'Pending' });
-      try {
-        await deployMetadata.deployWithPaths(deployPath, deployOptionWait);
-        fail('request should have timed out');
-      } catch (err) {
-        expect(err.message).contains(nls.localize('md_request_timeout'));
-        expect(deployPollStub.callCount).to.be.above(1);
-      }
+      deployPollStub.resolves({ status: 'Pending', success: false });
+      const result = await deployMetadata.deployWithPaths(deployPath, deployOptionWait);
+      expect(result.status).to.equal('Pending');
+      expect(result.success).to.be.false;
     });
   });
 });

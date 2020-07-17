@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
 import { BaseApi, RetrieveOptions, RetrievePathOptions, ApiResult, SourcePath } from '../types';
 import { MetadataConverter } from '../convert';
 import { DeployError } from '../errors';
@@ -15,8 +14,7 @@ import {
   Id,
   DeployResult,
   ComponentDeployment,
-  DeployMessage,
-  DeployDetails
+  DeployMessage
 } from '../types/newClient';
 
 export const DEFAULT_API_OPTIONS = {
@@ -90,13 +88,16 @@ export class MetadataApi extends BaseApi {
     options: MetadataDeployOptions,
     interval = 100
   ): Promise<DeployResult> {
+    const wait = (): Promise<void> => {
+      return new Promise(resolve => {
+        setTimeout(resolve, interval);
+      });
+    };
+
+    let result;
     const timeout = !options || !options.wait ? 10000 : options.wait;
     const endTime = Date.now() + timeout;
-    const checkDeploy = async (
-      resolve: (result: DeployResult) => void,
-      reject: (err: Error) => void
-    ): Promise<void> => {
-      let result;
+    do {
       try {
         // Recasting to use the library's DeployResult type
         result = ((await this.connection.metadata.checkDeployStatus(
@@ -104,25 +105,20 @@ export class MetadataApi extends BaseApi {
           true
         )) as unknown) as DeployResult;
       } catch (e) {
-        reject(new DeployError('md_request_fail', e));
+        throw new DeployError('md_request_fail', e);
       }
 
       switch (result.status) {
         case 'Succeeded':
         case 'Failed':
         case 'Canceled':
-          resolve(result);
-          break;
-        default:
-          if (Date.now() < endTime) {
-            setTimeout(checkDeploy, interval, resolve);
-          } else {
-            resolve(result);
-          }
+          return result;
       }
-    };
 
-    return new Promise(checkDeploy);
+      await wait();
+    } while (Date.now() < endTime);
+
+    return result;
   }
 
   private buildSourceDeployResult(
@@ -135,7 +131,7 @@ export class MetadataApi extends BaseApi {
       success: result.success
     };
 
-    const messages = this.getDeployMessages(result.details);
+    const messages = this.getDeployMessages(result);
 
     if (messages.length > 0) {
       deployResult.components = [];
@@ -170,21 +166,23 @@ export class MetadataApi extends BaseApi {
     return deployResult;
   }
 
-  private getDeployMessages(details: DeployDetails): DeployMessage[] {
-    const { componentSuccesses, componentFailures } = details;
+  private getDeployMessages(result: DeployResult): DeployMessage[] {
     const messages: DeployMessage[] = [];
-    if (componentSuccesses) {
-      if (Array.isArray(componentSuccesses)) {
-        messages.push(...componentSuccesses);
-      } else {
-        messages.push(componentSuccesses);
+    if (result.details) {
+      const { componentSuccesses, componentFailures } = result.details;
+      if (componentSuccesses) {
+        if (Array.isArray(componentSuccesses)) {
+          messages.push(...componentSuccesses);
+        } else {
+          messages.push(componentSuccesses);
+        }
       }
-    }
-    if (componentFailures) {
-      if (Array.isArray(componentFailures)) {
-        messages.push(...componentFailures);
-      } else {
-        messages.push(componentFailures);
+      if (componentFailures) {
+        if (Array.isArray(componentFailures)) {
+          messages.push(...componentFailures);
+        } else {
+          messages.push(componentFailures);
+        }
       }
     }
     return messages;

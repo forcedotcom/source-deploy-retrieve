@@ -15,7 +15,11 @@ import { fail } from 'assert';
 import * as path from 'path';
 import { nls } from '../../src/i18n';
 import { MetadataApiDeployOptions } from '../../src/types/client';
-import { DeployResult, MetadataSourceDeployResult } from '../../src/types/newClient';
+import {
+  DeployResult,
+  MetadataSourceDeployResult,
+  ComponentStatus
+} from '../../src/types/newClient';
 
 describe('Metadata Api', () => {
   let mockConnection: Connection;
@@ -56,16 +60,16 @@ describe('Metadata Api', () => {
     components: [
       {
         component,
-        status: 'Unchanged',
+        status: ComponentStatus.Unchanged,
         diagnostics: []
       }
     ]
   };
   const testingBuffer = Buffer.from('testingBuffer');
   const deployPath = path.join('file', 'path', 'myTestClass.cls');
-  let deployMetadata: MetadataApi;
+  let metadataClient: MetadataApi;
   let registryStub = sandboxStub.stub();
-  let conversionCallStub = sandboxStub.stub();
+  let convertStub = sandboxStub.stub();
   let deployIdStub = sandboxStub.stub();
   beforeEach(async () => {
     sandboxStub = createSandbox();
@@ -74,9 +78,9 @@ describe('Metadata Api', () => {
         username: testData.username
       })
     });
-    deployMetadata = new MetadataApi(mockConnection, registryAccess);
+    metadataClient = new MetadataApi(mockConnection, registryAccess);
     registryStub = sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns([component]);
-    conversionCallStub = sandboxStub
+    convertStub = sandboxStub
       .stub(MetadataConverter.prototype, 'convert')
       .withArgs([component], 'metadata', { type: 'zip' })
       .resolves({
@@ -108,9 +112,9 @@ describe('Metadata Api', () => {
       .withArgs('12345', true)
       // @ts-ignore minimum info required
       .resolves(deployResult);
-    const deploys = await deployMetadata.deployWithPaths(deployPath);
-    expect(registryStub.calledImmediatelyBefore(conversionCallStub)).to.be.true;
-    expect(conversionCallStub.calledImmediatelyBefore(deployIdStub)).to.be.true;
+    const deploys = await metadataClient.deployWithPaths(deployPath);
+    expect(registryStub.calledImmediatelyBefore(convertStub)).to.be.true;
+    expect(convertStub.calledImmediatelyBefore(deployIdStub)).to.be.true;
     expect(deployIdStub.calledImmediatelyBefore(deployPollStub)).to.be.true;
     expect(deploys).to.deep.equal(sourceDeployResult);
   });
@@ -137,7 +141,7 @@ describe('Metadata Api', () => {
       });
     // @ts-ignore
     sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves(deployResult);
-    await deployMetadata.deployWithPaths(deployPath, { apiOptions });
+    await metadataClient.deployWithPaths(deployPath, { apiOptions });
     expect(deployIdStub.args).to.deep.equal([[testingBuffer, apiOptions]]);
   });
 
@@ -151,7 +155,7 @@ describe('Metadata Api', () => {
       });
     // @ts-ignore
     sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves(deployResult);
-    await deployMetadata.deployWithPaths(deployPath);
+    await metadataClient.deployWithPaths(deployPath);
     expect(deployIdStub.args).to.deep.equal([[testingBuffer, DEFAULT_API_OPTIONS]]);
   });
 
@@ -172,7 +176,7 @@ describe('Metadata Api', () => {
       });
     // @ts-ignore
     sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').resolves(deployResult);
-    await deployMetadata.deployWithPaths(deployPath, {
+    await metadataClient.deployWithPaths(deployPath, {
       apiOptions: { checkOnly: true, autoUpdatePackage: true, singlePackage: false }
     });
     expect(deployIdStub.args).to.deep.equal([[testingBuffer, apiOptions]]);
@@ -188,7 +192,7 @@ describe('Metadata Api', () => {
         .stub(mockConnection.metadata, 'checkDeployStatus')
         // @ts-ignore
         .resolves(deployResult);
-      const deploys = await deployMetadata.deployWithPaths(deployPath);
+      const deploys = await metadataClient.deployWithPaths(deployPath);
       expect(deploys).to.deep.equal(sourceDeployResult);
     });
     it('should throw correct error for unexpected issue', async () => {
@@ -198,7 +202,7 @@ describe('Metadata Api', () => {
       });
       sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus').throws('unexpected error');
       try {
-        await deployMetadata.deployWithPaths(deployPath);
+        await metadataClient.deployWithPaths(deployPath);
         fail('request should have failed');
       } catch (e) {
         expect(e.message).contains(nls.localize('md_request_fail', 'unexpected error'));
@@ -216,9 +220,234 @@ describe('Metadata Api', () => {
       const deployPollStub = sandboxStub.stub(mockConnection.metadata, 'checkDeployStatus');
       // @ts-ignore
       deployPollStub.resolves({ status: 'Pending', success: false });
-      const result = await deployMetadata.deployWithPaths(deployPath, deployOptionWait);
+      const result = await metadataClient.deployWithPaths(deployPath, deployOptionWait);
       expect(result.status).to.equal('Pending');
       expect(result.success).to.be.false;
+    });
+  });
+
+  describe('Metadata Deploy Result', () => {
+    it('should set deploy operation status correctly', async () => {
+      // @ts-ignore
+      sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
+        id: '12345'
+      });
+      sandboxStub
+        .stub(mockConnection.metadata, 'checkDeployStatus')
+        // @ts-ignore minimum info required
+        .resolves({
+          success: true,
+          id: '1234',
+          status: 'Succeeded'
+        });
+      const result = await metadataClient.deploy(component);
+      expect(result).to.deep.equal({
+        id: '1234',
+        success: true,
+        status: 'Succeeded'
+      });
+    });
+
+    it('should set Changed component status for changed component', async () => {
+      // @ts-ignore
+      sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
+        id: '12345'
+      });
+      sandboxStub
+        .stub(mockConnection.metadata, 'checkDeployStatus')
+        // @ts-ignore minimum info required
+        .resolves({
+          success: true,
+          id: '1234',
+          status: 'Succeeded',
+          details: {
+            // @ts-ignore
+            componentSuccesses: [
+              {
+                changed: 'true',
+                created: 'false',
+                deleted: 'false',
+                fullName: component.fullName,
+                componentType: component.type.name
+              }
+            ]
+          }
+        });
+      const result = await metadataClient.deploy(component);
+      expect(result.components).to.deep.equal([
+        {
+          component,
+          status: ComponentStatus.Changed,
+          diagnostics: []
+        }
+      ]);
+    });
+
+    it('should set Created component status for created component', async () => {
+      // @ts-ignore
+      sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
+        id: '12345'
+      });
+      sandboxStub
+        .stub(mockConnection.metadata, 'checkDeployStatus')
+        // @ts-ignore minimum info required
+        .resolves({
+          success: true,
+          id: '1234',
+          status: 'Succeeded',
+          details: {
+            // @ts-ignore
+            componentSuccesses: [
+              {
+                changed: 'false',
+                created: 'true',
+                deleted: 'false',
+                fullName: component.fullName,
+                componentType: component.type.name
+              }
+            ]
+          }
+        });
+      const result = await metadataClient.deploy(component);
+      expect(result.components).to.deep.equal([
+        {
+          component,
+          status: ComponentStatus.Created,
+          diagnostics: []
+        }
+      ]);
+    });
+
+    it('should set Deleted component status for deleted component', async () => {
+      // @ts-ignore
+      sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
+        id: '12345'
+      });
+      sandboxStub
+        .stub(mockConnection.metadata, 'checkDeployStatus')
+        // @ts-ignore minimum info required
+        .resolves({
+          success: true,
+          id: '1234',
+          status: 'Succeeded',
+          details: {
+            // @ts-ignore
+            componentSuccesses: {
+              changed: 'false',
+              created: 'false',
+              deleted: 'true',
+              fullName: component.fullName,
+              componentType: component.type.name
+            }
+          }
+        });
+      const result = await metadataClient.deploy(component);
+      expect(result.components).to.deep.equal([
+        {
+          component,
+          status: ComponentStatus.Deleted,
+          diagnostics: []
+        }
+      ]);
+    });
+
+    it('should set Failed component status for failed component', async () => {
+      // @ts-ignore
+      sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
+        id: '12345'
+      });
+      sandboxStub
+        .stub(mockConnection.metadata, 'checkDeployStatus')
+        // @ts-ignore minimum info required
+        .resolves({
+          success: true,
+          id: '1234',
+          status: 'Failed',
+          details: {
+            // @ts-ignore
+            componentFailures: {
+              success: 'false',
+              changed: 'false',
+              created: 'false',
+              deleted: 'false',
+              fullName: component.fullName,
+              componentType: component.type.name
+            }
+          }
+        });
+      const result = await metadataClient.deploy(component);
+      expect(result.components).to.deep.equal([
+        {
+          component,
+          status: ComponentStatus.Failed,
+          diagnostics: []
+        }
+      ]);
+    });
+
+    it('should aggregate diagnostics for a component', async () => {
+      // @ts-ignore
+      sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
+        id: '12345'
+      });
+      sandboxStub
+        .stub(mockConnection.metadata, 'checkDeployStatus')
+        // @ts-ignore minimum info required
+        .resolves({
+          success: true,
+          id: '1234',
+          status: 'Failed',
+          details: {
+            // @ts-ignore
+            componentFailures: [
+              {
+                success: 'false',
+                changed: 'false',
+                created: 'false',
+                deleted: 'false',
+                fullName: component.fullName,
+                componentType: component.type.name,
+                problem: 'Expected ;',
+                problemType: 'Error',
+                lineNumber: 3,
+                columnNumber: 7
+              },
+              {
+                success: 'false',
+                changed: 'false',
+                created: 'false',
+                deleted: 'false',
+                fullName: component.fullName,
+                componentType: component.type.name,
+                problem: 'Symbol test does not exist',
+                problemType: 'Error',
+                lineNumber: 8,
+                columnNumber: 23
+              }
+            ]
+          }
+        });
+      const result = await metadataClient.deploy(component);
+      expect(result.components).to.deep.equal([
+        {
+          component,
+          status: ComponentStatus.Failed,
+          diagnostics: [
+            {
+              lineNumber: 3,
+              columnNumber: 7,
+              message: 'Expected ;',
+              type: 'Error'
+            },
+            {
+              lineNumber: 8,
+              columnNumber: 23,
+              message: 'Symbol test does not exist',
+              type: 'Error'
+            }
+          ]
+        }
+      ]);
     });
   });
 });

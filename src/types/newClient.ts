@@ -16,18 +16,24 @@ export type Id = string;
 export type ComponentDeployment = {
   id?: string;
   component: SourceComponent;
-  status: ComponentDeploymentStatus;
-  diagnostics: DeploymentDiagnostic[];
+  status: ComponentStatus;
+  diagnostics: ComponentDiagnostic[];
 };
 
-export type DeploymentDiagnostic = {
+export type ComponentDiagnostic = {
   lineNumber?: number;
   columnNumber?: number;
   message: string;
   type: 'Warning' | 'Error';
 };
 
-export type ComponentDeploymentStatus = 'Created' | 'Changed' | 'Unchanged' | 'Deleted' | 'Failed';
+export enum ComponentStatus {
+  Created = 'Created',
+  Changed = 'Changed',
+  Unchanged = 'Unchanged',
+  Deleted = 'Deleted',
+  Failed = 'Failed'
+}
 
 interface SourceApiResult {
   success: boolean;

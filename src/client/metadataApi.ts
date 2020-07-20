@@ -14,7 +14,8 @@ import {
   Id,
   DeployResult,
   ComponentDeployment,
-  DeployMessage
+  DeployMessage,
+  ComponentStatus
 } from '../types/newClient';
 
 export const DEFAULT_API_OPTIONS = {
@@ -47,7 +48,7 @@ export class MetadataApi extends BaseApi {
     const componentDeploymentMap = new Map<string, ComponentDeployment>();
     for (const component of metadataComponents) {
       componentDeploymentMap.set(`${component.type.name}:${component.fullName}`, {
-        status: 'Unchanged',
+        status: ComponentStatus.Unchanged,
         component,
         diagnostics: []
       });
@@ -98,7 +99,12 @@ export class MetadataApi extends BaseApi {
 
     const timeout = !options || !options.wait ? 10000 : options.wait;
     const endTime = Date.now() + timeout;
+    let triedOnce = false;
     do {
+      if (triedOnce) {
+        await wait(interval);
+      }
+
       try {
         // Recasting to use the library's DeployResult type
         result = ((await this.connection.metadata.checkDeployStatus(
@@ -116,7 +122,7 @@ export class MetadataApi extends BaseApi {
           return result;
       }
 
-      await wait(interval);
+      triedOnce = true;
     } while (Date.now() < endTime);
 
     return result;
@@ -142,13 +148,13 @@ export class MetadataApi extends BaseApi {
 
         if (componentDeployment) {
           if (message.created === 'true') {
-            componentDeployment.status = 'Created';
+            componentDeployment.status = ComponentStatus.Created;
           } else if (message.changed === 'true') {
-            componentDeployment.status = 'Changed';
+            componentDeployment.status = ComponentStatus.Changed;
           } else if (message.deleted === 'true') {
-            componentDeployment.status = 'Deleted';
+            componentDeployment.status = ComponentStatus.Deleted;
           } else if (message.success === 'false') {
-            componentDeployment.status = 'Failed';
+            componentDeployment.status = ComponentStatus.Failed;
           }
 
           if (message.problem) {

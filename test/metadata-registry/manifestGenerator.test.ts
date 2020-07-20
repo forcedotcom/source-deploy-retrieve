@@ -150,33 +150,23 @@ describe('ManifestGenerator', () => {
     const registryAccess = new RegistryAccess();
     sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(mdComponents);
     const manifestGenerator = new ManifestGenerator(registryAccess);
-    // @ts-ignore
-    sandboxStub.stub(fs, 'lstatSync').returns({ isDirectory: () => false });
-    const stubCreateMetadataFile = sandboxStub.stub(fs, 'createWriteStream');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    stubCreateMetadataFile.onCall(0).returns(new stream.PassThrough() as any);
-    sandboxStub.stub(fs, 'closeSync');
-    sandboxStub.stub(fs, 'openSync').returns(123);
+    const writeFileStub = sandboxStub.stub(fs, 'writeFileSync');
     manifestGenerator.createManifestFromPath(
       path.join('file', 'path', 'myTestClass.cls-meta.xml'),
       path.join(rootPath, 'manifest', 'package.xml')
     );
-    expect(stubCreateMetadataFile.callCount).to.equal(1);
-    expect(stubCreateMetadataFile.getCall(0).args[0]).to.equal(
+    expect(writeFileStub.callCount).to.equal(1);
+    expect(writeFileStub.getCall(0).args[0]).to.equal(
       path.join(rootPath, 'manifest', 'package.xml')
     );
   });
+
   it('should throw error when handling unexpected errors on creating a manifest with a sourcepath', () => {
     const registryAccess = new RegistryAccess();
     sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(mdComponents);
-    sandboxStub.stub(fs, 'existsSync').returns(true);
-    sandboxStub.stub(fs, 'closeSync');
-    sandboxStub.stub(fs, 'openSync').returns(123);
-    // @ts-ignore
-    sandboxStub.stub(fs, 'lstatSync').returns({ isDirectory: () => false });
-    const stubCreateMetadataFile = sandboxStub.stub(fs, 'createWriteStream');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    stubCreateMetadataFile.onCall(0).throwsException('Unexpected error when creating file');
+    const manifestGenerator = new ManifestGenerator(registryAccess);
+    const writeFileStub = sandboxStub.stub(fs, 'writeFileSync');
+    writeFileStub.onCall(0).throwsException('Unexpected error when creating file');
     const filePath = path.join(rootPath, 'myTestClass.cls-meta.xml');
     try {
       manifestGenerator.createManifestFromPath(

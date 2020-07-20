@@ -7,9 +7,9 @@
 
 import { MetadataComponent } from '../types';
 import { RegistryAccess } from './registryAccess';
-import { createFiles } from '../utils';
 import { RegistryError } from '../errors';
 import { SourceComponent } from './sourceComponent';
+import { writeFileSync } from 'fs';
 
 export class ManifestGenerator {
   private xmlDef = '<?xml version="1.0" encoding="UTF-8"?>\n';
@@ -24,8 +24,7 @@ export class ManifestGenerator {
   public createManifestFromPath(sourcePath: string, outputPath: string): void {
     try {
       const mdComponents: SourceComponent[] = this.registryAccess.getComponentsFromPath(sourcePath);
-      const manifestMap = new Map().set(outputPath, this.createManifest(mdComponents));
-      createFiles(manifestMap);
+      writeFileSync(outputPath, this.createManifest(mdComponents));
     } catch (err) {
       throw new RegistryError('error_on_manifest_creation', [sourcePath, err]);
     }

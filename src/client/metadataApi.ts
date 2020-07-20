@@ -4,33 +4,28 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
-import {
-  DeployResult,
-  BaseApi,
-  RetrieveOptions,
-  RetrievePathOptions,
-  ApiResult,
-  SourcePath
-} from '../types';
-import { nls } from '../i18n';
+import { BaseApi, RetrieveOptions, RetrievePathOptions, ApiResult, SourcePath } from '../types';
 import { MetadataConverter } from '../convert';
 import { DeployError } from '../errors';
 import { MetadataDeployOptions } from '../types/client';
 import { SourceComponent } from '../metadata-registry';
+import {
+  MetadataSourceDeployResult,
+  Id,
+  DeployResult,
+  ComponentDeployment,
+  DeployMessage,
+  ComponentStatus,
+  DeployStatus
+} from '../types/newClient';
 
-export const enum DeployStatusEnum {
-  Succeeded = 'Succeeded',
-  InProgress = 'InProgress',
-  Pending = 'Pending',
-  Failed = 'Failed'
-}
 export const DEFAULT_API_OPTIONS = {
   rollbackOnError: true,
   ignoreWarnings: false,
   checkOnly: false,
   singlePackage: true
 };
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export class MetadataApi extends BaseApi {
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult> {
@@ -43,33 +38,37 @@ export class MetadataApi extends BaseApi {
   public async deploy(
     components: SourceComponent | SourceComponent[],
     options?: MetadataDeployOptions
-  ): Promise<DeployResult> {
+  ): Promise<MetadataSourceDeployResult> {
     const metadataComponents = Array.isArray(components) ? components : [components];
+
     const converter = new MetadataConverter();
-    const conversionCall = await converter.convert(metadataComponents, 'metadata', { type: 'zip' });
-    const deployID = await this.metadataDeployID(conversionCall.zipBuffer, options);
-    const deploy = this.metadataDeployStatusPoll(deployID, options);
-    let files: string[] = [];
-    metadataComponents.forEach(file => {
-      files = files.concat(file.walkContent());
-      files.push(file.xml);
-    });
-    (await deploy).outboundFiles = files;
-    return deploy;
+    const { zipBuffer } = await converter.convert(metadataComponents, 'metadata', { type: 'zip' });
+
+    const deployID = await this.metadataDeployID(zipBuffer, options);
+    const deployStatusPoll = this.metadataDeployStatusPoll(deployID, options);
+    const componentDeploymentMap = new Map<string, ComponentDeployment>();
+    for (const component of metadataComponents) {
+      componentDeploymentMap.set(`${component.type.name}:${component.fullName}`, {
+        status: ComponentStatus.Unchanged,
+        component,
+        diagnostics: []
+      });
+    }
+
+    const result = await deployStatusPoll;
+
+    return this.buildSourceDeployResult(componentDeploymentMap, result);
   }
 
   public async deployWithPaths(
     paths: SourcePath,
     options?: MetadataDeployOptions
-  ): Promise<DeployResult> {
+  ): Promise<MetadataSourceDeployResult> {
     const components = this.registry.getComponentsFromPath(paths);
     return this.deploy(components, options);
   }
 
-  public async metadataDeployID(
-    zipBuffer: Buffer,
-    options?: MetadataDeployOptions
-  ): Promise<string> {
+  private async metadataDeployID(zipBuffer: Buffer, options?: MetadataDeployOptions): Promise<Id> {
     if (!options || !options.apiOptions) {
       options = {
         apiOptions: DEFAULT_API_OPTIONS
@@ -85,37 +84,115 @@ export class MetadataApi extends BaseApi {
     const result = await this.connection.metadata.deploy(zipBuffer, options.apiOptions);
     return result.id;
   }
-  public async metadataDeployStatusPoll(
+
+  private async metadataDeployStatusPoll(
     deployID: string,
     options: MetadataDeployOptions,
     interval = 100
   ): Promise<DeployResult> {
-    const timeout = !options || !options.wait ? 10000 : options.wait;
-    const endTime = Date.now() + timeout;
-    // @ts-ignore
-    const checkDeploy = async (resolve, reject): Promise<DeployResult> => {
-      const result = await this.connection.metadata.checkDeployStatus(deployID);
+    let result;
 
-      switch (result.status) {
-        case DeployStatusEnum.Succeeded:
-          resolve(result);
-          break;
-        case DeployStatusEnum.Failed:
-          const deployError = new DeployError('md_request_fail', result.errorMessage);
-          reject(deployError);
-          break;
-        case DeployStatusEnum.InProgress:
-        case DeployStatusEnum.Pending:
-        case '':
-        default:
-          if (Date.now() < endTime) {
-            setTimeout(checkDeploy, interval, resolve, reject);
-          } else {
-            reject(new Error(nls.localize('md_request_timeout')));
-          }
-      }
+    const wait = (interval: number): Promise<void> => {
+      return new Promise(resolve => {
+        setTimeout(resolve, interval);
+      });
     };
 
-    return new Promise(checkDeploy);
+    const timeout = !options || !options.wait ? 10000 : options.wait;
+    const endTime = Date.now() + timeout;
+    let triedOnce = false;
+    do {
+      if (triedOnce) {
+        await wait(interval);
+      }
+
+      try {
+        // Recasting to use the library's DeployResult type
+        result = ((await this.connection.metadata.checkDeployStatus(
+          deployID,
+          true
+        )) as unknown) as DeployResult;
+      } catch (e) {
+        throw new DeployError('md_request_fail', e);
+      }
+
+      switch (result.status) {
+        case DeployStatus.Succeeded:
+        case DeployStatus.Failed:
+        case DeployStatus.Canceled:
+          return result;
+      }
+
+      triedOnce = true;
+    } while (Date.now() < endTime);
+
+    return result;
+  }
+
+  private buildSourceDeployResult(
+    componentDeploymentMap: Map<string, ComponentDeployment>,
+    result: DeployResult
+  ): MetadataSourceDeployResult {
+    const deployResult: MetadataSourceDeployResult = {
+      id: result.id,
+      status: result.status,
+      success: result.success
+    };
+
+    const messages = this.getDeployMessages(result);
+
+    if (messages.length > 0) {
+      deployResult.components = [];
+      for (const message of messages) {
+        const componentKey = `${message.componentType}:${message.fullName}`;
+        const componentDeployment = componentDeploymentMap.get(componentKey);
+
+        if (componentDeployment) {
+          if (message.created === 'true') {
+            componentDeployment.status = ComponentStatus.Created;
+          } else if (message.changed === 'true') {
+            componentDeployment.status = ComponentStatus.Changed;
+          } else if (message.deleted === 'true') {
+            componentDeployment.status = ComponentStatus.Deleted;
+          } else if (message.success === 'false') {
+            componentDeployment.status = ComponentStatus.Failed;
+          }
+
+          if (message.problem) {
+            componentDeployment.diagnostics.push({
+              lineNumber: message.lineNumber,
+              columnNumber: message.columnNumber,
+              message: message.problem,
+              type: message.problemType
+            });
+          }
+        }
+      }
+      deployResult.components = Array.from(componentDeploymentMap.values());
+    }
+
+    return deployResult;
+  }
+
+  private getDeployMessages(result: DeployResult): DeployMessage[] {
+    const messages: DeployMessage[] = [];
+    if (result.details) {
+      const { componentSuccesses, componentFailures } = result.details;
+      if (componentSuccesses) {
+        if (Array.isArray(componentSuccesses)) {
+          messages.push(...componentSuccesses);
+        } else {
+          messages.push(componentSuccesses);
+        }
+      }
+      if (componentFailures) {
+        if (Array.isArray(componentFailures)) {
+          messages.push(...componentFailures);
+        } else {
+          messages.push(componentFailures);
+        }
+      }
+    }
+    return messages;
   }
 }

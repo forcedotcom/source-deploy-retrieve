@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
 import { SourceComponent } from '../metadata-registry';
 
 // ------------------------------------------------
@@ -27,6 +26,9 @@ export type ComponentDiagnostic = {
   type: 'Warning' | 'Error';
 };
 
+/**
+ * Possible statuses of a component being deployed.
+ */
 export enum ComponentStatus {
   Created = 'Created',
   Changed = 'Changed',
@@ -56,6 +58,9 @@ export interface MetadataSourceDeployResult extends SourceDeployResult {
 // Metadata API result types
 // ------------------------------
 
+/**
+ * Raw response returned from a checkDeployStatus call to the Metadata API
+ */
 export type DeployResult = {
   id: string;
   canceledBy?: string;
@@ -85,14 +90,18 @@ export type DeployResult = {
   success: boolean;
 };
 
-export type DeployStatus =
-  | 'Pending'
-  | 'InProgress'
-  | 'Succeeded'
-  | 'SucceededPartial'
-  | 'Failed'
-  | 'Canceling'
-  | 'Canceled';
+/**
+ * Possible statuses of a metadata deploy operation.
+ */
+export enum DeployStatus {
+  Pending = 'Pending',
+  InProgress = 'InProgress',
+  Succeeded = 'Succeeded',
+  SucceededPartial = 'SucceededPartial',
+  Failed = 'Failed',
+  Canceling = 'Canceling',
+  Canceled = 'Canceled'
+}
 
 export type DeployDetails = {
   componentFailures?: DeployMessage[];
@@ -102,7 +111,7 @@ export type DeployDetails = {
   // runTestResult?:
 };
 
-// API returns "boolean strings" for DeployMessage
+// DeployMessage "booleans" are strings
 type BooleanString = 'true' | 'false';
 
 export type DeployMessage = {

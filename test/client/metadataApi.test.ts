@@ -18,7 +18,8 @@ import { MetadataApiDeployOptions } from '../../src/types/client';
 import {
   DeployResult,
   MetadataSourceDeployResult,
-  ComponentStatus
+  ComponentStatus,
+  DeployStatus
 } from '../../src/types/newClient';
 
 describe('Metadata Api', () => {
@@ -41,7 +42,7 @@ describe('Metadata Api', () => {
   ]);
   const deployResult: DeployResult = {
     id: '12345',
-    status: 'Succeeded',
+    status: DeployStatus.Succeeded,
     success: true,
     details: {
       componentSuccesses: [
@@ -56,7 +57,7 @@ describe('Metadata Api', () => {
   const sourceDeployResult: MetadataSourceDeployResult = {
     id: '12345',
     success: true,
-    status: 'Succeeded',
+    status: DeployStatus.Succeeded,
     components: [
       {
         component,

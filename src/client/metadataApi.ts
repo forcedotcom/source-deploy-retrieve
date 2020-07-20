@@ -15,7 +15,8 @@ import {
   DeployResult,
   ComponentDeployment,
   DeployMessage,
-  ComponentStatus
+  ComponentStatus,
+  DeployStatus
 } from '../types/newClient';
 
 export const DEFAULT_API_OPTIONS = {
@@ -116,9 +117,9 @@ export class MetadataApi extends BaseApi {
       }
 
       switch (result.status) {
-        case 'Succeeded':
-        case 'Failed':
-        case 'Canceled':
+        case DeployStatus.Succeeded:
+        case DeployStatus.Failed:
+        case DeployStatus.Canceled:
           return result;
       }
 

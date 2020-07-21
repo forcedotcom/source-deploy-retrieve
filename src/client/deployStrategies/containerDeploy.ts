@@ -8,15 +8,26 @@
 import { readFileSync } from 'fs';
 import { deployTypes } from '../toolingApi';
 import { DeployError } from '../../errors';
-import { DeployStatusEnum, DeployResult, QueryResult } from '../../types';
+import { DeployResult, QueryResult } from '../../types';
 import { baseName } from '../../utils/path';
 import { ToolingCreateResult } from '../../utils/deploy';
 import { CONTAINER_ASYNC_REQUEST, METADATA_CONTAINER } from './constants';
 import { BaseDeploy } from './baseDeploy';
 import { SourceComponent } from '../../metadata-registry';
+import {
+  ToolingSourceDeployResult,
+  ContainerAsyncRequest,
+  ContainerAsyncRequestState,
+  Id,
+  ComponentDeployment,
+  ComponentStatus
+} from '../../types/newClient';
 
 export class ContainerDeploy extends BaseDeploy {
-  public async deploy(component: SourceComponent, namespace: string): Promise<DeployResult> {
+  public async deploy(
+    component: SourceComponent,
+    namespace: string
+  ): Promise<DeployResult | ToolingSourceDeployResult> {
     this.component = component;
     this.namespace = namespace;
     const sourcePath = component.content;
@@ -25,8 +36,8 @@ export class ContainerDeploy extends BaseDeploy {
     const container = await this.createMetadataContainer();
     await this.createContainerMember([sourcePath, metadataPath], container);
     const asyncRequest = await this.createContainerAsyncRequest(container);
-    const output = await this.toolingStatusCheck(asyncRequest);
-    return output;
+    const containerRequestStatus = await this.pollContainerStatus(asyncRequest.id);
+    return this.buildSourceDeployResult(containerRequestStatus);
   }
 
   public async createMetadataContainer(): Promise<ToolingCreateResult> {
@@ -104,24 +115,63 @@ export class ContainerDeploy extends BaseDeploy {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  public async toolingStatusCheck(asyncRequest: ToolingCreateResult): Promise<DeployResult> {
-    let retrieveResult: DeployResult = await this.toolingRetrieve(
-      CONTAINER_ASYNC_REQUEST,
-      asyncRequest.id
-    );
+  public async pollContainerStatus(containerId: Id): Promise<ContainerAsyncRequest> {
     let count = 0;
-    while (retrieveResult.State === DeployStatusEnum.Queued && count <= 30) {
-      await this.sleep(100);
-      retrieveResult = await this.toolingRetrieve(CONTAINER_ASYNC_REQUEST, asyncRequest.id);
+    let containerStatus;
+    do {
+      if (count > 0) {
+        await this.sleep(100);
+      }
+      containerStatus = (await this.connection.tooling.retrieve(
+        CONTAINER_ASYNC_REQUEST,
+        containerId
+      )) as ContainerAsyncRequest;
       count++;
-    }
-    retrieveResult.metadataFile = this.component.xml;
-    retrieveResult.outboundFiles = [this.component.content];
-    retrieveResult.outboundFiles.push(this.component.xml);
-    return retrieveResult;
+    } while (containerStatus.State === ContainerAsyncRequestState.Queued && count <= 30);
+    return containerStatus;
   }
 
-  private async toolingRetrieve(type: string, id: string): Promise<DeployResult> {
-    return (await this.connection.tooling.retrieve(type, id)) as DeployResult;
+  private buildSourceDeployResult(
+    containerRequest: ContainerAsyncRequest
+  ): ToolingSourceDeployResult {
+    const componentDeployment: ComponentDeployment = {
+      component: this.component,
+      status: ComponentStatus.Unchanged,
+      diagnostics: []
+    };
+
+    const messages = [];
+    const { componentSuccesses, componentFailures } = containerRequest.DeployDetails;
+    if (componentSuccesses) {
+      messages.push(...componentSuccesses);
+    }
+    if (componentFailures) {
+      messages.push(...componentFailures);
+    }
+
+    for (const message of messages) {
+      if (message.changed) {
+        componentDeployment.status = ComponentStatus.Changed;
+      } else if (message.created) {
+        componentDeployment.status = ComponentStatus.Created;
+      } else if (message.deleted) {
+        componentDeployment.status = ComponentStatus.Deleted;
+      } else if (!message.success) {
+        componentDeployment.status = ComponentStatus.Failed;
+        componentDeployment.diagnostics.push({
+          message: message.problem,
+          type: message.problemType,
+          lineNumber: message.lineNumber,
+          columnNumber: message.columnNumber
+        });
+      }
+    }
+
+    return {
+      id: containerRequest.Id,
+      status: containerRequest.State,
+      success: containerRequest.State === ContainerAsyncRequestState.Completed,
+      components: [componentDeployment]
+    };
   }
 }

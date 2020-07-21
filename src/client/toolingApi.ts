@@ -21,6 +21,7 @@ import { nls } from '../i18n';
 import { buildQuery, queryToFileMap } from './retrieveUtil';
 import { createFiles } from '../utils';
 import { SourceComponent } from '../metadata-registry';
+import { ToolingSourceDeployResult } from '../types/newClient';
 
 const retrieveTypes = new Set([
   'ApexClass',
@@ -100,7 +101,7 @@ export class ToolingApi extends BaseApi {
   public async deploy(
     components: SourceComponent | SourceComponent[],
     options?: ToolingDeployOptions
-  ): Promise<DeployResult> {
+  ): Promise<DeployResult | ToolingSourceDeployResult> {
     let mdComponent: SourceComponent;
     if (Array.isArray(components)) {
       if (components.length > 1) {
@@ -125,7 +126,7 @@ export class ToolingApi extends BaseApi {
   public async deployWithPaths(
     path: SourcePath,
     options?: ToolingDeployOptions
-  ): Promise<DeployResult> {
+  ): Promise<DeployResult | ToolingSourceDeployResult> {
     return this.deploy(this.registry.getComponentsFromPath(path), options);
   }
 }

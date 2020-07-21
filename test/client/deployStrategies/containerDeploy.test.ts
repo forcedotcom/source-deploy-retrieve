@@ -16,6 +16,7 @@ import { ToolingCreateResult } from '../../../src/utils/deploy';
 import { nls } from '../../../src/i18n';
 import { DeployStatusEnum, QueryResult } from '../../../src/types';
 import { SourceComponent, registryData } from '../../../src/metadata-registry';
+import { ContainerAsyncRequestState, ComponentStatus } from '../../../src/types/newClient';
 
 const $$ = testSetup();
 
@@ -392,7 +393,7 @@ describe('Container Deploy Strategy', () => {
       name: 'TestCAR',
       message: ''
     };
-    const pollCAR = await deployLibrary.toolingStatusCheck(asyncRequestMock);
+    const pollCAR = await deployLibrary.pollContainerStatus(asyncRequestMock.id);
     expect(pollCAR.State).to.equal('Completed');
   });
 
@@ -462,27 +463,16 @@ describe('Container Deploy Strategy', () => {
       )
     ).to.be.true;
     expect(result).to.deep.equals({
-      State: 'Completed',
-      isDeleted: false,
-      DeployDetails: {
-        componentFailures: [],
-        componentSuccesses: [
-          {
-            changed: true,
-            componentType: 'ApexComponent',
-            created: true,
-            createdDate: '2020-06-19T00:30:38.152+0000',
-            deleted: false,
-            fileName: 'component/one.component',
-            fullName: 'one',
-            id: '0992M000000uLGTQA2',
-            success: true,
-            warning: false
-          }
-        ]
-      },
-      metadataFile: 'file/path/one.component-meta.xml',
-      outboundFiles: ['file/path/one.component', 'file/path/one.component-meta.xml']
+      id: undefined,
+      status: ContainerAsyncRequestState.Completed,
+      success: true,
+      components: [
+        {
+          component: apexComponent,
+          diagnostics: [],
+          status: ComponentStatus.Changed
+        }
+      ]
     });
   });
 });

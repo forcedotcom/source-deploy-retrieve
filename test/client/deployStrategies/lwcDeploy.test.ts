@@ -13,7 +13,6 @@ import { join, basename } from 'path';
 import { RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { nls } from '../../../src/i18n';
-import { DeployStatusEnum, DeployResult } from '../../../src/types';
 import { LwcDeploy } from '../../../src/client/deployStrategies';
 import { LightningComponentResource, ToolingCreateResult } from '../../../src/utils/deploy';
 import {
@@ -21,6 +20,7 @@ import {
   registryData,
   VirtualTreeContainer
 } from '../../../src/metadata-registry';
+import { ToolingDeployStatus, ComponentStatus } from '../../../src/types/newClient';
 
 const $$ = testSetup();
 
@@ -84,35 +84,6 @@ describe('LWC Deploy Strategy', () => {
       LightningComponentBundleId: '1dcxxx000000060'
     }
   ] as LightningComponentResource[];
-  const createLwcSuccesses = [
-    {
-      changed: false,
-      created: true,
-      deleted: false,
-      fileName: join(bundlePath, 'mockLwcCmp.js'),
-      fullName: 'mockLwcCmp/mockLwcCmp.js',
-      success: true,
-      componentType: 'LightningComponentBundle'
-    },
-    {
-      changed: false,
-      created: true,
-      deleted: false,
-      fileName: join(bundlePath, 'mockLwcCmp.html'),
-      fullName: 'mockLwcCmp/mockLwcCmp.html',
-      success: true,
-      componentType: 'LightningComponentBundle'
-    },
-    {
-      changed: false,
-      created: true,
-      deleted: false,
-      fileName: join(bundlePath, 'mockLwcCmp.js-meta.xml'),
-      fullName: 'mockLwcCmp/mockLwcCmp.js-meta.xml',
-      success: true,
-      componentType: 'LightningComponentBundle'
-    }
-  ];
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
@@ -294,82 +265,21 @@ describe('LWC Deploy Strategy', () => {
     // @ts-ignore
     mockToolingQuery.resolves({ records: [] });
 
-    const auraDeploy = new LwcDeploy(mockConnection);
-    const deployResults = await auraDeploy.deploy(lwcComponent, '');
+    const lwc = new LwcDeploy(mockConnection);
+    const result = await lwc.deploy(lwcComponent, '');
 
-    expect(deployResults.DeployDetails.componentSuccesses).to.deep.equal(createLwcSuccesses);
-    expect(deployResults.DeployDetails.componentFailures.length).to.equal(0);
-  });
-
-  it('should update sources in bundle and return successes in correct shape', async () => {
-    const mockToolingUpdate = sandboxStub.stub(mockConnection.tooling, 'update');
-    mockToolingUpdate.resolves({
+    expect(result).to.deep.equal({
+      id: undefined,
+      status: ToolingDeployStatus.Completed,
       success: true,
-      id: '1dcxxx000000034',
-      errors: []
-    } as RecordResult);
-
-    sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
-
-    const mockToolingQuery = sandboxStub.stub(mockConnection.tooling, 'query');
-    // @ts-ignore
-    mockToolingQuery.resolves({ records: [{ Id: '1dcxxx000000034' }] });
-
-    const updateLwcSuccesses = [...createLwcSuccesses];
-    updateLwcSuccesses.forEach(el => {
-      el.changed = true;
-      el.created = false;
+      components: [
+        {
+          component: lwcComponent,
+          status: ComponentStatus.Created,
+          diagnostics: []
+        }
+      ]
     });
-    const updateLwcList = [...testLwcList];
-    updateLwcList.forEach(el => {
-      el.Id = '1dcxxx000000034';
-      delete el.LightningComponentBundleId;
-    });
-
-    const lwcDeploy = new LwcDeploy(mockConnection);
-    lwcDeploy.component = lwcComponent;
-    const results = await lwcDeploy.upsert(updateLwcList);
-
-    expect(results).to.deep.equal(updateLwcSuccesses);
-  });
-
-  it('should format output for creation only successes correctly', async () => {
-    sandboxStub.stub(LwcDeploy.prototype, 'buildResourceList').resolves(testLwcList);
-    sandboxStub
-      .stub(mockConnection.tooling, 'query')
-      // @ts-ignore
-      .resolves({ records: [] });
-    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create');
-    mockToolingCreate.resolves({
-      success: true,
-      id: '1dcxxx000000034',
-      errors: []
-    } as RecordResult);
-
-    sandboxStub.stub(LwcDeploy.prototype, 'upsert').resolves(createLwcSuccesses);
-
-    const testDeployResult: DeployResult = {
-      State: DeployStatusEnum.Completed,
-      DeployDetails: {
-        componentSuccesses: createLwcSuccesses,
-        componentFailures: []
-      },
-      isDeleted: false,
-      outboundFiles: lwcFiles,
-      ErrorMsg: null,
-      metadataFile: lwcComponent.xml
-    };
-
-    const lwcDeploy = new LwcDeploy(mockConnection);
-    const deployResult = await lwcDeploy.deploy(lwcComponent, '');
-
-    expect(deployResult.DeployDetails.componentSuccesses).to.deep.equal(
-      testDeployResult.DeployDetails.componentSuccesses
-    );
-    expect(deployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
-    expect(deployResult.isDeleted).to.equal(testDeployResult.isDeleted);
-    expect(deployResult.outboundFiles).to.deep.equal(testDeployResult.outboundFiles);
-    expect(deployResult.State).to.equal(testDeployResult.State);
   });
 
   it('should format output for creation only failures correctly', async () => {
@@ -386,43 +296,48 @@ describe('LWC Deploy Strategy', () => {
     } as RecordResult);
 
     sandboxStub
-      .stub(LwcDeploy.prototype, 'upsert')
+      .stub(mockConnection.tooling, 'update')
       .throws(new Error('mockLwcCmp.js:1,1 : Unexpected error while creating sources'));
 
-    const createTestFailures = [
-      {
-        changed: false,
-        created: false,
-        deleted: false,
-        fileName: join('file', 'path', 'lwc', 'mockLwcCmp', 'mockLwcCmp.js'),
-        fullName: 'mockLwcCmp/mockLwcCmp.js',
-        success: false,
-        componentType: 'LightningComponentBundle',
-        problem: 'Unexpected error while creating sources',
-        lineNumber: 1,
-        columnNumber: 1
-      }
-    ];
-
-    const testDeployResult: DeployResult = {
-      State: DeployStatusEnum.Failed,
-      DeployDetails: {
-        componentSuccesses: [],
-        componentFailures: createTestFailures
-      },
-      isDeleted: false,
-      ErrorMsg: createTestFailures[0].problem,
-      metadataFile: lwcComponent.xml
-    };
+    const updateLwcList = [...testLwcList];
+    updateLwcList.forEach(el => {
+      el.Id = '1dcxxx000000034';
+      delete el.LightningComponentBundleId;
+    });
 
     const lwcDeploy = new LwcDeploy(mockConnection);
     const deployResult = await lwcDeploy.deploy(lwcComponent, '');
 
-    expect(deployResult.DeployDetails.componentFailures).to.deep.equal(
-      testDeployResult.DeployDetails.componentFailures
-    );
-    expect(deployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
-    expect(deployResult.isDeleted).to.equal(testDeployResult.isDeleted);
-    expect(deployResult.State).to.equal(testDeployResult.State);
+    expect(deployResult).to.deep.equal({
+      id: undefined,
+      status: ToolingDeployStatus.Failed,
+      success: false,
+      components: [
+        {
+          component: lwcComponent,
+          status: ComponentStatus.Failed,
+          diagnostics: [
+            {
+              columnNumber: 1,
+              lineNumber: 1,
+              message: 'Unexpected error while creating sources',
+              type: 'Error'
+            },
+            {
+              columnNumber: 1,
+              lineNumber: 1,
+              message: 'Unexpected error while creating sources',
+              type: 'Error'
+            },
+            {
+              columnNumber: 1,
+              lineNumber: 1,
+              message: 'Unexpected error while creating sources',
+              type: 'Error'
+            }
+          ]
+        }
+      ]
+    });
   });
 });

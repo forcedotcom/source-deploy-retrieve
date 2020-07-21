@@ -51,7 +51,7 @@ export interface MetadataSourceDeployResult extends SourceDeployResult {
 }
 
 export interface ToolingSourceDeployResult extends SourceDeployResult {
-  status: ContainerAsyncRequestState;
+  status: ToolingDeployStatus;
 }
 
 // ------------------------------
@@ -138,14 +138,18 @@ export type ContainerAsyncRequest = {
   Id: Id;
   DeployDetails?: DeployDetails;
   ErrorMsg?: string;
-  State?: ContainerAsyncRequestState;
+  State?: ToolingDeployStatus;
 };
 
-export enum ContainerAsyncRequestState {
+export const enum ToolingDeployStatus {
+  // ContainerAsyncRequest states
   Queued = 'Queued',
   Invalidated = 'Invalidated',
+  Error = 'Error',
+  Aborted = 'Aborted',
+  // Shared
   Completed = 'Completed',
   Failed = 'Failed',
-  Error = 'Error',
-  Aborted = 'Aborted'
+  // unique to bundle requests
+  CompletedPartial = 'CompletedPartial'
 }

@@ -50,9 +50,9 @@ export interface MetadataSourceDeployResult extends SourceDeployResult {
   status: DeployStatus;
 }
 
-// export interface ToolingSourceDeployResult extends ApiDeployResult {
-//   status: ContainerAsyncRequestState;
-// }
+export interface ToolingSourceDeployResult extends SourceDeployResult {
+  status: ContainerAsyncRequestState;
+}
 
 // ------------------------------
 // Metadata API result types
@@ -112,7 +112,7 @@ export type DeployDetails = {
 };
 
 // DeployMessage "booleans" are strings
-type BooleanString = 'true' | 'false';
+type BooleanString = 'true' | 'false' | true | false;
 
 export type DeployMessage = {
   changed: BooleanString;
@@ -134,16 +134,18 @@ export type DeployMessage = {
 // Tooling API result types
 // ------------------------------
 
-// export type ContainerAsyncRequest = {
-//   DeployDetails?: DeployDetails;
-//   ErrorMsg?: string;
-//   State?: ContainerAsyncRequestState;
-// };
+export type ContainerAsyncRequest = {
+  Id: Id;
+  DeployDetails?: DeployDetails;
+  ErrorMsg?: string;
+  State?: ContainerAsyncRequestState;
+};
 
-// export type ContainerAsyncRequestState =
-//   | 'Queued'
-//   | 'Invalidated'
-//   | 'Completed'
-//   | 'Failed'
-//   | 'Error'
-//   | 'Aborted';
+export enum ContainerAsyncRequestState {
+  Queued = 'Queued',
+  Invalidated = 'Invalidated',
+  Completed = 'Completed',
+  Failed = 'Failed',
+  Error = 'Error',
+  Aborted = 'Aborted'
+}

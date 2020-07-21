@@ -13,6 +13,7 @@ import { DeployResult, DeployStatusEnum, SourceResult } from '../../types';
 import { ToolingCreateResult } from '../../utils/deploy';
 import { TOOLING_PATH_SEP } from './constants';
 import { SourceComponent } from '../../metadata-registry';
+import { ToolingSourceDeployResult } from '../../types/newClient';
 
 // tslint:disable-next-line:no-var-requires
 const DOMParser = require('xmldom-sfdx-encoding').DOMParser;
@@ -26,7 +27,10 @@ export abstract class BaseDeploy {
     this.connection = connection;
   }
 
-  public abstract deploy(component: SourceComponent, namespace: string): Promise<DeployResult>;
+  public abstract deploy(
+    component: SourceComponent,
+    namespace: string
+  ): Promise<DeployResult | ToolingSourceDeployResult>;
 
   public buildMetadataField(
     metadataContent: string

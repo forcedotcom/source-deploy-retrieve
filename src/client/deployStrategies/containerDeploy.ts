@@ -115,7 +115,7 @@ export class ContainerDeploy extends BaseDeploy {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  private async pollContainerStatus(containerId: Id): Promise<ContainerAsyncRequest> {
+  public async pollContainerStatus(containerId: Id): Promise<ContainerAsyncRequest> {
     let count = 0;
     let containerStatus;
     do {

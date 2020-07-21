@@ -11,7 +11,6 @@ import { RegistryAccess, SourceComponent, registryData } from '../../src/metadat
 import { SinonSandbox, createSandbox } from 'sinon';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as stream from 'stream';
 import { fail } from 'assert';
 
 describe('ManifestGenerator', () => {

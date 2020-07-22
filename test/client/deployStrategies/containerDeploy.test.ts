@@ -16,7 +16,7 @@ import { ToolingCreateResult } from '../../../src/utils/deploy';
 import { nls } from '../../../src/i18n';
 import { DeployStatusEnum, QueryResult } from '../../../src/types';
 import { SourceComponent, registryData } from '../../../src/metadata-registry';
-import { ContainerAsyncRequestState, ComponentStatus } from '../../../src/types/newClient';
+import { ToolingDeployStatus, ComponentStatus } from '../../../src/types/newClient';
 
 const $$ = testSetup();
 
@@ -434,7 +434,7 @@ describe('Container Deploy Strategy', () => {
 
     // mock status check
     sandboxStub.stub(mockConnection.tooling, 'retrieve').resolves({
-      State: DeployStatusEnum.Completed,
+      State: ToolingDeployStatus.Completed,
       isDeleted: false,
       DeployDetails: {
         componentFailures: [],
@@ -464,7 +464,7 @@ describe('Container Deploy Strategy', () => {
     ).to.be.true;
     expect(result).to.deep.equals({
       id: undefined,
-      status: ContainerAsyncRequestState.Completed,
+      status: ToolingDeployStatus.Completed,
       success: true,
       components: [
         {

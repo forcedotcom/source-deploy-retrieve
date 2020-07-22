@@ -17,7 +17,7 @@ import { SourceComponent } from '../../metadata-registry';
 import {
   ToolingSourceDeployResult,
   ContainerAsyncRequest,
-  ContainerAsyncRequestState,
+  ToolingDeployStatus,
   Id,
   ComponentDeployment,
   ComponentStatus
@@ -127,7 +127,7 @@ export class ContainerDeploy extends BaseDeploy {
         containerId
       )) as ContainerAsyncRequest;
       count++;
-    } while (containerStatus.State === ContainerAsyncRequestState.Queued && count <= 30);
+    } while (containerStatus.State === ToolingDeployStatus.Queued && count <= 30);
     return containerStatus;
   }
 
@@ -170,7 +170,7 @@ export class ContainerDeploy extends BaseDeploy {
     return {
       id: containerRequest.Id,
       status: containerRequest.State,
-      success: containerRequest.State === ContainerAsyncRequestState.Completed,
+      success: containerRequest.State === ToolingDeployStatus.Completed,
       components: [componentDeployment]
     };
   }

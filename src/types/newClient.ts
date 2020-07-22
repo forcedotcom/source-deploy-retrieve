@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { SourceComponent } from '../metadata-registry';
+import { SourcePath } from './common';
 
 // ------------------------------------------------
 // API results reformatted for source development
@@ -22,6 +23,7 @@ export type ComponentDeployment = {
 export type ComponentDiagnostic = {
   lineNumber?: number;
   columnNumber?: number;
+  filePath?: SourcePath;
   message: string;
   type: 'Warning' | 'Error';
 };
@@ -51,7 +53,7 @@ export interface MetadataSourceDeployResult extends SourceDeployResult {
 }
 
 export interface ToolingSourceDeployResult extends SourceDeployResult {
-  status: ContainerAsyncRequestState;
+  status: ToolingDeployStatus;
 }
 
 // ------------------------------
@@ -138,14 +140,18 @@ export type ContainerAsyncRequest = {
   Id: Id;
   DeployDetails?: DeployDetails;
   ErrorMsg?: string;
-  State?: ContainerAsyncRequestState;
+  State?: ToolingDeployStatus;
 };
 
-export enum ContainerAsyncRequestState {
+export const enum ToolingDeployStatus {
+  // ContainerAsyncRequest states
   Queued = 'Queued',
   Invalidated = 'Invalidated',
+  Error = 'Error',
+  Aborted = 'Aborted',
+  // Shared
   Completed = 'Completed',
   Failed = 'Failed',
-  Error = 'Error',
-  Aborted = 'Aborted'
+  // unique to bundle requests
+  CompletedPartial = 'CompletedPartial'
 }

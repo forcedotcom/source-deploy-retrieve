@@ -320,18 +320,21 @@ describe('LWC Deploy Strategy', () => {
             {
               columnNumber: 1,
               lineNumber: 1,
+              filePath: 'file/path/lwc/mockLwcCmp/mockLwcCmp.js',
               message: 'Unexpected error while creating sources',
               type: 'Error'
             },
             {
               columnNumber: 1,
               lineNumber: 1,
+              filePath: 'file/path/lwc/mockLwcCmp/mockLwcCmp.js',
               message: 'Unexpected error while creating sources',
               type: 'Error'
             },
             {
               columnNumber: 1,
               lineNumber: 1,
+              filePath: 'file/path/lwc/mockLwcCmp/mockLwcCmp.js',
               message: 'Unexpected error while creating sources',
               type: 'Error'
             }

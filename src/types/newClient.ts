@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { SourceComponent } from '../metadata-registry';
+import { SourcePath } from './common';
 
 // ------------------------------------------------
 // API results reformatted for source development
@@ -22,6 +23,7 @@ export type ComponentDeployment = {
 export type ComponentDiagnostic = {
   lineNumber?: number;
   columnNumber?: number;
+  filePath?: SourcePath;
   message: string;
   type: 'Warning' | 'Error';
 };

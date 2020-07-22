@@ -90,6 +90,7 @@ export class LwcDeploy extends BaseDeploy {
       diagnostics: []
     };
 
+    let partialSuccess = false;
     for (const resource of lightningResources) {
       try {
         if (resource.Id) {
@@ -99,6 +100,7 @@ export class LwcDeploy extends BaseDeploy {
           };
           await this.connection.tooling.update(deployTypes.get(type), formattedDef);
           deployment.status = ComponentStatus.Changed;
+          partialSuccess = true;
         } else {
           const formattedDef = {
             LightningComponentBundleId: resource.LightningComponentBundleId,
@@ -115,10 +117,7 @@ export class LwcDeploy extends BaseDeploy {
     }
 
     if (deployment.diagnostics.length > 0) {
-      deployment.status =
-        deployment.diagnostics.length === this.component.walkContent().length
-          ? ComponentStatus.Changed
-          : ComponentStatus.Failed;
+      deployment.status = partialSuccess ? ComponentStatus.Changed : ComponentStatus.Failed;
     }
 
     return deployment;
@@ -144,8 +143,10 @@ export class LwcDeploy extends BaseDeploy {
       const msgStartIndex = pathParts.findIndex(part => part.includes(':'));
       const fileObject = pathParts[msgStartIndex];
       const errLocation = fileObject.slice(fileObject.indexOf(':') + 1);
+      const fileName = fileObject.slice(0, fileObject.indexOf(':'));
 
       diagnostic.message = pathParts.slice(msgStartIndex + 2).join(' ');
+      diagnostic.filePath = this.component.walkContent().find(f => f.includes(fileName));
       diagnostic.lineNumber = errLocation ? Number(errLocation.split(',')[0]) : undefined;
       diagnostic.columnNumber = errLocation ? Number(errLocation.split(',')[1]) : undefined;
     } catch (e) {

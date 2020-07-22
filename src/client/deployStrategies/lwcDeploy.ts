@@ -150,6 +150,7 @@ export class LwcDeploy extends BaseDeploy {
       diagnostic.columnNumber = errLocation ? Number(errLocation.split(',')[1]) : undefined;
     } catch (e) {
       // TODO: log error with parsing error message
+      diagnostic.message = problem;
     }
 
     return diagnostic;

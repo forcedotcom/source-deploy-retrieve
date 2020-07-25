@@ -15,7 +15,7 @@ import { CONTAINER_ASYNC_REQUEST, METADATA_CONTAINER } from './constants';
 import { BaseDeploy } from './baseDeploy';
 import { SourceComponent } from '../../metadata-registry';
 import {
-  ToolingSourceDeployResult,
+  SourceDeployResult,
   ContainerAsyncRequest,
   ToolingDeployStatus,
   Id,
@@ -27,7 +27,7 @@ export class ContainerDeploy extends BaseDeploy {
   public async deploy(
     component: SourceComponent,
     namespace: string
-  ): Promise<DeployResult | ToolingSourceDeployResult> {
+  ): Promise<DeployResult | SourceDeployResult> {
     this.component = component;
     this.namespace = namespace;
     const sourcePath = component.content;
@@ -131,9 +131,7 @@ export class ContainerDeploy extends BaseDeploy {
     return containerStatus;
   }
 
-  private buildSourceDeployResult(
-    containerRequest: ContainerAsyncRequest
-  ): ToolingSourceDeployResult {
+  private buildSourceDeployResult(containerRequest: ContainerAsyncRequest): SourceDeployResult {
     const componentDeployment: ComponentDeployment = {
       component: this.component,
       status: ComponentStatus.Unchanged,
@@ -161,8 +159,9 @@ export class ContainerDeploy extends BaseDeploy {
         componentDeployment.diagnostics.push({
           message: message.problem,
           type: message.problemType,
-          lineNumber: message.lineNumber,
-          columnNumber: message.columnNumber
+          filePath: this.component.content,
+          lineNumber: Number(message.lineNumber),
+          columnNumber: Number(message.columnNumber)
         });
       }
     }

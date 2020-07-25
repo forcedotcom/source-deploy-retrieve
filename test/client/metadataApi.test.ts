@@ -17,9 +17,9 @@ import { nls } from '../../src/i18n';
 import { MetadataApiDeployOptions } from '../../src/types/client';
 import {
   DeployResult,
-  MetadataSourceDeployResult,
   ComponentStatus,
-  DeployStatus
+  DeployStatus,
+  SourceDeployResult
 } from '../../src/types/newClient';
 
 describe('Metadata Api', () => {
@@ -54,7 +54,7 @@ describe('Metadata Api', () => {
       ]
     }
   };
-  const sourceDeployResult: MetadataSourceDeployResult = {
+  const sourceDeployResult: SourceDeployResult = {
     id: '12345',
     success: true,
     status: DeployStatus.Succeeded,

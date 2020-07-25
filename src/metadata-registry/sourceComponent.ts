@@ -17,7 +17,7 @@ import { parseMetadataXml } from '../utils/registry';
 import { baseName } from '../utils';
 import { NodeFSTreeContainer, VirtualTreeContainer } from './treeContainers';
 
-type ComponentProperties = {
+export type ComponentProperties = {
   name: string;
   type: MetadataType;
   xml: SourcePath;

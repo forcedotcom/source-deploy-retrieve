@@ -7,7 +7,7 @@
 import { AuthInfo, Connection } from '@salesforce/core';
 import { expect } from 'chai';
 import { MockTestOrgData } from '@salesforce/core/lib/testSetup';
-import { createSandbox } from 'sinon';
+import { createSandbox, match } from 'sinon';
 import { RegistryAccess, registryData, SourceComponent } from '../../src/metadata-registry';
 import { MetadataApi, DEFAULT_API_OPTIONS } from '../../src/client/metadataApi';
 import { MetadataConverter } from '../../src/convert';
@@ -83,7 +83,7 @@ describe('Metadata Api', () => {
     registryStub = sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns([component]);
     convertStub = sandboxStub
       .stub(MetadataConverter.prototype, 'convert')
-      .withArgs([component], 'metadata', { type: 'zip' })
+      .withArgs(match.any, 'metadata', { type: 'zip' })
       .resolves({
         zipBuffer: testingBuffer
       });
@@ -395,7 +395,7 @@ describe('Metadata Api', () => {
         .stub(mockConnection.metadata, 'checkDeployStatus')
         // @ts-ignore minimum info required
         .resolves({
-          success: true,
+          success: false,
           id: '1234',
           status: 'Failed',
           details: {
@@ -447,6 +447,55 @@ describe('Metadata Api', () => {
               type: 'Error'
             }
           ]
+        }
+      ]);
+    });
+
+    it('should fix lwc deploy message issue', async () => {
+      const bundlePath = path.join('path', 'to', 'lwc', 'test');
+      const props = {
+        name: 'test',
+        type: registryData.types.lightningcomponentbundle,
+        xml: path.join(bundlePath, 'test.js-meta.xml'),
+        content: bundlePath
+      };
+      const component = SourceComponent.createVirtualComponent(props, [
+        {
+          dirPath: bundlePath,
+          children: [path.basename(props.xml), 'test.js', 'test.html']
+        }
+      ]);
+      // @ts-ignore
+      sandboxStub.stub(mockConnection.metadata, 'deploy').resolves({
+        id: '12345'
+      });
+      sandboxStub
+        .stub(mockConnection.metadata, 'checkDeployStatus')
+        // @ts-ignore minimum info required
+        .resolves({
+          success: true,
+          id: '1234',
+          status: 'Succeeded',
+          details: {
+            // @ts-ignore
+            componentSuccesses: [
+              {
+                success: 'false',
+                changed: 'false',
+                created: 'true',
+                deleted: 'false',
+                fullName: 'markup://c:test', // api should return 'test'
+                componentType: component.type.name
+              }
+            ]
+          }
+        });
+      const result = await metadataClient.deploy(component);
+      expect(result.components).to.deep.equal([
+        {
+          component,
+          status: ComponentStatus.Created,
+          diagnostics: []
         }
       ]);
     });

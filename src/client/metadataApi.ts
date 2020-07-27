@@ -194,6 +194,10 @@ export class MetadataApi extends BaseApi {
     return messages;
   }
 
+  /**
+   * Fix any issues with the deploy message returned by the api.
+   * TODO: remove as fixes are made in the api.
+   */
   private sanitizeDeployMessage(message: DeployMessage): DeployMessage {
     // lwc doesn't properly use the fullname property in the api.
     message.fullName = message.fullName.replace(/markup:\/\/c:/, '');

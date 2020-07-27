@@ -10,7 +10,7 @@ import { DeployError } from '../errors';
 import { MetadataDeployOptions } from '../types/client';
 import { SourceComponent } from '../metadata-registry';
 import {
-  MetadataSourceDeployResult,
+  SourceDeployResult,
   Id,
   DeployResult,
   ComponentDeployment,
@@ -18,6 +18,7 @@ import {
   ComponentStatus,
   DeployStatus
 } from '../types/newClient';
+import { DiagnosticUtil } from './diagnosticUtil';
 
 export const DEFAULT_API_OPTIONS = {
   rollbackOnError: true,
@@ -38,7 +39,7 @@ export class MetadataApi extends BaseApi {
   public async deploy(
     components: SourceComponent | SourceComponent[],
     options?: MetadataDeployOptions
-  ): Promise<MetadataSourceDeployResult> {
+  ): Promise<SourceDeployResult> {
     const metadataComponents = Array.isArray(components) ? components : [components];
 
     const converter = new MetadataConverter();
@@ -63,7 +64,7 @@ export class MetadataApi extends BaseApi {
   public async deployWithPaths(
     paths: SourcePath,
     options?: MetadataDeployOptions
-  ): Promise<MetadataSourceDeployResult> {
+  ): Promise<SourceDeployResult> {
     const components = this.registry.getComponentsFromPath(paths);
     return this.deploy(components, options);
   }
@@ -132,18 +133,20 @@ export class MetadataApi extends BaseApi {
   private buildSourceDeployResult(
     componentDeploymentMap: Map<string, ComponentDeployment>,
     result: DeployResult
-  ): MetadataSourceDeployResult {
-    const deployResult: MetadataSourceDeployResult = {
+  ): SourceDeployResult {
+    const deployResult: SourceDeployResult = {
       id: result.id,
       status: result.status,
       success: result.success
     };
 
     const messages = this.getDeployMessages(result);
+    const diagnosticUtil = new DiagnosticUtil('metadata');
 
     if (messages.length > 0) {
       deployResult.components = [];
-      for (const message of messages) {
+      for (let message of messages) {
+        message = this.sanitizeDeployMessage(message);
         const componentKey = `${message.componentType}:${message.fullName}`;
         const componentDeployment = componentDeploymentMap.get(componentKey);
 
@@ -159,12 +162,7 @@ export class MetadataApi extends BaseApi {
           }
 
           if (message.problem) {
-            componentDeployment.diagnostics.push({
-              lineNumber: message.lineNumber,
-              columnNumber: message.columnNumber,
-              message: message.problem,
-              type: message.problemType
-            });
+            diagnosticUtil.setDiagnostic(componentDeployment, message);
           }
         }
       }
@@ -194,5 +192,15 @@ export class MetadataApi extends BaseApi {
       }
     }
     return messages;
+  }
+
+  /**
+   * Fix any issues with the deploy message returned by the api.
+   * TODO: remove as fixes are made in the api.
+   */
+  private sanitizeDeployMessage(message: DeployMessage): DeployMessage {
+    // lwc doesn't properly use the fullname property in the api.
+    message.fullName = message.fullName.replace(/markup:\/\/c:/, '');
+    return message;
   }
 }

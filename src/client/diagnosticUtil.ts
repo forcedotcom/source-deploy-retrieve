@@ -88,22 +88,29 @@ export class DiagnosticUtil {
       type: 'Error',
     };
 
-    if (this.api === 'metadata') {
-      const matches = problem.match(/\[row,col\]:\[(\d+),(\d+)]\nMessage: (.*)/);
-      if (matches) {
-        diagnostic.lineNumber = Number(matches[1]);
-        diagnostic.columnNumber = Number(matches[2]);
-        diagnostic.message = matches[3];
-      }
-      const deployMesssage = message as DeployMessage;
-      if (deployMesssage.fileName) {
-        diagnostic.filePath = componentDeployment.component
+    const errLocation = problem.slice(problem.lastIndexOf('[') + 1, problem.lastIndexOf(']'));
+    const errorParts = problem.split(' ');
+    const fileType = errorParts.find((part) => {
+      part = part.toLowerCase();
+      return part.includes('controller') || part.includes('renderer') || part.includes('helper');
+    });
+
+    const filePath = fileType
+      ? componentDeployment.component
           .walkContent()
-          .find((f) => f.endsWith(basename(deployMesssage.fileName)));
-      }
+          .find((s) => s.toLowerCase().includes(fileType.toLowerCase()))
+      : undefined;
+    const lineNumber = errLocation ? Number(errLocation.split(',')[0]) : undefined;
+    const columnNumber = errLocation ? Number(errLocation.split(',')[1]) : undefined;
+    if (filePath && lineNumber && columnNumber) {
+      diagnostic.lineNumber = lineNumber;
+      diagnostic.columnNumber = columnNumber;
+      diagnostic.filePath = filePath;
     }
 
+    diagnostic.message = problem;
     componentDeployment.diagnostics.push(diagnostic);
+
     return componentDeployment;
   }
 

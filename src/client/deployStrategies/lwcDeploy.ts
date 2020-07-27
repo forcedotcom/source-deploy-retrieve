@@ -18,7 +18,7 @@ import { readFileSync } from 'fs';
 import { extName } from '../../utils';
 import { normalize } from 'path';
 import { deployTypes } from '../toolingApi';
-import { DiagnosticUtil } from '../diagnosticsUtil';
+import { DiagnosticUtil } from '../diagnosticUtil';
 
 export class LwcDeploy extends BaseDeploy {
   public async deploy(component: SourceComponent, namespace: string): Promise<SourceDeployResult> {

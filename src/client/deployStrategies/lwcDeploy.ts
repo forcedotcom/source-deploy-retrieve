@@ -6,11 +6,10 @@
  */
 
 import { BaseDeploy } from './baseDeploy';
-import { SourceComponent, SourceResult } from '../..';
+import { SourceComponent } from '../..';
 import {
-  ToolingSourceDeployResult,
+  SourceDeployResult,
   ToolingDeployStatus,
-  ComponentDiagnostic,
   ComponentDeployment,
   ComponentStatus
 } from '../../types/newClient';
@@ -19,12 +18,10 @@ import { readFileSync } from 'fs';
 import { extName } from '../../utils';
 import { normalize } from 'path';
 import { deployTypes } from '../toolingApi';
+import { DiagnosticUtil } from '../diagnosticUtil';
 
 export class LwcDeploy extends BaseDeploy {
-  public async deploy(
-    component: SourceComponent,
-    namespace: string
-  ): Promise<ToolingSourceDeployResult> {
+  public async deploy(component: SourceComponent, namespace: string): Promise<SourceDeployResult> {
     this.component = component;
     this.namespace = namespace;
 
@@ -90,6 +87,8 @@ export class LwcDeploy extends BaseDeploy {
       diagnostics: []
     };
 
+    const diagnosticUtil = new DiagnosticUtil('tooling');
+
     let partialSuccess = false;
     for (const resource of lightningResources) {
       try {
@@ -112,7 +111,7 @@ export class LwcDeploy extends BaseDeploy {
           deployment.status = ComponentStatus.Created;
         }
       } catch (e) {
-        deployment.diagnostics.push(this.parseLwcDiagnostic(e.message));
+        diagnosticUtil.setDiagnostic(deployment, e.message);
       }
     }
 
@@ -130,30 +129,5 @@ export class LwcDeploy extends BaseDeploy {
       }' and LightningComponentBundle.NamespacePrefix = '${this.namespace}'`
     );
     return lightningResourceResult.records as LightningComponentResource[];
-  }
-
-  private parseLwcDiagnostic(problem: string): ComponentDiagnostic {
-    const diagnostic: ComponentDiagnostic = {
-      message: problem,
-      type: 'Error'
-    };
-
-    try {
-      const pathParts = problem.split(/[\s\n\t]+/);
-      const msgStartIndex = pathParts.findIndex(part => part.includes(':'));
-      const fileObject = pathParts[msgStartIndex];
-      const errLocation = fileObject.slice(fileObject.indexOf(':') + 1);
-      const fileName = fileObject.slice(0, fileObject.indexOf(':'));
-
-      diagnostic.message = pathParts.slice(msgStartIndex + 2).join(' ');
-      diagnostic.filePath = this.component.walkContent().find(f => f.includes(fileName));
-      diagnostic.lineNumber = errLocation ? Number(errLocation.split(',')[0]) : undefined;
-      diagnostic.columnNumber = errLocation ? Number(errLocation.split(',')[1]) : undefined;
-    } catch (e) {
-      // TODO: log error with parsing error message
-      diagnostic.message = problem;
-    }
-
-    return diagnostic;
   }
 }

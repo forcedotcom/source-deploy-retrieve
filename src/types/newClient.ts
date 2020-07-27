@@ -46,14 +46,7 @@ interface SourceApiResult {
 export interface SourceDeployResult extends SourceApiResult {
   id: Id;
   components?: ComponentDeployment[];
-}
-
-export interface MetadataSourceDeployResult extends SourceDeployResult {
-  status: DeployStatus;
-}
-
-export interface ToolingSourceDeployResult extends SourceDeployResult {
-  status: ToolingDeployStatus;
+  status: DeployStatus | ToolingDeployStatus;
 }
 
 // ------------------------------
@@ -118,7 +111,7 @@ type BooleanString = 'true' | 'false' | true | false;
 
 export type DeployMessage = {
   changed: BooleanString;
-  columnNumber?: number;
+  columnNumber?: string;
   componentType?: string;
   created: BooleanString;
   createdDate: string;
@@ -126,7 +119,7 @@ export type DeployMessage = {
   fileName: string;
   fullName: string;
   id?: string;
-  lineNumber?: number;
+  lineNumber?: string;
   problem?: string;
   problemType?: 'Warning' | 'Error';
   success: BooleanString;

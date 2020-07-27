@@ -14,9 +14,8 @@ import { createSandbox, SinonSandbox } from 'sinon';
 import { ContainerDeploy } from '../../../src/client/deployStrategies';
 import { ToolingCreateResult } from '../../../src/utils/deploy';
 import { nls } from '../../../src/i18n';
-import { DeployStatusEnum, QueryResult } from '../../../src/types';
+import { QueryResult, ToolingDeployStatus, ComponentStatus } from '../../../src/types';
 import { SourceComponent, registryData } from '../../../src/metadata-registry';
-import { ToolingDeployStatus, ComponentStatus } from '../../../src/types/newClient';
 
 const $$ = testSetup();
 
@@ -379,7 +378,7 @@ describe('Container Deploy Strategy', () => {
     } as Record);
 
     mockToolingRetrieve.onCall(1).resolves({
-      State: DeployStatusEnum.Completed,
+      State: ToolingDeployStatus.Completed,
       isDeleted: false,
       DeployDetails: {
         componentFailures: [],

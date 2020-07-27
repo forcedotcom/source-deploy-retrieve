@@ -5,12 +5,16 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { DiagnosticUtil } from '../../src/client/diagnosticUtil';
-import { ComponentDeployment, ComponentStatus, DeployMessage } from '../../src/types/newClient';
 import { ComponentProperties, SourceComponent } from '../../src/metadata-registry/sourceComponent';
 import { registryData, VirtualTreeContainer } from '../../src/metadata-registry';
 import { join } from 'path';
 import { expect } from 'chai';
-import { TreeContainer } from '../../src/types';
+import {
+  ComponentDeployment,
+  ComponentStatus,
+  DeployMessage,
+  TreeContainer
+} from '../../src/types';
 
 function createDeployment(props: ComponentProperties, tree?: TreeContainer): ComponentDeployment {
   return {

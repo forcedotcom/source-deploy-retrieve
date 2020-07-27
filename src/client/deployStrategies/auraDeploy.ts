@@ -7,18 +7,18 @@
 import { readFileSync } from 'fs';
 import { AuraDefinition } from '../../utils/deploy';
 import { extName, baseName } from '../../utils';
-import { SourcePath } from '../../types';
+import {
+  SourcePath,
+  ComponentStatus,
+  ComponentDeployment,
+  ToolingDeployStatus,
+  SourceDeployResult,
+} from '../../types';
 import { deployTypes } from '../toolingApi';
 import { BaseDeploy } from './baseDeploy';
 import { AURA_TYPES } from './constants';
 import { SourceComponent } from '../../metadata-registry';
 import { DiagnosticUtil } from '../diagnosticUtil';
-import {
-  ComponentStatus,
-  ComponentDeployment,
-  ToolingDeployStatus,
-  SourceDeployResult,
-} from '../../types/newClient';
 
 export class AuraDeploy extends BaseDeploy {
   public async deploy(component: SourceComponent, namespace: string): Promise<SourceDeployResult> {

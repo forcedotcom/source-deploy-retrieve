@@ -13,7 +13,7 @@ import {
   MetadataTransformer,
   MetadataType,
   SourcePath,
-  TreeContainer
+  TreeContainer,
 } from '../types';
 import { extName, parentName } from '../utils/path';
 import { deepFreeze, parseMetadataXml } from '../utils/registry';

@@ -20,7 +20,7 @@ const $$ = testSetup();
 describe('Tooling API tests', () => {
   const testMetadataField = {
     apiVersion: '32.0',
-    status: 'Active'
+    status: 'Active',
   };
   const testData = new MockTestOrgData();
   let mockConnection: Connection;
@@ -30,12 +30,12 @@ describe('Tooling API tests', () => {
   beforeEach(async () => {
     sandboxStub = createSandbox();
     $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig()
+      contents: await testData.getConfig(),
     });
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
-        username: testData.username
-      })
+        username: testData.username,
+      }),
     });
   });
 
@@ -50,13 +50,13 @@ describe('Tooling API tests', () => {
         type: registryData.types.apexclass,
         name: 'myTestClass',
         xml: 'myTestClass.cls-meta.xml',
-        content: 'file/path/myTestClass.cls'
-      })
+        content: 'file/path/myTestClass.cls',
+      }),
     ]);
     sandboxStub.stub(ContainerDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const mockContainerDeploy = sandboxStub.stub(ContainerDeploy.prototype, 'deploy').resolves({
       State: DeployStatusEnum.Completed,
-      ErrorMsg: null
+      ErrorMsg: null,
     } as DeployResult);
 
     await deployLibrary.deployWithPaths('file/path/myTestClass.cls');
@@ -69,8 +69,8 @@ describe('Tooling API tests', () => {
       new SourceComponent({
         type: registryData.types.flexipage,
         name: '',
-        xml: ''
-      })
+        xml: '',
+      }),
     ]);
     const deployLibrary = new ToolingApi(mockConnection, registryAccess);
 

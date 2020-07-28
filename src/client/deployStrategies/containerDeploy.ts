@@ -20,7 +20,7 @@ import {
   ToolingDeployStatus,
   Id,
   ComponentDeployment,
-  ComponentStatus
+  ComponentStatus,
 } from '../../types/newClient';
 
 export class ContainerDeploy extends BaseDeploy {
@@ -42,7 +42,7 @@ export class ContainerDeploy extends BaseDeploy {
 
   public async createMetadataContainer(): Promise<ToolingCreateResult> {
     const metadataContainer = await this.toolingCreate(METADATA_CONTAINER, {
-      Name: `Deploy_MDC_${Date.now()}`
+      Name: `Deploy_MDC_${Date.now()}`,
     });
 
     if (!metadataContainer.success) {
@@ -72,7 +72,7 @@ export class ContainerDeploy extends BaseDeploy {
       FullName: fileName,
       Body: body,
       Metadata: metadataField,
-      ...(entityId ? { contentEntityId: entityId } : {})
+      ...(entityId ? { contentEntityId: entityId } : {}),
     };
 
     const containerMember = await this.toolingCreate(
@@ -102,7 +102,7 @@ export class ContainerDeploy extends BaseDeploy {
     container: ToolingCreateResult
   ): Promise<ToolingCreateResult> {
     const contAsyncRequest = await this.toolingCreate(CONTAINER_ASYNC_REQUEST, {
-      MetadataContainerId: container.id
+      MetadataContainerId: container.id,
     });
 
     if (!contAsyncRequest.success) {
@@ -112,7 +112,7 @@ export class ContainerDeploy extends BaseDeploy {
   }
 
   private sleep(ms: number): Promise<number> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   public async pollContainerStatus(containerId: Id): Promise<ContainerAsyncRequest> {
@@ -135,7 +135,7 @@ export class ContainerDeploy extends BaseDeploy {
     const componentDeployment: ComponentDeployment = {
       component: this.component,
       status: ComponentStatus.Unchanged,
-      diagnostics: []
+      diagnostics: [],
     };
 
     const messages = [];
@@ -161,7 +161,7 @@ export class ContainerDeploy extends BaseDeploy {
           type: message.problemType,
           filePath: this.component.content,
           lineNumber: Number(message.lineNumber),
-          columnNumber: Number(message.columnNumber)
+          columnNumber: Number(message.columnNumber),
         });
       }
     }
@@ -170,7 +170,7 @@ export class ContainerDeploy extends BaseDeploy {
       id: containerRequest.Id,
       status: containerRequest.State,
       success: containerRequest.State === ToolingDeployStatus.Completed,
-      components: [componentDeployment]
+      components: [componentDeployment],
     };
   }
 }

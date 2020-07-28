@@ -49,7 +49,7 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
             name: metaXml.fullName,
             type: this.type.children.types[childTypeId],
             xml: trigger,
-            parent: component
+            parent: component,
           },
           this.tree,
           this.forceIgnore

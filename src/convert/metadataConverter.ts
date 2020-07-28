@@ -15,7 +15,7 @@ import {
   ComponentConverter,
   StandardWriter,
   pipeline,
-  ZipWriter
+  ZipWriter,
 } from './streams';
 import { PACKAGE_XML_FILE, DEFAULT_PACKAGE_PREFIX } from '../utils/constants';
 import { ConversionError } from '../errors';

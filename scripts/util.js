@@ -3,7 +3,7 @@ require('shelljs/global');
 
 const terminalCodes = {
   FgRed: '\x1b[31m',
-  FgWhite: '\x1b[37m'
+  FgWhite: '\x1b[37m',
 };
 
 module.exports = {
@@ -32,5 +32,5 @@ module.exports = {
       config.fatal = prevConfig;
     }
   },
-  terminalCodes
+  terminalCodes,
 };

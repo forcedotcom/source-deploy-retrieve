@@ -10,7 +10,7 @@ import { DefaultTransformer } from './default';
 import { SourceComponent } from '../../metadata-registry/sourceComponent';
 
 const enum TransformerId {
-  Standard = 'standard'
+  Standard = 'standard',
 }
 
 export class MetadataTransformerFactory {

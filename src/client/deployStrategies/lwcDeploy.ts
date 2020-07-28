@@ -11,7 +11,7 @@ import {
   SourceDeployResult,
   ToolingDeployStatus,
   ComponentDeployment,
-  ComponentStatus
+  ComponentStatus,
 } from '../../types/newClient';
 import { LightningComponentResource } from '../../utils/deploy';
 import { readFileSync } from 'fs';
@@ -39,7 +39,7 @@ export class LwcDeploy extends BaseDeploy {
       id: undefined,
       status,
       success: status === ToolingDeployStatus.Completed,
-      components: [componentDeployment]
+      components: [componentDeployment],
     };
   }
   public async buildResourceList(): Promise<LightningComponentResource[]> {
@@ -51,13 +51,13 @@ export class LwcDeploy extends BaseDeploy {
       ? await this.upsertBundle(existingResources[0].LightningComponentBundleId)
       : await this.upsertBundle();
     const bundleId = lightningBundle.id;
-    sourceFiles.forEach(async sourceFile => {
+    sourceFiles.forEach(async (sourceFile) => {
       const source = readFileSync(sourceFile, 'utf8');
       const isMetaSource = sourceFile === this.component.xml;
       const format = isMetaSource ? 'js' : extName(sourceFile);
       let match: LightningComponentResource;
       if (existingResources.length > 0) {
-        match = existingResources.find(resource =>
+        match = existingResources.find((resource) =>
           sourceFile.endsWith(normalize(resource.FilePath))
         );
       }
@@ -67,7 +67,7 @@ export class LwcDeploy extends BaseDeploy {
         FilePath: sourceFile,
         Source: source,
         Format: format,
-        ...(match ? { Id: match.Id } : { LightningComponentBundleId: bundleId })
+        ...(match ? { Id: match.Id } : { LightningComponentBundleId: bundleId }),
       };
       // This is to ensure that the base file is deployed first for lwc
       // otherwise there is a `no base file found` error
@@ -84,7 +84,7 @@ export class LwcDeploy extends BaseDeploy {
     const deployment: ComponentDeployment = {
       status: ComponentStatus.Unchanged,
       component: this.component,
-      diagnostics: []
+      diagnostics: [],
     };
 
     const diagnosticUtil = new DiagnosticUtil('tooling');
@@ -95,7 +95,7 @@ export class LwcDeploy extends BaseDeploy {
         if (resource.Id) {
           const formattedDef = {
             Source: resource.Source,
-            Id: resource.Id
+            Id: resource.Id,
           };
           await this.connection.tooling.update(deployTypes.get(type), formattedDef);
           deployment.status = ComponentStatus.Changed;
@@ -105,7 +105,7 @@ export class LwcDeploy extends BaseDeploy {
             LightningComponentBundleId: resource.LightningComponentBundleId,
             Format: resource.Format,
             Source: resource.Source,
-            FilePath: this.getFormattedPaths(resource.FilePath)[0]
+            FilePath: this.getFormattedPaths(resource.FilePath)[0],
           };
           await this.toolingCreate(deployTypes.get(type), formattedDef);
           deployment.status = ComponentStatus.Created;
@@ -124,9 +124,7 @@ export class LwcDeploy extends BaseDeploy {
 
   private async findLightningResources(): Promise<LightningComponentResource[]> {
     const lightningResourceResult = await this.connection.tooling.query(
-      `Select LightningComponentBundleId, Id, Format, Source, FilePath from LightningComponentResource where LightningComponentBundle.DeveloperName = '${
-        this.component.fullName
-      }' and LightningComponentBundle.NamespacePrefix = '${this.namespace}'`
+      `Select LightningComponentBundleId, Id, Format, Source, FilePath from LightningComponentResource where LightningComponentBundle.DeveloperName = '${this.component.fullName}' and LightningComponentBundle.NamespacePrefix = '${this.namespace}'`
     );
     return lightningResourceResult.records as LightningComponentResource[];
   }

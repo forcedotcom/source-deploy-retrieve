@@ -16,7 +16,7 @@ describe('Registry Utils', () => {
       expect(util.parseMetadataXml(path)).to.deep.equal({
         fullName: 'a',
         path,
-        suffix: 'ext'
+        suffix: 'ext',
       });
     });
 

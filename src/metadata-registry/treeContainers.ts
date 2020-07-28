@@ -20,7 +20,7 @@ export abstract class BaseTreeContainer implements TreeContainer {
     fullName: string,
     dir: SourcePath
   ): SourcePath | undefined {
-    const fileName = this.readDirectory(dir).find(entry => {
+    const fileName = this.readDirectory(dir).find((entry) => {
       const parsed = parseMetadataXml(join(dir, entry));
       const metaXmlCondition = fileType === 'metadata' ? !!parsed : !parsed;
       return baseName(entry) === fullName && metaXmlCondition;
@@ -71,7 +71,7 @@ export class VirtualTreeContainer extends BaseTreeContainer {
   }
 
   public readDirectory(fsPath: string): string[] {
-    return Array.from(this.tree.get(fsPath)).map(p => basename(p));
+    return Array.from(this.tree.get(fsPath)).map((p) => basename(p));
   }
 
   private populate(virtualFs: VirtualDirectory[]): void {

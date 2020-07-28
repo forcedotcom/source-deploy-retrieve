@@ -13,7 +13,7 @@ import {
   ComponentDeployment,
   ComponentStatus,
   DeployMessage,
-  TreeContainer
+  TreeContainer,
 } from '../../src/types';
 
 function createDeployment(props: ComponentProperties, tree?: TreeContainer): ComponentDeployment {
@@ -222,8 +222,8 @@ describe('DiagnosticUtil', () => {
       expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message,
-          type: 'Error'
-        }
+          type: 'Error',
+        },
       ]);
     });
 
@@ -234,7 +234,7 @@ describe('DiagnosticUtil', () => {
         problem:
           "c.TestApp: Failed to parse HELPER for js://c.TestApp: Expected ',' or '}' [5, 1]: 's'",
         problemType: 'Error',
-        fileName: join('test', 'testHelper.js')
+        fileName: join('test', 'testHelper.js'),
       });
       expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
@@ -242,8 +242,8 @@ describe('DiagnosticUtil', () => {
           type: 'Error',
           filePath: join(bundlePath, 'testHelper.js'),
           lineNumber: 5,
-          columnNumber: 1
-        }
+          columnNumber: 1,
+        },
       ]);
     });
   });

@@ -9,11 +9,10 @@ import { Connection } from '@salesforce/core';
 import { readFileSync } from 'fs';
 import { sep } from 'path';
 import { DeployError } from '../../errors';
-import { DeployResult, DeployStatusEnum, SourceResult } from '../../types';
 import { ToolingCreateResult } from '../../utils/deploy';
 import { TOOLING_PATH_SEP } from './constants';
 import { SourceComponent } from '../../metadata-registry';
-import { SourceDeployResult } from '../../types/newClient';
+import { SourceDeployResult } from '../../types';
 
 // tslint:disable-next-line:no-var-requires
 const DOMParser = require('xmldom-sfdx-encoding').DOMParser;
@@ -30,7 +29,7 @@ export abstract class BaseDeploy {
   public abstract deploy(
     component: SourceComponent,
     namespace: string
-  ): Promise<DeployResult | SourceDeployResult>;
+  ): Promise<SourceDeployResult>;
 
   public buildMetadataField(
     metadataContent: string
@@ -94,63 +93,6 @@ export abstract class BaseDeploy {
     }
 
     return bundleResult;
-  }
-
-  protected formatBundleOutput(deployResults: SourceResult[], failure?: boolean): DeployResult {
-    let toolingDeployResult: DeployResult;
-    if (failure) {
-      toolingDeployResult = {
-        State: DeployStatusEnum.Failed,
-        ErrorMsg: deployResults[0].problem,
-        DeployDetails: {
-          componentSuccesses: [],
-          componentFailures: deployResults,
-        },
-        isDeleted: false,
-        metadataFile: this.component.xml,
-      };
-    } else {
-      const outboundFiles = this.component.walkContent();
-      outboundFiles.push(this.component.xml);
-      toolingDeployResult = {
-        State: DeployStatusEnum.Completed,
-        DeployDetails: {
-          componentSuccesses: deployResults,
-          componentFailures: [],
-        },
-        isDeleted: false,
-        outboundFiles,
-        ErrorMsg: null,
-        metadataFile: this.component.xml,
-      };
-    }
-    return toolingDeployResult;
-  }
-
-  protected createDeployResult(
-    filepath: string,
-    success: boolean,
-    created: boolean,
-    problem?: string
-  ): SourceResult {
-    const formattedPaths = this.getFormattedPaths(filepath);
-    const result = {
-      success,
-      deleted: false,
-      fileName: filepath,
-      fullName: formattedPaths[1],
-      componentType: this.component.type.name,
-    } as SourceResult;
-
-    if (success) {
-      result['created'] = created;
-      result['changed'] = !created;
-    } else {
-      result['problem'] = problem;
-      result['changed'] = false;
-      result['created'] = false;
-    }
-    return result;
   }
 
   protected getFormattedPaths(filepath: string): string[] {

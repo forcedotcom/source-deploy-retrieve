@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { DeployMessage, ComponentDeployment, ComponentDiagnostic } from '../types/newClient';
+import { DeployMessage, ComponentDeployment, ComponentDiagnostic, SourcePath } from '../types';
 import { registryData } from '../metadata-registry';
 import { basename } from 'path';
 
@@ -43,14 +43,17 @@ export class DiagnosticUtil {
     };
 
     if (this.api === 'metadata') {
+      const deployMessage = message as DeployMessage;
+      if (deployMessage.fileName) {
+        diagnostic.filePath = componentDeployment.component
+          .walkContent()
+          .find((f) => f.includes((message as DeployMessage).fileName));
+      }
       const matches = problem.match(/(\[Line: (\d+), Col: (\d+)] )?(.*)/);
       if (matches && matches[2] && matches[3] && matches[4]) {
         diagnostic.lineNumber = Number(matches[2]);
         diagnostic.columnNumber = Number(matches[3]);
         diagnostic.message = matches[4];
-        diagnostic.filePath = componentDeployment.component
-          .walkContent()
-          .find((f) => f.includes((message as DeployMessage).fileName));
       } else {
         diagnostic.message = problem;
       }
@@ -88,22 +91,40 @@ export class DiagnosticUtil {
       type: 'Error',
     };
 
-    if (this.api === 'metadata') {
-      const matches = problem.match(/\[row,col\]:\[(\d+),(\d+)]\nMessage: (.*)/);
-      if (matches) {
-        diagnostic.lineNumber = Number(matches[1]);
-        diagnostic.columnNumber = Number(matches[2]);
-        diagnostic.message = matches[3];
-      }
-      const deployMesssage = message as DeployMessage;
-      if (deployMesssage.fileName) {
-        diagnostic.filePath = componentDeployment.component
+    let filePath: SourcePath;
+    if (this.api === 'tooling') {
+      const errorParts = problem.split(' ');
+      const fileType = errorParts.find((part) => {
+        part = part.toLowerCase();
+        return part.includes('controller') || part.includes('renderer') || part.includes('helper');
+      });
+
+      filePath = fileType
+        ? componentDeployment.component
+            .walkContent()
+            .find((s) => s.toLowerCase().includes(fileType.toLowerCase()))
+        : undefined;
+    } else {
+      const deployMessage = message as DeployMessage;
+      if (deployMessage.fileName) {
+        filePath = componentDeployment.component
           .walkContent()
-          .find((f) => f.endsWith(basename(deployMesssage.fileName)));
+          .find((f) => f.endsWith(basename(deployMessage.fileName)));
       }
     }
 
+    if (filePath) {
+      diagnostic.filePath = filePath;
+      const matches = problem.match(/(\d+),\s?(\d+)/);
+      if (matches) {
+        diagnostic.lineNumber = Number(matches[1]);
+        diagnostic.columnNumber = Number(matches[2]);
+      }
+    }
+
+    diagnostic.message = problem;
     componentDeployment.diagnostics.push(diagnostic);
+
     return componentDeployment;
   }
 

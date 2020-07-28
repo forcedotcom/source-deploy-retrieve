@@ -5,12 +5,16 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { DiagnosticUtil } from '../../src/client/diagnosticUtil';
-import { ComponentDeployment, ComponentStatus, DeployMessage } from '../../src/types/newClient';
 import { ComponentProperties, SourceComponent } from '../../src/metadata-registry/sourceComponent';
 import { registryData, VirtualTreeContainer } from '../../src/metadata-registry';
 import { join } from 'path';
 import { expect } from 'chai';
-import { TreeContainer } from '../../src/types';
+import {
+  ComponentDeployment,
+  ComponentStatus,
+  DeployMessage,
+  TreeContainer,
+} from '../../src/types';
 
 function createDeployment(props: ComponentProperties, tree?: TreeContainer): ComponentDeployment {
   return {
@@ -202,11 +206,43 @@ describe('DiagnosticUtil', () => {
       });
       expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
-          message: 'There was a typo',
+          message: message.problem,
           type: 'Error',
           filePath: join(bundlePath, 'testHelper.js'),
           lineNumber: 1,
           columnNumber: 5,
+        },
+      ]);
+    });
+
+    it('should create diagnostic for problem with message only using tooling api', () => {
+      const util = new DiagnosticUtil('tooling');
+      const deployment = createDeployment(component, tree);
+      const message = 'There was a problem deploying';
+      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+        {
+          message,
+          type: 'Error',
+        },
+      ]);
+    });
+
+    it('should create diagnostic for problem with file line and column info using tooling api', () => {
+      const util = new DiagnosticUtil('tooling');
+      const deployment = createDeployment(component, tree);
+      const message = createDeployMessage({
+        problem:
+          "c.TestApp: Failed to parse HELPER for js://c.TestApp: Expected ',' or '}' [5, 1]: 's'",
+        problemType: 'Error',
+        fileName: join('test', 'testHelper.js'),
+      });
+      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+        {
+          message: message.problem,
+          type: 'Error',
+          filePath: join(bundlePath, 'testHelper.js'),
+          lineNumber: 5,
+          columnNumber: 1,
         },
       ]);
     });

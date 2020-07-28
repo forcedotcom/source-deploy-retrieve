@@ -27,7 +27,7 @@ function createChildType(childXmlName) {
     id: childXmlName.toLowerCase(),
     name: childXmlName,
     directoryName: `${camelCase}s`,
-    suffix: camelCase
+    suffix: camelCase,
   };
 }
 
@@ -42,7 +42,7 @@ function update() {
         xmlName: `${name}Folder`,
         suffix: `${typeId}Folder`,
         directoryName,
-        inFolder: false
+        inFolder: false,
       });
     }
 
@@ -52,7 +52,7 @@ function update() {
       name,
       suffix,
       directoryName,
-      inFolder: inFolder === 'true'
+      inFolder: inFolder === 'true',
     };
     if (childXmlNames) {
       registry.types[typeId].children = { types: {}, suffixes: {} };

@@ -10,7 +10,7 @@ import {
   MetadataRegistry,
   SourcePath,
   MetadataXml,
-  TreeContainer
+  TreeContainer,
 } from '../../types';
 import { parseMetadataXml } from '../../utils/registry';
 import * as registryData from '../data/registry.json';
@@ -65,7 +65,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       {
         name: componentName,
         type: this.type,
-        xml: rootMetadata.path
+        xml: rootMetadata.path,
       },
       this.tree,
       this.forceIgnore

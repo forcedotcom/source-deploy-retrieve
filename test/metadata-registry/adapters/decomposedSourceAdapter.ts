@@ -22,12 +22,12 @@ describe('DecomposedSourceAdapter', () => {
   });
 
   it('should return expected SourceComponent when given a child xml', () => {
-    const expectedChild = children.find(c => c.xml === regina.REGINA_CHILD_XML_PATH_1);
+    const expectedChild = children.find((c) => c.xml === regina.REGINA_CHILD_XML_PATH_1);
     expect(adapter.getComponent(regina.REGINA_CHILD_XML_PATH_1)).to.deep.equal(expectedChild);
   });
 
   it('should return expected SourceComponent when given a child xml in its decomposed folder', () => {
-    const expectedChild = children.find(c => c.xml === regina.REGINA_CHILD_XML_PATH_2);
+    const expectedChild = children.find((c) => c.xml === regina.REGINA_CHILD_XML_PATH_2);
     expect(adapter.getComponent(regina.REGINA_CHILD_XML_PATH_2)).to.deep.equal(expectedChild);
   });
 });

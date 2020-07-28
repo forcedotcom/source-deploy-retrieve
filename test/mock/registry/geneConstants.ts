@@ -17,5 +17,5 @@ export const GENE_XML_PATH = join(GENE_DIR, GENE_XML_NAME);
 export const GENE_COMPONENT = new SourceComponent({
   name: 'a',
   type,
-  xml: GENE_XML_PATH
+  xml: GENE_XML_PATH,
 });

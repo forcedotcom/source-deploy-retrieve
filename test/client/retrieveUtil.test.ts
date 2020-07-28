@@ -14,7 +14,7 @@ import {
   auraApplication,
   auraEvent,
   auraInterface,
-  auraTokens
+  auraTokens,
 } from './auraDefinitionMocks';
 import { lwcComponentMock } from './lightningComponentMocks';
 import { SourceComponent, registryData, VirtualTreeContainer } from '../../src/metadata-registry';
@@ -26,13 +26,13 @@ describe('Tooling Retrieve Util', () => {
       type: registryData.types.apexclass,
       name: 'myTestClass',
       xml: path.join(rootPath, 'myTestClass.cls-meta.xml'),
-      content: path.join(rootPath, 'myTestClass.cls')
+      content: path.join(rootPath, 'myTestClass.cls'),
     },
     [
       {
         dirPath: rootPath,
-        children: ['myTestClass.cls-meta.xml', 'myTestClass.cls']
-      }
+        children: ['myTestClass.cls-meta.xml', 'myTestClass.cls'],
+      },
     ]
   );
   const pageMDComponent: SourceComponent = SourceComponent.createVirtualComponent(
@@ -40,13 +40,13 @@ describe('Tooling Retrieve Util', () => {
       type: registryData.types.apexpage,
       name: 'myPage',
       xml: path.join(rootPath, 'myPage.page-meta.xml'),
-      content: path.join(rootPath, 'myPage.page')
+      content: path.join(rootPath, 'myPage.page'),
     },
     [
       {
         dirPath: rootPath,
-        children: ['myPage.page', 'myPage.page-meta.xml']
-      }
+        children: ['myPage.page', 'myPage.page-meta.xml'],
+      },
     ]
   );
   const auraMDComponent: SourceComponent = SourceComponent.createVirtualComponent(
@@ -54,13 +54,13 @@ describe('Tooling Retrieve Util', () => {
       type: registryData.types.auradefinitionbundle,
       name: 'testApp',
       xml: path.join(rootPath, 'testApp.app-meta.xml'),
-      content: path.join(rootPath, 'testApp.app')
+      content: path.join(rootPath, 'testApp.app'),
     },
     [
       {
         dirPath: rootPath,
-        children: ['testApp.app', 'testApp.app-meta.xml']
-      }
+        children: ['testApp.app', 'testApp.app-meta.xml'],
+      },
     ]
   );
 
@@ -109,12 +109,12 @@ describe('Tooling Retrieve Util', () => {
           Id: '01pxxx000000034',
           Name: 'myTestClass',
           NamespacePrefix: null,
-          Status: 'Active'
-        }
+          Status: 'Active',
+        },
       ],
       size: 1,
       totalSize: 1,
-      queryLocator: null
+      queryLocator: null,
     };
     const resultMap = queryToFileMap(apexClassQueryResult, classMDComponent);
     expect(resultMap.size).to.equal(2);
@@ -141,12 +141,12 @@ describe('Tooling Retrieve Util', () => {
           Markup: '<apex:page>\n<h1>Hello</h1>\n</apex:page>',
           Id: '066xxx000000034',
           Name: 'myPage',
-          NamespacePrefix: null
-        }
+          NamespacePrefix: null,
+        },
       ],
       size: 1,
       totalSize: 1,
-      queryLocator: null
+      queryLocator: null,
     };
     const resultMap = queryToFileMap(apexPageQueryResult, pageMDComponent);
     expect(resultMap.size).to.equal(2);
@@ -172,12 +172,12 @@ describe('Tooling Retrieve Util', () => {
           Markup: '<apex:page>\n<h1>Hello</h1>\n</apex:page>',
           Id: '066xxx000000034',
           Name: 'myPage',
-          NamespacePrefix: null
-        }
+          NamespacePrefix: null,
+        },
       ],
       size: 1,
       totalSize: 1,
-      queryLocator: null
+      queryLocator: null,
     };
     const overrideOutputPathMeta = path.join(
       'file',
@@ -214,7 +214,7 @@ describe('Tooling Retrieve Util', () => {
         type: registryData.types.auradefinitionbundle,
         name: 'myAuraCmp',
         xml: cmpMetaPath,
-        content: bundlePath
+        content: bundlePath,
       },
       [
         {
@@ -228,9 +228,9 @@ describe('Tooling Retrieve Util', () => {
             'myAuraCmp.svg',
             'myAuraCmpController.js',
             'myAuraCmpHelper.js',
-            'myAuraCmpRenderer.js'
-          ]
-        }
+            'myAuraCmpRenderer.js',
+          ],
+        },
       ]
     );
 
@@ -277,15 +277,15 @@ describe('Tooling Retrieve Util', () => {
     const tree = new VirtualTreeContainer([
       {
         dirPath: bundlePath,
-        children: [path.basename(appPath), path.basename(appMetaPath)]
-      }
+        children: [path.basename(appPath), path.basename(appMetaPath)],
+      },
     ]);
     const auraApplicationMD: SourceComponent = new SourceComponent(
       {
         type: registryData.types.auradefinitionbundle,
         name: 'myAuraApp',
         xml: appMetaPath,
-        content: bundlePath
+        content: bundlePath,
       },
       tree
     );
@@ -309,15 +309,15 @@ describe('Tooling Retrieve Util', () => {
     const tree = new VirtualTreeContainer([
       {
         dirPath: bundlePath,
-        children: [path.basename(eventPath), path.basename(eventMetaPath)]
-      }
+        children: [path.basename(eventPath), path.basename(eventMetaPath)],
+      },
     ]);
     const auraEventMD: SourceComponent = new SourceComponent(
       {
         type: registryData.types.auradefinitionbundle,
         name: 'myAuraEvent',
         xml: eventMetaPath,
-        content: bundlePath
+        content: bundlePath,
       },
       tree
     );
@@ -343,15 +343,15 @@ describe('Tooling Retrieve Util', () => {
     const tree = new VirtualTreeContainer([
       {
         dirPath: bundlePath,
-        children: [path.basename(interfacePath), path.basename(interfaceMetaPath)]
-      }
+        children: [path.basename(interfacePath), path.basename(interfaceMetaPath)],
+      },
     ]);
     const auraInterfaceMD: SourceComponent = new SourceComponent(
       {
         type: registryData.types.auradefinitionbundle,
         name: 'myAuraInterface',
         xml: interfaceMetaPath,
-        content: bundlePath
+        content: bundlePath,
       },
       tree
     );
@@ -379,13 +379,13 @@ describe('Tooling Retrieve Util', () => {
         type: registryData.types.auradefinitionbundle,
         name: 'myAuraToken',
         xml: tokensMetaPath,
-        content: bundlePath
+        content: bundlePath,
       },
       [
         {
           dirPath: bundlePath,
-          children: [path.basename(tokensPath), path.basename(tokensMetaPath)]
-        }
+          children: [path.basename(tokensPath), path.basename(tokensMetaPath)],
+        },
       ]
     );
 
@@ -412,7 +412,7 @@ describe('Tooling Retrieve Util', () => {
         type: registryData.types.lightningcomponentbundle,
         name: 'myLWCComponent',
         xml: metaPath,
-        content: bundlePath
+        content: bundlePath,
       },
       [
         {
@@ -421,9 +421,9 @@ describe('Tooling Retrieve Util', () => {
             path.basename(htmlPath),
             path.basename(jsPath),
             path.basename(cssPath),
-            path.basename(metaPath)
-          ]
-        }
+            path.basename(metaPath),
+          ],
+        },
       ]
     );
 

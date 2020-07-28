@@ -28,12 +28,12 @@ describe('Base Deploy Strategy', () => {
   beforeEach(async () => {
     sandboxStub = createSandbox();
     $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig()
+      contents: await testData.getConfig(),
     });
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
-        username: testData.username
-      })
+        username: testData.username,
+      }),
     });
     const mockFS = sandboxStub.stub(fs, 'readFileSync');
     mockFS.withArgs('file/path/one.cls', 'utf8').returns('public with sharing class TestAPI {}');
@@ -50,7 +50,7 @@ describe('Base Deploy Strategy', () => {
     const testMetadataField = {
       apiVersion: '47.0',
       status: 'Active',
-      packageVersions: '      1      0      packageA    '
+      packageVersions: '      1      0      packageA    ',
     };
     let metaXMLString = '<?xml version="1.0" encoding="UTF-8"?>';
     metaXMLString += '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">';

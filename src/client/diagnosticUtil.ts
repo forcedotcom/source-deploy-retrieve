@@ -39,7 +39,7 @@ export class DiagnosticUtil {
     const problem = typeof message === 'string' ? message : message.problem;
     const diagnostic: ComponentDiagnostic = {
       message: problem,
-      type: 'Error'
+      type: 'Error',
     };
 
     if (this.api === 'metadata') {
@@ -50,14 +50,14 @@ export class DiagnosticUtil {
         diagnostic.message = matches[4];
         diagnostic.filePath = componentDeployment.component
           .walkContent()
-          .find(f => f.includes((message as DeployMessage).fileName));
+          .find((f) => f.includes((message as DeployMessage).fileName));
       } else {
         diagnostic.message = problem;
       }
     } else {
       try {
         const pathParts = problem.split(/[\s\n\t]+/);
-        const msgStartIndex = pathParts.findIndex(part => part.includes(':'));
+        const msgStartIndex = pathParts.findIndex((part) => part.includes(':'));
         const fileObject = pathParts[msgStartIndex];
         const errLocation = fileObject.slice(fileObject.indexOf(':') + 1);
         const fileName = fileObject.slice(0, fileObject.indexOf(':'));
@@ -65,7 +65,7 @@ export class DiagnosticUtil {
         diagnostic.message = pathParts.slice(msgStartIndex + 2).join(' ');
         diagnostic.filePath = componentDeployment.component
           .walkContent()
-          .find(f => f.includes(fileName));
+          .find((f) => f.includes(fileName));
         diagnostic.lineNumber = Number(errLocation.split(',')[0]);
         diagnostic.columnNumber = Number(errLocation.split(',')[1]);
       } catch (e) {
@@ -85,7 +85,7 @@ export class DiagnosticUtil {
     const problem = typeof message === 'string' ? message : message.problem;
     const diagnostic: ComponentDiagnostic = {
       message: problem,
-      type: 'Error'
+      type: 'Error',
     };
 
     if (this.api === 'metadata') {
@@ -99,7 +99,7 @@ export class DiagnosticUtil {
       if (deployMesssage.fileName) {
         diagnostic.filePath = componentDeployment.component
           .walkContent()
-          .find(f => f.endsWith(basename(deployMesssage.fileName)));
+          .find((f) => f.endsWith(basename(deployMesssage.fileName)));
       }
     }
 
@@ -113,12 +113,12 @@ export class DiagnosticUtil {
   ): ComponentDeployment {
     const diagnostic: ComponentDiagnostic = {
       message: message.problem,
-      type: message.problemType
+      type: message.problemType,
     };
     if (message.fileName) {
       const localProblemFile = componentDeployment.component
         .walkContent()
-        .find(f => f.endsWith(basename(message.fileName)));
+        .find((f) => f.endsWith(basename(message.fileName)));
       diagnostic.filePath = localProblemFile;
     }
     if (message.lineNumber && message.columnNumber) {

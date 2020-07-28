@@ -12,7 +12,7 @@ export {
   ManifestGenerator,
   BaseTreeContainer,
   VirtualTreeContainer,
-  SourceComponent
+  SourceComponent,
 } from './metadata-registry';
 export {
   ApiResult,
@@ -26,5 +26,5 @@ export {
   DeployPathOptions,
   TreeContainer,
   VirtualDirectory,
-  MetadataComponent
+  MetadataComponent,
 } from './types';

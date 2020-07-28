@@ -16,7 +16,7 @@ function createDeployment(props: ComponentProperties, tree?: TreeContainer): Com
   return {
     status: ComponentStatus.Failed,
     component: new SourceComponent(props, tree),
-    diagnostics: []
+    diagnostics: [],
   };
 }
 
@@ -41,26 +41,26 @@ describe('DiagnosticUtil', () => {
       name: 'Test',
       type: registryData.types.apexclass,
       content: join(classes, 'Test.cls'),
-      xml: join(classes, 'Test.cls-meta.xml')
+      xml: join(classes, 'Test.cls-meta.xml'),
     };
     const tree = new VirtualTreeContainer([
       {
         dirPath: classes,
-        children: ['Test.cls', 'Test.cls-meta.xml']
-      }
+        children: ['Test.cls', 'Test.cls-meta.xml'],
+      },
     ]);
 
     it('should create diagnostic for problem with message only', () => {
       const deployment = createDeployment(component, tree);
       const message = createDeployMessage({
         problem: 'This might be a problem later!',
-        problemType: 'Warning'
+        problemType: 'Warning',
       });
       expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: 'This might be a problem later!',
-          type: 'Warning'
-        }
+          type: 'Warning',
+        },
       ]);
     });
 
@@ -71,7 +71,7 @@ describe('DiagnosticUtil', () => {
         problemType: 'Error',
         fileName: 'Test.cls',
         lineNumber: '4',
-        columnNumber: '2'
+        columnNumber: '2',
       });
       expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
@@ -79,8 +79,8 @@ describe('DiagnosticUtil', () => {
           type: 'Error',
           filePath: component.content,
           lineNumber: 4,
-          columnNumber: 2
-        }
+          columnNumber: 2,
+        },
       ]);
     });
   });
@@ -91,13 +91,13 @@ describe('DiagnosticUtil', () => {
       name: 'Test',
       type: registryData.types.lightningcomponentbundle,
       xml: join(bundlePath, 'test.js-meta.xml'),
-      content: bundlePath
+      content: bundlePath,
     };
     const tree = new VirtualTreeContainer([
       {
         dirPath: bundlePath,
-        children: ['test.js-meta.xml', 'test.js', 'test.html']
-      }
+        children: ['test.js-meta.xml', 'test.js', 'test.html'],
+      },
     ]);
 
     it('should create diagnostic for problem with message only using tooling api', () => {
@@ -107,8 +107,8 @@ describe('DiagnosticUtil', () => {
       expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message,
-          type: 'Error'
-        }
+          type: 'Error',
+        },
       ]);
     });
 
@@ -122,8 +122,8 @@ describe('DiagnosticUtil', () => {
           type: 'Error',
           filePath: join(bundlePath, 'test.html'),
           lineNumber: 3,
-          columnNumber: 12
-        }
+          columnNumber: 12,
+        },
       ]);
     });
 
@@ -132,13 +132,13 @@ describe('DiagnosticUtil', () => {
       const deployment = createDeployment(component, tree);
       const message = createDeployMessage({
         problem: 'There was a problem deploying',
-        problemType: 'Error'
+        problemType: 'Error',
       });
       expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: message.problem,
-          type: message.problemType
-        }
+          type: message.problemType,
+        },
       ]);
     });
 
@@ -148,7 +148,7 @@ describe('DiagnosticUtil', () => {
       const message = createDeployMessage({
         problem: '[Line: 4, Col: 15] LWC1075: Multiple roots found',
         problemType: 'Error',
-        fileName: join('test', 'test.html')
+        fileName: join('test', 'test.html'),
       });
       expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
@@ -156,8 +156,8 @@ describe('DiagnosticUtil', () => {
           type: 'Error',
           filePath: join(bundlePath, 'test.html'),
           lineNumber: 4,
-          columnNumber: 15
-        }
+          columnNumber: 15,
+        },
       ]);
     });
   });
@@ -168,13 +168,13 @@ describe('DiagnosticUtil', () => {
       name: 'Test',
       type: registryData.types.auradefinitionbundle,
       xml: join(bundlePath, 'test.app-meta.xml'),
-      content: bundlePath
+      content: bundlePath,
     };
     const tree = new VirtualTreeContainer([
       {
         dirPath: bundlePath,
-        children: ['test.app-meta.xml', 'test.app', 'testHelper.js', 'TestApp.auradoc']
-      }
+        children: ['test.app-meta.xml', 'test.app', 'testHelper.js', 'TestApp.auradoc'],
+      },
     ]);
 
     it('should create diagnostic for problem with message only using metadata api', () => {
@@ -182,13 +182,13 @@ describe('DiagnosticUtil', () => {
       const deployment = createDeployment(component, tree);
       const message = createDeployMessage({
         problem: 'There was a problem deploying',
-        problemType: 'Error'
+        problemType: 'Error',
       });
       expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: message.problem,
-          type: message.problemType
-        }
+          type: message.problemType,
+        },
       ]);
     });
 
@@ -198,7 +198,7 @@ describe('DiagnosticUtil', () => {
       const message = createDeployMessage({
         problem: '[row,col]:[1,5]\nMessage: There was a typo',
         problemType: 'Error',
-        fileName: join('test', 'testHelper.js')
+        fileName: join('test', 'testHelper.js'),
       });
       expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
@@ -206,8 +206,8 @@ describe('DiagnosticUtil', () => {
           type: 'Error',
           filePath: join(bundlePath, 'testHelper.js'),
           lineNumber: 1,
-          columnNumber: 5
-        }
+          columnNumber: 5,
+        },
       ]);
     });
   });

@@ -28,13 +28,13 @@ class TestTransformer implements MetadataTransformer {
   toMetadataFormat(): WriterFormat {
     return {
       component: this.component,
-      writeInfos: [{ relativeDestination: '/type/file.m', source: new Readable() }]
+      writeInfos: [{ relativeDestination: '/type/file.m', source: new Readable() }],
     };
   }
   toSourceFormat(): WriterFormat {
     return {
       component: this.component,
-      writeInfos: [{ relativeDestination: '/type/file.s', source: new Readable() }]
+      writeInfos: [{ relativeDestination: '/type/file.s', source: new Readable() }],
     };
   }
 }
@@ -108,9 +108,9 @@ describe('Streams', () => {
       writeInfos: [
         {
           relativeDestination,
-          source: readableMock
-        }
-      ]
+          source: readableMock,
+        },
+      ],
     };
 
     let pipelineStub: SinonStub;
@@ -148,7 +148,7 @@ describe('Streams', () => {
           expect(ensureFile.firstCall.args).to.deep.equal([fullPath]);
           expect(pipelineStub.firstCall.args).to.deep.equal([
             chunk.writeInfos[0].source,
-            fsWritableMock
+            fsWritableMock,
           ]);
         });
       });
@@ -177,7 +177,7 @@ describe('Streams', () => {
           expect(err).to.be.undefined;
           expect(appendStub.firstCall.args).to.deep.equal([
             chunk.writeInfos[0].source,
-            { name: chunk.writeInfos[0].relativeDestination }
+            { name: chunk.writeInfos[0].relativeDestination },
           ]);
         });
       });

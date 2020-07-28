@@ -20,7 +20,7 @@ export class AuraDeploy extends BaseDeploy {
     let auraDefinitions;
     try {
       auraDefinitions = await this.buildDefList();
-      const promiseArray = auraDefinitions.map(async def => this.upsert(def));
+      const promiseArray = auraDefinitions.map(async (def) => this.upsert(def));
       const results = await Promise.all(promiseArray);
       return this.formatBundleOutput(results);
     } catch (e) {
@@ -51,7 +51,7 @@ export class AuraDeploy extends BaseDeploy {
 
       let match: AuraDefinition;
       if (existingDefinitions.length > 0) {
-        match = existingDefinitions.find(definition => definition.DefType === defType);
+        match = existingDefinitions.find((definition) => definition.DefType === defType);
       }
 
       // If definition exists in org, assign the matching Id
@@ -61,7 +61,7 @@ export class AuraDeploy extends BaseDeploy {
         DefType: defType,
         Source: source,
         Format: format,
-        ...(match ? { Id: match.Id } : { AuraDefinitionBundleId: bundleId })
+        ...(match ? { Id: match.Id } : { AuraDefinitionBundleId: bundleId }),
       };
 
       // This is to ensure we return the correct project path when reporting errors
@@ -80,7 +80,7 @@ export class AuraDeploy extends BaseDeploy {
     if (auraDef.Id) {
       const formattedDef = {
         Source: auraDef.Source,
-        Id: auraDef.Id
+        Id: auraDef.Id,
       };
 
       await this.connection.tooling.update(deployTypes.get(type), formattedDef);
@@ -90,7 +90,7 @@ export class AuraDeploy extends BaseDeploy {
         AuraDefinitionBundleId: auraDef.AuraDefinitionBundleId,
         DefType: auraDef.DefType,
         Format: auraDef.Format,
-        Source: auraDef.Source
+        Source: auraDef.Source,
       };
 
       await this.toolingCreate(deployTypes.get(type), formattedDef);
@@ -148,9 +148,7 @@ export class AuraDeploy extends BaseDeploy {
 
   private async findAuraDefinitions(): Promise<AuraDefinition[]> {
     const auraDefResult = await this.connection.tooling.query(
-      `Select AuraDefinitionBundleId, Id, Format, Source, DefType from AuraDefinition where AuraDefinitionBundle.DeveloperName = '${
-        this.component.fullName
-      }' and AuraDefinitionBundle.NamespacePrefix = '${this.namespace}'`
+      `Select AuraDefinitionBundleId, Id, Format, Source, DefType from AuraDefinition where AuraDefinitionBundle.DeveloperName = '${this.component.fullName}' and AuraDefinitionBundle.NamespacePrefix = '${this.namespace}'`
     );
     return auraDefResult.records as AuraDefinition[];
   }
@@ -160,14 +158,14 @@ export class AuraDeploy extends BaseDeploy {
       const errLocation = error.slice(error.lastIndexOf('[') + 1, error.lastIndexOf(']'));
 
       const errorParts = error.split(' ');
-      const fileType = errorParts.find(part => {
+      const fileType = errorParts.find((part) => {
         part = part.toLowerCase();
         return part.includes('controller') || part.includes('renderer') || part.includes('helper');
       });
       let fileName: string;
       if (fileType) {
         const sources = this.component.walkContent();
-        fileName = sources.find(s => s.toLowerCase().includes(fileType.toLowerCase()));
+        fileName = sources.find((s) => s.toLowerCase().includes(fileType.toLowerCase()));
       } else {
         fileName = defaultPath;
       }
@@ -182,7 +180,7 @@ export class AuraDeploy extends BaseDeploy {
         success: false,
         changed: false,
         created: false,
-        deleted: false
+        deleted: false,
       } as SourceResult;
       return errObj;
     } catch (e) {
@@ -195,7 +193,7 @@ export class AuraDeploy extends BaseDeploy {
         success: false,
         changed: false,
         created: false,
-        deleted: false
+        deleted: false,
       } as SourceResult;
       return errObj;
     }

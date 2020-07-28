@@ -31,31 +31,31 @@ describe('Container Deploy Strategy', () => {
     id: '1dcxxx000000034',
     errors: [],
     name: 'VSCode_MDC_',
-    message: ''
+    message: '',
   };
   const apexClassCmp = new SourceComponent({
     type: registryData.types.apexclass,
     name: 'one',
     content: 'file/path/one.cls',
-    xml: 'file/path/one.cls-meta.xml'
+    xml: 'file/path/one.cls-meta.xml',
   });
   const apexTriggerCmp = new SourceComponent({
     type: registryData.types.apextrigger,
     name: 'one',
     content: 'file/path/one.trigger',
-    xml: 'file/path/one.trigger-meta.xml'
+    xml: 'file/path/one.trigger-meta.xml',
   });
   const apexPageCmp = new SourceComponent({
     type: registryData.types.apexpage,
     name: 'one',
     content: 'file/path/one.page',
-    xml: 'file/path/one.page-meta.xml'
+    xml: 'file/path/one.page-meta.xml',
   });
   const apexComponent = new SourceComponent({
     type: registryData.types.apexcomponent,
     name: 'one',
     content: 'file/path/one.component',
-    xml: 'file/path/one.component-meta.xml'
+    xml: 'file/path/one.component-meta.xml',
   });
   const testData = new MockTestOrgData();
   let mockConnection: Connection;
@@ -64,12 +64,12 @@ describe('Container Deploy Strategy', () => {
   beforeEach(async () => {
     sandboxStub = createSandbox();
     $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig()
+      contents: await testData.getConfig(),
     });
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
-        username: testData.username
-      })
+        username: testData.username,
+      }),
     });
     const mockFS = sandboxStub.stub(fs, 'readFileSync');
     mockFS.withArgs('file/path/one.cls', 'utf8').returns('public with sharing class TestAPI {}');
@@ -91,7 +91,7 @@ describe('Container Deploy Strategy', () => {
     mockToolingCreate.resolves({
       success: true,
       id: '1dcxxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     const container = await deployLibrary.createMetadataContainer();
@@ -109,7 +109,7 @@ describe('Container Deploy Strategy', () => {
     sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',
-      errors: ['Unexpected error while creating record']
+      errors: ['Unexpected error while creating record'],
     } as RecordResult);
     try {
       await deployLibrary.createMetadataContainer();
@@ -126,7 +126,7 @@ describe('Container Deploy Strategy', () => {
       message: 'duplicate value found: Name duplicates value on record with id : 1dcxxx000000034',
       name: 'DUPLICATE_VALUE',
       stack:
-        'DUPLICATE_VALUE: duplicate value found: Name duplicates value on record with id : 1dcxxx000000034'
+        'DUPLICATE_VALUE: duplicate value found: Name duplicates value on record with id : 1dcxxx000000034',
     };
     sandboxStub.stub(mockConnection.tooling, 'create').throws(errorObj);
     const deployLibrary = new ContainerDeploy(mockConnection);
@@ -147,7 +147,7 @@ describe('Container Deploy Strategy', () => {
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     deployLibrary.component = apexClassCmp;
@@ -168,7 +168,7 @@ describe('Container Deploy Strategy', () => {
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     deployLibrary.component = apexTriggerCmp;
@@ -189,7 +189,7 @@ describe('Container Deploy Strategy', () => {
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     deployLibrary.component = apexPageCmp;
@@ -210,7 +210,7 @@ describe('Container Deploy Strategy', () => {
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     deployLibrary.component = apexComponent;
@@ -231,7 +231,7 @@ describe('Container Deploy Strategy', () => {
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     deployLibrary.component = apexClassCmp;
@@ -253,7 +253,7 @@ describe('Container Deploy Strategy', () => {
     expect(secondParam.Body).to.equal('public with sharing class TestAPI {}');
     expect(secondParam.Metadata).to.deep.equal({
       apiVersion: '32.0',
-      status: 'Active'
+      status: 'Active',
     });
     expect(secondParam.contentEntityId).to.equal(undefined);
   });
@@ -264,7 +264,7 @@ describe('Container Deploy Strategy', () => {
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '400xxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     deployLibrary.component = apexClassCmp;
@@ -286,7 +286,7 @@ describe('Container Deploy Strategy', () => {
     expect(secondParam.Body).to.equal('public with sharing class TestAPI {}');
     expect(secondParam.Metadata).to.deep.equal({
       apiVersion: '32.0',
-      status: 'Active'
+      status: 'Active',
     });
     expect(secondParam.contentEntityId).to.equal('a00xxx000000034');
   });
@@ -297,7 +297,7 @@ describe('Container Deploy Strategy', () => {
     sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',
-      errors: ['Unexpected error while creating record']
+      errors: ['Unexpected error while creating record'],
     } as RecordResult);
 
     deployLibrary.component = apexClassCmp;
@@ -318,7 +318,7 @@ describe('Container Deploy Strategy', () => {
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: true,
       id: '1drxxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     const car = await deployLibrary.createContainerAsyncRequest(successfulContainerResult);
@@ -328,7 +328,7 @@ describe('Container Deploy Strategy', () => {
     expect(car.errors).to.be.an('array').that.is.empty;
     expect(mockToolingCreate.getCall(0).args[0]).to.equal('ContainerAsyncRequest');
     expect(mockToolingCreate.getCall(0).args[1]).to.deep.equal({
-      MetadataContainerId: successfulContainerResult.id
+      MetadataContainerId: successfulContainerResult.id,
     });
   });
 
@@ -337,7 +337,7 @@ describe('Container Deploy Strategy', () => {
     sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',
-      errors: ['Unexpected error while creating record']
+      errors: ['Unexpected error while creating record'],
     } as RecordResult);
 
     try {
@@ -355,7 +355,7 @@ describe('Container Deploy Strategy', () => {
       message: 'insufficient access rights on cross-reference id: 1drxx000000xUHs',
       errorCode: 'INSUFFICIENT_ACCESS_ON_CROSS_REFERENCE_ENTITY',
       fields: [],
-      name: 'INSUFFICIENT_ACCESS_ON_CROSS_REFERENCE_ENTITY'
+      name: 'INSUFFICIENT_ACCESS_ON_CROSS_REFERENCE_ENTITY',
     });
     try {
       await deployLibrary.createContainerAsyncRequest(successfulContainerResult);
@@ -375,7 +375,7 @@ describe('Container Deploy Strategy', () => {
     mockToolingRetrieve.onCall(0).resolves({
       State: 'Queued',
       isDeleted: false,
-      DeployDetails: null
+      DeployDetails: null,
     } as Record);
 
     mockToolingRetrieve.onCall(1).resolves({
@@ -383,15 +383,15 @@ describe('Container Deploy Strategy', () => {
       isDeleted: false,
       DeployDetails: {
         componentFailures: [],
-        componentSuccesses: []
-      }
+        componentSuccesses: [],
+      },
     } as Record);
     const asyncRequestMock: ToolingCreateResult = {
       success: true,
       id: '1drxxx000000034',
       errors: [],
       name: 'TestCAR',
-      message: ''
+      message: '',
     };
     const pollCAR = await deployLibrary.pollContainerStatus(asyncRequestMock.id);
     expect(pollCAR.State).to.equal('Completed');
@@ -404,7 +404,7 @@ describe('Container Deploy Strategy', () => {
     mockToolingCreate.onCall(0).resolves({
       success: true,
       id: '1dcxxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     // mock tooling query
@@ -415,21 +415,21 @@ describe('Container Deploy Strategy', () => {
       done: true,
       queryLocator: '',
       entityTypeName: 'ApexClass',
-      records: [{ Id: '00' }]
+      records: [{ Id: '00' }],
     } as QueryResult);
 
     // mock container member creation
     mockToolingCreate.onCall(1).resolves({
       success: true,
       id: '400xxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     // mock container async request creation
     mockToolingCreate.onCall(2).resolves({
       success: true,
       id: '1drxxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     // mock status check
@@ -449,10 +449,10 @@ describe('Container Deploy Strategy', () => {
             fullName: 'one',
             id: '0992M000000uLGTQA2',
             success: true,
-            warning: false
-          }
-        ]
-      }
+            warning: false,
+          },
+        ],
+      },
     } as Record);
     const result = await deployLibrary.deploy(apexComponent, 't5tr');
     expect(mockToolingCreate.calledThrice).to.be.true;
@@ -470,9 +470,9 @@ describe('Container Deploy Strategy', () => {
         {
           component: apexComponent,
           diagnostics: [],
-          status: ComponentStatus.Changed
-        }
-      ]
+          status: ComponentStatus.Changed,
+        },
+      ],
     });
   });
 });

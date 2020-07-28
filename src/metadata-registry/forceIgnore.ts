@@ -76,9 +76,9 @@ export class ForceIgnore {
   private parseContents(contents: string): string {
     return contents
       .split('\n')
-      .map(line => line.trim())
-      .map(line => line.replace(/[\\\/]/g, sep))
-      .map(line => line.replace(/^\\/, ''))
+      .map((line) => line.trim())
+      .map((line) => line.replace(/[\\\/]/g, sep))
+      .map((line) => line.replace(/^\\/, ''))
       .join('\n');
   }
 }

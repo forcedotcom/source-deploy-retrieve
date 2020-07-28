@@ -32,7 +32,7 @@ export class DefaultTransformer implements MetadataTransformer {
       for (const source of this.component.walkContent()) {
         result.writeInfos.push({
           source: createReadStream(source),
-          relativeDestination: this.getRelativeDestination(source)
+          relativeDestination: this.getRelativeDestination(source),
         });
       }
     } else {
@@ -40,7 +40,7 @@ export class DefaultTransformer implements MetadataTransformer {
     }
     result.writeInfos.push({
       source: createReadStream(this.component.xml),
-      relativeDestination: xmlDest
+      relativeDestination: xmlDest,
     });
     return result;
   }
@@ -65,7 +65,7 @@ export class DefaultTransformer implements MetadataTransformer {
 
   private trimUntil(fsPath: string, name: string): string {
     const parts = fsPath.split(sep);
-    const index = parts.findIndex(part => name === part);
+    const index = parts.findIndex((part) => name === part);
     return parts.slice(index).join(sep);
   }
 }

@@ -9,7 +9,7 @@ import {
   SourcePath,
   TreeContainer,
   VirtualDirectory,
-  MetadataComponent
+  MetadataComponent,
 } from '../types';
 import { join, dirname } from 'path';
 import { ForceIgnore } from './forceIgnore';
@@ -90,7 +90,7 @@ export class SourceComponent implements MetadataComponent {
             name: baseName(fsPath),
             type: this.type.children.types[childTypeId],
             xml: fsPath,
-            parent: this
+            parent: this,
           },
           this._tree,
           this.forceIgnore

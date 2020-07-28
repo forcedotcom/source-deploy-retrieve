@@ -36,7 +36,7 @@ export enum ComponentStatus {
   Changed = 'Changed',
   Unchanged = 'Unchanged',
   Deleted = 'Deleted',
-  Failed = 'Failed'
+  Failed = 'Failed',
 }
 
 interface SourceApiResult {
@@ -95,7 +95,7 @@ export enum DeployStatus {
   SucceededPartial = 'SucceededPartial',
   Failed = 'Failed',
   Canceling = 'Canceling',
-  Canceled = 'Canceled'
+  Canceled = 'Canceled',
 }
 
 export type DeployDetails = {
@@ -146,5 +146,5 @@ export const enum ToolingDeployStatus {
   Completed = 'Completed',
   Failed = 'Failed',
   // unique to bundle requests
-  CompletedPartial = 'CompletedPartial'
+  CompletedPartial = 'CompletedPartial',
 }

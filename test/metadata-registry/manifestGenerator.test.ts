@@ -25,7 +25,7 @@ describe('ManifestGenerator', () => {
   it('should generate manifest for one type', () => {
     const component = {
       fullName: 'someName',
-      type: { id: 'apexclass', name: 'ApexClass' }
+      type: { id: 'apexclass', name: 'ApexClass' },
     };
     let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
     expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
@@ -37,11 +37,11 @@ describe('ManifestGenerator', () => {
   it('should generate manifest for multiple types', () => {
     const component1 = {
       fullName: 'apexClass1',
-      type: { id: 'apexclass', name: 'ApexClass' }
+      type: { id: 'apexclass', name: 'ApexClass' },
     };
     const component2 = {
       fullName: 'apexTrigger1',
-      type: { id: 'apextrigger', name: 'ApexTrigger' }
+      type: { id: 'apextrigger', name: 'ApexTrigger' },
     };
     let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
     expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
@@ -55,15 +55,15 @@ describe('ManifestGenerator', () => {
   it('should generate manifest for multiple components', () => {
     const component1 = {
       fullName: 'apexClass1',
-      type: { id: 'apexclass', name: 'ApexClass' }
+      type: { id: 'apexclass', name: 'ApexClass' },
     };
     const component2 = {
       fullName: 'apexClass2',
-      type: { id: 'apexclass', name: 'ApexClass' }
+      type: { id: 'apexclass', name: 'ApexClass' },
     };
     const component3 = {
       fullName: 'apexTrigger1',
-      type: { id: 'apextrigger', name: 'ApexTrigger' }
+      type: { id: 'apextrigger', name: 'ApexTrigger' },
     };
     let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
     expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
@@ -79,15 +79,15 @@ describe('ManifestGenerator', () => {
   it('should generate manifest for multiple components passed in different order', () => {
     const component1 = {
       fullName: 'apexClass1',
-      type: { id: 'apexclass', name: 'ApexClass' }
+      type: { id: 'apexclass', name: 'ApexClass' },
     };
     const component2 = {
       fullName: 'apexClass2',
-      type: { id: 'apexclass', name: 'ApexClass' }
+      type: { id: 'apexclass', name: 'ApexClass' },
     };
     const component3 = {
       fullName: 'apexTrigger1',
-      type: { id: 'apextrigger', name: 'ApexTrigger' }
+      type: { id: 'apextrigger', name: 'ApexTrigger' },
     };
     let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
     expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
@@ -103,7 +103,7 @@ describe('ManifestGenerator', () => {
   it('should generate manifest by overriding apiversion', () => {
     const component = {
       fullName: 'someName',
-      type: { id: 'apexclass', name: 'ApexClass' }
+      type: { id: 'apexclass', name: 'ApexClass' },
     };
     let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
     expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
@@ -115,7 +115,7 @@ describe('ManifestGenerator', () => {
   it('should throw error for non valid type', () => {
     const component = {
       fullName: 'someName',
-      type: { id: 'someveryunknowntype', name: 'someveryunknowntype' }
+      type: { id: 'someveryunknowntype', name: 'someveryunknowntype' },
     };
     try {
       manifestGenerator.createManifest([component]);
@@ -134,15 +134,15 @@ describe('ManifestGenerator', () => {
         type: registryData.types.apexclass,
         name: 'myTestClass',
         xml: path.join(rootPath, 'myTestClass.cls-meta.xml'),
-        content: path.join(rootPath, 'myTestClass.cls')
+        content: path.join(rootPath, 'myTestClass.cls'),
       },
       [
         {
           dirPath: rootPath,
-          children: ['myTestClass.cls', 'myTestClass.cls-meta.xml']
-        }
+          children: ['myTestClass.cls', 'myTestClass.cls-meta.xml'],
+        },
       ]
-    )
+    ),
   ];
 
   it('should successfully create a manifest with a sourcepath', () => {

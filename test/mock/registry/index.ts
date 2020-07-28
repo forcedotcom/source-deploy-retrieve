@@ -13,52 +13,52 @@ export const mockRegistry = {
       directoryName: 'kathys',
       inFolder: true,
       name: 'KathyBates',
-      suffix: 'kathy'
+      suffix: 'kathy',
     },
     keanureeves: {
       id: 'keanureeves',
       directoryName: 'keanus',
       inFolder: false,
       name: 'KeanuReeves',
-      suffix: 'keanu'
+      suffix: 'keanu',
     },
     tinafey: {
       id: 'tinafey',
       directoryName: 'tinas',
       inFolder: true,
-      name: 'TinaFey'
+      name: 'TinaFey',
     },
     dwaynejohnson: {
       id: 'dwaynejohnson',
       directoryName: 'dwaynes',
       inFolder: false,
-      name: 'DwayneJohnson'
+      name: 'DwayneJohnson',
     },
     tarajihenson: {
       id: 'tarajihenson',
       directoryName: 'tarajis',
       inFolder: false,
-      name: 'TarajiHenson'
+      name: 'TarajiHenson',
     },
     simonpegg: {
       id: 'simonpegg',
       directoryName: 'simons',
       inFolder: false,
-      name: 'SimonPegg'
+      name: 'SimonPegg',
     },
     tinafeyfolder: {
       id: 'tinafeyfolder',
       directoryName: 'tinas',
       inFolder: false,
       name: 'TinaFeyFolder',
-      suffix: 'tinafeyFolder'
+      suffix: 'tinafeyFolder',
     },
     genewilder: {
       id: 'genewilder',
       directoryName: 'genes',
       inFolder: false,
       name: 'GeneWilder',
-      suffix: 'gene'
+      suffix: 'gene',
     },
     reginaking: {
       id: 'reginaking',
@@ -72,20 +72,20 @@ export const mockRegistry = {
             id: 'x',
             directoryName: 'xs',
             name: 'X',
-            suffix: 'x'
+            suffix: 'x',
           },
           y: {
             id: 'y',
             name: 'Y',
-            suffix: 'y'
-          }
+            suffix: 'y',
+          },
         },
         suffixes: {
           x: 'x',
-          y: 'y'
-        }
-      }
-    }
+          y: 'y',
+        },
+      },
+    },
   },
   suffixes: {
     kathy: 'kathybates',
@@ -93,14 +93,14 @@ export const mockRegistry = {
     missing: 'typewithoutdef',
     tinafeyFolder: 'tinafeyfolder',
     genewilder: 'gene',
-    reginaking: 'regina'
+    reginaking: 'regina',
   },
   mixedContent: {
     dwaynes: 'dwaynejohnson',
     tarajis: 'tarajihenson',
     simons: 'simonpegg',
     tinas: 'tinafey',
-    reginas: 'reginaking'
+    reginas: 'reginaking',
   },
   strategies: {
     keanureeves: { adapter: 'matchingContentFile', transformer: 'standard' },
@@ -109,9 +109,9 @@ export const mockRegistry = {
     dwaynejohnson: { adapter: 'mixedContent', transformer: 'mixedContent' },
     simonpegg: { adapter: 'bundle', transformer: 'bundle' },
     reginaking: { adapter: 'decomposed', transformer: 'decomposed' },
-    genewilder: { adapter: 'badAdapterId', transformer: 'badAdapterId' }
+    genewilder: { adapter: 'badAdapterId', transformer: 'badAdapterId' },
   },
-  apiVersion: '48.0'
+  apiVersion: '48.0',
 };
 
 import * as keanu from './keanuConstants';

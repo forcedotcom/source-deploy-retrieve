@@ -15,7 +15,7 @@ import {
   RetrieveOptions,
   QueryResult,
   SourcePath,
-  ToolingDeployOptions
+  ToolingDeployOptions,
 } from '../types';
 import { nls } from '../i18n';
 import { buildQuery, queryToFileMap } from './retrieveUtil';
@@ -29,7 +29,7 @@ const retrieveTypes = new Set([
   'ApexPage',
   'ApexComponent',
   'AuraDefinitionBundle',
-  'LightningComponentBundle'
+  'LightningComponentBundle',
 ]);
 
 export const deployTypes = new Map([
@@ -38,7 +38,7 @@ export const deployTypes = new Map([
   ['ApexPage', 'ApexPageMember'],
   ['ApexComponent', 'ApexComponentMember'],
   ['AuraDefinitionBundle', 'AuraDefinition'],
-  ['LightningComponentBundle', 'LightningComponentResource']
+  ['LightningComponentBundle', 'LightningComponentResource'],
 ]);
 
 export class ToolingApi extends BaseApi {
@@ -47,7 +47,7 @@ export class ToolingApi extends BaseApi {
     return await this.retrieve({
       output: options.output,
       namespace: options.namespace,
-      components: this.registry.getComponentsFromPath(retrievePaths)
+      components: this.registry.getComponentsFromPath(retrievePaths),
     });
   }
 
@@ -80,7 +80,7 @@ export class ToolingApi extends BaseApi {
         return {
           success: true,
           components: [],
-          message: nls.localize('error_md_not_present_in_org', mdComponent.fullName)
+          message: nls.localize('error_md_not_present_in_org', mdComponent.fullName),
         };
       }
 
@@ -89,7 +89,7 @@ export class ToolingApi extends BaseApi {
 
       retrieveResult = {
         success: true,
-        components: [mdComponent]
+        components: [mdComponent],
       };
     } catch (err) {
       throw new Error(nls.localize('error_in_tooling_retrieve', err));

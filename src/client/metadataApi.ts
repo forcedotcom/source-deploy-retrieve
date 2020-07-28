@@ -16,7 +16,7 @@ import {
   ComponentDeployment,
   DeployMessage,
   ComponentStatus,
-  DeployStatus
+  DeployStatus,
 } from '../types/newClient';
 import { DiagnosticUtil } from './diagnosticUtil';
 
@@ -24,7 +24,7 @@ export const DEFAULT_API_OPTIONS = {
   rollbackOnError: true,
   ignoreWarnings: false,
   checkOnly: false,
-  singlePackage: true
+  singlePackage: true,
 };
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -52,7 +52,7 @@ export class MetadataApi extends BaseApi {
       componentDeploymentMap.set(`${component.type.name}:${component.fullName}`, {
         status: ComponentStatus.Unchanged,
         component,
-        diagnostics: []
+        diagnostics: [],
       });
     }
 
@@ -72,7 +72,7 @@ export class MetadataApi extends BaseApi {
   private async metadataDeployID(zipBuffer: Buffer, options?: MetadataDeployOptions): Promise<Id> {
     if (!options || !options.apiOptions) {
       options = {
-        apiOptions: DEFAULT_API_OPTIONS
+        apiOptions: DEFAULT_API_OPTIONS,
       };
     } else {
       for (const [property, value] of Object.entries(DEFAULT_API_OPTIONS)) {
@@ -94,7 +94,7 @@ export class MetadataApi extends BaseApi {
     let result;
 
     const wait = (interval: number): Promise<void> => {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         setTimeout(resolve, interval);
       });
     };
@@ -137,7 +137,7 @@ export class MetadataApi extends BaseApi {
     const deployResult: SourceDeployResult = {
       id: result.id,
       status: result.status,
-      success: result.success
+      success: result.success,
     };
 
     const messages = this.getDeployMessages(result);

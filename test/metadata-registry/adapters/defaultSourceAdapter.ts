@@ -19,7 +19,7 @@ describe('DefaultSourceAdapter', () => {
       new SourceComponent({
         name: 'My_Test',
         type,
-        xml: path
+        xml: path,
       })
     );
   });

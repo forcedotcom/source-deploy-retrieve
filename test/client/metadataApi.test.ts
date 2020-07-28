@@ -20,7 +20,7 @@ import {
   ComponentStatus,
   DeployStatus,
   SourceDeployResult,
-} from '../../src/types';
+} from '../../src/client/types';
 
 describe('Metadata Api', () => {
   let mockConnection: Connection;

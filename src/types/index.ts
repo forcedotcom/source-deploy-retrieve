@@ -12,26 +12,6 @@ export {
   TreeContainer,
   VirtualDirectory,
 } from './registry';
-export { ApexRecord, AuraRecord, LWCRecord, QueryResult, VFRecord } from './query';
-export {
-  ApiResult,
-  BaseApi,
-  DeployPathOptions,
-  RetrievePathOptions,
-  RetrieveOptions,
-  ToolingDeployOptions,
-  ComponentDeployment,
-  ComponentDiagnostic,
-  ComponentStatus,
-  DeployMessage,
-  MetadataApiDeployOptions,
-  SourceDeployResult,
-  DeployResult,
-  RecordId,
-  DeployStatus,
-  ToolingDeployStatus,
-  ContainerAsyncRequest,
-} from './client';
 export {
   ConvertResult,
   ConvertOutputConfig,

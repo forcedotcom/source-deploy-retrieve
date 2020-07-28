@@ -12,7 +12,7 @@ import { createSandbox, SinonSandbox } from 'sinon';
 import { RegistryAccess, registryData, SourceComponent } from '../../src/metadata-registry';
 import { ToolingApi } from '../../src/client';
 import { ContainerDeploy } from '../../src/client/deployStrategies';
-import { ToolingDeployStatus, ComponentStatus } from '../../src/types';
+import { ToolingDeployStatus, ComponentStatus } from '../../src/client/types';
 import { nls } from '../../src/i18n';
 
 const $$ = testSetup();

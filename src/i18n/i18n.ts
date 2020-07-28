@@ -48,5 +48,5 @@ export const messages = {
   error_updating_metadata_type: "Unexpected error updating '%s'",
   error_parsing_metadata_file: 'Error parsing metadata file',
   tapi_deploy_component_limit_error:
-    'This deploy method only supports deploying one metadata component at a time'
+    'This deploy method only supports deploying one metadata component at a time',
 };

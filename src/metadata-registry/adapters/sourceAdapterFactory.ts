@@ -17,7 +17,7 @@ enum AdapterId {
   Bundle = 'bundle',
   Decomposed = 'decomposed',
   MatchingContentFile = 'matchingContentFile',
-  MixedContent = 'mixedContent'
+  MixedContent = 'mixedContent',
 }
 
 export class SourceAdapterFactory {

@@ -7,7 +7,7 @@
 import {
   BaseTreeContainer,
   NodeFSTreeContainer,
-  VirtualTreeContainer
+  VirtualTreeContainer,
 } from '../../src/metadata-registry/treeContainers';
 import { expect, assert } from 'chai';
 import { createSandbox } from 'sinon';
@@ -79,12 +79,12 @@ describe('Tree Containers', () => {
     const virtualFS = [
       {
         dirPath: '.',
-        children: ['test.txt', 'test2.txt', 'files']
+        children: ['test.txt', 'test2.txt', 'files'],
       },
       {
         dirPath: join('.', 'files'),
-        children: ['test3.txt']
-      }
+        children: ['test3.txt'],
+      },
     ];
     const tree = new VirtualTreeContainer(virtualFS);
 

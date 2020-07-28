@@ -54,7 +54,7 @@ export abstract class BaseDeploy {
         ...(statusNode ? { status: statusNode.textContent } : {}),
         ...(packageNode ? { packageVersions: packageNode.textContent } : {}),
         ...(descriptionNode ? { description: descriptionNode.textContent } : {}),
-        ...(labelNode ? { label: labelNode.textContent } : {})
+        ...(labelNode ? { label: labelNode.textContent } : {}),
       };
       return metadataField;
     } catch (e) {
@@ -83,7 +83,7 @@ export abstract class BaseDeploy {
     } else {
       const bundleObject = {
         FullName: this.component.fullName,
-        Metadata: metadataField
+        Metadata: metadataField,
       };
 
       bundleResult = await this.toolingCreate(this.component.type.name, bundleObject);
@@ -104,10 +104,10 @@ export abstract class BaseDeploy {
         ErrorMsg: deployResults[0].problem,
         DeployDetails: {
           componentSuccesses: [],
-          componentFailures: deployResults
+          componentFailures: deployResults,
         },
         isDeleted: false,
-        metadataFile: this.component.xml
+        metadataFile: this.component.xml,
       };
     } else {
       const outboundFiles = this.component.walkContent();
@@ -116,12 +116,12 @@ export abstract class BaseDeploy {
         State: DeployStatusEnum.Completed,
         DeployDetails: {
           componentSuccesses: deployResults,
-          componentFailures: []
+          componentFailures: [],
         },
         isDeleted: false,
         outboundFiles,
         ErrorMsg: null,
-        metadataFile: this.component.xml
+        metadataFile: this.component.xml,
       };
     }
     return toolingDeployResult;
@@ -139,7 +139,7 @@ export abstract class BaseDeploy {
       deleted: false,
       fileName: filepath,
       fullName: formattedPaths[1],
-      componentType: this.component.type.name
+      componentType: this.component.type.name,
     } as SourceResult;
 
     if (success) {
@@ -156,11 +156,13 @@ export abstract class BaseDeploy {
   protected getFormattedPaths(filepath: string): string[] {
     const pathParts = filepath.split(sep);
 
-    const typeFolderIndex = pathParts.findIndex(part => part === this.component.type.directoryName);
+    const typeFolderIndex = pathParts.findIndex(
+      (part) => part === this.component.type.directoryName
+    );
 
     return [
       pathParts.slice(typeFolderIndex).join(TOOLING_PATH_SEP),
-      pathParts.slice(typeFolderIndex + 1).join(TOOLING_PATH_SEP)
+      pathParts.slice(typeFolderIndex + 1).join(TOOLING_PATH_SEP),
     ];
   }
 }

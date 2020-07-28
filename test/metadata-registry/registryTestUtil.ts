@@ -40,7 +40,7 @@ export class RegistryTestUtil {
         componentMap[c.path] = c.component;
       }
       getAdapterStub.withArgs(entry.type).returns({
-        getComponent: (path: SourcePath) => componentMap[path]
+        getComponent: (path: SourcePath) => componentMap[path],
       });
     }
   }
@@ -54,13 +54,13 @@ export class RegistryTestUtil {
     const acceptStub = this.env.stub(forceIgnore, 'accepts');
     const denyStub = this.env.stub(forceIgnore, 'denies');
     if (config.deny) {
-      config.deny.forEach(path => {
+      config.deny.forEach((path) => {
         denyStub.withArgs(path).returns(true);
         acceptStub.withArgs(path).returns(false);
       });
     }
     if (config.accept) {
-      config.accept.forEach(path => {
+      config.accept.forEach((path) => {
         acceptStub.withArgs(path).returns(true);
         denyStub.withArgs(path).returns(false);
       });

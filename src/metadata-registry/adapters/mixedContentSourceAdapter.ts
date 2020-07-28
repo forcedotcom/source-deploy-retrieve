@@ -87,7 +87,7 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
    */
   private static trimPathToContent(path: SourcePath, type: MetadataType): SourcePath {
     const pathParts = path.split(sep);
-    const typeFolderIndex = pathParts.findIndex(part => part === type.directoryName);
+    const typeFolderIndex = pathParts.findIndex((part) => part === type.directoryName);
     const offset = type.inFolder ? 3 : 2;
     return pathParts.slice(0, typeFolderIndex + offset).join(sep);
   }

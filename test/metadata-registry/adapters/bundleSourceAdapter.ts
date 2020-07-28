@@ -19,18 +19,18 @@ describe('BundleSourceAdapter', () => {
     SIMON_XML_PATH,
     SIMON_SOURCE_PATHS,
     SIMON_DIR,
-    SIMON_COMPONENT
+    SIMON_COMPONENT,
   } = simon;
   const type = mockRegistry.types.simonpegg;
   const tree = new VirtualTreeContainer([
     {
       dirPath: SIMON_DIR,
-      children: [basename(SIMON_BUNDLE_PATH)]
+      children: [basename(SIMON_BUNDLE_PATH)],
     },
     {
       dirPath: SIMON_BUNDLE_PATH,
-      children: [SIMON_XML_NAME, ...SIMON_SOURCE_PATHS.map(p => basename(p))]
-    }
+      children: [SIMON_XML_NAME, ...SIMON_SOURCE_PATHS.map((p) => basename(p))],
+    },
   ]);
   const adapter = new BundleSourceAdapter(type, mockRegistry, undefined, tree);
   const expectedComponent = new SourceComponent(SIMON_COMPONENT, tree);

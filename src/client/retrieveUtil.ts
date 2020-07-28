@@ -105,7 +105,7 @@ export function queryToFileMap(
     case 'AuraDefinitionBundle':
       const auraRecord = queryResult.records as AuraRecord[];
       apiVersion = auraRecord[0].AuraDefinitionBundle.ApiVersion;
-      auraRecord.forEach(item => {
+      auraRecord.forEach((item) => {
         const cmpName = getAuraSourceName(mdSourcePath, mdComponent.name, item.DefType);
         saveFilesMap.set(cmpName, item.Source);
       });
@@ -113,7 +113,7 @@ export function queryToFileMap(
     case 'LightningComponentBundle':
       const lwcRecord = queryResult.records as LWCRecord[];
       const bundleParentPath = mdSourcePath.substring(0, mdSourcePath.lastIndexOf(`${sep}lwc`));
-      lwcRecord.forEach(item => {
+      lwcRecord.forEach((item) => {
         const cmpName = join(bundleParentPath, item.FilePath);
         saveFilesMap.set(cmpName, item.Source);
       });

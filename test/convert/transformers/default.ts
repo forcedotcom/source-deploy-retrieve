@@ -43,17 +43,17 @@ describe('DefaultTransformer', () => {
       for (const source of component.walkContent()) {
         expectedInfos.push({
           relativeDestination: join(relativeBundle, basename(source)),
-          source: fs.createReadStream(source)
+          source: fs.createReadStream(source),
         });
       }
       expectedInfos.push({
         relativeDestination: join(relativeBundle, simon.SIMON_XML_NAME),
-        source: fs.createReadStream(component.xml)
+        source: fs.createReadStream(component.xml),
       });
 
       expect(transformer.toMetadataFormat()).to.deep.equal({
         component,
-        writeInfos: expectedInfos
+        writeInfos: expectedInfos,
       });
     });
 
@@ -65,13 +65,13 @@ describe('DefaultTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           relativeDestination: join(directoryName, fileName),
-          source: fs.createReadStream(component.xml)
-        }
+          source: fs.createReadStream(component.xml),
+        },
       ];
 
       expect(transformer.toMetadataFormat()).to.deep.equal({
         component,
-        writeInfos: expectedInfos
+        writeInfos: expectedInfos,
       });
     });
 
@@ -87,13 +87,13 @@ describe('DefaultTransformer', () => {
             fullNameParts[0],
             `${fullNameParts[1]}.${component.type.suffix}`
           ),
-          source: fs.createReadStream(component.xml)
-        }
+          source: fs.createReadStream(component.xml),
+        },
       ];
 
       expect(transformer.toMetadataFormat()).to.deep.equal({
         component,
-        writeInfos: expectedInfos
+        writeInfos: expectedInfos,
       });
     });
   });

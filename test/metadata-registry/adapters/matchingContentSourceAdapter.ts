@@ -21,8 +21,8 @@ describe('MatchingContentSourceAdapter', () => {
   const tree = new VirtualTreeContainer([
     {
       dirPath: KEANUS_DIR,
-      children: [KEANU_SOURCE_NAMES[0], KEANU_XML_NAMES[0]]
-    }
+      children: [KEANU_SOURCE_NAMES[0], KEANU_XML_NAMES[0]],
+    },
   ]);
   const expectedComponent = new SourceComponent(KEANU_COMPONENT, tree);
   const adapter = new MatchingContentSourceAdapter(type, mockRegistry, undefined, tree);
@@ -50,7 +50,7 @@ describe('MatchingContentSourceAdapter', () => {
     const path = KEANU_SOURCE_PATHS[0];
     const forceIgnore = testUtil.stubForceIgnore({
       seed: KEANU_XML_PATHS[0],
-      deny: [path]
+      deny: [path],
     });
     const adapter = new MatchingContentSourceAdapter(type, mockRegistry, forceIgnore, tree);
     assert.throws(

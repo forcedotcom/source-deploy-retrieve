@@ -108,7 +108,7 @@ export enum DeployStatusEnum {
   Completed = 'Completed',
   Queued = 'Queued',
   Error = 'Error',
-  Failed = 'Failed'
+  Failed = 'Failed',
 }
 
 export interface DeployRetrieveClient {

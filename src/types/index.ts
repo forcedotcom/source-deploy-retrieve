@@ -10,7 +10,7 @@ export {
   MetadataXml,
   SourceAdapter,
   TreeContainer,
-  VirtualDirectory
+  VirtualDirectory,
 } from './registry';
 export { ApexRecord, AuraRecord, LWCRecord, QueryResult, VFRecord } from './query';
 export {
@@ -23,7 +23,7 @@ export {
   RetrievePathOptions,
   RetrieveOptions,
   SourceResult,
-  ToolingDeployOptions
+  ToolingDeployOptions,
 } from './client';
 export {
   ConvertResult,
@@ -31,5 +31,5 @@ export {
   SfdxFileFormat,
   WriteInfo,
   WriterFormat,
-  MetadataTransformer
+  MetadataTransformer,
 } from './conversion';

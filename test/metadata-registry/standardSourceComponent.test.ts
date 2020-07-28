@@ -20,7 +20,7 @@ describe('SourceComponent', () => {
       const component = new SourceComponent({
         name: 'a',
         type: mockRegistry.types.kathybates,
-        xml: kathy.KATHY_XML_PATHS[0]
+        xml: kathy.KATHY_XML_PATHS[0],
       });
       expect(component.walkContent()).to.be.empty;
     });
@@ -29,8 +29,8 @@ describe('SourceComponent', () => {
       const component = SourceComponent.createVirtualComponent(keanu.KEANU_COMPONENT, [
         {
           dirPath: keanu.KEANUS_DIR,
-          children: [keanu.KEANU_SOURCE_NAMES[0]]
-        }
+          children: [keanu.KEANU_SOURCE_NAMES[0]],
+        },
       ]);
       expect(component.walkContent()).to.deep.equal([keanu.KEANU_SOURCE_PATHS[0]]);
     });
@@ -41,7 +41,7 @@ describe('SourceComponent', () => {
           name: 'a',
           type: mockRegistry.types.tarajihenson,
           xml: taraji.TARAJI_XML_PATHS[0],
-          content: taraji.TARAJI_CONTENT_PATH
+          content: taraji.TARAJI_CONTENT_PATH,
         },
         taraji.TARAJI_VIRTUAL_FS
       );
@@ -54,7 +54,7 @@ describe('SourceComponent', () => {
       const forceIgnore = testUtil.stubForceIgnore({
         seed: path,
         accept: [taraji.TARAJI_SOURCE_PATHS[1]],
-        deny: [taraji.TARAJI_SOURCE_PATHS[0], taraji.TARAJI_SOURCE_PATHS[2]]
+        deny: [taraji.TARAJI_SOURCE_PATHS[0], taraji.TARAJI_SOURCE_PATHS[2]],
       });
       const component = SourceComponent.createVirtualComponent(
         taraji.TARAJI_COMPONENT,
@@ -73,7 +73,7 @@ describe('SourceComponent', () => {
         name: 'z',
         type: type.children.types.y,
         xml: regina.REGINA_CHILD_XML_PATH_1,
-        parent: regina.REGINA_COMPONENT
+        parent: regina.REGINA_COMPONENT,
       },
       regina.REGINA_VIRTUAL_FS
     );
@@ -82,7 +82,7 @@ describe('SourceComponent', () => {
         name: 'w',
         type: type.children.types.x,
         xml: regina.REGINA_CHILD_XML_PATH_2,
-        parent: regina.REGINA_COMPONENT
+        parent: regina.REGINA_COMPONENT,
       },
       regina.REGINA_VIRTUAL_FS
     );
@@ -95,7 +95,7 @@ describe('SourceComponent', () => {
       const testUtil = new RegistryTestUtil();
       const forceIgnore = testUtil.stubForceIgnore({
         seed: regina.REGINA_XML_PATH,
-        deny: [regina.REGINA_CHILD_XML_PATH_2]
+        deny: [regina.REGINA_CHILD_XML_PATH_2],
       });
       const component = SourceComponent.createVirtualComponent(
         regina.REGINA_COMPONENT,

@@ -8,26 +8,23 @@
 import { readFileSync } from 'fs';
 import { deployTypes } from '../toolingApi';
 import { DeployError } from '../../errors';
-import { DeployResult, QueryResult } from '../../types';
+import {
+  QueryResult,
+  SourceDeployResult,
+  ContainerAsyncRequest,
+  ToolingDeployStatus,
+  RecordId,
+  ComponentDeployment,
+  ComponentStatus,
+} from '../../types';
 import { baseName } from '../../utils/path';
 import { ToolingCreateResult } from '../../utils/deploy';
 import { CONTAINER_ASYNC_REQUEST, METADATA_CONTAINER } from './constants';
 import { BaseDeploy } from './baseDeploy';
 import { SourceComponent } from '../../metadata-registry';
-import {
-  SourceDeployResult,
-  ContainerAsyncRequest,
-  ToolingDeployStatus,
-  Id,
-  ComponentDeployment,
-  ComponentStatus,
-} from '../../types/newClient';
 
 export class ContainerDeploy extends BaseDeploy {
-  public async deploy(
-    component: SourceComponent,
-    namespace: string
-  ): Promise<DeployResult | SourceDeployResult> {
+  public async deploy(component: SourceComponent, namespace: string): Promise<SourceDeployResult> {
     this.component = component;
     this.namespace = namespace;
     const sourcePath = component.content;
@@ -115,7 +112,7 @@ export class ContainerDeploy extends BaseDeploy {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  public async pollContainerStatus(containerId: Id): Promise<ContainerAsyncRequest> {
+  public async pollContainerStatus(containerId: RecordId): Promise<ContainerAsyncRequest> {
     let count = 0;
     let containerStatus;
     do {

@@ -92,35 +92,42 @@ export class AuraDeploy extends BaseDeploy {
     };
 
     let partialSuccess = false;
-    for (const definition of auraDefinitions) {
-      try {
-        if (definition.Id) {
-          const formattedDef = {
-            Source: definition.Source,
-            Id: definition.Id,
-          };
-
-          await this.connection.tooling.update(deployTypes.get(type), formattedDef);
-          deployment.status = ComponentStatus.Changed;
-          partialSuccess = true;
-        } else {
-          const formattedDef = {
-            AuraDefinitionBundleId: definition.AuraDefinitionBundleId,
-            DefType: definition.DefType,
-            Format: definition.Format,
-            Source: definition.Source,
-          };
-
-          await this.toolingCreate(deployTypes.get(type), formattedDef);
-          deployment.status = ComponentStatus.Created;
+    let allCreate = true;
+    const deployPromises = auraDefinitions.map(
+      async (definition): Promise<void> => {
+        try {
+          if (definition.Id) {
+            const formattedDef = {
+              Source: definition.Source,
+              Id: definition.Id,
+            };
+            await this.connection.tooling.update(deployTypes.get(type), formattedDef);
+            allCreate = false;
+            partialSuccess = true;
+          } else {
+            const formattedDef = {
+              AuraDefinitionBundleId: definition.AuraDefinitionBundleId,
+              DefType: definition.DefType,
+              Format: definition.Format,
+              Source: definition.Source,
+            };
+            await this.toolingCreate(deployTypes.get(type), formattedDef);
+            partialSuccess = true;
+          }
+        } catch (e) {
+          diagnosticUtil.setDiagnostic(deployment, e.message);
         }
-      } catch (e) {
-        diagnosticUtil.setDiagnostic(deployment, e.message);
       }
-    }
+    );
+
+    await Promise.all(deployPromises);
 
     if (deployment.diagnostics.length > 0) {
       deployment.status = partialSuccess ? ComponentStatus.Changed : ComponentStatus.Failed;
+    } else if (allCreate) {
+      deployment.status = ComponentStatus.Created;
+    } else {
+      deployment.status = ComponentStatus.Changed;
     }
 
     return deployment;

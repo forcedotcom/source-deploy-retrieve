@@ -8,7 +8,203 @@
 import { Connection } from '@salesforce/core';
 import { SourcePath } from './common';
 import { RegistryAccess, SourceComponent } from '../metadata-registry';
-import { SourceDeployResult } from './newClient';
+
+// ------------------------------------------------
+// API results reformatted for source development
+// ------------------------------------------------
+
+export type RecordId = string;
+
+export type ComponentDeployment = {
+  id?: string;
+  component: SourceComponent;
+  status: ComponentStatus;
+  diagnostics: ComponentDiagnostic[];
+};
+
+export type ComponentDiagnostic = {
+  lineNumber?: number;
+  columnNumber?: number;
+  filePath?: SourcePath;
+  message: string;
+  type: 'Warning' | 'Error';
+};
+
+/**
+ * Possible statuses of a component being deployed.
+ */
+export enum ComponentStatus {
+  Created = 'Created',
+  Changed = 'Changed',
+  Unchanged = 'Unchanged',
+  Deleted = 'Deleted',
+  Failed = 'Failed',
+}
+
+interface SourceApiResult {
+  success: boolean;
+}
+
+export interface SourceDeployResult extends SourceApiResult {
+  id: RecordId;
+  components?: ComponentDeployment[];
+  status: DeployStatus | ToolingDeployStatus;
+}
+
+// ------------------------------------------------
+// Metadata API result types
+// ------------------------------------------------
+
+/**
+ * Raw response returned from a checkDeployStatus call to the Metadata API
+ */
+export type DeployResult = {
+  id: string;
+  canceledBy?: string;
+  canceledByName?: string;
+  checkOnly: boolean;
+  completedDate?: string;
+  createdBy: string;
+  createdByName: string;
+  createdDate: string;
+  details: DeployDetails;
+  done: boolean;
+  errorMessage?: string;
+  errorStatusCode?: string;
+  ignoreWarnings: boolean;
+  lastModifiedDate: string;
+  numberComponentErrors: number;
+  numberComponentsDeployed: number;
+  numberComponentsTotal: number;
+  numberTestErrors: number;
+  numberTestsCompleted: number;
+  numberTestsTotal: number;
+  runTestsEnabled: boolean;
+  rollbackOnError: boolean;
+  startDate?: string;
+  stateDetail?: string;
+  status: DeployStatus;
+  success: boolean;
+};
+
+/**
+ * Possible statuses of a metadata deploy operation.
+ */
+export enum DeployStatus {
+  Pending = 'Pending',
+  InProgress = 'InProgress',
+  Succeeded = 'Succeeded',
+  SucceededPartial = 'SucceededPartial',
+  Failed = 'Failed',
+  Canceling = 'Canceling',
+  Canceled = 'Canceled',
+}
+
+export type DeployDetails = {
+  componentFailures?: DeployMessage[];
+  componentSuccesses?: DeployMessage[];
+  // TODO: Add types for RetrieveResult and RunTestsResult
+  // retrieveResult?:
+  // runTestResult?:
+};
+
+type BooleanString = 'true' | 'false' | true | false;
+
+export type DeployMessage = {
+  changed: BooleanString;
+  columnNumber?: string;
+  componentType?: string;
+  created: BooleanString;
+  createdDate: string;
+  deleted: BooleanString;
+  fileName: string;
+  fullName: string;
+  id?: string;
+  lineNumber?: string;
+  problem?: string;
+  problemType?: 'Warning' | 'Error';
+  success: BooleanString;
+};
+
+// ------------------------------------------------
+// Tooling API result types
+// ------------------------------------------------
+
+export type ContainerAsyncRequest = {
+  Id: RecordId;
+  DeployDetails?: DeployDetails;
+  ErrorMsg?: string;
+  State?: ToolingDeployStatus;
+};
+
+export const enum ToolingDeployStatus {
+  // ContainerAsyncRequest states
+  Queued = 'Queued',
+  Invalidated = 'Invalidated',
+  Error = 'Error',
+  Aborted = 'Aborted',
+  // Shared
+  Completed = 'Completed',
+  Failed = 'Failed',
+  // unique to bundle requests
+  CompletedPartial = 'CompletedPartial',
+}
+
+// ------------------------------------------------
+// Clients
+// ------------------------------------------------
+
+export interface DeployRetrieveClient {
+  /**
+   * Retrieve metadata components and wait for the result.
+   *
+   * @param options Specify `components`, `output` and other optionals
+   */
+  retrieve(options: RetrieveOptions): Promise<ApiResult>;
+  /**
+   * Infer metadata components from source paths, retrieve them, and wait for the result.
+   *
+   * @param options Specify `paths`, `output` and other optionals
+   */
+  retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult>;
+  /**
+   * Deploy metadata components and wait for result.
+   *
+   * @param filePath Paths to source files to deploy
+   */
+  deploy(components: SourceComponent | SourceComponent[]): Promise<SourceDeployResult>;
+  /**
+   * Infer metadata components from source path, deploy them, and wait for results.
+   *
+   * @param filePath Paths to source files to deploy
+   */
+  deployWithPaths(paths: SourcePath | SourcePath[]): Promise<SourceDeployResult>;
+}
+
+export abstract class BaseApi implements DeployRetrieveClient {
+  protected connection: Connection;
+  protected registry: RegistryAccess;
+
+  constructor(connection: Connection, registry: RegistryAccess) {
+    this.connection = connection;
+    this.registry = registry;
+  }
+
+  /**
+   * @param options Specify `paths`, `output` and other optionals
+   */
+  abstract retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult>;
+
+  abstract retrieve(options: RetrieveOptions): Promise<ApiResult>;
+
+  abstract deploy(components: SourceComponent | SourceComponent[]): Promise<SourceDeployResult>;
+
+  abstract deployWithPaths(paths: SourcePath | SourcePath[]): Promise<SourceDeployResult>;
+}
+
+// ------------------------------------------------
+// Client options
+// ------------------------------------------------
 
 type CommonOptions = {
   /**
@@ -75,92 +271,3 @@ export type MetadataDeployOptions = WaitFlag & {
 export type ToolingDeployOptions = NamespaceFlag;
 
 export type DeployPathOptions = CommonOptions & CommonPathOptions;
-
-export type DeployResult = {
-  State: DeployStatusEnum;
-  ErrorMsg: string | null;
-  isDeleted: boolean;
-  DeployDetails: DeployDetails | null;
-  outboundFiles?: string[];
-  metadataFile: string;
-};
-
-export type DeployDetails = {
-  componentFailures: SourceResult[];
-  componentSuccesses: SourceResult[];
-};
-
-export type SourceResult = {
-  columnNumber?: number;
-  lineNumber?: number;
-  problem?: string;
-  problemType?: string;
-  fileName?: string;
-  fullName?: string;
-  componentType: string;
-  success?: boolean;
-  changed: boolean;
-  created: boolean;
-  deleted: boolean;
-};
-
-export enum DeployStatusEnum {
-  Completed = 'Completed',
-  Queued = 'Queued',
-  Error = 'Error',
-  Failed = 'Failed',
-}
-
-export interface DeployRetrieveClient {
-  /**
-   * Retrieve metadata components and wait for the result.
-   *
-   * @param options Specify `components`, `output` and other optionals
-   */
-  retrieve(options: RetrieveOptions): Promise<ApiResult>;
-  /**
-   * Infer metadata components from source paths, retrieve them, and wait for the result.
-   *
-   * @param options Specify `paths`, `output` and other optionals
-   */
-  retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult>;
-  /**
-   * Deploy metadata components and wait for result.
-   *
-   * @param filePath Paths to source files to deploy
-   */
-  deploy(
-    components: SourceComponent | SourceComponent[]
-  ): Promise<SourceDeployResult | DeployResult>;
-  /**
-   * Infer metadata components from source path, deploy them, and wait for results.
-   *
-   * @param filePath Paths to source files to deploy
-   */
-  deployWithPaths(paths: SourcePath | SourcePath[]): Promise<SourceDeployResult | DeployResult>;
-}
-
-export abstract class BaseApi implements DeployRetrieveClient {
-  protected connection: Connection;
-  protected registry: RegistryAccess;
-
-  constructor(connection: Connection, registry: RegistryAccess) {
-    this.connection = connection;
-    this.registry = registry;
-  }
-
-  /**
-   * @param options Specify `paths`, `output` and other optionals
-   */
-  abstract retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult>;
-
-  abstract retrieve(options: RetrieveOptions): Promise<ApiResult>;
-
-  abstract deploy(
-    components: SourceComponent | SourceComponent[]
-  ): Promise<SourceDeployResult | DeployResult>;
-
-  abstract deployWithPaths(
-    paths: SourcePath | SourcePath[]
-  ): Promise<SourceDeployResult | DeployResult>;
-}

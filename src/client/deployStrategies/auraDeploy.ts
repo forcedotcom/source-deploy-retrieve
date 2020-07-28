@@ -7,30 +7,38 @@
 import { readFileSync } from 'fs';
 import { AuraDefinition } from '../../utils/deploy';
 import { extName, baseName } from '../../utils';
-import { DeployResult, SourceResult, SourcePath } from '../../types';
+import {
+  SourcePath,
+  ComponentStatus,
+  ComponentDeployment,
+  ToolingDeployStatus,
+  SourceDeployResult,
+} from '../../types';
 import { deployTypes } from '../toolingApi';
 import { BaseDeploy } from './baseDeploy';
 import { AURA_TYPES } from './constants';
 import { SourceComponent } from '../../metadata-registry';
+import { DiagnosticUtil } from '../diagnosticUtil';
 
 export class AuraDeploy extends BaseDeploy {
-  public async deploy(component: SourceComponent, namespace: string): Promise<DeployResult> {
+  public async deploy(component: SourceComponent, namespace: string): Promise<SourceDeployResult> {
     this.component = component;
     this.namespace = namespace;
-    let auraDefinitions;
-    try {
-      auraDefinitions = await this.buildDefList();
-      const promiseArray = auraDefinitions.map(async (def) => this.upsert(def));
-      const results = await Promise.all(promiseArray);
-      return this.formatBundleOutput(results);
-    } catch (e) {
-      const filePath =
-        Array.isArray(auraDefinitions) && auraDefinitions.length > 0
-          ? auraDefinitions[0].FilePath
-          : component.fullName;
-      const failures = [this.parseAuraError(e.message, filePath)];
-      return this.formatBundleOutput(failures, true);
+    const auraDefinitions = await this.buildDefList();
+    const componentDeployment = await this.upsert(auraDefinitions);
+    let status = ToolingDeployStatus.Completed;
+    if (componentDeployment.diagnostics.length > 0) {
+      status =
+        componentDeployment.status !== ComponentStatus.Failed
+          ? ToolingDeployStatus.CompletedPartial
+          : ToolingDeployStatus.Failed;
     }
+    return {
+      id: undefined,
+      status,
+      success: status === ToolingDeployStatus.Completed,
+      components: [componentDeployment],
+    };
   }
 
   public async buildDefList(): Promise<AuraDefinition[]> {
@@ -74,28 +82,55 @@ export class AuraDeploy extends BaseDeploy {
     return auraDefinitions;
   }
 
-  public async upsert(auraDef: AuraDefinition): Promise<SourceResult> {
+  public async upsert(auraDefinitions: AuraDefinition[]): Promise<ComponentDeployment> {
     const type = this.component.type.name;
+    const diagnosticUtil = new DiagnosticUtil('tooling');
+    const deployment: ComponentDeployment = {
+      status: ComponentStatus.Unchanged,
+      component: this.component,
+      diagnostics: [],
+    };
 
-    if (auraDef.Id) {
-      const formattedDef = {
-        Source: auraDef.Source,
-        Id: auraDef.Id,
-      };
+    let partialSuccess = false;
+    let allCreate = true;
+    const deployPromises = auraDefinitions.map(
+      async (definition): Promise<void> => {
+        try {
+          if (definition.Id) {
+            const formattedDef = {
+              Source: definition.Source,
+              Id: definition.Id,
+            };
+            await this.connection.tooling.update(deployTypes.get(type), formattedDef);
+            allCreate = false;
+            partialSuccess = true;
+          } else {
+            const formattedDef = {
+              AuraDefinitionBundleId: definition.AuraDefinitionBundleId,
+              DefType: definition.DefType,
+              Format: definition.Format,
+              Source: definition.Source,
+            };
+            await this.toolingCreate(deployTypes.get(type), formattedDef);
+            partialSuccess = true;
+          }
+        } catch (e) {
+          diagnosticUtil.setDiagnostic(deployment, e.message);
+        }
+      }
+    );
 
-      await this.connection.tooling.update(deployTypes.get(type), formattedDef);
-      return this.createDeployResult(auraDef.FilePath, true, false);
+    await Promise.all(deployPromises);
+
+    if (deployment.diagnostics.length > 0) {
+      deployment.status = partialSuccess ? ComponentStatus.Changed : ComponentStatus.Failed;
+    } else if (allCreate) {
+      deployment.status = ComponentStatus.Created;
     } else {
-      const formattedDef = {
-        AuraDefinitionBundleId: auraDef.AuraDefinitionBundleId,
-        DefType: auraDef.DefType,
-        Format: auraDef.Format,
-        Source: auraDef.Source,
-      };
-
-      await this.toolingCreate(deployTypes.get(type), formattedDef);
-      return this.createDeployResult(auraDef.FilePath, true, true);
+      deployment.status = ComponentStatus.Changed;
     }
+
+    return deployment;
   }
 
   private getAuraFormat(suffix: string): string {
@@ -151,51 +186,5 @@ export class AuraDeploy extends BaseDeploy {
       `Select AuraDefinitionBundleId, Id, Format, Source, DefType from AuraDefinition where AuraDefinitionBundle.DeveloperName = '${this.component.fullName}' and AuraDefinitionBundle.NamespacePrefix = '${this.namespace}'`
     );
     return auraDefResult.records as AuraDefinition[];
-  }
-
-  private parseAuraError(error: string, defaultPath: string): SourceResult {
-    try {
-      const errLocation = error.slice(error.lastIndexOf('[') + 1, error.lastIndexOf(']'));
-
-      const errorParts = error.split(' ');
-      const fileType = errorParts.find((part) => {
-        part = part.toLowerCase();
-        return part.includes('controller') || part.includes('renderer') || part.includes('helper');
-      });
-      let fileName: string;
-      if (fileType) {
-        const sources = this.component.walkContent();
-        fileName = sources.find((s) => s.toLowerCase().includes(fileType.toLowerCase()));
-      } else {
-        fileName = defaultPath;
-      }
-
-      const errObj = {
-        ...(errLocation ? { lineNumber: Number(errLocation.split(',')[0]) } : {}),
-        ...(errLocation ? { columnNumber: Number(errLocation.split(',')[1]) } : {}),
-        problem: error,
-        fileName: fileName,
-        fullName: this.getFormattedPaths(fileName)[1],
-        componentType: this.component.type.name,
-        success: false,
-        changed: false,
-        created: false,
-        deleted: false,
-      } as SourceResult;
-      return errObj;
-    } catch (e) {
-      // log error with parsing error message
-      const errObj = {
-        problem: error,
-        fileName: defaultPath,
-        fullName: this.getFormattedPaths(defaultPath)[1],
-        componentType: this.component.type.name,
-        success: false,
-        changed: false,
-        created: false,
-        deleted: false,
-      } as SourceResult;
-      return errObj;
-    }
   }
 }

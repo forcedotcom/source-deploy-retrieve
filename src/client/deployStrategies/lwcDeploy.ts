@@ -12,7 +12,7 @@ import {
   ToolingDeployStatus,
   ComponentDeployment,
   ComponentStatus,
-} from '../../types/newClient';
+} from '../../types';
 import { LightningComponentResource } from '../../utils/deploy';
 import { readFileSync } from 'fs';
 import { extName } from '../../utils';
@@ -90,6 +90,8 @@ export class LwcDeploy extends BaseDeploy {
     const diagnosticUtil = new DiagnosticUtil('tooling');
 
     let partialSuccess = false;
+    let allCreate = true;
+    // first resource needs to be created first, so force sync
     for (const resource of lightningResources) {
       try {
         if (resource.Id) {
@@ -98,7 +100,7 @@ export class LwcDeploy extends BaseDeploy {
             Id: resource.Id,
           };
           await this.connection.tooling.update(deployTypes.get(type), formattedDef);
-          deployment.status = ComponentStatus.Changed;
+          allCreate = false;
           partialSuccess = true;
         } else {
           const formattedDef = {
@@ -108,7 +110,6 @@ export class LwcDeploy extends BaseDeploy {
             FilePath: this.getFormattedPaths(resource.FilePath)[0],
           };
           await this.toolingCreate(deployTypes.get(type), formattedDef);
-          deployment.status = ComponentStatus.Created;
         }
       } catch (e) {
         diagnosticUtil.setDiagnostic(deployment, e.message);
@@ -117,6 +118,10 @@ export class LwcDeploy extends BaseDeploy {
 
     if (deployment.diagnostics.length > 0) {
       deployment.status = partialSuccess ? ComponentStatus.Changed : ComponentStatus.Failed;
+    } else if (allCreate) {
+      deployment.status = ComponentStatus.Created;
+    } else {
+      deployment.status = ComponentStatus.Changed;
     }
 
     return deployment;

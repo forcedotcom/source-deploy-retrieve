@@ -14,13 +14,13 @@ import { MetadataConverter } from '../../src/convert';
 import { fail } from 'assert';
 import * as path from 'path';
 import { nls } from '../../src/i18n';
-import { MetadataApiDeployOptions } from '../../src/types/client';
 import {
+  MetadataApiDeployOptions,
   DeployResult,
   ComponentStatus,
   DeployStatus,
   SourceDeployResult,
-} from '../../src/types/newClient';
+} from '../../src/types';
 
 describe('Metadata Api', () => {
   let mockConnection: Connection;

@@ -4,20 +4,25 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { BaseApi, RetrieveOptions, RetrievePathOptions, ApiResult, SourcePath } from '../types';
+import {
+  BaseApi,
+  RetrieveOptions,
+  RetrievePathOptions,
+  ApiResult,
+  SourcePath,
+  SourceDeployResult,
+  ComponentDeployment,
+  ComponentStatus,
+  DeployResult,
+  RecordId,
+  DeployStatus,
+  DeployMessage,
+} from '../types';
 import { MetadataConverter } from '../convert';
 import { DeployError } from '../errors';
 import { MetadataDeployOptions } from '../types/client';
 import { SourceComponent } from '../metadata-registry';
-import {
-  SourceDeployResult,
-  Id,
-  DeployResult,
-  ComponentDeployment,
-  DeployMessage,
-  ComponentStatus,
-  DeployStatus,
-} from '../types/newClient';
+
 import { DiagnosticUtil } from './diagnosticUtil';
 
 export const DEFAULT_API_OPTIONS = {
@@ -69,7 +74,10 @@ export class MetadataApi extends BaseApi {
     return this.deploy(components, options);
   }
 
-  private async metadataDeployID(zipBuffer: Buffer, options?: MetadataDeployOptions): Promise<Id> {
+  private async metadataDeployID(
+    zipBuffer: Buffer,
+    options?: MetadataDeployOptions
+  ): Promise<RecordId> {
     if (!options || !options.apiOptions) {
       options = {
         apiOptions: DEFAULT_API_OPTIONS,

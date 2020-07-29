@@ -4,9 +4,10 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { DeployMessage, ComponentDeployment, ComponentDiagnostic, SourcePath } from '../types';
+import { SourcePath } from '../types';
 import { registryData } from '../metadata-registry';
 import { basename } from 'path';
+import { ComponentDeployment, DeployMessage, ComponentDiagnostic } from './types';
 
 export class DiagnosticUtil {
   private api: 'metadata' | 'tooling';

@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
 import { readFileSync } from 'fs';
 import { deployTypes } from '../toolingApi';
 import { DeployError } from '../../errors';
@@ -16,7 +15,7 @@ import {
   RecordId,
   ComponentDeployment,
   ComponentStatus,
-} from '../../types';
+} from '../types';
 import { baseName } from '../../utils/path';
 import { ToolingCreateResult } from '../../utils/deploy';
 import { CONTAINER_ASYNC_REQUEST, METADATA_CONTAINER } from './constants';

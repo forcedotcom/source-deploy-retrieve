@@ -14,7 +14,7 @@ import * as stream from 'stream';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ToolingApi } from '../../src/client';
 import { RegistryAccess, SourceComponent, registryData } from '../../src/metadata-registry';
-import { ApiResult, QueryResult } from '../../src/types';
+import { ApiResult, QueryResult } from '../../src/client/types';
 import { nls } from '../../src/i18n';
 import { fail } from 'assert';
 

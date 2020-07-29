@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
 import { Connection } from '@salesforce/core';
 import { readFileSync } from 'fs';
 import { sep } from 'path';
@@ -12,7 +11,7 @@ import { DeployError } from '../../errors';
 import { ToolingCreateResult } from '../../utils/deploy';
 import { TOOLING_PATH_SEP } from './constants';
 import { SourceComponent } from '../../metadata-registry';
-import { SourceDeployResult } from '../../types';
+import { SourceDeployResult } from '../types';
 
 // tslint:disable-next-line:no-var-requires
 const DOMParser = require('xmldom-sfdx-encoding').DOMParser;

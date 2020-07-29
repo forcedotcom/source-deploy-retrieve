@@ -8,7 +8,7 @@
 import * as path from 'path';
 import { expect } from 'chai';
 import { buildQuery, queryToFileMap } from '../../src/client/retrieveUtil';
-import { QueryResult } from '../../src/types';
+import { QueryResult } from '../../src/client/types';
 import {
   auraComponent,
   auraApplication,

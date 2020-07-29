@@ -10,9 +10,8 @@ import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { RegistryAccess, registryData, SourceComponent } from '../../src/metadata-registry';
-import { ToolingApi } from '../../src/client';
+import { ComponentStatus, ToolingApi, ToolingDeployStatus } from '../../src/client';
 import { ContainerDeploy } from '../../src/client/deployStrategies';
-import { ToolingDeployStatus, ComponentStatus } from '../../src/types';
 import { nls } from '../../src/i18n';
 
 const $$ = testSetup();

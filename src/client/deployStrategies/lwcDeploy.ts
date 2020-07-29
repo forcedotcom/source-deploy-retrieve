@@ -12,7 +12,7 @@ import {
   ToolingDeployStatus,
   ComponentDeployment,
   ComponentStatus,
-} from '../../types';
+} from '../types';
 import { LightningComponentResource } from '../../utils/deploy';
 import { readFileSync } from 'fs';
 import { extName } from '../../utils';

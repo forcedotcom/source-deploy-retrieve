@@ -1,3 +1,9 @@
+# 1.0.17 - July 28, 2020
+
+## Added
+
+- Metadata and tooling clients return new `SourceDeployResult` type for deploys. ([PR #85](https://github.com/forcedotcom/source-deploy-retrieve/pull/85), [PR #87](https://github.com/forcedotcom/source-deploy-retrieve/pull/87), [PR #88](https://github.com/forcedotcom/source-deploy-retrieve/pull/88), [PR #89](https://github.com/forcedotcom/source-deploy-retrieve/pull/89))
+
 # 1.0.16 - July 16, 2020
 
 ## Added

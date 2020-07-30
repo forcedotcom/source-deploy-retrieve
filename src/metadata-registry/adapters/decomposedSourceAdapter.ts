@@ -58,4 +58,8 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
     }
     return component;
   }
+
+  protected allowContentMetadataXml(): boolean {
+    return true;
+  }
 }

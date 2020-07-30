@@ -37,6 +37,7 @@ export const messages = {
   error_missing_adapter: "Missing adapter '%s' for metadata type '%s'",
   error_missing_transformer: "Missing transformer '%s' for metadata type '%s'",
   error_missing_metadata_xml: "%s: Metadata xml file missing for '%s'",
+  error_unsupported_content_metadata_xml: "%s: Unsupported content xml file for '%s'",
   error_missing_type_definition: "Missing metadata type definition in registry for id '%s'",
   error_no_metadata_xml_ignore: 'Metadata xml file %s is forceignored but is required for %s',
   error_no_source_ignore: '%s types require source to be present and %s is forceignored.',

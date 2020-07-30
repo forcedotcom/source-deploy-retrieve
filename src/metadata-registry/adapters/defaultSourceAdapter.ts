@@ -34,4 +34,8 @@ export class DefaultSourceAdapter extends BaseSourceAdapter {
   protected populate(component: SourceComponent): SourceComponent {
     return component;
   }
+
+  protected allowContentMetadataXml(): boolean {
+    return true;
+  }
 }

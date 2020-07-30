@@ -115,7 +115,7 @@ export class RegistryAccess {
       const fsPath = join(dir, file);
       if (this.tree.isDirectory(fsPath)) {
         dirQueue.push(fsPath);
-      } else if (parseMetadataXml(fsPath)) {
+      } else if (parseMetadataXml(fsPath) || this.parseAsContentMetadataXml(fsPath)) {
         const component = this.resolveComponent(fsPath);
         if (component) {
           components.push(component);
@@ -137,8 +137,20 @@ export class RegistryAccess {
     return components;
   }
 
+  /**
+   * Any file with a registered suffix is potentially a content metadata file.
+   *
+   * @param path File path of a potential content metadata file
+   */
+  private parseAsContentMetadataXml(path: SourcePath): boolean {
+    return this.registry.suffixes.hasOwnProperty(extName(path));
+  }
+
   private resolveComponent(fsPath: SourcePath): SourceComponent {
-    if (parseMetadataXml(fsPath) && this.forceIgnore.denies(fsPath)) {
+    if (
+      (parseMetadataXml(fsPath) || this.parseAsContentMetadataXml(fsPath)) &&
+      this.forceIgnore.denies(fsPath)
+    ) {
       // don't fetch the component if the metadata xml is denied
       return;
     }

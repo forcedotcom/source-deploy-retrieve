@@ -27,7 +27,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       if (!state.recompose[parentName]) {
         state.recompose[parentName] = {
           component: this.component.parent,
-          children: []
+          children: [],
         };
       }
       state.recompose[parentName].children.push(this.component);
@@ -80,9 +80,9 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       writeInfos: [
         {
           relativeDestination: xmlDest,
-          source
-        }
-      ]
+          source,
+        },
+      ],
     };
   }
 }

@@ -12,7 +12,7 @@ export type ConvertTransactionState = {
   recompose: {
     [fullName: string]: {
       /**
-       * Parent component children are rolled up into
+       * Parent component that children are rolled up into
        */
       component: SourceComponent;
       /**
@@ -23,6 +23,9 @@ export type ConvertTransactionState = {
   };
 };
 
+/**
+ * Manages a "global" state over the course of a single metadata conversion call.
+ */
 export class ConvertTransaction {
   public readonly state: ConvertTransactionState = { recompose: {} };
   private readonly finalizers = new Map<string, ConvertTransactionFinalizer>();
@@ -33,6 +36,10 @@ export class ConvertTransaction {
     }
   }
 
+  /**
+   * Call right before the end of a conversion pipeline to execute logic with
+   * the transaction state.
+   */
   public *executeFinalizers(): IterableIterator<WriterFormat | WriterFormat[]> {
     for (const finalizer of this.finalizers.values()) {
       yield finalizer.finalize(this.state);
@@ -40,6 +47,9 @@ export class ConvertTransaction {
   }
 }
 
+/**
+ * Logic to execute at the end of a convert transaction
+ */
 export interface ConvertTransactionFinalizer {
   finalize(state: ConvertTransactionState): WriterFormat | WriterFormat[];
 }

@@ -47,7 +47,7 @@ export class ComponentConverter extends Transform {
   constructor(targetFormat: SfdxFileFormat, registry: MetadataRegistry) {
     super({ objectMode: true });
     this.targetFormat = targetFormat;
-    this.transformerFactory = new MetadataTransformerFactory(registry);
+    this.transformerFactory = new MetadataTransformerFactory(registry, this.transaction);
   }
 
   public _transform(
@@ -58,7 +58,7 @@ export class ComponentConverter extends Transform {
     let err: Error;
     let result: WriterFormat;
     try {
-      const transformer = this.transformerFactory.getTransformer(chunk, this.transaction);
+      const transformer = this.transformerFactory.getTransformer(chunk);
       switch (this.targetFormat) {
         case 'metadata':
           result = transformer.toMetadataFormat();

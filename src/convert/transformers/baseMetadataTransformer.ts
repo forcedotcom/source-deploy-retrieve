@@ -12,7 +12,7 @@ export abstract class BaseMetadataTransformer implements MetadataTransformer {
   protected component: SourceComponent;
   protected convertTransaction: ConvertTransaction;
 
-  constructor(component: SourceComponent, convertTransaction: ConvertTransaction) {
+  constructor(component: SourceComponent, convertTransaction = new ConvertTransaction()) {
     this.component = component;
     this.convertTransaction = convertTransaction;
   }

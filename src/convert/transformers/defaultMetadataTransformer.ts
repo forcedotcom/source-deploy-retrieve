@@ -17,7 +17,7 @@ import { WriterFormat } from '../../types';
  * during the conversion process. It leaves the component's metadata xml and source
  * files as-is.
  */
-export class DefaultTransformer extends BaseMetadataTransformer {
+export class DefaultMetadataTransformer extends BaseMetadataTransformer {
   public toMetadataFormat(): WriterFormat {
     const result: WriterFormat = { component: this.component, writeInfos: [] };
     let xmlDest = this.component.getPackageRelativePath(this.component.xml);

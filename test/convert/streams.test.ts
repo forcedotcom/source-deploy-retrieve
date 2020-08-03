@@ -7,7 +7,6 @@
 import * as streams from '../../src/convert/streams';
 import { KATHY_COMPONENTS } from '../mock/registry/kathyConstants';
 import { expect } from 'chai';
-import { RegistryAccess } from '../../src/metadata-registry/registryAccess';
 import { createSandbox, SinonStub } from 'sinon';
 import { WriterFormat, MetadataTransformer } from '../../src/types';
 import { Readable, Writable } from 'stream';
@@ -17,6 +16,8 @@ import * as fs from 'fs';
 import { join } from 'path';
 import * as archiver from 'archiver';
 import { SourceComponent } from '../../src/metadata-registry';
+import { mockRegistry } from '../mock/registry';
+import { MetadataTransformerFactory } from '../../src/convert/transformers';
 
 const env = createSandbox();
 
@@ -57,16 +58,17 @@ describe('Streams', () => {
   describe('ComponentConverter', () => {
     const component = KATHY_COMPONENTS[0];
     const transformer = new TestTransformer(component);
-    let registryMock: RegistryAccess;
 
     beforeEach(() => {
-      registryMock = new RegistryAccess();
-      env.stub(registryMock, 'getTransformer').returns(transformer);
+      env
+        .stub(MetadataTransformerFactory.prototype, 'getTransformer')
+        .withArgs(component)
+        .returns(transformer);
     });
 
     it('should throw error for unexpected conversion format', () => {
       // @ts-ignore constructor argument invalid
-      const converter = new streams.ComponentConverter('badformat', registryMock);
+      const converter = new streams.ComponentConverter('badformat', mockRegistry);
       converter._transform(component, '', (err: Error) => {
         const expectedError = new LibraryError('error_convert_invalid_format', 'badformat');
         expect(err.message).to.equal(expectedError.message);
@@ -75,7 +77,7 @@ describe('Streams', () => {
     });
 
     it('should transform to metadata format', () => {
-      const converter = new streams.ComponentConverter('metadata', registryMock);
+      const converter = new streams.ComponentConverter('metadata', mockRegistry);
 
       converter._transform(component, '', (err: Error, data: WriterFormat) => {
         expect(err).to.be.undefined;
@@ -84,7 +86,7 @@ describe('Streams', () => {
     });
 
     it('should transform to source format', () => {
-      const converter = new streams.ComponentConverter('source', registryMock);
+      const converter = new streams.ComponentConverter('source', mockRegistry);
 
       converter._transform(component, '', (err: Error, data: WriterFormat) => {
         expect(err).to.be.undefined;

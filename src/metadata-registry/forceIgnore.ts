@@ -9,7 +9,7 @@ import * as gitignore from 'gitignore-parser';
 import { sep, relative, join, dirname, basename } from 'path';
 import { readFileSync } from 'fs';
 import { FORCE_IGNORE_FILE } from '../utils/constants';
-import { SourcePath } from '../types';
+import { SourcePath } from '../common';
 import { searchUp } from '../utils/fileSystemHandler';
 
 export class ForceIgnore {

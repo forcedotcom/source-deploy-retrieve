@@ -6,7 +6,7 @@
  */
 import { join, basename, dirname } from 'path';
 import { mockRegistry } from '.';
-import { SourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src';
 
 // Mixed content with directory as content
 const type = mockRegistry.types.tarajihenson;

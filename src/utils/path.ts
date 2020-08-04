@@ -6,7 +6,7 @@
  */
 
 import { basename, dirname, extname } from 'path';
-import { SourcePath } from '../types';
+import { SourcePath } from '../common';
 
 /**
  * Get the file or directory name at the end of a path. Different from `path.basename`

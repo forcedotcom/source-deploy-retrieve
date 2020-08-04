@@ -7,7 +7,7 @@
 import { META_XML_SUFFIX } from '../../utils';
 import { BaseSourceAdapter } from './baseSourceAdapter';
 import { ExpectedSourceFilesError, UnexpectedForceIgnore } from '../../errors';
-import { SourcePath } from '../../types';
+import { SourcePath } from '../../common';
 import { extName } from '../../utils/path';
 import { SourceComponent } from '../sourceComponent';
 

@@ -26,9 +26,7 @@ export class ForceIgnore {
   constructor(forceIgnorePath = '') {
     try {
       // add the default ignore paths, and then parse the .forceignore file
-      this.parser = ignore()
-        .add(DEFAULT_IGNORE)
-        .add(readFileSync(forceIgnorePath, 'utf-8').toString());
+      this.parser = ignore().add(DEFAULT_IGNORE).add(readFileSync(forceIgnorePath, 'utf-8'));
       this.forceIgnoreDirectory = dirname(forceIgnorePath);
     } catch (e) {
       // TODO: log no force ignore

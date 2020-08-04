@@ -18,6 +18,12 @@ import * as archiver from 'archiver';
 import { SourceComponent } from '../../src/metadata-registry';
 import { mockRegistry } from '../mock/registry';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
+import { ConvertTransaction } from '../../src/convert/convertTransaction';
+import {
+  TestFinalizerNoWrites,
+  TestFinalizerMultipleFormatsNoWrites,
+  TestFinalizerNoResult,
+} from '../mock/convert/finalizers';
 
 const env = createSandbox();
 
@@ -91,6 +97,55 @@ describe('Streams', () => {
       converter._transform(component, '', (err: Error, data: WriterFormat) => {
         expect(err).to.be.undefined;
         expect(data).to.deep.equal(transformer.toSourceFormat());
+      });
+    });
+
+    describe('Transaction Finalizers', () => {
+      let converter: streams.ComponentConverter;
+      let transaction: ConvertTransaction;
+
+      beforeEach(() => {
+        transaction = new ConvertTransaction();
+        converter = new streams.ComponentConverter('metadata', mockRegistry, transaction);
+      });
+
+      it('should not push a result if finalize did not return one', () => {
+        const pushStub = env.stub(converter, 'push');
+        transaction.addFinalizer(TestFinalizerNoResult);
+
+        converter._flush((err) => expect(err).to.be.undefined);
+
+        expect(pushStub.notCalled).to.be.true;
+      });
+
+      it('should flush one result from a single transaction finalizer', () => {
+        const finalizer = new TestFinalizerNoWrites();
+        const pushStub = env.stub(converter, 'push');
+        transaction.addFinalizer(TestFinalizerNoWrites);
+
+        converter._flush((err) => expect(err).to.be.undefined);
+
+        expect(pushStub.calledOnce).to.be.true;
+        expect(pushStub.calledOnceWith(finalizer.finalize())).to.be.true;
+      });
+
+      it('should flush multiple results from a single transaction finalizer', () => {
+        const pushStub = env.stub(converter, 'push');
+        const results = new TestFinalizerMultipleFormatsNoWrites().finalize();
+        transaction.addFinalizer(TestFinalizerMultipleFormatsNoWrites);
+
+        converter._flush((err) => expect(err).to.be.undefined);
+
+        expect(pushStub.calledTwice).to.be.true;
+        expect(pushStub.getCall(0).calledWith(results[0])).to.be.true;
+        expect(pushStub.getCall(1).calledWith(results[1])).to.be.true;
+      });
+
+      it('should pass error to callback if a problem occurred', () => {
+        const expectedError = new Error('whoops');
+        env.stub(transaction, 'executeFinalizers').throws(expectedError);
+
+        converter._flush((err: Error) => expect(err).to.deep.equal(expectedError));
       });
     });
   });

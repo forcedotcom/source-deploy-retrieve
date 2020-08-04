@@ -6,4 +6,5 @@
  */
 describe('Metadata Transformers', () => {
   require('./defaultMetadataTransformer');
+  require('./decomposedMetadataTransformer');
 });

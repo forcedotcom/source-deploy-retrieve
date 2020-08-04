@@ -41,12 +41,17 @@ export class ComponentReader extends Readable {
 
 export class ComponentConverter extends Transform {
   private targetFormat: SfdxFileFormat;
-  private transaction = new ConvertTransaction();
+  private transaction: ConvertTransaction;
   private transformerFactory: MetadataTransformerFactory;
 
-  constructor(targetFormat: SfdxFileFormat, registry: MetadataRegistry) {
+  constructor(
+    targetFormat: SfdxFileFormat,
+    registry: MetadataRegistry,
+    transaction = new ConvertTransaction()
+  ) {
     super({ objectMode: true });
     this.targetFormat = targetFormat;
+    this.transaction = transaction;
     this.transformerFactory = new MetadataTransformerFactory(registry, this.transaction);
   }
 

@@ -6,7 +6,11 @@
  */
 
 import { regina } from '../../mock/registry';
+<<<<<<< HEAD
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
+=======
+import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/DecomposedMetadataTransformer';
+>>>>>>> more tests
 import {
   ConvertTransaction,
   RecompositionFinalizer,

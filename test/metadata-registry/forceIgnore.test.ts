@@ -53,7 +53,10 @@ describe('ForceIgnore', () => {
     let forceIgnore: ForceIgnore;
     const root = join('some', 'path');
 
-    beforeEach(() => (forceIgnore = new ForceIgnore()));
+    beforeEach(() => {
+      env.stub(fs, 'readFileSync').returns('');
+      forceIgnore = new ForceIgnore();
+    });
 
     it('Should ignore files starting with a dot', () => {
       const dotPath = join(root, '.xyz');

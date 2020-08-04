@@ -15,6 +15,7 @@ import * as fs from 'fs';
 import { join } from 'path';
 import { LibraryError } from '../../src/errors';
 import { nls } from '../../src/i18n';
+import { VirtualDirectory } from '../../src/types';
 
 describe('Tree Containers', () => {
   const readDirResults = ['a.q', 'a.x-meta.xml', 'b', 'b.x-meta.xml', 'c.z', 'c.x-meta.xml'];
@@ -31,6 +32,10 @@ describe('Tree Containers', () => {
 
       isDirectory(): boolean {
         return false;
+      }
+
+      readFile(): Promise<Buffer> {
+        return Promise.resolve(Buffer.from(''));
       }
     }
     const tree = new TestTreeContainer();
@@ -73,17 +78,30 @@ describe('Tree Containers', () => {
       expect(tree.readDirectory(path)).to.deep.equal(readDirResults);
       expect(readdirStub.calledOnce).to.be.true;
     });
+
+    it('should use expected Node API for readFile', async () => {
+      const readFileStub = env.stub(fs.promises, 'readFile');
+      // @ts-ignore wants Dirents but string[] works as well
+      readFileStub.withArgs(path).resolves(Buffer.from('test'));
+      const data = await tree.readFile(path);
+      expect(data.toString()).to.deep.equal('test');
+      expect(readFileStub.calledOnce).to.be.true;
+    });
   });
 
   describe('VirtualTreeContainer', () => {
-    const virtualFS = [
+    const virtualFS: VirtualDirectory[] = [
       {
         dirPath: '.',
-        children: ['test.txt', 'test2.txt', 'files'],
+        children: ['test.txt', 'test2.txt', 'files', 'logs'],
       },
       {
         dirPath: join('.', 'files'),
         children: ['test3.txt'],
+      },
+      {
+        dirPath: join('.', 'logs'),
+        children: [{ name: 'run.log', data: Buffer.from('successful') }],
       },
     ];
     const tree = new VirtualTreeContainer(virtualFS);
@@ -133,6 +151,28 @@ describe('Tree Containers', () => {
 
     it('should return directory entries for readDirectory', () => {
       expect(tree.readDirectory('.')).to.deep.equal(virtualFS[0].children);
+    });
+
+    describe('readFile', () => {
+      it('should return file data for given path', async () => {
+        const data = await tree.readFile(join('.', 'logs', 'run.log'));
+        expect(data.toString()).to.equal('successful');
+      });
+
+      it('should return empty string buffer if file initialize without data', async () => {
+        const data = await tree.readFile(join('.', 'test.txt'));
+        expect(data.toString()).to.equal('');
+      });
+
+      it('should throw error if path does not exist', async () => {
+        const path = 'dne';
+        try {
+          await tree.readFile(path);
+          assert.fail('should have thrown an error');
+        } catch (e) {
+          expect(e.message).to.deep.equal(nls.localize('error_path_not_found', path));
+        }
+      });
     });
   });
 });

@@ -8,7 +8,7 @@ import { SourcePath, VirtualDirectory, TreeContainer } from '../types';
 import { join, dirname, basename } from 'path';
 import { baseName } from '../utils';
 import { parseMetadataXml } from '../utils/registry';
-import { lstatSync, existsSync, readdirSync } from 'fs';
+import { lstatSync, existsSync, readdirSync, promises as fsPromises } from 'fs';
 import { LibraryError } from '../errors';
 
 /**
@@ -30,9 +30,10 @@ export abstract class BaseTreeContainer implements TreeContainer {
     }
   }
 
-  public abstract exists(path: SourcePath): boolean;
-  public abstract isDirectory(path: SourcePath): boolean;
-  public abstract readDirectory(path: SourcePath): string[];
+  public abstract exists(fsPath: SourcePath): boolean;
+  public abstract isDirectory(fsPath: SourcePath): boolean;
+  public abstract readDirectory(fsPath: SourcePath): string[];
+  public abstract readFile(fsPath: SourcePath): Promise<Buffer>;
 }
 
 export class NodeFSTreeContainer extends BaseTreeContainer {
@@ -47,10 +48,15 @@ export class NodeFSTreeContainer extends BaseTreeContainer {
   public readDirectory(fsPath: SourcePath): string[] {
     return readdirSync(fsPath);
   }
+
+  public readFile(fsPath: SourcePath): Promise<Buffer> {
+    return fsPromises.readFile(fsPath);
+  }
 }
 
 export class VirtualTreeContainer extends BaseTreeContainer {
   private tree = new Map<SourcePath, Set<SourcePath>>();
+  private fileContents = new Map<SourcePath, Buffer>();
 
   constructor(virtualFs: VirtualDirectory[]) {
     super();
@@ -74,12 +80,36 @@ export class VirtualTreeContainer extends BaseTreeContainer {
     return Array.from(this.tree.get(fsPath)).map((p) => basename(p));
   }
 
+  public readFile(fsPath: SourcePath): Promise<Buffer> {
+    if (this.exists(fsPath)) {
+      let data = this.fileContents.get(fsPath);
+      if (!data) {
+        data = Buffer.from('');
+        this.fileContents.set(fsPath, data);
+      }
+      return Promise.resolve(data);
+    }
+    throw new LibraryError('error_path_not_found', fsPath);
+  }
+
   private populate(virtualFs: VirtualDirectory[]): void {
     for (const dir of virtualFs) {
       const { dirPath, children } = dir;
       this.tree.set(dirPath, new Set());
       for (const child of children) {
-        this.tree.get(dirPath).add(join(dirPath, child));
+        let childPath: SourcePath;
+        let childData: Buffer;
+        if (typeof child === 'string') {
+          childPath = join(dirPath, child);
+        } else {
+          childPath = join(dirPath, child.name);
+          childData = child.data;
+        }
+
+        this.tree.get(dirPath).add(childPath);
+        if (childData) {
+          this.fileContents.set(childPath, childData);
+        }
       }
     }
   }

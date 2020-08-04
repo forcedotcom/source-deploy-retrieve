@@ -9,7 +9,7 @@ import { mockRegistry } from '../../mock/registry';
 import { expect } from 'chai';
 import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';
 import { MetadataTransformerFactory } from '../../../src/convert/transformers';
-import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/DecomposedMetadataTransformer';
+import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
 import { REGINA_COMPONENT } from '../../mock/registry/reginaConstants';
 import { ConvertTransaction } from '../../../src/convert/convertTransaction';
 

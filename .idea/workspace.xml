@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="ff195c07-d340-452b-9e66-547c0b6822ad" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1fQC4Hgn0Ih7jG2fATZItp87xIS" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="nodejs.mocha.mocha_node_package_dir" value="$PROJECT_DIR$/node_modules/mocha" />
+    <property name="nodejs_interpreter_path" value="$USER_HOME$/.nvm/versions/node/v12.18.1/bin/node" />
+    <property name="nodejs_package_manager_path" value="yarn" />
+    <property name="settings.editor.selected.configurable" value="settings.nodejs" />
+    <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/metadata-registry" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Mocha.ForceIgnore">
+    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="test" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="ForceIgnore" type="mocha-javascript-test-runner" temporary="true" nameIsGenerated="true">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <mocha-package>$PROJECT_DIR$/node_modules/mocha</mocha-package>
+      <working-directory>$PROJECT_DIR$</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <ui>bdd</ui>
+      <extra-mocha-options />
+      <test-kind>SUITE</test-kind>
+      <test-file>$PROJECT_DIR$/test/metadata-registry/forceIgnore.test.ts</test-file>
+      <test-names>
+        <name value="ForceIgnore" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="ForceIgnore.Defaults.Should ignore files ending in .dup" type="mocha-javascript-test-runner" temporary="true" nameIsGenerated="true">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <mocha-package>$PROJECT_DIR$/node_modules/mocha</mocha-package>
+      <working-directory>$PROJECT_DIR$</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <ui>bdd</ui>
+      <extra-mocha-options />
+      <test-kind>TEST</test-kind>
+      <test-file>$PROJECT_DIR$/test/metadata-registry/forceIgnore.test.ts</test-file>
+      <test-names>
+        <name value="ForceIgnore" />
+        <name value="Defaults" />
+        <name value="Should ignore files ending in .dup" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="ForceIgnore.Defaults.Should ignore files starting with a dot" type="mocha-javascript-test-runner" temporary="true" nameIsGenerated="true">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <mocha-package>$PROJECT_DIR$/node_modules/mocha</mocha-package>
+      <working-directory>$PROJECT_DIR$</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <ui>bdd</ui>
+      <extra-mocha-options />
+      <test-kind>TEST</test-kind>
+      <test-file>$PROJECT_DIR$/test/metadata-registry/forceIgnore.test.ts</test-file>
+      <test-names>
+        <name value="ForceIgnore" />
+        <name value="Defaults" />
+        <name value="Should ignore files starting with a dot" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.test" />
+        <item itemvalue="Mocha.ForceIgnore" />
+        <item itemvalue="npm.build" />
+        <item itemvalue="Mocha.ForceIgnore.Defaults.Should ignore files ending in .dup" />
+        <item itemvalue="Mocha.ForceIgnore.Defaults.Should ignore files starting with a dot" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ff195c07-d340-452b-9e66-547c0b6822ad" name="Default Changelist" comment="" />
+      <created>1596140736347</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1596140736347</updated>
+      <workItem from="1596140737618" duration="1132000" />
+      <workItem from="1596467275573" duration="12011000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="525" y="-911" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1596490976644">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state x="525" y="-911" key="#com.intellij.fileTypes.FileTypeChooser/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596490976644" />
+    <state width="2518" height="424" key="GridCell.Tab.0.bottom" timestamp="1596553080278">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state width="2518" height="424" key="GridCell.Tab.0.bottom/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596553080278" />
+    <state width="2518" height="424" key="GridCell.Tab.0.center" timestamp="1596553080277">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state width="2518" height="424" key="GridCell.Tab.0.center/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596553080277" />
+    <state width="2518" height="424" key="GridCell.Tab.0.left" timestamp="1596553080276">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state width="2518" height="424" key="GridCell.Tab.0.left/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596553080276" />
+    <state width="2518" height="424" key="GridCell.Tab.0.right" timestamp="1596553080278">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state width="2518" height="424" key="GridCell.Tab.0.right/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596553080278" />
+    <state width="2518" height="419" key="GridCell.Tab.1.bottom" timestamp="1596552378406">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state width="2518" height="419" key="GridCell.Tab.1.bottom/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596552378406" />
+    <state width="2518" height="419" key="GridCell.Tab.1.center" timestamp="1596552378405">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state width="2518" height="419" key="GridCell.Tab.1.center/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596552378405" />
+    <state width="2518" height="419" key="GridCell.Tab.1.left" timestamp="1596552378405">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state width="2518" height="419" key="GridCell.Tab.1.left/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596552378405" />
+    <state width="2518" height="419" key="GridCell.Tab.1.right" timestamp="1596552378406">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state width="2518" height="419" key="GridCell.Tab.1.right/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596552378406" />
+    <state width="2518" height="419" key="GridCell.Tab.2.bottom" timestamp="1596552378409">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state width="2518" height="419" key="GridCell.Tab.2.bottom/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596552378409" />
+    <state width="2518" height="520" key="GridCell.Tab.2.bottom/-453.-1440.2560.1440/0.23.1680.1027@-453.-1440.2560.1440" timestamp="1596491687364" />
+    <state width="2518" height="419" key="GridCell.Tab.2.center" timestamp="1596552378407">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state width="2518" height="419" key="GridCell.Tab.2.center/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596552378407" />
+    <state width="2518" height="520" key="GridCell.Tab.2.center/-453.-1440.2560.1440/0.23.1680.1027@-453.-1440.2560.1440" timestamp="1596491687363" />
+    <state width="2518" height="419" key="GridCell.Tab.2.left" timestamp="1596552378407">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state width="2518" height="419" key="GridCell.Tab.2.left/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596552378407" />
+    <state width="2518" height="520" key="GridCell.Tab.2.left/-453.-1440.2560.1440/0.23.1680.1027@-453.-1440.2560.1440" timestamp="1596491687362" />
+    <state width="2518" height="419" key="GridCell.Tab.2.right" timestamp="1596552378408">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state width="2518" height="419" key="GridCell.Tab.2.right/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596552378408" />
+    <state width="2518" height="520" key="GridCell.Tab.2.right/-453.-1440.2560.1440/0.23.1680.1027@-453.-1440.2560.1440" timestamp="1596491687364" />
+    <state width="2518" height="419" key="GridCell.Tab.3.bottom" timestamp="1596552378413">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state width="2518" height="419" key="GridCell.Tab.3.bottom/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596552378413" />
+    <state width="2518" height="419" key="GridCell.Tab.3.center" timestamp="1596552378412">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state width="2518" height="419" key="GridCell.Tab.3.center/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596552378412" />
+    <state width="2518" height="419" key="GridCell.Tab.3.left" timestamp="1596552378409">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state width="2518" height="419" key="GridCell.Tab.3.left/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596552378409" />
+    <state width="2518" height="419" key="GridCell.Tab.3.right" timestamp="1596552378412">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state width="2518" height="419" key="GridCell.Tab.3.right/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596552378412" />
+    <state x="572" y="-1011" key="RollbackChangesDialog" timestamp="1596552148220">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state x="572" y="-1011" key="RollbackChangesDialog/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596552148220" />
+    <state x="336" y="-1081" key="SettingsEditor" timestamp="1596483772176">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state x="336" y="-1081" key="SettingsEditor/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596483772176" />
+    <state x="528" y="-965" width="598" height="490" key="find.popup" timestamp="1596470778685">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state x="528" y="-965" width="598" height="490" key="find.popup/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596470778685" />
+    <state x="492" y="-1109" width="670" height="676" key="search.everywhere.popup" timestamp="1596483562847">
+      <screen x="-453" y="-1440" width="2560" height="1440" />
+    </state>
+    <state x="492" y="-1109" width="670" height="676" key="search.everywhere.popup/-453.-1440.2560.1440/0.0.1680.1050@-453.-1440.2560.1440" timestamp="1596483562847" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/metadata-registry/forceIgnore.ts</url>
+          <line>70</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/metadata-registry/forceIgnore.ts</url>
+          <line>26</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/metadata-registry/forceIgnore.ts</url>
+          <line>30</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

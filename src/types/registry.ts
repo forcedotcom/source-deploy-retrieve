@@ -55,9 +55,14 @@ export type MetadataXml = {
   path: SourcePath;
 };
 
+export type VirtualFile = {
+  name: string;
+  data?: Buffer;
+};
+
 export type VirtualDirectory = {
   dirPath: SourcePath;
-  children: string[];
+  children: (VirtualFile | string)[];
 };
 
 /**
@@ -80,4 +85,5 @@ export interface TreeContainer {
   exists(path: SourcePath): boolean;
   readDirectory(path: SourcePath): string[];
   find(fileType: 'content' | 'metadata', fullName: string, dir: SourcePath): SourcePath | undefined;
+  readFile(fsPath: SourcePath): Promise<Buffer>;
 }

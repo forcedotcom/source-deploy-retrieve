@@ -10,7 +10,7 @@ import { registryData, VirtualTreeContainer } from '../../src/metadata-registry'
 import { join } from 'path';
 import { expect } from 'chai';
 import { ComponentDeployment, ComponentStatus, DeployMessage } from '../../src/client/types';
-import { TreeContainer } from '../../src/types/registry';
+import { TreeContainer } from '../../src';
 
 function createDeployment(props: ComponentProperties, tree?: TreeContainer): ComponentDeployment {
   return {

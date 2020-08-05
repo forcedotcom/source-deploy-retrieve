@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { MetadataRegistry, SourceAdapter, TreeContainer } from '../../types';
+import { MetadataRegistry, SourceAdapter, TreeContainer } from '../types';
 import { BundleSourceAdapter } from './bundleSourceAdapter';
 import { DecomposedSourceAdapter } from './decomposedSourceAdapter';
 import { MatchingContentSourceAdapter } from './matchingContentSourceAdapter';

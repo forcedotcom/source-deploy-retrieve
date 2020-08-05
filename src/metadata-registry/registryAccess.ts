@@ -5,10 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, join, sep } from 'path';
-import { NodeFSTreeContainer, registryData } from '.';
+import { MetadataRegistry, TreeContainer } from './types';
 import { MetadataTransformerFactory } from '../convert/transformers';
 import { TypeInferenceError } from '../errors';
-import { MetadataRegistry, MetadataTransformer, TreeContainer } from '../types';
+import { MetadataTransformer } from '../types';
 import { extName, parentName } from '../utils/path';
 import { deepFreeze, parseMetadataXml } from '../utils/registry';
 import { MixedContentSourceAdapter } from './adapters/mixedContentSourceAdapter';
@@ -16,6 +16,8 @@ import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
 import { MetadataType, SourcePath } from '../common';
+import { NodeFSTreeContainer } from './treeContainers';
+import { registryData } from '.';
 
 /**
  * Resolver for metadata type and component objects.

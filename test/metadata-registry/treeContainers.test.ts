@@ -15,7 +15,7 @@ import * as fs from 'fs';
 import { join } from 'path';
 import { LibraryError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { VirtualDirectory } from '../../src/types';
+import { VirtualDirectory } from '../../src';
 
 describe('Tree Containers', () => {
   const readDirResults = ['a.q', 'a.x-meta.xml', 'b', 'b.x-meta.xml', 'c.z', 'c.x-meta.xml'];

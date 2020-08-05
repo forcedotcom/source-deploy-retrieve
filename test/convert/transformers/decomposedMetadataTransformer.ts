@@ -11,21 +11,29 @@ import {
   ConvertTransaction,
   RecompositionFinalizer,
 } from '../../../src/convert/convertTransaction';
-import { expect } from 'chai';
-import { spy } from 'sinon';
+import { expect, assert } from 'chai';
+import { createSandbox } from 'sinon';
+import * as fs from 'fs';
+import { XML_DECL, XML_NS } from '../../../src/utils/constants';
+import { Readable } from 'stream';
+import { join } from 'path';
+import { LibraryError } from '../../../src/errors';
+import { nls } from '../../../src/i18n';
+
+const env = createSandbox();
 
 describe('DecomposedMetadataTransformer', () => {
   const component = regina.REGINA_COMPONENT;
 
+  afterEach(() => env.restore());
+
   it('should register RecompositionFinalizer', () => {
     const transaction = new ConvertTransaction();
-    const addFinalizerSpy = spy(transaction, 'addFinalizer');
+    const addFinalizerSpy = env.spy(transaction, 'addFinalizer');
 
     new DecomposedMetadataTransformer(component, transaction);
-    const finalizerRegistered = addFinalizerSpy.calledWith(RecompositionFinalizer);
-    addFinalizerSpy.restore();
 
-    expect(finalizerRegistered).to.be.true;
+    expect(addFinalizerSpy.calledWith(RecompositionFinalizer)).to.be.true;
   });
 
   describe('toMetadataFormat', () => {
@@ -47,6 +55,44 @@ describe('DecomposedMetadataTransformer', () => {
       });
     });
 
-    // it('should fully recompose metadata when a parent component is given', () => {});
+    it('should fully recompose metadata when a parent component is given', () => {
+      const transformer = new DecomposedMetadataTransformer(component, new ConvertTransaction());
+      const children = component.getChildren();
+      const readStub = env.stub(fs, 'readFileSync');
+      readStub.withArgs(children[0].xml).returns('<Y><test>child1</test></Y>');
+      readStub.withArgs(children[1].xml).returns('<X><test>child2</test></X>');
+      readStub
+        .withArgs(component.xml)
+        .returns(`${XML_DECL}<ReginaKing xmlns="${XML_NS}"><foo>bar</foo></ReginaKing>\n`);
+
+      const result = transformer.toMetadataFormat();
+
+      const expectedStr = `${XML_DECL}<ReginaKing xmlns="${XML_NS}">\n  <foo>bar</foo>\n  <ys>\n    <test>child1</test>\n  </ys>\n  <xs>\n    <test>child2</test>\n  </xs>\n</ReginaKing>\n`;
+      const source = new Readable();
+      source.push(expectedStr);
+      source.push(null);
+
+      expect(result).to.deep.equal({
+        component,
+        writeInfos: [
+          {
+            relativeDestination: join('reginas', 'a.regina'),
+            source,
+          },
+        ],
+      });
+    });
+
+    describe('toSourceFormat', () => {
+      it('should throw a not implemented error', () => {
+        const transformer = new DecomposedMetadataTransformer(component, new ConvertTransaction());
+
+        assert.throws(
+          () => transformer.toSourceFormat(),
+          LibraryError,
+          nls.localize('error_convert_not_implemented', ['source', component.type.name])
+        );
+      });
+    });
   });
 });

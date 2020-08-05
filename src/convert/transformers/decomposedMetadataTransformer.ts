@@ -13,6 +13,7 @@ import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { RecompositionFinalizer, ConvertTransaction } from '../convertTransaction';
 import { SourceComponent } from '../../metadata-registry';
 import { XML_NS, XML_NS_KEY, XML_DECL } from '../../utils/constants';
+import { LibraryError } from '../../errors';
 
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   constructor(component: SourceComponent, convertTransaction: ConvertTransaction) {
@@ -44,7 +45,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   }
 
   public toSourceFormat(): WriterFormat {
-    throw new Error('Method not implemented.');
+    throw new LibraryError('error_convert_not_implemented', ['source', this.component.type.name]);
   }
 
   public static recompose(children: SourceComponent[], baseXmlObj: any = {}): any {

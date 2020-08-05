@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { Connection } from '@salesforce/core';
-import { SourcePath } from '../types/common';
+import { SourcePath } from '../common/types';
 import { RegistryAccess, SourceComponent } from '../metadata-registry';
 
 // ------------------------------------------------

@@ -5,8 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { SourcePath, MetadataXml } from '../types';
+import { MetadataXml } from '../types';
 import { basename } from 'path';
+import { SourcePath } from '../common';
 
 /**
  * Returns the `MetadataXml` info from a given file path. If the path is not a

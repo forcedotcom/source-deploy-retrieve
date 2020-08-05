@@ -6,7 +6,7 @@
  */
 import { mockRegistry } from '.';
 import { join } from 'path';
-import { SourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src';
 
 // Bundle content
 const type = mockRegistry.types.simonpegg;

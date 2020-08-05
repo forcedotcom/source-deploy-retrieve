@@ -6,7 +6,7 @@
  */
 import { getDeployStrategy } from './deployStrategies';
 import { SourceClientError } from '../errors';
-import { SourcePath } from '../types';
+import { SourcePath } from '../common';
 import { nls } from '../i18n';
 import { buildQuery, queryToFileMap } from './retrieveUtil';
 import { createFiles } from '../utils';

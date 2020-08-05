@@ -22,7 +22,7 @@ import { MetadataConverter } from '../convert';
 import { DeployError } from '../errors';
 import { SourceComponent } from '../metadata-registry';
 import { DiagnosticUtil } from './diagnosticUtil';
-import { SourcePath } from '../types';
+import { SourcePath } from '../common';
 
 export const DEFAULT_API_OPTIONS = {
   rollbackOnError: true,

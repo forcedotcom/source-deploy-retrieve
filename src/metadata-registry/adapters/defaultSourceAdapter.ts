@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { BaseSourceAdapter } from './baseSourceAdapter';
-import { SourcePath } from '../../types';
+import { SourcePath } from '../../common';
 import { SourceComponent } from '../sourceComponent';
 
 /**

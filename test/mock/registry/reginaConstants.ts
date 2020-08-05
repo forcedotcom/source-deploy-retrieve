@@ -7,7 +7,7 @@
 import { join } from 'path';
 import { mockRegistry } from '.';
 import { baseName } from '../../../src/utils';
-import { SourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src';
 
 // Constants for a decomposed type
 const type = mockRegistry.types.reginaking;

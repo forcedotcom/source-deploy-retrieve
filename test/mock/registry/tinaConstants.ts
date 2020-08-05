@@ -6,7 +6,7 @@
  */
 import { join } from 'path';
 import { mockRegistry } from '.';
-import { SourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src';
 
 // Mixed content type in folders
 const type = mockRegistry.types.tinafey;

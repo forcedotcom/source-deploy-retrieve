@@ -9,7 +9,7 @@ import ignore, { Ignore } from 'ignore/index';
 import { relative, join, dirname, basename } from 'path';
 import { readFileSync } from 'fs';
 import { FORCE_IGNORE_FILE } from '../utils/constants';
-import { SourcePath } from '../types';
+import { SourcePath } from '../common';
 import { searchUp } from '../utils/fileSystemHandler';
 
 const DEFAULT_IGNORE: string[] = [

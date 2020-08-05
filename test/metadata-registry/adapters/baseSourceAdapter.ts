@@ -9,7 +9,7 @@ import { mockRegistry } from '../../mock/registry';
 import { DefaultSourceAdapter } from '../../../src/metadata-registry/adapters/defaultSourceAdapter';
 import { expect, assert } from 'chai';
 import { BaseSourceAdapter } from '../../../src/metadata-registry/adapters/baseSourceAdapter';
-import { SourcePath } from '../../../src/types';
+import { SourcePath } from '../../../src/common';
 import { RegistryError, UnexpectedForceIgnore } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { RegistryTestUtil } from '../registryTestUtil';

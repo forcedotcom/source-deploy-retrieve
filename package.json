@@ -32,7 +32,6 @@
     "archiver": "4.0.1",
     "ignore": "^5.1.8",
     "fast-xml-parser": "^3.17.4",
-    "gitignore-parser": "^0.0.2",
     "xmldom-sfdx-encoding": "^0.1.29"
   },
   "devDependencies": {

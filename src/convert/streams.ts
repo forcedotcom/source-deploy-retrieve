@@ -80,6 +80,10 @@ export class ComponentConverter extends Transform {
     callback(err, result);
   }
 
+  /**
+   * Called at the end when all components have passed through the pipeline. Finalizers
+   * take care of any additional work to be done at this stage e.g. recomposing child components.
+   */
   public _flush(callback: (err: Error, data?: WriterFormat) => void): void {
     let err: Error;
     try {

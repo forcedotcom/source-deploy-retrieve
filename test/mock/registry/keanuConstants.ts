@@ -6,7 +6,7 @@
  */
 import { join } from 'path';
 import { mockRegistry } from '.';
-import { SourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src';
 
 // Constants for a matching content file type
 const type = mockRegistry.types.keanureeves;

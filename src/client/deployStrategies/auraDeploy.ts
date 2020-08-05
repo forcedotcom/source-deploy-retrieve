@@ -7,7 +7,7 @@
 import { readFileSync } from 'fs';
 import { AuraDefinition } from '../../utils/deploy';
 import { extName, baseName } from '../../utils';
-import { SourcePath } from '../../types';
+import { SourcePath } from '../../common';
 import {
   ComponentStatus,
   ComponentDeployment,

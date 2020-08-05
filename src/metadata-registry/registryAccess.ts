@@ -8,19 +8,14 @@ import { basename, dirname, join, sep } from 'path';
 import { NodeFSTreeContainer, registryData } from '.';
 import { MetadataTransformerFactory } from '../convert/transformers';
 import { TypeInferenceError } from '../errors';
-import {
-  MetadataRegistry,
-  MetadataTransformer,
-  MetadataType,
-  SourcePath,
-  TreeContainer,
-} from '../types';
+import { MetadataRegistry, MetadataTransformer, TreeContainer } from '../types';
 import { extName, parentName } from '../utils/path';
 import { deepFreeze, parseMetadataXml } from '../utils/registry';
 import { MixedContentSourceAdapter } from './adapters/mixedContentSourceAdapter';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
+import { MetadataType, SourcePath } from '../common';
 
 /**
  * Resolver for metadata type and component objects.

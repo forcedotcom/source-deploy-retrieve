@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { TreeContainer, VirtualDirectory } from '../types';
+import { TreeContainer, VirtualDirectory } from './types';
 import { join, dirname } from 'path';
 import { ForceIgnore } from './forceIgnore';
 import { parseMetadataXml } from '../utils/registry';

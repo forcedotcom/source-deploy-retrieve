@@ -7,13 +7,13 @@
 import { readFileSync } from 'fs';
 import { AuraDefinition } from '../../utils/deploy';
 import { extName, baseName } from '../../utils';
+import { SourcePath } from '../../common';
 import {
-  SourcePath,
   ComponentStatus,
   ComponentDeployment,
   ToolingDeployStatus,
   SourceDeployResult,
-} from '../../types';
+} from '../types';
 import { deployTypes } from '../toolingApi';
 import { BaseDeploy } from './baseDeploy';
 import { AURA_TYPES } from './constants';

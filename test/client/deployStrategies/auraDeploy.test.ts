@@ -13,7 +13,7 @@ import { join } from 'path';
 import { RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { nls } from '../../../src/i18n';
-import { ToolingDeployStatus, ComponentStatus } from '../../../src/types';
+import { ToolingDeployStatus, ComponentStatus } from '../../../src/client';
 import { auraContents, auraComponent, auraFiles, testAuraList } from './auraDeployMocks';
 import { AuraDeploy } from '../../../src/client/deployStrategies';
 import { ToolingCreateResult, AuraDefinition } from '../../../src/utils/deploy';

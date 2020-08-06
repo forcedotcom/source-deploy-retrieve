@@ -4,23 +4,22 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
 import { getDeployStrategy } from './deployStrategies';
 import { SourceClientError } from '../errors';
-import {
-  BaseApi,
-  RetrievePathOptions,
-  ApiResult,
-  RetrieveOptions,
-  QueryResult,
-  SourcePath,
-  ToolingDeployOptions,
-  SourceDeployResult,
-} from '../types';
+import { SourcePath } from '../common';
 import { nls } from '../i18n';
 import { buildQuery, queryToFileMap } from './retrieveUtil';
 import { createFiles } from '../utils';
 import { SourceComponent } from '../metadata-registry';
+import {
+  BaseApi,
+  RetrieveOptions,
+  RetrievePathOptions,
+  ApiResult,
+  ToolingDeployOptions,
+  SourceDeployResult,
+  QueryResult,
+} from './types';
 
 const retrieveTypes = new Set([
   'ApexClass',

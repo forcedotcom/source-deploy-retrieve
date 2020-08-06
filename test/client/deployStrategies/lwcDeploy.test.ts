@@ -20,7 +20,7 @@ import {
   registryData,
   VirtualTreeContainer,
 } from '../../../src/metadata-registry';
-import { ToolingDeployStatus, ComponentStatus } from '../../../src/types';
+import { ToolingDeployStatus, ComponentStatus } from '../../../src/client';
 
 const $$ = testSetup();
 

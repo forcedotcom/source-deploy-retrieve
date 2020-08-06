@@ -9,7 +9,6 @@ import {
   RetrieveOptions,
   RetrievePathOptions,
   ApiResult,
-  SourcePath,
   SourceDeployResult,
   ComponentDeployment,
   ComponentStatus,
@@ -17,13 +16,13 @@ import {
   RecordId,
   DeployStatus,
   DeployMessage,
-} from '../types';
+  MetadataDeployOptions,
+} from './types';
 import { MetadataConverter } from '../convert';
 import { DeployError } from '../errors';
-import { MetadataDeployOptions } from '../types/client';
 import { SourceComponent } from '../metadata-registry';
-
 import { DiagnosticUtil } from './diagnosticUtil';
+import { SourcePath } from '../common';
 
 export const DEFAULT_API_OPTIONS = {
   rollbackOnError: true,

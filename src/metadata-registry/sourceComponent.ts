@@ -4,18 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import {
-  MetadataType,
-  SourcePath,
-  TreeContainer,
-  VirtualDirectory,
-  MetadataComponent,
-} from '../types';
+import { TreeContainer, VirtualDirectory } from './types';
 import { join, dirname } from 'path';
 import { ForceIgnore } from './forceIgnore';
 import { parseMetadataXml } from '../utils/registry';
 import { baseName } from '../utils';
 import { NodeFSTreeContainer, VirtualTreeContainer } from './treeContainers';
+import { MetadataType, SourcePath, MetadataComponent } from '../common';
 
 export type ComponentProperties = {
   name: string;

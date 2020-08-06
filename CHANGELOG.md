@@ -1,3 +1,13 @@
+# 1.0.18 - August 6, 2020
+
+## Added
+
+- Add readFile to TreeContainer ([PR #96](https://github.com/forcedotcom/source-deploy-retrieve/pull/96))
+
+## Fixed
+
+- Replaced module `gitignore-parser` for parsing forceignore files with `ignore` ([PR #98](https://github.com/forcedotcom/source-deploy-retrieve/pull/98))
+
 # 1.0.17 - July 28, 2020
 
 ## Added

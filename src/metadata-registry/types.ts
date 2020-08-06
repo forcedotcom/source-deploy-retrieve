@@ -6,7 +6,7 @@
  */
 
 import { MetadataType, SourcePath } from '../common/types';
-import { SourceComponent } from '../metadata-registry';
+import { SourceComponent } from '.';
 
 /**
  * Metadata type definitions

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { MetadataXml } from '../types';
+import { MetadataXml } from '../metadata-registry';
 import { basename } from 'path';
 import { SourcePath } from '../common';
 

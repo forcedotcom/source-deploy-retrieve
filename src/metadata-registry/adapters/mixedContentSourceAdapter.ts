@@ -9,7 +9,7 @@ import { dirname, basename, sep } from 'path';
 import { ExpectedSourceFilesError } from '../../errors';
 import { baseName } from '../../utils/path';
 import { SourcePath, MetadataType } from '../../common';
-import { TreeContainer } from '../../types';
+import { TreeContainer } from '../types';
 import { SourceComponent } from '../sourceComponent';
 
 /**

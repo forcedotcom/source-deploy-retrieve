@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { RegistryError } from '../../errors';
-import { MetadataTransformer } from '../../types';
+import { MetadataTransformer } from '../types';
 import { DefaultTransformer } from './default';
 import { SourceComponent } from '../../metadata-registry/sourceComponent';
 import { MetadataRegistry } from '../../metadata-registry';

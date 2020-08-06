@@ -11,7 +11,7 @@ import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
 import { LibraryError } from '../errors';
 import { RegistryAccess, SourceComponent } from '../metadata-registry';
-import { SfdxFileFormat, WriteInfo, WriterFormat } from '../types';
+import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { SourcePath } from '../common';
 

@@ -3,7 +3,7 @@
   "version": "1.0.17",
   "gusBuild": "49.1.0",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
-  "main": "lib/index.js",
+  "main": "lib/src/index.js",
   "author": "Salesforce",
   "license": "BSD-3-Clause",
   "homepage": "https://github.com/forcedotcom/source-deploy-retrieve#readme",
@@ -58,7 +58,6 @@
     "shx": "^0.3.2",
     "sinon": "^7.3.1",
     "source-map-support": "^0.5.16",
-    "ts-node": "^8.7.0",
     "typescript": "3.7.5"
   },
   "scripts": {
@@ -80,23 +79,5 @@
     "./{src,test}/**/*.{ts,js}": [
       "eslint -c .eslintrc.json --fix"
     ]
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text",
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "report-dir": "./test-results/coverage",
-    "temp-dir": "./test-results/coverage/.nyc_output"
   }
 }

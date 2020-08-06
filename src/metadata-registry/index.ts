@@ -10,6 +10,15 @@ export { RegistryAccess } from './registryAccess';
 export { ManifestGenerator } from './manifestGenerator';
 export { BaseTreeContainer, NodeFSTreeContainer, VirtualTreeContainer } from './treeContainers';
 export { SourceComponent } from './sourceComponent';
+export {
+  MetadataRegistry,
+  MetadataXml,
+  SourceAdapter,
+  TreeContainer,
+  VirtualDirectory,
+  TypeIndex,
+  SuffixIndex,
+} from './types';
 
 /**
  * Direct access to the JSON registry data. Useful for autocompletions.

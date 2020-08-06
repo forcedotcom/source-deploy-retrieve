@@ -24,6 +24,8 @@ export {
   BaseTreeContainer,
   VirtualTreeContainer,
   SourceComponent,
+  TreeContainer,
+  VirtualDirectory,
 } from './metadata-registry';
-export { ConvertOutputConfig, ConvertResult, TreeContainer, VirtualDirectory } from './types';
+export { ConvertOutputConfig, ConvertResult } from './types';
 export { MetadataComponent } from './common';

@@ -78,6 +78,13 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   }
 
   /**
+   * Control whether combined (metadata and content) metadata files are allowed for an adapter.
+   */
+  public allowContentMetadataXml(): boolean {
+    return false;
+  }
+
+  /**
    * Determine the related root metadata xml when the path given to `getComponent` isn't one.
    *
    * @param trigger Path that `getComponent` was called with
@@ -120,13 +127,6 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       return this.parseAsContentMetadataXml(path);
     }
     return isRootMetadataXml ? metaXml : undefined;
-  }
-
-  /**
-   * Control whether combined (metadata and content) metadata files are allowed for an adapter.
-   */
-  protected allowContentMetadataXml(): boolean {
-    return false;
   }
 
   /**

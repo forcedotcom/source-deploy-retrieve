@@ -95,7 +95,7 @@ export class RegistryAccess {
       }
     }
 
-    const component = this.resolveComponent(pathForFetch);
+    const component = this.resolveComponent(pathForFetch, true);
     return component ? [component] : [];
   }
 
@@ -116,7 +116,7 @@ export class RegistryAccess {
       if (this.tree.isDirectory(fsPath)) {
         dirQueue.push(fsPath);
       } else if (parseMetadataXml(fsPath) || this.parseAsContentMetadataXml(fsPath)) {
-        const component = this.resolveComponent(fsPath);
+        const component = this.resolveComponent(fsPath, false);
         if (component) {
           components.push(component);
           // don't traverse further if not in a root type directory. performance optimization
@@ -146,7 +146,7 @@ export class RegistryAccess {
     return this.registry.suffixes.hasOwnProperty(extName(path));
   }
 
-  private resolveComponent(fsPath: SourcePath): SourceComponent {
+  private resolveComponent(fsPath: SourcePath, isResolvingSource: boolean): SourceComponent {
     if (
       (parseMetadataXml(fsPath) || this.parseAsContentMetadataXml(fsPath)) &&
       this.forceIgnore.denies(fsPath)
@@ -157,7 +157,14 @@ export class RegistryAccess {
     const type = this.resolveType(fsPath);
     if (type) {
       const adapter = this.sourceAdapterFactory.getAdapter(type, this.forceIgnore);
-      return adapter.getComponent(fsPath);
+      // short circuit the component resolution unless this is a resolve for a
+      // source path or allowed content-only path, otherwise the adapter
+      // knows how to handle it
+      const shouldResolve =
+        isResolvingSource ||
+        !this.parseAsContentMetadataXml(fsPath) ||
+        adapter.allowContentMetadataXml();
+      return shouldResolve ? adapter.getComponent(fsPath) : undefined;
     }
     throw new TypeInferenceError('error_could_not_infer_type', fsPath);
   }

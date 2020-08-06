@@ -33,6 +33,10 @@ import { SourceComponent } from '../sourceComponent';
 export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
   protected ownFolder = true;
 
+  public allowContentMetadataXml(): boolean {
+    return true;
+  }
+
   /**
    * If the trigger turns out to be part of a child component, `populate` will build
    * the child component, set its parent property to the one created by the
@@ -57,9 +61,5 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
       }
     }
     return component;
-  }
-
-  protected allowContentMetadataXml(): boolean {
-    return true;
   }
 }

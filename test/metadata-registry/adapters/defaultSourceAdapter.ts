@@ -23,4 +23,17 @@ describe('DefaultSourceAdapter', () => {
       })
     );
   });
+
+  it('should return a SourceComponent when given a content-only metadata file', () => {
+    const path = join('path', 'to', 'keanus', 'My_Test.keanu');
+    const type = mockRegistry.types.keanureeves;
+    const adapter = new DefaultSourceAdapter(type, mockRegistry);
+    expect(adapter.getComponent(path)).to.deep.equal(
+      new SourceComponent({
+        name: 'My_Test',
+        type,
+        xml: path
+      })
+    );
+  });
 });

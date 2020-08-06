@@ -22,3 +22,8 @@ export const KEANU_COMPONENT = new SourceComponent({
   xml: KEANU_XML_PATHS[0],
   content: KEANU_SOURCE_PATHS[0]
 });
+export const KEANU_CONTENT_COMPONENT = new SourceComponent({
+  name: 'a',
+  type,
+  xml: KEANU_SOURCE_PATHS[0]
+});

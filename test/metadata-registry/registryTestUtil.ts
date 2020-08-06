@@ -31,6 +31,7 @@ export class RegistryTestUtil {
     config: {
       type: MetadataType;
       componentMappings: { path: SourcePath; component: SourceComponent }[];
+      allowContent?: boolean;
     }[]
   ): void {
     const getAdapterStub = this.env.stub(SourceAdapterFactory.prototype, 'getAdapter');
@@ -40,7 +41,8 @@ export class RegistryTestUtil {
         componentMap[c.path] = c.component;
       }
       getAdapterStub.withArgs(entry.type).returns({
-        getComponent: (path: SourcePath) => componentMap[path]
+        getComponent: (path: SourcePath) => componentMap[path],
+        allowContentMetadataXml: () => entry.allowContent
       });
     }
   }

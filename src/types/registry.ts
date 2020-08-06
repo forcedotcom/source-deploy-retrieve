@@ -70,6 +70,11 @@ export interface SourceAdapter {
    * @param fsPath Path to resolve
    */
   getComponent(fsPath: SourcePath): SourceComponent;
+
+  /**
+   * Whether the adapter allows content-only metadata definitions.
+   */
+  allowContentMetadataXml(): boolean;
 }
 
 /**

@@ -6,7 +6,7 @@
 
 ## Fixed
 
-- Replaced `gitignore-parser` library with `ignore` ([PR #98](https://github.com/forcedotcom/source-deploy-retrieve/pull/98))
+- Replaced module `gitignore-parser` for parsing forceignore files with `ignore` ([PR #98](https://github.com/forcedotcom/source-deploy-retrieve/pull/98))
 
 # 1.0.17 - July 28, 2020
 

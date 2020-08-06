@@ -28,8 +28,6 @@ to unlink the library:
 
 `yarn test` runs the suite and outputs code coverage as a text summary
 
-> When running tests, code changes don't need to be built with `yarn build` first since the test suite uses ts-node as its runtime environment. Otherwise, you should run `yarn build` before manually testing changes.
-
 ### Testing with the NPM artifact
 
 The library can also be installed to another local project as a regular NPM module. This is useful for manually testing the package that will be deployed to NPM. Use this instead of the linking process that's described under Development to QA changes before they are published:

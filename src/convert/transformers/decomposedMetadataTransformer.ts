@@ -14,6 +14,13 @@ import { RecompositionFinalizer, ConvertTransaction } from '../convertTransactio
 import { SourceComponent } from '../../metadata-registry';
 import { XML_NS, XML_NS_KEY, XML_DECL } from '../../utils/constants';
 import { LibraryError } from '../../errors';
+import { JsonMap, AnyJson, JsonArray } from '@salesforce/ts-types';
+
+interface RecomposedXmlJson extends JsonMap {
+  [parentFullName: string]: {
+    [groupNode: string]: AnyJson;
+  };
+}
 
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   constructor(component: SourceComponent, convertTransaction: ConvertTransaction) {
@@ -48,7 +55,10 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     throw new LibraryError('error_convert_not_implemented', ['source', this.component.type.name]);
   }
 
-  public static recompose(children: SourceComponent[], baseXmlObj: any = {}): any {
+  public static recompose(
+    children: SourceComponent[],
+    baseXmlObj: RecomposedXmlJson = {}
+  ): JsonMap {
     for (const child of children) {
       const { directoryName: groupNode } = child.type;
       const { name: parentName } = child.parent.type;
@@ -64,12 +74,12 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       if (!baseXmlObj[parentName][groupNode]) {
         baseXmlObj[parentName][groupNode] = [];
       }
-      baseXmlObj[parentName][groupNode].push(childContents);
+      (baseXmlObj[parentName][groupNode] as JsonArray).push(childContents);
     }
     return baseXmlObj;
   }
 
-  public static createWriterFormat(trigger: SourceComponent, xmlJson: any): WriterFormat {
+  public static createWriterFormat(trigger: SourceComponent, xmlJson: JsonMap): WriterFormat {
     const js2Xml = new j2xParser({ format: true, indentBy: '  ', ignoreAttributes: false });
     const source = new Readable();
     source.push(XML_DECL.concat(js2Xml.parse(xmlJson)));

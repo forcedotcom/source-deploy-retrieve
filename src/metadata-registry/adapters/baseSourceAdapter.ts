@@ -32,6 +32,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    * folder, including its root metadata xml file.
    */
   protected ownFolder = false;
+  protected metadataWithContent = true;
 
   constructor(
     type: MetadataType,
@@ -78,10 +79,10 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   }
 
   /**
-   * Control whether combined (metadata and content) metadata files are allowed for an adapter.
+   * Control whether metadata and content metadata files are allowed for an adapter.
    */
-  public allowContentMetadataXml(): boolean {
-    return false;
+  public allowMetadataWithContent(): boolean {
+    return this.metadataWithContent;
   }
 
   /**
@@ -123,7 +124,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       } else {
         isRootMetadataXml = true;
       }
-    } else if (this.allowContentMetadataXml()) {
+    } else if (!this.allowMetadataWithContent()) {
       return this.parseAsContentMetadataXml(path);
     }
     return isRootMetadataXml ? metaXml : undefined;

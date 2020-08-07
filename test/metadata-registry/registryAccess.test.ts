@@ -123,7 +123,7 @@ describe('RegistryAccess', () => {
           {
             type: mockRegistry.types.keanureeves,
             componentMappings: [{ path, component: keanu.KEANU_CONTENT_COMPONENT }],
-            allowContent: true
+            allowContent: false
           }
         ]);
         expect(access.getComponentsFromPath(path)).to.deep.equal([keanu.KEANU_CONTENT_COMPONENT]);
@@ -145,7 +145,7 @@ describe('RegistryAccess', () => {
           {
             type: mockRegistry.types.seanconnerys,
             componentMappings,
-            allowContent: true
+            allowContent: false
           }
         ]);
         expect(access.getComponentsFromPath(path)).to.deep.equal(sean.SEAN_COMPONENTS);

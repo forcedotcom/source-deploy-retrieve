@@ -42,7 +42,7 @@ export class RegistryTestUtil {
       }
       getAdapterStub.withArgs(entry.type).returns({
         getComponent: (path: SourcePath) => componentMap[path],
-        allowContentMetadataXml: () => entry.allowContent
+        allowMetadataWithContent: () => entry.allowContent
       });
     }
   }

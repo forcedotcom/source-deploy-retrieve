@@ -23,9 +23,7 @@ import { SourceComponent } from '../sourceComponent';
  *```
  */
 export class DefaultSourceAdapter extends BaseSourceAdapter {
-  public allowContentMetadataXml(): boolean {
-    return true;
-  }
+  protected metadataWithContent = false;
 
   /* istanbul ignore next */
   protected getRootMetadataXmlPath(trigger: string): SourcePath {

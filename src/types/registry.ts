@@ -74,7 +74,7 @@ export interface SourceAdapter {
   /**
    * Whether the adapter allows content-only metadata definitions.
    */
-  allowContentMetadataXml(): boolean;
+  allowMetadataWithContent(): boolean;
 }
 
 /**

@@ -10,7 +10,7 @@ import * as registryData from '../data/registry.json';
 import { RegistryError, UnexpectedForceIgnore } from '../../errors';
 import { parentName } from '../../utils/path';
 import { ForceIgnore } from '../forceIgnore';
-import { dirname, basename } from 'path';
+import { dirname, basename, sep } from 'path';
 import { NodeFSTreeContainer } from '../treeContainers';
 import { SourceComponent } from '../sourceComponent';
 import { MetadataType, SourcePath } from '../../common';
@@ -26,6 +26,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    * folder, including its root metadata xml file.
    */
   protected ownFolder = false;
+  protected metadataWithContent = true;
 
   constructor(
     type: MetadataType,
@@ -47,6 +48,9 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
         throw new RegistryError('error_missing_metadata_xml', [path, this.type.name]);
       }
       rootMetadata = parseMetadataXml(rootMetadataPath);
+      if (!rootMetadata) {
+        throw new RegistryError('error_unsupported_content_metadata_xml', [path, this.type.name]);
+      }
     }
     if (this.forceIgnore.denies(rootMetadata.path)) {
       throw new UnexpectedForceIgnore('error_no_metadata_xml_ignore', [rootMetadata.path, path]);
@@ -66,6 +70,13 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     );
 
     return this.populate(component, path);
+  }
+
+  /**
+   * Control whether metadata and content metadata files are allowed for an adapter.
+   */
+  public allowMetadataWithContent(): boolean {
+    return this.metadataWithContent;
   }
 
   /**
@@ -107,7 +118,34 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       } else {
         isRootMetadataXml = true;
       }
+    } else if (!this.allowMetadataWithContent()) {
+      return this.parseAsContentMetadataXml(path);
     }
     return isRootMetadataXml ? metaXml : undefined;
+  }
+
+  /**
+   * If the path given to `getComponent` serves as the sole definition (metadata and content)
+   * for a component, parse the name and return it. This allows matching files in metadata
+   * format such as:
+   *
+   *   .../tabs/MyTab.tab
+   *
+   * @param path File path of a metadata component
+   */
+  private parseAsContentMetadataXml(path: SourcePath): MetadataXml {
+    const parentPath = dirname(path);
+    const parts = parentPath.split(sep);
+    const typeFolderIndex = parts.lastIndexOf(this.type.directoryName);
+    const allowedIndex = this.type.inFolder ? parts.length - 2 : parts.length - 1;
+
+    if (typeFolderIndex !== allowedIndex) {
+      return undefined;
+    }
+
+    const match = basename(path).match(/(.+)\.(.+)/);
+    if (match && this.type.suffix === match[2]) {
+      return { fullName: match[1], suffix: match[2], path: path };
+    }
   }
 }

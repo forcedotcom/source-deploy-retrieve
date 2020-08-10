@@ -23,6 +23,8 @@ import { SourceComponent } from '../sourceComponent';
  *```
  */
 export class DefaultSourceAdapter extends BaseSourceAdapter {
+  protected metadataWithContent = false;
+
   /* istanbul ignore next */
   protected getRootMetadataXmlPath(trigger: string): SourcePath {
     // istanbul ignored for code coverage since this return won't ever be hit,

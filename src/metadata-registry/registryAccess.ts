@@ -92,7 +92,7 @@ export class RegistryAccess {
       }
     }
 
-    const component = this.resolveComponent(pathForFetch);
+    const component = this.resolveComponent(pathForFetch, true);
     return component ? [component] : [];
   }
 
@@ -112,8 +112,8 @@ export class RegistryAccess {
       const fsPath = join(dir, file);
       if (this.tree.isDirectory(fsPath)) {
         dirQueue.push(fsPath);
-      } else if (parseMetadataXml(fsPath)) {
-        const component = this.resolveComponent(fsPath);
+      } else if (parseMetadataXml(fsPath) || this.parseAsContentMetadataXml(fsPath)) {
+        const component = this.resolveComponent(fsPath, false);
         if (component) {
           components.push(component);
           // don't traverse further if not in a root type directory. performance optimization
@@ -134,15 +134,34 @@ export class RegistryAccess {
     return components;
   }
 
-  private resolveComponent(fsPath: SourcePath): SourceComponent {
-    if (parseMetadataXml(fsPath) && this.forceIgnore.denies(fsPath)) {
+  /**
+   * Any file with a registered suffix is potentially a content metadata file.
+   *
+   * @param path File path of a potential content metadata file
+   */
+  private parseAsContentMetadataXml(path: SourcePath): boolean {
+    return this.registry.suffixes.hasOwnProperty(extName(path));
+  }
+
+  private resolveComponent(fsPath: SourcePath, isResolvingSource: boolean): SourceComponent {
+    if (
+      (parseMetadataXml(fsPath) || this.parseAsContentMetadataXml(fsPath)) &&
+      this.forceIgnore.denies(fsPath)
+    ) {
       // don't fetch the component if the metadata xml is denied
       return;
     }
     const type = this.resolveType(fsPath);
     if (type) {
       const adapter = this.sourceAdapterFactory.getAdapter(type, this.forceIgnore);
-      return adapter.getComponent(fsPath);
+      // short circuit the component resolution unless this is a resolve for a
+      // source path or allowed content-only path, otherwise the adapter
+      // knows how to handle it
+      const shouldResolve =
+        isResolvingSource ||
+        !this.parseAsContentMetadataXml(fsPath) ||
+        !adapter.allowMetadataWithContent();
+      return shouldResolve ? adapter.getComponent(fsPath) : undefined;
     }
     throw new TypeInferenceError('error_could_not_infer_type', fsPath);
   }

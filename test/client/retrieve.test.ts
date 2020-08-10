@@ -14,7 +14,7 @@ import * as stream from 'stream';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ToolingApi } from '../../src/client';
 import { RegistryAccess, SourceComponent, registryData } from '../../src/metadata-registry';
-import { ApiResult, QueryResult } from '../../src/types';
+import { ApiResult, QueryResult } from '../../src/client/types';
 import { nls } from '../../src/i18n';
 import { fail } from 'assert';
 
@@ -36,12 +36,12 @@ describe('Tooling Retrieve', () => {
         name: 'ApexClass',
         directoryName: 'classes',
         inFolder: false,
-        suffix: 'cls'
+        suffix: 'cls',
       },
       name: 'myTestClass',
       xml: path.join('file', 'path', 'myTestClass.cls-meta.xml'),
-      content: path.join('file', 'path', 'myTestClass.cls')
-    })
+      content: path.join('file', 'path', 'myTestClass.cls'),
+    }),
   ];
   const apexClassQueryResult: QueryResult = {
     done: true,
@@ -53,23 +53,23 @@ describe('Tooling Retrieve', () => {
         Id: '01pxxx000000034',
         Name: 'myTestClass',
         NamespacePrefix: null,
-        Status: 'Active'
-      }
+        Status: 'Active',
+      },
     ],
     size: 1,
     totalSize: 1,
-    queryLocator: null
+    queryLocator: null,
   };
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
     $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig()
+      contents: await testData.getConfig(),
     });
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
-        username: testData.username
-      })
+        username: testData.username,
+      }),
     });
     sandboxStub.stub(fs, 'existsSync').returns(true);
     // @ts-ignore
@@ -106,7 +106,7 @@ describe('Tooling Retrieve', () => {
     const toolingAPI = new ToolingApi(mockConnection, registryAccess);
     const retrieveOpts = {
       paths: [path.join('file', 'path', 'myTestClass.cls')],
-      output: path.join('file', 'path')
+      output: path.join('file', 'path'),
     };
     const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
 
@@ -137,7 +137,7 @@ describe('Tooling Retrieve', () => {
     const retrieveOpts = {
       paths: [path.join('file', 'path', 'myTestClass.cls')],
       namespace: 'tstr',
-      output: path.join('file', 'path')
+      output: path.join('file', 'path'),
     };
     const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
 
@@ -169,7 +169,7 @@ describe('Tooling Retrieve', () => {
     const toolingAPI = new ToolingApi(mockConnection, registryAccess);
     const retrieveOpts = {
       paths: [path.join('file', 'path', 'myTestClass.cls')],
-      output: path.join('file', 'path')
+      output: path.join('file', 'path'),
     };
     const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
     expect(retrieveResults).to.be.a('object');
@@ -207,7 +207,7 @@ describe('Tooling Retrieve', () => {
 
     const toolingAPI = new ToolingApi(mockConnection, registryAccess);
     const retrieveResults: ApiResult = await toolingAPI.retrieve({
-      components: mdComponents
+      components: mdComponents,
     });
     expect(retrieveResults).to.be.a('object');
     expect(retrieveResults.success).to.equal(true);
@@ -239,7 +239,7 @@ describe('Tooling Retrieve', () => {
     const toolingAPI = new ToolingApi(mockConnection, registryAccess);
     const retrieveOpts = {
       paths: [path.join('file', 'path', 'myTestClass.cls')],
-      output: path.join('file', 'path')
+      output: path.join('file', 'path'),
     };
     const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
     expect(retrieveResults).to.be.a('object');
@@ -257,7 +257,7 @@ describe('Tooling Retrieve', () => {
         type: registryData.types.apexclass,
         name: 'anotherClass',
         xml: path.join('file', 'path', 'anotherClass.cls-meta.xml'),
-        content: path.join('file', 'path', 'anotherClass.cls')
+        content: path.join('file', 'path', 'anotherClass.cls'),
       })
     );
 
@@ -265,7 +265,7 @@ describe('Tooling Retrieve', () => {
 
     try {
       await toolingAPI.retrieve({
-        components: mdComponents
+        components: mdComponents,
       });
       fail('Retrieve should have thrown an error');
     } catch (e) {
@@ -282,19 +282,19 @@ describe('Tooling Retrieve', () => {
           name: 'FancyType',
           directoryName: 'fancy',
           inFolder: false,
-          suffix: 'b'
+          suffix: 'b',
         },
         name: 'anotherOne',
         xml: path.join('file', 'path', 'anotherOne.b-meta.xml'),
-        content: path.join('file', 'path', 'anotherOne.b')
-      })
+        content: path.join('file', 'path', 'anotherOne.b'),
+      }),
     ];
 
     const toolingAPI = new ToolingApi(mockConnection, registryAccess);
 
     try {
       await toolingAPI.retrieve({
-        components: unsupportedComponent
+        components: unsupportedComponent,
       });
       fail('Retrieve should have thrown an error');
     } catch (e) {

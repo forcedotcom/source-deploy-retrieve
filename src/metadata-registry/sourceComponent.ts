@@ -4,20 +4,15 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import {
-  MetadataType,
-  SourcePath,
-  TreeContainer,
-  VirtualDirectory,
-  MetadataComponent
-} from '../types';
+import { TreeContainer, VirtualDirectory } from './types';
 import { join, dirname } from 'path';
 import { ForceIgnore } from './forceIgnore';
 import { parseMetadataXml } from '../utils/registry';
 import { baseName } from '../utils';
 import { NodeFSTreeContainer, VirtualTreeContainer } from './treeContainers';
+import { MetadataType, SourcePath, MetadataComponent } from '../common';
 
-type ComponentProperties = {
+export type ComponentProperties = {
   name: string;
   type: MetadataType;
   xml: SourcePath;
@@ -90,7 +85,7 @@ export class SourceComponent implements MetadataComponent {
             name: baseName(fsPath),
             type: this.type.children.types[childTypeId],
             xml: fsPath,
-            parent: this
+            parent: this,
           },
           this._tree,
           this.forceIgnore

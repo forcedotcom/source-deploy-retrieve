@@ -9,9 +9,9 @@
     "noImplicitAny": true,
     // Needed in order to import registry.json
     "resolveJsonModule": true,
-    "rootDir": "src",
+    "rootDir": ".",
     "outDir": "lib",
     "preserveConstEnums": true
   },
-  "exclude": ["node_modules", "lib", "test"]
+  "exclude": ["node_modules", "lib"]
 }

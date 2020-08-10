@@ -6,7 +6,7 @@
  */
 import { mockRegistry } from '.';
 import { join } from 'path';
-import { SourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src';
 
 // Constants for a type that uses the BaseSourceAdapter
 const type = mockRegistry.types.genewilder;
@@ -17,5 +17,5 @@ export const GENE_XML_PATH = join(GENE_DIR, GENE_XML_NAME);
 export const GENE_COMPONENT = new SourceComponent({
   name: 'a',
   type,
-  xml: GENE_XML_PATH
+  xml: GENE_XML_PATH,
 });

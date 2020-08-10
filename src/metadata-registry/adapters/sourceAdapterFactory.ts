@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { MetadataRegistry, MetadataType, SourceAdapter, TreeContainer } from '../../types';
+import { MetadataRegistry, SourceAdapter, TreeContainer } from '../types';
 import { BundleSourceAdapter } from './bundleSourceAdapter';
 import { DecomposedSourceAdapter } from './decomposedSourceAdapter';
 import { MatchingContentSourceAdapter } from './matchingContentSourceAdapter';
@@ -12,12 +12,13 @@ import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { DefaultSourceAdapter } from './defaultSourceAdapter';
 import { RegistryError } from '../../errors';
 import { ForceIgnore } from '../forceIgnore';
+import { MetadataType } from '../../common';
 
 enum AdapterId {
   Bundle = 'bundle',
   Decomposed = 'decomposed',
   MatchingContentFile = 'matchingContentFile',
-  MixedContent = 'mixedContent'
+  MixedContent = 'mixedContent',
 }
 
 export class SourceAdapterFactory {

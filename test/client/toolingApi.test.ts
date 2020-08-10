@@ -10,9 +10,8 @@ import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { RegistryAccess, registryData, SourceComponent } from '../../src/metadata-registry';
-import { ToolingApi } from '../../src/client';
+import { ComponentStatus, ToolingApi, ToolingDeployStatus } from '../../src/client';
 import { ContainerDeploy } from '../../src/client/deployStrategies';
-import { DeployStatusEnum, DeployResult } from '../../src/types';
 import { nls } from '../../src/i18n';
 
 const $$ = testSetup();
@@ -20,7 +19,7 @@ const $$ = testSetup();
 describe('Tooling API tests', () => {
   const testMetadataField = {
     apiVersion: '32.0',
-    status: 'Active'
+    status: 'Active',
   };
   const testData = new MockTestOrgData();
   let mockConnection: Connection;
@@ -30,12 +29,12 @@ describe('Tooling API tests', () => {
   beforeEach(async () => {
     sandboxStub = createSandbox();
     $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig()
+      contents: await testData.getConfig(),
     });
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
-        username: testData.username
-      })
+        username: testData.username,
+      }),
     });
   });
 
@@ -45,19 +44,26 @@ describe('Tooling API tests', () => {
 
   it('should go ahead with deploy for supported types', async () => {
     const deployLibrary = new ToolingApi(mockConnection, registryAccess);
-    sandboxStub.stub(RegistryAccess.prototype, 'getComponentsFromPath').returns([
-      new SourceComponent({
-        type: registryData.types.apexclass,
-        name: 'myTestClass',
-        xml: 'myTestClass.cls-meta.xml',
-        content: 'file/path/myTestClass.cls'
-      })
-    ]);
+    const component = new SourceComponent({
+      type: registryData.types.apexclass,
+      name: 'myTestClass',
+      xml: 'myTestClass.cls-meta.xml',
+      content: 'file/path/myTestClass.cls',
+    });
+    sandboxStub.stub(RegistryAccess.prototype, 'getComponentsFromPath').returns([component]);
     sandboxStub.stub(ContainerDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const mockContainerDeploy = sandboxStub.stub(ContainerDeploy.prototype, 'deploy').resolves({
-      State: DeployStatusEnum.Completed,
-      ErrorMsg: null
-    } as DeployResult);
+      id: '123',
+      status: ToolingDeployStatus.Completed,
+      success: true,
+      components: [
+        {
+          component,
+          diagnostics: [],
+          status: ComponentStatus.Changed,
+        },
+      ],
+    });
 
     await deployLibrary.deployWithPaths('file/path/myTestClass.cls');
 
@@ -69,8 +75,8 @@ describe('Tooling API tests', () => {
       new SourceComponent({
         type: registryData.types.flexipage,
         name: '',
-        xml: ''
-      })
+        xml: '',
+      }),
     ]);
     const deployLibrary = new ToolingApi(mockConnection, registryAccess);
 

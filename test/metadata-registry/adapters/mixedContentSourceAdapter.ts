@@ -12,7 +12,7 @@ import {
   DWAYNE_DIR,
   taraji,
   DWAYNE_XML_NAME,
-  DWAYNE_SOURCE_NAME
+  DWAYNE_SOURCE_NAME,
 } from '../../mock/registry';
 import { expect, assert } from 'chai';
 import { MixedContentSourceAdapter } from '../../../src/metadata-registry/adapters/mixedContentSourceAdapter';
@@ -26,8 +26,8 @@ describe('MixedContentSourceAdapter', () => {
     const tree = new VirtualTreeContainer([
       {
         dirPath: DWAYNE_DIR,
-        children: [DWAYNE_XML_NAME]
-      }
+        children: [DWAYNE_XML_NAME],
+      },
     ]);
     const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
     assert.throws(() => adapter.getComponent(DWAYNE_SOURCE), ExpectedSourceFilesError);
@@ -38,8 +38,8 @@ describe('MixedContentSourceAdapter', () => {
     const tree = new VirtualTreeContainer([
       {
         dirPath: DWAYNE_DIR,
-        children: [DWAYNE_XML_NAME, DWAYNE_SOURCE_NAME]
-      }
+        children: [DWAYNE_XML_NAME, DWAYNE_SOURCE_NAME],
+      },
     ]);
     const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
     const expectedComponent = new SourceComponent(
@@ -47,7 +47,7 @@ describe('MixedContentSourceAdapter', () => {
         name: 'a',
         type,
         xml: DWAYNE_XML,
-        content: DWAYNE_SOURCE
+        content: DWAYNE_SOURCE,
       },
       tree
     );

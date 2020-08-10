@@ -8,7 +8,8 @@ import { BaseSourceAdapter } from './baseSourceAdapter';
 import { dirname, basename, sep } from 'path';
 import { ExpectedSourceFilesError } from '../../errors';
 import { baseName } from '../../utils/path';
-import { SourcePath, MetadataType, TreeContainer } from '../../types';
+import { SourcePath, MetadataType } from '../../common';
+import { TreeContainer } from '../types';
 import { SourceComponent } from '../sourceComponent';
 
 /**
@@ -87,7 +88,7 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
    */
   private static trimPathToContent(path: SourcePath, type: MetadataType): SourcePath {
     const pathParts = path.split(sep);
-    const typeFolderIndex = pathParts.findIndex(part => part === type.directoryName);
+    const typeFolderIndex = pathParts.findIndex((part) => part === type.directoryName);
     const offset = type.inFolder ? 3 : 2;
     return pathParts.slice(0, typeFolderIndex + offset).join(sep);
   }

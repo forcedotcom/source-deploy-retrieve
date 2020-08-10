@@ -4,26 +4,31 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { BaseApi, RetrieveOptions, RetrievePathOptions, ApiResult, SourcePath } from '../types';
+import {
+  BaseApi,
+  RetrieveOptions,
+  RetrievePathOptions,
+  ApiResult,
+  SourceDeployResult,
+  ComponentDeployment,
+  ComponentStatus,
+  DeployResult,
+  RecordId,
+  DeployStatus,
+  DeployMessage,
+  MetadataDeployOptions,
+} from './types';
 import { MetadataConverter } from '../convert';
 import { DeployError } from '../errors';
-import { MetadataDeployOptions } from '../types/client';
 import { SourceComponent } from '../metadata-registry';
-import {
-  MetadataSourceDeployResult,
-  Id,
-  DeployResult,
-  ComponentDeployment,
-  DeployMessage,
-  ComponentStatus,
-  DeployStatus
-} from '../types/newClient';
+import { DiagnosticUtil } from './diagnosticUtil';
+import { SourcePath } from '../common';
 
 export const DEFAULT_API_OPTIONS = {
   rollbackOnError: true,
   ignoreWarnings: false,
   checkOnly: false,
-  singlePackage: true
+  singlePackage: true,
 };
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -38,7 +43,7 @@ export class MetadataApi extends BaseApi {
   public async deploy(
     components: SourceComponent | SourceComponent[],
     options?: MetadataDeployOptions
-  ): Promise<MetadataSourceDeployResult> {
+  ): Promise<SourceDeployResult> {
     const metadataComponents = Array.isArray(components) ? components : [components];
 
     const converter = new MetadataConverter();
@@ -51,7 +56,7 @@ export class MetadataApi extends BaseApi {
       componentDeploymentMap.set(`${component.type.name}:${component.fullName}`, {
         status: ComponentStatus.Unchanged,
         component,
-        diagnostics: []
+        diagnostics: [],
       });
     }
 
@@ -63,15 +68,18 @@ export class MetadataApi extends BaseApi {
   public async deployWithPaths(
     paths: SourcePath,
     options?: MetadataDeployOptions
-  ): Promise<MetadataSourceDeployResult> {
+  ): Promise<SourceDeployResult> {
     const components = this.registry.getComponentsFromPath(paths);
     return this.deploy(components, options);
   }
 
-  private async metadataDeployID(zipBuffer: Buffer, options?: MetadataDeployOptions): Promise<Id> {
+  private async metadataDeployID(
+    zipBuffer: Buffer,
+    options?: MetadataDeployOptions
+  ): Promise<RecordId> {
     if (!options || !options.apiOptions) {
       options = {
-        apiOptions: DEFAULT_API_OPTIONS
+        apiOptions: DEFAULT_API_OPTIONS,
       };
     } else {
       for (const [property, value] of Object.entries(DEFAULT_API_OPTIONS)) {
@@ -93,7 +101,7 @@ export class MetadataApi extends BaseApi {
     let result;
 
     const wait = (interval: number): Promise<void> => {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         setTimeout(resolve, interval);
       });
     };
@@ -132,18 +140,20 @@ export class MetadataApi extends BaseApi {
   private buildSourceDeployResult(
     componentDeploymentMap: Map<string, ComponentDeployment>,
     result: DeployResult
-  ): MetadataSourceDeployResult {
-    const deployResult: MetadataSourceDeployResult = {
+  ): SourceDeployResult {
+    const deployResult: SourceDeployResult = {
       id: result.id,
       status: result.status,
-      success: result.success
+      success: result.success,
     };
 
     const messages = this.getDeployMessages(result);
+    const diagnosticUtil = new DiagnosticUtil('metadata');
 
     if (messages.length > 0) {
       deployResult.components = [];
-      for (const message of messages) {
+      for (let message of messages) {
+        message = this.sanitizeDeployMessage(message);
         const componentKey = `${message.componentType}:${message.fullName}`;
         const componentDeployment = componentDeploymentMap.get(componentKey);
 
@@ -159,12 +169,7 @@ export class MetadataApi extends BaseApi {
           }
 
           if (message.problem) {
-            componentDeployment.diagnostics.push({
-              lineNumber: message.lineNumber,
-              columnNumber: message.columnNumber,
-              message: message.problem,
-              type: message.problemType
-            });
+            diagnosticUtil.setDiagnostic(componentDeployment, message);
           }
         }
       }
@@ -194,5 +199,15 @@ export class MetadataApi extends BaseApi {
       }
     }
     return messages;
+  }
+
+  /**
+   * Fix any issues with the deploy message returned by the api.
+   * TODO: remove as fixes are made in the api.
+   */
+  private sanitizeDeployMessage(message: DeployMessage): DeployMessage {
+    // lwc doesn't properly use the fullname property in the api.
+    message.fullName = message.fullName.replace(/markup:\/\/c:/, '');
+    return message;
   }
 }

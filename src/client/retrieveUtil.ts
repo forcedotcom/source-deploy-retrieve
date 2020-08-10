@@ -4,11 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
 import { dirname, join, sep } from 'path';
-import { QueryResult } from '../types';
 import { generateMetaXML, generateMetaXMLPath, trimMetaXmlSuffix } from '../utils';
-import { ApexRecord, AuraRecord, LWCRecord, VFRecord } from '../types/query';
+import { ApexRecord, AuraRecord, LWCRecord, VFRecord, QueryResult } from './types';
 import { SourceComponent } from '../metadata-registry';
 
 export function buildQuery(mdComponent: SourceComponent, namespace = ''): string {
@@ -105,7 +103,7 @@ export function queryToFileMap(
     case 'AuraDefinitionBundle':
       const auraRecord = queryResult.records as AuraRecord[];
       apiVersion = auraRecord[0].AuraDefinitionBundle.ApiVersion;
-      auraRecord.forEach(item => {
+      auraRecord.forEach((item) => {
         const cmpName = getAuraSourceName(mdSourcePath, mdComponent.name, item.DefType);
         saveFilesMap.set(cmpName, item.Source);
       });
@@ -113,7 +111,7 @@ export function queryToFileMap(
     case 'LightningComponentBundle':
       const lwcRecord = queryResult.records as LWCRecord[];
       const bundleParentPath = mdSourcePath.substring(0, mdSourcePath.lastIndexOf(`${sep}lwc`));
-      lwcRecord.forEach(item => {
+      lwcRecord.forEach((item) => {
         const cmpName = join(bundleParentPath, item.FilePath);
         saveFilesMap.set(cmpName, item.Source);
       });

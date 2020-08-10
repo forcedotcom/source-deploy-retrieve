@@ -60,8 +60,8 @@ describe('RegistryAccess', () => {
         const access = testUtil.createRegistryAccess([
           {
             dirPath: keanu.KEANUS_DIR,
-            children: [keanu.KEANU_SOURCE_NAMES[0], keanu.KEANU_XML_NAMES[0]]
-          }
+            children: [keanu.KEANU_SOURCE_NAMES[0], keanu.KEANU_XML_NAMES[0]],
+          },
         ]);
         testUtil.stubAdapters([
           {
@@ -69,10 +69,10 @@ describe('RegistryAccess', () => {
             componentMappings: [
               {
                 path,
-                component: keanu.KEANU_COMPONENT
-              }
-            ]
-          }
+                component: keanu.KEANU_COMPONENT,
+              },
+            ],
+          },
         ]);
         expect(access.getComponentsFromPath(path)).to.deep.equal([keanu.KEANU_COMPONENT]);
       });
@@ -82,14 +82,14 @@ describe('RegistryAccess', () => {
         const access = testUtil.createRegistryAccess([
           {
             dirPath: keanu.KEANUS_DIR,
-            children: [keanu.KEANU_SOURCE_NAMES[0], keanu.KEANU_XML_NAMES[0]]
-          }
+            children: [keanu.KEANU_SOURCE_NAMES[0], keanu.KEANU_XML_NAMES[0]],
+          },
         ]);
         testUtil.stubAdapters([
           {
             type: mockRegistry.types.keanureeves,
-            componentMappings: [{ path, component: keanu.KEANU_COMPONENT }]
-          }
+            componentMappings: [{ path, component: keanu.KEANU_COMPONENT }],
+          },
         ]);
         expect(access.getComponentsFromPath(path)).to.deep.equal([keanu.KEANU_COMPONENT]);
       });
@@ -99,14 +99,14 @@ describe('RegistryAccess', () => {
         const access = testUtil.createRegistryAccess([
           {
             dirPath: dirname(path),
-            children: [basename(path)]
-          }
+            children: [basename(path)],
+          },
         ]);
         testUtil.stubAdapters([
           {
             type: mockRegistry.types.tarajihenson,
-            componentMappings: [{ path, component: taraji.TARAJI_COMPONENT }]
-          }
+            componentMappings: [{ path, component: taraji.TARAJI_COMPONENT }],
+          },
         ]);
         expect(access.getComponentsFromPath(path)).to.deep.equal([taraji.TARAJI_COMPONENT]);
       });
@@ -116,15 +116,15 @@ describe('RegistryAccess', () => {
         const access = testUtil.createRegistryAccess([
           {
             dirPath: dirname(path),
-            children: keanu.KEANU_SOURCE_NAMES
-          }
+            children: keanu.KEANU_SOURCE_NAMES,
+          },
         ]);
         testUtil.stubAdapters([
           {
             type: mockRegistry.types.keanureeves,
             componentMappings: [{ path, component: keanu.KEANU_CONTENT_COMPONENT }],
-            allowContent: false
-          }
+            allowContent: false,
+          },
         ]);
         expect(access.getComponentsFromPath(path)).to.deep.equal([keanu.KEANU_CONTENT_COMPONENT]);
       });
@@ -134,19 +134,19 @@ describe('RegistryAccess', () => {
         const access = testUtil.createRegistryAccess([
           {
             dirPath: path,
-            children: sean.SEAN_NAMES
-          }
+            children: sean.SEAN_NAMES,
+          },
         ]);
         const componentMappings = sean.SEAN_PATHS.map((p: string, i: number) => ({
           path: p,
-          component: sean.SEAN_COMPONENTS[i]
+          component: sean.SEAN_COMPONENTS[i],
         }));
         testUtil.stubAdapters([
           {
             type: mockRegistry.types.seanconnerys,
             componentMappings,
-            allowContent: false
-          }
+            allowContent: false,
+          },
         ]);
         expect(access.getComponentsFromPath(path)).to.deep.equal(sean.SEAN_COMPONENTS);
       });
@@ -157,14 +157,14 @@ describe('RegistryAccess', () => {
         const access = testUtil.createRegistryAccess([
           {
             dirPath: tina.TINA_DIR,
-            children: [basename(path)]
-          }
+            children: [basename(path)],
+          },
         ]);
         testUtil.stubAdapters([
           {
             type: mockRegistry.types.tinafeyfolder,
-            componentMappings: [{ path, component: tina.TINA_FOLDER_COMPONENT }]
-          }
+            componentMappings: [{ path, component: tina.TINA_FOLDER_COMPONENT }],
+          },
         ]);
         expect(access.getComponentsFromPath(path)).to.deep.equal([tina.TINA_FOLDER_COMPONENT]);
       });
@@ -174,8 +174,8 @@ describe('RegistryAccess', () => {
         const access = testUtil.createRegistryAccess([
           {
             dirPath: dirname(missing),
-            children: [basename(missing)]
-          }
+            children: [basename(missing)],
+          },
         ]);
         assert.throws(
           () => access.getComponentsFromPath(missing),
@@ -189,16 +189,16 @@ describe('RegistryAccess', () => {
         const access = testUtil.createRegistryAccess([
           {
             dirPath: dirname(path),
-            children: [basename(path)]
-          }
+            children: [basename(path)],
+          },
         ]);
         testUtil.stubForceIgnore({ seed: path, deny: [path] });
         testUtil.stubAdapters([
           {
             type: mockRegistry.types.keanureeves,
             // should not be returned
-            componentMappings: [{ path, component: keanu.KEANU_COMPONENT }]
-          }
+            componentMappings: [{ path, component: keanu.KEANU_COMPONENT }],
+          },
         ]);
         expect(access.getComponentsFromPath(path).length).to.equal(0);
       });
@@ -208,16 +208,16 @@ describe('RegistryAccess', () => {
         const access = testUtil.createRegistryAccess([
           {
             dirPath: dirname(path),
-            children: [basename(path)]
-          }
+            children: [basename(path)],
+          },
         ]);
         testUtil.stubForceIgnore({ seed: path, deny: [path] });
         testUtil.stubAdapters([
           {
             type: mockRegistry.types.keanureeves,
             // should not be returned
-            componentMappings: [{ path, component: keanu.KEANU_COMPONENT }]
-          }
+            componentMappings: [{ path, component: keanu.KEANU_COMPONENT }],
+          },
         ]);
         expect(access.getComponentsFromPath(path).length).to.equal(0);
       });
@@ -228,18 +228,18 @@ describe('RegistryAccess', () => {
         const access = testUtil.createRegistryAccess([
           {
             dirPath: kathy.KATHY_FOLDER,
-            children: kathy.KATHY_XML_NAMES
-          }
+            children: kathy.KATHY_XML_NAMES,
+          },
         ]);
         const componentMappings = kathy.KATHY_XML_PATHS.map((p: string, i: number) => ({
           path: p,
-          component: kathy.KATHY_COMPONENTS[i]
+          component: kathy.KATHY_COMPONENTS[i],
         }));
         testUtil.stubAdapters([
           {
             type: mockRegistry.types.kathybates,
-            componentMappings
-          }
+            componentMappings,
+          },
         ]);
         expect(access.getComponentsFromPath(kathy.KATHY_FOLDER)).to.deep.equal(
           kathy.KATHY_COMPONENTS
@@ -263,24 +263,24 @@ describe('RegistryAccess', () => {
               basename(keanuSrc),
               kathy.KATHY_XML_NAMES[0],
               'hasStuff',
-              'noStuff'
-            ]
+              'noStuff',
+            ],
           },
           {
             dirPath: noStuffDir,
-            children: []
+            children: [],
           },
           {
             dirPath: stuffDir,
-            children: [basename(keanuSrc2), basename(keanuXml2)]
-          }
+            children: [basename(keanuSrc2), basename(keanuXml2)],
+          },
         ]);
         const keanuComponent2: SourceComponent = new SourceComponent(
           {
             name: 'b',
             type: mockRegistry.types.keanureeves,
             xml: keanuXml2,
-            content: keanuSrc2
+            content: keanuSrc2,
           },
           tree
         );
@@ -288,7 +288,7 @@ describe('RegistryAccess', () => {
           {
             name: 'a',
             type: mockRegistry.types.kathybates,
-            xml: kathyXml
+            xml: kathyXml,
           },
           tree
         );
@@ -299,28 +299,28 @@ describe('RegistryAccess', () => {
             componentMappings: [
               {
                 path: join(KEANUS_DIR, kathy.KATHY_XML_NAMES[0]),
-                component: kathyComponent2
-              }
-            ]
+                component: kathyComponent2,
+              },
+            ],
           },
           {
             type: mockRegistry.types.keanureeves,
             componentMappings: [
               {
                 path: keanuXml,
-                component: keanu.KEANU_COMPONENT
+                component: keanu.KEANU_COMPONENT,
               },
               {
                 path: keanuXml2,
-                component: keanuComponent2
-              }
-            ]
-          }
+                component: keanuComponent2,
+              },
+            ],
+          },
         ]);
         expect(access.getComponentsFromPath(KEANUS_DIR)).to.deep.equal([
           keanu.KEANU_COMPONENT,
           kathyComponent2,
-          keanuComponent2
+          keanuComponent2,
         ]);
       });
 
@@ -328,8 +328,8 @@ describe('RegistryAccess', () => {
         const access = testUtil.createRegistryAccess([
           {
             dirPath: tina.TINA_FOLDER,
-            children: tina.TINA_XML_NAMES.concat(tina.TINA_SOURCE_NAMES)
-          }
+            children: tina.TINA_XML_NAMES.concat(tina.TINA_SOURCE_NAMES),
+          },
         ]);
         testUtil.stubAdapters([
           {
@@ -337,18 +337,18 @@ describe('RegistryAccess', () => {
             componentMappings: [
               {
                 path: tina.TINA_XML_PATHS[0],
-                component: tina.TINA_COMPONENTS[0]
+                component: tina.TINA_COMPONENTS[0],
               },
               {
                 path: tina.TINA_XML_PATHS[1],
-                component: tina.TINA_COMPONENTS[1]
-              }
-            ]
-          }
+                component: tina.TINA_COMPONENTS[1],
+              },
+            ],
+          },
         ]);
         expect(access.getComponentsFromPath(tina.TINA_FOLDER)).to.deep.equal([
           tina.TINA_COMPONENTS[0],
-          tina.TINA_COMPONENTS[1]
+          tina.TINA_COMPONENTS[1],
         ]);
       });
 
@@ -357,12 +357,12 @@ describe('RegistryAccess', () => {
         const access = testUtil.createRegistryAccess([
           {
             dirPath: TARAJI_CONTENT_PATH,
-            children: []
+            children: [],
           },
           {
             dirPath: taraji.TARAJI_DIR,
-            children: [taraji.TARAJI_XML_NAMES[0], basename(TARAJI_CONTENT_PATH)]
-          }
+            children: [taraji.TARAJI_XML_NAMES[0], basename(TARAJI_CONTENT_PATH)],
+          },
         ]);
         testUtil.stubAdapters([
           {
@@ -370,13 +370,13 @@ describe('RegistryAccess', () => {
             componentMappings: [
               {
                 path: taraji.TARAJI_XML_PATHS[0],
-                component: taraji.TARAJI_COMPONENT
-              }
-            ]
-          }
+                component: taraji.TARAJI_COMPONENT,
+              },
+            ],
+          },
         ]);
         expect(access.getComponentsFromPath(TARAJI_CONTENT_PATH)).to.deep.equal([
-          taraji.TARAJI_COMPONENT
+          taraji.TARAJI_COMPONENT,
         ]);
       });
 
@@ -385,12 +385,12 @@ describe('RegistryAccess', () => {
         const access = testUtil.createRegistryAccess([
           {
             dirPath: simon.SIMON_DIR,
-            children: [basename(SIMON_BUNDLE_PATH)]
+            children: [basename(SIMON_BUNDLE_PATH)],
           },
           {
             dirPath: SIMON_BUNDLE_PATH,
-            children: simon.SIMON_SOURCE_PATHS.concat(simon.SIMON_XML_PATH).map(p => basename(p))
-          }
+            children: simon.SIMON_SOURCE_PATHS.concat(simon.SIMON_XML_PATH).map((p) => basename(p)),
+          },
         ]);
         testUtil.stubAdapters([
           {
@@ -399,10 +399,10 @@ describe('RegistryAccess', () => {
               { path: simon.SIMON_XML_PATH, component: SIMON_COMPONENT },
               {
                 path: simon.SIMON_SUBTYPE_PATH,
-                component: SIMON_COMPONENT
-              }
-            ]
-          }
+                component: SIMON_COMPONENT,
+              },
+            ],
+          },
         ]);
         expect(access.getComponentsFromPath(SIMON_BUNDLE_PATH)).to.deep.equal([SIMON_COMPONENT]);
       });
@@ -418,12 +418,12 @@ describe('RegistryAccess', () => {
         const tree = new VirtualTreeContainer([
           {
             dirPath: simon.SIMON_DIR,
-            children: [basename(simon.SIMON_BUNDLE_PATH)]
+            children: [basename(simon.SIMON_BUNDLE_PATH)],
           },
           {
             dirPath: simon.SIMON_BUNDLE_PATH,
-            children: [keanu.KEANU_XML_NAMES[0], basename(simon.SIMON_SOURCE_PATHS[0])]
-          }
+            children: [keanu.KEANU_XML_NAMES[0], basename(simon.SIMON_SOURCE_PATHS[0])],
+          },
         ]);
         const access = new RegistryAccess(mockRegistry, tree);
         expect(access.getComponentsFromPath(simon.SIMON_DIR)).to.deep.equal([
@@ -432,10 +432,10 @@ describe('RegistryAccess', () => {
               name: 'a',
               type: mockRegistry.types.simonpegg,
               xml: join(simon.SIMON_BUNDLE_PATH, keanu.KEANU_XML_NAMES[0]),
-              content: simon.SIMON_BUNDLE_PATH
+              content: simon.SIMON_BUNDLE_PATH,
             },
             tree
-          )
+          ),
         ]);
       });
 
@@ -445,8 +445,8 @@ describe('RegistryAccess', () => {
         const access = testUtil.createRegistryAccess([
           {
             dirPath,
-            children: [kathy.KATHY_XML_NAMES[0], kathy.KATHY_XML_NAMES[1]]
-          }
+            children: [kathy.KATHY_XML_NAMES[0], kathy.KATHY_XML_NAMES[1]],
+          },
         ]);
         testUtil.stubAdapters([
           {
@@ -454,14 +454,14 @@ describe('RegistryAccess', () => {
             componentMappings: [
               {
                 path: kathy.KATHY_XML_PATHS[0],
-                component: kathy.KATHY_COMPONENTS[0]
+                component: kathy.KATHY_COMPONENTS[0],
               },
               {
                 path: kathy.KATHY_XML_PATHS[1],
-                component: kathy.KATHY_COMPONENTS[1]
-              }
-            ]
-          }
+                component: kathy.KATHY_COMPONENTS[1],
+              },
+            ],
+          },
         ]);
         expect(access.getComponentsFromPath(dirPath).length).to.equal(0);
       });

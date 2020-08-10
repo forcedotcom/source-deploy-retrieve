@@ -5,6 +5,7 @@
 /test
 /scripts
 /contributing
+/lib/test
 
 # Configuration files
 .eslintrc.json

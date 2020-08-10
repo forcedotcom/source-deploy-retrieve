@@ -4,12 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { MetadataTransformer, WriterFormat, SourcePath } from '../../types';
+import { MetadataTransformer, WriterFormat } from '../../types';
 import { META_XML_SUFFIX } from '../../utils';
 import { createReadStream } from 'fs';
 import { sep, join, basename } from 'path';
 import { LibraryError } from '../../errors';
 import { SourceComponent } from '../../metadata-registry';
+import { SourcePath } from '../../common';
 
 /**
  * The default metadata transformer.
@@ -32,7 +33,7 @@ export class DefaultTransformer implements MetadataTransformer {
       for (const source of this.component.walkContent()) {
         result.writeInfos.push({
           source: createReadStream(source),
-          relativeDestination: this.getRelativeDestination(source)
+          relativeDestination: this.getRelativeDestination(source),
         });
       }
     } else {
@@ -40,7 +41,7 @@ export class DefaultTransformer implements MetadataTransformer {
     }
     result.writeInfos.push({
       source: createReadStream(this.component.xml),
-      relativeDestination: xmlDest
+      relativeDestination: xmlDest,
     });
     return result;
   }
@@ -65,7 +66,7 @@ export class DefaultTransformer implements MetadataTransformer {
 
   private trimUntil(fsPath: string, name: string): string {
     const parts = fsPath.split(sep);
-    const index = parts.findIndex(part => name === part);
+    const index = parts.findIndex((part) => name === part);
     return parts.slice(index).join(sep);
   }
 }

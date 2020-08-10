@@ -5,12 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { createSandbox, SinonSandbox } from 'sinon';
-import { SourcePath, MetadataType, VirtualDirectory } from '../../src/types';
+import { VirtualDirectory } from '../../src';
 import { ForceIgnore } from '../../src/metadata-registry/forceIgnore';
 import { SourceAdapterFactory } from '../../src/metadata-registry/adapters/sourceAdapterFactory';
 import { VirtualTreeContainer } from '../../src/metadata-registry/treeContainers';
 import { mockRegistry } from '../mock/registry';
 import { RegistryAccess, SourceComponent } from '../../src/metadata-registry';
+import { MetadataType, SourcePath } from '../../src/common';
 
 export class RegistryTestUtil {
   private env: SinonSandbox;
@@ -42,7 +43,7 @@ export class RegistryTestUtil {
       }
       getAdapterStub.withArgs(entry.type).returns({
         getComponent: (path: SourcePath) => componentMap[path],
-        allowMetadataWithContent: () => entry.allowContent
+        allowMetadataWithContent: () => entry.allowContent,
       });
     }
   }
@@ -56,13 +57,13 @@ export class RegistryTestUtil {
     const acceptStub = this.env.stub(forceIgnore, 'accepts');
     const denyStub = this.env.stub(forceIgnore, 'denies');
     if (config.deny) {
-      config.deny.forEach(path => {
+      config.deny.forEach((path) => {
         denyStub.withArgs(path).returns(true);
         acceptStub.withArgs(path).returns(false);
       });
     }
     if (config.accept) {
-      config.accept.forEach(path => {
+      config.accept.forEach((path) => {
         acceptStub.withArgs(path).returns(true);
         denyStub.withArgs(path).returns(false);
       });

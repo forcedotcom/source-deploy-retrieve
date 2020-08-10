@@ -6,7 +6,7 @@
  */
 import { join } from 'path';
 import { mockRegistry } from '.';
-import { SourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src';
 
 // Constants for a type that uses the BaseSourceAdapter and is inFolder
 const type = mockRegistry.types.kathybates;
@@ -17,22 +17,22 @@ export const KATHY_XML_NAMES = ['a.kathy-meta.xml', 'b.kathy-meta.xml', 'c.kathy
 export const KATHY_XML_PATHS = [
   join(KATHY_FOLDER, 'a.kathy-meta.xml'),
   join(KATHY_FOLDER, 'b.kathy-meta.xml'),
-  join(KATHY_FOLDER, 'c.kathy-meta.xml')
+  join(KATHY_FOLDER, 'c.kathy-meta.xml'),
 ];
 export const KATHY_COMPONENTS: SourceComponent[] = [
   new SourceComponent({
     name: `A_Folder/a`,
     type,
-    xml: KATHY_XML_PATHS[0]
+    xml: KATHY_XML_PATHS[0],
   }),
   new SourceComponent({
     name: 'A_Folder/b',
     type,
-    xml: KATHY_XML_PATHS[1]
+    xml: KATHY_XML_PATHS[1],
   }),
   new SourceComponent({
     name: 'A_Folder/c',
     type,
-    xml: KATHY_XML_PATHS[2]
-  })
+    xml: KATHY_XML_PATHS[2],
+  }),
 ];

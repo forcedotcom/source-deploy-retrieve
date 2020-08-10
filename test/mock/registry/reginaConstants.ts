@@ -7,7 +7,7 @@
 import { join } from 'path';
 import { mockRegistry } from '.';
 import { baseName } from '../../../src/utils';
-import { SourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src';
 
 // Constants for a decomposed type
 const type = mockRegistry.types.reginaking;
@@ -24,18 +24,18 @@ export const REGINA_CHILD_XML_PATH_2 = join(REGINA_CHILD_DIR_PATH, REGINA_CHILD_
 export const REGINA_VIRTUAL_FS = [
   {
     dirPath: REGINA_PATH,
-    children: [REGINA_XML_NAME, REGINA_CHILD_XML_NAME_1, REGINA_CHILD_DIR]
+    children: [REGINA_XML_NAME, REGINA_CHILD_XML_NAME_1, REGINA_CHILD_DIR],
   },
   {
     dirPath: REGINA_CHILD_DIR_PATH,
-    children: [REGINA_CHILD_XML_NAME_2]
-  }
+    children: [REGINA_CHILD_XML_NAME_2],
+  },
 ];
 export const REGINA_COMPONENT = SourceComponent.createVirtualComponent(
   {
     name: baseName(REGINA_XML_PATH),
     type,
-    xml: REGINA_XML_PATH
+    xml: REGINA_XML_PATH,
   },
   REGINA_VIRTUAL_FS
 );

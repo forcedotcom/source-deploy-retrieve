@@ -18,16 +18,16 @@ import { LightningComponentResource, ToolingCreateResult } from '../../../src/ut
 import {
   SourceComponent,
   registryData,
-  VirtualTreeContainer
+  VirtualTreeContainer,
 } from '../../../src/metadata-registry';
-import { ToolingDeployStatus, ComponentStatus } from '../../../src/types/newClient';
+import { ToolingDeployStatus, ComponentStatus } from '../../../src/client';
 
 const $$ = testSetup();
 
 describe('LWC Deploy Strategy', () => {
   const testMetadataField = {
     apiVersion: '32.0',
-    status: 'Active'
+    status: 'Active',
   };
   const testData = new MockTestOrgData();
   let mockConnection: Connection;
@@ -42,25 +42,25 @@ describe('LWC Deploy Strategy', () => {
   const lwcFiles = [
     join(bundlePath, 'mockLwcCmp.js'),
     join(bundlePath, 'mockLwcCmp.html'),
-    join(bundlePath, 'mockLwcCmp.js-meta.xml')
+    join(bundlePath, 'mockLwcCmp.js-meta.xml'),
   ];
   const lwcContents = [
     `import { LightningElement } from 'lwc';export default class TestLwc extends LightningElement {}`,
     `<template></template>`,
-    simpleMetaXMLString
+    simpleMetaXMLString,
   ];
   const tree = new VirtualTreeContainer([
     {
       dirPath: bundlePath,
-      children: lwcFiles.map(f => basename(f))
-    }
+      children: lwcFiles.map((f) => basename(f)),
+    },
   ]);
   const lwcComponent = new SourceComponent(
     {
       type: registryData.types.lightningcomponentbundle,
       name: 'mockLwcCmp',
       content: bundlePath,
-      xml: join(bundlePath, 'mockLwcCmp.js-meta.xml')
+      xml: join(bundlePath, 'mockLwcCmp.js-meta.xml'),
     },
     tree
   );
@@ -69,31 +69,31 @@ describe('LWC Deploy Strategy', () => {
       FilePath: lwcFiles[0],
       Format: 'js',
       Source: lwcContents[0],
-      LightningComponentBundleId: '1dcxxx000000060'
+      LightningComponentBundleId: '1dcxxx000000060',
     },
     {
       FilePath: lwcFiles[1],
       Format: 'html',
       Source: lwcContents[1],
-      LightningComponentBundleId: '1dcxxx000000060'
+      LightningComponentBundleId: '1dcxxx000000060',
     },
     {
       FilePath: lwcFiles[2],
       Format: 'js',
       Source: lwcContents[2],
-      LightningComponentBundleId: '1dcxxx000000060'
-    }
+      LightningComponentBundleId: '1dcxxx000000060',
+    },
   ] as LightningComponentResource[];
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
     $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig()
+      contents: await testData.getConfig(),
     });
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
-        username: testData.username
-      })
+        username: testData.username,
+      }),
     });
 
     const mockFS = sandboxStub.stub(fs, 'readFileSync');
@@ -115,7 +115,7 @@ describe('LWC Deploy Strategy', () => {
     mockToolingCreate.resolves({
       success: true,
       id: '1dcxxx000000060',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     const lwcDeploy = new LwcDeploy(mockConnection);
@@ -131,21 +131,21 @@ describe('LWC Deploy Strategy', () => {
         Id: '1dcxxx000000034',
         Format: 'js',
         FilePath: lwcFiles[0],
-        Source: lwcContents[0]
+        Source: lwcContents[0],
       },
       {
         Id: '1dcxxx000000035',
         Format: 'html',
         FilePath: lwcFiles[1],
-        Source: lwcContents[1]
-      }
+        Source: lwcContents[1],
+      },
     ];
     // @ts-ignore
     mockToolingQuery.resolves({ records: matches });
     sandboxStub.stub(LwcDeploy.prototype, 'upsertBundle').resolves({
       success: true,
       id: '1dcxxx000000033',
-      errors: []
+      errors: [],
     } as ToolingCreateResult);
 
     const lwcDeploy = new LwcDeploy(mockConnection);
@@ -162,22 +162,22 @@ describe('LWC Deploy Strategy', () => {
         FilePath: join('path', 'to', 'wrong', 'lwc', 'lwcFile', 'lwcFile.html'),
         Format: 'html',
         Source: lwcContents[0],
-        LightningComponentBundleId: '1dcxxx000000060'
+        LightningComponentBundleId: '1dcxxx000000060',
       },
       {
         Id: '1dcxxx000000036',
         FilePath: 'path/to/wrong/lwc/lwcFile/lwcFile.js',
         Format: 'js',
         Source: lwcContents[1],
-        LightningComponentBundleId: '1dcxxx000000060'
-      }
+        LightningComponentBundleId: '1dcxxx000000060',
+      },
     ];
     // @ts-ignore
     mockToolingQuery.resolves({ records: matches });
     sandboxStub.stub(LwcDeploy.prototype, 'upsertBundle').resolves({
       success: true,
       id: '1dcxxx000000033',
-      errors: []
+      errors: [],
     } as ToolingCreateResult);
 
     const lwcDeploy = new LwcDeploy(mockConnection);
@@ -191,7 +191,7 @@ describe('LWC Deploy Strategy', () => {
     mockToolingCreate.resolves({
       success: true,
       id: '1dcxxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
@@ -212,7 +212,7 @@ describe('LWC Deploy Strategy', () => {
     mockToolingUpdate.resolves({
       success: true,
       id: '1dcxxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
@@ -232,7 +232,7 @@ describe('LWC Deploy Strategy', () => {
     sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',
-      errors: ['Unexpected error while creating record']
+      errors: ['Unexpected error while creating record'],
     } as RecordResult);
 
     sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
@@ -254,7 +254,7 @@ describe('LWC Deploy Strategy', () => {
     mockToolingCreate.resolves({
       success: true,
       id: '1dcxxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
@@ -276,9 +276,9 @@ describe('LWC Deploy Strategy', () => {
         {
           component: lwcComponent,
           status: ComponentStatus.Created,
-          diagnostics: []
-        }
-      ]
+          diagnostics: [],
+        },
+      ],
     });
   });
 
@@ -292,7 +292,7 @@ describe('LWC Deploy Strategy', () => {
     mockToolingCreate.onFirstCall().resolves({
       success: true,
       id: '1dcxxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     sandboxStub
@@ -300,7 +300,7 @@ describe('LWC Deploy Strategy', () => {
       .throws(new Error('mockLwcCmp.js:1,1 : Unexpected error while creating sources'));
 
     const updateLwcList = [...testLwcList];
-    updateLwcList.forEach(el => {
+    updateLwcList.forEach((el) => {
       el.Id = '1dcxxx000000034';
       delete el.LightningComponentBundleId;
     });
@@ -322,25 +322,25 @@ describe('LWC Deploy Strategy', () => {
               lineNumber: 1,
               filePath: lwcFiles[0],
               message: 'Unexpected error while creating sources',
-              type: 'Error'
+              type: 'Error',
             },
             {
               columnNumber: 1,
               lineNumber: 1,
               filePath: lwcFiles[0],
               message: 'Unexpected error while creating sources',
-              type: 'Error'
+              type: 'Error',
             },
             {
               columnNumber: 1,
               lineNumber: 1,
               filePath: lwcFiles[0],
               message: 'Unexpected error while creating sources',
-              type: 'Error'
-            }
-          ]
-        }
-      ]
+              type: 'Error',
+            },
+          ],
+        },
+      ],
     });
   });
 });

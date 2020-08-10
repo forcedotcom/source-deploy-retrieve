@@ -13,24 +13,17 @@ import { join } from 'path';
 import { RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { nls } from '../../../src/i18n';
-import { DeployStatusEnum, DeployResult } from '../../../src/types';
-import {
-  auraContents,
-  auraComponent,
-  auraFiles,
-  updateCreateSuccesses,
-  createAuraSuccesses,
-  testAuraList
-} from './auraDeployMocks';
+import { ToolingDeployStatus, ComponentStatus } from '../../../src/client';
+import { auraContents, auraComponent, auraFiles, testAuraList } from './auraDeployMocks';
 import { AuraDeploy } from '../../../src/client/deployStrategies';
-import { ToolingCreateResult } from '../../../src/utils/deploy';
+import { ToolingCreateResult, AuraDefinition } from '../../../src/utils/deploy';
 
 const $$ = testSetup();
 
 describe('Aura Deploy Strategy', () => {
   const testMetadataField = {
     apiVersion: '32.0',
-    status: 'Active'
+    status: 'Active',
   };
   const testData = new MockTestOrgData();
   let mockConnection: Connection;
@@ -44,12 +37,12 @@ describe('Aura Deploy Strategy', () => {
   beforeEach(async () => {
     sandboxStub = createSandbox();
     $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig()
+      contents: await testData.getConfig(),
     });
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
-        username: testData.username
-      })
+        username: testData.username,
+      }),
     });
 
     const mockFS = sandboxStub.stub(fs, 'readFileSync');
@@ -80,7 +73,7 @@ describe('Aura Deploy Strategy', () => {
     mockToolingCreate.resolves({
       success: true,
       id: '1dcxxx000000060',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     const auraDeploy = new AuraDeploy(mockConnection);
@@ -97,22 +90,22 @@ describe('Aura Deploy Strategy', () => {
         DefType: 'COMPONENT',
         Format: 'XML',
         FilePath: auraFiles[1],
-        Source: auraContents[1]
+        Source: auraContents[1],
       },
       {
         Id: '1dcxxx000000035',
         DefType: 'STYLE',
         Format: 'CSS',
         FilePath: auraFiles[2],
-        Source: auraContents[2]
+        Source: auraContents[2],
       },
       {
         Id: '1dcxxx000000036',
         DefType: 'DESIGN',
         Format: 'XML',
         FilePath: auraFiles[3],
-        Source: auraContents[3]
-      }
+        Source: auraContents[3],
+      },
     ];
     // @ts-ignore
     mockToolingQuery.resolves({ records: matches });
@@ -120,7 +113,7 @@ describe('Aura Deploy Strategy', () => {
     sandboxStub.stub(AuraDeploy.prototype, 'upsertBundle').resolves({
       success: true,
       id: '1dcxxx000000033',
-      errors: []
+      errors: [],
     } as ToolingCreateResult);
 
     const auraDeploy = new AuraDeploy(mockConnection);
@@ -138,7 +131,7 @@ describe('Aura Deploy Strategy', () => {
         Format: 'html',
         DefType: 'wrongType',
         Source: auraContents[0],
-        AuraDefinitionBundleId: '1dcxxx000000060'
+        AuraDefinitionBundleId: '1dcxxx000000060',
       },
       {
         Id: '1dcxxx000000036',
@@ -146,15 +139,15 @@ describe('Aura Deploy Strategy', () => {
         Format: 'js',
         DefType: 'wrongType',
         Source: auraContents[1],
-        AuraDefinitionBundleId: '1dcxxx000000060'
-      }
+        AuraDefinitionBundleId: '1dcxxx000000060',
+      },
     ];
     // @ts-ignore
     mockToolingQuery.resolves({ records: matches });
     sandboxStub.stub(AuraDeploy.prototype, 'upsertBundle').resolves({
       success: true,
       id: '1dcxxx000000033',
-      errors: []
+      errors: [],
     } as ToolingCreateResult);
 
     const auraDeploy = new AuraDeploy(mockConnection);
@@ -168,7 +161,7 @@ describe('Aura Deploy Strategy', () => {
     mockToolingCreate.resolves({
       success: true,
       id: '1dcxxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     sandboxStub.stub(AuraDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
@@ -189,7 +182,7 @@ describe('Aura Deploy Strategy', () => {
     mockToolingUpdate.resolves({
       success: true,
       id: '1dcxxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     sandboxStub.stub(AuraDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
@@ -209,7 +202,7 @@ describe('Aura Deploy Strategy', () => {
     sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',
-      errors: ['Unexpected error while creating record']
+      errors: ['Unexpected error while creating record'],
     } as RecordResult);
 
     sandboxStub.stub(AuraDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
@@ -231,7 +224,7 @@ describe('Aura Deploy Strategy', () => {
     mockToolingCreate.resolves({
       success: true,
       id: '1dcxxx000000034',
-      errors: []
+      errors: [],
     } as RecordResult);
 
     sandboxStub.stub(AuraDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
@@ -245,256 +238,132 @@ describe('Aura Deploy Strategy', () => {
     const auraDeploy = new AuraDeploy(mockConnection);
     const deployResults = await auraDeploy.deploy(auraComponent, '');
 
-    expect(deployResults.DeployDetails.componentSuccesses).to.deep.equal(createAuraSuccesses);
-    expect(deployResults.DeployDetails.componentFailures.length).to.equal(0);
-  });
-
-  it('should update sources in bundle and return successes in correct shape', async () => {
-    const mockToolingUpdate = sandboxStub.stub(mockConnection.tooling, 'update');
-    mockToolingUpdate.resolves({
+    expect(deployResults).to.deep.equal({
+      id: undefined,
+      status: ToolingDeployStatus.Completed,
       success: true,
-      id: '1dcxxx000000034',
-      errors: []
-    } as RecordResult);
-
-    sandboxStub.stub(AuraDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
-
-    const mockToolingQuery = sandboxStub.stub(mockConnection.tooling, 'query');
-    // @ts-ignore
-    mockToolingQuery.resolves({ records: [{ Id: '1dcxxx000000034' }] });
-
-    const updateAuraSuccesses = [...createAuraSuccesses];
-    updateAuraSuccesses.forEach(el => {
-      el.changed = true;
-      el.created = false;
+      components: [
+        {
+          status: ComponentStatus.Created,
+          component: auraComponent,
+          diagnostics: [],
+        },
+      ],
     });
-    const updateAuraList = [...testAuraList];
-    updateAuraList.forEach(el => {
-      el.Id = '1dcxxx000000034';
-      delete el.AuraDefinitionBundleId;
+  });
+
+  it('should set component status to "created" when all definition files created', async () => {
+    sandboxStub.stub(AuraDeploy.prototype, 'buildDefList').resolves(testAuraList);
+    sandboxStub
+      .stub(mockConnection.tooling, 'query')
+      // @ts-ignore
+      .resolves({ records: [] });
+    sandboxStub.stub(mockConnection.tooling, 'create').resolves();
+
+    const auraDeploy = new AuraDeploy(mockConnection);
+    const result = await auraDeploy.deploy(auraComponent, '');
+
+    expect(result).to.deep.equal({
+      id: undefined,
+      status: ToolingDeployStatus.Completed,
+      success: true,
+      components: [
+        {
+          status: ComponentStatus.Created,
+          component: auraComponent,
+          diagnostics: [],
+        },
+      ],
     });
-
-    const auraDeploy = new AuraDeploy(mockConnection);
-    auraDeploy.component = auraComponent;
-    const results = await Promise.all(
-      updateAuraList.map(async def => {
-        return auraDeploy.upsert(def);
-      })
-    );
-
-    expect(results).to.deep.equal(updateAuraSuccesses);
   });
 
-  it('should format output for creation only successes correctly', async () => {
+  it('should set component status to "changed" when one or more definition files updated', async () => {
+    const auraList = JSON.parse(JSON.stringify(testAuraList)) as AuraDefinition[];
+    // having a present Id triggers an update
+    auraList[0].Id = '12345';
+
+    sandboxStub.stub(AuraDeploy.prototype, 'buildDefList').resolves(auraList);
+    sandboxStub
+      .stub(mockConnection.tooling, 'query')
+      // @ts-ignore
+      .resolves({ records: [] });
+    sandboxStub.stub(mockConnection.tooling, 'create').resolves();
+
+    const auraDeploy = new AuraDeploy(mockConnection);
+    const result = await auraDeploy.deploy(auraComponent, '');
+    expect(result).to.deep.equal({
+      id: undefined,
+      status: ToolingDeployStatus.Completed,
+      success: true,
+      components: [
+        {
+          status: ComponentStatus.Changed,
+          component: auraComponent,
+          diagnostics: [],
+        },
+      ],
+    });
+  });
+
+  it('should set component status to "failed" when all definition files fail upsert', async () => {
+    const error = Error('test error');
+
     sandboxStub.stub(AuraDeploy.prototype, 'buildDefList').resolves(testAuraList);
     sandboxStub
       .stub(mockConnection.tooling, 'query')
       // @ts-ignore
       .resolves({ records: [] });
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create');
-    mockToolingCreate.resolves({
-      success: true,
-      id: '1dcxxx000000034',
-      errors: []
-    } as RecordResult);
-
-    const upsertStub = sandboxStub.stub(AuraDeploy.prototype, 'upsert');
-    for (let i = 0; i < 8; i++) {
-      upsertStub.onCall(i).resolves(createAuraSuccesses[i]);
-    }
-
-    const testDeployResult: DeployResult = {
-      State: DeployStatusEnum.Completed,
-      DeployDetails: {
-        componentSuccesses: createAuraSuccesses,
-        componentFailures: []
-      },
-      isDeleted: false,
-      outboundFiles: auraFiles,
-      ErrorMsg: null,
-      metadataFile: auraComponent.xml
-    };
+    mockToolingCreate.throws(error);
 
     const auraDeploy = new AuraDeploy(mockConnection);
-    const deployResult = await auraDeploy.deploy(auraComponent, '');
+    const result = await auraDeploy.deploy(auraComponent, '');
 
-    expect(deployResult.DeployDetails.componentSuccesses).to.deep.equal(
-      testDeployResult.DeployDetails.componentSuccesses
-    );
-    expect(deployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
-    expect(deployResult.isDeleted).to.equal(testDeployResult.isDeleted);
-    expect(deployResult.outboundFiles).to.deep.equal(testDeployResult.outboundFiles);
-    expect(deployResult.State).to.equal(testDeployResult.State);
+    expect(result).to.deep.equal({
+      id: undefined,
+      status: ToolingDeployStatus.Failed,
+      success: false,
+      components: [
+        {
+          status: ComponentStatus.Failed,
+          component: auraComponent,
+          diagnostics: testAuraList.map(() => ({ message: error.message, type: 'Error' })),
+        },
+      ],
+    });
   });
 
-  it('should format output for creation only failures with no specified file location correctly', async () => {
+  it('should set deploy status to "CompletedPartial" when only some definition files fail upsert', async () => {
+    const error = Error('test error');
+
     sandboxStub.stub(AuraDeploy.prototype, 'buildDefList').resolves(testAuraList);
     sandboxStub
       .stub(mockConnection.tooling, 'query')
       // @ts-ignore
       .resolves({ records: [] });
     const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create');
-    mockToolingCreate.onFirstCall().resolves({
-      success: true,
-      id: '1dcxxx000000034',
-      errors: []
-    } as RecordResult);
-
-    sandboxStub
-      .stub(AuraDeploy.prototype, 'upsert')
-      .throws(new Error('Unexpected error while creating sources: [1,1]'));
-
-    const createTestFailures = [
-      {
-        changed: false,
-        created: false,
-        deleted: false,
-        fileName: join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmp.cmp'),
-        fullName: 'mockAuraCmp/mockAuraCmp.cmp',
-        success: false,
-        componentType: 'AuraDefinitionBundle',
-        problem: 'Unexpected error while creating sources: [1,1]',
-        columnNumber: 1,
-        lineNumber: 1
-      }
-    ];
-
-    const testDeployResult = {
-      State: DeployStatusEnum.Failed,
-      DeployDetails: {
-        componentSuccesses: [],
-        componentFailures: createTestFailures
-      },
-      isDeleted: false,
-      ErrorMsg: createTestFailures[0].problem,
-      metadataFile: auraComponent.xml
-    } as DeployResult;
+    mockToolingCreate.resolves();
+    mockToolingCreate.onSecondCall().throws(error);
 
     const auraDeploy = new AuraDeploy(mockConnection);
-    const DeployResult = await auraDeploy.deploy(auraComponent, '');
+    const result = await auraDeploy.deploy(auraComponent, '');
 
-    expect(DeployResult.DeployDetails.componentFailures).to.deep.equal(
-      testDeployResult.DeployDetails.componentFailures
-    );
-    expect(DeployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
-    expect(DeployResult.isDeleted).to.equal(testDeployResult.isDeleted);
-    expect(DeployResult.State).to.equal(testDeployResult.State);
-  });
-
-  it('should format output for creation only failures with specified file correctly', async () => {
-    sandboxStub.stub(AuraDeploy.prototype, 'buildDefList').resolves(testAuraList);
-    sandboxStub
-      .stub(mockConnection.tooling, 'query')
-      // @ts-ignore
-      .resolves({ records: [] });
-    const mockToolingCreate = sandboxStub.stub(mockConnection.tooling, 'create');
-    mockToolingCreate.onFirstCall().resolves({
-      success: true,
-      id: '1dcxxx000000034',
-      errors: []
-    } as RecordResult);
-
-    sandboxStub
-      .stub(AuraDeploy.prototype, 'upsert')
-      .throws(new Error('Unexpected error while creating sources in HELPER : [1,1]'));
-
-    const createTestFailures = [
-      {
-        changed: false,
-        created: false,
-        deleted: false,
-        fileName: join('file', 'path', 'aura', 'mockAuraCmp', 'mockAuraCmpHelper.js'),
-        fullName: 'mockAuraCmp/mockAuraCmpHelper.js',
-        success: false,
-        componentType: 'AuraDefinitionBundle',
-        problem: 'Unexpected error while creating sources in HELPER : [1,1]',
-        columnNumber: 1,
-        lineNumber: 1
-      }
-    ];
-
-    const testDeployResult = {
-      State: DeployStatusEnum.Failed,
-      DeployDetails: {
-        componentSuccesses: [],
-        componentFailures: createTestFailures
-      },
-      isDeleted: false,
-      ErrorMsg: createTestFailures[0].problem,
-      metadataFile: auraComponent.xml
-    } as DeployResult;
-
-    const auraDeploy = new AuraDeploy(mockConnection);
-    const DeployResult = await auraDeploy.deploy(auraComponent, '');
-
-    expect(DeployResult.DeployDetails.componentFailures).to.deep.equal(
-      testDeployResult.DeployDetails.componentFailures
-    );
-    expect(DeployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
-    expect(DeployResult.isDeleted).to.equal(testDeployResult.isDeleted);
-    expect(DeployResult.State).to.equal(testDeployResult.State);
-  });
-
-  it('should format output for create and update successes correctly', async () => {
-    sandboxStub.stub(AuraDeploy.prototype, 'buildDefList').resolves(testAuraList);
-
-    const matches = [
-      {
-        Id: '1dcxxx000000034',
-        DefType: 'COMPONENT',
-        Format: 'XML',
-        FilePath: auraFiles[1],
-        Source: auraContents[1],
-        AuraDefinitionBundleId: '1dcxxx000000060'
-      },
-      {
-        Id: '1dcxxx000000035',
-        DefType: 'STYLE',
-        Format: 'CSS',
-        FilePath: auraFiles[2],
-        Source: auraContents[2],
-        AuraDefinitionBundleId: '1dcxxx000000060'
-      },
-      {
-        Id: '1dcxxx000000036',
-        DefType: 'DESIGN',
-        Format: 'XML',
-        FilePath: auraFiles[3],
-        Source: auraContents[3],
-        AuraDefinitionBundleId: '1dcxxx000000060'
-      }
-    ];
-    sandboxStub
-      .stub(mockConnection.tooling, 'query')
-      // @ts-ignore
-      .resolves({ records: matches });
-
-    const upsertStub = sandboxStub.stub(AuraDeploy.prototype, 'upsert');
-    for (let i = 0; i < 8; i++) {
-      upsertStub.onCall(i).resolves(updateCreateSuccesses[i]);
-    }
-
-    const testDeployResult = {
-      State: DeployStatusEnum.Completed,
-      DeployDetails: {
-        componentSuccesses: updateCreateSuccesses,
-        componentFailures: []
-      },
-      isDeleted: false,
-      outboundFiles: auraFiles,
-      ErrorMsg: null,
-      metadataFile: auraComponent.xml
-    } as DeployResult;
-
-    const bundleDeploy = new AuraDeploy(mockConnection);
-    const DeployResult = await bundleDeploy.deploy(auraComponent, '');
-
-    expect(DeployResult.DeployDetails.componentSuccesses).to.deep.equal(
-      testDeployResult.DeployDetails.componentSuccesses
-    );
-    expect(DeployResult.ErrorMsg).to.equal(testDeployResult.ErrorMsg);
-    expect(DeployResult.isDeleted).to.equal(testDeployResult.isDeleted);
-    expect(DeployResult.outboundFiles).to.deep.equal(testDeployResult.outboundFiles);
-    expect(DeployResult.State).to.equal(testDeployResult.State);
+    expect(result).to.deep.equal({
+      id: undefined,
+      status: ToolingDeployStatus.CompletedPartial,
+      success: false,
+      components: [
+        {
+          status: ComponentStatus.Changed,
+          component: auraComponent,
+          diagnostics: [
+            {
+              message: error.message,
+              type: 'Error',
+            },
+          ],
+        },
+      ],
+    });
   });
 });

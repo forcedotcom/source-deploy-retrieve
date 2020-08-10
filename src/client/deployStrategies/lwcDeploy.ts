@@ -6,25 +6,22 @@
  */
 
 import { BaseDeploy } from './baseDeploy';
-import { SourceComponent, SourceResult } from '../..';
+import { SourceComponent } from '../..';
 import {
-  ToolingSourceDeployResult,
+  SourceDeployResult,
   ToolingDeployStatus,
-  ComponentDiagnostic,
   ComponentDeployment,
-  ComponentStatus
-} from '../../types/newClient';
+  ComponentStatus,
+} from '../types';
 import { LightningComponentResource } from '../../utils/deploy';
 import { readFileSync } from 'fs';
 import { extName } from '../../utils';
 import { normalize } from 'path';
 import { deployTypes } from '../toolingApi';
+import { DiagnosticUtil } from '../diagnosticUtil';
 
 export class LwcDeploy extends BaseDeploy {
-  public async deploy(
-    component: SourceComponent,
-    namespace: string
-  ): Promise<ToolingSourceDeployResult> {
+  public async deploy(component: SourceComponent, namespace: string): Promise<SourceDeployResult> {
     this.component = component;
     this.namespace = namespace;
 
@@ -42,7 +39,7 @@ export class LwcDeploy extends BaseDeploy {
       id: undefined,
       status,
       success: status === ToolingDeployStatus.Completed,
-      components: [componentDeployment]
+      components: [componentDeployment],
     };
   }
   public async buildResourceList(): Promise<LightningComponentResource[]> {
@@ -54,13 +51,13 @@ export class LwcDeploy extends BaseDeploy {
       ? await this.upsertBundle(existingResources[0].LightningComponentBundleId)
       : await this.upsertBundle();
     const bundleId = lightningBundle.id;
-    sourceFiles.forEach(async sourceFile => {
+    sourceFiles.forEach(async (sourceFile) => {
       const source = readFileSync(sourceFile, 'utf8');
       const isMetaSource = sourceFile === this.component.xml;
       const format = isMetaSource ? 'js' : extName(sourceFile);
       let match: LightningComponentResource;
       if (existingResources.length > 0) {
-        match = existingResources.find(resource =>
+        match = existingResources.find((resource) =>
           sourceFile.endsWith(normalize(resource.FilePath))
         );
       }
@@ -70,7 +67,7 @@ export class LwcDeploy extends BaseDeploy {
         FilePath: sourceFile,
         Source: source,
         Format: format,
-        ...(match ? { Id: match.Id } : { LightningComponentBundleId: bundleId })
+        ...(match ? { Id: match.Id } : { LightningComponentBundleId: bundleId }),
       };
       // This is to ensure that the base file is deployed first for lwc
       // otherwise there is a `no base file found` error
@@ -87,37 +84,44 @@ export class LwcDeploy extends BaseDeploy {
     const deployment: ComponentDeployment = {
       status: ComponentStatus.Unchanged,
       component: this.component,
-      diagnostics: []
+      diagnostics: [],
     };
 
+    const diagnosticUtil = new DiagnosticUtil('tooling');
+
     let partialSuccess = false;
+    let allCreate = true;
+    // first resource needs to be created first, so force sync
     for (const resource of lightningResources) {
       try {
         if (resource.Id) {
           const formattedDef = {
             Source: resource.Source,
-            Id: resource.Id
+            Id: resource.Id,
           };
           await this.connection.tooling.update(deployTypes.get(type), formattedDef);
-          deployment.status = ComponentStatus.Changed;
+          allCreate = false;
           partialSuccess = true;
         } else {
           const formattedDef = {
             LightningComponentBundleId: resource.LightningComponentBundleId,
             Format: resource.Format,
             Source: resource.Source,
-            FilePath: this.getFormattedPaths(resource.FilePath)[0]
+            FilePath: this.getFormattedPaths(resource.FilePath)[0],
           };
           await this.toolingCreate(deployTypes.get(type), formattedDef);
-          deployment.status = ComponentStatus.Created;
         }
       } catch (e) {
-        deployment.diagnostics.push(this.parseLwcDiagnostic(e.message));
+        diagnosticUtil.setDiagnostic(deployment, e.message);
       }
     }
 
     if (deployment.diagnostics.length > 0) {
       deployment.status = partialSuccess ? ComponentStatus.Changed : ComponentStatus.Failed;
+    } else if (allCreate) {
+      deployment.status = ComponentStatus.Created;
+    } else {
+      deployment.status = ComponentStatus.Changed;
     }
 
     return deployment;
@@ -125,35 +129,8 @@ export class LwcDeploy extends BaseDeploy {
 
   private async findLightningResources(): Promise<LightningComponentResource[]> {
     const lightningResourceResult = await this.connection.tooling.query(
-      `Select LightningComponentBundleId, Id, Format, Source, FilePath from LightningComponentResource where LightningComponentBundle.DeveloperName = '${
-        this.component.fullName
-      }' and LightningComponentBundle.NamespacePrefix = '${this.namespace}'`
+      `Select LightningComponentBundleId, Id, Format, Source, FilePath from LightningComponentResource where LightningComponentBundle.DeveloperName = '${this.component.fullName}' and LightningComponentBundle.NamespacePrefix = '${this.namespace}'`
     );
     return lightningResourceResult.records as LightningComponentResource[];
-  }
-
-  private parseLwcDiagnostic(problem: string): ComponentDiagnostic {
-    const diagnostic: ComponentDiagnostic = {
-      message: problem,
-      type: 'Error'
-    };
-
-    try {
-      const pathParts = problem.split(/[\s\n\t]+/);
-      const msgStartIndex = pathParts.findIndex(part => part.includes(':'));
-      const fileObject = pathParts[msgStartIndex];
-      const errLocation = fileObject.slice(fileObject.indexOf(':') + 1);
-      const fileName = fileObject.slice(0, fileObject.indexOf(':'));
-
-      diagnostic.message = pathParts.slice(msgStartIndex + 2).join(' ');
-      diagnostic.filePath = this.component.walkContent().find(f => f.includes(fileName));
-      diagnostic.lineNumber = errLocation ? Number(errLocation.split(',')[0]) : undefined;
-      diagnostic.columnNumber = errLocation ? Number(errLocation.split(',')[1]) : undefined;
-    } catch (e) {
-      // TODO: log error with parsing error message
-      diagnostic.message = problem;
-    }
-
-    return diagnostic;
   }
 }

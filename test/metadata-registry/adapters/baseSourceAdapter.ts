@@ -9,7 +9,7 @@ import { mockRegistry } from '../../mock/registry';
 import { DefaultSourceAdapter } from '../../../src/metadata-registry/adapters/defaultSourceAdapter';
 import { expect, assert } from 'chai';
 import { BaseSourceAdapter } from '../../../src/metadata-registry/adapters/baseSourceAdapter';
-import { SourcePath } from '../../../src/types';
+import { SourcePath } from '../../../src/common';
 import { RegistryError, UnexpectedForceIgnore } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { RegistryTestUtil } from '../registryTestUtil';
@@ -35,7 +35,7 @@ describe('BaseSourceAdapter', () => {
       new SourceComponent({
         name: 'A_Folder/My_Test',
         type,
-        xml: path
+        xml: path,
       })
     );
   });
@@ -49,7 +49,7 @@ describe('BaseSourceAdapter', () => {
         name: 'a',
         type,
         xml: TestChildAdapter.xmlPath,
-        content: path
+        content: path,
       })
     );
   });
@@ -63,7 +63,7 @@ describe('BaseSourceAdapter', () => {
         name: 'a',
         type,
         xml: TestChildAdapter.xmlPath,
-        content: path
+        content: path,
       })
     );
   });
@@ -93,7 +93,7 @@ describe('BaseSourceAdapter', () => {
     const type = mockRegistry.types.keanureeves;
     const forceIgnore = testUtil.stubForceIgnore({
       seed: path,
-      deny: [path]
+      deny: [path],
     });
     const adapter = new TestChildAdapter(type, mockRegistry, forceIgnore);
     assert.throws(

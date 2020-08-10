@@ -25,6 +25,9 @@ junit-custom.xml
 # Eclipse
 .project
 
+# Webstorm
+.idea/
+
 # MacOS folder atttribute tracking
 **/.DS_Store
 

@@ -4,30 +4,26 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
 import { readFileSync } from 'fs';
 import { deployTypes } from '../toolingApi';
 import { DeployError } from '../../errors';
-import { DeployResult, QueryResult } from '../../types';
+import {
+  QueryResult,
+  SourceDeployResult,
+  ContainerAsyncRequest,
+  ToolingDeployStatus,
+  RecordId,
+  ComponentDeployment,
+  ComponentStatus,
+} from '../types';
 import { baseName } from '../../utils/path';
 import { ToolingCreateResult } from '../../utils/deploy';
 import { CONTAINER_ASYNC_REQUEST, METADATA_CONTAINER } from './constants';
 import { BaseDeploy } from './baseDeploy';
 import { SourceComponent } from '../../metadata-registry';
-import {
-  ToolingSourceDeployResult,
-  ContainerAsyncRequest,
-  ToolingDeployStatus,
-  Id,
-  ComponentDeployment,
-  ComponentStatus
-} from '../../types/newClient';
 
 export class ContainerDeploy extends BaseDeploy {
-  public async deploy(
-    component: SourceComponent,
-    namespace: string
-  ): Promise<DeployResult | ToolingSourceDeployResult> {
+  public async deploy(component: SourceComponent, namespace: string): Promise<SourceDeployResult> {
     this.component = component;
     this.namespace = namespace;
     const sourcePath = component.content;
@@ -42,7 +38,7 @@ export class ContainerDeploy extends BaseDeploy {
 
   public async createMetadataContainer(): Promise<ToolingCreateResult> {
     const metadataContainer = await this.toolingCreate(METADATA_CONTAINER, {
-      Name: `Deploy_MDC_${Date.now()}`
+      Name: `Deploy_MDC_${Date.now()}`,
     });
 
     if (!metadataContainer.success) {
@@ -72,7 +68,7 @@ export class ContainerDeploy extends BaseDeploy {
       FullName: fileName,
       Body: body,
       Metadata: metadataField,
-      ...(entityId ? { contentEntityId: entityId } : {})
+      ...(entityId ? { contentEntityId: entityId } : {}),
     };
 
     const containerMember = await this.toolingCreate(
@@ -102,7 +98,7 @@ export class ContainerDeploy extends BaseDeploy {
     container: ToolingCreateResult
   ): Promise<ToolingCreateResult> {
     const contAsyncRequest = await this.toolingCreate(CONTAINER_ASYNC_REQUEST, {
-      MetadataContainerId: container.id
+      MetadataContainerId: container.id,
     });
 
     if (!contAsyncRequest.success) {
@@ -112,10 +108,10 @@ export class ContainerDeploy extends BaseDeploy {
   }
 
   private sleep(ms: number): Promise<number> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  public async pollContainerStatus(containerId: Id): Promise<ContainerAsyncRequest> {
+  public async pollContainerStatus(containerId: RecordId): Promise<ContainerAsyncRequest> {
     let count = 0;
     let containerStatus;
     do {
@@ -131,13 +127,11 @@ export class ContainerDeploy extends BaseDeploy {
     return containerStatus;
   }
 
-  private buildSourceDeployResult(
-    containerRequest: ContainerAsyncRequest
-  ): ToolingSourceDeployResult {
+  private buildSourceDeployResult(containerRequest: ContainerAsyncRequest): SourceDeployResult {
     const componentDeployment: ComponentDeployment = {
       component: this.component,
       status: ComponentStatus.Unchanged,
-      diagnostics: []
+      diagnostics: [],
     };
 
     const messages = [];
@@ -161,8 +155,9 @@ export class ContainerDeploy extends BaseDeploy {
         componentDeployment.diagnostics.push({
           message: message.problem,
           type: message.problemType,
-          lineNumber: message.lineNumber,
-          columnNumber: message.columnNumber
+          filePath: this.component.content,
+          lineNumber: Number(message.lineNumber),
+          columnNumber: Number(message.columnNumber),
         });
       }
     }
@@ -171,7 +166,7 @@ export class ContainerDeploy extends BaseDeploy {
       id: containerRequest.Id,
       status: containerRequest.State,
       success: containerRequest.State === ToolingDeployStatus.Completed,
-      components: [componentDeployment]
+      components: [componentDeployment],
     };
   }
 }

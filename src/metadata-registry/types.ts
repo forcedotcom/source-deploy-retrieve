@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { MetadataType, SourcePath } from './common';
-import { SourceComponent } from '../metadata-registry';
+import { MetadataType, SourcePath } from '../common/types';
+import { SourceComponent } from '.';
 
 /**
  * Metadata type definitions
@@ -55,9 +55,14 @@ export type MetadataXml = {
   path: SourcePath;
 };
 
+export type VirtualFile = {
+  name: string;
+  data?: Buffer;
+};
+
 export type VirtualDirectory = {
   dirPath: SourcePath;
-  children: string[];
+  children: (VirtualFile | string)[];
 };
 
 /**
@@ -85,4 +90,5 @@ export interface TreeContainer {
   exists(path: SourcePath): boolean;
   readDirectory(path: SourcePath): string[];
   find(fileType: 'content' | 'metadata', fullName: string, dir: SourcePath): SourcePath | undefined;
+  readFile(fsPath: SourcePath): Promise<Buffer>;
 }

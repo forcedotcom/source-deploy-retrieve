@@ -6,7 +6,7 @@
  */
 import { join } from 'path';
 import { expect } from 'chai';
-import { baseName } from '../../src/utils/path';
+import { baseName } from '../../src/utils';
 
 describe('Path Utils', () => {
   const root = join('path', 'to', 'whatever');

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
-import { SourcePath } from '../../types';
+import { SourcePath } from '../../common';
 import { parseMetadataXml } from '../../utils/registry';
 import { SourceComponent } from '../sourceComponent';
 
@@ -50,7 +50,7 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
             name: metaXml.fullName,
             type: this.type.children.types[childTypeId],
             xml: trigger,
-            parent: component
+            parent: component,
           },
           this.tree,
           this.forceIgnore

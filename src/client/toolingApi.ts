@@ -4,24 +4,22 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
 import { getDeployStrategy } from './deployStrategies';
 import { SourceClientError } from '../errors';
-import {
-  BaseApi,
-  RetrievePathOptions,
-  ApiResult,
-  DeployResult,
-  RetrieveOptions,
-  QueryResult,
-  SourcePath,
-  ToolingDeployOptions
-} from '../types';
+import { SourcePath } from '../common';
 import { nls } from '../i18n';
 import { buildQuery, queryToFileMap } from './retrieveUtil';
 import { createFiles } from '../utils';
 import { SourceComponent } from '../metadata-registry';
-import { ToolingSourceDeployResult } from '../types/newClient';
+import {
+  BaseApi,
+  RetrieveOptions,
+  RetrievePathOptions,
+  ApiResult,
+  ToolingDeployOptions,
+  SourceDeployResult,
+  QueryResult,
+} from './types';
 
 const retrieveTypes = new Set([
   'ApexClass',
@@ -29,7 +27,7 @@ const retrieveTypes = new Set([
   'ApexPage',
   'ApexComponent',
   'AuraDefinitionBundle',
-  'LightningComponentBundle'
+  'LightningComponentBundle',
 ]);
 
 export const deployTypes = new Map([
@@ -38,7 +36,7 @@ export const deployTypes = new Map([
   ['ApexPage', 'ApexPageMember'],
   ['ApexComponent', 'ApexComponentMember'],
   ['AuraDefinitionBundle', 'AuraDefinition'],
-  ['LightningComponentBundle', 'LightningComponentResource']
+  ['LightningComponentBundle', 'LightningComponentResource'],
 ]);
 
 export class ToolingApi extends BaseApi {
@@ -47,7 +45,7 @@ export class ToolingApi extends BaseApi {
     return await this.retrieve({
       output: options.output,
       namespace: options.namespace,
-      components: this.registry.getComponentsFromPath(retrievePaths)
+      components: this.registry.getComponentsFromPath(retrievePaths),
     });
   }
 
@@ -80,7 +78,7 @@ export class ToolingApi extends BaseApi {
         return {
           success: true,
           components: [],
-          message: nls.localize('error_md_not_present_in_org', mdComponent.fullName)
+          message: nls.localize('error_md_not_present_in_org', mdComponent.fullName),
         };
       }
 
@@ -89,7 +87,7 @@ export class ToolingApi extends BaseApi {
 
       retrieveResult = {
         success: true,
-        components: [mdComponent]
+        components: [mdComponent],
       };
     } catch (err) {
       throw new Error(nls.localize('error_in_tooling_retrieve', err));
@@ -101,7 +99,7 @@ export class ToolingApi extends BaseApi {
   public async deploy(
     components: SourceComponent | SourceComponent[],
     options?: ToolingDeployOptions
-  ): Promise<DeployResult | ToolingSourceDeployResult> {
+  ): Promise<SourceDeployResult> {
     let mdComponent: SourceComponent;
     if (Array.isArray(components)) {
       if (components.length > 1) {
@@ -126,7 +124,7 @@ export class ToolingApi extends BaseApi {
   public async deployWithPaths(
     path: SourcePath,
     options?: ToolingDeployOptions
-  ): Promise<DeployResult | ToolingSourceDeployResult> {
+  ): Promise<SourceDeployResult> {
     return this.deploy(this.registry.getComponentsFromPath(path), options);
   }
 }

@@ -59,7 +59,7 @@ describe('MetadataConverter', () => {
 
     await converter.convert(components, 'metadata', {
       type: 'directory',
-      outputDirectory
+      outputDirectory,
     });
 
     expect(pipelineStub.firstCall.args[2].rootDestination).to.equal(packagePath);
@@ -73,7 +73,7 @@ describe('MetadataConverter', () => {
     try {
       await converter.convert(components, 'metadata', {
         type: 'directory',
-        outputDirectory
+        outputDirectory,
       });
       assert.fail('an error should have been thrown');
     } catch (e) {
@@ -87,7 +87,7 @@ describe('MetadataConverter', () => {
       await converter.convert(components, 'metadata', {
         type: 'directory',
         outputDirectory,
-        packageName
+        packageName,
       });
 
       expect(ensureDirectoryStub.calledBefore(pipelineStub)).to.be.true;
@@ -98,7 +98,7 @@ describe('MetadataConverter', () => {
       await converter.convert(components, 'metadata', {
         type: 'directory',
         outputDirectory,
-        packageName
+        packageName,
       });
 
       const pipelineArgs = pipelineStub.firstCall.args;
@@ -114,7 +114,7 @@ describe('MetadataConverter', () => {
       await converter.convert(components, 'metadata', {
         type: 'directory',
         outputDirectory,
-        packageName
+        packageName,
       });
 
       expect(writeFileStub.firstCall.args).to.deep.equal([expectedPath, expectedContents]);
@@ -124,7 +124,7 @@ describe('MetadataConverter', () => {
       const result = await converter.convert(components, 'metadata', {
         type: 'directory',
         outputDirectory,
-        packageName
+        packageName,
       });
 
       expect(result.packagePath).to.equal(packageOutput);
@@ -136,7 +136,7 @@ describe('MetadataConverter', () => {
       await converter.convert(components, 'metadata', {
         type: 'zip',
         outputDirectory,
-        packageName
+        packageName,
       });
 
       // secondCall is used because ZipWriter uses pipeline upon construction
@@ -168,7 +168,7 @@ describe('MetadataConverter', () => {
       const result = await converter.convert(components, 'metadata', {
         type: 'zip',
         outputDirectory,
-        packageName
+        packageName,
       });
 
       expect(result.packagePath).to.equal(`${packageOutput}.zip`);

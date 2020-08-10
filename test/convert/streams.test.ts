@@ -9,7 +9,7 @@ import { KATHY_COMPONENTS } from '../mock/registry/kathyConstants';
 import { expect } from 'chai';
 import { RegistryAccess } from '../../src/metadata-registry/registryAccess';
 import { createSandbox, SinonStub } from 'sinon';
-import { WriterFormat, MetadataTransformer } from '../../src/types';
+import { WriterFormat, MetadataTransformer } from '../../src/convert';
 import { Readable, Writable } from 'stream';
 import { LibraryError } from '../../src/errors';
 import * as fsUtil from '../../src/utils/fileSystemHandler';

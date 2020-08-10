@@ -8,7 +8,7 @@ import { basename, dirname, join, sep } from 'path';
 import { MetadataRegistry, TreeContainer } from './types';
 import { MetadataTransformerFactory } from '../convert/transformers';
 import { TypeInferenceError } from '../errors';
-import { MetadataTransformer } from '../types';
+import { MetadataTransformer } from '../convert';
 import { extName, parentName } from '../utils/path';
 import { deepFreeze, parseMetadataXml } from '../utils/registry';
 import { MixedContentSourceAdapter } from './adapters/mixedContentSourceAdapter';

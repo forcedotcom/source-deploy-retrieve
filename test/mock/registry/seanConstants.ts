@@ -14,21 +14,21 @@ const type = mockRegistry.types.seanconnerys;
 export const SEAN_DIR = join('path', 'to', 'seans');
 export const SEAN_FOLDER = join(SEAN_DIR, 'A_Folder');
 export const SEAN_NAMES = ['a.sean', 'b.sean', 'c.sean'];
-export const SEAN_PATHS = SEAN_NAMES.map(p => join(SEAN_FOLDER, p));
+export const SEAN_PATHS = SEAN_NAMES.map((p) => join(SEAN_FOLDER, p));
 export const SEAN_COMPONENTS: SourceComponent[] = [
   new SourceComponent({
     name: `A_Folder/a`,
     type,
-    xml: SEAN_PATHS[0]
+    xml: SEAN_PATHS[0],
   }),
   new SourceComponent({
     name: 'A_Folder/b',
     type,
-    xml: SEAN_PATHS[1]
+    xml: SEAN_PATHS[1],
   }),
   new SourceComponent({
     name: 'A_Folder/c',
     type,
-    xml: SEAN_PATHS[2]
-  })
+    xml: SEAN_PATHS[2],
+  }),
 ];

@@ -8,7 +8,7 @@
 import { assert, expect } from 'chai';
 import { RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../src/metadata-registry';
 import { nls } from '../../src/i18n';
-import { mockRegistry, kathy, keanu, taraji, tina, simon } from '../mock/registry';
+import { mockRegistry, kathy, keanu, taraji, tina, simon, sean } from '../mock/registry';
 import { join, basename, dirname } from 'path';
 import { TypeInferenceError } from '../../src/errors';
 import { RegistryTestUtil } from './registryTestUtil';
@@ -111,6 +111,46 @@ describe('RegistryAccess', () => {
         expect(access.getComponentsFromPath(path)).to.deep.equal([taraji.TARAJI_COMPONENT]);
       });
 
+      it('Should determine type for path content files', () => {
+        const path = keanu.KEANU_SOURCE_PATHS[0];
+        const access = testUtil.createRegistryAccess([
+          {
+            dirPath: dirname(path),
+            children: keanu.KEANU_SOURCE_NAMES,
+          },
+        ]);
+        testUtil.stubAdapters([
+          {
+            type: mockRegistry.types.keanureeves,
+            componentMappings: [{ path, component: keanu.KEANU_CONTENT_COMPONENT }],
+            allowContent: false,
+          },
+        ]);
+        expect(access.getComponentsFromPath(path)).to.deep.equal([keanu.KEANU_CONTENT_COMPONENT]);
+      });
+
+      it('Should determine type for inFolder path content files', () => {
+        const path = sean.SEAN_FOLDER;
+        const access = testUtil.createRegistryAccess([
+          {
+            dirPath: path,
+            children: sean.SEAN_NAMES,
+          },
+        ]);
+        const componentMappings = sean.SEAN_PATHS.map((p: string, i: number) => ({
+          path: p,
+          component: sean.SEAN_COMPONENTS[i],
+        }));
+        testUtil.stubAdapters([
+          {
+            type: mockRegistry.types.seanconnerys,
+            componentMappings,
+            allowContent: false,
+          },
+        ]);
+        expect(access.getComponentsFromPath(path)).to.deep.equal(sean.SEAN_COMPONENTS);
+      });
+
       it('Should not mistake folder component of a mixed content type as that type', () => {
         // this test has coveage on non-mixedContent types as well by nature of the execution path
         const path = tina.TINA_FOLDER_XML;
@@ -145,6 +185,25 @@ describe('RegistryAccess', () => {
       });
 
       it('Should not return a component if path to metadata xml is forceignored', () => {
+        const path = keanu.KEANU_XML_PATHS[0];
+        const access = testUtil.createRegistryAccess([
+          {
+            dirPath: dirname(path),
+            children: [basename(path)],
+          },
+        ]);
+        testUtil.stubForceIgnore({ seed: path, deny: [path] });
+        testUtil.stubAdapters([
+          {
+            type: mockRegistry.types.keanureeves,
+            // should not be returned
+            componentMappings: [{ path, component: keanu.KEANU_COMPONENT }],
+          },
+        ]);
+        expect(access.getComponentsFromPath(path).length).to.equal(0);
+      });
+
+      it('Should not return a component if path to content metadata xml is forceignored', () => {
         const path = keanu.KEANU_XML_PATHS[0];
         const access = testUtil.createRegistryAccess([
           {

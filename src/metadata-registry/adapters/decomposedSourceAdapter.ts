@@ -32,6 +32,7 @@ import { SourceComponent } from '../sourceComponent';
  */
 export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
   protected ownFolder = true;
+  protected metadataWithContent = false;
 
   /**
    * If the trigger turns out to be part of a child component, `populate` will build

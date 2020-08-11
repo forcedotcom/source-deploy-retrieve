@@ -7,7 +7,7 @@ const COVERAGE_RESULTS = join(__dirname, '..', 'test-results', 'coverage', 'lcov
 let attempts = 0;
 do {
   try {
-    const result = execSilent(`curl -s https://codecov.io/bash | basfeh -s -- -f ${COVERAGE_RESULTS}`);
+    const result = execSilent(`curl -s https://codecov.io/bash | bash -s -- -f ${COVERAGE_RESULTS}`);
     console.log(result.stdout);
     break;
   } catch (e) {

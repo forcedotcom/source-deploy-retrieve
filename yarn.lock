@@ -106,13 +106,13 @@
     mv "~2"
     safe-json-stringify "~1"
 
-"@salesforce/core@2.5.1":
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-2.5.1.tgz#1574e140e7fdd851a86972074013eca442083661"
-  integrity sha512-izKS51yO14Z5M7N1UMUf2B9+XQU0c3yAMZEX4QkV+9N849OJLTP86DjMYP1cjWlWrVOqSTwD95H4DZX1AOYpUQ==
+"@salesforce/core@2.9.0":
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-2.9.0.tgz#380996f5069433ec13a5e5b4e35890b3654fb871"
+  integrity sha512-z0ICMx7iaVb0gOu8zC2TnV4PP9pcCBGzVzQ1s5Xx6IrksgnYbe1xKGAxqxpoWWXSRuvKSmRsaJrf4rZHhDKFZQ==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
-    "@salesforce/kit" "^1.0.0"
+    "@salesforce/kit" "^1.2.2"
     "@salesforce/schemas" "^1.0.1"
     "@salesforce/ts-types" "^1.0.0"
     "@types/jsforce" "1.9.2"
@@ -123,12 +123,12 @@
     mkdirp "1.0.4"
     sfdx-faye "^1.0.9"
 
-"@salesforce/kit@^1.0.0":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-1.2.2.tgz#9efaee2f520fba4c87a1e138fb31579cc5de69bd"
-  integrity sha512-MQXUh8Ka8oB1SOPUF1kOynXQWcLeZ8YWOyqPtg6j8U9NxLlkTF2vfUfhZEm//jXjejDy7CEes5rEKRHm2df/OA==
+"@salesforce/kit@^1.2.2":
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-1.3.2.tgz#a44f738d8e6a1bcdf8dfec1ced5617143983cd60"
+  integrity sha512-Fhzl4pzk1z0B3CAbo+RfzZ5iwtc85Hpdx6CFctIdpPmB8Y1RRF7HByFRf3NYWHEYggfPmPutkwj4IZfpOcJaiQ==
   dependencies:
-    "@salesforce/ts-types" "^1.2.2"
+    "@salesforce/ts-types" "^1.4.2"
     tslib "^1.10.0"
 
 "@salesforce/schemas@^1.0.1":

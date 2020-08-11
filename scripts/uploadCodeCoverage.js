@@ -1,8 +1,9 @@
+#!/usr/bin/env node
+
 const { execSilent } = require('./util');
-const { join } = require('path');
 
 const MAX_ATTEMPTS = 3;
-const COVERAGE_RESULTS = join('test-results', 'coverage', 'lcov.info');
+const COVERAGE_RESULTS = 'test-results/coverage/lcov.info';
 
 let attempts = 0;
 do {

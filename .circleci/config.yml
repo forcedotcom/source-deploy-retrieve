@@ -42,7 +42,7 @@ _refs:
     name: Upload coverage to codecov.io
     command: |
       ./node_modules/nyc/bin/nyc.js report --reporter=lcov
-      curl -s https://codecov.io/bash | bash -s -- -f ./test-results/coverage/lcov.info
+      node ./scripts/uploadCodeCoverage.js
   gus-prepare-environment-variables: &gus-prepare-environment-variables
     name: 'Prepare environment variables for GUS Change Case Management'
     command: |

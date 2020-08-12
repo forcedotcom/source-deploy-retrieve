@@ -69,7 +69,7 @@
     "local:install": "./scripts/localInstall.js install",
     "local:link": "./scripts/localInstall.js link",
     "local:unlink": "./scripts/localInstall.js unlink",
-    "test": "shx rm -rf ./test-results && nyc mocha && node ./scripts/verifyTestArtifacts",
+    "test": "shx rm -rf ./test-results && nyc mocha",
     "update:registry": "node ./scripts/metadata-registry/update.js"
   },
   "husky": {

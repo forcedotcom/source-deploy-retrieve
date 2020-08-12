@@ -112,7 +112,7 @@ export class RegistryAccess {
       const fsPath = join(dir, file);
       if (this.tree.isDirectory(fsPath)) {
         dirQueue.push(fsPath);
-      } else if (parseMetadataXml(fsPath) || this.parseAsContentMetadataXml(fsPath)) {
+      } else if (this.isMetadata(fsPath)) {
         const component = this.resolveComponent(fsPath, false);
         if (component) {
           components.push(component);
@@ -134,21 +134,41 @@ export class RegistryAccess {
     return components;
   }
 
+  private isMetadata(fsPath: SourcePath): boolean {
+    return (
+      !!parseMetadataXml(fsPath) ||
+      this.parseAsContentMetadataXml(fsPath) ||
+      !!this.parseAsFolderMetadataXml(fsPath)
+    );
+  }
+
   /**
    * Any file with a registered suffix is potentially a content metadata file.
    *
-   * @param path File path of a potential content metadata file
+   * @param fsPath File path of a potential content metadata file
    */
-  private parseAsContentMetadataXml(path: SourcePath): boolean {
-    return this.registry.suffixes.hasOwnProperty(extName(path));
+  private parseAsContentMetadataXml(fsPath: SourcePath): boolean {
+    return this.registry.suffixes.hasOwnProperty(extName(fsPath));
+  }
+
+  /**
+   * Identify metadata xml for a folder component:
+   *    .../email/TestFolder-meta.xml
+   *
+   * Do not match this pattern:
+   *    .../tabs/TestFolder.tab-meta.xml
+   */
+  private parseAsFolderMetadataXml(fsPath: SourcePath): string {
+    const match = basename(fsPath).match(/(.+)-meta\.xml/);
+    if (match && !match[1].includes('.')) {
+      const parts = fsPath.split(sep);
+      return parts.length > 1 ? parts[parts.length - 2] : undefined;
+    }
   }
 
   private resolveComponent(fsPath: SourcePath, isResolvingSource: boolean): SourceComponent {
-    if (
-      (parseMetadataXml(fsPath) || this.parseAsContentMetadataXml(fsPath)) &&
-      this.forceIgnore.denies(fsPath)
-    ) {
-      // don't fetch the component if the metadata xml is denied
+    if (this.isMetadata(fsPath) && this.forceIgnore.denies(fsPath)) {
+      // don't fetch the component if the metadata (xml) is denied
       return;
     }
     const type = this.resolveType(fsPath);
@@ -188,6 +208,16 @@ export class RegistryAccess {
       const parsedMetaXml = parseMetadataXml(fsPath);
       if (parsedMetaXml) {
         typeId = this.registry.suffixes[parsedMetaXml.suffix];
+      }
+    }
+    // attempt 2.5 - test for a folder style xml file
+    if (!typeId) {
+      const metadataFolder = this.parseAsFolderMetadataXml(fsPath);
+      if (metadataFolder) {
+        // multiple matching directories may exist - folder components are not 'inFolder'
+        typeId = Object.values(this.registry.types).find(
+          (d) => d.directoryName === metadataFolder && !d.inFolder
+        )?.id;
       }
     }
     // attempt 3 - try treating the file extension name as a suffix

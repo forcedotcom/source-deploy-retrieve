@@ -104,7 +104,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    */
   private parseAsRootMetadataXml(path: SourcePath): MetadataXml {
     let isRootMetadataXml = false;
-    const metaXml = parseMetadataXml(path);
+    let metaXml = parseMetadataXml(path);
     if (metaXml) {
       const requireStrictParent = !!this.registry.mixedContent[this.type.directoryName];
       if (requireStrictParent) {
@@ -118,6 +118,8 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       } else {
         isRootMetadataXml = true;
       }
+    } else if ((metaXml = this.parseAsFolderMetadataXml(path))) {
+      return metaXml;
     } else if (!this.allowMetadataWithContent()) {
       return this.parseAsContentMetadataXml(path);
     }
@@ -146,6 +148,14 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     const match = basename(path).match(/(.+)\.(.+)/);
     if (match && this.type.suffix === match[2]) {
       return { fullName: match[1], suffix: match[2], path: path };
+    }
+  }
+
+  private parseAsFolderMetadataXml(fsPath: SourcePath): MetadataXml {
+    const match = basename(fsPath).match(/(.+)-meta\.xml/);
+    const parts = fsPath.split(sep);
+    if (match && !match[1].includes('.') && parts.length > 1) {
+      return { fullName: match[1], suffix: undefined, path: fsPath };
     }
   }
 }

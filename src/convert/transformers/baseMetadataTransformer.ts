@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { MetadataTransformer, WriterFormat } from '../../types';
+import { MetadataTransformer, WriterFormat } from '../types';
 import { ConvertTransaction } from '../convertTransaction';
 import { SourceComponent } from '../../metadata-registry';
 

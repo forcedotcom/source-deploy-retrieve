@@ -16,7 +16,7 @@ export {
   ApiResult,
   ComponentStatus,
 } from './client';
-export { MetadataConverter } from './convert';
+export { MetadataConverter, ConvertOutputConfig, ConvertResult } from './convert';
 export {
   RegistryAccess,
   registryData,
@@ -27,5 +27,4 @@ export {
   TreeContainer,
   VirtualDirectory,
 } from './metadata-registry';
-export { ConvertOutputConfig, ConvertResult } from './types';
 export { MetadataComponent } from './common';

@@ -87,6 +87,13 @@ export const mockRegistry = {
         },
       },
     },
+    seanconnerys: {
+      id: 'seanconnerys',
+      directoryName: 'seans',
+      inFolder: true,
+      name: 'SeanConnery',
+      suffix: 'sean',
+    },
   },
   suffixes: {
     kathy: 'kathybates',
@@ -95,6 +102,7 @@ export const mockRegistry = {
     tinafeyFolder: 'tinafeyfolder',
     genewilder: 'gene',
     reginaking: 'regina',
+    sean: 'seanconnerys',
   },
   mixedContent: {
     dwaynes: 'dwaynejohnson',
@@ -122,7 +130,8 @@ import * as taraji from './tarajiConstants';
 import * as tina from './tinaConstants';
 import * as gene from './geneConstants';
 import * as regina from './reginaConstants';
-export { kathy, keanu, simon, taraji, tina, gene, regina };
+import * as sean from './seanConstants';
+export { kathy, keanu, simon, taraji, tina, gene, regina, sean };
 
 // Mixed content
 export const DWAYNE_DIR = join('path', 'to', 'dwaynes');

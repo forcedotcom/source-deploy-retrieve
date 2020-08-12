@@ -8,7 +8,7 @@ import { META_XML_SUFFIX } from '../../utils';
 import { createReadStream } from 'fs';
 import { LibraryError } from '../../errors';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
-import { WriterFormat } from '../../types';
+import { WriterFormat } from '../types';
 
 /**
  * The default metadata transformer.

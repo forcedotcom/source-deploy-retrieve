@@ -6,7 +6,7 @@
  */
 import { simon, kathy, gene } from '../../mock/registry';
 import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';
-import { WriteInfo } from '../../../src/types';
+import { WriteInfo } from '../../../src/convert';
 import { join, basename } from 'path';
 import { createSandbox } from 'sinon';
 import { Readable } from 'stream';

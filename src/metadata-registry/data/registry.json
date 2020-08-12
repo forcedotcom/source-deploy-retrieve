@@ -1704,6 +1704,7 @@
     "emailtemplate": { "adapter": "matchingContentFile" },
     "experiencebundle": { "adapter": "mixedContent" },
     "lightningcomponentbundle": { "adapter": "bundle" },
+    "networkbranding": { "adapter": "matchingContentFile" },
     "staticresource": { "adapter": "mixedContent" },
     "waveTemplates": { "adapter": "bundle" }
   },

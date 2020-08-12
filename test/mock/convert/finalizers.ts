@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { ConvertTransactionFinalizer } from '../../../src/convert/convertTransaction';
-import { WriterFormat } from '../../../src/types';
+import { WriterFormat } from '../../../src/convert';
 import { keanu, simon } from '../registry';
 
 export class TestFinalizerNoWrites implements ConvertTransactionFinalizer {

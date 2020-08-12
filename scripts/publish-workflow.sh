@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-# For publishing a patch version, add the following parameter:
-# "publish-type": "patch"
+# For publishing a different version, see the format below for adding a publish-type
+# parameter:
+# "publish-type": "minor"
 
 CircleCIToken=$1
 PublishType=$2

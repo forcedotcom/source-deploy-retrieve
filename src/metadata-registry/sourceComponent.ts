@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { TreeContainer, VirtualDirectory } from './types';
-import { join, dirname } from 'path';
+import { join, dirname, sep, basename } from 'path';
 import { ForceIgnore } from './forceIgnore';
 import { parseMetadataXml } from '../utils/registry';
 import { baseName } from '../utils';
@@ -72,6 +72,20 @@ export class SourceComponent implements MetadataComponent {
     return this.getChildrenInternal(parentPath);
   }
 
+  public getPackageRelativePath(fsPath: SourcePath): SourcePath {
+    const { directoryName, suffix, inFolder } = this.type;
+    // if there isn't a suffix, assume this is a mixed content component that must
+    // reside in the directoryName of its type. trimUntil maintains the folder structure
+    // the file resides in for the new destination.
+    if (!suffix) {
+      return this.trimUntil(fsPath, directoryName);
+    } else if (inFolder) {
+      const folderName = this.fullName.split('/')[0];
+      return join(directoryName, folderName, basename(fsPath));
+    }
+    return join(directoryName, basename(fsPath));
+  }
+
   private getChildrenInternal(dirPath: SourcePath): SourceComponent[] {
     const children: SourceComponent[] = [];
     for (const fsPath of this.walk(dirPath)) {
@@ -111,6 +125,12 @@ export class SourceComponent implements MetadataComponent {
         }
       }
     }
+  }
+
+  private trimUntil(fsPath: string, name: string): string {
+    const parts = fsPath.split(sep);
+    const index = parts.findIndex((part) => name === part);
+    return parts.slice(index).join(sep);
   }
 
   get fullName(): string {

@@ -76,6 +76,7 @@ export const mockRegistry = {
           },
           y: {
             id: 'y',
+            directoryName: 'ys',
             name: 'Y',
             suffix: 'y',
           },

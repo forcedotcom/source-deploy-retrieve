@@ -30,11 +30,13 @@
   "dependencies": {
     "@salesforce/core": "2.5.1",
     "archiver": "4.0.1",
+    "fast-xml-parser": "^3.17.4",
     "ignore": "^5.1.8",
     "xmldom-sfdx-encoding": "^0.1.29"
   },
   "devDependencies": {
     "@salesforce/ts-sinon": "^1.1.2",
+    "@salesforce/ts-types": "^1.4.2",
     "@types/archiver": "^3.1.0",
     "@types/chai": "^4",
     "@types/mocha": "^5",

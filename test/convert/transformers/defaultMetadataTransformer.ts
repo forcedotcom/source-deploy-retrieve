@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { simon, kathy, gene } from '../../mock/registry';
-import { DefaultTransformer } from '../../../src/convert/transformers/default';
+import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';
 import { WriteInfo } from '../../../src/convert';
 import { join, basename } from 'path';
 import { createSandbox } from 'sinon';
@@ -25,7 +25,7 @@ class TestReadable extends Readable {
   }
 }
 
-describe('DefaultTransformer', () => {
+describe('DefaultMetadataTransformer', () => {
   beforeEach(() =>
     // @ts-ignore mock readable isn't an fs readable specifically
     env.stub(fs, 'createReadStream').callsFake((fsPath: string) => new TestReadable(fsPath))
@@ -36,7 +36,7 @@ describe('DefaultTransformer', () => {
   describe('toMetadataFormat', () => {
     it('should create a WriteInfo for each file in the component', () => {
       const component = simon.SIMON_COMPONENT;
-      const transformer = new DefaultTransformer(component);
+      const transformer = new DefaultMetadataTransformer(component);
       const { directoryName } = component.type;
       const relativeBundle = join(directoryName, basename(simon.SIMON_BUNDLE_PATH));
       const expectedInfos: WriteInfo[] = [];
@@ -59,7 +59,7 @@ describe('DefaultTransformer', () => {
 
     it('should strip the -meta.xml suffix for components with no content', () => {
       const component = gene.GENE_COMPONENT;
-      const transformer = new DefaultTransformer(component);
+      const transformer = new DefaultMetadataTransformer(component);
       const { directoryName } = component.type;
       const fileName = `${component.fullName}.${component.type.suffix}`;
       const expectedInfos: WriteInfo[] = [
@@ -79,7 +79,7 @@ describe('DefaultTransformer', () => {
       const component = kathy.KATHY_COMPONENTS[0];
       const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;
-      const transformer = new DefaultTransformer(component);
+      const transformer = new DefaultMetadataTransformer(component);
       const expectedInfos: WriteInfo[] = [
         {
           relativeDestination: join(
@@ -101,7 +101,7 @@ describe('DefaultTransformer', () => {
   describe('toSourceFormat', () => {
     it('should throw a not implemented error', () => {
       const component = simon.SIMON_COMPONENT;
-      const transformer = new DefaultTransformer(component);
+      const transformer = new DefaultMetadataTransformer(component);
 
       assert.throws(
         () => transformer.toSourceFormat(),

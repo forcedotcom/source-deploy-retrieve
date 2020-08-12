@@ -1,7 +1,7 @@
 const { existsSync } = require('fs');
 const { join } = require('path');
 const { terminalCodes } = require('./util');
-const { FgRed, FgWhite } = terminalCodes;
+const { FgRed } = terminalCodes;
 
 const testResultsPath = join(process.cwd(), 'test-results', 'test-results.xml');
 

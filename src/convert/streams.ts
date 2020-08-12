@@ -10,10 +10,12 @@ import { join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
 import { LibraryError } from '../errors';
-import { RegistryAccess, SourceComponent } from '../metadata-registry';
+import { SourceComponent, MetadataRegistry } from '../metadata-registry';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { SourcePath } from '../common';
+import { ConvertTransaction } from './convertTransaction';
+import { MetadataTransformerFactory } from './transformers';
 
 export const pipeline = promisify(cbPipeline);
 
@@ -39,12 +41,18 @@ export class ComponentReader extends Readable {
 
 export class ComponentConverter extends Transform {
   private targetFormat: SfdxFileFormat;
-  private registryAccess: RegistryAccess;
+  private transaction: ConvertTransaction;
+  private transformerFactory: MetadataTransformerFactory;
 
-  constructor(targetFormat: SfdxFileFormat, registryAccess: RegistryAccess) {
+  constructor(
+    targetFormat: SfdxFileFormat,
+    registry: MetadataRegistry,
+    transaction = new ConvertTransaction()
+  ) {
     super({ objectMode: true });
     this.targetFormat = targetFormat;
-    this.registryAccess = registryAccess;
+    this.transaction = transaction;
+    this.transformerFactory = new MetadataTransformerFactory(registry, this.transaction);
   }
 
   public _transform(
@@ -55,7 +63,7 @@ export class ComponentConverter extends Transform {
     let err: Error;
     let result: WriterFormat;
     try {
-      const transformer = this.registryAccess.getTransformer(chunk);
+      const transformer = this.transformerFactory.getTransformer(chunk);
       switch (this.targetFormat) {
         case 'metadata':
           result = transformer.toMetadataFormat();
@@ -70,6 +78,28 @@ export class ComponentConverter extends Transform {
       err = e;
     }
     callback(err, result);
+  }
+
+  /**
+   * Called at the end when all components have passed through the pipeline. Finalizers
+   * take care of any additional work to be done at this stage e.g. recomposing child components.
+   */
+  public _flush(callback: (err: Error, data?: WriterFormat) => void): void {
+    let err: Error;
+    try {
+      for (const finalizerResult of this.transaction.executeFinalizers()) {
+        if (finalizerResult) {
+          if (Array.isArray(finalizerResult)) {
+            finalizerResult.forEach((result) => this.push(result));
+          } else {
+            this.push(finalizerResult);
+          }
+        }
+      }
+    } catch (e) {
+      err = e;
+    }
+    callback(err);
   }
 }
 

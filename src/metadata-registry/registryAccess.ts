@@ -6,9 +6,7 @@
  */
 import { basename, dirname, join, sep } from 'path';
 import { MetadataRegistry, TreeContainer } from './types';
-import { MetadataTransformerFactory } from '../convert/transformers';
 import { TypeInferenceError } from '../errors';
-import { MetadataTransformer } from '../convert';
 import { extName, parentName } from '../utils/path';
 import { deepFreeze, parseMetadataXml } from '../utils/registry';
 import { MixedContentSourceAdapter } from './adapters/mixedContentSourceAdapter';
@@ -25,7 +23,6 @@ import { registryData } from '.';
 export class RegistryAccess {
   public readonly registry: MetadataRegistry;
   private forceIgnore: ForceIgnore;
-  private metadataTransformerFactory: MetadataTransformerFactory;
   private sourceAdapterFactory: SourceAdapterFactory;
   private tree: TreeContainer;
 
@@ -41,7 +38,6 @@ export class RegistryAccess {
         registryData;
     this.tree = tree;
     this.sourceAdapterFactory = new SourceAdapterFactory(this.registry, tree);
-    this.metadataTransformerFactory = new MetadataTransformerFactory(this.registry);
   }
 
   public getApiVersion(): string {
@@ -94,10 +90,6 @@ export class RegistryAccess {
 
     const component = this.resolveComponent(pathForFetch, true);
     return component ? [component] : [];
-  }
-
-  public getTransformer(component: SourceComponent): MetadataTransformer {
-    return this.metadataTransformerFactory.getTransformer(component);
   }
 
   private getComponentsFromPathRecursive(dir: SourcePath): SourceComponent[] {

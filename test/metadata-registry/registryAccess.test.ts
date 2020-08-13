@@ -369,7 +369,7 @@ describe('RegistryAccess', () => {
             type: mockRegistry.types.tarajihenson,
             componentMappings: [
               {
-                path: taraji.TARAJI_XML_PATHS[0],
+                path: TARAJI_CONTENT_PATH,
                 component: taraji.TARAJI_COMPONENT,
               },
             ],

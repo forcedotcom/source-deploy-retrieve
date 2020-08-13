@@ -68,24 +68,24 @@ describe('BaseSourceAdapter', () => {
     );
   });
 
-  it('Should throw an error if no valid root metadata xml found', () => {
-    class MissingMetadataChildAdapter extends BaseSourceAdapter {
-      protected getRootMetadataXmlPath(): SourcePath {
-        return undefined;
-      }
-      protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
-        return component;
-      }
-    }
-    const path = join('path', 'to', 'dwaynes', 'My_Test.js');
-    const type = mockRegistry.types.dwaynejohnson;
-    const adapter = new MissingMetadataChildAdapter(type, mockRegistry);
-    assert.throws(
-      () => adapter.getComponent(path),
-      RegistryError,
-      nls.localize('error_missing_metadata_xml', [path, type.name])
-    );
-  });
+  // it('Should throw an error if no valid root metadata xml found', () => {
+  //   class MissingMetadataChildAdapter extends BaseSourceAdapter {
+  //     protected getRootMetadataXmlPath(): SourcePath {
+  //       return undefined;
+  //     }
+  //     protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
+  //       return component;
+  //     }
+  //   }
+  //   const path = join('path', 'to', 'dwaynes', 'My_Test.js');
+  //   const type = mockRegistry.types.dwaynejohnson;
+  //   const adapter = new MissingMetadataChildAdapter(type, mockRegistry);
+  //   assert.throws(
+  //     () => adapter.getComponent(path),
+  //     RegistryError,
+  //     nls.localize('error_missing_metadata_xml', [path, type.name])
+  //   );
+  // });
 
   it('Should throw an error if a metadata xml file is forceignored', () => {
     const testUtil = new RegistryTestUtil();

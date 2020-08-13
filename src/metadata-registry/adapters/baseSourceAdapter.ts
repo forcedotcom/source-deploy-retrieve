@@ -46,7 +46,6 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       const rootMetadataPath = this.getRootMetadataXmlPath(path);
       if (rootMetadataPath) {
         rootMetadata = parseMetadataXml(rootMetadataPath);
-        // throw new RegistryError('error_missing_metadata_xml', [path, this.type.name]);
       }
     }
     if (rootMetadata && this.forceIgnore.denies(rootMetadata.path)) {

@@ -1,3 +1,15 @@
+# 1.0.19 - August 13, 2020
+
+## Added
+
+- Add component resolution for files in metadata format ([PR #94](https://github.com/forcedotcom/source-deploy-retrieve/pull/94))
+
+- Add recomposition for CustomObjects ([PR #95](https://github.com/forcedotcom/source-deploy-retrieve/pull/95))
+
+## Fixed
+
+- Fixed content file not being included during source conversion for NetworkBranding components ([PR #106](https://github.com/forcedotcom/source-deploy-retrieve/pull/106))
+
 # 1.0.18 - August 6, 2020
 
 ## Added

@@ -40,3 +40,17 @@ export const TARAJI_VIRTUAL_FS = [
     children: [basename(TARAJI_SOURCE_PATHS[1]), basename(TARAJI_SOURCE_PATHS[2])],
   },
 ];
+export const TARAJI_VIRTUAL_FS_NO_XML = [
+  {
+    dirPath: TARAJI_DIR,
+    children: [basename(TARAJI_CONTENT_PATH)],
+  },
+  {
+    dirPath: TARAJI_CONTENT_PATH,
+    children: [basename(TARAJI_SOURCE_PATHS[0]), basename(dirname(TARAJI_SOURCE_PATHS[1]))],
+  },
+  {
+    dirPath: dirname(TARAJI_SOURCE_PATHS[1]),
+    children: [basename(TARAJI_SOURCE_PATHS[1]), basename(TARAJI_SOURCE_PATHS[2])],
+  },
+];

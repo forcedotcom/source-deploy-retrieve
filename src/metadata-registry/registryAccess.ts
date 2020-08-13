@@ -88,10 +88,7 @@ export class RegistryAccess {
       const fsPath = join(dir, file);
       if (this.tree.isDirectory(fsPath)) {
         if (this.resolveDirectoryAsComponent(fsPath)) {
-          const component = this.resolveComponent(fsPath, true);
-          if (component) {
-            components.push(component);
-          }
+          components.push(this.resolveComponent(fsPath, true));
         } else {
           dirQueue.push(fsPath);
         }
@@ -124,24 +121,22 @@ export class RegistryAccess {
   private resolveDirectoryAsComponent(dirPath: SourcePath): boolean {
     let shouldResolve = true;
 
-    if (this.tree.isDirectory(dirPath)) {
-      const type = this.resolveType(dirPath);
-      if (type) {
-        const { directoryName, inFolder } = type;
-        const parts = dirPath.split(sep);
-        const folderOffset = inFolder ? 2 : 1;
-        const typeDirectoryIndex = parts.indexOf(directoryName);
-        if (
-          typeDirectoryIndex === -1 ||
-          parts.length - folderOffset <= typeDirectoryIndex ||
-          // types with children may want to resolve them individually
-          type.children
-        ) {
-          shouldResolve = false;
-        }
-      } else {
+    const type = this.resolveType(dirPath);
+    if (type) {
+      const { directoryName, inFolder } = type;
+      const parts = dirPath.split(sep);
+      const folderOffset = inFolder ? 2 : 1;
+      const typeDirectoryIndex = parts.indexOf(directoryName);
+      if (
+        typeDirectoryIndex === -1 ||
+        parts.length - folderOffset <= typeDirectoryIndex ||
+        // types with children may want to resolve them individually
+        type.children
+      ) {
         shouldResolve = false;
       }
+    } else {
+      shouldResolve = false;
     }
 
     return shouldResolve;
@@ -161,7 +156,7 @@ export class RegistryAccess {
       (parseMetadataXml(fsPath) || this.parseAsContentMetadataXml(fsPath)) &&
       this.forceIgnore.denies(fsPath)
     ) {
-      // don't fetch the component if the metadata xml is denied
+      // don't resolve the component if the metadata xml is denied
       return;
     }
     const type = this.resolveType(fsPath);

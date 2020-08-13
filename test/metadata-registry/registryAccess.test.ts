@@ -12,6 +12,14 @@ import { mockRegistry, kathy, keanu, taraji, tina, simon, sean } from '../mock/r
 import { join, basename, dirname } from 'path';
 import { TypeInferenceError } from '../../src/errors';
 import { RegistryTestUtil } from './registryTestUtil';
+import {
+  REGINA_VIRTUAL_FS,
+  REGINA_PATH,
+  REGINA_COMPONENT,
+  REGINA_CHILD_XML_PATH_1,
+  REGINA_CHILD_COMPONENT_1,
+  REGINA_XML_PATH,
+} from '../mock/registry/reginaConstants';
 
 const testUtil = new RegistryTestUtil();
 
@@ -406,6 +414,20 @@ describe('RegistryAccess', () => {
           },
         ]);
         expect(access.getComponentsFromPath(simon.SIMON_DIR)).to.deep.equal([SIMON_COMPONENT]);
+      });
+
+      it('Should stop resolution if parent component is resolved', () => {
+        const access = testUtil.createRegistryAccess(REGINA_VIRTUAL_FS);
+        testUtil.stubAdapters([
+          {
+            type: mockRegistry.types.reginaking,
+            componentMappings: [
+              { path: REGINA_XML_PATH, component: REGINA_COMPONENT },
+              { path: REGINA_CHILD_XML_PATH_1, component: REGINA_CHILD_COMPONENT_1 },
+            ],
+          },
+        ]);
+        expect(access.getComponentsFromPath(REGINA_PATH)).to.deep.equal([REGINA_COMPONENT]);
       });
 
       /**

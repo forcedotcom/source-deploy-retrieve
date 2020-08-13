@@ -45,9 +45,9 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
     return MixedContentSourceAdapter.findMetadataFromContent(trigger, this.type, this.tree);
   }
 
-  protected populate(component: SourceComponent, trigger: SourcePath): SourceComponent {
+  protected populate(trigger: SourcePath, component?: SourceComponent): SourceComponent {
     let contentPath = MixedContentSourceAdapter.trimPathToContent(trigger, this.type);
-    if (contentPath === component.xml) {
+    if (contentPath === component?.xml) {
       contentPath = this.tree.find('content', baseName(contentPath), dirname(contentPath));
     }
 
@@ -55,7 +55,19 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
       throw new ExpectedSourceFilesError(this.type, trigger);
     }
 
-    component.content = contentPath;
+    if (component) {
+      component.content = contentPath;
+    } else {
+      component = new SourceComponent(
+        {
+          name: baseName(contentPath),
+          type: this.type,
+          content: contentPath,
+        },
+        this.tree,
+        this.forceIgnore
+      );
+    }
 
     return component;
   }

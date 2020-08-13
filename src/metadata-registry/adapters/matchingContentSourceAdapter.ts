@@ -31,7 +31,7 @@ export class MatchingContentSourceAdapter extends BaseSourceAdapter {
     return `${trigger}${META_XML_SUFFIX}`;
   }
 
-  protected populate(component: SourceComponent, trigger: SourcePath): SourceComponent {
+  protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
     let sourcePath: SourcePath;
 
     if (component.xml === trigger) {

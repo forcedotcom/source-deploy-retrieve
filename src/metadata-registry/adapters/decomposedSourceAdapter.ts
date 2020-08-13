@@ -39,7 +39,7 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
    * the child component, set its parent property to the one created by the
    * `BaseSourceAdapter`, and return the child component instead.
    */
-  protected populate(component: SourceComponent, trigger: SourcePath): SourceComponent {
+  protected populate(trigger: SourcePath, component?: SourceComponent): SourceComponent {
     const metaXml = parseMetadataXml(trigger);
     if (metaXml) {
       const childTypeId = this.type.children.suffixes[metaXml.suffix];

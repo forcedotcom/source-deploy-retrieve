@@ -33,7 +33,7 @@ export class DefaultSourceAdapter extends BaseSourceAdapter {
     return trigger;
   }
 
-  protected populate(component: SourceComponent): SourceComponent {
+  protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
     return component;
   }
 }

@@ -20,7 +20,7 @@ class TestChildAdapter extends BaseSourceAdapter {
   protected getRootMetadataXmlPath(): SourcePath {
     return TestChildAdapter.xmlPath;
   }
-  protected populate(component: SourceComponent, trigger: SourcePath): SourceComponent {
+  protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
     component.content = trigger;
     return component;
   }
@@ -73,7 +73,7 @@ describe('BaseSourceAdapter', () => {
       protected getRootMetadataXmlPath(): SourcePath {
         return undefined;
       }
-      protected populate(component: SourceComponent): SourceComponent {
+      protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
         return component;
       }
     }

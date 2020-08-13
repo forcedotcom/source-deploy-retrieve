@@ -15,7 +15,7 @@ import { MetadataType, SourcePath, MetadataComponent } from '../common';
 export type ComponentProperties = {
   name: string;
   type: MetadataType;
-  xml: SourcePath;
+  xml?: SourcePath;
   content?: SourcePath;
   parent?: SourceComponent;
 };
@@ -26,7 +26,7 @@ export type ComponentProperties = {
 export class SourceComponent implements MetadataComponent {
   public readonly name: string;
   public readonly type: MetadataType;
-  public readonly xml: SourcePath;
+  public readonly xml?: SourcePath;
   public readonly parent?: SourceComponent;
   public content?: SourcePath;
   private _tree: TreeContainer;
@@ -68,8 +68,7 @@ export class SourceComponent implements MetadataComponent {
   }
 
   public getChildren(): SourceComponent[] {
-    const parentPath = dirname(this.xml);
-    return this.getChildrenInternal(parentPath);
+    return this.xml ? this.getChildrenInternal(dirname(this.xml)) : [];
   }
 
   public getPackageRelativePath(fsPath: SourcePath): SourcePath {

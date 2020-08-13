@@ -67,28 +67,35 @@ export class RegistryAccess {
       throw new TypeInferenceError('error_path_not_found', fsPath);
     }
 
-    let pathForFetch = fsPath;
+    const pathForFetch = fsPath;
+    const resolveRecursively = false;
     this.forceIgnore = ForceIgnore.findAndCreate(fsPath);
 
-    if (this.tree.isDirectory(fsPath)) {
+    if (this.tree.isDirectory(fsPath) && !this.shouldResolveFromDirectory(fsPath)) {
       // If we can determine a type from a directory path, and the end part of the path isn't
       // the directoryName of the type itself, we know the path is part of a mixedContent component
-      const type = this.resolveType(fsPath);
-      if (type) {
-        const { directoryName, inFolder } = type;
-        const parts = fsPath.split(sep);
-        const folderOffset = inFolder ? 2 : 1;
-        if (parts[parts.length - folderOffset] !== directoryName) {
-          pathForFetch =
-            MixedContentSourceAdapter.findMetadataFromContent(fsPath, type, this.tree) || fsPath;
-        }
-      }
-      if (pathForFetch === fsPath) {
-        return this.getComponentsFromPathRecursive(fsPath);
-      }
+      // const type = this.resolveType(fsPath);
+      // if (type) {
+      //   const { directoryName, inFolder } = type;
+      //   const parts = fsPath.split(sep);
+      //   const folderOffset = inFolder ? 2 : 1;
+      //   // if (parts[parts.length - folderOffset] !== directoryName) {
+      //   const typeDirectoryIndex = parts.indexOf(directoryName);
+      //   if (typeDirectoryIndex === -1 || parts.length - folderOffset <= typeDirectoryIndex) {
+      //     // if (parts[parts.length - folderOffset] === directoryName) {
+      //     resolveRecursively = true;
+      //     // pathForFetch =
+      //     //   MixedContentSourceAdapter.findMetadataFromContent(fsPath, type, this.tree) || fsPath;
+      //     // }
+      //   }
+      // }
+      // if (resolveRecursively) {
+      // if (pathForFetch === fsPath) {
+      return this.getComponentsFromPathRecursive(fsPath);
+      // }
     }
 
-    const component = this.resolveComponent(pathForFetch, true);
+    const component = this.resolveComponent(fsPath, true);
     return component ? [component] : [];
   }
 
@@ -103,7 +110,14 @@ export class RegistryAccess {
     for (const file of this.tree.readDirectory(dir)) {
       const fsPath = join(dir, file);
       if (this.tree.isDirectory(fsPath)) {
-        dirQueue.push(fsPath);
+        if (this.shouldResolveFromDirectory(fsPath)) {
+          const component = this.resolveComponent(fsPath, true);
+          if (component) {
+            components.push(component);
+          }
+        } else {
+          dirQueue.push(fsPath);
+        }
       } else if (parseMetadataXml(fsPath) || this.parseAsContentMetadataXml(fsPath)) {
         const component = this.resolveComponent(fsPath, false);
         if (component) {
@@ -124,6 +138,27 @@ export class RegistryAccess {
     }
 
     return components;
+  }
+
+  private shouldResolveFromDirectory(fsPath: SourcePath): boolean {
+    const type = this.resolveType(fsPath);
+    let shouldResolve = true;
+    if (type) {
+      const { directoryName, inFolder } = type;
+      const parts = fsPath.split(sep);
+      const folderOffset = inFolder ? 2 : 1;
+      const typeDirectoryIndex = parts.indexOf(directoryName);
+      if (
+        typeDirectoryIndex === -1 ||
+        parts.length - folderOffset <= typeDirectoryIndex ||
+        type.children
+      ) {
+        shouldResolve = false;
+      }
+    } else {
+      shouldResolve = false;
+    }
+    return shouldResolve;
   }
 
   /**

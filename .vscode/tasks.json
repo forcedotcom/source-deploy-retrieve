@@ -1,0 +1,27 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Publish Local Dev Server",
+            "command": "./script/publish-workflow.sh",
+            "type": "shell",
+            "args": ["${input:circleCiId}", "${input:publishType}"]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "circleCiId",
+            "type": "promptString",
+            "description": "CircleCi Token"
+        },
+        {
+            "id": "publishType",
+            "type": "pickString",
+            "description": "Type of version to publish",
+            "options": ["minor", "patch", "major"],
+            "default": "patch"
+        }
+    ]
+}

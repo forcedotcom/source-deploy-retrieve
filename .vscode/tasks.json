@@ -4,8 +4,8 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Publish Local Dev Server",
-            "command": "./script/publish-workflow.sh",
+            "label": "Publish Source Deploy Retrieve Library",
+            "command": "./scripts/publish-workflow.sh",
             "type": "shell",
             "args": ["${input:circleCiId}", "${input:publishType}"]
         }

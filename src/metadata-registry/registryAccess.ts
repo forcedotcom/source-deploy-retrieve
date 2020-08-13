@@ -9,7 +9,6 @@ import { MetadataRegistry, TreeContainer } from './types';
 import { TypeInferenceError } from '../errors';
 import { extName, parentName } from '../utils/path';
 import { deepFreeze, parseMetadataXml } from '../utils/registry';
-import { MixedContentSourceAdapter } from './adapters/mixedContentSourceAdapter';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
@@ -67,32 +66,10 @@ export class RegistryAccess {
       throw new TypeInferenceError('error_path_not_found', fsPath);
     }
 
-    const pathForFetch = fsPath;
-    const resolveRecursively = false;
     this.forceIgnore = ForceIgnore.findAndCreate(fsPath);
 
-    if (this.tree.isDirectory(fsPath) && !this.shouldResolveFromDirectory(fsPath)) {
-      // If we can determine a type from a directory path, and the end part of the path isn't
-      // the directoryName of the type itself, we know the path is part of a mixedContent component
-      // const type = this.resolveType(fsPath);
-      // if (type) {
-      //   const { directoryName, inFolder } = type;
-      //   const parts = fsPath.split(sep);
-      //   const folderOffset = inFolder ? 2 : 1;
-      //   // if (parts[parts.length - folderOffset] !== directoryName) {
-      //   const typeDirectoryIndex = parts.indexOf(directoryName);
-      //   if (typeDirectoryIndex === -1 || parts.length - folderOffset <= typeDirectoryIndex) {
-      //     // if (parts[parts.length - folderOffset] === directoryName) {
-      //     resolveRecursively = true;
-      //     // pathForFetch =
-      //     //   MixedContentSourceAdapter.findMetadataFromContent(fsPath, type, this.tree) || fsPath;
-      //     // }
-      //   }
-      // }
-      // if (resolveRecursively) {
-      // if (pathForFetch === fsPath) {
+    if (this.tree.isDirectory(fsPath) && !this.resolveDirectoryAsComponent(fsPath)) {
       return this.getComponentsFromPathRecursive(fsPath);
-      // }
     }
 
     const component = this.resolveComponent(fsPath, true);
@@ -110,7 +87,7 @@ export class RegistryAccess {
     for (const file of this.tree.readDirectory(dir)) {
       const fsPath = join(dir, file);
       if (this.tree.isDirectory(fsPath)) {
-        if (this.shouldResolveFromDirectory(fsPath)) {
+        if (this.resolveDirectoryAsComponent(fsPath)) {
           const component = this.resolveComponent(fsPath, true);
           if (component) {
             components.push(component);
@@ -140,24 +117,33 @@ export class RegistryAccess {
     return components;
   }
 
-  private shouldResolveFromDirectory(fsPath: SourcePath): boolean {
-    const type = this.resolveType(fsPath);
+  /**
+   * If a type can be determined from a directory path, and the end part of the path isn't
+   * the directoryName of the type itself, infer the path is part of a mixedContent component
+   */
+  private resolveDirectoryAsComponent(dirPath: SourcePath): boolean {
     let shouldResolve = true;
-    if (type) {
-      const { directoryName, inFolder } = type;
-      const parts = fsPath.split(sep);
-      const folderOffset = inFolder ? 2 : 1;
-      const typeDirectoryIndex = parts.indexOf(directoryName);
-      if (
-        typeDirectoryIndex === -1 ||
-        parts.length - folderOffset <= typeDirectoryIndex ||
-        type.children
-      ) {
+
+    if (this.tree.isDirectory(dirPath)) {
+      const type = this.resolveType(dirPath);
+      if (type) {
+        const { directoryName, inFolder } = type;
+        const parts = dirPath.split(sep);
+        const folderOffset = inFolder ? 2 : 1;
+        const typeDirectoryIndex = parts.indexOf(directoryName);
+        if (
+          typeDirectoryIndex === -1 ||
+          parts.length - folderOffset <= typeDirectoryIndex ||
+          // types with children may want to resolve them individually
+          type.children
+        ) {
+          shouldResolve = false;
+        }
+      } else {
         shouldResolve = false;
       }
-    } else {
-      shouldResolve = false;
     }
+
     return shouldResolve;
   }
 

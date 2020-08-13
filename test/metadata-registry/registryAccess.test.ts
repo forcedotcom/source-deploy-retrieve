@@ -396,6 +396,7 @@ describe('RegistryAccess', () => {
           {
             type: mockRegistry.types.simonpegg,
             componentMappings: [
+              { path: simon.SIMON_BUNDLE_PATH, component: SIMON_COMPONENT },
               { path: simon.SIMON_XML_PATH, component: SIMON_COMPONENT },
               {
                 path: simon.SIMON_SUBTYPE_PATH,
@@ -404,7 +405,7 @@ describe('RegistryAccess', () => {
             ],
           },
         ]);
-        expect(access.getComponentsFromPath(SIMON_BUNDLE_PATH)).to.deep.equal([SIMON_COMPONENT]);
+        expect(access.getComponentsFromPath(simon.SIMON_DIR)).to.deep.equal([SIMON_COMPONENT]);
       });
 
       /**

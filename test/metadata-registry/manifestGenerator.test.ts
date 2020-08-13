@@ -16,12 +16,15 @@ import { fail } from 'assert';
 describe('ManifestGenerator', () => {
   let sandboxStub: SinonSandbox;
   const manifestGenerator = new ManifestGenerator();
+
   beforeEach(async () => {
     sandboxStub = createSandbox();
   });
+
   afterEach(() => {
     sandboxStub.restore();
   });
+
   it('should generate manifest for one type', () => {
     const component = {
       fullName: 'someName',
@@ -34,6 +37,7 @@ describe('ManifestGenerator', () => {
     expectedManifest += '  <version>48.0</version>\n</Package>';
     expect(manifestGenerator.createManifest([component])).to.equal(expectedManifest);
   });
+
   it('should generate manifest for multiple types', () => {
     const component1 = {
       fullName: 'apexClass1',
@@ -52,6 +56,7 @@ describe('ManifestGenerator', () => {
     expectedManifest += '  <version>48.0</version>\n</Package>';
     expect(manifestGenerator.createManifest([component1, component2])).to.equal(expectedManifest);
   });
+
   it('should generate manifest for multiple components', () => {
     const component1 = {
       fullName: 'apexClass1',
@@ -76,6 +81,7 @@ describe('ManifestGenerator', () => {
       expectedManifest
     );
   });
+
   it('should generate manifest for multiple components passed in different order', () => {
     const component1 = {
       fullName: 'apexClass1',
@@ -100,6 +106,7 @@ describe('ManifestGenerator', () => {
       expectedManifest
     );
   });
+
   it('should generate manifest by overriding apiversion', () => {
     const component = {
       fullName: 'someName',
@@ -111,20 +118,6 @@ describe('ManifestGenerator', () => {
       '  <types>\n    <members>someName</members>\n    <name>ApexClass</name>\n  </types>\n';
     expectedManifest += '  <version>45.0</version>\n</Package>';
     expect(manifestGenerator.createManifest([component], '45.0')).to.equal(expectedManifest);
-  });
-  it('should throw error for non valid type', () => {
-    const component = {
-      fullName: 'someName',
-      type: { id: 'someveryunknowntype', name: 'someveryunknowntype' },
-    };
-    try {
-      manifestGenerator.createManifest([component]);
-      expect.fail('should have failed');
-    } catch (e) {
-      expect(e.message).to.equal(
-        "Missing metadata type definition in registry for id 'someveryunknowntype'"
-      );
-    }
   });
 
   const rootPath = path.join('file', 'path');

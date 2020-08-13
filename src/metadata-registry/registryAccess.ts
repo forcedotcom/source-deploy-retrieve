@@ -39,10 +39,6 @@ export class RegistryAccess {
     this.sourceAdapterFactory = new SourceAdapterFactory(this.registry, tree);
   }
 
-  public getApiVersion(): string {
-    return this.registry.apiVersion;
-  }
-
   /**
    * Get a metadata type definition.
    *
@@ -74,6 +70,10 @@ export class RegistryAccess {
 
     const component = this.resolveComponent(fsPath, true);
     return component ? [component] : [];
+  }
+
+  public getApiVersion(): string {
+    return this.registry.apiVersion;
   }
 
   private getComponentsFromPathRecursive(dir: SourcePath): SourceComponent[] {
@@ -112,43 +112,6 @@ export class RegistryAccess {
     }
 
     return components;
-  }
-
-  /**
-   * If a type can be determined from a directory path, and the end part of the path isn't
-   * the directoryName of the type itself, infer the path is part of a mixedContent component
-   */
-  private resolveDirectoryAsComponent(dirPath: SourcePath): boolean {
-    let shouldResolve = true;
-
-    const type = this.resolveType(dirPath);
-    if (type) {
-      const { directoryName, inFolder } = type;
-      const parts = dirPath.split(sep);
-      const folderOffset = inFolder ? 2 : 1;
-      const typeDirectoryIndex = parts.indexOf(directoryName);
-      if (
-        typeDirectoryIndex === -1 ||
-        parts.length - folderOffset <= typeDirectoryIndex ||
-        // types with children may want to resolve them individually
-        type.children
-      ) {
-        shouldResolve = false;
-      }
-    } else {
-      shouldResolve = false;
-    }
-
-    return shouldResolve;
-  }
-
-  /**
-   * Any file with a registered suffix is potentially a content metadata file.
-   *
-   * @param path File path of a potential content metadata file
-   */
-  private parseAsContentMetadataXml(path: SourcePath): boolean {
-    return this.registry.suffixes.hasOwnProperty(extName(path));
   }
 
   private resolveComponent(fsPath: SourcePath, isResolvingSource: boolean): SourceComponent {
@@ -206,5 +169,47 @@ export class RegistryAccess {
     if (typeId) {
       return this.getTypeFromName(typeId);
     }
+  }
+
+  /**
+   * Whether or not a directory that represents a single component should be resolved as one,
+   * or if it should be walked for additional components.
+   *
+   * If a type can be determined from a directory path, and the end part of the path isn't
+   * the directoryName of the type itself, infer the path is part of a mixedContent component
+   *
+   * @param dirPath Path to a directory
+   */
+  private resolveDirectoryAsComponent(dirPath: SourcePath): boolean {
+    let shouldResolve = true;
+
+    const type = this.resolveType(dirPath);
+    if (type) {
+      const { directoryName, inFolder } = type;
+      const parts = dirPath.split(sep);
+      const folderOffset = inFolder ? 2 : 1;
+      const typeDirectoryIndex = parts.indexOf(directoryName);
+      if (
+        typeDirectoryIndex === -1 ||
+        parts.length - folderOffset <= typeDirectoryIndex ||
+        // types with children may want to resolve them individually
+        type.children
+      ) {
+        shouldResolve = false;
+      }
+    } else {
+      shouldResolve = false;
+    }
+
+    return shouldResolve;
+  }
+
+  /**
+   * Any file with a registered suffix is potentially a content metadata file.
+   *
+   * @param path File path of a potential content metadata file
+   */
+  private parseAsContentMetadataXml(path: SourcePath): boolean {
+    return this.registry.suffixes.hasOwnProperty(extName(path));
   }
 }

@@ -28,12 +28,12 @@ describe('ManifestGenerator', () => {
   it('should generate manifest for one type', () => {
     const component = {
       fullName: 'someName',
-      type: { id: 'apexclass', name: 'ApexClass' },
+      type: { id: 'foobar', name: 'FooBar' },
     };
     let expectedManifest = '<?xml version="1.0" encoding="UTF-8"?>\n';
     expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedManifest +=
-      '  <types>\n    <members>someName</members>\n    <name>ApexClass</name>\n  </types>\n';
+      '  <types>\n    <members>someName</members>\n    <name>FooBar</name>\n  </types>\n';
     expectedManifest += '  <version>48.0</version>\n</Package>';
     expect(manifestGenerator.createManifest([component])).to.equal(expectedManifest);
   });

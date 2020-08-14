@@ -105,8 +105,8 @@ describe('BaseSourceAdapter', () => {
   });
 
   it('Should resolve a folder component', () => {
-    const path = join('path', 'to', 'genes', 'My_Test-meta.xml');
-    const type = mockRegistry.types.genewilder;
+    const path = join('path', 'to', 'seans', 'My_Test-meta.xml');
+    const type = mockRegistry.types.seanfolder;
     const adapter = new DefaultSourceAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.deep.equal(
       new SourceComponent({

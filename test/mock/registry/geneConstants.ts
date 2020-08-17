@@ -19,3 +19,10 @@ export const GENE_COMPONENT = new SourceComponent({
   type,
   xml: GENE_XML_PATH,
 });
+export const GENE_FOLDER_XML_NAME = 'a-meta.xml';
+export const GENE_FOLDER_XML_PATH = join(GENE_DIR, GENE_FOLDER_XML_NAME);
+export const GENE_FOLDER_COMPONENT = new SourceComponent({
+  name: 'a',
+  type,
+  xml: GENE_FOLDER_XML_PATH,
+});

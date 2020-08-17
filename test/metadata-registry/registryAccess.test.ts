@@ -8,7 +8,7 @@
 import { assert, expect } from 'chai';
 import { RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../src/metadata-registry';
 import { nls } from '../../src/i18n';
-import { mockRegistry, kathy, keanu, taraji, tina, simon, sean } from '../mock/registry';
+import { mockRegistry, kathy, keanu, taraji, tina, simon, sean, gene } from '../mock/registry';
 import { join, basename, dirname } from 'path';
 import { TypeInferenceError } from '../../src/errors';
 import { RegistryTestUtil } from './registryTestUtil';
@@ -151,6 +151,26 @@ describe('RegistryAccess', () => {
         expect(access.getComponentsFromPath(path)).to.deep.equal(sean.SEAN_COMPONENTS);
       });
 
+      it('Should determine type for folder files', () => {
+        const path = gene.GENE_DIR;
+        const access = testUtil.createRegistryAccess([
+          {
+            dirPath: path,
+            children: [gene.GENE_FOLDER_XML_NAME],
+          },
+        ]);
+        testUtil.stubAdapters([
+          {
+            type: mockRegistry.types.genewilder,
+            componentMappings: [
+              { path: gene.GENE_FOLDER_XML_PATH, component: gene.GENE_FOLDER_COMPONENT },
+            ],
+            allowContent: false,
+          },
+        ]);
+        expect(access.getComponentsFromPath(path)).to.deep.equal([gene.GENE_FOLDER_COMPONENT]);
+      });
+
       it('Should not mistake folder component of a mixed content type as that type', () => {
         // this test has coveage on non-mixedContent types as well by nature of the execution path
         const path = tina.TINA_FOLDER_XML;
@@ -217,6 +237,27 @@ describe('RegistryAccess', () => {
             type: mockRegistry.types.keanureeves,
             // should not be returned
             componentMappings: [{ path, component: keanu.KEANU_COMPONENT }],
+          },
+        ]);
+        expect(access.getComponentsFromPath(path).length).to.equal(0);
+      });
+
+      it('Should not return a component if path to folder metadata xml is forceignored', () => {
+        const path = gene.GENE_FOLDER_XML_PATH;
+        const access = testUtil.createRegistryAccess([
+          {
+            dirPath: dirname(path),
+            children: [basename(path)],
+          },
+        ]);
+        testUtil.stubForceIgnore({ seed: path, deny: [path] });
+        testUtil.stubAdapters([
+          {
+            type: mockRegistry.types.genewilder,
+            // should not be returned
+            componentMappings: [
+              { path: gene.GENE_FOLDER_XML_PATH, component: gene.GENE_FOLDER_COMPONENT },
+            ],
           },
         ]);
         expect(access.getComponentsFromPath(path).length).to.equal(0);

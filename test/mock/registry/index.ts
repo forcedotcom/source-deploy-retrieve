@@ -94,6 +94,13 @@ export const mockRegistry = {
       name: 'SeanConnery',
       suffix: 'sean',
     },
+    seanfolder: {
+      id: 'seanfolder',
+      directoryName: 'seans',
+      inFolder: false,
+      name: 'SeanFolder',
+      suffix: 'seanfolder',
+    },
   },
   suffixes: {
     kathy: 'kathybates',

@@ -81,5 +81,9 @@
     "./{src,test}/**/*.{ts,js}": [
       "eslint -c .eslintrc.json --fix"
     ]
+  },
+  "volta": {
+    "node": "12.4.0",
+    "yarn": "1.22.4"
   }
 }

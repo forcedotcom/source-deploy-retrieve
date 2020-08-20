@@ -10,7 +10,7 @@ import { DefaultSourceAdapter } from '../../../src/metadata-registry/adapters/de
 import { expect, assert } from 'chai';
 import { BaseSourceAdapter } from '../../../src/metadata-registry/adapters/baseSourceAdapter';
 import { SourcePath } from '../../../src/common';
-import { RegistryError, UnexpectedForceIgnore } from '../../../src/errors';
+import { UnexpectedForceIgnore } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { RegistryTestUtil } from '../registryTestUtil';
 import { SourceComponent } from '../../../src/metadata-registry';
@@ -20,7 +20,7 @@ class TestChildAdapter extends BaseSourceAdapter {
   protected getRootMetadataXmlPath(): SourcePath {
     return TestChildAdapter.xmlPath;
   }
-  protected populate(component: SourceComponent, trigger: SourcePath): SourceComponent {
+  protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
     component.content = trigger;
     return component;
   }
@@ -68,25 +68,6 @@ describe('BaseSourceAdapter', () => {
     );
   });
 
-  it('Should throw an error if no valid root metadata xml found', () => {
-    class MissingMetadataChildAdapter extends BaseSourceAdapter {
-      protected getRootMetadataXmlPath(): SourcePath {
-        return undefined;
-      }
-      protected populate(component: SourceComponent): SourceComponent {
-        return component;
-      }
-    }
-    const path = join('path', 'to', 'dwaynes', 'My_Test.js');
-    const type = mockRegistry.types.dwaynejohnson;
-    const adapter = new MissingMetadataChildAdapter(type, mockRegistry);
-    assert.throws(
-      () => adapter.getComponent(path),
-      RegistryError,
-      nls.localize('error_missing_metadata_xml', [path, type.name])
-    );
-  });
-
   it('Should throw an error if a metadata xml file is forceignored', () => {
     const testUtil = new RegistryTestUtil();
     const path = join('path', 'to', 'keanus', 'My_Test.keanu-meta.xml');
@@ -121,10 +102,6 @@ describe('BaseSourceAdapter', () => {
     const path = join('path', 'to', 'genes', 'My_Test.sean');
     const type = mockRegistry.types.seanconnerys;
     const adapter = new DefaultSourceAdapter(type, mockRegistry);
-    assert.throws(
-      () => adapter.getComponent(path),
-      RegistryError,
-      nls.localize('error_unsupported_content_metadata_xml', [path, type.name])
-    );
+    expect(adapter.getComponent(path)).to.be.undefined;
   });
 });

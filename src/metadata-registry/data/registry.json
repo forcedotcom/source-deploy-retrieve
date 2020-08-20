@@ -1706,7 +1706,7 @@
     "lightningcomponentbundle": { "adapter": "bundle" },
     "networkbranding": { "adapter": "matchingContentFile" },
     "staticresource": { "adapter": "mixedContent" },
-    "waveTemplates": { "adapter": "bundle" }
+    "wavetemplatebundle": { "adapter": "bundle" }
   },
   "apiVersion": "48.0"
 }

@@ -9,7 +9,6 @@ import { MetadataRegistry, TreeContainer } from './types';
 import { TypeInferenceError } from '../errors';
 import { extName, parentName } from '../utils/path';
 import { deepFreeze, parseMetadataXml } from '../utils/registry';
-import { MixedContentSourceAdapter } from './adapters/mixedContentSourceAdapter';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
@@ -40,10 +39,6 @@ export class RegistryAccess {
     this.sourceAdapterFactory = new SourceAdapterFactory(this.registry, tree);
   }
 
-  public getApiVersion(): string {
-    return this.registry.apiVersion;
-  }
-
   /**
    * Get a metadata type definition.
    *
@@ -67,29 +62,18 @@ export class RegistryAccess {
       throw new TypeInferenceError('error_path_not_found', fsPath);
     }
 
-    let pathForFetch = fsPath;
     this.forceIgnore = ForceIgnore.findAndCreate(fsPath);
 
-    if (this.tree.isDirectory(fsPath)) {
-      // If we can determine a type from a directory path, and the end part of the path isn't
-      // the directoryName of the type itself, we know the path is part of a mixedContent component
-      const type = this.resolveType(fsPath);
-      if (type) {
-        const { directoryName, inFolder } = type;
-        const parts = fsPath.split(sep);
-        const folderOffset = inFolder ? 2 : 1;
-        if (parts[parts.length - folderOffset] !== directoryName) {
-          pathForFetch =
-            MixedContentSourceAdapter.findMetadataFromContent(fsPath, type, this.tree) || fsPath;
-        }
-      }
-      if (pathForFetch === fsPath) {
-        return this.getComponentsFromPathRecursive(fsPath);
-      }
+    if (this.tree.isDirectory(fsPath) && !this.resolveDirectoryAsComponent(fsPath)) {
+      return this.getComponentsFromPathRecursive(fsPath);
     }
 
-    const component = this.resolveComponent(pathForFetch, true);
+    const component = this.resolveComponent(fsPath, true);
     return component ? [component] : [];
+  }
+
+  public getApiVersion(): string {
+    return this.registry.apiVersion;
   }
 
   private getComponentsFromPathRecursive(dir: SourcePath): SourceComponent[] {
@@ -103,7 +87,11 @@ export class RegistryAccess {
     for (const file of this.tree.readDirectory(dir)) {
       const fsPath = join(dir, file);
       if (this.tree.isDirectory(fsPath)) {
-        dirQueue.push(fsPath);
+        if (this.resolveDirectoryAsComponent(fsPath)) {
+          components.push(this.resolveComponent(fsPath, true));
+        } else {
+          dirQueue.push(fsPath);
+        }
       } else if (this.isMetadata(fsPath)) {
         const component = this.resolveComponent(fsPath, false);
         if (component) {
@@ -126,41 +114,9 @@ export class RegistryAccess {
     return components;
   }
 
-  private isMetadata(fsPath: SourcePath): boolean {
-    return (
-      !!parseMetadataXml(fsPath) ||
-      this.parseAsContentMetadataXml(fsPath) ||
-      !!this.parseAsFolderMetadataXml(fsPath)
-    );
-  }
-
-  /**
-   * Any file with a registered suffix is potentially a content metadata file.
-   *
-   * @param fsPath File path of a potential content metadata file
-   */
-  private parseAsContentMetadataXml(fsPath: SourcePath): boolean {
-    return this.registry.suffixes.hasOwnProperty(extName(fsPath));
-  }
-
-  /**
-   * Identify metadata xml for a folder component:
-   *    .../email/TestFolder-meta.xml
-   *
-   * Do not match this pattern:
-   *    .../tabs/TestFolder.tab-meta.xml
-   */
-  private parseAsFolderMetadataXml(fsPath: SourcePath): string {
-    const match = basename(fsPath).match(/(.+)-meta\.xml/);
-    if (match && !match[1].includes('.')) {
-      const parts = fsPath.split(sep);
-      return parts.length > 1 ? parts[parts.length - 2] : undefined;
-    }
-  }
-
   private resolveComponent(fsPath: SourcePath, isResolvingSource: boolean): SourceComponent {
     if (this.isMetadata(fsPath) && this.forceIgnore.denies(fsPath)) {
-      // don't fetch the component if the metadata (xml) is denied
+      // don't resolve the component if the metadata xml is denied
       return;
     }
     const type = this.resolveType(fsPath);
@@ -220,5 +176,70 @@ export class RegistryAccess {
     if (typeId) {
       return this.getTypeFromName(typeId);
     }
+  }
+
+  /**
+   * Whether or not a directory that represents a single component should be resolved as one,
+   * or if it should be walked for additional components.
+   *
+   * If a type can be determined from a directory path, and the end part of the path isn't
+   * the directoryName of the type itself, infer the path is part of a mixedContent component
+   *
+   * @param dirPath Path to a directory
+   */
+  private resolveDirectoryAsComponent(dirPath: SourcePath): boolean {
+    let shouldResolve = true;
+
+    const type = this.resolveType(dirPath);
+    if (type) {
+      const { directoryName, inFolder } = type;
+      const parts = dirPath.split(sep);
+      const folderOffset = inFolder ? 2 : 1;
+      const typeDirectoryIndex = parts.indexOf(directoryName);
+      if (
+        typeDirectoryIndex === -1 ||
+        parts.length - folderOffset <= typeDirectoryIndex ||
+        // types with children may want to resolve them individually
+        type.children
+      ) {
+        shouldResolve = false;
+      }
+    } else {
+      shouldResolve = false;
+    }
+
+    return shouldResolve;
+  }
+
+  /**
+   * Any file with a registered suffix is potentially a content metadata file.
+   *
+   * @param fsPath File path of a potential content metadata file
+   */
+  private parseAsContentMetadataXml(fsPath: SourcePath): boolean {
+    return this.registry.suffixes.hasOwnProperty(extName(fsPath));
+  }
+
+  /**
+   * Identify metadata xml for a folder component:
+   *    .../email/TestFolder-meta.xml
+   *
+   * Do not match this pattern:
+   *    .../tabs/TestFolder.tab-meta.xml
+   */
+  private parseAsFolderMetadataXml(fsPath: SourcePath): string {
+    const match = basename(fsPath).match(/(.+)-meta\.xml/);
+    if (match && !match[1].includes('.')) {
+      const parts = fsPath.split(sep);
+      return parts.length > 1 ? parts[parts.length - 2] : undefined;
+    }
+  }
+
+  private isMetadata(fsPath: SourcePath): boolean {
+    return (
+      !!parseMetadataXml(fsPath) ||
+      this.parseAsContentMetadataXml(fsPath) ||
+      !!this.parseAsFolderMetadataXml(fsPath)
+    );
   }
 }

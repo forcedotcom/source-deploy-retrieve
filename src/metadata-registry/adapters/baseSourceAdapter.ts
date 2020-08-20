@@ -7,7 +7,7 @@
 import { SourceAdapter, MetadataRegistry, MetadataXml, TreeContainer } from '../types';
 import { parseMetadataXml } from '../../utils/registry';
 import * as registryData from '../data/registry.json';
-import { RegistryError, UnexpectedForceIgnore } from '../../errors';
+import { UnexpectedForceIgnore } from '../../errors';
 import { parentName } from '../../utils/path';
 import { ForceIgnore } from '../forceIgnore';
 import { dirname, basename, sep } from 'path';
@@ -44,32 +44,31 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     let rootMetadata = this.parseAsRootMetadataXml(path);
     if (!rootMetadata) {
       const rootMetadataPath = this.getRootMetadataXmlPath(path);
-      if (!rootMetadataPath) {
-        throw new RegistryError('error_missing_metadata_xml', [path, this.type.name]);
-      }
-      rootMetadata = parseMetadataXml(rootMetadataPath);
-      if (!rootMetadata) {
-        throw new RegistryError('error_unsupported_content_metadata_xml', [path, this.type.name]);
+      if (rootMetadataPath) {
+        rootMetadata = parseMetadataXml(rootMetadataPath);
       }
     }
-    if (this.forceIgnore.denies(rootMetadata.path)) {
+    if (rootMetadata && this.forceIgnore.denies(rootMetadata.path)) {
       throw new UnexpectedForceIgnore('error_no_metadata_xml_ignore', [rootMetadata.path, path]);
     }
 
-    const componentName = this.type.inFolder
-      ? `${parentName(rootMetadata.path)}/${rootMetadata.fullName}`
-      : rootMetadata.fullName;
-    const component = new SourceComponent(
-      {
-        name: componentName,
-        type: this.type,
-        xml: rootMetadata.path,
-      },
-      this.tree,
-      this.forceIgnore
-    );
+    let component: SourceComponent;
+    if (rootMetadata) {
+      const componentName = this.type.inFolder
+        ? `${parentName(rootMetadata.path)}/${rootMetadata.fullName}`
+        : rootMetadata.fullName;
+      component = new SourceComponent(
+        {
+          name: componentName,
+          type: this.type,
+          xml: rootMetadata.path,
+        },
+        this.tree,
+        this.forceIgnore
+      );
+    }
 
-    return this.populate(component, path);
+    return this.populate(path, component);
   }
 
   /**
@@ -93,7 +92,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    * @param component Component to populate properties on
    * @param trigger Path that `getComponent` was called with
    */
-  protected abstract populate(component: SourceComponent, trigger: SourcePath): SourceComponent;
+  protected abstract populate(trigger: SourcePath, component?: SourceComponent): SourceComponent;
 
   /**
    * If the path given to `getComponent` is the root metadata xml file for a component,

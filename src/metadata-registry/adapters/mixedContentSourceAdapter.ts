@@ -8,8 +8,7 @@ import { BaseSourceAdapter } from './baseSourceAdapter';
 import { dirname, basename, sep } from 'path';
 import { ExpectedSourceFilesError } from '../../errors';
 import { baseName } from '../../utils/path';
-import { SourcePath, MetadataType } from '../../common';
-import { TreeContainer } from '../types';
+import { SourcePath } from '../../common';
 import { SourceComponent } from '../sourceComponent';
 
 /**
@@ -39,15 +38,15 @@ import { SourceComponent } from '../sourceComponent';
 export class MixedContentSourceAdapter extends BaseSourceAdapter {
   protected getRootMetadataXmlPath(trigger: SourcePath): SourcePath {
     if (this.ownFolder) {
-      const componentRoot = MixedContentSourceAdapter.trimPathToContent(trigger, this.type);
+      const componentRoot = this.trimPathToContent(trigger);
       return this.tree.find('metadata', basename(componentRoot), componentRoot);
     }
-    return MixedContentSourceAdapter.findMetadataFromContent(trigger, this.type, this.tree);
+    return this.findMetadataFromContent(trigger);
   }
 
-  protected populate(component: SourceComponent, trigger: SourcePath): SourceComponent {
-    let contentPath = MixedContentSourceAdapter.trimPathToContent(trigger, this.type);
-    if (contentPath === component.xml) {
+  protected populate(trigger: SourcePath, component?: SourceComponent): SourceComponent {
+    let contentPath = this.trimPathToContent(trigger);
+    if (contentPath === component?.xml) {
       contentPath = this.tree.find('content', baseName(contentPath), dirname(contentPath));
     }
 
@@ -55,7 +54,19 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
       throw new ExpectedSourceFilesError(this.type, trigger);
     }
 
-    component.content = contentPath;
+    if (component) {
+      component.content = contentPath;
+    } else {
+      component = new SourceComponent(
+        {
+          name: baseName(contentPath),
+          type: this.type,
+          content: contentPath,
+        },
+        this.tree,
+        this.forceIgnore
+      );
+    }
 
     return component;
   }
@@ -67,15 +78,11 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
    *
    * @param path Path to content or a child of the content
    */
-  public static findMetadataFromContent(
-    path: SourcePath,
-    type: MetadataType,
-    tree: TreeContainer
-  ): SourcePath {
-    const rootContentPath = MixedContentSourceAdapter.trimPathToContent(path, type);
+  private findMetadataFromContent(path: SourcePath): SourcePath {
+    const rootContentPath = this.trimPathToContent(path);
     const rootTypeDirectory = dirname(rootContentPath);
     const contentFullName = baseName(rootContentPath);
-    return tree.find('metadata', contentFullName, rootTypeDirectory);
+    return this.tree.find('metadata', contentFullName, rootTypeDirectory);
   }
 
   /**
@@ -86,10 +93,10 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
    * @param path Path to trim
    * @param type MetadataType to determine content for
    */
-  private static trimPathToContent(path: SourcePath, type: MetadataType): SourcePath {
+  private trimPathToContent(path: SourcePath): SourcePath {
     const pathParts = path.split(sep);
-    const typeFolderIndex = pathParts.findIndex((part) => part === type.directoryName);
-    const offset = type.inFolder ? 3 : 2;
+    const typeFolderIndex = pathParts.findIndex((part) => part === this.type.directoryName);
+    const offset = this.type.inFolder ? 3 : 2;
     return pathParts.slice(0, typeFolderIndex + offset).join(sep);
   }
 }

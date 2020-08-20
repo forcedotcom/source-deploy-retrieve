@@ -111,5 +111,16 @@ describe('SourceComponent', () => {
         `${regina.REGINA_COMPONENT.name}.${expectedChild.name}`
       );
     });
+
+    it('should return empty array if there is no metadata xml', () => {
+      const noXml = SourceComponent.createVirtualComponent(
+        {
+          name: 'noXml',
+          type: mockRegistry.types.tinafey,
+        },
+        []
+      );
+      expect(noXml.getChildren()).to.be.empty;
+    });
   });
 });

@@ -12,6 +12,14 @@ import { mockRegistry, kathy, keanu, taraji, tina, simon, sean, gene } from '../
 import { join, basename, dirname } from 'path';
 import { TypeInferenceError } from '../../src/errors';
 import { RegistryTestUtil } from './registryTestUtil';
+import {
+  REGINA_VIRTUAL_FS,
+  REGINA_PATH,
+  REGINA_COMPONENT,
+  REGINA_CHILD_XML_PATH_1,
+  REGINA_CHILD_COMPONENT_1,
+  REGINA_XML_PATH,
+} from '../mock/registry/reginaConstants';
 
 const testUtil = new RegistryTestUtil();
 
@@ -410,7 +418,7 @@ describe('RegistryAccess', () => {
             type: mockRegistry.types.tarajihenson,
             componentMappings: [
               {
-                path: taraji.TARAJI_XML_PATHS[0],
+                path: TARAJI_CONTENT_PATH,
                 component: taraji.TARAJI_COMPONENT,
               },
             ],
@@ -437,6 +445,7 @@ describe('RegistryAccess', () => {
           {
             type: mockRegistry.types.simonpegg,
             componentMappings: [
+              { path: simon.SIMON_BUNDLE_PATH, component: SIMON_COMPONENT },
               { path: simon.SIMON_XML_PATH, component: SIMON_COMPONENT },
               {
                 path: simon.SIMON_SUBTYPE_PATH,
@@ -445,7 +454,21 @@ describe('RegistryAccess', () => {
             ],
           },
         ]);
-        expect(access.getComponentsFromPath(SIMON_BUNDLE_PATH)).to.deep.equal([SIMON_COMPONENT]);
+        expect(access.getComponentsFromPath(simon.SIMON_DIR)).to.deep.equal([SIMON_COMPONENT]);
+      });
+
+      it('Should stop resolution if parent component is resolved', () => {
+        const access = testUtil.createRegistryAccess(REGINA_VIRTUAL_FS);
+        testUtil.stubAdapters([
+          {
+            type: mockRegistry.types.reginaking,
+            componentMappings: [
+              { path: REGINA_XML_PATH, component: REGINA_COMPONENT },
+              { path: REGINA_CHILD_XML_PATH_1, component: REGINA_CHILD_COMPONENT_1 },
+            ],
+          },
+        ]);
+        expect(access.getComponentsFromPath(REGINA_PATH)).to.deep.equal([REGINA_COMPONENT]);
       });
 
       /**

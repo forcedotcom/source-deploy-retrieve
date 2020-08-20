@@ -12,7 +12,8 @@ import { SourceComponent } from '../../../src';
 // Constants for a decomposed type
 const type = mockRegistry.types.reginaking;
 
-export const REGINA_PATH = join('path', 'to', 'reginas', 'a');
+export const REGINAS_PATH = join('path', 'to', 'reginas');
+export const REGINA_PATH = join(REGINAS_PATH, 'a');
 export const REGINA_XML_NAME = 'a.regina-meta.xml';
 export const REGINA_XML_PATH = join(REGINA_PATH, REGINA_XML_NAME);
 export const REGINA_CHILD_XML_NAME_1 = 'z.y-meta.xml';
@@ -36,6 +37,14 @@ export const REGINA_COMPONENT = SourceComponent.createVirtualComponent(
     name: baseName(REGINA_XML_PATH),
     type,
     xml: REGINA_XML_PATH,
+  },
+  REGINA_VIRTUAL_FS
+);
+export const REGINA_CHILD_COMPONENT_1 = SourceComponent.createVirtualComponent(
+  {
+    name: baseName(REGINA_CHILD_XML_NAME_1),
+    type: type.children.types.y,
+    xml: REGINA_CHILD_XML_PATH_1,
   },
   REGINA_VIRTUAL_FS
 );

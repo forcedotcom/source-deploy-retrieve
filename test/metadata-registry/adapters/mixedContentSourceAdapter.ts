@@ -19,6 +19,7 @@ import { MixedContentSourceAdapter } from '../../../src/metadata-registry/adapte
 import { ExpectedSourceFilesError } from '../../../src/errors';
 import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
 import { SourceComponent } from '../../../src/metadata-registry';
+import { TARAJI_VIRTUAL_FS_NO_XML, TARAJI_CONTENT_PATH } from '../../mock/registry/tarajiConstants';
 
 describe('MixedContentSourceAdapter', () => {
   it('Should throw ExpectedSourceFilesError if content does not exist', () => {
@@ -76,6 +77,20 @@ describe('MixedContentSourceAdapter', () => {
       const randomSource =
         TARAJI_SOURCE_PATHS[Math.floor(Math.random() * Math.floor(TARAJI_SOURCE_PATHS.length))];
       expect(adapter.getComponent(randomSource)).to.deep.equal(expectedComponent);
+    });
+
+    it('should return expected SourceComponent when there is no metadata xml', () => {
+      const tree = new VirtualTreeContainer(TARAJI_VIRTUAL_FS_NO_XML);
+      const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
+      const expectedComponent = new SourceComponent(
+        {
+          name: 'a',
+          type,
+          content: TARAJI_CONTENT_PATH,
+        },
+        tree
+      );
+      expect(adapter.getComponent(taraji.TARAJI_CONTENT_PATH)).to.deep.equal(expectedComponent);
     });
   });
 });

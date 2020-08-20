@@ -1,3 +1,9 @@
+# 1.0.20 - August 20, 2020
+
+## Fixed
+
+- Add resolution for folder components in metadata format ([PR #109](https://github.com/forcedotcom/source-deploy-retrieve/pull/109))
+
 # 1.0.19 - August 13, 2020
 
 ## Added

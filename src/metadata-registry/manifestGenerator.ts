@@ -51,16 +51,18 @@ export class ManifestGenerator {
   private createMetadataMap(components: MetadataComponent[]): Map<string, Set<string>> {
     const metadataMap: Map<string, Set<string>> = new Map<string, Set<string>>();
     for (const component of components) {
-      const metadataType = this.registryAccess.getTypeFromName(component.type.name).name;
-      const metadataName = component.fullName;
-      if (metadataMap.has(metadataType)) {
-        const metadataNames = metadataMap.get(metadataType);
-        metadataNames.add(metadataName);
-        metadataMap.set(metadataType, metadataNames);
+      const {
+        fullName,
+        type: { name: typeName },
+      } = component;
+      if (metadataMap.has(typeName)) {
+        const metadataNames = metadataMap.get(typeName);
+        metadataNames.add(fullName);
+        metadataMap.set(typeName, metadataNames);
       } else {
         const metadataNames: Set<string> = new Set<string>();
-        metadataNames.add(metadataName);
-        metadataMap.set(metadataType, metadataNames);
+        metadataNames.add(fullName);
+        metadataMap.set(typeName, metadataNames);
       }
     }
     return metadataMap;

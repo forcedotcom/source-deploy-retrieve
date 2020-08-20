@@ -84,4 +84,24 @@ describe('BaseSourceAdapter', () => {
     );
     testUtil.restore();
   });
+
+  it('Should resolve a folder component', () => {
+    const path = join('path', 'to', 'seans', 'My_Test-meta.xml');
+    const type = mockRegistry.types.seanfolder;
+    const adapter = new DefaultSourceAdapter(type, mockRegistry);
+    expect(adapter.getComponent(path)).to.deep.equal(
+      new SourceComponent({
+        name: 'My_Test',
+        type,
+        xml: path,
+      })
+    );
+  });
+
+  it('Should not recognize a content metadata file in the wrong directory', () => {
+    const path = join('path', 'to', 'genes', 'My_Test.sean');
+    const type = mockRegistry.types.seanconnerys;
+    const adapter = new DefaultSourceAdapter(type, mockRegistry);
+    expect(adapter.getComponent(path)).to.be.undefined;
+  });
 });

@@ -68,7 +68,9 @@ export class SourceComponent implements MetadataComponent {
   }
 
   public getChildren(): SourceComponent[] {
-    return this.xml ? this.getChildrenInternal(dirname(this.xml)) : [];
+    return this.xml && !this.parent && this.type.children
+      ? this.getChildrenInternal(dirname(this.xml))
+      : [];
   }
 
   public getPackageRelativePath(fsPath: SourcePath): SourcePath {
@@ -89,7 +91,7 @@ export class SourceComponent implements MetadataComponent {
     const children: SourceComponent[] = [];
     for (const fsPath of this.walk(dirPath)) {
       const childXml = parseMetadataXml(fsPath);
-      const fileIsRootXml = childXml.suffix === this.type.suffix;
+      const fileIsRootXml = childXml && childXml.suffix === this.type.suffix;
       if (childXml && !fileIsRootXml) {
         // TODO: Log warning if missing child type definition
         const childTypeId = this.type.children.suffixes[childXml.suffix];

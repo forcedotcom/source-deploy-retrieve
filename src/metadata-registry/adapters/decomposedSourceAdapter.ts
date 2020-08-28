@@ -28,6 +28,13 @@ import { SourceComponent } from '../sourceComponent';
  * |      ├── a.bar-meta.xml
  * |      ├── b.bar-meta.xml
  * |      ├── c.bar-meta.xml
+ *
+ * foos/
+ * ├── MyFoo__c/
+ * |   ├── a.bar-meta.xml
+ * |   ├── MyFoo__c.foo-meta.xml
+ * |   ├── b.bar-meta.xml
+ * |   ├── c.bar-meta.xml
  *```
  */
 export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
@@ -39,12 +46,16 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
    * the child component, set its parent property to the one created by the
    * `BaseSourceAdapter`, and return the child component instead.
    */
-  protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
+  protected populate(
+    trigger: SourcePath,
+    component: SourceComponent,
+    canResolveChild?: boolean
+  ): SourceComponent {
     const metaXml = parseMetadataXml(trigger);
     if (metaXml) {
       const childTypeId = this.type.children.suffixes[metaXml.suffix];
       const triggerIsAChild = !!childTypeId;
-      if (triggerIsAChild) {
+      if (triggerIsAChild && canResolveChild) {
         return new SourceComponent(
           {
             name: metaXml.fullName,

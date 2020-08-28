@@ -70,7 +70,7 @@ function update() {
 
     // populate mixedContent index
     if (!suffix) {
-      registry.mixedContent[directoryName] = typeId;
+      registry.strictTypeFolder[directoryName] = typeId;
     }
   }
 

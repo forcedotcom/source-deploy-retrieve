@@ -34,7 +34,7 @@ describe('ManifestGenerator', () => {
     expectedManifest += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
     expectedManifest +=
       '  <types>\n    <members>someName</members>\n    <name>FooBar</name>\n  </types>\n';
-    expectedManifest += '  <version>48.0</version>\n</Package>';
+    expectedManifest += '  <version>49.0</version>\n</Package>';
     expect(manifestGenerator.createManifest([component])).to.equal(expectedManifest);
   });
 
@@ -53,7 +53,7 @@ describe('ManifestGenerator', () => {
       '  <types>\n    <members>apexClass1</members>\n    <name>ApexClass</name>\n  </types>\n';
     expectedManifest +=
       '  <types>\n    <members>apexTrigger1</members>\n    <name>ApexTrigger</name>\n  </types>\n';
-    expectedManifest += '  <version>48.0</version>\n</Package>';
+    expectedManifest += '  <version>49.0</version>\n</Package>';
     expect(manifestGenerator.createManifest([component1, component2])).to.equal(expectedManifest);
   });
 
@@ -76,7 +76,7 @@ describe('ManifestGenerator', () => {
       '  <types>\n    <members>apexClass1</members>\n    <members>apexClass2</members>\n    <name>ApexClass</name>\n  </types>\n';
     expectedManifest +=
       '  <types>\n    <members>apexTrigger1</members>\n    <name>ApexTrigger</name>\n  </types>\n';
-    expectedManifest += '  <version>48.0</version>\n</Package>';
+    expectedManifest += '  <version>49.0</version>\n</Package>';
     expect(manifestGenerator.createManifest([component1, component2, component3])).to.equal(
       expectedManifest
     );
@@ -101,7 +101,7 @@ describe('ManifestGenerator', () => {
       '  <types>\n    <members>apexClass1</members>\n    <members>apexClass2</members>\n    <name>ApexClass</name>\n  </types>\n';
     expectedManifest +=
       '  <types>\n    <members>apexTrigger1</members>\n    <name>ApexTrigger</name>\n  </types>\n';
-    expectedManifest += '  <version>48.0</version>\n</Package>';
+    expectedManifest += '  <version>49.0</version>\n</Package>';
     expect(manifestGenerator.createManifest([component1, component3, component2])).to.equal(
       expectedManifest
     );

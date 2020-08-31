@@ -1,3 +1,9 @@
+# 1.0.21 - August 27, 2020
+
+## Added
+
+- Add registry support for WaveTemplateBundles and CustomObject child components when parent doesn't have a metadata xml ([PR #115](https://github.com/forcedotcom/source-deploy-retrieve/pull/115))
+
 # 1.0.20 - August 20, 2020
 
 ## Fixed

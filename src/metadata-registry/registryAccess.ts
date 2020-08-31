@@ -98,7 +98,7 @@ export class RegistryAccess {
           components.push(component);
           // don't traverse further if not in a root type directory. performance optimization
           // for mixed content types and ensures we don't add duplicates of the component.
-          const isMixedContent = !!this.registry.mixedContent[component.type.directoryName];
+          const isMixedContent = !!this.registry.strictTypeFolder[component.type.directoryName];
           const typeDir = basename(dirname(component.type.inFolder ? dirname(fsPath) : fsPath));
           if (isMixedContent && typeDir !== component.type.directoryName) {
             return components;
@@ -137,11 +137,11 @@ export class RegistryAccess {
   private resolveType(fsPath: SourcePath): MetadataType | undefined {
     let typeId: string;
 
-    // attempt 1 - check if the file is part of a mixed content type
+    // attempt 1 - check if the file is part of a component that requires a strict type folder
     const pathParts = new Set(fsPath.split(sep));
-    for (const directoryName of Object.keys(this.registry.mixedContent)) {
+    for (const directoryName of Object.keys(this.registry.strictTypeFolder)) {
       if (pathParts.has(directoryName)) {
-        typeId = this.registry.mixedContent[directoryName];
+        typeId = this.registry.strictTypeFolder[directoryName];
         // types with folders only have folder components living at the top level.
         // if the fsPath is a folder component, let a future strategy deal with it
         const isFolderType = this.getTypeFromName(typeId).inFolder;

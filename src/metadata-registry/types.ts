@@ -31,7 +31,7 @@ export type MetadataRegistry = {
   /**
    * Index mapping directoryNames to type ids for types with mixed content.
    */
-  mixedContent: {
+  strictTypeFolder: {
     [directoryName: string]: string;
   };
   /**

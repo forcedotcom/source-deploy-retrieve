@@ -91,7 +91,7 @@ export class SourceComponent implements MetadataComponent {
     const children: SourceComponent[] = [];
     for (const fsPath of this.walk(dirPath)) {
       const childXml = parseMetadataXml(fsPath);
-      const fileIsRootXml = childXml && childXml.suffix === this.type.suffix;
+      const fileIsRootXml = childXml?.suffix === this.type.suffix;
       if (childXml && !fileIsRootXml) {
         // TODO: Log warning if missing child type definition
         const childTypeId = this.type.children.suffixes[childXml.suffix];

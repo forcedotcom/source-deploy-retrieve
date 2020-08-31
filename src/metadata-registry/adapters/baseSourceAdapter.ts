@@ -109,7 +109,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     const metaXml = parseMetadataXml(path);
     if (metaXml) {
       let isRootMetadataXml = false;
-      const requireStrictParent = !!this.registry.mixedContent[this.type.directoryName];
+      const requireStrictParent = !!this.registry.strictTypeFolder[this.type.directoryName];
       if (requireStrictParent) {
         const parentPath = dirname(path);
         const typeDirName = basename(this.type.inFolder ? dirname(parentPath) : parentPath);

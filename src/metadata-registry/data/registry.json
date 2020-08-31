@@ -653,12 +653,6 @@
         }
       }
     },
-    "customfieldtranslation": {
-        "id": "customfieldtranslation",
-        "name": "CustomFieldTranslation",
-        "suffix": "fieldTranslation",
-        "inFolder": false
-    },
     "translations": {
       "id": "translations",
       "name": "Translations",

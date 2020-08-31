@@ -48,7 +48,6 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
       if (triggerIsAChild) {
         let parent = component;
         if (!parent) {
-          // create a parent if there isn't one present
           parent = new SourceComponent(
             {
               name: baseName(this.trimPathToContent(trigger)),

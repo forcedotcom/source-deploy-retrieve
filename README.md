@@ -24,7 +24,7 @@ Clone the project and `cd` into it. Ensure you have [Yarn](https://yarnpkg.com/)
 
 ### Testing with the command line
 
-Engage with the exports on the command line by running:
+Interact with the package exports on the command line by running:
 
 `yarn repl`
 

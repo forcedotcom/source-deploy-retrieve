@@ -8,13 +8,13 @@ import { WriterFormat } from '../types';
 import { parse as parseXml, j2xParser } from 'fast-xml-parser';
 import { readFileSync } from 'fs';
 import { Readable } from 'stream';
-import { META_XML_SUFFIX } from '../../utils';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { RecompositionFinalizer, ConvertTransaction } from '../convertTransaction';
 import { SourceComponent } from '../../metadata-registry';
 import { XML_NS, XML_NS_KEY, XML_DECL } from '../../utils/constants';
 import { LibraryError } from '../../errors';
 import { JsonMap, AnyJson, JsonArray } from '@salesforce/ts-types';
+import { join } from 'path';
 
 interface RecomposedXmlJson extends JsonMap {
   [parentFullName: string]: {
@@ -84,13 +84,14 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const source = new Readable();
     source.push(XML_DECL.concat(js2Xml.parse(xmlJson)));
     source.push(null);
-    let xmlDest = trigger.getPackageRelativePath(trigger.xml);
-    xmlDest = xmlDest.slice(0, xmlDest.lastIndexOf(META_XML_SUFFIX));
     return {
       component: trigger,
       writeInfos: [
         {
-          relativeDestination: xmlDest,
+          relativeDestination: join(
+            trigger.type.directoryName,
+            `${trigger.fullName}.${trigger.type.suffix}`
+          ),
           source,
         },
       ],

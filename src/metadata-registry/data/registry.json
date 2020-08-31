@@ -203,19 +203,19 @@
           "customfield": {
             "id": "customfield",
             "name": "CustomField",
-            "directoryName": "customFields",
-            "suffix": "customField"
+            "directoryName": "fields",
+            "suffix": "field"
           },
           "index": {
             "id": "index",
             "name": "Index",
-            "directoryName": "indexs",
+            "directoryName": "indexes",
             "suffix": "index"
           },
           "businessprocess": {
             "id": "businessprocess",
             "name": "BusinessProcess",
-            "directoryName": "businessProcesss",
+            "directoryName": "businessProcesses",
             "suffix": "businessProcess"
           },
           "recordtype": {
@@ -262,7 +262,7 @@
           }
         },
         "suffixes": {
-          "customField": "customfield",
+          "field": "customfield",
           "index": "index",
           "businessProcess": "businessprocess",
           "recordType": "recordtype",
@@ -287,14 +287,14 @@
       "name": "Report",
       "suffix": "report",
       "directoryName": "reports",
-      "inFolder": false
+      "inFolder": true
     },
     "dashboard": {
       "id": "dashboard",
       "name": "Dashboard",
       "suffix": "dashboard",
       "directoryName": "dashboards",
-      "inFolder": false
+      "inFolder": true
     },
     "visualizationplugin": {
       "id": "visualizationplugin",
@@ -328,7 +328,7 @@
       "id": "document",
       "name": "Document",
       "directoryName": "documents",
-      "inFolder": false
+      "inFolder": true
     },
     "custompageweblink": {
       "id": "custompageweblink",
@@ -349,7 +349,7 @@
       "name": "EmailTemplate",
       "suffix": "email",
       "directoryName": "email",
-      "inFolder": false
+      "inFolder": true
     },
     "quickaction": {
       "id": "quickaction",

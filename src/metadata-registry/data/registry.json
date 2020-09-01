@@ -218,17 +218,17 @@
             "directoryName": "businessProcesses",
             "suffix": "businessProcess"
           },
-          "compactlayout": {
-            "id": "compactlayout",
-            "name": "CompactLayout",
-            "directoryName": "compactLayouts",
-            "suffix": "compactLayout"
-          },
           "recordtype": {
             "id": "recordtype",
             "name": "RecordType",
             "directoryName": "recordTypes",
             "suffix": "recordType"
+          },
+          "compactlayout": {
+            "id": "compactlayout",
+            "name": "CompactLayout",
+            "directoryName": "compactLayouts",
+            "suffix": "compactLayout"
           },
           "weblink": {
             "id": "weblink",
@@ -265,8 +265,8 @@
           "field": "customfield",
           "index": "index",
           "businessProcess": "businessprocess",
-          "compactLayout": "compactlayout",
           "recordType": "recordtype",
+          "compactLayout": "compactlayout",
           "webLink": "weblink",
           "validationRule": "validationrule",
           "sharingReason": "sharingreason",
@@ -931,6 +931,12 @@
             "directoryName": "sharingCriteriaRules",
             "suffix": "sharingCriteriaRule"
           },
+          "sharingguestrule": {
+            "id": "sharingguestrule",
+            "name": "SharingGuestRule",
+            "directoryName": "sharingGuestRules",
+            "suffix": "sharingGuestRule"
+          },
           "sharingterritoryrule": {
             "id": "sharingterritoryrule",
             "name": "SharingTerritoryRule",
@@ -941,6 +947,7 @@
         "suffixes": {
           "sharingOwnerRule": "sharingownerrule",
           "sharingCriteriaRule": "sharingcriteriarule",
+          "sharingGuestRule": "sharingguestrule",
           "sharingTerritoryRule": "sharingterritoryrule"
         }
       }
@@ -1298,7 +1305,7 @@
     "emailservicesfunction": {
       "id": "emailservicesfunction",
       "name": "EmailServicesFunction",
-      "suffix": "xml",
+      "suffix": "",
       "directoryName": "emailservices",
       "inFolder": false
     },
@@ -1503,6 +1510,111 @@
       "suffix": "emailFolder",
       "directoryName": "email",
       "inFolder": false
+    },
+    "inboundnetworkconnection": {
+      "id": "inboundnetworkconnection",
+      "name": "InboundNetworkConnection",
+      "suffix": "inboundNetworkConnection",
+      "directoryName": "inboundNetworkConnections",
+      "inFolder": false
+    },
+    "outboundnetworkconnection": {
+      "id": "outboundnetworkconnection",
+      "name": "OutboundNetworkConnection",
+      "suffix": "outboundNetworkConnection",
+      "directoryName": "outboundNetworkConnections",
+      "inFolder": false
+    },
+    "mutingpermissionset": {
+      "id": "mutingpermissionset",
+      "name": "MutingPermissionSet",
+      "suffix": "mutingpermissionset",
+      "directoryName": "mutingpermissionsets",
+      "inFolder": false
+    },
+    "mydomaindiscoverablelogin": {
+      "id": "mydomaindiscoverablelogin",
+      "name": "MyDomainDiscoverableLogin",
+      "suffix": "myDomainDiscoverableLogin",
+      "directoryName": "myDomainDiscoverableLogins",
+      "inFolder": false
+    },
+    "blacklistedconsumer": {
+      "id": "blacklistedconsumer",
+      "name": "BlacklistedConsumer",
+      "suffix": "blacklistedConsumer",
+      "directoryName": "blacklistedConsumers",
+      "inFolder": false
+    },
+    "userprovisioningconfig": {
+      "id": "userprovisioningconfig",
+      "name": "UserProvisioningConfig",
+      "suffix": "userProvisioningConfig",
+      "directoryName": "userProvisioningConfigs",
+      "inFolder": false
+    },
+    "redirectwhitelisturl": {
+      "id": "redirectwhitelisturl",
+      "name": "RedirectWhitelistUrl",
+      "suffix": "redirectWhitelistUrl",
+      "directoryName": "redirectWhitelistUrls",
+      "inFolder": false
+    },
+    "apexemailnotifications": {
+      "id": "apexemailnotifications",
+      "name": "ApexEmailNotifications",
+      "suffix": "notifications",
+      "directoryName": "apexEmailNotifications",
+      "inFolder": false
+    },
+    "iframewhitelisturlsettings": {
+      "id": "iframewhitelisturlsettings",
+      "name": "IframeWhiteListUrlSettings",
+      "suffix": "iframeWhiteListUrlSettings",
+      "directoryName": "iframeWhiteListUrlSettings",
+      "inFolder": false
+    },
+    "appointmentschedulingpolicy": {
+      "id": "appointmentschedulingpolicy",
+      "name": "AppointmentSchedulingPolicy",
+      "suffix": "policy",
+      "directoryName": "appointmentSchedulingPolicies",
+      "inFolder": false
+    },
+    "notificationtypeconfig": {
+      "id": "notificationtypeconfig",
+      "name": "NotificationTypeConfig",
+      "suffix": "config",
+      "directoryName": "notificationTypeConfig",
+      "inFolder": false
+    },
+    "managedcontenttype": {
+      "id": "managedcontenttype",
+      "name": "ManagedContentType",
+      "suffix": "managedContentType",
+      "directoryName": "managedContentTypes",
+      "inFolder": false
+    },
+    "paymentgatewayprovider": {
+      "id": "paymentgatewayprovider",
+      "name": "PaymentGatewayProvider",
+      "suffix": "paymentGatewayProvider",
+      "directoryName": "paymentGatewayProviders",
+      "inFolder": false
+    },
+    "embeddedservicemenusettings": {
+      "id": "embeddedservicemenusettings",
+      "name": "EmbeddedServiceMenuSettings",
+      "suffix": "EmbeddedServiceMenuSettings",
+      "directoryName": "EmbeddedServiceMenuSettings",
+      "inFolder": false
+    },
+    "callcoachingmediaprovider": {
+      "id": "callcoachingmediaprovider",
+      "name": "CallCoachingMediaProvider",
+      "suffix": "callCoachingMediaProvider",
+      "directoryName": "callCoachingMediaProviders",
+      "inFolder": false
     }
   },
   "suffixes": {
@@ -1638,7 +1750,7 @@
     "actionLinkGroupTemplate": "actionlinkgrouptemplate",
     "licenseDefinition": "licensedefinition",
     "transactionSecurityPolicy": "transactionsecuritypolicy",
-    "policy": "accesscontrolpolicy",
+    "policy": "appointmentschedulingpolicy",
     "skill": "skill",
     "liveChatDeployment": "livechatdeployment",
     "liveChatButton": "livechatbutton",
@@ -1677,7 +1789,21 @@
     "reportFolder": "reportfolder",
     "dashboardFolder": "dashboardfolder",
     "documentFolder": "documentfolder",
-    "emailFolder": "emailFolder"
+    "emailFolder": "emailFolder",
+    "inboundNetworkConnection": "inboundnetworkconnection",
+    "outboundNetworkConnection": "outboundnetworkconnection",
+    "mutingpermissionset": "mutingpermissionset",
+    "myDomainDiscoverableLogin": "mydomaindiscoverablelogin",
+    "blacklistedConsumer": "blacklistedconsumer",
+    "userProvisioningConfig": "userprovisioningconfig",
+    "redirectWhitelistUrl": "redirectwhitelisturl",
+    "notifications": "apexemailnotifications",
+    "iframeWhiteListUrlSettings": "iframewhitelisturlsettings",
+    "config": "notificationtypeconfig",
+    "managedContentType": "managedcontenttype",
+    "paymentGatewayProvider": "paymentgatewayprovider",
+    "EmbeddedServiceMenuSettings": "embeddedservicemenusettings",
+    "callCoachingMediaProvider": "callcoachingmediaprovider"
   },
   "strictTypeFolder": {
     "experiences": "experiencebundle",
@@ -1740,5 +1866,5 @@
       "adapter": "bundle"
     }
   },
-  "apiVersion": "48.0"
+  "apiVersion": "49.0"
 }

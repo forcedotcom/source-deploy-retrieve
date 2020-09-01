@@ -14,6 +14,25 @@ Clone the project and `cd` into it. Ensure you have [Yarn](https://yarnpkg.com/)
 
 `yarn build`
 
+
+
+## Testing
+
+### Running the test suite
+
+`yarn test` runs the suite and outputs code coverage as a text summary
+
+### Testing with the command line
+
+Interact with the package exports on the command line by running:
+
+`yarn repl`
+
+This will start the NodeJS REPL with a few pre-set variables to conveniently interact
+with exported modules. The REPL runs with the `--inspect` flag, allowing you to attach a debugger to the process. Select the `Attach to Remote` configuration in VS Code and click play to debug against it.
+
+### Testing with another module
+
 To test the library in another local module, you can link it to such module so any changes that are built will be automatically present without reinstalling:
 
 `yarn local:link /path/to/other/project`
@@ -21,12 +40,6 @@ To test the library in another local module, you can link it to such module so a
 to unlink the library:
 
 `yarn local:unlink /path/to/other/project`
-
-## Testing
-
-### Running the test suite
-
-`yarn test` runs the suite and outputs code coverage as a text summary
 
 ### Testing with the NPM artifact
 

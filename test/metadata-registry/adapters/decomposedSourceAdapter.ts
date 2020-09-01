@@ -30,4 +30,24 @@ describe('DecomposedSourceAdapter', () => {
     const expectedChild = children.find((c) => c.xml === regina.REGINA_CHILD_XML_PATH_2);
     expect(adapter.getComponent(regina.REGINA_CHILD_XML_PATH_2)).to.deep.equal(expectedChild);
   });
+
+  it('should create a parent placeholder component if parent xml does not exist', () => {
+    const fsNoParentXml = [
+      {
+        dirPath: regina.REGINA_PATH,
+        children: [regina.REGINA_CHILD_XML_NAME_1, regina.REGINA_CHILD_DIR],
+      },
+      {
+        dirPath: regina.REGINA_CHILD_DIR_PATH,
+        children: [regina.REGINA_CHILD_XML_NAME_2],
+      },
+    ];
+    const tree = new VirtualTreeContainer(fsNoParentXml);
+    const adapter = new DecomposedSourceAdapter(type, mockRegistry, undefined, tree);
+    const expectedParent = new SourceComponent({ name: regina.REGINA_COMPONENT.name, type }, tree);
+
+    expect(adapter.getComponent(regina.REGINA_CHILD_XML_PATH_2).parent).to.deep.equal(
+      expectedParent
+    );
+  });
 });

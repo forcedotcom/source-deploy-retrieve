@@ -72,6 +72,21 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
   }
 
   /**
+   * Trim a path up until the root of a component's content. If the content is a file,
+   * the given path will be returned back. If the content is a folder, the path to that
+   * folder will be returned. Intended to be used exclusively for MixedContent types.
+   *
+   * @param path Path to trim
+   * @param type MetadataType to determine content for
+   */
+  protected trimPathToContent(path: SourcePath): SourcePath {
+    const pathParts = path.split(sep);
+    const typeFolderIndex = pathParts.findIndex((part) => part === this.type.directoryName);
+    const offset = this.type.inFolder ? 3 : 2;
+    return pathParts.slice(0, typeFolderIndex + offset).join(sep);
+  }
+
+  /**
    * A utility for finding a component's root metadata xml from a path to a component's
    * content. "Content" can either be a single file or an entire directory. If the content
    * is a directory, the path can be files or other directories inside of it.
@@ -83,20 +98,5 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
     const rootTypeDirectory = dirname(rootContentPath);
     const contentFullName = baseName(rootContentPath);
     return this.tree.find('metadata', contentFullName, rootTypeDirectory);
-  }
-
-  /**
-   * Trim a path up until the root of a component's content. If the content is a file,
-   * the given path will be returned back. If the content is a folder, the path to that
-   * folder will be returned. Intended to be used exclusively for MixedContent types.
-   *
-   * @param path Path to trim
-   * @param type MetadataType to determine content for
-   */
-  private trimPathToContent(path: SourcePath): SourcePath {
-    const pathParts = path.split(sep);
-    const typeFolderIndex = pathParts.findIndex((part) => part === this.type.directoryName);
-    const offset = this.type.inFolder ? 3 : 2;
-    return pathParts.slice(0, typeFolderIndex + offset).join(sep);
   }
 }

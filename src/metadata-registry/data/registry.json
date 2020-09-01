@@ -638,7 +638,20 @@
       "name": "CustomObjectTranslation",
       "suffix": "objectTranslation",
       "directoryName": "objectTranslations",
-      "inFolder": false
+      "inFolder": false,
+      "children": {
+        "types": {
+            "fieldtranslation": {
+              "id": "customfieldtranslation",
+              "name": "CustomFieldTranslation",
+              "directoryName": "fields",
+              "suffix": "fieldTranslation"
+            }
+        },
+        "suffixes": {
+            "fieldTranslation": "fieldtranslation"
+        }
+      }
     },
     "translations": {
       "id": "translations",
@@ -1678,6 +1691,7 @@
     "homePageComponent": "homepagecomponent",
     "homePageLayout": "homepagelayout",
     "objectTranslation": "customobjecttranslation",
+    "fieldTranslation": "customfieldtranslation",
     "translation": "translations",
     "globalValueSetTranslation": "globalvaluesettranslation",
     "standardValueSetTranslation": "standardvaluesettranslation",
@@ -1812,6 +1826,7 @@
     "documents": "document",
     "waveTemplates": "wavetemplatebundle",
     "objects": "customobject",
+    "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
     "sites": "customsite"
   },
@@ -1838,6 +1853,14 @@
       "adapter": "matchingContentFile"
     },
     "customobject": {
+      "adapter": "decomposed",
+      "transformer": "decomposed"
+    },
+    "customobjecttranslation": {
+      "adapter": "decomposed",
+      "transformer": "decomposed"
+    },
+    "customfieldtranslation": {
       "adapter": "decomposed",
       "transformer": "decomposed"
     },

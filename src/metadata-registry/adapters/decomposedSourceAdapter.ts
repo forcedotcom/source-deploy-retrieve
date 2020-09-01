@@ -8,6 +8,7 @@ import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { SourcePath } from '../../common';
 import { parseMetadataXml } from '../../utils/registry';
 import { SourceComponent } from '../sourceComponent';
+import { baseName } from '../../utils';
 
 /**
  * Handles decomposed types. A flavor of mixed content where a component can
@@ -56,12 +57,23 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
       const childTypeId = this.type.children.suffixes[metaXml.suffix];
       const triggerIsAChild = !!childTypeId;
       if (triggerIsAChild && canResolveChild) {
+        let parent = component;
+        if (!parent) {
+          parent = new SourceComponent(
+            {
+              name: baseName(this.trimPathToContent(trigger)),
+              type: this.type,
+            },
+            this.tree,
+            this.forceIgnore
+          );
+        }
         return new SourceComponent(
           {
             name: metaXml.fullName,
             type: this.type.children.types[childTypeId],
             xml: trigger,
-            parent: component,
+            parent,
           },
           this.tree,
           this.forceIgnore

@@ -936,12 +936,19 @@
             "name": "SharingGuestRule",
             "directoryName": "sharingGuestRules",
             "suffix": "sharingGuestRule"
+          },
+          "sharingterritoryrule": {
+            "id": "sharingterritoryrule",
+            "name": "SharingTerritoryRule",
+            "directoryName": "sharingTerritoryRules",
+            "suffix": "sharingTerritoryRule"
           }
         },
         "suffixes": {
           "sharingOwnerRule": "sharingownerrule",
           "sharingCriteriaRule": "sharingcriteriarule",
-          "sharingGuestRule": "sharingguestrule"
+          "sharingGuestRule": "sharingguestrule",
+          "sharingTerritoryRule": "sharingterritoryrule"
         }
       }
     },
@@ -1783,7 +1790,6 @@
     "dashboardFolder": "dashboardfolder",
     "documentFolder": "documentfolder",
     "emailFolder": "emailFolder",
-    "undefined": "document",
     "inboundNetworkConnection": "inboundnetworkconnection",
     "outboundNetworkConnection": "outboundnetworkconnection",
     "mutingpermissionset": "mutingpermissionset",
@@ -1795,7 +1801,6 @@
     "iframeWhiteListUrlSettings": "iframewhitelisturlsettings",
     "config": "notificationtypeconfig",
     "managedContentType": "managedcontenttype",
-    "xml": "emailservicesfunction",
     "paymentGatewayProvider": "paymentgatewayprovider",
     "EmbeddedServiceMenuSettings": "embeddedservicemenusettings",
     "callCoachingMediaProvider": "callcoachingmediaprovider"

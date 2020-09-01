@@ -583,7 +583,8 @@
           "childXmlNames": [
               "SharingOwnerRule",
               "SharingCriteriaRule",
-              "SharingGuestRule"
+              "SharingGuestRule",
+              "SharingTerritoryRule"
           ],
           "directoryName": "sharingRules",
           "inFolder": false,

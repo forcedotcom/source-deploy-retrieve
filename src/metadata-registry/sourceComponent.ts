@@ -6,11 +6,14 @@
  */
 import { TreeContainer, VirtualDirectory } from './types';
 import { join, dirname, sep, basename } from 'path';
+import { parse } from 'fast-xml-parser';
 import { ForceIgnore } from './forceIgnore';
 import { parseMetadataXml } from '../utils/registry';
 import { baseName } from '../utils';
 import { NodeFSTreeContainer, VirtualTreeContainer } from './treeContainers';
 import { MetadataType, SourcePath, MetadataComponent } from '../common';
+import { JsonMap } from '@salesforce/ts-types';
+import { readFileSync } from 'fs';
 
 export type ComponentProperties = {
   name: string;
@@ -71,6 +74,16 @@ export class SourceComponent implements MetadataComponent {
     return this.xml && !this.parent && this.type.children
       ? this.getChildrenInternal(dirname(this.xml))
       : [];
+  }
+
+  public parseXml(): JsonMap {
+    if (this.xml) {
+      // TODO: Change to use TreeContainer readFile
+      return parse(readFileSync(this.xml).toString());
+    }
+    throw new Error(
+      `SourceComponent ${this.name} does not have an associated metadata xml to parse`
+    );
   }
 
   public getPackageRelativePath(fsPath: SourcePath): SourcePath {
@@ -136,5 +149,9 @@ export class SourceComponent implements MetadataComponent {
 
   get fullName(): string {
     return `${this.parent ? `${this.parent.fullName}.` : ''}${this.name}`;
+  }
+
+  get tree(): TreeContainer {
+    return this._tree;
   }
 }

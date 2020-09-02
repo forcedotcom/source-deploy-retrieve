@@ -48,6 +48,8 @@ export const messages = {
   error_creating_metadata_type: "Unexpected error creating '%s'",
   error_updating_metadata_type: "Unexpected error updating '%s'",
   error_parsing_metadata_file: 'Error parsing metadata file',
+  error_static_resource_expected_archive_type:
+    'A StaticResource directory must have a content type of application/zip or application/jar - found %s for %s',
   tapi_deploy_component_limit_error:
     'This deploy method only supports deploying one metadata component at a time',
 };

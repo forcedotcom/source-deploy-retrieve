@@ -12,24 +12,23 @@ import { baseName } from '../../utils';
 import { JsonMap } from '@salesforce/ts-types';
 import { createReadStream } from 'fs';
 import { Readable } from 'stream';
+import { LibraryError } from '../../errors';
+
+const archiveTypes = new Map([
+  ['application/zip', 'zip'],
+  ['application/jar', 'jar'],
+]);
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public toMetadataFormat(): WriterFormat {
     let contentSource: Readable;
-    const { content, type, tree, xml } = this.component;
+    const { content, type, xml } = this.component;
     const writerFormat: WriterFormat = {
       component: this.component,
       writeInfos: [],
     };
 
-    if (tree.isDirectory(content)) {
-      const contentType = (this.component.parseXml().StaticResource as JsonMap)
-        .contentType as string;
-
-      if (!this.isArchive(contentType)) {
-        throw new Error();
-      }
-
+    if (this.componentIsExpandedArchive()) {
       const zip = createArchive('zip', { zlib: { level: 3 } });
       zip.directory(content, false);
       zip.finalize();
@@ -56,8 +55,19 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     throw new Error('Method not implemented.');
   }
 
-  private isArchive(contentType: string): boolean {
-    // TODO: stronger check of mime type
-    return contentType === 'application/zip' || contentType === 'application/jar';
+  private componentIsExpandedArchive(): boolean {
+    const { content, tree } = this.component;
+    if (tree.isDirectory(content)) {
+      const contentType = (this.component.parseXml().StaticResource as JsonMap)
+        .contentType as string;
+      if (archiveTypes.has(contentType)) {
+        return true;
+      }
+      throw new LibraryError('error_static_resource_expected_archive_type', [
+        contentType,
+        this.component.name,
+      ]);
+    }
+    return false;
   }
 }

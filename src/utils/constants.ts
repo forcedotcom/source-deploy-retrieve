@@ -12,3 +12,9 @@ export const DEFAULT_PACKAGE_PREFIX = 'metadataPackage';
 export const XML_NS_KEY = '@_xmlns';
 export const XML_NS = 'http://soap.sforce.com/2006/04/metadata';
 export const XML_DECL = '<?xml version="1.0" encoding="UTF-8"?>\n';
+export const ARCHIVE_MIME_TYPES = new Set([
+  'application/zip',
+  'application/x-zip-compressed',
+  'application/jar',
+  'application/octet-stream',
+]);

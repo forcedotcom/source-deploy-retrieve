@@ -14,6 +14,7 @@ import { NodeFSTreeContainer, VirtualTreeContainer } from './treeContainers';
 import { MetadataType, SourcePath, MetadataComponent } from '../common';
 import { JsonMap } from '@salesforce/ts-types';
 import { readFileSync } from 'fs';
+import { LibraryError } from '../errors';
 
 export type ComponentProperties = {
   name: string;
@@ -81,9 +82,7 @@ export class SourceComponent implements MetadataComponent {
       // TODO: Change to use TreeContainer readFile
       return parse(readFileSync(this.xml).toString());
     }
-    throw new Error(
-      `SourceComponent ${this.name} does not have an associated metadata xml to parse`
-    );
+    throw new LibraryError('error_parsing_xml', this.name);
   }
 
   public getPackageRelativePath(fsPath: SourcePath): SourcePath {

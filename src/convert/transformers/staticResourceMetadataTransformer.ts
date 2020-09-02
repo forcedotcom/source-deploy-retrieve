@@ -13,11 +13,7 @@ import { JsonMap } from '@salesforce/ts-types';
 import { createReadStream } from 'fs';
 import { Readable } from 'stream';
 import { LibraryError } from '../../errors';
-
-const archiveTypes = new Map([
-  ['application/zip', 'zip'],
-  ['application/jar', 'jar'],
-]);
+import { ARCHIVE_MIME_TYPES } from '../../utils/constants';
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public toMetadataFormat(): WriterFormat {
@@ -52,7 +48,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   }
 
   public toSourceFormat(): WriterFormat {
-    throw new Error('Method not implemented.');
+    throw new LibraryError('error_convert_not_implemented', ['source', this.component.type.name]);
   }
 
   private componentIsExpandedArchive(): boolean {
@@ -60,7 +56,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     if (tree.isDirectory(content)) {
       const contentType = (this.component.parseXml().StaticResource as JsonMap)
         .contentType as string;
-      if (archiveTypes.has(contentType)) {
+      if (ARCHIVE_MIME_TYPES.has(contentType)) {
         return true;
       }
       throw new LibraryError('error_static_resource_expected_archive_type', [

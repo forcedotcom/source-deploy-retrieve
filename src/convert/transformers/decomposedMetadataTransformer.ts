@@ -43,10 +43,9 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       return { component: this.component, writeInfos: [] };
     }
 
-    const baseXmlObj = parseXml(readFileSync(this.component.xml).toString());
     const recomposedXmlObj = DecomposedMetadataTransformer.recompose(
       this.component.getChildren(),
-      baseXmlObj
+      this.component.parseXml() as RecomposedXmlJson
     );
     return DecomposedMetadataTransformer.createWriterFormat(this.component, recomposedXmlObj);
   }

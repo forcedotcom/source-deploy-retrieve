@@ -10,7 +10,8 @@ import { createSandbox } from 'sinon';
 import * as fs from 'fs';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { FORCE_IGNORE_FILE } from '../../src/utils/constants';
-import { join } from 'path';
+import { join, sep } from 'path';
+import { Lifecycle } from '@salesforce/core';
 
 const env = createSandbox();
 
@@ -43,6 +44,53 @@ describe('ForceIgnore', () => {
     searchStub.withArgs(testPath, FORCE_IGNORE_FILE).returns(forceIgnorePath);
     const forceIgnore = ForceIgnore.findAndCreate(testPath);
     expect(forceIgnore.accepts(testPath)).to.be.false;
+  });
+
+  it('should send telemetry event when the old parser and the new parser have different results', () => {
+    const readStub = env.stub(fs, 'readFileSync');
+    readStub.withArgs(forceIgnorePath).returns(testPattern);
+    const forceIgnore = new ForceIgnore(forceIgnorePath);
+
+    let expected = {
+      eventName: 'FORCE_IGNORE_DIFFERENCE',
+      content:
+        '**/__tests__/**\n**/*.dup\n**/.*\n**/package2-descriptor.json\n**/package2-manifest.json',
+      oldLibraryResults: false,
+      newLibraryResults: true,
+      ignoreLines: [
+        '**/__tests__/**',
+        '**/*.dup',
+        '**/.*',
+        '**/package2-descriptor.json',
+        '**/package2-manifest.json',
+      ],
+      file: 'some/path/__tests__/myTest.x',
+    };
+
+    if (process.platform === 'win32') {
+      expected = {
+        content:
+          '**\\__tests__\\**\n**\\*.dup\n**\\.*\n**\\package2-descriptor.json\n**\\package2-manifest.json',
+        eventName: 'FORCE_IGNORE_DIFFERENCE',
+        file: 'some\\path\\__tests__\\myTest.x',
+        ignoreLines: [
+          '**\\__tests__\\**',
+          '**\\*.dup',
+          '**\\.*',
+          '**\\package2-descriptor.json',
+          '**\\package2-manifest.json',
+        ],
+        newLibraryResults: true,
+        oldLibraryResults: false,
+      };
+    }
+
+    const telemetrySpy = env.spy(Lifecycle.prototype, 'emit');
+    // @ts-ignore call the private method directly to avoid excessive stubbing
+    forceIgnore.resolveConflict(true, false, testPath);
+    expect(telemetrySpy.calledOnce).to.be.true;
+    expect(telemetrySpy.args[0][0]).to.equal('telemetry');
+    expect(telemetrySpy.args[0][1]).to.deep.equal(expected);
   });
 
   /**

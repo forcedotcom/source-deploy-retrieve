@@ -5,8 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { WriterFormat } from '../types';
-import { parse as parseXml, j2xParser } from 'fast-xml-parser';
-import { readFileSync } from 'fs';
+import { j2xParser } from 'fast-xml-parser';
 import { Readable } from 'stream';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { RecompositionFinalizer, ConvertTransaction } from '../convertTransaction';
@@ -61,8 +60,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     for (const child of children) {
       const { directoryName: groupNode } = child.type;
       const { name: parentName } = child.parent.type;
-      const parsedChild = parseXml(readFileSync(child.xml).toString());
-      const childContents = parsedChild[child.type.name];
+      const childContents = child.parseXml()[child.type.name];
 
       if (!baseXmlObj[parentName]) {
         baseXmlObj[parentName] = { '@_xmlns': XML_NS };

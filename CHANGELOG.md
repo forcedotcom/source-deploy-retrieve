@@ -1,3 +1,17 @@
+# 1.2.0 - September 3, 2020
+
+## Added
+
+- Support ObjectTranslations in metadata format ([PR #122](https://github.com/forcedotcom/source-deploy-retrieve/pull/122))
+
+## Fixed
+
+- Support CustomSite and SiteDotCom components ([PR #121](https://github.com/forcedotcom/source-deploy-retrieve/pull/121))
+
+- Fix CustomObject conversions when parent xml is not present ([PR #124](https://github.com/forcedotcom/source-deploy-retrieve/pull/124))
+
+- Update registry to API version 49.0 ([PR #123](https://github.com/forcedotcom/source-deploy-retrieve/pull/123))
+
 # 1.0.21 - August 27, 2020
 
 ## Added

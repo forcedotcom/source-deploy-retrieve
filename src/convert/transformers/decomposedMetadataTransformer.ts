@@ -11,7 +11,6 @@ import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { RecompositionFinalizer, ConvertTransaction } from '../convertTransaction';
 import { SourceComponent } from '../../metadata-registry';
 import { XML_NS, XML_NS_KEY, XML_DECL } from '../../utils/constants';
-import { LibraryError } from '../../errors';
 import { JsonMap, AnyJson, JsonArray } from '@salesforce/ts-types';
 import { join } from 'path';
 
@@ -50,7 +49,56 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   }
 
   public toSourceFormat(): WriterFormat {
-    throw new LibraryError('error_convert_not_implemented', ['source', this.component.type.name]);
+    const { type, xml, fullName: parentFullName } = this.component;
+    const js2Xml = new j2xParser({ format: true, indentBy: '    ', ignoreAttributes: false });
+    const composedMetadata = parseXml(readFileSync(xml).toString())[type.name];
+    const writerFormat: WriterFormat = {
+      component: this.component,
+      writeInfos: [],
+    };
+    const rootXmlObject = { [type.name]: {} };
+    for (const [tagName, collection] of Object.entries(composedMetadata)) {
+      const childType = Object.values(type.children.types).find(
+        (type) => type.directoryName === tagName
+      );
+      if (childType) {
+        const { directoryName: childDir, name: childTypeName } = childType;
+        for (const entry of collection as JsonArray) {
+          const childXml = {
+            [childTypeName]: Object.assign({ [XML_NS_KEY]: XML_NS }, entry),
+          };
+          const childSource = new Readable();
+          const { fullName: childFullName } = entry as JsonMap;
+          childSource.push(XML_DECL.concat(js2Xml.parse(childXml)));
+          childSource.push(null);
+          writerFormat.writeInfos.push({
+            source: childSource,
+            relativeDestination: join(
+              type.directoryName,
+              parentFullName,
+              childDir,
+              `${childFullName}.${childType.suffix}-meta.xml`
+            ),
+          });
+        }
+      } else {
+        //@ts-ignore
+        rootXmlObject[type.name][tagName] = collection;
+      }
+    }
+    const rootSource = new Readable();
+    rootSource.push(XML_DECL.concat(js2Xml.parse(rootXmlObject)));
+    rootSource.push(null);
+    writerFormat.writeInfos.push({
+      source: rootSource,
+      relativeDestination: join(
+        type.directoryName,
+        parentFullName,
+        `${parentFullName}.${type.suffix}-meta.xml`
+      ),
+    });
+
+    return writerFormat;
   }
 
   public static recompose(

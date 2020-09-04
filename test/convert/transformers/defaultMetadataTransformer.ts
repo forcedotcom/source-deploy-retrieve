@@ -74,7 +74,7 @@ describe('DefaultMetadataTransformer', () => {
       });
     });
 
-    it('should handle folder type components', () => {
+    it('should handle folder type components with no content', () => {
       const component = kathy.KATHY_COMPONENTS[0];
       const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;
@@ -139,7 +139,7 @@ describe('DefaultMetadataTransformer', () => {
       });
     });
 
-    it('should handle folder type components', () => {
+    it('should handle folder type components with no content', () => {
       const component = kathy.KATHY_MD_FORMAT_COMPONENTS[0];
       const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;

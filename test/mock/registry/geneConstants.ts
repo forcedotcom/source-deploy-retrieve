@@ -26,3 +26,10 @@ export const GENE_FOLDER_COMPONENT = new SourceComponent({
   type,
   xml: GENE_FOLDER_XML_PATH,
 });
+export const GENE_MD_FORMAT_XML_NAME = 'a.gene';
+export const GENE_MD_FORMAT_XML_PATH = join(GENE_DIR, GENE_MD_FORMAT_XML_NAME);
+export const GENE_MD_FORMAT_COMPONENT = new SourceComponent({
+  name: 'a',
+  type,
+  xml: GENE_MD_FORMAT_XML_PATH,
+});

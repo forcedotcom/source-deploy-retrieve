@@ -10,7 +10,7 @@ import { readFileSync } from 'fs';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { RecompositionFinalizer, ConvertTransaction } from '../convertTransaction';
 import { SourceComponent } from '../../metadata-registry';
-import { XML_NS, XML_NS_KEY } from '../../utils/constants';
+import { META_XML_SUFFIX, XML_NS, XML_NS_KEY } from '../../utils/constants';
 import { JsonMap, AnyJson, JsonArray } from '@salesforce/ts-types';
 import { JsToXml } from '../streams';
 import { join } from 'path';
@@ -74,7 +74,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
               type.directoryName,
               parentFullName,
               childDir,
-              `${childFullName}.${childType.suffix}-meta.xml`
+              `${childFullName}.${childType.suffix}${META_XML_SUFFIX}`
             ),
           });
         }
@@ -88,7 +88,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       relativeDestination: join(
         type.directoryName,
         parentFullName,
-        `${parentFullName}.${type.suffix}-meta.xml`
+        `${parentFullName}.${type.suffix}${META_XML_SUFFIX}`
       ),
     });
 

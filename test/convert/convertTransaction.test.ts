@@ -13,10 +13,10 @@ import { keanu, regina } from '../mock/registry';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import { TestFinalizerNoWrites, TestFinalizerNoResult } from '../mock/convert/finalizers';
-import { Readable } from 'stream';
 import { join } from 'path';
 import * as fs from 'fs';
-import { XML_NS, XML_DECL } from '../../src/utils/constants';
+import { XML_NS, XML_NS_KEY } from '../../src/utils/constants';
+import { JsToXml } from '../../src/convert/streams';
 
 const env = createSandbox();
 
@@ -72,18 +72,20 @@ describe('Convert Transaction Constructs', () => {
 
       const result = finalizer.finalize(state);
 
-      const expectedStr = `${XML_DECL}<ReginaKing xmlns="${XML_NS}">\n  <ys>\n    <test>child1</test>\n  </ys>\n  <xs>\n    <test>child2</test>\n  </xs>\n</ReginaKing>\n`;
-      const source = new Readable();
-      source.push(expectedStr);
-      source.push(null);
-
+      const expectedSource = new JsToXml({
+        ReginaKing: {
+          [XML_NS_KEY]: XML_NS,
+          ys: [{ test: 'child1' }],
+          xs: [{ test: 'child2' }],
+        },
+      });
       expect(result).to.deep.equal([
         {
           component: component,
           writeInfos: [
             {
               relativeDestination: join('reginas', 'a.regina'),
-              source,
+              source: expectedSource,
             },
           ],
         },

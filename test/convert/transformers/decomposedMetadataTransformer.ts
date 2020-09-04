@@ -14,11 +14,11 @@ import {
 import { expect, assert } from 'chai';
 import { createSandbox } from 'sinon';
 import * as fs from 'fs';
-import { XML_DECL, XML_NS } from '../../../src/utils/constants';
-import { Readable } from 'stream';
+import { XML_DECL, XML_NS, XML_NS_KEY } from '../../../src/utils/constants';
 import { join } from 'path';
 import { LibraryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
+import { JsToXml } from '../../../src/convert/streams';
 
 const env = createSandbox();
 
@@ -67,17 +67,21 @@ describe('DecomposedMetadataTransformer', () => {
 
       const result = transformer.toMetadataFormat();
 
-      const expectedStr = `${XML_DECL}<ReginaKing xmlns="${XML_NS}">\n  <foo>bar</foo>\n  <ys>\n    <test>child1</test>\n  </ys>\n  <xs>\n    <test>child2</test>\n  </xs>\n</ReginaKing>\n`;
-      const source = new Readable();
-      source.push(expectedStr);
-      source.push(null);
+      const expectedSource = new JsToXml({
+        ReginaKing: {
+          [XML_NS_KEY]: XML_NS,
+          foo: 'bar',
+          ys: [{ test: 'child1' }],
+          xs: [{ test: 'child2' }],
+        },
+      });
 
       expect(result).to.deep.equal({
         component,
         writeInfos: [
           {
             relativeDestination: join('reginas', 'a.regina'),
-            source,
+            source: expectedSource,
           },
         ],
       });
@@ -86,7 +90,6 @@ describe('DecomposedMetadataTransformer', () => {
     describe('toSourceFormat', () => {
       it('should throw a not implemented error', () => {
         const transformer = new DecomposedMetadataTransformer(component, new ConvertTransaction());
-
         assert.throws(
           () => transformer.toSourceFormat(),
           LibraryError,

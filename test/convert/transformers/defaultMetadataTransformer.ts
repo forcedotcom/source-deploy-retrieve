@@ -138,5 +138,27 @@ describe('DefaultMetadataTransformer', () => {
         writeInfos: expectedInfos,
       });
     });
+
+    it('should handle folder type components', () => {
+      const component = kathy.KATHY_MD_FORMAT_COMPONENTS[0];
+      const fullNameParts = component.fullName.split('/');
+      const { directoryName } = component.type;
+      const transformer = new DefaultMetadataTransformer(component);
+      const expectedInfos: WriteInfo[] = [
+        {
+          relativeDestination: join(
+            directoryName,
+            fullNameParts[0],
+            `${fullNameParts[1]}.${component.type.suffix}${META_XML_SUFFIX}`
+          ),
+          source: fs.createReadStream(component.xml),
+        },
+      ];
+
+      expect(transformer.toSourceFormat()).to.deep.equal({
+        component,
+        writeInfos: expectedInfos,
+      });
+    });
   });
 });

@@ -7,7 +7,7 @@
 import { META_XML_SUFFIX } from '../../utils';
 import { createReadStream } from 'fs';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
-import { WriterFormat } from '../types';
+import { SfdxFileFormat, WriterFormat } from '../types';
 
 /**
  * The default metadata transformer.
@@ -25,7 +25,7 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
     return this.getWriterFormat('source');
   }
 
-  private getWriterFormat(toFormat: string): WriterFormat {
+  private getWriterFormat(toFormat: SfdxFileFormat): WriterFormat {
     const result: WriterFormat = { component: this.component, writeInfos: [] };
     if (this.component.content) {
       for (const source of this.component.walkContent()) {

@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { WriterFormat } from '../types';
+import { WriteInfo, WriterFormat } from '../types';
 import { parse as parseXml } from 'fast-xml-parser';
 import { readFileSync } from 'fs';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
@@ -15,7 +15,7 @@ import { JsonMap, AnyJson, JsonArray } from '@salesforce/ts-types';
 import { JsToXml } from '../streams';
 import { join } from 'path';
 
-interface RecomposedXmlJson extends JsonMap {
+interface XmlJson extends JsonMap {
   [parentFullName: string]: {
     [groupNode: string]: AnyJson;
   };
@@ -51,18 +51,16 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   }
 
   public toSourceFormat(): WriterFormat {
+    const writeInfos: WriteInfo[] = [];
+
     const { type, xml, fullName: parentFullName } = this.component;
     const composedMetadata = parseXml(readFileSync(xml).toString())[type.name];
-    const writerFormat: WriterFormat = {
-      component: this.component,
-      writeInfos: [],
-    };
-    const rootXmlObject = { [type.name]: {} };
+    const rootXmlObject: XmlJson = { [type.name]: {} };
+
     for (const [tagName, collection] of Object.entries(composedMetadata)) {
-      const childType = Object.values(type.children.types).find(
-        (type) => type.directoryName === tagName
-      );
-      if (childType) {
+      const childTypeId = type?.children?.directories[tagName];
+      if (childTypeId) {
+        const childType = type.children.types[childTypeId];
         const tagCollection = Array.isArray(collection) ? collection : [collection];
         const { directoryName: childDir, name: childTypeName } = childType;
         for (const entry of tagCollection) {
@@ -70,7 +68,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
             [childTypeName]: Object.assign({ [XML_NS_KEY]: XML_NS }, entry),
           });
           const { fullName: childFullName } = entry as JsonMap;
-          writerFormat.writeInfos.push({
+          writeInfos.push({
             source: childSource,
             relativeDestination: join(
               type.directoryName,
@@ -81,11 +79,11 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
           });
         }
       } else {
-        //@ts-ignore
-        rootXmlObject[type.name][tagName] = collection;
+        rootXmlObject[type.name][tagName] = collection as JsonArray;
       }
     }
-    writerFormat.writeInfos.push({
+
+    writeInfos.push({
       source: new JsToXml(rootXmlObject),
       relativeDestination: join(
         type.directoryName,
@@ -94,13 +92,10 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       ),
     });
 
-    return writerFormat;
+    return { component: this.component, writeInfos };
   }
 
-  public static recompose(
-    children: SourceComponent[],
-    baseXmlObj: RecomposedXmlJson = {}
-  ): JsonMap {
+  public static recompose(children: SourceComponent[], baseXmlObj: XmlJson = {}): JsonMap {
     for (const child of children) {
       const { directoryName: groupNode } = child.type;
       const { name: parentName } = child.parent.type;

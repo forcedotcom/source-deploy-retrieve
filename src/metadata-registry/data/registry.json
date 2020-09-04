@@ -272,6 +272,18 @@
           "sharingReason": "sharingreason",
           "listView": "listview",
           "fieldSet": "fieldset"
+        },
+        "directories": {
+          "fields": "customfield",
+          "indexes": "index",
+          "businessProcesses": "businessprocess",
+          "recordTypes": "recordtype",
+          "compactLayouts": "compactlayout",
+          "webLinks": "weblink",
+          "validationRules": "validationrule",
+          "sharingReasons": "sharingreason",
+          "listViews": "listview",
+          "fieldSets": "fieldset"
         }
       }
     },
@@ -641,15 +653,15 @@
       "inFolder": false,
       "children": {
         "types": {
-            "fieldtranslation": {
-              "id": "customfieldtranslation",
-              "name": "CustomFieldTranslation",
-              "directoryName": "fields",
-              "suffix": "fieldTranslation"
-            }
+          "fieldtranslation": {
+            "id": "customfieldtranslation",
+            "name": "CustomFieldTranslation",
+            "directoryName": "fields",
+            "suffix": "fieldTranslation"
+          }
         },
         "suffixes": {
-            "fieldTranslation": "fieldtranslation"
+          "fieldTranslation": "fieldtranslation"
         }
       }
     },

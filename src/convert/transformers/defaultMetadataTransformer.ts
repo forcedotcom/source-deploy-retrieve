@@ -6,9 +6,8 @@
  */
 import { META_XML_SUFFIX } from '../../utils';
 import { createReadStream } from 'fs';
-import { LibraryError } from '../../errors';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
-import { WriterFormat } from '../types';
+import { SfdxFileFormat, WriterFormat } from '../types';
 
 /**
  * The default metadata transformer.
@@ -19,8 +18,15 @@ import { WriterFormat } from '../types';
  */
 export class DefaultMetadataTransformer extends BaseMetadataTransformer {
   public toMetadataFormat(): WriterFormat {
+    return this.getWriterFormat('metadata');
+  }
+
+  public toSourceFormat(): WriterFormat {
+    return this.getWriterFormat('source');
+  }
+
+  private getWriterFormat(toFormat: SfdxFileFormat): WriterFormat {
     const result: WriterFormat = { component: this.component, writeInfos: [] };
-    let xmlDest = this.component.getPackageRelativePath(this.component.xml);
     if (this.component.content) {
       for (const source of this.component.walkContent()) {
         result.writeInfos.push({
@@ -28,17 +34,21 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
           relativeDestination: this.component.getPackageRelativePath(source),
         });
       }
-    } else {
-      xmlDest = xmlDest.slice(0, xmlDest.lastIndexOf(META_XML_SUFFIX));
     }
-    result.writeInfos.push({
-      source: createReadStream(this.component.xml),
-      relativeDestination: xmlDest,
-    });
-    return result;
-  }
 
-  public toSourceFormat(): WriterFormat {
-    throw new LibraryError('error_convert_not_implemented', ['source', this.component.type.name]);
+    if (this.component.xml) {
+      let xmlDest = this.component.getPackageRelativePath(this.component.xml);
+      if (!this.component.content) {
+        xmlDest =
+          toFormat === 'metadata'
+            ? xmlDest.slice(0, xmlDest.lastIndexOf(META_XML_SUFFIX))
+            : `${xmlDest}${META_XML_SUFFIX}`;
+      }
+      result.writeInfos.push({
+        source: createReadStream(this.component.xml),
+        relativeDestination: xmlDest,
+      });
+    }
+    return result;
   }
 }

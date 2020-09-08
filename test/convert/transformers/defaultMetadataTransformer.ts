@@ -11,9 +11,8 @@ import { join, basename } from 'path';
 import { createSandbox } from 'sinon';
 import { Readable } from 'stream';
 import * as fs from 'fs';
-import { expect, assert } from 'chai';
-import { LibraryError } from '../../../src/errors';
-import { nls } from '../../../src/i18n';
+import { expect } from 'chai';
+import { META_XML_SUFFIX } from '../../../src/utils';
 
 const env = createSandbox();
 
@@ -75,7 +74,7 @@ describe('DefaultMetadataTransformer', () => {
       });
     });
 
-    it('should handle folder type components', () => {
+    it('should handle folder type components with no content', () => {
       const component = kathy.KATHY_COMPONENTS[0];
       const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;
@@ -99,15 +98,67 @@ describe('DefaultMetadataTransformer', () => {
   });
 
   describe('toSourceFormat', () => {
-    it('should throw a not implemented error', () => {
+    it('should create a WriteInfo for each file in the component', () => {
       const component = simon.SIMON_COMPONENT;
       const transformer = new DefaultMetadataTransformer(component);
+      const { directoryName } = component.type;
+      const relativeBundle = join(directoryName, basename(simon.SIMON_BUNDLE_PATH));
+      const expectedInfos: WriteInfo[] = [];
+      for (const source of component.walkContent()) {
+        expectedInfos.push({
+          relativeDestination: join(relativeBundle, basename(source)),
+          source: fs.createReadStream(source),
+        });
+      }
+      expectedInfos.push({
+        relativeDestination: join(relativeBundle, simon.SIMON_XML_NAME),
+        source: fs.createReadStream(component.xml),
+      });
 
-      assert.throws(
-        () => transformer.toSourceFormat(),
-        LibraryError,
-        nls.localize('error_convert_not_implemented', ['source', component.type.name])
-      );
+      expect(transformer.toSourceFormat()).to.deep.equal({
+        component,
+        writeInfos: expectedInfos,
+      });
+    });
+
+    it('should add in the -meta.xml suffix for components with no content', () => {
+      const component = gene.GENE_MD_FORMAT_COMPONENT;
+      const transformer = new DefaultMetadataTransformer(component);
+      const { directoryName } = component.type;
+      const fileName = `${component.fullName}.${component.type.suffix}${META_XML_SUFFIX}`;
+      const expectedInfos: WriteInfo[] = [
+        {
+          relativeDestination: join(directoryName, fileName),
+          source: fs.createReadStream(component.xml),
+        },
+      ];
+
+      expect(transformer.toSourceFormat()).to.deep.equal({
+        component,
+        writeInfos: expectedInfos,
+      });
+    });
+
+    it('should handle folder type components with no content', () => {
+      const component = kathy.KATHY_MD_FORMAT_COMPONENTS[0];
+      const fullNameParts = component.fullName.split('/');
+      const { directoryName } = component.type;
+      const transformer = new DefaultMetadataTransformer(component);
+      const expectedInfos: WriteInfo[] = [
+        {
+          relativeDestination: join(
+            directoryName,
+            fullNameParts[0],
+            `${fullNameParts[1]}.${component.type.suffix}${META_XML_SUFFIX}`
+          ),
+          source: fs.createReadStream(component.xml),
+        },
+      ];
+
+      expect(transformer.toSourceFormat()).to.deep.equal({
+        component,
+        writeInfos: expectedInfos,
+      });
     });
   });
 });

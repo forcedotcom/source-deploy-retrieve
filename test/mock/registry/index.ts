@@ -102,6 +102,13 @@ export const mockRegistry: MetadataRegistry = {
       name: 'SeanFolder',
       suffix: 'seanfolder',
     },
+    mixedcontentsinglefile: {
+      id: 'mixedcontentsinglefile',
+      directoryName: 'mixedSingleFiles',
+      inFolder: false,
+      name: 'MixedContentSingleFile',
+      suffix: 'mixedSingleFile',
+    },
   },
   suffixes: {
     kathy: 'kathybates',
@@ -111,6 +118,7 @@ export const mockRegistry: MetadataRegistry = {
     genewilder: 'gene',
     reginaking: 'regina',
     sean: 'seanconnerys',
+    mixedSingleFile: 'mixedcontentsinglefile',
   },
   strictTypeFolder: {
     dwaynes: 'dwaynejohnson',
@@ -118,15 +126,17 @@ export const mockRegistry: MetadataRegistry = {
     simons: 'simonpegg',
     tinas: 'tinafey',
     reginas: 'reginaking',
+    mixedSingleFiles: 'mixedcontentsinglefile',
   },
   strategies: {
     keanureeves: { adapter: 'matchingContentFile', transformer: 'standard' },
-    tinafey: { adapter: 'mixedContent', transformer: 'mixedContent' },
-    tarajihenson: { adapter: 'mixedContent', transformer: 'mixedContent' },
-    dwaynejohnson: { adapter: 'mixedContent', transformer: 'mixedContent' },
+    tinafey: { adapter: 'mixedContent' },
+    tarajihenson: { adapter: 'mixedContent' },
+    dwaynejohnson: { adapter: 'mixedContent' },
     simonpegg: { adapter: 'bundle', transformer: 'bundle' },
     reginaking: { adapter: 'decomposed', transformer: 'decomposed' },
     genewilder: { adapter: 'badAdapterId', transformer: 'badAdapterId' },
+    mixedcontentsinglefile: { adapter: 'mixedContent', transformer: 'staticResource' },
   },
   apiVersion: '48.0',
 };

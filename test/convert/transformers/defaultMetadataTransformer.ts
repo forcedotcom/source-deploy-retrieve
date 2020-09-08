@@ -9,20 +9,12 @@ import { DefaultMetadataTransformer } from '../../../src/convert/transformers/de
 import { WriteInfo } from '../../../src/convert';
 import { join, basename } from 'path';
 import { createSandbox } from 'sinon';
-import { Readable } from 'stream';
+import { TestReadable } from '../../mock/convert/readables';
 import * as fs from 'fs';
 import { expect } from 'chai';
 import { META_XML_SUFFIX } from '../../../src/utils';
 
 const env = createSandbox();
-
-class TestReadable extends Readable {
-  private fsPath: string;
-  constructor(fsPath: string) {
-    super();
-    this.fsPath = fsPath;
-  }
-}
 
 describe('DefaultMetadataTransformer', () => {
   beforeEach(() =>

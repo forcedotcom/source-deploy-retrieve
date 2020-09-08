@@ -11,10 +11,12 @@ import { SourceComponent } from '../../metadata-registry/sourceComponent';
 import { MetadataRegistry } from '../../metadata-registry';
 import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 import { ConvertTransaction } from '../convertTransaction';
+import { StaticResourceMetadataTransformer } from './staticResourceMetadataTransformer';
 
 const enum TransformerId {
   Standard = 'standard',
   Decomposed = 'decomposed',
+  StaticResource = 'staticResource',
 }
 
 export class MetadataTransformerFactory {
@@ -33,11 +35,13 @@ export class MetadataTransformerFactory {
       ? (this.registry.strategies[type.id].transformer as TransformerId)
       : undefined;
     switch (transformerId) {
-      case TransformerId.Decomposed:
-        return new DecomposedMetadataTransformer(component, this.convertTransaction);
       case TransformerId.Standard:
       case undefined:
         return new DefaultMetadataTransformer(component, this.convertTransaction);
+      case TransformerId.Decomposed:
+        return new DecomposedMetadataTransformer(component, this.convertTransaction);
+      case TransformerId.StaticResource:
+        return new StaticResourceMetadataTransformer(component, this.convertTransaction);
       default:
         throw new RegistryError('error_missing_transformer', [type.name, transformerId]);
     }

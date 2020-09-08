@@ -1883,7 +1883,8 @@
       "adapter": "matchingContentFile"
     },
     "staticresource": {
-      "adapter": "mixedContent"
+      "adapter": "mixedContent",
+      "transformer": "staticResource"
     },
     "wavetemplatebundle": {
       "adapter": "bundle"

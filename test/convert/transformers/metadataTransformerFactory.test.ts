@@ -12,6 +12,8 @@ import { MetadataTransformerFactory } from '../../../src/convert/transformers';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
 import { REGINA_COMPONENT } from '../../mock/registry/reginaConstants';
 import { ConvertTransaction } from '../../../src/convert/convertTransaction';
+import { MC_SINGLE_FILE_COMPONENT } from '../../mock/registry/mixedContentSingleFileConstants';
+import { StaticResourceMetadataTransformer } from '../../../src/convert/transformers/staticResourceMetadataTransformer';
 
 describe('MetadataTransformerFactory', () => {
   it('should return DefaultMetadataTransformer', () => {
@@ -28,6 +30,14 @@ describe('MetadataTransformerFactory', () => {
     const factory = new MetadataTransformerFactory(mockRegistry, transaction);
     expect(factory.getTransformer(component)).to.deep.equal(
       new DecomposedMetadataTransformer(component, transaction)
+    );
+  });
+
+  it('should return StaticResourceMetadataTransformer', () => {
+    const component = MC_SINGLE_FILE_COMPONENT;
+    const factory = new MetadataTransformerFactory(mockRegistry);
+    expect(factory.getTransformer(component)).to.deep.equal(
+      new StaticResourceMetadataTransformer(component)
     );
   });
 });

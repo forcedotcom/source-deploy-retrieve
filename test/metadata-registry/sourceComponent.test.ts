@@ -7,12 +7,45 @@
 import { SourceComponent } from '../../src/metadata-registry';
 import { RegistryTestUtil } from './registryTestUtil';
 import { mockRegistry, kathy, regina, taraji, keanu } from '../mock/registry';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { REGINA_COMPONENT } from '../mock/registry/reginaConstants';
+import { KEANU_COMPONENT } from '../mock/registry/keanuConstants';
+import { createSandbox } from 'sinon';
+import * as fs from 'fs';
+import { LibraryError } from '../../src/errors';
+import { nls } from '../../src/i18n';
+
+const env = createSandbox();
 
 describe('SourceComponent', () => {
   it('should return correct fullName for components without a parent', () => {
     expect(REGINA_COMPONENT.fullName).to.equal(REGINA_COMPONENT.name);
+  });
+
+  describe('parseXml', () => {
+    afterEach(() => env.restore());
+
+    it('should parse the components xml file to json', () => {
+      const component = KEANU_COMPONENT;
+      env.stub(fs, 'readFileSync').returns('<KeanuReeves><test>something</test></KeanuReeves>');
+      expect(component.parseXml()).to.deep.equal({
+        KeanuReeves: {
+          test: 'something',
+        },
+      });
+    });
+
+    it('should throw an error if the component does not have an xml when parsing', () => {
+      const component = new SourceComponent({
+        name: 'a',
+        type: mockRegistry.types.keanureeves,
+      });
+      assert.throws(
+        () => component.parseXml(),
+        LibraryError,
+        nls.localize('error_parsing_xml', component.name)
+      );
+    });
   });
 
   describe('walkContent', () => {

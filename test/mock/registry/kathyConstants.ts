@@ -36,3 +36,27 @@ export const KATHY_COMPONENTS: SourceComponent[] = [
     xml: KATHY_XML_PATHS[2],
   }),
 ];
+
+export const KATHY_MD_FORMAT_XML_NAMES = ['a.kathy', 'b.kathy', 'c.kathy'];
+export const KATHY_MD_FORMAT_XML_PATHS = [
+  join(KATHY_FOLDER, KATHY_MD_FORMAT_XML_NAMES[0]),
+  join(KATHY_FOLDER, KATHY_MD_FORMAT_XML_NAMES[1]),
+  join(KATHY_FOLDER, KATHY_MD_FORMAT_XML_NAMES[2]),
+];
+export const KATHY_MD_FORMAT_COMPONENTS: SourceComponent[] = [
+  new SourceComponent({
+    name: `A_Folder/a`,
+    type,
+    xml: KATHY_MD_FORMAT_XML_PATHS[0],
+  }),
+  new SourceComponent({
+    name: 'A_Folder/b',
+    type,
+    xml: KATHY_MD_FORMAT_XML_PATHS[1],
+  }),
+  new SourceComponent({
+    name: 'A_Folder/c',
+    type,
+    xml: KATHY_MD_FORMAT_XML_PATHS[2],
+  }),
+];

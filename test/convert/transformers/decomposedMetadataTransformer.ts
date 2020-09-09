@@ -11,19 +11,25 @@ import {
   ConvertTransaction,
   RecompositionFinalizer,
 } from '../../../src/convert/convertTransaction';
-import { expect, assert } from 'chai';
+import { expect } from 'chai';
 import { createSandbox } from 'sinon';
-import * as fs from 'fs';
-import { XML_DECL, XML_NS, XML_NS_KEY } from '../../../src/utils/constants';
+import { XML_NS, XML_NS_KEY } from '../../../src/utils/constants';
 import { join } from 'path';
-import { LibraryError } from '../../../src/errors';
-import { nls } from '../../../src/i18n';
 import { JsToXml } from '../../../src/convert/streams';
 
 const env = createSandbox();
 
 describe('DecomposedMetadataTransformer', () => {
   const component = regina.REGINA_COMPONENT;
+  const composedXmlObj = {
+    ReginaKing: {
+      [XML_NS_KEY]: XML_NS,
+      fullName: component.fullName,
+      foo: 'bar',
+      ys: [{ fullName: 'child', test: 'testVal' }],
+      xs: [{ fullName: 'child2', test: 'testVal2' }],
+    },
+  };
 
   afterEach(() => env.restore());
 
@@ -58,43 +64,118 @@ describe('DecomposedMetadataTransformer', () => {
     it('should fully recompose metadata when a parent component is given', () => {
       const transformer = new DecomposedMetadataTransformer(component, new ConvertTransaction());
       const children = component.getChildren();
-      const readStub = env.stub(fs, 'readFileSync');
-      readStub.withArgs(children[0].xml).returns('<Y><test>child1</test></Y>');
-      readStub.withArgs(children[1].xml).returns('<X><test>child2</test></X>');
-      readStub
-        .withArgs(component.xml)
-        .returns(`${XML_DECL}<ReginaKing xmlns="${XML_NS}"><foo>bar</foo></ReginaKing>\n`);
-
-      const result = transformer.toMetadataFormat();
-
-      const expectedSource = new JsToXml({
+      env.stub(component, 'parseXml').returns({
         ReginaKing: {
           [XML_NS_KEY]: XML_NS,
+          fullName: component.fullName,
           foo: 'bar',
-          ys: [{ test: 'child1' }],
-          xs: [{ test: 'child2' }],
         },
       });
+      env.stub(children[0], 'parseXml').returns({
+        Y: {
+          fullName: 'child',
+          test: 'testVal',
+        },
+      });
+      env.stub(children[1], 'parseXml').returns({
+        X: {
+          fullName: 'child2',
+          test: 'testVal2',
+        },
+      });
+      // force getChildren to return the children we just stubbed
+      env.stub(component, 'getChildren').returns(children);
+
+      const result = transformer.toMetadataFormat();
 
       expect(result).to.deep.equal({
         component,
         writeInfos: [
           {
+            source: new JsToXml(composedXmlObj),
             relativeDestination: join('reginas', 'a.regina'),
-            source: expectedSource,
           },
         ],
       });
     });
+  });
 
-    describe('toSourceFormat', () => {
-      it('should throw a not implemented error', () => {
-        const transformer = new DecomposedMetadataTransformer(component, new ConvertTransaction());
-        assert.throws(
-          () => transformer.toSourceFormat(),
-          LibraryError,
-          nls.localize('error_convert_not_implemented', ['source', component.type.name])
-        );
+  describe('toSourceFormat', () => {
+    it('should decompose children into respective directories and files', () => {
+      const { type, fullName } = component;
+      const transformer = new DecomposedMetadataTransformer(component);
+      const root = join(type.directoryName, fullName);
+      env.stub(component, 'parseXml').returns({
+        ReginaKing: {
+          [XML_NS_KEY]: XML_NS,
+          fullName,
+          foo: 'bar',
+          ys: { fullName: 'child', test: 'testVal' },
+          xs: [
+            { fullName: 'child2', test: 'testVal2' },
+            { fullName: 'child3', test: 'testVal3' },
+          ],
+        },
+      });
+
+      const result = transformer.toSourceFormat();
+
+      expect(result).to.deep.equal({
+        component,
+        writeInfos: [
+          {
+            source: new JsToXml({
+              Y: {
+                [XML_NS_KEY]: XML_NS,
+                fullName: 'child',
+                test: 'testVal',
+              },
+            }),
+            relativeDestination: join(
+              root,
+              type.children.types.y.directoryName,
+              'child.y-meta.xml'
+            ),
+          },
+          {
+            source: new JsToXml({
+              X: {
+                [XML_NS_KEY]: XML_NS,
+                fullName: 'child2',
+                test: 'testVal2',
+              },
+            }),
+            relativeDestination: join(
+              root,
+              type.children.types.x.directoryName,
+              'child2.x-meta.xml'
+            ),
+          },
+          {
+            source: new JsToXml({
+              X: {
+                [XML_NS_KEY]: XML_NS,
+                fullName: 'child3',
+                test: 'testVal3',
+              },
+            }),
+            relativeDestination: join(
+              root,
+              type.children.types.x.directoryName,
+              'child3.x-meta.xml'
+            ),
+          },
+          {
+            source: new JsToXml({
+              ReginaKing: {
+                [XML_NS_KEY]: XML_NS,
+                fullName: component.fullName,
+                foo: 'bar',
+              },
+            }),
+            relativeDestination: join(root, `${fullName}.${type.suffix}-meta.xml`),
+          },
+        ],
       });
     });
   });

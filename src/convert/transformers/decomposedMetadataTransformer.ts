@@ -5,8 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { WriteInfo, WriterFormat } from '../types';
-import { parse as parseXml } from 'fast-xml-parser';
-import { readFileSync } from 'fs';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { RecompositionFinalizer, ConvertTransaction } from '../convertTransaction';
 import { SourceComponent } from '../../metadata-registry';
@@ -22,7 +20,7 @@ interface XmlJson extends JsonMap {
 }
 
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
-  constructor(component: SourceComponent, convertTransaction: ConvertTransaction) {
+  constructor(component: SourceComponent, convertTransaction = new ConvertTransaction()) {
     super(component, convertTransaction);
     this.convertTransaction.addFinalizer(RecompositionFinalizer);
   }
@@ -44,7 +42,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
 
     const recomposedXmlObj = DecomposedMetadataTransformer.recompose(
       this.component.getChildren(),
-      this.component.parseXml() as RecomposedXmlJson
+      this.component.parseXml() as XmlJson
     );
 
     return DecomposedMetadataTransformer.createWriterFormat(this.component, recomposedXmlObj);
@@ -53,8 +51,8 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   public toSourceFormat(): WriterFormat {
     const writeInfos: WriteInfo[] = [];
 
-    const { type, xml, fullName: parentFullName } = this.component;
-    const composedMetadata = parseXml(readFileSync(xml).toString())[type.name];
+    const { type, fullName: parentFullName } = this.component;
+    const composedMetadata = this.component.parseXml()[type.name];
     const rootXmlObject: XmlJson = { [type.name]: {} };
 
     for (const [tagName, collection] of Object.entries(composedMetadata)) {
@@ -100,11 +98,8 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       const { directoryName: groupNode } = child.type;
       const { name: parentName } = child.parent.type;
       const childContents = child.parseXml()[child.type.name];
-
       if (!baseXmlObj[parentName]) {
         baseXmlObj[parentName] = { '@_xmlns': XML_NS };
-      } else if (!baseXmlObj[parentName][XML_NS_KEY]) {
-        baseXmlObj[parentName][XML_NS_KEY] = XML_NS;
       }
 
       if (!baseXmlObj[parentName][groupNode]) {

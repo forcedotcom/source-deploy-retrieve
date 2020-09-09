@@ -24,6 +24,7 @@ import {
   TestFinalizerMultipleFormatsNoWrites,
   TestFinalizerNoResult,
 } from '../mock/convert/finalizers';
+import { XML_DECL, XML_NS, XML_NS_KEY } from '../../src/utils/constants';
 
 const env = createSandbox();
 
@@ -276,6 +277,31 @@ describe('Streams', () => {
           expect(err.name).to.equal(whoops.name);
         });
       });
+    });
+  });
+
+  describe('JsToXml', () => {
+    it('should transform js object to xml string', () => {
+      const xmlObj = {
+        TestType: {
+          [XML_NS_KEY]: XML_NS,
+          foo: 'bar',
+          many: [{ test: 'first' }, { test: 'second' }],
+        },
+      };
+      const jsToXml = new streams.JsToXml(xmlObj);
+      let expectedBody = XML_DECL;
+      expectedBody += `<TestType xmlns="${XML_NS}">\n`;
+      expectedBody += '    <foo>bar</foo>\n';
+      expectedBody += '    <many>\n';
+      expectedBody += '        <test>first</test>\n';
+      expectedBody += '    </many>\n';
+      expectedBody += '    <many>\n';
+      expectedBody += '        <test>second</test>\n';
+      expectedBody += '    </many>\n';
+      expectedBody += '</TestType>\n';
+
+      expect(jsToXml.read().toString()).to.be.equal(expectedBody);
     });
   });
 });

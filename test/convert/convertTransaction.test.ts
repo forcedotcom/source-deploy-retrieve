@@ -72,20 +72,19 @@ describe('Convert Transaction Constructs', () => {
 
       const result = finalizer.finalize(state);
 
-      const expectedSource = new JsToXml({
-        ReginaKing: {
-          [XML_NS_KEY]: XML_NS,
-          ys: [{ test: 'child1' }],
-          xs: [{ test: 'child2' }],
-        },
-      });
       expect(result).to.deep.equal([
         {
           component: component,
           writeInfos: [
             {
+              source: new JsToXml({
+                ReginaKing: {
+                  [XML_NS_KEY]: XML_NS,
+                  ys: [{ test: 'child1' }],
+                  xs: [{ test: 'child2' }],
+                },
+              }),
               relativeDestination: join('reginas', 'a.regina'),
-              source: expectedSource,
             },
           ],
         },

@@ -2,7 +2,9 @@
 
 ## Added
 
-- Support convertions for StaticResources to metadata format ([PR #127](https://github.com/forcedotcom/source-deploy-retrieve/pull/127))
+- Support conversions for StaticResources to metadata format ([PR #127](https://github.com/forcedotcom/source-deploy-retrieve/pull/127))
+
+- Adds metadata source format conversion for the default transformer ([PR #135](https://github.com/forcedotcom/source-deploy-retrieve/pull/135))
 
 # 1.1.1 - September 3, 2020
 

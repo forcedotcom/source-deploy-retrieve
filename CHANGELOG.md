@@ -1,4 +1,10 @@
-# 1.2.0 - September 3, 2020
+# 1.1.2 - September 10, 2020
+
+## Added
+
+- Support convertions for StaticResources to metadata format ([PR #127](https://github.com/forcedotcom/source-deploy-retrieve/pull/127))
+
+# 1.1.1 - September 3, 2020
 
 ## Added
 

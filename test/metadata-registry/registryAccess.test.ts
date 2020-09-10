@@ -20,6 +20,13 @@ import {
   REGINA_CHILD_COMPONENT_1,
   REGINA_XML_PATH,
 } from '../mock/registry/reginaConstants';
+import {
+  TARAJI_COMPONENT,
+  TARAJI_CONTENT_PATH,
+  TARAJI_DIR,
+  TARAJI_VIRTUAL_FS,
+  TARAJI_XML_PATHS,
+} from '../mock/registry/tarajiConstants';
 
 const testUtil = new RegistryTestUtil();
 
@@ -455,6 +462,25 @@ describe('RegistryAccess', () => {
           },
         ]);
         expect(access.getComponentsFromPath(simon.SIMON_DIR)).to.deep.equal([SIMON_COMPONENT]);
+      });
+
+      it('Should not add duplicate component if directory content and xml are at the same level', () => {
+        const access = testUtil.createRegistryAccess(TARAJI_VIRTUAL_FS);
+        const component = SourceComponent.createVirtualComponent(
+          TARAJI_COMPONENT,
+          TARAJI_VIRTUAL_FS
+        );
+        testUtil.stubAdapters([
+          {
+            type: mockRegistry.types.tarajihenson,
+            componentMappings: [
+              { path: TARAJI_CONTENT_PATH, component },
+              { path: TARAJI_XML_PATHS[0], component },
+            ],
+          },
+        ]);
+
+        expect(access.getComponentsFromPath(TARAJI_DIR)).to.deep.equal([component]);
       });
 
       it('Should stop resolution if parent component is resolved', () => {

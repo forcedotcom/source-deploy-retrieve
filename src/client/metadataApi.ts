@@ -20,9 +20,12 @@ import {
 } from './types';
 import { MetadataConverter } from '../convert';
 import { DeployError } from '../errors';
-import { SourceComponent } from '../metadata-registry';
+import { ManifestGenerator, SourceComponent } from '../metadata-registry';
 import { DiagnosticUtil } from './diagnosticUtil';
 import { SourcePath } from '../common';
+import { createReadStream, writeFileSync } from 'fs';
+import * as unzipper from 'unzipper';
+import { parse } from 'fast-xml-parser';
 
 export const DEFAULT_API_OPTIONS = {
   rollbackOnError: true,
@@ -31,13 +34,121 @@ export const DEFAULT_API_OPTIONS = {
   singlePackage: true,
 };
 
+export type RetrieveRequest = {
+  apiVersion: string;
+  packageNames?: string[];
+  singlePackage?: boolean;
+  specificFiles?: string[];
+  unpackaged: {
+    members: string[];
+    name: string;
+  };
+};
+
+export enum RetrieveStatus {
+  Pending = 'Pending',
+  InProgress = 'InProgress',
+  Succeeded = 'Succeeded',
+  Failed = 'Failed',
+}
+
+export type RetrieveResult = {
+  done: boolean;
+  errorMessage: string;
+  errorStatusCode: string;
+  fileProperties: {}[];
+  id: string;
+  messages: string;
+  status: RetrieveStatus;
+  success: boolean;
+  // this is a base64binary
+  zipFile: string;
+};
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export class MetadataApi extends BaseApi {
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult> {
     throw new Error('Method not implemented.');
   }
   public async retrieve(options: RetrieveOptions): Promise<ApiResult> {
-    throw new Error('Method not implemented.');
+    const retrieveRequest = this.formatRetrieveRequest(options.components);
+    // @ts-ignore
+    const retrieveID = await this.metadataRetrieveID(retrieveRequest);
+    const retrieveResult = await this.metadataRetrieveStatusPoll(retrieveID, options);
+
+    const tmpFile = 'tmp/metadataformat.zip';
+    writeFileSync(tmpFile, retrieveResult.zipFile, 'base64');
+    createReadStream(tmpFile).pipe(unzipper.Extract({ path: options.output }));
+
+    const retrievedComponents = this.registry.getComponentsFromPath(options.output);
+    const converter = new MetadataConverter();
+    await converter.convert(retrievedComponents, 'source', {
+      type: 'directory',
+      outputDirectory: options.output,
+    });
+
+    const convertedComponents = this.registry.getComponentsFromPath(options.output);
+    return { success: true, components: convertedComponents };
+  }
+
+  private async metadataRetrieveStatusPoll(
+    retrieveID: string,
+    options: RetrieveOptions,
+    interval = 100
+  ): Promise<RetrieveResult> {
+    let result;
+
+    const wait = (interval: number): Promise<void> => {
+      return new Promise((resolve) => {
+        setTimeout(resolve, interval);
+      });
+    };
+
+    const timeout = !options || !options.wait ? 10000 : options.wait;
+    const endTime = Date.now() + timeout;
+    let triedOnce = false;
+    do {
+      if (triedOnce) {
+        await wait(interval);
+      }
+
+      try {
+        result = ((await this.connection.metadata.checkRetrieveStatus(
+          retrieveID
+        )) as unknown) as RetrieveResult;
+      } catch (e) {
+        throw new DeployError('md_request_fail', e);
+      }
+
+      switch (result.status) {
+        case RetrieveStatus.Succeeded:
+        case RetrieveStatus.Failed:
+          return result;
+      }
+
+      triedOnce = true;
+    } while (Date.now() < endTime);
+
+    return result;
+  }
+
+  private async metadataRetrieveID(retrieveRequest: RetrieveRequest): Promise<string> {
+    // @ts-ignore
+    const result = await this.connection.metadata.retrieve(retrieveRequest);
+    return result.id;
+  }
+
+  private formatRetrieveRequest(components: SourceComponent[]): RetrieveRequest {
+    const manifestGenerator = new ManifestGenerator(this.registry);
+    const manifest = manifestGenerator.createManifest(components);
+    const manifestJson = parse(manifest);
+    const packageData = manifestJson.Package;
+    delete packageData.$;
+    const retrieveRequest = {
+      apiVersion: this.registry.getApiVersion(),
+      unpackaged: packageData,
+    };
+    return retrieveRequest;
   }
 
   public async deploy(

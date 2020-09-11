@@ -7,7 +7,12 @@
 import { WriteInfo, WriterFormat } from '../types';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { RecompositionFinalizer, ConvertTransaction } from '../convertTransaction';
-import { MetadataRegistry, registryData, SourceComponent } from '../../metadata-registry';
+import {
+  DecompositionStrategy,
+  MetadataRegistry,
+  registryData,
+  SourceComponent,
+} from '../../metadata-registry';
 import { META_XML_SUFFIX, XML_NS, XML_NS_KEY } from '../../utils/constants';
 import { JsonMap, AnyJson, JsonArray } from '@salesforce/ts-types';
 import { JsToXml } from '../streams';
@@ -60,23 +65,31 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
 
     for (const [tagName, collection] of Object.entries(composedMetadata)) {
       const childTypeId = type?.children?.directories[tagName];
+
       if (childTypeId) {
         const childType = type.children.types[childTypeId];
         const tagCollection = Array.isArray(collection) ? collection : [collection];
+
         for (const entry of tagCollection) {
-          const childSource = new JsToXml({
-            [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS }, entry),
-          });
-          const name = (entry.fullName || entry.name) as string;
           let relativeDestination = join(type.directoryName, parentFullName);
-          if (this.registry.strategies[type.id].decomposition === 'folderPerType') {
+
+          const strategy = this.registry.strategies[type.id].decomposition as DecompositionStrategy;
+          if (strategy === DecompositionStrategy.FolderPerType) {
             relativeDestination = join(relativeDestination, childType.directoryName);
           }
+
+          const name = (entry.fullName || entry.name) as string;
           relativeDestination = join(
             relativeDestination,
             `${name}.${childType.suffix}${META_XML_SUFFIX}`
           );
-          writeInfos.push({ source: childSource, relativeDestination });
+
+          writeInfos.push({
+            source: new JsToXml({
+              [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS }, entry),
+            }),
+            relativeDestination,
+          });
         }
       } else {
         rootXmlObject[type.name][tagName] = collection as JsonArray;

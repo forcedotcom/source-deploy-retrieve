@@ -19,6 +19,17 @@ export type SuffixIndex = { [suffix: string]: string };
 
 export type DirectoryIndex = { [directoryName: string]: string };
 
+export const enum DecompositionStrategy {
+  /**
+   * Elements of child types are decomposed to the same folder the parent object is in
+   */
+  TopLevel = 'topLevel',
+  /**
+   * Elements of child types are decomposed into folders of their respective types
+   */
+  FolderPerType = 'folderPerType',
+}
+
 export type Strategy = {
   adapter: string;
   transformer?: string;

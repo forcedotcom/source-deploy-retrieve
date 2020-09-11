@@ -16,6 +16,7 @@ import { createSandbox } from 'sinon';
 import { XML_NS, XML_NS_KEY } from '../../../src/utils/constants';
 import { join } from 'path';
 import { JsToXml } from '../../../src/convert/streams';
+import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/registry/decomposedTopLevelConstants';
 
 const env = createSandbox();
 
@@ -101,7 +102,63 @@ describe('DecomposedMetadataTransformer', () => {
   });
 
   describe('toSourceFormat', () => {
-    it('should decompose children into respective directories and files', () => {
+    it('should decompose children into respective files for "topLevel" config', () => {
+      const component = DECOMPOSED_TOP_LEVEL_COMPONENT;
+      const { fullName, type } = component;
+      const transformer = new DecomposedMetadataTransformer(mockRegistry);
+      const root = join(type.directoryName, fullName);
+      env.stub(component, 'parseXml').returns({
+        DecomposedTopLevel: {
+          [XML_NS_KEY]: XML_NS,
+          fullName,
+          foo: 'bar',
+          gs: [
+            { name: 'child', test: 'testVal' },
+            { name: 'child2', test: 'testVal2' },
+          ],
+        },
+      });
+
+      const result = transformer.toSourceFormat(component);
+
+      expect(result).to.deep.equal({
+        component,
+        writeInfos: [
+          {
+            source: new JsToXml({
+              G: {
+                [XML_NS_KEY]: XML_NS,
+                name: 'child',
+                test: 'testVal',
+              },
+            }),
+            relativeDestination: join(root, 'child.g-meta.xml'),
+          },
+          {
+            source: new JsToXml({
+              G: {
+                [XML_NS_KEY]: XML_NS,
+                name: 'child2',
+                test: 'testVal2',
+              },
+            }),
+            relativeDestination: join(root, 'child2.g-meta.xml'),
+          },
+          {
+            source: new JsToXml({
+              DecomposedTopLevel: {
+                [XML_NS_KEY]: XML_NS,
+                fullName,
+                foo: 'bar',
+              },
+            }),
+            relativeDestination: join(root, `${fullName}.${type.suffix}-meta.xml`),
+          },
+        ],
+      });
+    });
+
+    it('should decompose children into respective directories and files for "folderPerType" config', () => {
       const { type, fullName } = component;
       const transformer = new DecomposedMetadataTransformer(mockRegistry);
       const root = join(type.directoryName, fullName);

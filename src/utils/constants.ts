@@ -18,3 +18,11 @@ export const ARCHIVE_MIME_TYPES = new Set([
   'application/jar',
   'application/octet-stream',
 ]);
+export const FALLBACK_TYPE_MAP = new Map<string, string>([
+  ['text/javascript', 'js'],
+  ['application/x-javascript', 'js'],
+  ['application/x-zip-compressed', 'zip'],
+  ['text/x-haml', 'haml'],
+  ['image/x-png', 'png'],
+  ['text/xml', 'xml'],
+]);

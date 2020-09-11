@@ -5,15 +5,17 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
-import { WriterFormat } from '..';
+import { WriterFormat, WriteInfo } from '..';
 import { create as createArchive } from 'archiver';
+import * as AdmZip from 'adm-zip';
+import { getExtension } from 'mime';
 import { basename, join } from 'path';
 import { baseName } from '../../utils';
 import { JsonMap } from '@salesforce/ts-types';
 import { createReadStream } from 'fs';
-import { Readable } from 'stream';
+import { PassThrough, Readable } from 'stream';
 import { LibraryError } from '../../errors';
-import { ARCHIVE_MIME_TYPES } from '../../utils/constants';
+import { ARCHIVE_MIME_TYPES, FALLBACK_TYPE_MAP } from '../../utils/constants';
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public toMetadataFormat(): WriterFormat {
@@ -48,14 +50,34 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   }
 
   public toSourceFormat(): WriterFormat {
-    throw new LibraryError('error_convert_not_implemented', ['source', this.component.type.name]);
+    const { xml, type, content } = this.component;
+    const result: WriterFormat = { component: this.component, writeInfos: [] };
+
+    if (content) {
+      const contentType = this.getContentType();
+      if (ARCHIVE_MIME_TYPES.has(contentType)) {
+        const baseDir = join(type.directoryName, baseName(content));
+        result.writeInfos.push(...this.createWriteInfosFromArchive(content, baseDir));
+      } else {
+        const extension = this.getExtensionFromType(contentType);
+        result.writeInfos.push({
+          source: createReadStream(content),
+          relativeDestination: join(type.directoryName, `${baseName(content)}.${extension}`),
+        });
+      }
+
+      result.writeInfos.push({
+        source: createReadStream(xml),
+        relativeDestination: join(type.directoryName, basename(xml)),
+      });
+    }
+    return result;
   }
 
   private componentIsExpandedArchive(): boolean {
     const { content, tree } = this.component;
     if (tree.isDirectory(content)) {
-      const contentType = (this.component.parseXml().StaticResource as JsonMap)
-        .contentType as string;
+      const contentType = this.getContentType();
       if (ARCHIVE_MIME_TYPES.has(contentType)) {
         return true;
       }
@@ -65,5 +87,33 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       ]);
     }
     return false;
+  }
+
+  private getContentType(): string {
+    return (this.component.parseXml().StaticResource as JsonMap).contentType as string;
+  }
+
+  private getExtensionFromType(contentType: string): string {
+    let ext = getExtension(contentType);
+    if (!ext && FALLBACK_TYPE_MAP.get(contentType)) {
+      ext = FALLBACK_TYPE_MAP.get(contentType);
+    }
+    return ext || 'none';
+  }
+
+  private createWriteInfosFromArchive(zipPath: string, destDir: string): WriteInfo[] {
+    const zip = new AdmZip(zipPath);
+    const infos = zip
+      .getEntries()
+      .filter((e) => !e.isDirectory)
+      .map((e) => {
+        const dataStream = new PassThrough();
+        dataStream.end(e.getData());
+        return {
+          source: dataStream,
+          relativeDestination: join(destDir, e.entryName),
+        };
+      });
+    return infos;
   }
 }

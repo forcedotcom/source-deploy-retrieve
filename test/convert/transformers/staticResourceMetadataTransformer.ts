@@ -104,15 +104,31 @@ describe('StaticResourceMetadataTransformer', () => {
   });
 
   describe('toSourceFormat', () => {
-    it('should throw a not implemented error', () => {
+    it('should rename extension from .resource to a mime extension for content file', () => {
       const component = MC_SINGLE_FILE_COMPONENT;
-      const transformer = new StaticResourceMetadataTransformer(component);
+      const { type, content, xml } = component;
+      env.stub(component, 'parseXml').returns({
+        StaticResource: {
+          contentType: 'image/png',
+        },
+      });
 
-      assert.throws(
-        () => transformer.toSourceFormat(),
-        LibraryError,
-        nls.localize('error_convert_not_implemented', ['source', component.type.name])
-      );
+      const transformer = new StaticResourceMetadataTransformer(component);
+      const expectedInfos: WriteInfo[] = [
+        {
+          source: fs.createReadStream(content),
+          relativeDestination: join(type.directoryName, `${baseName(content)}.png`),
+        },
+        {
+          source: fs.createReadStream(xml),
+          relativeDestination: join(type.directoryName, basename(xml)),
+        },
+      ];
+
+      expect(transformer.toSourceFormat()).to.deep.equal({
+        component,
+        writeInfos: expectedInfos,
+      });
     });
   });
 });

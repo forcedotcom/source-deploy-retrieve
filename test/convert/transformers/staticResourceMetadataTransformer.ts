@@ -19,6 +19,7 @@ import * as archiver from 'archiver';
 import { SourceComponent } from '../../../src';
 import { LibraryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
+import { mockRegistry } from '../../mock/registry';
 
 const env = createSandbox();
 
@@ -39,7 +40,7 @@ describe('StaticResourceMetadataTransformer', () => {
           contentType: 'png',
         },
       });
-      const transformer = new StaticResourceMetadataTransformer(component);
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
           source: fs.createReadStream(content),
@@ -51,7 +52,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toMetadataFormat()).to.deep.equal({
+      expect(transformer.toMetadataFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
@@ -65,7 +66,7 @@ describe('StaticResourceMetadataTransformer', () => {
       const archiveFinalizeStub = env.stub(archive, 'finalize');
       const parseXmlStub = env.stub(component, 'parseXml');
       env.stub(archiver, 'create').returns(archive);
-      const transformer = new StaticResourceMetadataTransformer(component);
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
           source: archive,
@@ -79,7 +80,7 @@ describe('StaticResourceMetadataTransformer', () => {
 
       for (const contentType of ARCHIVE_MIME_TYPES) {
         parseXmlStub.returns({ StaticResource: { contentType } });
-        expect(transformer.toMetadataFormat()).to.deep.equal({
+        expect(transformer.toMetadataFormat(component)).to.deep.equal({
           component,
           writeInfos: expectedInfos,
         });
@@ -93,10 +94,10 @@ describe('StaticResourceMetadataTransformer', () => {
       const component = SourceComponent.createVirtualComponent(TARAJI_COMPONENT, TARAJI_VIRTUAL_FS);
       const contentType = 'nonArchiveType';
       env.stub(component, 'parseXml').returns({ StaticResource: { contentType } });
-      const transformer = new StaticResourceMetadataTransformer(component);
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
 
       assert.throws(
-        () => transformer.toMetadataFormat(),
+        () => transformer.toMetadataFormat(component),
         LibraryError,
         nls.localize('error_static_resource_expected_archive_type', [contentType, component.name])
       );
@@ -106,10 +107,10 @@ describe('StaticResourceMetadataTransformer', () => {
   describe('toSourceFormat', () => {
     it('should throw a not implemented error', () => {
       const component = MC_SINGLE_FILE_COMPONENT;
-      const transformer = new StaticResourceMetadataTransformer(component);
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
 
       assert.throws(
-        () => transformer.toSourceFormat(),
+        () => transformer.toSourceFormat(component),
         LibraryError,
         nls.localize('error_convert_not_implemented', ['source', component.type.name])
       );

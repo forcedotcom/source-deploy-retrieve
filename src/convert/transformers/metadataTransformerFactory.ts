@@ -37,11 +37,11 @@ export class MetadataTransformerFactory {
     switch (transformerId) {
       case TransformerId.Standard:
       case undefined:
-        return new DefaultMetadataTransformer(component, this.convertTransaction);
+        return new DefaultMetadataTransformer(this.registry, this.convertTransaction);
       case TransformerId.Decomposed:
-        return new DecomposedMetadataTransformer(component, this.convertTransaction);
+        return new DecomposedMetadataTransformer(this.registry, this.convertTransaction);
       case TransformerId.StaticResource:
-        return new StaticResourceMetadataTransformer(component, this.convertTransaction);
+        return new StaticResourceMetadataTransformer(this.registry, this.convertTransaction);
       default:
         throw new RegistryError('error_missing_transformer', [type.name, transformerId]);
     }

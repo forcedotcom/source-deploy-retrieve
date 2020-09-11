@@ -20,7 +20,7 @@ describe('MetadataTransformerFactory', () => {
     const component = KEANU_COMPONENT;
     const factory = new MetadataTransformerFactory(mockRegistry);
     expect(factory.getTransformer(component)).to.deep.equal(
-      new DefaultMetadataTransformer(component)
+      new DefaultMetadataTransformer(mockRegistry)
     );
   });
 
@@ -29,7 +29,7 @@ describe('MetadataTransformerFactory', () => {
     const transaction = new ConvertTransaction();
     const factory = new MetadataTransformerFactory(mockRegistry, transaction);
     expect(factory.getTransformer(component)).to.deep.equal(
-      new DecomposedMetadataTransformer(component, transaction)
+      new DecomposedMetadataTransformer(mockRegistry, transaction)
     );
   });
 
@@ -37,7 +37,7 @@ describe('MetadataTransformerFactory', () => {
     const component = MC_SINGLE_FILE_COMPONENT;
     const factory = new MetadataTransformerFactory(mockRegistry);
     expect(factory.getTransformer(component)).to.deep.equal(
-      new StaticResourceMetadataTransformer(component)
+      new StaticResourceMetadataTransformer(mockRegistry)
     );
   });
 });

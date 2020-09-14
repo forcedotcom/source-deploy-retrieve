@@ -17,6 +17,8 @@ export type TypeIndex = { [typeId: string]: MetadataType };
  */
 export type SuffixIndex = { [suffix: string]: string };
 
+export type DirectoryIndex = { [directoryName: string]: string };
+
 export type Strategy = {
   adapter: string;
   transformer?: string;

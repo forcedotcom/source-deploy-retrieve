@@ -4,25 +4,23 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { WriterFormat } from '../types';
-import { j2xParser } from 'fast-xml-parser';
-import { Readable } from 'stream';
+import { WriteInfo, WriterFormat } from '../types';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { RecompositionFinalizer, ConvertTransaction } from '../convertTransaction';
 import { SourceComponent } from '../../metadata-registry';
-import { XML_NS, XML_NS_KEY, XML_DECL } from '../../utils/constants';
-import { LibraryError } from '../../errors';
+import { META_XML_SUFFIX, XML_NS, XML_NS_KEY } from '../../utils/constants';
 import { JsonMap, AnyJson, JsonArray } from '@salesforce/ts-types';
+import { JsToXml } from '../streams';
 import { join } from 'path';
 
-interface RecomposedXmlJson extends JsonMap {
+interface XmlJson extends JsonMap {
   [parentFullName: string]: {
     [groupNode: string]: AnyJson;
   };
 }
 
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
-  constructor(component: SourceComponent, convertTransaction: ConvertTransaction) {
+  constructor(component: SourceComponent, convertTransaction = new ConvertTransaction()) {
     super(component, convertTransaction);
     this.convertTransaction.addFinalizer(RecompositionFinalizer);
   }
@@ -44,28 +42,64 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
 
     const recomposedXmlObj = DecomposedMetadataTransformer.recompose(
       this.component.getChildren(),
-      this.component.parseXml() as RecomposedXmlJson
+      this.component.parseXml() as XmlJson
     );
+
     return DecomposedMetadataTransformer.createWriterFormat(this.component, recomposedXmlObj);
   }
 
   public toSourceFormat(): WriterFormat {
-    throw new LibraryError('error_convert_not_implemented', ['source', this.component.type.name]);
+    const writeInfos: WriteInfo[] = [];
+
+    const { type, fullName: parentFullName } = this.component;
+    const composedMetadata = this.component.parseXml()[type.name];
+    const rootXmlObject: XmlJson = { [type.name]: {} };
+
+    for (const [tagName, collection] of Object.entries(composedMetadata)) {
+      const childTypeId = type?.children?.directories[tagName];
+      if (childTypeId) {
+        const childType = type.children.types[childTypeId];
+        const tagCollection = Array.isArray(collection) ? collection : [collection];
+        const { directoryName: childDir, name: childTypeName } = childType;
+        for (const entry of tagCollection) {
+          const childSource = new JsToXml({
+            [childTypeName]: Object.assign({ [XML_NS_KEY]: XML_NS }, entry),
+          });
+          const { fullName: childFullName } = entry as JsonMap;
+          writeInfos.push({
+            source: childSource,
+            relativeDestination: join(
+              type.directoryName,
+              parentFullName,
+              childDir,
+              `${childFullName}.${childType.suffix}${META_XML_SUFFIX}`
+            ),
+          });
+        }
+      } else {
+        rootXmlObject[type.name][tagName] = collection as JsonArray;
+      }
+    }
+
+    writeInfos.push({
+      source: new JsToXml(rootXmlObject),
+      relativeDestination: join(
+        type.directoryName,
+        parentFullName,
+        `${parentFullName}.${type.suffix}${META_XML_SUFFIX}`
+      ),
+    });
+
+    return { component: this.component, writeInfos };
   }
 
-  public static recompose(
-    children: SourceComponent[],
-    baseXmlObj: RecomposedXmlJson = {}
-  ): JsonMap {
+  public static recompose(children: SourceComponent[], baseXmlObj: XmlJson = {}): JsonMap {
     for (const child of children) {
       const { directoryName: groupNode } = child.type;
       const { name: parentName } = child.parent.type;
       const childContents = child.parseXml()[child.type.name];
-
       if (!baseXmlObj[parentName]) {
         baseXmlObj[parentName] = { '@_xmlns': XML_NS };
-      } else if (!baseXmlObj[parentName][XML_NS_KEY]) {
-        baseXmlObj[parentName][XML_NS_KEY] = XML_NS;
       }
 
       if (!baseXmlObj[parentName][groupNode]) {
@@ -76,20 +110,16 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     return baseXmlObj;
   }
 
-  public static createWriterFormat(trigger: SourceComponent, xmlJson: JsonMap): WriterFormat {
-    const js2Xml = new j2xParser({ format: true, indentBy: '  ', ignoreAttributes: false });
-    const source = new Readable();
-    source.push(XML_DECL.concat(js2Xml.parse(xmlJson)));
-    source.push(null);
+  public static createWriterFormat(trigger: SourceComponent, xmlObject: JsonMap): WriterFormat {
     return {
       component: trigger,
       writeInfos: [
         {
+          source: new JsToXml(xmlObject),
           relativeDestination: join(
             trigger.type.directoryName,
             `${trigger.fullName}.${trigger.type.suffix}`
           ),
-          source,
         },
       ],
     };

@@ -6,6 +6,7 @@
  */
 
 import { TypeIndex, SuffixIndex } from '../metadata-registry';
+import { DirectoryIndex } from '../metadata-registry/types';
 
 /**
  * File system path to a source file of a metadata component.
@@ -41,6 +42,7 @@ export type MetadataType = {
   children?: {
     types: TypeIndex;
     suffixes: SuffixIndex;
+    directories?: DirectoryIndex;
   };
 };
 

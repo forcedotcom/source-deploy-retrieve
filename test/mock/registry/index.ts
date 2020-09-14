@@ -86,6 +86,10 @@ export const mockRegistry: MetadataRegistry = {
           x: 'x',
           y: 'y',
         },
+        directories: {
+          xs: 'x',
+          ys: 'y',
+        },
       },
     },
     seanconnerys: {

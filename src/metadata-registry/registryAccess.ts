@@ -79,6 +79,7 @@ export class RegistryAccess {
   private getComponentsFromPathRecursive(dir: SourcePath): SourceComponent[] {
     const dirQueue: SourcePath[] = [];
     const components: SourceComponent[] = [];
+    const ignore = new Set();
 
     if (this.forceIgnore.denies(dir)) {
       return components;
@@ -86,9 +87,16 @@ export class RegistryAccess {
 
     for (const file of this.tree.readDirectory(dir)) {
       const fsPath = join(dir, file);
+
+      if (ignore.has(fsPath)) {
+        continue;
+      }
+
       if (this.tree.isDirectory(fsPath)) {
         if (this.resolveDirectoryAsComponent(fsPath)) {
-          components.push(this.resolveComponent(fsPath, true));
+          const component = this.resolveComponent(fsPath, true);
+          components.push(component);
+          ignore.add(component.xml);
         } else {
           dirQueue.push(fsPath);
         }
@@ -96,6 +104,7 @@ export class RegistryAccess {
         const component = this.resolveComponent(fsPath, false);
         if (component) {
           components.push(component);
+          ignore.add(component.content);
           // don't traverse further if not in a root type directory. performance optimization
           // for mixed content types and ensures we don't add duplicates of the component.
           const isMixedContent = !!this.registry.strictTypeFolder[component.type.directoryName];

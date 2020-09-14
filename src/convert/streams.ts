@@ -16,6 +16,7 @@ import { ensureFileExists } from '../utils/fileSystemHandler';
 import { SourcePath } from '../common';
 import { ConvertTransaction } from './convertTransaction';
 import { MetadataTransformerFactory } from './transformers';
+import * as AdmZip from 'adm-zip';
 
 export const pipeline = promisify(cbPipeline);
 
@@ -197,5 +198,19 @@ export class ZipWriter extends ComponentWriter {
 
   get buffer(): Buffer | undefined {
     return Buffer.concat(this.buffers);
+  }
+}
+
+export class ArchiveReadable extends Readable {
+  private entry: AdmZip.IZipEntry;
+
+  constructor(entry: AdmZip.IZipEntry) {
+    super();
+    this.entry = entry;
+  }
+
+  public _read(): void {
+    this.push(this.entry.getData());
+    this.push(null);
   }
 }

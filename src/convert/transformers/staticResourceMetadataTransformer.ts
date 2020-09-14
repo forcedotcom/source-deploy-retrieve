@@ -13,9 +13,10 @@ import { basename, join } from 'path';
 import { baseName } from '../../utils';
 import { JsonMap } from '@salesforce/ts-types';
 import { createReadStream } from 'fs';
-import { PassThrough, Readable } from 'stream';
+import { Readable } from 'stream';
 import { LibraryError } from '../../errors';
 import { ARCHIVE_MIME_TYPES, FALLBACK_TYPE_MAP } from '../../utils/constants';
+import { ArchiveReadable } from '../streams';
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public toMetadataFormat(): WriterFormat {
@@ -107,10 +108,8 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       .getEntries()
       .filter((e) => !e.isDirectory)
       .map((e) => {
-        const dataStream = new PassThrough();
-        dataStream.end(e.getData());
         return {
-          source: dataStream,
+          source: new ArchiveReadable(e),
           relativeDestination: join(destDir, e.entryName),
         };
       });

@@ -125,6 +125,37 @@ export type DeployMessage = {
   success: BooleanString;
 };
 
+export enum RetrieveStatus {
+  Pending = 'Pending',
+  InProgress = 'InProgress',
+  Succeeded = 'Succeeded',
+  Failed = 'Failed',
+}
+
+export type RetrieveRequest = {
+  apiVersion: string;
+  packageNames?: string[];
+  singlePackage?: boolean;
+  specificFiles?: string[];
+  unpackaged: {
+    members: string[];
+    name: string;
+  };
+};
+
+/*export type RetrieveResult = {
+  done: boolean;
+  errorMessage: string;
+  errorStatusCode: string;
+  fileProperties: {}[];
+  id: string;
+  messages: string;
+  status: RetrieveStatus;
+  success: boolean;
+  // this is a base64binary
+  zipFile: string;
+};*/
+
 // ------------------------------------------------
 // Tooling API result types
 // ------------------------------------------------

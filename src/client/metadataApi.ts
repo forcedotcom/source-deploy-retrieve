@@ -17,6 +17,7 @@ import {
   DeployStatus,
   DeployMessage,
   MetadataDeployOptions,
+  RetrieveRequest,
 } from './types';
 import { MetadataConverter } from '../convert';
 import { DeployError } from '../errors';
@@ -28,6 +29,7 @@ import { parse } from 'fast-xml-parser';
 import { pipeline as cbPipeline } from 'stream';
 import { promisify } from 'util';
 import { join } from 'path';
+import { homedir } from 'os';
 const pipeline = promisify(cbPipeline);
 
 export const DEFAULT_API_OPTIONS = {
@@ -37,41 +39,27 @@ export const DEFAULT_API_OPTIONS = {
   singlePackage: true,
 };
 
-export type RetrieveRequest = {
-  apiVersion: string;
-  packageNames?: string[];
-  singlePackage?: boolean;
-  specificFiles?: string[];
-  unpackaged: {
-    members: string[];
-    name: string;
-  };
-};
-
-export enum RetrieveStatus {
-  Pending = 'Pending',
-  InProgress = 'InProgress',
-  Succeeded = 'Succeeded',
-  Failed = 'Failed',
-}
-
-export type RetrieveResult = {
-  done: boolean;
-  errorMessage: string;
-  errorStatusCode: string;
-  fileProperties: {}[];
-  id: string;
-  messages: string;
-  status: RetrieveStatus;
-  success: boolean;
-  // this is a base64binary
-  zipFile: string;
-};
-
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export class MetadataApi extends BaseApi {
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult> {
-    throw new Error('Method not implemented.');
+    const allComponents: SourceComponent[] = [];
+    for (const filepath of options.paths) {
+      allComponents.push(...this.registry.getComponentsFromPath(filepath));
+    }
+
+    const hashedCmps = new Set();
+    const uniqueComponents = allComponents.filter((component) => {
+      const hashed = this.hashElement(component);
+      if (!hashedCmps.has(hashed)) {
+        hashedCmps.add(hashed);
+        return component;
+      }
+    });
+    return this.retrieve({
+      components: uniqueComponents,
+      namespace: options.namespace,
+      output: options.output,
+    });
   }
 
   public async retrieve(options: RetrieveOptions): Promise<ApiResult> {
@@ -99,7 +87,7 @@ export class MetadataApi extends BaseApi {
   ): Promise<SourceComponent[]> {
     // @ts-ignore
     const retrieveStream = this.connection.metadata.retrieve(retrieveRequest).stream();
-    const tempCmpDir = join('.sfdx', 'tmp');
+    const tempCmpDir = join(homedir(), '.sfdx', 'tmp');
     await pipeline(retrieveStream, unzipper.Extract({ path: tempCmpDir }));
 
     const retrievedComponents = this.registry.getComponentsFromPath(tempCmpDir);
@@ -118,6 +106,11 @@ export class MetadataApi extends BaseApi {
 
     const convertedComponents = this.registry.getComponentsFromPath(options.output);
     return convertedComponents;
+  }
+
+  private hashElement(component: SourceComponent): string {
+    const hashed = `${component.fullName}.${component.type.id}`;
+    return hashed;
   }
 
   public async deploy(

@@ -110,12 +110,14 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     format.getExtraInfos = async (): Promise<WriteInfo[]> => {
       const writeInfos: WriteInfo[] = [];
       const directory = await Open.file(zipPath);
-      directory.files.forEach((f) => {
-        writeInfos.push({
-          source: f.stream(),
-          relativeDestination: join(destDir, f.path),
+      directory.files
+        .filter((f) => f.type === 'File')
+        .forEach((f) => {
+          writeInfos.push({
+            source: f.stream(),
+            relativeDestination: join(destDir, f.path),
+          });
         });
-      });
       return writeInfos;
     };
   }

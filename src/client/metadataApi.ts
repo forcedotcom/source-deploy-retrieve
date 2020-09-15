@@ -30,6 +30,7 @@ import { pipeline as cbPipeline } from 'stream';
 import { promisify } from 'util';
 import { join } from 'path';
 import { homedir } from 'os';
+import { remove } from 'fs-extra';
 const pipeline = promisify(cbPipeline);
 
 export const DEFAULT_API_OPTIONS = {
@@ -88,10 +89,16 @@ export class MetadataApi extends BaseApi {
     // @ts-ignore
     const retrieveStream = this.connection.metadata.retrieve(retrieveRequest).stream();
     const tempCmpDir = join(homedir(), '.sfdx', 'tmp');
-    await pipeline(retrieveStream, unzipper.Extract({ path: tempCmpDir }));
+    const outputStream = unzipper.Extract({ path: tempCmpDir });
 
-    const retrievedComponents = this.registry.getComponentsFromPath(tempCmpDir);
-    return retrievedComponents;
+    return new Promise((resolve, reject) => {
+      pipeline(retrieveStream, outputStream).catch((err) => reject(err));
+      outputStream.on('close', () => {
+        const retrievedComponents = this.registry.getComponentsFromPath(tempCmpDir);
+        remove(tempCmpDir);
+        resolve(retrievedComponents);
+      });
+    });
   }
 
   private async getConvertedComponents(
@@ -99,12 +106,12 @@ export class MetadataApi extends BaseApi {
     options: RetrieveOptions
   ): Promise<SourceComponent[]> {
     const converter = new MetadataConverter();
-    await converter.convert(retrievedComponents, 'source', {
+    const convertResult = await converter.convert(retrievedComponents, 'source', {
       type: 'directory',
       outputDirectory: options.output,
     });
 
-    const convertedComponents = this.registry.getComponentsFromPath(options.output);
+    const convertedComponents = this.registry.getComponentsFromPath(convertResult.packagePath);
     return convertedComponents;
   }
 

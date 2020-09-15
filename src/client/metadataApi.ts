@@ -23,9 +23,12 @@ import { DeployError } from '../errors';
 import { ManifestGenerator, SourceComponent } from '../metadata-registry';
 import { DiagnosticUtil } from './diagnosticUtil';
 import { SourcePath } from '../common';
-import { createReadStream, writeFileSync } from 'fs';
 import * as unzipper from 'unzipper';
 import { parse } from 'fast-xml-parser';
+import { pipeline as cbPipeline } from 'stream';
+import { promisify } from 'util';
+import { join } from 'path';
+const pipeline = promisify(cbPipeline);
 
 export const DEFAULT_API_OPTIONS = {
   rollbackOnError: true,
@@ -70,72 +73,12 @@ export class MetadataApi extends BaseApi {
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult> {
     throw new Error('Method not implemented.');
   }
+
   public async retrieve(options: RetrieveOptions): Promise<ApiResult> {
     const retrieveRequest = this.formatRetrieveRequest(options.components);
-    // @ts-ignore
-    const retrieveID = await this.metadataRetrieveID(retrieveRequest);
-    const retrieveResult = await this.metadataRetrieveStatusPoll(retrieveID, options);
-
-    const tmpFile = 'tmp/metadataformat.zip';
-    writeFileSync(tmpFile, retrieveResult.zipFile, 'base64');
-    createReadStream(tmpFile).pipe(unzipper.Extract({ path: options.output }));
-
-    const retrievedComponents = this.registry.getComponentsFromPath(options.output);
-    const converter = new MetadataConverter();
-    await converter.convert(retrievedComponents, 'source', {
-      type: 'directory',
-      outputDirectory: options.output,
-    });
-
-    const convertedComponents = this.registry.getComponentsFromPath(options.output);
+    const retrievedComponents = await this.getRetrievedComponents(retrieveRequest);
+    const convertedComponents = await this.getConvertedComponents(retrievedComponents, options);
     return { success: true, components: convertedComponents };
-  }
-
-  private async metadataRetrieveStatusPoll(
-    retrieveID: string,
-    options: RetrieveOptions,
-    interval = 100
-  ): Promise<RetrieveResult> {
-    let result;
-
-    const wait = (interval: number): Promise<void> => {
-      return new Promise((resolve) => {
-        setTimeout(resolve, interval);
-      });
-    };
-
-    const timeout = !options || !options.wait ? 10000 : options.wait;
-    const endTime = Date.now() + timeout;
-    let triedOnce = false;
-    do {
-      if (triedOnce) {
-        await wait(interval);
-      }
-
-      try {
-        result = ((await this.connection.metadata.checkRetrieveStatus(
-          retrieveID
-        )) as unknown) as RetrieveResult;
-      } catch (e) {
-        throw new DeployError('md_request_fail', e);
-      }
-
-      switch (result.status) {
-        case RetrieveStatus.Succeeded:
-        case RetrieveStatus.Failed:
-          return result;
-      }
-
-      triedOnce = true;
-    } while (Date.now() < endTime);
-
-    return result;
-  }
-
-  private async metadataRetrieveID(retrieveRequest: RetrieveRequest): Promise<string> {
-    // @ts-ignore
-    const result = await this.connection.metadata.retrieve(retrieveRequest);
-    return result.id;
   }
 
   private formatRetrieveRequest(components: SourceComponent[]): RetrieveRequest {
@@ -149,6 +92,32 @@ export class MetadataApi extends BaseApi {
       unpackaged: packageData,
     };
     return retrieveRequest;
+  }
+
+  private async getRetrievedComponents(
+    retrieveRequest: RetrieveRequest
+  ): Promise<SourceComponent[]> {
+    // @ts-ignore
+    const retrieveStream = this.connection.metadata.retrieve(retrieveRequest).stream();
+    const tempCmpDir = join('.sfdx', 'tmp');
+    await pipeline(retrieveStream, unzipper.Extract({ path: tempCmpDir }));
+
+    const retrievedComponents = this.registry.getComponentsFromPath(tempCmpDir);
+    return retrievedComponents;
+  }
+
+  private async getConvertedComponents(
+    retrievedComponents: SourceComponent[],
+    options: RetrieveOptions
+  ): Promise<SourceComponent[]> {
+    const converter = new MetadataConverter();
+    await converter.convert(retrievedComponents, 'source', {
+      type: 'directory',
+      outputDirectory: options.output,
+    });
+
+    const convertedComponents = this.registry.getComponentsFromPath(options.output);
+    return convertedComponents;
   }
 
   public async deploy(

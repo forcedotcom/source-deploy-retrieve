@@ -7,8 +7,8 @@
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { WriterFormat, WriteInfo } from '..';
 import { create as createArchive } from 'archiver';
-import * as AdmZip from 'adm-zip';
 import { getExtension } from 'mime';
+import { Open } from 'unzipper';
 import { basename, join } from 'path';
 import { baseName } from '../../utils';
 import { JsonMap } from '@salesforce/ts-types';
@@ -16,7 +16,6 @@ import { createReadStream } from 'fs';
 import { Readable } from 'stream';
 import { LibraryError } from '../../errors';
 import { ARCHIVE_MIME_TYPES, FALLBACK_TYPE_MAP } from '../../utils/constants';
-import { ArchiveReadable } from '../streams';
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public toMetadataFormat(): WriterFormat {
@@ -58,7 +57,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       const contentType = this.getContentType();
       if (ARCHIVE_MIME_TYPES.has(contentType)) {
         const baseDir = join(type.directoryName, baseName(content));
-        result.writeInfos.push(...this.createWriteInfosFromArchive(content, baseDir));
+        this.createWriteInfosFromArchive(content, baseDir, result);
       } else {
         const extension = this.getExtensionFromType(contentType);
         result.writeInfos.push({
@@ -99,20 +98,25 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     if (!ext && FALLBACK_TYPE_MAP.get(contentType)) {
       ext = FALLBACK_TYPE_MAP.get(contentType);
     }
-    return ext || 'none';
+    // return registered ext, fallback, or the default (application/octet-stream -> bin)
+    return ext || getExtension('');
   }
 
-  private createWriteInfosFromArchive(zipPath: string, destDir: string): WriteInfo[] {
-    const zip = new AdmZip(zipPath);
-    const infos = zip
-      .getEntries()
-      .filter((e) => !e.isDirectory)
-      .map((e) => {
-        return {
-          source: new ArchiveReadable(e),
-          relativeDestination: join(destDir, e.entryName),
-        };
+  private createWriteInfosFromArchive(
+    zipPath: string,
+    destDir: string,
+    format: WriterFormat
+  ): void {
+    format.getExtraInfos = async (): Promise<WriteInfo[]> => {
+      const writeInfos: WriteInfo[] = [];
+      const directory = await Open.file(zipPath);
+      directory.files.forEach((f) => {
+        writeInfos.push({
+          source: f.stream(),
+          relativeDestination: join(destDir, f.path),
+        });
       });
-    return infos;
+      return writeInfos;
+    };
   }
 }

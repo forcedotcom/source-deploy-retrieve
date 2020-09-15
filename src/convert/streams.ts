@@ -16,7 +16,6 @@ import { ensureFileExists } from '../utils/fileSystemHandler';
 import { SourcePath } from '../common';
 import { ConvertTransaction } from './convertTransaction';
 import { MetadataTransformerFactory } from './transformers';
-import * as AdmZip from 'adm-zip';
 
 export const pipeline = promisify(cbPipeline);
 
@@ -125,7 +124,10 @@ export class StandardWriter extends ComponentWriter {
   ): Promise<void> {
     let err: Error;
     try {
-      const writeTasks = chunk.writeInfos.map((info: WriteInfo) => {
+      const infos = chunk.getExtraInfos ? await chunk.getExtraInfos() : [];
+      infos.push(...chunk.writeInfos);
+
+      const writeTasks = infos.map((info: WriteInfo) => {
         const fullDest = join(this.rootDestination, info.relativeDestination);
         ensureFileExists(fullDest);
         return pipeline(info.source, createWriteStream(fullDest));
@@ -198,19 +200,5 @@ export class ZipWriter extends ComponentWriter {
 
   get buffer(): Buffer | undefined {
     return Buffer.concat(this.buffers);
-  }
-}
-
-export class ArchiveReadable extends Readable {
-  private entry: AdmZip.IZipEntry;
-
-  constructor(entry: AdmZip.IZipEntry) {
-    super();
-    this.entry = entry;
-  }
-
-  public _read(): void {
-    this.push(this.entry.getData());
-    this.push(null);
   }
 }

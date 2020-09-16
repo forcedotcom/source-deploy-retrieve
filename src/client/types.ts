@@ -143,19 +143,6 @@ export type RetrieveRequest = {
   };
 };
 
-/*export type RetrieveResult = {
-  done: boolean;
-  errorMessage: string;
-  errorStatusCode: string;
-  fileProperties: {}[];
-  id: string;
-  messages: string;
-  status: RetrieveStatus;
-  success: boolean;
-  // this is a base64binary
-  zipFile: string;
-};*/
-
 // ------------------------------------------------
 // Tooling API result types
 // ------------------------------------------------

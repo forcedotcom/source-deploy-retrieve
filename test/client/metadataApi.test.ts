@@ -20,8 +20,15 @@ import {
   ComponentStatus,
   DeployStatus,
   SourceDeployResult,
+  RetrieveOptions,
+  RetrievePathOptions,
 } from '../../src/client/types';
+import * as stream from 'stream';
+import * as unzipper from 'unzipper';
+import * as fsExtra from 'fs-extra';
+import { homedir } from 'os';
 
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 describe('Metadata Api', () => {
   let mockConnection: Connection;
   let sandboxStub = createSandbox();
@@ -68,6 +75,7 @@ describe('Metadata Api', () => {
   };
   const testingBuffer = Buffer.from('testingBuffer');
   const deployPath = path.join('file', 'path', 'myTestClass.cls');
+  const outputDir = path.join('path', 'to', 'output', 'dir');
   let metadataClient: MetadataApi;
   let registryStub = sandboxStub.stub();
   let convertStub = sandboxStub.stub();
@@ -86,6 +94,7 @@ describe('Metadata Api', () => {
       .withArgs(match.any, 'metadata', { type: 'zip' })
       .resolves({
         zipBuffer: testingBuffer,
+        //       packagePath: outputDir,
       });
   });
   afterEach(() => {
@@ -498,6 +507,277 @@ describe('Metadata Api', () => {
           diagnostics: [],
         },
       ]);
+    });
+  });
+
+  describe('Metadata API Retrieve', async () => {
+    it('should correctly format retrieve request', async () => {
+      const apiVersion = registryAccess.getApiVersion();
+      const options = {
+        components: [component],
+        output: outputDir,
+      } as RetrieveOptions;
+      const retrieveRequest = {
+        apiVersion,
+        unpackaged: {
+          types: { members: 'myTestClass', name: 'ApexClass' },
+          version: parseInt(apiVersion),
+        },
+      };
+
+      const mockRetrieve = {
+        stream: () => new stream.PassThrough(),
+      };
+      const retrieveStub = sandboxStub
+        .stub(mockConnection.metadata, 'retrieve')
+        //@ts-ignore
+        .returns(mockRetrieve);
+      const mockStream = new stream.PassThrough();
+      sandboxStub.stub(stream, 'pipeline').resolves();
+      // @ts-ignore
+      sandboxStub.stub(unzipper, 'Extract').returns(mockStream);
+      setTimeout(() => {
+        mockStream.emit('close');
+      }, 100);
+      registryStub.onFirstCall().returns([component]);
+      registryStub.onSecondCall().returns([component]);
+      convertStub
+        .withArgs(match.any, 'source', { type: 'directory', outputDirectory: outputDir })
+        .resolves({
+          packagePath: outputDir,
+        });
+
+      await metadataClient.retrieve(options);
+      expect(retrieveStub.calledWith(retrieveRequest)).to.be.true;
+    });
+
+    it('should correctly retrieve components and extract to directory', async () => {
+      const tmpDir = path.join(homedir(), '.sfdx', 'tmp');
+      const options = {
+        components: [component],
+        output: outputDir,
+      } as RetrieveOptions;
+
+      const mockRetrieve = {
+        stream: () => new stream.PassThrough(),
+      };
+      sandboxStub
+        .stub(mockConnection.metadata, 'retrieve')
+        //@ts-ignore
+        .returns(mockRetrieve);
+      const mockStream = new stream.PassThrough();
+      sandboxStub.stub(stream, 'pipeline').resolves();
+      // @ts-ignore
+      const extractStub = sandboxStub.stub(unzipper, 'Extract').returns(mockStream);
+      setTimeout(() => {
+        mockStream.emit('close');
+      }, 100);
+      registryStub.onFirstCall().returns([component]);
+      registryStub.onSecondCall().returns([component]);
+      convertStub
+        .withArgs(match.any, 'source', { type: 'directory', outputDirectory: outputDir })
+        .resolves({
+          packagePath: outputDir,
+        });
+
+      await metadataClient.retrieve(options);
+      expect(extractStub.calledOnce).to.be.true;
+      expect(extractStub.calledWith({ path: tmpDir })).to.be.true;
+    });
+
+    it('should correctly retrieve components and clean temp folder', async () => {
+      const tmpDir = path.join(homedir(), '.sfdx', 'tmp');
+      const options = {
+        components: [component],
+        output: outputDir,
+      } as RetrieveOptions;
+
+      const mockRetrieve = {
+        stream: () => new stream.PassThrough(),
+      };
+      sandboxStub
+        .stub(mockConnection.metadata, 'retrieve')
+        //@ts-ignore
+        .returns(mockRetrieve);
+      const mockStream = new stream.PassThrough();
+      sandboxStub.stub(stream, 'pipeline').resolves();
+      // @ts-ignore
+      sandboxStub.stub(unzipper, 'Extract').returns(mockStream);
+      setTimeout(() => {
+        mockStream.emit('close');
+      }, 100);
+      registryStub.onFirstCall().returns([component]);
+      registryStub.onSecondCall().returns([component]);
+      convertStub
+        .withArgs(match.any, 'source', { type: 'directory', outputDirectory: outputDir })
+        .resolves({
+          packagePath: outputDir,
+        });
+      const removeStub = sandboxStub.stub(fsExtra, 'remove');
+
+      await metadataClient.retrieve(options);
+      expect(removeStub.calledOnce).to.be.true;
+      expect(removeStub.calledWith(tmpDir)).to.be.true;
+    });
+
+    it('should convert the retrieved components', async () => {
+      const options = {
+        components: [component],
+        output: outputDir,
+      } as RetrieveOptions;
+
+      const mockRetrieve = {
+        stream: () => new stream.PassThrough(),
+      };
+      sandboxStub
+        .stub(mockConnection.metadata, 'retrieve')
+        //@ts-ignore
+        .returns(mockRetrieve);
+      const mockStream = new stream.PassThrough();
+      sandboxStub.stub(stream, 'pipeline').resolves();
+      // @ts-ignore
+      sandboxStub.stub(unzipper, 'Extract').returns(mockStream);
+      setTimeout(() => {
+        mockStream.emit('close');
+      }, 100);
+      registryStub.onFirstCall().returns([component]);
+      registryStub.onSecondCall().returns([component]);
+      convertStub
+        .withArgs(match.any, 'source', { type: 'directory', outputDirectory: outputDir })
+        .resolves({
+          packagePath: outputDir,
+        });
+
+      await metadataClient.retrieve(options);
+      expect(
+        convertStub.withArgs(match.any, 'source', {
+          type: 'directory',
+          outputDirectory: outputDir,
+        }).calledOnce
+      ).to.be.true;
+    });
+
+    it('should return successful result in apiformat', async () => {
+      const options = {
+        components: [component],
+        output: outputDir,
+      } as RetrieveOptions;
+      const retrieveResult = {
+        success: true,
+        components: [component],
+      };
+
+      const mockRetrieve = {
+        stream: () => new stream.PassThrough(),
+      };
+      sandboxStub
+        .stub(mockConnection.metadata, 'retrieve')
+        //@ts-ignore
+        .returns(mockRetrieve);
+      const mockStream = new stream.PassThrough();
+      sandboxStub.stub(stream, 'pipeline').resolves();
+      // @ts-ignore
+      sandboxStub.stub(unzipper, 'Extract').returns(mockStream);
+      setTimeout(() => {
+        mockStream.emit('close');
+      }, 100);
+      registryStub.onFirstCall().returns([component]);
+      registryStub.onSecondCall().returns([component]);
+      convertStub
+        .withArgs(match.any, 'source', { type: 'directory', outputDirectory: outputDir })
+        .resolves({
+          packagePath: outputDir,
+        });
+
+      const result = await metadataClient.retrieve(options);
+      expect(result).to.eql(retrieveResult);
+    });
+
+    it('should throw an error if theres an error during retrieve or conversion', async () => {
+      const errorMsg = 'test error';
+      const error = new Error(errorMsg);
+      const options = {
+        components: [component],
+        output: outputDir,
+      } as RetrieveOptions;
+
+      sandboxStub.stub(mockConnection.metadata, 'retrieve').throws(error);
+
+      try {
+        await metadataClient.retrieve(options);
+        expect.fail('Should have failed');
+      } catch (e) {
+        expect(e.message).to.equal(errorMsg);
+      }
+    });
+
+    it('should only retrieve unique components when retrieving with paths', async () => {
+      const rootPath = path.join('file', 'path');
+      const contentPaths = [
+        path.join(rootPath, 'myTestClass1.cls'),
+        path.join(rootPath, 'myTestClass2.cls'),
+        path.join(rootPath, 'myTestClass3.cls'),
+      ];
+      const xmlPaths = [
+        path.join(rootPath, 'myTestClass1.cls-meta.xml'),
+        path.join(rootPath, 'myTestClass2.cls-meta.xml'),
+        path.join(rootPath, 'myTestClass3.cls-meta.xml'),
+      ];
+      const firstProp = {
+        name: 'myTestClass1',
+        type: registryData.types.apexclass,
+        xml: xmlPaths[0],
+        content: contentPaths[0],
+      };
+      const secondProp = {
+        name: 'myTestClass2',
+        type: registryData.types.apexclass,
+        xml: xmlPaths[1],
+        content: contentPaths[1],
+      };
+      const thirdProp = {
+        name: 'myTestClass2',
+        type: registryData.types.apexclass,
+        xml: xmlPaths[1],
+        content: contentPaths[1],
+      };
+      const firstComponent = SourceComponent.createVirtualComponent(firstProp, [
+        {
+          dirPath: rootPath,
+          children: [path.basename(firstProp.xml), path.basename(firstProp.content)],
+        },
+      ]);
+      const secondComponent = SourceComponent.createVirtualComponent(secondProp, [
+        {
+          dirPath: rootPath,
+          children: [path.basename(secondProp.xml), path.basename(secondProp.content)],
+        },
+      ]);
+      const thirdComponent = SourceComponent.createVirtualComponent(thirdProp, [
+        {
+          dirPath: rootPath,
+          children: [path.basename(thirdProp.xml), path.basename(thirdProp.content)],
+        },
+      ]);
+
+      const options = {
+        paths: contentPaths,
+        output: outputDir,
+      } as RetrievePathOptions;
+
+      const mdRetrieveStub = sandboxStub.stub(metadataClient, 'retrieve');
+      registryStub.onFirstCall().returns([firstComponent, secondComponent, thirdComponent]);
+      registryStub.onSecondCall().returns([firstComponent, secondComponent, thirdComponent]);
+      registryStub.onThirdCall().returns([firstComponent, secondComponent, thirdComponent]);
+
+      await metadataClient.retrieveWithPaths(options);
+      expect(
+        mdRetrieveStub.calledWith({
+          components: [firstComponent, secondComponent, thirdComponent],
+          namespace: options.namespace,
+          output: options.output,
+        })
+      );
     });
   });
 });

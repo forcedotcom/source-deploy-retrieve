@@ -76,6 +76,7 @@ export class MetadataApi extends BaseApi {
     const manifestJson = parse(manifest);
     const packageData = manifestJson.Package;
     delete packageData.$;
+
     const retrieveRequest = {
       apiVersion: this.registry.getApiVersion(),
       unpackaged: packageData,
@@ -106,11 +107,11 @@ export class MetadataApi extends BaseApi {
     options: RetrieveOptions
   ): Promise<SourceComponent[]> {
     const converter = new MetadataConverter();
+    console.log('cmpsss' + retrievedComponents[0] + retrievedComponents[1] + options.output);
     const convertResult = await converter.convert(retrievedComponents, 'source', {
       type: 'directory',
       outputDirectory: options.output,
     });
-
     const convertedComponents = this.registry.getComponentsFromPath(convertResult.packagePath);
     return convertedComponents;
   }

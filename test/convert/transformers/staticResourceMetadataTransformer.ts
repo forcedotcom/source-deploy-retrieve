@@ -240,11 +240,10 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      // getExtraInfos: async (): Promise<WriteInfo[]> => [],
       const result = transformer.toSourceFormat(component);
       expect(result.component).to.deep.equal(component);
       expect(result.writeInfos).to.deep.equal(expectedInfos);
-      expect(result.getExtraInfos).to.be.a('function'); // to.satisfy(...)
+      expect(result.getExtraInfos).to.be.a('function');
       expect(await result.getExtraInfos()).to.deep.equal(extraInfo);
     });
 

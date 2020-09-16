@@ -40,7 +40,6 @@ export const DEFAULT_API_OPTIONS = {
   singlePackage: true,
 };
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 export class MetadataApi extends BaseApi {
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult> {
     const allComponents: SourceComponent[] = [];
@@ -107,7 +106,6 @@ export class MetadataApi extends BaseApi {
     options: RetrieveOptions
   ): Promise<SourceComponent[]> {
     const converter = new MetadataConverter();
-    console.log('cmpsss' + retrievedComponents[0] + retrievedComponents[1] + options.output);
     const convertResult = await converter.convert(retrievedComponents, 'source', {
       type: 'directory',
       outputDirectory: options.output,

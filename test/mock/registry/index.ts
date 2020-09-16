@@ -113,6 +113,29 @@ export const mockRegistry: MetadataRegistry = {
       name: 'MixedContentSingleFile',
       suffix: 'mixedSingleFile',
     },
+    decomposedtoplevel: {
+      id: 'decomposedtoplevel',
+      directoryName: 'decomposedTopLevels',
+      inFolder: false,
+      name: 'DecomposedTopLevel',
+      suffix: 'dtl',
+      children: {
+        types: {
+          g: {
+            id: 'g',
+            directoryName: 'gs',
+            name: 'G',
+            suffix: 'g',
+          },
+        },
+        suffixes: {
+          g: 'g',
+        },
+        directories: {
+          gs: 'g',
+        },
+      },
+    },
   },
   suffixes: {
     kathy: 'kathybates',
@@ -123,6 +146,7 @@ export const mockRegistry: MetadataRegistry = {
     reginaking: 'regina',
     sean: 'seanconnerys',
     mixedSingleFile: 'mixedcontentsinglefile',
+    dtl: 'decomposedtoplevel',
   },
   strictTypeFolder: {
     dwaynes: 'dwaynejohnson',
@@ -131,6 +155,7 @@ export const mockRegistry: MetadataRegistry = {
     tinas: 'tinafey',
     reginas: 'reginaking',
     mixedSingleFiles: 'mixedcontentsinglefile',
+    decomposedTopLevels: 'decomposedtoplevel',
   },
   strategies: {
     keanureeves: { adapter: 'matchingContentFile', transformer: 'standard' },
@@ -138,9 +163,18 @@ export const mockRegistry: MetadataRegistry = {
     tarajihenson: { adapter: 'mixedContent' },
     dwaynejohnson: { adapter: 'mixedContent' },
     simonpegg: { adapter: 'bundle', transformer: 'bundle' },
-    reginaking: { adapter: 'decomposed', transformer: 'decomposed' },
+    reginaking: {
+      adapter: 'decomposed',
+      transformer: 'decomposed',
+      decomposition: 'folderPerType',
+    },
     genewilder: { adapter: 'badAdapterId', transformer: 'badAdapterId' },
     mixedcontentsinglefile: { adapter: 'mixedContent', transformer: 'staticResource' },
+    decomposedtoplevel: {
+      adapter: 'decomposed',
+      transformer: 'decomposed',
+      decomposition: 'topLevel',
+    },
   },
   apiVersion: '48.0',
 };

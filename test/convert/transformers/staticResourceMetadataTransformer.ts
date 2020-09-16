@@ -20,6 +20,7 @@ import { SourceComponent } from '../../../src';
 import { LibraryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { CentralDirectory, Open, Entry } from 'unzipper';
+import { mockRegistry } from '../../mock/registry';
 
 const env = createSandbox();
 
@@ -40,7 +41,7 @@ describe('StaticResourceMetadataTransformer', () => {
           contentType: 'png',
         },
       });
-      const transformer = new StaticResourceMetadataTransformer(component);
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
           source: fs.createReadStream(content),
@@ -52,7 +53,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toMetadataFormat()).to.deep.equal({
+      expect(transformer.toMetadataFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
@@ -66,7 +67,7 @@ describe('StaticResourceMetadataTransformer', () => {
       const archiveFinalizeStub = env.stub(archive, 'finalize');
       const parseXmlStub = env.stub(component, 'parseXml');
       env.stub(archiver, 'create').returns(archive);
-      const transformer = new StaticResourceMetadataTransformer(component);
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
           source: archive,
@@ -80,7 +81,7 @@ describe('StaticResourceMetadataTransformer', () => {
 
       for (const contentType of ARCHIVE_MIME_TYPES) {
         parseXmlStub.returns({ StaticResource: { contentType } });
-        expect(transformer.toMetadataFormat()).to.deep.equal({
+        expect(transformer.toMetadataFormat(component)).to.deep.equal({
           component,
           writeInfos: expectedInfos,
         });
@@ -94,10 +95,10 @@ describe('StaticResourceMetadataTransformer', () => {
       const component = SourceComponent.createVirtualComponent(TARAJI_COMPONENT, TARAJI_VIRTUAL_FS);
       const contentType = 'nonArchiveType';
       env.stub(component, 'parseXml').returns({ StaticResource: { contentType } });
-      const transformer = new StaticResourceMetadataTransformer(component);
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
 
       assert.throws(
-        () => transformer.toMetadataFormat(),
+        () => transformer.toMetadataFormat(component),
         LibraryError,
         nls.localize('error_static_resource_expected_archive_type', [contentType, component.name])
       );
@@ -114,7 +115,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       });
 
-      const transformer = new StaticResourceMetadataTransformer(component);
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
           source: fs.createReadStream(content),
@@ -126,7 +127,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toSourceFormat()).to.deep.equal({
+      expect(transformer.toSourceFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
@@ -141,7 +142,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       });
 
-      const transformer = new StaticResourceMetadataTransformer(component);
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
           source: fs.createReadStream(content),
@@ -153,7 +154,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toSourceFormat()).to.deep.equal({
+      expect(transformer.toSourceFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
@@ -168,7 +169,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       });
 
-      const transformer = new StaticResourceMetadataTransformer(component);
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
           source: fs.createReadStream(content),
@@ -180,7 +181,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toSourceFormat()).to.deep.equal({
+      expect(transformer.toSourceFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
@@ -190,8 +191,8 @@ describe('StaticResourceMetadataTransformer', () => {
       const component = Object.assign({}, MC_SINGLE_FILE_COMPONENT);
       component.content = undefined;
 
-      const transformer = new StaticResourceMetadataTransformer(component);
-      expect(transformer.toSourceFormat()).to.deep.equal({
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
+      expect(transformer.toSourceFormat(component)).to.deep.equal({
         component,
         writeInfos: [],
       });
@@ -225,7 +226,7 @@ describe('StaticResourceMetadataTransformer', () => {
       } as CentralDirectory;
       env.stub(Open, 'file').resolves(cd);
 
-      const transformer = new StaticResourceMetadataTransformer(component);
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
           source: fs.createReadStream(xml),
@@ -240,7 +241,7 @@ describe('StaticResourceMetadataTransformer', () => {
       ];
 
       // getExtraInfos: async (): Promise<WriteInfo[]> => [],
-      const result = transformer.toSourceFormat();
+      const result = transformer.toSourceFormat(component);
       expect(result.component).to.deep.equal(component);
       expect(result.writeInfos).to.deep.equal(expectedInfos);
       expect(result.getExtraInfos).to.be.a('function'); // to.satisfy(...)
@@ -256,7 +257,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       });
 
-      const transformer = new StaticResourceMetadataTransformer(component);
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
           source: fs.createReadStream(content),
@@ -268,7 +269,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toSourceFormat()).to.deep.equal({
+      expect(transformer.toSourceFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });

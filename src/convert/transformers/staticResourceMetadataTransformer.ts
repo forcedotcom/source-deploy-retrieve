@@ -16,17 +16,18 @@ import { createReadStream } from 'fs';
 import { Readable } from 'stream';
 import { LibraryError } from '../../errors';
 import { ARCHIVE_MIME_TYPES, DEFAULT_CONTENT_TYPE, FALLBACK_TYPE_MAP } from '../../utils/constants';
+import { SourceComponent } from '../../metadata-registry';
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
-  public toMetadataFormat(): WriterFormat {
+  public toMetadataFormat(component: SourceComponent): WriterFormat {
     let contentSource: Readable;
-    const { content, type, xml } = this.component;
+    const { content, type, xml } = component;
     const writerFormat: WriterFormat = {
-      component: this.component,
+      component,
       writeInfos: [],
     };
 
-    if (this.componentIsExpandedArchive()) {
+    if (this.componentIsExpandedArchive(component)) {
       const zip = createArchive('zip', { zlib: { level: 3 } });
       zip.directory(content, false);
       zip.finalize();
@@ -49,12 +50,12 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     return writerFormat;
   }
 
-  public toSourceFormat(): WriterFormat {
-    const { xml, type, content } = this.component;
-    const result: WriterFormat = { component: this.component, writeInfos: [] };
+  public toSourceFormat(component: SourceComponent): WriterFormat {
+    const { xml, type, content } = component;
+    const result: WriterFormat = { component, writeInfos: [] };
 
     if (content) {
-      const contentType = this.getContentType();
+      const contentType = this.getContentType(component);
       if (ARCHIVE_MIME_TYPES.has(contentType)) {
         const baseDir = join(type.directoryName, baseName(content));
         this.createWriteInfosFromArchive(content, baseDir, result);
@@ -74,23 +75,23 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     return result;
   }
 
-  private componentIsExpandedArchive(): boolean {
-    const { content, tree } = this.component;
+  private componentIsExpandedArchive(component: SourceComponent): boolean {
+    const { content, tree } = component;
     if (tree.isDirectory(content)) {
-      const contentType = this.getContentType();
+      const contentType = this.getContentType(component);
       if (ARCHIVE_MIME_TYPES.has(contentType)) {
         return true;
       }
       throw new LibraryError('error_static_resource_expected_archive_type', [
         contentType,
-        this.component.name,
+        component.name,
       ]);
     }
     return false;
   }
 
-  private getContentType(): string {
-    return (this.component.parseXml().StaticResource as JsonMap).contentType as string;
+  private getContentType(component: SourceComponent): string {
+    return (component.parseXml().StaticResource as JsonMap).contentType as string;
   }
 
   private getExtensionFromType(contentType: string): string {

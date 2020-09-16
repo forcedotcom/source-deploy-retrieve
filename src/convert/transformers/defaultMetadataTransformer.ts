@@ -8,6 +8,7 @@ import { META_XML_SUFFIX } from '../../utils';
 import { createReadStream } from 'fs';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { SfdxFileFormat, WriterFormat } from '../types';
+import { SourceComponent } from '../../metadata-registry';
 
 /**
  * The default metadata transformer.
@@ -17,35 +18,35 @@ import { SfdxFileFormat, WriterFormat } from '../types';
  * files as-is.
  */
 export class DefaultMetadataTransformer extends BaseMetadataTransformer {
-  public toMetadataFormat(): WriterFormat {
-    return this.getWriterFormat('metadata');
+  public toMetadataFormat(component: SourceComponent): WriterFormat {
+    return this.getWriterFormat(component, 'metadata');
   }
 
-  public toSourceFormat(): WriterFormat {
-    return this.getWriterFormat('source');
+  public toSourceFormat(component: SourceComponent): WriterFormat {
+    return this.getWriterFormat(component, 'source');
   }
 
-  private getWriterFormat(toFormat: SfdxFileFormat): WriterFormat {
-    const result: WriterFormat = { component: this.component, writeInfos: [] };
-    if (this.component.content) {
-      for (const source of this.component.walkContent()) {
+  private getWriterFormat(component: SourceComponent, toFormat: SfdxFileFormat): WriterFormat {
+    const result: WriterFormat = { component: component, writeInfos: [] };
+    if (component.content) {
+      for (const source of component.walkContent()) {
         result.writeInfos.push({
           source: createReadStream(source),
-          relativeDestination: this.component.getPackageRelativePath(source),
+          relativeDestination: component.getPackageRelativePath(source),
         });
       }
     }
 
-    if (this.component.xml) {
-      let xmlDest = this.component.getPackageRelativePath(this.component.xml);
-      if (!this.component.content) {
+    if (component.xml) {
+      let xmlDest = component.getPackageRelativePath(component.xml);
+      if (!component.content) {
         xmlDest =
           toFormat === 'metadata'
             ? xmlDest.slice(0, xmlDest.lastIndexOf(META_XML_SUFFIX))
             : `${xmlDest}${META_XML_SUFFIX}`;
       }
       result.writeInfos.push({
-        source: createReadStream(this.component.xml),
+        source: createReadStream(component.xml),
         relativeDestination: xmlDest,
       });
     }

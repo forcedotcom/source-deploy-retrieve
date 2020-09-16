@@ -16,6 +16,9 @@ import { ensureFileExists } from '../utils/fileSystemHandler';
 import { SourcePath } from '../common';
 import { ConvertTransaction } from './convertTransaction';
 import { MetadataTransformerFactory } from './transformers';
+import { JsonMap } from '@salesforce/ts-types';
+import { XML_DECL } from '../utils/constants';
+import { j2xParser } from 'fast-xml-parser';
 
 export const pipeline = promisify(cbPipeline);
 
@@ -203,5 +206,26 @@ export class ZipWriter extends ComponentWriter {
 
   get buffer(): Buffer | undefined {
     return Buffer.concat(this.buffers);
+  }
+}
+
+/**
+ * Convenient wrapper to serialize a js object to XML content. Implemented as a stream
+ * to be used as a valid source for ComponentWriters in the conversion pipeline,
+ * even though it's not beneficial in the typical way a stream is.
+ */
+export class JsToXml extends Readable {
+  private xmlObject: JsonMap;
+
+  constructor(xmlObject: JsonMap) {
+    super();
+    this.xmlObject = xmlObject;
+  }
+
+  public _read(): void {
+    const js2Xml = new j2xParser({ format: true, indentBy: '    ', ignoreAttributes: false });
+    const xmlContent = XML_DECL.concat(js2Xml.parse(this.xmlObject));
+    this.push(xmlContent);
+    this.push(null);
   }
 }

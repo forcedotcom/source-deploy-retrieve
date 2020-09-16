@@ -6,17 +6,20 @@
  */
 import { MetadataTransformer, WriterFormat } from '../types';
 import { ConvertTransaction } from '../convertTransaction';
-import { SourceComponent } from '../../metadata-registry';
+import { MetadataRegistry, registryData, SourceComponent } from '../../metadata-registry';
 
 export abstract class BaseMetadataTransformer implements MetadataTransformer {
-  protected component: SourceComponent;
+  protected registry: MetadataRegistry;
   protected convertTransaction: ConvertTransaction;
 
-  constructor(component: SourceComponent, convertTransaction = new ConvertTransaction()) {
-    this.component = component;
+  constructor(
+    registry: MetadataRegistry = registryData,
+    convertTransaction = new ConvertTransaction()
+  ) {
+    this.registry = registry;
     this.convertTransaction = convertTransaction;
   }
 
-  public abstract toMetadataFormat(): WriterFormat;
-  public abstract toSourceFormat(): WriterFormat;
+  public abstract toMetadataFormat(component: SourceComponent): WriterFormat;
+  public abstract toSourceFormat(component: SourceComponent): WriterFormat;
 }

@@ -69,10 +69,10 @@ export class ComponentConverter extends Transform {
       const transformer = this.transformerFactory.getTransformer(chunk);
       switch (this.targetFormat) {
         case 'metadata':
-          result = transformer.toMetadataFormat();
+          result = transformer.toMetadataFormat(chunk);
           break;
         case 'source':
-          result = transformer.toSourceFormat();
+          result = transformer.toSourceFormat(chunk);
           break;
         default:
           throw new LibraryError('error_convert_invalid_format', this.targetFormat);

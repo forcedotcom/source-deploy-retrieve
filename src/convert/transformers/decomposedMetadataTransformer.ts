@@ -7,7 +7,12 @@
 import { WriteInfo, WriterFormat } from '../types';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { RecompositionFinalizer, ConvertTransaction } from '../convertTransaction';
-import { SourceComponent } from '../../metadata-registry';
+import {
+  DecompositionStrategy,
+  MetadataRegistry,
+  registryData,
+  SourceComponent,
+} from '../../metadata-registry';
 import { META_XML_SUFFIX, XML_NS, XML_NS_KEY } from '../../utils/constants';
 import { JsonMap, AnyJson, JsonArray } from '@salesforce/ts-types';
 import { JsToXml } from '../streams';
@@ -20,60 +25,70 @@ interface XmlJson extends JsonMap {
 }
 
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
-  constructor(component: SourceComponent, convertTransaction = new ConvertTransaction()) {
-    super(component, convertTransaction);
+  constructor(
+    registry: MetadataRegistry = registryData,
+    convertTransaction = new ConvertTransaction()
+  ) {
+    super(registry, convertTransaction);
     this.convertTransaction.addFinalizer(RecompositionFinalizer);
   }
 
-  public toMetadataFormat(): WriterFormat {
-    if (this.component.parent) {
+  public toMetadataFormat(component: SourceComponent): WriterFormat {
+    if (component.parent) {
       const { state } = this.convertTransaction;
-      const { fullName: parentName } = this.component.parent;
+      const { fullName: parentName } = component.parent;
       if (!state.recompose[parentName]) {
         state.recompose[parentName] = {
-          component: this.component.parent,
+          component: component.parent,
           children: [],
         };
       }
-      state.recompose[parentName].children.push(this.component);
+      state.recompose[parentName].children.push(component);
       // noop since the finalizer will push the writes to the component writer
-      return { component: this.component, writeInfos: [] };
+      return { component: component, writeInfos: [] };
     }
 
     const recomposedXmlObj = DecomposedMetadataTransformer.recompose(
-      this.component.getChildren(),
-      this.component.parseXml() as XmlJson
+      component.getChildren(),
+      component.parseXml() as XmlJson
     );
 
-    return DecomposedMetadataTransformer.createWriterFormat(this.component, recomposedXmlObj);
+    return DecomposedMetadataTransformer.createWriterFormat(component, recomposedXmlObj);
   }
 
-  public toSourceFormat(): WriterFormat {
+  public toSourceFormat(component: SourceComponent): WriterFormat {
     const writeInfos: WriteInfo[] = [];
 
-    const { type, fullName: parentFullName } = this.component;
-    const composedMetadata = this.component.parseXml()[type.name];
+    const { type, fullName: parentFullName } = component;
+    const composedMetadata = component.parseXml()[type.name];
     const rootXmlObject: XmlJson = { [type.name]: {} };
 
     for (const [tagName, collection] of Object.entries(composedMetadata)) {
       const childTypeId = type?.children?.directories[tagName];
+
       if (childTypeId) {
         const childType = type.children.types[childTypeId];
         const tagCollection = Array.isArray(collection) ? collection : [collection];
-        const { directoryName: childDir, name: childTypeName } = childType;
+
         for (const entry of tagCollection) {
-          const childSource = new JsToXml({
-            [childTypeName]: Object.assign({ [XML_NS_KEY]: XML_NS }, entry),
-          });
-          const { fullName: childFullName } = entry as JsonMap;
+          let relativeDestination = join(type.directoryName, parentFullName);
+
+          const strategy = this.registry.strategies[type.id].decomposition as DecompositionStrategy;
+          if (strategy === DecompositionStrategy.FolderPerType) {
+            relativeDestination = join(relativeDestination, childType.directoryName);
+          }
+
+          const name = (entry.fullName || entry.name) as string;
+          relativeDestination = join(
+            relativeDestination,
+            `${name}.${childType.suffix}${META_XML_SUFFIX}`
+          );
+
           writeInfos.push({
-            source: childSource,
-            relativeDestination: join(
-              type.directoryName,
-              parentFullName,
-              childDir,
-              `${childFullName}.${childType.suffix}${META_XML_SUFFIX}`
-            ),
+            source: new JsToXml({
+              [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS }, entry),
+            }),
+            relativeDestination,
           });
         }
       } else {
@@ -90,7 +105,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       ),
     });
 
-    return { component: this.component, writeInfos };
+    return { component, writeInfos };
   }
 
   public static recompose(children: SourceComponent[], baseXmlObj: XmlJson = {}): JsonMap {

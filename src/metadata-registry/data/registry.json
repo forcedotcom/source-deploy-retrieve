@@ -662,6 +662,9 @@
         },
         "suffixes": {
           "fieldTranslation": "fieldtranslation"
+        },
+        "directories": {
+          "fields": "fieldtranslation"
         }
       }
     },
@@ -1866,11 +1869,13 @@
     },
     "customobject": {
       "adapter": "decomposed",
-      "transformer": "decomposed"
+      "transformer": "decomposed",
+      "decomposition": "folderPerType"
     },
     "customobjecttranslation": {
       "adapter": "decomposed",
-      "transformer": "decomposed"
+      "transformer": "decomposed",
+      "decomposition": "topLevel"
     },
     "customfieldtranslation": {
       "adapter": "decomposed",

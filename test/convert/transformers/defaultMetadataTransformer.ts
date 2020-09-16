@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { simon, kathy, gene } from '../../mock/registry';
+import { simon, kathy, gene, mockRegistry } from '../../mock/registry';
 import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';
 import { WriteInfo } from '../../../src/convert';
 import { join, basename } from 'path';
@@ -27,7 +27,7 @@ describe('DefaultMetadataTransformer', () => {
   describe('toMetadataFormat', () => {
     it('should create a WriteInfo for each file in the component', () => {
       const component = simon.SIMON_COMPONENT;
-      const transformer = new DefaultMetadataTransformer(component);
+      const transformer = new DefaultMetadataTransformer(mockRegistry);
       const { directoryName } = component.type;
       const relativeBundle = join(directoryName, basename(simon.SIMON_BUNDLE_PATH));
       const expectedInfos: WriteInfo[] = [];
@@ -42,7 +42,7 @@ describe('DefaultMetadataTransformer', () => {
         source: fs.createReadStream(component.xml),
       });
 
-      expect(transformer.toMetadataFormat()).to.deep.equal({
+      expect(transformer.toMetadataFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
@@ -50,7 +50,7 @@ describe('DefaultMetadataTransformer', () => {
 
     it('should strip the -meta.xml suffix for components with no content', () => {
       const component = gene.GENE_COMPONENT;
-      const transformer = new DefaultMetadataTransformer(component);
+      const transformer = new DefaultMetadataTransformer(mockRegistry);
       const { directoryName } = component.type;
       const fileName = `${component.fullName}.${component.type.suffix}`;
       const expectedInfos: WriteInfo[] = [
@@ -60,7 +60,7 @@ describe('DefaultMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toMetadataFormat()).to.deep.equal({
+      expect(transformer.toMetadataFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
@@ -70,7 +70,7 @@ describe('DefaultMetadataTransformer', () => {
       const component = kathy.KATHY_COMPONENTS[0];
       const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;
-      const transformer = new DefaultMetadataTransformer(component);
+      const transformer = new DefaultMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
           relativeDestination: join(
@@ -82,7 +82,7 @@ describe('DefaultMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toMetadataFormat()).to.deep.equal({
+      expect(transformer.toMetadataFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
@@ -92,7 +92,7 @@ describe('DefaultMetadataTransformer', () => {
   describe('toSourceFormat', () => {
     it('should create a WriteInfo for each file in the component', () => {
       const component = simon.SIMON_COMPONENT;
-      const transformer = new DefaultMetadataTransformer(component);
+      const transformer = new DefaultMetadataTransformer(mockRegistry);
       const { directoryName } = component.type;
       const relativeBundle = join(directoryName, basename(simon.SIMON_BUNDLE_PATH));
       const expectedInfos: WriteInfo[] = [];
@@ -107,7 +107,7 @@ describe('DefaultMetadataTransformer', () => {
         source: fs.createReadStream(component.xml),
       });
 
-      expect(transformer.toSourceFormat()).to.deep.equal({
+      expect(transformer.toSourceFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
@@ -115,7 +115,7 @@ describe('DefaultMetadataTransformer', () => {
 
     it('should add in the -meta.xml suffix for components with no content', () => {
       const component = gene.GENE_MD_FORMAT_COMPONENT;
-      const transformer = new DefaultMetadataTransformer(component);
+      const transformer = new DefaultMetadataTransformer(mockRegistry);
       const { directoryName } = component.type;
       const fileName = `${component.fullName}.${component.type.suffix}${META_XML_SUFFIX}`;
       const expectedInfos: WriteInfo[] = [
@@ -125,7 +125,7 @@ describe('DefaultMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toSourceFormat()).to.deep.equal({
+      expect(transformer.toSourceFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
@@ -135,7 +135,7 @@ describe('DefaultMetadataTransformer', () => {
       const component = kathy.KATHY_MD_FORMAT_COMPONENTS[0];
       const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;
-      const transformer = new DefaultMetadataTransformer(component);
+      const transformer = new DefaultMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
           relativeDestination: join(
@@ -147,7 +147,7 @@ describe('DefaultMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toSourceFormat()).to.deep.equal({
+      expect(transformer.toSourceFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });

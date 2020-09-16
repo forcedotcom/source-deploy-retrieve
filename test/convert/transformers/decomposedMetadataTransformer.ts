@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { regina } from '../../mock/registry';
+import { mockRegistry, regina } from '../../mock/registry';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
 import {
   ConvertTransaction,
@@ -16,6 +16,7 @@ import { createSandbox } from 'sinon';
 import { XML_NS, XML_NS_KEY } from '../../../src/utils/constants';
 import { join } from 'path';
 import { JsToXml } from '../../../src/convert/streams';
+import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/registry/decomposedTopLevelConstants';
 
 const env = createSandbox();
 
@@ -37,7 +38,7 @@ describe('DecomposedMetadataTransformer', () => {
     const transaction = new ConvertTransaction();
     const addFinalizerSpy = env.spy(transaction, 'addFinalizer');
 
-    new DecomposedMetadataTransformer(component, transaction);
+    new DecomposedMetadataTransformer(mockRegistry, transaction);
 
     expect(addFinalizerSpy.calledWith(RecompositionFinalizer)).to.be.true;
   });
@@ -46,9 +47,9 @@ describe('DecomposedMetadataTransformer', () => {
     it('should delay for partial recomposition when a child component is given', () => {
       const child = component.getChildren()[0];
       const transaction = new ConvertTransaction();
-      const transformer = new DecomposedMetadataTransformer(child, transaction);
+      const transformer = new DecomposedMetadataTransformer(mockRegistry, transaction);
 
-      const writerFormat = transformer.toMetadataFormat();
+      const writerFormat = transformer.toMetadataFormat(child);
 
       expect(writerFormat).to.deep.equal({ component: child, writeInfos: [] });
       expect(transaction.state).to.deep.equal({
@@ -62,7 +63,7 @@ describe('DecomposedMetadataTransformer', () => {
     });
 
     it('should fully recompose metadata when a parent component is given', () => {
-      const transformer = new DecomposedMetadataTransformer(component, new ConvertTransaction());
+      const transformer = new DecomposedMetadataTransformer(mockRegistry, new ConvertTransaction());
       const children = component.getChildren();
       env.stub(component, 'parseXml').returns({
         ReginaKing: {
@@ -86,7 +87,7 @@ describe('DecomposedMetadataTransformer', () => {
       // force getChildren to return the children we just stubbed
       env.stub(component, 'getChildren').returns(children);
 
-      const result = transformer.toMetadataFormat();
+      const result = transformer.toMetadataFormat(component);
 
       expect(result).to.deep.equal({
         component,
@@ -101,9 +102,65 @@ describe('DecomposedMetadataTransformer', () => {
   });
 
   describe('toSourceFormat', () => {
-    it('should decompose children into respective directories and files', () => {
+    it('should decompose children into respective files for "topLevel" config', () => {
+      const component = DECOMPOSED_TOP_LEVEL_COMPONENT;
+      const { fullName, type } = component;
+      const transformer = new DecomposedMetadataTransformer(mockRegistry);
+      const root = join(type.directoryName, fullName);
+      env.stub(component, 'parseXml').returns({
+        DecomposedTopLevel: {
+          [XML_NS_KEY]: XML_NS,
+          fullName,
+          foo: 'bar',
+          gs: [
+            { name: 'child', test: 'testVal' },
+            { name: 'child2', test: 'testVal2' },
+          ],
+        },
+      });
+
+      const result = transformer.toSourceFormat(component);
+
+      expect(result).to.deep.equal({
+        component,
+        writeInfos: [
+          {
+            source: new JsToXml({
+              G: {
+                [XML_NS_KEY]: XML_NS,
+                name: 'child',
+                test: 'testVal',
+              },
+            }),
+            relativeDestination: join(root, 'child.g-meta.xml'),
+          },
+          {
+            source: new JsToXml({
+              G: {
+                [XML_NS_KEY]: XML_NS,
+                name: 'child2',
+                test: 'testVal2',
+              },
+            }),
+            relativeDestination: join(root, 'child2.g-meta.xml'),
+          },
+          {
+            source: new JsToXml({
+              DecomposedTopLevel: {
+                [XML_NS_KEY]: XML_NS,
+                fullName,
+                foo: 'bar',
+              },
+            }),
+            relativeDestination: join(root, `${fullName}.${type.suffix}-meta.xml`),
+          },
+        ],
+      });
+    });
+
+    it('should decompose children into respective directories and files for "folderPerType" config', () => {
       const { type, fullName } = component;
-      const transformer = new DecomposedMetadataTransformer(component);
+      const transformer = new DecomposedMetadataTransformer(mockRegistry);
       const root = join(type.directoryName, fullName);
       env.stub(component, 'parseXml').returns({
         ReginaKing: {
@@ -118,7 +175,7 @@ describe('DecomposedMetadataTransformer', () => {
         },
       });
 
-      const result = transformer.toSourceFormat();
+      const result = transformer.toSourceFormat(component);
 
       expect(result).to.deep.equal({
         component,

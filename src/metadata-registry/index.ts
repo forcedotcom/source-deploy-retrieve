@@ -18,6 +18,7 @@ export {
   VirtualDirectory,
   TypeIndex,
   SuffixIndex,
+  DecompositionStrategy,
 } from './types';
 
 /**

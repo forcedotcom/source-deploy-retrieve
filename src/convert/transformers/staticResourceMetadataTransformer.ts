@@ -14,17 +14,18 @@ import { createReadStream } from 'fs';
 import { Readable } from 'stream';
 import { LibraryError } from '../../errors';
 import { ARCHIVE_MIME_TYPES } from '../../utils/constants';
+import { SourceComponent } from '../../metadata-registry';
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
-  public toMetadataFormat(): WriterFormat {
+  public toMetadataFormat(component: SourceComponent): WriterFormat {
     let contentSource: Readable;
-    const { content, type, xml } = this.component;
+    const { content, type, xml } = component;
     const writerFormat: WriterFormat = {
-      component: this.component,
+      component,
       writeInfos: [],
     };
 
-    if (this.componentIsExpandedArchive()) {
+    if (this.componentIsExpandedArchive(component)) {
       const zip = createArchive('zip', { zlib: { level: 3 } });
       zip.directory(content, false);
       zip.finalize();
@@ -47,21 +48,20 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     return writerFormat;
   }
 
-  public toSourceFormat(): WriterFormat {
-    throw new LibraryError('error_convert_not_implemented', ['source', this.component.type.name]);
+  public toSourceFormat(component: SourceComponent): WriterFormat {
+    throw new LibraryError('error_convert_not_implemented', ['source', component.type.name]);
   }
 
-  private componentIsExpandedArchive(): boolean {
-    const { content, tree } = this.component;
+  private componentIsExpandedArchive(component: SourceComponent): boolean {
+    const { content, tree } = component;
     if (tree.isDirectory(content)) {
-      const contentType = (this.component.parseXml().StaticResource as JsonMap)
-        .contentType as string;
+      const contentType = (component.parseXml().StaticResource as JsonMap).contentType as string;
       if (ARCHIVE_MIME_TYPES.has(contentType)) {
         return true;
       }
       throw new LibraryError('error_static_resource_expected_archive_type', [
         contentType,
-        this.component.name,
+        component.name,
       ]);
     }
     return false;

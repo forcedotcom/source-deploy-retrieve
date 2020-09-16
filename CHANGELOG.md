@@ -1,3 +1,15 @@
+# 1.1.3 - September 16, 2020
+
+## Added
+
+- Support conversions for CustomObjects to metadata format ([PR #136](https://github.com/forcedotcom/source-deploy-retrieve/pull/136))
+
+- Support conversions for child components at the same level as the parent component ([PR #142](https://github.com/forcedotcom/source-deploy-retrieve/pull/142))
+
+## Fixed
+
+- Fix duplicate SourceComponents when scanning StaticResources with a directory for content ([PR #138](https://github.com/forcedotcom/source-deploy-retrieve/pull/138))
+
 # 1.1.2 - September 10, 2020
 
 ## Added

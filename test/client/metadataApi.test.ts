@@ -26,7 +26,7 @@ import {
 import * as stream from 'stream';
 import * as unzipper from 'unzipper';
 import * as fsExtra from 'fs-extra';
-import { homedir } from 'os';
+import { tmpdir } from 'os';
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 describe('Metadata Api', () => {
@@ -551,7 +551,7 @@ describe('Metadata Api', () => {
     });
 
     it('should correctly retrieve components and extract to directory', async () => {
-      const tmpDir = path.join(homedir(), '.sfdx', 'tmp');
+      const tempDir = path.join(tmpdir(), '.sfdx', 'tmp');
       const options = {
         components: [component],
         output: outputDir,
@@ -581,11 +581,11 @@ describe('Metadata Api', () => {
 
       await metadataClient.retrieve(options);
       expect(extractStub.calledOnce).to.be.true;
-      expect(extractStub.calledWith({ path: tmpDir })).to.be.true;
+      expect(extractStub.calledWith({ path: tempDir })).to.be.true;
     });
 
     it('should correctly retrieve components and clean temp folder', async () => {
-      const tmpDir = path.join(homedir(), '.sfdx', 'tmp');
+      const tempDir = path.join(tmpdir(), '.sfdx', 'tmp');
       const options = {
         components: [component],
         output: outputDir,
@@ -615,8 +615,8 @@ describe('Metadata Api', () => {
       const removeStub = sandboxStub.stub(fsExtra, 'remove');
 
       await metadataClient.retrieve(options);
-      expect(removeStub.calledOnce).to.be.true;
-      expect(removeStub.calledWith(tmpDir)).to.be.true;
+      expect(removeStub.called).to.be.true;
+      expect(removeStub.calledWith(tempDir)).to.be.true;
     });
 
     it('should convert the retrieved components', async () => {

@@ -29,7 +29,7 @@ import { parse } from 'fast-xml-parser';
 import { pipeline as cbPipeline } from 'stream';
 import { promisify } from 'util';
 import { join } from 'path';
-import { homedir } from 'os';
+import { tmpdir } from 'os';
 import { remove } from 'fs-extra';
 const pipeline = promisify(cbPipeline);
 
@@ -41,6 +41,7 @@ export const DEFAULT_API_OPTIONS = {
 };
 
 export class MetadataApi extends BaseApi {
+  // TODO: move filtering logic to registry W-8023153
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult> {
     const allComponents: SourceComponent[] = [];
     for (const filepath of options.paths) {
@@ -86,16 +87,16 @@ export class MetadataApi extends BaseApi {
   private async getRetrievedComponents(
     retrieveRequest: RetrieveRequest
   ): Promise<SourceComponent[]> {
-    // @ts-ignore
+    // @ts-ignore jsforce buffers zipData from the retrieveResult and exposes it as a readable stream property
     const retrieveStream = this.connection.metadata.retrieve(retrieveRequest).stream();
-    const tempCmpDir = join(homedir(), '.sfdx', 'tmp');
+    const tempCmpDir = join(tmpdir(), '.sfdx', 'tmp');
+    remove(tempCmpDir);
     const outputStream = unzipper.Extract({ path: tempCmpDir });
 
     return new Promise((resolve, reject) => {
       pipeline(retrieveStream, outputStream).catch((err) => reject(err));
       outputStream.on('close', () => {
         const retrievedComponents = this.registry.getComponentsFromPath(tempCmpDir);
-        remove(tempCmpDir);
         resolve(retrievedComponents);
       });
     });

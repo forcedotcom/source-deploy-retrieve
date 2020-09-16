@@ -162,7 +162,10 @@ export class ZipWriter extends ComponentWriter {
   ): Promise<void> {
     let err: Error;
     try {
-      for (const writeInfo of chunk.writeInfos) {
+      const infos = chunk.getExtraInfos ? await chunk.getExtraInfos() : [];
+      infos.push(...chunk.writeInfos);
+
+      for (const writeInfo of infos) {
         this.addToZip(writeInfo.source, writeInfo.relativeDestination);
       }
     } catch (e) {

@@ -26,3 +26,4 @@ export const FALLBACK_TYPE_MAP = new Map<string, string>([
   ['image/x-png', 'png'],
   ['text/xml', 'xml'],
 ]);
+export const DEFAULT_CONTENT_TYPE = 'application/octet-stream';

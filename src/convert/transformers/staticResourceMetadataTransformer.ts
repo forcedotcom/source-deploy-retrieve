@@ -15,7 +15,7 @@ import { JsonMap } from '@salesforce/ts-types';
 import { createReadStream } from 'fs';
 import { Readable } from 'stream';
 import { LibraryError } from '../../errors';
-import { ARCHIVE_MIME_TYPES, FALLBACK_TYPE_MAP } from '../../utils/constants';
+import { ARCHIVE_MIME_TYPES, DEFAULT_CONTENT_TYPE, FALLBACK_TYPE_MAP } from '../../utils/constants';
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public toMetadataFormat(): WriterFormat {
@@ -99,7 +99,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       ext = FALLBACK_TYPE_MAP.get(contentType);
     }
     // return registered ext, fallback, or the default (application/octet-stream -> bin)
-    return ext || getExtension('');
+    return ext || getExtension(DEFAULT_CONTENT_TYPE);
   }
 
   private createWriteInfosFromArchive(
@@ -110,14 +110,14 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     format.getExtraInfos = async (): Promise<WriteInfo[]> => {
       const writeInfos: WriteInfo[] = [];
       const directory = await Open.file(zipPath);
-      directory.files
-        .filter((f) => f.type === 'File')
-        .forEach((f) => {
+      directory.files.forEach((f) => {
+        if (f.type === 'File') {
           writeInfos.push({
             source: f.stream(),
             relativeDestination: join(destDir, f.path),
           });
-        });
+        }
+      });
       return writeInfos;
     };
   }

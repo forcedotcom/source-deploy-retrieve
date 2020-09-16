@@ -125,13 +125,6 @@ export type DeployMessage = {
   success: BooleanString;
 };
 
-export enum RetrieveStatus {
-  Pending = 'Pending',
-  InProgress = 'InProgress',
-  Succeeded = 'Succeeded',
-  Failed = 'Failed',
-}
-
 export type RetrieveRequest = {
   apiVersion: string;
   packageNames?: string[];

@@ -94,7 +94,6 @@ describe('Metadata Api', () => {
       .withArgs(match.any, 'metadata', { type: 'zip' })
       .resolves({
         zipBuffer: testingBuffer,
-        //       packagePath: outputDir,
       });
   });
   afterEach(() => {

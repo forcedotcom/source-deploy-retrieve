@@ -14,7 +14,11 @@ import { SourceComponent } from '../metadata-registry';
 
 export type WriteInfo = { relativeDestination: SourcePath; source: Readable };
 
-export type WriterFormat = { component: SourceComponent; writeInfos: WriteInfo[] };
+export type WriterFormat = {
+  component: SourceComponent;
+  getExtraInfos?: () => Promise<WriteInfo[]>;
+  writeInfos: WriteInfo[];
+};
 
 type PackageName = {
   /**

@@ -19,6 +19,7 @@ import * as archiver from 'archiver';
 import { SourceComponent } from '../../../src';
 import { LibraryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
+import { CentralDirectory, Open, Entry } from 'unzipper';
 import { mockRegistry } from '../../mock/registry';
 
 const env = createSandbox();
@@ -105,15 +106,172 @@ describe('StaticResourceMetadataTransformer', () => {
   });
 
   describe('toSourceFormat', () => {
-    it('should throw a not implemented error', () => {
+    it('should rename extension from .resource to a mime extension for content file', () => {
       const component = MC_SINGLE_FILE_COMPONENT;
-      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
+      const { type, content, xml } = component;
+      env.stub(component, 'parseXml').returns({
+        StaticResource: {
+          contentType: 'image/png',
+        },
+      });
 
-      assert.throws(
-        () => transformer.toSourceFormat(component),
-        LibraryError,
-        nls.localize('error_convert_not_implemented', ['source', component.type.name])
-      );
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
+      const expectedInfos: WriteInfo[] = [
+        {
+          source: fs.createReadStream(content),
+          relativeDestination: join(type.directoryName, `${baseName(content)}.png`),
+        },
+        {
+          source: fs.createReadStream(xml),
+          relativeDestination: join(type.directoryName, basename(xml)),
+        },
+      ];
+
+      expect(transformer.toSourceFormat(component)).to.deep.equal({
+        component,
+        writeInfos: expectedInfos,
+      });
+    });
+
+    it('should rename extension from .resource for a fallback mime extension', () => {
+      const component = MC_SINGLE_FILE_COMPONENT;
+      const { type, content, xml } = component;
+      env.stub(component, 'parseXml').returns({
+        StaticResource: {
+          contentType: 'application/x-javascript',
+        },
+      });
+
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
+      const expectedInfos: WriteInfo[] = [
+        {
+          source: fs.createReadStream(content),
+          relativeDestination: join(type.directoryName, `${baseName(content)}.js`),
+        },
+        {
+          source: fs.createReadStream(xml),
+          relativeDestination: join(type.directoryName, basename(xml)),
+        },
+      ];
+
+      expect(transformer.toSourceFormat(component)).to.deep.equal({
+        component,
+        writeInfos: expectedInfos,
+      });
+    });
+
+    it('should rename extension from .resource for an unsupported mime extension', () => {
+      const component = MC_SINGLE_FILE_COMPONENT;
+      const { type, content, xml } = component;
+      env.stub(component, 'parseXml').returns({
+        StaticResource: {
+          contentType: 'application/x-myspace',
+        },
+      });
+
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
+      const expectedInfos: WriteInfo[] = [
+        {
+          source: fs.createReadStream(content),
+          relativeDestination: join(type.directoryName, `${baseName(content)}.bin`),
+        },
+        {
+          source: fs.createReadStream(xml),
+          relativeDestination: join(type.directoryName, basename(xml)),
+        },
+      ];
+
+      expect(transformer.toSourceFormat(component)).to.deep.equal({
+        component,
+        writeInfos: expectedInfos,
+      });
+    });
+
+    it('should ignore components without content', () => {
+      const component = Object.assign({}, MC_SINGLE_FILE_COMPONENT);
+      component.content = undefined;
+
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
+      expect(transformer.toSourceFormat(component)).to.deep.equal({
+        component,
+        writeInfos: [],
+      });
+    });
+
+    it('should extract an archive', async () => {
+      const component = MC_SINGLE_FILE_COMPONENT;
+      const { type, xml } = component;
+      env.stub(component, 'parseXml').returns({
+        StaticResource: {
+          contentType: 'application/zip',
+        },
+      });
+      const cd = {
+        files: [
+          {
+            path: 'a',
+            type: 'Directory',
+            stream: (): Entry => {
+              return null;
+            },
+          },
+          {
+            path: 'b/c.css',
+            type: 'File',
+            stream: (): Entry => {
+              return null;
+            },
+          },
+        ],
+      } as CentralDirectory;
+      env.stub(Open, 'file').resolves(cd);
+
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
+      const expectedInfos: WriteInfo[] = [
+        {
+          source: fs.createReadStream(xml),
+          relativeDestination: join(type.directoryName, basename(xml)),
+        },
+      ];
+      const extraInfo: WriteInfo[] = [
+        {
+          source: null,
+          relativeDestination: join(type.directoryName, 'a', 'b', 'c.css'),
+        },
+      ];
+
+      const result = transformer.toSourceFormat(component);
+      expect(result.component).to.deep.equal(component);
+      expect(result.writeInfos).to.deep.equal(expectedInfos);
+      expect(result.getExtraInfos).to.be.a('function');
+      expect(await result.getExtraInfos()).to.deep.equal(extraInfo);
+    });
+
+    it('should work well for null contentType', () => {
+      const component = MC_SINGLE_FILE_COMPONENT;
+      const { type, content, xml } = component;
+      env.stub(component, 'parseXml').returns({
+        StaticResource: {
+          contentType: undefined,
+        },
+      });
+
+      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
+      const expectedInfos: WriteInfo[] = [
+        {
+          source: fs.createReadStream(content),
+          relativeDestination: join(type.directoryName, `${baseName(content)}.bin`),
+        },
+        {
+          source: fs.createReadStream(xml),
+          relativeDestination: join(type.directoryName, basename(xml)),
+        },
+      ];
+
+      expect(transformer.toSourceFormat(component)).to.deep.equal({
+        component,
+        writeInfos: expectedInfos,
+      });
     });
   });
 });

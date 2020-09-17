@@ -127,7 +127,10 @@ export class StandardWriter extends ComponentWriter {
   ): Promise<void> {
     let err: Error;
     try {
-      const writeTasks = chunk.writeInfos.map((info: WriteInfo) => {
+      const infos = chunk.getExtraInfos ? await chunk.getExtraInfos() : [];
+      infos.push(...chunk.writeInfos);
+
+      const writeTasks = infos.map((info: WriteInfo) => {
         const fullDest = join(this.rootDestination, info.relativeDestination);
         ensureFileExists(fullDest);
         return pipeline(info.source, createWriteStream(fullDest));
@@ -162,7 +165,10 @@ export class ZipWriter extends ComponentWriter {
   ): Promise<void> {
     let err: Error;
     try {
-      for (const writeInfo of chunk.writeInfos) {
+      const infos = chunk.getExtraInfos ? await chunk.getExtraInfos() : [];
+      infos.push(...chunk.writeInfos);
+
+      for (const writeInfo of infos) {
         this.addToZip(writeInfo.source, writeInfo.relativeDestination);
       }
     } catch (e) {

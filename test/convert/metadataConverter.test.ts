@@ -11,7 +11,7 @@ import { ManifestGenerator, RegistryAccess, registryData } from '../../src/metad
 import * as streams from '../../src/convert/streams';
 import * as fs from 'fs';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
-import { join } from 'path';
+import { dirname, join } from 'path';
 import { expect, assert } from 'chai';
 import { PACKAGE_XML_FILE, DEFAULT_PACKAGE_PREFIX } from '../../src/utils/constants';
 import { ConversionError } from '../../src/errors';
@@ -132,6 +132,18 @@ describe('MetadataConverter', () => {
   });
 
   describe('Zip Output', () => {
+    it('should ensure directory exists before starting conversion', async () => {
+      const zipPath = packageOutput + '.zip';
+      await converter.convert(components, 'metadata', {
+        type: 'zip',
+        outputDirectory,
+        packageName,
+      });
+
+      expect(ensureDirectoryStub.calledBefore(pipelineStub)).to.be.true;
+      expect(ensureDirectoryStub.firstCall.args[0]).to.equal(dirname(zipPath));
+    });
+
     it('should create conversion pipeline with fs write configuration', async () => {
       await converter.convert(components, 'metadata', {
         type: 'zip',

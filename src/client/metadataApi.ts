@@ -73,7 +73,9 @@ export class MetadataApi extends BaseApi {
       retrievedResult.retrievedComponents,
       options
     );
-    return Object.assign(retrievedResult.sourceRetrieveResult, convertedComponents);
+    const sourceRetrieveResult: SourceRetrieveResult = retrievedResult.sourceRetrieveResult;
+    sourceRetrieveResult.components = convertedComponents;
+    return sourceRetrieveResult;
   }
 
   private formatRetrieveRequest(components: SourceComponent[]): RetrieveRequest {

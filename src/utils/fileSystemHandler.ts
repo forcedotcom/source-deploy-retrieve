@@ -25,7 +25,12 @@ export function ensureFileExists(filePath: string): void {
 export function emptyDirectory(dirPath: string): void {
   const files = fs.readdirSync(dirPath);
   for (const file of files) {
-    fs.unlinkSync(path.join(dirPath, file));
+    const curPath = path.join(dirPath, file);
+    if (fs.lstatSync(curPath).isDirectory()) {
+      emptyDirectory(curPath);
+    } else {
+      fs.unlinkSync(path.join(dirPath, file));
+    }
   }
 }
 

@@ -14,6 +14,7 @@ import { MetadataConverter } from '../../src/convert';
 import { fail } from 'assert';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import * as path from 'path';
+import * as fs from 'fs';
 import { nls } from '../../src/i18n';
 import {
   MetadataApiDeployOptions,
@@ -23,10 +24,13 @@ import {
   SourceDeployResult,
   RetrieveOptions,
   RetrievePathOptions,
+  RetrieveResult,
+  RetrieveStatus,
 } from '../../src/client/types';
 import * as stream from 'stream';
 import * as unzipper from 'unzipper';
 import { tmpdir } from 'os';
+import Sinon = require('sinon');
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 describe('Metadata Api', () => {
@@ -47,6 +51,15 @@ describe('Metadata Api', () => {
       children: [path.basename(props.xml), path.basename(props.content)],
     },
   ]);
+  const retrieveResult: RetrieveResult = {
+    id: '12345',
+    status: RetrieveStatus.Succeeded,
+    success: true,
+    fileProperties: [],
+    done: true,
+    messages: { fileName: '', problem: '' },
+    zipFile: 'thisisthezipfile',
+  };
   const deployResult: DeployResult = {
     id: '12345',
     status: DeployStatus.Succeeded,
@@ -510,6 +523,43 @@ describe('Metadata Api', () => {
   });
 
   describe('Metadata API Retrieve', async () => {
+    let retrieveStub: Sinon.SinonStub;
+    let extractStub: Sinon.SinonStub;
+    let removeStub: Sinon.SinonStub;
+
+    beforeEach(async () => {
+      const mockRetrieve = new stream.PassThrough();
+      retrieveStub = sandboxStub
+        .stub(mockConnection.metadata, 'retrieve')
+        // @ts-ignore
+        .resolves({ id: 'xxxxxxx' });
+      // @ts-ignore
+      sandboxStub.stub(fs, 'createReadStream').returns(mockRetrieve);
+      const mockStream = new stream.PassThrough();
+      sandboxStub.stub(stream, 'pipeline').resolves();
+      // @ts-ignore
+      extractStub = sandboxStub.stub(unzipper, 'Extract').returns(mockStream);
+      setTimeout(() => {
+        mockStream.emit('close');
+      }, 100);
+
+      sandboxStub
+        .stub(mockConnection.metadata, 'checkRetrieveStatus')
+        // @ts-ignore
+        .resolves(retrieveResult);
+      registryStub.onFirstCall().returns([component]);
+      registryStub.onSecondCall().returns([component]);
+      convertStub
+        .withArgs(match.any, 'source', { type: 'directory', outputDirectory: outputDir })
+        .resolves({
+          packagePath: outputDir,
+        });
+      removeStub = sandboxStub.stub(fsUtil, 'emptyDirectory');
+    });
+    afterEach(() => {
+      sandboxStub.restore();
+    });
+
     it('should correctly format retrieve request', async () => {
       const apiVersion = registryAccess.getApiVersion();
       const options = {
@@ -524,28 +574,6 @@ describe('Metadata Api', () => {
         },
       };
 
-      const mockRetrieve = {
-        stream: () => new stream.PassThrough(),
-      };
-      const retrieveStub = sandboxStub
-        .stub(mockConnection.metadata, 'retrieve')
-        //@ts-ignore
-        .returns(mockRetrieve);
-      const mockStream = new stream.PassThrough();
-      sandboxStub.stub(stream, 'pipeline').resolves();
-      // @ts-ignore
-      sandboxStub.stub(unzipper, 'Extract').returns(mockStream);
-      setTimeout(() => {
-        mockStream.emit('close');
-      }, 100);
-      registryStub.onFirstCall().returns([component]);
-      registryStub.onSecondCall().returns([component]);
-      convertStub
-        .withArgs(match.any, 'source', { type: 'directory', outputDirectory: outputDir })
-        .resolves({
-          packagePath: outputDir,
-        });
-
       await metadataClient.retrieve(options);
       expect(retrieveStub.calledWith(retrieveRequest)).to.be.true;
     });
@@ -556,28 +584,6 @@ describe('Metadata Api', () => {
         components: [component],
         output: outputDir,
       } as RetrieveOptions;
-
-      const mockRetrieve = {
-        stream: () => new stream.PassThrough(),
-      };
-      sandboxStub
-        .stub(mockConnection.metadata, 'retrieve')
-        //@ts-ignore
-        .returns(mockRetrieve);
-      const mockStream = new stream.PassThrough();
-      sandboxStub.stub(stream, 'pipeline').resolves();
-      // @ts-ignore
-      const extractStub = sandboxStub.stub(unzipper, 'Extract').returns(mockStream);
-      setTimeout(() => {
-        mockStream.emit('close');
-      }, 100);
-      registryStub.onFirstCall().returns([component]);
-      registryStub.onSecondCall().returns([component]);
-      convertStub
-        .withArgs(match.any, 'source', { type: 'directory', outputDirectory: outputDir })
-        .resolves({
-          packagePath: outputDir,
-        });
 
       await metadataClient.retrieve(options);
       expect(extractStub.calledOnce).to.be.true;
@@ -591,29 +597,6 @@ describe('Metadata Api', () => {
         output: outputDir,
       } as RetrieveOptions;
 
-      const mockRetrieve = {
-        stream: () => new stream.PassThrough(),
-      };
-      sandboxStub
-        .stub(mockConnection.metadata, 'retrieve')
-        //@ts-ignore
-        .returns(mockRetrieve);
-      const mockStream = new stream.PassThrough();
-      sandboxStub.stub(stream, 'pipeline').resolves();
-      // @ts-ignore
-      sandboxStub.stub(unzipper, 'Extract').returns(mockStream);
-      setTimeout(() => {
-        mockStream.emit('close');
-      }, 100);
-      registryStub.onFirstCall().returns([component]);
-      registryStub.onSecondCall().returns([component]);
-      convertStub
-        .withArgs(match.any, 'source', { type: 'directory', outputDirectory: outputDir })
-        .resolves({
-          packagePath: outputDir,
-        });
-      const removeStub = sandboxStub.stub(fsUtil, 'emptyDirectory');
-
       await metadataClient.retrieve(options);
       expect(removeStub.called).to.be.true;
       expect(removeStub.calledWith(tempDir)).to.be.true;
@@ -625,28 +608,6 @@ describe('Metadata Api', () => {
         output: outputDir,
       } as RetrieveOptions;
 
-      const mockRetrieve = {
-        stream: () => new stream.PassThrough(),
-      };
-      sandboxStub
-        .stub(mockConnection.metadata, 'retrieve')
-        //@ts-ignore
-        .returns(mockRetrieve);
-      const mockStream = new stream.PassThrough();
-      sandboxStub.stub(stream, 'pipeline').resolves();
-      // @ts-ignore
-      sandboxStub.stub(unzipper, 'Extract').returns(mockStream);
-      setTimeout(() => {
-        mockStream.emit('close');
-      }, 100);
-      registryStub.onFirstCall().returns([component]);
-      registryStub.onSecondCall().returns([component]);
-      convertStub
-        .withArgs(match.any, 'source', { type: 'directory', outputDirectory: outputDir })
-        .resolves({
-          packagePath: outputDir,
-        });
-
       await metadataClient.retrieve(options);
       expect(
         convertStub.withArgs(match.any, 'source', {
@@ -656,40 +617,24 @@ describe('Metadata Api', () => {
       ).to.be.true;
     });
 
-    it('should return successful result in apiformat', async () => {
+    it('should return successful result in SourceRetrieveResult format', async () => {
       const options = {
         components: [component],
         output: outputDir,
       } as RetrieveOptions;
-      const retrieveResult = {
+      const sourceRetrieveResult = {
         success: true,
         components: [component],
+        id: '12345',
+        message: {
+          fileName: '',
+          problem: '',
+        },
+        status: 'Succeeded',
       };
-
-      const mockRetrieve = {
-        stream: () => new stream.PassThrough(),
-      };
-      sandboxStub
-        .stub(mockConnection.metadata, 'retrieve')
-        //@ts-ignore
-        .returns(mockRetrieve);
-      const mockStream = new stream.PassThrough();
-      sandboxStub.stub(stream, 'pipeline').resolves();
-      // @ts-ignore
-      sandboxStub.stub(unzipper, 'Extract').returns(mockStream);
-      setTimeout(() => {
-        mockStream.emit('close');
-      }, 100);
-      registryStub.onFirstCall().returns([component]);
-      registryStub.onSecondCall().returns([component]);
-      convertStub
-        .withArgs(match.any, 'source', { type: 'directory', outputDirectory: outputDir })
-        .resolves({
-          packagePath: outputDir,
-        });
 
       const result = await metadataClient.retrieve(options);
-      expect(result).to.eql(retrieveResult);
+      expect(result).to.eql(sourceRetrieveResult);
     });
 
     it('should throw an error if theres an error during retrieve or conversion', async () => {
@@ -700,8 +645,7 @@ describe('Metadata Api', () => {
         output: outputDir,
       } as RetrieveOptions;
 
-      sandboxStub.stub(mockConnection.metadata, 'retrieve').throws(error);
-
+      retrieveStub.throws(error);
       try {
         await metadataClient.retrieve(options);
         expect.fail('Should have failed');

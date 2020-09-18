@@ -51,10 +51,10 @@ export interface SourceDeployResult extends SourceApiResult {
 }
 
 export interface SourceRetrieveResult extends SourceApiResult {
-  id: RecordId;
+  id?: RecordId;
   components?: SourceComponent[];
   status: RetrieveStatus;
-  message?: RetrieveMessage;
+  message?: RetrieveMessage | string;
 }
 
 // ------------------------------------------------

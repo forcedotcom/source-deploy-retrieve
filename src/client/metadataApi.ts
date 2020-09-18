@@ -8,7 +8,6 @@ import {
   BaseApi,
   RetrieveOptions,
   RetrievePathOptions,
-  ApiResult,
   SourceDeployResult,
   ComponentDeployment,
   ComponentStatus,
@@ -18,9 +17,12 @@ import {
   DeployMessage,
   MetadataDeployOptions,
   RetrieveRequest,
+  RetrieveResult,
+  RetrieveStatus,
+  SourceRetrieveResult,
 } from './types';
 import { MetadataConverter } from '../convert';
-import { DeployError } from '../errors';
+import { DeployError, RetrieveError } from '../errors';
 import { ManifestGenerator, SourceComponent } from '../metadata-registry';
 import { DiagnosticUtil } from './diagnosticUtil';
 import { SourcePath } from '../common';
@@ -30,7 +32,8 @@ import { pipeline as cbPipeline } from 'stream';
 import { promisify } from 'util';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import { remove } from 'fs-extra';
+import { createReadStream, writeFileSync } from 'fs';
+import { ensureDirectoryExists, emptyDirectory } from '../utils/fileSystemHandler';
 const pipeline = promisify(cbPipeline);
 
 export const DEFAULT_API_OPTIONS = {
@@ -42,7 +45,7 @@ export const DEFAULT_API_OPTIONS = {
 
 export class MetadataApi extends BaseApi {
   // TODO: move filtering logic to registry W-8023153
-  public async retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult> {
+  public async retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult> {
     const allComponents: SourceComponent[] = [];
     for (const filepath of options.paths) {
       allComponents.push(...this.registry.getComponentsFromPath(filepath));
@@ -63,11 +66,14 @@ export class MetadataApi extends BaseApi {
     });
   }
 
-  public async retrieve(options: RetrieveOptions): Promise<ApiResult> {
+  public async retrieve(options: RetrieveOptions): Promise<SourceRetrieveResult> {
     const retrieveRequest = this.formatRetrieveRequest(options.components);
-    const retrievedComponents = await this.getRetrievedComponents(retrieveRequest);
-    const convertedComponents = await this.getConvertedComponents(retrievedComponents, options);
-    return { success: true, components: convertedComponents };
+    const retrievedResult = await this.getRetrievedResult(retrieveRequest, options);
+    const convertedComponents = await this.getConvertedComponents(
+      retrievedResult.retrievedComponents,
+      options
+    );
+    return Object.assign(retrievedResult.sourceRetrieveResult, convertedComponents);
   }
 
   private formatRetrieveRequest(components: SourceComponent[]): RetrieveRequest {
@@ -84,22 +90,86 @@ export class MetadataApi extends BaseApi {
     return retrieveRequest;
   }
 
-  private async getRetrievedComponents(
-    retrieveRequest: RetrieveRequest
-  ): Promise<SourceComponent[]> {
+  private async getRetrievedResult(
+    retrieveRequest: RetrieveRequest,
+    options: RetrieveOptions
+  ): Promise<{
+    retrievedComponents: SourceComponent[];
+    sourceRetrieveResult: SourceRetrieveResult;
+  }> {
     // @ts-ignore jsforce buffers zipData from the retrieveResult and exposes it as a readable stream property
-    const retrieveStream = this.connection.metadata.retrieve(retrieveRequest).stream();
+    const retrieveId = (await this.connection.metadata.retrieve(retrieveRequest)).id;
+    const retrieveResult = await this.metadataRetrieveStatusPoll(retrieveId, options);
+
     const tempCmpDir = join(tmpdir(), '.sfdx', 'tmp');
-    remove(tempCmpDir);
+    ensureDirectoryExists(tempCmpDir);
+    emptyDirectory(tempCmpDir);
+    const tmpZip = join(tempCmpDir, 'metadataformat.zip');
+    writeFileSync(tmpZip, retrieveResult.zipFile, 'base64');
+
+    const retrieveStream = createReadStream(tmpZip);
     const outputStream = unzipper.Extract({ path: tempCmpDir });
 
     return new Promise((resolve, reject) => {
       pipeline(retrieveStream, outputStream).catch((err) => reject(err));
       outputStream.on('close', () => {
         const retrievedComponents = this.registry.getComponentsFromPath(tempCmpDir);
-        resolve(retrievedComponents);
+        const sourceRetrieveResult = this.buildSourceRetrieveResult(retrieveResult);
+        resolve({ retrievedComponents, sourceRetrieveResult });
       });
     });
+  }
+
+  private async metadataRetrieveStatusPoll(
+    retrieveID: string,
+    options: RetrieveOptions,
+    interval = 100
+  ): Promise<RetrieveResult> {
+    let result;
+
+    const wait = (interval: number): Promise<void> => {
+      return new Promise((resolve) => {
+        setTimeout(resolve, interval);
+      });
+    };
+
+    const timeout = !options || !options.wait ? 10000 : options.wait;
+    const endTime = Date.now() + timeout;
+    let triedOnce = false;
+    do {
+      if (triedOnce) {
+        await wait(interval);
+      }
+
+      try {
+        // Recasting to use the library's RetrieveResult type
+        result = ((await this.connection.metadata.checkRetrieveStatus(
+          retrieveID
+        )) as unknown) as RetrieveResult;
+      } catch (e) {
+        throw new RetrieveError('md_request_fail', e);
+      }
+
+      switch (result.status) {
+        case RetrieveStatus.Succeeded:
+        case RetrieveStatus.Failed:
+          return result;
+      }
+
+      triedOnce = true;
+    } while (Date.now() < endTime);
+
+    return result;
+  }
+
+  private buildSourceRetrieveResult(retrieveResult: RetrieveResult): SourceRetrieveResult {
+    const sourceRetrieveResult = {
+      status: retrieveResult.status,
+      id: retrieveResult.id,
+      message: retrieveResult.messages,
+      success: retrieveResult.status === RetrieveStatus.Succeeded ? true : false,
+    } as SourceRetrieveResult;
+    return sourceRetrieveResult;
   }
 
   private async getConvertedComponents(

@@ -12,6 +12,7 @@ import { RegistryAccess, registryData, SourceComponent } from '../../src/metadat
 import { MetadataApi, DEFAULT_API_OPTIONS } from '../../src/client/metadataApi';
 import { MetadataConverter } from '../../src/convert';
 import { fail } from 'assert';
+import * as fsUtil from '../../src/utils/fileSystemHandler';
 import * as path from 'path';
 import { nls } from '../../src/i18n';
 import {
@@ -25,7 +26,6 @@ import {
 } from '../../src/client/types';
 import * as stream from 'stream';
 import * as unzipper from 'unzipper';
-import * as fsExtra from 'fs-extra';
 import { tmpdir } from 'os';
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
@@ -612,7 +612,7 @@ describe('Metadata Api', () => {
         .resolves({
           packagePath: outputDir,
         });
-      const removeStub = sandboxStub.stub(fsExtra, 'remove');
+      const removeStub = sandboxStub.stub(fsUtil, 'emptyDirectory');
 
       await metadataClient.retrieve(options);
       expect(removeStub.called).to.be.true;

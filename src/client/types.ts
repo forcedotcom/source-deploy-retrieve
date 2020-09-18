@@ -50,6 +50,13 @@ export interface SourceDeployResult extends SourceApiResult {
   status: DeployStatus | ToolingDeployStatus;
 }
 
+export interface SourceRetrieveResult extends SourceApiResult {
+  id: RecordId;
+  components?: SourceComponent[];
+  status: RetrieveStatus;
+  message?: RetrieveMessage;
+}
+
 // ------------------------------------------------
 // Metadata API result types
 // ------------------------------------------------
@@ -136,6 +143,29 @@ export type RetrieveRequest = {
   };
 };
 
+export enum RetrieveStatus {
+  Pending = 'Pending',
+  InProgress = 'InProgress',
+  Succeeded = 'Succeeded',
+  Failed = 'Failed',
+}
+
+export type RetrieveMessage = { fileName: string; problem: string };
+
+/**
+ * Raw response returned from a checkRetrieveStatus call to the Metadata API
+ */
+export type RetrieveResult = {
+  done: boolean;
+  fileProperties: {}[];
+  id: string;
+  messages: RetrieveMessage;
+  status: RetrieveStatus;
+  success: boolean;
+  // this is a base64binary
+  zipFile: string;
+};
+
 // ------------------------------------------------
 // Tooling API result types
 // ------------------------------------------------
@@ -217,13 +247,13 @@ export interface DeployRetrieveClient {
    *
    * @param options Specify `components`, `output` and other optionals
    */
-  retrieve(options: RetrieveOptions): Promise<ApiResult>;
+  retrieve(options: RetrieveOptions): Promise<SourceRetrieveResult>;
   /**
    * Infer metadata components from source paths, retrieve them, and wait for the result.
    *
    * @param options Specify `paths`, `output` and other optionals
    */
-  retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult>;
+  retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult>;
   /**
    * Deploy metadata components and wait for result.
    *
@@ -250,9 +280,9 @@ export abstract class BaseApi implements DeployRetrieveClient {
   /**
    * @param options Specify `paths`, `output` and other optionals
    */
-  abstract retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult>;
+  abstract retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult>;
 
-  abstract retrieve(options: RetrieveOptions): Promise<ApiResult>;
+  abstract retrieve(options: RetrieveOptions): Promise<SourceRetrieveResult>;
 
   abstract deploy(components: SourceComponent | SourceComponent[]): Promise<SourceDeployResult>;
 

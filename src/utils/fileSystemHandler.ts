@@ -22,6 +22,13 @@ export function ensureFileExists(filePath: string): void {
   fs.closeSync(fs.openSync(filePath, 'w'));
 }
 
+export function emptyDirectory(dirPath: string): void {
+  const files = fs.readdirSync(dirPath);
+  for (const file of files) {
+    fs.unlinkSync(path.join(dirPath, file));
+  }
+}
+
 /**
  * Method to save multiple files on disk.
  *

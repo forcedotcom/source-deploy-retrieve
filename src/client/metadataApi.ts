@@ -67,14 +67,15 @@ export class MetadataApi extends BaseApi {
   }
 
   public async retrieve(options: RetrieveOptions): Promise<SourceRetrieveResult> {
+    let components: SourceComponent[] = [];
     const retrieveRequest = this.formatRetrieveRequest(options.components);
-    const retrievedResult = await this.getRetrievedResult(retrieveRequest, options);
-    const convertedComponents = await this.getConvertedComponents(
-      retrievedResult.retrievedComponents,
-      options
-    );
-    const sourceRetrieveResult: SourceRetrieveResult = retrievedResult.sourceRetrieveResult;
-    sourceRetrieveResult.components = convertedComponents;
+    const retrieveResult = await this.getRetrievedResult(retrieveRequest, options);
+    if (retrieveResult.status === RetrieveStatus.Succeeded) {
+      const extractedComponents = await this.extractComponents(retrieveResult);
+      components = await this.getConvertedComponents(extractedComponents, options);
+    }
+
+    const sourceRetrieveResult = this.buildSourceRetrieveResult(retrieveResult, components);
     return sourceRetrieveResult;
   }
 
@@ -95,20 +96,11 @@ export class MetadataApi extends BaseApi {
   private async getRetrievedResult(
     retrieveRequest: RetrieveRequest,
     options: RetrieveOptions
-  ): Promise<{
-    retrievedComponents: SourceComponent[];
-    sourceRetrieveResult: SourceRetrieveResult;
-  }> {
-    let retrievedComponents: SourceComponent[] = [];
+  ): Promise<RetrieveResult> {
     // @ts-ignore required callback
     const retrieveId = (await this.connection.metadata.retrieve(retrieveRequest)).id;
     const retrieveResult = await this.metadataRetrieveStatusPoll(retrieveId, options);
-    const sourceRetrieveResult = this.buildSourceRetrieveResult(retrieveResult);
-
-    if (sourceRetrieveResult.success) {
-      retrievedComponents = await this.extractComponents(retrieveResult);
-    }
-    return { retrievedComponents, sourceRetrieveResult };
+    return retrieveResult;
   }
 
   private async metadataRetrieveStatusPoll(
@@ -155,12 +147,16 @@ export class MetadataApi extends BaseApi {
     return result;
   }
 
-  private buildSourceRetrieveResult(retrieveResult: RetrieveResult): SourceRetrieveResult {
+  private buildSourceRetrieveResult(
+    retrieveResult: RetrieveResult,
+    components?: SourceComponent[]
+  ): SourceRetrieveResult {
     const sourceRetrieveResult = {
       status: retrieveResult.status,
       id: retrieveResult.id,
       message: retrieveResult.messages,
       success: retrieveResult.status === RetrieveStatus.Succeeded ? true : false,
+      components,
     } as SourceRetrieveResult;
     return sourceRetrieveResult;
   }

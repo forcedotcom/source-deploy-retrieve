@@ -26,6 +26,7 @@ import {
   RetrievePathOptions,
   RetrieveResult,
   RetrieveStatus,
+  SourceRetrieveResult,
 } from '../../src/client/types';
 import * as stream from 'stream';
 import * as unzipper from 'unzipper';
@@ -58,6 +59,15 @@ describe('Metadata Api', () => {
     fileProperties: [],
     done: true,
     messages: { fileName: '', problem: '' },
+    zipFile: 'thisisthezipfile',
+  };
+  const failedRetrieveResult: RetrieveResult = {
+    id: '12345',
+    status: RetrieveStatus.Failed,
+    success: false,
+    fileProperties: [],
+    done: true,
+    messages: { fileName: 'testComponent', problem: 'There was an error' },
     zipFile: 'thisisthezipfile',
   };
   const deployResult: DeployResult = {
@@ -526,6 +536,7 @@ describe('Metadata Api', () => {
     let retrieveStub: Sinon.SinonStub;
     let extractStub: Sinon.SinonStub;
     let removeStub: Sinon.SinonStub;
+    let retrieveStatusStub: Sinon.SinonStub;
 
     beforeEach(async () => {
       const mockRetrieve = new stream.PassThrough();
@@ -543,7 +554,7 @@ describe('Metadata Api', () => {
         mockStream.emit('close');
       }, 100);
 
-      sandboxStub
+      retrieveStatusStub = sandboxStub
         .stub(mockConnection.metadata, 'checkRetrieveStatus')
         // @ts-ignore
         .resolves(retrieveResult);
@@ -622,7 +633,7 @@ describe('Metadata Api', () => {
         components: [component],
         output: outputDir,
       } as RetrieveOptions;
-      const sourceRetrieveResult = {
+      const sourceRetrieveResult: SourceRetrieveResult = {
         success: true,
         components: [component],
         id: '12345',
@@ -630,7 +641,25 @@ describe('Metadata Api', () => {
           fileName: '',
           problem: '',
         },
-        status: 'Succeeded',
+        status: RetrieveStatus.Succeeded,
+      };
+
+      const result = await metadataClient.retrieve(options);
+      expect(result).to.eql(sourceRetrieveResult);
+    });
+
+    it('should return failed result in SourceRetrieveResult format', async () => {
+      retrieveStatusStub.resolves(failedRetrieveResult);
+      const options = {
+        components: [component],
+        output: outputDir,
+      } as RetrieveOptions;
+      const sourceRetrieveResult: SourceRetrieveResult = {
+        success: false,
+        components: [] as SourceComponent[],
+        id: '12345',
+        message: { fileName: 'testComponent', problem: 'There was an error' },
+        status: RetrieveStatus.Failed,
       };
 
       const result = await metadataClient.retrieve(options);

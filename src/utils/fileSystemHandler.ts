@@ -22,6 +22,26 @@ export function ensureFileExists(filePath: string): void {
   fs.closeSync(fs.openSync(filePath, 'w'));
 }
 
+export function isDirectory(fsPath: SourcePath): boolean {
+  return fs.lstatSync(fsPath).isDirectory();
+}
+
+export function deleteDirectory(dirPath: string): void {
+  if (fs.existsSync(dirPath)) {
+    const files = fs.readdirSync(dirPath);
+    console.log('readder ' + dirPath);
+    for (const file of files) {
+      const curPath = path.join(dirPath, file);
+      if (isDirectory(curPath)) {
+        deleteDirectory(curPath);
+      } else {
+        fs.unlinkSync(path.join(dirPath, file));
+      }
+    }
+    fs.rmdirSync(dirPath);
+  }
+}
+
 export function emptyDirectory(dirPath: string): void {
   const files = fs.readdirSync(dirPath);
   for (const file of files) {
@@ -47,10 +67,6 @@ export function createFiles(fileMap: Map<string, string>): void {
     writeStream.write(fileMap.get(filePath));
     writeStream.end();
   }
-}
-
-export function isDirectory(fsPath: SourcePath): boolean {
-  return fs.lstatSync(fsPath).isDirectory();
 }
 
 /**

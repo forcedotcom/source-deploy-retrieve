@@ -33,7 +33,7 @@ import { promisify } from 'util';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { createReadStream, writeFileSync } from 'fs';
-import { ensureDirectoryExists, emptyDirectory } from '../utils/fileSystemHandler';
+import { ensureDirectoryExists, deleteDirectory } from '../utils/fileSystemHandler';
 const pipeline = promisify(cbPipeline);
 
 export const DEFAULT_API_OPTIONS = {
@@ -99,27 +99,16 @@ export class MetadataApi extends BaseApi {
     retrievedComponents: SourceComponent[];
     sourceRetrieveResult: SourceRetrieveResult;
   }> {
-    // @ts-ignore jsforce buffers zipData from the retrieveResult and exposes it as a readable stream property
+    let retrievedComponents: SourceComponent[] = [];
+    // @ts-ignore required callback
     const retrieveId = (await this.connection.metadata.retrieve(retrieveRequest)).id;
     const retrieveResult = await this.metadataRetrieveStatusPoll(retrieveId, options);
+    const sourceRetrieveResult = this.buildSourceRetrieveResult(retrieveResult);
 
-    const tempCmpDir = join(tmpdir(), '.sfdx', 'tmp');
-    ensureDirectoryExists(tempCmpDir);
-    emptyDirectory(tempCmpDir);
-    const tmpZip = join(tempCmpDir, 'metadataformat.zip');
-    writeFileSync(tmpZip, retrieveResult.zipFile, 'base64');
-
-    const retrieveStream = createReadStream(tmpZip);
-    const outputStream = unzipper.Extract({ path: tempCmpDir });
-
-    return new Promise((resolve, reject) => {
-      pipeline(retrieveStream, outputStream).catch((err) => reject(err));
-      outputStream.on('close', () => {
-        const retrievedComponents = this.registry.getComponentsFromPath(tempCmpDir);
-        const sourceRetrieveResult = this.buildSourceRetrieveResult(retrieveResult);
-        resolve({ retrievedComponents, sourceRetrieveResult });
-      });
-    });
+    if (sourceRetrieveResult.success) {
+      retrievedComponents = await this.extractComponents(retrieveResult);
+    }
+    return { retrievedComponents, sourceRetrieveResult };
   }
 
   private async metadataRetrieveStatusPoll(
@@ -156,6 +145,8 @@ export class MetadataApi extends BaseApi {
         case RetrieveStatus.Succeeded:
         case RetrieveStatus.Failed:
           return result;
+        case RetrieveStatus.InProgress:
+          continue;
       }
 
       triedOnce = true;
@@ -172,6 +163,25 @@ export class MetadataApi extends BaseApi {
       success: retrieveResult.status === RetrieveStatus.Succeeded ? true : false,
     } as SourceRetrieveResult;
     return sourceRetrieveResult;
+  }
+
+  private async extractComponents(retrieveResult: RetrieveResult): Promise<SourceComponent[]> {
+    const tempCmpDir = join(tmpdir(), '.sfdx', 'tmp');
+    deleteDirectory(tempCmpDir);
+    ensureDirectoryExists(tempCmpDir);
+    const tmpZip = join(tempCmpDir, 'metadataformat.zip');
+    writeFileSync(tmpZip, retrieveResult.zipFile, 'base64');
+
+    const retrieveStream = createReadStream(tmpZip);
+    const outputStream = unzipper.Extract({ path: tempCmpDir });
+
+    return new Promise((resolve, reject) => {
+      pipeline(retrieveStream, outputStream).catch((err) => reject(err));
+      outputStream.on('close', () => {
+        const retrievedComponents = this.registry.getComponentsFromPath(tempCmpDir);
+        resolve(retrievedComponents);
+      });
+    });
   }
 
   private async getConvertedComponents(

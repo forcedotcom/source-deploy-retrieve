@@ -554,7 +554,7 @@ describe('Metadata Api', () => {
         .resolves({
           packagePath: outputDir,
         });
-      removeStub = sandboxStub.stub(fsUtil, 'emptyDirectory');
+      removeStub = sandboxStub.stub(fsUtil, 'deleteDirectory');
     });
     afterEach(() => {
       sandboxStub.restore();

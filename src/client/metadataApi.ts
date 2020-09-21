@@ -138,7 +138,6 @@ export class MetadataApi extends BaseApi {
         case RetrieveStatus.Failed:
           return result;
         case RetrieveStatus.InProgress:
-          continue;
       }
 
       triedOnce = true;

@@ -29,7 +29,6 @@ export function isDirectory(fsPath: SourcePath): boolean {
 export function deleteDirectory(dirPath: string): void {
   if (fs.existsSync(dirPath)) {
     const files = fs.readdirSync(dirPath);
-    console.log('readder ' + dirPath);
     for (const file of files) {
       const curPath = path.join(dirPath, file);
       if (isDirectory(curPath)) {
@@ -39,18 +38,6 @@ export function deleteDirectory(dirPath: string): void {
       }
     }
     fs.rmdirSync(dirPath);
-  }
-}
-
-export function emptyDirectory(dirPath: string): void {
-  const files = fs.readdirSync(dirPath);
-  for (const file of files) {
-    const curPath = path.join(dirPath, file);
-    if (fs.lstatSync(curPath).isDirectory()) {
-      emptyDirectory(curPath);
-    } else {
-      fs.unlinkSync(path.join(dirPath, file));
-    }
   }
 }
 

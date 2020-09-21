@@ -731,10 +731,11 @@ describe('Metadata Api', () => {
           children: [path.basename(thirdProp.xml), path.basename(thirdProp.content)],
         },
       ]);
-
+      const wait = 1000;
       const options = {
         paths: contentPaths,
         output: outputDir,
+        wait,
       } as RetrievePathOptions;
 
       const mdRetrieveStub = sandboxStub.stub(metadataClient, 'retrieve');
@@ -748,6 +749,7 @@ describe('Metadata Api', () => {
           components: [firstComponent, secondComponent, thirdComponent],
           namespace: options.namespace,
           output: options.output,
+          wait,
         })
       );
     });

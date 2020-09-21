@@ -59,11 +59,8 @@ export class MetadataApi extends BaseApi {
         return component;
       }
     });
-    return this.retrieve({
-      components: uniqueComponents,
-      namespace: options.namespace,
-      output: options.output,
-    });
+    const retrieveOptions = { components: uniqueComponents } as RetrieveOptions;
+    return this.retrieve(Object.assign(retrieveOptions, options));
   }
 
   public async retrieve(options: RetrieveOptions): Promise<SourceRetrieveResult> {

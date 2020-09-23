@@ -15,10 +15,11 @@ import {
   BaseApi,
   RetrieveOptions,
   RetrievePathOptions,
-  ApiResult,
   ToolingDeployOptions,
   SourceDeployResult,
   QueryResult,
+  SourceRetrieveResult,
+  RetrieveStatus,
 } from './types';
 
 const retrieveTypes = new Set([
@@ -40,7 +41,7 @@ export const deployTypes = new Map([
 ]);
 
 export class ToolingApi extends BaseApi {
-  public async retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult> {
+  public async retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult> {
     const retrievePaths = options.paths[0];
     return await this.retrieve({
       output: options.output,
@@ -49,8 +50,8 @@ export class ToolingApi extends BaseApi {
     });
   }
 
-  public async retrieve(options: RetrieveOptions): Promise<ApiResult> {
-    let retrieveResult: ApiResult;
+  public async retrieve(options: RetrieveOptions): Promise<SourceRetrieveResult> {
+    let retrieveResult: SourceRetrieveResult;
     if (options.components.length > 1) {
       const retrieveError = new Error();
       retrieveError.message = nls.localize('tapi_retrieve_component_limit_error');
@@ -76,6 +77,7 @@ export class ToolingApi extends BaseApi {
 
       if (queryResult && queryResult.records.length === 0) {
         return {
+          status: RetrieveStatus.Succeeded,
           success: true,
           components: [],
           message: nls.localize('error_md_not_present_in_org', mdComponent.fullName),
@@ -86,6 +88,7 @@ export class ToolingApi extends BaseApi {
       createFiles(saveFilesMap);
 
       retrieveResult = {
+        status: RetrieveStatus.Succeeded,
         success: true,
         components: [mdComponent],
       };

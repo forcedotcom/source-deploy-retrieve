@@ -14,7 +14,7 @@ import * as stream from 'stream';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ToolingApi } from '../../src/client';
 import { RegistryAccess, SourceComponent, registryData } from '../../src/metadata-registry';
-import { ApiResult, QueryResult } from '../../src/client/types';
+import { QueryResult, SourceRetrieveResult } from '../../src/client/types';
 import { nls } from '../../src/i18n';
 import { fail } from 'assert';
 
@@ -108,7 +108,7 @@ describe('Tooling Retrieve', () => {
       paths: [path.join('file', 'path', 'myTestClass.cls')],
       output: path.join('file', 'path'),
     };
-    const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
+    const retrieveResults: SourceRetrieveResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
 
     expect(retrieveResults).to.be.a('object');
     expect(retrieveResults.success).to.equal(true);
@@ -139,7 +139,7 @@ describe('Tooling Retrieve', () => {
       namespace: 'tstr',
       output: path.join('file', 'path'),
     };
-    const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
+    const retrieveResults: SourceRetrieveResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
 
     expect(retrieveResults).to.be.a('object');
     expect(retrieveResults.success).to.equal(true);
@@ -171,7 +171,7 @@ describe('Tooling Retrieve', () => {
       paths: [path.join('file', 'path', 'myTestClass.cls')],
       output: path.join('file', 'path'),
     };
-    const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
+    const retrieveResults: SourceRetrieveResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
     expect(retrieveResults).to.be.a('object');
     expect(retrieveResults.success).to.equal(true);
     expect(retrieveResults.components).to.be.a('Array');
@@ -206,7 +206,7 @@ describe('Tooling Retrieve', () => {
     sandboxStub.stub(fs, 'openSync');
 
     const toolingAPI = new ToolingApi(mockConnection, registryAccess);
-    const retrieveResults: ApiResult = await toolingAPI.retrieve({
+    const retrieveResults: SourceRetrieveResult = await toolingAPI.retrieve({
       components: mdComponents,
     });
     expect(retrieveResults).to.be.a('object');
@@ -241,7 +241,7 @@ describe('Tooling Retrieve', () => {
       paths: [path.join('file', 'path', 'myTestClass.cls')],
       output: path.join('file', 'path'),
     };
-    const retrieveResults: ApiResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
+    const retrieveResults: SourceRetrieveResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
     expect(retrieveResults).to.be.a('object');
     expect(retrieveResults.success).to.equal(true);
     expect(retrieveResults.components).to.be.a('Array');

@@ -8,7 +8,6 @@ import {
   BaseApi,
   RetrieveOptions,
   RetrievePathOptions,
-  ApiResult,
   SourceDeployResult,
   ComponentDeployment,
   ComponentStatus,
@@ -17,12 +16,25 @@ import {
   DeployStatus,
   DeployMessage,
   MetadataDeployOptions,
+  RetrieveRequest,
+  RetrieveResult,
+  RetrieveStatus,
+  SourceRetrieveResult,
 } from './types';
 import { MetadataConverter } from '../convert';
-import { DeployError } from '../errors';
-import { SourceComponent } from '../metadata-registry';
+import { DeployError, RetrieveError } from '../errors';
+import { ManifestGenerator, SourceComponent } from '../metadata-registry';
 import { DiagnosticUtil } from './diagnosticUtil';
 import { SourcePath } from '../common';
+import * as unzipper from 'unzipper';
+import { parse } from 'fast-xml-parser';
+import { pipeline as cbPipeline } from 'stream';
+import { promisify } from 'util';
+import { join } from 'path';
+import { tmpdir } from 'os';
+import { createReadStream, writeFileSync } from 'fs';
+import { ensureDirectoryExists, deleteDirectory } from '../utils/fileSystemHandler';
+const pipeline = promisify(cbPipeline);
 
 export const DEFAULT_API_OPTIONS = {
   rollbackOnError: true,
@@ -31,13 +43,155 @@ export const DEFAULT_API_OPTIONS = {
   singlePackage: true,
 };
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 export class MetadataApi extends BaseApi {
-  public async retrieveWithPaths(options: RetrievePathOptions): Promise<ApiResult> {
-    throw new Error('Method not implemented.');
+  // TODO: move filtering logic to registry W-8023153
+  public async retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult> {
+    const allComponents: SourceComponent[] = [];
+    for (const filepath of options.paths) {
+      allComponents.push(...this.registry.getComponentsFromPath(filepath));
+    }
+
+    const hashedCmps = new Set();
+    const uniqueComponents = allComponents.filter((component) => {
+      const hashed = this.hashElement(component);
+      if (!hashedCmps.has(hashed)) {
+        hashedCmps.add(hashed);
+        return component;
+      }
+    });
+    const retrieveOptions = { components: uniqueComponents } as RetrieveOptions;
+    return this.retrieve(Object.assign(retrieveOptions, options));
   }
-  public async retrieve(options: RetrieveOptions): Promise<ApiResult> {
-    throw new Error('Method not implemented.');
+
+  public async retrieve(options: RetrieveOptions): Promise<SourceRetrieveResult> {
+    let components: SourceComponent[] = [];
+    const retrieveRequest = this.formatRetrieveRequest(options.components);
+    const retrieveResult = await this.getRetrievedResult(retrieveRequest, options);
+    if (retrieveResult.status === RetrieveStatus.Succeeded) {
+      const extractedComponents = await this.extractComponents(retrieveResult);
+      components = await this.getConvertedComponents(extractedComponents, options);
+    }
+
+    const sourceRetrieveResult = this.buildSourceRetrieveResult(retrieveResult, components);
+    return sourceRetrieveResult;
+  }
+
+  private formatRetrieveRequest(components: SourceComponent[]): RetrieveRequest {
+    const manifestGenerator = new ManifestGenerator(this.registry);
+    const manifest = manifestGenerator.createManifest(components);
+    const manifestJson = parse(manifest);
+    const packageData = manifestJson.Package;
+    delete packageData.$;
+
+    const retrieveRequest = {
+      apiVersion: this.registry.getApiVersion(),
+      unpackaged: packageData,
+    };
+    return retrieveRequest;
+  }
+
+  private async getRetrievedResult(
+    retrieveRequest: RetrieveRequest,
+    options: RetrieveOptions
+  ): Promise<RetrieveResult> {
+    // @ts-ignore required callback
+    const retrieveId = (await this.connection.metadata.retrieve(retrieveRequest)).id;
+    const retrieveResult = await this.metadataRetrieveStatusPoll(retrieveId, options);
+    return retrieveResult;
+  }
+
+  private async metadataRetrieveStatusPoll(
+    retrieveID: string,
+    options: RetrieveOptions,
+    interval = 100
+  ): Promise<RetrieveResult> {
+    let result;
+
+    const wait = (interval: number): Promise<void> => {
+      return new Promise((resolve) => {
+        setTimeout(resolve, interval);
+      });
+    };
+
+    const timeout = !options || !options.wait ? 10000 : options.wait;
+    const endTime = Date.now() + timeout;
+    let triedOnce = false;
+    do {
+      if (triedOnce) {
+        await wait(interval);
+      }
+
+      try {
+        // Recasting to use the library's RetrieveResult type
+        result = ((await this.connection.metadata.checkRetrieveStatus(
+          retrieveID
+        )) as unknown) as RetrieveResult;
+      } catch (e) {
+        throw new RetrieveError('md_request_fail', e);
+      }
+
+      switch (result.status) {
+        case RetrieveStatus.Succeeded:
+        case RetrieveStatus.Failed:
+          return result;
+        case RetrieveStatus.InProgress:
+      }
+
+      triedOnce = true;
+    } while (Date.now() < endTime);
+
+    return result;
+  }
+
+  private buildSourceRetrieveResult(
+    retrieveResult: RetrieveResult,
+    components?: SourceComponent[]
+  ): SourceRetrieveResult {
+    const sourceRetrieveResult = {
+      status: retrieveResult.status,
+      id: retrieveResult.id,
+      message: retrieveResult.messages,
+      success: retrieveResult.status === RetrieveStatus.Succeeded ? true : false,
+      components,
+    } as SourceRetrieveResult;
+    return sourceRetrieveResult;
+  }
+
+  private async extractComponents(retrieveResult: RetrieveResult): Promise<SourceComponent[]> {
+    const tempCmpDir = join(tmpdir(), '.sfdx', 'tmp');
+    deleteDirectory(tempCmpDir);
+    ensureDirectoryExists(tempCmpDir);
+    const tmpZip = join(tempCmpDir, 'metadataformat.zip');
+    writeFileSync(tmpZip, retrieveResult.zipFile, 'base64');
+
+    const retrieveStream = createReadStream(tmpZip);
+    const outputStream = unzipper.Extract({ path: tempCmpDir });
+
+    return new Promise((resolve, reject) => {
+      pipeline(retrieveStream, outputStream).catch((err) => reject(err));
+      outputStream.on('close', () => {
+        const retrievedComponents = this.registry.getComponentsFromPath(tempCmpDir);
+        resolve(retrievedComponents);
+      });
+    });
+  }
+
+  private async getConvertedComponents(
+    retrievedComponents: SourceComponent[],
+    options: RetrieveOptions
+  ): Promise<SourceComponent[]> {
+    const converter = new MetadataConverter();
+    const convertResult = await converter.convert(retrievedComponents, 'source', {
+      type: 'directory',
+      outputDirectory: options.output,
+    });
+    const convertedComponents = this.registry.getComponentsFromPath(convertResult.packagePath);
+    return convertedComponents;
+  }
+
+  private hashElement(component: SourceComponent): string {
+    const hashed = `${component.fullName}.${component.type.id}`;
+    return hashed;
   }
 
   public async deploy(

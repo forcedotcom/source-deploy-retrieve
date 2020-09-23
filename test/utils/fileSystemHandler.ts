@@ -98,4 +98,66 @@ describe('File System Utils', () => {
       expect(closeStub.firstCall.args[0]).to.equal(123);
     });
   });
+
+  describe('deleteDirectory', () => {
+    const path = join('path', 'to');
+    const path2 = join(path, 'dir');
+
+    let readdirStub: SinonStub;
+    let existsStub: SinonStub;
+    let rmdirStub: SinonStub;
+    let unlinkStub: SinonStub;
+    beforeEach(() => {
+      // @ts-ignore
+      readdirStub = env.stub(fs, 'readdirSync');
+      existsStub = env.stub(fs, 'existsSync');
+      rmdirStub = env.stub(fs, 'rmdirSync');
+      unlinkStub = env.stub(fs, 'unlinkSync');
+    });
+
+    it('should return immediately if file or directory does not exist', () => {
+      existsStub.withArgs(path2).returns(false);
+
+      fsUtil.deleteDirectory(path2);
+
+      expect(readdirStub.notCalled).to.be.true;
+      expect(rmdirStub.notCalled).to.be.true;
+    });
+
+    it('should remove nested files as needed', () => {
+      const testFile = 'fileOne';
+      existsStub.returns(true);
+      readdirStub.returns([testFile]);
+      const statStub = env.stub(fs, 'lstatSync');
+      // @ts-ignore
+      statStub.returns({ isDirectory: () => false });
+
+      fsUtil.deleteDirectory(path2);
+
+      expect(readdirStub.firstCall.args[0]).to.equal(path2);
+      expect(unlinkStub.firstCall.args[0]).to.equal(join(path2, testFile));
+      expect(rmdirStub.firstCall.args[0]).to.equal(path2);
+    });
+
+    it('should remove nested directories as needed', () => {
+      const testDir = 'dirOne';
+      const testDirPath = join(path2, testDir);
+      existsStub.returns(true);
+      readdirStub.withArgs(path2).returns([testDir]);
+      readdirStub.withArgs(testDirPath).returns([]);
+      env
+        .stub(fs, 'lstatSync')
+        .withArgs(join(path2, testDir))
+        // @ts-ignore
+        .returns({ isDirectory: () => true });
+
+      fsUtil.deleteDirectory(path2);
+
+      expect(readdirStub.firstCall.args[0]).to.equal(path2);
+      expect(readdirStub.secondCall.args[0]).to.equal(testDirPath);
+      expect(rmdirStub.firstCall.args[0]).to.equal(testDirPath);
+      expect(rmdirStub.secondCall.args[0]).to.equal(path2);
+      expect(unlinkStub.notCalled).to.be.true;
+    });
+  });
 });

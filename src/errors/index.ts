@@ -56,6 +56,12 @@ export class DeployError extends SourceClientError {
   }
 }
 
+export class RetrieveError extends SourceClientError {
+  constructor(messageKey: string, args?: string | string[]) {
+    super(messageKey, args);
+  }
+}
+
 /**
  * A wrapper for any errors thrown in the conversion pipeline
  */

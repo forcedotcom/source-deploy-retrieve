@@ -1,3 +1,17 @@
+# 1.1.4 - September 23, 2020
+
+## Added
+
+- Retrieve components using the Metadata API to a specified directory ([PR #143](https://github.com/forcedotcom/source-deploy-retrieve/pull/143))
+
+- Convert StaticResources from metadata format to source format ([#141](https://github.com/forcedotcom/source-deploy-retrieve/pull/141))
+
+- Show warning when user has a .forceignore file incompatible with the new parser ([#129](https://github.com/forcedotcom/source-deploy-retrieve/pull/129))
+
+## Fixed
+
+- Fix output directory not being created if it doesn't exist during conversion ([PR #148](https://github.com/forcedotcom/source-deploy-retrieve/pull/148)
+
 # 1.1.3 - September 16, 2020
 
 ## Added

@@ -29,6 +29,7 @@ describe('MetadataConverter', () => {
   const packageName = 'test';
   const outputDirectory = join('path', 'to', 'output');
   const packageOutput = join(outputDirectory, packageName);
+  const dirPackagePath = join(packageOutput, 'main', 'default');
   /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
   function validatePipelineArgs(pipelineArgs: any[]): void {
     expect(pipelineArgs[0] instanceof streams.ComponentReader).to.be.true;
@@ -96,9 +97,7 @@ describe('MetadataConverter', () => {
       });
 
       expect(ensureDirectoryStub.calledBefore(pipelineStub)).to.be.true;
-      expect(ensureDirectoryStub.firstCall.args[0]).to.equal(
-        join(packageOutput, 'main', 'default')
-      );
+      expect(ensureDirectoryStub.firstCall.args[0]).to.equal(dirPackagePath);
     });
 
     it('should create conversion pipeline with proper stream configuration', async () => {
@@ -111,7 +110,7 @@ describe('MetadataConverter', () => {
       const pipelineArgs = pipelineStub.firstCall.args;
       validatePipelineArgs(pipelineArgs);
       expect(pipelineArgs[2] instanceof streams.StandardWriter).to.be.true;
-      expect(pipelineArgs[2].rootDestination).to.equal(join(packageOutput, 'main', 'default'));
+      expect(pipelineArgs[2].rootDestination).to.equal(dirPackagePath);
     });
 
     it('should return packagePath in result', async () => {
@@ -121,7 +120,7 @@ describe('MetadataConverter', () => {
         packageName,
       });
 
-      expect(result.packagePath).to.equal(join(packageOutput, 'main', 'default'));
+      expect(result.packagePath).to.equal(dirPackagePath);
     });
   });
 

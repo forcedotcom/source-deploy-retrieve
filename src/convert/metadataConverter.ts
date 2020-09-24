@@ -6,7 +6,6 @@
  */
 import { SfdxFileFormat, ConvertOutputConfig, ConvertResult } from './types';
 import { ManifestGenerator, RegistryAccess, SourceComponent } from '../metadata-registry';
-import { promises } from 'fs';
 import { dirname, join } from 'path';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
 import { Writable } from 'stream';
@@ -52,8 +51,6 @@ export class MetadataConverter {
       switch (output.type) {
         case 'directory':
           writer = new StandardWriter(packagePath);
-          const manifestPath = join(packagePath, PACKAGE_XML_FILE);
-          tasks.push(promises.writeFile(manifestPath, manifestContents));
           break;
         case 'zip':
           writer = new ZipWriter(packagePath);
@@ -89,6 +86,7 @@ export class MetadataConverter {
         packagePath += '.zip';
         ensureDirectoryExists(dirname(packagePath));
       } else {
+        packagePath = join(packagePath, 'main', 'default');
         ensureDirectoryExists(packagePath);
       }
     }

@@ -54,7 +54,12 @@ describe('MetadataConverter', () => {
 
   it('should generate package name using timestamp when option omitted', async () => {
     const timestamp = 123456;
-    const packagePath = join(outputDirectory, `${DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
+    const packagePath = join(
+      outputDirectory,
+      `${DEFAULT_PACKAGE_PREFIX}_${timestamp}`,
+      'main',
+      'default'
+    );
     env.stub(Date, 'now').returns(timestamp);
 
     await converter.convert(components, 'metadata', {
@@ -91,7 +96,9 @@ describe('MetadataConverter', () => {
       });
 
       expect(ensureDirectoryStub.calledBefore(pipelineStub)).to.be.true;
-      expect(ensureDirectoryStub.firstCall.args[0]).to.equal(packageOutput);
+      expect(ensureDirectoryStub.firstCall.args[0]).to.equal(
+        join(packageOutput, 'main', 'default')
+      );
     });
 
     it('should create conversion pipeline with proper stream configuration', async () => {
@@ -104,20 +111,7 @@ describe('MetadataConverter', () => {
       const pipelineArgs = pipelineStub.firstCall.args;
       validatePipelineArgs(pipelineArgs);
       expect(pipelineArgs[2] instanceof streams.StandardWriter).to.be.true;
-      expect(pipelineArgs[2].rootDestination).to.equal(packageOutput);
-    });
-
-    it('should write a manifest for directory configuration', async () => {
-      const expectedPath = join(packageOutput, PACKAGE_XML_FILE);
-      const expectedContents = new ManifestGenerator(mockRegistryAccess).createManifest(components);
-
-      await converter.convert(components, 'metadata', {
-        type: 'directory',
-        outputDirectory,
-        packageName,
-      });
-
-      expect(writeFileStub.firstCall.args).to.deep.equal([expectedPath, expectedContents]);
+      expect(pipelineArgs[2].rootDestination).to.equal(join(packageOutput, 'main', 'default'));
     });
 
     it('should return packagePath in result', async () => {
@@ -127,7 +121,7 @@ describe('MetadataConverter', () => {
         packageName,
       });
 
-      expect(result.packagePath).to.equal(packageOutput);
+      expect(result.packagePath).to.equal(join(packageOutput, 'main', 'default'));
     });
   });
 

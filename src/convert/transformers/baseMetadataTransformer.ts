@@ -7,10 +7,12 @@
 import { MetadataTransformer, WriterFormat } from '../types';
 import { ConvertTransaction } from '../convertTransaction';
 import { MetadataRegistry, registryData, SourceComponent } from '../../metadata-registry';
+import { join } from 'path';
 
 export abstract class BaseMetadataTransformer implements MetadataTransformer {
   protected registry: MetadataRegistry;
   protected convertTransaction: ConvertTransaction;
+  protected rootPackagePath = join('main', 'default');
 
   constructor(
     registry: MetadataRegistry = registryData,

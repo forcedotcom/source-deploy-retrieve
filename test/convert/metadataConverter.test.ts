@@ -55,12 +55,7 @@ describe('MetadataConverter', () => {
 
   it('should generate package name using timestamp when option omitted', async () => {
     const timestamp = 123456;
-    const packagePath = join(
-      outputDirectory,
-      `${DEFAULT_PACKAGE_PREFIX}_${timestamp}`,
-      'main',
-      'default'
-    );
+    const packagePath = join(outputDirectory, `${DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
     env.stub(Date, 'now').returns(timestamp);
 
     await converter.convert(components, 'metadata', {
@@ -97,7 +92,7 @@ describe('MetadataConverter', () => {
       });
 
       expect(ensureDirectoryStub.calledBefore(pipelineStub)).to.be.true;
-      expect(ensureDirectoryStub.firstCall.args[0]).to.equal(dirPackagePath);
+      expect(ensureDirectoryStub.firstCall.args[0]).to.equal(packageOutput);
     });
 
     it('should create conversion pipeline with proper stream configuration', async () => {
@@ -110,7 +105,7 @@ describe('MetadataConverter', () => {
       const pipelineArgs = pipelineStub.firstCall.args;
       validatePipelineArgs(pipelineArgs);
       expect(pipelineArgs[2] instanceof streams.StandardWriter).to.be.true;
-      expect(pipelineArgs[2].rootDestination).to.equal(dirPackagePath);
+      expect(pipelineArgs[2].rootDestination).to.equal(packageOutput);
     });
 
     it('should return packagePath in result', async () => {
@@ -120,7 +115,28 @@ describe('MetadataConverter', () => {
         packageName,
       });
 
-      expect(result.packagePath).to.equal(dirPackagePath);
+      expect(result.packagePath).to.equal(packageOutput);
+    });
+
+    it('should write manifest for directory configuration if metadata format', async () => {
+      const timestamp = 123456;
+      const packagePath = join(outputDirectory, `${DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
+      env.stub(Date, 'now').returns(timestamp);
+      const expectedContents = new ManifestGenerator(mockRegistryAccess).createManifest(components);
+
+      await converter.convert(components, 'metadata', { type: 'directory', outputDirectory });
+
+      expect(writeFileStub.calledBefore(pipelineStub)).to.be.true;
+      expect(writeFileStub.firstCall.args).to.deep.equal([
+        join(packagePath, PACKAGE_XML_FILE),
+        expectedContents,
+      ]);
+    });
+
+    it('should not write manifest for directory configuration if source format', async () => {
+      await converter.convert(components, 'source', { type: 'directory', outputDirectory });
+
+      expect(writeFileStub.notCalled).to.be.true;
     });
   });
 
@@ -179,7 +195,7 @@ describe('MetadataConverter', () => {
       expect(result.packagePath).to.equal(`${packageOutput}.zip`);
     });
 
-    it('should write manifest for zip configuration', async () => {
+    it('should write manifest for zip configuration if metadata format', async () => {
       const expectedContents = new ManifestGenerator(mockRegistryAccess).createManifest(components);
       const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
 
@@ -187,6 +203,14 @@ describe('MetadataConverter', () => {
 
       expect(addToZipStub.calledBefore(pipelineStub)).to.be.true;
       expect(addToZipStub.firstCall.args).to.deep.equal([expectedContents, PACKAGE_XML_FILE]);
+    });
+
+    it('should not write manifest for zip configuration if source format', async () => {
+      const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
+
+      await converter.convert(components, 'source', { type: 'zip' });
+
+      expect(addToZipStub.notCalled).to.be.true;
     });
   });
 });

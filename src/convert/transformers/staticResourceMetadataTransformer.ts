@@ -57,19 +57,23 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     if (content) {
       const contentType = this.getContentType(component);
       if (ARCHIVE_MIME_TYPES.has(contentType)) {
-        const baseDir = join(type.directoryName, baseName(content));
+        const baseDir = join(this.rootPackagePath, type.directoryName, baseName(content));
         this.createWriteInfosFromArchive(content, baseDir, result);
       } else {
         const extension = this.getExtensionFromType(contentType);
         result.writeInfos.push({
           source: createReadStream(content),
-          relativeDestination: join(type.directoryName, `${baseName(content)}.${extension}`),
+          relativeDestination: join(
+            this.rootPackagePath,
+            type.directoryName,
+            `${baseName(content)}.${extension}`
+          ),
         });
       }
 
       result.writeInfos.push({
         source: createReadStream(xml),
-        relativeDestination: join(type.directoryName, basename(xml)),
+        relativeDestination: join(this.rootPackagePath, type.directoryName, basename(xml)),
       });
     }
     return result;

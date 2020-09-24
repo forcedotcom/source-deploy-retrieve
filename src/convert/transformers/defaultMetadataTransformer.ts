@@ -9,6 +9,7 @@ import { createReadStream } from 'fs';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { SfdxFileFormat, WriterFormat } from '../types';
 import { SourceComponent } from '../../metadata-registry';
+import { join } from 'path';
 
 /**
  * The default metadata transformer.
@@ -32,13 +33,14 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
       for (const source of component.walkContent()) {
         result.writeInfos.push({
           source: createReadStream(source),
-          relativeDestination: component.getPackageRelativePath(source),
+          relativeDestination: this.getPackageRelativePath(component, source, toFormat),
         });
       }
     }
 
     if (component.xml) {
-      let xmlDest = component.getPackageRelativePath(component.xml);
+      let xmlDest = this.getPackageRelativePath(component, component.xml, toFormat);
+      component.getPackageRelativePath(component.xml);
       if (!component.content) {
         xmlDest =
           toFormat === 'metadata'
@@ -51,5 +53,16 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
       });
     }
     return result;
+  }
+
+  private getPackageRelativePath(
+    component: SourceComponent,
+    fsPath: string,
+    toFormat: SfdxFileFormat
+  ): string {
+    if (toFormat === 'source') {
+      return join(this.rootPackagePath, component.getPackageRelativePath(fsPath));
+    }
+    return component.getPackageRelativePath(fsPath);
   }
 }

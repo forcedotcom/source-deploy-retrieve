@@ -71,7 +71,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
         const tagCollection = Array.isArray(collection) ? collection : [collection];
 
         for (const entry of tagCollection) {
-          let relativeDestination = join(type.directoryName, parentFullName);
+          let relativeDestination = join(this.rootPackagePath, type.directoryName, parentFullName);
 
           const strategy = this.registry.strategies[type.id].decomposition as DecompositionStrategy;
           if (strategy === DecompositionStrategy.FolderPerType) {
@@ -99,6 +99,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     writeInfos.push({
       source: new JsToXml(rootXmlObject),
       relativeDestination: join(
+        this.rootPackagePath,
         type.directoryName,
         parentFullName,
         `${parentFullName}.${type.suffix}${META_XML_SUFFIX}`

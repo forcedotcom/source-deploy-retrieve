@@ -16,6 +16,7 @@ import { join } from 'path';
 import { LibraryError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { VirtualDirectory } from '../../src';
+import { Readable } from 'stream';
 
 describe('Tree Containers', () => {
   const readDirResults = ['a.q', 'a.x-meta.xml', 'b', 'b.x-meta.xml', 'c.z', 'c.x-meta.xml'];
@@ -36,6 +37,10 @@ describe('Tree Containers', () => {
 
       readFile(): Promise<Buffer> {
         return Promise.resolve(Buffer.from(''));
+      }
+
+      stream(): Readable {
+        return;
       }
     }
     const tree = new TestTreeContainer();

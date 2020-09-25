@@ -8,9 +8,11 @@ import { VirtualDirectory, TreeContainer } from '../metadata-registry';
 import { join, dirname, basename } from 'path';
 import { baseName } from '../utils';
 import { parseMetadataXml } from '../utils/registry';
-import { lstatSync, existsSync, readdirSync, promises as fsPromises } from 'fs';
+import { lstatSync, existsSync, readdirSync, promises as fsPromises, createReadStream } from 'fs';
 import { LibraryError } from '../errors';
 import { SourcePath } from '../common';
+import * as unzipper from 'unzipper';
+import { Readable } from 'stream';
 
 /**
  * An extendable base class for implementing the `TreeContainer` interface
@@ -35,6 +37,7 @@ export abstract class BaseTreeContainer implements TreeContainer {
   public abstract isDirectory(fsPath: SourcePath): boolean;
   public abstract readDirectory(fsPath: SourcePath): string[];
   public abstract readFile(fsPath: SourcePath): Promise<Buffer>;
+  public abstract stream(fsPath: SourcePath): Readable;
 }
 
 export class NodeFSTreeContainer extends BaseTreeContainer {
@@ -52,6 +55,82 @@ export class NodeFSTreeContainer extends BaseTreeContainer {
 
   public readFile(fsPath: SourcePath): Promise<Buffer> {
     return fsPromises.readFile(fsPath);
+  }
+
+  public stream(fsPath: SourcePath): Readable {
+    return createReadStream(fsPath);
+  }
+}
+
+interface ZipEntry {
+  path: string;
+  stream?: () => unzipper.Entry;
+}
+
+export class ZipTreeContainer extends BaseTreeContainer {
+  private tree = new Map<SourcePath, ZipEntry[] | ZipEntry>();
+
+  private constructor(directory: unzipper.CentralDirectory) {
+    super();
+    this.populate(directory);
+  }
+
+  public static async create(buffer: Buffer): Promise<ZipTreeContainer> {
+    const directory = await unzipper.Open.buffer(buffer);
+    return new ZipTreeContainer(directory);
+  }
+
+  public exists(fsPath: string): boolean {
+    return this.tree.has(fsPath);
+  }
+
+  public isDirectory(fsPath: string): boolean {
+    if (this.exists(fsPath)) {
+      return Array.isArray(this.tree.get(fsPath));
+    }
+    throw new LibraryError('error_path_not_found', fsPath);
+  }
+
+  public readDirectory(fsPath: string): string[] {
+    if (this.isDirectory(fsPath)) {
+      return (this.tree.get(fsPath) as ZipEntry[]).map((entry) => basename(entry.path));
+    }
+    throw new LibraryError('error_path_not_directory', fsPath);
+  }
+
+  public readFile(fsPath: string): Promise<Buffer> {
+    throw new Error('Method not implemented.');
+  }
+
+  public stream(fsPath: string): Readable {
+    if (!this.isDirectory(fsPath)) {
+      return (this.tree.get(fsPath) as ZipEntry).stream();
+    }
+    throw new LibraryError('error_no_directory_stream');
+  }
+
+  private populate(directory: unzipper.CentralDirectory): void {
+    for (const { type, path, stream } of directory.files) {
+      if (type === 'File') {
+        const entry = { path, stream };
+        this.tree.set(path, entry);
+        this.ensureDirPathExists(entry);
+      } else if (!this.tree.has(path)) {
+        this.tree.set(path, []);
+      }
+    }
+  }
+
+  private ensureDirPathExists(entry: ZipEntry): void {
+    const dirPath = dirname(entry.path);
+    if (dirPath === entry.path) {
+      return;
+    } else if (!this.exists(dirPath)) {
+      this.tree.set(dirPath, [entry]);
+      this.ensureDirPathExists({ path: dirPath });
+    } else {
+      (this.tree.get(dirPath) as ZipEntry[]).push(entry);
+    }
   }
 }
 
@@ -91,6 +170,10 @@ export class VirtualTreeContainer extends BaseTreeContainer {
       return Promise.resolve(data);
     }
     throw new LibraryError('error_path_not_found', fsPath);
+  }
+
+  public stream(fsPath: string): Readable {
+    throw new Error('Method not implemented.');
   }
 
   private populate(virtualFs: VirtualDirectory[]): void {

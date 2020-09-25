@@ -33,7 +33,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       zip.finalize();
       contentSource = zip;
     } else {
-      contentSource = createReadStream(content);
+      contentSource = component.tree.stream(content);
     }
 
     writerFormat.writeInfos.push(
@@ -42,7 +42,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
         relativeDestination: join(type.directoryName, `${baseName(content)}.${type.suffix}`),
       },
       {
-        source: createReadStream(xml),
+        source: component.tree.stream(xml),
         relativeDestination: join(type.directoryName, basename(xml)),
       }
     );
@@ -62,13 +62,13 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       } else {
         const extension = this.getExtensionFromType(contentType);
         result.writeInfos.push({
-          source: createReadStream(content),
+          source: component.tree.stream(content),
           relativeDestination: join(type.directoryName, `${baseName(content)}.${extension}`),
         });
       }
 
       result.writeInfos.push({
-        source: createReadStream(xml),
+        source: component.tree.stream(xml),
         relativeDestination: join(type.directoryName, basename(xml)),
       });
     }

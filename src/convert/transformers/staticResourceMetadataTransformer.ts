@@ -51,29 +51,28 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   }
 
   public toSourceFormat(component: SourceComponent): WriterFormat {
-    const { xml, type, content } = component;
+    const { xml, content } = component;
     const result: WriterFormat = { component, writeInfos: [] };
 
     if (content) {
       const contentType = this.getContentType(component);
       if (ARCHIVE_MIME_TYPES.has(contentType)) {
-        const baseDir = join(this.rootPackagePath, type.directoryName, baseName(content));
+        const baseDir = component.getPackageRelativePath(baseName(content), 'source');
         this.createWriteInfosFromArchive(content, baseDir, result);
       } else {
         const extension = this.getExtensionFromType(contentType);
         result.writeInfos.push({
           source: createReadStream(content),
-          relativeDestination: join(
-            this.rootPackagePath,
-            type.directoryName,
-            `${baseName(content)}.${extension}`
+          relativeDestination: component.getPackageRelativePath(
+            `${baseName(content)}.${extension}`,
+            'source'
           ),
         });
       }
 
       result.writeInfos.push({
         source: createReadStream(xml),
-        relativeDestination: join(this.rootPackagePath, type.directoryName, basename(xml)),
+        relativeDestination: component.getPackageRelativePath(basename(xml), 'source'),
       });
     }
     return result;

@@ -33,14 +33,13 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
       for (const source of component.walkContent()) {
         result.writeInfos.push({
           source: createReadStream(source),
-          relativeDestination: this.getPackageRelativePath(component, source, toFormat),
+          relativeDestination: component.getPackageRelativePath(source, toFormat),
         });
       }
     }
 
     if (component.xml) {
-      let xmlDest = this.getPackageRelativePath(component, component.xml, toFormat);
-      component.getPackageRelativePath(component.xml);
+      let xmlDest = component.getPackageRelativePath(component.xml, toFormat);
       if (!component.content) {
         xmlDest =
           toFormat === 'metadata'
@@ -53,16 +52,5 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
       });
     }
     return result;
-  }
-
-  private getPackageRelativePath(
-    component: SourceComponent,
-    fsPath: string,
-    toFormat: SfdxFileFormat
-  ): string {
-    if (toFormat === 'source') {
-      return join(this.rootPackagePath, component.getPackageRelativePath(fsPath));
-    }
-    return component.getPackageRelativePath(fsPath);
   }
 }

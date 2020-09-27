@@ -29,7 +29,7 @@ describe('MetadataConverter', () => {
   const packageName = 'test';
   const outputDirectory = join('path', 'to', 'output');
   const packageOutput = join(outputDirectory, packageName);
-  const dirPackagePath = join(packageOutput, 'main', 'default');
+
   /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
   function validatePipelineArgs(pipelineArgs: any[]): void {
     expect(pipelineArgs[0] instanceof streams.ComponentReader).to.be.true;
@@ -118,7 +118,7 @@ describe('MetadataConverter', () => {
       expect(result.packagePath).to.equal(packageOutput);
     });
 
-    it('should write manifest for directory configuration if metadata format', async () => {
+    it('should write manifest for metadata format conversion', async () => {
       const timestamp = 123456;
       const packagePath = join(outputDirectory, `${DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
       env.stub(Date, 'now').returns(timestamp);
@@ -133,7 +133,7 @@ describe('MetadataConverter', () => {
       ]);
     });
 
-    it('should not write manifest for directory configuration if source format', async () => {
+    it('should not write manifest for source format conversion', async () => {
       await converter.convert(components, 'source', { type: 'directory', outputDirectory });
 
       expect(writeFileStub.notCalled).to.be.true;
@@ -195,7 +195,7 @@ describe('MetadataConverter', () => {
       expect(result.packagePath).to.equal(`${packageOutput}.zip`);
     });
 
-    it('should write manifest for zip configuration if metadata format', async () => {
+    it('should write manifest for metadata format conversion', async () => {
       const expectedContents = new ManifestGenerator(mockRegistryAccess).createManifest(components);
       const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
 
@@ -205,7 +205,7 @@ describe('MetadataConverter', () => {
       expect(addToZipStub.firstCall.args).to.deep.equal([expectedContents, PACKAGE_XML_FILE]);
     });
 
-    it('should not write manifest for zip configuration if source format', async () => {
+    it('should not write manifest for source format conversion', async () => {
       const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
 
       await converter.convert(components, 'source', { type: 'zip' });

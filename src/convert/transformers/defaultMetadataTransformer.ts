@@ -9,7 +9,6 @@ import { createReadStream } from 'fs';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { SfdxFileFormat, WriterFormat } from '../types';
 import { SourceComponent } from '../../metadata-registry';
-import { join } from 'path';
 
 /**
  * The default metadata transformer.

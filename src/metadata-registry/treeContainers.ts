@@ -65,6 +65,7 @@ export class NodeFSTreeContainer extends BaseTreeContainer {
 interface ZipEntry {
   path: string;
   stream?: () => unzipper.Entry;
+  buffer?: () => Promise<Buffer>;
 }
 
 export class ZipTreeContainer extends BaseTreeContainer {
@@ -95,29 +96,28 @@ export class ZipTreeContainer extends BaseTreeContainer {
     if (this.isDirectory(fsPath)) {
       return (this.tree.get(fsPath) as ZipEntry[]).map((entry) => basename(entry.path));
     }
-    throw new LibraryError('error_path_not_directory', fsPath);
+    throw new LibraryError('error_expected_directory_path', fsPath);
   }
 
   public readFile(fsPath: string): Promise<Buffer> {
-    throw new Error('Method not implemented.');
+    if (!this.isDirectory(fsPath)) {
+      return (this.tree.get(fsPath) as ZipEntry).buffer();
+    }
+    throw new LibraryError('error_expected_file_path', fsPath);
   }
 
   public stream(fsPath: string): Readable {
     if (!this.isDirectory(fsPath)) {
       return (this.tree.get(fsPath) as ZipEntry).stream();
     }
-    throw new LibraryError('error_no_directory_stream');
+    throw new LibraryError('error_no_directory_stream', this.constructor.name);
   }
 
   private populate(directory: unzipper.CentralDirectory): void {
-    for (const { type, path, stream } of directory.files) {
-      if (type === 'File') {
-        const entry = { path, stream };
-        this.tree.set(path, entry);
-        this.ensureDirPathExists(entry);
-      } else if (!this.tree.has(path)) {
-        this.tree.set(path, []);
-      }
+    for (const { path, stream, buffer } of directory.files) {
+      const entry = { path, stream, buffer };
+      this.tree.set(path, entry);
+      this.ensureDirPathExists(entry);
     }
   }
 

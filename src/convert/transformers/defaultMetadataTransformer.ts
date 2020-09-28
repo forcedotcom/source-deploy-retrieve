@@ -5,10 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { META_XML_SUFFIX } from '../../utils';
+import { createReadStream } from 'fs';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { SfdxFileFormat, WriterFormat } from '../types';
 import { SourceComponent } from '../../metadata-registry';
-import { createReadStream } from 'fs';
 
 /**
  * The default metadata transformer.

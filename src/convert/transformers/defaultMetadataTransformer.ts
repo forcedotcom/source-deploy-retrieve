@@ -8,6 +8,7 @@ import { META_XML_SUFFIX } from '../../utils';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { SfdxFileFormat, WriterFormat } from '../types';
 import { SourceComponent } from '../../metadata-registry';
+import { createReadStream } from 'fs';
 
 /**
  * The default metadata transformer.
@@ -30,7 +31,7 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
     if (component.content) {
       for (const source of component.walkContent()) {
         result.writeInfos.push({
-          source: component.tree.stream(source),
+          source: createReadStream(source),
           relativeDestination: component.getPackageRelativePath(source),
         });
       }
@@ -45,7 +46,7 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
             : `${xmlDest}${META_XML_SUFFIX}`;
       }
       result.writeInfos.push({
-        source: component.tree.stream(component.xml),
+        source: createReadStream(component.xml),
         relativeDestination: xmlDest,
       });
     }

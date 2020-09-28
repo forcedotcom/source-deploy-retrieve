@@ -23,12 +23,7 @@ import {
 } from './types';
 import { MetadataConverter } from '../convert';
 import { DeployError, RetrieveError } from '../errors';
-import {
-  ManifestGenerator,
-  RegistryAccess,
-  registryData,
-  SourceComponent,
-} from '../metadata-registry';
+import { ManifestGenerator, SourceComponent } from '../metadata-registry';
 import { DiagnosticUtil } from './diagnosticUtil';
 import { SourcePath } from '../common';
 import * as unzipper from 'unzipper';
@@ -39,7 +34,6 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 import { createReadStream, writeFileSync } from 'fs';
 import { ensureDirectoryExists, deleteDirectory } from '../utils/fileSystemHandler';
-import { ZipTreeContainer } from '../metadata-registry/treeContainers';
 const pipeline = promisify(cbPipeline);
 
 export const DEFAULT_API_OPTIONS = {
@@ -74,12 +68,8 @@ export class MetadataApi extends BaseApi {
     const retrieveRequest = this.formatRetrieveRequest(options.components);
     const retrieveResult = await this.getRetrievedResult(retrieveRequest, options);
     if (retrieveResult.status === RetrieveStatus.Succeeded) {
-      // const extractedComponents = await this.extractComponents(retrieveResult);
-      const buffer = Buffer.from(retrieveResult.zipFile, 'base64');
-      const tree = await ZipTreeContainer.create(buffer);
-      const registryAccess = new RegistryAccess(registryData, tree);
-      const zipComponents = registryAccess.getComponentsFromPath('.');
-      components = await this.getConvertedComponents(zipComponents, options);
+      const extractedComponents = await this.extractComponents(retrieveResult);
+      components = await this.getConvertedComponents(extractedComponents, options);
     }
 
     const sourceRetrieveResult = this.buildSourceRetrieveResult(retrieveResult, components);

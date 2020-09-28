@@ -25,7 +25,7 @@
     "lib"
   ],
   "engines": {
-    "node": ">=12.4.0"
+    "node": ">=10.17.0"
   },
   "dependencies": {
     "@salesforce/core": "2.9.0",
@@ -46,7 +46,7 @@
     "@types/chai": "^4",
     "@types/mime": "2.0.3",
     "@types/mocha": "^5",
-    "@types/node": "^12.4.0",
+    "@types/node": "^10",
     "@types/sinon": "^7.5.2",
     "@types/unzipper": "^0.10.3",
     "@typescript-eslint/eslint-plugin": "^2.22.0",

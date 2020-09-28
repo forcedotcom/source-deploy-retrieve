@@ -115,7 +115,7 @@ export class ZipTreeContainer extends BaseTreeContainer {
 
   private populate(directory: unzipper.CentralDirectory): void {
     for (const { path, stream, buffer } of directory.files) {
-      const entry = { path, stream, buffer };
+      const entry = { path: this.normalizePath(path), stream, buffer };
       this.tree.set(path, entry);
       this.ensureDirPathExists(entry);
     }
@@ -131,6 +131,14 @@ export class ZipTreeContainer extends BaseTreeContainer {
     } else {
       (this.tree.get(dirPath) as ZipEntry[]).push(entry);
     }
+  }
+
+  /**
+   * Zip entry paths use forward slashes. Normalize passed in
+   * paths to use them.
+   */
+  private normalizePath(path: string): string {
+    return path.replace(/\\/g, '/');
   }
 }
 

@@ -178,7 +178,7 @@ describe('Tree Containers', () => {
       });
 
       it('should throw an error if path is not a directory', () => {
-        const path = 'files/test2.txt';
+        const path = join('.', 'files', 'test2.txt');
         assert.throws(
           () => tree.readDirectory(path),
           LibraryError,

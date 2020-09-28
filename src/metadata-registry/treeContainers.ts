@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { VirtualDirectory, TreeContainer } from '../metadata-registry';
-import { join, dirname, basename } from 'path';
+import { join, dirname, basename, normalize } from 'path';
 import { baseName } from '../utils';
 import { parseMetadataXml } from '../utils/registry';
 import { lstatSync, existsSync, readdirSync, promises as fsPromises, createReadStream } from 'fs';
@@ -115,7 +115,7 @@ export class ZipTreeContainer extends BaseTreeContainer {
 
   private populate(directory: unzipper.CentralDirectory): void {
     for (const { path, stream, buffer } of directory.files) {
-      const entry = { path: this.normalizePath(path), stream, buffer };
+      const entry = { path: normalize(path), stream, buffer };
       this.tree.set(path, entry);
       this.ensureDirPathExists(entry);
     }
@@ -131,14 +131,6 @@ export class ZipTreeContainer extends BaseTreeContainer {
     } else {
       (this.tree.get(dirPath) as ZipEntry[]).push(entry);
     }
-  }
-
-  /**
-   * Zip entry paths use forward slashes. Normalize passed in
-   * paths to use them.
-   */
-  private normalizePath(path: string): string {
-    return path.replace(/\\/g, '/');
   }
 }
 

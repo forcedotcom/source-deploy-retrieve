@@ -49,6 +49,9 @@ export const messages = {
   error_updating_metadata_type: "Unexpected error updating '%s'",
   error_parsing_metadata_file: 'Error parsing metadata file',
   error_parsing_xml: 'SourceComponent %s does not have an associated metadata xml to parse',
+  error_expected_file_path: '%s: path is to a directory, expected a file',
+  error_expected_directory_path: '%s: path is to a file, expected a directory',
+  error_no_directory_stream: '%s does not support readable streams on directories',
   error_static_resource_expected_archive_type:
     'A StaticResource directory must have a content type of application/zip or application/jar - found %s for %s',
   tapi_deploy_component_limit_error:

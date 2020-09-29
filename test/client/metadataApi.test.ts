@@ -661,6 +661,8 @@ describe('Metadata Api', () => {
     it('should return failed result without component matches in SourceRetrieveResult format', async () => {
       retrieveStatusStub.resolves(retrieveFailure);
       registryStub.onSecondCall().returns([]);
+      registryStub.onThirdCall().returns([]);
+
       const options = {
         components: [component],
         output: outputDir,

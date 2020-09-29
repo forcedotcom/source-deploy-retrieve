@@ -34,7 +34,7 @@ function createDeployMessage(props: MockDeployMessage): DeployMessage {
 }
 
 describe('DiagnosticUtil', () => {
-  describe('Default', () => {
+  describe('Default Deploy', () => {
     const util = new DiagnosticUtil('metadata');
     const classes = join('path', 'to', 'classes');
     const component = {
@@ -85,7 +85,43 @@ describe('DiagnosticUtil', () => {
     });
   });
 
-  describe('LWC', () => {
+  describe('Retrieve', () => {
+    const util = new DiagnosticUtil('metadata');
+    const classes = join('path', 'to', 'classes');
+    const props = {
+      name: 'Test',
+      type: registryData.types.apexclass,
+      content: join(classes, 'Test.cls'),
+      xml: join(classes, 'Test.cls-meta.xml'),
+    };
+    const component = SourceComponent.createVirtualComponent(props, [
+      {
+        dirPath: classes,
+        children: ['Test.cls', 'Test.cls-meta.xml'],
+      },
+    ]);
+
+    it('should create retrieve diagnostic for problem without any matches', () => {
+      const message = 'There was a problem with the retrieve';
+      const retrieveMessage = { problem: message, fileName: 'testComponent' };
+      expect(util.setRetrieveDiagnostic(retrieveMessage, [component])).to.deep.equal({
+        message,
+        type: 'Error',
+      });
+    });
+
+    it('should create retrieve diagnostic for problem with a component match', () => {
+      const message = `There was a problem with entity 'ApexClass' of name 'Test'`;
+      const retrieveMessage = { problem: message, fileName: 'testComponent' };
+      expect(util.setRetrieveDiagnostic(retrieveMessage, [component])).to.deep.equal({
+        message,
+        type: 'Error',
+        filePath: component.content,
+      });
+    });
+  });
+
+  describe('LWC Deploy', () => {
     const bundlePath = join('path', 'to', 'lwc', 'test');
     const component = {
       name: 'Test',
@@ -162,7 +198,7 @@ describe('DiagnosticUtil', () => {
     });
   });
 
-  describe('Aura', () => {
+  describe('Aura Deploy', () => {
     const bundlePath = join('path', 'to', 'aura', 'test');
     const component = {
       name: 'Test',

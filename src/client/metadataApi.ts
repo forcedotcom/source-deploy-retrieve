@@ -158,7 +158,7 @@ export class MetadataApi extends BaseApi {
       !retrieveResult.hasOwnProperty('messages');
 
     const sourceRetrieveResult: SourceRetrieveResult = {
-      status: retrieveResult.status,
+      status: success ? retrieveResult.status : RetrieveStatus.Failed,
       id: retrieveResult.id,
       components,
       success,

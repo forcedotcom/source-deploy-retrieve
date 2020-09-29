@@ -58,18 +58,30 @@ describe('Metadata Api', () => {
     success: true,
     fileProperties: [],
     done: true,
-    messages: { fileName: '', problem: '' },
     zipFile: 'thisisthezipfile',
   };
-  const failedRetrieveResult: RetrieveResult = {
+  const retrieveFailure: RetrieveResult = {
     id: '12345',
-    status: RetrieveStatus.Failed,
+    status: RetrieveStatus.Succeeded,
     success: false,
     fileProperties: [],
     done: true,
     messages: { fileName: 'testComponent', problem: 'There was an error' },
     zipFile: 'thisisthezipfile',
   };
+  const formattedRetrieveFailure: RetrieveResult = {
+    id: '12345',
+    status: RetrieveStatus.Failed,
+    success: false,
+    fileProperties: [],
+    done: true,
+    messages: {
+      fileName: props.name,
+      problem: `There was an error with entity of type 'ApexClass' named 'myTestClass'`,
+    },
+    zipFile: 'thisisthezipfile',
+  };
+
   const deployResult: DeployResult = {
     id: '12345',
     status: DeployStatus.Succeeded,
@@ -637,12 +649,8 @@ describe('Metadata Api', () => {
         success: true,
         components: [component],
         id: '12345',
-        message: [
-          {
-            fileName: '',
-            problem: '',
-          },
-        ],
+        message: [],
+        diagnostics: [],
         status: RetrieveStatus.Succeeded,
       };
 
@@ -650,17 +658,57 @@ describe('Metadata Api', () => {
       expect(result).to.eql(sourceRetrieveResult);
     });
 
-    it('should return failed result in SourceRetrieveResult format', async () => {
-      retrieveStatusStub.resolves(failedRetrieveResult);
+    it('should return failed result without component matches in SourceRetrieveResult format', async () => {
+      retrieveStatusStub.resolves(retrieveFailure);
+      registryStub.onSecondCall().returns([]);
       const options = {
         components: [component],
         output: outputDir,
       } as RetrieveOptions;
+
       const sourceRetrieveResult: SourceRetrieveResult = {
         success: false,
         components: [] as SourceComponent[],
         id: '12345',
         message: [{ fileName: 'testComponent', problem: 'There was an error' }],
+        diagnostics: [
+          {
+            message: 'There was an error',
+            type: 'Error',
+          },
+        ],
+        status: RetrieveStatus.Failed,
+      };
+
+      const result = await metadataClient.retrieve(options);
+      expect(result).to.eql(sourceRetrieveResult);
+    });
+
+    it('should return failed result with component matches in SourceRetrieveResult format', async () => {
+      retrieveStatusStub.resolves(formattedRetrieveFailure);
+      const options = {
+        components: [component],
+        output: outputDir,
+      } as RetrieveOptions;
+
+      const problem = `There was an error with entity of type 'ApexClass' named 'myTestClass'`;
+      const sourceRetrieveResult: SourceRetrieveResult = {
+        success: false,
+        components: [] as SourceComponent[],
+        id: '12345',
+        message: [
+          {
+            fileName: 'myTestClass',
+            problem,
+          },
+        ],
+        diagnostics: [
+          {
+            filePath: props.content,
+            message: problem,
+            type: 'Error',
+          },
+        ],
         status: RetrieveStatus.Failed,
       };
 

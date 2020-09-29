@@ -20,17 +20,20 @@ export class DiagnosticUtil {
     message: RetrieveMessage,
     components: SourceComponent[]
   ): ComponentDiagnostic {
-    const matches = message.problem.match(/'(.*?)'/g);
-    const filename = matches[matches.length - 1].replace(/['"]+/g, '');
-    const component = components.filter((obj) => {
-      return obj.fullName === filename;
-    })[0];
-
     const diagnostic: ComponentDiagnostic = {
       message: message.problem,
       type: 'Error',
-      ...(component ? { filePath: component.content } : {}),
     };
+
+    const matches = message.problem.match(/'(.*?)'/g);
+    if (matches && Array.isArray(matches)) {
+      const filename = matches[matches.length - 1].replace(/['"]+/g, '');
+      const component = components.filter((obj) => {
+        return obj.fullName === filename;
+      })[0];
+      diagnostic.filePath = component.content;
+    }
+
     return diagnostic;
   }
 

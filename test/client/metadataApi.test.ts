@@ -637,10 +637,12 @@ describe('Metadata Api', () => {
         success: true,
         components: [component],
         id: '12345',
-        message: {
-          fileName: '',
-          problem: '',
-        },
+        message: [
+          {
+            fileName: '',
+            problem: '',
+          },
+        ],
         status: RetrieveStatus.Succeeded,
       };
 
@@ -658,7 +660,7 @@ describe('Metadata Api', () => {
         success: false,
         components: [] as SourceComponent[],
         id: '12345',
-        message: { fileName: 'testComponent', problem: 'There was an error' },
+        message: [{ fileName: 'testComponent', problem: 'There was an error' }],
         status: RetrieveStatus.Failed,
       };
 

@@ -54,7 +54,8 @@ export interface SourceRetrieveResult extends SourceApiResult {
   id?: RecordId;
   components?: SourceComponent[];
   status: RetrieveStatus;
-  message?: RetrieveMessage | string;
+  message?: RetrieveMessage[] | string;
+  diagnostics?: ComponentDiagnostic[];
 }
 
 // ------------------------------------------------
@@ -159,9 +160,9 @@ export type RetrieveResult = {
   done: boolean;
   fileProperties: {}[];
   id: string;
-  messages: RetrieveMessage;
   status: RetrieveStatus;
   success: boolean;
+  messages?: RetrieveMessage[] | RetrieveMessage;
   // this is a base64binary
   zipFile: string;
 };

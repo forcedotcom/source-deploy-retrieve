@@ -72,7 +72,11 @@ export class MetadataApi extends BaseApi {
       components = await this.getConvertedComponents(extractedComponents, options);
     }
 
-    const sourceRetrieveResult = this.buildSourceRetrieveResult(retrieveResult, components);
+    const sourceRetrieveResult = this.buildSourceRetrieveResult(
+      retrieveResult,
+      options,
+      components
+    );
     return sourceRetrieveResult;
   }
 
@@ -145,15 +149,37 @@ export class MetadataApi extends BaseApi {
 
   private buildSourceRetrieveResult(
     retrieveResult: RetrieveResult,
+    options: RetrieveOptions,
     components?: SourceComponent[]
   ): SourceRetrieveResult {
-    const sourceRetrieveResult = {
+    const success =
+      retrieveResult.status === RetrieveStatus.Succeeded &&
+      options.components.length === components.length &&
+      !retrieveResult.hasOwnProperty('messages');
+
+    const sourceRetrieveResult: SourceRetrieveResult = {
       status: retrieveResult.status,
       id: retrieveResult.id,
-      message: retrieveResult.messages,
-      success: retrieveResult.status === RetrieveStatus.Succeeded ? true : false,
       components,
-    } as SourceRetrieveResult;
+      success,
+    };
+
+    sourceRetrieveResult.diagnostics = [];
+    sourceRetrieveResult.message = [];
+    if (retrieveResult.hasOwnProperty('messages')) {
+      const diagnosticUtil = new DiagnosticUtil('metadata');
+      sourceRetrieveResult.message = Array.isArray(retrieveResult.messages)
+        ? retrieveResult.messages
+        : [retrieveResult.messages];
+      for (const retrieveMessage of sourceRetrieveResult.message) {
+        const diagnostic = diagnosticUtil.setRetrieveDiagnostic(
+          retrieveMessage,
+          options.components
+        );
+        sourceRetrieveResult.diagnostics.push(diagnostic);
+      }
+    }
+
     return sourceRetrieveResult;
   }
 
@@ -323,7 +349,7 @@ export class MetadataApi extends BaseApi {
           }
 
           if (message.problem) {
-            diagnosticUtil.setDiagnostic(componentDeployment, message);
+            diagnosticUtil.setDeployDiagnostic(componentDeployment, message);
           }
         }
       }

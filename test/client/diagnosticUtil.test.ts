@@ -56,7 +56,7 @@ describe('DiagnosticUtil', () => {
         problem: 'This might be a problem later!',
         problemType: 'Warning',
       });
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: 'This might be a problem later!',
           type: 'Warning',
@@ -73,7 +73,7 @@ describe('DiagnosticUtil', () => {
         lineNumber: '4',
         columnNumber: '2',
       });
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: 'Expected a ;',
           type: 'Error',
@@ -104,7 +104,7 @@ describe('DiagnosticUtil', () => {
       const util = new DiagnosticUtil('tooling');
       const deployment = createDeployment(component, tree);
       const message = 'There was a problem with the component';
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message,
           type: 'Error',
@@ -116,7 +116,7 @@ describe('DiagnosticUtil', () => {
       const util = new DiagnosticUtil('tooling');
       const deployment = createDeployment(component, tree);
       const message = 'Compilation Failure\n\ttest.html:3,12 : LWC1075: Multiple roots found';
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: 'LWC1075: Multiple roots found',
           type: 'Error',
@@ -134,7 +134,7 @@ describe('DiagnosticUtil', () => {
         problem: 'There was a problem deploying',
         problemType: 'Error',
       });
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: message.problem,
           type: message.problemType,
@@ -150,7 +150,7 @@ describe('DiagnosticUtil', () => {
         problemType: 'Error',
         fileName: join('test', 'test.html'),
       });
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: 'LWC1075: Multiple roots found',
           type: 'Error',
@@ -184,7 +184,7 @@ describe('DiagnosticUtil', () => {
         problem: 'There was a problem deploying',
         problemType: 'Error',
       });
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: message.problem,
           type: message.problemType,
@@ -200,7 +200,7 @@ describe('DiagnosticUtil', () => {
         problemType: 'Error',
         fileName: join('test', 'testHelper.js'),
       });
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: message.problem,
           type: 'Error',
@@ -215,7 +215,7 @@ describe('DiagnosticUtil', () => {
       const util = new DiagnosticUtil('tooling');
       const deployment = createDeployment(component, tree);
       const message = 'There was a problem deploying';
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message,
           type: 'Error',
@@ -232,7 +232,7 @@ describe('DiagnosticUtil', () => {
         problemType: 'Error',
         fileName: join('test', 'testHelper.js'),
       });
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: message.problem,
           type: 'Error',

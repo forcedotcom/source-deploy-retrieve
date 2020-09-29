@@ -15,6 +15,7 @@ import { MetadataType, SourcePath, MetadataComponent } from '../common';
 import { JsonMap } from '@salesforce/ts-types';
 import { readFileSync } from 'fs';
 import { LibraryError } from '../errors';
+import { SfdxFileFormat } from '../convert';
 
 export type ComponentProperties = {
   name: string;
@@ -85,18 +86,25 @@ export class SourceComponent implements MetadataComponent {
     throw new LibraryError('error_parsing_xml', this.name);
   }
 
-  public getPackageRelativePath(fsPath: SourcePath): SourcePath {
+  public getPackageRelativePath(fsPath: SourcePath, format: SfdxFileFormat): SourcePath {
     const { directoryName, suffix, inFolder } = this.type;
     // if there isn't a suffix, assume this is a mixed content component that must
     // reside in the directoryName of its type. trimUntil maintains the folder structure
     // the file resides in for the new destination.
+    let relativePath: SourcePath;
     if (!suffix) {
-      return this.trimUntil(fsPath, directoryName);
+      relativePath = this.trimUntil(fsPath, directoryName);
     } else if (inFolder) {
       const folderName = this.fullName.split('/')[0];
-      return join(directoryName, folderName, basename(fsPath));
+      relativePath = join(directoryName, folderName, basename(fsPath));
+    } else {
+      relativePath = join(directoryName, basename(fsPath));
     }
-    return join(directoryName, basename(fsPath));
+
+    if (format === 'source') {
+      return join('main', 'default', relativePath);
+    }
+    return relativePath;
   }
 
   private getChildrenInternal(dirPath: SourcePath): SourceComponent[] {

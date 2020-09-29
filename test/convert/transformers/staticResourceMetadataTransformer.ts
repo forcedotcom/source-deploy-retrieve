@@ -25,6 +25,7 @@ import { mockRegistry } from '../../mock/registry';
 const env = createSandbox();
 
 describe('StaticResourceMetadataTransformer', () => {
+  const rootPackagePath = join('main', 'default');
   beforeEach(() =>
     // @ts-ignore mock readable isn't an fs readable specifically
     env.stub(fs, 'createReadStream').callsFake((fsPath: string) => new TestReadable(fsPath))
@@ -119,11 +120,15 @@ describe('StaticResourceMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           source: fs.createReadStream(content),
-          relativeDestination: join(type.directoryName, `${baseName(content)}.png`),
+          relativeDestination: join(
+            rootPackagePath,
+            type.directoryName,
+            `${baseName(content)}.png`
+          ),
         },
         {
           source: fs.createReadStream(xml),
-          relativeDestination: join(type.directoryName, basename(xml)),
+          relativeDestination: join(rootPackagePath, type.directoryName, basename(xml)),
         },
       ];
 
@@ -146,11 +151,11 @@ describe('StaticResourceMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           source: fs.createReadStream(content),
-          relativeDestination: join(type.directoryName, `${baseName(content)}.js`),
+          relativeDestination: join(rootPackagePath, type.directoryName, `${baseName(content)}.js`),
         },
         {
           source: fs.createReadStream(xml),
-          relativeDestination: join(type.directoryName, basename(xml)),
+          relativeDestination: join(rootPackagePath, type.directoryName, basename(xml)),
         },
       ];
 
@@ -173,11 +178,15 @@ describe('StaticResourceMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           source: fs.createReadStream(content),
-          relativeDestination: join(type.directoryName, `${baseName(content)}.bin`),
+          relativeDestination: join(
+            rootPackagePath,
+            type.directoryName,
+            `${baseName(content)}.bin`
+          ),
         },
         {
           source: fs.createReadStream(xml),
-          relativeDestination: join(type.directoryName, basename(xml)),
+          relativeDestination: join(rootPackagePath, type.directoryName, basename(xml)),
         },
       ];
 
@@ -230,13 +239,13 @@ describe('StaticResourceMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           source: fs.createReadStream(xml),
-          relativeDestination: join(type.directoryName, basename(xml)),
+          relativeDestination: join(rootPackagePath, type.directoryName, basename(xml)),
         },
       ];
       const extraInfo: WriteInfo[] = [
         {
           source: null,
-          relativeDestination: join(type.directoryName, 'a', 'b', 'c.css'),
+          relativeDestination: join(rootPackagePath, type.directoryName, 'a', 'b', 'c.css'),
         },
       ];
 
@@ -260,11 +269,15 @@ describe('StaticResourceMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           source: fs.createReadStream(content),
-          relativeDestination: join(type.directoryName, `${baseName(content)}.bin`),
+          relativeDestination: join(
+            rootPackagePath,
+            type.directoryName,
+            `${baseName(content)}.bin`
+          ),
         },
         {
           source: fs.createReadStream(xml),
-          relativeDestination: join(type.directoryName, basename(xml)),
+          relativeDestination: join(rootPackagePath, type.directoryName, basename(xml)),
         },
       ];
 

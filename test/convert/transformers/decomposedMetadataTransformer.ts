@@ -106,7 +106,7 @@ describe('DecomposedMetadataTransformer', () => {
       const component = DECOMPOSED_TOP_LEVEL_COMPONENT;
       const { fullName, type } = component;
       const transformer = new DecomposedMetadataTransformer(mockRegistry);
-      const root = join(type.directoryName, fullName);
+      const root = join('main', 'default', type.directoryName, fullName);
       env.stub(component, 'parseXml').returns({
         DecomposedTopLevel: {
           [XML_NS_KEY]: XML_NS,
@@ -161,7 +161,7 @@ describe('DecomposedMetadataTransformer', () => {
     it('should decompose children into respective directories and files for "folderPerType" config', () => {
       const { type, fullName } = component;
       const transformer = new DecomposedMetadataTransformer(mockRegistry);
-      const root = join(type.directoryName, fullName);
+      const root = join('main', 'default', type.directoryName, fullName);
       env.stub(component, 'parseXml').returns({
         ReginaKing: {
           [XML_NS_KEY]: XML_NS,

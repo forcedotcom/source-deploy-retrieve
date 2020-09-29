@@ -46,18 +46,22 @@ export class MetadataConverter {
       const manifestContents = manifestGenerator.createManifest(components);
       const packagePath = this.getPackagePath(output);
       const tasks = [];
-
+      const isSource = targetFormat === 'source';
       // initialize writer and create manifest
       let writer: Writable;
       switch (output.type) {
         case 'directory':
           writer = new StandardWriter(packagePath);
-          const manifestPath = join(packagePath, PACKAGE_XML_FILE);
-          tasks.push(promises.writeFile(manifestPath, manifestContents));
+          if (!isSource) {
+            const manifestPath = join(packagePath, PACKAGE_XML_FILE);
+            tasks.push(promises.writeFile(manifestPath, manifestContents));
+          }
           break;
         case 'zip':
           writer = new ZipWriter(packagePath);
-          (writer as ZipWriter).addToZip(manifestContents, PACKAGE_XML_FILE);
+          if (!isSource) {
+            (writer as ZipWriter).addToZip(manifestContents, PACKAGE_XML_FILE);
+          }
           break;
       }
 
@@ -81,11 +85,12 @@ export class MetadataConverter {
 
   private getPackagePath(outputConfig: ConvertOutputConfig): SourcePath | undefined {
     let packagePath: SourcePath;
-    const { outputDirectory, packageName } = outputConfig;
+    const { outputDirectory, packageName, type } = outputConfig;
     if (outputDirectory) {
       const name = packageName || `${DEFAULT_PACKAGE_PREFIX}_${Date.now()}`;
       packagePath = join(outputDirectory, name);
-      if (outputConfig.type === 'zip') {
+
+      if (type === 'zip') {
         packagePath += '.zip';
         ensureDirectoryExists(dirname(packagePath));
       } else {

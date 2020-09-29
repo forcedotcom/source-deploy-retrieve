@@ -60,6 +60,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const writeInfos: WriteInfo[] = [];
 
     const { type, fullName: parentFullName } = component;
+    const rootPackagePath = component.getPackageRelativePath(parentFullName, 'source');
     const composedMetadata = component.parseXml()[type.name];
     const rootXmlObject: XmlJson = { [type.name]: {} };
 
@@ -71,8 +72,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
         const tagCollection = Array.isArray(collection) ? collection : [collection];
 
         for (const entry of tagCollection) {
-          let relativeDestination = join(type.directoryName, parentFullName);
-
+          let relativeDestination = rootPackagePath;
           const strategy = this.registry.strategies[type.id].decomposition as DecompositionStrategy;
           if (strategy === DecompositionStrategy.FolderPerType) {
             relativeDestination = join(relativeDestination, childType.directoryName);
@@ -99,8 +99,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     writeInfos.push({
       source: new JsToXml(rootXmlObject),
       relativeDestination: join(
-        type.directoryName,
-        parentFullName,
+        rootPackagePath,
         `${parentFullName}.${type.suffix}${META_XML_SUFFIX}`
       ),
     });

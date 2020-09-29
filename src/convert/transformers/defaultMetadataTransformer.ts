@@ -32,13 +32,13 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
       for (const source of component.walkContent()) {
         result.writeInfos.push({
           source: createReadStream(source),
-          relativeDestination: component.getPackageRelativePath(source),
+          relativeDestination: component.getPackageRelativePath(source, toFormat),
         });
       }
     }
 
     if (component.xml) {
-      let xmlDest = component.getPackageRelativePath(component.xml);
+      let xmlDest = component.getPackageRelativePath(component.xml, toFormat);
       if (!component.content) {
         xmlDest =
           toFormat === 'metadata'

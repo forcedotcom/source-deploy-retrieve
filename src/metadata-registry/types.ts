@@ -7,6 +7,7 @@
 
 import { MetadataType, SourcePath } from '../common/types';
 import { SourceComponent } from '.';
+import { Readable } from 'stream';
 
 /**
  * Metadata type definitions
@@ -105,4 +106,5 @@ export interface TreeContainer {
   readDirectory(path: SourcePath): string[];
   find(fileType: 'content' | 'metadata', fullName: string, dir: SourcePath): SourcePath | undefined;
   readFile(fsPath: SourcePath): Promise<Buffer>;
+  stream(fsPath: SourcePath): Readable;
 }

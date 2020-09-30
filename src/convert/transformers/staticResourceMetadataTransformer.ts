@@ -111,6 +111,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     destDir: string,
     format: WriterFormat
   ): void {
+    // TODO: with async transformer methods, this workaround may not be necessary anymore.
     format.getExtraInfos = async (): Promise<WriteInfo[]> => {
       const writeInfos: WriteInfo[] = [];
       const directory = await Open.file(zipPath);

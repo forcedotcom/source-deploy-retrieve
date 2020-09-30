@@ -6,10 +6,10 @@ const { RegistryAccess, MetadataConverter, SourceClient } = require('../lib/src'
 
 const startMessage = `
 Usage:
-  registryAccess: RegistryAccess instance
-  converter: MetadataConverter instance
   resolve(path): resolve components from a path
+  async convert(components, format, outputConfig): Convert metadata components to a target format
   async client(username): create a SourceClient
+  time(func, mem = true): run function and report execution time and approx. heap usage
 `
 console.log(startMessage);
 
@@ -23,9 +23,9 @@ const context = {
     const registryAccess = new RegistryAccess();
     return registryAccess.getComponentsFromPath(path);
   },
-  convert: async (components, format, outputConfig) => {
+  convert: async (components, targetFormat, outputConfig) => {
     converter = new MetadataConverter();
-    return converter.convert(components, format, outputConfig);
+    return converter.convert(components, targetFormat, outputConfig);
   },
   client: async (username) => {
     return new SourceClient(await Connection.create({
@@ -34,7 +34,6 @@ const context = {
   },
   time: async (func, mem = true) => {
     const logName = func.name || 'func';
-    console.log('\n')
     console.time(logName)
     const result = await func()
     console.timeEnd(logName)
@@ -44,12 +43,6 @@ const context = {
       console.log(`Approx. heap usage: ${MB} MB`);
     }
     return result;
-  },
-  doit: async (path) => {
-    context.time(async () => {
-      const c = context.resolve(path);
-      await context.convert(c, 'metadata', { type: 'directory', outputDirectory: '/Users/b.powell/Desktop' })
-    })
   }
 }
 

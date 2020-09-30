@@ -13,7 +13,7 @@ import {
 import { expect, assert } from 'chai';
 import { createSandbox } from 'sinon';
 import * as fs from 'fs';
-import { join } from 'path';
+import { join, normalize } from 'path';
 import { LibraryError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { VirtualDirectory } from '../../src';
@@ -221,7 +221,7 @@ describe('Tree Containers', () => {
       it('should return a readable stream', async () => {
         const path = join(filesRoot, 'test.txt');
         const zipDir = await unzipper.Open.buffer(zipBuffer);
-        const expectedStream = zipDir.files.find((f) => f.path === path)?.stream();
+        const expectedStream = zipDir.files.find((f) => normalize(f.path) === path)?.stream();
         const actual = tree.stream(path);
         expect(actual instanceof Readable).to.be.true;
         expect((actual as unzipper.Entry).path).to.equal(expectedStream.path);

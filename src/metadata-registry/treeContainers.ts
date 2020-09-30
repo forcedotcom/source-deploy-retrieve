@@ -8,7 +8,7 @@ import { VirtualDirectory, TreeContainer } from '../metadata-registry';
 import { join, dirname, basename, normalize } from 'path';
 import { baseName } from '../utils';
 import { parseMetadataXml } from '../utils/registry';
-import { lstatSync, existsSync, readdirSync, promises as fsPromises, createReadStream } from 'fs';
+import { lstatSync, existsSync, readdirSync, createReadStream, readFileSync } from 'fs';
 import { LibraryError } from '../errors';
 import { SourcePath } from '../common';
 import * as unzipper from 'unzipper';
@@ -54,7 +54,8 @@ export class NodeFSTreeContainer extends BaseTreeContainer {
   }
 
   public readFile(fsPath: SourcePath): Promise<Buffer> {
-    return fsPromises.readFile(fsPath);
+    // significant performance increase using sync instead of fs.promise version
+    return Promise.resolve(readFileSync(fsPath));
   }
 
   public stream(fsPath: SourcePath): Readable {

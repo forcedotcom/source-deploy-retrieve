@@ -114,11 +114,13 @@ export class ZipTreeContainer extends BaseTreeContainer {
   }
 
   private populate(directory: unzipper.CentralDirectory): void {
-    for (const { path, stream, buffer } of directory.files) {
-      // normalize path to use OS separator since zip entries always use forward slash
-      const entry = { path: normalize(path), stream, buffer };
-      this.tree.set(entry.path, entry);
-      this.ensureDirPathExists(entry);
+    for (const { path, type, stream, buffer } of directory.files) {
+      if (type === 'File') {
+        // normalize path to use OS separator since zip entries always use forward slash
+        const entry = { path: normalize(path), stream, buffer };
+        this.tree.set(path, entry);
+        this.ensureDirPathExists(entry);
+      }
     }
   }
 

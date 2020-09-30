@@ -110,6 +110,8 @@ describe('Tree Containers', () => {
     let tree: ZipTreeContainer;
     let zipBuffer: Buffer;
 
+    const filesRoot = join('.', 'main', 'default');
+
     before(async () => {
       const pipeline = promisify(cbPipeline);
       const archive = createArchive('zip', { zlib: { level: 3 } });
@@ -120,9 +122,13 @@ describe('Tree Containers', () => {
         cb();
       };
       pipeline(archive, bufferWritable);
-      archive.append('test text', { name: 'test.txt' });
-      archive.append('test text 2', { name: 'files/test2.txt' });
-      archive.append('test text 3', { name: 'files/test3.txt' });
+
+      archive.append(null, { name: 'main/' });
+      archive.append(null, { name: 'main/default/' });
+      archive.append('test text', { name: 'main/default/test.txt' });
+      archive.append('test text 2', { name: 'main/default/test2.txt' });
+      archive.append('test text 3', { name: 'main/default/morefiles/test3.txt' });
+
       await archive.finalize();
 
       zipBuffer = Buffer.concat(buffers);
@@ -131,35 +137,34 @@ describe('Tree Containers', () => {
 
     describe('exists', () => {
       it('should return true for file that exists', () => {
-        const path = join('.', 'test.txt');
+        const path = join(filesRoot, 'test.txt');
         expect(tree.exists(path)).to.be.true;
       });
 
       it('should return true for directory that exists', () => {
-        const path = join('.', 'files');
+        const path = join(filesRoot, 'morefiles');
         expect(tree.exists(path)).to.be.true;
       });
 
       it('should return false for file that does not exist', () => {
-        const path = join('.', 'files', 'test4.txt');
+        const path = join(filesRoot, 'test4.txt');
         expect(tree.exists(path)).to.be.false;
       });
 
       it('should return false for directory that does not exist', () => {
-        const path = join('.', 'otherfiles');
+        const path = join('.', 'dne');
         expect(tree.exists(path)).to.be.false;
       });
     });
 
     describe('isDirectory', () => {
       it('should return false for isDirectory', () => {
-        const path = join('.', 'test.txt');
+        const path = join(filesRoot, 'test.txt');
         expect(tree.isDirectory(path)).to.be.false;
       });
 
       it('should return true for isDirectory', () => {
-        const path = join('.', 'files');
-        expect(tree.isDirectory(path)).to.be.true;
+        expect(tree.isDirectory(filesRoot)).to.be.true;
       });
 
       it('should throw an error if path does not exist', () => {
@@ -173,12 +178,24 @@ describe('Tree Containers', () => {
     });
 
     describe('readDirectory', () => {
-      it('should return directory entries for readDirectory', () => {
-        expect(tree.readDirectory('.')).to.deep.equal(['test.txt', 'files']);
+      it('should return correct directory entries for directory with files and directories', () => {
+        expect(tree.readDirectory('main/default')).to.deep.equal([
+          'test.txt',
+          'test2.txt',
+          'morefiles',
+        ]);
+      });
+
+      it('should return correct directory entries for directory only files', () => {
+        expect(tree.readDirectory('main/default/morefiles')).to.deep.equal(['test3.txt']);
+      });
+
+      it('should return correct directory entries for directory with only directories', () => {
+        expect(tree.readDirectory('.')).to.deep.equal(['main']);
       });
 
       it('should throw an error if path is not a directory', () => {
-        const path = join('.', 'files', 'test2.txt');
+        const path = join(filesRoot, 'test2.txt');
         assert.throws(
           () => tree.readDirectory(path),
           LibraryError,
@@ -189,24 +206,23 @@ describe('Tree Containers', () => {
 
     describe('readFile', () => {
       it('should read contents of zip entry into buffer', async () => {
-        const path = join('.', 'test.txt');
+        const path = join(filesRoot, 'test.txt');
         const contents = (await tree.readFile(path)).toString();
         expect(contents).to.equal('test text');
       });
 
       it('should throw an error if path is to directory', () => {
-        const path = join('.', 'files');
         assert.throws(
-          () => tree.readFile(path),
+          () => tree.readFile(filesRoot),
           LibraryError,
-          nls.localize('error_expected_file_path', path)
+          nls.localize('error_expected_file_path', filesRoot)
         );
       });
     });
 
     describe('stream', () => {
       it('should return a readable stream', async () => {
-        const path = join('.', 'test.txt');
+        const path = join(filesRoot, 'test.txt');
         const zipDir = await unzipper.Open.buffer(zipBuffer);
         const expectedStream = zipDir.files.find((f) => f.path === path)?.stream();
         const actual = tree.stream(path);
@@ -215,9 +231,8 @@ describe('Tree Containers', () => {
       });
 
       it('should throw an error if given path is to a directory', () => {
-        const path = join('.', 'files');
         assert.throws(
-          () => tree.stream(path),
+          () => tree.stream(filesRoot),
           LibraryError,
           nls.localize('error_no_directory_stream', tree.constructor.name)
         );

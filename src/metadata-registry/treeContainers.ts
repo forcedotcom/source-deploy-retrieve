@@ -118,7 +118,7 @@ export class ZipTreeContainer extends BaseTreeContainer {
       if (type === 'File') {
         // normalize path to use OS separator since zip entries always use forward slash
         const entry = { path: normalize(path), stream, buffer };
-        this.tree.set(path, entry);
+        this.tree.set(entry.path, entry);
         this.ensureDirPathExists(entry);
       }
     }

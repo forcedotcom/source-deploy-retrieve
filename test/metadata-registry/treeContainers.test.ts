@@ -179,15 +179,12 @@ describe('Tree Containers', () => {
 
     describe('readDirectory', () => {
       it('should return correct directory entries for directory with files and directories', () => {
-        expect(tree.readDirectory('main/default')).to.deep.equal([
-          'test.txt',
-          'test2.txt',
-          'morefiles',
-        ]);
+        expect(tree.readDirectory(filesRoot)).to.deep.equal(['test.txt', 'test2.txt', 'morefiles']);
       });
 
       it('should return correct directory entries for directory only files', () => {
-        expect(tree.readDirectory('main/default/morefiles')).to.deep.equal(['test3.txt']);
+        const path = join(filesRoot, 'morefiles');
+        expect(tree.readDirectory(path)).to.deep.equal(['test3.txt']);
       });
 
       it('should return correct directory entries for directory with only directories', () => {

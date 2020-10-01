@@ -5,7 +5,7 @@ const shell = require('shelljs');
 const PR_REGEX = new RegExp(/(\(#\d+\))(\s+\(#\d+\))*$/);
 const COMMIT_REGEX = new RegExp(/^([\da-zA-Z]+)/);
 const TYPE_REGEX = new RegExp(/([a-zA-Z]+)(?:\([a-zA-Z]+\))?:/);
-const RELEASE_REGEX = new RegExp(/^origin\/release\/v\d{1,2}\.\d{1,2}\.\d/);
+const RELEASE_REGEX = new RegExp(/^\d{1,2}\.\d{1,2}\.\d/);
 
 const PR_NUM = 'PR_NUM';
 const COMMIT = 'COMMIT';

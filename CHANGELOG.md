@@ -1,3 +1,15 @@
+# 1.1.5 - September 30, 2020
+
+## Added 
+
+- Add ZipTreeContainer and stream() to TreeContainer interface ([PR #154](https://github.com/forcedotcom/source-deploy-retrieve/pull/154))
+
+## Fixed
+
+- Fix ZipTreeContainer adding duplicate entries ([PR #158](https://github.com/forcedotcom/source-deploy-retrieve/pull/158))
+
+- Fix output package path during source conversion ([PR #153](https://github.com/forcedotcom/source-deploy-retrieve/pull/153))
+
 # 1.1.4 - September 23, 2020
 
 ## Added

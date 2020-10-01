@@ -121,7 +121,7 @@ function getPortBranch() {
         );
         process.exit(-1);
     }
-    shell.exec(util.format(`git checkout -b portPR-v${process.argv[releaseIndex + 1]} main`));
+    shell.exec(`git checkout -b portPR-v${process.argv[releaseIndex + 1]} main`);
 }
 
 function getCherryPickCommits(diffList) {

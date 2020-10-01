@@ -3,7 +3,7 @@
 const shell = require('shelljs');
 
 // const PR_REGEX = new RegExp(/(\(#\d+\))/);   // works as expected, but doesn't grab all instances.
-const PORT_PR_REGEX = new RegExp(/(?:\(#\d+\))\s+(\(#\d+\))$/);  // Grab the second occurance of the PR in the event of a port PR
+const PR_REGEX = new RegExp(/(\(#\d+\))(\s+\(#\d+\))*$/);
 const COMMIT_REGEX = new RegExp(/^([\da-zA-Z]+)/);
 const TYPE_REGEX = new RegExp(/([a-zA-Z]+)(?:\([a-zA-Z]+\))?:/);
 
@@ -13,7 +13,7 @@ const MESSAGE = 'MESSAGE';
 
 function getAllDiffs(baseBranch, featureBranch) {
     if (ADD_VERBOSE_LOGGING)
-        console.log(`Step 1: Get all diffs between branches ${baseBranch} and ${featureBranch}`);
+        console.log(`\n\nStep 1: Get all diffs between branches ${baseBranch} and ${featureBranch}`);
     return shell
         .exec(`git log --oneline ${baseBranch}..${featureBranch}`, {
             silent: !ADD_VERBOSE_LOGGING
@@ -25,7 +25,7 @@ function getAllDiffs(baseBranch, featureBranch) {
 
 function parseCommits(commits) {
     if (ADD_VERBOSE_LOGGING) {
-        console.log('\nStep 2: Parse commits');
+        console.log('\n\nStep 2: Parse commits');
         console.log('Commit Parsing Results...');
     }
     var commitMaps = [];
@@ -44,9 +44,9 @@ function buildMapFromCommit(commit) {
         var commitNum = COMMIT_REGEX.exec(commit);
         if (commitNum) {
             var message = commit.replace(commitNum[0], '');
-            var portPR = PORT_PR_REGEX.exec(commit);
-            if (portPR) {
-                message = message.replace(portPR[1], '');
+            var pr = PR_REGEX.exec(commit);
+            if (pr) {
+                message = message.replace(pr[0], '');
             }
             var type = TYPE_REGEX.exec(message);
             if (type) {

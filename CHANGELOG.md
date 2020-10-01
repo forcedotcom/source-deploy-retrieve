@@ -1,6 +1,6 @@
-# 1.1.5 - September 30, 2020
+# 1.1.5 - October 1, 2020
 
-## Added 
+## Added
 
 - Add ZipTreeContainer and stream() to TreeContainer interface ([PR #154](https://github.com/forcedotcom/source-deploy-retrieve/pull/154))
 

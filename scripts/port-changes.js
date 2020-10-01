@@ -15,6 +15,8 @@ const MESSAGE = 'MESSAGE';
 function getAllDiffs(baseBranch, featureBranch) {
     if (ADD_VERBOSE_LOGGING)
         console.log(`\n\nStep 1: Get all diffs between branches ${baseBranch} and ${featureBranch}`);
+    shell.exec(`git fetch upstream main:main`, { silent: !ADD_VERBOSE_LOGGING });
+    shell.exec(`git fetch upstream develop:develop`, { silent: !ADD_VERBOSE_LOGGING });
     return shell
         .exec(`git log --oneline ${baseBranch}..${featureBranch}`, {
             silent: !ADD_VERBOSE_LOGGING

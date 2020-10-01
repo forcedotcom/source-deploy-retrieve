@@ -9,7 +9,12 @@ import { ComponentProperties, SourceComponent } from '../../src/metadata-registr
 import { registryData, VirtualTreeContainer } from '../../src/metadata-registry';
 import { join } from 'path';
 import { expect } from 'chai';
-import { ComponentDeployment, ComponentStatus, DeployMessage } from '../../src/client/types';
+import {
+  ComponentDeployment,
+  ComponentStatus,
+  DeployMessage,
+  RetrieveStatus,
+} from '../../src/client/types';
 import { TreeContainer } from '../../src';
 
 function createDeployment(props: ComponentProperties, tree?: TreeContainer): ComponentDeployment {
@@ -101,22 +106,19 @@ describe('DiagnosticUtil', () => {
       },
     ]);
 
-    it('should create retrieve diagnostic for problem without any matches', () => {
+    it('should create retrieve diagnostic for componentRetrieval', () => {
       const message = 'There was a problem with the retrieve';
-      const retrieveMessage = { problem: message, fileName: 'testComponent' };
-      expect(util.setRetrieveDiagnostic(retrieveMessage, [component])).to.deep.equal({
-        message,
-        type: 'Error',
-      });
-    });
-
-    it('should create retrieve diagnostic for problem with a component match', () => {
-      const message = `There was a problem with entity 'ApexClass' of name 'Test'`;
-      const retrieveMessage = { problem: message, fileName: 'testComponent' };
-      expect(util.setRetrieveDiagnostic(retrieveMessage, [component])).to.deep.equal({
-        message,
-        type: 'Error',
-        filePath: component.content,
+      // const retrieveMessage = { problem: message, fileName: 'testComponent' };
+      expect(
+        util.setRetrieveDiagnostic(message, { component, status: RetrieveStatus.Failed })
+      ).to.deep.equal({
+        diagnostics: {
+          message,
+          type: 'Error',
+          filePath: component.content,
+        },
+        component,
+        status: RetrieveStatus.Failed,
       });
     });
   });

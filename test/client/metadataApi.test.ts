@@ -27,6 +27,7 @@ import {
   RetrieveResult,
   RetrieveStatus,
   SourceRetrieveResult,
+  ComponentDiagnostic,
 } from '../../src/client/types';
 import * as stream from 'stream';
 import * as unzipper from 'unzipper';
@@ -647,10 +648,9 @@ describe('Metadata Api', () => {
       } as RetrieveOptions;
       const sourceRetrieveResult: SourceRetrieveResult = {
         success: true,
-        components: [component],
+        components: [{ component, status: RetrieveStatus.Succeeded }],
         id: '12345',
-        message: [],
-        diagnostics: [],
+        messages: [],
         status: RetrieveStatus.Succeeded,
       };
 
@@ -670,15 +670,9 @@ describe('Metadata Api', () => {
 
       const sourceRetrieveResult: SourceRetrieveResult = {
         success: false,
-        components: [] as SourceComponent[],
+        components: [],
         id: '12345',
-        message: [{ fileName: 'testComponent', problem: 'There was an error' }],
-        diagnostics: [
-          {
-            message: 'There was an error',
-            type: 'Error',
-          },
-        ],
+        messages: [{ fileName: 'testComponent', problem: 'There was an error' }],
         status: RetrieveStatus.Failed,
       };
 
@@ -694,23 +688,17 @@ describe('Metadata Api', () => {
       } as RetrieveOptions;
 
       const problem = `There was an error with entity of type 'ApexClass' named 'myTestClass'`;
+      const diagnostics: ComponentDiagnostic = {
+        filePath: props.content,
+        message: problem,
+        type: 'Error',
+      };
+
       const sourceRetrieveResult: SourceRetrieveResult = {
         success: false,
-        components: [] as SourceComponent[],
+        components: [{ component, status: RetrieveStatus.Failed, diagnostics }],
         id: '12345',
-        message: [
-          {
-            fileName: 'myTestClass',
-            problem,
-          },
-        ],
-        diagnostics: [
-          {
-            filePath: props.content,
-            message: problem,
-            type: 'Error',
-          },
-        ],
+        messages: [],
         status: RetrieveStatus.Failed,
       };
 

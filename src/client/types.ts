@@ -21,6 +21,12 @@ export type ComponentDeployment = {
   diagnostics: ComponentDiagnostic[];
 };
 
+export type ComponentRetrieval = {
+  component: SourceComponent;
+  status?: RetrieveStatus;
+  diagnostics?: ComponentDiagnostic;
+};
+
 export type ComponentDiagnostic = {
   lineNumber?: number;
   columnNumber?: number;
@@ -52,10 +58,9 @@ export interface SourceDeployResult extends SourceApiResult {
 
 export interface SourceRetrieveResult extends SourceApiResult {
   id?: RecordId;
-  components?: SourceComponent[];
+  components?: ComponentRetrieval[];
   status: RetrieveStatus;
-  message?: RetrieveMessage[] | string;
-  diagnostics?: ComponentDiagnostic[];
+  messages?: RetrieveMessage[] | string;
 }
 
 // ------------------------------------------------

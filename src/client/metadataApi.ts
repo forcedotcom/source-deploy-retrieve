@@ -20,6 +20,7 @@ import {
   RetrieveResult,
   RetrieveStatus,
   SourceRetrieveResult,
+  ComponentRetrieval,
 } from './types';
 import { MetadataConverter } from '../convert';
 import { DeployError, RetrieveError } from '../errors';
@@ -72,10 +73,13 @@ export class MetadataApi extends BaseApi {
       components = await this.getConvertedComponents(extractedComponents, options);
     }
 
+    const componentRetrievals = components.map((component) => {
+      return { component, status: retrieveResult.status } as ComponentRetrieval;
+    });
     const sourceRetrieveResult = this.buildSourceRetrieveResult(
       retrieveResult,
       options,
-      components
+      componentRetrievals
     );
     return sourceRetrieveResult;
   }
@@ -150,37 +154,69 @@ export class MetadataApi extends BaseApi {
   private buildSourceRetrieveResult(
     retrieveResult: RetrieveResult,
     options: RetrieveOptions,
-    components?: SourceComponent[]
+    components?: ComponentRetrieval[]
   ): SourceRetrieveResult {
-    const success =
-      retrieveResult.status === RetrieveStatus.Succeeded &&
-      options.components.length === components.length &&
-      !retrieveResult.hasOwnProperty('messages');
+    const success = this.calculateSuccess(retrieveResult, options, components);
 
     const sourceRetrieveResult: SourceRetrieveResult = {
-      status: success ? retrieveResult.status : RetrieveStatus.Failed,
+      status: success ? RetrieveStatus.Succeeded : RetrieveStatus.Failed,
       id: retrieveResult.id,
-      components,
       success,
     };
 
-    sourceRetrieveResult.diagnostics = [];
-    sourceRetrieveResult.message = [];
+    sourceRetrieveResult.components = components || [];
+    sourceRetrieveResult.messages = [];
     if (retrieveResult.hasOwnProperty('messages')) {
       const diagnosticUtil = new DiagnosticUtil('metadata');
-      sourceRetrieveResult.message = Array.isArray(retrieveResult.messages)
+      const messages = Array.isArray(retrieveResult.messages)
         ? retrieveResult.messages
         : [retrieveResult.messages];
-      for (const retrieveMessage of sourceRetrieveResult.message) {
-        const diagnostic = diagnosticUtil.setRetrieveDiagnostic(
-          retrieveMessage,
-          options.components
-        );
-        sourceRetrieveResult.diagnostics.push(diagnostic);
+
+      for (const retrieveMessage of messages) {
+        let existingRetrieval: ComponentRetrieval;
+        let failedComponent: SourceComponent;
+        const matches = retrieveMessage.problem.match(/.+'(.+)'.+'(.+)'/);
+        if (matches && Array.isArray(matches)) {
+          const [fullName] = matches.slice(2);
+
+          existingRetrieval = components.filter((obj) => {
+            return obj.component.fullName === fullName;
+          })[0];
+          failedComponent = options.components.filter((obj) => {
+            return obj.fullName === fullName;
+          })[0];
+        }
+
+        if (existingRetrieval) {
+          diagnosticUtil.setRetrieveDiagnostic(retrieveMessage.problem, existingRetrieval);
+        } else if (failedComponent) {
+          const failedRetrieval: ComponentRetrieval = {
+            component: failedComponent,
+            status: sourceRetrieveResult.status,
+          };
+          diagnosticUtil.setRetrieveDiagnostic(retrieveMessage.problem, failedRetrieval);
+          sourceRetrieveResult.components.push(failedRetrieval);
+        } else {
+          sourceRetrieveResult.messages.push(retrieveMessage);
+        }
       }
     }
 
     return sourceRetrieveResult;
+  }
+
+  private calculateSuccess(
+    retrieveResult: RetrieveResult,
+    options: RetrieveOptions,
+    components: ComponentRetrieval[]
+  ): boolean {
+    return (
+      (retrieveResult.status === RetrieveStatus.Succeeded &&
+        options.components.length === components.length &&
+        !retrieveResult.hasOwnProperty('messages')) ||
+      retrieveResult.status === RetrieveStatus.InProgress ||
+      retrieveResult.status === RetrieveStatus.Pending
+    );
   }
 
   private async extractComponents(retrieveResult: RetrieveResult): Promise<SourceComponent[]> {

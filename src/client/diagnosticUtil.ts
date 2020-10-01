@@ -5,9 +5,14 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { SourcePath } from '../common';
-import { registryData, SourceComponent } from '../metadata-registry';
+import { registryData } from '../metadata-registry';
 import { basename } from 'path';
-import { ComponentDeployment, DeployMessage, ComponentDiagnostic, RetrieveMessage } from './types';
+import {
+  ComponentDeployment,
+  DeployMessage,
+  ComponentDiagnostic,
+  ComponentRetrieval,
+} from './types';
 
 export class DiagnosticUtil {
   private api: 'metadata' | 'tooling';
@@ -17,24 +22,16 @@ export class DiagnosticUtil {
   }
 
   public setRetrieveDiagnostic(
-    message: RetrieveMessage,
-    components: SourceComponent[]
-  ): ComponentDiagnostic {
-    const diagnostic: ComponentDiagnostic = {
-      message: message.problem,
+    message: string,
+    componentRetrieval: ComponentRetrieval
+  ): ComponentRetrieval {
+    componentRetrieval.diagnostics = {
+      message: message,
       type: 'Error',
+      filePath: componentRetrieval.component.content,
     };
 
-    const matches = message.problem.match(/'(.*?)'/g);
-    if (matches && Array.isArray(matches)) {
-      const filename = matches[matches.length - 1].replace(/['"]+/g, '');
-      const component = components.filter((obj) => {
-        return obj.fullName === filename;
-      })[0];
-      diagnostic.filePath = component.content;
-    }
-
-    return diagnostic;
+    return componentRetrieval;
   }
 
   public setDeployDiagnostic(

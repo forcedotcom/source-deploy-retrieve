@@ -7,14 +7,13 @@
 import { AuthInfo, Connection } from '@salesforce/core';
 import { expect } from 'chai';
 import { MockTestOrgData } from '@salesforce/core/lib/testSetup';
-import { createSandbox, match } from 'sinon';
+import { createSandbox, match, SinonStub } from 'sinon';
 import { RegistryAccess, registryData, SourceComponent } from '../../src/metadata-registry';
 import { MetadataApi, DEFAULT_API_OPTIONS } from '../../src/client/metadataApi';
 import { MetadataConverter } from '../../src/convert';
 import { fail } from 'assert';
-import * as fsUtil from '../../src/utils/fileSystemHandler';
+import { TEST_PACKAGE_BASE_64 } from '../mock/client';
 import * as path from 'path';
-import * as fs from 'fs';
 import { nls } from '../../src/i18n';
 import {
   MetadataApiDeployOptions,
@@ -29,10 +28,6 @@ import {
   SourceRetrieveResult,
   ComponentDiagnostic,
 } from '../../src/client/types';
-import * as stream from 'stream';
-import * as unzipper from 'unzipper';
-import { tmpdir } from 'os';
-import Sinon = require('sinon');
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 describe('Metadata Api', () => {
@@ -59,7 +54,8 @@ describe('Metadata Api', () => {
     success: true,
     fileProperties: [],
     done: true,
-    zipFile: 'thisisthezipfile',
+    messages: { fileName: '', problem: '' },
+    zipFile: TEST_PACKAGE_BASE_64,
   };
   const retrieveFailure: RetrieveResult = {
     id: '12345',
@@ -546,26 +542,14 @@ describe('Metadata Api', () => {
   });
 
   describe('Metadata API Retrieve', async () => {
-    let retrieveStub: Sinon.SinonStub;
-    let extractStub: Sinon.SinonStub;
-    let removeStub: Sinon.SinonStub;
-    let retrieveStatusStub: Sinon.SinonStub;
+    let retrieveStub: SinonStub;
+    let retrieveStatusStub: SinonStub;
 
     beforeEach(async () => {
-      const mockRetrieve = new stream.PassThrough();
       retrieveStub = sandboxStub
         .stub(mockConnection.metadata, 'retrieve')
         // @ts-ignore
         .resolves({ id: 'xxxxxxx' });
-      // @ts-ignore
-      sandboxStub.stub(fs, 'createReadStream').returns(mockRetrieve);
-      const mockStream = new stream.PassThrough();
-      sandboxStub.stub(stream, 'pipeline').resolves();
-      // @ts-ignore
-      extractStub = sandboxStub.stub(unzipper, 'Extract').returns(mockStream);
-      setTimeout(() => {
-        mockStream.emit('close');
-      }, 100);
 
       retrieveStatusStub = sandboxStub
         .stub(mockConnection.metadata, 'checkRetrieveStatus')
@@ -578,8 +562,8 @@ describe('Metadata Api', () => {
         .resolves({
           packagePath: outputDir,
         });
-      removeStub = sandboxStub.stub(fsUtil, 'deleteDirectory');
     });
+
     afterEach(() => {
       sandboxStub.restore();
     });
@@ -600,30 +584,6 @@ describe('Metadata Api', () => {
 
       await metadataClient.retrieve(options);
       expect(retrieveStub.calledWith(retrieveRequest)).to.be.true;
-    });
-
-    it('should correctly retrieve components and extract to directory', async () => {
-      const tempDir = path.join(tmpdir(), '.sfdx', 'tmp');
-      const options = {
-        components: [component],
-        output: outputDir,
-      } as RetrieveOptions;
-
-      await metadataClient.retrieve(options);
-      expect(extractStub.calledOnce).to.be.true;
-      expect(extractStub.calledWith({ path: tempDir })).to.be.true;
-    });
-
-    it('should correctly retrieve components and clean temp folder', async () => {
-      const tempDir = path.join(tmpdir(), '.sfdx', 'tmp');
-      const options = {
-        components: [component],
-        output: outputDir,
-      } as RetrieveOptions;
-
-      await metadataClient.retrieve(options);
-      expect(removeStub.called).to.be.true;
-      expect(removeStub.calledWith(tempDir)).to.be.true;
     });
 
     it('should convert the retrieved components', async () => {

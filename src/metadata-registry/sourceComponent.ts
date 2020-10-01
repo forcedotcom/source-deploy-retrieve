@@ -13,7 +13,6 @@ import { baseName } from '../utils';
 import { NodeFSTreeContainer, VirtualTreeContainer } from './treeContainers';
 import { MetadataType, SourcePath, MetadataComponent } from '../common';
 import { JsonMap } from '@salesforce/ts-types';
-import { readFileSync } from 'fs';
 import { LibraryError } from '../errors';
 import { SfdxFileFormat } from '../convert';
 
@@ -78,10 +77,9 @@ export class SourceComponent implements MetadataComponent {
       : [];
   }
 
-  public parseXml(): JsonMap {
+  public async parseXml(): Promise<JsonMap> {
     if (this.xml) {
-      // TODO: Change to use TreeContainer readFile
-      return parse(readFileSync(this.xml).toString());
+      return parse((await this.tree.readFile(this.xml)).toString());
     }
     throw new LibraryError('error_parsing_xml', this.name);
   }

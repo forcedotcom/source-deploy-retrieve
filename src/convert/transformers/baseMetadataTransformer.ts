@@ -20,6 +20,6 @@ export abstract class BaseMetadataTransformer implements MetadataTransformer {
     this.convertTransaction = convertTransaction;
   }
 
-  public abstract toMetadataFormat(component: SourceComponent): WriterFormat;
-  public abstract toSourceFormat(component: SourceComponent): WriterFormat;
+  public abstract toMetadataFormat(component: SourceComponent): Promise<WriterFormat>;
+  public abstract toSourceFormat(component: SourceComponent): Promise<WriterFormat>;
 }

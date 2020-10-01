@@ -40,9 +40,9 @@ export class ConvertTransaction {
    * Call right before the end of a conversion pipeline to execute logic with
    * the transaction state.
    */
-  public *executeFinalizers(): IterableIterator<WriterFormat | WriterFormat[]> {
+  public async *executeFinalizers(): AsyncIterable<WriterFormat | WriterFormat[]> {
     for (const finalizer of this.finalizers.values()) {
-      yield finalizer.finalize(this.state);
+      yield await finalizer.finalize(this.state);
     }
   }
 }
@@ -51,7 +51,7 @@ export class ConvertTransaction {
  * Logic to execute at the end of a convert transaction
  */
 export interface ConvertTransactionFinalizer {
-  finalize(state: ConvertTransactionState): WriterFormat | WriterFormat[];
+  finalize(state: ConvertTransactionState): Promise<WriterFormat | WriterFormat[]>;
 }
 
 export interface FinalizerConstructor {
@@ -59,14 +59,14 @@ export interface FinalizerConstructor {
 }
 
 export class RecompositionFinalizer implements ConvertTransactionFinalizer {
-  public finalize(state: ConvertTransactionState): WriterFormat[] {
+  public async finalize(state: ConvertTransactionState): Promise<WriterFormat[]> {
     const writerData: WriterFormat[] = [];
 
     for (const parentName of Object.keys(state.recompose)) {
       const parentComponent = state.recompose[parentName].component;
       // only recompose children stored in transaction state
       const children = state.recompose[parentName].children;
-      const recomposedXmlObj = DecomposedMetadataTransformer.recompose(children);
+      const recomposedXmlObj = await DecomposedMetadataTransformer.recompose(children);
       const writerFormat = DecomposedMetadataTransformer.createWriterFormat(
         parentComponent,
         recomposedXmlObj

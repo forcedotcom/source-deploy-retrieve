@@ -128,7 +128,7 @@ function getCherryPickCommits(diffList) {
     if (ADD_VERBOSE_LOGGING)
         console.log('\n\nStep 5: Cherry-pick diffs into new branch');
     for (var i = 0; i < diffList.length; i++) {
-        shell.exec(`git cherry-pick ${diffList[i][COMMIT]}`);
+        shell.exec(`git cherry-pick --strategy=recursive -X theirs ${diffList[i][COMMIT]}`);
     }
 }
 

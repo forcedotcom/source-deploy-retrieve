@@ -7,13 +7,13 @@
 import { SourceComponent } from '../../src/metadata-registry';
 import { RegistryTestUtil } from './registryTestUtil';
 import { mockRegistry, kathy, regina, taraji, keanu } from '../mock/registry';
-import { assert, expect } from 'chai';
+import { expect } from 'chai';
 import { REGINA_COMPONENT } from '../mock/registry/reginaConstants';
 import { KEANU_COMPONENT } from '../mock/registry/keanuConstants';
 import { createSandbox } from 'sinon';
-import * as fs from 'fs';
 import { LibraryError } from '../../src/errors';
 import { nls } from '../../src/i18n';
+import { fail } from 'assert';
 
 const env = createSandbox();
 
@@ -25,26 +25,30 @@ describe('SourceComponent', () => {
   describe('parseXml', () => {
     afterEach(() => env.restore());
 
-    it('should parse the components xml file to json', () => {
+    it('should parse the components xml file to json', async () => {
       const component = KEANU_COMPONENT;
-      env.stub(fs, 'readFileSync').returns('<KeanuReeves><test>something</test></KeanuReeves>');
-      expect(component.parseXml()).to.deep.equal({
+      env
+        .stub(component.tree, 'readFile')
+        .resolves(Buffer.from('<KeanuReeves><test>something</test></KeanuReeves>'));
+      expect(await component.parseXml()).to.deep.equal({
         KeanuReeves: {
           test: 'something',
         },
       });
     });
 
-    it('should throw an error if the component does not have an xml when parsing', () => {
+    it('should throw an error if the component does not have an xml when parsing', async () => {
       const component = new SourceComponent({
         name: 'a',
         type: mockRegistry.types.keanureeves,
       });
-      assert.throws(
-        () => component.parseXml(),
-        LibraryError,
-        nls.localize('error_parsing_xml', component.name)
-      );
+      try {
+        await component.parseXml();
+        fail('parseXml should have thrown an error');
+      } catch (e) {
+        expect(e.name).to.equal(LibraryError.name);
+        expect(e.message).to.equal(nls.localize('error_parsing_xml', component.name));
+      }
     });
   });
 

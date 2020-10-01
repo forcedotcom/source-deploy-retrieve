@@ -4,19 +4,20 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+
+import * as fs from 'fs';
+import { expect } from 'chai';
+import { join } from 'path';
+import { createSandbox } from 'sinon';
 import {
   ConvertTransaction,
   RecompositionFinalizer,
   ConvertTransactionState,
 } from '../../src/convert/convertTransaction';
-import { keanu, regina } from '../mock/registry';
-import { expect } from 'chai';
-import { createSandbox } from 'sinon';
-import { TestFinalizerNoWrites, TestFinalizerNoResult } from '../mock/convert/finalizers';
-import { join } from 'path';
-import * as fs from 'fs';
-import { XML_NS, XML_NS_KEY } from '../../src/utils/constants';
 import { JsToXml } from '../../src/convert/streams';
+import { XML_NS_KEY, XML_NS } from '../../src/utils/constants';
+import { keanu, regina } from '../mock/registry';
+import { TestFinalizerNoWrites, TestFinalizerNoResult } from '../mock/convert/finalizers';
 
 const env = createSandbox();
 
@@ -36,12 +37,15 @@ describe('Convert Transaction Constructs', () => {
       env.restore();
     });
 
-    it('should yield results of finalizers upon executeFinalizers', () => {
+    it('should yield results of finalizers upon executeFinalizers', async () => {
       const transaction = new ConvertTransaction();
 
       transaction.addFinalizer(TestFinalizerNoWrites);
       transaction.addFinalizer(TestFinalizerNoResult);
-      const results = Array.from(transaction.executeFinalizers());
+      const results = [];
+      for await (const result of transaction.executeFinalizers()) {
+        results.push(Array.isArray(result) ? result : result);
+      }
 
       expect(results).to.deep.equal([
         {
@@ -54,12 +58,12 @@ describe('Convert Transaction Constructs', () => {
   });
 
   describe('RecompositionFinalizer', () => {
-    it('should return a WriterFormat with recomposed data', () => {
+    it('should return a WriterFormat with recomposed data', async () => {
       const component = regina.REGINA_COMPONENT;
       const children = component.getChildren();
-      const readStub = env.stub(fs, 'readFileSync');
-      readStub.withArgs(children[0].xml).returns('<Y><test>child1</test></Y>');
-      readStub.withArgs(children[1].xml).returns('<X><test>child2</test></X>');
+      const readStub = env.stub(component.tree, 'readFile');
+      readStub.withArgs(children[0].xml).resolves(Buffer.from('<Y><test>child1</test></Y>'));
+      readStub.withArgs(children[1].xml).resolves(Buffer.from('<X><test>child2</test></X>'));
       const finalizer = new RecompositionFinalizer();
       const state: ConvertTransactionState = {
         recompose: {
@@ -70,7 +74,7 @@ describe('Convert Transaction Constructs', () => {
         },
       };
 
-      const result = finalizer.finalize(state);
+      const result = await finalizer.finalize(state);
 
       expect(result).to.deep.equal([
         {

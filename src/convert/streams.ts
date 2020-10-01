@@ -58,21 +58,21 @@ export class ComponentConverter extends Transform {
     this.transformerFactory = new MetadataTransformerFactory(registry, this.transaction);
   }
 
-  public _transform(
+  public async _transform(
     chunk: SourceComponent,
     encoding: string,
     callback: (err: Error, data: WriterFormat) => void
-  ): void {
+  ): Promise<void> {
     let err: Error;
     let result: WriterFormat;
     try {
       const transformer = this.transformerFactory.getTransformer(chunk);
       switch (this.targetFormat) {
         case 'metadata':
-          result = transformer.toMetadataFormat(chunk);
+          result = await transformer.toMetadataFormat(chunk);
           break;
         case 'source':
-          result = transformer.toSourceFormat(chunk);
+          result = await transformer.toSourceFormat(chunk);
           break;
         default:
           throw new LibraryError('error_convert_invalid_format', this.targetFormat);
@@ -87,10 +87,10 @@ export class ComponentConverter extends Transform {
    * Called at the end when all components have passed through the pipeline. Finalizers
    * take care of any additional work to be done at this stage e.g. recomposing child components.
    */
-  public _flush(callback: (err: Error, data?: WriterFormat) => void): void {
+  public async _flush(callback: (err: Error, data?: WriterFormat) => void): Promise<void> {
     let err: Error;
     try {
-      for (const finalizerResult of this.transaction.executeFinalizers()) {
+      for await (const finalizerResult of this.transaction.executeFinalizers()) {
         if (finalizerResult) {
           if (Array.isArray(finalizerResult)) {
             finalizerResult.forEach((result) => this.push(result));

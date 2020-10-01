@@ -18,11 +18,11 @@ import { SourceComponent } from '../../metadata-registry';
  * files as-is.
  */
 export class DefaultMetadataTransformer extends BaseMetadataTransformer {
-  public toMetadataFormat(component: SourceComponent): WriterFormat {
+  public async toMetadataFormat(component: SourceComponent): Promise<WriterFormat> {
     return this.getWriterFormat(component, 'metadata');
   }
 
-  public toSourceFormat(component: SourceComponent): WriterFormat {
+  public async toSourceFormat(component: SourceComponent): Promise<WriterFormat> {
     return this.getWriterFormat(component, 'source');
   }
 

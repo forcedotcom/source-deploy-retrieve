@@ -19,7 +19,7 @@ import { ARCHIVE_MIME_TYPES, DEFAULT_CONTENT_TYPE, FALLBACK_TYPE_MAP } from '../
 import { SourceComponent } from '../../metadata-registry';
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
-  public toMetadataFormat(component: SourceComponent): WriterFormat {
+  public async toMetadataFormat(component: SourceComponent): Promise<WriterFormat> {
     let contentSource: Readable;
     const { content, type, xml } = component;
     const writerFormat: WriterFormat = {
@@ -27,7 +27,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       writeInfos: [],
     };
 
-    if (this.componentIsExpandedArchive(component)) {
+    if (await this.componentIsExpandedArchive(component)) {
       const zip = createArchive('zip', { zlib: { level: 3 } });
       zip.directory(content, false);
       zip.finalize();
@@ -50,12 +50,12 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     return writerFormat;
   }
 
-  public toSourceFormat(component: SourceComponent): WriterFormat {
+  public async toSourceFormat(component: SourceComponent): Promise<WriterFormat> {
     const { xml, content } = component;
     const result: WriterFormat = { component, writeInfos: [] };
 
     if (content) {
-      const contentType = this.getContentType(component);
+      const contentType = await this.getContentType(component);
       if (ARCHIVE_MIME_TYPES.has(contentType)) {
         const baseDir = component.getPackageRelativePath(baseName(content), 'source');
         this.createWriteInfosFromArchive(content, baseDir, result);
@@ -78,10 +78,10 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     return result;
   }
 
-  private componentIsExpandedArchive(component: SourceComponent): boolean {
+  private async componentIsExpandedArchive(component: SourceComponent): Promise<boolean> {
     const { content, tree } = component;
     if (tree.isDirectory(content)) {
-      const contentType = this.getContentType(component);
+      const contentType = await this.getContentType(component);
       if (ARCHIVE_MIME_TYPES.has(contentType)) {
         return true;
       }
@@ -93,8 +93,8 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     return false;
   }
 
-  private getContentType(component: SourceComponent): string {
-    return (component.parseXml().StaticResource as JsonMap).contentType as string;
+  private async getContentType(component: SourceComponent): Promise<string> {
+    return ((await component.parseXml()).StaticResource as JsonMap).contentType as string;
   }
 
   private getExtensionFromType(contentType: string): string {
@@ -111,6 +111,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     destDir: string,
     format: WriterFormat
   ): void {
+    // TODO: with async transformer methods, this workaround may not be necessary anymore.
     format.getExtraInfos = async (): Promise<WriteInfo[]> => {
       const writeInfos: WriteInfo[] = [];
       const directory = await Open.file(zipPath);

@@ -4,23 +4,24 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { StaticResourceMetadataTransformer } from '../../../src/convert/transformers/staticResourceMetadataTransformer';
-import { createSandbox } from 'sinon';
-import { WriteInfo } from '../../../src/convert';
-import { basename, join } from 'path';
-import { MC_SINGLE_FILE_COMPONENT } from '../../mock/registry/mixedContentSingleFileConstants';
-import { baseName } from '../../../src/utils';
+
 import * as fs from 'fs';
-import { assert, expect } from 'chai';
-import { TestReadable } from '../../mock/convert/readables';
-import { TARAJI_COMPONENT, TARAJI_VIRTUAL_FS } from '../../mock/registry/tarajiConstants';
-import { ARCHIVE_MIME_TYPES } from '../../../src/utils/constants';
 import * as archiver from 'archiver';
+import { expect } from 'chai';
+import { join, basename } from 'path';
+import { createSandbox } from 'sinon';
+import { Entry, CentralDirectory, Open } from 'unzipper';
 import { SourceComponent } from '../../../src';
+import { WriteInfo } from '../../../src/convert';
+import { StaticResourceMetadataTransformer } from '../../../src/convert/transformers/staticResourceMetadataTransformer';
 import { LibraryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
-import { CentralDirectory, Open, Entry } from 'unzipper';
+import { baseName } from '../../../src/utils';
+import { ARCHIVE_MIME_TYPES } from '../../../src/utils/constants';
 import { mockRegistry } from '../../mock/registry';
+import { MC_SINGLE_FILE_COMPONENT } from '../../mock/registry/mixedContentSingleFileConstants';
+import { TARAJI_COMPONENT, TARAJI_VIRTUAL_FS } from '../../mock/registry/tarajiConstants';
+import { TestReadable } from '../../mock/convert/readables';
 
 const env = createSandbox();
 
@@ -34,10 +35,10 @@ describe('StaticResourceMetadataTransformer', () => {
   afterEach(() => env.restore());
 
   describe('toMetadataFormat', () => {
-    it('should rename extension to .resource for content file', () => {
+    it('should rename extension to .resource for content file', async () => {
       const component = MC_SINGLE_FILE_COMPONENT;
       const { type, content, xml } = component;
-      env.stub(component, 'parseXml').returns({
+      env.stub(component, 'parseXml').resolves({
         StaticResource: {
           contentType: 'png',
         },
@@ -54,13 +55,13 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toMetadataFormat(component)).to.deep.equal({
+      expect(await transformer.toMetadataFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
     });
 
-    it('should zip directory content for all supported archive mime types', () => {
+    it('should zip directory content for all supported archive mime types', async () => {
       const component = SourceComponent.createVirtualComponent(TARAJI_COMPONENT, TARAJI_VIRTUAL_FS);
       const { type, content, xml } = component;
       const archive = archiver.create('zip', { zlib: { level: 3 } });
@@ -81,8 +82,8 @@ describe('StaticResourceMetadataTransformer', () => {
       ];
 
       for (const contentType of ARCHIVE_MIME_TYPES) {
-        parseXmlStub.returns({ StaticResource: { contentType } });
-        expect(transformer.toMetadataFormat(component)).to.deep.equal({
+        parseXmlStub.resolves({ StaticResource: { contentType } });
+        expect(await transformer.toMetadataFormat(component)).to.deep.equal({
           component,
           writeInfos: expectedInfos,
         });
@@ -92,25 +93,28 @@ describe('StaticResourceMetadataTransformer', () => {
       }
     });
 
-    it('should throw an error if content is directory but contentType is not an archive type', () => {
+    it('should throw an error if content is directory but contentType is not an archive type', async () => {
       const component = SourceComponent.createVirtualComponent(TARAJI_COMPONENT, TARAJI_VIRTUAL_FS);
       const contentType = 'nonArchiveType';
-      env.stub(component, 'parseXml').returns({ StaticResource: { contentType } });
+      env.stub(component, 'parseXml').resolves({ StaticResource: { contentType } });
       const transformer = new StaticResourceMetadataTransformer(mockRegistry);
 
-      assert.throws(
-        () => transformer.toMetadataFormat(component),
-        LibraryError,
-        nls.localize('error_static_resource_expected_archive_type', [contentType, component.name])
-      );
+      try {
+        await transformer.toMetadataFormat(component);
+      } catch (e) {
+        expect(e.name).to.equal(LibraryError.name);
+        expect(e.message).to.equal(
+          nls.localize('error_static_resource_expected_archive_type', [contentType, component.name])
+        );
+      }
     });
   });
 
   describe('toSourceFormat', () => {
-    it('should rename extension from .resource to a mime extension for content file', () => {
+    it('should rename extension from .resource to a mime extension for content file', async () => {
       const component = MC_SINGLE_FILE_COMPONENT;
       const { type, content, xml } = component;
-      env.stub(component, 'parseXml').returns({
+      env.stub(component, 'parseXml').resolves({
         StaticResource: {
           contentType: 'image/png',
         },
@@ -132,16 +136,16 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toSourceFormat(component)).to.deep.equal({
+      expect(await transformer.toSourceFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
     });
 
-    it('should rename extension from .resource for a fallback mime extension', () => {
+    it('should rename extension from .resource for a fallback mime extension', async () => {
       const component = MC_SINGLE_FILE_COMPONENT;
       const { type, content, xml } = component;
-      env.stub(component, 'parseXml').returns({
+      env.stub(component, 'parseXml').resolves({
         StaticResource: {
           contentType: 'application/x-javascript',
         },
@@ -159,16 +163,16 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toSourceFormat(component)).to.deep.equal({
+      expect(await transformer.toSourceFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
     });
 
-    it('should rename extension from .resource for an unsupported mime extension', () => {
+    it('should rename extension from .resource for an unsupported mime extension', async () => {
       const component = MC_SINGLE_FILE_COMPONENT;
       const { type, content, xml } = component;
-      env.stub(component, 'parseXml').returns({
+      env.stub(component, 'parseXml').resolves({
         StaticResource: {
           contentType: 'application/x-myspace',
         },
@@ -190,18 +194,18 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toSourceFormat(component)).to.deep.equal({
+      expect(await transformer.toSourceFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
     });
 
-    it('should ignore components without content', () => {
+    it('should ignore components without content', async () => {
       const component = Object.assign({}, MC_SINGLE_FILE_COMPONENT);
       component.content = undefined;
 
       const transformer = new StaticResourceMetadataTransformer(mockRegistry);
-      expect(transformer.toSourceFormat(component)).to.deep.equal({
+      expect(await transformer.toSourceFormat(component)).to.deep.equal({
         component,
         writeInfos: [],
       });
@@ -210,7 +214,7 @@ describe('StaticResourceMetadataTransformer', () => {
     it('should extract an archive', async () => {
       const component = MC_SINGLE_FILE_COMPONENT;
       const { type, xml } = component;
-      env.stub(component, 'parseXml').returns({
+      env.stub(component, 'parseXml').resolves({
         StaticResource: {
           contentType: 'application/zip',
         },
@@ -249,17 +253,17 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      const result = transformer.toSourceFormat(component);
+      const result = await transformer.toSourceFormat(component);
       expect(result.component).to.deep.equal(component);
       expect(result.writeInfos).to.deep.equal(expectedInfos);
       expect(result.getExtraInfos).to.be.a('function');
       expect(await result.getExtraInfos()).to.deep.equal(extraInfo);
     });
 
-    it('should work well for null contentType', () => {
+    it('should work well for null contentType', async () => {
       const component = MC_SINGLE_FILE_COMPONENT;
       const { type, content, xml } = component;
-      env.stub(component, 'parseXml').returns({
+      env.stub(component, 'parseXml').resolves({
         StaticResource: {
           contentType: undefined,
         },
@@ -281,7 +285,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toSourceFormat(component)).to.deep.equal({
+      expect(await transformer.toSourceFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });

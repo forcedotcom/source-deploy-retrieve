@@ -25,7 +25,7 @@ describe('DefaultMetadataTransformer', () => {
   afterEach(() => env.restore());
 
   describe('toMetadataFormat', () => {
-    it('should create a WriteInfo for each file in the component', () => {
+    it('should create a WriteInfo for each file in the component', async () => {
       const component = simon.SIMON_COMPONENT;
       const transformer = new DefaultMetadataTransformer(mockRegistry);
       const { directoryName } = component.type;
@@ -42,13 +42,13 @@ describe('DefaultMetadataTransformer', () => {
         source: fs.createReadStream(component.xml),
       });
 
-      expect(transformer.toMetadataFormat(component)).to.deep.equal({
+      expect(await transformer.toMetadataFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
     });
 
-    it('should strip the -meta.xml suffix for components with no content', () => {
+    it('should strip the -meta.xml suffix for components with no content', async () => {
       const component = gene.GENE_COMPONENT;
       const transformer = new DefaultMetadataTransformer(mockRegistry);
       const { directoryName } = component.type;
@@ -60,13 +60,13 @@ describe('DefaultMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toMetadataFormat(component)).to.deep.equal({
+      expect(await transformer.toMetadataFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
     });
 
-    it('should handle folder type components with no content', () => {
+    it('should handle folder type components with no content', async () => {
       const component = kathy.KATHY_COMPONENTS[0];
       const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;
@@ -82,7 +82,7 @@ describe('DefaultMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toMetadataFormat(component)).to.deep.equal({
+      expect(await transformer.toMetadataFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
@@ -90,7 +90,7 @@ describe('DefaultMetadataTransformer', () => {
   });
 
   describe('toSourceFormat', () => {
-    it('should create a WriteInfo for each file in the component', () => {
+    it('should create a WriteInfo for each file in the component', async () => {
       const component = simon.SIMON_COMPONENT;
       const transformer = new DefaultMetadataTransformer(mockRegistry);
       const { directoryName } = component.type;
@@ -112,13 +112,13 @@ describe('DefaultMetadataTransformer', () => {
         source: fs.createReadStream(component.xml),
       });
 
-      expect(transformer.toSourceFormat(component)).to.deep.equal({
+      expect(await transformer.toSourceFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
     });
 
-    it('should add in the -meta.xml suffix for components with no content', () => {
+    it('should add in the -meta.xml suffix for components with no content', async () => {
       const component = gene.GENE_MD_FORMAT_COMPONENT;
       const transformer = new DefaultMetadataTransformer(mockRegistry);
       const { directoryName } = component.type;
@@ -130,13 +130,13 @@ describe('DefaultMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toSourceFormat(component)).to.deep.equal({
+      expect(await transformer.toSourceFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
     });
 
-    it('should handle folder type components with no content', () => {
+    it('should handle folder type components with no content', async () => {
       const component = kathy.KATHY_MD_FORMAT_COMPONENTS[0];
       const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;
@@ -154,7 +154,7 @@ describe('DefaultMetadataTransformer', () => {
         },
       ];
 
-      expect(transformer.toSourceFormat(component)).to.deep.equal({
+      expect(await transformer.toSourceFormat(component)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });

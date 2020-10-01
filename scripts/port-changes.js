@@ -127,7 +127,7 @@ function getPortBranch() {
 function getCherryPickCommits(diffList) {
     if (ADD_VERBOSE_LOGGING)
         console.log('\n\nStep 5: Cherry-pick diffs into new branch');
-    for (var i = diffList.length; i >= 0; i--) {
+    for (var i = diffList.length - 1; i >= 0; i--) {
         shell.exec(`git cherry-pick --strategy=recursive -X theirs ${diffList[i][COMMIT]}`);
     }
 }

@@ -2,11 +2,12 @@
 
 const shell = require('shelljs');
 
-// const PR_REGEX = new RegExp(/(\(#\d+\))/);   // works as expected, but doesn't grab all instances.
 const PR_REGEX = new RegExp(/(\(#\d+\))(\s+\(#\d+\))*$/);
 const COMMIT_REGEX = new RegExp(/^([\da-zA-Z]+)/);
 const TYPE_REGEX = new RegExp(/([a-zA-Z]+)(?:\([a-zA-Z]+\))?:/);
+const RELEASE_REGEX = new RegExp(/^origin\/release\/v\d{2}\.\d{1,2}\.\d/);
 
+const PR_NUM = 'PR_NUM';
 const COMMIT = 'COMMIT';
 const TYPE = 'TYPE';
 const MESSAGE = 'MESSAGE';
@@ -46,6 +47,7 @@ function buildMapFromCommit(commit) {
             var message = commit.replace(commitNum[0], '');
             var pr = PR_REGEX.exec(commit);
             if (pr) {
+                map[PR_NUM] = pr[0];
                 message = message.replace(pr[0], '');
             }
             var type = TYPE_REGEX.exec(message);
@@ -72,13 +74,21 @@ function buildMapFromCommit(commit) {
  * (PR #) appended at the end.
  */
 function filterDiffs(parsedCommits) {
-    console.log(`\n\nStep 3: Filter out non diffs`);
+    if (ADD_VERBOSE_LOGGING) {
+        console.log(`\n\nStep 3: Filter out non diffs. The commits we would want to filter...`);
+        console.log('\ta) Are the same, but have a different hash.');
+        console.log('\tb) Were ported from one branch to another. Therefore, they include an additional (PR #).\n');
+    }
     var filteredMaps = [];
     for (var i = 0; i < parsedCommits.length; i++) {
         var commitMap = parsedCommits[i];
         if (isTrueDiff(commitMap)) {
             filteredMaps.push(commitMap);
         }
+    }
+    if (ADD_VERBOSE_LOGGING) {
+        console.log('\nFiltered Results were: ');
+        console.log(filteredMaps);
     }
     return filteredMaps;
 }
@@ -87,12 +97,31 @@ function isTrueDiff(commitMap) {
     var mainResult = shell.exec(`git log --grep="${commitMap[MESSAGE]}" --oneline main`, { silent: true });
     var developResult = shell.exec(`git log --grep="${commitMap[MESSAGE]}" --oneline develop`, { silent: true });
     if (!mainResult || mainResult.length === 0) {
-        console.log(`${commitMap[COMMIT]} Commit is missing from main. Porting.`);
+        if (ADD_VERBOSE_LOGGING)
+            console.log(`${commitMap[COMMIT]} Commit is missing from main. Porting.`);
         return true;
     } else if (mainResult && developResult) {
-        console.log(`${commitMap[COMMIT]} Commit is present in both branches. Filtering.`);
+        if (ADD_VERBOSE_LOGGING)
+            console.log(`${commitMap[COMMIT]} Commit is present in both branches. Filtering.`);
         return false;
     }
+}
+
+function getPortBranch() {
+    if (ADD_VERBOSE_LOGGING)
+        console.log('\n\nStep 4: Generate the port PR branch based on -r argument');
+    var releaseIndex = process.argv.indexOf('-r');
+    if (!(releaseIndex > -1)) {
+        console.error('Release version for the port PR is required. Example: \'-r 0.0.5\'');
+        process.exit(-1);
+    }
+    if (!RELEASE_REGEX.exec(`${process.argv[releaseIndex + 1]}`)) {
+        console.log(
+            `Invalid release version '${process.argv[releaseIndex + 1]}'. Expected format [x.y.z].`
+        );
+        process.exit(-1);
+    }
+    shell.exec(util.format(`git checkout -b portPR-v${process.argv[releaseIndex + 1]} main`));
 }
 
 let ADD_VERBOSE_LOGGING = process.argv.indexOf('-v') > -1 ? true : false;
@@ -100,8 +129,7 @@ let ADD_VERBOSE_LOGGING = process.argv.indexOf('-v') > -1 ? true : false;
 const diffList = getAllDiffs('main', 'develop');
 const parsedCommits = parseCommits(diffList);
 const filteredDiffList = filterDiffs(parsedCommits);
-console.log('\nFinal Results:');
-console.log(filteredDiffList);
+getPortBranch();
 
 // # 3 - maybe this step can actually come later?
 // # Generate a new branch for the port.

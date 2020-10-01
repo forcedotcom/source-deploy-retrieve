@@ -116,7 +116,7 @@ function getPortBranch() {
         process.exit(-1);
     }
     if (!RELEASE_REGEX.exec(`${process.argv[releaseIndex + 1]}`)) {
-        console.log(
+        console.error(
             `Invalid release version '${process.argv[releaseIndex + 1]}'. Expected format [x.y.z].`
         );
         process.exit(-1);

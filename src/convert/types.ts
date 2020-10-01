@@ -47,8 +47,8 @@ type ZipConfig = PackageName & {
  * Transforms metadata component files into different SFDX file formats
  */
 export interface MetadataTransformer {
-  toMetadataFormat(component: SourceComponent): WriterFormat;
-  toSourceFormat(component: SourceComponent): WriterFormat;
+  toMetadataFormat(component: SourceComponent): Promise<WriterFormat>;
+  toSourceFormat(component: SourceComponent): Promise<WriterFormat>;
 }
 
 // --------------

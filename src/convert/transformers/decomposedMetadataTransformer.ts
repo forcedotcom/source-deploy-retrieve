@@ -33,7 +33,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     this.convertTransaction.addFinalizer(RecompositionFinalizer);
   }
 
-  public toMetadataFormat(component: SourceComponent): WriterFormat {
+  public async toMetadataFormat(component: SourceComponent): Promise<WriterFormat> {
     if (component.parent) {
       const { state } = this.convertTransaction;
       const { fullName: parentName } = component.parent;
@@ -48,20 +48,20 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       return { component: component, writeInfos: [] };
     }
 
-    const recomposedXmlObj = DecomposedMetadataTransformer.recompose(
+    const recomposedXmlObj = await DecomposedMetadataTransformer.recompose(
       component.getChildren(),
-      component.parseXml() as XmlJson
+      (await component.parseXml()) as XmlJson
     );
 
     return DecomposedMetadataTransformer.createWriterFormat(component, recomposedXmlObj);
   }
 
-  public toSourceFormat(component: SourceComponent): WriterFormat {
+  public async toSourceFormat(component: SourceComponent): Promise<WriterFormat> {
     const writeInfos: WriteInfo[] = [];
 
     const { type, fullName: parentFullName } = component;
     const rootPackagePath = component.getPackageRelativePath(parentFullName, 'source');
-    const composedMetadata = component.parseXml()[type.name];
+    const composedMetadata = (await component.parseXml())[type.name];
     const rootXmlObject: XmlJson = { [type.name]: {} };
 
     for (const [tagName, collection] of Object.entries(composedMetadata)) {
@@ -107,11 +107,14 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     return { component, writeInfos };
   }
 
-  public static recompose(children: SourceComponent[], baseXmlObj: XmlJson = {}): JsonMap {
+  public static async recompose(
+    children: SourceComponent[],
+    baseXmlObj: XmlJson = {}
+  ): Promise<JsonMap> {
     for (const child of children) {
       const { directoryName: groupNode } = child.type;
       const { name: parentName } = child.parent.type;
-      const childContents = child.parseXml()[child.type.name];
+      const childContents = (await child.parseXml())[child.type.name];
       if (!baseXmlObj[parentName]) {
         baseXmlObj[parentName] = { '@_xmlns': XML_NS };
       }

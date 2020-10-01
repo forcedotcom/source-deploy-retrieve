@@ -4,27 +4,28 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as streams from '../../src/convert/streams';
-import { KATHY_COMPONENTS } from '../mock/registry/kathyConstants';
-import { expect } from 'chai';
-import { createSandbox, SinonStub } from 'sinon';
-import { WriterFormat, MetadataTransformer } from '../../src/convert';
-import { Readable, Writable } from 'stream';
-import { LibraryError } from '../../src/errors';
-import * as fsUtil from '../../src/utils/fileSystemHandler';
+
 import * as fs from 'fs';
-import { join } from 'path';
 import * as archiver from 'archiver';
-import { SourceComponent } from '../../src/metadata-registry';
-import { mockRegistry } from '../mock/registry';
-import { MetadataTransformerFactory } from '../../src/convert/transformers';
+import * as streams from '../../src/convert/streams';
+import * as fsUtil from '../../src/utils/fileSystemHandler';
+import { expect } from 'chai';
+import { join } from 'path';
+import { createSandbox, SinonStub } from 'sinon';
+import { Readable, Writable } from 'stream';
+import { SourceComponent } from '../../src';
+import { MetadataTransformer, WriterFormat } from '../../src/convert';
 import { ConvertTransaction } from '../../src/convert/convertTransaction';
+import { MetadataTransformerFactory } from '../../src/convert/transformers';
+import { LibraryError } from '../../src/errors';
+import { XML_NS_KEY, XML_NS, XML_DECL } from '../../src/utils/constants';
 import {
+  TestFinalizerNoResult,
   TestFinalizerNoWrites,
   TestFinalizerMultipleFormatsNoWrites,
-  TestFinalizerNoResult,
 } from '../mock/convert/finalizers';
-import { XML_DECL, XML_NS, XML_NS_KEY } from '../../src/utils/constants';
+import { mockRegistry } from '../mock/registry';
+import { KATHY_COMPONENTS } from '../mock/registry/kathyConstants';
 
 const env = createSandbox();
 
@@ -33,13 +34,13 @@ class TestTransformer implements MetadataTransformer {
   constructor(component: SourceComponent) {
     this.component = component;
   }
-  toMetadataFormat(): WriterFormat {
+  async toMetadataFormat(): Promise<WriterFormat> {
     return {
       component: this.component,
       writeInfos: [{ relativeDestination: '/type/file.m', source: new Readable() }],
     };
   }
-  toSourceFormat(): WriterFormat {
+  async toSourceFormat(): Promise<WriterFormat> {
     return {
       component: this.component,
       writeInfos: [{ relativeDestination: '/type/file.s', source: new Readable() }],
@@ -119,23 +120,23 @@ describe('Streams', () => {
         expect(pushStub.notCalled).to.be.true;
       });
 
-      it('should flush one result from a single transaction finalizer', () => {
+      it('should flush one result from a single transaction finalizer', async () => {
         const finalizer = new TestFinalizerNoWrites();
         const pushStub = env.stub(converter, 'push');
         transaction.addFinalizer(TestFinalizerNoWrites);
 
-        converter._flush((err) => expect(err).to.be.undefined);
+        await converter._flush((err) => expect(err).to.be.undefined);
 
         expect(pushStub.calledOnce).to.be.true;
-        expect(pushStub.calledOnceWith(finalizer.finalize())).to.be.true;
+        expect(pushStub.calledOnceWith(await finalizer.finalize())).to.be.true;
       });
 
-      it('should flush multiple results from a single transaction finalizer', () => {
+      it('should flush multiple results from a single transaction finalizer', async () => {
         const pushStub = env.stub(converter, 'push');
-        const results = new TestFinalizerMultipleFormatsNoWrites().finalize();
+        const results = await new TestFinalizerMultipleFormatsNoWrites().finalize();
         transaction.addFinalizer(TestFinalizerMultipleFormatsNoWrites);
 
-        converter._flush((err) => expect(err).to.be.undefined);
+        await converter._flush((err) => expect(err).to.be.undefined);
 
         expect(pushStub.calledTwice).to.be.true;
         expect(pushStub.getCall(0).calledWith(results[0])).to.be.true;

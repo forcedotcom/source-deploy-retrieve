@@ -44,12 +44,12 @@ describe('DecomposedMetadataTransformer', () => {
   });
 
   describe('toMetadataFormat', () => {
-    it('should delay for partial recomposition when a child component is given', () => {
+    it('should delay for partial recomposition when a child component is given', async () => {
       const child = component.getChildren()[0];
       const transaction = new ConvertTransaction();
       const transformer = new DecomposedMetadataTransformer(mockRegistry, transaction);
 
-      const writerFormat = transformer.toMetadataFormat(child);
+      const writerFormat = await transformer.toMetadataFormat(child);
 
       expect(writerFormat).to.deep.equal({ component: child, writeInfos: [] });
       expect(transaction.state).to.deep.equal({
@@ -62,23 +62,23 @@ describe('DecomposedMetadataTransformer', () => {
       });
     });
 
-    it('should fully recompose metadata when a parent component is given', () => {
+    it('should fully recompose metadata when a parent component is given', async () => {
       const transformer = new DecomposedMetadataTransformer(mockRegistry, new ConvertTransaction());
       const children = component.getChildren();
-      env.stub(component, 'parseXml').returns({
+      env.stub(component, 'parseXml').resolves({
         ReginaKing: {
           [XML_NS_KEY]: XML_NS,
           fullName: component.fullName,
           foo: 'bar',
         },
       });
-      env.stub(children[0], 'parseXml').returns({
+      env.stub(children[0], 'parseXml').resolves({
         Y: {
           fullName: 'child',
           test: 'testVal',
         },
       });
-      env.stub(children[1], 'parseXml').returns({
+      env.stub(children[1], 'parseXml').resolves({
         X: {
           fullName: 'child2',
           test: 'testVal2',
@@ -87,7 +87,7 @@ describe('DecomposedMetadataTransformer', () => {
       // force getChildren to return the children we just stubbed
       env.stub(component, 'getChildren').returns(children);
 
-      const result = transformer.toMetadataFormat(component);
+      const result = await transformer.toMetadataFormat(component);
 
       expect(result).to.deep.equal({
         component,
@@ -102,12 +102,12 @@ describe('DecomposedMetadataTransformer', () => {
   });
 
   describe('toSourceFormat', () => {
-    it('should decompose children into respective files for "topLevel" config', () => {
+    it('should decompose children into respective files for "topLevel" config', async () => {
       const component = DECOMPOSED_TOP_LEVEL_COMPONENT;
       const { fullName, type } = component;
       const transformer = new DecomposedMetadataTransformer(mockRegistry);
       const root = join('main', 'default', type.directoryName, fullName);
-      env.stub(component, 'parseXml').returns({
+      env.stub(component, 'parseXml').resolves({
         DecomposedTopLevel: {
           [XML_NS_KEY]: XML_NS,
           fullName,
@@ -119,7 +119,7 @@ describe('DecomposedMetadataTransformer', () => {
         },
       });
 
-      const result = transformer.toSourceFormat(component);
+      const result = await transformer.toSourceFormat(component);
 
       expect(result).to.deep.equal({
         component,
@@ -158,11 +158,11 @@ describe('DecomposedMetadataTransformer', () => {
       });
     });
 
-    it('should decompose children into respective directories and files for "folderPerType" config', () => {
+    it('should decompose children into respective directories and files for "folderPerType" config', async () => {
       const { type, fullName } = component;
       const transformer = new DecomposedMetadataTransformer(mockRegistry);
       const root = join('main', 'default', type.directoryName, fullName);
-      env.stub(component, 'parseXml').returns({
+      env.stub(component, 'parseXml').resolves({
         ReginaKing: {
           [XML_NS_KEY]: XML_NS,
           fullName,
@@ -175,7 +175,7 @@ describe('DecomposedMetadataTransformer', () => {
         },
       });
 
-      const result = transformer.toSourceFormat(component);
+      const result = await transformer.toSourceFormat(component);
 
       expect(result).to.deep.equal({
         component,

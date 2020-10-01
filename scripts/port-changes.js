@@ -124,16 +124,18 @@ function getPortBranch() {
     shell.exec(util.format(`git checkout -b portPR-v${process.argv[releaseIndex + 1]} main`));
 }
 
+function getCherryPickCommits(diffList) {
+    if (ADD_VERBOSE_LOGGING)
+        console.log('\n\nStep 5: Cherry-pick diffs into new branch');
+    for (var i = 0; i < diffList.length; i++) {
+        shell.exec(`git cherry-pick ${diffList[i][COMMIT]}`);
+    }
+}
+
 let ADD_VERBOSE_LOGGING = process.argv.indexOf('-v') > -1 ? true : false;
 
 const diffList = getAllDiffs('main', 'develop');
 const parsedCommits = parseCommits(diffList);
 const filteredDiffList = filterDiffs(parsedCommits);
 getPortBranch();
-
-// # 3 - maybe this step can actually come later?
-// # Generate a new branch for the port.
-// # TODO - what should the version be. Or could we just use today's date?
-
-// # 4
-// # cherry-pick all commits that are true diffs.
+getCherryPickCommits(filteredDiffList);

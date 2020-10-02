@@ -176,17 +176,17 @@ describe('Tooling Retrieve', () => {
     expect(retrieveResults.success).to.equal(true);
     expect(retrieveResults.components).to.be.a('Array');
     expect(retrieveResults.components.length).to.equal(1);
-    expect(retrieveResults.components[0].fullName).to.equal('myTestClass');
-    expect(retrieveResults.components[0].type).to.be.a('object');
-    expect(retrieveResults.components[0].type.name).to.equal('ApexClass');
-    expect(retrieveResults.components[0].type.suffix).to.equal('cls');
-    expect(retrieveResults.components[0].type.directoryName).to.equal('classes');
-    expect(retrieveResults.components[0].type.inFolder).to.equal(false);
-    expect(retrieveResults.components[0].xml).to.equal(
+    expect(retrieveResults.components[0].component.fullName).to.equal('myTestClass');
+    expect(retrieveResults.components[0].component.type).to.be.a('object');
+    expect(retrieveResults.components[0].component.type.name).to.equal('ApexClass');
+    expect(retrieveResults.components[0].component.type.suffix).to.equal('cls');
+    expect(retrieveResults.components[0].component.type.directoryName).to.equal('classes');
+    expect(retrieveResults.components[0].component.type.inFolder).to.equal(false);
+    expect(retrieveResults.components[0].component.xml).to.equal(
       path.join('file', 'path', 'myTestClass.cls-meta.xml')
     );
-    expect(retrieveResults.components[0].walkContent().length).to.equal(1);
-    expect(retrieveResults.components[0].walkContent()[0]).to.equal(
+    expect(retrieveResults.components[0].component.walkContent().length).to.equal(1);
+    expect(retrieveResults.components[0].component.walkContent()[0]).to.equal(
       path.join('file', 'path', 'myTestClass.cls')
     );
   });
@@ -213,17 +213,17 @@ describe('Tooling Retrieve', () => {
     expect(retrieveResults.success).to.equal(true);
     expect(retrieveResults.components).to.be.a('Array');
     expect(retrieveResults.components.length).to.equal(1);
-    expect(retrieveResults.components[0].fullName).to.equal('myTestClass');
-    expect(retrieveResults.components[0].type).to.be.a('object');
-    expect(retrieveResults.components[0].type.name).to.equal('ApexClass');
-    expect(retrieveResults.components[0].type.suffix).to.equal('cls');
-    expect(retrieveResults.components[0].type.directoryName).to.equal('classes');
-    expect(retrieveResults.components[0].type.inFolder).to.equal(false);
-    expect(retrieveResults.components[0].xml).to.equal(
+    expect(retrieveResults.components[0].component.fullName).to.equal('myTestClass');
+    expect(retrieveResults.components[0].component.type).to.be.a('object');
+    expect(retrieveResults.components[0].component.type.name).to.equal('ApexClass');
+    expect(retrieveResults.components[0].component.type.suffix).to.equal('cls');
+    expect(retrieveResults.components[0].component.type.directoryName).to.equal('classes');
+    expect(retrieveResults.components[0].component.type.inFolder).to.equal(false);
+    expect(retrieveResults.components[0].component.xml).to.equal(
       path.join('file', 'path', 'myTestClass.cls-meta.xml')
     );
-    expect(retrieveResults.components[0].walkContent().length).to.equal(1);
-    expect(retrieveResults.components[0].walkContent()[0]).to.equal(
+    expect(retrieveResults.components[0].component.walkContent().length).to.equal(1);
+    expect(retrieveResults.components[0].component.walkContent()[0]).to.equal(
       path.join('file', 'path', 'myTestClass.cls')
     );
   });
@@ -246,7 +246,7 @@ describe('Tooling Retrieve', () => {
     expect(retrieveResults.success).to.equal(true);
     expect(retrieveResults.components).to.be.a('Array');
     expect(retrieveResults.components.length).to.equal(0);
-    expect(retrieveResults.message).to.equal(
+    expect(retrieveResults.messages).to.equal(
       nls.localize('error_md_not_present_in_org', 'myTestClass')
     );
   });

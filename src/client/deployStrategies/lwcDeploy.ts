@@ -112,7 +112,7 @@ export class LwcDeploy extends BaseDeploy {
           await this.toolingCreate(deployTypes.get(type), formattedDef);
         }
       } catch (e) {
-        diagnosticUtil.setDiagnostic(deployment, e.message);
+        diagnosticUtil.setDeployDiagnostic(deployment, e.message);
       }
     }
 

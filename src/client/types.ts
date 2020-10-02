@@ -21,6 +21,12 @@ export type ComponentDeployment = {
   diagnostics: ComponentDiagnostic[];
 };
 
+export type ComponentRetrieval = {
+  component: SourceComponent;
+  status?: RetrieveStatus;
+  diagnostics?: ComponentDiagnostic;
+};
+
 export type ComponentDiagnostic = {
   lineNumber?: number;
   columnNumber?: number;
@@ -52,9 +58,9 @@ export interface SourceDeployResult extends SourceApiResult {
 
 export interface SourceRetrieveResult extends SourceApiResult {
   id?: RecordId;
-  components?: SourceComponent[];
+  components?: ComponentRetrieval[];
   status: RetrieveStatus;
-  message?: RetrieveMessage | string;
+  messages?: RetrieveMessage[] | string;
 }
 
 // ------------------------------------------------
@@ -159,9 +165,9 @@ export type RetrieveResult = {
   done: boolean;
   fileProperties: {}[];
   id: string;
-  messages: RetrieveMessage;
   status: RetrieveStatus;
   success: boolean;
+  messages?: RetrieveMessage[] | RetrieveMessage;
   // this is a base64binary
   zipFile: string;
 };

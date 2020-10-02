@@ -108,7 +108,6 @@ describe('DiagnosticUtil', () => {
 
     it('should create retrieve diagnostic for componentRetrieval', () => {
       const message = 'There was a problem with the retrieve';
-      // const retrieveMessage = { problem: message, fileName: 'testComponent' };
       expect(
         util.setRetrieveDiagnostic(message, { component, status: RetrieveStatus.Failed })
       ).to.deep.equal({

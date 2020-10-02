@@ -9,7 +9,12 @@ import { ComponentProperties, SourceComponent } from '../../src/metadata-registr
 import { registryData, VirtualTreeContainer } from '../../src/metadata-registry';
 import { join } from 'path';
 import { expect } from 'chai';
-import { ComponentDeployment, ComponentStatus, DeployMessage } from '../../src/client/types';
+import {
+  ComponentDeployment,
+  ComponentStatus,
+  DeployMessage,
+  RetrieveStatus,
+} from '../../src/client/types';
 import { TreeContainer } from '../../src';
 
 function createDeployment(props: ComponentProperties, tree?: TreeContainer): ComponentDeployment {
@@ -34,7 +39,7 @@ function createDeployMessage(props: MockDeployMessage): DeployMessage {
 }
 
 describe('DiagnosticUtil', () => {
-  describe('Default', () => {
+  describe('Default Deploy', () => {
     const util = new DiagnosticUtil('metadata');
     const classes = join('path', 'to', 'classes');
     const component = {
@@ -56,7 +61,7 @@ describe('DiagnosticUtil', () => {
         problem: 'This might be a problem later!',
         problemType: 'Warning',
       });
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: 'This might be a problem later!',
           type: 'Warning',
@@ -73,7 +78,7 @@ describe('DiagnosticUtil', () => {
         lineNumber: '4',
         columnNumber: '2',
       });
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: 'Expected a ;',
           type: 'Error',
@@ -85,7 +90,39 @@ describe('DiagnosticUtil', () => {
     });
   });
 
-  describe('LWC', () => {
+  describe('Retrieve', () => {
+    const util = new DiagnosticUtil('metadata');
+    const classes = join('path', 'to', 'classes');
+    const props = {
+      name: 'Test',
+      type: registryData.types.apexclass,
+      content: join(classes, 'Test.cls'),
+      xml: join(classes, 'Test.cls-meta.xml'),
+    };
+    const component = SourceComponent.createVirtualComponent(props, [
+      {
+        dirPath: classes,
+        children: ['Test.cls', 'Test.cls-meta.xml'],
+      },
+    ]);
+
+    it('should create retrieve diagnostic for componentRetrieval', () => {
+      const message = 'There was a problem with the retrieve';
+      expect(
+        util.setRetrieveDiagnostic(message, { component, status: RetrieveStatus.Failed })
+      ).to.deep.equal({
+        diagnostics: {
+          message,
+          type: 'Error',
+          filePath: component.content,
+        },
+        component,
+        status: RetrieveStatus.Failed,
+      });
+    });
+  });
+
+  describe('LWC Deploy', () => {
     const bundlePath = join('path', 'to', 'lwc', 'test');
     const component = {
       name: 'Test',
@@ -104,7 +141,7 @@ describe('DiagnosticUtil', () => {
       const util = new DiagnosticUtil('tooling');
       const deployment = createDeployment(component, tree);
       const message = 'There was a problem with the component';
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message,
           type: 'Error',
@@ -116,7 +153,7 @@ describe('DiagnosticUtil', () => {
       const util = new DiagnosticUtil('tooling');
       const deployment = createDeployment(component, tree);
       const message = 'Compilation Failure\n\ttest.html:3,12 : LWC1075: Multiple roots found';
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: 'LWC1075: Multiple roots found',
           type: 'Error',
@@ -134,7 +171,7 @@ describe('DiagnosticUtil', () => {
         problem: 'There was a problem deploying',
         problemType: 'Error',
       });
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: message.problem,
           type: message.problemType,
@@ -150,7 +187,7 @@ describe('DiagnosticUtil', () => {
         problemType: 'Error',
         fileName: join('test', 'test.html'),
       });
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: 'LWC1075: Multiple roots found',
           type: 'Error',
@@ -162,7 +199,7 @@ describe('DiagnosticUtil', () => {
     });
   });
 
-  describe('Aura', () => {
+  describe('Aura Deploy', () => {
     const bundlePath = join('path', 'to', 'aura', 'test');
     const component = {
       name: 'Test',
@@ -184,7 +221,7 @@ describe('DiagnosticUtil', () => {
         problem: 'There was a problem deploying',
         problemType: 'Error',
       });
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: message.problem,
           type: message.problemType,
@@ -200,7 +237,7 @@ describe('DiagnosticUtil', () => {
         problemType: 'Error',
         fileName: join('test', 'testHelper.js'),
       });
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: message.problem,
           type: 'Error',
@@ -215,7 +252,7 @@ describe('DiagnosticUtil', () => {
       const util = new DiagnosticUtil('tooling');
       const deployment = createDeployment(component, tree);
       const message = 'There was a problem deploying';
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message,
           type: 'Error',
@@ -232,7 +269,7 @@ describe('DiagnosticUtil', () => {
         problemType: 'Error',
         fileName: join('test', 'testHelper.js'),
       });
-      expect(util.setDiagnostic(deployment, message).diagnostics).to.deep.equal([
+      expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
           message: message.problem,
           type: 'Error',

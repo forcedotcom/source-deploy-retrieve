@@ -20,6 +20,7 @@ import {
   RetrieveResult,
   RetrieveStatus,
   SourceRetrieveResult,
+  ComponentRetrieval,
 } from './types';
 import { MetadataConverter } from '../convert';
 import { DeployError, RetrieveError } from '../errors';
@@ -72,7 +73,14 @@ export class MetadataApi extends BaseApi {
       components = await this.getConvertedComponents(extractedComponents, options);
     }
 
-    const sourceRetrieveResult = this.buildSourceRetrieveResult(retrieveResult, components);
+    const componentRetrievals = components.map((component) => {
+      return { component, status: retrieveResult.status } as ComponentRetrieval;
+    });
+    const sourceRetrieveResult = this.buildSourceRetrieveResult(
+      retrieveResult,
+      options,
+      componentRetrievals
+    );
     return sourceRetrieveResult;
   }
 
@@ -145,16 +153,70 @@ export class MetadataApi extends BaseApi {
 
   private buildSourceRetrieveResult(
     retrieveResult: RetrieveResult,
-    components?: SourceComponent[]
+    options: RetrieveOptions,
+    components?: ComponentRetrieval[]
   ): SourceRetrieveResult {
-    const sourceRetrieveResult = {
-      status: retrieveResult.status,
+    const success = this.calculateSuccess(retrieveResult, options, components);
+
+    const sourceRetrieveResult: SourceRetrieveResult = {
+      status: success ? RetrieveStatus.Succeeded : RetrieveStatus.Failed,
       id: retrieveResult.id,
-      message: retrieveResult.messages,
-      success: retrieveResult.status === RetrieveStatus.Succeeded ? true : false,
-      components,
-    } as SourceRetrieveResult;
+      success,
+    };
+
+    sourceRetrieveResult.components = components || [];
+    sourceRetrieveResult.messages = [];
+    if (retrieveResult.hasOwnProperty('messages')) {
+      const diagnosticUtil = new DiagnosticUtil('metadata');
+      const messages = Array.isArray(retrieveResult.messages)
+        ? retrieveResult.messages
+        : [retrieveResult.messages];
+
+      for (const retrieveMessage of messages) {
+        let existingRetrieval: ComponentRetrieval;
+        let failedComponent: SourceComponent;
+        const matches = retrieveMessage.problem.match(/.+'(.+)'.+'(.+)'/);
+        if (matches && Array.isArray(matches)) {
+          const [fullName] = matches.slice(2);
+
+          existingRetrieval = components.find((retrieval) => {
+            return retrieval.component.fullName === fullName;
+          });
+          failedComponent = options.components.find((component) => {
+            return component.fullName === fullName;
+          });
+        }
+
+        if (existingRetrieval) {
+          diagnosticUtil.setRetrieveDiagnostic(retrieveMessage.problem, existingRetrieval);
+        } else if (failedComponent) {
+          const failedRetrieval: ComponentRetrieval = {
+            component: failedComponent,
+            status: sourceRetrieveResult.status,
+          };
+          diagnosticUtil.setRetrieveDiagnostic(retrieveMessage.problem, failedRetrieval);
+          sourceRetrieveResult.components.push(failedRetrieval);
+        } else {
+          sourceRetrieveResult.messages.push(retrieveMessage);
+        }
+      }
+    }
+
     return sourceRetrieveResult;
+  }
+
+  private calculateSuccess(
+    retrieveResult: RetrieveResult,
+    options: RetrieveOptions,
+    components: ComponentRetrieval[]
+  ): boolean {
+    return (
+      (retrieveResult.status === RetrieveStatus.Succeeded &&
+        options.components.length === components.length &&
+        !retrieveResult.hasOwnProperty('messages')) ||
+      retrieveResult.status === RetrieveStatus.InProgress ||
+      retrieveResult.status === RetrieveStatus.Pending
+    );
   }
 
   private async extractComponents(retrieveResult: RetrieveResult): Promise<SourceComponent[]> {
@@ -323,7 +385,7 @@ export class MetadataApi extends BaseApi {
           }
 
           if (message.problem) {
-            diagnosticUtil.setDiagnostic(componentDeployment, message);
+            diagnosticUtil.setDeployDiagnostic(componentDeployment, message);
           }
         }
       }

@@ -7,7 +7,12 @@
 import { SourcePath } from '../common';
 import { registryData } from '../metadata-registry';
 import { basename } from 'path';
-import { ComponentDeployment, DeployMessage, ComponentDiagnostic } from './types';
+import {
+  ComponentDeployment,
+  DeployMessage,
+  ComponentDiagnostic,
+  ComponentRetrieval,
+} from './types';
 
 export class DiagnosticUtil {
   private api: 'metadata' | 'tooling';
@@ -16,7 +21,20 @@ export class DiagnosticUtil {
     this.api = api;
   }
 
-  public setDiagnostic(
+  public setRetrieveDiagnostic(
+    message: string,
+    componentRetrieval: ComponentRetrieval
+  ): ComponentRetrieval {
+    componentRetrieval.diagnostics = {
+      message: message,
+      type: 'Error',
+      filePath: componentRetrieval.component.content,
+    };
+
+    return componentRetrieval;
+  }
+
+  public setDeployDiagnostic(
     componentDeployment: ComponentDeployment,
     message: string | DeployMessage
   ): ComponentDeployment {

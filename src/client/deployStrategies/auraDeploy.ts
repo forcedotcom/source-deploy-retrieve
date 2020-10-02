@@ -115,7 +115,7 @@ export class AuraDeploy extends BaseDeploy {
             partialSuccess = true;
           }
         } catch (e) {
-          diagnosticUtil.setDiagnostic(deployment, e.message);
+          diagnosticUtil.setDeployDiagnostic(deployment, e.message);
         }
       }
     );

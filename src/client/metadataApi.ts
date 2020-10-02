@@ -179,12 +179,12 @@ export class MetadataApi extends BaseApi {
         if (matches && Array.isArray(matches)) {
           const [fullName] = matches.slice(2);
 
-          existingRetrieval = components.filter((obj) => {
-            return obj.component.fullName === fullName;
-          })[0];
-          failedComponent = options.components.filter((obj) => {
-            return obj.fullName === fullName;
-          })[0];
+          existingRetrieval = components.find((retrieval) => {
+            return retrieval.component.fullName === fullName;
+          });
+          failedComponent = options.components.find((component) => {
+            return component.fullName === fullName;
+          });
         }
 
         if (existingRetrieval) {

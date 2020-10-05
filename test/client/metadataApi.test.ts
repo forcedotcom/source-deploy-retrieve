@@ -54,7 +54,6 @@ describe('Metadata Api', () => {
     success: true,
     fileProperties: [],
     done: true,
-    messages: { fileName: '', problem: '' },
     zipFile: TEST_PACKAGE_BASE_64,
   };
   const retrieveFailure: RetrieveResult = {
@@ -555,8 +554,8 @@ describe('Metadata Api', () => {
         .stub(mockConnection.metadata, 'checkRetrieveStatus')
         // @ts-ignore
         .resolves(retrieveResult);
-      registryStub.onFirstCall().returns([component]);
-      registryStub.onSecondCall().returns([component]);
+      // registryStub.onFirstCall().returns([component]);
+      // registryStub.onSecondCall().returns([component]);
       convertStub
         .withArgs(match.any, 'source', { type: 'directory', outputDirectory: outputDir })
         .resolves({
@@ -619,9 +618,12 @@ describe('Metadata Api', () => {
     });
 
     it('should return failed result without component matches in SourceRetrieveResult format', async () => {
+      const emptyZip = await createZipFromVirtualFs([
+        { dirPath: 'unpackaged', children: ['package.xml'] },
+      ]);
+      retrieveFailure.zipFile = emptyZip.toString('base64');
       retrieveStatusStub.resolves(retrieveFailure);
-      registryStub.onSecondCall().returns([]);
-      registryStub.onThirdCall().returns([]);
+      registryStub.returns([]);
 
       const options = {
         components: [component],

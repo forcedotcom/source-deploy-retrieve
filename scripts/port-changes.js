@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 
+/*
+ * Port commits from develop to main.
+ */
+
 const shell = require('shelljs');
 
 const PR_REGEX = new RegExp(/(\(#\d+\))(\s+\(#\d+\))*$/);
@@ -141,3 +145,8 @@ const parsedCommits = parseCommits(diffList);
 const filteredDiffList = filterDiffs(parsedCommits);
 getPortBranch();
 getCherryPickCommits(filteredDiffList);
+
+console.log('\nNext Steps:');
+console.log('\t1) Push changes upstream.');
+console.log('\t2) Open PR.');
+console.log('\t\bNote that upon approval, you will want to rebase and merge!\b');

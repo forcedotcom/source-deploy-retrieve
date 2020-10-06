@@ -23,6 +23,7 @@ export {
   ManifestGenerator,
   BaseTreeContainer,
   VirtualTreeContainer,
+  ZipTreeContainer,
   SourceComponent,
   TreeContainer,
   VirtualDirectory,

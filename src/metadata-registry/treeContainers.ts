@@ -177,7 +177,7 @@ export class VirtualTreeContainer extends BaseTreeContainer {
   }
 
   public stream(fsPath: string): Readable {
-    throw new Error('Method not implemented.');
+    throw new Error('Method not implemented');
   }
 
   private populate(virtualFs: VirtualDirectory[]): void {

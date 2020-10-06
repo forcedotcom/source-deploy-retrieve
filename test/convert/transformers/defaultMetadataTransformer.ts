@@ -10,16 +10,17 @@ import { WriteInfo } from '../../../src/convert';
 import { join, basename } from 'path';
 import { createSandbox } from 'sinon';
 import { TestReadable } from '../../mock/convert/readables';
-import * as fs from 'fs';
 import { expect } from 'chai';
 import { META_XML_SUFFIX } from '../../../src/utils';
+import { SourceComponent, VirtualTreeContainer } from '../../../src';
 
 const env = createSandbox();
 
 describe('DefaultMetadataTransformer', () => {
   beforeEach(() =>
-    // @ts-ignore mock readable isn't an fs readable specifically
-    env.stub(fs, 'createReadStream').callsFake((fsPath: string) => new TestReadable(fsPath))
+    env
+      .stub(VirtualTreeContainer.prototype, 'stream')
+      .callsFake((fsPath: string) => new TestReadable(fsPath))
   );
 
   afterEach(() => env.restore());
@@ -33,30 +34,31 @@ describe('DefaultMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [];
       for (const source of component.walkContent()) {
         expectedInfos.push({
+          source: component.tree.stream(source),
           relativeDestination: join(relativeBundle, basename(source)),
-          source: fs.createReadStream(source),
         });
       }
       expectedInfos.push({
+        source: component.tree.stream(component.xml),
         relativeDestination: join(relativeBundle, simon.SIMON_XML_NAME),
-        source: fs.createReadStream(component.xml),
       });
 
-      expect(await transformer.toMetadataFormat(component)).to.deep.equal({
+      const result = await transformer.toMetadataFormat(component);
+      expect(result).to.deep.equal({
         component,
         writeInfos: expectedInfos,
       });
     });
 
     it('should strip the -meta.xml suffix for components with no content', async () => {
-      const component = gene.GENE_COMPONENT;
+      const component = SourceComponent.createVirtualComponent(gene.GENE_COMPONENT, []);
       const transformer = new DefaultMetadataTransformer(mockRegistry);
       const { directoryName } = component.type;
       const fileName = `${component.fullName}.${component.type.suffix}`;
       const expectedInfos: WriteInfo[] = [
         {
           relativeDestination: join(directoryName, fileName),
-          source: fs.createReadStream(component.xml),
+          source: component.tree.stream(component.xml),
         },
       ];
 
@@ -67,7 +69,7 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should handle folder type components with no content', async () => {
-      const component = kathy.KATHY_COMPONENTS[0];
+      const component = SourceComponent.createVirtualComponent(kathy.KATHY_COMPONENTS[0], []);
       const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;
       const transformer = new DefaultMetadataTransformer(mockRegistry);
@@ -78,7 +80,7 @@ describe('DefaultMetadataTransformer', () => {
             fullNameParts[0],
             `${fullNameParts[1]}.${component.type.suffix}`
           ),
-          source: fs.createReadStream(component.xml),
+          source: component.tree.stream(component.xml),
         },
       ];
 
@@ -104,12 +106,12 @@ describe('DefaultMetadataTransformer', () => {
       for (const source of component.walkContent()) {
         expectedInfos.push({
           relativeDestination: join(relativeBundle, basename(source)),
-          source: fs.createReadStream(source),
+          source: component.tree.stream(source),
         });
       }
       expectedInfos.push({
         relativeDestination: join(relativeBundle, simon.SIMON_XML_NAME),
-        source: fs.createReadStream(component.xml),
+        source: component.tree.stream(component.xml),
       });
 
       expect(await transformer.toSourceFormat(component)).to.deep.equal({
@@ -119,14 +121,14 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should add in the -meta.xml suffix for components with no content', async () => {
-      const component = gene.GENE_MD_FORMAT_COMPONENT;
+      const component = SourceComponent.createVirtualComponent(gene.GENE_MD_FORMAT_COMPONENT, []);
       const transformer = new DefaultMetadataTransformer(mockRegistry);
       const { directoryName } = component.type;
       const fileName = `${component.fullName}.${component.type.suffix}${META_XML_SUFFIX}`;
       const expectedInfos: WriteInfo[] = [
         {
           relativeDestination: join('main', 'default', directoryName, fileName),
-          source: fs.createReadStream(component.xml),
+          source: component.tree.stream(component.xml),
         },
       ];
 
@@ -137,7 +139,10 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should handle folder type components with no content', async () => {
-      const component = kathy.KATHY_MD_FORMAT_COMPONENTS[0];
+      const component = SourceComponent.createVirtualComponent(
+        kathy.KATHY_MD_FORMAT_COMPONENTS[0],
+        []
+      );
       const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;
       const transformer = new DefaultMetadataTransformer(mockRegistry);
@@ -150,7 +155,7 @@ describe('DefaultMetadataTransformer', () => {
             fullNameParts[0],
             `${fullNameParts[1]}.${component.type.suffix}${META_XML_SUFFIX}`
           ),
-          source: fs.createReadStream(component.xml),
+          source: component.tree.stream(component.xml),
         },
       ];
 

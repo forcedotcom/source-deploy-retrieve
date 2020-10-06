@@ -12,7 +12,7 @@ import { RegistryAccess, registryData, SourceComponent } from '../../src/metadat
 import { MetadataApi, DEFAULT_API_OPTIONS } from '../../src/client/metadataApi';
 import { MetadataConverter } from '../../src/convert';
 import { fail } from 'assert';
-import { TEST_PACKAGE_BASE_64 } from '../mock/client';
+import { createMockZip } from '../mock/client';
 import * as path from 'path';
 import { nls } from '../../src/i18n';
 import {
@@ -48,35 +48,6 @@ describe('Metadata Api', () => {
       children: [path.basename(props.xml), path.basename(props.content)],
     },
   ]);
-  const retrieveResult: RetrieveResult = {
-    id: '12345',
-    status: RetrieveStatus.Succeeded,
-    success: true,
-    fileProperties: [],
-    done: true,
-    zipFile: TEST_PACKAGE_BASE_64,
-  };
-  const retrieveFailure: RetrieveResult = {
-    id: '12345',
-    status: RetrieveStatus.Succeeded,
-    success: false,
-    fileProperties: [],
-    done: true,
-    messages: { fileName: 'testComponent', problem: 'There was an error' },
-    zipFile: 'thisisthezipfile',
-  };
-  const formattedRetrieveFailure: RetrieveResult = {
-    id: '12345',
-    status: RetrieveStatus.Failed,
-    success: false,
-    fileProperties: [],
-    done: true,
-    messages: {
-      fileName: props.name,
-      problem: `There was an error with entity of type 'ApexClass' named 'myTestClass'`,
-    },
-    zipFile: 'thisisthezipfile',
-  };
 
   const deployResult: DeployResult = {
     id: '12345',
@@ -540,9 +511,32 @@ describe('Metadata Api', () => {
     });
   });
 
-  describe('Metadata API Retrieve', async () => {
+  describe('Metadata API Retrieve', () => {
     let retrieveStub: SinonStub;
     let retrieveStatusStub: SinonStub;
+    let base64ZipWithClass: string;
+    let base64EmptyZip: string;
+
+    const defaultRetrieveResult: RetrieveResult = {
+      id: '12345',
+      status: RetrieveStatus.Succeeded,
+      success: true,
+      fileProperties: [],
+      done: true,
+      zipFile: '',
+    };
+
+    before(async () => {
+      base64ZipWithClass = (
+        await createMockZip([
+          'unpackaged/package.xml',
+          'unpackaged/classes/myTestClass.cls',
+          'unpackaged/classes/myTestClass.cls-meta.xml',
+        ])
+      ).toString('base64');
+      base64EmptyZip = (await createMockZip(['unpackaged/package.xml'])).toString('base64');
+      defaultRetrieveResult.zipFile = base64ZipWithClass;
+    });
 
     beforeEach(async () => {
       retrieveStub = sandboxStub
@@ -553,9 +547,7 @@ describe('Metadata Api', () => {
       retrieveStatusStub = sandboxStub
         .stub(mockConnection.metadata, 'checkRetrieveStatus')
         // @ts-ignore
-        .resolves(retrieveResult);
-      // registryStub.onFirstCall().returns([component]);
-      // registryStub.onSecondCall().returns([component]);
+        .resolves(defaultRetrieveResult);
       convertStub
         .withArgs(match.any, 'source', { type: 'directory', outputDirectory: outputDir })
         .resolves({
@@ -618,11 +610,15 @@ describe('Metadata Api', () => {
     });
 
     it('should return failed result without component matches in SourceRetrieveResult format', async () => {
-      const emptyZip = await createZipFromVirtualFs([
-        { dirPath: 'unpackaged', children: ['package.xml'] },
-      ]);
-      retrieveFailure.zipFile = emptyZip.toString('base64');
-      retrieveStatusStub.resolves(retrieveFailure);
+      retrieveStatusStub.resolves({
+        id: '12345',
+        status: RetrieveStatus.Succeeded,
+        success: false,
+        fileProperties: [],
+        done: true,
+        messages: { fileName: 'testComponent', problem: 'There was an error' },
+        zipFile: base64EmptyZip,
+      });
       registryStub.returns([]);
 
       const options = {
@@ -639,11 +635,22 @@ describe('Metadata Api', () => {
       };
 
       const result = await metadataClient.retrieve(options);
-      expect(result).to.eql(sourceRetrieveResult);
+      expect(result).to.deep.equal(sourceRetrieveResult);
     });
 
     it('should return failed result with component matches in SourceRetrieveResult format', async () => {
-      retrieveStatusStub.resolves(formattedRetrieveFailure);
+      retrieveStatusStub.resolves({
+        id: '12345',
+        status: RetrieveStatus.Failed,
+        success: false,
+        fileProperties: [],
+        done: true,
+        messages: {
+          fileName: props.name,
+          problem: `There was an error with entity of type 'ApexClass' named 'myTestClass'`,
+        },
+        zipFile: base64EmptyZip,
+      });
       const options = {
         components: [component],
         output: outputDir,

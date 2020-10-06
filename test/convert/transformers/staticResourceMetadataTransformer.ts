@@ -4,14 +4,12 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
-import * as fs from 'fs';
 import * as archiver from 'archiver';
 import { expect } from 'chai';
 import { join, basename } from 'path';
 import { createSandbox } from 'sinon';
 import { Entry, CentralDirectory, Open } from 'unzipper';
-import { SourceComponent } from '../../../src';
+import { SourceComponent, VirtualTreeContainer } from '../../../src';
 import { WriteInfo } from '../../../src/convert';
 import { StaticResourceMetadataTransformer } from '../../../src/convert/transformers/staticResourceMetadataTransformer';
 import { LibraryError } from '../../../src/errors';
@@ -28,8 +26,9 @@ const env = createSandbox();
 describe('StaticResourceMetadataTransformer', () => {
   const rootPackagePath = join('main', 'default');
   beforeEach(() =>
-    // @ts-ignore mock readable isn't an fs readable specifically
-    env.stub(fs, 'createReadStream').callsFake((fsPath: string) => new TestReadable(fsPath))
+    env
+      .stub(VirtualTreeContainer.prototype, 'stream')
+      .callsFake((fsPath: string) => new TestReadable(fsPath))
   );
 
   afterEach(() => env.restore());
@@ -46,11 +45,11 @@ describe('StaticResourceMetadataTransformer', () => {
       const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
-          source: fs.createReadStream(content),
+          source: component.tree.stream(content),
           relativeDestination: join(type.directoryName, `${baseName(content)}.${type.suffix}`),
         },
         {
-          source: fs.createReadStream(xml),
+          source: component.tree.stream(xml),
           relativeDestination: join(type.directoryName, basename(xml)),
         },
       ];
@@ -76,7 +75,7 @@ describe('StaticResourceMetadataTransformer', () => {
           relativeDestination: join(type.directoryName, `${baseName(content)}.${type.suffix}`),
         },
         {
-          source: fs.createReadStream(xml),
+          source: component.tree.stream(xml),
           relativeDestination: join(type.directoryName, basename(xml)),
         },
       ];
@@ -123,7 +122,7 @@ describe('StaticResourceMetadataTransformer', () => {
       const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
-          source: fs.createReadStream(content),
+          source: component.tree.stream(content),
           relativeDestination: join(
             rootPackagePath,
             type.directoryName,
@@ -131,7 +130,7 @@ describe('StaticResourceMetadataTransformer', () => {
           ),
         },
         {
-          source: fs.createReadStream(xml),
+          source: component.tree.stream(xml),
           relativeDestination: join(rootPackagePath, type.directoryName, basename(xml)),
         },
       ];
@@ -154,11 +153,11 @@ describe('StaticResourceMetadataTransformer', () => {
       const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
-          source: fs.createReadStream(content),
+          source: component.tree.stream(content),
           relativeDestination: join(rootPackagePath, type.directoryName, `${baseName(content)}.js`),
         },
         {
-          source: fs.createReadStream(xml),
+          source: component.tree.stream(xml),
           relativeDestination: join(rootPackagePath, type.directoryName, basename(xml)),
         },
       ];
@@ -181,7 +180,7 @@ describe('StaticResourceMetadataTransformer', () => {
       const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
-          source: fs.createReadStream(content),
+          source: component.tree.stream(content),
           relativeDestination: join(
             rootPackagePath,
             type.directoryName,
@@ -189,7 +188,7 @@ describe('StaticResourceMetadataTransformer', () => {
           ),
         },
         {
-          source: fs.createReadStream(xml),
+          source: component.tree.stream(xml),
           relativeDestination: join(rootPackagePath, type.directoryName, basename(xml)),
         },
       ];
@@ -242,7 +241,7 @@ describe('StaticResourceMetadataTransformer', () => {
       const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
-          source: fs.createReadStream(xml),
+          source: component.tree.stream(xml),
           relativeDestination: join(rootPackagePath, type.directoryName, basename(xml)),
         },
       ];
@@ -272,7 +271,7 @@ describe('StaticResourceMetadataTransformer', () => {
       const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
-          source: fs.createReadStream(content),
+          source: component.tree.stream(content),
           relativeDestination: join(
             rootPackagePath,
             type.directoryName,
@@ -280,7 +279,7 @@ describe('StaticResourceMetadataTransformer', () => {
           ),
         },
         {
-          source: fs.createReadStream(xml),
+          source: component.tree.stream(xml),
           relativeDestination: join(rootPackagePath, type.directoryName, basename(xml)),
         },
       ];

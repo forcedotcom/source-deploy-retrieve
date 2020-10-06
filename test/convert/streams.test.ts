@@ -87,18 +87,18 @@ describe('Streams', () => {
     it('should transform to metadata format', () => {
       const converter = new streams.ComponentConverter('metadata', mockRegistry);
 
-      converter._transform(component, '', (err: Error, data: WriterFormat) => {
+      converter._transform(component, '', async (err: Error, data: WriterFormat) => {
         expect(err).to.be.undefined;
-        expect(data).to.deep.equal(transformer.toMetadataFormat());
+        expect(data).to.deep.equal(await transformer.toMetadataFormat());
       });
     });
 
     it('should transform to source format', () => {
       const converter = new streams.ComponentConverter('source', mockRegistry);
 
-      converter._transform(component, '', (err: Error, data: WriterFormat) => {
+      converter._transform(component, '', async (err: Error, data: WriterFormat) => {
         expect(err).to.be.undefined;
-        expect(data).to.deep.equal(transformer.toSourceFormat());
+        expect(data).to.deep.equal(await transformer.toSourceFormat());
       });
     });
 

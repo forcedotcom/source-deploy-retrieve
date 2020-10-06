@@ -24,18 +24,11 @@ import {
 } from './types';
 import { MetadataConverter } from '../convert';
 import { DeployError, RetrieveError } from '../errors';
-import { ManifestGenerator, SourceComponent } from '../metadata-registry';
+import { ManifestGenerator, RegistryAccess, SourceComponent } from '../metadata-registry';
 import { DiagnosticUtil } from './diagnosticUtil';
 import { SourcePath } from '../common';
-import * as unzipper from 'unzipper';
 import { parse } from 'fast-xml-parser';
-import { pipeline as cbPipeline } from 'stream';
-import { promisify } from 'util';
-import { join } from 'path';
-import { tmpdir } from 'os';
-import { createReadStream, writeFileSync } from 'fs';
-import { ensureDirectoryExists, deleteDirectory } from '../utils/fileSystemHandler';
-const pipeline = promisify(cbPipeline);
+import { ZipTreeContainer } from '../metadata-registry/treeContainers';
 
 export const DEFAULT_API_OPTIONS = {
   rollbackOnError: true,
@@ -69,8 +62,9 @@ export class MetadataApi extends BaseApi {
     const retrieveRequest = this.formatRetrieveRequest(options.components);
     const retrieveResult = await this.getRetrievedResult(retrieveRequest, options);
     if (retrieveResult.status === RetrieveStatus.Succeeded) {
-      const extractedComponents = await this.extractComponents(retrieveResult);
-      components = await this.getConvertedComponents(extractedComponents, options);
+      const tree = await ZipTreeContainer.create(Buffer.from(retrieveResult.zipFile, 'base64'));
+      const zipComponents = new RegistryAccess(undefined, tree).getComponentsFromPath('.');
+      components = await this.getConvertedComponents(zipComponents, options);
     }
 
     const componentRetrievals = components.map((component) => {
@@ -217,25 +211,6 @@ export class MetadataApi extends BaseApi {
       retrieveResult.status === RetrieveStatus.InProgress ||
       retrieveResult.status === RetrieveStatus.Pending
     );
-  }
-
-  private async extractComponents(retrieveResult: RetrieveResult): Promise<SourceComponent[]> {
-    const tempCmpDir = join(tmpdir(), '.sfdx', 'tmp');
-    deleteDirectory(tempCmpDir);
-    ensureDirectoryExists(tempCmpDir);
-    const tmpZip = join(tempCmpDir, 'metadataformat.zip');
-    writeFileSync(tmpZip, retrieveResult.zipFile, 'base64');
-
-    const retrieveStream = createReadStream(tmpZip);
-    const outputStream = unzipper.Extract({ path: tempCmpDir });
-
-    return new Promise((resolve, reject) => {
-      pipeline(retrieveStream, outputStream).catch((err) => reject(err));
-      outputStream.on('close', () => {
-        const retrievedComponents = this.registry.getComponentsFromPath(tempCmpDir);
-        resolve(retrievedComponents);
-      });
-    });
   }
 
   private async getConvertedComponents(

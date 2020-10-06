@@ -7,14 +7,13 @@
 import { AuthInfo, Connection } from '@salesforce/core';
 import { expect } from 'chai';
 import { MockTestOrgData } from '@salesforce/core/lib/testSetup';
-import { createSandbox, match } from 'sinon';
+import { createSandbox, match, SinonStub } from 'sinon';
 import { RegistryAccess, registryData, SourceComponent } from '../../src/metadata-registry';
 import { MetadataApi, DEFAULT_API_OPTIONS } from '../../src/client/metadataApi';
 import { MetadataConverter } from '../../src/convert';
 import { fail } from 'assert';
-import * as fsUtil from '../../src/utils/fileSystemHandler';
+import { createMockZip } from '../mock/client';
 import * as path from 'path';
-import * as fs from 'fs';
 import { nls } from '../../src/i18n';
 import {
   MetadataApiDeployOptions,
@@ -29,10 +28,6 @@ import {
   SourceRetrieveResult,
   ComponentDiagnostic,
 } from '../../src/client/types';
-import * as stream from 'stream';
-import * as unzipper from 'unzipper';
-import { tmpdir } from 'os';
-import Sinon = require('sinon');
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 describe('Metadata Api', () => {
@@ -53,35 +48,6 @@ describe('Metadata Api', () => {
       children: [path.basename(props.xml), path.basename(props.content)],
     },
   ]);
-  const retrieveResult: RetrieveResult = {
-    id: '12345',
-    status: RetrieveStatus.Succeeded,
-    success: true,
-    fileProperties: [],
-    done: true,
-    zipFile: 'thisisthezipfile',
-  };
-  const retrieveFailure: RetrieveResult = {
-    id: '12345',
-    status: RetrieveStatus.Succeeded,
-    success: false,
-    fileProperties: [],
-    done: true,
-    messages: { fileName: 'testComponent', problem: 'There was an error' },
-    zipFile: 'thisisthezipfile',
-  };
-  const formattedRetrieveFailure: RetrieveResult = {
-    id: '12345',
-    status: RetrieveStatus.Failed,
-    success: false,
-    fileProperties: [],
-    done: true,
-    messages: {
-      fileName: props.name,
-      problem: `There was an error with entity of type 'ApexClass' named 'myTestClass'`,
-    },
-    zipFile: 'thisisthezipfile',
-  };
 
   const deployResult: DeployResult = {
     id: '12345',
@@ -545,41 +511,50 @@ describe('Metadata Api', () => {
     });
   });
 
-  describe('Metadata API Retrieve', async () => {
-    let retrieveStub: Sinon.SinonStub;
-    let extractStub: Sinon.SinonStub;
-    let removeStub: Sinon.SinonStub;
-    let retrieveStatusStub: Sinon.SinonStub;
+  describe('Metadata API Retrieve', () => {
+    let retrieveStub: SinonStub;
+    let retrieveStatusStub: SinonStub;
+    let base64ZipWithClass: string;
+    let base64EmptyZip: string;
+
+    const defaultRetrieveResult: RetrieveResult = {
+      id: '12345',
+      status: RetrieveStatus.Succeeded,
+      success: true,
+      fileProperties: [],
+      done: true,
+      zipFile: '',
+    };
+
+    before(async () => {
+      base64ZipWithClass = (
+        await createMockZip([
+          'unpackaged/package.xml',
+          'unpackaged/classes/myTestClass.cls',
+          'unpackaged/classes/myTestClass.cls-meta.xml',
+        ])
+      ).toString('base64');
+      base64EmptyZip = (await createMockZip(['unpackaged/package.xml'])).toString('base64');
+      defaultRetrieveResult.zipFile = base64ZipWithClass;
+    });
 
     beforeEach(async () => {
-      const mockRetrieve = new stream.PassThrough();
       retrieveStub = sandboxStub
         .stub(mockConnection.metadata, 'retrieve')
         // @ts-ignore
         .resolves({ id: 'xxxxxxx' });
-      // @ts-ignore
-      sandboxStub.stub(fs, 'createReadStream').returns(mockRetrieve);
-      const mockStream = new stream.PassThrough();
-      sandboxStub.stub(stream, 'pipeline').resolves();
-      // @ts-ignore
-      extractStub = sandboxStub.stub(unzipper, 'Extract').returns(mockStream);
-      setTimeout(() => {
-        mockStream.emit('close');
-      }, 100);
 
       retrieveStatusStub = sandboxStub
         .stub(mockConnection.metadata, 'checkRetrieveStatus')
         // @ts-ignore
-        .resolves(retrieveResult);
-      registryStub.onFirstCall().returns([component]);
-      registryStub.onSecondCall().returns([component]);
+        .resolves(defaultRetrieveResult);
       convertStub
         .withArgs(match.any, 'source', { type: 'directory', outputDirectory: outputDir })
         .resolves({
           packagePath: outputDir,
         });
-      removeStub = sandboxStub.stub(fsUtil, 'deleteDirectory');
     });
+
     afterEach(() => {
       sandboxStub.restore();
     });
@@ -600,30 +575,6 @@ describe('Metadata Api', () => {
 
       await metadataClient.retrieve(options);
       expect(retrieveStub.calledWith(retrieveRequest)).to.be.true;
-    });
-
-    it('should correctly retrieve components and extract to directory', async () => {
-      const tempDir = path.join(tmpdir(), '.sfdx', 'tmp');
-      const options = {
-        components: [component],
-        output: outputDir,
-      } as RetrieveOptions;
-
-      await metadataClient.retrieve(options);
-      expect(extractStub.calledOnce).to.be.true;
-      expect(extractStub.calledWith({ path: tempDir })).to.be.true;
-    });
-
-    it('should correctly retrieve components and clean temp folder', async () => {
-      const tempDir = path.join(tmpdir(), '.sfdx', 'tmp');
-      const options = {
-        components: [component],
-        output: outputDir,
-      } as RetrieveOptions;
-
-      await metadataClient.retrieve(options);
-      expect(removeStub.called).to.be.true;
-      expect(removeStub.calledWith(tempDir)).to.be.true;
     });
 
     it('should convert the retrieved components', async () => {
@@ -659,9 +610,16 @@ describe('Metadata Api', () => {
     });
 
     it('should return failed result without component matches in SourceRetrieveResult format', async () => {
-      retrieveStatusStub.resolves(retrieveFailure);
-      registryStub.onSecondCall().returns([]);
-      registryStub.onThirdCall().returns([]);
+      retrieveStatusStub.resolves({
+        id: '12345',
+        status: RetrieveStatus.Succeeded,
+        success: false,
+        fileProperties: [],
+        done: true,
+        messages: { fileName: 'testComponent', problem: 'There was an error' },
+        zipFile: base64EmptyZip,
+      });
+      registryStub.returns([]);
 
       const options = {
         components: [component],
@@ -677,11 +635,22 @@ describe('Metadata Api', () => {
       };
 
       const result = await metadataClient.retrieve(options);
-      expect(result).to.eql(sourceRetrieveResult);
+      expect(result).to.deep.equal(sourceRetrieveResult);
     });
 
     it('should return failed result with component matches in SourceRetrieveResult format', async () => {
-      retrieveStatusStub.resolves(formattedRetrieveFailure);
+      retrieveStatusStub.resolves({
+        id: '12345',
+        status: RetrieveStatus.Failed,
+        success: false,
+        fileProperties: [],
+        done: true,
+        messages: {
+          fileName: props.name,
+          problem: `There was an error with entity of type 'ApexClass' named 'myTestClass'`,
+        },
+        zipFile: base64EmptyZip,
+      });
       const options = {
         components: [component],
         output: outputDir,

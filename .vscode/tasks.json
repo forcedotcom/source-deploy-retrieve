@@ -13,7 +13,7 @@
       "label": "Launch Pre-Publish Steps",
       "command": "./scripts/port-changes.js",
       "type": "shell",
-      "args": ["${input:verboseOutput}", "-r", "${input:releaseBranch}"]
+      "args": ["${input:verboseOutput}", "-r", "${input:releaseVersion}"]
     },
     {
       "label": "Commit",
@@ -52,7 +52,7 @@
       "default": "patch"
     },
     {
-      "id": "releaseBranch",
+      "id": "releaseVersion",
       "type": "promptString",
       "description": "Provide the release version (Ex 1.1.0)"
     },

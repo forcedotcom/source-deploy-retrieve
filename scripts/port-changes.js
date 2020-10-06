@@ -157,7 +157,7 @@ function getCherryPickCommits(diffList) {
     }
 }
 
-let ADD_VERBOSE_LOGGING = process.argv.indexOf('-v') > -1 ? true : false;
+let ADD_VERBOSE_LOGGING = process.argv.indexOf('-v') > -1;
 
 const releaseVersion = getReleaseVersion();
 updateBranches('main', 'develop');

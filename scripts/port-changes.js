@@ -121,7 +121,11 @@ function getPortBranch(baseBranch) {
         );
         process.exit(-1);
     }
-    shell.exec(`git checkout -b portPR-v${process.argv[releaseIndex + 1]} ${baseBranch}`);
+    const result = shell.exec(`git checkout -b portPR-v${process.argv[releaseIndex + 1]} ${baseBranch}`).stderr.toString().trim();
+    if (result && result.startsWith('fatal')) {
+        console.log('\n\nManual review required. Unable to generate port branch.');
+        process.exit(-1);
+    }
 }
 
 function getCherryPickCommits(diffList) {

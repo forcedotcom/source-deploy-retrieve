@@ -10,7 +10,7 @@
       "args": ["${input:circleCiId}", "${input:publishType}"]
     },
     {
-      "label": "Launch Pre-Publish Steps",
+      "label": "Create Port PR for Publishing",
       "command": "./scripts/port-changes.js",
       "type": "shell",
       "args": ["${input:verboseOutput}", "-r", "${input:publishType}"]

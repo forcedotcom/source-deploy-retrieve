@@ -1,26 +1,32 @@
 #!/usr/bin/env node
 
 /*
- * Port commits from develop to main.
+ * Ports changes from develop to main. The only commits
+ * that will be ported are 'true diffs'. This logic will
+ * generate a new portPR branch and cherry-pick the commits
+ * to the new branch.
  */
 
 const shell = require('shelljs');
 
 const PR_REGEX = new RegExp(/(\(#\d+\))(\s+\(#\d+\))*$/);
 const COMMIT_REGEX = new RegExp(/^([\da-zA-Z]+)/);
-const TYPE_REGEX = new RegExp(/([a-zA-Z]+)(?:\([a-zA-Z]+\))?:/);
 const RELEASE_REGEX = new RegExp(/^\d{1,2}\.\d{1,2}\.\d/);
 
 const PR_NUM = 'PR_NUM';
 const COMMIT = 'COMMIT';
-const TYPE = 'TYPE';
 const MESSAGE = 'MESSAGE';
+
+function updateBranches(baseBranch, featureBranch) {
+    if (ADD_VERBOSE_LOGGING)
+        console.log(`\n\nStep 1: Update branches ${baseBranch} and ${featureBranch}`);
+    shell.exec(`git fetch . origin/${baseBranch}:${baseBranch}`, { silent: !ADD_VERBOSE_LOGGING });
+    shell.exec(`git fetch . origin/${featureBranch}:${featureBranch}`, { silent: !ADD_VERBOSE_LOGGING });
+}
 
 function getAllDiffs(baseBranch, featureBranch) {
     if (ADD_VERBOSE_LOGGING)
-        console.log(`\n\nStep 1: Get all diffs between branches ${baseBranch} and ${featureBranch}`);
-    shell.exec(`git fetch upstream main:main`, { silent: !ADD_VERBOSE_LOGGING });
-    shell.exec(`git fetch upstream develop:develop`, { silent: !ADD_VERBOSE_LOGGING });
+        console.log(`\n\nStep 2: Get all diffs between branches ${baseBranch} and ${featureBranch}`);
     return shell
         .exec(`git log --oneline ${baseBranch}..${featureBranch}`, {
             silent: !ADD_VERBOSE_LOGGING
@@ -56,18 +62,12 @@ function buildMapFromCommit(commit) {
                 map[PR_NUM] = pr[0];
                 message = message.replace(pr[0], '');
             }
-            var type = TYPE_REGEX.exec(message);
-            if (type) {
-                map[TYPE] = type[1];
-                message = message.replace(type[0], '');
-            }
             map[COMMIT] = commitNum[0];
             map[MESSAGE] = message.trim();
         }
     }
     if (ADD_VERBOSE_LOGGING) {
         console.log('\nCommit: ' + commit);
-        console.log('Commit Map:');
         console.log(map);
     }
     return map;
@@ -100,15 +100,15 @@ function filterDiffs(parsedCommits) {
 }
 
 function isTrueDiff(commitMap) {
-    var mainResult = shell.exec(`git log --grep="${commitMap[MESSAGE]}" --oneline main`, { silent: true });
-    var developResult = shell.exec(`git log --grep="${commitMap[MESSAGE]}" --oneline develop`, { silent: true });
-    if (!mainResult || mainResult.length === 0) {
+    var mainResult = shell.exec(`git log --grep="${commitMap[MESSAGE]}" -F --oneline main`, { silent: true });
+    var noResultsFound = !mainResult || mainResult.length === 0;
+    if (noResultsFound) {
         if (ADD_VERBOSE_LOGGING)
-            console.log(`Commit is missing from main. Porting.`);
+            console.log(`Porting - Commit is missing from main.\n\t${commitMap[COMMIT]} ${commitMap[MESSAGE]}`);
         return true;
-    } else if (mainResult && developResult) {
+    } else {
         if (ADD_VERBOSE_LOGGING)
-            console.log(`Commit is present in both branches. Filtering.\n\t${commitMap[COMMIT]} ${commitMap[MESSAGE]}`);
+            console.log(`Filtering - Commit is present in both branches.\n\t${commitMap[COMMIT]} ${commitMap[MESSAGE]}`);
         return false;
     }
 }
@@ -140,13 +140,9 @@ function getCherryPickCommits(diffList) {
 
 let ADD_VERBOSE_LOGGING = process.argv.indexOf('-v') > -1 ? true : false;
 
+updateBranches('main', 'develop');
 const diffList = getAllDiffs('main', 'develop');
 const parsedCommits = parseCommits(diffList);
 const filteredDiffList = filterDiffs(parsedCommits);
 getPortBranch();
 getCherryPickCommits(filteredDiffList);
-
-console.log('\nNext Steps:');
-console.log('\t1) Push changes upstream.');
-console.log('\t2) Open PR.');
-console.log('\t\bNote that upon approval, you will want to rebase and merge!\b');

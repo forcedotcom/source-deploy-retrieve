@@ -8,7 +8,12 @@ import * as data from './data/registry.json';
 import { deepFreeze } from '../utils/registry';
 export { RegistryAccess } from './registryAccess';
 export { ManifestGenerator } from './manifestGenerator';
-export { BaseTreeContainer, NodeFSTreeContainer, VirtualTreeContainer } from './treeContainers';
+export {
+  BaseTreeContainer,
+  NodeFSTreeContainer,
+  VirtualTreeContainer,
+  ZipTreeContainer,
+} from './treeContainers';
 export { SourceComponent } from './sourceComponent';
 export {
   MetadataRegistry,

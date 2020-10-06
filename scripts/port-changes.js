@@ -73,12 +73,6 @@ function buildMapFromCommit(commit) {
     return map;
 }
 
-/**
- * From the list of diffs, determine which are 'true' diffs. It's possible for the list
- * to contain entries that have the same commit message, but a different hash. Also,
- * due to porting it's possible for the same commit to be present but with an additional
- * (PR #) appended at the end.
- */
 function filterDiffs(parsedCommits) {
     if (ADD_VERBOSE_LOGGING) {
         console.log(`\n\nStep 3: Filter out non diffs. The commits we would want to filter...`);
@@ -113,7 +107,7 @@ function isTrueDiff(commitMap) {
     }
 }
 
-function getPortBranch() {
+function getPortBranch(baseBranch) {
     if (ADD_VERBOSE_LOGGING)
         console.log('\n\nStep 4: Generate the port PR branch based on -r argument');
     var releaseIndex = process.argv.indexOf('-r');
@@ -127,7 +121,7 @@ function getPortBranch() {
         );
         process.exit(-1);
     }
-    shell.exec(`git checkout -b portPR-v${process.argv[releaseIndex + 1]} main`);
+    shell.exec(`git checkout -b portPR-v${process.argv[releaseIndex + 1]} ${baseBranch}`);
 }
 
 function getCherryPickCommits(diffList) {
@@ -144,5 +138,5 @@ updateBranches('main', 'develop');
 const diffList = getAllDiffs('main', 'develop');
 const parsedCommits = parseCommits(diffList);
 const filteredDiffList = filterDiffs(parsedCommits);
-getPortBranch();
+getPortBranch('main');
 getCherryPickCommits(filteredDiffList);

@@ -64,6 +64,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const composedMetadata = (await component.parseXml())[type.name];
     const rootXmlObject: XmlJson = { [type.name]: {} };
 
+    let childrenOnlyTags = true;
     for (const [tagName, collection] of Object.entries(composedMetadata)) {
       const childTypeId = type?.children?.directories[tagName];
 
@@ -92,17 +93,20 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
           });
         }
       } else {
+        childrenOnlyTags = false;
         rootXmlObject[type.name][tagName] = collection as JsonArray;
       }
     }
 
-    writeInfos.push({
-      source: new JsToXml(rootXmlObject),
-      relativeDestination: join(
-        rootPackagePath,
-        `${parentFullName}.${type.suffix}${META_XML_SUFFIX}`
-      ),
-    });
+    if (!childrenOnlyTags) {
+      writeInfos.push({
+        source: new JsToXml(rootXmlObject),
+        relativeDestination: join(
+          rootPackagePath,
+          `${parentFullName}.${type.suffix}${META_XML_SUFFIX}`
+        ),
+      });
+    }
 
     return { component, writeInfos };
   }

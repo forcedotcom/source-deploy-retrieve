@@ -138,7 +138,7 @@ export class RegistryAccess {
         isResolvingSource ||
         !this.parseAsContentMetadataXml(fsPath) ||
         !adapter.allowMetadataWithContent();
-      return shouldResolve ? adapter.getComponent(fsPath, isResolvingSource) : undefined;
+      return shouldResolve ? adapter.getComponent(fsPath) : undefined;
     }
     throw new TypeInferenceError('error_could_not_infer_type', fsPath);
   }

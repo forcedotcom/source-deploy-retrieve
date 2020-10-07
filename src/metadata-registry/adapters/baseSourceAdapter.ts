@@ -40,7 +40,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     this.tree = tree;
   }
 
-  public getComponent(path: SourcePath, canResolveChild = true): SourceComponent {
+  public getComponent(path: SourcePath): SourceComponent {
     let rootMetadata = this.parseAsRootMetadataXml(path);
     if (!rootMetadata) {
       const rootMetadataPath = this.getRootMetadataXmlPath(path);
@@ -68,7 +68,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       );
     }
 
-    return this.populate(path, component, canResolveChild);
+    return this.populate(path, component);
   }
 
   /**
@@ -92,11 +92,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    * @param component Component to populate properties on
    * @param trigger Path that `getComponent` was called with
    */
-  protected abstract populate(
-    trigger: SourcePath,
-    component?: SourceComponent,
-    canResolveChild?: boolean
-  ): SourceComponent;
+  protected abstract populate(trigger: SourcePath, component?: SourceComponent): SourceComponent;
 
   /**
    * If the path given to `getComponent` is the root metadata xml file for a component,

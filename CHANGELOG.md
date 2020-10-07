@@ -2,7 +2,7 @@
 
 ## Added
 
-- Add more detail to metadata api retrieve result ([PR #154](https://github.com/forcedotcom/source-deploy-retrieve/pull/155))
+- Add more detail to metadata api retrieve result ([PR #155](https://github.com/forcedotcom/source-deploy-retrieve/pull/155))
 
 - Performance improvements to extracting zip file from metadata retrieve ([PR #164](https://github.com/forcedotcom/source-deploy-retrieve/pull/164))
 

@@ -1,3 +1,15 @@
+# 1.1.6 - October 7, 2020
+
+## Added
+
+- Add more detail to metadata api retrieve result ([PR #154](https://github.com/forcedotcom/source-deploy-retrieve/pull/155))
+
+- Performance improvements to extracting zip file from metadata retrieve ([PR #164](https://github.com/forcedotcom/source-deploy-retrieve/pull/164))
+
+## Fixed
+
+- Fix creating an empty parent xml when decomposing child components ([PR #166](https://github.com/forcedotcom/source-deploy-retrieve/pull/166))
+
 # 1.1.5 - October 1, 2020
 
 ## Added

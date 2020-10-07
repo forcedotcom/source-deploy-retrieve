@@ -23,9 +23,12 @@ function getReleaseVersion() {
     switch (releaseType) {
         case 'major':
             major = parseInt(major) + 1;
+            minor = 0;
+            patch = 0;
             break;
         case 'minor':
             minor = parseInt(minor) + 1;
+            patch = 0;
             break;
         case 'patch':
             patch = parseInt(patch) + 1;
@@ -36,7 +39,7 @@ function getReleaseVersion() {
 
 function getReleaseType() {
     var releaseIndex = process.argv.indexOf('-r');
-    if (!(releaseIndex > -1)) {
+    if (releaseIndex === -1) {
         console.error('Release version type for the port PR is required. Example: \'patch\', \'minor\', or \'major\'');
         process.exit(-1);
     }

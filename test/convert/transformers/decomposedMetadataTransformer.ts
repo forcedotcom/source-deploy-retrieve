@@ -235,5 +235,69 @@ describe('DecomposedMetadataTransformer', () => {
         ],
       });
     });
+
+    it('should not create parent xml during decomposition when only children are being decomposed', async () => {
+      const { type, fullName } = component;
+      const transformer = new DecomposedMetadataTransformer(mockRegistry);
+      const root = join('main', 'default', type.directoryName, fullName);
+      env.stub(component, 'parseXml').resolves({
+        ReginaKing: {
+          ys: { fullName: 'child', test: 'testVal' },
+          xs: [
+            { fullName: 'child2', test: 'testVal2' },
+            { fullName: 'child3', test: 'testVal3' },
+          ],
+        },
+      });
+
+      const result = await transformer.toSourceFormat(component);
+      expect(result).to.deep.equal({
+        component,
+        writeInfos: [
+          {
+            source: new JsToXml({
+              Y: {
+                [XML_NS_KEY]: XML_NS,
+                fullName: 'child',
+                test: 'testVal',
+              },
+            }),
+            relativeDestination: join(
+              root,
+              type.children.types.y.directoryName,
+              'child.y-meta.xml'
+            ),
+          },
+          {
+            source: new JsToXml({
+              X: {
+                [XML_NS_KEY]: XML_NS,
+                fullName: 'child2',
+                test: 'testVal2',
+              },
+            }),
+            relativeDestination: join(
+              root,
+              type.children.types.x.directoryName,
+              'child2.x-meta.xml'
+            ),
+          },
+          {
+            source: new JsToXml({
+              X: {
+                [XML_NS_KEY]: XML_NS,
+                fullName: 'child3',
+                test: 'testVal3',
+              },
+            }),
+            relativeDestination: join(
+              root,
+              type.children.types.x.directoryName,
+              'child3.x-meta.xml'
+            ),
+          },
+        ],
+      });
+    });
   });
 });

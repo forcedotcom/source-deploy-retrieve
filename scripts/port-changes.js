@@ -22,7 +22,7 @@ const MESSAGE = 'MESSAGE';
  */
 function updateBranches(baseBranch, featureBranch) {
   if (ADD_VERBOSE_LOGGING)
-    console.log(`\n\nStep 1: Switch branch to ${baseBranch} and pull in latest changes.`);
+    console.log(`\n\nStep 1: Switch branch to ${baseBranch} and update ${baseBranch} and ${featureBranch}`);
   checkErrorCode(
     shell.exec(`git checkout ${baseBranch}`).code,
     `\n\nAn error occurred switching your current branch to ${baseBranch}. Exitting.`

@@ -173,11 +173,10 @@ function isTrueDiff(commitMap) {
 function getPortBranch(baseBranch, version) {
   if (ADD_VERBOSE_LOGGING)
     console.log('\n\nStep 5: Generate the port PR branch based on -r argument');
-  const result = shell.exec(`git checkout -b portPR-v${version} ${baseBranch}`).code;
-  if (result !== 0) {
-    console.log('\n\nManual review required. Unable to generate port branch.');
-    process.exit(-1);
-  }
+  checkErrorCode(
+    shell.exec(`git checkout -b portPR-v${version} ${baseBranch}`).code,
+    '\n\nManual review required. Unable to generate port branch.'
+  );
 }
 
 function getCherryPickCommits(diffList) {

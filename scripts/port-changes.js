@@ -145,8 +145,10 @@ function isTrueDiff(commitMap) {
 function getPortBranch(baseBranch, version) {
     if (ADD_VERBOSE_LOGGING)
         console.log('\n\nStep 4: Generate the port PR branch based on -r argument');
-    const result = shell.exec(`git checkout -b portPR-v${version} ${baseBranch}`).stderr.toString().trim();
-    if (result && result.startsWith('fatal')) {
+    // const result = shell.exec(`git checkout -b portPR-v${version} ${baseBranch}`).stderr.toString().trim();
+    const result = shell.exec(`git checkout -b portPR-v${version} ${baseBranch}`).code;
+    console.log('code was: ' + result);
+    if (result && (result.startsWith('fatal') || result.startsWith('error'))) {
         console.log('\n\nManual review required. Unable to generate port branch.');
         process.exit(-1);
     }
@@ -168,4 +170,4 @@ const diffList = getAllDiffs('main', 'develop');
 const parsedCommits = parseCommits(diffList);
 const filteredDiffList = filterDiffs(parsedCommits);
 getPortBranch('main', releaseVersion);
-getCherryPickCommits(filteredDiffList);
+// getCherryPickCommits(filteredDiffList);

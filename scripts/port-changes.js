@@ -77,18 +77,6 @@ function getReleaseType() {
   return process.argv[releaseIndex + 1];
 }
 
-function getPortBranch(baseBranch, version) {
-  if (ADD_VERBOSE_LOGGING)
-    console.log(
-      '\n\nStep 1: Generate the port PR branch based on -r argument\n\tThis step assumes you at least have the latest version update locally.'
-    );
-  const result = shell.exec(`git checkout -b portPR-v${version} ${baseBranch}`).code;
-  if (result !== 0) {
-    console.log('\n\nManual review required. Unable to generate port branch.');
-    process.exit(-1);
-  }
-}
-
 function getAllDiffs(baseBranch, featureBranch) {
   if (ADD_VERBOSE_LOGGING)
     console.log(`\n\nStep 2: Get all diffs between branches ${baseBranch} and ${featureBranch}`);
@@ -103,7 +91,7 @@ function getAllDiffs(baseBranch, featureBranch) {
 
 function parseCommits(commits) {
   if (ADD_VERBOSE_LOGGING) {
-    console.log('\n\nStep 2: Parse commits');
+    console.log('\n\nStep 3: Parse commits');
     console.log('Commit Parsing Results...');
   }
   var commitMaps = [];
@@ -140,7 +128,7 @@ function buildMapFromCommit(commit) {
 
 function filterDiffs(parsedCommits) {
   if (ADD_VERBOSE_LOGGING) {
-    console.log(`\n\nStep 3: Filter out non diffs. The commits we would want to filter...`);
+    console.log(`\n\nStep 4: Filter out non diffs. The commits we would want to filter...`);
     console.log('\ta) Are the same, but have a different hash.');
     console.log(
       '\tb) Were ported from one branch to another. Therefore, they include an additional (PR #).\n'
@@ -180,8 +168,20 @@ function isTrueDiff(commitMap) {
   }
 }
 
+function getPortBranch(baseBranch, version) {
+  if (ADD_VERBOSE_LOGGING)
+    console.log(
+      '\n\nStep 5: Generate the port PR branch based on -r argument'
+    );
+  const result = shell.exec(`git checkout -b portPR-v${version} ${baseBranch}`).code;
+  if (result !== 0) {
+    console.log('\n\nManual review required. Unable to generate port branch.');
+    process.exit(-1);
+  }
+}
+
 function getCherryPickCommits(diffList) {
-  if (ADD_VERBOSE_LOGGING) console.log('\n\nStep 5: Cherry-pick diffs into new branch');
+  if (ADD_VERBOSE_LOGGING) console.log('\n\nStep 6: Cherry-pick diffs into new branch');
   for (var i = diffList.length - 1; i >= 0; i--) {
     shell.exec(`git cherry-pick --strategy=recursive -X theirs ${diffList[i][COMMIT]}`);
   }

@@ -55,8 +55,8 @@ function getReleaseType() {
 function updateBranches(baseBranch, featureBranch) {
     if (ADD_VERBOSE_LOGGING)
         console.log(`\n\nStep 1: Update branches ${baseBranch} and ${featureBranch}`);
-    const baseBranchResult = shell.exec(`git fetch . origin/${baseBranch}:${baseBranch}`, { silent: !ADD_VERBOSE_LOGGING }).code;
-    const featureBranchResult = shell.exec(`git fetch . origin/${featureBranch}:${featureBranch}`, { silent: !ADD_VERBOSE_LOGGING }).code;
+    const baseBranchResult = shell.exec(`git fetch -u . origin/${baseBranch}:${baseBranch}`, { silent: !ADD_VERBOSE_LOGGING }).code;
+    const featureBranchResult = shell.exec(`git fetch -u . origin/${featureBranch}:${featureBranch}`, { silent: !ADD_VERBOSE_LOGGING }).code;
     if (baseBranchResult !== 0 || featureBranchResult !== 0) {
         console.log('\n\nAn error occurred updating your branches. We cannot be sure that you are porting the latest changes. Exitting.');
         process.exit(-1);

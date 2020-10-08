@@ -22,7 +22,9 @@ const MESSAGE = 'MESSAGE';
  */
 function updateBranches(baseBranch, featureBranch) {
   if (ADD_VERBOSE_LOGGING)
-    console.log(`\n\nStep 1: Switch branch to ${baseBranch} and update ${baseBranch} and ${featureBranch}`);
+    console.log(
+      `\n\nStep 1: Switch branch to ${baseBranch} and update ${baseBranch} and ${featureBranch}`
+    );
   checkErrorCode(
     shell.exec(`git checkout ${baseBranch}`).code,
     `\n\nAn error occurred switching your current branch to ${baseBranch}. Exitting.`
@@ -170,9 +172,7 @@ function isTrueDiff(commitMap) {
 
 function getPortBranch(baseBranch, version) {
   if (ADD_VERBOSE_LOGGING)
-    console.log(
-      '\n\nStep 5: Generate the port PR branch based on -r argument'
-    );
+    console.log('\n\nStep 5: Generate the port PR branch based on -r argument');
   const result = shell.exec(`git checkout -b portPR-v${version} ${baseBranch}`).code;
   if (result !== 0) {
     console.log('\n\nManual review required. Unable to generate port branch.');

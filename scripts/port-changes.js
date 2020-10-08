@@ -148,7 +148,7 @@ function getPortBranch(baseBranch, version) {
     // const result = shell.exec(`git checkout -b portPR-v${version} ${baseBranch}`).stderr.toString().trim();
     const result = shell.exec(`git checkout -b portPR-v${version} ${baseBranch}`).code;
     console.log('code was: ' + result);
-    if (result && (result.startsWith('fatal') || result.startsWith('error'))) {
+    if (result && result !== 0) {
         console.log('\n\nManual review required. Unable to generate port branch.');
         process.exit(-1);
     }

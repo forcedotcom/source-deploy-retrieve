@@ -9,6 +9,7 @@ import { SourcePath } from '../../common';
 import { parseMetadataXml } from '../../utils/registry';
 import { SourceComponent } from '../sourceComponent';
 import { baseName } from '../../utils';
+import { DecompositionStrategy } from '../types';
 
 /**
  * Handles decomposed types. A flavor of mixed content where a component can
@@ -47,12 +48,21 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
    * the child component, set its parent property to the one created by the
    * `BaseSourceAdapter`, and return the child component instead.
    */
-  protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
+  protected populate(
+    trigger: SourcePath,
+    component: SourceComponent,
+    isResolvingSource?: boolean
+  ): SourceComponent {
     const metaXml = parseMetadataXml(trigger);
     if (metaXml) {
       const childTypeId = this.type.children.suffixes[metaXml.suffix];
       const triggerIsAChild = !!childTypeId;
-      if (triggerIsAChild) {
+      const strategy = this.registry.strategies[this.type.id]
+        .decomposition as DecompositionStrategy;
+      if (
+        triggerIsAChild &&
+        (strategy === DecompositionStrategy.FolderPerType || isResolvingSource)
+      ) {
         let parent = component;
         if (!parent) {
           parent = new SourceComponent(

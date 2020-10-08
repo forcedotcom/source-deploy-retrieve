@@ -9,6 +9,11 @@ import { mockRegistry, regina } from '../../mock/registry';
 import { expect } from 'chai';
 import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
 import { SourceComponent } from '../../../src/metadata-registry';
+import {
+  DECOMPOSED_TOP_LEVEL_COMPONENT,
+  DECOMPOSED_VIRTUAL_FS,
+  DECOMPOSED_TOP_LEVEL_XML_PATH,
+} from '../../mock/registry/decomposedTopLevelConstants';
 
 describe('DecomposedSourceAdapter', () => {
   const type = mockRegistry.types.reginaking;
@@ -49,5 +54,13 @@ describe('DecomposedSourceAdapter', () => {
     expect(adapter.getComponent(regina.REGINA_CHILD_XML_PATH_2).parent).to.deep.equal(
       expectedParent
     );
+  });
+
+  it('should return expected SourceComponent when given a topLevel parent component', () => {
+    const type = mockRegistry.types.decomposedtoplevel;
+    const tree = new VirtualTreeContainer(DECOMPOSED_VIRTUAL_FS);
+    const component = new SourceComponent(DECOMPOSED_TOP_LEVEL_COMPONENT, tree);
+    const adapter = new DecomposedSourceAdapter(type, mockRegistry, undefined, tree);
+    expect(adapter.getComponent(DECOMPOSED_TOP_LEVEL_XML_PATH)).to.deep.equal(component);
   });
 });

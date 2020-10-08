@@ -16,6 +16,17 @@ const PR_NUM = 'PR_NUM';
 const COMMIT = 'COMMIT';
 const MESSAGE = 'MESSAGE';
 
+function updateBranches(baseBranch, featureBranch) {
+    if (ADD_VERBOSE_LOGGING)
+        console.log(`\n\nStep 1: Update branches ${baseBranch} and ${featureBranch}`);
+    const baseBranchResult = shell.exec(`git fetch . origin/${baseBranch}:${baseBranch} -u`, { silent: !ADD_VERBOSE_LOGGING }).code;
+    const featureBranchResult = shell.exec(`git fetch . origin/${featureBranch}:${featureBranch} -u`, { silent: !ADD_VERBOSE_LOGGING }).code;
+    if (baseBranchResult !== 0 || featureBranchResult !== 0) {
+        console.log('\n\nAn error occurred updating your branches. We cannot be sure that you are porting the latest changes. Exitting.');
+        process.exit(-1);
+    }
+}
+
 function getReleaseVersion() {
     const releaseType = getReleaseType();
     const currentVersion = require('../package.json').version;
@@ -50,17 +61,6 @@ function getReleaseType() {
         process.exit(-1);
     }
     return process.argv[releaseIndex + 1];
-}
-
-function updateBranches(baseBranch, featureBranch) {
-    if (ADD_VERBOSE_LOGGING)
-        console.log(`\n\nStep 1: Update branches ${baseBranch} and ${featureBranch}`);
-    const baseBranchResult = shell.exec(`git fetch -u . origin/${baseBranch}:${baseBranch}`, { silent: !ADD_VERBOSE_LOGGING }).code;
-    const featureBranchResult = shell.exec(`git fetch -u . origin/${featureBranch}:${featureBranch}`, { silent: !ADD_VERBOSE_LOGGING }).code;
-    if (baseBranchResult !== 0 || featureBranchResult !== 0) {
-        console.log('\n\nAn error occurred updating your branches. We cannot be sure that you are porting the latest changes. Exitting.');
-        process.exit(-1);
-    }
 }
 
 function getAllDiffs(baseBranch, featureBranch) {
@@ -166,8 +166,8 @@ function getCherryPickCommits(diffList) {
 
 let ADD_VERBOSE_LOGGING = process.argv.indexOf('-v') > -1;
 
-const releaseVersion = getReleaseVersion();
 updateBranches('main', 'develop');
+const releaseVersion = getReleaseVersion();
 const diffList = getAllDiffs('main', 'develop');
 const parsedCommits = parseCommits(diffList);
 const filteredDiffList = filterDiffs(parsedCommits);

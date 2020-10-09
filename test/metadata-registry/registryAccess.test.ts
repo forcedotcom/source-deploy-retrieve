@@ -19,6 +19,8 @@ import {
   REGINA_CHILD_XML_PATH_1,
   REGINA_CHILD_COMPONENT_1,
   REGINA_XML_PATH,
+  REGINA_CHILD_DIR_PATH,
+  REGINA_CHILD_XML_PATH_2,
 } from '../mock/registry/reginaConstants';
 import {
   TARAJI_COMPONENT,
@@ -495,6 +497,15 @@ describe('RegistryAccess', () => {
           },
         ]);
         expect(access.getComponentsFromPath(REGINA_PATH)).to.deep.equal([REGINA_COMPONENT]);
+      });
+
+      it('should return expected child SourceComponent when given a subdirectory of a folderPerType component', () => {
+        const tree = new VirtualTreeContainer(REGINA_VIRTUAL_FS);
+        const access = testUtil.createRegistryAccess(REGINA_VIRTUAL_FS);
+        const expectedComponent = new SourceComponent(REGINA_COMPONENT, tree);
+        const children = expectedComponent.getChildren();
+        const expectedChild = children.find((c) => c.xml === REGINA_CHILD_XML_PATH_2);
+        expect(access.getComponentsFromPath(REGINA_CHILD_DIR_PATH)).to.deep.equal([expectedChild]);
       });
 
       /**

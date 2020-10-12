@@ -12,7 +12,10 @@ import { SourceComponent } from '../metadata-registry';
 // INTERNAL
 // --------------
 
-export type WriteInfo = { relativeDestination: SourcePath; source: Readable };
+export type WriteInfo = {
+  output: SourcePath;
+  source: Readable;
+};
 
 export type WriterFormat = {
   component: SourceComponent;
@@ -27,7 +30,7 @@ type PackageName = {
   packageName?: string;
 };
 
-type DirectoryConfig = PackageName & {
+export type DirectoryConfig = PackageName & {
   type: 'directory';
   /**
    * Directory path to output the converted package to.
@@ -35,7 +38,7 @@ type DirectoryConfig = PackageName & {
   outputDirectory: SourcePath;
 };
 
-type ZipConfig = PackageName & {
+export type ZipConfig = PackageName & {
   type: 'zip';
   /**
    * Directory path to output the zip package to.
@@ -43,12 +46,18 @@ type ZipConfig = PackageName & {
   outputDirectory?: SourcePath;
 };
 
+export type MergeConfig = {
+  type: 'merge';
+  components: SourceComponent[];
+  defaultDirectory: SourcePath;
+};
+
 /**
  * Transforms metadata component files into different SFDX file formats
  */
 export interface MetadataTransformer {
   toMetadataFormat(component: SourceComponent): Promise<WriterFormat>;
-  toSourceFormat(component: SourceComponent): Promise<WriterFormat>;
+  toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriterFormat>;
 }
 
 // --------------
@@ -64,7 +73,7 @@ export interface MetadataTransformer {
  */
 export type SfdxFileFormat = 'metadata' | 'source';
 
-export type ConvertOutputConfig = DirectoryConfig | ZipConfig;
+export type ConvertOutputConfig = DirectoryConfig | ZipConfig | MergeConfig;
 
 export type ConvertResult = {
   /**

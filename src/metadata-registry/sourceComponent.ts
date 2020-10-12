@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { TreeContainer, VirtualDirectory } from './types';
-import { join, dirname, sep, basename } from 'path';
+import { join, dirname, basename } from 'path';
 import { parse } from 'fast-xml-parser';
 import { ForceIgnore } from './forceIgnore';
 import { parseMetadataXml } from '../utils/registry';
@@ -15,6 +15,7 @@ import { MetadataType, SourcePath, MetadataComponent } from '../common';
 import { JsonMap } from '@salesforce/ts-types';
 import { LibraryError } from '../errors';
 import { SfdxFileFormat } from '../convert';
+import { trimUntil } from '../utils/path';
 
 export type ComponentProperties = {
   name: string;
@@ -91,7 +92,7 @@ export class SourceComponent implements MetadataComponent {
     // the file resides in for the new destination.
     let relativePath: SourcePath;
     if (!suffix) {
-      relativePath = this.trimUntil(fsPath, directoryName);
+      relativePath = trimUntil(fsPath, directoryName);
     } else if (inFolder) {
       const folderName = this.fullName.split('/')[0];
       relativePath = join(directoryName, folderName, basename(fsPath));
@@ -144,12 +145,6 @@ export class SourceComponent implements MetadataComponent {
         }
       }
     }
-  }
-
-  private trimUntil(fsPath: string, name: string): string {
-    const parts = fsPath.split(sep);
-    const index = parts.findIndex((part) => name === part);
-    return parts.slice(index).join(sep);
   }
 
   get fullName(): string {

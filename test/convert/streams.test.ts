@@ -37,13 +37,13 @@ class TestTransformer implements MetadataTransformer {
   async toMetadataFormat(): Promise<WriterFormat> {
     return {
       component: this.component,
-      writeInfos: [{ relativeDestination: '/type/file.m', source: new Readable() }],
+      writeInfos: [{ output: '/type/file.m', source: new Readable() }],
     };
   }
   async toSourceFormat(): Promise<WriterFormat> {
     return {
       component: this.component,
-      writeInfos: [{ relativeDestination: '/type/file.s', source: new Readable() }],
+      writeInfos: [{ output: '/type/file.s', source: new Readable() }],
     };
   }
 }
@@ -166,7 +166,7 @@ describe('Streams', () => {
       component: KATHY_COMPONENTS[0],
       writeInfos: [
         {
-          relativeDestination,
+          output: relativeDestination,
           source: readableMock,
         },
       ],
@@ -206,13 +206,13 @@ describe('Streams', () => {
           component: KATHY_COMPONENTS[0],
           writeInfos: [
             {
-              relativeDestination,
+              output: relativeDestination,
               source: readableMock,
             },
           ],
           getExtraInfos: async () => [
             {
-              relativeDestination: join('testdata', 'images', 'a.1'),
+              output: join('testdata', 'images', 'a.1'),
               source: readableMock,
             },
           ],
@@ -263,7 +263,7 @@ describe('Streams', () => {
           expect(err).to.be.undefined;
           expect(appendStub.firstCall.args).to.deep.equal([
             chunk.writeInfos[0].source,
-            { name: chunk.writeInfos[0].relativeDestination },
+            { name: chunk.writeInfos[0].output },
           ]);
         });
       });
@@ -314,13 +314,13 @@ describe('Streams', () => {
           component: KATHY_COMPONENTS[0],
           writeInfos: [
             {
-              relativeDestination,
+              output: relativeDestination,
               source: readableMock,
             },
           ],
           getExtraInfos: async () => [
             {
-              relativeDestination: join('testdata', 'images', 'a.1'),
+              output: join('testdata', 'images', 'a.1'),
               source: readableMock,
             },
           ],

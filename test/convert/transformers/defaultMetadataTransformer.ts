@@ -35,12 +35,12 @@ describe('DefaultMetadataTransformer', () => {
       for (const source of component.walkContent()) {
         expectedInfos.push({
           source: component.tree.stream(source),
-          relativeDestination: join(relativeBundle, basename(source)),
+          output: join(relativeBundle, basename(source)),
         });
       }
       expectedInfos.push({
         source: component.tree.stream(component.xml),
-        relativeDestination: join(relativeBundle, simon.SIMON_XML_NAME),
+        output: join(relativeBundle, simon.SIMON_XML_NAME),
       });
 
       const result = await transformer.toMetadataFormat(component);
@@ -57,7 +57,7 @@ describe('DefaultMetadataTransformer', () => {
       const fileName = `${component.fullName}.${component.type.suffix}`;
       const expectedInfos: WriteInfo[] = [
         {
-          relativeDestination: join(directoryName, fileName),
+          output: join(directoryName, fileName),
           source: component.tree.stream(component.xml),
         },
       ];
@@ -75,7 +75,7 @@ describe('DefaultMetadataTransformer', () => {
       const transformer = new DefaultMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
-          relativeDestination: join(
+          output: join(
             directoryName,
             fullNameParts[0],
             `${fullNameParts[1]}.${component.type.suffix}`
@@ -105,12 +105,12 @@ describe('DefaultMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [];
       for (const source of component.walkContent()) {
         expectedInfos.push({
-          relativeDestination: join(relativeBundle, basename(source)),
+          output: join(relativeBundle, basename(source)),
           source: component.tree.stream(source),
         });
       }
       expectedInfos.push({
-        relativeDestination: join(relativeBundle, simon.SIMON_XML_NAME),
+        output: join(relativeBundle, simon.SIMON_XML_NAME),
         source: component.tree.stream(component.xml),
       });
 
@@ -127,7 +127,7 @@ describe('DefaultMetadataTransformer', () => {
       const fileName = `${component.fullName}.${component.type.suffix}${META_XML_SUFFIX}`;
       const expectedInfos: WriteInfo[] = [
         {
-          relativeDestination: join('main', 'default', directoryName, fileName),
+          output: join('main', 'default', directoryName, fileName),
           source: component.tree.stream(component.xml),
         },
       ];
@@ -148,7 +148,7 @@ describe('DefaultMetadataTransformer', () => {
       const transformer = new DefaultMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
-          relativeDestination: join(
+          output: join(
             'main',
             'default',
             directoryName,

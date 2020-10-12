@@ -8,6 +8,9 @@ import { META_XML_SUFFIX } from '../../utils';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { SfdxFileFormat, WriterFormat } from '../types';
 import { SourceComponent } from '../../metadata-registry';
+import { trimUntil } from '../../utils/path';
+import { basename, dirname, join } from 'path';
+import { SourcePath } from '../../common';
 
 /**
  * The default metadata transformer.
@@ -21,34 +24,69 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
     return this.getWriterFormat(component, 'metadata');
   }
 
-  public async toSourceFormat(component: SourceComponent): Promise<WriterFormat> {
-    return this.getWriterFormat(component, 'source');
+  public async toSourceFormat(
+    component: SourceComponent,
+    mergeWith?: SourceComponent
+  ): Promise<WriterFormat> {
+    return this.getWriterFormat(component, 'source', mergeWith);
   }
 
-  private getWriterFormat(component: SourceComponent, toFormat: SfdxFileFormat): WriterFormat {
+  private getWriterFormat(
+    component: SourceComponent,
+    targetFormat: SfdxFileFormat,
+    mergeWith?: SourceComponent
+  ): WriterFormat {
     const result: WriterFormat = { component: component, writeInfos: [] };
+
     if (component.content) {
       for (const source of component.walkContent()) {
         result.writeInfos.push({
           source: component.tree.stream(source),
-          relativeDestination: component.getPackageRelativePath(source, toFormat),
+          output: this.getContentSourceDestination(source, targetFormat, component, mergeWith),
         });
       }
     }
 
     if (component.xml) {
-      let xmlDest = component.getPackageRelativePath(component.xml, toFormat);
-      if (!component.content) {
-        xmlDest =
-          toFormat === 'metadata'
-            ? xmlDest.slice(0, xmlDest.lastIndexOf(META_XML_SUFFIX))
-            : `${xmlDest}${META_XML_SUFFIX}`;
-      }
       result.writeInfos.push({
         source: component.tree.stream(component.xml),
-        relativeDestination: xmlDest,
+        output: this.getXmlDestination(targetFormat, component, mergeWith),
       });
     }
+
     return result;
+  }
+
+  private getContentSourceDestination(
+    source: SourcePath,
+    targetFormat: SfdxFileFormat,
+    component: SourceComponent,
+    mergeWith?: SourceComponent
+  ): SourcePath {
+    if (mergeWith) {
+      if (component.tree.isDirectory(component.content)) {
+        const relative = trimUntil(source, basename(component.content));
+        return join(dirname(mergeWith.content), relative);
+      } else {
+        return mergeWith.content;
+      }
+    }
+    return component.getPackageRelativePath(source, targetFormat);
+  }
+
+  private getXmlDestination(
+    targetFormat: SfdxFileFormat,
+    component: SourceComponent,
+    mergeWith?: SourceComponent
+  ): SourcePath {
+    let xmlDestination =
+      mergeWith?.xml || component.getPackageRelativePath(component.xml, targetFormat);
+    if (!component.content) {
+      xmlDestination =
+        targetFormat === 'metadata'
+          ? xmlDestination.slice(0, xmlDestination.lastIndexOf(META_XML_SUFFIX))
+          : `${xmlDestination}${META_XML_SUFFIX}`;
+    }
+    return xmlDestination;
   }
 }

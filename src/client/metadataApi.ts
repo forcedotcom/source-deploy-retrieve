@@ -22,7 +22,7 @@ import {
   SourceRetrieveResult,
   ComponentRetrieval,
 } from './types';
-import { MetadataConverter } from '../convert';
+import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { DeployError, RetrieveError } from '../errors';
 import { ManifestGenerator, RegistryAccess, SourceComponent } from '../metadata-registry';
 import { DiagnosticUtil } from './diagnosticUtil';
@@ -218,12 +218,19 @@ export class MetadataApi extends BaseApi {
     options: RetrieveOptions
   ): Promise<SourceComponent[]> {
     const converter = new MetadataConverter();
-    const convertResult = await converter.convert(retrievedComponents, 'source', {
-      type: 'directory',
-      outputDirectory: options.output,
-    });
-    const convertedComponents = this.registry.getComponentsFromPath(convertResult.packagePath);
-    return convertedComponents;
+    const outputConfig: ConvertOutputConfig = options.merge
+      ? {
+          type: 'merge',
+          components: options.components,
+          defaultDirectory: options.output,
+        }
+      : {
+          type: 'directory',
+          outputDirectory: options.output,
+        };
+    const convertResult = await converter.convert(retrievedComponents, 'source', outputConfig);
+    // const convertedComponents = this.registry.getComponentsFromPath(convertResult.packagePath);
+    return options.components;
   }
 
   private hashElement(component: SourceComponent): string {

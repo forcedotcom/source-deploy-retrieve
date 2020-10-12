@@ -94,7 +94,7 @@ describe('DecomposedMetadataTransformer', () => {
         writeInfos: [
           {
             source: new JsToXml(composedXmlObj),
-            relativeDestination: join('reginas', 'a.regina'),
+            output: join('reginas', 'a.regina'),
           },
         ],
       });
@@ -132,7 +132,7 @@ describe('DecomposedMetadataTransformer', () => {
                 test: 'testVal',
               },
             }),
-            relativeDestination: join(root, 'child.g-meta.xml'),
+            output: join(root, 'child.g-meta.xml'),
           },
           {
             source: new JsToXml({
@@ -142,7 +142,7 @@ describe('DecomposedMetadataTransformer', () => {
                 test: 'testVal2',
               },
             }),
-            relativeDestination: join(root, 'child2.g-meta.xml'),
+            output: join(root, 'child2.g-meta.xml'),
           },
           {
             source: new JsToXml({
@@ -152,7 +152,7 @@ describe('DecomposedMetadataTransformer', () => {
                 foo: 'bar',
               },
             }),
-            relativeDestination: join(root, `${fullName}.${type.suffix}-meta.xml`),
+            output: join(root, `${fullName}.${type.suffix}-meta.xml`),
           },
         ],
       });
@@ -188,11 +188,7 @@ describe('DecomposedMetadataTransformer', () => {
                 test: 'testVal',
               },
             }),
-            relativeDestination: join(
-              root,
-              type.children.types.y.directoryName,
-              'child.y-meta.xml'
-            ),
+            output: join(root, type.children.types.y.directoryName, 'child.y-meta.xml'),
           },
           {
             source: new JsToXml({
@@ -202,11 +198,7 @@ describe('DecomposedMetadataTransformer', () => {
                 test: 'testVal2',
               },
             }),
-            relativeDestination: join(
-              root,
-              type.children.types.x.directoryName,
-              'child2.x-meta.xml'
-            ),
+            output: join(root, type.children.types.x.directoryName, 'child2.x-meta.xml'),
           },
           {
             source: new JsToXml({
@@ -216,11 +208,7 @@ describe('DecomposedMetadataTransformer', () => {
                 test: 'testVal3',
               },
             }),
-            relativeDestination: join(
-              root,
-              type.children.types.x.directoryName,
-              'child3.x-meta.xml'
-            ),
+            output: join(root, type.children.types.x.directoryName, 'child3.x-meta.xml'),
           },
           {
             source: new JsToXml({
@@ -230,7 +218,7 @@ describe('DecomposedMetadataTransformer', () => {
                 foo: 'bar',
               },
             }),
-            relativeDestination: join(root, `${fullName}.${type.suffix}-meta.xml`),
+            output: join(root, `${fullName}.${type.suffix}-meta.xml`),
           },
         ],
       });

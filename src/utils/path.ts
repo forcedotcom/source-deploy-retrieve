@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { basename, dirname, extname } from 'path';
+import { basename, dirname, extname, sep } from 'path';
 import { SourcePath } from '../common';
 
 /**
@@ -34,4 +34,25 @@ export function extName(fsPath: SourcePath): string {
  */
 export function parentName(fsPath: SourcePath): string {
   return basename(dirname(fsPath));
+}
+
+/**
+ * Trim a path up until and including the given part. Returns `fsPath`
+ * if the path `part` was not found.
+ *
+ * ```
+ * const fsPath = '/path/to/a/nested/file'
+ * trimUntil(fsPath, 'a') // 'a/nested/file'
+ * ```
+ *
+ * @param fsPath Path to trim
+ * @param part Path part to trim up until
+ */
+export function trimUntil(fsPath: SourcePath, part: string): string {
+  const parts = fsPath.split(sep);
+  const partIndex = parts.findIndex((p) => part === p);
+  if (partIndex === -1) {
+    return fsPath;
+  }
+  return parts.slice(partIndex).join(sep);
 }

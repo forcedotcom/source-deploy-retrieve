@@ -73,23 +73,20 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
         const tagCollection = Array.isArray(collection) ? collection : [collection];
 
         for (const entry of tagCollection) {
-          let relativeDestination = rootPackagePath;
+          let output = rootPackagePath;
           const strategy = this.registry.strategies[type.id].decomposition as DecompositionStrategy;
           if (strategy === DecompositionStrategy.FolderPerType) {
-            relativeDestination = join(relativeDestination, childType.directoryName);
+            output = join(output, childType.directoryName);
           }
 
           const name = (entry.fullName || entry.name) as string;
-          relativeDestination = join(
-            relativeDestination,
-            `${name}.${childType.suffix}${META_XML_SUFFIX}`
-          );
+          output = join(output, `${name}.${childType.suffix}${META_XML_SUFFIX}`);
 
           writeInfos.push({
             source: new JsToXml({
               [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS }, entry),
             }),
-            relativeDestination,
+            output,
           });
         }
       } else {
@@ -101,10 +98,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     if (!childrenOnlyTags) {
       writeInfos.push({
         source: new JsToXml(rootXmlObject),
-        relativeDestination: join(
-          rootPackagePath,
-          `${parentFullName}.${type.suffix}${META_XML_SUFFIX}`
-        ),
+        output: join(rootPackagePath, `${parentFullName}.${type.suffix}${META_XML_SUFFIX}`),
       });
     }
 
@@ -137,10 +131,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       writeInfos: [
         {
           source: new JsToXml(xmlObject),
-          relativeDestination: join(
-            trigger.type.directoryName,
-            `${trigger.fullName}.${trigger.type.suffix}`
-          ),
+          output: join(trigger.type.directoryName, `${trigger.fullName}.${trigger.type.suffix}`),
         },
       ],
     };

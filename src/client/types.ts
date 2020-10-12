@@ -305,6 +305,7 @@ type CommonOptions = {
    */
   wait?: number;
   namespace?: string;
+  merge?: boolean;
 };
 
 type CommonRetrieveOptions = {

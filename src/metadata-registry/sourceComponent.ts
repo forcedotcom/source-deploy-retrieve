@@ -16,6 +16,7 @@ import { JsonMap } from '@salesforce/ts-types';
 import { LibraryError } from '../errors';
 import { SfdxFileFormat } from '../convert';
 import { trimUntil } from '../utils/path';
+import { DEFAULT_PACKAGE_ROOT_SFDX } from '../utils/constants';
 
 export type ComponentProperties = {
   name: string;
@@ -101,7 +102,7 @@ export class SourceComponent implements MetadataComponent {
     }
 
     if (format === 'source') {
-      return join('main', 'default', relativePath);
+      return join(DEFAULT_PACKAGE_ROOT_SFDX, relativePath);
     }
     return relativePath;
   }

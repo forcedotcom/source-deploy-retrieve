@@ -19,6 +19,7 @@ describe('ComponentSet', () => {
       name: 'TestDupe',
       type: mockRegistry.types.mixedcontentsinglefile,
     }),
+    // creating a copy to ensure it is deduped
     new SourceComponent({
       name: 'TestDupe',
       type: mockRegistry.types.mixedcontentsinglefile,

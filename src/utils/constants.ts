@@ -4,11 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { join } from 'path';
 
 export const FORCE_IGNORE_FILE = '.forceignore';
 export const META_XML_SUFFIX = '-meta.xml';
 export const PACKAGE_XML_FILE = 'package.xml';
 export const DEFAULT_PACKAGE_PREFIX = 'metadataPackage';
+export const DEFAULT_PACKAGE_ROOT_SFDX = join('main', 'default');
 export const XML_NS_KEY = '@_xmlns';
 export const XML_NS = 'http://soap.sforce.com/2006/04/metadata';
 export const XML_DECL = '<?xml version="1.0" encoding="UTF-8"?>\n';

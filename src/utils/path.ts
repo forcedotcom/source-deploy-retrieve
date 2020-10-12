@@ -39,12 +39,6 @@ export function parentName(fsPath: SourcePath): string {
 /**
  * Trim a path up until and including the given part. Returns `fsPath`
  * if the path `part` was not found.
- *
- * ```
- * const fsPath = '/path/to/a/nested/file'
- * trimUntil(fsPath, 'a') // 'a/nested/file'
- * ```
- *
  * @param fsPath Path to trim
  * @param part Path part to trim up until
  */

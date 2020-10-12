@@ -7,6 +7,7 @@
 import { join } from 'path';
 import { expect } from 'chai';
 import { baseName } from '../../src/utils';
+import { trimUntil } from '../../src/utils/path';
 
 describe('Path Utils', () => {
   const root = join('path', 'to', 'whatever');
@@ -20,6 +21,16 @@ describe('Path Utils', () => {
     it('Should handle paths with no suffixes', () => {
       const path = join(root, 'a');
       expect(baseName(path)).to.equal('a');
+    });
+  });
+
+  describe('trimUntil', () => {
+    it('should return given path if part is not found', () => {
+      expect(trimUntil(root, 'test')).to.equal(root);
+    });
+
+    it('should return trimmed path up until and including the given part', () => {
+      expect(trimUntil(root, 'to')).to.equal(join('to', 'whatever'));
     });
   });
 });

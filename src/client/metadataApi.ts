@@ -229,8 +229,10 @@ export class MetadataApi extends BaseApi {
           outputDirectory: options.output,
         };
     const convertResult = await converter.convert(retrievedComponents, 'source', outputConfig);
-    // const convertedComponents = this.registry.getComponentsFromPath(convertResult.packagePath);
-    return options.components;
+    if (options.merge) {
+      return options.components;
+    }
+    return this.registry.getComponentsFromPath(convertResult.packagePath);
   }
 
   private hashElement(component: SourceComponent): string {

@@ -25,8 +25,7 @@ import {
 } from './streams';
 import { PACKAGE_XML_FILE, DEFAULT_PACKAGE_PREFIX } from '../utils/constants';
 import { ConversionError } from '../errors';
-import { SourcePath } from '../common';
-import { ComponentSet } from '../metadata-registry/componentSet';
+import { ComponentSet, SourcePath } from '../common';
 
 export class MetadataConverter {
   private registryAccess: RegistryAccess;
@@ -55,7 +54,7 @@ export class MetadataConverter {
       const tasks = [];
 
       let writer: Writable;
-      let mergeSet: ComponentSet;
+      let mergeSet: ComponentSet<SourceComponent>;
       let packagePath: SourcePath;
 
       switch (output.type) {

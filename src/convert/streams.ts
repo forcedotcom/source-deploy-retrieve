@@ -13,14 +13,12 @@ import { LibraryError } from '../errors';
 import { SourceComponent, MetadataRegistry } from '../metadata-registry';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
-import { SourcePath } from '../common';
+import { ComponentSet, SourcePath } from '../common';
 import { ConvertTransaction } from './convertTransaction';
 import { MetadataTransformerFactory } from './transformers';
 import { JsonMap } from '@salesforce/ts-types';
 import { XML_DECL } from '../utils/constants';
 import { j2xParser } from 'fast-xml-parser';
-import { ComponentSet } from '../metadata-registry/componentSet';
-
 export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
@@ -47,13 +45,13 @@ export class ComponentConverter extends Transform {
   private targetFormat: SfdxFileFormat;
   private transaction: ConvertTransaction;
   private transformerFactory: MetadataTransformerFactory;
-  private mergeSet: ComponentSet;
+  private mergeSet: ComponentSet<SourceComponent>;
 
   constructor(
     targetFormat: SfdxFileFormat,
     registry: MetadataRegistry,
     transaction = new ConvertTransaction(),
-    mergeSet?: ComponentSet
+    mergeSet?: ComponentSet<SourceComponent>
   ) {
     super({ objectMode: true });
     this.targetFormat = targetFormat;

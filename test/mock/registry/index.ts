@@ -5,9 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { MetadataRegistry } from '../../../src/metadata-registry';
 
-export const mockRegistry: MetadataRegistry = {
+export const mockRegistry = {
   types: {
     kathybates: {
       id: 'kathybates',

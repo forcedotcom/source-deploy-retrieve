@@ -14,7 +14,7 @@ import { join } from 'path';
 import { createSandbox, SinonStub } from 'sinon';
 import { Readable, Writable } from 'stream';
 import { SourceComponent } from '../../src';
-import { MetadataTransformer, WriterFormat } from '../../src/convert';
+import { MetadataTransformer, WriteInfo, WriterFormat } from '../../src/convert';
 import { ConvertTransaction } from '../../src/convert/convertTransaction';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
 import { LibraryError } from '../../src/errors';
@@ -26,24 +26,25 @@ import {
 } from '../mock/convert/finalizers';
 import { mockRegistry } from '../mock/registry';
 import { KATHY_COMPONENTS } from '../mock/registry/kathyConstants';
+import { ComponentSet } from '../../src/common';
 
 const env = createSandbox();
 
 class TestTransformer implements MetadataTransformer {
-  private component: SourceComponent;
-  constructor(component: SourceComponent) {
-    this.component = component;
-  }
-  async toMetadataFormat(): Promise<WriterFormat> {
+  async toMetadataFormat(component: SourceComponent): Promise<WriterFormat> {
     return {
-      component: this.component,
+      component,
       writeInfos: [{ output: '/type/file.m', source: new Readable() }],
     };
   }
-  async toSourceFormat(): Promise<WriterFormat> {
+  async toSourceFormat(
+    component: SourceComponent,
+    mergeWith?: SourceComponent
+  ): Promise<WriterFormat> {
+    const output = mergeWith ? mergeWith.content || mergeWith.xml : '/type/file.s';
     return {
-      component: this.component,
-      writeInfos: [{ output: '/type/file.s', source: new Readable() }],
+      component,
+      writeInfos: [{ output, source: new Readable() }],
     };
   }
 }
@@ -65,7 +66,7 @@ describe('Streams', () => {
 
   describe('ComponentConverter', () => {
     const component = KATHY_COMPONENTS[0];
-    const transformer = new TestTransformer(component);
+    const transformer = new TestTransformer();
 
     beforeEach(() => {
       env
@@ -89,7 +90,7 @@ describe('Streams', () => {
 
       converter._transform(component, '', async (err: Error, data: WriterFormat) => {
         expect(err).to.be.undefined;
-        expect(data).to.deep.equal(await transformer.toMetadataFormat());
+        expect(data).to.deep.equal(await transformer.toMetadataFormat(component));
       });
     });
 
@@ -98,7 +99,19 @@ describe('Streams', () => {
 
       converter._transform(component, '', async (err: Error, data: WriterFormat) => {
         expect(err).to.be.undefined;
-        expect(data).to.deep.equal(await transformer.toSourceFormat());
+        expect(data).to.deep.equal(await transformer.toSourceFormat(component));
+      });
+    });
+
+    it('should transform to source format using a merge component', () => {
+      const mergeSet = new ComponentSet([KATHY_COMPONENTS[1]]);
+      const converter = new streams.ComponentConverter('source', mockRegistry, undefined, mergeSet);
+
+      converter._transform(component, '', async (err: Error, data: WriterFormat) => {
+        expect(err).to.be.undefined;
+        expect(data).to.deep.equal(
+          await transformer.toSourceFormat(component, KATHY_COMPONENTS[1])
+        );
       });
     });
 
@@ -178,11 +191,12 @@ describe('Streams', () => {
       const writer = new streams.StandardWriter(rootDestination);
 
       let ensureFile: SinonStub;
+      let writableStub: SinonStub;
 
       beforeEach(() => {
         ensureFile = env.stub(fsUtil, 'ensureFileExists');
         pipelineStub = env.stub(streams, 'pipeline');
-        env
+        writableStub = env
           .stub(fs, 'createWriteStream')
           .withArgs(fullPath)
           // @ts-ignore
@@ -234,6 +248,32 @@ describe('Streams', () => {
           expect(ensureFile.firstCall.args).to.deep.equal([fullPath]);
           expect(pipelineStub.firstCall.args).to.deep.equal([
             chunk.writeInfos[0].source,
+            fsWritableMock,
+          ]);
+        });
+      });
+
+      it('should use full path of WriteInfo output if it is absolute', async () => {
+        pipelineStub.resolves();
+
+        const absolutePath = '/absolute/path';
+        const formatWithAbsoluteOutput: WriterFormat = {
+          component: KATHY_COMPONENTS[0],
+          writeInfos: [
+            {
+              source: readableMock,
+              output: absolutePath,
+            },
+          ],
+        };
+
+        writableStub.withArgs(absolutePath).returns(fsWritableMock);
+
+        await writer._write(formatWithAbsoluteOutput, '', (err: Error) => {
+          expect(err).to.be.undefined;
+          expect(ensureFile.firstCall.args).to.deep.equal([absolutePath]);
+          expect(pipelineStub.firstCall.args).to.deep.equal([
+            formatWithAbsoluteOutput.writeInfos[0].source,
             fsWritableMock,
           ]);
         });

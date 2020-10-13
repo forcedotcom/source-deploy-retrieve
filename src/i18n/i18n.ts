@@ -32,6 +32,8 @@ export const messages = {
   error_could_not_infer_type: '%s: Could not infer a metadata type',
   error_expected_source_files: "%s: Expected source files for type '%s'",
   error_failed_convert: 'Component conversion failed: %s',
+  error_merge_metadata_target_unsupported:
+    'Merge convert for metadata target format currently unsupported',
   error_in_tooling_retrieve: 'Unexpected error while retrieving using Tooling API. Stack trace: %s',
   error_md_not_present_in_org: '%s was not found in org',
   error_missing_adapter: "Missing adapter '%s' for metadata type '%s'",

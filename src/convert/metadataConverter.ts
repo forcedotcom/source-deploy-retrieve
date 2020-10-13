@@ -24,7 +24,7 @@ import {
   ZipWriter,
 } from './streams';
 import { PACKAGE_XML_FILE, DEFAULT_PACKAGE_PREFIX } from '../utils/constants';
-import { ConversionError } from '../errors';
+import { ConversionError, LibraryError } from '../errors';
 import { ComponentSet, SourcePath } from '../common';
 
 export class MetadataConverter {
@@ -75,7 +75,7 @@ export class MetadataConverter {
           break;
         case 'merge':
           if (!isSource) {
-            throw new Error('merge convert for metadata target format currently unsupported');
+            throw new LibraryError('error_merge_metadata_target_unsupported');
           }
           mergeSet = new ComponentSet(output.components);
           writer = new StandardWriter(output.defaultDirectory);

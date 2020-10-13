@@ -221,7 +221,7 @@ export class MetadataApi extends BaseApi {
     const outputConfig: ConvertOutputConfig = options.merge
       ? {
           type: 'merge',
-          components: options.components,
+          mergeWith: options.components,
           defaultDirectory: options.output,
         }
       : {

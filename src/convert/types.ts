@@ -48,7 +48,13 @@ export type ZipConfig = PackageName & {
 
 export type MergeConfig = {
   type: 'merge';
-  components: SourceComponent[];
+  /**
+   * Existing components to merge and replace the converted components with.
+   */
+  mergeWith: SourceComponent[];
+  /**
+   * Location to store components that aren't merged.
+   */
   defaultDirectory: SourcePath;
 };
 

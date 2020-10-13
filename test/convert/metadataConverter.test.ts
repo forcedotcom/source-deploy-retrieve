@@ -229,7 +229,7 @@ describe('MetadataConverter', () => {
         await converter.convert(components, 'metadata', {
           type: 'merge',
           defaultDirectory,
-          components: mergeComponents,
+          mergeWith: mergeComponents,
         });
       } catch (e) {
         expect(e.name).to.equal(ConversionError.name);
@@ -241,7 +241,7 @@ describe('MetadataConverter', () => {
       await converter.convert(components, 'source', {
         type: 'merge',
         defaultDirectory,
-        components: mergeComponents,
+        mergeWith: mergeComponents,
       });
 
       const pipelineArgs = pipelineStub.firstCall.args;

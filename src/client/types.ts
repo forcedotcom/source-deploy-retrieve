@@ -310,18 +310,13 @@ type CommonOptions = {
 
 type CommonRetrieveOptions = {
   /**
-   * Whether or not the files should be automatically converted to
-   * [source format](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_source_file_format.htm)
-   */
-  convert?: boolean;
-  /**
-   * Whether or not existing source files should be overwritten.
-   */
-  overwrite?: boolean;
-  /**
    * The directory to retrieve the components to.
    */
   output?: SourcePath;
+  /**
+   * Whether or not to merge and replace input components with the retrieved versions
+   */
+  merge?: boolean;
 };
 
 type CommonPathOptions = {

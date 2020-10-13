@@ -77,7 +77,8 @@ export class MetadataConverter {
           if (!isSource) {
             throw new LibraryError('error_merge_metadata_target_unsupported');
           }
-          mergeSet = new ComponentSet(output.mergeWith);
+          mergeSet = new ComponentSet();
+          output.mergeWith.forEach((component) => mergeSet.add(component.parent || component));
           writer = new StandardWriter(output.defaultDirectory);
           break;
       }

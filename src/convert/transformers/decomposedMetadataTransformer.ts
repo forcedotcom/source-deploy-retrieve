@@ -17,6 +17,7 @@ import { META_XML_SUFFIX, XML_NS, XML_NS_KEY } from '../../utils/constants';
 import { JsonMap, AnyJson, JsonArray } from '@salesforce/ts-types';
 import { JsToXml } from '../streams';
 import { join } from 'path';
+import { ComponentSet, MetadataType, SourcePath } from '../../common';
 
 interface XmlJson extends JsonMap {
   [parentFullName: string]: {
@@ -88,52 +89,81 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     return DecomposedMetadataTransformer.createWriterFormat(component, recomposedXmlObj);
   }
 
-  public async toSourceFormat(component: SourceComponent): Promise<WriterFormat> {
+  public async toSourceFormat(
+    component: SourceComponent,
+    mergeWith?: SourceComponent
+  ): Promise<WriterFormat> {
     const writeInfos: WriteInfo[] = [];
-
     const { type, fullName: parentFullName } = component;
+    const parentXmlObject: XmlJson = { [type.name]: {} };
+
+    let createParentXml = false;
     const rootPackagePath = component.getPackageRelativePath(parentFullName, 'source');
-    const composedMetadata = (await component.parseXml())[type.name];
-    const rootXmlObject: XmlJson = { [type.name]: {} };
+    const childComponentMergeSet = mergeWith
+      ? new ComponentSet(mergeWith.getChildren())
+      : undefined;
 
-    let childrenOnlyTags = true;
-    for (const [tagName, collection] of Object.entries(composedMetadata)) {
-      const childTypeId = type?.children?.directories[tagName];
-
-      if (childTypeId) {
-        const childType = type.children.types[childTypeId];
-        const tagCollection = Array.isArray(collection) ? collection : [collection];
-
-        for (const entry of tagCollection) {
-          let output = rootPackagePath;
-          const strategy = this.registry.strategies[type.id].decomposition as DecompositionStrategy;
-          if (strategy === DecompositionStrategy.FolderPerType) {
-            output = join(output, childType.directoryName);
-          }
-
-          const name = (entry.fullName || entry.name) as string;
-          output = join(output, `${name}.${childType.suffix}${META_XML_SUFFIX}`);
+    const composedMetadata = await this.getComposedMetadataEntries(component);
+    for (const [tagKey, tagValue] of composedMetadata) {
+      const childTypeId = type.children?.directories[tagKey];
+      const childType = type.children?.types[childTypeId];
+      if (childType) {
+        const tagValues = Array.isArray(tagValue) ? tagValue : [tagValue];
+        for (const value of tagValues) {
+          const entryName = (value.fullName || value.name) as string;
+          const mergeChild = childComponentMergeSet?.get({
+            fullName: `${parentFullName}.${entryName}`,
+            type: childType,
+          });
+          const output =
+            mergeChild?.xml ||
+            join(rootPackagePath, this.getOutputPathForEntry(entryName, childType, component));
 
           writeInfos.push({
             source: new JsToXml({
-              [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS }, entry),
+              [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS }, value),
             }),
             output,
           });
         }
       } else {
-        childrenOnlyTags = false;
-        rootXmlObject[type.name][tagName] = collection as JsonArray;
+        // tag entry isn't a child type, so add it to the parent xml
+        createParentXml = true;
+        parentXmlObject[type.name][tagKey] = tagValue as JsonArray;
       }
     }
 
-    if (!childrenOnlyTags) {
+    if (createParentXml) {
+      const parentOutput =
+        mergeWith?.xml ||
+        join(rootPackagePath, `${parentFullName}.${type.suffix}${META_XML_SUFFIX}`);
       writeInfos.push({
-        source: new JsToXml(rootXmlObject),
-        output: join(rootPackagePath, `${parentFullName}.${type.suffix}${META_XML_SUFFIX}`),
+        source: new JsToXml(parentXmlObject),
+        output: parentOutput,
       });
     }
 
     return { component, writeInfos };
+  }
+
+  private async getComposedMetadataEntries(component: SourceComponent): Promise<[string, any][]> {
+    const composedMetadata = (await component.parseXml())[component.type.name];
+    return Object.entries(composedMetadata);
+  }
+
+  private getOutputPathForEntry(
+    entryName: string,
+    entryType: MetadataType,
+    component: SourceComponent
+  ): SourcePath {
+    const { type } = component;
+    const strategy = this.registry.strategies[type.id].decomposition as DecompositionStrategy;
+
+    let output: SourcePath;
+    if (strategy === DecompositionStrategy.FolderPerType) {
+      output = join(output, entryType.directoryName);
+    }
+
+    return join(output, `${entryName}.${entryType.suffix}${META_XML_SUFFIX}`);
   }
 }

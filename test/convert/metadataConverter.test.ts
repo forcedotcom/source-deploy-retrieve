@@ -13,7 +13,6 @@ import * as fs from 'fs';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { dirname, join } from 'path';
 import { expect, assert } from 'chai';
-import { PACKAGE_XML_FILE, DEFAULT_PACKAGE_PREFIX } from '../../src/utils/constants';
 import { ConversionError } from '../../src/errors';
 
 const env = createSandbox();
@@ -55,7 +54,10 @@ describe('MetadataConverter', () => {
 
   it('should generate package name using timestamp when option omitted', async () => {
     const timestamp = 123456;
-    const packagePath = join(outputDirectory, `${DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
+    const packagePath = join(
+      outputDirectory,
+      `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`
+    );
     env.stub(Date, 'now').returns(timestamp);
 
     await converter.convert(components, 'metadata', {
@@ -120,7 +122,10 @@ describe('MetadataConverter', () => {
 
     it('should write manifest for metadata format conversion', async () => {
       const timestamp = 123456;
-      const packagePath = join(outputDirectory, `${DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
+      const packagePath = join(
+        outputDirectory,
+        `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`
+      );
       env.stub(Date, 'now').returns(timestamp);
       const expectedContents = new ManifestGenerator(mockRegistryAccess).createManifest(components);
 
@@ -128,7 +133,7 @@ describe('MetadataConverter', () => {
 
       expect(writeFileStub.calledBefore(pipelineStub)).to.be.true;
       expect(writeFileStub.firstCall.args).to.deep.equal([
-        join(packagePath, PACKAGE_XML_FILE),
+        join(packagePath, MetadataConverter.PACKAGE_XML_FILE),
         expectedContents,
       ]);
     });
@@ -202,7 +207,10 @@ describe('MetadataConverter', () => {
       await converter.convert(components, 'metadata', { type: 'zip' });
 
       expect(addToZipStub.calledBefore(pipelineStub)).to.be.true;
-      expect(addToZipStub.firstCall.args).to.deep.equal([expectedContents, PACKAGE_XML_FILE]);
+      expect(addToZipStub.firstCall.args).to.deep.equal([
+        expectedContents,
+        MetadataConverter.PACKAGE_XML_FILE,
+      ]);
     });
 
     it('should not write manifest for source format conversion', async () => {

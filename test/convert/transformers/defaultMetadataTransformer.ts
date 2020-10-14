@@ -11,7 +11,7 @@ import { join, basename } from 'path';
 import { createSandbox } from 'sinon';
 import { TestReadable } from '../../mock/convert/readables';
 import { expect } from 'chai';
-import { META_XML_SUFFIX } from '../../../src/utils';
+import { META_XML_SUFFIX } from '../../../src/common';
 import { SourceComponent, VirtualTreeContainer } from '../../../src';
 
 const env = createSandbox();

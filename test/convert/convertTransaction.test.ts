@@ -13,9 +13,9 @@ import {
   ConvertTransactionState,
 } from '../../src/convert/convertTransaction';
 import { JsToXml } from '../../src/convert/streams';
-import { XML_NS_KEY, XML_NS } from '../../src/utils/constants';
 import { keanu, regina } from '../mock/registry';
 import { TestFinalizerNoWrites, TestFinalizerNoResult } from '../mock/convert/finalizers';
+import { XML_NS_URL, XML_NS_KEY } from '../../src/common';
 
 const env = createSandbox();
 
@@ -81,7 +81,7 @@ describe('Convert Transaction Constructs', () => {
             {
               source: new JsToXml({
                 ReginaKing: {
-                  [XML_NS_KEY]: XML_NS,
+                  [XML_NS_KEY]: XML_NS_URL,
                   ys: [{ test: 'child1' }],
                   xs: [{ test: 'child2' }],
                 },

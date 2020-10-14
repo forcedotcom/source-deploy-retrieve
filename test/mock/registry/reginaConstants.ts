@@ -48,3 +48,11 @@ export const REGINA_CHILD_COMPONENT_1 = SourceComponent.createVirtualComponent(
   },
   REGINA_VIRTUAL_FS
 );
+export const REGINA_CHILD_COMPONENT_2 = SourceComponent.createVirtualComponent(
+  {
+    name: baseName(REGINA_CHILD_XML_NAME_2),
+    type: type.children.types.x,
+    xml: REGINA_CHILD_XML_PATH_2,
+  },
+  REGINA_VIRTUAL_FS
+);

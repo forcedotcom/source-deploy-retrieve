@@ -187,7 +187,8 @@ import * as tina from './tinaConstants';
 import * as gene from './geneConstants';
 import * as regina from './reginaConstants';
 import * as sean from './seanConstants';
-export { kathy, keanu, simon, taraji, tina, gene, regina, sean };
+import * as decomposedtoplevel from './decomposedTopLevelConstants';
+export { kathy, keanu, simon, taraji, tina, gene, regina, sean, decomposedtoplevel };
 
 // Mixed content
 export const DWAYNE_DIR = join('path', 'to', 'dwaynes');

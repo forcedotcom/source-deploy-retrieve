@@ -40,7 +40,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     this.tree = tree;
   }
 
-  public getComponent(path: SourcePath, canResolveChild = true): SourceComponent {
+  public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent {
     let rootMetadata = this.parseAsRootMetadataXml(path);
     if (!rootMetadata) {
       const rootMetadataPath = this.getRootMetadataXmlPath(path);
@@ -68,7 +68,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       );
     }
 
-    return this.populate(path, component, canResolveChild);
+    return this.populate(path, component, isResolvingSource);
   }
 
   /**
@@ -164,6 +164,6 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   protected abstract populate(
     trigger: SourcePath,
     component?: SourceComponent,
-    canResolveChild?: boolean
+    isResolvingSource?: boolean
   ): SourceComponent;
 }

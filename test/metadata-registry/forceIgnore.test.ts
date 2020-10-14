@@ -10,7 +10,7 @@ import { createSandbox } from 'sinon';
 import * as fs from 'fs';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { FORCE_IGNORE_FILE } from '../../src/utils/constants';
-import { join, sep } from 'path';
+import { join } from 'path';
 import { Lifecycle } from '@salesforce/core';
 
 const env = createSandbox();

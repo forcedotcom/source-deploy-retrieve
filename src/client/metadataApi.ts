@@ -38,6 +38,39 @@ export const DEFAULT_API_OPTIONS = {
 };
 
 export class MetadataApi extends BaseApi {
+  public async deploy(
+    components: SourceComponent | SourceComponent[],
+    options?: MetadataDeployOptions
+  ): Promise<SourceDeployResult> {
+    const metadataComponents = Array.isArray(components) ? components : [components];
+
+    const converter = new MetadataConverter();
+    const { zipBuffer } = await converter.convert(metadataComponents, 'metadata', { type: 'zip' });
+
+    const deployID = await this.metadataDeployID(zipBuffer, options);
+    const deployStatusPoll = this.metadataDeployStatusPoll(deployID, options);
+    const componentDeploymentMap = new Map<string, ComponentDeployment>();
+    for (const component of metadataComponents) {
+      componentDeploymentMap.set(`${component.type.name}:${component.fullName}`, {
+        status: ComponentStatus.Unchanged,
+        component,
+        diagnostics: [],
+      });
+    }
+
+    const result = await deployStatusPoll;
+
+    return this.buildSourceDeployResult(componentDeploymentMap, result);
+  }
+
+  public async deployWithPaths(
+    paths: SourcePath,
+    options?: MetadataDeployOptions
+  ): Promise<SourceDeployResult> {
+    const components = this.registry.getComponentsFromPath(paths);
+    return this.deploy(components, options);
+  }
+
   // TODO: move filtering logic to registry W-8023153
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult> {
     const allComponents: SourceComponent[] = [];
@@ -229,39 +262,6 @@ export class MetadataApi extends BaseApi {
   private hashElement(component: SourceComponent): string {
     const hashed = `${component.fullName}.${component.type.id}`;
     return hashed;
-  }
-
-  public async deploy(
-    components: SourceComponent | SourceComponent[],
-    options?: MetadataDeployOptions
-  ): Promise<SourceDeployResult> {
-    const metadataComponents = Array.isArray(components) ? components : [components];
-
-    const converter = new MetadataConverter();
-    const { zipBuffer } = await converter.convert(metadataComponents, 'metadata', { type: 'zip' });
-
-    const deployID = await this.metadataDeployID(zipBuffer, options);
-    const deployStatusPoll = this.metadataDeployStatusPoll(deployID, options);
-    const componentDeploymentMap = new Map<string, ComponentDeployment>();
-    for (const component of metadataComponents) {
-      componentDeploymentMap.set(`${component.type.name}:${component.fullName}`, {
-        status: ComponentStatus.Unchanged,
-        component,
-        diagnostics: [],
-      });
-    }
-
-    const result = await deployStatusPoll;
-
-    return this.buildSourceDeployResult(componentDeploymentMap, result);
-  }
-
-  public async deployWithPaths(
-    paths: SourcePath,
-    options?: MetadataDeployOptions
-  ): Promise<SourceDeployResult> {
-    const components = this.registry.getComponentsFromPath(paths);
-    return this.deploy(components, options);
   }
 
   private async metadataDeployID(

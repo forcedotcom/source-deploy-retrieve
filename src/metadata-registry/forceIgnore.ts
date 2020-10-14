@@ -31,6 +31,7 @@ export class ForceIgnore {
     '**/package2-descriptor.json',
     '**/package2-manifest.json',
   ];
+
   public constructor(forceIgnorePath = '') {
     try {
       const file = readFileSync(forceIgnorePath, 'utf-8');
@@ -48,16 +49,6 @@ export class ForceIgnore {
     } catch (e) {
       // TODO: log no force ignore
     }
-  }
-
-  // REMOVE THIS AFTER GITIGNORE-PARSER DEPRECATED
-  private parseContents(contents: string): string {
-    return contents
-      .split('\n')
-      .map((line) => line.trim())
-      .map((line) => line.replace(/[\\\/]/g, sep))
-      .map((line) => line.replace(/^\\/, ''))
-      .join('\n');
   }
 
   /**
@@ -102,6 +93,16 @@ export class ForceIgnore {
     }
 
     return this.useNewParser ? accepts : fctResult;
+  }
+
+  // REMOVE THIS AFTER GITIGNORE-PARSER DEPRECATED
+  private parseContents(contents: string): string {
+    return contents
+      .split('\n')
+      .map((line) => line.trim())
+      .map((line) => line.replace(/[\\\/]/g, sep))
+      .map((line) => line.replace(/^\\/, ''))
+      .join('\n');
   }
 
   // AFTER GITIGNORE-PARSER DEPRECATED, remove this method

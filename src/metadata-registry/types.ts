@@ -88,8 +88,9 @@ export interface SourceAdapter {
    * Create a metadata component object from a file path.
    *
    * @param fsPath Path to resolve
+   * @param isResolvingSource Whether the path to resolve is a single file
    */
-  getComponent(fsPath: SourcePath, canResolveChild?: boolean): SourceComponent;
+  getComponent(fsPath: SourcePath, isResolvingSource?: boolean): SourceComponent;
 
   /**
    * Whether the adapter allows content-only metadata definitions.

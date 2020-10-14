@@ -20,20 +20,23 @@ export const DECOMPOSED_TOP_LEVEL_CHILD_XML_NAMES = ['z.g-meta.xml', 'y.g-meta.x
 export const DECOMPOSED_TOP_LEVEL_CHILD_XML_PATHS = DECOMPOSED_TOP_LEVEL_CHILD_XML_NAMES.map((n) =>
   join(DECOMPOSED_TOP_LEVEL_COMPONENT_PATH, n)
 );
+
+export const DECOMPOSED_VIRTUAL_FS = [
+  {
+    dirPath: DECOMPOSED_TOP_LEVEL_COMPONENT_PATH,
+    children: [
+      DECOMPOSED_TOP_LEVEL_XML_NAMES[0],
+      DECOMPOSED_TOP_LEVEL_CHILD_XML_NAMES[0],
+      DECOMPOSED_TOP_LEVEL_CHILD_XML_NAMES[1],
+    ],
+  },
+];
+
 export const DECOMPOSED_TOP_LEVEL_COMPONENT = SourceComponent.createVirtualComponent(
   {
     name: baseName(DECOMPOSED_TOP_LEVEL_XML_PATH),
     type: mockRegistry.types.decomposedtoplevel,
     xml: DECOMPOSED_TOP_LEVEL_XML_PATH,
   },
-  [
-    {
-      dirPath: DECOMPOSED_TOP_LEVEL_DIR,
-      children: [baseName(DECOMPOSED_TOP_LEVEL_COMPONENT_PATH)],
-    },
-    {
-      dirPath: DECOMPOSED_TOP_LEVEL_COMPONENT_PATH,
-      children: DECOMPOSED_TOP_LEVEL_CHILD_XML_NAMES,
-    },
-  ]
+  DECOMPOSED_VIRTUAL_FS
 );

@@ -20,7 +20,7 @@ import { SourceComponent } from '../../metadata-registry';
 import { DiagnosticUtil } from '../diagnosticUtil';
 
 export class AuraDeploy extends BaseDeploy {
-  private static readonly AURA_RESOURCES = ['APPLICATION', 'COMPONENT', 'EVENT', 'INTERFACE'];
+  private static readonly AURA_DEF_TYPES = ['APPLICATION', 'COMPONENT', 'EVENT', 'INTERFACE'];
 
   public async deploy(component: SourceComponent, namespace: string): Promise<SourceDeployResult> {
     this.component = component;
@@ -75,7 +75,7 @@ export class AuraDeploy extends BaseDeploy {
 
       // This is to ensure we return the correct project path when reporting errors
       // must be the file associated with the specified aura type
-      AuraDeploy.AURA_RESOURCES.includes(auraDef.DefType)
+      AuraDeploy.AURA_DEF_TYPES.includes(auraDef.DefType)
         ? auraDefinitions.unshift(auraDef)
         : auraDefinitions.push(auraDef);
     });

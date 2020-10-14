@@ -9,7 +9,6 @@ import { readFileSync } from 'fs';
 import { sep } from 'path';
 import { DeployError } from '../../errors';
 import { ToolingCreateResult } from '../../utils/deploy';
-import { TOOLING_PATH_SEP } from './constants';
 import { SourceComponent } from '../../metadata-registry';
 import { SourceDeployResult } from '../types';
 
@@ -17,6 +16,8 @@ import { SourceDeployResult } from '../types';
 const DOMParser = require('xmldom-sfdx-encoding').DOMParser;
 
 export abstract class BaseDeploy {
+  private static readonly TOOLING_PATH_SEP = '/';
+
   public connection: Connection;
   public component: SourceComponent;
   public namespace: string;
@@ -97,8 +98,8 @@ export abstract class BaseDeploy {
     );
 
     return [
-      pathParts.slice(typeFolderIndex).join(TOOLING_PATH_SEP),
-      pathParts.slice(typeFolderIndex + 1).join(TOOLING_PATH_SEP),
+      pathParts.slice(typeFolderIndex).join(BaseDeploy.TOOLING_PATH_SEP),
+      pathParts.slice(typeFolderIndex + 1).join(BaseDeploy.TOOLING_PATH_SEP),
     ];
   }
 

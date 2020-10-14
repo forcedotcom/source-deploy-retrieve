@@ -16,11 +16,12 @@ import {
 } from '../types';
 import { deployTypes } from '../toolingApi';
 import { BaseDeploy } from './baseDeploy';
-import { AURA_TYPES } from './constants';
 import { SourceComponent } from '../../metadata-registry';
 import { DiagnosticUtil } from '../diagnosticUtil';
 
 export class AuraDeploy extends BaseDeploy {
+  private static readonly AURA_RESOURCES = ['APPLICATION', 'COMPONENT', 'EVENT', 'INTERFACE'];
+
   public async deploy(component: SourceComponent, namespace: string): Promise<SourceDeployResult> {
     this.component = component;
     this.namespace = namespace;
@@ -74,7 +75,7 @@ export class AuraDeploy extends BaseDeploy {
 
       // This is to ensure we return the correct project path when reporting errors
       // must be the file associated with the specified aura type
-      AURA_TYPES.includes(auraDef.DefType)
+      AuraDeploy.AURA_RESOURCES.includes(auraDef.DefType)
         ? auraDefinitions.unshift(auraDef)
         : auraDefinitions.push(auraDef);
     });

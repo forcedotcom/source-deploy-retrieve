@@ -33,6 +33,41 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     this.convertTransaction.addFinalizer(RecompositionFinalizer);
   }
 
+  public static async recompose(
+    children: SourceComponent[],
+    baseXmlObj: XmlJson = {}
+  ): Promise<JsonMap> {
+    for (const child of children) {
+      const { directoryName: groupNode } = child.type;
+      const { name: parentName } = child.parent.type;
+      const childContents = (await child.parseXml())[child.type.name];
+      if (!baseXmlObj[parentName]) {
+        baseXmlObj[parentName] = { '@_xmlns': XML_NS };
+      }
+
+      if (!baseXmlObj[parentName][groupNode]) {
+        baseXmlObj[parentName][groupNode] = [];
+      }
+      (baseXmlObj[parentName][groupNode] as JsonArray).push(childContents);
+    }
+    return baseXmlObj;
+  }
+
+  public static createWriterFormat(trigger: SourceComponent, xmlObject: JsonMap): WriterFormat {
+    return {
+      component: trigger,
+      writeInfos: [
+        {
+          source: new JsToXml(xmlObject),
+          relativeDestination: join(
+            trigger.type.directoryName,
+            `${trigger.fullName}.${trigger.type.suffix}`
+          ),
+        },
+      ],
+    };
+  }
+
   public async toMetadataFormat(component: SourceComponent): Promise<WriterFormat> {
     if (component.parent) {
       const { state } = this.convertTransaction;
@@ -109,40 +144,5 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     }
 
     return { component, writeInfos };
-  }
-
-  public static async recompose(
-    children: SourceComponent[],
-    baseXmlObj: XmlJson = {}
-  ): Promise<JsonMap> {
-    for (const child of children) {
-      const { directoryName: groupNode } = child.type;
-      const { name: parentName } = child.parent.type;
-      const childContents = (await child.parseXml())[child.type.name];
-      if (!baseXmlObj[parentName]) {
-        baseXmlObj[parentName] = { '@_xmlns': XML_NS };
-      }
-
-      if (!baseXmlObj[parentName][groupNode]) {
-        baseXmlObj[parentName][groupNode] = [];
-      }
-      (baseXmlObj[parentName][groupNode] as JsonArray).push(childContents);
-    }
-    return baseXmlObj;
-  }
-
-  public static createWriterFormat(trigger: SourceComponent, xmlObject: JsonMap): WriterFormat {
-    return {
-      component: trigger,
-      writeInfos: [
-        {
-          source: new JsToXml(xmlObject),
-          relativeDestination: join(
-            trigger.type.directoryName,
-            `${trigger.fullName}.${trigger.type.suffix}`
-          ),
-        },
-      ],
-    };
   }
 }

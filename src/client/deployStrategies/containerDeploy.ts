@@ -107,10 +107,6 @@ export class ContainerDeploy extends BaseDeploy {
     return contAsyncRequest;
   }
 
-  private sleep(ms: number): Promise<number> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
   public async pollContainerStatus(containerId: RecordId): Promise<ContainerAsyncRequest> {
     let count = 0;
     let containerStatus;
@@ -125,6 +121,10 @@ export class ContainerDeploy extends BaseDeploy {
       count++;
     } while (containerStatus.State === ToolingDeployStatus.Queued && count <= 30);
     return containerStatus;
+  }
+
+  private sleep(ms: number): Promise<number> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   private buildSourceDeployResult(containerRequest: ContainerAsyncRequest): SourceDeployResult {

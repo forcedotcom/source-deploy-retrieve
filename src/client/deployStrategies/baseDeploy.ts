@@ -25,11 +25,6 @@ export abstract class BaseDeploy {
     this.connection = connection;
   }
 
-  public abstract deploy(
-    component: SourceComponent,
-    namespace: string
-  ): Promise<SourceDeployResult>;
-
   public buildMetadataField(
     metadataContent: string
   ): {
@@ -58,10 +53,6 @@ export abstract class BaseDeploy {
     } catch (e) {
       throw new DeployError('error_parsing_metadata_file');
     }
-  }
-
-  protected async toolingCreate(type: string, record: object): Promise<ToolingCreateResult> {
-    return (await this.connection.tooling.create(type, record)) as ToolingCreateResult;
   }
 
   // If bundle already exists then use Id and update existing
@@ -94,6 +85,10 @@ export abstract class BaseDeploy {
     return bundleResult;
   }
 
+  protected async toolingCreate(type: string, record: object): Promise<ToolingCreateResult> {
+    return (await this.connection.tooling.create(type, record)) as ToolingCreateResult;
+  }
+
   protected getFormattedPaths(filepath: string): string[] {
     const pathParts = filepath.split(sep);
 
@@ -106,4 +101,9 @@ export abstract class BaseDeploy {
       pathParts.slice(typeFolderIndex + 1).join(TOOLING_PATH_SEP),
     ];
   }
+
+  public abstract deploy(
+    component: SourceComponent,
+    namespace: string
+  ): Promise<SourceDeployResult>;
 }

@@ -180,6 +180,7 @@ export class VirtualTreeContainer extends BaseTreeContainer {
     throw new LibraryError('error_path_not_found', fsPath);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public stream(fsPath: string): Readable {
     throw new Error('Method not implemented');
   }

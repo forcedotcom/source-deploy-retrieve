@@ -7,15 +7,13 @@ This is a guide for publishing the Source Deploy Retrieve Library to npm. Most c
 1. Publisher has a valid CircleCI token for the forcedotcom organization. More info on CircleCI's doc [Create a Personal API token](https://circleci.com/docs/2.0/managing-api-tokens/#creating-a-personal-api-token).
 1. Publisher is a part of the GitHub team 'PDT'.
 
-## Generate the Change Log
-
-Add an entry to the `CHANGELOG.md` that includes the date for publishing, the version bump, and the list of changes going out for the release.
-
-## Porting Changes
+## Background
 
 After feature/bug work has been QA'd and closed, it's time to prepare those changes for publishing.
 
 The source-deploy-retrieve project uses a two branch strategy. Work that is currently under development is committed to the 'develop' branch. Whereas the 'main' branch is what's currently in production or is being staged for production.
+
+## Porting Changes
 
 To port changes from the develop branch to main we utilize a script called `port-changes.js`. This script is configured with a task to make it easy to trigger from the VSCode Command Palette. This script will determine the changes that need to be ported from develop to main. It will also create the port branch with the specified version bump and cherry-pick the commits we want to port.
 
@@ -35,6 +33,18 @@ In the event that a change was ported that wasn't ready for production, we would
 1. Replace 'pick' with 'drop' for any commit that you want to exclude from the port branch.
 1. Exit the editor with `Ctrl + c`.
 1. Save the changes with `:wq`.
+1. Push changes to remote.
+
+## Verify Work Items
+
+For each commit being pulled into the port PR, we want to make sure that the following is true:
+
+1. The affiliated work item has been QA'd and closed.
+2. The work item has the appropriate scheduled build. This scheduled build value would match the scheduled build going out for the VSCode Extensions. It's okay that this version is not the same as the one for Source Deploy Retrieve.
+
+## Generate the Change Log
+
+Using the information from the port PR, add an entry to the `CHANGELOG.md` that includes the date for publishing, the version bump, and the list of changes going out for the release. This new PR for the change log should be committed directly into main.
 
 ## Publishing to NPM
 
@@ -43,9 +53,9 @@ To publish the changes to npm, we run the task `Publish Source Deploy Retrieve L
 ### Prerequisites
 
 1. All staged changes have been QA'd and Closed.
-1. All staged changes have the appropriate scheduled build associated with their Work Item in GUS. This scheduled build value would match the scheduled build going out for the VSCode Extensions. It's okay that this version is not the same as the one for Source Deploy Retrieve.
-1. CHANGELOG.md has been updated with the information for this latest release.
+1. All staged changes have the appropriate scheduled build associated with their Work Item in GUS.
 1. Port PR has been merged into main and the commit-workflow has succeed.
+1. CHANGELOG.md has been updated with the information for this latest release.
 
 ### Steps
 
@@ -53,7 +63,7 @@ To publish the changes to npm, we run the task `Publish Source Deploy Retrieve L
 1. Search for `Tasks: Run Task`
 1. Select `Publish Source Deploy Retrieve Library`
 1. Enter in your CircleCI Token.
-1. Once the request has been sent, approve the workflow in CircleCI. Note only members of the GitHub team 'PDT' can approve the workflow.
+1. Once the request has been sent, approve the workflow in CircleCI. <i>Note only members of the GitHub team 'PDT' can approve the workflow.</i>
 
 ## Post Publish
 

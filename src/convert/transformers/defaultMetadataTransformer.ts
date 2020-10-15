@@ -10,7 +10,7 @@ import { SfdxFileFormat, WriterFormat } from '../types';
 import { SourceComponent } from '../../metadata-registry';
 import { trimUntil } from '../../utils/path';
 import { basename, dirname, join } from 'path';
-import { MetadataComponent, SourcePath } from '../../common';
+import { SourcePath } from '../../common';
 
 /**
  * The default metadata transformer.

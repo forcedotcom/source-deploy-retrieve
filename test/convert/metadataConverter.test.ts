@@ -17,6 +17,7 @@ import { PACKAGE_XML_FILE, DEFAULT_PACKAGE_PREFIX } from '../../src/utils/consta
 import { ConversionError, LibraryError } from '../../src/errors';
 import { TINA_COMPONENTS } from '../mock/registry/tinaConstants';
 import { ComponentSet } from '../../src/common';
+import { fail } from 'assert';
 
 const env = createSandbox();
 
@@ -231,6 +232,7 @@ describe('MetadataConverter', () => {
           defaultDirectory,
           mergeWith: mergeComponents,
         });
+        fail(`should have thrown a ${expectedError.name} error`);
       } catch (e) {
         expect(e.name).to.equal(ConversionError.name);
         expect(e.message).to.equal(expectedError.message);

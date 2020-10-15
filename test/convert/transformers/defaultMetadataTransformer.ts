@@ -12,7 +12,7 @@ import { createSandbox } from 'sinon';
 import { TestReadable } from '../../mock/convert/readables';
 import { expect } from 'chai';
 import { META_XML_SUFFIX } from '../../../src/utils';
-import { SourceComponent, VirtualTreeContainer } from '../../../src';
+import { MetadataComponent, SourceComponent, VirtualTreeContainer } from '../../../src';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../../src/utils/constants';
 
 const env = createSandbox();
@@ -229,6 +229,38 @@ describe('DefaultMetadataTransformer', () => {
       expect(await transformer.toSourceFormat(component, mergeWith)).to.deep.equal({
         component,
         writeInfos: expectedInfos,
+      });
+    });
+
+    it('should use default relative package path if merge component has no content', async () => {
+      const component = keanu.KEANU_COMPONENT;
+      const mergeWith = SourceComponent.createVirtualComponent(
+        {
+          name: 'a',
+          type: mockRegistry.types.keanureeves,
+        },
+        []
+      );
+
+      expect((await transformer.toSourceFormat(component, mergeWith)).writeInfos).to.deep.contain({
+        output: component.getPackageRelativePath(component.content, 'source'),
+        source: component.tree.stream(component.content),
+      });
+    });
+
+    it('should use default relative package path if merge component has no xml', async () => {
+      const component = keanu.KEANU_COMPONENT;
+      const mergeWith = SourceComponent.createVirtualComponent(
+        {
+          name: 'a',
+          type: mockRegistry.types.keanureeves,
+        },
+        []
+      );
+
+      expect((await transformer.toSourceFormat(component, mergeWith)).writeInfos).to.deep.contain({
+        output: component.getPackageRelativePath(component.xml, 'source'),
+        source: component.tree.stream(component.xml),
       });
     });
   });

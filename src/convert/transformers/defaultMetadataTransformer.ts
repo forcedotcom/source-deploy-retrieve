@@ -10,7 +10,7 @@ import { SfdxFileFormat, WriterFormat } from '../types';
 import { SourceComponent } from '../../metadata-registry';
 import { trimUntil } from '../../utils/path';
 import { basename, dirname, join } from 'path';
-import { SourcePath } from '../../common';
+import { MetadataComponent, SourcePath } from '../../common';
 
 /**
  * The default metadata transformer.
@@ -57,23 +57,24 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
     return result;
   }
 
+  // assumes component has content
   private getContentSourceDestination(
     source: SourcePath,
     targetFormat: SfdxFileFormat,
     component: SourceComponent,
     mergeWith?: SourceComponent
   ): SourcePath {
-    if (mergeWith) {
+    if (mergeWith?.content) {
       if (component.tree.isDirectory(component.content)) {
         const relative = trimUntil(source, basename(component.content));
         return join(dirname(mergeWith.content), relative);
-      } else {
-        return mergeWith.content;
       }
+      return mergeWith.content;
     }
     return component.getPackageRelativePath(source, targetFormat);
   }
 
+  // assumes component has xml
   private getXmlDestination(
     targetFormat: SfdxFileFormat,
     component: SourceComponent,
@@ -81,12 +82,15 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
   ): SourcePath {
     let xmlDestination =
       mergeWith?.xml || component.getPackageRelativePath(component.xml, targetFormat);
+
+    // quirk: append or strip the -meta.xml suffix to the xml if there's no content
     if (!component.content) {
       xmlDestination =
         targetFormat === 'metadata'
           ? xmlDestination.slice(0, xmlDestination.lastIndexOf(META_XML_SUFFIX))
           : `${xmlDestination}${META_XML_SUFFIX}`;
     }
+
     return xmlDestination;
   }
 }

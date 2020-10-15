@@ -161,7 +161,11 @@ export class VirtualTreeContainer extends BaseTreeContainer {
   }
 
   public readDirectory(fsPath: string): string[] {
-    return Array.from(this.tree.get(fsPath)).map((p) => basename(p));
+    if (this.isDirectory(fsPath)) {
+      return Array.from(this.tree.get(fsPath)).map((p) => basename(p));
+    }
+
+    throw new LibraryError('error_expected_directory_path', fsPath);
   }
 
   public readFile(fsPath: SourcePath): Promise<Buffer> {
@@ -176,6 +180,7 @@ export class VirtualTreeContainer extends BaseTreeContainer {
     throw new LibraryError('error_path_not_found', fsPath);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public stream(fsPath: string): Readable {
     throw new Error('Method not implemented');
   }

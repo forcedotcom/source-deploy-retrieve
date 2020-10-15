@@ -9,9 +9,7 @@
   "extends": ["plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
   "rules": {
     "ban-ts-ignore": "off",
-    "@typescript-eslint/ban-ts-ignore": "off",
     "camelcase": "off",
-    "@typescript-eslint/camelcase": "off",
     "constructor-super": "warn",
     "curly": "error",
     "eqeqeq": "error",
@@ -40,8 +38,11 @@
     ], // non-complete list of globals that are easy to access unintentionally
     "no-var": "error",
     "jsdoc/no-types": "warn",
-    "@typescript-eslint/semi": "warn",
+    "@typescript-eslint/ban-ts-ignore": "off",
+    "@typescript-eslint/camelcase": "off",
     "@typescript-eslint/class-name-casing": "warn",
+    "@typescript-eslint/semi": "warn",
+    "@typescript-eslint/member-ordering": "error",
     "header/header": [
       2,
       "block",

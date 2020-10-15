@@ -40,7 +40,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     this.tree = tree;
   }
 
-  public getComponent(path: SourcePath, canResolveChild = true): SourceComponent {
+  public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent {
     let rootMetadata = this.parseAsRootMetadataXml(path);
     if (!rootMetadata) {
       const rootMetadataPath = this.getRootMetadataXmlPath(path);
@@ -68,7 +68,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       );
     }
 
-    return this.populate(path, component, canResolveChild);
+    return this.populate(path, component, isResolvingSource);
   }
 
   /**
@@ -77,26 +77,6 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   public allowMetadataWithContent(): boolean {
     return this.metadataWithContent;
   }
-
-  /**
-   * Determine the related root metadata xml when the path given to `getComponent` isn't one.
-   *
-   * @param trigger Path that `getComponent` was called with
-   */
-  protected abstract getRootMetadataXmlPath(trigger: SourcePath): SourcePath;
-
-  /**
-   * Populate additional properties on a SourceComponent, such as source files and child components.
-   * The component passed to `populate` has its fullName, xml, and type properties already set.
-   *
-   * @param component Component to populate properties on
-   * @param trigger Path that `getComponent` was called with
-   */
-  protected abstract populate(
-    trigger: SourcePath,
-    component?: SourceComponent,
-    canResolveChild?: boolean
-  ): SourceComponent;
 
   /**
    * If the path given to `getComponent` is the root metadata xml file for a component,
@@ -166,4 +146,24 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       return { fullName: match[1], suffix: undefined, path: fsPath };
     }
   }
+
+  /**
+   * Determine the related root metadata xml when the path given to `getComponent` isn't one.
+   *
+   * @param trigger Path that `getComponent` was called with
+   */
+  protected abstract getRootMetadataXmlPath(trigger: SourcePath): SourcePath;
+
+  /**
+   * Populate additional properties on a SourceComponent, such as source files and child components.
+   * The component passed to `populate` has its fullName, xml, and type properties already set.
+   *
+   * @param component Component to populate properties on
+   * @param trigger Path that `getComponent` was called with
+   */
+  protected abstract populate(
+    trigger: SourcePath,
+    component?: SourceComponent,
+    isResolvingSource?: boolean
+  ): SourceComponent;
 }

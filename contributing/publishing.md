@@ -25,6 +25,7 @@ To port changes from the develop branch to main we utilize a script called `port
 1. Select `-v` to see the full output.
 1. Select the type of version bump. Typically using the default value of `patch` is fine.
 1. Push your branch up with `git push origin <branchName>` and open the pull request for review.
+1. <b>Important:</b> When your PR has been approved, be sure to merge with the option `Rebase and Merge`. We do <b>not</b> want to squash these commits.
 
 In the event that a change was ported that wasn't ready for production, we would want to remove it from the port branch. To remove commit(s) from the port branch...
 

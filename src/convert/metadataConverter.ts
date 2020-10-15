@@ -4,7 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SfdxFileFormat, ConvertOutputConfig, ConvertResult } from './types';
+import {
+  SfdxFileFormat,
+  ConvertOutputConfig,
+  ConvertResult,
+  DirectoryConfig,
+  ZipConfig,
+} from './types';
 import { ManifestGenerator, RegistryAccess, SourceComponent } from '../metadata-registry';
 import { promises } from 'fs';
 import { dirname, join } from 'path';
@@ -18,8 +24,8 @@ import {
   ZipWriter,
 } from './streams';
 import { PACKAGE_XML_FILE, DEFAULT_PACKAGE_PREFIX } from '../utils/constants';
-import { ConversionError } from '../errors';
-import { SourcePath } from '../common';
+import { ConversionError, LibraryError } from '../errors';
+import { ComponentSet, SourcePath } from '../common';
 
 export class MetadataConverter {
   private registryAccess: RegistryAccess;
@@ -44,13 +50,16 @@ export class MetadataConverter {
       // TODO: evaluate if a builder pattern for manifest creation is more efficient here
       const manifestGenerator = new ManifestGenerator(this.registryAccess);
       const manifestContents = manifestGenerator.createManifest(components);
-      const packagePath = this.getPackagePath(output);
-      const tasks = [];
       const isSource = targetFormat === 'source';
-      // initialize writer and create manifest
+      const tasks = [];
+
       let writer: Writable;
+      let mergeSet: ComponentSet<SourceComponent>;
+      let packagePath: SourcePath;
+
       switch (output.type) {
         case 'directory':
+          packagePath = this.getPackagePath(output);
           writer = new StandardWriter(packagePath);
           if (!isSource) {
             const manifestPath = join(packagePath, PACKAGE_XML_FILE);
@@ -58,16 +67,24 @@ export class MetadataConverter {
           }
           break;
         case 'zip':
+          packagePath = this.getPackagePath(output);
           writer = new ZipWriter(packagePath);
           if (!isSource) {
             (writer as ZipWriter).addToZip(manifestContents, PACKAGE_XML_FILE);
           }
           break;
+        case 'merge':
+          if (!isSource) {
+            throw new LibraryError('error_merge_metadata_target_unsupported');
+          }
+          mergeSet = new ComponentSet(output.mergeWith);
+          writer = new StandardWriter(output.defaultDirectory);
+          break;
       }
 
       const conversionPipeline = pipeline(
         new ComponentReader(components),
-        new ComponentConverter(targetFormat, this.registryAccess.registry),
+        new ComponentConverter(targetFormat, this.registryAccess.registry, undefined, mergeSet),
         writer
       );
       tasks.push(conversionPipeline);
@@ -83,7 +100,7 @@ export class MetadataConverter {
     }
   }
 
-  private getPackagePath(outputConfig: ConvertOutputConfig): SourcePath | undefined {
+  private getPackagePath(outputConfig: DirectoryConfig | ZipConfig): SourcePath | undefined {
     let packagePath: SourcePath;
     const { outputDirectory, packageName, type } = outputConfig;
     if (outputDirectory) {

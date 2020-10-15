@@ -4,13 +4,12 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { META_XML_SUFFIX } from '../../utils';
+import { META_XML_SUFFIX, SourcePath } from '../../common';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { SfdxFileFormat, WriterFormat } from '../types';
 import { SourceComponent } from '../../metadata-registry';
 import { trimUntil } from '../../utils/path';
 import { basename, dirname, join } from 'path';
-import { SourcePath } from '../../common';
 
 /**
  * The default metadata transformer.

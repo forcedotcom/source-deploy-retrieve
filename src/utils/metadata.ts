@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { META_XML_SUFFIX } from './constants';
+import { META_XML_SUFFIX } from '../common';
 
 export function generateMetaXML(typeName: string, apiVersion: string, status: string): string {
   let templateResult = '<?xml version="1.0" encoding="UTF-8"?>\n';

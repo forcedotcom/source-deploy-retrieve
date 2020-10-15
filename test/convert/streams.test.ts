@@ -14,11 +14,10 @@ import { join } from 'path';
 import { createSandbox, SinonStub } from 'sinon';
 import { Readable, Writable } from 'stream';
 import { SourceComponent } from '../../src';
-import { MetadataTransformer, WriteInfo, WriterFormat } from '../../src/convert';
+import { MetadataTransformer, WriterFormat } from '../../src/convert';
 import { ConvertTransaction } from '../../src/convert/convertTransaction';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
 import { LibraryError } from '../../src/errors';
-import { XML_NS_KEY, XML_NS, XML_DECL } from '../../src/utils/constants';
 import {
   TestFinalizerNoResult,
   TestFinalizerNoWrites,
@@ -26,7 +25,7 @@ import {
 } from '../mock/convert/finalizers';
 import { mockRegistry } from '../mock/registry';
 import { KATHY_COMPONENTS } from '../mock/registry/kathyConstants';
-import { ComponentSet } from '../../src/common';
+import { ComponentSet, XML_NS_URL, XML_DECL, XML_NS_KEY } from '../../src/common';
 
 const env = createSandbox();
 
@@ -381,14 +380,14 @@ describe('Streams', () => {
     it('should transform js object to xml string', () => {
       const xmlObj = {
         TestType: {
-          [XML_NS_KEY]: XML_NS,
+          [XML_NS_KEY]: XML_NS_URL,
           foo: 'bar',
           many: [{ test: 'first' }, { test: 'second' }],
         },
       };
       const jsToXml = new streams.JsToXml(xmlObj);
       let expectedBody = XML_DECL;
-      expectedBody += `<TestType xmlns="${XML_NS}">\n`;
+      expectedBody += `<TestType xmlns="${XML_NS_URL}">\n`;
       expectedBody += '    <foo>bar</foo>\n';
       expectedBody += '    <many>\n';
       expectedBody += '        <test>first</test>\n';

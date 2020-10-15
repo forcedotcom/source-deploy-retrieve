@@ -11,9 +11,8 @@ import { join, basename } from 'path';
 import { createSandbox } from 'sinon';
 import { TestReadable } from '../../mock/convert/readables';
 import { expect } from 'chai';
-import { META_XML_SUFFIX } from '../../../src/utils';
-import { MetadataComponent, SourceComponent, VirtualTreeContainer } from '../../../src';
-import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../../src/utils/constants';
+import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX } from '../../../src/common';
+import { SourceComponent, VirtualTreeContainer } from '../../../src';
 
 const env = createSandbox();
 

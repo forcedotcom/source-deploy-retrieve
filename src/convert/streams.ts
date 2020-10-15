@@ -13,11 +13,10 @@ import { LibraryError } from '../errors';
 import { SourceComponent, MetadataRegistry } from '../metadata-registry';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
-import { ComponentSet, SourcePath } from '../common';
+import { ComponentSet, SourcePath, XML_DECL } from '../common';
 import { ConvertTransaction } from './convertTransaction';
 import { MetadataTransformerFactory } from './transformers';
 import { JsonMap } from '@salesforce/ts-types';
-import { XML_DECL } from '../utils/constants';
 import { j2xParser } from 'fast-xml-parser';
 export const pipeline = promisify(cbPipeline);
 

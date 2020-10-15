@@ -164,7 +164,6 @@ export class VirtualTreeContainer extends BaseTreeContainer {
     if (this.isDirectory(fsPath)) {
       return Array.from(this.tree.get(fsPath)).map((p) => basename(p));
     }
-
     throw new LibraryError('error_expected_directory_path', fsPath);
   }
 

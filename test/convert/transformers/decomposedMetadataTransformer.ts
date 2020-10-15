@@ -17,6 +17,7 @@ import { XML_NS, XML_NS_KEY } from '../../../src/utils/constants';
 import { join } from 'path';
 import { JsToXml } from '../../../src/convert/streams';
 import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/registry/decomposedTopLevelConstants';
+import { SourceComponent } from '../../../src';
 
 const env = createSandbox();
 
@@ -271,6 +272,81 @@ describe('DecomposedMetadataTransformer', () => {
               },
             }),
             output: join(root, type.children.types.x.directoryName, 'child3.x-meta.xml'),
+          },
+        ],
+      });
+    });
+
+    it('should merge output with merge component only containing children', async () => {
+      const mergeComponentChild = component.getChildren()[0];
+      const componentToConvert = SourceComponent.createVirtualComponent(
+        {
+          name: 'a',
+          type: mockRegistry.types.reginaking,
+        },
+        []
+      );
+      env.stub(componentToConvert, 'parseXml').resolves({
+        ReginaKing: {
+          [XML_NS_KEY]: XML_NS,
+          [mergeComponentChild.type.directoryName]: {
+            fullName: mergeComponentChild.name,
+            test: 'testVal',
+          },
+        },
+      });
+
+      const transformer = new DecomposedMetadataTransformer(mockRegistry);
+      const result = await transformer.toSourceFormat(componentToConvert, component);
+
+      expect(result).to.deep.equal({
+        component: componentToConvert,
+        writeInfos: [
+          {
+            source: new JsToXml({
+              [mergeComponentChild.type.name]: {
+                [XML_NS_KEY]: XML_NS,
+                fullName: mergeComponentChild.name,
+                test: 'testVal',
+              },
+            }),
+            output: mergeComponentChild.xml,
+          },
+        ],
+      });
+    });
+
+    it('should merge output with parent merge component', async () => {
+      const componentToConvert = SourceComponent.createVirtualComponent(
+        {
+          name: 'a',
+          type: mockRegistry.types.reginaking,
+        },
+        []
+      );
+      env.stub(componentToConvert, 'parseXml').resolves({
+        ReginaKing: {
+          [XML_NS_KEY]: XML_NS,
+          fullName: component.fullName,
+          foo: 'bar',
+        },
+      });
+
+      const transformer = new DecomposedMetadataTransformer(mockRegistry);
+      const result = await transformer.toSourceFormat(componentToConvert, component);
+
+      expect(result).to.deep.equal({
+        component: componentToConvert,
+        writeInfos: [
+          {
+            source: new JsToXml({
+              [component.type.name]: {
+                [XML_NS_KEY]: XML_NS,
+                fullName: component.fullName,
+                foo: 'bar',
+              },
+            }),
+            output: component.xml,
           },
         ],
       });

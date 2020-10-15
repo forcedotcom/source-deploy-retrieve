@@ -106,8 +106,8 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const composedMetadata = await this.getComposedMetadataEntries(component);
     for (const [tagKey, tagValue] of composedMetadata) {
       const childTypeId = type.children?.directories[tagKey];
-      const childType = type.children?.types[childTypeId];
-      if (childType) {
+      if (childTypeId) {
+        const childType = type.children.types[childTypeId];
         const tagValues = Array.isArray(tagValue) ? tagValue : [tagValue];
         for (const value of tagValues) {
           const entryName = (value.fullName || value.name) as string;
@@ -128,7 +128,9 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
         }
       } else {
         // tag entry isn't a child type, so add it to the parent xml
-        createParentXml = true;
+        if (tagKey !== XML_NS_KEY) {
+          createParentXml = true;
+        }
         parentXmlObject[type.name][tagKey] = tagValue as JsonArray;
       }
     }
@@ -159,11 +161,12 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const { type } = component;
     const strategy = this.registry.strategies[type.id].decomposition as DecompositionStrategy;
 
-    let output: SourcePath;
+    let output = `${entryName}.${entryType.suffix}${META_XML_SUFFIX}`;
+
     if (strategy === DecompositionStrategy.FolderPerType) {
-      output = join(output, entryType.directoryName);
+      output = join(entryType.directoryName, output);
     }
 
-    return join(output, `${entryName}.${entryType.suffix}${META_XML_SUFFIX}`);
+    return output;
   }
 }

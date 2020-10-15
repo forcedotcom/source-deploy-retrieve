@@ -78,6 +78,7 @@ export class MetadataConverter {
             throw new LibraryError('error_merge_metadata_target_unsupported');
           }
           mergeSet = new ComponentSet();
+          // since child components are composed in metadata format, we need to merge using the parent
           output.mergeWith.forEach((component) => mergeSet.add(component.parent || component));
           writer = new StandardWriter(output.defaultDirectory);
           break;

@@ -14,7 +14,10 @@ import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { dirname, join } from 'path';
 import { expect, assert } from 'chai';
 import { PACKAGE_XML_FILE, DEFAULT_PACKAGE_PREFIX } from '../../src/utils/constants';
-import { ConversionError } from '../../src/errors';
+import { ConversionError, LibraryError } from '../../src/errors';
+import { TINA_COMPONENTS } from '../mock/registry/tinaConstants';
+import { ComponentSet } from '../../src/common';
+import { fail } from 'assert';
 
 const env = createSandbox();
 
@@ -31,11 +34,11 @@ describe('MetadataConverter', () => {
   const packageOutput = join(outputDirectory, packageName);
 
   /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
-  function validatePipelineArgs(pipelineArgs: any[]): void {
+  function validatePipelineArgs(pipelineArgs: any[], targetFormat = 'metadata'): void {
     expect(pipelineArgs[0] instanceof streams.ComponentReader).to.be.true;
     expect(pipelineArgs[0].components).to.deep.equal(components);
     expect(pipelineArgs[1] instanceof streams.ComponentConverter).to.be.true;
-    expect(pipelineArgs[1].targetFormat).to.equal('metadata');
+    expect(pipelineArgs[1].targetFormat).to.equal(targetFormat);
     expect(pipelineArgs[2] instanceof streams.ComponentWriter).to.be.true;
   }
 
@@ -45,6 +48,7 @@ describe('MetadataConverter', () => {
     writeFileStub = env.stub(fs.promises, 'writeFile').resolves();
     env.stub(fs, 'createWriteStream');
   });
+
   afterEach(() => env.restore());
 
   it('should initialize with default RegistryAccess by default', () => {
@@ -211,6 +215,41 @@ describe('MetadataConverter', () => {
       await converter.convert(components, 'source', { type: 'zip' });
 
       expect(addToZipStub.notCalled).to.be.true;
+    });
+  });
+
+  describe('Merge Output', () => {
+    const defaultDirectory = join('path', 'to', 'default');
+    const mergeComponents = TINA_COMPONENTS;
+
+    it('should throw error if merge config provided for metadata target format', async () => {
+      const expectedError = new ConversionError(
+        new LibraryError('error_merge_metadata_target_unsupported')
+      );
+      try {
+        await converter.convert(components, 'metadata', {
+          type: 'merge',
+          defaultDirectory,
+          mergeWith: mergeComponents,
+        });
+        fail(`should have thrown a ${expectedError.name} error`);
+      } catch (e) {
+        expect(e.name).to.equal(ConversionError.name);
+        expect(e.message).to.equal(expectedError.message);
+      }
+    });
+
+    it('should create conversion pipeline with proper configuration', async () => {
+      await converter.convert(components, 'source', {
+        type: 'merge',
+        defaultDirectory,
+        mergeWith: mergeComponents,
+      });
+
+      const pipelineArgs = pipelineStub.firstCall.args;
+      validatePipelineArgs(pipelineArgs, 'source');
+      expect(pipelineArgs[1].mergeSet).to.deep.equal(new ComponentSet(mergeComponents));
+      expect(pipelineArgs[2].rootDestination).to.equal(defaultDirectory);
     });
   });
 });

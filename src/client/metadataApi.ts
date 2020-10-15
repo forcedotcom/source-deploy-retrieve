@@ -71,7 +71,7 @@ export class MetadataApi extends BaseApi {
     return this.deploy(components, options);
   }
 
-  // TODO: move filtering logic to registry W-8023153
+  // TODO: W-8023153: move filtering logic to registry
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult> {
     const allComponents: SourceComponent[] = [];
     for (const filepath of options.paths) {
@@ -263,6 +263,7 @@ export class MetadataApi extends BaseApi {
         };
     const convertResult = await converter.convert(retrievedComponents, 'source', outputConfig);
     if (options.merge) {
+      // TODO: W-8220616: this may return incomplete information about the retrieve
       return options.components;
     }
     return this.registry.getComponentsFromPath(convertResult.packagePath);

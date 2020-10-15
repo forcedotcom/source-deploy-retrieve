@@ -1,3 +1,9 @@
+# 1.1.7 - October 15, 2020
+
+## Fixed
+
+- Fixed resolution of decomposed child components ([PR #174](https://github.com/forcedotcom/source-deploy-retrieve/pull/174))
+
 # 1.1.6 - October 7, 2020
 
 ## Added

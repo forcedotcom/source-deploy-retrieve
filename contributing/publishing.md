@@ -1,6 +1,6 @@
 # Publishing
 
-This is a guide for publishing the Source Deploy Retrieve Library to npm. Most contributors will not need to worry about publishing.
+This is a guide for publishing the Source Deploy Retrieve Library to npm. Most contributors will not need to worry about publishing. Publishing can only be done by the PDT team. Please contact us if there are changes that you feel need to be published.
 
 ## Prerequisites
 

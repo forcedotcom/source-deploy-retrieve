@@ -22,7 +22,7 @@ import {
   SourceRetrieveResult,
   ComponentRetrieval,
 } from './types';
-import { MetadataConverter } from '../convert';
+import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { DeployError, RetrieveError } from '../errors';
 import { ManifestGenerator, RegistryAccess, SourceComponent } from '../metadata-registry';
 import { DiagnosticUtil } from './diagnosticUtil';
@@ -71,7 +71,7 @@ export class MetadataApi extends BaseApi {
     return this.deploy(components, options);
   }
 
-  // TODO: move filtering logic to registry W-8023153
+  // TODO: W-8023153: move filtering logic to registry
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult> {
     const allComponents: SourceComponent[] = [];
     for (const filepath of options.paths) {
@@ -251,12 +251,22 @@ export class MetadataApi extends BaseApi {
     options: RetrieveOptions
   ): Promise<SourceComponent[]> {
     const converter = new MetadataConverter();
-    const convertResult = await converter.convert(retrievedComponents, 'source', {
-      type: 'directory',
-      outputDirectory: options.output,
-    });
-    const convertedComponents = this.registry.getComponentsFromPath(convertResult.packagePath);
-    return convertedComponents;
+    const outputConfig: ConvertOutputConfig = options.merge
+      ? {
+          type: 'merge',
+          mergeWith: options.components,
+          defaultDirectory: options.output,
+        }
+      : {
+          type: 'directory',
+          outputDirectory: options.output,
+        };
+    const convertResult = await converter.convert(retrievedComponents, 'source', outputConfig);
+    if (options.merge) {
+      // TODO: W-8220616: this may return incomplete information about the retrieve
+      return options.components;
+    }
+    return this.registry.getComponentsFromPath(convertResult.packagePath);
   }
 
   private hashElement(component: SourceComponent): string {

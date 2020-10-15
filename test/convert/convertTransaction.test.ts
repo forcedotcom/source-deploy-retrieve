@@ -86,7 +86,7 @@ describe('Convert Transaction Constructs', () => {
                   xs: [{ test: 'child2' }],
                 },
               }),
-              relativeDestination: join('reginas', 'a.regina'),
+              output: join('reginas', 'a.regina'),
             },
           ],
         },

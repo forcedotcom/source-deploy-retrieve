@@ -45,11 +45,11 @@ describe('StaticResourceMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           source: component.tree.stream(content),
-          relativeDestination: join(type.directoryName, `${baseName(content)}.${type.suffix}`),
+          output: join(type.directoryName, `${baseName(content)}.${type.suffix}`),
         },
         {
           source: component.tree.stream(xml),
-          relativeDestination: join(type.directoryName, basename(xml)),
+          output: join(type.directoryName, basename(xml)),
         },
       ];
 
@@ -71,11 +71,11 @@ describe('StaticResourceMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           source: archive,
-          relativeDestination: join(type.directoryName, `${baseName(content)}.${type.suffix}`),
+          output: join(type.directoryName, `${baseName(content)}.${type.suffix}`),
         },
         {
           source: component.tree.stream(xml),
-          relativeDestination: join(type.directoryName, basename(xml)),
+          output: join(type.directoryName, basename(xml)),
         },
       ];
 
@@ -122,15 +122,11 @@ describe('StaticResourceMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           source: component.tree.stream(content),
-          relativeDestination: join(
-            rootPackagePath,
-            type.directoryName,
-            `${baseName(content)}.png`
-          ),
+          output: join(rootPackagePath, type.directoryName, `${baseName(content)}.png`),
         },
         {
           source: component.tree.stream(xml),
-          relativeDestination: join(rootPackagePath, type.directoryName, basename(xml)),
+          output: join(rootPackagePath, type.directoryName, basename(xml)),
         },
       ];
 
@@ -153,11 +149,11 @@ describe('StaticResourceMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           source: component.tree.stream(content),
-          relativeDestination: join(rootPackagePath, type.directoryName, `${baseName(content)}.js`),
+          output: join(rootPackagePath, type.directoryName, `${baseName(content)}.js`),
         },
         {
           source: component.tree.stream(xml),
-          relativeDestination: join(rootPackagePath, type.directoryName, basename(xml)),
+          output: join(rootPackagePath, type.directoryName, basename(xml)),
         },
       ];
 
@@ -180,15 +176,11 @@ describe('StaticResourceMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           source: component.tree.stream(content),
-          relativeDestination: join(
-            rootPackagePath,
-            type.directoryName,
-            `${baseName(content)}.bin`
-          ),
+          output: join(rootPackagePath, type.directoryName, `${baseName(content)}.bin`),
         },
         {
           source: component.tree.stream(xml),
-          relativeDestination: join(rootPackagePath, type.directoryName, basename(xml)),
+          output: join(rootPackagePath, type.directoryName, basename(xml)),
         },
       ];
 
@@ -241,13 +233,13 @@ describe('StaticResourceMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           source: component.tree.stream(xml),
-          relativeDestination: join(rootPackagePath, type.directoryName, basename(xml)),
+          output: join(rootPackagePath, type.directoryName, basename(xml)),
         },
       ];
       const extraInfo: WriteInfo[] = [
         {
           source: null,
-          relativeDestination: join(rootPackagePath, type.directoryName, 'a', 'b', 'c.css'),
+          output: join(rootPackagePath, type.directoryName, 'a', 'b', 'c.css'),
         },
       ];
 
@@ -271,15 +263,11 @@ describe('StaticResourceMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           source: component.tree.stream(content),
-          relativeDestination: join(
-            rootPackagePath,
-            type.directoryName,
-            `${baseName(content)}.bin`
-          ),
+          output: join(rootPackagePath, type.directoryName, `${baseName(content)}.bin`),
         },
         {
           source: component.tree.stream(xml),
-          relativeDestination: join(rootPackagePath, type.directoryName, basename(xml)),
+          output: join(rootPackagePath, type.directoryName, basename(xml)),
         },
       ];
 

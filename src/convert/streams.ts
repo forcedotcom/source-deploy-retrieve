@@ -6,19 +6,18 @@
  */
 import { Archiver, create as createArchive } from 'archiver';
 import { createWriteStream } from 'fs';
-import { join } from 'path';
+import { isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
 import { LibraryError } from '../errors';
 import { SourceComponent, MetadataRegistry } from '../metadata-registry';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
-import { SourcePath, XML_DECL } from '../common';
+import { ComponentSet, SourcePath, XML_DECL } from '../common';
 import { ConvertTransaction } from './convertTransaction';
 import { MetadataTransformerFactory } from './transformers';
 import { JsonMap } from '@salesforce/ts-types';
 import { j2xParser } from 'fast-xml-parser';
-
 export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
@@ -45,16 +44,19 @@ export class ComponentConverter extends Transform {
   private targetFormat: SfdxFileFormat;
   private transaction: ConvertTransaction;
   private transformerFactory: MetadataTransformerFactory;
+  private mergeSet: ComponentSet<SourceComponent>;
 
   constructor(
     targetFormat: SfdxFileFormat,
     registry: MetadataRegistry,
-    transaction = new ConvertTransaction()
+    transaction = new ConvertTransaction(),
+    mergeSet?: ComponentSet<SourceComponent>
   ) {
     super({ objectMode: true });
     this.targetFormat = targetFormat;
     this.transaction = transaction;
     this.transformerFactory = new MetadataTransformerFactory(registry, this.transaction);
+    this.mergeSet = mergeSet;
   }
 
   public async _transform(
@@ -66,12 +68,13 @@ export class ComponentConverter extends Transform {
     let result: WriterFormat;
     try {
       const transformer = this.transformerFactory.getTransformer(chunk);
+      const componentToMergeAgainst = this.mergeSet?.get(chunk);
       switch (this.targetFormat) {
         case 'metadata':
           result = await transformer.toMetadataFormat(chunk);
           break;
         case 'source':
-          result = await transformer.toSourceFormat(chunk);
+          result = await transformer.toSourceFormat(chunk, componentToMergeAgainst);
           break;
         default:
           throw new LibraryError('error_convert_invalid_format', this.targetFormat);
@@ -130,7 +133,9 @@ export class StandardWriter extends ComponentWriter {
       infos.push(...chunk.writeInfos);
 
       const writeTasks = infos.map((info: WriteInfo) => {
-        const fullDest = join(this.rootDestination, info.relativeDestination);
+        const fullDest = isAbsolute(info.output)
+          ? info.output
+          : join(this.rootDestination, info.output);
         ensureFileExists(fullDest);
         return pipeline(info.source, createWriteStream(fullDest));
       });
@@ -168,7 +173,7 @@ export class ZipWriter extends ComponentWriter {
       infos.push(...chunk.writeInfos);
 
       for (const writeInfo of infos) {
-        this.addToZip(writeInfo.source, writeInfo.relativeDestination);
+        this.addToZip(writeInfo.source, writeInfo.output);
       }
     } catch (e) {
       err = e;

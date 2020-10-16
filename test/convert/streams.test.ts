@@ -63,54 +63,83 @@ describe('Streams', () => {
     });
   });
 
+  /**
+   * NOTE: tests that call _transform methods must utilize Mocha.done to signal
+   * when a test has finished and to pass on any assertion failures to the test
+   * runner. Otherwise a test may fail but signal that it was successful.
+   */
   describe('ComponentConverter', () => {
     const component = KATHY_COMPONENTS[0];
     const transformer = new TestTransformer();
 
     beforeEach(() => {
-      env
-        .stub(MetadataTransformerFactory.prototype, 'getTransformer')
-        .withArgs(component)
-        .returns(transformer);
+      env.stub(MetadataTransformerFactory.prototype, 'getTransformer').returns(transformer);
     });
 
-    it('should throw error for unexpected conversion format', () => {
+    it('should throw error for unexpected conversion format', (done) => {
       // @ts-ignore constructor argument invalid
       const converter = new streams.ComponentConverter('badformat', mockRegistry);
+      const expectedError = new LibraryError('error_convert_invalid_format', 'badformat');
+
       converter._transform(component, '', (err: Error) => {
-        const expectedError = new LibraryError('error_convert_invalid_format', 'badformat');
-        expect(err.message).to.equal(expectedError.message);
-        expect(err.name).to.equal(expectedError.name);
+        try {
+          expect(err.message).to.equal(expectedError.message);
+          expect(err.name).to.equal(expectedError.name);
+          done();
+        } catch (e) {
+          done(e);
+        }
       });
     });
 
-    it('should transform to metadata format', () => {
+    it('should transform to metadata format', (done) => {
       const converter = new streams.ComponentConverter('metadata', mockRegistry);
 
       converter._transform(component, '', async (err: Error, data: WriterFormat) => {
-        expect(err).to.be.undefined;
-        expect(data).to.deep.equal(await transformer.toMetadataFormat(component));
+        try {
+          expect(err).to.be.undefined;
+          expect(data).to.deep.equal(await transformer.toMetadataFormat(component));
+          done();
+        } catch (e) {
+          done(e);
+        }
       });
     });
 
-    it('should transform to source format', () => {
+    it('should transform to source format', (done) => {
       const converter = new streams.ComponentConverter('source', mockRegistry);
 
       converter._transform(component, '', async (err: Error, data: WriterFormat) => {
-        expect(err).to.be.undefined;
-        expect(data).to.deep.equal(await transformer.toSourceFormat(component));
+        try {
+          expect(err).to.be.undefined;
+          expect(data).to.deep.equal(await transformer.toSourceFormat(component));
+          done();
+        } catch (e) {
+          done(e);
+        }
       });
     });
 
-    it('should transform to source format using a merge component', () => {
-      const mergeSet = new ComponentSet([KATHY_COMPONENTS[1]]);
+    it('should transform to source format using a merge component', (done) => {
+      const newComponent = SourceComponent.createVirtualComponent(
+        {
+          name: component.name,
+          type: component.type,
+          xml: join('path', 'to', 'another', 'kathys', 'a.kathy-meta.xml'),
+        },
+        []
+      );
+      const mergeSet = new ComponentSet([component]);
       const converter = new streams.ComponentConverter('source', mockRegistry, undefined, mergeSet);
 
-      converter._transform(component, '', async (err: Error, data: WriterFormat) => {
-        expect(err).to.be.undefined;
-        expect(data).to.deep.equal(
-          await transformer.toSourceFormat(component, KATHY_COMPONENTS[1])
-        );
+      converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {
+        try {
+          expect(err).to.be.undefined;
+          expect(data).to.deep.equal(await transformer.toSourceFormat(newComponent, component));
+          done();
+        } catch (e) {
+          done(e);
+        }
       });
     });
 
@@ -123,11 +152,11 @@ describe('Streams', () => {
         converter = new streams.ComponentConverter('metadata', mockRegistry, transaction);
       });
 
-      it('should not push a result if finalize did not return one', () => {
+      it('should not push a result if finalize did not return one', async () => {
         const pushStub = env.stub(converter, 'push');
         transaction.addFinalizer(TestFinalizerNoResult);
 
-        converter._flush((err) => expect(err).to.be.undefined);
+        await converter._flush((err) => expect(err).to.be.undefined);
 
         expect(pushStub.notCalled).to.be.true;
       });
@@ -155,11 +184,11 @@ describe('Streams', () => {
         expect(pushStub.getCall(1).calledWith(results[1])).to.be.true;
       });
 
-      it('should pass error to callback if a problem occurred', () => {
+      it('should pass error to callback if a problem occurred', async () => {
         const expectedError = new Error('whoops');
         env.stub(transaction, 'executeFinalizers').throws(expectedError);
 
-        converter._flush((err: Error) => expect(err).to.deep.equal(expectedError));
+        await converter._flush((err: Error) => expect(err).to.deep.equal(expectedError));
       });
     });
   });

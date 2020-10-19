@@ -19,9 +19,9 @@ To port changes from the develop branch to main we utilize a script called `port
 
 ### Steps
 
-1. Open the Command Palette (press Ctrl+Shift+P on Windows or Linux, or Cmd+Shift+P on macOS)
-1. Search for `Tasks: Run Task`
-1. Select `Create Port PR for Publishing`
+1. Open the Command Palette (press Ctrl+Shift+P on Windows or Linux, or Cmd+Shift+P on macOS).
+1. Search for `Tasks: Run Task`.
+1. Select `Create Port PR for Publishing`.
 1. Select `-v` to see the full output.
 1. Select the type of version bump. Typically using the default value of `patch` is fine.
 1. Push your branch up with `git push origin <branchName>` and open the pull request for review.
@@ -29,8 +29,8 @@ To port changes from the develop branch to main we utilize a script called `port
 
 In the event that a change was ported that wasn't ready for production, we would want to remove it from the port branch. To remove commit(s) from the port branch...
 
-1. Checkout branch portPR-v...
-1. Run `git rebase -i HEAD~<NumberOfPortedCommits>`. For example: `git rebase -i HEAD~5`
+1. Checkout branch portPR-v<version>.
+1. Run `git rebase -i HEAD~<NumberOfPortedCommits>`. For example: `git rebase -i HEAD~5`.
 1. Replace 'pick' with 'drop' for any commit that you want to exclude from the port branch.
 1. Exit the editor with `Ctrl + c`.
 1. Save the changes with `:wq`.
@@ -41,7 +41,7 @@ In the event that a change was ported that wasn't ready for production, we would
 For each commit being pulled into the port PR, we want to make sure that the following is true:
 
 1. The affiliated work item has been QA'd and closed.
-2. The work item has the appropriate scheduled build. This scheduled build value would match the scheduled build going out for the VSCode Extensions. It's okay that this version is not the same as the one for Source Deploy Retrieve.
+2. The work item has the appropriate scheduled build. This scheduled build value <b>must</b> match the scheduled build going out for the VS Code Extensions. It's okay that this version is not the same as the one for Source Deploy Retrieve.
 
 ## Generate the Change Log
 
@@ -60,9 +60,9 @@ To publish the changes to npm, we run the task `Publish Source Deploy Retrieve L
 
 ### Steps
 
-1. Open the Command Palette (press Ctrl+Shift+P on Windows or Linux, or Cmd+Shift+P on macOS)
-1. Search for `Tasks: Run Task`
-1. Select `Publish Source Deploy Retrieve Library`
+1. Open the Command Palette (press Ctrl+Shift+P on Windows or Linux, or Cmd+Shift+P on macOS).
+1. Search for `Tasks: Run Task`.
+1. Select `Publish Source Deploy Retrieve Library`.
 1. Enter in your CircleCI Token.
 1. Once the request has been sent, approve the workflow in CircleCI. <i>Note only members of the GitHub team 'PDT' can approve the workflow.</i>
 
@@ -72,8 +72,8 @@ After the publish has succeed, we want to port the version bump in main back to 
 
 ### Steps
 
-1. Grab the latest version bump commit from main: `git log -n 1 --pretty=format:"%h" main`
-1. Create a new branch to port the change to develop: `git checkout -b portToDevelop-<versionNumber> develop`
-1. Cherry-pick the latest commit number from step 1: `git cherry-pick <hash>`
-1. Push your port branch up to origin: `git push origin portToDevelop-<versionNumber>`
+1. Grab the latest version bump commit from main: `git log -n 1 --pretty=format:"%h" main`.
+1. Create a new branch to port the change to develop: `git checkout -b portToDevelop-<versionNumber> develop`.
+1. Cherry-pick the latest commit number from step 1: `git cherry-pick <hash>`.
+1. Push your port branch up to origin: `git push origin portToDevelop-<versionNumber>`.
 1. Open your PR for review.

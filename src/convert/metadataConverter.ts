@@ -23,11 +23,13 @@ import {
   pipeline,
   ZipWriter,
 } from './streams';
-import { PACKAGE_XML_FILE, DEFAULT_PACKAGE_PREFIX } from '../utils/constants';
 import { ConversionError, LibraryError } from '../errors';
 import { ComponentSet, SourcePath } from '../common';
 
 export class MetadataConverter {
+  public static readonly PACKAGE_XML_FILE = 'package.xml';
+  public static readonly DEFAULT_PACKAGE_PREFIX = 'metadataPackage';
+
   private registryAccess: RegistryAccess;
 
   constructor(registryAccess = new RegistryAccess()) {
@@ -62,7 +64,7 @@ export class MetadataConverter {
           packagePath = this.getPackagePath(output);
           writer = new StandardWriter(packagePath);
           if (!isSource) {
-            const manifestPath = join(packagePath, PACKAGE_XML_FILE);
+            const manifestPath = join(packagePath, MetadataConverter.PACKAGE_XML_FILE);
             tasks.push(promises.writeFile(manifestPath, manifestContents));
           }
           break;
@@ -70,7 +72,7 @@ export class MetadataConverter {
           packagePath = this.getPackagePath(output);
           writer = new ZipWriter(packagePath);
           if (!isSource) {
-            (writer as ZipWriter).addToZip(manifestContents, PACKAGE_XML_FILE);
+            (writer as ZipWriter).addToZip(manifestContents, MetadataConverter.PACKAGE_XML_FILE);
           }
           break;
         case 'merge':
@@ -106,7 +108,7 @@ export class MetadataConverter {
     let packagePath: SourcePath;
     const { outputDirectory, packageName, type } = outputConfig;
     if (outputDirectory) {
-      const name = packageName || `${DEFAULT_PACKAGE_PREFIX}_${Date.now()}`;
+      const name = packageName || `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${Date.now()}`;
       packagePath = join(outputDirectory, name);
 
       if (type === 'zip') {

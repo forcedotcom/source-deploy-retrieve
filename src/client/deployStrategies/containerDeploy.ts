@@ -18,11 +18,13 @@ import {
 } from '../types';
 import { baseName } from '../../utils/path';
 import { ToolingCreateResult } from '../../utils/deploy';
-import { CONTAINER_ASYNC_REQUEST, METADATA_CONTAINER } from './constants';
 import { BaseDeploy } from './baseDeploy';
 import { SourceComponent } from '../../metadata-registry';
 
 export class ContainerDeploy extends BaseDeploy {
+  private static readonly CONTAINER_ASYNC_REQUEST = 'ContainerAsyncRequest';
+  private static readonly METADATA_CONTAINER = 'MetadataContainer';
+
   public async deploy(component: SourceComponent, namespace: string): Promise<SourceDeployResult> {
     this.component = component;
     this.namespace = namespace;
@@ -37,7 +39,7 @@ export class ContainerDeploy extends BaseDeploy {
   }
 
   public async createMetadataContainer(): Promise<ToolingCreateResult> {
-    const metadataContainer = await this.toolingCreate(METADATA_CONTAINER, {
+    const metadataContainer = await this.toolingCreate(ContainerDeploy.METADATA_CONTAINER, {
       Name: `Deploy_MDC_${Date.now()}`,
     });
 
@@ -97,7 +99,7 @@ export class ContainerDeploy extends BaseDeploy {
   public async createContainerAsyncRequest(
     container: ToolingCreateResult
   ): Promise<ToolingCreateResult> {
-    const contAsyncRequest = await this.toolingCreate(CONTAINER_ASYNC_REQUEST, {
+    const contAsyncRequest = await this.toolingCreate(ContainerDeploy.CONTAINER_ASYNC_REQUEST, {
       MetadataContainerId: container.id,
     });
 
@@ -115,7 +117,7 @@ export class ContainerDeploy extends BaseDeploy {
         await this.sleep(100);
       }
       containerStatus = (await this.connection.tooling.retrieve(
-        CONTAINER_ASYNC_REQUEST,
+        ContainerDeploy.CONTAINER_ASYNC_REQUEST,
         containerId
       )) as ContainerAsyncRequest;
       count++;

@@ -9,14 +9,13 @@ import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import * as fs from 'fs';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
-import { FORCE_IGNORE_FILE } from '../../src/utils/constants';
 import { join } from 'path';
 import { Lifecycle } from '@salesforce/core';
 
 const env = createSandbox();
 
 describe('ForceIgnore', () => {
-  const forceIgnorePath = join('some', FORCE_IGNORE_FILE);
+  const forceIgnorePath = join('some', ForceIgnore.FILE_NAME);
   const testPath = join('some', 'path', '__tests__', 'myTest.x');
   const testPattern = '**/__tests__/**';
 
@@ -41,7 +40,7 @@ describe('ForceIgnore', () => {
     const readStub = env.stub(fs, 'readFileSync');
     const searchStub = env.stub(fsUtil, 'searchUp');
     readStub.withArgs(forceIgnorePath).returns(testPattern);
-    searchStub.withArgs(testPath, FORCE_IGNORE_FILE).returns(forceIgnorePath);
+    searchStub.withArgs(testPath, ForceIgnore.FILE_NAME).returns(forceIgnorePath);
     const forceIgnore = ForceIgnore.findAndCreate(testPath);
     expect(forceIgnore.accepts(testPath)).to.be.false;
   });

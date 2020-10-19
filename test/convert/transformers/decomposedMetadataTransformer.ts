@@ -13,11 +13,11 @@ import {
 } from '../../../src/convert/convertTransaction';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
-import { XML_NS, XML_NS_KEY } from '../../../src/utils/constants';
 import { join } from 'path';
 import { JsToXml } from '../../../src/convert/streams';
 import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/registry/decomposedTopLevelConstants';
 import { SourceComponent } from '../../../src';
+import { XML_NS_URL, XML_NS_KEY } from '../../../src/common';
 
 const env = createSandbox();
 
@@ -25,7 +25,7 @@ describe('DecomposedMetadataTransformer', () => {
   const component = regina.REGINA_COMPONENT;
   const composedXmlObj = {
     ReginaKing: {
-      [XML_NS_KEY]: XML_NS,
+      [XML_NS_KEY]: XML_NS_URL,
       fullName: component.fullName,
       foo: 'bar',
       ys: [{ fullName: 'child', test: 'testVal' }],
@@ -68,7 +68,7 @@ describe('DecomposedMetadataTransformer', () => {
       const children = component.getChildren();
       env.stub(component, 'parseXml').resolves({
         ReginaKing: {
-          [XML_NS_KEY]: XML_NS,
+          [XML_NS_KEY]: XML_NS_URL,
           fullName: component.fullName,
           foo: 'bar',
         },
@@ -110,7 +110,7 @@ describe('DecomposedMetadataTransformer', () => {
       const root = join('main', 'default', type.directoryName, fullName);
       env.stub(component, 'parseXml').resolves({
         DecomposedTopLevel: {
-          [XML_NS_KEY]: XML_NS,
+          [XML_NS_KEY]: XML_NS_URL,
           fullName,
           foo: 'bar',
           gs: [
@@ -128,7 +128,7 @@ describe('DecomposedMetadataTransformer', () => {
           {
             source: new JsToXml({
               G: {
-                [XML_NS_KEY]: XML_NS,
+                [XML_NS_KEY]: XML_NS_URL,
                 name: 'child',
                 test: 'testVal',
               },
@@ -138,7 +138,7 @@ describe('DecomposedMetadataTransformer', () => {
           {
             source: new JsToXml({
               G: {
-                [XML_NS_KEY]: XML_NS,
+                [XML_NS_KEY]: XML_NS_URL,
                 name: 'child2',
                 test: 'testVal2',
               },
@@ -148,7 +148,7 @@ describe('DecomposedMetadataTransformer', () => {
           {
             source: new JsToXml({
               DecomposedTopLevel: {
-                [XML_NS_KEY]: XML_NS,
+                [XML_NS_KEY]: XML_NS_URL,
                 fullName,
                 foo: 'bar',
               },
@@ -165,7 +165,7 @@ describe('DecomposedMetadataTransformer', () => {
       const root = join('main', 'default', type.directoryName, fullName);
       env.stub(component, 'parseXml').resolves({
         ReginaKing: {
-          [XML_NS_KEY]: XML_NS,
+          [XML_NS_KEY]: XML_NS_URL,
           fullName,
           foo: 'bar',
           ys: { fullName: 'child', test: 'testVal' },
@@ -184,7 +184,7 @@ describe('DecomposedMetadataTransformer', () => {
           {
             source: new JsToXml({
               Y: {
-                [XML_NS_KEY]: XML_NS,
+                [XML_NS_KEY]: XML_NS_URL,
                 fullName: 'child',
                 test: 'testVal',
               },
@@ -194,7 +194,7 @@ describe('DecomposedMetadataTransformer', () => {
           {
             source: new JsToXml({
               X: {
-                [XML_NS_KEY]: XML_NS,
+                [XML_NS_KEY]: XML_NS_URL,
                 fullName: 'child2',
                 test: 'testVal2',
               },
@@ -204,7 +204,7 @@ describe('DecomposedMetadataTransformer', () => {
           {
             source: new JsToXml({
               X: {
-                [XML_NS_KEY]: XML_NS,
+                [XML_NS_KEY]: XML_NS_URL,
                 fullName: 'child3',
                 test: 'testVal3',
               },
@@ -214,7 +214,7 @@ describe('DecomposedMetadataTransformer', () => {
           {
             source: new JsToXml({
               ReginaKing: {
-                [XML_NS_KEY]: XML_NS,
+                [XML_NS_KEY]: XML_NS_URL,
                 fullName: component.fullName,
                 foo: 'bar',
               },
@@ -246,7 +246,7 @@ describe('DecomposedMetadataTransformer', () => {
           {
             source: new JsToXml({
               Y: {
-                [XML_NS_KEY]: XML_NS,
+                [XML_NS_KEY]: XML_NS_URL,
                 fullName: 'child',
                 test: 'testVal',
               },
@@ -256,7 +256,7 @@ describe('DecomposedMetadataTransformer', () => {
           {
             source: new JsToXml({
               X: {
-                [XML_NS_KEY]: XML_NS,
+                [XML_NS_KEY]: XML_NS_URL,
                 fullName: 'child2',
                 test: 'testVal2',
               },
@@ -266,7 +266,7 @@ describe('DecomposedMetadataTransformer', () => {
           {
             source: new JsToXml({
               X: {
-                [XML_NS_KEY]: XML_NS,
+                [XML_NS_KEY]: XML_NS_URL,
                 fullName: 'child3',
                 test: 'testVal3',
               },

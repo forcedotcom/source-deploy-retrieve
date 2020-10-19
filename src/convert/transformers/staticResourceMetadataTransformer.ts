@@ -14,10 +14,25 @@ import { baseName } from '../../utils';
 import { JsonMap } from '@salesforce/ts-types';
 import { Readable } from 'stream';
 import { LibraryError } from '../../errors';
-import { ARCHIVE_MIME_TYPES, DEFAULT_CONTENT_TYPE, FALLBACK_TYPE_MAP } from '../../utils/constants';
 import { SourceComponent } from '../../metadata-registry';
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
+  public static readonly ARCHIVE_MIME_TYPES = new Set([
+    'application/zip',
+    'application/x-zip-compressed',
+    'application/jar',
+    'application/octet-stream',
+  ]);
+  private static readonly DEFAULT_CONTENT_TYPE = 'application/octet-stream';
+  private static readonly FALLBACK_TYPE_MAP = new Map<string, string>([
+    ['text/javascript', 'js'],
+    ['application/x-javascript', 'js'],
+    ['application/x-zip-compressed', 'zip'],
+    ['text/x-haml', 'haml'],
+    ['image/x-png', 'png'],
+    ['text/xml', 'xml'],
+  ]);
+
   public async toMetadataFormat(component: SourceComponent): Promise<WriterFormat> {
     let contentSource: Readable;
     const { content, type, xml } = component;
@@ -55,7 +70,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
 
     if (content) {
       const contentType = await this.getContentType(component);
-      if (ARCHIVE_MIME_TYPES.has(contentType)) {
+      if (StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(contentType)) {
         const baseDir = component.getPackageRelativePath(baseName(content), 'source');
         this.createWriteInfosFromArchive(content, baseDir, result);
       } else {
@@ -78,7 +93,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     const { content, tree } = component;
     if (tree.isDirectory(content)) {
       const contentType = await this.getContentType(component);
-      if (ARCHIVE_MIME_TYPES.has(contentType)) {
+      if (StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(contentType)) {
         return true;
       }
       throw new LibraryError('error_static_resource_expected_archive_type', [
@@ -94,12 +109,12 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   }
 
   private getExtensionFromType(contentType: string): string {
-    let ext = getExtension(contentType);
-    if (!ext && FALLBACK_TYPE_MAP.get(contentType)) {
-      ext = FALLBACK_TYPE_MAP.get(contentType);
-    }
     // return registered ext, fallback, or the default (application/octet-stream -> bin)
-    return ext || getExtension(DEFAULT_CONTENT_TYPE);
+    return (
+      getExtension(contentType) ||
+      StaticResourceMetadataTransformer.FALLBACK_TYPE_MAP.get(contentType) ||
+      getExtension(StaticResourceMetadataTransformer.DEFAULT_CONTENT_TYPE)
+    );
   }
 
   private createWriteInfosFromArchive(

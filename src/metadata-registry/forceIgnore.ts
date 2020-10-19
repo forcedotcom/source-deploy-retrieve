@@ -8,7 +8,6 @@
 import ignore, { Ignore } from 'ignore/index';
 import { relative, join, dirname, sep } from 'path';
 import { readFileSync } from 'fs';
-import { FORCE_IGNORE_FILE } from '../utils/constants';
 import { SourcePath } from '../common';
 import { searchUp } from '../utils/fileSystemHandler';
 // @ts-ignore this doesn't have typings
@@ -18,6 +17,8 @@ import { Lifecycle } from '@salesforce/core';
 let warn = true;
 
 export class ForceIgnore {
+  public static readonly FILE_NAME = '.forceignore';
+
   private readonly parser: Ignore;
   private readonly forceIgnoreDirectory: string;
   // TODO: REMOVE THE BELOW CLASS MEMBERS
@@ -60,9 +61,9 @@ export class ForceIgnore {
    */
   public static findAndCreate(seed: SourcePath): ForceIgnore {
     let potentialForceIgnorePath = '';
-    const projectConfigPath = searchUp(seed, FORCE_IGNORE_FILE);
+    const projectConfigPath = searchUp(seed, ForceIgnore.FILE_NAME);
     if (projectConfigPath) {
-      potentialForceIgnorePath = join(dirname(projectConfigPath), FORCE_IGNORE_FILE);
+      potentialForceIgnorePath = join(dirname(projectConfigPath), ForceIgnore.FILE_NAME);
     }
     return new ForceIgnore(potentialForceIgnorePath);
   }

@@ -13,11 +13,17 @@ import {
   registryData,
   SourceComponent,
 } from '../../metadata-registry';
-import { META_XML_SUFFIX, XML_NS, XML_NS_KEY } from '../../utils/constants';
 import { JsonMap, AnyJson, JsonArray } from '@salesforce/ts-types';
 import { JsToXml } from '../streams';
 import { join } from 'path';
-import { ComponentSet, MetadataType, SourcePath } from '../../common';
+import {
+  ComponentSet,
+  MetadataType,
+  SourcePath,
+  META_XML_SUFFIX,
+  XML_NS_URL,
+  XML_NS_KEY,
+} from '../../common';
 
 interface XmlJson extends JsonMap {
   [parentFullName: string]: {
@@ -43,7 +49,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       const { name: parentName } = child.parent.type;
       const childContents = (await child.parseXml())[child.type.name];
       if (!baseXmlObj[parentName]) {
-        baseXmlObj[parentName] = { '@_xmlns': XML_NS };
+        baseXmlObj[parentName] = { '@_xmlns': XML_NS_URL };
       }
 
       if (!baseXmlObj[parentName][groupNode]) {
@@ -121,7 +127,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
 
           writeInfos.push({
             source: new JsToXml({
-              [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS }, value),
+              [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
             }),
             output,
           });

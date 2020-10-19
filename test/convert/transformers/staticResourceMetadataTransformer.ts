@@ -15,7 +15,6 @@ import { StaticResourceMetadataTransformer } from '../../../src/convert/transfor
 import { LibraryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { baseName } from '../../../src/utils';
-import { ARCHIVE_MIME_TYPES } from '../../../src/utils/constants';
 import { mockRegistry } from '../../mock/registry';
 import { MC_SINGLE_FILE_COMPONENT } from '../../mock/registry/mixedContentSingleFileConstants';
 import { TARAJI_COMPONENT, TARAJI_VIRTUAL_FS } from '../../mock/registry/tarajiConstants';
@@ -80,7 +79,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      for (const contentType of ARCHIVE_MIME_TYPES) {
+      for (const contentType of StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES) {
         parseXmlStub.resolves({ StaticResource: { contentType } });
         expect(await transformer.toMetadataFormat(component)).to.deep.equal({
           component,

@@ -64,31 +64,44 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     return writerFormat;
   }
 
-  public async toSourceFormat(component: SourceComponent): Promise<WriterFormat> {
+  public async toSourceFormat(
+    component: SourceComponent,
+    mergeWith?: SourceComponent
+  ): Promise<WriterFormat> {
     const { xml, content } = component;
     const result: WriterFormat = { component, writeInfos: [] };
 
     if (content) {
-      const contentType = await this.getContentType(component);
-      if (StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(contentType)) {
-        const baseDir = component.getPackageRelativePath(baseName(content), 'source');
-        this.createWriteInfosFromArchive(content, baseDir, result);
+      // only expand the archive if there isn't a merge component, or the merge component is itself expanded
+      if (!mergeWith || (await this.componentIsExpandedArchive(mergeWith))) {
+        const baseDir = mergeWith
+          ? mergeWith.content
+          : component.getPackageRelativePath(baseName(content), 'source');
+        const zipBuffer = await component.tree.readFile(content);
+        result.writeInfos = await this.createWriteInfosFromArchive(zipBuffer, baseDir);
       } else {
+        const contentType = await this.getContentType(component);
         const extension = this.getExtensionFromType(contentType);
         result.writeInfos.push({
           source: component.tree.stream(content),
-          output: component.getPackageRelativePath(`${baseName(content)}.${extension}`, 'source'),
+          output: mergeWith
+            ? mergeWith.content
+            : component.getPackageRelativePath(`${baseName(content)}.${extension}`, 'source'),
         });
       }
-
-      result.writeInfos.push({
-        source: component.tree.stream(xml),
-        output: component.getPackageRelativePath(basename(xml), 'source'),
-      });
     }
+
+    result.writeInfos.push({
+      source: component.tree.stream(xml),
+      output: mergeWith ? mergeWith.xml : component.getPackageRelativePath(basename(xml), 'source'),
+    });
     return result;
   }
 
+  /**
+   * "Expanded" refers to a component whose content file is a zip file, and its current
+   * state is unzipped.
+   */
   private async componentIsExpandedArchive(component: SourceComponent): Promise<boolean> {
     const { content, tree } = component;
     if (tree.isDirectory(content)) {
@@ -104,6 +117,23 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     return false;
   }
 
+  private async createWriteInfosFromArchive(
+    zipBuffer: Buffer,
+    baseDir: string
+  ): Promise<WriteInfo[]> {
+    const writeInfos: WriteInfo[] = [];
+    const directory = await Open.buffer(zipBuffer);
+    for (const entry of directory.files) {
+      if (entry.type === 'File') {
+        writeInfos.push({
+          source: entry.stream(),
+          output: join(baseDir, entry.path),
+        });
+      }
+    }
+    return writeInfos;
+  }
+
   private async getContentType(component: SourceComponent): Promise<string> {
     return ((await component.parseXml()).StaticResource as JsonMap).contentType as string;
   }
@@ -115,26 +145,5 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       StaticResourceMetadataTransformer.FALLBACK_TYPE_MAP.get(contentType) ||
       getExtension(StaticResourceMetadataTransformer.DEFAULT_CONTENT_TYPE)
     );
-  }
-
-  private createWriteInfosFromArchive(
-    zipPath: string,
-    destDir: string,
-    format: WriterFormat
-  ): void {
-    // TODO: with async transformer methods, this workaround may not be necessary anymore.
-    format.getExtraInfos = async (): Promise<WriteInfo[]> => {
-      const writeInfos: WriteInfo[] = [];
-      const directory = await Open.file(zipPath);
-      directory.files.forEach((f) => {
-        if (f.type === 'File') {
-          writeInfos.push({
-            source: f.stream(),
-            output: join(destDir, f.path),
-          });
-        }
-      });
-      return writeInfos;
-    };
   }
 }

@@ -232,22 +232,17 @@ describe('StaticResourceMetadataTransformer', () => {
       const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
+          source: null,
+          output: join(rootPackagePath, type.directoryName, 'a', 'b', 'c.css'),
+        },
+        {
           source: component.tree.stream(xml),
           output: join(rootPackagePath, type.directoryName, basename(xml)),
         },
       ];
-      const extraInfo: WriteInfo[] = [
-        {
-          source: null,
-          output: join(rootPackagePath, type.directoryName, 'a', 'b', 'c.css'),
-        },
-      ];
-
       const result = await transformer.toSourceFormat(component);
       expect(result.component).to.deep.equal(component);
       expect(result.writeInfos).to.deep.equal(expectedInfos);
-      expect(result.getExtraInfos).to.be.a('function');
-      expect(await result.getExtraInfos()).to.deep.equal(extraInfo);
     });
 
     it('should work well for null contentType', async () => {

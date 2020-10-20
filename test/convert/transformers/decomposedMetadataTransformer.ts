@@ -288,7 +288,7 @@ describe('DecomposedMetadataTransformer', () => {
       );
       env.stub(componentToConvert, 'parseXml').resolves({
         ReginaKing: {
-          [XML_NS_KEY]: XML_NS,
+          [XML_NS_KEY]: XML_NS_URL,
           [mergeComponentChild.type.directoryName]: {
             fullName: mergeComponentChild.name,
             test: 'testVal',
@@ -305,7 +305,7 @@ describe('DecomposedMetadataTransformer', () => {
           {
             source: new JsToXml({
               [mergeComponentChild.type.name]: {
-                [XML_NS_KEY]: XML_NS,
+                [XML_NS_KEY]: XML_NS_URL,
                 fullName: mergeComponentChild.name,
                 test: 'testVal',
               },
@@ -326,7 +326,7 @@ describe('DecomposedMetadataTransformer', () => {
       );
       env.stub(componentToConvert, 'parseXml').resolves({
         ReginaKing: {
-          [XML_NS_KEY]: XML_NS,
+          [XML_NS_KEY]: XML_NS_URL,
           fullName: component.fullName,
           foo: 'bar',
         },
@@ -341,7 +341,7 @@ describe('DecomposedMetadataTransformer', () => {
           {
             source: new JsToXml({
               [component.type.name]: {
-                [XML_NS_KEY]: XML_NS,
+                [XML_NS_KEY]: XML_NS_URL,
                 fullName: component.fullName,
                 foo: 'bar',
               },

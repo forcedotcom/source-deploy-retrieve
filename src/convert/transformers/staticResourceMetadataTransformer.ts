@@ -15,6 +15,7 @@ import { JsonMap } from '@salesforce/ts-types';
 import { Readable } from 'stream';
 import { LibraryError } from '../../errors';
 import { SourceComponent } from '../../metadata-registry';
+import { SourcePath } from '../../common';
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public static readonly ARCHIVE_MIME_TYPES = new Set([
@@ -68,34 +69,41 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   ): Promise<WriterFormat> {
     const { xml, content } = component;
     const result: WriterFormat = { component, writeInfos: [] };
-    const componentContentType = await this.getContentType(component);
-    const mergeContentPath = mergeWith?.content;
-    const baseContentPath = mergeContentPath || component.getPackageRelativePath(content, 'source');
 
-    // only unzip an archive component if there isn't a merge component, or the merge component is itself expanded
-    const shouldUnzipArchive =
-      StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(componentContentType) &&
-      (!mergeWith || mergeWith.tree.isDirectory(mergeContentPath));
+    if (content) {
+      const componentContentType = await this.getContentType(component);
+      const mergeContentPath = mergeWith?.content;
+      const baseContentPath = this.getBaseContentPath(component, mergeWith);
 
-    if (shouldUnzipArchive) {
-      const zipBuffer = await component.tree.readFile(content);
-      result.writeInfos = await this.createWriteInfosFromArchive(zipBuffer, baseContentPath);
-    } else {
-      const extension = this.getExtensionFromType(componentContentType);
-      // make sure to use the extension that maps with contentType
-      const output = `${join(dirname(baseContentPath), baseName(baseContentPath))}.${extension}`;
+      // only unzip an archive component if there isn't a merge component, or the merge component is itself expanded
+      const shouldUnzipArchive =
+        StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(componentContentType) &&
+        (!mergeWith || mergeWith.tree.isDirectory(mergeContentPath));
+
+      if (shouldUnzipArchive) {
+        const zipBuffer = await component.tree.readFile(content);
+        result.writeInfos = await this.createWriteInfosFromArchive(zipBuffer, baseContentPath);
+      } else {
+        const extension = this.getExtensionFromType(componentContentType);
+        result.writeInfos.push({
+          source: component.tree.stream(content),
+          output: `${baseContentPath}.${extension}`,
+        });
+      }
+
       result.writeInfos.push({
-        source: component.tree.stream(content),
-        output,
+        source: component.tree.stream(xml),
+        output: mergeWith?.xml || component.getPackageRelativePath(basename(xml), 'source'),
       });
     }
 
-    result.writeInfos.push({
-      source: component.tree.stream(xml),
-      output: mergeWith?.xml || component.getPackageRelativePath(basename(xml), 'source'),
-    });
-
     return result;
+  }
+
+  private getBaseContentPath(component: SourceComponent, mergeWith?: SourceComponent): SourcePath {
+    const baseContentPath =
+      mergeWith?.content || component.getPackageRelativePath(component.content, 'source');
+    return join(dirname(baseContentPath), baseName(baseContentPath));
   }
 
   /**

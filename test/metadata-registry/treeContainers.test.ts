@@ -301,6 +301,14 @@ describe('Tree Containers', () => {
       it('should return directory entries for readDirectory', () => {
         expect(tree.readDirectory('.')).to.deep.equal(virtualFS[0].children);
       });
+
+      it('should throw an error if path is not a directory', () => {
+        assert.throws(
+          () => tree.readDirectory('test.txt'),
+          LibraryError,
+          nls.localize('error_expected_directory_path', 'test.txt')
+        );
+      });
     });
 
     describe('readFile', () => {

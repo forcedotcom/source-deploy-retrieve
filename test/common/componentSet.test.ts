@@ -42,4 +42,10 @@ describe('ComponentSet', () => {
   it('should correctly test component membership', () => {
     expect(set.has(dupeComponent)).to.be.true;
   });
+
+  it('should add a component', () => {
+    const set = new ComponentSet();
+    set.add(dupeComponent);
+    expect(Array.from(set.values())).to.deep.equal([dupeComponent]);
+  });
 });

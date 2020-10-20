@@ -13,11 +13,16 @@ import { MetadataComponent } from './types';
 export class ComponentSet<T extends MetadataComponent> {
   private map = new Map<string, T>();
 
-  constructor(components: Iterable<T>) {
-    for (const component of components) {
-      const key = `${component.type.id}.${component.fullName}`;
-      this.map.set(key, component);
+  constructor(components?: Iterable<T>) {
+    if (components) {
+      for (const component of components) {
+        this.map.set(this.key(component), component);
+      }
     }
+  }
+
+  public add(component: T): void {
+    this.map.set(this.key(component), component);
   }
 
   public get(component: MetadataComponent): T | undefined {

@@ -28,7 +28,7 @@
     "node": ">=10.17.0"
   },
   "dependencies": {
-    "@salesforce/core": "2.9.0",
+    "@salesforce/core": "2.11.0",
     "archiver": "4.0.1",
     "fast-xml-parser": "^3.17.4",
     "gitignore-parser": "0.0.2",

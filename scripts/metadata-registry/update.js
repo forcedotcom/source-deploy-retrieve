@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+const deepmerge = require('deepmerge');
 const { join } = require('path');
 
 // Prep the registry
@@ -21,6 +22,8 @@ const registry = fs.existsSync(REGISTRY_PATH)
 // TODO: Replace with api call
 const describe = JSON.parse(fs.readFileSync(join(__dirname, 'describe.json')));
 
+const registryErrata = JSON.parse(fs.readFileSync(join(__dirname, 'typeOverride.json')))
+
 function createChildType(childXmlName) {
   const camelCase = childXmlName.substring(0, 1).toLowerCase() + childXmlName.substring(1);
   return {
@@ -30,6 +33,30 @@ function createChildType(childXmlName) {
     suffix: camelCase,
   };
 }
+
+function populateChildRegistry(parentTypeId, childNames) {
+  const childRegistry = registry.types[parentTypeId].children || {};
+  const childTypeIndex = childRegistry.types || {};
+  const childSuffixIndex = childRegistry.suffixes || {};
+  const childDirectoryIndex = childRegistry.directories || {};
+
+  for (const name of childNames) {
+    const childTypeId = name.toLowerCase();
+    let childType = createChildType(name);
+
+    if (childTypeIndex[childTypeId]) {
+      // override has been applied since here, so make existing entry the dominant one
+      childType = deepmerge(childType, childTypeIndex[childTypeId]);
+    }
+
+    childTypeIndex[childTypeId] = childType;
+    childSuffixIndex[childType.suffix] = childTypeId;
+    childDirectoryIndex[childType.directoryName] = childTypeId;
+  }
+
+  registry.types[parentTypeId].children = childRegistry;
+}
+
 
 function update() {
   for (const object of describe.metadataObjects) {
@@ -47,29 +74,33 @@ function update() {
     }
 
     // populate the type
-    registry.types[typeId] = {
-      id: typeId,
-      name,
-      suffix,
-      directoryName,
-      inFolder: inFolder === 'true',
-    };
-    if (childXmlNames) {
-      registry.types[typeId].children = { types: {}, suffixes: {} };
-      const childNames = !(childXmlNames instanceof Array) ? [childXmlNames] : childXmlNames;
-      for (const child of childNames) {
-        const childTypeId = child.toLowerCase();
-        const childType = createChildType(child);
-        registry.types[typeId].children.types[childTypeId] = childType;
-        registry.types[typeId].children.suffixes[childType.suffix] = childTypeId;
+    if (!registry.types[typeId]) {
+      registry.types[typeId] = {
+        id: typeId,
+        name,
+        suffix,
+        directoryName,
+        inFolder: inFolder === 'true' || inFolder === true,
       }
     }
 
-    // populate suffix index
-    registry.suffixes[suffix] = typeId;
+    // apply correction if one exists, and populate additional indexes afterwards
+    if (registryErrata[typeId]) {
+      registry.types[typeId] = deepmerge(registry.types[typeId], registryErrata[typeId])
+    }
 
-    // populate mixedContent index
-    if (!suffix) {
+    if (childXmlNames) {
+      const childNames = !(childXmlNames instanceof Array) ? [childXmlNames] : childXmlNames;
+      populateChildRegistry(typeId, childNames);
+    }
+
+    const finalEntry = registry.types[typeId];
+
+    // index file suffixes, otherwise require index type as requiring strict type folder 
+    if (finalEntry.suffix) {
+      // populate suffix index
+      registry.suffixes[finalEntry.suffix] = typeId;
+    } else {
       registry.strictTypeFolder[directoryName] = typeId;
     }
   }

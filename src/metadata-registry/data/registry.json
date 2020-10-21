@@ -1333,7 +1333,7 @@
     "emailservicesfunction": {
       "id": "emailservicesfunction",
       "name": "EmailServicesFunction",
-      "suffix": "",
+      "suffix": null,
       "directoryName": "emailservices",
       "inFolder": false
     },
@@ -1843,7 +1843,8 @@
     "objects": "customobject",
     "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
-    "sites": "customsite"
+    "sites": "customsite",
+    "emailservices": "emailservicesfunction"
   },
   "strategies": {
     "apexclass": {

@@ -79,8 +79,11 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
     component: SourceComponent,
     mergeWith?: SourceComponent
   ): SourcePath {
-    let xmlDestination =
-      mergeWith?.xml || component.getPackageRelativePath(component.xml, targetFormat);
+    if (mergeWith?.xml && targetFormat === 'source') {
+      return mergeWith.xml;
+    }
+
+    let xmlDestination = component.getPackageRelativePath(component.xml, targetFormat);
 
     // quirk: append or strip the -meta.xml suffix to the xml if there's no content
     if (!component.content) {

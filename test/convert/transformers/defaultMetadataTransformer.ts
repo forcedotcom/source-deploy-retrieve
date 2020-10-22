@@ -13,6 +13,7 @@ import { TestReadable } from '../../mock/convert/readables';
 import { expect } from 'chai';
 import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX } from '../../../src/common';
 import { SourceComponent, VirtualTreeContainer } from '../../../src';
+import { GENE_COMPONENT, GENE_XML_NAME } from '../../mock/registry/geneConstants';
 
 const env = createSandbox();
 
@@ -231,19 +232,20 @@ describe('DefaultMetadataTransformer', () => {
       });
     });
 
-    it('should use default relative package path if merge component has no content', async () => {
-      const component = keanu.KEANU_COMPONENT;
-      const mergeWith = SourceComponent.createVirtualComponent(
+    it('should use merge component xml path', async () => {
+      const mergeWith = GENE_COMPONENT;
+      const component = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistry.types.keanureeves,
+          type: mockRegistry.types.genewilder,
+          xml: join('path', 'to', 'another', 'genes', GENE_XML_NAME),
         },
         []
       );
 
       expect((await transformer.toSourceFormat(component, mergeWith)).writeInfos).to.deep.contain({
-        output: component.getPackageRelativePath(component.content, 'source'),
-        source: component.tree.stream(component.content),
+        output: mergeWith.xml,
+        source: component.tree.stream(component.xml),
       });
     });
 

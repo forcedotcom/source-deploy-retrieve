@@ -8,15 +8,17 @@ const terminalCodes = {
 
 module.exports = {
   run: (status, f) => {
+    let result;
     shell.exec(`printf "🐎 ${status}..."`);
     try {
-      f();
+      result = f();
     } catch (e) {
       shell.exec(`printf "\\r❗️ ${status}...failed\n"`);
       shell.exec(`printf "${e.message}"`);
       process.exit(1);
     }
     shell.exec(`printf "\\r✅ ${status}...\\033[1m\\033[37mdone\\033[0m\\n"`);
+    return result;
   },
   execSilent: (command, swallowError) => {
     const prevConfig = config.fatal;

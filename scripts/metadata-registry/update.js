@@ -2,10 +2,10 @@
 
 const fs = require('fs');
 const deepmerge = require('deepmerge');
-const { join } = require('path');
+const path = require('path');
+const { execSilent, run } = require('../util');
 
-// Prep the registry
-const REGISTRY_PATH = join(
+const REGISTRY_PATH = path.join(
   __dirname,
   '..',
   '..',
@@ -14,58 +14,47 @@ const REGISTRY_PATH = join(
   'data',
   'registry.json'
 );
-const EMPTY_REGISTRY = { types: {}, suffixes: {}, mixedContent: {} };
-const registry = fs.existsSync(REGISTRY_PATH)
-  ? JSON.parse(fs.readFileSync(REGISTRY_PATH))
-  : EMPTY_REGISTRY;
+// const registry = fs.existsSync(REGISTRY_PATH)
+//   ? JSON.parse(fs.readFileSync(REGISTRY_PATH))
+//   : { types: {}, suffixes: {}, strictTypeFolder: {} };
 
-// TODO: Replace with api call
-const describe = JSON.parse(fs.readFileSync(join(__dirname, 'describe.json')));
+function initializeChildRegistry(type, childNames) {
+  if (!type.children) type.children = {};
+  if (!type.children.types) type.children.types = {};
+  if (!type.children.suffixes) type.children.suffixes = {};
+  if (!type.children.directories) type.children.directories = {};
 
-const registryErrata = JSON.parse(fs.readFileSync(join(__dirname, 'typeOverride.json')))
-
-function createChildType(childXmlName) {
-  const camelCase = childXmlName.substring(0, 1).toLowerCase() + childXmlName.substring(1);
-  return {
-    id: childXmlName.toLowerCase(),
-    name: childXmlName,
-    directoryName: `${camelCase}s`,
-    suffix: camelCase,
-  };
-}
-
-function populateChildRegistry(parentTypeId, childNames) {
-  const childRegistry = registry.types[parentTypeId].children || {};
-  const childTypeIndex = childRegistry.types || {};
-  const childSuffixIndex = childRegistry.suffixes || {};
-  const childDirectoryIndex = childRegistry.directories || {};
+  const createChildType = (childName) => {
+    const camelCase = childName.substring(0, 1).toLowerCase() + childName.substring(1);
+    return {
+      id: childName.toLowerCase(),
+      name: childName,
+      directoryName: `${camelCase}s`,
+      suffix: camelCase,
+    };
+  }
 
   for (const name of childNames) {
     const childTypeId = name.toLowerCase();
-    let childType = createChildType(name);
+    const childType = type.children.types[childTypeId] || createChildType(name);
 
-    if (childTypeIndex[childTypeId]) {
-      // override has been applied since here, so make existing entry the dominant one
-      childType = deepmerge(childType, childTypeIndex[childTypeId]);
-    }
-
-    childTypeIndex[childTypeId] = childType;
-    childSuffixIndex[childType.suffix] = childTypeId;
-    childDirectoryIndex[childType.directoryName] = childTypeId;
+    type.children.types[childTypeId] = childType;
+    type.children.suffixes[childType.suffix] = childTypeId;
+    type.children.directories[childType.directoryName] = childTypeId;
   }
-
-  registry.types[parentTypeId].children = childRegistry;
 }
 
 
-function update() {
-  for (const object of describe.metadataObjects) {
+function update(registry, describeResult) {
+  const typeOverrides = JSON.parse(fs.readFileSync(path.join(__dirname, 'typeOverride.json')))
+
+  for (const object of describeResult.metadataObjects) {
     const typeId = object.xmlName.toLowerCase();
     const { xmlName: name, suffix, directoryName, inFolder, childXmlNames } = object;
 
     // If it's a type with folders, process the folder type later
     if (inFolder === 'true') {
-      describe.metadataObjects.push({
+      describeResult.metadataObjects.push({
         xmlName: `${name}Folder`,
         suffix: `${typeId}Folder`,
         directoryName,
@@ -73,41 +62,68 @@ function update() {
       });
     }
 
-    // populate the type
-    if (!registry.types[typeId]) {
-      registry.types[typeId] = {
-        id: typeId,
-        name,
-        suffix,
-        directoryName,
-        inFolder: inFolder === 'true' || inFolder === true,
-      }
-    }
+    let type = registry.types[typeId] || {
+      id: typeId,
+      name,
+      suffix,
+      directoryName,
+      inFolder: inFolder === 'true' || inFolder === true,
+    };
 
-    // apply correction if one exists, and populate additional indexes afterwards
-    if (registryErrata[typeId]) {
-      registry.types[typeId] = deepmerge(registry.types[typeId], registryErrata[typeId])
+    // apply type override if one exists
+    if (typeOverrides[typeId]) {
+      type = deepmerge(type, typeOverrides[typeId])
     }
 
     if (childXmlNames) {
       const childNames = !(childXmlNames instanceof Array) ? [childXmlNames] : childXmlNames;
-      populateChildRegistry(typeId, childNames);
+      initializeChildRegistry(type, childNames);
     }
 
-    const finalEntry = registry.types[typeId];
+    registry.types[typeId] = type
 
     // index file suffixes, otherwise require index type as requiring strict type folder 
-    if (finalEntry.suffix) {
-      // populate suffix index
-      registry.suffixes[finalEntry.suffix] = typeId;
+    if (type.suffix) {
+      registry.suffixes[type.suffix] = typeId;
     } else {
-      registry.strictTypeFolder[directoryName] = typeId;
+      registry.strictTypeFolder[type.directoryName] = typeId;
     }
   }
-
-  fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2));
-
-  console.log('Registry updated');
 }
 
-update();
+function printHelp() {
+
+}
+
+function main() {
+  let describeResult;
+  
+  const source = process.argv[2];
+  
+  if (source === '-p') {
+    const describeFilePath = !path.isAbsolute(process.argv[3])
+      ? path.resolve(process.cwd(), process.argv[3])
+      : process.argv[3];
+    describeResult = JSON.parse(fs.readFileSync(describeFilePath));
+  } else if (source === '-a') {
+    const apiVersion = process.argv[3]
+    const orgUsername = process.argv[5]
+    const result = run(`Fetching Metadata API describe for v${apiVersion}`, () =>
+      execSilent(`sfdx force:mdapi:describemetadata -u ${orgUsername} -a ${apiVersion} --json`)
+    );
+    describeResult = JSON.parse(result.stdout).result;
+  } else {
+    printHelp();
+    process.exit(1);
+  }
+
+  run('Applying registry updates', () => {
+    const registry = fs.existsSync(REGISTRY_PATH)
+      ? JSON.parse(fs.readFileSync(REGISTRY_PATH))
+      : { types: {}, suffixes: {}, strictTypeFolder: {} };
+    update(registry, describeResult);
+    fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2));
+  });
+}
+
+main();

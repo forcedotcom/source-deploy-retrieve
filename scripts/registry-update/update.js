@@ -1,19 +1,6 @@
-#!/usr/bin/env node
-
 const fs = require('fs');
-const deepmerge = require('deepmerge');
 const path = require('path');
-const { execSilent, run } = require('../util');
-
-const REGISTRY_PATH = path.join(
-  __dirname,
-  '..',
-  '..',
-  'src',
-  'metadata-registry',
-  'data',
-  'registry.json'
-);
+const deepmerge = require('deepmerge');
 
 function initializeChildRegistry(type, childNames) {
   if (!type.children) type.children = {};
@@ -41,8 +28,7 @@ function initializeChildRegistry(type, childNames) {
   }
 }
 
-
-function applyDescribeResult(registry, describeResult) {
+function update(registry, describeResult) {
   const typeOverrides = JSON.parse(fs.readFileSync(path.join(__dirname, 'typeOverride.json')))
 
   for (const object of describeResult.metadataObjects) {
@@ -88,44 +74,4 @@ function applyDescribeResult(registry, describeResult) {
   }
 }
 
-function loadRegistry() {
-  return fs.existsSync(REGISTRY_PATH)
-    ? JSON.parse(fs.readFileSync(REGISTRY_PATH))
-    : { types: {}, suffixes: {}, strictTypeFolder: {} };
-}
-
-function printHelp() {
-
-}
-
-function main() {
-  let describeResult;
-  
-  const [apiVersion, source, sourceArg] = process.argv.slice(2, 5);
-
-  if (source === '-p') {
-    const describeFilePath = !path.isAbsolute(process.argv[3])
-      ? path.resolve(process.cwd(), process.argv[3])
-      : process.argv[3];
-    describeResult = JSON.parse(fs.readFileSync(describeFilePath));
-  } else if (source === '-u') {
-    const result = run(`Fetching Metadata API describe for v${apiVersion}`, () =>
-      execSilent(`sfdx force:mdapi:describemetadata -u ${sourceArg} -a ${apiVersion} --json`)
-    );
-    describeResult = JSON.parse(result.stdout).result;
-  } else {
-    printHelp();
-    process.exit(1);
-  }
-
-  run('Applying registry updates', () => {
-    const registry = loadRegistry();
-
-    applyDescribeResult(registry, describeResult);
-    registry.apiVersion = apiVersion;
-
-    fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2));
-  });
-}
-
-main();
+module.exports = update;

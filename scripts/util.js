@@ -13,7 +13,7 @@ module.exports = {
     try {
       result = f();
     } catch (e) {
-      shell.exec(`printf "\\r❗️ ${status}...failed\n"`);
+      shell.exec(`printf "\\r❗️ ${status}...\\033[1m\\033[37mfailed\\033[0m\\n"`);
       shell.exec(`printf "${e.message}"`);
       process.exit(1);
     }

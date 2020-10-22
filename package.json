@@ -84,7 +84,7 @@
     "repl": "node --inspect ./scripts/repl.js",
     "test": "shx rm -rf ./test-results && nyc mocha && node ./scripts/verifyTestArtifacts.js",
     "coverage": "nyc report --reporter=lcov",
-    "update:registry": "node ./scripts/metadata-registry/update.js"
+    "registry-update": "node ./scripts/registry-update"
   },
   "husky": {
     "hooks": {

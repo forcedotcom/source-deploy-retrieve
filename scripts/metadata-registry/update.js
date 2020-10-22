@@ -14,9 +14,6 @@ const REGISTRY_PATH = path.join(
   'data',
   'registry.json'
 );
-// const registry = fs.existsSync(REGISTRY_PATH)
-//   ? JSON.parse(fs.readFileSync(REGISTRY_PATH))
-//   : { types: {}, suffixes: {}, strictTypeFolder: {} };
 
 function initializeChildRegistry(type, childNames) {
   if (!type.children) type.children = {};
@@ -45,7 +42,7 @@ function initializeChildRegistry(type, childNames) {
 }
 
 
-function update(registry, describeResult) {
+function applyDescribeResult(registry, describeResult) {
   const typeOverrides = JSON.parse(fs.readFileSync(path.join(__dirname, 'typeOverride.json')))
 
   for (const object of describeResult.metadataObjects) {
@@ -91,6 +88,12 @@ function update(registry, describeResult) {
   }
 }
 
+function loadRegistry() {
+  return fs.existsSync(REGISTRY_PATH)
+    ? JSON.parse(fs.readFileSync(REGISTRY_PATH))
+    : { types: {}, suffixes: {}, strictTypeFolder: {} };
+}
+
 function printHelp() {
 
 }
@@ -98,18 +101,16 @@ function printHelp() {
 function main() {
   let describeResult;
   
-  const source = process.argv[2];
-  
+  const [apiVersion, source, sourceArg] = process.argv.slice(2, 5);
+
   if (source === '-p') {
     const describeFilePath = !path.isAbsolute(process.argv[3])
       ? path.resolve(process.cwd(), process.argv[3])
       : process.argv[3];
     describeResult = JSON.parse(fs.readFileSync(describeFilePath));
-  } else if (source === '-a') {
-    const apiVersion = process.argv[3]
-    const orgUsername = process.argv[5]
+  } else if (source === '-u') {
     const result = run(`Fetching Metadata API describe for v${apiVersion}`, () =>
-      execSilent(`sfdx force:mdapi:describemetadata -u ${orgUsername} -a ${apiVersion} --json`)
+      execSilent(`sfdx force:mdapi:describemetadata -u ${sourceArg} -a ${apiVersion} --json`)
     );
     describeResult = JSON.parse(result.stdout).result;
   } else {
@@ -118,10 +119,11 @@ function main() {
   }
 
   run('Applying registry updates', () => {
-    const registry = fs.existsSync(REGISTRY_PATH)
-      ? JSON.parse(fs.readFileSync(REGISTRY_PATH))
-      : { types: {}, suffixes: {}, strictTypeFolder: {} };
-    update(registry, describeResult);
+    const registry = loadRegistry();
+
+    applyDescribeResult(registry, describeResult);
+    registry.apiVersion = apiVersion;
+
     fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2));
   });
 }

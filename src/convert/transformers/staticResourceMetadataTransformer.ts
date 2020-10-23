@@ -9,12 +9,13 @@ import { WriterFormat, WriteInfo } from '..';
 import { create as createArchive } from 'archiver';
 import { getExtension } from 'mime';
 import { Open } from 'unzipper';
-import { basename, join } from 'path';
+import { basename, dirname, join } from 'path';
 import { baseName } from '../../utils';
 import { JsonMap } from '@salesforce/ts-types';
 import { Readable } from 'stream';
 import { LibraryError } from '../../errors';
 import { SourceComponent } from '../../metadata-registry';
+import { SourcePath } from '../../common';
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public static readonly ARCHIVE_MIME_TYPES = new Set([
@@ -34,12 +35,10 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   ]);
 
   public async toMetadataFormat(component: SourceComponent): Promise<WriterFormat> {
-    let contentSource: Readable;
     const { content, type, xml } = component;
-    const writerFormat: WriterFormat = {
-      component,
-      writeInfos: [],
-    };
+    const writerFormat: WriterFormat = { component, writeInfos: [] };
+
+    let contentSource: Readable;
 
     if (await this.componentIsExpandedArchive(component)) {
       const zip = createArchive('zip', { zlib: { level: 3 } });
@@ -64,31 +63,53 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     return writerFormat;
   }
 
-  public async toSourceFormat(component: SourceComponent): Promise<WriterFormat> {
+  public async toSourceFormat(
+    component: SourceComponent,
+    mergeWith?: SourceComponent
+  ): Promise<WriterFormat> {
     const { xml, content } = component;
     const result: WriterFormat = { component, writeInfos: [] };
 
     if (content) {
-      const contentType = await this.getContentType(component);
-      if (StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(contentType)) {
-        const baseDir = component.getPackageRelativePath(baseName(content), 'source');
-        this.createWriteInfosFromArchive(content, baseDir, result);
+      const componentContentType = await this.getContentType(component);
+      const mergeContentPath = mergeWith?.content;
+      const baseContentPath = this.getBaseContentPath(component, mergeWith);
+
+      // only unzip an archive component if there isn't a merge component, or the merge component is itself expanded
+      const shouldUnzipArchive =
+        StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(componentContentType) &&
+        (!mergeWith || mergeWith.tree.isDirectory(mergeContentPath));
+
+      if (shouldUnzipArchive) {
+        const zipBuffer = await component.tree.readFile(content);
+        result.writeInfos = await this.createWriteInfosFromArchive(zipBuffer, baseContentPath);
       } else {
-        const extension = this.getExtensionFromType(contentType);
+        const extension = this.getExtensionFromType(componentContentType);
         result.writeInfos.push({
           source: component.tree.stream(content),
-          output: component.getPackageRelativePath(`${baseName(content)}.${extension}`, 'source'),
+          output: `${baseContentPath}.${extension}`,
         });
       }
 
       result.writeInfos.push({
         source: component.tree.stream(xml),
-        output: component.getPackageRelativePath(basename(xml), 'source'),
+        output: mergeWith?.xml || component.getPackageRelativePath(basename(xml), 'source'),
       });
     }
+
     return result;
   }
 
+  private getBaseContentPath(component: SourceComponent, mergeWith?: SourceComponent): SourcePath {
+    const baseContentPath =
+      mergeWith?.content || component.getPackageRelativePath(component.content, 'source');
+    return join(dirname(baseContentPath), baseName(baseContentPath));
+  }
+
+  /**
+   * "Expanded" refers to a component whose content file is a zip file, and its current
+   * state is unzipped.
+   */
   private async componentIsExpandedArchive(component: SourceComponent): Promise<boolean> {
     const { content, tree } = component;
     if (tree.isDirectory(content)) {
@@ -104,6 +125,23 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     return false;
   }
 
+  private async createWriteInfosFromArchive(
+    zipBuffer: Buffer,
+    baseDir: string
+  ): Promise<WriteInfo[]> {
+    const writeInfos: WriteInfo[] = [];
+    const directory = await Open.buffer(zipBuffer);
+    for (const entry of directory.files) {
+      if (entry.type === 'File') {
+        writeInfos.push({
+          source: entry.stream(),
+          output: join(baseDir, entry.path),
+        });
+      }
+    }
+    return writeInfos;
+  }
+
   private async getContentType(component: SourceComponent): Promise<string> {
     return ((await component.parseXml()).StaticResource as JsonMap).contentType as string;
   }
@@ -115,26 +153,5 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       StaticResourceMetadataTransformer.FALLBACK_TYPE_MAP.get(contentType) ||
       getExtension(StaticResourceMetadataTransformer.DEFAULT_CONTENT_TYPE)
     );
-  }
-
-  private createWriteInfosFromArchive(
-    zipPath: string,
-    destDir: string,
-    format: WriterFormat
-  ): void {
-    // TODO: with async transformer methods, this workaround may not be necessary anymore.
-    format.getExtraInfos = async (): Promise<WriteInfo[]> => {
-      const writeInfos: WriteInfo[] = [];
-      const directory = await Open.file(zipPath);
-      directory.files.forEach((f) => {
-        if (f.type === 'File') {
-          writeInfos.push({
-            source: f.stream(),
-            output: join(destDir, f.path),
-          });
-        }
-      });
-      return writeInfos;
-    };
   }
 }

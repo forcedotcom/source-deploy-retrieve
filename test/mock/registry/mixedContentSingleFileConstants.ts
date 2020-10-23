@@ -11,8 +11,10 @@ import { SourceComponent } from '../../../src';
 const type = mockRegistry.types.mixedcontentsinglefile;
 
 export const MC_SINGLE_FILE_DIR = join('path', 'to', 'mixedSingleFiles');
-export const MC_XML_NAMES = ['a.mixedSingleFile-meta.xml'];
-export const MC_SINGLE_FILE_XML_PATHS = MC_XML_NAMES.map((n) => join(MC_SINGLE_FILE_DIR, n));
+export const MC_SINGLE_FILE_XML_NAMES = ['a.mixedSingleFile-meta.xml'];
+export const MC_SINGLE_FILE_XML_PATHS = MC_SINGLE_FILE_XML_NAMES.map((n) =>
+  join(MC_SINGLE_FILE_DIR, n)
+);
 export const MC_SINGLE_FILE_SOURCE_NAMES = ['a.x'];
 export const MC_SINGLE_FILE_SOURCE_PATHS = MC_SINGLE_FILE_SOURCE_NAMES.map((n) =>
   join(MC_SINGLE_FILE_DIR, n)
@@ -27,7 +29,7 @@ export const MC_SINGLE_FILE_COMPONENT = SourceComponent.createVirtualComponent(
   [
     {
       dirPath: MC_SINGLE_FILE_DIR,
-      children: MC_XML_NAMES.concat(MC_SINGLE_FILE_SOURCE_NAMES),
+      children: MC_SINGLE_FILE_XML_NAMES.concat(MC_SINGLE_FILE_SOURCE_NAMES),
     },
   ]
 );

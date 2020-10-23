@@ -36,12 +36,14 @@ export class ForceIgnore {
   public constructor(forceIgnorePath = '') {
     try {
       const file = readFileSync(forceIgnorePath, 'utf-8');
-      this.contents = this.parseContents(`${file}\n${this.DEFAULT_IGNORE.join('\n')}`);
+      this.contents = `${file}\n${this.DEFAULT_IGNORE.join('\n')}`;
       // add the default ignore paths, and then parse the .forceignore file
-      this.parser = ignore().add(this.contents.split('\n'));
+      // DO NOT CALL parseContents FOR THE NEW PARSER
+      // the new library handles it's own unix/windows file path separators, let it handle it
+      this.parser = ignore().add(this.contents);
       // TODO: START REMOVE AFTER GITIGNORE-PARSER DEPRECATED
       // add the default and send to the old gitignore-parser
-      this.gitignoreParser = gitignoreParser.compile(this.contents);
+      this.gitignoreParser = gitignoreParser.compile(this.parseContents(this.contents));
       this.forceIgnoreDirectory = dirname(forceIgnorePath);
 
       // read the file to determine which parser to use
@@ -69,31 +71,41 @@ export class ForceIgnore {
   }
 
   public denies(fsPath: SourcePath): boolean {
-    // AFTER GITIGNORE-PARSER DEPRECATED, change this to `return this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));`
-    let denies = false;
-    let fctResult = false;
-    // if there's a parser, and we're not trying to .forceignore the .forceignore
-    if (this.parser && this.gitignoreParser && !!relative(this.forceIgnoreDirectory, fsPath)) {
-      denies = this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));
-      fctResult = this.gitignoreParser.denies(relative(this.forceIgnoreDirectory, fsPath));
-      // send to look for differences, analytics
-      this.resolveConflict(denies, fctResult, this.contents);
+    try {
+      // AFTER GITIGNORE-PARSER DEPRECATED, change this to `return this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));`
+      let denies = false;
+      let fctResult = false;
+      // if there's a parser, and we're not trying to .forceignore the .forceignore
+      const relativePath = relative(this.forceIgnoreDirectory, fsPath);
+      if (this.parser && this.gitignoreParser && !!relativePath) {
+        denies = this.parser.ignores(relativePath);
+        fctResult = this.gitignoreParser.denies(relativePath);
+        // send to look for differences, analytics
+        this.resolveConflict(denies, fctResult, this.contents);
+      }
+      return this.useNewParser ? denies : fctResult;
+    } catch (e) {
+      return false;
     }
-    return this.useNewParser ? denies : fctResult;
   }
 
   public accepts(fsPath: SourcePath): boolean {
-    // AFTER GITIGNORE-PARSER DEPRECATED, change this to `return !this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));`
-    let accepts = true;
-    let fctResult = true;
-    if (this.parser && this.gitignoreParser && !!relative(this.forceIgnoreDirectory, fsPath)) {
-      accepts = !this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));
-      fctResult = this.gitignoreParser.accepts(relative(this.forceIgnoreDirectory, fsPath));
-      // send to look for differences, analytics
-      this.resolveConflict(accepts, fctResult, this.contents);
-    }
+    try {
+      // AFTER GITIGNORE-PARSER DEPRECATED, change this to `return !this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));`
+      let accepts = true;
+      let fctResult = true;
+      const relativePath = relative(this.forceIgnoreDirectory, fsPath);
+      if (this.parser && this.gitignoreParser && !!relativePath) {
+        accepts = !this.parser.ignores(relativePath);
+        fctResult = this.gitignoreParser.accepts(relativePath);
+        // send to look for differences, analytics
+        this.resolveConflict(accepts, fctResult, this.contents);
+      }
 
-    return this.useNewParser ? accepts : fctResult;
+      return this.useNewParser ? accepts : fctResult;
+    } catch (e) {
+      return true;
+    }
   }
 
   // REMOVE THIS AFTER GITIGNORE-PARSER DEPRECATED
@@ -118,7 +130,7 @@ export class ForceIgnore {
       ignoreItems.forEach((ignoreItem) => {
         // we need to run the both of the compilers for a single line to find the problem entry
         const gitignoreResult = gitignoreParser
-          .compile(ignoreItem)
+          .compile(this.parseContents(ignoreItem))
           .accepts(relative(this.forceIgnoreDirectory, file));
         const ignoreResult = !ignore()
           .add([ignoreItem])

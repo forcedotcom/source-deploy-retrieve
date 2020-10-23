@@ -244,26 +244,12 @@ describe('Streams', () => {
       it('should perform file copies based on given write infos', async () => {
         pipelineStub.resolves();
 
-        const extraChunk: WriterFormat = {
-          component: KATHY_COMPONENTS[0],
-          writeInfos: [
-            {
-              output: relativeDestination,
-              source: readableMock,
-            },
-          ],
-          getExtraInfos: async () => [
-            {
-              output: join('testdata', 'images', 'a.1'),
-              source: readableMock,
-            },
-          ],
-        };
-
-        await writer._write(extraChunk, '', (err: Error) => {
+        await writer._write(chunk, '', (err: Error) => {
           expect(err).to.be.undefined;
-          expect(ensureFile.firstCall.args).to.deep.equal([
-            join(rootDestination, 'testdata', 'images', 'a.1'),
+          expect(ensureFile.firstCall.args).to.deep.equal([fullPath]);
+          expect(pipelineStub.firstCall.args).to.deep.equal([
+            chunk.writeInfos[0].source,
+            fsWritableMock,
           ]);
         });
       });
@@ -371,35 +357,6 @@ describe('Streams', () => {
         await writer._final((err: Error) => {
           expect(err.message).to.equal(whoops.message);
           expect(err.name).to.equal(whoops.name);
-        });
-      });
-
-      it('should use extra info when available', async () => {
-        writer = new streams.ZipWriter(`${rootDestination}.zip`);
-        const appendStub = env.stub(archive, 'append');
-
-        const extraChunk: WriterFormat = {
-          component: KATHY_COMPONENTS[0],
-          writeInfos: [
-            {
-              output: relativeDestination,
-              source: readableMock,
-            },
-          ],
-          getExtraInfos: async () => [
-            {
-              output: join('testdata', 'images', 'a.1'),
-              source: readableMock,
-            },
-          ],
-        };
-
-        await writer._write(extraChunk, '', (err: Error) => {
-          expect(err).to.be.undefined;
-          expect(appendStub.firstCall.args).to.deep.equal([
-            extraChunk.writeInfos[0].source,
-            { name: join('testdata', 'images', 'a.1') },
-          ]);
         });
       });
     });

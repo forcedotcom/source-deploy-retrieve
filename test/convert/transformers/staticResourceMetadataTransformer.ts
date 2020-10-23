@@ -16,14 +16,19 @@ import { LibraryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { baseName } from '../../../src/utils';
 import { mockRegistry } from '../../mock/registry';
-import { MC_SINGLE_FILE_COMPONENT } from '../../mock/registry/mixedContentSingleFileConstants';
+import {
+  MC_SINGLE_FILE_COMPONENT,
+  MC_SINGLE_FILE_XML_NAMES,
+} from '../../mock/registry/mixedContentSingleFileConstants';
 import { TARAJI_COMPONENT, TARAJI_VIRTUAL_FS } from '../../mock/registry/tarajiConstants';
 import { TestReadable } from '../../mock/convert/readables';
+import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../../src/common';
 
 const env = createSandbox();
 
 describe('StaticResourceMetadataTransformer', () => {
-  const rootPackagePath = join('main', 'default');
+  const transformer = new StaticResourceMetadataTransformer(mockRegistry);
+
   beforeEach(() =>
     env
       .stub(VirtualTreeContainer.prototype, 'stream')
@@ -41,7 +46,7 @@ describe('StaticResourceMetadataTransformer', () => {
           contentType: 'png',
         },
       });
-      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
+
       const expectedInfos: WriteInfo[] = [
         {
           source: component.tree.stream(content),
@@ -67,7 +72,7 @@ describe('StaticResourceMetadataTransformer', () => {
       const archiveFinalizeStub = env.stub(archive, 'finalize');
       const parseXmlStub = env.stub(component, 'parseXml');
       env.stub(archiver, 'create').returns(archive);
-      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
+
       const expectedInfos: WriteInfo[] = [
         {
           source: archive,
@@ -95,7 +100,6 @@ describe('StaticResourceMetadataTransformer', () => {
       const component = SourceComponent.createVirtualComponent(TARAJI_COMPONENT, TARAJI_VIRTUAL_FS);
       const contentType = 'nonArchiveType';
       env.stub(component, 'parseXml').resolves({ StaticResource: { contentType } });
-      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
 
       try {
         await transformer.toMetadataFormat(component);
@@ -109,6 +113,25 @@ describe('StaticResourceMetadataTransformer', () => {
   });
 
   describe('toSourceFormat', () => {
+    const mockCentralDirectory = {
+      files: [
+        {
+          path: 'a',
+          type: 'Directory',
+          stream: (): Entry => {
+            return null;
+          },
+        },
+        {
+          path: 'b/c.css',
+          type: 'File',
+          stream: (): Entry => {
+            return null;
+          },
+        },
+      ],
+    } as CentralDirectory;
+
     it('should rename extension from .resource to a mime extension for content file', async () => {
       const component = MC_SINGLE_FILE_COMPONENT;
       const { type, content, xml } = component;
@@ -118,15 +141,14 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       });
 
-      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
           source: component.tree.stream(content),
-          output: join(rootPackagePath, type.directoryName, `${baseName(content)}.png`),
+          output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, `${baseName(content)}.png`),
         },
         {
           source: component.tree.stream(xml),
-          output: join(rootPackagePath, type.directoryName, basename(xml)),
+          output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, basename(xml)),
         },
       ];
 
@@ -145,15 +167,14 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       });
 
-      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
           source: component.tree.stream(content),
-          output: join(rootPackagePath, type.directoryName, `${baseName(content)}.js`),
+          output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, `${baseName(content)}.js`),
         },
         {
           source: component.tree.stream(xml),
-          output: join(rootPackagePath, type.directoryName, basename(xml)),
+          output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, basename(xml)),
         },
       ];
 
@@ -172,15 +193,14 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       });
 
-      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       const expectedInfos: WriteInfo[] = [
         {
           source: component.tree.stream(content),
-          output: join(rootPackagePath, type.directoryName, `${baseName(content)}.bin`),
+          output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, `${baseName(content)}.bin`),
         },
         {
           source: component.tree.stream(xml),
-          output: join(rootPackagePath, type.directoryName, basename(xml)),
+          output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, basename(xml)),
         },
       ];
 
@@ -194,7 +214,6 @@ describe('StaticResourceMetadataTransformer', () => {
       const component = Object.assign({}, MC_SINGLE_FILE_COMPONENT);
       component.content = undefined;
 
-      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
       expect(await transformer.toSourceFormat(component)).to.deep.equal({
         component,
         writeInfos: [],
@@ -209,45 +228,21 @@ describe('StaticResourceMetadataTransformer', () => {
           contentType: 'application/zip',
         },
       });
-      const cd = {
-        files: [
+      env.stub(Open, 'buffer').resolves(mockCentralDirectory);
+
+      expect(await transformer.toSourceFormat(component)).to.deep.equal({
+        component,
+        writeInfos: [
           {
-            path: 'a',
-            type: 'Directory',
-            stream: (): Entry => {
-              return null;
-            },
+            source: null,
+            output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, 'a', 'b', 'c.css'),
           },
           {
-            path: 'b/c.css',
-            type: 'File',
-            stream: (): Entry => {
-              return null;
-            },
+            source: component.tree.stream(xml),
+            output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, basename(xml)),
           },
         ],
-      } as CentralDirectory;
-      env.stub(Open, 'file').resolves(cd);
-
-      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
-      const expectedInfos: WriteInfo[] = [
-        {
-          source: component.tree.stream(xml),
-          output: join(rootPackagePath, type.directoryName, basename(xml)),
-        },
-      ];
-      const extraInfo: WriteInfo[] = [
-        {
-          source: null,
-          output: join(rootPackagePath, type.directoryName, 'a', 'b', 'c.css'),
-        },
-      ];
-
-      const result = await transformer.toSourceFormat(component);
-      expect(result.component).to.deep.equal(component);
-      expect(result.writeInfos).to.deep.equal(expectedInfos);
-      expect(result.getExtraInfos).to.be.a('function');
-      expect(await result.getExtraInfos()).to.deep.equal(extraInfo);
+      });
     });
 
     it('should work well for null contentType', async () => {
@@ -259,21 +254,103 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       });
 
-      const transformer = new StaticResourceMetadataTransformer(mockRegistry);
-      const expectedInfos: WriteInfo[] = [
-        {
-          source: component.tree.stream(content),
-          output: join(rootPackagePath, type.directoryName, `${baseName(content)}.bin`),
-        },
-        {
-          source: component.tree.stream(xml),
-          output: join(rootPackagePath, type.directoryName, basename(xml)),
-        },
-      ];
-
       expect(await transformer.toSourceFormat(component)).to.deep.equal({
         component,
-        writeInfos: expectedInfos,
+        writeInfos: [
+          {
+            source: component.tree.stream(content),
+            output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, `${baseName(content)}.bin`),
+          },
+          {
+            source: component.tree.stream(xml),
+            output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, basename(xml)),
+          },
+        ],
+      });
+    });
+
+    it('should merge output with merge component when content is archive', async () => {
+      const root = join('path', 'to', 'another', 'mixedSingleFiles');
+      const component = MC_SINGLE_FILE_COMPONENT;
+      const mergeComponent = SourceComponent.createVirtualComponent(
+        {
+          name: MC_SINGLE_FILE_COMPONENT.name,
+          type: mockRegistry.types.mixedcontentsinglefile,
+          xml: join(root, MC_SINGLE_FILE_XML_NAMES[0]),
+          content: join(root, 'a'),
+        },
+        [
+          {
+            dirPath: root,
+            children: ['a'],
+          },
+          {
+            dirPath: join(root, 'a'),
+            children: [],
+          },
+        ]
+      );
+      env.stub(component, 'parseXml').resolves({
+        StaticResource: {
+          contentType: 'application/zip',
+        },
+      });
+      env.stub(Open, 'buffer').resolves(mockCentralDirectory);
+
+      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equal({
+        component,
+        writeInfos: [
+          {
+            source: null,
+            output: join(mergeComponent.content, 'b', 'c.css'),
+          },
+          {
+            source: component.tree.stream(component.xml),
+            output: mergeComponent.xml,
+          },
+        ],
+      });
+    });
+
+    it('should merge output with merge component when content is single file', async () => {
+      const root = join('path', 'to', 'another', 'mixedSingleFiles');
+      const component = MC_SINGLE_FILE_COMPONENT;
+      const mergeComponent = SourceComponent.createVirtualComponent(
+        {
+          name: MC_SINGLE_FILE_COMPONENT.name,
+          type: mockRegistry.types.mixedcontentsinglefile,
+          xml: join(root, MC_SINGLE_FILE_XML_NAMES[0]),
+          content: join(root, 'a'),
+        },
+        [
+          {
+            dirPath: root,
+            children: ['a'],
+          },
+          {
+            dirPath: join(root, 'a'),
+            children: [],
+          },
+        ]
+      );
+      env.stub(component, 'parseXml').resolves({
+        StaticResource: {
+          contentType: 'text/plain',
+        },
+      });
+
+      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equal({
+        component,
+        writeInfos: [
+          {
+            source: component.tree.stream(component.content),
+            output: `${mergeComponent.content}.txt`,
+          },
+          {
+            source: component.tree.stream(component.xml),
+            output: mergeComponent.xml,
+          },
+        ],
       });
     });
   });

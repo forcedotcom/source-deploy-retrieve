@@ -19,7 +19,6 @@ export type WriteInfo = {
 
 export type WriterFormat = {
   component: SourceComponent;
-  getExtraInfos?: () => Promise<WriteInfo[]>;
   writeInfos: WriteInfo[];
 };
 

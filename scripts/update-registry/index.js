@@ -38,9 +38,9 @@ const [apiVersion, source, sourceArg] = process.argv.slice(2, 5);
 let describeResult;
 
 if (source === '-p') {
-  const describeFilePath = !path.isAbsolute(process.argv[3])
-    ? path.resolve(process.cwd(), process.argv[3])
-    : process.argv[3];
+  const describeFilePath = !path.isAbsolute(sourceArg)
+    ? path.resolve(process.cwd(), sourceArg)
+    : sourceArg;
   describeResult = JSON.parse(fs.readFileSync(describeFilePath));
 } else if (source === '-u') {
   const result = run(`Fetching Metadata API describe for v${apiVersion}`, () =>

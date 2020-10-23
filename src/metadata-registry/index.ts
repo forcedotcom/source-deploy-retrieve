@@ -25,6 +25,7 @@ export {
   SuffixIndex,
   DecompositionStrategy,
 } from './types';
+export { ForceIgnore } from './forceIgnore';
 
 /**
  * Direct access to the JSON registry data. Useful for autocompletions.

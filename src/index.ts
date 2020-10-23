@@ -29,5 +29,6 @@ export {
   SourceComponent,
   TreeContainer,
   VirtualDirectory,
+  ForceIgnore,
 } from './metadata-registry';
 export { MetadataType, MetadataComponent, SourcePath } from './common';

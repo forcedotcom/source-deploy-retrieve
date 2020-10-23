@@ -1,3 +1,13 @@
+# 1.1.8 - October 23, 2020
+
+## Fixed
+
+- Handle trailing slashes on forceignore rules ([PR #190](https://github.com/forcedotcom/source-deploy-retrieve/pull/190))
+
+## Added
+
+- Convert and merge decomposed component types ([PR #184](https://github.com/forcedotcom/source-deploy-retrieve/pull/184))
+
 # 1.1.7 - October 15, 2020
 
 ## Fixed

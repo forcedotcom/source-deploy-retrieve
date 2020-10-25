@@ -2,9 +2,14 @@
 
 const fs = require('fs');
 const path = require('path');
-const update = require('./update');
+const { Connection, AuthInfo } = require('@salesforce/core');
+const { Octokit } = require('@octokit/rest');
+const { createAppAuth } = require("@octokit/auth-app");
 const { run, execSilent } = require('../util');
+const update = require('./update');
 
+const { REPO_OWNER, REPO_NAME, INSTALLATION_ID, APP_ID } = process.env; 
+const BASE_BRANCH = 'develop';
 const REGISTRY_PATH = path.join(
   __dirname,
   '..',
@@ -32,33 +37,107 @@ the changes after they have been generated to ensure there were no unexpected mo
   console.log(message);
 }
 
-
-const [apiVersion, source, sourceArg] = process.argv.slice(2, 5);
-
-let describeResult;
-
-if (source === '-p') {
-  const describeFilePath = !path.isAbsolute(sourceArg)
-    ? path.resolve(process.cwd(), sourceArg)
-    : sourceArg;
-  describeResult = JSON.parse(fs.readFileSync(describeFilePath));
-} else if (source === '-u') {
-  const result = run(`Fetching Metadata API describe for v${apiVersion}`, () =>
-    execSilent(`sfdx force:mdapi:describemetadata -u ${sourceArg} -a ${apiVersion} --json`)
-  );
-  describeResult = JSON.parse(result.stdout).result;
-} else {
-  printHelp();
-  process.exit();
+async function getConnection(username) {
+  return Connection.create({
+    authInfo: await AuthInfo.create({ username }),
+  });
 }
 
-run('Applying registry updates', () => {
-  const registry = fs.existsSync(REGISTRY_PATH)
-    ? JSON.parse(fs.readFileSync(REGISTRY_PATH))
-    : { types: {}, suffixes: {}, strictTypeFolder: {} };;
+function getDescribeFromFile(fsPath) {
+  const describeFilePath = !path.isAbsolute(fsPath)
+      ? path.resolve(process.cwd(), fsPath)
+      : fsPath;
+  return JSON.parse(fs.readFileSync(describeFilePath));
+}
 
-  update(registry, describeResult);
-  registry.apiVersion = apiVersion;
+async function getDescribeFromOrg(username, apiVersion) {
+  const conn = await getConnection(username);
+  if (apiVersion) {
+    conn.setApiVersion(apiVerison);
+  } else {
+    apiVersion = conn.getApiVersion();
+  }
+  const result = await run(
+    `Fetching metadata describe v${apiVersion}`,
+    () => conn.metadata.describe()
+  );
+  return { result, apiVersion }
+}
 
-  fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2));
-});
+async function fetchDescribeResult(source, sourceArg, apiVersion) {  
+  if (source === '-f') {
+    return {
+      result: getDescribeFromFile(sourceArg),
+      apiVersion
+    }
+  } else if (source === '-u') {
+    return getDescribeFromOrg(sourceArg, apiVersion);
+  }
+}
+
+function registryHasChanges() {
+  return execSilent('git status').includes('registry.json');
+}
+
+async function openPullRequest(head, apiVersion) {
+  const app = new Octokit({
+    authStrategy: createAppAuth,
+    auth: {
+      id: APP_ID,
+      privateKey: process.env.SDR_BOT_KEY,
+      installationId: INSTALLATION_ID
+    }
+  });
+
+  await app.auth({ type: 'installation', installationId: INSTALLATION_ID });
+
+  return app.pulls.create({
+    base: `refs/heads/${BASE_BRANCH}`,
+    head: `refs/heads/${head}`,
+    owner: REPO_OWNER,
+    repo: REPO_NAME,
+    title: `chore: metadata registry update (v${apiVersion})`,
+    body: `Metadata registry update with the latest available Metadata API version v${apiVersion}`
+  });
+}
+
+async function main() {
+  const [source, sourceArg] = process.argv.slice(2, 5);
+  let apiVersion = process.argv[4];
+
+  const describeResult = await fetchDescribeResult(source, sourceArg, apiVersion);
+
+  if (!describeResult) {
+    printHelp();
+    process.exit();
+  }
+
+  apiVersion = describeResult.apiVersion
+
+  const branchName = `registry-update-v${apiVersion}`;
+
+  run('Applying registry updates', () => {
+    execSilent(`git checkout -b ${branchName} ${BASE_BRANCH}`)
+
+    const registry = fs.existsSync(REGISTRY_PATH)
+      ? JSON.parse(fs.readFileSync(REGISTRY_PATH))
+      : { types: {}, suffixes: {}, strictTypeFolder: {} };;
+
+    update(registry, describeResult.result);
+    registry.apiVersion = apiVersion;
+
+    fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2));
+  });
+
+  if (registryHasChanges()) {
+    run('Creating pull request for registry updates', async () => {
+      execSilent(`git add ${REGISTRY_PATH}`);
+      execSilent(`git commit -m "chore: update registry for v${apiVersion}"`);
+      execSilent(`git push origin ${branchName}`);
+
+      await openPullRequest(branchName, apiVersion);
+    });
+  }
+}
+
+main();

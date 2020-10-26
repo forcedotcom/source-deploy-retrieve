@@ -7,8 +7,10 @@
 export {
   SourceClient,
   MetadataApiDeployOptions,
+  RetrieveOptions,
   RetrievePathOptions,
   SourceDeployResult,
+  SourceRetrieveResult,
   ToolingDeployOptions,
   ToolingDeployStatus,
   DeployPathOptions,

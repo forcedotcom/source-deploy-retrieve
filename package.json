@@ -54,6 +54,7 @@
     "chai": "^4",
     "commitizen": "^3.0.5",
     "cz-conventional-changelog": "^2.1.0",
+    "deepmerge": "^4.2.2",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-header": "^3.0.0",
@@ -83,7 +84,7 @@
     "repl": "node --inspect ./scripts/repl.js",
     "test": "shx rm -rf ./test-results && nyc mocha && node ./scripts/verifyTestArtifacts.js",
     "coverage": "nyc report --reporter=lcov",
-    "update:registry": "node ./scripts/metadata-registry/update.js"
+    "update-registry": "node ./scripts/update-registry"
   },
   "husky": {
     "hooks": {

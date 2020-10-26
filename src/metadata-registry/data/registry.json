@@ -24,6 +24,9 @@
         },
         "suffixes": {
           "customLabel": "customlabel"
+        },
+        "directories": {
+          "customLabels": "customlabel"
         }
       }
     },
@@ -554,6 +557,14 @@
           "workflowSend": "workflowsend",
           "workflowOutboundMessage": "workflowoutboundmessage",
           "workflowRule": "workflowrule"
+        },
+        "directories": {
+          "workflowFieldUpdates": "workflowfieldupdate",
+          "workflowTasks": "workflowtask",
+          "workflowAlerts": "workflowalert",
+          "workflowSends": "workflowsend",
+          "workflowOutboundMessages": "workflowoutboundmessage",
+          "workflowRules": "workflowrule"
         }
       }
     },
@@ -574,6 +585,9 @@
         },
         "suffixes": {
           "assignmentRule": "assignmentrule"
+        },
+        "directories": {
+          "assignmentRules": "assignmentrule"
         }
       }
     },
@@ -594,6 +608,9 @@
         },
         "suffixes": {
           "autoResponseRule": "autoresponserule"
+        },
+        "directories": {
+          "autoResponseRules": "autoresponserule"
         }
       }
     },
@@ -614,6 +631,9 @@
         },
         "suffixes": {
           "escalationRule": "escalationrule"
+        },
+        "directories": {
+          "escalationRules": "escalationrule"
         }
       }
     },
@@ -790,6 +810,9 @@
         },
         "suffixes": {
           "matchingRule": "matchingrule"
+        },
+        "directories": {
+          "matchingRules": "matchingrule"
         }
       }
     },
@@ -977,6 +1000,10 @@
           "sharingCriteriaRule": "sharingcriteriarule",
           "sharingGuestRule": "sharingguestrule",
           "sharingTerritoryRule": "sharingterritoryrule"
+        },
+        "directories": {
+          "sharingOwnerRules": "sharingownerrule",
+          "sharingCriteriaRules": "sharingcriteriarule"
         }
       }
     },
@@ -1333,7 +1360,7 @@
     "emailservicesfunction": {
       "id": "emailservicesfunction",
       "name": "EmailServicesFunction",
-      "suffix": "",
+      "suffix": null,
       "directoryName": "emailservices",
       "inFolder": false
     },
@@ -1643,6 +1670,20 @@
       "suffix": "callCoachingMediaProvider",
       "directoryName": "callCoachingMediaProviders",
       "inFolder": false
+    },
+    "customindex": {
+      "id": "customindex",
+      "name": "CustomIndex",
+      "suffix": "indx",
+      "directoryName": "customindex",
+      "inFolder": false
+    },
+    "entityimplements": {
+      "id": "entityimplements",
+      "name": "EntityImplements",
+      "suffix": "entityImplements",
+      "directoryName": "entityImplements",
+      "inFolder": false
     }
   },
   "suffixes": {
@@ -1832,7 +1873,9 @@
     "managedContentType": "managedcontenttype",
     "paymentGatewayProvider": "paymentgatewayprovider",
     "EmbeddedServiceMenuSettings": "embeddedservicemenusettings",
-    "callCoachingMediaProvider": "callcoachingmediaprovider"
+    "callCoachingMediaProvider": "callcoachingmediaprovider",
+    "indx": "customindex",
+    "entityImplements": "entityimplements"
   },
   "strictTypeFolder": {
     "experiences": "experiencebundle",
@@ -1843,7 +1886,8 @@
     "objects": "customobject",
     "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
-    "sites": "customsite"
+    "sites": "customsite",
+    "emailservices": "emailservicesfunction"
   },
   "strategies": {
     "apexclass": {
@@ -1907,5 +1951,5 @@
       "adapter": "bundle"
     }
   },
-  "apiVersion": "49.0"
+  "apiVersion": "50.0"
 }

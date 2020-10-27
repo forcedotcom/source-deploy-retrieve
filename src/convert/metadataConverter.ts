@@ -11,7 +11,7 @@ import {
   DirectoryConfig,
   ZipConfig,
 } from './types';
-import { ManifestGenerator, RegistryAccess, SourceComponent } from '../metadata-registry';
+import { ManifestGenerator, MetadataResolver, SourceComponent } from '../metadata-registry';
 import { promises } from 'fs';
 import { dirname, join } from 'path';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
@@ -30,9 +30,9 @@ export class MetadataConverter {
   public static readonly PACKAGE_XML_FILE = 'package.xml';
   public static readonly DEFAULT_PACKAGE_PREFIX = 'metadataPackage';
 
-  private registryAccess: RegistryAccess;
+  private registryAccess: MetadataResolver;
 
-  constructor(registryAccess = new RegistryAccess()) {
+  constructor(registryAccess = new MetadataResolver()) {
     this.registryAccess = registryAccess;
   }
 

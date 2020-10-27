@@ -19,7 +19,7 @@ import { registryData } from '.';
 /**
  * Resolver for metadata type and component objects.
  */
-export class RegistryAccess {
+export class MetadataResolver {
   public readonly registry: MetadataRegistry;
   private forceIgnore: ForceIgnore;
   private sourceAdapterFactory: SourceAdapterFactory;

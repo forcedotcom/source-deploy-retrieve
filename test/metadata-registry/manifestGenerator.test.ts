@@ -7,7 +7,7 @@
 
 import { ManifestGenerator } from '../../src/metadata-registry/manifestGenerator';
 import { expect } from 'chai';
-import { RegistryAccess, SourceComponent, registryData } from '../../src/metadata-registry';
+import { MetadataResolver, SourceComponent, registryData } from '../../src/metadata-registry';
 import { SinonSandbox, createSandbox } from 'sinon';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -16,7 +16,7 @@ import { fail } from 'assert';
 describe('ManifestGenerator', () => {
   let sandboxStub: SinonSandbox;
   const manifestGenerator = new ManifestGenerator();
-  const registryAccess = new RegistryAccess();
+  const registryAccess = new MetadataResolver();
   const apiVersion = registryAccess.getApiVersion();
 
   beforeEach(async () => {
@@ -141,7 +141,7 @@ describe('ManifestGenerator', () => {
   ];
 
   it('should successfully create a manifest with a sourcepath', () => {
-    const registryAccess = new RegistryAccess();
+    const registryAccess = new MetadataResolver();
     sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(mdComponents);
     const manifestGenerator = new ManifestGenerator(registryAccess);
     const writeFileStub = sandboxStub.stub(fs, 'writeFileSync');
@@ -156,7 +156,7 @@ describe('ManifestGenerator', () => {
   });
 
   it('should throw error when handling unexpected errors on creating a manifest with a sourcepath', () => {
-    const registryAccess = new RegistryAccess();
+    const registryAccess = new MetadataResolver();
     sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(mdComponents);
     const manifestGenerator = new ManifestGenerator(registryAccess);
     const writeFileStub = sandboxStub.stub(fs, 'writeFileSync');

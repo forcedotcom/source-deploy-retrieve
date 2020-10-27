@@ -24,7 +24,7 @@ import {
 } from './types';
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { DeployError, RetrieveError } from '../errors';
-import { ManifestGenerator, RegistryAccess, SourceComponent } from '../metadata-registry';
+import { ManifestGenerator, MetadataResolver, SourceComponent } from '../metadata-registry';
 import { DiagnosticUtil } from './diagnosticUtil';
 import { SourcePath } from '../common';
 import { parse } from 'fast-xml-parser';
@@ -96,7 +96,7 @@ export class MetadataApi extends BaseApi {
     const retrieveResult = await this.getRetrievedResult(retrieveRequest, options);
     if (retrieveResult.status === RetrieveStatus.Succeeded) {
       const tree = await ZipTreeContainer.create(Buffer.from(retrieveResult.zipFile, 'base64'));
-      const zipComponents = new RegistryAccess(undefined, tree).getComponentsFromPath('.');
+      const zipComponents = new MetadataResolver(undefined, tree).getComponentsFromPath('.');
       components = await this.getConvertedComponents(zipComponents, options);
     }
 

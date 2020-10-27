@@ -6,7 +6,7 @@
  */
 
 import { MetadataComponent, XML_DECL } from '../common';
-import { RegistryAccess } from './registryAccess';
+import { MetadataResolver } from './metadataResolver';
 import { RegistryError } from '../errors';
 import { SourceComponent } from './sourceComponent';
 import { writeFileSync } from 'fs';
@@ -14,9 +14,9 @@ import { writeFileSync } from 'fs';
 export class ManifestGenerator {
   private packageModuleStart = '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
   private packageModuleEnd = '</Package>';
-  private registryAccess: RegistryAccess;
+  private registryAccess: MetadataResolver;
 
-  constructor(registryAccess = new RegistryAccess()) {
+  constructor(registryAccess = new MetadataResolver()) {
     this.registryAccess = registryAccess;
   }
 

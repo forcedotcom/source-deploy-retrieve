@@ -15,6 +15,7 @@ import { SourceComponent } from './sourceComponent';
 import { MetadataType, SourcePath } from '../common';
 import { NodeFSTreeContainer } from './treeContainers';
 import { registryData } from '.';
+import { RegistryAccess } from './registryAccess';
 
 /**
  * Resolver for metadata type and component objects.
@@ -24,32 +25,24 @@ export class MetadataResolver {
   private forceIgnore: ForceIgnore;
   private sourceAdapterFactory: SourceAdapterFactory;
   private tree: TreeContainer;
+  private registryAccess: RegistryAccess;
 
   /**
    * @param registry Custom registry data
    * @param tree `TreeContainer` to traverse with
    */
-  constructor(registry?: MetadataRegistry, tree: TreeContainer = new NodeFSTreeContainer()) {
+  constructor(
+    registry: MetadataRegistry = registryData,
+    tree: TreeContainer = new NodeFSTreeContainer()
+  ) {
     this.registry = registry
       ? // deep freeze a copy, not the original object
         deepFreeze(JSON.parse(JSON.stringify(registry)) as MetadataRegistry)
       : // registryData is already frozen
         registryData;
+    this.registryAccess = new RegistryAccess(registry);
     this.tree = tree;
     this.sourceAdapterFactory = new SourceAdapterFactory(this.registry, tree);
-  }
-
-  /**
-   * Get a metadata type definition.
-   *
-   * @param name Name of the metadata type
-   */
-  public getTypeFromName(name: string): MetadataType {
-    const lower = name.toLowerCase().replace(/ /g, '');
-    if (!this.registry.types[lower]) {
-      throw new TypeInferenceError('error_missing_type_definition', lower);
-    }
-    return this.registry.types[lower];
   }
 
   /**
@@ -144,47 +137,47 @@ export class MetadataResolver {
   }
 
   private resolveType(fsPath: SourcePath): MetadataType | undefined {
-    let typeId: string;
+    let resolvedType: MetadataType;
 
     // attempt 1 - check if the file is part of a component that requires a strict type folder
     const pathParts = new Set(fsPath.split(sep));
-    for (const directoryName of Object.keys(this.registry.strictTypeFolder)) {
-      if (pathParts.has(directoryName)) {
-        typeId = this.registry.strictTypeFolder[directoryName];
+    for (const type of this.registryAccess.getStrictFolderTypes()) {
+      if (pathParts.has(type.directoryName)) {
         // types with folders only have folder components living at the top level.
         // if the fsPath is a folder component, let a future strategy deal with it
-        const isFolderType = this.getTypeFromName(typeId).inFolder;
-        if (isFolderType && parentName(fsPath) === directoryName) {
-          typeId = undefined;
+        // const isFolderType = this.getTypeFromName(typeId).inFolder;
+        if (!type.inFolder || parentName(fsPath) !== type.directoryName) {
+          resolvedType = type;
         }
         break;
       }
     }
+
     // attempt 2 - check if it's a metadata xml file
-    if (!typeId) {
+    if (!resolvedType) {
       const parsedMetaXml = parseMetadataXml(fsPath);
       if (parsedMetaXml) {
-        typeId = this.registry.suffixes[parsedMetaXml.suffix];
+        resolvedType = this.registryAccess.getTypeBySuffix(parsedMetaXml.suffix);
       }
     }
+
     // attempt 2.5 - test for a folder style xml file
-    if (!typeId) {
+    if (!resolvedType) {
       const metadataFolder = this.parseAsFolderMetadataXml(fsPath);
       if (metadataFolder) {
         // multiple matching directories may exist - folder components are not 'inFolder'
-        typeId = Object.values(this.registry.types).find(
-          (d) => d.directoryName === metadataFolder && !d.inFolder
-        )?.id;
+        resolvedType = this.registryAccess.findType(
+          (type) => type.directoryName === metadataFolder && !type.inFolder
+        );
       }
     }
+
     // attempt 3 - try treating the file extension name as a suffix
-    if (!typeId) {
-      typeId = this.registry.suffixes[extName(fsPath)];
+    if (!resolvedType) {
+      resolvedType = this.registryAccess.getTypeBySuffix(extName(fsPath));
     }
 
-    if (typeId) {
-      return this.getTypeFromName(typeId);
-    }
+    return resolvedType;
   }
 
   /**

@@ -20,8 +20,8 @@ const context = {
   MetadataResolver: MetadataResolver,
   MetadataConverter: MetadataConverter,
   resolve: (path) => {
-    const registryAccess = new MetadataResolver();
-    return registryAccess.getComponentsFromPath(path);
+    const resolver = new MetadataResolver();
+    return resolver.getComponentsFromPath(path);
   },
   convert: async (components, targetFormat, outputConfig) => {
     converter = new MetadataConverter();

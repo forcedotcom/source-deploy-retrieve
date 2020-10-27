@@ -24,7 +24,7 @@ describe('Tooling API tests', () => {
   const testData = new MockTestOrgData();
   let mockConnection: Connection;
   let sandboxStub: SinonSandbox;
-  const registryAccess = new MetadataResolver();
+  const resolver = new MetadataResolver();
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
@@ -43,7 +43,7 @@ describe('Tooling API tests', () => {
   });
 
   it('should go ahead with deploy for supported types', async () => {
-    const deployLibrary = new ToolingApi(mockConnection, registryAccess);
+    const deployLibrary = new ToolingApi(mockConnection, resolver);
     const component = new SourceComponent({
       type: registryData.types.apexclass,
       name: 'myTestClass',
@@ -78,7 +78,7 @@ describe('Tooling API tests', () => {
         xml: '',
       }),
     ]);
-    const deployLibrary = new ToolingApi(mockConnection, registryAccess);
+    const deployLibrary = new ToolingApi(mockConnection, resolver);
 
     try {
       await deployLibrary.deployWithPaths('file/path/myTestClass.flexipage');

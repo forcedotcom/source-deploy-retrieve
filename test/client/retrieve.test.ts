@@ -13,7 +13,7 @@ import * as path from 'path';
 import * as stream from 'stream';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ToolingApi } from '../../src/client';
-import { RegistryAccess, SourceComponent, registryData } from '../../src/metadata-registry';
+import { MetadataResolver, SourceComponent, registryData } from '../../src/metadata-registry';
 import { QueryResult, SourceRetrieveResult } from '../../src/client/types';
 import { nls } from '../../src/i18n';
 import { fail } from 'assert';
@@ -21,7 +21,7 @@ import { fail } from 'assert';
 const $$ = testSetup();
 describe('Tooling Retrieve', () => {
   const testData = new MockTestOrgData();
-  const registryAccess = new RegistryAccess();
+  const resolver = new MetadataResolver();
   let mockConnection: Connection;
   let sandboxStub: SinonSandbox;
   let metaXMLFile = '<?xml version="1.0" encoding="UTF-8"?>\n';
@@ -89,7 +89,7 @@ describe('Tooling Retrieve', () => {
   });
 
   it('should generate correct query to retrieve an ApexClass', async () => {
-    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(mdComponents);
+    sandboxStub.stub(resolver, 'getComponentsFromPath').returns(mdComponents);
     const toolingQueryStub = sandboxStub.stub(mockConnection.tooling, 'query');
     // @ts-ignore
     toolingQueryStub.returns(apexClassQueryResult);
@@ -103,7 +103,7 @@ describe('Tooling Retrieve', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     stubCreateMetadataFile.onCall(1).returns(new stream.PassThrough() as any);
 
-    const toolingAPI = new ToolingApi(mockConnection, registryAccess);
+    const toolingAPI = new ToolingApi(mockConnection, resolver);
     const retrieveOpts = {
       paths: [path.join('file', 'path', 'myTestClass.cls')],
       output: path.join('file', 'path'),
@@ -120,7 +120,7 @@ describe('Tooling Retrieve', () => {
   });
 
   it('should generate correct query to retrieve an ApexClass using namespace', async () => {
-    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(mdComponents);
+    sandboxStub.stub(resolver, 'getComponentsFromPath').returns(mdComponents);
     const toolingQueryStub = sandboxStub.stub(mockConnection.tooling, 'query');
     // @ts-ignore
     toolingQueryStub.returns(apexClassQueryResult);
@@ -133,7 +133,7 @@ describe('Tooling Retrieve', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     stubCreateMetadataFile.onCall(1).returns(new stream.PassThrough() as any);
 
-    const toolingAPI = new ToolingApi(mockConnection, registryAccess);
+    const toolingAPI = new ToolingApi(mockConnection, resolver);
     const retrieveOpts = {
       paths: [path.join('file', 'path', 'myTestClass.cls')],
       namespace: 'tstr',
@@ -151,7 +151,7 @@ describe('Tooling Retrieve', () => {
   });
 
   it('should retrieve an ApexClass using filepath', async () => {
-    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(mdComponents);
+    sandboxStub.stub(resolver, 'getComponentsFromPath').returns(mdComponents);
 
     sandboxStub
       .stub(mockConnection.tooling, 'query')
@@ -166,7 +166,7 @@ describe('Tooling Retrieve', () => {
     sandboxStub.stub(fs, 'closeSync');
     sandboxStub.stub(fs, 'openSync');
 
-    const toolingAPI = new ToolingApi(mockConnection, registryAccess);
+    const toolingAPI = new ToolingApi(mockConnection, resolver);
     const retrieveOpts = {
       paths: [path.join('file', 'path', 'myTestClass.cls')],
       output: path.join('file', 'path'),
@@ -205,7 +205,7 @@ describe('Tooling Retrieve', () => {
     sandboxStub.stub(fs, 'closeSync');
     sandboxStub.stub(fs, 'openSync');
 
-    const toolingAPI = new ToolingApi(mockConnection, registryAccess);
+    const toolingAPI = new ToolingApi(mockConnection, resolver);
     const retrieveResults: SourceRetrieveResult = await toolingAPI.retrieve({
       components: mdComponents,
     });
@@ -229,14 +229,14 @@ describe('Tooling Retrieve', () => {
   });
 
   it('should return empty result when metadata is not in org', async () => {
-    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(mdComponents);
+    sandboxStub.stub(resolver, 'getComponentsFromPath').returns(mdComponents);
 
     sandboxStub
       .stub(mockConnection.tooling, 'query')
       // @ts-ignore
       .returns({ done: true, entityTypeName: 'ApexClass', records: [] });
 
-    const toolingAPI = new ToolingApi(mockConnection, registryAccess);
+    const toolingAPI = new ToolingApi(mockConnection, resolver);
     const retrieveOpts = {
       paths: [path.join('file', 'path', 'myTestClass.cls')],
       output: path.join('file', 'path'),
@@ -261,7 +261,7 @@ describe('Tooling Retrieve', () => {
       })
     );
 
-    const toolingAPI = new ToolingApi(mockConnection, registryAccess);
+    const toolingAPI = new ToolingApi(mockConnection, resolver);
 
     try {
       await toolingAPI.retrieve({
@@ -290,7 +290,7 @@ describe('Tooling Retrieve', () => {
       }),
     ];
 
-    const toolingAPI = new ToolingApi(mockConnection, registryAccess);
+    const toolingAPI = new ToolingApi(mockConnection, resolver);
 
     try {
       await toolingAPI.retrieve({

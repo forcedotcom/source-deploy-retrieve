@@ -7,7 +7,7 @@
 
 import { ManifestGenerator } from '../../src/metadata-registry/manifestGenerator';
 import { expect } from 'chai';
-import { RegistryAccess, SourceComponent, registryData } from '../../src/metadata-registry';
+import { MetadataResolver, SourceComponent, registryData } from '../../src/metadata-registry';
 import { SinonSandbox, createSandbox } from 'sinon';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -16,8 +16,8 @@ import { fail } from 'assert';
 describe('ManifestGenerator', () => {
   let sandboxStub: SinonSandbox;
   const manifestGenerator = new ManifestGenerator();
-  const registryAccess = new RegistryAccess();
-  const apiVersion = registryAccess.getApiVersion();
+  const resolver = new MetadataResolver();
+  const apiVersion = resolver.getApiVersion();
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
@@ -141,9 +141,9 @@ describe('ManifestGenerator', () => {
   ];
 
   it('should successfully create a manifest with a sourcepath', () => {
-    const registryAccess = new RegistryAccess();
-    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(mdComponents);
-    const manifestGenerator = new ManifestGenerator(registryAccess);
+    const resolver = new MetadataResolver();
+    sandboxStub.stub(resolver, 'getComponentsFromPath').returns(mdComponents);
+    const manifestGenerator = new ManifestGenerator(resolver);
     const writeFileStub = sandboxStub.stub(fs, 'writeFileSync');
     manifestGenerator.createManifestFromPath(
       path.join('file', 'path', 'myTestClass.cls-meta.xml'),
@@ -156,9 +156,9 @@ describe('ManifestGenerator', () => {
   });
 
   it('should throw error when handling unexpected errors on creating a manifest with a sourcepath', () => {
-    const registryAccess = new RegistryAccess();
-    sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns(mdComponents);
-    const manifestGenerator = new ManifestGenerator(registryAccess);
+    const resolver = new MetadataResolver();
+    sandboxStub.stub(resolver, 'getComponentsFromPath').returns(mdComponents);
+    const manifestGenerator = new ManifestGenerator(resolver);
     const writeFileStub = sandboxStub.stub(fs, 'writeFileSync');
     writeFileStub.onCall(0).throwsException('Unexpected error when creating file');
     const filePath = path.join(rootPath, 'myTestClass.cls-meta.xml');

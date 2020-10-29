@@ -7,7 +7,7 @@
 import { MetadataConverter } from '../../src/convert';
 import { createSandbox, SinonStub } from 'sinon';
 import { kathy, mockRegistry } from '../mock/registry';
-import { ManifestGenerator, RegistryAccess, registryData } from '../../src/metadata-registry';
+import { ManifestGenerator, MetadataResolver, registryData } from '../../src/metadata-registry';
 import * as streams from '../../src/convert/streams';
 import * as fs from 'fs';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
@@ -25,8 +25,8 @@ describe('MetadataConverter', () => {
   let pipelineStub: SinonStub;
   let writeFileStub: SinonStub;
 
-  const mockRegistryAccess = new RegistryAccess(mockRegistry);
-  const converter = new MetadataConverter(mockRegistryAccess);
+  const mockMetadataResolver = new MetadataResolver(mockRegistry);
+  const converter = new MetadataConverter(mockMetadataResolver);
   const components = kathy.KATHY_COMPONENTS;
   const packageName = 'test';
   const outputDirectory = join('path', 'to', 'output');
@@ -50,10 +50,10 @@ describe('MetadataConverter', () => {
 
   afterEach(() => env.restore());
 
-  it('should initialize with default RegistryAccess by default', () => {
+  it('should initialize with default MetadataResolver by default', () => {
     const defaultConverter = new MetadataConverter();
-    // @ts-ignore registryAccess private
-    expect(defaultConverter.registryAccess.registry).to.deep.equal(registryData);
+    // @ts-ignore resolver private
+    expect(defaultConverter.resolver.registry).to.deep.equal(registryData);
   });
 
   it('should generate package name using timestamp when option omitted', async () => {
@@ -131,7 +131,9 @@ describe('MetadataConverter', () => {
         `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`
       );
       env.stub(Date, 'now').returns(timestamp);
-      const expectedContents = new ManifestGenerator(mockRegistryAccess).createManifest(components);
+      const expectedContents = new ManifestGenerator(mockMetadataResolver).createManifest(
+        components
+      );
 
       await converter.convert(components, 'metadata', { type: 'directory', outputDirectory });
 
@@ -205,7 +207,9 @@ describe('MetadataConverter', () => {
     });
 
     it('should write manifest for metadata format conversion', async () => {
-      const expectedContents = new ManifestGenerator(mockRegistryAccess).createManifest(components);
+      const expectedContents = new ManifestGenerator(mockMetadataResolver).createManifest(
+        components
+      );
       const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
 
       await converter.convert(components, 'metadata', { type: 'zip' });

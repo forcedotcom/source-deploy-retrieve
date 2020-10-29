@@ -14,6 +14,7 @@ export {
   RetrieveOptions,
   RetrievePathOptions,
   SourceDeployResult,
+  RetrieveMessage,
   SourceRetrieveResult,
   ToolingDeployOptions,
   ToolingDeployStatus,

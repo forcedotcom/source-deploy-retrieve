@@ -276,11 +276,11 @@ export interface DeployRetrieveClient {
 
 export abstract class BaseApi implements DeployRetrieveClient {
   protected connection: Connection;
-  protected registry: MetadataResolver;
+  protected resolver: MetadataResolver;
 
-  constructor(connection: Connection, registry: MetadataResolver) {
+  constructor(connection: Connection, resolver: MetadataResolver) {
     this.connection = connection;
-    this.registry = registry;
+    this.resolver = resolver;
   }
 
   /**

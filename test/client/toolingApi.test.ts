@@ -9,7 +9,7 @@ import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import { createSandbox, SinonSandbox } from 'sinon';
-import { RegistryAccess, registryData, SourceComponent } from '../../src/metadata-registry';
+import { MetadataResolver, registryData, SourceComponent } from '../../src/metadata-registry';
 import { ComponentStatus, ToolingApi, ToolingDeployStatus } from '../../src/client';
 import { ContainerDeploy } from '../../src/client/deployStrategies';
 import { nls } from '../../src/i18n';
@@ -24,7 +24,7 @@ describe('Tooling API tests', () => {
   const testData = new MockTestOrgData();
   let mockConnection: Connection;
   let sandboxStub: SinonSandbox;
-  const registryAccess = new RegistryAccess();
+  const resolver = new MetadataResolver();
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
@@ -43,14 +43,14 @@ describe('Tooling API tests', () => {
   });
 
   it('should go ahead with deploy for supported types', async () => {
-    const deployLibrary = new ToolingApi(mockConnection, registryAccess);
+    const deployLibrary = new ToolingApi(mockConnection, resolver);
     const component = new SourceComponent({
       type: registryData.types.apexclass,
       name: 'myTestClass',
       xml: 'myTestClass.cls-meta.xml',
       content: 'file/path/myTestClass.cls',
     });
-    sandboxStub.stub(RegistryAccess.prototype, 'getComponentsFromPath').returns([component]);
+    sandboxStub.stub(MetadataResolver.prototype, 'getComponentsFromPath').returns([component]);
     sandboxStub.stub(ContainerDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const mockContainerDeploy = sandboxStub.stub(ContainerDeploy.prototype, 'deploy').resolves({
       id: '123',
@@ -71,14 +71,14 @@ describe('Tooling API tests', () => {
   });
 
   it('should exit deploy for unsupported types', async () => {
-    sandboxStub.stub(RegistryAccess.prototype, 'getComponentsFromPath').returns([
+    sandboxStub.stub(MetadataResolver.prototype, 'getComponentsFromPath').returns([
       new SourceComponent({
         type: registryData.types.flexipage,
         name: '',
         xml: '',
       }),
     ]);
-    const deployLibrary = new ToolingApi(mockConnection, registryAccess);
+    const deployLibrary = new ToolingApi(mockConnection, resolver);
 
     try {
       await deployLibrary.deployWithPaths('file/path/myTestClass.flexipage');

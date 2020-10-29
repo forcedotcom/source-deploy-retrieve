@@ -10,7 +10,7 @@ import { ForceIgnore } from '../../src/metadata-registry/forceIgnore';
 import { SourceAdapterFactory } from '../../src/metadata-registry/adapters/sourceAdapterFactory';
 import { VirtualTreeContainer } from '../../src/metadata-registry/treeContainers';
 import { mockRegistry } from '../mock/registry';
-import { RegistryAccess, SourceComponent } from '../../src/metadata-registry';
+import { MetadataResolver, SourceComponent } from '../../src/metadata-registry';
 import { MetadataType, SourcePath } from '../../src/common';
 
 export class RegistryTestUtil {
@@ -24,8 +24,8 @@ export class RegistryTestUtil {
     this.env.restore();
   }
 
-  public createRegistryAccess(virtualFS: VirtualDirectory[]): RegistryAccess {
-    return new RegistryAccess(mockRegistry, new VirtualTreeContainer(virtualFS));
+  public createMetadataResolver(virtualFS: VirtualDirectory[]): MetadataResolver {
+    return new MetadataResolver(mockRegistry, new VirtualTreeContainer(virtualFS));
   }
 
   public stubAdapters(

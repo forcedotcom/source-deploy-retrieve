@@ -176,7 +176,7 @@ export const mockRegistry = {
     },
   },
   apiVersion: '48.0',
-};
+} as MetadataRegistry;
 
 import * as keanu from './keanuConstants';
 import * as kathy from './kathyConstants';
@@ -187,6 +187,7 @@ import * as gene from './geneConstants';
 import * as regina from './reginaConstants';
 import * as sean from './seanConstants';
 import * as decomposedtoplevel from './decomposedTopLevelConstants';
+import { MetadataRegistry } from '../../../src/metadata-registry';
 export { kathy, keanu, simon, taraji, tina, gene, regina, sean, decomposedtoplevel };
 
 // Mixed content

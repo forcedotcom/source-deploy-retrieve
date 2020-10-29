@@ -2,7 +2,7 @@
 
 const repl = require('repl');
 const { Connection, AuthInfo } = require('@salesforce/core');
-const { RegistryAccess, MetadataConverter, SourceClient } = require('../lib/src');
+const { MetadataResolver, MetadataConverter, SourceClient } = require('../lib/src');
 
 const startMessage = `
 Usage:
@@ -17,11 +17,11 @@ const replServer = repl.start({ breakEvalOnSigint: true });
 replServer.setupHistory('.repl_history', (err, repl) => {});
 
 const context = {
-  RegistryAccess: RegistryAccess,
+  MetadataResolver: MetadataResolver,
   MetadataConverter: MetadataConverter,
   resolve: (path) => {
-    const registryAccess = new RegistryAccess();
-    return registryAccess.getComponentsFromPath(path);
+    const resolver = new MetadataResolver();
+    return resolver.getComponentsFromPath(path);
   },
   convert: async (components, targetFormat, outputConfig) => {
     converter = new MetadataConverter();

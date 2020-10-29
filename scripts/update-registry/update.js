@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const deepmerge = require('deepmerge');
 
-function initializeChildRegistry(type, childNames, registry) {
+function initializeChildRegistry(type, childNames) {
   if (!type.children) type.children = {};
   if (!type.children.types) type.children.types = {};
   if (!type.children.suffixes) type.children.suffixes = {};
@@ -25,7 +25,6 @@ function initializeChildRegistry(type, childNames, registry) {
     type.children.types[childTypeId] = childType;
     type.children.suffixes[childType.suffix] = childTypeId;
     type.children.directories[childType.directoryName] = childTypeId;
-    registry.childTypes[childTypeId] = type.id;
   }
 }
 
@@ -71,7 +70,7 @@ function update(registry, describeResult) {
     if (type.suffix) {
       registry.suffixes[type.suffix] = typeId;
     } else {
-      registry.strictTypeFolder[type.directoryName] = typeId;
+      registry.strictDirectoryNames[type.directoryName] = typeId;
     }
   }
 }

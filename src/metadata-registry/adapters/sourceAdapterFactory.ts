@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { MetadataRegistry, SourceAdapter, TreeContainer } from '../types';
+import { SourceAdapter, TreeContainer } from '../types';
 import { BundleSourceAdapter } from './bundleSourceAdapter';
 import { DecomposedSourceAdapter } from './decomposedSourceAdapter';
 import { MatchingContentSourceAdapter } from './matchingContentSourceAdapter';
@@ -13,6 +13,7 @@ import { DefaultSourceAdapter } from './defaultSourceAdapter';
 import { RegistryError } from '../../errors';
 import { ForceIgnore } from '../forceIgnore';
 import { MetadataType } from '../../common';
+import { RegistryAccess } from '../registryAccess';
 
 enum AdapterId {
   Bundle = 'bundle',
@@ -22,18 +23,16 @@ enum AdapterId {
 }
 
 export class SourceAdapterFactory {
-  private registry: MetadataRegistry;
+  private registry: RegistryAccess;
   private tree: TreeContainer;
 
-  constructor(registry: MetadataRegistry, tree: TreeContainer) {
+  constructor(registry: RegistryAccess, tree: TreeContainer) {
     this.registry = registry;
     this.tree = tree;
   }
 
   public getAdapter(type: MetadataType, forceIgnore = new ForceIgnore()): SourceAdapter {
-    const adapterId = this.registry.strategies.hasOwnProperty(type.id)
-      ? (this.registry.strategies[type.id].adapter as AdapterId)
-      : undefined;
+    const adapterId = type.strategies?.adapter as AdapterId;
     switch (adapterId) {
       case AdapterId.Bundle:
         return new BundleSourceAdapter(type, this.registry, forceIgnore, this.tree);

@@ -7,12 +7,7 @@
 import { WriteInfo, WriterFormat } from '../types';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { RecompositionFinalizer, ConvertTransaction } from '../convertTransaction';
-import {
-  DecompositionStrategy,
-  MetadataRegistry,
-  registryData,
-  SourceComponent,
-} from '../../metadata-registry';
+import { DecompositionStrategy, RegistryAccess, SourceComponent } from '../../metadata-registry';
 import { JsonMap, AnyJson, JsonArray } from '@salesforce/ts-types';
 import { JsToXml } from '../streams';
 import { join } from 'path';
@@ -32,10 +27,7 @@ interface XmlJson extends JsonMap {
 }
 
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
-  constructor(
-    registry: MetadataRegistry = registryData,
-    convertTransaction = new ConvertTransaction()
-  ) {
+  constructor(registry = new RegistryAccess(), convertTransaction = new ConvertTransaction()) {
     super(registry, convertTransaction);
     this.convertTransaction.addFinalizer(RecompositionFinalizer);
   }
@@ -164,12 +156,9 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     entryType: MetadataType,
     component: SourceComponent
   ): SourcePath {
-    const { type } = component;
-    const strategy = this.registry.strategies[type.id].decomposition as DecompositionStrategy;
-
     let output = `${entryName}.${entryType.suffix}${META_XML_SUFFIX}`;
 
-    if (strategy === DecompositionStrategy.FolderPerType) {
+    if (component.type.strategies.decomposition === DecompositionStrategy.FolderPerType) {
       output = join(entryType.directoryName, output);
     }
 

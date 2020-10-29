@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { MatchingContentSourceAdapter } from '../../../src/metadata-registry/adapters/matchingContentSourceAdapter';
-import { mockRegistry, keanu } from '../../mock/registry';
+import { mockRegistry, keanu, mockRegistryData } from '../../mock/registry';
 import { expect, assert } from 'chai';
 import { ExpectedSourceFilesError, UnexpectedForceIgnore } from '../../../src/errors';
 import { join } from 'path';
@@ -16,7 +16,7 @@ import { KEANU_SOURCE_NAMES, KEANU_XML_NAMES } from '../../mock/registry/keanuCo
 import { SourceComponent } from '../../../src/metadata-registry';
 
 describe('MatchingContentSourceAdapter', () => {
-  const type = mockRegistry.types.keanureeves;
+  const type = mockRegistryData.types.keanureeves;
   const { KEANU_SOURCE_PATHS, KEANU_XML_PATHS, KEANU_COMPONENT, KEANUS_DIR } = keanu;
   const tree = new VirtualTreeContainer([
     {

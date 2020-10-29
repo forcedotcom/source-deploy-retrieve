@@ -12,7 +12,17 @@ import {
   VirtualTreeContainer,
 } from '../../src/metadata-registry';
 import { nls } from '../../src/i18n';
-import { mockRegistry, kathy, keanu, taraji, tina, simon, sean, gene } from '../mock/registry';
+import {
+  mockRegistry,
+  kathy,
+  keanu,
+  taraji,
+  tina,
+  simon,
+  sean,
+  gene,
+  mockRegistryData,
+} from '../mock/registry';
 import { join, basename, dirname } from 'path';
 import { TypeInferenceError } from '../../src/errors';
 import { RegistryTestUtil } from './registryTestUtil';
@@ -37,12 +47,7 @@ import {
 const testUtil = new RegistryTestUtil();
 
 describe('MetadataResolver', () => {
-  const access = new MetadataResolver(mockRegistry);
-
-  it('Should freeze the registry data parameter', () => {
-    expect(Object.isFrozen(access.registry)).to.be.true;
-    expect(Object.isFrozen(mockRegistry)).to.be.false;
-  });
+  const resolver = new MetadataResolver(mockRegistry);
 
   describe('getComponentsFromPath', () => {
     afterEach(() => testUtil.restore());
@@ -52,7 +57,7 @@ describe('MetadataResolver', () => {
         const path = keanu.KEANU_SOURCE_PATHS[0];
 
         assert.throws(
-          () => access.getComponentsFromPath(path),
+          () => resolver.getComponentsFromPath(path),
           TypeInferenceError,
           nls.localize('error_path_not_found', [path])
         );
@@ -68,7 +73,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.keanureeves,
+            type: mockRegistryData.types.keanureeves,
             componentMappings: [
               {
                 path,
@@ -90,7 +95,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.keanureeves,
+            type: mockRegistryData.types.keanureeves,
             componentMappings: [{ path, component: keanu.KEANU_COMPONENT }],
           },
         ]);
@@ -107,7 +112,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.tarajihenson,
+            type: mockRegistryData.types.tarajihenson,
             componentMappings: [{ path, component: taraji.TARAJI_COMPONENT }],
           },
         ]);
@@ -124,7 +129,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.keanureeves,
+            type: mockRegistryData.types.keanureeves,
             componentMappings: [{ path, component: keanu.KEANU_CONTENT_COMPONENT }],
             allowContent: false,
           },
@@ -146,7 +151,7 @@ describe('MetadataResolver', () => {
         }));
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.seanconnerys,
+            type: mockRegistryData.types.seanconnerys,
             componentMappings,
             allowContent: false,
           },
@@ -164,7 +169,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.genewilder,
+            type: mockRegistryData.types.genewilder,
             componentMappings: [
               { path: gene.GENE_FOLDER_XML_PATH, component: gene.GENE_FOLDER_COMPONENT },
             ],
@@ -185,7 +190,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.tinafeyfolder,
+            type: mockRegistryData.types.tinafeyfolder,
             componentMappings: [{ path, component: tina.TINA_FOLDER_COMPONENT }],
           },
         ]);
@@ -218,7 +223,7 @@ describe('MetadataResolver', () => {
         testUtil.stubForceIgnore({ seed: path, deny: [path] });
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.keanureeves,
+            type: mockRegistryData.types.keanureeves,
             // should not be returned
             componentMappings: [{ path, component: keanu.KEANU_COMPONENT }],
           },
@@ -237,7 +242,7 @@ describe('MetadataResolver', () => {
         testUtil.stubForceIgnore({ seed: path, deny: [path] });
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.keanureeves,
+            type: mockRegistryData.types.keanureeves,
             // should not be returned
             componentMappings: [{ path, component: keanu.KEANU_COMPONENT }],
           },
@@ -256,7 +261,7 @@ describe('MetadataResolver', () => {
         testUtil.stubForceIgnore({ seed: path, deny: [path] });
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.genewilder,
+            type: mockRegistryData.types.genewilder,
             // should not be returned
             componentMappings: [
               { path: gene.GENE_FOLDER_XML_PATH, component: gene.GENE_FOLDER_COMPONENT },
@@ -281,7 +286,7 @@ describe('MetadataResolver', () => {
         }));
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.kathybates,
+            type: mockRegistryData.types.kathybates,
             componentMappings,
           },
         ]);
@@ -322,7 +327,7 @@ describe('MetadataResolver', () => {
         const keanuComponent2: SourceComponent = new SourceComponent(
           {
             name: 'b',
-            type: mockRegistry.types.keanureeves,
+            type: mockRegistryData.types.keanureeves,
             xml: keanuXml2,
             content: keanuSrc2,
           },
@@ -331,7 +336,7 @@ describe('MetadataResolver', () => {
         const kathyComponent2 = new SourceComponent(
           {
             name: 'a',
-            type: mockRegistry.types.kathybates,
+            type: mockRegistryData.types.kathybates,
             xml: kathyXml,
           },
           tree
@@ -339,7 +344,7 @@ describe('MetadataResolver', () => {
         const access = new MetadataResolver(mockRegistry, tree);
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.kathybates,
+            type: mockRegistryData.types.kathybates,
             componentMappings: [
               {
                 path: join(KEANUS_DIR, kathy.KATHY_XML_NAMES[0]),
@@ -348,7 +353,7 @@ describe('MetadataResolver', () => {
             ],
           },
           {
-            type: mockRegistry.types.keanureeves,
+            type: mockRegistryData.types.keanureeves,
             componentMappings: [
               {
                 path: keanuXml,
@@ -377,7 +382,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.tinafey,
+            type: mockRegistryData.types.tinafey,
             componentMappings: [
               {
                 path: tina.TINA_XML_PATHS[0],
@@ -410,7 +415,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.tarajihenson,
+            type: mockRegistryData.types.tarajihenson,
             componentMappings: [
               {
                 path: TARAJI_CONTENT_PATH,
@@ -438,7 +443,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.simonpegg,
+            type: mockRegistryData.types.simonpegg,
             componentMappings: [
               { path: simon.SIMON_BUNDLE_PATH, component: SIMON_COMPONENT },
               { path: simon.SIMON_XML_PATH, component: SIMON_COMPONENT },
@@ -460,7 +465,7 @@ describe('MetadataResolver', () => {
         );
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.tarajihenson,
+            type: mockRegistryData.types.tarajihenson,
             componentMappings: [
               { path: TARAJI_CONTENT_PATH, component },
               { path: TARAJI_XML_PATHS[0], component },
@@ -475,7 +480,7 @@ describe('MetadataResolver', () => {
         const access = testUtil.createMetadataResolver(REGINA_VIRTUAL_FS);
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.reginaking,
+            type: mockRegistryData.types.reginaking,
             componentMappings: [
               { path: REGINA_XML_PATH, component: REGINA_COMPONENT },
               { path: REGINA_CHILD_XML_PATH_1, component: REGINA_CHILD_COMPONENT_1 },
@@ -517,7 +522,7 @@ describe('MetadataResolver', () => {
           new SourceComponent(
             {
               name: 'a',
-              type: mockRegistry.types.simonpegg,
+              type: mockRegistryData.types.simonpegg,
               xml: join(simon.SIMON_BUNDLE_PATH, keanu.KEANU_XML_NAMES[0]),
               content: simon.SIMON_BUNDLE_PATH,
             },
@@ -537,7 +542,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistry.types.kathybates,
+            type: mockRegistryData.types.kathybates,
             componentMappings: [
               {
                 path: kathy.KATHY_XML_PATHS[0],

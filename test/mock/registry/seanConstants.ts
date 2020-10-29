@@ -5,11 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { mockRegistry } from '.';
+import { mockRegistryData } from '.';
 import { SourceComponent } from '../../../src/metadata-registry';
 
 // Constants for a type that uses the BaseSourceAdapter and is inFolder
-const type = mockRegistry.types.seanconnerys;
+const type = mockRegistryData.types.seanconnerys;
 
 export const SEAN_DIR = join('path', 'to', 'seans');
 export const SEAN_FOLDER = join(SEAN_DIR, 'A_Folder');

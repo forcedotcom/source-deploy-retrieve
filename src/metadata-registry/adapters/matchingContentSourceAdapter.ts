@@ -38,7 +38,7 @@ export class MatchingContentSourceAdapter extends BaseSourceAdapter {
       if (this.tree.exists(fsPath)) {
         sourcePath = fsPath;
       }
-    } else if (this.fileSuffixIndexed(trigger)) {
+    } else if (this.extensionMatchesType(trigger)) {
       sourcePath = trigger;
     }
 
@@ -56,7 +56,7 @@ export class MatchingContentSourceAdapter extends BaseSourceAdapter {
     return fsPath.slice(0, fsPath.lastIndexOf(META_XML_SUFFIX));
   }
 
-  private fileSuffixIndexed(fsPath: SourcePath): boolean {
-    return !!this.registry.suffixes[extName(fsPath)];
+  private extensionMatchesType(fsPath: SourcePath): boolean {
+    return this.registry.getTypeBySuffix(extName(fsPath)) === this.type;
   }
 }

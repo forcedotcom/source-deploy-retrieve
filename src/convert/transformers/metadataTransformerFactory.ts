@@ -8,22 +8,16 @@ import { RegistryError } from '../../errors';
 import { MetadataTransformer } from '../types';
 import { DefaultMetadataTransformer } from './defaultMetadataTransformer';
 import { SourceComponent } from '../../metadata-registry/sourceComponent';
-import { MetadataRegistry } from '../../metadata-registry';
 import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 import { ConvertTransaction } from '../convertTransaction';
 import { StaticResourceMetadataTransformer } from './staticResourceMetadataTransformer';
-
-const enum TransformerId {
-  Standard = 'standard',
-  Decomposed = 'decomposed',
-  StaticResource = 'staticResource',
-}
+import { RegistryAccess, TransformerStrategy } from '../../metadata-registry';
 
 export class MetadataTransformerFactory {
-  private registry: MetadataRegistry;
+  private registry: RegistryAccess;
   private convertTransaction: ConvertTransaction;
 
-  constructor(registry: MetadataRegistry, convertTransaction = new ConvertTransaction()) {
+  constructor(registry: RegistryAccess, convertTransaction = new ConvertTransaction()) {
     this.registry = registry;
     this.convertTransaction = convertTransaction;
   }
@@ -31,16 +25,14 @@ export class MetadataTransformerFactory {
   public getTransformer(component: SourceComponent): MetadataTransformer {
     // transformer is determined by the parent, if the component has one
     const type = component.parent ? component.parent.type : component.type;
-    const transformerId = this.registry.strategies.hasOwnProperty(type.id)
-      ? (this.registry.strategies[type.id].transformer as TransformerId)
-      : undefined;
+    const transformerId = type.strategies?.transformer;
     switch (transformerId) {
-      case TransformerId.Standard:
+      case TransformerStrategy.Standard:
       case undefined:
         return new DefaultMetadataTransformer(this.registry, this.convertTransaction);
-      case TransformerId.Decomposed:
+      case TransformerStrategy.Decomposed:
         return new DecomposedMetadataTransformer(this.registry, this.convertTransaction);
-      case TransformerId.StaticResource:
+      case TransformerStrategy.StaticResource:
         return new StaticResourceMetadataTransformer(this.registry, this.convertTransaction);
       default:
         throw new RegistryError('error_missing_transformer', [type.name, transformerId]);

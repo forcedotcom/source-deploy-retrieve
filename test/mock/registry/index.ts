@@ -5,8 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
+import { MetadataRegistry, RegistryAccess } from '../../../src/metadata-registry';
 
-export const mockRegistry = {
+export const mockRegistryData = {
   types: {
     kathybates: {
       id: 'kathybates',
@@ -21,30 +22,51 @@ export const mockRegistry = {
       inFolder: false,
       name: 'KeanuReeves',
       suffix: 'keanu',
+      strategies: {
+        adapter: 'matchingContentFile',
+        transformer: 'standard',
+      },
     },
     tinafey: {
       id: 'tinafey',
       directoryName: 'tinas',
       inFolder: true,
       name: 'TinaFey',
+      strictDirectoryName: true,
+      strategies: {
+        adapter: 'mixedContent',
+      },
     },
     dwaynejohnson: {
       id: 'dwaynejohnson',
       directoryName: 'dwaynes',
       inFolder: false,
       name: 'DwayneJohnson',
+      strictDirectoryName: true,
+      strategies: {
+        adapter: 'mixedContent',
+      },
     },
     tarajihenson: {
       id: 'tarajihenson',
       directoryName: 'tarajis',
       inFolder: false,
       name: 'TarajiHenson',
+      strictDirectoryName: true,
+      strategies: {
+        adapter: 'mixedContent',
+      },
     },
     simonpegg: {
       id: 'simonpegg',
       directoryName: 'simons',
       inFolder: false,
       name: 'SimonPegg',
+      strictDirectoryName: true,
+      strategies: {
+        adapter: 'bundle',
+        transformer: 'bundle',
+      },
     },
     tinafeyfolder: {
       id: 'tinafeyfolder',
@@ -59,6 +81,10 @@ export const mockRegistry = {
       inFolder: false,
       name: 'GeneWilder',
       suffix: 'gene',
+      strategies: {
+        adapter: 'badAdapterId',
+        transformer: 'badAdapterId',
+      },
     },
     reginaking: {
       id: 'reginaking',
@@ -66,6 +92,7 @@ export const mockRegistry = {
       inFolder: false,
       name: 'ReginaKing',
       suffix: 'regina',
+      strictDirectoryName: true,
       children: {
         types: {
           x: {
@@ -90,6 +117,11 @@ export const mockRegistry = {
           ys: 'y',
         },
       },
+      strategies: {
+        adapter: 'decomposed',
+        transformer: 'decomposed',
+        decomposition: 'folderPerType',
+      },
     },
     seanconnerys: {
       id: 'seanconnerys',
@@ -111,6 +143,11 @@ export const mockRegistry = {
       inFolder: false,
       name: 'MixedContentSingleFile',
       suffix: 'mixedSingleFile',
+      strictDirectoryName: true,
+      strategies: {
+        adapter: 'mixedContent',
+        transformer: 'staticResource',
+      },
     },
     decomposedtoplevel: {
       id: 'decomposedtoplevel',
@@ -118,6 +155,7 @@ export const mockRegistry = {
       inFolder: false,
       name: 'DecomposedTopLevel',
       suffix: 'dtl',
+      strictDirectoryName: true,
       children: {
         types: {
           g: {
@@ -134,6 +172,11 @@ export const mockRegistry = {
           gs: 'g',
         },
       },
+      strategies: {
+        adapter: 'decomposed',
+        transformer: 'decomposed',
+        decomposition: 'topLevel',
+      },
     },
   },
   suffixes: {
@@ -147,7 +190,7 @@ export const mockRegistry = {
     mixedSingleFile: 'mixedcontentsinglefile',
     dtl: 'decomposedtoplevel',
   },
-  strictTypeFolder: {
+  strictDirectoryNames: {
     dwaynes: 'dwaynejohnson',
     tarajis: 'tarajihenson',
     simons: 'simonpegg',
@@ -156,27 +199,10 @@ export const mockRegistry = {
     mixedSingleFiles: 'mixedcontentsinglefile',
     decomposedTopLevels: 'decomposedtoplevel',
   },
-  strategies: {
-    keanureeves: { adapter: 'matchingContentFile', transformer: 'standard' },
-    tinafey: { adapter: 'mixedContent' },
-    tarajihenson: { adapter: 'mixedContent' },
-    dwaynejohnson: { adapter: 'mixedContent' },
-    simonpegg: { adapter: 'bundle', transformer: 'bundle' },
-    reginaking: {
-      adapter: 'decomposed',
-      transformer: 'decomposed',
-      decomposition: 'folderPerType',
-    },
-    genewilder: { adapter: 'badAdapterId', transformer: 'badAdapterId' },
-    mixedcontentsinglefile: { adapter: 'mixedContent', transformer: 'staticResource' },
-    decomposedtoplevel: {
-      adapter: 'decomposed',
-      transformer: 'decomposed',
-      decomposition: 'topLevel',
-    },
-  },
   apiVersion: '48.0',
 } as MetadataRegistry;
+
+export const mockRegistry = new RegistryAccess(mockRegistryData);
 
 import * as keanu from './keanuConstants';
 import * as kathy from './kathyConstants';
@@ -187,7 +213,6 @@ import * as gene from './geneConstants';
 import * as regina from './reginaConstants';
 import * as sean from './seanConstants';
 import * as decomposedtoplevel from './decomposedTopLevelConstants';
-import { MetadataRegistry } from '../../../src/metadata-registry';
 export { kathy, keanu, simon, taraji, tina, gene, regina, sean, decomposedtoplevel };
 
 // Mixed content

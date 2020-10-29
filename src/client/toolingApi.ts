@@ -46,7 +46,7 @@ export class ToolingApi extends BaseApi {
     return await this.retrieve({
       output: options.output,
       namespace: options.namespace,
-      components: this.registry.getComponentsFromPath(retrievePaths),
+      components: this.resolver.getComponentsFromPath(retrievePaths),
     });
   }
 
@@ -128,6 +128,6 @@ export class ToolingApi extends BaseApi {
     path: SourcePath,
     options?: ToolingDeployOptions
   ): Promise<SourceDeployResult> {
-    return this.deploy(this.registry.getComponentsFromPath(path), options);
+    return this.deploy(this.resolver.getComponentsFromPath(path), options);
   }
 }

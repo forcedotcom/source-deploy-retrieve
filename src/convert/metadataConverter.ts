@@ -11,7 +11,7 @@ import {
   DirectoryConfig,
   ZipConfig,
 } from './types';
-import { ManifestGenerator, MetadataResolver, SourceComponent } from '../metadata-registry';
+import { ManifestGenerator, RegistryAccess, SourceComponent } from '../metadata-registry';
 import { promises } from 'fs';
 import { dirname, join } from 'path';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
@@ -30,10 +30,10 @@ export class MetadataConverter {
   public static readonly PACKAGE_XML_FILE = 'package.xml';
   public static readonly DEFAULT_PACKAGE_PREFIX = 'metadataPackage';
 
-  private resolver: MetadataResolver;
+  private registry: RegistryAccess;
 
-  constructor(resolver = new MetadataResolver()) {
-    this.resolver = resolver;
+  constructor(registry = new RegistryAccess()) {
+    this.registry = registry;
   }
 
   /**
@@ -50,7 +50,7 @@ export class MetadataConverter {
   ): Promise<ConvertResult> {
     try {
       // TODO: evaluate if a builder pattern for manifest creation is more efficient here
-      const manifestGenerator = new ManifestGenerator(this.resolver);
+      const manifestGenerator = new ManifestGenerator(undefined, this.registry);
       const manifestContents = manifestGenerator.createManifest(components);
       const isSource = targetFormat === 'source';
       const tasks = [];
@@ -88,7 +88,7 @@ export class MetadataConverter {
 
       const conversionPipeline = pipeline(
         new ComponentReader(components),
-        new ComponentConverter(targetFormat, this.resolver.registry, undefined, mergeSet),
+        new ComponentConverter(targetFormat, this.registry, undefined, mergeSet),
         writer
       );
       tasks.push(conversionPipeline);

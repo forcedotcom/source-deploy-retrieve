@@ -10,7 +10,7 @@ import { isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
 import { LibraryError } from '../errors';
-import { SourceComponent, MetadataRegistry } from '../metadata-registry';
+import { SourceComponent, RegistryAccess } from '../metadata-registry';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { ComponentSet, SourcePath, XML_DECL } from '../common';
@@ -48,7 +48,7 @@ export class ComponentConverter extends Transform {
 
   constructor(
     targetFormat: SfdxFileFormat,
-    registry: MetadataRegistry,
+    registry: RegistryAccess,
     transaction = new ConvertTransaction(),
     mergeSet?: ComponentSet<SourceComponent>
   ) {

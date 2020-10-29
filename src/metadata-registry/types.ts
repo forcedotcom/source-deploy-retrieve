@@ -31,33 +31,21 @@ export const enum DecompositionStrategy {
   FolderPerType = 'folderPerType',
 }
 
-export type Strategy = {
-  adapter: string;
-  transformer?: string;
-  decomposition?: string;
-};
+export const enum TransformerStrategy {
+  Standard = 'standard',
+  Decomposed = 'decomposed',
+  StaticResource = 'staticResource',
+}
 
 /**
- * Describes the shape of the registry data.
+ * Schema of the registry data.
  */
 export type MetadataRegistry = {
   types: TypeIndex;
   suffixes?: SuffixIndex;
-  /**
-   * Index mapping directoryNames to type ids for types with mixed content.
-   */
-  strictTypeFolder: {
+  strictDirectoryNames: {
     [directoryName: string]: string;
   };
-  /**
-   * SourceAdapter mappings for types that need an explicit definition.
-   */
-  strategies: {
-    [typeId: string]: Strategy;
-  };
-  /**
-   * API Version
-   */
   apiVersion: string;
 };
 

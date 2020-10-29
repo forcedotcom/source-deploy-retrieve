@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { mockRegistry } from '../../mock/registry';
+import { mockRegistry, mockRegistryData } from '../../mock/registry';
 import { DefaultSourceAdapter } from '../../../src/metadata-registry/adapters/defaultSourceAdapter';
 import { expect, assert } from 'chai';
 import { BaseSourceAdapter } from '../../../src/metadata-registry/adapters/baseSourceAdapter';
@@ -29,7 +29,7 @@ class TestChildAdapter extends BaseSourceAdapter {
 describe('BaseSourceAdapter', () => {
   it('Should reformat the fullName for folder types', () => {
     const path = join('path', 'to', 'kathys', 'A_Folder', 'My_Test.kathy-meta.xml');
-    const type = mockRegistry.types.kathybates;
+    const type = mockRegistryData.types.kathybates;
     const adapter = new DefaultSourceAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.deep.equal(
       new SourceComponent({
@@ -42,7 +42,7 @@ describe('BaseSourceAdapter', () => {
 
   it('Should defer parsing metadata xml to child adapter if path is not a metadata xml', () => {
     const path = join('path', 'to', 'dwaynes', 'My_Test.js');
-    const type = mockRegistry.types.dwaynejohnson;
+    const type = mockRegistryData.types.dwaynejohnson;
     const adapter = new TestChildAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.deep.equal(
       new SourceComponent({
@@ -56,7 +56,7 @@ describe('BaseSourceAdapter', () => {
 
   it('Should defer parsing metadata xml to child adapter if path is not a root metadata xml', () => {
     const path = join('path', 'to', 'dwaynes', 'smallDwaynes', 'b.small-meta.xml');
-    const type = mockRegistry.types.dwaynejohnson;
+    const type = mockRegistryData.types.dwaynejohnson;
     const adapter = new TestChildAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.deep.equal(
       new SourceComponent({
@@ -71,7 +71,7 @@ describe('BaseSourceAdapter', () => {
   it('Should throw an error if a metadata xml file is forceignored', () => {
     const testUtil = new RegistryTestUtil();
     const path = join('path', 'to', 'keanus', 'My_Test.keanu-meta.xml');
-    const type = mockRegistry.types.keanureeves;
+    const type = mockRegistryData.types.keanureeves;
     const forceIgnore = testUtil.stubForceIgnore({
       seed: path,
       deny: [path],
@@ -87,7 +87,7 @@ describe('BaseSourceAdapter', () => {
 
   it('Should resolve a folder component', () => {
     const path = join('path', 'to', 'seans', 'My_Test-meta.xml');
-    const type = mockRegistry.types.seanfolder;
+    const type = mockRegistryData.types.seanfolder;
     const adapter = new DefaultSourceAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.deep.equal(
       new SourceComponent({
@@ -100,7 +100,7 @@ describe('BaseSourceAdapter', () => {
 
   it('Should not recognize a content metadata file in the wrong directory', () => {
     const path = join('path', 'to', 'genes', 'My_Test.sean');
-    const type = mockRegistry.types.seanconnerys;
+    const type = mockRegistryData.types.seanconnerys;
     const adapter = new DefaultSourceAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.be.undefined;
   });

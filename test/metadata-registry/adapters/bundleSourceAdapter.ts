@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { mockRegistry, simon } from '../../mock/registry';
+import { mockRegistry, mockRegistryData, simon } from '../../mock/registry';
 import { expect } from 'chai';
 import { BundleSourceAdapter } from '../../../src/metadata-registry/adapters/bundleSourceAdapter';
 import { basename } from 'path';
@@ -21,7 +21,7 @@ describe('BundleSourceAdapter', () => {
     SIMON_DIR,
     SIMON_COMPONENT,
   } = simon;
-  const type = mockRegistry.types.simonpegg;
+  const type = mockRegistryData.types.simonpegg;
   const tree = new VirtualTreeContainer([
     {
       dirPath: SIMON_DIR,

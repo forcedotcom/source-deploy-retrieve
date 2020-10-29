@@ -8,7 +8,7 @@ import { AuthInfo, Connection } from '@salesforce/core';
 import { expect } from 'chai';
 import { MockTestOrgData } from '@salesforce/core/lib/testSetup';
 import { createSandbox, match, SinonStub } from 'sinon';
-import { RegistryAccess, registryData, SourceComponent } from '../../src/metadata-registry';
+import { MetadataResolver, registryData, SourceComponent } from '../../src/metadata-registry';
 import { MetadataApi, DEFAULT_API_OPTIONS } from '../../src/client/metadataApi';
 import { MetadataConverter } from '../../src/convert';
 import { fail } from 'assert';
@@ -34,7 +34,7 @@ describe('Metadata Api', () => {
   let mockConnection: Connection;
   let sandboxStub = createSandbox();
   const testData = new MockTestOrgData();
-  const registryAccess = new RegistryAccess();
+  const resolver = new MetadataResolver();
   const rootPath = path.join('file', 'path');
   const props = {
     name: 'myTestClass',
@@ -89,8 +89,8 @@ describe('Metadata Api', () => {
         username: testData.username,
       }),
     });
-    metadataClient = new MetadataApi(mockConnection, registryAccess);
-    registryStub = sandboxStub.stub(registryAccess, 'getComponentsFromPath').returns([component]);
+    metadataClient = new MetadataApi(mockConnection, resolver);
+    registryStub = sandboxStub.stub(resolver, 'getComponentsFromPath').returns([component]);
     convertStub = sandboxStub
       .stub(MetadataConverter.prototype, 'convert')
       .withArgs(match.any, 'metadata', { type: 'zip' })
@@ -560,7 +560,7 @@ describe('Metadata Api', () => {
     });
 
     it('should correctly format retrieve request', async () => {
-      const apiVersion = registryAccess.getApiVersion();
+      const apiVersion = resolver.getApiVersion();
       const options = {
         components: [component],
         output: outputDir,

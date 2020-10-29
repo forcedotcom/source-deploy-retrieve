@@ -24,7 +24,7 @@ import {
 } from './types';
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { DeployError, RetrieveError } from '../errors';
-import { ManifestGenerator, RegistryAccess, SourceComponent } from '../metadata-registry';
+import { ManifestGenerator, MetadataResolver, SourceComponent } from '../metadata-registry';
 import { DiagnosticUtil } from './diagnosticUtil';
 import { SourcePath } from '../common';
 import { parse } from 'fast-xml-parser';
@@ -67,7 +67,7 @@ export class MetadataApi extends BaseApi {
     paths: SourcePath,
     options?: MetadataDeployOptions
   ): Promise<SourceDeployResult> {
-    const components = this.registry.getComponentsFromPath(paths);
+    const components = this.resolver.getComponentsFromPath(paths);
     return this.deploy(components, options);
   }
 
@@ -75,7 +75,7 @@ export class MetadataApi extends BaseApi {
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult> {
     const allComponents: SourceComponent[] = [];
     for (const filepath of options.paths) {
-      allComponents.push(...this.registry.getComponentsFromPath(filepath));
+      allComponents.push(...this.resolver.getComponentsFromPath(filepath));
     }
 
     const hashedCmps = new Set();
@@ -96,7 +96,7 @@ export class MetadataApi extends BaseApi {
     const retrieveResult = await this.getRetrievedResult(retrieveRequest, options);
     if (retrieveResult.status === RetrieveStatus.Succeeded) {
       const tree = await ZipTreeContainer.create(Buffer.from(retrieveResult.zipFile, 'base64'));
-      const zipComponents = new RegistryAccess(undefined, tree).getComponentsFromPath('.');
+      const zipComponents = new MetadataResolver(undefined, tree).getComponentsFromPath('.');
       components = await this.getConvertedComponents(zipComponents, options);
     }
 
@@ -112,14 +112,14 @@ export class MetadataApi extends BaseApi {
   }
 
   private formatRetrieveRequest(components: SourceComponent[]): RetrieveRequest {
-    const manifestGenerator = new ManifestGenerator(this.registry);
+    const manifestGenerator = new ManifestGenerator(this.resolver);
     const manifest = manifestGenerator.createManifest(components);
     const manifestJson = parse(manifest);
     const packageData = manifestJson.Package;
     delete packageData.$;
 
     const retrieveRequest = {
-      apiVersion: this.registry.getApiVersion(),
+      apiVersion: this.resolver.getApiVersion(),
       unpackaged: packageData,
     };
     return retrieveRequest;
@@ -266,7 +266,7 @@ export class MetadataApi extends BaseApi {
       // TODO: W-8220616: this may return incomplete information about the retrieve
       return options.components;
     }
-    return this.registry.getComponentsFromPath(convertResult.packagePath);
+    return this.resolver.getComponentsFromPath(convertResult.packagePath);
   }
 
   private hashElement(component: SourceComponent): string {

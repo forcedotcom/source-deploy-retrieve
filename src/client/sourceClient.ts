@@ -6,7 +6,7 @@
  */
 import { Connection } from '@salesforce/core';
 import { ToolingApi } from './toolingApi';
-import { RegistryAccess } from '../metadata-registry';
+import { MetadataResolver } from '../metadata-registry';
 import { MetadataApi } from './metadataApi';
 
 /**
@@ -20,9 +20,9 @@ export class SourceClient {
   public readonly tooling: ToolingApi;
   public readonly metadata: MetadataApi;
 
-  constructor(connection: Connection, registry = new RegistryAccess()) {
+  constructor(connection: Connection, resolver = new MetadataResolver()) {
     this.connection = connection;
-    this.tooling = new ToolingApi(connection, registry);
-    this.metadata = new MetadataApi(connection, registry);
+    this.tooling = new ToolingApi(connection, resolver);
+    this.metadata = new MetadataApi(connection, resolver);
   }
 }

@@ -21,7 +21,7 @@ export {
 } from './client';
 export { MetadataConverter, ConvertOutputConfig, ConvertResult } from './convert';
 export {
-  RegistryAccess,
+  MetadataResolver,
   registryData,
   ManifestGenerator,
   BaseTreeContainer,

@@ -7,8 +7,11 @@
 export {
   SourceClient,
   MetadataApiDeployOptions,
+  RetrieveOptions,
   RetrievePathOptions,
   SourceDeployResult,
+  RetrieveMessage,
+  SourceRetrieveResult,
   ToolingDeployOptions,
   ToolingDeployStatus,
   DeployPathOptions,
@@ -27,5 +30,6 @@ export {
   SourceComponent,
   TreeContainer,
   VirtualDirectory,
+  ForceIgnore,
 } from './metadata-registry';
 export { MetadataType, MetadataComponent, SourcePath } from './common';

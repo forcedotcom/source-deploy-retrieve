@@ -1,3 +1,13 @@
+# 1.1.9 - October 28, 2020
+
+## Fixed
+
+- Support API version 50.0 ([PR #189](https://github.com/forcedotcom/source-deploy-retrieve/pull/189))
+
+## Added
+
+- Convert and merge static resources ([PR #186](https://github.com/forcedotcom/source-deploy-retrieve/pull/186))
+
 # 1.1.8 - October 23, 2020
 
 ## Fixed

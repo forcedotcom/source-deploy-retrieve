@@ -11,7 +11,12 @@ import {
   DirectoryConfig,
   ZipConfig,
 } from './types';
-import { ManifestGenerator, RegistryAccess, SourceComponent } from '../metadata-registry';
+import {
+  ManifestGenerator,
+  MetadataResolver,
+  RegistryAccess,
+  SourceComponent,
+} from '../metadata-registry';
 import { promises } from 'fs';
 import { dirname, join } from 'path';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';

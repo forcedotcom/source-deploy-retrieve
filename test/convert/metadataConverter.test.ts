@@ -49,12 +49,6 @@ describe('MetadataConverter', () => {
 
   afterEach(() => env.restore());
 
-  // it('should initialize with default MetadataResolver by default', () => {
-  //   const defaultConverter = new MetadataConverter();
-  //   // @ts-ignore resolver private
-  //   expect(defaultConverter.resolver.registry).to.deep.equal(registryData);
-  // });
-
   it('should generate package name using timestamp when option omitted', async () => {
     const timestamp = 123456;
     const packagePath = join(

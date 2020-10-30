@@ -199,6 +199,11 @@ export const mockRegistryData = {
     mixedSingleFiles: 'mixedcontentsinglefile',
     decomposedTopLevels: 'decomposedtoplevel',
   },
+  childTypes: {
+    x: 'reginaking',
+    y: 'reginaking',
+    g: 'decomposedtoplevel',
+  },
   apiVersion: '48.0',
 } as MetadataRegistry;
 

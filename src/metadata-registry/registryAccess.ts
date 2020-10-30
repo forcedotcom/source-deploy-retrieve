@@ -21,6 +21,15 @@ export class RegistryAccess {
 
   public getTypeByName(name: string): MetadataType {
     const lower = name.toLowerCase().trim();
+    if (this.registry.childTypes[lower]) {
+      const parentTypeId = this.registry.childTypes[lower];
+      const childType = this.registry.types[parentTypeId].children?.types[lower];
+      if (childType) {
+        return childType;
+      }
+      // "[parent type] missing child type definition for id [lower]"
+      throw new RegistryError('');
+    }
     if (!this.registry.types[lower]) {
       throw new RegistryError('error_missing_type_definition', lower);
     }

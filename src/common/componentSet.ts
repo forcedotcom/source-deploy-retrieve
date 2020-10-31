@@ -37,6 +37,10 @@ export class ComponentSet<T extends MetadataComponent> {
     return this.map.values();
   }
 
+  get size(): number {
+    return this.map.size;
+  }
+
   private key(component: MetadataComponent): string {
     return `${component.type.id}.${component.fullName}`;
   }

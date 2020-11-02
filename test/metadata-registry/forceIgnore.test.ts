@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { ForceIgnore } from '../../src/metadata-registry/forceIgnore';
+import { ForceIgnore } from '../../src/metadata-registry';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import * as fs from 'fs';
@@ -45,7 +45,7 @@ describe('ForceIgnore', () => {
     expect(forceIgnore.accepts(testPath)).to.be.false;
   });
 
-  it('should send telemetry event when the old parser and the new parser have different results', () => {
+  it('should send telemetry event when the old parser and the new parser have different results testing old parser', () => {
     const readStub = env.stub(fs, 'readFileSync');
     readStub.withArgs(forceIgnorePath).returns(testPattern);
     const forceIgnore = new ForceIgnore(forceIgnorePath);
@@ -54,23 +54,41 @@ describe('ForceIgnore', () => {
 
     const expected = {
       eventName: 'FORCE_IGNORE_DIFFERENCE',
-      content:
-        '**/__tests__/**\n**/*.dup\n**/.*\n**/package2-descriptor.json\n**/package2-manifest.json',
+      content: testPattern,
       oldLibraryResults: false,
       newLibraryResults: true,
-      ignoreLines: [
-        '**/__tests__/**',
-        '**/*.dup',
-        '**/.*',
-        '**/package2-descriptor.json',
-        '**/package2-manifest.json',
-      ],
+      ignoreLines: [testPattern],
       file,
     };
 
     const telemetrySpy = env.spy(Lifecycle.prototype, 'emit');
     // @ts-ignore call the private method directly to avoid excessive stubbing
-    forceIgnore.resolveConflict(true, false, testPath);
+    forceIgnore.resolveConflict(true, false, testPattern, file);
+    expect(telemetrySpy.calledOnce).to.be.true;
+    expect(telemetrySpy.args[0][0]).to.equal('telemetry');
+    expect(telemetrySpy.args[0][1]).to.deep.equal(expected);
+  });
+
+  it('should send telemetry event when the old parser and the new parser have different results testing new parser', () => {
+    const readStub = env.stub(fs, 'readFileSync');
+    const switchParser = '# .forceignore v2';
+    readStub.withArgs(forceIgnorePath).returns(testPattern + '\n' + switchParser);
+    const forceIgnore = new ForceIgnore(forceIgnorePath);
+
+    const file = join('some', 'path', '__tests__', 'myTest.x');
+
+    const expected = {
+      eventName: 'FORCE_IGNORE_DIFFERENCE',
+      content: testPattern,
+      oldLibraryResults: false,
+      newLibraryResults: true,
+      ignoreLines: [testPattern, switchParser],
+      file,
+    };
+
+    const telemetrySpy = env.spy(Lifecycle.prototype, 'emit');
+    // @ts-ignore call the private method directly to avoid excessive stubbing
+    forceIgnore.resolveConflict(true, false, testPattern, file);
     expect(telemetrySpy.calledOnce).to.be.true;
     expect(telemetrySpy.args[0][0]).to.equal('telemetry');
     expect(telemetrySpy.args[0][1]).to.deep.equal(expected);
@@ -96,23 +114,30 @@ describe('ForceIgnore', () => {
    * TODO: Rework when approach to default patterns changes. We should be able
    * to generally test the defaults system.
    */
-  describe('Defaults', () => {
+  describe('Defaults with new parser', () => {
     let forceIgnore: ForceIgnore;
     const root = join('some', 'path');
 
     beforeEach(() => {
-      env.stub(fs, 'readFileSync').returns('');
+      // when using the new parser, respect the defaults
+      env.stub(fs, 'readFileSync').returns('# .forceignore v2');
       forceIgnore = new ForceIgnore();
     });
 
     it('Should ignore files starting with a dot', () => {
       const dotPath = join(root, '.xyz');
+      const telemetrySpy = env.spy(Lifecycle.prototype, 'emit');
+      expect(telemetrySpy.called).to.be.false;
+
       expect(forceIgnore.accepts(dotPath)).to.be.false;
       expect(forceIgnore.denies(dotPath)).to.be.true;
     });
 
     it('Should ignore files ending in .dup', () => {
       const dupPath = join(root, 'abc.dup');
+      const telemetrySpy = env.spy(Lifecycle.prototype, 'emit');
+      expect(telemetrySpy.called).to.be.false;
+
       expect(forceIgnore.accepts(dupPath)).to.be.false;
       expect(forceIgnore.denies(dupPath)).to.be.true;
     });
@@ -127,6 +152,43 @@ describe('ForceIgnore', () => {
       const manifestPath = join(root, 'package2-manifest.json');
       expect(forceIgnore.accepts(manifestPath)).to.be.false;
       expect(forceIgnore.denies(manifestPath)).to.be.true;
+    });
+  });
+
+  describe('Defaults with old parser', () => {
+    let forceIgnore: ForceIgnore;
+    const root = join('some', 'path');
+
+    beforeEach(() => {
+      env.stub(fs, 'readFileSync').returns('');
+      forceIgnore = new ForceIgnore();
+    });
+
+    it('Should ignore files starting with a dot', () => {
+      const dotPath = join(root, '.xyz');
+      expect(forceIgnore.accepts(dotPath)).to.be.true;
+      expect(forceIgnore.denies(dotPath)).to.be.false;
+    });
+
+    it('Should ignore files ending in .dup', () => {
+      const dupPath = join(root, 'abc.dup');
+      const telemetrySpy = env.spy(Lifecycle.prototype, 'emit');
+      expect(telemetrySpy.called).to.be.false;
+
+      expect(forceIgnore.accepts(dupPath)).to.be.true;
+      expect(forceIgnore.denies(dupPath)).to.be.false;
+    });
+
+    it('Should ignore files named package2-descriptor.json', () => {
+      const descriptorPath = join(root, 'package2-descriptor.json');
+      expect(forceIgnore.accepts(descriptorPath)).to.be.true;
+      expect(forceIgnore.denies(descriptorPath)).to.be.false;
+    });
+
+    it('Should ignore files named package2-manifest.json', () => {
+      const manifestPath = join(root, 'package2-manifest.json');
+      expect(forceIgnore.accepts(manifestPath)).to.be.true;
+      expect(forceIgnore.denies(manifestPath)).to.be.false;
     });
   });
 });

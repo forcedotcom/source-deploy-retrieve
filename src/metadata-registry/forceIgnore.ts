@@ -6,7 +6,7 @@
  */
 
 import ignore, { Ignore } from 'ignore/index';
-import { relative, join, dirname, sep } from 'path';
+import { dirname, join, relative, sep } from 'path';
 import { readFileSync } from 'fs';
 import { SourcePath } from '../common';
 import { searchUp } from '../utils/fileSystemHandler';
@@ -35,12 +35,11 @@ export class ForceIgnore {
 
   public constructor(forceIgnorePath = '') {
     try {
-      const file = readFileSync(forceIgnorePath, 'utf-8');
-      this.contents = `${file}\n${this.DEFAULT_IGNORE.join('\n')}`;
+      this.contents = readFileSync(forceIgnorePath, 'utf-8');
       // add the default ignore paths, and then parse the .forceignore file
       // DO NOT CALL parseContents FOR THE NEW PARSER
       // the new library handles it's own unix/windows file path separators, let it handle it
-      this.parser = ignore().add(this.contents);
+      this.parser = ignore().add(`${this.contents}\n${this.DEFAULT_IGNORE.join('\n')}`);
       // TODO: START REMOVE AFTER GITIGNORE-PARSER DEPRECATED
       // add the default and send to the old gitignore-parser
       this.gitignoreParser = gitignoreParser.compile(this.parseContents(this.contents));
@@ -81,7 +80,7 @@ export class ForceIgnore {
         denies = this.parser.ignores(relativePath);
         fctResult = this.gitignoreParser.denies(relativePath);
         // send to look for differences, analytics
-        this.resolveConflict(denies, fctResult, this.contents);
+        this.resolveConflict(denies, fctResult, this.contents, relativePath);
       }
       return this.useNewParser ? denies : fctResult;
     } catch (e) {
@@ -99,7 +98,7 @@ export class ForceIgnore {
         accepts = !this.parser.ignores(relativePath);
         fctResult = this.gitignoreParser.accepts(relativePath);
         // send to look for differences, analytics
-        this.resolveConflict(accepts, fctResult, this.contents);
+        this.resolveConflict(accepts, fctResult, this.contents, relativePath);
       }
 
       return this.useNewParser ? accepts : fctResult;
@@ -122,6 +121,7 @@ export class ForceIgnore {
   private resolveConflict(
     newLibraryResults: boolean,
     oldLibraryResults: boolean,
+    content: string,
     file: string
   ): void {
     const ignoreItems = this.contents.split('\n');
@@ -150,7 +150,7 @@ export class ForceIgnore {
       // send analytics, if they exist.
       Lifecycle.getInstance().emit('telemetry', {
         eventName: 'FORCE_IGNORE_DIFFERENCE',
-        content: this.contents,
+        content,
         oldLibraryResults,
         newLibraryResults,
         ignoreLines: this.ignoreLines,

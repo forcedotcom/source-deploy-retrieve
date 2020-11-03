@@ -5,11 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { mockRegistry } from '.';
+import { mockRegistryData } from '.';
 import { SourceComponent } from '../../../src';
 
 // Constants for a matching content file type
-const type = mockRegistry.types.keanureeves;
+const type = mockRegistryData.types.keanureeves;
 
 export const KEANUS_DIR = join('path', 'to', 'keanus');
 export const KEANU_XML_NAMES = ['a.keanu-meta.xml', 'b.keanu-meta.xml'];

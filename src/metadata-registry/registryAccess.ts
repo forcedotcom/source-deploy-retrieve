@@ -43,7 +43,7 @@ export class RegistryAccess {
    * their assigned directory name.
    */
   public getStrictFolderTypes(): MetadataType[] {
-    return Object.values(this.registry.strictTypeFolder).map(
+    return Object.values(this.registry.strictDirectoryNames).map(
       (typeId) => this.registry.types[typeId]
     );
   }

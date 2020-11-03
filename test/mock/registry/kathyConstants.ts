@@ -5,11 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { mockRegistry } from '.';
+import { mockRegistryData } from '.';
 import { SourceComponent } from '../../../src';
 
 // Constants for a type that uses the BaseSourceAdapter and is inFolder
-const type = mockRegistry.types.kathybates;
+const type = mockRegistryData.types.kathybates;
 
 export const KATHYS_DIR = join('path', 'to', 'kathys');
 export const KATHY_FOLDER = join(KATHYS_DIR, 'A_Folder');

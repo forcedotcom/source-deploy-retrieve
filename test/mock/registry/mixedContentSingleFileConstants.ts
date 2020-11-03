@@ -5,10 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { mockRegistry } from '.';
+import { mockRegistryData } from '.';
 import { SourceComponent } from '../../../src';
 
-const type = mockRegistry.types.mixedcontentsinglefile;
+const type = mockRegistryData.types.mixedcontentsinglefile;
 
 export const MC_SINGLE_FILE_DIR = join('path', 'to', 'mixedSingleFiles');
 export const MC_SINGLE_FILE_XML_NAMES = ['a.mixedSingleFile-meta.xml'];

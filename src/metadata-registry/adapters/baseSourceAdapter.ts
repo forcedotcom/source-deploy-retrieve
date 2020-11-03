@@ -4,9 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SourceAdapter, MetadataRegistry, MetadataXml, TreeContainer } from '../types';
+import { SourceAdapter, MetadataXml, TreeContainer } from '../types';
 import { parseMetadataXml } from '../../utils/registry';
-import * as registryData from '../data/registry.json';
 import { UnexpectedForceIgnore } from '../../errors';
 import { parentName } from '../../utils/path';
 import { ForceIgnore } from '../forceIgnore';
@@ -14,10 +13,11 @@ import { dirname, basename, sep } from 'path';
 import { NodeFSTreeContainer } from '../treeContainers';
 import { SourceComponent } from '../sourceComponent';
 import { MetadataType, SourcePath } from '../../common';
+import { RegistryAccess } from '../registryAccess';
 
 export abstract class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;
-  protected registry: MetadataRegistry;
+  protected registry: RegistryAccess;
   protected forceIgnore: ForceIgnore;
   protected tree: TreeContainer;
 
@@ -30,7 +30,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
 
   constructor(
     type: MetadataType,
-    registry: MetadataRegistry = registryData,
+    registry = new RegistryAccess(),
     forceIgnore: ForceIgnore = new ForceIgnore(),
     tree: TreeContainer = new NodeFSTreeContainer()
   ) {
@@ -89,8 +89,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     const metaXml = parseMetadataXml(path);
     if (metaXml) {
       let isRootMetadataXml = false;
-      const requireStrictParent = !!this.registry.strictTypeFolder[this.type.directoryName];
-      if (requireStrictParent) {
+      if (this.type.strictDirectoryName) {
         const parentPath = dirname(path);
         const typeDirName = basename(this.type.inFolder ? dirname(parentPath) : parentPath);
         const nameMatchesParent = basename(parentPath) === metaXml.fullName;

@@ -7,26 +7,26 @@
 import { expect } from 'chai';
 import { MetadataComponent, SourceComponent } from '../../src';
 import { ComponentSet } from '../../src/common';
-import { mockRegistry } from '../mock/registry';
+import { mockRegistryData } from '../mock/registry';
 
 describe('ComponentSet', () => {
   const dupeComponent: MetadataComponent = {
     fullName: 'TestDupe',
-    type: mockRegistry.types.mixedcontentsinglefile,
+    type: mockRegistryData.types.mixedcontentsinglefile,
   };
   const sourceComponents = [
     new SourceComponent({
       name: 'TestDupe',
-      type: mockRegistry.types.mixedcontentsinglefile,
+      type: mockRegistryData.types.mixedcontentsinglefile,
     }),
     // creating a copy to ensure it is deduped
     new SourceComponent({
       name: 'TestDupe',
-      type: mockRegistry.types.mixedcontentsinglefile,
+      type: mockRegistryData.types.mixedcontentsinglefile,
     }),
     new SourceComponent({
       name: 'Test2',
-      type: mockRegistry.types.decomposedtoplevel,
+      type: mockRegistryData.types.decomposedtoplevel,
     }),
   ];
   const set = new ComponentSet(sourceComponents);

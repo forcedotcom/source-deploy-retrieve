@@ -16,8 +16,7 @@ import { fail } from 'assert';
 describe('ManifestGenerator', () => {
   let sandboxStub: SinonSandbox;
   const manifestGenerator = new ManifestGenerator();
-  const resolver = new MetadataResolver();
-  const apiVersion = resolver.getApiVersion();
+  const apiVersion = registryData.apiVersion;
 
   beforeEach(async () => {
     sandboxStub = createSandbox();

@@ -33,4 +33,4 @@ export {
   ForceIgnore,
 } from './metadata-registry';
 export { MetadataType, MetadataComponent, SourcePath } from './common';
-export { MetadataPackage } from './package';
+export { MetadataPackage } from './metadata-package/metadataPackage';

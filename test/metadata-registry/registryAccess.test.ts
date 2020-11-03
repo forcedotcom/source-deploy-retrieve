@@ -7,7 +7,10 @@
 import { assert, expect } from 'chai';
 import { RegistryError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { mockRegistry, mockRegistryData } from '../mock/registry';
+import { MetadataRegistry } from '../../src/metadata-registry';
+import { mockRegistry, mockRegistryData as mrd } from '../mock/registry';
+
+const mockRegistryData = mrd as MetadataRegistry;
 
 describe('RegistryAccess', () => {
   it('should return apiVersion of the registry', () => {

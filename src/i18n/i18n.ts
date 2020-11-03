@@ -54,6 +54,8 @@ export const messages = {
   error_expected_file_path: '%s: path is to a directory, expected a file',
   error_expected_directory_path: '%s: path is to a file, expected a directory',
   error_no_directory_stream: '%s does not support readable streams on directories',
+  error_no_source_to_deploy: 'No source backed components present in the package',
+  error_invalid_package: 'The metadata pacakge was not initialized properly',
   error_static_resource_expected_archive_type:
     'A StaticResource directory must have a content type of application/zip or application/jar - found %s for %s',
   tapi_deploy_component_limit_error:

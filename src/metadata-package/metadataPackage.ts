@@ -16,47 +16,51 @@ import {
   SourceComponent,
   TreeContainer,
 } from '../metadata-registry';
-import { MetadataComponent } from '../common/types';
-import { ComponentCollection } from '../common/componentCollection';
+import {
+  MetadataComponent,
+  ComponentCollection,
+  XML_DECL,
+  XML_NS_KEY,
+  XML_NS_URL,
+} from '../common';
 import {
   PackageTypeMembers,
   FromSourceOptions,
   FromManifestOptions,
   PackageManifestContents,
+  SourceComponentOptions,
+  MetadataMember,
+  MetadataPackageOptions,
 } from './types';
+import { MetadataPackageError } from '../errors';
 
 export class MetadataPackage {
   public apiVersion: string;
   private registry: RegistryAccess;
-  private typeMembers: PackageTypeMembers[];
-  private _components?: ComponentCollection<MetadataComponent>;
-  private _sourceComponents?: ComponentCollection<SourceComponent>;
+  private typeMembers: PackageTypeMembers[] = [];
+  private _components = new ComponentCollection<MetadataComponent>();
+  private _sourceComponents = new ComponentCollection<SourceComponent>();
 
-  private constructor(registry = new RegistryAccess()) {
+  public constructor(registry = new RegistryAccess()) {
     this.registry = registry;
     this.apiVersion = registry.apiVersion;
   }
 
   /**
-   * Create a package by resolving `SourceComponents` from a given path.
-   *
-   * ```
-   * MetadataPackage.fromSource('/path/to/force-app')
-   * ```
+   * Create a package by resolving metadata components and their associated source files from a given path.
    *
    * @param fsPath Path to resolve components from
    * @param options
    */
   public static fromSource(fsPath: string, options?: FromSourceOptions): MetadataPackage {
     const mdPackage = new MetadataPackage(options?.registry);
-    mdPackage.getSourceComponents({ resolve: fsPath, tree: options?.tree, new: true });
+    mdPackage.getSourceComponents({ resolve: fsPath, tree: options?.tree, reinitialize: true });
     return mdPackage;
   }
 
   /**
-   * Create a package by reading a manifest file in xml format.
-   *
-   * Optionally, specify a file path with the `resolve` option to resolve for matching SourceComponents in the manifest.
+   * Create a package by reading a manifest file in xml format. Optionally, specify a file path
+   * with the `resolve` option to resolve source files for the components.
    *
    * ```
    * MetadataPackage.fromManifest('/path/to/package.xml', {
@@ -81,15 +85,39 @@ export class MetadataPackage {
     mdPackage.apiVersion = version;
     mdPackage.typeMembers = types;
     if (options?.resolve) {
-      mdPackage.getSourceComponents({ resolve: options?.resolve, tree, new: true });
+      mdPackage.getSourceComponents({ resolve: options?.resolve, tree, reinitialize: true });
     }
     return mdPackage;
   }
 
+  public static fromMembers(
+    members: Iterable<MetadataMember>,
+    options?: MetadataPackageOptions
+  ): MetadataPackage {
+    const mdp = new MetadataPackage(options?.registry);
+    for (const member of members) {
+      mdp.add(member);
+    }
+    return mdp;
+  }
+
+  /**
+   * Deploy package components to an org. The components must be backed by source files.
+   *
+   * @param connection Connection to org to deploy components to.
+   * @param options
+   */
   public async deploy(
     connection: Connection,
     options?: MetadataDeployOptions
   ): Promise<SourceDeployResult>;
+  /**
+   * Deploy package components to an org. The components must be backed by source files.
+   * Requires local AuthInfo from @salesforce/core, usually created after authenticating with the Salesforce CLI.
+   *
+   * @param username Username to deploy components with.
+   * @param options
+   */
   public async deploy(
     username: string,
     options?: MetadataDeployOptions
@@ -98,6 +126,9 @@ export class MetadataPackage {
     auth: Connection | string,
     options?: MetadataDeployOptions
   ): Promise<SourceDeployResult> {
+    if (this.getSourceComponents().size === 0) {
+      throw new MetadataPackageError('error_no_source_to_deploy');
+    }
     const connection = await this.getConnection(auth);
     const client = new SourceClient(connection, new MetadataResolver());
     return client.metadata.deploy(this.getSourceComponents().getAll(), options);
@@ -129,14 +160,14 @@ export class MetadataPackage {
    * Get an object representation of the package manifest.
    */
   public getObject(): PackageManifestContents {
-    if (!this.typeMembers) {
+    if (this.typeMembers.length === 0 && this.getComponents().size > 0) {
       const typeMembers: PackageTypeMembers[] = [];
       for (const [typeName, components] of this.getComponents().entries()) {
         const members: string[] = [];
         for (const { fullName } of components.values()) {
           members.push(fullName);
         }
-        typeMembers.push({ name: typeName, members });
+        typeMembers.push({ members, name: typeName });
       }
       this.typeMembers = typeMembers;
     }
@@ -150,35 +181,25 @@ export class MetadataPackage {
   }
 
   /**
-   * Get a collection of MetadataComponents included in the package. Different from
-   * `getSourceComponents()` in that if source files have not been resolved with the
-   * components, only component FullName and Type information is returned.
-   *
-   * ```
-   * const manifestPackage = await MetadataPackage.fromManifest('/path/to/package.xml');
-   * const collection = manifestPackage.getComponents();
-   * for (const [typeName, components] of collection.entries()) {
-   *  console.log(`${typeName} count: ${components.size}`)
-   * }
-   * ```
+   * Get a collection of metadata components included in the package. Only returns component
+   * FullName and Type information if source files have not yet been resolved.
    */
   public getComponents(): ComponentCollection<MetadataComponent> {
-    if (this._components) {
+    if (this._components.size > 0) {
       return this._components;
-    } else if (this._sourceComponents) {
+    } else if (this._sourceComponents.size > 0) {
       return this._sourceComponents;
-    } else if (this.typeMembers) {
+    } else if (this.typeMembers.length > 0) {
       this.setComponentsFromMembers();
-      return this._components;
     }
-    throw new Error('asdf');
+    return this._components;
   }
 
   /**
-   * Get a collection of `SourceComponents` from the package. If `SourceComponents` were not
+   * Get a collection of source-backed metadata components from the package. If source files were not
    * resolved during package initialization, returns `undefined`. To resolve components for
    * the existing package, specify the `resolve` option with a path to resolve the package against.
-   * `SourceComponents` are cached for subsequent requests unless explicitly resolved.
+   * The returned collection is cached for subsequent requests unless explicitly re-resolved.
    *
    * ```
    * // pre-resolved
@@ -192,20 +213,18 @@ export class MetadataPackage {
    *
    * @param options
    */
-  public getSourceComponents(options?: {
-    resolve?: string;
-    tree?: TreeContainer;
-    new?: boolean;
-  }): ComponentCollection<SourceComponent> | undefined {
+  public getSourceComponents(
+    options?: SourceComponentOptions
+  ): ComponentCollection<SourceComponent> | undefined {
     if (!options?.resolve) {
       return this._sourceComponents;
     }
 
     let filterSet: ComponentCollection<MetadataComponent>;
 
-    if (options?.new) {
-      this._components = undefined;
-      this.typeMembers = undefined;
+    if (options?.reinitialize) {
+      this._components = new ComponentCollection<MetadataComponent>();
+      this.typeMembers = [];
     } else {
       filterSet = this.getComponents();
     }
@@ -216,9 +235,9 @@ export class MetadataPackage {
     const sourceComponentMap = new ComponentCollection<SourceComponent>();
 
     for (const component of resolved) {
-      if (options?.new || filterSet.has(component)) {
+      if (options?.reinitialize || filterSet.has(component)) {
         sourceComponentMap.add(component);
-      } else if (!options?.new) {
+      } else if (!options?.reinitialize) {
         for (const childComponent of component.getChildren()) {
           if (filterSet.has(childComponent)) {
             sourceComponentMap.add(childComponent);
@@ -233,21 +252,41 @@ export class MetadataPackage {
   }
 
   /**
-   * Create a manifest xml string (package.xml) from the package components.
+   * Create a manifest in xml format for the package (package.xml file).
    */
-  public getPackageXml(): string {
-    if (this.typeMembers) {
-      const j2x = new j2xParser({
-        format: true,
-        indentBy: '    ',
-        ignoreAttributes: false,
-      });
-      return j2x.parse(this.getObject());
+  public getPackageXml(indentation = 4): string {
+    const indent = new Array(indentation + 1).join(' ');
+
+    if (this.typeMembers.length === 0 && this._components.size > 0) {
+      const generator = new ManifestGenerator(undefined, this.registry);
+      return generator.createManifest(this.getComponents().getAll(), this.apiVersion, indent);
     }
 
-    const generator = new ManifestGenerator(undefined, this.registry);
+    const j2x = new j2xParser({
+      format: true,
+      indentBy: indent,
+      ignoreAttributes: false,
+    });
+    const toParse = this.getObject() as any;
+    toParse.Package[XML_NS_KEY] = XML_NS_URL;
+    return XML_DECL.concat(j2x.parse(toParse));
+  }
 
-    return generator.createManifest(this.getComponents().getAll(), this.apiVersion);
+  public add(members: MetadataMember): void;
+  public add(components: MetadataComponent): void;
+  public add(input: MetadataComponent | MetadataMember): void {
+    if (typeof input.type === 'string') {
+      this._components.add({
+        fullName: input.fullName,
+        type: this.registry.getTypeByName(input.type),
+      });
+    } else {
+      this._components.add(input as MetadataComponent);
+    }
+
+    // invalidate cache
+    this._sourceComponents = new ComponentCollection<SourceComponent>();
+    this.typeMembers = [];
   }
 
   private async getConnection(auth: Connection | string): Promise<Connection> {

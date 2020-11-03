@@ -4,7 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { ComponentSet, MetadataComponent, MetadataType } from '.';
+import { ComponentSet } from './componentSet';
+import { MetadataComponent, MetadataType } from './types';
 
 export class ComponentCollection<T extends MetadataComponent> {
   private map = new Map<string, ComponentSet<T>>();
@@ -44,5 +45,13 @@ export class ComponentCollection<T extends MetadataComponent> {
 
   public getByType(type: MetadataType): T[] {
     return [...this.map.get(type.name)?.values()];
+  }
+
+  get size(): number {
+    let count = 0;
+    for (const set of this.map.values()) {
+      count += set.size;
+    }
+    return count;
   }
 }

@@ -205,7 +205,7 @@ export const mockRegistryData = {
     g: 'decomposedtoplevel',
   },
   apiVersion: '48.0',
-} as MetadataRegistry;
+};
 
 export const mockRegistry = new RegistryAccess(mockRegistryData);
 

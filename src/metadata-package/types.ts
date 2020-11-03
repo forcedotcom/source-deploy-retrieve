@@ -6,6 +6,11 @@
  */
 import { RegistryAccess, TreeContainer } from '../metadata-registry';
 
+export interface MetadataMember {
+  fullName: string;
+  type: string;
+}
+
 export interface PackageTypeMembers {
   name: string;
   members: string[];
@@ -28,4 +33,10 @@ export interface FromSourceOptions extends MetadataPackageOptions {
 
 export interface FromManifestOptions extends FromSourceOptions {
   resolve?: string;
+}
+
+export interface SourceComponentOptions {
+  resolve?: string;
+  tree?: TreeContainer;
+  reinitialize?: boolean;
 }

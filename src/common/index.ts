@@ -13,3 +13,4 @@ export {
   XML_NS_KEY,
 } from './constants';
 export { ComponentSet } from './componentSet';
+export { ComponentCollection } from './componentCollection';

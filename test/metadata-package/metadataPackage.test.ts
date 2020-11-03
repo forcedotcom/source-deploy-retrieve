@@ -82,6 +82,35 @@ const virtualPackageFiles: VirtualDirectory[] = [
 const tree = new VirtualTreeContainer(virtualPackageFiles);
 
 describe('MetadataPackage', () => {
+  describe('Initializers', () => {
+    describe('fromSource', () => {
+      it('should initialize with source backed components', () => {
+        const mdp = MetadataPackage.fromSource('.', { registry: mockRegistry, tree });
+        const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath('.');
+        expect(mdp.sourceComponents.getAll()).to.deep.equal(expected);
+      });
+    });
+
+    describe('fromManifestFile', () => {
+      it('should not initialize with source backed components by default', async () => {
+        const mdp = await MetadataPackage.fromManifestFile('package.xml', {
+          registry: mockRegistry,
+          tree,
+        });
+        expect(mdp.sourceComponents.size).to.equal(0);
+      });
+      it('should initialize with source-backed components when specifying resolve option', async () => {
+        const mdp = await MetadataPackage.fromManifestFile('package.xml', {
+          registry: mockRegistry,
+          tree,
+          resolve: '.',
+        });
+        const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath('.');
+        expect(mdp.sourceComponents.getAll()).to.deep.equal(expected);
+      });
+    });
+  });
+
   describe('getObject', () => {
     it('should return an object representing the package manifest', () => {
       const mdp = MetadataPackage.fromSource('.', { registry: mockRegistry, tree });
@@ -104,18 +133,12 @@ describe('MetadataPackage', () => {
   });
 
   describe('getComponents', () => {
-    it('should return source backed components if present', () => {
-      const mdp = MetadataPackage.fromSource('.', { registry: mockRegistry, tree });
-      const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath('.');
-      expect(mdp.getComponents().getAll()).to.deep.equal(expected);
-    });
-
-    it('should return non-source backed components if source components not present', async () => {
+    it('should return metadata components', async () => {
       const mdp = await MetadataPackage.fromManifestFile('package.xml', {
         registry: mockRegistry,
         tree,
       });
-      expect(mdp.getComponents().getAll()).to.deep.equal([
+      expect(mdp.components.getAll()).to.deep.equal([
         {
           fullName: 'a',
           type: mockRegistryData.types.decomposedtoplevel,
@@ -127,45 +150,26 @@ describe('MetadataPackage', () => {
       ]);
     });
 
-    // it('should throw an error if there is no way to return components', () => {
-    //   // @ts-ignore constructor is private, but we are breaking the rules to stop
-    //   // initializers from breaking the rules.
-    //   const badMdp = new MetadataPackage(mockRegistry);
-    //   try {
-    //     (badMdp as MetadataPackage).getComponents();
-    //     fail('should have thrown an error');
-    //   } catch (e) {
-    //     expect(e.name).to.equal(MetadataPackageError.name);
-    //     expect(e.message).to.equal(nls.localize('error_invalid_package'));
-    //   }
-    // });
+    it('should return metadata components if initialized from source', () => {
+      const mdp = MetadataPackage.fromSource('.', { registry: mockRegistry, tree });
+      expect(mdp.components.getAll()).to.deep.equal([
+        {
+          fullName: 'a',
+          type: mockRegistryData.types.decomposedtoplevel,
+        },
+        {
+          fullName: 'b',
+          type: mockRegistryData.types.mixedcontentsinglefile,
+        },
+        {
+          fullName: 'c',
+          type: mockRegistryData.types.mixedcontentsinglefile,
+        },
+      ]);
+    });
   });
 
-  describe('getSourceComponents', () => {
-    it('should initialize with source backed components', () => {
-      const mdp = MetadataPackage.fromSource('.', { registry: mockRegistry, tree });
-      const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath('.');
-      expect(mdp.getSourceComponents().getAll()).to.deep.equal(expected);
-    });
-
-    it('should not initialize with source backed components by default', async () => {
-      const mdp = await MetadataPackage.fromManifestFile('package.xml', {
-        registry: mockRegistry,
-        tree,
-      });
-      expect(mdp.getSourceComponents().size).to.equal(0);
-    });
-
-    it('should initialize with source-backed components when specifying resolve option', async () => {
-      const mdp = await MetadataPackage.fromManifestFile('package.xml', {
-        registry: mockRegistry,
-        tree,
-        resolve: '.',
-      });
-      const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath('.');
-      expect(mdp.getSourceComponents().getAll()).to.deep.equal(expected);
-    });
-
+  describe('resolveSourceComponents', () => {
     it('should force reinitializing package components with reinitialize option', () => {
       const resolver = new MetadataResolver(mockRegistry, tree);
       const mdp = MetadataPackage.fromSource('decomposedTopLevels', {
@@ -173,14 +177,15 @@ describe('MetadataPackage', () => {
         tree,
       });
 
-      expect(mdp.getSourceComponents().getAll()).to.deep.equal(
+      expect(mdp.sourceComponents.getAll()).to.deep.equal(
         resolver.getComponentsFromPath('decomposedTopLevels')
       );
 
-      const result = mdp.getSourceComponents({ resolve: '.', tree, reinitialize: true }).getAll();
+      const result = mdp.resolveSourceComponents('.', { tree, reinitialize: true }).getAll();
       const expected = resolver.getComponentsFromPath('.');
 
       expect(result).to.deep.equal(expected);
+      expect(mdp.sourceComponents.getAll()).to.deep.equal(expected);
     });
 
     it('should resolve new components against package components', async () => {
@@ -189,15 +194,15 @@ describe('MetadataPackage', () => {
         tree,
       });
 
-      expect(mdp.getSourceComponents().size).to.equal(0);
+      expect(mdp.sourceComponents.size).to.equal(0);
 
       // since the package only includes components a and b, it should not resolve c
-      const result = mdp.getSourceComponents({ resolve: '.', tree }).getAll();
+      mdp.resolveSourceComponents('.', { tree });
       const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath('.');
       const missingIndex = expected.findIndex((c) => c.fullName === 'c');
       expected.splice(missingIndex, 1);
 
-      expect(result).to.deep.equal(expected);
+      expect(mdp.sourceComponents.getAll()).to.deep.equal(expected);
     });
 
     it('should only resolve child components even if parent is present', () => {
@@ -215,12 +220,13 @@ describe('MetadataPackage', () => {
         { registry: mockRegistry }
       );
 
-      const result = mdp.getSourceComponents({ resolve: '.', tree }).getAll();
+      const result = mdp.resolveSourceComponents('.', { tree }).getAll();
       const expected = new MetadataResolver(mockRegistry, tree)
         .getComponentsFromPath('decomposedTopLevels')[0]
         .getChildren();
 
       expect(result).to.deep.equal(expected);
+      expect(mdp.sourceComponents.getAll()).to.deep.equal(expected);
     });
   });
 
@@ -256,7 +262,7 @@ describe('MetadataPackage', () => {
       });
       const mdp = MetadataPackage.fromSource('.', { registry: mockRegistry, tree });
       const deployStub = stub(MetadataApi.prototype, 'deploy');
-      deployStub.withArgs(mdp.getSourceComponents().getAll()).resolves(mockResult);
+      deployStub.withArgs(mdp.sourceComponents.getAll()).resolves(mockResult);
 
       const result = await mdp.deploy(mockConnection);
 
@@ -299,7 +305,7 @@ describe('MetadataPackage', () => {
       const retrieveStub = stub(MetadataApi.prototype, 'retrieve');
       retrieveStub
         .withArgs({
-          components: mdp.getSourceComponents().getAll(),
+          components: mdp.sourceComponents.getAll(),
           merge: true,
           output: '/test/path',
           wait: 5000,
@@ -322,11 +328,11 @@ describe('MetadataPackage', () => {
     it('should add metadata member to package components', async () => {
       const mdp = new MetadataPackage(mockRegistry);
 
-      expect(mdp.getComponents().size).to.equal(0);
+      expect(mdp.components.size).to.equal(0);
 
       mdp.add({ fullName: 'foo', type: 'DecomposedTopLevel' });
 
-      expect(mdp.getComponents().getAll()).to.deep.equal([
+      expect(mdp.components.getAll()).to.deep.equal([
         {
           fullName: 'foo',
           type: mockRegistryData.types.decomposedtoplevel,
@@ -338,23 +344,23 @@ describe('MetadataPackage', () => {
       const mdp = new MetadataPackage(mockRegistry);
       const component = { fullName: 'bar', type: mockRegistryData.types.mixedcontentsinglefile };
 
-      expect(mdp.getComponents().size).to.equal(0);
+      expect(mdp.components.size).to.equal(0);
 
       mdp.add(component);
 
-      expect(mdp.getComponents().getAll()).to.deep.equal([component]);
+      expect(mdp.components.getAll()).to.deep.equal([component]);
     });
 
     it('should invalidate source component cache when adding', () => {
       const mdp = MetadataPackage.fromSource('.', { registry: mockRegistry, tree });
 
-      expect(mdp.getComponents().size).to.equal(3);
-      expect(mdp.getSourceComponents().size).to.equal(3);
+      expect(mdp.components.size).to.equal(3);
+      expect(mdp.sourceComponents.size).to.equal(3);
 
       mdp.add({ fullName: 'foo', type: 'MixedContentSingleFile' });
 
-      expect(mdp.getComponents().size).to.equal(4);
-      expect(mdp.getSourceComponents().size).to.equal(0);
+      expect(mdp.components.size).to.equal(4);
+      expect(mdp.sourceComponents.size).to.equal(0);
     });
   });
 });

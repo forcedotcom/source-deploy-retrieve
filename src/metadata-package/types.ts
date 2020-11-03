@@ -36,7 +36,6 @@ export interface FromManifestOptions extends FromSourceOptions {
 }
 
 export interface SourceComponentOptions {
-  resolve?: string;
   tree?: TreeContainer;
   reinitialize?: boolean;
 }

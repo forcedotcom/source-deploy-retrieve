@@ -8,22 +8,16 @@ import { ComponentSet } from './componentSet';
 import { MetadataComponent, MetadataType } from './types';
 
 export class ComponentCollection<T extends MetadataComponent> {
-  private map = new Map<string, ComponentSet<T>>();
+  protected map = new Map<string, ComponentSet<T>>();
 
-  constructor(components?: Iterable<T>) {
-    if (components) {
-      for (const component of components) {
-        this.add(component);
+  constructor(collection?: ComponentCollection<T>) {
+    if (collection) {
+      for (const [typeName, set] of collection.entries()) {
+        this.map.set(typeName, new ComponentSet());
+        for (const component of set.values()) {
+          this.map.get(typeName).add(component);
+        }
       }
-    }
-  }
-
-  public add(component: T): void {
-    const { type } = component;
-    if (!this.map.has(type.name)) {
-      this.map.set(type.name, new ComponentSet([component]));
-    } else {
-      this.map.get(type.name).add(component);
     }
   }
 
@@ -53,5 +47,18 @@ export class ComponentCollection<T extends MetadataComponent> {
       count += set.size;
     }
     return count;
+  }
+}
+
+export class MutableComponentCollection<T extends MetadataComponent> extends ComponentCollection<
+  T
+> {
+  public add(component: T): void {
+    const { type } = component;
+    if (!this.map.has(type.name)) {
+      this.map.set(type.name, new ComponentSet([component]));
+    } else {
+      this.map.get(type.name).add(component);
+    }
   }
 }

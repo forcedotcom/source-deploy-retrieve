@@ -22,6 +22,7 @@ import {
   XML_DECL,
   XML_NS_KEY,
   XML_NS_URL,
+  MutableComponentCollection,
 } from '../common';
 import {
   PackageTypeMembers,
@@ -33,13 +34,13 @@ import {
   MetadataPackageOptions,
 } from './types';
 import { MetadataPackageError } from '../errors';
+import { deepFreeze } from '../utils/registry';
 
 export class MetadataPackage {
   public apiVersion: string;
   private registry: RegistryAccess;
-  private typeMembers: PackageTypeMembers[] = [];
-  private _components = new ComponentCollection<MetadataComponent>();
-  private _sourceComponents = new ComponentCollection<SourceComponent>();
+  private _components = new MutableComponentCollection<MetadataComponent>();
+  private _sourceComponents = new MutableComponentCollection<SourceComponent>();
 
   public constructor(registry = new RegistryAccess()) {
     this.registry = registry;
@@ -54,7 +55,7 @@ export class MetadataPackage {
    */
   public static fromSource(fsPath: string, options?: FromSourceOptions): MetadataPackage {
     const mdPackage = new MetadataPackage(options?.registry);
-    mdPackage.getSourceComponents({ resolve: fsPath, tree: options?.tree, reinitialize: true });
+    mdPackage.resolveSourceComponents(fsPath, { tree: options?.tree, reinitialize: true });
     return mdPackage;
   }
 
@@ -83,9 +84,14 @@ export class MetadataPackage {
       ignoreNameSpace: false,
     }) as PackageManifestContents).Package;
     mdPackage.apiVersion = version;
-    mdPackage.typeMembers = types;
     if (options?.resolve) {
-      mdPackage.getSourceComponents({ resolve: options?.resolve, tree, reinitialize: true });
+      mdPackage.resolveSourceComponents(options.resolve, { tree, reinitialize: true });
+    } else {
+      for (const { name: type, members } of types) {
+        for (const fullName of members) {
+          mdPackage.add({ fullName, type });
+        }
+      }
     }
     return mdPackage;
   }
@@ -126,12 +132,12 @@ export class MetadataPackage {
     auth: Connection | string,
     options?: MetadataDeployOptions
   ): Promise<SourceDeployResult> {
-    if (this.getSourceComponents().size === 0) {
+    if (this._sourceComponents.size === 0) {
       throw new MetadataPackageError('error_no_source_to_deploy');
     }
     const connection = await this.getConnection(auth);
     const client = new SourceClient(connection, new MetadataResolver());
-    return client.metadata.deploy(this.getSourceComponents().getAll(), options);
+    return client.metadata.deploy(this._sourceComponents.getAll(), options);
   }
 
   public async retrieve(
@@ -148,8 +154,20 @@ export class MetadataPackage {
   ): Promise<SourceRetrieveResult> {
     const connection = await this.getConnection(auth);
     const client = new SourceClient(connection, new MetadataResolver());
+    let toRetrieve: MetadataComponent[];
+
+    if (this._sourceComponents.size > 0) {
+      toRetrieve = this._sourceComponents.getAll();
+    } else {
+      if (this._components.size === 0) {
+        throw new MetadataPackageError('error_no_source_to_retrieve');
+      }
+      toRetrieve = this._components.getAll();
+    }
+
     return client.metadata.retrieve({
-      components: this.getSourceComponents().getAll(),
+      // this is fine, if they aren't mergable then they'll go to the default
+      components: toRetrieve as SourceComponent[],
       merge: options?.merge,
       output: options?.output,
       wait: options?.wait,
@@ -160,93 +178,63 @@ export class MetadataPackage {
    * Get an object representation of the package manifest.
    */
   public getObject(): PackageManifestContents {
-    if (this.typeMembers.length === 0 && this.getComponents().size > 0) {
-      const typeMembers: PackageTypeMembers[] = [];
-      for (const [typeName, components] of this.getComponents().entries()) {
-        const members: string[] = [];
-        for (const { fullName } of components.values()) {
-          members.push(fullName);
-        }
-        typeMembers.push({ members, name: typeName });
+    const typeMembers: PackageTypeMembers[] = [];
+
+    for (const [typeName, components] of this._components.entries()) {
+      const members: string[] = [];
+      for (const { fullName } of components.values()) {
+        members.push(fullName);
       }
-      this.typeMembers = typeMembers;
+      typeMembers.push({ members, name: typeName });
     }
 
     return {
       Package: {
-        types: this.typeMembers,
+        types: typeMembers,
         version: this.apiVersion,
       },
     };
   }
 
   /**
-   * Get a collection of metadata components included in the package. Only returns component
-   * FullName and Type information if source files have not yet been resolved.
-   */
-  public getComponents(): ComponentCollection<MetadataComponent> {
-    if (this._components.size > 0) {
-      return this._components;
-    } else if (this._sourceComponents.size > 0) {
-      return this._sourceComponents;
-    } else if (this.typeMembers.length > 0) {
-      this.setComponentsFromMembers();
-    }
-    return this._components;
-  }
-
-  /**
-   * Get a collection of source-backed metadata components from the package. If source files were not
-   * resolved during package initialization, returns `undefined`. To resolve components for
-   * the existing package, specify the `resolve` option with a path to resolve the package against.
-   * The returned collection is cached for subsequent requests unless explicitly re-resolved.
-   *
-   * ```
-   * // pre-resolved
-   * const sourcePackage = MetadataPackage.fromSource('/path/to/force-app');
-   * sourcePackage.getSourceComponents();
-   *
-   * // unresolved at initialization
-   * const manifestPackage = await MetadataPackage.fromManifestFile('/path/to/package.xml');
-   * const components = manifestPackage.getSourceComponents({ resolve: '/path/to/force-app' });
-   * ```
+   * Resolve source backed versions of the package components. Specify the `reinitialize`
+   * option to resolve all components in the given path, regardless of what is in the package.
+   * `reinitialize` overwrites the package state with the newly resolved components.
    *
    * @param options
    */
-  public getSourceComponents(
+  public resolveSourceComponents(
+    fsPath: string,
     options?: SourceComponentOptions
   ): ComponentCollection<SourceComponent> | undefined {
-    if (!options?.resolve) {
-      return this._sourceComponents;
-    }
-
     let filterSet: ComponentCollection<MetadataComponent>;
 
     if (options?.reinitialize) {
-      this._components = new ComponentCollection<MetadataComponent>();
-      this.typeMembers = [];
+      this._components = new MutableComponentCollection<MetadataComponent>();
     } else {
-      filterSet = this.getComponents();
+      filterSet = this._components;
     }
 
     // TODO: move filter logic to resolver and have it return ComponentCollection
     const resolver = new MetadataResolver(this.registry, options?.tree);
-    const resolved = resolver.getComponentsFromPath(options.resolve);
-    const sourceComponentMap = new ComponentCollection<SourceComponent>();
+    const resolved = resolver.getComponentsFromPath(fsPath);
+    this._sourceComponents = new MutableComponentCollection<SourceComponent>();
 
     for (const component of resolved) {
       if (options?.reinitialize || filterSet.has(component)) {
-        sourceComponentMap.add(component);
+        this._sourceComponents.add(component);
+        this._components.add(Object.freeze({ fullName: component.fullName, type: component.type }));
       } else if (!options?.reinitialize) {
         for (const childComponent of component.getChildren()) {
           if (filterSet.has(childComponent)) {
-            sourceComponentMap.add(childComponent);
+            this._sourceComponents.add(childComponent);
+            this._components.add(
+              Object.freeze({ fullName: childComponent.fullName, type: childComponent.type })
+            );
           }
         }
       }
     }
-
-    this._sourceComponents = sourceComponentMap;
 
     return this._sourceComponents;
   }
@@ -255,16 +243,9 @@ export class MetadataPackage {
    * Create a manifest in xml format for the package (package.xml file).
    */
   public getPackageXml(indentation = 4): string {
-    const indent = new Array(indentation + 1).join(' ');
-
-    if (this.typeMembers.length === 0 && this._components.size > 0) {
-      const generator = new ManifestGenerator(undefined, this.registry);
-      return generator.createManifest(this.getComponents().getAll(), this.apiVersion, indent);
-    }
-
     const j2x = new j2xParser({
       format: true,
-      indentBy: indent,
+      indentBy: new Array(indentation + 1).join(' '),
       ignoreAttributes: false,
     });
     const toParse = this.getObject() as any;
@@ -276,17 +257,28 @@ export class MetadataPackage {
   public add(components: MetadataComponent): void;
   public add(input: MetadataComponent | MetadataMember): void {
     if (typeof input.type === 'string') {
-      this._components.add({
-        fullName: input.fullName,
-        type: this.registry.getTypeByName(input.type),
-      });
+      this._components.add(
+        Object.freeze({
+          fullName: input.fullName,
+          type: this.registry.getTypeByName(input.type),
+        })
+      );
     } else {
-      this._components.add(input as MetadataComponent);
+      this._components.add(Object.freeze(input) as MetadataComponent);
     }
 
     // invalidate cache
-    this._sourceComponents = new ComponentCollection<SourceComponent>();
-    this.typeMembers = [];
+    // if (this._sourceComponents.size > 0) {
+    //   this._sourceComponents = new MutableComponentCollection<SourceComponent>();
+    // }
+  }
+
+  get components(): ComponentCollection<MetadataComponent> {
+    return new ComponentCollection(this._components);
+  }
+
+  get sourceComponents(): ComponentCollection<SourceComponent> {
+    return new ComponentCollection(this._sourceComponents);
   }
 
   private async getConnection(auth: Connection | string): Promise<Connection> {
@@ -295,18 +287,5 @@ export class MetadataPackage {
       : await Connection.create({
           authInfo: await AuthInfo.create({ username: auth }),
         });
-  }
-
-  private setComponentsFromMembers(): void {
-    const components = new ComponentCollection<MetadataComponent>();
-    for (const { name, members } of this.typeMembers) {
-      const type = this.registry.getTypeByName(name);
-      const fullNames = Array.isArray(members) ? members : [members];
-      for (const fullName of fullNames) {
-        const component = { fullName, type };
-        components.add(component);
-      }
-    }
-    this._components = components;
   }
 }

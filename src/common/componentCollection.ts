@@ -29,12 +29,16 @@ export class ComponentCollection<T extends MetadataComponent> {
     return this.map.entries();
   }
 
-  public getAll(): T[] {
-    const components: T[] = [];
+  public *iter(): IterableIterator<T> {
     for (const typeSet of this.map.values()) {
-      components.push(...typeSet.values());
+      for (const component of typeSet.values()) {
+        yield component;
+      }
     }
-    return components;
+  }
+
+  public getAll(): MetadataComponent[] {
+    return Array.from(this.iter());
   }
 
   public getByType(type: MetadataType): T[] {

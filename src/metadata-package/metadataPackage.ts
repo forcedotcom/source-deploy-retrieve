@@ -9,12 +9,10 @@ import { parse as parseXml, j2xParser } from 'fast-xml-parser';
 import { SourceClient } from '../client';
 import { MetadataDeployOptions, SourceDeployResult, SourceRetrieveResult } from '../client/types';
 import {
-  ManifestGenerator,
   MetadataResolver,
   NodeFSTreeContainer,
   RegistryAccess,
   SourceComponent,
-  TreeContainer,
 } from '../metadata-registry';
 import {
   MetadataComponent,
@@ -23,6 +21,7 @@ import {
   XML_NS_KEY,
   XML_NS_URL,
   MutableComponentCollection,
+  ComponentSet,
 } from '../common';
 import {
   PackageTypeMembers,
@@ -34,13 +33,11 @@ import {
   MetadataPackageOptions,
 } from './types';
 import { MetadataPackageError } from '../errors';
-import { deepFreeze } from '../utils/registry';
 
 export class MetadataPackage {
   public apiVersion: string;
   private registry: RegistryAccess;
   private _components = new MutableComponentCollection<MetadataComponent>();
-  private _sourceComponents = new MutableComponentCollection<SourceComponent>();
 
   public constructor(registry = new RegistryAccess()) {
     this.registry = registry;
@@ -55,7 +52,7 @@ export class MetadataPackage {
    */
   public static fromSource(fsPath: string, options?: FromSourceOptions): MetadataPackage {
     const mdPackage = new MetadataPackage(options?.registry);
-    mdPackage.resolveSourceComponents(fsPath, { tree: options?.tree, reinitialize: true });
+    mdPackage.resolveSourceComponents(fsPath, { tree: options?.tree });
     return mdPackage;
   }
 
@@ -76,6 +73,7 @@ export class MetadataPackage {
     fsPath: string,
     options?: FromManifestOptions
   ): Promise<MetadataPackage> {
+    const registry = options?.registry || new RegistryAccess();
     const tree = options?.tree || new NodeFSTreeContainer();
     const file = await tree.readFile(fsPath);
     const mdPackage = new MetadataPackage(options?.registry);
@@ -84,15 +82,33 @@ export class MetadataPackage {
       ignoreNameSpace: false,
     }) as PackageManifestContents).Package;
     mdPackage.apiVersion = version;
-    if (options?.resolve) {
-      mdPackage.resolveSourceComponents(options.resolve, { tree, reinitialize: true });
-    } else {
-      for (const { name: type, members } of types) {
-        for (const fullName of members) {
-          mdPackage.add({ fullName, type });
+
+    const filterSet = new ComponentSet<MetadataComponent>();
+
+    for (const packageTypeMembers of types) {
+      const members = Array.isArray(packageTypeMembers.members)
+        ? packageTypeMembers.members
+        : [packageTypeMembers.members];
+      for (const fullName of members) {
+        const component: MetadataComponent = {
+          fullName,
+          type: registry.getTypeByName(packageTypeMembers.name),
+        };
+        if (options?.resolve) {
+          filterSet.add(component);
+        } else {
+          mdPackage.add(component);
         }
       }
     }
+
+    if (options?.resolve) {
+      mdPackage.resolveSourceComponents(options.resolve, {
+        tree,
+        filter: filterSet,
+      });
+    }
+
     return mdPackage;
   }
 
@@ -132,12 +148,20 @@ export class MetadataPackage {
     auth: Connection | string,
     options?: MetadataDeployOptions
   ): Promise<SourceDeployResult> {
-    if (this._sourceComponents.size === 0) {
+    const toDeploy: SourceComponent[] = [];
+    for (const component of this._components.iter()) {
+      if (component instanceof SourceComponent) {
+        toDeploy.push(component);
+      }
+    }
+
+    if (toDeploy.length === 0) {
       throw new MetadataPackageError('error_no_source_to_deploy');
     }
+
     const connection = await this.getConnection(auth);
     const client = new SourceClient(connection, new MetadataResolver());
-    return client.metadata.deploy(this._sourceComponents.getAll(), options);
+    return client.metadata.deploy(toDeploy, options);
   }
 
   public async retrieve(
@@ -154,20 +178,14 @@ export class MetadataPackage {
   ): Promise<SourceRetrieveResult> {
     const connection = await this.getConnection(auth);
     const client = new SourceClient(connection, new MetadataResolver());
-    let toRetrieve: MetadataComponent[];
 
-    if (this._sourceComponents.size > 0) {
-      toRetrieve = this._sourceComponents.getAll();
-    } else {
-      if (this._components.size === 0) {
-        throw new MetadataPackageError('error_no_source_to_retrieve');
-      }
-      toRetrieve = this._components.getAll();
+    if (this._components.size === 0) {
+      throw new MetadataPackageError('error_no_source_to_retrieve');
     }
 
     return client.metadata.retrieve({
       // this is fine, if they aren't mergable then they'll go to the default
-      components: toRetrieve as SourceComponent[],
+      components: Array.from(this._components.iter()) as SourceComponent[],
       merge: options?.merge,
       output: options?.output,
       wait: options?.wait,
@@ -207,36 +225,33 @@ export class MetadataPackage {
     fsPath: string,
     options?: SourceComponentOptions
   ): ComponentCollection<SourceComponent> | undefined {
-    let filterSet: ComponentCollection<MetadataComponent>;
+    let filterSet: ComponentSet<MetadataComponent>;
 
-    if (options?.reinitialize) {
-      this._components = new MutableComponentCollection<MetadataComponent>();
-    } else {
-      filterSet = this._components;
+    if (options?.filter) {
+      filterSet =
+        options.filter instanceof ComponentSet ? options.filter : new ComponentSet(options.filter);
     }
 
     // TODO: move filter logic to resolver and have it return ComponentCollection
     const resolver = new MetadataResolver(this.registry, options?.tree);
     const resolved = resolver.getComponentsFromPath(fsPath);
-    this._sourceComponents = new MutableComponentCollection<SourceComponent>();
+    const sourceComponents = new MutableComponentCollection<SourceComponent>();
 
     for (const component of resolved) {
-      if (options?.reinitialize || filterSet.has(component)) {
-        this._sourceComponents.add(component);
-        this._components.add(Object.freeze({ fullName: component.fullName, type: component.type }));
-      } else if (!options?.reinitialize) {
+      if (!filterSet || filterSet.has(component)) {
+        this._components.add(component);
+        sourceComponents.add(component);
+      } else if (filterSet) {
         for (const childComponent of component.getChildren()) {
           if (filterSet.has(childComponent)) {
-            this._sourceComponents.add(childComponent);
-            this._components.add(
-              Object.freeze({ fullName: childComponent.fullName, type: childComponent.type })
-            );
+            this._components.add(childComponent);
+            sourceComponents.add(childComponent);
           }
         }
       }
     }
 
-    return this._sourceComponents;
+    return new ComponentCollection<SourceComponent>(sourceComponents);
   }
 
   /**
@@ -266,19 +281,10 @@ export class MetadataPackage {
     } else {
       this._components.add(Object.freeze(input) as MetadataComponent);
     }
-
-    // invalidate cache
-    // if (this._sourceComponents.size > 0) {
-    //   this._sourceComponents = new MutableComponentCollection<SourceComponent>();
-    // }
   }
 
   get components(): ComponentCollection<MetadataComponent> {
     return new ComponentCollection(this._components);
-  }
-
-  get sourceComponents(): ComponentCollection<SourceComponent> {
-    return new ComponentCollection(this._sourceComponents);
   }
 
   private async getConnection(auth: Connection | string): Promise<Connection> {

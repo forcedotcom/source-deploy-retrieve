@@ -4,6 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { ComponentSet, MetadataComponent } from '../common';
 import { RegistryAccess, TreeContainer } from '../metadata-registry';
 
 export interface MetadataMember {
@@ -37,5 +38,5 @@ export interface FromManifestOptions extends FromSourceOptions {
 
 export interface SourceComponentOptions {
   tree?: TreeContainer;
-  reinitialize?: boolean;
+  filter?: MetadataComponent[] | ComponentSet<MetadataComponent>;
 }

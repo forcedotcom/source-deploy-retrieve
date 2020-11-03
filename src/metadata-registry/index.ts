@@ -7,6 +7,7 @@
 import * as data from './data/registry.json';
 import { deepFreeze } from '../utils/registry';
 export { MetadataResolver } from './metadataResolver';
+export { RegistryAccess } from './registryAccess';
 export { ManifestGenerator } from './manifestGenerator';
 export {
   BaseTreeContainer,
@@ -23,7 +24,9 @@ export {
   VirtualDirectory,
   TypeIndex,
   SuffixIndex,
+  DirectoryIndex,
   DecompositionStrategy,
+  TransformerStrategy,
 } from './types';
 export { ForceIgnore } from './forceIgnore';
 

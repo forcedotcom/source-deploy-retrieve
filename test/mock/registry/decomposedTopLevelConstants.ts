@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { mockRegistry } from '.';
+import { mockRegistryData } from '.';
 import { SourceComponent } from '../../../src';
 import { baseName } from '../../../src/utils';
 
@@ -35,7 +35,7 @@ export const DECOMPOSED_VIRTUAL_FS = [
 export const DECOMPOSED_TOP_LEVEL_COMPONENT = SourceComponent.createVirtualComponent(
   {
     name: baseName(DECOMPOSED_TOP_LEVEL_XML_PATH),
-    type: mockRegistry.types.decomposedtoplevel,
+    type: mockRegistryData.types.decomposedtoplevel,
     xml: DECOMPOSED_TOP_LEVEL_XML_PATH,
   },
   DECOMPOSED_VIRTUAL_FS

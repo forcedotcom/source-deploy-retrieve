@@ -4,12 +4,12 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { mockRegistry } from '.';
+import { mockRegistryData } from '.';
 import { join } from 'path';
 import { SourceComponent } from '../../../src';
 
 // Bundle content
-const type = mockRegistry.types.simonpegg;
+const type = mockRegistryData.types.simonpegg;
 
 export const SIMON_DIR = join('path', 'to', 'simons');
 export const SIMON_BUNDLE_PATH = join(SIMON_DIR, 'a');

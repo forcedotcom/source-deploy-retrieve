@@ -5,11 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { mockRegistry } from '.';
+import { mockRegistryData } from '.';
 import { SourceComponent } from '../../../src';
 
 // Mixed content type in folders
-const type = mockRegistry.types.tinafey;
+const type = mockRegistryData.types.tinafey;
 
 export const TINA_DIR = join('path', 'to', 'tinas');
 export const TINA_FOLDER = join(TINA_DIR, 'A_Folder');
@@ -20,7 +20,7 @@ export const TINA_SOURCE_NAMES = ['a.x', 'b.y'];
 export const TINA_SOURCE_PATHS = TINA_SOURCE_NAMES.map((n) => join(TINA_FOLDER, n));
 export const TINA_FOLDER_COMPONENT = new SourceComponent({
   name: 'A_Folder',
-  type: mockRegistry.types.tinafeyfolder,
+  type: mockRegistryData.types.tinafeyfolder,
   xml: TINA_FOLDER_XML,
 });
 export const TINA_COMPONENTS = [

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { mockRegistry, regina } from '../../mock/registry';
+import { mockRegistry, mockRegistryData, regina } from '../../mock/registry';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
 import {
   ConvertTransaction,
@@ -282,7 +282,7 @@ describe('DecomposedMetadataTransformer', () => {
       const componentToConvert = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistry.types.reginaking,
+          type: mockRegistryData.types.reginaking,
         },
         []
       );
@@ -320,7 +320,7 @@ describe('DecomposedMetadataTransformer', () => {
       const componentToConvert = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistry.types.reginaking,
+          type: mockRegistryData.types.reginaking,
         },
         []
       );

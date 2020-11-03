@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { simon, kathy, gene, keanu, mockRegistry } from '../../mock/registry';
+import { simon, kathy, gene, keanu, mockRegistry, mockRegistryData } from '../../mock/registry';
 import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';
 import { WriteInfo } from '../../../src/convert';
 import { join, basename } from 'path';
@@ -165,7 +165,7 @@ describe('DefaultMetadataTransformer', () => {
       const component = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistry.types.simonpegg,
+          type: mockRegistryData.types.simonpegg,
           xml: join(root, 'a.js-meta.xml'),
           content: root,
         },
@@ -203,7 +203,7 @@ describe('DefaultMetadataTransformer', () => {
       const component = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistry.types.keanureeves,
+          type: mockRegistryData.types.keanureeves,
           xml: join(root, 'a.keanu-meta.xml'),
           content: join(root, 'a.keanu'),
         },
@@ -237,7 +237,7 @@ describe('DefaultMetadataTransformer', () => {
       const component = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistry.types.genewilder,
+          type: mockRegistryData.types.genewilder,
           xml: join('path', 'to', 'another', 'genes', GENE_XML_NAME),
         },
         []
@@ -254,7 +254,7 @@ describe('DefaultMetadataTransformer', () => {
       const mergeWith = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistry.types.keanureeves,
+          type: mockRegistryData.types.keanureeves,
         },
         []
       );

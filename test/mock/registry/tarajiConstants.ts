@@ -5,11 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join, basename, dirname } from 'path';
-import { mockRegistry } from '.';
+import { mockRegistryData } from '.';
 import { SourceComponent } from '../../../src';
 
 // Mixed content with directory as content
-const type = mockRegistry.types.tarajihenson;
+const type = mockRegistryData.types.tarajihenson;
 
 export const TARAJI_DIR = join('path', 'to', 'tarajis');
 export const TARAJI_CONTENT_PATH = join(TARAJI_DIR, 'a');

@@ -6,7 +6,7 @@
  */
 import { SourceComponent } from '../../src/metadata-registry';
 import { RegistryTestUtil } from './registryTestUtil';
-import { mockRegistry, kathy, regina, taraji, keanu } from '../mock/registry';
+import { kathy, regina, taraji, keanu, mockRegistryData } from '../mock/registry';
 import { expect } from 'chai';
 import { REGINA_COMPONENT } from '../mock/registry/reginaConstants';
 import { KEANU_COMPONENT } from '../mock/registry/keanuConstants';
@@ -40,7 +40,7 @@ describe('SourceComponent', () => {
     it('should throw an error if the component does not have an xml when parsing', async () => {
       const component = new SourceComponent({
         name: 'a',
-        type: mockRegistry.types.keanureeves,
+        type: mockRegistryData.types.keanureeves,
       });
       try {
         await component.parseXml();
@@ -56,7 +56,7 @@ describe('SourceComponent', () => {
     it('should return empty array if no content is set', () => {
       const component = new SourceComponent({
         name: 'a',
-        type: mockRegistry.types.kathybates,
+        type: mockRegistryData.types.kathybates,
         xml: kathy.KATHY_XML_PATHS[0],
       });
       expect(component.walkContent()).to.be.empty;
@@ -76,7 +76,7 @@ describe('SourceComponent', () => {
       const component = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistry.types.tarajihenson,
+          type: mockRegistryData.types.tarajihenson,
           xml: taraji.TARAJI_XML_PATHS[0],
           content: taraji.TARAJI_CONTENT_PATH,
         },
@@ -104,7 +104,7 @@ describe('SourceComponent', () => {
   });
 
   describe('Child Components', () => {
-    const type = mockRegistry.types.reginaking;
+    const type = mockRegistryData.types.reginaking;
     const expectedChild = SourceComponent.createVirtualComponent(
       {
         name: 'z',
@@ -153,7 +153,7 @@ describe('SourceComponent', () => {
       const noXml = SourceComponent.createVirtualComponent(
         {
           name: 'noXml',
-          type: mockRegistry.types.tinafey,
+          type: mockRegistryData.types.tinafey,
         },
         []
       );

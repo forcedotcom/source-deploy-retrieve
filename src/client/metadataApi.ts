@@ -112,14 +112,14 @@ export class MetadataApi extends BaseApi {
   }
 
   private formatRetrieveRequest(components: SourceComponent[]): RetrieveRequest {
-    const manifestGenerator = new ManifestGenerator(this.resolver);
+    const manifestGenerator = new ManifestGenerator(this.resolver, this.registry);
     const manifest = manifestGenerator.createManifest(components);
     const manifestJson = parse(manifest);
     const packageData = manifestJson.Package;
     delete packageData.$;
 
     const retrieveRequest = {
-      apiVersion: this.resolver.getApiVersion(),
+      apiVersion: this.registry.apiVersion,
       unpackaged: packageData,
     };
     return retrieveRequest;

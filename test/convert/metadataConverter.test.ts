@@ -7,7 +7,7 @@
 import { MetadataConverter } from '../../src/convert';
 import { createSandbox, SinonStub } from 'sinon';
 import { kathy, mockRegistry } from '../mock/registry';
-import { ManifestGenerator, MetadataResolver, registryData } from '../../src/metadata-registry';
+import { ManifestGenerator } from '../../src/metadata-registry';
 import * as streams from '../../src/convert/streams';
 import * as fs from 'fs';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
@@ -25,8 +25,7 @@ describe('MetadataConverter', () => {
   let pipelineStub: SinonStub;
   let writeFileStub: SinonStub;
 
-  const mockMetadataResolver = new MetadataResolver(mockRegistry);
-  const converter = new MetadataConverter(mockMetadataResolver);
+  const converter = new MetadataConverter(mockRegistry);
   const components = kathy.KATHY_COMPONENTS;
   const packageName = 'test';
   const outputDirectory = join('path', 'to', 'output');
@@ -49,12 +48,6 @@ describe('MetadataConverter', () => {
   });
 
   afterEach(() => env.restore());
-
-  it('should initialize with default MetadataResolver by default', () => {
-    const defaultConverter = new MetadataConverter();
-    // @ts-ignore resolver private
-    expect(defaultConverter.resolver.registry).to.deep.equal(registryData);
-  });
 
   it('should generate package name using timestamp when option omitted', async () => {
     const timestamp = 123456;
@@ -131,7 +124,7 @@ describe('MetadataConverter', () => {
         `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`
       );
       env.stub(Date, 'now').returns(timestamp);
-      const expectedContents = new ManifestGenerator(mockMetadataResolver).createManifest(
+      const expectedContents = new ManifestGenerator(undefined, mockRegistry).createManifest(
         components
       );
 
@@ -207,7 +200,7 @@ describe('MetadataConverter', () => {
     });
 
     it('should write manifest for metadata format conversion', async () => {
-      const expectedContents = new ManifestGenerator(mockMetadataResolver).createManifest(
+      const expectedContents = new ManifestGenerator(undefined, mockRegistry).createManifest(
         components
       );
       const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');

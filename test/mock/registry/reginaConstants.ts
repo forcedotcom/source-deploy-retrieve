@@ -5,12 +5,12 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { mockRegistry } from '.';
+import { mockRegistryData } from '.';
 import { baseName } from '../../../src/utils';
 import { SourceComponent } from '../../../src';
 
 // Constants for a decomposed type
-const type = mockRegistry.types.reginaking;
+const type = mockRegistryData.types.reginaking;
 
 export const REGINAS_PATH = join('path', 'to', 'reginas');
 export const REGINA_PATH = join(REGINAS_PATH, 'a');

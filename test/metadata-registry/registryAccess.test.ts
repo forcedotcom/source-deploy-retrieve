@@ -7,58 +7,59 @@
 import { assert, expect } from 'chai';
 import { RegistryError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { RegistryAccess } from '../../src/metadata-registry/registryAccess';
-import { mockRegistry } from '../mock/registry';
+import { mockRegistry, mockRegistryData } from '../mock/registry';
 
 describe('RegistryAccess', () => {
-  const access = new RegistryAccess(mockRegistry);
-
   it('should return apiVersion of the registry', () => {
-    expect(access.apiVersion).to.equal(mockRegistry.apiVersion);
+    expect(mockRegistry.apiVersion).to.equal(mockRegistryData.apiVersion);
   });
 
   describe('getTypeByName', () => {
     it('should fetch type regardless of casing', () => {
-      expect(access.getTypeByName('KeAnUReeVes')).to.deep.equal(mockRegistry.types.keanureeves);
+      expect(mockRegistry.getTypeByName('KeAnUReeVes')).to.deep.equal(
+        mockRegistryData.types.keanureeves
+      );
     });
 
     it('should ignore leading and trailing spaces', () => {
-      expect(access.getTypeByName('  kathyBates ')).to.deep.equal(mockRegistry.types.kathybates);
+      expect(mockRegistry.getTypeByName('  kathyBates ')).to.deep.equal(
+        mockRegistryData.types.kathybates
+      );
     });
 
     it('should throw an error if type definition missing', () => {
       assert.throws(
-        () => access.getTypeByName('TypeWithoutDef'),
+        () => mockRegistry.getTypeByName('TypeWithoutDef'),
         RegistryError,
-        nls.localize('error_missing_type_definition', mockRegistry.suffixes.missing)
+        nls.localize('error_missing_type_definition', 'typewithoutdef')
       );
     });
   });
 
   describe('getTypeBySuffix', () => {
     it('should get known type by suffix', () => {
-      const type = mockRegistry.types.keanureeves;
-      expect(access.getTypeBySuffix(type.suffix)).to.deep.equal(type);
+      const type = mockRegistryData.types.keanureeves;
+      expect(mockRegistry.getTypeBySuffix(type.suffix)).to.deep.equal(type);
     });
 
     it('should return undefined for unknown suffix', () => {
-      expect(access.getTypeBySuffix('asdf')).to.be.undefined;
+      expect(mockRegistry.getTypeBySuffix('asdf')).to.be.undefined;
     });
   });
 
   describe('findType', () => {
     it('should find a type using a given predicate', () => {
-      const foundType = access.findType((type) => type.suffix === 'dtl');
-      expect(foundType).to.deep.equal(mockRegistry.types.decomposedtoplevel);
+      const foundType = mockRegistry.findType((type) => type.suffix === 'dtl');
+      expect(foundType).to.deep.equal(mockRegistryData.types.decomposedtoplevel);
     });
   });
 
   describe('getStrictFolderTypes', () => {
     it('should return all the types requiring a parent directory named after its type', () => {
-      const types = Object.values(mockRegistry.strictTypeFolder).map(
-        (typeId) => mockRegistry.types[typeId]
+      const types = Object.values(mockRegistryData.strictDirectoryNames).map(
+        (typeId) => mockRegistryData.types[typeId]
       );
-      expect(access.getStrictFolderTypes()).to.deep.equal(types);
+      expect(mockRegistry.getStrictFolderTypes()).to.deep.equal(types);
     });
   });
 });

@@ -15,7 +15,7 @@ import { StaticResourceMetadataTransformer } from '../../../src/convert/transfor
 import { LibraryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { baseName } from '../../../src/utils';
-import { mockRegistry } from '../../mock/registry';
+import { mockRegistry, mockRegistryData } from '../../mock/registry';
 import {
   MC_SINGLE_FILE_COMPONENT,
   MC_SINGLE_FILE_XML_NAMES,
@@ -275,7 +275,7 @@ describe('StaticResourceMetadataTransformer', () => {
       const mergeComponent = SourceComponent.createVirtualComponent(
         {
           name: MC_SINGLE_FILE_COMPONENT.name,
-          type: mockRegistry.types.mixedcontentsinglefile,
+          type: mockRegistryData.types.mixedcontentsinglefile,
           xml: join(root, MC_SINGLE_FILE_XML_NAMES[0]),
           content: join(root, 'a'),
         },
@@ -318,7 +318,7 @@ describe('StaticResourceMetadataTransformer', () => {
       const mergeComponent = SourceComponent.createVirtualComponent(
         {
           name: MC_SINGLE_FILE_COMPONENT.name,
-          type: mockRegistry.types.mixedcontentsinglefile,
+          type: mockRegistryData.types.mixedcontentsinglefile,
           xml: join(root, MC_SINGLE_FILE_XML_NAMES[0]),
           content: join(root, 'a'),
         },

@@ -10,14 +10,17 @@ import { MetadataResolver } from './metadataResolver';
 import { RegistryError } from '../errors';
 import { SourceComponent } from './sourceComponent';
 import { writeFileSync } from 'fs';
+import { RegistryAccess } from './registryAccess';
 
 export class ManifestGenerator {
   private packageModuleStart = '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
   private packageModuleEnd = '</Package>';
   private resolver: MetadataResolver;
+  private registry: RegistryAccess;
 
-  constructor(resolver = new MetadataResolver()) {
+  constructor(resolver = new MetadataResolver(), registry = new RegistryAccess()) {
     this.resolver = resolver;
+    this.registry = registry;
   }
 
   public createManifestFromPath(sourcePath: string, outputPath: string): void {
@@ -31,7 +34,7 @@ export class ManifestGenerator {
 
   public createManifest(
     components: MetadataComponent[],
-    apiVersion = this.resolver.getApiVersion()
+    apiVersion = this.registry.apiVersion
   ): string {
     let output = XML_DECL.concat(this.packageModuleStart);
     const metadataMap = this.createMetadataMap(components);

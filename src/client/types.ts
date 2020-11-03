@@ -6,7 +6,7 @@
  */
 import { Connection } from '@salesforce/core';
 import { SourcePath } from '../common/types';
-import { MetadataResolver, SourceComponent } from '../metadata-registry';
+import { MetadataResolver, RegistryAccess, SourceComponent } from '../metadata-registry';
 
 // ------------------------------------------------
 // API results reformatted for source development
@@ -277,10 +277,12 @@ export interface DeployRetrieveClient {
 export abstract class BaseApi implements DeployRetrieveClient {
   protected connection: Connection;
   protected resolver: MetadataResolver;
+  protected registry: RegistryAccess;
 
-  constructor(connection: Connection, resolver: MetadataResolver) {
+  constructor(connection: Connection, resolver: MetadataResolver, registry = new RegistryAccess()) {
     this.connection = connection;
     this.resolver = resolver;
+    this.registry = registry;
   }
 
   /**

@@ -5,13 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { DecomposedSourceAdapter } from '../../../src/metadata-registry/adapters/decomposedSourceAdapter';
-import { mockRegistry, regina, decomposedtoplevel } from '../../mock/registry';
+import { mockRegistry, regina, decomposedtoplevel, mockRegistryData } from '../../mock/registry';
 import { expect } from 'chai';
 import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
 import { SourceComponent } from '../../../src/metadata-registry';
 
 describe('DecomposedSourceAdapter', () => {
-  const type = mockRegistry.types.reginaking;
+  const type = mockRegistryData.types.reginaking;
   const tree = new VirtualTreeContainer(regina.REGINA_VIRTUAL_FS);
   const adapter = new DecomposedSourceAdapter(type, mockRegistry, undefined, tree);
   const expectedComponent = new SourceComponent(regina.REGINA_COMPONENT, tree);
@@ -52,7 +52,7 @@ describe('DecomposedSourceAdapter', () => {
   });
 
   it('should return expected SourceComponent when given a topLevel parent component', () => {
-    const type = mockRegistry.types.decomposedtoplevel;
+    const type = mockRegistryData.types.decomposedtoplevel;
     const tree = new VirtualTreeContainer(decomposedtoplevel.DECOMPOSED_VIRTUAL_FS);
     const component = new SourceComponent(decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT, tree);
     const adapter = new DecomposedSourceAdapter(type, mockRegistry, undefined, tree);

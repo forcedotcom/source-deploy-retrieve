@@ -5,42 +5,32 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, join, sep } from 'path';
-import { MetadataRegistry, TreeContainer } from './types';
+import { TreeContainer } from './types';
 import { TypeInferenceError } from '../errors';
 import { extName, parentName } from '../utils/path';
-import { deepFreeze, parseMetadataXml } from '../utils/registry';
+import { parseMetadataXml } from '../utils/registry';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
 import { MetadataType, SourcePath } from '../common';
 import { NodeFSTreeContainer } from './treeContainers';
-import { registryData } from '.';
 import { RegistryAccess } from './registryAccess';
 
 /**
  * Resolver for metadata type and component objects.
  */
 export class MetadataResolver {
-  public readonly registry: MetadataRegistry;
   private forceIgnore: ForceIgnore;
   private sourceAdapterFactory: SourceAdapterFactory;
   private tree: TreeContainer;
-  private registryAccess: RegistryAccess;
+  private registry: RegistryAccess;
 
   /**
    * @param registry Custom registry data
    * @param tree `TreeContainer` to traverse with
    */
-  constructor(
-    registry: MetadataRegistry = registryData,
-    tree: TreeContainer = new NodeFSTreeContainer()
-  ) {
-    this.registry = registry
-      ? // deep freeze a copy, not the original object
-        deepFreeze(JSON.parse(JSON.stringify(registry)) as MetadataRegistry)
-      : // registryData is already frozen
-        registryData;
-    this.registryAccess = new RegistryAccess(registry);
+  constructor(registry = new RegistryAccess(), tree: TreeContainer = new NodeFSTreeContainer()) {
+    this.registry = registry;
     this.tree = tree;
     this.sourceAdapterFactory = new SourceAdapterFactory(this.registry, tree);
   }
@@ -63,10 +53,6 @@ export class MetadataResolver {
 
     const component = this.resolveComponent(fsPath, true);
     return component ? [component] : [];
-  }
-
-  public getApiVersion(): string {
-    return this.registry.apiVersion;
   }
 
   private getComponentsFromPathRecursive(dir: SourcePath): SourceComponent[] {
@@ -100,9 +86,8 @@ export class MetadataResolver {
           ignore.add(component.content);
           // don't traverse further if not in a root type directory. performance optimization
           // for mixed content types and ensures we don't add duplicates of the component.
-          const isMixedContent = !!this.registry.strictTypeFolder[component.type.directoryName];
           const typeDir = basename(dirname(component.type.inFolder ? dirname(fsPath) : fsPath));
-          if (isMixedContent && typeDir !== component.type.directoryName) {
+          if (component.type.strictDirectoryName && typeDir !== component.type.directoryName) {
             return components;
           }
         }
@@ -141,7 +126,7 @@ export class MetadataResolver {
 
     // attempt 1 - check if the file is part of a component that requires a strict type folder
     const pathParts = new Set(fsPath.split(sep));
-    for (const type of this.registryAccess.getStrictFolderTypes()) {
+    for (const type of this.registry.getStrictFolderTypes()) {
       if (pathParts.has(type.directoryName)) {
         // types with folders only have folder components living at the top level.
         // if the fsPath is a folder component, let a future strategy deal with it
@@ -157,7 +142,7 @@ export class MetadataResolver {
     if (!resolvedType) {
       const parsedMetaXml = parseMetadataXml(fsPath);
       if (parsedMetaXml) {
-        resolvedType = this.registryAccess.getTypeBySuffix(parsedMetaXml.suffix);
+        resolvedType = this.registry.getTypeBySuffix(parsedMetaXml.suffix);
       }
     }
 
@@ -166,7 +151,7 @@ export class MetadataResolver {
       const metadataFolder = this.parseAsFolderMetadataXml(fsPath);
       if (metadataFolder) {
         // multiple matching directories may exist - folder components are not 'inFolder'
-        resolvedType = this.registryAccess.findType(
+        resolvedType = this.registry.findType(
           (type) => type.directoryName === metadataFolder && !type.inFolder
         );
       }
@@ -174,7 +159,7 @@ export class MetadataResolver {
 
     // attempt 3 - try treating the file extension name as a suffix
     if (!resolvedType) {
-      resolvedType = this.registryAccess.getTypeBySuffix(extName(fsPath));
+      resolvedType = this.registry.getTypeBySuffix(extName(fsPath));
     }
 
     return resolvedType;
@@ -219,7 +204,7 @@ export class MetadataResolver {
    * @param fsPath File path of a potential content metadata file
    */
   private parseAsContentMetadataXml(fsPath: SourcePath): boolean {
-    return this.registry.suffixes.hasOwnProperty(extName(fsPath));
+    return !!this.registry.getTypeBySuffix(extName(fsPath));
   }
 
   /**

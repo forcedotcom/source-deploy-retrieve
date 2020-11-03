@@ -51,6 +51,7 @@ function update(registry, describeResult) {
       suffix,
       directoryName,
       inFolder: inFolder === 'true' || inFolder === true,
+      strictDirectoryName: !suffix
     };
 
     // apply type override if one exists
@@ -60,16 +61,16 @@ function update(registry, describeResult) {
 
     if (childXmlNames) {
       const childNames = !(childXmlNames instanceof Array) ? [childXmlNames] : childXmlNames;
-      initializeChildRegistry(type, childNames);
+      initializeChildRegistry(type, childNames, registry);
     }
 
     registry.types[typeId] = type
 
-    // index file suffixes, otherwise require index type as requiring strict type folder 
+    // index file suffixes, otherwise require index type as requiring strict type folder
     if (type.suffix) {
       registry.suffixes[type.suffix] = typeId;
     } else {
-      registry.strictTypeFolder[type.directoryName] = typeId;
+      registry.strictDirectoryNames[type.directoryName] = typeId;
     }
   }
 }

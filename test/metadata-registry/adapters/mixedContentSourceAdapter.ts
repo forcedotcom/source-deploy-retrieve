@@ -13,6 +13,7 @@ import {
   taraji,
   DWAYNE_XML_NAME,
   DWAYNE_SOURCE_NAME,
+  mockRegistryData,
 } from '../../mock/registry';
 import { expect, assert } from 'chai';
 import { MixedContentSourceAdapter } from '../../../src/metadata-registry/adapters/mixedContentSourceAdapter';
@@ -23,7 +24,7 @@ import { TARAJI_VIRTUAL_FS_NO_XML, TARAJI_CONTENT_PATH } from '../../mock/regist
 
 describe('MixedContentSourceAdapter', () => {
   it('Should throw ExpectedSourceFilesError if content does not exist', () => {
-    const type = mockRegistry.types.dwaynejohnson;
+    const type = mockRegistryData.types.dwaynejohnson;
     const tree = new VirtualTreeContainer([
       {
         dirPath: DWAYNE_DIR,
@@ -35,7 +36,7 @@ describe('MixedContentSourceAdapter', () => {
   });
 
   describe('File Content', () => {
-    const type = mockRegistry.types.dwaynejohnson;
+    const type = mockRegistryData.types.dwaynejohnson;
     const tree = new VirtualTreeContainer([
       {
         dirPath: DWAYNE_DIR,
@@ -64,7 +65,7 @@ describe('MixedContentSourceAdapter', () => {
 
   describe('Directory Content', () => {
     const { TARAJI_COMPONENT, TARAJI_SOURCE_PATHS, TARAJI_XML_PATHS, TARAJI_VIRTUAL_FS } = taraji;
-    const type = mockRegistry.types.tarajihenson;
+    const type = mockRegistryData.types.tarajihenson;
     const tree = new VirtualTreeContainer(TARAJI_VIRTUAL_FS);
     const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
     const expectedComponent = new SourceComponent(TARAJI_COMPONENT, tree);

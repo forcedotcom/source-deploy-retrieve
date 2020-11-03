@@ -5,8 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { TypeIndex, SuffixIndex } from '../metadata-registry';
-import { DirectoryIndex } from '../metadata-registry/types';
+import { TypeIndex, SuffixIndex, DirectoryIndex } from '../metadata-registry';
 
 /**
  * File system path to a source file of a metadata component.
@@ -35,6 +34,10 @@ export type MetadataType = {
    */
   suffix?: string;
   /**
+   * Whether or not components are required to reside in a folder named after the type's directoryName.
+   */
+  strictDirectoryName?: boolean;
+  /**
    * Type definitions for child types, if the type has any.
    *
    * __Examples:__ `CustomField` and `CompactLayout` on `CustomObject`
@@ -43,6 +46,14 @@ export type MetadataType = {
     types: TypeIndex;
     suffixes: SuffixIndex;
     directories?: DirectoryIndex;
+  };
+  /**
+   * Configuration for resolving and converting components of the type.
+   */
+  strategies?: {
+    adapter: string;
+    transformer?: string;
+    decomposition?: string;
   };
 };
 

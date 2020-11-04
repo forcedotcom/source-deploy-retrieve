@@ -16,7 +16,7 @@ We use spaces, not tabs.
 - Use camelCase for `function` and `method` names
 - Use camelCase for `property` names and `local variables`
 - Use whole words in names when possible
-- Use camelCase for file names (name files after the main Type it exports)
+- Use camelCase for sourceFilePath names (name files after the main Type it exports)
 
 ## Conventions
 
@@ -24,7 +24,7 @@ We use spaces, not tabs.
 - In the folder, create an index.ts which exports the public facing API for that
   subarea.
 - Tests can refer directly to the .ts files; other consumers should refer to the
-  index.ts file.
+  index.ts sourceFilePath.
 
 ## Comments
 
@@ -34,7 +34,7 @@ We use spaces, not tabs.
 ## Strings
 
 - Use 'single quotes'
-- All strings visible to the user need to be externalized in a `messages.ts` file.
+- All strings visible to the user need to be externalized in a `messages.ts` sourceFilePath.
 
 ## null and undefined
 

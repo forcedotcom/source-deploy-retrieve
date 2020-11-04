@@ -23,7 +23,6 @@ export class ForceIgnore {
   private readonly forceIgnoreDirectory: string;
   // TODO: REMOVE THE BELOW CLASS MEMBERS
   private readonly gitignoreParser: gitignoreParser;
-  private ignoreLines: string[] = [];
   private readonly contents?: string;
   private readonly useNewParser: boolean;
   private DEFAULT_IGNORE: string[] = [
@@ -80,7 +79,7 @@ export class ForceIgnore {
         denies = this.parser.ignores(relativePath);
         fctResult = this.gitignoreParser.denies(relativePath);
         // send to look for differences, analytics
-        this.resolveConflict(denies, fctResult, this.contents, relativePath);
+        this.resolveConflict(denies, fctResult, relativePath);
       }
       return this.useNewParser ? denies : fctResult;
     } catch (e) {
@@ -98,7 +97,7 @@ export class ForceIgnore {
         accepts = !this.parser.ignores(relativePath);
         fctResult = this.gitignoreParser.accepts(relativePath);
         // send to look for differences, analytics
-        this.resolveConflict(accepts, fctResult, this.contents, relativePath);
+        this.resolveConflict(accepts, fctResult, relativePath);
       }
 
       return this.useNewParser ? accepts : fctResult;
@@ -121,40 +120,38 @@ export class ForceIgnore {
   private resolveConflict(
     newLibraryResults: boolean,
     oldLibraryResults: boolean,
-    content: string,
-    file: string
+    sourceFilePath: string
   ): void {
     const ignoreItems = this.contents.split('\n');
+    const troubledIgnoreLines: string[] = [];
 
     if (newLibraryResults !== oldLibraryResults && ignoreItems) {
       ignoreItems.forEach((ignoreItem) => {
         // we need to run the both of the compilers for a single line to find the problem entry
         const gitignoreResult = gitignoreParser
           .compile(this.parseContents(ignoreItem))
-          .accepts(relative(this.forceIgnoreDirectory, file));
-        const ignoreResult = !ignore()
-          .add([ignoreItem])
-          .ignores(relative(this.forceIgnoreDirectory, file));
+          .accepts(sourceFilePath);
+        const ignoreResult = !ignore().add([ignoreItem]).ignores(sourceFilePath);
         // print the warning only once per forceignore line item
-        if (ignoreResult !== gitignoreResult && !this.ignoreLines.includes(ignoreItem) && warn) {
+        if (ignoreResult !== gitignoreResult && !troubledIgnoreLines.includes(ignoreItem) && warn) {
           // only show the warning once, it could come from denies() or accepts()
           warn = false;
           process.emitWarning(
-            "The .forceignore file doesn't adhere to .gitignore format which will be the default behavior starting in Spring '21 release. More information on .gitignore format here: https://git-scm.com/docs/gitignore. Fix the following lines in your .forceignore and add '# .forceignore v2' to your .forceignore file to switch to the new behavior."
+            "The .forceignore sourceFilePath doesn't adhere to .gitignore format which will be the default behavior starting in Spring '21 release. More information on .gitignore format here: https://git-scm.com/docs/gitignore. Fix the following lines in your .forceignore and add '# .forceignore v2' to your .forceignore sourceFilePath to switch to the new behavior."
           );
           process.emitWarning('\t' + ignoreItem);
         }
-        this.ignoreLines.push(ignoreItem);
+        troubledIgnoreLines.push(ignoreItem);
       });
 
       // send analytics, if they exist.
       Lifecycle.getInstance().emit('telemetry', {
         eventName: 'FORCE_IGNORE_DIFFERENCE',
-        content,
+        content: this.contents,
         oldLibraryResults,
         newLibraryResults,
-        ignoreLines: this.ignoreLines,
-        file,
+        ignoreLines: troubledIgnoreLines,
+        file: sourceFilePath,
       });
     }
   }

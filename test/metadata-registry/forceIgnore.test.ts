@@ -63,7 +63,7 @@ describe('ForceIgnore', () => {
 
     const telemetrySpy = env.spy(Lifecycle.prototype, 'emit');
     // @ts-ignore call the private method directly to avoid excessive stubbing
-    forceIgnore.resolveConflict(true, false, testPattern, file);
+    forceIgnore.resolveConflict(true, false, file);
     expect(telemetrySpy.calledOnce).to.be.true;
     expect(telemetrySpy.args[0][0]).to.equal('telemetry');
     expect(telemetrySpy.args[0][1]).to.deep.equal(expected);
@@ -72,14 +72,15 @@ describe('ForceIgnore', () => {
   it('should send telemetry event when the old parser and the new parser have different results testing new parser', () => {
     const readStub = env.stub(fs, 'readFileSync');
     const switchParser = '# .forceignore v2';
-    readStub.withArgs(forceIgnorePath).returns(testPattern + '\n' + switchParser);
+    const entries = testPattern + '\n' + switchParser;
+    readStub.withArgs(forceIgnorePath).returns(entries);
     const forceIgnore = new ForceIgnore(forceIgnorePath);
 
     const file = join('some', 'path', '__tests__', 'myTest.x');
 
     const expected = {
       eventName: 'FORCE_IGNORE_DIFFERENCE',
-      content: testPattern,
+      content: entries,
       oldLibraryResults: false,
       newLibraryResults: true,
       ignoreLines: [testPattern, switchParser],
@@ -88,7 +89,7 @@ describe('ForceIgnore', () => {
 
     const telemetrySpy = env.spy(Lifecycle.prototype, 'emit');
     // @ts-ignore call the private method directly to avoid excessive stubbing
-    forceIgnore.resolveConflict(true, false, testPattern, file);
+    forceIgnore.resolveConflict(true, false, file);
     expect(telemetrySpy.calledOnce).to.be.true;
     expect(telemetrySpy.args[0][0]).to.equal('telemetry');
     expect(telemetrySpy.args[0][1]).to.deep.equal(expected);

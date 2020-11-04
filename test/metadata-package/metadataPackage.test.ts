@@ -293,9 +293,8 @@ describe('MetadataPackage', () => {
         })
         .resolves(mockResult);
 
-      const result = await mdp.retrieve(mockConnection, {
+      const result = await mdp.retrieve(mockConnection, '/test/path', {
         merge: true,
-        output: '/test/path',
         wait: 5000,
       });
 
@@ -307,7 +306,7 @@ describe('MetadataPackage', () => {
     it('should throw error if there are no components when retrieving', async () => {
       const mdp = new MetadataPackage(mockRegistry);
       try {
-        await mdp.retrieve('test@foobar.com');
+        await mdp.retrieve('test@foobar.com', '/test/path');
         fail('should have thrown an error');
       } catch (e) {
         expect(e.name).to.equal(MetadataPackageError.name);

@@ -45,7 +45,7 @@ export class MetadataPackage {
   }
 
   /**
-   * Create a package by resolving metadata components and their associated source files from a given path.
+   * Create a package by resolving source backed components.
    *
    * @param fsPath Path to resolve components from
    * @param options
@@ -112,6 +112,12 @@ export class MetadataPackage {
     return mdPackage;
   }
 
+  /**
+   * Create a package by specifying a collection of Type name/FullName objects
+   *
+   * @param members Collection of FullName and Type name objects
+   * @param options
+   */
   public static fromMembers(
     members: Iterable<MetadataMember>,
     options?: MetadataPackageOptions
@@ -126,13 +132,14 @@ export class MetadataPackage {
   /**
    * Deploy package components to an org. The components must be backed by source files.
    *
-   * @param connection Connection to org to deploy components to.
+   * @param connection Connection to org to deploy to.
    * @param options
    */
   public async deploy(
     connection: Connection,
     options?: MetadataDeployOptions
   ): Promise<SourceDeployResult>;
+
   /**
    * Deploy package components to an org. The components must be backed by source files.
    * Requires local AuthInfo from @salesforce/core, usually created after authenticating with the Salesforce CLI.
@@ -164,17 +171,37 @@ export class MetadataPackage {
     return client.metadata.deploy(toDeploy, options);
   }
 
+  /**
+   * Retrieve package components from an org. Package components are not required to be backed by
+   * source files. Requires local AuthInfo from @salesforce/core, usually created after authenticating
+   * with the Salesforce CLI.
+   *
+   * @param connection Connection to org to retrieve from.
+   * @param output Directory to retrieve to.
+   * @param options
+   */
   public async retrieve(
     connection: Connection,
-    options?: { merge?: boolean; output?: string; wait?: number }
+    output: string,
+    options?: { merge?: boolean; wait?: number }
   ): Promise<SourceRetrieveResult>;
+  /**
+   * Retrieve package components from an org. Package components are not required to be backed by
+   * source files.
+   *
+   * @param username Username of org to retrieve from.
+   * @param output Directory to retrieve to
+   * @param options
+   */
   public async retrieve(
     username: string,
-    options?: { merge?: boolean; output?: string; wait?: number }
+    output: string,
+    options?: { merge?: boolean; wait?: number }
   ): Promise<SourceRetrieveResult>;
   public async retrieve(
     auth: Connection | string,
-    options?: { merge?: boolean; output?: string; wait?: number }
+    output: string,
+    options?: { merge?: boolean; wait?: number }
   ): Promise<SourceRetrieveResult> {
     const connection = await this.getConnection(auth);
     const client = new SourceClient(connection, new MetadataResolver());
@@ -187,7 +214,7 @@ export class MetadataPackage {
       // this is fine, if they aren't mergable then they'll go to the default
       components: Array.from(this._components.iter()) as SourceComponent[],
       merge: options?.merge,
-      output: options?.output,
+      output,
       wait: options?.wait,
     });
   }
@@ -215,10 +242,9 @@ export class MetadataPackage {
   }
 
   /**
-   * Resolve source backed versions of the package components. Specify the `reinitialize`
-   * option to resolve all components in the given path, regardless of what is in the package.
-   * `reinitialize` overwrites the package state with the newly resolved components.
+   * Resolve source backed components and add them to the package.
    *
+   * @param fsPath: File path to resolve
    * @param options
    */
   public resolveSourceComponents(
@@ -256,6 +282,8 @@ export class MetadataPackage {
 
   /**
    * Create a manifest in xml format for the package (package.xml file).
+   *
+   * @param indentation Number of spaces to indent lines by.
    */
   public getPackageXml(indentation = 4): string {
     const j2x = new j2xParser({

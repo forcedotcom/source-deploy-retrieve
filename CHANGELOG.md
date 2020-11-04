@@ -30,7 +30,7 @@
 
 - Add more detail to metadata api retrieve result ([PR #155](https://github.com/forcedotcom/source-deploy-retrieve/pull/155))
 
-- Performance improvements to extracting zip sourceFilePath from metadata retrieve ([PR #164](https://github.com/forcedotcom/source-deploy-retrieve/pull/164))
+- Performance improvements to extracting zip file from metadata retrieve ([PR #164](https://github.com/forcedotcom/source-deploy-retrieve/pull/164))
 
 ## Fixed
 
@@ -56,7 +56,7 @@
 
 - Convert StaticResources from metadata format to source format ([#141](https://github.com/forcedotcom/source-deploy-retrieve/pull/141))
 
-- Show warning when user has a .forceignore sourceFilePath incompatible with the new parser ([#129](https://github.com/forcedotcom/source-deploy-retrieve/pull/129))
+- Show warning when user has a .forceignore file incompatible with the new parser ([#129](https://github.com/forcedotcom/source-deploy-retrieve/pull/129))
 
 ## Fixed
 
@@ -118,7 +118,7 @@
 
 ## Fixed
 
-- Fixed content sourceFilePath not being included during source conversion for NetworkBranding components ([PR #106](https://github.com/forcedotcom/source-deploy-retrieve/pull/106))
+- Fixed content file not being included during source conversion for NetworkBranding components ([PR #106](https://github.com/forcedotcom/source-deploy-retrieve/pull/106))
 
 # 1.0.18 - August 6, 2020
 
@@ -166,7 +166,7 @@
 
 ## Fixed
 
-- Corrected sourceFilePath creation for retrieve ([PR #56](https://github.com/forcedotcom/source-deploy-retrieve/pull/56))
+- Corrected file creation for retrieve ([PR #56](https://github.com/forcedotcom/source-deploy-retrieve/pull/56))
 
 - Fixed formatting and linting issues ([PR #59](https://github.com/forcedotcom/source-deploy-retrieve/pull/59))
 

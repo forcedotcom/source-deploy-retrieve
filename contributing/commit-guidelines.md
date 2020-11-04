@@ -35,7 +35,7 @@ Here's an example of a good and easy to read commit log showing only the subject
 ```
 * 8d6a286 - (HEAD -> develop) Fix capitalization of package display name (#466) (3 weeks ago) <Ruth Sears-Blazej>
 * 96cb255 - Added feature request template (#462) (3 weeks ago) <Nathan Totten>
-* 57abc05 - Add an event listener for changes to the sfdx-config sourceFilePath (#457) (3 weeks ago) <Allison Leong>
+* 57abc05 - Add an event listener for changes to the sfdx-config file (#457) (3 weeks ago) <Allison Leong>
 * 5d5d7dc - Mark apex replay debugger as preview (#458) (3 weeks ago) <Nick Chen>
 * 8ace1d7 - Bump @salesforce/core to 1.5.1 (#456) (3 weeks ago) <Nick Chen>
 * fb7dda1 - Remove note about limitations of Live Share (#455) (3 weeks ago) <Nick Chen>

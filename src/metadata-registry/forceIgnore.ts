@@ -120,28 +120,28 @@ export class ForceIgnore {
   private resolveConflict(
     newLibraryResults: boolean,
     oldLibraryResults: boolean,
-    sourceFilePath: string
+    fsPath: string
   ): void {
     const ignoreItems = this.contents.split('\n');
-    const troubledIgnoreLines: string[] = [];
+    const troubledIgnoreLines: Set<string> = new Set<string>();
 
     if (newLibraryResults !== oldLibraryResults && ignoreItems) {
       ignoreItems.forEach((ignoreItem) => {
         // we need to run the both of the compilers for a single line to find the problem entry
         const gitignoreResult = gitignoreParser
           .compile(this.parseContents(ignoreItem))
-          .accepts(sourceFilePath);
-        const ignoreResult = !ignore().add([ignoreItem]).ignores(sourceFilePath);
+          .accepts(fsPath);
+        const ignoreResult = !ignore().add([ignoreItem]).ignores(fsPath);
         // print the warning only once per forceignore line item
-        if (ignoreResult !== gitignoreResult && !troubledIgnoreLines.includes(ignoreItem) && warn) {
+        if (ignoreResult !== gitignoreResult && !troubledIgnoreLines.has(ignoreItem) && warn) {
           // only show the warning once, it could come from denies() or accepts()
           warn = false;
           process.emitWarning(
-            "The .forceignore sourceFilePath doesn't adhere to .gitignore format which will be the default behavior starting in Spring '21 release. More information on .gitignore format here: https://git-scm.com/docs/gitignore. Fix the following lines in your .forceignore and add '# .forceignore v2' to your .forceignore sourceFilePath to switch to the new behavior."
+            "The .forceignore file doesn't adhere to .gitignore format which will be the default behavior starting in Spring '21 release. More information on .gitignore format here: https://git-scm.com/docs/gitignore. Fix the following lines in your .forceignore and add '# .forceignore v2' to your .forceignore file to switch to the new behavior."
           );
           process.emitWarning('\t' + ignoreItem);
         }
-        troubledIgnoreLines.push(ignoreItem);
+        troubledIgnoreLines.add(ignoreItem);
       });
 
       // send analytics, if they exist.
@@ -151,7 +151,7 @@ export class ForceIgnore {
         oldLibraryResults,
         newLibraryResults,
         ignoreLines: troubledIgnoreLines,
-        file: sourceFilePath,
+        file: fsPath,
       });
     }
   }

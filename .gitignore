@@ -31,7 +31,7 @@ junit-custom.xml
 # MacOS folder atttribute tracking
 **/.DS_Store
 
-# sourceFilePath generated for publishing
+# file generated for publishing
 *.tgz
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
@@ -93,10 +93,10 @@ typings/
 # Output of 'npm pack'
 *.tgz
 
-# Yarn Integrity sourceFilePath
+# Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables sourceFilePath
+# dotenv environment variables file
 .env
 .env.test
 

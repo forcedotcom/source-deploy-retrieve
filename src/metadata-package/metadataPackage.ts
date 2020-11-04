@@ -33,6 +33,7 @@ import {
   MetadataPackageOptions,
 } from './types';
 import { MetadataPackageError } from '../errors';
+import { nls } from '../i18n';
 
 export class MetadataPackage {
   public apiVersion: string;
@@ -45,7 +46,7 @@ export class MetadataPackage {
   }
 
   /**
-   * Create a package by resolving source backed components.
+   * Create a package by resolving components from source.
    *
    * @param fsPath Path to resolve components from
    * @param options
@@ -73,8 +74,8 @@ export class MetadataPackage {
     fsPath: string,
     options?: FromManifestOptions
   ): Promise<MetadataPackage> {
-    const registry = options?.registry || new RegistryAccess();
-    const tree = options?.tree || new NodeFSTreeContainer();
+    const registry = options?.registry ?? new RegistryAccess();
+    const tree = options?.tree ?? new NodeFSTreeContainer();
     const file = await tree.readFile(fsPath);
     const mdPackage = new MetadataPackage(options?.registry);
     const { types, version } = (parseXml(file.toString(), {
@@ -156,14 +157,20 @@ export class MetadataPackage {
     options?: MetadataDeployOptions
   ): Promise<SourceDeployResult> {
     const toDeploy: SourceComponent[] = [];
+    const missingSource: string[] = [];
+
     for (const component of this._components.iter()) {
       if (component instanceof SourceComponent) {
         toDeploy.push(component);
+      } else {
+        missingSource.push(`${component.type.name}:${component.fullName}`);
       }
     }
 
     if (toDeploy.length === 0) {
       throw new MetadataPackageError('error_no_source_to_deploy');
+    } else if (missingSource.length > 0) {
+      console.warn(nls.localize('warn_unresolved_source_for_components', missingSource.join(',')));
     }
 
     const connection = await this.getConnection(auth);
@@ -207,7 +214,7 @@ export class MetadataPackage {
     const client = new SourceClient(connection, new MetadataResolver());
 
     if (this._components.size === 0) {
-      throw new MetadataPackageError('error_no_source_to_retrieve');
+      throw new MetadataPackageError('error_no_components_to_retrieve');
     }
 
     return client.metadata.retrieve({
@@ -252,10 +259,9 @@ export class MetadataPackage {
     options?: SourceComponentOptions
   ): ComponentCollection<SourceComponent> | undefined {
     let filterSet: ComponentSet<MetadataComponent>;
-
     if (options?.filter) {
-      filterSet =
-        options.filter instanceof ComponentSet ? options.filter : new ComponentSet(options.filter);
+      const { filter } = options;
+      filterSet = filter instanceof ComponentSet ? filter : new ComponentSet(filter);
     }
 
     // TODO: move filter logic to resolver and have it return ComponentCollection

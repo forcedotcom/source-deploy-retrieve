@@ -62,4 +62,6 @@ export const messages = {
     'A StaticResource directory must have a content type of application/zip or application/jar - found %s for %s',
   tapi_deploy_component_limit_error:
     'This deploy method only supports deploying one metadata component at a time',
+  warn_unresolved_source_for_components:
+    'The following components will not be deployed due to unresolved source: %s',
 };

@@ -8,7 +8,7 @@ import { AuthInfo, Connection } from '@salesforce/core';
 import { fail } from 'assert';
 import { expect } from 'chai';
 import { join } from 'path';
-import { stub } from 'sinon';
+import { createSandbox, stub } from 'sinon';
 import {
   VirtualDirectory,
   VirtualTreeContainer,
@@ -82,7 +82,11 @@ const virtualPackageFiles: VirtualDirectory[] = [
 
 const tree = new VirtualTreeContainer(virtualPackageFiles);
 
+const env = createSandbox();
+
 describe('MetadataPackage', () => {
+  afterEach(() => env.restore());
+
   describe('Initializers', () => {
     describe('fromSource', () => {
       it('should initialize with source backed components', () => {
@@ -170,6 +174,15 @@ describe('MetadataPackage', () => {
   });
 
   describe('resolveSourceComponents', () => {
+    it('should resolve components and add to package', () => {
+      const mdp = new MetadataPackage(mockRegistry);
+      const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath('.');
+      const result = mdp.resolveSourceComponents('.', { tree });
+
+      expect(result.getAll()).to.deep.equal(expected);
+      expect(mdp.components.getAll()).to.deep.equal(expected);
+    });
+
     it('should resolve components and filter', async () => {
       const mdp = new MetadataPackage(mockRegistry);
       const filter = [{ fullName: 'b', type: mockRegistryData.types.mixedcontentsinglefile }];
@@ -208,6 +221,7 @@ describe('MetadataPackage', () => {
         .getChildren();
 
       expect(result).to.deep.equal(expected);
+      expect(mdp.components.getAll()).to.deep.equal(expected);
     });
   });
 
@@ -242,14 +256,12 @@ describe('MetadataPackage', () => {
         }),
       });
       const mdp = MetadataPackage.fromSource('.', { registry: mockRegistry, tree });
-      const deployStub = stub(MetadataApi.prototype, 'deploy');
+      const deployStub = env.stub(MetadataApi.prototype, 'deploy');
       deployStub.withArgs(mdp.components.getAll() as SourceComponent[]).resolves(mockResult);
 
       const result = await mdp.deploy(mockConnection);
 
       expect(result).to.deep.equal(mockResult);
-
-      deployStub.restore();
     });
 
     it('should throw error if there are no source backed components when deploying', async () => {
@@ -265,6 +277,23 @@ describe('MetadataPackage', () => {
         expect(e.name).to.equal(MetadataPackageError.name);
         expect(e.message).to.equal(nls.localize('error_no_source_to_deploy'));
       }
+    });
+
+    it('should warn when some components are missing source', async () => {
+      stub(MetadataApi.prototype, 'deploy');
+      const warnStub = env.stub(console, 'warn').callsFake(() => true);
+      const mdp = MetadataPackage.fromSource('.', { registry: mockRegistry, tree });
+      const missing = mdp.components.getAll().map((c) => `${c.type.name}:${c.fullName}`);
+
+      mdp.add({ fullName: 'NoSource', type: 'MixedContentSingleFile' });
+
+      await mdp.deploy('test@foobar.com');
+
+      expect(
+        warnStub.calledOnceWith(
+          nls.localize('warn_unresolved_source_for_components', missing.join(','))
+        )
+      );
     });
   });
 
@@ -283,24 +312,43 @@ describe('MetadataPackage', () => {
         }),
       });
       const mdp = MetadataPackage.fromSource('.', { registry: mockRegistry, tree });
-      const retrieveStub = stub(MetadataApi.prototype, 'retrieve');
+      const retrieveStub = env.stub(MetadataApi.prototype, 'retrieve');
       retrieveStub
         .withArgs({
           components: mdp.components.getAll() as SourceComponent[],
-          merge: true,
+          merge: undefined,
           output: '/test/path',
-          wait: 5000,
+          wait: undefined,
         })
         .resolves(mockResult);
 
-      const result = await mdp.retrieve(mockConnection, '/test/path', {
-        merge: true,
-        wait: 5000,
-      });
+      const result = await mdp.retrieve(mockConnection, '/test/path');
 
       expect(result).to.deep.equal(mockResult);
+    });
 
-      retrieveStub.restore();
+    it('should handle options', async () => {
+      const mockConnection = await Connection.create({
+        authInfo: await AuthInfo.create({
+          username: 'test@foobar.com',
+        }),
+      });
+      const mdp = MetadataPackage.fromSource('.', { registry: mockRegistry, tree });
+      const retrieveStub = stub(MetadataApi.prototype, 'retrieve');
+
+      await mdp.retrieve(mockConnection, '/test/path', {
+        merge: true,
+        wait: 1234,
+      });
+
+      expect(
+        retrieveStub.calledWith({
+          components: mdp.components.getAll() as SourceComponent[],
+          merge: true,
+          output: '/test/path',
+          wait: 1234,
+        })
+      ).to.be.true;
     });
 
     it('should throw error if there are no components when retrieving', async () => {
@@ -310,7 +358,7 @@ describe('MetadataPackage', () => {
         fail('should have thrown an error');
       } catch (e) {
         expect(e.name).to.equal(MetadataPackageError.name);
-        expect(e.message).to.equal(nls.localize('error_no_source_to_retrieve'));
+        expect(e.message).to.equal(nls.localize('error_no_components_to_retrieve'));
       }
     });
   });

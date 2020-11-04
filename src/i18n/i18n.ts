@@ -41,6 +41,7 @@ export const messages = {
   error_missing_metadata_xml: "%s: Metadata xml file missing for '%s'",
   error_unsupported_content_metadata_xml: "%s: Unsupported content xml file for '%s'",
   error_missing_type_definition: "Missing metadata type definition in registry for id '%s'",
+  error_missing_child_type_definition: 'Type %s does not have a child type definition %s',
   error_no_metadata_xml_ignore: 'Metadata xml file %s is forceignored but is required for %s',
   error_no_source_ignore: '%s types require source to be present and %s is forceignored.',
   error_path_not_found: '%s: File or folder not found',

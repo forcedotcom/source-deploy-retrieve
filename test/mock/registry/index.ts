@@ -203,6 +203,7 @@ export const mockRegistryData = {
     x: 'reginaking',
     y: 'reginaking',
     g: 'decomposedtoplevel',
+    badchildtype: 'mixedcontentsinglefile',
   },
   apiVersion: '48.0',
 };

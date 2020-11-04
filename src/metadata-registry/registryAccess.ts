@@ -27,8 +27,7 @@ export class RegistryAccess {
       if (childType) {
         return childType;
       }
-      // "[parent type] missing child type definition for id [lower]"
-      throw new RegistryError('');
+      throw new RegistryError('error_missing_child_type_definition', [parentTypeId, lower]);
     }
     if (!this.registry.types[lower]) {
       throw new RegistryError('error_missing_type_definition', lower);

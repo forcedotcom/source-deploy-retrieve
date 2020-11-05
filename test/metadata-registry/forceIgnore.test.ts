@@ -11,7 +11,9 @@ import * as fs from 'fs';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { dirname, join, relative } from 'path';
 import { Lifecycle } from '@salesforce/core';
-
+// @ts-ignore this doesn't have typings
+import * as gitignoreParser from 'gitignore-parser';
+import ignore from 'ignore';
 const env = createSandbox();
 
 describe('ForceIgnore', () => {
@@ -51,14 +53,25 @@ describe('ForceIgnore', () => {
     readStub.withArgs(forceIgnorePath).returns(testPattern);
     const forceIgnore = new ForceIgnore(forceIgnorePath);
     const file = join('some', 'path', '__tests__', 'myTest.x');
+    // @ts-ignore private member
+    env.stub(forceIgnore.gitignoreParser, 'accepts').returns(false);
+    // @ts-ignore private member
+    env.stub(forceIgnore.parser, 'ignores').returns(false);
 
-    const telemetrySpy = env.spy(Lifecycle.prototype, 'emit');
+    // @ts-ignore parseContents is private
+    const oldParser = gitignoreParser.compile(forceIgnore.parseContents(testPattern));
+    const newParser = ignore().add([testPattern]);
+
+    env.stub(oldParser, 'accepts').returns(false);
+    env.stub(newParser, 'ignores').returns(true);
+
+    const telemetrySpy = env.stub(Lifecycle.prototype, 'emit');
 
     const expected = {
       eventName: 'FORCE_IGNORE_DIFFERENCE',
       content: testPattern,
-      oldLibraryResults: true,
-      newLibraryResults: false,
+      oldLibraryResults: false,
+      newLibraryResults: true,
       ignoreLines: [testPattern],
       file: relative(dirname(forceIgnorePath), file),
     };
@@ -81,11 +94,23 @@ describe('ForceIgnore', () => {
 
     const file = join('some', 'path', '__tests__', 'myTest.x');
 
+    // @ts-ignore private member
+    env.stub(forceIgnore.gitignoreParser, 'accepts').returns(false);
+    // @ts-ignore private member
+    env.stub(forceIgnore.parser, 'ignores').returns(false);
+
+    // @ts-ignore parseContents is private
+    const oldParser = gitignoreParser.compile(forceIgnore.parseContents(testPattern));
+    const newParser = ignore().add([testPattern]);
+
+    env.stub(oldParser, 'accepts').returns(false);
+    env.stub(newParser, 'ignores').returns(true);
+
     const expected = {
       eventName: 'FORCE_IGNORE_DIFFERENCE',
       content: entries,
-      oldLibraryResults: true,
-      newLibraryResults: false,
+      oldLibraryResults: false,
+      newLibraryResults: true,
       ignoreLines: [testPattern, switchParser],
       file: relative(dirname(forceIgnorePath), file),
     };

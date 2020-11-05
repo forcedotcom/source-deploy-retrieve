@@ -144,19 +144,13 @@ export class ForceIgnore {
         troubledIgnoreLines.add(ignoreItem);
       });
 
-      // break entries out of the Set so they can be read in the analytics
-      const ignoreLines: string[] = [];
-      troubledIgnoreLines.forEach((entry) => {
-        ignoreLines.push(entry);
-      });
-
       // send analytics, if they exist.
       Lifecycle.getInstance().emit('telemetry', {
         eventName: 'FORCE_IGNORE_DIFFERENCE',
         content: this.contents,
         oldLibraryResults,
         newLibraryResults,
-        ignoreLines,
+        ignoreLines: Array.from(troubledIgnoreLines),
         file: fsPath,
       });
     }

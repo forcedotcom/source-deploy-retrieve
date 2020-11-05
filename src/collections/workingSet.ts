@@ -265,6 +265,11 @@ export class WorkingSet implements Iterable<MetadataComponent> {
     return XML_DECL.concat(j2x.parse(toParse));
   }
 
+  /**
+   * Add a component to the set.
+   *
+   * @param component
+   */
   public add(component: MetadataComponent | MetadataMember): void {
     if (typeof component.type === 'string') {
       this.setComponent({
@@ -276,6 +281,11 @@ export class WorkingSet implements Iterable<MetadataComponent> {
     }
   }
 
+  /**
+   * Get the set entries grouped by metadata type name.
+   *
+   * entry -> [type name, component set]
+   */
   public entries(): IterableIterator<[string, ComponentSet<MetadataComponent>]> {
     return this._components.entries();
   }

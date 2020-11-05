@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import * as fs from 'fs';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
-import { join } from 'path';
+import { dirname, join, relative } from 'path';
 import { Lifecycle } from '@salesforce/core';
 
 const env = createSandbox();
@@ -47,23 +47,24 @@ describe('ForceIgnore', () => {
 
   it('should send telemetry event when the old parser and the new parser have different results testing old parser', () => {
     const readStub = env.stub(fs, 'readFileSync');
+    const testPattern = '*__tests__*';
     readStub.withArgs(forceIgnorePath).returns(testPattern);
     const forceIgnore = new ForceIgnore(forceIgnorePath);
-
     const file = join('some', 'path', '__tests__', 'myTest.x');
+
+    const telemetrySpy = env.spy(Lifecycle.prototype, 'emit');
 
     const expected = {
       eventName: 'FORCE_IGNORE_DIFFERENCE',
       content: testPattern,
-      oldLibraryResults: false,
-      newLibraryResults: true,
+      oldLibraryResults: true,
+      newLibraryResults: false,
       ignoreLines: [testPattern],
-      file,
+      file: relative(dirname(forceIgnorePath), file),
     };
 
-    const telemetrySpy = env.spy(Lifecycle.prototype, 'emit');
-    // @ts-ignore call the private method directly to avoid excessive stubbing
-    forceIgnore.resolveConflict(true, false, file);
+    forceIgnore.accepts(file);
+
     expect(telemetrySpy.calledOnce).to.be.true;
     expect(telemetrySpy.args[0][0]).to.equal('telemetry');
     expect(telemetrySpy.args[0][1]).to.deep.equal(expected);

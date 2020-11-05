@@ -227,7 +227,7 @@ export class WorkingSet implements Iterable<MetadataComponent> {
       filterSet = filter instanceof ComponentSet ? filter : new ComponentSet(filter);
     }
 
-    // TODO: move filter logic to resolver and have it return ComponentCollection
+    // TODO: move filter logic to resolver W-8023153
     const resolver = new MetadataResolver(this.registry, options?.tree);
     const resolved = resolver.getComponentsFromPath(fsPath);
     const sourceComponents = new ComponentSet<SourceComponent>();

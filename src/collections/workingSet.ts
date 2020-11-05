@@ -6,8 +6,12 @@
  */
 import { AuthInfo, Connection } from '@salesforce/core';
 import { parse as parseXml, j2xParser } from 'fast-xml-parser';
+import { ComponentSet } from './componentSet';
 import { SourceClient } from '../client';
 import { MetadataDeployOptions, SourceDeployResult, SourceRetrieveResult } from '../client/types';
+import { MetadataComponent, XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
+import { WorkingSetError } from '../errors';
+import { nls } from '../i18n';
 import {
   MetadataResolver,
   NodeFSTreeContainer,
@@ -15,30 +19,19 @@ import {
   SourceComponent,
 } from '../metadata-registry';
 import {
-  MetadataComponent,
-  ComponentCollection,
-  XML_DECL,
-  XML_NS_KEY,
-  XML_NS_URL,
-  MutableComponentCollection,
-  ComponentSet,
-} from '../common';
-import {
   PackageTypeMembers,
   FromSourceOptions,
   FromManifestOptions,
-  PackageManifestContents,
+  PackageManifestObject,
   SourceComponentOptions,
   MetadataMember,
-  MetadataPackageOptions,
+  WorkingSetOptions,
 } from './types';
-import { MetadataPackageError } from '../errors';
-import { nls } from '../i18n';
 
-export class MetadataPackage {
+export class WorkingSet implements Iterable<MetadataComponent> {
   public apiVersion: string;
   private registry: RegistryAccess;
-  private _components = new MutableComponentCollection<MetadataComponent>();
+  private _components = new Map<string, ComponentSet<MetadataComponent>>();
 
   public constructor(registry = new RegistryAccess()) {
     this.registry = registry;
@@ -46,23 +39,23 @@ export class MetadataPackage {
   }
 
   /**
-   * Create a package by resolving components from source.
+   * Create a set by resolving components from source.
    *
    * @param fsPath Path to resolve components from
    * @param options
    */
-  public static fromSource(fsPath: string, options?: FromSourceOptions): MetadataPackage {
-    const mdPackage = new MetadataPackage(options?.registry);
-    mdPackage.resolveSourceComponents(fsPath, { tree: options?.tree });
-    return mdPackage;
+  public static fromSource(fsPath: string, options?: FromSourceOptions): WorkingSet {
+    const ws = new WorkingSet(options?.registry);
+    ws.resolveSourceComponents(fsPath, { tree: options?.tree });
+    return ws;
   }
 
   /**
-   * Create a package by reading a manifest file in xml format. Optionally, specify a file path
+   * Create a set by reading a manifest file in xml format. Optionally, specify a file path
    * with the `resolve` option to resolve source files for the components.
    *
    * ```
-   * MetadataPackage.fromManifest('/path/to/package.xml', {
+   * WorkingSet.fromManifest('/path/to/package.xml', {
    *  resolve: '/path/to/force-app'
    * });
    * ```
@@ -73,16 +66,16 @@ export class MetadataPackage {
   public static async fromManifestFile(
     fsPath: string,
     options?: FromManifestOptions
-  ): Promise<MetadataPackage> {
+  ): Promise<WorkingSet> {
     const registry = options?.registry ?? new RegistryAccess();
     const tree = options?.tree ?? new NodeFSTreeContainer();
     const file = await tree.readFile(fsPath);
-    const mdPackage = new MetadataPackage(options?.registry);
+    const ws = new WorkingSet(options?.registry);
     const { types, version } = (parseXml(file.toString(), {
       stopNodes: ['version'],
       ignoreNameSpace: false,
-    }) as PackageManifestContents).Package;
-    mdPackage.apiVersion = version;
+    }) as PackageManifestObject).Package;
+    ws.apiVersion = version;
 
     const filterSet = new ComponentSet<MetadataComponent>();
 
@@ -98,68 +91,54 @@ export class MetadataPackage {
         if (options?.resolve) {
           filterSet.add(component);
         } else {
-          mdPackage.add(component);
+          ws.add(component);
         }
       }
     }
 
     if (options?.resolve) {
-      mdPackage.resolveSourceComponents(options.resolve, {
+      ws.resolveSourceComponents(options.resolve, {
         tree,
         filter: filterSet,
       });
     }
 
-    return mdPackage;
+    return ws;
   }
 
   /**
-   * Create a package by specifying a collection of Type name/FullName objects
+   * Create a set from a collection of components or type members.
    *
-   * @param members Collection of FullName and Type name objects
+   * @param collection
    * @param options
    */
-  public static fromMembers(
-    members: Iterable<MetadataMember>,
-    options?: MetadataPackageOptions
-  ): MetadataPackage {
-    const mdp = new MetadataPackage(options?.registry);
-    for (const member of members) {
-      mdp.add(member);
+  public static fromComponents(
+    collection: Iterable<MetadataComponent> | Iterable<MetadataMember>,
+    options?: WorkingSetOptions
+  ): WorkingSet {
+    const ws = new WorkingSet(options?.registry);
+    for (const component of collection) {
+      ws.add(component);
     }
-    return mdp;
+    return ws;
   }
 
   /**
-   * Deploy package components to an org. The components must be backed by source files.
+   * Deploy components in the set to an org. The components must be backed by source files.
+   * Deploying with a username requires local AuthInfo from @salesforce/core, usually created
+   * after authenticating with the Salesforce CLI.
    *
-   * @param connection Connection to org to deploy to.
+   * @param usernameOrConnection Username or connection to deploy components with.
    * @param options
    */
   public async deploy(
-    connection: Connection,
-    options?: MetadataDeployOptions
-  ): Promise<SourceDeployResult>;
-
-  /**
-   * Deploy package components to an org. The components must be backed by source files.
-   * Requires local AuthInfo from @salesforce/core, usually created after authenticating with the Salesforce CLI.
-   *
-   * @param username Username to deploy components with.
-   * @param options
-   */
-  public async deploy(
-    username: string,
-    options?: MetadataDeployOptions
-  ): Promise<SourceDeployResult>;
-  public async deploy(
-    auth: Connection | string,
+    usernameOrConnection: string | Connection,
     options?: MetadataDeployOptions
   ): Promise<SourceDeployResult> {
     const toDeploy: SourceComponent[] = [];
     const missingSource: string[] = [];
 
-    for (const component of this._components.iter()) {
+    for (const component of this) {
       if (component instanceof SourceComponent) {
         toDeploy.push(component);
       } else {
@@ -168,58 +147,41 @@ export class MetadataPackage {
     }
 
     if (toDeploy.length === 0) {
-      throw new MetadataPackageError('error_no_source_to_deploy');
+      throw new WorkingSetError('error_no_source_to_deploy');
     } else if (missingSource.length > 0) {
       console.warn(nls.localize('warn_unresolved_source_for_components', missingSource.join(',')));
     }
 
-    const connection = await this.getConnection(auth);
+    const connection = await this.getConnection(usernameOrConnection);
     const client = new SourceClient(connection, new MetadataResolver());
+
     return client.metadata.deploy(toDeploy, options);
   }
 
   /**
-   * Retrieve package components from an org. Package components are not required to be backed by
-   * source files. Requires local AuthInfo from @salesforce/core, usually created after authenticating
-   * with the Salesforce CLI.
+   * Retrieve components in the set from an org. Components are not required to be backed by
+   * source files. Retrieving with a username requires local AuthInfo from @salesforce/core,
+   * usually created after authenticating with the Salesforce CLI.
    *
-   * @param connection Connection to org to retrieve from.
+   * @param usernameOrConnection Username or Connection to retrieve with.
    * @param output Directory to retrieve to.
    * @param options
    */
   public async retrieve(
-    connection: Connection,
-    output: string,
-    options?: { merge?: boolean; wait?: number }
-  ): Promise<SourceRetrieveResult>;
-  /**
-   * Retrieve package components from an org. Package components are not required to be backed by
-   * source files.
-   *
-   * @param username Username of org to retrieve from.
-   * @param output Directory to retrieve to
-   * @param options
-   */
-  public async retrieve(
-    username: string,
-    output: string,
-    options?: { merge?: boolean; wait?: number }
-  ): Promise<SourceRetrieveResult>;
-  public async retrieve(
-    auth: Connection | string,
+    usernameOrConnection: string | Connection,
     output: string,
     options?: { merge?: boolean; wait?: number }
   ): Promise<SourceRetrieveResult> {
-    const connection = await this.getConnection(auth);
+    const connection = await this.getConnection(usernameOrConnection);
     const client = new SourceClient(connection, new MetadataResolver());
 
     if (this._components.size === 0) {
-      throw new MetadataPackageError('error_no_components_to_retrieve');
+      throw new WorkingSetError('error_no_components_to_retrieve');
     }
 
     return client.metadata.retrieve({
       // this is fine, if they aren't mergable then they'll go to the default
-      components: Array.from(this._components.iter()) as SourceComponent[],
+      components: Array.from(this) as SourceComponent[],
       merge: options?.merge,
       output,
       wait: options?.wait,
@@ -227,9 +189,9 @@ export class MetadataPackage {
   }
 
   /**
-   * Get an object representation of the package manifest.
+   * Get an object representation of a package manifest based on the set components.
    */
-  public getObject(): PackageManifestContents {
+  public getObject(): PackageManifestObject {
     const typeMembers: PackageTypeMembers[] = [];
 
     for (const [typeName, components] of this._components.entries()) {
@@ -249,7 +211,7 @@ export class MetadataPackage {
   }
 
   /**
-   * Resolve source backed components and add them to the package.
+   * Resolve source backed components and add them to the set.
    *
    * @param fsPath: File path to resolve
    * @param options
@@ -257,8 +219,9 @@ export class MetadataPackage {
   public resolveSourceComponents(
     fsPath: string,
     options?: SourceComponentOptions
-  ): ComponentCollection<SourceComponent> | undefined {
+  ): ComponentSet<SourceComponent> | undefined {
     let filterSet: ComponentSet<MetadataComponent>;
+
     if (options?.filter) {
       const { filter } = options;
       filterSet = filter instanceof ComponentSet ? filter : new ComponentSet(filter);
@@ -267,27 +230,27 @@ export class MetadataPackage {
     // TODO: move filter logic to resolver and have it return ComponentCollection
     const resolver = new MetadataResolver(this.registry, options?.tree);
     const resolved = resolver.getComponentsFromPath(fsPath);
-    const sourceComponents = new MutableComponentCollection<SourceComponent>();
+    const sourceComponents = new ComponentSet<SourceComponent>();
 
     for (const component of resolved) {
       if (!filterSet || filterSet.has(component)) {
-        this._components.add(component);
+        this.setComponent(component);
         sourceComponents.add(component);
       } else if (filterSet) {
         for (const childComponent of component.getChildren()) {
           if (filterSet.has(childComponent)) {
-            this._components.add(childComponent);
+            this.setComponent(childComponent);
             sourceComponents.add(childComponent);
           }
         }
       }
     }
 
-    return new ComponentCollection<SourceComponent>(sourceComponents);
+    return sourceComponents;
   }
 
   /**
-   * Create a manifest in xml format for the package (package.xml file).
+   * Create a manifest in xml format (package.xml) based on the set components.
    *
    * @param indentation Number of spaces to indent lines by.
    */
@@ -302,23 +265,35 @@ export class MetadataPackage {
     return XML_DECL.concat(j2x.parse(toParse));
   }
 
-  public add(members: MetadataMember): void;
-  public add(components: MetadataComponent): void;
-  public add(input: MetadataComponent | MetadataMember): void {
-    if (typeof input.type === 'string') {
-      this._components.add(
-        Object.freeze({
-          fullName: input.fullName,
-          type: this.registry.getTypeByName(input.type),
-        })
-      );
+  public add(component: MetadataComponent | MetadataMember): void {
+    if (typeof component.type === 'string') {
+      this.setComponent({
+        fullName: component.fullName,
+        type: this.registry.getTypeByName(component.type),
+      });
     } else {
-      this._components.add(Object.freeze(input) as MetadataComponent);
+      this.setComponent(component as MetadataComponent);
     }
   }
 
-  get components(): ComponentCollection<MetadataComponent> {
-    return new ComponentCollection(this._components);
+  public entries(): IterableIterator<[string, ComponentSet<MetadataComponent>]> {
+    return this._components.entries();
+  }
+
+  public *[Symbol.iterator](): Iterator<MetadataComponent> {
+    for (const componentSet of this._components.values()) {
+      for (const component of componentSet) {
+        yield component;
+      }
+    }
+  }
+
+  get size(): number {
+    let count = 0;
+    for (const set of this._components.values()) {
+      count += set.size;
+    }
+    return count;
   }
 
   private async getConnection(auth: Connection | string): Promise<Connection> {
@@ -327,5 +302,13 @@ export class MetadataPackage {
       : await Connection.create({
           authInfo: await AuthInfo.create({ username: auth }),
         });
+  }
+
+  private setComponent(component: MetadataComponent): void {
+    const { type } = component;
+    if (!this._components.has(type.name)) {
+      this._components.set(type.name, new ComponentSet<MetadataComponent>());
+    }
+    this._components.get(type.name).add(Object.freeze(component));
   }
 }

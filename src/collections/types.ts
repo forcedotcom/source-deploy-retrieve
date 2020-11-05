@@ -4,8 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { ComponentSet, MetadataComponent } from '../common';
+import { MetadataComponent } from '../common';
 import { RegistryAccess, TreeContainer } from '../metadata-registry';
+import { ComponentSet } from './componentSet';
 
 export interface MetadataMember {
   fullName: string;
@@ -17,18 +18,18 @@ export interface PackageTypeMembers {
   members: string[];
 }
 
-export interface PackageManifestContents {
+export interface PackageManifestObject {
   Package: {
     types: PackageTypeMembers[];
     version: string;
   };
 }
 
-export interface MetadataPackageOptions {
+export interface WorkingSetOptions {
   registry?: RegistryAccess;
 }
 
-export interface FromSourceOptions extends MetadataPackageOptions {
+export interface FromSourceOptions extends WorkingSetOptions {
   tree?: TreeContainer;
 }
 

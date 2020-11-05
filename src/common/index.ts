@@ -12,5 +12,3 @@ export {
   XML_NS_URL,
   XML_NS_KEY,
 } from './constants';
-export { ComponentSet } from './componentSet';
-export { MutableComponentCollection, ComponentCollection } from './componentCollection';

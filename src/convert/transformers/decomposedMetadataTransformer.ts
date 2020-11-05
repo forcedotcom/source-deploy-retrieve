@@ -11,14 +11,8 @@ import { DecompositionStrategy, RegistryAccess, SourceComponent } from '../../me
 import { JsonMap, AnyJson, JsonArray } from '@salesforce/ts-types';
 import { JsToXml } from '../streams';
 import { join } from 'path';
-import {
-  ComponentSet,
-  MetadataType,
-  SourcePath,
-  META_XML_SUFFIX,
-  XML_NS_URL,
-  XML_NS_KEY,
-} from '../../common';
+import { MetadataType, SourcePath, META_XML_SUFFIX, XML_NS_URL, XML_NS_KEY } from '../../common';
+import { ComponentSet } from '../../collections';
 
 interface XmlJson extends JsonMap {
   [parentFullName: string]: {

@@ -72,7 +72,7 @@ export class ConversionError extends LibraryError {
   }
 }
 
-export class MetadataPackageError extends LibraryError {
+export class WorkingSetError extends LibraryError {
   constructor(messageKey: string, args?: string | string[]) {
     super(messageKey, args);
   }

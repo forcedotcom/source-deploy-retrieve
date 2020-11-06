@@ -58,6 +58,17 @@ _refs:
       export GUS_BUILD="$(node -pe "require('./package.json').gusBuild")"
       echo "export GUS_RELEASE=offcore.tooling.$GUS_BUILD" >> $BASH_ENV
 
+commands:
+  build-artifact:
+    steps: 
+      - run:
+          name: Archiving tarball
+          command: |
+            yarn pack
+            mkdir artifact
+            find . -name "*.tgz" -type f -exec cp {} ./artifact \;
+      - store_artifacts:
+          path: ./artifact
 jobs:
   node-latest: &node-test
     docker:
@@ -73,6 +84,7 @@ jobs:
       - run: *coverage
       - store_test_results:
           path: test-results
+      - build-artifact
   node-12:
     <<: *node-test
     docker:

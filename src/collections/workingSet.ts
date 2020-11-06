@@ -24,11 +24,13 @@ import {
   FromManifestOptions,
   PackageManifestObject,
   SourceComponentOptions,
-  MetadataMember,
   WorkingSetOptions,
+  MetadataSet,
 } from './types';
+import { ComponentLike } from '../common/types';
 
-export class WorkingSet implements Iterable<MetadataComponent> {
+export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
+  private static readonly WILDCARD = '*';
   public apiVersion: string;
   private registry: RegistryAccess;
   private _components = new Map<string, ComponentSet<MetadataComponent>>();
@@ -69,27 +71,33 @@ export class WorkingSet implements Iterable<MetadataComponent> {
   ): Promise<WorkingSet> {
     const registry = options?.registry ?? new RegistryAccess();
     const tree = options?.tree ?? new NodeFSTreeContainer();
-    const file = await tree.readFile(fsPath);
-    const ws = new WorkingSet(options?.registry);
-    const { types, version } = (parseXml(file.toString(), {
-      stopNodes: ['version'],
-      ignoreNameSpace: false,
-    }) as PackageManifestObject).Package;
-    ws.apiVersion = version;
+    const wildcardParsing = options?.wildcard ?? 'literal';
 
+    const file = await tree.readFile(fsPath);
+    const manifestObj = WorkingSet.parseManifestXml(file.toString());
+    const ws = new WorkingSet(options?.registry);
     const filterSet = new ComponentSet<MetadataComponent>();
 
-    for (const packageTypeMembers of types) {
+    // Fix: 1 entry will not be iterable
+    for (const packageTypeMembers of manifestObj.types) {
       const members = Array.isArray(packageTypeMembers.members)
         ? packageTypeMembers.members
         : [packageTypeMembers.members];
       for (const fullName of members) {
+        const memberIsWildcard = fullName === WorkingSet.WILDCARD;
         const component: MetadataComponent = {
           fullName,
           type: registry.getTypeByName(packageTypeMembers.name),
         };
         if (options?.resolve) {
-          filterSet.add(component);
+          if (memberIsWildcard && wildcardParsing !== 'literal') {
+            filterSet.add(component);
+            if (wildcardParsing === 'literalAndResolve') {
+              ws.add(component);
+            }
+          } else {
+            filterSet.add(component);
+          }
         } else {
           ws.add(component);
         }
@@ -103,6 +111,8 @@ export class WorkingSet implements Iterable<MetadataComponent> {
       });
     }
 
+    ws.apiVersion = manifestObj.version;
+
     return ws;
   }
 
@@ -113,7 +123,7 @@ export class WorkingSet implements Iterable<MetadataComponent> {
    * @param options
    */
   public static fromComponents(
-    collection: Iterable<MetadataComponent> | Iterable<MetadataMember>,
+    collection: Iterable<ComponentLike>,
     options?: WorkingSetOptions
   ): WorkingSet {
     const ws = new WorkingSet(options?.registry);
@@ -121,6 +131,20 @@ export class WorkingSet implements Iterable<MetadataComponent> {
       ws.add(component);
     }
     return ws;
+  }
+
+  private static parseManifestXml(
+    xmlContents: string
+  ): { types: PackageTypeMembers[]; version: string } {
+    const obj = (parseXml(xmlContents, {
+      stopNodes: ['version'],
+      ignoreNameSpace: false,
+    }) as PackageManifestObject).Package;
+
+    return {
+      types: Array.isArray(obj.types) ? obj.types : [obj.types],
+      version: obj.version,
+    };
   }
 
   /**
@@ -142,6 +166,9 @@ export class WorkingSet implements Iterable<MetadataComponent> {
       if (component instanceof SourceComponent) {
         toDeploy.push(component);
       } else {
+        if (component.fullName === WorkingSet.WILDCARD) {
+          throw new WorkingSetError('error_deploy_wildcard_literal');
+        }
         missingSource.push(`${component.type.name}:${component.fullName}`);
       }
     }
@@ -233,7 +260,12 @@ export class WorkingSet implements Iterable<MetadataComponent> {
     const sourceComponents = new ComponentSet<SourceComponent>();
 
     for (const component of resolved) {
-      if (!filterSet || filterSet.has(component)) {
+      const shouldResolve = !filterSet || filterSet.has(component);
+      const includedInWildcard = filterSet?.has({
+        fullName: WorkingSet.WILDCARD,
+        type: component.type,
+      });
+      if (shouldResolve || includedInWildcard) {
         this.setComponent(component);
         sourceComponents.add(component);
       } else if (filterSet) {
@@ -265,12 +297,7 @@ export class WorkingSet implements Iterable<MetadataComponent> {
     return XML_DECL.concat(j2x.parse(toParse));
   }
 
-  /**
-   * Add a component to the set.
-   *
-   * @param component
-   */
-  public add(component: MetadataComponent | MetadataMember): void {
+  public add(component: ComponentLike): void {
     if (typeof component.type === 'string') {
       this.setComponent({
         fullName: component.fullName,
@@ -279,6 +306,14 @@ export class WorkingSet implements Iterable<MetadataComponent> {
     } else {
       this.setComponent(component as MetadataComponent);
     }
+  }
+
+  public has(component: ComponentLike): boolean {
+    const typeName =
+      typeof component.type === 'string'
+        ? this.registry.getTypeByName(component.type).name
+        : component.type.name;
+    return this._components.get(typeName)?.has(component) === true;
   }
 
   /**

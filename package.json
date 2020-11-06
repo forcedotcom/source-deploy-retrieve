@@ -22,7 +22,7 @@
     "retrieve"
   ],
   "files": [
-    "lib"
+    "lib/src"
   ],
   "engines": {
     "node": ">=10.17.0"

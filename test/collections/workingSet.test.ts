@@ -134,13 +134,13 @@ describe('WorkingSet', () => {
         expect(Array.from(mdp)).to.deep.equal(expected);
       });
 
-      it('should not interpret wildcard members literally by default', async () => {
+      it('should interpret wildcard members literally by default', async () => {
         const mdp = await WorkingSet.fromManifestFile('packageWildcard.xml', {
           registry: mockRegistry,
           tree,
         });
 
-        expect(mdp.has({ fullName: '*', type: 'MixedContentSingleFile' })).to.be.false;
+        expect(mdp.has({ fullName: '*', type: 'MixedContentSingleFile' })).to.be.true;
       });
 
       it('should interpret wildcard members literally when literalWildcard = true', async () => {

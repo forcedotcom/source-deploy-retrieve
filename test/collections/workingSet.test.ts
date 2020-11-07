@@ -134,31 +134,31 @@ describe('WorkingSet', () => {
         expect(Array.from(mdp)).to.deep.equal(expected);
       });
 
-      it('should interpret wildcard members literally by default', async () => {
+      it('should not interpret wildcard members literally by default', async () => {
         const mdp = await WorkingSet.fromManifestFile('packageWildcard.xml', {
           registry: mockRegistry,
           tree,
         });
 
-        expect(mdp.has({ fullName: '*', type: 'MixedContentSingleFile' }));
+        expect(mdp.has({ fullName: '*', type: 'MixedContentSingleFile' })).to.be.false;
       });
 
-      it('should interpret wildcard members literally when wildcard option = literal', async () => {
+      it('should interpret wildcard members literally when literalWildcard = true', async () => {
         const mdp = await WorkingSet.fromManifestFile('packageWildcard.xml', {
           registry: mockRegistry,
           tree,
-          wildcard: 'literal',
+          literalWildcard: true,
         });
 
         expect(mdp.has({ fullName: '*', type: 'MixedContentSingleFile' }));
       });
 
-      it('should resolve components when wildcard option = resolve and a wildcard member is encountered', async () => {
+      it('should resolve components when literalWildcard = false and wildcard is encountered', async () => {
         const mdp = await WorkingSet.fromManifestFile('packageWildcard.xml', {
           registry: mockRegistry,
           tree,
           resolve: '.',
-          wildcard: 'resolve',
+          literalWildcard: false,
         });
         const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath(
           'mixedSingleFiles'
@@ -167,12 +167,12 @@ describe('WorkingSet', () => {
         expect(Array.from(mdp)).to.deep.equal(expected);
       });
 
-      it('should resolve components and add literal wildcard component when wildcard option = literalAndResolve', async () => {
+      it('should resolve components and add literal wildcard component when literalWildcard = true and resolve != undefined', async () => {
         const mdp = await WorkingSet.fromManifestFile('packageWildcard.xml', {
           registry: mockRegistry,
           tree,
           resolve: '.',
-          wildcard: 'literalAndResolve',
+          literalWildcard: true,
         });
         const sourceComponents = new MetadataResolver(mockRegistry, tree).getComponentsFromPath(
           'mixedSingleFiles'

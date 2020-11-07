@@ -30,7 +30,7 @@ export interface FromSourceOptions extends WorkingSetOptions {
 
 export interface FromManifestOptions extends FromSourceOptions {
   resolve?: string;
-  wildcard?: 'literal' | 'resolve' | 'literalAndResolve';
+  literalWildcard?: boolean;
 }
 
 export interface SourceComponentOptions {

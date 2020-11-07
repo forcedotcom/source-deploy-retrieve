@@ -71,47 +71,39 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
   ): Promise<WorkingSet> {
     const registry = options?.registry ?? new RegistryAccess();
     const tree = options?.tree ?? new NodeFSTreeContainer();
-    const wildcardParsing = options?.wildcard ?? 'literal';
+    const shouldResolve = options?.resolve;
 
-    const file = await tree.readFile(fsPath);
-    const manifestObj = WorkingSet.parseManifestXml(file.toString());
     const ws = new WorkingSet(options?.registry);
     const filterSet = new ComponentSet<MetadataComponent>();
+    const file = await tree.readFile(fsPath);
+    const manifestObj = WorkingSet.parseManifestXml(file.toString());
 
-    // Fix: 1 entry will not be iterable
-    for (const packageTypeMembers of manifestObj.types) {
-      const members = Array.isArray(packageTypeMembers.members)
-        ? packageTypeMembers.members
-        : [packageTypeMembers.members];
+    ws.apiVersion = manifestObj.version;
+
+    for (const { name: typeName, members } of manifestObj.types) {
       for (const fullName of members) {
         const memberIsWildcard = fullName === WorkingSet.WILDCARD;
         const component: MetadataComponent = {
           fullName,
-          type: registry.getTypeByName(packageTypeMembers.name),
+          type: registry.getTypeByName(typeName),
         };
-        if (options?.resolve) {
-          if (memberIsWildcard && wildcardParsing !== 'literal') {
-            filterSet.add(component);
-            if (wildcardParsing === 'literalAndResolve') {
-              ws.add(component);
-            }
-          } else {
-            filterSet.add(component);
-          }
-        } else {
+
+        if (shouldResolve) {
+          filterSet.add(component);
+        }
+
+        if (!shouldResolve || (memberIsWildcard && options?.literalWildcard)) {
           ws.add(component);
         }
       }
     }
 
-    if (options?.resolve) {
+    if (shouldResolve) {
       ws.resolveSourceComponents(options.resolve, {
         tree,
         filter: filterSet,
       });
     }
-
-    ws.apiVersion = manifestObj.version;
 
     return ws;
   }

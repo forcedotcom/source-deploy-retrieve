@@ -6,7 +6,7 @@
  */
 
 import ignore, { Ignore } from 'ignore/index';
-import { relative, join, dirname, sep } from 'path';
+import { dirname, join, relative, sep } from 'path';
 import { readFileSync } from 'fs';
 import { SourcePath } from '../common';
 import { searchUp } from '../utils/fileSystemHandler';
@@ -23,7 +23,6 @@ export class ForceIgnore {
   private readonly forceIgnoreDirectory: string;
   // TODO: REMOVE THE BELOW CLASS MEMBERS
   private readonly gitignoreParser: gitignoreParser;
-  private ignoreLines: string[] = [];
   private readonly contents?: string;
   private readonly useNewParser: boolean;
   private DEFAULT_IGNORE: string[] = [
@@ -35,12 +34,11 @@ export class ForceIgnore {
 
   public constructor(forceIgnorePath = '') {
     try {
-      const file = readFileSync(forceIgnorePath, 'utf-8');
-      this.contents = `${file}\n${this.DEFAULT_IGNORE.join('\n')}`;
+      this.contents = readFileSync(forceIgnorePath, 'utf-8');
       // add the default ignore paths, and then parse the .forceignore file
       // DO NOT CALL parseContents FOR THE NEW PARSER
       // the new library handles it's own unix/windows file path separators, let it handle it
-      this.parser = ignore().add(this.contents);
+      this.parser = ignore().add(`${this.contents}\n${this.DEFAULT_IGNORE.join('\n')}`);
       // TODO: START REMOVE AFTER GITIGNORE-PARSER DEPRECATED
       // add the default and send to the old gitignore-parser
       this.gitignoreParser = gitignoreParser.compile(this.parseContents(this.contents));
@@ -81,7 +79,7 @@ export class ForceIgnore {
         denies = this.parser.ignores(relativePath);
         fctResult = this.gitignoreParser.denies(relativePath);
         // send to look for differences, analytics
-        this.resolveConflict(denies, fctResult, this.contents);
+        this.resolveConflict(denies, fctResult, relativePath);
       }
       return this.useNewParser ? denies : fctResult;
     } catch (e) {
@@ -99,7 +97,7 @@ export class ForceIgnore {
         accepts = !this.parser.ignores(relativePath);
         fctResult = this.gitignoreParser.accepts(relativePath);
         // send to look for differences, analytics
-        this.resolveConflict(accepts, fctResult, this.contents);
+        this.resolveConflict(accepts, fctResult, relativePath);
       }
 
       return this.useNewParser ? accepts : fctResult;
@@ -122,21 +120,20 @@ export class ForceIgnore {
   private resolveConflict(
     newLibraryResults: boolean,
     oldLibraryResults: boolean,
-    file: string
+    fsPath: string
   ): void {
     const ignoreItems = this.contents.split('\n');
+    const troubledIgnoreLines: Set<string> = new Set<string>();
 
     if (newLibraryResults !== oldLibraryResults && ignoreItems) {
       ignoreItems.forEach((ignoreItem) => {
         // we need to run the both of the compilers for a single line to find the problem entry
         const gitignoreResult = gitignoreParser
           .compile(this.parseContents(ignoreItem))
-          .accepts(relative(this.forceIgnoreDirectory, file));
-        const ignoreResult = !ignore()
-          .add([ignoreItem])
-          .ignores(relative(this.forceIgnoreDirectory, file));
+          .accepts(fsPath);
+        const ignoreResult = !ignore().add([ignoreItem]).ignores(fsPath);
         // print the warning only once per forceignore line item
-        if (ignoreResult !== gitignoreResult && !this.ignoreLines.includes(ignoreItem) && warn) {
+        if (ignoreResult !== gitignoreResult && !troubledIgnoreLines.has(ignoreItem) && warn) {
           // only show the warning once, it could come from denies() or accepts()
           warn = false;
           process.emitWarning(
@@ -144,7 +141,7 @@ export class ForceIgnore {
           );
           process.emitWarning('\t' + ignoreItem);
         }
-        this.ignoreLines.push(ignoreItem);
+        troubledIgnoreLines.add(ignoreItem);
       });
 
       // send analytics, if they exist.
@@ -153,8 +150,8 @@ export class ForceIgnore {
         content: this.contents,
         oldLibraryResults,
         newLibraryResults,
-        ignoreLines: this.ignoreLines,
-        file,
+        ignoreLines: Array.from(troubledIgnoreLines),
+        file: fsPath,
       });
     }
   }

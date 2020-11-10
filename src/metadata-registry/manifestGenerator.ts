@@ -14,7 +14,7 @@ import { RegistryAccess } from './registryAccess';
 
 export class ManifestGenerator {
   private packageModuleStart = '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
-  private packageModuleEnd = '</Package>';
+  private packageModuleEnd = '</Package>\n';
   private resolver: MetadataResolver;
   private registry: RegistryAccess;
 
@@ -34,19 +34,20 @@ export class ManifestGenerator {
 
   public createManifest(
     components: MetadataComponent[],
-    apiVersion = this.registry.apiVersion
+    apiVersion = this.registry.apiVersion,
+    indent = '  '
   ): string {
     let output = XML_DECL.concat(this.packageModuleStart);
     const metadataMap = this.createMetadataMap(components);
     for (const metadataType of metadataMap.keys()) {
-      output = output.concat('  <types>\n');
+      output = output.concat(`${indent}<types>\n`);
       for (const metadataName of metadataMap.get(metadataType)) {
-        output = output.concat(`    <members>${metadataName}</members>\n`);
+        output = output.concat(`${indent}${indent}<members>${metadataName}</members>\n`);
       }
-      output = output.concat(`    <name>${metadataType}</name>\n`);
-      output = output.concat('  </types>\n');
+      output = output.concat(`${indent}${indent}<name>${metadataType}</name>\n`);
+      output = output.concat(`${indent}</types>\n`);
     }
-    output = output.concat(`  <version>${apiVersion}</version>\n`, this.packageModuleEnd);
+    output = output.concat(`${indent}<version>${apiVersion}</version>\n`, this.packageModuleEnd);
     return output;
   }
 

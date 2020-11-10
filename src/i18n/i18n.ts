@@ -41,6 +41,7 @@ export const messages = {
   error_missing_metadata_xml: "%s: Metadata xml file missing for '%s'",
   error_unsupported_content_metadata_xml: "%s: Unsupported content xml file for '%s'",
   error_missing_type_definition: "Missing metadata type definition in registry for id '%s'",
+  error_missing_child_type_definition: 'Type %s does not have a child type definition %s',
   error_no_metadata_xml_ignore: 'Metadata xml file %s is forceignored but is required for %s',
   error_no_source_ignore: '%s types require source to be present and %s is forceignored.',
   error_path_not_found: '%s: File or folder not found',
@@ -54,8 +55,13 @@ export const messages = {
   error_expected_file_path: '%s: path is to a directory, expected a file',
   error_expected_directory_path: '%s: path is to a file, expected a directory',
   error_no_directory_stream: '%s does not support readable streams on directories',
+  error_no_source_to_deploy: 'No source backed components present in the package',
+  error_no_components_to_retrieve: 'No components in the package to retrieve',
+  error_invalid_package: 'The metadata pacakge was not initialized properly',
   error_static_resource_expected_archive_type:
     'A StaticResource directory must have a content type of application/zip or application/jar - found %s for %s',
   tapi_deploy_component_limit_error:
     'This deploy method only supports deploying one metadata component at a time',
+  warn_unresolved_source_for_components:
+    'The following components will not be deployed due to unresolved source: %s',
 };

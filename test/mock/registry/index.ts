@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { MetadataRegistry, RegistryAccess } from '../../../src/metadata-registry';
+import { RegistryAccess } from '../../../src/metadata-registry';
 
 export const mockRegistryData = {
   types: {
@@ -199,8 +199,14 @@ export const mockRegistryData = {
     mixedSingleFiles: 'mixedcontentsinglefile',
     decomposedTopLevels: 'decomposedtoplevel',
   },
+  childTypes: {
+    x: 'reginaking',
+    y: 'reginaking',
+    g: 'decomposedtoplevel',
+    badchildtype: 'mixedcontentsinglefile',
+  },
   apiVersion: '48.0',
-} as MetadataRegistry;
+};
 
 export const mockRegistry = new RegistryAccess(mockRegistryData);
 

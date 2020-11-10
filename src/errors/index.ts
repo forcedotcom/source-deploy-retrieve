@@ -71,3 +71,9 @@ export class ConversionError extends LibraryError {
     this.stack = originalError.stack;
   }
 }
+
+export class WorkingSetError extends LibraryError {
+  constructor(messageKey: string, args?: string | string[]) {
+    super(messageKey, args);
+  }
+}

@@ -4,13 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { MetadataComponent } from './types';
+import { MetadataComponent } from '../common/types';
 
 /**
  * A collection that contains no duplicate MetadataComponents. Components are hashed
  * by their FullName and metadata type id.
  */
-export class ComponentSet<T extends MetadataComponent> {
+export class ComponentSet<T extends MetadataComponent> implements Iterable<T> {
   private map = new Map<string, T>();
 
   constructor(components?: Iterable<T>) {
@@ -35,6 +35,16 @@ export class ComponentSet<T extends MetadataComponent> {
 
   public values(): IterableIterator<T> {
     return this.map.values();
+  }
+
+  public *[Symbol.iterator](): Iterator<T> {
+    for (const component of this.map.values()) {
+      yield component;
+    }
+  }
+
+  get size(): number {
+    return this.map.size;
   }
 
   private key(component: MetadataComponent): string {

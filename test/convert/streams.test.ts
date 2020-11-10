@@ -13,7 +13,7 @@ import { expect } from 'chai';
 import { join } from 'path';
 import { createSandbox, SinonStub } from 'sinon';
 import { Readable, Writable } from 'stream';
-import { SourceComponent } from '../../src';
+import { ComponentSet, SourceComponent } from '../../src';
 import { MetadataTransformer, WriterFormat } from '../../src/convert';
 import { ConvertTransaction } from '../../src/convert/convertTransaction';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
@@ -25,7 +25,7 @@ import {
 } from '../mock/convert/finalizers';
 import { mockRegistry } from '../mock/registry';
 import { KATHY_COMPONENTS } from '../mock/registry/kathyConstants';
-import { ComponentSet, XML_NS_URL, XML_DECL, XML_NS_KEY } from '../../src/common';
+import { XML_NS_URL, XML_DECL, XML_NS_KEY } from '../../src/common';
 
 const env = createSandbox();
 

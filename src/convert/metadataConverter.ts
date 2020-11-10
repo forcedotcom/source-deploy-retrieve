@@ -11,12 +11,7 @@ import {
   DirectoryConfig,
   ZipConfig,
 } from './types';
-import {
-  ManifestGenerator,
-  MetadataResolver,
-  RegistryAccess,
-  SourceComponent,
-} from '../metadata-registry';
+import { ManifestGenerator, RegistryAccess, SourceComponent } from '../metadata-registry';
 import { promises } from 'fs';
 import { dirname, join } from 'path';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
@@ -29,7 +24,8 @@ import {
   ZipWriter,
 } from './streams';
 import { ConversionError, LibraryError } from '../errors';
-import { ComponentSet, SourcePath } from '../common';
+import { SourcePath } from '../common';
+import { ComponentSet } from '../collections';
 
 export class MetadataConverter {
   public static readonly PACKAGE_XML_FILE = 'package.xml';

@@ -2,7 +2,7 @@
 
 const repl = require('repl');
 const { Connection, AuthInfo } = require('@salesforce/core');
-const { MetadataResolver, MetadataConverter, SourceClient } = require('../lib/src');
+const { MetadataResolver, MetadataConverter, SourceClient, WorkingSet } = require('../lib/src');
 
 const startMessage = `
 Usage:
@@ -19,6 +19,7 @@ replServer.setupHistory('.repl_history', (err, repl) => {});
 const context = {
   MetadataResolver: MetadataResolver,
   MetadataConverter: MetadataConverter,
+  WorkingSet: WorkingSet,
   resolve: (path) => {
     const resolver = new MetadataResolver();
     return resolver.getComponentsFromPath(path);

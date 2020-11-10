@@ -5,8 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { expect } from 'chai';
-import { MetadataComponent, SourceComponent } from '../../src';
-import { ComponentSet } from '../../src/common';
+import { ComponentSet, MetadataComponent, SourceComponent } from '../../src';
 import { mockRegistryData } from '../mock/registry';
 
 describe('ComponentSet', () => {

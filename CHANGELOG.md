@@ -1,3 +1,15 @@
+# 1.1.10 - November 6, 2020
+
+## Fixed
+
+- Export `ForceIgnore` class ([PR #198](https://github.com/forcedotcom/source-deploy-retrieve/pull/198))
+
+- Export `RetrieveMessage` type ([PR #195](https://github.com/forcedotcom/source-deploy-retrieve/pull/195))
+
+## Added
+
+- Move `RegistryAccess` functionality to new  `MetadataResolver` class ([PR #194](https://github.com/forcedotcom/source-deploy-retrieve/pull/194), [PR #199](https://github.com/forcedotcom/source-deploy-retrieve/pull/199))
+
 # 1.1.9 - October 28, 2020
 
 ## Fixed

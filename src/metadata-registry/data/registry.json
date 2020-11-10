@@ -2064,5 +2064,31 @@
     "sites": "customsite",
     "emailservices": "emailservicesfunction"
   },
+  "childTypes": {
+    "customlabel": "customlabels",
+    "customfield": "customobject",
+    "index": "customobject",
+    "businessprocess": "customobject",
+    "recordtype": "customobject",
+    "compactlayout": "customobject",
+    "weblink": "customobject",
+    "validationrule": "customobject",
+    "sharingreason": "customobject",
+    "listview": "customobject",
+    "fieldset": "customobject",
+    "workflowfieldupdate": "workflow",
+    "workflowtask": "workflow",
+    "workflowalert": "workflow",
+    "workflowsend": "workflow",
+    "workflowoutboundmessage": "workflow",
+    "workflowrule": "workflow",
+    "assignmentrule": "assignmentrules",
+    "autoresponserule": "autoresponserules",
+    "escalationrule": "escalationrules",
+    "matchingrule": "matchingrules",
+    "sharingownerrule": "sharingrules",
+    "sharingcriteriarule": "sharingrules",
+    "botversion": "bot"
+  },
   "apiVersion": "50.0"
 }

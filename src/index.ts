@@ -33,3 +33,4 @@ export {
   ForceIgnore,
 } from './metadata-registry';
 export { MetadataType, MetadataComponent, SourcePath } from './common';
+export { WorkingSet, ComponentSet } from './collections';

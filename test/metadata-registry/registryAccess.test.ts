@@ -7,6 +7,7 @@
 import { assert, expect } from 'chai';
 import { RegistryError } from '../../src/errors';
 import { nls } from '../../src/i18n';
+import { MetadataRegistry } from '../../src/metadata-registry';
 import { mockRegistry, mockRegistryData } from '../mock/registry';
 
 describe('RegistryAccess', () => {
@@ -27,11 +28,28 @@ describe('RegistryAccess', () => {
       );
     });
 
+    it('should fetch child type definition', () => {
+      expect(mockRegistry.getTypeByName('x')).to.deep.equal(
+        mockRegistryData.types.reginaking.children.types.x
+      );
+    });
+
     it('should throw an error if type definition missing', () => {
       assert.throws(
         () => mockRegistry.getTypeByName('TypeWithoutDef'),
         RegistryError,
         nls.localize('error_missing_type_definition', 'typewithoutdef')
+      );
+    });
+
+    it('should throw an error if child type definition missing', () => {
+      assert.throws(
+        () => mockRegistry.getTypeByName('badchildtype'),
+        RegistryError,
+        nls.localize('error_missing_child_type_definition', [
+          'mixedcontentsinglefile',
+          'badchildtype',
+        ])
       );
     });
   });
@@ -57,7 +75,7 @@ describe('RegistryAccess', () => {
   describe('getStrictFolderTypes', () => {
     it('should return all the types requiring a parent directory named after its type', () => {
       const types = Object.values(mockRegistryData.strictDirectoryNames).map(
-        (typeId) => mockRegistryData.types[typeId]
+        (typeId) => (mockRegistryData as MetadataRegistry).types[typeId]
       );
       expect(mockRegistry.getStrictFolderTypes()).to.deep.equal(types);
     });

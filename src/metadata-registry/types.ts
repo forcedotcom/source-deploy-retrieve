@@ -46,6 +46,9 @@ export type MetadataRegistry = {
   strictDirectoryNames: {
     [directoryName: string]: string;
   };
+  childTypes: {
+    [childTypeId: string]: string;
+  };
   apiVersion: string;
 };
 

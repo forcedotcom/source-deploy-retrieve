@@ -15,8 +15,8 @@ import { dirname, join } from 'path';
 import { expect, assert } from 'chai';
 import { ConversionError, LibraryError } from '../../src/errors';
 import { TINA_COMPONENTS } from '../mock/registry/tinaConstants';
-import { ComponentSet } from '../../src/common';
 import { fail } from 'assert';
+import { ComponentSet } from '../../src';
 
 const env = createSandbox();
 

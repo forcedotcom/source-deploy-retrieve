@@ -76,10 +76,28 @@ const packageXmlWildcard: VirtualFile = {
 </Package>\n`),
 };
 
+const packageXmlSingleMember: VirtualFile = {
+  name: 'packageSingleMember.xml',
+  data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Test</members>
+        <name>MixedContentSingleFile</name>
+    </types>
+    <version>${mockRegistry.apiVersion}</version>
+</Package>\n`),
+};
+
 const virtualPackageFiles: VirtualDirectory[] = [
   {
     dirPath: '.',
-    children: ['decomposedTopLevels', 'mixedSingleFiles', packageXml, packageXmlWildcard],
+    children: [
+      'decomposedTopLevels',
+      'mixedSingleFiles',
+      packageXml,
+      packageXmlWildcard,
+      packageXmlSingleMember,
+    ],
   },
   {
     dirPath: 'decomposedTopLevels',
@@ -115,9 +133,32 @@ describe('WorkingSet', () => {
           registry: mockRegistry,
           tree,
         });
-        for (const component of mdp) {
-          expect(component instanceof SourceComponent).to.be.false;
-        }
+        expect(Array.from(mdp)).to.deep.equal([
+          {
+            fullName: 'a',
+            type: mockRegistryData.types.decomposedtoplevel,
+          },
+          {
+            fullName: 'b',
+            type: mockRegistryData.types.mixedcontentsinglefile,
+          },
+        ]);
+      });
+
+      /**
+       * xml parsing library returns string | string[] for entries, tests that this is handled
+       */
+      it('should handle types with one member properly', async () => {
+        const mdp = await WorkingSet.fromManifestFile('packageSingleMember.xml', {
+          registry: mockRegistry,
+          tree,
+        });
+        expect(Array.from(mdp)).to.deep.equal([
+          {
+            fullName: 'Test',
+            type: mockRegistryData.types.mixedcontentsinglefile,
+          },
+        ]);
       });
 
       it('should initialize with source backed components when specifying resolve option', async () => {

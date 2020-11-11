@@ -76,25 +76,19 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
     const ws = new WorkingSet(options?.registry);
     const filterSet = new ComponentSet<MetadataComponent>();
     const file = await tree.readFile(fsPath);
-    const manifestObj = WorkingSet.parseManifestXml(file.toString());
+    const manifestObj: PackageManifestObject = parseXml(file.toString(), {
+      stopNodes: ['version'],
+    });
 
-    ws.apiVersion = manifestObj.version;
+    ws.apiVersion = manifestObj.Package.version;
 
-    for (const { name: typeName, members } of manifestObj.types) {
-      for (const fullName of members) {
-        const memberIsWildcard = fullName === WorkingSet.WILDCARD;
-        const component: MetadataComponent = {
-          fullName,
-          type: registry.getTypeByName(typeName),
-        };
-
-        if (shouldResolve) {
-          filterSet.add(component);
-        }
-
-        if (!shouldResolve || (memberIsWildcard && options?.literalWildcard)) {
-          ws.add(component);
-        }
+    for (const component of WorkingSet.getComponentsFromManifestObject(manifestObj, registry)) {
+      const memberIsWildcard = component.fullName === WorkingSet.WILDCARD;
+      if (shouldResolve) {
+        filterSet.add(component);
+      }
+      if (!shouldResolve || (memberIsWildcard && options?.literalWildcard)) {
+        ws.add(component);
       }
     }
 
@@ -125,18 +119,21 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
     return ws;
   }
 
-  private static parseManifestXml(
-    xmlContents: string
-  ): { types: PackageTypeMembers[]; version: string } {
-    const obj = (parseXml(xmlContents, {
-      stopNodes: ['version'],
-      ignoreNameSpace: false,
-    }) as PackageManifestObject).Package;
-
-    return {
-      types: Array.isArray(obj.types) ? obj.types : [obj.types],
-      version: obj.version,
-    };
+  private static *getComponentsFromManifestObject(
+    obj: PackageManifestObject,
+    registry: RegistryAccess
+  ): IterableIterator<MetadataComponent> {
+    const { types } = obj.Package;
+    const typeMembers = Array.isArray(types) ? types : [types];
+    for (const { name: typeName, members } of typeMembers) {
+      const fullNames = Array.isArray(members) ? members : [members];
+      for (const fullName of fullNames) {
+        yield {
+          fullName,
+          type: registry.getTypeByName(typeName),
+        };
+      }
+    }
   }
 
   /**

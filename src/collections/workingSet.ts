@@ -33,7 +33,7 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
   private static readonly WILDCARD = '*';
   public apiVersion: string;
   private registry: RegistryAccess;
-  private _components = new Map<string, ComponentSet<MetadataComponent>>();
+  private components = new Map<string, ComponentSet<MetadataComponent>>();
 
   public constructor(registry = new RegistryAccess()) {
     this.registry = registry;
@@ -191,7 +191,7 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
     const connection = await this.getConnection(usernameOrConnection);
     const client = new SourceClient(connection, new MetadataResolver());
 
-    if (this._components.size === 0) {
+    if (this.components.size === 0) {
       throw new WorkingSetError('error_no_components_to_retrieve');
     }
 
@@ -210,7 +210,7 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
   public getObject(): PackageManifestObject {
     const typeMembers: PackageTypeMembers[] = [];
 
-    for (const [typeName, components] of this._components.entries()) {
+    for (const [typeName, components] of this.components.entries()) {
       const members: string[] = [];
       for (const { fullName } of components.values()) {
         members.push(fullName);
@@ -302,7 +302,7 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
       typeof component.type === 'string'
         ? this.registry.getTypeByName(component.type).name
         : component.type.name;
-    return this._components.get(typeName)?.has(component) === true;
+    return this.components.get(typeName)?.has(component) === true;
   }
 
   /**
@@ -311,11 +311,11 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
    * entry -> [type name, component set]
    */
   public entries(): IterableIterator<[string, ComponentSet<MetadataComponent>]> {
-    return this._components.entries();
+    return this.components.entries();
   }
 
   public *[Symbol.iterator](): Iterator<MetadataComponent> {
-    for (const componentSet of this._components.values()) {
+    for (const componentSet of this.components.values()) {
       for (const component of componentSet) {
         yield component;
       }
@@ -324,7 +324,7 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
 
   get size(): number {
     let count = 0;
-    for (const set of this._components.values()) {
+    for (const set of this.components.values()) {
       count += set.size;
     }
     return count;
@@ -340,9 +340,9 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
 
   private setComponent(component: MetadataComponent): void {
     const { type } = component;
-    if (!this._components.has(type.name)) {
-      this._components.set(type.name, new ComponentSet<MetadataComponent>());
+    if (!this.components.has(type.name)) {
+      this.components.set(type.name, new ComponentSet<MetadataComponent>());
     }
-    this._components.get(type.name).add(Object.freeze(component));
+    this.components.get(type.name).add(Object.freeze(component));
   }
 }

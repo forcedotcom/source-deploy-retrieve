@@ -6,3 +6,10 @@
  */
 export { WorkingSet } from './workingSet';
 export { ComponentSet } from './componentSet';
+export {
+  WorkingSetOptions,
+  FromSourceOptions,
+  FromManifestOptions,
+  SourceComponentOptions,
+  MetadataSet,
+} from './types';

@@ -4,13 +4,14 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { MetadataComponent } from '../common/types';
+import { ComponentLike, MetadataComponent } from '../common/types';
+import { MetadataSet } from './types';
 
 /**
  * A collection that contains no duplicate MetadataComponents. Components are hashed
  * by their FullName and metadata type id.
  */
-export class ComponentSet<T extends MetadataComponent> implements Iterable<T> {
+export class ComponentSet<T extends MetadataComponent> implements MetadataSet, Iterable<T> {
   private map = new Map<string, T>();
 
   constructor(components?: Iterable<T>) {
@@ -29,7 +30,7 @@ export class ComponentSet<T extends MetadataComponent> implements Iterable<T> {
     return this.map.get(this.key(component));
   }
 
-  public has(component: MetadataComponent): boolean {
+  public has(component: ComponentLike): boolean {
     return this.map.has(this.key(component));
   }
 
@@ -47,7 +48,9 @@ export class ComponentSet<T extends MetadataComponent> implements Iterable<T> {
     return this.map.size;
   }
 
-  private key(component: MetadataComponent): string {
-    return `${component.type.id}.${component.fullName}`;
+  private key(component: ComponentLike): string {
+    const typeName =
+      typeof component.type === 'string' ? component.type.toLowerCase().trim() : component.type.id;
+    return `${typeName}.${component.fullName}`;
   }
 }

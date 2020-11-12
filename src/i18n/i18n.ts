@@ -56,6 +56,8 @@ export const messages = {
   error_expected_directory_path: '%s: path is to a file, expected a directory',
   error_no_directory_stream: '%s does not support readable streams on directories',
   error_no_source_to_deploy: 'No source backed components present in the package',
+  error_deploy_wildcard_literal:
+    'Cannot deploy a literal wildcard component - source must be resolved',
   error_no_components_to_retrieve: 'No components in the package to retrieve',
   error_invalid_package: 'The metadata pacakge was not initialized properly',
   error_static_resource_expected_archive_type:

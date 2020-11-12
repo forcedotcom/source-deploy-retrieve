@@ -1,3 +1,15 @@
+# 1.1.11 - November 12, 2020
+
+## Fixed
+
+- Fix default ForceIgnore rule unintentionally ignoring DuplicateRule components ([PR #200](https://github.com/forcedotcom/source-deploy-retrieve/pull/200))
+
+## Added
+
+- Add "Working Set Collection" to perform library functionality on a set of components ([PR #201](https://github.com/forcedotcom/source-deploy-retrieve/pull/201))
+
+- Handle wildcards when parsing manifest files ([PR #205](https://github.com/forcedotcom/source-deploy-retrieve/pull/205))
+
 # 1.1.10 - November 6, 2020
 
 ## Fixed

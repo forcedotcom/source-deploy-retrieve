@@ -33,4 +33,11 @@ export {
   ForceIgnore,
 } from './metadata-registry';
 export { MetadataType, MetadataComponent, SourcePath } from './common';
-export { WorkingSet, ComponentSet } from './collections';
+export {
+  WorkingSet,
+  ComponentSet,
+  FromManifestOptions,
+  FromSourceOptions,
+  SourceComponentOptions,
+  WorkingSetOptions,
+} from './collections';

@@ -23,6 +23,7 @@ import {
   SourceDeployResult,
   SourceRetrieveResult,
 } from '../../src/client/types';
+import { MetadataComponent, MetadataMember } from '../../src/common/types';
 import { WorkingSetError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { VirtualFile } from '../../src/metadata-registry/types';
@@ -47,7 +48,7 @@ const packageXml: VirtualFile = {
 };
 
 const packageXmlComplete: VirtualFile = {
-  name: 'package.xml',
+  name: 'packageComplete.xml',
   data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
@@ -63,10 +64,40 @@ const packageXmlComplete: VirtualFile = {
 </Package>\n`),
 };
 
+const packageXmlWildcard: VirtualFile = {
+  name: 'packageWildcard.xml',
+  data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>*</members>
+        <name>MixedContentSingleFile</name>
+    </types>
+    <version>${mockRegistry.apiVersion}</version>
+</Package>\n`),
+};
+
+const packageXmlSingleMember: VirtualFile = {
+  name: 'packageSingleMember.xml',
+  data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Test</members>
+        <name>MixedContentSingleFile</name>
+    </types>
+    <version>${mockRegistry.apiVersion}</version>
+</Package>\n`),
+};
+
 const virtualPackageFiles: VirtualDirectory[] = [
   {
     dirPath: '.',
-    children: ['decomposedTopLevels', 'mixedSingleFiles', packageXml],
+    children: [
+      'decomposedTopLevels',
+      'mixedSingleFiles',
+      packageXml,
+      packageXmlWildcard,
+      packageXmlSingleMember,
+    ],
   },
   {
     dirPath: 'decomposedTopLevels',
@@ -102,9 +133,32 @@ describe('WorkingSet', () => {
           registry: mockRegistry,
           tree,
         });
-        for (const component of mdp) {
-          expect(component instanceof SourceComponent).to.be.false;
-        }
+        expect(Array.from(mdp)).to.deep.equal([
+          {
+            fullName: 'a',
+            type: mockRegistryData.types.decomposedtoplevel,
+          },
+          {
+            fullName: 'b',
+            type: mockRegistryData.types.mixedcontentsinglefile,
+          },
+        ]);
+      });
+
+      /**
+       * xml parsing library returns string | string[] for entries, tests that this is handled
+       */
+      it('should handle types with one member properly', async () => {
+        const mdp = await WorkingSet.fromManifestFile('packageSingleMember.xml', {
+          registry: mockRegistry,
+          tree,
+        });
+        expect(Array.from(mdp)).to.deep.equal([
+          {
+            fullName: 'Test',
+            type: mockRegistryData.types.mixedcontentsinglefile,
+          },
+        ]);
       });
 
       it('should initialize with source backed components when specifying resolve option', async () => {
@@ -119,6 +173,56 @@ describe('WorkingSet', () => {
         expected.splice(missingIndex, 1);
 
         expect(Array.from(mdp)).to.deep.equal(expected);
+      });
+
+      it('should interpret wildcard members literally by default', async () => {
+        const mdp = await WorkingSet.fromManifestFile('packageWildcard.xml', {
+          registry: mockRegistry,
+          tree,
+        });
+
+        expect(mdp.has({ fullName: '*', type: 'MixedContentSingleFile' })).to.be.true;
+      });
+
+      it('should interpret wildcard members literally when literalWildcard = true', async () => {
+        const mdp = await WorkingSet.fromManifestFile('packageWildcard.xml', {
+          registry: mockRegistry,
+          tree,
+          literalWildcard: true,
+        });
+
+        expect(mdp.has({ fullName: '*', type: 'MixedContentSingleFile' }));
+      });
+
+      it('should resolve components when literalWildcard = false and wildcard is encountered', async () => {
+        const mdp = await WorkingSet.fromManifestFile('packageWildcard.xml', {
+          registry: mockRegistry,
+          tree,
+          resolve: '.',
+          literalWildcard: false,
+        });
+        const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath(
+          'mixedSingleFiles'
+        );
+
+        expect(Array.from(mdp)).to.deep.equal(expected);
+      });
+
+      it('should resolve components and add literal wildcard component when literalWildcard = true and resolve != undefined', async () => {
+        const mdp = await WorkingSet.fromManifestFile('packageWildcard.xml', {
+          registry: mockRegistry,
+          tree,
+          resolve: '.',
+          literalWildcard: true,
+        });
+        const sourceComponents = new MetadataResolver(mockRegistry, tree).getComponentsFromPath(
+          'mixedSingleFiles'
+        );
+
+        expect(Array.from(mdp)).to.deep.equal([
+          { fullName: '*', type: mockRegistryData.types.mixedcontentsinglefile },
+          ...sourceComponents,
+        ]);
       });
     });
 
@@ -264,21 +368,6 @@ describe('WorkingSet', () => {
       expect(result).to.deep.equal(mockResult);
     });
 
-    it('should throw error if there are no source backed components when deploying', async () => {
-      const mdp = await WorkingSet.fromManifestFile('package.xml', {
-        registry: mockRegistry,
-        tree,
-      });
-
-      try {
-        await mdp.deploy('test@foobar.com');
-        fail('should have thrown an error');
-      } catch (e) {
-        expect(e.name).to.equal(WorkingSetError.name);
-        expect(e.message).to.equal(nls.localize('error_no_source_to_deploy'));
-      }
-    });
-
     it('should warn when some components are missing source', async () => {
       stub(MetadataApi.prototype, 'deploy');
       const warnStub = env.stub(console, 'warn').callsFake(() => true);
@@ -294,6 +383,36 @@ describe('WorkingSet', () => {
           nls.localize('warn_unresolved_source_for_components', missing.join(','))
         )
       );
+    });
+
+    it('should throw error if there are no source backed components when deploying', async () => {
+      const mdp = await WorkingSet.fromManifestFile('package.xml', {
+        registry: mockRegistry,
+        tree,
+      });
+
+      try {
+        await mdp.deploy('test@foobar.com');
+        fail('should have thrown an error');
+      } catch (e) {
+        expect(e.name).to.equal(WorkingSetError.name);
+        expect(e.message).to.equal(nls.localize('error_no_source_to_deploy'));
+      }
+    });
+
+    it('should throw error if attempting to deploy a wildcard literal component', async () => {
+      const mdp = await WorkingSet.fromManifestFile('packageWildcard.xml', {
+        registry: mockRegistry,
+        tree,
+      });
+
+      try {
+        await mdp.deploy('test@foobar.com');
+        fail('should have thrown an error');
+      } catch (e) {
+        expect(e.name).to.equal(WorkingSetError.name);
+        expect(e.message).to.equal(nls.localize('error_deploy_wildcard_literal'));
+      }
     });
   });
 
@@ -388,6 +507,42 @@ describe('WorkingSet', () => {
       mdp.add(component);
 
       expect(Array.from(mdp)).to.deep.equal([component]);
+    });
+  });
+
+  describe('has', () => {
+    it('should correctly identify membership when given a MetadataMember', () => {
+      const ws = new WorkingSet(mockRegistry);
+      const member: MetadataMember = {
+        fullName: 'a',
+        type: 'MixedContentSingleFile',
+      };
+
+      expect(ws.has(member)).to.be.false;
+
+      ws.add({
+        fullName: 'a',
+        type: mockRegistryData.types.mixedcontentsinglefile,
+      });
+
+      expect(ws.has(member)).to.be.true;
+    });
+
+    it('should correctly identify membership when given a MetadataComponent', () => {
+      const ws = new WorkingSet(mockRegistry);
+      const component: MetadataComponent = {
+        fullName: 'a',
+        type: mockRegistryData.types.mixedcontentsinglefile,
+      };
+
+      expect(ws.has(component)).to.be.false;
+
+      ws.add({
+        fullName: 'a',
+        type: 'MixedContentSingleFile',
+      });
+
+      expect(ws.has(component)).to.be.true;
     });
   });
 

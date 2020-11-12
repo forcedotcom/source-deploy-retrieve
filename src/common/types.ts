@@ -65,3 +65,10 @@ export interface MetadataComponent {
   type: MetadataType;
   parent?: MetadataComponent;
 }
+
+export interface MetadataMember {
+  fullName: string;
+  type: string;
+}
+
+export type ComponentLike = MetadataComponent | MetadataMember;

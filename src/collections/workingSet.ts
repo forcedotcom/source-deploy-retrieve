@@ -366,6 +366,6 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
     if (!this.components.has(type.name)) {
       this.components.set(type.name, new ComponentSet<MetadataComponent>());
     }
-    this.components.get(type.name).add(Object.freeze(component));
+    this.components.get(type.name).add(component);
   }
 }

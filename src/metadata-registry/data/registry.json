@@ -352,7 +352,8 @@
       "suffix": "report",
       "directoryName": "reports",
       "inFolder": true,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "folderType": "reportfolder"
     },
     "dashboard": {
       "id": "dashboard",
@@ -360,7 +361,8 @@
       "suffix": "dashboard",
       "directoryName": "dashboards",
       "inFolder": true,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "folderType": "dashboardfolder"
     },
     "visualizationplugin": {
       "id": "visualizationplugin",
@@ -398,6 +400,7 @@
       "directoryName": "documents",
       "inFolder": true,
       "strictDirectoryName": true,
+      "folderType": "documentfolder",
       "strategies": {
         "adapter": "mixedContent"
       }
@@ -425,6 +428,7 @@
       "directoryName": "email",
       "inFolder": true,
       "strictDirectoryName": false,
+      "folderType": "emailfolder",
       "strategies": {
         "adapter": "matchingContentFile"
       }
@@ -1703,28 +1707,32 @@
       "name": "ReportFolder",
       "suffix": "reportFolder",
       "directoryName": "reports",
-      "inFolder": false
+      "inFolder": false,
+      "folderContentType": "report"
     },
     "dashboardfolder": {
       "id": "dashboardfolder",
       "name": "DashboardFolder",
       "suffix": "dashboardFolder",
       "directoryName": "dashboards",
-      "inFolder": false
+      "inFolder": false,
+      "folderContentType": "dashboard"
     },
     "documentfolder": {
       "id": "documentfolder",
       "name": "DocumentFolder",
       "suffix": "documentFolder",
       "directoryName": "documents",
-      "inFolder": false
+      "inFolder": false,
+      "folderContentType": "document"
     },
     "emailfolder": {
       "id": "emailfolder",
       "name": "EmailFolder",
       "suffix": "emailFolder",
       "directoryName": "email",
-      "inFolder": false
+      "inFolder": false,
+      "folderContentType": "emailtemplate"
     },
     "inboundnetworkconnection": {
       "id": "inboundnetworkconnection",

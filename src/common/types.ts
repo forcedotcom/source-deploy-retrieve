@@ -37,6 +37,8 @@ export type MetadataType = {
    * Whether or not components are required to reside in a folder named after the type's directoryName.
    */
   strictDirectoryName?: boolean;
+  folderContentType?: string;
+  folderType?: string;
   /**
    * Type definitions for child types, if the type has any.
    *

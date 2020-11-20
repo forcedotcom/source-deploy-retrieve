@@ -31,8 +31,8 @@ import { mockRegistry, mockRegistryData } from '../mock/registry';
 
 const env = createSandbox();
 
-const packageXml: VirtualFile = {
-  name: 'package.xml',
+const subsetXml: VirtualFile = {
+  name: 'subset.xml',
   data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
@@ -47,8 +47,8 @@ const packageXml: VirtualFile = {
 </Package>\n`),
 };
 
-const packageXmlComplete: VirtualFile = {
-  name: 'packageComplete.xml',
+const completeXml: VirtualFile = {
+  name: 'complete.xml',
   data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
@@ -64,8 +64,8 @@ const packageXmlComplete: VirtualFile = {
 </Package>\n`),
 };
 
-const packageXmlWildcard: VirtualFile = {
-  name: 'packageWildcard.xml',
+const wildcardXml: VirtualFile = {
+  name: 'wildcard.xml',
   data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
@@ -76,13 +76,25 @@ const packageXmlWildcard: VirtualFile = {
 </Package>\n`),
 };
 
-const packageXmlSingleMember: VirtualFile = {
-  name: 'packageSingleMember.xml',
+const singleMemberXml: VirtualFile = {
+  name: 'singleMember.xml',
   data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>Test</members>
         <name>MixedContentSingleFile</name>
+    </types>
+    <version>${mockRegistry.apiVersion}</version>
+</Package>\n`),
+};
+
+const folderComponentXml: VirtualFile = {
+  name: 'folderComponent.xml',
+  data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Test_Folder</members>
+        <name>TinaFey</name>
     </types>
     <version>${mockRegistry.apiVersion}</version>
 </Package>\n`),
@@ -94,9 +106,10 @@ const virtualPackageFiles: VirtualDirectory[] = [
     children: [
       'decomposedTopLevels',
       'mixedSingleFiles',
-      packageXml,
-      packageXmlWildcard,
-      packageXmlSingleMember,
+      subsetXml,
+      wildcardXml,
+      singleMemberXml,
+      folderComponentXml,
     ],
   },
   {
@@ -121,19 +134,19 @@ describe('WorkingSet', () => {
   describe('Initializers', () => {
     describe('fromSource', () => {
       it('should initialize with source backed components', () => {
-        const mdp = WorkingSet.fromSource('.', { registry: mockRegistry, tree });
+        const ws = WorkingSet.fromSource('.', { registry: mockRegistry, tree });
         const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath('.');
-        expect(Array.from(mdp)).to.deep.equal(expected);
+        expect(Array.from(ws)).to.deep.equal(expected);
       });
     });
 
     describe('fromManifestFile', () => {
       it('should not initialize with source backed components by default', async () => {
-        const mdp = await WorkingSet.fromManifestFile('package.xml', {
+        const ws = await WorkingSet.fromManifestFile('subset.xml', {
           registry: mockRegistry,
           tree,
         });
-        expect(Array.from(mdp)).to.deep.equal([
+        expect(Array.from(ws)).to.deep.equal([
           {
             fullName: 'a',
             type: mockRegistryData.types.decomposedtoplevel,
@@ -149,11 +162,11 @@ describe('WorkingSet', () => {
        * xml parsing library returns string | string[] for entries, tests that this is handled
        */
       it('should handle types with one member properly', async () => {
-        const mdp = await WorkingSet.fromManifestFile('packageSingleMember.xml', {
+        const ws = await WorkingSet.fromManifestFile('singleMember.xml', {
           registry: mockRegistry,
           tree,
         });
-        expect(Array.from(mdp)).to.deep.equal([
+        expect(Array.from(ws)).to.deep.equal([
           {
             fullName: 'Test',
             type: mockRegistryData.types.mixedcontentsinglefile,
@@ -161,8 +174,21 @@ describe('WorkingSet', () => {
         ]);
       });
 
+      it('should interpret a member of a type in folders with no delimeter as its corresponding folder type', async () => {
+        const ws = await WorkingSet.fromManifestFile('folderComponent.xml', {
+          registry: mockRegistry,
+          tree,
+        });
+        expect(Array.from(ws)).to.deep.equal([
+          {
+            fullName: 'Test_Folder',
+            type: mockRegistryData.types.tinafeyfolder,
+          },
+        ]);
+      });
+
       it('should initialize with source backed components when specifying resolve option', async () => {
-        const mdp = await WorkingSet.fromManifestFile('package.xml', {
+        const ws = await WorkingSet.fromManifestFile('subset.xml', {
           registry: mockRegistry,
           tree,
           resolve: '.',
@@ -172,30 +198,30 @@ describe('WorkingSet', () => {
         const missingIndex = expected.findIndex((c) => c.fullName === 'c');
         expected.splice(missingIndex, 1);
 
-        expect(Array.from(mdp)).to.deep.equal(expected);
+        expect(Array.from(ws)).to.deep.equal(expected);
       });
 
       it('should interpret wildcard members literally by default', async () => {
-        const mdp = await WorkingSet.fromManifestFile('packageWildcard.xml', {
+        const ws = await WorkingSet.fromManifestFile('wildcard.xml', {
           registry: mockRegistry,
           tree,
         });
 
-        expect(mdp.has({ fullName: '*', type: 'MixedContentSingleFile' })).to.be.true;
+        expect(ws.has({ fullName: '*', type: 'MixedContentSingleFile' })).to.be.true;
       });
 
       it('should interpret wildcard members literally when literalWildcard = true', async () => {
-        const mdp = await WorkingSet.fromManifestFile('packageWildcard.xml', {
+        const ws = await WorkingSet.fromManifestFile('wildcard.xml', {
           registry: mockRegistry,
           tree,
           literalWildcard: true,
         });
 
-        expect(mdp.has({ fullName: '*', type: 'MixedContentSingleFile' }));
+        expect(ws.has({ fullName: '*', type: 'MixedContentSingleFile' }));
       });
 
       it('should resolve components when literalWildcard = false and wildcard is encountered', async () => {
-        const mdp = await WorkingSet.fromManifestFile('packageWildcard.xml', {
+        const ws = await WorkingSet.fromManifestFile('wildcard.xml', {
           registry: mockRegistry,
           tree,
           resolve: '.',
@@ -205,11 +231,11 @@ describe('WorkingSet', () => {
           'mixedSingleFiles'
         );
 
-        expect(Array.from(mdp)).to.deep.equal(expected);
+        expect(Array.from(ws)).to.deep.equal(expected);
       });
 
       it('should resolve components and add literal wildcard component when literalWildcard = true and resolve != undefined', async () => {
-        const mdp = await WorkingSet.fromManifestFile('packageWildcard.xml', {
+        const ws = await WorkingSet.fromManifestFile('wildcard.xml', {
           registry: mockRegistry,
           tree,
           resolve: '.',
@@ -219,7 +245,7 @@ describe('WorkingSet', () => {
           'mixedSingleFiles'
         );
 
-        expect(Array.from(mdp)).to.deep.equal([
+        expect(Array.from(ws)).to.deep.equal([
           { fullName: '*', type: mockRegistryData.types.mixedcontentsinglefile },
           ...sourceComponents,
         ]);
@@ -228,7 +254,7 @@ describe('WorkingSet', () => {
 
     describe('fromComponents', () => {
       it('should initialize non-source backed components from members', () => {
-        const mdp = WorkingSet.fromComponents(
+        const ws = WorkingSet.fromComponents(
           [
             {
               fullName: 'Test1',
@@ -242,7 +268,7 @@ describe('WorkingSet', () => {
           { registry: mockRegistry }
         );
 
-        expect(Array.from(mdp)).to.deep.equal([
+        expect(Array.from(ws)).to.deep.equal([
           {
             fullName: 'Test1',
             type: mockRegistryData.types.decomposedtoplevel,
@@ -258,8 +284,8 @@ describe('WorkingSet', () => {
 
   describe('getObject', () => {
     it('should return an object representing the package manifest', () => {
-      const mdp = WorkingSet.fromSource('.', { registry: mockRegistry, tree });
-      expect(mdp.getObject()).to.deep.equal({
+      const ws = WorkingSet.fromSource('.', { registry: mockRegistry, tree });
+      expect(ws.getObject()).to.deep.equal({
         Package: {
           types: [
             {
@@ -275,20 +301,33 @@ describe('WorkingSet', () => {
         },
       });
     });
+
+    it('should interpret folder components as members of the type they are a container for', () => {
+      const member = { fullName: 'Test_Folder', type: 'TinaFeyFolder' };
+      const ws = WorkingSet.fromComponents([member], { registry: mockRegistry });
+
+      expect(ws.has(member)).to.be.true;
+      expect(ws.getObject().Package.types).to.deep.equal([
+        {
+          name: 'TinaFey',
+          members: ['Test_Folder'],
+        },
+      ]);
+    });
   });
 
   describe('resolveSourceComponents', () => {
     it('should resolve components and add to package', () => {
-      const mdp = new WorkingSet(mockRegistry);
+      const ws = new WorkingSet(mockRegistry);
       const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath('.');
-      const result = mdp.resolveSourceComponents('.', { tree });
+      const result = ws.resolveSourceComponents('.', { tree });
 
       expect(Array.from(result)).to.deep.equal(expected);
-      expect(Array.from(mdp)).to.deep.equal(expected);
+      expect(Array.from(ws)).to.deep.equal(expected);
     });
 
     it('should resolve components and filter', async () => {
-      const mdp = new WorkingSet(mockRegistry);
+      const ws = new WorkingSet(mockRegistry);
       const filter = [{ fullName: 'b', type: mockRegistryData.types.mixedcontentsinglefile }];
 
       const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath('.');
@@ -301,10 +340,10 @@ describe('WorkingSet', () => {
         1
       );
 
-      const result = mdp.resolveSourceComponents('.', { tree, filter });
+      const result = ws.resolveSourceComponents('.', { tree, filter });
 
       expect(Array.from(result)).to.deep.equal(expected);
-      expect(Array.from(mdp)).to.deep.equal(expected);
+      expect(Array.from(ws)).to.deep.equal(expected);
     });
 
     it('should only resolve child components when present in filter even if parent source exists', () => {
@@ -318,30 +357,30 @@ describe('WorkingSet', () => {
           type: mockRegistryData.types.decomposedtoplevel.children.types.g,
         },
       ];
-      const mdp = new WorkingSet(mockRegistry);
-      const result = mdp.resolveSourceComponents('.', { tree, filter });
+      const ws = new WorkingSet(mockRegistry);
+      const result = ws.resolveSourceComponents('.', { tree, filter });
       const expected = new MetadataResolver(mockRegistry, tree)
         .getComponentsFromPath('decomposedTopLevels')[0]
         .getChildren();
 
       expect(Array.from(result)).to.deep.equal(expected);
-      expect(Array.from(mdp)).to.deep.equal(expected);
+      expect(Array.from(ws)).to.deep.equal(expected);
     });
   });
 
   describe('getPackageXml', () => {
     it('should return manifest string when initialized from manifest file', async () => {
-      const mdp = await WorkingSet.fromManifestFile('package.xml', {
+      const ws = await WorkingSet.fromManifestFile('subset.xml', {
         registry: mockRegistry,
         tree,
       });
 
-      expect(mdp.getPackageXml()).to.equal(packageXml.data.toString());
+      expect(ws.getPackageXml()).to.equal(subsetXml.data.toString());
     });
 
     it('should return manifest string when initialized from source', () => {
-      const mdp = WorkingSet.fromSource('.', { registry: mockRegistry, tree });
-      expect(mdp.getPackageXml(4)).to.equal(packageXmlComplete.data.toString());
+      const ws = WorkingSet.fromSource('.', { registry: mockRegistry, tree });
+      expect(ws.getPackageXml(4)).to.equal(completeXml.data.toString());
     });
   });
 
@@ -359,11 +398,11 @@ describe('WorkingSet', () => {
           username: 'test@foobar.com',
         }),
       });
-      const mdp = WorkingSet.fromSource('.', { registry: mockRegistry, tree });
+      const ws = WorkingSet.fromSource('.', { registry: mockRegistry, tree });
       const deployStub = env.stub(MetadataApi.prototype, 'deploy');
-      deployStub.withArgs(Array.from(mdp) as SourceComponent[]).resolves(mockResult);
+      deployStub.withArgs(Array.from(ws) as SourceComponent[]).resolves(mockResult);
 
-      const result = await mdp.deploy(mockConnection);
+      const result = await ws.deploy(mockConnection);
 
       expect(result).to.deep.equal(mockResult);
     });
@@ -371,12 +410,12 @@ describe('WorkingSet', () => {
     it('should warn when some components are missing source', async () => {
       stub(MetadataApi.prototype, 'deploy');
       const warnStub = env.stub(console, 'warn').callsFake(() => true);
-      const mdp = WorkingSet.fromSource('.', { registry: mockRegistry, tree });
-      const missing = Array.from(mdp).map((c) => `${c.type.name}:${c.fullName}`);
+      const ws = WorkingSet.fromSource('.', { registry: mockRegistry, tree });
+      const missing = Array.from(ws).map((c) => `${c.type.name}:${c.fullName}`);
 
-      mdp.add({ fullName: 'NoSource', type: 'MixedContentSingleFile' });
+      ws.add({ fullName: 'NoSource', type: 'MixedContentSingleFile' });
 
-      await mdp.deploy('test@foobar.com');
+      await ws.deploy('test@foobar.com');
 
       expect(
         warnStub.calledOnceWith(
@@ -386,13 +425,13 @@ describe('WorkingSet', () => {
     });
 
     it('should throw error if there are no source backed components when deploying', async () => {
-      const mdp = await WorkingSet.fromManifestFile('package.xml', {
+      const ws = await WorkingSet.fromManifestFile('subset.xml', {
         registry: mockRegistry,
         tree,
       });
 
       try {
-        await mdp.deploy('test@foobar.com');
+        await ws.deploy('test@foobar.com');
         fail('should have thrown an error');
       } catch (e) {
         expect(e.name).to.equal(WorkingSetError.name);
@@ -401,13 +440,13 @@ describe('WorkingSet', () => {
     });
 
     it('should throw error if attempting to deploy a wildcard literal component', async () => {
-      const mdp = await WorkingSet.fromManifestFile('packageWildcard.xml', {
+      const ws = await WorkingSet.fromManifestFile('wildcard.xml', {
         registry: mockRegistry,
         tree,
       });
 
       try {
-        await mdp.deploy('test@foobar.com');
+        await ws.deploy('test@foobar.com');
         fail('should have thrown an error');
       } catch (e) {
         expect(e.name).to.equal(WorkingSetError.name);
@@ -430,18 +469,18 @@ describe('WorkingSet', () => {
           username: 'test@foobar.com',
         }),
       });
-      const mdp = WorkingSet.fromSource('.', { registry: mockRegistry, tree });
+      const ws = WorkingSet.fromSource('.', { registry: mockRegistry, tree });
       const retrieveStub = env.stub(MetadataApi.prototype, 'retrieve');
       retrieveStub
         .withArgs({
-          components: Array.from(mdp) as SourceComponent[],
+          components: Array.from(ws) as SourceComponent[],
           merge: undefined,
           output: '/test/path',
           wait: undefined,
         })
         .resolves(mockResult);
 
-      const result = await mdp.retrieve(mockConnection, '/test/path');
+      const result = await ws.retrieve(mockConnection, '/test/path');
 
       expect(result).to.deep.equal(mockResult);
     });
@@ -452,17 +491,17 @@ describe('WorkingSet', () => {
           username: 'test@foobar.com',
         }),
       });
-      const mdp = WorkingSet.fromSource('.', { registry: mockRegistry, tree });
+      const ws = WorkingSet.fromSource('.', { registry: mockRegistry, tree });
       const retrieveStub = stub(MetadataApi.prototype, 'retrieve');
 
-      await mdp.retrieve(mockConnection, '/test/path', {
+      await ws.retrieve(mockConnection, '/test/path', {
         merge: true,
         wait: 1234,
       });
 
       expect(
         retrieveStub.calledWith({
-          components: Array.from(mdp) as SourceComponent[],
+          components: Array.from(ws) as SourceComponent[],
           merge: true,
           output: '/test/path',
           wait: 1234,
@@ -471,9 +510,9 @@ describe('WorkingSet', () => {
     });
 
     it('should throw error if there are no components when retrieving', async () => {
-      const mdp = new WorkingSet(mockRegistry);
+      const ws = new WorkingSet(mockRegistry);
       try {
-        await mdp.retrieve('test@foobar.com', '/test/path');
+        await ws.retrieve('test@foobar.com', '/test/path');
         fail('should have thrown an error');
       } catch (e) {
         expect(e.name).to.equal(WorkingSetError.name);
@@ -484,13 +523,13 @@ describe('WorkingSet', () => {
 
   describe('add', () => {
     it('should add metadata member to package components', async () => {
-      const mdp = new WorkingSet(mockRegistry);
+      const ws = new WorkingSet(mockRegistry);
 
-      expect(mdp.size).to.equal(0);
+      expect(ws.size).to.equal(0);
 
-      mdp.add({ fullName: 'foo', type: 'DecomposedTopLevel' });
+      ws.add({ fullName: 'foo', type: 'DecomposedTopLevel' });
 
-      expect(Array.from(mdp)).to.deep.equal([
+      expect(Array.from(ws)).to.deep.equal([
         {
           fullName: 'foo',
           type: mockRegistryData.types.decomposedtoplevel,
@@ -499,14 +538,14 @@ describe('WorkingSet', () => {
     });
 
     it('should add metadata component to package components', async () => {
-      const mdp = new WorkingSet(mockRegistry);
+      const ws = new WorkingSet(mockRegistry);
       const component = { fullName: 'bar', type: mockRegistryData.types.mixedcontentsinglefile };
 
-      expect(mdp.size).to.equal(0);
+      expect(ws.size).to.equal(0);
 
-      mdp.add(component);
+      ws.add(component);
 
-      expect(Array.from(mdp)).to.deep.equal([component]);
+      expect(Array.from(ws)).to.deep.equal([component]);
     });
   });
 
@@ -548,7 +587,7 @@ describe('WorkingSet', () => {
 
   describe('entries', () => {
     it('should return component entries of the set by type name', () => {
-      const mdp = WorkingSet.fromComponents(
+      const ws = WorkingSet.fromComponents(
         [
           {
             fullName: 'Test1',
@@ -566,7 +605,7 @@ describe('WorkingSet', () => {
         { registry: mockRegistry }
       );
 
-      const entries = Array.from(mdp.entries());
+      const entries = Array.from(ws.entries());
       expect(entries.length).to.equal(2);
 
       const dtls = entries.find((entry) => entry[0] === 'DecomposedTopLevel')[1];
@@ -592,7 +631,7 @@ describe('WorkingSet', () => {
   });
 
   it('should calculate size correctly', () => {
-    const mdp = WorkingSet.fromSource('.', { registry: mockRegistry, tree });
-    expect(mdp.size).to.equal(3);
+    const ws = WorkingSet.fromSource('.', { registry: mockRegistry, tree });
+    expect(ws.size).to.equal(3);
   });
 });

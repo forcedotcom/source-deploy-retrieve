@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join } from 'path';
+import { basename, join } from 'path';
 import { mockRegistryData } from '.';
 import { SourceComponent } from '../../../src';
 
@@ -18,11 +18,19 @@ export const TINA_XML_NAMES = ['a.tina-meta.xml', 'b.tina-meta.xml'];
 export const TINA_XML_PATHS = TINA_XML_NAMES.map((n) => join(TINA_FOLDER, n));
 export const TINA_SOURCE_NAMES = ['a.x', 'b.y'];
 export const TINA_SOURCE_PATHS = TINA_SOURCE_NAMES.map((n) => join(TINA_FOLDER, n));
-export const TINA_FOLDER_COMPONENT = new SourceComponent({
-  name: 'A_Folder',
-  type: mockRegistryData.types.tinafeyfolder,
-  xml: TINA_FOLDER_XML,
-});
+export const TINA_FOLDER_COMPONENT = SourceComponent.createVirtualComponent(
+  {
+    name: 'A_Folder',
+    type: mockRegistryData.types.tinafeyfolder,
+    xml: TINA_FOLDER_XML,
+  },
+  [
+    {
+      dirPath: TINA_FOLDER,
+      children: [basename(TINA_FOLDER_XML)],
+    },
+  ]
+);
 export const TINA_COMPONENTS = [
   new SourceComponent({
     name: 'A_Folder/a',

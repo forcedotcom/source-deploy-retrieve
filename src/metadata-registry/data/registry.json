@@ -14,6 +14,7 @@
       "suffix": "labels",
       "directoryName": "labels",
       "inFolder": false,
+      "strictDirectoryName": false,
       "children": {
         "types": {
           "customlabel": {
@@ -29,8 +30,7 @@
         "directories": {
           "customLabels": "customlabel"
         }
-      },
-      "strictDirectoryName": false
+      }
     },
     "navigationmenu": {
       "id": "navigationmenu",
@@ -352,7 +352,8 @@
       "suffix": "report",
       "directoryName": "reports",
       "inFolder": true,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "folderType": "reportfolder"
     },
     "dashboard": {
       "id": "dashboard",
@@ -360,7 +361,8 @@
       "suffix": "dashboard",
       "directoryName": "dashboards",
       "inFolder": true,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "folderType": "dashboardfolder"
     },
     "visualizationplugin": {
       "id": "visualizationplugin",
@@ -398,6 +400,7 @@
       "directoryName": "documents",
       "inFolder": true,
       "strictDirectoryName": true,
+      "folderType": "documentfolder",
       "strategies": {
         "adapter": "mixedContent"
       }
@@ -425,6 +428,7 @@
       "directoryName": "email",
       "inFolder": true,
       "strictDirectoryName": false,
+      "folderType": "emailfolder",
       "strategies": {
         "adapter": "matchingContentFile"
       }
@@ -575,6 +579,7 @@
       "suffix": "workflow",
       "directoryName": "workflows",
       "inFolder": false,
+      "strictDirectoryName": false,
       "children": {
         "types": {
           "workflowfieldupdate": {
@@ -637,8 +642,7 @@
           "workflowOutboundMessages": "workflowoutboundmessage",
           "workflowRules": "workflowrule"
         }
-      },
-      "strictDirectoryName": false
+      }
     },
     "assignmentrules": {
       "id": "assignmentrules",
@@ -646,6 +650,7 @@
       "suffix": "assignmentRules",
       "directoryName": "assignmentRules",
       "inFolder": false,
+      "strictDirectoryName": false,
       "children": {
         "types": {
           "assignmentrule": {
@@ -661,8 +666,7 @@
         "directories": {
           "assignmentRules": "assignmentrule"
         }
-      },
-      "strictDirectoryName": false
+      }
     },
     "autoresponserules": {
       "id": "autoresponserules",
@@ -670,6 +674,7 @@
       "suffix": "autoResponseRules",
       "directoryName": "autoResponseRules",
       "inFolder": false,
+      "strictDirectoryName": false,
       "children": {
         "types": {
           "autoresponserule": {
@@ -685,8 +690,7 @@
         "directories": {
           "autoResponseRules": "autoresponserule"
         }
-      },
-      "strictDirectoryName": false
+      }
     },
     "escalationrules": {
       "id": "escalationrules",
@@ -694,6 +698,7 @@
       "suffix": "escalationRules",
       "directoryName": "escalationRules",
       "inFolder": false,
+      "strictDirectoryName": false,
       "children": {
         "types": {
           "escalationrule": {
@@ -709,8 +714,7 @@
         "directories": {
           "escalationRules": "escalationrule"
         }
-      },
-      "strictDirectoryName": false
+      }
     },
     "posttemplate": {
       "id": "posttemplate",
@@ -904,6 +908,7 @@
       "suffix": "matchingRule",
       "directoryName": "matchingRules",
       "inFolder": false,
+      "strictDirectoryName": false,
       "children": {
         "types": {
           "matchingrule": {
@@ -919,8 +924,7 @@
         "directories": {
           "matchingRules": "matchingrule"
         }
-      },
-      "strictDirectoryName": false
+      }
     },
     "duplicaterule": {
       "id": "duplicaterule",
@@ -1087,6 +1091,7 @@
       "suffix": "sharingRules",
       "directoryName": "sharingRules",
       "inFolder": false,
+      "strictDirectoryName": false,
       "children": {
         "types": {
           "sharingownerrule": {
@@ -1124,8 +1129,7 @@
           "sharingOwnerRules": "sharingownerrule",
           "sharingCriteriaRules": "sharingcriteriarule"
         }
-      },
-      "strictDirectoryName": false
+      }
     },
     "sharingset": {
       "id": "sharingset",
@@ -1703,28 +1707,36 @@
       "name": "ReportFolder",
       "suffix": "reportFolder",
       "directoryName": "reports",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": false,
+      "folderContentType": "report"
     },
     "dashboardfolder": {
       "id": "dashboardfolder",
       "name": "DashboardFolder",
       "suffix": "dashboardFolder",
       "directoryName": "dashboards",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": false,
+      "folderContentType": "dashboard"
     },
     "documentfolder": {
       "id": "documentfolder",
       "name": "DocumentFolder",
       "suffix": "documentFolder",
       "directoryName": "documents",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": false,
+      "folderContentType": "document"
     },
     "emailfolder": {
       "id": "emailfolder",
       "name": "EmailFolder",
       "suffix": "emailFolder",
       "directoryName": "email",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": false,
+      "folderContentType": "emailtemplate"
     },
     "inboundnetworkconnection": {
       "id": "inboundnetworkconnection",
@@ -2034,7 +2046,7 @@
     "reportFolder": "reportfolder",
     "dashboardFolder": "dashboardfolder",
     "documentFolder": "documentfolder",
-    "emailFolder": "emailFolder",
+    "emailFolder": "emailfolder",
     "inboundNetworkConnection": "inboundnetworkconnection",
     "outboundNetworkConnection": "outboundnetworkconnection",
     "mutingpermissionset": "mutingpermissionset",

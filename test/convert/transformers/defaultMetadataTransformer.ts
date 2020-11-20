@@ -70,7 +70,7 @@ describe('DefaultMetadataTransformer', () => {
       });
     });
 
-    it('should string the -meta.xml suffix for components with no content and in folders', async () => {
+    it('should remove the -meta.xml suffix for components with no content and in folders', async () => {
       const component = SourceComponent.createVirtualComponent(kathy.KATHY_COMPONENTS[0], []);
       const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;
@@ -91,7 +91,7 @@ describe('DefaultMetadataTransformer', () => {
       });
     });
 
-    it('should strip file extension and preserve -meta.xml for folder components', async () => {
+    it('should remove file extension and preserve -meta.xml for folder components', async () => {
       const component = TINA_FOLDER_COMPONENT;
       const expectedInfos: WriteInfo[] = [
         {

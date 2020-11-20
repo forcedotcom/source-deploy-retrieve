@@ -50,7 +50,7 @@ export class MetadataConverter {
     output: ConvertOutputConfig
   ): Promise<ConvertResult> {
     try {
-      // sometimes we end up here because the components were already part of a working set...
+      // it's possible the components came from a working set, so this may be redundant in some cases...
       const manifestContents = WorkingSet.fromComponents(components, {
         registry: this.registry,
       }).getPackageXml();

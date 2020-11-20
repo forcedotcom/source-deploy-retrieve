@@ -57,7 +57,7 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
    * with the `resolve` option to resolve source files for the components.
    *
    * ```
-   * WorkingSet.fromManifest('/path/to/package.xml', {
+   * WorkingSet.fromManifestFile('/path/to/package.xml', {
    *  resolve: '/path/to/force-app'
    * });
    * ```
@@ -219,6 +219,8 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
     for (const [typeName, components] of this.components.entries()) {
       let members: string[] = [];
       const type = this.registry.getTypeByName(typeName);
+
+      // build folder related members separately to combine folder types and types in folders into one
       const isFolderRelatedType = type.folderType || type.folderContentType;
       if (isFolderRelatedType) {
         const { name: contentTypeName } = type.folderContentType
@@ -229,9 +231,11 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
         }
         members = folderMembers.get(contentTypeName);
       }
+
       for (const { fullName } of components.values()) {
         members.push(fullName);
       }
+
       if (!isFolderRelatedType) {
         typeMembers.push({ members, name: typeName });
       }

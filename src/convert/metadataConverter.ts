@@ -11,7 +11,7 @@ import {
   DirectoryConfig,
   ZipConfig,
 } from './types';
-import { ManifestGenerator, RegistryAccess, SourceComponent } from '../metadata-registry';
+import { RegistryAccess, SourceComponent } from '../metadata-registry';
 import { promises } from 'fs';
 import { dirname, join } from 'path';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
@@ -25,7 +25,7 @@ import {
 } from './streams';
 import { ConversionError, LibraryError } from '../errors';
 import { SourcePath } from '../common';
-import { ComponentSet } from '../collections';
+import { ComponentSet, WorkingSet } from '../collections';
 
 export class MetadataConverter {
   public static readonly PACKAGE_XML_FILE = 'package.xml';
@@ -50,9 +50,10 @@ export class MetadataConverter {
     output: ConvertOutputConfig
   ): Promise<ConvertResult> {
     try {
-      // TODO: evaluate if a builder pattern for manifest creation is more efficient here
-      const manifestGenerator = new ManifestGenerator(undefined, this.registry);
-      const manifestContents = manifestGenerator.createManifest(components);
+      // it's possible the components came from a working set, so this may be redundant in some cases...
+      const manifestContents = WorkingSet.fromComponents(components, {
+        registry: this.registry,
+      }).getPackageXml();
       const isSource = targetFormat === 'source';
       const tasks = [];
 

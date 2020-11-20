@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { RegistryAccess } from '../../../src/metadata-registry';
+import { MetadataRegistry, RegistryAccess } from '../../../src/metadata-registry';
 
 export const mockRegistryData = {
   types: {
@@ -33,6 +33,7 @@ export const mockRegistryData = {
       inFolder: true,
       name: 'TinaFey',
       strictDirectoryName: true,
+      folderType: 'tinafeyfolder',
       strategies: {
         adapter: 'mixedContent',
       },
@@ -74,6 +75,7 @@ export const mockRegistryData = {
       inFolder: false,
       name: 'TinaFeyFolder',
       suffix: 'tinafeyFolder',
+      folderContentType: 'tinafey',
     },
     genewilder: {
       id: 'genewilder',
@@ -206,7 +208,7 @@ export const mockRegistryData = {
     badchildtype: 'mixedcontentsinglefile',
   },
   apiVersion: '48.0',
-};
+} as MetadataRegistry;
 
 export const mockRegistry = new RegistryAccess(mockRegistryData);
 

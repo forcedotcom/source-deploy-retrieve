@@ -57,7 +57,7 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
    * with the `resolve` option to resolve source files for the components.
    *
    * ```
-   * WorkingSet.fromManifest('/path/to/package.xml', {
+   * WorkingSet.fromManifestFile('/path/to/package.xml', {
    *  resolve: '/path/to/force-app'
    * });
    * ```
@@ -128,9 +128,14 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
     for (const { name: typeName, members } of typeMembers) {
       const fullNames = Array.isArray(members) ? members : [members];
       for (const fullName of fullNames) {
+        let type = registry.getTypeByName(typeName);
+        // if there is no delimeter and it's a type in folders, infer folder component
+        if (type.folderType && !fullName.includes('/')) {
+          type = registry.getTypeByName(type.folderType);
+        }
         yield {
           fullName,
-          type: registry.getTypeByName(typeName),
+          type,
         };
       }
     }
@@ -209,12 +214,34 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
    */
   public getObject(): PackageManifestObject {
     const typeMembers: PackageTypeMembers[] = [];
+    const folderMembers = new Map<string, string[]>();
 
     for (const [typeName, components] of this.components.entries()) {
-      const members: string[] = [];
+      let members: string[] = [];
+      const type = this.registry.getTypeByName(typeName);
+
+      // build folder related members separately to combine folder types and types in folders into one
+      const isFolderRelatedType = type.folderType || type.folderContentType;
+      if (isFolderRelatedType) {
+        const { name: contentTypeName } = type.folderContentType
+          ? this.registry.getTypeByName(type.folderContentType)
+          : type;
+        if (!folderMembers.has(contentTypeName)) {
+          folderMembers.set(contentTypeName, []);
+        }
+        members = folderMembers.get(contentTypeName);
+      }
+
       for (const { fullName } of components.values()) {
         members.push(fullName);
       }
+
+      if (!isFolderRelatedType) {
+        typeMembers.push({ members, name: typeName });
+      }
+    }
+
+    for (const [typeName, members] of folderMembers.entries()) {
       typeMembers.push({ members, name: typeName });
     }
 
@@ -343,6 +370,6 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
     if (!this.components.has(type.name)) {
       this.components.set(type.name, new ComponentSet<MetadataComponent>());
     }
-    this.components.get(type.name).add(Object.freeze(component));
+    this.components.get(type.name).add(component);
   }
 }

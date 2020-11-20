@@ -32,31 +32,40 @@ function update(registry, describeResult) {
   const typeOverrides = JSON.parse(fs.readFileSync(path.join(__dirname, 'typeOverride.json')))
 
   for (const object of describeResult.metadataObjects) {
-    const typeId = object.xmlName.toLowerCase();
-    const { xmlName: name, suffix, directoryName, inFolder, childXmlNames } = object;
+    let typeId = object.xmlName.toLowerCase();
+    const { xmlName: name, suffix, directoryName, inFolder, childXmlNames, folderContentType } = object;
 
     // If it's a type with folders, process the folder type later
-    if (inFolder === 'true') {
+    let folderTypeId;
+    if (inFolder === 'true' || inFolder === true) {
       describeResult.metadataObjects.push({
         xmlName: `${name}Folder`,
         suffix: `${typeId}Folder`,
         directoryName,
-        inFolder: false,
+        folderContentType: typeId
       });
+      folderTypeId = `${typeId}folder`
     }
 
-    let type = registry.types[typeId] || {
+    const generatedType = {
       id: typeId,
       name,
       suffix,
       directoryName,
       inFolder: inFolder === 'true' || inFolder === true,
-      strictDirectoryName: !suffix
+      strictDirectoryName: !suffix,
+      folderType: folderTypeId,
+      folderContentType
     };
+    let type = deepmerge(generatedType, registry.types[typeId] || {})
 
     // apply type override if one exists
-    if (typeOverrides[typeId]) {
-      type = deepmerge(type, typeOverrides[typeId])
+    const typeOverride = typeOverrides[typeId]
+    if (typeOverride) {
+      type = deepmerge(type, typeOverride)
+      if (typeOverride.id) {
+        typeId = typeOverride.id
+      }
     }
 
     if (childXmlNames) {

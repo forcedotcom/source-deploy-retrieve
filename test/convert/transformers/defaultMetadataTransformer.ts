@@ -14,6 +14,7 @@ import { expect } from 'chai';
 import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX } from '../../../src/common';
 import { SourceComponent, VirtualTreeContainer } from '../../../src';
 import { GENE_COMPONENT, GENE_XML_NAME } from '../../mock/registry/geneConstants';
+import { TINA_FOLDER_COMPONENT } from '../../mock/registry/tinaConstants';
 
 const env = createSandbox();
 
@@ -69,7 +70,7 @@ describe('DefaultMetadataTransformer', () => {
       });
     });
 
-    it('should handle folder type components with no content', async () => {
+    it('should remove the -meta.xml suffix for components with no content and in folders', async () => {
       const component = SourceComponent.createVirtualComponent(kathy.KATHY_COMPONENTS[0], []);
       const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;
@@ -80,6 +81,21 @@ describe('DefaultMetadataTransformer', () => {
             fullNameParts[0],
             `${fullNameParts[1]}.${component.type.suffix}`
           ),
+          source: component.tree.stream(component.xml),
+        },
+      ];
+
+      expect(await transformer.toMetadataFormat(component)).to.deep.equal({
+        component,
+        writeInfos: expectedInfos,
+      });
+    });
+
+    it('should remove file extension and preserve -meta.xml for folder components', async () => {
+      const component = TINA_FOLDER_COMPONENT;
+      const expectedInfos: WriteInfo[] = [
+        {
+          output: join(component.type.directoryName, `${component.fullName}${META_XML_SUFFIX}`),
           source: component.tree.stream(component.xml),
         },
       ];

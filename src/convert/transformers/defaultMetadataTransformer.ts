@@ -85,12 +85,18 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
 
     let xmlDestination = component.getPackageRelativePath(component.xml, targetFormat);
 
-    // quirk: append or strip the -meta.xml suffix to the xml if there's no content
+    // quirks:
+    // - append or strip the -meta.xml suffix to the path if there's no content
+    // - remove file extension but preserve -meta.xml suffix if folder type
     if (!component.content) {
-      xmlDestination =
-        targetFormat === 'metadata'
-          ? xmlDestination.slice(0, xmlDestination.lastIndexOf(META_XML_SUFFIX))
-          : `${xmlDestination}${META_XML_SUFFIX}`;
+      if (targetFormat === 'metadata') {
+        const { folderContentType, suffix } = component.type;
+        xmlDestination = folderContentType
+          ? xmlDestination.replace(`.${suffix}`, '')
+          : xmlDestination.slice(0, xmlDestination.lastIndexOf(META_XML_SUFFIX));
+      } else {
+        xmlDestination = `${xmlDestination}${META_XML_SUFFIX}`;
+      }
     }
 
     return xmlDestination;

@@ -23,6 +23,7 @@ export type MetadataType = {
    * Whether or not components are stored in folders.
    *
    * __Examples:__ Reports, Dashboards, Documents, EmailTemplates
+   * @deprecated use `folderType` to get the related folder type, if one exists
    */
   inFolder?: boolean;
   /**
@@ -37,6 +38,14 @@ export type MetadataType = {
    * Whether or not components are required to reside in a folder named after the type's directoryName.
    */
   strictDirectoryName?: boolean;
+  /**
+   * If the type is a folder type (container for components), the id of the type it is a container for.
+   */
+  folderContentType?: string;
+  /**
+   * If the type is contained in folders, the id of the type that contains it.
+   */
+  folderType?: string;
   /**
    * Type definitions for child types, if the type has any.
    *

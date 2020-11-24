@@ -77,10 +77,18 @@ export class ToolingApi extends BaseApi {
 
       if (queryResult && queryResult.records.length === 0) {
         return {
-          status: RetrieveStatus.Succeeded,
-          success: true,
-          components: [],
-          messages: nls.localize('error_md_not_present_in_org', mdComponent.fullName),
+          status: RetrieveStatus.Failed,
+          success: false,
+          successes: [],
+          failures: [
+            {
+              component: {
+                fullName: mdComponent.fullName,
+                type: mdComponent.type,
+              },
+              message: nls.localize('error_md_not_present_in_org', mdComponent.fullName),
+            },
+          ],
         };
       }
 
@@ -90,7 +98,8 @@ export class ToolingApi extends BaseApi {
       retrieveResult = {
         status: RetrieveStatus.Succeeded,
         success: true,
-        components: [{ component: mdComponent }],
+        successes: [{ component: mdComponent }],
+        failures: [],
       };
     } catch (err) {
       throw new Error(nls.localize('error_in_tooling_retrieve', err));

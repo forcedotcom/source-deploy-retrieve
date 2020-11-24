@@ -14,7 +14,7 @@ import * as stream from 'stream';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ToolingApi } from '../../src/client';
 import { MetadataResolver, SourceComponent, registryData } from '../../src/metadata-registry';
-import { QueryResult, SourceRetrieveResult } from '../../src/client/types';
+import { QueryResult, RetrieveStatus, SourceRetrieveResult } from '../../src/client/types';
 import { nls } from '../../src/i18n';
 import { fail } from 'assert';
 
@@ -172,23 +172,16 @@ describe('Tooling Retrieve', () => {
       output: path.join('file', 'path'),
     };
     const retrieveResults: SourceRetrieveResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
-    expect(retrieveResults).to.be.a('object');
-    expect(retrieveResults.success).to.equal(true);
-    expect(retrieveResults.components).to.be.a('Array');
-    expect(retrieveResults.components.length).to.equal(1);
-    expect(retrieveResults.components[0].component.fullName).to.equal('myTestClass');
-    expect(retrieveResults.components[0].component.type).to.be.a('object');
-    expect(retrieveResults.components[0].component.type.name).to.equal('ApexClass');
-    expect(retrieveResults.components[0].component.type.suffix).to.equal('cls');
-    expect(retrieveResults.components[0].component.type.directoryName).to.equal('classes');
-    expect(retrieveResults.components[0].component.type.inFolder).to.equal(false);
-    expect(retrieveResults.components[0].component.xml).to.equal(
-      path.join('file', 'path', 'myTestClass.cls-meta.xml')
-    );
-    expect(retrieveResults.components[0].component.walkContent().length).to.equal(1);
-    expect(retrieveResults.components[0].component.walkContent()[0]).to.equal(
-      path.join('file', 'path', 'myTestClass.cls')
-    );
+    expect(retrieveResults).to.deep.equal({
+      success: true,
+      status: RetrieveStatus.Succeeded,
+      failures: [],
+      successes: [
+        {
+          component: mdComponents[0],
+        },
+      ],
+    });
   });
 
   it('should retrieve an ApexClass using SourceComponents', async () => {
@@ -209,23 +202,16 @@ describe('Tooling Retrieve', () => {
     const retrieveResults: SourceRetrieveResult = await toolingAPI.retrieve({
       components: mdComponents,
     });
-    expect(retrieveResults).to.be.a('object');
-    expect(retrieveResults.success).to.equal(true);
-    expect(retrieveResults.components).to.be.a('Array');
-    expect(retrieveResults.components.length).to.equal(1);
-    expect(retrieveResults.components[0].component.fullName).to.equal('myTestClass');
-    expect(retrieveResults.components[0].component.type).to.be.a('object');
-    expect(retrieveResults.components[0].component.type.name).to.equal('ApexClass');
-    expect(retrieveResults.components[0].component.type.suffix).to.equal('cls');
-    expect(retrieveResults.components[0].component.type.directoryName).to.equal('classes');
-    expect(retrieveResults.components[0].component.type.inFolder).to.equal(false);
-    expect(retrieveResults.components[0].component.xml).to.equal(
-      path.join('file', 'path', 'myTestClass.cls-meta.xml')
-    );
-    expect(retrieveResults.components[0].component.walkContent().length).to.equal(1);
-    expect(retrieveResults.components[0].component.walkContent()[0]).to.equal(
-      path.join('file', 'path', 'myTestClass.cls')
-    );
+    expect(retrieveResults).to.deep.equal({
+      success: true,
+      status: RetrieveStatus.Succeeded,
+      failures: [],
+      successes: [
+        {
+          component: mdComponents[0],
+        },
+      ],
+    });
   });
 
   it('should return empty result when metadata is not in org', async () => {
@@ -242,13 +228,21 @@ describe('Tooling Retrieve', () => {
       output: path.join('file', 'path'),
     };
     const retrieveResults: SourceRetrieveResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
-    expect(retrieveResults).to.be.a('object');
-    expect(retrieveResults.success).to.equal(true);
-    expect(retrieveResults.components).to.be.a('Array');
-    expect(retrieveResults.components.length).to.equal(0);
-    expect(retrieveResults.messages).to.equal(
-      nls.localize('error_md_not_present_in_org', 'myTestClass')
-    );
+
+    expect(retrieveResults).to.deep.equal({
+      successes: [],
+      status: RetrieveStatus.Failed,
+      success: false,
+      failures: [
+        {
+          component: {
+            fullName: mdComponents[0].fullName,
+            type: mdComponents[0].type,
+          },
+          message: nls.localize('error_md_not_present_in_org', 'myTestClass'),
+        },
+      ],
+    });
   });
 
   it('should throw an error when trying to retrieve more than one type at a time', async () => {

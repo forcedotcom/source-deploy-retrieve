@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { Connection } from '@salesforce/core';
-import { SourcePath } from '../common/types';
+import { MetadataComponent, SourcePath } from '../common/types';
 import { MetadataResolver, RegistryAccess, SourceComponent } from '../metadata-registry';
 
 // ------------------------------------------------
@@ -56,11 +56,21 @@ export interface SourceDeployResult extends SourceApiResult {
   status: DeployStatus | ToolingDeployStatus;
 }
 
+export type RetrieveFailure = {
+  component?: MetadataComponent;
+  message: string;
+};
+
+export type RetrieveSuccess = {
+  component: SourceComponent;
+  properties?: FileProperties;
+};
+
 export interface SourceRetrieveResult extends SourceApiResult {
   id?: RecordId;
-  components?: ComponentRetrieval[];
+  successes: RetrieveSuccess[];
+  failures: RetrieveFailure[];
   status: RetrieveStatus;
-  messages?: RetrieveMessage[] | string;
 }
 
 // ------------------------------------------------
@@ -153,17 +163,44 @@ export enum RetrieveStatus {
   Pending = 'Pending',
   InProgress = 'InProgress',
   Succeeded = 'Succeeded',
+  PartialSuccess = 'PartialSuccess',
   Failed = 'Failed',
 }
 
 export type RetrieveMessage = { fileName: string; problem: string };
+
+enum ManageableState {
+  Beta = 'beta',
+  Deleted = 'deleted',
+  Deprecated = 'deprecated',
+  DeprecatedEditable = 'deprecatedEditable',
+  Installed = 'installed',
+  InstalledEditable = 'installedEditable',
+  Released = 'released',
+  Unmanaged = 'unmanaged',
+}
+
+export type FileProperties = {
+  createdById: string;
+  createdByName: string;
+  createdDate: string;
+  fileName: string;
+  fullName: string;
+  id: string;
+  lastModifiedById: string;
+  lastModifiedByName: string;
+  lastModifiedDate: string;
+  manageableState?: ManageableState;
+  namespacePrefix?: string;
+  type: string;
+};
 
 /**
  * Raw response returned from a checkRetrieveStatus call to the Metadata API
  */
 export type RetrieveResult = {
   done: boolean;
-  fileProperties: {}[];
+  fileProperties: FileProperties[];
   id: string;
   status: RetrieveStatus;
   success: boolean;

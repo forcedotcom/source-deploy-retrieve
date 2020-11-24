@@ -31,7 +31,6 @@ import {
   RetrieveResult,
   RetrieveStatus,
   SourceRetrieveResult,
-  ComponentDiagnostic,
 } from '../../src/client/types';
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
@@ -527,7 +526,20 @@ describe('Metadata Api', () => {
       id: '12345',
       status: RetrieveStatus.Succeeded,
       success: true,
-      fileProperties: [],
+      fileProperties: [
+        {
+          createdById: '1234',
+          createdByName: 'test user',
+          createdDate: '2020-11-24T13:35:17.712Z',
+          fileName: `unpackaged/${component.type.directoryName}/${component.fullName}`,
+          fullName: component.fullName,
+          id: 'abcd',
+          lastModifiedById: '1234',
+          lastModifiedByName: 'test user',
+          lastModifiedDate: '2020-11-24T13:35:17.712Z',
+          type: component.type.name,
+        },
+      ],
       done: true,
       zipFile: '',
     };
@@ -605,9 +617,9 @@ describe('Metadata Api', () => {
       } as RetrieveOptions;
       const sourceRetrieveResult: SourceRetrieveResult = {
         success: true,
-        components: [{ component, status: RetrieveStatus.Succeeded }],
+        successes: [{ component, properties: defaultRetrieveResult.fileProperties[0] }],
+        failures: [],
         id: '12345',
-        messages: [],
         status: RetrieveStatus.Succeeded,
       };
 
@@ -633,10 +645,10 @@ describe('Metadata Api', () => {
       } as RetrieveOptions;
 
       const sourceRetrieveResult: SourceRetrieveResult = {
-        success: false,
-        components: [],
         id: '12345',
-        messages: [{ fileName: 'testComponent', problem: 'There was an error' }],
+        success: false,
+        successes: [],
+        failures: [{ message: 'There was an error' }],
         status: RetrieveStatus.Failed,
       };
 
@@ -663,22 +675,43 @@ describe('Metadata Api', () => {
       } as RetrieveOptions;
 
       const problem = `There was an error with entity of type 'ApexClass' named 'myTestClass'`;
-      const diagnostics: ComponentDiagnostic = {
-        filePath: props.content,
-        message: problem,
-        type: 'Error',
-      };
 
       const sourceRetrieveResult: SourceRetrieveResult = {
-        success: false,
-        components: [{ component, status: RetrieveStatus.Failed, diagnostics }],
         id: '12345',
-        messages: [],
         status: RetrieveStatus.Failed,
+        success: false,
+        successes: [],
+        failures: [
+          { component: { fullName: component.fullName, type: component.type }, message: problem },
+        ],
       };
 
       const result = await metadataClient.retrieve(options);
       expect(result).to.eql(sourceRetrieveResult);
+    });
+
+    it('should return partial success result when there are successes and failures', async () => {
+      retrieveStatusStub.resolves({
+        id: '12345',
+        status: RetrieveStatus.Succeeded,
+        success: false,
+        fileProperties: defaultRetrieveResult.fileProperties,
+        done: true,
+        messages: { fileName: 'testComponent', problem: 'There was an error' },
+        zipFile: base64EmptyZip,
+      });
+
+      const result = await metadataClient.retrieve({
+        components: [component],
+        output: outputDir,
+      });
+      expect(result).to.deep.equal({
+        id: '12345',
+        success: true,
+        successes: [{ component, properties: defaultRetrieveResult.fileProperties[0] }],
+        failures: [{ message: 'There was an error' }],
+        status: RetrieveStatus.PartialSuccess,
+      });
     });
 
     it('should throw an error if theres an error during retrieve or conversion', async () => {

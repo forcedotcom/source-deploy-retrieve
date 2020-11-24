@@ -460,7 +460,8 @@ describe('WorkingSet', () => {
       id: '1234',
       status: RetrieveStatus.Succeeded,
       success: true,
-      components: [],
+      successes: [],
+      failures: [],
     };
 
     it('should retrieve package components', async () => {

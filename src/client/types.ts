@@ -183,13 +183,13 @@ enum ManageableState {
 export type FileProperties = {
   createdById: string;
   createdByName: string;
-  createdDate: Date;
+  createdDate: string;
   fileName: string;
   fullName: string;
   id: string;
   lastModifiedById: string;
   lastModifiedByName: string;
-  lastModifiedDate: Date;
+  lastModifiedDate: string;
   manageableState?: ManageableState;
   namespacePrefix?: string;
   type: string;

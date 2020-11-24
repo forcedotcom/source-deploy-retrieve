@@ -20,7 +20,8 @@ import {
   RetrieveResult,
   RetrieveStatus,
   SourceRetrieveResult,
-  ComponentRetrieval,
+  RetrieveFailure,
+  RetrieveSuccess,
 } from './types';
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { DeployError, RetrieveError } from '../errors';
@@ -29,6 +30,7 @@ import { DiagnosticUtil } from './diagnosticUtil';
 import { SourcePath } from '../common';
 import { parse } from 'fast-xml-parser';
 import { ZipTreeContainer } from '../metadata-registry/treeContainers';
+import { ComponentSet } from '../collections';
 
 export const DEFAULT_API_OPTIONS = {
   rollbackOnError: true,
@@ -100,14 +102,7 @@ export class MetadataApi extends BaseApi {
       components = await this.getConvertedComponents(zipComponents, options);
     }
 
-    const componentRetrievals = components.map((component) => {
-      return { component, status: retrieveResult.status } as ComponentRetrieval;
-    });
-    const sourceRetrieveResult = this.buildSourceRetrieveResult(
-      retrieveResult,
-      options,
-      componentRetrievals
-    );
+    const sourceRetrieveResult = this.buildSourceRetrieveResult(retrieveResult, components);
     return sourceRetrieveResult;
   }
 
@@ -180,70 +175,70 @@ export class MetadataApi extends BaseApi {
 
   private buildSourceRetrieveResult(
     retrieveResult: RetrieveResult,
-    options: RetrieveOptions,
-    components?: ComponentRetrieval[]
+    retrievedComponents: SourceComponent[]
   ): SourceRetrieveResult {
-    const success = this.calculateSuccess(retrieveResult, options, components);
+    const retrievedSet = new ComponentSet(retrievedComponents);
+    const successes: RetrieveSuccess[] = [];
+    const failures: RetrieveFailure[] = [];
 
-    const sourceRetrieveResult: SourceRetrieveResult = {
-      status: success ? RetrieveStatus.Succeeded : RetrieveStatus.Failed,
-      id: retrieveResult.id,
-      success,
-    };
-
-    sourceRetrieveResult.components = components || [];
-    sourceRetrieveResult.messages = [];
-    if (retrieveResult.hasOwnProperty('messages')) {
-      const diagnosticUtil = new DiagnosticUtil('metadata');
-      const messages = Array.isArray(retrieveResult.messages)
+    if (retrieveResult.messages) {
+      const retrieveMessages = Array.isArray(retrieveResult.messages)
         ? retrieveResult.messages
         : [retrieveResult.messages];
 
-      for (const retrieveMessage of messages) {
-        let existingRetrieval: ComponentRetrieval;
-        let failedComponent: SourceComponent;
-        const matches = retrieveMessage.problem.match(/.+'(.+)'.+'(.+)'/);
-        if (matches && Array.isArray(matches)) {
-          const [fullName] = matches.slice(2);
-
-          existingRetrieval = components.find((retrieval) => {
-            return retrieval.component.fullName === fullName;
+      for (const message of retrieveMessages) {
+        // match type name and fullname of problem component
+        const matches = message.problem.match(/.+'(.+)'.+'(.+)'/);
+        if (matches) {
+          const [typeName, fullName] = matches.slice(1);
+          failures.push({
+            component: {
+              fullName,
+              type: this.registry.getTypeByName(typeName),
+            },
+            message: message.problem,
           });
-          failedComponent = options.components.find((component) => {
-            return component.fullName === fullName;
-          });
-        }
-
-        if (existingRetrieval) {
-          diagnosticUtil.setRetrieveDiagnostic(retrieveMessage.problem, existingRetrieval);
-        } else if (failedComponent) {
-          const failedRetrieval: ComponentRetrieval = {
-            component: failedComponent,
-            status: sourceRetrieveResult.status,
-          };
-          diagnosticUtil.setRetrieveDiagnostic(retrieveMessage.problem, failedRetrieval);
-          sourceRetrieveResult.components.push(failedRetrieval);
         } else {
-          sourceRetrieveResult.messages.push(retrieveMessage);
+          failures.push({ message: message.problem });
         }
       }
     }
 
-    return sourceRetrieveResult;
-  }
+    if (retrieveResult.fileProperties) {
+      const fileProperties = Array.isArray(retrieveResult.fileProperties)
+        ? retrieveResult.fileProperties
+        : [retrieveResult.fileProperties];
+      for (const properties of fileProperties) {
+        // not interested in the "Package" component at this time
+        if (properties.type === 'Package') {
+          continue;
+        }
+        successes.push({
+          properties,
+          component: retrievedSet.get({
+            fullName: properties.fullName,
+            type: this.registry.getTypeByName(properties.type),
+          }),
+        });
+      }
+    }
 
-  private calculateSuccess(
-    retrieveResult: RetrieveResult,
-    options: RetrieveOptions,
-    components: ComponentRetrieval[]
-  ): boolean {
-    return (
-      (retrieveResult.status === RetrieveStatus.Succeeded &&
-        options.components.length === components.length &&
-        !retrieveResult.hasOwnProperty('messages')) ||
-      retrieveResult.status === RetrieveStatus.InProgress ||
-      retrieveResult.status === RetrieveStatus.Pending
-    );
+    let status = retrieveResult.status;
+    if (failures.length > 0) {
+      if (successes.length > 0) {
+        status = RetrieveStatus.PartialSuccess;
+      } else {
+        status = RetrieveStatus.Failed;
+      }
+    }
+
+    return {
+      id: retrieveResult.id,
+      status,
+      successes,
+      failures,
+      success: status === RetrieveStatus.Succeeded || status === RetrieveStatus.PartialSuccess,
+    };
   }
 
   private async getConvertedComponents(

@@ -205,7 +205,10 @@ export class MetadataApi extends BaseApi {
     }
 
     if (retrieveResult.fileProperties) {
-      for (const properties of retrieveResult.fileProperties) {
+      const fileProperties = Array.isArray(retrieveResult.fileProperties)
+        ? retrieveResult.fileProperties
+        : [retrieveResult.fileProperties];
+      for (const properties of fileProperties) {
         // not interested in the "Package" component
         if (properties.type === 'Package') {
           continue;

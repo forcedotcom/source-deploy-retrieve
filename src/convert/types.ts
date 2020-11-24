@@ -89,4 +89,5 @@ export type ConvertResult = {
    * Buffer of converted package. `Undefined` if `outputDirectory` is omitted from zip output config.
    */
   zipBuffer?: Buffer;
+  converted?: SourceComponent[];
 };

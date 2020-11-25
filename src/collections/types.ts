@@ -29,7 +29,7 @@ export interface FromSourceOptions extends WorkingSetOptions {
 }
 
 export interface FromManifestOptions extends FromSourceOptions {
-  resolve?: string | Iterable<string>;
+  resolve?: Iterable<string>;
   literalWildcard?: boolean;
 }
 

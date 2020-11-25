@@ -93,6 +93,7 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
     }
 
     if (shouldResolve) {
+      // if it's a string, don't iterate over the characters
       const toResolve = typeof options.resolve === 'string' ? [options.resolve] : options.resolve;
       for (const fsPath of toResolve) {
         ws.resolveSourceComponents(fsPath, {

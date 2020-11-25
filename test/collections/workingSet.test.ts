@@ -201,7 +201,7 @@ describe('WorkingSet', () => {
         expect(Array.from(ws)).to.deep.equal(expected);
       });
 
-      it('should initialize with source backed components when specifying iterable resolve option', async () => {
+      it('should initialize with source backed components when specifying non-string iterable resolve option', async () => {
         const ws = await WorkingSet.fromManifestFile('subset.xml', {
           registry: mockRegistry,
           tree,

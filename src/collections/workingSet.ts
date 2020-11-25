@@ -71,7 +71,7 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
   ): Promise<WorkingSet> {
     const registry = options?.registry ?? new RegistryAccess();
     const tree = options?.tree ?? new NodeFSTreeContainer();
-    const shouldResolve = options?.resolve;
+    const shouldResolve = !!options?.resolve;
 
     const ws = new WorkingSet(options?.registry);
     const filterSet = new ComponentSet<MetadataComponent>();
@@ -93,10 +93,14 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
     }
 
     if (shouldResolve) {
-      ws.resolveSourceComponents(options.resolve, {
-        tree,
-        filter: filterSet,
-      });
+      // if it's a string, don't iterate over the characters
+      const toResolve = typeof options.resolve === 'string' ? [options.resolve] : options.resolve;
+      for (const fsPath of toResolve) {
+        ws.resolveSourceComponents(fsPath, {
+          tree,
+          filter: filterSet,
+        });
+      }
     }
 
     return ws;

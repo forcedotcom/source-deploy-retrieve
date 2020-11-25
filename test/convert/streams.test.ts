@@ -10,10 +10,10 @@ import * as archiver from 'archiver';
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { expect } from 'chai';
-import { join } from 'path';
+import { basename, dirname, join, sep } from 'path';
 import { createSandbox, SinonStub } from 'sinon';
 import { Readable, Writable } from 'stream';
-import { ComponentSet, SourceComponent } from '../../src';
+import { ComponentSet, MetadataResolver, SourceComponent } from '../../src';
 import { MetadataTransformer, WriterFormat } from '../../src/convert';
 import { ConvertTransaction } from '../../src/convert/convertTransaction';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
@@ -26,6 +26,12 @@ import {
 import { mockRegistry } from '../mock/registry';
 import { KATHY_COMPONENTS } from '../mock/registry/kathyConstants';
 import { XML_NS_URL, XML_DECL, XML_NS_KEY } from '../../src/common';
+import {
+  KEANUS_DIR,
+  KEANU_COMPONENT,
+  KEANU_SOURCE_NAMES,
+  KEANU_XML_NAMES,
+} from '../mock/registry/keanuConstants';
 
 const env = createSandbox();
 
@@ -195,19 +201,43 @@ describe('Streams', () => {
 
   describe('ComponentWriters', () => {
     const rootDestination = join('path', 'to', 'test-package');
-    const relativeDestination = join('type', 'file.x');
-    const fullPath = join(rootDestination, relativeDestination);
+    const absoluteRootDestination = join(sep, 'absolute', 'path');
     const fsWritableMock = new Writable();
     const readableMock = new Readable();
     readableMock._read = (): void => {
       readableMock.push('hi');
       readableMock.push(null);
     };
+    const component = SourceComponent.createVirtualComponent(KEANU_COMPONENT, [
+      {
+        dirPath: KEANUS_DIR,
+        children: KEANU_XML_NAMES.concat(KEANU_SOURCE_NAMES),
+      },
+      {
+        dirPath: join(rootDestination, KEANU_COMPONENT.type.directoryName),
+        children: [basename(KEANU_COMPONENT.xml), basename(KEANU_COMPONENT.content)],
+      },
+      {
+        dirPath: join(absoluteRootDestination, KEANU_COMPONENT.type.directoryName),
+        children: [basename(KEANU_COMPONENT.xml), basename(KEANU_COMPONENT.content)],
+      },
+    ]);
     const chunk: WriterFormat = {
-      component: KATHY_COMPONENTS[0],
+      component: component,
       writeInfos: [
         {
-          output: relativeDestination,
+          output: component.getPackageRelativePath(component.xml, 'metadata'),
+          source: readableMock,
+        },
+        {
+          output: component.getPackageRelativePath(component.content, 'metadata'),
+          source: readableMock,
+        },
+        {
+          output: join(
+            absoluteRootDestination,
+            component.getPackageRelativePath(component.xml, 'metadata')
+          ),
           source: readableMock,
         },
       ],
@@ -216,17 +246,19 @@ describe('Streams', () => {
     let pipelineStub: SinonStub;
 
     describe('StandardWriter', () => {
-      const writer = new streams.StandardWriter(rootDestination);
+      const resolver = new MetadataResolver(mockRegistry, chunk.component.tree);
+      const resolverSpy = env.spy(resolver, 'getComponentsFromPath');
+
+      let writer: streams.StandardWriter;
 
       let ensureFile: SinonStub;
-      let writableStub: SinonStub;
 
       beforeEach(() => {
+        writer = new streams.StandardWriter(rootDestination, resolver);
         ensureFile = env.stub(fsUtil, 'ensureFileExists');
         pipelineStub = env.stub(streams, 'pipeline');
-        writableStub = env
+        env
           .stub(fs, 'createWriteStream')
-          .withArgs(fullPath)
           // @ts-ignore
           .returns(fsWritableMock);
       });
@@ -241,12 +273,16 @@ describe('Streams', () => {
         });
       });
 
-      it('should perform file copies based on given write infos', async () => {
+      it('should join root destination and relative WriteInfo outputs during copy', async () => {
         pipelineStub.resolves();
+        const root = join(rootDestination, KEANU_COMPONENT.type.directoryName);
 
         await writer._write(chunk, '', (err: Error) => {
           expect(err).to.be.undefined;
-          expect(ensureFile.firstCall.args).to.deep.equal([fullPath]);
+          expect(ensureFile.firstCall.args[0]).to.equal(join(root, basename(KEANU_COMPONENT.xml)));
+          expect(ensureFile.secondCall.args[0]).to.equal(
+            join(root, basename(KEANU_COMPONENT.content))
+          );
           expect(pipelineStub.firstCall.args).to.deep.equal([
             chunk.writeInfos[0].source,
             fsWritableMock,
@@ -254,42 +290,68 @@ describe('Streams', () => {
         });
       });
 
-      it('should use extra info when available', async () => {
+      it('should use full paths of WriteInfo output if they are absolute during copy', async () => {
         pipelineStub.resolves();
 
-        await writer._write(chunk, '', (err: Error) => {
-          expect(err).to.be.undefined;
-          expect(ensureFile.firstCall.args).to.deep.equal([fullPath]);
-          expect(pipelineStub.firstCall.args).to.deep.equal([
-            chunk.writeInfos[0].source,
-            fsWritableMock,
-          ]);
-        });
-      });
-
-      it('should use full path of WriteInfo output if it is absolute', async () => {
-        pipelineStub.resolves();
-
-        const absolutePath = '/absolute/path';
         const formatWithAbsoluteOutput: WriterFormat = {
-          component: KATHY_COMPONENTS[0],
+          component: component,
           writeInfos: [
             {
               source: readableMock,
-              output: absolutePath,
+              output: join(
+                absoluteRootDestination,
+                component.getPackageRelativePath(component.xml, 'metadata')
+              ),
+            },
+            {
+              source: readableMock,
+              output: join(
+                absoluteRootDestination,
+                component.getPackageRelativePath(component.content, 'metadata')
+              ),
             },
           ],
         };
 
-        writableStub.withArgs(absolutePath).returns(fsWritableMock);
-
         await writer._write(formatWithAbsoluteOutput, '', (err: Error) => {
           expect(err).to.be.undefined;
-          expect(ensureFile.firstCall.args).to.deep.equal([absolutePath]);
+          expect(ensureFile.firstCall.args).to.deep.equal([
+            formatWithAbsoluteOutput.writeInfos[0].output,
+          ]);
+          expect(ensureFile.secondCall.args).to.deep.equal([
+            formatWithAbsoluteOutput.writeInfos[1].output,
+          ]);
           expect(pipelineStub.firstCall.args).to.deep.equal([
             formatWithAbsoluteOutput.writeInfos[0].source,
             fsWritableMock,
           ]);
+        });
+      });
+
+      it('should resolve copied source components during write', async () => {
+        pipelineStub.resolves();
+
+        await writer._write(chunk, '', (err: Error) => {
+          expect(err).to.be.undefined;
+          const destination = join(rootDestination, component.type.directoryName);
+          const expected = resolver.getComponentsFromPath(destination);
+          expect(writer.converted).to.deep.equal(expected);
+        });
+      });
+
+      it('should skip copying when there are no WriteInfos', async () => {
+        pipelineStub.resolves();
+
+        const emptyChunk: WriterFormat = {
+          component,
+          writeInfos: [],
+        };
+
+        await writer._write(emptyChunk, '', (err: Error) => {
+          expect(err).to.be.undefined;
+          expect(ensureFile.notCalled).to.be.true;
+          expect(pipelineStub.notCalled).to.be.true;
+          expect(resolverSpy.notCalled).to.be.true;
         });
       });
     });

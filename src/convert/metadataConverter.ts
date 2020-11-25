@@ -15,13 +15,13 @@ import { RegistryAccess, SourceComponent } from '../metadata-registry';
 import { promises } from 'fs';
 import { dirname, join } from 'path';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
-import { Writable } from 'stream';
 import {
   ComponentReader,
   ComponentConverter,
   StandardWriter,
   pipeline,
   ZipWriter,
+  ComponentWriter,
 } from './streams';
 import { ConversionError, LibraryError } from '../errors';
 import { SourcePath } from '../common';
@@ -57,7 +57,7 @@ export class MetadataConverter {
       const isSource = targetFormat === 'source';
       const tasks = [];
 
-      let writer: Writable;
+      let writer: ComponentWriter;
       let mergeSet: ComponentSet<SourceComponent>;
       let packagePath: SourcePath;
 
@@ -99,6 +99,8 @@ export class MetadataConverter {
       const result: ConvertResult = { packagePath };
       if (output.type === 'zip' && !packagePath) {
         result.zipBuffer = (writer as ZipWriter).buffer;
+      } else if (output.type !== 'zip') {
+        result.converted = (writer as StandardWriter).converted;
       }
       return result;
     } catch (e) {

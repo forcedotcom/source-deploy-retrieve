@@ -187,11 +187,25 @@ describe('WorkingSet', () => {
         ]);
       });
 
-      it('should initialize with source backed components when specifying resolve option', async () => {
+      it('should initialize with source backed components when specifying string resolve option', async () => {
         const ws = await WorkingSet.fromManifestFile('subset.xml', {
           registry: mockRegistry,
           tree,
           resolve: '.',
+        });
+
+        const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath('.');
+        const missingIndex = expected.findIndex((c) => c.fullName === 'c');
+        expected.splice(missingIndex, 1);
+
+        expect(Array.from(ws)).to.deep.equal(expected);
+      });
+
+      it('should initialize with source backed components when specifying non-string iterable resolve option', async () => {
+        const ws = await WorkingSet.fromManifestFile('subset.xml', {
+          registry: mockRegistry,
+          tree,
+          resolve: ['decomposedTopLevels', 'mixedSingleFiles'],
         });
 
         const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath('.');

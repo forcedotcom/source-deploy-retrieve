@@ -544,6 +544,14 @@ describe('Metadata Api', () => {
       zipFile: '',
     };
 
+    const rootDestination = path.join(path.sep, 'retrieved', component.type.directoryName);
+    const convertedComponent = new SourceComponent({
+      name: component.name,
+      type: component.type,
+      content: path.join(rootDestination, path.basename(component.content)),
+      xml: path.join(rootDestination, path.basename(component.xml)),
+    });
+
     before(async () => {
       base64ZipWithClass = (
         await createMockZip([
@@ -570,6 +578,7 @@ describe('Metadata Api', () => {
         .withArgs(match.any, 'source', { type: 'directory', outputDirectory: outputDir })
         .resolves({
           packagePath: outputDir,
+          converted: [convertedComponent],
         });
     });
 
@@ -617,7 +626,9 @@ describe('Metadata Api', () => {
       } as RetrieveOptions;
       const sourceRetrieveResult: SourceRetrieveResult = {
         success: true,
-        successes: [{ component, properties: defaultRetrieveResult.fileProperties[0] }],
+        successes: [
+          { component: convertedComponent, properties: defaultRetrieveResult.fileProperties[0] },
+        ],
         failures: [],
         id: '12345',
         status: RetrieveStatus.Succeeded,
@@ -638,6 +649,7 @@ describe('Metadata Api', () => {
         zipFile: base64EmptyZip,
       });
       registryStub.returns([]);
+      convertStub.resolves([]);
 
       const options = {
         components: [component],
@@ -708,7 +720,9 @@ describe('Metadata Api', () => {
       expect(result).to.deep.equal({
         id: '12345',
         success: true,
-        successes: [{ component, properties: defaultRetrieveResult.fileProperties[0] }],
+        successes: [
+          { component: convertedComponent, properties: defaultRetrieveResult.fileProperties[0] },
+        ],
         failures: [{ message: 'There was an error' }],
         status: RetrieveStatus.PartialSuccess,
       });

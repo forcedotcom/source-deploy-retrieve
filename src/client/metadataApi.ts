@@ -257,11 +257,7 @@ export class MetadataApi extends BaseApi {
           outputDirectory: options.output,
         };
     const convertResult = await converter.convert(retrievedComponents, 'source', outputConfig);
-    if (options.merge) {
-      // TODO: W-8220616: this may return incomplete information about the retrieve
-      return options.components;
-    }
-    return this.resolver.getComponentsFromPath(convertResult.packagePath);
+    return convertResult.converted;
   }
 
   private hashElement(component: SourceComponent): string {

@@ -10,7 +10,7 @@ import { isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
 import { LibraryError } from '../errors';
-import { SourceComponent, RegistryAccess } from '../metadata-registry';
+import { SourceComponent, RegistryAccess, MetadataResolver } from '../metadata-registry';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { SourcePath, XML_DECL } from '../common';
@@ -119,8 +119,12 @@ export abstract class ComponentWriter extends Writable {
 }
 
 export class StandardWriter extends ComponentWriter {
-  constructor(rootDestination: SourcePath) {
+  public converted: SourceComponent[] = [];
+  private resolver: MetadataResolver;
+
+  constructor(rootDestination: SourcePath, resolver = new MetadataResolver()) {
     super(rootDestination);
+    this.resolver = resolver;
   }
 
   public async _write(
@@ -129,20 +133,27 @@ export class StandardWriter extends ComponentWriter {
     callback: (err?: Error) => void
   ): Promise<void> {
     let err: Error;
-    try {
-      const writeTasks = chunk.writeInfos.map((info: WriteInfo) => {
-        const fullDest = isAbsolute(info.output)
-          ? info.output
-          : join(this.rootDestination, info.output);
-        ensureFileExists(fullDest);
-        return pipeline(info.source, createWriteStream(fullDest));
-      });
-      // it is a reasonable expectation that when a conversion call exits, the files of
-      // every component has been written to the destination. This await ensures the microtask
-      // queue is empty when that call exits and overall less memory is consumed.
-      await Promise.all(writeTasks);
-    } catch (e) {
-      err = e;
+    if (chunk.writeInfos.length !== 0) {
+      try {
+        let resolvePath: SourcePath;
+        const writeTasks = chunk.writeInfos.map((info: WriteInfo) => {
+          const fullDest = isAbsolute(info.output)
+            ? info.output
+            : join(this.rootDestination, info.output);
+          if (!resolvePath) {
+            resolvePath = fullDest;
+          }
+          ensureFileExists(fullDest);
+          return pipeline(info.source, createWriteStream(fullDest));
+        });
+        // it is a reasonable expectation that when a conversion call exits, the files of
+        // every component has been written to the destination. This await ensures the microtask
+        // queue is empty when that call exits and overall less memory is consumed.
+        await Promise.all(writeTasks);
+        this.converted.push(...this.resolver.getComponentsFromPath(resolvePath));
+      } catch (e) {
+        err = e;
+      }
     }
     callback(err);
   }

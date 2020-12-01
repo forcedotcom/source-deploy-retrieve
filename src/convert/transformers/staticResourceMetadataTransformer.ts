@@ -49,7 +49,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       contentSource = component.tree.stream(content);
     }
 
-    writerFormat.writeInfos.push(
+    this.writes.push(
       {
         source: contentSource,
         output: join(type.directoryName, `${baseName(content)}.${type.suffix}`),
@@ -82,16 +82,16 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
 
       if (shouldUnzipArchive) {
         const zipBuffer = await component.tree.readFile(content);
-        result.writeInfos = await this.createWriteInfosFromArchive(zipBuffer, baseContentPath);
+        await this.createWriteInfosFromArchive(zipBuffer, baseContentPath);
       } else {
         const extension = this.getExtensionFromType(componentContentType);
-        result.writeInfos.push({
+        this.writes.push({
           source: component.tree.stream(content),
           output: `${baseContentPath}.${extension}`,
         });
       }
 
-      result.writeInfos.push({
+      this.writes.push({
         source: component.tree.stream(xml),
         output: mergeWith?.xml || component.getPackageRelativePath(basename(xml), 'source'),
       });
@@ -125,21 +125,16 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     return false;
   }
 
-  private async createWriteInfosFromArchive(
-    zipBuffer: Buffer,
-    baseDir: string
-  ): Promise<WriteInfo[]> {
-    const writeInfos: WriteInfo[] = [];
+  private async createWriteInfosFromArchive(zipBuffer: Buffer, baseDir: string): Promise<void> {
     const directory = await Open.buffer(zipBuffer);
     for (const entry of directory.files) {
       if (entry.type === 'File') {
-        writeInfos.push({
+        this.writes.push({
           source: entry.stream(),
           output: join(baseDir, entry.path),
         });
       }
     }
-    return writeInfos;
   }
 
   private async getContentType(component: SourceComponent): Promise<string> {

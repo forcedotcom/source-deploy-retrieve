@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { Connection } from '@salesforce/core';
+import { ComponentSet } from '../collections';
+import { PackageTypeMembers } from '../collections/types';
 import { MetadataComponent, SourcePath } from '../common/types';
 import { MetadataResolver, RegistryAccess, SourceComponent } from '../metadata-registry';
 
@@ -154,8 +156,7 @@ export type RetrieveRequest = {
   singlePackage?: boolean;
   specificFiles?: string[];
   unpackaged: {
-    members: string[];
-    name: string;
+    types: PackageTypeMembers[];
   };
 };
 
@@ -365,8 +366,7 @@ type CommonPathOptions = {
   paths: SourcePath[];
 };
 
-export type RetrieveOptions = CommonOptions &
-  CommonRetrieveOptions & { components: SourceComponent[] };
+export type RetrieveOptions = CommonOptions & CommonRetrieveOptions & { components: ComponentSet };
 
 export type RetrievePathOptions = CommonOptions & CommonRetrieveOptions & CommonPathOptions;
 

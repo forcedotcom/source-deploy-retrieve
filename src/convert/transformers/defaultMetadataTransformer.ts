@@ -39,7 +39,7 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
 
     if (component.content) {
       for (const source of component.walkContent()) {
-        result.writeInfos.push({
+        this.writes.push({
           source: component.tree.stream(source),
           output: this.getContentSourceDestination(source, targetFormat, component, mergeWith),
         });
@@ -47,7 +47,7 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
     }
 
     if (component.xml) {
-      result.writeInfos.push({
+      this.writes.push({
         source: component.tree.stream(component.xml),
         output: this.getXmlDestination(targetFormat, component, mergeWith),
       });

@@ -78,7 +78,12 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       (await component.parseXml()) as XmlJson
     );
 
-    return DecomposedMetadataTransformer.createWriterFormat(component, recomposedXmlObj);
+    const writerFormat = DecomposedMetadataTransformer.createWriterFormat(
+      component,
+      recomposedXmlObj
+    );
+    this.writes.push(...writerFormat.writeInfos);
+    return writerFormat;
   }
 
   public async toSourceFormat(
@@ -103,22 +108,29 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
         const tagValues = Array.isArray(tagValue) ? tagValue : [tagValue];
         for (const value of tagValues) {
           const entryName = (value.fullName || value.name) as string;
-          const mergeChild = childComponentMergeSet
-            ?.getSourceComponents({
-              fullName: `${parentFullName}.${entryName}`,
-              type: childType,
-            })
-            .next().value;
-          const output =
-            mergeChild?.xml ||
-            join(rootPackagePath, this.getOutputPathForEntry(entryName, childType, component));
-
-          writeInfos.push({
-            source: new JsToXml({
-              [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
-            }),
-            output,
+          const childComponent = {
+            fullName: `${parentFullName}.${entryName}`,
+            type: childType,
+          };
+          const source = new JsToXml({
+            [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
           });
+          if (childComponentMergeSet?.has(childComponent)) {
+            for (const mergeChild of childComponentMergeSet.getSourceComponents(childComponent)) {
+              this.writes.push({
+                source,
+                output: mergeChild.xml,
+              });
+            }
+          } else {
+            this.writes.push({
+              source,
+              output: join(
+                rootPackagePath,
+                this.getOutputPathForEntry(entryName, childType, component)
+              ),
+            });
+          }
         }
       } else {
         // tag entry isn't a child type, so add it to the parent xml
@@ -133,7 +145,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       const parentOutput =
         mergeWith?.xml ||
         join(rootPackagePath, `${parentFullName}.${type.suffix}${META_XML_SUFFIX}`);
-      writeInfos.push({
+      this.writes.push({
         source: new JsToXml(parentXmlObject),
         output: parentOutput,
       });

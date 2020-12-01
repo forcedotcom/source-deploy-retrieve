@@ -9,7 +9,6 @@ import { createWriteStream } from 'fs';
 import { isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
-import { LibraryError } from '../errors';
 import { SourceComponent, RegistryAccess, MetadataResolver } from '../metadata-registry';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
@@ -69,17 +68,8 @@ export class ComponentConverter extends Transform {
     let result: WriterFormat;
     try {
       const transformer = this.transformerFactory.getTransformer(chunk);
-      const componentToMergeAgainst = this.mergeSet?.getSourceComponents(chunk).next().value;
-      switch (this.targetFormat) {
-        case 'metadata':
-          result = await transformer.toMetadataFormat(chunk);
-          break;
-        case 'source':
-          result = await transformer.toSourceFormat(chunk, componentToMergeAgainst);
-          break;
-        default:
-          throw new LibraryError('error_convert_invalid_format', this.targetFormat);
-      }
+      const mergeWith = this.mergeSet?.getSourceComponents(chunk);
+      result = await transformer.createWriteOperations(chunk, this.targetFormat, mergeWith);
     } catch (e) {
       err = e;
     }

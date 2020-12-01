@@ -220,7 +220,7 @@ describe('MetadataConverter', () => {
 
   describe('Merge Output', () => {
     const defaultDirectory = join('path', 'to', 'default');
-    const mergeComponents = TINA_COMPONENTS;
+    const mergeComponents = new ComponentSet(TINA_COMPONENTS);
 
     it('should throw error if merge config provided for metadata target format', async () => {
       const expectedError = new ConversionError(

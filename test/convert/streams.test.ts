@@ -32,11 +32,11 @@ import {
   KEANU_SOURCE_NAMES,
   KEANU_XML_NAMES,
 } from '../mock/registry/keanuConstants';
-import { MetadataTransformer } from '../../src/convert/types';
+import { BaseMetadataTransformer } from '../../src/convert/transformers/baseMetadataTransformer';
 
 const env = createSandbox();
 
-class TestTransformer implements MetadataTransformer {
+class TestTransformer extends BaseMetadataTransformer {
   async toMetadataFormat(component: SourceComponent): Promise<WriterFormat> {
     return {
       component,

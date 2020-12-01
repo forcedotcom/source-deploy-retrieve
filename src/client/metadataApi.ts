@@ -27,7 +27,7 @@ import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { DeployError, RetrieveError } from '../errors';
 import { ManifestGenerator, MetadataResolver, SourceComponent } from '../metadata-registry';
 import { DiagnosticUtil } from './diagnosticUtil';
-import { SourcePath } from '../common';
+import { MetadataComponent, SourcePath } from '../common';
 import { parse } from 'fast-xml-parser';
 import { ZipTreeContainer } from '../metadata-registry/treeContainers';
 import { ComponentSet } from '../collections';
@@ -73,22 +73,13 @@ export class MetadataApi extends BaseApi {
     return this.deploy(components, options);
   }
 
-  // TODO: W-8023153: move filtering logic to registry
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult> {
-    const allComponents: SourceComponent[] = [];
+    const components = new ComponentSet();
     for (const filepath of options.paths) {
-      allComponents.push(...this.resolver.getComponentsFromPath(filepath));
+      components.resolveSourceComponents(filepath);
     }
 
-    const hashedCmps = new Set();
-    const uniqueComponents = allComponents.filter((component) => {
-      const hashed = this.hashElement(component);
-      if (!hashedCmps.has(hashed)) {
-        hashedCmps.add(hashed);
-        return component;
-      }
-    });
-    const retrieveOptions = { components: uniqueComponents } as RetrieveOptions;
+    const retrieveOptions = { components } as RetrieveOptions;
     return this.retrieve(Object.assign(retrieveOptions, options));
   }
 
@@ -106,16 +97,12 @@ export class MetadataApi extends BaseApi {
     return sourceRetrieveResult;
   }
 
-  private formatRetrieveRequest(components: SourceComponent[]): RetrieveRequest {
-    const manifestGenerator = new ManifestGenerator(this.resolver, this.registry);
-    const manifest = manifestGenerator.createManifest(components);
-    const manifestJson = parse(manifest);
-    const packageData = manifestJson.Package;
-    delete packageData.$;
-
+  private formatRetrieveRequest(components: ComponentSet): RetrieveRequest {
     const retrieveRequest = {
       apiVersion: this.registry.apiVersion,
-      unpackaged: packageData,
+      unpackaged: {
+        types: components.getObject().Package.types,
+      },
     };
     return retrieveRequest;
   }

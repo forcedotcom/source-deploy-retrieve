@@ -141,14 +141,11 @@ export class ComponentSet implements Iterable<MetadataComponent> {
     options?: MetadataDeployOptions
   ): Promise<SourceDeployResult> {
     const toDeploy = Array.from(this.getSourceComponents());
-
     if (toDeploy.length === 0) {
       throw new ComponentSetError('error_no_source_to_deploy');
     }
-
     const connection = await this.getConnection(usernameOrConnection);
     const client = new SourceClient(connection, new MetadataResolver());
-
     return client.metadata.deploy(toDeploy, options);
   }
 
@@ -169,10 +166,8 @@ export class ComponentSet implements Iterable<MetadataComponent> {
     if (this.size === 0) {
       throw new ComponentSetError('error_no_components_to_retrieve');
     }
-
     const connection = await this.getConnection(usernameOrConnection);
     const client = new SourceClient(connection, new MetadataResolver());
-
     return client.metadata.retrieve({
       // this is fine, if they aren't mergable then they'll go to the default
       components: Array.from(this) as SourceComponent[],

@@ -12,7 +12,7 @@ import { JsonMap, AnyJson, JsonArray } from '@salesforce/ts-types';
 import { JsToXml } from '../streams';
 import { join } from 'path';
 import { MetadataType, SourcePath, META_XML_SUFFIX, XML_NS_URL, XML_NS_KEY } from '../../common';
-import { WorkingSet } from '../../collections';
+import { ComponentSet } from '../../collections';
 
 interface XmlJson extends JsonMap {
   [parentFullName: string]: {
@@ -91,7 +91,9 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
 
     let createParentXml = false;
     const rootPackagePath = component.getPackageRelativePath(parentFullName, 'source');
-    const childComponentMergeSet = mergeWith ? new WorkingSet(mergeWith.getChildren()) : undefined;
+    const childComponentMergeSet = mergeWith
+      ? new ComponentSet(mergeWith.getChildren())
+      : undefined;
 
     const composedMetadata = await this.getComposedMetadataEntries(component);
     for (const [tagKey, tagValue] of composedMetadata) {

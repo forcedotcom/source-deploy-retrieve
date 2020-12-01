@@ -9,7 +9,7 @@ import { parse as parseXml, j2xParser } from 'fast-xml-parser';
 import { SourceClient } from '../client';
 import { MetadataDeployOptions, SourceDeployResult, SourceRetrieveResult } from '../client/types';
 import { MetadataComponent, XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
-import { WorkingSetError } from '../errors';
+import { ComponentSetError } from '../errors';
 import { nls } from '../i18n';
 import {
   MetadataResolver,
@@ -23,11 +23,10 @@ import {
   FromManifestOptions,
   PackageManifestObject,
   SourceComponentOptions,
-  MetadataSet,
 } from './types';
 import { ComponentLike } from '../common/types';
 
-export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
+export class ComponentSet implements Iterable<MetadataComponent> {
   private static readonly WILDCARD = '*';
   public apiVersion: string;
   private registry: RegistryAccess;
@@ -47,8 +46,8 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
    * @param fsPath Path to resolve components from
    * @param options
    */
-  public static fromSource(fsPath: string, options?: FromSourceOptions): WorkingSet {
-    const ws = new WorkingSet(undefined, options?.registry);
+  public static fromSource(fsPath: string, options?: FromSourceOptions): ComponentSet {
+    const ws = new ComponentSet(undefined, options?.registry);
     ws.resolveSourceComponents(fsPath, { tree: options?.tree });
     return ws;
   }
@@ -69,13 +68,13 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
   public static async fromManifestFile(
     fsPath: string,
     options?: FromManifestOptions
-  ): Promise<WorkingSet> {
+  ): Promise<ComponentSet> {
     const registry = options?.registry ?? new RegistryAccess();
     const tree = options?.tree ?? new NodeFSTreeContainer();
     const shouldResolve = !!options?.resolve;
 
-    const ws = new WorkingSet(undefined, registry);
-    const filterSet = new WorkingSet(undefined, registry);
+    const ws = new ComponentSet(undefined, registry);
+    const filterSet = new ComponentSet(undefined, registry);
     const file = await tree.readFile(fsPath);
     const manifestObj: PackageManifestObject = parseXml(file.toString(), {
       stopNodes: ['version'],
@@ -83,8 +82,8 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
 
     ws.apiVersion = manifestObj.Package.version;
 
-    for (const component of WorkingSet.getComponentsFromManifestObject(manifestObj, registry)) {
-      const memberIsWildcard = component.fullName === WorkingSet.WILDCARD;
+    for (const component of ComponentSet.getComponentsFromManifestObject(manifestObj, registry)) {
+      const memberIsWildcard = component.fullName === ComponentSet.WILDCARD;
       if (shouldResolve) {
         filterSet.add(component);
       }
@@ -148,15 +147,15 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
       if (component instanceof SourceComponent) {
         toDeploy.push(component);
       } else {
-        if (component.fullName === WorkingSet.WILDCARD) {
-          throw new WorkingSetError('error_deploy_wildcard_literal');
+        if (component.fullName === ComponentSet.WILDCARD) {
+          throw new ComponentSetError('error_deploy_wildcard_literal');
         }
         missingSource.push(`${component.type.name}:${component.fullName}`);
       }
     }
 
     if (toDeploy.length === 0) {
-      throw new WorkingSetError('error_no_source_to_deploy');
+      throw new ComponentSetError('error_no_source_to_deploy');
     } else if (missingSource.length > 0) {
       console.warn(nls.localize('warn_unresolved_source_for_components', missingSource.join(',')));
     }
@@ -185,7 +184,7 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
     const client = new SourceClient(connection, new MetadataResolver());
 
     if (this.size === 0) {
-      throw new WorkingSetError('error_no_components_to_retrieve');
+      throw new ComponentSetError('error_no_components_to_retrieve');
     }
 
     return client.metadata.retrieve({
@@ -236,23 +235,23 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
    * @param fsPath: File path to resolve
    * @param options
    */
-  public resolveSourceComponents(fsPath: string, options?: SourceComponentOptions): WorkingSet {
-    let filterSet: WorkingSet;
+  public resolveSourceComponents(fsPath: string, options?: SourceComponentOptions): ComponentSet {
+    let filterSet: ComponentSet;
 
     if (options?.filter) {
       const { filter } = options;
-      filterSet = filter instanceof WorkingSet ? filter : new WorkingSet(filter);
+      filterSet = filter instanceof ComponentSet ? filter : new ComponentSet(filter);
     }
 
     // TODO: move filter logic to resolver W-8023153
     const resolver = new MetadataResolver(this.registry, options?.tree);
     const resolved = resolver.getComponentsFromPath(fsPath);
-    const sourceComponents = new WorkingSet();
+    const sourceComponents = new ComponentSet();
 
     for (const component of resolved) {
       const shouldResolve = !filterSet || filterSet.has(component);
       const includedInWildcard = filterSet?.has({
-        fullName: WorkingSet.WILDCARD,
+        fullName: ComponentSet.WILDCARD,
         type: component.type,
       });
       if (shouldResolve || includedInWildcard) {

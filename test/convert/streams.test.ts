@@ -13,7 +13,7 @@ import { expect } from 'chai';
 import { basename, join, sep } from 'path';
 import { createSandbox, SinonStub } from 'sinon';
 import { Readable, Writable } from 'stream';
-import { MetadataResolver, SourceComponent, WorkingSet } from '../../src';
+import { MetadataResolver, SourceComponent, ComponentSet } from '../../src';
 import { WriterFormat } from '../../src/convert';
 import { ConvertTransaction } from '../../src/convert/convertTransaction';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
@@ -136,7 +136,7 @@ describe('Streams', () => {
         },
         []
       );
-      const mergeSet = new WorkingSet([component]);
+      const mergeSet = new ComponentSet([component]);
       const converter = new streams.ComponentConverter('source', mockRegistry, undefined, mergeSet);
 
       converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {

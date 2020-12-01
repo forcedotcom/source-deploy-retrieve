@@ -30,7 +30,7 @@ import { DiagnosticUtil } from './diagnosticUtil';
 import { SourcePath } from '../common';
 import { parse } from 'fast-xml-parser';
 import { ZipTreeContainer } from '../metadata-registry/treeContainers';
-import { WorkingSet } from '../collections';
+import { ComponentSet } from '../collections';
 
 export const DEFAULT_API_OPTIONS = {
   rollbackOnError: true,
@@ -177,7 +177,7 @@ export class MetadataApi extends BaseApi {
     retrieveResult: RetrieveResult,
     retrievedComponents: SourceComponent[]
   ): SourceRetrieveResult {
-    const retrievedSet = new WorkingSet(retrievedComponents);
+    const retrievedSet = new ComponentSet(retrievedComponents);
     const successes: RetrieveSuccess[] = [];
     const failures: RetrieveFailure[] = [];
 

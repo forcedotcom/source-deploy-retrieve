@@ -18,7 +18,7 @@ import { ConvertTransaction } from './convertTransaction';
 import { MetadataTransformerFactory } from './transformers';
 import { JsonMap } from '@salesforce/ts-types';
 import { j2xParser } from 'fast-xml-parser';
-import { WorkingSet } from '../collections';
+import { ComponentSet } from '../collections';
 export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
@@ -45,13 +45,13 @@ export class ComponentConverter extends Transform {
   private targetFormat: SfdxFileFormat;
   private transaction: ConvertTransaction;
   private transformerFactory: MetadataTransformerFactory;
-  private mergeSet: WorkingSet;
+  private mergeSet: ComponentSet;
 
   constructor(
     targetFormat: SfdxFileFormat,
     registry: RegistryAccess,
     transaction = new ConvertTransaction(),
-    mergeSet?: WorkingSet
+    mergeSet?: ComponentSet
   ) {
     super({ objectMode: true });
     this.targetFormat = targetFormat;

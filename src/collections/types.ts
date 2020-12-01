@@ -6,7 +6,7 @@
  */
 import { ComponentLike, MetadataComponent } from '../common';
 import { RegistryAccess, TreeContainer } from '../metadata-registry';
-import { ComponentSet } from './componentSet';
+import { WorkingSet } from './workingSet';
 
 export interface PackageTypeMembers {
   name: string;
@@ -21,6 +21,7 @@ export interface PackageManifestObject {
 }
 
 export interface WorkingSetOptions {
+  components?: Iterable<ComponentLike>;
   registry?: RegistryAccess;
 }
 
@@ -35,7 +36,7 @@ export interface FromManifestOptions extends FromSourceOptions {
 
 export interface SourceComponentOptions {
   tree?: TreeContainer;
-  filter?: MetadataComponent[] | ComponentSet<MetadataComponent>;
+  filter?: MetadataComponent[] | WorkingSet;
 }
 
 export interface MetadataSet {

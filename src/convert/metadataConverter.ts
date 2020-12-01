@@ -25,7 +25,7 @@ import {
 } from './streams';
 import { ConversionError, LibraryError } from '../errors';
 import { SourcePath } from '../common';
-import { ComponentSet, WorkingSet } from '../collections';
+import { WorkingSet } from '../collections';
 
 export class MetadataConverter {
   public static readonly PACKAGE_XML_FILE = 'package.xml';
@@ -51,14 +51,12 @@ export class MetadataConverter {
   ): Promise<ConvertResult> {
     try {
       // it's possible the components came from a working set, so this may be redundant in some cases...
-      const manifestContents = WorkingSet.fromComponents(components, {
-        registry: this.registry,
-      }).getPackageXml();
+      const manifestContents = new WorkingSet(components, this.registry).getPackageXml();
       const isSource = targetFormat === 'source';
       const tasks = [];
 
       let writer: ComponentWriter;
-      let mergeSet: ComponentSet<SourceComponent>;
+      let mergeSet: WorkingSet;
       let packagePath: SourcePath;
 
       switch (output.type) {
@@ -81,7 +79,7 @@ export class MetadataConverter {
           if (!isSource) {
             throw new LibraryError('error_merge_metadata_target_unsupported');
           }
-          mergeSet = new ComponentSet();
+          mergeSet = new WorkingSet();
           // since child components are composed in metadata format, we need to merge using the parent
           output.mergeWith.forEach((component) => mergeSet.add(component.parent || component));
           writer = new StandardWriter(output.defaultDirectory);

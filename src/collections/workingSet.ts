@@ -6,7 +6,6 @@
  */
 import { AuthInfo, Connection } from '@salesforce/core';
 import { parse as parseXml, j2xParser } from 'fast-xml-parser';
-import { ComponentSet } from './componentSet';
 import { SourceClient } from '../client';
 import { MetadataDeployOptions, SourceDeployResult, SourceRetrieveResult } from '../client/types';
 import { MetadataComponent, XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
@@ -24,7 +23,6 @@ import {
   FromManifestOptions,
   PackageManifestObject,
   SourceComponentOptions,
-  WorkingSetOptions,
   MetadataSet,
 } from './types';
 import { ComponentLike } from '../common/types';
@@ -33,11 +31,14 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
   private static readonly WILDCARD = '*';
   public apiVersion: string;
   private registry: RegistryAccess;
-  private components = new Map<string, ComponentSet<MetadataComponent>>();
+  private components = new Map<string, Map<string, SourceComponent>>();
 
-  public constructor(registry = new RegistryAccess()) {
+  public constructor(components: Iterable<ComponentLike> = [], registry = new RegistryAccess()) {
     this.registry = registry;
-    this.apiVersion = registry.apiVersion;
+    this.apiVersion = this.registry.apiVersion;
+    for (const component of components) {
+      this.add(component);
+    }
   }
 
   /**
@@ -47,7 +48,7 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
    * @param options
    */
   public static fromSource(fsPath: string, options?: FromSourceOptions): WorkingSet {
-    const ws = new WorkingSet(options?.registry);
+    const ws = new WorkingSet(undefined, options?.registry);
     ws.resolveSourceComponents(fsPath, { tree: options?.tree });
     return ws;
   }
@@ -73,8 +74,8 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
     const tree = options?.tree ?? new NodeFSTreeContainer();
     const shouldResolve = !!options?.resolve;
 
-    const ws = new WorkingSet(options?.registry);
-    const filterSet = new ComponentSet<MetadataComponent>();
+    const ws = new WorkingSet(undefined, registry);
+    const filterSet = new WorkingSet(undefined, registry);
     const file = await tree.readFile(fsPath);
     const manifestObj: PackageManifestObject = parseXml(file.toString(), {
       stopNodes: ['version'],
@@ -103,23 +104,6 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
       }
     }
 
-    return ws;
-  }
-
-  /**
-   * Create a set from a collection of components or type members.
-   *
-   * @param collection
-   * @param options
-   */
-  public static fromComponents(
-    collection: Iterable<ComponentLike>,
-    options?: WorkingSetOptions
-  ): WorkingSet {
-    const ws = new WorkingSet(options?.registry);
-    for (const component of collection) {
-      ws.add(component);
-    }
     return ws;
   }
 
@@ -200,7 +184,7 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
     const connection = await this.getConnection(usernameOrConnection);
     const client = new SourceClient(connection, new MetadataResolver());
 
-    if (this.components.size === 0) {
+    if (this.size === 0) {
       throw new WorkingSetError('error_no_components_to_retrieve');
     }
 
@@ -217,35 +201,24 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
    * Get an object representation of a package manifest based on the set components.
    */
   public getObject(): PackageManifestObject {
-    const typeMembers: PackageTypeMembers[] = [];
-    const folderMembers = new Map<string, string[]>();
+    const typeMap = new Map<string, string[]>();
+    for (const key of this.components.keys()) {
+      const [typeId, fullName] = key.split('.');
+      let type = this.registry.getTypeByName(typeId);
 
-    for (const [typeName, components] of this.components.entries()) {
-      let members: string[] = [];
-      const type = this.registry.getTypeByName(typeName);
-
-      // build folder related members separately to combine folder types and types in folders into one
-      const isFolderRelatedType = type.folderType || type.folderContentType;
-      if (isFolderRelatedType) {
-        const { name: contentTypeName } = type.folderContentType
-          ? this.registry.getTypeByName(type.folderContentType)
-          : type;
-        if (!folderMembers.has(contentTypeName)) {
-          folderMembers.set(contentTypeName, []);
-        }
-        members = folderMembers.get(contentTypeName);
+      if (type.folderContentType) {
+        type = this.registry.getTypeByName(type.folderContentType);
       }
 
-      for (const { fullName } of components.values()) {
-        members.push(fullName);
+      if (!typeMap.has(type.name)) {
+        typeMap.set(type.name, []);
       }
 
-      if (!isFolderRelatedType) {
-        typeMembers.push({ members, name: typeName });
-      }
+      typeMap.get(type.name).push(fullName);
     }
 
-    for (const [typeName, members] of folderMembers.entries()) {
+    const typeMembers: PackageTypeMembers[] = [];
+    for (const [typeName, members] of typeMap.entries()) {
       typeMembers.push({ members, name: typeName });
     }
 
@@ -263,21 +236,18 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
    * @param fsPath: File path to resolve
    * @param options
    */
-  public resolveSourceComponents(
-    fsPath: string,
-    options?: SourceComponentOptions
-  ): ComponentSet<SourceComponent> | undefined {
-    let filterSet: ComponentSet<MetadataComponent>;
+  public resolveSourceComponents(fsPath: string, options?: SourceComponentOptions): WorkingSet {
+    let filterSet: WorkingSet;
 
     if (options?.filter) {
       const { filter } = options;
-      filterSet = filter instanceof ComponentSet ? filter : new ComponentSet(filter);
+      filterSet = filter instanceof WorkingSet ? filter : new WorkingSet(filter);
     }
 
     // TODO: move filter logic to resolver W-8023153
     const resolver = new MetadataResolver(this.registry, options?.tree);
     const resolved = resolver.getComponentsFromPath(fsPath);
-    const sourceComponents = new ComponentSet<SourceComponent>();
+    const sourceComponents = new WorkingSet();
 
     for (const component of resolved) {
       const shouldResolve = !filterSet || filterSet.has(component);
@@ -286,12 +256,12 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
         type: component.type,
       });
       if (shouldResolve || includedInWildcard) {
-        this.setComponent(component);
+        this.add(component);
         sourceComponents.add(component);
       } else if (filterSet) {
         for (const childComponent of component.getChildren()) {
           if (filterSet.has(childComponent)) {
-            this.setComponent(childComponent);
+            this.add(childComponent);
             sourceComponents.add(childComponent);
           }
         }
@@ -317,48 +287,61 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
     return XML_DECL.concat(j2x.parse(toParse));
   }
 
-  public add(component: ComponentLike): void {
-    if (typeof component.type === 'string') {
-      this.setComponent({
-        fullName: component.fullName,
-        type: this.registry.getTypeByName(component.type),
-      });
+  public *getSourceComponents(forMember?: ComponentLike): IterableIterator<SourceComponent> {
+    let iter;
+
+    if (forMember) {
+      // filter optimization
+      const memberCollection = this.components.get(this.simpleKey(forMember));
+      iter = memberCollection?.size > 0 ? memberCollection.values() : [];
     } else {
-      this.setComponent(component as MetadataComponent);
+      iter = this;
     }
-  }
 
-  public has(component: ComponentLike): boolean {
-    const typeName =
-      typeof component.type === 'string'
-        ? this.registry.getTypeByName(component.type).name
-        : component.type.name;
-    return this.components.get(typeName)?.has(component) === true;
-  }
-
-  /**
-   * Get the set entries grouped by metadata type name.
-   *
-   * entry -> [type name, component set]
-   */
-  public entries(): IterableIterator<[string, ComponentSet<MetadataComponent>]> {
-    return this.components.entries();
-  }
-
-  public *[Symbol.iterator](): Iterator<MetadataComponent> {
-    for (const componentSet of this.components.values()) {
-      for (const component of componentSet) {
+    for (const component of iter) {
+      if (component instanceof SourceComponent) {
         yield component;
       }
     }
   }
 
-  get size(): number {
-    let count = 0;
-    for (const set of this.components.values()) {
-      count += set.size;
+  public add(component: ComponentLike): void {
+    const key = this.simpleKey(component);
+    if (!this.components.has(key)) {
+      this.components.set(key, new Map<string, SourceComponent>());
     }
-    return count;
+    if (component instanceof SourceComponent) {
+      this.components.get(key).set(this.sourceKey(component), component);
+    }
+  }
+
+  public has(component: ComponentLike): boolean {
+    return this.components.has(this.simpleKey(component));
+  }
+
+  public *[Symbol.iterator](): Iterator<MetadataComponent> {
+    for (const [key, sourceComponents] of this.components.entries()) {
+      if (sourceComponents.size === 0) {
+        const [typeName, fullName] = key.split('.');
+        yield {
+          fullName,
+          type: this.registry.getTypeByName(typeName),
+        };
+      } else {
+        for (const component of sourceComponents.values()) {
+          yield component;
+        }
+      }
+    }
+  }
+
+  get size(): number {
+    let size = 0;
+    for (const collection of this.components.values()) {
+      // just having an entry in the parent map counts as 1
+      size += collection.size === 0 ? 1 : collection.size;
+    }
+    return size;
   }
 
   private async getConnection(auth: Connection | string): Promise<Connection> {
@@ -369,11 +352,14 @@ export class WorkingSet implements MetadataSet, Iterable<MetadataComponent> {
         });
   }
 
-  private setComponent(component: MetadataComponent): void {
-    const { type } = component;
-    if (!this.components.has(type.name)) {
-      this.components.set(type.name, new ComponentSet<MetadataComponent>());
-    }
-    this.components.get(type.name).add(component);
+  private sourceKey(component: SourceComponent): string {
+    const { fullName, type, xml, content } = component;
+    return `${type.name}${fullName}${xml ?? ''}${content ?? ''}`;
+  }
+
+  private simpleKey(component: ComponentLike): string {
+    const typeName =
+      typeof component.type === 'string' ? component.type.toLowerCase().trim() : component.type.id;
+    return `${typeName}.${component.fullName}`;
   }
 }

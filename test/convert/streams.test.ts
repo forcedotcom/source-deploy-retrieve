@@ -10,11 +10,11 @@ import * as archiver from 'archiver';
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { expect } from 'chai';
-import { basename, dirname, join, sep } from 'path';
+import { basename, join, sep } from 'path';
 import { createSandbox, SinonStub } from 'sinon';
 import { Readable, Writable } from 'stream';
-import { ComponentSet, MetadataResolver, SourceComponent } from '../../src';
-import { MetadataTransformer, WriterFormat } from '../../src/convert';
+import { MetadataResolver, SourceComponent, WorkingSet } from '../../src';
+import { WriterFormat } from '../../src/convert';
 import { ConvertTransaction } from '../../src/convert/convertTransaction';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
 import { LibraryError } from '../../src/errors';
@@ -32,6 +32,7 @@ import {
   KEANU_SOURCE_NAMES,
   KEANU_XML_NAMES,
 } from '../mock/registry/keanuConstants';
+import { MetadataTransformer } from '../../src/convert/types';
 
 const env = createSandbox();
 
@@ -135,7 +136,7 @@ describe('Streams', () => {
         },
         []
       );
-      const mergeSet = new ComponentSet([component]);
+      const mergeSet = new WorkingSet([component]);
       const converter = new streams.ComponentConverter('source', mockRegistry, undefined, mergeSet);
 
       converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {

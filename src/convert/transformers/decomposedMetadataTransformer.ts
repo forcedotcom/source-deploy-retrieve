@@ -12,7 +12,7 @@ import { JsonMap, AnyJson, JsonArray } from '@salesforce/ts-types';
 import { JsToXml } from '../streams';
 import { join } from 'path';
 import { MetadataType, SourcePath, META_XML_SUFFIX, XML_NS_URL, XML_NS_KEY } from '../../common';
-import { ComponentSet } from '../../collections';
+import { WorkingSet } from '../../collections';
 
 interface XmlJson extends JsonMap {
   [parentFullName: string]: {
@@ -91,9 +91,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
 
     let createParentXml = false;
     const rootPackagePath = component.getPackageRelativePath(parentFullName, 'source');
-    const childComponentMergeSet = mergeWith
-      ? new ComponentSet(mergeWith.getChildren())
-      : undefined;
+    const childComponentMergeSet = mergeWith ? new WorkingSet(mergeWith.getChildren()) : undefined;
 
     const composedMetadata = await this.getComposedMetadataEntries(component);
     for (const [tagKey, tagValue] of composedMetadata) {
@@ -103,10 +101,12 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
         const tagValues = Array.isArray(tagValue) ? tagValue : [tagValue];
         for (const value of tagValues) {
           const entryName = (value.fullName || value.name) as string;
-          const mergeChild = childComponentMergeSet?.get({
-            fullName: `${parentFullName}.${entryName}`,
-            type: childType,
-          });
+          const mergeChild = childComponentMergeSet
+            ?.getSourceComponents({
+              fullName: `${parentFullName}.${entryName}`,
+              type: childType,
+            })
+            .next().value;
           const output =
             mergeChild?.xml ||
             join(rootPackagePath, this.getOutputPathForEntry(entryName, childType, component));

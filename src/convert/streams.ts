@@ -45,13 +45,13 @@ export class ComponentConverter extends Transform {
   private targetFormat: SfdxFileFormat;
   private transaction: ConvertTransaction;
   private transformerFactory: MetadataTransformerFactory;
-  private mergeSet: ComponentSet<SourceComponent>;
+  private mergeSet: ComponentSet;
 
   constructor(
     targetFormat: SfdxFileFormat,
     registry: RegistryAccess,
     transaction = new ConvertTransaction(),
-    mergeSet?: ComponentSet<SourceComponent>
+    mergeSet?: ComponentSet
   ) {
     super({ objectMode: true });
     this.targetFormat = targetFormat;
@@ -69,7 +69,7 @@ export class ComponentConverter extends Transform {
     let result: WriterFormat;
     try {
       const transformer = this.transformerFactory.getTransformer(chunk);
-      const componentToMergeAgainst = this.mergeSet?.get(chunk);
+      const componentToMergeAgainst = this.mergeSet?.getSourceComponents(chunk).next().value;
       switch (this.targetFormat) {
         case 'metadata':
           result = await transformer.toMetadataFormat(chunk);

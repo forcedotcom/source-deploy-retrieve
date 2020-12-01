@@ -103,10 +103,12 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
         const tagValues = Array.isArray(tagValue) ? tagValue : [tagValue];
         for (const value of tagValues) {
           const entryName = (value.fullName || value.name) as string;
-          const mergeChild = childComponentMergeSet?.get({
-            fullName: `${parentFullName}.${entryName}`,
-            type: childType,
-          });
+          const mergeChild = childComponentMergeSet
+            ?.getSourceComponents({
+              fullName: `${parentFullName}.${entryName}`,
+              type: childType,
+            })
+            .next().value;
           const output =
             mergeChild?.xml ||
             join(rootPackagePath, this.getOutputPathForEntry(entryName, childType, component));

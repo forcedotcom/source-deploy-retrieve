@@ -34,10 +34,8 @@ export {
 } from './metadata-registry';
 export { MetadataType, MetadataComponent, SourcePath } from './common';
 export {
-  WorkingSet,
   ComponentSet,
   FromManifestOptions,
   FromSourceOptions,
   SourceComponentOptions,
-  WorkingSetOptions,
 } from './collections';

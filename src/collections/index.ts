@@ -4,12 +4,5 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-export { WorkingSet } from './workingSet';
 export { ComponentSet } from './componentSet';
-export {
-  WorkingSetOptions,
-  FromSourceOptions,
-  FromManifestOptions,
-  SourceComponentOptions,
-  MetadataSet,
-} from './types';
+export { FromSourceOptions, FromManifestOptions, SourceComponentOptions } from './types';

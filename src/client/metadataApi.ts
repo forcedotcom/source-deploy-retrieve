@@ -215,10 +215,12 @@ export class MetadataApi extends BaseApi {
         }
         successes.push({
           properties,
-          component: retrievedSet.get({
-            fullName: properties.fullName,
-            type: this.registry.getTypeByName(properties.type),
-          }),
+          component: retrievedSet
+            .getSourceComponents({
+              fullName: properties.fullName,
+              type: this.registry.getTypeByName(properties.type),
+            })
+            .next().value,
         });
       }
     }

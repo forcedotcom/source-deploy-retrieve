@@ -445,23 +445,6 @@ describe('ComponentSet', () => {
       expect(result).to.deep.equal(mockResult);
     });
 
-    it('should warn when some components are missing source', async () => {
-      stub(MetadataApi.prototype, 'deploy');
-      const warnStub = env.stub(console, 'warn').callsFake(() => true);
-      const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
-      const missing = Array.from(set).map((c) => `${c.type.name}:${c.fullName}`);
-
-      set.add({ fullName: 'NoSource', type: 'MixedContentSingleFile' });
-
-      await set.deploy('test@foobar.com');
-
-      expect(
-        warnStub.calledOnceWith(
-          nls.localize('warn_unresolved_source_for_components', missing.join(','))
-        )
-      );
-    });
-
     it('should throw error if there are no source backed components when deploying', async () => {
       const set = await ComponentSet.fromManifestFile('subset.xml', {
         registry: mockRegistry,
@@ -474,21 +457,6 @@ describe('ComponentSet', () => {
       } catch (e) {
         expect(e.name).to.equal(ComponentSetError.name);
         expect(e.message).to.equal(nls.localize('error_no_source_to_deploy'));
-      }
-    });
-
-    it('should throw error if attempting to deploy a wildcard literal component', async () => {
-      const set = await ComponentSet.fromManifestFile('wildcard.xml', {
-        registry: mockRegistry,
-        tree,
-      });
-
-      try {
-        await set.deploy('test@foobar.com');
-        fail('should have thrown an error');
-      } catch (e) {
-        expect(e.name).to.equal(ComponentSetError.name);
-        expect(e.message).to.equal(nls.localize('error_deploy_wildcard_literal'));
       }
     });
   });

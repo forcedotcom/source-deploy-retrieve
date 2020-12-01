@@ -140,24 +140,10 @@ export class ComponentSet implements Iterable<MetadataComponent> {
     usernameOrConnection: string | Connection,
     options?: MetadataDeployOptions
   ): Promise<SourceDeployResult> {
-    const toDeploy: SourceComponent[] = [];
-    const missingSource: string[] = [];
-
-    for (const component of this) {
-      if (component instanceof SourceComponent) {
-        toDeploy.push(component);
-      } else {
-        if (component.fullName === ComponentSet.WILDCARD) {
-          throw new ComponentSetError('error_deploy_wildcard_literal');
-        }
-        missingSource.push(`${component.type.name}:${component.fullName}`);
-      }
-    }
+    const toDeploy = Array.from(this.getSourceComponents());
 
     if (toDeploy.length === 0) {
       throw new ComponentSetError('error_no_source_to_deploy');
-    } else if (missingSource.length > 0) {
-      console.warn(nls.localize('warn_unresolved_source_for_components', missingSource.join(',')));
     }
 
     const connection = await this.getConnection(usernameOrConnection);
@@ -180,12 +166,12 @@ export class ComponentSet implements Iterable<MetadataComponent> {
     output: string,
     options?: { merge?: boolean; wait?: number }
   ): Promise<SourceRetrieveResult> {
-    const connection = await this.getConnection(usernameOrConnection);
-    const client = new SourceClient(connection, new MetadataResolver());
-
     if (this.size === 0) {
       throw new ComponentSetError('error_no_components_to_retrieve');
     }
+
+    const connection = await this.getConnection(usernameOrConnection);
+    const client = new SourceClient(connection, new MetadataResolver());
 
     return client.metadata.retrieve({
       // this is fine, if they aren't mergable then they'll go to the default

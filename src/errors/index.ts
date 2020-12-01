@@ -72,7 +72,7 @@ export class ConversionError extends LibraryError {
   }
 }
 
-export class WorkingSetError extends LibraryError {
+export class ComponentSetError extends LibraryError {
   constructor(messageKey: string, args?: string | string[]) {
     super(messageKey, args);
   }

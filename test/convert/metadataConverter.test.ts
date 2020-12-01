@@ -7,7 +7,6 @@
 import { MetadataConverter } from '../../src/convert';
 import { createSandbox, SinonStub } from 'sinon';
 import { kathy, mockRegistry } from '../mock/registry';
-import { ManifestGenerator } from '../../src/metadata-registry';
 import * as streams from '../../src/convert/streams';
 import * as fs from 'fs';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
@@ -16,7 +15,7 @@ import { expect, assert } from 'chai';
 import { ConversionError, LibraryError } from '../../src/errors';
 import { TINA_COMPONENTS } from '../mock/registry/tinaConstants';
 import { fail } from 'assert';
-import { ComponentSet, WorkingSet } from '../../src';
+import { ComponentSet } from '../../src';
 
 const env = createSandbox();
 
@@ -124,9 +123,7 @@ describe('MetadataConverter', () => {
         `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`
       );
       env.stub(Date, 'now').returns(timestamp);
-      const expectedContents = WorkingSet.fromComponents(components, {
-        registry: mockRegistry,
-      }).getPackageXml();
+      const expectedContents = new ComponentSet(components, mockRegistry).getPackageXml();
 
       await converter.convert(components, 'metadata', { type: 'directory', outputDirectory });
 
@@ -200,9 +197,7 @@ describe('MetadataConverter', () => {
     });
 
     it('should write manifest for metadata format conversion', async () => {
-      const expectedContents = WorkingSet.fromComponents(components, {
-        registry: mockRegistry,
-      }).getPackageXml();
+      const expectedContents = new ComponentSet(components, mockRegistry).getPackageXml();
       const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
 
       await converter.convert(components, 'metadata', { type: 'zip' });

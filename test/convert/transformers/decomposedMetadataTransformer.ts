@@ -165,7 +165,6 @@ describe('DecomposedMetadataTransformer', () => {
       const root = join('main', 'default', type.directoryName, fullName);
       env.stub(component, 'parseXml').resolves({
         ReginaKing: {
-          [XML_NS_KEY]: XML_NS_URL,
           fullName,
           foo: 'bar',
           ys: { fullName: 'child', test: 'testVal' },

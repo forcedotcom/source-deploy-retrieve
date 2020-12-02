@@ -87,7 +87,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   ): Promise<WriterFormat> {
     const writeInfos: WriteInfo[] = [];
     const { type, fullName: parentFullName } = component;
-    const parentXmlObject: XmlJson = { [type.name]: {} };
+    const parentXmlObject: any = { [type.name]: { [XML_NS_KEY]: XML_NS_URL } };
 
     let createParentXml = false;
     const rootPackagePath = component.getPackageRelativePath(parentFullName, 'source');

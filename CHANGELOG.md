@@ -1,3 +1,17 @@
+# 1.1.12 - December 2, 2020
+
+## Fixed
+
+- Handle Folder metadata types ([PR #208](https://github.com/forcedotcom/source-deploy-retrieve/pull/208))
+
+- Report accurate retrieve operation status when using wildcards in manifest files ([PR #209](https://github.com/forcedotcom/source-deploy-retrieve/pull/209))
+
+- Report correct retrieve file output ([PR #210](https://github.com/forcedotcom/source-deploy-retrieve/pull/210))
+
+- Handle multiple resolve targets when parsing manifest files ([PR #211](https://github.com/forcedotcom/source-deploy-retrieve/pull/211))
+
+- Enable multiple source-backed components for a single metadata component ([PR #212](https://github.com/forcedotcom/source-deploy-retrieve/pull/212))
+
 # 1.1.11 - November 12, 2020
 
 ## Fixed

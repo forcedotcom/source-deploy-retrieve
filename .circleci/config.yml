@@ -157,7 +157,7 @@ jobs:
             export RELEASE_TAG="$(node -pe "require('./package.json').version")"
             echo "export RELEASE_VERSION=$RELEASE_TAG" >> $BASH_ENV
             source $BASH_ENV
-            git commit -m "Updated version $RELEASE_TAG"
+            git commit -m "chore: updated version $RELEASE_TAG"
       - run:
           name: Set .npmrc
           command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc

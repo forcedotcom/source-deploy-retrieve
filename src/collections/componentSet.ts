@@ -10,7 +10,6 @@ import { SourceClient } from '../client';
 import { MetadataDeployOptions, SourceDeployResult, SourceRetrieveResult } from '../client/types';
 import { MetadataComponent, XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSetError } from '../errors';
-import { nls } from '../i18n';
 import {
   MetadataResolver,
   NodeFSTreeContainer,
@@ -28,6 +27,7 @@ import { ComponentLike } from '../common/types';
 
 export class ComponentSet implements Iterable<MetadataComponent> {
   private static readonly WILDCARD = '*';
+  private static readonly KEY_DELIMITER = '#';
   public apiVersion: string;
   private registry: RegistryAccess;
   private components = new Map<string, Map<string, SourceComponent>>();
@@ -116,7 +116,7 @@ export class ComponentSet implements Iterable<MetadataComponent> {
       const fullNames = Array.isArray(members) ? members : [members];
       for (const fullName of fullNames) {
         let type = registry.getTypeByName(typeName);
-        // if there is no delimeter and it's a type in folders, infer folder component
+        // if there is no / delimiter and it's a type in folders, infer folder component
         if (type.folderType && !fullName.includes('/')) {
           type = registry.getTypeByName(type.folderType);
         }
@@ -183,7 +183,7 @@ export class ComponentSet implements Iterable<MetadataComponent> {
   public getObject(): PackageManifestObject {
     const typeMap = new Map<string, string[]>();
     for (const key of this.components.keys()) {
-      const [typeId, fullName] = key.split('.');
+      const [typeId, fullName] = key.split(ComponentSet.KEY_DELIMITER);
       let type = this.registry.getTypeByName(typeId);
 
       if (type.folderContentType) {
@@ -302,7 +302,7 @@ export class ComponentSet implements Iterable<MetadataComponent> {
   public *[Symbol.iterator](): Iterator<MetadataComponent> {
     for (const [key, sourceComponents] of this.components.entries()) {
       if (sourceComponents.size === 0) {
-        const [typeName, fullName] = key.split('.');
+        const [typeName, fullName] = key.split(ComponentSet.KEY_DELIMITER);
         yield {
           fullName,
           type: this.registry.getTypeByName(typeName),
@@ -340,6 +340,6 @@ export class ComponentSet implements Iterable<MetadataComponent> {
   private simpleKey(component: ComponentLike): string {
     const typeName =
       typeof component.type === 'string' ? component.type.toLowerCase().trim() : component.type.id;
-    return `${typeName}.${component.fullName}`;
+    return `${typeName}${ComponentSet.KEY_DELIMITER}${component.fullName}`;
   }
 }

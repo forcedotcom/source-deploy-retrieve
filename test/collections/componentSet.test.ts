@@ -174,7 +174,7 @@ describe('ComponentSet', () => {
         ]);
       });
 
-      it('should interpret a member of a type in folders with no delimeter as its corresponding folder type', async () => {
+      it('should interpret a member of a type in folders with no delimiter as its corresponding folder type', async () => {
         const set = await ComponentSet.fromManifestFile('folderComponent.xml', {
           registry: mockRegistry,
           tree,
@@ -340,6 +340,20 @@ describe('ComponentSet', () => {
         {
           name: 'TinaFey',
           members: ['Test_Folder'],
+        },
+      ]);
+    });
+
+    /**
+     * If component set keys are incorrectly handled, child component names may not be returned properly.
+     */
+    it('should correctly return addressable child components', () => {
+      const set = new ComponentSet([{ fullName: 'MyParent__c.Child__c', type: 'x' }], mockRegistry);
+
+      expect(set.getObject().Package.types).to.deep.equal([
+        {
+          name: 'X',
+          members: ['MyParent__c.Child__c'],
         },
       ]);
     });

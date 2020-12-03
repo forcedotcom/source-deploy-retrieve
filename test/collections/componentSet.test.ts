@@ -174,7 +174,7 @@ describe('ComponentSet', () => {
         ]);
       });
 
-      it('should interpret a member of a type in folders with no delimeter as its corresponding folder type', async () => {
+      it('should interpret a member of a type in folders with no delimiter as its corresponding folder type', async () => {
         const set = await ComponentSet.fromManifestFile('folderComponent.xml', {
           registry: mockRegistry,
           tree,

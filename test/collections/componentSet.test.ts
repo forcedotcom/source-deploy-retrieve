@@ -343,6 +343,20 @@ describe('ComponentSet', () => {
         },
       ]);
     });
+
+    /**
+     * If component set keys are incorrectly handled, child component names may not be returned properly.
+     */
+    it('should correctly return addressable child components', () => {
+      const set = new ComponentSet([{ fullName: 'MyParent__c.Child__c', type: 'x' }], mockRegistry);
+
+      expect(set.getObject().Package.types).to.deep.equal([
+        {
+          name: 'X',
+          members: ['MyParent__c.Child__c'],
+        },
+      ]);
+    });
   });
 
   describe('resolveSourceComponents', () => {

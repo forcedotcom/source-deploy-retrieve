@@ -1,3 +1,8 @@
+# 1.1.13 - December 3, 2020
+## Fixed
+
+- Add non-source components when initializing ComponentSets with resolve option ([#217](https://github.com/forcedotcom/source-deploy-retrieve/pull/217))
+
 # 1.1.12 - December 2, 2020
 
 ## Fixed

@@ -13,6 +13,7 @@ export {
   MetadataApiDeployOptions,
   RetrieveOptions,
   RetrievePathOptions,
+  RetrieveStatus,
   SourceDeployResult,
   RetrieveMessage,
   SourceRetrieveResult,

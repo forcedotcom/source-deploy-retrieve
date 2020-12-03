@@ -263,10 +263,25 @@ describe('ComponentSet', () => {
           { fullName: '*', type: mockRegistryData.types.mixedcontentsinglefile },
           ...sourceComponents,
         ]);
+
+        it('should add components even if they were not resolved', async () => {
+          const set = await ComponentSet.fromManifestFile('folderComponent.xml', {
+            registry: mockRegistry,
+            tree,
+            resolve: '.',
+          });
+
+          expect(Array.from(set)).to.deep.equal([
+            {
+              fullName: 'Test_Folder',
+              type: mockRegistryData.types.tinafeyfolder,
+            },
+          ]);
+        });
       });
     });
 
-    describe('fromComponents', () => {
+    describe('constructor', () => {
       it('should initialize non-source backed components from members', () => {
         const set = new ComponentSet(
           [

@@ -83,11 +83,11 @@ export class ComponentSet implements Iterable<MetadataComponent> {
     ws.apiVersion = manifestObj.Package.version;
 
     for (const component of ComponentSet.getComponentsFromManifestObject(manifestObj, registry)) {
-      const memberIsWildcard = component.fullName === ComponentSet.WILDCARD;
       if (shouldResolve) {
         filterSet.add(component);
       }
-      if (!shouldResolve || (memberIsWildcard && options?.literalWildcard)) {
+      const memberIsWildcard = component.fullName === ComponentSet.WILDCARD;
+      if (!memberIsWildcard || options?.literalWildcard || !shouldResolve) {
         ws.add(component);
       }
     }

@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { WriteInfo, WriterFormat } from '../types';
+import { WriteInfo } from '../types';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { RecompositionFinalizer, ConvertTransaction } from '../convertTransaction';
 import { DecompositionStrategy, RegistryAccess, SourceComponent } from '../../metadata-registry';
@@ -46,19 +46,14 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     return baseXmlObj;
   }
 
-  public static createWriterFormat(trigger: SourceComponent, xmlObject: JsonMap): WriterFormat {
+  public static createParentWriteInfo(trigger: SourceComponent, xmlObject: JsonMap): WriteInfo {
     return {
-      component: trigger,
-      writeInfos: [
-        {
-          source: new JsToXml(xmlObject),
-          output: join(trigger.type.directoryName, `${trigger.fullName}.${trigger.type.suffix}`),
-        },
-      ],
+      source: new JsToXml(xmlObject),
+      output: join(trigger.type.directoryName, `${trigger.fullName}.${trigger.type.suffix}`),
     };
   }
 
-  public async toMetadataFormat(component: SourceComponent): Promise<WriterFormat> {
+  public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     if (component.parent) {
       const { state } = this.convertTransaction;
       const { fullName: parentName } = component.parent;
@@ -70,7 +65,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       }
       state.recompose[parentName].children.push(component);
       // noop since the finalizer will push the writes to the component writer
-      return { component: component, writeInfos: [] };
+      return [];
     }
 
     const recomposedXmlObj = await DecomposedMetadataTransformer.recompose(
@@ -78,18 +73,13 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       (await component.parseXml()) as XmlJson
     );
 
-    const writerFormat = DecomposedMetadataTransformer.createWriterFormat(
-      component,
-      recomposedXmlObj
-    );
-    this.writes.push(...writerFormat.writeInfos);
-    return writerFormat;
+    return [DecomposedMetadataTransformer.createParentWriteInfo(component, recomposedXmlObj)];
   }
 
   public async toSourceFormat(
     component: SourceComponent,
     mergeWith?: SourceComponent
-  ): Promise<WriterFormat> {
+  ): Promise<WriteInfo[]> {
     const writeInfos: WriteInfo[] = [];
     const { type, fullName: parentFullName } = component;
     const parentXmlObject: any = { [type.name]: { [XML_NS_KEY]: XML_NS_URL } };
@@ -117,13 +107,13 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
           });
           if (childComponentMergeSet?.has(childComponent)) {
             for (const mergeChild of childComponentMergeSet.getSourceComponents(childComponent)) {
-              this.writes.push({
+              writeInfos.push({
                 source,
                 output: mergeChild.xml,
               });
             }
           } else {
-            this.writes.push({
+            writeInfos.push({
               source,
               output: join(
                 rootPackagePath,
@@ -145,13 +135,13 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       const parentOutput =
         mergeWith?.xml ||
         join(rootPackagePath, `${parentFullName}.${type.suffix}${META_XML_SUFFIX}`);
-      this.writes.push({
+      writeInfos.push({
         source: new JsToXml(parentXmlObject),
         output: parentOutput,
       });
     }
 
-    return { component, writeInfos };
+    return writeInfos;
   }
 
   private async getComposedMetadataEntries(component: SourceComponent): Promise<[string, any][]> {

@@ -18,6 +18,7 @@ import { MetadataTransformerFactory } from './transformers';
 import { JsonMap } from '@salesforce/ts-types';
 import { j2xParser } from 'fast-xml-parser';
 import { ComponentSet } from '../collections';
+import { LibraryError } from '../errors';
 export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
@@ -65,15 +66,31 @@ export class ComponentConverter extends Transform {
     callback: (err: Error, data: WriterFormat) => void
   ): Promise<void> {
     let err: Error;
-    let result: WriterFormat;
+    const writeInfos: WriteInfo[] = [];
     try {
+      const converts: Promise<WriteInfo[]>[] = [];
       const transformer = this.transformerFactory.getTransformer(chunk);
       const mergeWith = this.mergeSet?.getSourceComponents(chunk);
-      result = await transformer.createWriteOperations(chunk, this.targetFormat, mergeWith);
+      if (this.targetFormat === 'source') {
+        if (mergeWith) {
+          for (const mergeComponent of mergeWith) {
+            converts.push(transformer.toSourceFormat(chunk, mergeComponent));
+          }
+        }
+        if (converts.length === 0) {
+          converts.push(transformer.toSourceFormat(chunk));
+        }
+      } else if (this.targetFormat === 'metadata') {
+        converts.push(transformer.toMetadataFormat(chunk));
+      } else {
+        throw new LibraryError('error_convert_invalid_format', this.targetFormat);
+      }
+      // could maybe improve all this with lazy async collections...
+      (await Promise.all(converts)).forEach((infos) => writeInfos.push(...infos));
     } catch (e) {
       err = e;
     }
-    callback(err, result);
+    callback(err, { component: chunk, writeInfos });
   }
 
   /**

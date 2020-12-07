@@ -58,10 +58,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toMetadataFormat(component)).to.deep.equal({
-        component,
-        writeInfos: expectedInfos,
-      });
+      expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
     });
 
     it('should zip directory content for all supported archive mime types', async () => {
@@ -86,10 +83,7 @@ describe('StaticResourceMetadataTransformer', () => {
 
       for (const contentType of StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES) {
         parseXmlStub.resolves({ StaticResource: { contentType } });
-        expect(await transformer.toMetadataFormat(component)).to.deep.equal({
-          component,
-          writeInfos: expectedInfos,
-        });
+        expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
         expect(archiveDirStub.calledOnceWith(content, false)).to.be.true;
         expect(archiveFinalizeStub.calledImmediatelyAfter(archiveDirStub)).to.be.true;
         archiveDirStub.resetHistory();
@@ -152,10 +146,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equal({
-        component,
-        writeInfos: expectedInfos,
-      });
+      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
     });
 
     it('should rename extension from .resource for a fallback mime extension', async () => {
@@ -178,10 +169,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equal({
-        component,
-        writeInfos: expectedInfos,
-      });
+      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
     });
 
     it('should rename extension from .resource for an unsupported mime extension', async () => {
@@ -204,20 +192,14 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equal({
-        component,
-        writeInfos: expectedInfos,
-      });
+      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
     });
 
     it('should ignore components without content', async () => {
       const component = Object.assign({}, MC_SINGLE_FILE_COMPONENT);
       component.content = undefined;
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equal({
-        component,
-        writeInfos: [],
-      });
+      expect(await transformer.toSourceFormat(component)).to.deep.equal([]);
     });
 
     it('should extract an archive', async () => {
@@ -229,20 +211,18 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       });
       env.stub(Open, 'buffer').resolves(mockCentralDirectory);
+      const expectedInfos: WriteInfo[] = [
+        {
+          source: null,
+          output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, 'a', 'b', 'c.css'),
+        },
+        {
+          source: component.tree.stream(xml),
+          output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, basename(xml)),
+        },
+      ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equal({
-        component,
-        writeInfos: [
-          {
-            source: null,
-            output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, 'a', 'b', 'c.css'),
-          },
-          {
-            source: component.tree.stream(xml),
-            output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, basename(xml)),
-          },
-        ],
-      });
+      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
     });
 
     it('should work well for null contentType', async () => {
@@ -253,20 +233,18 @@ describe('StaticResourceMetadataTransformer', () => {
           contentType: undefined,
         },
       });
+      const expectedInfos: WriteInfo[] = [
+        {
+          source: component.tree.stream(content),
+          output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, `${baseName(content)}.bin`),
+        },
+        {
+          source: component.tree.stream(xml),
+          output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, basename(xml)),
+        },
+      ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equal({
-        component,
-        writeInfos: [
-          {
-            source: component.tree.stream(content),
-            output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, `${baseName(content)}.bin`),
-          },
-          {
-            source: component.tree.stream(xml),
-            output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, basename(xml)),
-          },
-        ],
-      });
+      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
     });
 
     it('should merge output with merge component when content is archive', async () => {
@@ -296,20 +274,20 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       });
       env.stub(Open, 'buffer').resolves(mockCentralDirectory);
+      const expectedInfos: WriteInfo[] = [
+        {
+          source: null,
+          output: join(mergeComponent.content, 'b', 'c.css'),
+        },
+        {
+          source: component.tree.stream(component.xml),
+          output: mergeComponent.xml,
+        },
+      ];
 
-      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equal({
-        component,
-        writeInfos: [
-          {
-            source: null,
-            output: join(mergeComponent.content, 'b', 'c.css'),
-          },
-          {
-            source: component.tree.stream(component.xml),
-            output: mergeComponent.xml,
-          },
-        ],
-      });
+      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equal(
+        expectedInfos
+      );
     });
 
     it('should merge output with merge component when content is single file', async () => {
@@ -338,20 +316,20 @@ describe('StaticResourceMetadataTransformer', () => {
           contentType: 'text/plain',
         },
       });
+      const expectedInfos: WriteInfo[] = [
+        {
+          source: component.tree.stream(component.content),
+          output: `${mergeComponent.content}.txt`,
+        },
+        {
+          source: component.tree.stream(component.xml),
+          output: mergeComponent.xml,
+        },
+      ];
 
-      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equal({
-        component,
-        writeInfos: [
-          {
-            source: component.tree.stream(component.content),
-            output: `${mergeComponent.content}.txt`,
-          },
-          {
-            source: component.tree.stream(component.xml),
-            output: mergeComponent.xml,
-          },
-        ],
-      });
+      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equal(
+        expectedInfos
+      );
     });
   });
 });

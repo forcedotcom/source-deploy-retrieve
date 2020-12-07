@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
-import { WriterFormat, WriteInfo } from '..';
+import { WriteInfo } from '..';
 import { create as createArchive } from 'archiver';
 import { getExtension } from 'mime';
 import { Open } from 'unzipper';
@@ -34,9 +34,8 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     ['text/xml', 'xml'],
   ]);
 
-  public async toMetadataFormat(component: SourceComponent): Promise<WriterFormat> {
+  public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     const { content, type, xml } = component;
-    const writerFormat: WriterFormat = { component, writeInfos: [] };
 
     let contentSource: Readable;
 
@@ -49,7 +48,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       contentSource = component.tree.stream(content);
     }
 
-    this.writes.push(
+    return [
       {
         source: contentSource,
         output: join(type.directoryName, `${baseName(content)}.${type.suffix}`),
@@ -57,18 +56,16 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       {
         source: component.tree.stream(xml),
         output: join(type.directoryName, basename(xml)),
-      }
-    );
-
-    return writerFormat;
+      },
+    ];
   }
 
   public async toSourceFormat(
     component: SourceComponent,
     mergeWith?: SourceComponent
-  ): Promise<WriterFormat> {
+  ): Promise<WriteInfo[]> {
     const { xml, content } = component;
-    const result: WriterFormat = { component, writeInfos: [] };
+    const writeInfos: WriteInfo[] = [];
 
     if (content) {
       const componentContentType = await this.getContentType(component);
@@ -82,22 +79,24 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
 
       if (shouldUnzipArchive) {
         const zipBuffer = await component.tree.readFile(content);
-        await this.createWriteInfosFromArchive(zipBuffer, baseContentPath);
+        for await (const info of this.createWriteInfosFromArchive(zipBuffer, baseContentPath)) {
+          writeInfos.push(info);
+        }
       } else {
         const extension = this.getExtensionFromType(componentContentType);
-        this.writes.push({
+        writeInfos.push({
           source: component.tree.stream(content),
           output: `${baseContentPath}.${extension}`,
         });
       }
 
-      this.writes.push({
+      writeInfos.push({
         source: component.tree.stream(xml),
         output: mergeWith?.xml || component.getPackageRelativePath(basename(xml), 'source'),
       });
     }
 
-    return result;
+    return writeInfos;
   }
 
   private getBaseContentPath(component: SourceComponent, mergeWith?: SourceComponent): SourcePath {
@@ -125,14 +124,17 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     return false;
   }
 
-  private async createWriteInfosFromArchive(zipBuffer: Buffer, baseDir: string): Promise<void> {
+  private async *createWriteInfosFromArchive(
+    zipBuffer: Buffer,
+    baseDir: string
+  ): AsyncIterable<WriteInfo> {
     const directory = await Open.buffer(zipBuffer);
     for (const entry of directory.files) {
       if (entry.type === 'File') {
-        this.writes.push({
+        yield {
           source: entry.stream(),
           output: join(baseDir, entry.path),
-        });
+        };
       }
     }
   }

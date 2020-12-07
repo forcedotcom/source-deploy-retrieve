@@ -62,13 +62,8 @@ export type MergeConfig = {
  * Transforms metadata component files into different SFDX file formats
  */
 export interface MetadataTransformer {
-  createWriteOperations(
-    component: SourceComponent,
-    targetFormat: SfdxFileFormat,
-    mergeWith?: Iterable<SourceComponent>
-  ): Promise<WriterFormat>;
-  toMetadataFormat(component: SourceComponent): Promise<WriterFormat>;
-  toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriterFormat>;
+  toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]>;
+  toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]>;
 }
 
 // --------------

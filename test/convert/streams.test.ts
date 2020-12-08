@@ -153,6 +153,36 @@ describe('Streams', () => {
       });
     });
 
+    it('should transform to source formating using multiple merge components', (done) => {
+      const newComponent = new SourceComponent({
+        name: component.name,
+        type: component.type,
+        xml: join('path', 'to', 'another', 'kathys', 'a.kathy-meta.xml'),
+      });
+      const secondMergeComponent = new SourceComponent({
+        name: component.name,
+        type: component.type,
+        xml: join('path', 'to', 'yetanother', 'kathys', 'a.kathy-meta.xml'),
+      });
+      const mergeSet = new ComponentSet([component, secondMergeComponent]);
+      const converter = new streams.ComponentConverter('source', mockRegistry, undefined, mergeSet);
+
+      converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {
+        try {
+          expect(err).to.be.undefined;
+          expect(data).to.deep.equal({
+            component: newComponent,
+            writeInfos: (await transformer.toSourceFormat(newComponent, component)).concat(
+              await transformer.toSourceFormat(newComponent, secondMergeComponent)
+            ),
+          });
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
+    });
+
     describe('Transaction Finalizers', () => {
       let converter: streams.ComponentConverter;
       let transaction: ConvertTransaction;

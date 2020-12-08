@@ -16,6 +16,10 @@ import { ConversionError, LibraryError } from '../../src/errors';
 import { TINA_COMPONENTS } from '../mock/registry/tinaConstants';
 import { fail } from 'assert';
 import { ComponentSet } from '../../src';
+import {
+  REGINA_CHILD_COMPONENT_1,
+  REGINA_CHILD_COMPONENT_2,
+} from '../mock/registry/reginaConstants';
 
 const env = createSandbox();
 
@@ -248,6 +252,20 @@ describe('MetadataConverter', () => {
       validatePipelineArgs(pipelineArgs, 'source');
       expect(pipelineArgs[1].mergeSet).to.deep.equal(new ComponentSet(TINA_COMPONENTS));
       expect(pipelineArgs[2].rootDestination).to.equal(defaultDirectory);
+    });
+
+    it('should ensure merge set contains parents of child components instead of the children themselves', async () => {
+      await converter.convert(components, 'source', {
+        type: 'merge',
+        defaultDirectory,
+        mergeWith: [REGINA_CHILD_COMPONENT_1, REGINA_CHILD_COMPONENT_2],
+      });
+
+      const pipelineArgs = pipelineStub.firstCall.args;
+      validatePipelineArgs(pipelineArgs, 'source');
+      expect(pipelineArgs[1].mergeSet).to.deep.equal(
+        new ComponentSet([REGINA_CHILD_COMPONENT_1.parent])
+      );
     });
   });
 });

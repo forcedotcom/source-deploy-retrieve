@@ -50,10 +50,8 @@ export class MetadataConverter {
     output: ConvertOutputConfig
   ): Promise<ConvertResult> {
     try {
-      const manifestContents = (components instanceof ComponentSet
-        ? components
-        : new ComponentSet(components, this.registry)
-      ).getPackageXml();
+      // it's possible the components came from a component set, so this may be redundant in some cases...
+      const manifestContents = new ComponentSet(components, this.registry).getPackageXml();
       const isSource = targetFormat === 'source';
       const tasks = [];
 

@@ -75,19 +75,22 @@ export class ComponentConverter extends Transform {
       const converts: Promise<WriteInfo[]>[] = [];
       const transformer = this.transformerFactory.getTransformer(chunk);
       const mergeWith = this.mergeSet?.getSourceComponents(chunk);
-      if (this.targetFormat === 'source') {
-        if (mergeWith) {
-          for (const mergeComponent of mergeWith) {
-            converts.push(transformer.toSourceFormat(chunk, mergeComponent));
+      switch (this.targetFormat) {
+        case 'source':
+          if (mergeWith) {
+            for (const mergeComponent of mergeWith) {
+              converts.push(transformer.toSourceFormat(chunk, mergeComponent));
+            }
           }
-        }
-        if (converts.length === 0) {
-          converts.push(transformer.toSourceFormat(chunk));
-        }
-      } else if (this.targetFormat === 'metadata') {
-        converts.push(transformer.toMetadataFormat(chunk));
-      } else {
-        throw new LibraryError('error_convert_invalid_format', this.targetFormat);
+          if (converts.length === 0) {
+            converts.push(transformer.toSourceFormat(chunk));
+          }
+          break;
+        case 'metadata':
+          converts.push(transformer.toMetadataFormat(chunk));
+          break;
+        default:
+          throw new LibraryError('error_convert_invalid_format', this.targetFormat);
       }
       // could maybe improve all this with lazy async collections...
       (await Promise.all(converts)).forEach((infos) => writeInfos.push(...infos));

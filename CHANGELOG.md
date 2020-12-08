@@ -1,3 +1,8 @@
+# 1.1.14 - December 7, 2020
+## Fixed
+
+- Fix issue with deploying individual child components ([#220](https://github.com/forcedotcom/source-deploy-retrieve/pull/220))
+
 # 1.1.13 - December 3, 2020
 ## Fixed
 

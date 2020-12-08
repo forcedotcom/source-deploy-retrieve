@@ -33,7 +33,6 @@ describe('MetadataConverter', () => {
   /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
   function validatePipelineArgs(pipelineArgs: any[], targetFormat = 'metadata'): void {
     expect(pipelineArgs[0] instanceof streams.ComponentReader).to.be.true;
-    expect(pipelineArgs[0].components).to.deep.equal(components);
     expect(pipelineArgs[1] instanceof streams.ComponentConverter).to.be.true;
     expect(pipelineArgs[1].targetFormat).to.equal(targetFormat);
     expect(pipelineArgs[2] instanceof streams.ComponentWriter).to.be.true;
@@ -220,7 +219,6 @@ describe('MetadataConverter', () => {
 
   describe('Merge Output', () => {
     const defaultDirectory = join('path', 'to', 'default');
-    const mergeComponents = new ComponentSet(TINA_COMPONENTS);
 
     it('should throw error if merge config provided for metadata target format', async () => {
       const expectedError = new ConversionError(
@@ -230,7 +228,7 @@ describe('MetadataConverter', () => {
         await converter.convert(components, 'metadata', {
           type: 'merge',
           defaultDirectory,
-          mergeWith: mergeComponents,
+          mergeWith: TINA_COMPONENTS,
         });
         fail(`should have thrown a ${expectedError.name} error`);
       } catch (e) {
@@ -243,12 +241,12 @@ describe('MetadataConverter', () => {
       await converter.convert(components, 'source', {
         type: 'merge',
         defaultDirectory,
-        mergeWith: mergeComponents,
+        mergeWith: TINA_COMPONENTS,
       });
 
       const pipelineArgs = pipelineStub.firstCall.args;
       validatePipelineArgs(pipelineArgs, 'source');
-      expect(pipelineArgs[1].mergeSet).to.deep.equal(new ComponentSet(mergeComponents));
+      expect(pipelineArgs[1].mergeSet).to.deep.equal(new ComponentSet(TINA_COMPONENTS));
       expect(pipelineArgs[2].rootDestination).to.equal(defaultDirectory);
     });
   });

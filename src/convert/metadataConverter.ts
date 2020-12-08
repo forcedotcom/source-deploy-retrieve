@@ -45,13 +45,15 @@ export class MetadataConverter {
    * @param output Configuration for outputting the converted files
    */
   public async convert(
-    components: SourceComponent[],
+    components: Iterable<SourceComponent>,
     targetFormat: SfdxFileFormat,
     output: ConvertOutputConfig
   ): Promise<ConvertResult> {
     try {
-      // it's possible the components came from a working set, so this may be redundant in some cases...
-      const manifestContents = new ComponentSet(components, this.registry).getPackageXml();
+      const manifestContents = (components instanceof ComponentSet
+        ? components
+        : new ComponentSet(components, this.registry)
+      ).getPackageXml();
       const isSource = targetFormat === 'source';
       const tasks = [];
 

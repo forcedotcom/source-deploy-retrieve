@@ -51,7 +51,7 @@ export type MergeConfig = {
   /**
    * Existing components to merge and replace the converted components with.
    */
-  mergeWith: ComponentSet;
+  mergeWith: Iterable<SourceComponent>;
   /**
    * Location to store components that aren't merged.
    */

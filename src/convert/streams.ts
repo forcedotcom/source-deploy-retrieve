@@ -22,21 +22,25 @@ import { LibraryError } from '../errors';
 export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
-  private currentIndex = 0;
-  private components: SourceComponent[];
+  private iter: Iterator<SourceComponent>;
 
-  constructor(components: SourceComponent[]) {
+  constructor(components: Iterable<SourceComponent>) {
     super({ objectMode: true });
-    this.components = components;
+    this.iter = this.createIterator(components);
   }
 
   public _read(): void {
-    if (this.currentIndex < this.components.length) {
-      const c = this.components[this.currentIndex];
-      this.currentIndex += 1;
-      this.push(c);
-    } else {
-      this.push(null);
+    let next = this.iter.next();
+    while (!next.done) {
+      this.push(next.value);
+      next = this.iter.next();
+    }
+    this.push(null);
+  }
+
+  private *createIterator(components: Iterable<SourceComponent>): Iterator<SourceComponent> {
+    for (const component of components) {
+      yield component;
     }
   }
 }

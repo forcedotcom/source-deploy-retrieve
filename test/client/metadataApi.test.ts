@@ -23,13 +23,12 @@ import {
   RetrieveStatus,
   RetrieveOptions,
   SourceRetrieveResult,
-  RetrievePathOptions,
   ComponentSet,
 } from '../../src';
 import { MetadataApi, DEFAULT_API_OPTIONS } from '../../src/client/metadataApi';
 import { DeployResult, RetrieveResult } from '../../src/client/types';
 import { nls } from '../../src/i18n';
-import { RegistryAccess, VirtualTreeContainer } from '../../src/metadata-registry';
+import { RegistryAccess } from '../../src/metadata-registry';
 import { createMockZip } from '../mock/client';
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
@@ -600,8 +599,7 @@ describe('Metadata Api', () => {
       };
 
       await metadataClient.retrieve(options);
-      expect(retrieveStub.firstCall.args[0]).to.deep.equal(retrieveRequest);
-      // expect(retrieveStub.calledWith(retrieveRequest)).to.be.true;
+      expect(retrieveStub.calledWith(retrieveRequest)).to.be.true;
     });
 
     it('should convert the retrieved components', async () => {

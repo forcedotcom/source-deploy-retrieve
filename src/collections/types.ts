@@ -20,20 +20,21 @@ export interface PackageManifestObject {
   };
 }
 
-export interface ComponentSetOptions {
+export interface FromSourceOptions {
   registry?: RegistryAccess;
-}
-
-export interface FromSourceOptions extends ComponentSetOptions {
   tree?: TreeContainer;
 }
 
-export interface FromManifestOptions extends FromSourceOptions {
-  resolve?: Iterable<string>;
+export interface FromManifestOptions {
   literalWildcard?: boolean;
+  registry?: RegistryAccess;
+  resolve?: Iterable<string>;
+  resolveChildrenWithParent?: boolean;
+  tree?: TreeContainer;
 }
 
-export interface SourceComponentOptions {
-  tree?: TreeContainer;
+export interface ResolveOptions {
   filter?: MetadataComponent[] | ComponentSet;
+  resolveChildrenWithParent?: boolean;
+  tree?: TreeContainer;
 }

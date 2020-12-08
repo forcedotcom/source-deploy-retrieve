@@ -66,7 +66,8 @@ export class RecompositionFinalizer implements ConvertTransactionFinalizer {
       const parentComponent = state.recompose[parentName].component;
       // only recompose children stored in transaction state
       const children = state.recompose[parentName].children;
-      const recomposedXmlObj = await DecomposedMetadataTransformer.recompose(children);
+      const baseObject: any = parentComponent.xml ? await parentComponent.parseXml() : undefined;
+      const recomposedXmlObj = await DecomposedMetadataTransformer.recompose(children, baseObject);
       writerData.push({
         component: parentComponent,
         writeInfos: [

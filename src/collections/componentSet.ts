@@ -21,7 +21,7 @@ import {
   FromSourceOptions,
   FromManifestOptions,
   PackageManifestObject,
-  SourceComponentOptions,
+  ResolveOptions,
 } from './types';
 import { ComponentLike } from '../common/types';
 
@@ -67,11 +67,12 @@ export class ComponentSet implements Iterable<MetadataComponent> {
    */
   public static async fromManifestFile(
     fsPath: string,
-    options?: FromManifestOptions
+    options: FromManifestOptions = {}
   ): Promise<ComponentSet> {
-    const registry = options?.registry ?? new RegistryAccess();
-    const tree = options?.tree ?? new NodeFSTreeContainer();
-    const shouldResolve = !!options?.resolve;
+    const registry = options.registry ?? new RegistryAccess();
+    const tree = options.tree ?? new NodeFSTreeContainer();
+    const resolveChildrenWithParent = options.resolveChildrenWithParent ?? false;
+    const shouldResolve = !!options.resolve;
 
     const ws = new ComponentSet(undefined, registry);
     const filterSet = new ComponentSet(undefined, registry);
@@ -99,6 +100,7 @@ export class ComponentSet implements Iterable<MetadataComponent> {
         ws.resolveSourceComponents(fsPath, {
           tree,
           filter: filterSet,
+          resolveChildrenWithParent,
         });
       }
     }
@@ -215,35 +217,51 @@ export class ComponentSet implements Iterable<MetadataComponent> {
    * @param fsPath: File path to resolve
    * @param options
    */
-  public resolveSourceComponents(fsPath: string, options?: SourceComponentOptions): ComponentSet {
+  public resolveSourceComponents(fsPath: string, options: ResolveOptions = {}): ComponentSet {
     let filterSet: ComponentSet;
+    const { resolveChildrenWithParent } = options;
 
     if (options?.filter) {
       const { filter } = options;
       filterSet = filter instanceof ComponentSet ? filter : new ComponentSet(filter);
     }
 
-    // TODO: move filter logic to resolver W-8023153
+    // TODO: move most of this logic to resolver W-8023153
     const resolver = new MetadataResolver(this.registry, options?.tree);
     const resolved = resolver.getComponentsFromPath(fsPath);
     const sourceComponents = new ComponentSet();
 
     for (const component of resolved) {
-      const shouldResolve = !filterSet || filterSet.has(component);
-      const includedInWildcard = filterSet?.has({
-        fullName: ComponentSet.WILDCARD,
-        type: component.type,
-      });
-      if (shouldResolve || includedInWildcard) {
-        this.add(component);
-        sourceComponents.add(component);
-      } else if (filterSet) {
-        for (const childComponent of component.getChildren()) {
-          if (filterSet.has(childComponent)) {
-            this.add(childComponent);
-            sourceComponents.add(childComponent);
+      if (filterSet) {
+        const includedInWildcard = filterSet.has({
+          fullName: ComponentSet.WILDCARD,
+          type: component.type,
+        });
+        const parentInFilter = component.parent && filterSet.has(component.parent);
+        if (
+          filterSet.has(component) ||
+          includedInWildcard ||
+          (parentInFilter && resolveChildrenWithParent)
+        ) {
+          this.add(component);
+          sourceComponents.add(component);
+          if (!parentInFilter && resolveChildrenWithParent) {
+            for (const child of component.getChildren()) {
+              this.add(child);
+              sourceComponents.add(child);
+            }
+          }
+        } else {
+          for (const childComponent of component.getChildren()) {
+            if (filterSet.has(childComponent)) {
+              this.add(childComponent);
+              sourceComponents.add(childComponent);
+            }
           }
         }
+      } else {
+        this.add(component);
+        sourceComponents.add(component);
       }
     }
 

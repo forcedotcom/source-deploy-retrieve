@@ -44,10 +44,10 @@ export const deployTypes = new Map([
 export class ToolingApi extends BaseApi {
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult> {
     const retrievePaths = options.paths[0];
-    return await this.retrieve({
+    return this.retrieve({
       output: options.output,
       namespace: options.namespace,
-      components: ComponentSet.fromSource(retrievePaths),
+      components: ComponentSet.fromSource(retrievePaths, { registry: this.registry }),
     });
   }
 

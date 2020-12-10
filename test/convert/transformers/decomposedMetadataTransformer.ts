@@ -50,9 +50,7 @@ describe('DecomposedMetadataTransformer', () => {
       const transaction = new ConvertTransaction();
       const transformer = new DecomposedMetadataTransformer(mockRegistry, transaction);
 
-      const writerFormat = await transformer.toMetadataFormat(child);
-
-      expect(writerFormat).to.deep.equal({ component: child, writeInfos: [] });
+      expect(await transformer.toMetadataFormat(child)).to.deep.equal([]);
       expect(transaction.state).to.deep.equal({
         recompose: {
           [component.fullName]: {
@@ -90,15 +88,12 @@ describe('DecomposedMetadataTransformer', () => {
 
       const result = await transformer.toMetadataFormat(component);
 
-      expect(result).to.deep.equal({
-        component,
-        writeInfos: [
-          {
-            source: new JsToXml(composedXmlObj),
-            output: join('reginas', 'a.regina'),
-          },
-        ],
-      });
+      expect(result).to.deep.equal([
+        {
+          source: new JsToXml(composedXmlObj),
+          output: join('reginas', 'a.regina'),
+        },
+      ]);
     });
   });
 
@@ -122,41 +117,38 @@ describe('DecomposedMetadataTransformer', () => {
 
       const result = await transformer.toSourceFormat(component);
 
-      expect(result).to.deep.equal({
-        component,
-        writeInfos: [
-          {
-            source: new JsToXml({
-              G: {
-                [XML_NS_KEY]: XML_NS_URL,
-                name: 'child',
-                test: 'testVal',
-              },
-            }),
-            output: join(root, 'child.g-meta.xml'),
-          },
-          {
-            source: new JsToXml({
-              G: {
-                [XML_NS_KEY]: XML_NS_URL,
-                name: 'child2',
-                test: 'testVal2',
-              },
-            }),
-            output: join(root, 'child2.g-meta.xml'),
-          },
-          {
-            source: new JsToXml({
-              DecomposedTopLevel: {
-                [XML_NS_KEY]: XML_NS_URL,
-                fullName,
-                foo: 'bar',
-              },
-            }),
-            output: join(root, `${fullName}.${type.suffix}-meta.xml`),
-          },
-        ],
-      });
+      expect(result).to.deep.equal([
+        {
+          source: new JsToXml({
+            G: {
+              [XML_NS_KEY]: XML_NS_URL,
+              name: 'child',
+              test: 'testVal',
+            },
+          }),
+          output: join(root, 'child.g-meta.xml'),
+        },
+        {
+          source: new JsToXml({
+            G: {
+              [XML_NS_KEY]: XML_NS_URL,
+              name: 'child2',
+              test: 'testVal2',
+            },
+          }),
+          output: join(root, 'child2.g-meta.xml'),
+        },
+        {
+          source: new JsToXml({
+            DecomposedTopLevel: {
+              [XML_NS_KEY]: XML_NS_URL,
+              fullName,
+              foo: 'bar',
+            },
+          }),
+          output: join(root, `${fullName}.${type.suffix}-meta.xml`),
+        },
+      ]);
     });
 
     it('should decompose children into respective directories and files for "folderPerType" config', async () => {
@@ -177,51 +169,48 @@ describe('DecomposedMetadataTransformer', () => {
 
       const result = await transformer.toSourceFormat(component);
 
-      expect(result).to.deep.equal({
-        component,
-        writeInfos: [
-          {
-            source: new JsToXml({
-              Y: {
-                [XML_NS_KEY]: XML_NS_URL,
-                fullName: 'child',
-                test: 'testVal',
-              },
-            }),
-            output: join(root, type.children.types.y.directoryName, 'child.y-meta.xml'),
-          },
-          {
-            source: new JsToXml({
-              X: {
-                [XML_NS_KEY]: XML_NS_URL,
-                fullName: 'child2',
-                test: 'testVal2',
-              },
-            }),
-            output: join(root, type.children.types.x.directoryName, 'child2.x-meta.xml'),
-          },
-          {
-            source: new JsToXml({
-              X: {
-                [XML_NS_KEY]: XML_NS_URL,
-                fullName: 'child3',
-                test: 'testVal3',
-              },
-            }),
-            output: join(root, type.children.types.x.directoryName, 'child3.x-meta.xml'),
-          },
-          {
-            source: new JsToXml({
-              ReginaKing: {
-                [XML_NS_KEY]: XML_NS_URL,
-                fullName: component.fullName,
-                foo: 'bar',
-              },
-            }),
-            output: join(root, `${fullName}.${type.suffix}-meta.xml`),
-          },
-        ],
-      });
+      expect(result).to.deep.equal([
+        {
+          source: new JsToXml({
+            Y: {
+              [XML_NS_KEY]: XML_NS_URL,
+              fullName: 'child',
+              test: 'testVal',
+            },
+          }),
+          output: join(root, type.children.types.y.directoryName, 'child.y-meta.xml'),
+        },
+        {
+          source: new JsToXml({
+            X: {
+              [XML_NS_KEY]: XML_NS_URL,
+              fullName: 'child2',
+              test: 'testVal2',
+            },
+          }),
+          output: join(root, type.children.types.x.directoryName, 'child2.x-meta.xml'),
+        },
+        {
+          source: new JsToXml({
+            X: {
+              [XML_NS_KEY]: XML_NS_URL,
+              fullName: 'child3',
+              test: 'testVal3',
+            },
+          }),
+          output: join(root, type.children.types.x.directoryName, 'child3.x-meta.xml'),
+        },
+        {
+          source: new JsToXml({
+            ReginaKing: {
+              [XML_NS_KEY]: XML_NS_URL,
+              fullName: component.fullName,
+              foo: 'bar',
+            },
+          }),
+          output: join(root, `${fullName}.${type.suffix}-meta.xml`),
+        },
+      ]);
     });
 
     it('should not create parent xml during decomposition when only children are being decomposed', async () => {
@@ -239,41 +228,38 @@ describe('DecomposedMetadataTransformer', () => {
       });
 
       const result = await transformer.toSourceFormat(component);
-      expect(result).to.deep.equal({
-        component,
-        writeInfos: [
-          {
-            source: new JsToXml({
-              Y: {
-                [XML_NS_KEY]: XML_NS_URL,
-                fullName: 'child',
-                test: 'testVal',
-              },
-            }),
-            output: join(root, type.children.types.y.directoryName, 'child.y-meta.xml'),
-          },
-          {
-            source: new JsToXml({
-              X: {
-                [XML_NS_KEY]: XML_NS_URL,
-                fullName: 'child2',
-                test: 'testVal2',
-              },
-            }),
-            output: join(root, type.children.types.x.directoryName, 'child2.x-meta.xml'),
-          },
-          {
-            source: new JsToXml({
-              X: {
-                [XML_NS_KEY]: XML_NS_URL,
-                fullName: 'child3',
-                test: 'testVal3',
-              },
-            }),
-            output: join(root, type.children.types.x.directoryName, 'child3.x-meta.xml'),
-          },
-        ],
-      });
+      expect(result).to.deep.equal([
+        {
+          source: new JsToXml({
+            Y: {
+              [XML_NS_KEY]: XML_NS_URL,
+              fullName: 'child',
+              test: 'testVal',
+            },
+          }),
+          output: join(root, type.children.types.y.directoryName, 'child.y-meta.xml'),
+        },
+        {
+          source: new JsToXml({
+            X: {
+              [XML_NS_KEY]: XML_NS_URL,
+              fullName: 'child2',
+              test: 'testVal2',
+            },
+          }),
+          output: join(root, type.children.types.x.directoryName, 'child2.x-meta.xml'),
+        },
+        {
+          source: new JsToXml({
+            X: {
+              [XML_NS_KEY]: XML_NS_URL,
+              fullName: 'child3',
+              test: 'testVal3',
+            },
+          }),
+          output: join(root, type.children.types.x.directoryName, 'child3.x-meta.xml'),
+        },
+      ]);
     });
 
     it('should merge output with merge component only containing children', async () => {
@@ -298,21 +284,18 @@ describe('DecomposedMetadataTransformer', () => {
       const transformer = new DecomposedMetadataTransformer(mockRegistry);
       const result = await transformer.toSourceFormat(componentToConvert, component);
 
-      expect(result).to.deep.equal({
-        component: componentToConvert,
-        writeInfos: [
-          {
-            source: new JsToXml({
-              [mergeComponentChild.type.name]: {
-                [XML_NS_KEY]: XML_NS_URL,
-                fullName: mergeComponentChild.name,
-                test: 'testVal',
-              },
-            }),
-            output: mergeComponentChild.xml,
-          },
-        ],
-      });
+      expect(result).to.deep.equal([
+        {
+          source: new JsToXml({
+            [mergeComponentChild.type.name]: {
+              [XML_NS_KEY]: XML_NS_URL,
+              fullName: mergeComponentChild.name,
+              test: 'testVal',
+            },
+          }),
+          output: mergeComponentChild.xml,
+        },
+      ]);
     });
 
     it('should merge output with parent merge component', async () => {
@@ -334,21 +317,18 @@ describe('DecomposedMetadataTransformer', () => {
       const transformer = new DecomposedMetadataTransformer(mockRegistry);
       const result = await transformer.toSourceFormat(componentToConvert, component);
 
-      expect(result).to.deep.equal({
-        component: componentToConvert,
-        writeInfos: [
-          {
-            source: new JsToXml({
-              [component.type.name]: {
-                [XML_NS_KEY]: XML_NS_URL,
-                fullName: component.fullName,
-                foo: 'bar',
-              },
-            }),
-            output: component.xml,
-          },
-        ],
-      });
+      expect(result).to.deep.equal([
+        {
+          source: new JsToXml({
+            [component.type.name]: {
+              [XML_NS_KEY]: XML_NS_URL,
+              fullName: component.fullName,
+              foo: 'bar',
+            },
+          }),
+          output: component.xml,
+        },
+      ]);
     });
   });
 });

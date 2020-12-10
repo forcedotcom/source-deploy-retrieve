@@ -16,6 +16,10 @@ import { ConversionError, LibraryError } from '../../src/errors';
 import { TINA_COMPONENTS } from '../mock/registry/tinaConstants';
 import { fail } from 'assert';
 import { ComponentSet } from '../../src';
+import {
+  REGINA_CHILD_COMPONENT_1,
+  REGINA_CHILD_COMPONENT_2,
+} from '../mock/registry/reginaConstants';
 
 const env = createSandbox();
 
@@ -33,7 +37,6 @@ describe('MetadataConverter', () => {
   /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
   function validatePipelineArgs(pipelineArgs: any[], targetFormat = 'metadata'): void {
     expect(pipelineArgs[0] instanceof streams.ComponentReader).to.be.true;
-    expect(pipelineArgs[0].components).to.deep.equal(components);
     expect(pipelineArgs[1] instanceof streams.ComponentConverter).to.be.true;
     expect(pipelineArgs[1].targetFormat).to.equal(targetFormat);
     expect(pipelineArgs[2] instanceof streams.ComponentWriter).to.be.true;
@@ -220,7 +223,6 @@ describe('MetadataConverter', () => {
 
   describe('Merge Output', () => {
     const defaultDirectory = join('path', 'to', 'default');
-    const mergeComponents = TINA_COMPONENTS;
 
     it('should throw error if merge config provided for metadata target format', async () => {
       const expectedError = new ConversionError(
@@ -230,7 +232,7 @@ describe('MetadataConverter', () => {
         await converter.convert(components, 'metadata', {
           type: 'merge',
           defaultDirectory,
-          mergeWith: mergeComponents,
+          mergeWith: TINA_COMPONENTS,
         });
         fail(`should have thrown a ${expectedError.name} error`);
       } catch (e) {
@@ -243,13 +245,27 @@ describe('MetadataConverter', () => {
       await converter.convert(components, 'source', {
         type: 'merge',
         defaultDirectory,
-        mergeWith: mergeComponents,
+        mergeWith: TINA_COMPONENTS,
       });
 
       const pipelineArgs = pipelineStub.firstCall.args;
       validatePipelineArgs(pipelineArgs, 'source');
-      expect(pipelineArgs[1].mergeSet).to.deep.equal(new ComponentSet(mergeComponents));
+      expect(pipelineArgs[1].mergeSet).to.deep.equal(new ComponentSet(TINA_COMPONENTS));
       expect(pipelineArgs[2].rootDestination).to.equal(defaultDirectory);
+    });
+
+    it('should ensure merge set contains parents of child components instead of the children themselves', async () => {
+      await converter.convert(components, 'source', {
+        type: 'merge',
+        defaultDirectory,
+        mergeWith: [REGINA_CHILD_COMPONENT_1, REGINA_CHILD_COMPONENT_2],
+      });
+
+      const pipelineArgs = pipelineStub.firstCall.args;
+      validatePipelineArgs(pipelineArgs, 'source');
+      expect(pipelineArgs[1].mergeSet).to.deep.equal(
+        new ComponentSet([REGINA_CHILD_COMPONENT_1.parent])
+      );
     });
   });
 });

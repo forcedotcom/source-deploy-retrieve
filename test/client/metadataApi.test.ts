@@ -4,34 +4,32 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { AuthInfo, Connection } from '@salesforce/core';
-import { expect } from 'chai';
+
+import { Connection, AuthInfo } from '@salesforce/core';
 import { MockTestOrgData } from '@salesforce/core/lib/testSetup';
+import { fail } from 'assert';
+import { expect } from 'chai';
 import { createSandbox, match, SinonStub } from 'sinon';
+import * as path from 'path';
 import {
-  RegistryAccess,
   MetadataResolver,
   registryData,
   SourceComponent,
-} from '../../src/metadata-registry';
-import { MetadataApi, DEFAULT_API_OPTIONS } from '../../src/client/metadataApi';
-import { MetadataConverter } from '../../src/convert';
-import { fail } from 'assert';
-import { createMockZip } from '../mock/client';
-import * as path from 'path';
-import { nls } from '../../src/i18n';
-import {
-  MetadataApiDeployOptions,
-  DeployResult,
-  ComponentStatus,
   DeployStatus,
   SourceDeployResult,
-  RetrieveOptions,
-  RetrievePathOptions,
-  RetrieveResult,
+  ComponentStatus,
+  MetadataConverter,
+  MetadataApiDeployOptions,
   RetrieveStatus,
+  RetrieveOptions,
   SourceRetrieveResult,
-} from '../../src/client/types';
+  ComponentSet,
+} from '../../src';
+import { MetadataApi, DEFAULT_API_OPTIONS } from '../../src/client/metadataApi';
+import { DeployResult, RetrieveResult } from '../../src/client/types';
+import { nls } from '../../src/i18n';
+import { RegistryAccess } from '../../src/metadata-registry';
+import { createMockZip } from '../mock/client';
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 describe('Metadata Api', () => {
@@ -588,15 +586,15 @@ describe('Metadata Api', () => {
 
     it('should correctly format retrieve request', async () => {
       const apiVersion = registry.apiVersion;
+      const components = new ComponentSet([component], registry);
       const options = {
-        components: [component],
+        components,
         output: outputDir,
       } as RetrieveOptions;
       const retrieveRequest = {
         apiVersion,
         unpackaged: {
-          types: { members: 'myTestClass', name: 'ApexClass' },
-          version: parseInt(apiVersion),
+          types: components.getObject().Package.types,
         },
       };
 
@@ -606,7 +604,7 @@ describe('Metadata Api', () => {
 
     it('should convert the retrieved components', async () => {
       const options = {
-        components: [component],
+        components: new ComponentSet([component]),
         output: outputDir,
       } as RetrieveOptions;
 
@@ -621,7 +619,7 @@ describe('Metadata Api', () => {
 
     it('should return successful result in SourceRetrieveResult format', async () => {
       const options = {
-        components: [component],
+        components: new ComponentSet([component]),
         output: outputDir,
       } as RetrieveOptions;
       const sourceRetrieveResult: SourceRetrieveResult = {
@@ -652,7 +650,7 @@ describe('Metadata Api', () => {
       convertStub.resolves([]);
 
       const options = {
-        components: [component],
+        components: new ComponentSet([component]),
         output: outputDir,
       } as RetrieveOptions;
 
@@ -682,7 +680,7 @@ describe('Metadata Api', () => {
         zipFile: base64EmptyZip,
       });
       const options = {
-        components: [component],
+        components: new ComponentSet([component]),
         output: outputDir,
       } as RetrieveOptions;
 
@@ -714,7 +712,7 @@ describe('Metadata Api', () => {
       });
 
       const result = await metadataClient.retrieve({
-        components: [component],
+        components: new ComponentSet([component]),
         output: outputDir,
       });
       expect(result).to.deep.equal({
@@ -732,7 +730,7 @@ describe('Metadata Api', () => {
       const errorMsg = 'test error';
       const error = new Error(errorMsg);
       const options = {
-        components: [component],
+        components: new ComponentSet([component]),
         output: outputDir,
       } as RetrieveOptions;
 
@@ -743,77 +741,6 @@ describe('Metadata Api', () => {
       } catch (e) {
         expect(e.message).to.equal(errorMsg);
       }
-    });
-
-    it('should only retrieve unique components when retrieving with paths', async () => {
-      const rootPath = path.join('file', 'path');
-      const contentPaths = [
-        path.join(rootPath, 'myTestClass1.cls'),
-        path.join(rootPath, 'myTestClass2.cls'),
-        path.join(rootPath, 'myTestClass3.cls'),
-      ];
-      const xmlPaths = [
-        path.join(rootPath, 'myTestClass1.cls-meta.xml'),
-        path.join(rootPath, 'myTestClass2.cls-meta.xml'),
-        path.join(rootPath, 'myTestClass3.cls-meta.xml'),
-      ];
-      const firstProp = {
-        name: 'myTestClass1',
-        type: registryData.types.apexclass,
-        xml: xmlPaths[0],
-        content: contentPaths[0],
-      };
-      const secondProp = {
-        name: 'myTestClass2',
-        type: registryData.types.apexclass,
-        xml: xmlPaths[1],
-        content: contentPaths[1],
-      };
-      const thirdProp = {
-        name: 'myTestClass2',
-        type: registryData.types.apexclass,
-        xml: xmlPaths[1],
-        content: contentPaths[1],
-      };
-      const firstComponent = SourceComponent.createVirtualComponent(firstProp, [
-        {
-          dirPath: rootPath,
-          children: [path.basename(firstProp.xml), path.basename(firstProp.content)],
-        },
-      ]);
-      const secondComponent = SourceComponent.createVirtualComponent(secondProp, [
-        {
-          dirPath: rootPath,
-          children: [path.basename(secondProp.xml), path.basename(secondProp.content)],
-        },
-      ]);
-      const thirdComponent = SourceComponent.createVirtualComponent(thirdProp, [
-        {
-          dirPath: rootPath,
-          children: [path.basename(thirdProp.xml), path.basename(thirdProp.content)],
-        },
-      ]);
-      const wait = 1000;
-      const options = {
-        paths: contentPaths,
-        output: outputDir,
-        wait,
-      } as RetrievePathOptions;
-
-      const mdRetrieveStub = sandboxStub.stub(metadataClient, 'retrieve');
-      registryStub.onFirstCall().returns([firstComponent, secondComponent, thirdComponent]);
-      registryStub.onSecondCall().returns([firstComponent, secondComponent, thirdComponent]);
-      registryStub.onThirdCall().returns([firstComponent, secondComponent, thirdComponent]);
-
-      await metadataClient.retrieveWithPaths(options);
-      expect(
-        mdRetrieveStub.calledWith({
-          components: [firstComponent, secondComponent, thirdComponent],
-          namespace: options.namespace,
-          output: options.output,
-          wait,
-        })
-      );
     });
   });
 });

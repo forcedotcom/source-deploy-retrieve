@@ -17,6 +17,7 @@ import { MetadataResolver, SourceComponent, registryData } from '../../src/metad
 import { QueryResult, RetrieveStatus, SourceRetrieveResult } from '../../src/client/types';
 import { nls } from '../../src/i18n';
 import { fail } from 'assert';
+import { ComponentSet } from '../../src';
 
 const $$ = testSetup();
 describe('Tooling Retrieve', () => {
@@ -31,13 +32,7 @@ describe('Tooling Retrieve', () => {
   metaXMLFile += '</ApexClass>';
   const mdComponents: SourceComponent[] = [
     new SourceComponent({
-      type: {
-        id: 'apexclass',
-        name: 'ApexClass',
-        directoryName: 'classes',
-        inFolder: false,
-        suffix: 'cls',
-      },
+      type: registryData.types.apexclass,
       name: 'myTestClass',
       xml: path.join('file', 'path', 'myTestClass.cls-meta.xml'),
       content: path.join('file', 'path', 'myTestClass.cls'),
@@ -151,7 +146,13 @@ describe('Tooling Retrieve', () => {
   });
 
   it('should retrieve an ApexClass using filepath', async () => {
-    sandboxStub.stub(resolver, 'getComponentsFromPath').returns(mdComponents);
+    const component = new SourceComponent({
+      type: registryData.types.apexclass,
+      name: 'myTestClass',
+      xml: path.join('file', 'path', 'myTestClass.cls-meta.xml'),
+      content: path.join('file', 'path', 'myTestClass.cls'),
+    });
+    sandboxStub.stub(resolver, 'getComponentsFromPath').returns([component]);
 
     sandboxStub
       .stub(mockConnection.tooling, 'query')
@@ -178,7 +179,7 @@ describe('Tooling Retrieve', () => {
       failures: [],
       successes: [
         {
-          component: mdComponents[0],
+          component,
         },
       ],
     });
@@ -200,7 +201,7 @@ describe('Tooling Retrieve', () => {
 
     const toolingAPI = new ToolingApi(mockConnection, resolver);
     const retrieveResults: SourceRetrieveResult = await toolingAPI.retrieve({
-      components: mdComponents,
+      components: new ComponentSet(mdComponents),
     });
     expect(retrieveResults).to.deep.equal({
       success: true,
@@ -259,7 +260,7 @@ describe('Tooling Retrieve', () => {
 
     try {
       await toolingAPI.retrieve({
-        components: mdComponents,
+        components: new ComponentSet(mdComponents),
       });
       fail('Retrieve should have thrown an error');
     } catch (e) {
@@ -288,7 +289,7 @@ describe('Tooling Retrieve', () => {
 
     try {
       await toolingAPI.retrieve({
-        components: unsupportedComponent,
+        components: new ComponentSet(unsupportedComponent),
       });
       fail('Retrieve should have thrown an error');
     } catch (e) {

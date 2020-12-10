@@ -9,7 +9,6 @@ import { createWriteStream } from 'fs';
 import { isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
-import { LibraryError } from '../errors';
 import { SourceComponent, RegistryAccess, MetadataResolver } from '../metadata-registry';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
@@ -19,24 +18,29 @@ import { MetadataTransformerFactory } from './transformers';
 import { JsonMap } from '@salesforce/ts-types';
 import { j2xParser } from 'fast-xml-parser';
 import { ComponentSet } from '../collections';
+import { LibraryError } from '../errors';
 export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
-  private currentIndex = 0;
-  private components: SourceComponent[];
+  private iter: Iterator<SourceComponent>;
 
-  constructor(components: SourceComponent[]) {
+  constructor(components: Iterable<SourceComponent>) {
     super({ objectMode: true });
-    this.components = components;
+    this.iter = this.createIterator(components);
   }
 
   public _read(): void {
-    if (this.currentIndex < this.components.length) {
-      const c = this.components[this.currentIndex];
-      this.currentIndex += 1;
-      this.push(c);
-    } else {
-      this.push(null);
+    let next = this.iter.next();
+    while (!next.done) {
+      this.push(next.value);
+      next = this.iter.next();
+    }
+    this.push(null);
+  }
+
+  private *createIterator(components: Iterable<SourceComponent>): Iterator<SourceComponent> {
+    for (const component of components) {
+      yield component;
     }
   }
 }
@@ -66,24 +70,34 @@ export class ComponentConverter extends Transform {
     callback: (err: Error, data: WriterFormat) => void
   ): Promise<void> {
     let err: Error;
-    let result: WriterFormat;
+    const writeInfos: WriteInfo[] = [];
     try {
+      const converts: Promise<WriteInfo[]>[] = [];
       const transformer = this.transformerFactory.getTransformer(chunk);
-      const componentToMergeAgainst = this.mergeSet?.getSourceComponents(chunk).next().value;
+      const mergeWith = this.mergeSet?.getSourceComponents(chunk);
       switch (this.targetFormat) {
-        case 'metadata':
-          result = await transformer.toMetadataFormat(chunk);
-          break;
         case 'source':
-          result = await transformer.toSourceFormat(chunk, componentToMergeAgainst);
+          if (mergeWith) {
+            for (const mergeComponent of mergeWith) {
+              converts.push(transformer.toSourceFormat(chunk, mergeComponent));
+            }
+          }
+          if (converts.length === 0) {
+            converts.push(transformer.toSourceFormat(chunk));
+          }
+          break;
+        case 'metadata':
+          converts.push(transformer.toMetadataFormat(chunk));
           break;
         default:
           throw new LibraryError('error_convert_invalid_format', this.targetFormat);
       }
+      // could maybe improve all this with lazy async collections...
+      (await Promise.all(converts)).forEach((infos) => writeInfos.push(...infos));
     } catch (e) {
       err = e;
     }
-    callback(err, result);
+    callback(err, { component: chunk, writeInfos });
   }
 
   /**

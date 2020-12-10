@@ -25,10 +25,9 @@ import {
 } from './types';
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { DeployError, RetrieveError } from '../errors';
-import { ManifestGenerator, MetadataResolver, SourceComponent } from '../metadata-registry';
+import { MetadataResolver, SourceComponent } from '../metadata-registry';
 import { DiagnosticUtil } from './diagnosticUtil';
-import { SourcePath } from '../common';
-import { parse } from 'fast-xml-parser';
+import { MetadataComponent, SourcePath } from '../common';
 import { ZipTreeContainer } from '../metadata-registry/treeContainers';
 import { ComponentSet } from '../collections';
 
@@ -73,22 +72,13 @@ export class MetadataApi extends BaseApi {
     return this.deploy(components, options);
   }
 
-  // TODO: W-8023153: move filtering logic to registry
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult> {
-    const allComponents: SourceComponent[] = [];
+    const components = new ComponentSet(undefined, this.registry);
     for (const filepath of options.paths) {
-      allComponents.push(...this.resolver.getComponentsFromPath(filepath));
+      components.resolveSourceComponents(filepath);
     }
 
-    const hashedCmps = new Set();
-    const uniqueComponents = allComponents.filter((component) => {
-      const hashed = this.hashElement(component);
-      if (!hashedCmps.has(hashed)) {
-        hashedCmps.add(hashed);
-        return component;
-      }
-    });
-    const retrieveOptions = { components: uniqueComponents } as RetrieveOptions;
+    const retrieveOptions = { components } as RetrieveOptions;
     return this.retrieve(Object.assign(retrieveOptions, options));
   }
 
@@ -106,16 +96,14 @@ export class MetadataApi extends BaseApi {
     return sourceRetrieveResult;
   }
 
-  private formatRetrieveRequest(components: SourceComponent[]): RetrieveRequest {
-    const manifestGenerator = new ManifestGenerator(this.resolver, this.registry);
-    const manifest = manifestGenerator.createManifest(components);
-    const manifestJson = parse(manifest);
-    const packageData = manifestJson.Package;
-    delete packageData.$;
-
+  private formatRetrieveRequest(components: Iterable<MetadataComponent>): RetrieveRequest {
+    const componentSet =
+      components instanceof ComponentSet ? components : new ComponentSet(components, this.registry);
     const retrieveRequest = {
       apiVersion: this.registry.apiVersion,
-      unpackaged: packageData,
+      unpackaged: {
+        types: componentSet.getObject().Package.types,
+      },
     };
     return retrieveRequest;
   }
@@ -177,7 +165,7 @@ export class MetadataApi extends BaseApi {
     retrieveResult: RetrieveResult,
     retrievedComponents: SourceComponent[]
   ): SourceRetrieveResult {
-    const retrievedSet = new ComponentSet(retrievedComponents);
+    const retrievedSet = new ComponentSet(retrievedComponents, this.registry);
     const successes: RetrieveSuccess[] = [];
     const failures: RetrieveFailure[] = [];
 
@@ -251,7 +239,7 @@ export class MetadataApi extends BaseApi {
     const outputConfig: ConvertOutputConfig = options.merge
       ? {
           type: 'merge',
-          mergeWith: options.components,
+          mergeWith: options.components.getSourceComponents(),
           defaultDirectory: options.output,
         }
       : {
@@ -260,11 +248,6 @@ export class MetadataApi extends BaseApi {
         };
     const convertResult = await converter.convert(retrievedComponents, 'source', outputConfig);
     return convertResult.converted;
-  }
-
-  private hashElement(component: SourceComponent): string {
-    const hashed = `${component.fullName}.${component.type.id}`;
-    return hashed;
   }
 
   private async metadataDeployID(

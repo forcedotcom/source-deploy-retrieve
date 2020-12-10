@@ -14,7 +14,7 @@ import { basename, join, sep } from 'path';
 import { createSandbox, SinonStub } from 'sinon';
 import { Readable, Writable } from 'stream';
 import { MetadataResolver, SourceComponent, ComponentSet } from '../../src';
-import { WriterFormat } from '../../src/convert';
+import { WriteInfo, WriterFormat } from '../../src/convert';
 import { ConvertTransaction } from '../../src/convert/convertTransaction';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
 import { LibraryError } from '../../src/errors';
@@ -32,26 +32,20 @@ import {
   KEANU_SOURCE_NAMES,
   KEANU_XML_NAMES,
 } from '../mock/registry/keanuConstants';
-import { MetadataTransformer } from '../../src/convert/types';
+import { BaseMetadataTransformer } from '../../src/convert/transformers/baseMetadataTransformer';
 
 const env = createSandbox();
 
-class TestTransformer implements MetadataTransformer {
-  async toMetadataFormat(component: SourceComponent): Promise<WriterFormat> {
-    return {
-      component,
-      writeInfos: [{ output: '/type/file.m', source: new Readable() }],
-    };
+class TestTransformer extends BaseMetadataTransformer {
+  async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
+    return [{ output: '/type/file.m', source: new Readable() }];
   }
   async toSourceFormat(
     component: SourceComponent,
     mergeWith?: SourceComponent
-  ): Promise<WriterFormat> {
+  ): Promise<WriteInfo[]> {
     const output = mergeWith ? mergeWith.content || mergeWith.xml : '/type/file.s';
-    return {
-      component,
-      writeInfos: [{ output, source: new Readable() }],
-    };
+    return [{ output, source: new Readable() }];
   }
 }
 
@@ -105,7 +99,10 @@ describe('Streams', () => {
       converter._transform(component, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
-          expect(data).to.deep.equal(await transformer.toMetadataFormat(component));
+          expect(data).to.deep.equal({
+            component,
+            writeInfos: await transformer.toMetadataFormat(component),
+          });
           done();
         } catch (e) {
           done(e);
@@ -119,7 +116,10 @@ describe('Streams', () => {
       converter._transform(component, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
-          expect(data).to.deep.equal(await transformer.toSourceFormat(component));
+          expect(data).to.deep.equal({
+            component,
+            writeInfos: await transformer.toSourceFormat(component),
+          });
           done();
         } catch (e) {
           done(e);
@@ -142,7 +142,40 @@ describe('Streams', () => {
       converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
-          expect(data).to.deep.equal(await transformer.toSourceFormat(newComponent, component));
+          expect(data).to.deep.equal({
+            component: newComponent,
+            writeInfos: await transformer.toSourceFormat(newComponent, component),
+          });
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
+    });
+
+    it('should transform to source formating using multiple merge components', (done) => {
+      const newComponent = new SourceComponent({
+        name: component.name,
+        type: component.type,
+        xml: join('path', 'to', 'another', 'kathys', 'a.kathy-meta.xml'),
+      });
+      const secondMergeComponent = new SourceComponent({
+        name: component.name,
+        type: component.type,
+        xml: join('path', 'to', 'yetanother', 'kathys', 'a.kathy-meta.xml'),
+      });
+      const mergeSet = new ComponentSet([component, secondMergeComponent]);
+      const converter = new streams.ComponentConverter('source', mockRegistry, undefined, mergeSet);
+
+      converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {
+        try {
+          expect(err).to.be.undefined;
+          expect(data).to.deep.equal({
+            component: newComponent,
+            writeInfos: (await transformer.toSourceFormat(newComponent, component)).concat(
+              await transformer.toSourceFormat(newComponent, secondMergeComponent)
+            ),
+          });
           done();
         } catch (e) {
           done(e);

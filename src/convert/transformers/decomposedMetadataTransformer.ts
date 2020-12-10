@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { WriteInfo, WriterFormat } from '../types';
+import { WriteInfo } from '../types';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { RecompositionFinalizer, ConvertTransaction } from '../convertTransaction';
 import { DecompositionStrategy, RegistryAccess, SourceComponent } from '../../metadata-registry';
@@ -46,19 +46,14 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     return baseXmlObj;
   }
 
-  public static createWriterFormat(trigger: SourceComponent, xmlObject: JsonMap): WriterFormat {
+  public static createParentWriteInfo(trigger: SourceComponent, xmlObject: JsonMap): WriteInfo {
     return {
-      component: trigger,
-      writeInfos: [
-        {
-          source: new JsToXml(xmlObject),
-          output: join(trigger.type.directoryName, `${trigger.fullName}.${trigger.type.suffix}`),
-        },
-      ],
+      source: new JsToXml(xmlObject),
+      output: join(trigger.type.directoryName, `${trigger.fullName}.${trigger.type.suffix}`),
     };
   }
 
-  public async toMetadataFormat(component: SourceComponent): Promise<WriterFormat> {
+  public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     if (component.parent) {
       const { state } = this.convertTransaction;
       const { fullName: parentName } = component.parent;
@@ -70,7 +65,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       }
       state.recompose[parentName].children.push(component);
       // noop since the finalizer will push the writes to the component writer
-      return { component: component, writeInfos: [] };
+      return [];
     }
 
     const recomposedXmlObj = await DecomposedMetadataTransformer.recompose(
@@ -78,13 +73,13 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       (await component.parseXml()) as XmlJson
     );
 
-    return DecomposedMetadataTransformer.createWriterFormat(component, recomposedXmlObj);
+    return [DecomposedMetadataTransformer.createParentWriteInfo(component, recomposedXmlObj)];
   }
 
   public async toSourceFormat(
     component: SourceComponent,
     mergeWith?: SourceComponent
-  ): Promise<WriterFormat> {
+  ): Promise<WriteInfo[]> {
     const writeInfos: WriteInfo[] = [];
     const { type, fullName: parentFullName } = component;
     const parentXmlObject: any = { [type.name]: { [XML_NS_KEY]: XML_NS_URL } };
@@ -103,22 +98,29 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
         const tagValues = Array.isArray(tagValue) ? tagValue : [tagValue];
         for (const value of tagValues) {
           const entryName = (value.fullName || value.name) as string;
-          const mergeChild = childComponentMergeSet
-            ?.getSourceComponents({
-              fullName: `${parentFullName}.${entryName}`,
-              type: childType,
-            })
-            .next().value;
-          const output =
-            mergeChild?.xml ||
-            join(rootPackagePath, this.getOutputPathForEntry(entryName, childType, component));
-
-          writeInfos.push({
-            source: new JsToXml({
-              [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
-            }),
-            output,
+          const childComponent = {
+            fullName: `${parentFullName}.${entryName}`,
+            type: childType,
+          };
+          const source = new JsToXml({
+            [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
           });
+          if (childComponentMergeSet?.has(childComponent)) {
+            for (const mergeChild of childComponentMergeSet.getSourceComponents(childComponent)) {
+              writeInfos.push({
+                source,
+                output: mergeChild.xml,
+              });
+            }
+          } else {
+            writeInfos.push({
+              source,
+              output: join(
+                rootPackagePath,
+                this.getOutputPathForEntry(entryName, childType, component)
+              ),
+            });
+          }
         }
       } else {
         // tag entry isn't a child type, so add it to the parent xml
@@ -139,7 +141,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       });
     }
 
-    return { component, writeInfos };
+    return writeInfos;
   }
 
   private async getComposedMetadataEntries(component: SourceComponent): Promise<[string, any][]> {

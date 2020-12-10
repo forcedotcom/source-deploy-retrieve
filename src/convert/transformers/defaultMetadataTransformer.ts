@@ -6,7 +6,7 @@
  */
 import { META_XML_SUFFIX, SourcePath } from '../../common';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
-import { SfdxFileFormat, WriterFormat } from '../types';
+import { SfdxFileFormat, WriteInfo } from '../types';
 import { SourceComponent } from '../../metadata-registry';
 import { trimUntil } from '../../utils/path';
 import { basename, dirname, join } from 'path';
@@ -19,14 +19,14 @@ import { basename, dirname, join } from 'path';
  * files as-is.
  */
 export class DefaultMetadataTransformer extends BaseMetadataTransformer {
-  public async toMetadataFormat(component: SourceComponent): Promise<WriterFormat> {
+  public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     return this.getWriterFormat(component, 'metadata');
   }
 
   public async toSourceFormat(
     component: SourceComponent,
     mergeWith?: SourceComponent
-  ): Promise<WriterFormat> {
+  ): Promise<WriteInfo[]> {
     return this.getWriterFormat(component, 'source', mergeWith);
   }
 
@@ -34,12 +34,12 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
     component: SourceComponent,
     targetFormat: SfdxFileFormat,
     mergeWith?: SourceComponent
-  ): WriterFormat {
-    const result: WriterFormat = { component: component, writeInfos: [] };
+  ): WriteInfo[] {
+    const writeInfos: WriteInfo[] = [];
 
     if (component.content) {
       for (const source of component.walkContent()) {
-        result.writeInfos.push({
+        writeInfos.push({
           source: component.tree.stream(source),
           output: this.getContentSourceDestination(source, targetFormat, component, mergeWith),
         });
@@ -47,13 +47,13 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
     }
 
     if (component.xml) {
-      result.writeInfos.push({
+      writeInfos.push({
         source: component.tree.stream(component.xml),
         output: this.getXmlDestination(targetFormat, component, mergeWith),
       });
     }
 
-    return result;
+    return writeInfos;
   }
 
   // assumes component has content

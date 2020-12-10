@@ -45,12 +45,12 @@ export class MetadataConverter {
    * @param output Configuration for outputting the converted files
    */
   public async convert(
-    components: SourceComponent[],
+    components: Iterable<SourceComponent>,
     targetFormat: SfdxFileFormat,
     output: ConvertOutputConfig
   ): Promise<ConvertResult> {
     try {
-      // it's possible the components came from a working set, so this may be redundant in some cases...
+      // it's possible the components came from a component set, so this may be redundant in some cases...
       const manifestContents = new ComponentSet(components, this.registry).getPackageXml();
       const isSource = targetFormat === 'source';
       const tasks = [];
@@ -81,7 +81,9 @@ export class MetadataConverter {
           }
           mergeSet = new ComponentSet();
           // since child components are composed in metadata format, we need to merge using the parent
-          output.mergeWith.forEach((component) => mergeSet.add(component.parent || component));
+          for (const component of output.mergeWith) {
+            mergeSet.add(component.parent ?? component);
+          }
           writer = new StandardWriter(output.defaultDirectory);
           break;
       }

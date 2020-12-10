@@ -67,11 +67,12 @@ export class RecompositionFinalizer implements ConvertTransactionFinalizer {
       // only recompose children stored in transaction state
       const children = state.recompose[parentName].children;
       const recomposedXmlObj = await DecomposedMetadataTransformer.recompose(children);
-      const writerFormat = DecomposedMetadataTransformer.createWriterFormat(
-        parentComponent,
-        recomposedXmlObj
-      );
-      writerData.push(writerFormat);
+      writerData.push({
+        component: parentComponent,
+        writeInfos: [
+          DecomposedMetadataTransformer.createParentWriteInfo(parentComponent, recomposedXmlObj),
+        ],
+      });
     }
 
     return writerData;

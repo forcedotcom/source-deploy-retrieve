@@ -21,6 +21,7 @@ import {
   SourceRetrieveResult,
   RetrieveStatus,
 } from './types';
+import { ComponentSet } from '../collections';
 
 const retrieveTypes = new Set([
   'ApexClass',
@@ -43,22 +44,22 @@ export const deployTypes = new Map([
 export class ToolingApi extends BaseApi {
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult> {
     const retrievePaths = options.paths[0];
-    return await this.retrieve({
+    return this.retrieve({
       output: options.output,
       namespace: options.namespace,
-      components: this.resolver.getComponentsFromPath(retrievePaths),
+      components: ComponentSet.fromSource(retrievePaths, { registry: this.registry }),
     });
   }
 
   public async retrieve(options: RetrieveOptions): Promise<SourceRetrieveResult> {
     let retrieveResult: SourceRetrieveResult;
-    if (options.components.length > 1) {
+    if (options.components.size > 1) {
       const retrieveError = new Error();
       retrieveError.message = nls.localize('tapi_retrieve_component_limit_error');
       retrieveError.name = 'MetadataRetrieveLimit';
       throw retrieveError;
     }
-    const mdComponent: SourceComponent = options.components[0];
+    const mdComponent: SourceComponent = options.components.getSourceComponents().next().value;
 
     if (!retrieveTypes.has(mdComponent.type.name)) {
       const retrieveError = new Error();

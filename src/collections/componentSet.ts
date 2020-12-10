@@ -169,8 +169,7 @@ export class ComponentSet implements Iterable<MetadataComponent> {
     const connection = await this.getConnection(usernameOrConnection);
     const client = new SourceClient(connection, new MetadataResolver());
     return client.metadata.retrieve({
-      // this is fine, if they aren't mergable then they'll go to the default
-      components: Array.from(this) as SourceComponent[],
+      components: this,
       merge: options?.merge,
       output,
       wait: options?.wait,

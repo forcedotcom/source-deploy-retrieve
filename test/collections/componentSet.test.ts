@@ -509,7 +509,7 @@ describe('ComponentSet', () => {
       const retrieveStub = env.stub(MetadataApi.prototype, 'retrieve');
       retrieveStub
         .withArgs({
-          components: Array.from(set) as SourceComponent[],
+          components: set,
           merge: undefined,
           output: '/test/path',
           wait: undefined,
@@ -537,7 +537,7 @@ describe('ComponentSet', () => {
 
       expect(
         retrieveStub.calledWith({
-          components: Array.from(set) as SourceComponent[],
+          components: set,
           merge: true,
           output: '/test/path',
           wait: 1234,

@@ -23,15 +23,6 @@ const env = createSandbox();
 
 describe('DecomposedMetadataTransformer', () => {
   const component = regina.REGINA_COMPONENT;
-  const composedXmlObj = {
-    ReginaKing: {
-      [XML_NS_KEY]: XML_NS_URL,
-      fullName: component.fullName,
-      foo: 'bar',
-      ys: [{ fullName: 'child', test: 'testVal' }],
-      xs: [{ fullName: 'child2', test: 'testVal2' }],
-    },
-  };
 
   afterEach(() => env.restore());
 
@@ -45,7 +36,7 @@ describe('DecomposedMetadataTransformer', () => {
   });
 
   describe('toMetadataFormat', () => {
-    it('should delay for partial recomposition when a child component is given', async () => {
+    it('should defer write operations and set transaction state when a child component is given', async () => {
       const child = component.getChildren()[0];
       const transaction = new ConvertTransaction();
       const transformer = new DecomposedMetadataTransformer(mockRegistry, transaction);
@@ -61,39 +52,19 @@ describe('DecomposedMetadataTransformer', () => {
       });
     });
 
-    it('should fully recompose metadata when a parent component is given', async () => {
-      const transformer = new DecomposedMetadataTransformer(mockRegistry, new ConvertTransaction());
-      const children = component.getChildren();
-      env.stub(component, 'parseXml').resolves({
-        ReginaKing: {
-          [XML_NS_KEY]: XML_NS_URL,
-          fullName: component.fullName,
-          foo: 'bar',
-        },
-      });
-      env.stub(children[0], 'parseXml').resolves({
-        Y: {
-          fullName: 'child',
-          test: 'testVal',
-        },
-      });
-      env.stub(children[1], 'parseXml').resolves({
-        X: {
-          fullName: 'child2',
-          test: 'testVal2',
-        },
-      });
-      // force getChildren to return the children we just stubbed
-      env.stub(component, 'getChildren').returns(children);
+    it('should defer write operations and set transaction state when a parent component is given', async () => {
+      const transaction = new ConvertTransaction();
+      const transformer = new DecomposedMetadataTransformer(mockRegistry, transaction);
 
-      const result = await transformer.toMetadataFormat(component);
-
-      expect(result).to.deep.equal([
-        {
-          source: new JsToXml(composedXmlObj),
-          output: join('reginas', 'a.regina'),
+      expect(await transformer.toMetadataFormat(component)).to.deep.equal([]);
+      expect(transaction.state).to.deep.equal({
+        recompose: {
+          [component.fullName]: {
+            component,
+            children: component.getChildren(),
+          },
         },
-      ]);
+      });
     });
   });
 

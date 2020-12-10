@@ -9,7 +9,7 @@ import { mockRegistryData } from '.';
 import { SourceComponent } from '../../../src';
 import { baseName } from '../../../src/utils';
 
-export const DECOMPOSED_TOP_LEVEL_DIR = join('path', 'to', 'decomposedTopLevel');
+export const DECOMPOSED_TOP_LEVEL_DIR = join('path', 'to', 'decomposedTopLevels');
 export const DECOMPOSED_TOP_LEVEL_COMPONENT_PATH = join(DECOMPOSED_TOP_LEVEL_DIR, 'a');
 export const DECOMPOSED_TOP_LEVEL_XML_NAMES = ['a.dtl-meta.xml'];
 export const DECOMPOSED_TOP_LEVEL_XML_PATH = join(
@@ -37,6 +37,7 @@ export const DECOMPOSED_TOP_LEVEL_COMPONENT = SourceComponent.createVirtualCompo
     name: baseName(DECOMPOSED_TOP_LEVEL_XML_PATH),
     type: mockRegistryData.types.decomposedtoplevel,
     xml: DECOMPOSED_TOP_LEVEL_XML_PATH,
+    content: DECOMPOSED_TOP_LEVEL_COMPONENT_PATH,
   },
   DECOMPOSED_VIRTUAL_FS
 );

@@ -59,9 +59,6 @@ describe('Convert Transaction Constructs', () => {
     it('should return a WriterFormat with recomposed data', async () => {
       const component = regina.REGINA_COMPONENT;
       const children = component.getChildren();
-      const readStub = env.stub(component.tree, 'readFile');
-      readStub.withArgs(children[0].xml).resolves(Buffer.from('<Y><test>child1</test></Y>'));
-      readStub.withArgs(children[1].xml).resolves(Buffer.from('<X><test>child2</test></X>'));
       const finalizer = new RecompositionFinalizer();
       const state: ConvertTransactionState = {
         recompose: {
@@ -82,6 +79,7 @@ describe('Convert Transaction Constructs', () => {
               source: new JsToXml({
                 ReginaKing: {
                   [XML_NS_KEY]: XML_NS_URL,
+                  fullName: 'a',
                   ys: [{ test: 'child1' }],
                   xs: [{ test: 'child2' }],
                 },

@@ -8,49 +8,16 @@ import { WriteInfo } from '../types';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { RecompositionFinalizer, ConvertTransaction } from '../convertTransaction';
 import { DecompositionStrategy, RegistryAccess, SourceComponent } from '../../metadata-registry';
-import { JsonMap, AnyJson, JsonArray } from '@salesforce/ts-types';
+import { JsonArray } from '@salesforce/ts-types';
 import { JsToXml } from '../streams';
 import { join } from 'path';
 import { MetadataType, SourcePath, META_XML_SUFFIX, XML_NS_URL, XML_NS_KEY } from '../../common';
 import { ComponentSet } from '../../collections';
 
-interface XmlJson extends JsonMap {
-  [parentFullName: string]: {
-    [groupNode: string]: AnyJson;
-  };
-}
-
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   constructor(registry = new RegistryAccess(), convertTransaction = new ConvertTransaction()) {
     super(registry, convertTransaction);
     this.convertTransaction.addFinalizer(RecompositionFinalizer);
-  }
-
-  public static async recompose(
-    children: SourceComponent[],
-    baseXmlObj: XmlJson = {}
-  ): Promise<JsonMap> {
-    for (const child of children) {
-      const { directoryName: groupNode } = child.type;
-      const { name: parentName } = child.parent.type;
-      const childContents = (await child.parseXml())[child.type.name];
-      if (!baseXmlObj[parentName]) {
-        baseXmlObj[parentName] = { '@_xmlns': XML_NS_URL };
-      }
-
-      if (!baseXmlObj[parentName][groupNode]) {
-        baseXmlObj[parentName][groupNode] = [];
-      }
-      (baseXmlObj[parentName][groupNode] as JsonArray).push(childContents);
-    }
-    return baseXmlObj;
-  }
-
-  public static createParentWriteInfo(trigger: SourceComponent, xmlObject: JsonMap): WriteInfo {
-    return {
-      source: new JsToXml(xmlObject),
-      output: join(trigger.type.directoryName, `${trigger.fullName}.${trigger.type.suffix}`),
-    };
   }
 
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {

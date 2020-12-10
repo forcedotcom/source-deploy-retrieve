@@ -5,10 +5,24 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { WriterFormat } from './types';
-import { DecomposedMetadataTransformer } from './transformers/decomposedMetadataTransformer';
 import { SourceComponent } from '../metadata-registry';
+import { join } from 'path';
+import { JsToXml } from './streams';
+import { XML_NS_URL } from '../common';
+import { JsonArray, JsonMap } from '@salesforce/ts-types';
 
-export type ConvertTransactionState = {
+/**
+ * Logic to execute at the end of a convert transaction
+ */
+export interface ConvertTransactionFinalizer {
+  finalize(state: ConvertTransactionState): Promise<WriterFormat | WriterFormat[]>;
+}
+
+export interface FinalizerConstructor {
+  new (): ConvertTransactionFinalizer;
+}
+
+export interface ConvertTransactionState {
   recompose: {
     [fullName: string]: {
       /**
@@ -21,7 +35,7 @@ export type ConvertTransactionState = {
       children: SourceComponent[];
     };
   };
-};
+}
 
 /**
  * Manages a "global" state over the course of a single metadata conversion call.
@@ -47,35 +61,43 @@ export class ConvertTransaction {
   }
 }
 
-/**
- * Logic to execute at the end of a convert transaction
- */
-export interface ConvertTransactionFinalizer {
-  finalize(state: ConvertTransactionState): Promise<WriterFormat | WriterFormat[]>;
-}
-
-export interface FinalizerConstructor {
-  new (): ConvertTransactionFinalizer;
-}
-
 export class RecompositionFinalizer implements ConvertTransactionFinalizer {
   public async finalize(state: ConvertTransactionState): Promise<WriterFormat[]> {
     const writerData: WriterFormat[] = [];
 
     for (const parentName of Object.keys(state.recompose)) {
-      const parentComponent = state.recompose[parentName].component;
-      // only recompose children stored in transaction state
+      const parent = state.recompose[parentName].component;
       const children = state.recompose[parentName].children;
-      const baseObject: any = parentComponent.xml ? await parentComponent.parseXml() : undefined;
-      const recomposedXmlObj = await DecomposedMetadataTransformer.recompose(children, baseObject);
+      const baseObject: JsonMap = parent.xml ? await parent.parseXml() : {};
+      const recomposedXmlObj = await this.recompose(children, baseObject);
       writerData.push({
-        component: parentComponent,
+        component: parent,
         writeInfos: [
-          DecomposedMetadataTransformer.createParentWriteInfo(parentComponent, recomposedXmlObj),
+          {
+            source: new JsToXml(recomposedXmlObj),
+            output: join(parent.type.directoryName, `${parent.fullName}.${parent.type.suffix}`),
+          },
         ],
       });
     }
 
     return writerData;
+  }
+
+  private async recompose(children: SourceComponent[], baseXmlObj: any): Promise<JsonMap> {
+    for (const child of children) {
+      const { directoryName: groupNode } = child.type;
+      const { name: parentName } = child.parent.type;
+      const childContents = (await child.parseXml())[child.type.name];
+      if (!baseXmlObj[parentName]) {
+        baseXmlObj[parentName] = { '@_xmlns': XML_NS_URL };
+      }
+
+      if (!baseXmlObj[parentName][groupNode]) {
+        baseXmlObj[parentName][groupNode] = [];
+      }
+      (baseXmlObj[parentName][groupNode] as JsonArray).push(childContents);
+    }
+    return baseXmlObj;
   }
 }

@@ -44,7 +44,10 @@ describe('DecomposedSourceAdapter', () => {
     ];
     const tree = new VirtualTreeContainer(fsNoParentXml);
     const adapter = new DecomposedSourceAdapter(type, mockRegistry, undefined, tree);
-    const expectedParent = new SourceComponent({ name: regina.REGINA_COMPONENT.name, type }, tree);
+    const expectedParent = new SourceComponent(
+      { name: regina.REGINA_COMPONENT.name, type, content: regina.REGINA_PATH },
+      tree
+    );
 
     expect(adapter.getComponent(regina.REGINA_CHILD_XML_PATH_2).parent).to.deep.equal(
       expectedParent

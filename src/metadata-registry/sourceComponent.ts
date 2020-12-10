@@ -80,7 +80,8 @@ export class SourceComponent implements MetadataComponent {
 
   public async parseXml(): Promise<JsonMap> {
     if (this.xml) {
-      return parse((await this.tree.readFile(this.xml)).toString());
+      const contents = await this.tree.readFile(this.xml);
+      return parse(contents.toString(), { ignoreAttributes: false });
     }
     throw new LibraryError('error_parsing_xml', this.name);
   }

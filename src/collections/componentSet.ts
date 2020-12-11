@@ -46,9 +46,9 @@ export class ComponentSet implements Iterable<MetadataComponent> {
    * @param fsPath Path to resolve components from
    * @param options
    */
-  public static fromSource(fsPath: string, options?: FromSourceOptions): ComponentSet {
-    const ws = new ComponentSet(undefined, options?.registry);
-    ws.resolveSourceComponents(fsPath, { tree: options?.tree });
+  public static fromSource(fsPath: string, options: FromSourceOptions = {}): ComponentSet {
+    const ws = new ComponentSet(undefined, options.registry);
+    ws.resolveSourceComponents(fsPath, options);
     return ws;
   }
 
@@ -245,13 +245,8 @@ export class ComponentSet implements Iterable<MetadataComponent> {
         ) {
           this.add(component);
           sourceComponents.add(component);
-          if (!parentInFilter && resolveChildrenWithParent) {
-            for (const child of component.getChildren()) {
-              this.add(child);
-              sourceComponents.add(child);
-            }
-          }
         } else {
+          // have to check for any individually addressed children in the filter set
           for (const childComponent of component.getChildren()) {
             if (filterSet.has(childComponent)) {
               this.add(childComponent);
@@ -262,6 +257,13 @@ export class ComponentSet implements Iterable<MetadataComponent> {
       } else {
         this.add(component);
         sourceComponents.add(component);
+      }
+
+      if (resolveChildrenWithParent) {
+        for (const child of component.getChildren()) {
+          this.add(child);
+          sourceComponents.add(child);
+        }
       }
     }
 

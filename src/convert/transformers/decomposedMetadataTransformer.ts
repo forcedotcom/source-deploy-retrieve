@@ -79,18 +79,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
           const source = new JsToXml({
             [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
           });
-          const decomposeStateValue = state.decompose[childComponent.fullName];
-          if (childComponentMergeSet?.has(childComponent)) {
-            for (const mergeChild of childComponentMergeSet.getSourceComponents(childComponent)) {
-              if (decomposeStateValue) {
-                decomposeStateValue.foundMerge = true;
-              }
-              writeInfos.push({
-                source,
-                output: mergeChild.xml,
-              });
-            }
-          } else if (!decomposeStateValue) {
+          if (!state.decompose[childComponent.fullName]) {
             state.decompose[childComponent.fullName] = {
               component,
               foundMerge: false,
@@ -102,6 +91,16 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
                 ),
               },
             };
+          }
+          const decomposeStateValue = state.decompose[childComponent.fullName];
+          if (childComponentMergeSet?.has(childComponent)) {
+            for (const mergeChild of childComponentMergeSet.getSourceComponents(childComponent)) {
+              decomposeStateValue.foundMerge = true;
+              writeInfos.push({
+                source,
+                output: mergeChild.xml,
+              });
+            }
           }
         }
       } else {

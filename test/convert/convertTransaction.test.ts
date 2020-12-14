@@ -67,6 +67,7 @@ describe('Convert Transaction Constructs', () => {
             children,
           },
         },
+        decompose: {},
       };
 
       const result = await finalizer.finalize(state);

@@ -257,7 +257,7 @@ describe('Streams', () => {
       },
     ]);
     const chunk: WriterFormat = {
-      component: component,
+      component,
       writeInfos: [
         {
           output: component.getPackageRelativePath(component.xml, 'metadata'),
@@ -280,7 +280,7 @@ describe('Streams', () => {
     let pipelineStub: SinonStub;
 
     describe('StandardWriter', () => {
-      const resolver = new MetadataResolver(mockRegistry, chunk.component.tree);
+      const resolver = new MetadataResolver(mockRegistry, component.tree);
       const resolverSpy = env.spy(resolver, 'getComponentsFromPath');
 
       let writer: streams.StandardWriter;

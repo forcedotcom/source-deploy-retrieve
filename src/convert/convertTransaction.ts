@@ -4,11 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { WriterFormat } from './types';
-import { SourceComponent } from '../metadata-registry';
+import { WriteInfo, WriterFormat } from './types';
+import { DecompositionStrategy, SourceComponent } from '../metadata-registry';
 import { join } from 'path';
 import { JsToXml } from './streams';
-import { XML_NS_URL } from '../common';
+import { MetadataComponent, META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../common';
 import { JsonArray, JsonMap } from '@salesforce/ts-types';
 
 /**
@@ -35,13 +35,26 @@ export interface ConvertTransactionState {
       children: SourceComponent[];
     };
   };
+  decompose: {
+    [fullName: string]: {
+      /**
+       * Parent component that the child originally belonged to
+       */
+      component: SourceComponent;
+      writeInfo: WriteInfo;
+      /**
+       * Whether or not the child component found a matching component to merge with
+       */
+      foundMerge: boolean;
+    };
+  };
 }
 
 /**
  * Manages a "global" state over the course of a single metadata conversion call.
  */
 export class ConvertTransaction {
-  public readonly state: ConvertTransactionState = { recompose: {} };
+  public readonly state: ConvertTransactionState = { recompose: {}, decompose: {} };
   private readonly finalizers = new Map<string, ConvertTransactionFinalizer>();
 
   public addFinalizer(finalizerCtor: FinalizerConstructor): void {
@@ -61,6 +74,10 @@ export class ConvertTransaction {
   }
 }
 
+/**
+ * Merges child components that share the same parent in the conversion pipeline
+ * into a single file.
+ */
 export class RecompositionFinalizer implements ConvertTransactionFinalizer {
   public async finalize(state: ConvertTransactionState): Promise<WriterFormat[]> {
     const writerData: WriterFormat[] = [];
@@ -99,5 +116,27 @@ export class RecompositionFinalizer implements ConvertTransactionFinalizer {
       (baseXmlObj[parentName][groupNode] as JsonArray).push(childContents);
     }
     return baseXmlObj;
+  }
+}
+
+/**
+ * Creates write infos for any children that haven't been written yet. Children may
+ * delay being written in order to find potential existing children to merge
+ * with in the conversion pipeline.
+ */
+export class DecompositionFinalizer implements ConvertTransactionFinalizer {
+  public async finalize(state: ConvertTransactionState): Promise<WriterFormat[]> {
+    const writerData: WriterFormat[] = [];
+
+    for (const toDecompose of Object.values(state.decompose)) {
+      if (!toDecompose.foundMerge) {
+        writerData.push({
+          component: toDecompose.component,
+          writeInfos: [toDecompose.writeInfo],
+        });
+      }
+    }
+
+    return writerData;
   }
 }

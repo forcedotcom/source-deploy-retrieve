@@ -237,7 +237,13 @@ export class ComponentSet implements Iterable<MetadataComponent> {
           fullName: ComponentSet.WILDCARD,
           type: component.type,
         });
-        const parentInFilter = component.parent && filterSet.has(component.parent);
+        const parentInFilter =
+          component.parent &&
+          (filterSet.has(component.parent) ||
+            filterSet.has({
+              fullName: ComponentSet.WILDCARD,
+              type: component.parent.type,
+            }));
         if (
           filterSet.has(component) ||
           includedInWildcard ||
@@ -245,6 +251,13 @@ export class ComponentSet implements Iterable<MetadataComponent> {
         ) {
           this.add(component);
           sourceComponents.add(component);
+
+          if (resolveChildrenWithParent) {
+            for (const child of component.getChildren()) {
+              this.add(child);
+              sourceComponents.add(child);
+            }
+          }
         } else {
           // have to check for any individually addressed children in the filter set
           for (const childComponent of component.getChildren()) {
@@ -257,12 +270,11 @@ export class ComponentSet implements Iterable<MetadataComponent> {
       } else {
         this.add(component);
         sourceComponents.add(component);
-      }
-
-      if (resolveChildrenWithParent) {
-        for (const child of component.getChildren()) {
-          this.add(child);
-          sourceComponents.add(child);
+        if (resolveChildrenWithParent) {
+          for (const child of component.getChildren()) {
+            this.add(child);
+            sourceComponents.add(child);
+          }
         }
       }
     }

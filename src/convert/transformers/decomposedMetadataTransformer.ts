@@ -6,7 +6,11 @@
  */
 import { WriteInfo } from '../types';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
-import { RecompositionFinalizer, ConvertTransaction } from '../convertTransaction';
+import {
+  RecompositionFinalizer,
+  ConvertTransaction,
+  DecompositionFinalizer,
+} from '../convertTransaction';
 import { DecompositionStrategy, RegistryAccess, SourceComponent } from '../../metadata-registry';
 import { JsonArray } from '@salesforce/ts-types';
 import { JsToXml } from '../streams';
@@ -18,6 +22,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   constructor(registry = new RegistryAccess(), convertTransaction = new ConvertTransaction()) {
     super(registry, convertTransaction);
     this.convertTransaction.addFinalizer(RecompositionFinalizer);
+    this.convertTransaction.addFinalizer(DecompositionFinalizer);
   }
 
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
@@ -48,6 +53,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     component: SourceComponent,
     mergeWith?: SourceComponent
   ): Promise<WriteInfo[]> {
+    const { state } = this.convertTransaction;
     const writeInfos: WriteInfo[] = [];
     const { type, fullName: parentFullName } = component;
     const parentXmlObject: any = { [type.name]: { [XML_NS_KEY]: XML_NS_URL } };
@@ -73,23 +79,29 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
           const source = new JsToXml({
             [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
           });
-          if (childComponentMergeSet) {
-            if (childComponentMergeSet.has(childComponent)) {
-              for (const mergeChild of childComponentMergeSet.getSourceComponents(childComponent)) {
-                writeInfos.push({
-                  source,
-                  output: mergeChild.xml,
-                });
+          const decomposeStateValue = state.decompose[childComponent.fullName];
+          if (childComponentMergeSet?.has(childComponent)) {
+            for (const mergeChild of childComponentMergeSet.getSourceComponents(childComponent)) {
+              if (decomposeStateValue) {
+                decomposeStateValue.foundMerge = true;
               }
+              writeInfos.push({
+                source,
+                output: mergeChild.xml,
+              });
             }
-          } else {
-            writeInfos.push({
-              source,
-              output: join(
-                rootPackagePath,
-                this.getOutputPathForEntry(entryName, childType, component)
-              ),
-            });
+          } else if (!decomposeStateValue) {
+            state.decompose[childComponent.fullName] = {
+              component,
+              foundMerge: false,
+              writeInfo: {
+                source,
+                output: join(
+                  rootPackagePath,
+                  this.getOutputPathForEntry(entryName, childType, component)
+                ),
+              },
+            };
           }
         }
       } else {

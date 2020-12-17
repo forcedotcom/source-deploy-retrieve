@@ -49,6 +49,7 @@ describe('DecomposedMetadataTransformer', () => {
             children: [child],
           },
         },
+        decompose: {},
       });
     });
 
@@ -64,12 +65,13 @@ describe('DecomposedMetadataTransformer', () => {
             children: component.getChildren(),
           },
         },
+        decompose: {},
       });
     });
   });
 
   describe('toSourceFormat', () => {
-    it('should decompose children into respective files for "topLevel" config', async () => {
+    it('should defer write operations and set transaction state for "topLevel" config', async () => {
       const component = DECOMPOSED_TOP_LEVEL_COMPONENT;
       const { fullName, type } = component;
       const transformer = new DecomposedMetadataTransformer(mockRegistry);

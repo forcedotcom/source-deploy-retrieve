@@ -8,7 +8,7 @@ import { WriteInfo, WriterFormat } from './types';
 import { DecompositionStrategy, SourceComponent } from '../metadata-registry';
 import { join } from 'path';
 import { JsToXml } from './streams';
-import { MetadataComponent, META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../common';
+import { MetadataComponent, META_XML_SUFFIX, XML_NS_URL } from '../common';
 import { JsonArray, JsonMap } from '@salesforce/ts-types';
 
 /**
@@ -38,14 +38,11 @@ export interface ConvertTransactionState {
   decompose: {
     [fullName: string]: {
       /**
-       * Parent component that the child originally belonged to
-       */
-      component: SourceComponent;
-      writeInfo: WriteInfo;
-      /**
        * Whether or not the child component found a matching component to merge with
        */
-      foundMerge: boolean;
+      foundMerge?: boolean;
+      writeInfo?: WriteInfo;
+      component: MetadataComponent;
     };
   };
 }
@@ -131,12 +128,23 @@ export class DecompositionFinalizer implements ConvertTransactionFinalizer {
     for (const toDecompose of Object.values(state.decompose)) {
       if (!toDecompose.foundMerge) {
         writerData.push({
-          component: toDecompose.component,
+          component: toDecompose.component.parent ?? toDecompose.component,
           writeInfos: [toDecompose.writeInfo],
         });
       }
     }
 
     return writerData;
+  }
+
+  private getOutputPathForEntry(child: MetadataComponent, parent: SourceComponent): string {
+    const childName = child.fullName.split('.')[1];
+    let output = `${childName}.${child.type.suffix}${META_XML_SUFFIX}`;
+
+    if (parent.type.strategies.decomposition === DecompositionStrategy.FolderPerType) {
+      output = join(child.type.directoryName, output);
+    }
+
+    return join(parent.getPackageRelativePath(parent.fullName, 'source'), output);
   }
 }

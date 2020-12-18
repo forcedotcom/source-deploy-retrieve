@@ -46,7 +46,7 @@ export class ComponentReader extends Readable {
 }
 
 export class ComponentConverter extends Transform {
-  private context = new ConvertContext();
+  public readonly context = new ConvertContext();
   private targetFormat: SfdxFileFormat;
   private mergeSet: ComponentSet;
   private transformerFactory: MetadataTransformerFactory;
@@ -102,13 +102,13 @@ export class ComponentConverter extends Transform {
     let err: Error;
     try {
       for await (const finalizerResult of this.context.executeFinalizers()) {
-        if (finalizerResult) {
-          if (Array.isArray(finalizerResult)) {
-            finalizerResult.forEach((result) => this.push(result));
-          } else {
-            this.push(finalizerResult);
-          }
-        }
+        finalizerResult.forEach((result) => this.push(result));
+        // if (finalizerResult) {
+        // if (Array.isArray(finalizerResult)) {
+
+        // } else {
+        //   this.push(finalizerResult);
+        // }
       }
     } catch (e) {
       err = e;

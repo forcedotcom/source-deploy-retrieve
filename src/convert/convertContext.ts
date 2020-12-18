@@ -14,12 +14,8 @@ import { JsonArray, JsonMap } from '@salesforce/ts-types';
 abstract class ConvertTransactionFinalizer<T> {
   protected abstract _state: T;
 
-  public setState(props: Partial<T> | ((state: T) => void)): void {
-    if (typeof props === 'function') {
-      props(this._state);
-    } else {
-      this._state = Object.assign(this._state, props);
-    }
+  public setState(props: (state: T) => void): void {
+    props(this._state);
   }
 
   get state(): T {
@@ -74,9 +70,9 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
       const { directoryName: groupNode } = child.type;
       const { name: parentName } = child.parent.type;
       const childContents = (await child.parseXml())[child.type.name];
-      if (!baseXmlObj[parentName]) {
-        baseXmlObj[parentName] = { '@_xmlns': XML_NS_URL };
-      }
+      // if (!baseXmlObj[parentName]) {
+      //   baseXmlObj[parentName] = { '@_xmlns': XML_NS_URL };
+      // }
 
       if (!baseXmlObj[parentName][groupNode]) {
         baseXmlObj[parentName][groupNode] = [];
@@ -126,7 +122,7 @@ export class ConvertContext {
   public readonly decomposition = new DecompositionFinalizer();
   public readonly recomposition = new RecompositionFinalizer();
 
-  public async *executeFinalizers(): AsyncIterable<WriterFormat | WriterFormat[]> {
+  public async *executeFinalizers(): AsyncIterable<WriterFormat[]> {
     for (const member of Object.values(this)) {
       if (member instanceof ConvertTransactionFinalizer) {
         yield member.finalize();

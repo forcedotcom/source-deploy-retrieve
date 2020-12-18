@@ -42,7 +42,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
         } else {
           state[fullName] = {
             component,
-            children: [...component.getChildren()],
+            children: component.getChildren(),
           };
         }
       });
@@ -59,9 +59,8 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const { type, fullName: parentFullName } = component;
 
     const mergeWithChildren = mergeWith ? new ComponentSet(mergeWith.getChildren()) : undefined;
-    const parentXmlObject: any = { [type.name]: { [XML_NS_KEY]: XML_NS_URL } };
+    let parentXmlObject: any;
     const composedMetadata = await this.getComposedMetadataEntries(component);
-    const createParentXml = !this.context.decomposition.state[parentFullName];
 
     if (mergeWith) {
       this.setDecomposedState(component);
@@ -109,13 +108,17 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
         }
       } else {
         // tag entry isn't a child type, so add it to the parent xml
-        if (createParentXml && tagKey !== XML_NS_KEY) {
+        if (tagKey !== XML_NS_KEY) {
+          if (!parentXmlObject) {
+            parentXmlObject = { [type.name]: { [XML_NS_KEY]: XML_NS_URL } };
+          }
           parentXmlObject[type.name][tagKey] = tagValue as JsonArray;
         }
       }
     }
 
-    if (createParentXml) {
+    const parentInContextState = this.context.decomposition.state[parentFullName];
+    if (!parentInContextState && parentXmlObject) {
       const parentSource = new JsToXml(parentXmlObject);
       if (!mergeWith) {
         writeInfos.push({

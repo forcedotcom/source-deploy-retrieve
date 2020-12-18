@@ -5,16 +5,16 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { MetadataTransformer, WriteInfo } from '../types';
-import { ConvertTransaction } from '../convertTransaction';
+import { ConvertContext } from '../convertContext';
 import { RegistryAccess, SourceComponent } from '../../metadata-registry';
 
 export abstract class BaseMetadataTransformer implements MetadataTransformer {
+  public readonly context: ConvertContext;
   protected registry: RegistryAccess;
-  protected convertTransaction: ConvertTransaction;
 
-  constructor(registry = new RegistryAccess(), convertTransaction = new ConvertTransaction()) {
+  constructor(registry = new RegistryAccess(), context = new ConvertContext()) {
     this.registry = registry;
-    this.convertTransaction = convertTransaction;
+    this.context = context;
   }
 
   public abstract toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]>;

@@ -157,7 +157,9 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   ): void {
     const key = `${forComponent.type.name}#${forComponent.fullName}`;
     const withOrigin = Object.assign({ origin: forComponent.parent ?? forComponent }, props);
-    this.context.decomposition.setState({ [key]: withOrigin });
+    this.context.decomposition.setState((state) => {
+      state[key] = Object.assign(state[key] ?? {}, withOrigin);
+    });
   }
 
   private getDefaultOutput(component: MetadataComponent): SourcePath {

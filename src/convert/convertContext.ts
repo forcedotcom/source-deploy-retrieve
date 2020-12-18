@@ -17,8 +17,9 @@ abstract class ConvertTransactionFinalizer<T> {
   public setState(props: Partial<T> | ((state: T) => void)): void {
     if (typeof props === 'function') {
       props(this._state);
+    } else {
+      this._state = Object.assign(this._state, props);
     }
-    this._state = Object.assign(this._state, props);
   }
 
   get state(): T {

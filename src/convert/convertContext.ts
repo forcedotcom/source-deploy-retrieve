@@ -8,7 +8,7 @@ import { WriteInfo, WriterFormat } from './types';
 import { SourceComponent } from '../metadata-registry';
 import { join } from 'path';
 import { JsToXml } from './streams';
-import { MetadataComponent, XML_NS_URL } from '../common';
+import { MetadataComponent } from '../common';
 import { JsonArray, JsonMap } from '@salesforce/ts-types';
 
 abstract class ConvertTransactionFinalizer<T> {

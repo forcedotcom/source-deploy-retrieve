@@ -103,12 +103,6 @@ export class ComponentConverter extends Transform {
     try {
       for await (const finalizerResult of this.context.executeFinalizers()) {
         finalizerResult.forEach((result) => this.push(result));
-        // if (finalizerResult) {
-        // if (Array.isArray(finalizerResult)) {
-
-        // } else {
-        //   this.push(finalizerResult);
-        // }
       }
     } catch (e) {
       err = e;

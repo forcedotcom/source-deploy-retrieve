@@ -15,6 +15,7 @@ import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/registry/decomposedTo
 import { SourceComponent } from '../../../src';
 import { XML_NS_URL, XML_NS_KEY } from '../../../src/common';
 import { ConvertContext } from '../../../src/convert/convertContext';
+import { Readable } from 'stream';
 
 const env = createSandbox();
 
@@ -290,7 +291,42 @@ describe('DecomposedMetadataTransformer', () => {
         ]);
       });
 
-      it('should defer write operations for children that are not members of merge component', () => {
+      it('should defer write operations for children that are not members of merge component', async () => {
+        const mergeComponentChild = component.getChildren()[0];
+        const { fullName, type } = component;
+        const root = join('main', 'default', type.directoryName, fullName);
+        const componentToMerge = SourceComponent.createVirtualComponent(
+          {
+            name: 'a',
+            type: mockRegistryData.types.reginaking,
+          },
+          []
+        );
+        env.stub(component, 'parseXml').resolves({
+          ReginaKing: {
+            [XML_NS_KEY]: XML_NS_URL,
+            [mergeComponentChild.type.directoryName]: {
+              fullName: mergeComponentChild.name,
+              test: 'testVal',
+            },
+          },
+        });
+        const context = new ConvertContext();
+        const transformer = new DecomposedMetadataTransformer(mockRegistry, context);
+
+        const result = await transformer.toSourceFormat(component, componentToMerge);
+        expect(result).to.be.empty;
+        expect(context.decomposition.state).to.deep.equal({
+          [`${mergeComponentChild.type.name}#${mergeComponentChild.fullName}`]: {
+            foundMerge: false,
+            origin: component,
+            writeInfo: {
+              source: new Readable(),
+              output: join(root, mergeComponentChild.type.directoryName, 'child3.x-meta.xml'),
+            },
+          },
+        });
+
         throw new Error('write this test!');
       });
 

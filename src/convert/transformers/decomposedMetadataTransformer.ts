@@ -62,9 +62,9 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     let parentXmlObject: any;
     const composedMetadata = await this.getComposedMetadataEntries(component);
 
-    if (mergeWith) {
-      this.setDecomposedState(component);
-    }
+    // if (mergeWith) {
+    //   this.setDecomposedState(component);
+    // }
 
     for (const [tagKey, tagValue] of composedMetadata) {
       const childTypeId = type.children?.directories[tagKey];
@@ -98,6 +98,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
               this.setDecomposedState(childComponent, { foundMerge: true });
             } else {
               this.setDecomposedState(childComponent, {
+                foundMerge: false,
                 writeInfo: {
                   source,
                   output: this.getDefaultOutput(childComponent),
@@ -117,7 +118,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       }
     }
 
-    const parentInContextState = this.context.decomposition.state[parentFullName];
+    const parentInContextState = !!this.context.decomposition.state[parentFullName];
     if (!parentInContextState && parentXmlObject) {
       const parentSource = new JsToXml(parentXmlObject);
       if (!mergeWith) {
@@ -133,6 +134,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
         this.setDecomposedState(component, { foundMerge: true });
       } else {
         this.setDecomposedState(component, {
+          foundMerge: false,
           writeInfo: {
             source: parentSource,
             output: this.getDefaultOutput(component),

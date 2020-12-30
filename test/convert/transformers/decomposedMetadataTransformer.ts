@@ -321,13 +321,21 @@ describe('DecomposedMetadataTransformer', () => {
             foundMerge: false,
             origin: component,
             writeInfo: {
-              source: new Readable(),
-              output: join(root, mergeComponentChild.type.directoryName, 'child3.x-meta.xml'),
+              source: new JsToXml({
+                [mergeComponentChild.type.name]: {
+                  [XML_NS_KEY]: XML_NS_URL,
+                  fullName: mergeComponentChild.name,
+                  test: 'testVal',
+                },
+              }),
+              output: join(
+                root,
+                mergeComponentChild.type.directoryName,
+                `${mergeComponentChild.name}.${mergeComponentChild.type.suffix}-meta.xml`
+              ),
             },
           },
         });
-
-        throw new Error('write this test!');
       });
 
       it('should defer write operation for parent that is not a member of merge component', () => {

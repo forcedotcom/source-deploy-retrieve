@@ -12,7 +12,7 @@ import { createSandbox } from 'sinon';
 import { join } from 'path';
 import { JsToXml } from '../../../src/convert/streams';
 import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/registry/decomposedTopLevelConstants';
-import { SourceComponent } from '../../../src';
+import { ComponentSet, SourceComponent } from '../../../src';
 import { XML_NS_URL, XML_NS_KEY } from '../../../src/common';
 import { ConvertContext } from '../../../src/convert/convertContext';
 
@@ -34,7 +34,7 @@ describe('DecomposedMetadataTransformer', () => {
       expect(context.recomposition.state).to.deep.equal({
         [component.fullName]: {
           component,
-          children: [child1, child2],
+          children: new ComponentSet([child1, child2], mockRegistry),
         },
       });
     });
@@ -47,7 +47,7 @@ describe('DecomposedMetadataTransformer', () => {
       expect(context.recomposition.state).to.deep.equal({
         [component.fullName]: {
           component,
-          children: component.getChildren(),
+          children: new ComponentSet(component.getChildren(), mockRegistry),
         },
       });
     });
@@ -62,7 +62,7 @@ describe('DecomposedMetadataTransformer', () => {
       expect(context.recomposition.state).to.deep.equal({
         [component.fullName]: {
           component,
-          children: [child].concat(component.getChildren()),
+          children: new ComponentSet([child].concat(component.getChildren()), mockRegistry),
         },
       });
     });

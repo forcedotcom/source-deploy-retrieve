@@ -9,11 +9,12 @@ import { expect } from 'chai';
 import { join } from 'path';
 import { createSandbox } from 'sinon';
 import { Readable } from 'stream';
+import { ComponentSet } from '../../src/collections';
 import { XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { WriterFormat } from '../../src/convert';
 import { ConvertContext } from '../../src/convert/convertContext';
 import { JsToXml } from '../../src/convert/streams';
-import { keanu, regina } from '../mock/registry';
+import { keanu, mockRegistry, regina } from '../mock/registry';
 
 const env = createSandbox();
 
@@ -53,7 +54,7 @@ describe('Convert Transaction Constructs', () => {
         context.recomposition.setState((state) => {
           state['Test__c'] = {
             component,
-            children: component.getChildren(),
+            children: new ComponentSet(component.getChildren(), mockRegistry),
           };
         });
 

@@ -71,7 +71,6 @@ export class ComponentSet implements Iterable<MetadataComponent> {
   ): Promise<ComponentSet> {
     const registry = options.registry ?? new RegistryAccess();
     const tree = options.tree ?? new NodeFSTreeContainer();
-    const resolveChildrenWithParent = options.resolveChildrenWithParent ?? false;
     const shouldResolve = !!options.resolve;
 
     const ws = new ComponentSet(undefined, registry);
@@ -100,7 +99,6 @@ export class ComponentSet implements Iterable<MetadataComponent> {
         ws.resolveSourceComponents(fsPath, {
           tree,
           filter: filterSet,
-          resolveChildrenWithParent,
         });
       }
     }
@@ -219,7 +217,6 @@ export class ComponentSet implements Iterable<MetadataComponent> {
    */
   public resolveSourceComponents(fsPath: string, options: ResolveOptions = {}): ComponentSet {
     let filterSet: ComponentSet;
-    const { resolveChildrenWithParent } = options;
 
     if (options?.filter) {
       const { filter } = options;
@@ -244,20 +241,9 @@ export class ComponentSet implements Iterable<MetadataComponent> {
               fullName: ComponentSet.WILDCARD,
               type: component.parent.type,
             }));
-        if (
-          filterSet.has(component) ||
-          includedInWildcard ||
-          (parentInFilter && resolveChildrenWithParent)
-        ) {
+        if (filterSet.has(component) || includedInWildcard || parentInFilter) {
           this.add(component);
           sourceComponents.add(component);
-
-          if (resolveChildrenWithParent) {
-            for (const child of component.getChildren()) {
-              this.add(child);
-              sourceComponents.add(child);
-            }
-          }
         } else {
           // have to check for any individually addressed children in the filter set
           for (const childComponent of component.getChildren()) {
@@ -270,12 +256,6 @@ export class ComponentSet implements Iterable<MetadataComponent> {
       } else {
         this.add(component);
         sourceComponents.add(component);
-        if (resolveChildrenWithParent) {
-          for (const child of component.getChildren()) {
-            this.add(child);
-            sourceComponents.add(child);
-          }
-        }
       }
     }
 

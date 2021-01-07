@@ -26,7 +26,6 @@ interface ComponentSetOptions {
 
 export interface FromSourceOptions extends ComponentSetOptions {
   filter?: Iterable<ComponentLike> | ComponentSet;
-  resolveChildrenWithParent?: boolean;
   tree?: TreeContainer;
 }
 

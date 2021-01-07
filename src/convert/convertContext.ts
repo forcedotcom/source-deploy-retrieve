@@ -10,6 +10,7 @@ import { join } from 'path';
 import { JsToXml } from './streams';
 import { MetadataComponent } from '../common';
 import { JsonArray, JsonMap } from '@salesforce/ts-types';
+import { ComponentSet } from '../collections';
 
 abstract class ConvertTransactionFinalizer<T> {
   protected abstract _state: T;
@@ -34,7 +35,7 @@ export interface RecompositionState {
     /**
      * Children to be rolled up into the parent file
      */
-    children?: SourceComponent[];
+    children?: ComponentSet;
   };
 }
 
@@ -65,14 +66,12 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
     return writerData;
   }
 
-  private async recompose(children: SourceComponent[], baseXmlObj: any): Promise<JsonMap> {
+  private async recompose(children: ComponentSet, baseXmlObj: any): Promise<JsonMap> {
     for (const child of children) {
       const { directoryName: groupNode } = child.type;
       const { name: parentName } = child.parent.type;
-      const childContents = (await child.parseXml())[child.type.name];
-      // if (!baseXmlObj[parentName]) {
-      //   baseXmlObj[parentName] = { '@_xmlns': XML_NS_URL };
-      // }
+      const xmlObj = await (child as SourceComponent).parseXml();
+      const childContents = xmlObj[child.type.name];
 
       if (!baseXmlObj[parentName][groupNode]) {
         baseXmlObj[parentName][groupNode] = [];

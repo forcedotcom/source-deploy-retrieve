@@ -26,11 +26,11 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       const { fullName: parentName } = component.parent;
       this.context.recomposition.setState((state) => {
         if (state[parentName]) {
-          state[parentName].children.push(component);
+          state[parentName].children.add(component);
         } else {
           state[parentName] = {
             component: component.parent,
-            children: [component],
+            children: new ComponentSet([component], this.registry),
           };
         }
       });
@@ -38,11 +38,13 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       const { fullName } = component;
       this.context.recomposition.setState((state) => {
         if (state[fullName]) {
-          state[fullName].children.push(...component.getChildren());
+          for (const child of component.getChildren()) {
+            state[fullName].children.add(child);
+          }
         } else {
           state[fullName] = {
             component,
-            children: component.getChildren(),
+            children: new ComponentSet(component.getChildren(), this.registry),
           };
         }
       });
@@ -59,7 +61,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const { type, fullName: parentFullName } = component;
 
     const childrenOfMergeComponent = mergeWith
-      ? new ComponentSet(mergeWith.getChildren())
+      ? new ComponentSet(mergeWith.getChildren(), this.registry)
       : undefined;
     let parentXmlObject: any;
     const composedMetadata = await this.getComposedMetadataEntries(component);

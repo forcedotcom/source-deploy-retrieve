@@ -179,34 +179,15 @@ describe('Streams', () => {
 
     describe('Transaction Finalizers', () => {
       let converter: streams.ComponentConverter;
-      // let transaction: ConvertTransaction;
 
       beforeEach(() => {
-        // transaction = new ConvertTransaction();
         converter = new streams.ComponentConverter('metadata', mockRegistry);
       });
 
-      // it('should not push a result if finalize did not return one', async () => {
-      //   const pushStub = env.stub(converter, 'push');
-      //   transaction.addFinalizer(TestFinalizerNoResult);
-
-      //   await converter._flush((err) => expect(err).to.be.undefined);
-
-      //   expect(pushStub.notCalled).to.be.true;
-      // });
-
       it('should flush one result from a single transaction finalizer', async () => {
-        // converter.context.recomposition.setState((state) => {
-        //   state['Test__c'] = {
-        //     component,
-        //     children: [],
-        //   };
-        // });
-        // const finalizer = new TestFinalizerNoWrites();
         const format: WriterFormat = { component, writeInfos: [] };
         const pushStub = env.stub(converter, 'push');
         env.stub(converter.context.recomposition, 'finalize').resolves([format]);
-        // transaction.addFinalizer(TestFinalizerNoWrites);
 
         await converter._flush((err) => expect(err).to.be.undefined);
 
@@ -219,7 +200,6 @@ describe('Streams', () => {
         const format: WriterFormat = { component, writeInfos: [] };
         const results = [format, format];
         env.stub(converter.context.recomposition, 'finalize').resolves(results);
-        // transaction.addFinalizer(TestFinalizerMultipleFormatsNoWrites);
 
         await converter._flush((err) => expect(err).to.be.undefined);
 

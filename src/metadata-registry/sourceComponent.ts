@@ -83,7 +83,7 @@ export class SourceComponent implements MetadataComponent {
       const contents = await this.tree.readFile(this.xml);
       return parse(contents.toString(), { ignoreAttributes: false });
     }
-    throw new LibraryError('error_parsing_xml', this.name);
+    return {};
   }
 
   public getPackageRelativePath(fsPath: SourcePath, format: SfdxFileFormat): SourcePath {

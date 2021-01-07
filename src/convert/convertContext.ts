@@ -49,7 +49,7 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
     const writerData: WriterFormat[] = [];
 
     for (const { component: parent, children } of Object.values(this.state)) {
-      const baseObject: JsonMap = parent.xml ? await parent.parseXml() : {};
+      const baseObject: JsonMap = await parent.parseXml();
       const recomposedXmlObj = await this.recompose(children, baseObject);
       writerData.push({
         component: parent,

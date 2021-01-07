@@ -58,13 +58,11 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const writeInfos: WriteInfo[] = [];
     const { type, fullName: parentFullName } = component;
 
-    const mergeWithChildren = mergeWith ? new ComponentSet(mergeWith.getChildren()) : undefined;
+    const childrenOfMergeComponent = mergeWith
+      ? new ComponentSet(mergeWith.getChildren())
+      : undefined;
     let parentXmlObject: any;
     const composedMetadata = await this.getComposedMetadataEntries(component);
-
-    // if (mergeWith) {
-    //   this.setDecomposedState(component);
-    // }
 
     for (const [tagKey, tagValue] of composedMetadata) {
       const childTypeId = type.children?.directories[tagKey];
@@ -81,30 +79,35 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
           const source = new JsToXml({
             [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
           });
+          // if there's nothing to merge with, push write operation now to default location
           if (!mergeWith) {
             writeInfos.push({
               source,
               output: this.getDefaultOutput(childComponent),
             });
-          } else {
-            if (mergeWithChildren.has(childComponent)) {
-              const mergeChild: SourceComponent = mergeWithChildren
-                .getSourceComponents(childComponent)
-                .next().value;
-              writeInfos.push({
+          }
+          // if the merge parent has a child that can be merged with, push write
+          // operation now and mark it as merged in the state
+          else if (childrenOfMergeComponent.has(childComponent)) {
+            const mergeChild: SourceComponent = childrenOfMergeComponent
+              .getSourceComponents(childComponent)
+              .next().value;
+            writeInfos.push({
+              source,
+              output: mergeChild.xml,
+            });
+            this.setDecomposedState(childComponent, { foundMerge: true });
+          }
+          // if no child component is found to merge with yet, mark it as so in
+          // the state
+          else if (!this.getDecomposedState(childComponent)?.foundMerge) {
+            this.setDecomposedState(childComponent, {
+              foundMerge: false,
+              writeInfo: {
                 source,
-                output: mergeChild.xml,
-              });
-              this.setDecomposedState(childComponent, { foundMerge: true });
-            } else {
-              this.setDecomposedState(childComponent, {
-                foundMerge: false,
-                writeInfo: {
-                  source,
-                  output: this.getDefaultOutput(childComponent),
-                },
-              });
-            }
+                output: this.getDefaultOutput(childComponent),
+              },
+            });
           }
         }
       } else {
@@ -118,8 +121,8 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       }
     }
 
-    const parentInContextState = !!this.context.decomposition.state[parentFullName];
-    if (!parentInContextState && parentXmlObject) {
+    const parentState = this.getDecomposedState(component);
+    if (!parentState && parentXmlObject) {
       const parentSource = new JsToXml(parentXmlObject);
       if (!mergeWith) {
         writeInfos.push({
@@ -132,7 +135,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
           output: mergeWith.xml,
         });
         this.setDecomposedState(component, { foundMerge: true });
-      } else {
+      } else if (!parentState?.foundMerge) {
         this.setDecomposedState(component, {
           foundMerge: false,
           writeInfo: {
@@ -165,6 +168,13 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     this.context.decomposition.setState((state) => {
       state[key] = Object.assign(state[key] ?? {}, withOrigin);
     });
+  }
+
+  private getDecomposedState<T extends string>(
+    forComponent: MetadataComponent
+  ): DecompositionState[T] {
+    const key = `${forComponent.type.name}#${forComponent.fullName}`;
+    return this.context.decomposition.state[key];
   }
 
   private getDefaultOutput(component: MetadataComponent): SourcePath {

@@ -15,7 +15,6 @@ import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/registry/decomposedTo
 import { SourceComponent } from '../../../src';
 import { XML_NS_URL, XML_NS_KEY } from '../../../src/common';
 import { ConvertContext } from '../../../src/convert/convertContext';
-import { Readable } from 'stream';
 
 const env = createSandbox();
 
@@ -25,16 +24,17 @@ describe('DecomposedMetadataTransformer', () => {
   afterEach(() => env.restore());
 
   describe('toMetadataFormat', () => {
-    it('should defer write operations and set context state when a child component is given', async () => {
-      const child = component.getChildren()[0];
+    it('should defer write operations and set context state when a child components are given', async () => {
+      const [child1, child2] = component.getChildren();
       const context = new ConvertContext();
       const transformer = new DecomposedMetadataTransformer(mockRegistry, context);
 
-      expect(await transformer.toMetadataFormat(child)).to.deep.equal([]);
+      expect(await transformer.toMetadataFormat(child1)).to.deep.equal([]);
+      expect(await transformer.toMetadataFormat(child2)).to.deep.equal([]);
       expect(context.recomposition.state).to.deep.equal({
         [component.fullName]: {
           component,
-          children: [child],
+          children: [child1, child2],
         },
       });
     });
@@ -48,6 +48,21 @@ describe('DecomposedMetadataTransformer', () => {
         [component.fullName]: {
           component,
           children: component.getChildren(),
+        },
+      });
+    });
+
+    it('should defer write operations and set context state when a child and parent component is given', async () => {
+      const [child] = component.getChildren();
+      const context = new ConvertContext();
+      const transformer = new DecomposedMetadataTransformer(mockRegistry, context);
+
+      expect(await transformer.toMetadataFormat(child)).to.deep.equal([]);
+      expect(await transformer.toMetadataFormat(component)).to.deep.equal([]);
+      expect(context.recomposition.state).to.deep.equal({
+        [component.fullName]: {
+          component,
+          children: [child].concat(component.getChildren()),
         },
       });
     });
@@ -338,8 +353,45 @@ describe('DecomposedMetadataTransformer', () => {
         });
       });
 
-      it('should defer write operation for parent that is not a member of merge component', () => {
-        throw new Error('write this test!');
+      it('should defer write operation for parent xml that is not a member of merge component', async () => {
+        // const mergeComponentChild = component.getChildren()[0];
+        const { fullName, type } = component;
+        const root = join('main', 'default', type.directoryName, fullName);
+        const componentToMerge = SourceComponent.createVirtualComponent(
+          {
+            name: 'a',
+            type: mockRegistryData.types.reginaking,
+          },
+          []
+        );
+        env.stub(component, 'parseXml').resolves({
+          ReginaKing: {
+            [XML_NS_KEY]: XML_NS_URL,
+            fullName: component.fullName,
+            foo: 'bar',
+          },
+        });
+        const context = new ConvertContext();
+        const transformer = new DecomposedMetadataTransformer(mockRegistry, context);
+
+        const result = await transformer.toSourceFormat(component, componentToMerge);
+        expect(result).to.be.empty;
+        expect(context.decomposition.state).to.deep.equal({
+          [`${type.name}#${fullName}`]: {
+            foundMerge: false,
+            origin: component,
+            writeInfo: {
+              source: new JsToXml({
+                [type.name]: {
+                  [XML_NS_KEY]: XML_NS_URL,
+                  fullName,
+                  foo: 'bar',
+                },
+              }),
+              output: join(root, `${fullName}.${type.suffix}-meta.xml`),
+            },
+          },
+        });
       });
     });
   });

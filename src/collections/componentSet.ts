@@ -324,11 +324,11 @@ export class ComponentSet implements Iterable<MetadataComponent> {
   }
 
   private async getConnection(auth: Connection | string): Promise<Connection> {
-    return auth instanceof Connection
-      ? auth
-      : await Connection.create({
+    return typeof auth === 'string'
+      ? await Connection.create({
           authInfo: await AuthInfo.create({ username: auth }),
-        });
+        })
+      : auth;
   }
 
   private sourceKey(component: SourceComponent): string {

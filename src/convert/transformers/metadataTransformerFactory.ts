@@ -9,17 +9,17 @@ import { MetadataTransformer } from '../types';
 import { DefaultMetadataTransformer } from './defaultMetadataTransformer';
 import { SourceComponent } from '../../metadata-registry/sourceComponent';
 import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
-import { ConvertTransaction } from '../convertTransaction';
+import { ConvertContext } from '../convertContext';
 import { StaticResourceMetadataTransformer } from './staticResourceMetadataTransformer';
 import { RegistryAccess, TransformerStrategy } from '../../metadata-registry';
 
 export class MetadataTransformerFactory {
   private registry: RegistryAccess;
-  private convertTransaction: ConvertTransaction;
+  private context: ConvertContext;
 
-  constructor(registry: RegistryAccess, convertTransaction = new ConvertTransaction()) {
+  constructor(registry: RegistryAccess, context = new ConvertContext()) {
     this.registry = registry;
-    this.convertTransaction = convertTransaction;
+    this.context = context;
   }
 
   public getTransformer(component: SourceComponent): MetadataTransformer {
@@ -29,11 +29,11 @@ export class MetadataTransformerFactory {
     switch (transformerId) {
       case TransformerStrategy.Standard:
       case undefined:
-        return new DefaultMetadataTransformer(this.registry, this.convertTransaction);
+        return new DefaultMetadataTransformer(this.registry, this.context);
       case TransformerStrategy.Decomposed:
-        return new DecomposedMetadataTransformer(this.registry, this.convertTransaction);
+        return new DecomposedMetadataTransformer(this.registry, this.context);
       case TransformerStrategy.StaticResource:
-        return new StaticResourceMetadataTransformer(this.registry, this.convertTransaction);
+        return new StaticResourceMetadataTransformer(this.registry, this.context);
       default:
         throw new RegistryError('error_missing_transformer', [type.name, transformerId]);
     }

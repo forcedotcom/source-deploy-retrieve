@@ -15,14 +15,8 @@ import { createSandbox, SinonStub } from 'sinon';
 import { Readable, Writable } from 'stream';
 import { MetadataResolver, SourceComponent, ComponentSet } from '../../src';
 import { WriteInfo, WriterFormat } from '../../src/convert';
-import { ConvertTransaction } from '../../src/convert/convertTransaction';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
 import { LibraryError } from '../../src/errors';
-import {
-  TestFinalizerNoResult,
-  TestFinalizerNoWrites,
-  TestFinalizerMultipleFormatsNoWrites,
-} from '../mock/convert/finalizers';
 import { mockRegistry } from '../mock/registry';
 import { KATHY_COMPONENTS } from '../mock/registry/kathyConstants';
 import { XML_NS_URL, XML_DECL, XML_NS_KEY } from '../../src/common';
@@ -137,7 +131,7 @@ describe('Streams', () => {
         []
       );
       const mergeSet = new ComponentSet([component]);
-      const converter = new streams.ComponentConverter('source', mockRegistry, undefined, mergeSet);
+      const converter = new streams.ComponentConverter('source', mockRegistry, mergeSet);
 
       converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {
         try {
@@ -165,7 +159,7 @@ describe('Streams', () => {
         xml: join('path', 'to', 'yetanother', 'kathys', 'a.kathy-meta.xml'),
       });
       const mergeSet = new ComponentSet([component, secondMergeComponent]);
-      const converter = new streams.ComponentConverter('source', mockRegistry, undefined, mergeSet);
+      const converter = new streams.ComponentConverter('source', mockRegistry, mergeSet);
 
       converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {
         try {
@@ -185,37 +179,27 @@ describe('Streams', () => {
 
     describe('Transaction Finalizers', () => {
       let converter: streams.ComponentConverter;
-      let transaction: ConvertTransaction;
 
       beforeEach(() => {
-        transaction = new ConvertTransaction();
-        converter = new streams.ComponentConverter('metadata', mockRegistry, transaction);
-      });
-
-      it('should not push a result if finalize did not return one', async () => {
-        const pushStub = env.stub(converter, 'push');
-        transaction.addFinalizer(TestFinalizerNoResult);
-
-        await converter._flush((err) => expect(err).to.be.undefined);
-
-        expect(pushStub.notCalled).to.be.true;
+        converter = new streams.ComponentConverter('metadata', mockRegistry);
       });
 
       it('should flush one result from a single transaction finalizer', async () => {
-        const finalizer = new TestFinalizerNoWrites();
+        const format: WriterFormat = { component, writeInfos: [] };
         const pushStub = env.stub(converter, 'push');
-        transaction.addFinalizer(TestFinalizerNoWrites);
+        env.stub(converter.context.recomposition, 'finalize').resolves([format]);
 
         await converter._flush((err) => expect(err).to.be.undefined);
 
         expect(pushStub.calledOnce).to.be.true;
-        expect(pushStub.calledOnceWith(await finalizer.finalize())).to.be.true;
+        expect(pushStub.calledOnceWith(format)).to.be.true;
       });
 
-      it('should flush multiple results from a single transaction finalizer', async () => {
+      it('should flush multiple results from a context finalizer', async () => {
         const pushStub = env.stub(converter, 'push');
-        const results = await new TestFinalizerMultipleFormatsNoWrites().finalize();
-        transaction.addFinalizer(TestFinalizerMultipleFormatsNoWrites);
+        const format: WriterFormat = { component, writeInfos: [] };
+        const results = [format, format];
+        env.stub(converter.context.recomposition, 'finalize').resolves(results);
 
         await converter._flush((err) => expect(err).to.be.undefined);
 
@@ -226,7 +210,7 @@ describe('Streams', () => {
 
       it('should pass error to callback if a problem occurred', async () => {
         const expectedError = new Error('whoops');
-        env.stub(transaction, 'executeFinalizers').throws(expectedError);
+        env.stub(converter.context, 'executeFinalizers').throws(expectedError);
 
         await converter._flush((err: Error) => expect(err).to.deep.equal(expectedError));
       });
@@ -257,7 +241,7 @@ describe('Streams', () => {
       },
     ]);
     const chunk: WriterFormat = {
-      component: component,
+      component,
       writeInfos: [
         {
           output: component.getPackageRelativePath(component.xml, 'metadata'),
@@ -280,7 +264,7 @@ describe('Streams', () => {
     let pipelineStub: SinonStub;
 
     describe('StandardWriter', () => {
-      const resolver = new MetadataResolver(mockRegistry, chunk.component.tree);
+      const resolver = new MetadataResolver(mockRegistry, component.tree);
       const resolverSpy = env.spy(resolver, 'getComponentsFromPath');
 
       let writer: streams.StandardWriter;

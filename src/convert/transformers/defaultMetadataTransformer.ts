@@ -20,17 +20,17 @@ import { basename, dirname, join } from 'path';
  */
 export class DefaultMetadataTransformer extends BaseMetadataTransformer {
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
-    return this.getWriterFormat(component, 'metadata');
+    return this.getWriteInfos(component, 'metadata');
   }
 
   public async toSourceFormat(
     component: SourceComponent,
     mergeWith?: SourceComponent
   ): Promise<WriteInfo[]> {
-    return this.getWriterFormat(component, 'source', mergeWith);
+    return this.getWriteInfos(component, 'source', mergeWith);
   }
 
-  private getWriterFormat(
+  private getWriteInfos(
     component: SourceComponent,
     targetFormat: SfdxFileFormat,
     mergeWith?: SourceComponent

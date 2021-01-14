@@ -38,5 +38,5 @@ export {
   ComponentSet,
   FromManifestOptions,
   FromSourceOptions,
-  SourceComponentOptions,
+  ResolveOptions,
 } from './collections';

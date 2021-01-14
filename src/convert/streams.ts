@@ -13,7 +13,7 @@ import { SourceComponent, RegistryAccess, MetadataResolver } from '../metadata-r
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { SourcePath, XML_DECL } from '../common';
-import { ConvertTransaction } from './convertTransaction';
+import { ConvertContext } from './convertContext';
 import { MetadataTransformerFactory } from './transformers';
 import { JsonMap } from '@salesforce/ts-types';
 import { j2xParser } from 'fast-xml-parser';
@@ -46,22 +46,16 @@ export class ComponentReader extends Readable {
 }
 
 export class ComponentConverter extends Transform {
+  public readonly context = new ConvertContext();
   private targetFormat: SfdxFileFormat;
-  private transaction: ConvertTransaction;
-  private transformerFactory: MetadataTransformerFactory;
   private mergeSet: ComponentSet;
+  private transformerFactory: MetadataTransformerFactory;
 
-  constructor(
-    targetFormat: SfdxFileFormat,
-    registry: RegistryAccess,
-    transaction = new ConvertTransaction(),
-    mergeSet?: ComponentSet
-  ) {
+  constructor(targetFormat: SfdxFileFormat, registry: RegistryAccess, mergeSet?: ComponentSet) {
     super({ objectMode: true });
     this.targetFormat = targetFormat;
-    this.transaction = transaction;
-    this.transformerFactory = new MetadataTransformerFactory(registry, this.transaction);
     this.mergeSet = mergeSet;
+    this.transformerFactory = new MetadataTransformerFactory(registry, this.context);
   }
 
   public async _transform(
@@ -107,14 +101,8 @@ export class ComponentConverter extends Transform {
   public async _flush(callback: (err: Error, data?: WriterFormat) => void): Promise<void> {
     let err: Error;
     try {
-      for await (const finalizerResult of this.transaction.executeFinalizers()) {
-        if (finalizerResult) {
-          if (Array.isArray(finalizerResult)) {
-            finalizerResult.forEach((result) => this.push(result));
-          } else {
-            this.push(finalizerResult);
-          }
-        }
+      for await (const finalizerResult of this.context.executeFinalizers()) {
+        finalizerResult.forEach((result) => this.push(result));
       }
     } catch (e) {
       err = e;

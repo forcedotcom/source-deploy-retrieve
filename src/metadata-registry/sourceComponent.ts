@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { TreeContainer, VirtualDirectory } from './types';
-import { join, dirname, basename } from 'path';
+import { join, basename } from 'path';
 import { parse } from 'fast-xml-parser';
 import { ForceIgnore } from './forceIgnore';
 import { parseMetadataXml } from '../utils/registry';
@@ -73,16 +73,17 @@ export class SourceComponent implements MetadataComponent {
   }
 
   public getChildren(): SourceComponent[] {
-    return this.xml && !this.parent && this.type.children
-      ? this.getChildrenInternal(dirname(this.xml))
+    return this.content && !this.parent && this.type.children
+      ? this.getChildrenInternal(this.content)
       : [];
   }
 
   public async parseXml(): Promise<JsonMap> {
     if (this.xml) {
-      return parse((await this.tree.readFile(this.xml)).toString());
+      const contents = await this.tree.readFile(this.xml);
+      return parse(contents.toString(), { ignoreAttributes: false });
     }
-    throw new LibraryError('error_parsing_xml', this.name);
+    return {};
   }
 
   public getPackageRelativePath(fsPath: SourcePath, format: SfdxFileFormat): SourcePath {

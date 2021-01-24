@@ -61,7 +61,7 @@ export abstract class MetadataOperation<
     this.event.on('finish', subscriber);
   }
 
-  public onCancel(subscriber: (result: U) => void): void {
+  public onCancel(subscriber: (result: U | undefined) => void): void {
     this.event.on('cancel', subscriber);
   }
 

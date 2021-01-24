@@ -4,18 +4,19 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { assert, createSandbox, SinonFakeTimers } from 'sinon';
-import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
+import { createSandbox, SinonFakeTimers } from 'sinon';
+import { testSetup } from '@salesforce/core/lib/testSetup';
 import { ComponentSet } from '../../../src';
 import { MetadataOperation } from '../../../src/client/metadataOperatitons/metadataOperation';
 import { MetadataRequestResult, RequestStatus, SourceApiResult } from '../../../src/client/types';
-import { AuthInfo, Connection } from '@salesforce/core';
+import { Connection } from '@salesforce/core';
 import { expect } from 'chai';
 import { DeployError } from '../../../src/errors';
 import { Done } from 'mocha';
+import { mockConnection } from '../../mock/client';
 
+const $$ = testSetup();
 const env = createSandbox();
-
 class TestOperation extends MetadataOperation<MetadataRequestResult, SourceApiResult> {
   public request = { done: true, status: RequestStatus.Succeeded, id: '1', success: true };
   public lifecycle = {
@@ -40,19 +41,6 @@ class TestOperation extends MetadataOperation<MetadataRequestResult, SourceApiRe
     return this.lifecycle.doCancel();
   }
 }
-const $$ = testSetup();
-
-async function mockConnection(): Promise<Connection> {
-  const testData = new MockTestOrgData();
-  $$.setConfigStubContents('AuthInfoConfig', {
-    contents: await testData.getConfig(),
-  });
-  return Connection.create({
-    authInfo: await AuthInfo.create({
-      username: testData.username,
-    }),
-  });
-}
 
 function validate(expectations: () => void, done: Done): void {
   let fail: Error;
@@ -72,7 +60,7 @@ describe('MetadataOperation', () => {
 
   beforeEach(async () => {
     clock = env.useFakeTimers();
-    connection = await mockConnection();
+    connection = await mockConnection($$);
     operation = new TestOperation({ components: new ComponentSet(), connection });
   });
 
@@ -122,21 +110,9 @@ describe('MetadataOperation', () => {
       checkStatus.onFirstCall().returns({ status: RequestStatus.InProgress });
       checkStatus.onSecondCall().returns({ status: RequestStatus.Succeeded });
 
-      /**
-       * How this works:
-       * 1) queue m1 (operation lifecycle)
-       * 2) queue m2 (first queueMicrotask callback)
-       * 3) run m1
-       * 4) queue m3 (first status check) during m1
-       * 5) run m2
-       * 6) queue m4 (tick clock by 110 ms)
-       * 7) run m3 (1st poll finishes, 2nd poll starts)
-       * 8) queue m5 (wait before checking status again) during m3
-       * 9) run m4
-       * 10) run m5, (request finishes)
-       */
       operation.start();
       queueMicrotask(() => {
+        // schedule clock to break first poll wait after lifecycle starts
         queueMicrotask(() => {
           clock.tick(110);
         });
@@ -169,6 +145,21 @@ describe('MetadataOperation', () => {
   describe('Cancellation', () => {
     it('should exit immediately if cancel operation finishes synchonously', (done) => {
       const { checkStatus, doCancel } = operation.lifecycle;
+      checkStatus.returns({ status: RequestStatus.InProgress });
+
+      operation.start();
+      queueMicrotask(() => operation.cancel());
+
+      operation.onCancel(() => {
+        validate(() => {
+          expect(doCancel.calledOnce).to.be.true;
+          expect(checkStatus.calledOnce).to.be.true;
+        }, done);
+      });
+    });
+
+    it('should exit immediately and return undefined result if cancelled in same task', (done) => {
+      const { checkStatus, doCancel } = operation.lifecycle;
 
       operation.start();
       operation.cancel();
@@ -185,20 +176,24 @@ describe('MetadataOperation', () => {
       const { checkStatus, doCancel } = operation.lifecycle;
       checkStatus.returns({ status: RequestStatus.InProgress });
       doCancel.callsFake(() => {
+        // when cancel is called, set status to canceling
         checkStatus.returns({ status: RequestStatus.Canceling });
         return false;
       });
-      // doCancel.returns(false);
 
       operation.start();
-      operation.cancel();
-
       queueMicrotask(() => {
+        // cancel right after lifecycle starts
+        operation.cancel();
         queueMicrotask(() => {
+          // schedule timer tick to break first wait
           queueMicrotask(() => {
             clock.tick(110);
             queueMicrotask(() => {
-              clock.tick(110);
+              // schedule timer tick to break second wait
+              queueMicrotask(() => {
+                clock.tick(110);
+              });
             });
           });
         });
@@ -206,7 +201,9 @@ describe('MetadataOperation', () => {
 
       operation.onUpdate((result) => {
         if (checkStatus.callCount === 2) {
+          // should be canceling by second poll
           expect(result.status).to.equal(RequestStatus.Canceling);
+          // force third poll to have cancel status
           checkStatus.returns({ status: RequestStatus.Canceled });
         }
       });

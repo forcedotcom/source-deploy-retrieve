@@ -6,8 +6,7 @@
  */
 import { AuthInfo, Connection } from '@salesforce/core';
 import { parse as parseXml, j2xParser } from 'fast-xml-parser';
-import { SourceClient } from '../client';
-import { MetadataDeployOptions, SourceDeployResult, SourceRetrieveResult } from '../client/types';
+import { MetadataApiDeployOptions } from '../client/types';
 import { MetadataComponent, XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSetError } from '../errors';
 import {
@@ -24,6 +23,13 @@ import {
   SourceComponentOptions,
 } from './types';
 import { ComponentLike } from '../common/types';
+import { DeployOperation } from '../client/metadataOperatitons';
+import {
+  RetrieveOperation,
+  RetrieveOptions,
+} from '../client/metadataOperatitons/metadataApiRetrieve';
+
+type Auth = { usernameOrConnection: string | Connection };
 
 export class ComponentSet implements Iterable<MetadataComponent> {
   private static readonly WILDCARD = '*';
@@ -133,20 +139,22 @@ export class ComponentSet implements Iterable<MetadataComponent> {
    * Deploying with a username requires local AuthInfo from @salesforce/core, usually created
    * after authenticating with the Salesforce CLI.
    *
-   * @param usernameOrConnection Username or connection to deploy components with.
    * @param options
    */
-  public async deploy(
-    usernameOrConnection: string | Connection,
-    options?: MetadataDeployOptions
-  ): Promise<SourceDeployResult> {
+  public async deploy(options: MetadataApiDeployOptions & Auth): Promise<DeployOperation> {
     const toDeploy = Array.from(this.getSourceComponents());
+
     if (toDeploy.length === 0) {
       throw new ComponentSetError('error_no_source_to_deploy');
     }
-    const connection = await this.getConnection(usernameOrConnection);
-    const client = new SourceClient(connection, new MetadataResolver());
-    return client.metadata.deploy(toDeploy, options);
+
+    const operationOptions = Object.assign({}, options, {
+      components: this,
+      connection: await this.getConnection(options.usernameOrConnection),
+      registry: this.registry,
+    });
+
+    return new DeployOperation(operationOptions);
   }
 
   /**
@@ -158,22 +166,18 @@ export class ComponentSet implements Iterable<MetadataComponent> {
    * @param output Directory to retrieve to.
    * @param options
    */
-  public async retrieve(
-    usernameOrConnection: string | Connection,
-    output: string,
-    options?: { merge?: boolean; wait?: number }
-  ): Promise<SourceRetrieveResult> {
+  public async retrieve(options: RetrieveOptions & Auth): Promise<RetrieveOperation> {
     if (this.size === 0) {
       throw new ComponentSetError('error_no_components_to_retrieve');
     }
-    const connection = await this.getConnection(usernameOrConnection);
-    const client = new SourceClient(connection, new MetadataResolver());
-    return client.metadata.retrieve({
+
+    const operationOptions = Object.assign({}, options, {
       components: this,
-      merge: options?.merge,
-      output,
-      wait: options?.wait,
+      connection: await this.getConnection(options.usernameOrConnection),
+      registry: this.registry,
     });
+
+    return new RetrieveOperation(operationOptions);
   }
 
   /**

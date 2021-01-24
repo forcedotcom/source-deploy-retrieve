@@ -4,9 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Connection } from '@salesforce/core';
 import { SourceDeployResult, ComponentStatus } from '..';
-import { MetadataConverter, SourceComponent } from '../..';
+import { MetadataConverter } from '../..';
 import { DiagnosticUtil } from '../diagnosticUtil';
 import {
   DeployResult,
@@ -14,26 +13,22 @@ import {
   DeployMessage,
   MetadataApiDeployOptions,
 } from '../types';
-import { MetadataApiOperation } from './metadataApiOperation';
+import { MetadataOperation, MetadataOperationOptions } from './metadataOperation';
 
-export class DeployOperation extends MetadataApiOperation<DeployResult, SourceDeployResult> {
-  public static readonly DEFAULT_OPTIONS = {
+export type DeployOperationOptions = MetadataOperationOptions & MetadataApiDeployOptions;
+
+export class DeployOperation extends MetadataOperation<DeployResult, SourceDeployResult> {
+  public static readonly DEFAULT_OPTIONS: MetadataApiDeployOptions = {
     rollbackOnError: true,
     ignoreWarnings: false,
     checkOnly: false,
     singlePackage: true,
   };
-  private components: SourceComponent[];
-  private options?: MetadataApiDeployOptions;
+  private options: MetadataApiDeployOptions;
 
-  constructor(
-    connection: Connection,
-    components: SourceComponent[],
-    options?: MetadataApiDeployOptions
-  ) {
-    super(connection);
-    this.components = components;
-    this.options = options || DeployOperation.DEFAULT_OPTIONS;
+  constructor(options: DeployOperationOptions) {
+    super(options);
+    this.options = Object.assign({}, DeployOperation.DEFAULT_OPTIONS, options);
   }
 
   protected async doCancel(): Promise<boolean> {
@@ -51,25 +46,17 @@ export class DeployOperation extends MetadataApiOperation<DeployResult, SourceDe
 
   protected async pre(): Promise<{ id: string }> {
     const converter = new MetadataConverter();
-    const { zipBuffer } = await converter.convert(this.components, 'metadata', { type: 'zip' });
-
-    // if (!options) {
-    //   options = DeployOperation.DEFAULT_OPTIONS;
-    // } else {
-    //   for (const [property, value] of Object.entries(DEFAULT_API_OPTIONS)) {
-    //     if (!(property in options.apiOptions)) {
-    //       //@ts-ignore ignore while dynamically building the defaults
-    //       options.apiOptions[property] = value;
-    //     }
-    //   }
-    // }
-
-    return this.connection.metadata.deploy(zipBuffer, this.options);
+    const { zipBuffer } = await converter.convert(
+      Array.from(this.components.getSourceComponents()),
+      'metadata',
+      { type: 'zip' }
+    );
+    return this.connection.metadata.deploy(zipBuffer, DeployOperation.DEFAULT_OPTIONS);
   }
 
   protected async post(result: DeployResult): Promise<SourceDeployResult> {
     const componentDeploymentMap = new Map<string, ComponentDeployment>();
-    for (const component of this.components) {
+    for (const component of this.components.getSourceComponents()) {
       componentDeploymentMap.set(`${component.type.name}:${component.fullName}`, {
         status: ComponentStatus.Unchanged,
         component,

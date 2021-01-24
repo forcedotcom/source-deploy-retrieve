@@ -19,7 +19,7 @@ import {
   SourceDeployResult,
   QueryResult,
   SourceRetrieveResult,
-  RetrieveStatus,
+  RequestStatus,
 } from './types';
 import { ComponentSet } from '../collections';
 
@@ -78,7 +78,7 @@ export class ToolingApi extends BaseApi {
 
       if (queryResult && queryResult.records.length === 0) {
         return {
-          status: RetrieveStatus.Failed,
+          status: RequestStatus.Failed,
           success: false,
           successes: [],
           failures: [
@@ -97,7 +97,7 @@ export class ToolingApi extends BaseApi {
       createFiles(saveFilesMap);
 
       retrieveResult = {
-        status: RetrieveStatus.Succeeded,
+        status: RequestStatus.Succeeded,
         success: true,
         successes: [{ component: mdComponent }],
         failures: [],

@@ -6,19 +6,27 @@
  */
 import { Connection } from '@salesforce/core';
 import { EventEmitter } from 'events';
+import { ComponentSet } from '../../collections';
 import { DeployError } from '../../errors';
 import { MetadataRequestResult, RequestStatus, SourceApiResult } from '../types';
 
-export abstract class MetadataApiOperation<
+export interface MetadataOperationOptions {
+  connection: Connection;
+  components: ComponentSet;
+}
+
+export abstract class MetadataOperation<
   U extends MetadataRequestResult,
   R extends SourceApiResult
 > {
   protected connection: Connection;
-  private cancelling = false;
+  protected components: ComponentSet;
+  private signalCancel = false;
   private event = new EventEmitter();
 
-  constructor(connection: Connection) {
+  constructor({ connection, components }: MetadataOperationOptions) {
     this.connection = connection;
+    this.components = components;
   }
 
   public start(interval = 100): void {
@@ -26,7 +34,7 @@ export abstract class MetadataApiOperation<
       .then(({ id }) => this.pollStatus(id, interval))
       .then(
         (result): Promise<R | undefined> => {
-          if (result.status === RequestStatus.Canceled) {
+          if (!result || result.status === RequestStatus.Canceled) {
             this.event.emit('cancel', result);
             return Promise.resolve(undefined);
           }
@@ -42,7 +50,7 @@ export abstract class MetadataApiOperation<
   }
 
   public cancel(): void {
-    this.cancelling = true;
+    this.signalCancel = true;
   }
 
   public onUpdate(subscriber: (result: U) => void): void {
@@ -67,28 +75,36 @@ export abstract class MetadataApiOperation<
 
     try {
       while (true) {
-        if (this.cancelling) {
-          const shouldBreak = this.doCancel();
+        if (this.signalCancel) {
+          const shouldBreak = await this.doCancel();
           if (shouldBreak) {
-            result.status = RequestStatus.Canceled;
+            if (result) {
+              result.status = RequestStatus.Canceled;
+            }
             return result;
           }
+          this.signalCancel = false;
         }
+
         if (triedOnce) {
           await this.wait(interval);
         }
+
         result = await this.checkStatus(id);
+
         switch (result.status) {
           case RequestStatus.Succeeded:
           case RequestStatus.Canceled:
           case RequestStatus.Failed:
             return result;
         }
+
         this.event.emit('update', result);
+
         triedOnce = true;
       }
     } catch (e) {
-      throw new DeployError('md_request_fail', e);
+      throw new DeployError('md_request_fail', e.message);
     }
   }
 

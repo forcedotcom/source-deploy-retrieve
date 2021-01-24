@@ -48,14 +48,31 @@ export enum ComponentStatus {
   Failed = 'Failed',
 }
 
-interface SourceApiResult {
+export interface SourceApiResult {
   success: boolean;
 }
 
 export interface SourceDeployResult extends SourceApiResult {
   id: RecordId;
   components?: ComponentDeployment[];
-  status: DeployStatus | ToolingDeployStatus;
+  status: RequestStatus | ToolingDeployStatus;
+}
+
+export enum RequestStatus {
+  Pending = 'Pending',
+  InProgress = 'InProgress',
+  Succeeded = 'Succeeded',
+  SucceededPartial = 'SucceededPartial',
+  Failed = 'Failed',
+  Canceling = 'Canceling',
+  Canceled = 'Canceled',
+}
+
+export interface MetadataRequestResult {
+  id: string;
+  status: RequestStatus;
+  success: boolean;
+  done: boolean;
 }
 
 export type RetrieveFailure = {
@@ -72,7 +89,7 @@ export interface SourceRetrieveResult extends SourceApiResult {
   id?: RecordId;
   successes: RetrieveSuccess[];
   failures: RetrieveFailure[];
-  status: RetrieveStatus;
+  status: RequestStatus;
 }
 
 // ------------------------------------------------
@@ -82,8 +99,8 @@ export interface SourceRetrieveResult extends SourceApiResult {
 /**
  * Raw response returned from a checkDeployStatus call to the Metadata API
  */
-export type DeployResult = {
-  id: string;
+export interface DeployResult extends MetadataRequestResult {
+  // id: string;
   canceledBy?: string;
   canceledByName?: string;
   checkOnly: boolean;
@@ -92,7 +109,7 @@ export type DeployResult = {
   createdByName: string;
   createdDate: string;
   details: DeployDetails;
-  done: boolean;
+  // done: boolean;
   errorMessage?: string;
   errorStatusCode?: string;
   ignoreWarnings: boolean;
@@ -107,9 +124,37 @@ export type DeployResult = {
   rollbackOnError: boolean;
   startDate?: string;
   stateDetail?: string;
-  status: DeployStatus;
-  success: boolean;
-};
+  // status: RequestStatus;
+  // success: boolean;
+}
+// export type DeployResult = {
+//   id: string;
+//   canceledBy?: string;
+//   canceledByName?: string;
+//   checkOnly: boolean;
+//   completedDate?: string;
+//   createdBy: string;
+//   createdByName: string;
+//   createdDate: string;
+//   details: DeployDetails;
+//   done: boolean;
+//   errorMessage?: string;
+//   errorStatusCode?: string;
+//   ignoreWarnings: boolean;
+//   lastModifiedDate: string;
+//   numberComponentErrors: number;
+//   numberComponentsDeployed: number;
+//   numberComponentsTotal: number;
+//   numberTestErrors: number;
+//   numberTestsCompleted: number;
+//   numberTestsTotal: number;
+//   runTestsEnabled: boolean;
+//   rollbackOnError: boolean;
+//   startDate?: string;
+//   stateDetail?: string;
+//   status: DeployStatus;
+//   success: boolean;
+// };
 
 /**
  * Possible statuses of a metadata deploy operation.
@@ -199,16 +244,16 @@ export type FileProperties = {
 /**
  * Raw response returned from a checkRetrieveStatus call to the Metadata API
  */
-export type RetrieveResult = {
+export interface RetrieveResult {
   done: boolean;
   fileProperties: FileProperties[];
   id: string;
-  status: RetrieveStatus;
+  status: RequestStatus;
   success: boolean;
   messages?: RetrieveMessage[] | RetrieveMessage;
   // this is a base64binary
   zipFile: string;
-};
+}
 
 // ------------------------------------------------
 // Tooling API result types
@@ -392,9 +437,9 @@ export type MetadataApiDeployOptions = {
   singlePackage?: boolean;
 };
 
-export type MetadataDeployOptions = WaitFlag & {
-  apiOptions?: MetadataApiDeployOptions;
-};
+// export type MetadataDeployOptions = WaitFlag & {
+//   apiOptions?: MetadataApiDeployOptions;
+// };
 
 export type ToolingDeployOptions = NamespaceFlag;
 

@@ -4,10 +4,10 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+
 import { Connection } from '@salesforce/core';
+import { MetadataResolver } from '..';
 import { ToolingApi } from './toolingApi';
-import { MetadataResolver } from '../metadata-registry';
-import { MetadataApi } from './metadataApi';
 
 /**
  * Transfer SFDX source to and from a Salesforce org.
@@ -18,11 +18,11 @@ export class SourceClient {
    * Perform operations using the tooling api.
    */
   public readonly tooling: ToolingApi;
-  public readonly metadata: MetadataApi;
+  // public readonly metadata: MetadataApi;
 
   constructor(connection: Connection, resolver = new MetadataResolver()) {
     this.connection = connection;
     this.tooling = new ToolingApi(connection, resolver);
-    this.metadata = new MetadataApi(connection, resolver);
+    // this.metadata = new MetadataApi(connection, resolver);
   }
 }

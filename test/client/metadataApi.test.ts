@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, salesforce.com, inc.
+ * Copyright (c) 2021, salesforce.com, inc.
  * All rights reserved.
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
@@ -26,7 +26,7 @@
 //   ComponentSet,
 // } from '../../src';
 // import { MetadataApi, DEFAULT_API_OPTIONS } from '../../src/client/metadataApi';
-// import { DeployResult, RetrieveResult } from '../../src/client/types';
+// import { DeployResult, RequestStatus, RetrieveResult } from '../../src/client/types';
 // import { nls } from '../../src/i18n';
 // import { RegistryAccess } from '../../src/metadata-registry';
 // import { createMockZip } from '../mock/client';
@@ -522,7 +522,7 @@
 
 //     const defaultRetrieveResult: RetrieveResult = {
 //       id: '12345',
-//       status: RetrieveStatus.Succeeded,
+//       status: RequestStatus.Succeeded,
 //       success: true,
 //       fileProperties: [
 //         {
@@ -629,7 +629,7 @@
 //         ],
 //         failures: [],
 //         id: '12345',
-//         status: RetrieveStatus.Succeeded,
+//         status: RequestStatus.Succeeded,
 //       };
 
 //       const result = await metadataClient.retrieve(options);
@@ -639,7 +639,7 @@
 //     it('should return failed result without component matches in SourceRetrieveResult format', async () => {
 //       retrieveStatusStub.resolves({
 //         id: '12345',
-//         status: RetrieveStatus.Succeeded,
+//         status: RequestStatus.Succeeded,
 //         success: false,
 //         fileProperties: [],
 //         done: true,
@@ -659,7 +659,7 @@
 //         success: false,
 //         successes: [],
 //         failures: [{ message: 'There was an error' }],
-//         status: RetrieveStatus.Failed,
+//         status: RequestStatus.Failed,
 //       };
 
 //       const result = await metadataClient.retrieve(options);
@@ -669,7 +669,7 @@
 //     it('should return failed result with component matches in SourceRetrieveResult format', async () => {
 //       retrieveStatusStub.resolves({
 //         id: '12345',
-//         status: RetrieveStatus.Failed,
+//         status: RequestStatus.Failed,
 //         success: false,
 //         fileProperties: [],
 //         done: true,
@@ -688,7 +688,7 @@
 
 //       const sourceRetrieveResult: SourceRetrieveResult = {
 //         id: '12345',
-//         status: RetrieveStatus.Failed,
+//         status: RequestStatus.Failed,
 //         success: false,
 //         successes: [],
 //         failures: [
@@ -703,7 +703,7 @@
 //     it('should return partial success result when there are successes and failures', async () => {
 //       retrieveStatusStub.resolves({
 //         id: '12345',
-//         status: RetrieveStatus.Succeeded,
+//         status: RequestStatus.Succeeded,
 //         success: false,
 //         fileProperties: defaultRetrieveResult.fileProperties,
 //         done: true,
@@ -722,7 +722,7 @@
 //           { component: convertedComponent, properties: defaultRetrieveResult.fileProperties[0] },
 //         ],
 //         failures: [{ message: 'There was an error' }],
-//         status: RetrieveStatus.PartialSuccess,
+//         status: RequestStatus.SucceededPartial,
 //       });
 //     });
 

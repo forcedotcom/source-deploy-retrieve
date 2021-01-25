@@ -23,7 +23,7 @@ import {
   SourceComponentOptions,
 } from './types';
 import { ComponentLike } from '../common/types';
-import { DeployOperation } from '../client/metadataOperatitons';
+import { MetadataApiDeploy } from '../client/metadataOperatitons';
 import {
   RetrieveOperation,
   RetrieveOptions,
@@ -141,7 +141,7 @@ export class ComponentSet implements Iterable<MetadataComponent> {
    *
    * @param options
    */
-  public async deploy(options: MetadataApiDeployOptions & Auth): Promise<DeployOperation> {
+  public async deploy(options: MetadataApiDeployOptions & Auth): Promise<MetadataApiDeploy> {
     const toDeploy = Array.from(this.getSourceComponents());
 
     if (toDeploy.length === 0) {
@@ -154,7 +154,7 @@ export class ComponentSet implements Iterable<MetadataComponent> {
       registry: this.registry,
     });
 
-    return new DeployOperation(operationOptions);
+    return new MetadataApiDeploy(operationOptions);
   }
 
   /**

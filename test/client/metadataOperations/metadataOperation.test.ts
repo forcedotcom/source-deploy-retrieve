@@ -17,6 +17,7 @@ import { mockConnection } from '../../mock/client';
 
 const $$ = testSetup();
 const env = createSandbox();
+
 class TestOperation extends MetadataOperation<MetadataRequestResult, SourceApiResult> {
   public request = { done: true, status: RequestStatus.Succeeded, id: '1', success: true };
   public lifecycle = {
@@ -42,7 +43,7 @@ class TestOperation extends MetadataOperation<MetadataRequestResult, SourceApiRe
   }
 }
 
-function validate(expectations: () => void, done: Done): void {
+export function validate(expectations: () => void, done: Done): void {
   let fail: Error;
   try {
     expectations();
@@ -164,10 +165,11 @@ describe('MetadataOperation', () => {
       operation.start();
       operation.cancel();
 
-      operation.onCancel(() => {
+      operation.onCancel((result) => {
         validate(() => {
           expect(doCancel.calledOnce).to.be.true;
           expect(checkStatus.calledOnce).to.be.false;
+          expect(result).to.be.undefined;
         }, done);
       });
     });
@@ -186,11 +188,11 @@ describe('MetadataOperation', () => {
         // cancel right after lifecycle starts
         operation.cancel();
         queueMicrotask(() => {
-          // schedule timer tick to break first wait
+          // schedule clock to break first wait
           queueMicrotask(() => {
             clock.tick(110);
             queueMicrotask(() => {
-              // schedule timer tick to break second wait
+              // schedule clock to break second wait
               queueMicrotask(() => {
                 clock.tick(110);
               });

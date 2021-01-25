@@ -170,8 +170,8 @@ export enum DeployStatus {
 }
 
 export type DeployDetails = {
-  componentFailures?: DeployMessage[];
-  componentSuccesses?: DeployMessage[];
+  componentFailures?: DeployMessage | DeployMessage[];
+  componentSuccesses?: DeployMessage | DeployMessage[];
   // TODO: Add types for RetrieveResult and RunTestsResult
   // retrieveResult?:
   // runTestResult?:

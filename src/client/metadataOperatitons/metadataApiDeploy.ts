@@ -17,7 +17,7 @@ import { MetadataOperation, MetadataOperationOptions } from './metadataOperation
 
 export type DeployOperationOptions = MetadataOperationOptions & MetadataApiDeployOptions;
 
-export class DeployOperation extends MetadataOperation<DeployResult, SourceDeployResult> {
+export class MetadataApiDeploy extends MetadataOperation<DeployResult, SourceDeployResult> {
   public static readonly DEFAULT_OPTIONS: MetadataApiDeployOptions = {
     rollbackOnError: true,
     ignoreWarnings: false,
@@ -25,15 +25,19 @@ export class DeployOperation extends MetadataOperation<DeployResult, SourceDeplo
     singlePackage: true,
   };
   private options: MetadataApiDeployOptions;
+  private deployId: string | undefined;
 
   constructor(options: DeployOperationOptions) {
     super(options);
-    this.options = Object.assign({}, DeployOperation.DEFAULT_OPTIONS, options);
+    this.options = Object.assign({}, MetadataApiDeploy.DEFAULT_OPTIONS, options);
   }
 
   protected async doCancel(): Promise<boolean> {
-    // @ts-ignore _invoke is private on the jsforce metadata object, and cancelDeploy is not an exposed method
-    const { done } = this.connection.metadata._invoke('cancelDeploy', { id: this.id });
+    let done = true;
+    if (this.deployId) {
+      // @ts-ignore _invoke is private on the jsforce metadata object, and cancelDeploy is not an exposed method
+      done = this.connection.metadata._invoke('cancelDeploy', { id: this.deployId }).done;
+    }
     return done;
   }
 
@@ -51,7 +55,12 @@ export class DeployOperation extends MetadataOperation<DeployResult, SourceDeplo
       'metadata',
       { type: 'zip' }
     );
-    return this.connection.metadata.deploy(zipBuffer, DeployOperation.DEFAULT_OPTIONS);
+    const result = await this.connection.metadata.deploy(
+      zipBuffer,
+      MetadataApiDeploy.DEFAULT_OPTIONS
+    );
+    this.deployId = result.id;
+    return result;
   }
 
   protected async post(result: DeployResult): Promise<SourceDeployResult> {
@@ -86,7 +95,7 @@ export class DeployOperation extends MetadataOperation<DeployResult, SourceDeplo
             componentDeployment.status = ComponentStatus.Changed;
           } else if (message.deleted === 'true') {
             componentDeployment.status = ComponentStatus.Deleted;
-          } else if (message.success === 'false') {
+          } else {
             componentDeployment.status = ComponentStatus.Failed;
           }
 

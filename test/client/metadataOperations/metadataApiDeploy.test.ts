@@ -95,7 +95,7 @@ async function stubLifecycle(
   };
 }
 
-describe('Metadata API Deploy Operation', () => {
+describe('MetadataApiDeploy', () => {
   afterEach(() => env.restore());
 
   it('should deploy zip buffer', (done) => {
@@ -103,6 +103,39 @@ describe('Metadata API Deploy Operation', () => {
       operation.start();
 
       operation.onFinish(() => done());
+    });
+  });
+
+  describe('Cancellation', () => {
+    it('should cancel immediately if cancelDeploy call returns done = true', (done) => {
+      stubLifecycle().then(({ operation, checkStatusStub, invokeStub }) => {
+        invokeStub.withArgs('cancelDeploy', { id: asyncResult.id }).returns({ done: true });
+
+        operation.start();
+        operation.cancel();
+
+        operation.onCancel(() =>
+          validate(() => {
+            expect(checkStatusStub.notCalled).to.be.true;
+          }, done)
+        );
+      });
+    });
+
+    it('should async cancel if cancelDeploy call returns done = false', (done) => {
+      stubLifecycle().then(({ operation, checkStatusStub, invokeStub }) => {
+        invokeStub.withArgs('cancelDeploy', { id: asyncResult.id }).returns({ done: false });
+        checkStatusStub.withArgs(asyncResult.id, true).resolves({ status: RequestStatus.Canceled });
+
+        operation.start();
+        operation.cancel();
+
+        operation.onCancel(() =>
+          validate(() => {
+            expect(checkStatusStub.calledOnce).to.be.true;
+          }, done)
+        );
+      });
     });
   });
 
@@ -313,39 +346,6 @@ describe('Metadata API Deploy Operation', () => {
                 diagnostics: [],
               },
             ]);
-          }, done)
-        );
-      });
-    });
-  });
-
-  describe('Cancellation', () => {
-    it('should cancel immediately if cancelDeploy call returns done = true', (done) => {
-      stubLifecycle().then(({ operation, checkStatusStub, invokeStub }) => {
-        invokeStub.withArgs('cancelDeploy', { id: asyncResult.id }).returns({ done: true });
-
-        operation.start();
-        operation.cancel();
-
-        operation.onCancel(() =>
-          validate(() => {
-            expect(checkStatusStub.notCalled).to.be.true;
-          }, done)
-        );
-      });
-    });
-
-    it('should async cancel if cancelDeploy call returns done = false', (done) => {
-      stubLifecycle().then(({ operation, checkStatusStub, invokeStub }) => {
-        invokeStub.withArgs('cancelDeploy', { id: asyncResult.id }).returns({ done: false });
-        checkStatusStub.withArgs(asyncResult.id, true).resolves({ status: RequestStatus.Canceled });
-
-        operation.start();
-        operation.cancel();
-
-        operation.onCancel(() =>
-          validate(() => {
-            expect(checkStatusStub.calledOnce).to.be.true;
           }, done)
         );
       });

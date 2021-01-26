@@ -19,13 +19,13 @@ export type RetrieveOptions = {
 export type RetrieveOperationOptions = MetadataOperationOptions &
   RetrieveOptions & { registry?: RegistryAccess };
 
-export class RetrieveOperation extends MetadataOperation<RetrieveResult, SourceRetrieveResult> {
+export class MetadataApiRetrieve extends MetadataOperation<RetrieveResult, SourceRetrieveResult> {
   public static DEFAULT_OPTIONS: Partial<RetrieveOperationOptions> = { merge: false };
   private options: RetrieveOperationOptions;
 
   constructor(options: RetrieveOperationOptions) {
     super(options);
-    this.options = Object.assign({}, RetrieveOperation.DEFAULT_OPTIONS, options);
+    this.options = Object.assign({}, MetadataApiRetrieve.DEFAULT_OPTIONS, options);
   }
 
   protected async doCancel(): Promise<boolean> {

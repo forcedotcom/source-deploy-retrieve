@@ -246,7 +246,7 @@ export type FileProperties = {
  */
 export interface RetrieveResult {
   done: boolean;
-  fileProperties: FileProperties[];
+  fileProperties: FileProperties | FileProperties[];
   id: string;
   status: RequestStatus;
   success: boolean;

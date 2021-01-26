@@ -25,7 +25,7 @@ import {
 import { ComponentLike } from '../common/types';
 import { MetadataApiDeploy } from '../client/metadataOperatitons';
 import {
-  RetrieveOperation,
+  MetadataApiRetrieve,
   RetrieveOptions,
 } from '../client/metadataOperatitons/metadataApiRetrieve';
 
@@ -166,7 +166,7 @@ export class ComponentSet implements Iterable<MetadataComponent> {
    * @param output Directory to retrieve to.
    * @param options
    */
-  public async retrieve(options: RetrieveOptions & Auth): Promise<RetrieveOperation> {
+  public async retrieve(options: RetrieveOptions & Auth): Promise<MetadataApiRetrieve> {
     if (this.size === 0) {
       throw new ComponentSetError('error_no_components_to_retrieve');
     }
@@ -177,7 +177,7 @@ export class ComponentSet implements Iterable<MetadataComponent> {
       registry: this.registry,
     });
 
-    return new RetrieveOperation(operationOptions);
+    return new MetadataApiRetrieve(operationOptions);
   }
 
   /**

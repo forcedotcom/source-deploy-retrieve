@@ -28,7 +28,7 @@
     "node": ">=10.17.0"
   },
   "dependencies": {
-    "@salesforce/core": "2.11.0",
+    "@salesforce/core": "2.12.0",
     "archiver": "4.0.1",
     "fast-xml-parser": "^3.17.4",
     "gitignore-parser": "0.0.2",
@@ -46,6 +46,7 @@
     "@types/chai": "^4",
     "@types/mime": "2.0.3",
     "@types/mocha": "^5",
+    "@types/mkdirp": "0.5.2",
     "@types/node": "^10",
     "@types/sinon": "^7.5.2",
     "@types/unzipper": "^0.10.3",

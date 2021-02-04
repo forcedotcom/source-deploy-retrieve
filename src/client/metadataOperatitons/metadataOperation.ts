@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Connection } from '@salesforce/core';
+import { AuthInfo, Connection } from '@salesforce/core';
 import { EventEmitter } from 'events';
 import { ComponentSet } from '../../collections';
 import { DeployError } from '../../errors';
@@ -44,6 +44,7 @@ export abstract class MetadataOperation<
       .then((sourceResult) => {
         if (sourceResult) {
           this.event.emit('finish', sourceResult);
+          return sourceResult;
         }
       })
       .catch((e) => this.event.emit('error', e));

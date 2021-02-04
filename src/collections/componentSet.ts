@@ -29,7 +29,13 @@ import {
   RetrieveOptions,
 } from '../client/metadataOperatitons/metadataApiRetrieve';
 
-type Auth = { usernameOrConnection: string | Connection };
+type Auth = {
+  /**
+   * Deploying with a username requires local AuthInfo from @salesforce/core, usually created
+   * after authenticating with the Salesforce CLI.
+   */
+  usernameOrConnection: string | Connection;
+};
 
 export class ComponentSet implements Iterable<MetadataComponent> {
   private static readonly WILDCARD = '*';
@@ -135,9 +141,8 @@ export class ComponentSet implements Iterable<MetadataComponent> {
   }
 
   /**
-   * Deploy components in the set to an org. The components must be backed by source files.
-   * Deploying with a username requires local AuthInfo from @salesforce/core, usually created
-   * after authenticating with the Salesforce CLI.
+   * Constructs a deploy operation using the components in the set. There must be at least
+   * one source-backed component in the set to create an operation.
    *
    * @param options
    */
@@ -158,12 +163,8 @@ export class ComponentSet implements Iterable<MetadataComponent> {
   }
 
   /**
-   * Retrieve components in the set from an org. Components are not required to be backed by
-   * source files. Retrieving with a username requires local AuthInfo from @salesforce/core,
-   * usually created after authenticating with the Salesforce CLI.
+   * Constructs a retrieve operation using the components in the set.
    *
-   * @param usernameOrConnection Username or Connection to retrieve with.
-   * @param output Directory to retrieve to.
    * @param options
    */
   public async retrieve(options: RetrieveOptions & Auth): Promise<MetadataApiRetrieve> {

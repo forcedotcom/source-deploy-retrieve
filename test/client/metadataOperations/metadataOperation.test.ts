@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { createSandbox, SinonFakeTimers } from 'sinon';
+import { createSandbox, SinonFakeTimers, SinonStub } from 'sinon';
 import { testSetup } from '@salesforce/core/lib/testSetup';
 import { ComponentSet } from '../../../src';
 import { MetadataOperation } from '../../../src/client/metadataOperatitons/metadataOperation';
@@ -12,8 +12,8 @@ import { MetadataRequestResult, RequestStatus, SourceApiResult } from '../../../
 import { Connection } from '@salesforce/core';
 import { expect } from 'chai';
 import { DeployError } from '../../../src/errors';
-import { Done } from 'mocha';
 import { mockConnection } from '../../mock/client';
+import { fail } from 'assert';
 
 const $$ = testSetup();
 const env = createSandbox();
@@ -43,16 +43,6 @@ class TestOperation extends MetadataOperation<MetadataRequestResult, SourceApiRe
   }
 }
 
-export function validate(expectations: () => void, done: Done): void {
-  let fail: Error;
-  try {
-    expectations();
-  } catch (e) {
-    fail = e;
-  }
-  done(fail);
-}
-
 describe('MetadataOperation', () => {
   let clock: SinonFakeTimers;
   let connection: Connection;
@@ -67,114 +57,130 @@ describe('MetadataOperation', () => {
 
   afterEach(() => env.restore());
 
-  it('should run lifecycle in correct order', (done) => {
+  it('should run lifecycle in correct order', async () => {
     const { pre, checkStatus, post } = operation.lifecycle;
 
-    operation.start();
+    await operation.start();
 
-    operation.onFinish(() => {
-      validate(() => {
-        expect(pre.called).to.be.true;
-        expect(checkStatus.calledAfter(pre)).to.be.true;
-        expect(post.calledAfter(checkStatus)).to.be.true;
-      }, done);
-    });
+    expect(pre.called).to.be.true;
+    expect(checkStatus.calledAfter(pre)).to.be.true;
+    expect(post.calledAfter(checkStatus)).to.be.true;
   });
 
-  describe('Polling', () => {
-    it('should exit when request status is "Succeeded"', (done) => {
-      operation.lifecycle.checkStatus.resolves({ status: RequestStatus.Succeeded });
+  describe('Polling and Event Listeners', () => {
+    let listenerStub: SinonStub;
 
-      operation.start();
+    beforeEach(() => (listenerStub = env.stub()));
 
-      operation.onFinish(() => done());
+    it('should exit when request status is "Succeeded"', async () => {
+      const { checkStatus } = operation.lifecycle;
+      checkStatus.resolves({ status: RequestStatus.Succeeded });
+
+      operation.onFinish(() => listenerStub());
+      await operation.start();
+
+      expect(checkStatus.callCount).to.equal(1);
+      expect(listenerStub.callCount).to.equal(1);
     });
 
-    it('should exit when request status is "Failed"', (done) => {
-      operation.lifecycle.checkStatus.resolves({ status: RequestStatus.Failed });
+    it('should exit when request status is "Failed"', async () => {
+      const { checkStatus } = operation.lifecycle;
+      checkStatus.resolves({ status: RequestStatus.Failed });
 
-      operation.start();
+      operation.onFinish(() => listenerStub());
+      await operation.start();
 
-      operation.onFinish(() => done());
+      expect(checkStatus.callCount).to.equal(1);
+      expect(listenerStub.callCount).to.equal(1);
     });
 
-    it('should exit when request status is "Canceled"', (done) => {
-      operation.lifecycle.checkStatus.resolves({ status: RequestStatus.Canceled });
+    it('should exit when request status is "Canceled"', async () => {
+      const { checkStatus } = operation.lifecycle;
+      checkStatus.resolves({ status: RequestStatus.Canceled });
 
-      operation.start();
+      operation.onCancel(() => listenerStub());
+      await operation.start();
 
-      operation.onCancel(() => done());
+      expect(checkStatus.callCount).to.equal(1);
+      expect(listenerStub.callCount).to.equal(1);
     });
 
-    it('should wait if status checked at least once', (done) => {
+    it('should wait if status checked at least once', async () => {
       const { checkStatus } = operation.lifecycle;
       checkStatus.onFirstCall().returns({ status: RequestStatus.InProgress });
       checkStatus.onSecondCall().returns({ status: RequestStatus.Succeeded });
 
-      operation.start();
+      operation.onUpdate(() => listenerStub());
+      const operationPromise = operation.start();
       queueMicrotask(() => {
         // schedule clock to break first poll wait after lifecycle starts
         queueMicrotask(() => {
           clock.tick(110);
         });
       });
+      await operationPromise;
 
-      operation.onFinish(() => {
-        validate(() => {
-          expect(operation.lifecycle.checkStatus.callCount).to.equal(2);
-        }, done);
-      });
+      expect(operation.lifecycle.checkStatus.callCount).to.equal(2);
+      expect(listenerStub.callCount).to.equal(1);
     });
 
-    it('should throw wrapped error if something goes wrong', (done) => {
+    it('should emit wrapped error if something goes wrong', async () => {
       const { checkStatus } = operation.lifecycle;
       const originalError = new Error('whoops');
       const expectedError = new DeployError('md_request_fail', originalError.message);
       checkStatus.throws(originalError);
 
-      operation.start();
+      let error: Error;
+      operation.onError((e) => (error = e));
+      await operation.start();
 
-      operation.onError((e) => {
-        validate(() => {
-          expect(e.name).to.deep.equal(expectedError.name);
-          expect(e.message).to.deep.equal(expectedError.message);
-        }, done);
-      });
+      expect(error.name).to.deep.equal(expectedError.name);
+      expect(error.message).to.deep.equal(expectedError.message);
+    });
+
+    it('should throw wrapped error if there are no error listeners', async () => {
+      const { checkStatus } = operation.lifecycle;
+      const originalError = new Error('whoops');
+      const expectedError = new DeployError('md_request_fail', originalError.message);
+      checkStatus.throws(originalError);
+
+      try {
+        await operation.start();
+        fail('should have thrown an error');
+      } catch (e) {
+        expect(e.name).to.deep.equal(expectedError.name);
+        expect(e.message).to.deep.equal(expectedError.message);
+      }
     });
   });
 
   describe('Cancellation', () => {
-    it('should exit immediately if cancel operation finishes synchonously', (done) => {
+    it('should exit immediately if cancel operation finishes synchonously', async () => {
       const { checkStatus, doCancel } = operation.lifecycle;
       checkStatus.returns({ status: RequestStatus.InProgress });
 
-      operation.start();
+      const operationPromise = operation.start();
       queueMicrotask(() => operation.cancel());
+      await operationPromise;
 
-      operation.onCancel(() => {
-        validate(() => {
-          expect(doCancel.calledOnce).to.be.true;
-          expect(checkStatus.calledOnce).to.be.true;
-        }, done);
-      });
+      expect(doCancel.calledOnce).to.be.true;
+      expect(checkStatus.calledOnce).to.be.true;
     });
 
-    it('should exit immediately and return undefined result if cancelled in same task', (done) => {
+    it('should exit immediately and return undefined result if cancelled in same task', async () => {
       const { checkStatus, doCancel } = operation.lifecycle;
 
-      operation.start();
+      const operationPromise = operation.start();
       operation.cancel();
+      const result = await operationPromise;
 
-      operation.onCancel((result) => {
-        validate(() => {
-          expect(doCancel.calledOnce).to.be.true;
-          expect(checkStatus.calledOnce).to.be.false;
-          expect(result).to.be.undefined;
-        }, done);
-      });
+      expect(doCancel.calledOnce).to.be.true;
+      expect(checkStatus.calledOnce).to.be.false;
+      expect(result).to.be.undefined;
     });
 
-    it('should continue polling until cancel operation finishes asynchonously', (done) => {
+    it('should continue polling until cancel operation finishes asynchonously', async () => {
+      const cancelListenerStub = env.stub();
       const { checkStatus, doCancel } = operation.lifecycle;
       checkStatus.returns({ status: RequestStatus.InProgress });
       doCancel.callsFake(() => {
@@ -183,7 +189,8 @@ describe('MetadataOperation', () => {
         return false;
       });
 
-      operation.start();
+      const operationPromise = operation.start();
+
       queueMicrotask(() => {
         // cancel right after lifecycle starts
         operation.cancel();
@@ -201,6 +208,8 @@ describe('MetadataOperation', () => {
         });
       });
 
+      operation.onCancel(() => cancelListenerStub());
+
       operation.onUpdate((result) => {
         if (checkStatus.callCount === 2) {
           // should be canceling by second poll
@@ -210,7 +219,9 @@ describe('MetadataOperation', () => {
         }
       });
 
-      operation.onCancel(() => done());
+      await operationPromise;
+
+      expect(cancelListenerStub.callCount).to.equal(1);
     });
   });
 });

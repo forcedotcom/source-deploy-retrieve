@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { AuthInfo, Connection } from '@salesforce/core';
+import { Connection } from '@salesforce/core';
 import { EventEmitter } from 'events';
 import { ComponentSet } from '../../collections';
 import { DeployError } from '../../errors';
@@ -29,25 +29,26 @@ export abstract class MetadataOperation<
     this.components = components;
   }
 
-  public start(interval = 100): void {
-    this.pre()
-      .then(({ id }) => this.pollStatus(id, interval))
-      .then(
-        (result): Promise<R | undefined> => {
-          if (!result || result.status === RequestStatus.Canceled) {
-            this.event.emit('cancel', result);
-            return Promise.resolve(undefined);
-          }
-          return this.post(result);
-        }
-      )
-      .then((sourceResult) => {
-        if (sourceResult) {
-          this.event.emit('finish', sourceResult);
-          return sourceResult;
-        }
-      })
-      .catch((e) => this.event.emit('error', e));
+  public async start(interval = 100): Promise<R | undefined> {
+    try {
+      const { id } = await this.pre();
+      const apiResult = await this.pollStatus(id, interval);
+
+      if (!apiResult || apiResult.status === RequestStatus.Canceled) {
+        this.event.emit('cancel', apiResult);
+        return;
+      }
+
+      const sourceResult = await this.post(apiResult);
+      this.event.emit('finish', sourceResult);
+
+      return sourceResult;
+    } catch (e) {
+      if (this.event.listenerCount('error') === 0) {
+        throw e;
+      }
+      this.event.emit('error', e);
+    }
   }
 
   public cancel(): void {

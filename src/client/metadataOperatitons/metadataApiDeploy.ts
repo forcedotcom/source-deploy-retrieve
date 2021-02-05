@@ -35,17 +35,17 @@ export class MetadataApiDeploy extends MetadataOperation<DeployResult, SourceDep
   protected async doCancel(): Promise<boolean> {
     let done = true;
     if (this.deployId) {
+      const connection = await this.getConnection();
       // @ts-ignore _invoke is private on the jsforce metadata object, and cancelDeploy is not an exposed method
-      done = this.connection.metadata._invoke('cancelDeploy', { id: this.deployId }).done;
+      done = connection.metadata._invoke('cancelDeploy', { id: this.deployId }).done;
     }
     return done;
   }
 
-  protected checkStatus(id: string): Promise<DeployResult> {
+  protected async checkStatus(id: string): Promise<DeployResult> {
+    const connection = await this.getConnection();
     // Recasting to use the project's DeployResult type
-    return (this.connection.metadata.checkDeployStatus(id, true) as unknown) as Promise<
-      DeployResult
-    >;
+    return (connection.metadata.checkDeployStatus(id, true) as unknown) as DeployResult;
   }
 
   protected async pre(): Promise<{ id: string }> {
@@ -55,10 +55,8 @@ export class MetadataApiDeploy extends MetadataOperation<DeployResult, SourceDep
       'metadata',
       { type: 'zip' }
     );
-    const result = await this.connection.metadata.deploy(
-      zipBuffer,
-      MetadataApiDeploy.DEFAULT_OPTIONS
-    );
+    const connection = await this.getConnection();
+    const result = await connection.metadata.deploy(zipBuffer, MetadataApiDeploy.DEFAULT_OPTIONS);
     this.deployId = result.id;
     return result;
   }

@@ -445,7 +445,7 @@ describe('ComponentSet', () => {
     it('should properly construct a deploy operation', async () => {
       const connection = await mockConnection($$);
       const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
-      const operationArgs = { components: set, connection };
+      const operationArgs = { components: set, usernameOrConnection: connection };
       const expectedOperation = new MetadataApiDeploy(operationArgs);
       const constructorStub = env
         .stub()
@@ -477,7 +477,11 @@ describe('ComponentSet', () => {
     it('should properly construct a retrieve operation', async () => {
       const connection = await mockConnection($$);
       const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
-      const operationArgs = { components: set, defaultOutput: join('test', 'path'), connection };
+      const operationArgs = {
+        components: set,
+        defaultOutput: join('test', 'path'),
+        usernameOrConnection: connection,
+      };
       const expectedOperation = new MetadataApiRetrieve(operationArgs);
       const constructorStub = env
         .stub()

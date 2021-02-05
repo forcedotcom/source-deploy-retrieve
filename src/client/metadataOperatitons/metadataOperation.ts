@@ -4,14 +4,14 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Connection } from '@salesforce/core';
+import { AuthInfo, Connection } from '@salesforce/core';
 import { EventEmitter } from 'events';
 import { ComponentSet } from '../../collections';
 import { DeployError } from '../../errors';
 import { MetadataRequestResult, RequestStatus, SourceApiResult } from '../types';
 
 export interface MetadataOperationOptions {
-  connection: Connection;
+  usernameOrConnection: string | Connection;
   components: ComponentSet;
 }
 
@@ -19,13 +19,13 @@ export abstract class MetadataOperation<
   U extends MetadataRequestResult,
   R extends SourceApiResult
 > {
-  protected connection: Connection;
   protected components: ComponentSet;
   private signalCancel = false;
   private event = new EventEmitter();
+  private usernameOrConnection: string | Connection;
 
-  constructor({ connection, components }: MetadataOperationOptions) {
-    this.connection = connection;
+  constructor({ usernameOrConnection, components }: MetadataOperationOptions) {
+    this.usernameOrConnection = usernameOrConnection;
     this.components = components;
   }
 
@@ -69,6 +69,15 @@ export abstract class MetadataOperation<
 
   public onError(subscriber: (result: Error) => void): void {
     this.event.on('error', subscriber);
+  }
+
+  protected async getConnection(): Promise<Connection> {
+    if (typeof this.usernameOrConnection === 'string') {
+      this.usernameOrConnection = await Connection.create({
+        authInfo: await AuthInfo.create({ username: this.usernameOrConnection }),
+      });
+    }
+    return this.usernameOrConnection;
   }
 
   private async pollStatus(id: string, interval: number): Promise<U> {

@@ -112,7 +112,7 @@ export class MetadataApiDeployMock extends MetadataOperationMock {
       checkStatusStub,
       invokeStub,
       operation: new MetadataApiDeploy({
-        connection,
+        usernameOrConnection: connection,
         components: options.components,
       }),
     };
@@ -218,7 +218,7 @@ export class MetadataApiRetrieveMock extends MetadataOperationMock {
       checkStatusStub,
       convertStub,
       operation: new MetadataApiRetrieve({
-        connection,
+        usernameOrConnection: connection,
         components,
         defaultOutput: this.defaultOutput,
         registry: mockRegistry,

@@ -34,16 +34,18 @@ export class MetadataApiRetrieve extends MetadataOperation<RetrieveResult, Sourc
   }
 
   protected async pre(): Promise<{ id: string }> {
+    const connection = await this.getConnection();
     // @ts-ignore required callback
-    return this.connection.metadata.retrieve({
+    return connection.metadata.retrieve({
       apiVersion: this.components.apiVersion,
       unpackaged: this.components.getObject().Package,
     });
   }
 
-  protected checkStatus(id: string): Promise<RetrieveResult> {
+  protected async checkStatus(id: string): Promise<RetrieveResult> {
+    const connection = await this.getConnection();
     // Recasting to use the project's RetrieveResult type
-    return (this.connection.metadata.checkRetrieveStatus(id) as unknown) as Promise<RetrieveResult>;
+    return (connection.metadata.checkRetrieveStatus(id) as unknown) as Promise<RetrieveResult>;
   }
 
   protected async post(result: RetrieveResult): Promise<SourceRetrieveResult> {

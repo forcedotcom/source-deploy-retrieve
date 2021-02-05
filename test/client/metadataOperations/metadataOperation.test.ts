@@ -5,11 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { createSandbox, SinonFakeTimers, SinonStub } from 'sinon';
-import { testSetup } from '@salesforce/core/lib/testSetup';
+import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { ComponentSet } from '../../../src';
 import { MetadataOperation } from '../../../src/client/metadataOperatitons/metadataOperation';
 import { MetadataRequestResult, RequestStatus, SourceApiResult } from '../../../src/client/types';
-import { Connection } from '@salesforce/core';
+import { AuthInfo, Connection } from '@salesforce/core';
 import { expect } from 'chai';
 import { DeployError } from '../../../src/errors';
 import { mockConnection } from '../../mock/client';
@@ -52,7 +52,10 @@ describe('MetadataOperation', () => {
   beforeEach(async () => {
     clock = env.useFakeTimers();
     connection = await mockConnection($$);
-    operation = new TestOperation({ components: new ComponentSet(), connection });
+    operation = new TestOperation({
+      components: new ComponentSet(),
+      usernameOrConnection: connection,
+    });
   });
 
   afterEach(() => env.restore());
@@ -65,6 +68,28 @@ describe('MetadataOperation', () => {
     expect(pre.called).to.be.true;
     expect(checkStatus.calledAfter(pre)).to.be.true;
     expect(post.calledAfter(checkStatus)).to.be.true;
+  });
+
+  it('should initialize a Connection if a username is given', async () => {
+    class TestOperationConnection extends TestOperation {
+      protected async pre(): Promise<{ id: string }> {
+        const connection = await this.getConnection();
+        return this.lifecycle.pre(connection);
+      }
+    }
+    const testData = new MockTestOrgData();
+    $$.setConfigStubContents('AuthInfoConfig', { contents: await testData.getConfig() });
+    const authInfo = await AuthInfo.create({ username: 'foo@example.com' });
+    env.stub(AuthInfo, 'create').withArgs({ username: 'foo@example.com' }).resolves(authInfo);
+    env.stub(Connection, 'create').withArgs({ authInfo }).resolves(connection);
+    operation = new TestOperationConnection({
+      components: new ComponentSet(),
+      usernameOrConnection: 'foo@example.com',
+    });
+
+    await operation.start();
+
+    expect(operation.lifecycle.pre.firstCall.args[0]).to.equal(connection);
   });
 
   describe('Polling and Event Listeners', () => {

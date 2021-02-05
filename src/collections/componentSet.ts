@@ -146,7 +146,7 @@ export class ComponentSet implements Iterable<MetadataComponent> {
    *
    * @param options
    */
-  public async deploy(options: MetadataApiDeployOptions & Auth): Promise<MetadataApiDeploy> {
+  public deploy(options: MetadataApiDeployOptions & Auth): MetadataApiDeploy {
     const toDeploy = Array.from(this.getSourceComponents());
 
     if (toDeploy.length === 0) {
@@ -155,7 +155,6 @@ export class ComponentSet implements Iterable<MetadataComponent> {
 
     const operationOptions = Object.assign({}, options, {
       components: this,
-      connection: await this.getConnection(options.usernameOrConnection),
       registry: this.registry,
     });
 
@@ -167,14 +166,13 @@ export class ComponentSet implements Iterable<MetadataComponent> {
    *
    * @param options
    */
-  public async retrieve(options: RetrieveOptions & Auth): Promise<MetadataApiRetrieve> {
+  public retrieve(options: RetrieveOptions & Auth): MetadataApiRetrieve {
     if (this.size === 0) {
       throw new ComponentSetError('error_no_components_to_retrieve');
     }
 
     const operationOptions = Object.assign({}, options, {
       components: this,
-      connection: await this.getConnection(options.usernameOrConnection),
       registry: this.registry,
     });
 
@@ -326,14 +324,6 @@ export class ComponentSet implements Iterable<MetadataComponent> {
       size += collection.size === 0 ? 1 : collection.size;
     }
     return size;
-  }
-
-  private async getConnection(auth: Connection | string): Promise<Connection> {
-    return typeof auth === 'string'
-      ? await Connection.create({
-          authInfo: await AuthInfo.create({ username: auth }),
-        })
-      : auth;
   }
 
   private sourceKey(component: SourceComponent): string {

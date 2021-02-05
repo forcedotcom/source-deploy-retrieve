@@ -29,7 +29,7 @@ import { mockRegistry } from '../registry';
 import { KEANU_COMPONENT } from '../registry/keanuConstants';
 
 abstract class MetadataOperationMock {
-  constructor(protected sandbox: SinonSandbox, private done: Done) {}
+  constructor(protected sandbox: SinonSandbox, private done?: Done) {}
 
   public validate(logic: () => void): void {
     let fail: Error;

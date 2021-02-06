@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, salesforce.com, inc.
+ * Copyright (c) 2021, salesforce.com, inc.
  * All rights reserved.
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
@@ -10,21 +10,18 @@ import { ComponentSet } from '../../collections';
 import { DeployError } from '../../errors';
 import { MetadataRequestResult, RequestStatus, SourceApiResult } from '../types';
 
-export interface MetadataOperationOptions {
+export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
   components: ComponentSet;
 }
 
-export abstract class MetadataOperation<
-  U extends MetadataRequestResult,
-  R extends SourceApiResult
-> {
+export abstract class MetadataTransfer<U extends MetadataRequestResult, R extends SourceApiResult> {
   protected components: ComponentSet;
   private signalCancel = false;
   private event = new EventEmitter();
   private usernameOrConnection: string | Connection;
 
-  constructor({ usernameOrConnection, components }: MetadataOperationOptions) {
+  constructor({ usernameOrConnection, components }: MetadataTransferOptions) {
     this.usernameOrConnection = usernameOrConnection;
     this.components = components;
   }

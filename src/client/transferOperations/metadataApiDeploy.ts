@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, salesforce.com, inc.
+ * Copyright (c) 2021, salesforce.com, inc.
  * All rights reserved.
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
@@ -11,14 +11,14 @@ import {
   DeployResult,
   ComponentDeployment,
   DeployMessage,
-  MetadataApiDeployOptions,
+  MetadataApiDeployOptions as ApiOptions,
 } from '../types';
-import { MetadataOperation, MetadataOperationOptions } from './metadataOperation';
+import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 
-type DeployOperationOptions = MetadataOperationOptions & MetadataApiDeployOptions;
+type MetadataApiDeployOptions = MetadataTransferOptions & ApiOptions;
 
-export class MetadataApiDeploy extends MetadataOperation<DeployResult, SourceDeployResult> {
-  public static readonly DEFAULT_OPTIONS: MetadataApiDeployOptions = {
+export class MetadataApiDeploy extends MetadataTransfer<DeployResult, SourceDeployResult> {
+  public static readonly DEFAULT_OPTIONS: ApiOptions = {
     rollbackOnError: true,
     ignoreWarnings: false,
     checkOnly: false,
@@ -27,25 +27,9 @@ export class MetadataApiDeploy extends MetadataOperation<DeployResult, SourceDep
   private options: MetadataApiDeployOptions;
   private deployId: string | undefined;
 
-  constructor(options: DeployOperationOptions) {
+  constructor(options: MetadataApiDeployOptions) {
     super(options);
     this.options = Object.assign({}, MetadataApiDeploy.DEFAULT_OPTIONS, options);
-  }
-
-  protected async doCancel(): Promise<boolean> {
-    let done = true;
-    if (this.deployId) {
-      const connection = await this.getConnection();
-      // @ts-ignore _invoke is private on the jsforce metadata object, and cancelDeploy is not an exposed method
-      done = connection.metadata._invoke('cancelDeploy', { id: this.deployId }).done;
-    }
-    return done;
-  }
-
-  protected async checkStatus(id: string): Promise<DeployResult> {
-    const connection = await this.getConnection();
-    // Recasting to use the project's DeployResult type
-    return (connection.metadata.checkDeployStatus(id, true) as unknown) as DeployResult;
   }
 
   protected async pre(): Promise<{ id: string }> {
@@ -59,6 +43,12 @@ export class MetadataApiDeploy extends MetadataOperation<DeployResult, SourceDep
     const result = await connection.metadata.deploy(zipBuffer, MetadataApiDeploy.DEFAULT_OPTIONS);
     this.deployId = result.id;
     return result;
+  }
+
+  protected async checkStatus(id: string): Promise<DeployResult> {
+    const connection = await this.getConnection();
+    // Recasting to use the project's DeployResult type
+    return (connection.metadata.checkDeployStatus(id, true) as unknown) as DeployResult;
   }
 
   protected async post(result: DeployResult): Promise<SourceDeployResult> {
@@ -105,6 +95,16 @@ export class MetadataApiDeploy extends MetadataOperation<DeployResult, SourceDep
     deployResult.components = Array.from(componentDeploymentMap.values());
 
     return deployResult;
+  }
+
+  protected async doCancel(): Promise<boolean> {
+    let done = true;
+    if (this.deployId) {
+      const connection = await this.getConnection();
+      // @ts-ignore _invoke is private on the jsforce metadata object, and cancelDeploy is not an exposed method
+      done = connection.metadata._invoke('cancelDeploy', { id: this.deployId }).done;
+    }
+    return done;
   }
 
   private getDeployMessages(result: DeployResult): DeployMessage[] {

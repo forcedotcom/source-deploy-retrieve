@@ -7,7 +7,7 @@
 import { createSandbox, SinonFakeTimers, SinonStub } from 'sinon';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { ComponentSet } from '../../../src';
-import { MetadataOperation } from '../../../src/client/metadataOperatitons/metadataOperation';
+import { MetadataTransfer } from '../../../src/client/transferOperations/metadataTransfer';
 import { MetadataRequestResult, RequestStatus, SourceApiResult } from '../../../src/client/types';
 import { AuthInfo, Connection } from '@salesforce/core';
 import { expect } from 'chai';
@@ -18,7 +18,7 @@ import { fail } from 'assert';
 const $$ = testSetup();
 const env = createSandbox();
 
-class TestOperation extends MetadataOperation<MetadataRequestResult, SourceApiResult> {
+class TestTransfer extends MetadataTransfer<MetadataRequestResult, SourceApiResult> {
   public request = { done: true, status: RequestStatus.Succeeded, id: '1', success: true };
   public lifecycle = {
     pre: env.stub().returns({ id: '1' }),
@@ -43,16 +43,16 @@ class TestOperation extends MetadataOperation<MetadataRequestResult, SourceApiRe
   }
 }
 
-describe('MetadataOperation', () => {
+describe('MetadataTransfer', () => {
   let clock: SinonFakeTimers;
   let connection: Connection;
 
-  let operation: TestOperation;
+  let operation: TestTransfer;
 
   beforeEach(async () => {
     clock = env.useFakeTimers();
     connection = await mockConnection($$);
-    operation = new TestOperation({
+    operation = new TestTransfer({
       components: new ComponentSet(),
       usernameOrConnection: connection,
     });
@@ -71,7 +71,7 @@ describe('MetadataOperation', () => {
   });
 
   it('should initialize a Connection if a username is given', async () => {
-    class TestOperationConnection extends TestOperation {
+    class TestTransferConnection extends TestTransfer {
       protected async pre(): Promise<{ id: string }> {
         const connection = await this.getConnection();
         return this.lifecycle.pre(connection);
@@ -82,7 +82,7 @@ describe('MetadataOperation', () => {
     const authInfo = await AuthInfo.create({ username: 'foo@example.com' });
     env.stub(AuthInfo, 'create').withArgs({ username: 'foo@example.com' }).resolves(authInfo);
     env.stub(Connection, 'create').withArgs({ authInfo }).resolves(connection);
-    operation = new TestOperationConnection({
+    operation = new TestTransferConnection({
       components: new ComponentSet(),
       usernameOrConnection: 'foo@example.com',
     });

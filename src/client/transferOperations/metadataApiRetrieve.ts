@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, salesforce.com, inc.
+ * Copyright (c) 2021, salesforce.com, inc.
  * All rights reserved.
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
@@ -9,28 +9,23 @@ import { ConvertOutputConfig, MetadataConverter, SourceComponent } from '../..';
 import { ComponentSet } from '../../collections';
 import { RegistryAccess, ZipTreeContainer } from '../../metadata-registry';
 import { RequestStatus, RetrieveFailure, RetrieveResult, RetrieveSuccess } from '../types';
-import { MetadataOperation, MetadataOperationOptions } from './metadataOperation';
+import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 
 export type RetrieveOptions = {
   merge?: boolean;
   defaultOutput: string;
 };
 
-type RetrieveOperationOptions = MetadataOperationOptions &
+type MetadataApiRetrieveOptions = MetadataTransferOptions &
   RetrieveOptions & { registry?: RegistryAccess };
 
-export class MetadataApiRetrieve extends MetadataOperation<RetrieveResult, SourceRetrieveResult> {
-  public static DEFAULT_OPTIONS: Partial<RetrieveOperationOptions> = { merge: false };
-  private options: RetrieveOperationOptions;
+export class MetadataApiRetrieve extends MetadataTransfer<RetrieveResult, SourceRetrieveResult> {
+  public static DEFAULT_OPTIONS: Partial<MetadataApiRetrieveOptions> = { merge: false };
+  private options: MetadataApiRetrieveOptions;
 
-  constructor(options: RetrieveOperationOptions) {
+  constructor(options: MetadataApiRetrieveOptions) {
     super(options);
     this.options = Object.assign({}, MetadataApiRetrieve.DEFAULT_OPTIONS, options);
-  }
-
-  protected async doCancel(): Promise<boolean> {
-    // retrieve doesn't require signaling to the server to stop
-    return true;
   }
 
   protected async pre(): Promise<{ id: string }> {
@@ -54,6 +49,11 @@ export class MetadataApiRetrieve extends MetadataOperation<RetrieveResult, Sourc
       components = await this.extract(Buffer.from(result.zipFile, 'base64'));
     }
     return this.buildSourceRetrieveResult(result, components);
+  }
+
+  protected async doCancel(): Promise<boolean> {
+    // retrieve doesn't require signaling to the server to stop
+    return true;
   }
 
   private async extract(zip: Buffer): Promise<SourceComponent[]> {
@@ -136,6 +136,7 @@ export class MetadataApiRetrieve extends MetadataOperation<RetrieveResult, Sourc
     }
 
     let status = retrieveResult.status;
+
     if (failures.length > 0) {
       if (successes.length > 0) {
         status = RequestStatus.SucceededPartial;

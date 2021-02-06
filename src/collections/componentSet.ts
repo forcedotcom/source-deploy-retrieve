@@ -23,7 +23,7 @@ import {
   SourceComponentOptions,
 } from './types';
 import { ComponentLike } from '../common/types';
-import { RetrieveOptions } from '../client/metadataOperatitons/metadataApiRetrieve';
+import { RetrieveOptions } from '../client/transferOperations/metadataApiRetrieve';
 
 type Auth = {
   /**

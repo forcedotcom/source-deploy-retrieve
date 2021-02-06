@@ -10,7 +10,7 @@ import { ComponentStatus, RequestStatus } from '../../../src/client/types';
 import { expect } from 'chai';
 import { KEANU_COMPONENT } from '../../mock/registry/keanuConstants';
 import { basename, join } from 'path';
-import { MOCK_ASYNC_RESULT, stubMetadataDeploy } from '../../mock/client/operations';
+import { MOCK_ASYNC_RESULT, stubMetadataDeploy } from '../../mock/client/transferOperations';
 
 const env = createSandbox();
 

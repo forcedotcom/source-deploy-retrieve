@@ -28,11 +28,6 @@ const context = {
     converter = new MetadataConverter();
     return converter.convert(components, targetFormat, outputConfig);
   },
-  client: async (username) => {
-    return new SourceClient(await Connection.create({
-      authInfo: await AuthInfo.create({ username })
-    }))
-  },
   time: async (func, mem = true) => {
     const logName = func.name || 'func';
     console.time(logName)

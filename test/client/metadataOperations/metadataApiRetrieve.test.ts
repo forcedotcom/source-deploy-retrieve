@@ -15,152 +15,124 @@ import { KEANU_COMPONENT } from '../../mock/registry/keanuConstants';
 
 const env = createSandbox();
 
-describe('MetadataApiRetrieve', () => {
-  it('should retrieve zip and extract to directory', (done) => {
-    const lifecycleMock = new MetadataApiRetrieveMock(env, done);
+describe('MetadataApiRetrieve', async () => {
+  afterEach(() => env.restore());
+
+  it('should retrieve zip and extract to directory', async () => {
+    const lifecycleMock = new MetadataApiRetrieveMock(env);
     const component = KEANU_COMPONENT;
     const components = new ComponentSet([component], mockRegistry);
-    lifecycleMock
-      .stub({
-        components,
-        fileProperties: {
-          fullName: component.fullName,
-          type: component.type.name,
-          fileName: component.content,
-        },
-      })
-      .then(({ operation, convertStub }) => {
-        operation.start();
+    const { operation, convertStub } = await lifecycleMock.stub({
+      components,
+      fileProperties: {
+        fullName: component.fullName,
+        type: component.type.name,
+        fileName: component.content,
+      },
+    });
 
-        operation.onFinish(() => {
-          lifecycleMock.validate(() => {
-            expect(convertStub.calledOnce).to.be.true;
-            expect(
-              convertStub.calledWith(match.any, 'source', {
-                type: 'directory',
-                outputDirectory: lifecycleMock.defaultOutput,
-              })
-            ).to.be.true;
-          });
-        });
-      });
+    await operation.start();
+
+    expect(convertStub.calledOnce).to.be.true;
+    expect(
+      convertStub.calledWith(match.any, 'source', {
+        type: 'directory',
+        outputDirectory: lifecycleMock.defaultOutput,
+      })
+    ).to.be.true;
   });
 
-  it('should retrieve zip and merge with existing components', (done) => {
-    const lifecycleMock = new MetadataApiRetrieveMock(env, done);
+  it('should retrieve zip and merge with existing components', async () => {
+    const lifecycleMock = new MetadataApiRetrieveMock(env);
     const component = KEANU_COMPONENT;
     const components = new ComponentSet([component], mockRegistry);
-    lifecycleMock
-      .stub({
-        components,
-        merge: true,
-        fileProperties: {
-          fullName: component.fullName,
-          type: component.type.name,
-          fileName: component.content,
-        },
+    const { operation, convertStub } = await lifecycleMock.stub({
+      components,
+      merge: true,
+      fileProperties: {
+        fullName: component.fullName,
+        type: component.type.name,
+        fileName: component.content,
+      },
+    });
+
+    await operation.start();
+
+    expect(convertStub.calledOnce).to.be.true;
+    expect(
+      convertStub.calledWith(match.any, 'source', {
+        type: 'merge',
+        mergeWith: components.getSourceComponents(),
+        defaultDirectory: lifecycleMock.defaultOutput,
       })
-      .then((lifecycle) => {
-        const { operation, convertStub } = lifecycle;
-
-        operation.start();
-
-        operation.onFinish(() => {
-          lifecycleMock.validate(() => {
-            expect(convertStub.calledOnce).to.be.true;
-            expect(
-              convertStub.calledWith(match.any, 'source', {
-                type: 'merge',
-                mergeWith: components.getSourceComponents(),
-                defaultDirectory: lifecycleMock.defaultOutput,
-              })
-            ).to.be.true;
-          });
-        });
-      });
+    ).to.be.true;
   });
 
   describe('Cancellation', () => {
-    it('should immediately stop polling', (done) => {
-      const lifecycleMock = new MetadataApiRetrieveMock(env, done);
+    it('should immediately stop polling', async () => {
+      const lifecycleMock = new MetadataApiRetrieveMock(env);
       const component = KEANU_COMPONENT;
       const components = new ComponentSet([component], mockRegistry);
-      lifecycleMock.stub({ components }).then(({ operation, checkStatusStub }) => {
-        operation.start();
-        operation.cancel();
+      const { operation, checkStatusStub } = await lifecycleMock.stub({ components });
 
-        operation.onCancel(() => {
-          lifecycleMock.validate(() => {
-            expect(checkStatusStub.notCalled).to.be.true;
-          });
-        });
-      });
+      operation.cancel();
+      await operation.start();
+
+      expect(checkStatusStub.notCalled).to.be.true;
     });
   });
 
   describe('Retrieve Result', () => {
-    it('should return successfully retrieved components', (done) => {
-      const lifecycleMock = new MetadataApiRetrieveMock(env, done);
+    it('should return successfully retrieved components', async () => {
+      const lifecycleMock = new MetadataApiRetrieveMock(env);
       const component = KEANU_COMPONENT;
       const fileProperties = {
         fullName: component.fullName,
         type: component.type.name,
         fileName: component.content,
       };
-      lifecycleMock
-        .stub({
-          components: new ComponentSet([KEANU_COMPONENT], mockRegistry),
-          merge: true,
-          fileProperties,
-        })
-        .then(({ operation }) => {
-          operation.start();
+      const { operation } = await lifecycleMock.stub({
+        components: new ComponentSet([KEANU_COMPONENT], mockRegistry),
+        merge: true,
+        fileProperties,
+      });
 
-          operation.onFinish((result) => {
-            lifecycleMock.validate(() => {
-              expect(result.status).to.equal(RequestStatus.Succeeded);
-              expect(result.successes).to.deep.equal([
-                {
-                  component,
-                  properties: fileProperties,
-                },
-              ]);
-            });
-          });
-        });
+      const result = await operation.start();
+
+      expect(result.status).to.equal(RequestStatus.Succeeded);
+      expect(result.successes).to.deep.equal([
+        {
+          component,
+          properties: fileProperties,
+        },
+      ]);
     });
 
-    it('should report components that failed to be retrieved', (done) => {
-      const lifecycleMock = new MetadataApiRetrieveMock(env, done);
+    it('should report components that failed to be retrieved', async () => {
+      const lifecycleMock = new MetadataApiRetrieveMock(env);
       const component = KEANU_COMPONENT;
       const message = `Failed to retrieve components of type '${component.type.name}' named '${component.fullName}'`;
-      lifecycleMock
-        .stub({
-          components: new ComponentSet([KEANU_COMPONENT], mockRegistry),
-          messages: { problem: message },
-        })
-        .then(({ operation }) => {
-          operation.start();
+      const { operation } = await lifecycleMock.stub({
+        components: new ComponentSet([KEANU_COMPONENT], mockRegistry),
+        messages: { problem: message },
+      });
 
-          operation.onFinish((result) => {
-            lifecycleMock.validate(() => {
-              expect(result.status).to.equal(RequestStatus.Failed);
-              expect(result.failures).to.deep.equal([
-                {
-                  component: {
-                    fullName: component.fullName,
-                    type: component.type,
-                  },
-                  message,
-                },
-              ]);
-            });
-          });
-        });
+      const result = await operation.start();
+
+      expect(result.status).to.equal(RequestStatus.Failed);
+      expect(result.failures).to.deep.equal([
+        {
+          component: {
+            fullName: component.fullName,
+            type: component.type,
+          },
+          message,
+        },
+      ]);
     });
 
-    it('should report both successful and failed components', (done) => {
-      const lifecycleMock = new MetadataApiRetrieveMock(env, done);
+    it('should report both successful and failed components', async () => {
+      const lifecycleMock = new MetadataApiRetrieveMock(env);
       const components = [KEANU_COMPONENT, KATHY_COMPONENTS[0], KATHY_COMPONENTS[1]];
       const messages = [
         `Failed to retrieve components of type '${components[0].type.name}' named '${components[0].fullName}'`,
@@ -171,70 +143,56 @@ describe('MetadataApiRetrieve', () => {
         type: components[2].type.name,
         fileName: components[2].xml,
       };
+      const { operation } = await lifecycleMock.stub({
+        components: new ComponentSet(components, mockRegistry),
+        messages: messages.map((m) => ({ problem: m })),
+        merge: true,
+        fileProperties,
+      });
 
-      lifecycleMock
-        .stub({
-          components: new ComponentSet(components, mockRegistry),
-          messages: messages.map((m) => ({ problem: m })),
-          merge: true,
-          fileProperties,
-        })
-        .then(({ operation }) => {
-          operation.start();
+      const result = await operation.start();
 
-          operation.onFinish((result) => {
-            lifecycleMock.validate(() => {
-              expect(result.status).to.equal(RequestStatus.SucceededPartial);
-              expect(result.successes).to.deep.equal([
-                {
-                  component: components[2],
-                  properties: fileProperties,
-                },
-              ]);
-              expect(result.failures).to.deep.equal([
-                {
-                  component: {
-                    fullName: components[0].fullName,
-                    type: components[0].type,
-                  },
-                  message: messages[0],
-                },
-                {
-                  component: {
-                    fullName: components[1].fullName,
-                    type: components[1].type,
-                  },
-                  message: messages[1],
-                },
-              ]);
-            });
-          });
-        });
+      expect(result.status).to.equal(RequestStatus.SucceededPartial);
+      expect(result.successes).to.deep.equal([
+        {
+          component: components[2],
+          properties: fileProperties,
+        },
+      ]);
+      expect(result.failures).to.deep.equal([
+        {
+          component: {
+            fullName: components[0].fullName,
+            type: components[0].type,
+          },
+          message: messages[0],
+        },
+        {
+          component: {
+            fullName: components[1].fullName,
+            type: components[1].type,
+          },
+          message: messages[1],
+        },
+      ]);
     });
 
-    it('should report generic failure', (done) => {
-      const lifecycleMock = new MetadataApiRetrieveMock(env, done);
+    it('should report generic failure', async () => {
+      const lifecycleMock = new MetadataApiRetrieveMock(env);
       const message = 'Something went wrong';
+      const { operation } = await lifecycleMock.stub({
+        components: new ComponentSet([KEANU_COMPONENT], mockRegistry),
+        messages: { problem: message },
+      });
 
-      lifecycleMock
-        .stub({
-          components: new ComponentSet([KEANU_COMPONENT], mockRegistry),
-          messages: { problem: message },
-        })
-        .then(({ operation }) => {
-          operation.start();
+      const result = await operation.start();
 
-          operation.onFinish((result) => {
-            lifecycleMock.validate(() => {
-              expect(result.status).to.equal(RequestStatus.Failed);
-              expect(result.failures).to.deep.equal([{ message }]);
-            });
-          });
-        });
+      expect(result.status).to.equal(RequestStatus.Failed);
+      expect(result.failures).to.deep.equal([{ message }]);
     });
 
-    it('should ignore retrieved "Package" metadata type', (done) => {
-      const lifecycleMock = new MetadataApiRetrieveMock(env, done);
+    it('should ignore retrieved "Package" metadata type', async () => {
+      const lifecycleMock = new MetadataApiRetrieveMock(env);
       const component = KEANU_COMPONENT;
       const fileProperties = [
         {
@@ -248,27 +206,21 @@ describe('MetadataApiRetrieve', () => {
           fileName: 'package.xml',
         },
       ];
-      lifecycleMock
-        .stub({
-          components: new ComponentSet([KEANU_COMPONENT], mockRegistry),
-          merge: true,
-          fileProperties,
-        })
-        .then(({ operation }) => {
-          operation.start();
+      const { operation } = await lifecycleMock.stub({
+        components: new ComponentSet([KEANU_COMPONENT], mockRegistry),
+        merge: true,
+        fileProperties,
+      });
 
-          operation.onFinish((result) => {
-            lifecycleMock.validate(() => {
-              expect(result.status).to.equal(RequestStatus.Succeeded);
-              expect(result.successes).to.deep.equal([
-                {
-                  component,
-                  properties: fileProperties[0],
-                },
-              ]);
-            });
-          });
-        });
+      const result = await operation.start();
+
+      expect(result.status).to.equal(RequestStatus.Succeeded);
+      expect(result.successes).to.deep.equal([
+        {
+          component,
+          properties: fileProperties[0],
+        },
+      ]);
     });
   });
 });

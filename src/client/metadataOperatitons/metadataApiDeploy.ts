@@ -93,8 +93,10 @@ export class MetadataApiDeploy extends MetadataOperation<DeployResult, SourceDep
             componentDeployment.status = ComponentStatus.Changed;
           } else if (message.deleted === 'true') {
             componentDeployment.status = ComponentStatus.Deleted;
-          } else {
+          } else if (message.success === 'false') {
             componentDeployment.status = ComponentStatus.Failed;
+          } else {
+            componentDeployment.status = ComponentStatus.Unchanged;
           }
 
           if (message.problem) {

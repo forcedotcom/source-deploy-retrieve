@@ -146,6 +146,31 @@ describe('MetadataApiDeploy', () => {
       ]);
     });
 
+    it('should set "Unchanged" component status for an unchanged component', async () => {
+      const lifecycleMock = new MetadataApiDeployMock(env);
+      const { operation } = await lifecycleMock.stub({
+        components: new ComponentSet([KEANU_COMPONENT]),
+        componentFailures: {
+          success: 'true',
+          changed: 'false',
+          created: 'false',
+          deleted: 'false',
+          fullName: KEANU_COMPONENT.fullName,
+          componentType: KEANU_COMPONENT.type.name,
+        },
+      });
+
+      const result = await operation.start();
+
+      expect(result.components).to.deep.equal([
+        {
+          component: KEANU_COMPONENT,
+          status: ComponentStatus.Unchanged,
+          diagnostics: [],
+        },
+      ]);
+    });
+
     it('should aggregate diagnostics for a component', async () => {
       const lifecycleMock = new MetadataApiDeployMock(env);
       const { operation } = await lifecycleMock.stub({

@@ -29,10 +29,15 @@ export abstract class MetadataOperation<
     this.components = components;
   }
 
-  public async start(interval = 100): Promise<R | undefined> {
+  /**
+   * Start the metadata operation.
+   *
+   * @param pollInterval Frequency in milliseconds to poll for operation status
+   */
+  public async start(pollInterval = 100): Promise<R | undefined> {
     try {
       const { id } = await this.pre();
-      const apiResult = await this.pollStatus(id, interval);
+      const apiResult = await this.pollStatus(id, pollInterval);
 
       if (!apiResult || apiResult.status === RequestStatus.Canceled) {
         this.event.emit('cancel', apiResult);

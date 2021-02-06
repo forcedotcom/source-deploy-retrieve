@@ -11,6 +11,7 @@ import { ToolingApi } from './toolingApi';
 
 /**
  * Transfer SFDX source to and from a Salesforce org.
+ * @deprecated
  */
 export class SourceClient {
   public readonly connection: Connection;
@@ -18,11 +19,9 @@ export class SourceClient {
    * Perform operations using the tooling api.
    */
   public readonly tooling: ToolingApi;
-  // public readonly metadata: MetadataApi;
 
   constructor(connection: Connection, resolver = new MetadataResolver()) {
     this.connection = connection;
     this.tooling = new ToolingApi(connection, resolver);
-    // this.metadata = new MetadataApi(connection, resolver);
   }
 }

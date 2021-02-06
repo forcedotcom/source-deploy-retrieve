@@ -1,14 +1,12 @@
 #!/usr/bin/env node
 
 const repl = require('repl');
-const { Connection, AuthInfo } = require('@salesforce/core');
-const { MetadataResolver, MetadataConverter, SourceClient, ComponentSet } = require('../lib/src');
+const { MetadataResolver, MetadataConverter, ComponentSet } = require('../lib/src');
 
 const startMessage = `
 Usage:
   resolve(path): resolve components from a path
   async convert(components, format, outputConfig): Convert metadata components to a target format
-  async client(username): create a SourceClient
   time(func, mem = true): run function and report execution time and approx. heap usage
 `
 console.log(startMessage);

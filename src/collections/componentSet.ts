@@ -4,9 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { AuthInfo, Connection } from '@salesforce/core';
+import { Connection } from '@salesforce/core';
 import { parse as parseXml, j2xParser } from 'fast-xml-parser';
-import { MetadataApiDeployOptions } from '../client/types';
+import { MetadataApiDeployOptions, MetadataApiDeploy, MetadataApiRetrieve } from '../client';
 import { MetadataComponent, XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSetError } from '../errors';
 import {
@@ -23,11 +23,7 @@ import {
   SourceComponentOptions,
 } from './types';
 import { ComponentLike } from '../common/types';
-import { MetadataApiDeploy } from '../client/metadataOperatitons';
-import {
-  MetadataApiRetrieve,
-  RetrieveOptions,
-} from '../client/metadataOperatitons/metadataApiRetrieve';
+import { RetrieveOptions } from '../client/metadataOperatitons/metadataApiRetrieve';
 
 type Auth = {
   /**

@@ -10,7 +10,7 @@ import { ComponentStatus, RequestStatus } from '../../../src/client/types';
 import { expect } from 'chai';
 import { KEANU_COMPONENT } from '../../mock/registry/keanuConstants';
 import { basename, join } from 'path';
-import { MetadataApiDeployMock } from '../../mock/client/operations';
+import { MOCK_ASYNC_RESULT, stubMetadataDeploy } from '../../mock/client/operations';
 
 const env = createSandbox();
 
@@ -19,11 +19,8 @@ describe('MetadataApiDeploy', () => {
 
   describe('Cancellation', () => {
     it('should cancel immediately if cancelDeploy call returns done = true', async () => {
-      const lifecycleMock = new MetadataApiDeployMock(env);
-      const { operation, checkStatusStub, invokeStub } = await lifecycleMock.stub();
-      invokeStub
-        .withArgs('cancelDeploy', { id: lifecycleMock.asyncResult.id })
-        .returns({ done: true });
+      const { operation, checkStatusStub, invokeStub } = await stubMetadataDeploy(env);
+      invokeStub.withArgs('cancelDeploy', { id: MOCK_ASYNC_RESULT.id }).returns({ done: true });
 
       operation.cancel();
       await operation.start();
@@ -32,13 +29,10 @@ describe('MetadataApiDeploy', () => {
     });
 
     it('should async cancel if cancelDeploy call returns done = false', async () => {
-      const lifecycleMock = new MetadataApiDeployMock(env);
-      const { operation, checkStatusStub, invokeStub } = await lifecycleMock.stub();
-      invokeStub
-        .withArgs('cancelDeploy', { id: lifecycleMock.asyncResult.id })
-        .returns({ done: false });
+      const { operation, checkStatusStub, invokeStub } = await stubMetadataDeploy(env);
+      invokeStub.withArgs('cancelDeploy', { id: MOCK_ASYNC_RESULT.id }).returns({ done: false });
       checkStatusStub
-        .withArgs(lifecycleMock.asyncResult.id, true)
+        .withArgs(MOCK_ASYNC_RESULT.id, true)
         .resolves({ status: RequestStatus.Canceled });
 
       operation.cancel();
@@ -50,8 +44,7 @@ describe('MetadataApiDeploy', () => {
 
   describe('Deploy Result', () => {
     it('should set "Changed" component status for changed component', async () => {
-      const lifecycleMock = new MetadataApiDeployMock(env);
-      const { operation } = await lifecycleMock.stub({
+      const { operation } = await stubMetadataDeploy(env, {
         components: new ComponentSet([KEANU_COMPONENT]),
         componentSuccesses: {
           changed: 'true',
@@ -74,8 +67,7 @@ describe('MetadataApiDeploy', () => {
     });
 
     it('should set "Created" component status for changed component', async () => {
-      const lifecycleMock = new MetadataApiDeployMock(env);
-      const { operation } = await lifecycleMock.stub({
+      const { operation } = await stubMetadataDeploy(env, {
         components: new ComponentSet([KEANU_COMPONENT]),
         componentSuccesses: {
           changed: 'false',
@@ -98,8 +90,7 @@ describe('MetadataApiDeploy', () => {
     });
 
     it('should set "Deleted" component status for deleted component', async () => {
-      const lifecycleMock = new MetadataApiDeployMock(env);
-      const { operation } = await lifecycleMock.stub({
+      const { operation } = await stubMetadataDeploy(env, {
         components: new ComponentSet([KEANU_COMPONENT]),
         componentSuccesses: {
           changed: 'false',
@@ -122,8 +113,7 @@ describe('MetadataApiDeploy', () => {
     });
 
     it('should set "Failed" component status for failed component', async () => {
-      const lifecycleMock = new MetadataApiDeployMock(env);
-      const { operation } = await lifecycleMock.stub({
+      const { operation } = await stubMetadataDeploy(env, {
         components: new ComponentSet([KEANU_COMPONENT]),
         componentFailures: {
           success: 'false',
@@ -147,8 +137,7 @@ describe('MetadataApiDeploy', () => {
     });
 
     it('should set "Unchanged" component status for an unchanged component', async () => {
-      const lifecycleMock = new MetadataApiDeployMock(env);
-      const { operation } = await lifecycleMock.stub({
+      const { operation } = await stubMetadataDeploy(env, {
         components: new ComponentSet([KEANU_COMPONENT]),
         componentFailures: {
           success: 'true',
@@ -172,8 +161,7 @@ describe('MetadataApiDeploy', () => {
     });
 
     it('should aggregate diagnostics for a component', async () => {
-      const lifecycleMock = new MetadataApiDeployMock(env);
-      const { operation } = await lifecycleMock.stub({
+      const { operation } = await stubMetadataDeploy(env, {
         components: new ComponentSet([KEANU_COMPONENT]),
         componentFailures: [
           {
@@ -228,7 +216,6 @@ describe('MetadataApiDeploy', () => {
     });
 
     it('should fix lwc deploy message issue', async () => {
-      const lifecycleMock = new MetadataApiDeployMock(env);
       const bundlePath = join('path', 'to', 'lwc', 'test');
       const props = {
         name: 'test',
@@ -242,7 +229,7 @@ describe('MetadataApiDeploy', () => {
           children: [basename(props.xml), 'test.js', 'test.html'],
         },
       ]);
-      const { operation } = await lifecycleMock.stub({
+      const { operation } = await stubMetadataDeploy(env, {
         components: new ComponentSet([component]),
         componentSuccesses: [
           {

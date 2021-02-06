@@ -6,7 +6,6 @@
  */
 
 import { testSetup } from '@salesforce/core/lib/testSetup';
-import { Done } from 'mocha';
 import { join, sep } from 'path';
 import { match, SinonSandbox, SinonStub } from 'sinon';
 import { createMockZip, mockConnection } from '.';
@@ -28,22 +27,8 @@ import {
 import { mockRegistry } from '../registry';
 import { KEANU_COMPONENT } from '../registry/keanuConstants';
 
-abstract class MetadataOperationMock {
-  constructor(protected sandbox: SinonSandbox, private done?: Done) {}
-
-  public validate(logic: () => void): void {
-    let fail: Error;
-    try {
-      logic();
-    } catch (e) {
-      fail = e;
-    }
-    this.sandbox.restore();
-    this.done(fail);
-  }
-
-  public abstract stub(options: any): Promise<any>;
-}
+export const MOCK_ASYNC_RESULT = { id: '1234', state: RequestStatus.Pending, done: false };
+export const MOCK_DEFAULT_OUTPUT = sep + 'test';
 
 interface DeployStubOptions {
   components?: ComponentSet;
@@ -59,64 +44,61 @@ interface DeployOperationLifecycle {
   operation: MetadataApiDeploy;
 }
 
-export class MetadataApiDeployMock extends MetadataOperationMock {
-  public readonly asyncResult = { id: '1234', state: RequestStatus.Pending, done: false };
+export async function stubMetadataDeploy(
+  sandbox: SinonSandbox,
+  options: DeployStubOptions = { components: new ComponentSet() }
+): Promise<DeployOperationLifecycle> {
+  const zipBuffer = Buffer.from('1234');
+  const connection = await mockConnection(testSetup());
 
-  public async stub(
-    options: DeployStubOptions = { components: new ComponentSet() }
-  ): Promise<DeployOperationLifecycle> {
-    const zipBuffer = Buffer.from('1234');
-    const connection = await mockConnection(testSetup());
+  const deployStub = sandbox.stub(connection.metadata, 'deploy');
+  deployStub.withArgs(zipBuffer, MetadataApiDeploy.DEFAULT_OPTIONS).resolves(MOCK_ASYNC_RESULT);
 
-    const deployStub = this.sandbox.stub(connection.metadata, 'deploy');
-    deployStub.withArgs(zipBuffer, MetadataApiDeploy.DEFAULT_OPTIONS).resolves(this.asyncResult);
+  const convertStub = sandbox.stub(MetadataConverter.prototype, 'convert');
+  convertStub
+    .withArgs(Array.from(options.components), 'metadata', { type: 'zip' })
+    .resolves({ zipBuffer });
 
-    const convertStub = this.sandbox.stub(MetadataConverter.prototype, 'convert');
-    convertStub
-      .withArgs(Array.from(options.components), 'metadata', { type: 'zip' })
-      .resolves({ zipBuffer });
-
-    const defaultStatus = { success: false, done: false, status: RequestStatus.Pending };
-    const status: Partial<DeployResult> = Object.assign(defaultStatus, this.asyncResult);
-    if (options.componentSuccesses) {
-      if (options.componentFailures) {
-        status.status = RequestStatus.SucceededPartial;
-      } else {
-        status.status = RequestStatus.Succeeded;
-      }
-      status.details = {};
-      // @ts-ignore
-      status.details.componentSuccesses = options.componentSuccesses;
-      status.success = true;
-    } else {
-      status.status = RequestStatus.Failed;
-      status.success = false;
-    }
+  const defaultStatus = { success: false, done: false, status: RequestStatus.Pending };
+  const status: Partial<DeployResult> = Object.assign(defaultStatus, MOCK_ASYNC_RESULT);
+  if (options.componentSuccesses) {
     if (options.componentFailures) {
-      if (!status.details) {
-        status.details = {};
-      }
-      // @ts-ignore
-      status.details.componentFailures = options.componentFailures;
+      status.status = RequestStatus.SucceededPartial;
+    } else {
+      status.status = RequestStatus.Succeeded;
     }
-    const checkStatusStub = this.sandbox.stub(connection.metadata, 'checkDeployStatus');
+    status.details = {};
     // @ts-ignore
-    checkStatusStub.withArgs(this.asyncResult.id, true).resolves(status);
-
-    // @ts-ignore
-    const invokeStub = this.sandbox.stub(connection.metadata, '_invoke');
-
-    return {
-      deployStub,
-      convertStub,
-      checkStatusStub,
-      invokeStub,
-      operation: new MetadataApiDeploy({
-        usernameOrConnection: connection,
-        components: options.components,
-      }),
-    };
+    status.details.componentSuccesses = options.componentSuccesses;
+    status.success = true;
+  } else {
+    status.status = RequestStatus.Failed;
+    status.success = false;
   }
+  if (options.componentFailures) {
+    if (!status.details) {
+      status.details = {};
+    }
+    // @ts-ignore
+    status.details.componentFailures = options.componentFailures;
+  }
+  const checkStatusStub = sandbox.stub(connection.metadata, 'checkDeployStatus');
+  // @ts-ignore
+  checkStatusStub.withArgs(MOCK_ASYNC_RESULT.id, true).resolves(status);
+
+  // @ts-ignore
+  const invokeStub = sandbox.stub(connection.metadata, '_invoke');
+
+  return {
+    deployStub,
+    convertStub,
+    checkStatusStub,
+    invokeStub,
+    operation: new MetadataApiDeploy({
+      usernameOrConnection: connection,
+      components: options.components,
+    }),
+  };
 }
 
 interface RetrieveStubOptions {
@@ -135,95 +117,93 @@ interface RetrieveOperationLifecycle {
   operation: MetadataApiRetrieve;
 }
 
-export class MetadataApiRetrieveMock extends MetadataOperationMock {
-  public readonly asyncResult = { id: '1234', state: RequestStatus.Pending, done: false };
-  public readonly defaultOutput = sep + 'test';
+export async function stubMetadataRetrieve(
+  sandbox: SinonSandbox,
+  options: RetrieveStubOptions
+): Promise<RetrieveOperationLifecycle> {
+  const connection = await mockConnection(testSetup());
+  const { components } = options;
+  // contents of the zip don't really matter (unless something changes)
+  const zipBuffer = await createMockZip([
+    'unpackaged/package.xml',
+    join('unpackaged', KEANU_COMPONENT.content),
+    join('unpackaged', KEANU_COMPONENT.xml),
+  ]);
 
-  public async stub(options: RetrieveStubOptions): Promise<RetrieveOperationLifecycle> {
-    const connection = await mockConnection(testSetup());
-    const { components } = options;
-    // contents of the zip don't really matter (unless something changes)
-    const zipBuffer = await createMockZip([
-      'unpackaged/package.xml',
-      join('unpackaged', KEANU_COMPONENT.content),
-      join('unpackaged', KEANU_COMPONENT.xml),
-    ]);
+  const retrieveStub = sandbox.stub(connection.metadata, 'retrieve');
+  retrieveStub
+    // @ts-ignore required callback
+    .withArgs({
+      apiVersion: components.apiVersion,
+      unpackaged: components.getObject().Package,
+    })
+    .resolves(MOCK_ASYNC_RESULT);
 
-    const retrieveStub = this.sandbox.stub(connection.metadata, 'retrieve');
-    retrieveStub
-      // @ts-ignore required callback
-      .withArgs({
-        apiVersion: components.apiVersion,
-        unpackaged: components.getObject().Package,
-      })
-      .resolves(this.asyncResult);
-
-    const defaultStatus: Partial<RetrieveResult> = {
-      id: this.asyncResult.id,
-      status: RequestStatus.Pending,
-      success: false,
-      done: false,
-      zipFile: zipBuffer.toString('base64'),
-    };
-    if (options.fileProperties) {
-      defaultStatus.success = true;
-      // @ts-ignore
-      defaultStatus.fileProperties = options.fileProperties;
-      defaultStatus.status = options.failures
-        ? RequestStatus.SucceededPartial
-        : RequestStatus.Succeeded;
-    } else {
-      defaultStatus.success = false;
-      defaultStatus.status = RequestStatus.Failed;
-    }
-    if (options.messages) {
-      // @ts-ignore
-      defaultStatus.messages = options.messages;
-    }
-    const checkStatusStub = this.sandbox.stub(connection.metadata, 'checkRetrieveStatus');
-    // @ts-ignore force returning project's RetrieveResult type
-    checkStatusStub.withArgs(this.asyncResult.id).resolves(defaultStatus);
-
-    const source = Array.from(components.getSourceComponents());
-
-    let outputConfig: ConvertOutputConfig;
-    let converted: SourceComponent[] = [];
-    if (options.merge) {
-      outputConfig = {
-        type: 'merge',
-        mergeWith: components.getSourceComponents(),
-        defaultDirectory: this.defaultOutput,
-      };
-      converted = source;
-    } else {
-      outputConfig = {
-        type: 'directory',
-        outputDirectory: this.defaultOutput,
-      };
-      for (const component of components) {
-        const sc = new SourceComponent({
-          name: component.fullName,
-          type: component.type,
-          xml: join(this.defaultOutput, `${component.fullName}.${component.type.suffix}-meta.xml`),
-          content: join(this.defaultOutput, `${component.fullName}.${component.type.suffix}`),
-        });
-        converted.push(sc);
-      }
-    }
-    const convertStub = this.sandbox.stub(MetadataConverter.prototype, 'convert');
-    convertStub.withArgs(match.any, 'source', outputConfig).resolves({ converted });
-
-    return {
-      retrieveStub,
-      checkStatusStub,
-      convertStub,
-      operation: new MetadataApiRetrieve({
-        usernameOrConnection: connection,
-        components,
-        defaultOutput: this.defaultOutput,
-        registry: mockRegistry,
-        merge: options.merge,
-      }),
-    };
+  const defaultStatus: Partial<RetrieveResult> = {
+    id: MOCK_ASYNC_RESULT.id,
+    status: RequestStatus.Pending,
+    success: false,
+    done: false,
+    zipFile: zipBuffer.toString('base64'),
+  };
+  if (options.fileProperties) {
+    defaultStatus.success = true;
+    // @ts-ignore
+    defaultStatus.fileProperties = options.fileProperties;
+    defaultStatus.status = options.failures
+      ? RequestStatus.SucceededPartial
+      : RequestStatus.Succeeded;
+  } else {
+    defaultStatus.success = false;
+    defaultStatus.status = RequestStatus.Failed;
   }
+  if (options.messages) {
+    // @ts-ignore
+    defaultStatus.messages = options.messages;
+  }
+  const checkStatusStub = sandbox.stub(connection.metadata, 'checkRetrieveStatus');
+  // @ts-ignore force returning project's RetrieveResult type
+  checkStatusStub.withArgs(MOCK_ASYNC_RESULT.id).resolves(defaultStatus);
+
+  const source = Array.from(components.getSourceComponents());
+
+  let outputConfig: ConvertOutputConfig;
+  let converted: SourceComponent[] = [];
+  if (options.merge) {
+    outputConfig = {
+      type: 'merge',
+      mergeWith: components.getSourceComponents(),
+      defaultDirectory: MOCK_DEFAULT_OUTPUT,
+    };
+    converted = source;
+  } else {
+    outputConfig = {
+      type: 'directory',
+      outputDirectory: MOCK_DEFAULT_OUTPUT,
+    };
+    for (const component of components) {
+      const sc = new SourceComponent({
+        name: component.fullName,
+        type: component.type,
+        xml: join(MOCK_DEFAULT_OUTPUT, `${component.fullName}.${component.type.suffix}-meta.xml`),
+        content: join(MOCK_DEFAULT_OUTPUT, `${component.fullName}.${component.type.suffix}`),
+      });
+      converted.push(sc);
+    }
+  }
+  const convertStub = sandbox.stub(MetadataConverter.prototype, 'convert');
+  convertStub.withArgs(match.any, 'source', outputConfig).resolves({ converted });
+
+  return {
+    retrieveStub,
+    checkStatusStub,
+    convertStub,
+    operation: new MetadataApiRetrieve({
+      usernameOrConnection: connection,
+      components,
+      defaultOutput: MOCK_DEFAULT_OUTPUT,
+      registry: mockRegistry,
+      merge: options.merge,
+    }),
+  };
 }

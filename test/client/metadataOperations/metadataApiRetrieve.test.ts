@@ -8,7 +8,7 @@ import { expect } from 'chai';
 import { createSandbox, match } from 'sinon';
 import { ComponentSet } from '../../../src';
 import { RequestStatus } from '../../../src/client/types';
-import { MetadataApiRetrieveMock } from '../../mock/client/operations';
+import { MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../../mock/client/operations';
 import { mockRegistry } from '../../mock/registry';
 import { KATHY_COMPONENTS } from '../../mock/registry/kathyConstants';
 import { KEANU_COMPONENT } from '../../mock/registry/keanuConstants';
@@ -19,10 +19,9 @@ describe('MetadataApiRetrieve', async () => {
   afterEach(() => env.restore());
 
   it('should retrieve zip and extract to directory', async () => {
-    const lifecycleMock = new MetadataApiRetrieveMock(env);
     const component = KEANU_COMPONENT;
     const components = new ComponentSet([component], mockRegistry);
-    const { operation, convertStub } = await lifecycleMock.stub({
+    const { operation, convertStub } = await stubMetadataRetrieve(env, {
       components,
       fileProperties: {
         fullName: component.fullName,
@@ -37,16 +36,15 @@ describe('MetadataApiRetrieve', async () => {
     expect(
       convertStub.calledWith(match.any, 'source', {
         type: 'directory',
-        outputDirectory: lifecycleMock.defaultOutput,
+        outputDirectory: MOCK_DEFAULT_OUTPUT,
       })
     ).to.be.true;
   });
 
   it('should retrieve zip and merge with existing components', async () => {
-    const lifecycleMock = new MetadataApiRetrieveMock(env);
     const component = KEANU_COMPONENT;
     const components = new ComponentSet([component], mockRegistry);
-    const { operation, convertStub } = await lifecycleMock.stub({
+    const { operation, convertStub } = await stubMetadataRetrieve(env, {
       components,
       merge: true,
       fileProperties: {
@@ -63,17 +61,16 @@ describe('MetadataApiRetrieve', async () => {
       convertStub.calledWith(match.any, 'source', {
         type: 'merge',
         mergeWith: components.getSourceComponents(),
-        defaultDirectory: lifecycleMock.defaultOutput,
+        defaultDirectory: MOCK_DEFAULT_OUTPUT,
       })
     ).to.be.true;
   });
 
   describe('Cancellation', () => {
     it('should immediately stop polling', async () => {
-      const lifecycleMock = new MetadataApiRetrieveMock(env);
       const component = KEANU_COMPONENT;
       const components = new ComponentSet([component], mockRegistry);
-      const { operation, checkStatusStub } = await lifecycleMock.stub({ components });
+      const { operation, checkStatusStub } = await stubMetadataRetrieve(env, { components });
 
       operation.cancel();
       await operation.start();
@@ -84,14 +81,13 @@ describe('MetadataApiRetrieve', async () => {
 
   describe('Retrieve Result', () => {
     it('should return successfully retrieved components', async () => {
-      const lifecycleMock = new MetadataApiRetrieveMock(env);
       const component = KEANU_COMPONENT;
       const fileProperties = {
         fullName: component.fullName,
         type: component.type.name,
         fileName: component.content,
       };
-      const { operation } = await lifecycleMock.stub({
+      const { operation } = await stubMetadataRetrieve(env, {
         components: new ComponentSet([KEANU_COMPONENT], mockRegistry),
         merge: true,
         fileProperties,
@@ -109,10 +105,9 @@ describe('MetadataApiRetrieve', async () => {
     });
 
     it('should report components that failed to be retrieved', async () => {
-      const lifecycleMock = new MetadataApiRetrieveMock(env);
       const component = KEANU_COMPONENT;
       const message = `Failed to retrieve components of type '${component.type.name}' named '${component.fullName}'`;
-      const { operation } = await lifecycleMock.stub({
+      const { operation } = await stubMetadataRetrieve(env, {
         components: new ComponentSet([KEANU_COMPONENT], mockRegistry),
         messages: { problem: message },
       });
@@ -132,7 +127,6 @@ describe('MetadataApiRetrieve', async () => {
     });
 
     it('should report both successful and failed components', async () => {
-      const lifecycleMock = new MetadataApiRetrieveMock(env);
       const components = [KEANU_COMPONENT, KATHY_COMPONENTS[0], KATHY_COMPONENTS[1]];
       const messages = [
         `Failed to retrieve components of type '${components[0].type.name}' named '${components[0].fullName}'`,
@@ -143,7 +137,7 @@ describe('MetadataApiRetrieve', async () => {
         type: components[2].type.name,
         fileName: components[2].xml,
       };
-      const { operation } = await lifecycleMock.stub({
+      const { operation } = await stubMetadataRetrieve(env, {
         components: new ComponentSet(components, mockRegistry),
         messages: messages.map((m) => ({ problem: m })),
         merge: true,
@@ -178,9 +172,8 @@ describe('MetadataApiRetrieve', async () => {
     });
 
     it('should report generic failure', async () => {
-      const lifecycleMock = new MetadataApiRetrieveMock(env);
       const message = 'Something went wrong';
-      const { operation } = await lifecycleMock.stub({
+      const { operation } = await stubMetadataRetrieve(env, {
         components: new ComponentSet([KEANU_COMPONENT], mockRegistry),
         messages: { problem: message },
       });
@@ -192,7 +185,6 @@ describe('MetadataApiRetrieve', async () => {
     });
 
     it('should ignore retrieved "Package" metadata type', async () => {
-      const lifecycleMock = new MetadataApiRetrieveMock(env);
       const component = KEANU_COMPONENT;
       const fileProperties = [
         {
@@ -206,7 +198,7 @@ describe('MetadataApiRetrieve', async () => {
           fileName: 'package.xml',
         },
       ];
-      const { operation } = await lifecycleMock.stub({
+      const { operation } = await stubMetadataRetrieve(env, {
         components: new ComponentSet([KEANU_COMPONENT], mockRegistry),
         merge: true,
         fileProperties,

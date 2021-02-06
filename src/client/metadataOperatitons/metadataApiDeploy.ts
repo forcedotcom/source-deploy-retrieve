@@ -62,7 +62,14 @@ export class MetadataApiDeploy extends MetadataOperation<DeployResult, SourceDep
   }
 
   protected async post(result: DeployResult): Promise<SourceDeployResult> {
+    const diagnosticUtil = new DiagnosticUtil('metadata');
     const componentDeploymentMap = new Map<string, ComponentDeployment>();
+    const deployResult: SourceDeployResult = {
+      id: result.id,
+      status: result.status,
+      success: result.success,
+    };
+
     for (const component of this.components.getSourceComponents()) {
       componentDeploymentMap.set(`${component.type.name}:${component.fullName}`, {
         status: ComponentStatus.Unchanged,
@@ -70,63 +77,51 @@ export class MetadataApiDeploy extends MetadataOperation<DeployResult, SourceDep
         diagnostics: [],
       });
     }
-    const deployResult: SourceDeployResult = {
-      id: result.id,
-      status: result.status,
-      success: result.success,
-    };
 
-    const messages = this.getDeployMessages(result);
-    const diagnosticUtil = new DiagnosticUtil('metadata');
+    for (let message of this.getDeployMessages(result)) {
+      message = this.sanitizeDeployMessage(message);
+      const componentKey = `${message.componentType}:${message.fullName}`;
+      const componentDeployment = componentDeploymentMap.get(componentKey);
 
-    if (messages.length > 0) {
-      deployResult.components = [];
-      for (let message of messages) {
-        message = this.sanitizeDeployMessage(message);
-        const componentKey = `${message.componentType}:${message.fullName}`;
-        const componentDeployment = componentDeploymentMap.get(componentKey);
+      if (componentDeployment) {
+        if (message.created === 'true') {
+          componentDeployment.status = ComponentStatus.Created;
+        } else if (message.changed === 'true') {
+          componentDeployment.status = ComponentStatus.Changed;
+        } else if (message.deleted === 'true') {
+          componentDeployment.status = ComponentStatus.Deleted;
+        } else if (message.success === 'false') {
+          componentDeployment.status = ComponentStatus.Failed;
+        } else {
+          componentDeployment.status = ComponentStatus.Unchanged;
+        }
 
-        if (componentDeployment) {
-          if (message.created === 'true') {
-            componentDeployment.status = ComponentStatus.Created;
-          } else if (message.changed === 'true') {
-            componentDeployment.status = ComponentStatus.Changed;
-          } else if (message.deleted === 'true') {
-            componentDeployment.status = ComponentStatus.Deleted;
-          } else if (message.success === 'false') {
-            componentDeployment.status = ComponentStatus.Failed;
-          } else {
-            componentDeployment.status = ComponentStatus.Unchanged;
-          }
-
-          if (message.problem) {
-            diagnosticUtil.setDeployDiagnostic(componentDeployment, message);
-          }
+        if (message.problem) {
+          diagnosticUtil.setDeployDiagnostic(componentDeployment, message);
         }
       }
-      deployResult.components = Array.from(componentDeploymentMap.values());
     }
+
+    deployResult.components = Array.from(componentDeploymentMap.values());
 
     return deployResult;
   }
 
   private getDeployMessages(result: DeployResult): DeployMessage[] {
     const messages: DeployMessage[] = [];
-    if (result.details) {
-      const { componentSuccesses, componentFailures } = result.details;
-      if (componentSuccesses) {
-        if (Array.isArray(componentSuccesses)) {
-          messages.push(...componentSuccesses);
-        } else {
-          messages.push(componentSuccesses);
-        }
+    const { componentSuccesses, componentFailures } = result.details;
+    if (componentSuccesses) {
+      if (Array.isArray(componentSuccesses)) {
+        messages.push(...componentSuccesses);
+      } else {
+        messages.push(componentSuccesses);
       }
-      if (componentFailures) {
-        if (Array.isArray(componentFailures)) {
-          messages.push(...componentFailures);
-        } else {
-          messages.push(componentFailures);
-        }
+    }
+    if (componentFailures) {
+      if (Array.isArray(componentFailures)) {
+        messages.push(...componentFailures);
+      } else {
+        messages.push(componentFailures);
       }
     }
     return messages;

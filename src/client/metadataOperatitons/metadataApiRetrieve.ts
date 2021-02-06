@@ -16,7 +16,7 @@ export type RetrieveOptions = {
   defaultOutput: string;
 };
 
-export type RetrieveOperationOptions = MetadataOperationOptions &
+type RetrieveOperationOptions = MetadataOperationOptions &
   RetrieveOptions & { registry?: RegistryAccess };
 
 export class MetadataApiRetrieve extends MetadataOperation<RetrieveResult, SourceRetrieveResult> {

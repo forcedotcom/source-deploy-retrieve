@@ -15,7 +15,7 @@ import {
 } from '../types';
 import { MetadataOperation, MetadataOperationOptions } from './metadataOperation';
 
-export type DeployOperationOptions = MetadataOperationOptions & MetadataApiDeployOptions;
+type DeployOperationOptions = MetadataOperationOptions & MetadataApiDeployOptions;
 
 export class MetadataApiDeploy extends MetadataOperation<DeployResult, SourceDeployResult> {
   public static readonly DEFAULT_OPTIONS: MetadataApiDeployOptions = {

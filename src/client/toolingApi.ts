@@ -10,9 +10,8 @@ import { SourcePath } from '../common';
 import { nls } from '../i18n';
 import { buildQuery, queryToFileMap } from './retrieveUtil';
 import { createFiles } from '../utils';
-import { SourceComponent } from '../metadata-registry';
+import { MetadataResolver, RegistryAccess, SourceComponent } from '../metadata-registry';
 import {
-  BaseApi,
   RetrieveOptions,
   RetrievePathOptions,
   ToolingDeployOptions,
@@ -22,6 +21,7 @@ import {
   RequestStatus,
 } from './types';
 import { ComponentSet } from '../collections';
+import { Connection } from '@salesforce/core';
 
 const retrieveTypes = new Set([
   'ApexClass',
@@ -41,7 +41,17 @@ export const deployTypes = new Map([
   ['LightningComponentBundle', 'LightningComponentResource'],
 ]);
 
-export class ToolingApi extends BaseApi {
+export class ToolingApi {
+  protected connection: Connection;
+  protected resolver: MetadataResolver;
+  protected registry: RegistryAccess;
+
+  constructor(connection: Connection, resolver: MetadataResolver, registry = new RegistryAccess()) {
+    this.connection = connection;
+    this.resolver = resolver;
+    this.registry = registry;
+  }
+
   public async retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult> {
     const retrievePaths = options.paths[0];
     return this.retrieve({

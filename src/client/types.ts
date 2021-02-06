@@ -327,60 +327,6 @@ export type LWCRecord = {
 };
 
 // ------------------------------------------------
-// Clients
-// ------------------------------------------------
-
-export interface DeployRetrieveClient {
-  /**
-   * Retrieve metadata components and wait for the result.
-   *
-   * @param options Specify `components`, `output` and other optionals
-   */
-  retrieve(options: RetrieveOptions): Promise<SourceRetrieveResult>;
-  /**
-   * Infer metadata components from source paths, retrieve them, and wait for the result.
-   *
-   * @param options Specify `paths`, `output` and other optionals
-   */
-  retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult>;
-  /**
-   * Deploy metadata components and wait for result.
-   *
-   * @param filePath Paths to source files to deploy
-   */
-  deploy(components: SourceComponent | SourceComponent[]): Promise<SourceDeployResult>;
-  /**
-   * Infer metadata components from source path, deploy them, and wait for results.
-   *
-   * @param filePath Paths to source files to deploy
-   */
-  deployWithPaths(paths: SourcePath | SourcePath[]): Promise<SourceDeployResult>;
-}
-
-export abstract class BaseApi implements DeployRetrieveClient {
-  protected connection: Connection;
-  protected resolver: MetadataResolver;
-  protected registry: RegistryAccess;
-
-  constructor(connection: Connection, resolver: MetadataResolver, registry = new RegistryAccess()) {
-    this.connection = connection;
-    this.resolver = resolver;
-    this.registry = registry;
-  }
-
-  /**
-   * @param options Specify `paths`, `output` and other optionals
-   */
-  abstract retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult>;
-
-  abstract retrieve(options: RetrieveOptions): Promise<SourceRetrieveResult>;
-
-  abstract deploy(components: SourceComponent | SourceComponent[]): Promise<SourceDeployResult>;
-
-  abstract deployWithPaths(paths: SourcePath | SourcePath[]): Promise<SourceDeployResult>;
-}
-
-// ------------------------------------------------
 // Client options
 // ------------------------------------------------
 

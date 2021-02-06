@@ -11,7 +11,7 @@ import { MetadataTransfer } from '../../../src/client/transferOperations/metadat
 import { MetadataRequestResult, RequestStatus, SourceApiResult } from '../../../src/client/types';
 import { AuthInfo, Connection } from '@salesforce/core';
 import { expect } from 'chai';
-import { DeployError } from '../../../src/errors';
+import { MetadataTransferError } from '../../../src/errors';
 import { mockConnection } from '../../mock/client';
 import { fail } from 'assert';
 
@@ -152,7 +152,7 @@ describe('MetadataTransfer', () => {
     it('should emit wrapped error if something goes wrong', async () => {
       const { checkStatus } = operation.lifecycle;
       const originalError = new Error('whoops');
-      const expectedError = new DeployError('md_request_fail', originalError.message);
+      const expectedError = new MetadataTransferError('md_request_fail', originalError.message);
       checkStatus.throws(originalError);
 
       let error: Error;
@@ -166,7 +166,7 @@ describe('MetadataTransfer', () => {
     it('should throw wrapped error if there are no error listeners', async () => {
       const { checkStatus } = operation.lifecycle;
       const originalError = new Error('whoops');
-      const expectedError = new DeployError('md_request_fail', originalError.message);
+      const expectedError = new MetadataTransferError('md_request_fail', originalError.message);
       checkStatus.throws(originalError);
 
       try {

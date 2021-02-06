@@ -8,15 +8,12 @@ export {
   MetadataApiDeployOptions,
   RetrieveOptions,
   RetrievePathOptions,
-  RetrieveStatus,
   SourceDeployResult,
   RetrieveMessage,
   SourceRetrieveResult,
   ToolingDeployOptions,
   ToolingDeployStatus,
   DeployPathOptions,
-  DeployStatus,
-  ApiResult,
   ComponentStatus,
 } from './client';
 export { MetadataConverter, ConvertOutputConfig, ConvertResult } from './convert';

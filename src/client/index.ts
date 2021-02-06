@@ -7,13 +7,10 @@
 export { MetadataApiDeploy, MetadataApiRetrieve } from './transferOperations';
 export { ToolingApi } from './toolingApi';
 export {
-  ApiResult,
   DeployPathOptions,
-  DeployStatus,
   MetadataApiDeployOptions,
   RetrieveOptions,
   RetrievePathOptions,
-  RetrieveStatus,
   SourceDeployResult,
   RetrieveMessage,
   SourceRetrieveResult,

@@ -13,7 +13,7 @@ import {
   ComponentDeployment,
   ComponentStatus,
   DeployMessage,
-  RetrieveStatus,
+  RequestStatus,
 } from '../../src/client/types';
 import { TreeContainer } from '../../src';
 
@@ -109,7 +109,7 @@ describe('DiagnosticUtil', () => {
     it('should create retrieve diagnostic for componentRetrieval', () => {
       const message = 'There was a problem with the retrieve';
       expect(
-        util.setRetrieveDiagnostic(message, { component, status: RetrieveStatus.Failed })
+        util.setRetrieveDiagnostic(message, { component, status: RequestStatus.Failed })
       ).to.deep.equal({
         diagnostics: {
           message,
@@ -117,7 +117,7 @@ describe('DiagnosticUtil', () => {
           filePath: component.content,
         },
         component,
-        status: RetrieveStatus.Failed,
+        status: RequestStatus.Failed,
       });
     });
   });

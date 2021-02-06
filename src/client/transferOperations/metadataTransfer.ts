@@ -7,7 +7,7 @@
 import { AuthInfo, Connection } from '@salesforce/core';
 import { EventEmitter } from 'events';
 import { ComponentSet } from '../../collections';
-import { DeployError } from '../../errors';
+import { MetadataTransferError } from '../../errors';
 import { MetadataRequestResult, RequestStatus, SourceApiResult } from '../types';
 
 export interface MetadataTransferOptions {
@@ -117,7 +117,7 @@ export abstract class MetadataTransfer<U extends MetadataRequestResult, R extend
         triedOnce = true;
       }
     } catch (e) {
-      throw new DeployError('md_request_fail', e.message);
+      throw new MetadataTransferError('md_request_fail', e.message);
     }
   }
 

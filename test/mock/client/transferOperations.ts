@@ -16,7 +16,7 @@ import {
   RetrieveMessage,
   SourceComponent,
 } from '../../../src';
-import { MetadataApiDeploy, MetadataApiRetrieve } from '../../../src/client/transferOperations';
+import { MetadataApiDeploy, MetadataApiRetrieve } from '../../../src/client';
 import {
   DeployMessage,
   DeployResult,

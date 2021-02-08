@@ -4,15 +4,15 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SourceDeployResult, ComponentStatus } from '..';
-import { MetadataConverter } from '../..';
-import { DiagnosticUtil } from '../diagnosticUtil';
+import { SourceDeployResult, ComponentStatus } from '.';
+import { MetadataConverter } from '..';
+import { DiagnosticUtil } from './diagnosticUtil';
 import {
   DeployResult,
   ComponentDeployment,
   DeployMessage,
   MetadataApiDeployOptions as ApiOptions,
-} from '../types';
+} from './types';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 
 type MetadataApiDeployOptions = MetadataTransferOptions & ApiOptions;

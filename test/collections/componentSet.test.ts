@@ -10,7 +10,7 @@ import { expect } from 'chai';
 import { join } from 'path';
 import { createSandbox } from 'sinon';
 import { VirtualDirectory, VirtualTreeContainer, ComponentSet, MetadataResolver } from '../../src';
-import { MetadataApiDeploy, MetadataApiRetrieve } from '../../src/client/transferOperations';
+import { MetadataApiDeploy, MetadataApiRetrieve } from '../../src/client';
 import { MetadataComponent, MetadataMember } from '../../src/common/types';
 import { ComponentSetError } from '../../src/errors';
 import { nls } from '../../src/i18n';

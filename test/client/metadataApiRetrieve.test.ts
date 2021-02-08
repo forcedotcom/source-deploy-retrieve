@@ -6,12 +6,12 @@
  */
 import { expect } from 'chai';
 import { createSandbox, match } from 'sinon';
-import { ComponentSet } from '../../../src';
-import { RequestStatus } from '../../../src/client/types';
-import { MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../../mock/client/transferOperations';
-import { mockRegistry } from '../../mock/registry';
-import { KATHY_COMPONENTS } from '../../mock/registry/kathyConstants';
-import { KEANU_COMPONENT } from '../../mock/registry/keanuConstants';
+import { ComponentSet } from '../../src';
+import { RequestStatus } from '../../src/client/types';
+import { MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
+import { mockRegistry } from '../mock/registry';
+import { KATHY_COMPONENTS } from '../mock/registry/kathyConstants';
+import { KEANU_COMPONENT } from '../mock/registry/keanuConstants';
 
 const env = createSandbox();
 

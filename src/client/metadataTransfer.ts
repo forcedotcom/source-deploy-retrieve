@@ -6,9 +6,9 @@
  */
 import { AuthInfo, Connection } from '@salesforce/core';
 import { EventEmitter } from 'events';
-import { ComponentSet } from '../../collections';
-import { MetadataTransferError } from '../../errors';
-import { MetadataRequestResult, RequestStatus, SourceApiResult } from '../types';
+import { ComponentSet } from '../collections';
+import { MetadataTransferError } from '../errors';
+import { MetadataRequestResult, RequestStatus, SourceApiResult } from './types';
 
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;

@@ -6,13 +6,13 @@
  */
 import { createSandbox, SinonFakeTimers, SinonStub } from 'sinon';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
-import { ComponentSet } from '../../../src';
-import { MetadataTransfer } from '../../../src/client/transferOperations/metadataTransfer';
-import { MetadataRequestResult, RequestStatus, SourceApiResult } from '../../../src/client/types';
+import { ComponentSet } from '../../src';
+import { MetadataTransfer } from '../../src/client/metadataTransfer';
+import { MetadataRequestResult, RequestStatus, SourceApiResult } from '../../src/client/types';
 import { AuthInfo, Connection } from '@salesforce/core';
 import { expect } from 'chai';
-import { MetadataTransferError } from '../../../src/errors';
-import { mockConnection } from '../../mock/client';
+import { MetadataTransferError } from '../../src/errors';
+import { mockConnection } from '../mock/client';
 import { fail } from 'assert';
 
 const $$ = testSetup();

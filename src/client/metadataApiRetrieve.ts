@@ -5,10 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { SourceRetrieveResult } from '..';
-import { ConvertOutputConfig, MetadataConverter, SourceComponent } from '../..';
-import { ComponentSet } from '../../collections';
-import { RegistryAccess, ZipTreeContainer } from '../../metadata-registry';
-import { RequestStatus, RetrieveFailure, RetrieveResult, RetrieveSuccess } from '../types';
+import { ConvertOutputConfig, MetadataConverter, SourceComponent } from '../';
+import { ComponentSet } from '../collections';
+import { RegistryAccess, ZipTreeContainer } from '../metadata-registry';
+import { RequestStatus, RetrieveFailure, RetrieveResult, RetrieveSuccess } from './types';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 
 export type RetrieveOptions = {

@@ -1,4 +1,10 @@
-# 1.1.15 - January 12, 2020
+# 1.1.16 - February 9, 2021
+
+## Added
+
+- Support dividing a decomposed component across different directories ([PR #224](https://github.com/forcedotcom/source-deploy-retrieve/pull/224))
+
+# 1.1.15 - January 12, 2021
 
 ## Added
 

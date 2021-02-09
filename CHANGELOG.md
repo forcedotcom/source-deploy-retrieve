@@ -2,7 +2,7 @@
 
 ## Added
 
-- Support dividing a single decomposed compnent across different package directories ([PR #224](https://github.com/forcedotcom/source-deploy-retrieve/pull/224))
+- Support dividing a decomposed component across different directories ([PR #224](https://github.com/forcedotcom/source-deploy-retrieve/pull/224))
 
 # 1.1.15 - January 12, 2021
 

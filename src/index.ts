@@ -33,7 +33,7 @@ export {
   ComponentSet,
   FromManifestOptions,
   FromSourceOptions,
-  SourceComponentOptions,
   DeploySetOptions,
   RetrieveSetOptions,
+  ResolveOptions,
 } from './collections';

@@ -15,7 +15,7 @@ import {
 } from './types';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 
-type MetadataApiDeployOptions = MetadataTransferOptions & ApiOptions;
+export type MetadataApiDeployOptions = MetadataTransferOptions & ApiOptions;
 
 export class MetadataApiDeploy extends MetadataTransfer<DeployResult, SourceDeployResult> {
   public static readonly DEFAULT_OPTIONS: ApiOptions = {

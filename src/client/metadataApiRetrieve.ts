@@ -8,15 +8,16 @@ import { SourceRetrieveResult } from '..';
 import { ConvertOutputConfig, MetadataConverter, SourceComponent } from '../';
 import { ComponentSet } from '../collections';
 import { RegistryAccess, ZipTreeContainer } from '../metadata-registry';
-import { RequestStatus, RetrieveFailure, RetrieveResult, RetrieveSuccess } from './types';
+import {
+  RequestStatus,
+  RetrieveFailure,
+  RetrieveOptions,
+  RetrieveResult,
+  RetrieveSuccess,
+} from './types';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 
-export type RetrieveOptions = {
-  merge?: boolean;
-  defaultOutput: string;
-};
-
-type MetadataApiRetrieveOptions = MetadataTransferOptions &
+export type MetadataApiRetrieveOptions = MetadataTransferOptions &
   RetrieveOptions & { registry?: RegistryAccess };
 
 export class MetadataApiRetrieve extends MetadataTransfer<RetrieveResult, SourceRetrieveResult> {
@@ -58,16 +59,16 @@ export class MetadataApiRetrieve extends MetadataTransfer<RetrieveResult, Source
 
   private async extract(zip: Buffer): Promise<SourceComponent[]> {
     const converter = new MetadataConverter(this.options.registry);
-    const { merge, defaultOutput } = this.options;
+    const { merge, output } = this.options;
     const outputConfig: ConvertOutputConfig = merge
       ? {
           type: 'merge',
           mergeWith: this.components.getSourceComponents(),
-          defaultDirectory: defaultOutput,
+          defaultDirectory: output,
         }
       : {
           type: 'directory',
-          outputDirectory: defaultOutput,
+          outputDirectory: output,
         };
     const zipComponents = ComponentSet.fromSource('.', {
       registry: this.options.registry,

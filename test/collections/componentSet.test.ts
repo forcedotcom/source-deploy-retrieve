@@ -479,7 +479,7 @@ describe('ComponentSet', () => {
       const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
       const operationArgs = {
         components: set,
-        defaultOutput: join('test', 'path'),
+        output: join('test', 'path'),
         usernameOrConnection: connection,
       };
       const expectedOperation = new MetadataApiRetrieve(operationArgs);
@@ -490,7 +490,7 @@ describe('ComponentSet', () => {
       Object.setPrototypeOf(MetadataApiRetrieve, constructorStub);
 
       const result = await set.retrieve({
-        defaultOutput: operationArgs.defaultOutput,
+        output: operationArgs.output,
         usernameOrConnection: connection,
       });
 
@@ -500,7 +500,7 @@ describe('ComponentSet', () => {
     it('should throw error if there are no components in the set', async () => {
       const set = new ComponentSet(undefined, mockRegistry);
       try {
-        await set.retrieve({ usernameOrConnection: 'test@foobar.com', defaultOutput: 'test' });
+        await set.retrieve({ usernameOrConnection: 'test@foobar.com', output: 'test' });
         fail('should have thrown an error');
       } catch (e) {
         expect(e.name).to.equal(ComponentSetError.name);

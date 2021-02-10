@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { ComponentSet } from '../collections';
 import { PackageTypeMembers } from '../collections/types';
 import { MetadataComponent, SourcePath } from '../common/types';
 import { SourceComponent } from '../metadata-registry';
@@ -273,40 +272,19 @@ export type LWCRecord = {
 // Client options
 // ------------------------------------------------
 
-type CommonOptions = {
+export interface RetrieveOptions {
   /**
-   * Set the max number of seconds to wait for the operation.
+   * The directory to retrieve components to. If `merge: true`, components are only
+   * retrieved to `output` if there wasn't a component to merge with.
    */
-  wait?: number;
-  namespace?: string;
-  merge?: boolean;
-};
-
-type CommonRetrieveOptions = {
-  /**
-   * The directory to retrieve the components to.
-   */
-  output?: SourcePath;
+  output: SourcePath;
   /**
    * Whether or not to merge and replace input components with the retrieved versions
    */
   merge?: boolean;
-};
+}
 
-type CommonPathOptions = {
-  /**
-   * Source paths of the files to perform the operation on.
-   */
-  paths: SourcePath[];
-};
-
-export type RetrieveOptions = CommonOptions & CommonRetrieveOptions & { components: ComponentSet };
-
-export type RetrievePathOptions = CommonOptions & CommonRetrieveOptions & CommonPathOptions;
-
-type NamespaceFlag = { namespace?: string };
-
-export type MetadataApiDeployOptions = {
+export interface MetadataApiDeployOptions {
   allowMissingFiles?: boolean;
   autoUpdatePackage?: boolean;
   checkOnly?: boolean;
@@ -317,8 +295,4 @@ export type MetadataApiDeployOptions = {
   runAllTests?: boolean;
   runTests?: string[];
   singlePackage?: boolean;
-};
-
-export type ToolingDeployOptions = NamespaceFlag;
-
-export type DeployPathOptions = CommonOptions & CommonPathOptions;
+}

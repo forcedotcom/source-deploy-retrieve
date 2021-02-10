@@ -7,13 +7,12 @@
 export {
   MetadataApiDeployOptions,
   RetrieveOptions,
-  RetrievePathOptions,
   SourceDeployResult,
   RetrieveMessage,
   SourceRetrieveResult,
   ToolingDeployOptions,
+  ToolingRetrieveOptions,
   ToolingDeployStatus,
-  DeployPathOptions,
   ComponentStatus,
 } from './client';
 export { MetadataConverter, ConvertOutputConfig, ConvertResult } from './convert';
@@ -35,4 +34,6 @@ export {
   FromManifestOptions,
   FromSourceOptions,
   SourceComponentOptions,
+  DeploySetOptions,
+  RetrieveSetOptions,
 } from './collections';

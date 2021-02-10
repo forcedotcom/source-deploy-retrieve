@@ -4,9 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Connection } from '@salesforce/core';
 import { parse as parseXml, j2xParser } from 'fast-xml-parser';
-import { MetadataApiDeployOptions, MetadataApiDeploy, MetadataApiRetrieve } from '../client';
+import {
+  MetadataApiDeploy,
+  MetadataApiDeployOptions,
+  MetadataApiRetrieve,
+  MetadataApiRetrieveOptions,
+} from '../client';
 import { MetadataComponent, XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSetError } from '../errors';
 import {
@@ -23,15 +27,9 @@ import {
   SourceComponentOptions,
 } from './types';
 import { ComponentLike } from '../common/types';
-import { RetrieveOptions } from '../client/metadataApiRetrieve';
 
-type Auth = {
-  /**
-   * Deploying with a username requires local AuthInfo from @salesforce/core, usually created
-   * after authenticating with the Salesforce CLI.
-   */
-  usernameOrConnection: string | Connection;
-};
+export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
+export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
 
 export class ComponentSet implements Iterable<MetadataComponent> {
   private static readonly WILDCARD = '*';
@@ -142,7 +140,7 @@ export class ComponentSet implements Iterable<MetadataComponent> {
    *
    * @param options
    */
-  public deploy(options: MetadataApiDeployOptions & Auth): MetadataApiDeploy {
+  public deploy(options: DeploySetOptions): MetadataApiDeploy {
     const toDeploy = Array.from(this.getSourceComponents());
 
     if (toDeploy.length === 0) {
@@ -162,7 +160,7 @@ export class ComponentSet implements Iterable<MetadataComponent> {
    *
    * @param options
    */
-  public retrieve(options: RetrieveOptions & Auth): MetadataApiRetrieve {
+  public retrieve(options: RetrieveSetOptions): MetadataApiRetrieve {
     if (this.size === 0) {
       throw new ComponentSetError('error_no_components_to_retrieve');
     }

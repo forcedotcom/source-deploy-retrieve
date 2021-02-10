@@ -201,7 +201,7 @@ export async function stubMetadataRetrieve(
     operation: new MetadataApiRetrieve({
       usernameOrConnection: connection,
       components,
-      defaultOutput: MOCK_DEFAULT_OUTPUT,
+      output: MOCK_DEFAULT_OUTPUT,
       registry: mockRegistry,
       merge: options.merge,
     }),

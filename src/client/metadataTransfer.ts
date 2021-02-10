@@ -27,7 +27,7 @@ export abstract class MetadataTransfer<U extends MetadataRequestResult, R extend
   }
 
   /**
-   * Start the metadata operation.
+   * Start the metadata transfer.
    *
    * @param pollInterval Frequency in milliseconds to poll for operation status
    */

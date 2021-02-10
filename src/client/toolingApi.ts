@@ -11,17 +11,13 @@ import { nls } from '../i18n';
 import { buildQuery, queryToFileMap } from './retrieveUtil';
 import { createFiles } from '../utils';
 import { MetadataResolver, RegistryAccess, SourceComponent } from '../metadata-registry';
-import {
-  RetrieveOptions,
-  RetrievePathOptions,
-  ToolingDeployOptions,
-  SourceDeployResult,
-  QueryResult,
-  SourceRetrieveResult,
-  RequestStatus,
-} from './types';
+import { SourceDeployResult, QueryResult, SourceRetrieveResult, RequestStatus } from './types';
 import { ComponentSet } from '../collections';
 import { Connection } from '@salesforce/core';
+
+type WithNamespace = { namespace?: string };
+export type ToolingDeployOptions = WithNamespace;
+export type ToolingRetrieveOptions = WithNamespace & { output?: string };
 
 const retrieveTypes = new Set([
   'ApexClass',
@@ -52,16 +48,19 @@ export class ToolingApi {
     this.registry = registry;
   }
 
-  public async retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult> {
-    const retrievePaths = options.paths[0];
+  public async retrieveWithPaths(
+    options: ToolingRetrieveOptions & { paths: string[] }
+  ): Promise<SourceRetrieveResult> {
     return this.retrieve({
       output: options.output,
       namespace: options.namespace,
-      components: ComponentSet.fromSource(retrievePaths, { registry: this.registry }),
+      components: ComponentSet.fromSource(options.paths[0], { registry: this.registry }),
     });
   }
 
-  public async retrieve(options: RetrieveOptions): Promise<SourceRetrieveResult> {
+  public async retrieve(
+    options: ToolingRetrieveOptions & { components: ComponentSet }
+  ): Promise<SourceRetrieveResult> {
     let retrieveResult: SourceRetrieveResult;
     if (options.components.size > 1) {
       const retrieveError = new Error();

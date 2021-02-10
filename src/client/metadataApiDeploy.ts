@@ -4,25 +4,30 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SourceDeployResult, ComponentStatus } from '.';
-import { MetadataConverter } from '..';
+import { MetadataConverter } from '../convert';
 import { DiagnosticUtil } from './diagnosticUtil';
 import {
   DeployResult,
   ComponentDeployment,
   DeployMessage,
   MetadataApiDeployOptions as ApiOptions,
+  ComponentStatus,
+  SourceDeployResult,
 } from './types';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 
-export type MetadataApiDeployOptions = MetadataTransferOptions & ApiOptions;
+export interface MetadataApiDeployOptions extends MetadataTransferOptions {
+  apiOptions?: ApiOptions;
+}
 
 export class MetadataApiDeploy extends MetadataTransfer<DeployResult, SourceDeployResult> {
-  public static readonly DEFAULT_OPTIONS: ApiOptions = {
-    rollbackOnError: true,
-    ignoreWarnings: false,
-    checkOnly: false,
-    singlePackage: true,
+  public static readonly DEFAULT_OPTIONS: Partial<MetadataApiDeployOptions> = {
+    apiOptions: {
+      rollbackOnError: true,
+      ignoreWarnings: false,
+      checkOnly: false,
+      singlePackage: true,
+    },
   };
   private options: MetadataApiDeployOptions;
   private deployId: string | undefined;
@@ -40,7 +45,7 @@ export class MetadataApiDeploy extends MetadataTransfer<DeployResult, SourceDepl
       { type: 'zip' }
     );
     const connection = await this.getConnection();
-    const result = await connection.metadata.deploy(zipBuffer, MetadataApiDeploy.DEFAULT_OPTIONS);
+    const result = await connection.metadata.deploy(zipBuffer, this.options.apiOptions);
     this.deployId = result.id;
     return result;
   }

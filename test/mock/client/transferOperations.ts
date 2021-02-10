@@ -21,6 +21,7 @@ import {
   DeployMessage,
   DeployResult,
   FileProperties,
+  MetadataApiDeployOptions,
   RequestStatus,
   RetrieveResult,
 } from '../../../src/client/types';
@@ -34,6 +35,7 @@ interface DeployStubOptions {
   components?: ComponentSet;
   componentSuccesses?: Partial<DeployMessage> | Partial<DeployMessage>[];
   componentFailures?: Partial<DeployMessage> | Partial<DeployMessage>[];
+  apiOptions?: MetadataApiDeployOptions;
 }
 
 interface DeployOperationLifecycle {
@@ -52,7 +54,9 @@ export async function stubMetadataDeploy(
   const connection = await mockConnection(testSetup());
 
   const deployStub = sandbox.stub(connection.metadata, 'deploy');
-  deployStub.withArgs(zipBuffer, MetadataApiDeploy.DEFAULT_OPTIONS).resolves(MOCK_ASYNC_RESULT);
+  deployStub
+    .withArgs(zipBuffer, options.apiOptions ?? MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions)
+    .resolves(MOCK_ASYNC_RESULT);
 
   const convertStub = sandbox.stub(MetadataConverter.prototype, 'convert');
   convertStub

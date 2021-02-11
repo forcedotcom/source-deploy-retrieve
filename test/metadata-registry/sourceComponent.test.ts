@@ -6,7 +6,7 @@
  */
 import { SourceComponent } from '../../src/metadata-registry';
 import { RegistryTestUtil } from './registryTestUtil';
-import { kathy, regina, taraji, keanu, mockRegistryData } from '../mock/registry';
+import { xmlInFolder, regina, taraji, keanu, mockRegistryData } from '../mock/registry';
 import { expect } from 'chai';
 import { REGINA_COMPONENT } from '../mock/registry/reginaConstants';
 import { KEANU_COMPONENT } from '../mock/registry/keanuConstants';
@@ -47,8 +47,8 @@ describe('SourceComponent', () => {
     it('should return empty array if no content is set', () => {
       const component = new SourceComponent({
         name: 'a',
-        type: mockRegistryData.types.kathybates,
-        xml: kathy.KATHY_XML_PATHS[0],
+        type: mockRegistryData.types.xmlinfolder,
+        xml: xmlInFolder.XML_PATHS[0],
       });
       expect(component.walkContent()).to.be.empty;
     });

@@ -18,7 +18,7 @@ import { WriteInfo, WriterFormat } from '../../src/convert';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
 import { LibraryError } from '../../src/errors';
 import { mockRegistry } from '../mock/registry';
-import { KATHY_COMPONENTS } from '../mock/registry/kathyConstants';
+import { COMPONENTS } from '../mock/registry/xmlInFolder';
 import { XML_NS_URL, XML_DECL, XML_NS_KEY } from '../../src/common';
 import {
   KEANUS_DIR,
@@ -48,13 +48,13 @@ describe('Streams', () => {
 
   describe('ComponentReader', () => {
     it('should read metadata components one at a time', async () => {
-      const reader = new streams.ComponentReader(KATHY_COMPONENTS);
+      const reader = new streams.ComponentReader(COMPONENTS);
       let currentIndex = 0;
       for await (const component of reader) {
-        expect(component).to.deep.equal(KATHY_COMPONENTS[currentIndex]);
+        expect(component).to.deep.equal(COMPONENTS[currentIndex]);
         currentIndex += 1;
       }
-      expect(currentIndex).to.equal(KATHY_COMPONENTS.length);
+      expect(currentIndex).to.equal(COMPONENTS.length);
     });
   });
 
@@ -64,7 +64,7 @@ describe('Streams', () => {
    * runner. Otherwise a test may fail but signal that it was successful.
    */
   describe('ComponentConverter', () => {
-    const component = KATHY_COMPONENTS[0];
+    const component = COMPONENTS[0];
     const transformer = new TestTransformer();
 
     beforeEach(() => {

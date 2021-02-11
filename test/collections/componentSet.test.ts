@@ -4,32 +4,22 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { AuthInfo, Connection } from '@salesforce/core';
+import { testSetup } from '@salesforce/core/lib/testSetup';
 import { fail } from 'assert';
 import { expect } from 'chai';
 import { join } from 'path';
-import { createSandbox, stub } from 'sinon';
-import {
-  VirtualDirectory,
-  VirtualTreeContainer,
-  ComponentSet,
-  MetadataResolver,
-  SourceComponent,
-} from '../../src';
-import { MetadataApi } from '../../src/client/metadataApi';
-import {
-  DeployStatus,
-  RetrieveStatus,
-  SourceDeployResult,
-  SourceRetrieveResult,
-} from '../../src/client/types';
+import { createSandbox } from 'sinon';
+import { VirtualDirectory, VirtualTreeContainer, ComponentSet, MetadataResolver } from '../../src';
+import { MetadataApiDeploy, MetadataApiRetrieve } from '../../src/client';
 import { MetadataComponent, MetadataMember } from '../../src/common/types';
 import { ComponentSetError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { VirtualFile } from '../../src/metadata-registry/types';
+import { mockConnection } from '../mock/client';
 import { mockRegistry, mockRegistryData } from '../mock/registry';
 
 const env = createSandbox();
+const $$ = testSetup(env);
 
 const subsetXml: VirtualFile = {
   name: 'subset.xml',
@@ -465,26 +455,20 @@ describe('ComponentSet', () => {
   });
 
   describe('deploy', () => {
-    const mockResult: SourceDeployResult = {
-      id: '1234',
-      status: DeployStatus.Succeeded,
-      success: true,
-      components: [],
-    };
-
-    it('should deploy package components when given a connection', async () => {
-      const mockConnection = await Connection.create({
-        authInfo: await AuthInfo.create({
-          username: 'test@foobar.com',
-        }),
-      });
+    it('should properly construct a deploy operation', async () => {
+      const connection = await mockConnection($$);
       const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
-      const deployStub = env.stub(MetadataApi.prototype, 'deploy');
-      deployStub.withArgs(Array.from(set) as SourceComponent[]).resolves(mockResult);
+      const operationArgs = { components: set, usernameOrConnection: connection };
+      const expectedOperation = new MetadataApiDeploy(operationArgs);
+      const constructorStub = env
+        .stub()
+        .withArgs(operationArgs)
+        .callsFake(() => expectedOperation);
+      Object.setPrototypeOf(MetadataApiDeploy, constructorStub);
 
-      const result = await set.deploy(mockConnection);
+      const result = await set.deploy({ usernameOrConnection: connection });
 
-      expect(result).to.deep.equal(mockResult);
+      expect(result).to.deep.equal(expectedOperation);
     });
 
     it('should throw error if there are no source backed components when deploying', async () => {
@@ -492,9 +476,8 @@ describe('ComponentSet', () => {
         registry: mockRegistry,
         tree,
       });
-
       try {
-        await set.deploy('test@foobar.com');
+        await set.deploy({ usernameOrConnection: 'test@foobar.com' });
         fail('should have thrown an error');
       } catch (e) {
         expect(e.name).to.equal(ComponentSetError.name);
@@ -504,64 +487,33 @@ describe('ComponentSet', () => {
   });
 
   describe('retrieve', () => {
-    const mockResult: SourceRetrieveResult = {
-      id: '1234',
-      status: RetrieveStatus.Succeeded,
-      success: true,
-      successes: [],
-      failures: [],
-    };
-
-    it('should retrieve package components', async () => {
-      const mockConnection = await Connection.create({
-        authInfo: await AuthInfo.create({
-          username: 'test@foobar.com',
-        }),
-      });
+    it('should properly construct a retrieve operation', async () => {
+      const connection = await mockConnection($$);
       const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
-      const retrieveStub = env.stub(MetadataApi.prototype, 'retrieve');
-      retrieveStub
-        .withArgs({
-          components: set,
-          merge: undefined,
-          output: '/test/path',
-          wait: undefined,
-        })
-        .resolves(mockResult);
+      const operationArgs = {
+        components: set,
+        output: join('test', 'path'),
+        usernameOrConnection: connection,
+      };
+      const expectedOperation = new MetadataApiRetrieve(operationArgs);
+      const constructorStub = env
+        .stub()
+        .withArgs(operationArgs)
+        .callsFake(() => expectedOperation);
+      Object.setPrototypeOf(MetadataApiRetrieve, constructorStub);
 
-      const result = await set.retrieve(mockConnection, '/test/path');
+      const result = await set.retrieve({
+        output: operationArgs.output,
+        usernameOrConnection: connection,
+      });
 
-      expect(result).to.deep.equal(mockResult);
+      expect(result).to.deep.equal(expectedOperation);
     });
 
-    it('should handle options', async () => {
-      const mockConnection = await Connection.create({
-        authInfo: await AuthInfo.create({
-          username: 'test@foobar.com',
-        }),
-      });
-      const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
-      const retrieveStub = stub(MetadataApi.prototype, 'retrieve');
-
-      await set.retrieve(mockConnection, '/test/path', {
-        merge: true,
-        wait: 1234,
-      });
-
-      expect(
-        retrieveStub.calledWith({
-          components: set,
-          merge: true,
-          output: '/test/path',
-          wait: 1234,
-        })
-      ).to.be.true;
-    });
-
-    it('should throw error if there are no components when retrieving', async () => {
+    it('should throw error if there are no components in the set', async () => {
       const set = new ComponentSet(undefined, mockRegistry);
       try {
-        await set.retrieve('test@foobar.com', '/test/path');
+        await set.retrieve({ usernameOrConnection: 'test@foobar.com', output: 'test' });
         fail('should have thrown an error');
       } catch (e) {
         expect(e.name).to.equal(ComponentSetError.name);
@@ -636,6 +588,7 @@ describe('ComponentSet', () => {
 
   it('should calculate size correctly', () => {
     const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
+
     expect(set.size).to.equal(3);
   });
 });

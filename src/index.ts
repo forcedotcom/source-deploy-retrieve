@@ -5,19 +5,14 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 export {
-  SourceClient,
   MetadataApiDeployOptions,
   RetrieveOptions,
-  RetrievePathOptions,
-  RetrieveStatus,
   SourceDeployResult,
   RetrieveMessage,
   SourceRetrieveResult,
   ToolingDeployOptions,
+  ToolingRetrieveOptions,
   ToolingDeployStatus,
-  DeployPathOptions,
-  DeployStatus,
-  ApiResult,
   ComponentStatus,
 } from './client';
 export { MetadataConverter, ConvertOutputConfig, ConvertResult } from './convert';
@@ -38,5 +33,7 @@ export {
   ComponentSet,
   FromManifestOptions,
   FromSourceOptions,
+  DeploySetOptions,
+  RetrieveSetOptions,
   ResolveOptions,
 } from './collections';

@@ -4,10 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { AuthInfo, Connection } from '@salesforce/core';
 import { parse as parseXml, j2xParser } from 'fast-xml-parser';
-import { SourceClient } from '../client';
-import { MetadataDeployOptions, SourceDeployResult, SourceRetrieveResult } from '../client/types';
+import {
+  MetadataApiDeploy,
+  MetadataApiDeployOptions,
+  MetadataApiRetrieve,
+  MetadataApiRetrieveOptions,
+} from '../client';
 import { MetadataComponent, XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSetError } from '../errors';
 import {
@@ -24,6 +27,9 @@ import {
   ResolveOptions,
 } from './types';
 import { ComponentLike } from '../common/types';
+
+export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
+export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
 
 export class ComponentSet implements Iterable<MetadataComponent> {
   private static readonly WILDCARD = '*';
@@ -129,51 +135,42 @@ export class ComponentSet implements Iterable<MetadataComponent> {
   }
 
   /**
-   * Deploy components in the set to an org. The components must be backed by source files.
-   * Deploying with a username requires local AuthInfo from @salesforce/core, usually created
-   * after authenticating with the Salesforce CLI.
+   * Constructs a deploy operation using the components in the set. There must be at least
+   * one source-backed component in the set to create an operation.
    *
-   * @param usernameOrConnection Username or connection to deploy components with.
    * @param options
    */
-  public async deploy(
-    usernameOrConnection: string | Connection,
-    options?: MetadataDeployOptions
-  ): Promise<SourceDeployResult> {
+  public deploy(options: DeploySetOptions): MetadataApiDeploy {
     const toDeploy = Array.from(this.getSourceComponents());
+
     if (toDeploy.length === 0) {
       throw new ComponentSetError('error_no_source_to_deploy');
     }
-    const connection = await this.getConnection(usernameOrConnection);
-    const client = new SourceClient(connection, new MetadataResolver());
-    return client.metadata.deploy(toDeploy, options);
+
+    const operationOptions = Object.assign({}, options, {
+      components: this,
+      registry: this.registry,
+    });
+
+    return new MetadataApiDeploy(operationOptions);
   }
 
   /**
-   * Retrieve components in the set from an org. Components are not required to be backed by
-   * source files. Retrieving with a username requires local AuthInfo from @salesforce/core,
-   * usually created after authenticating with the Salesforce CLI.
+   * Constructs a retrieve operation using the components in the set.
    *
-   * @param usernameOrConnection Username or Connection to retrieve with.
-   * @param output Directory to retrieve to.
    * @param options
    */
-  public async retrieve(
-    usernameOrConnection: string | Connection,
-    output: string,
-    options?: { merge?: boolean; wait?: number }
-  ): Promise<SourceRetrieveResult> {
+  public retrieve(options: RetrieveSetOptions): MetadataApiRetrieve {
     if (this.size === 0) {
       throw new ComponentSetError('error_no_components_to_retrieve');
     }
-    const connection = await this.getConnection(usernameOrConnection);
-    const client = new SourceClient(connection, new MetadataResolver());
-    return client.metadata.retrieve({
+
+    const operationOptions = Object.assign({}, options, {
       components: this,
-      merge: options?.merge,
-      output,
-      wait: options?.wait,
+      registry: this.registry,
     });
+
+    return new MetadataApiRetrieve(operationOptions);
   }
 
   /**
@@ -333,14 +330,6 @@ export class ComponentSet implements Iterable<MetadataComponent> {
       size += collection.size === 0 ? 1 : collection.size;
     }
     return size;
-  }
-
-  private async getConnection(auth: Connection | string): Promise<Connection> {
-    return typeof auth === 'string'
-      ? await Connection.create({
-          authInfo: await AuthInfo.create({ username: auth }),
-        })
-      : auth;
   }
 
   private sourceKey(component: SourceComponent): string {

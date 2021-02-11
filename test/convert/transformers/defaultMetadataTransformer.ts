@@ -14,7 +14,10 @@ import { expect } from 'chai';
 import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX } from '../../../src/common';
 import { SourceComponent, VirtualTreeContainer } from '../../../src';
 import { GENE_COMPONENT, GENE_XML_NAME } from '../../mock/registry/geneConstants';
-import { TINA_FOLDER_COMPONENT } from '../../mock/registry/tinaConstants';
+import {
+  TINA_FOLDER_COMPONENT,
+  TINA_FOLDER_COMPONENT_MD_FORMAT,
+} from '../../mock/registry/tinaConstants';
 
 const env = createSandbox();
 
@@ -132,7 +135,7 @@ describe('DefaultMetadataTransformer', () => {
       expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
     });
 
-    it('should handle folder type components with no content', async () => {
+    it('should handle components in folders with no content', async () => {
       const component = SourceComponent.createVirtualComponent(
         kathy.KATHY_MD_FORMAT_COMPONENTS[0],
         []
@@ -146,6 +149,23 @@ describe('DefaultMetadataTransformer', () => {
             directoryName,
             fullNameParts[0],
             `${fullNameParts[1]}.${component.type.suffix}${META_XML_SUFFIX}`
+          ),
+          source: component.tree.stream(component.xml),
+        },
+      ];
+
+      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
+    });
+
+    it('should handle folder components', async () => {
+      const component = TINA_FOLDER_COMPONENT_MD_FORMAT;
+      const { directoryName } = mockRegistry.getTypeByName(component.type.folderContentType);
+      const expectedInfos: WriteInfo[] = [
+        {
+          output: join(
+            DEFAULT_PACKAGE_ROOT_SFDX,
+            directoryName,
+            `${component.fullName}.${component.type.suffix}${META_XML_SUFFIX}`
           ),
           source: component.tree.stream(component.xml),
         },

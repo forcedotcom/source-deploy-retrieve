@@ -10,18 +10,14 @@ import { SourcePath } from '../common';
 import { nls } from '../i18n';
 import { buildQuery, queryToFileMap } from './retrieveUtil';
 import { createFiles } from '../utils';
-import { SourceComponent } from '../metadata-registry';
-import {
-  BaseApi,
-  RetrieveOptions,
-  RetrievePathOptions,
-  ToolingDeployOptions,
-  SourceDeployResult,
-  QueryResult,
-  SourceRetrieveResult,
-  RetrieveStatus,
-} from './types';
+import { MetadataResolver, RegistryAccess, SourceComponent } from '../metadata-registry';
+import { SourceDeployResult, QueryResult, SourceRetrieveResult, RequestStatus } from './types';
 import { ComponentSet } from '../collections';
+import { Connection } from '@salesforce/core';
+
+type WithNamespace = { namespace?: string };
+export type ToolingDeployOptions = WithNamespace;
+export type ToolingRetrieveOptions = WithNamespace & { output?: string };
 
 const retrieveTypes = new Set([
   'ApexClass',
@@ -41,17 +37,30 @@ export const deployTypes = new Map([
   ['LightningComponentBundle', 'LightningComponentResource'],
 ]);
 
-export class ToolingApi extends BaseApi {
-  public async retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult> {
-    const retrievePaths = options.paths[0];
+export class ToolingApi {
+  protected connection: Connection;
+  protected resolver: MetadataResolver;
+  protected registry: RegistryAccess;
+
+  constructor(connection: Connection, resolver: MetadataResolver, registry = new RegistryAccess()) {
+    this.connection = connection;
+    this.resolver = resolver;
+    this.registry = registry;
+  }
+
+  public async retrieveWithPaths(
+    options: ToolingRetrieveOptions & { paths: string[] }
+  ): Promise<SourceRetrieveResult> {
     return this.retrieve({
       output: options.output,
       namespace: options.namespace,
-      components: ComponentSet.fromSource(retrievePaths, { registry: this.registry }),
+      components: ComponentSet.fromSource(options.paths[0], { registry: this.registry }),
     });
   }
 
-  public async retrieve(options: RetrieveOptions): Promise<SourceRetrieveResult> {
+  public async retrieve(
+    options: ToolingRetrieveOptions & { components: ComponentSet }
+  ): Promise<SourceRetrieveResult> {
     let retrieveResult: SourceRetrieveResult;
     if (options.components.size > 1) {
       const retrieveError = new Error();
@@ -78,7 +87,7 @@ export class ToolingApi extends BaseApi {
 
       if (queryResult && queryResult.records.length === 0) {
         return {
-          status: RetrieveStatus.Failed,
+          status: RequestStatus.Failed,
           success: false,
           successes: [],
           failures: [
@@ -97,7 +106,7 @@ export class ToolingApi extends BaseApi {
       createFiles(saveFilesMap);
 
       retrieveResult = {
-        status: RetrieveStatus.Succeeded,
+        status: RequestStatus.Succeeded,
         success: true,
         successes: [{ component: mdComponent }],
         failures: [],

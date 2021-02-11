@@ -7,7 +7,6 @@
 import { MetadataComponent, SourcePath } from '../common/types';
 import { Readable } from 'stream';
 import { SourceComponent } from '../metadata-registry';
-import { ComponentSet } from '../collections';
 
 // --------------
 // INTERNAL

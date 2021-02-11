@@ -4,17 +4,23 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Connection } from '@salesforce/core';
-import { ComponentSet } from '../collections';
 import { PackageTypeMembers } from '../collections/types';
 import { MetadataComponent, SourcePath } from '../common/types';
-import { MetadataResolver, RegistryAccess, SourceComponent } from '../metadata-registry';
+import { SourceComponent } from '../metadata-registry';
 
 // ------------------------------------------------
 // API results reformatted for source development
 // ------------------------------------------------
 
 export type RecordId = string;
+
+export enum ComponentStatus {
+  Created = 'Created',
+  Changed = 'Changed',
+  Unchanged = 'Unchanged',
+  Deleted = 'Deleted',
+  Failed = 'Failed',
+}
 
 export type ComponentDeployment = {
   id?: string;
@@ -25,7 +31,7 @@ export type ComponentDeployment = {
 
 export type ComponentRetrieval = {
   component: SourceComponent;
-  status?: RetrieveStatus;
+  status?: RequestStatus;
   diagnostics?: ComponentDiagnostic;
 };
 
@@ -37,25 +43,31 @@ export type ComponentDiagnostic = {
   type: 'Warning' | 'Error';
 };
 
-/**
- * Status of component during a deployment.
- */
-export enum ComponentStatus {
-  Created = 'Created',
-  Changed = 'Changed',
-  Unchanged = 'Unchanged',
-  Deleted = 'Deleted',
-  Failed = 'Failed',
-}
-
-interface SourceApiResult {
+export interface SourceApiResult {
   success: boolean;
 }
 
 export interface SourceDeployResult extends SourceApiResult {
   id: RecordId;
   components?: ComponentDeployment[];
-  status: DeployStatus | ToolingDeployStatus;
+  status: RequestStatus | ToolingDeployStatus;
+}
+
+export enum RequestStatus {
+  Pending = 'Pending',
+  InProgress = 'InProgress',
+  Succeeded = 'Succeeded',
+  SucceededPartial = 'SucceededPartial',
+  Failed = 'Failed',
+  Canceling = 'Canceling',
+  Canceled = 'Canceled',
+}
+
+export interface MetadataRequestResult {
+  id: string;
+  status: RequestStatus;
+  success: boolean;
+  done: boolean;
 }
 
 export type RetrieveFailure = {
@@ -72,7 +84,7 @@ export interface SourceRetrieveResult extends SourceApiResult {
   id?: RecordId;
   successes: RetrieveSuccess[];
   failures: RetrieveFailure[];
-  status: RetrieveStatus;
+  status: RequestStatus;
 }
 
 // ------------------------------------------------
@@ -82,8 +94,7 @@ export interface SourceRetrieveResult extends SourceApiResult {
 /**
  * Raw response returned from a checkDeployStatus call to the Metadata API
  */
-export type DeployResult = {
-  id: string;
+export interface DeployResult extends MetadataRequestResult {
   canceledBy?: string;
   canceledByName?: string;
   checkOnly: boolean;
@@ -92,7 +103,6 @@ export type DeployResult = {
   createdByName: string;
   createdDate: string;
   details: DeployDetails;
-  done: boolean;
   errorMessage?: string;
   errorStatusCode?: string;
   ignoreWarnings: boolean;
@@ -107,26 +117,11 @@ export type DeployResult = {
   rollbackOnError: boolean;
   startDate?: string;
   stateDetail?: string;
-  status: DeployStatus;
-  success: boolean;
-};
-
-/**
- * Possible statuses of a metadata deploy operation.
- */
-export enum DeployStatus {
-  Pending = 'Pending',
-  InProgress = 'InProgress',
-  Succeeded = 'Succeeded',
-  SucceededPartial = 'SucceededPartial',
-  Failed = 'Failed',
-  Canceling = 'Canceling',
-  Canceled = 'Canceled',
 }
 
 export type DeployDetails = {
-  componentFailures?: DeployMessage[];
-  componentSuccesses?: DeployMessage[];
+  componentFailures?: DeployMessage | DeployMessage[];
+  componentSuccesses?: DeployMessage | DeployMessage[];
   // TODO: Add types for RetrieveResult and RunTestsResult
   // retrieveResult?:
   // runTestResult?:
@@ -160,14 +155,6 @@ export type RetrieveRequest = {
   };
 };
 
-export enum RetrieveStatus {
-  Pending = 'Pending',
-  InProgress = 'InProgress',
-  Succeeded = 'Succeeded',
-  PartialSuccess = 'PartialSuccess',
-  Failed = 'Failed',
-}
-
 export type RetrieveMessage = { fileName: string; problem: string };
 
 enum ManageableState {
@@ -199,16 +186,16 @@ export type FileProperties = {
 /**
  * Raw response returned from a checkRetrieveStatus call to the Metadata API
  */
-export type RetrieveResult = {
+export interface RetrieveResult {
   done: boolean;
-  fileProperties: FileProperties[];
+  fileProperties: FileProperties | FileProperties[];
   id: string;
-  status: RetrieveStatus;
+  status: RequestStatus;
   success: boolean;
   messages?: RetrieveMessage[] | RetrieveMessage;
   // this is a base64binary
   zipFile: string;
-};
+}
 
 // ------------------------------------------------
 // Tooling API result types
@@ -282,104 +269,22 @@ export type LWCRecord = {
 };
 
 // ------------------------------------------------
-// Clients
-// ------------------------------------------------
-
-export interface DeployRetrieveClient {
-  /**
-   * Retrieve metadata components and wait for the result.
-   *
-   * @param options Specify `components`, `output` and other optionals
-   */
-  retrieve(options: RetrieveOptions): Promise<SourceRetrieveResult>;
-  /**
-   * Infer metadata components from source paths, retrieve them, and wait for the result.
-   *
-   * @param options Specify `paths`, `output` and other optionals
-   */
-  retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult>;
-  /**
-   * Deploy metadata components and wait for result.
-   *
-   * @param filePath Paths to source files to deploy
-   */
-  deploy(components: SourceComponent | SourceComponent[]): Promise<SourceDeployResult>;
-  /**
-   * Infer metadata components from source path, deploy them, and wait for results.
-   *
-   * @param filePath Paths to source files to deploy
-   */
-  deployWithPaths(paths: SourcePath | SourcePath[]): Promise<SourceDeployResult>;
-}
-
-export abstract class BaseApi implements DeployRetrieveClient {
-  protected connection: Connection;
-  protected resolver: MetadataResolver;
-  protected registry: RegistryAccess;
-
-  constructor(connection: Connection, resolver: MetadataResolver, registry = new RegistryAccess()) {
-    this.connection = connection;
-    this.resolver = resolver;
-    this.registry = registry;
-  }
-
-  /**
-   * @param options Specify `paths`, `output` and other optionals
-   */
-  abstract retrieveWithPaths(options: RetrievePathOptions): Promise<SourceRetrieveResult>;
-
-  abstract retrieve(options: RetrieveOptions): Promise<SourceRetrieveResult>;
-
-  abstract deploy(components: SourceComponent | SourceComponent[]): Promise<SourceDeployResult>;
-
-  abstract deployWithPaths(paths: SourcePath | SourcePath[]): Promise<SourceDeployResult>;
-}
-
-// ------------------------------------------------
 // Client options
 // ------------------------------------------------
 
-type CommonOptions = {
+export interface RetrieveOptions {
   /**
-   * Set the max number of seconds to wait for the operation.
+   * The directory to retrieve components to. If `merge: true`, components are only
+   * retrieved to `output` if there wasn't a component to merge with.
    */
-  wait?: number;
-  namespace?: string;
-  merge?: boolean;
-};
-
-type CommonRetrieveOptions = {
-  /**
-   * The directory to retrieve the components to.
-   */
-  output?: SourcePath;
+  output: SourcePath;
   /**
    * Whether or not to merge and replace input components with the retrieved versions
    */
   merge?: boolean;
-};
+}
 
-type CommonPathOptions = {
-  /**
-   * Source paths of the files to perform the operation on.
-   */
-  paths: SourcePath[];
-};
-
-export type RetrieveOptions = CommonOptions & CommonRetrieveOptions & { components: ComponentSet };
-
-export type RetrievePathOptions = CommonOptions & CommonRetrieveOptions & CommonPathOptions;
-
-export type ApiResult = {
-  success: boolean;
-  components: SourceComponent[];
-  message?: string;
-};
-
-type WaitFlag = { wait?: number };
-type NamespaceFlag = { namespace?: string };
-
-export type MetadataApiDeployOptions = {
+export interface MetadataApiDeployOptions {
   allowMissingFiles?: boolean;
   autoUpdatePackage?: boolean;
   checkOnly?: boolean;
@@ -390,12 +295,4 @@ export type MetadataApiDeployOptions = {
   runAllTests?: boolean;
   runTests?: string[];
   singlePackage?: boolean;
-};
-
-export type MetadataDeployOptions = WaitFlag & {
-  apiOptions?: MetadataApiDeployOptions;
-};
-
-export type ToolingDeployOptions = NamespaceFlag;
-
-export type DeployPathOptions = CommonOptions & CommonPathOptions;
+}

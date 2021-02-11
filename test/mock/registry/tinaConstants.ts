@@ -14,6 +14,7 @@ const type = mockRegistryData.types.tinafey;
 export const TINA_DIR = join('path', 'to', 'tinas');
 export const TINA_FOLDER = join(TINA_DIR, 'A_Folder');
 export const TINA_FOLDER_XML = join(TINA_DIR, 'A_Folder.tinafeyFolder-meta.xml');
+export const TINA_FOLDER_XML_MD_FORMAT = join(TINA_DIR, 'A_Folder-meta.xml');
 export const TINA_XML_NAMES = ['a.tina-meta.xml', 'b.tina-meta.xml'];
 export const TINA_XML_PATHS = TINA_XML_NAMES.map((n) => join(TINA_FOLDER, n));
 export const TINA_SOURCE_NAMES = ['a.x', 'b.y'];
@@ -23,6 +24,19 @@ export const TINA_FOLDER_COMPONENT = SourceComponent.createVirtualComponent(
     name: 'A_Folder',
     type: mockRegistryData.types.tinafeyfolder,
     xml: TINA_FOLDER_XML,
+  },
+  [
+    {
+      dirPath: TINA_FOLDER,
+      children: [basename(TINA_FOLDER_XML)],
+    },
+  ]
+);
+export const TINA_FOLDER_COMPONENT_MD_FORMAT = SourceComponent.createVirtualComponent(
+  {
+    name: 'A_Folder',
+    type: mockRegistryData.types.tinafeyfolder,
+    xml: TINA_FOLDER_XML_MD_FORMAT,
   },
   [
     {

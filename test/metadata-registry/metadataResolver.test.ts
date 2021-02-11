@@ -14,7 +14,7 @@ import {
 import { nls } from '../../src/i18n';
 import {
   mockRegistry,
-  kathy,
+  xmlInFolder,
   keanu,
   taraji,
   tina,
@@ -274,24 +274,24 @@ describe('MetadataResolver', () => {
 
     describe('Directory Paths', () => {
       it('Should return all components in a directory', () => {
-        const access = testUtil.createMetadataResolver([
+        const resolver = testUtil.createMetadataResolver([
           {
-            dirPath: kathy.KATHY_FOLDER,
-            children: kathy.KATHY_XML_NAMES,
+            dirPath: xmlInFolder.COMPONENT_FOLDER_PATH,
+            children: xmlInFolder.XML_NAMES,
           },
         ]);
-        const componentMappings = kathy.KATHY_XML_PATHS.map((p: string, i: number) => ({
+        const componentMappings = xmlInFolder.XML_PATHS.map((p: string, i: number) => ({
           path: p,
-          component: kathy.KATHY_COMPONENTS[i],
+          component: xmlInFolder.COMPONENTS[i],
         }));
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.kathybates,
+            type: mockRegistryData.types.xmlinfolder,
             componentMappings,
           },
         ]);
-        expect(access.getComponentsFromPath(kathy.KATHY_FOLDER)).to.deep.equal(
-          kathy.KATHY_COMPONENTS
+        expect(resolver.getComponentsFromPath(xmlInFolder.COMPONENT_FOLDER_PATH)).to.deep.equal(
+          xmlInFolder.COMPONENTS
         );
       });
 
@@ -299,7 +299,7 @@ describe('MetadataResolver', () => {
         const { KEANUS_DIR } = keanu;
         const stuffDir = join(KEANUS_DIR, 'hasStuff');
         const noStuffDir = join(KEANUS_DIR, 'noStuff');
-        const kathyXml = join(KEANUS_DIR, kathy.KATHY_XML_NAMES[0]);
+        const kathyXml = join(KEANUS_DIR, xmlInFolder.XML_NAMES[0]);
         const keanuXml = keanu.KEANU_XML_PATHS[0];
         const keanuSrc = keanu.KEANU_SOURCE_PATHS[0];
         const keanuXml2 = join(stuffDir, keanu.KEANU_XML_NAMES[1]);
@@ -310,7 +310,7 @@ describe('MetadataResolver', () => {
             children: [
               basename(keanuXml),
               basename(keanuSrc),
-              kathy.KATHY_XML_NAMES[0],
+              xmlInFolder.XML_NAMES[0],
               'hasStuff',
               'noStuff',
             ],
@@ -336,7 +336,7 @@ describe('MetadataResolver', () => {
         const kathyComponent2 = new SourceComponent(
           {
             name: 'a',
-            type: mockRegistryData.types.kathybates,
+            type: mockRegistryData.types.xmlinfolder,
             xml: kathyXml,
           },
           tree
@@ -344,10 +344,10 @@ describe('MetadataResolver', () => {
         const access = new MetadataResolver(mockRegistry, tree);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.kathybates,
+            type: mockRegistryData.types.xmlinfolder,
             componentMappings: [
               {
-                path: join(KEANUS_DIR, kathy.KATHY_XML_NAMES[0]),
+                path: join(KEANUS_DIR, xmlInFolder.XML_NAMES[0]),
                 component: kathyComponent2,
               },
             ],
@@ -476,7 +476,7 @@ describe('MetadataResolver', () => {
         expect(access.getComponentsFromPath(TARAJI_DIR)).to.deep.equal([component]);
       });
 
-      it('Should stop resolution if parent component is resolved', () => {
+      it('should stop resolution if parent component is resolved', () => {
         const access = testUtil.createMetadataResolver(REGINA_VIRTUAL_FS);
         testUtil.stubAdapters([
           {
@@ -506,7 +506,7 @@ describe('MetadataResolver', () => {
        * Pretend that this bundle's root xml suffix is the same as KeanuReeves - still should be
        * identified as SimonPegg type
        */
-      it('Should handle suffix collision for mixed content types', () => {
+      it('should handle suffix collision for mixed content types', () => {
         const tree = new VirtualTreeContainer([
           {
             dirPath: simon.SIMON_DIR,
@@ -531,26 +531,26 @@ describe('MetadataResolver', () => {
         ]);
       });
 
-      it('Should not return components if the directory is forceignored', () => {
-        const dirPath = kathy.KATHY_FOLDER;
+      it('should not return components if the directory is forceignored', () => {
+        const dirPath = xmlInFolder.COMPONENT_FOLDER_PATH;
         testUtil.stubForceIgnore({ seed: dirPath, deny: [dirPath] });
         const access = testUtil.createMetadataResolver([
           {
             dirPath,
-            children: [kathy.KATHY_XML_NAMES[0], kathy.KATHY_XML_NAMES[1]],
+            children: [xmlInFolder.XML_NAMES[0], xmlInFolder.XML_NAMES[1]],
           },
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.kathybates,
+            type: mockRegistryData.types.xmlinfolder,
             componentMappings: [
               {
-                path: kathy.KATHY_XML_PATHS[0],
-                component: kathy.KATHY_COMPONENTS[0],
+                path: xmlInFolder.XML_PATHS[0],
+                component: xmlInFolder.COMPONENTS[0],
               },
               {
-                path: kathy.KATHY_XML_PATHS[1],
-                component: kathy.KATHY_COMPONENTS[1],
+                path: xmlInFolder.XML_PATHS[1],
+                component: xmlInFolder.COMPONENTS[1],
               },
             ],
           },

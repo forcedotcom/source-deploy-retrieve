@@ -6,7 +6,7 @@
  */
 import { MetadataConverter } from '../../src/convert';
 import { createSandbox, SinonStub } from 'sinon';
-import { kathy, mockRegistry } from '../mock/registry';
+import { xmlInFolder, mockRegistry } from '../mock/registry';
 import * as streams from '../../src/convert/streams';
 import * as fs from 'fs';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
@@ -29,7 +29,7 @@ describe('MetadataConverter', () => {
   let writeFileStub: SinonStub;
 
   const converter = new MetadataConverter(mockRegistry);
-  const components = kathy.KATHY_COMPONENTS;
+  const components = xmlInFolder.COMPONENTS;
   const packageName = 'test';
   const outputDirectory = join('path', 'to', 'output');
   const packageOutput = join(outputDirectory, packageName);

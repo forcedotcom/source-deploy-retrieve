@@ -4,7 +4,14 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { simon, kathy, gene, keanu, mockRegistry, mockRegistryData } from '../../mock/registry';
+import {
+  simon,
+  xmlInFolder,
+  gene,
+  keanu,
+  mockRegistry,
+  mockRegistryData,
+} from '../../mock/registry';
 import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';
 import { WriteInfo } from '../../../src/convert';
 import { join, basename } from 'path';
@@ -67,7 +74,7 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should remove the -meta.xml suffix for components with no content and in folders', async () => {
-      const component = SourceComponent.createVirtualComponent(kathy.KATHY_COMPONENTS[0], []);
+      const component = SourceComponent.createVirtualComponent(xmlInFolder.COMPONENTS[0], []);
       const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;
       const expectedInfos: WriteInfo[] = [
@@ -137,7 +144,7 @@ describe('DefaultMetadataTransformer', () => {
 
     it('should handle components in folders with no content', async () => {
       const component = SourceComponent.createVirtualComponent(
-        kathy.KATHY_MD_FORMAT_COMPONENTS[0],
+        xmlInFolder.COMPONENTS_MD_FORMAT[0],
         []
       );
       const fullNameParts = component.fullName.split('/');

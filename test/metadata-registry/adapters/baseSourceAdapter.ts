@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { mockRegistry, mockRegistryData } from '../../mock/registry';
+import { xmlInFolder, mockRegistry, mockRegistryData } from '../../mock/registry';
 import { DefaultSourceAdapter } from '../../../src/metadata-registry/adapters/defaultSourceAdapter';
 import { expect, assert } from 'chai';
 import { BaseSourceAdapter } from '../../../src/metadata-registry/adapters/baseSourceAdapter';
@@ -14,7 +14,9 @@ import { UnexpectedForceIgnore } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { RegistryTestUtil } from '../registryTestUtil';
 import { SourceComponent } from '../../../src/metadata-registry';
+import { parseMetadataXml } from '../../../src/utils/registry';
 
+// TODO: Remove when tests replace with TestAdapter
 class TestChildAdapter extends BaseSourceAdapter {
   public static readonly xmlPath = join('path', 'to', 'dwaynes', 'a.dwayne-meta.xml');
   protected getRootMetadataXmlPath(): SourcePath {
@@ -26,18 +28,27 @@ class TestChildAdapter extends BaseSourceAdapter {
   }
 }
 
+class TestAdapter extends BaseSourceAdapter {
+  public readonly component: SourceComponent;
+
+  constructor(component: SourceComponent) {
+    super(component.type, mockRegistry);
+    this.component = component;
+  }
+
+  protected getRootMetadataXmlPath(): SourcePath {
+    return this.component.xml;
+  }
+  protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
+    return this.component;
+  }
+}
+
 describe('BaseSourceAdapter', () => {
-  it('Should reformat the fullName for folder types', () => {
-    const path = join('path', 'to', 'kathys', 'A_Folder', 'My_Test.kathy-meta.xml');
-    const type = mockRegistryData.types.kathybates;
-    const adapter = new DefaultSourceAdapter(type, mockRegistry);
-    expect(adapter.getComponent(path)).to.deep.equal(
-      new SourceComponent({
-        name: 'A_Folder/My_Test',
-        type,
-        xml: path,
-      })
-    );
+  it('should reformat the fullName for folder types', () => {
+    const component = xmlInFolder.COMPONENTS[0];
+    const adapter = new TestAdapter(component);
+    expect(adapter.getComponent(component.xml)).to.deep.equal(component);
   });
 
   it('Should defer parsing metadata xml to child adapter if path is not a metadata xml', () => {

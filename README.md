@@ -47,3 +47,9 @@ to unlink the library:
 The library can also be installed to another local project as a regular NPM module. This is useful for manually testing the package that will be deployed to NPM. Use this instead of the linking process that's described under Development to QA changes before they are published:
 
 `yarn local:install /path/to/other/package`
+
+### Updating the registry
+
+The library uses a registry to resolve how to process metadata types. This needs to be updated on every mayor platform release to add all the new metadata types. Run the command below against an org in the latest platform version.
+
+`yarn update-registry <api version e.g. 51.0> -u <username>`

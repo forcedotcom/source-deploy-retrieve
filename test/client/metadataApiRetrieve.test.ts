@@ -9,8 +9,7 @@ import { createSandbox, match } from 'sinon';
 import { ComponentSet } from '../../src';
 import { RequestStatus } from '../../src/client/types';
 import { MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
-import { mockRegistry } from '../mock/registry';
-import { KATHY_COMPONENTS } from '../mock/registry/kathyConstants';
+import { mockRegistry, xmlInFolder } from '../mock/registry';
 import { KEANU_COMPONENT } from '../mock/registry/keanuConstants';
 
 const env = createSandbox();
@@ -127,7 +126,7 @@ describe('MetadataApiRetrieve', async () => {
     });
 
     it('should report both successful and failed components', async () => {
-      const components = [KEANU_COMPONENT, KATHY_COMPONENTS[0], KATHY_COMPONENTS[1]];
+      const components = [KEANU_COMPONENT, xmlInFolder.COMPONENTS[0], xmlInFolder.COMPONENTS[1]];
       const messages = [
         `Failed to retrieve components of type '${components[0].type.name}' named '${components[0].fullName}'`,
         `Failed to retrieve components of type '${components[1].type.name}' named '${components[1].fullName}'`,

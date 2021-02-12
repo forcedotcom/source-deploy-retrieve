@@ -37,7 +37,8 @@
       "name": "NavigationMenu",
       "suffix": "navigationMenu",
       "directoryName": "navigationMenus",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "staticresource": {
       "id": "staticresource",
@@ -64,6 +65,7 @@
       "name": "ExperienceBundle",
       "directoryName": "experiences",
       "inFolder": false,
+      "strictDirectoryName": true,
       "strategies": {
         "adapter": "mixedContent"
       }
@@ -534,7 +536,8 @@
       "name": "RecommendationStrategy",
       "suffix": "recommendationStrategy",
       "directoryName": "recommendationStrategies",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "flow": {
       "id": "flow",
@@ -1136,7 +1139,8 @@
       "name": "SharingSet",
       "suffix": "sharingSet",
       "directoryName": "sharingSets",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "community": {
       "id": "community",
@@ -1231,7 +1235,8 @@
       "name": "Network",
       "suffix": "network",
       "directoryName": "networks",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "networkbranding": {
       "id": "networkbranding",
@@ -1256,7 +1261,8 @@
       "name": "CommunityThemeDefinition",
       "suffix": "communityThemeDefinition",
       "directoryName": "communityThemeDefinitions",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "brandingset": {
       "id": "brandingset",
@@ -1295,35 +1301,56 @@
       "name": "CommunityTemplateDefinition",
       "suffix": "communityTemplateDefinition",
       "directoryName": "communityTemplateDefinitions",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "managedtopics": {
       "id": "managedtopics",
       "name": "ManagedTopics",
       "suffix": "managedTopics",
       "directoryName": "managedTopics",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": false,
+      "children": {
+        "types": {
+          "managedtopic": {
+            "id": "managedtopic",
+            "name": "ManagedTopic",
+            "directoryName": "managedTopics",
+            "suffix": "managedTopic"
+          }
+        },
+        "suffixes": {
+          "managedTopic": "managedtopic"
+        },
+        "directories": {
+          "managedTopics": "managedtopic"
+        }
+      }
     },
     "keywordlist": {
       "id": "keywordlist",
       "name": "KeywordList",
       "suffix": "keywords",
       "directoryName": "moderation",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "usercriteria": {
       "id": "usercriteria",
       "name": "UserCriteria",
       "suffix": "userCriteria",
       "directoryName": "userCriteria",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "moderationrule": {
       "id": "moderationrule",
       "name": "ModerationRule",
       "suffix": "rule",
       "directoryName": "moderation",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "territory2type": {
       "id": "territory2type",
@@ -1871,6 +1898,30 @@
       "directoryName": "entityImplements",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "audience": {
+      "id": "audience",
+      "name": "Audience",
+      "suffix": "audience",
+      "directoryName": "audience",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "cmsconnectsource": {
+      "id": "cmsconnectsource",
+      "name": "CMSConnectSource",
+      "suffix": "cmsConnectSource",
+      "directoryName": "cmsConnectSource",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "platformeventsubscriberconfig": {
+      "id": "platformeventsubscriberconfig",
+      "name": "PlatformEventSubscriberConfig",
+      "suffix": "platformEventSubscriberConfig",
+      "directoryName": "PlatformEventSubscriberConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -2062,7 +2113,10 @@
     "EmbeddedServiceMenuSettings": "embeddedservicemenusettings",
     "callCoachingMediaProvider": "callcoachingmediaprovider",
     "indx": "customindex",
-    "entityImplements": "entityimplements"
+    "entityImplements": "entityimplements",
+    "audience": "audience",
+    "cmsConnectSource": "cmsconnectsource",
+    "platformEventSubscriberConfig": "platformeventsubscriberconfig"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -2102,5 +2156,5 @@
     "sharingcriteriarule": "sharingrules",
     "botversion": "bot"
   },
-  "apiVersion": "50.0"
+  "apiVersion": "51.0"
 }

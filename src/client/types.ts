@@ -64,7 +64,7 @@ interface FileResponseFailure extends FileResponseBase {
 
 export type FileResponse = FileResponseSuccess | FileResponseFailure;
 
-export interface TransferResult {
+export interface MetadataTransferResult {
   response: MetadataRequestResult;
   components: ComponentSet;
   getFileResponses(): FileResponse[];
@@ -213,14 +213,14 @@ export type FileProperties = {
 /**
  * Raw response returned from a checkRetrieveStatus call to the Metadata API
  */
-export interface RetrieveResult {
+export interface MetadataApiRetrieveStatus {
   done: boolean;
   fileProperties: FileProperties | FileProperties[];
   id: string;
   status: RequestStatus;
   success: boolean;
   messages?: RetrieveMessage[] | RetrieveMessage;
-  // this is a base64binary
+  /** `base64` encoded string */
   zipFile: string;
 }
 

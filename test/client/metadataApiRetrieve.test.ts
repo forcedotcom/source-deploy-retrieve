@@ -6,11 +6,18 @@
  */
 import { expect } from 'chai';
 import { createSandbox, match } from 'sinon';
-import { ComponentSet } from '../../src';
-import { RequestStatus } from '../../src/client/types';
+import { ComponentSet, SourceComponent } from '../../src';
+import { RetrieveResult } from '../../src/client/metadataApiRetrieve';
+import {
+  ComponentStatus,
+  FileProperties,
+  FileResponse,
+  MetadataApiRetrieveStatus,
+} from '../../src/client/types';
 import { MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
-import { mockRegistry, xmlInFolder } from '../mock/registry';
+import { mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
 import { KEANU_COMPONENT } from '../mock/registry/keanuConstants';
+import { REGINA_COMPONENT } from '../mock/registry/reginaConstants';
 
 const env = createSandbox();
 
@@ -65,6 +72,44 @@ describe('MetadataApiRetrieve', async () => {
     ).to.be.true;
   });
 
+  it('should construct a result object with retrieved components', async () => {
+    const component = KEANU_COMPONENT;
+    const retrievedComponents = new ComponentSet([KEANU_COMPONENT], mockRegistry);
+    const fileProperties = {
+      fullName: component.fullName,
+      type: component.type.name,
+      fileName: component.content,
+    } as FileProperties;
+    const { operation, response } = await stubMetadataRetrieve(env, {
+      components: retrievedComponents,
+      merge: true,
+      fileProperties,
+    });
+
+    const result = await operation.start();
+    const expected = new RetrieveResult(response, retrievedComponents);
+
+    expect(result).to.deep.equal(expected);
+  });
+
+  it('should construct a result object with no components when no components are retrieved', async () => {
+    const retrievedComponents = new ComponentSet();
+    const { operation, response } = await stubMetadataRetrieve(env, {
+      components: retrievedComponents,
+      merge: true,
+      messages: [
+        {
+          problem: 'whoops!',
+        },
+      ],
+    });
+
+    const result = await operation.start();
+    const expected = new RetrieveResult(response, retrievedComponents);
+
+    expect(result).to.deep.equal(expected);
+  });
+
   describe('Cancellation', () => {
     it('should immediately stop polling', async () => {
       const component = KEANU_COMPONENT;
@@ -78,140 +123,161 @@ describe('MetadataApiRetrieve', async () => {
     });
   });
 
-  describe('Retrieve Result', () => {
-    it('should return successfully retrieved components', async () => {
-      const component = KEANU_COMPONENT;
-      const fileProperties = {
-        fullName: component.fullName,
-        type: component.type.name,
-        fileName: component.content,
-      };
-      const { operation } = await stubMetadataRetrieve(env, {
-        components: new ComponentSet([KEANU_COMPONENT], mockRegistry),
-        merge: true,
-        fileProperties,
-      });
+  describe('RetrieveResult', () => {
+    describe('getFileResponses', () => {
+      it('should report all files of a component on success', () => {
+        const component = KEANU_COMPONENT;
+        const retrievedSet = new ComponentSet([component]);
+        const apiStatus = {};
+        const result = new RetrieveResult(apiStatus as MetadataApiRetrieveStatus, retrievedSet);
 
-      const result = await operation.start();
-
-      expect(result.status).to.equal(RequestStatus.Succeeded);
-      expect(result.successes).to.deep.equal([
-        {
-          component,
-          properties: fileProperties,
-        },
-      ]);
-    });
-
-    it('should report components that failed to be retrieved', async () => {
-      const component = KEANU_COMPONENT;
-      const message = `Failed to retrieve components of type '${component.type.name}' named '${component.fullName}'`;
-      const { operation } = await stubMetadataRetrieve(env, {
-        components: new ComponentSet([KEANU_COMPONENT], mockRegistry),
-        messages: { problem: message },
-      });
-
-      const result = await operation.start();
-
-      expect(result.status).to.equal(RequestStatus.Failed);
-      expect(result.failures).to.deep.equal([
-        {
-          component: {
-            fullName: component.fullName,
-            type: component.type,
-          },
-          message,
-        },
-      ]);
-    });
-
-    it('should report both successful and failed components', async () => {
-      const components = [KEANU_COMPONENT, xmlInFolder.COMPONENTS[0], xmlInFolder.COMPONENTS[1]];
-      const messages = [
-        `Failed to retrieve components of type '${components[0].type.name}' named '${components[0].fullName}'`,
-        `Failed to retrieve components of type '${components[1].type.name}' named '${components[1].fullName}'`,
-      ];
-      const fileProperties = {
-        fullName: components[2].fullName,
-        type: components[2].type.name,
-        fileName: components[2].xml,
-      };
-      const { operation } = await stubMetadataRetrieve(env, {
-        components: new ComponentSet(components, mockRegistry),
-        messages: messages.map((m) => ({ problem: m })),
-        merge: true,
-        fileProperties,
-      });
-
-      const result = await operation.start();
-
-      expect(result.status).to.equal(RequestStatus.SucceededPartial);
-      expect(result.successes).to.deep.equal([
-        {
-          component: components[2],
-          properties: fileProperties,
-        },
-      ]);
-      expect(result.failures).to.deep.equal([
-        {
-          component: {
-            fullName: components[0].fullName,
-            type: components[0].type,
-          },
-          message: messages[0],
-        },
-        {
-          component: {
-            fullName: components[1].fullName,
-            type: components[1].type,
-          },
-          message: messages[1],
-        },
-      ]);
-    });
-
-    it('should report generic failure', async () => {
-      const message = 'Something went wrong';
-      const { operation } = await stubMetadataRetrieve(env, {
-        components: new ComponentSet([KEANU_COMPONENT], mockRegistry),
-        messages: { problem: message },
-      });
-
-      const result = await operation.start();
-
-      expect(result.status).to.equal(RequestStatus.Failed);
-      expect(result.failures).to.deep.equal([{ message }]);
-    });
-
-    it('should ignore retrieved "Package" metadata type', async () => {
-      const component = KEANU_COMPONENT;
-      const fileProperties = [
-        {
+        const responses = result.getFileResponses();
+        const baseResponse: FileResponse = {
+          state: ComponentStatus.Changed,
           fullName: component.fullName,
           type: component.type.name,
-          fileName: component.content,
-        },
+        };
+        const expected: FileResponse[] = [
+          Object.assign({}, baseResponse, { filePath: component.content }),
+          Object.assign({}, baseResponse, { filePath: component.xml }),
+        ];
+
+        expect(responses).to.deep.equal(expected);
+      });
+    });
+
+    it('should report one failure if component does not exist', () => {
+      const component = KEANU_COMPONENT;
+      const retrievedSet = new ComponentSet();
+      const apiStatus = {
+        messages: [
+          {
+            problem: `Entity of type '${component.type.name}' named '${component.fullName}' cannot be found`,
+          },
+        ],
+      };
+      const result = new RetrieveResult(apiStatus as MetadataApiRetrieveStatus, retrievedSet);
+
+      const responses = result.getFileResponses();
+      const expected: FileResponse[] = [
         {
-          fullName: 'package.xml',
-          type: 'Package',
-          fileName: 'package.xml',
+          state: ComponentStatus.Failed,
+          error: apiStatus.messages[0].problem,
+          fullName: component.fullName,
+          type: component.type.name,
+          problemType: 'Error',
         },
       ];
-      const { operation } = await stubMetadataRetrieve(env, {
-        components: new ComponentSet([KEANU_COMPONENT], mockRegistry),
-        merge: true,
-        fileProperties,
-      });
 
-      const result = await operation.start();
+      expect(responses).to.deep.equal(expected);
+    });
 
-      expect(result.status).to.equal(RequestStatus.Succeeded);
-      expect(result.successes).to.deep.equal([
+    it('should report files of successful component and one failure for an unsuccessful one', () => {
+      const successComponent = xmlInFolder.COMPONENTS[0];
+      const failComponent = KEANU_COMPONENT;
+      const retrievedSet = new ComponentSet([successComponent]);
+      const apiStatus = {
+        messages: [
+          {
+            problem: `Entity of type '${failComponent.type.name}' named '${failComponent.fullName}' cannot be found`,
+          },
+        ],
+      };
+      const result = new RetrieveResult(apiStatus as MetadataApiRetrieveStatus, retrievedSet);
+
+      const responses = result.getFileResponses();
+      const expected: FileResponse[] = [
         {
-          component,
-          properties: fileProperties[0],
+          state: ComponentStatus.Failed,
+          error: apiStatus.messages[0].problem,
+          fullName: failComponent.fullName,
+          type: failComponent.type.name,
+          problemType: 'Error',
         },
-      ]);
+        {
+          state: ComponentStatus.Changed,
+          fullName: successComponent.fullName,
+          type: successComponent.type.name,
+          filePath: successComponent.xml,
+        },
+      ];
+
+      expect(responses).to.deep.equal(expected);
+    });
+
+    it('should report unexpected failure message', () => {
+      const retrievedSet = new ComponentSet();
+      const apiStatus = {
+        messages: [
+          {
+            problem: '\\_(ツ)_/¯ not sure what happened',
+          },
+        ],
+      };
+      const result = new RetrieveResult(apiStatus as MetadataApiRetrieveStatus, retrievedSet);
+
+      const responses = result.getFileResponses();
+      const expected: FileResponse[] = [
+        {
+          state: ComponentStatus.Failed,
+          error: apiStatus.messages[0].problem,
+          fullName: '',
+          type: '',
+          problemType: 'Error',
+        },
+      ];
+
+      expect(responses).to.deep.equal(expected);
+    });
+
+    /**
+     * This is tested on the assumption that the ComponentWriter result directly
+     * includes children in the returned set, so we don't need to eagrly resolve
+     * the children of a parent.
+     */
+    it('should not report content files if component type has children', () => {
+      const component = REGINA_COMPONENT;
+      const retrievedSet = new ComponentSet([component]);
+      const apiStatus = {};
+      const result = new RetrieveResult(apiStatus as MetadataApiRetrieveStatus, retrievedSet);
+
+      const responses = result.getFileResponses();
+      const expected: FileResponse[] = [
+        {
+          state: ComponentStatus.Changed,
+          fullName: component.fullName,
+          type: component.type.name,
+          filePath: component.xml,
+        },
+      ];
+
+      expect(responses).to.deep.equal(expected);
+    });
+
+    it('should only report xml file if the component has one', () => {
+      const component = new SourceComponent(
+        {
+          name: 'OnlyContent',
+          type: mockRegistryData.types.keanureeves,
+          content: KEANU_COMPONENT.content,
+        },
+        KEANU_COMPONENT.tree
+      );
+      const retrievedSet = new ComponentSet([component]);
+      const apiStatus = {};
+      const result = new RetrieveResult(apiStatus as MetadataApiRetrieveStatus, retrievedSet);
+
+      const responses = result.getFileResponses();
+      const expected: FileResponse[] = [
+        {
+          state: ComponentStatus.Changed,
+          fullName: component.fullName,
+          type: component.type.name,
+          filePath: component.content,
+        },
+      ];
+
+      expect(responses).to.deep.equal(expected);
     });
   });
 });

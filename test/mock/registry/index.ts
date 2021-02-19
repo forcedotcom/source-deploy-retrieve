@@ -32,12 +32,17 @@ export const mockRegistryData = {
         transformer: 'standard',
       },
     },
-    tinafey: {
-      id: 'tinafey',
-      directoryName: 'tinas',
+    /**
+     * Metadata with content of any file type in a folder type component
+     *
+     * e.g. Document in DocumentFolder
+     */
+    mixedcontentinfolder: {
+      id: 'mixedcontentinfolder',
+      directoryName: 'mixedContentInFolders',
       inFolder: true,
-      name: 'TinaFey',
-      suffix: 'tina',
+      name: 'MixedContentInFolder',
+      suffix: 'mcif',
       strictDirectoryName: true,
       folderType: 'tinafeyfolder',
       strategies: {
@@ -77,11 +82,11 @@ export const mockRegistryData = {
     },
     tinafeyfolder: {
       id: 'tinafeyfolder',
-      directoryName: 'tinas',
+      directoryName: 'mixedContentInFolders',
       inFolder: false,
       name: 'TinaFeyFolder',
       suffix: 'tinafeyFolder',
-      folderContentType: 'tinafey',
+      folderContentType: 'mixedcontentinfolder',
     },
     genewilder: {
       id: 'genewilder',
@@ -195,6 +200,7 @@ export const mockRegistryData = {
     genewilder: 'gene',
     reginaking: 'regina',
     sean: 'seanconnerys',
+    mcif: 'mixedcontentinfolder',
     mixedSingleFile: 'mixedcontentsinglefile',
     dtl: 'decomposedtoplevel',
   },
@@ -202,9 +208,9 @@ export const mockRegistryData = {
     dwaynes: 'dwaynejohnson',
     tarajis: 'tarajihenson',
     simons: 'simonpegg',
-    tinas: 'tinafey',
     reginas: 'reginaking',
     mixedSingleFiles: 'mixedcontentsinglefile',
+    mixedContentInFolders: 'mixedcontentinfolder',
     decomposedTopLevels: 'decomposedtoplevel',
   },
   childTypes: {
@@ -222,12 +228,22 @@ import * as keanu from './keanuConstants';
 import * as xmlInFolder from './xmlInFolder';
 import * as simon from './simonConstants';
 import * as taraji from './tarajiConstants';
-import * as tina from './tinaConstants';
+import * as mixedContentInFolder from './tinaConstants';
 import * as gene from './geneConstants';
 import * as regina from './reginaConstants';
 import * as sean from './seanConstants';
 import * as decomposedtoplevel from './decomposedTopLevelConstants';
-export { xmlInFolder, keanu, simon, taraji, tina, gene, regina, sean, decomposedtoplevel };
+export {
+  xmlInFolder,
+  keanu,
+  simon,
+  taraji,
+  mixedContentInFolder,
+  gene,
+  regina,
+  sean,
+  decomposedtoplevel,
+};
 
 // Mixed content
 export const DWAYNE_DIR = join('path', 'to', 'dwaynes');

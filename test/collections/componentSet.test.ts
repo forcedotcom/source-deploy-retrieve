@@ -84,7 +84,7 @@ const folderComponentXml: VirtualFile = {
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>Test_Folder</members>
-        <name>TinaFey</name>
+        <name>MixedContentInFolder</name>
     </types>
     <version>${mockRegistry.apiVersion}</version>
 </Package>\n`),
@@ -328,7 +328,7 @@ describe('ComponentSet', () => {
       expect(set.has(member)).to.be.true;
       expect(set.getObject().Package.types).to.deep.equal([
         {
-          name: 'TinaFey',
+          name: 'MixedContentInFolder',
           members: ['Test_Folder'],
         },
       ]);

@@ -10,7 +10,7 @@ import { SourceComponent, VirtualTreeContainer } from '../../../src';
 import { META_XML_SUFFIX } from '../../../src/common';
 
 // Mixed content type in folders
-const type = mockRegistryData.types.tinafey;
+const type = mockRegistryData.types.mixedcontentinfolder;
 const folderType = mockRegistryData.types.tinafeyfolder;
 
 export const TYPE_DIRECTORY = join('path', 'to', type.directoryName);

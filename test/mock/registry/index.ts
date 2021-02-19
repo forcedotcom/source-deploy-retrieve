@@ -44,7 +44,7 @@ export const mockRegistryData = {
       name: 'MixedContentInFolder',
       suffix: 'mcif',
       strictDirectoryName: true,
-      folderType: 'tinafeyfolder',
+      folderType: 'mciffolder',
       strategies: {
         adapter: 'mixedContent',
       },
@@ -80,12 +80,12 @@ export const mockRegistryData = {
         transformer: 'bundle',
       },
     },
-    tinafeyfolder: {
-      id: 'tinafeyfolder',
+    mciffolder: {
+      id: 'mciffolder',
       directoryName: 'mixedContentInFolders',
       inFolder: false,
-      name: 'TinaFeyFolder',
-      suffix: 'tinafeyFolder',
+      name: 'McifFolder',
+      suffix: 'mcifFolder',
       folderContentType: 'mixedcontentinfolder',
     },
     genewilder: {
@@ -196,7 +196,7 @@ export const mockRegistryData = {
     xif: 'xmlinfolder',
     keanu: 'keanureeves',
     missing: 'typewithoutdef',
-    tinafeyFolder: 'tinafeyfolder',
+    mcifFolder: 'mciffolder',
     genewilder: 'gene',
     reginaking: 'regina',
     sean: 'seanconnerys',

@@ -190,7 +190,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.tinafeyfolder,
+            type: mockRegistryData.types.mciffolder,
             componentMappings: [{ path, component: mixedContentInFolder.FOLDER_COMPONENT }],
           },
         ]);

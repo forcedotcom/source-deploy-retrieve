@@ -172,7 +172,7 @@ describe('ComponentSet', () => {
         expect(Array.from(set)).to.deep.equal([
           {
             fullName: 'Test_Folder',
-            type: mockRegistryData.types.tinafeyfolder,
+            type: mockRegistryData.types.mciffolder,
           },
         ]);
       });
@@ -264,7 +264,7 @@ describe('ComponentSet', () => {
           expect(Array.from(set)).to.deep.equal([
             {
               fullName: 'Test_Folder',
-              type: mockRegistryData.types.tinafeyfolder,
+              type: mockRegistryData.types.mciffolder,
             },
           ]);
         });
@@ -322,7 +322,7 @@ describe('ComponentSet', () => {
     });
 
     it('should interpret folder components as members of the type they are a container for', () => {
-      const member = { fullName: 'Test_Folder', type: 'TinaFeyFolder' };
+      const member = { fullName: 'Test_Folder', type: 'McifFolder' };
       const set = new ComponentSet([member], mockRegistry);
 
       expect(set.has(member)).to.be.true;

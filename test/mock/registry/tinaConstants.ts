@@ -11,7 +11,7 @@ import { META_XML_SUFFIX } from '../../../src/common';
 
 // Mixed content type in folders
 const type = mockRegistryData.types.mixedcontentinfolder;
-const folderType = mockRegistryData.types.tinafeyfolder;
+const folderType = mockRegistryData.types.mciffolder;
 
 export const TYPE_DIRECTORY = join('path', 'to', type.directoryName);
 export const COMPONENT_FOLDER_NAME = 'A_Folder';

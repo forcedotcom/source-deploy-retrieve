@@ -228,7 +228,7 @@ import * as keanu from './keanuConstants';
 import * as xmlInFolder from './xmlInFolder';
 import * as simon from './simonConstants';
 import * as taraji from './tarajiConstants';
-import * as mixedContentInFolder from './tinaConstants';
+import * as mixedContentInFolder from './mixedContentInFolder';
 import * as gene from './geneConstants';
 import * as regina from './reginaConstants';
 import * as sean from './seanConstants';

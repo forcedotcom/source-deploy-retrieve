@@ -21,7 +21,10 @@ import { expect } from 'chai';
 import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX } from '../../../src/common';
 import { SourceComponent, VirtualTreeContainer } from '../../../src';
 import { GENE_COMPONENT, GENE_XML_NAME } from '../../mock/registry/geneConstants';
-import { FOLDER_COMPONENT, FOLDER_COMPONENT_MD_FORMAT } from '../../mock/registry/tinaConstants';
+import {
+  FOLDER_COMPONENT,
+  FOLDER_COMPONENT_MD_FORMAT,
+} from '../../mock/registry/mixedContentInFolder';
 
 const env = createSandbox();
 

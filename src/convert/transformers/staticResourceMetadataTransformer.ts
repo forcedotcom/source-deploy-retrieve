@@ -22,7 +22,6 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     'application/zip',
     'application/x-zip-compressed',
     'application/jar',
-    'application/octet-stream',
   ]);
   private static readonly DEFAULT_CONTENT_TYPE = 'application/octet-stream';
   private static readonly FALLBACK_TYPE_MAP = new Map<string, string>([

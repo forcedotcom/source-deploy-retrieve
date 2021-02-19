@@ -37,6 +37,7 @@ export const mockRegistryData = {
       directoryName: 'tinas',
       inFolder: true,
       name: 'TinaFey',
+      suffix: 'tina',
       strictDirectoryName: true,
       folderType: 'tinafeyfolder',
       strategies: {

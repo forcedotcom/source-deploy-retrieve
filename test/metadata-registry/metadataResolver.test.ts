@@ -181,20 +181,20 @@ describe('MetadataResolver', () => {
 
       it('Should not mistake folder component of a mixed content type as that type', () => {
         // this test has coveage on non-mixedContent types as well by nature of the execution path
-        const path = tina.TINA_FOLDER_XML;
+        const path = tina.FOLDER_XML_PATH;
         const access = testUtil.createMetadataResolver([
           {
-            dirPath: tina.TINA_DIR,
+            dirPath: tina.TYPE_DIRECTORY,
             children: [basename(path)],
           },
         ]);
         testUtil.stubAdapters([
           {
             type: mockRegistryData.types.tinafeyfolder,
-            componentMappings: [{ path, component: tina.TINA_FOLDER_COMPONENT }],
+            componentMappings: [{ path, component: tina.FOLDER_COMPONENT }],
           },
         ]);
-        expect(access.getComponentsFromPath(path)).to.deep.equal([tina.TINA_FOLDER_COMPONENT]);
+        expect(access.getComponentsFromPath(path)).to.deep.equal([tina.FOLDER_COMPONENT]);
       });
 
       it('Should throw type id error if one could not be determined', () => {
@@ -376,8 +376,8 @@ describe('MetadataResolver', () => {
       it('Should handle the folder of a mixed content folder type', () => {
         const access = testUtil.createMetadataResolver([
           {
-            dirPath: tina.TINA_FOLDER,
-            children: tina.TINA_XML_NAMES.concat(tina.TINA_SOURCE_NAMES),
+            dirPath: tina.COMPONENT_FOLDER_PATH,
+            children: tina.XML_NAMES.concat(tina.CONTENT_NAMES),
           },
         ]);
         testUtil.stubAdapters([
@@ -385,19 +385,19 @@ describe('MetadataResolver', () => {
             type: mockRegistryData.types.tinafey,
             componentMappings: [
               {
-                path: tina.TINA_XML_PATHS[0],
-                component: tina.TINA_COMPONENTS[0],
+                path: tina.XML_PATHS[0],
+                component: tina.COMPONENTS[0],
               },
               {
-                path: tina.TINA_XML_PATHS[1],
-                component: tina.TINA_COMPONENTS[1],
+                path: tina.XML_PATHS[1],
+                component: tina.COMPONENTS[1],
               },
             ],
           },
         ]);
-        expect(access.getComponentsFromPath(tina.TINA_FOLDER)).to.deep.equal([
-          tina.TINA_COMPONENTS[0],
-          tina.TINA_COMPONENTS[1],
+        expect(access.getComponentsFromPath(tina.COMPONENT_FOLDER_PATH)).to.deep.equal([
+          tina.COMPONENTS[0],
+          tina.COMPONENTS[1],
         ]);
       });
 

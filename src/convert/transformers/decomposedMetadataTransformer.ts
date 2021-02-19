@@ -7,7 +7,7 @@
 import { WriteInfo } from '../types';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { DecompositionStrategy, SourceComponent } from '../../metadata-registry';
-import { JsonArray } from '@salesforce/ts-types';
+import { JsonMap } from '@salesforce/ts-types';
 import { JsToXml } from '../streams';
 import { join } from 'path';
 import {
@@ -63,7 +63,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const childrenOfMergeComponent = mergeWith
       ? new ComponentSet(mergeWith.getChildren(), this.registry)
       : undefined;
-    let parentXmlObject: any;
+    let parentXmlObject: JsonMap;
     const composedMetadata = await this.getComposedMetadataEntries(component);
 
     for (const [tagKey, tagValue] of composedMetadata) {
@@ -118,7 +118,8 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
           if (!parentXmlObject) {
             parentXmlObject = { [type.name]: { [XML_NS_KEY]: XML_NS_URL } };
           }
-          parentXmlObject[type.name][tagKey] = tagValue as JsonArray;
+          const tagGroup = parentXmlObject[type.name] as JsonMap;
+          tagGroup[tagKey] = tagValue;
         }
       }
     }

@@ -63,8 +63,8 @@ describe('DiagnosticUtil', () => {
       });
       expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
-          message: 'This might be a problem later!',
-          type: 'Warning',
+          error: 'This might be a problem later!',
+          problemType: 'Warning',
         },
       ]);
     });
@@ -80,8 +80,8 @@ describe('DiagnosticUtil', () => {
       });
       expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
-          message: 'Expected a ;',
-          type: 'Error',
+          error: 'Expected a ;',
+          problemType: 'Error',
           filePath: component.content,
           lineNumber: 4,
           columnNumber: 2,
@@ -112,8 +112,8 @@ describe('DiagnosticUtil', () => {
         util.setRetrieveDiagnostic(message, { component, status: RequestStatus.Failed })
       ).to.deep.equal({
         diagnostics: {
-          message,
-          type: 'Error',
+          error: message,
+          problemType: 'Error',
           filePath: component.content,
         },
         component,
@@ -143,8 +143,8 @@ describe('DiagnosticUtil', () => {
       const message = 'There was a problem with the component';
       expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
-          message,
-          type: 'Error',
+          error: message,
+          problemType: 'Error',
         },
       ]);
     });
@@ -155,8 +155,8 @@ describe('DiagnosticUtil', () => {
       const message = 'Compilation Failure\n\ttest.html:3,12 : LWC1075: Multiple roots found';
       expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
-          message: 'LWC1075: Multiple roots found',
-          type: 'Error',
+          error: 'LWC1075: Multiple roots found',
+          problemType: 'Error',
           filePath: join(bundlePath, 'test.html'),
           lineNumber: 3,
           columnNumber: 12,
@@ -173,8 +173,8 @@ describe('DiagnosticUtil', () => {
       });
       expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
-          message: message.problem,
-          type: message.problemType,
+          error: message.problem,
+          problemType: message.problemType,
         },
       ]);
     });
@@ -189,8 +189,8 @@ describe('DiagnosticUtil', () => {
       });
       expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
-          message: 'LWC1075: Multiple roots found',
-          type: 'Error',
+          error: 'LWC1075: Multiple roots found',
+          problemType: 'Error',
           filePath: join(bundlePath, 'test.html'),
           lineNumber: 4,
           columnNumber: 15,
@@ -223,8 +223,8 @@ describe('DiagnosticUtil', () => {
       });
       expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
-          message: message.problem,
-          type: message.problemType,
+          error: message.problem,
+          problemType: message.problemType,
         },
       ]);
     });
@@ -239,8 +239,8 @@ describe('DiagnosticUtil', () => {
       });
       expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
-          message: message.problem,
-          type: 'Error',
+          error: message.problem,
+          problemType: 'Error',
           filePath: join(bundlePath, 'testHelper.js'),
           lineNumber: 1,
           columnNumber: 5,
@@ -254,8 +254,8 @@ describe('DiagnosticUtil', () => {
       const message = 'There was a problem deploying';
       expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
-          message,
-          type: 'Error',
+          error: message,
+          problemType: 'Error',
         },
       ]);
     });
@@ -271,8 +271,8 @@ describe('DiagnosticUtil', () => {
       });
       expect(util.setDeployDiagnostic(deployment, message).diagnostics).to.deep.equal([
         {
-          message: message.problem,
-          type: 'Error',
+          error: message.problem,
+          problemType: 'Error',
           filePath: join(bundlePath, 'testHelper.js'),
           lineNumber: 5,
           columnNumber: 1,

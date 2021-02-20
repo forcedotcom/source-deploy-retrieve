@@ -163,8 +163,8 @@ export class ContainerDeploy extends BaseDeploy {
       } else if (!message.success) {
         componentDeployment.status = ComponentStatus.Failed;
         componentDeployment.diagnostics.push({
-          message: message.problem,
-          type: message.problemType,
+          error: message.problem,
+          problemType: message.problemType,
           filePath: this.component.content,
           lineNumber: Number(message.lineNumber),
           columnNumber: Number(message.columnNumber),

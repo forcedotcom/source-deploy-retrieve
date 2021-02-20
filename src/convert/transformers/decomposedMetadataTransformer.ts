@@ -93,7 +93,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
           else if (childrenOfMergeComponent.has(childComponent)) {
             const mergeChild: SourceComponent = childrenOfMergeComponent
               .getSourceComponents(childComponent)
-              .next().value;
+              .first();
             writeInfos.push({
               source,
               output: mergeChild.xml,

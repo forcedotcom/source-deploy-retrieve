@@ -9,6 +9,7 @@ import { expect } from 'chai';
 import { join } from 'path';
 import { createSandbox } from 'sinon';
 import { Readable } from 'stream';
+import { SourceComponent } from '../../src';
 import { ComponentSet } from '../../src/collections';
 import { XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { WriterFormat } from '../../src/convert';
@@ -69,6 +70,44 @@ describe('Convert Transaction Constructs', () => {
                   ReginaKing: {
                     [XML_NS_KEY]: XML_NS_URL,
                     fullName: 'a',
+                    ys: [{ test: 'child1' }],
+                    xs: [{ test: 'child2' }],
+                  },
+                }),
+                output: join('reginas', 'a.regina'),
+              },
+            ],
+          },
+        ]);
+      });
+
+      it('should still recompose if parent xml is empty', async () => {
+        const component = new SourceComponent(
+          {
+            name: regina.REGINA_COMPONENT.name,
+            type: regina.REGINA_COMPONENT.type,
+            content: regina.REGINA_COMPONENT.content,
+          },
+          regina.REGINA_COMPONENT.tree
+        );
+        const context = new ConvertContext();
+        context.recomposition.setState((state) => {
+          state['Test__c'] = {
+            component,
+            children: new ComponentSet(component.getChildren(), mockRegistry),
+          };
+        });
+
+        const result = await context.recomposition.finalize();
+
+        expect(result).to.deep.equal([
+          {
+            component,
+            writeInfos: [
+              {
+                source: new JsToXml({
+                  ReginaKing: {
+                    [XML_NS_KEY]: XML_NS_URL,
                     ys: [{ test: 'child1' }],
                     xs: [{ test: 'child2' }],
                   },

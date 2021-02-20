@@ -23,7 +23,7 @@ import {
   FileProperties,
   MetadataApiDeployOptions,
   RequestStatus,
-  RetrieveResult,
+  MetadataApiRetrieveStatus,
 } from '../../../src/client/types';
 import { mockRegistry } from '../registry';
 import { KEANU_COMPONENT } from '../registry/keanuConstants';
@@ -119,6 +119,7 @@ interface RetrieveOperationLifecycle {
   checkStatusStub: SinonStub;
   convertStub: SinonStub;
   operation: MetadataApiRetrieve;
+  response: MetadataApiRetrieveStatus;
 }
 
 export async function stubMetadataRetrieve(
@@ -143,7 +144,7 @@ export async function stubMetadataRetrieve(
     })
     .resolves(MOCK_ASYNC_RESULT);
 
-  const defaultStatus: Partial<RetrieveResult> = {
+  const defaultStatus: Partial<MetadataApiRetrieveStatus> = {
     id: MOCK_ASYNC_RESULT.id,
     status: RequestStatus.Pending,
     success: false,
@@ -209,5 +210,6 @@ export async function stubMetadataRetrieve(
       registry: mockRegistry,
       merge: options.merge,
     }),
+    response: defaultStatus as MetadataApiRetrieveStatus,
   };
 }

@@ -4,6 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { ComponentSet } from '../collections';
 import { PackageTypeMembers } from '../collections/types';
 import { MetadataComponent, SourcePath } from '../common/types';
 import { SourceComponent } from '../metadata-registry';
@@ -39,9 +40,35 @@ export type ComponentDiagnostic = {
   lineNumber?: number;
   columnNumber?: number;
   filePath?: SourcePath;
-  message: string;
-  type: 'Warning' | 'Error';
+  error: string;
+  problemType: 'Warning' | 'Error';
 };
+
+interface FileResponseBase {
+  fullName: string;
+  type: string;
+  filePath?: string;
+}
+
+interface FileResponseSuccess extends FileResponseBase {
+  state: Exclude<ComponentStatus, ComponentStatus.Failed>;
+}
+
+interface FileResponseFailure extends FileResponseBase {
+  state: ComponentStatus.Failed;
+  lineNumber?: number;
+  columnNumber?: number;
+  error: string;
+  problemType: 'Warning' | 'Error';
+}
+
+export type FileResponse = FileResponseSuccess | FileResponseFailure;
+
+export interface MetadataTransferResult {
+  response: MetadataRequestResult;
+  components: ComponentSet;
+  getFileResponses(): FileResponse[];
+}
 
 export interface SourceApiResult {
   success: boolean;
@@ -186,14 +213,14 @@ export type FileProperties = {
 /**
  * Raw response returned from a checkRetrieveStatus call to the Metadata API
  */
-export interface RetrieveResult {
+export interface MetadataApiRetrieveStatus {
   done: boolean;
   fileProperties: FileProperties | FileProperties[];
   id: string;
   status: RequestStatus;
   success: boolean;
   messages?: RetrieveMessage[] | RetrieveMessage;
-  // this is a base64binary
+  /** `base64` encoded string */
   zipFile: string;
 }
 

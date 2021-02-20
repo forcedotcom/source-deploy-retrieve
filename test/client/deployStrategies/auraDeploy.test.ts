@@ -327,7 +327,7 @@ describe('Aura Deploy Strategy', () => {
         {
           status: ComponentStatus.Failed,
           component: auraComponent,
-          diagnostics: testAuraList.map(() => ({ message: error.message, type: 'Error' })),
+          diagnostics: testAuraList.map(() => ({ error: error.message, problemType: 'Error' })),
         },
       ],
     });
@@ -358,8 +358,8 @@ describe('Aura Deploy Strategy', () => {
           component: auraComponent,
           diagnostics: [
             {
-              message: error.message,
-              type: 'Error',
+              error: error.message,
+              problemType: 'Error',
             },
           ],
         },

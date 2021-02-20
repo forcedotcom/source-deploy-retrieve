@@ -277,17 +277,19 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   }
 
   public getSourceComponents(member?: ComponentLike): LazyCollection<SourceComponent> {
-    let iter: Iterable<SourceComponent>;
+    let iter: Iterable<MetadataComponent>;
 
     if (member) {
       // filter optimization
       const memberCollection = this.components.get(this.simpleKey(member));
       iter = memberCollection?.size > 0 ? memberCollection.values() : [];
     } else {
-      iter = this as Iterable<SourceComponent>;
+      iter = this;
     }
 
-    return new LazyCollection(iter).filter((c) => c instanceof SourceComponent);
+    return new LazyCollection(iter).filter((c) => c instanceof SourceComponent) as LazyCollection<
+      SourceComponent
+    >;
   }
 
   public add(component: ComponentLike): void {

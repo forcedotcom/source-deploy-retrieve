@@ -137,22 +137,27 @@ export class StandardWriter extends ComponentWriter {
     let err: Error;
     if (chunk.writeInfos.length !== 0) {
       try {
-        let resolvePath: SourcePath;
+        const toResolve: string[] = [];
         const writeTasks = chunk.writeInfos.map((info: WriteInfo) => {
           const fullDest = isAbsolute(info.output)
             ? info.output
             : join(this.rootDestination, info.output);
-          if (!resolvePath) {
-            resolvePath = fullDest;
+          // if there are children, resolve each file. o/w just pick one of the files to resolve
+          if (toResolve.length === 0 || chunk.component.type.children) {
+            toResolve.push(fullDest);
           }
           ensureFileExists(fullDest);
           return pipeline(info.source, createWriteStream(fullDest));
         });
+
         // it is a reasonable expectation that when a conversion call exits, the files of
         // every component has been written to the destination. This await ensures the microtask
         // queue is empty when that call exits and overall less memory is consumed.
         await Promise.all(writeTasks);
-        this.converted.push(...this.resolver.getComponentsFromPath(resolvePath));
+
+        for (const fsPath of toResolve) {
+          this.converted.push(...this.resolver.getComponentsFromPath(fsPath));
+        }
       } catch (e) {
         err = e;
       }

@@ -23,8 +23,8 @@ describe('RegistryAccess', () => {
     });
 
     it('should ignore leading and trailing spaces', () => {
-      expect(mockRegistry.getTypeByName('  kathyBates ')).to.deep.equal(
-        mockRegistryData.types.kathybates
+      expect(mockRegistry.getTypeByName('  xmlinFolder ')).to.deep.equal(
+        mockRegistryData.types.xmlinfolder
       );
     });
 

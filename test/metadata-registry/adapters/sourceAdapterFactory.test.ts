@@ -16,14 +16,17 @@ import { nls } from '../../../src/i18n';
 import { SourceAdapterFactory } from '../../../src/metadata-registry/adapters/sourceAdapterFactory';
 import { VirtualTreeContainer } from '../../../src/metadata-registry';
 
+/**
+ * The types being passed to getAdapter don't really matter in these tests. We're
+ * just making sure that the adapter is instantiated correctly based on their registry
+ * configuration.
+ */
 describe('SourceAdapterFactory', () => {
   const tree = new VirtualTreeContainer([]);
   const factory = new SourceAdapterFactory(mockRegistry, tree);
 
-  // the types being passed to getAdapter don't really matter in these tests. We're
-  // just making sure that the adapter is instantiated correctly based on given inputs
   it('Should return DefaultSourceAdapter for type with no assigned AdapterId', () => {
-    const type = mockRegistryData.types.kathybates;
+    const type = mockRegistryData.types.xmlinfolder;
     const adapter = factory.getAdapter(type);
     expect(adapter).to.deep.equal(new DefaultSourceAdapter(type, mockRegistry, undefined, tree));
   });

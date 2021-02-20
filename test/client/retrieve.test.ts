@@ -14,7 +14,7 @@ import * as stream from 'stream';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ToolingApi } from '../../src/client';
 import { MetadataResolver, SourceComponent, registryData } from '../../src/metadata-registry';
-import { QueryResult, RetrieveStatus, SourceRetrieveResult } from '../../src/client/types';
+import { QueryResult, RequestStatus, SourceRetrieveResult } from '../../src/client/types';
 import { nls } from '../../src/i18n';
 import { fail } from 'assert';
 import { ComponentSet } from '../../src';
@@ -175,7 +175,7 @@ describe('Tooling Retrieve', () => {
     const retrieveResults: SourceRetrieveResult = await toolingAPI.retrieveWithPaths(retrieveOpts);
     expect(retrieveResults).to.deep.equal({
       success: true,
-      status: RetrieveStatus.Succeeded,
+      status: RequestStatus.Succeeded,
       failures: [],
       successes: [
         {
@@ -205,7 +205,7 @@ describe('Tooling Retrieve', () => {
     });
     expect(retrieveResults).to.deep.equal({
       success: true,
-      status: RetrieveStatus.Succeeded,
+      status: RequestStatus.Succeeded,
       failures: [],
       successes: [
         {
@@ -232,7 +232,7 @@ describe('Tooling Retrieve', () => {
 
     expect(retrieveResults).to.deep.equal({
       successes: [],
-      status: RetrieveStatus.Failed,
+      status: RequestStatus.Failed,
       success: false,
       failures: [
         {

@@ -139,10 +139,18 @@ export class ContainerDeploy extends BaseDeploy {
     const messages = [];
     const { componentSuccesses, componentFailures } = containerRequest.DeployDetails;
     if (componentSuccesses) {
-      messages.push(...componentSuccesses);
+      if (Array.isArray(componentSuccesses)) {
+        messages.push(...componentSuccesses);
+      } else {
+        messages.push(componentSuccesses);
+      }
     }
     if (componentFailures) {
-      messages.push(...componentFailures);
+      if (Array.isArray(componentFailures)) {
+        messages.push(...componentFailures);
+      } else {
+        messages.push(componentFailures);
+      }
     }
 
     for (const message of messages) {
@@ -155,8 +163,8 @@ export class ContainerDeploy extends BaseDeploy {
       } else if (!message.success) {
         componentDeployment.status = ComponentStatus.Failed;
         componentDeployment.diagnostics.push({
-          message: message.problem,
-          type: message.problemType,
+          error: message.problem,
+          problemType: message.problemType,
           filePath: this.component.content,
           lineNumber: Number(message.lineNumber),
           columnNumber: Number(message.columnNumber),

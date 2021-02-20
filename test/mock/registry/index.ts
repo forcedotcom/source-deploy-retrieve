@@ -5,16 +5,21 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { MetadataRegistry, RegistryAccess } from '../../../src/metadata-registry';
+import { RegistryAccess } from '../../../src/metadata-registry';
 
 export const mockRegistryData = {
   types: {
-    kathybates: {
-      id: 'kathybates',
-      directoryName: 'kathys',
+    /**
+     * Metadata with no content and is contained in a folder type component
+     *
+     * e.g. Report in ReportFolder
+     */
+    xmlinfolder: {
+      id: 'xmlinfolder',
+      directoryName: 'xmlinfolders',
       inFolder: true,
-      name: 'KathyBates',
-      suffix: 'kathy',
+      name: 'XmlInFolder',
+      suffix: 'xif',
     },
     keanureeves: {
       id: 'keanureeves',
@@ -182,7 +187,7 @@ export const mockRegistryData = {
     },
   },
   suffixes: {
-    kathy: 'kathybates',
+    xif: 'xmlinfolder',
     keanu: 'keanureeves',
     missing: 'typewithoutdef',
     tinafeyFolder: 'tinafeyfolder',
@@ -208,12 +213,12 @@ export const mockRegistryData = {
     badchildtype: 'mixedcontentsinglefile',
   },
   apiVersion: '48.0',
-} as MetadataRegistry;
+};
 
 export const mockRegistry = new RegistryAccess(mockRegistryData);
 
 import * as keanu from './keanuConstants';
-import * as kathy from './kathyConstants';
+import * as xmlInFolder from './xmlInFolder';
 import * as simon from './simonConstants';
 import * as taraji from './tarajiConstants';
 import * as tina from './tinaConstants';
@@ -221,7 +226,7 @@ import * as gene from './geneConstants';
 import * as regina from './reginaConstants';
 import * as sean from './seanConstants';
 import * as decomposedtoplevel from './decomposedTopLevelConstants';
-export { kathy, keanu, simon, taraji, tina, gene, regina, sean, decomposedtoplevel };
+export { xmlInFolder, keanu, simon, taraji, tina, gene, regina, sean, decomposedtoplevel };
 
 // Mixed content
 export const DWAYNE_DIR = join('path', 'to', 'dwaynes');

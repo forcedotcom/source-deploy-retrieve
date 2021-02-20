@@ -1,3 +1,19 @@
+# 1.1.16 - February 9, 2021
+
+## Added
+
+- Support dividing a decomposed component across different directories ([PR #224](https://github.com/forcedotcom/source-deploy-retrieve/pull/224))
+
+# 1.1.15 - January 12, 2021
+
+## Added
+
+- Support merging a component into multiple existing copies during conversion ([PR #223](https://github.com/forcedotcom/source-deploy-retrieve/pull/223))
+
+## Fixed
+
+- Fix issue setting up connection when deploying or retrieving ComponentSet ([PR #226](https://github.com/forcedotcom/source-deploy-retrieve/pull/226))
+
 # 1.1.14 - December 7, 2020
 ## Fixed
 

@@ -26,8 +26,8 @@ export class DiagnosticUtil {
     componentRetrieval: ComponentRetrieval
   ): ComponentRetrieval {
     componentRetrieval.diagnostics = {
-      message: message,
-      type: 'Error',
+      error: message,
+      problemType: 'Error',
       filePath: componentRetrieval.component.content,
     };
 
@@ -57,8 +57,8 @@ export class DiagnosticUtil {
   ): ComponentDeployment {
     const problem = typeof message === 'string' ? message : message.problem;
     const diagnostic: ComponentDiagnostic = {
-      message: problem,
-      type: 'Error',
+      error: problem,
+      problemType: 'Error',
     };
 
     if (this.api === 'metadata') {
@@ -72,9 +72,9 @@ export class DiagnosticUtil {
       if (matches && matches[2] && matches[3] && matches[4]) {
         diagnostic.lineNumber = Number(matches[2]);
         diagnostic.columnNumber = Number(matches[3]);
-        diagnostic.message = matches[4];
+        diagnostic.error = matches[4];
       } else {
-        diagnostic.message = problem;
+        diagnostic.error = problem;
       }
     } else {
       try {
@@ -84,7 +84,7 @@ export class DiagnosticUtil {
         const errLocation = fileObject.slice(fileObject.indexOf(':') + 1);
         const fileName = fileObject.slice(0, fileObject.indexOf(':'));
 
-        diagnostic.message = pathParts.slice(msgStartIndex + 2).join(' ');
+        diagnostic.error = pathParts.slice(msgStartIndex + 2).join(' ');
         diagnostic.filePath = componentDeployment.component
           .walkContent()
           .find((f) => f.includes(fileName));
@@ -92,7 +92,7 @@ export class DiagnosticUtil {
         diagnostic.columnNumber = Number(errLocation.split(',')[1]);
       } catch (e) {
         // TODO: log error with parsing error message
-        diagnostic.message = problem;
+        diagnostic.error = problem;
       }
     }
 
@@ -106,8 +106,8 @@ export class DiagnosticUtil {
   ): ComponentDeployment {
     const problem = typeof message === 'string' ? message : message.problem;
     const diagnostic: ComponentDiagnostic = {
-      message: problem,
-      type: 'Error',
+      error: problem,
+      problemType: 'Error',
     };
 
     let filePath: SourcePath;
@@ -141,7 +141,7 @@ export class DiagnosticUtil {
       }
     }
 
-    diagnostic.message = problem;
+    diagnostic.error = problem;
     componentDeployment.diagnostics.push(diagnostic);
 
     return componentDeployment;
@@ -152,8 +152,8 @@ export class DiagnosticUtil {
     message: DeployMessage
   ): ComponentDeployment {
     const diagnostic: ComponentDiagnostic = {
-      message: message.problem,
-      type: message.problemType,
+      error: message.problem,
+      problemType: message.problemType,
     };
     if (message.fileName) {
       const localProblemFile = componentDeployment.component

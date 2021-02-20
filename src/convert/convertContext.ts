@@ -8,7 +8,7 @@ import { WriteInfo, WriterFormat } from './types';
 import { SourceComponent } from '../metadata-registry';
 import { join } from 'path';
 import { JsToXml } from './streams';
-import { MetadataComponent } from '../common';
+import { MetadataComponent, XML_NS_KEY, XML_NS_URL } from '../common';
 import { JsonArray, JsonMap } from '@salesforce/ts-types';
 import { ComponentSet } from '../collections';
 
@@ -50,8 +50,7 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
     const writerData: WriterFormat[] = [];
 
     for (const { component: parent, children } of Object.values(this.state)) {
-      const baseObject: JsonMap = await parent.parseXml();
-      const recomposedXmlObj = await this.recompose(children, baseObject);
+      const recomposedXmlObj = await this.recompose(children, parent);
       writerData.push({
         component: parent,
         writeInfos: [
@@ -66,19 +65,31 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
     return writerData;
   }
 
-  private async recompose(children: ComponentSet, baseXmlObj: any): Promise<JsonMap> {
+  private async recompose(children: ComponentSet, parent: SourceComponent): Promise<JsonMap> {
+    const parentXmlObj: JsonMap = await parent.parseXml();
+
     for (const child of children) {
-      const { directoryName: groupNode } = child.type;
+      const { directoryName: groupName } = child.type;
       const { name: parentName } = child.parent.type;
       const xmlObj = await (child as SourceComponent).parseXml();
       const childContents = xmlObj[child.type.name];
 
-      if (!baseXmlObj[parentName][groupNode]) {
-        baseXmlObj[parentName][groupNode] = [];
+      if (!parentXmlObj[parentName]) {
+        parentXmlObj[parentName] = { [XML_NS_KEY]: XML_NS_URL };
       }
-      (baseXmlObj[parentName][groupNode] as JsonArray).push(childContents);
+
+      const parent = parentXmlObj[parentName] as JsonMap;
+
+      if (!parent[groupName]) {
+        parent[groupName] = [];
+      }
+
+      const group = parent[groupName] as JsonArray;
+
+      group.push(childContents);
     }
-    return baseXmlObj;
+
+    return parentXmlObj;
   }
 }
 

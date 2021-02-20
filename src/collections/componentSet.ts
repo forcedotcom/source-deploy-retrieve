@@ -27,11 +27,11 @@ import {
   ResolveOptions,
 } from './types';
 import { ComponentLike } from '../common/types';
+import { LazyCollection } from './lazyCollection';
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
-
-export class ComponentSet implements Iterable<MetadataComponent> {
+export class ComponentSet extends LazyCollection<MetadataComponent> {
   private static readonly WILDCARD = '*';
   private static readonly KEY_DELIMITER = '#';
   public apiVersion: string;
@@ -39,6 +39,7 @@ export class ComponentSet implements Iterable<MetadataComponent> {
   private components = new Map<string, Map<string, SourceComponent>>();
 
   public constructor(components: Iterable<ComponentLike> = [], registry = new RegistryAccess()) {
+    super();
     this.registry = registry;
     this.apiVersion = this.registry.apiVersion;
     for (const component of components) {
@@ -275,22 +276,20 @@ export class ComponentSet implements Iterable<MetadataComponent> {
     return XML_DECL.concat(j2x.parse(toParse));
   }
 
-  public *getSourceComponents(forMember?: ComponentLike): IterableIterator<SourceComponent> {
-    let iter;
+  public getSourceComponents(member?: ComponentLike): LazyCollection<SourceComponent> {
+    let iter: Iterable<MetadataComponent>;
 
-    if (forMember) {
+    if (member) {
       // filter optimization
-      const memberCollection = this.components.get(this.simpleKey(forMember));
+      const memberCollection = this.components.get(this.simpleKey(member));
       iter = memberCollection?.size > 0 ? memberCollection.values() : [];
     } else {
       iter = this;
     }
 
-    for (const component of iter) {
-      if (component instanceof SourceComponent) {
-        yield component;
-      }
-    }
+    return new LazyCollection(iter).filter((c) => c instanceof SourceComponent) as LazyCollection<
+      SourceComponent
+    >;
   }
 
   public add(component: ComponentLike): void {

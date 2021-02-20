@@ -144,7 +144,7 @@ describe('SourceComponent', () => {
       const noXml = SourceComponent.createVirtualComponent(
         {
           name: 'noXml',
-          type: mockRegistryData.types.tinafey,
+          type: mockRegistryData.types.mixedcontentinfolder,
         },
         []
       );

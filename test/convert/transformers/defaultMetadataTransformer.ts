@@ -22,9 +22,9 @@ import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX } from '../../../src/common'
 import { SourceComponent, VirtualTreeContainer } from '../../../src';
 import { GENE_COMPONENT, GENE_XML_NAME } from '../../mock/registry/geneConstants';
 import {
-  TINA_FOLDER_COMPONENT,
-  TINA_FOLDER_COMPONENT_MD_FORMAT,
-} from '../../mock/registry/tinaConstants';
+  FOLDER_COMPONENT,
+  FOLDER_COMPONENT_MD_FORMAT,
+} from '../../mock/registry/mixedContentInFolder';
 
 const env = createSandbox();
 
@@ -92,7 +92,7 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should remove file extension and preserve -meta.xml for folder components', async () => {
-      const component = TINA_FOLDER_COMPONENT;
+      const component = FOLDER_COMPONENT;
       const expectedInfos: WriteInfo[] = [
         {
           output: join(component.type.directoryName, `${component.fullName}${META_XML_SUFFIX}`),
@@ -165,7 +165,7 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should handle folder components', async () => {
-      const component = TINA_FOLDER_COMPONENT_MD_FORMAT;
+      const component = FOLDER_COMPONENT_MD_FORMAT;
       const { directoryName } = mockRegistry.getTypeByName(component.type.folderContentType);
       const expectedInfos: WriteInfo[] = [
         {

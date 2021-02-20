@@ -13,7 +13,7 @@ import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { dirname, join } from 'path';
 import { expect, assert } from 'chai';
 import { ConversionError, LibraryError } from '../../src/errors';
-import { TINA_COMPONENTS } from '../mock/registry/tinaConstants';
+import { COMPONENTS } from '../mock/registry/mixedContentInFolder';
 import { fail } from 'assert';
 import { ComponentSet } from '../../src';
 import {
@@ -232,7 +232,7 @@ describe('MetadataConverter', () => {
         await converter.convert(components, 'metadata', {
           type: 'merge',
           defaultDirectory,
-          mergeWith: TINA_COMPONENTS,
+          mergeWith: COMPONENTS,
         });
         fail(`should have thrown a ${expectedError.name} error`);
       } catch (e) {
@@ -245,12 +245,12 @@ describe('MetadataConverter', () => {
       await converter.convert(components, 'source', {
         type: 'merge',
         defaultDirectory,
-        mergeWith: TINA_COMPONENTS,
+        mergeWith: COMPONENTS,
       });
 
       const pipelineArgs = pipelineStub.firstCall.args;
       validatePipelineArgs(pipelineArgs, 'source');
-      expect(pipelineArgs[1].mergeSet).to.deep.equal(new ComponentSet(TINA_COMPONENTS));
+      expect(pipelineArgs[1].mergeSet).to.deep.equal(new ComponentSet(COMPONENTS));
       expect(pipelineArgs[2].rootDestination).to.equal(defaultDirectory);
     });
 

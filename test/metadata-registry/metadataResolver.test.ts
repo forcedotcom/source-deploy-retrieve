@@ -17,7 +17,7 @@ import {
   xmlInFolder,
   keanu,
   taraji,
-  tina,
+  mixedContentInFolder,
   simon,
   sean,
   gene,
@@ -181,20 +181,22 @@ describe('MetadataResolver', () => {
 
       it('Should not mistake folder component of a mixed content type as that type', () => {
         // this test has coveage on non-mixedContent types as well by nature of the execution path
-        const path = tina.TINA_FOLDER_XML;
+        const path = mixedContentInFolder.FOLDER_XML_PATH;
         const access = testUtil.createMetadataResolver([
           {
-            dirPath: tina.TINA_DIR,
+            dirPath: mixedContentInFolder.TYPE_DIRECTORY,
             children: [basename(path)],
           },
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.tinafeyfolder,
-            componentMappings: [{ path, component: tina.TINA_FOLDER_COMPONENT }],
+            type: mockRegistryData.types.mciffolder,
+            componentMappings: [{ path, component: mixedContentInFolder.FOLDER_COMPONENT }],
           },
         ]);
-        expect(access.getComponentsFromPath(path)).to.deep.equal([tina.TINA_FOLDER_COMPONENT]);
+        expect(access.getComponentsFromPath(path)).to.deep.equal([
+          mixedContentInFolder.FOLDER_COMPONENT,
+        ]);
       });
 
       it('Should throw type id error if one could not be determined', () => {
@@ -376,29 +378,28 @@ describe('MetadataResolver', () => {
       it('Should handle the folder of a mixed content folder type', () => {
         const access = testUtil.createMetadataResolver([
           {
-            dirPath: tina.TINA_FOLDER,
-            children: tina.TINA_XML_NAMES.concat(tina.TINA_SOURCE_NAMES),
+            dirPath: mixedContentInFolder.COMPONENT_FOLDER_PATH,
+            children: mixedContentInFolder.XML_NAMES.concat(mixedContentInFolder.CONTENT_NAMES),
           },
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.tinafey,
+            type: mockRegistryData.types.mixedcontentinfolder,
             componentMappings: [
               {
-                path: tina.TINA_XML_PATHS[0],
-                component: tina.TINA_COMPONENTS[0],
+                path: mixedContentInFolder.XML_PATHS[0],
+                component: mixedContentInFolder.COMPONENTS[0],
               },
               {
-                path: tina.TINA_XML_PATHS[1],
-                component: tina.TINA_COMPONENTS[1],
+                path: mixedContentInFolder.XML_PATHS[1],
+                component: mixedContentInFolder.COMPONENTS[1],
               },
             ],
           },
         ]);
-        expect(access.getComponentsFromPath(tina.TINA_FOLDER)).to.deep.equal([
-          tina.TINA_COMPONENTS[0],
-          tina.TINA_COMPONENTS[1],
-        ]);
+        expect(
+          access.getComponentsFromPath(mixedContentInFolder.COMPONENT_FOLDER_PATH)
+        ).to.deep.equal([mixedContentInFolder.COMPONENTS[0], mixedContentInFolder.COMPONENTS[1]]);
       });
 
       it('Should return a component for a directory that is content or a child of content', () => {

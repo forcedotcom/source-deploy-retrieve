@@ -8,11 +8,9 @@ import { MetadataConverter } from '../convert';
 import { DiagnosticUtil } from './diagnosticUtil';
 import {
   MetadataApiDeployStatus,
-  ComponentDeployment,
   DeployMessage,
   MetadataApiDeployOptions as ApiOptions,
   ComponentStatus,
-  SourceDeployResult,
   FileResponse,
   MetadataTransferResult,
 } from './types';
@@ -180,10 +178,7 @@ export interface MetadataApiDeployOptions extends MetadataTransferOptions {
   apiOptions?: ApiOptions;
 }
 
-export class MetadataApiDeploy extends MetadataTransfer<
-  MetadataApiDeployStatus,
-  SourceDeployResult
-> {
+export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus, DeployResult> {
   public static readonly DEFAULT_OPTIONS: Partial<MetadataApiDeployOptions> = {
     apiOptions: {
       rollbackOnError: true,
@@ -215,58 +210,12 @@ export class MetadataApiDeploy extends MetadataTransfer<
 
   protected async checkStatus(id: string): Promise<MetadataApiDeployStatus> {
     const connection = await this.getConnection();
-    // Recasting to use the project's DeployResult type
+    // Recasting to use the project's version of the type
     return (connection.metadata.checkDeployStatus(id, true) as unknown) as MetadataApiDeployStatus;
   }
 
-  protected async post(result: MetadataApiDeployStatus): Promise<SourceDeployResult> {
-    const diagnosticUtil = new DiagnosticUtil('metadata');
-    const componentDeploymentMap = new Map<string, ComponentDeployment>();
-    const deployResult: SourceDeployResult = {
-      id: result.id,
-      status: result.status,
-      success: result.success,
-    };
-
-    for (const component of this.components.getSourceComponents()) {
-      componentDeploymentMap.set(`${component.type.name}:${component.fullName}`, {
-        status: ComponentStatus.Unchanged,
-        component,
-        diagnostics: [],
-      });
-    }
-
-    for (let message of this.getDeployMessages(result)) {
-      message = this.sanitizeDeployMessage(message);
-      const componentKey = `${message.componentType}:${message.fullName}`;
-      const componentDeployment = componentDeploymentMap.get(componentKey);
-
-      if (componentDeployment) {
-        if (message.created === 'true') {
-          componentDeployment.status = ComponentStatus.Created;
-        } else if (message.changed === 'true') {
-          componentDeployment.status = ComponentStatus.Changed;
-        } else if (message.deleted === 'true') {
-          componentDeployment.status = ComponentStatus.Deleted;
-        } else if (message.success === 'false') {
-          componentDeployment.status = ComponentStatus.Failed;
-        } else {
-          componentDeployment.status = ComponentStatus.Unchanged;
-        }
-
-        if (message.problem) {
-          const diagnostic = diagnosticUtil.parseDeployDiagnostic(
-            componentDeployment.component,
-            message
-          );
-          componentDeployment.diagnostics.push(diagnostic);
-        }
-      }
-    }
-
-    deployResult.components = Array.from(componentDeploymentMap.values());
-
-    return deployResult;
+  protected async post(result: MetadataApiDeployStatus): Promise<DeployResult> {
+    return new DeployResult(result, this.components);
   }
 
   protected async doCancel(): Promise<boolean> {
@@ -277,35 +226,5 @@ export class MetadataApiDeploy extends MetadataTransfer<
       done = connection.metadata._invoke('cancelDeploy', { id: this.deployId }).done;
     }
     return done;
-  }
-
-  private getDeployMessages(result: MetadataApiDeployStatus): DeployMessage[] {
-    const messages: DeployMessage[] = [];
-    const { componentSuccesses, componentFailures } = result.details;
-    if (componentSuccesses) {
-      if (Array.isArray(componentSuccesses)) {
-        messages.push(...componentSuccesses);
-      } else {
-        messages.push(componentSuccesses);
-      }
-    }
-    if (componentFailures) {
-      if (Array.isArray(componentFailures)) {
-        messages.push(...componentFailures);
-      } else {
-        messages.push(componentFailures);
-      }
-    }
-    return messages;
-  }
-
-  /**
-   * Fix any issues with the deploy message returned by the api.
-   * TODO: remove as fixes are made in the api.
-   */
-  private sanitizeDeployMessage(message: DeployMessage): DeployMessage {
-    // lwc doesn't properly use the fullname property in the api.
-    message.fullName = message.fullName.replace(/markup:\/\/c:/, '');
-    return message;
   }
 }

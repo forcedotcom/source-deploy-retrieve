@@ -201,13 +201,13 @@ describe('MetadataApiDeploy', () => {
             {
               lineNumber: 3,
               columnNumber: 7,
-              error: 'Expected ;',
+              error: 'Expected ; (3:7)',
               problemType: 'Error',
             },
             {
               lineNumber: 8,
               columnNumber: 23,
-              error: 'Symbol test does not exist',
+              error: 'Symbol test does not exist (8:23)',
               problemType: 'Error',
             },
           ],

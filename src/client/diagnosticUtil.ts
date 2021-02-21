@@ -5,14 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { SourcePath } from '../common';
-import { registryData } from '../metadata-registry';
+import { registryData, SourceComponent } from '../metadata-registry';
 import { basename } from 'path';
-import {
-  ComponentDeployment,
-  DeployMessage,
-  ComponentDiagnostic,
-  ComponentRetrieval,
-} from './types';
+import { DeployMessage, ComponentDiagnostic } from './types';
 
 export class DiagnosticUtil {
   private api: 'metadata' | 'tooling';
@@ -21,40 +16,50 @@ export class DiagnosticUtil {
     this.api = api;
   }
 
-  public setRetrieveDiagnostic(
-    message: string,
-    componentRetrieval: ComponentRetrieval
-  ): ComponentRetrieval {
-    componentRetrieval.diagnostics = {
-      error: message,
-      problemType: 'Error',
-      filePath: componentRetrieval.component.content,
-    };
-
-    return componentRetrieval;
-  }
-
-  public setDeployDiagnostic(
-    componentDeployment: ComponentDeployment,
+  public parseDeployDiagnostic(
+    component: SourceComponent,
     message: string | DeployMessage
-  ): ComponentDeployment {
-    const { name: typeName } = componentDeployment.component.type;
+  ): ComponentDiagnostic {
+    const { name: typeName } = component.type;
     switch (typeName) {
       case registryData.types.lightningcomponentbundle.name:
-        return this.parseLwc(componentDeployment, message);
+        return this.parseLwc(component, message);
       case registryData.types.auradefinitionbundle.name:
-        return this.parseAura(componentDeployment, message);
+        return this.parseAura(component, message);
       default:
         if (typeof message !== 'string') {
-          return this.parseDefault(componentDeployment, message);
+          return this.parseDefault(component, message);
         }
     }
   }
 
+  private parseDefault(component: SourceComponent, message: DeployMessage): ComponentDiagnostic {
+    const { problem, problemType, fileName, lineNumber, columnNumber } = message;
+    const diagnostic: ComponentDiagnostic = {
+      error: problem,
+      problemType,
+    };
+
+    if (fileName) {
+      const localProblemFile = component
+        .walkContent()
+        .find((f) => f.endsWith(basename(message.fileName)));
+      diagnostic.filePath = localProblemFile ?? component.xml;
+    }
+
+    if (lineNumber && columnNumber) {
+      diagnostic.lineNumber = Number(lineNumber);
+      diagnostic.columnNumber = Number(columnNumber);
+      diagnostic.error = this.appendErrorWithLocation(diagnostic.error, lineNumber, columnNumber);
+    }
+
+    return diagnostic;
+  }
+
   private parseLwc(
-    componentDeployment: ComponentDeployment,
+    component: SourceComponent,
     message: string | DeployMessage
-  ): ComponentDeployment {
+  ): ComponentDiagnostic {
     const problem = typeof message === 'string' ? message : message.problem;
     const diagnostic: ComponentDiagnostic = {
       error: problem,
@@ -64,7 +69,7 @@ export class DiagnosticUtil {
     if (this.api === 'metadata') {
       const deployMessage = message as DeployMessage;
       if (deployMessage.fileName) {
-        diagnostic.filePath = componentDeployment.component
+        diagnostic.filePath = component
           .walkContent()
           .find((f) => f.includes((message as DeployMessage).fileName));
       }
@@ -72,7 +77,11 @@ export class DiagnosticUtil {
       if (matches && matches[2] && matches[3] && matches[4]) {
         diagnostic.lineNumber = Number(matches[2]);
         diagnostic.columnNumber = Number(matches[3]);
-        diagnostic.error = matches[4];
+        diagnostic.error = this.appendErrorWithLocation(
+          matches[4],
+          diagnostic.lineNumber,
+          diagnostic.columnNumber
+        );
       } else {
         diagnostic.error = problem;
       }
@@ -85,25 +94,27 @@ export class DiagnosticUtil {
         const fileName = fileObject.slice(0, fileObject.indexOf(':'));
 
         diagnostic.error = pathParts.slice(msgStartIndex + 2).join(' ');
-        diagnostic.filePath = componentDeployment.component
-          .walkContent()
-          .find((f) => f.includes(fileName));
+        diagnostic.filePath = component.walkContent().find((f) => f.includes(fileName));
         diagnostic.lineNumber = Number(errLocation.split(',')[0]);
         diagnostic.columnNumber = Number(errLocation.split(',')[1]);
+        diagnostic.error = this.appendErrorWithLocation(
+          diagnostic.error,
+          diagnostic.lineNumber,
+          diagnostic.columnNumber
+        );
       } catch (e) {
         // TODO: log error with parsing error message
         diagnostic.error = problem;
       }
     }
 
-    componentDeployment.diagnostics.push(diagnostic);
-    return componentDeployment;
+    return diagnostic;
   }
 
   private parseAura(
-    componentDeployment: ComponentDeployment,
+    component: SourceComponent,
     message: string | DeployMessage
-  ): ComponentDeployment {
+  ): ComponentDiagnostic {
     const problem = typeof message === 'string' ? message : message.problem;
     const diagnostic: ComponentDiagnostic = {
       error: problem,
@@ -119,14 +130,12 @@ export class DiagnosticUtil {
       });
 
       filePath = fileType
-        ? componentDeployment.component
-            .walkContent()
-            .find((s) => s.toLowerCase().includes(fileType.toLowerCase()))
+        ? component.walkContent().find((s) => s.toLowerCase().includes(fileType.toLowerCase()))
         : undefined;
     } else {
       const deployMessage = message as DeployMessage;
       if (deployMessage.fileName) {
-        filePath = componentDeployment.component
+        filePath = component
           .walkContent()
           .find((f) => f.endsWith(basename(deployMessage.fileName)));
       }
@@ -136,36 +145,22 @@ export class DiagnosticUtil {
       diagnostic.filePath = filePath;
       const matches = problem.match(/(\d+),\s?(\d+)/);
       if (matches) {
-        diagnostic.lineNumber = Number(matches[1]);
-        diagnostic.columnNumber = Number(matches[2]);
+        const lineNumber = Number(matches[1]);
+        const columnNumber = Number(matches[2]);
+        diagnostic.lineNumber = lineNumber;
+        diagnostic.columnNumber = columnNumber;
+        diagnostic.error = this.appendErrorWithLocation(diagnostic.error, lineNumber, columnNumber);
       }
     }
 
-    diagnostic.error = problem;
-    componentDeployment.diagnostics.push(diagnostic);
-
-    return componentDeployment;
+    return diagnostic;
   }
 
-  private parseDefault(
-    componentDeployment: ComponentDeployment,
-    message: DeployMessage
-  ): ComponentDeployment {
-    const diagnostic: ComponentDiagnostic = {
-      error: message.problem,
-      problemType: message.problemType,
-    };
-    if (message.fileName) {
-      const localProblemFile = componentDeployment.component
-        .walkContent()
-        .find((f) => f.endsWith(basename(message.fileName)));
-      diagnostic.filePath = localProblemFile;
-    }
-    if (message.lineNumber && message.columnNumber) {
-      diagnostic.lineNumber = Number(message.lineNumber);
-      diagnostic.columnNumber = Number(message.columnNumber);
-    }
-    componentDeployment.diagnostics.push(diagnostic);
-    return componentDeployment;
+  private appendErrorWithLocation(
+    error: string,
+    line: string | number,
+    column: string | number
+  ): string {
+    return `${error} (${line}:${column})`;
   }
 }

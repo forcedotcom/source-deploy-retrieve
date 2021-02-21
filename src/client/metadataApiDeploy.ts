@@ -92,7 +92,11 @@ export class MetadataApiDeploy extends MetadataTransfer<DeployResult, SourceDepl
         }
 
         if (message.problem) {
-          diagnosticUtil.setDeployDiagnostic(componentDeployment, message);
+          const diagnostic = diagnosticUtil.parseDeployDiagnostic(
+            componentDeployment.component,
+            message
+          );
+          componentDeployment.diagnostics.push(diagnostic);
         }
       }
     }

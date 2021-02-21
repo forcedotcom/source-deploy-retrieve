@@ -133,8 +133,9 @@ export class DeployResult implements MetadataTransferResult {
         type: sanitized.componentType,
       };
       const key = this.key(componentLike);
-      // lwc will return failures and successes for the same component, which is wrong.
-      // this will ensure successes aren't reported if there is a failure for a component
+      // this will ensure successes aren't reported if there
+      // is a failure for the same component
+      // e.g. lwc returns failures and successes
       if (!failedComponents.has(componentLike)) {
         if (!messageMap.has(key)) {
           messageMap.set(key, []);

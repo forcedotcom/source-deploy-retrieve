@@ -44,6 +44,7 @@ interface DeployOperationLifecycle {
   checkStatusStub: SinonStub;
   invokeStub: SinonStub;
   operation: MetadataApiDeploy;
+  response: MetadataApiDeployStatus;
 }
 
 export async function stubMetadataDeploy(
@@ -102,6 +103,7 @@ export async function stubMetadataDeploy(
       usernameOrConnection: connection,
       components: options.components,
     }),
+    response: status as MetadataApiDeployStatus,
   };
 }
 

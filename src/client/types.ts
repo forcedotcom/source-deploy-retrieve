@@ -121,7 +121,7 @@ export interface SourceRetrieveResult extends SourceApiResult {
 /**
  * Raw response returned from a checkDeployStatus call to the Metadata API
  */
-export interface DeployResult extends MetadataRequestResult {
+export interface MetadataApiDeployStatus extends MetadataRequestResult {
   canceledBy?: string;
   canceledByName?: string;
   checkOnly: boolean;

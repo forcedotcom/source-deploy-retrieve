@@ -19,7 +19,7 @@ import {
 import { MetadataApiDeploy, MetadataApiRetrieve } from '../../../src/client';
 import {
   DeployMessage,
-  DeployResult,
+  MetadataApiDeployStatus,
   FileProperties,
   MetadataApiDeployOptions,
   RequestStatus,
@@ -64,7 +64,7 @@ export async function stubMetadataDeploy(
     .resolves({ zipBuffer });
 
   const defaultStatus = { success: false, done: false, status: RequestStatus.Pending };
-  const status: Partial<DeployResult> = Object.assign(defaultStatus, MOCK_ASYNC_RESULT);
+  const status: Partial<MetadataApiDeployStatus> = Object.assign(defaultStatus, MOCK_ASYNC_RESULT);
   if (options.componentSuccesses) {
     if (options.componentFailures) {
       status.status = RequestStatus.SucceededPartial;

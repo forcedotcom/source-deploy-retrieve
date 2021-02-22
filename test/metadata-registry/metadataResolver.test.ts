@@ -54,7 +54,7 @@ describe('MetadataResolver', () => {
 
     describe('File Paths', () => {
       it('Should throw file not found error if given path does not exist', () => {
-        const path = keanu.KEANU_SOURCE_PATHS[0];
+        const path = keanu.CONTENT_PATHS[0];
 
         assert.throws(
           () => resolver.getComponentsFromPath(path),
@@ -64,11 +64,11 @@ describe('MetadataResolver', () => {
       });
 
       it('Should determine type for metadata file with known suffix', () => {
-        const path = keanu.KEANU_XML_PATHS[0];
+        const path = keanu.XML_PATHS[0];
         const access = testUtil.createMetadataResolver([
           {
-            dirPath: keanu.KEANUS_DIR,
-            children: [keanu.KEANU_SOURCE_NAMES[0], keanu.KEANU_XML_NAMES[0]],
+            dirPath: keanu.TYPE_DIRECTORY,
+            children: [keanu.CONTENT_NAMES[0], keanu.XML_NAMES[0]],
           },
         ]);
         testUtil.stubAdapters([
@@ -77,29 +77,29 @@ describe('MetadataResolver', () => {
             componentMappings: [
               {
                 path,
-                component: keanu.KEANU_COMPONENT,
+                component: keanu.COMPONENT,
               },
             ],
           },
         ]);
-        expect(access.getComponentsFromPath(path)).to.deep.equal([keanu.KEANU_COMPONENT]);
+        expect(access.getComponentsFromPath(path)).to.deep.equal([keanu.COMPONENT]);
       });
 
       it('Should determine type for source file with known suffix', () => {
-        const path = keanu.KEANU_SOURCE_PATHS[0];
+        const path = keanu.CONTENT_PATHS[0];
         const access = testUtil.createMetadataResolver([
           {
-            dirPath: keanu.KEANUS_DIR,
-            children: [keanu.KEANU_SOURCE_NAMES[0], keanu.KEANU_XML_NAMES[0]],
+            dirPath: keanu.TYPE_DIRECTORY,
+            children: [keanu.CONTENT_NAMES[0], keanu.XML_NAMES[0]],
           },
         ]);
         testUtil.stubAdapters([
           {
             type: mockRegistryData.types.keanureeves,
-            componentMappings: [{ path, component: keanu.KEANU_COMPONENT }],
+            componentMappings: [{ path, component: keanu.COMPONENT }],
           },
         ]);
-        expect(access.getComponentsFromPath(path)).to.deep.equal([keanu.KEANU_COMPONENT]);
+        expect(access.getComponentsFromPath(path)).to.deep.equal([keanu.COMPONENT]);
       });
 
       it('Should determine type for path of mixed content type', () => {
@@ -120,21 +120,21 @@ describe('MetadataResolver', () => {
       });
 
       it('Should determine type for path content files', () => {
-        const path = keanu.KEANU_SOURCE_PATHS[0];
+        const path = keanu.CONTENT_PATHS[0];
         const access = testUtil.createMetadataResolver([
           {
             dirPath: dirname(path),
-            children: keanu.KEANU_SOURCE_NAMES,
+            children: keanu.CONTENT_NAMES,
           },
         ]);
         testUtil.stubAdapters([
           {
             type: mockRegistryData.types.keanureeves,
-            componentMappings: [{ path, component: keanu.KEANU_CONTENT_COMPONENT }],
+            componentMappings: [{ path, component: keanu.CONTENT_COMPONENT }],
             allowContent: false,
           },
         ]);
-        expect(access.getComponentsFromPath(path)).to.deep.equal([keanu.KEANU_CONTENT_COMPONENT]);
+        expect(access.getComponentsFromPath(path)).to.deep.equal([keanu.CONTENT_COMPONENT]);
       });
 
       it('Should determine type for inFolder path content files', () => {
@@ -215,7 +215,7 @@ describe('MetadataResolver', () => {
       });
 
       it('Should not return a component if path to metadata xml is forceignored', () => {
-        const path = keanu.KEANU_XML_PATHS[0];
+        const path = keanu.XML_PATHS[0];
         const access = testUtil.createMetadataResolver([
           {
             dirPath: dirname(path),
@@ -227,14 +227,14 @@ describe('MetadataResolver', () => {
           {
             type: mockRegistryData.types.keanureeves,
             // should not be returned
-            componentMappings: [{ path, component: keanu.KEANU_COMPONENT }],
+            componentMappings: [{ path, component: keanu.COMPONENT }],
           },
         ]);
         expect(access.getComponentsFromPath(path).length).to.equal(0);
       });
 
       it('Should not return a component if path to content metadata xml is forceignored', () => {
-        const path = keanu.KEANU_XML_PATHS[0];
+        const path = keanu.XML_PATHS[0];
         const access = testUtil.createMetadataResolver([
           {
             dirPath: dirname(path),
@@ -246,7 +246,7 @@ describe('MetadataResolver', () => {
           {
             type: mockRegistryData.types.keanureeves,
             // should not be returned
-            componentMappings: [{ path, component: keanu.KEANU_COMPONENT }],
+            componentMappings: [{ path, component: keanu.COMPONENT }],
           },
         ]);
         expect(access.getComponentsFromPath(path).length).to.equal(0);
@@ -298,14 +298,14 @@ describe('MetadataResolver', () => {
       });
 
       it('Should walk all file and directory children', () => {
-        const { KEANUS_DIR } = keanu;
+        const { TYPE_DIRECTORY: KEANUS_DIR } = keanu;
         const stuffDir = join(KEANUS_DIR, 'hasStuff');
         const noStuffDir = join(KEANUS_DIR, 'noStuff');
         const kathyXml = join(KEANUS_DIR, xmlInFolder.XML_NAMES[0]);
-        const keanuXml = keanu.KEANU_XML_PATHS[0];
-        const keanuSrc = keanu.KEANU_SOURCE_PATHS[0];
-        const keanuXml2 = join(stuffDir, keanu.KEANU_XML_NAMES[1]);
-        const keanuSrc2 = join(stuffDir, keanu.KEANU_SOURCE_NAMES[1]);
+        const keanuXml = keanu.XML_PATHS[0];
+        const keanuSrc = keanu.CONTENT_PATHS[0];
+        const keanuXml2 = join(stuffDir, keanu.XML_NAMES[1]);
+        const keanuSrc2 = join(stuffDir, keanu.CONTENT_NAMES[1]);
         const tree = new VirtualTreeContainer([
           {
             dirPath: KEANUS_DIR,
@@ -359,7 +359,7 @@ describe('MetadataResolver', () => {
             componentMappings: [
               {
                 path: keanuXml,
-                component: keanu.KEANU_COMPONENT,
+                component: keanu.COMPONENT,
               },
               {
                 path: keanuXml2,
@@ -369,7 +369,7 @@ describe('MetadataResolver', () => {
           },
         ]);
         expect(access.getComponentsFromPath(KEANUS_DIR)).to.deep.equal([
-          keanu.KEANU_COMPONENT,
+          keanu.COMPONENT,
           kathyComponent2,
           keanuComponent2,
         ]);
@@ -515,7 +515,7 @@ describe('MetadataResolver', () => {
           },
           {
             dirPath: simon.SIMON_BUNDLE_PATH,
-            children: [keanu.KEANU_XML_NAMES[0], basename(simon.SIMON_SOURCE_PATHS[0])],
+            children: [keanu.XML_NAMES[0], basename(simon.SIMON_SOURCE_PATHS[0])],
           },
         ]);
         const access = new MetadataResolver(mockRegistry, tree);
@@ -524,7 +524,7 @@ describe('MetadataResolver', () => {
             {
               name: 'a',
               type: mockRegistryData.types.simonpegg,
-              xml: join(simon.SIMON_BUNDLE_PATH, keanu.KEANU_XML_NAMES[0]),
+              xml: join(simon.SIMON_BUNDLE_PATH, keanu.XML_NAMES[0]),
               content: simon.SIMON_BUNDLE_PATH,
             },
             tree

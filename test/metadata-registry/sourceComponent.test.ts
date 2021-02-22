@@ -9,7 +9,7 @@ import { RegistryTestUtil } from './registryTestUtil';
 import { xmlInFolder, regina, taraji, keanu, mockRegistryData } from '../mock/registry';
 import { expect } from 'chai';
 import { REGINA_COMPONENT } from '../mock/registry/reginaConstants';
-import { KEANU_COMPONENT } from '../mock/registry/keanuConstants';
+import { COMPONENT } from '../mock/registry/keanuConstants';
 import { createSandbox } from 'sinon';
 
 const env = createSandbox();
@@ -23,7 +23,7 @@ describe('SourceComponent', () => {
     afterEach(() => env.restore());
 
     it('should parse the components xml file to json', async () => {
-      const component = KEANU_COMPONENT;
+      const component = COMPONENT;
       env
         .stub(component.tree, 'readFile')
         .resolves(Buffer.from('<KeanuReeves><test>something</test></KeanuReeves>'));
@@ -54,13 +54,13 @@ describe('SourceComponent', () => {
     });
 
     it('should return content if content is a file', () => {
-      const component = SourceComponent.createVirtualComponent(keanu.KEANU_COMPONENT, [
+      const component = SourceComponent.createVirtualComponent(keanu.COMPONENT, [
         {
-          dirPath: keanu.KEANUS_DIR,
-          children: [keanu.KEANU_SOURCE_NAMES[0]],
+          dirPath: keanu.TYPE_DIRECTORY,
+          children: [keanu.CONTENT_NAMES[0]],
         },
       ]);
-      expect(component.walkContent()).to.deep.equal([keanu.KEANU_SOURCE_PATHS[0]]);
+      expect(component.walkContent()).to.deep.equal([keanu.CONTENT_PATHS[0]]);
     });
 
     it('should collect all files if content is directory', () => {

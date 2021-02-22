@@ -12,16 +12,21 @@ import { join } from 'path';
 import { RegistryTestUtil } from '../registryTestUtil';
 import { nls } from '../../../src/i18n';
 import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
-import { KEANU_SOURCE_NAMES, KEANU_XML_NAMES } from '../../mock/registry/keanuConstants';
+import { CONTENT_NAMES, XML_NAMES } from '../../mock/registry/keanuConstants';
 import { SourceComponent } from '../../../src/metadata-registry';
 
 describe('MatchingContentSourceAdapter', () => {
   const type = mockRegistryData.types.keanureeves;
-  const { KEANU_SOURCE_PATHS, KEANU_XML_PATHS, KEANU_COMPONENT, KEANUS_DIR } = keanu;
+  const {
+    CONTENT_PATHS: KEANU_SOURCE_PATHS,
+    XML_PATHS: KEANU_XML_PATHS,
+    COMPONENT: KEANU_COMPONENT,
+    TYPE_DIRECTORY: KEANUS_DIR,
+  } = keanu;
   const tree = new VirtualTreeContainer([
     {
       dirPath: KEANUS_DIR,
-      children: [KEANU_SOURCE_NAMES[0], KEANU_XML_NAMES[0]],
+      children: [CONTENT_NAMES[0], XML_NAMES[0]],
     },
   ]);
   const expectedComponent = new SourceComponent(KEANU_COMPONENT, tree);

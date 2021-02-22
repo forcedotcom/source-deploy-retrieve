@@ -27,7 +27,7 @@ describe('Convert Transaction Constructs', () => {
       const context = new ConvertContext();
       const result1: WriterFormat[] = [
         {
-          component: keanu.KEANU_COMPONENT,
+          component: keanu.COMPONENT,
           writeInfos: [],
         },
       ];

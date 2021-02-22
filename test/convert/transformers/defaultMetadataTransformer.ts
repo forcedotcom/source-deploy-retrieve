@@ -232,7 +232,7 @@ describe('DefaultMetadataTransformer', () => {
           },
         ]
       );
-      const mergeWith = keanu.KEANU_COMPONENT;
+      const mergeWith = keanu.COMPONENT;
       const expectedInfos: WriteInfo[] = [
         {
           output: mergeWith.content,
@@ -265,7 +265,7 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should use default relative package path if merge component has no xml', async () => {
-      const component = keanu.KEANU_COMPONENT;
+      const component = keanu.COMPONENT;
       const mergeWith = SourceComponent.createVirtualComponent(
         {
           name: 'a',

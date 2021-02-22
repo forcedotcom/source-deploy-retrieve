@@ -25,7 +25,7 @@ import {
   COMPONENT,
   CONTENT_NAMES,
   XML_NAMES,
-} from '../mock/registry/keanuConstants';
+} from '../mock/registry/matchingContentFileConstants';
 import { BaseMetadataTransformer } from '../../src/convert/transformers/baseMetadataTransformer';
 
 const env = createSandbox();

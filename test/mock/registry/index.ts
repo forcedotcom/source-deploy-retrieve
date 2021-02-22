@@ -229,7 +229,7 @@ export const mockRegistryData = {
 
 export const mockRegistry = new RegistryAccess(mockRegistryData);
 
-import * as keanu from './keanuConstants';
+import * as matchingContentFile from './matchingContentFileConstants';
 import * as xmlInFolder from './xmlInFolder';
 import * as simon from './simonConstants';
 import * as taraji from './tarajiConstants';
@@ -240,7 +240,7 @@ import * as sean from './seanConstants';
 import * as decomposedtoplevel from './decomposedTopLevelConstants';
 export {
   xmlInFolder,
-  keanu,
+  matchingContentFile,
   simon,
   taraji,
   mixedContentInFolder,

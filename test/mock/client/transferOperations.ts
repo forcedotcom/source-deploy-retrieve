@@ -26,7 +26,7 @@ import {
   MetadataApiRetrieveStatus,
 } from '../../../src/client/types';
 import { mockRegistry } from '../registry';
-import { COMPONENT } from '../registry/keanuConstants';
+import { COMPONENT } from '../registry/matchingContentFileConstants';
 
 export const MOCK_ASYNC_RESULT = { id: '1234', state: RequestStatus.Pending, done: false };
 export const MOCK_DEFAULT_OUTPUT = sep + 'test';

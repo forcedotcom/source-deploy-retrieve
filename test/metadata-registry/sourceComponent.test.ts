@@ -6,10 +6,16 @@
  */
 import { SourceComponent } from '../../src/metadata-registry';
 import { RegistryTestUtil } from './registryTestUtil';
-import { xmlInFolder, regina, taraji, keanu, mockRegistryData } from '../mock/registry';
+import {
+  xmlInFolder,
+  regina,
+  taraji,
+  matchingContentFile,
+  mockRegistryData,
+} from '../mock/registry';
 import { expect } from 'chai';
 import { REGINA_COMPONENT } from '../mock/registry/reginaConstants';
-import { COMPONENT } from '../mock/registry/keanuConstants';
+import { COMPONENT } from '../mock/registry/matchingContentFileConstants';
 import { createSandbox } from 'sinon';
 
 const env = createSandbox();
@@ -54,13 +60,13 @@ describe('SourceComponent', () => {
     });
 
     it('should return content if content is a file', () => {
-      const component = SourceComponent.createVirtualComponent(keanu.COMPONENT, [
+      const component = SourceComponent.createVirtualComponent(matchingContentFile.COMPONENT, [
         {
-          dirPath: keanu.TYPE_DIRECTORY,
-          children: [keanu.CONTENT_NAMES[0]],
+          dirPath: matchingContentFile.TYPE_DIRECTORY,
+          children: [matchingContentFile.CONTENT_NAMES[0]],
         },
       ]);
-      expect(component.walkContent()).to.deep.equal([keanu.CONTENT_PATHS[0]]);
+      expect(component.walkContent()).to.deep.equal([matchingContentFile.CONTENT_PATHS[0]]);
     });
 
     it('should collect all files if content is directory', () => {

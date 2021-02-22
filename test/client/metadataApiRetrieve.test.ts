@@ -16,7 +16,7 @@ import {
 } from '../../src/client/types';
 import { MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
 import { mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
-import { COMPONENT } from '../mock/registry/keanuConstants';
+import { COMPONENT } from '../mock/registry/matchingContentFileConstants';
 import { REGINA_COMPONENT } from '../mock/registry/reginaConstants';
 
 const env = createSandbox();

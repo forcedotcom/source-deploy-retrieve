@@ -15,7 +15,7 @@ import { RegistryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { mockRegistry } from '../../mock/registry';
 import { GENE_COMPONENT } from '../../mock/registry/geneConstants';
-import { COMPONENT } from '../../mock/registry/keanuConstants';
+import { COMPONENT } from '../../mock/registry/matchingContentFileConstants';
 import { MC_SINGLE_FILE_COMPONENT } from '../../mock/registry/mixedContentSingleFileConstants';
 import { REGINA_COMPONENT } from '../../mock/registry/reginaConstants';
 

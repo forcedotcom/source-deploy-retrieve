@@ -8,7 +8,7 @@ import { createSandbox } from 'sinon';
 import { ComponentSet, registryData, SourceComponent } from '../../src';
 import { ComponentStatus, RequestStatus } from '../../src/client/types';
 import { expect } from 'chai';
-import { COMPONENT } from '../mock/registry/keanuConstants';
+import { COMPONENT } from '../mock/registry/matchingContentFileConstants';
 import { basename, join } from 'path';
 import { MOCK_ASYNC_RESULT, stubMetadataDeploy } from '../mock/client/transferOperations';
 

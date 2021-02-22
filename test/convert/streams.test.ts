@@ -18,7 +18,7 @@ import { WriteInfo, WriterFormat } from '../../src/convert';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
 import { LibraryError } from '../../src/errors';
 import { mockRegistry } from '../mock/registry';
-import { COMPONENTS } from '../mock/registry/xmlInFolder';
+import { COMPONENTS } from '../mock/registry/xmlInFolderConstants';
 import { XML_NS_URL, XML_DECL, XML_NS_KEY } from '../../src/common';
 import {
   TYPE_DIRECTORY,

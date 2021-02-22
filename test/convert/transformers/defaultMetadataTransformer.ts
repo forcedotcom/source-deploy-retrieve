@@ -24,7 +24,7 @@ import { GENE_COMPONENT, GENE_XML_NAME } from '../../mock/registry/geneConstants
 import {
   FOLDER_COMPONENT,
   FOLDER_COMPONENT_MD_FORMAT,
-} from '../../mock/registry/mixedContentInFolder';
+} from '../../mock/registry/mixedContentInFolderConstants';
 
 const env = createSandbox();
 

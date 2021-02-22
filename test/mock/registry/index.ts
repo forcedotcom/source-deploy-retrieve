@@ -230,10 +230,10 @@ export const mockRegistryData = {
 export const mockRegistry = new RegistryAccess(mockRegistryData);
 
 import * as matchingContentFile from './matchingContentFileConstants';
-import * as xmlInFolder from './xmlInFolder';
+import * as xmlInFolder from './xmlInFolderConstants';
 import * as simon from './simonConstants';
 import * as taraji from './tarajiConstants';
-import * as mixedContentInFolder from './mixedContentInFolder';
+import * as mixedContentInFolder from './mixedContentInFolderConstants';
 import * as gene from './geneConstants';
 import * as regina from './reginaConstants';
 import * as sean from './seanConstants';

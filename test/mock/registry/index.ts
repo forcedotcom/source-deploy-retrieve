@@ -21,12 +21,17 @@ export const mockRegistryData = {
       name: 'XmlInFolder',
       suffix: 'xif',
     },
-    keanureeves: {
-      id: 'keanureeves',
-      directoryName: 'keanus',
+    /**
+     * Metadata with a content file that has the same suffix as the xml (minus the -meta.xml)
+     *
+     * e.g. ApexClass
+     */
+    matchingcontentfile: {
+      id: 'matchingcontentfile',
+      directoryName: 'matchingContentFiles',
       inFolder: false,
-      name: 'KeanuReeves',
-      suffix: 'keanu',
+      name: 'MatchingContentFile',
+      suffix: 'mcf',
       strategies: {
         adapter: 'matchingContentFile',
         transformer: 'standard',
@@ -194,7 +199,7 @@ export const mockRegistryData = {
   },
   suffixes: {
     xif: 'xmlinfolder',
-    keanu: 'keanureeves',
+    mcf: 'matchingcontentfile',
     missing: 'typewithoutdef',
     mcifFolder: 'mciffolder',
     genewilder: 'gene',
@@ -224,18 +229,18 @@ export const mockRegistryData = {
 
 export const mockRegistry = new RegistryAccess(mockRegistryData);
 
-import * as keanu from './keanuConstants';
-import * as xmlInFolder from './xmlInFolder';
+import * as matchingContentFile from './matchingContentFileConstants';
+import * as xmlInFolder from './xmlInFolderConstants';
 import * as simon from './simonConstants';
 import * as taraji from './tarajiConstants';
-import * as mixedContentInFolder from './mixedContentInFolder';
+import * as mixedContentInFolder from './mixedContentInFolderConstants';
 import * as gene from './geneConstants';
 import * as regina from './reginaConstants';
 import * as sean from './seanConstants';
 import * as decomposedtoplevel from './decomposedTopLevelConstants';
 export {
   xmlInFolder,
-  keanu,
+  matchingContentFile,
   simon,
   taraji,
   mixedContentInFolder,

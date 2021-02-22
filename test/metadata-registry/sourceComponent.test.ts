@@ -6,10 +6,16 @@
  */
 import { SourceComponent } from '../../src/metadata-registry';
 import { RegistryTestUtil } from './registryTestUtil';
-import { xmlInFolder, regina, taraji, keanu, mockRegistryData } from '../mock/registry';
+import {
+  xmlInFolder,
+  regina,
+  taraji,
+  matchingContentFile,
+  mockRegistryData,
+} from '../mock/registry';
 import { expect } from 'chai';
 import { REGINA_COMPONENT } from '../mock/registry/reginaConstants';
-import { KEANU_COMPONENT } from '../mock/registry/keanuConstants';
+import { COMPONENT } from '../mock/registry/matchingContentFileConstants';
 import { createSandbox } from 'sinon';
 
 const env = createSandbox();
@@ -23,12 +29,12 @@ describe('SourceComponent', () => {
     afterEach(() => env.restore());
 
     it('should parse the components xml file to json', async () => {
-      const component = KEANU_COMPONENT;
+      const component = COMPONENT;
       env
         .stub(component.tree, 'readFile')
-        .resolves(Buffer.from('<KeanuReeves><test>something</test></KeanuReeves>'));
+        .resolves(Buffer.from('<MatchingContentFile><test>something</test></MatchingContentFile>'));
       expect(await component.parseXml()).to.deep.equal({
-        KeanuReeves: {
+        MatchingContentFile: {
           test: 'something',
         },
       });
@@ -37,7 +43,7 @@ describe('SourceComponent', () => {
     it('should return empty object if component does not have an xml', async () => {
       const component = new SourceComponent({
         name: 'a',
-        type: mockRegistryData.types.keanureeves,
+        type: mockRegistryData.types.matchingcontentfile,
       });
       expect(await component.parseXml()).to.deep.equal({});
     });
@@ -54,13 +60,13 @@ describe('SourceComponent', () => {
     });
 
     it('should return content if content is a file', () => {
-      const component = SourceComponent.createVirtualComponent(keanu.KEANU_COMPONENT, [
+      const component = SourceComponent.createVirtualComponent(matchingContentFile.COMPONENT, [
         {
-          dirPath: keanu.KEANUS_DIR,
-          children: [keanu.KEANU_SOURCE_NAMES[0]],
+          dirPath: matchingContentFile.TYPE_DIRECTORY,
+          children: [matchingContentFile.CONTENT_NAMES[0]],
         },
       ]);
-      expect(component.walkContent()).to.deep.equal([keanu.KEANU_SOURCE_PATHS[0]]);
+      expect(component.walkContent()).to.deep.equal([matchingContentFile.CONTENT_PATHS[0]]);
     });
 
     it('should collect all files if content is directory', () => {

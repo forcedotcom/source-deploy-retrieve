@@ -73,7 +73,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.keanureeves,
+            type: mockRegistryData.types.matchingcontentfile,
             componentMappings: [
               {
                 path,
@@ -95,7 +95,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.keanureeves,
+            type: mockRegistryData.types.matchingcontentfile,
             componentMappings: [{ path, component: keanu.COMPONENT }],
           },
         ]);
@@ -129,7 +129,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.keanureeves,
+            type: mockRegistryData.types.matchingcontentfile,
             componentMappings: [{ path, component: keanu.CONTENT_COMPONENT }],
             allowContent: false,
           },
@@ -225,7 +225,7 @@ describe('MetadataResolver', () => {
         testUtil.stubForceIgnore({ seed: path, deny: [path] });
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.keanureeves,
+            type: mockRegistryData.types.matchingcontentfile,
             // should not be returned
             componentMappings: [{ path, component: keanu.COMPONENT }],
           },
@@ -244,7 +244,7 @@ describe('MetadataResolver', () => {
         testUtil.stubForceIgnore({ seed: path, deny: [path] });
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.keanureeves,
+            type: mockRegistryData.types.matchingcontentfile,
             // should not be returned
             componentMappings: [{ path, component: keanu.COMPONENT }],
           },
@@ -329,7 +329,7 @@ describe('MetadataResolver', () => {
         const keanuComponent2: SourceComponent = new SourceComponent(
           {
             name: 'b',
-            type: mockRegistryData.types.keanureeves,
+            type: mockRegistryData.types.matchingcontentfile,
             xml: keanuXml2,
             content: keanuSrc2,
           },
@@ -355,7 +355,7 @@ describe('MetadataResolver', () => {
             ],
           },
           {
-            type: mockRegistryData.types.keanureeves,
+            type: mockRegistryData.types.matchingcontentfile,
             componentMappings: [
               {
                 path: keanuXml,
@@ -504,7 +504,7 @@ describe('MetadataResolver', () => {
        * Because files of a mixed content type could have any suffix, they might collide
        * with a type that uses the "suffix index" in the registry and be assigned the incorrect type.
        *
-       * Pretend that this bundle's root xml suffix is the same as KeanuReeves - still should be
+       * Pretend that this bundle's root xml suffix is the same as MatchingContentFile - still should be
        * identified as SimonPegg type
        */
       it('should handle suffix collision for mixed content types', () => {

@@ -10,7 +10,7 @@ import { SourceComponent, VirtualTreeContainer } from '../../../src';
 import { META_XML_SUFFIX } from '../../../src/common';
 
 // Constants for a matching content file type
-const type = mockRegistryData.types.keanureeves;
+const type = mockRegistryData.types.matchingcontentfile;
 
 export const TYPE_DIRECTORY = join('path', 'to', type.directoryName);
 export const COMPONENT_NAMES = ['a', 'b'];

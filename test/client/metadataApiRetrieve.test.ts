@@ -258,7 +258,7 @@ describe('MetadataApiRetrieve', async () => {
       const component = new SourceComponent(
         {
           name: 'OnlyContent',
-          type: mockRegistryData.types.keanureeves,
+          type: mockRegistryData.types.matchingcontentfile,
           content: COMPONENT.content,
         },
         COMPONENT.tree

@@ -21,12 +21,12 @@ export const mockRegistryData = {
       name: 'XmlInFolder',
       suffix: 'xif',
     },
-    keanureeves: {
-      id: 'keanureeves',
-      directoryName: 'keanus',
+    matchingcontentfile: {
+      id: 'matchingcontentfile',
+      directoryName: 'matchingContentFiles',
       inFolder: false,
-      name: 'KeanuReeves',
-      suffix: 'keanu',
+      name: 'MatchingContentFile',
+      suffix: 'mcf',
       strategies: {
         adapter: 'matchingContentFile',
         transformer: 'standard',
@@ -194,7 +194,7 @@ export const mockRegistryData = {
   },
   suffixes: {
     xif: 'xmlinfolder',
-    keanu: 'keanureeves',
+    mcf: 'matchingcontentfile',
     missing: 'typewithoutdef',
     mcifFolder: 'mciffolder',
     genewilder: 'gene',

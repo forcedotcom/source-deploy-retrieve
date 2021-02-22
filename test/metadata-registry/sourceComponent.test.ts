@@ -26,9 +26,9 @@ describe('SourceComponent', () => {
       const component = COMPONENT;
       env
         .stub(component.tree, 'readFile')
-        .resolves(Buffer.from('<KeanuReeves><test>something</test></KeanuReeves>'));
+        .resolves(Buffer.from('<MatchingContentFile><test>something</test></MatchingContentFile>'));
       expect(await component.parseXml()).to.deep.equal({
-        KeanuReeves: {
+        MatchingContentFile: {
           test: 'something',
         },
       });
@@ -37,7 +37,7 @@ describe('SourceComponent', () => {
     it('should return empty object if component does not have an xml', async () => {
       const component = new SourceComponent({
         name: 'a',
-        type: mockRegistryData.types.keanureeves,
+        type: mockRegistryData.types.matchingcontentfile,
       });
       expect(await component.parseXml()).to.deep.equal({});
     });

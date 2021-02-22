@@ -16,7 +16,7 @@ import { CONTENT_NAMES, XML_NAMES } from '../../mock/registry/keanuConstants';
 import { SourceComponent } from '../../../src/metadata-registry';
 
 describe('MatchingContentSourceAdapter', () => {
-  const type = mockRegistryData.types.keanureeves;
+  const type = mockRegistryData.types.matchingcontentfile;
   const {
     CONTENT_PATHS: KEANU_SOURCE_PATHS,
     XML_PATHS: KEANU_XML_PATHS,

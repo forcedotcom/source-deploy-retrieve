@@ -221,7 +221,7 @@ describe('DefaultMetadataTransformer', () => {
       const component = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistryData.types.keanureeves,
+          type: mockRegistryData.types.matchingcontentfile,
           xml: join(root, 'a.keanu-meta.xml'),
           content: join(root, 'a.keanu'),
         },
@@ -269,7 +269,7 @@ describe('DefaultMetadataTransformer', () => {
       const mergeWith = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistryData.types.keanureeves,
+          type: mockRegistryData.types.matchingcontentfile,
         },
         []
       );

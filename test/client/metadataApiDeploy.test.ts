@@ -8,7 +8,7 @@ import { createSandbox } from 'sinon';
 import { ComponentSet, registryData, SourceComponent } from '../../src';
 import { ComponentStatus, RequestStatus } from '../../src/client/types';
 import { expect } from 'chai';
-import { KEANU_COMPONENT } from '../mock/registry/keanuConstants';
+import { COMPONENT } from '../mock/registry/matchingContentFileConstants';
 import { basename, join } from 'path';
 import { MOCK_ASYNC_RESULT, stubMetadataDeploy } from '../mock/client/transferOperations';
 
@@ -45,13 +45,13 @@ describe('MetadataApiDeploy', () => {
   describe('Deploy Result', () => {
     it('should set "Changed" component status for changed component', async () => {
       const { operation } = await stubMetadataDeploy(env, {
-        components: new ComponentSet([KEANU_COMPONENT]),
+        components: new ComponentSet([COMPONENT]),
         componentSuccesses: {
           changed: 'true',
           created: 'false',
           deleted: 'false',
-          fullName: KEANU_COMPONENT.fullName,
-          componentType: KEANU_COMPONENT.type.name,
+          fullName: COMPONENT.fullName,
+          componentType: COMPONENT.type.name,
         },
       });
 
@@ -59,7 +59,7 @@ describe('MetadataApiDeploy', () => {
 
       expect(result.components).to.deep.equal([
         {
-          component: KEANU_COMPONENT,
+          component: COMPONENT,
           status: ComponentStatus.Changed,
           diagnostics: [],
         },
@@ -68,13 +68,13 @@ describe('MetadataApiDeploy', () => {
 
     it('should set "Created" component status for changed component', async () => {
       const { operation } = await stubMetadataDeploy(env, {
-        components: new ComponentSet([KEANU_COMPONENT]),
+        components: new ComponentSet([COMPONENT]),
         componentSuccesses: {
           changed: 'false',
           created: 'true',
           deleted: 'false',
-          fullName: KEANU_COMPONENT.fullName,
-          componentType: KEANU_COMPONENT.type.name,
+          fullName: COMPONENT.fullName,
+          componentType: COMPONENT.type.name,
         },
       });
 
@@ -82,7 +82,7 @@ describe('MetadataApiDeploy', () => {
 
       expect(result.components).to.deep.equal([
         {
-          component: KEANU_COMPONENT,
+          component: COMPONENT,
           status: ComponentStatus.Created,
           diagnostics: [],
         },
@@ -91,13 +91,13 @@ describe('MetadataApiDeploy', () => {
 
     it('should set "Deleted" component status for deleted component', async () => {
       const { operation } = await stubMetadataDeploy(env, {
-        components: new ComponentSet([KEANU_COMPONENT]),
+        components: new ComponentSet([COMPONENT]),
         componentSuccesses: {
           changed: 'false',
           created: 'false',
           deleted: 'true',
-          fullName: KEANU_COMPONENT.fullName,
-          componentType: KEANU_COMPONENT.type.name,
+          fullName: COMPONENT.fullName,
+          componentType: COMPONENT.type.name,
         },
       });
 
@@ -105,7 +105,7 @@ describe('MetadataApiDeploy', () => {
 
       expect(result.components).to.deep.equal([
         {
-          component: KEANU_COMPONENT,
+          component: COMPONENT,
           status: ComponentStatus.Deleted,
           diagnostics: [],
         },
@@ -114,14 +114,14 @@ describe('MetadataApiDeploy', () => {
 
     it('should set "Failed" component status for failed component', async () => {
       const { operation } = await stubMetadataDeploy(env, {
-        components: new ComponentSet([KEANU_COMPONENT]),
+        components: new ComponentSet([COMPONENT]),
         componentFailures: {
           success: 'false',
           changed: 'false',
           created: 'false',
           deleted: 'false',
-          fullName: KEANU_COMPONENT.fullName,
-          componentType: KEANU_COMPONENT.type.name,
+          fullName: COMPONENT.fullName,
+          componentType: COMPONENT.type.name,
         },
       });
 
@@ -129,7 +129,7 @@ describe('MetadataApiDeploy', () => {
 
       expect(result.components).to.deep.equal([
         {
-          component: KEANU_COMPONENT,
+          component: COMPONENT,
           status: ComponentStatus.Failed,
           diagnostics: [],
         },
@@ -138,14 +138,14 @@ describe('MetadataApiDeploy', () => {
 
     it('should set "Unchanged" component status for an unchanged component', async () => {
       const { operation } = await stubMetadataDeploy(env, {
-        components: new ComponentSet([KEANU_COMPONENT]),
+        components: new ComponentSet([COMPONENT]),
         componentFailures: {
           success: 'true',
           changed: 'false',
           created: 'false',
           deleted: 'false',
-          fullName: KEANU_COMPONENT.fullName,
-          componentType: KEANU_COMPONENT.type.name,
+          fullName: COMPONENT.fullName,
+          componentType: COMPONENT.type.name,
         },
       });
 
@@ -153,7 +153,7 @@ describe('MetadataApiDeploy', () => {
 
       expect(result.components).to.deep.equal([
         {
-          component: KEANU_COMPONENT,
+          component: COMPONENT,
           status: ComponentStatus.Unchanged,
           diagnostics: [],
         },
@@ -162,15 +162,15 @@ describe('MetadataApiDeploy', () => {
 
     it('should aggregate diagnostics for a component', async () => {
       const { operation } = await stubMetadataDeploy(env, {
-        components: new ComponentSet([KEANU_COMPONENT]),
+        components: new ComponentSet([COMPONENT]),
         componentFailures: [
           {
             success: 'false',
             changed: 'false',
             created: 'false',
             deleted: 'false',
-            fullName: KEANU_COMPONENT.fullName,
-            componentType: KEANU_COMPONENT.type.name,
+            fullName: COMPONENT.fullName,
+            componentType: COMPONENT.type.name,
             problem: 'Expected ;',
             problemType: 'Error',
             lineNumber: '3',
@@ -181,8 +181,8 @@ describe('MetadataApiDeploy', () => {
             changed: 'false',
             created: 'false',
             deleted: 'false',
-            fullName: KEANU_COMPONENT.fullName,
-            componentType: KEANU_COMPONENT.type.name,
+            fullName: COMPONENT.fullName,
+            componentType: COMPONENT.type.name,
             problem: 'Symbol test does not exist',
             problemType: 'Error',
             lineNumber: '8',
@@ -195,7 +195,7 @@ describe('MetadataApiDeploy', () => {
 
       expect(result.components).to.deep.equal([
         {
-          component: KEANU_COMPONENT,
+          component: COMPONENT,
           status: ComponentStatus.Failed,
           diagnostics: [
             {

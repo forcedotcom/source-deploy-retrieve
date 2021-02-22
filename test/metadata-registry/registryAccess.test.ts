@@ -17,8 +17,8 @@ describe('RegistryAccess', () => {
 
   describe('getTypeByName', () => {
     it('should fetch type regardless of casing', () => {
-      expect(mockRegistry.getTypeByName('KeAnUReeVes')).to.deep.equal(
-        mockRegistryData.types.keanureeves
+      expect(mockRegistry.getTypeByName('mAtcHingContentfile')).to.deep.equal(
+        mockRegistryData.types.matchingcontentfile
       );
     });
 
@@ -56,7 +56,7 @@ describe('RegistryAccess', () => {
 
   describe('getTypeBySuffix', () => {
     it('should get known type by suffix', () => {
-      const type = mockRegistryData.types.keanureeves;
+      const type = mockRegistryData.types.matchingcontentfile;
       expect(mockRegistry.getTypeBySuffix(type.suffix)).to.deep.equal(type);
     });
 

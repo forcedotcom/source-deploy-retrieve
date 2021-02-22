@@ -15,7 +15,7 @@ import { XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { WriterFormat } from '../../src/convert';
 import { ConvertContext } from '../../src/convert/convertContext';
 import { JsToXml } from '../../src/convert/streams';
-import { keanu, mockRegistry, regina } from '../mock/registry';
+import { matchingContentFile, mockRegistry, regina } from '../mock/registry';
 
 const env = createSandbox();
 
@@ -27,7 +27,7 @@ describe('Convert Transaction Constructs', () => {
       const context = new ConvertContext();
       const result1: WriterFormat[] = [
         {
-          component: keanu.KEANU_COMPONENT,
+          component: matchingContentFile.COMPONENT,
           writeInfos: [],
         },
       ];

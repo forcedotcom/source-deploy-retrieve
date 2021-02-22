@@ -18,14 +18,14 @@ import { WriteInfo, WriterFormat } from '../../src/convert';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
 import { LibraryError } from '../../src/errors';
 import { mockRegistry } from '../mock/registry';
-import { COMPONENTS } from '../mock/registry/xmlInFolder';
+import { COMPONENTS } from '../mock/registry/xmlInFolderConstants';
 import { XML_NS_URL, XML_DECL, XML_NS_KEY } from '../../src/common';
 import {
-  KEANUS_DIR,
-  KEANU_COMPONENT,
-  KEANU_SOURCE_NAMES,
-  KEANU_XML_NAMES,
-} from '../mock/registry/keanuConstants';
+  TYPE_DIRECTORY,
+  COMPONENT,
+  CONTENT_NAMES,
+  XML_NAMES,
+} from '../mock/registry/matchingContentFileConstants';
 import { BaseMetadataTransformer } from '../../src/convert/transformers/baseMetadataTransformer';
 
 const env = createSandbox();
@@ -226,18 +226,18 @@ describe('Streams', () => {
       readableMock.push('hi');
       readableMock.push(null);
     };
-    const component = SourceComponent.createVirtualComponent(KEANU_COMPONENT, [
+    const component = SourceComponent.createVirtualComponent(COMPONENT, [
       {
-        dirPath: KEANUS_DIR,
-        children: KEANU_XML_NAMES.concat(KEANU_SOURCE_NAMES),
+        dirPath: TYPE_DIRECTORY,
+        children: XML_NAMES.concat(CONTENT_NAMES),
       },
       {
-        dirPath: join(rootDestination, KEANU_COMPONENT.type.directoryName),
-        children: [basename(KEANU_COMPONENT.xml), basename(KEANU_COMPONENT.content)],
+        dirPath: join(rootDestination, COMPONENT.type.directoryName),
+        children: [basename(COMPONENT.xml), basename(COMPONENT.content)],
       },
       {
-        dirPath: join(absoluteRootDestination, KEANU_COMPONENT.type.directoryName),
-        children: [basename(KEANU_COMPONENT.xml), basename(KEANU_COMPONENT.content)],
+        dirPath: join(absoluteRootDestination, COMPONENT.type.directoryName),
+        children: [basename(COMPONENT.xml), basename(COMPONENT.content)],
       },
     ]);
     const chunk: WriterFormat = {
@@ -293,14 +293,12 @@ describe('Streams', () => {
 
       it('should join root destination and relative WriteInfo outputs during copy', async () => {
         pipelineStub.resolves();
-        const root = join(rootDestination, KEANU_COMPONENT.type.directoryName);
+        const root = join(rootDestination, COMPONENT.type.directoryName);
 
         await writer._write(chunk, '', (err: Error) => {
           expect(err).to.be.undefined;
-          expect(ensureFile.firstCall.args[0]).to.equal(join(root, basename(KEANU_COMPONENT.xml)));
-          expect(ensureFile.secondCall.args[0]).to.equal(
-            join(root, basename(KEANU_COMPONENT.content))
-          );
+          expect(ensureFile.firstCall.args[0]).to.equal(join(root, basename(COMPONENT.xml)));
+          expect(ensureFile.secondCall.args[0]).to.equal(join(root, basename(COMPONENT.content)));
           expect(pipelineStub.firstCall.args).to.deep.equal([
             chunk.writeInfos[0].source,
             fsWritableMock,

@@ -8,7 +8,7 @@ import {
   simon,
   xmlInFolder,
   gene,
-  keanu,
+  matchingContentFile,
   mockRegistry,
   mockRegistryData,
 } from '../../mock/registry';
@@ -24,7 +24,7 @@ import { GENE_COMPONENT, GENE_XML_NAME } from '../../mock/registry/geneConstants
 import {
   FOLDER_COMPONENT,
   FOLDER_COMPONENT_MD_FORMAT,
-} from '../../mock/registry/mixedContentInFolder';
+} from '../../mock/registry/mixedContentInFolderConstants';
 
 const env = createSandbox();
 
@@ -217,30 +217,35 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should merge output with merge component when content is a file', async () => {
-      const root = join('path', 'to', 'another', 'keanus');
+      const root = join(
+        'path',
+        'to',
+        'another',
+        mockRegistryData.types.matchingcontentfile.directoryName
+      );
       const component = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistryData.types.keanureeves,
-          xml: join(root, 'a.keanu-meta.xml'),
-          content: join(root, 'a.keanu'),
+          type: mockRegistryData.types.matchingcontentfile,
+          xml: join(root, matchingContentFile.XML_NAMES[0]),
+          content: join(root, matchingContentFile.CONTENT_NAMES[0]),
         },
         [
           {
             dirPath: root,
-            children: ['a.keanu-meta.xml', 'a.keanu'],
+            children: [matchingContentFile.XML_NAMES[0], matchingContentFile.CONTENT_NAMES[0]],
           },
         ]
       );
-      const mergeWith = keanu.KEANU_COMPONENT;
+      const mergeWith = matchingContentFile.COMPONENT;
       const expectedInfos: WriteInfo[] = [
         {
           output: mergeWith.content,
-          source: component.tree.stream(join(root, 'a.keanu')),
+          source: component.tree.stream(join(root, matchingContentFile.CONTENT_NAMES[0])),
         },
         {
           output: mergeWith.xml,
-          source: component.tree.stream(join(root, 'a.keanu-meta.xml')),
+          source: component.tree.stream(join(root, matchingContentFile.XML_NAMES[0])),
         },
       ];
 
@@ -265,11 +270,11 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should use default relative package path if merge component has no xml', async () => {
-      const component = keanu.KEANU_COMPONENT;
+      const component = matchingContentFile.COMPONENT;
       const mergeWith = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistryData.types.keanureeves,
+          type: mockRegistryData.types.matchingcontentfile,
         },
         []
       );

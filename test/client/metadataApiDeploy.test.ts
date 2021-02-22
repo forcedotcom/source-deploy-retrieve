@@ -147,7 +147,7 @@ describe('MetadataApiDeploy', () => {
           expect(responses).to.deep.equal(expected);
         });
 
-        it('should ignore successes if any failure present for component', () => {
+        it('should report component as failed if component has success and failure messages', () => {
           const component = KEANU_COMPONENT;
           const deployedSet = new ComponentSet([component]);
           const { fullName, type, content } = component;

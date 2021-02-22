@@ -32,6 +32,7 @@ export class DeployResult implements MetadataTransferResult {
   }
 
   public getFileResponses(): FileResponse[] {
+    // TODO: Log when messages can't be mapped to components
     const messages = this.getDeployMessages(this.response);
     const fileResponses: FileResponse[] = [];
 
@@ -66,7 +67,6 @@ export class DeployResult implements MetadataTransferResult {
 
       if (baseResponse.state === ComponentStatus.Failed) {
         const diagnostic = this.diagnosticUtil.parseDeployDiagnostic(component, message);
-        // const xmlAsFilePath = xml && !content ? { filePath: xml } : {};
         const response = Object.assign(baseResponse, diagnostic) as FileResponse;
         responses.push(response);
       } else {
@@ -133,14 +133,10 @@ export class DeployResult implements MetadataTransferResult {
         type: sanitized.componentType,
       };
       const key = this.key(componentLike);
-      // this will ensure successes aren't reported if there
-      // is a failure for the same component
-      // e.g. lwc returns failures and successes
+      // this will ensure successes aren't reported if there is a failure for
+      // the same component. e.g. lwc returns failures and successes
       if (!failedComponents.has(componentLike)) {
-        if (!messageMap.has(key)) {
-          messageMap.set(key, []);
-        }
-        messageMap.get(key).push(sanitized);
+        messageMap.set(key, [sanitized]);
       }
     }
 

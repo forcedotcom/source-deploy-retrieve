@@ -21,6 +21,11 @@ export const mockRegistryData = {
       name: 'XmlInFolder',
       suffix: 'xif',
     },
+    /**
+     * Metadata with a content file that has the same suffix (minus the -meta.xml)
+     *
+     * e.g. ApexClass
+     */
     matchingcontentfile: {
       id: 'matchingcontentfile',
       directoryName: 'matchingContentFiles',

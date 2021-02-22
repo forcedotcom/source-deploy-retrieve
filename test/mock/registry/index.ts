@@ -22,7 +22,7 @@ export const mockRegistryData = {
       suffix: 'xif',
     },
     /**
-     * Metadata with a content file that has the same suffix (minus the -meta.xml)
+     * Metadata with a content file that has the same suffix as the xml (minus the -meta.xml)
      *
      * e.g. ApexClass
      */

@@ -15,13 +15,13 @@ import { RegistryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { mockRegistry } from '../../mock/registry';
 import { GENE_COMPONENT } from '../../mock/registry/geneConstants';
-import { KEANU_COMPONENT } from '../../mock/registry/keanuConstants';
+import { COMPONENT } from '../../mock/registry/matchingContentFileConstants';
 import { MC_SINGLE_FILE_COMPONENT } from '../../mock/registry/mixedContentSingleFileConstants';
 import { REGINA_COMPONENT } from '../../mock/registry/reginaConstants';
 
 describe('MetadataTransformerFactory', () => {
   it('should return DefaultMetadataTransformer', () => {
-    const component = KEANU_COMPONENT;
+    const component = COMPONENT;
     const factory = new MetadataTransformerFactory(mockRegistry);
     expect(factory.getTransformer(component)).to.deep.equal(
       new DefaultMetadataTransformer(mockRegistry)

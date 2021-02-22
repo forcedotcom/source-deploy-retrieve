@@ -26,7 +26,7 @@ import {
   MetadataApiRetrieveStatus,
 } from '../../../src/client/types';
 import { mockRegistry } from '../registry';
-import { KEANU_COMPONENT } from '../registry/keanuConstants';
+import { COMPONENT } from '../registry/matchingContentFileConstants';
 
 export const MOCK_ASYNC_RESULT = { id: '1234', state: RequestStatus.Pending, done: false };
 export const MOCK_DEFAULT_OUTPUT = sep + 'test';
@@ -131,8 +131,8 @@ export async function stubMetadataRetrieve(
   // contents of the zip don't really matter (unless something changes)
   const zipBuffer = await createMockZip([
     'unpackaged/package.xml',
-    join('unpackaged', KEANU_COMPONENT.content),
-    join('unpackaged', KEANU_COMPONENT.xml),
+    join('unpackaged', COMPONENT.content),
+    join('unpackaged', COMPONENT.xml),
   ]);
 
   const retrieveStub = sandbox.stub(connection.metadata, 'retrieve');

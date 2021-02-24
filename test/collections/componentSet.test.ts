@@ -510,6 +510,31 @@ describe('ComponentSet', () => {
       expect(result).to.deep.equal(expectedOperation);
     });
 
+    it('should properly construct a retrieve operation with packageName', async () => {
+      const connection = await mockConnection($$);
+      const set = new ComponentSet([]);
+      const operationArgs = {
+        components: set,
+        output: join('test', 'path'),
+        usernameOrConnection: connection,
+        packageNames: ['MyPackage'],
+      };
+      const expectedOperation = new MetadataApiRetrieve(operationArgs);
+      const constructorStub = env
+        .stub()
+        .withArgs(operationArgs)
+        .callsFake(() => expectedOperation);
+      Object.setPrototypeOf(MetadataApiRetrieve, constructorStub);
+
+      const result = await set.retrieve({
+        packageNames: ['MyPackage'],
+        output: operationArgs.output,
+        usernameOrConnection: connection,
+      });
+
+      expect(result).to.deep.equal(expectedOperation);
+    });
+
     it('should throw error if there are no components in the set', async () => {
       const set = new ComponentSet(undefined, mockRegistry);
       try {

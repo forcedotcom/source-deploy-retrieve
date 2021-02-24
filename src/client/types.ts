@@ -309,6 +309,7 @@ export interface RetrieveOptions {
    * Whether or not to merge and replace input components with the retrieved versions
    */
   merge?: boolean;
+  packageNames?: string[];
 }
 
 export interface MetadataApiDeployOptions {

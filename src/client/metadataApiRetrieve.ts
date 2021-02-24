@@ -99,11 +99,20 @@ export class MetadataApiRetrieve extends MetadataTransfer<
 
   protected async pre(): Promise<{ id: string }> {
     const connection = await this.getConnection();
+    // if we're retrieving with packageNames add it
+    // otherwise don't - it causes errors if undefined or an empty array
+    const options = this.options.packageNames
+      ? {
+          packageNames: this.options.packageNames,
+          apiVersion: this.components.apiVersion,
+          unpackaged: this.components.getObject().Package,
+        }
+      : {
+          apiVersion: this.components.apiVersion,
+          unpackaged: this.components.getObject().Package,
+        };
     // @ts-ignore required callback
-    return connection.metadata.retrieve({
-      apiVersion: this.components.apiVersion,
-      unpackaged: this.components.getObject().Package,
-    });
+    return connection.metadata.retrieve(options);
   }
 
   protected async checkStatus(id: string): Promise<MetadataApiRetrieveStatus> {

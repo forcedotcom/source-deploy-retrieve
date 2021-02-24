@@ -162,7 +162,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @param options
    */
   public retrieve(options: RetrieveSetOptions): MetadataApiRetrieve {
-    if (this.size === 0) {
+    // to retrieve via packageNames, the ComponentSets size will be 0
+    if (this.size === 0 && !options.packageNames?.length) {
       throw new ComponentSetError('error_no_components_to_retrieve');
     }
 

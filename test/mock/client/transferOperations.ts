@@ -29,6 +29,7 @@ import { mockRegistry } from '../registry';
 import { COMPONENT } from '../registry/matchingContentFileConstants';
 
 export const MOCK_ASYNC_RESULT = { id: '1234', state: RequestStatus.Pending, done: false };
+export const MOCK_PACKAGE_RESULT = { id: '7890', state: RequestStatus.Pending, done: false };
 export const MOCK_DEFAULT_OUTPUT = sep + 'test';
 
 interface DeployStubOptions {
@@ -107,6 +108,7 @@ export async function stubMetadataDeploy(
 
 interface RetrieveStubOptions {
   merge?: boolean;
+  packageNames?: string[];
   components?: ComponentSet;
   successes?: ComponentSet;
   messages?: Partial<RetrieveMessage> | Partial<RetrieveMessage>[];
@@ -142,7 +144,12 @@ export async function stubMetadataRetrieve(
       apiVersion: components.apiVersion,
       unpackaged: components.getObject().Package,
     })
-    .resolves(MOCK_ASYNC_RESULT);
+    .resolves(MOCK_ASYNC_RESULT)
+    .withArgs({
+      apiVersion: components.apiVersion,
+      packageNames: ['MyPackage'],
+    })
+    .resolves(MOCK_PACKAGE_RESULT);
 
   const defaultStatus: Partial<MetadataApiRetrieveStatus> = {
     id: MOCK_ASYNC_RESULT.id,
@@ -151,7 +158,7 @@ export async function stubMetadataRetrieve(
     done: false,
     zipFile: zipBuffer.toString('base64'),
   };
-  if (options.fileProperties) {
+  if (options.fileProperties || options.packageNames) {
     defaultStatus.success = true;
     // @ts-ignore
     defaultStatus.fileProperties = options.fileProperties;

@@ -92,6 +92,20 @@ describe('MetadataApiRetrieve', async () => {
     expect(result).to.deep.equal(expected);
   });
 
+  it('should construct a result object with retrieved components with only packageName', async () => {
+    const retrievedComponents = new ComponentSet([], mockRegistry);
+    const { operation, response } = await stubMetadataRetrieve(env, {
+      components: retrievedComponents,
+      packageNames: ['MyPackage'],
+      merge: true,
+    });
+
+    const result = await operation.start();
+    const expected = new RetrieveResult(response, retrievedComponents);
+
+    expect(result).to.deep.equal(expected);
+  });
+
   it('should construct a result object with no components when no components are retrieved', async () => {
     const retrievedComponents = new ComponentSet();
     const { operation, response } = await stubMetadataRetrieve(env, {

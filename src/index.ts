@@ -5,13 +5,21 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 export {
+  MetadataApiDeploy,
   MetadataApiDeployOptions,
+  MetadataApiRetrieve,
+  MetadataApiRetrieveOptions,
+  RetrieveResult,
+  ToolingApi,
+  ToolingDeployOptions,
+  ToolingRetrieveOptions,
+  DeployResult,
+  FileResponse,
+  MetadataApiRetrieveStatus,
   RetrieveOptions,
   SourceDeployResult,
   RetrieveMessage,
   SourceRetrieveResult,
-  ToolingDeployOptions,
-  ToolingRetrieveOptions,
   ToolingDeployStatus,
   ComponentStatus,
 } from './client';

@@ -10,9 +10,9 @@
 
 - Fix for recompostion failure when the parent xml did not exist ([PR #245](https://github.com/forcedotcom/source-deploy-retrieve/pull/245))
 
-- Remove the octet-stream as an archive type ([PR #244](https://github.com/forcedotcom/source-deploy-retrieve/pull/244))
+- Fix conversion failure to source format for StaticResource component with `octet-stream` content type  ([PR #244](https://github.com/forcedotcom/source-deploy-retrieve/pull/244))
 
-- Fix timeout for metadata transfer with deploy and retrieve ([PR #236](https://github.com/forcedotcom/source-deploy-retrieve/pull/236))
+- Fix timeout during metadata api deploy and retrieve operations ([PR #236](https://github.com/forcedotcom/source-deploy-retrieve/pull/236))
 
 - Convert folder components to source format correctly ([PR #239](https://github.com/forcedotcom/source-deploy-retrieve/pull/239))
 

@@ -534,17 +534,6 @@ describe('ComponentSet', () => {
 
       expect(result).to.deep.equal(expectedOperation);
     });
-
-    it('should throw error if there are no components in the set', async () => {
-      const set = new ComponentSet(undefined, mockRegistry);
-      try {
-        await set.retrieve({ usernameOrConnection: 'test@foobar.com', output: 'test' });
-        fail('should have thrown an error');
-      } catch (e) {
-        expect(e.name).to.equal(ComponentSetError.name);
-        expect(e.message).to.equal(nls.localize('error_no_components_to_retrieve'));
-      }
-    });
   });
 
   describe('add', () => {

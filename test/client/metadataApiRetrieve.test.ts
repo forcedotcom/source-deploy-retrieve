@@ -94,15 +94,17 @@ describe('MetadataApiRetrieve', async () => {
 
   it('should construct a result object with retrieved components with only packageName', async () => {
     const retrievedComponents = new ComponentSet([], mockRegistry);
-    const { operation, response } = await stubMetadataRetrieve(env, {
+    const options = {
       components: retrievedComponents,
       packageNames: ['MyPackage'],
       merge: true,
-    });
+    };
+    const { operation, response, retrieveStub } = await stubMetadataRetrieve(env, options);
 
     const result = await operation.start();
     const expected = new RetrieveResult(response, retrievedComponents);
 
+    expect(retrieveStub.args[0][0].packageNames).to.equal(options.packageNames);
     expect(result).to.deep.equal(expected);
   });
 

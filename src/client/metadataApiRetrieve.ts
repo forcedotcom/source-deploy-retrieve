@@ -17,6 +17,7 @@ import {
 } from './types';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import { normalizeToArray } from '../utils';
+import { MetadataApiRetrieveError } from '../errors';
 
 export type MetadataApiRetrieveOptions = MetadataTransferOptions &
   RetrieveOptions & { registry?: RegistryAccess };
@@ -98,6 +99,10 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   }
 
   protected async pre(): Promise<{ id: string }> {
+    // now that we can retrieve via packageNames, the ComponentSet size could theoretically be 0
+    if (this.options.components.size === 0 && this.options.packageNames?.length === 0) {
+      throw new MetadataApiRetrieveError('error_no_components_to_retrieve');
+    }
     const connection = await this.getConnection();
     // if we're retrieving with packageNames add it
     // otherwise don't - it causes errors if undefined or an empty array

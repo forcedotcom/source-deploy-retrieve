@@ -29,7 +29,6 @@ import { mockRegistry } from '../registry';
 import { COMPONENT } from '../registry/matchingContentFileConstants';
 
 export const MOCK_ASYNC_RESULT = { id: '1234', state: RequestStatus.Pending, done: false };
-export const MOCK_PACKAGE_RESULT = { id: '7890', state: RequestStatus.Pending, done: false };
 export const MOCK_DEFAULT_OUTPUT = sep + 'test';
 
 interface DeployStubOptions {
@@ -137,19 +136,7 @@ export async function stubMetadataRetrieve(
     join('unpackaged', COMPONENT.xml),
   ]);
 
-  const retrieveStub = sandbox.stub(connection.metadata, 'retrieve');
-  retrieveStub
-    // @ts-ignore required callback
-    .withArgs({
-      apiVersion: components.apiVersion,
-      unpackaged: components.getObject().Package,
-    })
-    .resolves(MOCK_ASYNC_RESULT)
-    .withArgs({
-      apiVersion: components.apiVersion,
-      packageNames: ['MyPackage'],
-    })
-    .resolves(MOCK_PACKAGE_RESULT);
+  const retrieveStub = sandbox.stub(connection.metadata, 'retrieve').resolves(MOCK_ASYNC_RESULT);
 
   const defaultStatus: Partial<MetadataApiRetrieveStatus> = {
     id: MOCK_ASYNC_RESULT.id,
@@ -211,6 +198,7 @@ export async function stubMetadataRetrieve(
     checkStatusStub,
     convertStub,
     operation: new MetadataApiRetrieve({
+      packageNames: options.packageNames,
       usernameOrConnection: connection,
       components,
       output: MOCK_DEFAULT_OUTPUT,

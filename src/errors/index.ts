@@ -77,3 +77,9 @@ export class ComponentSetError extends LibraryError {
     super(messageKey, args);
   }
 }
+
+export class MetadataApiRetrieveError extends LibraryError {
+  constructor(messageKey: string, args?: string | string[]) {
+    super(messageKey, args);
+  }
+}

@@ -303,7 +303,42 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   }
 
   public has(component: ComponentLike): boolean {
-    return this.components.has(this.simpleKey(component));
+    const isDirectlyInSet = this.components.has(this.simpleKey(component));
+    if (isDirectlyInSet) {
+      return true;
+    }
+
+    const wildcardMember: ComponentLike = {
+      fullName: ComponentSet.WILDCARD,
+      type: typeof component.type === 'object' ? component.type.name : component.type,
+    };
+    const isIncludedInWildcard = this.components.has(this.simpleKey(wildcardMember));
+    if (isIncludedInWildcard) {
+      return true;
+    }
+
+    if (typeof component.type === 'object') {
+      const { parent } = component as MetadataComponent;
+      if (parent) {
+        const parentDirectlyInSet = this.components.has(this.simpleKey(parent));
+        if (parentDirectlyInSet) {
+          return true;
+        }
+
+        const wildcardKey = this.simpleKey({
+          fullName: ComponentSet.WILDCARD,
+          type: parent.type,
+        });
+        const parentInWildcard = this.components.has(wildcardKey);
+        if (parentInWildcard) {
+          return true;
+        }
+      }
+    } else {
+      // brute force the parent check - worst case.
+    }
+
+    return false;
   }
 
   public *[Symbol.iterator](): Iterator<MetadataComponent> {

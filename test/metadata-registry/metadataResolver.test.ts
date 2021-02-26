@@ -22,6 +22,7 @@ import {
   sean,
   gene,
   mockRegistryData,
+  decomposedtoplevel,
 } from '../mock/registry';
 import { join, basename, dirname } from 'path';
 import { TypeInferenceError } from '../../src/errors';
@@ -43,6 +44,7 @@ import {
   TARAJI_VIRTUAL_FS,
   TARAJI_XML_PATHS,
 } from '../mock/registry/tarajiConstants';
+import { ComponentSet } from '../../src';
 
 const testUtil = new RegistryTestUtil();
 
@@ -559,6 +561,140 @@ describe('MetadataResolver', () => {
           },
         ]);
         expect(access.getComponentsFromPath(dirPath).length).to.equal(0);
+      });
+    });
+
+    describe('Filtering', () => {
+      it('should only return components present in filter', async () => {
+        const resolver = testUtil.createMetadataResolver([
+          {
+            dirPath: xmlInFolder.COMPONENT_FOLDER_PATH,
+            children: xmlInFolder.XML_NAMES,
+          },
+        ]);
+        const componentMappings = xmlInFolder.XML_PATHS.map((p: string, i: number) => ({
+          path: p,
+          component: xmlInFolder.COMPONENTS[i],
+        }));
+        testUtil.stubAdapters([
+          {
+            type: mockRegistryData.types.xmlinfolder,
+            componentMappings,
+          },
+        ]);
+        const toFilter = {
+          fullName: xmlInFolder.COMPONENTS[0].fullName,
+          type: mockRegistryData.types.xmlinfolder,
+        };
+        const filter = new ComponentSet([toFilter]);
+
+        const result = resolver.getComponentsFromPath(xmlInFolder.COMPONENT_FOLDER_PATH, filter);
+
+        expect(result).to.deep.equal([xmlInFolder.COMPONENTS[0]]);
+      });
+
+      it('should resolve child components when present in filter', async () => {
+        const resolver = testUtil.createMetadataResolver(decomposedtoplevel.DECOMPOSED_VIRTUAL_FS);
+        const children = decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT.getChildren();
+        const componentMappings = children.map((c: SourceComponent) => ({
+          path: c.xml,
+          component: c,
+        }));
+        componentMappings.push({
+          path: decomposedtoplevel.DECOMPOSED_TOP_LEVEL_XML_PATH,
+          component: decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT,
+        });
+        testUtil.stubAdapters([
+          {
+            type: mockRegistryData.types.decomposedtoplevel,
+            componentMappings,
+          },
+        ]);
+        const toFilter = [
+          {
+            fullName: children[0].fullName,
+            type: children[0].type,
+          },
+          {
+            fullName: children[1].fullName,
+            type: children[1].type,
+          },
+        ];
+        const filter = new ComponentSet(toFilter);
+
+        const result = resolver.getComponentsFromPath(
+          decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT_PATH,
+          filter
+        );
+
+        expect(result).to.deep.equal(children);
+      });
+
+      it('should resolve directory component if in filter', () => {
+        const resolver = testUtil.createMetadataResolver([
+          {
+            dirPath: simon.SIMON_DIR,
+            children: [basename(simon.SIMON_BUNDLE_PATH)],
+          },
+          {
+            dirPath: simon.SIMON_BUNDLE_PATH,
+            children: simon.SIMON_SOURCE_PATHS.map((p) => basename(p)).concat([
+              simon.SIMON_XML_NAME,
+            ]),
+          },
+        ]);
+        testUtil.stubAdapters([
+          {
+            type: mockRegistryData.types.simonpegg,
+            componentMappings: [
+              {
+                path: simon.SIMON_BUNDLE_PATH,
+                component: simon.SIMON_COMPONENT,
+              },
+            ],
+          },
+        ]);
+        const filter = new ComponentSet([
+          {
+            fullName: simon.SIMON_COMPONENT.fullName,
+            type: simon.SIMON_COMPONENT.type,
+          },
+        ]);
+
+        const result = resolver.getComponentsFromPath(simon.SIMON_DIR, filter);
+
+        expect(result).to.deep.equal([simon.SIMON_COMPONENT]);
+      });
+
+      it('should not resolve directory component if not in filter', () => {
+        const resolver = testUtil.createMetadataResolver([
+          {
+            dirPath: simon.SIMON_DIR,
+            children: [basename(simon.SIMON_BUNDLE_PATH)],
+          },
+          {
+            dirPath: simon.SIMON_BUNDLE_PATH,
+            children: simon.SIMON_SOURCE_PATHS.map((p) => basename(p)).concat([
+              simon.SIMON_XML_NAME,
+            ]),
+          },
+        ]);
+        testUtil.stubAdapters([
+          {
+            type: mockRegistryData.types.simonpegg,
+            componentMappings: [
+              {
+                path: simon.SIMON_BUNDLE_PATH,
+                component: simon.SIMON_COMPONENT,
+              },
+            ],
+          },
+        ]);
+        const filter = new ComponentSet();
+
+        const result = resolver.getComponentsFromPath(simon.SIMON_DIR, filter);
+
+        expect(result).to.deep.equal([]);
       });
     });
   });

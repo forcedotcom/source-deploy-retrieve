@@ -358,60 +358,6 @@ describe('ComponentSet', () => {
       expect(Array.from(result)).to.deep.equal(expected);
       expect(Array.from(set)).to.deep.equal(expected);
     });
-
-    it('should resolve components and filter', async () => {
-      const set = new ComponentSet(undefined, mockRegistry);
-      const filter = [{ fullName: 'b', type: mockRegistryData.types.mixedcontentsinglefile }];
-
-      const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath('.');
-      expected.splice(
-        expected.findIndex((c) => c.fullName === 'a'),
-        1
-      );
-      expected.splice(
-        expected.findIndex((c) => c.fullName === 'c'),
-        1
-      );
-
-      const result = set.resolveSourceComponents('.', { tree, filter });
-
-      expect(Array.from(result)).to.deep.equal(expected);
-      expect(Array.from(set)).to.deep.equal(expected);
-    });
-
-    it('should resolve child components when present in filter', () => {
-      const filter = [
-        {
-          fullName: 'a.child1',
-          type: mockRegistryData.types.decomposedtoplevel.children.types.g,
-        },
-        {
-          fullName: 'a.child2',
-          type: mockRegistryData.types.decomposedtoplevel.children.types.g,
-        },
-      ];
-      const set = new ComponentSet(undefined, mockRegistry);
-      const result = set.resolveSourceComponents('.', { tree, filter });
-      const expected = new MetadataResolver(mockRegistry, tree)
-        .getComponentsFromPath('decomposedTopLevels')[0]
-        .getChildren();
-
-      expect(Array.from(result)).to.deep.equal(expected);
-      expect(Array.from(set)).to.deep.equal(expected);
-    });
-
-    it('should resolve child if parent is in filter option', () => {
-      const pathToChild = join('decomposedTopLevels', 'a', 'child1.g-meta.xml');
-      const set = new ComponentSet(undefined, mockRegistry);
-      const result = set.resolveSourceComponents(pathToChild, {
-        tree,
-        filter: [{ fullName: 'a', type: 'decomposedtoplevel' }],
-      });
-      const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath(pathToChild);
-
-      expect(Array.from(result)).to.deep.equal(expected);
-      expect(Array.from(set)).to.deep.equal(expected);
-    });
   });
 
   describe('getPackageXml', () => {

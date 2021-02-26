@@ -308,8 +308,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
           return true;
         }
       }
-    } else {
-      // brute force the parent check - worst case.
     }
 
     return false;

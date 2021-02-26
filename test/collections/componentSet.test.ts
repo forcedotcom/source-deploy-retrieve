@@ -536,7 +536,7 @@ describe('ComponentSet', () => {
       expect(set.has(component)).to.be.true;
     });
 
-    it('should correctly evaluate membership with wildcard of component type', () => {
+    it('should correctly evaluate membership of component with wildcard of component type in set', () => {
       const component = mixedContentSingleFile.MC_SINGLE_FILE_COMPONENT;
       const set = new ComponentSet(undefined, mockRegistry);
 
@@ -547,7 +547,7 @@ describe('ComponentSet', () => {
       expect(set.has(component)).to.be.true;
     });
 
-    it('should correctly evaluate membership with parent of child component', () => {
+    it('should correctly evaluate membership of component with parent in set', () => {
       const parent = decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT;
       const [child] = parent.getChildren();
       const set = new ComponentSet(undefined, mockRegistry);
@@ -559,7 +559,7 @@ describe('ComponentSet', () => {
       expect(set.has(child)).to.be.true;
     });
 
-    it('should correctly evaluate membership with wildcard of parent type', () => {
+    it('should correctly evaluate membership of component with wildcard of parent type in set', () => {
       const parent = decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT;
       const [child] = parent.getChildren();
       const set = new ComponentSet(undefined, mockRegistry);

@@ -39,7 +39,8 @@ export class MetadataResolver {
   /**
    * Get the metadata component(s) from a file path.
    *
-   * @param fsPath File path for a piece of metadata
+   * @param fsPath File path to metadata or directory
+   * @param filter Set to filter which components are resolved
    */
   public getComponentsFromPath(fsPath: string, filter?: ComponentSet): SourceComponent[] {
     if (!this.tree.exists(fsPath)) {

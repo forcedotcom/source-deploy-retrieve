@@ -16,7 +16,12 @@ import { ComponentSetError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { VirtualFile } from '../../src/metadata-registry/types';
 import { mockConnection } from '../mock/client';
-import { mockRegistry, mockRegistryData } from '../mock/registry';
+import {
+  decomposedtoplevel,
+  mixedContentSingleFile,
+  mockRegistry,
+  mockRegistryData,
+} from '../mock/registry';
 
 const env = createSandbox();
 const $$ = testSetup(env);
@@ -384,7 +389,7 @@ describe('ComponentSet', () => {
         'mixedSingleFiles'
       );
 
-      expect(Array.from(set.getSourceComponents())).to.deep.equal(expected);
+      expect(set.getSourceComponents().toArray()).to.deep.equal(expected);
     });
 
     it('should return source-backed components that match the given metadata member', () => {
@@ -497,7 +502,7 @@ describe('ComponentSet', () => {
   });
 
   describe('has', () => {
-    it('should correctly identify membership when given a MetadataMember', () => {
+    it('should correctly evaluate membership with MetadataMember', () => {
       const set = new ComponentSet(undefined, mockRegistry);
       const member: MetadataMember = {
         fullName: 'a',
@@ -514,7 +519,7 @@ describe('ComponentSet', () => {
       expect(set.has(member)).to.be.true;
     });
 
-    it('should correctly identify membership when given a MetadataComponent', () => {
+    it('should correctly evaluate membership with MetadataComponent', () => {
       const set = new ComponentSet(undefined, mockRegistry);
       const component: MetadataComponent = {
         fullName: 'a',
@@ -529,6 +534,41 @@ describe('ComponentSet', () => {
       });
 
       expect(set.has(component)).to.be.true;
+    });
+
+    it('should correctly evaluate membership with wildcard of component type', () => {
+      const component = mixedContentSingleFile.MC_SINGLE_FILE_COMPONENT;
+      const set = new ComponentSet(undefined, mockRegistry);
+
+      expect(set.has(component)).to.be.false;
+
+      set.add({ fullName: ComponentSet.WILDCARD, type: component.type });
+
+      expect(set.has(component)).to.be.true;
+    });
+
+    it('should correctly evaluate membership with parent of child component', () => {
+      const parent = decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT;
+      const [child] = parent.getChildren();
+      const set = new ComponentSet(undefined, mockRegistry);
+
+      expect(set.has(child)).to.be.false;
+
+      set.add(parent);
+
+      expect(set.has(child)).to.be.true;
+    });
+
+    it('should correctly evaluate membership with wildcard of parent type', () => {
+      const parent = decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT;
+      const [child] = parent.getChildren();
+      const set = new ComponentSet(undefined, mockRegistry);
+
+      expect(set.has(child)).to.be.false;
+
+      set.add({ fullName: ComponentSet.WILDCARD, type: parent.type });
+
+      expect(set.has(child)).to.be.true;
     });
   });
 

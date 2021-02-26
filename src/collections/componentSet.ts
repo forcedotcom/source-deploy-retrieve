@@ -31,8 +31,9 @@ import { LazyCollection } from './lazyCollection';
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
+
 export class ComponentSet extends LazyCollection<MetadataComponent> {
-  private static readonly WILDCARD = '*';
+  public static readonly WILDCARD = '*';
   private static readonly KEY_DELIMITER = '#';
   public apiVersion: string;
   private registry: RegistryAccess;

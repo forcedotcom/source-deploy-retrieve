@@ -9,7 +9,7 @@ import { xmlInFolder, mockRegistry, mockRegistryData } from '../../mock/registry
 import { DefaultSourceAdapter } from '../../../src/metadata-registry/adapters/defaultSourceAdapter';
 import { expect, assert } from 'chai';
 import { BaseSourceAdapter } from '../../../src/metadata-registry/adapters/baseSourceAdapter';
-import { SourcePath } from '../../../src/common';
+import { META_XML_SUFFIX, SourcePath } from '../../../src/common';
 import { UnexpectedForceIgnore } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { RegistryTestUtil } from '../registryTestUtil';
@@ -81,8 +81,8 @@ describe('BaseSourceAdapter', () => {
 
   it('Should throw an error if a metadata xml file is forceignored', () => {
     const testUtil = new RegistryTestUtil();
-    const path = join('path', 'to', 'keanus', 'My_Test.keanu-meta.xml');
-    const type = mockRegistryData.types.keanureeves;
+    const type = mockRegistryData.types.matchingcontentfile;
+    const path = join('path', 'to', type.directoryName, `My_Test.${type.suffix}${META_XML_SUFFIX}`);
     const forceIgnore = testUtil.stubForceIgnore({
       seed: path,
       deny: [path],

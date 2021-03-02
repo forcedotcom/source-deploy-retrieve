@@ -16,7 +16,12 @@ import { ComponentSetError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { VirtualFile } from '../../src/metadata-registry/types';
 import { mockConnection } from '../mock/client';
-import { mockRegistry, mockRegistryData } from '../mock/registry';
+import {
+  decomposedtoplevel,
+  mixedContentSingleFile,
+  mockRegistry,
+  mockRegistryData,
+} from '../mock/registry';
 
 const env = createSandbox();
 const $$ = testSetup(env);
@@ -358,60 +363,6 @@ describe('ComponentSet', () => {
       expect(Array.from(result)).to.deep.equal(expected);
       expect(Array.from(set)).to.deep.equal(expected);
     });
-
-    it('should resolve components and filter', async () => {
-      const set = new ComponentSet(undefined, mockRegistry);
-      const filter = [{ fullName: 'b', type: mockRegistryData.types.mixedcontentsinglefile }];
-
-      const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath('.');
-      expected.splice(
-        expected.findIndex((c) => c.fullName === 'a'),
-        1
-      );
-      expected.splice(
-        expected.findIndex((c) => c.fullName === 'c'),
-        1
-      );
-
-      const result = set.resolveSourceComponents('.', { tree, filter });
-
-      expect(Array.from(result)).to.deep.equal(expected);
-      expect(Array.from(set)).to.deep.equal(expected);
-    });
-
-    it('should resolve child components when present in filter', () => {
-      const filter = [
-        {
-          fullName: 'a.child1',
-          type: mockRegistryData.types.decomposedtoplevel.children.types.g,
-        },
-        {
-          fullName: 'a.child2',
-          type: mockRegistryData.types.decomposedtoplevel.children.types.g,
-        },
-      ];
-      const set = new ComponentSet(undefined, mockRegistry);
-      const result = set.resolveSourceComponents('.', { tree, filter });
-      const expected = new MetadataResolver(mockRegistry, tree)
-        .getComponentsFromPath('decomposedTopLevels')[0]
-        .getChildren();
-
-      expect(Array.from(result)).to.deep.equal(expected);
-      expect(Array.from(set)).to.deep.equal(expected);
-    });
-
-    it('should resolve child if parent is in filter option', () => {
-      const pathToChild = join('decomposedTopLevels', 'a', 'child1.g-meta.xml');
-      const set = new ComponentSet(undefined, mockRegistry);
-      const result = set.resolveSourceComponents(pathToChild, {
-        tree,
-        filter: [{ fullName: 'a', type: 'decomposedtoplevel' }],
-      });
-      const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath(pathToChild);
-
-      expect(Array.from(result)).to.deep.equal(expected);
-      expect(Array.from(set)).to.deep.equal(expected);
-    });
   });
 
   describe('getPackageXml', () => {
@@ -438,7 +389,7 @@ describe('ComponentSet', () => {
         'mixedSingleFiles'
       );
 
-      expect(Array.from(set.getSourceComponents())).to.deep.equal(expected);
+      expect(set.getSourceComponents().toArray()).to.deep.equal(expected);
     });
 
     it('should return source-backed components that match the given metadata member', () => {
@@ -551,7 +502,7 @@ describe('ComponentSet', () => {
   });
 
   describe('has', () => {
-    it('should correctly identify membership when given a MetadataMember', () => {
+    it('should correctly evaluate membership with MetadataMember', () => {
       const set = new ComponentSet(undefined, mockRegistry);
       const member: MetadataMember = {
         fullName: 'a',
@@ -568,7 +519,7 @@ describe('ComponentSet', () => {
       expect(set.has(member)).to.be.true;
     });
 
-    it('should correctly identify membership when given a MetadataComponent', () => {
+    it('should correctly evaluate membership with MetadataComponent', () => {
       const set = new ComponentSet(undefined, mockRegistry);
       const component: MetadataComponent = {
         fullName: 'a',
@@ -583,6 +534,41 @@ describe('ComponentSet', () => {
       });
 
       expect(set.has(component)).to.be.true;
+    });
+
+    it('should correctly evaluate membership of component with wildcard of component type in set', () => {
+      const component = mixedContentSingleFile.MC_SINGLE_FILE_COMPONENT;
+      const set = new ComponentSet(undefined, mockRegistry);
+
+      expect(set.has(component)).to.be.false;
+
+      set.add({ fullName: ComponentSet.WILDCARD, type: component.type });
+
+      expect(set.has(component)).to.be.true;
+    });
+
+    it('should correctly evaluate membership of component with parent in set', () => {
+      const parent = decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT;
+      const [child] = parent.getChildren();
+      const set = new ComponentSet(undefined, mockRegistry);
+
+      expect(set.has(child)).to.be.false;
+
+      set.add(parent);
+
+      expect(set.has(child)).to.be.true;
+    });
+
+    it('should correctly evaluate membership of component with wildcard of parent type in set', () => {
+      const parent = decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT;
+      const [child] = parent.getChildren();
+      const set = new ComponentSet(undefined, mockRegistry);
+
+      expect(set.has(child)).to.be.false;
+
+      set.add({ fullName: ComponentSet.WILDCARD, type: parent.type });
+
+      expect(set.has(child)).to.be.true;
     });
   });
 

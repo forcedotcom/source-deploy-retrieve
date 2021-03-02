@@ -41,7 +41,7 @@ describe('SourceAdapterFactory', () => {
   });
 
   it('Should return MatchingContentSourceAdapter for matchingContentFile AdapterId', () => {
-    const type = mockRegistryData.types.keanureeves;
+    const type = mockRegistryData.types.matchingcontentfile;
     const adapter = factory.getAdapter(type);
     expect(adapter).to.deep.equal(
       new MatchingContentSourceAdapter(type, mockRegistry, undefined, tree)

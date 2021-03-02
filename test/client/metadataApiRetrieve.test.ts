@@ -15,8 +15,8 @@ import {
   MetadataApiRetrieveStatus,
 } from '../../src/client/types';
 import { MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
-import { mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
-import { KEANU_COMPONENT } from '../mock/registry/keanuConstants';
+import { matchingContentFile, mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
+import { COMPONENT } from '../mock/registry/matchingContentFileConstants';
 import { REGINA_COMPONENT } from '../mock/registry/reginaConstants';
 
 const env = createSandbox();
@@ -26,7 +26,7 @@ describe('MetadataApiRetrieve', async () => {
 
   describe('Lifecycle', () => {
     it('should retrieve zip and extract to directory', async () => {
-      const component = KEANU_COMPONENT;
+      const component = matchingContentFile.COMPONENT;
       const components = new ComponentSet([component], mockRegistry);
       const { operation, convertStub } = await stubMetadataRetrieve(env, {
         components,
@@ -49,7 +49,7 @@ describe('MetadataApiRetrieve', async () => {
     });
 
     it('should retrieve zip and merge with existing components', async () => {
-      const component = KEANU_COMPONENT;
+      const component = matchingContentFile.COMPONENT;
       const components = new ComponentSet([component], mockRegistry);
       const { operation, convertStub } = await stubMetadataRetrieve(env, {
         components,
@@ -74,8 +74,8 @@ describe('MetadataApiRetrieve', async () => {
     });
 
     it('should construct a result object with retrieved components', async () => {
-      const component = KEANU_COMPONENT;
-      const retrievedComponents = new ComponentSet([KEANU_COMPONENT], mockRegistry);
+      const component = matchingContentFile.COMPONENT;
+      const retrievedComponents = new ComponentSet([matchingContentFile.COMPONENT], mockRegistry);
       const fileProperties = {
         fullName: component.fullName,
         type: component.type.name,
@@ -112,7 +112,7 @@ describe('MetadataApiRetrieve', async () => {
     });
 
     it('should immediately stop polling on cancel', async () => {
-      const component = KEANU_COMPONENT;
+      const component = matchingContentFile.COMPONENT;
       const components = new ComponentSet([component], mockRegistry);
       const { operation, checkStatusStub } = await stubMetadataRetrieve(env, { components });
 
@@ -126,7 +126,7 @@ describe('MetadataApiRetrieve', async () => {
   describe('RetrieveResult', () => {
     describe('getFileResponses', () => {
       it('should report all files of a component on success', () => {
-        const component = KEANU_COMPONENT;
+        const component = COMPONENT;
         const retrievedSet = new ComponentSet([component]);
         const apiStatus = {};
         const result = new RetrieveResult(apiStatus as MetadataApiRetrieveStatus, retrievedSet);
@@ -147,7 +147,7 @@ describe('MetadataApiRetrieve', async () => {
     });
 
     it('should report one failure if component does not exist', () => {
-      const component = KEANU_COMPONENT;
+      const component = COMPONENT;
       const retrievedSet = new ComponentSet();
       const apiStatus = {
         messages: [
@@ -174,7 +174,7 @@ describe('MetadataApiRetrieve', async () => {
 
     it('should report files of successful component and one failure for an unsuccessful one', () => {
       const successComponent = xmlInFolder.COMPONENTS[0];
-      const failComponent = KEANU_COMPONENT;
+      const failComponent = COMPONENT;
       const retrievedSet = new ComponentSet([successComponent]);
       const apiStatus = {
         messages: [
@@ -258,10 +258,10 @@ describe('MetadataApiRetrieve', async () => {
       const component = new SourceComponent(
         {
           name: 'OnlyContent',
-          type: mockRegistryData.types.keanureeves,
-          content: KEANU_COMPONENT.content,
+          type: mockRegistryData.types.matchingcontentfile,
+          content: COMPONENT.content,
         },
-        KEANU_COMPONENT.tree
+        COMPONENT.tree
       );
       const retrievedSet = new ComponentSet([component]);
       const apiStatus = {};

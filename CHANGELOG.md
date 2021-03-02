@@ -1,3 +1,21 @@
+# 1.1.18 - February 24, 2021
+
+## Added
+
+- Turn component sets into lazy collections ([PR #247](https://github.com/forcedotcom/source-deploy-retrieve/pull/247))
+
+- Get file statuses from retrieve results ([PR #243](https://github.com/forcedotcom/source-deploy-retrieve/pull/243))
+
+## Fixed
+
+- Fix for recompostion failure when the parent xml did not exist ([PR #245](https://github.com/forcedotcom/source-deploy-retrieve/pull/245))
+
+- Fix conversion failure to source format for StaticResource component with `octet-stream` content type  ([PR #244](https://github.com/forcedotcom/source-deploy-retrieve/pull/244))
+
+- Fix timeout during metadata api deploy and retrieve operations ([PR #236](https://github.com/forcedotcom/source-deploy-retrieve/pull/236))
+
+- Convert folder components to source format correctly ([PR #239](https://github.com/forcedotcom/source-deploy-retrieve/pull/239))
+
 # 1.1.16 - February 9, 2021
 
 ## Added

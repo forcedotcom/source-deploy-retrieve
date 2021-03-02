@@ -14,11 +14,10 @@ import {
   RequestStatus,
 } from '../../src/client/types';
 import { expect } from 'chai';
-import { KEANU_COMPONENT } from '../mock/registry/keanuConstants';
 import { basename, join } from 'path';
 import { MOCK_ASYNC_RESULT, stubMetadataDeploy } from '../mock/client/transferOperations';
 import { DeployResult } from '../../src/client/metadataApiDeploy';
-import { mockRegistry } from '../mock/registry';
+import { mockRegistry, matchingContentFile } from '../mock/registry';
 import { META_XML_SUFFIX } from '../../src/common';
 import {
   REGINA_CHILD_COMPONENT_1,
@@ -33,7 +32,7 @@ describe('MetadataApiDeploy', () => {
 
   describe('Lifecycle', () => {
     it('should convert to metadata format and create zip', async () => {
-      const components = new ComponentSet([KEANU_COMPONENT]);
+      const components = new ComponentSet([matchingContentFile.COMPONENT]);
       const { operation, convertStub } = await stubMetadataDeploy(env, {
         components,
       });
@@ -44,7 +43,7 @@ describe('MetadataApiDeploy', () => {
     });
 
     it('should call deploy with zip', async () => {
-      const components = new ComponentSet([KEANU_COMPONENT]);
+      const components = new ComponentSet([matchingContentFile.COMPONENT]);
       const { operation, convertStub, deployStub } = await stubMetadataDeploy(env, {
         components,
       });
@@ -57,7 +56,7 @@ describe('MetadataApiDeploy', () => {
     });
 
     it('should construct a result object with deployed components', async () => {
-      const component = KEANU_COMPONENT;
+      const component = matchingContentFile.COMPONENT;
       const deployedComponents = new ComponentSet([component], mockRegistry);
       const { operation, response } = await stubMetadataDeploy(env, {
         components: deployedComponents,
@@ -148,7 +147,7 @@ describe('MetadataApiDeploy', () => {
         });
 
         it('should report component as failed if component has success and failure messages', () => {
-          const component = KEANU_COMPONENT;
+          const component = matchingContentFile.COMPONENT;
           const deployedSet = new ComponentSet([component]);
           const { fullName, type, content } = component;
           const problem = 'something went wrong';
@@ -247,7 +246,7 @@ describe('MetadataApiDeploy', () => {
       });
 
       it('should set "Changed" component status for changed component', async () => {
-        const component = KEANU_COMPONENT;
+        const component = matchingContentFile.COMPONENT;
         const deployedSet = new ComponentSet([component]);
         const { fullName, type, content, xml } = component;
         const apiStatus: Partial<MetadataApiDeployStatus> = {
@@ -283,7 +282,7 @@ describe('MetadataApiDeploy', () => {
       });
 
       it('should set "Created" component status for changed component', async () => {
-        const component = KEANU_COMPONENT;
+        const component = matchingContentFile.COMPONENT;
         const deployedSet = new ComponentSet([component]);
         const { fullName, type, content, xml } = component;
         const apiStatus: Partial<MetadataApiDeployStatus> = {
@@ -319,7 +318,7 @@ describe('MetadataApiDeploy', () => {
       });
 
       it('should set "Deleted" component status for deleted component', async () => {
-        const component = KEANU_COMPONENT;
+        const component = matchingContentFile.COMPONENT;
         const deployedSet = new ComponentSet([component]);
         const { fullName, type, content, xml } = component;
         const apiStatus: Partial<MetadataApiDeployStatus> = {
@@ -355,7 +354,7 @@ describe('MetadataApiDeploy', () => {
       });
 
       it('should set "Failed" component status for failed component', async () => {
-        const component = KEANU_COMPONENT;
+        const component = matchingContentFile.COMPONENT;
         const deployedSet = new ComponentSet([component]);
         const { fullName, type, content } = component;
         const problem = 'something went wrong';
@@ -393,7 +392,7 @@ describe('MetadataApiDeploy', () => {
       });
 
       it('should set "Unchanged" component status for an unchanged component', async () => {
-        const component = KEANU_COMPONENT;
+        const component = matchingContentFile.COMPONENT;
         const deployedSet = new ComponentSet([component]);
         const { fullName, type, content, xml } = component;
         const apiStatus: Partial<MetadataApiDeployStatus> = {
@@ -430,7 +429,7 @@ describe('MetadataApiDeploy', () => {
       });
 
       it('should aggregate diagnostics for a component', () => {
-        const component = KEANU_COMPONENT;
+        const component = matchingContentFile.COMPONENT;
         const deployedSet = new ComponentSet([component]);
         const { fullName, type, content } = component;
         const problem = 'something went wrong';

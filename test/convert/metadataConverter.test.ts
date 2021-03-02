@@ -13,7 +13,7 @@ import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { dirname, join } from 'path';
 import { expect, assert } from 'chai';
 import { ConversionError, LibraryError } from '../../src/errors';
-import { COMPONENTS } from '../mock/registry/mixedContentInFolder';
+import { COMPONENTS } from '../mock/registry/mixedContentInFolderConstants';
 import { fail } from 'assert';
 import { ComponentSet } from '../../src';
 import {

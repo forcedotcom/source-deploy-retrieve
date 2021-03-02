@@ -31,8 +31,9 @@ import { LazyCollection } from './lazyCollection';
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
+
 export class ComponentSet extends LazyCollection<MetadataComponent> {
-  private static readonly WILDCARD = '*';
+  public static readonly WILDCARD = '*';
   private static readonly KEY_DELIMITER = '#';
   public apiVersion: string;
   private registry: RegistryAccess;
@@ -221,40 +222,13 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       filterSet = filter instanceof ComponentSet ? filter : new ComponentSet(filter);
     }
 
-    // TODO: move most of this logic to resolver W-8023153
     const resolver = new MetadataResolver(this.registry, options?.tree);
-    const resolved = resolver.getComponentsFromPath(fsPath);
+    const resolved = resolver.getComponentsFromPath(fsPath, filterSet);
     const sourceComponents = new ComponentSet();
 
     for (const component of resolved) {
-      if (filterSet) {
-        const includedInWildcard = filterSet.has({
-          fullName: ComponentSet.WILDCARD,
-          type: component.type,
-        });
-        const parentInFilter =
-          component.parent &&
-          (filterSet.has(component.parent) ||
-            filterSet.has({
-              fullName: ComponentSet.WILDCARD,
-              type: component.parent.type,
-            }));
-        if (filterSet.has(component) || includedInWildcard || parentInFilter) {
-          this.add(component);
-          sourceComponents.add(component);
-        } else {
-          // have to check for any individually addressed children in the filter set
-          for (const childComponent of component.getChildren()) {
-            if (filterSet.has(childComponent)) {
-              this.add(childComponent);
-              sourceComponents.add(childComponent);
-            }
-          }
-        }
-      } else {
-        this.add(component);
-        sourceComponents.add(component);
-      }
+      this.add(component);
+      sourceComponents.add(component);
     }
 
     return sourceComponents;
@@ -303,7 +277,40 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   }
 
   public has(component: ComponentLike): boolean {
-    return this.components.has(this.simpleKey(component));
+    const isDirectlyInSet = this.components.has(this.simpleKey(component));
+    if (isDirectlyInSet) {
+      return true;
+    }
+
+    const wildcardMember: ComponentLike = {
+      fullName: ComponentSet.WILDCARD,
+      type: typeof component.type === 'object' ? component.type.name : component.type,
+    };
+    const isIncludedInWildcard = this.components.has(this.simpleKey(wildcardMember));
+    if (isIncludedInWildcard) {
+      return true;
+    }
+
+    if (typeof component.type === 'object') {
+      const { parent } = component as MetadataComponent;
+      if (parent) {
+        const parentDirectlyInSet = this.components.has(this.simpleKey(parent));
+        if (parentDirectlyInSet) {
+          return true;
+        }
+
+        const wildcardKey = this.simpleKey({
+          fullName: ComponentSet.WILDCARD,
+          type: parent.type,
+        });
+        const parentInWildcard = this.components.has(wildcardKey);
+        if (parentInWildcard) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   public *[Symbol.iterator](): Iterator<MetadataComponent> {

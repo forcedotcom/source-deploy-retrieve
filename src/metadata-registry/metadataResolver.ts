@@ -15,6 +15,7 @@ import { SourceComponent } from './sourceComponent';
 import { MetadataType, SourcePath } from '../common';
 import { NodeFSTreeContainer } from './treeContainers';
 import { RegistryAccess } from './registryAccess';
+import { ComponentSet } from '../collections';
 
 /**
  * Resolver for metadata type and component objects.
@@ -38,9 +39,10 @@ export class MetadataResolver {
   /**
    * Get the metadata component(s) from a file path.
    *
-   * @param fsPath File path for a piece of metadata
+   * @param fsPath File path to metadata or directory
+   * @param filter Set to filter which components are resolved
    */
-  public getComponentsFromPath(fsPath: string): SourceComponent[] {
+  public getComponentsFromPath(fsPath: string, filter?: ComponentSet): SourceComponent[] {
     if (!this.tree.exists(fsPath)) {
       throw new TypeInferenceError('error_path_not_found', fsPath);
     }
@@ -48,14 +50,17 @@ export class MetadataResolver {
     this.forceIgnore = ForceIgnore.findAndCreate(fsPath);
 
     if (this.tree.isDirectory(fsPath) && !this.resolveDirectoryAsComponent(fsPath)) {
-      return this.getComponentsFromPathRecursive(fsPath);
+      return this.getComponentsFromPathRecursive(fsPath, filter);
     }
 
     const component = this.resolveComponent(fsPath, true);
     return component ? [component] : [];
   }
 
-  private getComponentsFromPathRecursive(dir: SourcePath): SourceComponent[] {
+  private getComponentsFromPathRecursive(
+    dir: SourcePath,
+    filter?: ComponentSet
+  ): SourceComponent[] {
     const dirQueue: SourcePath[] = [];
     const components: SourceComponent[] = [];
     const ignore = new Set();
@@ -74,16 +79,26 @@ export class MetadataResolver {
       if (this.tree.isDirectory(fsPath)) {
         if (this.resolveDirectoryAsComponent(fsPath)) {
           const component = this.resolveComponent(fsPath, true);
-          components.push(component);
-          ignore.add(component.xml);
+          if (!filter || filter.has(component)) {
+            components.push(component);
+            ignore.add(component.xml);
+          }
         } else {
           dirQueue.push(fsPath);
         }
       } else if (this.isMetadata(fsPath)) {
         const component = this.resolveComponent(fsPath, false);
         if (component) {
-          components.push(component);
-          ignore.add(component.content);
+          if (!filter || filter.has(component)) {
+            components.push(component);
+            ignore.add(component.content);
+          } else {
+            for (const child of component.getChildren()) {
+              if (filter.has(child)) {
+                components.push(child);
+              }
+            }
+          }
           // don't traverse further if not in a root type directory. performance optimization
           // for mixed content types and ensures we don't add duplicates of the component.
           const typeDir = basename(dirname(component.type.inFolder ? dirname(fsPath) : fsPath));
@@ -95,7 +110,7 @@ export class MetadataResolver {
     }
 
     for (const dir of dirQueue) {
-      components.push(...this.getComponentsFromPathRecursive(dir));
+      components.push(...this.getComponentsFromPathRecursive(dir, filter));
     }
 
     return components;

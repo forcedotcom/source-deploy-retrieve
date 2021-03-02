@@ -25,8 +25,9 @@ import {
   RequestStatus,
   MetadataApiRetrieveStatus,
 } from '../../../src/client/types';
+import { ComponentProperties } from '../../../src/metadata-registry/sourceComponent';
+import { normalizeToArray } from '../../../src/utils';
 import { mockRegistry } from '../registry';
-import { COMPONENT } from '../registry/matchingContentFileConstants';
 
 export const MOCK_ASYNC_RESULT = { id: '1234', state: RequestStatus.Pending, done: false };
 export const MOCK_DEFAULT_OUTPUT = sep + 'test';
@@ -109,11 +110,10 @@ export async function stubMetadataDeploy(
 
 interface RetrieveStubOptions {
   merge?: boolean;
-  components?: ComponentSet;
-  successes?: ComponentSet;
+  packageNames?: string[];
+  toRetrieve?: ComponentSet;
   messages?: Partial<RetrieveMessage> | Partial<RetrieveMessage>[];
-  fileProperties?: Partial<FileProperties> | Partial<FileProperties>[];
-  failures?: ComponentSet;
+  successes?: ComponentSet;
 }
 
 interface RetrieveOperationLifecycle {
@@ -124,55 +124,80 @@ interface RetrieveOperationLifecycle {
   response: MetadataApiRetrieveStatus;
 }
 
+/**
+ * A stubber that simulates the API retrieve.
+ *
+ * @param sandbox Sinon sandbox to stub against
+ * @param options Options to stub out the retrieve
+ */
 export async function stubMetadataRetrieve(
   sandbox: SinonSandbox,
   options: RetrieveStubOptions
 ): Promise<RetrieveOperationLifecycle> {
+  const { toRetrieve: components } = options;
   const connection = await mockConnection(testSetup());
-  const { components } = options;
-  // contents of the zip don't really matter (unless something changes)
-  const zipBuffer = await createMockZip([
-    'unpackaged/package.xml',
-    join('unpackaged', COMPONENT.content),
-    join('unpackaged', COMPONENT.xml),
-  ]);
 
-  const retrieveStub = sandbox.stub(connection.metadata, 'retrieve');
-  retrieveStub
-    // @ts-ignore required callback
-    .withArgs({
-      apiVersion: components.apiVersion,
-      unpackaged: components.getObject().Package,
-    })
-    .resolves(MOCK_ASYNC_RESULT);
+  const retrieveStub = sandbox.stub(connection.metadata, 'retrieve').resolves(MOCK_ASYNC_RESULT);
 
-  const defaultStatus: Partial<MetadataApiRetrieveStatus> = {
+  const retrieveStatus: Partial<MetadataApiRetrieveStatus> = {
     id: MOCK_ASYNC_RESULT.id,
     status: RequestStatus.Pending,
     success: false,
     done: false,
-    zipFile: zipBuffer.toString('base64'),
   };
-  if (options.fileProperties) {
-    defaultStatus.success = true;
-    // @ts-ignore
-    defaultStatus.fileProperties = options.fileProperties;
-    defaultStatus.status = options.failures
-      ? RequestStatus.SucceededPartial
-      : RequestStatus.Succeeded;
-  } else {
-    defaultStatus.success = false;
-    defaultStatus.status = RequestStatus.Failed;
+
+  const zipEntries = ['unpackaged/package.xml'];
+
+  const successes = options.successes?.getSourceComponents().toArray();
+
+  if (successes?.length > 0) {
+    retrieveStatus.success = true;
+    retrieveStatus.status = RequestStatus.Succeeded;
+    const fileProperties: Partial<FileProperties>[] = [];
+
+    for (const success of successes) {
+      const contentFiles = success.walkContent();
+      if (contentFiles.length > 0) {
+        for (const content of success.walkContent()) {
+          fileProperties.push({
+            fullName: success.fullName,
+            type: success.type.name,
+            fileName: content,
+          });
+          zipEntries.push(join('unpackaged', content));
+        }
+      } else {
+        fileProperties.push({
+          fullName: success.fullName,
+          type: success.type.name,
+          fileName: success.xml,
+        });
+      }
+    }
+    retrieveStatus.fileProperties =
+      fileProperties.length === 1
+        ? (fileProperties[0] as FileProperties)
+        : (fileProperties as FileProperties[]);
   }
-  if (options.messages) {
-    // @ts-ignore
-    defaultStatus.messages = options.messages;
+
+  const messages = normalizeToArray(options.messages);
+
+  if (messages.length > 0) {
+    retrieveStatus.status =
+      retrieveStatus.status === RequestStatus.Succeeded
+        ? RequestStatus.SucceededPartial
+        : RequestStatus.Failed;
+    retrieveStatus.messages =
+      messages.length === 1 ? (messages[0] as RetrieveMessage) : (messages as RetrieveMessage[]);
   }
+
+  retrieveStatus.zipFile = (await createMockZip(zipEntries)).toString('base64');
+
   const checkStatusStub = sandbox.stub(connection.metadata, 'checkRetrieveStatus');
   // @ts-ignore force returning project's RetrieveResult type
-  checkStatusStub.withArgs(MOCK_ASYNC_RESULT.id).resolves(defaultStatus);
+  checkStatusStub.withArgs(MOCK_ASYNC_RESULT.id).resolves(retrieveStatus);
 
-  const source = Array.from(components.getSourceComponents());
+  const source = components.getSourceComponents().toArray();
 
   let outputConfig: ConvertOutputConfig;
   let converted: SourceComponent[] = [];
@@ -188,14 +213,20 @@ export async function stubMetadataRetrieve(
       type: 'directory',
       outputDirectory: MOCK_DEFAULT_OUTPUT,
     };
-    for (const component of components) {
-      const sc = new SourceComponent({
-        name: component.fullName,
-        type: component.type,
-        xml: join(MOCK_DEFAULT_OUTPUT, `${component.fullName}.${component.type.suffix}-meta.xml`),
-        content: join(MOCK_DEFAULT_OUTPUT, `${component.fullName}.${component.type.suffix}`),
-      });
-      converted.push(sc);
+    if (options.successes) {
+      for (const component of successes) {
+        const props: ComponentProperties = {
+          name: component.fullName,
+          type: component.type,
+        };
+        if (component.xml) {
+          props.xml = join(MOCK_DEFAULT_OUTPUT, component.xml);
+        }
+        if (component.content) {
+          props.content = join(MOCK_DEFAULT_OUTPUT, component.content);
+        }
+        converted.push(new SourceComponent(props));
+      }
     }
   }
   const convertStub = sandbox.stub(MetadataConverter.prototype, 'convert');
@@ -206,12 +237,13 @@ export async function stubMetadataRetrieve(
     checkStatusStub,
     convertStub,
     operation: new MetadataApiRetrieve({
+      packageNames: options.packageNames,
       usernameOrConnection: connection,
       components,
       output: MOCK_DEFAULT_OUTPUT,
       registry: mockRegistry,
       merge: options.merge,
     }),
-    response: defaultStatus as MetadataApiRetrieveStatus,
+    response: retrieveStatus as MetadataApiRetrieveStatus,
   };
 }

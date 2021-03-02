@@ -19,7 +19,7 @@ import {
 import { MetadataApiDeploy, MetadataApiRetrieve } from '../../../src/client';
 import {
   DeployMessage,
-  DeployResult,
+  MetadataApiDeployStatus,
   FileProperties,
   MetadataApiDeployOptions,
   RequestStatus,
@@ -44,6 +44,7 @@ interface DeployOperationLifecycle {
   checkStatusStub: SinonStub;
   invokeStub: SinonStub;
   operation: MetadataApiDeploy;
+  response: MetadataApiDeployStatus;
 }
 
 export async function stubMetadataDeploy(
@@ -64,7 +65,7 @@ export async function stubMetadataDeploy(
     .resolves({ zipBuffer });
 
   const defaultStatus = { success: false, done: false, status: RequestStatus.Pending };
-  const status: Partial<DeployResult> = Object.assign(defaultStatus, MOCK_ASYNC_RESULT);
+  const status: Partial<MetadataApiDeployStatus> = Object.assign(defaultStatus, MOCK_ASYNC_RESULT);
   if (options.componentSuccesses) {
     if (options.componentFailures) {
       status.status = RequestStatus.SucceededPartial;
@@ -102,6 +103,7 @@ export async function stubMetadataDeploy(
       usernameOrConnection: connection,
       components: options.components,
     }),
+    response: status as MetadataApiDeployStatus,
   };
 }
 

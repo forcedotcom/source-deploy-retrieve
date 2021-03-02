@@ -8,7 +8,11 @@ import { createSandbox, SinonFakeTimers, SinonStub } from 'sinon';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { ComponentSet } from '../../src';
 import { MetadataTransfer } from '../../src/client/metadataTransfer';
-import { MetadataRequestResult, RequestStatus, SourceApiResult } from '../../src/client/types';
+import {
+  MetadataRequestStatus,
+  MetadataTransferResult,
+  RequestStatus,
+} from '../../src/client/types';
 import { AuthInfo, Connection } from '@salesforce/core';
 import { expect } from 'chai';
 import { MetadataTransferError } from '../../src/errors';
@@ -18,7 +22,7 @@ import { fail } from 'assert';
 const $$ = testSetup();
 const env = createSandbox();
 
-class TestTransfer extends MetadataTransfer<MetadataRequestResult, SourceApiResult> {
+class TestTransfer extends MetadataTransfer<MetadataRequestStatus, MetadataTransferResult> {
   public request = { done: true, status: RequestStatus.Succeeded, id: '1', success: true };
   public lifecycle = {
     pre: env.stub().returns({ id: '1' }),
@@ -32,10 +36,10 @@ class TestTransfer extends MetadataTransfer<MetadataRequestResult, SourceApiResu
   protected async pre(): Promise<{ id: string }> {
     return this.lifecycle.pre();
   }
-  protected async checkStatus(id: string): Promise<MetadataRequestResult> {
+  protected async checkStatus(id: string): Promise<MetadataRequestStatus> {
     return this.lifecycle.checkStatus();
   }
-  protected async post(result: MetadataRequestResult): Promise<SourceApiResult> {
+  protected async post(result: MetadataRequestStatus): Promise<MetadataTransferResult> {
     return this.lifecycle.post();
   }
   protected doCancel(): Promise<boolean> {

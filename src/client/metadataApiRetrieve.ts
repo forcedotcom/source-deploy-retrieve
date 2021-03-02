@@ -18,8 +18,7 @@ import {
 } from './types';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import { MetadataApiRetrieveError } from '../errors';
-import { normalizeToArray } from '../utils/collections';
-
+import { normalizeToArray } from '../utils';
 
 export type MetadataApiRetrieveOptions = MetadataTransferOptions &
   RetrieveOptions & { registry?: RegistryAccess };

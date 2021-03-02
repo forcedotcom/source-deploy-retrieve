@@ -8,12 +8,7 @@ import { AuthInfo, Connection } from '@salesforce/core';
 import { EventEmitter } from 'events';
 import { ComponentSet } from '../collections';
 import { MetadataTransferError } from '../errors';
-import {
-  MetadataRequestResult,
-  RequestStatus,
-  SourceApiResult,
-  MetadataTransferResult,
-} from './types';
+import { MetadataRequestStatus, RequestStatus, MetadataTransferResult } from './types';
 
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
@@ -21,8 +16,8 @@ export interface MetadataTransferOptions {
 }
 
 export abstract class MetadataTransfer<
-  U extends MetadataRequestResult,
-  R extends SourceApiResult | MetadataTransferResult
+  Status extends MetadataRequestStatus,
+  Result extends MetadataTransferResult
 > {
   protected components: ComponentSet;
   private signalCancel = false;
@@ -39,7 +34,7 @@ export abstract class MetadataTransfer<
    *
    * @param pollInterval Frequency in milliseconds to poll for operation status
    */
-  public async start(pollInterval = 100): Promise<R | undefined> {
+  public async start(pollInterval = 100): Promise<Result | undefined> {
     try {
       const { id } = await this.pre();
       const apiResult = await this.pollStatus(id, pollInterval);
@@ -65,15 +60,15 @@ export abstract class MetadataTransfer<
     this.signalCancel = true;
   }
 
-  public onUpdate(subscriber: (result: U) => void): void {
+  public onUpdate(subscriber: (result: Status) => void): void {
     this.event.on('update', subscriber);
   }
 
-  public onFinish(subscriber: (result: R) => void): void {
+  public onFinish(subscriber: (result: Result) => void): void {
     this.event.on('finish', subscriber);
   }
 
-  public onCancel(subscriber: (result: U | undefined) => void): void {
+  public onCancel(subscriber: (result: Status | undefined) => void): void {
     this.event.on('cancel', subscriber);
   }
 
@@ -90,8 +85,8 @@ export abstract class MetadataTransfer<
     return this.usernameOrConnection;
   }
 
-  private async pollStatus(id: string, interval: number): Promise<U> {
-    let result: U;
+  private async pollStatus(id: string, interval: number): Promise<Status> {
+    let result: Status;
     let triedOnce = false;
 
     try {
@@ -136,7 +131,7 @@ export abstract class MetadataTransfer<
   }
 
   protected abstract pre(): Promise<{ id: string }>;
-  protected abstract checkStatus(id: string): Promise<U>;
-  protected abstract post(result: U): Promise<R>;
+  protected abstract checkStatus(id: string): Promise<Status>;
+  protected abstract post(result: Status): Promise<Result>;
   protected abstract doCancel(): Promise<boolean>;
 }

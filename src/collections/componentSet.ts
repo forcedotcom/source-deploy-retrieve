@@ -163,10 +163,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @param options
    */
   public retrieve(options: RetrieveSetOptions): MetadataApiRetrieve {
-    if (this.size === 0) {
-      throw new ComponentSetError('error_no_components_to_retrieve');
-    }
-
     const operationOptions = Object.assign({}, options, {
       components: this,
       registry: this.registry,

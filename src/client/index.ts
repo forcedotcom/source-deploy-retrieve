@@ -4,10 +4,17 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-export { MetadataApiDeploy, MetadataApiDeployOptions } from './metadataApiDeploy';
-export { MetadataApiRetrieve, MetadataApiRetrieveOptions } from './metadataApiRetrieve';
+
+export { MetadataApiDeploy, MetadataApiDeployOptions, DeployResult } from './metadataApiDeploy';
+export {
+  MetadataApiRetrieve,
+  MetadataApiRetrieveOptions,
+  RetrieveResult,
+} from './metadataApiRetrieve';
 export { ToolingApi, ToolingDeployOptions, ToolingRetrieveOptions } from './toolingApi';
 export {
+  FileResponse,
+  MetadataApiRetrieveStatus,
   RetrieveOptions,
   SourceDeployResult,
   RetrieveMessage,

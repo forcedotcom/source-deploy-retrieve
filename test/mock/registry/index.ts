@@ -234,6 +234,7 @@ import * as xmlInFolder from './xmlInFolderConstants';
 import * as simon from './simonConstants';
 import * as taraji from './tarajiConstants';
 import * as mixedContentInFolder from './mixedContentInFolderConstants';
+import * as mixedContentSingleFile from './mixedContentSingleFileConstants';
 import * as gene from './geneConstants';
 import * as regina from './reginaConstants';
 import * as sean from './seanConstants';
@@ -244,6 +245,7 @@ export {
   simon,
   taraji,
   mixedContentInFolder,
+  mixedContentSingleFile,
   gene,
   regina,
   sean,

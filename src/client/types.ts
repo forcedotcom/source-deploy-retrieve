@@ -65,7 +65,7 @@ interface FileResponseFailure extends FileResponseBase {
 export type FileResponse = FileResponseSuccess | FileResponseFailure;
 
 export interface MetadataTransferResult {
-  response: MetadataRequestResult;
+  response: MetadataRequestStatus;
   components: ComponentSet;
   getFileResponses(): FileResponse[];
 }
@@ -90,7 +90,7 @@ export enum RequestStatus {
   Canceled = 'Canceled',
 }
 
-export interface MetadataRequestResult {
+export interface MetadataRequestStatus {
   id: string;
   status: RequestStatus;
   success: boolean;
@@ -121,7 +121,7 @@ export interface SourceRetrieveResult extends SourceApiResult {
 /**
  * Raw response returned from a checkDeployStatus call to the Metadata API
  */
-export interface DeployResult extends MetadataRequestResult {
+export interface MetadataApiDeployStatus extends MetadataRequestStatus {
   canceledBy?: string;
   canceledByName?: string;
   checkOnly: boolean;

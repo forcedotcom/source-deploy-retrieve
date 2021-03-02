@@ -14,9 +14,11 @@ import {
   RequestStatus,
   RetrieveOptions,
   MetadataTransferResult,
+  RetrieveRequest,
 } from './types';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
-import { normalizeToArray } from '../utils/collections';
+import { MetadataApiRetrieveError } from '../errors';
+import { normalizeToArray } from '../utils';
 
 export type MetadataApiRetrieveOptions = MetadataTransferOptions &
   RetrieveOptions & { registry?: RegistryAccess };
@@ -98,12 +100,26 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   }
 
   protected async pre(): Promise<{ id: string }> {
+    const { packageNames } = this.options;
+
+    if (this.components.size === 0 && (!packageNames || packageNames.length === 0)) {
+      throw new MetadataApiRetrieveError('error_no_components_to_retrieve');
+    }
+
     const connection = await this.getConnection();
-    // @ts-ignore required callback
-    return connection.metadata.retrieve({
+    const requestBody: RetrieveRequest = {
       apiVersion: this.components.apiVersion,
       unpackaged: this.components.getObject().Package,
-    });
+    };
+
+    // if we're retrieving with packageNames add it
+    // otherwise don't - it causes errors if undefined or an empty array
+    if (packageNames) {
+      requestBody.packageNames = packageNames;
+    }
+
+    // @ts-ignore required callback
+    return connection.metadata.retrieve(requestBody);
   }
 
   protected async checkStatus(id: string): Promise<MetadataApiRetrieveStatus> {
@@ -119,7 +135,10 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     if (result.status === RequestStatus.Succeeded) {
       components = await this.extract(Buffer.from(result.zipFile, 'base64'));
     }
-    return new RetrieveResult(result, components ?? new ComponentSet());
+    return new RetrieveResult(
+      result,
+      components ?? new ComponentSet(undefined, this.options.registry)
+    );
   }
 
   protected async doCancel(): Promise<boolean> {

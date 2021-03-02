@@ -461,15 +461,29 @@ describe('ComponentSet', () => {
       expect(result).to.deep.equal(expectedOperation);
     });
 
-    it('should throw error if there are no components in the set', async () => {
-      const set = new ComponentSet(undefined, mockRegistry);
-      try {
-        await set.retrieve({ usernameOrConnection: 'test@foobar.com', output: 'test' });
-        fail('should have thrown an error');
-      } catch (e) {
-        expect(e.name).to.equal(ComponentSetError.name);
-        expect(e.message).to.equal(nls.localize('error_no_components_to_retrieve'));
-      }
+    it('should properly construct a retrieve operation with packageName', async () => {
+      const connection = await mockConnection($$);
+      const set = new ComponentSet([]);
+      const operationArgs = {
+        components: set,
+        output: join('test', 'path'),
+        usernameOrConnection: connection,
+        packageNames: ['MyPackage'],
+      };
+      const expectedOperation = new MetadataApiRetrieve(operationArgs);
+      const constructorStub = env
+        .stub()
+        .withArgs(operationArgs)
+        .callsFake(() => expectedOperation);
+      Object.setPrototypeOf(MetadataApiRetrieve, constructorStub);
+
+      const result = await set.retrieve({
+        packageNames: ['MyPackage'],
+        output: operationArgs.output,
+        usernameOrConnection: connection,
+      });
+
+      expect(result).to.deep.equal(expectedOperation);
     });
   });
 

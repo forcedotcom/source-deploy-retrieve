@@ -74,11 +74,11 @@ export const mockRegistryData = {
         adapter: 'mixedContent',
       },
     },
-    simonpegg: {
-      id: 'simonpegg',
-      directoryName: 'simons',
+    bundle: {
+      id: 'bundle',
+      directoryName: 'bundles',
       inFolder: false,
-      name: 'SimonPegg',
+      name: 'Bundle',
       strictDirectoryName: true,
       strategies: {
         adapter: 'bundle',
@@ -212,7 +212,7 @@ export const mockRegistryData = {
   strictDirectoryNames: {
     dwaynes: 'dwaynejohnson',
     tarajis: 'tarajihenson',
-    simons: 'simonpegg',
+    bundles: 'bundle',
     reginas: 'reginaking',
     mixedSingleFiles: 'mixedcontentsinglefile',
     mixedContentInFolders: 'mixedcontentinfolder',
@@ -231,7 +231,7 @@ export const mockRegistry = new RegistryAccess(mockRegistryData);
 
 import * as matchingContentFile from './matchingContentFileConstants';
 import * as xmlInFolder from './xmlInFolderConstants';
-import * as simon from './simonConstants';
+import * as bundle from './bundleConstants';
 import * as taraji from './tarajiConstants';
 import * as mixedContentInFolder from './mixedContentInFolderConstants';
 import * as mixedContentSingleFile from './mixedContentSingleFileConstants';
@@ -242,7 +242,7 @@ import * as decomposedtoplevel from './decomposedTopLevelConstants';
 export {
   xmlInFolder,
   matchingContentFile,
-  simon,
+  bundle,
   taraji,
   mixedContentInFolder,
   mixedContentSingleFile,

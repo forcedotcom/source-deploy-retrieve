@@ -34,7 +34,7 @@
     "gitignore-parser": "0.0.2",
     "ignore": "^5.1.8",
     "mime": "2.4.6",
-    "unzipper": "0.10.0",
+    "unzipper": "0.10.11",
     "xmldom-sfdx-encoding": "^0.1.29"
   },
   "devDependencies": {

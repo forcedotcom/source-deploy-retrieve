@@ -6,6 +6,10 @@
 
 - Retrieve using package names ([PR #251](https://github.com/forcedotcom/source-deploy-retrieve/pull/251))
 
+## Fixed
+
+- Fix some StaticResource zip files failing to convert to source format ([PR #260](https://github.com/forcedotcom/source-deploy-retrieve/pull/260))
+
 # 1.1.18 - February 24, 2021
 
 ## Added

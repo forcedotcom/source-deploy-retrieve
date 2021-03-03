@@ -49,7 +49,7 @@ describe('SourceAdapterFactory', () => {
   });
 
   it('Should return BundleSourceAdapter for bundle AdapterId', () => {
-    const type = mockRegistryData.types.simonpegg;
+    const type = mockRegistryData.types.bundle;
     const adapter = factory.getAdapter(type);
     expect(adapter).to.deep.equal(new BundleSourceAdapter(type, mockRegistry, undefined, tree));
   });

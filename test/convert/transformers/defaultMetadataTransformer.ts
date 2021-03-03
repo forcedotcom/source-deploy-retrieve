@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import {
-  simon,
+  bundle,
   xmlInFolder,
   gene,
   matchingContentFile,
@@ -41,9 +41,9 @@ describe('DefaultMetadataTransformer', () => {
 
   describe('toMetadataFormat', () => {
     it('should create a WriteInfo for each file in the component', async () => {
-      const component = simon.SIMON_COMPONENT;
+      const component = bundle.COMPONENT;
       const { directoryName } = component.type;
-      const relativeBundle = join(directoryName, basename(simon.SIMON_BUNDLE_PATH));
+      const relativeBundle = join(directoryName, basename(bundle.CONTENT_PATH));
       const expectedInfos: WriteInfo[] = [];
       for (const source of component.walkContent()) {
         expectedInfos.push({
@@ -53,7 +53,7 @@ describe('DefaultMetadataTransformer', () => {
       }
       expectedInfos.push({
         source: component.tree.stream(component.xml),
-        output: join(relativeBundle, simon.SIMON_XML_NAME),
+        output: join(relativeBundle, bundle.XML_NAME),
       });
 
       expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
@@ -106,12 +106,12 @@ describe('DefaultMetadataTransformer', () => {
 
   describe('toSourceFormat', () => {
     it('should create a WriteInfo for each file in the component', async () => {
-      const component = simon.SIMON_COMPONENT;
+      const component = bundle.COMPONENT;
       const { directoryName } = component.type;
       const relativeBundle = join(
         DEFAULT_PACKAGE_ROOT_SFDX,
         directoryName,
-        basename(simon.SIMON_BUNDLE_PATH)
+        basename(bundle.CONTENT_PATH)
       );
       const expectedInfos: WriteInfo[] = [];
       for (const source of component.walkContent()) {
@@ -121,7 +121,7 @@ describe('DefaultMetadataTransformer', () => {
         });
       }
       expectedInfos.push({
-        output: join(relativeBundle, simon.SIMON_XML_NAME),
+        output: join(relativeBundle, bundle.XML_NAME),
         source: component.tree.stream(component.xml),
       });
 
@@ -182,11 +182,17 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should merge output with merge component when content is a directory', async () => {
-      const root = join('path', 'to', 'another', 'simons', 'a');
+      const root = join(
+        'path',
+        'to',
+        'another',
+        bundle.COMPONENT.type.directoryName,
+        bundle.COMPONENT.name
+      );
       const component = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistryData.types.simonpegg,
+          type: mockRegistryData.types.bundle,
           xml: join(root, 'a.js-meta.xml'),
           content: root,
         },
@@ -197,7 +203,7 @@ describe('DefaultMetadataTransformer', () => {
           },
         ]
       );
-      const mergeWith = simon.SIMON_COMPONENT;
+      const mergeWith = bundle.COMPONENT;
       const expectedInfos: WriteInfo[] = [
         {
           output: join(mergeWith.content, 'b.c'),

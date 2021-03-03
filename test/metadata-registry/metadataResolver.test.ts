@@ -18,7 +18,7 @@ import {
   matchingContentFile,
   taraji,
   mixedContentInFolder,
-  simon,
+  bundle,
   sean,
   gene,
   mockRegistryData,
@@ -435,31 +435,31 @@ describe('MetadataResolver', () => {
       });
 
       it('Should not add duplicates of a component when the content has multiple -meta.xmls', () => {
-        const { SIMON_COMPONENT, SIMON_BUNDLE_PATH } = simon;
+        const { COMPONENT, CONTENT_PATH } = bundle;
         const access = testUtil.createMetadataResolver([
           {
-            dirPath: simon.SIMON_DIR,
-            children: [basename(SIMON_BUNDLE_PATH)],
+            dirPath: bundle.TYPE_DIRECTORY,
+            children: [basename(CONTENT_PATH)],
           },
           {
-            dirPath: SIMON_BUNDLE_PATH,
-            children: simon.SIMON_SOURCE_PATHS.concat(simon.SIMON_XML_PATH).map((p) => basename(p)),
+            dirPath: CONTENT_PATH,
+            children: bundle.SOURCE_PATHS.concat(bundle.XML_PATH).map((p) => basename(p)),
           },
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.simonpegg,
+            type: mockRegistryData.types.bundle,
             componentMappings: [
-              { path: simon.SIMON_BUNDLE_PATH, component: SIMON_COMPONENT },
-              { path: simon.SIMON_XML_PATH, component: SIMON_COMPONENT },
+              { path: bundle.CONTENT_PATH, component: COMPONENT },
+              { path: bundle.XML_PATH, component: COMPONENT },
               {
-                path: simon.SIMON_SUBTYPE_PATH,
-                component: SIMON_COMPONENT,
+                path: bundle.SUBTYPE_XML_PATH,
+                component: COMPONENT,
               },
             ],
           },
         ]);
-        expect(access.getComponentsFromPath(simon.SIMON_DIR)).to.deep.equal([SIMON_COMPONENT]);
+        expect(access.getComponentsFromPath(bundle.TYPE_DIRECTORY)).to.deep.equal([COMPONENT]);
       });
 
       it('Should not add duplicate component if directory content and xml are at the same level', () => {
@@ -509,27 +509,27 @@ describe('MetadataResolver', () => {
        * with a type that uses the "suffix index" in the registry and be assigned the incorrect type.
        *
        * Pretend that this bundle's root xml suffix is the same as MatchingContentFile - still should be
-       * identified as SimonPegg type
+       * identified as bundle type
        */
       it('should handle suffix collision for mixed content types', () => {
         const tree = new VirtualTreeContainer([
           {
-            dirPath: simon.SIMON_DIR,
-            children: [basename(simon.SIMON_BUNDLE_PATH)],
+            dirPath: bundle.TYPE_DIRECTORY,
+            children: [basename(bundle.CONTENT_PATH)],
           },
           {
-            dirPath: simon.SIMON_BUNDLE_PATH,
-            children: [matchingContentFile.XML_NAMES[0], basename(simon.SIMON_SOURCE_PATHS[0])],
+            dirPath: bundle.CONTENT_PATH,
+            children: [matchingContentFile.XML_NAMES[0], basename(bundle.SOURCE_PATHS[0])],
           },
         ]);
         const access = new MetadataResolver(mockRegistry, tree);
-        expect(access.getComponentsFromPath(simon.SIMON_DIR)).to.deep.equal([
+        expect(access.getComponentsFromPath(bundle.TYPE_DIRECTORY)).to.deep.equal([
           new SourceComponent(
             {
               name: 'a',
-              type: mockRegistryData.types.simonpegg,
-              xml: join(simon.SIMON_BUNDLE_PATH, matchingContentFile.XML_NAMES[0]),
-              content: simon.SIMON_BUNDLE_PATH,
+              type: mockRegistryData.types.bundle,
+              xml: join(bundle.CONTENT_PATH, matchingContentFile.XML_NAMES[0]),
+              content: bundle.CONTENT_PATH,
             },
             tree
           ),
@@ -631,68 +631,55 @@ describe('MetadataResolver', () => {
       });
 
       it('should resolve directory component if in filter', () => {
-        const resolver = testUtil.createMetadataResolver([
-          {
-            dirPath: simon.SIMON_DIR,
-            children: [basename(simon.SIMON_BUNDLE_PATH)],
-          },
-          {
-            dirPath: simon.SIMON_BUNDLE_PATH,
-            children: simon.SIMON_SOURCE_PATHS.map((p) => basename(p)).concat([
-              simon.SIMON_XML_NAME,
-            ]),
-          },
-        ]);
+        const resolver = new MetadataResolver(mockRegistry, bundle.COMPONENT.tree);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.simonpegg,
+            type: mockRegistryData.types.bundle,
             componentMappings: [
               {
-                path: simon.SIMON_BUNDLE_PATH,
-                component: simon.SIMON_COMPONENT,
+                path: bundle.CONTENT_PATH,
+                component: bundle.COMPONENT,
               },
             ],
           },
         ]);
         const filter = new ComponentSet([
           {
-            fullName: simon.SIMON_COMPONENT.fullName,
-            type: simon.SIMON_COMPONENT.type,
+            fullName: bundle.COMPONENT.fullName,
+            type: bundle.COMPONENT.type,
           },
         ]);
 
-        const result = resolver.getComponentsFromPath(simon.SIMON_DIR, filter);
+        const result = resolver.getComponentsFromPath(bundle.TYPE_DIRECTORY, filter);
 
-        expect(result).to.deep.equal([simon.SIMON_COMPONENT]);
+        expect(result).to.deep.equal([bundle.COMPONENT]);
       });
 
       it('should not resolve directory component if not in filter', () => {
         const resolver = testUtil.createMetadataResolver([
           {
-            dirPath: simon.SIMON_DIR,
-            children: [basename(simon.SIMON_BUNDLE_PATH)],
+            dirPath: bundle.TYPE_DIRECTORY,
+            children: [basename(bundle.CONTENT_PATH)],
           },
           {
-            dirPath: simon.SIMON_BUNDLE_PATH,
-            children: simon.SIMON_SOURCE_PATHS.map((p) => basename(p)).concat([
-              simon.SIMON_XML_NAME,
-            ]),
+            dirPath: bundle.CONTENT_PATH,
+            children: bundle.SOURCE_PATHS.map((p) => basename(p)).concat([bundle.XML_NAME]),
           },
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.simonpegg,
+            type: mockRegistryData.types.bundle,
             componentMappings: [
               {
-                path: simon.SIMON_BUNDLE_PATH,
-                component: simon.SIMON_COMPONENT,
+                path: bundle.CONTENT_PATH,
+                component: bundle.COMPONENT,
               },
             ],
           },
         ]);
         const filter = new ComponentSet();
 
-        const result = resolver.getComponentsFromPath(simon.SIMON_DIR, filter);
+        const result = resolver.getComponentsFromPath(bundle.TYPE_DIRECTORY, filter);
 
         expect(result).to.deep.equal([]);
       });

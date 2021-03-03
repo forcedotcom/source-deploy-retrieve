@@ -1,3 +1,11 @@
+# 1.1.19 - March 3, 2021
+
+## Added
+
+- Get file statuses from deploy results ([PR #249](https://github.com/forcedotcom/source-deploy-retrieve/pull/249))
+
+- Retrieve using package names ([PR #251](https://github.com/forcedotcom/source-deploy-retrieve/pull/251))
+
 # 1.1.18 - February 24, 2021
 
 ## Added

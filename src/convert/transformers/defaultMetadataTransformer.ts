@@ -83,6 +83,7 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
       return mergeWith.xml;
     }
 
+    const { folderContentType, suffix } = component.type;
     let xmlDestination = component.getPackageRelativePath(component.xml, targetFormat);
 
     // quirks:
@@ -91,7 +92,6 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
     //    - remove file extension but preserve -meta.xml suffix if folder type and to 'metadata format'
     //    - insert file extension behind the -meta.xml suffix if folder type and to 'source format'
     if (!component.content) {
-      const { folderContentType, suffix } = component.type;
       if (targetFormat === 'metadata') {
         xmlDestination = folderContentType
           ? xmlDestination.replace(`.${suffix}`, '')
@@ -101,6 +101,12 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
           ? xmlDestination.replace(META_XML_SUFFIX, `.${suffix}${META_XML_SUFFIX}`)
           : `${xmlDestination}${META_XML_SUFFIX}`;
       }
+    } else if (suffix) {
+      // Replace the suffix with that of the component type. This is particularly important for Documents.
+      xmlDestination = xmlDestination.replace(
+        /(\.[a-zA-Z0-9]+-meta.xml$)/,
+        '.' + component.type?.suffix + META_XML_SUFFIX
+      );
     }
 
     return xmlDestination;

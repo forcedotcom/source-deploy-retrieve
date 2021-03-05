@@ -102,11 +102,17 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
           : `${xmlDestination}${META_XML_SUFFIX}`;
       }
     } else if (suffix) {
-      // Replace the suffix with that of the component type. This is particularly important for Documents.
-      xmlDestination = xmlDestination.replace(
-        /(\.[a-zA-Z0-9]+-meta.xml$)/,
-        '.' + component.type?.suffix + META_XML_SUFFIX
-      );
+      if (component.type.name === 'Document' && targetFormat === 'metadata') {
+        xmlDestination = xmlDestination.replace(
+          '.' + suffix,
+          component.content.slice(component.content.lastIndexOf('.'), component.content.length)
+        );
+      } else {
+        xmlDestination = xmlDestination.replace(
+          /(\.[a-zA-Z0-9]+-meta.xml$)/,
+          '.' + component.type?.suffix + META_XML_SUFFIX
+        );
+      }
     }
 
     return xmlDestination;

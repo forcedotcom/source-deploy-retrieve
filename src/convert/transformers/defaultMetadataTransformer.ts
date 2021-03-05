@@ -109,7 +109,7 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
         );
       } else {
         xmlDestination = xmlDestination.replace(
-          /(\.[a-zA-Z0-9]+-meta.xml$)/,
+          /(\.[a-zA-Z]+-meta.xml$)/,
           '.' + component.type?.suffix + META_XML_SUFFIX
         );
       }

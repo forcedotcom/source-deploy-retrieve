@@ -10,6 +10,9 @@ import { SfdxFileFormat, WriteInfo } from '../types';
 import { SourceComponent } from '../../metadata-registry';
 import { trimUntil } from '../../utils/path';
 import { basename, dirname, join } from 'path';
+import { extName } from '../../utils';
+
+const ORIGINAL_SUFFIX_REGEX = new RegExp('(.)([a-zA-Z]+)(' + META_XML_SUFFIX + ')$');
 
 /**
  * The default metadata transformer.
@@ -103,14 +106,11 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
       }
     } else if (suffix) {
       if (component.type.name === 'Document' && targetFormat === 'metadata') {
-        xmlDestination = xmlDestination.replace(
-          '.' + suffix,
-          component.content.slice(component.content.lastIndexOf('.'), component.content.length)
-        );
+        xmlDestination = xmlDestination.replace('.' + suffix, '.' + extName(component.content));
       } else {
         xmlDestination = xmlDestination.replace(
-          /(\.[a-zA-Z]+-meta.xml$)/,
-          '.' + component.type?.suffix + META_XML_SUFFIX
+          ORIGINAL_SUFFIX_REGEX,
+          '.' + suffix + META_XML_SUFFIX
         );
       }
     }

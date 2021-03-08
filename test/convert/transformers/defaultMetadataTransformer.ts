@@ -105,7 +105,6 @@ describe('DefaultMetadataTransformer', () => {
       expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
     });
 
-    // TODO - finish
     it('should replace document suffix with original suffix', async () => {
       const component = SourceComponent.createVirtualComponent(
         document.COMPONENT_MD,
@@ -113,12 +112,6 @@ describe('DefaultMetadataTransformer', () => {
       );
       const expectedInfos: WriteInfo[] = [
         {
-          // INFO 1 - source: '/Users/shelby.holden/workspace/SFDX_Projects/TestingSDR/force-app/main/default/documents/BugTest/MyBuggyFile.png'
-          // INFO 1 - output: 'documents/BugTest/MyBuggyFile.png'
-
-          // INFO 2 - source: component.xml
-          // INFO 2 - output: 'documents/BugTest/MyBuggyFile.png-meta.xml'
-
           output: join(
             component.type.directoryName,
             component.fullName + '.' + extName(component.content)

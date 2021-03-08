@@ -4,10 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, join } from 'path';
+import { join } from 'path';
 import { mockRegistryData } from '.';
 import { SourceComponent } from '../../../src';
 import { META_XML_SUFFIX } from '../../../src/common';
+import { extName } from '../../../src/utils';
 
 const type = mockRegistryData.types.document;
 
@@ -22,19 +23,25 @@ export const CONTENT_PATH = join(
   COMPONENT_NAME + '.' + COMPONENT_SUFFIX
 );
 
-export const XML_NAMES = [COMPONENT_NAME + '.' + COMPONENT_SUFFIX + META_XML_SUFFIX];
-export const XML_PATHS = XML_NAMES.map((n) => join(COMPONENT_FOLDER_PATH, n));
-export const CONVERTED_XML_PATH = join(
-  COMPONENT_FOLDER_NAME,
-  COMPONENT_NAME + '.' + type.suffix + META_XML_SUFFIX
-);
+export const XML_NAME = COMPONENT_NAME + '.' + COMPONENT_SUFFIX + META_XML_SUFFIX;
+export const XML_PATH = join(COMPONENT_FOLDER_PATH, XML_NAME);
+
+// Document types are converted from the original suffix to '.document' during source conversion.
+export const CONVERTED_XML_PATH = XML_PATH.replace(extName(CONTENT_PATH), 'document');
 
 export const COMPONENT: SourceComponent = new SourceComponent({
   name: join(COMPONENT_FOLDER_NAME, COMPONENT_NAME),
   type,
-  xml: XML_PATHS[0],
+  xml: XML_PATH,
   content: CONTENT_PATH,
 });
+export const COMPONENT_MD: SourceComponent = new SourceComponent({
+  name: join(COMPONENT_FOLDER_NAME, COMPONENT_NAME),
+  type,
+  xml: CONVERTED_XML_PATH,
+  content: CONTENT_PATH,
+});
+
 export const COMPONENT_VIRTUAL_FS = [
   {
     dirPath: DOCUMENTS_DIRECTORY,
@@ -46,12 +53,6 @@ export const COMPONENT_VIRTUAL_FS = [
   },
 ];
 
-export const COMPONENT_MD: SourceComponent = new SourceComponent({
-  name: join(COMPONENT_FOLDER_NAME, COMPONENT_NAME),
-  type,
-  xml: CONVERTED_XML_PATH,
-  content: CONTENT_PATH,
-});
 export const COMPONENT_MD_VIRTUAL_FS = [
   {
     dirPath: DOCUMENTS_DIRECTORY,

@@ -110,25 +110,19 @@ describe('DefaultMetadataTransformer', () => {
         document.COMPONENT_MD,
         document.COMPONENT_VIRTUAL_FS
       );
+      const outputPath = join(component.type.directoryName, component.fullName);
       const expectedInfos: WriteInfo[] = [
         {
-          output: join(
-            component.type.directoryName,
-            component.fullName + '.' + extName(component.content)
-          ),
+          output: outputPath + '.' + extName(component.content),
           source: component.tree.stream(component.content),
         },
         {
-          output: join(
-            component.type.directoryName,
-            component.fullName + '.' + extName(component.content) + META_XML_SUFFIX
-          ),
+          output: outputPath + '.' + extName(component.content) + META_XML_SUFFIX,
           source: component.tree.stream(component.xml),
         },
       ];
 
-      const results = await transformer.toMetadataFormat(component);
-      expect(results).to.deep.equal(expectedInfos);
+      expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
     });
   });
 
@@ -324,27 +318,23 @@ describe('DefaultMetadataTransformer', () => {
         document.COMPONENT,
         document.COMPONENT_VIRTUAL_FS
       );
+      const outputPath = join(
+        DEFAULT_PACKAGE_ROOT_SFDX,
+        component.type.directoryName,
+        component.fullName
+      );
       const expectedInfos: WriteInfo[] = [
         {
-          output: join(
-            DEFAULT_PACKAGE_ROOT_SFDX,
-            component.type.directoryName,
-            component.fullName + '.' + extName(component.content)
-          ), // Why is the final path 'main/default/...'?
+          output: outputPath + '.' + extName(component.content),
           source: component.tree.stream(component.content),
         },
         {
-          output: join(
-            DEFAULT_PACKAGE_ROOT_SFDX,
-            component.type.directoryName,
-            component.fullName + '.' + component.type.suffix + META_XML_SUFFIX
-          ),
+          output: outputPath + '.' + component.type.suffix + META_XML_SUFFIX,
           source: component.tree.stream(component.xml),
         },
       ];
 
-      const results = await transformer.toSourceFormat(component);
-      expect(results).to.deep.equal(expectedInfos);
+      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
     });
   });
 });

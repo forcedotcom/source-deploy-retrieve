@@ -271,10 +271,3 @@ export const DWAYNE_XML_NAME = 'a.dwayne-meta.xml';
 export const DWAYNE_XML = join(DWAYNE_DIR, DWAYNE_XML_NAME);
 export const DWAYNE_SOURCE_NAME = 'a.xyz';
 export const DWAYNE_SOURCE = join(DWAYNE_DIR, DWAYNE_SOURCE_NAME);
-
-// Mixed content
-export const ELIZA_DIR = join('path', 'to', 'eliza');
-export const ELIZA_XML_NAME = 'a.png-meta.xml';
-export const ELIZA_XML = join(ELIZA_DIR, ELIZA_XML_NAME);
-export const ELIZA_SOURCE_NAME = 'a.png';
-export const ELIZA_SOURCE = join(ELIZA_DIR, ELIZA_SOURCE_NAME);

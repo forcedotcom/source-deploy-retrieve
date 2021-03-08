@@ -7,6 +7,7 @@
 import {
   bundle,
   xmlInFolder,
+  document,
   gene,
   matchingContentFile,
   mockRegistry,
@@ -25,6 +26,7 @@ import {
   FOLDER_COMPONENT,
   FOLDER_COMPONENT_MD_FORMAT,
 } from '../../mock/registry/mixedContentInFolderConstants';
+import { extName } from '../../../src/utils';
 
 const env = createSandbox();
 
@@ -102,6 +104,26 @@ describe('DefaultMetadataTransformer', () => {
 
       expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
     });
+
+    // TODO - come back
+    // it('should replace document suffix with original suffix', async () => {
+    //   const component = SourceComponent.createVirtualComponent(document.COMPONENT, []);
+    //   const fullNameParts = component.content.split('/');
+
+    //   const { directoryName } = component.type;
+    //   const expectedInfos: WriteInfo[] = [
+    //     {
+    //       output: join(
+    //         component.content.replace(
+    //           document.COMPONENT_ORIGINAL_SUFFIX, component.type.suffix
+    //         )
+    //       ),
+    //       source: component.tree.stream(component.xml),
+    //     },
+    //   ];
+
+    //   expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
+    // });
   });
 
   describe('toSourceFormat', () => {
@@ -289,6 +311,36 @@ describe('DefaultMetadataTransformer', () => {
         output: component.getPackageRelativePath(component.xml, 'source'),
         source: component.tree.stream(component.xml),
       });
+    });
+
+    it('should replace original suffix with type suffix', async () => {
+      const component = SourceComponent.createVirtualComponent(
+        document.COMPONENT,
+        document.COMPONENT_VIRTUAL_FS
+      );
+      const expectedInfos: WriteInfo[] = [
+        {
+          output: join(
+            'main',
+            'default',
+            component.type.directoryName,
+            component.fullName + '.' + extName(component.content)
+          ), // Why is the final path 'main/default/...'?
+          source: component.tree.stream(component.content),
+        },
+        {
+          output: join(
+            'main',
+            'default',
+            component.type.directoryName,
+            component.fullName + '.' + component.type.suffix + META_XML_SUFFIX
+          ),
+          source: component.tree.stream(component.xml),
+        },
+      ];
+
+      const results = await transformer.toSourceFormat(component);
+      expect(results).to.deep.equal(expectedInfos);
     });
   });
 });

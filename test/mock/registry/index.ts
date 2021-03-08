@@ -37,6 +37,17 @@ export const mockRegistryData = {
         transformer: 'standard',
       },
     },
+    document: {
+      id: 'document',
+      directoryName: 'documentFolder',
+      inFolder: true,
+      name: 'Document',
+      suffix: 'document',
+      folderType: 'documentfolder',
+      strategies: {
+        adapter: 'mixedContent',
+      },
+    },
     /**
      * Metadata with content of any file type in a folder type component
      *
@@ -232,6 +243,7 @@ export const mockRegistry = new RegistryAccess(mockRegistryData);
 import * as matchingContentFile from './matchingContentFileConstants';
 import * as xmlInFolder from './xmlInFolderConstants';
 import * as bundle from './bundleConstants';
+import * as document from './documentConstants';
 import * as taraji from './tarajiConstants';
 import * as mixedContentInFolder from './mixedContentInFolderConstants';
 import * as mixedContentSingleFile from './mixedContentSingleFileConstants';
@@ -241,6 +253,7 @@ import * as sean from './seanConstants';
 import * as decomposedtoplevel from './decomposedTopLevelConstants';
 export {
   xmlInFolder,
+  document,
   matchingContentFile,
   bundle,
   taraji,
@@ -258,3 +271,10 @@ export const DWAYNE_XML_NAME = 'a.dwayne-meta.xml';
 export const DWAYNE_XML = join(DWAYNE_DIR, DWAYNE_XML_NAME);
 export const DWAYNE_SOURCE_NAME = 'a.xyz';
 export const DWAYNE_SOURCE = join(DWAYNE_DIR, DWAYNE_SOURCE_NAME);
+
+// Mixed content
+export const ELIZA_DIR = join('path', 'to', 'eliza');
+export const ELIZA_XML_NAME = 'a.png-meta.xml';
+export const ELIZA_XML = join(ELIZA_DIR, ELIZA_XML_NAME);
+export const ELIZA_SOURCE_NAME = 'a.png';
+export const ELIZA_SOURCE = join(ELIZA_DIR, ELIZA_SOURCE_NAME);

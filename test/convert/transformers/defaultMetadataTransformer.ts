@@ -105,25 +105,38 @@ describe('DefaultMetadataTransformer', () => {
       expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
     });
 
-    // TODO - come back
-    // it('should replace document suffix with original suffix', async () => {
-    //   const component = SourceComponent.createVirtualComponent(document.COMPONENT, []);
-    //   const fullNameParts = component.content.split('/');
+    // TODO - finish
+    it('should replace document suffix with original suffix', async () => {
+      const component = SourceComponent.createVirtualComponent(
+        document.COMPONENT_MD,
+        document.COMPONENT_VIRTUAL_FS
+      );
+      const expectedInfos: WriteInfo[] = [
+        {
+          // INFO 1 - source: '/Users/shelby.holden/workspace/SFDX_Projects/TestingSDR/force-app/main/default/documents/BugTest/MyBuggyFile.png'
+          // INFO 1 - output: 'documents/BugTest/MyBuggyFile.png'
 
-    //   const { directoryName } = component.type;
-    //   const expectedInfos: WriteInfo[] = [
-    //     {
-    //       output: join(
-    //         component.content.replace(
-    //           document.COMPONENT_ORIGINAL_SUFFIX, component.type.suffix
-    //         )
-    //       ),
-    //       source: component.tree.stream(component.xml),
-    //     },
-    //   ];
+          // INFO 2 - source: component.xml
+          // INFO 2 - output: 'documents/BugTest/MyBuggyFile.png-meta.xml'
 
-    //   expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
-    // });
+          output: join(
+            component.type.directoryName,
+            component.fullName + '.' + extName(component.content)
+          ),
+          source: component.tree.stream(component.content),
+        },
+        {
+          output: join(
+            component.type.directoryName,
+            component.fullName + '.' + extName(component.content) + META_XML_SUFFIX
+          ),
+          source: component.tree.stream(component.xml),
+        },
+      ];
+
+      const results = await transformer.toMetadataFormat(component);
+      expect(results).to.deep.equal(expectedInfos);
+    });
   });
 
   describe('toSourceFormat', () => {
@@ -321,8 +334,7 @@ describe('DefaultMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           output: join(
-            'main',
-            'default',
+            DEFAULT_PACKAGE_ROOT_SFDX,
             component.type.directoryName,
             component.fullName + '.' + extName(component.content)
           ), // Why is the final path 'main/default/...'?
@@ -330,8 +342,7 @@ describe('DefaultMetadataTransformer', () => {
         },
         {
           output: join(
-            'main',
-            'default',
+            DEFAULT_PACKAGE_ROOT_SFDX,
             component.type.directoryName,
             component.fullName + '.' + component.type.suffix + META_XML_SUFFIX
           ),

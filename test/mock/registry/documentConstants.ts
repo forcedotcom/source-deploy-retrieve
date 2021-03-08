@@ -24,6 +24,10 @@ export const CONTENT_PATH = join(
 
 export const XML_NAMES = [COMPONENT_NAME + '.' + COMPONENT_SUFFIX + META_XML_SUFFIX];
 export const XML_PATHS = XML_NAMES.map((n) => join(COMPONENT_FOLDER_PATH, n));
+export const CONVERTED_XML_PATH = join(
+  COMPONENT_FOLDER_NAME,
+  COMPONENT_NAME + '.' + type.suffix + META_XML_SUFFIX
+);
 
 export const COMPONENT: SourceComponent = new SourceComponent({
   name: join(COMPONENT_FOLDER_NAME, COMPONENT_NAME),
@@ -31,7 +35,6 @@ export const COMPONENT: SourceComponent = new SourceComponent({
   xml: XML_PATHS[0],
   content: CONTENT_PATH,
 });
-
 export const COMPONENT_VIRTUAL_FS = [
   {
     dirPath: DOCUMENTS_DIRECTORY,
@@ -43,10 +46,22 @@ export const COMPONENT_VIRTUAL_FS = [
   },
 ];
 
-export const CONVERTED_XML_PATH = join(
-  COMPONENT_FOLDER_NAME,
-  COMPONENT_NAME + '.' + type.suffix + META_XML_SUFFIX
-);
+export const COMPONENT_MD: SourceComponent = new SourceComponent({
+  name: join(COMPONENT_FOLDER_NAME, COMPONENT_NAME),
+  type,
+  xml: CONVERTED_XML_PATH,
+  content: CONTENT_PATH,
+});
+export const COMPONENT_MD_VIRTUAL_FS = [
+  {
+    dirPath: DOCUMENTS_DIRECTORY,
+    children: [COMPONENT_FOLDER_NAME],
+  },
+  {
+    dirPath: COMPONENT_FOLDER_PATH,
+    children: [COMPONENT_NAME + '.' + COMPONENT_SUFFIX],
+  },
+];
 
 // export const COMPONENT_ORIGINAL_SUFFIX = 'png';
 

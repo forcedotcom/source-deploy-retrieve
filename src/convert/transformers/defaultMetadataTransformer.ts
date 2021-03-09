@@ -106,7 +106,10 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
       }
     } else if (suffix) {
       if (component.type.name === 'Document' && targetFormat === 'metadata') {
-        xmlDestination = xmlDestination.replace('.' + suffix, '.' + extName(component.content));
+        xmlDestination = xmlDestination.replace(
+          new RegExp('.' + suffix + META_XML_SUFFIX + '$'),
+          '.' + extName(component.content) + META_XML_SUFFIX
+        );
       } else {
         xmlDestination = xmlDestination.replace(
           ORIGINAL_SUFFIX_REGEX,

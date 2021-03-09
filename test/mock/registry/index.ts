@@ -37,9 +37,14 @@ export const mockRegistryData = {
         transformer: 'standard',
       },
     },
+    /**
+     * Metadata with mixed content that requires replacement of the suffix.
+     *
+     * e.g. Document
+     */
     document: {
       id: 'document',
-      directoryName: 'documentFolder',
+      directoryName: 'documents',
       inFolder: true,
       name: 'Document',
       suffix: 'document',

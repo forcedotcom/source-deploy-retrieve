@@ -101,9 +101,18 @@ export class MetadataApiRetrieve extends MetadataTransfer<
 
   protected async pre(): Promise<{ id: string }> {
     const { packageNames } = this.options;
+    const converter = new MetadataConverter();
 
     if (this.components.size === 0 && (!packageNames || packageNames.length === 0)) {
       throw new MetadataApiRetrieveError('error_no_components_to_retrieve');
+    }
+
+    if (process.env.SFDX_MDAPI_TEMP_DIR) {
+      // ensureDirectoryExists(process.env.SFDX_MDAPI_TEMP_DIR);
+      await converter.convert(Array.from(this.components.getSourceComponents()), 'metadata', {
+        type: 'directory',
+        outputDirectory: process.env.SFDX_MDAPI_TEMP_DIR,
+      });
     }
 
     const connection = await this.getConnection();

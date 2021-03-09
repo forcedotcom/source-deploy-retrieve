@@ -38,6 +38,22 @@ export const mockRegistryData = {
       },
     },
     /**
+     * Metadata with mixed content that requires replacement of the suffix.
+     *
+     * e.g. Document
+     */
+    document: {
+      id: 'document',
+      directoryName: 'documents',
+      inFolder: true,
+      name: 'Document',
+      suffix: 'document',
+      folderType: 'documentfolder',
+      strategies: {
+        adapter: 'mixedContent',
+      },
+    },
+    /**
      * Metadata with content of any file type in a folder type component
      *
      * e.g. Document in DocumentFolder
@@ -232,6 +248,7 @@ export const mockRegistry = new RegistryAccess(mockRegistryData);
 import * as matchingContentFile from './matchingContentFileConstants';
 import * as xmlInFolder from './xmlInFolderConstants';
 import * as bundle from './bundleConstants';
+import * as document from './documentConstants';
 import * as taraji from './tarajiConstants';
 import * as mixedContentInFolder from './mixedContentInFolderConstants';
 import * as mixedContentSingleFile from './mixedContentSingleFileConstants';
@@ -241,6 +258,7 @@ import * as sean from './seanConstants';
 import * as decomposedtoplevel from './decomposedTopLevelConstants';
 export {
   xmlInFolder,
+  document,
   matchingContentFile,
   bundle,
   taraji,

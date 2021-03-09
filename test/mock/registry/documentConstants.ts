@@ -29,13 +29,13 @@ export const XML_PATH = join(COMPONENT_FOLDER_PATH, XML_NAME);
 export const CONVERTED_XML_PATH = XML_PATH.replace(extName(CONTENT_PATH), 'document');
 
 export const COMPONENT: SourceComponent = new SourceComponent({
-  name: join(COMPONENT_FOLDER_NAME, COMPONENT_NAME),
+  name: COMPONENT_FOLDER_NAME + '/' + COMPONENT_NAME,
   type,
   xml: XML_PATH,
   content: CONTENT_PATH,
 });
 export const COMPONENT_MD: SourceComponent = new SourceComponent({
-  name: join(COMPONENT_FOLDER_NAME, COMPONENT_NAME),
+  name: COMPONENT_FOLDER_NAME + '/' + COMPONENT_NAME,
   type,
   xml: CONVERTED_XML_PATH,
   content: CONTENT_PATH,

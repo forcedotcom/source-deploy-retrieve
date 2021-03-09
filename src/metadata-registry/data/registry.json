@@ -399,6 +399,7 @@
     "document": {
       "id": "document",
       "name": "Document",
+      "suffix": "document",
       "directoryName": "documents",
       "inFolder": true,
       "strictDirectoryName": true,

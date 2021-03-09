@@ -108,7 +108,6 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     }
 
     if (process.env.SFDX_MDAPI_TEMP_DIR) {
-      // ensureDirectoryExists(process.env.SFDX_MDAPI_TEMP_DIR);
       await converter.convert(Array.from(this.components.getSourceComponents()), 'metadata', {
         type: 'directory',
         outputDirectory: process.env.SFDX_MDAPI_TEMP_DIR,

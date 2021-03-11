@@ -124,7 +124,7 @@ function getCommits(releaseBranch, previousBranch) {
   }
   const commits = shell
     .exec(
-      `git log --cherry-pick --oneline ${releaseBranch}...${previousBranch}`,
+      `git log --since="2 months ago" --cherry-pick --oneline ${releaseBranch}...${previousBranch}`,
       {
         silent: !ADD_VERBOSE_LOGGING
       }
@@ -279,7 +279,7 @@ console.log("Starting script 'change-log-generator'\n");
 checkForHelp();
 
 let ADD_VERBOSE_LOGGING = process.argv.indexOf('-v') > -1 ? true : false;
-let CHANGE_LOG_PATH = path.join(process.cwd() + 'CHANGELOG.md');
+let CHANGE_LOG_PATH = path.join(process.cwd(), 'CHANGELOG.md');
 
 const releaseVersion = getReleaseVersion();
 const changeLogBranch = getNewChangeLogBranch(releaseVersion);

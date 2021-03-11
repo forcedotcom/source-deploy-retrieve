@@ -6,7 +6,7 @@
  */
 import { createSandbox, SinonFakeTimers, SinonStub } from 'sinon';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
-import { ComponentSet } from '../../src';
+import { ComponentSet, MetadataConverter } from '../../src';
 import { MetadataTransfer } from '../../src/client/metadataTransfer';
 import {
   MetadataRequestStatus,
@@ -18,6 +18,7 @@ import { expect } from 'chai';
 import { MetadataTransferError } from '../../src/errors';
 import { mockConnection } from '../mock/client';
 import { fail } from 'assert';
+import { getString } from '@salesforce/ts-types';
 
 const $$ = testSetup();
 const env = createSandbox();
@@ -110,6 +111,22 @@ describe('MetadataTransfer', () => {
 
       expect(checkStatus.callCount).to.equal(1);
       expect(listenerStub.callCount).to.equal(1);
+    });
+
+    it.only('should convert metadata to temp directory when the env var "SFDX_MDAPI_TEMP_DIR" is set', async () => {
+      process.env.SFDX_MDAPI_TEMP_DIR = 'test';
+      const convertSpy = env.spy(MetadataConverter.prototype, 'convert');
+
+      const { checkStatus } = operation.lifecycle;
+      checkStatus.resolves({ status: RequestStatus.Succeeded });
+
+      operation.onFinish(() => listenerStub());
+      await operation.start();
+
+      expect(checkStatus.callCount).to.equal(1);
+      expect(listenerStub.callCount).to.equal(1);
+      expect(convertSpy.callCount).to.equal(1);
+      expect(getString(convertSpy.firstCall.args[2], 'outputDirectory', '')).to.equal('test');
     });
 
     it('should exit when request status is "Failed"', async () => {

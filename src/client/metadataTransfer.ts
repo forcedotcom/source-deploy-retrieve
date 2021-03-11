@@ -7,7 +7,7 @@
 import { AuthInfo, Connection } from '@salesforce/core';
 import { EventEmitter } from 'events';
 import { ComponentSet } from '../collections';
-import { MetadataTransferError } from '../errors';
+import { ConversionError, MetadataTransferError } from '../errors';
 import { MetadataRequestStatus, RequestStatus, MetadataTransferResult } from './types';
 import { MetadataConverter } from '../convert';
 
@@ -39,10 +39,14 @@ export abstract class MetadataTransfer<
     try {
       if (process.env.SFDX_MDAPI_TEMP_DIR) {
         const converter = new MetadataConverter();
-        await converter.convert(Array.from(this.components.getSourceComponents()), 'metadata', {
-          type: 'directory',
-          outputDirectory: process.env.SFDX_MDAPI_TEMP_DIR,
-        });
+        converter
+          .convert(this.components.getSourceComponents(), 'metadata', {
+            type: 'directory',
+            outputDirectory: process.env.SFDX_MDAPI_TEMP_DIR,
+          })
+          .catch((e) => {
+            throw new ConversionError(e);
+          });
       }
 
       const { id } = await this.pre();

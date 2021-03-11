@@ -7,8 +7,9 @@
 import { AuthInfo, Connection } from '@salesforce/core';
 import { EventEmitter } from 'events';
 import { ComponentSet } from '../collections';
-import { MetadataTransferError } from '../errors';
+import { ConversionError, MetadataTransferError } from '../errors';
 import { MetadataRequestStatus, RequestStatus, MetadataTransferResult } from './types';
+import { MetadataConverter } from '../convert';
 
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
@@ -36,6 +37,18 @@ export abstract class MetadataTransfer<
    */
   public async start(pollInterval = 100): Promise<Result | undefined> {
     try {
+      if (process.env.SFDX_MDAPI_TEMP_DIR) {
+        const converter = new MetadataConverter();
+        converter
+          .convert(this.components.getSourceComponents(), 'metadata', {
+            type: 'directory',
+            outputDirectory: process.env.SFDX_MDAPI_TEMP_DIR,
+          })
+          .catch((e) => {
+            throw new ConversionError(e);
+          });
+      }
+
       const { id } = await this.pre();
       const apiResult = await this.pollStatus(id, pollInterval);
 

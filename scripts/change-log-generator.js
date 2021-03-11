@@ -203,10 +203,10 @@ function generateKey(packageName, type) {
   return `${keyPrefix}|${packageName}`;
 }
 
-function getChangeLogText(releaseBranch, groupedMessages) {
+function getChangeLogText(releaseVersion, groupedMessages) {
   let changeLogText = util.format(
     LOG_HEADER,
-    releaseBranch.toString().replace(constants.RELEASE_BRANCH_PREFIX, '')
+    releaseVersion
   );
   let lastType = '';
   Object.keys(groupedMessages).forEach(function(key) {
@@ -253,7 +253,7 @@ const releaseVersion = getReleaseVersion();
 // console.log(util.format(RELEASE_MESSAGE, releaseVersion, previousBranch));
 const changeLogBranch = getNewChangeLogBranch(releaseVersion);
 
-const parsedCommits = parseCommits(getCommits(releaseVersion, previousBranch));
+const parsedCommits = parseCommits(getCommits('develop', 'main'));
 const groupedMessages = getGroupedMessages(parsedCommits);
 const changeLog = getChangeLogText(releaseVersion, groupedMessages);
 writeChangeLog(changeLog);

@@ -45,7 +45,7 @@ export abstract class MetadataTransfer<
             outputDirectory: process.env.SFDX_MDAPI_TEMP_DIR,
           })
           .catch((e) => {
-            throw new ConversionError(e);
+            console.error(e);
           });
       }
 

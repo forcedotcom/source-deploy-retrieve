@@ -37,9 +37,8 @@ export abstract class MetadataTransfer<
    */
   public async start(pollInterval = 100): Promise<Result | undefined> {
     try {
-      const converter = new MetadataConverter();
-
       if (process.env.SFDX_MDAPI_TEMP_DIR) {
+        const converter = new MetadataConverter();
         await converter.convert(Array.from(this.components.getSourceComponents()), 'metadata', {
           type: 'directory',
           outputDirectory: process.env.SFDX_MDAPI_TEMP_DIR,

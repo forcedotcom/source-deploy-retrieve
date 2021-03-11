@@ -280,7 +280,7 @@ let ADD_VERBOSE_LOGGING = process.argv.indexOf('-v') > -1 ? true : false;
 let CHANGE_LOG_PATH = path.join(process.cwd(), 'CHANGELOG.md');
 
 const releaseVersion = getReleaseVersion();
-const changeLogBranch = getNewChangeLogBranch(releaseVersion);
+// const changeLogBranch = getNewChangeLogBranch(releaseVersion);
 
 const parsedCommits = parseCommits(getCommits('develop', 'main'));
 const groupedMessages = getGroupedMessages(parsedCommits);

@@ -18,7 +18,7 @@ import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import { join, dirname, basename, extname } from 'path';
 import { SourceComponent, registryData } from '../metadata-registry';
 import { ComponentLike } from '../common';
-import { normalizeToArray } from '../utils/';
+import { normalizeToArray } from '../utils/collections';
 import { ComponentSet } from '../collections';
 
 export class DeployResult implements MetadataTransferResult {
@@ -194,14 +194,6 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
 
   protected async pre(): Promise<{ id: string }> {
     const converter = new MetadataConverter();
-
-    if (process.env.SFDX_MDAPI_TEMP_DIR) {
-      await converter.convert(Array.from(this.components.getSourceComponents()), 'metadata', {
-        type: 'directory',
-        outputDirectory: process.env.SFDX_MDAPI_TEMP_DIR,
-      });
-    }
-
     const { zipBuffer } = await converter.convert(
       Array.from(this.components.getSourceComponents()),
       'metadata',

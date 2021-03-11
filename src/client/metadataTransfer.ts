@@ -9,6 +9,7 @@ import { EventEmitter } from 'events';
 import { ComponentSet } from '../collections';
 import { MetadataTransferError } from '../errors';
 import { MetadataRequestStatus, RequestStatus, MetadataTransferResult } from './types';
+import { MetadataConverter } from '../convert';
 
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
@@ -36,6 +37,15 @@ export abstract class MetadataTransfer<
    */
   public async start(pollInterval = 100): Promise<Result | undefined> {
     try {
+      const converter = new MetadataConverter();
+
+      if (process.env.SFDX_MDAPI_TEMP_DIR) {
+        await converter.convert(Array.from(this.components.getSourceComponents()), 'metadata', {
+          type: 'directory',
+          outputDirectory: process.env.SFDX_MDAPI_TEMP_DIR,
+        });
+      }
+
       const { id } = await this.pre();
       const apiResult = await this.pollStatus(id, pollInterval);
 

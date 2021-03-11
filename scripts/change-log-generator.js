@@ -286,5 +286,4 @@ const parsedCommits = parseCommits(getCommits('develop', 'main'));
 const groupedMessages = getGroupedMessages(parsedCommits);
 const changeLog = getChangeLogText(releaseVersion, groupedMessages);
 writeChangeLog(changeLog);
-writeAdditionalInfo();
 // openPRForChanges(releaseVersion, changeLogBranch);

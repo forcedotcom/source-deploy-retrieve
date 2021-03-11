@@ -222,15 +222,13 @@ function getGroupedMessages(parsedCommits) {
  *
  * If we have a type that should be ignored, return an empty key.
  */
-function generateKey(packageName, type) {
+function generateKey(type) {
   if (
-    typesToIgnore.includes(type) ||
-    PACKAGES_TO_IGNORE.includes(packageName)
+    typesToIgnore.includes(type)
   ) {
     return '';
   }
-  const keyPrefix = type === 'feat' ? 'Added' : 'Fixed';
-  return `${keyPrefix}|${packageName}`;
+  return type === 'feat' ? 'Added' : 'Fixed';
 }
 
 function getChangeLogText(releaseVersion, groupedMessages) {

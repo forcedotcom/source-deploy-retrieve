@@ -44,6 +44,13 @@ const typesToIgnore = [
   'revert'
 ];
 
+function checkForHelp() {
+    if (process.argv.indexOf('-h') > -1) {
+        console.log('\nGenerate the change log. Commits that are considered "new" are in the "develop" branch, but not "main".\n');
+        console.log('Example: node change-log-generator -v');
+    }
+}
+
 function getReleaseVersion() {
     const releaseType = getReleaseType();
     const currentVersion = require('../package.json').version;
@@ -63,7 +70,7 @@ function getReleaseVersion() {
         break;
     }
     return `${major}.${minor}.${patch}`;
-  }
+}
 
 function getNewChangeLogBranch(releaseVersion) {
   if (ADD_VERBOSE_LOGGING) {
@@ -246,11 +253,12 @@ function writeChangeLog(textToInsert) {
 
 console.log("Starting script 'change-log-generator'\n");
 
+checkForHelp();
+
 let ADD_VERBOSE_LOGGING = process.argv.indexOf('-v') > -1 ? true : false;
 let CHANGE_LOG_PATH = path.join(process.cwd() + 'CHANGELOG.md');
 
 const releaseVersion = getReleaseVersion();
-// console.log(util.format(RELEASE_MESSAGE, releaseVersion, previousBranch));
 const changeLogBranch = getNewChangeLogBranch(releaseVersion);
 
 const parsedCommits = parseCommits(getCommits('develop', 'main'));

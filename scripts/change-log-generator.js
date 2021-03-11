@@ -14,7 +14,6 @@ const process = require('process');
 const shell = require('shelljs');
 const fs = require('fs');
 const util = require('util');
-const constants = require('./change-log-constants');
 
 shell.set('-e');
 shell.set('+v');
@@ -33,6 +32,10 @@ const PR_NUM = 'PR_NUM';
 const COMMIT = 'COMMIT';
 const TYPE = 'TYPE';
 const MESSAGE = 'MESSAGE';
+
+const PR_REGEX = new RegExp(/(\(#\d+\))/);
+const COMMIT_REGEX = new RegExp(/^([\da-zA-Z]+)/);
+const TYPE_REGEX = new RegExp(/([a-zA-Z]+)(?:\([a-zA-Z]+\))?:/);
 
 const typesToIgnore = [
   'chore',
@@ -132,11 +135,11 @@ function parseCommits(commits) {
 function buildMapFromCommit(commit) {
   let map = {};
   if (commit) {
-    let pr = constants.PR_REGEX.exec(commit);
-    let commitNum = constants.COMMIT_REGEX.exec(commit);
+    let pr = PR_REGEX.exec(commit);
+    let commitNum = COMMIT_REGEX.exec(commit);
     if (pr && commitNum) {
       let message = commit.replace(commitNum[0], '').replace(pr[0], '');
-      let type = constants.TYPE_REGEX.exec(message);
+      let type = TYPE_REGEX.exec(message);
       map[PR_NUM] = pr[0].replace(/[^\d]/g, '');
       map[COMMIT] = commitNum[0];
       if (type) {

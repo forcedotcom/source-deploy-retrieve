@@ -14,6 +14,7 @@ const process = require('process');
 const shell = require('shelljs');
 const fs = require('fs');
 const util = require('util');
+const path = require('path');
 
 shell.set('-e');
 shell.set('+v');

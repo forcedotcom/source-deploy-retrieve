@@ -7,7 +7,7 @@
  * You have shelljs installed globally using `npm install -g shelljs`.
  *
  * Overriding Default Values:
- * Add verbose logging. Example: npm run build-change-log -- -v
+ * Add verbose logging. Example: npm run build-change-log -- -v -r 1.1.11
  */
 
 const process = require('process');
@@ -54,6 +54,25 @@ function checkForHelp() {
         console.log('Example: node change-log-generator -v');
     }
 }
+
+function getReleaseType() {
+    var releaseIndex = process.argv.indexOf('-r');
+    if (releaseIndex === -1) {
+      console.error(
+        "Release version type for the port PR is required. Example: 'patch', 'minor', or 'major'"
+      );
+      process.exit(-1);
+    }
+    if (!/patch|minor|major/.exec(`${process.argv[releaseIndex + 1]}`)) {
+      console.error(
+        `Invalid release version type '${
+          process.argv[releaseIndex + 1]
+        }'. Expected patch, minor, or major.`
+      );
+      process.exit(-1);
+    }
+    return process.argv[releaseIndex + 1];
+  }
 
 function getReleaseVersion() {
     const releaseType = getReleaseType();

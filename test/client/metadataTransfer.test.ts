@@ -114,19 +114,23 @@ describe('MetadataTransfer', () => {
     });
 
     it('should convert metadata to temp directory when the env var "SFDX_MDAPI_TEMP_DIR" is set', async () => {
-      process.env.SFDX_MDAPI_TEMP_DIR = 'test';
-      const convertSpy = env.spy(MetadataConverter.prototype, 'convert');
+      try {
+        process.env.SFDX_MDAPI_TEMP_DIR = 'test';
+        const convertStub = env.stub(MetadataConverter.prototype, 'convert').resolves();
 
-      const { checkStatus } = operation.lifecycle;
-      checkStatus.resolves({ status: RequestStatus.Succeeded });
+        const { checkStatus } = operation.lifecycle;
+        checkStatus.resolves({ status: RequestStatus.Succeeded });
 
-      operation.onFinish(() => listenerStub());
-      await operation.start();
+        operation.onFinish(() => listenerStub());
+        await operation.start();
 
-      expect(checkStatus.callCount).to.equal(1);
-      expect(listenerStub.callCount).to.equal(1);
-      expect(convertSpy.callCount).to.equal(1);
-      expect(getString(convertSpy.firstCall.args[2], 'outputDirectory', '')).to.equal('test');
+        expect(checkStatus.callCount).to.equal(1);
+        expect(listenerStub.callCount).to.equal(1);
+        expect(convertStub.callCount).to.equal(1);
+        expect(getString(convertStub.firstCall.args[2], 'outputDirectory', '')).to.equal('test');
+      } finally {
+        delete process.env.SFDX_MDAPI_TEMP_DIR;
+      }
     });
 
     it('should exit when request status is "Failed"', async () => {

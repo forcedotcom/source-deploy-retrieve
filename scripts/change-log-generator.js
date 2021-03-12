@@ -195,7 +195,7 @@ function getGroupedMessages(parsedCommits) {
   let groupedMessages = {};
   let sortedMessages = {};
   parsedCommits.forEach(function(map) {
-    const key = generateKey('', map[TYPE]);
+    const key = generateKey(map[TYPE]);
     if (key) {
         groupedMessages[key] = groupedMessages[key] || [];
         groupedMessages[key].push(

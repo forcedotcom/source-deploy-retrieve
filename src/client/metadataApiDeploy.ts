@@ -18,8 +18,11 @@ import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import { join, dirname, basename, extname } from 'path';
 import { SourceComponent, registryData } from '../metadata-registry';
 import { ComponentLike } from '../common';
-import { normalizeToArray } from '../utils/collections';
+import { normalizeToArray } from '../utils';
 import { ComponentSet } from '../collections';
+import { ConfigAggregator, Connection } from '@salesforce/core';
+
+type Header = { Authorization: string; clientId: string; 'Sforce-Call-Options': string };
 
 export class DeployResult implements MetadataTransferResult {
   public readonly response: MetadataApiDeployStatus;
@@ -182,6 +185,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
       ignoreWarnings: false,
       checkOnly: false,
       singlePackage: true,
+      restDeploy: true,
     },
   };
   private options: MetadataApiDeployOptions;
@@ -192,15 +196,30 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     this.options = Object.assign({}, MetadataApiDeploy.DEFAULT_OPTIONS, options);
   }
 
+  private static setRestHeaders(connection: Connection): Header {
+    return {
+      Authorization: connection && `OAuth ${connection.accessToken}`,
+      clientId: connection.oauth2 && connection.oauth2.clientId,
+      ['Sforce-Call-Options']: 'client=' + connection.getAuthInfoFields().clientId,
+    };
+  }
+
+  // REST is the default unless:
+  //   1. SOAP is specified with the soapdeploy flag on the command
+  //   2. The restDeploy SFDX config setting is explicitly false.
+  private static async isRestDeploy(options: ApiOptions): Promise<boolean> {
+    if (options.restDeploy === false) {
+      return true;
+    }
+
+    const aggregator = await ConfigAggregator.create();
+    const restDeployConfig = aggregator.getPropertyValue('restDeploy');
+    // aggregator property values are returned as strings
+    return restDeployConfig !== 'true';
+  }
+
   protected async pre(): Promise<{ id: string }> {
-    const converter = new MetadataConverter();
-    const { zipBuffer } = await converter.convert(
-      Array.from(this.components.getSourceComponents()),
-      'metadata',
-      { type: 'zip' }
-    );
-    const connection = await this.getConnection();
-    const result = await connection.metadata.deploy(zipBuffer, this.options.apiOptions);
+    const result = await this.deploy(this.options.apiOptions);
     this.deployId = result.id;
     return result;
   }
@@ -223,5 +242,62 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
       done = connection.metadata._invoke('cancelDeploy', { id: this.deployId }).done;
     }
     return done;
+  }
+
+  private async deploy(options: ApiOptions): Promise<{ id: string }> {
+    const converter = new MetadataConverter();
+    const { zipBuffer } = await converter.convert(
+      Array.from(this.components.getSourceComponents()),
+      'metadata',
+      { type: 'zip' }
+    );
+    const connection = await this.getConnection();
+    let res;
+
+    if (await MetadataApiDeploy.isRestDeploy(options)) {
+      res = await this.doRestDeploy(zipBuffer, this.options.apiOptions);
+    } else {
+      // SOAP deploy
+      res = connection.metadata.deploy(zipBuffer, this.options.apiOptions);
+    }
+    return res;
+  }
+
+  private async doRestDeploy(zipStream: Buffer, options: ApiOptions): Promise<{ id: string }> {
+    let response;
+    const connection = await this.getConnection();
+    const headers = MetadataApiDeploy.setRestHeaders(connection);
+    const url = `${connection.instanceUrl.replace(
+      /\/$/,
+      ''
+    )}/services/data/v${connection.getApiVersion()}/metadata/deployRequest`;
+    try {
+      response = (await connection.request({
+        url,
+        headers,
+        body: JSON.stringify({
+          file: { content: zipStream, contentType: 'application/zip' },
+          entity_content: {
+            content: options,
+            contentType: 'application/json',
+          },
+        }),
+        method: 'POST',
+      })) as { id: string; statusCode: number; errorCode: string; message: string; stack: string };
+    } catch (e) {
+      if (response.statusCode > 300) {
+        let error;
+        if (response.errorCode === 'API_DISABLED_FOR_ORG') {
+          error = new Error('mdDeployCommandCliNoRestDeploy');
+        } else {
+          error = new Error(`${response.errorCode}: ${response.message}`);
+        }
+        throw error;
+      } else {
+        throw e;
+      }
+    }
+
+    return response;
   }
 }

@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { AuthInfo, Connection } from '@salesforce/core';
+import { AuthInfo, Connection, Logger } from '@salesforce/core';
 import { EventEmitter } from 'events';
 import { ComponentSet } from '../collections';
 import { ConversionError, MetadataTransferError } from '../errors';
@@ -44,8 +44,8 @@ export abstract class MetadataTransfer<
             type: 'directory',
             outputDirectory: process.env.SFDX_MDAPI_TEMP_DIR,
           })
-          .catch((e) => {
-            console.error(e);
+          .catch(async (e) => {
+            new Logger('SDRL:start').debug(e);
           });
       }
 

@@ -1,3 +1,9 @@
+# 1.1.20 - March 17, 2021
+
+## Fixed
+
+- Convert Document metadata type to document ([PR #263](https://github.com/forcedotcom/salesforcedx-vscode/pull/263))
+
 # 1.1.19 - March 3, 2021
 
 ## Added

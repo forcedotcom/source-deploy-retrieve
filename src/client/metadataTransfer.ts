@@ -44,7 +44,7 @@ export abstract class MetadataTransfer<
         this.logger.debug(`Converting metadata to: ${mdapiTempDir}`);
         try {
           const converter = new MetadataConverter();
-          await converter.convert(this.components.getSourceComponents(), 'metadata', {
+          await converter.convert(Array.from(this.components.getSourceComponents()), 'metadata', {
             type: 'directory',
             outputDirectory: mdapiTempDir,
           });

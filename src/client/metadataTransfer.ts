@@ -7,7 +7,7 @@
 import { AuthInfo, Connection, Logger } from '@salesforce/core';
 import { EventEmitter } from 'events';
 import { ComponentSet } from '../collections';
-import { ConversionError, MetadataTransferError } from '../errors';
+import { MetadataTransferError } from '../errors';
 import { MetadataRequestStatus, RequestStatus, MetadataTransferResult } from './types';
 import { MetadataConverter } from '../convert';
 
@@ -24,10 +24,12 @@ export abstract class MetadataTransfer<
   private signalCancel = false;
   private event = new EventEmitter();
   private usernameOrConnection: string | Connection;
+  private logger: Logger;
 
   constructor({ usernameOrConnection, components }: MetadataTransferOptions) {
     this.usernameOrConnection = usernameOrConnection;
     this.components = components;
+    this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
   /**
@@ -37,16 +39,18 @@ export abstract class MetadataTransfer<
    */
   public async start(pollInterval = 100): Promise<Result | undefined> {
     try {
-      if (process.env.SFDX_MDAPI_TEMP_DIR) {
-        const converter = new MetadataConverter();
-        converter
-          .convert(this.components.getSourceComponents(), 'metadata', {
+      const mdapiTempDir = process.env.SFDX_MDAPI_TEMP_DIR;
+      if (mdapiTempDir) {
+        this.logger.debug(`Converting metadata to: ${mdapiTempDir}`);
+        try {
+          const converter = new MetadataConverter();
+          await converter.convert(this.components.getSourceComponents(), 'metadata', {
             type: 'directory',
-            outputDirectory: process.env.SFDX_MDAPI_TEMP_DIR,
-          })
-          .catch(async (e) => {
-            new Logger('SDRL:start').debug(e);
+            outputDirectory: mdapiTempDir,
           });
+        } catch (e) {
+          this.logger.debug(e);
+        }
       }
 
       const { id } = await this.pre();

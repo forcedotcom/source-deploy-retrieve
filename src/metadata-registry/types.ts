@@ -35,6 +35,7 @@ export const enum TransformerStrategy {
   Standard = 'standard',
   Decomposed = 'decomposed',
   StaticResource = 'staticResource',
+  CustomLabels = 'customLabels',
 }
 
 /**

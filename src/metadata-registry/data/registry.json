@@ -30,6 +30,10 @@
         "directories": {
           "customLabels": "customlabel"
         }
+      },
+      "strategies": {
+        "adapter": "default",
+        "transformer": "customLabels"
       }
     },
     "navigationmenu": {

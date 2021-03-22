@@ -19,6 +19,7 @@ import {
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import { MetadataApiRetrieveError } from '../errors';
 import { normalizeToArray } from '../utils';
+import { isArray } from '@salesforce/ts-types';
 
 export type MetadataApiRetrieveOptions = MetadataTransferOptions &
   RetrieveOptions & { registry?: RegistryAccess };
@@ -125,9 +126,12 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   protected async checkStatus(id: string): Promise<MetadataApiRetrieveStatus> {
     const connection = await this.getConnection();
     // Recasting to use the project's RetrieveResult type
-    return (connection.metadata.checkRetrieveStatus(id) as unknown) as Promise<
-      MetadataApiRetrieveStatus
-    >;
+    const status = await connection.metadata.checkRetrieveStatus(id);
+    // TODO: maybe do this in jsforce?
+    status.fileProperties = isArray(status.fileProperties)
+      ? status.fileProperties
+      : [status.fileProperties];
+    return status as MetadataApiRetrieveStatus;
   }
 
   protected async post(result: MetadataApiRetrieveStatus): Promise<RetrieveResult> {

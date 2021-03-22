@@ -18,6 +18,7 @@ import { TreeContainer } from '../treeContainers';
 enum AdapterId {
   Bundle = 'bundle',
   Decomposed = 'decomposed',
+  Default = 'default',
   MatchingContentFile = 'matchingContentFile',
   MixedContent = 'mixedContent',
 }
@@ -42,10 +43,12 @@ export class SourceAdapterFactory {
         return new MatchingContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case AdapterId.MixedContent:
         return new MixedContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
+      case AdapterId.Default:
+        return new DefaultSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case undefined:
         return new DefaultSourceAdapter(type, this.registry, forceIgnore, this.tree);
       default:
-        throw new RegistryError('error_missing_adapter', [type.name, adapterId]);
+        throw new RegistryError('error_missing_adapter', [adapterId, type.name]);
     }
   }
 }

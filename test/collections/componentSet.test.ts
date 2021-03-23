@@ -422,6 +422,24 @@ describe('ComponentSet', () => {
       expect(result).to.deep.equal(expectedOperation);
     });
 
+    it('should properly construct a deploy operation with overridden apiVersion', async () => {
+      const connection = await mockConnection($$);
+      const apiVersion = '50.0';
+      const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
+      set.apiVersion = apiVersion;
+      const operationArgs = { components: set, usernameOrConnection: connection, apiVersion };
+      const expectedOperation = new MetadataApiDeploy(operationArgs);
+      const constructorStub = env
+        .stub()
+        .withArgs(operationArgs)
+        .callsFake(() => expectedOperation);
+      Object.setPrototypeOf(MetadataApiDeploy, constructorStub);
+
+      const result = await set.deploy({ usernameOrConnection: connection });
+
+      expect(result).to.deep.equal(expectedOperation);
+    });
+
     it('should throw error if there are no source backed components when deploying', async () => {
       const set = await ComponentSet.fromManifestFile('subset.xml', {
         registry: mockRegistry,
@@ -442,6 +460,32 @@ describe('ComponentSet', () => {
       const connection = await mockConnection($$);
       const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
       const operationArgs = {
+        components: set,
+        output: join('test', 'path'),
+        usernameOrConnection: connection,
+      };
+      const expectedOperation = new MetadataApiRetrieve(operationArgs);
+      const constructorStub = env
+        .stub()
+        .withArgs(operationArgs)
+        .callsFake(() => expectedOperation);
+      Object.setPrototypeOf(MetadataApiRetrieve, constructorStub);
+
+      const result = await set.retrieve({
+        output: operationArgs.output,
+        usernameOrConnection: connection,
+      });
+
+      expect(result).to.deep.equal(expectedOperation);
+    });
+
+    it('should properly construct a retrieve operation with overridden apiVersion', async () => {
+      const connection = await mockConnection($$);
+      const apiVersion = '50.0';
+      const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
+      set.apiVersion = apiVersion;
+      const operationArgs = {
+        apiVersion,
         components: set,
         output: join('test', 'path'),
         usernameOrConnection: connection,

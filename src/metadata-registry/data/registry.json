@@ -32,7 +32,7 @@
         }
       },
       "strategies": {
-        "adapter": "default",
+        "adapter": "customLabels",
         "transformer": "customLabels"
       }
     },

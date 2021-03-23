@@ -6,56 +6,45 @@
  */
 
 import { WriteInfo } from '../types';
-import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { SourceComponent } from '../../metadata-registry';
-import { SourcePath, MetadataComponent } from '../../common';
-import { DecompositionState } from '../convertContext';
+import { DefaultMetadataTransformer } from './defaultMetadataTransformer';
+import { LabelsIndex } from '../../utils/labelsIndex';
+import { get, JsonMap } from '@salesforce/ts-types';
+import { set } from '@salesforce/kit';
+import deepmerge = require('deepmerge');
+import { JsToXml } from '../streams';
 
-export class CustomLabelsMetadataTransformer extends BaseMetadataTransformer {
-  public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
-    console.log(component);
-    throw new Error('implement me');
-  }
-
+export class CustomLabelsMetadataTransformer extends DefaultMetadataTransformer {
   public async toSourceFormat(
     component: SourceComponent,
     mergeWith?: SourceComponent
   ): Promise<WriteInfo[]> {
-    console.log(component);
-    console.log(mergeWith);
-    throw new Error('implement me');
+    const allLabelsXml = await component.parseXml();
+
+    const index = await LabelsIndex.getInstance().resolve();
+    // If there's only one CustomLabels file, then there's no need
+    // to unpack the labels into their respective files
+    if ([...index.keys()].length <= 1) {
+      return super.toSourceFormat(component, mergeWith);
+    }
+
+    const writeInfos: WriteInfo[] = [];
+    for (const [fsPath, labels] of [...index.entries()]) {
+      const customLabelsObj = deepmerge({}, allLabelsXml);
+      const filteredLabels = this.filterLabels(customLabelsObj, labels);
+      set(customLabelsObj, 'CustomLabels.labels', filteredLabels);
+      writeInfos.push({
+        source: new JsToXml(customLabelsObj),
+        output: fsPath,
+      });
+    }
+    return writeInfos;
   }
 
-  private async getComposedMetadataEntries(
-    component: SourceComponent
-  ): Promise<[string, unknown][]> {
-    console.log(component);
-    throw new Error('implement me');
-  }
-
-  /**
-   * Helper for setting the decomposed transaction state
-   * @param forComponent
-   * @param props
-   */
-  private setDecomposedState(
-    forComponent: MetadataComponent,
-    props: Partial<Omit<DecompositionState[keyof DecompositionState], 'origin'>> = {}
-  ): void {
-    console.log(forComponent);
-    console.log(props);
-    throw new Error('implement me');
-  }
-
-  private getDecomposedState<T extends string>(
-    forComponent: MetadataComponent
-  ): DecompositionState[T] {
-    console.log(forComponent);
-    throw new Error('implement me');
-  }
-
-  private getDefaultOutput(component: MetadataComponent): SourcePath {
-    console.log(component);
-    throw new Error('implement me');
+  private filterLabels(customLabelsObj: JsonMap, labels: string[]): JsonMap[] {
+    const unfilteredLabels = get(customLabelsObj, 'CustomLabels.labels', []) as Array<
+      JsonMap & { fullName: string }
+    >;
+    return unfilteredLabels.filter((label) => labels.includes(label.fullName));
   }
 }

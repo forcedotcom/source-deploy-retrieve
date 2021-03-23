@@ -13,7 +13,6 @@ import { baseName } from '../utils';
 import { NodeFSTreeContainer, VirtualTreeContainer } from './treeContainers';
 import { DEFAULT_PACKAGE_ROOT_SFDX, MetadataType, SourcePath, MetadataComponent } from '../common';
 import { JsonMap } from '@salesforce/ts-types';
-import { LibraryError } from '../errors';
 import { SfdxFileFormat } from '../convert';
 import { trimUntil } from '../utils/path';
 
@@ -78,12 +77,12 @@ export class SourceComponent implements MetadataComponent {
       : [];
   }
 
-  public async parseXml(): Promise<JsonMap> {
+  public async parseXml<T = JsonMap>(): Promise<T> {
     if (this.xml) {
       const contents = await this.tree.readFile(this.xml);
-      return parse(contents.toString(), { ignoreAttributes: false });
+      return parse(contents.toString(), { ignoreAttributes: false }) as T;
     }
-    return {};
+    return {} as T;
   }
 
   public getPackageRelativePath(fsPath: SourcePath, format: SfdxFileFormat): SourcePath {

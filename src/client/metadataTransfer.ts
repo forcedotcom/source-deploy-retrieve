@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { AuthInfo, Connection } from '@salesforce/core';
+import { AuthInfo, Connection, Logger } from '@salesforce/core';
 import { EventEmitter } from 'events';
 import { ComponentSet } from '../collections';
 import { MetadataTransferError } from '../errors';
@@ -13,6 +13,7 @@ import { MetadataRequestStatus, RequestStatus, MetadataTransferResult } from './
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
   components: ComponentSet;
+  apiVersion?: string;
 }
 
 export abstract class MetadataTransfer<
@@ -20,13 +21,17 @@ export abstract class MetadataTransfer<
   Result extends MetadataTransferResult
 > {
   protected components: ComponentSet;
+  protected logger: Logger;
   private signalCancel = false;
   private event = new EventEmitter();
   private usernameOrConnection: string | Connection;
+  private apiVersion: string;
 
-  constructor({ usernameOrConnection, components }: MetadataTransferOptions) {
+  constructor({ usernameOrConnection, components, apiVersion }: MetadataTransferOptions) {
     this.usernameOrConnection = usernameOrConnection;
     this.components = components;
+    this.apiVersion = apiVersion;
+    this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
   /**
@@ -81,6 +86,10 @@ export abstract class MetadataTransfer<
       this.usernameOrConnection = await Connection.create({
         authInfo: await AuthInfo.create({ username: this.usernameOrConnection }),
       });
+      if (this.apiVersion) {
+        this.usernameOrConnection.setApiVersion(this.apiVersion);
+        this.logger.debug(`Overriding apiVersion to: ${this.apiVersion}`);
+      }
     }
     return this.usernameOrConnection;
   }

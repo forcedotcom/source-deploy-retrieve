@@ -16,7 +16,7 @@ import {
 import { expect } from 'chai';
 import { basename, join } from 'path';
 import { MOCK_ASYNC_RESULT, stubMetadataDeploy } from '../mock/client/transferOperations';
-import { DeployResult } from '../../src/client/metadataApiDeploy';
+import { DeployResult, MetadataApiDeploy } from '../../src/client/metadataApiDeploy';
 import { mockRegistry, matchingContentFile } from '../mock/registry';
 import { META_XML_SUFFIX } from '../../src/common';
 import {
@@ -551,6 +551,39 @@ describe('MetadataApiDeploy', () => {
 
         expect(responses).to.deep.equal(expected);
       });
+    });
+  });
+
+  describe('Constructor', () => {
+    it('should merge default API options', () => {
+      const mdApiDeploy = new MetadataApiDeploy({
+        usernameOrConnection: 'testing',
+        components: new ComponentSet(),
+        apiOptions: {
+          checkOnly: true,
+          testLevel: 'RunLocalTests',
+        },
+      });
+      // @ts-ignore testing private property
+      const mdOpts = mdApiDeploy.options;
+      expect(mdOpts.apiOptions).to.have.property('checkOnly', true);
+      expect(mdOpts.apiOptions).to.have.property('rollbackOnError', true);
+      expect(mdOpts.apiOptions).to.have.property('ignoreWarnings', false);
+      expect(mdOpts.apiOptions).to.have.property('singlePackage', true);
+      expect(mdOpts.apiOptions).to.have.property('testLevel', 'RunLocalTests');
+    });
+
+    it('should use default API options', () => {
+      const mdApiDeploy = new MetadataApiDeploy({
+        usernameOrConnection: 'testing',
+        components: new ComponentSet(),
+      });
+      // @ts-ignore testing private property
+      const mdOpts = mdApiDeploy.options;
+      expect(mdOpts.apiOptions).to.have.property('rollbackOnError', true);
+      expect(mdOpts.apiOptions).to.have.property('ignoreWarnings', false);
+      expect(mdOpts.apiOptions).to.have.property('checkOnly', false);
+      expect(mdOpts.apiOptions).to.have.property('singlePackage', true);
     });
   });
 });

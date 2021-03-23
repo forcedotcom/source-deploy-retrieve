@@ -152,6 +152,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const operationOptions = Object.assign({}, options, {
       components: this,
       registry: this.registry,
+      apiVersion: this.apiVersion,
     });
 
     return new MetadataApiDeploy(operationOptions);
@@ -166,6 +167,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const operationOptions = Object.assign({}, options, {
       components: this,
       registry: this.registry,
+      apiVersion: this.apiVersion,
     });
 
     return new MetadataApiRetrieve(operationOptions);

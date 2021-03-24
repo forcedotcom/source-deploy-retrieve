@@ -174,10 +174,10 @@ export async function stubMetadataRetrieve(
         });
       }
     }
-    retrieveStatus.fileProperties = fileProperties as FileProperties[];
-    // fileProperties.length === 1
-    //   ? (fileProperties[0] as FileProperties)
-    //   : (fileProperties as FileProperties[]);
+    retrieveStatus.fileProperties =
+      fileProperties.length === 1
+        ? (fileProperties[0] as FileProperties)
+        : (fileProperties as FileProperties[]);
   }
 
   const messages = normalizeToArray(options.messages);

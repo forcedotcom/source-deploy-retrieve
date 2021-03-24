@@ -63,6 +63,10 @@ export type MetadataType = {
     adapter: string;
     transformer?: string;
     decomposition?: string;
+    elementParser?: {
+      xmlPath: string;
+      nameAttr: string;
+    };
   };
 };
 

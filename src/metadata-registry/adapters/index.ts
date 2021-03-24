@@ -9,4 +9,4 @@ export { BundleSourceAdapter } from './bundleSourceAdapter';
 export { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 export { DecomposedSourceAdapter } from './decomposedSourceAdapter';
 export { DefaultSourceAdapter } from './defaultSourceAdapter';
-export { CustomLabelsSourceAdapter } from './customLabelsSourceAdapter';
+export { NonDecomposedSourceAdapter } from './nonDecomposedSourceAdapter';

@@ -65,7 +65,7 @@ describe('SourceAdapterFactory', () => {
     assert.throws(
       () => factory.getAdapter(type),
       RegistryError,
-      nls.localize('error_missing_adapter', [type.name, type.strategies.adapter])
+      nls.localize('error_missing_adapter', [type.strategies.adapter, type.name])
     );
   });
 });

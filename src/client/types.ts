@@ -215,7 +215,7 @@ export type FileProperties = {
  */
 export interface MetadataApiRetrieveStatus {
   done: boolean;
-  fileProperties: FileProperties[];
+  fileProperties: FileProperties | FileProperties[];
   id: string;
   status: RequestStatus;
   success: boolean;

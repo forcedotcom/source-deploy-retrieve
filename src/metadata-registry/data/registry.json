@@ -32,8 +32,12 @@
         }
       },
       "strategies": {
-        "adapter": "customLabels",
-        "transformer": "customLabels"
+        "adapter": "nonDecomposed",
+        "transformer": "nonDecomposed",
+        "elementParser": {
+          "xmlPath": "CustomLabels.labels",
+          "nameAttr": "fullName"
+        }
       }
     },
     "navigationmenu": {

@@ -14,15 +14,15 @@ import { RegistryError } from '../../errors';
 import { ForceIgnore } from '../forceIgnore';
 import { MetadataType } from '../../common';
 import { RegistryAccess } from '../registryAccess';
-import { CustomLabelsSourceAdapter } from './customLabelsSourceAdapter';
+import { NonDecomposedSourceAdapter } from './nonDecomposedSourceAdapter';
 
 enum AdapterId {
   Bundle = 'bundle',
-  CustomLabels = 'customLabels',
   Decomposed = 'decomposed',
   Default = 'default',
   MatchingContentFile = 'matchingContentFile',
   MixedContent = 'mixedContent',
+  NonDecomposed = 'nonDecomposed',
 }
 
 export class SourceAdapterFactory {
@@ -47,8 +47,8 @@ export class SourceAdapterFactory {
         return new MixedContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case AdapterId.Default:
         return new DefaultSourceAdapter(type, this.registry, forceIgnore, this.tree);
-      case AdapterId.CustomLabels:
-        return new CustomLabelsSourceAdapter(type, this.registry, forceIgnore, this.tree);
+      case AdapterId.NonDecomposed:
+        return new NonDecomposedSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case undefined:
         return new DefaultSourceAdapter(type, this.registry, forceIgnore, this.tree);
       default:

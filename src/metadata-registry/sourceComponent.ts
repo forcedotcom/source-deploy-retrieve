@@ -13,7 +13,6 @@ import { baseName } from '../utils';
 import { NodeFSTreeContainer, VirtualTreeContainer } from './treeContainers';
 import { DEFAULT_PACKAGE_ROOT_SFDX, MetadataType, SourcePath, MetadataComponent } from '../common';
 import { JsonMap } from '@salesforce/ts-types';
-import { LibraryError } from '../errors';
 import { SfdxFileFormat } from '../convert';
 import { trimUntil } from '../utils/path';
 

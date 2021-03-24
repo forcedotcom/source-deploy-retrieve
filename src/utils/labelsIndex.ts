@@ -9,13 +9,13 @@ import { JsonMap } from '@salesforce/ts-types';
 import { SourceComponent } from '../metadata-registry/sourceComponent';
 import { normalizeToArray } from './collections';
 
-type CustomLabelsXml = {
+export type CustomLabelsObj = {
   CustomLabels: {
     labels: CustomLabel | CustomLabel[];
   };
 };
 
-type CustomLabel = JsonMap & { fullName: string };
+export type CustomLabel = JsonMap & { fullName: string };
 
 type Index = Map<string, string[]>;
 
@@ -34,13 +34,13 @@ export class LabelsIndex {
     return LabelsIndex.instance;
   }
 
-  public add(fsPath: string, component: SourceComponent): void {
+  public register(fsPath: string, component: SourceComponent): void {
     this.components.set(fsPath, component);
   }
 
   public async resolve(): Promise<Index> {
     for (const [fsPath, component] of [...this.components.entries()]) {
-      const contents = await component.parseXml<CustomLabelsXml>();
+      const contents = await component.parseXml<CustomLabelsObj>();
       const labels = normalizeToArray(contents.CustomLabels.labels);
       for (const label of labels) {
         this.addLabelToIndex(fsPath, label);

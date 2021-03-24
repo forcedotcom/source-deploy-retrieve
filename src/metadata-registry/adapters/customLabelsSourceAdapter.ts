@@ -18,7 +18,7 @@ export class CustomLabelsSourceAdapter extends DefaultSourceAdapter {
   protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
     const index = LabelsIndex.getInstance();
     if (trigger.endsWith('-meta.xml')) {
-      index.add(trigger, component);
+      index.register(trigger, component);
     }
     return component;
   }

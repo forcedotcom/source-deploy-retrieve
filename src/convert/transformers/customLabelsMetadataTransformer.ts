@@ -5,46 +5,38 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { WriteInfo } from '../types';
-import { SourceComponent } from '../../metadata-registry';
 import { DefaultMetadataTransformer } from './defaultMetadataTransformer';
-import { LabelsIndex } from '../../utils/labelsIndex';
-import { get, JsonMap } from '@salesforce/ts-types';
-import { set } from '@salesforce/kit';
-import deepmerge = require('deepmerge');
 import { JsToXml } from '../streams';
+import { LabelsIndex, CustomLabelsObj, CustomLabel } from '../../utils/labelsIndex';
+import { normalizeToArray } from '../../utils';
+import { set } from '@salesforce/kit';
+import { SourceComponent } from '../../metadata-registry';
+import { WriteInfo } from '../types';
+import deepmerge = require('deepmerge');
 
 export class CustomLabelsMetadataTransformer extends DefaultMetadataTransformer {
   public async toSourceFormat(
     component: SourceComponent,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     mergeWith?: SourceComponent
   ): Promise<WriteInfo[]> {
-    const allLabelsXml = await component.parseXml();
-
+    const allLabelsObj = await component.parseXml<CustomLabelsObj>();
     const index = await LabelsIndex.getInstance().resolve();
-    // If there's only one CustomLabels file, then there's no need
-    // to unpack the labels into their respective files
-    if ([...index.keys()].length <= 1) {
-      return super.toSourceFormat(component, mergeWith);
-    }
-
+    console.log(index);
     const writeInfos: WriteInfo[] = [];
     for (const [fsPath, labels] of [...index.entries()]) {
-      const customLabelsObj = deepmerge({}, allLabelsXml);
+      const customLabelsObj = deepmerge({}, allLabelsObj);
       const filteredLabels = this.filterLabels(customLabelsObj, labels);
-      set(customLabelsObj, 'CustomLabels.labels', filteredLabels);
-      writeInfos.push({
-        source: new JsToXml(customLabelsObj),
-        output: fsPath,
-      });
+      if (filteredLabels.length) {
+        set(customLabelsObj, 'CustomLabels.labels', filteredLabels);
+        writeInfos.push({ source: new JsToXml(customLabelsObj), output: fsPath });
+      }
     }
     return writeInfos;
   }
 
-  private filterLabels(customLabelsObj: JsonMap, labels: string[]): JsonMap[] {
-    const unfilteredLabels = get(customLabelsObj, 'CustomLabels.labels', []) as Array<
-      JsonMap & { fullName: string }
-    >;
+  private filterLabels(customLabelsObj: CustomLabelsObj, labels: string[]): CustomLabel[] {
+    const unfilteredLabels = normalizeToArray(customLabelsObj.CustomLabels?.labels || []);
     return unfilteredLabels.filter((label) => labels.includes(label.fullName));
   }
 }

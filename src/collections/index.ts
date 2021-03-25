@@ -7,3 +7,4 @@
 export { LazyCollection } from './lazyCollection';
 export { ComponentSet, DeploySetOptions, RetrieveSetOptions } from './componentSet';
 export { FromSourceOptions, FromManifestOptions, ResolveOptions } from './types';
+export { resolveSource, ResolveSourceOptions } from './initializers';

@@ -4,8 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { ConvertOutputConfig, MetadataConverter } from '../';
-import { ComponentSet } from '../collections';
+import { ConvertOutputConfig, MetadataConverter } from '../convert';
+import { ComponentSet, resolveSource } from '../collections';
 import { RegistryAccess, ZipTreeContainer } from '../metadata-registry';
 import {
   ComponentStatus,
@@ -159,7 +159,8 @@ export class MetadataApiRetrieve extends MetadataTransfer<
           type: 'directory',
           outputDirectory: output,
         };
-    const zipComponents = ComponentSet.fromSource('.', {
+    const zipComponents = resolveSource({
+      fsPaths: ['.'],
       registry: this.options.registry,
       tree: await ZipTreeContainer.create(zip),
     }).getSourceComponents();

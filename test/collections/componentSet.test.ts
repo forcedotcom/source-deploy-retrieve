@@ -1,26 +1,35 @@
 /*
- * Copyright (c) 2020, salesforce.com, inc.
+ * Copyright (c) 2021, salesforce.com, inc.
  * All rights reserved.
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+
 import { testSetup } from '@salesforce/core/lib/testSetup';
 import { fail } from 'assert';
 import { expect } from 'chai';
 import { join } from 'path';
 import { createSandbox } from 'sinon';
-import { VirtualDirectory, VirtualTreeContainer, ComponentSet, MetadataResolver } from '../../src';
-import { MetadataApiDeploy, MetadataApiRetrieve } from '../../src/client';
-import { MetadataComponent, MetadataMember } from '../../src/common/types';
+import {
+  VirtualDirectory,
+  VirtualTreeContainer,
+  ComponentSet,
+  MetadataResolver,
+  MetadataApiDeploy,
+  MetadataApiRetrieve,
+  MetadataComponent,
+  resolveSource,
+} from '../../src';
+import { MetadataMember } from '../../src/common/types';
 import { ComponentSetError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { VirtualFile } from '../../src/metadata-registry/types';
 import { mockConnection } from '../mock/client';
 import {
-  decomposedtoplevel,
-  mixedContentSingleFile,
   mockRegistry,
   mockRegistryData,
+  mixedContentSingleFile,
+  decomposedtoplevel,
 } from '../mock/registry';
 
 const env = createSandbox();
@@ -129,7 +138,7 @@ describe('ComponentSet', () => {
   describe('Initializers', () => {
     describe('fromSource', () => {
       it('should initialize with source backed components', () => {
-        const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
+        const set = resolveSource({ fsPaths: ['.'], registry: mockRegistry, tree });
         const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath('.');
         expect(Array.from(set)).to.deep.equal(expected);
       });
@@ -308,7 +317,7 @@ describe('ComponentSet', () => {
 
   describe('getObject', () => {
     it('should return an object representing the package manifest', () => {
-      const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
+      const set = resolveSource({ fsPaths: ['.'], registry: mockRegistry, tree });
       expect(set.getObject()).to.deep.equal({
         Package: {
           types: [
@@ -354,17 +363,6 @@ describe('ComponentSet', () => {
     });
   });
 
-  describe('resolveSourceComponents', () => {
-    it('should resolve components and add to package', () => {
-      const set = new ComponentSet(undefined, mockRegistry);
-      const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath('.');
-      const result = set.resolveSourceComponents('.', { tree });
-
-      expect(Array.from(result)).to.deep.equal(expected);
-      expect(Array.from(set)).to.deep.equal(expected);
-    });
-  });
-
   describe('getPackageXml', () => {
     it('should return manifest string when initialized from manifest file', async () => {
       const set = await ComponentSet.fromManifestFile('subset.xml', {
@@ -376,14 +374,14 @@ describe('ComponentSet', () => {
     });
 
     it('should return manifest string when initialized from source', () => {
-      const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
+      const set = resolveSource({ fsPaths: ['.'], registry: mockRegistry, tree });
       expect(set.getPackageXml(4)).to.equal(completeXml.data.toString());
     });
   });
 
   describe('getSourceComponents', () => {
     it('should return source-backed components in the set', () => {
-      const set = ComponentSet.fromSource('mixedSingleFiles', { registry: mockRegistry, tree });
+      const set = resolveSource({ fsPaths: ['mixedSingleFiles'], registry: mockRegistry, tree });
       set.add({ fullName: 'Test', type: 'decomposedtoplevel' });
       const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath(
         'mixedSingleFiles'
@@ -393,7 +391,7 @@ describe('ComponentSet', () => {
     });
 
     it('should return source-backed components that match the given metadata member', () => {
-      const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
+      const set = resolveSource({ fsPaths: ['.'], registry: mockRegistry, tree });
       const expected = new MetadataResolver(mockRegistry, tree).getComponentsFromPath(
         join('mixedSingleFiles', 'b.foo')
       );
@@ -408,7 +406,7 @@ describe('ComponentSet', () => {
   describe('deploy', () => {
     it('should properly construct a deploy operation', async () => {
       const connection = await mockConnection($$);
-      const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
+      const set = resolveSource({ fsPaths: ['.'], registry: mockRegistry, tree });
       const operationArgs = { components: set, usernameOrConnection: connection };
       const expectedOperation = new MetadataApiDeploy(operationArgs);
       const constructorStub = env
@@ -425,7 +423,7 @@ describe('ComponentSet', () => {
     it('should properly construct a deploy operation with overridden apiVersion', async () => {
       const connection = await mockConnection($$);
       const apiVersion = '50.0';
-      const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
+      const set = resolveSource({ fsPaths: ['.'], registry: mockRegistry, tree });
       set.apiVersion = apiVersion;
       const operationArgs = { components: set, usernameOrConnection: connection, apiVersion };
       const expectedOperation = new MetadataApiDeploy(operationArgs);
@@ -458,7 +456,7 @@ describe('ComponentSet', () => {
   describe('retrieve', () => {
     it('should properly construct a retrieve operation', async () => {
       const connection = await mockConnection($$);
-      const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
+      const set = resolveSource({ fsPaths: ['.'], registry: mockRegistry, tree });
       const operationArgs = {
         components: set,
         output: join('test', 'path'),
@@ -482,7 +480,7 @@ describe('ComponentSet', () => {
     it('should properly construct a retrieve operation with overridden apiVersion', async () => {
       const connection = await mockConnection($$);
       const apiVersion = '50.0';
-      const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
+      const set = resolveSource({ fsPaths: ['.'], registry: mockRegistry, tree });
       set.apiVersion = apiVersion;
       const operationArgs = {
         apiVersion,
@@ -631,7 +629,7 @@ describe('ComponentSet', () => {
   });
 
   it('should calculate size correctly', () => {
-    const set = ComponentSet.fromSource('.', { registry: mockRegistry, tree });
+    const set = resolveSource({ fsPaths: ['.'], registry: mockRegistry, tree });
 
     expect(set.size).to.equal(3);
   });

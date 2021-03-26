@@ -33,10 +33,10 @@ export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
 
 /**
- * A collection containing no duplicate metadata members. In other words, no duplicate `fullName` and `type` pairs.
+ * A collection containing no duplicate metadata members (`fullName` and `type` pairs).
  *
  * Multiple {@link SourceComponent}s can be present in the set and correspond to the same member.
- * This is typically the case when a component's source files are split across locations, such as
+ * This is typically the case when a component's source files are split across locations. For an example, see
  * the [multiple package directories](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_mpd.htm)
  * scenario.
  *
@@ -67,7 +67,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    */
   public static fromSource(fsPath: string): ComponentSet;
   /**
-   * Resolve metadata components from multiple file or directory paths in a file system.
+   * Resolve metadata components from multiple file paths or directory paths in a file system.
    *
    * @param fsPaths File or directory paths to resolve against
    * @returns ComponentSet of source resolved components
@@ -318,7 +318,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    *
    * A pair is considered present in the set if one of the following criteria is met:
    *
-   * - The pair directly in the set
+   * - The pair is directly in the set
    * - A wilcard component with the same `type` as the pair
    * - If a parent is attached to the pair and the parent is directly in the set
    * - If a parent is attached to the pair, and a wildcard component's `type` matches the parent's `type`

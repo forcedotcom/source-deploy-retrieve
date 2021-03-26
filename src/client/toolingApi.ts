@@ -54,7 +54,7 @@ export class ToolingApi {
     return this.retrieve({
       output: options.output,
       namespace: options.namespace,
-      components: ComponentSet.fromSource(options.paths[0], { registry: this.registry }),
+      components: ComponentSet.fromSource({ fsPaths: [options.paths[0]], registry: this.registry }),
     });
   }
 

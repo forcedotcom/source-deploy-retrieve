@@ -33,15 +33,14 @@ export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
 
 /**
- * A collection containing no duplicate metadata members (`fullName` and `type` pairs).
+ * A collection containing no duplicate metadata members (`fullName` and `type` pairs). `ComponentSets`
+ * are a convinient way of constructing a unique collection of components to perform operations such as
+ * deploying and retrieving.
  *
  * Multiple {@link SourceComponent}s can be present in the set and correspond to the same member.
  * This is typically the case when a component's source files are split across locations. For an example, see
  * the [multiple package directories](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_mpd.htm)
  * scenario.
- *
- * `ComponentSets` are a convinient way of constructing a collection of components to perform operations such as
- * deploying and retrieving.
  */
 export class ComponentSet extends LazyCollection<MetadataComponent> {
   public static readonly WILDCARD = '*';

@@ -195,9 +195,10 @@ describe('ComponentSet', () => {
       });
     });
 
-    describe('fromManifestFile', () => {
+    describe('fromManifest', () => {
       it('should not initialize with source backed components by default', async () => {
-        const set = await ComponentSet.fromManifestFile('subset.xml', {
+        const set = await ComponentSet.fromManifest({
+          manifestPath: 'subset.xml',
           registry: mockRegistry,
           tree,
         });
@@ -217,11 +218,12 @@ describe('ComponentSet', () => {
        * xml parsing library returns string | string[] for entries, tests that this is handled
        */
       it('should handle types with one member properly', async () => {
-        const set = await ComponentSet.fromManifestFile('singleMember.xml', {
+        const set = await ComponentSet.fromManifest({
+          manifestPath: 'singleMember.xml',
           registry: mockRegistry,
           tree,
         });
-        expect(Array.from(set)).to.deep.equal([
+        expect(set.toArray()).to.deep.equal([
           {
             fullName: 'Test',
             type: mockRegistryData.types.mixedcontentsinglefile,
@@ -230,11 +232,12 @@ describe('ComponentSet', () => {
       });
 
       it('should interpret a member of a type in folders with no delimiter as its corresponding folder type', async () => {
-        const set = await ComponentSet.fromManifestFile('folderComponent.xml', {
+        const set = await ComponentSet.fromManifest({
+          manifestPath: 'folderComponent.xml',
           registry: mockRegistry,
           tree,
         });
-        expect(Array.from(set)).to.deep.equal([
+        expect(set.toArray()).to.deep.equal([
           {
             fullName: 'Test_Folder',
             type: mockRegistryData.types.mciffolder,
@@ -243,10 +246,11 @@ describe('ComponentSet', () => {
       });
 
       it('should initialize with source backed components when specifying string resolve option', async () => {
-        const set = await ComponentSet.fromManifestFile('subset.xml', {
+        const set = await ComponentSet.fromManifest({
+          manifestPath: 'subset.xml',
           registry: mockRegistry,
           tree,
-          resolve: '.',
+          resolvePaths: ['.'],
         });
 
         const expected = new resolution.MetadataResolver(mockRegistry, tree).getComponentsFromPath(
@@ -255,14 +259,15 @@ describe('ComponentSet', () => {
         const missingIndex = expected.findIndex((c) => c.fullName === 'c');
         expected.splice(missingIndex, 1);
 
-        expect(Array.from(set)).to.deep.equal(expected);
+        expect(set.toArray()).to.deep.equal(expected);
       });
 
       it('should initialize with source backed components when specifying non-string iterable resolve option', async () => {
-        const set = await ComponentSet.fromManifestFile('subset.xml', {
+        const set = await ComponentSet.fromManifest({
+          manifestPath: 'subset.xml',
           registry: mockRegistry,
           tree,
-          resolve: ['decomposedTopLevels', 'mixedSingleFiles'],
+          resolvePaths: ['decomposedTopLevels', 'mixedSingleFiles'],
         });
 
         const expected = new resolution.MetadataResolver(mockRegistry, tree).getComponentsFromPath(
@@ -275,7 +280,8 @@ describe('ComponentSet', () => {
       });
 
       it('should interpret wildcard members literally by default', async () => {
-        const set = await ComponentSet.fromManifestFile('wildcard.xml', {
+        const set = await ComponentSet.fromManifest({
+          manifestPath: 'wildcard.xml',
           registry: mockRegistry,
           tree,
         });
@@ -283,55 +289,59 @@ describe('ComponentSet', () => {
         expect(set.has({ fullName: '*', type: 'MixedContentSingleFile' })).to.be.true;
       });
 
-      it('should interpret wildcard members literally when literalWildcard = true', async () => {
-        const set = await ComponentSet.fromManifestFile('wildcard.xml', {
+      it('should interpret wildcard members literally when forceAddWildcards = true', async () => {
+        const set = await ComponentSet.fromManifest({
+          manifestPath: 'wildcard.xml',
           registry: mockRegistry,
           tree,
-          literalWildcard: true,
+          forceAddWildcards: true,
         });
 
         expect(set.has({ fullName: '*', type: 'MixedContentSingleFile' }));
       });
 
       it('should resolve components when literalWildcard = false and wildcard is encountered', async () => {
-        const set = await ComponentSet.fromManifestFile('wildcard.xml', {
+        const set = await ComponentSet.fromManifest({
+          manifestPath: 'wildcard.xml',
           registry: mockRegistry,
           tree,
-          resolve: '.',
-          literalWildcard: false,
+          resolvePaths: ['.'],
+          forceAddWildcards: false,
         });
         const expected = new resolution.MetadataResolver(mockRegistry, tree).getComponentsFromPath(
           'mixedSingleFiles'
         );
 
-        expect(Array.from(set)).to.deep.equal(expected);
+        expect(set.toArray()).to.deep.equal(expected);
       });
 
       it('should resolve components and add literal wildcard component when literalWildcard = true and resolve != undefined', async () => {
-        const set = await ComponentSet.fromManifestFile('wildcard.xml', {
+        const set = await ComponentSet.fromManifest({
+          manifestPath: 'wildcard.xml',
           registry: mockRegistry,
           tree,
-          resolve: '.',
-          literalWildcard: true,
+          resolvePaths: ['.'],
+          forceAddWildcards: true,
         });
         const sourceComponents = new resolution.MetadataResolver(
           mockRegistry,
           tree
         ).getComponentsFromPath('mixedSingleFiles');
 
-        expect(Array.from(set)).to.deep.equal([
+        expect(set.toArray()).to.deep.equal([
           { fullName: '*', type: mockRegistryData.types.mixedcontentsinglefile },
           ...sourceComponents,
         ]);
 
         it('should add components even if they were not resolved', async () => {
-          const set = await ComponentSet.fromManifestFile('folderComponent.xml', {
+          const set = await ComponentSet.fromManifest({
+            manifestPath: 'folderComponent.xml',
             registry: mockRegistry,
             tree,
-            resolve: '.',
+            resolvePaths: ['.'],
           });
 
-          expect(Array.from(set)).to.deep.equal([
+          expect(set.toArray()).to.deep.equal([
             {
               fullName: 'Test_Folder',
               type: mockRegistryData.types.mciffolder,
@@ -421,7 +431,8 @@ describe('ComponentSet', () => {
 
   describe('getPackageXml', () => {
     it('should return manifest string when initialized from manifest file', async () => {
-      const set = await ComponentSet.fromManifestFile('subset.xml', {
+      const set = await ComponentSet.fromManifest({
+        manifestPath: 'subset.xml',
         registry: mockRegistry,
         tree,
       });
@@ -499,7 +510,8 @@ describe('ComponentSet', () => {
     });
 
     it('should throw error if there are no source backed components when deploying', async () => {
-      const set = await ComponentSet.fromManifestFile('subset.xml', {
+      const set = await ComponentSet.fromManifest({
+        manifestPath: 'subset.xml',
         registry: mockRegistry,
         tree,
       });

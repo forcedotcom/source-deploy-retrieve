@@ -20,7 +20,6 @@ import {
   mixedContentInFolder,
   bundle,
   sean,
-  gene,
   mockRegistryData,
   decomposedtoplevel,
 } from '../mock/registry';
@@ -164,23 +163,23 @@ describe('MetadataResolver', () => {
       });
 
       it('Should determine type for folder files', () => {
-        const path = gene.GENE_DIR;
+        const path = xmlInFolder.TYPE_DIRECTORY;
         const access = testUtil.createMetadataResolver([
           {
             dirPath: path,
-            children: [gene.GENE_FOLDER_XML_NAME],
+            children: [xmlInFolder.FOLDER_XML_NAME],
           },
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.genewilder,
+            type: mockRegistryData.types.xmlinfolderfolder,
             componentMappings: [
-              { path: gene.GENE_FOLDER_XML_PATH, component: gene.GENE_FOLDER_COMPONENT },
+              { path: xmlInFolder.FOLDER_XML_PATH, component: xmlInFolder.FOLDER_COMPONENT },
             ],
             allowContent: false,
           },
         ]);
-        expect(access.getComponentsFromPath(path)).to.deep.equal([gene.GENE_FOLDER_COMPONENT]);
+        expect(access.getComponentsFromPath(path)).to.deep.equal([xmlInFolder.FOLDER_COMPONENT]);
       });
 
       it('Should not mistake folder component of a mixed content type as that type', () => {
@@ -257,7 +256,7 @@ describe('MetadataResolver', () => {
       });
 
       it('Should not return a component if path to folder metadata xml is forceignored', () => {
-        const path = gene.GENE_FOLDER_XML_PATH;
+        const path = xmlInFolder.FOLDER_XML_PATH;
         const access = testUtil.createMetadataResolver([
           {
             dirPath: dirname(path),
@@ -267,10 +266,10 @@ describe('MetadataResolver', () => {
         testUtil.stubForceIgnore({ seed: path, deny: [path] });
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.genewilder,
+            type: mockRegistryData.types.xmlinfolder,
             // should not be returned
             componentMappings: [
-              { path: gene.GENE_FOLDER_XML_PATH, component: gene.GENE_FOLDER_COMPONENT },
+              { path: xmlInFolder.FOLDER_XML_PATH, component: xmlInFolder.FOLDER_COMPONENT },
             ],
           },
         ]);

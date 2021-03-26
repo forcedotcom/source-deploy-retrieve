@@ -10,6 +10,7 @@ import { SourceComponent } from '../../../src';
 import { META_XML_SUFFIX } from '../../../src/common';
 
 const type = mockRegistryData.types.xmlinfolder;
+const folderType = mockRegistryData.types.xmlinfolderfolder;
 
 export const TYPE_DIRECTORY = join('path', 'to', type.directoryName);
 export const COMPONENT_FOLDER_NAME = 'A_Folder';
@@ -30,6 +31,18 @@ export const COMPONENTS: SourceComponent[] = COMPONENT_NAMES.map(
       xml: XML_PATHS[index],
     })
 );
+
+export const FOLDER_XML_PATH = join(
+  TYPE_DIRECTORY,
+  `${COMPONENT_FOLDER_NAME}.${folderType.suffix}${META_XML_SUFFIX}`
+);
+export const FOLDER_XML_NAME = basename(FOLDER_XML_PATH);
+export const FOLDER_COMPONENT = new SourceComponent({
+  name: COMPONENT_FOLDER_NAME,
+  type: folderType,
+  xml: FOLDER_XML_PATH,
+});
+
 export const COMPONENTS_MD_FORMAT: SourceComponent[] = COMPONENT_NAMES.map(
   (name, index) =>
     new SourceComponent({

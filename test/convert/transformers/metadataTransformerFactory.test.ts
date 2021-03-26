@@ -6,6 +6,7 @@
  */
 
 import { assert, expect } from 'chai';
+import { SourceComponent } from '../../../src';
 import { ConvertContext } from '../../../src/convert/convertContext';
 import { MetadataTransformerFactory } from '../../../src/convert/transformers';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
@@ -13,15 +14,13 @@ import { DefaultMetadataTransformer } from '../../../src/convert/transformers/de
 import { StaticResourceMetadataTransformer } from '../../../src/convert/transformers/staticResourceMetadataTransformer';
 import { RegistryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
-import { mockRegistry } from '../../mock/registry';
-import { GENE_COMPONENT } from '../../mock/registry/geneConstants';
-import { COMPONENT } from '../../mock/registry/matchingContentFileConstants';
+import { matchingContentFile, mockRegistry } from '../../mock/registry';
 import { MC_SINGLE_FILE_COMPONENT } from '../../mock/registry/mixedContentSingleFileConstants';
 import { REGINA_COMPONENT } from '../../mock/registry/reginaConstants';
 
 describe('MetadataTransformerFactory', () => {
   it('should return DefaultMetadataTransformer', () => {
-    const component = COMPONENT;
+    const component = matchingContentFile.COMPONENT;
     const factory = new MetadataTransformerFactory(mockRegistry);
     expect(factory.getTransformer(component)).to.deep.equal(
       new DefaultMetadataTransformer(mockRegistry)
@@ -55,7 +54,11 @@ describe('MetadataTransformerFactory', () => {
   });
 
   it('should throw an error for a missing transformer mapping', () => {
-    const component = GENE_COMPONENT;
+    const component = new SourceComponent({
+      name: 'Test',
+      type: mockRegistry.getTypeByName('MissingStrategies'),
+      xml: 'Test.xml',
+    });
     const { type } = component;
     const factory = new MetadataTransformerFactory(mockRegistry);
     assert.throws(

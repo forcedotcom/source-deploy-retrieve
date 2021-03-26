@@ -327,4 +327,5 @@ export interface MetadataApiDeployOptions {
   runTests?: string[];
   singlePackage?: boolean;
   testLevel?: 'NoTestRun' | 'RunSpecifiedTests' | 'RunLocalTests' | 'RunAllTestsInOrg';
+  rest?: boolean;
 }

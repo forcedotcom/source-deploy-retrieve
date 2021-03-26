@@ -17,9 +17,21 @@ export const mockRegistryData = {
     xmlinfolder: {
       id: 'xmlinfolder',
       directoryName: 'xmlinfolders',
-      inFolder: true,
       name: 'XmlInFolder',
       suffix: 'xif',
+      folderType: 'xmlinfolderfolder',
+    },
+    /**
+     * Folder metadata type for XmlInFolder type
+     *
+     * e.g. ReportFolder for Report
+     */
+    xmlinfolderfolder: {
+      id: 'xmlinfolderfolder',
+      directoryName: 'xmlinfolders',
+      name: 'XmlInFolder',
+      suffix: 'xifFolder',
+      folderContentType: 'xmlinfolder',
     },
     /**
      * Metadata with a content file that has the same suffix as the xml (minus the -meta.xml)
@@ -108,17 +120,6 @@ export const mockRegistryData = {
       name: 'McifFolder',
       suffix: 'mcifFolder',
       folderContentType: 'mixedcontentinfolder',
-    },
-    genewilder: {
-      id: 'genewilder',
-      directoryName: 'genes',
-      inFolder: false,
-      name: 'GeneWilder',
-      suffix: 'gene',
-      strategies: {
-        adapter: 'badAdapterId',
-        transformer: 'badAdapterId',
-      },
     },
     reginaking: {
       id: 'reginaking',
@@ -212,18 +213,29 @@ export const mockRegistryData = {
         decomposition: 'topLevel',
       },
     },
+    missingstrategies: {
+      id: 'missingstrategies',
+      directoryName: 'missingStrategies',
+      name: 'MissingStrategies',
+      suffix: 'ms',
+      strategies: {
+        adapter: 'thisdoesnotexist',
+        transformer: 'thisdoesnotexist',
+      },
+    },
   },
   suffixes: {
     xif: 'xmlinfolder',
+    xifFolder: 'xmlinfolderfolder',
     mcf: 'matchingcontentfile',
     missing: 'typewithoutdef',
     mcifFolder: 'mciffolder',
-    genewilder: 'gene',
     reginaking: 'regina',
     sean: 'seanconnerys',
     mcif: 'mixedcontentinfolder',
     mixedSingleFile: 'mixedcontentsinglefile',
     dtl: 'decomposedtoplevel',
+    ms: 'missingstrategies',
   },
   strictDirectoryNames: {
     dwaynes: 'dwaynejohnson',
@@ -252,7 +264,6 @@ import * as document from './documentConstants';
 import * as taraji from './tarajiConstants';
 import * as mixedContentInFolder from './mixedContentInFolderConstants';
 import * as mixedContentSingleFile from './mixedContentSingleFileConstants';
-import * as gene from './geneConstants';
 import * as regina from './reginaConstants';
 import * as sean from './seanConstants';
 import * as decomposedtoplevel from './decomposedTopLevelConstants';
@@ -264,7 +275,6 @@ export {
   taraji,
   mixedContentInFolder,
   mixedContentSingleFile,
-  gene,
   regina,
   sean,
   decomposedtoplevel,

@@ -87,14 +87,14 @@ export class SourceComponent implements MetadataComponent {
   }
 
   public getPackageRelativePath(fsPath: SourcePath, format: SfdxFileFormat): SourcePath {
-    const { directoryName, suffix, inFolder } = this.type;
+    const { directoryName, suffix, inFolder, folderType } = this.type;
     // if there isn't a suffix, assume this is a mixed content component that must
     // reside in the directoryName of its type. trimUntil maintains the folder structure
     // the file resides in for the new destination.
     let relativePath: SourcePath;
     if (!suffix) {
       relativePath = trimUntil(fsPath, directoryName);
-    } else if (inFolder) {
+    } else if (folderType || inFolder) {
       const folderName = this.fullName.split('/')[0];
       relativePath = join(directoryName, folderName, basename(fsPath));
     } else {

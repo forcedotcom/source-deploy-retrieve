@@ -19,6 +19,7 @@ import { ComponentSet } from '../collections';
 
 /**
  * Resolver for metadata type and component objects.
+ * @internal
  */
 export class MetadataResolver {
   private forceIgnore: ForceIgnore;
@@ -40,9 +41,9 @@ export class MetadataResolver {
    * Get the metadata component(s) from a file path.
    *
    * @param fsPath File path to metadata or directory
-   * @param filter Set to filter which components are resolved
+   * @param inclusiveFilter Set to filter which components are resolved
    */
-  public getComponentsFromPath(fsPath: string, filter?: ComponentSet): SourceComponent[] {
+  public getComponentsFromPath(fsPath: string, inclusiveFilter?: ComponentSet): SourceComponent[] {
     if (!this.tree.exists(fsPath)) {
       throw new TypeInferenceError('error_path_not_found', fsPath);
     }
@@ -50,7 +51,7 @@ export class MetadataResolver {
     this.forceIgnore = ForceIgnore.findAndCreate(fsPath);
 
     if (this.tree.isDirectory(fsPath) && !this.resolveDirectoryAsComponent(fsPath)) {
-      return this.getComponentsFromPathRecursive(fsPath, filter);
+      return this.getComponentsFromPathRecursive(fsPath, inclusiveFilter);
     }
 
     const component = this.resolveComponent(fsPath, true);
@@ -59,7 +60,7 @@ export class MetadataResolver {
 
   private getComponentsFromPathRecursive(
     dir: SourcePath,
-    filter?: ComponentSet
+    inclusiveFilter?: ComponentSet
   ): SourceComponent[] {
     const dirQueue: SourcePath[] = [];
     const components: SourceComponent[] = [];
@@ -79,7 +80,7 @@ export class MetadataResolver {
       if (this.tree.isDirectory(fsPath)) {
         if (this.resolveDirectoryAsComponent(fsPath)) {
           const component = this.resolveComponent(fsPath, true);
-          if (!filter || filter.has(component)) {
+          if (!inclusiveFilter || inclusiveFilter.has(component)) {
             components.push(component);
             ignore.add(component.xml);
           }
@@ -89,12 +90,12 @@ export class MetadataResolver {
       } else if (this.isMetadata(fsPath)) {
         const component = this.resolveComponent(fsPath, false);
         if (component) {
-          if (!filter || filter.has(component)) {
+          if (!inclusiveFilter || inclusiveFilter.has(component)) {
             components.push(component);
             ignore.add(component.content);
           } else {
             for (const child of component.getChildren()) {
-              if (filter.has(child)) {
+              if (inclusiveFilter.has(child)) {
                 components.push(child);
               }
             }
@@ -110,7 +111,7 @@ export class MetadataResolver {
     }
 
     for (const dir of dirQueue) {
-      components.push(...this.getComponentsFromPathRecursive(dir, filter));
+      components.push(...this.getComponentsFromPathRecursive(dir, inclusiveFilter));
     }
 
     return components;

@@ -13,11 +13,21 @@ import {
 } from '../client';
 import { MetadataComponent, XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSetError } from '../errors';
-import { NodeFSTreeContainer, RegistryAccess, SourceComponent } from '../metadata-registry';
-import { PackageTypeMembers, FromManifestOptions, PackageManifestObject } from './types';
+import {
+  MetadataResolver,
+  NodeFSTreeContainer,
+  RegistryAccess,
+  SourceComponent,
+  TreeContainer,
+} from '../metadata-registry';
+import {
+  PackageTypeMembers,
+  FromManifestOptions,
+  PackageManifestObject,
+  FromSourceOptions,
+} from './types';
 import { ComponentLike } from '../common/types';
 import { LazyCollection } from './lazyCollection';
-import { resolveSource } from './initializers';
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
@@ -47,6 +57,57 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     for (const component of components) {
       this.add(component);
     }
+  }
+
+  /**
+   * Resolve metadata components from a file or directory path in a file system.
+   *
+   * @param fsPath File or directory path to resolve against
+   * @returns ComponentSet of source resolved components
+   */
+  public static fromSource(fsPath: string): ComponentSet;
+  /**
+   * Resolve metadata components from multiple file or directory paths in a file system.
+   *
+   * @param fsPaths File or directory paths to resolve against
+   * @returns ComponentSet of source resolved components
+   */
+  public static fromSource(fsPaths: string[]): ComponentSet;
+  /**
+   * Resolve metadata components from file or directory paths in a file system.
+   * Customize the resolution process using an options object, such as specifying filters
+   * and resolving against a different file system abstraction (see {@link TreeContainer}).
+   *
+   * @param options
+   * @returns ComponentSet of source resolved components
+   */
+  public static fromSource(options: FromSourceOptions): ComponentSet;
+  public static fromSource(input: string | string[] | FromSourceOptions): ComponentSet {
+    let fsPaths = [];
+    let registry: RegistryAccess;
+    let tree: TreeContainer;
+    let inclusiveFilter: ComponentSet;
+
+    if (Array.isArray(input)) {
+      fsPaths = input;
+    } else if (typeof input === 'object') {
+      fsPaths = input.fsPaths;
+      registry = input.registry ?? registry;
+      tree = input.tree ?? tree;
+      inclusiveFilter = input.inclusiveFilter;
+    } else {
+      fsPaths = [input];
+    }
+
+    const resolver = new MetadataResolver(registry, tree);
+    const set = new ComponentSet([], registry);
+    for (const fsPath of fsPaths) {
+      for (const component of resolver.getComponentsFromPath(fsPath, inclusiveFilter)) {
+        set.add(component);
+      }
+    }
+
+    return set;
   }
 
   /**
@@ -94,7 +155,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       // if it's a string, don't iterate over the characters
       const toResolve =
         typeof options.resolve === 'string' ? [options.resolve] : Array.from(options.resolve);
-      const components = resolveSource({
+      const components = ComponentSet.fromSource({
         fsPaths: toResolve,
         tree,
         inclusiveFilter: filterSet,

@@ -12,7 +12,7 @@ import { buildQuery, queryToFileMap } from './retrieveUtil';
 import { createFiles } from '../utils';
 import { MetadataResolver, RegistryAccess, SourceComponent } from '../metadata-registry';
 import { SourceDeployResult, QueryResult, SourceRetrieveResult, RequestStatus } from './types';
-import { ComponentSet, resolveSource } from '../collections';
+import { ComponentSet } from '../collections';
 import { Connection } from '@salesforce/core';
 
 type WithNamespace = { namespace?: string };
@@ -54,7 +54,7 @@ export class ToolingApi {
     return this.retrieve({
       output: options.output,
       namespace: options.namespace,
-      components: resolveSource({ fsPaths: [options.paths[0]], registry: this.registry }),
+      components: ComponentSet.fromSource({ fsPaths: [options.paths[0]], registry: this.registry }),
     });
   }
 

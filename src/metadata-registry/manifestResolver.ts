@@ -10,6 +10,7 @@ import { RegistryAccess } from './registryAccess';
 import { NodeFSTreeContainer } from './treeContainers';
 import { TreeContainer } from './types';
 import { parse as parseXml } from 'fast-xml-parser';
+import { normalizeToArray } from '../utils';
 
 export interface PackageTypeMembers {
   name: string;
@@ -18,6 +19,16 @@ export interface PackageTypeMembers {
 
 export interface PackageManifest {
   types: PackageTypeMembers[];
+  version: string;
+}
+
+interface ParsedPackageTypeMembers {
+  name: string;
+  members: string | string[];
+}
+
+interface ParsedPackageManifest {
+  types: ParsedPackageTypeMembers | ParsedPackageTypeMembers[];
   version: string;
 }
 
@@ -43,23 +54,15 @@ export class ManifestResolver {
 
     const file = await this.tree.readFile(manifestPath);
 
-    let types: PackageTypeMembers[];
-    let apiVersion: string;
+    const parsedManifest: ParsedPackageManifest = parseXml(file.toString(), {
+      stopNodes: ['version'],
+    }).Package;
+    const packageTypeMembers = normalizeToArray(parsedManifest.types);
+    const apiVersion = parsedManifest.version;
 
-    try {
-      const parsedManifest = parseXml(file.toString(), {
-        stopNodes: ['version'],
-        arrayMode: 'strict',
-      }).Package[0];
-      types = parsedManifest.types;
-      apiVersion = parsedManifest.version;
-    } catch (e) {
-      throw new Error('Error parsing manifest file. Ensure it is properly formed');
-    }
-
-    for (const typeMembers of types) {
-      const typeName = typeMembers.name[0];
-      for (const fullName of typeMembers.members) {
+    for (const typeMembers of packageTypeMembers) {
+      const typeName = typeMembers.name;
+      for (const fullName of normalizeToArray(typeMembers.members)) {
         let type = this.registry.getTypeByName(typeName);
         // if there is no / delimiter and it's a type in folders, infer folder component
         if (type.folderType && !fullName.includes('/')) {

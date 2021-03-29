@@ -1,0 +1,97 @@
+/*
+ * Copyright (c) 2021, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
+import { join } from 'path';
+import { mockRegistry, mockRegistryData } from '.';
+import { VirtualTreeContainer } from '../../../src';
+import { VirtualFile } from '../../../src/metadata-registry/types';
+
+const { decomposedtoplevel, mixedcontentsinglefile, mixedcontentinfolder } = mockRegistryData.types;
+
+export const BASIC: VirtualFile = {
+  name: 'basic.xml',
+  data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>a</members>
+        <name>${decomposedtoplevel.name}</name>
+    </types>
+    <types>
+        <members>b</members>
+        <members>c</members>
+        <name>${mixedcontentsinglefile.name}</name>
+    </types>
+    <version>${mockRegistry.apiVersion}</version>
+</Package>\n`),
+};
+
+export const ONE_OF_EACH: VirtualFile = {
+  name: 'one-of-each.xml',
+  data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>a</members>
+        <name>${decomposedtoplevel.name}</name>
+    </types>
+    <types>
+        <members>b</members>
+        <name>${mixedcontentsinglefile.name}</name>
+    </types>
+    <version>${mockRegistry.apiVersion}</version>
+</Package>\n`),
+};
+
+export const ONE_FOLDER_COMPONENT: VirtualFile = {
+  name: 'one-folder-component.xml',
+  data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Test_Folder</members>
+        <name>${mixedcontentinfolder.name}</name>
+    </types>
+    <version>${mockRegistry.apiVersion}</version>
+</Package>\n`),
+};
+
+// malformed due to missing <types> tag containing component
+export const MALFORMED: VirtualFile = {
+  name: 'malformed.xml',
+  data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+        <members>Test_Folder</members>
+        <name>${mixedcontentinfolder.name}</asdf>
+    <version>${mockRegistry.apiVersion}</version>
+</Package>\n`),
+};
+
+export const TREE = new VirtualTreeContainer([
+  {
+    dirPath: '.',
+    children: [
+      'decomposedTopLevels',
+      'mixedSingleFiles',
+      BASIC,
+      ONE_OF_EACH,
+      MALFORMED,
+      // wildcardXml,
+      // singleMemberXml,
+      ONE_FOLDER_COMPONENT,
+    ],
+  },
+  {
+    dirPath: 'decomposedTopLevels',
+    children: ['a'],
+  },
+  {
+    dirPath: join('decomposedTopLevels', 'a'),
+    children: ['a.dtl-meta.xml', 'child1.g-meta.xml', 'child2.g-meta.xml'],
+  },
+  {
+    dirPath: 'mixedSingleFiles',
+    children: ['b.foo', 'b.mixedSingleFile-meta.xml', 'c.bar', 'c.mixedSingleFile-meta.xml'],
+  },
+]);

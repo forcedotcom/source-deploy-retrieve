@@ -45,8 +45,8 @@ export const ONE_OF_EACH: VirtualFile = {
 </Package>\n`),
 };
 
-export const ONE_FOLDER_COMPONENT: VirtualFile = {
-  name: 'one-folder-component.xml',
+export const ONE_FOLDER_MEMBER: VirtualFile = {
+  name: 'one-folder-member.xml',
   data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
@@ -57,13 +57,14 @@ export const ONE_FOLDER_COMPONENT: VirtualFile = {
 </Package>\n`),
 };
 
-// malformed due to missing <types> tag containing component
-export const MALFORMED: VirtualFile = {
-  name: 'malformed.xml',
+export const ONE_WILDCARD: VirtualFile = {
+  name: 'one-wildcard.xml',
   data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-        <members>Test_Folder</members>
-        <name>${mixedcontentinfolder.name}</asdf>
+    <types>
+        <members>*</members>
+        <name>${mixedcontentsinglefile.name}</name>
+    </types>
     <version>${mockRegistry.apiVersion}</version>
 </Package>\n`),
 };
@@ -76,10 +77,8 @@ export const TREE = new VirtualTreeContainer([
       'mixedSingleFiles',
       BASIC,
       ONE_OF_EACH,
-      MALFORMED,
-      // wildcardXml,
-      // singleMemberXml,
-      ONE_FOLDER_COMPONENT,
+      ONE_WILDCARD,
+      ONE_FOLDER_MEMBER,
     ],
   },
   {

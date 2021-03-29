@@ -10,7 +10,7 @@ import { createSandbox } from 'sinon';
 import { MetadataComponent } from '../../src';
 import { ManifestResolver, NodeFSTreeContainer, RegistryAccess } from '../../src/metadata-registry';
 import { mockRegistry, mockRegistryData } from '../mock/registry';
-import * as mockManifests from '../mock/registry/manifestFiles';
+import * as mockManifests from '../mock/registry/manifestConstants';
 
 const env = createSandbox();
 
@@ -21,11 +21,11 @@ describe('ManifestResolver', () => {
     it('should used expected default dependencies', async () => {
       const readFileStub = env.stub(NodeFSTreeContainer.prototype, 'readFile');
       const getTypeStub = env.stub(RegistryAccess.prototype, 'getTypeByName');
-      readFileStub.resolves(mockManifests.ONE_FOLDER_COMPONENT.data);
+      readFileStub.resolves(mockManifests.ONE_FOLDER_MEMBER.data);
       getTypeStub.returns(mockRegistryData.types.mciffolder);
 
       const resolver = new ManifestResolver();
-      const result = await resolver.resolve(mockManifests.ONE_FOLDER_COMPONENT.name);
+      const result = await resolver.resolve(mockManifests.ONE_FOLDER_MEMBER.name);
       const expected: MetadataComponent[] = [
         {
           fullName: 'Test_Folder',
@@ -64,7 +64,7 @@ describe('ManifestResolver', () => {
     it('should interpret a member of a type in folders with no delimiter as its corresponding folder type', async () => {
       const resolver = new ManifestResolver(mockManifests.TREE, mockRegistry);
 
-      const result = await resolver.resolve(mockManifests.ONE_FOLDER_COMPONENT.name);
+      const result = await resolver.resolve(mockManifests.ONE_FOLDER_MEMBER.name);
       const expected: MetadataComponent[] = [
         {
           fullName: 'Test_Folder',

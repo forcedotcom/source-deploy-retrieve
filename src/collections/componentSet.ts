@@ -121,7 +121,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   /**
    * Resolve components from a manifest file in XML format. Customize the resolution
    * process using an options object, such as resolving source-backed components
-   * when parsing the manifest file.
+   * and using the manifest file as a filter.
    *
    * see [Sample package.xml Manifest Files](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/manifest_samples.htm)
    *

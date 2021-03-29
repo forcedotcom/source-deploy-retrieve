@@ -18,13 +18,13 @@ import {
   NodeFSTreeContainer,
   RegistryAccess,
   SourceComponent,
+  TreeContainer,
 } from '../metadata-registry';
 import {
   PackageTypeMembers,
-  FromSourceOptions,
   FromManifestOptions,
   PackageManifestObject,
-  ResolveOptions,
+  FromSourceOptions,
 } from './types';
 import { ComponentLike } from '../common/types';
 import { LazyCollection } from './lazyCollection';
@@ -32,6 +32,16 @@ import { LazyCollection } from './lazyCollection';
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
 
+/**
+ * A collection containing no duplicate metadata members (`fullName` and `type` pairs). `ComponentSets`
+ * are a convinient way of constructing a unique collection of components to perform operations such as
+ * deploying and retrieving.
+ *
+ * Multiple {@link SourceComponent}s can be present in the set and correspond to the same member.
+ * This is typically the case when a component's source files are split across locations. For an example, see
+ * the [multiple package directories](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_mpd.htm)
+ * scenario.
+ */
 export class ComponentSet extends LazyCollection<MetadataComponent> {
   public static readonly WILDCARD = '*';
   private static readonly KEY_DELIMITER = '#';
@@ -49,15 +59,54 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   }
 
   /**
-   * Create a set by resolving components from source.
+   * Resolve metadata components from a file or directory path in a file system.
    *
-   * @param fsPath Path to resolve components from
-   * @param options
+   * @param fsPath File or directory path to resolve against
+   * @returns ComponentSet of source resolved components
    */
-  public static fromSource(fsPath: string, options: FromSourceOptions = {}): ComponentSet {
-    const ws = new ComponentSet(undefined, options.registry);
-    ws.resolveSourceComponents(fsPath, options);
-    return ws;
+  public static fromSource(fsPath: string): ComponentSet;
+  /**
+   * Resolve metadata components from multiple file paths or directory paths in a file system.
+   *
+   * @param fsPaths File or directory paths to resolve against
+   * @returns ComponentSet of source resolved components
+   */
+  public static fromSource(fsPaths: string[]): ComponentSet;
+  /**
+   * Resolve metadata components from file or directory paths in a file system.
+   * Customize the resolution process using an options object, such as specifying filters
+   * and resolving against a different file system abstraction (see {@link TreeContainer}).
+   *
+   * @param options
+   * @returns ComponentSet of source resolved components
+   */
+  public static fromSource(options: FromSourceOptions): ComponentSet;
+  public static fromSource(input: string | string[] | FromSourceOptions): ComponentSet {
+    let fsPaths = [];
+    let registry: RegistryAccess;
+    let tree: TreeContainer;
+    let inclusiveFilter: ComponentSet;
+
+    if (Array.isArray(input)) {
+      fsPaths = input;
+    } else if (typeof input === 'object') {
+      fsPaths = input.fsPaths;
+      registry = input.registry ?? registry;
+      tree = input.tree ?? tree;
+      inclusiveFilter = input.inclusiveFilter;
+    } else {
+      fsPaths = [input];
+    }
+
+    const resolver = new MetadataResolver(registry, tree);
+    const set = new ComponentSet([], registry);
+    for (const fsPath of fsPaths) {
+      for (const component of resolver.getComponentsFromPath(fsPath, inclusiveFilter)) {
+        set.add(component);
+      }
+    }
+
+    return set;
   }
 
   /**
@@ -65,13 +114,14 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * with the `resolve` option to resolve source files for the components.
    *
    * ```
-   * WorkingSet.fromManifestFile('/path/to/package.xml', {
+   * ComponentSet.fromManifestFile('/path/to/package.xml', {
    *  resolve: '/path/to/force-app'
    * });
    * ```
    *
    * @param fsPath Path to xml file
    * @param options
+   * @returns Promise of a ComponentSet
    */
   public static async fromManifestFile(
     fsPath: string,
@@ -102,12 +152,16 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     if (shouldResolve) {
       // if it's a string, don't iterate over the characters
-      const toResolve = typeof options.resolve === 'string' ? [options.resolve] : options.resolve;
-      for (const fsPath of toResolve) {
-        ws.resolveSourceComponents(fsPath, {
-          tree,
-          filter: filterSet,
-        });
+      const toResolve =
+        typeof options.resolve === 'string' ? [options.resolve] : Array.from(options.resolve);
+      const components = ComponentSet.fromSource({
+        fsPaths: toResolve,
+        tree,
+        inclusiveFilter: filterSet,
+        registry,
+      });
+      for (const component of components) {
+        ws.add(component);
       }
     }
 
@@ -141,6 +195,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * one source-backed component in the set to create an operation.
    *
    * @param options
+   * @returns Metadata API deploy operation
    */
   public deploy(options: DeploySetOptions): MetadataApiDeploy {
     const toDeploy = Array.from(this.getSourceComponents());
@@ -162,6 +217,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * Constructs a retrieve operation using the components in the set.
    *
    * @param options
+   * @returns Metadata API retrieve operation
    */
   public retrieve(options: RetrieveSetOptions): MetadataApiRetrieve {
     const operationOptions = Object.assign({}, options, {
@@ -175,6 +231,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
   /**
    * Get an object representation of a package manifest based on the set components.
+   *
+   * @returns Object representation of a package manifest
    */
   public getObject(): PackageManifestObject {
     const typeMap = new Map<string, string[]>();
@@ -207,32 +265,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   }
 
   /**
-   * Resolve source backed components and add them to the set.
-   *
-   * @param fsPath: File path to resolve
-   * @param options
-   */
-  public resolveSourceComponents(fsPath: string, options: ResolveOptions = {}): ComponentSet {
-    let filterSet: ComponentSet;
-
-    if (options?.filter) {
-      const { filter } = options;
-      filterSet = filter instanceof ComponentSet ? filter : new ComponentSet(filter);
-    }
-
-    const resolver = new MetadataResolver(this.registry, options?.tree);
-    const resolved = resolver.getComponentsFromPath(fsPath, filterSet);
-    const sourceComponents = new ComponentSet();
-
-    for (const component of resolved) {
-      this.add(component);
-      sourceComponents.add(component);
-    }
-
-    return sourceComponents;
-  }
-
-  /**
    * Create a manifest in xml format (package.xml) based on the set components.
    *
    * @param indentation Number of spaces to indent lines by.
@@ -248,6 +280,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     return XML_DECL.concat(j2x.parse(toParse));
   }
 
+  /**
+   * Get only the source-backed metadata components in the set.
+   *
+   * @param member Member to retrieve source-backed components for.
+   * @returns Collection of source-backed components
+   */
   public getSourceComponents(member?: ComponentLike): LazyCollection<SourceComponent> {
     let iter: Iterable<MetadataComponent>;
 
@@ -274,6 +312,19 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
   }
 
+  /**
+   * Tests whether or not a `fullName` and `type` pair is present in the set.
+   *
+   * A pair is considered present in the set if one of the following criteria is met:
+   *
+   * - The pair is directly in the set
+   * - A wilcard component with the same `type` as the pair
+   * - If a parent is attached to the pair and the parent is directly in the set
+   * - If a parent is attached to the pair, and a wildcard component's `type` matches the parent's `type`
+   *
+   * @param component Component to test for membership in the set
+   * @returns `true` if the component is in the set
+   */
   public has(component: ComponentLike): boolean {
     const isDirectlyInSet = this.components.has(this.simpleKey(component));
     if (isDirectlyInSet) {
@@ -327,6 +378,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
   }
 
+  /**
+   * Each {@link SourceComponent} counts as an element in the set, even if multiple
+   * ones map to the same `fullName` and `type` pair.
+   *
+   * @returns number of metadata components in the set
+   */
   get size(): number {
     let size = 0;
     for (const collection of this.components.values()) {

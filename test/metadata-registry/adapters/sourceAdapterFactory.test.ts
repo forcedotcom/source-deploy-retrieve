@@ -61,7 +61,7 @@ describe('SourceAdapterFactory', () => {
   });
 
   it('Should throw RegistryError for missing adapter', () => {
-    const type = mockRegistryData.types.genewilder;
+    const type = mockRegistryData.types.missingstrategies;
     assert.throws(
       () => factory.getAdapter(type),
       RegistryError,

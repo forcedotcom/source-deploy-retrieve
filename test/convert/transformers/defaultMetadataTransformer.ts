@@ -8,7 +8,6 @@ import {
   bundle,
   xmlInFolder,
   document,
-  gene,
   matchingContentFile,
   mockRegistry,
   mockRegistryData,
@@ -21,7 +20,6 @@ import { TestReadable } from '../../mock/convert/readables';
 import { expect } from 'chai';
 import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX } from '../../../src/common';
 import { SourceComponent, VirtualTreeContainer } from '../../../src';
-import { GENE_COMPONENT, GENE_XML_NAME } from '../../mock/registry/geneConstants';
 import {
   FOLDER_COMPONENT,
   FOLDER_COMPONENT_MD_FORMAT,
@@ -62,7 +60,7 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should strip the -meta.xml suffix for components with no content', async () => {
-      const component = SourceComponent.createVirtualComponent(gene.GENE_COMPONENT, []);
+      const component = SourceComponent.createVirtualComponent(xmlInFolder.COMPONENTS[0], []);
       const { directoryName } = component.type;
       const fileName = `${component.fullName}.${component.type.suffix}`;
       const expectedInfos: WriteInfo[] = [
@@ -151,7 +149,10 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should add in the -meta.xml suffix for components with no content', async () => {
-      const component = SourceComponent.createVirtualComponent(gene.GENE_MD_FORMAT_COMPONENT, []);
+      const component = SourceComponent.createVirtualComponent(
+        xmlInFolder.COMPONENTS_MD_FORMAT[0],
+        []
+      );
       const { directoryName } = component.type;
       const fileName = `${component.fullName}.${component.type.suffix}${META_XML_SUFFIX}`;
       const expectedInfos: WriteInfo[] = [
@@ -281,12 +282,12 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should use merge component xml path', async () => {
-      const mergeWith = GENE_COMPONENT;
+      const mergeWith = xmlInFolder.COMPONENTS[0];
       const component = SourceComponent.createVirtualComponent(
         {
-          name: 'a',
-          type: mockRegistryData.types.genewilder,
-          xml: join('path', 'to', 'another', 'genes', GENE_XML_NAME),
+          name: mergeWith.name,
+          type: mergeWith.type,
+          xml: join('path', 'to', 'another', mergeWith.type.directoryName, basename(mergeWith.xml)),
         },
         []
       );

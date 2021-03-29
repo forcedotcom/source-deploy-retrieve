@@ -142,7 +142,7 @@ describe('ComponentSet', () => {
           manifestPath: manifestFiles.ONE_OF_EACH.name,
           registry: mockRegistry,
           tree: manifestFiles.TREE,
-          resolvePaths: ['decomposedTopLevels', 'mixedSingleFiles'],
+          resolveSourcePaths: ['decomposedTopLevels', 'mixedSingleFiles'],
         });
 
         const result = set.toArray();
@@ -186,7 +186,7 @@ describe('ComponentSet', () => {
           manifestPath: manifestFiles.ONE_WILDCARD.name,
           registry: mockRegistry,
           tree: manifestFiles.TREE,
-          resolvePaths: ['.'],
+          resolveSourcePaths: ['.'],
           forceAddWildcards: false,
         });
 
@@ -204,7 +204,7 @@ describe('ComponentSet', () => {
           manifestPath: manifestFiles.ONE_WILDCARD.name,
           registry: mockRegistry,
           tree: manifestFiles.TREE,
-          resolvePaths: ['.'],
+          resolveSourcePaths: ['.'],
           forceAddWildcards: true,
         });
         const sourceComponents = new resolution.MetadataResolver(
@@ -226,7 +226,7 @@ describe('ComponentSet', () => {
           manifestPath: manifestFiles.ONE_FOLDER_MEMBER.name,
           registry: mockRegistry,
           tree: manifestFiles.TREE,
-          resolvePaths: ['.'],
+          resolveSourcePaths: ['.'],
         });
 
         const result = set.toArray();

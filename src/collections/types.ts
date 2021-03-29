@@ -39,7 +39,7 @@ export interface FromManifestOptions extends OptionalTreeRegistryOptions {
    * Paths to resolve source-backed components, using the manifest file to
    * indicate which components to include.
    */
-  resolvePaths?: string[];
+  resolveSourcePaths?: string[];
   /**
    * By default, wildcard members encoutered in the manifest are added to the set
    * e.g. `{ fullName: '*', type: 'ApexClass' }`. If `resolvePaths` is set,

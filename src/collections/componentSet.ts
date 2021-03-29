@@ -135,7 +135,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     const manifestResolver = new ManifestResolver(options.tree, options.registry);
     const manifest = await manifestResolver.resolve(manifestPath);
-    const resolveIncludeSet = options.resolvePaths
+    const resolveIncludeSet = options.resolveSourcePaths
       ? new ComponentSet([], options.registry)
       : undefined;
     const result = new ComponentSet([], options.registry);
@@ -146,14 +146,14 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         resolveIncludeSet.add(component);
       }
       const memberIsWildcard = component.fullName === ComponentSet.WILDCARD;
-      if (!memberIsWildcard || options.forceAddWildcards || !options.resolvePaths) {
+      if (!memberIsWildcard || options.forceAddWildcards || !options.resolveSourcePaths) {
         result.add(component);
       }
     }
 
-    if (options.resolvePaths) {
+    if (options.resolveSourcePaths) {
       const components = ComponentSet.fromSource({
-        fsPaths: options.resolvePaths,
+        fsPaths: options.resolveSourcePaths,
         tree: options.tree,
         include: resolveIncludeSet,
         registry: options.registry,

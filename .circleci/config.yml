@@ -3,7 +3,7 @@ version: 2.1
 
 orbs:
   win: circleci/windows@2.2.0
-  sfchangecase: salesforce/change-case-management@3
+  # sfchangecase: salesforce/change-case-management@3
   slack: circleci/slack@3.4.2
 
 parameters:
@@ -136,14 +136,14 @@ jobs:
       - restore_cache: *restore_cache
       - run: *gh-config
       - run: *install
-      - sfchangecase/install
+      # - sfchangecase/install
       - run: *gus-prepare-environment-variables
-      - sfchangecase/create:
-          location: REPO_LOCATION
-          release: GUS_RELEASE
-      - sfchangecase/check:
-          location: REPO_LOCATION
-          release: GUS_RELEASE
+      # - sfchangecase/create:
+      #     location: REPO_LOCATION
+      #     release: GUS_RELEASE
+      # - sfchangecase/check:
+      #     location: REPO_LOCATION
+      #     release: GUS_RELEASE
       - run: *build
       - run:
           name: Bump package version
@@ -164,9 +164,9 @@ jobs:
           command: |
             git tag v${RELEASE_VERSION}
             git push --tags
-      - sfchangecase/update:
-          location: REPO_LOCATION
-          release: GUS_RELEASE
+      # - sfchangecase/update:
+      #     location: REPO_LOCATION
+      #     release: GUS_RELEASE
       - slack/notify:
           channel: 'pdt_releases'
           color: '#9bcd9b'

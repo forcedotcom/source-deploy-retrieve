@@ -39,7 +39,7 @@ export abstract class MetadataTransfer<
     const mdapiTempDir = process.env.SFDX_MDAPI_TEMP_DIR;
     if (mdapiTempDir) {
       process.emitWarning(
-        'The SFDX_MDAPI_TEMP_DIR environment variable is set, which my degrade performance'
+        'The SFDX_MDAPI_TEMP_DIR environment variable is set, which may degrade performance'
       );
       this.logger.debug(`Converting metadata to: ${mdapiTempDir}`);
       try {

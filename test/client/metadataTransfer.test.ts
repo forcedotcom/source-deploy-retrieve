@@ -113,26 +113,6 @@ describe('MetadataTransfer', () => {
       expect(listenerStub.callCount).to.equal(1);
     });
 
-    it('should convert metadata to temp directory when the env var "SFDX_MDAPI_TEMP_DIR" is set', async () => {
-      try {
-        process.env.SFDX_MDAPI_TEMP_DIR = 'test';
-        const convertStub = env.stub(MetadataConverter.prototype, 'convert').resolves();
-
-        const { checkStatus } = operation.lifecycle;
-        checkStatus.resolves({ status: RequestStatus.Succeeded });
-
-        operation.onFinish(() => listenerStub());
-        await operation.start();
-
-        expect(checkStatus.callCount).to.equal(1);
-        expect(listenerStub.callCount).to.equal(1);
-        expect(convertStub.callCount).to.equal(1);
-        expect(getString(convertStub.firstCall.args[2], 'outputDirectory', '')).to.equal('test');
-      } finally {
-        delete process.env.SFDX_MDAPI_TEMP_DIR;
-      }
-    });
-
     it('should exit when request status is "Failed"', async () => {
       const { checkStatus } = operation.lifecycle;
       checkStatus.resolves({ status: RequestStatus.Failed });

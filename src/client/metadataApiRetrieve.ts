@@ -131,6 +131,8 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   }
 
   protected async post(result: MetadataApiRetrieveStatus): Promise<RetrieveResult> {
+    await this.maybeSaveTempDirectory();
+
     let components: ComponentSet;
     if (result.status === RequestStatus.Succeeded) {
       components = await this.extract(Buffer.from(result.zipFile, 'base64'));

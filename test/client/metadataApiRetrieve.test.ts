@@ -12,10 +12,15 @@ import { RetrieveResult } from '../../src/client/metadataApiRetrieve';
 import { ComponentStatus, FileResponse, MetadataApiRetrieveStatus } from '../../src/client/types';
 import { MetadataApiRetrieveError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
+import {
+  MOCK_DEFAULT_OUTPUT,
+  stubMetadataDeploy,
+  stubMetadataRetrieve,
+} from '../mock/client/transferOperations';
 import { matchingContentFile, mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
 import { COMPONENT } from '../mock/registry/matchingContentFileConstants';
 import { REGINA_COMPONENT } from '../mock/registry/reginaConstants';
+import { getString } from '@salesforce/ts-types';
 
 const env = createSandbox();
 
@@ -93,6 +98,25 @@ describe('MetadataApiRetrieve', async () => {
           outputDirectory: MOCK_DEFAULT_OUTPUT,
         })
       ).to.be.true;
+    });
+
+    it('should save the temp directory if the enviornment variable is set', async () => {
+      try {
+        process.env.SFDX_MDAPI_TEMP_DIR = 'test';
+        const component = COMPONENT;
+        const toRetrieve = new ComponentSet([component], mockRegistry);
+        const { operation, convertStub } = await stubMetadataRetrieve(env, {
+          toRetrieve,
+          merge: true,
+          successes: toRetrieve,
+        });
+
+        await operation.start();
+
+        expect(getString(convertStub.firstCall.args[2], 'outputDirectory', '')).to.equal('test');
+      } finally {
+        delete process.env.SFDX_MDAPI_TEMP_DIR;
+      }
     });
 
     it('should retrieve zip and merge with existing components', async () => {

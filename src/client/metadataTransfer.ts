@@ -9,7 +9,7 @@ import { EventEmitter } from 'events';
 import { ComponentSet } from '../collections';
 import { MetadataTransferError } from '../errors';
 import { MetadataRequestStatus, RequestStatus, MetadataTransferResult } from './types';
-import { MetadataConverter } from '../convert';
+import { MetadataConverter, SfdxFileFormat } from '../convert';
 
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
@@ -32,6 +32,25 @@ export abstract class MetadataTransfer<
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
+  public async maybeSaveTempDirectory(): Promise<void> {
+    const mdapiTempDir = process.env.SFDX_MDAPI_TEMP_DIR;
+    if (mdapiTempDir) {
+      process.emitWarning(
+        'The SFDX_MDAPI_TEMP_DIR environment variable is set, which my degrade performance'
+      );
+      this.logger.debug(`Converting metadata to: ${mdapiTempDir}`);
+      try {
+        const converter = new MetadataConverter();
+        await converter.convert(this.components.getSourceComponents().toArray(), 'metadata', {
+          type: 'directory',
+          outputDirectory: mdapiTempDir,
+        });
+      } catch (e) {
+        this.logger.debug(e);
+      }
+    }
+  }
+
   /**
    * Start the metadata transfer.
    *
@@ -39,20 +58,6 @@ export abstract class MetadataTransfer<
    */
   public async start(pollInterval = 100): Promise<Result | undefined> {
     try {
-      const mdapiTempDir = process.env.SFDX_MDAPI_TEMP_DIR;
-      if (mdapiTempDir) {
-        this.logger.debug(`Converting metadata to: ${mdapiTempDir}`);
-        try {
-          const converter = new MetadataConverter();
-          await converter.convert(Array.from(this.components.getSourceComponents()), 'metadata', {
-            type: 'directory',
-            outputDirectory: mdapiTempDir,
-          });
-        } catch (e) {
-          this.logger.debug(e);
-        }
-      }
-
       const { id } = await this.pre();
       const apiResult = await this.pollStatus(id, pollInterval);
 

@@ -13,6 +13,7 @@ import * as mixedContentInFolder from './mixedContentInFolderConstants';
 import * as mixedContentSingleFile from './mixedContentSingleFileConstants';
 import * as regina from './reginaConstants';
 import * as decomposedtoplevel from './decomposedTopLevelConstants';
+import * as dwayne from './dwayneConstants';
 export {
   xmlInFolder,
   document,
@@ -23,4 +24,5 @@ export {
   mixedContentSingleFile,
   regina,
   decomposedtoplevel,
+  dwayne,
 };

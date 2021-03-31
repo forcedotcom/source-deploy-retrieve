@@ -14,7 +14,6 @@ import { UnexpectedForceIgnore } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { RegistryTestUtil } from '../registryTestUtil';
 import { SourceComponent } from '../../../src/metadata-registry';
-import { parseMetadataXml } from '../../../src/utils/registry';
 
 // TODO: Remove when tests replace with TestAdapter
 class TestChildAdapter extends BaseSourceAdapter {
@@ -39,7 +38,7 @@ class TestAdapter extends BaseSourceAdapter {
   protected getRootMetadataXmlPath(): SourcePath {
     return this.component.xml;
   }
-  protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
+  protected populate(): SourceComponent {
     return this.component;
   }
 }

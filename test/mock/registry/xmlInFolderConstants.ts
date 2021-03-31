@@ -51,3 +51,8 @@ export const COMPONENTS_MD_FORMAT: SourceComponent[] = COMPONENT_NAMES.map(
       xml: XML_PATHS_MD_FORMAT[index],
     })
 );
+export const FOLDER_COMPONENT_MD_FORMAT = new SourceComponent({
+  name: COMPONENT_FOLDER_NAME,
+  type: folderType,
+  xml: join(TYPE_DIRECTORY, `${COMPONENT_FOLDER_NAME}${META_XML_SUFFIX}`),
+});

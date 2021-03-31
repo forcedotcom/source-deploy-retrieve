@@ -5,7 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { createSandbox } from 'sinon';
-import { ComponentSet, registryData, SourceComponent } from '../../src';
+import {
+  ComponentSet,
+  registryData,
+  SourceComponent,
+  DeployResult,
+  MetadataApiDeploy,
+} from '../../src';
 import {
   ComponentStatus,
   DeployMessage,
@@ -16,7 +22,6 @@ import {
 import { expect } from 'chai';
 import { basename, join } from 'path';
 import { MOCK_ASYNC_RESULT, stubMetadataDeploy } from '../mock/client/transferOperations';
-import { DeployResult, MetadataApiDeploy } from '../../src/client/metadataApiDeploy';
 import { mockRegistry, matchingContentFile } from '../mock/registry';
 import { META_XML_SUFFIX } from '../../src/common';
 import {

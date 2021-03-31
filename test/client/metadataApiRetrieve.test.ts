@@ -7,9 +7,14 @@
 import { fail } from 'assert';
 import { expect } from 'chai';
 import { createSandbox, match } from 'sinon';
-import { ComponentSet, SourceComponent } from '../../src';
-import { RetrieveResult } from '../../src/client/metadataApiRetrieve';
-import { ComponentStatus, FileResponse, MetadataApiRetrieveStatus } from '../../src/client/types';
+import {
+  RetrieveResult,
+  ComponentSet,
+  SourceComponent,
+  ComponentStatus,
+  FileResponse,
+  MetadataApiRetrieveStatus,
+} from '../../src';
 import { MetadataApiRetrieveError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';

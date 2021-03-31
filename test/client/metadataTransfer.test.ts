@@ -6,7 +6,7 @@
  */
 import { createSandbox, SinonFakeTimers, SinonStub } from 'sinon';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
-import { ComponentSet, MetadataConverter } from '../../src';
+import { ComponentSet } from '../../src';
 import { MetadataTransfer } from '../../src/client/metadataTransfer';
 import {
   MetadataRequestStatus,
@@ -18,7 +18,6 @@ import { expect } from 'chai';
 import { MetadataTransferError } from '../../src/errors';
 import { mockConnection } from '../mock/client';
 import { fail } from 'assert';
-import { getString } from '@salesforce/ts-types';
 
 const $$ = testSetup();
 const env = createSandbox();

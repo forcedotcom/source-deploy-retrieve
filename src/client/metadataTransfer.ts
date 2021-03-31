@@ -9,7 +9,7 @@ import { EventEmitter } from 'events';
 import { ComponentSet } from '../collections';
 import { MetadataTransferError } from '../errors';
 import { MetadataRequestStatus, RequestStatus, MetadataTransferResult } from './types';
-import { MetadataConverter, SfdxFileFormat } from '../convert';
+import { MetadataConverter } from '../convert';
 
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
@@ -26,7 +26,6 @@ export abstract class MetadataTransfer<
   private signalCancel = false;
   private event = new EventEmitter();
   private usernameOrConnection: string | Connection;
-  private logger: Logger;
   private apiVersion: string;
 
   constructor({ usernameOrConnection, components, apiVersion }: MetadataTransferOptions) {

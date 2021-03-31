@@ -189,7 +189,8 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
 
   constructor(options: MetadataApiDeployOptions) {
     super(options);
-    this.options = Object.assign({}, MetadataApiDeploy.DEFAULT_OPTIONS, options);
+    options.apiOptions = { ...MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions, ...options.apiOptions };
+    this.options = Object.assign({}, options);
   }
 
   protected async pre(): Promise<{ id: string }> {

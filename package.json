@@ -71,12 +71,14 @@
     "shx": "^0.3.2",
     "sinon": "^7.3.1",
     "source-map-support": "^0.5.16",
-    "typescript": "3.7.5"
+    "typedoc": "^0.20.33",
+    "typescript": "3.9.7"
   },
   "scripts": {
     "build": "shx rm -rf ./lib && tsc -b",
     "commit-init": "commitizen init cz-conventional-changelog --save-dev --save-exact --force",
     "commit": "git-cz",
+    "docs": "shx rm -rf ./docs/api && yarn typedoc",
     "format": "prettier --config .prettierrc --loglevel warn --write './{src,test,scripts}/**/*.{js,json,ts}'",
     "lint": "eslint -c .eslintrc.json --ext .ts ./src ./test",
     "local:install": "./scripts/localInstall.js install",

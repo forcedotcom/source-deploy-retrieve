@@ -37,10 +37,10 @@ class TestTransfer extends MetadataTransfer<MetadataRequestStatus, MetadataTrans
   protected async pre(): Promise<{ id: string }> {
     return this.lifecycle.pre();
   }
-  protected async checkStatus(id: string): Promise<MetadataRequestStatus> {
+  protected async checkStatus(): Promise<MetadataRequestStatus> {
     return this.lifecycle.checkStatus();
   }
-  protected async post(result: MetadataRequestStatus): Promise<MetadataTransferResult> {
+  protected async post(): Promise<MetadataTransferResult> {
     return this.lifecycle.post();
   }
   protected doCancel(): Promise<boolean> {
@@ -95,6 +95,32 @@ describe('MetadataTransfer', () => {
     await operation.start();
 
     expect(operation.lifecycle.pre.firstCall.args[0]).to.equal(connection);
+  });
+
+  it('should initialize a Connection with overridden apiVersion if a username is given', async () => {
+    class TestTransferConnection extends TestTransfer {
+      protected async pre(): Promise<{ id: string }> {
+        const connection = await this.getConnection();
+        return this.lifecycle.pre(connection);
+      }
+    }
+    const apiVersion = '50.0';
+    const testData = new MockTestOrgData();
+    $$.setConfigStubContents('AuthInfoConfig', { contents: await testData.getConfig() });
+    const authInfo = await AuthInfo.create({ username: 'foo@example.com' });
+    env.stub(AuthInfo, 'create').withArgs({ username: 'foo@example.com' }).resolves(authInfo);
+    env.stub(Connection, 'create').withArgs({ authInfo }).resolves(connection);
+    const setApiVersionSpy = env.spy(Connection.prototype, 'setApiVersion');
+    operation = new TestTransferConnection({
+      components: new ComponentSet(),
+      usernameOrConnection: 'foo@example.com',
+      apiVersion,
+    });
+
+    await operation.start();
+
+    expect(operation.lifecycle.pre.firstCall.args[0]).to.equal(connection);
+    expect(setApiVersionSpy.calledWith(apiVersion)).to.equal(true);
   });
 
   describe('Polling and Event Listeners', () => {

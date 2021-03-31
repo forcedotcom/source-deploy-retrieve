@@ -12,12 +12,8 @@ import { RetrieveResult } from '../../src/client/metadataApiRetrieve';
 import { ComponentStatus, FileResponse, MetadataApiRetrieveStatus } from '../../src/client/types';
 import { MetadataApiRetrieveError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import {
-  MOCK_DEFAULT_OUTPUT,
-  stubMetadataDeploy,
-  stubMetadataRetrieve,
-} from '../mock/client/transferOperations';
-import { matchingContentFile, mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
+import { MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
+import { mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
 import { COMPONENT } from '../mock/registry/matchingContentFileConstants';
 import { REGINA_COMPONENT } from '../mock/registry/reginaConstants';
 import { getString } from '@salesforce/ts-types';

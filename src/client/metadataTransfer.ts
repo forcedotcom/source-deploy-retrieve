@@ -14,6 +14,7 @@ import { MetadataConverter, SfdxFileFormat } from '../convert';
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
   components: ComponentSet;
+  apiVersion?: string;
 }
 
 export abstract class MetadataTransfer<
@@ -21,14 +22,17 @@ export abstract class MetadataTransfer<
   Result extends MetadataTransferResult
 > {
   protected components: ComponentSet;
+  protected logger: Logger;
   private signalCancel = false;
   private event = new EventEmitter();
   private usernameOrConnection: string | Connection;
   private logger: Logger;
+  private apiVersion: string;
 
-  constructor({ usernameOrConnection, components }: MetadataTransferOptions) {
+  constructor({ usernameOrConnection, components, apiVersion }: MetadataTransferOptions) {
     this.usernameOrConnection = usernameOrConnection;
     this.components = components;
+    this.apiVersion = apiVersion;
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
@@ -103,6 +107,10 @@ export abstract class MetadataTransfer<
       this.usernameOrConnection = await Connection.create({
         authInfo: await AuthInfo.create({ username: this.usernameOrConnection }),
       });
+      if (this.apiVersion) {
+        this.usernameOrConnection.setApiVersion(this.apiVersion);
+        this.logger.debug(`Overriding apiVersion to: ${this.apiVersion}`);
+      }
     }
     return this.usernameOrConnection;
   }

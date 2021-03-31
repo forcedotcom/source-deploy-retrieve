@@ -158,20 +158,6 @@ export const mockRegistryData = {
         decomposition: 'folderPerType',
       },
     },
-    seanconnerys: {
-      id: 'seanconnerys',
-      directoryName: 'seans',
-      inFolder: true,
-      name: 'SeanConnery',
-      suffix: 'sean',
-    },
-    seanfolder: {
-      id: 'seanfolder',
-      directoryName: 'seans',
-      inFolder: false,
-      name: 'SeanFolder',
-      suffix: 'seanfolder',
-    },
     mixedcontentsinglefile: {
       id: 'mixedcontentsinglefile',
       directoryName: 'mixedSingleFiles',
@@ -231,7 +217,6 @@ export const mockRegistryData = {
     missing: 'typewithoutdef',
     mcifFolder: 'mciffolder',
     reginaking: 'regina',
-    sean: 'seanconnerys',
     mcif: 'mixedcontentinfolder',
     mixedSingleFile: 'mixedcontentsinglefile',
     dtl: 'decomposedtoplevel',
@@ -265,7 +250,6 @@ import * as taraji from './tarajiConstants';
 import * as mixedContentInFolder from './mixedContentInFolderConstants';
 import * as mixedContentSingleFile from './mixedContentSingleFileConstants';
 import * as regina from './reginaConstants';
-import * as sean from './seanConstants';
 import * as decomposedtoplevel from './decomposedTopLevelConstants';
 export {
   xmlInFolder,
@@ -276,7 +260,6 @@ export {
   mixedContentInFolder,
   mixedContentSingleFile,
   regina,
-  sean,
   decomposedtoplevel,
 };
 

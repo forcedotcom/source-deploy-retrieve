@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import { join } from 'path';
 import { JsToXml } from '../../../src/convert/streams';
-import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/registry/decomposedTopLevelConstants';
+import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/registry/type-constants/decomposedTopLevelConstants';
 import { ComponentSet, SourceComponent } from '../../../src';
 import { XML_NS_URL, XML_NS_KEY } from '../../../src/common';
 import { ConvertContext } from '../../../src/convert/convertContext';

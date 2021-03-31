@@ -34,14 +34,14 @@ import {
   REGINA_XML_PATH,
   REGINA_CHILD_DIR_PATH,
   REGINA_CHILD_XML_PATH_2,
-} from '../mock/registry/reginaConstants';
+} from '../mock/registry/type-constants/reginaConstants';
 import {
   TARAJI_COMPONENT,
   TARAJI_CONTENT_PATH,
   TARAJI_DIR,
   TARAJI_VIRTUAL_FS,
   TARAJI_XML_PATHS,
-} from '../mock/registry/tarajiConstants';
+} from '../mock/registry/type-constants/tarajiConstants';
 import { ComponentSet } from '../../src';
 
 const testUtil = new RegistryTestUtil();

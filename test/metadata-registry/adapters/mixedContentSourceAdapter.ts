@@ -20,7 +20,10 @@ import { MixedContentSourceAdapter } from '../../../src/metadata-registry/adapte
 import { ExpectedSourceFilesError } from '../../../src/errors';
 import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
 import { SourceComponent } from '../../../src/metadata-registry';
-import { TARAJI_VIRTUAL_FS_NO_XML, TARAJI_CONTENT_PATH } from '../../mock/registry/tarajiConstants';
+import {
+  TARAJI_VIRTUAL_FS_NO_XML,
+  TARAJI_CONTENT_PATH,
+} from '../../mock/registry/type-constants/tarajiConstants';
 
 describe('MixedContentSourceAdapter', () => {
   it('Should throw ExpectedSourceFilesError if content does not exist', () => {

@@ -69,16 +69,6 @@ commands:
             find . -name "*.tgz" -type f -exec cp {} ./artifact \;
       - store_artifacts:
           path: ./artifact
-  
-  bump-package-version:
-    name: Bump package version
-    command: |
-      yarn version --<< pipeline.parameters.publish-type >> --no-git-tag-version
-      git add package.json
-      export RELEASE_TAG="$(node -pe "require('./package.json').version")"
-      echo "export RELEASE_VERSION=$RELEASE_TAG" >> $BASH_ENV
-      source $BASH_ENV
-      git commit -m "chore: updated version $RELEASE_TAG"
 
 jobs:
   node-latest: &node-test
@@ -156,36 +146,32 @@ jobs:
       - release-management/change-case-create
       - run:
           when: on_fail
-          steps:
-            - run: 
-                name: Close CTC case as Not Implemented
-                command: |
-                  if [ -z "${SF_CHANGE_CASE_SFDX_AUTH_URL}" ] || [ -z "${SF_CHANGE_CASE_TEMPLATE_ID}" ] || [ -z "${SF_CHANGE_CASE_SCHEDULE_BUILD}" ]; then
-                    echo "Environment not configured for CTC"
-                  else
-                    sfchangecase close --location "https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME" --status "Not Implemented"
-                  fi
-            - slack/notify:
-                channel: 'pdt_releases'
-                color: '#EE0808'
-                message: 'SDR Library v${RELEASE_VERSION} change case logic not implemented'
-        - run:
-            when: on_success
-            steps:
-             - run:
-                name: All Good! Close CTC case/implementations
-                command: |
-                  if [ -z "${SF_CHANGE_CASE_SFDX_AUTH_URL}" ] || [ -z "${SF_CHANGE_CASE_TEMPLATE_ID}" ] || [ -z "${SF_CHANGE_CASE_SCHEDULE_BUILD}" ]; then
-                    echo "Environment not configured for CTC"
-                  else
-                    sfchangecase close --location "https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME"
-                  fi
-            - slack/notify:
-                channel: 'pdt_releases'
-                color: '#9bcd9b'
-                message: 'SDR Library v${RELEASE_VERSION} change case implemented'
+          name: Close CTC case as Not Implemented
+          command: |
+            if [ -z "${SF_CHANGE_CASE_SFDX_AUTH_URL}" ] || [ -z "${SF_CHANGE_CASE_TEMPLATE_ID}" ] || [ -z "${SF_CHANGE_CASE_SCHEDULE_BUILD}" ]; then
+              echo "Environment not configured for CTC"
+            else
+              sfchangecase close --location "https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME" --status "Not Implemented"
+            fi
+      - run:
+          when: on_success
+          name: All Good! Close CTC case/implementations
+          command: |
+            if [ -z "${SF_CHANGE_CASE_SFDX_AUTH_URL}" ] || [ -z "${SF_CHANGE_CASE_TEMPLATE_ID}" ] || [ -z "${SF_CHANGE_CASE_SCHEDULE_BUILD}" ]; then
+              echo "Environment not configured for CTC"
+            else
+              sfchangecase close --location "https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME"
+            fi
       - run: *build
-      - bump-package-version
+      - run:
+          name: Bump package version
+          command: |
+            yarn version --<< pipeline.parameters.publish-type >> --no-git-tag-version
+            git add package.json
+            export RELEASE_TAG="$(node -pe "require('./package.json').version")"
+            echo "export RELEASE_VERSION=$RELEASE_TAG" >> $BASH_ENV
+            source $BASH_ENV
+            git commit -m "chore: updated version $RELEASE_TAG"
       - run:
           name: Set .npmrc
           command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc

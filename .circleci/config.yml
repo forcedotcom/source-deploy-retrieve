@@ -3,7 +3,7 @@ version: 2.1
 
 orbs:
   win: circleci/windows@2.2.0
-  # sfchangecase: salesforce/change-case-management@3
+  release-management: salesforce/npm-release-management@4
   slack: circleci/slack@3.4.2
 
 parameters:
@@ -56,7 +56,7 @@ _refs:
     name: 'Prepare environment variables for GUS Change Case Management'
     command: |
       export GUS_BUILD="$(node -pe "require('./package.json').gusBuild")"
-      echo "export GUS_RELEASE=offcore.tooling.$GUS_BUILD" >> $BASH_ENV
+      echo "export SF_CHANGE_CASE_SCHEDULE_BUILD=offcore.tooling.$GUS_BUILD" >> $BASH_ENV
 
 commands:
   build-artifact:
@@ -69,6 +69,17 @@ commands:
             find . -name "*.tgz" -type f -exec cp {} ./artifact \;
       - store_artifacts:
           path: ./artifact
+  
+  bump-package-version:
+    name: Bump package version
+    command: |
+      yarn version --<< pipeline.parameters.publish-type >> --no-git-tag-version
+      git add package.json
+      export RELEASE_TAG="$(node -pe "require('./package.json').version")"
+      echo "export RELEASE_VERSION=$RELEASE_TAG" >> $BASH_ENV
+      source $BASH_ENV
+      git commit -m "chore: updated version $RELEASE_TAG"
+
 jobs:
   node-latest: &node-test
     docker:
@@ -85,10 +96,12 @@ jobs:
       - store_test_results:
           path: test-results
       - build-artifact
+
   node-12:
     <<: *node-test
     docker:
       - image: node:12
+
   cache:
     <<: *node-test
     steps:
@@ -100,6 +113,7 @@ jobs:
             - ~/cli/node_modules
             - /usr/local/share/.cache/yarn
             - /usr/local/share/.config/yarn
+
   run-win-tests:
     description: 'Run tests on Windows'
     executor: win/default
@@ -124,6 +138,7 @@ jobs:
           shell: bash.exe
       - store_test_results:
           path: test-results
+
   publish:
     <<: *defaults
     steps:
@@ -136,24 +151,41 @@ jobs:
       - restore_cache: *restore_cache
       - run: *gh-config
       - run: *install
-      # - sfchangecase/install
+      - release-management/install-change-case-mgmt
       - run: *gus-prepare-environment-variables
-      # - sfchangecase/create:
-      #     location: REPO_LOCATION
-      #     release: GUS_RELEASE
-      # - sfchangecase/check:
-      #     location: REPO_LOCATION
-      #     release: GUS_RELEASE
-      - run: *build
+      - release-management/change-case-create
       - run:
-          name: Bump package version
-          command: |
-            yarn version --<< pipeline.parameters.publish-type >> --no-git-tag-version
-            git add package.json
-            export RELEASE_TAG="$(node -pe "require('./package.json').version")"
-            echo "export RELEASE_VERSION=$RELEASE_TAG" >> $BASH_ENV
-            source $BASH_ENV
-            git commit -m "chore: updated version $RELEASE_TAG"
+          when: on_fail
+          steps:
+            - run: 
+                name: Close CTC case as Not Implemented
+                command: |
+                  if [ -z "${SF_CHANGE_CASE_SFDX_AUTH_URL}" ] || [ -z "${SF_CHANGE_CASE_TEMPLATE_ID}" ] || [ -z "${SF_CHANGE_CASE_SCHEDULE_BUILD}" ]; then
+                    echo "Environment not configured for CTC"
+                  else
+                    sfchangecase close --location "https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME" --status "Not Implemented"
+                  fi
+            - slack/notify:
+                channel: 'pdt_releases'
+                color: '#EE0808'
+                message: 'SDR Library v${RELEASE_VERSION} change case logic not implemented'
+        - run:
+            when: on_success
+            steps:
+             - run:
+                name: All Good! Close CTC case/implementations
+                command: |
+                  if [ -z "${SF_CHANGE_CASE_SFDX_AUTH_URL}" ] || [ -z "${SF_CHANGE_CASE_TEMPLATE_ID}" ] || [ -z "${SF_CHANGE_CASE_SCHEDULE_BUILD}" ]; then
+                    echo "Environment not configured for CTC"
+                  else
+                    sfchangecase close --location "https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME"
+                  fi
+            - slack/notify:
+                channel: 'pdt_releases'
+                color: '#9bcd9b'
+                message: 'SDR Library v${RELEASE_VERSION} change case implemented'
+      - run: *build
+      - bump-package-version
       - run:
           name: Set .npmrc
           command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
@@ -164,9 +196,6 @@ jobs:
           command: |
             git tag v${RELEASE_VERSION}
             git push --tags
-      # - sfchangecase/update:
-      #     location: REPO_LOCATION
-      #     release: GUS_RELEASE
       - slack/notify:
           channel: 'pdt_releases'
           color: '#9bcd9b'

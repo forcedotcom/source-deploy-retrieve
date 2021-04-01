@@ -4,14 +4,14 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { AuthInfo, Connection, Logger } from '@salesforce/core';
+import { AuthInfo, Connection, fs, Logger } from '@salesforce/core';
 import { EventEmitter } from 'events';
 import { ComponentSet } from '../collections';
 import { MetadataTransferError } from '../errors';
 import { MetadataRequestStatus, RequestStatus, MetadataTransferResult } from './types';
-import { MetadataConverter } from '../convert';
+import { MetadataConverter, SfdxFileFormat } from '../convert';
 import { SourceComponent } from '../metadata-registry';
-
+import { join } from 'path';
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
   components: ComponentSet;
@@ -83,7 +83,7 @@ export abstract class MetadataTransfer<
     this.event.on('error', subscriber);
   }
 
-  protected async maybeSaveTempDirectory(cs?: SourceComponent[]): Promise<void> {
+  protected async maybeSaveTempDirectory(target: SfdxFileFormat, cs?: ComponentSet): Promise<void> {
     const mdapiTempDir = process.env.SFDX_MDAPI_TEMP_DIR;
     if (mdapiTempDir) {
       process.emitWarning(
@@ -93,12 +93,22 @@ export abstract class MetadataTransfer<
         `Converting metadata to: ${mdapiTempDir} because the SFDX_MDAPI_TEMP_DIR is set`
       );
       try {
-        const source = cs || this.components.getSourceComponents().toArray();
+        const source = cs || this.components;
         const converter = new MetadataConverter();
-        await converter.convert(source, 'metadata', {
-          type: 'directory',
-          outputDirectory: mdapiTempDir,
-        });
+        if (target === 'source') {
+          await converter.convert(source.getSourceComponents().toArray(), target, {
+            type: 'directory',
+            outputDirectory: mdapiTempDir,
+          });
+          // for source convert the package.xml isn't included, we'll write that separately
+
+          fs.writeFileSync(join(mdapiTempDir, 'package.xml'), source.getPackageXml());
+        } else {
+          await converter.convert(source.getSourceComponents().toArray(), target, {
+            type: 'directory',
+            outputDirectory: mdapiTempDir,
+          });
+        }
       } catch (e) {
         this.logger.debug(e);
       }

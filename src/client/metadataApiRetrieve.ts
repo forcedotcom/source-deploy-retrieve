@@ -138,7 +138,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
 
     components = components ?? new ComponentSet(undefined, this.options.registry);
 
-    await this.maybeSaveTempDirectory(components.getSourceComponents().toArray());
+    await this.maybeSaveTempDirectory('source', components);
 
     return new RetrieveResult(result, components);
   }

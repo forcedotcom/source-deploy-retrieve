@@ -201,7 +201,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
       { type: 'zip' }
     );
     const connection = await this.getConnection();
-    await this.maybeSaveTempDirectory();
+    await this.maybeSaveTempDirectory('metadata');
     const result = await connection.metadata.deploy(zipBuffer, this.options.apiOptions);
     this.deployId = result.id;
     return result;

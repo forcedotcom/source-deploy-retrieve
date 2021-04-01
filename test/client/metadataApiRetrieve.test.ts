@@ -101,11 +101,10 @@ describe('MetadataApiRetrieve', async () => {
       ).to.be.true;
     });
 
-    it('should save the temp directory if the enviornment variable is set', async () => {
+    it('should save the temp directory if the environment variable is set', async () => {
       try {
         process.env.SFDX_MDAPI_TEMP_DIR = 'test';
-        const component = COMPONENT;
-        const toRetrieve = new ComponentSet([component], mockRegistry);
+        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
         const { operation, convertStub } = await stubMetadataRetrieve(env, {
           toRetrieve,
           merge: true,
@@ -114,10 +113,23 @@ describe('MetadataApiRetrieve', async () => {
 
         await operation.start();
 
-        expect(getString(convertStub.firstCall.args[2], 'outputDirectory', '')).to.equal('test');
+        expect(getString(convertStub.secondCall.args[2], 'outputDirectory', '')).to.equal('test');
       } finally {
         delete process.env.SFDX_MDAPI_TEMP_DIR;
       }
+    });
+
+    it('should NOT save the temp directory if the environment variable is NOT set', async () => {
+      const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+      const { operation, convertStub } = await stubMetadataRetrieve(env, {
+        toRetrieve,
+        merge: true,
+        successes: toRetrieve,
+      });
+
+      await operation.start();
+      // if the env var is set the callCount will be 2
+      expect(convertStub.callCount).to.equal(1);
     });
 
     it('should retrieve zip and merge with existing components', async () => {

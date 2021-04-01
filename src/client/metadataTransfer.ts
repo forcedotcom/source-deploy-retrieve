@@ -10,6 +10,7 @@ import { ComponentSet } from '../collections';
 import { MetadataTransferError } from '../errors';
 import { MetadataRequestStatus, RequestStatus, MetadataTransferResult } from './types';
 import { MetadataConverter } from '../convert';
+import { SourceComponent } from '../metadata-registry';
 
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
@@ -33,25 +34,6 @@ export abstract class MetadataTransfer<
     this.components = components;
     this.apiVersion = apiVersion;
     this.logger = Logger.childFromRoot(this.constructor.name);
-  }
-
-  public async maybeSaveTempDirectory(): Promise<void> {
-    const mdapiTempDir = process.env.SFDX_MDAPI_TEMP_DIR;
-    if (mdapiTempDir) {
-      process.emitWarning(
-        'The SFDX_MDAPI_TEMP_DIR environment variable is set, which may degrade performance'
-      );
-      this.logger.debug(`Converting metadata to: ${mdapiTempDir}`);
-      try {
-        const converter = new MetadataConverter();
-        await converter.convert(this.components.getSourceComponents().toArray(), 'metadata', {
-          type: 'directory',
-          outputDirectory: mdapiTempDir,
-        });
-      } catch (e) {
-        this.logger.debug(e);
-      }
-    }
   }
 
   /**
@@ -99,6 +81,28 @@ export abstract class MetadataTransfer<
 
   public onError(subscriber: (result: Error) => void): void {
     this.event.on('error', subscriber);
+  }
+
+  protected async maybeSaveTempDirectory(cs?: SourceComponent[]): Promise<void> {
+    const mdapiTempDir = process.env.SFDX_MDAPI_TEMP_DIR;
+    if (mdapiTempDir) {
+      process.emitWarning(
+        'The SFDX_MDAPI_TEMP_DIR environment variable is set, which may degrade performance'
+      );
+      this.logger.debug(
+        `Converting metadata to: ${mdapiTempDir} because the SFDX_MDAPI_TEMP_DIR is set`
+      );
+      try {
+        const source = cs || this.components.getSourceComponents().toArray();
+        const converter = new MetadataConverter();
+        await converter.convert(source, 'metadata', {
+          type: 'directory',
+          outputDirectory: mdapiTempDir,
+        });
+      } catch (e) {
+        this.logger.debug(e);
+      }
+    }
   }
 
   protected async getConnection(): Promise<Connection> {

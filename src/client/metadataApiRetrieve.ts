@@ -131,16 +131,16 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   }
 
   protected async post(result: MetadataApiRetrieveStatus): Promise<RetrieveResult> {
-    await this.maybeSaveTempDirectory();
-
     let components: ComponentSet;
     if (result.status === RequestStatus.Succeeded) {
       components = await this.extract(Buffer.from(result.zipFile, 'base64'));
     }
-    return new RetrieveResult(
-      result,
-      components ?? new ComponentSet(undefined, this.options.registry)
-    );
+
+    components = components ?? new ComponentSet(undefined, this.options.registry);
+
+    await this.maybeSaveTempDirectory(components.getSourceComponents().toArray());
+
+    return new RetrieveResult(result, components);
   }
 
   protected async doCancel(): Promise<boolean> {

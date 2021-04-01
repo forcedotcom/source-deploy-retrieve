@@ -80,6 +80,18 @@ describe('MetadataApiDeploy', () => {
       }
     });
 
+    it('should NOT save the temp directory if the enviornment variable is NOT set', async () => {
+      const components = new ComponentSet([matchingContentFile.COMPONENT]);
+      const { operation, convertStub } = await stubMetadataDeploy(env, {
+        components,
+      });
+
+      await operation.start();
+
+      // if the env var is set the callCount will be 2
+      expect(convertStub.callCount).to.equal(1);
+    });
+
     it('should construct a result object with deployed components', async () => {
       const component = matchingContentFile.COMPONENT;
       const deployedComponents = new ComponentSet([component], mockRegistry);

@@ -90,7 +90,7 @@ export abstract class MetadataTransfer<
         'The SFDX_MDAPI_TEMP_DIR environment variable is set, which may degrade performance'
       );
       this.logger.debug(
-        `Converting metadata to: ${mdapiTempDir} because the SFDX_MDAPI_TEMP_DIR is set`
+        `Converting metadata to: ${mdapiTempDir} because the SFDX_MDAPI_TEMP_DIR environment variable is set`
       );
       try {
         const source = cs || this.components;

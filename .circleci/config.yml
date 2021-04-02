@@ -13,6 +13,9 @@ parameters:
   publish-type:
     type: string
     default: patch
+  scheduled-build:
+    type: string
+    default: ''
 
 _refs:
   defaults: &defaults
@@ -55,7 +58,7 @@ _refs:
   gus-prepare-environment-variables: &gus-prepare-environment-variables
     name: 'Prepare environment variables for GUS Change Case Management'
     command: |
-      export GUS_BUILD="$(node -pe "require('./package.json').gusBuild")"
+      export GUS_BUILD="<< pipeline.parameters.scheduled-build >>"
       echo "export SF_CHANGE_CASE_SCHEDULE_BUILD=offcore.tooling.$GUS_BUILD" >> $BASH_ENV
 
 commands:

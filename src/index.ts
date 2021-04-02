@@ -35,7 +35,7 @@ export {
   VirtualDirectory,
   ForceIgnore,
 } from './resolution';
-export { MetadataType, MetadataComponent, SourcePath } from './common';
+export { MetadataComponent, SourcePath } from './common';
 export {
   ComponentSet,
   FromManifestOptions,
@@ -43,4 +43,4 @@ export {
   DeploySetOptions,
   RetrieveSetOptions,
 } from './collections';
-export { RegistryAccess, registryData } from './registry';
+export { MetadataType, RegistryAccess, registryData } from './registry';

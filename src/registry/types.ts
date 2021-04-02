@@ -1,0 +1,103 @@
+/*
+ * Copyright (c) 2021, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
+export type MetadataType = {
+  id: string;
+  name: string;
+  /**
+   * Name of the directory where components are located in a package
+   */
+  directoryName?: string;
+  /**
+   * Whether or not components are stored in folders.
+   *
+   * __Examples:__ Reports, Dashboards, Documents, EmailTemplates
+   * @deprecated use `folderType` to get the related folder type, if one exists
+   */
+  inFolder?: boolean;
+  /**
+   * File suffix
+   *
+   * Some types may not have one, such as those made up of varying file extensions.
+   *
+   * __Examples:__ LightningComponentBundles, Documents, StaticResources
+   */
+  suffix?: string;
+  /**
+   * Whether or not components are required to reside in a folder named after the type's directoryName.
+   */
+  strictDirectoryName?: boolean;
+  /**
+   * If the type is a folder type (container for components), the id of the type it is a container for.
+   */
+  folderContentType?: string;
+  /**
+   * If the type is contained in folders, the id of the type that contains it.
+   */
+  folderType?: string;
+  /**
+   * Type definitions for child types, if the type has any.
+   *
+   * __Examples:__ `CustomField` and `CompactLayout` on `CustomObject`
+   */
+  children?: {
+    types: TypeIndex;
+    suffixes: SuffixIndex;
+    directories?: DirectoryIndex;
+  };
+  /**
+   * Configuration for resolving and converting components of the type.
+   */
+  strategies?: {
+    adapter: string;
+    transformer?: string;
+    decomposition?: string;
+  };
+};
+
+/**
+ * Metadata type definitions
+ */
+export type TypeIndex = { [typeId: string]: MetadataType };
+/**
+ * Mapping of metadata suffixes -> type ids.
+ */
+export type SuffixIndex = { [suffix: string]: string };
+
+export type DirectoryIndex = { [directoryName: string]: string };
+
+export const enum DecompositionStrategy {
+  /**
+   * Elements of child types are decomposed to the same folder the parent object is in
+   */
+  TopLevel = 'topLevel',
+  /**
+   * Elements of child types are decomposed into folders of their respective types
+   */
+  FolderPerType = 'folderPerType',
+}
+
+export const enum TransformerStrategy {
+  Standard = 'standard',
+  Decomposed = 'decomposed',
+  StaticResource = 'staticResource',
+}
+
+/**
+ * Schema of the registry data.
+ */
+export type MetadataRegistry = {
+  types: TypeIndex;
+  suffixes?: SuffixIndex;
+  strictDirectoryNames: {
+    [directoryName: string]: string;
+  };
+  childTypes: {
+    [childTypeId: string]: string;
+  };
+  apiVersion: string;
+};

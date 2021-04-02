@@ -9,7 +9,7 @@ import { SourcePath } from '../../common';
 import { parseMetadataXml } from '../../utils/registry';
 import { SourceComponent } from '../sourceComponent';
 import { baseName } from '../../utils';
-import { DecompositionStrategy } from '../types';
+import { DecompositionStrategy } from '../../registry';
 
 /**
  * Handles decomposed types. A flavor of mixed content where a component can

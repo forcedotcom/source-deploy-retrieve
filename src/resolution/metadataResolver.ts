@@ -12,10 +12,11 @@ import { parseMetadataXml } from '../utils/registry';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
-import { MetadataType, SourcePath } from '../common';
+import { SourcePath } from '../common';
 import { NodeFSTreeContainer } from './treeContainers';
 import { RegistryAccess } from '../registry/registryAccess';
 import { ComponentSet } from '../collections';
+import { MetadataType } from '../registry';
 
 /**
  * Resolver for metadata type and component objects.

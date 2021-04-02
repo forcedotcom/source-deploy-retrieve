@@ -5,10 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as registry from './registry.json';
-import { MetadataType } from '../common';
 import { RegistryError } from '../errors';
-import { MetadataRegistry } from '../resolution/types';
 import { deepFreeze } from '../utils';
+import { MetadataRegistry, MetadataType } from './types';
 
 /**
  * Object of the raw metadata registry data.

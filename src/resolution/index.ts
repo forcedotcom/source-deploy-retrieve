@@ -6,7 +6,6 @@
  */
 export { MetadataResolver } from './metadataResolver';
 export { ManifestResolver } from './manifestResolver';
-export { RegistryAccess } from '../registry/registryAccess';
 export { ManifestGenerator } from './manifestGenerator';
 export {
   BaseTreeContainer,
@@ -15,16 +14,5 @@ export {
   ZipTreeContainer,
 } from './treeContainers';
 export { SourceComponent } from './sourceComponent';
-export {
-  MetadataRegistry,
-  MetadataXml,
-  SourceAdapter,
-  TreeContainer,
-  VirtualDirectory,
-  TypeIndex,
-  SuffixIndex,
-  DirectoryIndex,
-  DecompositionStrategy,
-  TransformerStrategy,
-} from './types';
+export { MetadataXml, SourceAdapter, TreeContainer, VirtualDirectory } from './types';
 export { ForceIgnore } from './forceIgnore';

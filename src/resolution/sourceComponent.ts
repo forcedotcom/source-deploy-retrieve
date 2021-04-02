@@ -11,10 +11,11 @@ import { ForceIgnore } from './forceIgnore';
 import { parseMetadataXml } from '../utils/registry';
 import { baseName } from '../utils';
 import { NodeFSTreeContainer, VirtualTreeContainer } from './treeContainers';
-import { DEFAULT_PACKAGE_ROOT_SFDX, MetadataType, SourcePath, MetadataComponent } from '../common';
+import { DEFAULT_PACKAGE_ROOT_SFDX, SourcePath, MetadataComponent } from '../common';
 import { JsonMap } from '@salesforce/ts-types';
 import { SfdxFileFormat } from '../convert';
 import { trimUntil } from '../utils/path';
+import { MetadataType } from '../registry';
 
 export type ComponentProperties = {
   name: string;

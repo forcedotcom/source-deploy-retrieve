@@ -6,7 +6,7 @@
  */
 import { WriteInfo } from '../types';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
-import { DecompositionStrategy, SourceComponent } from '../../resolution';
+import { SourceComponent } from '../../resolution';
 import { JsonMap } from '@salesforce/ts-types';
 import { JsToXml } from '../streams';
 import { join } from 'path';
@@ -19,6 +19,7 @@ import {
 } from '../../common';
 import { ComponentSet } from '../../collections';
 import { DecompositionState } from '../convertContext';
+import { DecompositionStrategy } from '../../registry';
 
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {

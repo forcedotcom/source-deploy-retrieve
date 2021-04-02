@@ -11,7 +11,7 @@ import { SourceComponent } from '../../resolution/sourceComponent';
 import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 import { ConvertContext } from '../convertContext';
 import { StaticResourceMetadataTransformer } from './staticResourceMetadataTransformer';
-import { RegistryAccess, TransformerStrategy } from '../../resolution';
+import { RegistryAccess, TransformerStrategy } from '../../registry';
 
 export class MetadataTransformerFactory {
   private registry: RegistryAccess;

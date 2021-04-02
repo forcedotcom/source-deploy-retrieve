@@ -5,9 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { SourcePath } from '../common';
-import { registryData, SourceComponent } from '../resolution';
+import { SourceComponent } from '../resolution';
 import { basename } from 'path';
 import { DeployMessage, ComponentDiagnostic } from './types';
+import { registryData } from '../registry';
 
 export class DiagnosticUtil {
   private api: 'metadata' | 'tooling';

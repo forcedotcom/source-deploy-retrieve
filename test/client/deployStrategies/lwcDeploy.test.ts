@@ -15,8 +15,9 @@ import { createSandbox, SinonSandbox } from 'sinon';
 import { nls } from '../../../src/i18n';
 import { LwcDeploy } from '../../../src/client/deployStrategies';
 import { LightningComponentResource, ToolingCreateResult } from '../../../src/utils/deploy';
-import { SourceComponent, registryData, VirtualTreeContainer } from '../../../src/resolution';
+import { SourceComponent, VirtualTreeContainer } from '../../../src/resolution';
 import { ToolingDeployStatus, ComponentStatus } from '../../../src/client';
+import { registryData } from '../../../src';
 
 const $$ = testSetup();
 

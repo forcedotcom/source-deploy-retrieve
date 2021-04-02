@@ -7,11 +7,12 @@
 
 import { ManifestGenerator } from '../../src/resolution/manifestGenerator';
 import { expect } from 'chai';
-import { MetadataResolver, SourceComponent, registryData } from '../../src/resolution';
+import { MetadataResolver, SourceComponent } from '../../src/resolution';
 import { SinonSandbox, createSandbox } from 'sinon';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fail } from 'assert';
+import { registryData } from '../../src';
 
 describe('ManifestGenerator', () => {
   let sandboxStub: SinonSandbox;

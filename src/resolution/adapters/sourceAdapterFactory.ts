@@ -13,7 +13,7 @@ import { DefaultSourceAdapter } from './defaultSourceAdapter';
 import { RegistryError } from '../../errors';
 import { ForceIgnore } from '../forceIgnore';
 import { MetadataType } from '../../common';
-import { RegistryAccess } from '../registryAccess';
+import { RegistryAccess } from '../../registry/registryAccess';
 
 enum AdapterId {
   Bundle = 'bundle',

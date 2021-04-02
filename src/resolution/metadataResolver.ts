@@ -14,7 +14,7 @@ import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
 import { MetadataType, SourcePath } from '../common';
 import { NodeFSTreeContainer } from './treeContainers';
-import { RegistryAccess } from './registryAccess';
+import { RegistryAccess } from '../registry/registryAccess';
 import { ComponentSet } from '../collections';
 
 /**

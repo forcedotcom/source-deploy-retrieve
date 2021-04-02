@@ -7,4 +7,4 @@
 export { createFiles } from './fileSystemHandler';
 export { generateMetaXML, generateMetaXMLPath, trimMetaXmlSuffix } from './metadata';
 export { extName, baseName } from './path';
-export { normalizeToArray } from './collections';
+export { normalizeToArray, deepFreeze } from './collections';

@@ -6,10 +6,10 @@
  */
 import { DiagnosticUtil } from '../../src/client/diagnosticUtil';
 import { SourceComponent } from '../../src/resolution/sourceComponent';
-import { registryData } from '../../src/resolution';
 import { join } from 'path';
 import { expect } from 'chai';
 import { DeployMessage } from '../../src/client/types';
+import { registryData } from '../../src';
 
 type MockDeployMessage = {
   problem?: string;

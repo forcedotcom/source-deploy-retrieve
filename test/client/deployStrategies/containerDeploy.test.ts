@@ -15,7 +15,8 @@ import { ContainerDeploy } from '../../../src/client/deployStrategies';
 import { ToolingCreateResult } from '../../../src/utils/deploy';
 import { nls } from '../../../src/i18n';
 import { QueryResult, ToolingDeployStatus, ComponentStatus } from '../../../src/client/types';
-import { SourceComponent, registryData } from '../../../src/resolution';
+import { SourceComponent } from '../../../src/resolution';
+import { registryData } from '../../../src';
 
 const $$ = testSetup();
 

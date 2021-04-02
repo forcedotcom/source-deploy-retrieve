@@ -26,7 +26,6 @@ export {
 export { MetadataConverter, ConvertOutputConfig, ConvertResult } from './convert';
 export {
   MetadataResolver,
-  registryData,
   ManifestGenerator,
   BaseTreeContainer,
   VirtualTreeContainer,
@@ -44,3 +43,4 @@ export {
   DeploySetOptions,
   RetrieveSetOptions,
 } from './collections';
+export { RegistryAccess, registryData } from './registry';

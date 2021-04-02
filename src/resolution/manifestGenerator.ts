@@ -10,7 +10,7 @@ import { MetadataResolver } from './metadataResolver';
 import { RegistryError } from '../errors';
 import { SourceComponent } from './sourceComponent';
 import { writeFileSync } from 'fs';
-import { RegistryAccess } from './registryAccess';
+import { RegistryAccess } from '../registry/registryAccess';
 
 export class ManifestGenerator {
   private packageModuleStart = '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';

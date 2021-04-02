@@ -9,10 +9,11 @@ import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import { createSandbox, SinonSandbox } from 'sinon';
-import { MetadataResolver, registryData, SourceComponent } from '../../src/resolution';
+import { MetadataResolver, SourceComponent } from '../../src/resolution';
 import { ComponentStatus, ToolingApi, ToolingDeployStatus } from '../../src/client';
 import { ContainerDeploy } from '../../src/client/deployStrategies';
 import { nls } from '../../src/i18n';
+import { registryData } from '../../src';
 
 const $$ = testSetup();
 

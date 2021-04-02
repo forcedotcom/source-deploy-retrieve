@@ -4,13 +4,19 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { registryData } from '.';
+import * as registry from './registry.json';
 import { MetadataType } from '../common';
 import { RegistryError } from '../errors';
-import { MetadataRegistry } from './types';
+import { MetadataRegistry } from '../resolution/types';
+import { deepFreeze } from '../utils';
 
 /**
- * Accessor for interacting with data that conforms to the MetadataRegistry schema.
+ * Object of the raw metadata registry data.
+ */
+export const registryData = deepFreeze(registry);
+
+/**
+ * Container for querying metadata registry data.
  */
 export class RegistryAccess {
   private registry: MetadataRegistry;
@@ -19,6 +25,12 @@ export class RegistryAccess {
     this.registry = registry;
   }
 
+  /**
+   * Query a metadata type by its name.
+   *
+   * @param name - Case-insensitive name of the metadata type
+   * @returns The corresponding metadata type object
+   */
   public getTypeByName(name: string): MetadataType {
     const lower = name.toLowerCase().trim();
     if (this.registry.childTypes[lower]) {
@@ -35,6 +47,12 @@ export class RegistryAccess {
     return this.registry.types[lower];
   }
 
+  /**
+   * Query a metadata type by its file suffix.
+   *
+   * @param suffix - File suffix of the metadata type
+   * @returns The corresponding metadata type object
+   */
   public getTypeBySuffix(suffix: string): MetadataType | undefined {
     if (this.registry.suffixes[suffix]) {
       const typeId = this.registry.suffixes[suffix];
@@ -42,13 +60,22 @@ export class RegistryAccess {
     }
   }
 
+  /**
+   * Searches for the first metadata type in the registry that returns `true`
+   * for the given predicate function.
+   *
+   * @param predicate - Predicate to test types with
+   * @returns The first metadata type object that fulfills the predicate
+   */
   public findType(predicate: (type: MetadataType) => boolean): MetadataType {
     return Object.values(this.registry.types).find(predicate);
   }
 
   /**
-   * Get the types whose component files require having a parent directory named after
+   * Query the types whose component files require having a parent directory named after
    * their assigned directory name.
+   *
+   * @returns An array of metadata type objects that require strict parent folder names
    */
   public getStrictFolderTypes(): MetadataType[] {
     return Object.values(this.registry.strictDirectoryNames).map(

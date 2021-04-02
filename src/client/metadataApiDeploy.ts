@@ -16,10 +16,11 @@ import {
 } from './types';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import { join, dirname, basename, extname } from 'path';
-import { SourceComponent, registryData } from '../resolution';
+import { SourceComponent } from '../resolution';
 import { ComponentLike } from '../common';
 import { normalizeToArray } from '../utils/collections';
 import { ComponentSet } from '../collections';
+import { registryData } from '../registry';
 
 export class DeployResult implements MetadataTransferResult {
   public readonly response: MetadataApiDeployStatus;

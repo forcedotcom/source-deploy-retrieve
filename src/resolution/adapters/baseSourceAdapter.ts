@@ -13,7 +13,7 @@ import { dirname, basename, sep } from 'path';
 import { NodeFSTreeContainer } from '../treeContainers';
 import { SourceComponent } from '../sourceComponent';
 import { MetadataType, SourcePath } from '../../common';
-import { RegistryAccess } from '../registryAccess';
+import { RegistryAccess } from '../../registry/registryAccess';
 
 export abstract class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;

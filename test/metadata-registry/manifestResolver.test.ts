@@ -18,7 +18,7 @@ describe('ManifestResolver', () => {
   afterEach(() => env.restore());
 
   describe('resolve', () => {
-    it('should used expected default dependencies', async () => {
+    it('should use expected default dependencies', async () => {
       const readFileStub = env.stub(NodeFSTreeContainer.prototype, 'readFile');
       const getTypeStub = env.stub(RegistryAccess.prototype, 'getTypeByName');
       readFileStub.resolves(mockManifests.ONE_FOLDER_MEMBER.data);

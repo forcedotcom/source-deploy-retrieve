@@ -147,6 +147,11 @@ export const mockRegistryData = {
         decomposition: 'folderPerType',
       },
     },
+    /**
+     * Metadata with one content of any file extension
+     *
+     * e.g. StaticResource
+     */
     mixedcontentsinglefile: {
       id: 'mixedcontentsinglefile',
       directoryName: 'mixedSingleFiles',

@@ -1923,6 +1923,26 @@
       "directoryName": "PlatformEventSubscriberConfigs",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "workskillrouting": {
+      "id": "workskillrouting",
+      "name": "WorkSkillRouting",
+      "suffix": "workSkillRouting",
+      "directoryName": "workSkillRoutings",
+      "strictDirectoryName": false,
+      "children": {
+        "types": {
+          "workskillroutingattribute": {
+            "id": "workskillroutingattribute",
+            "name": "WorkSkillRoutingAttribute",
+            "directoryName": "workSkillRoutingAttributes",
+            "suffix": "workSkillRoutingAttribute"
+          }
+        },
+        "suffixes": {
+          "workSkillRoutingAttribute": "workskillroutingattribute"
+        }
+      }
     }
   },
   "suffixes": {
@@ -2117,7 +2137,8 @@
     "entityImplements": "entityimplements",
     "audience": "audience",
     "cmsConnectSource": "cmsconnectsource",
-    "platformEventSubscriberConfig": "platformeventsubscriberconfig"
+    "platformEventSubscriberConfig": "platformeventsubscriberconfig",
+    "workSkillRouting": "workskillrouting"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

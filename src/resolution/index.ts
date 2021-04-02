@@ -14,5 +14,13 @@ export {
   ZipTreeContainer,
 } from './treeContainers';
 export { SourceComponent } from './sourceComponent';
-export { MetadataXml, SourceAdapter, TreeContainer, VirtualDirectory } from './types';
+export {
+  MetadataXml,
+  SourceAdapter,
+  TreeContainer,
+  VirtualDirectory,
+  MetadataComponent,
+  ComponentLike,
+  MetadataMember,
+} from './types';
 export { ForceIgnore } from './forceIgnore';

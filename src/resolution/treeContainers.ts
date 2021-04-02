@@ -6,8 +6,7 @@
  */
 import { VirtualDirectory, TreeContainer } from '.';
 import { join, dirname, basename, normalize } from 'path';
-import { baseName } from '../utils';
-import { parseMetadataXml } from '../utils/registry';
+import { baseName, parseMetadataXml } from '../utils';
 import { lstatSync, existsSync, readdirSync, createReadStream, readFileSync } from 'fs';
 import { LibraryError } from '../errors';
 import { SourcePath } from '../common';

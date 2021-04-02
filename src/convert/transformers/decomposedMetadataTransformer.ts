@@ -6,17 +6,11 @@
  */
 import { WriteInfo } from '../types';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
-import { SourceComponent } from '../../resolution';
+import { MetadataComponent, SourceComponent } from '../../resolution';
 import { JsonMap } from '@salesforce/ts-types';
 import { JsToXml } from '../streams';
 import { join } from 'path';
-import {
-  SourcePath,
-  META_XML_SUFFIX,
-  XML_NS_URL,
-  XML_NS_KEY,
-  MetadataComponent,
-} from '../../common';
+import { SourcePath, META_XML_SUFFIX, XML_NS_URL, XML_NS_KEY } from '../../common';
 import { ComponentSet } from '../../collections';
 import { DecompositionState } from '../convertContext';
 import { DecompositionStrategy } from '../../registry';

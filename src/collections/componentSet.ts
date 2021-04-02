@@ -10,16 +10,22 @@ import {
   MetadataApiRetrieve,
   MetadataApiRetrieveOptions,
 } from '../client';
-import { MetadataComponent, XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
+import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSetError } from '../errors';
-import { MetadataResolver, ManifestResolver, SourceComponent, TreeContainer } from '../resolution';
+import {
+  MetadataResolver,
+  ManifestResolver,
+  SourceComponent,
+  TreeContainer,
+  MetadataComponent,
+  ComponentLike,
+} from '../resolution';
 import {
   PackageTypeMembers,
   FromManifestOptions,
   PackageManifestObject,
   FromSourceOptions,
 } from './types';
-import { ComponentLike } from '../common/types';
 import { LazyCollection } from './lazyCollection';
 import { j2xParser } from 'fast-xml-parser';
 import { RegistryAccess } from '../registry';

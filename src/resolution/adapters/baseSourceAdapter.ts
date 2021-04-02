@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { SourceAdapter, MetadataXml, TreeContainer } from '../types';
-import { parseMetadataXml } from '../../utils/registry';
+import { parseMetadataXml } from '../../utils';
 import { UnexpectedForceIgnore } from '../../errors';
 import { parentName } from '../../utils/path';
 import { ForceIgnore } from '../forceIgnore';

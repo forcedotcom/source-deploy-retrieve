@@ -6,9 +6,8 @@
  */
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { SourcePath } from '../../common';
-import { parseMetadataXml } from '../../utils/registry';
 import { SourceComponent } from '../sourceComponent';
-import { baseName } from '../../utils';
+import { baseName, parseMetadataXml } from '../../utils';
 import { DecompositionStrategy } from '../../registry';
 
 /**

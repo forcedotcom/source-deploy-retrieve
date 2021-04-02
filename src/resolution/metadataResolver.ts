@@ -7,8 +7,7 @@
 import { basename, dirname, join, sep } from 'path';
 import { TreeContainer } from './types';
 import { TypeInferenceError } from '../errors';
-import { extName, parentName } from '../utils/path';
-import { parseMetadataXml } from '../utils/registry';
+import { extName, parentName, parseMetadataXml } from '../utils';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';

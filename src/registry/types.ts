@@ -87,21 +87,21 @@ export interface MetadataType {
 /**
  * Mapping of metadata type ids -> Metadata type definitions.
  */
-export interface TypeIndex {
+interface TypeIndex {
   [typeId: string]: MetadataType;
 }
 
 /**
  * Mapping of metadata type file suffixes -> type ids.
  */
-export interface SuffixIndex {
+interface SuffixIndex {
   [suffix: string]: string;
 }
 
 /**
  * Mapping of metadata type directory names -> type ids.
  */
-export interface DirectoryIndex {
+interface DirectoryIndex {
   [directoryName: string]: string;
 }
 

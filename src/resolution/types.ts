@@ -8,6 +8,23 @@
 import { SourcePath } from '../common/types';
 import { SourceComponent } from '.';
 import { Readable } from 'stream';
+import { MetadataType } from '../registry';
+
+export interface MetadataComponent {
+  /**
+   * Fully qualified name of the component.
+   */
+  fullName: string;
+  type: MetadataType;
+  parent?: MetadataComponent;
+}
+
+export interface MetadataMember {
+  fullName: string;
+  type: string;
+}
+
+export type ComponentLike = MetadataComponent | MetadataMember;
 
 /**
  * Properties of a metadata xml's file name

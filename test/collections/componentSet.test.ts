@@ -17,10 +17,9 @@ import {
   MetadataResolver,
   RegistryAccess,
 } from '../../src';
-import { MetadataMember } from '../../src/common/types';
 import { ComponentSetError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { ManifestResolver } from '../../src/resolution';
+import { ManifestResolver, MetadataMember } from '../../src/resolution';
 import { mockConnection } from '../mock/client';
 import {
   mockRegistry,

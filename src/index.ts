@@ -25,6 +25,8 @@ export {
 } from './client';
 export { MetadataConverter, ConvertOutputConfig, ConvertResult } from './convert';
 export {
+  MetadataComponent,
+  MetadataMember,
   MetadataResolver,
   ManifestGenerator,
   BaseTreeContainer,
@@ -35,7 +37,7 @@ export {
   VirtualDirectory,
   ForceIgnore,
 } from './resolution';
-export { MetadataComponent, SourcePath } from './common';
+export { SourcePath } from './common';
 export {
   ComponentSet,
   FromManifestOptions,

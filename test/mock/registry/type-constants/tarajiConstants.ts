@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join, basename, dirname } from 'path';
-import { mockRegistryData } from '.';
-import { SourceComponent } from '../../../src';
+import { mockRegistryData } from '../mockRegistry';
+import { SourceComponent } from '../../../../src';
 
 // Mixed content with directory as content
 const type = mockRegistryData.types.tarajihenson;

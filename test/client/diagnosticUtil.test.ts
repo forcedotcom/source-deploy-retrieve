@@ -5,25 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { DiagnosticUtil } from '../../src/client/diagnosticUtil';
-import { ComponentProperties, SourceComponent } from '../../src/metadata-registry/sourceComponent';
-import { registryData, VirtualTreeContainer } from '../../src/metadata-registry';
+import { SourceComponent } from '../../src/metadata-registry/sourceComponent';
+import { registryData } from '../../src/metadata-registry';
 import { join } from 'path';
 import { expect } from 'chai';
-import {
-  ComponentDeployment,
-  ComponentStatus,
-  DeployMessage,
-  RequestStatus,
-} from '../../src/client/types';
-import { TreeContainer } from '../../src';
-
-function createDeployment(props: ComponentProperties, tree?: TreeContainer): ComponentDeployment {
-  return {
-    status: ComponentStatus.Failed,
-    component: new SourceComponent(props, tree),
-    diagnostics: [],
-  };
-}
+import { DeployMessage } from '../../src/client/types';
 
 type MockDeployMessage = {
   problem?: string;

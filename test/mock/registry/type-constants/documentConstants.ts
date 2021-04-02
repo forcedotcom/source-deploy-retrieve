@@ -5,10 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { mockRegistryData } from '.';
-import { SourceComponent } from '../../../src';
-import { META_XML_SUFFIX } from '../../../src/common';
-import { extName } from '../../../src/utils';
+import { mockRegistryData } from '../mockRegistry';
+import { SourceComponent } from '../../../../src';
+import { META_XML_SUFFIX } from '../../../../src/common';
+import { extName } from '../../../../src/utils';
 
 const type = mockRegistryData.types.document;
 

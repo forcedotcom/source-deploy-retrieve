@@ -4,12 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
 import { testSetup } from '@salesforce/core/lib/testSetup';
 import { fail } from 'assert';
 import { expect } from 'chai';
 import { join } from 'path';
-import { createSandbox, SinonSpy, SinonStub } from 'sinon';
+import { createSandbox, SinonStub } from 'sinon';
 import { ComponentSet, MetadataApiDeploy, MetadataApiRetrieve, MetadataComponent } from '../../src';
 import * as resolution from '../../src/metadata-registry';
 import { MetadataMember } from '../../src/common/types';
@@ -36,10 +35,8 @@ describe('ComponentSet', () => {
       const resolved = [matchingContentFile.COMPONENT];
 
       let getComponentsStub: SinonStub;
-      let resolverSpy: SinonSpy;
 
       beforeEach(() => {
-        resolverSpy = env.spy(resolution, 'MetadataResolver');
         getComponentsStub = env
           .stub(resolution.MetadataResolver.prototype, 'getComponentsFromPath')
           .returns(resolved);
@@ -56,43 +53,38 @@ describe('ComponentSet', () => {
       });
 
       it('should initialize with source backed components using a single file path', () => {
-        ComponentSet.fromSource('.');
-
-        expect(resolverSpy.callCount).to.equal(1);
-        expect(resolverSpy.firstCall.args[0]).to.equal(undefined);
-        expect(resolverSpy.firstCall.args[1]).to.equal(undefined);
+        const result = ComponentSet.fromSource('.').toArray();
 
         expect(getComponentsStub.callCount).to.equal(1);
         expect(getComponentsStub.firstCall.args[0]).to.equal('.');
+        expect(result).to.deep.equal(resolved);
       });
 
       it('should initialize with source backed components using multiple file paths', () => {
         const paths = ['folder1', 'folder2'];
 
-        ComponentSet.fromSource(paths);
-
-        expect(resolverSpy.callCount).to.equal(1);
-        expect(resolverSpy.firstCall.args[0]).to.equal(undefined);
-        expect(resolverSpy.firstCall.args[1]).to.equal(undefined);
+        const result = ComponentSet.fromSource(paths).toArray();
 
         expect(getComponentsStub.callCount).to.equal(2);
         expect(getComponentsStub.firstCall.args[0]).to.equal(paths[0]);
         expect(getComponentsStub.secondCall.args[0]).to.equal(paths[1]);
+        expect(result).to.deep.equal(resolved);
       });
 
       it('should initialize with source backed components using options object', () => {
-        ComponentSet.fromSource({
-          fsPaths: ['.'],
+        getComponentsStub.restore();
+
+        const result = ComponentSet.fromSource({
+          fsPaths: ['mixedSingleFiles'],
           registry: mockRegistry,
           tree: manifestFiles.TREE,
-        });
+        }).toArray();
+        const expected = new resolution.MetadataResolver(
+          mockRegistry,
+          manifestFiles.TREE
+        ).getComponentsFromPath('mixedSingleFiles');
 
-        expect(resolverSpy.callCount).to.equal(1);
-        expect(resolverSpy.firstCall.args[0]).to.equal(mockRegistry);
-        expect(resolverSpy.firstCall.args[1]).to.equal(manifestFiles.TREE);
-
-        expect(getComponentsStub.callCount).to.equal(1);
-        expect(getComponentsStub.firstCall.args[0]).to.equal('.');
+        expect(result).to.deep.equal(expected);
       });
     });
 

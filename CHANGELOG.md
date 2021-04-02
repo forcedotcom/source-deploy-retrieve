@@ -1,8 +1,22 @@
+# 1.1.21 - March 30, 2021
+
+## Added
+
+- Better options for from source component set initializer ([PR #276](https://github.com/forcedotcom/source-deploy-retrieve/pull/276))
+
+## Fixed
+
+- Set an overridden apiVersion on a created connection ([PR #274](https://github.com/forcedotcom/source-deploy-retrieve/pull/274))
+
+- Merge deploy api options ([PR #272](https://github.com/forcedotcom/source-deploy-retrieve/pull/272))
+
+- Add testLevel to MetadataApiDeployOptions type ([PR #271](https://github.com/forcedotcom/source-deploy-retrieve/pull/271))
+
 # 1.1.20 - March 17, 2021
 
 ## Fixed
 
-- Convert Document metadata type to document ([PR #263](https://github.com/forcedotcom/salesforcedx-vscode/pull/263))
+- Convert Document metadata type to document ([PR #263](https://github.com/forcedotcom/source-deploy-retrieve/pull/263))
 
 # 1.1.19 - March 3, 2021
 

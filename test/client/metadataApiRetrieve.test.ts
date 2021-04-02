@@ -13,9 +13,9 @@ import { ComponentStatus, FileResponse, MetadataApiRetrieveStatus } from '../../
 import { MetadataApiRetrieveError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
-import { matchingContentFile, mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
-import { COMPONENT } from '../mock/registry/matchingContentFileConstants';
-import { REGINA_COMPONENT } from '../mock/registry/reginaConstants';
+import { mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
+import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
+import { REGINA_COMPONENT } from '../mock/registry/type-constants/reginaConstants';
 
 const env = createSandbox();
 

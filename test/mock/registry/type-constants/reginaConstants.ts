@@ -5,10 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { mockRegistryData } from '.';
-import { baseName } from '../../../src/utils';
-import { SourceComponent, VirtualDirectory } from '../../../src';
-import { XML_NS_URL } from '../../../src/common';
+import { mockRegistryData } from '../mockRegistry';
+import { baseName } from '../../../../src/utils';
+import { SourceComponent, VirtualDirectory } from '../../../../src';
+import { XML_NS_URL } from '../../../../src/common';
 
 // Constants for a decomposed type
 const type = mockRegistryData.types.reginaking;

@@ -7,6 +7,7 @@
 import * as data from './data/registry.json';
 import { deepFreeze } from '../utils/registry';
 export { MetadataResolver } from './metadataResolver';
+export { ManifestResolver } from './manifestResolver';
 export { RegistryAccess } from './registryAccess';
 export { ManifestGenerator } from './manifestGenerator';
 export {

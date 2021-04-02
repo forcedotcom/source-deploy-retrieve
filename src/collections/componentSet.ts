@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { parse as parseXml, j2xParser } from 'fast-xml-parser';
 import {
   MetadataApiDeploy,
   MetadataApiDeployOptions,
@@ -15,7 +14,7 @@ import { MetadataComponent, XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSetError } from '../errors';
 import {
   MetadataResolver,
-  NodeFSTreeContainer,
+  ManifestResolver,
   RegistryAccess,
   SourceComponent,
   TreeContainer,
@@ -28,6 +27,7 @@ import {
 } from './types';
 import { ComponentLike } from '../common/types';
 import { LazyCollection } from './lazyCollection';
+import { j2xParser } from 'fast-xml-parser';
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
@@ -93,7 +93,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       fsPaths = input.fsPaths;
       registry = input.registry ?? registry;
       tree = input.tree ?? tree;
-      inclusiveFilter = input.inclusiveFilter;
+      inclusiveFilter = input.include;
     } else {
       fsPaths = [input];
     }
@@ -110,84 +110,62 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   }
 
   /**
-   * Create a set by reading a manifest file in xml format. Optionally, specify a file path
-   * with the `resolve` option to resolve source files for the components.
+   * Resolve components from a manifest file in XML format.
    *
-   * ```
-   * ComponentSet.fromManifestFile('/path/to/package.xml', {
-   *  resolve: '/path/to/force-app'
-   * });
-   * ```
+   * see [Sample package.xml Manifest Files](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/manifest_samples.htm)
    *
-   * @param fsPath Path to xml file
-   * @param options
-   * @returns Promise of a ComponentSet
+   * @param manifestPath Path to XML file
+   * @returns Promise of a ComponentSet containing manifest components
    */
-  public static async fromManifestFile(
-    fsPath: string,
-    options: FromManifestOptions = {}
-  ): Promise<ComponentSet> {
-    const registry = options.registry ?? new RegistryAccess();
-    const tree = options.tree ?? new NodeFSTreeContainer();
-    const shouldResolve = !!options.resolve;
+  public static async fromManifest(manifestPath: string): Promise<ComponentSet>;
+  /**
+   * Resolve components from a manifest file in XML format.
+   * Customize the resolution process using an options object. For example, resolve source-backed components
+   * while using the manifest file as a filter.
+   * process using an options object, such as resolving source-backed components
+   * and using the manifest file as a filter.
+   *
+   * see [Sample package.xml Manifest Files](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/manifest_samples.htm)
+   *
+   * @param options
+   * @returns Promise of a ComponentSet containing manifest components
+   */
+  public static async fromManifest(options: FromManifestOptions): Promise<ComponentSet>;
+  public static async fromManifest(input: string | FromManifestOptions): Promise<ComponentSet> {
+    const manifestPath = typeof input === 'string' ? input : input.manifestPath;
+    const options = (typeof input === 'object' ? input : {}) as Partial<FromManifestOptions>;
 
-    const ws = new ComponentSet(undefined, registry);
-    const filterSet = new ComponentSet(undefined, registry);
-    const file = await tree.readFile(fsPath);
-    const manifestObj: PackageManifestObject = parseXml(file.toString(), {
-      stopNodes: ['version'],
-    });
+    const manifestResolver = new ManifestResolver(options.tree, options.registry);
+    const manifest = await manifestResolver.resolve(manifestPath);
+    const resolveIncludeSet = options.resolveSourcePaths
+      ? new ComponentSet([], options.registry)
+      : undefined;
+    const result = new ComponentSet([], options.registry);
+    result.apiVersion = manifest.apiVersion;
 
-    ws.apiVersion = manifestObj.Package.version;
-
-    for (const component of ComponentSet.getComponentsFromManifestObject(manifestObj, registry)) {
-      if (shouldResolve) {
-        filterSet.add(component);
+    for (const component of manifest.components) {
+      if (resolveIncludeSet) {
+        resolveIncludeSet.add(component);
       }
       const memberIsWildcard = component.fullName === ComponentSet.WILDCARD;
-      if (!memberIsWildcard || options?.literalWildcard || !shouldResolve) {
-        ws.add(component);
+      if (!memberIsWildcard || options.forceAddWildcards || !options.resolveSourcePaths) {
+        result.add(component);
       }
     }
 
-    if (shouldResolve) {
-      // if it's a string, don't iterate over the characters
-      const toResolve =
-        typeof options.resolve === 'string' ? [options.resolve] : Array.from(options.resolve);
+    if (options.resolveSourcePaths) {
       const components = ComponentSet.fromSource({
-        fsPaths: toResolve,
-        tree,
-        inclusiveFilter: filterSet,
-        registry,
+        fsPaths: options.resolveSourcePaths,
+        tree: options.tree,
+        include: resolveIncludeSet,
+        registry: options.registry,
       });
       for (const component of components) {
-        ws.add(component);
+        result.add(component);
       }
     }
 
-    return ws;
-  }
-
-  private static *getComponentsFromManifestObject(
-    obj: PackageManifestObject,
-    registry: RegistryAccess
-  ): IterableIterator<MetadataComponent> {
-    const { types } = obj.Package;
-    const typeMembers = Array.isArray(types) ? types : [types];
-    for (const { name: typeName, members } of typeMembers) {
-      const fullNames = Array.isArray(members) ? members : [members];
-      for (const fullName of fullNames) {
-        let type = registry.getTypeByName(typeName);
-        // if there is no / delimiter and it's a type in folders, infer folder component
-        if (type.folderType && !fullName.includes('/')) {
-          type = registry.getTypeByName(type.folderType);
-        }
-        yield {
-          fullName,
-          type,
-        };
-      }
-    }
+    return result;
   }
 
   /**

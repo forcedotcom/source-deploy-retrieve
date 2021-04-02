@@ -23,7 +23,7 @@ import { SourceComponent, VirtualTreeContainer } from '../../../src';
 import {
   FOLDER_COMPONENT,
   FOLDER_COMPONENT_MD_FORMAT,
-} from '../../mock/registry/mixedContentInFolderConstants';
+} from '../../mock/registry/type-constants/mixedContentInFolderConstants';
 import { extName } from '../../../src/utils';
 
 const env = createSandbox();

@@ -14,8 +14,8 @@ import {
   mockRegistryData,
 } from '../mock/registry';
 import { expect } from 'chai';
-import { REGINA_COMPONENT } from '../mock/registry/reginaConstants';
-import { COMPONENT } from '../mock/registry/matchingContentFileConstants';
+import { REGINA_COMPONENT } from '../mock/registry/type-constants/reginaConstants';
+import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
 import { createSandbox } from 'sinon';
 
 const env = createSandbox();

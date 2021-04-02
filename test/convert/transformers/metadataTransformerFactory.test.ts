@@ -15,8 +15,8 @@ import { StaticResourceMetadataTransformer } from '../../../src/convert/transfor
 import { RegistryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { matchingContentFile, mockRegistry } from '../../mock/registry';
-import { MC_SINGLE_FILE_COMPONENT } from '../../mock/registry/mixedContentSingleFileConstants';
-import { REGINA_COMPONENT } from '../../mock/registry/reginaConstants';
+import { MC_SINGLE_FILE_COMPONENT } from '../../mock/registry/type-constants/mixedContentSingleFileConstants';
+import { REGINA_COMPONENT } from '../../mock/registry/type-constants/reginaConstants';
 
 describe('MetadataTransformerFactory', () => {
   it('should return DefaultMetadataTransformer', () => {

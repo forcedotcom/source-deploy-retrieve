@@ -19,8 +19,8 @@ import { MetadataApiRetrieveError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
 import { mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
-import { COMPONENT } from '../mock/registry/matchingContentFileConstants';
-import { REGINA_COMPONENT } from '../mock/registry/reginaConstants';
+import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
+import { REGINA_COMPONENT } from '../mock/registry/type-constants/reginaConstants';
 import { getString } from '@salesforce/ts-types';
 
 const env = createSandbox();

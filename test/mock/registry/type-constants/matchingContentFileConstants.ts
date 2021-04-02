@@ -5,9 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { mockRegistryData } from '.';
-import { SourceComponent, VirtualTreeContainer } from '../../../src';
-import { META_XML_SUFFIX } from '../../../src/common';
+import { mockRegistryData } from '../mockRegistry';
+import { SourceComponent, VirtualTreeContainer } from '../../../../src';
+import { META_XML_SUFFIX } from '../../../../src/common';
 
 // Constants for a matching content file type
 const type = mockRegistryData.types.matchingcontentfile;

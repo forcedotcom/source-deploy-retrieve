@@ -13,13 +13,13 @@ import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { dirname, join } from 'path';
 import { expect, assert } from 'chai';
 import { ConversionError, LibraryError } from '../../src/errors';
-import { COMPONENTS } from '../mock/registry/mixedContentInFolderConstants';
+import { COMPONENTS } from '../mock/registry/type-constants/mixedContentInFolderConstants';
 import { fail } from 'assert';
 import { ComponentSet } from '../../src';
 import {
   REGINA_CHILD_COMPONENT_1,
   REGINA_CHILD_COMPONENT_2,
-} from '../mock/registry/reginaConstants';
+} from '../mock/registry/type-constants/reginaConstants';
 
 const env = createSandbox();
 

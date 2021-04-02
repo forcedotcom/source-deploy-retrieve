@@ -19,7 +19,6 @@ import {
   taraji,
   mixedContentInFolder,
   bundle,
-  sean,
   mockRegistryData,
   decomposedtoplevel,
 } from '../mock/registry';
@@ -35,14 +34,14 @@ import {
   REGINA_XML_PATH,
   REGINA_CHILD_DIR_PATH,
   REGINA_CHILD_XML_PATH_2,
-} from '../mock/registry/reginaConstants';
+} from '../mock/registry/type-constants/reginaConstants';
 import {
   TARAJI_COMPONENT,
   TARAJI_CONTENT_PATH,
   TARAJI_DIR,
   TARAJI_VIRTUAL_FS,
   TARAJI_XML_PATHS,
-} from '../mock/registry/tarajiConstants';
+} from '../mock/registry/type-constants/tarajiConstants';
 import { ComponentSet } from '../../src';
 
 const testUtil = new RegistryTestUtil();
@@ -141,25 +140,25 @@ describe('MetadataResolver', () => {
       });
 
       it('Should determine type for inFolder path content files', () => {
-        const path = sean.SEAN_FOLDER;
+        const path = xmlInFolder.COMPONENT_FOLDER_PATH;
         const access = testUtil.createMetadataResolver([
           {
             dirPath: path,
-            children: sean.SEAN_NAMES,
+            children: xmlInFolder.XML_NAMES,
           },
         ]);
-        const componentMappings = sean.SEAN_PATHS.map((p: string, i: number) => ({
-          path: p,
-          component: sean.SEAN_COMPONENTS[i],
+        const componentMappings = xmlInFolder.COMPONENTS.map((c: SourceComponent) => ({
+          path: c.xml,
+          component: c,
         }));
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.seanconnerys,
+            type: mockRegistryData.types.xmlinfolder,
             componentMappings,
             allowContent: false,
           },
         ]);
-        expect(access.getComponentsFromPath(path)).to.deep.equal(sean.SEAN_COMPONENTS);
+        expect(access.getComponentsFromPath(path)).to.deep.equal(xmlInFolder.COMPONENTS);
       });
 
       it('Should determine type for folder files', () => {

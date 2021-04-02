@@ -6,21 +6,22 @@
  */
 
 import {
-  mockRegistry,
   DWAYNE_SOURCE,
   DWAYNE_XML,
   DWAYNE_DIR,
-  taraji,
   DWAYNE_XML_NAME,
   DWAYNE_SOURCE_NAME,
-  mockRegistryData,
-} from '../../mock/registry';
+} from '../../mock/registry/type-constants/dwayneConstants';
 import { expect, assert } from 'chai';
 import { MixedContentSourceAdapter } from '../../../src/metadata-registry/adapters/mixedContentSourceAdapter';
 import { ExpectedSourceFilesError } from '../../../src/errors';
 import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
 import { SourceComponent } from '../../../src/metadata-registry';
-import { TARAJI_VIRTUAL_FS_NO_XML, TARAJI_CONTENT_PATH } from '../../mock/registry/tarajiConstants';
+import {
+  TARAJI_VIRTUAL_FS_NO_XML,
+  TARAJI_CONTENT_PATH,
+} from '../../mock/registry/type-constants/tarajiConstants';
+import { mockRegistry, mockRegistryData, taraji } from '../../mock/registry';
 
 describe('MixedContentSourceAdapter', () => {
   it('Should throw ExpectedSourceFilesError if content does not exist', () => {

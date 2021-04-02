@@ -5,9 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, join } from 'path';
-import { mockRegistryData } from '.';
-import { SourceComponent } from '../../../src';
-import { META_XML_SUFFIX } from '../../../src/common';
+import { mockRegistryData } from '../mockRegistry';
+import { SourceComponent } from '../../../../src';
+import { META_XML_SUFFIX } from '../../../../src/common';
 
 const type = mockRegistryData.types.xmlinfolder;
 const folderType = mockRegistryData.types.xmlinfolderfolder;
@@ -51,3 +51,8 @@ export const COMPONENTS_MD_FORMAT: SourceComponent[] = COMPONENT_NAMES.map(
       xml: XML_PATHS_MD_FORMAT[index],
     })
 );
+export const FOLDER_COMPONENT_MD_FORMAT = new SourceComponent({
+  name: COMPONENT_FOLDER_NAME,
+  type: folderType,
+  xml: join(TYPE_DIRECTORY, `${COMPONENT_FOLDER_NAME}${META_XML_SUFFIX}`),
+});

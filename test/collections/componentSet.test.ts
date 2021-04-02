@@ -19,7 +19,7 @@ import {
 } from '../../src';
 import { ComponentSetError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { ManifestResolver, MetadataMember } from '../../src/resolution';
+import { ManifestResolver, MetadataMember } from '../../src/resolve';
 import { mockConnection } from '../mock/client';
 import {
   mockRegistry,

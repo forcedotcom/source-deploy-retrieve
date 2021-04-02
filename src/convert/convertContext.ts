@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { WriteInfo, WriterFormat } from './types';
-import { MetadataComponent, SourceComponent } from '../resolution';
+import { MetadataComponent, SourceComponent } from '../resolve';
 import { join } from 'path';
 import { JsToXml } from './streams';
 import { XML_NS_KEY, XML_NS_URL } from '../common';

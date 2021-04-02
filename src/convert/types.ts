@@ -6,7 +6,7 @@
  */
 import { SourcePath } from '../common/types';
 import { Readable } from 'stream';
-import { MetadataComponent, SourceComponent } from '../resolution';
+import { MetadataComponent, SourceComponent } from '../resolve';
 
 // --------------
 // INTERNAL

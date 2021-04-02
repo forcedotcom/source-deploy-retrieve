@@ -9,7 +9,7 @@ import {
   NodeFSTreeContainer,
   VirtualTreeContainer,
   ZipTreeContainer,
-} from '../../src/resolution/treeContainers';
+} from '../../src/resolve/treeContainers';
 import { expect, assert } from 'chai';
 import { createSandbox } from 'sinon';
 import * as fs from 'fs';

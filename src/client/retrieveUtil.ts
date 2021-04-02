@@ -7,7 +7,7 @@
 import { dirname, join, sep } from 'path';
 import { generateMetaXML, generateMetaXMLPath, trimMetaXmlSuffix } from '../utils';
 import { ApexRecord, AuraRecord, LWCRecord, VFRecord, QueryResult } from './types';
-import { SourceComponent } from '../resolution';
+import { SourceComponent } from '../resolve';
 
 export function buildQuery(mdComponent: SourceComponent, namespace = ''): string {
   let queryString = '';

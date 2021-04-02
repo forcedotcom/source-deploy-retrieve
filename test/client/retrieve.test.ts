@@ -13,7 +13,7 @@ import * as path from 'path';
 import * as stream from 'stream';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ToolingApi } from '../../src/client';
-import { MetadataResolver, SourceComponent } from '../../src/resolution';
+import { MetadataResolver, SourceComponent } from '../../src/resolve';
 import { QueryResult, RequestStatus, SourceRetrieveResult } from '../../src/client/types';
 import { nls } from '../../src/i18n';
 import { fail } from 'assert';

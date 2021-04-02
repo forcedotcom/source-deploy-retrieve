@@ -19,7 +19,7 @@ import {
   TreeContainer,
   MetadataComponent,
   ComponentLike,
-} from '../resolution';
+} from '../resolve';
 import {
   PackageTypeMembers,
   FromManifestOptions,

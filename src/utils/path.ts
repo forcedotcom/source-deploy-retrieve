@@ -7,7 +7,7 @@
 
 import { basename, dirname, extname, sep } from 'path';
 import { SourcePath } from '../common';
-import { MetadataXml } from '../resolution';
+import { MetadataXml } from '../resolve';
 
 /**
  * Get the file or directory name at the end of a path. Different from `path.basename`

@@ -6,7 +6,7 @@
  */
 
 import { RegistryAccess } from '../registry';
-import { TreeContainer } from '../resolution';
+import { TreeContainer } from '../resolve';
 
 /**
  * File system path to a source file of a metadata component.

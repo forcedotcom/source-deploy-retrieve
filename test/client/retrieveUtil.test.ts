@@ -17,7 +17,7 @@ import {
   auraTokens,
 } from './auraDefinitionMocks';
 import { lwcComponentMock } from './lightningComponentMocks';
-import { SourceComponent, VirtualTreeContainer } from '../../src/resolution';
+import { SourceComponent, VirtualTreeContainer } from '../../src/resolve';
 import { registryData } from '../../src';
 
 describe('Tooling Retrieve Util', () => {

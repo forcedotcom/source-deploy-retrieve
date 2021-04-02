@@ -36,7 +36,7 @@ export {
   TreeContainer,
   VirtualDirectory,
   ForceIgnore,
-} from './resolution';
+} from './resolve';
 export { SourcePath } from './common';
 export {
   ComponentSet,

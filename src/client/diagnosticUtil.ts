@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { SourcePath } from '../common';
-import { SourceComponent } from '../resolution';
+import { SourceComponent } from '../resolve';
 import { basename } from 'path';
 import { DeployMessage, ComponentDiagnostic } from './types';
 import { registryData } from '../registry';

@@ -6,15 +6,15 @@
  */
 import { mockRegistry, mockRegistryData } from '../../mock/registry';
 import { expect, assert } from 'chai';
-import { DefaultSourceAdapter } from '../../../src/resolution/adapters/defaultSourceAdapter';
-import { MixedContentSourceAdapter } from '../../../src/resolution/adapters/mixedContentSourceAdapter';
-import { MatchingContentSourceAdapter } from '../../../src/resolution/adapters/matchingContentSourceAdapter';
-import { BundleSourceAdapter } from '../../../src/resolution/adapters/bundleSourceAdapter';
-import { DecomposedSourceAdapter } from '../../../src/resolution/adapters/decomposedSourceAdapter';
+import { DefaultSourceAdapter } from '../../../src/resolve/adapters/defaultSourceAdapter';
+import { MixedContentSourceAdapter } from '../../../src/resolve/adapters/mixedContentSourceAdapter';
+import { MatchingContentSourceAdapter } from '../../../src/resolve/adapters/matchingContentSourceAdapter';
+import { BundleSourceAdapter } from '../../../src/resolve/adapters/bundleSourceAdapter';
+import { DecomposedSourceAdapter } from '../../../src/resolve/adapters/decomposedSourceAdapter';
 import { RegistryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
-import { SourceAdapterFactory } from '../../../src/resolution/adapters/sourceAdapterFactory';
-import { VirtualTreeContainer } from '../../../src/resolution';
+import { SourceAdapterFactory } from '../../../src/resolve/adapters/sourceAdapterFactory';
+import { VirtualTreeContainer } from '../../../src/resolve';
 
 /**
  * The types being passed to getAdapter don't really matter in these tests. We're

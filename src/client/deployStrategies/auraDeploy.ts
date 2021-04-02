@@ -16,7 +16,7 @@ import {
 } from '../types';
 import { deployTypes } from '../toolingApi';
 import { BaseDeploy } from './baseDeploy';
-import { SourceComponent } from '../../resolution';
+import { SourceComponent } from '../../resolve';
 import { DiagnosticUtil } from '../diagnosticUtil';
 
 export class AuraDeploy extends BaseDeploy {

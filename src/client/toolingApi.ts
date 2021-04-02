@@ -10,7 +10,7 @@ import { SourcePath } from '../common';
 import { nls } from '../i18n';
 import { buildQuery, queryToFileMap } from './retrieveUtil';
 import { createFiles } from '../utils';
-import { MetadataResolver, SourceComponent } from '../resolution';
+import { MetadataResolver, SourceComponent } from '../resolve';
 import { SourceDeployResult, QueryResult, SourceRetrieveResult, RequestStatus } from './types';
 import { ComponentSet } from '../collections';
 import { Connection } from '@salesforce/core';

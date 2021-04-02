@@ -16,7 +16,7 @@ import {
 } from './types';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import { join, dirname, basename, extname } from 'path';
-import { ComponentLike, SourceComponent } from '../resolution';
+import { ComponentLike, SourceComponent } from '../resolve';
 import { normalizeToArray } from '../utils/collections';
 import { ComponentSet } from '../collections';
 import { registryData } from '../registry';

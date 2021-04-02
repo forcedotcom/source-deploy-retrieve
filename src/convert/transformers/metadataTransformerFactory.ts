@@ -7,7 +7,7 @@
 import { RegistryError } from '../../errors';
 import { MetadataTransformer } from '../types';
 import { DefaultMetadataTransformer } from './defaultMetadataTransformer';
-import { SourceComponent } from '../../resolution/sourceComponent';
+import { SourceComponent } from '../../resolve/sourceComponent';
 import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 import { ConvertContext } from '../convertContext';
 import { StaticResourceMetadataTransformer } from './staticResourceMetadataTransformer';

@@ -6,7 +6,7 @@
  */
 import { join, basename } from 'path';
 import { AuraDefinition } from '../../../src/utils/deploy';
-import { SourceComponent, VirtualTreeContainer } from '../../../src/resolution';
+import { SourceComponent, VirtualTreeContainer } from '../../../src/resolve';
 import { registryData } from '../../../src';
 
 const bundlePath = join('file', 'path', 'aura', 'mockAuraCmp');

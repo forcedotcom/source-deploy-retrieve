@@ -13,10 +13,10 @@ import {
   DWAYNE_SOURCE_NAME,
 } from '../../mock/registry/type-constants/dwayneConstants';
 import { expect, assert } from 'chai';
-import { MixedContentSourceAdapter } from '../../../src/resolution/adapters/mixedContentSourceAdapter';
+import { MixedContentSourceAdapter } from '../../../src/resolve/adapters/mixedContentSourceAdapter';
 import { ExpectedSourceFilesError } from '../../../src/errors';
-import { VirtualTreeContainer } from '../../../src/resolution/treeContainers';
-import { SourceComponent } from '../../../src/resolution';
+import { VirtualTreeContainer } from '../../../src/resolve/treeContainers';
+import { SourceComponent } from '../../../src/resolve';
 import {
   TARAJI_VIRTUAL_FS_NO_XML,
   TARAJI_CONTENT_PATH,

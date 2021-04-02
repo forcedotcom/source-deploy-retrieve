@@ -6,11 +6,12 @@
  */
 
 import {
-  DWAYNE_SOURCE,
-  DWAYNE_XML,
-  DWAYNE_DIR,
-  DWAYNE_XML_NAME,
-  DWAYNE_SOURCE_NAME,
+  CONTENT_PATHS,
+  XML_PATHS,
+  TYPE_DIRECTORY,
+  XML_NAMES,
+  CONTENT_NAMES,
+  COMPONENTS,
 } from '../../mock/registry/type-constants/dwayneConstants';
 import { expect, assert } from 'chai';
 import { MixedContentSourceAdapter } from '../../../src/metadata-registry/adapters/mixedContentSourceAdapter';
@@ -28,39 +29,31 @@ describe('MixedContentSourceAdapter', () => {
     const type = mockRegistryData.types.dwaynejohnson;
     const tree = new VirtualTreeContainer([
       {
-        dirPath: DWAYNE_DIR,
-        children: [DWAYNE_XML_NAME],
+        dirPath: TYPE_DIRECTORY,
+        children: [XML_NAMES[0]],
       },
     ]);
     const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
-    assert.throws(() => adapter.getComponent(DWAYNE_SOURCE), ExpectedSourceFilesError);
+    assert.throws(() => adapter.getComponent(CONTENT_PATHS[0]), ExpectedSourceFilesError);
   });
 
   describe('File Content', () => {
     const type = mockRegistryData.types.dwaynejohnson;
     const tree = new VirtualTreeContainer([
       {
-        dirPath: DWAYNE_DIR,
-        children: [DWAYNE_XML_NAME, DWAYNE_SOURCE_NAME],
+        dirPath: TYPE_DIRECTORY,
+        children: [XML_NAMES[0], CONTENT_NAMES[0]],
       },
     ]);
     const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
-    const expectedComponent = new SourceComponent(
-      {
-        name: 'a',
-        type,
-        xml: DWAYNE_XML,
-        content: DWAYNE_SOURCE,
-      },
-      tree
-    );
+    const expectedComponent = new SourceComponent(COMPONENTS[0], tree);
 
     it('Should return expected SourceComponent when given a root metadata xml path', () => {
-      expect(adapter.getComponent(DWAYNE_XML)).to.deep.equal(expectedComponent);
+      expect(adapter.getComponent(XML_PATHS[0])).to.deep.equal(expectedComponent);
     });
 
     it('Should return expected SourceComponent when given a source path', () => {
-      expect(adapter.getComponent(DWAYNE_SOURCE)).to.deep.equal(expectedComponent);
+      expect(adapter.getComponent(CONTENT_PATHS[0])).to.deep.equal(expectedComponent);
     });
   });
 

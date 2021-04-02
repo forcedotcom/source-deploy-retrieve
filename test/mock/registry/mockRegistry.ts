@@ -87,6 +87,7 @@ export const mockRegistryData = {
       inFolder: false,
       name: 'DwayneJohnson',
       strictDirectoryName: true,
+      suffix: 'dwayne',
       strategies: {
         adapter: 'mixedContent',
       },

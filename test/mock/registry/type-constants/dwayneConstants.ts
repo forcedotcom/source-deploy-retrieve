@@ -6,10 +6,24 @@
  */
 
 import { join } from 'path';
+import { SourceComponent } from '../../../../src';
+import { META_XML_SUFFIX } from '../../../../src/common';
+import { mockRegistryData } from '../mockRegistry';
 
-// Mixed content
-export const DWAYNE_DIR = join('path', 'to', 'dwaynes');
-export const DWAYNE_XML_NAME = 'a.dwayne-meta.xml';
-export const DWAYNE_XML = join(DWAYNE_DIR, DWAYNE_XML_NAME);
-export const DWAYNE_SOURCE_NAME = 'a.xyz';
-export const DWAYNE_SOURCE = join(DWAYNE_DIR, DWAYNE_SOURCE_NAME);
+const type = mockRegistryData.types.dwaynejohnson;
+
+export const TYPE_DIRECTORY = join('path', 'to', type.directoryName);
+export const COMPONENT_NAMES = ['a'];
+export const XML_NAMES = COMPONENT_NAMES.map((name) => `${name}.${type.suffix}${META_XML_SUFFIX}`);
+export const XML_PATHS = XML_NAMES.map((name) => join(TYPE_DIRECTORY, name));
+export const CONTENT_NAMES = COMPONENT_NAMES.map((name) => `${name}.xyz`);
+export const CONTENT_PATHS = CONTENT_NAMES.map((name) => join(TYPE_DIRECTORY, name));
+export const COMPONENTS = COMPONENT_NAMES.map(
+  (name, index) =>
+    new SourceComponent({
+      name,
+      type,
+      content: CONTENT_PATHS[index],
+      xml: XML_PATHS[index],
+    })
+);

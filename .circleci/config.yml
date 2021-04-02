@@ -144,24 +144,6 @@ jobs:
       - release-management/install-change-case-mgmt
       - run: *gus-prepare-environment-variables
       - release-management/change-case-create
-      - run:
-          when: on_fail
-          name: Close CTC case as Not Implemented
-          command: |
-            if [ -z "${SF_CHANGE_CASE_SFDX_AUTH_URL}" ] || [ -z "${SF_CHANGE_CASE_TEMPLATE_ID}" ] || [ -z "${SF_CHANGE_CASE_SCHEDULE_BUILD}" ]; then
-              echo "Environment not configured for CTC"
-            else
-              sfchangecase close --location "https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME" --status "Not Implemented"
-            fi
-      - run:
-          when: on_success
-          name: All Good! Close CTC case/implementations
-          command: |
-            if [ -z "${SF_CHANGE_CASE_SFDX_AUTH_URL}" ] || [ -z "${SF_CHANGE_CASE_TEMPLATE_ID}" ] || [ -z "${SF_CHANGE_CASE_SCHEDULE_BUILD}" ]; then
-              echo "Environment not configured for CTC"
-            else
-              sfchangecase close --location "https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME"
-            fi
       - run: *build
       - run:
           name: Bump package version
@@ -189,6 +171,17 @@ jobs:
       - slack/status:
           channel: 'pdt_releases'
           fail_only: true
+      - run:
+          when: on_fail
+          name: Close CTC case as Not Implemented
+          command: |
+            release-management/change-case-close:
+              status: 'Not Implemented'
+      - run:
+          when: on_success
+          name: All Good! Close CTC case/implementations
+          command: |
+            release-management/change-case-close
 
 workflows:
   version: 2.1

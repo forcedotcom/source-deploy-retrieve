@@ -4,25 +4,16 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
 import { testSetup } from '@salesforce/core/lib/testSetup';
 import { fail } from 'assert';
 import { expect } from 'chai';
 import { join } from 'path';
 import { createSandbox, SinonStub } from 'sinon';
-import {
-  VirtualDirectory,
-  VirtualTreeContainer,
-  ComponentSet,
-  MetadataApiDeploy,
-  MetadataApiRetrieve,
-  MetadataComponent,
-} from '../../src';
+import { ComponentSet, MetadataApiDeploy, MetadataApiRetrieve, MetadataComponent } from '../../src';
 import * as resolution from '../../src/metadata-registry';
 import { MetadataMember } from '../../src/common/types';
 import { ComponentSetError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { VirtualFile } from '../../src/metadata-registry/types';
 import { mockConnection } from '../mock/client';
 import {
   mockRegistry,
@@ -31,106 +22,10 @@ import {
   decomposedtoplevel,
   matchingContentFile,
 } from '../mock/registry';
+import * as manifestFiles from '../mock/registry/manifestConstants';
 
 const env = createSandbox();
 const $$ = testSetup(env);
-
-const subsetXml: VirtualFile = {
-  name: 'subset.xml',
-  data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
-<Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <types>
-        <members>a</members>
-        <name>DecomposedTopLevel</name>
-    </types>
-    <types>
-        <members>b</members>
-        <name>MixedContentSingleFile</name>
-    </types>
-    <version>${mockRegistry.apiVersion}</version>
-</Package>\n`),
-};
-
-const completeXml: VirtualFile = {
-  name: 'complete.xml',
-  data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
-<Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <types>
-        <members>a</members>
-        <name>DecomposedTopLevel</name>
-    </types>
-    <types>
-        <members>b</members>
-        <members>c</members>
-        <name>MixedContentSingleFile</name>
-    </types>
-    <version>${mockRegistry.apiVersion}</version>
-</Package>\n`),
-};
-
-const wildcardXml: VirtualFile = {
-  name: 'wildcard.xml',
-  data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
-<Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <types>
-        <members>*</members>
-        <name>MixedContentSingleFile</name>
-    </types>
-    <version>${mockRegistry.apiVersion}</version>
-</Package>\n`),
-};
-
-const singleMemberXml: VirtualFile = {
-  name: 'singleMember.xml',
-  data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
-<Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <types>
-        <members>Test</members>
-        <name>MixedContentSingleFile</name>
-    </types>
-    <version>${mockRegistry.apiVersion}</version>
-</Package>\n`),
-};
-
-const folderComponentXml: VirtualFile = {
-  name: 'folderComponent.xml',
-  data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
-<Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <types>
-        <members>Test_Folder</members>
-        <name>MixedContentInFolder</name>
-    </types>
-    <version>${mockRegistry.apiVersion}</version>
-</Package>\n`),
-};
-
-const virtualPackageFiles: VirtualDirectory[] = [
-  {
-    dirPath: '.',
-    children: [
-      'decomposedTopLevels',
-      'mixedSingleFiles',
-      subsetXml,
-      wildcardXml,
-      singleMemberXml,
-      folderComponentXml,
-    ],
-  },
-  {
-    dirPath: 'decomposedTopLevels',
-    children: ['a'],
-  },
-  {
-    dirPath: join('decomposedTopLevels', 'a'),
-    children: ['a.dtl-meta.xml', 'child1.g-meta.xml', 'child2.g-meta.xml'],
-  },
-  {
-    dirPath: 'mixedSingleFiles',
-    children: ['b.foo', 'b.mixedSingleFile-meta.xml', 'c.bar', 'c.mixedSingleFile-meta.xml'],
-  },
-];
-
-const tree = new VirtualTreeContainer(virtualPackageFiles);
 
 describe('ComponentSet', () => {
   afterEach(() => env.restore());
@@ -149,9 +44,10 @@ describe('ComponentSet', () => {
 
       it('should initialize with result from source resolver', () => {
         const result = ComponentSet.fromSource('.').toArray();
-        const expected = new resolution.MetadataResolver(mockRegistry, tree).getComponentsFromPath(
-          '.'
-        );
+        const expected = new resolution.MetadataResolver(
+          mockRegistry,
+          manifestFiles.TREE
+        ).getComponentsFromPath('.');
 
         expect(result).to.deep.equal(expected);
       });
@@ -181,159 +77,159 @@ describe('ComponentSet', () => {
         const result = ComponentSet.fromSource({
           fsPaths: ['mixedSingleFiles'],
           registry: mockRegistry,
-          tree,
+          tree: manifestFiles.TREE,
         }).toArray();
-        const expected = new resolution.MetadataResolver(mockRegistry, tree).getComponentsFromPath(
-          'mixedSingleFiles'
-        );
+        const expected = new resolution.MetadataResolver(
+          mockRegistry,
+          manifestFiles.TREE
+        ).getComponentsFromPath('mixedSingleFiles');
 
         expect(result).to.deep.equal(expected);
       });
     });
 
-    describe('fromManifestFile', () => {
-      it('should not initialize with source backed components by default', async () => {
-        const set = await ComponentSet.fromManifestFile('subset.xml', {
-          registry: mockRegistry,
-          tree,
-        });
-        expect(Array.from(set)).to.deep.equal([
-          {
-            fullName: 'a',
-            type: mockRegistryData.types.decomposedtoplevel,
-          },
-          {
-            fullName: 'b',
-            type: mockRegistryData.types.mixedcontentsinglefile,
-          },
-        ]);
-      });
-
-      /**
-       * xml parsing library returns string | string[] for entries, tests that this is handled
-       */
-      it('should handle types with one member properly', async () => {
-        const set = await ComponentSet.fromManifestFile('singleMember.xml', {
-          registry: mockRegistry,
-          tree,
-        });
-        expect(Array.from(set)).to.deep.equal([
+    describe('fromManifest', () => {
+      it('should initialize with components using a path', async () => {
+        const expected: MetadataComponent[] = [
           {
             fullName: 'Test',
-            type: mockRegistryData.types.mixedcontentsinglefile,
+            type: mockRegistryData.types.matchingcontentfile,
           },
-        ]);
+        ];
+        const resolveStub = env.stub(resolution.ManifestResolver.prototype, 'resolve').resolves({
+          components: expected,
+          apiVersion: mockRegistryData.apiVersion,
+        });
+        env
+          .stub(resolution.RegistryAccess.prototype, 'getTypeByName')
+          .returns(mockRegistryData.types.matchingcontentfile);
+        const manifest = manifestFiles.ONE_FOLDER_MEMBER;
+        const set = await ComponentSet.fromManifest(manifest.name);
+
+        const result = set.toArray();
+
+        expect(resolveStub.callCount).to.equal(1);
+        expect(result).to.deep.equal(expected);
       });
 
-      it('should interpret a member of a type in folders with no delimiter as its corresponding folder type', async () => {
-        const set = await ComponentSet.fromManifestFile('folderComponent.xml', {
+      it('should initialize with components using an options object', async () => {
+        const manifest = manifestFiles.ONE_OF_EACH;
+        const set = await ComponentSet.fromManifest({
+          manifestPath: manifest.name,
           registry: mockRegistry,
-          tree,
+          tree: manifestFiles.TREE,
         });
-        expect(Array.from(set)).to.deep.equal([
+
+        const result = set.toArray();
+        const expected = await new resolution.ManifestResolver(
+          manifestFiles.TREE,
+          mockRegistry
+        ).resolve(manifest.name);
+
+        expect(result).to.deep.equal(expected.components);
+      });
+
+      it('should initialize with source backed components when specifying resolvePaths option', async () => {
+        const set = await ComponentSet.fromManifest({
+          manifestPath: manifestFiles.ONE_OF_EACH.name,
+          registry: mockRegistry,
+          tree: manifestFiles.TREE,
+          resolveSourcePaths: ['decomposedTopLevels', 'mixedSingleFiles'],
+        });
+
+        const result = set.toArray();
+        const expected = new resolution.MetadataResolver(
+          mockRegistry,
+          manifestFiles.TREE
+        ).getComponentsFromPath('.');
+        const missingIndex = expected.findIndex((c) => c.fullName === 'c');
+        expected.splice(missingIndex, 1);
+
+        expect(result).to.deep.equal(expected);
+      });
+
+      it('should resolve wildcard members by default', async () => {
+        const set = await ComponentSet.fromManifest({
+          manifestPath: manifestFiles.ONE_WILDCARD.name,
+          registry: mockRegistry,
+          tree: manifestFiles.TREE,
+        });
+
+        const result = set.has({ fullName: '*', type: 'MixedContentSingleFile' });
+
+        expect(result).to.be.true;
+      });
+
+      it('should resolve wildcard members when forceAddWildcards = true', async () => {
+        const set = await ComponentSet.fromManifest({
+          manifestPath: manifestFiles.ONE_WILDCARD.name,
+          registry: mockRegistry,
+          tree: manifestFiles.TREE,
+          forceAddWildcards: true,
+        });
+
+        const result = set.has({ fullName: '*', type: 'MixedContentSingleFile' });
+
+        expect(result).to.be.true;
+      });
+
+      it('should resolve components and not wildcard members when forceAddWildcards = false', async () => {
+        const set = await ComponentSet.fromManifest({
+          manifestPath: manifestFiles.ONE_WILDCARD.name,
+          registry: mockRegistry,
+          tree: manifestFiles.TREE,
+          resolveSourcePaths: ['.'],
+          forceAddWildcards: false,
+        });
+
+        const result = set.toArray();
+        const expected = new resolution.MetadataResolver(
+          mockRegistry,
+          manifestFiles.TREE
+        ).getComponentsFromPath('mixedSingleFiles');
+
+        expect(result).to.deep.equal(expected);
+      });
+
+      it('should resolve source and wildcard components when forceAddWildcards = true and resolvePaths are specified', async () => {
+        const set = await ComponentSet.fromManifest({
+          manifestPath: manifestFiles.ONE_WILDCARD.name,
+          registry: mockRegistry,
+          tree: manifestFiles.TREE,
+          resolveSourcePaths: ['.'],
+          forceAddWildcards: true,
+        });
+        const sourceComponents = new resolution.MetadataResolver(
+          mockRegistry,
+          manifestFiles.TREE
+        ).getComponentsFromPath('mixedSingleFiles');
+
+        const result = set.toArray();
+        const expected = [
+          { fullName: '*', type: mockRegistryData.types.mixedcontentsinglefile },
+          ...sourceComponents,
+        ];
+
+        expect(result).to.deep.equal(expected);
+      });
+
+      it('should add components even if they were not resolved', async () => {
+        const set = await ComponentSet.fromManifest({
+          manifestPath: manifestFiles.ONE_FOLDER_MEMBER.name,
+          registry: mockRegistry,
+          tree: manifestFiles.TREE,
+          resolveSourcePaths: ['.'],
+        });
+
+        const result = set.toArray();
+        const expected = [
           {
             fullName: 'Test_Folder',
             type: mockRegistryData.types.mciffolder,
           },
-        ]);
-      });
+        ];
 
-      it('should initialize with source backed components when specifying string resolve option', async () => {
-        const set = await ComponentSet.fromManifestFile('subset.xml', {
-          registry: mockRegistry,
-          tree,
-          resolve: '.',
-        });
-
-        const expected = new resolution.MetadataResolver(mockRegistry, tree).getComponentsFromPath(
-          '.'
-        );
-        const missingIndex = expected.findIndex((c) => c.fullName === 'c');
-        expected.splice(missingIndex, 1);
-
-        expect(Array.from(set)).to.deep.equal(expected);
-      });
-
-      it('should initialize with source backed components when specifying non-string iterable resolve option', async () => {
-        const set = await ComponentSet.fromManifestFile('subset.xml', {
-          registry: mockRegistry,
-          tree,
-          resolve: ['decomposedTopLevels', 'mixedSingleFiles'],
-        });
-
-        const expected = new resolution.MetadataResolver(mockRegistry, tree).getComponentsFromPath(
-          '.'
-        );
-        const missingIndex = expected.findIndex((c) => c.fullName === 'c');
-        expected.splice(missingIndex, 1);
-
-        expect(Array.from(set)).to.deep.equal(expected);
-      });
-
-      it('should interpret wildcard members literally by default', async () => {
-        const set = await ComponentSet.fromManifestFile('wildcard.xml', {
-          registry: mockRegistry,
-          tree,
-        });
-
-        expect(set.has({ fullName: '*', type: 'MixedContentSingleFile' })).to.be.true;
-      });
-
-      it('should interpret wildcard members literally when literalWildcard = true', async () => {
-        const set = await ComponentSet.fromManifestFile('wildcard.xml', {
-          registry: mockRegistry,
-          tree,
-          literalWildcard: true,
-        });
-
-        expect(set.has({ fullName: '*', type: 'MixedContentSingleFile' }));
-      });
-
-      it('should resolve components when literalWildcard = false and wildcard is encountered', async () => {
-        const set = await ComponentSet.fromManifestFile('wildcard.xml', {
-          registry: mockRegistry,
-          tree,
-          resolve: '.',
-          literalWildcard: false,
-        });
-        const expected = new resolution.MetadataResolver(mockRegistry, tree).getComponentsFromPath(
-          'mixedSingleFiles'
-        );
-
-        expect(Array.from(set)).to.deep.equal(expected);
-      });
-
-      it('should resolve components and add literal wildcard component when literalWildcard = true and resolve != undefined', async () => {
-        const set = await ComponentSet.fromManifestFile('wildcard.xml', {
-          registry: mockRegistry,
-          tree,
-          resolve: '.',
-          literalWildcard: true,
-        });
-        const sourceComponents = new resolution.MetadataResolver(
-          mockRegistry,
-          tree
-        ).getComponentsFromPath('mixedSingleFiles');
-
-        expect(Array.from(set)).to.deep.equal([
-          { fullName: '*', type: mockRegistryData.types.mixedcontentsinglefile },
-          ...sourceComponents,
-        ]);
-
-        it('should add components even if they were not resolved', async () => {
-          const set = await ComponentSet.fromManifestFile('folderComponent.xml', {
-            registry: mockRegistry,
-            tree,
-            resolve: '.',
-          });
-
-          expect(Array.from(set)).to.deep.equal([
-            {
-              fullName: 'Test_Folder',
-              type: mockRegistryData.types.mciffolder,
-            },
-          ]);
-        });
+        expect(result).to.deep.equal(expected);
       });
     });
 
@@ -369,7 +265,11 @@ describe('ComponentSet', () => {
 
   describe('getObject', () => {
     it('should return an object representing the package manifest', () => {
-      const set = ComponentSet.fromSource({ fsPaths: ['.'], registry: mockRegistry, tree });
+      const set = ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry: mockRegistry,
+        tree: manifestFiles.TREE,
+      });
       expect(set.getObject()).to.deep.equal({
         Package: {
           types: [
@@ -417,17 +317,26 @@ describe('ComponentSet', () => {
 
   describe('getPackageXml', () => {
     it('should return manifest string when initialized from manifest file', async () => {
-      const set = await ComponentSet.fromManifestFile('subset.xml', {
+      const manifest = manifestFiles.ONE_OF_EACH;
+      const set = await ComponentSet.fromManifest({
+        manifestPath: manifest.name,
         registry: mockRegistry,
-        tree,
+        tree: manifestFiles.TREE,
       });
 
-      expect(set.getPackageXml()).to.equal(subsetXml.data.toString());
+      const result = set.getPackageXml();
+      const expected = manifest.data.toString();
+
+      expect(result).to.equal(expected);
     });
 
     it('should return manifest string when initialized from source', () => {
-      const set = ComponentSet.fromSource({ fsPaths: ['.'], registry: mockRegistry, tree });
-      expect(set.getPackageXml(4)).to.equal(completeXml.data.toString());
+      const set = ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry: mockRegistry,
+        tree: manifestFiles.TREE,
+      });
+      expect(set.getPackageXml(4)).to.equal(manifestFiles.BASIC.data.toString());
     });
   });
 
@@ -436,21 +345,27 @@ describe('ComponentSet', () => {
       const set = ComponentSet.fromSource({
         fsPaths: ['mixedSingleFiles'],
         registry: mockRegistry,
-        tree,
+        tree: manifestFiles.TREE,
       });
       set.add({ fullName: 'Test', type: 'decomposedtoplevel' });
-      const expected = new resolution.MetadataResolver(mockRegistry, tree).getComponentsFromPath(
-        'mixedSingleFiles'
-      );
+      const expected = new resolution.MetadataResolver(
+        mockRegistry,
+        manifestFiles.TREE
+      ).getComponentsFromPath('mixedSingleFiles');
 
       expect(set.getSourceComponents().toArray()).to.deep.equal(expected);
     });
 
     it('should return source-backed components that match the given metadata member', () => {
-      const set = ComponentSet.fromSource({ fsPaths: ['.'], registry: mockRegistry, tree });
-      const expected = new resolution.MetadataResolver(mockRegistry, tree).getComponentsFromPath(
-        join('mixedSingleFiles', 'b.foo')
-      );
+      const set = ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry: mockRegistry,
+        tree: manifestFiles.TREE,
+      });
+      const expected = new resolution.MetadataResolver(
+        mockRegistry,
+        manifestFiles.TREE
+      ).getComponentsFromPath(join('mixedSingleFiles', 'b.foo'));
 
       expect(set.size).to.equal(3);
       expect(
@@ -462,7 +377,11 @@ describe('ComponentSet', () => {
   describe('deploy', () => {
     it('should properly construct a deploy operation', async () => {
       const connection = await mockConnection($$);
-      const set = ComponentSet.fromSource({ fsPaths: ['.'], registry: mockRegistry, tree });
+      const set = ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry: mockRegistry,
+        tree: manifestFiles.TREE,
+      });
       const operationArgs = { components: set, usernameOrConnection: connection };
       const expectedOperation = new MetadataApiDeploy(operationArgs);
       const constructorStub = env
@@ -479,7 +398,11 @@ describe('ComponentSet', () => {
     it('should properly construct a deploy operation with overridden apiVersion', async () => {
       const connection = await mockConnection($$);
       const apiVersion = '50.0';
-      const set = ComponentSet.fromSource({ fsPaths: ['.'], registry: mockRegistry, tree });
+      const set = ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry: mockRegistry,
+        tree: manifestFiles.TREE,
+      });
       set.apiVersion = apiVersion;
       const operationArgs = { components: set, usernameOrConnection: connection, apiVersion };
       const expectedOperation = new MetadataApiDeploy(operationArgs);
@@ -495,9 +418,10 @@ describe('ComponentSet', () => {
     });
 
     it('should throw error if there are no source backed components when deploying', async () => {
-      const set = await ComponentSet.fromManifestFile('subset.xml', {
+      const set = await ComponentSet.fromManifest({
+        manifestPath: manifestFiles.ONE_OF_EACH.name,
         registry: mockRegistry,
-        tree,
+        tree: manifestFiles.TREE,
       });
       try {
         await set.deploy({ usernameOrConnection: 'test@foobar.com' });
@@ -512,7 +436,11 @@ describe('ComponentSet', () => {
   describe('retrieve', () => {
     it('should properly construct a retrieve operation', async () => {
       const connection = await mockConnection($$);
-      const set = ComponentSet.fromSource({ fsPaths: ['.'], registry: mockRegistry, tree });
+      const set = ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry: mockRegistry,
+        tree: manifestFiles.TREE,
+      });
       const operationArgs = {
         components: set,
         output: join('test', 'path'),
@@ -536,7 +464,11 @@ describe('ComponentSet', () => {
     it('should properly construct a retrieve operation with overridden apiVersion', async () => {
       const connection = await mockConnection($$);
       const apiVersion = '50.0';
-      const set = ComponentSet.fromSource({ fsPaths: ['.'], registry: mockRegistry, tree });
+      const set = ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry: mockRegistry,
+        tree: manifestFiles.TREE,
+      });
       set.apiVersion = apiVersion;
       const operationArgs = {
         apiVersion,
@@ -685,7 +617,11 @@ describe('ComponentSet', () => {
   });
 
   it('should calculate size correctly', () => {
-    const set = ComponentSet.fromSource({ fsPaths: ['.'], registry: mockRegistry, tree });
+    const set = ComponentSet.fromSource({
+      fsPaths: ['.'],
+      registry: mockRegistry,
+      tree: manifestFiles.TREE,
+    });
 
     expect(set.size).to.equal(3);
   });

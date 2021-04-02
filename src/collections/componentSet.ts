@@ -119,7 +119,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    */
   public static async fromManifest(manifestPath: string): Promise<ComponentSet>;
   /**
-   * Resolve components from a manifest file in XML format. 
+   * Resolve components from a manifest file in XML format.
    * Customize the resolution process using an options object. For example, resolve source-backed components
    * while using the manifest file as a filter.
    * process using an options object, such as resolving source-backed components

@@ -5,7 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { createSandbox } from 'sinon';
-import { ComponentSet, registryData, SourceComponent } from '../../src';
+import {
+  ComponentSet,
+  registryData,
+  SourceComponent,
+  DeployResult,
+  MetadataApiDeploy,
+} from '../../src';
 import {
   ComponentStatus,
   DeployMessage,
@@ -16,7 +22,6 @@ import {
 import { expect } from 'chai';
 import { basename, join } from 'path';
 import { MOCK_ASYNC_RESULT, stubMetadataDeploy } from '../mock/client/transferOperations';
-import { DeployResult, MetadataApiDeploy } from '../../src/client/metadataApiDeploy';
 import { mockRegistry, matchingContentFile } from '../mock/registry';
 import { META_XML_SUFFIX } from '../../src/common';
 import {
@@ -24,6 +29,7 @@ import {
   REGINA_CHILD_COMPONENT_2,
   REGINA_COMPONENT,
 } from '../mock/registry/type-constants/reginaConstants';
+import { getString } from '@salesforce/ts-types';
 
 const env = createSandbox();
 
@@ -53,6 +59,37 @@ describe('MetadataApiDeploy', () => {
 
       expect(deployStub.calledOnce).to.be.true;
       expect(deployStub.firstCall.args[0]).to.equal(zipBuffer);
+    });
+
+    it('should save the temp directory if the enviornment variable is set', async () => {
+      try {
+        process.env.SFDX_MDAPI_TEMP_DIR = 'test';
+        const components = new ComponentSet([matchingContentFile.COMPONENT]);
+        const { operation, convertStub, deployStub } = await stubMetadataDeploy(env, {
+          components,
+        });
+
+        await operation.start();
+        const { zipBuffer } = await convertStub.returnValues[0];
+
+        expect(deployStub.calledOnce).to.be.true;
+        expect(deployStub.firstCall.args[0]).to.equal(zipBuffer);
+        expect(getString(convertStub.secondCall.args[2], 'outputDirectory', '')).to.equal('test');
+      } finally {
+        delete process.env.SFDX_MDAPI_TEMP_DIR;
+      }
+    });
+
+    it('should NOT save the temp directory if the enviornment variable is NOT set', async () => {
+      const components = new ComponentSet([matchingContentFile.COMPONENT]);
+      const { operation, convertStub } = await stubMetadataDeploy(env, {
+        components,
+      });
+
+      await operation.start();
+
+      // if the env var is set the callCount will be 2
+      expect(convertStub.callCount).to.equal(1);
     });
 
     it('should construct a result object with deployed components', async () => {

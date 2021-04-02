@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SourceAdapter, TreeContainer } from '../types';
+import { SourceAdapter } from '../types';
 import { BundleSourceAdapter } from './bundleSourceAdapter';
 import { DecomposedSourceAdapter } from './decomposedSourceAdapter';
 import { MatchingContentSourceAdapter } from './matchingContentSourceAdapter';
@@ -14,6 +14,7 @@ import { RegistryError } from '../../errors';
 import { ForceIgnore } from '../forceIgnore';
 import { MetadataType } from '../../common';
 import { RegistryAccess } from '../registryAccess';
+import { TreeContainer } from '../treeContainers';
 
 enum AdapterId {
   Bundle = 'bundle',

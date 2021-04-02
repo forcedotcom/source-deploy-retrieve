@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, join, sep } from 'path';
-import { TreeContainer } from './types';
 import { TypeInferenceError } from '../errors';
 import { extName, parentName } from '../utils/path';
 import { parseMetadataXml } from '../utils/registry';
@@ -13,7 +12,7 @@ import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
 import { MetadataType, SourcePath } from '../common';
-import { NodeFSTreeContainer } from './treeContainers';
+import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
 import { RegistryAccess } from './registryAccess';
 import { ComponentSet } from '../collections';
 

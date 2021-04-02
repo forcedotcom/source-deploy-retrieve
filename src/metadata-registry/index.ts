@@ -11,7 +11,7 @@ export { ManifestResolver } from './manifestResolver';
 export { RegistryAccess } from './registryAccess';
 export { ManifestGenerator } from './manifestGenerator';
 export {
-  BaseTreeContainer,
+  TreeContainer,
   NodeFSTreeContainer,
   VirtualTreeContainer,
   ZipTreeContainer,
@@ -21,7 +21,6 @@ export {
   MetadataRegistry,
   MetadataXml,
   SourceAdapter,
-  TreeContainer,
   VirtualDirectory,
   TypeIndex,
   SuffixIndex,

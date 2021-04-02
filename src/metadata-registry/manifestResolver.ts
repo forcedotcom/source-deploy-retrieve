@@ -7,8 +7,7 @@
 
 import { MetadataComponent } from '../common';
 import { RegistryAccess } from './registryAccess';
-import { NodeFSTreeContainer } from './treeContainers';
-import { TreeContainer } from './types';
+import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
 import { parse as parseXml } from 'fast-xml-parser';
 import { normalizeToArray } from '../utils';
 

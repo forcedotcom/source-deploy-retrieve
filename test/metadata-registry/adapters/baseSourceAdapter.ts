@@ -50,7 +50,7 @@ describe('BaseSourceAdapter', () => {
     expect(adapter.getComponent(component.xml)).to.deep.equal(component);
   });
 
-  it('Should defer parsing metadata xml to child adapter if path is not a metadata xml', () => {
+  it('should defer parsing metadata xml to child adapter if path is not a metadata xml', () => {
     const path = join('path', 'to', 'dwaynes', 'My_Test.js');
     const type = mockRegistryData.types.dwaynejohnson;
     const adapter = new TestChildAdapter(type, mockRegistry);
@@ -64,7 +64,7 @@ describe('BaseSourceAdapter', () => {
     );
   });
 
-  it('Should defer parsing metadata xml to child adapter if path is not a root metadata xml', () => {
+  it('should defer parsing metadata xml to child adapter if path is not a root metadata xml', () => {
     const path = join('path', 'to', 'dwaynes', 'smallDwaynes', 'b.small-meta.xml');
     const type = mockRegistryData.types.dwaynejohnson;
     const adapter = new TestChildAdapter(type, mockRegistry);
@@ -78,7 +78,7 @@ describe('BaseSourceAdapter', () => {
     );
   });
 
-  it('Should throw an error if a metadata xml file is forceignored', () => {
+  it('should throw an error if a metadata xml file is forceignored', () => {
     const testUtil = new RegistryTestUtil();
     const type = mockRegistryData.types.matchingcontentfile;
     const path = join('path', 'to', type.directoryName, `My_Test.${type.suffix}${META_XML_SUFFIX}`);
@@ -95,22 +95,17 @@ describe('BaseSourceAdapter', () => {
     testUtil.restore();
   });
 
-  it('Should resolve a folder component', () => {
-    const path = join('path', 'to', 'seans', 'My_Test-meta.xml');
-    const type = mockRegistryData.types.seanfolder;
-    const adapter = new DefaultSourceAdapter(type, mockRegistry);
-    expect(adapter.getComponent(path)).to.deep.equal(
-      new SourceComponent({
-        name: 'My_Test',
-        type,
-        xml: path,
-      })
-    );
+  it('should resolve a folder component in metadata format', () => {
+    const component = xmlInFolder.FOLDER_COMPONENT_MD_FORMAT;
+    const adapter = new DefaultSourceAdapter(component.type, mockRegistry);
+
+    expect(adapter.getComponent(component.xml)).to.deep.equal(component);
   });
 
-  it('Should not recognize a content metadata file in the wrong directory', () => {
-    const path = join('path', 'to', 'genes', 'My_Test.sean');
-    const type = mockRegistryData.types.seanconnerys;
+  it('should not recognize an xml only component in metadata format when in the wrong directory', () => {
+    // not in the right type directory
+    const path = join('path', 'to', 'something', 'My_Test.xif');
+    const type = mockRegistryData.types.xmlinfolder;
     const adapter = new DefaultSourceAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.be.undefined;
   });

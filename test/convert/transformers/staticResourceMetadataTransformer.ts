@@ -19,8 +19,11 @@ import { mockRegistry, mockRegistryData } from '../../mock/registry';
 import {
   MC_SINGLE_FILE_COMPONENT,
   MC_SINGLE_FILE_XML_NAMES,
-} from '../../mock/registry/mixedContentSingleFileConstants';
-import { TARAJI_COMPONENT, TARAJI_VIRTUAL_FS } from '../../mock/registry/tarajiConstants';
+} from '../../mock/registry/type-constants/mixedContentSingleFileConstants';
+import {
+  TARAJI_COMPONENT,
+  TARAJI_VIRTUAL_FS,
+} from '../../mock/registry/type-constants/tarajiConstants';
 import { TestReadable } from '../../mock/convert/readables';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../../src/common';
 

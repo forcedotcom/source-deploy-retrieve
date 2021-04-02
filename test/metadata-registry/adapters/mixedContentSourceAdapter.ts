@@ -26,19 +26,19 @@ describe('MixedContentSourceAdapter', () => {
     const type = mockRegistryData.types.mixedcontentsinglefile;
     const tree = new VirtualTreeContainer([
       {
-        dirPath: mixedContentSingleFile.MC_SINGLE_FILE_DIR,
-        children: [mixedContentSingleFile.MC_SINGLE_FILE_XML_NAMES[0]],
+        dirPath: mixedContentSingleFile.TYPE_DIRECTORY,
+        children: [mixedContentSingleFile.XML_NAMES[0]],
       },
     ]);
     const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
     assert.throws(
-      () => adapter.getComponent(mixedContentSingleFile.MC_SINGLE_FILE_COMPONENT.content),
+      () => adapter.getComponent(mixedContentSingleFile.COMPONENT.content),
       ExpectedSourceFilesError
     );
   });
 
   describe('File Content', () => {
-    const component = mixedContentSingleFile.MC_SINGLE_FILE_COMPONENT;
+    const component = mixedContentSingleFile.COMPONENT;
     const adapter = new MixedContentSourceAdapter(
       mockRegistryData.types.mixedcontentsinglefile,
       mockRegistry,

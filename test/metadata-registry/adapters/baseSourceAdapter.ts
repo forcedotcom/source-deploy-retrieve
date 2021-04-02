@@ -49,7 +49,7 @@ describe('BaseSourceAdapter', () => {
   });
 
   it('should defer parsing metadata xml to child adapter if path is not a metadata xml', () => {
-    const component = mixedContentSingleFile.MC_SINGLE_FILE_COMPONENT;
+    const component = mixedContentSingleFile.COMPONENT;
     const adapter = new TestAdapter(component);
 
     const result = adapter.getComponent(component.content);

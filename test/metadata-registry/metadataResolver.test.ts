@@ -19,8 +19,6 @@ import {
   taraji,
   mixedContentInFolder,
   bundle,
-  sean,
-  gene,
   mockRegistryData,
   decomposedtoplevel,
 } from '../mock/registry';
@@ -36,14 +34,14 @@ import {
   REGINA_XML_PATH,
   REGINA_CHILD_DIR_PATH,
   REGINA_CHILD_XML_PATH_2,
-} from '../mock/registry/reginaConstants';
+} from '../mock/registry/type-constants/reginaConstants';
 import {
   TARAJI_COMPONENT,
   TARAJI_CONTENT_PATH,
   TARAJI_DIR,
   TARAJI_VIRTUAL_FS,
   TARAJI_XML_PATHS,
-} from '../mock/registry/tarajiConstants';
+} from '../mock/registry/type-constants/tarajiConstants';
 import { ComponentSet } from '../../src';
 
 const testUtil = new RegistryTestUtil();
@@ -142,45 +140,45 @@ describe('MetadataResolver', () => {
       });
 
       it('Should determine type for inFolder path content files', () => {
-        const path = sean.SEAN_FOLDER;
+        const path = xmlInFolder.COMPONENT_FOLDER_PATH;
         const access = testUtil.createMetadataResolver([
           {
             dirPath: path,
-            children: sean.SEAN_NAMES,
+            children: xmlInFolder.XML_NAMES,
           },
         ]);
-        const componentMappings = sean.SEAN_PATHS.map((p: string, i: number) => ({
-          path: p,
-          component: sean.SEAN_COMPONENTS[i],
+        const componentMappings = xmlInFolder.COMPONENTS.map((c: SourceComponent) => ({
+          path: c.xml,
+          component: c,
         }));
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.seanconnerys,
+            type: mockRegistryData.types.xmlinfolder,
             componentMappings,
             allowContent: false,
           },
         ]);
-        expect(access.getComponentsFromPath(path)).to.deep.equal(sean.SEAN_COMPONENTS);
+        expect(access.getComponentsFromPath(path)).to.deep.equal(xmlInFolder.COMPONENTS);
       });
 
       it('Should determine type for folder files', () => {
-        const path = gene.GENE_DIR;
+        const path = xmlInFolder.TYPE_DIRECTORY;
         const access = testUtil.createMetadataResolver([
           {
             dirPath: path,
-            children: [gene.GENE_FOLDER_XML_NAME],
+            children: [xmlInFolder.FOLDER_XML_NAME],
           },
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.genewilder,
+            type: mockRegistryData.types.xmlinfolderfolder,
             componentMappings: [
-              { path: gene.GENE_FOLDER_XML_PATH, component: gene.GENE_FOLDER_COMPONENT },
+              { path: xmlInFolder.FOLDER_XML_PATH, component: xmlInFolder.FOLDER_COMPONENT },
             ],
             allowContent: false,
           },
         ]);
-        expect(access.getComponentsFromPath(path)).to.deep.equal([gene.GENE_FOLDER_COMPONENT]);
+        expect(access.getComponentsFromPath(path)).to.deep.equal([xmlInFolder.FOLDER_COMPONENT]);
       });
 
       it('Should not mistake folder component of a mixed content type as that type', () => {
@@ -257,7 +255,7 @@ describe('MetadataResolver', () => {
       });
 
       it('Should not return a component if path to folder metadata xml is forceignored', () => {
-        const path = gene.GENE_FOLDER_XML_PATH;
+        const path = xmlInFolder.FOLDER_XML_PATH;
         const access = testUtil.createMetadataResolver([
           {
             dirPath: dirname(path),
@@ -267,10 +265,10 @@ describe('MetadataResolver', () => {
         testUtil.stubForceIgnore({ seed: path, deny: [path] });
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.genewilder,
+            type: mockRegistryData.types.xmlinfolder,
             // should not be returned
             componentMappings: [
-              { path: gene.GENE_FOLDER_XML_PATH, component: gene.GENE_FOLDER_COMPONENT },
+              { path: xmlInFolder.FOLDER_XML_PATH, component: xmlInFolder.FOLDER_COMPONENT },
             ],
           },
         ]);

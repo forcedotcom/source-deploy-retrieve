@@ -5,8 +5,32 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-export type MetadataType = {
+/**
+ * Schema of the registry data.
+ */
+export interface MetadataRegistry {
+  types: TypeIndex;
+  suffixes?: SuffixIndex;
+  strictDirectoryNames: {
+    [directoryName: string]: string;
+  };
+  childTypes: {
+    [childTypeId: string]: string;
+  };
+  apiVersion: string;
+}
+
+/**
+ * Metadata type definition in the registry.
+ */
+export interface MetadataType {
+  /**
+   * Unique identifier of the metadata type. Usually the API name lowercased.
+   */
   id: string;
+  /**
+   * API name of the metadata type.
+   */
   name: string;
   /**
    * Name of the directory where components are located in a package
@@ -16,6 +40,7 @@ export type MetadataType = {
    * Whether or not components are stored in folders.
    *
    * __Examples:__ Reports, Dashboards, Documents, EmailTemplates
+   *
    * @deprecated use `folderType` to get the related folder type, if one exists
    */
   inFolder?: boolean;
@@ -57,19 +82,32 @@ export type MetadataType = {
     transformer?: string;
     decomposition?: string;
   };
-};
+}
 
 /**
- * Metadata type definitions
+ * Mapping of metadata type ids -> Metadata type definitions.
  */
-export type TypeIndex = { [typeId: string]: MetadataType };
+export interface TypeIndex {
+  [typeId: string]: MetadataType;
+}
+
 /**
- * Mapping of metadata suffixes -> type ids.
+ * Mapping of metadata type file suffixes -> type ids.
  */
-export type SuffixIndex = { [suffix: string]: string };
+export interface SuffixIndex {
+  [suffix: string]: string;
+}
 
-export type DirectoryIndex = { [directoryName: string]: string };
+/**
+ * Mapping of metadata type directory names -> type ids.
+ */
+export interface DirectoryIndex {
+  [directoryName: string]: string;
+}
 
+/**
+ * Strategy names for handling component decomposition.
+ */
 export const enum DecompositionStrategy {
   /**
    * Elements of child types are decomposed to the same folder the parent object is in
@@ -81,23 +119,11 @@ export const enum DecompositionStrategy {
   FolderPerType = 'folderPerType',
 }
 
+/**
+ * Strategy names for the type of transformation to use for metadata types.
+ */
 export const enum TransformerStrategy {
   Standard = 'standard',
   Decomposed = 'decomposed',
   StaticResource = 'staticResource',
 }
-
-/**
- * Schema of the registry data.
- */
-export type MetadataRegistry = {
-  types: TypeIndex;
-  suffixes?: SuffixIndex;
-  strictDirectoryNames: {
-    [directoryName: string]: string;
-  };
-  childTypes: {
-    [childTypeId: string]: string;
-  };
-  apiVersion: string;
-};

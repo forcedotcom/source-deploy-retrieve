@@ -21,16 +21,34 @@ export interface PackageManifestObject {
 
 export interface FromSourceOptions extends OptionalTreeRegistryOptions {
   /**
-   * File or directory paths to resolve components against
+   * File paths or directory paths to resolve components against
    */
   fsPaths: string[];
   /**
    * Only resolve components contained in the given set
    */
-  inclusiveFilter?: ComponentSet;
+  include?: ComponentSet;
 }
 
 export interface FromManifestOptions extends OptionalTreeRegistryOptions {
-  resolve?: Iterable<string>;
-  literalWildcard?: boolean;
+  /**
+   * Path to the manifest file in XML format
+   */
+  manifestPath: string;
+  /**
+   * Paths to resolve source-backed components. The manifest file is used to
+   * indicate which components to include.
+   */
+  resolveSourcePaths?: string[];
+  /**
+   * By default, wildcard members encoutered in the manifest are added to the set
+   * e.g. `{ fullName: '*', type: 'ApexClass' }`. If `resolveSourcePaths` is set,
+   * wildcard components are not added to the final set, but are used in the filter
+   * when resolving source-backed components to match all components with the wildcard
+   * type.
+   *
+   * Use this flag to always add wildcard components to the set, regardless of the other
+   * conditions.
+   */
+  forceAddWildcards?: boolean;
 }

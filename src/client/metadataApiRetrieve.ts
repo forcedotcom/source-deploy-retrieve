@@ -135,10 +135,12 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     if (result.status === RequestStatus.Succeeded) {
       components = await this.extract(Buffer.from(result.zipFile, 'base64'));
     }
-    return new RetrieveResult(
-      result,
-      components ?? new ComponentSet(undefined, this.options.registry)
-    );
+
+    components = components ?? new ComponentSet(undefined, this.options.registry);
+
+    await this.maybeSaveTempDirectory('source', components);
+
+    return new RetrieveResult(result, components);
   }
 
   protected async doCancel(): Promise<boolean> {

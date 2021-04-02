@@ -7,15 +7,21 @@
 import { fail } from 'assert';
 import { expect } from 'chai';
 import { createSandbox, match } from 'sinon';
-import { ComponentSet, SourceComponent } from '../../src';
-import { RetrieveResult } from '../../src/client/metadataApiRetrieve';
-import { ComponentStatus, FileResponse, MetadataApiRetrieveStatus } from '../../src/client/types';
+import {
+  RetrieveResult,
+  ComponentSet,
+  SourceComponent,
+  ComponentStatus,
+  FileResponse,
+  MetadataApiRetrieveStatus,
+} from '../../src';
 import { MetadataApiRetrieveError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
 import { mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
 import { REGINA_COMPONENT } from '../mock/registry/type-constants/reginaConstants';
+import { getString } from '@salesforce/ts-types';
 
 const env = createSandbox();
 
@@ -93,6 +99,37 @@ describe('MetadataApiRetrieve', async () => {
           outputDirectory: MOCK_DEFAULT_OUTPUT,
         })
       ).to.be.true;
+    });
+
+    it('should save the temp directory if the environment variable is set', async () => {
+      try {
+        process.env.SFDX_MDAPI_TEMP_DIR = 'test';
+        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const { operation, convertStub } = await stubMetadataRetrieve(env, {
+          toRetrieve,
+          merge: true,
+          successes: toRetrieve,
+        });
+
+        await operation.start();
+
+        expect(getString(convertStub.secondCall.args[2], 'outputDirectory', '')).to.equal('test');
+      } finally {
+        delete process.env.SFDX_MDAPI_TEMP_DIR;
+      }
+    });
+
+    it('should NOT save the temp directory if the environment variable is NOT set', async () => {
+      const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+      const { operation, convertStub } = await stubMetadataRetrieve(env, {
+        toRetrieve,
+        merge: true,
+        successes: toRetrieve,
+      });
+
+      await operation.start();
+      // if the env var is set the callCount will be 2
+      expect(convertStub.callCount).to.equal(1);
     });
 
     it('should retrieve zip and merge with existing components', async () => {

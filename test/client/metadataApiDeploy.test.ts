@@ -23,7 +23,7 @@ import {
   REGINA_CHILD_COMPONENT_1,
   REGINA_CHILD_COMPONENT_2,
   REGINA_COMPONENT,
-} from '../mock/registry/reginaConstants';
+} from '../mock/registry/type-constants/reginaConstants';
 
 const env = createSandbox();
 

@@ -81,17 +81,6 @@ export const mockRegistryData = {
         adapter: 'mixedContent',
       },
     },
-    dwaynejohnson: {
-      id: 'dwaynejohnson',
-      directoryName: 'dwaynes',
-      inFolder: false,
-      name: 'DwayneJohnson',
-      strictDirectoryName: true,
-      suffix: 'dwayne',
-      strategies: {
-        adapter: 'mixedContent',
-      },
-    },
     tarajihenson: {
       id: 'tarajihenson',
       directoryName: 'tarajis',
@@ -223,7 +212,6 @@ export const mockRegistryData = {
     ms: 'missingstrategies',
   },
   strictDirectoryNames: {
-    dwaynes: 'dwaynejohnson',
     tarajis: 'tarajihenson',
     bundles: 'bundle',
     reginas: 'reginaking',

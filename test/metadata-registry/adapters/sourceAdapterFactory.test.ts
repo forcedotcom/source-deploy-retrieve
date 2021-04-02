@@ -32,7 +32,7 @@ describe('SourceAdapterFactory', () => {
   });
 
   it('Should return MixedContentSourceAdapter for mixedContent AdapterId', () => {
-    const type = mockRegistryData.types.dwaynejohnson;
+    const type = mockRegistryData.types.mixedcontentsinglefile;
     const adapter = factory.getAdapter(type);
     expect(adapter).to.deep.equal(
       new MixedContentSourceAdapter(type, mockRegistry, undefined, tree)

@@ -6,7 +6,7 @@
  */
 import { WriteInfo } from '../types';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
-import { DecompositionStrategy, SourceComponent } from '../../metadata-registry';
+import { DecompositionStrategy, SourceComponent } from '../../resolution';
 import { JsonMap } from '@salesforce/ts-types';
 import { JsToXml } from '../streams';
 import { join } from 'path';

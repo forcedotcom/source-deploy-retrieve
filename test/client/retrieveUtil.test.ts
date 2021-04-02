@@ -17,7 +17,7 @@ import {
   auraTokens,
 } from './auraDefinitionMocks';
 import { lwcComponentMock } from './lightningComponentMocks';
-import { SourceComponent, registryData, VirtualTreeContainer } from '../../src/metadata-registry';
+import { SourceComponent, registryData, VirtualTreeContainer } from '../../src/resolution';
 
 describe('Tooling Retrieve Util', () => {
   const rootPath = path.join('file', 'path');

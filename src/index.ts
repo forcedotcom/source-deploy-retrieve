@@ -35,7 +35,7 @@ export {
   TreeContainer,
   VirtualDirectory,
   ForceIgnore,
-} from './metadata-registry';
+} from './resolution';
 export { MetadataType, MetadataComponent, SourcePath } from './common';
 export {
   ComponentSet,

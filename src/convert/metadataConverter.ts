@@ -11,7 +11,7 @@ import {
   DirectoryConfig,
   ZipConfig,
 } from './types';
-import { RegistryAccess, SourceComponent } from '../metadata-registry';
+import { RegistryAccess, SourceComponent } from '../resolution';
 import { promises } from 'fs';
 import { dirname, join } from 'path';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';

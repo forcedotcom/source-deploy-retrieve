@@ -7,7 +7,7 @@
 import { assert, expect } from 'chai';
 import { RegistryError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { MetadataRegistry } from '../../src/metadata-registry';
+import { MetadataRegistry } from '../../src/resolution';
 import { mockRegistry, mockRegistryData } from '../mock/registry';
 
 describe('RegistryAccess', () => {

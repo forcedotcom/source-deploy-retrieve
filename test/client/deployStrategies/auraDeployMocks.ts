@@ -6,11 +6,7 @@
  */
 import { join, basename } from 'path';
 import { AuraDefinition } from '../../../src/utils/deploy';
-import {
-  SourceComponent,
-  VirtualTreeContainer,
-  registryData,
-} from '../../../src/metadata-registry';
+import { SourceComponent, VirtualTreeContainer, registryData } from '../../../src/resolution';
 
 const bundlePath = join('file', 'path', 'aura', 'mockAuraCmp');
 const auraXml = join(bundlePath, 'mockAuraCmp.cmp-meta.xml');

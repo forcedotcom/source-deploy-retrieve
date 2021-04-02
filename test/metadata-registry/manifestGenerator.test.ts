@@ -5,9 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { ManifestGenerator } from '../../src/metadata-registry/manifestGenerator';
+import { ManifestGenerator } from '../../src/resolution/manifestGenerator';
 import { expect } from 'chai';
-import { MetadataResolver, SourceComponent, registryData } from '../../src/metadata-registry';
+import { MetadataResolver, SourceComponent, registryData } from '../../src/resolution';
 import { SinonSandbox, createSandbox } from 'sinon';
 import * as fs from 'fs';
 import * as path from 'path';

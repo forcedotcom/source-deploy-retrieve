@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { DiagnosticUtil } from '../../src/client/diagnosticUtil';
-import { SourceComponent } from '../../src/metadata-registry/sourceComponent';
-import { registryData } from '../../src/metadata-registry';
+import { SourceComponent } from '../../src/resolution/sourceComponent';
+import { registryData } from '../../src/resolution';
 import { join } from 'path';
 import { expect } from 'chai';
 import { DeployMessage } from '../../src/client/types';

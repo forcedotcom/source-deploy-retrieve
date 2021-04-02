@@ -9,7 +9,7 @@ import { BaseDeploy } from './baseDeploy';
 import { ContainerDeploy } from './containerDeploy';
 import { AuraDeploy } from './auraDeploy';
 import { LwcDeploy } from './lwcDeploy';
-import { registryData } from '../../metadata-registry';
+import { registryData } from '../../resolution';
 
 export { ContainerDeploy } from './containerDeploy';
 export { AuraDeploy } from './auraDeploy';

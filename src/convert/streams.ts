@@ -9,7 +9,7 @@ import { createWriteStream } from 'fs';
 import { isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
-import { SourceComponent, RegistryAccess, MetadataResolver } from '../metadata-registry';
+import { SourceComponent, RegistryAccess, MetadataResolver } from '../resolution';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { SourcePath, XML_DECL } from '../common';

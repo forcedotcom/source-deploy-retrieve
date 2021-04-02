@@ -6,11 +6,11 @@
  */
 import { createSandbox, SinonSandbox } from 'sinon';
 import { VirtualDirectory } from '../../src';
-import { ForceIgnore } from '../../src/metadata-registry/forceIgnore';
-import { SourceAdapterFactory } from '../../src/metadata-registry/adapters/sourceAdapterFactory';
-import { VirtualTreeContainer } from '../../src/metadata-registry/treeContainers';
+import { ForceIgnore } from '../../src/resolution/forceIgnore';
+import { SourceAdapterFactory } from '../../src/resolution/adapters/sourceAdapterFactory';
+import { VirtualTreeContainer } from '../../src/resolution/treeContainers';
 import { mockRegistry } from '../mock/registry';
-import { MetadataResolver, SourceComponent } from '../../src/metadata-registry';
+import { MetadataResolver, SourceComponent } from '../../src/resolution';
 import { MetadataType, SourcePath } from '../../src/common';
 
 export class RegistryTestUtil {

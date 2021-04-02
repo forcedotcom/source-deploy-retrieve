@@ -18,7 +18,7 @@ import {
   RegistryAccess,
   SourceComponent,
   TreeContainer,
-} from '../metadata-registry';
+} from '../resolution';
 import {
   PackageTypeMembers,
   FromManifestOptions,

@@ -6,7 +6,7 @@
  */
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
-import { RegistryAccess, ZipTreeContainer } from '../metadata-registry';
+import { RegistryAccess, ZipTreeContainer } from '../resolution';
 import {
   ComponentStatus,
   FileResponse,

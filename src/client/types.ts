@@ -7,7 +7,7 @@
 import { ComponentSet } from '../collections';
 import { PackageTypeMembers } from '../collections/types';
 import { MetadataComponent, SourcePath } from '../common/types';
-import { SourceComponent } from '../metadata-registry';
+import { SourceComponent } from '../resolution';
 
 // ------------------------------------------------
 // API results reformatted for source development

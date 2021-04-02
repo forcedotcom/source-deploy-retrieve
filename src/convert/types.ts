@@ -6,7 +6,7 @@
  */
 import { MetadataComponent, SourcePath } from '../common/types';
 import { Readable } from 'stream';
-import { SourceComponent } from '../metadata-registry';
+import { SourceComponent } from '../resolution';
 
 // --------------
 // INTERNAL

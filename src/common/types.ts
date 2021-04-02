@@ -11,7 +11,7 @@ import {
   DirectoryIndex,
   RegistryAccess,
   TreeContainer,
-} from '../metadata-registry';
+} from '../resolution';
 
 /**
  * File system path to a source file of a metadata component.

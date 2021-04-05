@@ -43,5 +43,4 @@ export {
   FromSourceOptions,
   DeploySetOptions,
   RetrieveSetOptions,
-  ResolveOptions,
 } from './collections';

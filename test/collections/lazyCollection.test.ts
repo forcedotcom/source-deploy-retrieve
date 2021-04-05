@@ -8,7 +8,7 @@ import { expect } from 'chai';
 import { LazyCollection } from '../../src/collections';
 
 class TestCollection extends LazyCollection<number> {
-  public *[Symbol.iterator]() {
+  public *[Symbol.iterator](): Iterator<number> {
     yield 2;
     yield 4;
     yield 6;

@@ -55,9 +55,10 @@ export async function stubMetadataDeploy(
   const zipBuffer = Buffer.from('1234');
   const connection = await mockConnection(testSetup());
 
-  const deployStub = sandbox.stub(connection.metadata, 'deploy');
+  const deployStub = sandbox.stub(connection, 'deploy');
   deployStub
     .withArgs(zipBuffer, options.apiOptions ?? MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions)
+    // @ts-ignore
     .resolves(MOCK_ASYNC_RESULT);
 
   const convertStub = sandbox.stub(MetadataConverter.prototype, 'convert');

@@ -6,7 +6,8 @@
  */
 
 import { nls } from '../i18n';
-import { MetadataType, SourcePath } from '../common';
+import { SourcePath } from '../common';
+import { MetadataType } from '../registry';
 
 export class LibraryError extends Error {
   constructor(messageKey: string, args?: string | string[]) {

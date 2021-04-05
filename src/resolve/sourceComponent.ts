@@ -4,17 +4,17 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { TreeContainer, VirtualDirectory } from './types';
+import { MetadataComponent, TreeContainer, VirtualDirectory } from './types';
 import { join, basename } from 'path';
 import { parse } from 'fast-xml-parser';
 import { ForceIgnore } from './forceIgnore';
-import { parseMetadataXml } from '../utils/registry';
-import { baseName } from '../utils';
+import { baseName, parseMetadataXml } from '../utils';
 import { NodeFSTreeContainer, VirtualTreeContainer } from './treeContainers';
-import { DEFAULT_PACKAGE_ROOT_SFDX, MetadataType, SourcePath, MetadataComponent } from '../common';
+import { DEFAULT_PACKAGE_ROOT_SFDX, SourcePath } from '../common';
 import { JsonMap } from '@salesforce/ts-types';
 import { SfdxFileFormat } from '../convert';
 import { trimUntil } from '../utils/path';
+import { MetadataType } from '../registry';
 
 export type ComponentProperties = {
   name: string;

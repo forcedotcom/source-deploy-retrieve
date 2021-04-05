@@ -8,7 +8,7 @@
 import { join } from 'path';
 import { mockRegistry, mockRegistryData } from '.';
 import { VirtualTreeContainer } from '../../../src';
-import { VirtualFile } from '../../../src/metadata-registry/types';
+import { VirtualFile } from '../../../src/resolve/types';
 
 const { decomposedtoplevel, mixedcontentsinglefile, mixedcontentinfolder } = mockRegistryData.types;
 

@@ -12,8 +12,7 @@ import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { DefaultSourceAdapter } from './defaultSourceAdapter';
 import { RegistryError } from '../../errors';
 import { ForceIgnore } from '../forceIgnore';
-import { MetadataType } from '../../common';
-import { RegistryAccess } from '../registryAccess';
+import { MetadataType, RegistryAccess } from '../../registry';
 
 enum AdapterId {
   Bundle = 'bundle',

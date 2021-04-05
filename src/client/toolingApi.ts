@@ -10,10 +10,11 @@ import { SourcePath } from '../common';
 import { nls } from '../i18n';
 import { buildQuery, queryToFileMap } from './retrieveUtil';
 import { createFiles } from '../utils';
-import { MetadataResolver, RegistryAccess, SourceComponent } from '../metadata-registry';
+import { MetadataResolver, SourceComponent } from '../resolve';
 import { SourceDeployResult, QueryResult, SourceRetrieveResult, RequestStatus } from './types';
 import { ComponentSet } from '../collections';
 import { Connection } from '@salesforce/core';
+import { RegistryAccess } from '../registry';
 
 type WithNamespace = { namespace?: string };
 export type ToolingDeployOptions = WithNamespace;

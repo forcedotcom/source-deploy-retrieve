@@ -6,8 +6,8 @@
  */
 import { ComponentSet } from '../collections';
 import { PackageTypeMembers } from '../collections/types';
-import { MetadataComponent, SourcePath } from '../common/types';
-import { SourceComponent } from '../metadata-registry';
+import { SourcePath } from '../common/types';
+import { MetadataComponent, SourceComponent } from '../resolve';
 
 // ------------------------------------------------
 // API results reformatted for source development

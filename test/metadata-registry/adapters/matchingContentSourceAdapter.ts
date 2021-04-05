@@ -4,15 +4,15 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { MatchingContentSourceAdapter } from '../../../src/metadata-registry/adapters/matchingContentSourceAdapter';
+import { MatchingContentSourceAdapter } from '../../../src/resolve/adapters/matchingContentSourceAdapter';
 import { mockRegistry, matchingContentFile, mockRegistryData } from '../../mock/registry';
 import { expect, assert } from 'chai';
 import { ExpectedSourceFilesError, UnexpectedForceIgnore } from '../../../src/errors';
 import { join } from 'path';
 import { RegistryTestUtil } from '../registryTestUtil';
 import { nls } from '../../../src/i18n';
-import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
-import { SourceComponent } from '../../../src/metadata-registry';
+import { VirtualTreeContainer } from '../../../src/resolve/treeContainers';
+import { SourceComponent } from '../../../src/resolve';
 
 describe('MatchingContentSourceAdapter', () => {
   const type = mockRegistryData.types.matchingcontentfile;

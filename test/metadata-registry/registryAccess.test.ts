@@ -7,7 +7,7 @@
 import { assert, expect } from 'chai';
 import { RegistryError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { MetadataRegistry } from '../../src/metadata-registry';
+import { MetadataRegistry, MetadataType } from '../../src/registry';
 import { mockRegistry, mockRegistryData } from '../mock/registry';
 
 describe('RegistryAccess', () => {
@@ -67,7 +67,7 @@ describe('RegistryAccess', () => {
 
   describe('findType', () => {
     it('should find a type using a given predicate', () => {
-      const foundType = mockRegistry.findType((type) => type.suffix === 'dtl');
+      const foundType = mockRegistry.findType((type: MetadataType) => type.suffix === 'dtl');
       expect(foundType).to.deep.equal(mockRegistryData.types.decomposedtoplevel);
     });
   });

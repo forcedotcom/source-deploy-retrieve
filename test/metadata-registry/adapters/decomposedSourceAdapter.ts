@@ -4,11 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { DecomposedSourceAdapter } from '../../../src/metadata-registry/adapters/decomposedSourceAdapter';
+import { DecomposedSourceAdapter } from '../../../src/resolve/adapters/decomposedSourceAdapter';
 import { mockRegistry, regina, decomposedtoplevel, mockRegistryData } from '../../mock/registry';
 import { expect } from 'chai';
-import { VirtualTreeContainer } from '../../../src/metadata-registry/treeContainers';
-import { SourceComponent } from '../../../src/metadata-registry';
+import { VirtualTreeContainer } from '../../../src/resolve/treeContainers';
+import { SourceComponent } from '../../../src/resolve';
 
 describe('DecomposedSourceAdapter', () => {
   const type = mockRegistryData.types.reginaking;

@@ -26,7 +26,7 @@ export abstract class TreeContainer {
    * @param fileType - The type of component file
    * @param name - The name of the file without a suffix
    * @param directory - The directory to search in
-   * @returns
+   * @returns The first path that meets the criteria, or `undefined` if none were found
    */
   public find(
     fileType: 'content' | 'metadataXml',

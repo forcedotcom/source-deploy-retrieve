@@ -6,8 +6,7 @@
  */
 import { join } from 'path';
 import { expect } from 'chai';
-import { baseName } from '../../src/utils';
-import { trimUntil } from '../../src/utils/path';
+import { parseMetadataXml, trimUntil, baseName } from '../../src/utils';
 
 describe('Path Utils', () => {
   const root = join('path', 'to', 'whatever');
@@ -31,6 +30,22 @@ describe('Path Utils', () => {
 
     it('should return trimmed path up until and including the given part', () => {
       expect(trimUntil(root, 'to')).to.equal(join('to', 'whatever'));
+    });
+  });
+
+  describe('parseMetadataXml', () => {
+    it('Should parse fullName and suffix from metadata xml path', () => {
+      const path = join(root, 'a.ext-meta.xml');
+      expect(parseMetadataXml(path)).to.deep.equal({
+        fullName: 'a',
+        path,
+        suffix: 'ext',
+      });
+    });
+
+    it('Should return undefined for file name not in metadata xml format', () => {
+      const path = join(root, 'a.ext');
+      expect(parseMetadataXml(path)).to.be.undefined;
     });
   });
 });

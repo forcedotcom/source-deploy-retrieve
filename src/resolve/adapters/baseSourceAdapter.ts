@@ -5,15 +5,15 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { SourceAdapter, MetadataXml, TreeContainer } from '../types';
-import { parseMetadataXml } from '../../utils/registry';
+import { parseMetadataXml } from '../../utils';
 import { UnexpectedForceIgnore } from '../../errors';
 import { parentName } from '../../utils/path';
 import { ForceIgnore } from '../forceIgnore';
 import { dirname, basename, sep } from 'path';
 import { NodeFSTreeContainer } from '../treeContainers';
 import { SourceComponent } from '../sourceComponent';
-import { MetadataType, SourcePath } from '../../common';
-import { RegistryAccess } from '../registryAccess';
+import { SourcePath } from '../../common';
+import { MetadataType, RegistryAccess } from '../../registry';
 
 export abstract class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;

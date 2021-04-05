@@ -6,7 +6,7 @@
  */
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
-import { RegistryAccess, ZipTreeContainer } from '../metadata-registry';
+import { ZipTreeContainer } from '../resolve';
 import {
   ComponentStatus,
   FileResponse,
@@ -19,6 +19,7 @@ import {
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import { MetadataApiRetrieveError } from '../errors';
 import { normalizeToArray } from '../utils';
+import { RegistryAccess } from '../registry';
 
 export type MetadataApiRetrieveOptions = MetadataTransferOptions &
   RetrieveOptions & { registry?: RegistryAccess };

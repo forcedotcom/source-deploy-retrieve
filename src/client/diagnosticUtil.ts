@@ -5,9 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { SourcePath } from '../common';
-import { registryData, SourceComponent } from '../metadata-registry';
+import { SourceComponent } from '../resolve';
 import { basename } from 'path';
 import { DeployMessage, ComponentDiagnostic } from './types';
+import { registry } from '../registry';
 
 export class DiagnosticUtil {
   private api: 'metadata' | 'tooling';
@@ -22,9 +23,9 @@ export class DiagnosticUtil {
   ): ComponentDiagnostic {
     const { name: typeName } = component.type;
     switch (typeName) {
-      case registryData.types.lightningcomponentbundle.name:
+      case registry.types.lightningcomponentbundle.name:
         return this.parseLwc(component, message);
-      case registryData.types.auradefinitionbundle.name:
+      case registry.types.auradefinitionbundle.name:
         return this.parseAura(component, message);
       default:
         if (typeof message !== 'string') {

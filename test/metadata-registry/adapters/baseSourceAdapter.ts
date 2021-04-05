@@ -6,14 +6,14 @@
  */
 import { join } from 'path';
 import { xmlInFolder, mockRegistry, mockRegistryData } from '../../mock/registry';
-import { DefaultSourceAdapter } from '../../../src/metadata-registry/adapters/defaultSourceAdapter';
+import { DefaultSourceAdapter } from '../../../src/resolve/adapters/defaultSourceAdapter';
 import { expect, assert } from 'chai';
-import { BaseSourceAdapter } from '../../../src/metadata-registry/adapters/baseSourceAdapter';
+import { BaseSourceAdapter } from '../../../src/resolve/adapters/baseSourceAdapter';
 import { META_XML_SUFFIX, SourcePath } from '../../../src/common';
 import { UnexpectedForceIgnore } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { RegistryTestUtil } from '../registryTestUtil';
-import { SourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src/resolve';
 
 // TODO: Remove when tests replace with TestAdapter
 class TestChildAdapter extends BaseSourceAdapter {

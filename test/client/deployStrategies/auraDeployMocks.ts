@@ -6,11 +6,8 @@
  */
 import { join, basename } from 'path';
 import { AuraDefinition } from '../../../src/utils/deploy';
-import {
-  SourceComponent,
-  VirtualTreeContainer,
-  registryData,
-} from '../../../src/metadata-registry';
+import { SourceComponent, VirtualTreeContainer } from '../../../src/resolve';
+import { registry } from '../../../src';
 
 const bundlePath = join('file', 'path', 'aura', 'mockAuraCmp');
 const auraXml = join(bundlePath, 'mockAuraCmp.cmp-meta.xml');
@@ -45,7 +42,7 @@ const tree = new VirtualTreeContainer([
 ]);
 export const auraComponent = new SourceComponent(
   {
-    type: registryData.types.auradefinitionbundle,
+    type: registry.types.auradefinitionbundle,
     name: 'mockAuraCmp',
     content: bundlePath,
     xml: auraXml,

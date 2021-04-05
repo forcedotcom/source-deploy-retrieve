@@ -5,52 +5,23 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { MetadataType, SourcePath } from '../common/types';
+import { SourcePath } from '../common/types';
 import { SourceComponent } from '.';
 import { Readable } from 'stream';
+import { MetadataType } from '../registry';
 
-/**
- * Metadata type definitions
- */
-export type TypeIndex = { [typeId: string]: MetadataType };
-/**
- * Mapping of metadata suffixes -> type ids.
- */
-export type SuffixIndex = { [suffix: string]: string };
-
-export type DirectoryIndex = { [directoryName: string]: string };
-
-export const enum DecompositionStrategy {
-  /**
-   * Elements of child types are decomposed to the same folder the parent object is in
-   */
-  TopLevel = 'topLevel',
-  /**
-   * Elements of child types are decomposed into folders of their respective types
-   */
-  FolderPerType = 'folderPerType',
+export interface MetadataComponent {
+  fullName: string;
+  type: MetadataType;
+  parent?: MetadataComponent;
 }
 
-export const enum TransformerStrategy {
-  Standard = 'standard',
-  Decomposed = 'decomposed',
-  StaticResource = 'staticResource',
+export interface MetadataMember {
+  fullName: string;
+  type: string;
 }
 
-/**
- * Schema of the registry data.
- */
-export type MetadataRegistry = {
-  types: TypeIndex;
-  suffixes?: SuffixIndex;
-  strictDirectoryNames: {
-    [directoryName: string]: string;
-  };
-  childTypes: {
-    [childTypeId: string]: string;
-  };
-  apiVersion: string;
-};
+export type ComponentLike = MetadataComponent | MetadataMember;
 
 /**
  * Properties of a metadata xml's file name

@@ -6,9 +6,9 @@
  */
 import { join } from 'path';
 import { mockRegistry, mockRegistryData } from '../../mock/registry';
-import { DefaultSourceAdapter } from '../../../src/metadata-registry/adapters/defaultSourceAdapter';
+import { DefaultSourceAdapter } from '../../../src/resolve/adapters/defaultSourceAdapter';
 import { expect } from 'chai';
-import { SourceComponent } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src/resolve';
 import { META_XML_SUFFIX } from '../../../src/common';
 
 describe('DefaultSourceAdapter', () => {

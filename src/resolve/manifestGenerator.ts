@@ -5,12 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { MetadataComponent, XML_DECL } from '../common';
+import { XML_DECL } from '../common';
 import { MetadataResolver } from './metadataResolver';
 import { RegistryError } from '../errors';
 import { SourceComponent } from './sourceComponent';
 import { writeFileSync } from 'fs';
-import { RegistryAccess } from './registryAccess';
+import { RegistryAccess } from '../registry/registryAccess';
+import { MetadataComponent } from './types';
 
 export class ManifestGenerator {
   private packageModuleStart = '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';

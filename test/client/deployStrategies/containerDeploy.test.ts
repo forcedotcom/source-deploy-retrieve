@@ -15,7 +15,8 @@ import { ContainerDeploy } from '../../../src/client/deployStrategies';
 import { ToolingCreateResult } from '../../../src/utils/deploy';
 import { nls } from '../../../src/i18n';
 import { QueryResult, ToolingDeployStatus, ComponentStatus } from '../../../src/client/types';
-import { SourceComponent, registryData } from '../../../src/metadata-registry';
+import { SourceComponent } from '../../../src/resolve';
+import { registry } from '../../../src';
 
 const $$ = testSetup();
 
@@ -33,25 +34,25 @@ describe('Container Deploy Strategy', () => {
     message: '',
   };
   const apexClassCmp = new SourceComponent({
-    type: registryData.types.apexclass,
+    type: registry.types.apexclass,
     name: 'one',
     content: 'file/path/one.cls',
     xml: 'file/path/one.cls-meta.xml',
   });
   const apexTriggerCmp = new SourceComponent({
-    type: registryData.types.apextrigger,
+    type: registry.types.apextrigger,
     name: 'one',
     content: 'file/path/one.trigger',
     xml: 'file/path/one.trigger-meta.xml',
   });
   const apexPageCmp = new SourceComponent({
-    type: registryData.types.apexpage,
+    type: registry.types.apexpage,
     name: 'one',
     content: 'file/path/one.page',
     xml: 'file/path/one.page-meta.xml',
   });
   const apexComponent = new SourceComponent({
-    type: registryData.types.apexcomponent,
+    type: registry.types.apexcomponent,
     name: 'one',
     content: 'file/path/one.component',
     xml: 'file/path/one.component-meta.xml',

@@ -5,10 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { WriteInfo, WriterFormat } from './types';
-import { SourceComponent } from '../metadata-registry';
+import { MetadataComponent, SourceComponent } from '../resolve';
 import { join } from 'path';
 import { JsToXml } from './streams';
-import { MetadataComponent, XML_NS_KEY, XML_NS_URL } from '../common';
+import { XML_NS_KEY, XML_NS_URL } from '../common';
 import { JsonArray, JsonMap } from '@salesforce/ts-types';
 import { ComponentSet } from '../collections';
 

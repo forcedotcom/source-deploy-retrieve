@@ -7,7 +7,7 @@
 import { META_XML_SUFFIX, SourcePath } from '../../common';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { SfdxFileFormat, WriteInfo } from '../types';
-import { SourceComponent } from '../../metadata-registry';
+import { SourceComponent } from '../../resolve';
 import { trimUntil } from '../../utils/path';
 import { basename, dirname, join } from 'path';
 import { extName } from '../../utils';

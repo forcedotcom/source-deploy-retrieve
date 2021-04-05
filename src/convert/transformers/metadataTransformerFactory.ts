@@ -7,11 +7,11 @@
 import { RegistryError } from '../../errors';
 import { MetadataTransformer } from '../types';
 import { DefaultMetadataTransformer } from './defaultMetadataTransformer';
-import { SourceComponent } from '../../metadata-registry/sourceComponent';
+import { SourceComponent } from '../../resolve/sourceComponent';
 import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 import { ConvertContext } from '../convertContext';
 import { StaticResourceMetadataTransformer } from './staticResourceMetadataTransformer';
-import { RegistryAccess, TransformerStrategy } from '../../metadata-registry';
+import { RegistryAccess, TransformerStrategy } from '../../registry';
 
 export class MetadataTransformerFactory {
   private registry: RegistryAccess;

@@ -4,16 +4,14 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { VirtualDirectory } from '../metadata-registry';
 import { join, dirname, basename, normalize } from 'path';
-import { baseName } from '../utils';
-import { parseMetadataXml } from '../utils/registry';
+import { baseName, parseMetadataXml } from '../utils';
 import { lstatSync, existsSync, readdirSync, createReadStream, readFileSync } from 'fs';
 import { LibraryError } from '../errors';
 import { SourcePath } from '../common';
 import * as unzipper from 'unzipper';
 import { Readable } from 'stream';
-import { ZipEntry } from './types';
+import { VirtualDirectory, ZipEntry } from './types';
 
 /**
  * A container for interacting with a file system. Operations such as component resolution,

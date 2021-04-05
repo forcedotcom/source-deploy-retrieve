@@ -6,11 +6,7 @@
  */
 
 import { assert, expect } from 'chai';
-import {
-  MetadataResolver,
-  SourceComponent,
-  VirtualTreeContainer,
-} from '../../src/metadata-registry';
+import { MetadataResolver, SourceComponent, VirtualTreeContainer } from '../../src/resolve';
 import { nls } from '../../src/i18n';
 import {
   mockRegistry,

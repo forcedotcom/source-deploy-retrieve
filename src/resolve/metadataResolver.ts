@@ -6,15 +6,14 @@
  */
 import { basename, dirname, join, sep } from 'path';
 import { TypeInferenceError } from '../errors';
-import { extName, parentName } from '../utils/path';
-import { parseMetadataXml } from '../utils/registry';
+import { extName, parentName, parseMetadataXml } from '../utils';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
-import { MetadataType, SourcePath } from '../common';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
-import { RegistryAccess } from './registryAccess';
+import { RegistryAccess } from '../registry/registryAccess';
 import { ComponentSet } from '../collections';
+import { MetadataType } from '../registry';
 
 /**
  * Resolver for metadata type and component objects.
@@ -58,10 +57,10 @@ export class MetadataResolver {
   }
 
   private getComponentsFromPathRecursive(
-    dir: SourcePath,
+    dir: string,
     inclusiveFilter?: ComponentSet
   ): SourceComponent[] {
-    const dirQueue: SourcePath[] = [];
+    const dirQueue: string[] = [];
     const components: SourceComponent[] = [];
     const ignore = new Set();
 
@@ -116,7 +115,7 @@ export class MetadataResolver {
     return components;
   }
 
-  private resolveComponent(fsPath: SourcePath, isResolvingSource: boolean): SourceComponent {
+  private resolveComponent(fsPath: string, isResolvingSource: boolean): SourceComponent {
     if (this.isMetadata(fsPath) && this.forceIgnore.denies(fsPath)) {
       // don't resolve the component if the metadata xml is denied
       return;
@@ -136,7 +135,7 @@ export class MetadataResolver {
     throw new TypeInferenceError('error_could_not_infer_type', fsPath);
   }
 
-  private resolveType(fsPath: SourcePath): MetadataType | undefined {
+  private resolveType(fsPath: string): MetadataType | undefined {
     let resolvedType: MetadataType;
 
     // attempt 1 - check if the file is part of a component that requires a strict type folder
@@ -189,7 +188,7 @@ export class MetadataResolver {
    *
    * @param dirPath Path to a directory
    */
-  private resolveDirectoryAsComponent(dirPath: SourcePath): boolean {
+  private resolveDirectoryAsComponent(dirPath: string): boolean {
     let shouldResolve = true;
 
     const type = this.resolveType(dirPath);
@@ -218,7 +217,7 @@ export class MetadataResolver {
    *
    * @param fsPath File path of a potential content metadata file
    */
-  private parseAsContentMetadataXml(fsPath: SourcePath): boolean {
+  private parseAsContentMetadataXml(fsPath: string): boolean {
     return !!this.registry.getTypeBySuffix(extName(fsPath));
   }
 
@@ -229,7 +228,7 @@ export class MetadataResolver {
    * Do not match this pattern:
    *    .../tabs/TestFolder.tab-meta.xml
    */
-  private parseAsFolderMetadataXml(fsPath: SourcePath): string {
+  private parseAsFolderMetadataXml(fsPath: string): string {
     const match = basename(fsPath).match(/(.+)-meta\.xml/);
     if (match && !match[1].includes('.')) {
       const parts = fsPath.split(sep);
@@ -237,7 +236,7 @@ export class MetadataResolver {
     }
   }
 
-  private isMetadata(fsPath: SourcePath): boolean {
+  private isMetadata(fsPath: string): boolean {
     return (
       !!parseMetadataXml(fsPath) ||
       this.parseAsContentMetadataXml(fsPath) ||

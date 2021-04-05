@@ -7,7 +7,7 @@
       "label": "Publish Source Deploy Retrieve Library",
       "command": "./scripts/publish-workflow.sh",
       "type": "shell",
-      "args": ["${input:circleCiId}", "${input:publishType}"]
+      "args": ["${input:circleCiId}", "${input:publishType}", "${input:scheduledBuild}"]
     },
     {
       "label": "Create Port PR for Publishing",
@@ -48,8 +48,13 @@
       "id": "publishType",
       "type": "pickString",
       "description": "Type of version to publish",
-      "options": ["minor", "patch", "major"],
+      "options": ["patch", "minor", "major"],
       "default": "patch"
+    },
+    {
+      "id": "scheduledBuild",
+      "type": "promptString",
+      "description": "Scheduled Build (should match current week's release version). Ex: 50.7.0"
     },
     {
       "id": "verboseOutput",

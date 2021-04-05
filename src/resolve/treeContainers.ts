@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { VirtualDirectory, TreeContainer } from '.';
 import { join, dirname, basename, normalize } from 'path';
 import { baseName, parseMetadataXml } from '../utils';
 import { lstatSync, existsSync, readdirSync, createReadStream, readFileSync } from 'fs';
@@ -12,34 +11,78 @@ import { LibraryError } from '../errors';
 import { SourcePath } from '../common';
 import * as unzipper from 'unzipper';
 import { Readable } from 'stream';
+import { VirtualDirectory, ZipEntry } from './types';
 
 /**
- * An extendable base class for implementing the `TreeContainer` interface
+ * A container for interacting with a file system. Operations such as component resolution,
+ * conversion, and packaging perform I/O against `TreeContainer` abstractions.
+ *
+ * Extend this base class to implement a custom container.
  */
-export abstract class BaseTreeContainer implements TreeContainer {
+export abstract class TreeContainer {
+  /**
+   * Searches for a metadata component file in a container directory.
+   *
+   * @param fileType - The type of component file
+   * @param name - The name of the file without a suffix
+   * @param directory - The directory to search in
+   * @returns The first path that meets the criteria, or `undefined` if none were found
+   */
   public find(
-    fileType: 'content' | 'metadata',
-    fullName: string,
-    dir: SourcePath
-  ): SourcePath | undefined {
-    const fileName = this.readDirectory(dir).find((entry) => {
-      const parsed = parseMetadataXml(join(dir, entry));
-      const metaXmlCondition = fileType === 'metadata' ? !!parsed : !parsed;
-      return baseName(entry) === fullName && metaXmlCondition;
+    fileType: 'content' | 'metadataXml',
+    name: string,
+    directory: string
+  ): string | undefined {
+    const fileName = this.readDirectory(directory).find((entry) => {
+      const parsed = parseMetadataXml(join(directory, entry));
+      const metaXmlCondition = fileType === 'metadataXml' ? !!parsed : !parsed;
+      return baseName(entry) === name && metaXmlCondition;
     });
     if (fileName) {
-      return join(dir, fileName);
+      return join(directory, fileName);
     }
   }
-
+  /**
+   * Whether or not a file path exists in the container.
+   *
+   * @param fsPath - File path to test
+   * @returns `true` if the path exists
+   */
   public abstract exists(fsPath: SourcePath): boolean;
+  /**
+   * Whether or not a file path is a directory in the container.
+   *
+   * @param fsPath - File path to test
+   * @returns `true` if the path is to a directory
+   */
   public abstract isDirectory(fsPath: SourcePath): boolean;
+  /**
+   * Reads the contents of a directory in the container.
+   *
+   * @param fsPath Path to directory
+   * @returns An array of file and directory names in the directory
+   */
   public abstract readDirectory(fsPath: SourcePath): string[];
+  /**
+   * Reads the contents of a file.
+   *
+   * @param fsPath
+   * @returns A buffer of the file contents
+   */
   public abstract readFile(fsPath: SourcePath): Promise<Buffer>;
+  /**
+   * Creates a readable stream of a file's contents.
+   *
+   * @param fsPath - File path to create a readable stream from
+   * @returns A readable stream
+   */
   public abstract stream(fsPath: SourcePath): Readable;
 }
 
-export class NodeFSTreeContainer extends BaseTreeContainer {
+/**
+ * A {@link TreeContainer} that wraps the NodeJS `fs` module.
+ */
+export class NodeFSTreeContainer extends TreeContainer {
   public isDirectory(fsPath: SourcePath): boolean {
     return lstatSync(fsPath).isDirectory();
   }
@@ -53,7 +96,7 @@ export class NodeFSTreeContainer extends BaseTreeContainer {
   }
 
   public readFile(fsPath: SourcePath): Promise<Buffer> {
-    // significant performance increase using sync instead of fs.promise version
+    // significant enough performance increase using sync instead of fs.promise version
     return Promise.resolve(readFileSync(fsPath));
   }
 
@@ -62,13 +105,11 @@ export class NodeFSTreeContainer extends BaseTreeContainer {
   }
 }
 
-interface ZipEntry {
-  path: string;
-  stream?: () => unzipper.Entry;
-  buffer?: () => Promise<Buffer>;
-}
-
-export class ZipTreeContainer extends BaseTreeContainer {
+/**
+ * A {@link TreeContainer} that utilizes the central directory of a zip file
+ * to perform I/O without unzipping it to the disk first.
+ */
+export class ZipTreeContainer extends TreeContainer {
   private tree = new Map<SourcePath, ZipEntry[] | ZipEntry>();
 
   private constructor(directory: unzipper.CentralDirectory) {
@@ -76,6 +117,12 @@ export class ZipTreeContainer extends BaseTreeContainer {
     this.populate(directory);
   }
 
+  /**
+   * Creates a `ZipTreeContainer` from a Buffer of a zip file.
+   *
+   * @param buffer - Buffer of the zip file
+   * @returns A Promise of a `ZipTreeContainer`
+   */
   public static async create(buffer: Buffer): Promise<ZipTreeContainer> {
     const directory = await unzipper.Open.buffer(buffer);
     return new ZipTreeContainer(directory);
@@ -137,7 +184,10 @@ export class ZipTreeContainer extends BaseTreeContainer {
   }
 }
 
-export class VirtualTreeContainer extends BaseTreeContainer {
+/**
+ * A {@link TreeContainer} useful for mocking a file system.
+ */
+export class VirtualTreeContainer extends TreeContainer {
   private tree = new Map<SourcePath, Set<SourcePath>>();
   private fileContents = new Map<SourcePath, Buffer>();
 

@@ -7,7 +7,7 @@
 
 import { SourcePath } from '../common/types';
 import { SourceComponent } from '.';
-import { Readable } from 'stream';
+import { Entry } from 'unzipper';
 import { MetadataType } from '../registry';
 
 export interface MetadataComponent {
@@ -60,14 +60,8 @@ export interface SourceAdapter {
   allowMetadataWithContent(): boolean;
 }
 
-/**
- * A tree abstraction for the registry to traverse when inferring components
- */
-export interface TreeContainer {
-  isDirectory(path: SourcePath): boolean;
-  exists(path: SourcePath): boolean;
-  readDirectory(path: SourcePath): string[];
-  find(fileType: 'content' | 'metadata', fullName: string, dir: SourcePath): SourcePath | undefined;
-  readFile(fsPath: SourcePath): Promise<Buffer>;
-  stream(fsPath: SourcePath): Readable;
+export interface ZipEntry {
+  path: string;
+  stream?: () => Entry;
+  buffer?: () => Promise<Buffer>;
 }

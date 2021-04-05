@@ -39,7 +39,7 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
   protected getRootMetadataXmlPath(trigger: SourcePath): SourcePath {
     if (this.ownFolder) {
       const componentRoot = this.trimPathToContent(trigger);
-      return this.tree.find('metadata', basename(componentRoot), componentRoot);
+      return this.tree.find('metadataXml', basename(componentRoot), componentRoot);
     }
     return this.findMetadataFromContent(trigger);
   }
@@ -97,6 +97,6 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
     const rootContentPath = this.trimPathToContent(path);
     const rootTypeDirectory = dirname(rootContentPath);
     const contentFullName = baseName(rootContentPath);
-    return this.tree.find('metadata', contentFullName, rootTypeDirectory);
+    return this.tree.find('metadataXml', contentFullName, rootTypeDirectory);
   }
 }

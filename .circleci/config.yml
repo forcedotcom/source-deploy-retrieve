@@ -3,7 +3,7 @@ version: 2.1
 
 orbs:
   win: circleci/windows@2.2.0
-  # sfchangecase: salesforce/change-case-management@3
+  release-management: salesforce/npm-release-management@4.12.1
   slack: circleci/slack@3.4.2
 
 parameters:
@@ -13,6 +13,9 @@ parameters:
   publish-type:
     type: string
     default: patch
+  scheduled-build:
+    type: string
+    default: ''
 
 _refs:
   defaults: &defaults
@@ -55,8 +58,8 @@ _refs:
   gus-prepare-environment-variables: &gus-prepare-environment-variables
     name: 'Prepare environment variables for GUS Change Case Management'
     command: |
-      export GUS_BUILD="$(node -pe "require('./package.json').gusBuild")"
-      echo "export GUS_RELEASE=offcore.tooling.$GUS_BUILD" >> $BASH_ENV
+      export GUS_BUILD="<< pipeline.parameters.scheduled-build >>"
+      echo "export SF_CHANGE_CASE_SCHEDULE_BUILD=offcore.tooling.$GUS_BUILD" >> $BASH_ENV
 
 commands:
   build-artifact:
@@ -69,6 +72,7 @@ commands:
             find . -name "*.tgz" -type f -exec cp {} ./artifact \;
       - store_artifacts:
           path: ./artifact
+
 jobs:
   node-latest: &node-test
     docker:
@@ -85,10 +89,12 @@ jobs:
       - store_test_results:
           path: test-results
       - build-artifact
+
   node-12:
     <<: *node-test
     docker:
       - image: node:12
+
   cache:
     <<: *node-test
     steps:
@@ -100,6 +106,7 @@ jobs:
             - ~/cli/node_modules
             - /usr/local/share/.cache/yarn
             - /usr/local/share/.config/yarn
+
   run-win-tests:
     description: 'Run tests on Windows'
     executor: win/default
@@ -124,6 +131,7 @@ jobs:
           shell: bash.exe
       - store_test_results:
           path: test-results
+
   publish:
     <<: *defaults
     steps:
@@ -136,14 +144,9 @@ jobs:
       - restore_cache: *restore_cache
       - run: *gh-config
       - run: *install
-      # - sfchangecase/install
+      - release-management/install-change-case-mgmt
       - run: *gus-prepare-environment-variables
-      # - sfchangecase/create:
-      #     location: REPO_LOCATION
-      #     release: GUS_RELEASE
-      # - sfchangecase/check:
-      #     location: REPO_LOCATION
-      #     release: GUS_RELEASE
+      - release-management/change-case-create
       - run: *build
       - run:
           name: Bump package version
@@ -164,9 +167,6 @@ jobs:
           command: |
             git tag v${RELEASE_VERSION}
             git push --tags
-      # - sfchangecase/update:
-      #     location: REPO_LOCATION
-      #     release: GUS_RELEASE
       - slack/notify:
           channel: 'pdt_releases'
           color: '#9bcd9b'
@@ -174,6 +174,17 @@ jobs:
       - slack/status:
           channel: 'pdt_releases'
           fail_only: true
+      - run:
+          when: on_fail
+          name: Close CTC case as Not Implemented
+          command: |
+            release-management/change-case-close:
+              status: 'Not Implemented'
+      - run:
+          when: on_success
+          name: All Good! Close CTC case/implementations
+          command: |
+            release-management/change-case-close
 
 workflows:
   version: 2.1

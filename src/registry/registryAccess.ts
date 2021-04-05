@@ -4,15 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as registry from './registry.json';
+import { registry as defaultRegistry } from './registry';
 import { RegistryError } from '../errors';
-import { deepFreeze } from '../utils';
 import { MetadataRegistry, MetadataType } from './types';
-
-/**
- * Object of the raw metadata registry data.
- */
-export const registryData = deepFreeze(registry);
 
 /**
  * Container for querying metadata registry data.
@@ -20,7 +14,7 @@ export const registryData = deepFreeze(registry);
 export class RegistryAccess {
   private registry: MetadataRegistry;
 
-  constructor(registry: MetadataRegistry = registryData) {
+  constructor(registry: MetadataRegistry = defaultRegistry) {
     this.registry = registry;
   }
 
@@ -71,8 +65,8 @@ export class RegistryAccess {
   }
 
   /**
-   * Query the types whose component files require having a parent directory named after
-   * their assigned directory name.
+   * Query the types that require a strict parent directory
+   * @see {@link MetadataType.strictDirectoryName}
    *
    * @returns An array of metadata type objects that require strict parent folder names
    */

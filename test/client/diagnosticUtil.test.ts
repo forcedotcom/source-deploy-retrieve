@@ -9,7 +9,7 @@ import { SourceComponent } from '../../src/resolve/sourceComponent';
 import { join } from 'path';
 import { expect } from 'chai';
 import { DeployMessage } from '../../src/client/types';
-import { registryData } from '../../src';
+import { registry } from '../../src';
 
 type MockDeployMessage = {
   problem?: string;
@@ -31,7 +31,7 @@ describe('DiagnosticUtil', () => {
     const component = SourceComponent.createVirtualComponent(
       {
         name: 'Test',
-        type: registryData.types.apexclass,
+        type: registry.types.apexclass,
         content: join(classes, 'Test.cls'),
         xml: join(classes, 'Test.cls-meta.xml'),
       },
@@ -81,7 +81,7 @@ describe('DiagnosticUtil', () => {
     const component = SourceComponent.createVirtualComponent(
       {
         name: 'Test',
-        type: registryData.types.lightningcomponentbundle,
+        type: registry.types.lightningcomponentbundle,
         xml: join(bundlePath, 'test.js-meta.xml'),
         content: bundlePath,
       },
@@ -157,7 +157,7 @@ describe('DiagnosticUtil', () => {
     const component = SourceComponent.createVirtualComponent(
       {
         name: 'Test',
-        type: registryData.types.auradefinitionbundle,
+        type: registry.types.auradefinitionbundle,
         xml: join(bundlePath, 'test.app-meta.xml'),
         content: bundlePath,
       },

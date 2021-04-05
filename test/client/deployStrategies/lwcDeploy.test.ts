@@ -17,7 +17,7 @@ import { LwcDeploy } from '../../../src/client/deployStrategies';
 import { LightningComponentResource, ToolingCreateResult } from '../../../src/utils/deploy';
 import { SourceComponent, VirtualTreeContainer } from '../../../src/resolve';
 import { ToolingDeployStatus, ComponentStatus } from '../../../src/client';
-import { registryData } from '../../../src';
+import { registry } from '../../../src';
 
 const $$ = testSetup();
 
@@ -54,7 +54,7 @@ describe('LWC Deploy Strategy', () => {
   ]);
   const lwcComponent = new SourceComponent(
     {
-      type: registryData.types.lightningcomponentbundle,
+      type: registry.types.lightningcomponentbundle,
       name: 'mockLwcCmp',
       content: bundlePath,
       xml: join(bundlePath, 'mockLwcCmp.js-meta.xml'),

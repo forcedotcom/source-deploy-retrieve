@@ -11,9 +11,6 @@ import { Readable } from 'stream';
 import { MetadataType } from '../registry';
 
 export interface MetadataComponent {
-  /**
-   * Fully qualified name of the component.
-   */
   fullName: string;
   type: MetadataType;
   parent?: MetadataComponent;

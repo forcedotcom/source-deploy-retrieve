@@ -12,12 +12,12 @@ import { SinonSandbox, createSandbox } from 'sinon';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fail } from 'assert';
-import { registryData } from '../../src';
+import { registry } from '../../src';
 
 describe('ManifestGenerator', () => {
   let sandboxStub: SinonSandbox;
   const manifestGenerator = new ManifestGenerator();
-  const apiVersion = registryData.apiVersion;
+  const apiVersion = registry.apiVersion;
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
@@ -126,7 +126,7 @@ describe('ManifestGenerator', () => {
   const mdComponents = [
     SourceComponent.createVirtualComponent(
       {
-        type: registryData.types.apexclass,
+        type: registry.types.apexclass,
         name: 'myTestClass',
         xml: path.join(rootPath, 'myTestClass.cls-meta.xml'),
         content: path.join(rootPath, 'myTestClass.cls'),

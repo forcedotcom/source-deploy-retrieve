@@ -45,4 +45,4 @@ export {
   DeploySetOptions,
   RetrieveSetOptions,
 } from './collections';
-export { MetadataType, RegistryAccess, registryData } from './registry';
+export { MetadataType, RegistryAccess, registry } from './registry';

@@ -6,7 +6,8 @@
  */
 
 /**
- * Schema of the registry data.
+ * A database of metadata types and configuration to define component behavior
+ * when performing library operations.
  */
 export interface MetadataRegistry {
   types: TypeIndex;

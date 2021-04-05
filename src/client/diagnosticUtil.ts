@@ -8,7 +8,7 @@ import { SourcePath } from '../common';
 import { SourceComponent } from '../resolve';
 import { basename } from 'path';
 import { DeployMessage, ComponentDiagnostic } from './types';
-import { registryData } from '../registry';
+import { registry } from '../registry';
 
 export class DiagnosticUtil {
   private api: 'metadata' | 'tooling';
@@ -23,9 +23,9 @@ export class DiagnosticUtil {
   ): ComponentDiagnostic {
     const { name: typeName } = component.type;
     switch (typeName) {
-      case registryData.types.lightningcomponentbundle.name:
+      case registry.types.lightningcomponentbundle.name:
         return this.parseLwc(component, message);
-      case registryData.types.auradefinitionbundle.name:
+      case registry.types.auradefinitionbundle.name:
         return this.parseAura(component, message);
       default:
         if (typeof message !== 'string') {

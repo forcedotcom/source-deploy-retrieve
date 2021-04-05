@@ -8,7 +8,7 @@ export { MetadataResolver } from './metadataResolver';
 export { ManifestResolver } from './manifestResolver';
 export { ManifestGenerator } from './manifestGenerator';
 export {
-  BaseTreeContainer,
+  TreeContainer,
   NodeFSTreeContainer,
   VirtualTreeContainer,
   ZipTreeContainer,
@@ -17,7 +17,6 @@ export { SourceComponent } from './sourceComponent';
 export {
   MetadataXml,
   SourceAdapter,
-  TreeContainer,
   VirtualDirectory,
   MetadataComponent,
   ComponentLike,

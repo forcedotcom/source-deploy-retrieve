@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import {
-  BaseTreeContainer,
+  TreeContainer,
   NodeFSTreeContainer,
   VirtualTreeContainer,
   ZipTreeContainer,
@@ -25,8 +25,8 @@ import { promisify } from 'util';
 describe('Tree Containers', () => {
   const readDirResults = ['a.q', 'a.x-meta.xml', 'b', 'b.x-meta.xml', 'c.z', 'c.x-meta.xml'];
 
-  describe('BaseTreeContainer', () => {
-    class TestTreeContainer extends BaseTreeContainer {
+  describe('TreeContainer Base Class', () => {
+    class TestTreeContainer extends TreeContainer {
       readDirectory(): string[] {
         return readDirResults;
       }
@@ -50,7 +50,7 @@ describe('Tree Containers', () => {
     const tree = new TestTreeContainer();
 
     it('should find first matching metadata file', () => {
-      expect(tree.find('metadata', 'b', '')).to.equal('b.x-meta.xml');
+      expect(tree.find('metadataXml', 'b', '')).to.equal('b.x-meta.xml');
     });
 
     it('should find first matching content file', () => {

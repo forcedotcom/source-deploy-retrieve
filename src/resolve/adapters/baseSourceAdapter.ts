@@ -4,13 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SourceAdapter, MetadataXml, TreeContainer } from '../types';
+import { SourceAdapter, MetadataXml } from '../types';
 import { parseMetadataXml } from '../../utils';
 import { UnexpectedForceIgnore } from '../../errors';
 import { parentName } from '../../utils/path';
 import { ForceIgnore } from '../forceIgnore';
 import { dirname, basename, sep } from 'path';
-import { NodeFSTreeContainer } from '../treeContainers';
+import { NodeFSTreeContainer, TreeContainer } from '../treeContainers';
 import { SourceComponent } from '../sourceComponent';
 import { SourcePath } from '../../common';
 import { MetadataType, RegistryAccess } from '../../registry';

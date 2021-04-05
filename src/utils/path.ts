@@ -54,7 +54,7 @@ export function trimUntil(fsPath: SourcePath, part: string): string {
 
 /**
  * Returns the `MetadataXml` info from a given file path. If the path is not a
- * metadata xml file (-meta.xml), returns `undefined`
+ * metadata xml file (-meta.xml), returns `undefined`.
  *
  * @param fsPath - File path to parse
  * @returns MetadataXml info or undefined

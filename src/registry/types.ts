@@ -33,7 +33,7 @@ export interface MetadataType {
    */
   name: string;
   /**
-   * Name of the directory where components are located in a package
+   * Name of the directory where components are located in a package.
    */
   directoryName?: string;
   /**
@@ -110,11 +110,11 @@ interface DirectoryIndex {
  */
 export const enum DecompositionStrategy {
   /**
-   * Elements of child types are decomposed to the same folder the parent object is in
+   * Elements of child types are decomposed to the same folder the parent object is in.
    */
   TopLevel = 'topLevel',
   /**
-   * Elements of child types are decomposed into folders of their respective types
+   * Elements of child types are decomposed into folders of their respective types.
    */
   FolderPerType = 'folderPerType',
 }

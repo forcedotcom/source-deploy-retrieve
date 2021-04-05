@@ -7,7 +7,7 @@
 
 import { mockRegistry, bundle } from '../../mock/registry';
 import { expect } from 'chai';
-import { BundleSourceAdapter } from '../../../src/metadata-registry/adapters/bundleSourceAdapter';
+import { BundleSourceAdapter } from '../../../src/resolve/adapters/bundleSourceAdapter';
 
 describe('BundleSourceAdapter', () => {
   const adapter = new BundleSourceAdapter(

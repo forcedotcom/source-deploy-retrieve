@@ -5,10 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { MetadataComponent } from '../common';
-import { RegistryAccess } from './registryAccess';
+import { RegistryAccess } from '../registry/registryAccess';
 import { NodeFSTreeContainer } from './treeContainers';
-import { TreeContainer } from './types';
+import { MetadataComponent, TreeContainer } from './types';
 import { parse as parseXml } from 'fast-xml-parser';
 import { normalizeToArray } from '../utils';
 

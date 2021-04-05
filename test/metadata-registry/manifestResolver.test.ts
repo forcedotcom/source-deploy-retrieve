@@ -7,8 +7,8 @@
 
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
-import { MetadataComponent } from '../../src';
-import { ManifestResolver, NodeFSTreeContainer, RegistryAccess } from '../../src/metadata-registry';
+import { MetadataComponent, RegistryAccess } from '../../src';
+import { ManifestResolver, NodeFSTreeContainer } from '../../src/resolve';
 import { mockRegistry, mockRegistryData } from '../mock/registry';
 import * as mockManifests from '../mock/registry/manifestConstants';
 

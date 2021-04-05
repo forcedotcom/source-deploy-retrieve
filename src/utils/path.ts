@@ -7,6 +7,7 @@
 
 import { basename, dirname, extname, sep } from 'path';
 import { SourcePath } from '../common';
+import { MetadataXml } from '../resolve';
 
 /**
  * Get the file or directory name at the end of a path. Different from `path.basename`
@@ -49,4 +50,18 @@ export function trimUntil(fsPath: SourcePath, part: string): string {
     return fsPath;
   }
   return parts.slice(partIndex).join(sep);
+}
+
+/**
+ * Returns the `MetadataXml` info from a given file path. If the path is not a
+ * metadata xml file (-meta.xml), returns `undefined`.
+ *
+ * @param fsPath - File path to parse
+ * @returns MetadataXml info or undefined
+ */
+export function parseMetadataXml(fsPath: string): MetadataXml | undefined {
+  const match = basename(fsPath).match(/(.+)\.(.+)-meta\.xml/);
+  if (match) {
+    return { fullName: match[1], suffix: match[2], path: fsPath };
+  }
 }

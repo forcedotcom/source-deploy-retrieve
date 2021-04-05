@@ -25,7 +25,7 @@ import {
   RequestStatus,
   MetadataApiRetrieveStatus,
 } from '../../../src/client/types';
-import { ComponentProperties } from '../../../src/metadata-registry/sourceComponent';
+import { ComponentProperties } from '../../../src/resolve/sourceComponent';
 import { normalizeToArray } from '../../../src/utils';
 import { mockRegistry } from '../registry';
 

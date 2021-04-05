@@ -5,18 +5,19 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { ManifestGenerator } from '../../src/metadata-registry/manifestGenerator';
+import { ManifestGenerator } from '../../src/resolve/manifestGenerator';
 import { expect } from 'chai';
-import { MetadataResolver, SourceComponent, registryData } from '../../src/metadata-registry';
+import { MetadataResolver, SourceComponent } from '../../src/resolve';
 import { SinonSandbox, createSandbox } from 'sinon';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fail } from 'assert';
+import { registry } from '../../src';
 
 describe('ManifestGenerator', () => {
   let sandboxStub: SinonSandbox;
   const manifestGenerator = new ManifestGenerator();
-  const apiVersion = registryData.apiVersion;
+  const apiVersion = registry.apiVersion;
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
@@ -125,7 +126,7 @@ describe('ManifestGenerator', () => {
   const mdComponents = [
     SourceComponent.createVirtualComponent(
       {
-        type: registryData.types.apexclass,
+        type: registry.types.apexclass,
         name: 'myTestClass',
         xml: path.join(rootPath, 'myTestClass.cls-meta.xml'),
         content: path.join(rootPath, 'myTestClass.cls'),

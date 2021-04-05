@@ -19,7 +19,7 @@ import {
 import { baseName } from '../../utils/path';
 import { ToolingCreateResult } from '../../utils/deploy';
 import { BaseDeploy } from './baseDeploy';
-import { SourceComponent } from '../../metadata-registry';
+import { SourceComponent } from '../../resolve';
 
 export class ContainerDeploy extends BaseDeploy {
   private static readonly CONTAINER_ASYNC_REQUEST = 'ContainerAsyncRequest';

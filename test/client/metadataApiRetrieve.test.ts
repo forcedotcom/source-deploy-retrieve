@@ -22,6 +22,7 @@ import { mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
 import { REGINA_COMPONENT } from '../mock/registry/type-constants/reginaConstants';
 import { getString } from '@salesforce/ts-types';
+import { fs } from '@salesforce/core';
 
 const env = createSandbox();
 
@@ -110,6 +111,7 @@ describe('MetadataApiRetrieve', async () => {
           merge: true,
           successes: toRetrieve,
         });
+        env.stub(fs, 'writeFileSync');
 
         await operation.start();
 
@@ -126,6 +128,7 @@ describe('MetadataApiRetrieve', async () => {
         merge: true,
         successes: toRetrieve,
       });
+      env.stub(fs, 'writeFileSync');
 
       await operation.start();
       // if the env var is set the callCount will be 2

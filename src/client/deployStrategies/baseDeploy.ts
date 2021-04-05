@@ -9,7 +9,7 @@ import { readFileSync } from 'fs';
 import { sep } from 'path';
 import { DeployError } from '../../errors';
 import { ToolingCreateResult } from '../../utils/deploy';
-import { SourceComponent } from '../../metadata-registry';
+import { SourceComponent } from '../../resolve';
 import { SourceDeployResult } from '../types';
 
 // tslint:disable-next-line:no-var-requires

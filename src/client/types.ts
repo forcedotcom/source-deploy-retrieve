@@ -225,77 +225,6 @@ export interface MetadataApiRetrieveStatus {
 }
 
 // ------------------------------------------------
-// Tooling API result types
-// ------------------------------------------------
-
-export type ContainerAsyncRequest = {
-  Id: RecordId;
-  DeployDetails?: DeployDetails;
-  ErrorMsg?: string;
-  State?: ToolingDeployStatus;
-};
-
-export const enum ToolingDeployStatus {
-  // ContainerAsyncRequest states
-  Queued = 'Queued',
-  Invalidated = 'Invalidated',
-  Error = 'Error',
-  Aborted = 'Aborted',
-  // Shared
-  Completed = 'Completed',
-  Failed = 'Failed',
-  // unique to bundle requests
-  CompletedPartial = 'CompletedPartial',
-}
-
-export type QueryResult = {
-  size: number;
-  totalSize: number;
-  done: boolean;
-  queryLocator: string;
-  entityTypeName: string;
-  records: ApexRecord[] | AuraRecord[] | LWCRecord[] | VFRecord[];
-};
-
-export type ApexRecord = {
-  Id: string;
-  Name: string;
-  NamespacePrefix: string;
-  Body: string;
-  ApiVersion: string;
-  Status: string;
-};
-
-export type VFRecord = {
-  Id: string;
-  Name: string;
-  NamespacePrefix: string;
-  Markup: string;
-  ApiVersion: string;
-};
-
-export type AuraRecord = {
-  Id: string;
-  DefType: string;
-  Source: string;
-  AuraDefinitionBundle: {
-    ApiVersion: string;
-    DeveloperName: string;
-    NamespacePrefix: string;
-  };
-};
-
-export type LWCRecord = {
-  Id: string;
-  FilePath: string;
-  Source: string;
-  LightningComponentBundle: {
-    DeveloperName: string;
-    NamespacePrefix: string;
-  };
-};
-
-// ------------------------------------------------
 // Client options
 // ------------------------------------------------
 
@@ -327,4 +256,100 @@ export interface MetadataApiDeployOptions {
   runTests?: string[];
   singlePackage?: boolean;
   testLevel?: 'NoTestRun' | 'RunSpecifiedTests' | 'RunLocalTests' | 'RunAllTestsInOrg';
+}
+
+// ------------------------------------------------
+// Tooling API
+// ------------------------------------------------
+
+export type ContainerAsyncRequest = {
+  Id: RecordId;
+  DeployDetails?: DeployDetails;
+  ErrorMsg?: string;
+  State?: ToolingDeployStatus;
+};
+
+export const enum ToolingDeployStatus {
+  // ContainerAsyncRequest states
+  Queued = 'Queued',
+  Invalidated = 'Invalidated',
+  Error = 'Error',
+  Aborted = 'Aborted',
+  // Shared
+  Completed = 'Completed',
+  Failed = 'Failed',
+  // unique to bundle requests
+  CompletedPartial = 'CompletedPartial',
+}
+
+export interface QueryResult {
+  size: number;
+  totalSize: number;
+  done: boolean;
+  queryLocator: string;
+  entityTypeName: string;
+  records: ApexRecord[] | AuraRecord[] | LWCRecord[] | VFRecord[];
+}
+
+export interface ApexRecord {
+  Id: string;
+  Name: string;
+  NamespacePrefix: string;
+  Body: string;
+  ApiVersion: string;
+  Status: string;
+}
+
+export interface VFRecord {
+  Id: string;
+  Name: string;
+  NamespacePrefix: string;
+  Markup: string;
+  ApiVersion: string;
+}
+
+export interface AuraRecord {
+  Id: string;
+  DefType: string;
+  Source: string;
+  AuraDefinitionBundle: {
+    ApiVersion: string;
+    DeveloperName: string;
+    NamespacePrefix: string;
+  };
+}
+
+export interface LWCRecord {
+  Id: string;
+  FilePath: string;
+  Source: string;
+  LightningComponentBundle: {
+    DeveloperName: string;
+    NamespacePrefix: string;
+  };
+}
+
+export interface ToolingCreateResult {
+  id: string;
+  success: boolean;
+  errors: string[];
+  name: string;
+  message: string;
+}
+
+export interface AuraDefinition {
+  FilePath: string;
+  DefType: string;
+  Source: string;
+  Format: string;
+  Id?: string;
+  AuraDefinitionBundleId?: string;
+}
+
+export interface LightningComponentResource {
+  FilePath: string;
+  Source: string;
+  Format: string;
+  Id?: string;
+  LightningComponentBundleId?: string;
 }

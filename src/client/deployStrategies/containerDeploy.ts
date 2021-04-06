@@ -15,9 +15,9 @@ import {
   RecordId,
   ComponentDeployment,
   ComponentStatus,
+  ToolingCreateResult,
 } from '../types';
 import { baseName } from '../../utils/path';
-import { ToolingCreateResult } from '../../utils/deploy';
 import { BaseDeploy } from './baseDeploy';
 import { SourceComponent } from '../../resolve';
 

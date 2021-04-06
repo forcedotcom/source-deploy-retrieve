@@ -16,7 +16,7 @@ import { nls } from '../../../src/i18n';
 import { ToolingDeployStatus, ComponentStatus } from '../../../src/client';
 import { auraContents, auraComponent, auraFiles, testAuraList } from './auraDeployMocks';
 import { AuraDeploy } from '../../../src/client/deployStrategies';
-import { ToolingCreateResult, AuraDefinition } from '../../../src/utils/deploy';
+import { ToolingCreateResult, AuraDefinition } from '../../../src/client/types';
 
 const $$ = testSetup();
 

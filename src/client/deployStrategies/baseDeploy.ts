@@ -8,9 +8,8 @@ import { Connection } from '@salesforce/core';
 import { readFileSync } from 'fs';
 import { sep } from 'path';
 import { DeployError } from '../../errors';
-import { ToolingCreateResult } from '../../utils/deploy';
 import { SourceComponent } from '../../resolve';
-import { SourceDeployResult } from '../types';
+import { SourceDeployResult, ToolingCreateResult } from '../types';
 
 // tslint:disable-next-line:no-var-requires
 const DOMParser = require('xmldom-sfdx-encoding').DOMParser;

@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { readFileSync } from 'fs';
-import { AuraDefinition } from '../../utils/deploy';
 import { extName, baseName } from '../../utils';
 import { SourcePath } from '../../common';
 import {
@@ -13,10 +12,11 @@ import {
   ComponentDeployment,
   ToolingDeployStatus,
   SourceDeployResult,
+  AuraDefinition,
 } from '../types';
 import { deployTypes } from '../toolingApi';
 import { BaseDeploy } from './baseDeploy';
-import { SourceComponent } from '../../metadata-registry';
+import { SourceComponent } from '../../resolve';
 import { DiagnosticUtil } from '../diagnosticUtil';
 
 export class AuraDeploy extends BaseDeploy {

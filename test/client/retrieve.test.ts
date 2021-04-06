@@ -13,11 +13,11 @@ import * as path from 'path';
 import * as stream from 'stream';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ToolingApi } from '../../src/client';
-import { MetadataResolver, SourceComponent, registryData } from '../../src/metadata-registry';
+import { MetadataResolver, SourceComponent } from '../../src/resolve';
 import { QueryResult, RequestStatus, SourceRetrieveResult } from '../../src/client/types';
 import { nls } from '../../src/i18n';
 import { fail } from 'assert';
-import { ComponentSet } from '../../src';
+import { ComponentSet, registry } from '../../src';
 
 const $$ = testSetup();
 describe('Tooling Retrieve', () => {
@@ -32,7 +32,7 @@ describe('Tooling Retrieve', () => {
   metaXMLFile += '</ApexClass>';
   const mdComponents: SourceComponent[] = [
     new SourceComponent({
-      type: registryData.types.apexclass,
+      type: registry.types.apexclass,
       name: 'myTestClass',
       xml: path.join('file', 'path', 'myTestClass.cls-meta.xml'),
       content: path.join('file', 'path', 'myTestClass.cls'),
@@ -147,7 +147,7 @@ describe('Tooling Retrieve', () => {
 
   it('should retrieve an ApexClass using filepath', async () => {
     const component = new SourceComponent({
-      type: registryData.types.apexclass,
+      type: registry.types.apexclass,
       name: 'myTestClass',
       xml: path.join('file', 'path', 'myTestClass.cls-meta.xml'),
       content: path.join('file', 'path', 'myTestClass.cls'),
@@ -249,7 +249,7 @@ describe('Tooling Retrieve', () => {
   it('should throw an error when trying to retrieve more than one type at a time', async () => {
     mdComponents.push(
       new SourceComponent({
-        type: registryData.types.apexclass,
+        type: registry.types.apexclass,
         name: 'anotherClass',
         xml: path.join('file', 'path', 'anotherClass.cls-meta.xml'),
         content: path.join('file', 'path', 'anotherClass.cls'),

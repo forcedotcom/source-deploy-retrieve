@@ -9,7 +9,7 @@ import { createWriteStream } from 'fs';
 import { isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
-import { SourceComponent, RegistryAccess, MetadataResolver } from '../metadata-registry';
+import { SourceComponent, MetadataResolver } from '../resolve';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { SourcePath, XML_DECL } from '../common';
@@ -19,6 +19,7 @@ import { JsonMap } from '@salesforce/ts-types';
 import { j2xParser } from 'fast-xml-parser';
 import { ComponentSet } from '../collections';
 import { LibraryError } from '../errors';
+import { RegistryAccess } from '../registry';
 export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {

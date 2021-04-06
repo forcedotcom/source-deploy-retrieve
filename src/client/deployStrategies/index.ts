@@ -9,7 +9,7 @@ import { BaseDeploy } from './baseDeploy';
 import { ContainerDeploy } from './containerDeploy';
 import { AuraDeploy } from './auraDeploy';
 import { LwcDeploy } from './lwcDeploy';
-import { registryData } from '../../metadata-registry';
+import { registry } from '../../registry';
 
 export { ContainerDeploy } from './containerDeploy';
 export { AuraDeploy } from './auraDeploy';
@@ -17,9 +17,9 @@ export { LwcDeploy } from './lwcDeploy';
 
 export const getDeployStrategy = (type: string, connection: Connection): BaseDeploy => {
   switch (type) {
-    case registryData.types.auradefinitionbundle.name:
+    case registry.types.auradefinitionbundle.name:
       return new AuraDeploy(connection);
-    case registryData.types.lightningcomponentbundle.name:
+    case registry.types.lightningcomponentbundle.name:
       return new LwcDeploy(connection);
     default:
       return new ContainerDeploy(connection);

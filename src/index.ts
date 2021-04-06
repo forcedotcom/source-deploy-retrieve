@@ -25,18 +25,17 @@ export {
 } from './client';
 export { MetadataConverter, ConvertOutputConfig, ConvertResult } from './convert';
 export {
+  MetadataComponent,
+  MetadataMember,
   MetadataResolver,
-  registryData,
-  ManifestGenerator,
-  BaseTreeContainer,
   VirtualTreeContainer,
   ZipTreeContainer,
   SourceComponent,
   TreeContainer,
   VirtualDirectory,
   ForceIgnore,
-} from './metadata-registry';
-export { MetadataType, MetadataComponent, SourcePath } from './common';
+} from './resolve';
+export { SourcePath } from './common';
 export {
   ComponentSet,
   FromManifestOptions,
@@ -44,3 +43,4 @@ export {
   DeploySetOptions,
   RetrieveSetOptions,
 } from './collections';
+export { MetadataType, RegistryAccess, registry } from './registry';

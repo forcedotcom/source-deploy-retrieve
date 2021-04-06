@@ -15,11 +15,7 @@ import { StaticResourceMetadataTransformer } from '../../../src/convert/transfor
 import { LibraryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { baseName } from '../../../src/utils';
-import { mockRegistry, mockRegistryData } from '../../mock/registry';
-import {
-  MC_SINGLE_FILE_COMPONENT,
-  MC_SINGLE_FILE_XML_NAMES,
-} from '../../mock/registry/type-constants/mixedContentSingleFileConstants';
+import { mixedContentSingleFile, mockRegistry, mockRegistryData } from '../../mock/registry';
 import {
   TARAJI_COMPONENT,
   TARAJI_VIRTUAL_FS,
@@ -42,7 +38,7 @@ describe('StaticResourceMetadataTransformer', () => {
 
   describe('toMetadataFormat', () => {
     it('should rename extension to .resource for content file', async () => {
-      const component = MC_SINGLE_FILE_COMPONENT;
+      const component = mixedContentSingleFile.COMPONENT;
       const { type, content, xml } = component;
       env.stub(component, 'parseXml').resolves({
         StaticResource: {
@@ -130,7 +126,7 @@ describe('StaticResourceMetadataTransformer', () => {
     } as CentralDirectory;
 
     it('should rename extension from .resource to a mime extension for content file', async () => {
-      const component = MC_SINGLE_FILE_COMPONENT;
+      const component = mixedContentSingleFile.COMPONENT;
       const { type, content, xml } = component;
       env.stub(component, 'parseXml').resolves({
         StaticResource: {
@@ -153,7 +149,7 @@ describe('StaticResourceMetadataTransformer', () => {
     });
 
     it('should rename extension from .resource for a fallback mime extension', async () => {
-      const component = MC_SINGLE_FILE_COMPONENT;
+      const component = mixedContentSingleFile.COMPONENT;
       const { type, content, xml } = component;
       env.stub(component, 'parseXml').resolves({
         StaticResource: {
@@ -176,7 +172,7 @@ describe('StaticResourceMetadataTransformer', () => {
     });
 
     it('should rename extension from .resource for an unsupported mime extension', async () => {
-      const component = MC_SINGLE_FILE_COMPONENT;
+      const component = mixedContentSingleFile.COMPONENT;
       const { type, content, xml } = component;
       env.stub(component, 'parseXml').resolves({
         StaticResource: {
@@ -199,14 +195,14 @@ describe('StaticResourceMetadataTransformer', () => {
     });
 
     it('should ignore components without content', async () => {
-      const component = Object.assign({}, MC_SINGLE_FILE_COMPONENT);
+      const component = Object.assign({}, mixedContentSingleFile.COMPONENT);
       component.content = undefined;
 
       expect(await transformer.toSourceFormat(component)).to.deep.equal([]);
     });
 
     it('should extract an archive', async () => {
-      const component = MC_SINGLE_FILE_COMPONENT;
+      const component = mixedContentSingleFile.COMPONENT;
       const { type, xml } = component;
       env.stub(component, 'parseXml').resolves({
         StaticResource: {
@@ -229,7 +225,7 @@ describe('StaticResourceMetadataTransformer', () => {
     });
 
     it('should work well for null contentType', async () => {
-      const component = MC_SINGLE_FILE_COMPONENT;
+      const component = mixedContentSingleFile.COMPONENT;
       const { type, content, xml } = component;
       env.stub(component, 'parseXml').resolves({
         StaticResource: {
@@ -252,12 +248,12 @@ describe('StaticResourceMetadataTransformer', () => {
 
     it('should merge output with merge component when content is archive', async () => {
       const root = join('path', 'to', 'another', 'mixedSingleFiles');
-      const component = MC_SINGLE_FILE_COMPONENT;
+      const component = mixedContentSingleFile.COMPONENT;
       const mergeComponent = SourceComponent.createVirtualComponent(
         {
-          name: MC_SINGLE_FILE_COMPONENT.name,
+          name: mixedContentSingleFile.COMPONENT.name,
           type: mockRegistryData.types.mixedcontentsinglefile,
-          xml: join(root, MC_SINGLE_FILE_XML_NAMES[0]),
+          xml: join(root, mixedContentSingleFile.XML_NAMES[0]),
           content: join(root, 'a'),
         },
         [
@@ -295,12 +291,12 @@ describe('StaticResourceMetadataTransformer', () => {
 
     it('should merge output with merge component when content is single file', async () => {
       const root = join('path', 'to', 'another', 'mixedSingleFiles');
-      const component = MC_SINGLE_FILE_COMPONENT;
+      const component = mixedContentSingleFile.COMPONENT;
       const mergeComponent = SourceComponent.createVirtualComponent(
         {
-          name: MC_SINGLE_FILE_COMPONENT.name,
+          name: mixedContentSingleFile.COMPONENT.name,
           type: mockRegistryData.types.mixedcontentsinglefile,
-          xml: join(root, MC_SINGLE_FILE_XML_NAMES[0]),
+          xml: join(root, mixedContentSingleFile.XML_NAMES[0]),
           content: join(root, 'a'),
         },
         [

@@ -277,6 +277,7 @@ describe('ComponentSet', () => {
       });
       expect(set.getObject()).to.deep.equal({
         Package: {
+          fullName: undefined,
           types: [
             {
               name: 'DecomposedTopLevel',

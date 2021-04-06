@@ -16,6 +16,7 @@ export interface PackageManifestObject {
   Package: {
     types: PackageTypeMembers[];
     version: string;
+    fullName: string;
   };
 }
 

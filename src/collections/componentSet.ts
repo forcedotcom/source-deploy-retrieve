@@ -47,6 +47,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public static readonly WILDCARD = '*';
   private static readonly KEY_DELIMITER = '#';
   public apiVersion: string;
+  public fullName?: string;
   private registry: RegistryAccess;
   private components = new Map<string, Map<string, SourceComponent>>();
 
@@ -143,6 +144,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       : undefined;
     const result = new ComponentSet([], options.registry);
     result.apiVersion = manifest.apiVersion;
+    result.fullName = manifest.fullName;
 
     for (const component of manifest.components) {
       if (resolveIncludeSet) {
@@ -239,6 +241,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       Package: {
         types: typeMembers,
         version: this.apiVersion,
+        fullName: this.fullName,
       },
     };
   }

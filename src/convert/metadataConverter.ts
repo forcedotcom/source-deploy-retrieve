@@ -13,7 +13,7 @@ import {
 } from './types';
 import { SourceComponent } from '../resolve';
 import { promises } from 'fs';
-import { dirname, join, normalize } from 'path';
+import { dirname, join } from 'path';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
 import {
   ComponentReader,
@@ -123,7 +123,7 @@ export class MetadataConverter {
     const { outputDirectory, packageName, type } = outputConfig;
     if (outputDirectory) {
       const name = packageName || `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${Date.now()}`;
-      packagePath = normalize(join(outputDirectory, name));
+      packagePath = join(outputDirectory, name);
 
       if (type === 'zip') {
         packagePath += '.zip';

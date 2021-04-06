@@ -293,6 +293,31 @@ describe('ComponentSet', () => {
       });
     });
 
+    it('should return an object representing the package manifest with fullName', () => {
+      const set = ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry: mockRegistry,
+        tree: manifestFiles.TREE,
+      });
+      set.fullName = 'testFullName';
+      expect(set.getObject()).to.deep.equal({
+        Package: {
+          fullName: 'testFullName',
+          types: [
+            {
+              name: 'DecomposedTopLevel',
+              members: ['a'],
+            },
+            {
+              name: 'MixedContentSingleFile',
+              members: ['b', 'c'],
+            },
+          ],
+          version: mockRegistry.apiVersion,
+        },
+      });
+    });
+
     it('should interpret folder components as members of the type they are a container for', () => {
       const member = { fullName: 'Test_Folder', type: 'McifFolder' };
       const set = new ComponentSet([member], mockRegistry);

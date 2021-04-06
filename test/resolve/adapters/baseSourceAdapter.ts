@@ -5,37 +5,31 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { xmlInFolder, mockRegistry, mockRegistryData } from '../../mock/registry';
-import { DefaultSourceAdapter } from '../../../src/resolve/adapters/defaultSourceAdapter';
 import { expect, assert } from 'chai';
-import { BaseSourceAdapter } from '../../../src/resolve/adapters/baseSourceAdapter';
-import { META_XML_SUFFIX, SourcePath } from '../../../src/common';
+import {
+  xmlInFolder,
+  mockRegistry,
+  mockRegistryData,
+  mixedContentSingleFile,
+  regina,
+  matchingContentFile,
+} from '../../mock/registry';
+import { BaseSourceAdapter, DefaultSourceAdapter } from '../../../src/resolve/adapters';
+import { META_XML_SUFFIX } from '../../../src/common';
 import { UnexpectedForceIgnore } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { RegistryTestUtil } from '../registryTestUtil';
-import { SourceComponent } from '../../../src/resolve';
-
-// TODO: Remove when tests replace with TestAdapter
-class TestChildAdapter extends BaseSourceAdapter {
-  public static readonly xmlPath = join('path', 'to', 'dwaynes', 'a.dwayne-meta.xml');
-  protected getRootMetadataXmlPath(): SourcePath {
-    return TestChildAdapter.xmlPath;
-  }
-  protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
-    component.content = trigger;
-    return component;
-  }
-}
+import { ForceIgnore, SourceComponent } from '../../../src';
 
 class TestAdapter extends BaseSourceAdapter {
   public readonly component: SourceComponent;
 
-  constructor(component: SourceComponent) {
-    super(component.type, mockRegistry);
+  constructor(component: SourceComponent, forceIgnore?: ForceIgnore) {
+    super(component.type, mockRegistry, forceIgnore);
     this.component = component;
   }
 
-  protected getRootMetadataXmlPath(): SourcePath {
+  protected getRootMetadataXmlPath(): string {
     return this.component.xml;
   }
   protected populate(): SourceComponent {
@@ -47,35 +41,28 @@ describe('BaseSourceAdapter', () => {
   it('should reformat the fullName for folder types', () => {
     const component = xmlInFolder.COMPONENTS[0];
     const adapter = new TestAdapter(component);
-    expect(adapter.getComponent(component.xml)).to.deep.equal(component);
+
+    const result = adapter.getComponent(component.xml);
+
+    expect(result).to.deep.equal(component);
   });
 
   it('should defer parsing metadata xml to child adapter if path is not a metadata xml', () => {
-    const path = join('path', 'to', 'dwaynes', 'My_Test.js');
-    const type = mockRegistryData.types.dwaynejohnson;
-    const adapter = new TestChildAdapter(type, mockRegistry);
-    expect(adapter.getComponent(path)).to.deep.equal(
-      new SourceComponent({
-        name: 'a',
-        type,
-        xml: TestChildAdapter.xmlPath,
-        content: path,
-      })
-    );
+    const component = mixedContentSingleFile.COMPONENT;
+    const adapter = new TestAdapter(component);
+
+    const result = adapter.getComponent(component.content);
+
+    expect(result).to.deep.equal(component);
   });
 
   it('should defer parsing metadata xml to child adapter if path is not a root metadata xml', () => {
-    const path = join('path', 'to', 'dwaynes', 'smallDwaynes', 'b.small-meta.xml');
-    const type = mockRegistryData.types.dwaynejohnson;
-    const adapter = new TestChildAdapter(type, mockRegistry);
-    expect(adapter.getComponent(path)).to.deep.equal(
-      new SourceComponent({
-        name: 'a',
-        type,
-        xml: TestChildAdapter.xmlPath,
-        content: path,
-      })
-    );
+    const component = regina.REGINA_CHILD_COMPONENT_1;
+    const adapter = new TestAdapter(component);
+
+    const result = adapter.getComponent(regina.REGINA_CHILD_COMPONENT_1.xml);
+
+    expect(result).to.deep.equal(component);
   });
 
   it('should throw an error if a metadata xml file is forceignored', () => {
@@ -86,7 +73,7 @@ describe('BaseSourceAdapter', () => {
       seed: path,
       deny: [path],
     });
-    const adapter = new TestChildAdapter(type, mockRegistry, forceIgnore);
+    const adapter = new TestAdapter(matchingContentFile.COMPONENT, forceIgnore);
     assert.throws(
       () => adapter.getComponent(path),
       UnexpectedForceIgnore,

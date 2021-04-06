@@ -7,29 +7,27 @@
 import { join } from 'path';
 import { mockRegistryData } from '../mockRegistry';
 import { SourceComponent } from '../../../../src';
+import { META_XML_SUFFIX } from '../../../../src/common';
 
 const type = mockRegistryData.types.mixedcontentsinglefile;
 
-export const MC_SINGLE_FILE_DIR = join('path', 'to', 'mixedSingleFiles');
-export const MC_SINGLE_FILE_XML_NAMES = ['a.mixedSingleFile-meta.xml'];
-export const MC_SINGLE_FILE_XML_PATHS = MC_SINGLE_FILE_XML_NAMES.map((n) =>
-  join(MC_SINGLE_FILE_DIR, n)
-);
-export const MC_SINGLE_FILE_SOURCE_NAMES = ['a.x'];
-export const MC_SINGLE_FILE_SOURCE_PATHS = MC_SINGLE_FILE_SOURCE_NAMES.map((n) =>
-  join(MC_SINGLE_FILE_DIR, n)
-);
-export const MC_SINGLE_FILE_COMPONENT = SourceComponent.createVirtualComponent(
+export const TYPE_DIRECTORY = join('path', 'to', type.directoryName);
+export const COMPONENT_NAMES = ['a'];
+export const XML_NAMES = COMPONENT_NAMES.map((name) => `${name}.${type.suffix}${META_XML_SUFFIX}`);
+export const XML_PATHS = XML_NAMES.map((n) => join(TYPE_DIRECTORY, n));
+export const CONTENT_NAMES = COMPONENT_NAMES.map((name) => `${name}.x`);
+export const CONTENT_PATHS = CONTENT_NAMES.map((n) => join(TYPE_DIRECTORY, n));
+export const COMPONENT = SourceComponent.createVirtualComponent(
   {
     name: 'a',
     type,
-    content: MC_SINGLE_FILE_SOURCE_PATHS[0],
-    xml: MC_SINGLE_FILE_XML_PATHS[0],
+    content: CONTENT_PATHS[0],
+    xml: XML_PATHS[0],
   },
   [
     {
-      dirPath: MC_SINGLE_FILE_DIR,
-      children: MC_SINGLE_FILE_XML_NAMES.concat(MC_SINGLE_FILE_SOURCE_NAMES),
+      dirPath: TYPE_DIRECTORY,
+      children: XML_NAMES.concat(CONTENT_NAMES),
     },
   ]
 );

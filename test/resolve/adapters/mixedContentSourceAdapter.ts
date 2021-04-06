@@ -5,13 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import {
-  DWAYNE_SOURCE,
-  DWAYNE_XML,
-  DWAYNE_DIR,
-  DWAYNE_XML_NAME,
-  DWAYNE_SOURCE_NAME,
-} from '../../mock/registry/type-constants/dwayneConstants';
 import { expect, assert } from 'chai';
 import { MixedContentSourceAdapter } from '../../../src/resolve/adapters/mixedContentSourceAdapter';
 import { ExpectedSourceFilesError } from '../../../src/errors';
@@ -21,46 +14,48 @@ import {
   TARAJI_VIRTUAL_FS_NO_XML,
   TARAJI_CONTENT_PATH,
 } from '../../mock/registry/type-constants/tarajiConstants';
-import { mockRegistry, mockRegistryData, taraji } from '../../mock/registry';
+import {
+  mockRegistry,
+  mockRegistryData,
+  taraji,
+  mixedContentSingleFile,
+} from '../../mock/registry';
 
 describe('MixedContentSourceAdapter', () => {
   it('Should throw ExpectedSourceFilesError if content does not exist', () => {
-    const type = mockRegistryData.types.dwaynejohnson;
+    const type = mockRegistryData.types.mixedcontentsinglefile;
     const tree = new VirtualTreeContainer([
       {
-        dirPath: DWAYNE_DIR,
-        children: [DWAYNE_XML_NAME],
+        dirPath: mixedContentSingleFile.TYPE_DIRECTORY,
+        children: [mixedContentSingleFile.XML_NAMES[0]],
       },
     ]);
     const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
-    assert.throws(() => adapter.getComponent(DWAYNE_SOURCE), ExpectedSourceFilesError);
+    assert.throws(
+      () => adapter.getComponent(mixedContentSingleFile.COMPONENT.content),
+      ExpectedSourceFilesError
+    );
   });
 
   describe('File Content', () => {
-    const type = mockRegistryData.types.dwaynejohnson;
-    const tree = new VirtualTreeContainer([
-      {
-        dirPath: DWAYNE_DIR,
-        children: [DWAYNE_XML_NAME, DWAYNE_SOURCE_NAME],
-      },
-    ]);
-    const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
-    const expectedComponent = new SourceComponent(
-      {
-        name: 'a',
-        type,
-        xml: DWAYNE_XML,
-        content: DWAYNE_SOURCE,
-      },
-      tree
+    const component = mixedContentSingleFile.COMPONENT;
+    const adapter = new MixedContentSourceAdapter(
+      mockRegistryData.types.mixedcontentsinglefile,
+      mockRegistry,
+      undefined,
+      component.tree
     );
 
     it('Should return expected SourceComponent when given a root metadata xml path', () => {
-      expect(adapter.getComponent(DWAYNE_XML)).to.deep.equal(expectedComponent);
+      const result = adapter.getComponent(component.xml);
+
+      expect(result).to.deep.equal(component);
     });
 
     it('Should return expected SourceComponent when given a source path', () => {
-      expect(adapter.getComponent(DWAYNE_SOURCE)).to.deep.equal(expectedComponent);
+      const result = adapter.getComponent(component.content);
+
+      expect(result).to.deep.equal(component);
     });
   });
 

@@ -584,7 +584,7 @@ describe('ComponentSet', () => {
     });
 
     it('should correctly evaluate membership of component with wildcard of component type in set', () => {
-      const component = mixedContentSingleFile.MC_SINGLE_FILE_COMPONENT;
+      const component = mixedContentSingleFile.COMPONENT;
       const set = new ComponentSet(undefined, mockRegistry);
 
       expect(set.has(component)).to.be.false;

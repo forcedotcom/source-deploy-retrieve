@@ -28,7 +28,6 @@ export {
   MetadataComponent,
   MetadataMember,
   MetadataResolver,
-  ManifestGenerator,
   VirtualTreeContainer,
   ZipTreeContainer,
   SourceComponent,

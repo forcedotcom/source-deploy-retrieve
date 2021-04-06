@@ -6,7 +6,6 @@
  */
 export { MetadataResolver } from './metadataResolver';
 export { ManifestResolver } from './manifestResolver';
-export { ManifestGenerator } from './manifestGenerator';
 export {
   TreeContainer,
   NodeFSTreeContainer,

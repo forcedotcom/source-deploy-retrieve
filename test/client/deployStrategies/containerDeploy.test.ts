@@ -12,9 +12,13 @@ import * as fs from 'fs';
 import { Record, RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ContainerDeploy } from '../../../src/client/deployStrategies';
-import { ToolingCreateResult } from '../../../src/utils/deploy';
 import { nls } from '../../../src/i18n';
-import { QueryResult, ToolingDeployStatus, ComponentStatus } from '../../../src/client/types';
+import {
+  QueryResult,
+  ToolingDeployStatus,
+  ComponentStatus,
+  ToolingCreateResult,
+} from '../../../src/client/types';
 import { SourceComponent } from '../../../src/resolve';
 import { registry } from '../../../src';
 

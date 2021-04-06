@@ -14,7 +14,7 @@ import { RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { nls } from '../../../src/i18n';
 import { LwcDeploy } from '../../../src/client/deployStrategies';
-import { LightningComponentResource, ToolingCreateResult } from '../../../src/utils/deploy';
+import { LightningComponentResource, ToolingCreateResult } from '../../../src/client/types';
 import { SourceComponent, VirtualTreeContainer } from '../../../src/resolve';
 import { ToolingDeployStatus, ComponentStatus } from '../../../src/client';
 import { registry } from '../../../src';

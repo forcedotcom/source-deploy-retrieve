@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join, basename } from 'path';
-import { AuraDefinition } from '../../../src/utils/deploy';
+import { AuraDefinition } from '../../../src/client/types';
 import { SourceComponent, VirtualTreeContainer } from '../../../src/resolve';
 import { registry } from '../../../src';
 

@@ -8,11 +8,11 @@
 
 - Generate api documentation ([PR #275](https://github.com/forcedotcom/salesforcedx-vscode/pull/275))
 
+- Support SFDX_MDAPI_TEMP_DIR environment variable for metadata deploys and retrieves ([PR #266](https://github.com/forcedotcom/salesforcedx-vscode/pull/266))
+
 ## Fixed
 
 - Add documentation for tree containers ([PR #289](https://github.com/forcedotcom/salesforcedx-vscode/pull/289))
-
-- Add SFDX_MDAPI_TEMP_DIR environment variable handling ([PR #266](https://github.com/forcedotcom/salesforcedx-vscode/pull/266))
 
 # 1.1.21 - March 30, 2021
 

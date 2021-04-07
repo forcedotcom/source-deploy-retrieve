@@ -52,7 +52,8 @@ export class MetadataConverter {
   ): Promise<ConvertResult> {
     try {
       // it's possible the components came from a component set, so this may be redundant in some cases...
-      const manifestContents = new ComponentSet(components, this.registry).getPackageXml();
+      const cs = new ComponentSet(components, this.registry);
+      let manifestContents;
       const isSource = targetFormat === 'source';
       const tasks = [];
 
@@ -62,6 +63,10 @@ export class MetadataConverter {
 
       switch (output.type) {
         case 'directory':
+          if (output.packageName) {
+            cs.fullName = output.packageName;
+          }
+          manifestContents = cs.getPackageXml();
           packagePath = this.getPackagePath(output);
           writer = new StandardWriter(packagePath);
           if (!isSource) {
@@ -70,6 +75,10 @@ export class MetadataConverter {
           }
           break;
         case 'zip':
+          if (output.packageName) {
+            cs.fullName = output.packageName;
+          }
+          manifestContents = cs.getPackageXml();
           packagePath = this.getPackagePath(output);
           writer = new ZipWriter(packagePath);
           if (!isSource) {

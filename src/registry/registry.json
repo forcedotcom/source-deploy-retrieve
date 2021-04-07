@@ -21,7 +21,7 @@
             "id": "customlabel",
             "name": "CustomLabel",
             "ignoreParentName": true,
-            "uniqueIdAttribute": "fullName",
+            "uniqueIdElement": "fullName",
             "directoryName": "labels",
             "suffix": "labels"
           }

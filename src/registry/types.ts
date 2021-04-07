@@ -72,7 +72,7 @@ export interface MetadataType {
   /**
    * The xml attribute used as the unique identifier when parsing the xml
    */
-  uniqueIdAttribute?: string;
+  uniqueIdElement?: string;
   /**
    * Type definitions for child types, if the type has any.
    *

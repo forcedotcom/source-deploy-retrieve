@@ -126,7 +126,7 @@ export class SourceComponent implements MetadataComponent {
       const children = normalizeToArray(
         get(parsed, `${this.parent.type.name}.${this.type.directoryName}`)
       ) as T[];
-      return children.find((c) => getString(c, this.type.uniqueIdAttribute) === this.name);
+      return children.find((c) => getString(c, this.type.uniqueIdElement) === this.name);
     } else {
       return parsed;
     }
@@ -162,12 +162,12 @@ export class SourceComponent implements MetadataComponent {
     const children: SourceComponent[] = [];
     for (const childTypeId of Object.keys(this.type.children.types)) {
       const childType = this.type.children.types[childTypeId];
-      const uniqueIdAttribute = childType.uniqueIdAttribute;
+      const uniqueIdElement = childType.uniqueIdElement;
       const elements = normalizeToArray(get(parsed, xmlPathToChildren, []));
       const childComponents = elements.map((element) => {
         return new SourceComponent(
           {
-            name: getString(element, uniqueIdAttribute),
+            name: getString(element, uniqueIdElement),
             type: childType,
             xml: this.xml,
             parent: this,

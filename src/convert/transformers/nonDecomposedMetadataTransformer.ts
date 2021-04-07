@@ -29,10 +29,10 @@ export class NonDecomposedMetadataTransformer extends DecomposedMetadataTransfor
     const children = mergeWith?.getChildren() ?? [];
     const claimedChildren = children.map((c) => c.name);
     const [childTypeId] = Object.keys(component.type.children.types);
-    const { uniqueIdAttribute } = component.type.children.types[childTypeId];
+    const { uniqueIdElement } = component.type.children.types[childTypeId];
 
     for (const child of incomingChildrenXml) {
-      const childName = getString(child, uniqueIdAttribute);
+      const childName = getString(child, uniqueIdElement);
       if (claimedChildren.includes(childName)) {
         this.setStateForClaimed(mergeWith, childName, child);
       } else {

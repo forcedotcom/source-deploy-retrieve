@@ -266,7 +266,7 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
     for (const component of unprocessedComponents) {
       for (const child of component.getChildren()) {
         const xml = await child.parseXml();
-        const childName = getString(xml, child.type.uniqueIdAttribute);
+        const childName = getString(xml, child.type.uniqueIdElement);
         childrenOfUnprocessed.push(childName);
       }
     }

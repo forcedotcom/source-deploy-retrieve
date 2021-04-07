@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { MetadataConverter } from '../../src/convert';
 import { createSandbox, SinonStub } from 'sinon';
 import { xmlInFolder, mockRegistry } from '../mock/registry';
 import * as streams from '../../src/convert/streams';
@@ -15,7 +14,7 @@ import { expect, assert } from 'chai';
 import { ConversionError, LibraryError } from '../../src/errors';
 import { COMPONENTS } from '../mock/registry/type-constants/mixedContentInFolderConstants';
 import { fail } from 'assert';
-import { ComponentSet } from '../../src';
+import { ComponentSet, MetadataConverter } from '../../src';
 import {
   REGINA_CHILD_COMPONENT_1,
   REGINA_CHILD_COMPONENT_2,
@@ -109,6 +108,19 @@ describe('MetadataConverter', () => {
       expect(pipelineArgs[2].rootDestination).to.equal(packageOutput);
     });
 
+    it('should create conversion pipeline with normalized output directory', async () => {
+      await converter.convert(components, 'metadata', {
+        type: 'directory',
+        outputDirectory: './',
+        packageName,
+      });
+
+      const pipelineArgs = pipelineStub.firstCall.args;
+      validatePipelineArgs(pipelineArgs);
+      expect(pipelineArgs[2] instanceof streams.StandardWriter).to.be.true;
+      expect(pipelineArgs[2].rootDestination).to.equal(packageName);
+    });
+
     it('should return packagePath in result', async () => {
       const result = await converter.convert(components, 'metadata', {
         type: 'directory',
@@ -129,6 +141,28 @@ describe('MetadataConverter', () => {
       const expectedContents = new ComponentSet(components, mockRegistry).getPackageXml();
 
       await converter.convert(components, 'metadata', { type: 'directory', outputDirectory });
+
+      expect(writeFileStub.calledBefore(pipelineStub)).to.be.true;
+      expect(writeFileStub.firstCall.args).to.deep.equal([
+        join(packagePath, MetadataConverter.PACKAGE_XML_FILE),
+        expectedContents,
+      ]);
+    });
+
+    it('should write the fullName entry when packageName is provided', async () => {
+      const timestamp = 123456;
+      const packageName = 'examplePackage';
+      const packagePath = join(outputDirectory, packageName);
+      env.stub(Date, 'now').returns(timestamp);
+      const cs = new ComponentSet(components, mockRegistry);
+      cs.fullName = packageName;
+      const expectedContents = cs.getPackageXml();
+
+      await converter.convert(components, 'metadata', {
+        type: 'directory',
+        outputDirectory,
+        packageName,
+      });
 
       expect(writeFileStub.calledBefore(pipelineStub)).to.be.true;
       expect(writeFileStub.firstCall.args).to.deep.equal([

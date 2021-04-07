@@ -195,14 +195,19 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
       return;
     }
 
+    const unprocessedComponents = this.getUnprocessedComponents(defaultDirectory);
+    const parentPaths = Object.keys(this.state.claimed).concat(
+      unprocessedComponents.map((c) => c.xml)
+    );
+
     const defaultComponentKey =
-      Object.keys(this.state.claimed).find((k) => k.startsWith(defaultDirectory)) ||
-      Object.keys(this.state.claimed)[0];
+      parentPaths.find((p) => p.startsWith(defaultDirectory)) || parentPaths[0];
 
     const claimedChildren = [
       ...this.getClaimedChildrenNames(),
-      ...(await this.getChildrenOfUnprocessedComponents(defaultDirectory)),
+      ...(await this.getChildrenOfUnprocessedComponents(unprocessedComponents)),
     ];
+
     // merge unclaimed children into default parent component
     for (const [key, childIndex] of Object.entries(this.state.unclaimed)) {
       const pruned = Object.entries(childIndex.children).reduce((result, [childName, childXml]) => {
@@ -211,16 +216,18 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
           : result;
       }, {});
       delete this.state.unclaimed[key];
-      this.state.claimed[defaultComponentKey].children = Object.assign(
-        {},
-        this.state.claimed[defaultComponentKey].children,
-        pruned
-      );
+      if (this.state.claimed[defaultComponentKey]) {
+        this.state.claimed[defaultComponentKey].children = Object.assign(
+          {},
+          this.state.claimed[defaultComponentKey].children,
+          pruned
+        );
+      }
     }
   }
 
   /**
-   * Returns the children of "unprocessed components"
+   * Returns the "unprocessed components"
    *
    * An unprocessed component is a component that was not resolved during component resolution.
    * This typically only happens when a specific source path was resolved. This is problematic for
@@ -228,7 +235,7 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
    * child type before recomposing the final xml. So in order for each of the children to be properly
    * claimed, we have to create new ComponentSet that will have all the parent components.
    */
-  private async getChildrenOfUnprocessedComponents(defaultDirectory: string): Promise<string[]> {
+  private getUnprocessedComponents(defaultDirectory: string): SourceComponent[] {
     if (isEmpty(this.state.unclaimed)) {
       return [];
     }
@@ -261,7 +268,15 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
     const unprocessedComponents = ComponentSet.fromSource({ fsPaths, include: filterSet })
       .getSourceComponents()
       .filter((component) => !this.state.claimed[component.xml]);
+    return unprocessedComponents.toArray();
+  }
 
+  /**
+   * Returns the children of "unprocessed components"
+   */
+  private async getChildrenOfUnprocessedComponents(
+    unprocessedComponents: SourceComponent[]
+  ): Promise<string[]> {
     const childrenOfUnprocessed = [];
     for (const component of unprocessedComponents) {
       for (const child of component.getChildren()) {

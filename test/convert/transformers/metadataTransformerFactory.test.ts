@@ -14,9 +14,8 @@ import { DefaultMetadataTransformer } from '../../../src/convert/transformers/de
 import { StaticResourceMetadataTransformer } from '../../../src/convert/transformers/staticResourceMetadataTransformer';
 import { RegistryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
-import { matchingContentFile, mockRegistry } from '../../mock/registry';
-import { MC_SINGLE_FILE_COMPONENT } from '../../mock/registry/mixedContentSingleFileConstants';
-import { REGINA_COMPONENT } from '../../mock/registry/reginaConstants';
+import { matchingContentFile, mockRegistry, mixedContentSingleFile } from '../../mock/registry';
+import { REGINA_COMPONENT } from '../../mock/registry/type-constants/reginaConstants';
 
 describe('MetadataTransformerFactory', () => {
   it('should return DefaultMetadataTransformer', () => {
@@ -37,7 +36,7 @@ describe('MetadataTransformerFactory', () => {
   });
 
   it('should return StaticResourceMetadataTransformer', () => {
-    const component = MC_SINGLE_FILE_COMPONENT;
+    const component = mixedContentSingleFile.COMPONENT;
     const factory = new MetadataTransformerFactory(mockRegistry);
     expect(factory.getTransformer(component)).to.deep.equal(
       new StaticResourceMetadataTransformer(mockRegistry)

@@ -5,25 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { DiagnosticUtil } from '../../src/client/diagnosticUtil';
-import { ComponentProperties, SourceComponent } from '../../src/metadata-registry/sourceComponent';
-import { registryData, VirtualTreeContainer } from '../../src/metadata-registry';
+import { SourceComponent } from '../../src/resolve/sourceComponent';
 import { join } from 'path';
 import { expect } from 'chai';
-import {
-  ComponentDeployment,
-  ComponentStatus,
-  DeployMessage,
-  RequestStatus,
-} from '../../src/client/types';
-import { TreeContainer } from '../../src';
-
-function createDeployment(props: ComponentProperties, tree?: TreeContainer): ComponentDeployment {
-  return {
-    status: ComponentStatus.Failed,
-    component: new SourceComponent(props, tree),
-    diagnostics: [],
-  };
-}
+import { DeployMessage } from '../../src/client/types';
+import { registry } from '../../src';
 
 type MockDeployMessage = {
   problem?: string;
@@ -45,7 +31,7 @@ describe('DiagnosticUtil', () => {
     const component = SourceComponent.createVirtualComponent(
       {
         name: 'Test',
-        type: registryData.types.apexclass,
+        type: registry.types.apexclass,
         content: join(classes, 'Test.cls'),
         xml: join(classes, 'Test.cls-meta.xml'),
       },
@@ -95,7 +81,7 @@ describe('DiagnosticUtil', () => {
     const component = SourceComponent.createVirtualComponent(
       {
         name: 'Test',
-        type: registryData.types.lightningcomponentbundle,
+        type: registry.types.lightningcomponentbundle,
         xml: join(bundlePath, 'test.js-meta.xml'),
         content: bundlePath,
       },
@@ -171,7 +157,7 @@ describe('DiagnosticUtil', () => {
     const component = SourceComponent.createVirtualComponent(
       {
         name: 'Test',
-        type: registryData.types.auradefinitionbundle,
+        type: registry.types.auradefinitionbundle,
         xml: join(bundlePath, 'test.app-meta.xml'),
         content: bundlePath,
       },

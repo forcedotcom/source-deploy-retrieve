@@ -11,7 +11,7 @@ import {
   DirectoryConfig,
   ZipConfig,
 } from './types';
-import { RegistryAccess, SourceComponent } from '../metadata-registry';
+import { SourceComponent } from '../resolve';
 import { promises } from 'fs';
 import { dirname, join } from 'path';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
@@ -26,6 +26,7 @@ import {
 import { ConversionError, LibraryError } from '../errors';
 import { SourcePath } from '../common';
 import { ComponentSet } from '../collections';
+import { RegistryAccess } from '../registry';
 
 export class MetadataConverter {
   public static readonly PACKAGE_XML_FILE = 'package.xml';

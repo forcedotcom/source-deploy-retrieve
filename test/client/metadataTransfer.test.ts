@@ -36,10 +36,10 @@ class TestTransfer extends MetadataTransfer<MetadataRequestStatus, MetadataTrans
   protected async pre(): Promise<{ id: string }> {
     return this.lifecycle.pre();
   }
-  protected async checkStatus(id: string): Promise<MetadataRequestStatus> {
+  protected async checkStatus(): Promise<MetadataRequestStatus> {
     return this.lifecycle.checkStatus();
   }
-  protected async post(result: MetadataRequestStatus): Promise<MetadataTransferResult> {
+  protected async post(): Promise<MetadataTransferResult> {
     return this.lifecycle.post();
   }
   protected doCancel(): Promise<boolean> {

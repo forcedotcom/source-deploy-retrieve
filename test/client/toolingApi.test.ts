@@ -9,10 +9,11 @@ import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import { createSandbox, SinonSandbox } from 'sinon';
-import { MetadataResolver, registryData, SourceComponent } from '../../src/metadata-registry';
+import { MetadataResolver, SourceComponent } from '../../src/resolve';
 import { ComponentStatus, ToolingApi, ToolingDeployStatus } from '../../src/client';
 import { ContainerDeploy } from '../../src/client/deployStrategies';
 import { nls } from '../../src/i18n';
+import { registry } from '../../src';
 
 const $$ = testSetup();
 
@@ -45,7 +46,7 @@ describe('Tooling API tests', () => {
   it('should go ahead with deploy for supported types', async () => {
     const deployLibrary = new ToolingApi(mockConnection, resolver);
     const component = new SourceComponent({
-      type: registryData.types.apexclass,
+      type: registry.types.apexclass,
       name: 'myTestClass',
       xml: 'myTestClass.cls-meta.xml',
       content: 'file/path/myTestClass.cls',
@@ -73,7 +74,7 @@ describe('Tooling API tests', () => {
   it('should exit deploy for unsupported types', async () => {
     sandboxStub.stub(MetadataResolver.prototype, 'getComponentsFromPath').returns([
       new SourceComponent({
-        type: registryData.types.flexipage,
+        type: registry.types.flexipage,
         name: '',
         xml: '',
       }),

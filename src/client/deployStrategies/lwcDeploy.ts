@@ -12,8 +12,8 @@ import {
   ToolingDeployStatus,
   ComponentDeployment,
   ComponentStatus,
+  LightningComponentResource,
 } from '../types';
-import { LightningComponentResource } from '../../utils/deploy';
 import { readFileSync } from 'fs';
 import { extName } from '../../utils';
 import { normalize } from 'path';

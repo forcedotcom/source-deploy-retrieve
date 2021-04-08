@@ -31,6 +31,12 @@ describe('SourceAdapterFactory', () => {
     expect(adapter).to.deep.equal(new DefaultSourceAdapter(type, mockRegistry, undefined, tree));
   });
 
+  it('Should return DefaultSourceAdapter for default AdapterId', () => {
+    const type = mockRegistryData.types.nondecomposed;
+    const adapter = factory.getAdapter(type);
+    expect(adapter).to.deep.equal(new DefaultSourceAdapter(type, mockRegistry, undefined, tree));
+  });
+
   it('Should return MixedContentSourceAdapter for mixedContent AdapterId', () => {
     const type = mockRegistryData.types.mixedcontentsinglefile;
     const adapter = factory.getAdapter(type);
@@ -65,7 +71,7 @@ describe('SourceAdapterFactory', () => {
     assert.throws(
       () => factory.getAdapter(type),
       RegistryError,
-      nls.localize('error_missing_adapter', [type.name, type.strategies.adapter])
+      nls.localize('error_missing_adapter', [type.strategies.adapter, type.name])
     );
   });
 });

@@ -257,7 +257,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       indentBy: new Array(indentation + 1).join(' '),
       ignoreAttributes: false,
     });
-    const toParse = this.getObject() as any;
+    const toParse = this.getObject();
     toParse.Package[XML_NS_KEY] = XML_NS_URL;
     return XML_DECL.concat(j2x.parse(toParse));
   }

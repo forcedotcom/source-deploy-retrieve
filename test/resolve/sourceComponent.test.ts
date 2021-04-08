@@ -16,6 +16,13 @@ import {
 import { expect } from 'chai';
 import { REGINA_COMPONENT } from '../mock/registry/type-constants/reginaConstants';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
+import {
+  COMPONENT_1,
+  CHILD_1_NAME,
+  VIRTUAL_DIR,
+  COMPONENT_1_XML_PATH,
+  CHILD_2_NAME,
+} from '../mock/registry/type-constants/nonDecomposedConstants';
 import { createSandbox } from 'sinon';
 
 const env = createSandbox();
@@ -155,6 +162,36 @@ describe('SourceComponent', () => {
         []
       );
       expect(noXml.getChildren()).to.be.empty;
+    });
+  });
+
+  describe('Nondecomposed Child Components', () => {
+    const type = mockRegistryData.types.nondecomposed;
+    const expectedChild = SourceComponent.createVirtualComponent(
+      {
+        name: CHILD_1_NAME,
+        type: type.children.types.nondecomposedchild,
+        xml: COMPONENT_1_XML_PATH,
+        parent: COMPONENT_1,
+      },
+      VIRTUAL_DIR
+    );
+    const expectedChild2 = SourceComponent.createVirtualComponent(
+      {
+        name: CHILD_2_NAME,
+        type: type.children.types.nondecomposedchild,
+        xml: COMPONENT_1_XML_PATH,
+        parent: COMPONENT_1,
+      },
+      VIRTUAL_DIR
+    );
+
+    it('should return child components for a component', () => {
+      expect(COMPONENT_1.getChildren()).to.deep.equal([expectedChild, expectedChild2]);
+    });
+
+    it('should return correct fullName', () => {
+      expect(expectedChild.fullName).to.equal(expectedChild.name);
     });
   });
 });

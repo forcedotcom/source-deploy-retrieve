@@ -9,9 +9,9 @@ import { parse } from 'fast-xml-parser';
 import { ForceIgnore } from './forceIgnore';
 import { NodeFSTreeContainer, TreeContainer, VirtualTreeContainer } from './treeContainers';
 import { MetadataComponent, VirtualDirectory } from './types';
-import { baseName, parseMetadataXml } from '../utils';
+import { baseName, normalizeToArray, parseMetadataXml } from '../utils';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common';
-import { JsonMap } from '@salesforce/ts-types';
+import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { SfdxFileFormat } from '../convert';
 import { trimUntil } from '../utils/path';
 import { MetadataType } from '../registry';
@@ -72,17 +72,28 @@ export class SourceComponent implements MetadataComponent {
   }
 
   public getChildren(): SourceComponent[] {
-    return this.content && !this.parent && this.type.children
-      ? this.getChildrenInternal(this.content)
-      : [];
+    if (!this.parent && this.type.children) {
+      return this.content
+        ? this.getDecomposedChildren(this.content)
+        : this.getNonDecomposedChildren();
+    }
+    return [];
   }
 
-  public async parseXml(): Promise<JsonMap> {
+  public async parseXml<T = JsonMap>(): Promise<T> {
     if (this.xml) {
       const contents = await this.tree.readFile(this.xml);
-      return parse(contents.toString(), { ignoreAttributes: false });
+      return this.parse<T>(contents.toString());
     }
-    return {};
+    return {} as T;
+  }
+
+  public parseXmlSync<T = JsonMap>(): T {
+    if (this.xml) {
+      const contents = this.tree.readFileSync(this.xml);
+      return this.parse<T>(contents.toString());
+    }
+    return {} as T;
   }
 
   public getPackageRelativePath(fsPath: string, format: SfdxFileFormat): string {
@@ -106,7 +117,22 @@ export class SourceComponent implements MetadataComponent {
     return relativePath;
   }
 
-  private getChildrenInternal(dirPath: string): SourceComponent[] {
+  private parse<T = JsonMap>(contents: string): T {
+    const parsed = parse(contents.toString(), { ignoreAttributes: false }) as T;
+    const [firstElement] = Object.keys(parsed);
+    if (firstElement === this.type.name) {
+      return parsed;
+    } else if (this.parent) {
+      const children = normalizeToArray(
+        get(parsed, `${this.parent.type.name}.${this.type.directoryName}`)
+      ) as T[];
+      return children.find((c) => getString(c, this.type.uniqueIdElement) === this.name);
+    } else {
+      return parsed;
+    }
+  }
+
+  private getDecomposedChildren(dirPath: string): SourceComponent[] {
     const children: SourceComponent[] = [];
     for (const fsPath of this.walk(dirPath)) {
       const childXml = parseMetadataXml(fsPath);
@@ -130,6 +156,31 @@ export class SourceComponent implements MetadataComponent {
     return children;
   }
 
+  private getNonDecomposedChildren(): SourceComponent[] {
+    const parsed = this.parseXmlSync();
+    const xmlPathToChildren = `${this.type.name}.${this.type.directoryName}`;
+    const children: SourceComponent[] = [];
+    for (const childTypeId of Object.keys(this.type.children.types)) {
+      const childType = this.type.children.types[childTypeId];
+      const uniqueIdElement = childType.uniqueIdElement;
+      const elements = normalizeToArray(get(parsed, xmlPathToChildren, []));
+      const childComponents = elements.map((element) => {
+        return new SourceComponent(
+          {
+            name: getString(element, uniqueIdElement),
+            type: childType,
+            xml: this.xml,
+            parent: this,
+          },
+          this._tree,
+          this.forceIgnore
+        );
+      });
+      children.push(...childComponents);
+    }
+    return children;
+  }
+
   private *walk(fsPath: string): IterableIterator<string> {
     if (!this._tree.isDirectory(fsPath)) {
       yield fsPath;
@@ -148,7 +199,11 @@ export class SourceComponent implements MetadataComponent {
   }
 
   get fullName(): string {
-    return `${this.parent ? `${this.parent.fullName}.` : ''}${this.name}`;
+    if (this.parent && this.type.ignoreParentName) {
+      return this.name;
+    } else {
+      return `${this.parent ? `${this.parent.fullName}.` : ''}${this.name}`;
+    }
   }
 
   get tree(): TreeContainer {

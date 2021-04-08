@@ -14,6 +14,7 @@ export {
   mixedContentInFolder,
   mixedContentSingleFile,
   regina,
+  nonDecomposed,
   decomposedtoplevel,
 } from './type-constants';
 export { mockRegistry, mockRegistryData } from './mockRegistry';

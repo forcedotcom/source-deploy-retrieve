@@ -31,6 +31,7 @@ import { BaseMetadataTransformer } from '../../src/convert/transformers/baseMeta
 const env = createSandbox();
 
 class TestTransformer extends BaseMetadataTransformer {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     return [{ output: '/type/file.m', source: new Readable() }];
   }

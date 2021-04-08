@@ -60,6 +60,7 @@ export class MetadataConverter {
       let writer: ComponentWriter;
       let mergeSet: ComponentSet;
       let packagePath: SourcePath;
+      let defaultDirectory: SourcePath;
 
       switch (output.type) {
         case 'directory':
@@ -68,6 +69,7 @@ export class MetadataConverter {
           }
           manifestContents = cs.getPackageXml();
           packagePath = this.getPackagePath(output);
+          defaultDirectory = packagePath;
           writer = new StandardWriter(packagePath);
           if (!isSource) {
             const manifestPath = join(packagePath, MetadataConverter.PACKAGE_XML_FILE);
@@ -80,6 +82,7 @@ export class MetadataConverter {
           }
           manifestContents = cs.getPackageXml();
           packagePath = this.getPackagePath(output);
+          defaultDirectory = packagePath;
           writer = new ZipWriter(packagePath);
           if (!isSource) {
             (writer as ZipWriter).addToZip(manifestContents, MetadataConverter.PACKAGE_XML_FILE);
@@ -89,6 +92,7 @@ export class MetadataConverter {
           if (!isSource) {
             throw new LibraryError('error_merge_metadata_target_unsupported');
           }
+          defaultDirectory = output.defaultDirectory;
           mergeSet = new ComponentSet();
           // since child components are composed in metadata format, we need to merge using the parent
           for (const component of output.mergeWith) {
@@ -100,7 +104,7 @@ export class MetadataConverter {
 
       const conversionPipeline = pipeline(
         new ComponentReader(components),
-        new ComponentConverter(targetFormat, this.registry, mergeSet),
+        new ComponentConverter(targetFormat, this.registry, mergeSet, defaultDirectory),
         writer
       );
       tasks.push(conversionPipeline);

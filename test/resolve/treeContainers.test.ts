@@ -43,6 +43,10 @@ describe('Tree Containers', () => {
         return Promise.resolve(Buffer.from(''));
       }
 
+      readFileSync(): Buffer {
+        return Buffer.from('');
+      }
+
       stream(): Readable {
         return;
       }
@@ -93,6 +97,15 @@ describe('Tree Containers', () => {
       // @ts-ignore wants Dirents but string[] works as well
       readFileStub.withArgs(path).resolves(Buffer.from('test'));
       const data = await tree.readFile(path);
+      expect(data.toString()).to.deep.equal('test');
+      expect(readFileStub.calledOnce).to.be.true;
+    });
+
+    it('should use expected Node API for readFileSync', () => {
+      const readFileStub = env.stub(fs, 'readFileSync');
+      // @ts-ignore wants Dirents but string[] works as well
+      readFileStub.withArgs(path).returns(Buffer.from('test'));
+      const data = tree.readFileSync(path);
       expect(data.toString()).to.deep.equal('test');
       expect(readFileStub.calledOnce).to.be.true;
     });
@@ -217,6 +230,16 @@ describe('Tree Containers', () => {
       });
     });
 
+    describe('readFileSync', () => {
+      it('should throw an error because it is not implemented yet', () => {
+        assert.throws(
+          () => tree.readFileSync(join(filesRoot, 'test.txt')),
+          Error,
+          'Method not implemented'
+        );
+      });
+    });
+
     describe('stream', () => {
       it('should return a readable stream', async () => {
         const path = join(filesRoot, 'test.txt');
@@ -326,6 +349,28 @@ describe('Tree Containers', () => {
         const path = 'dne';
         try {
           await tree.readFile(path);
+          assert.fail('should have thrown an error');
+        } catch (e) {
+          expect(e.message).to.deep.equal(nls.localize('error_path_not_found', path));
+        }
+      });
+    });
+
+    describe('readFileSync', () => {
+      it('should return file data for given path', () => {
+        const data = tree.readFileSync(join('.', 'logs', 'run.log'));
+        expect(data.toString()).to.equal('successful');
+      });
+
+      it('should return empty string buffer if file initialize without data', () => {
+        const data = tree.readFileSync(join('.', 'test.txt'));
+        expect(data.toString()).to.equal('');
+      });
+
+      it('should throw error if path does not exist', () => {
+        const path = 'dne';
+        try {
+          tree.readFileSync(path);
           assert.fail('should have thrown an error');
         } catch (e) {
           expect(e.message).to.deep.equal(nls.localize('error_path_not_found', path));

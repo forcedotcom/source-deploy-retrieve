@@ -82,6 +82,42 @@ export const mockRegistryData = {
         adapter: 'mixedContent',
       },
     },
+    /**
+     * Metadata types with children that are not decomposed into separate files
+     *
+     * e.g. CustomLabels
+     */
+    nondecomposed: {
+      id: 'nondecomposedparent',
+      name: 'nondecomposedparent',
+      suffix: 'nondecomposed',
+      directoryName: 'nondecomposed',
+      inFolder: false,
+      strictDirectoryName: false,
+      children: {
+        types: {
+          nondecomposedchild: {
+            id: 'nondecomposedchild',
+            name: 'nondecomposedchild',
+            ignoreParentName: true,
+            uniqueIdElement: 'id',
+            directoryName: 'nondecomposed',
+            suffix: 'nondecomposed',
+          },
+        },
+        suffixes: {
+          nondecomposed: 'nondecomposed',
+        },
+        directories: {
+          nondecomposed: 'nondecomposed',
+        },
+      },
+      strategies: {
+        adapter: 'default',
+        transformer: 'nonDecomposed',
+        recomposition: 'startEmpty',
+      },
+    },
     tarajihenson: {
       id: 'tarajihenson',
       directoryName: 'tarajis',

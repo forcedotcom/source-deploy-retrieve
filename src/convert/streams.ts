@@ -51,12 +51,19 @@ export class ComponentConverter extends Transform {
   private targetFormat: SfdxFileFormat;
   private mergeSet: ComponentSet;
   private transformerFactory: MetadataTransformerFactory;
+  private defaultDirectory: string;
 
-  constructor(targetFormat: SfdxFileFormat, registry: RegistryAccess, mergeSet?: ComponentSet) {
+  constructor(
+    targetFormat: SfdxFileFormat,
+    registry: RegistryAccess,
+    mergeSet?: ComponentSet,
+    defaultDirectory?: string
+  ) {
     super({ objectMode: true });
     this.targetFormat = targetFormat;
     this.mergeSet = mergeSet;
     this.transformerFactory = new MetadataTransformerFactory(registry, this.context);
+    this.defaultDirectory = defaultDirectory;
   }
 
   public async _transform(
@@ -102,7 +109,7 @@ export class ComponentConverter extends Transform {
   public async _flush(callback: (err: Error, data?: WriterFormat) => void): Promise<void> {
     let err: Error;
     try {
-      for await (const finalizerResult of this.context.executeFinalizers()) {
+      for await (const finalizerResult of this.context.executeFinalizers(this.defaultDirectory)) {
         finalizerResult.forEach((result) => this.push(result));
       }
     } catch (e) {

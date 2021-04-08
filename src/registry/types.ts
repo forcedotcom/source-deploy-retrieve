@@ -66,6 +66,14 @@ export interface MetadataType {
    */
   folderType?: string;
   /**
+   * If the parent name should be ignored when constructing the type's fullName
+   */
+  ignoreParentName?: boolean;
+  /**
+   * The xml attribute used as the unique identifier when parsing the xml
+   */
+  uniqueIdElement?: string;
+  /**
    * Type definitions for child types, if the type has any.
    *
    * __Examples:__ `CustomField` and `CompactLayout` on `CustomObject`
@@ -82,6 +90,7 @@ export interface MetadataType {
     adapter: string;
     transformer?: string;
     decomposition?: string;
+    recomposition?: string;
   };
 }
 
@@ -121,10 +130,21 @@ export const enum DecompositionStrategy {
 }
 
 /**
+ * Strategy names for handling component recomposition.
+ */
+export const enum RecompositionStrategy {
+  /**
+   * The parent object should start as an empty object when recomposing the child types
+   */
+  StartEmpty = 'startEmpty',
+}
+
+/**
  * Strategy names for the type of transformation to use for metadata types.
  */
 export const enum TransformerStrategy {
   Standard = 'standard',
   Decomposed = 'decomposed',
   StaticResource = 'staticResource',
+  NonDecomposed = 'nonDecomposed',
 }

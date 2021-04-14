@@ -11,7 +11,7 @@ import { LibraryError } from '../errors';
 import { SourcePath } from '../common';
 import * as unzipper from 'unzipper';
 import { Readable } from 'stream';
-import { VirtualDirectory, ZipEntry } from './types';
+import { VirtualDirectory } from './types';
 
 /**
  * A container for interacting with a file system. Operations such as component resolution,
@@ -103,6 +103,12 @@ export class NodeFSTreeContainer extends TreeContainer {
   public stream(fsPath: SourcePath): Readable {
     return createReadStream(fsPath);
   }
+}
+
+interface ZipEntry {
+  path: string;
+  stream?: () => unzipper.Entry;
+  buffer?: () => Promise<Buffer>;
 }
 
 /**

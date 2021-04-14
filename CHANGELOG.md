@@ -1,18 +1,30 @@
+# 2.0.1 - April 14, 2021
+
+## Added
+
+- Support split CustomLabels on deploy and retrieve ([PR #278](https://github.com/forcedotcom/source-deploy-retrieve/pull/278))
+
+## Fixed
+
+- Add fullName to CompSet to be added to package.xml ([PR #296](https://github.com/forcedotcom/source-deploy-retrieve/pull/296))
+
+- Build issue with outdated reference ([PR #241](https://github.com/forcedotcom/source-deploy-retrieve/pull/241))
+
 # 2.0.0 - April 7, 2021
 
 ## Added
 
-- Update from manifest initializer ([PR #279](https://github.com/forcedotcom/salesforcedx-vscode/pull/279))
+- Update from manifest initializer ([PR #279](https://github.com/forcedotcom/source-deploy-retrieve/pull/279))
 
-- Add workskillrouting type to registry ([PR #287](https://github.com/forcedotcom/salesforcedx-vscode/pull/287))
+- Add workskillrouting type to registry ([PR #287](https://github.com/forcedotcom/source-deploy-retrieve/pull/287))
 
-- Generate api documentation ([PR #275](https://github.com/forcedotcom/salesforcedx-vscode/pull/275))
+- Generate api documentation ([PR #275](https://github.com/forcedotcom/source-deploy-retrieve/pull/275))
 
-- Support SFDX_MDAPI_TEMP_DIR environment variable for metadata deploys and retrieves ([PR #266](https://github.com/forcedotcom/salesforcedx-vscode/pull/266))
+- Support SFDX_MDAPI_TEMP_DIR environment variable for metadata deploys and retrieves ([PR #266](https://github.com/forcedotcom/source-deploy-retrieve/pull/266))
 
 ## Fixed
 
-- Add documentation for tree containers ([PR #289](https://github.com/forcedotcom/salesforcedx-vscode/pull/289))
+- Add documentation for tree containers ([PR #289](https://github.com/forcedotcom/source-deploy-retrieve/pull/289))
 
 # 1.1.21 - March 30, 2021
 

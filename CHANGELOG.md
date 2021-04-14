@@ -1,10 +1,8 @@
-# 2.0.1 - April 14, 2021
+# 2.1.0 - April 14, 2021
 
 ## Added
 
 - Support split CustomLabels on deploy and retrieve ([PR #278](https://github.com/forcedotcom/source-deploy-retrieve/pull/278))
-
-## Fixed
 
 - Add fullName to CompSet to be added to package.xml ([PR #296](https://github.com/forcedotcom/source-deploy-retrieve/pull/296))
 

@@ -8,7 +8,7 @@
 
 ## Fixed
 
-- Fix requiring consumer to install types of `unzipper` internal dependency ([PR #305]https://github.com/forcedotcom/source-deploy-retrieve/pull/305)
+- Fix requiring consumer to install types of `unzipper` internal dependency ([PR #305](https://github.com/forcedotcom/source-deploy-retrieve/pull/305))
 
 # 2.0.0 - April 7, 2021
 

@@ -8,8 +8,6 @@
 
 - Add fullName to CompSet to be added to package.xml ([PR #296](https://github.com/forcedotcom/source-deploy-retrieve/pull/296))
 
-- Build issue with outdated reference ([PR #241](https://github.com/forcedotcom/source-deploy-retrieve/pull/241))
-
 # 2.0.0 - April 7, 2021
 
 ## Added

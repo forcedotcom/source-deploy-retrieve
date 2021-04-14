@@ -4,7 +4,7 @@
 
 - Support split CustomLabels on deploy and retrieve ([PR #278](https://github.com/forcedotcom/source-deploy-retrieve/pull/278))
 
-- Add fullName to CompSet to be added to package.xml ([PR #296](https://github.com/forcedotcom/source-deploy-retrieve/pull/296))
+- Add `fullName` property to `ComponentSet` to be included in package xml generation ([PR #296](https://github.com/forcedotcom/source-deploy-retrieve/pull/296))
 ## Fixed
 
 - Fix requiring consumer to install types of `unzipper` internal dependency ([PR #305]https://github.com/forcedotcom/source-deploy-retrieve/pull/305)

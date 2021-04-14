@@ -7,5 +7,6 @@
 describe('Metadata Transformers', () => {
   require('./defaultMetadataTransformer');
   require('./decomposedMetadataTransformer');
+  require('./nonDecomposedMetadataTransformer');
   require('./staticResourceMetadataTransformer');
 });

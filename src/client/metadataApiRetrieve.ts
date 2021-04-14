@@ -126,9 +126,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   protected async checkStatus(id: string): Promise<MetadataApiRetrieveStatus> {
     const connection = await this.getConnection();
     // Recasting to use the project's RetrieveResult type
-    return (connection.metadata.checkRetrieveStatus(id) as unknown) as Promise<
-      MetadataApiRetrieveStatus
-    >;
+    const status = await connection.metadata.checkRetrieveStatus(id);
+    status.fileProperties = normalizeToArray(status.fileProperties);
+    return status as MetadataApiRetrieveStatus;
   }
 
   protected async post(result: MetadataApiRetrieveStatus): Promise<RetrieveResult> {

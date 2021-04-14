@@ -1,3 +1,19 @@
+# 2.0.0 - April 7, 2021
+
+## Added
+
+- Update from manifest initializer ([PR #279](https://github.com/forcedotcom/salesforcedx-vscode/pull/279))
+
+- Add workskillrouting type to registry ([PR #287](https://github.com/forcedotcom/salesforcedx-vscode/pull/287))
+
+- Generate api documentation ([PR #275](https://github.com/forcedotcom/salesforcedx-vscode/pull/275))
+
+- Support SFDX_MDAPI_TEMP_DIR environment variable for metadata deploys and retrieves ([PR #266](https://github.com/forcedotcom/salesforcedx-vscode/pull/266))
+
+## Fixed
+
+- Add documentation for tree containers ([PR #289](https://github.com/forcedotcom/salesforcedx-vscode/pull/289))
+
 # 1.1.21 - March 30, 2021
 
 ## Added

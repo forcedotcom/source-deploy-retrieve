@@ -20,16 +20,23 @@
           "customlabel": {
             "id": "customlabel",
             "name": "CustomLabel",
-            "directoryName": "customLabels",
-            "suffix": "customLabel"
+            "ignoreParentName": true,
+            "uniqueIdElement": "fullName",
+            "directoryName": "labels",
+            "suffix": "labels"
           }
         },
         "suffixes": {
-          "customLabel": "customlabel"
+          "customLabel": "labels"
         },
         "directories": {
-          "customLabels": "customlabel"
+          "customLabels": "labels"
         }
+      },
+      "strategies": {
+        "adapter": "default",
+        "transformer": "nonDecomposed",
+        "recomposition": "startEmpty"
       }
     },
     "navigationmenu": {

@@ -34,6 +34,7 @@ interface ParsedPackageManifest {
 export interface ResolveManifestResult {
   components: MetadataComponent[];
   apiVersion: string;
+  fullName?: string;
 }
 
 /**

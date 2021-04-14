@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { OptionalTreeRegistryOptions } from '../common';
+import { OptionalTreeRegistryOptions, XML_NS_KEY } from '../common';
 import { ComponentSet } from './componentSet';
 
 export interface PackageTypeMembers {
@@ -16,6 +16,8 @@ export interface PackageManifestObject {
   Package: {
     types: PackageTypeMembers[];
     version: string;
+    fullName: string;
+    [XML_NS_KEY]?: string;
   };
 }
 

@@ -7,7 +7,6 @@
 
 import { SourcePath } from '../common/types';
 import { SourceComponent } from '.';
-import { Entry } from 'unzipper';
 import { MetadataType } from '../registry';
 
 export interface MetadataComponent {
@@ -58,10 +57,4 @@ export interface SourceAdapter {
    * Whether the adapter allows content-only metadata definitions.
    */
   allowMetadataWithContent(): boolean;
-}
-
-export interface ZipEntry {
-  path: string;
-  stream?: () => Entry;
-  buffer?: () => Promise<Buffer>;
 }

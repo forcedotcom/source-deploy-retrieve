@@ -1969,6 +1969,16 @@
       "suffix": "timeSheetTemplate",
       "directoryName": "timeSheetTemplates",
       "strictDirectoryName": false
+    },
+    "accountrelationshipsharerule": {
+      "id": "accountrelationshipsharerule",
+      "name": "AccountRelationshipShareRule",
+      "suffix": "accountRelationshipShareRule",
+      "directoryName": "accountRelationshipShareRules",
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     }
   },
   "suffixes": {
@@ -2165,8 +2175,8 @@
     "cmsConnectSource": "cmsconnectsource",
     "platformEventSubscriberConfig": "platformeventsubscriberconfig",
     "workSkillRouting": "workskillrouting",
-
-    "timeSheetTemplate": "timesheettemplate"
+    "timeSheetTemplate": "timesheettemplate",
+    "accountRelationshipShareRule": "accountrelationshipsharerule"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

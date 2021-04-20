@@ -1,3 +1,15 @@
+# 2.1.1 - April 20, 2021
+
+## Fixed
+
+- Updated registry to fix source conversion for the following types ([PR #307](https://github.com/forcedotcom/source-deploy-retrieve/pull/307)):
+  - AccountRelationshipShareRule
+  - TimeSheetTemplate
+  - WaveDashboard
+  - WaveLens
+  - WaveDataflow
+  - WaveRecipe
+
 # 2.1.0 - April 14, 2021
 
 ## Added

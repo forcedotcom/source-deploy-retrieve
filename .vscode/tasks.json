@@ -59,7 +59,7 @@
     {
       "id": "date",
       "type": "promptString",
-      "description": "Date of release (Month DD, YYYY) - Ex: April 3, 2021"
+      "description": "Date of release (ex April 3, 2021). Leave blank to use today's date."
     },
     {
       "id": "publishType",

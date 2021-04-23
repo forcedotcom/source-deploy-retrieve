@@ -1,3 +1,9 @@
+# 2.1.3 - April 23, 2021
+
+## Fixed
+
+- Build issue with outdated reference ([PR #241](https://github.com/forcedotcom/source-deploy-retrieve/pull/241))
+
 # 2.1.1 - April 20, 2021
 
 ## Fixed

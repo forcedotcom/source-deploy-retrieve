@@ -7,7 +7,7 @@
  * You have shelljs installed globally using `npm install -g shelljs`.
  * 
  * Example: 
- * node ./scripts/change-log-generator -v -r [patch | minor | major]
+ * node ./scripts/change-log-generator -v -r [patch | minor | major] -t 'April 3, 2021'
  */
 
 const process = require('process');
@@ -20,7 +20,7 @@ shell.set('-e');
 shell.set('+v');
 
 // Text Values
-const LOG_HEADER = '# %s - Month DD, YYYY\n';
+const LOG_HEADER = '# %s - %s\n';
 const TYPE_HEADER = '\n## %s\n';
 const SECTION_HEADER = '\n#### %s\n';
 const MESSAGE_FORMAT =
@@ -56,7 +56,7 @@ function checkForHelp() {
 }
 
 function getReleaseType() {
-    var releaseIndex = process.argv.indexOf('-r');
+    const releaseIndex = process.argv.indexOf('-r');
     if (releaseIndex === -1) {
       console.error(
         "Release version type for the port PR is required. Accepted Values: 'patch', 'minor', or 'major'"
@@ -77,7 +77,7 @@ function getReleaseType() {
 function getReleaseVersion() {
     const releaseType = getReleaseType();
     const currentVersion = require('../package.json').version;
-    var [version, major, minor, patch] = currentVersion.match(/^(\d+)\.?(\d+)\.?(\*|\d+)$/);
+    const [version, major, minor, patch] = currentVersion.match(/^(\d+)\.?(\d+)\.?(\*|\d+)$/);
     switch (releaseType) {
       case 'major':
         major = parseInt(major) + 1;
@@ -93,6 +93,15 @@ function getReleaseVersion() {
         break;
     }
     return `${major}.${minor}.${patch}`;
+}
+
+function getReleaseDate() {
+  const dateIndex = process.argv.indexOf('-t');
+  if (dateIndex > -1) {
+    return process.argv[dateIndex + 1];
+  } else {
+    return 'Month DD, YYYY'
+  }
 }
 
 function getNewChangeLogBranch(releaseVersion) {
@@ -227,7 +236,8 @@ function generateKey(type) {
 function getChangeLogText(releaseVersion, groupedMessages) {
   let changeLogText = util.format(
     LOG_HEADER,
-    releaseVersion
+    releaseVersion,
+    getReleaseDate()
   );
   let lastType = '';
   Object.keys(groupedMessages).forEach(function(key) {

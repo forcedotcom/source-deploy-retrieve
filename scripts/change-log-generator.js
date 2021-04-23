@@ -97,10 +97,10 @@ function getReleaseVersion() {
 
 function getReleaseDate() {
   const dateIndex = process.argv.indexOf('-t');
-  if (dateIndex > -1) {
+  if (dateIndex > -1 && process.argv[dateIndex + 1]) {
     return process.argv[dateIndex + 1];
   } else {
-    return 'Month DD, YYYY'
+    return "Month DD, YYYY";
   }
 }
 

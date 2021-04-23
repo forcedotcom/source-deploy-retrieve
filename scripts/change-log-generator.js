@@ -290,3 +290,4 @@ const groupedMessages = getGroupedMessages(parsedCommits);
 const changeLog = getChangeLogText(releaseVersion, groupedMessages);
 writeChangeLog(changeLog);
 openPRForChanges(releaseVersion, changeLogBranch);
+console.log('Once the PR has been created, switch the base branch to main.');

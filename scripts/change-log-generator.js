@@ -109,7 +109,7 @@ function getNewChangeLogBranch(releaseVersion) {
     console.log('\nCreate change log branch.');
   }
   const changeLogBranch =
-    'test-changeLog-v' +
+    'changeLog-v' +
     releaseVersion;
   const code = shell.exec(`git checkout -b ${changeLogBranch} main`)
     .code;

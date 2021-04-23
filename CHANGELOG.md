@@ -1,3 +1,11 @@
+# 3.0.0 - April 23, 2021
+
+## Fixed
+
+- Update missing config for wave and other types ([PR #307](https://github.com/forcedotcom/source-deploy-retrieve/pull/307))
+
+- Build issue with outdated reference ([PR #241](https://github.com/forcedotcom/source-deploy-retrieve/pull/241))
+
 # 2.1.0 - April 14, 2021
 
 ## Added

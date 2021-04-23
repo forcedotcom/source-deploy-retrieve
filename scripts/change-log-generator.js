@@ -265,15 +265,15 @@ function writeChangeLog(textToInsert) {
   fs.closeSync(fd);
 }
 
-// function openPRForChanges(releaseBranch, changeLogBranch) {
-//   const commitCommand = `git commit -a -m "chore: generated CHANGELOG for ${releaseBranch}"`;
-//   const pushCommand = `git push origin ${changeLogBranch}`;
-//   shell.exec(commitCommand);
-//   shell.exec(pushCommand, { silent: true });
-//   shell.exec(
-//     `open "https://github.com/forcedotcom/salesforcedx-vscode/pull/new/${changeLogBranch}"`
-//   );
-// }
+function openPRForChanges(releaseBranch, changeLogBranch) {
+  const commitCommand = `git commit -a -m "chore: generated CHANGELOG for ${releaseBranch}"`;
+  const pushCommand = `git push origin ${changeLogBranch}`;
+  shell.exec(commitCommand);
+  shell.exec(pushCommand, { silent: true });
+  shell.exec(
+    `open "https://github.com/forcedotcom/source-deploy-retrieve/pull/new/${changeLogBranch}"`
+  );
+}
 
 console.log("Starting script 'change-log-generator'\n");
 
@@ -283,10 +283,10 @@ let ADD_VERBOSE_LOGGING = process.argv.indexOf('-v') > -1 ? true : false;
 let CHANGE_LOG_PATH = path.join(process.cwd(), 'CHANGELOG.md');
 
 const releaseVersion = getReleaseVersion();
-// const changeLogBranch = getNewChangeLogBranch(releaseVersion);
+const changeLogBranch = getNewChangeLogBranch(releaseVersion);
 
 const parsedCommits = getCommitsAsMaps(getNewCommits('develop', 'main'));
 const groupedMessages = getGroupedMessages(parsedCommits);
 const changeLog = getChangeLogText(releaseVersion, groupedMessages);
 writeChangeLog(changeLog);
-// openPRForChanges(releaseVersion, changeLogBranch);
+openPRForChanges(releaseVersion, changeLogBranch);

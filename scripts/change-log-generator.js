@@ -5,8 +5,8 @@
  *
  * Assumption:
  * You have shelljs installed globally using `npm install -g shelljs`.
- * 
- * Example: 
+ *
+ * Example:
  * node ./scripts/change-log-generator -v -r [patch | minor | major] -t 'April 3, 2021'
  */
 
@@ -25,8 +25,7 @@ const TYPE_HEADER = '\n## %s\n';
 const SECTION_HEADER = '\n#### %s\n';
 const MESSAGE_FORMAT =
   '\n- %s ([PR #%s](https://github.com/forcedotcom/source-deploy-retrieve/pull/%s))\n';
-const PR_ALREADY_EXISTS_ERROR =
-  'Filtered PR number %s. An entry already exists in the changelog.';
+const PR_ALREADY_EXISTS_ERROR = 'Filtered PR number %s. An entry already exists in the changelog.';
 
 // Commit Map Keys
 const PR_NUM = 'PR_NUM';
@@ -38,61 +37,55 @@ const PR_REGEX = new RegExp(/(\(#\d+\))/);
 const COMMIT_REGEX = new RegExp(/^([\da-zA-Z]+)/);
 const TYPE_REGEX = new RegExp(/([a-zA-Z]+)(?:\([a-zA-Z]+\))?:/);
 
-const typesToIgnore = [
-  'chore',
-  'style',
-  'refactor',
-  'test',
-  'build',
-  'ci',
-  'revert'
-];
+const typesToIgnore = ['chore', 'style', 'refactor', 'test', 'build', 'ci', 'revert'];
 
 function checkForHelp() {
-    if (process.argv.indexOf('-h') > -1) {
-        console.log('\nGenerate the change log. Commits that are considered "new" are in the "develop" branch, but not "main".\n');
-        console.log('node ./scripts/change-log-generator -v -r [patch | minor | major]');
-    }
+  if (process.argv.indexOf('-h') > -1) {
+    console.log(
+      '\nGenerate the change log. Commits that are considered "new" are in the "develop" branch, but not "main".\n'
+    );
+    console.log('node ./scripts/change-log-generator -v -r [patch | minor | major]');
+  }
 }
 
 function getReleaseType() {
-    const releaseIndex = process.argv.indexOf('-r');
-    if (releaseIndex === -1) {
-      console.error(
-        "Release version type for the port PR is required. Accepted Values: 'patch', 'minor', or 'major'"
-      );
-      process.exit(-1);
-    }
-    if (!/patch|minor|major/.exec(`${process.argv[releaseIndex + 1]}`)) {
-      console.error(
-        `Invalid release version type '${
-          process.argv[releaseIndex + 1]
-        }'. Expected patch, minor, or major.`
-      );
-      process.exit(-1);
-    }
-    return process.argv[releaseIndex + 1];
+  const releaseIndex = process.argv.indexOf('-r');
+  if (releaseIndex === -1) {
+    console.error(
+      "Release version type for the port PR is required. Accepted Values: 'patch', 'minor', or 'major'"
+    );
+    process.exit(-1);
   }
+  if (!/patch|minor|major/.exec(`${process.argv[releaseIndex + 1]}`)) {
+    console.error(
+      `Invalid release version type '${
+        process.argv[releaseIndex + 1]
+      }'. Expected patch, minor, or major.`
+    );
+    process.exit(-1);
+  }
+  return process.argv[releaseIndex + 1];
+}
 
 function getReleaseVersion() {
-    const releaseType = getReleaseType();
-    const currentVersion = require('../package.json').version;
-    let [version, major, minor, patch] = currentVersion.match(/^(\d+)\.?(\d+)\.?(\*|\d+)$/);
-    switch (releaseType) {
-      case 'major':
-        major = parseInt(major) + 1;
-        minor = 0;
-        patch = 0;
-        break;
-      case 'minor':
-        minor = parseInt(minor) + 1;
-        patch = 0;
-        break;
-      case 'patch':
-        patch = parseInt(patch) + 1;
-        break;
-    }
-    return `${major}.${minor}.${patch}`;
+  const releaseType = getReleaseType();
+  const currentVersion = require('../package.json').version;
+  let [version, major, minor, patch] = currentVersion.match(/^(\d+)\.?(\d+)\.?(\*|\d+)$/);
+  switch (releaseType) {
+    case 'major':
+      major = parseInt(major) + 1;
+      minor = 0;
+      patch = 0;
+      break;
+    case 'minor':
+      minor = parseInt(minor) + 1;
+      patch = 0;
+      break;
+    case 'patch':
+      patch = parseInt(patch) + 1;
+      break;
+  }
+  return `${major}.${minor}.${patch}`;
 }
 
 function getReleaseDate() {
@@ -100,7 +93,11 @@ function getReleaseDate() {
   if (dateIndex > -1 && process.argv[dateIndex + 1]) {
     return process.argv[dateIndex + 1];
   } else {
-    return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date());
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    }).format(new Date());
   }
 }
 
@@ -108,11 +105,8 @@ function getNewChangeLogBranch(releaseVersion) {
   if (ADD_VERBOSE_LOGGING) {
     console.log('\nCreate change log branch.');
   }
-  const changeLogBranch =
-    'changeLog-v' +
-    releaseVersion;
-  const code = shell.exec(`git checkout -b ${changeLogBranch} main`)
-    .code;
+  const changeLogBranch = 'changeLog-v' + releaseVersion;
+  const code = shell.exec(`git checkout -b ${changeLogBranch} main`).code;
   if (code !== 0) {
     console.log('An error occurred generating the change log branch. Exiting.');
     process.exit(-1);
@@ -122,16 +116,13 @@ function getNewChangeLogBranch(releaseVersion) {
 
 function getNewCommits(releaseBranch, previousBranch) {
   if (ADD_VERBOSE_LOGGING) {
-    console.log(
-      '\nDetermine differences between develop and main.' +
-        '\nCommits:'
-    );
+    console.log('\nDetermine differences between develop and main.' + '\nCommits:');
   }
   const commits = shell
     .exec(
       `git log --since="2 months ago" --cherry-pick --oneline ${releaseBranch}...${previousBranch}`,
       {
-        silent: !ADD_VERBOSE_LOGGING
+        silent: !ADD_VERBOSE_LOGGING,
       }
     )
     .stdout.trim()
@@ -183,7 +174,7 @@ function buildMapFromCommit(commit) {
 function filterExistingPREntries(parsedCommits) {
   let currentChangeLog = fs.readFileSync(CHANGE_LOG_PATH);
   let filteredResults = [];
-  parsedCommits.forEach(function(map) {
+  parsedCommits.forEach(function (map) {
     if (!currentChangeLog.includes('PR #' + map[PR_NUM])) {
       filteredResults.push(map);
     } else if (ADD_VERBOSE_LOGGING) {
@@ -196,18 +187,18 @@ function filterExistingPREntries(parsedCommits) {
 function getGroupedMessages(parsedCommits) {
   let groupedMessages = {};
   let sortedMessages = {};
-  parsedCommits.forEach(function(map) {
+  parsedCommits.forEach(function (map) {
     const key = generateKey(map[TYPE]);
     if (key) {
-        groupedMessages[key] = groupedMessages[key] || [];
-        groupedMessages[key].push(
-          util.format(MESSAGE_FORMAT, map[MESSAGE], map[PR_NUM], map[PR_NUM])
-        );
+      groupedMessages[key] = groupedMessages[key] || [];
+      groupedMessages[key].push(
+        util.format(MESSAGE_FORMAT, map[MESSAGE], map[PR_NUM], map[PR_NUM])
+      );
     }
   });
   Object.keys(groupedMessages)
     .sort()
-    .forEach(function(key) {
+    .forEach(function (key) {
       sortedMessages[key] = groupedMessages[key];
     });
   if (ADD_VERBOSE_LOGGING) {
@@ -225,31 +216,25 @@ function getGroupedMessages(parsedCommits) {
  * If we have a type that should be ignored, return an empty key.
  */
 function generateKey(type) {
-  if (
-    typesToIgnore.includes(type)
-  ) {
+  if (typesToIgnore.includes(type)) {
     return '';
   }
   return type === 'feat' ? 'Added' : 'Fixed';
 }
 
 function getChangeLogText(releaseVersion, groupedMessages) {
-  let changeLogText = util.format(
-    LOG_HEADER,
-    releaseVersion,
-    getReleaseDate()
-  );
+  let changeLogText = util.format(LOG_HEADER, releaseVersion, getReleaseDate());
   let lastType = '';
-  Object.keys(groupedMessages).forEach(function(key) {
+  Object.keys(groupedMessages).forEach(function (key) {
     let [type, packageName] = key.split('|');
     if (!lastType || lastType != type) {
       changeLogText += util.format(TYPE_HEADER, type);
       lastType = type;
     }
     if (packageName) {
-        changeLogText += util.format(SECTION_HEADER, packageName);
+      changeLogText += util.format(SECTION_HEADER, packageName);
     }
-    groupedMessages[key].forEach(function(message) {
+    groupedMessages[key].forEach(function (message) {
       changeLogText += message;
     });
   });

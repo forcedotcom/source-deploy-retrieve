@@ -289,4 +289,4 @@ const parsedCommits = getCommitsAsMaps(getNewCommits('develop', 'main'));
 const groupedMessages = getGroupedMessages(parsedCommits);
 const changeLog = getChangeLogText(releaseVersion, groupedMessages);
 writeChangeLog(changeLog);
-// openPRForChanges(releaseVersion, changeLogBranch);
+openPRForChanges(releaseVersion, changeLogBranch);

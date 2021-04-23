@@ -77,7 +77,7 @@ function getReleaseType() {
 function getReleaseVersion() {
     const releaseType = getReleaseType();
     const currentVersion = require('../package.json').version;
-    const [version, major, minor, patch] = currentVersion.match(/^(\d+)\.?(\d+)\.?(\*|\d+)$/);
+    let [version, major, minor, patch] = currentVersion.match(/^(\d+)\.?(\d+)\.?(\*|\d+)$/);
     switch (releaseType) {
       case 'major':
         major = parseInt(major) + 1;

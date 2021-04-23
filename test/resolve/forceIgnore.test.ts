@@ -30,7 +30,7 @@ describe('ForceIgnore', () => {
     const entries = testPattern + '\n' + switchParser;
     readStub.withArgs(forceIgnorePath).returns(entries);
     // @ts-ignore private member
-    const emitWarningSpy = env.stub(process, 'emitWarning');
+    const emitWarningSpy = env.stub(ForceIgnore.prototype, 'emitWarning');
     const forceIgnore = new ForceIgnore(forceIgnorePath);
     const files = [
       join('some', 'path', '__tests__', 'myTest.x'),

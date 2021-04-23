@@ -15,6 +15,7 @@ import * as gitignoreParser from 'gitignore-parser';
 import { Lifecycle } from '@salesforce/core';
 
 let warn = true;
+const troubleEmittedForPattern = new Set<string>();
 
 export class ForceIgnore {
   public static readonly FILE_NAME = '.forceignore';
@@ -126,23 +127,30 @@ export class ForceIgnore {
     const troubledIgnoreLines: Set<string> = new Set<string>();
 
     if (newLibraryResults !== oldLibraryResults && ignoreItems) {
-      ignoreItems.forEach((ignoreItem) => {
-        // we need to run the both of the compilers for a single line to find the problem entry
-        const gitignoreResult = gitignoreParser
-          .compile(this.parseContents(ignoreItem))
-          .accepts(fsPath);
-        const ignoreResult = !ignore().add([ignoreItem]).ignores(fsPath);
-        // print the warning only once per forceignore line item
-        if (ignoreResult !== gitignoreResult && !troubledIgnoreLines.has(ignoreItem) && warn) {
-          // only show the warning once, it could come from denies() or accepts()
-          warn = false;
-          process.emitWarning(
-            "The .forceignore file doesn't adhere to .gitignore format which will be the default behavior starting in Spring '21 release. More information on .gitignore format here: https://git-scm.com/docs/gitignore. Fix the following lines in your .forceignore and add '# .forceignore v2' to your .forceignore file to switch to the new behavior."
-          );
-          process.emitWarning('\t' + ignoreItem);
-        }
-        troubledIgnoreLines.add(ignoreItem);
-      });
+      ignoreItems
+        .filter((ignoreItem) => ignoreItem.length)
+        .forEach((ignoreItem) => {
+          // we need to run the both of the compilers for a single line to find the problem entry
+          const gitignoreResult = gitignoreParser
+            .compile(this.parseContents(ignoreItem))
+            .accepts(fsPath);
+          const ignoreResult = !ignore().add([ignoreItem]).ignores(fsPath);
+          // print the warning only once per forceignore line item
+          if (ignoreResult !== gitignoreResult && !troubledIgnoreLines.has(ignoreItem)) {
+            // only show the warning once, it could come from denies() or accepts()
+            if (warn) {
+              warn = false;
+              process.emitWarning(
+                'We\'re replacing the current ".forceignore" parser with one that uses the same patterns as "git" uses with ".gitignore". Until we remove the old one, both parsers are available. But we recommend you start using the new parser soon by adding this line to the top of your ".forceignore" file:  "# .forceignore v2". Read about the new ".gitgnore" pattern format here: https://git-scm.com/docs/gitignore. Then fix the following lines in your ".forceignore" file because they don\'t adhere to the new formatting rules.'
+              );
+            }
+            if (!troubleEmittedForPattern.has(ignoreItem)) {
+              troubleEmittedForPattern.add(ignoreItem);
+              process.emitWarning('\t' + ignoreItem);
+            }
+          }
+          troubledIgnoreLines.add(ignoreItem);
+        });
 
       // send analytics, if they exist.
       Lifecycle.getInstance().emit('telemetry', {

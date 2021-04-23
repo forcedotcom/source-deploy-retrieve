@@ -100,7 +100,7 @@ function getReleaseDate() {
   if (dateIndex > -1 && process.argv[dateIndex + 1]) {
     return process.argv[dateIndex + 1];
   } else {
-    return "Month DD, YYYY";
+    return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date());
   }
 }
 
@@ -271,7 +271,7 @@ function openPRForChanges(releaseBranch, changeLogBranch) {
   shell.exec(commitCommand);
   shell.exec(pushCommand, { silent: true });
   shell.exec(
-    `open "https://github.com/forcedotcom/source-deploy-retrieve/pull/new/${changeLogBranch}"`
+    `open "https://github.com/forcedotcom/source-deploy-retrieve/pull/new/main...${changeLogBranch}"`
   );
 }
 

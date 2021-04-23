@@ -46,7 +46,7 @@ describe('ForceIgnore', () => {
     env.stub(oldParser, 'accepts').returns(false);
     env.stub(newParser, 'ignores').returns(true);
     files.forEach((file) => forceIgnore.accepts(file));
-    expect(emitWarningSpy.calledTwice).to.be.true;
+    expect(emitWarningSpy.callCount).to.be.equal(2);
   });
 
   it('Should default to not ignoring a file if forceignore is not loaded', () => {

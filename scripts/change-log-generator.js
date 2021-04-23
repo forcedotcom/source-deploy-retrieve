@@ -5,9 +5,9 @@
  *
  * Assumption:
  * You have shelljs installed globally using `npm install -g shelljs`.
- *
- * Overriding Default Values:
- * Add verbose logging. Example: npm run build-change-log -- -v -r 1.1.11
+ * 
+ * Example: 
+ * node ./scripts/change-log-generator -v -r [patch | minor | major]
  */
 
 const process = require('process');
@@ -24,7 +24,7 @@ const LOG_HEADER = '# %s - Month DD, YYYY\n';
 const TYPE_HEADER = '\n## %s\n';
 const SECTION_HEADER = '\n#### %s\n';
 const MESSAGE_FORMAT =
-  '\n- %s ([PR #%s](https://github.com/forcedotcom/salesforcedx-vscode/pull/%s))\n';
+  '\n- %s ([PR #%s](https://github.com/forcedotcom/source-deploy-retrieve/pull/%s))\n';
 const PR_ALREADY_EXISTS_ERROR =
   'Filtered PR number %s. An entry already exists in the changelog.';
 
@@ -51,7 +51,7 @@ const typesToIgnore = [
 function checkForHelp() {
     if (process.argv.indexOf('-h') > -1) {
         console.log('\nGenerate the change log. Commits that are considered "new" are in the "develop" branch, but not "main".\n');
-        console.log('Example: node change-log-generator -v');
+        console.log('node ./scripts/change-log-generator -v -r [patch | minor | major]');
     }
 }
 
@@ -59,7 +59,7 @@ function getReleaseType() {
     var releaseIndex = process.argv.indexOf('-r');
     if (releaseIndex === -1) {
       console.error(
-        "Release version type for the port PR is required. Example: 'patch', 'minor', or 'major'"
+        "Release version type for the port PR is required. Accepted Values: 'patch', 'minor', or 'major'"
       );
       process.exit(-1);
     }
@@ -111,11 +111,7 @@ function getNewChangeLogBranch(releaseVersion) {
   return changeLogBranch;
 }
 
-/**
- * This command will list all commits that are different between
- * the two branches.
- */
-function getCommits(releaseBranch, previousBranch) {
+function getNewCommits(releaseBranch, previousBranch) {
   if (ADD_VERBOSE_LOGGING) {
     console.log(
       '\nDetermine differences between develop and main.' +
@@ -134,10 +130,7 @@ function getCommits(releaseBranch, previousBranch) {
   return commits;
 }
 
-/**
- * Parse the commits and return them as a list of hashmaps.
- */
-function parseCommits(commits) {
+function getCommitsAsMaps(commits) {
   if (ADD_VERBOSE_LOGGING) {
     console.log('\nParse commits and gather required information.');
     console.log('Commit Parsing Results...');
@@ -282,7 +275,7 @@ let CHANGE_LOG_PATH = path.join(process.cwd(), 'CHANGELOG.md');
 const releaseVersion = getReleaseVersion();
 // const changeLogBranch = getNewChangeLogBranch(releaseVersion);
 
-const parsedCommits = parseCommits(getCommits('develop', 'main'));
+const parsedCommits = getCommitsAsMaps(getNewCommits('develop', 'main'));
 const groupedMessages = getGroupedMessages(parsedCommits);
 const changeLog = getChangeLogText(releaseVersion, groupedMessages);
 writeChangeLog(changeLog);

@@ -15,7 +15,7 @@ import * as gitignoreParser from 'gitignore-parser';
 import { Lifecycle } from '@salesforce/core';
 
 let warn = true;
-const troubleEmittedForPatter = new Set<string>();
+const troubleEmittedForPattern = new Set<string>();
 
 export class ForceIgnore {
   public static readonly FILE_NAME = '.forceignore';
@@ -144,8 +144,8 @@ export class ForceIgnore {
                 'We\'re replacing the current ".forceignore" parser with one that uses the same patterns as "git" uses with ".gitignore". Until we remove the old one, both parsers are available. But we recommend you start using the new parser soon by adding this line to the top of your ".forceignore" file:  "# .forceignore v2". Read about the new ".gitgnore" pattern format here: https://git-scm.com/docs/gitignore. Then fix the following lines in your ".forceignore" file because they don\'t adhere to the new formatting rules.'
               );
             }
-            if (!troubleEmittedForPatter.has(ignoreItem)) {
-              troubleEmittedForPatter.add(ignoreItem);
+            if (!troubleEmittedForPattern.has(ignoreItem)) {
+              troubleEmittedForPattern.add(ignoreItem);
               process.emitWarning('\t' + ignoreItem);
             }
           }

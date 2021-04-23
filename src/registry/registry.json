@@ -1032,14 +1032,20 @@
       "name": "WaveLens",
       "suffix": "wlens",
       "directoryName": "wave",
-      "inFolder": false
+      "inFolder": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "wavedashboard": {
       "id": "wavedashboard",
       "name": "WaveDashboard",
       "suffix": "wdash",
       "directoryName": "wave",
-      "inFolder": false
+      "inFolder": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "wavexmd": {
       "id": "wavexmd",
@@ -1053,14 +1059,20 @@
       "name": "WaveDataflow",
       "suffix": "wdf",
       "directoryName": "wave",
-      "inFolder": false
+      "inFolder": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "waverecipe": {
       "id": "waverecipe",
       "name": "WaveRecipe",
       "suffix": "wdpr",
       "directoryName": "wave",
-      "inFolder": false
+      "inFolder": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "customsite": {
       "id": "customsite",
@@ -1950,6 +1962,20 @@
           "workSkillRoutingAttribute": "workskillroutingattribute"
         }
       }
+    },
+    "timesheettemplate": {
+      "id": "timesheettemplate",
+      "name": "TimeSheetTemplate",
+      "suffix": "timeSheetTemplate",
+      "directoryName": "timeSheetTemplates",
+      "strictDirectoryName": false
+    },
+    "accountrelationshipsharerule": {
+      "id": "accountrelationshipsharerule",
+      "name": "AccountRelationshipShareRule",
+      "suffix": "accountRelationshipShareRule",
+      "directoryName": "accountRelationshipShareRules",
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -2145,7 +2171,9 @@
     "audience": "audience",
     "cmsConnectSource": "cmsconnectsource",
     "platformEventSubscriberConfig": "platformeventsubscriberconfig",
-    "workSkillRouting": "workskillrouting"
+    "workSkillRouting": "workskillrouting",
+    "timeSheetTemplate": "timesheettemplate",
+    "accountRelationshipShareRule": "accountrelationshipsharerule"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

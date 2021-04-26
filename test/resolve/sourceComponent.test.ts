@@ -35,7 +35,7 @@ describe('SourceComponent', () => {
   describe('parseXml', () => {
     afterEach(() => env.restore());
 
-    it('should parse the components xml file to json', async () => {
+    it('should parse the components xml file to js object', async () => {
       const component = COMPONENT;
       env
         .stub(component.tree, 'readFile')
@@ -53,6 +53,41 @@ describe('SourceComponent', () => {
         type: mockRegistryData.types.matchingcontentfile,
       });
       expect(await component.parseXml()).to.deep.equal({});
+    });
+
+    it('should preserve leading zeroes in node values', async () => {
+      const component = COMPONENT;
+      env
+        .stub(component.tree, 'readFile')
+        .resolves(Buffer.from('<MatchingContentFile><test>001</test></MatchingContentFile>'));
+
+      const result = await component.parseXml();
+      const expected = {
+        MatchingContentFile: {
+          test: '001',
+        },
+      };
+
+      expect(result).to.deep.equal(expected);
+    });
+
+    it('should parse attributes of nodes', async () => {
+      const component = COMPONENT;
+      env
+        .stub(component.tree, 'readFile')
+        .resolves(
+          Buffer.from('<MatchingContentFile a="test"><test>something</test></MatchingContentFile>')
+        );
+
+      const result = await component.parseXml();
+      const expected = {
+        MatchingContentFile: {
+          '@_a': 'test',
+          test: 'something',
+        },
+      };
+
+      expect(result).to.deep.equal(expected);
     });
   });
 

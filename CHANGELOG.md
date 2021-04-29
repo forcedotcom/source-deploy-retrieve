@@ -1,3 +1,9 @@
+# 2.1.3 - April 29, 2021
+
+## Fixed
+
+- Preserve leading zeroes in xml node values ([PR #319](https://github.com/forcedotcom/source-deploy-retrieve/pull/319))
+
 # 2.1.1 - April 20, 2021
 
 ## Fixed

@@ -50,11 +50,6 @@ _refs:
   test: &test
     name: Run tests
     command: yarn test
-  coverage: &coverage
-    name: Upload coverage to codecov.io
-    command: |
-      ./node_modules/nyc/bin/nyc.js report --reporter=lcov
-      node ./scripts/uploadCodeCoverage.js
   gus-prepare-environment-variables: &gus-prepare-environment-variables
     name: 'Prepare environment variables for GUS Change Case Management'
     command: |
@@ -85,7 +80,6 @@ jobs:
       - run: *lint
       - run: *build
       - run: *test
-      - run: *coverage
       - store_test_results:
           path: test-results
       - build-artifact
@@ -126,9 +120,6 @@ jobs:
       - run: *lint
       - run: *build
       - run: *test
-      - run:
-          <<: *coverage
-          shell: bash.exe
       - store_test_results:
           path: test-results
 

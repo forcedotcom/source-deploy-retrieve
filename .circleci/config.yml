@@ -213,7 +213,9 @@ workflows:
         - hold: # Requires manual approval in Circle Ci
             type: approval
         - publish:
-            context: pdt-publish-restricted-context
+            context:
+              - pdt-publish-restricted-context
+              - CLI_CTC
             filters:
               branches:
                 only:

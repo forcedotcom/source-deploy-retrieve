@@ -7,11 +7,12 @@
 import { RegistryError } from '../../errors';
 import { MetadataTransformer } from '../types';
 import { DefaultMetadataTransformer } from './defaultMetadataTransformer';
-import { SourceComponent } from '../../metadata-registry/sourceComponent';
+import { SourceComponent } from '../../resolve/sourceComponent';
 import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 import { ConvertContext } from '../convertContext';
 import { StaticResourceMetadataTransformer } from './staticResourceMetadataTransformer';
-import { RegistryAccess, TransformerStrategy } from '../../metadata-registry';
+import { RegistryAccess, TransformerStrategy } from '../../registry';
+import { NonDecomposedMetadataTransformer } from './nonDecomposedMetadataTransformer';
 
 export class MetadataTransformerFactory {
   private registry: RegistryAccess;
@@ -34,6 +35,8 @@ export class MetadataTransformerFactory {
         return new DecomposedMetadataTransformer(this.registry, this.context);
       case TransformerStrategy.StaticResource:
         return new StaticResourceMetadataTransformer(this.registry, this.context);
+      case TransformerStrategy.NonDecomposed:
+        return new NonDecomposedMetadataTransformer(this.registry, this.context);
       default:
         throw new RegistryError('error_missing_transformer', [type.name, transformerId]);
     }

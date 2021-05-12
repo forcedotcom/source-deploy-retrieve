@@ -4,7 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { RegistryAccess } from '../../../src/metadata-registry';
+
+import { RegistryAccess } from '../../../src';
 
 export const mockRegistryData = {
   types: {
@@ -81,14 +82,40 @@ export const mockRegistryData = {
         adapter: 'mixedContent',
       },
     },
-    dwaynejohnson: {
-      id: 'dwaynejohnson',
-      directoryName: 'dwaynes',
+    /**
+     * Metadata types with children that are not decomposed into separate files
+     *
+     * e.g. CustomLabels
+     */
+    nondecomposed: {
+      id: 'nondecomposedparent',
+      name: 'nondecomposedparent',
+      suffix: 'nondecomposed',
+      directoryName: 'nondecomposed',
       inFolder: false,
-      name: 'DwayneJohnson',
-      strictDirectoryName: true,
+      strictDirectoryName: false,
+      children: {
+        types: {
+          nondecomposedchild: {
+            id: 'nondecomposedchild',
+            name: 'nondecomposedchild',
+            ignoreParentName: true,
+            uniqueIdElement: 'id',
+            directoryName: 'nondecomposed',
+            suffix: 'nondecomposed',
+          },
+        },
+        suffixes: {
+          nondecomposed: 'nondecomposed',
+        },
+        directories: {
+          nondecomposed: 'nondecomposed',
+        },
+      },
       strategies: {
-        adapter: 'mixedContent',
+        adapter: 'default',
+        transformer: 'nonDecomposed',
+        recomposition: 'startEmpty',
       },
     },
     tarajihenson: {
@@ -157,6 +184,11 @@ export const mockRegistryData = {
         decomposition: 'folderPerType',
       },
     },
+    /**
+     * Metadata with one content of any file extension
+     *
+     * e.g. StaticResource
+     */
     mixedcontentsinglefile: {
       id: 'mixedcontentsinglefile',
       directoryName: 'mixedSingleFiles',
@@ -222,7 +254,6 @@ export const mockRegistryData = {
     ms: 'missingstrategies',
   },
   strictDirectoryNames: {
-    dwaynes: 'dwaynejohnson',
     tarajis: 'tarajihenson',
     bundles: 'bundle',
     reginas: 'reginaking',

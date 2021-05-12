@@ -7,7 +7,7 @@
 import { createSandbox } from 'sinon';
 import {
   ComponentSet,
-  registryData,
+  registry,
   SourceComponent,
   DeployResult,
   MetadataApiDeploy,
@@ -136,7 +136,7 @@ describe('MetadataApiDeploy', () => {
           const bundlePath = join('path', 'to', 'lwc', 'test');
           const props = {
             name: 'test',
-            type: registryData.types.lightningcomponentbundle,
+            type: registry.types.lightningcomponentbundle,
             xml: join(bundlePath, 'test.js-meta.xml'),
             content: bundlePath,
           };
@@ -230,7 +230,7 @@ describe('MetadataApiDeploy', () => {
         });
 
         it('should fix deploy message issue for "Document" type', () => {
-          const type = registryData.types.document;
+          const type = registry.types.document;
           const name = 'test';
           const contentName = `${name}.xyz`;
           const basePath = join('path', 'to', type.directoryName, 'A_Folder');

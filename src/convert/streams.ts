@@ -9,7 +9,7 @@ import { createWriteStream } from 'fs';
 import { isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
-import { SourceComponent, RegistryAccess, MetadataResolver } from '../metadata-registry';
+import { SourceComponent, MetadataResolver } from '../resolve';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { SourcePath, XML_DECL } from '../common';
@@ -19,6 +19,7 @@ import { JsonMap } from '@salesforce/ts-types';
 import { j2xParser } from 'fast-xml-parser';
 import { ComponentSet } from '../collections';
 import { LibraryError } from '../errors';
+import { RegistryAccess } from '../registry';
 export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
@@ -50,12 +51,19 @@ export class ComponentConverter extends Transform {
   private targetFormat: SfdxFileFormat;
   private mergeSet: ComponentSet;
   private transformerFactory: MetadataTransformerFactory;
+  private defaultDirectory: string;
 
-  constructor(targetFormat: SfdxFileFormat, registry: RegistryAccess, mergeSet?: ComponentSet) {
+  constructor(
+    targetFormat: SfdxFileFormat,
+    registry: RegistryAccess,
+    mergeSet?: ComponentSet,
+    defaultDirectory?: string
+  ) {
     super({ objectMode: true });
     this.targetFormat = targetFormat;
     this.mergeSet = mergeSet;
     this.transformerFactory = new MetadataTransformerFactory(registry, this.context);
+    this.defaultDirectory = defaultDirectory;
   }
 
   public async _transform(
@@ -101,7 +109,7 @@ export class ComponentConverter extends Transform {
   public async _flush(callback: (err: Error, data?: WriterFormat) => void): Promise<void> {
     let err: Error;
     try {
-      for await (const finalizerResult of this.context.executeFinalizers()) {
+      for await (const finalizerResult of this.context.executeFinalizers(this.defaultDirectory)) {
         finalizerResult.forEach((result) => this.push(result));
       }
     } catch (e) {

@@ -1,3 +1,49 @@
+# 2.1.3 - April 29, 2021
+
+## Fixed
+
+- Preserve leading zeroes in xml node values ([PR #319](https://github.com/forcedotcom/source-deploy-retrieve/pull/319))
+
+# 2.1.1 - April 20, 2021
+
+## Fixed
+
+- Updated registry to fix source conversion for the following types ([PR #307](https://github.com/forcedotcom/source-deploy-retrieve/pull/307)):
+  - AccountRelationshipShareRule
+  - TimeSheetTemplate
+  - WaveDashboard
+  - WaveLens
+  - WaveDataflow
+  - WaveRecipe
+
+# 2.1.0 - April 14, 2021
+
+## Added
+
+- Support split CustomLabels on deploy and retrieve ([PR #278](https://github.com/forcedotcom/source-deploy-retrieve/pull/278))
+
+- Add `fullName` property to `ComponentSet` to be included in package xml generation ([PR #296](https://github.com/forcedotcom/source-deploy-retrieve/pull/296))
+
+## Fixed
+
+- Fix requiring consumer to install types of `unzipper` internal dependency ([PR #305](https://github.com/forcedotcom/source-deploy-retrieve/pull/305))
+
+# 2.0.0 - April 7, 2021
+
+## Added
+
+- Update from manifest initializer ([PR #279](https://github.com/forcedotcom/source-deploy-retrieve/pull/279))
+
+- Add workskillrouting type to registry ([PR #287](https://github.com/forcedotcom/source-deploy-retrieve/pull/287))
+
+- Generate api documentation ([PR #275](https://github.com/forcedotcom/source-deploy-retrieve/pull/275))
+
+- Support SFDX_MDAPI_TEMP_DIR environment variable for metadata deploys and retrieves ([PR #266](https://github.com/forcedotcom/source-deploy-retrieve/pull/266))
+
+## Fixed
+
+- Add documentation for tree containers ([PR #289](https://github.com/forcedotcom/source-deploy-retrieve/pull/289))
+
 # 1.1.21 - March 30, 2021
 
 ## Added

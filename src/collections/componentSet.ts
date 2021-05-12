@@ -10,24 +10,25 @@ import {
   MetadataApiRetrieve,
   MetadataApiRetrieveOptions,
 } from '../client';
-import { MetadataComponent, XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
+import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSetError } from '../errors';
 import {
   MetadataResolver,
   ManifestResolver,
-  RegistryAccess,
   SourceComponent,
   TreeContainer,
-} from '../metadata-registry';
+  MetadataComponent,
+  ComponentLike,
+} from '../resolve';
 import {
   PackageTypeMembers,
   FromManifestOptions,
   PackageManifestObject,
   FromSourceOptions,
 } from './types';
-import { ComponentLike } from '../common/types';
 import { LazyCollection } from './lazyCollection';
 import { j2xParser } from 'fast-xml-parser';
+import { RegistryAccess } from '../registry';
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
@@ -46,6 +47,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public static readonly WILDCARD = '*';
   private static readonly KEY_DELIMITER = '#';
   public apiVersion: string;
+  public fullName?: string;
   private registry: RegistryAccess;
   private components = new Map<string, Map<string, SourceComponent>>();
 
@@ -142,6 +144,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       : undefined;
     const result = new ComponentSet([], options.registry);
     result.apiVersion = manifest.apiVersion;
+    result.fullName = manifest.fullName;
 
     for (const component of manifest.components) {
       if (resolveIncludeSet) {
@@ -238,6 +241,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       Package: {
         types: typeMembers,
         version: this.apiVersion,
+        fullName: this.fullName,
       },
     };
   }
@@ -253,7 +257,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       indentBy: new Array(indentation + 1).join(' '),
       ignoreAttributes: false,
     });
-    const toParse = this.getObject() as any;
+    const toParse = this.getObject();
     toParse.Package[XML_NS_KEY] = XML_NS_URL;
     return XML_DECL.concat(j2x.parse(toParse));
   }

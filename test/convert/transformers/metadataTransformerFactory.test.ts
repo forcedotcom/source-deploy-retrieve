@@ -10,13 +10,14 @@ import { SourceComponent } from '../../../src';
 import { ConvertContext } from '../../../src/convert/convertContext';
 import { MetadataTransformerFactory } from '../../../src/convert/transformers';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
+import { NonDecomposedMetadataTransformer } from '../../../src/convert/transformers/nonDecomposedMetadataTransformer';
 import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';
 import { StaticResourceMetadataTransformer } from '../../../src/convert/transformers/staticResourceMetadataTransformer';
 import { RegistryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
-import { matchingContentFile, mockRegistry } from '../../mock/registry';
-import { MC_SINGLE_FILE_COMPONENT } from '../../mock/registry/type-constants/mixedContentSingleFileConstants';
+import { matchingContentFile, mockRegistry, mixedContentSingleFile } from '../../mock/registry';
 import { REGINA_COMPONENT } from '../../mock/registry/type-constants/reginaConstants';
+import { COMPONENT_1 } from '../../mock/registry/type-constants/nonDecomposedConstants';
 
 describe('MetadataTransformerFactory', () => {
   it('should return DefaultMetadataTransformer', () => {
@@ -36,8 +37,17 @@ describe('MetadataTransformerFactory', () => {
     );
   });
 
+  it('should return NonDecomposedMetadataTransformer', () => {
+    const component = COMPONENT_1;
+    const context = new ConvertContext();
+    const factory = new MetadataTransformerFactory(mockRegistry, context);
+    expect(factory.getTransformer(component)).to.deep.equal(
+      new NonDecomposedMetadataTransformer(mockRegistry, context)
+    );
+  });
+
   it('should return StaticResourceMetadataTransformer', () => {
-    const component = MC_SINGLE_FILE_COMPONENT;
+    const component = mixedContentSingleFile.COMPONENT;
     const factory = new MetadataTransformerFactory(mockRegistry);
     expect(factory.getTransformer(component)).to.deep.equal(
       new StaticResourceMetadataTransformer(mockRegistry)

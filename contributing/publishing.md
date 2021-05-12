@@ -13,6 +13,18 @@ After feature/bug work has been QA'd and closed, it's time to prepare those chan
 
 The source-deploy-retrieve project uses a two-branch strategy. Work that is currently under development is committed to the 'develop' branch. The 'main' branch is what's currently in production or is being staged for production.
 
+## Generate the Change Log
+
+We generate the change log based off of the new commits that are being staged for production. The change log generator helps us automate the process of generating the `CHANGELOG.md` with the correct format and commits being staged.
+
+To run the change log generator:
+
+1. Run `git pull` to make sure your local changes are up to date.
+1. Open the Command Palette (press Ctrl+Shift+P on Windows or Linux, or Cmd+Shift+P on macOS).
+1. Search for `Tasks: Run Task`.
+1. Select `Create Change Log`.
+1. Select the type of version bump. In most instances we will be using `patch`. Select `patch` when backwards compatible bug fixes are made. Select `minor` when new backwards compatible functionality is added. Select `major` when incompatible API changes are made. See https://semver.org/ for more information.
+
 ## Porting Changes
 
 To port changes from the develop branch to main, we utilize a script called `port-changes.js`. This script is configured with a task to make it easy to trigger from the VS Code Command Palette. This script determines the changes to port from develop to main. It also creates the port branch with the specified version bump and cherry-picks the commits we want to port.
@@ -23,7 +35,7 @@ To port changes from the develop branch to main, we utilize a script called `por
 1. Search for `Tasks: Run Task`.
 1. Select `Create Port PR for Publishing`.
 1. Select `-v` to see the full output.
-1. Select the type of version bump. Typically using the default value of `patch` is fine.
+1. Select the type of version bump - this value should match what was used by the change log generator. In most instances we will be using `patch`. Select `patch` when backwards compatible bug fixes are made. Select `minor` when new backwards compatible functionality is added. Select `major` when incompatible API changes are made. See https://semver.org/ for more information.
 1. Push your branch up with `git push origin <branchName>` and open the pull request for review.
 1. <b>Important:</b> When your PR has been approved, be sure to merge with the option `Rebase and Merge`. We do <b>not</b> want to squash these commits.
 
@@ -42,10 +54,6 @@ For each commit being pulled into the port PR, make sure that the following is t
 
 1. The affiliated work item has been QA'd and closed.
 2. The work item has the appropriate scheduled build. This scheduled build value <b>must</b> match the scheduled build going out for the VS Code Extensions. It's okay that this version is not the same as the one for Source Deploy Retrieve.
-
-## Generate the Change Log
-
-Using the information from the port PR, add an entry to the `CHANGELOG.md` that includes the date for publishing, the version bump, and the list of changes going out for the release. Commit this new PR for the change log directly into main.
 
 ## Publishing to NPM
 

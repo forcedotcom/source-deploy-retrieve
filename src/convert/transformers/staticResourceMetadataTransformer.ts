@@ -14,7 +14,7 @@ import { baseName } from '../../utils';
 import { JsonMap } from '@salesforce/ts-types';
 import { Readable } from 'stream';
 import { LibraryError } from '../../errors';
-import { SourceComponent } from '../../metadata-registry';
+import { SourceComponent } from '../../resolve';
 import { SourcePath } from '../../common';
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {

@@ -6,7 +6,7 @@
  */
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
-import { RegistryAccess, ZipTreeContainer } from '../metadata-registry';
+import { ZipTreeContainer } from '../resolve';
 import {
   ComponentStatus,
   FileResponse,
@@ -19,6 +19,7 @@ import {
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import { MetadataApiRetrieveError } from '../errors';
 import { normalizeToArray } from '../utils';
+import { RegistryAccess } from '../registry';
 
 export type MetadataApiRetrieveOptions = MetadataTransferOptions &
   RetrieveOptions & { registry?: RegistryAccess };
@@ -125,9 +126,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   protected async checkStatus(id: string): Promise<MetadataApiRetrieveStatus> {
     const connection = await this.getConnection();
     // Recasting to use the project's RetrieveResult type
-    return (connection.metadata.checkRetrieveStatus(id) as unknown) as Promise<
-      MetadataApiRetrieveStatus
-    >;
+    const status = await connection.metadata.checkRetrieveStatus(id);
+    status.fileProperties = normalizeToArray(status.fileProperties);
+    return status as MetadataApiRetrieveStatus;
   }
 
   protected async post(result: MetadataApiRetrieveStatus): Promise<RetrieveResult> {

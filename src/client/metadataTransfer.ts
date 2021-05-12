@@ -10,8 +10,8 @@ import { ComponentSet } from '../collections';
 import { MetadataTransferError } from '../errors';
 import { MetadataRequestStatus, RequestStatus, MetadataTransferResult } from './types';
 import { MetadataConverter, SfdxFileFormat } from '../convert';
-import { SourceComponent } from '../metadata-registry';
 import { join } from 'path';
+
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
   components: ComponentSet;

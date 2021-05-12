@@ -16,10 +16,10 @@ import {
 } from './types';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import { join, dirname, basename, extname } from 'path';
-import { SourceComponent, registryData } from '../metadata-registry';
-import { ComponentLike } from '../common';
+import { ComponentLike, SourceComponent } from '../resolve';
 import { normalizeToArray } from '../utils/collections';
 import { ComponentSet } from '../collections';
+import { registry } from '../registry';
 
 export class DeployResult implements MetadataTransferResult {
   public readonly response: MetadataApiDeployStatus;
@@ -149,11 +149,11 @@ export class DeployResult implements MetadataTransferResult {
    */
   private sanitizeDeployMessage(message: DeployMessage): DeployMessage {
     switch (message.componentType) {
-      case registryData.types.lightningcomponentbundle.name:
+      case registry.types.lightningcomponentbundle.name:
         // remove the markup scheme from fullName
         message.fullName = message.fullName.replace(/markup:\/\/c:/, '');
         break;
-      case registryData.types.document.name:
+      case registry.types.document.name:
         // strip document extension from fullName
         message.fullName = join(
           dirname(message.fullName),

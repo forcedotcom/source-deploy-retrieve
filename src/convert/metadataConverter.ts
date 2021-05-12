@@ -11,7 +11,7 @@ import {
   DirectoryConfig,
   ZipConfig,
 } from './types';
-import { RegistryAccess, SourceComponent } from '../metadata-registry';
+import { SourceComponent } from '../resolve';
 import { promises } from 'fs';
 import { dirname, join } from 'path';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
@@ -26,6 +26,7 @@ import {
 import { ConversionError, LibraryError } from '../errors';
 import { SourcePath } from '../common';
 import { ComponentSet } from '../collections';
+import { RegistryAccess } from '../registry';
 
 export class MetadataConverter {
   public static readonly PACKAGE_XML_FILE = 'package.xml';
@@ -51,17 +52,24 @@ export class MetadataConverter {
   ): Promise<ConvertResult> {
     try {
       // it's possible the components came from a component set, so this may be redundant in some cases...
-      const manifestContents = new ComponentSet(components, this.registry).getPackageXml();
+      const cs = new ComponentSet(components, this.registry);
+      let manifestContents;
       const isSource = targetFormat === 'source';
       const tasks = [];
 
       let writer: ComponentWriter;
       let mergeSet: ComponentSet;
       let packagePath: SourcePath;
+      let defaultDirectory: SourcePath;
 
       switch (output.type) {
         case 'directory':
+          if (output.packageName) {
+            cs.fullName = output.packageName;
+          }
+          manifestContents = cs.getPackageXml();
           packagePath = this.getPackagePath(output);
+          defaultDirectory = packagePath;
           writer = new StandardWriter(packagePath);
           if (!isSource) {
             const manifestPath = join(packagePath, MetadataConverter.PACKAGE_XML_FILE);
@@ -69,7 +77,12 @@ export class MetadataConverter {
           }
           break;
         case 'zip':
+          if (output.packageName) {
+            cs.fullName = output.packageName;
+          }
+          manifestContents = cs.getPackageXml();
           packagePath = this.getPackagePath(output);
+          defaultDirectory = packagePath;
           writer = new ZipWriter(packagePath);
           if (!isSource) {
             (writer as ZipWriter).addToZip(manifestContents, MetadataConverter.PACKAGE_XML_FILE);
@@ -79,6 +92,7 @@ export class MetadataConverter {
           if (!isSource) {
             throw new LibraryError('error_merge_metadata_target_unsupported');
           }
+          defaultDirectory = output.defaultDirectory;
           mergeSet = new ComponentSet();
           // since child components are composed in metadata format, we need to merge using the parent
           for (const component of output.mergeWith) {
@@ -90,7 +104,7 @@ export class MetadataConverter {
 
       const conversionPipeline = pipeline(
         new ComponentReader(components),
-        new ComponentConverter(targetFormat, this.registry, mergeSet),
+        new ComponentConverter(targetFormat, this.registry, mergeSet, defaultDirectory),
         writer
       );
       tasks.push(conversionPipeline);

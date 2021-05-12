@@ -9,11 +9,17 @@ import { fail } from 'assert';
 import { expect } from 'chai';
 import { join } from 'path';
 import { createSandbox, SinonStub } from 'sinon';
-import { ComponentSet, MetadataApiDeploy, MetadataApiRetrieve, MetadataComponent } from '../../src';
-import * as resolution from '../../src/metadata-registry';
-import { MetadataMember } from '../../src/common/types';
+import {
+  ComponentSet,
+  MetadataApiDeploy,
+  MetadataApiRetrieve,
+  MetadataComponent,
+  MetadataResolver,
+  RegistryAccess,
+} from '../../src';
 import { ComponentSetError } from '../../src/errors';
 import { nls } from '../../src/i18n';
+import { ManifestResolver, MetadataMember } from '../../src/resolve';
 import { mockConnection } from '../mock/client';
 import {
   mockRegistry,
@@ -38,13 +44,13 @@ describe('ComponentSet', () => {
 
       beforeEach(() => {
         getComponentsStub = env
-          .stub(resolution.MetadataResolver.prototype, 'getComponentsFromPath')
+          .stub(MetadataResolver.prototype, 'getComponentsFromPath')
           .returns(resolved);
       });
 
       it('should initialize with result from source resolver', () => {
         const result = ComponentSet.fromSource('.').toArray();
-        const expected = new resolution.MetadataResolver(
+        const expected = new MetadataResolver(
           mockRegistry,
           manifestFiles.TREE
         ).getComponentsFromPath('.');
@@ -79,7 +85,7 @@ describe('ComponentSet', () => {
           registry: mockRegistry,
           tree: manifestFiles.TREE,
         }).toArray();
-        const expected = new resolution.MetadataResolver(
+        const expected = new MetadataResolver(
           mockRegistry,
           manifestFiles.TREE
         ).getComponentsFromPath('mixedSingleFiles');
@@ -96,12 +102,12 @@ describe('ComponentSet', () => {
             type: mockRegistryData.types.matchingcontentfile,
           },
         ];
-        const resolveStub = env.stub(resolution.ManifestResolver.prototype, 'resolve').resolves({
+        const resolveStub = env.stub(ManifestResolver.prototype, 'resolve').resolves({
           components: expected,
           apiVersion: mockRegistryData.apiVersion,
         });
         env
-          .stub(resolution.RegistryAccess.prototype, 'getTypeByName')
+          .stub(RegistryAccess.prototype, 'getTypeByName')
           .returns(mockRegistryData.types.matchingcontentfile);
         const manifest = manifestFiles.ONE_FOLDER_MEMBER;
         const set = await ComponentSet.fromManifest(manifest.name);
@@ -121,10 +127,9 @@ describe('ComponentSet', () => {
         });
 
         const result = set.toArray();
-        const expected = await new resolution.ManifestResolver(
-          manifestFiles.TREE,
-          mockRegistry
-        ).resolve(manifest.name);
+        const expected = await new ManifestResolver(manifestFiles.TREE, mockRegistry).resolve(
+          manifest.name
+        );
 
         expect(result).to.deep.equal(expected.components);
       });
@@ -138,7 +143,7 @@ describe('ComponentSet', () => {
         });
 
         const result = set.toArray();
-        const expected = new resolution.MetadataResolver(
+        const expected = new MetadataResolver(
           mockRegistry,
           manifestFiles.TREE
         ).getComponentsFromPath('.');
@@ -183,7 +188,7 @@ describe('ComponentSet', () => {
         });
 
         const result = set.toArray();
-        const expected = new resolution.MetadataResolver(
+        const expected = new MetadataResolver(
           mockRegistry,
           manifestFiles.TREE
         ).getComponentsFromPath('mixedSingleFiles');
@@ -199,7 +204,7 @@ describe('ComponentSet', () => {
           resolveSourcePaths: ['.'],
           forceAddWildcards: true,
         });
-        const sourceComponents = new resolution.MetadataResolver(
+        const sourceComponents = new MetadataResolver(
           mockRegistry,
           manifestFiles.TREE
         ).getComponentsFromPath('mixedSingleFiles');
@@ -272,6 +277,32 @@ describe('ComponentSet', () => {
       });
       expect(set.getObject()).to.deep.equal({
         Package: {
+          fullName: undefined,
+          types: [
+            {
+              name: 'DecomposedTopLevel',
+              members: ['a'],
+            },
+            {
+              name: 'MixedContentSingleFile',
+              members: ['b', 'c'],
+            },
+          ],
+          version: mockRegistry.apiVersion,
+        },
+      });
+    });
+
+    it('should return an object representing the package manifest with fullName', () => {
+      const set = ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry: mockRegistry,
+        tree: manifestFiles.TREE,
+      });
+      set.fullName = 'testFullName';
+      expect(set.getObject()).to.deep.equal({
+        Package: {
+          fullName: 'testFullName',
           types: [
             {
               name: 'DecomposedTopLevel',
@@ -348,10 +379,9 @@ describe('ComponentSet', () => {
         tree: manifestFiles.TREE,
       });
       set.add({ fullName: 'Test', type: 'decomposedtoplevel' });
-      const expected = new resolution.MetadataResolver(
-        mockRegistry,
-        manifestFiles.TREE
-      ).getComponentsFromPath('mixedSingleFiles');
+      const expected = new MetadataResolver(mockRegistry, manifestFiles.TREE).getComponentsFromPath(
+        'mixedSingleFiles'
+      );
 
       expect(set.getSourceComponents().toArray()).to.deep.equal(expected);
     });
@@ -362,10 +392,9 @@ describe('ComponentSet', () => {
         registry: mockRegistry,
         tree: manifestFiles.TREE,
       });
-      const expected = new resolution.MetadataResolver(
-        mockRegistry,
-        manifestFiles.TREE
-      ).getComponentsFromPath(join('mixedSingleFiles', 'b.foo'));
+      const expected = new MetadataResolver(mockRegistry, manifestFiles.TREE).getComponentsFromPath(
+        join('mixedSingleFiles', 'b.foo')
+      );
 
       expect(set.size).to.equal(3);
       expect(
@@ -581,7 +610,7 @@ describe('ComponentSet', () => {
     });
 
     it('should correctly evaluate membership of component with wildcard of component type in set', () => {
-      const component = mixedContentSingleFile.MC_SINGLE_FILE_COMPONENT;
+      const component = mixedContentSingleFile.COMPONENT;
       const set = new ComponentSet(undefined, mockRegistry);
 
       expect(set.has(component)).to.be.false;

@@ -29,21 +29,30 @@ type PackageName = {
   packageName?: string;
 };
 
-export type DirectoryConfig = PackageName & {
-  type: 'directory';
+type UniqueOutputDir = {
   /**
-   * Directory path to output the converted package to.
+   * Whether to generate a unique directory within the outputDirectory. Default is true.
    */
-  outputDirectory: SourcePath;
+  genUniqueDir?: boolean;
 };
 
-export type ZipConfig = PackageName & {
-  type: 'zip';
-  /**
-   * Directory path to output the zip package to.
-   */
-  outputDirectory?: SourcePath;
-};
+export type DirectoryConfig = PackageName &
+  UniqueOutputDir & {
+    type: 'directory';
+    /**
+     * Directory path to output the converted package to.
+     */
+    outputDirectory: SourcePath;
+  };
+
+export type ZipConfig = PackageName &
+  UniqueOutputDir & {
+    type: 'zip';
+    /**
+     * Directory path to output the zip package to.
+     */
+    outputDirectory?: SourcePath;
+  };
 
 export type MergeConfig = {
   type: 'merge';

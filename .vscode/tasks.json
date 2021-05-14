@@ -36,13 +36,30 @@
       },
       "args": ["run", "commit-init"],
       "isBackground": false
-    }
+    },
+    {
+      "label": "Create Change Log",
+      "command": "./scripts/change-log-generator.js",
+      "type": "shell",
+      "args": [
+        "${input:verboseOutput}",
+        "-r",
+        "${input:publishType}",
+        "-t",
+        "${input:date}"
+      ]
+    },
   ],
   "inputs": [
     {
       "id": "circleCiId",
       "type": "promptString",
       "description": "CircleCi Token"
+    },
+    {
+      "id": "date",
+      "type": "promptString",
+      "description": "Date of release (ex April 3, 2021). Leave blank to use today's date."
     },
     {
       "id": "publishType",

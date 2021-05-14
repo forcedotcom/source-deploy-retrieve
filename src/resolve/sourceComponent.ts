@@ -118,7 +118,11 @@ export class SourceComponent implements MetadataComponent {
   }
 
   private parse<T = JsonMap>(contents: string): T {
-    const parsed = parse(contents.toString(), { ignoreAttributes: false }) as T;
+    // include tag attributes and don't parse text node as number
+    const parsed = parse(contents.toString(), {
+      ignoreAttributes: false,
+      parseNodeValue: false,
+    }) as T;
     const [firstElement] = Object.keys(parsed);
     if (firstElement === this.type.name) {
       return parsed;

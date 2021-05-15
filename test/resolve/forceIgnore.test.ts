@@ -23,34 +23,27 @@ describe('ForceIgnore', () => {
 
   afterEach(() => env.restore());
 
-  (!process.platform.includes('win') ? it : it.skip)(
-    'should emit user warning once per force ignore difference',
-    () => {
-      const switchParser = '# .forceignore v2';
-      const testPattern = '*__tests__*';
-      const entries = testPattern + '\n' + switchParser;
-      const readStub = env.stub(fs, 'readFileSync');
-      readStub.withArgs(forceIgnorePath).returns(entries);
-      // @ts-ignore private member
-      const emitWarningSpy = env.stub(ForceIgnore.prototype, 'emitWarning');
-      const forceIgnore = new ForceIgnore(forceIgnorePath);
-      const files = [
-        join('some', 'path', '__tests__', 'myTest.x'),
-        join('some', 'path', 'other', '__tests__', 'myOtherTest.x'),
-      ];
-      // @ts-ignore private member
-      env.stub(forceIgnore.gitignoreParser, 'accepts').returns(false);
-      // @ts-ignore private member
-      env.stub(forceIgnore.parser, 'ignores').returns(false);
-      // @ts-ignore parseContents is private
-      const oldParser = gitignoreParser.compile(forceIgnore.parseContents(testPattern));
-      const newParser = ignore().add([testPattern]);
-      env.stub(oldParser, 'accepts').returns(false);
-      env.stub(newParser, 'ignores').returns(true);
-      files.forEach((file) => forceIgnore.accepts(file));
-      expect(emitWarningSpy.callCount).to.be.equal(2);
-    }
-  );
+  it('should emit user warning once per force ignore difference', () => {
+    const readStub = env.stub(fs, 'readFileSync');
+    readStub.withArgs(forceIgnorePath).returns('*__tests__*');
+    // @ts-ignore private member
+    const emitWarningSpy = env.stub(ForceIgnore.prototype, 'emitWarning');
+    const forceIgnore = new ForceIgnore(forceIgnorePath);
+    const files = [
+      join('some', 'path', '__tests__', 'myTest.x'),
+      join('some', 'path', 'other', '__tests__', 'myOtherTest.x'),
+    ];
+    // @ts-ignore private member
+    env.stub(forceIgnore.gitignoreParser, 'accepts').returns(false);
+    // @ts-ignore private member
+    env.stub(forceIgnore.parser, 'ignores').returns(false);
+    // @ts-ignore parseContents is private
+    env.stub(gitignoreParser, 'compile').returns({
+      accepts: () => true,
+    });
+    files.forEach((file) => forceIgnore.accepts(file));
+    expect(emitWarningSpy.callCount).to.be.equal(2);
+  });
 
   it('Should default to not ignoring a file if forceignore is not loaded', () => {
     const path = join('some', 'path');

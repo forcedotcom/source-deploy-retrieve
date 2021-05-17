@@ -66,6 +66,16 @@ describe('MetadataConverter', () => {
     expect(pipelineStub.firstCall.args[2].rootDestination).to.equal(packagePath);
   });
 
+  it('should convert to specified output dir', async () => {
+    await converter.convert(components, 'metadata', {
+      type: 'directory',
+      outputDirectory,
+      genUniqueDir: false,
+    });
+
+    expect(pipelineStub.firstCall.args[2].rootDestination).to.equal(outputDirectory);
+  });
+
   it('should throw ConversionError when an error occurs', async () => {
     const error = new Error('whoops!');
     const expectedError = new ConversionError(error);
@@ -185,6 +195,18 @@ describe('MetadataConverter', () => {
         type: 'zip',
         outputDirectory,
         packageName,
+      });
+
+      expect(ensureDirectoryStub.calledBefore(pipelineStub)).to.be.true;
+      expect(ensureDirectoryStub.firstCall.args[0]).to.equal(dirname(zipPath));
+    });
+
+    it('should convert to specified output dir', async () => {
+      const zipPath = outputDirectory + '.zip';
+      await converter.convert(components, 'metadata', {
+        type: 'zip',
+        outputDirectory,
+        genUniqueDir: false,
       });
 
       expect(ensureDirectoryStub.calledBefore(pipelineStub)).to.be.true;

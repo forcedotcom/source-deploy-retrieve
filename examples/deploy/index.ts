@@ -13,9 +13,9 @@ import {
 /**
  * Deploy components resolved from a file path.
  */
-export async function deployUsingSourcePath(fsPath: string): Promise<void> {
+export async function deployUsingSourcePath(fsPath: string, username: string): Promise<void> {
   const result = await ComponentSet.fromSource(fsPath)
-    .deploy({ usernameOrConnection: 'user@example.com' })
+    .deploy({ usernameOrConnection: username })
     .start();
 
   console.log(result.getFileResponses());
@@ -31,14 +31,15 @@ export async function deployUsingSourcePath(fsPath: string): Promise<void> {
  */
 export async function deployUsingManifestFile(
   manifestPath: string,
-  packageDirectoryPaths: string[]
+  packageDirectoryPaths: string[],
+  username: string
 ): Promise<void> {
   const components = await ComponentSet.fromManifest({
     manifestPath,
     resolveSourcePaths: packageDirectoryPaths,
   });
 
-  const result = await components.deploy({ usernameOrConnection: 'user@example.com' }).start();
+  const result = await components.deploy({ usernameOrConnection: username }).start();
 
   console.log(result.getFileResponses());
 }
@@ -55,7 +56,8 @@ export async function deployUsingManifestFile(
  */
 export async function deployUsingMembers(
   members: MetadataMember[],
-  packageDirectoryPaths: string[]
+  packageDirectoryPaths: string[],
+  username: string
 ): Promise<void> {
   const options: FromSourceOptions = {
     fsPaths: packageDirectoryPaths,
@@ -63,7 +65,7 @@ export async function deployUsingMembers(
   };
 
   const result = await ComponentSet.fromSource(options)
-    .deploy({ usernameOrConnection: 'user@example.com' })
+    .deploy({ usernameOrConnection: username })
     .start();
 
   console.log(result.getFileResponses());
@@ -74,9 +76,9 @@ export async function deployUsingMembers(
  *
  * This example also demonstrates cancellation
  */
-export async function deployAndListen(fsPath: string): Promise<void> {
+export async function deployAndListen(fsPath: string, username: string): Promise<void> {
   const operation = ComponentSet.fromSource(fsPath).deploy({
-    usernameOrConnection: 'user@example.com ',
+    usernameOrConnection: username,
   });
 
   let pollCount = 0;

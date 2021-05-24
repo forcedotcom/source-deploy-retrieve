@@ -1,3 +1,17 @@
+# 2.1.4 - May 24, 2021
+
+## Added
+
+- Adds option to convert source directly to the specified directory ([PR #332](https://github.com/forcedotcom/source-deploy-retrieve/pull/332))
+
+## Fixed
+
+- Fix cannot split issue ([PR #333](https://github.com/forcedotcom/source-deploy-retrieve/pull/333))
+
+- Improve messaging for force ignore old vs new parsers ([PR #324](https://github.com/forcedotcom/source-deploy-retrieve/pull/324))
+
+- Update change log generation documentation ([PR #329](https://github.com/forcedotcom/source-deploy-retrieve/pull/329))
+
 # 2.1.3 - April 29, 2021
 
 ## Fixed

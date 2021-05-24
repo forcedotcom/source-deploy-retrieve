@@ -4,16 +4,12 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import {
-  ComponentSet,
-  FromSourceOptions,
-  MetadataMember,
-} from '@salesforce/source-deploy-retrieve';
+import { ComponentSet, MetadataMember } from '@salesforce/source-deploy-retrieve';
 
 /**
- * Deploy components resolved from a file path.
+ * Deploy components resolved from a file path (SFDX Command).
  */
-export async function deployUsingSourcePath(fsPath: string, username: string): Promise<void> {
+export async function forceSourceDeployPath(fsPath: string, username: string): Promise<void> {
   const result = await ComponentSet.fromSource(fsPath)
     .deploy({ usernameOrConnection: username })
     .start();
@@ -22,14 +18,11 @@ export async function deployUsingSourcePath(fsPath: string, username: string): P
 }
 
 /**
- * Deploy using a manifest file (package.xml)
+ * Deploy using a manifest file (package.xml) (SFDX Command).
  *
- * The library does not make assumptions about how a manifest file is being used
- * to perform a deploy or retrieve operation. Below is an example of following
- * the SFDX behavior, which uses the manifest file as a filter for deploying any
- * components that match manifest entries across a project's package directories.
+ * Uses the members in the manifest as a filter when resolving source components.
  */
-export async function deployUsingManifestFile(
+export async function forceSourceDeployManifest(
   manifestPath: string,
   packageDirectoryPaths: string[],
   username: string
@@ -45,26 +38,21 @@ export async function deployUsingManifestFile(
 }
 
 /**
- * Deploy using metadata members (components addressed by name)
+ * Deploy using metadata members (SFDX Command).
  *
  * e.g. `{ fullName: 'TestClass', type: 'ApexClass' }`
  *
- * The library does not make assumptions about how members are being used to
- * perform a deploy or retrieve operation. Below is an example of following the SFDX
- * behavior, which uses the members as a filter for deploying any components that
- * match a `fullName` and `type` pair across a project's package directories.
+ * Uses the members as a filter when resolving source components.
  */
-export async function deployUsingMembers(
+export async function forceSourceDeployMetadata(
   members: MetadataMember[],
   packageDirectoryPaths: string[],
   username: string
 ): Promise<void> {
-  const options: FromSourceOptions = {
+  const result = await ComponentSet.fromSource({
     fsPaths: packageDirectoryPaths,
     include: new ComponentSet(members),
-  };
-
-  const result = await ComponentSet.fromSource(options)
+  })
     .deploy({ usernameOrConnection: username })
     .start();
 
@@ -74,7 +62,7 @@ export async function deployUsingMembers(
 /**
  * Deploy with a file path and subscribe to updates.
  *
- * This example also demonstrates cancellation
+ * This example also demonstrates cancellation.
  */
 export async function deployAndListen(fsPath: string, username: string): Promise<void> {
   const operation = ComponentSet.fromSource(fsPath).deploy({

@@ -74,6 +74,10 @@ export interface SourceApiResult {
   success: boolean;
 }
 
+export interface AsyncSourceDeployResult {
+  id: RecordId;
+}
+
 export interface SourceDeployResult extends SourceApiResult {
   id: RecordId;
   components?: ComponentDeployment[];

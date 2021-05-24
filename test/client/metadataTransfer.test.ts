@@ -222,7 +222,7 @@ describe('MetadataTransfer', () => {
       expect(checkStatus.calledOnce).to.be.true;
     });
 
-    it('should exit immediately and return undefined result if cancelled in same task', async () => {
+    it('should exit immediately and return a Status result if cancelled in same task', async () => {
       const { checkStatus, doCancel } = operation.lifecycle;
 
       const operationPromise = operation.start();
@@ -231,7 +231,7 @@ describe('MetadataTransfer', () => {
 
       expect(doCancel.calledOnce).to.be.true;
       expect(checkStatus.calledOnce).to.be.false;
-      expect(result).to.be.undefined;
+      expect(result).to.deep.equal({ id: '1' });
     });
 
     it('should continue polling until cancel operation finishes asynchonously', async () => {

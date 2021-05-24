@@ -8,7 +8,12 @@ import { AuthInfo, Connection, fs, Logger } from '@salesforce/core';
 import { EventEmitter } from 'events';
 import { ComponentSet } from '../collections';
 import { MetadataTransferError } from '../errors';
-import { MetadataRequestStatus, RequestStatus, MetadataTransferResult } from './types';
+import {
+  AsyncSourceDeployResult,
+  MetadataRequestStatus,
+  RequestStatus,
+  MetadataTransferResult,
+} from './types';
 import { MetadataConverter, SfdxFileFormat } from '../convert';
 import { join } from 'path';
 
@@ -37,18 +42,28 @@ export abstract class MetadataTransfer<
   }
 
   /**
-   * Start the metadata transfer.
+   * Start the metadata transfer poll for results unless pollInterval
+   * is null or 0.
    *
-   * @param pollInterval Frequency in milliseconds to poll for operation status
+   * @param pollInterval Frequency in milliseconds to poll for operation status.
+   * Set to null or 0 to disable polling.
+   * @param timeout The number of milliseconds before polling times out.
    */
-  public async start(pollInterval = 100): Promise<Result | undefined> {
+  public async start(
+    pollInterval = 100,
+    timeout?: number
+  ): Promise<Result | AsyncSourceDeployResult> {
     try {
       const { id } = await this.pre();
-      const apiResult = await this.pollStatus(id, pollInterval);
 
+      if (pollInterval === null || pollInterval === 0) {
+        return { id };
+      }
+
+      const apiResult = await this.pollStatus(id, pollInterval, timeout);
       if (!apiResult || apiResult.status === RequestStatus.Canceled) {
         this.event.emit('cancel', apiResult);
-        return;
+        return this.post(apiResult);
       }
 
       const sourceResult = await this.post(apiResult);
@@ -128,18 +143,35 @@ export abstract class MetadataTransfer<
     return this.usernameOrConnection;
   }
 
-  private async pollStatus(id: string, interval: number): Promise<Status> {
+  private async pollStatus(id: string, interval: number, timeout?: number): Promise<Status> {
     let result: Status;
     let triedOnce = false;
 
     try {
+      let timeoutId: NodeJS.Timeout;
+      if (timeout) {
+        timeoutId = setTimeout(() => {
+          throw Error('timeout exceeded');
+        }, timeout);
+      }
+
       while (true) {
         if (this.signalCancel) {
           const shouldBreak = await this.doCancel();
           if (shouldBreak) {
-            if (result) {
-              result.status = RequestStatus.Canceled;
+            if (timeout) {
+              clearTimeout(timeoutId);
             }
+            if (!result) {
+              // Build a status response; useful for consistent event
+              // payloads and deploy/retrieve responses.
+              result = {
+                id,
+                success: false,
+                done: true,
+              } as Status;
+            }
+            result.status = RequestStatus.Canceled;
             return result;
           }
           this.signalCancel = false;
@@ -155,6 +187,9 @@ export abstract class MetadataTransfer<
           case RequestStatus.Succeeded:
           case RequestStatus.Canceled:
           case RequestStatus.Failed:
+            if (timeout) {
+              clearTimeout(timeoutId);
+            }
             return result;
         }
 

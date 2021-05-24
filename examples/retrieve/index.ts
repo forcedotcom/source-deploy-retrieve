@@ -4,8 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as path from 'path';
+// @ts-ignore
 import { ComponentSet, MetadataMember } from '@salesforce/source-deploy-retrieve';
+import * as path from 'path';
 
 /**
  * Retrieve all Apex classes in the org to ./myClasses

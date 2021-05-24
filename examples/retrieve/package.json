@@ -1,0 +1,9 @@
+{
+  "name": "retrieve",
+  "version": "1.0.0",
+  "description": "Examples for retrieving with the library",
+  "main": "index.js",
+  "dependencies": {
+    "@salesforce/source-deploy-retrieve": "^2.1.3"
+  }
+}

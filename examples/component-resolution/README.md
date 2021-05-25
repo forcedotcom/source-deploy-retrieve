@@ -34,7 +34,7 @@ Another common use-case is parsing components from a manifest file. Similar to s
 
 ```typescript
 // use the ComponentSet initializer
-const set = ComponentSet.fromManifestFile('/path/to/package.xml');
+const set = ComponentSet.fromManifest('/path/to/package.xml');
 
 // or use the resolver directly
 const manifestResolver = new ManifestResolver();

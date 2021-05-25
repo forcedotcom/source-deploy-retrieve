@@ -23,12 +23,12 @@ await localComponents.retrieve({
 
 ## Note on Replicating `source:retrieve` With a Manifest File
 
-Source-backed components are generally speaking not required to retrieve. However, the behavior of the `source:retrieve` command is to replace any local components that match with those in the retrieve result, and any new components in a default package directory. The `fromManifestFile` initializer includes the `resolveSourcePaths` option as a convenience to resolve source-backed components that match entries in the given manifest file. 
+Source-backed components are generally speaking not required to retrieve. However, the behavior of the `source:retrieve` command is to replace any local components that match with those in the retrieve result, and any new components in a default package directory. The `fromManifest` initializer includes the `resolveSourcePaths` option as a convenience to resolve source-backed components that match entries in the given manifest file. 
 
 A particular case to keep in mind when resolving source components with a manifest is when wildcards are encountered (fullName = `*`). The source resolution process interprets them as adding any component that is of the same type the wildcard is associated with to the set. However, there may be components in the org that are not local, and therefore cannot be added to the set during resolution. For this case, the wildcard needs to be added directly to the set as a component to ensure we retrieve new components as well. The option for this is `forceAddWildcards`:
 
 ```typescript
-const components = await ComponentSet.fromManifestFile({
+const components = await ComponentSet.fromManifest({
   manifestPath: '/path/to/package.xml ',
   // search "sfdx package directories" for local components that match the manifest
   resolveSourcePaths: ['/path/to/package1', '/path/to/package2'],

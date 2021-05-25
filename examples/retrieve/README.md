@@ -1,6 +1,6 @@
 # Retrieving Components
 
-This module provides code samples of how to retrieve metadata components using `ComponentSet.retrieve()`.
+This module provides code samples of how to retrieve metadata components.
 
 ## Component Merging
 

@@ -22,6 +22,7 @@ export {
   SourceRetrieveResult,
   ToolingDeployStatus,
   ComponentStatus,
+  FileProperties,
 } from './client';
 export { MetadataConverter, ConvertOutputConfig, ConvertResult } from './convert';
 export {

@@ -1,7 +1,7 @@
 {
   "name": "deploy",
   "version": "1.0.0",
-  "description": "Code samples for package creation with the library",
+  "description": "Code samples for resolving components with the library",
   "main": "index.js",
   "dependencies": {
     "@salesforce/source-deploy-retrieve": "^2.1.3"

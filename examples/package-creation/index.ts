@@ -46,15 +46,14 @@ export async function convertToMetadataFormat(
 }
 
 /**
- * Converts components resolved from a file path into a zipped "metadata format" package.
+ * Converts components resolved from a file path into a zipped "metadata format" package,
+ * and outputs the base64 string of the zip file.
  */
-export async function convertToMetadataFormatAndZip(
-  fsPath: string,
-  outputDirectory: string
-): Promise<void> {
+export async function convertToMetadataFormatAndZip(fsPath: string): Promise<void> {
   const converter = new MetadataConverter();
   const components = ComponentSet.fromSource(fsPath);
   const { zipBuffer } = await converter.convert(components, 'metadata', { type: 'zip' });
+  console.log(zipBuffer.toString('base64'));
 }
 
 /**

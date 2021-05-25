@@ -7,6 +7,7 @@
 import { MetadataConverter } from '../convert';
 import { DiagnosticUtil } from './diagnosticUtil';
 import {
+  AsyncResult,
   MetadataApiDeployStatus,
   DeployMessage,
   MetadataApiDeployOptions as ApiOptions,
@@ -184,8 +185,8 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
       singlePackage: true,
     },
   };
+  public deployId?: string;
   private options: MetadataApiDeployOptions;
-  private deployId: string | undefined;
 
   constructor(options: MetadataApiDeployOptions) {
     super(options);
@@ -193,7 +194,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     this.options = Object.assign({}, options);
   }
 
-  protected async pre(): Promise<{ id: string }> {
+  protected async pre(): Promise<AsyncResult> {
     const converter = new MetadataConverter();
     const { zipBuffer } = await converter.convert(
       Array.from(this.components.getSourceComponents()),

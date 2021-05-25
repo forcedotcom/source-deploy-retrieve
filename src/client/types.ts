@@ -74,7 +74,7 @@ export interface SourceApiResult {
   success: boolean;
 }
 
-export interface AsyncSourceDeployResult {
+export interface AsyncResult {
   id: RecordId;
 }
 

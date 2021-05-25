@@ -8,6 +8,7 @@ import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
 import { ZipTreeContainer } from '../resolve';
 import {
+  AsyncResult,
   ComponentStatus,
   FileResponse,
   MetadataApiRetrieveStatus,
@@ -93,6 +94,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   RetrieveResult
 > {
   public static DEFAULT_OPTIONS: Partial<MetadataApiRetrieveOptions> = { merge: false };
+  public retrieveId?: string;
   private options: MetadataApiRetrieveOptions;
 
   constructor(options: MetadataApiRetrieveOptions) {
@@ -100,7 +102,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     this.options = Object.assign({}, MetadataApiRetrieve.DEFAULT_OPTIONS, options);
   }
 
-  protected async pre(): Promise<{ id: string }> {
+  protected async pre(): Promise<AsyncResult> {
     const { packageNames } = this.options;
 
     if (this.components.size === 0 && (!packageNames || packageNames.length === 0)) {
@@ -120,7 +122,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     }
 
     // @ts-ignore required callback
-    return connection.metadata.retrieve(requestBody);
+    const result = await connection.metadata.retrieve(requestBody);
+    this.retrieveId = result.id;
+    return result;
   }
 
   protected async checkStatus(id: string): Promise<MetadataApiRetrieveStatus> {

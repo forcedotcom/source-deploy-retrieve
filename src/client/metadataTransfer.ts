@@ -4,18 +4,21 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { AuthInfo, Connection, fs, Logger } from '@salesforce/core';
+import { AuthInfo, Connection, fs, Logger, PollingClient, StatusResult } from '@salesforce/core';
 import { EventEmitter } from 'events';
 import { ComponentSet } from '../collections';
 import { MetadataTransferError } from '../errors';
 import {
-  AsyncSourceDeployResult,
+  AsyncResult,
   MetadataRequestStatus,
   RequestStatus,
   MetadataTransferResult,
+  RecordId,
 } from './types';
 import { MetadataConverter, SfdxFileFormat } from '../convert';
 import { join } from 'path';
+import { Duration } from '@salesforce/kit';
+import { AnyJson } from '@salesforce/ts-types';
 
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
@@ -42,39 +45,61 @@ export abstract class MetadataTransfer<
   }
 
   /**
-   * Start the metadata transfer poll for results unless pollInterval
-   * is null or 0.
+   * Send the metadata transfer request to the org.
    *
-   * @param pollInterval Frequency in milliseconds to poll for operation status.
-   * Set to null or 0 to disable polling.
-   * @param timeout The number of milliseconds before polling times out.
+   * @returns AsyncResult from the deploy or retrieve response.
    */
-  public async start(
-    pollInterval = 100,
-    timeout?: number
-  ): Promise<Result | AsyncSourceDeployResult> {
+  public async start(): Promise<AsyncResult> {
+    return this.pre();
+  }
+
+  /**
+   * Poll for the status of the metadata transfer request.
+   *
+   * @param id The DeployID or RetrieveID.
+   * @param options Polling options; frequency, timeout, polling function.
+   * @returns The result of the deploy or retrieve.
+   */
+  public async pollStatus(id: RecordId, options?: Partial<PollingClient.Options>): Promise<Result> {
+    let mdapiStatus: Status;
+    const defaultOptions: PollingClient.Options = {
+      frequency: options?.frequency ?? Duration.milliseconds(100),
+      timeout: options?.timeout ?? Duration.minutes(60),
+      poll: async (): Promise<StatusResult> => {
+        let completed = false;
+        if (this.signalCancel) {
+          const shouldBreak = await this.doCancel();
+          if (shouldBreak) {
+            if (!mdapiStatus) {
+              mdapiStatus = { id, success: false, done: true } as Status;
+            }
+            mdapiStatus.status = RequestStatus.Canceled;
+            completed = true;
+            this.event.emit('cancel', mdapiStatus);
+          }
+          this.signalCancel = false;
+        } else {
+          mdapiStatus = await this.checkStatus(id);
+          completed = mdapiStatus?.done;
+          this.event.emit('update', mdapiStatus);
+        }
+        return { completed, payload: (mdapiStatus as unknown) as AnyJson };
+      },
+    };
+    const pollingOptions = { ...defaultOptions, ...options };
+    const pollingClient = await PollingClient.create(pollingOptions);
+
     try {
-      const { id } = await this.pre();
-
-      if (pollInterval === null || pollInterval === 0) {
-        return { id };
-      }
-
-      const apiResult = await this.pollStatus(id, pollInterval, timeout);
-      if (!apiResult || apiResult.status === RequestStatus.Canceled) {
-        this.event.emit('cancel', apiResult);
-        return this.post(apiResult);
-      }
-
-      const sourceResult = await this.post(apiResult);
-      this.event.emit('finish', sourceResult);
-
-      return sourceResult;
+      const completedMdapiStatus = ((await pollingClient.subscribe()) as unknown) as Status;
+      const result = await this.post(completedMdapiStatus);
+      this.event.emit('finish', result);
+      return result;
     } catch (e) {
+      const error = new MetadataTransferError('md_request_fail', e.message);
       if (this.event.listenerCount('error') === 0) {
-        throw e;
+        throw error;
       }
-      this.event.emit('error', e);
+      this.event.emit('error', error);
     }
   }
 
@@ -143,72 +168,7 @@ export abstract class MetadataTransfer<
     return this.usernameOrConnection;
   }
 
-  private async pollStatus(id: string, interval: number, timeout?: number): Promise<Status> {
-    let result: Status;
-    let triedOnce = false;
-
-    try {
-      let timeoutId: NodeJS.Timeout;
-      if (timeout) {
-        timeoutId = setTimeout(() => {
-          throw Error('timeout exceeded');
-        }, timeout);
-      }
-
-      while (true) {
-        if (this.signalCancel) {
-          const shouldBreak = await this.doCancel();
-          if (shouldBreak) {
-            if (timeout) {
-              clearTimeout(timeoutId);
-            }
-            if (!result) {
-              // Build a status response; useful for consistent event
-              // payloads and deploy/retrieve responses.
-              result = {
-                id,
-                success: false,
-                done: true,
-              } as Status;
-            }
-            result.status = RequestStatus.Canceled;
-            return result;
-          }
-          this.signalCancel = false;
-        }
-
-        if (triedOnce) {
-          await this.wait(interval);
-        }
-
-        result = await this.checkStatus(id);
-
-        switch (result.status) {
-          case RequestStatus.Succeeded:
-          case RequestStatus.Canceled:
-          case RequestStatus.Failed:
-            if (timeout) {
-              clearTimeout(timeoutId);
-            }
-            return result;
-        }
-
-        this.event.emit('update', result);
-
-        triedOnce = true;
-      }
-    } catch (e) {
-      throw new MetadataTransferError('md_request_fail', e.message);
-    }
-  }
-
-  private wait(interval: number): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(resolve, interval);
-    });
-  }
-
-  protected abstract pre(): Promise<{ id: string }>;
+  protected abstract pre(): Promise<AsyncResult>;
   protected abstract checkStatus(id: string): Promise<Status>;
   protected abstract post(result: Status): Promise<Result>;
   protected abstract doCancel(): Promise<boolean>;

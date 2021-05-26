@@ -7,19 +7,21 @@
 import { MetadataConverter } from '../convert';
 import { DiagnosticUtil } from './diagnosticUtil';
 import {
-  MetadataApiDeployStatus,
-  DeployMessage,
-  MetadataApiDeployOptions as ApiOptions,
   ComponentStatus,
+  DeployMessage,
   FileResponse,
+  MetadataApiDeployOptions as ApiOptions,
+  MetadataApiDeployStatus,
   MetadataTransferResult,
 } from './types';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
-import { join, dirname, basename, extname } from 'path';
+import { basename, dirname, extname, join } from 'path';
 import { ComponentLike, SourceComponent } from '../resolve';
-import { normalizeToArray } from '../utils/collections';
+import { normalizeToArray } from '../utils';
 import { ComponentSet } from '../collections';
 import { registry } from '../registry';
+import { Connection } from '@salesforce/core';
+import { isString, JsonCollection } from '@salesforce/ts-types';
 
 export class DeployResult implements MetadataTransferResult {
   public readonly response: MetadataApiDeployStatus;
@@ -193,6 +195,53 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     this.options = Object.assign({}, options);
   }
 
+  public static async deployRecentlyValidatedId(
+    id: string,
+    usernameOrConnection: string | Connection,
+    rest = false,
+    apiVersion?: string
+  ): Promise<MetadataApiDeploy> {
+    const metadataDeploy = new MetadataApiDeploy({
+      usernameOrConnection,
+      apiVersion,
+      components: new ComponentSet(),
+    });
+
+    const response = await metadataDeploy.doDeployRecentlyValidatedId(id, rest);
+
+    // This is the deploy ID of the deployRecentValidation response, not
+    // the already validated deploy ID (i.e., options.id).
+    // SOAP API will return the id as a string
+    // REST API will return the id as {id: 'xxxxxxx'};
+    metadataDeploy.deployId = isString(response) ? response : (response as { id: string }).id;
+    return metadataDeploy;
+  }
+
+  public static async cancel(
+    deployId: string,
+    usernameOrConnection: string | Connection
+  ): Promise<boolean> {
+    const metadataDeploy = new MetadataApiDeploy({
+      usernameOrConnection,
+      components: new ComponentSet(),
+    });
+    metadataDeploy.deployId = deployId;
+
+    return metadataDeploy.doCancel();
+  }
+
+  public static async report(
+    deployId: string,
+    usernameOrConnection: string | Connection
+  ): Promise<MetadataApiDeployStatus> {
+    const metadataDeploy = new MetadataApiDeploy({
+      usernameOrConnection,
+      components: new ComponentSet(),
+    });
+
+    return metadataDeploy.checkStatus(deployId);
+  }
+
   protected async pre(): Promise<{ id: string }> {
     const converter = new MetadataConverter();
     const { zipBuffer } = await converter.convert(
@@ -225,5 +274,9 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
       done = connection.metadata._invoke('cancelDeploy', { id: this.deployId }).done;
     }
     return done;
+  }
+
+  protected async doDeployRecentlyValidatedId(id: string, rest = false): Promise<JsonCollection> {
+    return (await this.getConnection()).deployRecentValidation({ id, rest });
   }
 }

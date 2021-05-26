@@ -11,7 +11,7 @@
     "resolveJsonModule": true,
     "rootDir": ".",
     "outDir": "lib",
-    "preserveConstEnums": true
+    "preserveConstEnums": true,
   },
-  "exclude": ["node_modules", "lib"]
+  "exclude": ["node_modules", "lib", "examples"]
 }

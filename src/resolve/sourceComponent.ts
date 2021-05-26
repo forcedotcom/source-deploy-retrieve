@@ -161,26 +161,29 @@ export class SourceComponent implements MetadataComponent {
   }
 
   private getNonDecomposedChildren(): SourceComponent[] {
+    // this method only applies to customlabels type
     const parsed = this.parseXmlSync();
     const xmlPathToChildren = `${this.type.name}.${this.type.directoryName}`;
     const children: SourceComponent[] = [];
     for (const childTypeId of Object.keys(this.type.children.types)) {
       const childType = this.type.children.types[childTypeId];
       const uniqueIdElement = childType.uniqueIdElement;
-      const elements = normalizeToArray(get(parsed, xmlPathToChildren, []));
-      const childComponents = elements.map((element) => {
-        return new SourceComponent(
-          {
-            name: getString(element, uniqueIdElement),
-            type: childType,
-            xml: this.xml,
-            parent: this,
-          },
-          this._tree,
-          this.forceIgnore
-        );
-      });
-      children.push(...childComponents);
+      if (uniqueIdElement) {
+        const elements = normalizeToArray(get(parsed, xmlPathToChildren, []));
+        const childComponents = elements.map((element) => {
+          return new SourceComponent(
+            {
+              name: getString(element, uniqueIdElement),
+              type: childType,
+              xml: this.xml,
+              parent: this,
+            },
+            this._tree,
+            this.forceIgnore
+          );
+        });
+        children.push(...childComponents);
+      }
     }
     return children;
   }

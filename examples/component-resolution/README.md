@@ -14,9 +14,9 @@ Components can be resolved from metadata source files - both "source format" and
 const components = ComponentSet.fromSource('/path/to/force-app/main/default/classes');
 ```
 
-This will automatically build a unique collection of components. A client may then perform common operations such as deploying and retrieving the resolved components from the component set object. Note that "unique" in a component set means only one instance of a fullName and type pair. Multiple source-backed components referring to the same fullName and type pair may coexist in the same set - in fact this is how splitting a CustomObjects across multiple package directories in SFDX is achieved.
+This will automatically build a unique collection of components. A client may then perform common operations such as deploying and retrieving the resolved components from the component set object. Note that "unique" in a component set means only one instance of a fullName and type pair. Multiple source-backed components referring to the same fullName and type pair may coexist in the same set - in fact this is how splitting a CustomObject across multiple package directories in SFDX is achieved.
 
-The component set initializer is simply a wrapper of the underlying source resolver logic, and adds the result to the set. If all a client is interested in is analyzing components, we recommend potentially using the `MetadataResolver` directly. While there isn't a ton of extra overhead in constructing a `ComponentSet`, if a client's functionality doesn't require one it may be more beneficial from a performance standpoint:
+The component set initializer is simply a wrapper of the underlying source resolver logic, with the added benefit of creating a unique collection of components. If all a client is interested in is analyzing components, we recommend potentially using the `MetadataResolver` directly. While there isn't a ton of extra overhead in constructing a `ComponentSet`, if a client's functionality doesn't require one it may be more beneficial from a performance standpoint:
 
 
 ```typescript
@@ -65,7 +65,7 @@ This will add all members in the manifest as components, and will replace it wit
 
 A `TreeContainer` is an encapsulation of a file system that enables I/O against anything that can be abstracted as one. The implication is a client can resolve source-backed components against alternate file system abstractions. By default for most operations, the `NodeFSTreeContainer` is used, which is simply a wrapper of the Node file system api calls. There is also the `ZipTreeContainer`, which is used for scanning components against the central directory of a zip file, and the `VirtualTreeContainer`, helpful for creating mock components in testing scenarios.
 
-Clients can implement new tree containers by extending the `TreeContainer` base class and expand existing functionality.
+Clients can implement new tree containers by extending the `TreeContainer` base class and expanding existing functionality.
 
 ### Mocking Components With the VirtualTreeeContainer
 

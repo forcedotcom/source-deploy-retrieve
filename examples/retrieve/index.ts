@@ -99,28 +99,25 @@ export async function retrieveAndListen(fsPath: string, username: string): Promi
     output: process.cwd(),
   });
 
-  let pollCount = 0;
-  const pollInterval = 100;
+  let updates = 0;
 
   // subscribe to deploy status event and report on the progress
   operation.onUpdate((response) => {
     const { status } = response;
     const progressMessage = `Status: ${status}`;
     console.log(progressMessage);
-    pollCount += 1;
-
-    const timeElapsed = pollCount * pollInterval;
+    updates += 1;
 
     // if the operation is taking longer than 30 seconds, cancel it
-    if (timeElapsed === 30000) {
+    if (updates === 10) {
       operation.cancel();
     }
   });
 
-  // subscribe to when a cancellation has finished
+  // if after 10 updates the operation hasn't finished, cancel it.
   operation.onCancel(() => {
     console.log('The retrieve operation was canceled');
   });
 
-  operation.start(pollInterval);
+  operation.start();
 }

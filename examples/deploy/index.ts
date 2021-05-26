@@ -70,28 +70,24 @@ export async function deployAndListen(fsPath: string, username: string): Promise
     usernameOrConnection: username,
   });
 
-  let pollCount = 0;
-  const pollInterval = 100;
+  let updates = 0;
 
   // subscribe to deploy status event and report on the progress
   operation.onUpdate((response) => {
     const { status, numberComponentsDeployed, numberComponentsTotal } = response;
     const progressMessage = `Status: ${status}\tProgress: ${numberComponentsDeployed}/${numberComponentsTotal}`;
     console.log(progressMessage);
-    pollCount += 1;
+    updates += 1;
 
-    const timeElapsed = pollCount * pollInterval;
-
-    // if the operation is taking longer than 5 seconds, cancel it
-    if (timeElapsed === 5000) {
+    // if after 10 updates the operation hasn't finished, cancel it.
+    if (updates === 10) {
       operation.cancel();
     }
   });
 
-  // subscribe to when a cancellation has finished
   operation.onCancel(() => {
     console.log('The deploy operation was canceled');
   });
 
-  operation.start(pollInterval);
+  operation.start();
 }

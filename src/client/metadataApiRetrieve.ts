@@ -100,6 +100,14 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     this.options = Object.assign({}, MetadataApiRetrieve.DEFAULT_OPTIONS, options);
   }
 
+  public async checkStatus(): Promise<MetadataApiRetrieveStatus> {
+    const connection = await this.getConnection();
+    // Recasting to use the project's RetrieveResult type
+    const status = await connection.metadata.checkRetrieveStatus(this.id);
+    status.fileProperties = normalizeToArray(status.fileProperties);
+    return status as MetadataApiRetrieveStatus;
+  }
+
   protected async pre(): Promise<{ id: string }> {
     const { packageNames } = this.options;
 
@@ -121,14 +129,6 @@ export class MetadataApiRetrieve extends MetadataTransfer<
 
     // @ts-ignore required callback
     return connection.metadata.retrieve(requestBody);
-  }
-
-  protected async checkStatus(id: string): Promise<MetadataApiRetrieveStatus> {
-    const connection = await this.getConnection();
-    // Recasting to use the project's RetrieveResult type
-    const status = await connection.metadata.checkRetrieveStatus(id);
-    status.fileProperties = normalizeToArray(status.fileProperties);
-    return status as MetadataApiRetrieveStatus;
   }
 
   protected async post(result: MetadataApiRetrieveStatus): Promise<RetrieveResult> {

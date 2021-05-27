@@ -28,12 +28,20 @@ export abstract class MetadataTransfer<
   private event = new EventEmitter();
   private usernameOrConnection: string | Connection;
   private apiVersion: string;
+  private _id?: string;
 
   constructor({ usernameOrConnection, components, apiVersion }: MetadataTransferOptions) {
     this.usernameOrConnection = usernameOrConnection;
     this.components = components;
     this.apiVersion = apiVersion;
     this.logger = Logger.childFromRoot(this.constructor.name);
+  }
+
+  get id(): string {
+    if (!this._id) {
+      throw new MetadataTransferError('Deploy ID is undefined');
+    }
+    return this._id;
   }
 
   /**
@@ -44,6 +52,7 @@ export abstract class MetadataTransfer<
   public async start(pollInterval = 100): Promise<Result | undefined> {
     try {
       const { id } = await this.pre();
+      this._id = id;
       const apiResult = await this.pollStatus(id, pollInterval);
 
       if (!apiResult || apiResult.status === RequestStatus.Canceled) {
@@ -149,7 +158,7 @@ export abstract class MetadataTransfer<
           await this.wait(interval);
         }
 
-        result = await this.checkStatus(id);
+        result = await this.checkStatus();
 
         switch (result.status) {
           case RequestStatus.Succeeded:
@@ -172,9 +181,8 @@ export abstract class MetadataTransfer<
       setTimeout(resolve, interval);
     });
   }
-
+  public abstract checkStatus(): Promise<Status>;
   protected abstract pre(): Promise<{ id: string }>;
-  protected abstract checkStatus(id: string): Promise<Status>;
   protected abstract post(result: Status): Promise<Result>;
   protected abstract doCancel(): Promise<boolean>;
 }

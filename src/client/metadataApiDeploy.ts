@@ -197,15 +197,24 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     this.deployId = options.id;
   }
 
+  /**
+   *
+   * @param rest set to true to use the REST api and false to use the SOAP api
+
+   * deploys a previously validated deploy created when deploying with the checkonly: true option and running all tests in the org
+   */
   public async deployRecentValidation(rest = false): Promise<JsonCollection> {
     return (await this.getConnection()).deployRecentValidation({ id: this.deployId, rest });
   }
 
-  public async report(): Promise<MetadataApiDeployStatus> {
+  /**
+   * will return the status of the this.id
+   */
+  public async checkStatus(): Promise<MetadataApiDeployStatus> {
     const connection = await this.getConnection();
     // Recasting to use the project's version of the type
     return (connection.metadata.checkDeployStatus(
-      this.deployId,
+      this.id,
       true
     ) as unknown) as MetadataApiDeployStatus;
   }
@@ -222,12 +231,6 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     const result = await connection.metadata.deploy(zipBuffer, this.options.apiOptions);
     this.deployId = result.id;
     return result;
-  }
-
-  protected async checkStatus(id: string): Promise<MetadataApiDeployStatus> {
-    const connection = await this.getConnection();
-    // Recasting to use the project's version of the type
-    return (connection.metadata.checkDeployStatus(id, true) as unknown) as MetadataApiDeployStatus;
   }
 
   protected async post(result: MetadataApiDeployStatus): Promise<DeployResult> {

@@ -32,13 +32,14 @@ class TestTransfer extends MetadataTransfer<MetadataRequestStatus, MetadataTrans
     post: env.stub().returns({ id: '1' }),
     doCancel: env.stub().returns(true),
   };
+  public async checkStatus(): Promise<MetadataRequestStatus> {
+    return this.lifecycle.checkStatus();
+  }
 
   protected async pre(): Promise<{ id: string }> {
     return this.lifecycle.pre();
   }
-  protected async checkStatus(): Promise<MetadataRequestStatus> {
-    return this.lifecycle.checkStatus();
-  }
+
   protected async post(): Promise<MetadataTransferResult> {
     return this.lifecycle.post();
   }

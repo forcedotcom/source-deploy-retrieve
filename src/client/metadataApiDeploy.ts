@@ -194,9 +194,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     super(options);
     options.apiOptions = { ...MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions, ...options.apiOptions };
     this.options = Object.assign({}, options);
-    if (options.id) {
-      this.deployId = options.id;
-    }
+    this.deployId = options.id;
   }
 
   public async deployRecentValidation(rest = false): Promise<JsonCollection> {

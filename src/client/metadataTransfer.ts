@@ -65,6 +65,8 @@ export abstract class MetadataTransfer<
 
   public cancel(): void {
     this.signalCancel = true;
+    // unawaited async method
+    this.doCancel();
   }
 
   public onUpdate(subscriber: (result: Status) => void): void {

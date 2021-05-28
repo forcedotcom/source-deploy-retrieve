@@ -205,7 +205,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
    */
   public async deployRecentValidation(rest = false): Promise<JsonCollection> {
     if (!this.id) {
-      throw new DeployError('Retrieve ID not defined');
+      throw new DeployError('Deploy ID not defined');
     }
     return (await this.getConnection()).deployRecentValidation({ id: this.id, rest });
   }
@@ -217,7 +217,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
    */
   public async checkStatus(): Promise<MetadataApiDeployStatus> {
     if (!this.id) {
-      throw new DeployError('Retrieve ID not defined');
+      throw new DeployError('Deploy ID not defined');
     }
     const connection = await this.getConnection();
     // Recasting to use the project's version of the type

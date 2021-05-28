@@ -100,6 +100,11 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     this.options = Object.assign({}, MetadataApiRetrieve.DEFAULT_OPTIONS, options);
   }
 
+  /**
+   * Check the status of the retrieve operation.
+   *
+   * @returns Status of the retrieve
+   */
   public async checkStatus(): Promise<MetadataApiRetrieveStatus> {
     if (!this.id) {
       throw new MetadataApiRetrieveError('Retrieve ID not defined');

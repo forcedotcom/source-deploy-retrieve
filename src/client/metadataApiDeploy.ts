@@ -217,7 +217,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
   }
 
   /**
-   * Check the status of the retrieve operation.
+   * Check the status of the deploy operation.
    *
    * @returns Status of the retrieve
    */

@@ -213,7 +213,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
       id: this.id,
       rest,
     }) as unknown) as AsyncResult | string;
-    return isString(response) ? response : (response as { id: string }).id;
+    return isString(response) ? response : (response as AsyncResult).id;
   }
 
   /**

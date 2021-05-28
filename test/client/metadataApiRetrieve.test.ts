@@ -17,7 +17,11 @@ import {
 } from '../../src';
 import { MetadataApiRetrieveError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
+import {
+  MOCK_DEFAULT_OUTPUT,
+  stubMetadataDeploy,
+  stubMetadataRetrieve,
+} from '../mock/client/transferOperations';
 import { mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
 import { REGINA_COMPONENT } from '../mock/registry/type-constants/reginaConstants';
@@ -186,6 +190,20 @@ describe('MetadataApiRetrieve', async () => {
       const expected = new RetrieveResult(response, new ComponentSet(undefined, mockRegistry));
 
       expect(result).to.deep.equal(expected);
+    });
+
+    it('should throw an error when attempting to call checkStatus without an id set', async () => {
+      const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+      const { operation } = await stubMetadataRetrieve(env, {
+        toRetrieve,
+        merge: true,
+      });
+      try {
+        await operation.checkStatus();
+        chai.assert.fail('the above should throw an error');
+      } catch (e) {
+        expect(e.message).to.contain('Retrieve ID not defined');
+      }
     });
   });
 

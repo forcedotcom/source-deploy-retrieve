@@ -21,7 +21,12 @@ import {
 } from '../../src/client/types';
 import { expect } from 'chai';
 import { basename, join } from 'path';
-import { MOCK_ASYNC_RESULT, stubMetadataDeploy } from '../mock/client/transferOperations';
+import {
+  MOCK_ASYNC_RESULT,
+  MOCK_RECENTLY_VALIDATED_ID_REST,
+  MOCK_RECENTLY_VALIDATED_ID_SOAP,
+  stubMetadataDeploy,
+} from '../mock/client/transferOperations';
 import { mockRegistry, matchingContentFile } from '../mock/registry';
 import { META_XML_SUFFIX } from '../../src/common';
 import {
@@ -126,6 +131,54 @@ describe('MetadataApiDeploy', () => {
       await operation.start();
 
       expect(checkStatusStub.calledOnce).to.be.true;
+    });
+
+    it('should throw an error when id is undefined and attempting to call checkStatus', async () => {
+      const { operation } = await stubMetadataDeploy(env);
+      try {
+        await operation.checkStatus();
+      } catch (e) {
+        expect(e.message).to.contain('Deploy ID not defined');
+      }
+    });
+
+    it('should throw an error when id is undefined and attempting to call deployRecentlyValidatedId', async () => {
+      const { operation } = await stubMetadataDeploy(env);
+      try {
+        await operation.deployRecentValidation(false);
+        chai.assert.fail('the above should throw an error');
+      } catch (e) {
+        expect(e.message).to.contain('Deploy ID not defined');
+      }
+    });
+
+    it('should return new ID for a deployRecentlyValidatedId SOAP', async () => {
+      const { operation } = await stubMetadataDeploy(env, {
+        id: '1234',
+        components: new ComponentSet(),
+      });
+
+      const result = await operation.deployRecentValidation(false);
+      expect(result).to.equal(MOCK_RECENTLY_VALIDATED_ID_SOAP);
+    });
+
+    it('should return new ID for a deployRecentlyValidatedId REST', async () => {
+      const { operation } = await stubMetadataDeploy(env, {
+        id: '1234',
+        components: new ComponentSet(),
+      });
+
+      const result = await operation.deployRecentValidation(true);
+      expect(result).to.equal(MOCK_RECENTLY_VALIDATED_ID_REST.id);
+    });
+
+    it('should throw an error when id is undefined and attempting to call doCancel', async () => {
+      const { operation } = await stubMetadataDeploy(env);
+      try {
+        await operation.doCancel();
+      } catch (e) {
+        expect(e.message).to.contain('Deploy ID not defined');
+      }
     });
   });
 

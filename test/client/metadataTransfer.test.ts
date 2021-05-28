@@ -75,6 +75,24 @@ describe('MetadataTransfer', () => {
     expect(post.calledAfter(checkStatus)).to.be.true;
   });
 
+  it('should set the _id property if passed in the constructor', () => {
+    const TRANSFER_ID = '1234567890';
+    const operation = new TestTransfer({
+      components: new ComponentSet(),
+      usernameOrConnection: connection,
+      id: TRANSFER_ID,
+    });
+    expect(operation.id).to.equal(TRANSFER_ID);
+  });
+
+  it('should construct new Transfer without Id', () => {
+    const operation = new TestTransfer({
+      components: new ComponentSet(),
+      usernameOrConnection: connection,
+    });
+    expect(operation.id).to.equal(undefined);
+  });
+
   it('should initialize a Connection if a username is given', async () => {
     class TestTransferConnection extends TestTransfer {
       protected async pre(): Promise<{ id: string }> {

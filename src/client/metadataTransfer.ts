@@ -16,6 +16,7 @@ export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
   components: ComponentSet;
   apiVersion?: string;
+  id?: string;
 }
 
 export abstract class MetadataTransfer<
@@ -24,16 +25,17 @@ export abstract class MetadataTransfer<
 > {
   protected components: ComponentSet;
   protected logger: Logger;
+  protected _id?: string;
   private signalCancel = false;
   private event = new EventEmitter();
   private usernameOrConnection: string | Connection;
   private apiVersion: string;
-  private _id?: string;
 
-  constructor({ usernameOrConnection, components, apiVersion }: MetadataTransferOptions) {
+  constructor({ usernameOrConnection, components, apiVersion, id }: MetadataTransferOptions) {
     this.usernameOrConnection = usernameOrConnection;
     this.components = components;
     this.apiVersion = apiVersion;
+    this._id = id;
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
 

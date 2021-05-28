@@ -7,6 +7,7 @@
 import { MetadataConverter } from '../convert';
 import { DiagnosticUtil } from './diagnosticUtil';
 import {
+  AsyncResult,
   ComponentStatus,
   DeployMessage,
   FileResponse,
@@ -20,7 +21,7 @@ import { ComponentLike, SourceComponent } from '../resolve';
 import { normalizeToArray } from '../utils';
 import { ComponentSet } from '../collections';
 import { registry } from '../registry';
-import { JsonCollection } from '@salesforce/ts-types';
+import { isString } from '@salesforce/ts-types';
 import { DeployError } from '../errors';
 
 export class DeployResult implements MetadataTransferResult {
@@ -175,7 +176,6 @@ export class DeployResult implements MetadataTransferResult {
 
 export interface MetadataApiDeployOptions extends MetadataTransferOptions {
   apiOptions?: ApiOptions;
-  id?: string;
 }
 
 export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus, DeployResult> {
@@ -188,13 +188,11 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     },
   };
   private options: MetadataApiDeployOptions;
-  private deployId: string | undefined;
 
   constructor(options: MetadataApiDeployOptions) {
     super(options);
     options.apiOptions = { ...MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions, ...options.apiOptions };
     this.options = Object.assign({}, options);
-    this.deployId = options.id;
   }
 
   /**
@@ -202,18 +200,26 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
    * @param rest set to true to use the REST api and false to use the SOAP api
 
    * deploys a previously validated deploy created when deploying with the checkonly: true option and running all tests in the org
+   * rest = true will return an AsyncResult with structure {id: 'xxxxxxxxx'}
+   * rest = false will return a string of the deploy id
+   * parse and return the new id as a string
    */
-  public async deployRecentValidation(rest = false): Promise<JsonCollection> {
+  public async deployRecentValidation(rest = false): Promise<string> {
     if (!this.id) {
       throw new DeployError('Deploy ID not defined');
     }
-    return (await this.getConnection()).deployRecentValidation({ id: this.id, rest });
+    const conn = await this.getConnection();
+    const response = (conn.deployRecentValidation({
+      id: this.id,
+      rest,
+    }) as unknown) as AsyncResult | string;
+    return isString(response) ? response : (response as { id: string }).id;
   }
 
   /**
-   * Check the status of the deploy operation.
+   * Check the status of the retrieve operation.
    *
-   * @returns Status of the deploy
+   * @returns Status of the retrieve
    */
   public async checkStatus(): Promise<MetadataApiDeployStatus> {
     if (!this.id) {
@@ -237,7 +243,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     const connection = await this.getConnection();
     await this.maybeSaveTempDirectory('metadata');
     const result = await connection.metadata.deploy(zipBuffer, this.options.apiOptions);
-    this.deployId = result.id;
+    this._id = result.id;
     return result;
   }
 
@@ -247,10 +253,10 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
 
   protected async doCancel(): Promise<boolean> {
     let done = true;
-    if (this.deployId) {
+    if (this.id) {
       const connection = await this.getConnection();
       // @ts-ignore _invoke is private on the jsforce metadata object, and cancelDeploy is not an exposed method
-      done = connection.metadata._invoke('cancelDeploy', { id: this.deployId }).done;
+      done = connection.metadata._invoke('cancelDeploy', { id: this.id }).done;
     }
     return done;
   }

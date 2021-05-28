@@ -37,10 +37,7 @@ export abstract class MetadataTransfer<
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
-  get id(): string {
-    if (!this._id) {
-      throw new MetadataTransferError('Deploy ID is undefined');
-    }
+  get id(): string | undefined {
     return this._id;
   }
 

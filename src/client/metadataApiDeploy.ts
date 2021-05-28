@@ -20,8 +20,8 @@ import { ComponentLike, SourceComponent } from '../resolve';
 import { normalizeToArray } from '../utils';
 import { ComponentSet } from '../collections';
 import { registry } from '../registry';
-import { Connection } from '@salesforce/core';
-import { isString, JsonCollection } from '@salesforce/ts-types';
+import { JsonCollection } from '@salesforce/ts-types';
+import { DeployError } from '../errors';
 
 export class DeployResult implements MetadataTransferResult {
   public readonly response: MetadataApiDeployStatus;
@@ -204,13 +204,21 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
    * deploys a previously validated deploy created when deploying with the checkonly: true option and running all tests in the org
    */
   public async deployRecentValidation(rest = false): Promise<JsonCollection> {
-    return (await this.getConnection()).deployRecentValidation({ id: this.deployId, rest });
+    if (!this.id) {
+      throw new DeployError('Retrieve ID not defined');
+    }
+    return (await this.getConnection()).deployRecentValidation({ id: this.id, rest });
   }
 
   /**
-   * will return the status of the this.id
+   * Check the status of the deploy operation.
+   *
+   * @returns Status of the deploy
    */
   public async checkStatus(): Promise<MetadataApiDeployStatus> {
+    if (!this.id) {
+      throw new DeployError('Retrieve ID not defined');
+    }
     const connection = await this.getConnection();
     // Recasting to use the project's version of the type
     return (connection.metadata.checkDeployStatus(

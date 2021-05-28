@@ -101,6 +101,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   }
 
   public async checkStatus(): Promise<MetadataApiRetrieveStatus> {
+    if (!this.id) {
+      throw new MetadataApiRetrieveError('Retrieve ID not defined');
+    }
     const connection = await this.getConnection();
     // Recasting to use the project's RetrieveResult type
     const status = await connection.metadata.checkRetrieveStatus(this.id);

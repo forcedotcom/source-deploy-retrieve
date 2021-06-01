@@ -58,10 +58,10 @@ const myObject = ComponentSet
   });
 ```
 
-See the [examples]('examples/') folder for more code samples and guides.
+See the [examples]('./examples/') folder for more code samples and guides.
 
 ## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for details on how to contribute to the library.
 
-See [development.md](./contributing/development.md) for details on building and testing the library locally.
+See [developing.md](./contributing/developing.md) for details on building and testing the library locally.

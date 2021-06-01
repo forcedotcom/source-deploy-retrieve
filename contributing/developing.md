@@ -31,8 +31,6 @@ $ yarn build
 
 `yarn test` runs the suite and outputs code coverage as a text summary. Utilize the `Run Tests` VS Code debugger configuration to enable the debugger and run the test suite.
 
-<br>
-
 ### Testing with the command line
 
 Interact with the package exports on the command line by running:
@@ -41,8 +39,6 @@ Interact with the package exports on the command line by running:
 
 This will start the NodeJS REPL with a few pre-set variables to conveniently interact
 with exported modules. The REPL runs with the `--inspect` flag, allowing you to attach a debugger to the process. Select the `Attach to Remote` configuration in VS Code and click play to debug against it.
-
-<br>
 
 ### Testing in another package
 
@@ -54,15 +50,11 @@ to unlink the library:
 
 `yarn local:unlink /path/to/other/project`
 
-<br>
-
 ### Testing with the NPM artifact
 
 The library can also be installed to another local project as a regular NPM module. This is useful for manually testing the package that will be deployed to NPM. Use this instead of the linking process that's described under Development to QA changes before they are published:
 
 `yarn local:install /path/to/other/package`
-
-<br>
 
 ## Updating the registry
 

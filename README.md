@@ -58,7 +58,7 @@ const myObject = ComponentSet
   });
 ```
 
-See the [examples]('./examples') folder for more code samples and guides.
+See the [examples]('examples/') folder for more code samples and guides.
 
 ## Contributing
 

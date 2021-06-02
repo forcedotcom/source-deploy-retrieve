@@ -12,7 +12,7 @@ Here's a summary:
 - Separate subject from body with a blank line
 - Limit the subject line to 50 characters (this is a guide but not strictly
   enforced)
-- Capitalize the subject line
+- <strike>Capitalize the subject line</strike> (commitizen config overrides this)
 - Do not end the subject line with a period
 - Use the imperative mood in the subject line
 - <strike>Wrap the body at 72 characters</strike> (this is not strictly

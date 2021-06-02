@@ -21,6 +21,7 @@ import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import { MetadataApiRetrieveError } from '../errors';
 import { normalizeToArray } from '../utils';
 import { RegistryAccess } from '../registry';
+import { asBoolean, getBoolean, isString } from '@salesforce/ts-types';
 
 export type MetadataApiRetrieveOptions = MetadataTransferOptions &
   RetrieveOptions & { registry?: RegistryAccess };
@@ -94,7 +95,6 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   RetrieveResult
 > {
   public static DEFAULT_OPTIONS: Partial<MetadataApiRetrieveOptions> = { merge: false };
-  public retrieveId?: string;
   private options: MetadataApiRetrieveOptions;
 
   constructor(options: MetadataApiRetrieveOptions) {
@@ -122,17 +122,23 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     }
 
     // @ts-ignore required callback
-    const result = await connection.metadata.retrieve(requestBody);
-    this.retrieveId = result.id;
-    return result;
+    return connection.metadata.retrieve(requestBody);
   }
 
   protected async checkStatus(id: string): Promise<MetadataApiRetrieveStatus> {
+    const coerceBoolean = (field: unknown): boolean => {
+      if (isString(field)) {
+        return field.toLowerCase() === 'true';
+      }
+      return asBoolean(field) || false;
+    };
     const connection = await this.getConnection();
-    // Recasting to use the project's RetrieveResult type
-    const status = await connection.metadata.checkRetrieveStatus(id);
+    // Cast RetrieveResult returned by jsForce to MetadataApiRetrieveStatus
+    const status = (await connection.metadata.checkRetrieveStatus(id)) as MetadataApiRetrieveStatus;
     status.fileProperties = normalizeToArray(status.fileProperties);
-    return status as MetadataApiRetrieveStatus;
+    status.success = coerceBoolean(status.success);
+    status.done = coerceBoolean(status.done);
+    return status;
   }
 
   protected async post(result: MetadataApiRetrieveStatus): Promise<RetrieveResult> {

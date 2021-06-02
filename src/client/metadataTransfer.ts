@@ -18,7 +18,7 @@ import {
 import { MetadataConverter, SfdxFileFormat } from '../convert';
 import { join } from 'path';
 import { Duration } from '@salesforce/kit';
-import { AnyJson } from '@salesforce/ts-types';
+import { AnyJson, isNumber } from '@salesforce/ts-types';
 
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
@@ -36,6 +36,7 @@ export abstract class MetadataTransfer<
   private event = new EventEmitter();
   private usernameOrConnection: string | Connection;
   private apiVersion: string;
+  private id: RecordId;
 
   constructor({ usernameOrConnection, components, apiVersion }: MetadataTransferOptions) {
     this.usernameOrConnection = usernameOrConnection;
@@ -44,55 +45,72 @@ export abstract class MetadataTransfer<
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
+  public getId(): RecordId {
+    return this.id;
+  }
+
   /**
    * Send the metadata transfer request to the org.
    *
    * @returns AsyncResult from the deploy or retrieve response.
    */
   public async start(): Promise<AsyncResult> {
-    return this.pre();
+    const asyncResult = await this.pre();
+    this.id = asyncResult.id;
+    this.logger.debug(`Started metadata transfer. ID = ${this.id}`);
+    return asyncResult;
   }
 
   /**
    * Poll for the status of the metadata transfer request.
+   * Default frequency is 100 ms.
+   * Default timeout is 60 minutes.
    *
-   * @param id The DeployID or RetrieveID.
    * @param options Polling options; frequency, timeout, polling function.
    * @returns The result of the deploy or retrieve.
    */
-  public async pollStatus(id: RecordId, options?: Partial<PollingClient.Options>): Promise<Result> {
-    let mdapiStatus: Status;
-    const defaultOptions: PollingClient.Options = {
-      frequency: options?.frequency ?? Duration.milliseconds(100),
-      timeout: options?.timeout ?? Duration.minutes(60),
-      poll: async (): Promise<StatusResult> => {
-        let completed = false;
-        if (this.signalCancel) {
-          const shouldBreak = await this.doCancel();
-          if (shouldBreak) {
-            if (!mdapiStatus) {
-              mdapiStatus = { id, success: false, done: true } as Status;
-            }
-            mdapiStatus.status = RequestStatus.Canceled;
-            completed = true;
-            this.event.emit('cancel', mdapiStatus);
-          }
-          this.signalCancel = false;
-        } else {
-          mdapiStatus = await this.checkStatus(id);
-          completed = mdapiStatus?.done;
-          this.event.emit('update', mdapiStatus);
-        }
-        return { completed, payload: (mdapiStatus as unknown) as AnyJson };
-      },
+  public async pollStatus(options?: Partial<PollingClient.Options>): Promise<Result>;
+  /**
+   * Poll for the status of the metadata transfer request.
+   * Default frequency is 100 ms.
+   * Default timeout is 60 minutes.
+   *
+   * @param frequency Polling frequency in milliseconds.
+   * @param timeout Polling timeout in seconds.
+   * @returns The result of the deploy or retrieve.
+   */
+  public async pollStatus(frequency?: number, timeout?: number): Promise<Result>;
+  public async pollStatus(
+    frequencyOrOptions?: number | Partial<PollingClient.Options>,
+    timeout?: number
+  ): Promise<Result> {
+    let pollingOptions: PollingClient.Options = {
+      frequency: Duration.milliseconds(100),
+      timeout: Duration.minutes(60),
+      poll: this.poll.bind(this),
     };
-    const pollingOptions = { ...defaultOptions, ...options };
+    if (isNumber(frequencyOrOptions)) {
+      pollingOptions.frequency = Duration.milliseconds(frequencyOrOptions);
+    } else if (frequencyOrOptions !== undefined) {
+      pollingOptions = { ...pollingOptions, ...frequencyOrOptions };
+    }
+    if (isNumber(timeout)) {
+      pollingOptions.timeout = Duration.seconds(timeout);
+    }
+
     const pollingClient = await PollingClient.create(pollingOptions);
 
     try {
+      this.logger.debug(`Polling for metadata transfer status. ID = ${this.id}`);
+      this.logger.debug(`Polling frequency (ms): ${pollingOptions.frequency.milliseconds}`);
+      this.logger.debug(`Polling timeout (min): ${pollingOptions.timeout.minutes}`);
       const completedMdapiStatus = ((await pollingClient.subscribe()) as unknown) as Status;
       const result = await this.post(completedMdapiStatus);
-      this.event.emit('finish', result);
+      if (completedMdapiStatus.status === RequestStatus.Canceled) {
+        this.event.emit('cancel', completedMdapiStatus);
+      } else {
+        this.event.emit('finish', result);
+      }
       return result;
     } catch (e) {
       const error = new MetadataTransferError('md_request_fail', e.message);
@@ -166,6 +184,32 @@ export abstract class MetadataTransfer<
       }
     }
     return this.usernameOrConnection;
+  }
+
+  private async poll(): Promise<StatusResult> {
+    let completed = false;
+    let mdapiStatus: Status;
+
+    if (this.signalCancel) {
+      const shouldBreak = await this.doCancel();
+      if (shouldBreak) {
+        if (!mdapiStatus) {
+          mdapiStatus = { id: this.id, success: false, done: true } as Status;
+        }
+        mdapiStatus.status = RequestStatus.Canceled;
+        completed = true;
+      }
+      this.signalCancel = false;
+    } else {
+      mdapiStatus = await this.checkStatus(this.id);
+      completed = mdapiStatus?.done;
+      if (!completed) {
+        this.event.emit('update', mdapiStatus);
+      }
+    }
+    this.logger.debug(`MDAPI status update: ${mdapiStatus.status}`);
+
+    return { completed, payload: (mdapiStatus as unknown) as AnyJson };
   }
 
   protected abstract pre(): Promise<AsyncResult>;

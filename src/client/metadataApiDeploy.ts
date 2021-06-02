@@ -185,7 +185,6 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
       singlePackage: true,
     },
   };
-  public deployId?: string;
   private options: MetadataApiDeployOptions;
 
   constructor(options: MetadataApiDeployOptions) {
@@ -203,9 +202,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     );
     const connection = await this.getConnection();
     await this.maybeSaveTempDirectory('metadata');
-    const result = await connection.metadata.deploy(zipBuffer, this.options.apiOptions);
-    this.deployId = result.id;
-    return result;
+    return connection.metadata.deploy(zipBuffer, this.options.apiOptions);
   }
 
   protected async checkStatus(id: string): Promise<MetadataApiDeployStatus> {
@@ -220,10 +217,11 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
 
   protected async doCancel(): Promise<boolean> {
     let done = true;
-    if (this.deployId) {
+    const deployId = this.getId();
+    if (deployId) {
       const connection = await this.getConnection();
       // @ts-ignore _invoke is private on the jsforce metadata object, and cancelDeploy is not an exposed method
-      done = connection.metadata._invoke('cancelDeploy', { id: this.deployId }).done;
+      done = (await connection.metadata._invoke('cancelDeploy', { id: deployId })).done;
     }
     return done;
   }

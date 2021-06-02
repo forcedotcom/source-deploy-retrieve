@@ -29,7 +29,9 @@ import {
   REGINA_CHILD_COMPONENT_2,
   REGINA_COMPONENT,
 } from '../mock/registry/type-constants/reginaConstants';
-import { getString } from '@salesforce/ts-types';
+import { AnyJson, getString } from '@salesforce/ts-types';
+import { PollingClient, StatusResult } from '@salesforce/core';
+import { Duration } from '@salesforce/kit';
 
 const env = createSandbox();
 
@@ -37,33 +39,20 @@ describe('MetadataApiDeploy', () => {
   afterEach(() => env.restore());
 
   describe('Lifecycle', () => {
-    it('should convert to metadata format and create zip', async () => {
-      const components = new ComponentSet([matchingContentFile.COMPONENT]);
-      const { operation, convertStub } = await stubMetadataDeploy(env, {
-        components,
+    describe('start', () => {
+      it('should convert to metadata format and create zip', async () => {
+        const components = new ComponentSet([matchingContentFile.COMPONENT]);
+        const { operation, convertStub } = await stubMetadataDeploy(env, {
+          components,
+        });
+
+        await operation.start();
+
+        expect(convertStub.calledWith(components.toArray(), 'metadata', { type: 'zip' })).to.be
+          .true;
       });
 
-      await operation.start();
-
-      expect(convertStub.calledWith(components.toArray(), 'metadata', { type: 'zip' })).to.be.true;
-    });
-
-    it('should call deploy with zip', async () => {
-      const components = new ComponentSet([matchingContentFile.COMPONENT]);
-      const { operation, convertStub, deployStub } = await stubMetadataDeploy(env, {
-        components,
-      });
-
-      await operation.start();
-      const { zipBuffer } = await convertStub.returnValues[0];
-
-      expect(deployStub.calledOnce).to.be.true;
-      expect(deployStub.firstCall.args[0]).to.equal(zipBuffer);
-    });
-
-    it('should save the temp directory if the enviornment variable is set', async () => {
-      try {
-        process.env.SFDX_MDAPI_TEMP_DIR = 'test';
+      it('should call deploy with zip', async () => {
         const components = new ComponentSet([matchingContentFile.COMPONENT]);
         const { operation, convertStub, deployStub } = await stubMetadataDeploy(env, {
           components,
@@ -74,58 +63,143 @@ describe('MetadataApiDeploy', () => {
 
         expect(deployStub.calledOnce).to.be.true;
         expect(deployStub.firstCall.args[0]).to.equal(zipBuffer);
-        expect(getString(convertStub.secondCall.args[2], 'outputDirectory', '')).to.equal('test');
-      } finally {
-        delete process.env.SFDX_MDAPI_TEMP_DIR;
-      }
-    });
-
-    it('should NOT save the temp directory if the enviornment variable is NOT set', async () => {
-      const components = new ComponentSet([matchingContentFile.COMPONENT]);
-      const { operation, convertStub } = await stubMetadataDeploy(env, {
-        components,
       });
 
-      await operation.start();
+      it('should save the temp directory if the enviornment variable is set', async () => {
+        try {
+          process.env.SFDX_MDAPI_TEMP_DIR = 'test';
+          const components = new ComponentSet([matchingContentFile.COMPONENT]);
+          const { operation, convertStub, deployStub } = await stubMetadataDeploy(env, {
+            components,
+          });
 
-      // if the env var is set the callCount will be 2
-      expect(convertStub.callCount).to.equal(1);
-    });
+          await operation.start();
+          const { zipBuffer } = await convertStub.returnValues[0];
 
-    it('should construct a result object with deployed components', async () => {
-      const component = matchingContentFile.COMPONENT;
-      const deployedComponents = new ComponentSet([component], mockRegistry);
-      const { operation, response } = await stubMetadataDeploy(env, {
-        components: deployedComponents,
+          expect(deployStub.calledOnce).to.be.true;
+          expect(deployStub.firstCall.args[0]).to.equal(zipBuffer);
+          expect(getString(convertStub.secondCall.args[2], 'outputDirectory', '')).to.equal('test');
+        } finally {
+          delete process.env.SFDX_MDAPI_TEMP_DIR;
+        }
       });
 
-      const result = await operation.start();
-      const expected = new DeployResult(response, deployedComponents);
+      it('should NOT save the temp directory if the enviornment variable is NOT set', async () => {
+        const components = new ComponentSet([matchingContentFile.COMPONENT]);
+        const { operation, convertStub } = await stubMetadataDeploy(env, {
+          components,
+        });
 
-      expect(result).to.deep.equal(expected);
+        await operation.start();
+
+        // if the env var is set the callCount will be 2
+        expect(convertStub.callCount).to.equal(1);
+      });
+
+      it('should return an AsyncResult', async () => {
+        const component = matchingContentFile.COMPONENT;
+        const deployedComponents = new ComponentSet([component], mockRegistry);
+        const { operation } = await stubMetadataDeploy(env, {
+          components: deployedComponents,
+        });
+
+        const result = await operation.start();
+
+        expect(result).to.deep.equal(MOCK_ASYNC_RESULT);
+      });
+
+      it('should set the deploy ID', async () => {
+        const component = matchingContentFile.COMPONENT;
+        const deployedComponents = new ComponentSet([component], mockRegistry);
+        const { operation, response } = await stubMetadataDeploy(env, {
+          components: deployedComponents,
+        });
+
+        await operation.start();
+
+        expect(operation.getId()).to.deep.equal(response.id);
+      });
     });
 
-    it('should cancel immediately if cancelDeploy call returns done = true', async () => {
-      const { operation, checkStatusStub, invokeStub } = await stubMetadataDeploy(env);
-      invokeStub.withArgs('cancelDeploy', { id: MOCK_ASYNC_RESULT.id }).returns({ done: true });
+    describe('pollStatus', () => {
+      it('should construct a result object with deployed components', async () => {
+        const component = matchingContentFile.COMPONENT;
+        const deployedComponents = new ComponentSet([component], mockRegistry);
+        const { operation, response } = await stubMetadataDeploy(env, {
+          components: deployedComponents,
+        });
 
-      operation.cancel();
-      await operation.start();
+        await operation.start();
+        const result = await operation.pollStatus();
+        const expected = new DeployResult(response, deployedComponents);
 
-      expect(checkStatusStub.notCalled).to.be.true;
-    });
+        expect(result).to.deep.equal(expected);
+      });
 
-    it('should async cancel if cancelDeploy call returns done = false', async () => {
-      const { operation, checkStatusStub, invokeStub } = await stubMetadataDeploy(env);
-      invokeStub.withArgs('cancelDeploy', { id: MOCK_ASYNC_RESULT.id }).returns({ done: false });
-      checkStatusStub
-        .withArgs(MOCK_ASYNC_RESULT.id, true)
-        .resolves({ status: RequestStatus.Canceled });
+      it('should cancel immediately if cancelDeploy call returns done = true', async () => {
+        const { operation, checkStatusStub, invokeStub } = await stubMetadataDeploy(env);
+        invokeStub.withArgs('cancelDeploy', { id: MOCK_ASYNC_RESULT.id }).resolves({ done: true });
 
-      operation.cancel();
-      await operation.start();
+        await operation.start();
+        operation.cancel();
+        await operation.pollStatus();
 
-      expect(checkStatusStub.calledOnce).to.be.true;
+        expect(checkStatusStub.notCalled).to.be.true;
+      });
+
+      it('should async cancel if cancelDeploy call returns done = false', async () => {
+        const { operation, checkStatusStub, invokeStub } = await stubMetadataDeploy(env);
+        invokeStub.withArgs('cancelDeploy', { id: MOCK_ASYNC_RESULT.id }).resolves({ done: false });
+        checkStatusStub
+          .withArgs(MOCK_ASYNC_RESULT.id, true)
+          .resolves({ status: RequestStatus.Canceled, done: true });
+
+        await operation.start();
+        operation.cancel();
+        await operation.pollStatus();
+
+        expect(checkStatusStub.calledOnce).to.be.true;
+      });
+
+      it('should override timeout and frequency by number', async () => {
+        const component = matchingContentFile.COMPONENT;
+        const deployedComponents = new ComponentSet([component], mockRegistry);
+        const { operation, pollingClientSpy } = await stubMetadataDeploy(env, {
+          components: deployedComponents,
+        });
+        const frequency = Duration.milliseconds(500);
+        const timeout = Duration.seconds(30);
+
+        await operation.start();
+        await operation.pollStatus(frequency.milliseconds, timeout.seconds);
+
+        const pollingClientOptions = pollingClientSpy.firstCall.args[0] as PollingClient.Options;
+        expect(pollingClientOptions.frequency).to.deep.equal(frequency);
+        expect(pollingClientOptions.timeout).to.deep.equal(timeout);
+      });
+
+      it('should override polling client options', async () => {
+        const component = matchingContentFile.COMPONENT;
+        const deployedComponents = new ComponentSet([component], mockRegistry);
+        const { operation, pollingClientSpy } = await stubMetadataDeploy(env, {
+          components: deployedComponents,
+        });
+        const frequency = Duration.milliseconds(500);
+        const timeout = Duration.seconds(30);
+        const poll = (): Promise<StatusResult> =>
+          Promise.resolve({
+            completed: true,
+            payload: {} as AnyJson,
+          });
+
+        await operation.start();
+        await operation.pollStatus({ frequency, timeout, poll });
+
+        const pollingClientOptions = pollingClientSpy.firstCall.args[0] as PollingClient.Options;
+        expect(pollingClientOptions.frequency).to.deep.equal(frequency);
+        expect(pollingClientOptions.timeout).to.deep.equal(timeout);
+        expect(pollingClientOptions.poll).to.deep.equal(poll);
+      });
     });
   });
 

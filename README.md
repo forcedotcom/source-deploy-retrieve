@@ -11,7 +11,7 @@ A Javascript toolkit for working with Salesforce metadata. Built to support the 
 
 ## Features
 
-- Resolve Salesforce metadata files into Javascript objects
+- Resolve Salesforce metadata files into JavaScript objects
 - Parse and generate [manifest files](https://trailhead.salesforce.com/en/content/learn/modules/package-xml/package-xml-adventure)
 - Convert source files between [SFDX File Formats](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_source_file_format.htm)
 - Generate metadata packages with the option to automatically create a zip file

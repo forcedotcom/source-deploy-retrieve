@@ -5,51 +5,63 @@
 ![npm (scoped)](https://img.shields.io/npm/v/@salesforce/source-deploy-retrieve)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
-Typescript Library to support the Salesforce extensions for VS Code.
+## Introduction
 
-Note: This library is in beta and has been released early so we can collect feedback. It may contain bugs, undergo major changes, or be discontinued.
+A JavaScript toolkit for working with Salesforce metadata. Built to support the SFDX deploy and retrieve experience in the [Salesforce VS Code Extensions](https://github.com/forcedotcom/salesforcedx-vscode), CLI plugins, and other tools working with metadata.
 
-## Development
+## Features
 
-Clone the project and `cd` into it. Ensure you have [Yarn](https://yarnpkg.com/) installed and run the following to build:
+- Resolve Salesforce metadata files into JavaScript objects
+- Parse and generate [manifest files](https://trailhead.salesforce.com/en/content/learn/modules/package-xml/package-xml-adventure)
+- Convert source files between [SFDX File Formats](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_source_file_format.htm)
+- Generate metadata packages with the option to automatically create a zip file
+- Deploy and retrieve metadata with an org
+- An [index](./src/registry/registry.json) to reference available metadata types.
+- Utilize promises with `async/await` syntax
 
-`yarn build`
+## Usage
 
+Install the package:
 
+```
+npm install @salesforce/source-deploy-retrieve
+```
 
-## Testing
+Examples:
 
-### Running the test suite
+```typescript
+const { ComponentSet } = require('@salesforce/source-deploy-retrieve');
 
-`yarn test` runs the suite and outputs code coverage as a text summary
+// Deploy a local set of Apex classes to an org
+const deployResult = await ComponentSet
+  .fromSource('/dev/MyProject/force-app/main/default/classes')
+  .deploy({ usernameOrConnection: 'user@example.com' })
+  .start();
 
-### Testing with the command line
+// Retrieve metadata defined in a manifest file
+const retrieveResult = await ComponentSet
+  .fromManifest('/dev/my-project/manifest/package.xml')
+  .retrieve({
+    usernameOrConnection: 'user@example.com'
+    output: '/dev/retrieve-result'
+  })
+  .start();
 
-Interact with the package exports on the command line by running:
+// Search for a particular CustomObject
+const myObject = ComponentSet
+  .fromSource([
+    '/dev/my-project/force-app',
+    '/dev/my-project/force-app-2'
+  ])
+  .find(component => {
+    return component.fullName === 'MyObject__c' && component.type.name === 'CustomObject')
+  });
+```
 
-`yarn repl`
+See the [examples](./examples) folder for more code samples and guides.
 
-This will start the NodeJS REPL with a few pre-set variables to conveniently interact
-with exported modules. The REPL runs with the `--inspect` flag, allowing you to attach a debugger to the process. Select the `Attach to Remote` configuration in VS Code and click play to debug against it.
+## Contributing
 
-### Testing with another module
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for details on how to contribute to the library.
 
-To test the library in another local module, you can link it to such module so any changes that are built will be automatically present without reinstalling:
-
-`yarn local:link /path/to/other/project`
-
-to unlink the library:
-
-`yarn local:unlink /path/to/other/project`
-
-### Testing with the NPM artifact
-
-The library can also be installed to another local project as a regular NPM module. This is useful for manually testing the package that will be deployed to NPM. Use this instead of the linking process that's described under Development to QA changes before they are published:
-
-`yarn local:install /path/to/other/package`
-
-### Updating the registry
-
-The library uses a registry to resolve how to process metadata types. This needs to be updated on every mayor platform release to add all the new metadata types. Run the command below against an org in the latest platform version.
-
-`yarn update-registry <api version e.g. 51.0> -u <username>`
+See [developing.md](./contributing/developing.md) for details on building and testing the library locally.

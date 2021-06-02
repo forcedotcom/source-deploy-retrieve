@@ -3,8 +3,6 @@
 When possible, the following are enforced through the code formatter
 (Prettier.js) and tslint rules.
 
----
-
 ## Indentation
 
 We use spaces, not tabs.
@@ -22,14 +20,14 @@ We use spaces, not tabs.
 
 - Create a folder for each major subarea
 - In the folder, create an index.ts which exports the public facing API for that
-  subarea.
+  subarea
 - Tests can refer directly to the .ts files; other consumers should refer to the
-  index.ts file.
+  index.ts file
 
 ## Comments
 
-- Use sparingly since comments always become outdated quickly.
-- If you must, use JSDoc style comments.
+- Use inline sparingly since comments always become outdated quickly
+- Use JSDoc style comments for public facing API
 
 ## Strings
 

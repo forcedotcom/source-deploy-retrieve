@@ -1,6 +1,6 @@
 # Library Examples
 
-This directory provides code samples and guides describing how to use library functionality. We recommend referencing the [Component Resolution]('./component-resolution') example first, since resolving components is fundamental to using the rest of the library.
+This directory provides code samples and guides describing how to use library functionality. We recommend referencing the [Component Resolution](./component-resolution) example first, since resolving components is fundamental to using the rest of the library.
 
 ## Examples
 

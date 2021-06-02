@@ -7,7 +7,7 @@
 
 ## Introduction
 
-A Javascript toolkit for working with Salesforce metadata. Built to support the SFDX deploy and retrieve experience in the [Salesforce VS Code Extensions](https://github.com/forcedotcom/salesforcedx-vscode), CLI plugins, and other tools working with metadata.
+A JavaScript toolkit for working with Salesforce metadata. Built to support the SFDX deploy and retrieve experience in the [Salesforce VS Code Extensions](https://github.com/forcedotcom/salesforcedx-vscode), CLI plugins, and other tools working with metadata.
 
 ## Features
 

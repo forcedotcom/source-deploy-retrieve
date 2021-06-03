@@ -31,19 +31,24 @@ import { mockRegistry } from '../registry';
 
 export const MOCK_ASYNC_RESULT = { id: '1234', state: RequestStatus.Pending, done: false };
 export const MOCK_DEFAULT_OUTPUT = sep + 'test';
+export const MOCK_RECENTLY_VALIDATED_ID_REST = { id: '1234567890' };
+export const MOCK_RECENTLY_VALIDATED_ID_SOAP = '0987654321';
 
 interface DeployStubOptions {
   components?: ComponentSet;
   componentSuccesses?: Partial<DeployMessage> | Partial<DeployMessage>[];
   componentFailures?: Partial<DeployMessage> | Partial<DeployMessage>[];
   apiOptions?: MetadataApiDeployOptions;
+  id?: string;
 }
 
 interface DeployOperationLifecycle {
   deployStub: SinonStub;
   convertStub: SinonStub;
   checkStatusStub: SinonStub;
+  deployRecentlyValidatedIdStub: SinonStub;
   invokeStub: SinonStub;
+  invokeResultStub: SinonStub;
   operation: MetadataApiDeploy;
   response: MetadataApiDeployStatus;
 }
@@ -59,6 +64,14 @@ export async function stubMetadataDeploy(
   deployStub
     .withArgs(zipBuffer, options.apiOptions ?? MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions)
     .resolves(MOCK_ASYNC_RESULT);
+
+  const deployRecentlyValidatedIdStub = sandbox.stub(connection, 'deployRecentValidation');
+  deployRecentlyValidatedIdStub
+    .withArgs({ id: MOCK_ASYNC_RESULT.id, rest: true })
+    .resolves(MOCK_RECENTLY_VALIDATED_ID_REST)
+    .withArgs({ id: MOCK_ASYNC_RESULT.id, rest: false })
+    // @ts-ignore overriding return type to match API
+    .resolves(MOCK_RECENTLY_VALIDATED_ID_SOAP);
 
   const convertStub = sandbox.stub(MetadataConverter.prototype, 'convert');
   convertStub
@@ -94,15 +107,24 @@ export async function stubMetadataDeploy(
 
   // @ts-ignore
   const invokeStub = sandbox.stub(connection.metadata, '_invoke');
+  const invokeResultStub = sandbox.stub();
+  invokeStub.returns({
+    thenCall: (f: (result: any | null) => void) => {
+      return f(invokeResultStub());
+    },
+  });
 
   return {
     deployStub,
     convertStub,
     checkStatusStub,
     invokeStub,
+    invokeResultStub,
+    deployRecentlyValidatedIdStub,
     operation: new MetadataApiDeploy({
       usernameOrConnection: connection,
       components: options.components,
+      id: options.id,
     }),
     response: status as MetadataApiDeployStatus,
   };

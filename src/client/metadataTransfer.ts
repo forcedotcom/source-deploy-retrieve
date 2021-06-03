@@ -16,6 +16,7 @@ export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
   components: ComponentSet;
   apiVersion?: string;
+  id?: string;
 }
 
 export abstract class MetadataTransfer<
@@ -24,16 +25,22 @@ export abstract class MetadataTransfer<
 > {
   protected components: ComponentSet;
   protected logger: Logger;
-  private signalCancel = false;
+  protected canceled = false;
+  private _id?: string;
   private event = new EventEmitter();
   private usernameOrConnection: string | Connection;
   private apiVersion: string;
 
-  constructor({ usernameOrConnection, components, apiVersion }: MetadataTransferOptions) {
+  constructor({ usernameOrConnection, components, apiVersion, id }: MetadataTransferOptions) {
     this.usernameOrConnection = usernameOrConnection;
     this.components = components;
     this.apiVersion = apiVersion;
+    this._id = id;
     this.logger = Logger.childFromRoot(this.constructor.name);
+  }
+
+  get id(): string | undefined {
+    return this._id;
   }
 
   /**
@@ -43,8 +50,10 @@ export abstract class MetadataTransfer<
    */
   public async start(pollInterval = 100): Promise<Result | undefined> {
     try {
+      this.canceled = false;
       const { id } = await this.pre();
-      const apiResult = await this.pollStatus(id, pollInterval);
+      this._id = id;
+      const apiResult = await this.pollStatus(pollInterval);
 
       if (!apiResult || apiResult.status === RequestStatus.Canceled) {
         this.event.emit('cancel', apiResult);
@@ -61,10 +70,6 @@ export abstract class MetadataTransfer<
       }
       this.event.emit('error', e);
     }
-  }
-
-  public cancel(): void {
-    this.signalCancel = true;
   }
 
   public onUpdate(subscriber: (result: Status) => void): void {
@@ -128,32 +133,29 @@ export abstract class MetadataTransfer<
     return this.usernameOrConnection;
   }
 
-  private async pollStatus(id: string, interval: number): Promise<Status> {
+  private async pollStatus(interval: number): Promise<Status> {
     let result: Status;
     let triedOnce = false;
 
     try {
       while (true) {
-        if (this.signalCancel) {
-          const shouldBreak = await this.doCancel();
-          if (shouldBreak) {
-            if (result) {
-              result.status = RequestStatus.Canceled;
-            }
-            return result;
+        if (this.canceled) {
+          if (result) {
+            result.status = RequestStatus.Canceled;
           }
-          this.signalCancel = false;
+          return result;
         }
 
         if (triedOnce) {
           await this.wait(interval);
         }
 
-        result = await this.checkStatus(id);
+        result = await this.checkStatus();
 
         switch (result.status) {
-          case RequestStatus.Succeeded:
           case RequestStatus.Canceled:
+            this.canceled = true;
+          case RequestStatus.Succeeded:
           case RequestStatus.Failed:
             return result;
         }
@@ -173,8 +175,8 @@ export abstract class MetadataTransfer<
     });
   }
 
+  public abstract checkStatus(): Promise<Status>;
+  public abstract cancel(): Promise<void>;
   protected abstract pre(): Promise<{ id: string }>;
-  protected abstract checkStatus(id: string): Promise<Status>;
   protected abstract post(result: Status): Promise<Result>;
-  protected abstract doCancel(): Promise<boolean>;
 }

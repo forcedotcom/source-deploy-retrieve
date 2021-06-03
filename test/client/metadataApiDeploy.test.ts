@@ -17,9 +17,8 @@ import {
   DeployMessage,
   FileResponse,
   MetadataApiDeployStatus,
-  RequestStatus,
 } from '../../src/client/types';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { basename, join } from 'path';
 import {
   MOCK_ASYNC_RESULT,
@@ -35,6 +34,7 @@ import {
   REGINA_COMPONENT,
 } from '../mock/registry/type-constants/reginaConstants';
 import { getString } from '@salesforce/ts-types';
+import { MissingJobIdError } from '../../src/errors';
 
 const env = createSandbox();
 
@@ -109,50 +109,24 @@ describe('MetadataApiDeploy', () => {
 
       expect(result).to.deep.equal(expected);
     });
+  });
 
-    it('should cancel immediately if cancelDeploy call returns done = true', async () => {
-      const { operation, checkStatusStub, invokeStub } = await stubMetadataDeploy(env);
-      invokeStub.withArgs('cancelDeploy', { id: MOCK_ASYNC_RESULT.id }).returns({ done: true });
-
-      operation.cancel();
-      await operation.start();
-
-      expect(checkStatusStub.notCalled).to.be.true;
-    });
-
-    it('should async cancel if cancelDeploy call returns done = false', async () => {
-      const { operation, checkStatusStub, invokeStub } = await stubMetadataDeploy(env);
-      invokeStub.withArgs('cancelDeploy', { id: MOCK_ASYNC_RESULT.id }).returns({ done: false });
-      checkStatusStub
-        .withArgs(MOCK_ASYNC_RESULT.id, true)
-        .resolves({ status: RequestStatus.Canceled });
-
-      operation.cancel();
-      await operation.start();
-
-      expect(checkStatusStub.calledOnce).to.be.true;
-    });
-
-    it('should throw an error when id is undefined and attempting to call checkStatus', async () => {
+  describe('checkStatus', () => {
+    it('should throw an error when a job ID is not set', async () => {
       const { operation } = await stubMetadataDeploy(env);
       try {
         await operation.checkStatus();
+        assert.fail('should have thrown an error');
       } catch (e) {
-        expect(e.message).to.contain('Deploy ID not defined');
+        const expectedError = new MissingJobIdError('deploy');
+        expect(e.name).to.equal(expectedError.name);
+        expect(e.message).to.equal(expectedError.message);
       }
     });
+  });
 
-    it('should throw an error when id is undefined and attempting to call deployRecentlyValidatedId', async () => {
-      const { operation } = await stubMetadataDeploy(env);
-      try {
-        await operation.deployRecentValidation(false);
-        chai.assert.fail('the above should throw an error');
-      } catch (e) {
-        expect(e.message).to.contain('Deploy ID not defined');
-      }
-    });
-
-    it('should return new ID for a deployRecentlyValidatedId SOAP', async () => {
+  describe('deployRecentValidation', () => {
+    it('should return new ID for SOAP version', async () => {
       const { operation } = await stubMetadataDeploy(env, {
         id: '1234',
         components: new ComponentSet(),
@@ -162,7 +136,7 @@ describe('MetadataApiDeploy', () => {
       expect(result).to.equal(MOCK_RECENTLY_VALIDATED_ID_SOAP);
     });
 
-    it('should return new ID for a deployRecentlyValidatedId REST', async () => {
+    it('should return new ID for REST version', async () => {
       const { operation } = await stubMetadataDeploy(env, {
         id: '1234',
         components: new ComponentSet(),
@@ -172,12 +146,44 @@ describe('MetadataApiDeploy', () => {
       expect(result).to.equal(MOCK_RECENTLY_VALIDATED_ID_REST.id);
     });
 
-    it('should throw an error when id is undefined and attempting to call doCancel', async () => {
+    it('should throw an error when a job ID is not set', async () => {
       const { operation } = await stubMetadataDeploy(env);
       try {
-        await operation.doCancel();
+        await operation.deployRecentValidation(false);
+        assert.fail('should have thrown an error');
       } catch (e) {
-        expect(e.message).to.contain('Deploy ID not defined');
+        const expectedError = new MissingJobIdError('deploy');
+        expect(e.name).to.equal(expectedError.name);
+        expect(e.message).to.equal(expectedError.message);
+      }
+    });
+  });
+
+  describe('cancel', () => {
+    it('should send cancelDeploy request to org if cancel is called', async () => {
+      const { operation, invokeStub } = await stubMetadataDeploy(env, {
+        id: MOCK_ASYNC_RESULT.id,
+        components: new ComponentSet(),
+      });
+
+      await operation.cancel();
+
+      expect(invokeStub.calledOnce).to.be.true;
+      expect(invokeStub.firstCall.args).to.deep.equal([
+        'cancelDeploy',
+        { id: MOCK_ASYNC_RESULT.id },
+      ]);
+    });
+
+    it('should throw an error when a job ID is not set', async () => {
+      const { operation } = await stubMetadataDeploy(env);
+      try {
+        await operation.cancel();
+        assert.fail('should have thrown an error');
+      } catch (e) {
+        const expectedError = new MissingJobIdError('deploy');
+        expect(e.name).to.equal(expectedError.name);
+        expect(e.message).to.equal(expectedError.message);
       }
     });
   });

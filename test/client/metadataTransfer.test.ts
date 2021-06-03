@@ -30,10 +30,14 @@ class TestTransfer extends MetadataTransfer<MetadataRequestStatus, MetadataTrans
       .stub()
       .returns({ done: true, status: RequestStatus.Succeeded, id: '1', success: true }),
     post: env.stub().returns({ id: '1' }),
-    doCancel: env.stub().returns(true),
+    cancel: env.stub().returns(true),
   };
   public async checkStatus(): Promise<MetadataRequestStatus> {
     return this.lifecycle.checkStatus();
+  }
+
+  public async cancel(): Promise<void> {
+    this.canceled = this.lifecycle.cancel();
   }
 
   protected async pre(): Promise<{ id: string }> {
@@ -42,9 +46,6 @@ class TestTransfer extends MetadataTransfer<MetadataRequestStatus, MetadataTrans
 
   protected async post(): Promise<MetadataTransferResult> {
     return this.lifecycle.post();
-  }
-  protected doCancel(): Promise<boolean> {
-    return this.lifecycle.doCancel();
   }
 }
 
@@ -229,35 +230,34 @@ describe('MetadataTransfer', () => {
   });
 
   describe('Cancellation', () => {
-    it('should exit immediately if cancel operation finishes synchonously', async () => {
-      const { checkStatus, doCancel } = operation.lifecycle;
-      checkStatus.returns({ status: RequestStatus.InProgress });
+    it('should exit if cancel request finishes', async () => {
+      const { checkStatus, cancel } = operation.lifecycle;
+      checkStatus.resolves({ status: RequestStatus.InProgress });
 
       const operationPromise = operation.start();
-      queueMicrotask(() => operation.cancel());
+      queueMicrotask(async () => await operation.cancel());
       await operationPromise;
 
-      expect(doCancel.calledOnce).to.be.true;
+      expect(cancel.calledOnce).to.be.true;
       expect(checkStatus.calledOnce).to.be.true;
     });
 
-    it('should exit immediately and return undefined result if cancelled in same task', async () => {
-      const { checkStatus, doCancel } = operation.lifecycle;
+    it('should exit even before status has been checked before cancel request', async () => {
+      const { checkStatus } = operation.lifecycle;
 
       const operationPromise = operation.start();
-      operation.cancel();
+      await operation.cancel();
       const result = await operationPromise;
 
-      expect(doCancel.calledOnce).to.be.true;
-      expect(checkStatus.calledOnce).to.be.false;
+      expect(checkStatus.notCalled).to.be.true;
       expect(result).to.be.undefined;
     });
 
     it('should continue polling until cancel operation finishes asynchonously', async () => {
       const cancelListenerStub = env.stub();
-      const { checkStatus, doCancel } = operation.lifecycle;
+      const { checkStatus, cancel } = operation.lifecycle;
       checkStatus.returns({ status: RequestStatus.InProgress });
-      doCancel.callsFake(() => {
+      cancel.callsFake(() => {
         // when cancel is called, set status to canceling
         checkStatus.returns({ status: RequestStatus.Canceling });
         return false;

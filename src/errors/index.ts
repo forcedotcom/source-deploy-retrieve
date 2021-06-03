@@ -84,3 +84,9 @@ export class MetadataApiRetrieveError extends LibraryError {
     super(messageKey, args);
   }
 }
+
+export class MissingJobIdError extends LibraryError {
+  constructor(operation: string) {
+    super('error_no_job_id', [operation]);
+  }
+}

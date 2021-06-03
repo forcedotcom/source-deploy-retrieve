@@ -22,7 +22,7 @@ import { normalizeToArray } from '../utils';
 import { ComponentSet } from '../collections';
 import { registry } from '../registry';
 import { isString } from '@salesforce/ts-types';
-import { DeployError } from '../errors';
+import { MissingJobIdError } from '../errors';
 
 export class DeployResult implements MetadataTransferResult {
   public readonly response: MetadataApiDeployStatus;
@@ -213,7 +213,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
    */
   public async deployRecentValidation(rest = false): Promise<string> {
     if (!this.id) {
-      throw new DeployError('Deploy ID not defined');
+      throw new MissingJobIdError('deploy');
     }
     const conn = await this.getConnection();
     const response = ((await conn.deployRecentValidation({
@@ -230,7 +230,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
    */
   public async checkStatus(): Promise<MetadataApiDeployStatus> {
     if (!this.id) {
-      throw new DeployError('Deploy ID not defined');
+      throw new MissingJobIdError('deploy');
     }
     const connection = await this.getConnection();
     // Recasting to use the project's version of the type
@@ -240,14 +240,33 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     ) as unknown) as MetadataApiDeployStatus;
   }
 
-  public async doCancel(): Promise<boolean> {
-    let done = true;
-    if (this.id) {
-      const connection = await this.getConnection();
-      // @ts-ignore _invoke is private on the jsforce metadata object, and cancelDeploy is not an exposed method
-      done = connection.metadata._invoke('cancelDeploy', { id: this.id }).done;
+  /**
+   * Cancel the deploy operation.
+   *
+   * Deploys are asynchronously canceled. Once the cancel request is made to the org,
+   * check the status of the cancellation with `checkStatus`.
+   */
+  public async cancel(): Promise<void> {
+    if (!this.id) {
+      throw new MissingJobIdError('deploy');
     }
-    return done;
+
+    const connection = await this.getConnection();
+
+    return new Promise((resolve, reject) => {
+      connection.metadata
+        // @ts-ignore _invoke is private on the jsforce metadata object, and cancelDeploy is not an exposed method
+        ._invoke('cancelDeploy', { id: this.id })
+        .thenCall((result: any) => {
+          // this does not return CancelDeployResult as documented in the API.
+          // a null result seems to indicate the request was successful
+          if (result) {
+            reject(result);
+          } else {
+            resolve(result);
+          }
+        });
+    });
   }
 
   protected async pre(): Promise<{ id: string }> {
@@ -260,7 +279,6 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     const connection = await this.getConnection();
     await this.maybeSaveTempDirectory('metadata');
     const result = await connection.metadata.deploy(zipBuffer, this.options.apiOptions);
-    this._id = result.id;
     return result;
   }
 

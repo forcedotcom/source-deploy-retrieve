@@ -17,7 +17,7 @@ import {
   RetrieveRequest,
 } from './types';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
-import { MetadataApiRetrieveError } from '../errors';
+import { MetadataApiRetrieveError, MissingJobIdError } from '../errors';
 import { normalizeToArray } from '../utils';
 import { RegistryAccess } from '../registry';
 
@@ -107,13 +107,23 @@ export class MetadataApiRetrieve extends MetadataTransfer<
    */
   public async checkStatus(): Promise<MetadataApiRetrieveStatus> {
     if (!this.id) {
-      throw new MetadataApiRetrieveError('Retrieve ID not defined');
+      throw new MissingJobIdError('retrieve');
     }
     const connection = await this.getConnection();
     // Recasting to use the project's RetrieveResult type
     const status = await connection.metadata.checkRetrieveStatus(this.id);
     status.fileProperties = normalizeToArray(status.fileProperties);
     return status as MetadataApiRetrieveStatus;
+  }
+
+  /**
+   * Cancel the retrieve operation.
+   *
+   * Canceling a retrieve occurs immediately and requires no additional status
+   * checks to the org, unlike {@link MetadataApiDeploy.cancel}.
+   */
+  public async cancel(): Promise<void> {
+    this.canceled = true;
   }
 
   protected async pre(): Promise<{ id: string }> {
@@ -150,11 +160,6 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     await this.maybeSaveTempDirectory('source', components);
 
     return new RetrieveResult(result, components);
-  }
-
-  protected async doCancel(): Promise<boolean> {
-    // retrieve doesn't require signaling to the server to stop
-    return true;
   }
 
   private async extract(zip: Buffer): Promise<ComponentSet> {

@@ -15,13 +15,9 @@ import {
   FileResponse,
   MetadataApiRetrieveStatus,
 } from '../../src';
-import { MetadataApiRetrieveError } from '../../src/errors';
+import { MetadataApiRetrieveError, MissingJobIdError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import {
-  MOCK_DEFAULT_OUTPUT,
-  stubMetadataDeploy,
-  stubMetadataRetrieve,
-} from '../mock/client/transferOperations';
+import { MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
 import { mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
 import { REGINA_COMPONENT } from '../mock/registry/type-constants/reginaConstants';
@@ -191,7 +187,9 @@ describe('MetadataApiRetrieve', async () => {
 
       expect(result).to.deep.equal(expected);
     });
+  });
 
+  describe('checkStatus', () => {
     it('should throw an error when attempting to call checkStatus without an id set', async () => {
       const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
       const { operation } = await stubMetadataRetrieve(env, {
@@ -202,12 +200,14 @@ describe('MetadataApiRetrieve', async () => {
         await operation.checkStatus();
         chai.assert.fail('the above should throw an error');
       } catch (e) {
-        expect(e.message).to.contain('Retrieve ID not defined');
+        const expectedError = new MissingJobIdError('retrieve');
+        expect(e.name).to.equal(expectedError.name);
+        expect(e.message).to.equal(expectedError.message);
       }
     });
   });
 
-  describe('Cancellation', () => {
+  describe('cancel', () => {
     it('should immediately stop polling', async () => {
       const component = COMPONENT;
       const components = new ComponentSet([component], mockRegistry);
@@ -215,8 +215,9 @@ describe('MetadataApiRetrieve', async () => {
         toRetrieve: components,
       });
 
-      operation.cancel();
-      await operation.start();
+      const operationPromise = operation.start();
+      await operation.cancel();
+      await operationPromise;
 
       expect(checkStatusStub.notCalled).to.be.true;
     });

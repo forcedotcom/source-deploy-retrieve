@@ -48,6 +48,7 @@ interface DeployOperationLifecycle {
   checkStatusStub: SinonStub;
   deployRecentlyValidatedIdStub: SinonStub;
   invokeStub: SinonStub;
+  invokeResultStub: SinonStub;
   operation: MetadataApiDeploy;
   response: MetadataApiDeployStatus;
 }
@@ -106,12 +107,19 @@ export async function stubMetadataDeploy(
 
   // @ts-ignore
   const invokeStub = sandbox.stub(connection.metadata, '_invoke');
+  const invokeResultStub = sandbox.stub();
+  invokeStub.returns({
+    thenCall: (f: (result: any | null) => void) => {
+      return f(invokeResultStub());
+    },
+  });
 
   return {
     deployStub,
     convertStub,
     checkStatusStub,
     invokeStub,
+    invokeResultStub,
     deployRecentlyValidatedIdStub,
     operation: new MetadataApiDeploy({
       usernameOrConnection: connection,

@@ -108,3 +108,5 @@ package-lock.json
 
 # history for repl script
 .repl_history
+
+docs/

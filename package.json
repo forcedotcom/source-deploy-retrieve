@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "gusBuild": "49.1.0",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/src/index.js",
@@ -28,8 +28,8 @@
     "node": ">=12.11.0"
   },
   "dependencies": {
-    "@salesforce/core": "2.20.8",
-    "@salesforce/kit": "^1.4.3",
+    "@salesforce/core": "2.23.2",
+    "@salesforce/kit": "^1.5.0",
     "@salesforce/ts-types": "^1.4.2",
     "archiver": "4.0.1",
     "fast-xml-parser": "^3.17.4",
@@ -81,7 +81,7 @@
     "build": "shx rm -rf ./lib && tsc -b",
     "commit-init": "commitizen init cz-conventional-changelog --save-dev --save-exact --force",
     "commit": "git-cz",
-    "docs": "shx rm -rf ./docs/api && yarn typedoc",
+    "docs": "shx rm -rf ./docs && yarn typedoc",
     "format": "prettier --config .prettierrc --loglevel warn --write './{src,test,scripts}/**/*.{js,json,ts}'",
     "lint": "eslint -c .eslintrc.json --ext .ts ./src ./test",
     "local:install": "./scripts/localInstall.js install",

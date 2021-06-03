@@ -22,4 +22,5 @@ export {
   SourceRetrieveResult,
   ToolingDeployStatus,
   ComponentStatus,
+  FileProperties,
 } from './types';

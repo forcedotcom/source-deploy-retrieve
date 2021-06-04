@@ -8,13 +8,7 @@ import { AuthInfo, Connection, fs, Logger, PollingClient, StatusResult } from '@
 import { EventEmitter } from 'events';
 import { ComponentSet } from '../collections';
 import { MetadataTransferError } from '../errors';
-import {
-  AsyncResult,
-  MetadataRequestStatus,
-  RequestStatus,
-  MetadataTransferResult,
-  RecordId,
-} from './types';
+import { AsyncResult, MetadataRequestStatus, RequestStatus, MetadataTransferResult } from './types';
 import { MetadataConverter, SfdxFileFormat } from '../convert';
 import { join } from 'path';
 import { Duration } from '@salesforce/kit';
@@ -24,6 +18,7 @@ export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
   components: ComponentSet;
   apiVersion?: string;
+  id?: string;
 }
 
 export abstract class MetadataTransfer<
@@ -32,21 +27,22 @@ export abstract class MetadataTransfer<
 > {
   protected components: ComponentSet;
   protected logger: Logger;
-  private signalCancel = false;
+  protected canceled = false;
+  private _id?: string;
   private event = new EventEmitter();
   private usernameOrConnection: string | Connection;
   private apiVersion: string;
-  private id: RecordId;
 
-  constructor({ usernameOrConnection, components, apiVersion }: MetadataTransferOptions) {
+  constructor({ usernameOrConnection, components, apiVersion, id }: MetadataTransferOptions) {
     this.usernameOrConnection = usernameOrConnection;
     this.components = components;
     this.apiVersion = apiVersion;
+    this._id = id;
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
-  public getId(): RecordId {
-    return this.id;
+  get id(): string | undefined {
+    return this._id;
   }
 
   /**
@@ -55,8 +51,9 @@ export abstract class MetadataTransfer<
    * @returns AsyncResult from the deploy or retrieve response.
    */
   public async start(): Promise<AsyncResult> {
+    this.canceled = false;
     const asyncResult = await this.pre();
-    this.id = asyncResult.id;
+    this._id = asyncResult.id;
     this.logger.debug(`Started metadata transfer. ID = ${this.id}`);
     return asyncResult;
   }
@@ -119,10 +116,6 @@ export abstract class MetadataTransfer<
       }
       this.event.emit('error', error);
     }
-  }
-
-  public cancel(): void {
-    this.signalCancel = true;
   }
 
   public onUpdate(subscriber: (result: Status) => void): void {
@@ -190,18 +183,17 @@ export abstract class MetadataTransfer<
     let completed = false;
     let mdapiStatus: Status;
 
-    if (this.signalCancel) {
-      const shouldBreak = await this.doCancel();
-      if (shouldBreak) {
-        if (!mdapiStatus) {
-          mdapiStatus = { id: this.id, success: false, done: true } as Status;
-        }
-        mdapiStatus.status = RequestStatus.Canceled;
-        completed = true;
+    if (this.canceled) {
+      // This only happens for a canceled retrieve. Canceled deploys are
+      // handled via checkStatus response.
+      if (!mdapiStatus) {
+        mdapiStatus = { id: this.id, success: false, done: true } as Status;
       }
-      this.signalCancel = false;
+      mdapiStatus.status = RequestStatus.Canceled;
+      completed = true;
+      this.canceled = false;
     } else {
-      mdapiStatus = await this.checkStatus(this.id);
+      mdapiStatus = await this.checkStatus();
       completed = mdapiStatus?.done;
       if (!completed) {
         this.event.emit('update', mdapiStatus);
@@ -212,8 +204,8 @@ export abstract class MetadataTransfer<
     return { completed, payload: (mdapiStatus as unknown) as AnyJson };
   }
 
+  public abstract checkStatus(): Promise<Status>;
+  public abstract cancel(): Promise<void>;
   protected abstract pre(): Promise<AsyncResult>;
-  protected abstract checkStatus(id: string): Promise<Status>;
   protected abstract post(result: Status): Promise<Result>;
-  protected abstract doCancel(): Promise<boolean>;
 }

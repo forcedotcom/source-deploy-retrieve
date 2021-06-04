@@ -8,19 +8,21 @@ import { MetadataConverter } from '../convert';
 import { DiagnosticUtil } from './diagnosticUtil';
 import {
   AsyncResult,
-  MetadataApiDeployStatus,
-  DeployMessage,
-  MetadataApiDeployOptions as ApiOptions,
   ComponentStatus,
+  DeployMessage,
   FileResponse,
+  MetadataApiDeployOptions as ApiOptions,
+  MetadataApiDeployStatus,
   MetadataTransferResult,
 } from './types';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
-import { join, dirname, basename, extname } from 'path';
+import { basename, dirname, extname, join } from 'path';
 import { ComponentLike, SourceComponent } from '../resolve';
-import { normalizeToArray } from '../utils/collections';
+import { normalizeToArray } from '../utils';
 import { ComponentSet } from '../collections';
 import { registry } from '../registry';
+import { isString } from '@salesforce/ts-types';
+import { MissingJobIdError } from '../errors';
 
 export class DeployResult implements MetadataTransferResult {
   public readonly response: MetadataApiDeployStatus;
@@ -193,6 +195,80 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     this.options = Object.assign({}, options);
   }
 
+  /**
+   * Deploy recently validated components without running Apex tests. Requires the operation to have been
+   * created with the `{ checkOnly: true }` API option.
+   *
+   * Ensure that the following requirements are met before deploying a recent validation:
+   * - The components have been validated successfully for the target environment within the last 10 days.
+   * - As part of the validation, Apex tests in the target org have passed.
+   * - Code coverage requirements are met.
+   *   - If all tests in the org or all local tests are run, overall code coverage is at least 75%, and Apex triggers have some coverage.
+   *   - If specific tests are run with the RunSpecifiedTests test level, each class and trigger that was deployed is covered by at least 75% individually.
+   *
+   * See [deployRecentValidation()](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_deployRecentValidation.htm)
+   *
+   * @param rest - Set to `true` to use the REST API, otherwise defaults to using SOAP
+   * @returns The ID of the quick deployment
+   */
+  public async deployRecentValidation(rest = false): Promise<string> {
+    if (!this.id) {
+      throw new MissingJobIdError('deploy');
+    }
+    const conn = await this.getConnection();
+    const response = ((await conn.deployRecentValidation({
+      id: this.id,
+      rest,
+    })) as unknown) as AsyncResult | string;
+    return isString(response) ? response : (response as AsyncResult).id;
+  }
+
+  /**
+   * Check the status of the deploy operation.
+   *
+   * @returns Status of the retrieve
+   */
+  public async checkStatus(): Promise<MetadataApiDeployStatus> {
+    if (!this.id) {
+      throw new MissingJobIdError('deploy');
+    }
+    const connection = await this.getConnection();
+    // Recasting to use the project's version of the type
+    return (connection.metadata.checkDeployStatus(
+      this.id,
+      true
+    ) as unknown) as MetadataApiDeployStatus;
+  }
+
+  /**
+   * Cancel the deploy operation.
+   *
+   * Deploys are asynchronously canceled. Once the cancel request is made to the org,
+   * check the status of the cancellation with `checkStatus`.
+   */
+  public async cancel(): Promise<void> {
+    if (!this.id) {
+      throw new MissingJobIdError('deploy');
+    }
+
+    const connection = await this.getConnection();
+
+    return new Promise((resolve, reject) => {
+      connection.metadata
+        // @ts-ignore _invoke is private on the jsforce metadata object, and cancelDeploy is not an exposed method
+        ._invoke('cancelDeploy', { id: this.id })
+        .thenCall((result: any) => {
+          // this does not return CancelDeployResult as documented in the API.
+          // a null result seems to indicate the request was successful
+          if (result) {
+            reject(result);
+          } else {
+            resolve(result);
+          }
+        });
+    });
+  }
+
   protected async pre(): Promise<AsyncResult> {
     const converter = new MetadataConverter();
     const { zipBuffer } = await converter.convert(
@@ -205,24 +281,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     return connection.metadata.deploy(zipBuffer, this.options.apiOptions);
   }
 
-  protected async checkStatus(id: string): Promise<MetadataApiDeployStatus> {
-    const connection = await this.getConnection();
-    // Recasting to use the project's version of the type
-    return (connection.metadata.checkDeployStatus(id, true) as unknown) as MetadataApiDeployStatus;
-  }
-
   protected async post(result: MetadataApiDeployStatus): Promise<DeployResult> {
     return new DeployResult(result, this.components);
-  }
-
-  protected async doCancel(): Promise<boolean> {
-    let done = true;
-    const deployId = this.getId();
-    if (deployId) {
-      const connection = await this.getConnection();
-      // @ts-ignore _invoke is private on the jsforce metadata object, and cancelDeploy is not an exposed method
-      done = (await connection.metadata._invoke('cancelDeploy', { id: deployId })).done;
-    }
-    return done;
   }
 }

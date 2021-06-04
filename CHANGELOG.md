@@ -1,3 +1,13 @@
+# 2.1.5 - June 3, 2021
+
+## Fixed
+
+- Update documentation for open-source ([PR #345](https://github.com/forcedotcom/source-deploy-retrieve/pull/345))
+
+- Add examples ([PR #342](https://github.com/forcedotcom/source-deploy-retrieve/pull/342))
+
+- Export FileProperties from the top level ([PR #335](https://github.com/forcedotcom/source-deploy-retrieve/pull/335))
+
 # 2.1.4 - May 24, 2021
 
 ## Added

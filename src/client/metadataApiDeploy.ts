@@ -226,7 +226,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
   /**
    * Check the status of the deploy operation.
    *
-   * @returns Status of the retrieve
+   * @returns Status of the deploy
    */
   public async checkStatus(): Promise<MetadataApiDeployStatus> {
     if (!this.id) {

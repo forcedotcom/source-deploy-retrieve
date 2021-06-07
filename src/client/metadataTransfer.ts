@@ -16,7 +16,7 @@ import { AnyJson, isNumber } from '@salesforce/ts-types';
 
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
-  components: ComponentSet;
+  components?: ComponentSet;
   apiVersion?: string;
   id?: string;
 }
@@ -144,7 +144,7 @@ export abstract class MetadataTransfer<
         `Converting metadata to: ${mdapiTempDir} because the SFDX_MDAPI_TEMP_DIR environment variable is set`
       );
       try {
-        const source = cs || this.components;
+        const source = cs || this.components || new ComponentSet();
         const converter = new MetadataConverter();
         if (target === 'source') {
           await converter.convert(source.getSourceComponents().toArray(), target, {

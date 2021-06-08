@@ -279,7 +279,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     );
     const connection = await this.getConnection();
     await this.maybeSaveTempDirectory('metadata');
-    return await connection.deploy(zipBuffer, this.options.apiOptions);
+    return connection.deploy(zipBuffer, this.options.apiOptions);
   }
 
   protected async post(result: MetadataApiDeployStatus): Promise<DeployResult> {

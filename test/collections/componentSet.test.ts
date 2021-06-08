@@ -413,6 +413,7 @@ describe('ComponentSet', () => {
       });
       const operationArgs = { components: set, usernameOrConnection: connection };
       const expectedOperation = new MetadataApiDeploy(operationArgs);
+      const startStub = env.stub(expectedOperation, 'start').resolves();
       const constructorStub = env
         .stub()
         .withArgs(operationArgs)
@@ -422,6 +423,7 @@ describe('ComponentSet', () => {
       const result = await set.deploy({ usernameOrConnection: connection });
 
       expect(result).to.deep.equal(expectedOperation);
+      expect(startStub.calledOnce).to.be.true;
     });
 
     it('should properly construct a deploy operation with overridden apiVersion', async () => {
@@ -435,6 +437,7 @@ describe('ComponentSet', () => {
       set.apiVersion = apiVersion;
       const operationArgs = { components: set, usernameOrConnection: connection, apiVersion };
       const expectedOperation = new MetadataApiDeploy(operationArgs);
+      const startStub = env.stub(expectedOperation, 'start').resolves();
       const constructorStub = env
         .stub()
         .withArgs(operationArgs)
@@ -444,6 +447,7 @@ describe('ComponentSet', () => {
       const result = await set.deploy({ usernameOrConnection: connection });
 
       expect(result).to.deep.equal(expectedOperation);
+      expect(startStub.calledOnce).to.be.true;
     });
 
     it('should throw error if there are no source backed components when deploying', async () => {
@@ -476,6 +480,7 @@ describe('ComponentSet', () => {
         usernameOrConnection: connection,
       };
       const expectedOperation = new MetadataApiRetrieve(operationArgs);
+      const startStub = env.stub(expectedOperation, 'start').resolves();
       const constructorStub = env
         .stub()
         .withArgs(operationArgs)
@@ -488,6 +493,7 @@ describe('ComponentSet', () => {
       });
 
       expect(result).to.deep.equal(expectedOperation);
+      expect(startStub.calledOnce).to.be.true;
     });
 
     it('should properly construct a retrieve operation with overridden apiVersion', async () => {
@@ -506,6 +512,7 @@ describe('ComponentSet', () => {
         usernameOrConnection: connection,
       };
       const expectedOperation = new MetadataApiRetrieve(operationArgs);
+      const startStub = env.stub(expectedOperation, 'start').resolves();
       const constructorStub = env
         .stub()
         .withArgs(operationArgs)
@@ -518,6 +525,7 @@ describe('ComponentSet', () => {
       });
 
       expect(result).to.deep.equal(expectedOperation);
+      expect(startStub.calledOnce).to.be.true;
     });
 
     it('should properly construct a retrieve operation with packageName', async () => {
@@ -530,6 +538,7 @@ describe('ComponentSet', () => {
         packageNames: ['MyPackage'],
       };
       const expectedOperation = new MetadataApiRetrieve(operationArgs);
+      const startStub = env.stub(expectedOperation, 'start').resolves();
       const constructorStub = env
         .stub()
         .withArgs(operationArgs)
@@ -543,6 +552,7 @@ describe('ComponentSet', () => {
       });
 
       expect(result).to.deep.equal(expectedOperation);
+      expect(startStub.calledOnce).to.be.true;
     });
   });
 

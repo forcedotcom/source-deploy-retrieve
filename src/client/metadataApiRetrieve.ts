@@ -183,8 +183,8 @@ export class MetadataApiRetrieve extends MetadataTransfer<
 
   private async extract(zip: Buffer): Promise<ComponentSet> {
     const components: SourceComponent[] = [];
-    const converter = new MetadataConverter(this.options.registry);
-    const { merge, output, packageNames } = this.options;
+    const { merge, output, packageNames, registry } = this.options;
+    const converter = new MetadataConverter(registry);
     const tree = await ZipTreeContainer.create(zip);
     // initialize with the specified output and unpackaged metadata
     const packageAggregator: Package[] = [{ name: output, zipTreeLocation: 'unpackaged' }];
@@ -209,7 +209,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
           };
       const zipComponents = ComponentSet.fromSource({
         fsPaths: [pkg.zipTreeLocation],
-        registry: this.options.registry,
+        registry,
         tree,
       })
         .getSourceComponents()
@@ -217,6 +217,6 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       const convertResult = await converter.convert(zipComponents, 'source', outputConfig);
       components.push(...convertResult.converted);
     }
-    return new ComponentSet(components, this.options.registry);
+    return new ComponentSet(components, registry);
   }
 }

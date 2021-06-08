@@ -69,28 +69,24 @@ describe('MetadataApiRetrieve', async () => {
         }
       });
 
-      it('should call retrieve with given options', async () => {
+      it('should call retrieve with for unpackaged data', async () => {
         const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
         const options = {
           toRetrieve,
-          packageNames: ['MyPackage'],
           merge: true,
           successes: toRetrieve,
         };
-        env.stub(ZipTreeContainer.prototype, 'isDirectory').returns(false);
         const { operation, retrieveStub } = await stubMetadataRetrieve(env, options);
-
         await operation.start();
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
           apiVersion: toRetrieve.apiVersion,
-          packageNames: options.packageNames,
           unpackaged: toRetrieve.getObject().Package,
         });
       });
 
-      it('should call retrieve with given options', async () => {
+      it('should call retrieve with with package', async () => {
         const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
         const options = {
           toRetrieve,
@@ -99,7 +95,6 @@ describe('MetadataApiRetrieve', async () => {
           successes: toRetrieve,
         };
         const { operation, retrieveStub } = await stubMetadataRetrieve(env, options);
-
         await operation.start();
 
         expect(retrieveStub.calledOnce).to.be.true;

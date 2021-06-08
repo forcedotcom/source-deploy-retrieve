@@ -5,9 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { PollingClient } from '@salesforce/core';
 import { testSetup } from '@salesforce/core/lib/testSetup';
 import { join, sep } from 'path';
-import { match, SinonSandbox, SinonStub } from 'sinon';
+import { match, SinonSandbox, SinonSpy, SinonStub } from 'sinon';
 import { createMockZip, mockConnection } from '.';
 import {
   ComponentSet,
@@ -43,6 +44,7 @@ interface DeployStubOptions {
 }
 
 interface DeployOperationLifecycle {
+  pollingClientSpy: SinonSpy;
   deployStub: SinonStub;
   convertStub: SinonStub;
   checkStatusStub: SinonStub;
@@ -59,6 +61,8 @@ export async function stubMetadataDeploy(
 ): Promise<DeployOperationLifecycle> {
   const zipBuffer = Buffer.from('1234');
   const connection = await mockConnection(testSetup());
+
+  const pollingClientSpy = sandbox.spy(PollingClient, 'create');
 
   const deployStub = sandbox.stub(connection.metadata, 'deploy');
   deployStub
@@ -101,6 +105,7 @@ export async function stubMetadataDeploy(
     // @ts-ignore
     status.details.componentFailures = options.componentFailures;
   }
+  status.done = true;
   const checkStatusStub = sandbox.stub(connection.metadata, 'checkDeployStatus');
   // @ts-ignore
   checkStatusStub.withArgs(MOCK_ASYNC_RESULT.id, true).resolves(status);
@@ -115,6 +120,7 @@ export async function stubMetadataDeploy(
   });
 
   return {
+    pollingClientSpy,
     deployStub,
     convertStub,
     checkStatusStub,
@@ -165,7 +171,7 @@ export async function stubMetadataRetrieve(
     id: MOCK_ASYNC_RESULT.id,
     status: RequestStatus.Pending,
     success: false,
-    done: false,
+    done: true,
   };
 
   const zipEntries = ['unpackaged/package.xml'];

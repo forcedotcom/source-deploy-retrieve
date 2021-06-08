@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@salesforce/core": "2.23.2",
-    "@salesforce/kit": "1.5.0",
+    "@salesforce/kit": "^1.5.0",
     "@salesforce/ts-types": "^1.4.2",
     "archiver": "4.0.1",
     "fast-xml-parser": "^3.17.4",

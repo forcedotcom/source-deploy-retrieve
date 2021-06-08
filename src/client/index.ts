@@ -13,6 +13,7 @@ export {
 } from './metadataApiRetrieve';
 export { ToolingApi, ToolingDeployOptions, ToolingRetrieveOptions } from './toolingApi';
 export {
+  AsyncResult,
   FileResponse,
   MetadataApiRetrieveStatus,
   RetrieveOptions,

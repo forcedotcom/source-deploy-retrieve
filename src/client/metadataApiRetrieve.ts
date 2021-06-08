@@ -8,6 +8,7 @@ import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
 import { SourceComponent, ZipTreeContainer } from '../resolve';
 import {
+  AsyncResult,
   ComponentStatus,
   FileResponse,
   MetadataApiRetrieveStatus,
@@ -20,6 +21,7 @@ import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import { MetadataApiRetrieveError, MissingJobIdError } from '../errors';
 import { normalizeToArray } from '../utils';
 import { RegistryAccess } from '../registry';
+import { asBoolean, isString } from '@salesforce/ts-types';
 
 export type MetadataApiRetrieveOptions = MetadataTransferOptions &
   RetrieveOptions & { registry?: RegistryAccess };
@@ -114,11 +116,23 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     if (!this.id) {
       throw new MissingJobIdError('retrieve');
     }
+
+    const coerceBoolean = (field: unknown): boolean => {
+      if (isString(field)) {
+        return field.toLowerCase() === 'true';
+      }
+      return asBoolean(field, false);
+    };
     const connection = await this.getConnection();
-    // Recasting to use the project's RetrieveResult type
-    const status = await connection.metadata.checkRetrieveStatus(this.id);
+
+    // Cast RetrieveResult returned by jsForce to MetadataApiRetrieveStatus
+    const status = (await connection.metadata.checkRetrieveStatus(
+      this.id
+    )) as MetadataApiRetrieveStatus;
     status.fileProperties = normalizeToArray(status.fileProperties);
-    return status as MetadataApiRetrieveStatus;
+    status.success = coerceBoolean(status.success);
+    status.done = coerceBoolean(status.done);
+    return status;
   }
 
   /**
@@ -131,7 +145,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     this.canceled = true;
   }
 
-  protected async pre(): Promise<{ id: string }> {
+  protected async pre(): Promise<AsyncResult> {
     const { packageNames } = this.options;
 
     if (this.components.size === 0 && (!packageNames || packageNames.length === 0)) {

@@ -18,7 +18,11 @@ import {
 } from '../../src';
 import { MetadataApiRetrieveError, MissingJobIdError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
+import {
+  MOCK_ASYNC_RESULT,
+  MOCK_DEFAULT_OUTPUT,
+  stubMetadataRetrieve,
+} from '../mock/client/transferOperations';
 import { mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
 import { REGINA_COMPONENT } from '../mock/registry/type-constants/reginaConstants';
@@ -31,82 +35,154 @@ describe('MetadataApiRetrieve', async () => {
   afterEach(() => env.restore());
 
   describe('Lifecycle', () => {
-    it('should throw error if there are no components to retrieve', async () => {
-      const toRetrieve = new ComponentSet([], mockRegistry);
-      const { operation } = await stubMetadataRetrieve(env, {
-        toRetrieve: toRetrieve,
-        merge: true,
+    describe('start', () => {
+      it('should throw error if there are no components to retrieve', async () => {
+        const toRetrieve = new ComponentSet([], mockRegistry);
+        const { operation } = await stubMetadataRetrieve(env, {
+          toRetrieve: toRetrieve,
+          merge: true,
+        });
+
+        try {
+          await operation.start();
+          fail('should have thrown an error');
+        } catch (e) {
+          expect(e.name).to.equal(MetadataApiRetrieveError.name);
+          expect(e.message).to.equal(nls.localize('error_no_components_to_retrieve'));
+        }
       });
 
-      try {
+      it('should throw error if packageNames list is empty', async () => {
+        const toRetrieve = new ComponentSet([], mockRegistry);
+        const { operation } = await stubMetadataRetrieve(env, {
+          toRetrieve: toRetrieve,
+          merge: true,
+          packageNames: [],
+        });
+
+        try {
+          await operation.start();
+          fail('should have thrown an error');
+        } catch (e) {
+          expect(e.name).to.equal(MetadataApiRetrieveError.name);
+          expect(e.message).to.equal(nls.localize('error_no_components_to_retrieve'));
+        }
+      });
+
+      it('should call retrieve with given options', async () => {
+        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const options = {
+          toRetrieve,
+          packageNames: ['MyPackage'],
+          merge: true,
+          successes: toRetrieve,
+        };
+        env.stub(ZipTreeContainer.prototype, 'isDirectory').returns(false);
+        const { operation, retrieveStub } = await stubMetadataRetrieve(env, options);
+
         await operation.start();
-        fail('should have thrown an error');
-      } catch (e) {
-        expect(e.name).to.equal(MetadataApiRetrieveError.name);
-        expect(e.message).to.equal(nls.localize('error_no_components_to_retrieve'));
-      }
-    });
 
-    it('should throw error if packageNames list is empty', async () => {
-      const toRetrieve = new ComponentSet([], mockRegistry);
-      const { operation } = await stubMetadataRetrieve(env, {
-        toRetrieve: toRetrieve,
-        merge: true,
-        packageNames: [],
+        expect(retrieveStub.calledOnce).to.be.true;
+        expect(retrieveStub.firstCall.args[0]).to.deep.equal({
+          apiVersion: toRetrieve.apiVersion,
+          packageNames: options.packageNames,
+          unpackaged: toRetrieve.getObject().Package,
+        });
       });
 
-      try {
+      it('should call retrieve with given options', async () => {
+        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const options = {
+          toRetrieve,
+          packageNames: ['MyPackage'],
+          merge: true,
+          successes: toRetrieve,
+        };
+        const { operation, retrieveStub } = await stubMetadataRetrieve(env, options);
+
         await operation.start();
-        fail('should have thrown an error');
-      } catch (e) {
-        expect(e.name).to.equal(MetadataApiRetrieveError.name);
-        expect(e.message).to.equal(nls.localize('error_no_components_to_retrieve'));
-      }
-    });
 
-    it('should call retrieve with given options', async () => {
-      const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
-      const options = {
-        toRetrieve,
-        packageNames: ['MyPackage'],
-        merge: true,
-        successes: toRetrieve,
-      };
-      env.stub(ZipTreeContainer.prototype, 'isDirectory').returns(false);
-      const { operation, retrieveStub } = await stubMetadataRetrieve(env, options);
+        expect(retrieveStub.calledOnce).to.be.true;
+        expect(retrieveStub.firstCall.args[0]).to.deep.equal({
+          apiVersion: toRetrieve.apiVersion,
+          packageNames: options.packageNames,
+          unpackaged: toRetrieve.getObject().Package,
+        });
+      });
 
-      await operation.start();
+      it('should return an AsyncResult', async () => {
+        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const options = {
+          toRetrieve,
+          packageNames: ['MyPackage'],
+          merge: true,
+          successes: toRetrieve,
+        };
+        const { operation } = await stubMetadataRetrieve(env, options);
 
-      expect(retrieveStub.calledOnce).to.be.true;
-      expect(retrieveStub.firstCall.args[0]).to.deep.equal({
-        apiVersion: toRetrieve.apiVersion,
-        packageNames: options.packageNames,
-        unpackaged: toRetrieve.getObject().Package,
+        const result = await operation.start();
+
+        expect(result).to.deep.equal(MOCK_ASYNC_RESULT);
+      });
+
+      it('should set the retrieve ID', async () => {
+        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const options = {
+          toRetrieve,
+          packageNames: ['MyPackage'],
+          merge: true,
+          successes: toRetrieve,
+        };
+        const { operation, response } = await stubMetadataRetrieve(env, options);
+
+        await operation.start();
+
+        expect(operation.id).to.deep.equal(response.id);
       });
     });
 
-    it('should retrieve zip and extract to directory', async () => {
-      const component = COMPONENT;
-      const toRetrieve = new ComponentSet([component], mockRegistry);
-      const { operation, convertStub } = await stubMetadataRetrieve(env, {
-        toRetrieve,
-        successes: toRetrieve,
+    describe('pollStatus', () => {
+      it('should retrieve zip and extract to directory', async () => {
+        const component = COMPONENT;
+        const toRetrieve = new ComponentSet([component], mockRegistry);
+        const { operation, convertStub } = await stubMetadataRetrieve(env, {
+          toRetrieve,
+          successes: toRetrieve,
+        });
+
+        await operation.start();
+        await operation.pollStatus();
+
+        expect(convertStub.calledOnce).to.be.true;
+        expect(
+          convertStub.calledWith(match.any, 'source', {
+            type: 'directory',
+            outputDirectory: MOCK_DEFAULT_OUTPUT,
+          })
+        ).to.be.true;
       });
 
-      await operation.start();
+      it('should save the temp directory if the environment variable is set', async () => {
+        try {
+          process.env.SFDX_MDAPI_TEMP_DIR = 'test';
+          const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+          const { operation, convertStub } = await stubMetadataRetrieve(env, {
+            toRetrieve,
+            merge: true,
+            successes: toRetrieve,
+          });
+          env.stub(fs, 'writeFileSync');
 
-      expect(convertStub.calledOnce).to.be.true;
-      expect(
-        convertStub.calledWith(match.any, 'source', {
-          type: 'directory',
-          outputDirectory: MOCK_DEFAULT_OUTPUT,
-        })
-      ).to.be.true;
-    });
+          await operation.start();
+          await operation.pollStatus();
 
-    it('should save the temp directory if the environment variable is set', async () => {
-      try {
-        process.env.SFDX_MDAPI_TEMP_DIR = 'test';
+          expect(getString(convertStub.secondCall.args[2], 'outputDirectory', '')).to.equal('test');
+        } finally {
+          delete process.env.SFDX_MDAPI_TEMP_DIR;
+        }
+      });
+
+      it('should NOT save the temp directory if the environment variable is NOT set', async () => {
         const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
         const { operation, convertStub } = await stubMetadataRetrieve(env, {
           toRetrieve,
@@ -116,78 +192,66 @@ describe('MetadataApiRetrieve', async () => {
         env.stub(fs, 'writeFileSync');
 
         await operation.start();
-
-        expect(getString(convertStub.secondCall.args[2], 'outputDirectory', '')).to.equal('test');
-      } finally {
-        delete process.env.SFDX_MDAPI_TEMP_DIR;
-      }
-    });
-
-    it('should NOT save the temp directory if the environment variable is NOT set', async () => {
-      const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
-      const { operation, convertStub } = await stubMetadataRetrieve(env, {
-        toRetrieve,
-        merge: true,
-        successes: toRetrieve,
-      });
-      env.stub(fs, 'writeFileSync');
-
-      await operation.start();
-      // if the env var is set the callCount will be 2
-      expect(convertStub.callCount).to.equal(1);
-    });
-
-    it('should retrieve zip and merge with existing components', async () => {
-      const component = COMPONENT;
-      const toRetrieve = new ComponentSet([component], mockRegistry);
-      const { operation, convertStub } = await stubMetadataRetrieve(env, {
-        toRetrieve,
-        merge: true,
-        successes: toRetrieve,
+        await operation.pollStatus();
+        // if the env var is set the callCount will be 2
+        expect(convertStub.callCount).to.equal(1);
       });
 
-      await operation.start();
+      it('should retrieve zip and merge with existing components', async () => {
+        const component = COMPONENT;
+        const toRetrieve = new ComponentSet([component], mockRegistry);
+        const { operation, convertStub } = await stubMetadataRetrieve(env, {
+          toRetrieve,
+          merge: true,
+          successes: toRetrieve,
+        });
 
-      expect(convertStub.calledOnce).to.be.true;
-      expect(
-        convertStub.calledWith(match.any, 'source', {
-          type: 'merge',
-          mergeWith: toRetrieve.getSourceComponents(),
-          defaultDirectory: MOCK_DEFAULT_OUTPUT,
-        })
-      ).to.be.true;
-    });
+        await operation.start();
+        await operation.pollStatus();
 
-    it('should construct a result object with retrieved components', async () => {
-      const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
-      const { operation, response } = await stubMetadataRetrieve(env, {
-        toRetrieve,
-        merge: true,
-        successes: toRetrieve,
+        expect(convertStub.calledOnce).to.be.true;
+        expect(
+          convertStub.calledWith(match.any, 'source', {
+            type: 'merge',
+            mergeWith: toRetrieve.getSourceComponents(),
+            defaultDirectory: MOCK_DEFAULT_OUTPUT,
+          })
+        ).to.be.true;
       });
 
-      const result = await operation.start();
-      const expected = new RetrieveResult(response, toRetrieve);
+      it('should construct a result object with retrieved components', async () => {
+        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const { operation, response } = await stubMetadataRetrieve(env, {
+          toRetrieve,
+          merge: true,
+          successes: toRetrieve,
+        });
 
-      expect(result).to.deep.equal(expected);
-    });
+        await operation.start();
+        const result = await operation.pollStatus();
+        const expected = new RetrieveResult(response, toRetrieve);
 
-    it('should construct a result object with no components when no components are retrieved', async () => {
-      const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
-      const { operation, response } = await stubMetadataRetrieve(env, {
-        toRetrieve,
-        merge: true,
-        messages: [
-          {
-            problem: 'whoops!',
-          },
-        ],
+        expect(result).to.deep.equal(expected);
       });
 
-      const result = await operation.start();
-      const expected = new RetrieveResult(response, new ComponentSet(undefined, mockRegistry));
+      it('should construct a result object with no components when no components are retrieved', async () => {
+        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const { operation, response } = await stubMetadataRetrieve(env, {
+          toRetrieve,
+          merge: true,
+          messages: [
+            {
+              problem: 'whoops!',
+            },
+          ],
+        });
 
-      expect(result).to.deep.equal(expected);
+        await operation.start();
+        const result = await operation.pollStatus();
+        const expected = new RetrieveResult(response, new ComponentSet(undefined, mockRegistry));
+
+        expect(result).to.deep.equal(expected);
+      });
     });
   });
 
@@ -217,7 +281,8 @@ describe('MetadataApiRetrieve', async () => {
         toRetrieve: components,
       });
 
-      const operationPromise = operation.start();
+      await operation.start();
+      const operationPromise = operation.pollStatus();
       await operation.cancel();
       await operationPromise;
 

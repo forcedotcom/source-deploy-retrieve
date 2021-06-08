@@ -70,6 +70,7 @@ describe('MetadataTransfer', () => {
     const { pre, checkStatus, post } = operation.lifecycle;
 
     await operation.start();
+    await operation.pollStatus();
 
     expect(pre.called).to.be.true;
     expect(checkStatus.calledAfter(pre)).to.be.true;
@@ -147,55 +148,25 @@ describe('MetadataTransfer', () => {
 
     beforeEach(() => (listenerStub = env.stub()));
 
-    it('should exit when request status is "Succeeded"', async () => {
+    it('should exit and fire "finish" event when done = true', async () => {
       const { checkStatus } = operation.lifecycle;
-      checkStatus.resolves({ status: RequestStatus.Succeeded });
+      checkStatus.resolves({ done: true });
 
       operation.onFinish(() => listenerStub());
-      await operation.start();
+      await operation.pollStatus();
 
       expect(checkStatus.callCount).to.equal(1);
       expect(listenerStub.callCount).to.equal(1);
     });
 
-    it('should exit when request status is "Failed"', async () => {
+    it('should exit and fire "cancel" event when done = true and request status is "Canceled"', async () => {
       const { checkStatus } = operation.lifecycle;
-      checkStatus.resolves({ status: RequestStatus.Failed });
-
-      operation.onFinish(() => listenerStub());
-      await operation.start();
-
-      expect(checkStatus.callCount).to.equal(1);
-      expect(listenerStub.callCount).to.equal(1);
-    });
-
-    it('should exit when request status is "Canceled"', async () => {
-      const { checkStatus } = operation.lifecycle;
-      checkStatus.resolves({ status: RequestStatus.Canceled });
+      checkStatus.resolves({ status: RequestStatus.Canceled, done: true });
 
       operation.onCancel(() => listenerStub());
-      await operation.start();
+      await operation.pollStatus();
 
       expect(checkStatus.callCount).to.equal(1);
-      expect(listenerStub.callCount).to.equal(1);
-    });
-
-    it('should wait if status checked at least once', async () => {
-      const { checkStatus } = operation.lifecycle;
-      checkStatus.onFirstCall().returns({ status: RequestStatus.InProgress });
-      checkStatus.onSecondCall().returns({ status: RequestStatus.Succeeded });
-
-      operation.onUpdate(() => listenerStub());
-      const operationPromise = operation.start();
-      queueMicrotask(() => {
-        // schedule clock to break first poll wait after lifecycle starts
-        queueMicrotask(() => {
-          clock.tick(110);
-        });
-      });
-      await operationPromise;
-
-      expect(operation.lifecycle.checkStatus.callCount).to.equal(2);
       expect(listenerStub.callCount).to.equal(1);
     });
 
@@ -207,7 +178,7 @@ describe('MetadataTransfer', () => {
 
       let error: Error;
       operation.onError((e) => (error = e));
-      await operation.start();
+      await operation.pollStatus();
 
       expect(error.name).to.deep.equal(expectedError.name);
       expect(error.message).to.deep.equal(expectedError.message);
@@ -220,7 +191,7 @@ describe('MetadataTransfer', () => {
       checkStatus.throws(originalError);
 
       try {
-        await operation.start();
+        await operation.pollStatus();
         fail('should have thrown an error');
       } catch (e) {
         expect(e.name).to.deep.equal(expectedError.name);
@@ -230,27 +201,16 @@ describe('MetadataTransfer', () => {
   });
 
   describe('Cancellation', () => {
-    it('should exit if cancel request finishes', async () => {
-      const { checkStatus, cancel } = operation.lifecycle;
-      checkStatus.resolves({ status: RequestStatus.InProgress });
-
-      const operationPromise = operation.start();
-      queueMicrotask(async () => await operation.cancel());
-      await operationPromise;
-
-      expect(cancel.calledOnce).to.be.true;
-      expect(checkStatus.calledOnce).to.be.true;
-    });
-
     it('should exit even before status has been checked before cancel request', async () => {
       const { checkStatus } = operation.lifecycle;
 
-      const operationPromise = operation.start();
+      await operation.start();
+      const operationPromise = operation.pollStatus();
       await operation.cancel();
       const result = await operationPromise;
 
       expect(checkStatus.notCalled).to.be.true;
-      expect(result).to.be.undefined;
+      expect(result).to.deep.equal({ id: '1' });
     });
 
     it('should continue polling until cancel operation finishes asynchonously', async () => {
@@ -263,7 +223,7 @@ describe('MetadataTransfer', () => {
         return false;
       });
 
-      const operationPromise = operation.start();
+      const operationPromise = operation.pollStatus();
 
       queueMicrotask(() => {
         // cancel right after lifecycle starts
@@ -289,7 +249,7 @@ describe('MetadataTransfer', () => {
           // should be canceling by second poll
           expect(result.status).to.equal(RequestStatus.Canceling);
           // force third poll to have cancel status
-          checkStatus.returns({ status: RequestStatus.Canceled });
+          checkStatus.returns({ status: RequestStatus.Canceled, done: true });
         }
       });
 

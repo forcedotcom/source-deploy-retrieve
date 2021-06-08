@@ -14,6 +14,7 @@ import {
   ComponentStatus,
   FileResponse,
   MetadataApiRetrieveStatus,
+  ZipTreeContainer,
 } from '../../src';
 import { MetadataApiRetrieveError, MissingJobIdError } from '../../src/errors';
 import { nls } from '../../src/i18n';
@@ -71,6 +72,7 @@ describe('MetadataApiRetrieve', async () => {
         merge: true,
         successes: toRetrieve,
       };
+      env.stub(ZipTreeContainer.prototype, 'isDirectory').returns(false);
       const { operation, retrieveStub } = await stubMetadataRetrieve(env, options);
 
       await operation.start();

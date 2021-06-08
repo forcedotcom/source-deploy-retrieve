@@ -6,7 +6,7 @@
  */
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
-import { ZipTreeContainer } from '../resolve';
+import { SourceComponent, ZipTreeContainer } from '../resolve';
 import {
   ComponentStatus,
   FileResponse,
@@ -23,6 +23,11 @@ import { RegistryAccess } from '../registry';
 
 export type MetadataApiRetrieveOptions = MetadataTransferOptions &
   RetrieveOptions & { registry?: RegistryAccess };
+
+interface Package {
+  name: string;
+  zipTreeLocation: string;
+}
 
 export class RetrieveResult implements MetadataTransferResult {
   public readonly response: MetadataApiRetrieveStatus;
@@ -163,28 +168,41 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   }
 
   private async extract(zip: Buffer): Promise<ComponentSet> {
+    const components: SourceComponent[] = [];
     const converter = new MetadataConverter(this.options.registry);
-    const { merge, output } = this.options;
-    const outputConfig: ConvertOutputConfig = merge
-      ? {
-          type: 'merge',
-          mergeWith: this.components.getSourceComponents(),
-          defaultDirectory: output,
-        }
-      : {
-          type: 'directory',
-          outputDirectory: output,
-        };
-    const zipComponents = ComponentSet.fromSource({
-      fsPaths: ['.'],
-      registry: this.options.registry,
-      tree: await ZipTreeContainer.create(zip),
-    })
-      .getSourceComponents()
-      .toArray();
-
-    const convertResult = await converter.convert(zipComponents, 'source', outputConfig);
-
-    return new ComponentSet(convertResult.converted, this.options.registry);
+    const { merge, output, packageNames } = this.options;
+    const tree = await ZipTreeContainer.create(zip);
+    // initialize with the specified output and unpackaged metadata
+    const packageAggregator: Package[] = [{ name: output, zipTreeLocation: 'unpackaged' }];
+    packageNames?.forEach((pkg) => {
+      // add the retrieved packages - if they exist
+      packageAggregator.push({ name: pkg, zipTreeLocation: pkg });
+    });
+    const validatedPackages = packageAggregator.filter((pkg) =>
+      tree.isDirectory(pkg.zipTreeLocation)
+    );
+    for (const pkg of validatedPackages) {
+      const outputConfig: ConvertOutputConfig = merge
+        ? {
+            type: 'merge',
+            mergeWith: this.components.getSourceComponents(),
+            defaultDirectory: pkg.name,
+          }
+        : {
+            type: 'directory',
+            // change pkg type
+            outputDirectory: pkg.name,
+          };
+      const zipComponents = ComponentSet.fromSource({
+        fsPaths: [pkg.zipTreeLocation],
+        registry: this.options.registry,
+        tree,
+      })
+        .getSourceComponents()
+        .toArray();
+      const convertResult = await converter.convert(zipComponents, 'source', outputConfig);
+      components.push(...convertResult.converted);
+    }
+    return new ComponentSet(components, this.options.registry);
   }
 }

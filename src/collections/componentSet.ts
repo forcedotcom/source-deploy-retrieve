@@ -172,13 +172,14 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   }
 
   /**
-   * Constructs a deploy operation using the components in the set. There must be at least
-   * one source-backed component in the set to create an operation.
+   * Constructs a deploy operation using the components in the set and starts
+   * the deployment. There must be at least one source-backed component in
+   * the set to create an operation.
    *
    * @param options
    * @returns Metadata API deploy operation
    */
-  public deploy(options: DeploySetOptions): MetadataApiDeploy {
+  public async deploy(options: DeploySetOptions): Promise<MetadataApiDeploy> {
     const toDeploy = Array.from(this.getSourceComponents());
 
     if (toDeploy.length === 0) {
@@ -191,23 +192,28 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       apiVersion: this.apiVersion,
     });
 
-    return new MetadataApiDeploy(operationOptions);
+    const mdapiDeploy = new MetadataApiDeploy(operationOptions);
+    await mdapiDeploy.start();
+    return mdapiDeploy;
   }
 
   /**
-   * Constructs a retrieve operation using the components in the set.
+   * Constructs a retrieve operation using the components in the set and
+   * starts the retrieval.
    *
    * @param options
    * @returns Metadata API retrieve operation
    */
-  public retrieve(options: RetrieveSetOptions): MetadataApiRetrieve {
+  public async retrieve(options: RetrieveSetOptions): Promise<MetadataApiRetrieve> {
     const operationOptions = Object.assign({}, options, {
       components: this,
       registry: this.registry,
       apiVersion: this.apiVersion,
     });
 
-    return new MetadataApiRetrieve(operationOptions);
+    const mdapiRetrieve = new MetadataApiRetrieve(operationOptions);
+    await mdapiRetrieve.start();
+    return mdapiRetrieve;
   }
 
   /**

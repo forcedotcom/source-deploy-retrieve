@@ -227,7 +227,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
   /**
    * Check the status of the deploy operation.
    *
-   * @returns Status of the retrieve
+   * @returns Status of the deploy
    */
   public async checkStatus(): Promise<MetadataApiDeployStatus> {
     if (!this.id) {
@@ -270,7 +270,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     });
   }
 
-  protected async pre(): Promise<{ id: string }> {
+  protected async pre(): Promise<AsyncResult> {
     const converter = new MetadataConverter();
     const { zipBuffer } = await converter.convert(
       Array.from(this.components.getSourceComponents()),

@@ -260,6 +260,10 @@ export interface MetadataApiDeployOptions {
   runTests?: string[];
   singlePackage?: boolean;
   testLevel?: 'NoTestRun' | 'RunSpecifiedTests' | 'RunLocalTests' | 'RunAllTestsInOrg';
+  /**
+   * Set to true to use the REST API for deploying.
+   */
+  rest?: boolean;
 }
 
 // ------------------------------------------------

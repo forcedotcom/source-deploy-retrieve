@@ -185,6 +185,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
       ignoreWarnings: false,
       checkOnly: false,
       singlePackage: true,
+      rest: false,
     },
   };
   private options: MetadataApiDeployOptions;
@@ -278,7 +279,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     );
     const connection = await this.getConnection();
     await this.maybeSaveTempDirectory('metadata');
-    return connection.metadata.deploy(zipBuffer, this.options.apiOptions);
+    return connection.deploy(zipBuffer, this.options.apiOptions);
   }
 
   protected async post(result: MetadataApiDeployStatus): Promise<DeployResult> {

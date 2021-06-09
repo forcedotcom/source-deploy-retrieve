@@ -1,3 +1,13 @@
+# 2.1.6 - June 9, 2021
+
+## Added
+
+- Add support for making asynchronous metadata transfers ([PR #334](https://github.com/forcedotcom/source-deploy-retrieve/pull/334))
+
+## Fixed
+
+- Use MetadataApiDeploy instance methods ([PR #343](https://github.com/forcedotcom/source-deploy-retrieve/pull/343))
+
 # 2.1.5 - June 3, 2021
 
 ## Fixed

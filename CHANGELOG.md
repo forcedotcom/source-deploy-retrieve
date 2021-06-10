@@ -1,12 +1,12 @@
-# 2.1.6 - June 9, 2021
+# 2.1.6 - June 10, 2021
 
 ## Added
 
 - Add support for making asynchronous metadata transfers ([PR #334](https://github.com/forcedotcom/source-deploy-retrieve/pull/334))
 
-## Fixed
+- Add deployRecentValidation method to MetadataApiDeploy, and checkStatus method to MetadataTransfer classes ([PR #343](https://github.com/forcedotcom/source-deploy-retrieve/pull/343))
 
-- Use MetadataApiDeploy instance methods ([PR #343](https://github.com/forcedotcom/source-deploy-retrieve/pull/343))
+- Add option for deploying using REST ([PR #352](https://github.com/forcedotcom/source-deploy-retrieve/pull/352))
 
 # 2.1.5 - June 3, 2021
 

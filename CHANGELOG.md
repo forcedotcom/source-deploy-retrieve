@@ -2,7 +2,7 @@
 
 ## Added
 
-- Add support for making asynchronous metadata transfers ([PR #334](https://github.com/forcedotcom/source-deploy-retrieve/pull/334))
+- [BREAKING] Add support for making asynchronous metadata transfers ([PR #334](https://github.com/forcedotcom/source-deploy-retrieve/pull/334))
 
 - Add deployRecentValidation method to MetadataApiDeploy, and checkStatus method to MetadataTransfer classes ([PR #343](https://github.com/forcedotcom/source-deploy-retrieve/pull/343))
 

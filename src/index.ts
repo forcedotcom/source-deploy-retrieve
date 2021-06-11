@@ -16,6 +16,7 @@ export {
   ToolingRetrieveOptions,
   DeployResult,
   FileResponse,
+  MetadataApiDeployStatus,
   MetadataApiRetrieveStatus,
   RetrieveOptions,
   SourceDeployResult,

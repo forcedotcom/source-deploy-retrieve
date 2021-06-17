@@ -10,8 +10,7 @@ const REGISTRY_PATH = path.join(
   '..',
   '..',
   'src',
-  'metadata-registry',
-  'data',
+  'registry',
   'registry.json'
 );
 

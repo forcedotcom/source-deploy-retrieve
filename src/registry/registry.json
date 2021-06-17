@@ -1976,6 +1976,14 @@
       "suffix": "accountRelationshipShareRule",
       "directoryName": "accountRelationshipShareRules",
       "strictDirectoryName": false
+    },
+    "ipaddressrange": {
+      "id": "ipaddressrange",
+      "name": "IPAddressRange",
+      "suffix": "IPAddressRange",
+      "directoryName": "IPAddressRanges",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -2173,7 +2181,8 @@
     "platformEventSubscriberConfig": "platformeventsubscriberconfig",
     "workSkillRouting": "workskillrouting",
     "timeSheetTemplate": "timesheettemplate",
-    "accountRelationshipShareRule": "accountrelationshipsharerule"
+    "accountRelationshipShareRule": "accountrelationshipsharerule",
+    "IPAddressRange": "ipaddressrange"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -2213,5 +2222,5 @@
     "sharingcriteriarule": "sharingrules",
     "botversion": "bot"
   },
-  "apiVersion": "51.0"
+  "apiVersion": "52.0"
 }

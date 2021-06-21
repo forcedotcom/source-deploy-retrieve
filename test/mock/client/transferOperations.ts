@@ -16,8 +16,10 @@ import {
   MetadataConverter,
   RetrieveMessage,
   SourceComponent,
+  MetadataApiDeploy,
+  MetadataApiRetrieve,
 } from '../../../src';
-import { MetadataApiDeploy, MetadataApiRetrieve } from '../../../src/client';
+import { DeployResultLocator, AsyncResult } from 'jsforce';
 import {
   DeployMessage,
   MetadataApiDeployStatus,
@@ -62,12 +64,13 @@ export async function stubMetadataDeploy(
   const zipBuffer = Buffer.from('1234');
   const connection = await mockConnection(testSetup());
 
+  const deployStub = sandbox.stub(connection, 'deploy');
   const pollingClientSpy = sandbox.spy(PollingClient, 'create');
 
-  const deployStub = sandbox.stub(connection.metadata, 'deploy');
   deployStub
     .withArgs(zipBuffer, options.apiOptions ?? MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions)
-    .resolves(MOCK_ASYNC_RESULT);
+    // overriding return type to match API
+    .resolves((MOCK_ASYNC_RESULT as unknown) as DeployResultLocator<AsyncResult>);
 
   const deployRecentlyValidatedIdStub = sandbox.stub(connection, 'deployRecentValidation');
   deployRecentlyValidatedIdStub

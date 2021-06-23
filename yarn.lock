@@ -245,15 +245,18 @@
     mv "~2"
     safe-json-stringify "~1"
 
-"@salesforce/core@2.24.1":
-  version "2.24.1"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-2.24.1.tgz#0b2943ae642b84fd7bf9e60a87caf7454f129e14"
-  integrity sha512-oXb4x6UNkg++BlQd2wd/sdOlYCsQ1kMlruVJkcvQdLXXUHBjIl4ciV9f0NLQ2bjpU8vUtjlSmZR7cDruHDw9NA==
+"@salesforce/core@2.24.2":
+  version "2.24.2"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-2.24.2.tgz#d699af286bcf00051a85c63a9c60aa8146fd8b5f"
+  integrity sha512-J5fPpHOKVsliQe0tH6IsSt71VLAP7vuStimxdixI4k2JBkyrGFvvJ8+O8qFQ1Je0037A0xN0haT+ky2QivAZPg==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
     "@salesforce/kit" "^1.5.0"
     "@salesforce/schemas" "^1.0.1"
     "@salesforce/ts-types" "^1.5.13"
+    "@types/graceful-fs" "^4.1.5"
+    "@types/jsforce" "^1.9.29"
+    "@types/mkdirp" "^1.0.1"
     debug "^3.1.0"
     graceful-fs "^4.2.4"
     jsen "0.6.6"
@@ -370,6 +373,20 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
+"@types/graceful-fs@^4.1.5":
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/@types/graceful-fs/-/graceful-fs-4.1.5.tgz#21ffba0d98da4350db64891f92a9e5db3cdb4e15"
+  integrity sha512-anKkLmZZ+xm4p8JWBf4hElkM4XR+EZeA2M9BAkkTldmcyDY4mbdIJnRghDJH3Ov5ooY7/UAoENtmdMSkaAd7Cw==
+  dependencies:
+    "@types/node" "*"
+
+"@types/jsforce@^1.9.29":
+  version "1.9.30"
+  resolved "https://registry.yarnpkg.com/@types/jsforce/-/jsforce-1.9.30.tgz#725cba4175ddc17cf9902b6e647f2ed4a9614b50"
+  integrity sha512-T0fgAfa99sx13gkClPkJsQRHzTcJ0Rgj7//6XEY9Qq6VRQH0U+cxlM1fqAsQ8rhAfAzyGhQk+j1nR1cWkp06NQ==
+  dependencies:
+    "@types/node" "*"
+
 "@types/json-schema@^7.0.3":
   version "7.0.7"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.7.tgz#98a993516c859eb0d5c4c8f098317a9ea68db9ad"
@@ -389,6 +406,13 @@
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/@types/mkdirp/-/mkdirp-0.5.2.tgz#503aacfe5cc2703d5484326b1b27efa67a339c1f"
   integrity sha512-U5icWpv7YnZYGsN4/cmh3WD2onMY0aJIiTE6+51TwJCttdHvtCYmkBNOobHlXwrJRL0nkH9jH4kD+1FAdMN4Tg==
+  dependencies:
+    "@types/node" "*"
+
+"@types/mkdirp@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@types/mkdirp/-/mkdirp-1.0.1.tgz#0930b948914a78587de35458b86c907b6e98bbf6"
+  integrity sha512-HkGSK7CGAXncr8Qn/0VqNtExEE+PHMWb+qlR1faHMao7ng6P3tAaoWWBMdva0gL5h4zprjIO89GJOLXsMcDm1Q==
   dependencies:
     "@types/node" "*"
 

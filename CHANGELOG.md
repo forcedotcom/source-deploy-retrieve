@@ -1,3 +1,15 @@
+# 3.1.0 - June 30, 2021
+
+## Added
+
+- Update registry to 52.0 with new types ([PR #360](https://github.com/forcedotcom/source-deploy-retrieve/pull/360))
+
+- Add `MetadataApiDeployStatus` to public API ([PR #358](https://github.com/forcedotcom/source-deploy-retrieve/pull/358))
+
+## Fixed
+
+- Fix issue with polling logic not waiting for previous poll to finish ([PR #361](https://github.com/forcedotcom/source-deploy-retrieve/pull/361))
+
 # 3.0.0 - June 10, 2021
 
 ## Added

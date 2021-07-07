@@ -1679,6 +1679,7 @@
       "suffix": "bot",
       "directoryName": "bots",
       "inFolder": false,
+      "strictDirectoryName": true,
       "children": {
         "types": {
           "botversion": {
@@ -1688,9 +1689,17 @@
             "suffix": "botVersion"
           }
         },
+        "directories": {
+          "version": "botversion"
+        },
         "suffixes": {
           "botVersion": "botversion"
         }
+      },
+      "strategies": {
+        "adapter": "decomposed",
+        "transformer": "decomposed",
+        "decomposition": "folderPerType"
       }
     },
     "animationrule": {
@@ -2192,6 +2201,7 @@
     "documents": "document",
     "waveTemplates": "wavetemplatebundle",
     "objects": "customobject",
+    "bot": "bot",
     "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
     "sites": "customsite",

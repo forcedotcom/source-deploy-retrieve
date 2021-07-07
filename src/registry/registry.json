@@ -1047,6 +1047,16 @@
         "adapter": "matchingContentFile"
       }
     },
+    "wavecomponent": {
+      "id": "wavecomponent",
+      "name": "WaveComponent",
+      "suffix": "wcomp",
+      "directoryName": "wave",
+      "inFolder": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
+    },
     "wavexmd": {
       "id": "wavexmd",
       "name": "WaveXmd",
@@ -1976,6 +1986,14 @@
       "suffix": "accountRelationshipShareRule",
       "directoryName": "accountRelationshipShareRules",
       "strictDirectoryName": false
+    },
+    "ipaddressrange": {
+      "id": "ipaddressrange",
+      "name": "IPAddressRange",
+      "suffix": "IPAddressRange",
+      "directoryName": "IPAddressRanges",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -2069,6 +2087,7 @@
     "geodata": "eclairgeodata",
     "wlens": "wavelens",
     "wdash": "wavedashboard",
+    "wcomp": "wavecomponent",
     "xmd": "wavexmd",
     "wdf": "wavedataflow",
     "wdpr": "waverecipe",
@@ -2173,7 +2192,8 @@
     "platformEventSubscriberConfig": "platformeventsubscriberconfig",
     "workSkillRouting": "workskillrouting",
     "timeSheetTemplate": "timesheettemplate",
-    "accountRelationshipShareRule": "accountrelationshipsharerule"
+    "accountRelationshipShareRule": "accountrelationshipsharerule",
+    "IPAddressRange": "ipaddressrange"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -2213,5 +2233,5 @@
     "sharingcriteriarule": "sharingrules",
     "botversion": "bot"
   },
-  "apiVersion": "51.0"
+  "apiVersion": "52.0"
 }

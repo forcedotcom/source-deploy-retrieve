@@ -15,6 +15,7 @@ export { ToolingApi, ToolingDeployOptions, ToolingRetrieveOptions } from './tool
 export {
   AsyncResult,
   FileResponse,
+  MetadataApiDeployStatus,
   MetadataApiRetrieveStatus,
   RetrieveOptions,
   SourceDeployResult,

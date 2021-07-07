@@ -9,4 +9,4 @@
 # the repo. Unless a later match takes precedence,
 # @forcedotcom/pdt will be requested for
 # review when someone opens a pull request.
-*       @forcedotcom/pdt
+*       @forcedotcom/pdt @shetzel

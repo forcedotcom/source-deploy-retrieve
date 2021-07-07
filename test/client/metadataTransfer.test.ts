@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { createSandbox, SinonFakeTimers, SinonStub } from 'sinon';
+import { createSandbox, SinonStub } from 'sinon';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { ComponentSet } from '../../src';
 import { MetadataTransfer } from '../../src/client/metadataTransfer';
@@ -18,6 +18,7 @@ import { expect } from 'chai';
 import { MetadataTransferError } from '../../src/errors';
 import { mockConnection } from '../mock/client';
 import { fail } from 'assert';
+import { sleep } from '@salesforce/kit';
 
 const $$ = testSetup();
 const env = createSandbox();
@@ -50,13 +51,11 @@ class TestTransfer extends MetadataTransfer<MetadataRequestStatus, MetadataTrans
 }
 
 describe('MetadataTransfer', () => {
-  let clock: SinonFakeTimers;
   let connection: Connection;
 
   let operation: TestTransfer;
 
   beforeEach(async () => {
-    clock = env.useFakeTimers();
     connection = await mockConnection($$);
     operation = new TestTransfer({
       components: new ComponentSet(),
@@ -170,6 +169,55 @@ describe('MetadataTransfer', () => {
       expect(listenerStub.callCount).to.equal(1);
     });
 
+    it('should wait for polling function to return before queing another', async () => {
+      const { checkStatus } = operation.lifecycle;
+      const checkStatusRuntime = 50;
+      const callOrder: string[] = [];
+      checkStatus.onFirstCall().callsFake(async () => {
+        callOrder.push('firstCall1');
+        await sleep(checkStatusRuntime);
+        callOrder.push('firstCall2');
+        return { done: false };
+      });
+      checkStatus.onSecondCall().callsFake(async () => {
+        callOrder.push('secondCall1');
+        return { done: true };
+      });
+
+      await operation.pollStatus(20);
+
+      expect(checkStatus.callCount).to.equal(2);
+      expect(callOrder).to.deep.equal(['firstCall1', 'firstCall2', 'secondCall1']);
+    });
+
+    it('should poll until timeout', async () => {
+      // This test ensures that the core PollingClient doesn't stop
+      // after 10 tries (the ts-retry-promise library default) and polls
+      // until the timeout is exceeded.
+      const { checkStatus } = operation.lifecycle;
+      let callCount = 0;
+      checkStatus.callsFake(async () => {
+        callCount += 1;
+        if (callCount > 22) {
+          // This is a safeguard to ensure polling stops if the timeout
+          // doesn't kick in.
+          return { done: true };
+        }
+        return { done: false };
+      });
+
+      try {
+        await operation.pollStatus(50, 1);
+        fail('should have thrown an error');
+      } catch (err) {
+        expect(callCount).to.be.greaterThan(15);
+        expect(err.name, 'Polling function should have timed out').to.equal(
+          'MetadataTransferError'
+        );
+        expect(err.message).to.equal('Metadata API request failed: The client has timed out.');
+      }
+    });
+
     it('should emit wrapped error if something goes wrong', async () => {
       const { checkStatus } = operation.lifecycle;
       const originalError = new Error('whoops');
@@ -201,8 +249,12 @@ describe('MetadataTransfer', () => {
   });
 
   describe('Cancellation', () => {
-    it('should exit even before status has been checked before cancel request', async () => {
+    it('should exit without calling checkStatus if transfer is immediately canceled', async () => {
       const { checkStatus } = operation.lifecycle;
+      const cancelListenerStub = env.stub();
+      const updateListenerStub = env.stub();
+      operation.onCancel(() => cancelListenerStub());
+      operation.onUpdate(() => updateListenerStub());
 
       await operation.start();
       const operationPromise = operation.pollStatus();
@@ -211,51 +263,28 @@ describe('MetadataTransfer', () => {
 
       expect(checkStatus.notCalled).to.be.true;
       expect(result).to.deep.equal({ id: '1' });
+      expect(cancelListenerStub.callCount).to.equal(1);
+      expect(updateListenerStub.callCount).to.equal(0);
     });
 
-    it('should continue polling until cancel operation finishes asynchonously', async () => {
+    it('should exit after checkStatus if transfer is marked for cancelation', async () => {
+      const { checkStatus } = operation.lifecycle;
       const cancelListenerStub = env.stub();
-      const { checkStatus, cancel } = operation.lifecycle;
-      checkStatus.returns({ status: RequestStatus.InProgress });
-      cancel.callsFake(() => {
-        // when cancel is called, set status to canceling
-        checkStatus.returns({ status: RequestStatus.Canceling });
-        return false;
-      });
-
-      const operationPromise = operation.pollStatus();
-
-      queueMicrotask(() => {
-        // cancel right after lifecycle starts
-        operation.cancel();
-        queueMicrotask(() => {
-          // schedule clock to break first wait
-          queueMicrotask(() => {
-            clock.tick(110);
-            queueMicrotask(() => {
-              // schedule clock to break second wait
-              queueMicrotask(() => {
-                clock.tick(110);
-              });
-            });
-          });
-        });
-      });
-
+      const updateListenerStub = env.stub();
       operation.onCancel(() => cancelListenerStub());
-
-      operation.onUpdate((result) => {
-        if (checkStatus.callCount === 2) {
-          // should be canceling by second poll
-          expect(result.status).to.equal(RequestStatus.Canceling);
-          // force third poll to have cancel status
-          checkStatus.returns({ status: RequestStatus.Canceled, done: true });
-        }
+      operation.onUpdate(() => updateListenerStub());
+      checkStatus.onFirstCall().callsFake(async () => {
+        await operation.cancel();
+        return { status: RequestStatus.InProgress, done: false };
       });
 
-      await operationPromise;
+      await operation.start();
+      const result = await operation.pollStatus();
 
+      expect(checkStatus.calledOnce).to.be.true;
+      expect(result).to.deep.equal({ id: '1' });
       expect(cancelListenerStub.callCount).to.equal(1);
+      expect(updateListenerStub.callCount).to.equal(1);
     });
   });
 });

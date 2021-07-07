@@ -16,6 +16,8 @@ import {
   RetrieveOptions,
   MetadataTransferResult,
   RetrieveRequest,
+  PackageOptions,
+  RetrieveExtractOptions,
 } from './types';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import { MetadataApiRetrieveError, MissingJobIdError } from '../errors';
@@ -25,11 +27,6 @@ import { asBoolean, isString } from '@salesforce/ts-types';
 
 export type MetadataApiRetrieveOptions = MetadataTransferOptions &
   RetrieveOptions & { registry?: RegistryAccess };
-
-interface Package {
-  name: string;
-  zipTreeLocation: string;
-}
 
 export class RetrieveResult implements MetadataTransferResult {
   public readonly response: MetadataApiRetrieveStatus;
@@ -146,9 +143,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   }
 
   protected async pre(): Promise<AsyncResult> {
-    const { packageNames } = this.options;
+    const { packages } = this.options;
 
-    if (this.components.size === 0 && (!packageNames || packageNames.length === 0)) {
+    if (this.components.size === 0 && !packages?.length) {
       throw new MetadataApiRetrieveError('error_no_components_to_retrieve');
     }
 
@@ -160,8 +157,8 @@ export class MetadataApiRetrieve extends MetadataTransfer<
 
     // if we're retrieving with packageNames add it
     // otherwise don't - it causes errors if undefined or an empty array
-    if (packageNames) {
-      requestBody.packageNames = packageNames;
+    if (packages?.length) {
+      requestBody.packageNames = this.getPackageNames();
     }
 
     // @ts-ignore required callback
@@ -181,31 +178,47 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     return new RetrieveResult(result, components);
   }
 
+  private getPackageNames(): string[] {
+    return this.getPackageOptions()?.map((pkg) => pkg.name);
+  }
+
+  private getPackageOptions(): PackageOptions[] {
+    const { packages } = this.options;
+    if (packages?.length) {
+      if (isString(packages[0])) {
+        const pkgs = packages as string[];
+        return pkgs.map((pkg) => ({ name: pkg, outputDir: pkg }));
+      } else {
+        const pkgs = packages as PackageOptions[];
+        return pkgs.map(({ name, outputDir }) => ({ name, outputDir: outputDir || name }));
+      }
+    }
+  }
+
   private async extract(zip: Buffer): Promise<ComponentSet> {
     const components: SourceComponent[] = [];
-    const { merge, output, packageNames, registry } = this.options;
+    const { merge, output, registry } = this.options;
     const converter = new MetadataConverter(registry);
     const tree = await ZipTreeContainer.create(zip);
-    // initialize with the specified output and unpackaged metadata
-    const packageAggregator: Package[] = [{ name: output, zipTreeLocation: 'unpackaged' }];
-    packageNames?.forEach((pkg) => {
-      // add the retrieved packages - if they exist
-      packageAggregator.push({ name: pkg, zipTreeLocation: pkg });
+
+    const packages: RetrieveExtractOptions[] = [
+      { zipTreeLocation: 'unpackaged', outputDir: output },
+    ];
+    const packageOpts = this.getPackageOptions();
+    packageOpts?.forEach(({ name, outputDir }) => {
+      packages.push({ zipTreeLocation: name, outputDir });
     });
-    const validatedPackages = packageAggregator.filter((pkg) =>
-      tree.isDirectory(pkg.zipTreeLocation)
-    );
-    for (const pkg of validatedPackages) {
+
+    for (const pkg of packages) {
       const outputConfig: ConvertOutputConfig = merge
         ? {
             type: 'merge',
             mergeWith: this.components.getSourceComponents(),
-            defaultDirectory: pkg.name,
+            defaultDirectory: pkg.outputDir,
           }
         : {
             type: 'directory',
-            // change pkg type
-            outputDirectory: pkg.name,
+            outputDirectory: pkg.outputDir,
           };
       const zipComponents = ComponentSet.fromSource({
         fsPaths: [pkg.zipTreeLocation],

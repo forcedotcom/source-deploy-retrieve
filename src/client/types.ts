@@ -240,7 +240,7 @@ export interface PackageOptions {
   /**
    * The directory where the retrieved package source should be
    * converted. If this is not specified the directory will
-   * default to `<process.cwd()>/packageName`.
+   * default to `<process.cwd()>/PackageOptions.name`.
    */
   outputDir?: SourcePath;
 }

@@ -190,6 +190,34 @@ describe('MetadataTransfer', () => {
       expect(callOrder).to.deep.equal(['firstCall1', 'firstCall2', 'secondCall1']);
     });
 
+    it('should poll until timeout', async () => {
+      // This test ensures that the core PollingClient doesn't stop
+      // after 10 tries (the ts-retry-promise library default) and polls
+      // until the timeout is exceeded.
+      const { checkStatus } = operation.lifecycle;
+      let callCount = 0;
+      checkStatus.callsFake(async () => {
+        callCount += 1;
+        if (callCount > 22) {
+          // This is a safeguard to ensure polling stops if the timeout
+          // doesn't kick in.
+          return { done: true };
+        }
+        return { done: false };
+      });
+
+      try {
+        await operation.pollStatus(50, 1);
+        fail('should have thrown an error');
+      } catch (err) {
+        expect(callCount).to.be.greaterThan(15);
+        expect(err.name, 'Polling function should have timed out').to.equal(
+          'MetadataTransferError'
+        );
+        expect(err.message).to.equal('Metadata API request failed: The client has timed out.');
+      }
+    });
+
     it('should emit wrapped error if something goes wrong', async () => {
       const { checkStatus } = operation.lifecycle;
       const originalError = new Error('whoops');

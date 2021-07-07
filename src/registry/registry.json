@@ -2149,6 +2149,7 @@
     "prompt": "prompt",
     "mlDomain": "mldomain",
     "bot": "bot",
+    "botVersion": "botversion",
     "animationRule": "animationrule",
     "deployment": "recordactiondeployment",
     "EmbeddedServiceFlowConfig": "embeddedserviceflowconfig",

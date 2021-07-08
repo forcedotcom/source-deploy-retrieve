@@ -16,7 +16,7 @@ import {
   RetrieveOptions,
   MetadataTransferResult,
   RetrieveRequest,
-  PackageOptions,
+  PackageOption,
   RetrieveExtractOptions,
 } from './types';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
@@ -143,9 +143,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   }
 
   protected async pre(): Promise<AsyncResult> {
-    const { packages } = this.options;
+    const packageNames = this.getPackageNames();
 
-    if (this.components.size === 0 && !packages?.length) {
+    if (this.components.size === 0 && !packageNames?.length) {
       throw new MetadataApiRetrieveError('error_no_components_to_retrieve');
     }
 
@@ -157,8 +157,8 @@ export class MetadataApiRetrieve extends MetadataTransfer<
 
     // if we're retrieving with packageNames add it
     // otherwise don't - it causes errors if undefined or an empty array
-    if (packages?.length) {
-      requestBody.packageNames = this.getPackageNames();
+    if (packageNames?.length) {
+      requestBody.packageNames = packageNames;
     }
 
     // @ts-ignore required callback
@@ -182,14 +182,15 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     return this.getPackageOptions()?.map((pkg) => pkg.name);
   }
 
-  private getPackageOptions(): PackageOptions[] {
-    const { packages } = this.options;
-    if (packages?.length) {
-      if (isString(packages[0])) {
-        const pkgs = packages as string[];
-        return pkgs.map((pkg) => ({ name: pkg, outputDir: pkg }));
+  private getPackageOptions(): PackageOption[] {
+    const { packageOptions } = this.options;
+    if (packageOptions?.length) {
+      if (isString(packageOptions[0])) {
+        const packageNames = packageOptions as string[];
+        return packageNames.map((pkg) => ({ name: pkg, outputDir: pkg }));
       } else {
-        const pkgs = packages as PackageOptions[];
+        const pkgs = packageOptions as PackageOption[];
+        // If there isn't an outputDir specified, use the package name.
         return pkgs.map(({ name, outputDir }) => ({ name, outputDir: outputDir || name }));
       }
     }

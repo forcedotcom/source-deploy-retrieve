@@ -58,7 +58,7 @@ describe('MetadataApiRetrieve', async () => {
         const { operation } = await stubMetadataRetrieve(env, {
           toRetrieve: toRetrieve,
           merge: true,
-          packages: [],
+          packageOptions: [],
         });
 
         try {
@@ -91,7 +91,7 @@ describe('MetadataApiRetrieve', async () => {
         const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
         const options = {
           toRetrieve,
-          packages: ['MyPackage'],
+          packageOptions: ['MyPackage'],
           merge: true,
           successes: toRetrieve,
         };
@@ -101,7 +101,7 @@ describe('MetadataApiRetrieve', async () => {
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
           apiVersion: toRetrieve.apiVersion,
-          packageNames: options.packages,
+          packageNames: options.packageOptions,
           unpackaged: toRetrieve.getObject().Package,
         });
       });
@@ -110,7 +110,7 @@ describe('MetadataApiRetrieve', async () => {
         const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
         const options = {
           toRetrieve,
-          packages: [{ name: 'MyPackage' }],
+          packageOptions: [{ name: 'MyPackage' }],
           merge: true,
           successes: toRetrieve,
         };
@@ -120,7 +120,7 @@ describe('MetadataApiRetrieve', async () => {
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
           apiVersion: toRetrieve.apiVersion,
-          packageNames: [options.packages[0].name],
+          packageNames: [options.packageOptions[0].name],
           unpackaged: toRetrieve.getObject().Package,
         });
       });
@@ -129,7 +129,7 @@ describe('MetadataApiRetrieve', async () => {
         const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
         const options = {
           toRetrieve,
-          packages: [{ name: 'MyPackage', outputDir: 'fake/output/dir' }],
+          packageOptions: [{ name: 'MyPackage', outputDir: 'fake/output/dir' }],
           merge: true,
           successes: toRetrieve,
         };
@@ -139,7 +139,7 @@ describe('MetadataApiRetrieve', async () => {
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
           apiVersion: toRetrieve.apiVersion,
-          packageNames: [options.packages[0].name],
+          packageNames: [options.packageOptions[0].name],
           unpackaged: toRetrieve.getObject().Package,
         });
       });
@@ -225,7 +225,7 @@ describe('MetadataApiRetrieve', async () => {
         const successesCompSet = new ComponentSet([component, pkgComponent], mockRegistry);
         const { operation, convertStub } = await stubMetadataRetrieve(env, {
           toRetrieve,
-          packages: [packageName],
+          packageOptions: [packageName],
           successes: successesCompSet,
         });
 
@@ -259,7 +259,7 @@ describe('MetadataApiRetrieve', async () => {
         const successesCompSet = new ComponentSet([component, pkgComponent], mockRegistry);
         const { operation, convertStub } = await stubMetadataRetrieve(env, {
           toRetrieve,
-          packages: [{ name: packageName, outputDir: packageOutputDir }],
+          packageOptions: [{ name: packageName, outputDir: packageOutputDir }],
           successes: successesCompSet,
         });
 

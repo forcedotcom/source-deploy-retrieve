@@ -546,7 +546,7 @@ describe('ComponentSet', () => {
       Object.setPrototypeOf(MetadataApiRetrieve, constructorStub);
 
       const result = await set.retrieve({
-        packages: ['MyPackage'],
+        packageOptions: ['MyPackage'],
         output: operationArgs.output,
         usernameOrConnection: connection,
       });

@@ -27,7 +27,7 @@ import {
   MetadataApiDeployOptions,
   RequestStatus,
   MetadataApiRetrieveStatus,
-  PackageOptions,
+  PackageOption,
 } from '../../../src/client/types';
 import { ComponentProperties } from '../../../src/resolve/sourceComponent';
 import { normalizeToArray } from '../../../src/utils';
@@ -142,7 +142,7 @@ export async function stubMetadataDeploy(
 
 interface RetrieveStubOptions {
   merge?: boolean;
-  packages?: string[] | PackageOptions[];
+  packageOptions?: string[] | PackageOption[];
   toRetrieve?: ComponentSet;
   messages?: Partial<RetrieveMessage> | Partial<RetrieveMessage>[];
   successes?: ComponentSet;
@@ -166,7 +166,7 @@ export async function stubMetadataRetrieve(
   sandbox: SinonSandbox,
   options: RetrieveStubOptions
 ): Promise<RetrieveOperationLifecycle> {
-  const { toRetrieve: retrievedComponents, packages } = options;
+  const { toRetrieve: retrievedComponents, packageOptions: packages } = options;
   const connection = await mockConnection(testSetup());
 
   const retrieveStub = sandbox.stub(connection.metadata, 'retrieve').resolves(MOCK_ASYNC_RESULT);
@@ -203,7 +203,7 @@ export async function stubMetadataRetrieve(
             if (typeof packages[0] === 'string') {
               packageNames = packages as string[];
             } else {
-              packageNames = (packages as PackageOptions[]).map((pkg) => pkg.name);
+              packageNames = (packages as PackageOption[]).map((pkg) => pkg.name);
             }
             if (packageNames.some((pkg) => content.startsWith(pkg))) {
               zipEntries.push(content);
@@ -245,13 +245,13 @@ export async function stubMetadataRetrieve(
 
   const outputConfigs: ConvertOutputConfig[] = [];
   let converted: SourceComponent[] = [];
-  let pkgs: PackageOptions[];
+  let pkgs: PackageOption[];
 
   if (packages) {
     if (typeof packages[0] === 'string') {
       pkgs = (packages as string[]).map((pkg) => ({ name: pkg, outputDir: pkg }));
     } else {
-      pkgs = packages as PackageOptions[];
+      pkgs = packages as PackageOption[];
     }
   }
 
@@ -307,7 +307,7 @@ export async function stubMetadataRetrieve(
     checkStatusStub,
     convertStub,
     operation: new MetadataApiRetrieve({
-      packages: options.packages,
+      packageOptions: options.packageOptions,
       usernameOrConnection: connection,
       components: retrievedComponents,
       output: MOCK_DEFAULT_OUTPUT,

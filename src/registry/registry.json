@@ -1685,12 +1685,12 @@
           "botversion": {
             "id": "botversion",
             "name": "BotVersion",
-            "directoryName": "botVersions",
+            "directoryName": "",
             "suffix": "botVersion"
           }
         },
         "directories": {
-          "version": "botversion"
+          "botVersions": "botversion"
         },
         "suffixes": {
           "botVersion": "botversion"

@@ -199,13 +199,13 @@ export async function stubMetadataRetrieve(
           if (!packages) {
             zipEntries.push(join('unpackaged', content));
           } else {
-            let pkgs: string[] = [];
+            let packageNames: string[] = [];
             if (typeof packages[0] === 'string') {
-              pkgs = packages as string[];
+              packageNames = packages as string[];
             } else {
-              pkgs = (packages as PackageOptions[]).map((pkg) => pkg.name);
+              packageNames = (packages as PackageOptions[]).map((pkg) => pkg.name);
             }
-            if (pkgs.some((pkg) => content.startsWith(pkg))) {
+            if (packageNames.some((pkg) => content.startsWith(pkg))) {
               zipEntries.push(content);
             }
           }

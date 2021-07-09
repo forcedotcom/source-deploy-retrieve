@@ -2201,7 +2201,7 @@
     "documents": "document",
     "waveTemplates": "wavetemplatebundle",
     "objects": "customobject",
-    "bot": "bot",
+    "bots": "bot",
     "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
     "sites": "customsite",

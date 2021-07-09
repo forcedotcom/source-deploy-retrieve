@@ -1,8 +1,8 @@
-# 3.1.1 - July 8, 2021
+# 3.1.1 - July 9, 2021
 
 ## Fixed
 
-- Bumps the version of core to 2.25.1 ([PR #369](https://github.com/forcedotcom/source-deploy-retrieve/pull/369))
+- Bump version of @salesforce/core to 2.25.1 ([PR #369](https://github.com/forcedotcom/source-deploy-retrieve/pull/369))
 
 - Add WaveComponent to metadata registry ([PR #366](https://github.com/forcedotcom/source-deploy-retrieve/pull/366))
 

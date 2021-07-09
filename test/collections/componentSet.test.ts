@@ -535,7 +535,7 @@ describe('ComponentSet', () => {
         components: set,
         output: join('test', 'path'),
         usernameOrConnection: connection,
-        packageNames: ['MyPackage'],
+        packages: ['MyPackage'],
       };
       const expectedOperation = new MetadataApiRetrieve(operationArgs);
       const startStub = env.stub(expectedOperation, 'start').resolves();
@@ -546,7 +546,7 @@ describe('ComponentSet', () => {
       Object.setPrototypeOf(MetadataApiRetrieve, constructorStub);
 
       const result = await set.retrieve({
-        packageNames: ['MyPackage'],
+        packageOptions: ['MyPackage'],
         output: operationArgs.output,
         usernameOrConnection: connection,
       });

@@ -27,6 +27,7 @@ import {
   MetadataApiDeployOptions,
   RequestStatus,
   MetadataApiRetrieveStatus,
+  PackageOption,
 } from '../../../src/client/types';
 import { ComponentProperties } from '../../../src/resolve/sourceComponent';
 import { normalizeToArray } from '../../../src/utils';
@@ -141,7 +142,7 @@ export async function stubMetadataDeploy(
 
 interface RetrieveStubOptions {
   merge?: boolean;
-  packageNames?: string[];
+  packageOptions?: string[] | PackageOption[];
   toRetrieve?: ComponentSet;
   messages?: Partial<RetrieveMessage> | Partial<RetrieveMessage>[];
   successes?: ComponentSet;
@@ -165,7 +166,7 @@ export async function stubMetadataRetrieve(
   sandbox: SinonSandbox,
   options: RetrieveStubOptions
 ): Promise<RetrieveOperationLifecycle> {
-  const { toRetrieve: components } = options;
+  const { toRetrieve: retrievedComponents, packageOptions: packages } = options;
   const connection = await mockConnection(testSetup());
 
   const retrieveStub = sandbox.stub(connection.metadata, 'retrieve').resolves(MOCK_ASYNC_RESULT);
@@ -195,7 +196,19 @@ export async function stubMetadataRetrieve(
             type: success.type.name,
             fileName: content,
           });
-          zipEntries.push(join('unpackaged', content));
+          if (!packages) {
+            zipEntries.push(join('unpackaged', content));
+          } else {
+            let packageNames: string[] = [];
+            if (typeof packages[0] === 'string') {
+              packageNames = packages as string[];
+            } else {
+              packageNames = (packages as PackageOption[]).map((pkg) => pkg.name);
+            }
+            if (packageNames.some((pkg) => content.startsWith(pkg))) {
+              zipEntries.push(content);
+            }
+          }
         }
       } else {
         fileProperties.push({
@@ -228,22 +241,40 @@ export async function stubMetadataRetrieve(
   // @ts-ignore force returning project's RetrieveResult type
   checkStatusStub.withArgs(MOCK_ASYNC_RESULT.id).resolves(retrieveStatus);
 
-  const source = components.getSourceComponents().toArray();
+  const source = retrievedComponents.getSourceComponents().toArray();
 
-  let outputConfig: ConvertOutputConfig;
+  const outputConfigs: ConvertOutputConfig[] = [];
   let converted: SourceComponent[] = [];
+  let pkgs: PackageOption[];
+
+  if (packages) {
+    if (typeof packages[0] === 'string') {
+      pkgs = (packages as string[]).map((pkg) => ({ name: pkg, outputDir: pkg }));
+    } else {
+      pkgs = packages as PackageOption[];
+    }
+  }
+
   if (options.merge) {
-    outputConfig = {
+    outputConfigs.push({
       type: 'merge',
-      mergeWith: components.getSourceComponents(),
+      mergeWith: retrievedComponents.getSourceComponents(),
       defaultDirectory: MOCK_DEFAULT_OUTPUT,
-    };
+    });
     converted = source;
+
+    pkgs?.forEach((pkg) =>
+      outputConfigs.push({
+        type: 'merge',
+        mergeWith: retrievedComponents.getSourceComponents(),
+        defaultDirectory: pkg.outputDir,
+      })
+    );
   } else {
-    outputConfig = {
+    outputConfigs.push({
       type: 'directory',
       outputDirectory: MOCK_DEFAULT_OUTPUT,
-    };
+    });
     if (options.successes) {
       for (const component of successes) {
         const props: ComponentProperties = {
@@ -259,18 +290,26 @@ export async function stubMetadataRetrieve(
         converted.push(new SourceComponent(props));
       }
     }
+    pkgs?.forEach((pkg) =>
+      outputConfigs.push({
+        type: 'directory',
+        outputDirectory: pkg.outputDir,
+      })
+    );
   }
   const convertStub = sandbox.stub(MetadataConverter.prototype, 'convert');
-  convertStub.withArgs(match.any, 'source', outputConfig).resolves({ converted });
+  outputConfigs.forEach((outputCfg) => {
+    convertStub.withArgs(match.any, 'source', outputCfg).resolves({ converted });
+  });
 
   return {
     retrieveStub,
     checkStatusStub,
     convertStub,
     operation: new MetadataApiRetrieve({
-      packageNames: options.packageNames,
+      packageOptions: options.packageOptions,
       usernameOrConnection: connection,
-      components,
+      components: retrievedComponents,
       output: MOCK_DEFAULT_OUTPUT,
       registry: mockRegistry,
       merge: options.merge,

@@ -6,7 +6,7 @@
  */
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
-import { ZipTreeContainer } from '../resolve';
+import { SourceComponent, ZipTreeContainer } from '../resolve';
 import {
   AsyncResult,
   ComponentStatus,
@@ -16,6 +16,8 @@ import {
   RetrieveOptions,
   MetadataTransferResult,
   RetrieveRequest,
+  PackageOption,
+  RetrieveExtractOptions,
 } from './types';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import { MetadataApiRetrieveError, MissingJobIdError } from '../errors';
@@ -141,9 +143,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   }
 
   protected async pre(): Promise<AsyncResult> {
-    const { packageNames } = this.options;
+    const packageNames = this.getPackageNames();
 
-    if (this.components.size === 0 && (!packageNames || packageNames.length === 0)) {
+    if (this.components.size === 0 && !packageNames?.length) {
       throw new MetadataApiRetrieveError('error_no_components_to_retrieve');
     }
 
@@ -155,7 +157,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
 
     // if we're retrieving with packageNames add it
     // otherwise don't - it causes errors if undefined or an empty array
-    if (packageNames) {
+    if (packageNames?.length) {
       requestBody.packageNames = packageNames;
     }
 
@@ -176,29 +178,59 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     return new RetrieveResult(result, components);
   }
 
+  private getPackageNames(): string[] {
+    return this.getPackageOptions()?.map((pkg) => pkg.name);
+  }
+
+  private getPackageOptions(): PackageOption[] {
+    const { packageOptions } = this.options;
+    if (packageOptions?.length) {
+      if (isString(packageOptions[0])) {
+        const packageNames = packageOptions as string[];
+        return packageNames.map((pkg) => ({ name: pkg, outputDir: pkg }));
+      } else {
+        const pkgs = packageOptions as PackageOption[];
+        // If there isn't an outputDir specified, use the package name.
+        return pkgs.map(({ name, outputDir }) => ({ name, outputDir: outputDir || name }));
+      }
+    }
+  }
+
   private async extract(zip: Buffer): Promise<ComponentSet> {
-    const converter = new MetadataConverter(this.options.registry);
-    const { merge, output } = this.options;
-    const outputConfig: ConvertOutputConfig = merge
-      ? {
-          type: 'merge',
-          mergeWith: this.components.getSourceComponents(),
-          defaultDirectory: output,
-        }
-      : {
-          type: 'directory',
-          outputDirectory: output,
-        };
-    const zipComponents = ComponentSet.fromSource({
-      fsPaths: ['.'],
-      registry: this.options.registry,
-      tree: await ZipTreeContainer.create(zip),
-    })
-      .getSourceComponents()
-      .toArray();
+    const components: SourceComponent[] = [];
+    const { merge, output, registry } = this.options;
+    const converter = new MetadataConverter(registry);
+    const tree = await ZipTreeContainer.create(zip);
 
-    const convertResult = await converter.convert(zipComponents, 'source', outputConfig);
+    const packages: RetrieveExtractOptions[] = [
+      { zipTreeLocation: 'unpackaged', outputDir: output },
+    ];
+    const packageOpts = this.getPackageOptions();
+    packageOpts?.forEach(({ name, outputDir }) => {
+      packages.push({ zipTreeLocation: name, outputDir });
+    });
 
-    return new ComponentSet(convertResult.converted, this.options.registry);
+    for (const pkg of packages) {
+      const outputConfig: ConvertOutputConfig = merge
+        ? {
+            type: 'merge',
+            mergeWith: this.components.getSourceComponents(),
+            defaultDirectory: pkg.outputDir,
+          }
+        : {
+            type: 'directory',
+            outputDirectory: pkg.outputDir,
+          };
+      const zipComponents = ComponentSet.fromSource({
+        fsPaths: [pkg.zipTreeLocation],
+        registry,
+        tree,
+      })
+        .getSourceComponents()
+        .toArray();
+      const convertResult = await converter.convert(zipComponents, 'source', outputConfig);
+      components.push(...convertResult.converted);
+    }
+    return new ComponentSet(components, registry);
   }
 }

@@ -7,6 +7,7 @@
 import { fail } from 'assert';
 import { expect } from 'chai';
 import { createSandbox, match } from 'sinon';
+import { join } from 'path';
 import {
   RetrieveResult,
   ComponentSet,
@@ -14,6 +15,7 @@ import {
   ComponentStatus,
   FileResponse,
   MetadataApiRetrieveStatus,
+  VirtualTreeContainer,
 } from '../../src';
 import { MetadataApiRetrieveError, MissingJobIdError } from '../../src/errors';
 import { nls } from '../../src/i18n';
@@ -56,7 +58,7 @@ describe('MetadataApiRetrieve', async () => {
         const { operation } = await stubMetadataRetrieve(env, {
           toRetrieve: toRetrieve,
           merge: true,
-          packageNames: [],
+          packageOptions: [],
         });
 
         try {
@@ -68,42 +70,76 @@ describe('MetadataApiRetrieve', async () => {
         }
       });
 
-      it('should call retrieve with given options', async () => {
+      it('should call retrieve for unpackaged data', async () => {
         const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
         const options = {
           toRetrieve,
-          packageNames: ['MyPackage'],
           merge: true,
           successes: toRetrieve,
         };
         const { operation, retrieveStub } = await stubMetadataRetrieve(env, options);
-
         await operation.start();
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
           apiVersion: toRetrieve.apiVersion,
-          packageNames: options.packageNames,
           unpackaged: toRetrieve.getObject().Package,
         });
       });
 
-      it('should call retrieve with given options', async () => {
+      it('should call retrieve for a package as string[]', async () => {
         const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
         const options = {
           toRetrieve,
-          packageNames: ['MyPackage'],
+          packageOptions: ['MyPackage'],
           merge: true,
           successes: toRetrieve,
         };
         const { operation, retrieveStub } = await stubMetadataRetrieve(env, options);
-
         await operation.start();
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
           apiVersion: toRetrieve.apiVersion,
-          packageNames: options.packageNames,
+          packageNames: options.packageOptions,
+          unpackaged: toRetrieve.getObject().Package,
+        });
+      });
+
+      it('should call retrieve for a package as PackageOptions[] with name only', async () => {
+        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const options = {
+          toRetrieve,
+          packageOptions: [{ name: 'MyPackage' }],
+          merge: true,
+          successes: toRetrieve,
+        };
+        const { operation, retrieveStub } = await stubMetadataRetrieve(env, options);
+        await operation.start();
+
+        expect(retrieveStub.calledOnce).to.be.true;
+        expect(retrieveStub.firstCall.args[0]).to.deep.equal({
+          apiVersion: toRetrieve.apiVersion,
+          packageNames: [options.packageOptions[0].name],
+          unpackaged: toRetrieve.getObject().Package,
+        });
+      });
+
+      it('should call retrieve for a package as PackageOptions[] with name and outputDir', async () => {
+        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const options = {
+          toRetrieve,
+          packageOptions: [{ name: 'MyPackage', outputDir: 'fake/output/dir' }],
+          merge: true,
+          successes: toRetrieve,
+        };
+        const { operation, retrieveStub } = await stubMetadataRetrieve(env, options);
+        await operation.start();
+
+        expect(retrieveStub.calledOnce).to.be.true;
+        expect(retrieveStub.firstCall.args[0]).to.deep.equal({
+          apiVersion: toRetrieve.apiVersion,
+          packageNames: [options.packageOptions[0].name],
           unpackaged: toRetrieve.getObject().Package,
         });
       });
@@ -140,6 +176,26 @@ describe('MetadataApiRetrieve', async () => {
     });
 
     describe('pollStatus', () => {
+      const getPackageComponent = (packageName: string): SourceComponent => {
+        const contentName = 'z.mcf';
+        const metaName = `${contentName}-meta.xml`;
+        const type = mockRegistryData.types.matchingcontentfile;
+        return new SourceComponent(
+          {
+            name: 'z',
+            type,
+            xml: join(packageName, type.directoryName, metaName),
+            content: join(packageName, type.directoryName, contentName),
+          },
+          new VirtualTreeContainer([
+            {
+              dirPath: join(packageName, type.directoryName),
+              children: [metaName, contentName],
+            },
+          ])
+        );
+      };
+
       it('should retrieve zip and extract to directory', async () => {
         const component = COMPONENT;
         const toRetrieve = new ComponentSet([component], mockRegistry);
@@ -158,6 +214,73 @@ describe('MetadataApiRetrieve', async () => {
             outputDirectory: MOCK_DEFAULT_OUTPUT,
           })
         ).to.be.true;
+      });
+
+      it('should retrieve zip with packages and extract to default directory', async () => {
+        const component = COMPONENT;
+        const packageName = 'MyPackage';
+        const pkgComponent = getPackageComponent(packageName);
+        const fromSourceSpy = env.spy(ComponentSet, 'fromSource');
+        const toRetrieve = new ComponentSet([component], mockRegistry);
+        const successesCompSet = new ComponentSet([component, pkgComponent], mockRegistry);
+        const { operation, convertStub } = await stubMetadataRetrieve(env, {
+          toRetrieve,
+          packageOptions: [packageName],
+          successes: successesCompSet,
+        });
+
+        await operation.start();
+        await operation.pollStatus();
+
+        expect(convertStub.calledTwice).to.be.true;
+        const convertCall1Args = convertStub.firstCall.args;
+        const convertCall2Args = convertStub.secondCall.args;
+        expect(convertCall1Args[1]).to.equal('source');
+        expect(convertCall1Args[2]).to.deep.equal({
+          type: 'directory',
+          outputDirectory: MOCK_DEFAULT_OUTPUT,
+        });
+        expect(fromSourceSpy.calledTwice).to.be.true;
+        expect(fromSourceSpy.secondCall.args[0]).to.have.deep.property('fsPaths', [packageName]);
+        expect(convertCall2Args[1]).to.equal('source');
+        expect(convertCall2Args[2]).to.deep.equal({
+          type: 'directory',
+          outputDirectory: packageName,
+        });
+      });
+
+      it('should retrieve zip with packages and extract to specified directory', async () => {
+        const component = COMPONENT;
+        const packageName = 'MyPackage';
+        const packageOutputDir = 'myPackageDir';
+        const pkgComponent = getPackageComponent(packageName);
+        const fromSourceSpy = env.spy(ComponentSet, 'fromSource');
+        const toRetrieve = new ComponentSet([component], mockRegistry);
+        const successesCompSet = new ComponentSet([component, pkgComponent], mockRegistry);
+        const { operation, convertStub } = await stubMetadataRetrieve(env, {
+          toRetrieve,
+          packageOptions: [{ name: packageName, outputDir: packageOutputDir }],
+          successes: successesCompSet,
+        });
+
+        await operation.start();
+        await operation.pollStatus();
+
+        expect(convertStub.calledTwice).to.be.true;
+        const convertCall1Args = convertStub.firstCall.args;
+        const convertCall2Args = convertStub.secondCall.args;
+        expect(convertCall1Args[1]).to.equal('source');
+        expect(convertCall1Args[2]).to.deep.equal({
+          type: 'directory',
+          outputDirectory: MOCK_DEFAULT_OUTPUT,
+        });
+        expect(fromSourceSpy.calledTwice).to.be.true;
+        expect(fromSourceSpy.secondCall.args[0]).to.have.deep.property('fsPaths', [packageName]);
+        expect(convertCall2Args[1]).to.equal('source');
+        expect(convertCall2Args[2]).to.deep.equal({
+          type: 'directory',
+          outputDirectory: packageOutputDir,
+        });
       });
 
       it('should save the temp directory if the environment variable is set', async () => {

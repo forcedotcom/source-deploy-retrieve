@@ -1685,7 +1685,7 @@
           "botversion": {
             "id": "botversion",
             "name": "BotVersion",
-            "directoryName": "",
+            "directoryName": "botVersions",
             "suffix": "botVersion"
           }
         },
@@ -1699,7 +1699,7 @@
       "strategies": {
         "adapter": "decomposed",
         "transformer": "decomposed",
-        "decomposition": "folderPerType"
+        "decomposition": "topLevel"
       }
     },
     "animationrule": {

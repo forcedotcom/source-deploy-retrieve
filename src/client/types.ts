@@ -232,6 +232,36 @@ export interface MetadataApiRetrieveStatus {
 // Client options
 // ------------------------------------------------
 
+export interface PackageOption {
+  /**
+   * The name of the package to retrieve.
+   */
+  name: string;
+  /**
+   * The directory where the retrieved package source should be
+   * converted. If this is not specified the directory will
+   * default to `<process.cwd()>/PackageOption.name`.
+   */
+  outputDir?: SourcePath;
+}
+
+export type PackageOptions = string[] | PackageOption[];
+
+export interface RetrieveExtractOptions {
+  /**
+   * Top most directory within the retrieved zip file.
+   * E.g., `unpackaged` for unpackaged source, or the name of the
+   * package for retrieved package source.
+   */
+  zipTreeLocation: string;
+  /**
+   * The directory where the retrieved source should be converted.
+   * This is `RetrieveOptions.output` for unpackaged source, and
+   * `PackageOption.outputDir` for packaged source.
+   */
+  outputDir: SourcePath;
+}
+
 export interface RetrieveOptions {
   /**
    * The directory to retrieve components to. If `merge: true`, components are only
@@ -239,13 +269,13 @@ export interface RetrieveOptions {
    */
   output: SourcePath;
   /**
-   * Whether or not to merge and replace input components with the retrieved versions
+   * Whether or not to merge and replace input components with the retrieved versions.
    */
   merge?: boolean;
   /**
-   * A list of package names to retrieve
+   * A list of package names to retrieve, or package names and their retrieval locations.
    */
-  packageNames?: string[];
+  packageOptions?: PackageOptions;
 }
 
 export interface MetadataApiDeployOptions {

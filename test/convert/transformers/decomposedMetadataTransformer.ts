@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { mockRegistry, mockRegistryData, regina } from '../../mock/registry';
+import { mockRegistry, mockRegistryData, decomposed } from '../../mock/registry';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
@@ -19,7 +19,7 @@ import { ConvertContext } from '../../../src/convert/convertContext';
 const env = createSandbox();
 
 describe('DecomposedMetadataTransformer', () => {
-  const component = regina.REGINA_COMPONENT;
+  const component = decomposed.DECOMPOSED_COMPONENT;
 
   afterEach(() => env.restore());
 
@@ -75,7 +75,7 @@ describe('DecomposedMetadataTransformer', () => {
       const context = new ConvertContext();
       const transformer = new DecomposedMetadataTransformer(mockRegistry, context);
       env.stub(component, 'parseXml').resolves({
-        ReginaKing: {
+        Decomposed: {
           fullName,
           foo: 'bar',
           ys: { fullName: 'child', test: 'testVal' },
@@ -122,7 +122,7 @@ describe('DecomposedMetadataTransformer', () => {
         },
         {
           source: new JsToXml({
-            ReginaKing: {
+            Decomposed: {
               [XML_NS_KEY]: XML_NS_URL,
               fullName: component.fullName,
               foo: 'bar',
@@ -191,7 +191,7 @@ describe('DecomposedMetadataTransformer', () => {
       const transformer = new DecomposedMetadataTransformer(mockRegistry);
       const root = join('main', 'default', type.directoryName, fullName);
       env.stub(component, 'parseXml').resolves({
-        ReginaKing: {
+        Decomposed: {
           ys: { fullName: 'child', test: 'testVal' },
           xs: [
             { fullName: 'child2', test: 'testVal2' },
@@ -242,12 +242,12 @@ describe('DecomposedMetadataTransformer', () => {
         const componentToConvert = SourceComponent.createVirtualComponent(
           {
             name: 'a',
-            type: mockRegistryData.types.reginaking,
+            type: mockRegistryData.types.decomposed,
           },
           []
         );
         env.stub(componentToConvert, 'parseXml').resolves({
-          ReginaKing: {
+          Decomposed: {
             [XML_NS_KEY]: XML_NS_URL,
             [mergeComponentChild.type.directoryName]: {
               fullName: mergeComponentChild.name,
@@ -277,12 +277,12 @@ describe('DecomposedMetadataTransformer', () => {
         const componentToConvert = SourceComponent.createVirtualComponent(
           {
             name: 'a',
-            type: mockRegistryData.types.reginaking,
+            type: mockRegistryData.types.decomposed,
           },
           []
         );
         env.stub(componentToConvert, 'parseXml').resolves({
-          ReginaKing: {
+          Decomposed: {
             [XML_NS_KEY]: XML_NS_URL,
             fullName: component.fullName,
             foo: 'bar',
@@ -313,12 +313,12 @@ describe('DecomposedMetadataTransformer', () => {
         const componentToMerge = SourceComponent.createVirtualComponent(
           {
             name: 'a',
-            type: mockRegistryData.types.reginaking,
+            type: mockRegistryData.types.decomposed,
           },
           []
         );
         env.stub(component, 'parseXml').resolves({
-          ReginaKing: {
+          Decomposed: {
             [XML_NS_KEY]: XML_NS_URL,
             [mergeComponentChild.type.directoryName]: {
               fullName: mergeComponentChild.name,
@@ -360,12 +360,12 @@ describe('DecomposedMetadataTransformer', () => {
         const componentToMerge = SourceComponent.createVirtualComponent(
           {
             name: 'a',
-            type: mockRegistryData.types.reginaking,
+            type: mockRegistryData.types.decomposed,
           },
           []
         );
         env.stub(component, 'parseXml').resolves({
-          ReginaKing: {
+          Decomposed: {
             [XML_NS_KEY]: XML_NS_URL,
             fullName: component.fullName,
             foo: 'bar',

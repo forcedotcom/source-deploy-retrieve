@@ -29,10 +29,10 @@ import {
 import { mockRegistry, matchingContentFile } from '../mock/registry';
 import { META_XML_SUFFIX } from '../../src/common';
 import {
-  REGINA_CHILD_COMPONENT_1,
-  REGINA_CHILD_COMPONENT_2,
-  REGINA_COMPONENT,
-} from '../mock/registry/type-constants/reginaConstants';
+  DECOMPOSED_CHILD_COMPONENT_1,
+  DECOMPOSED_CHILD_COMPONENT_2,
+  DECOMPOSED_COMPONENT,
+} from '../mock/registry/type-constants/decomposedConstants';
 import { AnyJson, getString } from '@salesforce/ts-types';
 import { PollingClient, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
@@ -674,7 +674,7 @@ describe('MetadataApiDeploy', () => {
       });
 
       it('should report children of deployed component', () => {
-        const component = REGINA_COMPONENT;
+        const component = DECOMPOSED_COMPONENT;
         const deployedSet = new ComponentSet([component]);
         const apiStatus: Partial<MetadataApiDeployStatus> = {
           details: {
@@ -683,15 +683,15 @@ describe('MetadataApiDeploy', () => {
                 changed: 'true',
                 created: 'false',
                 deleted: 'false',
-                fullName: REGINA_CHILD_COMPONENT_1.fullName,
-                componentType: REGINA_CHILD_COMPONENT_1.type.name,
+                fullName: DECOMPOSED_CHILD_COMPONENT_1.fullName,
+                componentType: DECOMPOSED_CHILD_COMPONENT_1.type.name,
               } as DeployMessage,
               {
                 changed: 'true',
                 created: 'false',
                 deleted: 'false',
-                fullName: REGINA_CHILD_COMPONENT_2.fullName,
-                componentType: REGINA_CHILD_COMPONENT_2.type.name,
+                fullName: DECOMPOSED_CHILD_COMPONENT_2.fullName,
+                componentType: DECOMPOSED_CHILD_COMPONENT_2.type.name,
               } as DeployMessage,
               {
                 changed: 'true',
@@ -708,16 +708,16 @@ describe('MetadataApiDeploy', () => {
         const responses = result.getFileResponses();
         const expected: FileResponse[] = [
           {
-            fullName: REGINA_CHILD_COMPONENT_1.fullName,
-            type: REGINA_CHILD_COMPONENT_1.type.name,
+            fullName: DECOMPOSED_CHILD_COMPONENT_1.fullName,
+            type: DECOMPOSED_CHILD_COMPONENT_1.type.name,
             state: ComponentStatus.Changed,
-            filePath: REGINA_CHILD_COMPONENT_1.xml,
+            filePath: DECOMPOSED_CHILD_COMPONENT_1.xml,
           },
           {
-            fullName: REGINA_CHILD_COMPONENT_2.fullName,
-            type: REGINA_CHILD_COMPONENT_2.type.name,
+            fullName: DECOMPOSED_CHILD_COMPONENT_2.fullName,
+            type: DECOMPOSED_CHILD_COMPONENT_2.type.name,
             state: ComponentStatus.Changed,
-            filePath: REGINA_CHILD_COMPONENT_2.xml,
+            filePath: DECOMPOSED_CHILD_COMPONENT_2.xml,
           },
           {
             fullName: component.fullName,

@@ -26,7 +26,7 @@ import {
 } from '../mock/client/transferOperations';
 import { mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
-import { REGINA_COMPONENT } from '../mock/registry/type-constants/reginaConstants';
+import { DECOMPOSED_COMPONENT } from '../mock/registry/type-constants/decomposedConstants';
 import { getString } from '@salesforce/ts-types';
 import { fs } from '@salesforce/core';
 
@@ -524,7 +524,7 @@ describe('MetadataApiRetrieve', async () => {
      * the children of a parent.
      */
     it('should not report content files if component type has children', () => {
-      const component = REGINA_COMPONENT;
+      const component = DECOMPOSED_COMPONENT;
       const retrievedSet = new ComponentSet([component]);
       const apiStatus = {};
       const result = new RetrieveResult(apiStatus as MetadataApiRetrieveStatus, retrievedSet);

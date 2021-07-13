@@ -16,7 +16,7 @@ import { StaticResourceMetadataTransformer } from '../../../src/convert/transfor
 import { RegistryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { matchingContentFile, mockRegistry, mixedContentSingleFile } from '../../mock/registry';
-import { REGINA_COMPONENT } from '../../mock/registry/type-constants/reginaConstants';
+import { DECOMPOSED_COMPONENT } from '../../mock/registry/type-constants/decomposedConstants';
 import { COMPONENT_1 } from '../../mock/registry/type-constants/nonDecomposedConstants';
 
 describe('MetadataTransformerFactory', () => {
@@ -29,7 +29,7 @@ describe('MetadataTransformerFactory', () => {
   });
 
   it('should return DecomposedMetadataTransformer', () => {
-    const component = REGINA_COMPONENT;
+    const component = DECOMPOSED_COMPONENT;
     const context = new ConvertContext();
     const factory = new MetadataTransformerFactory(mockRegistry, context);
     expect(factory.getTransformer(component)).to.deep.equal(
@@ -55,7 +55,7 @@ describe('MetadataTransformerFactory', () => {
   });
 
   it('should return transformer that maps to parent type of a component', () => {
-    const [child] = REGINA_COMPONENT.getChildren();
+    const [child] = DECOMPOSED_COMPONENT.getChildren();
     const context = new ConvertContext();
     const factory = new MetadataTransformerFactory(mockRegistry, context);
     expect(factory.getTransformer(child)).to.deep.equal(

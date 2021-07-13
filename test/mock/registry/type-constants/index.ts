@@ -11,7 +11,7 @@ import * as document from './documentConstants';
 import * as taraji from './tarajiConstants';
 import * as mixedContentInFolder from './mixedContentInFolderConstants';
 import * as mixedContentSingleFile from './mixedContentSingleFileConstants';
-import * as regina from './reginaConstants';
+import * as decomposed from './decomposedConstants';
 import * as decomposedtoplevel from './decomposedTopLevelConstants';
 import * as nonDecomposed from './nonDecomposedConstants';
 export {
@@ -22,7 +22,7 @@ export {
   taraji,
   mixedContentInFolder,
   mixedContentSingleFile,
-  regina,
+  decomposed,
   decomposedtoplevel,
   nonDecomposed,
 };

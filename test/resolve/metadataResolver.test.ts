@@ -22,15 +22,15 @@ import { join, basename, dirname } from 'path';
 import { TypeInferenceError } from '../../src/errors';
 import { RegistryTestUtil } from './registryTestUtil';
 import {
-  REGINA_VIRTUAL_FS,
-  REGINA_PATH,
-  REGINA_COMPONENT,
-  REGINA_CHILD_XML_PATH_1,
-  REGINA_CHILD_COMPONENT_1,
-  REGINA_XML_PATH,
-  REGINA_CHILD_DIR_PATH,
-  REGINA_CHILD_XML_PATH_2,
-} from '../mock/registry/type-constants/reginaConstants';
+  DECOMPOSED_VIRTUAL_FS,
+  DECOMPOSED_PATH,
+  DECOMPOSED_COMPONENT,
+  DECOMPOSED_CHILD_XML_PATH_1,
+  DECOMPOSED_CHILD_COMPONENT_1,
+  DECOMPOSED_XML_PATH,
+  DECOMPOSED_CHILD_DIR_PATH,
+  DECOMPOSED_CHILD_XML_PATH_2,
+} from '../mock/registry/type-constants/decomposedConstants';
 import {
   TARAJI_COMPONENT,
   TARAJI_CONTENT_PATH,
@@ -476,26 +476,28 @@ describe('MetadataResolver', () => {
       });
 
       it('should stop resolution if parent component is resolved', () => {
-        const access = testUtil.createMetadataResolver(REGINA_VIRTUAL_FS);
+        const access = testUtil.createMetadataResolver(DECOMPOSED_VIRTUAL_FS);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.reginaking,
+            type: mockRegistryData.types.decomposed,
             componentMappings: [
-              { path: REGINA_XML_PATH, component: REGINA_COMPONENT },
-              { path: REGINA_CHILD_XML_PATH_1, component: REGINA_CHILD_COMPONENT_1 },
+              { path: DECOMPOSED_XML_PATH, component: DECOMPOSED_COMPONENT },
+              { path: DECOMPOSED_CHILD_XML_PATH_1, component: DECOMPOSED_CHILD_COMPONENT_1 },
             ],
           },
         ]);
-        expect(access.getComponentsFromPath(REGINA_PATH)).to.deep.equal([REGINA_COMPONENT]);
+        expect(access.getComponentsFromPath(DECOMPOSED_PATH)).to.deep.equal([DECOMPOSED_COMPONENT]);
       });
 
       it('should return expected child SourceComponent when given a subdirectory of a folderPerType component', () => {
-        const tree = new VirtualTreeContainer(REGINA_VIRTUAL_FS);
-        const access = testUtil.createMetadataResolver(REGINA_VIRTUAL_FS);
-        const expectedComponent = new SourceComponent(REGINA_COMPONENT, tree);
+        const tree = new VirtualTreeContainer(DECOMPOSED_VIRTUAL_FS);
+        const access = testUtil.createMetadataResolver(DECOMPOSED_VIRTUAL_FS);
+        const expectedComponent = new SourceComponent(DECOMPOSED_COMPONENT, tree);
         const children = expectedComponent.getChildren();
-        const expectedChild = children.find((c) => c.xml === REGINA_CHILD_XML_PATH_2);
-        expect(access.getComponentsFromPath(REGINA_CHILD_DIR_PATH)).to.deep.equal([expectedChild]);
+        const expectedChild = children.find((c) => c.xml === DECOMPOSED_CHILD_XML_PATH_2);
+        expect(access.getComponentsFromPath(DECOMPOSED_CHILD_DIR_PATH)).to.deep.equal([
+          expectedChild,
+        ]);
       });
 
       /**

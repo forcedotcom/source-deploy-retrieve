@@ -16,9 +16,9 @@ import { COMPONENTS } from '../mock/registry/type-constants/mixedContentInFolder
 import { fail } from 'assert';
 import { ComponentSet, MetadataConverter } from '../../src';
 import {
-  REGINA_CHILD_COMPONENT_1,
-  REGINA_CHILD_COMPONENT_2,
-} from '../mock/registry/type-constants/reginaConstants';
+  DECOMPOSED_CHILD_COMPONENT_1,
+  DECOMPOSED_CHILD_COMPONENT_2,
+} from '../mock/registry/type-constants/decomposedConstants';
 
 const env = createSandbox();
 
@@ -314,13 +314,13 @@ describe('MetadataConverter', () => {
       await converter.convert(components, 'source', {
         type: 'merge',
         defaultDirectory,
-        mergeWith: [REGINA_CHILD_COMPONENT_1, REGINA_CHILD_COMPONENT_2],
+        mergeWith: [DECOMPOSED_CHILD_COMPONENT_1, DECOMPOSED_CHILD_COMPONENT_2],
       });
 
       const pipelineArgs = pipelineStub.firstCall.args;
       validatePipelineArgs(pipelineArgs, 'source');
       expect(pipelineArgs[1].mergeSet).to.deep.equal(
-        new ComponentSet([REGINA_CHILD_COMPONENT_1.parent])
+        new ComponentSet([DECOMPOSED_CHILD_COMPONENT_1.parent])
       );
     });
   });

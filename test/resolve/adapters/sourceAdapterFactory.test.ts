@@ -61,7 +61,7 @@ describe('SourceAdapterFactory', () => {
   });
 
   it('Should return DecomposedSourceAdapter for decomposed AdapterId', () => {
-    const type = mockRegistryData.types.reginaking;
+    const type = mockRegistryData.types.decomposed;
     const adapter = factory.getAdapter(type);
     expect(adapter).to.deep.equal(new DecomposedSourceAdapter(type, mockRegistry, undefined, tree));
   });

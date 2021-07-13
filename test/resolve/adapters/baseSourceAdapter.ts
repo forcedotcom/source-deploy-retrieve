@@ -11,7 +11,7 @@ import {
   mockRegistry,
   mockRegistryData,
   mixedContentSingleFile,
-  regina,
+  decomposed,
   matchingContentFile,
 } from '../../mock/registry';
 import { BaseSourceAdapter, DefaultSourceAdapter } from '../../../src/resolve/adapters';
@@ -57,10 +57,10 @@ describe('BaseSourceAdapter', () => {
   });
 
   it('should defer parsing metadata xml to child adapter if path is not a root metadata xml', () => {
-    const component = regina.REGINA_CHILD_COMPONENT_1;
+    const component = decomposed.DECOMPOSED_CHILD_COMPONENT_1;
     const adapter = new TestAdapter(component);
 
-    const result = adapter.getComponent(regina.REGINA_CHILD_COMPONENT_1.xml);
+    const result = adapter.getComponent(decomposed.DECOMPOSED_CHILD_COMPONENT_1.xml);
 
     expect(result).to.deep.equal(component);
   });

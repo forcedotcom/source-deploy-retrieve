@@ -17,9 +17,9 @@ import { nls } from '../../../src/i18n';
 import { baseName } from '../../../src/utils';
 import { mixedContentSingleFile, mockRegistry, mockRegistryData } from '../../mock/registry';
 import {
-  TARAJI_COMPONENT,
-  TARAJI_VIRTUAL_FS,
-} from '../../mock/registry/type-constants/tarajiConstants';
+  MIXED_CONTENT_DIRECTORY_COMPONENT,
+  MIXED_CONTENT_DIRECTORY_VIRTUAL_FS,
+} from '../../mock/registry/type-constants/mixedContentDirectoryConstants';
 import { TestReadable } from '../../mock/convert/readables';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../../src/common';
 
@@ -61,7 +61,10 @@ describe('StaticResourceMetadataTransformer', () => {
     });
 
     it('should zip directory content for all supported archive mime types', async () => {
-      const component = SourceComponent.createVirtualComponent(TARAJI_COMPONENT, TARAJI_VIRTUAL_FS);
+      const component = SourceComponent.createVirtualComponent(
+        MIXED_CONTENT_DIRECTORY_COMPONENT,
+        MIXED_CONTENT_DIRECTORY_VIRTUAL_FS
+      );
       const { type, content, xml } = component;
       const archive = archiver.create('zip', { zlib: { level: 3 } });
       const archiveDirStub = env.stub(archive, 'directory');
@@ -90,7 +93,10 @@ describe('StaticResourceMetadataTransformer', () => {
     });
 
     it('should throw an error if content is directory but contentType is not an archive type', async () => {
-      const component = SourceComponent.createVirtualComponent(TARAJI_COMPONENT, TARAJI_VIRTUAL_FS);
+      const component = SourceComponent.createVirtualComponent(
+        MIXED_CONTENT_DIRECTORY_COMPONENT,
+        MIXED_CONTENT_DIRECTORY_VIRTUAL_FS
+      );
       const contentType = 'nonArchiveType';
       env.stub(component, 'parseXml').resolves({ StaticResource: { contentType } });
 

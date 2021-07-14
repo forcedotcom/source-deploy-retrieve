@@ -118,11 +118,11 @@ export const mockRegistryData = {
         recomposition: 'startEmpty',
       },
     },
-    tarajihenson: {
-      id: 'tarajihenson',
-      directoryName: 'tarajis',
+    mixedcontentdirectory: {
+      id: 'mixedcontentdirectory',
+      directoryName: 'mixedcontentdirectories',
       inFolder: false,
-      name: 'TarajiHenson',
+      name: 'MixedContentDirectory',
       strictDirectoryName: true,
       strategies: {
         adapter: 'mixedContent',
@@ -254,7 +254,7 @@ export const mockRegistryData = {
     ms: 'missingstrategies',
   },
   strictDirectoryNames: {
-    tarajis: 'tarajihenson',
+    mixedContentDirectories: 'mixedcontentdirectory',
     bundles: 'bundle',
     decomposed: 'decomposed',
     mixedSingleFiles: 'mixedcontentsinglefile',

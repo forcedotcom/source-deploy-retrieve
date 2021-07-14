@@ -10,7 +10,7 @@ export {
   document,
   matchingContentFile,
   bundle,
-  taraji,
+  mixedContentDirectory,
   mixedContentInFolder,
   mixedContentSingleFile,
   decomposed,

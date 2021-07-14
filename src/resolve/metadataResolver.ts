@@ -78,11 +78,9 @@ export class MetadataResolver {
       if (this.tree.isDirectory(fsPath)) {
         if (this.resolveDirectoryAsComponent(fsPath)) {
           const component = this.resolveComponent(fsPath, true);
-          if (component) {
-            if (!inclusiveFilter || inclusiveFilter.has(component)) {
-              components.push(component);
-              ignore.add(component.xml);
-            }
+          if (component && (!inclusiveFilter || inclusiveFilter.has(component))) {
+            components.push(component);
+            ignore.add(component.xml);
           }
         } else {
           dirQueue.push(fsPath);

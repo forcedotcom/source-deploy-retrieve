@@ -560,6 +560,39 @@ describe('MetadataResolver', () => {
       });
     });
 
+    it('should ignore directories as fsPaths', () => {
+      // NOTE on what this test is for: When an ExperienceBundle type is retrieved
+      // as part of a project's metadata, but the ExperienceBundle dir and all files
+      // in that dir are ignored, it would throw an error. This ensures it doesn't
+      // throw and also doesn't resolve any components.
+      const dirPath = taraji.TARAJI_DIR;
+      const fsPath = taraji.TARAJI_CONTENT_PATH;
+      const topLevelXmlPath = taraji.TARAJI_XML_PATHS[0];
+      testUtil.stubForceIgnore({ seed: dirPath, deny: [fsPath, topLevelXmlPath] });
+      const access = testUtil.createMetadataResolver([
+        {
+          dirPath,
+          children: [basename(fsPath), basename(topLevelXmlPath)],
+        },
+        {
+          dirPath: fsPath,
+          children: [],
+        },
+      ]);
+      testUtil.stubAdapters([
+        {
+          type: mockRegistryData.types.tarajihenson,
+          componentMappings: [
+            {
+              path: topLevelXmlPath,
+              component: taraji.TARAJI_COMPONENT,
+            },
+          ],
+        },
+      ]);
+      expect(access.getComponentsFromPath(dirPath).length).to.equal(0);
+    });
+
     describe('Filtering', () => {
       it('should only return components present in filter', async () => {
         const resolver = testUtil.createMetadataResolver([

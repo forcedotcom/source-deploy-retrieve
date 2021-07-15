@@ -1644,6 +1644,13 @@
       "directoryName": "commandActions",
       "inFolder": false
     },
+    "batchcalcjobdefinition": {
+      "id": "batchcalcjobdefinition",
+      "name": "BatchCalcJobDefinition",
+      "suffix": "batchCalcJobDefinition",
+      "directoryName": "batchCalcJobDefinitions",
+      "inFolder": false
+    },
     "oauthcustomscope": {
       "id": "oauthcustomscope",
       "name": "OauthCustomScope",

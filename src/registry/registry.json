@@ -1558,10 +1558,10 @@
     "emailservicesfunction": {
       "id": "emailservicesfunction",
       "name": "EmailServicesFunction",
-      "suffix": null,
+      "suffix": "xml",
       "directoryName": "emailservices",
       "inFolder": false,
-      "strictDirectoryName": true
+      "strictDirectoryName": false
     },
     "integrationhubsettingstype": {
       "id": "integrationhubsettingstype",
@@ -2182,7 +2182,8 @@
     "workSkillRouting": "workskillrouting",
     "timeSheetTemplate": "timesheettemplate",
     "accountRelationshipShareRule": "accountrelationshipsharerule",
-    "IPAddressRange": "ipaddressrange"
+    "IPAddressRange": "ipaddressrange",
+    "xml": "emailservicesfunction"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -2194,7 +2195,6 @@
     "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
     "sites": "customsite",
-    "emailservices": "emailservicesfunction"
   },
   "childTypes": {
     "customlabel": "customlabels",

@@ -1047,6 +1047,16 @@
         "adapter": "matchingContentFile"
       }
     },
+    "wavecomponent": {
+      "id": "wavecomponent",
+      "name": "WaveComponent",
+      "suffix": "wcomp",
+      "directoryName": "wave",
+      "inFolder": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
+    },
     "wavexmd": {
       "id": "wavexmd",
       "name": "WaveXmd",
@@ -1679,6 +1689,7 @@
       "suffix": "bot",
       "directoryName": "bots",
       "inFolder": false,
+      "strictDirectoryName": true,
       "children": {
         "types": {
           "botversion": {
@@ -1688,9 +1699,17 @@
             "suffix": "botVersion"
           }
         },
+        "directories": {
+          "botVersions": "botversion"
+        },
         "suffixes": {
           "botVersion": "botversion"
         }
+      },
+      "strategies": {
+        "adapter": "decomposed",
+        "transformer": "decomposed",
+        "decomposition": "topLevel"
       }
     },
     "animationrule": {
@@ -2077,6 +2096,7 @@
     "geodata": "eclairgeodata",
     "wlens": "wavelens",
     "wdash": "wavedashboard",
+    "wcomp": "wavecomponent",
     "xmd": "wavexmd",
     "wdf": "wavedataflow",
     "wdpr": "waverecipe",
@@ -2149,6 +2169,7 @@
     "prompt": "prompt",
     "mlDomain": "mldomain",
     "bot": "bot",
+    "botVersion": "botversion",
     "animationRule": "animationrule",
     "deployment": "recordactiondeployment",
     "EmbeddedServiceFlowConfig": "embeddedserviceflowconfig",
@@ -2192,6 +2213,7 @@
     "documents": "document",
     "waveTemplates": "wavetemplatebundle",
     "objects": "customobject",
+    "bots": "bot",
     "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
     "sites": "customsite",

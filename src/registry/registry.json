@@ -1649,7 +1649,8 @@
       "name": "BatchCalcJobDefinition",
       "suffix": "batchCalcJobDefinition",
       "directoryName": "batchCalcJobDefinitions",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "oauthcustomscope": {
       "id": "oauthcustomscope",
@@ -2161,6 +2162,7 @@
     "featureParameterDate": "featureparameterdate",
     "featureParameterInteger": "featureparameterinteger",
     "commandaction": "commandaction",
+    "batchCalcJobDefinition": "batchcalcjobdefinition",
     "oauthcustomscope": "oauthcustomscope",
     "platformEventChannel": "platformeventchannel",
     "customHelpMenuSection": "customhelpmenusection",

@@ -16,9 +16,9 @@ import { COMPONENTS } from '../mock/registry/type-constants/mixedContentInFolder
 import { fail } from 'assert';
 import { ComponentSet, MetadataConverter } from '../../src';
 import {
-  REGINA_CHILD_COMPONENT_1,
-  REGINA_CHILD_COMPONENT_2,
-} from '../mock/registry/type-constants/reginaConstants';
+  DECOMPOSED_CHILD_COMPONENT_1,
+  DECOMPOSED_CHILD_COMPONENT_2,
+} from '../mock/registry/type-constants/decomposedConstants';
 
 const env = createSandbox();
 
@@ -157,6 +157,27 @@ describe('MetadataConverter', () => {
         join(packagePath, MetadataConverter.PACKAGE_XML_FILE),
         expectedContents,
       ]);
+    });
+
+    it('should write manifest for metadata format conversion with sourceApiVersion', async () => {
+      const timestamp = 123456;
+      const packagePath = join(
+        outputDirectory,
+        `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`
+      );
+      env.stub(Date, 'now').returns(timestamp);
+      const compSet = new ComponentSet(components, mockRegistry);
+      compSet.sourceApiVersion = '45.0';
+      const expectedContents = compSet.getPackageXml();
+
+      await converter.convert(compSet, 'metadata', { type: 'directory', outputDirectory });
+
+      expect(writeFileStub.calledBefore(pipelineStub)).to.be.true;
+      expect(writeFileStub.firstCall.args).to.deep.equal([
+        join(packagePath, MetadataConverter.PACKAGE_XML_FILE),
+        expectedContents,
+      ]);
+      expect(expectedContents).to.contain(`<version>${compSet.sourceApiVersion}</version>`);
     });
 
     it('should write the fullName entry when packageName is provided', async () => {
@@ -314,13 +335,13 @@ describe('MetadataConverter', () => {
       await converter.convert(components, 'source', {
         type: 'merge',
         defaultDirectory,
-        mergeWith: [REGINA_CHILD_COMPONENT_1, REGINA_CHILD_COMPONENT_2],
+        mergeWith: [DECOMPOSED_CHILD_COMPONENT_1, DECOMPOSED_CHILD_COMPONENT_2],
       });
 
       const pipelineArgs = pipelineStub.firstCall.args;
       validatePipelineArgs(pipelineArgs, 'source');
       expect(pipelineArgs[1].mergeSet).to.deep.equal(
-        new ComponentSet([REGINA_CHILD_COMPONENT_1.parent])
+        new ComponentSet([DECOMPOSED_CHILD_COMPONENT_1.parent])
       );
     });
   });

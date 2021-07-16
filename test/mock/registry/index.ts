@@ -13,7 +13,7 @@ export {
   taraji,
   mixedContentInFolder,
   mixedContentSingleFile,
-  regina,
+  decomposed,
   nonDecomposed,
   decomposedtoplevel,
 } from './type-constants';

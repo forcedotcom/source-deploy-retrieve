@@ -272,11 +272,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
 
   protected async pre(): Promise<AsyncResult> {
     const converter = new MetadataConverter();
-    const { zipBuffer } = await converter.convert(
-      Array.from(this.components.getSourceComponents()),
-      'metadata',
-      { type: 'zip' }
-    );
+    const { zipBuffer } = await converter.convert(this.components, 'metadata', { type: 'zip' });
     const connection = await this.getConnection();
     await this.maybeSaveTempDirectory('metadata');
     return connection.deploy(zipBuffer, this.options.apiOptions);

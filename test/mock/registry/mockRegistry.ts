@@ -147,12 +147,12 @@ export const mockRegistryData = {
       suffix: 'mcifFolder',
       folderContentType: 'mixedcontentinfolder',
     },
-    reginaking: {
-      id: 'reginaking',
-      directoryName: 'reginas',
+    decomposed: {
+      id: 'decomposed',
+      directoryName: 'decomposeds',
       inFolder: false,
-      name: 'ReginaKing',
-      suffix: 'regina',
+      name: 'Decomposed',
+      suffix: 'decomposed',
       strictDirectoryName: true,
       children: {
         types: {
@@ -247,7 +247,7 @@ export const mockRegistryData = {
     mcf: 'matchingcontentfile',
     missing: 'typewithoutdef',
     mcifFolder: 'mciffolder',
-    reginaking: 'regina',
+    decomposed: 'decomposed',
     mcif: 'mixedcontentinfolder',
     mixedSingleFile: 'mixedcontentsinglefile',
     dtl: 'decomposedtoplevel',
@@ -256,14 +256,14 @@ export const mockRegistryData = {
   strictDirectoryNames: {
     tarajis: 'tarajihenson',
     bundles: 'bundle',
-    reginas: 'reginaking',
+    decomposed: 'decomposed',
     mixedSingleFiles: 'mixedcontentsinglefile',
     mixedContentInFolders: 'mixedcontentinfolder',
     decomposedTopLevels: 'decomposedtoplevel',
   },
   childTypes: {
-    x: 'reginaking',
-    y: 'reginaking',
+    x: 'decomposed',
+    y: 'decomposed',
     g: 'decomposedtoplevel',
     badchildtype: 'mixedcontentsinglefile',
   },

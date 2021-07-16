@@ -8,13 +8,13 @@ import { SourceComponent } from '../../src/resolve';
 import { RegistryTestUtil } from './registryTestUtil';
 import {
   xmlInFolder,
-  regina,
+  decomposed,
   taraji,
   matchingContentFile,
   mockRegistryData,
 } from '../mock/registry';
 import { expect } from 'chai';
-import { REGINA_COMPONENT } from '../mock/registry/type-constants/reginaConstants';
+import { DECOMPOSED_COMPONENT } from '../mock/registry/type-constants/decomposedConstants';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
 import {
   COMPONENT_1,
@@ -30,7 +30,7 @@ const env = createSandbox();
 
 describe('SourceComponent', () => {
   it('should return correct fullName for components without a parent', () => {
-    expect(REGINA_COMPONENT.fullName).to.equal(REGINA_COMPONENT.name);
+    expect(DECOMPOSED_COMPONENT.fullName).to.equal(DECOMPOSED_COMPONENT.name);
   });
 
   describe('parseXml', () => {
@@ -144,39 +144,42 @@ describe('SourceComponent', () => {
   });
 
   describe('Child Components', () => {
-    const type = mockRegistryData.types.reginaking;
+    const type = mockRegistryData.types.decomposed;
     const expectedChild = SourceComponent.createVirtualComponent(
       {
         name: 'z',
         type: type.children.types.y,
-        xml: regina.REGINA_CHILD_XML_PATH_1,
-        parent: regina.REGINA_COMPONENT,
+        xml: decomposed.DECOMPOSED_CHILD_XML_PATH_1,
+        parent: decomposed.DECOMPOSED_COMPONENT,
       },
-      regina.REGINA_VIRTUAL_FS
+      decomposed.DECOMPOSED_VIRTUAL_FS
     );
     const expectedChild2 = SourceComponent.createVirtualComponent(
       {
         name: 'w',
         type: type.children.types.x,
-        xml: regina.REGINA_CHILD_XML_PATH_2,
-        parent: regina.REGINA_COMPONENT,
+        xml: decomposed.DECOMPOSED_CHILD_XML_PATH_2,
+        parent: decomposed.DECOMPOSED_COMPONENT,
       },
-      regina.REGINA_VIRTUAL_FS
+      decomposed.DECOMPOSED_VIRTUAL_FS
     );
 
     it('should return child components for a component', () => {
-      expect(regina.REGINA_COMPONENT.getChildren()).to.deep.equal([expectedChild, expectedChild2]);
+      expect(decomposed.DECOMPOSED_COMPONENT.getChildren()).to.deep.equal([
+        expectedChild,
+        expectedChild2,
+      ]);
     });
 
     it('should not include children that are forceignored', () => {
       const testUtil = new RegistryTestUtil();
       const forceIgnore = testUtil.stubForceIgnore({
-        seed: regina.REGINA_XML_PATH,
-        deny: [regina.REGINA_CHILD_XML_PATH_2],
+        seed: decomposed.DECOMPOSED_XML_PATH,
+        deny: [decomposed.DECOMPOSED_CHILD_XML_PATH_2],
       });
       const component = SourceComponent.createVirtualComponent(
-        regina.REGINA_COMPONENT,
-        regina.REGINA_VIRTUAL_FS,
+        decomposed.DECOMPOSED_COMPONENT,
+        decomposed.DECOMPOSED_VIRTUAL_FS,
         forceIgnore
       );
       expect(component.getChildren()).to.deep.equal([expectedChild]);
@@ -185,7 +188,7 @@ describe('SourceComponent', () => {
 
     it('should return correct fullName for components with a parent', () => {
       expect(expectedChild.fullName).to.equal(
-        `${regina.REGINA_COMPONENT.name}.${expectedChild.name}`
+        `${decomposed.DECOMPOSED_COMPONENT.name}.${expectedChild.name}`
       );
     });
 

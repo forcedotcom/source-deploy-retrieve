@@ -82,9 +82,7 @@ export async function stubMetadataDeploy(
     .resolves(MOCK_RECENTLY_VALIDATED_ID_SOAP);
 
   const convertStub = sandbox.stub(MetadataConverter.prototype, 'convert');
-  convertStub
-    .withArgs(Array.from(options.components), 'metadata', { type: 'zip' })
-    .resolves({ zipBuffer });
+  convertStub.withArgs(options.components, 'metadata', { type: 'zip' }).resolves({ zipBuffer });
 
   const defaultStatus = { success: false, done: false, status: RequestStatus.Pending };
   const status: Partial<MetadataApiDeployStatus> = Object.assign(defaultStatus, MOCK_ASYNC_RESULT);

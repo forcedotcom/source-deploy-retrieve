@@ -146,19 +146,13 @@ export abstract class MetadataTransfer<
       try {
         const source = cs || this.components || new ComponentSet();
         const converter = new MetadataConverter();
+        await converter.convert(source, target, {
+          type: 'directory',
+          outputDirectory: mdapiTempDir,
+        });
         if (target === 'source') {
-          await converter.convert(source.getSourceComponents().toArray(), target, {
-            type: 'directory',
-            outputDirectory: mdapiTempDir,
-          });
-          // for source convert the package.xml isn't included, we'll write that separately
-
+          // for source convert the package.xml isn't included so write it separately
           fs.writeFileSync(join(mdapiTempDir, 'package.xml'), source.getPackageXml());
-        } else {
-          await converter.convert(source.getSourceComponents().toArray(), target, {
-            type: 'directory',
-            outputDirectory: mdapiTempDir,
-          });
         }
       } catch (e) {
         this.logger.debug(e);
@@ -171,7 +165,7 @@ export abstract class MetadataTransfer<
       this.usernameOrConnection = await Connection.create({
         authInfo: await AuthInfo.create({ username: this.usernameOrConnection }),
       });
-      if (this.apiVersion) {
+      if (this.apiVersion && this.apiVersion !== this.usernameOrConnection.version) {
         this.usernameOrConnection.setApiVersion(this.apiVersion);
         this.logger.debug(`Overriding apiVersion to: ${this.apiVersion}`);
       }

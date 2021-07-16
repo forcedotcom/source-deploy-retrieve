@@ -1,3 +1,17 @@
+# 4.0.0 - July 16, 2021
+
+## Fixed
+
+- Add support for sourceApiVersion ([PR #381](https://github.com/forcedotcom/source-deploy-retrieve/pull/381))
+
+- Add BatchCalcJobDefinition to metadata registry ([PR #382](https://github.com/forcedotcom/source-deploy-retrieve/pull/382))
+
+- ResolveComponent no longer tries to resolve ignored dir paths ([PR #379](https://github.com/forcedotcom/source-deploy-retrieve/pull/379))
+
+- Match toolbelt for Bot and BotVersion metadata types ([PR #372](https://github.com/forcedotcom/source-deploy-retrieve/pull/372))
+
+- Retrieve package names to their respective packages ([PR #353](https://github.com/forcedotcom/source-deploy-retrieve/pull/353))
+
 # 3.1.1 - July 9, 2021
 
 ## Fixed

@@ -159,6 +159,27 @@ describe('MetadataConverter', () => {
       ]);
     });
 
+    it('should write manifest for metadata format conversion with sourceApiVersion', async () => {
+      const timestamp = 123456;
+      const packagePath = join(
+        outputDirectory,
+        `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`
+      );
+      env.stub(Date, 'now').returns(timestamp);
+      const compSet = new ComponentSet(components, mockRegistry);
+      compSet.sourceApiVersion = '45.0';
+      const expectedContents = compSet.getPackageXml();
+
+      await converter.convert(compSet, 'metadata', { type: 'directory', outputDirectory });
+
+      expect(writeFileStub.calledBefore(pipelineStub)).to.be.true;
+      expect(writeFileStub.firstCall.args).to.deep.equal([
+        join(packagePath, MetadataConverter.PACKAGE_XML_FILE),
+        expectedContents,
+      ]);
+      expect(expectedContents).to.contain(`<version>${compSet.sourceApiVersion}</version>`);
+    });
+
     it('should write the fullName entry when packageName is provided', async () => {
       const timestamp = 123456;
       const packageName = 'examplePackage';

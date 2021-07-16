@@ -46,7 +46,15 @@ export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
 export class ComponentSet extends LazyCollection<MetadataComponent> {
   public static readonly WILDCARD = '*';
   private static readonly KEY_DELIMITER = '#';
+  /**
+   * The metadata API version to use. E.g., 52.0
+   */
   public apiVersion: string;
+  /**
+   * The metadata API version of the deployed/retrieved source.
+   * This is used as the value for the `version` field in the manifest.
+   */
+  public sourceApiVersion: string;
   public fullName?: string;
   private registry: RegistryAccess;
   private components = new Map<string, Map<string, SourceComponent>>();
@@ -246,7 +254,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     return {
       Package: {
         types: typeMembers,
-        version: this.apiVersion,
+        version: this.sourceApiVersion || this.apiVersion,
         fullName: this.fullName,
       },
     };

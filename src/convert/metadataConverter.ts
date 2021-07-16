@@ -49,10 +49,36 @@ export class MetadataConverter {
     components: Iterable<SourceComponent>,
     targetFormat: SfdxFileFormat,
     output: ConvertOutputConfig
+  ): Promise<ConvertResult>;
+
+  /**
+   * Convert metadata components within a `ComponentSet` to another SFDX file format.
+   *
+   * @param componentSet ComponentSet to convert
+   * @param targetFormat Format to convert the component files to
+   * @param output Configuration for outputting the converted files
+   */
+  public async convert(
+    componentSet: ComponentSet,
+    targetFormat: SfdxFileFormat,
+    output: ConvertOutputConfig
+  ): Promise<ConvertResult>;
+
+  public async convert(
+    comps: ComponentSet | Iterable<SourceComponent>,
+    targetFormat: SfdxFileFormat,
+    output: ConvertOutputConfig
   ): Promise<ConvertResult> {
     try {
-      // it's possible the components came from a component set, so this may be redundant in some cases...
-      const cs = new ComponentSet(components, this.registry);
+      let cs: ComponentSet;
+      let components: Iterable<SourceComponent>;
+      if (comps instanceof ComponentSet) {
+        cs = comps;
+        components = Array.from(comps.getSourceComponents());
+      } else {
+        cs = new ComponentSet(comps, this.registry);
+        components = comps;
+      }
       let manifestContents;
       const isSource = targetFormat === 'source';
       const tasks = [];

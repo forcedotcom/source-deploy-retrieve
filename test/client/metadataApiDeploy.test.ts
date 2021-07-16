@@ -53,8 +53,7 @@ describe('MetadataApiDeploy', () => {
 
         await operation.start();
 
-        expect(convertStub.calledWith(components.toArray(), 'metadata', { type: 'zip' })).to.be
-          .true;
+        expect(convertStub.calledWith(components, 'metadata', { type: 'zip' })).to.be.true;
       });
 
       it('should call deploy with zip', async () => {

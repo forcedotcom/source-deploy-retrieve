@@ -8,7 +8,7 @@
 
 - ResolveComponent no longer tries to resolve ignored dir paths ([PR #379](https://github.com/forcedotcom/source-deploy-retrieve/pull/379))
 
-- Wr/bot version ([PR #372](https://github.com/forcedotcom/source-deploy-retrieve/pull/372))
+- Match toolbelt for Bot and BotVersion metadata types ([PR #372](https://github.com/forcedotcom/source-deploy-retrieve/pull/372))
 
 - Retrieve package names to their respective packages ([PR #353](https://github.com/forcedotcom/source-deploy-retrieve/pull/353))
 

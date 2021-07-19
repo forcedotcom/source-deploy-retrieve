@@ -574,9 +574,9 @@ describe('MetadataResolver', () => {
       // as part of a project's metadata, but the ExperienceBundle dir and all files
       // in that dir are ignored, it would throw an error. This ensures it doesn't
       // throw and also doesn't resolve any components.
-      const dirPath = taraji.TARAJI_DIR;
-      const fsPath = taraji.TARAJI_CONTENT_PATH;
-      const topLevelXmlPath = taraji.TARAJI_XML_PATHS[0];
+      const dirPath = mixedContentDirectory.MIXED_CONTENT_DIRECTORY_DIR;
+      const fsPath = mixedContentDirectory.MIXED_CONTENT_DIRECTORY_CONTENT_PATH;
+      const topLevelXmlPath = mixedContentDirectory.MIXED_CONTENT_DIRECTORY_XML_PATHS[0];
       testUtil.stubForceIgnore({ seed: dirPath, deny: [fsPath, topLevelXmlPath] });
       const access = testUtil.createMetadataResolver([
         {
@@ -590,11 +590,11 @@ describe('MetadataResolver', () => {
       ]);
       testUtil.stubAdapters([
         {
-          type: mockRegistryData.types.tarajihenson,
+          type: mockRegistryData.types.mixedcontentdirectory,
           componentMappings: [
             {
               path: topLevelXmlPath,
-              component: taraji.TARAJI_COMPONENT,
+              component: mixedContentDirectory.MIXED_CONTENT_DIRECTORY_COMPONENT,
             },
           ],
         },

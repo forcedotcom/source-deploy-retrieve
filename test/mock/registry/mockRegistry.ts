@@ -118,11 +118,16 @@ export const mockRegistryData = {
         recomposition: 'startEmpty',
       },
     },
-    tarajihenson: {
-      id: 'tarajihenson',
-      directoryName: 'tarajis',
+    /**
+     * Metadata whose content is directory(ies) containing files of any extension
+     *
+     * e.g. ExperienceBundle
+     */
+    mixedcontentdirectory: {
+      id: 'mixedcontentdirectory',
+      directoryName: 'mixedcontentdirectories',
       inFolder: false,
-      name: 'TarajiHenson',
+      name: 'MixedContentDirectory',
       strictDirectoryName: true,
       strategies: {
         adapter: 'mixedContent',
@@ -254,7 +259,7 @@ export const mockRegistryData = {
     ms: 'missingstrategies',
   },
   strictDirectoryNames: {
-    tarajis: 'tarajihenson',
+    mixedContentDirectories: 'mixedcontentdirectory',
     bundles: 'bundle',
     decomposed: 'decomposed',
     mixedSingleFiles: 'mixedcontentsinglefile',

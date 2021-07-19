@@ -8,7 +8,7 @@ import * as matchingContentFile from './matchingContentFileConstants';
 import * as xmlInFolder from './xmlInFolderConstants';
 import * as bundle from './bundleConstants';
 import * as document from './documentConstants';
-import * as taraji from './tarajiConstants';
+import * as mixedContentDirectory from './mixedContentDirectoryConstants';
 import * as mixedContentInFolder from './mixedContentInFolderConstants';
 import * as mixedContentSingleFile from './mixedContentSingleFileConstants';
 import * as decomposed from './decomposedConstants';
@@ -19,7 +19,7 @@ export {
   document,
   matchingContentFile,
   bundle,
-  taraji,
+  mixedContentDirectory,
   mixedContentInFolder,
   mixedContentSingleFile,
   decomposed,

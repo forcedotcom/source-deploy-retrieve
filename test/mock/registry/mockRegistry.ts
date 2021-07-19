@@ -118,6 +118,11 @@ export const mockRegistryData = {
         recomposition: 'startEmpty',
       },
     },
+    /**
+     * Metadata whose content is directory(ies) containing files of any extension
+     *
+     * e.g. ExperienceBundle
+     */
     mixedcontentdirectory: {
       id: 'mixedcontentdirectory',
       directoryName: 'mixedcontentdirectories',

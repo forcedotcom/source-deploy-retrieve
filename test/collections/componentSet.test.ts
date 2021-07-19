@@ -318,6 +318,31 @@ describe('ComponentSet', () => {
       });
     });
 
+    it('should return an object representing the package manifest with sourceApiVersion', () => {
+      const set = ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry: mockRegistry,
+        tree: manifestFiles.TREE,
+      });
+      set.sourceApiVersion = '45.0';
+      expect(set.getObject()).to.deep.equal({
+        Package: {
+          fullName: undefined,
+          types: [
+            {
+              name: 'DecomposedTopLevel',
+              members: ['a'],
+            },
+            {
+              name: 'MixedContentSingleFile',
+              members: ['b', 'c'],
+            },
+          ],
+          version: set.sourceApiVersion,
+        },
+      });
+    });
+
     it('should interpret folder components as members of the type they are a container for', () => {
       const member = { fullName: 'Test_Folder', type: 'McifFolder' };
       const set = new ComponentSet([member], mockRegistry);

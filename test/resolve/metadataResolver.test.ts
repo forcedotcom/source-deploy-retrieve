@@ -12,7 +12,7 @@ import {
   mockRegistry,
   xmlInFolder,
   matchingContentFile,
-  taraji,
+  mixedContentDirectory,
   mixedContentInFolder,
   bundle,
   mockRegistryData,
@@ -32,12 +32,12 @@ import {
   DECOMPOSED_CHILD_XML_PATH_2,
 } from '../mock/registry/type-constants/decomposedConstants';
 import {
-  TARAJI_COMPONENT,
-  TARAJI_CONTENT_PATH,
-  TARAJI_DIR,
-  TARAJI_VIRTUAL_FS,
-  TARAJI_XML_PATHS,
-} from '../mock/registry/type-constants/tarajiConstants';
+  MIXED_CONTENT_DIRECTORY_COMPONENT,
+  MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
+  MIXED_CONTENT_DIRECTORY_DIR,
+  MIXED_CONTENT_DIRECTORY_VIRTUAL_FS,
+  MIXED_CONTENT_DIRECTORY_XML_PATHS,
+} from '../mock/registry/type-constants/mixedContentDirectoryConstants';
 import { ComponentSet } from '../../src';
 
 const testUtil = new RegistryTestUtil();
@@ -99,7 +99,7 @@ describe('MetadataResolver', () => {
       });
 
       it('Should determine type for path of mixed content type', () => {
-        const path = taraji.TARAJI_SOURCE_PATHS[1];
+        const path = mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[1];
         const access = testUtil.createMetadataResolver([
           {
             dirPath: dirname(path),
@@ -108,11 +108,15 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.tarajihenson,
-            componentMappings: [{ path, component: taraji.TARAJI_COMPONENT }],
+            type: mockRegistryData.types.mixedcontentdirectory,
+            componentMappings: [
+              { path, component: mixedContentDirectory.MIXED_CONTENT_DIRECTORY_COMPONENT },
+            ],
           },
         ]);
-        expect(access.getComponentsFromPath(path)).to.deep.equal([taraji.TARAJI_COMPONENT]);
+        expect(access.getComponentsFromPath(path)).to.deep.equal([
+          mixedContentDirectory.MIXED_CONTENT_DIRECTORY_COMPONENT,
+        ]);
       });
 
       it('Should determine type for path content files', () => {
@@ -401,30 +405,33 @@ describe('MetadataResolver', () => {
       });
 
       it('Should return a component for a directory that is content or a child of content', () => {
-        const { TARAJI_CONTENT_PATH } = taraji;
+        const { MIXED_CONTENT_DIRECTORY_CONTENT_PATH } = mixedContentDirectory;
         const access = testUtil.createMetadataResolver([
           {
-            dirPath: TARAJI_CONTENT_PATH,
+            dirPath: MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
             children: [],
           },
           {
-            dirPath: taraji.TARAJI_DIR,
-            children: [taraji.TARAJI_XML_NAMES[0], basename(TARAJI_CONTENT_PATH)],
+            dirPath: mixedContentDirectory.MIXED_CONTENT_DIRECTORY_DIR,
+            children: [
+              mixedContentDirectory.MIXED_CONTENT_DIRECTORY_XML_NAMES[0],
+              basename(MIXED_CONTENT_DIRECTORY_CONTENT_PATH),
+            ],
           },
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.tarajihenson,
+            type: mockRegistryData.types.mixedcontentdirectory,
             componentMappings: [
               {
-                path: TARAJI_CONTENT_PATH,
-                component: taraji.TARAJI_COMPONENT,
+                path: MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
+                component: mixedContentDirectory.MIXED_CONTENT_DIRECTORY_COMPONENT,
               },
             ],
           },
         ]);
-        expect(access.getComponentsFromPath(TARAJI_CONTENT_PATH)).to.deep.equal([
-          taraji.TARAJI_COMPONENT,
+        expect(access.getComponentsFromPath(MIXED_CONTENT_DIRECTORY_CONTENT_PATH)).to.deep.equal([
+          mixedContentDirectory.MIXED_CONTENT_DIRECTORY_COMPONENT,
         ]);
       });
 
@@ -457,22 +464,24 @@ describe('MetadataResolver', () => {
       });
 
       it('Should not add duplicate component if directory content and xml are at the same level', () => {
-        const access = testUtil.createMetadataResolver(TARAJI_VIRTUAL_FS);
+        const access = testUtil.createMetadataResolver(MIXED_CONTENT_DIRECTORY_VIRTUAL_FS);
         const component = SourceComponent.createVirtualComponent(
-          TARAJI_COMPONENT,
-          TARAJI_VIRTUAL_FS
+          MIXED_CONTENT_DIRECTORY_COMPONENT,
+          MIXED_CONTENT_DIRECTORY_VIRTUAL_FS
         );
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.tarajihenson,
+            type: mockRegistryData.types.mixedcontentdirectory,
             componentMappings: [
-              { path: TARAJI_CONTENT_PATH, component },
-              { path: TARAJI_XML_PATHS[0], component },
+              { path: MIXED_CONTENT_DIRECTORY_CONTENT_PATH, component },
+              { path: MIXED_CONTENT_DIRECTORY_XML_PATHS[0], component },
             ],
           },
         ]);
 
-        expect(access.getComponentsFromPath(TARAJI_DIR)).to.deep.equal([component]);
+        expect(access.getComponentsFromPath(MIXED_CONTENT_DIRECTORY_DIR)).to.deep.equal([
+          component,
+        ]);
       });
 
       it('should stop resolution if parent component is resolved', () => {
@@ -565,9 +574,9 @@ describe('MetadataResolver', () => {
       // as part of a project's metadata, but the ExperienceBundle dir and all files
       // in that dir are ignored, it would throw an error. This ensures it doesn't
       // throw and also doesn't resolve any components.
-      const dirPath = taraji.TARAJI_DIR;
-      const fsPath = taraji.TARAJI_CONTENT_PATH;
-      const topLevelXmlPath = taraji.TARAJI_XML_PATHS[0];
+      const dirPath = mixedContentDirectory.MIXED_CONTENT_DIRECTORY_DIR;
+      const fsPath = mixedContentDirectory.MIXED_CONTENT_DIRECTORY_CONTENT_PATH;
+      const topLevelXmlPath = mixedContentDirectory.MIXED_CONTENT_DIRECTORY_XML_PATHS[0];
       testUtil.stubForceIgnore({ seed: dirPath, deny: [fsPath, topLevelXmlPath] });
       const access = testUtil.createMetadataResolver([
         {
@@ -581,11 +590,11 @@ describe('MetadataResolver', () => {
       ]);
       testUtil.stubAdapters([
         {
-          type: mockRegistryData.types.tarajihenson,
+          type: mockRegistryData.types.mixedcontentdirectory,
           componentMappings: [
             {
               path: topLevelXmlPath,
-              component: taraji.TARAJI_COMPONENT,
+              component: mixedContentDirectory.MIXED_CONTENT_DIRECTORY_COMPONENT,
             },
           ],
         },

@@ -27,10 +27,10 @@
           }
         },
         "suffixes": {
-          "customLabel": "labels"
+          "labels": "customlabel"
         },
         "directories": {
-          "customLabels": "labels"
+          "labels": "customlabel"
         }
       },
       "strategies": {
@@ -468,6 +468,9 @@
         },
         "suffixes": {
           "formSection": "formsection"
+        },
+        "directories": {
+          "formSections": "formsection"
         }
       }
     },
@@ -590,68 +593,69 @@
       "suffix": "workflow",
       "directoryName": "workflows",
       "inFolder": false,
-      "strictDirectoryName": false,
+      "strictDirectoryName": true,
       "children": {
         "types": {
           "workflowfieldupdate": {
             "id": "workflowfieldupdate",
             "name": "WorkflowFieldUpdate",
-            "directoryName": "workflowFieldUpdates",
-            "suffix": "workflowFieldUpdate"
+            "directoryName": "fieldUpdates",
+            "suffix": "fieldUpdate"
           },
           "workflowknowledgepublish": {
             "id": "workflowknowledgepublish",
             "name": "WorkflowKnowledgePublish",
-            "directoryName": "workflowKnowledgePublishs",
-            "suffix": "workflowKnowledgePublish"
+            "directoryName": "knowledgePublishes",
+            "suffix": "knowledgePublish"
           },
           "workflowtask": {
             "id": "workflowtask",
             "name": "WorkflowTask",
-            "directoryName": "workflowTasks",
-            "suffix": "workflowTask"
+            "directoryName": "tasks",
+            "suffix": "task"
           },
           "workflowalert": {
             "id": "workflowalert",
             "name": "WorkflowAlert",
-            "directoryName": "workflowAlerts",
-            "suffix": "workflowAlert"
+            "directoryName": "alerts",
+            "suffix": "alert"
           },
           "workflowsend": {
             "id": "workflowsend",
             "name": "WorkflowSend",
-            "directoryName": "workflowSends",
-            "suffix": "workflowSend"
+            "directoryName": "send",
+            "suffix": "send"
           },
           "workflowoutboundmessage": {
             "id": "workflowoutboundmessage",
             "name": "WorkflowOutboundMessage",
-            "directoryName": "workflowOutboundMessages",
-            "suffix": "workflowOutboundMessage"
+            "directoryName": "outboundMessages",
+            "suffix": "outboundMessage"
           },
           "workflowrule": {
             "id": "workflowrule",
             "name": "WorkflowRule",
-            "directoryName": "workflowRules",
-            "suffix": "workflowRule"
+            "directoryName": "rules",
+            "suffix": "rule"
           }
         },
         "suffixes": {
-          "workflowFieldUpdate": "workflowfieldupdate",
-          "workflowKnowledgePublish": "workflowknowledgepublish",
-          "workflowTask": "workflowtask",
-          "workflowAlert": "workflowalert",
-          "workflowSend": "workflowsend",
-          "workflowOutboundMessage": "workflowoutboundmessage",
-          "workflowRule": "workflowrule"
+          "fieldUpdate": "workflowfieldupdate",
+          "knowledgePublish": "workflowknowledgepublish",
+          "task": "workflowtask",
+          "alert": "workflowalert",
+          "send": "workflowsend",
+          "outboundMessage": "workflowoutboundmessage",
+          "rule": "workflowrule"
         },
         "directories": {
-          "workflowFieldUpdates": "workflowfieldupdate",
-          "workflowTasks": "workflowtask",
-          "workflowAlerts": "workflowalert",
-          "workflowSends": "workflowsend",
-          "workflowOutboundMessages": "workflowoutboundmessage",
-          "workflowRules": "workflowrule"
+          "fieldUpdate": "workflowfieldupdate",
+          "knowledgePublish": "workflowknowledgepublish",
+          "task": "workflowtask",
+          "alert": "workflowalert",
+          "send": "workflowsend",
+          "outboundMessage": "workflowoutboundmessage",
+          "rule": "workflowrule"
         }
       }
     },
@@ -667,7 +671,8 @@
           "assignmentrule": {
             "id": "assignmentrule",
             "name": "AssignmentRule",
-            "directoryName": "assignmentRules",
+            "uniqueIdElement": "fullName",
+            "directoryName": "assignmentRule",
             "suffix": "assignmentRule"
           }
         },
@@ -675,8 +680,13 @@
           "assignmentRule": "assignmentrule"
         },
         "directories": {
-          "assignmentRules": "assignmentrule"
+          "assignmentRule": "assignmentrule"
         }
+      },
+      "strategies": {
+        "adapter": "default",
+        "transformer": "nonDecomposed",
+        "recomposition": "startEmpty"
       }
     },
     "autoresponserules": {
@@ -691,7 +701,8 @@
           "autoresponserule": {
             "id": "autoresponserule",
             "name": "AutoResponseRule",
-            "directoryName": "autoResponseRules",
+            "uniqueIdElement": "fullName",
+            "directoryName": "autoResponseRule",
             "suffix": "autoResponseRule"
           }
         },
@@ -699,8 +710,13 @@
           "autoResponseRule": "autoresponserule"
         },
         "directories": {
-          "autoResponseRules": "autoresponserule"
+          "autoResponseRule": "autoresponserule"
         }
+      },
+      "strategies": {
+        "adapter": "default",
+        "transformer": "nonDecomposed",
+        "recomposition": "startEmpty"
       }
     },
     "escalationrules": {
@@ -715,7 +731,8 @@
           "escalationrule": {
             "id": "escalationrule",
             "name": "EscalationRule",
-            "directoryName": "escalationRules",
+            "uniqueIdElement": "fullName",
+            "directoryName": "escalationRule",
             "suffix": "escalationRule"
           }
         },
@@ -723,8 +740,13 @@
           "escalationRule": "escalationrule"
         },
         "directories": {
-          "escalationRules": "escalationrule"
+          "escalationRule": "escalationrule"
         }
+      },
+      "strategies": {
+        "adapter": "default",
+        "transformer": "nonDecomposed",
+        "recomposition": "startEmpty"
       }
     },
     "posttemplate": {
@@ -768,7 +790,7 @@
       "strictDirectoryName": true,
       "children": {
         "types": {
-          "fieldtranslation": {
+          "customfieldtranslation": {
             "id": "customfieldtranslation",
             "name": "CustomFieldTranslation",
             "directoryName": "fields",
@@ -776,10 +798,10 @@
           }
         },
         "suffixes": {
-          "fieldTranslation": "fieldtranslation"
+          "fieldTranslation": "customfieldtranslation"
         },
         "directories": {
-          "fields": "fieldtranslation"
+          "fields": "customfieldtranslation"
         }
       },
       "strategies": {
@@ -925,6 +947,7 @@
           "matchingrule": {
             "id": "matchingrule",
             "name": "MatchingRule",
+            "uniqueIdElement": "fullName",
             "directoryName": "matchingRules",
             "suffix": "matchingRule"
           }
@@ -935,6 +958,11 @@
         "directories": {
           "matchingRules": "matchingrule"
         }
+      },
+      "strategies": {
+        "adapter": "default",
+        "transformer": "nonDecomposed",
+        "recomposition": "startEmpty"
       }
     },
     "duplicaterule": {
@@ -1001,6 +1029,7 @@
       "name": "WaveTemplateBundle",
       "directoryName": "waveTemplates",
       "inFolder": false,
+      "strictDirectoryName": true,
       "strategies": {
         "adapter": "bundle"
       }
@@ -1124,7 +1153,7 @@
       "suffix": "sharingRules",
       "directoryName": "sharingRules",
       "inFolder": false,
-      "strictDirectoryName": false,
+      "strictDirectoryName": true,
       "children": {
         "types": {
           "sharingownerrule": {
@@ -1160,7 +1189,10 @@
         },
         "directories": {
           "sharingOwnerRules": "sharingownerrule",
-          "sharingCriteriaRules": "sharingcriteriarule"
+          "sharingCriteriaRules": "sharingcriteriarule",
+          "sharingGuestRules": "sharingguestrule",
+          "sharingTerritoryRules": "sharingterritoryrule"
+
         }
       }
     },
@@ -1346,7 +1378,7 @@
           "managedtopic": {
             "id": "managedtopic",
             "name": "ManagedTopic",
-            "directoryName": "managedTopics",
+            "directoryName": "ManagedTopic",
             "suffix": "managedTopic"
           }
         },
@@ -1354,7 +1386,7 @@
           "managedTopic": "managedtopic"
         },
         "directories": {
-          "managedTopics": "managedtopic"
+          "ManagedTopic": "managedtopic"
         }
       }
     },
@@ -2014,6 +2046,17 @@
     }
   },
   "suffixes": {
+    "document": "document",
+    "customfieldtranslation": "customobjecttranslation",
+    "bots": "bot",
+    "workflowknowledgepublish": "workflow",
+    "formsection": "form",
+    "workflows": "workflow",
+    "sharingguestrule": "sharingrules",
+    "sharingterritoryrule": "sharingrules",
+    "managedtopic": "managedtopics",
+    "botversion": "bot",
+    "workskillroutingattribute": "workskillrouting",
     "installedPackage": "installedpackage",
     "labels": "customlabels",
     "navigationMenu": "navigationmenu",

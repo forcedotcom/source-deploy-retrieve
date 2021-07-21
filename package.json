@@ -43,7 +43,7 @@
     "@commitlint/cli": "^7",
     "@commitlint/config-conventional": "^7",
     "@salesforce/ts-sinon": "^1.1.2",
-    "@types/archiver": "^3.1.0",
+    "@types/archiver": "^5.1.1",
     "@types/chai": "^4",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/mime": "2.0.3",

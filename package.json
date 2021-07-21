@@ -42,6 +42,7 @@
   "devDependencies": {
     "@commitlint/cli": "^7",
     "@commitlint/config-conventional": "^7",
+    "@salesforce/dev-scripts": "^0.6.2",
     "@salesforce/ts-sinon": "^1.1.2",
     "@types/archiver": "^3.1.0",
     "@types/chai": "^4",
@@ -79,9 +80,10 @@
   },
   "scripts": {
     "build": "shx rm -rf ./lib && tsc -b",
+    "ci-docs": "yarn sf-ci-docs",
     "commit-init": "commitizen init cz-conventional-changelog --save-dev --save-exact --force",
     "commit": "git-cz",
-    "docs": "shx rm -rf ./docs && yarn typedoc",
+    "docs": "sf-docs",
     "format": "prettier --config .prettierrc --loglevel warn --write './{src,test,scripts}/**/*.{js,json,ts}'",
     "lint": "eslint -c .eslintrc.json --ext .ts ./src ./test",
     "local:install": "./scripts/localInstall.js install",

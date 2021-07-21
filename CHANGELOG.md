@@ -1,3 +1,9 @@
+# 3.1.2 - July 23, 2021
+
+## Fixed
+
+- Port pr v4.0.0 ([PR #387](https://github.com/forcedotcom/source-deploy-retrieve/pull/387))
+
 # 4.0.0 - July 16, 2021
 
 ## Fixed

@@ -7,6 +7,11 @@
 
 import { RegistryAccess } from '../../../src';
 
+/**
+ * SDR is driven by the idea that solutions aren’t built for specific metadata types, but for classifications of types.
+ * mockRegistryData provides classifications of types, instead of specifc metadata types, for testing purposes.
+ *
+ */
 export const mockRegistryData = {
   types: {
     /**

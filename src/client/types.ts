@@ -160,7 +160,7 @@ export type DeployDetails = {
 
 export interface RunTestResult {
   codeCoverage?: CodeCoverage[] | CodeCoverage;
-  codeCoverageWarnings: CodeCoverageWarnings[] | CodeCoverageWarnings;
+  codeCoverageWarnings?: CodeCoverageWarnings[] | CodeCoverageWarnings;
   failures?: Failures[] | Failures;
   numFailures: string;
   numTestsRun: string;

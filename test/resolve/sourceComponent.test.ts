@@ -9,7 +9,7 @@ import { RegistryTestUtil } from './registryTestUtil';
 import {
   xmlInFolder,
   decomposed,
-  taraji,
+  mixedContentDirectory,
   matchingContentFile,
   mockRegistryData,
 } from '../mock/registry';
@@ -116,29 +116,36 @@ describe('SourceComponent', () => {
       const component = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistryData.types.tarajihenson,
-          xml: taraji.TARAJI_XML_PATHS[0],
-          content: taraji.TARAJI_CONTENT_PATH,
+          type: mockRegistryData.types.mixedcontentdirectory,
+          xml: mixedContentDirectory.MIXED_CONTENT_DIRECTORY_XML_PATHS[0],
+          content: mixedContentDirectory.MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
         },
-        taraji.TARAJI_VIRTUAL_FS
+        mixedContentDirectory.MIXED_CONTENT_DIRECTORY_VIRTUAL_FS
       );
-      expect(component.walkContent()).to.deep.equal(taraji.TARAJI_SOURCE_PATHS);
+      expect(component.walkContent()).to.deep.equal(
+        mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS
+      );
     });
 
     it('Should not include source paths that are forceignored', () => {
       const testUtil = new RegistryTestUtil();
-      const path = taraji.TARAJI_SOURCE_PATHS[0];
+      const path = mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[0];
       const forceIgnore = testUtil.stubForceIgnore({
         seed: path,
-        accept: [taraji.TARAJI_SOURCE_PATHS[1]],
-        deny: [taraji.TARAJI_SOURCE_PATHS[0], taraji.TARAJI_SOURCE_PATHS[2]],
+        accept: [mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[1]],
+        deny: [
+          mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[0],
+          mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[2],
+        ],
       });
       const component = SourceComponent.createVirtualComponent(
-        taraji.TARAJI_COMPONENT,
-        taraji.TARAJI_VIRTUAL_FS,
+        mixedContentDirectory.MIXED_CONTENT_DIRECTORY_COMPONENT,
+        mixedContentDirectory.MIXED_CONTENT_DIRECTORY_VIRTUAL_FS,
         forceIgnore
       );
-      expect(component.walkContent()).to.deep.equal([taraji.TARAJI_SOURCE_PATHS[1]]);
+      expect(component.walkContent()).to.deep.equal([
+        mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[1],
+      ]);
       testUtil.restore();
     });
   });

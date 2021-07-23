@@ -153,10 +153,60 @@ export interface MetadataApiDeployStatus extends MetadataRequestStatus {
 export type DeployDetails = {
   componentFailures?: DeployMessage | DeployMessage[];
   componentSuccesses?: DeployMessage | DeployMessage[];
-  // TODO: Add types for RetrieveResult and RunTestsResult
+  // TODO: Add types for RetrieveResult
   // retrieveResult?:
-  // runTestResult?:
+  runTestResult?: RunTestResult;
 };
+
+export interface RunTestResult {
+  codeCoverage?: CodeCoverage[] | CodeCoverage;
+  codeCoverageWarnings?: CodeCoverageWarnings[] | CodeCoverageWarnings;
+  failures?: Failures[] | Failures;
+  numFailures: string;
+  numTestsRun: string;
+  successes?: Successes[] | Successes;
+  totalTime: string;
+}
+
+export interface CodeCoverage {
+  id: string;
+  locationsNotCovered?: LocationsNotCovered[] | LocationsNotCovered;
+  name: string;
+  numLocations: string;
+  numLocationsNotCovered: string;
+  type: string;
+}
+
+export interface LocationsNotCovered {
+  column: string;
+  line: string;
+  numExecutions: string;
+  time: string;
+}
+
+export interface CodeCoverageWarnings {
+  id: string;
+  message: string;
+  namespace: string;
+}
+
+export interface Failures {
+  id: string;
+  message: string;
+  methodName: string;
+  name: string;
+  packageName: string;
+  stackTrace: string;
+  time: string;
+  type: string;
+}
+
+export interface Successes {
+  id: string;
+  methodName: string;
+  name: string;
+  time: string;
+}
 
 type BooleanString = 'true' | 'false' | true | false;
 

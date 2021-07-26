@@ -1,0 +1,1174 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>@salesforce/source-deploy-retrieve</title>
+	<meta name="description" content="Documentation for @salesforce/source-deploy-retrieve">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">@salesforce/source-deploy-retrieve</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1>@salesforce/source-deploy-retrieve</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#salesforce-source-deploy-retrieve" id="salesforce-source-deploy-retrieve" style="color: inherit; text-decoration: none;">
+					<h1>Salesforce source-deploy-retrieve</h1>
+				</a>
+				<p><a href="https://circleci.com/gh/forcedotcom/source-deploy-retrieve"><img src="https://circleci.com/gh/forcedotcom/source-deploy-retrieve.svg?style=svg&circle-token=8cab4c48eb81996544b9fa3dfa29e6734376b73f" alt="CircleCI"></a>
+					<a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg" alt="License"></a>
+					<img src="https://img.shields.io/npm/v/@salesforce/source-deploy-retrieve" alt="npm (scoped)">
+				<a href="http://commitizen.github.io/cz-cli/"><img src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg" alt="Commitizen friendly"></a></p>
+				<a href="#introduction" id="introduction" style="color: inherit; text-decoration: none;">
+					<h2>Introduction</h2>
+				</a>
+				<p>A JavaScript toolkit for working with Salesforce metadata. Built to support the SFDX deploy and retrieve experience in the <a href="https://github.com/forcedotcom/salesforcedx-vscode">Salesforce VS Code Extensions</a>, CLI plugins, and other tools working with metadata.</p>
+				<a href="#features" id="features" style="color: inherit; text-decoration: none;">
+					<h2>Features</h2>
+				</a>
+				<ul>
+					<li>Resolve Salesforce metadata files into JavaScript objects</li>
+					<li>Parse and generate <a href="https://trailhead.salesforce.com/en/content/learn/modules/package-xml/package-xml-adventure">manifest files</a></li>
+					<li>Convert source files between <a href="https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_source_file_format.htm">SFDX File Formats</a></li>
+					<li>Generate metadata packages with the option to automatically create a zip file</li>
+					<li>Deploy and retrieve metadata with an org</li>
+					<li>An <a href="./src/registry/registry.json">index</a> to reference available metadata types.</li>
+					<li>Utilize promises with <code>async/await</code> syntax</li>
+				</ul>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<p>Install the package:</p>
+				<pre><code><span class="hljs-built_in">npm</span> install @salesforce/source-deploy-retrieve
+</code></pre>
+				<p>Examples:</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> { ComponentSet } = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@salesforce/source-deploy-retrieve&#x27;</span>);
+
+<span class="hljs-comment">// Deploy a local set of Apex classes to an org</span>
+<span class="hljs-keyword">const</span> deployResult = <span class="hljs-keyword">await</span> ComponentSet
+  .fromSource(<span class="hljs-string">&#x27;/dev/MyProject/force-app/main/default/classes&#x27;</span>)
+  .deploy({ <span class="hljs-attr">usernameOrConnection</span>: <span class="hljs-string">&#x27;user@example.com&#x27;</span> })
+  .start();
+
+<span class="hljs-comment">// Retrieve metadata defined in a manifest file</span>
+<span class="hljs-keyword">const</span> retrieveResult = <span class="hljs-keyword">await</span> ComponentSet
+  .fromManifest(<span class="hljs-string">&#x27;/dev/my-project/manifest/package.xml&#x27;</span>)
+  .retrieve({
+    <span class="hljs-attr">usernameOrConnection</span>: <span class="hljs-string">&#x27;user@example.com&#x27;</span>
+    <span class="hljs-attr">output</span>: <span class="hljs-string">&#x27;/dev/retrieve-result&#x27;</span>
+  })
+  .start();
+
+<span class="hljs-comment">// Search for a particular CustomObject</span>
+<span class="hljs-keyword">const</span> myObject = ComponentSet
+  .fromSource([
+    <span class="hljs-string">&#x27;/dev/my-project/force-app&#x27;</span>,
+    <span class="hljs-string">&#x27;/dev/my-project/force-app-2&#x27;</span>
+  ])
+  .find(<span class="hljs-function"><span class="hljs-params">component</span> =&gt;</span> {
+    <span class="hljs-keyword">return</span> component.fullName === <span class="hljs-string">&#x27;MyObject__c&#x27;</span> &amp;&amp; component.type.name === <span class="hljs-string">&#x27;CustomObject&#x27;</span>)
+  });
+</code></pre>
+				<p>See the <a href="./examples">examples</a> folder for more code samples and guides.</p>
+				<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
+					<h2>Contributing</h2>
+				</a>
+				<p>See <a href="./CONTRIBUTING.md">CONTRIBUTING.md</a> for details on how to contribute to the library.</p>
+				<p>See <a href="./contributing/developing.md">developing.md</a> for details on building and testing the library locally.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-enum">
+						<a href="enums/adapterid.html" class="tsd-kind-icon">Adapter<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/componentstatus.html" class="tsd-kind-icon">Component<wbr>Status</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/decompositionstrategy.html" class="tsd-kind-icon">Decomposition<wbr>Strategy</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/manageablestate.html" class="tsd-kind-icon">Manageable<wbr>State</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/recompositionstrategy.html" class="tsd-kind-icon">Recomposition<wbr>Strategy</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/requeststatus.html" class="tsd-kind-icon">Request<wbr>Status</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/toolingdeploystatus.html" class="tsd-kind-icon">Tooling<wbr>Deploy<wbr>Status</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/transformerstrategy.html" class="tsd-kind-icon">Transformer<wbr>Strategy</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/auradeploy.html" class="tsd-kind-icon">Aura<wbr>Deploy</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/basedeploy.html" class="tsd-kind-icon">Base<wbr>Deploy</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/basemetadatatransformer.html" class="tsd-kind-icon">Base<wbr>Metadata<wbr>Transformer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/basesourceadapter.html" class="tsd-kind-icon">Base<wbr>Source<wbr>Adapter</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/bundlesourceadapter.html" class="tsd-kind-icon">Bundle<wbr>Source<wbr>Adapter</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/componentconverter.html" class="tsd-kind-icon">Component<wbr>Converter</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/componentreader.html" class="tsd-kind-icon">Component<wbr>Reader</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/componentset.html" class="tsd-kind-icon">Component<wbr>Set</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/componentseterror.html" class="tsd-kind-icon">Component<wbr>Set<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/componentwriter.html" class="tsd-kind-icon">Component<wbr>Writer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/containerdeploy.html" class="tsd-kind-icon">Container<wbr>Deploy</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/conversionerror.html" class="tsd-kind-icon">Conversion<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/convertcontext.html" class="tsd-kind-icon">Convert<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/converttransactionfinalizer.html" class="tsd-kind-icon">Convert<wbr>Transaction<wbr>Finalizer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/decomposedmetadatatransformer.html" class="tsd-kind-icon">Decomposed<wbr>Metadata<wbr>Transformer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/decomposedsourceadapter.html" class="tsd-kind-icon">Decomposed<wbr>Source<wbr>Adapter</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/decompositionfinalizer.html" class="tsd-kind-icon">Decomposition<wbr>Finalizer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/defaultmetadatatransformer.html" class="tsd-kind-icon">Default<wbr>Metadata<wbr>Transformer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/defaultsourceadapter.html" class="tsd-kind-icon">Default<wbr>Source<wbr>Adapter</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/deployerror.html" class="tsd-kind-icon">Deploy<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/deployresult.html" class="tsd-kind-icon">Deploy<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/diagnosticutil.html" class="tsd-kind-icon">Diagnostic<wbr>Util</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/expectedsourcefileserror.html" class="tsd-kind-icon">Expected<wbr>Source<wbr>Files<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/forceignore.html" class="tsd-kind-icon">Force<wbr>Ignore</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/jstoxml.html" class="tsd-kind-icon">Js<wbr>ToXml</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/lazycollection.html" class="tsd-kind-icon">Lazy<wbr>Collection</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/libraryerror.html" class="tsd-kind-icon">Library<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/localization.html" class="tsd-kind-icon">Localization</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/lwcdeploy.html" class="tsd-kind-icon">Lwc<wbr>Deploy</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/manifestresolver.html" class="tsd-kind-icon">Manifest<wbr>Resolver</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/matchingcontentsourceadapter.html" class="tsd-kind-icon">Matching<wbr>Content<wbr>Source<wbr>Adapter</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/message.html" class="tsd-kind-icon">Message</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/metadataapideploy.html" class="tsd-kind-icon">Metadata<wbr>Api<wbr>Deploy</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/metadataapiretrieve.html" class="tsd-kind-icon">Metadata<wbr>Api<wbr>Retrieve</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/metadataapiretrieveerror.html" class="tsd-kind-icon">Metadata<wbr>Api<wbr>Retrieve<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/metadataconverter.html" class="tsd-kind-icon">Metadata<wbr>Converter</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/metadataresolver.html" class="tsd-kind-icon">Metadata<wbr>Resolver</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/metadatatransfer.html" class="tsd-kind-icon">Metadata<wbr>Transfer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/metadatatransfererror.html" class="tsd-kind-icon">Metadata<wbr>Transfer<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/metadatatransformerfactory.html" class="tsd-kind-icon">Metadata<wbr>Transformer<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/missingjobiderror.html" class="tsd-kind-icon">Missing<wbr>Job<wbr>IdError</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/mixedcontentsourceadapter.html" class="tsd-kind-icon">Mixed<wbr>Content<wbr>Source<wbr>Adapter</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/nodefstreecontainer.html" class="tsd-kind-icon">NodeFSTree<wbr>Container</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/nondecomposedmetadatatransformer.html" class="tsd-kind-icon">Non<wbr>Decomposed<wbr>Metadata<wbr>Transformer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/nondecompositionfinalizer.html" class="tsd-kind-icon">Non<wbr>Decomposition<wbr>Finalizer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/recompositionfinalizer.html" class="tsd-kind-icon">Recomposition<wbr>Finalizer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/registryaccess.html" class="tsd-kind-icon">Registry<wbr>Access</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/registryerror.html" class="tsd-kind-icon">Registry<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/registrytestutil.html" class="tsd-kind-icon">Registry<wbr>Test<wbr>Util</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/retrieveresult.html" class="tsd-kind-icon">Retrieve<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/sourceadapterfactory.html" class="tsd-kind-icon">Source<wbr>Adapter<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/sourceclienterror.html" class="tsd-kind-icon">Source<wbr>Client<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/sourcecomponent.html" class="tsd-kind-icon">Source<wbr>Component</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/standardwriter.html" class="tsd-kind-icon">Standard<wbr>Writer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/staticresourcemetadatatransformer.html" class="tsd-kind-icon">Static<wbr>Resource<wbr>Metadata<wbr>Transformer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/testadapter.html" class="tsd-kind-icon">Test<wbr>Adapter</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/testcollection.html" class="tsd-kind-icon">Test<wbr>Collection</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/testreadable.html" class="tsd-kind-icon">Test<wbr>Readable</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/testtransfer.html" class="tsd-kind-icon">Test<wbr>Transfer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/testtransformer.html" class="tsd-kind-icon">Test<wbr>Transformer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/toolingapi.html" class="tsd-kind-icon">Tooling<wbr>Api</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/treecontainer.html" class="tsd-kind-icon">Tree<wbr>Container</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/typeinferenceerror.html" class="tsd-kind-icon">Type<wbr>Inference<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/unexpectedforceignore.html" class="tsd-kind-icon">Unexpected<wbr>Force<wbr>Ignore</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/virtualtreecontainer.html" class="tsd-kind-icon">Virtual<wbr>Tree<wbr>Container</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/ziptreecontainer.html" class="tsd-kind-icon">Zip<wbr>Tree<wbr>Container</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/zipwriter.html" class="tsd-kind-icon">Zip<wbr>Writer</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/apexrecord.html" class="tsd-kind-icon">Apex<wbr>Record</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/asyncresult.html" class="tsd-kind-icon">Async<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/auradefinition.html" class="tsd-kind-icon">Aura<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/aurarecord.html" class="tsd-kind-icon">Aura<wbr>Record</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/decompositionstate.html" class="tsd-kind-icon">Decomposition<wbr>State</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/deployoperationlifecycle.html" class="tsd-kind-icon">Deploy<wbr>Operation<wbr>Lifecycle</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/deploystuboptions.html" class="tsd-kind-icon">Deploy<wbr>Stub<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/directoryindex.html" class="tsd-kind-icon">Directory<wbr>Index</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/fileresponsebase.html" class="tsd-kind-icon">File<wbr>Response<wbr>Base</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/fileresponsefailure.html" class="tsd-kind-icon">File<wbr>Response<wbr>Failure</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/fileresponsesuccess.html" class="tsd-kind-icon">File<wbr>Response<wbr>Success</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/frommanifestoptions.html" class="tsd-kind-icon">From<wbr>Manifest<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/fromsourceoptions.html" class="tsd-kind-icon">From<wbr>Source<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/lwcrecord.html" class="tsd-kind-icon">LWCRecord</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/lightningcomponentresource.html" class="tsd-kind-icon">Lightning<wbr>Component<wbr>Resource</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/localizationprovider.html" class="tsd-kind-icon">Localization<wbr>Provider</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/metadataapideployoptions.html" class="tsd-kind-icon">Metadata<wbr>Api<wbr>Deploy<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/metadataapideploystatus.html" class="tsd-kind-icon">Metadata<wbr>Api<wbr>Deploy<wbr>Status</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/metadataapiretrievestatus.html" class="tsd-kind-icon">Metadata<wbr>Api<wbr>Retrieve<wbr>Status</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/metadatacomponent.html" class="tsd-kind-icon">Metadata<wbr>Component</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/metadatamember.html" class="tsd-kind-icon">Metadata<wbr>Member</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/metadataregistry.html" class="tsd-kind-icon">Metadata<wbr>Registry</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/metadatarequeststatus.html" class="tsd-kind-icon">Metadata<wbr>Request<wbr>Status</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/metadatatransferoptions.html" class="tsd-kind-icon">Metadata<wbr>Transfer<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/metadatatransferresult.html" class="tsd-kind-icon">Metadata<wbr>Transfer<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/metadatatransformer.html" class="tsd-kind-icon">Metadata<wbr>Transformer</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/metadatatype.html" class="tsd-kind-icon">Metadata<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/nondecompositionstate.html" class="tsd-kind-icon">Non<wbr>Decomposition<wbr>State</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/optionaltreeregistryoptions.html" class="tsd-kind-icon">Optional<wbr>Tree<wbr>Registry<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/packagemanifest.html" class="tsd-kind-icon">Package<wbr>Manifest</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/packagemanifestobject.html" class="tsd-kind-icon">Package<wbr>Manifest<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/packageoption.html" class="tsd-kind-icon">Package<wbr>Option</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/packagetypemembers.html" class="tsd-kind-icon">Package<wbr>Type<wbr>Members</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/parsedpackagemanifest.html" class="tsd-kind-icon">Parsed<wbr>Package<wbr>Manifest</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/parsedpackagetypemembers.html" class="tsd-kind-icon">Parsed<wbr>Package<wbr>Type<wbr>Members</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/queryresult.html" class="tsd-kind-icon">Query<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/recompositionstate.html" class="tsd-kind-icon">Recomposition<wbr>State</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/registryoptions.html" class="tsd-kind-icon">Registry<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/resolvemanifestresult.html" class="tsd-kind-icon">Resolve<wbr>Manifest<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/retrieveextractoptions.html" class="tsd-kind-icon">Retrieve<wbr>Extract<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/retrieveoperationlifecycle.html" class="tsd-kind-icon">Retrieve<wbr>Operation<wbr>Lifecycle</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/retrieveoptions.html" class="tsd-kind-icon">Retrieve<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/retrievestuboptions.html" class="tsd-kind-icon">Retrieve<wbr>Stub<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/sourceadapter.html" class="tsd-kind-icon">Source<wbr>Adapter</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/sourceapiresult.html" class="tsd-kind-icon">Source<wbr>Api<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/sourcedeployresult.html" class="tsd-kind-icon">Source<wbr>Deploy<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/sourceretrieveresult.html" class="tsd-kind-icon">Source<wbr>Retrieve<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/suffixindex.html" class="tsd-kind-icon">Suffix<wbr>Index</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/toolingcreateresult.html" class="tsd-kind-icon">Tooling<wbr>Create<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/treeoptions.html" class="tsd-kind-icon">Tree<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/typeindex.html" class="tsd-kind-icon">Type<wbr>Index</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/vfrecord.html" class="tsd-kind-icon">VFRecord</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/zipentry.html" class="tsd-kind-icon">Zip<wbr>Entry</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#booleanstring" class="tsd-kind-icon">Boolean<wbr>String</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#childindex" class="tsd-kind-icon">Child<wbr>Index</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#componentdeployment" class="tsd-kind-icon">Component<wbr>Deployment</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#componentdiagnostic" class="tsd-kind-icon">Component<wbr>Diagnostic</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#componentlike" class="tsd-kind-icon">Component<wbr>Like</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#componentproperties" class="tsd-kind-icon">Component<wbr>Properties</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#componentretrieval" class="tsd-kind-icon">Component<wbr>Retrieval</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#containerasyncrequest" class="tsd-kind-icon">Container<wbr>Async<wbr>Request</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#convertoutputconfig" class="tsd-kind-icon">Convert<wbr>Output<wbr>Config</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#convertresult" class="tsd-kind-icon">Convert<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#deploydetails" class="tsd-kind-icon">Deploy<wbr>Details</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#deploymessage" class="tsd-kind-icon">Deploy<wbr>Message</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#deploysetoptions" class="tsd-kind-icon">Deploy<wbr>Set<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#directoryconfig" class="tsd-kind-icon">Directory<wbr>Config</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#fileproperties" class="tsd-kind-icon">File<wbr>Properties</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#fileresponse" class="tsd-kind-icon">File<wbr>Response</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#mergeconfig" class="tsd-kind-icon">Merge<wbr>Config</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#messagebundle" class="tsd-kind-icon">Message<wbr>Bundle</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#metadataapiretrieveoptions" class="tsd-kind-icon">Metadata<wbr>Api<wbr>Retrieve<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#metadataxml" class="tsd-kind-icon">Metadata<wbr>Xml</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#mockdeploymessage" class="tsd-kind-icon">Mock<wbr>Deploy<wbr>Message</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#packagename" class="tsd-kind-icon">Package<wbr>Name</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#packageoptions" class="tsd-kind-icon">Package<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#recordid" class="tsd-kind-icon">Record<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#retrievefailure" class="tsd-kind-icon">Retrieve<wbr>Failure</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#retrievemessage" class="tsd-kind-icon">Retrieve<wbr>Message</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#retrieverequest" class="tsd-kind-icon">Retrieve<wbr>Request</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#retrievesetoptions" class="tsd-kind-icon">Retrieve<wbr>Set<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#retrievesuccess" class="tsd-kind-icon">Retrieve<wbr>Success</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#sfdxfileformat" class="tsd-kind-icon">Sfdx<wbr>File<wbr>Format</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#sourcepath" class="tsd-kind-icon">Source<wbr>Path</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#toolingdeployoptions" class="tsd-kind-icon">Tooling<wbr>Deploy<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#toolingretrieveoptions" class="tsd-kind-icon">Tooling<wbr>Retrieve<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#uniqueoutputdir" class="tsd-kind-icon">Unique<wbr>Output<wbr>Dir</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#virtualdirectory" class="tsd-kind-icon">Virtual<wbr>Directory</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#virtualfile" class="tsd-kind-icon">Virtual<wbr>File</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#withnamespace" class="tsd-kind-icon">With<wbr>Namespace</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#writeinfo" class="tsd-kind-icon">Write<wbr>Info</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#writerformat" class="tsd-kind-icon">Writer<wbr>Format</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#zipconfig" class="tsd-kind-icon">Zip<wbr>Config</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#__" class="tsd-kind-icon">$$</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#child_1_name" class="tsd-kind-icon">CHILD_<wbr>1_NAME</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#child_2_name" class="tsd-kind-icon">CHILD_<wbr>2_NAME</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#child_3_name" class="tsd-kind-icon">CHILD_<wbr>3_NAME</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#component" class="tsd-kind-icon">COMPONENT</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#components" class="tsd-kind-icon">COMPONENTS</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#components_md_format" class="tsd-kind-icon">COMPONENTS_<wbr>MD_<wbr>FORMAT</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#component_1" class="tsd-kind-icon">COMPONENT_<wbr>1</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#component_1_type_dir" class="tsd-kind-icon">COMPONENT_<wbr>1_TYPE_<wbr>DIR</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#component_1_xml_path" class="tsd-kind-icon">COMPONENT_<wbr>1_XML_<wbr>PATH</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#component_2" class="tsd-kind-icon">COMPONENT_<wbr>2</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#component_2_type_dir" class="tsd-kind-icon">COMPONENT_<wbr>2_TYPE_<wbr>DIR</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#component_2_xml_path" class="tsd-kind-icon">COMPONENT_<wbr>2_XML_<wbr>PATH</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#component_folder_name" class="tsd-kind-icon">COMPONENT_<wbr>FOLDER_<wbr>NAME</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#component_folder_path" class="tsd-kind-icon">COMPONENT_<wbr>FOLDER_<wbr>PATH</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#component_md" class="tsd-kind-icon">COMPONENT_<wbr>MD</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#component_name" class="tsd-kind-icon">COMPONENT_<wbr>NAME</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#component_names" class="tsd-kind-icon">COMPONENT_<wbr>NAMES</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#component_suffix" class="tsd-kind-icon">COMPONENT_<wbr>SUFFIX</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#component_virtual_fs" class="tsd-kind-icon">COMPONENT_<wbr>VIRTUAL_<wbr>FS</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#content_component" class="tsd-kind-icon">CONTENT_<wbr>COMPONENT</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#content_file_exts" class="tsd-kind-icon">CONTENT_<wbr>FILE_<wbr>EXTS</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#content_names" class="tsd-kind-icon">CONTENT_<wbr>NAMES</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#content_path" class="tsd-kind-icon">CONTENT_<wbr>PATH</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#content_paths" class="tsd-kind-icon">CONTENT_<wbr>PATHS</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#converted_xml_path" class="tsd-kind-icon">CONVERTED_<wbr>XML_<wbr>PATH</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposeds_path" class="tsd-kind-icon">DECOMPOSEDS_<wbr>PATH</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_child_component_1" class="tsd-kind-icon">DECOMPOSED_<wbr>CHILD_<wbr>COMPONENT_<wbr>1</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_child_component_2" class="tsd-kind-icon">DECOMPOSED_<wbr>CHILD_<wbr>COMPONENT_<wbr>2</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_child_dir" class="tsd-kind-icon">DECOMPOSED_<wbr>CHILD_<wbr>DIR</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_child_dir_path" class="tsd-kind-icon">DECOMPOSED_<wbr>CHILD_<wbr>DIR_<wbr>PATH</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_child_xml_name_1" class="tsd-kind-icon">DECOMPOSED_<wbr>CHILD_<wbr>XML_<wbr>NAME_<wbr>1</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_child_xml_name_2" class="tsd-kind-icon">DECOMPOSED_<wbr>CHILD_<wbr>XML_<wbr>NAME_<wbr>2</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_child_xml_path_1" class="tsd-kind-icon">DECOMPOSED_<wbr>CHILD_<wbr>XML_<wbr>PATH_<wbr>1</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_child_xml_path_2" class="tsd-kind-icon">DECOMPOSED_<wbr>CHILD_<wbr>XML_<wbr>PATH_<wbr>2</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_component" class="tsd-kind-icon">DECOMPOSED_<wbr>COMPONENT</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_path" class="tsd-kind-icon">DECOMPOSED_<wbr>PATH</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_top_level_child_xml_names" class="tsd-kind-icon">DECOMPOSED_<wbr>TOP_<wbr>LEVEL_<wbr>CHILD_<wbr>XML_<wbr>NAMES</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_top_level_child_xml_paths" class="tsd-kind-icon">DECOMPOSED_<wbr>TOP_<wbr>LEVEL_<wbr>CHILD_<wbr>XML_<wbr>PATHS</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_top_level_component" class="tsd-kind-icon">DECOMPOSED_<wbr>TOP_<wbr>LEVEL_<wbr>COMPONENT</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_top_level_component_path" class="tsd-kind-icon">DECOMPOSED_<wbr>TOP_<wbr>LEVEL_<wbr>COMPONENT_<wbr>PATH</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_top_level_dir" class="tsd-kind-icon">DECOMPOSED_<wbr>TOP_<wbr>LEVEL_<wbr>DIR</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_top_level_xml_names" class="tsd-kind-icon">DECOMPOSED_<wbr>TOP_<wbr>LEVEL_<wbr>XML_<wbr>NAMES</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_top_level_xml_path" class="tsd-kind-icon">DECOMPOSED_<wbr>TOP_<wbr>LEVEL_<wbr>XML_<wbr>PATH</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_virtual_fs" class="tsd-kind-icon">DECOMPOSED_<wbr>VIRTUAL_<wbr>FS</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_xml_name" class="tsd-kind-icon">DECOMPOSED_<wbr>XML_<wbr>NAME</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposed_xml_path" class="tsd-kind-icon">DECOMPOSED_<wbr>XML_<wbr>PATH</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#default_dir" class="tsd-kind-icon">DEFAULT_<wbr>DIR</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#default_package_root_sfdx" class="tsd-kind-icon">DEFAULT_<wbr>PACKAGE_<wbr>ROOT_<wbr>SFDX</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#documents_directory" class="tsd-kind-icon">DOCUMENTS_<wbr>DIRECTORY</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#domparser" class="tsd-kind-icon">DOMParser</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#folder_component" class="tsd-kind-icon">FOLDER_<wbr>COMPONENT</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#folder_component_md_format" class="tsd-kind-icon">FOLDER_<wbr>COMPONENT_<wbr>MD_<wbr>FORMAT</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#folder_xml_name" class="tsd-kind-icon">FOLDER_<wbr>XML_<wbr>NAME</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#folder_xml_path" class="tsd-kind-icon">FOLDER_<wbr>XML_<wbr>PATH</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#folder_xml_path_md_format" class="tsd-kind-icon">FOLDER_<wbr>XML_<wbr>PATH_<wbr>MD_<wbr>FORMAT</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#matching_rules_component" class="tsd-kind-icon">MATCHING_<wbr>RULES_<wbr>COMPONENT</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#matching_rules_component_dir" class="tsd-kind-icon">MATCHING_<wbr>RULES_<wbr>COMPONENT_<wbr>DIR</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#matching_rules_component_xml_path" class="tsd-kind-icon">MATCHING_<wbr>RULES_<wbr>COMPONENT_<wbr>XML_<wbr>PATH</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#matching_rules_type" class="tsd-kind-icon">MATCHING_<wbr>RULES_<wbr>TYPE</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#matching_rules_type_directory_name" class="tsd-kind-icon">MATCHING_<wbr>RULES_<wbr>TYPE_<wbr>DIRECTORY_<wbr>NAME</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#matching_rules_xml_name" class="tsd-kind-icon">MATCHING_<wbr>RULES_<wbr>XML_<wbr>NAME</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#meta_xml_suffix" class="tsd-kind-icon">META_<wbr>XML_<wbr>SUFFIX</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#missing_label_msg" class="tsd-kind-icon">MISSING_<wbr>LABEL_<wbr>MSG</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#mixed_content_directory_component" class="tsd-kind-icon">MIXED_<wbr>CONTENT_<wbr>DIRECTORY_<wbr>COMPONENT</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#mixed_content_directory_content_path" class="tsd-kind-icon">MIXED_<wbr>CONTENT_<wbr>DIRECTORY_<wbr>CONTENT_<wbr>PATH</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#mixed_content_directory_dir" class="tsd-kind-icon">MIXED_<wbr>CONTENT_<wbr>DIRECTORY_<wbr>DIR</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#mixed_content_directory_source_paths" class="tsd-kind-icon">MIXED_<wbr>CONTENT_<wbr>DIRECTORY_<wbr>SOURCE_<wbr>PATHS</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#mixed_content_directory_virtual_fs" class="tsd-kind-icon">MIXED_<wbr>CONTENT_<wbr>DIRECTORY_<wbr>VIRTUAL_<wbr>FS</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#mixed_content_directory_virtual_fs_no_xml" class="tsd-kind-icon">MIXED_<wbr>CONTENT_<wbr>DIRECTORY_<wbr>VIRTUAL_<wbr>FS_<wbr>NO_<wbr>XML</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#mixed_content_directory_xml_names" class="tsd-kind-icon">MIXED_<wbr>CONTENT_<wbr>DIRECTORY_<wbr>XML_<wbr>NAMES</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#mixed_content_directory_xml_paths" class="tsd-kind-icon">MIXED_<wbr>CONTENT_<wbr>DIRECTORY_<wbr>XML_<wbr>PATHS</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#mock_default_output" class="tsd-kind-icon">MOCK_<wbr>DEFAULT_<wbr>OUTPUT</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#mock_recently_validated_id_soap" class="tsd-kind-icon">MOCK_<wbr>RECENTLY_<wbr>VALIDATED_<wbr>ID_<wbr>SOAP</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#non_default_dir" class="tsd-kind-icon">NON_<wbr>DEFAULT_<wbr>DIR</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#original_suffix_regex" class="tsd-kind-icon">ORIGINAL_<wbr>SUFFIX_<wbr>REGEX</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#source_paths" class="tsd-kind-icon">SOURCE_<wbr>PATHS</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#subtype_xml_path" class="tsd-kind-icon">SUBTYPE_<wbr>XML_<wbr>PATH</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#tree" class="tsd-kind-icon">TREE</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#type_directory" class="tsd-kind-icon">TYPE_<wbr>DIRECTORY</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#unclaimed_child_name" class="tsd-kind-icon">UNCLAIMED_<wbr>CHILD_<wbr>NAME</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#virtual_dir" class="tsd-kind-icon">VIRTUAL_<wbr>DIR</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#working_dir" class="tsd-kind-icon">WORKING_<wbr>DIR</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#xml_decl" class="tsd-kind-icon">XML_<wbr>DECL</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#xml_name" class="tsd-kind-icon">XML_<wbr>NAME</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#xml_names" class="tsd-kind-icon">XML_<wbr>NAMES</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#xml_ns_key" class="tsd-kind-icon">XML_<wbr>NS_<wbr>KEY</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#xml_ns_url" class="tsd-kind-icon">XML_<wbr>NS_<wbr>URL</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#xml_path" class="tsd-kind-icon">XML_<wbr>PATH</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#xml_paths" class="tsd-kind-icon">XML_<wbr>PATHS</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#xml_paths_md_format" class="tsd-kind-icon">XML_<wbr>PATHS_<wbr>MD_<wbr>FORMAT</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#auracontents" class="tsd-kind-icon">aura<wbr>Contents</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#aurafiles" class="tsd-kind-icon">aura<wbr>Files</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#auraxml" class="tsd-kind-icon">aura<wbr>Xml</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#bundlepath" class="tsd-kind-icon">bundle<wbr>Path</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#chai" class="tsd-kind-icon">chai</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#createaurasuccesses" class="tsd-kind-icon">create<wbr>Aura<wbr>Successes</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#decomposedtoplevel" class="tsd-kind-icon">decomposedtoplevel</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#deepequalinanyorder" class="tsd-kind-icon">deep<wbr>Equal<wbr>InAny<wbr>Order</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#deploytypes" class="tsd-kind-icon">deploy<wbr>Types</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#env" class="tsd-kind-icon">env</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#expect" class="tsd-kind-icon">expect</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#foldertype" class="tsd-kind-icon">folder<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#mixedcontentinfolder" class="tsd-kind-icon">mixedcontentinfolder</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#mixedcontentsinglefile" class="tsd-kind-icon">mixedcontentsinglefile</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#mockregistry" class="tsd-kind-icon">mock<wbr>Registry</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#nls" class="tsd-kind-icon">nls</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#pipeline" class="tsd-kind-icon">pipeline</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#registry" class="tsd-kind-icon">registry</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#retrievetypes" class="tsd-kind-icon">retrieve<wbr>Types</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#testauralist" class="tsd-kind-icon">test<wbr>Aura<wbr>List</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#testutil" class="tsd-kind-icon">test<wbr>Util</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#tree" class="tsd-kind-icon">tree</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#troubleemittedforpattern" class="tsd-kind-icon">trouble<wbr>Emitted<wbr>For<wbr>Pattern</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#type" class="tsd-kind-icon">type</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#updatecreatesuccesses" class="tsd-kind-icon">update<wbr>Create<wbr>Successes</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#warn" class="tsd-kind-icon">warn</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#basename" class="tsd-kind-icon">base<wbr>Name</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#buildquery" class="tsd-kind-icon">build<wbr>Query</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#createdeploymessage" class="tsd-kind-icon">create<wbr>Deploy<wbr>Message</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#createfiles" class="tsd-kind-icon">create<wbr>Files</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#createmockzip" class="tsd-kind-icon">create<wbr>Mock<wbr>Zip</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#deepfreeze" class="tsd-kind-icon">deep<wbr>Freeze</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#ensuredirectoryexists" class="tsd-kind-icon">ensure<wbr>Directory<wbr>Exists</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#ensurefileexists" class="tsd-kind-icon">ensure<wbr>File<wbr>Exists</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#extname" class="tsd-kind-icon">ext<wbr>Name</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#generatemetaxml" class="tsd-kind-icon">generate<wbr>MetaXML</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#generatemetaxmlpath" class="tsd-kind-icon">generate<wbr>MetaXMLPath</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#getaurasourcename" class="tsd-kind-icon">get<wbr>Aura<wbr>Source<wbr>Name</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#getdeploystrategy" class="tsd-kind-icon">get<wbr>Deploy<wbr>Strategy</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#loadmessagebundle" class="tsd-kind-icon">load<wbr>Message<wbr>Bundle</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#mockconnection" class="tsd-kind-icon">mock<wbr>Connection</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#normalizetoarray" class="tsd-kind-icon">normalize<wbr>ToArray</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#parentname" class="tsd-kind-icon">parent<wbr>Name</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#parsemetadataxml" class="tsd-kind-icon">parse<wbr>Metadata<wbr>Xml</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#querytofilemap" class="tsd-kind-icon">query<wbr>ToFile<wbr>Map</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#searchup" class="tsd-kind-icon">search<wbr>Up</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#stubmetadatadeploy" class="tsd-kind-icon">stub<wbr>Metadata<wbr>Deploy</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#stubmetadataretrieve" class="tsd-kind-icon">stub<wbr>Metadata<wbr>Retrieve</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#trimmetaxmlsuffix" class="tsd-kind-icon">trim<wbr>Meta<wbr>Xml<wbr>Suffix</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#trimuntil" class="tsd-kind-icon">trim<wbr>Until</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#basic" class="tsd-kind-icon">BASIC</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#child_1_xml" class="tsd-kind-icon">CHILD_<wbr>1_XML</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#child_2_xml" class="tsd-kind-icon">CHILD_<wbr>2_XML</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#child_3_xml" class="tsd-kind-icon">CHILD_<wbr>3_XML</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#claimed_xml_content" class="tsd-kind-icon">CLAIMED_<wbr>XML_<wbr>CONTENT</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#component_1_xml" class="tsd-kind-icon">COMPONENT_<wbr>1_XML</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#component_2_xml" class="tsd-kind-icon">COMPONENT_<wbr>2_XML</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#full_xml_content" class="tsd-kind-icon">FULL_<wbr>XML_<wbr>CONTENT</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#matching_rules_component_xml" class="tsd-kind-icon">MATCHING_<wbr>RULES_<wbr>COMPONENT_<wbr>XML</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#mock_async_result" class="tsd-kind-icon">MOCK_<wbr>ASYNC_<wbr>RESULT</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#mock_recently_validated_id_rest" class="tsd-kind-icon">MOCK_<wbr>RECENTLY_<wbr>VALIDATED_<wbr>ID_<wbr>REST</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#one_folder_member" class="tsd-kind-icon">ONE_<wbr>FOLDER_<wbr>MEMBER</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#one_of_each" class="tsd-kind-icon">ONE_<wbr>OF_<wbr>EACH</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#one_wildcard" class="tsd-kind-icon">ONE_<wbr>WILDCARD</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#unclaimed_child_xml" class="tsd-kind-icon">UNCLAIMED_<wbr>CHILD_<wbr>XML</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#unclaimed_xml_content" class="tsd-kind-icon">UNCLAIMED_<wbr>XML_<wbr>CONTENT</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#auraapplication" class="tsd-kind-icon">aura<wbr>Application</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#auracomponent" class="tsd-kind-icon">aura<wbr>Component</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#auraevent" class="tsd-kind-icon">aura<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#aurainterface" class="tsd-kind-icon">aura<wbr>Interface</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#auratokens" class="tsd-kind-icon">aura<wbr>Tokens</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#lwccomponentmock" class="tsd-kind-icon">lwc<wbr>Component<wbr>Mock</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#messages" class="tsd-kind-icon">messages</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#mockregistrydata" class="tsd-kind-icon">mock<wbr>Registry<wbr>Data</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer>
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

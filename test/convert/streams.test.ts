@@ -7,6 +7,7 @@
 
 import * as fs from 'fs';
 import * as archiver from 'archiver';
+import { Logger } from '@salesforce/core';
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { expect } from 'chai';
@@ -369,6 +370,48 @@ describe('Streams', () => {
           expect(ensureFile.notCalled).to.be.true;
           expect(pipelineStub.notCalled).to.be.true;
           expect(resolverSpy.notCalled).to.be.true;
+        });
+      });
+
+      it('should skip duplicate components in WriteInfos', async () => {
+        pipelineStub.resolves();
+        const loggerStub = env.stub(Logger.prototype, 'debug');
+
+        const dupedComponent = SourceComponent.createVirtualComponent(COMPONENT, [
+          {
+            dirPath: TYPE_DIRECTORY,
+            children: XML_NAMES.concat(CONTENT_NAMES),
+          },
+          {
+            dirPath: join(rootDestination, COMPONENT.type.directoryName),
+            children: [basename(COMPONENT.xml), basename(COMPONENT.content)],
+          },
+          {
+            dirPath: join(absoluteRootDestination, COMPONENT.type.directoryName),
+            children: [basename(COMPONENT.xml), basename(COMPONENT.content)],
+          },
+        ]);
+        dupedComponent.type.children = mockRegistry.getTypeByName('decomposed').children;
+
+        const compWriteInfo: WriteInfo = {
+          output: dupedComponent.getPackageRelativePath(component.xml, 'metadata'),
+          source: readableMock,
+        };
+        const chunkWithDupe: WriterFormat = {
+          component: dupedComponent,
+          writeInfos: [compWriteInfo, compWriteInfo],
+        };
+
+        // The chunk has 2 identical components. The dupe should be
+        // ignored so that it only writes once to compensate for W-9614275
+        await writer._write(chunkWithDupe, '', (err: Error) => {
+          expect(err).to.be.undefined;
+          expect(ensureFile.calledOnce).to.be.true;
+          expect(pipelineStub.calledOnce).to.be.true;
+          expect(loggerStub.calledOnce).to.be.true;
+          const fullDest = join(rootDestination, compWriteInfo.output);
+          const expectedLogMsg = `Ignoring duplicate metadata for: ${fullDest}`;
+          expect(loggerStub.firstCall.args[0]).to.equal(expectedLogMsg);
         });
       });
     });

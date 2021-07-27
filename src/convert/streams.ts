@@ -20,6 +20,7 @@ import { j2xParser } from 'fast-xml-parser';
 import { ComponentSet } from '../collections';
 import { LibraryError } from '../errors';
 import { RegistryAccess } from '../registry';
+import { Logger } from '@salesforce/core';
 export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
@@ -131,10 +132,12 @@ export abstract class ComponentWriter extends Writable {
 export class StandardWriter extends ComponentWriter {
   public converted: SourceComponent[] = [];
   private resolver: MetadataResolver;
+  private logger: Logger;
 
   constructor(rootDestination: SourcePath, resolver = new MetadataResolver()) {
     super(rootDestination);
     this.resolver = resolver;
+    this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
   public async _write(
@@ -152,6 +155,12 @@ export class StandardWriter extends ComponentWriter {
             : join(this.rootDestination, info.output);
           // if there are children, resolve each file. o/w just pick one of the files to resolve
           if (toResolve.length === 0 || chunk.component.type.children) {
+            // This is a workaround for a server side ListViews bug where
+            // duplicate components are sent. W-9614275
+            if (toResolve.includes(fullDest)) {
+              this.logger.debug(`Ignoring duplicate metadata for: ${fullDest}`);
+              return;
+            }
             toResolve.push(fullDest);
           }
           ensureFileExists(fullDest);

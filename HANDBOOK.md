@@ -7,40 +7,40 @@
 
 ## Table of Contents
 
-* [Introduction](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAxbyX9)
-* [Symbol Key](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAtYkWp)
-* [Metadata Registry](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAhtJMg)
-    * [The registry.json file](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACA5A5nI)
-    * [Updating the registry.json file](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACACJket)
-    * [The registry object](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACA3Ni7f)
-    * [Querying registry data](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACA9zGAB)
-* [Component Resolution](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAB3xJU)
-    * [Resolving from metadata files](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAP6Nj3)
-    * [Resolving from a manifest file (package.xml)](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAzToYY)
-    * [Tree Containers](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACANkrzM)
-        * [Creating mock components with the VirtualTreeContainer](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAJuy6N)
-* [Component Packaging](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAuECcA)
-    * [Converting metadata](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAHyo6U)
-    * [The conversion pipeline](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAbRdD0)
-        * [ComponentReader](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAuNNie)
-        * [ComponentConverter](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAXkTlH)
-        * [ComponentWriter](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAU9vfn)
-        * [ConvertContext](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACASCcpx)
-        * [Example Code](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAXIYqq)
-* [Component Merging](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAJNJ97)
-    * [CustomObjects across multiple package directories](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAsZT68)
-* [Component Sets](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAotCix)
-    * [Creating a set](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAORglp)
-    * [Initializing a set from metadata files](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAywJ6b)
-    * [Initializing a set from a manifest file](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAhn96h)
-    * [Lazy pipeline methods](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAaZ0BI)
-* [Deploying and Retrieving](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACArZn2C)
-    * [Establishing an org connection](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAsLoFW)
-    * [Deploying](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACApirEg)
-        * [Example Code](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAYRlEG)
-    * [Retrieving](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACA159P8)
-        * [Example Code](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACA2yjPs)
-* [Further Examples](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAoIGVj)
+* [Introduction](#introduction)
+* [Symbol Key](#symbol-key)
+* [Metadata Registry](#metadata-registry)
+    * [The registry.json file](#the-registryjson-file)
+    * [Updating the registry.json file](#updating-the-registryjson-file)
+    * [The registry object](#the-registry-object)
+    * [Querying registry data](#querying-registry-data)
+* [Component Resolution](#component-resolution)
+    * [Resolving from metadata files](#resolving-from-metadata-files)
+    * [Resolving from a manifest file (package.xml)](#resolving-from-a-manifest-file-packagexml)
+    * [Tree containers](#tree-containers)
+        * [Creating mock components with the VirtualTreeContainer](#creating-mock-components-with-the-virtualtreecontainer)
+* [Component Packaging](#component-packaging)
+    * [Converting metadata](#converting-metadata)
+    * [The conversion pipeline](#the-conversion-pipeline)
+        * [ComponentReader](#componentreader)
+        * [ComponentConverter](#componentconverter)
+        * [ComponentWriter](#componentwriter)
+        * [ConvertContext](#convertcontext)
+        * [Example code](#in-decomposedmetadatatransformerts)
+* [Component Merging](#component-merging)
+    * [CustomObjects across multiple package directories](#customobjects-across-multiple-package-directories)
+* [Component Sets](#component-sets)
+    * [Creating a set](#creating-a-set)
+    * [Initializing a set from metadata files](#initializing-a-set-from-metadata-files)
+    * [Initializing a set from a manifest file](#initializing-a-set-from-a-manifest-file)
+    * [Lazy pipeline methods](#lazy-pipeline-methods)
+* [Deploying and Retrieving](#deploying-and-retrieving)
+    * [Establishing an org connection](#establishing-an-org-connection)
+    * [Deploying](#deploying)
+        * [Example code](#deploy-with-a-source-path)
+    * [Retrieving](#retrieving)
+        * [Example code](#retrieve-with-a-source-path)
+* [Further Examples](#further-examples)
 
 
 
@@ -220,7 +220,7 @@ import { ManifestResolver } from '@salesforce/source-deploy-retrieve';
 📝 *So if the manifest resolver doesn’t create source-backed components, how do the deploy/retrieve commands work that utilize a manifest? We’ll go over this in the section Initializing a set from a manifest file. Those objects have an initializer that combines the efforts of the source and manifest resolvers to do exactly that. Following the principles of the library, we make pieces of functionality as building block modules to support larger operations. A tool author may just want to build something that analyzes and manipulates manifest files, so we don’t tightly couple it with assumptions about deploying and retrieving.*
 
 
-### Tree Containers
+### Tree containers
 
 A `TreeContainer` is an encapsulation of a file system that enables I/O against anything that can be abstracted as one. The implication is a client can resolve source-backed components against alternate file system abstractions. By default for most operations, the `NodeFSTreeContainer` is used, which is simply a wrapper of the Node file system api calls. There is also the `ZipTreeContainer`, which is used for scanning components against the central directory of a zip file, and the `VirtualTreeContainer`, helpful for creating mock components in testing scenarios. This concept is central to how we resolve and extract components in a retrieved zip file.
 
@@ -228,7 +228,7 @@ Clients can implement new tree containers by extending the `TreeContainer` base 
 
 💡*The author, Brian, demonstrated the extensibility of tree containers for a side project by creating a* `GitTreeContainer`*. This enabled resolving components against a git object tree, allowing us to perform component diffs between git refs and analyze GitHub projects. See the [SFDX Badge Generator](https://sfdx-badge.herokuapp.com/). This could be expanded into a plugin of some sort.*
 
-**Creating mock components with the VirtualTreeContainer**
+#### Creating mock components with the VirtualTreeContainer
 
 If a consumer needs to create fake components for testing, the `VirtualTreeContainer` is a great way to do so without having to create real local files in a project. This is how the library tests its own functionality in fact.
 
@@ -333,16 +333,16 @@ const converter = new MetadataConverter();
 
 When `convert` is called, the method prepares the inputs for setting up the conversion pipeline. The pipeline consists of chaining three custom NodeJS stream, one for each stage of the copy operation. To more deeply understand what is happening in the conversion process, it’s recommended to familiarize yourself with streaming concepts and the NodeJS API. See [Stream NodeJS documentation](https://nodejs.org/api/stream.html) and [Understanding Streams in NodeJS](https://nodesource.com/blog/understanding-streams-in-nodejs/).
 
-**ComponentReader**
+#### ComponentReader
 
 The reader is fairly simple, it takes a collection of source components and implements the stream API to push them out one-by-one.
 
 🧽 *When this aspect of the library was first written,* `Readable.from(iterable)` *was not yet available. This simple API could probably replace the* `ComponentReader`*.*
 
 
-**ComponentConverter**
+#### ComponentConverter
 
-Here is where file transformation is done, but without being written to the destination yet. Similar to how source resolution uses adapters to determine how to construct components for a type (see [The resolver constructs components based…](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACArIBsy)), conversion uses `MetadataTransformer` implementations to describe the transformations. As you might guess, types are assigned a transformer, if they need one, in their metadata registry definition, otherwise the default one is used. Each transformer implements a `toSourceFormat` and a `toMetadataFormat` method, which are called by the `ComponentConverter` based on what the target format is. The methods will return a collection of `WriteInfo` objects, which as we’ve been touching on are “descriptions” of how to write a given file.
+Here is where file transformation is done, but without being written to the destination yet. Similar to how source resolution uses adapters to determine how to construct components for a type (see [The resolver constructs components based…](#resolving-from-metadata-files)), conversion uses `MetadataTransformer` implementations to describe the transformations. As you might guess, types are assigned a transformer, if they need one, in their metadata registry definition, otherwise the default one is used. Each transformer implements a `toSourceFormat` and a `toMetadataFormat` method, which are called by the `ComponentConverter` based on what the target format is. The methods will return a collection of `WriteInfo` objects, which as we’ve been touching on are “descriptions” of how to write a given file.
 
 Let’s say we’re converting a Layout from source format to metadata format. The write infos returned would look something like this:
 
@@ -362,7 +362,7 @@ notice how we are stripping the `-meta.xml` suffix with the returned write info.
 📝 *In a perfect world, no transformation of metadata files would be necessary. This aspect exists because that’s how SFDX was designed. Having a tooling client do fancy things to files is prone to error and consistency across other tools when the API should be returning files in a source friendly format to begin with. Just like the source adapters, CAREFULLY CAREFULLY consider if another transformer needs to be created — the right answer is likely NO. We don’t want to create special logic for any more types.*
 
 
-**ComponentWriter**
+#### ComponentWriter
 
 A `ComponentWriter` is responsible for taking the write infos created in the previous stage and using them to finally write files to a destination. The library relies on two different implementations of a writer:
 
@@ -372,7 +372,7 @@ A `ComponentWriter` is responsible for taking the write infos created in the pre
 The strategies used here are consciously attempting to reduce I/O and memory utilization as much as possible, and we do so with the help of the NodeJS streams API again. For instance, having the zip buffer built right in memory for a future deploy operation helps with this. Before, we were copying files to disk, then zipping those files and writing the result to disk, and then finally reloading the zip back into memory. This can be expensive on slower machines and grows a bit fast regarding time/space complexity.
 
 
-**ConvertContext**
+#### ConvertContext
 
 If you’ve been examining the code, you may have noticed the component converter holds on to something called a `ConvertContext`. This object is meant to be used as a “global state” of sorts over the course of a single conversion. Transformers can access this object in their implementation to save state and establish context of previous work they have already completed through subsequent calls. The state is stored in objects that extend `ConvertTransactionFinalizer`. A convert context has an instance of each of these finalizers to represent a section of state. Different scenarios may depend on different shapes of state, so we use these objects to isolate those states.
 
@@ -381,7 +381,7 @@ Once finalizers have state data set, it needs to be processed at the end of the 
 In less general terms, this concept was created out of necessity to support converting decomposed components like CustomObjects. When processing a CustomObject, we need to combine the contents of all of its files, which are components themselves, into a single file for deployment. If we are processing a CustomField in the pipeline, we don’t want to tell the component writer to write a file just yet because we’re still waiting on any other child components of the same object to be included in the file. So instead of returning a write info, we save the same information in the `RecompositionFinalizer`’s state. Once all components of the convert have been processed, `RecompositionFinalizer.prototype.finalize()` is called to combine all of an object’s child components into a single write info, and to push that to the component writer.
 
 
-**In [decomposedMetadataTransformer.ts](https://github.com/forcedotcom/source-deploy-retrieve/blob/develop/src/convert/transformers/decomposedMetadataTransformer.ts)**
+#### In [decomposedMetadataTransformer.ts](https://github.com/forcedotcom/source-deploy-retrieve/blob/develop/src/convert/transformers/decomposedMetadataTransformer.ts)
 
 ```
 // in decomposedMetadataTransformer.ts
@@ -413,7 +413,7 @@ public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> 
 ```
 
 
-**In [convertContext.ts](https://github.com/forcedotcom/source-deploy-retrieve/blob/develop/src/convert/convertContext.ts)**
+#### In [convertContext.ts](https://github.com/forcedotcom/source-deploy-retrieve/blob/develop/src/convert/convertContext.ts)
 
 ```
 class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionState> {
@@ -703,7 +703,7 @@ The simplest way to kick off a new deploy is through a component set. `Component
 
 📝 *Keep in mind that when the* `deploy()` *promise resolves, it does NOT mean the deploy has finished. It means the request has been sent to the org. Remember, these are asynchronous operations.*
 
-**Deploy with a source path**
+#### Deploy with a source path
 
 ```
 import { ComponentSet } from '@salesforce/source-deploy-retrieve'
@@ -730,7 +730,7 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 ```
 
 
-**Deploy with a manifest file**
+#### Deploy with a manifest file
 
 ```
 import { ComponentSet } from '@salesforce/source-deploy-retrieve'
@@ -766,7 +766,7 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 ```
 
 
-**Canceling a deploy**
+#### Canceling a deploy
 
 The Metadata API supports canceling a deploy in progress, and that is exposed through the `cancel()` method on the transfer object. Cancelations are also asynchronous operations - we need to poll to monitor when a cancelation actually finishes.
 
@@ -793,7 +793,7 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 ```
 
 
-**Make requests with an existing deploy**
+#### Make requests with an existing deploy
 
 If a deploy was started by some other client or routine, as long as we have the deploy ID we can still make requests to monitor the status or cancel the operation. This is done by constructing a `MetadataApiDeploy` object with the ID as an option.
 
@@ -833,11 +833,11 @@ import { MetadataApiDeploy } from '@salesforce/source-deploy-retrieve'
 
 The simplest way to kick off a new retrieve is through a component set. `ComponentSet.prototype.retrieve()` will request every fullName and type pair in the set to be retrieved from the org to the specified `output` path. In order to have the components extracted to their destination, we are required to call the `pollStatus()` method. This will wait until the retrieve has finished and then convert and extract the files.
 
-We also have the option of merging components that are retrieved in the org with those that are present in the set. **Merging is required when retrieving existing components in an SFDX project**. See [Component Merging](https://salesforce.quip.com/lBbbAkn8eBLS#OYPACAJNJ97) for more information about the concept. When the option `merge: true` is set, the files of the retrieved components are written to the locations of the files of the source-backed components in the set. For any non-source-backed components in the set, or if `merge: false`, these files are by default copied to the destination specified with the `output` option.
+We also have the option of merging components that are retrieved in the org with those that are present in the set. **Merging is required when retrieving existing components in an SFDX project**. See [Component Merging](#component-merging) for more information about the concept. When the option `merge: true` is set, the files of the retrieved components are written to the locations of the files of the source-backed components in the set. For any non-source-backed components in the set, or if `merge: false`, these files are by default copied to the destination specified with the `output` option.
 
 📝 *Keep in mind that when the* `retrieve()` *promise resolves, it does NOT mean the retrieve has finished. It means the request has been sent to the org. Remember - these are asynchronous operations.*
 
-**Retrieve with a source path**
+#### Retrieve with a source path
 
 ```
 import { ComponentSet } from '@salesforce/source-deploy-retrieve'
@@ -865,7 +865,7 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 ```
 
 
-**Retrieve with a manifest file**
+#### Retrieve with a manifest file
 
 ```
 import { ComponentSet } from '@salesforce/source-deploy-retrieve'
@@ -879,8 +879,8 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
             '/path/to/force-app',
             '/path/to/test-app'
         ],
-        // We want to retrieve everything in the org as well
-        // see https://salesforce.quip.com/F3q6AmNSquvE#ZJKACAucH58
+        // We want to retrieve everything in the org as well,
+        // see the section on initializing a set from a manifest file
         forceAddWildcards: true
     })
     
@@ -904,7 +904,7 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 ```
 
 
-**Canceling a retrieve**
+#### Canceling a retrieve
 
 Unlike deploys, there isn’t a mechanism for signaling a retrieve cancelation with the Metadata API. The library will simply break any potential polling of the retrieved status, and that is exposed through the `cancel()` method on the transfer object.
 
@@ -934,7 +934,7 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 ```
 
 
-**Make requests with an existing retrieve**
+#### Make requests with an existing retrieve
 
 If a retrieve was started by some other client or routine, as long as we have the retrieve ID we can still make requests to monitor the status or cancel the operation. This is done by constructing a `MetadataApiRetrieve` object with the ID as an option.
 

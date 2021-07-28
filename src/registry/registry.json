@@ -768,7 +768,7 @@
       "strictDirectoryName": true,
       "children": {
         "types": {
-          "customfieldtranslation": {
+          "fieldtranslation": {
             "id": "customfieldtranslation",
             "name": "CustomFieldTranslation",
             "directoryName": "fields",
@@ -776,10 +776,10 @@
           }
         },
         "suffixes": {
-          "fieldTranslation": "customfieldtranslation"
+          "fieldTranslation": "fieldtranslation"
         },
         "directories": {
-          "fields": "customfieldtranslation"
+          "fields": "fieldtranslation"
         }
       },
       "strategies": {
@@ -2240,8 +2240,7 @@
     "matchingrule": "matchingrules",
     "sharingownerrule": "sharingrules",
     "sharingcriteriarule": "sharingrules",
-    "botversion": "bot",
-    "customfieldtranslation": "customobjecttranslation"
+    "botversion": "bot"
   },
   "apiVersion": "52.0"
 }

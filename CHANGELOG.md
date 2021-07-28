@@ -1,3 +1,19 @@
+# 4.0.1 - July 28, 2021
+
+## Fixed
+
+- Under-the-hood fixes
+
+- Export runTestResult type (#402) ([PR #395](https://github.com/forcedotcom/source-deploy-retrieve/pull/395))
+
+- Add missing metadata types from toolbelt to the metadata registry ([PR #393](https://github.com/forcedotcom/source-deploy-retrieve/pull/393))
+
+- Ignore duplicate components in server response ([PR #401](https://github.com/forcedotcom/source-deploy-retrieve/pull/401))
+
+- Bump version of archiver for NodeJS v16 ([PR #399](https://github.com/forcedotcom/source-deploy-retrieve/pull/399))
+
+- Add CustomFieldTranslation to metadata registry ([#389](https://github.com/forcedotcom/source-deploy-retrieve/pull/389))
+
 # 4.0.0 - July 16, 2021
 
 ## Fixed

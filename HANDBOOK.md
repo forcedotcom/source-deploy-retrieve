@@ -1,10 +1,5 @@
 # Source-Deploy-Retrieve (SDR) Handbook
 
-*To library maintainers, contributors, and consumers:*
-
-*Bryan Powell wrote this information in June 2021 to provide a guide for both how SDR works and how to use it effectively. This is meant to be a living document and should change as contributions are added to the library. If you notice parts of it become outdated or are inaccurate in some way, please update it or start a discussion if needed. If you are merging a pull request that could either have an impact on information in here, or is worth adding new information to the document, it would be much appreciated by future readers to do so.*
-
-
 ## Table of Contents
 
 * [Introduction](#introduction)

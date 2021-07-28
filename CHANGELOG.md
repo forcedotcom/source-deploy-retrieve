@@ -1,3 +1,19 @@
+# 4.0.1 - July 28, 2021
+
+## Fixed
+
+- Revert " add missing types from toolbelt to the best of my ability " (#404) ([PR #393](https://github.com/forcedotcom/source-deploy-retrieve/pull/393))
+
+- Revert " add RunTestResult type " (#402) ([PR #395](https://github.com/forcedotcom/source-deploy-retrieve/pull/395))
+
+- Add missing types from toolbelt to the best of my ability ([PR #393](https://github.com/forcedotcom/source-deploy-retrieve/pull/393))
+
+- Ignore duplicate components in server response ([PR #401](https://github.com/forcedotcom/source-deploy-retrieve/pull/401))
+
+- Bump version of archiver for NodeJS v16 ([PR #399](https://github.com/forcedotcom/source-deploy-retrieve/pull/399))
+
+- Port pr v4.0.0 ([PR #387](https://github.com/forcedotcom/source-deploy-retrieve/pull/387))
+
 # 4.0.0 - July 16, 2021
 
 ## Fixed

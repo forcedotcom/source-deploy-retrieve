@@ -22,7 +22,6 @@ export type ComponentProperties = {
   xml?: string;
   content?: string;
   parent?: SourceComponent;
-  forceIgnored?: boolean;
 };
 
 /**
@@ -34,7 +33,6 @@ export class SourceComponent implements MetadataComponent {
   public readonly xml?: string;
   public readonly parent?: SourceComponent;
   public content?: string;
-  public forceIgnored?: boolean;
   private _tree: TreeContainer;
   private forceIgnore: ForceIgnore;
 
@@ -48,7 +46,6 @@ export class SourceComponent implements MetadataComponent {
     this.xml = props.xml;
     this.parent = props.parent;
     this.content = props.content;
-    this.forceIgnored = props.forceIgnored;
     this._tree = tree;
     this.forceIgnore = forceIgnore;
   }

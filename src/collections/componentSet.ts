@@ -29,7 +29,6 @@ import {
 import { LazyCollection } from './lazyCollection';
 import { j2xParser } from 'fast-xml-parser';
 import { RegistryAccess } from '../registry';
-import { resourceLimits } from 'node:worker_threads';
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;

@@ -51,10 +51,13 @@ export class BundleSourceAdapter extends MixedContentSourceAdapter {
     // we could be populating from a valid sourcepath lwc/validLWC/myFoo.js
     try {
       if (this.tree.readDirectory(trigger)) {
+        // if the directory is populated with files (validLWC)
         return super.populate(trigger, component);
       }
+      // else the directory is empty (invalidLWC) do nothing
+      return;
     } catch (e) {
-      // potentially valid filepath
+      // potentially valid filepath (lwc/validLWC/myFoo.js)
       return super.populate(trigger, component);
     }
   }

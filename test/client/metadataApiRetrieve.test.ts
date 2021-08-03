@@ -336,6 +336,7 @@ describe('MetadataApiRetrieve', async () => {
             type: 'merge',
             mergeWith: toRetrieve.getSourceComponents(),
             defaultDirectory: MOCK_DEFAULT_OUTPUT,
+            forceIgnoredPaths: undefined,
           })
         ).to.be.true;
       });

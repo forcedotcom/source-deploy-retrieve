@@ -77,6 +77,7 @@ export class ComponentConverter extends Transform {
     try {
       const converts: Promise<WriteInfo[]>[] = [];
       const transformer = this.transformerFactory.getTransformer(chunk);
+      transformer.forceIgnoredPaths = this.mergeSet?.forceIgnoredPaths ?? [];
       const mergeWith = this.mergeSet?.getSourceComponents(chunk);
       switch (this.targetFormat) {
         case 'source':
@@ -121,6 +122,7 @@ export class ComponentConverter extends Transform {
 }
 
 export abstract class ComponentWriter extends Writable {
+  public forceIgnoredPaths?: string[] = [];
   protected rootDestination?: SourcePath;
 
   constructor(rootDestination?: SourcePath) {
@@ -153,6 +155,9 @@ export class StandardWriter extends ComponentWriter {
           const fullDest = isAbsolute(info.output)
             ? info.output
             : join(this.rootDestination, info.output);
+          if (this.forceIgnoredPaths.includes(fullDest)) {
+            return;
+          }
           // if there are children, resolve each file. o/w just pick one of the files to resolve
           if (toResolve.length === 0 || chunk.component.type.children) {
             // This is a workaround for a server side ListViews bug where

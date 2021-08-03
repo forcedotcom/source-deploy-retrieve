@@ -20,6 +20,7 @@ import { MetadataType } from '../registry';
  * @internal
  */
 export class MetadataResolver {
+  public forceIgnoredPaths: string[];
   private forceIgnore: ForceIgnore;
   private sourceAdapterFactory: SourceAdapterFactory;
   private tree: TreeContainer;
@@ -33,6 +34,7 @@ export class MetadataResolver {
     this.registry = registry;
     this.tree = tree;
     this.sourceAdapterFactory = new SourceAdapterFactory(this.registry, tree);
+    this.forceIgnoredPaths = [];
   }
 
   /**
@@ -118,6 +120,7 @@ export class MetadataResolver {
   private resolveComponent(fsPath: string, isResolvingSource: boolean): SourceComponent {
     if (this.forceIgnore.denies(fsPath)) {
       // don't resolve the component if the path is denied
+      this.forceIgnoredPaths.push(fsPath);
       return;
     }
     const type = this.resolveType(fsPath);

@@ -13,6 +13,7 @@ export interface MetadataComponent {
   fullName: string;
   type: MetadataType;
   parent?: MetadataComponent;
+  forceIgnored?: boolean;
 }
 
 export interface MetadataMember {

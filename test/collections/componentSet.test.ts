@@ -223,7 +223,7 @@ describe('ComponentSet', () => {
           manifestPath: manifestFiles.ONE_FOLDER_MEMBER.name,
           registry: mockRegistry,
           tree: manifestFiles.TREE,
-          resolveSourcePaths: ['.'],
+          // resolveSourcePaths: ['.'],
         });
 
         const result = set.toArray();

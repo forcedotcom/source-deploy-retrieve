@@ -64,12 +64,14 @@ export type MergeConfig = {
    * Location to store components that aren't merged.
    */
   defaultDirectory: SourcePath;
+  forceIgnoredPaths?: string[];
 };
 
 /**
  * Transforms metadata component files into different SFDX file formats
  */
 export interface MetadataTransformer {
+  forceIgnoredPaths?: string[];
   toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]>;
   toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]>;
 }

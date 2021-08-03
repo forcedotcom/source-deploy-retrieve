@@ -29,6 +29,7 @@ import {
 import { LazyCollection } from './lazyCollection';
 import { j2xParser } from 'fast-xml-parser';
 import { RegistryAccess } from '../registry';
+import { resourceLimits } from 'node:worker_threads';
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
@@ -56,6 +57,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    */
   public sourceApiVersion: string;
   public fullName?: string;
+  public forceIgnoredPaths?: string[];
   private registry: RegistryAccess;
   private components = new Map<string, Map<string, SourceComponent>>();
 
@@ -116,6 +118,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       }
     }
 
+    set.forceIgnoredPaths = resolver.forceIgnoredPaths;
+
     return set;
   }
 
@@ -171,6 +175,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         include: resolveIncludeSet,
         registry: options.registry,
       });
+      result.forceIgnoredPaths = components.forceIgnoredPaths;
       for (const component of components) {
         result.add(component);
       }

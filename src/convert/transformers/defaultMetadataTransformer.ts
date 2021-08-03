@@ -9,7 +9,7 @@ import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { SfdxFileFormat, WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve';
 import { trimUntil } from '../../utils/path';
-import { basename, dirname, join } from 'path';
+import { basename, dirname, isAbsolute, join } from 'path';
 import { extName } from '../../utils';
 
 const ORIGINAL_SUFFIX_REGEX = new RegExp('(.)([a-zA-Z]+)(' + META_XML_SUFFIX + ')$');
@@ -39,20 +39,32 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
     mergeWith?: SourceComponent
   ): WriteInfo[] {
     const writeInfos: WriteInfo[] = [];
+    let output: string;
 
     if (component.content) {
       for (const source of component.walkContent()) {
+        output = this.getContentSourceDestination(source, targetFormat, component, mergeWith);
+        // if (this.forceIgnoredPaths.includes(output)) {
+        //   continue;
+        // }
         writeInfos.push({
           source: component.tree.stream(source),
-          output: this.getContentSourceDestination(source, targetFormat, component, mergeWith),
+          output: output,
         });
       }
     }
 
     if (component.xml) {
+      output = this.getXmlDestination(targetFormat, component, mergeWith);
+      // output = isAbsolute(output)
+      //   ? output
+      //   : join('/Users/vyao/apex-recipes-force-ignore/force-app', output);
+      // if (this.forceIgnoredPaths.includes(output)) {
+      //   return writeInfos;
+      // }
       writeInfos.push({
         source: component.tree.stream(component.xml),
-        output: this.getXmlDestination(targetFormat, component, mergeWith),
+        output: output,
       });
     }
 

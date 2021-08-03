@@ -124,7 +124,9 @@ export class MetadataConverter {
           for (const component of output.mergeWith) {
             mergeSet.add(component.parent ?? component);
           }
+          mergeSet.forceIgnoredPaths = output.forceIgnoredPaths;
           writer = new StandardWriter(output.defaultDirectory);
+          writer.forceIgnoredPaths = output.forceIgnoredPaths;
           break;
       }
 

@@ -10,12 +10,14 @@ import { SourceComponent } from '../../resolve';
 import { RegistryAccess } from '../../registry';
 
 export abstract class BaseMetadataTransformer implements MetadataTransformer {
+  public forceIgnoredPaths?: string[];
   public readonly context: ConvertContext;
   protected registry: RegistryAccess;
 
   constructor(registry = new RegistryAccess(), context = new ConvertContext()) {
     this.registry = registry;
     this.context = context;
+    this.forceIgnoredPaths = [];
   }
 
   public abstract toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]>;

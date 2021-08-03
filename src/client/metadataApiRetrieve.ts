@@ -216,7 +216,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
             type: 'merge',
             mergeWith: this.components.getSourceComponents(),
             defaultDirectory: pkg.outputDir,
-            forceIgnoredPaths: this.components.forceIgnoredPaths,
+            forceIgnoredPaths: this.components.forceIgnoredPaths ?? [],
           }
         : {
             type: 'directory',

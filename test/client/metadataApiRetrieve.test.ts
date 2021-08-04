@@ -356,6 +356,21 @@ describe('MetadataApiRetrieve', async () => {
         expect(result).to.deep.equal(expected);
       });
 
+      it('should construct a result object with no components when components are forceIgnored', async () => {
+        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        toRetrieve.forceIgnoredPaths = [COMPONENT.xml, COMPONENT.content];
+        const { operation } = await stubMetadataRetrieve(env, {
+          toRetrieve,
+          merge: true,
+          successes: toRetrieve,
+        });
+
+        await operation.start();
+        const result = await operation.pollStatus();
+
+        expect(result.components.size).to.equal(0);
+      });
+
       it('should construct a result object with no components when no components are retrieved', async () => {
         const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
         const { operation, response } = await stubMetadataRetrieve(env, {

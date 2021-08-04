@@ -299,7 +299,12 @@ export async function stubMetadataRetrieve(
   }
   const convertStub = sandbox.stub(MetadataConverter.prototype, 'convert');
   outputConfigs.forEach((outputCfg) => {
-    convertStub.withArgs(match.any, 'source', outputCfg).resolves({ converted });
+    const notForceIgnoredConverted = converted.filter(
+      (component) => !retrievedComponents.forceIgnoredPaths ?? [].includes(component.xml)
+    );
+    convertStub
+      .withArgs(match.any, 'source', outputCfg)
+      .resolves({ converted: notForceIgnoredConverted });
   });
 
   return {

@@ -47,18 +47,15 @@ export class BundleSourceAdapter extends MixedContentSourceAdapter {
    * @protected
    */
   protected populate(trigger: SourcePath, component?: SourceComponent): SourceComponent {
-    // this.tree.readDirectory will throw an error if the trigger is a file - imagine the try/catch as an if/else
-    // we could be populating from a valid sourcepath lwc/validLWC/myFoo.js
-    try {
-      if (this.tree.readDirectory(trigger)) {
-        // if the directory is populated with files (validLWC)
-        return super.populate(trigger, component);
-      }
-      // else the directory is empty (invalidLWC) do nothing
-      return;
-    } catch (e) {
-      // potentially valid filepath (lwc/validLWC/myFoo.js)
+    if (this.tree.isDirectory(trigger) && this.tree.readDirectory(trigger)?.length) {
+      // if we're populating from a populated directory (validLWC)
       return super.populate(trigger, component);
+    } else if (!this.tree.isDirectory(trigger)) {
+      // we're populating from a path to a file (validLWC/myFoo.js)
+      return super.populate(trigger, component);
+    } else {
+      // we're populating from an empty dir (invalidLWC) do nothing
+      return;
     }
   }
 }

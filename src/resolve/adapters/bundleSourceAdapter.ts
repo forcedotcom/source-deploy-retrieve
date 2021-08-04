@@ -30,17 +30,18 @@ export class BundleSourceAdapter extends MixedContentSourceAdapter {
   protected ownFolder = true;
 
   /**
-   * filters out empty directories pretending to be valid bundle types
+   * Excludes empty bundle directories.
+   *
    * e.g.
    * lwc/
-   * ├── validLWC/
+   * ├── myFoo/
    * |   ├── myFoo.js
    * |   ├── myFooStyle.css
    * |   ├── myFoo.html
    * |   ├── myFoo.js-meta.xml
-   * ├── invalidLWC/
+   * ├── emptyLWC/
    *
-   * so we shouldn't populate with the `invalidLWC` directory
+   * so we shouldn't populate with the `emptyLWC` directory
    *
    * @param trigger Path that `getComponent` was called with
    * @param component Component to populate properties on
@@ -48,7 +49,7 @@ export class BundleSourceAdapter extends MixedContentSourceAdapter {
    */
   protected populate(trigger: SourcePath, component?: SourceComponent): SourceComponent {
     if (this.tree.isDirectory(trigger) && !this.tree.readDirectory(trigger)?.length) {
-      // if it's an empty directory, don't include it (lwc/invalidLWC)
+      // if it's an empty directory, don't include it (e.g., lwc/emptyLWC)
       return;
     }
     return super.populate(trigger, component);

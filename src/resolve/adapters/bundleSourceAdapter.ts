@@ -47,15 +47,10 @@ export class BundleSourceAdapter extends MixedContentSourceAdapter {
    * @protected
    */
   protected populate(trigger: SourcePath, component?: SourceComponent): SourceComponent {
-    if (this.tree.isDirectory(trigger) && this.tree.readDirectory(trigger)?.length) {
-      // if we're populating from a populated directory (validLWC)
-      return super.populate(trigger, component);
-    } else if (!this.tree.isDirectory(trigger)) {
-      // we're populating from a path to a file (validLWC/myFoo.js)
-      return super.populate(trigger, component);
-    } else {
-      // we're populating from an empty dir (invalidLWC) do nothing
+    if (this.tree.isDirectory(trigger) && !this.tree.readDirectory(trigger)?.length) {
+      // if it's an empty directory, don't include it (lwc/invalidLWC)
       return;
     }
+    return super.populate(trigger, component);
   }
 }

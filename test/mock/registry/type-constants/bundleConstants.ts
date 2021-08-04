@@ -39,3 +39,22 @@ export const COMPONENT = SourceComponent.createVirtualComponent(
     },
   ]
 );
+
+export const EMPTY_BUNDLE = SourceComponent.createVirtualComponent(
+  {
+    name: 'a',
+    type,
+    xml: XML_PATH,
+    content: CONTENT_PATH,
+  },
+  [
+    {
+      dirPath: TYPE_DIRECTORY,
+      children: [COMPONENT_NAME],
+    },
+    {
+      dirPath: CONTENT_PATH,
+      children: [],
+    },
+  ]
+);

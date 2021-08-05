@@ -8,10 +8,10 @@ import * as matchingContentFile from './matchingContentFileConstants';
 import * as xmlInFolder from './xmlInFolderConstants';
 import * as bundle from './bundleConstants';
 import * as document from './documentConstants';
-import * as taraji from './tarajiConstants';
+import * as mixedContentDirectory from './mixedContentDirectoryConstants';
 import * as mixedContentInFolder from './mixedContentInFolderConstants';
 import * as mixedContentSingleFile from './mixedContentSingleFileConstants';
-import * as regina from './reginaConstants';
+import * as decomposed from './decomposedConstants';
 import * as decomposedtoplevel from './decomposedTopLevelConstants';
 import * as nonDecomposed from './nonDecomposedConstants';
 export {
@@ -19,10 +19,10 @@ export {
   document,
   matchingContentFile,
   bundle,
-  taraji,
+  mixedContentDirectory,
   mixedContentInFolder,
   mixedContentSingleFile,
-  regina,
+  decomposed,
   decomposedtoplevel,
   nonDecomposed,
 };

@@ -30,7 +30,7 @@ describe('RegistryAccess', () => {
 
     it('should fetch child type definition', () => {
       expect(mockRegistry.getTypeByName('x')).to.deep.equal(
-        mockRegistryData.types.reginaking.children.types.x
+        mockRegistryData.types.decomposed.children.types.x
       );
     });
 

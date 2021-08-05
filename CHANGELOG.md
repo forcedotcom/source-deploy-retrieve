@@ -1,3 +1,33 @@
+# 4.0.1 - July 28, 2021
+
+## Fixed
+
+- Under-the-hood fixes
+
+- Export runTestResult type (#402) ([PR #395](https://github.com/forcedotcom/source-deploy-retrieve/pull/395))
+
+- Add missing metadata types from toolbelt to the metadata registry ([PR #393](https://github.com/forcedotcom/source-deploy-retrieve/pull/393))
+
+- Ignore duplicate components in server response ([PR #401](https://github.com/forcedotcom/source-deploy-retrieve/pull/401))
+
+- Bump version of archiver for NodeJS v16 ([PR #399](https://github.com/forcedotcom/source-deploy-retrieve/pull/399))
+
+- Add CustomFieldTranslation to metadata registry ([#389](https://github.com/forcedotcom/source-deploy-retrieve/pull/389))
+
+# 4.0.0 - July 16, 2021
+
+## Fixed
+
+- Add support for sourceApiVersion ([PR #381](https://github.com/forcedotcom/source-deploy-retrieve/pull/381))
+
+- Add BatchCalcJobDefinition to metadata registry ([PR #382](https://github.com/forcedotcom/source-deploy-retrieve/pull/382))
+
+- ResolveComponent no longer tries to resolve ignored dir paths ([PR #379](https://github.com/forcedotcom/source-deploy-retrieve/pull/379))
+
+- Match toolbelt for Bot and BotVersion metadata types ([PR #372](https://github.com/forcedotcom/source-deploy-retrieve/pull/372))
+
+- Retrieve package names to their respective packages ([PR #353](https://github.com/forcedotcom/source-deploy-retrieve/pull/353))
+
 # 3.1.1 - July 9, 2021
 
 ## Fixed

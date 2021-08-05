@@ -25,7 +25,7 @@ import {
 import { WriterFormat } from '../../src/convert';
 import { ConvertContext } from '../../src/convert/convertContext';
 import { JsToXml } from '../../src/convert/streams';
-import { matchingContentFile, mockRegistry, regina, nonDecomposed } from '../mock/registry';
+import { matchingContentFile, mockRegistry, decomposed, nonDecomposed } from '../mock/registry';
 
 const env = createSandbox();
 
@@ -38,7 +38,9 @@ describe('Convert Transaction Constructs', () => {
       const result1: WriterFormat[] = [
         { component: matchingContentFile.COMPONENT, writeInfos: [] },
       ];
-      const result2: WriterFormat[] = [{ component: regina.REGINA_COMPONENT, writeInfos: [] }];
+      const result2: WriterFormat[] = [
+        { component: decomposed.DECOMPOSED_COMPONENT, writeInfos: [] },
+      ];
       const result3: WriterFormat[] = [{ component: nonDecomposed.COMPONENT_1, writeInfos: [] }];
       env.stub(context.recomposition, 'finalize').resolves(result1);
       env.stub(context.decomposition, 'finalize').resolves(result2);
@@ -56,7 +58,7 @@ describe('Convert Transaction Constructs', () => {
 
     describe('Recomposition', () => {
       it('should return a WriterFormat with recomposed data', async () => {
-        const component = regina.REGINA_COMPONENT;
+        const component = decomposed.DECOMPOSED_COMPONENT;
         const context = new ConvertContext();
         context.recomposition.setState((state) => {
           state['Test__c'] = {
@@ -73,14 +75,14 @@ describe('Convert Transaction Constructs', () => {
             writeInfos: [
               {
                 source: new JsToXml({
-                  ReginaKing: {
+                  Decomposed: {
                     [XML_NS_KEY]: XML_NS_URL,
                     fullName: 'a',
                     ys: [{ test: 'child1' }],
                     xs: [{ test: 'child2' }],
                   },
                 }),
-                output: join('reginas', 'a.regina'),
+                output: join('decomposeds', 'a.decomposed'),
               },
             ],
           },
@@ -90,11 +92,11 @@ describe('Convert Transaction Constructs', () => {
       it('should still recompose if parent xml is empty', async () => {
         const component = new SourceComponent(
           {
-            name: regina.REGINA_COMPONENT.name,
-            type: regina.REGINA_COMPONENT.type,
-            content: regina.REGINA_COMPONENT.content,
+            name: decomposed.DECOMPOSED_COMPONENT.name,
+            type: decomposed.DECOMPOSED_COMPONENT.type,
+            content: decomposed.DECOMPOSED_COMPONENT.content,
           },
-          regina.REGINA_COMPONENT.tree
+          decomposed.DECOMPOSED_COMPONENT.tree
         );
         const context = new ConvertContext();
         context.recomposition.setState((state) => {
@@ -112,13 +114,13 @@ describe('Convert Transaction Constructs', () => {
             writeInfos: [
               {
                 source: new JsToXml({
-                  ReginaKing: {
+                  Decomposed: {
                     [XML_NS_KEY]: XML_NS_URL,
                     ys: [{ test: 'child1' }],
                     xs: [{ test: 'child2' }],
                   },
                 }),
-                output: join('reginas', 'a.regina'),
+                output: join('decomposeds', 'a.decomposed'),
               },
             ],
           },
@@ -128,7 +130,7 @@ describe('Convert Transaction Constructs', () => {
 
     describe('Decomposition', () => {
       it('should return WriterFormats only for components where a merge was not found', async () => {
-        const component = regina.REGINA_COMPONENT;
+        const component = decomposed.DECOMPOSED_COMPONENT;
         const context = new ConvertContext();
         const children = component.getChildren();
         const writeInfos = [

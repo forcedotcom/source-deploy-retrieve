@@ -10,10 +10,10 @@ export {
   document,
   matchingContentFile,
   bundle,
-  taraji,
+  mixedContentDirectory,
   mixedContentInFolder,
   mixedContentSingleFile,
-  regina,
+  decomposed,
   nonDecomposed,
   decomposedtoplevel,
 } from './type-constants';

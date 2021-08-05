@@ -39,7 +39,9 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     let contentSource: Readable;
 
     if (await this.componentIsExpandedArchive(component)) {
-      const zip = createArchive('zip', { zlib: { level: 3 } });
+      // toolbelt was using level 9 for static resources, so we'll do the same.
+      // Otherwise, you'll see errors like https://github.com/forcedotcom/cli/issues/1098
+      const zip = createArchive('zip', { zlib: { level: 9 } });
       zip.directory(content, false);
       zip.finalize();
       contentSource = zip;

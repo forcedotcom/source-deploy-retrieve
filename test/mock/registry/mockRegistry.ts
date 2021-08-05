@@ -7,6 +7,11 @@
 
 import { RegistryAccess } from '../../../src';
 
+/**
+ * SDR is driven by the idea that solutions aren’t built for specific metadata types, but for classifications of types.
+ * mockRegistryData provides classifications of types, instead of specific metadata types, for testing purposes.
+ *
+ */
 export const mockRegistryData = {
   types: {
     /**
@@ -118,11 +123,16 @@ export const mockRegistryData = {
         recomposition: 'startEmpty',
       },
     },
-    tarajihenson: {
-      id: 'tarajihenson',
-      directoryName: 'tarajis',
+    /**
+     * Metadata whose content is directory(ies) containing files of any extension
+     *
+     * e.g. ExperienceBundle
+     */
+    mixedcontentdirectory: {
+      id: 'mixedcontentdirectory',
+      directoryName: 'mixedcontentdirectories',
       inFolder: false,
-      name: 'TarajiHenson',
+      name: 'MixedContentDirectory',
       strictDirectoryName: true,
       strategies: {
         adapter: 'mixedContent',
@@ -254,7 +264,7 @@ export const mockRegistryData = {
     ms: 'missingstrategies',
   },
   strictDirectoryNames: {
-    tarajis: 'tarajihenson',
+    mixedContentDirectories: 'mixedcontentdirectory',
     bundles: 'bundle',
     decomposed: 'decomposed',
     mixedSingleFiles: 'mixedcontentsinglefile',

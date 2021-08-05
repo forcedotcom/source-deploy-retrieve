@@ -11,13 +11,13 @@ import { ExpectedSourceFilesError } from '../../../src/errors';
 import { VirtualTreeContainer } from '../../../src/resolve/treeContainers';
 import { SourceComponent } from '../../../src/resolve';
 import {
-  TARAJI_VIRTUAL_FS_NO_XML,
-  TARAJI_CONTENT_PATH,
-} from '../../mock/registry/type-constants/tarajiConstants';
+  MIXED_CONTENT_DIRECTORY_VIRTUAL_FS_NO_XML,
+  MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
+} from '../../mock/registry/type-constants/mixedContentDirectoryConstants';
 import {
   mockRegistry,
   mockRegistryData,
-  taraji,
+  mixedContentDirectory,
   mixedContentSingleFile,
 } from '../../mock/registry';
 
@@ -60,34 +60,45 @@ describe('MixedContentSourceAdapter', () => {
   });
 
   describe('Directory Content', () => {
-    const { TARAJI_COMPONENT, TARAJI_SOURCE_PATHS, TARAJI_XML_PATHS, TARAJI_VIRTUAL_FS } = taraji;
-    const type = mockRegistryData.types.tarajihenson;
-    const tree = new VirtualTreeContainer(TARAJI_VIRTUAL_FS);
+    const {
+      MIXED_CONTENT_DIRECTORY_COMPONENT,
+      MIXED_CONTENT_DIRECTORY_SOURCE_PATHS,
+      MIXED_CONTENT_DIRECTORY_XML_PATHS,
+      MIXED_CONTENT_DIRECTORY_VIRTUAL_FS,
+    } = mixedContentDirectory;
+    const type = mockRegistryData.types.mixedcontentdirectory;
+    const tree = new VirtualTreeContainer(MIXED_CONTENT_DIRECTORY_VIRTUAL_FS);
     const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
-    const expectedComponent = new SourceComponent(TARAJI_COMPONENT, tree);
+    const expectedComponent = new SourceComponent(MIXED_CONTENT_DIRECTORY_COMPONENT, tree);
 
     it('Should return expected SourceComponent when given a root metadata xml path', () => {
-      expect(adapter.getComponent(TARAJI_XML_PATHS[0])).to.deep.equal(expectedComponent);
+      expect(adapter.getComponent(MIXED_CONTENT_DIRECTORY_XML_PATHS[0])).to.deep.equal(
+        expectedComponent
+      );
     });
 
     it('Should return expected SourceComponent when given a source path', () => {
       const randomSource =
-        TARAJI_SOURCE_PATHS[Math.floor(Math.random() * Math.floor(TARAJI_SOURCE_PATHS.length))];
+        MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[
+          Math.floor(Math.random() * Math.floor(MIXED_CONTENT_DIRECTORY_SOURCE_PATHS.length))
+        ];
       expect(adapter.getComponent(randomSource)).to.deep.equal(expectedComponent);
     });
 
     it('should return expected SourceComponent when there is no metadata xml', () => {
-      const tree = new VirtualTreeContainer(TARAJI_VIRTUAL_FS_NO_XML);
+      const tree = new VirtualTreeContainer(MIXED_CONTENT_DIRECTORY_VIRTUAL_FS_NO_XML);
       const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
       const expectedComponent = new SourceComponent(
         {
           name: 'a',
           type,
-          content: TARAJI_CONTENT_PATH,
+          content: MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
         },
         tree
       );
-      expect(adapter.getComponent(taraji.TARAJI_CONTENT_PATH)).to.deep.equal(expectedComponent);
+      expect(
+        adapter.getComponent(mixedContentDirectory.MIXED_CONTENT_DIRECTORY_CONTENT_PATH)
+      ).to.deep.equal(expectedComponent);
     });
   });
 });

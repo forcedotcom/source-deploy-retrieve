@@ -1697,6 +1697,7 @@
       "suffix": "bot",
       "directoryName": "bots",
       "inFolder": false,
+      "strictDirectoryName": true,
       "children": {
         "types": {
           "botversion": {
@@ -1706,9 +1707,17 @@
             "suffix": "botVersion"
           }
         },
+        "directories": {
+          "botVersions": "botversion"
+        },
         "suffixes": {
           "botVersion": "botversion"
         }
+      },
+      "strategies": {
+        "adapter": "decomposed",
+        "transformer": "decomposed",
+        "decomposition": "topLevel"
       }
     },
     "animationrule": {
@@ -2507,6 +2516,7 @@
     "prompt": "prompt",
     "mlDomain": "mldomain",
     "bot": "bot",
+    "botVersion": "botversion",
     "animationRule": "animationrule",
     "deployment": "recordactiondeployment",
     "EmbeddedServiceFlowConfig": "embeddedserviceflowconfig",
@@ -2550,6 +2560,7 @@
     "documents": "document",
     "waveTemplates": "wavetemplatebundle",
     "objects": "customobject",
+    "bots": "bot",
     "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
     "sites": "customsite",

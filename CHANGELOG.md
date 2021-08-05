@@ -1,3 +1,15 @@
+# 4.0.2 - August 5, 2021
+
+## Added
+
+- Add SDR Handbook ([PR #400](https://github.com/forcedotcom/source-deploy-retrieve/pull/400))
+
+## Fixed
+
+- Fix compression level for static resources ([PR #411](https://github.com/forcedotcom/source-deploy-retrieve/pull/411))
+
+- Fix deployment of empty bundles ([PR #412](https://github.com/forcedotcom/source-deploy-retrieve/pull/412))
+
 # 4.0.1 - July 28, 2021
 
 ## Fixed

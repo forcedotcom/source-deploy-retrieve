@@ -6,13 +6,13 @@
  */
 import { Archiver, create as createArchive } from 'archiver';
 import { createWriteStream } from 'fs';
-import { isAbsolute, join } from 'path';
+import { dirname, isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
 import { SourceComponent, MetadataResolver } from '../resolve';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
-import { SourcePath, XML_DECL } from '../common';
+import { META_XML_SUFFIX, SourcePath, XML_DECL } from '../common';
 import { ConvertContext } from './convertContext';
 import { MetadataTransformerFactory } from './transformers';
 import { JsonMap } from '@salesforce/ts-types';
@@ -20,7 +20,8 @@ import { j2xParser } from 'fast-xml-parser';
 import { ComponentSet } from '../collections';
 import { LibraryError } from '../errors';
 import { RegistryAccess } from '../registry';
-import { Logger } from '@salesforce/core';
+import { fs, Logger } from '@salesforce/core';
+import { basename } from 'node:path';
 export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
@@ -151,10 +152,23 @@ export class StandardWriter extends ComponentWriter {
       try {
         const toResolve: string[] = [];
         const writeTasks = chunk.writeInfos.map((info: WriteInfo) => {
-          const fullDest = isAbsolute(info.output)
+          let fullDest = isAbsolute(info.output)
             ? info.output
             : join(this.rootDestination, info.output);
-          if (this.forceIgnoredPaths.includes(fullDest)) {
+          if (!fs.fileExistsSync(fullDest)) {
+            for (const ignoredPath of this.forceIgnoredPaths) {
+              if (
+                dirname(ignoredPath).includes(dirname(fullDest)) &&
+                basename(ignoredPath).includes(basename(fullDest))
+              ) {
+                fullDest = ignoredPath;
+              }
+            }
+          }
+          const fullDestMeta = fullDest.endsWith(META_XML_SUFFIX)
+            ? fullDest
+            : fullDest + META_XML_SUFFIX;
+          if (this.forceIgnoredPaths.includes(fullDestMeta)) {
             return;
           }
           // if there are children, resolve each file. o/w just pick one of the files to resolve

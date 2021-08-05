@@ -2,13 +2,13 @@
 
 ## Added
 
-- Added SDR Handbook to the repo ([PR #400](https://github.com/forcedotcom/source-deploy-retrieve/pull/400))
+- Add SDR Handbook ([PR #400](https://github.com/forcedotcom/source-deploy-retrieve/pull/400))
 
 ## Fixed
 
-- Static resource size consistency ([PR #411](https://github.com/forcedotcom/source-deploy-retrieve/pull/411))
+- Fix compression level for static resources ([PR #411](https://github.com/forcedotcom/source-deploy-retrieve/pull/411))
 
-- Port pr v4.0.0 ([PR #387](https://github.com/forcedotcom/source-deploy-retrieve/pull/387))
+- Fix deployment of empty bundles ([PR #412](https://github.com/forcedotcom/source-deploy-retrieve/pull/412))
 
 # 4.0.1 - July 28, 2021
 

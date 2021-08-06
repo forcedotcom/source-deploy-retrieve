@@ -6,7 +6,7 @@
  */
 import { Archiver, create as createArchive } from 'archiver';
 import { createWriteStream } from 'fs';
-import { dirname, isAbsolute, join } from 'path';
+import { basename, dirname, isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
 import { SourceComponent, MetadataResolver } from '../resolve';
@@ -21,7 +21,6 @@ import { ComponentSet } from '../collections';
 import { LibraryError } from '../errors';
 import { RegistryAccess } from '../registry';
 import { fs, Logger } from '@salesforce/core';
-import { basename } from 'node:path';
 export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
@@ -122,7 +121,7 @@ export class ComponentConverter extends Transform {
 }
 
 export abstract class ComponentWriter extends Writable {
-  public forceIgnoredPaths?: string[] = [];
+  public forceIgnoredPaths?: Set<string> = new Set<string>();
   protected rootDestination?: SourcePath;
 
   constructor(rootDestination?: SourcePath) {
@@ -165,10 +164,7 @@ export class StandardWriter extends ComponentWriter {
               }
             }
           }
-          const fullDestMeta = fullDest.endsWith(META_XML_SUFFIX)
-            ? fullDest
-            : fullDest + META_XML_SUFFIX;
-          if (this.forceIgnoredPaths.includes(fullDestMeta)) {
+          if (this.forceIgnoredPaths.has(fullDest)) {
             return;
           }
           // if there are children, resolve each file. o/w just pick one of the files to resolve

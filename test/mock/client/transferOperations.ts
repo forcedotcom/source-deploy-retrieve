@@ -258,7 +258,7 @@ export async function stubMetadataRetrieve(
       type: 'merge',
       mergeWith: retrievedComponents.getSourceComponents(),
       defaultDirectory: MOCK_DEFAULT_OUTPUT,
-      forceIgnoredPaths: retrievedComponents.forceIgnoredPaths ?? [],
+      forceIgnoredPaths: retrievedComponents.forceIgnoredPaths ?? new Set<string>(),
     });
     converted = source;
 
@@ -267,7 +267,7 @@ export async function stubMetadataRetrieve(
         type: 'merge',
         mergeWith: retrievedComponents.getSourceComponents(),
         defaultDirectory: pkg.outputDir,
-        forceIgnoredPaths: retrievedComponents.forceIgnoredPaths ?? [],
+        forceIgnoredPaths: retrievedComponents.forceIgnoredPaths ?? new Set<string>(),
       })
     );
   } else {

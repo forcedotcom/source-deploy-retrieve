@@ -56,7 +56,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    */
   public sourceApiVersion: string;
   public fullName?: string;
-  public forceIgnoredPaths?: string[];
+  public forceIgnoredPaths?: Set<string>;
   private registry: RegistryAccess;
   private components = new Map<string, Map<string, SourceComponent>>();
 

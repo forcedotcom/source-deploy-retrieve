@@ -336,7 +336,7 @@ describe('MetadataApiRetrieve', async () => {
             type: 'merge',
             mergeWith: toRetrieve.getSourceComponents(),
             defaultDirectory: MOCK_DEFAULT_OUTPUT,
-            forceIgnoredPaths: [],
+            forceIgnoredPaths: new Set<string>(),
           })
         ).to.be.true;
       });
@@ -358,7 +358,7 @@ describe('MetadataApiRetrieve', async () => {
 
       it('should construct a result object with no components when components are forceIgnored', async () => {
         const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
-        toRetrieve.forceIgnoredPaths = [COMPONENT.xml, COMPONENT.content];
+        toRetrieve.forceIgnoredPaths = new Set([COMPONENT.xml, COMPONENT.content]);
         const { operation } = await stubMetadataRetrieve(env, {
           toRetrieve,
           merge: true,

@@ -768,7 +768,7 @@
       "strictDirectoryName": true,
       "children": {
         "types": {
-          "fieldtranslation": {
+          "customfieldtranslation": {
             "id": "customfieldtranslation",
             "name": "CustomFieldTranslation",
             "directoryName": "fields",
@@ -776,10 +776,10 @@
           }
         },
         "suffixes": {
-          "fieldTranslation": "fieldtranslation"
+          "fieldTranslation": "customfieldtranslation"
         },
         "directories": {
-          "fields": "fieldtranslation"
+          "fields": "customfieldtranslation"
         }
       },
       "strategies": {
@@ -1568,10 +1568,10 @@
     "emailservicesfunction": {
       "id": "emailservicesfunction",
       "name": "EmailServicesFunction",
-      "suffix": null,
+      "suffix": "xml",
       "directoryName": "emailservices",
       "inFolder": false,
-      "strictDirectoryName": true
+      "strictDirectoryName": false
     },
     "integrationhubsettingstype": {
       "id": "integrationhubsettingstype",
@@ -1697,6 +1697,7 @@
       "suffix": "bot",
       "directoryName": "bots",
       "inFolder": false,
+      "strictDirectoryName": true,
       "children": {
         "types": {
           "botversion": {
@@ -1706,9 +1707,17 @@
             "suffix": "botVersion"
           }
         },
+        "directories": {
+          "botVersions": "botversion"
+        },
         "suffixes": {
           "botVersion": "botversion"
         }
+      },
+      "strategies": {
+        "adapter": "decomposed",
+        "transformer": "decomposed",
+        "decomposition": "topLevel"
       }
     },
     "animationrule": {
@@ -2002,9 +2011,347 @@
       "directoryName": "IPAddressRanges",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "icon": {
+      "id": "icon",
+      "name": "Icon",
+      "suffix": "icon",
+      "directoryName": "icons",
+      "strictDirectoryName": false
+    },
+    "businessprocessgroup": {
+      "id": "businessprocessgroup",
+      "name": "BusinessProcessGroup",
+      "suffix": "businessProcessGroup",
+      "directoryName": "businessProcessGroups",
+      "strictDirectoryName": false
+    },
+    "businessprocessfeedbackconfiguration": {
+      "id": "businessprocessfeedbackconfiguration",
+      "name": "BusinessProcessFeedbackConfiguration",
+      "suffix": "businessProcessFeedbackConfiguration",
+      "directoryName": "businessProcessFeedbackConfigurations",
+      "strictDirectoryName": false
+    },
+    "discoveryaimodel": {
+      "id": "discoveryaimodel",
+      "name": "DiscoveryAIModel",
+      "suffix": "model",
+      "directoryName": "discovery",
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
+    },
+    "discoverygoal": {
+      "id": "discoverygoal",
+      "name": "DiscoveryGoal",
+      "suffix": "goal",
+      "directoryName": "discovery",
+      "strictDirectoryName": false
+    },
+    "restrictionrule": {
+      "id": "restrictionrule",
+      "name": "RestrictionRule",
+      "suffix": "rule",
+      "directoryName": "restrictionRules",
+      "strictDirectoryName": false
+    },
+    "functionreference": {
+      "id": "functionreference",
+      "name": "FunctionReference",
+      "suffix": "function",
+      "directoryName": "functions",
+      "strictDirectoryName": false
+    },
+    "participantrole": {
+      "id": "participantrole",
+      "name": "ParticipantRole",
+      "suffix": "participantRole",
+      "directoryName": "participantRoles",
+      "strictDirectoryName": false
+    },
+    "gatewayproviderpaymentmethodtype": {
+      "id": "gatewayproviderpaymentmethodtype",
+      "name": "GatewayProviderPaymentMethodType",
+      "suffix": "gatewayProviderPaymentMethodType",
+      "directoryName": "gatewayProviderPaymentMethodTypes",
+      "strictDirectoryName": false
+    },
+    "careprovidersearchconfig": {
+      "id": "careprovidersearchconfig",
+      "name": "CareProviderSearchConfig",
+      "suffix": "careProviderSearchConfig",
+      "directoryName": "careProviderSearchConfigs",
+      "strictDirectoryName": false
+    },
+    "caresystemfieldmapping": {
+      "id": "caresystemfieldmapping",
+      "name": "CareSystemFieldMapping",
+      "suffix": "careSystemFieldMapping",
+      "directoryName": "careSystemFieldMappings",
+      "strictDirectoryName": false
+    },
+    "documenttype": {
+      "id": "documenttype",
+      "name": "DocumentType",
+      "suffix": "documentType",
+      "directoryName": "documentTypes",
+      "strictDirectoryName": false
+    },
+    "ocrsampledocument": {
+      "id": "ocrsampledocument",
+      "name": "OcrSampleDocument",
+      "suffix": "ocrSampleDocument",
+      "directoryName": "ocrSampleDocuments",
+      "strictDirectoryName": false
+    },
+    "ocrtemplate": {
+      "id": "ocrtemplate",
+      "name": "OcrTemplate",
+      "suffix": "ocrTemplate",
+      "directoryName": "ocrTemplates",
+      "strictDirectoryName": false
+    },
+    "actionplantemplate": {
+      "id": "actionplantemplate",
+      "name": "ActionPlanTemplate",
+      "suffix": "apt",
+      "directoryName": "actionPlanTemplates",
+      "strictDirectoryName": false
+    },
+    "decisiontable": {
+      "id": "decisiontable",
+      "name": "DecisionTable",
+      "suffix": "decisionTable",
+      "directoryName": "decisionTables",
+      "strictDirectoryName": false
+    },
+    "decisiontabledatasetlink": {
+      "id": "decisiontabledatasetlink",
+      "name": "DecisionTableDatasetLink",
+      "suffix": "decisionTableDatasetLink",
+      "directoryName": "decisionTableDatasetLinks",
+      "strictDirectoryName": false
+    },
+    "briefcasedefinition": {
+      "id": "briefcasedefinition",
+      "name": "BriefcaseDefinition",
+      "suffix": "briefcaseDefinition",
+      "directoryName": "briefcaseDefinitions",
+      "strictDirectoryName": false
+    },
+    "batchprocessjobdefinition": {
+      "id": "batchprocessjobdefinition",
+      "name": "BatchProcessJobDefinition",
+      "suffix": "batchProcessJobDefinition",
+      "directoryName": "batchProcessJobDefinitions",
+      "strictDirectoryName": false
+    },
+    "webstoretemplate": {
+      "id": "webstoretemplate",
+      "name": "WebStoreTemplate",
+      "suffix": "webStoreTemplate",
+      "directoryName": "webStoreTemplates",
+      "strictDirectoryName": false
+    },
+    "dynamictrigger": {
+      "id": "dynamictrigger",
+      "name": "DynamicTrigger",
+      "suffix": "dynamicTrigger",
+      "directoryName": "dynamicTriggers",
+      "strictDirectoryName": false
+    },
+    "objecthierarchyrelationship": {
+      "id": "objecthierarchyrelationship",
+      "name": "ObjectHierarchyRelationship",
+      "suffix": "settings",
+      "directoryName": "ObjectHierarchyRelationship",
+      "strictDirectoryName": false
+    },
+    "salesagreementsettings": {
+      "id": "salesagreementsettings",
+      "name": "SalesAgreementSettings",
+      "suffix": "salesAgreementSetting",
+      "directoryName": "salesAgreementSettings",
+      "strictDirectoryName": false
+    },
+    "acctmgrtargetsettings": {
+      "id": "acctmgrtargetsettings",
+      "name": "AcctMgrTargetSettings",
+      "suffix": "acctMgrTargetSetting",
+      "directoryName": "acctMgrTargetSettings",
+      "strictDirectoryName": false
+    },
+    "accountforecastsettings": {
+      "id": "accountforecastsettings",
+      "name": "AccountForecastSettings",
+      "suffix": "accountForecastSetting",
+      "directoryName": "AccountForecastSettings",
+      "strictDirectoryName": false
+    },
+    "industriesmanufacturingsettings": {
+      "id": "industriesmanufacturingsettings",
+      "name": "IndustriesManufacturingSettings",
+      "suffix": "settings",
+      "directoryName": "IndustriesManufacturingSettings",
+      "strictDirectoryName": false
+    },
+    "fieldservicemobileextension": {
+      "id": "fieldservicemobileextension",
+      "name": "FieldServiceMobileExtension",
+      "suffix": "fieldServiceMobileExtension",
+      "directoryName": "fieldServiceMobileExtensions",
+      "strictDirectoryName": false
+    },
+    "datasource": {
+      "id": "datasource",
+      "name": "DataSource",
+      "suffix": "dataSource",
+      "directoryName": "mktDataSources",
+      "strictDirectoryName": false
+    },
+    "datasourceobject": {
+      "id": "datasourceobject",
+      "name": "DataSourceObject",
+      "suffix": "dataSourceObject",
+      "directoryName": "mktDataSourceObjects",
+      "strictDirectoryName": false
+    },
+    "externaldataconnector": {
+      "id": "externaldataconnector",
+      "name": "ExternalDataConnector",
+      "suffix": "externalDataConnector",
+      "directoryName": "externalDataConnectors",
+      "strictDirectoryName": false
+    },
+    "dataconnectors3": {
+      "id": "dataconnectors3",
+      "name": "DataConnectorS3",
+      "suffix": "s3DataConnector",
+      "directoryName": "s3DataConnectors",
+      "strictDirectoryName": false
+    },
+    "datastreamdefinition": {
+      "id": "datastreamdefinition",
+      "name": "DataStreamDefinition",
+      "suffix": "dataStreamDefinition",
+      "directoryName": "dataStreamDefinitions",
+      "strictDirectoryName": false
+    },
+    "mktdatatranobject": {
+      "id": "mktdatatranobject",
+      "name": "MktDataTranObject",
+      "suffix": "mktDataTranObject",
+      "directoryName": "mktDataTranObjects",
+      "strictDirectoryName": false
+    },
+    "fieldsrctrgtrelationship": {
+      "id": "fieldsrctrgtrelationship",
+      "name": "FieldSrcTrgtRelationship",
+      "suffix": "fieldSrcTrgtRelationship",
+      "directoryName": "fieldSrcTrgtRelationships",
+      "strictDirectoryName": false
+    },
+    "objectsourcetargetmap": {
+      "id": "objectsourcetargetmap",
+      "name": "ObjectSourceTargetMap",
+      "suffix": "objectSourceTargetMap",
+      "directoryName": "objectSourceTargetMaps",
+      "strictDirectoryName": false
+    },
+    "benefitaction": {
+      "id": "benefitaction",
+      "name": "BenefitAction",
+      "suffix": "benefitAction",
+      "directoryName": "benefitActions",
+      "strictDirectoryName": false
+    },
+    "channelobjectlinkingrule": {
+      "id": "channelobjectlinkingrule",
+      "name": "ChannelObjectLinkingRule",
+      "suffix": "ChannelObjectLinkingRule",
+      "directoryName": "ChannelObjectLinkingRules",
+      "strictDirectoryName": false
+    },
+    "conversationvendorinfo": {
+      "id": "conversationvendorinfo",
+      "name": "ConversationVendorInfo",
+      "suffix": "ConversationVendorInformation",
+      "directoryName": "ConversationVendorInformation",
+      "strictDirectoryName": false
+    },
+    "conversationvendorfielddef": {
+      "id": "conversationvendorfielddef",
+      "name": "ConversationVendorFieldDef",
+      "suffix": "ConversationVendorFieldDefinition",
+      "directoryName": "ConversationVendorFieldDefinitions",
+      "strictDirectoryName": false
+    },
+    "schedulingrule": {
+      "id": "schedulingrule",
+      "name": "SchedulingRule",
+      "suffix": "schedulingRule",
+      "directoryName": "SchedulingRules",
+      "strictDirectoryName": false
+    },
+    "datamappingschema": {
+      "id": "datamappingschema",
+      "name": "DataMappingSchema",
+      "suffix": "dataMappingSchema",
+      "directoryName": "dataMappingSchema",
+      "strictDirectoryName": false
+    },
+    "datamapping": {
+      "id": "datamapping",
+      "name": "DataMapping",
+      "suffix": "dataMapping",
+      "directoryName": "dataMapping",
+      "strictDirectoryName": false
+    },
+    "federationdatamappingusage": {
+      "id": "federationdatamappingusage",
+      "name": "FederationDataMappingUsage",
+      "suffix": "federationDataMappingUsage",
+      "directoryName": "federationDataMappingUsage",
+      "strictDirectoryName": false
+    },
+    "connectedsystem": {
+      "id": "connectedsystem",
+      "name": "ConnectedSystem",
+      "suffix": "connectedSystem",
+      "directoryName": "ConnectedSystem",
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
+    "sites": "customsite",
+    "icon": "icon",
+    "businessProcessGroup": "businessprocessgroup",
+    "model": "discoveryaimodel",
+    "goal": "discoverygoal",
+    "functions": "functionreference",
+    "participantRole": "participantrole",
+    "gatewayProviderPaymentMethodType": "gatewayproviderpaymentmethodtype",
+    "careProviderSearchConfig": "careprovidersearchconfig",
+    "careSystemFieldMapping": "caresystemfieldmapping",
+    "documentType": "documenttype",
+    "ocrSampleDocument": "ocrsampledocument",
+    "ocrTemplate": "ocrtemplate",
+    "apt": "actionplantemplate",
+    "decisionTable": "decisiontable",
+    "decisionTableDatasetLink": "decisiontabledatasetlink",
+    "briefcaseDefinition": "briefcasedefinition",
+    "batchProcessJobDefinition": "batchprocessjobdefinition",
+    "webstoretemplate": "webstoretemplate",
+    "acctMgrTargetSetting": "acctmgrtargetsettings",
+    "dataSourceObject": "datasourceobject",
+    "externalDataConnector": "externaldataconnector",
+    "s3DataConnector": "dataconnectors3",
+    "mktDataTranObject": "mktdatatranobject",
+    "fieldSrcTrgtRelationship": "fieldsrctrgtrelationship",
+    "objectSourceTargetMap": "objectsourcetargetmap",
+    "benefitAction": "benefitaction",
     "installedPackage": "installedpackage",
     "labels": "customlabels",
     "navigationMenu": "navigationmenu",
@@ -2169,6 +2516,7 @@
     "prompt": "prompt",
     "mlDomain": "mldomain",
     "bot": "bot",
+    "botVersion": "botversion",
     "animationRule": "animationrule",
     "deployment": "recordactiondeployment",
     "EmbeddedServiceFlowConfig": "embeddedserviceflowconfig",
@@ -2202,7 +2550,8 @@
     "workSkillRouting": "workskillrouting",
     "timeSheetTemplate": "timesheettemplate",
     "accountRelationshipShareRule": "accountrelationshipsharerule",
-    "IPAddressRange": "ipaddressrange"
+    "IPAddressRange": "ipaddressrange",
+    "xml": "emailservicesfunction"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -2211,10 +2560,10 @@
     "documents": "document",
     "waveTemplates": "wavetemplatebundle",
     "objects": "customobject",
+    "bots": "bot",
     "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
     "sites": "customsite",
-    "emailservices": "emailservicesfunction"
   },
   "childTypes": {
     "customlabel": "customlabels",
@@ -2240,7 +2589,8 @@
     "matchingrule": "matchingrules",
     "sharingownerrule": "sharingrules",
     "sharingcriteriarule": "sharingrules",
-    "botversion": "bot"
+    "botversion": "bot",
+    "customfieldtranslation": "customobjecttranslation"
   },
   "apiVersion": "52.0"
 }

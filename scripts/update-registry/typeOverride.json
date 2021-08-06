@@ -1,7 +1,4 @@
 {
-  "emailservicesfunction": {
-    "suffix": null
-  },
   "emailtemplatefolder": {
     "id": "emailfolder",
     "name": "EmailFolder",

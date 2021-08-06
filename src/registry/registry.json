@@ -2184,7 +2184,7 @@
     "industriesmanufacturingsettings": {
       "id": "industriesmanufacturingsettings",
       "name": "IndustriesManufacturingSettings",
-      "suffix": "settings",
+      "suffix": "industriesManufacturingSettings",
       "directoryName": "IndustriesManufacturingSettings",
       "strictDirectoryName": false
     },

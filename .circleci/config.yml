@@ -55,6 +55,9 @@ _refs:
     command: |
       export GUS_BUILD="<< pipeline.parameters.scheduled-build >>"
       echo "export SF_CHANGE_CASE_SCHEDULE_BUILD=offcore.tooling.$GUS_BUILD" >> $BASH_ENV
+  docs-deploy: &docs-deploy
+    name: Generate and deploy docs
+    command: yarn ci-docs
 
 commands:
   build-artifact:
@@ -139,6 +142,7 @@ jobs:
       - release-management/install-change-case-mgmt
       - release-management/change-case-create
       - run: *build
+      - run: *docs-deploy
       - run:
           name: Bump package version
           command: |

@@ -1568,10 +1568,10 @@
     "emailservicesfunction": {
       "id": "emailservicesfunction",
       "name": "EmailServicesFunction",
-      "suffix": null,
+      "suffix": "xml",
       "directoryName": "emailservices",
       "inFolder": false,
-      "strictDirectoryName": true
+      "strictDirectoryName": false
     },
     "integrationhubsettingstype": {
       "id": "integrationhubsettingstype",
@@ -1697,6 +1697,7 @@
       "suffix": "bot",
       "directoryName": "bots",
       "inFolder": false,
+      "strictDirectoryName": true,
       "children": {
         "types": {
           "botversion": {
@@ -1706,9 +1707,17 @@
             "suffix": "botVersion"
           }
         },
+        "directories": {
+          "botVersions": "botversion"
+        },
         "suffixes": {
           "botVersion": "botversion"
         }
+      },
+      "strategies": {
+        "adapter": "decomposed",
+        "transformer": "decomposed",
+        "decomposition": "topLevel"
       }
     },
     "animationrule": {
@@ -2507,6 +2516,7 @@
     "prompt": "prompt",
     "mlDomain": "mldomain",
     "bot": "bot",
+    "botVersion": "botversion",
     "animationRule": "animationrule",
     "deployment": "recordactiondeployment",
     "EmbeddedServiceFlowConfig": "embeddedserviceflowconfig",
@@ -2540,7 +2550,8 @@
     "workSkillRouting": "workskillrouting",
     "timeSheetTemplate": "timesheettemplate",
     "accountRelationshipShareRule": "accountrelationshipsharerule",
-    "IPAddressRange": "ipaddressrange"
+    "IPAddressRange": "ipaddressrange",
+    "xml": "emailservicesfunction"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -2549,10 +2560,10 @@
     "documents": "document",
     "waveTemplates": "wavetemplatebundle",
     "objects": "customobject",
+    "bots": "bot",
     "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
     "sites": "customsite",
-    "emailservices": "emailservicesfunction"
   },
   "childTypes": {
     "customlabel": "customlabels",

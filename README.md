@@ -59,6 +59,7 @@ const myObject = ComponentSet
 ```
 
 See the [examples](./examples) folder for more code samples and guides.
+See the [API documentation](https://forcedotcom.github.io/source-deploy-retrieve/) for details on how to effectively use and integrate SDR.
 
 ## Contributing
 

@@ -30,6 +30,7 @@ import { RegistryAccess } from '../registry';
 
 export class MetadataConverter {
   public static readonly PACKAGE_XML_FILE = 'package.xml';
+  public static readonly DESTRUCTIVE_CHANGES_POST_XML_FILE = 'destructiveChangesPost.xml';
   public static readonly DEFAULT_PACKAGE_PREFIX = 'metadataPackage';
 
   private registry: RegistryAccess;
@@ -100,6 +101,16 @@ export class MetadataConverter {
           if (!isSource) {
             const manifestPath = join(packagePath, MetadataConverter.PACKAGE_XML_FILE);
             tasks.push(promises.writeFile(manifestPath, manifestContents));
+
+            // For deploying destructive changes
+            if (cs.hasDeletes) {
+              const destructiveManifestContents = cs.getPackageXml(undefined, true);
+              const destructiveManifestPath = join(
+                packagePath,
+                MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE
+              );
+              tasks.push(promises.writeFile(destructiveManifestPath, destructiveManifestContents));
+            }
           }
           break;
         case 'zip':
@@ -112,6 +123,15 @@ export class MetadataConverter {
           writer = new ZipWriter(packagePath);
           if (!isSource) {
             (writer as ZipWriter).addToZip(manifestContents, MetadataConverter.PACKAGE_XML_FILE);
+
+            // For deploying destructive changes
+            if (cs.hasDeletes) {
+              const destructiveManifestContents = cs.getPackageXml(undefined, true);
+              (writer as ZipWriter).addToZip(
+                destructiveManifestContents,
+                MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE
+              );
+            }
           }
           break;
         case 'merge':

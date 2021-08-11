@@ -30,6 +30,10 @@ export interface FromSourceOptions extends OptionalTreeRegistryOptions {
    * Only resolve components contained in the given set
    */
   include?: ComponentSet;
+  /**
+   * File paths or directory paths of deleted components, i.e., destructive changes.
+   */
+  fsDeletePaths?: string[];
 }
 
 export interface FromManifestOptions extends OptionalTreeRegistryOptions {

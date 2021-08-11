@@ -54,7 +54,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
 
     let component: SourceComponent;
     if (rootMetadata) {
-      const componentName = this.type.inFolder
+      const componentName = this.type.folderType
         ? `${parentName(rootMetadata.path)}/${rootMetadata.fullName}`
         : rootMetadata.fullName;
       component = new SourceComponent(
@@ -85,7 +85,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    *
    * @param path File path of a metadata component
    */
-  private parseAsRootMetadataXml(path: SourcePath): MetadataXml {
+  protected parseAsRootMetadataXml(path: SourcePath): MetadataXml {
     const metaXml = parseMetadataXml(path);
     if (metaXml) {
       let isRootMetadataXml = false;

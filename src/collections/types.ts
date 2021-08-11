@@ -21,6 +21,11 @@ export interface PackageManifestObject {
   };
 }
 
+export enum DestructiveChangesType {
+  POST = 'post',
+  PRE = 'pre',
+}
+
 export interface FromSourceOptions extends OptionalTreeRegistryOptions {
   /**
    * File paths or directory paths to resolve components against

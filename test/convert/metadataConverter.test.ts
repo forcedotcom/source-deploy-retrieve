@@ -19,6 +19,7 @@ import {
   DECOMPOSED_CHILD_COMPONENT_1,
   DECOMPOSED_CHILD_COMPONENT_2,
 } from '../mock/registry/type-constants/decomposedConstants';
+import { DestructiveChangesType } from '../../src/collections/types';
 
 const env = createSandbox();
 
@@ -159,7 +160,7 @@ describe('MetadataConverter', () => {
       ]);
     });
 
-    it('should write destructive changes manifest when ComponentSet has deletes', async () => {
+    it('should write destructive changes post manifest when ComponentSet has deletes', async () => {
       const timestamp = 123456;
       const packagePath = join(
         outputDirectory,
@@ -190,6 +191,42 @@ describe('MetadataConverter', () => {
       ]);
       expect(writeFileStub.secondCall.args).to.deep.equal([
         join(packagePath, MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE),
+        expectedDestructiveContents,
+      ]);
+    });
+
+    it('should write destructive changes pre manifest when ComponentSet has deletes', async () => {
+      const timestamp = 123456;
+      const packagePath = join(
+        outputDirectory,
+        `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`
+      );
+      env.stub(Date, 'now').returns(timestamp);
+      const component1 = new SourceComponent({
+        name: DECOMPOSED_CHILD_COMPONENT_1.name,
+        type: DECOMPOSED_CHILD_COMPONENT_1.type,
+        xml: DECOMPOSED_CHILD_COMPONENT_1.xml,
+      });
+      component1.setMarkedForDelete(true);
+      const component2 = new SourceComponent({
+        name: DECOMPOSED_CHILD_COMPONENT_2.name,
+        type: DECOMPOSED_CHILD_COMPONENT_2.type,
+        xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
+      });
+      const compSet = new ComponentSet([component1, component2], mockRegistry);
+      compSet.setDestructiveChangesType(DestructiveChangesType.PRE);
+      const expectedDestructiveContents = compSet.getPackageXml(undefined, true);
+      const expectedContents = compSet.getPackageXml();
+
+      await converter.convert(compSet, 'metadata', { type: 'directory', outputDirectory });
+
+      expect(writeFileStub.calledBefore(pipelineStub)).to.be.true;
+      expect(writeFileStub.firstCall.args).to.deep.equal([
+        join(packagePath, MetadataConverter.PACKAGE_XML_FILE),
+        expectedContents,
+      ]);
+      expect(writeFileStub.secondCall.args).to.deep.equal([
+        join(packagePath, MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE),
         expectedDestructiveContents,
       ]);
     });
@@ -324,7 +361,7 @@ describe('MetadataConverter', () => {
       ]);
     });
 
-    it('should write destructive changes manifest when ComponentSet has deletes', async () => {
+    it('should write destructive changes post manifest when ComponentSet has deletes', async () => {
       const component1 = new SourceComponent({
         name: DECOMPOSED_CHILD_COMPONENT_1.name,
         type: DECOMPOSED_CHILD_COMPONENT_1.type,
@@ -351,6 +388,37 @@ describe('MetadataConverter', () => {
       expect(addToZipStub.secondCall.args).to.deep.equal([
         expectedDestructiveContents,
         MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE,
+      ]);
+    });
+
+    it('should write destructive changes pre manifest when ComponentSet has deletes', async () => {
+      const component1 = new SourceComponent({
+        name: DECOMPOSED_CHILD_COMPONENT_1.name,
+        type: DECOMPOSED_CHILD_COMPONENT_1.type,
+        xml: DECOMPOSED_CHILD_COMPONENT_1.xml,
+      });
+      component1.setMarkedForDelete(true);
+      const component2 = new SourceComponent({
+        name: DECOMPOSED_CHILD_COMPONENT_2.name,
+        type: DECOMPOSED_CHILD_COMPONENT_2.type,
+        xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
+      });
+      const compSet = new ComponentSet([component1, component2], mockRegistry);
+      compSet.setDestructiveChangesType(DestructiveChangesType.PRE);
+      const expectedDestructiveContents = compSet.getPackageXml(undefined, true);
+      const expectedContents = compSet.getPackageXml();
+      const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
+
+      await converter.convert(compSet, 'metadata', { type: 'zip' });
+
+      expect(addToZipStub.calledBefore(pipelineStub)).to.be.true;
+      expect(addToZipStub.firstCall.args).to.deep.equal([
+        expectedContents,
+        MetadataConverter.PACKAGE_XML_FILE,
+      ]);
+      expect(addToZipStub.secondCall.args).to.deep.equal([
+        expectedDestructiveContents,
+        MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE,
       ]);
     });
 

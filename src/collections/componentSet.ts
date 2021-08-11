@@ -25,6 +25,7 @@ import {
   FromManifestOptions,
   PackageManifestObject,
   FromSourceOptions,
+  DestructiveChangesType,
 } from './types';
 import { LazyCollection } from './lazyCollection';
 import { j2xParser } from 'fast-xml-parser';
@@ -64,6 +65,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   // internal component maps used by this.getObject() when building manifests.
   private destructiveComponents = new Map<string, Map<string, SourceComponent>>();
   private manifestComponents = new Map<string, Map<string, SourceComponent>>();
+
+  private destructiveChangesType = DestructiveChangesType.POST;
 
   public constructor(components: Iterable<ComponentLike> = [], registry = new RegistryAccess()) {
     super();
@@ -422,6 +425,28 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         }
       }
     }
+  }
+
+  /**
+   * If this `ComponentSet` has components marked for delete, this sets
+   * whether those components are deleted before any other changes are
+   * deployed (`destructiveChangesPre.xml`) or after changes are deployed
+   * (`destructiveChangesPost.xml`).
+   *
+   * @param type The type of destructive changes to make; i.e., pre or post deploy.
+   */
+  public setDestructiveChangesType(type: DestructiveChangesType): void {
+    this.destructiveChangesType = type;
+  }
+
+  /**
+   * If this `ComponentSet` has components marked for delete it will use this
+   * type to build the appropriate destructive changes manifest.
+   *
+   * @returns The type of destructive changes to make; i.e., pre or post deploy.
+   */
+  public getDestructiveChangesType(): DestructiveChangesType {
+    return this.destructiveChangesType;
   }
 
   /**

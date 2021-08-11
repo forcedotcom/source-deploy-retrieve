@@ -7,8 +7,9 @@
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { SourcePath } from '../../common';
 import { SourceComponent } from '../sourceComponent';
-import { baseName, parseMetadataXml } from '../../utils';
+import { baseName, parentName, parseMetadataXml } from '../../utils';
 import { DecompositionStrategy } from '../../registry';
+import { UnexpectedForceIgnore } from '../../errors';
 
 /**
  * Handles decomposed types. A flavor of mixed content where a component can
@@ -41,6 +42,34 @@ import { DecompositionStrategy } from '../../registry';
 export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
   protected ownFolder = true;
   protected metadataWithContent = false;
+
+  public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent {
+    let rootMetadata = super.parseAsRootMetadataXml(path);
+    if (!rootMetadata) {
+      const rootMetadataPath = this.getRootMetadataXmlPath(path);
+      if (rootMetadataPath) {
+        rootMetadata = parseMetadataXml(rootMetadataPath);
+      }
+    }
+
+    let component: SourceComponent;
+    if (rootMetadata) {
+      const componentName = this.type.folderType
+        ? `${parentName(rootMetadata.path)}/${rootMetadata.fullName}`
+        : rootMetadata.fullName;
+      component = new SourceComponent(
+        {
+          name: componentName,
+          type: this.type,
+          xml: rootMetadata.path,
+        },
+        this.tree,
+        this.forceIgnore
+      );
+    }
+
+    return this.populate(path, component, isResolvingSource);
+  }
 
   /**
    * If the trigger turns out to be part of a child component, `populate` will build

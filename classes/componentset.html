@@ -109,7 +109,6 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="componentset.html#apiversion" class="tsd-kind-icon">api<wbr>Version</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="componentset.html#fullname" class="tsd-kind-icon">full<wbr>Name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="componentset.html#iterable" class="tsd-kind-icon">iterable</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="componentset.html#sourceapiversion" class="tsd-kind-icon">source<wbr>Api<wbr>Version</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="componentset.html#wildcard" class="tsd-kind-icon">WILDCARD</a></li>
 							</ul>
@@ -117,6 +116,7 @@
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="componentset.html#hasdeletes" class="tsd-kind-icon">has<wbr>Deletes</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="componentset.html#size" class="tsd-kind-icon">size</a></li>
 							</ul>
 						</section>
@@ -129,12 +129,14 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="componentset.html#filter" class="tsd-kind-icon">filter</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="componentset.html#find" class="tsd-kind-icon">find</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="componentset.html#first" class="tsd-kind-icon">first</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="componentset.html#getdestructivechangestype" class="tsd-kind-icon">get<wbr>Destructive<wbr>Changes<wbr>Type</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="componentset.html#getobject" class="tsd-kind-icon">get<wbr>Object</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="componentset.html#getpackagexml" class="tsd-kind-icon">get<wbr>Package<wbr>Xml</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="componentset.html#getsourcecomponents" class="tsd-kind-icon">get<wbr>Source<wbr>Components</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="componentset.html#has" class="tsd-kind-icon">has</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited"><a href="componentset.html#map" class="tsd-kind-icon">map</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="componentset.html#retrieve" class="tsd-kind-icon">retrieve</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="componentset.html#setdestructivechangestype" class="tsd-kind-icon">set<wbr>Destructive<wbr>Changes<wbr>Type</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="componentset.html#toarray" class="tsd-kind-icon">to<wbr>Array</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="componentset.html#frommanifest" class="tsd-kind-icon">from<wbr>Manifest</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="componentset.html#fromsource" class="tsd-kind-icon">from<wbr>Source</a></li>
@@ -156,7 +158,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="lazycollection.html">LazyCollection</a>.<a href="lazycollection.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L60">src/collections/componentSet.ts:60</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L69">src/collections/componentSet.ts:69</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -181,7 +183,7 @@
 					<div class="tsd-signature tsd-kind-icon">api<wbr>Version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L52">src/collections/componentSet.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L54">src/collections/componentSet.ts:54</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -196,18 +198,7 @@
 					<div class="tsd-signature tsd-kind-icon">full<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L58">src/collections/componentSet.ts:58</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-					<a name="iterable" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagProtected">Protected</span> iterable</h3>
-					<div class="tsd-signature tsd-kind-icon">iterable<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/metadatacomponent.html" class="tsd-signature-type">MetadataComponent</a><span class="tsd-signature-symbol">&gt;</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="lazycollection.html">LazyCollection</a>.<a href="lazycollection.html#iterable">iterable</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/lazyCollection.ts#L9">src/collections/lazyCollection.ts:9</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L60">src/collections/componentSet.ts:60</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -217,7 +208,7 @@
 					<div class="tsd-signature tsd-kind-icon">source<wbr>Api<wbr>Version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L57">src/collections/componentSet.ts:57</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L59">src/collections/componentSet.ts:59</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -233,13 +224,35 @@
 					<div class="tsd-signature tsd-kind-icon">WILDCARD<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"*"</span><span class="tsd-signature-symbol"> = &quot;*&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L47">src/collections/componentSet.ts:47</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L49">src/collections/componentSet.ts:49</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="hasdeletes" class="tsd-anchor"></a>
+					<h3>has<wbr>Deletes</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> hasDeletes<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L470">src/collections/componentSet.ts:470</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns <code>true</code> if this <code>ComponentSet</code> contains components marked for deletion.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="size" class="tsd-anchor"></a>
 					<h3>size</h3>
@@ -250,7 +263,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L383">src/collections/componentSet.ts:383</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L458">src/collections/componentSet.ts:458</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -278,7 +291,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="lazycollection.html">LazyCollection</a>.<a href="lazycollection.html#_symbol_iterator_">[Symbol.iterator]</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L361">src/collections/componentSet.ts:361</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L414">src/collections/componentSet.ts:414</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/metadatacomponent.html" class="tsd-signature-type">MetadataComponent</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -289,19 +302,22 @@
 					<a name="add" class="tsd-anchor"></a>
 					<h3>add</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">add<span class="tsd-signature-symbol">(</span>component<span class="tsd-signature-symbol">: </span><a href="../globals.html#componentlike" class="tsd-signature-type">ComponentLike</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<span class="tsd-signature-symbol">(</span>component<span class="tsd-signature-symbol">: </span><a href="../globals.html#componentlike" class="tsd-signature-type">ComponentLike</a>, asDeletion<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L301">src/collections/componentSet.ts:301</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L338">src/collections/componentSet.ts:338</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>component: <a href="../globals.html#componentlike" class="tsd-signature-type">ComponentLike</a></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> asDeletion: <span class="tsd-signature-type">boolean</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -318,7 +334,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L190">src/collections/componentSet.ts:190</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L211">src/collections/componentSet.ts:211</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -350,7 +366,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="lazycollection.html">LazyCollection</a>.<a href="lazycollection.html#filter">filter</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/lazyCollection.ts#L30">src/collections/lazyCollection.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/lazyCollection.ts#L30">src/collections/lazyCollection.ts:30</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -392,7 +408,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="lazycollection.html">LazyCollection</a>.<a href="lazycollection.html#find">find</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/lazyCollection.ts#L19">src/collections/lazyCollection.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/lazyCollection.ts#L19">src/collections/lazyCollection.ts:19</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -434,7 +450,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="lazycollection.html">LazyCollection</a>.<a href="lazycollection.html#first">first</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/lazyCollection.ts#L15">src/collections/lazyCollection.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/lazyCollection.ts#L15">src/collections/lazyCollection.ts:15</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/metadatacomponent.html" class="tsd-signature-type">MetadataComponent</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
@@ -442,16 +458,40 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="getobject" class="tsd-anchor"></a>
-					<h3>get<wbr>Object</h3>
+					<a name="getdestructivechangestype" class="tsd-anchor"></a>
+					<h3>get<wbr>Destructive<wbr>Changes<wbr>Type</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Object<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/packagemanifestobject.html" class="tsd-signature-type">PackageManifestObject</a></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Destructive<wbr>Changes<wbr>Type<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../enums/destructivechangestype.html" class="tsd-signature-type">DestructiveChangesType</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L232">src/collections/componentSet.ts:232</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L448">src/collections/componentSet.ts:448</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>If this <code>ComponentSet</code> has components marked for delete it will use this
+									type to build the appropriate destructive changes manifest.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="../enums/destructivechangestype.html" class="tsd-signature-type">DestructiveChangesType</a></h4>
+							<p>The type of destructive changes to make; i.e., pre or post deploy.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getobject" class="tsd-anchor"></a>
+					<h3>get<wbr>Object</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Object<span class="tsd-signature-symbol">(</span>forDestructiveChanges<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/packagemanifestobject.html" class="tsd-signature-type">PackageManifestObject</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L253">src/collections/componentSet.ts:253</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -459,6 +499,12 @@
 									<p>Get an object representation of a package manifest based on the set components.</p>
 								</div>
 							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> forDestructiveChanges: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+								</li>
+							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/packagemanifestobject.html" class="tsd-signature-type">PackageManifestObject</a></h4>
 							<p>Object representation of a package manifest</p>
 						</li>
@@ -468,19 +514,21 @@
 					<a name="getpackagexml" class="tsd-anchor"></a>
 					<h3>get<wbr>Package<wbr>Xml</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Package<wbr>Xml<span class="tsd-signature-symbol">(</span>indentation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Package<wbr>Xml<span class="tsd-signature-symbol">(</span>indentation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span>, forDestructiveChanges<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L268">src/collections/componentSet.ts:268</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L305">src/collections/componentSet.ts:305</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Create a manifest in xml format (package.xml) based on the set components.</p>
+									<p>Create a manifest in xml format based on the set components and the
+									type of manifest to create.</p>
 								</div>
+								<p>E.g. package.xml or destructiveChanges.xml</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -488,6 +536,12 @@
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> indentation: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 4</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Number of spaces to indent lines by.</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> forDestructiveChanges: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Whether to build a manifest for destructive changes.</p>
 									</div>
 								</li>
 							</ul>
@@ -505,7 +559,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L285">src/collections/componentSet.ts:285</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L322">src/collections/componentSet.ts:322</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -537,7 +591,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L324">src/collections/componentSet.ts:324</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L377">src/collections/componentSet.ts:377</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -547,7 +601,7 @@
 								<p>A pair is considered present in the set if one of the following criteria is met:</p>
 								<ul>
 									<li>The pair is directly in the set</li>
-									<li>A wilcard component with the same <code>type</code> as the pair</li>
+									<li>A wildcard component with the same <code>type</code> as the pair</li>
 									<li>If a parent is attached to the pair and the parent is directly in the set</li>
 									<li>If a parent is attached to the pair, and a wildcard component&#39;s <code>type</code> matches the parent&#39;s <code>type</code></li>
 								</ul>
@@ -577,7 +631,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="lazycollection.html">LazyCollection</a>.<a href="lazycollection.html#map">map</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/lazyCollection.ts#L46">src/collections/lazyCollection.ts:46</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/lazyCollection.ts#L46">src/collections/lazyCollection.ts:46</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -624,7 +678,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L215">src/collections/componentSet.ts:215</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L236">src/collections/componentSet.ts:236</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -644,6 +698,40 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setdestructivechangestype" class="tsd-anchor"></a>
+					<h3>set<wbr>Destructive<wbr>Changes<wbr>Type</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Destructive<wbr>Changes<wbr>Type<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="../enums/destructivechangestype.html" class="tsd-signature-type">DestructiveChangesType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L438">src/collections/componentSet.ts:438</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>If this <code>ComponentSet</code> has components marked for delete, this sets
+										whether those components are deleted before any other changes are
+										deployed (<code>destructiveChangesPre.xml</code>) or after changes are deployed
+									(<code>destructiveChangesPost.xml</code>).</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>type: <a href="../enums/destructivechangestype.html" class="tsd-signature-type">DestructiveChangesType</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The type of destructive changes to make; i.e., pre or post deploy.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="toarray" class="tsd-anchor"></a>
 					<h3>to<wbr>Array</h3>
@@ -655,7 +743,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="lazycollection.html">LazyCollection</a>.<a href="lazycollection.html#toarray">toArray</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/lazyCollection.ts#L59">src/collections/lazyCollection.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/lazyCollection.ts#L59">src/collections/lazyCollection.ts:59</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/metadatacomponent.html" class="tsd-signature-type">MetadataComponent</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -673,7 +761,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L130">src/collections/componentSet.ts:130</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L151">src/collections/componentSet.ts:151</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -697,7 +785,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L143">src/collections/componentSet.ts:143</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L164">src/collections/componentSet.ts:164</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -733,7 +821,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L77">src/collections/componentSet.ts:77</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L92">src/collections/componentSet.ts:92</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -756,7 +844,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L84">src/collections/componentSet.ts:84</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L99">src/collections/componentSet.ts:99</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -779,7 +867,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/1abee03/src/collections/componentSet.ts#L93">src/collections/componentSet.ts:93</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/collections/componentSet.ts#L108">src/collections/componentSet.ts:108</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -826,14 +914,14 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="componentset.html#fullname" class="tsd-kind-icon">full<wbr>Name</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-								<a href="componentset.html#iterable" class="tsd-kind-icon">iterable</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="componentset.html#sourceapiversion" class="tsd-kind-icon">source<wbr>Api<wbr>Version</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
 								<a href="componentset.html#wildcard" class="tsd-kind-icon">WILDCARD</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="componentset.html#hasdeletes" class="tsd-kind-icon">has<wbr>Deletes</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="componentset.html#size" class="tsd-kind-icon">size</a>
@@ -857,6 +945,9 @@
 								<a href="componentset.html#first" class="tsd-kind-icon">first</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="componentset.html#getdestructivechangestype" class="tsd-kind-icon">get<wbr>Destructive<wbr>Changes<wbr>Type</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="componentset.html#getobject" class="tsd-kind-icon">get<wbr>Object</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -873,6 +964,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="componentset.html#retrieve" class="tsd-kind-icon">retrieve</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="componentset.html#setdestructivechangestype" class="tsd-kind-icon">set<wbr>Destructive<wbr>Changes<wbr>Type</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="componentset.html#toarray" class="tsd-kind-icon">to<wbr>Array</a>
@@ -909,10 +1003,6 @@
 			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>

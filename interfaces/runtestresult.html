@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>QueryResult | @salesforce/source-deploy-retrieve</title>
+	<title>RunTestResult | @salesforce/source-deploy-retrieve</title>
 	<meta name="description" content="Documentation for @salesforce/source-deploy-retrieve">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -52,10 +52,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="queryresult.html">QueryResult</a>
+					<a href="runtestresult.html">RunTestResult</a>
 				</li>
 			</ul>
-			<h1>Interface QueryResult</h1>
+			<h1>Interface RunTestResult</h1>
 		</div>
 	</div>
 </header>
@@ -66,7 +66,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">QueryResult</span>
+						<span class="target">RunTestResult</span>
 					</li>
 				</ul>
 			</section>
@@ -77,12 +77,13 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="queryresult.html#done" class="tsd-kind-icon">done</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="queryresult.html#entitytypename" class="tsd-kind-icon">entity<wbr>Type<wbr>Name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="queryresult.html#querylocator" class="tsd-kind-icon">query<wbr>Locator</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="queryresult.html#records" class="tsd-kind-icon">records</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="queryresult.html#size" class="tsd-kind-icon">size</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="queryresult.html#totalsize" class="tsd-kind-icon">total<wbr>Size</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="runtestresult.html#codecoverage" class="tsd-kind-icon">code<wbr>Coverage</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="runtestresult.html#codecoveragewarnings" class="tsd-kind-icon">code<wbr>Coverage<wbr>Warnings</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="runtestresult.html#failures" class="tsd-kind-icon">failures</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="runtestresult.html#numfailures" class="tsd-kind-icon">num<wbr>Failures</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="runtestresult.html#numtestsrun" class="tsd-kind-icon">num<wbr>Tests<wbr>Run</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="runtestresult.html#successes" class="tsd-kind-icon">successes</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="runtestresult.html#totaltime" class="tsd-kind-icon">total<wbr>Time</a></li>
 							</ul>
 						</section>
 					</div>
@@ -91,62 +92,72 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="done" class="tsd-anchor"></a>
-					<h3>done</h3>
-					<div class="tsd-signature tsd-kind-icon">done<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<a name="codecoverage" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> code<wbr>Coverage</h3>
+					<div class="tsd-signature tsd-kind-icon">code<wbr>Coverage<span class="tsd-signature-symbol">:</span> <a href="codecoverage.html" class="tsd-signature-type">CodeCoverage</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="codecoverage.html" class="tsd-signature-type">CodeCoverage</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/client/types.ts#L376">src/client/types.ts:376</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/client/types.ts#L162">src/client/types.ts:162</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="entitytypename" class="tsd-anchor"></a>
-					<h3>entity<wbr>Type<wbr>Name</h3>
-					<div class="tsd-signature tsd-kind-icon">entity<wbr>Type<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="codecoveragewarnings" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> code<wbr>Coverage<wbr>Warnings</h3>
+					<div class="tsd-signature tsd-kind-icon">code<wbr>Coverage<wbr>Warnings<span class="tsd-signature-symbol">:</span> <a href="codecoveragewarnings.html" class="tsd-signature-type">CodeCoverageWarnings</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="codecoveragewarnings.html" class="tsd-signature-type">CodeCoverageWarnings</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/client/types.ts#L378">src/client/types.ts:378</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/client/types.ts#L163">src/client/types.ts:163</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="querylocator" class="tsd-anchor"></a>
-					<h3>query<wbr>Locator</h3>
-					<div class="tsd-signature tsd-kind-icon">query<wbr>Locator<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="failures" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> failures</h3>
+					<div class="tsd-signature tsd-kind-icon">failures<span class="tsd-signature-symbol">:</span> <a href="failures.html" class="tsd-signature-type">Failures</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="failures.html" class="tsd-signature-type">Failures</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/client/types.ts#L377">src/client/types.ts:377</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/client/types.ts#L164">src/client/types.ts:164</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="records" class="tsd-anchor"></a>
-					<h3>records</h3>
-					<div class="tsd-signature tsd-kind-icon">records<span class="tsd-signature-symbol">:</span> <a href="apexrecord.html" class="tsd-signature-type">ApexRecord</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="aurarecord.html" class="tsd-signature-type">AuraRecord</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="lwcrecord.html" class="tsd-signature-type">LWCRecord</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="vfrecord.html" class="tsd-signature-type">VFRecord</a><span class="tsd-signature-symbol">[]</span></div>
+					<a name="numfailures" class="tsd-anchor"></a>
+					<h3>num<wbr>Failures</h3>
+					<div class="tsd-signature tsd-kind-icon">num<wbr>Failures<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/client/types.ts#L379">src/client/types.ts:379</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/client/types.ts#L165">src/client/types.ts:165</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="size" class="tsd-anchor"></a>
-					<h3>size</h3>
-					<div class="tsd-signature tsd-kind-icon">size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="numtestsrun" class="tsd-anchor"></a>
+					<h3>num<wbr>Tests<wbr>Run</h3>
+					<div class="tsd-signature tsd-kind-icon">num<wbr>Tests<wbr>Run<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/client/types.ts#L374">src/client/types.ts:374</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/client/types.ts#L166">src/client/types.ts:166</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="totalsize" class="tsd-anchor"></a>
-					<h3>total<wbr>Size</h3>
-					<div class="tsd-signature tsd-kind-icon">total<wbr>Size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="successes" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> successes</h3>
+					<div class="tsd-signature tsd-kind-icon">successes<span class="tsd-signature-symbol">:</span> <a href="successes.html" class="tsd-signature-type">Successes</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="successes.html" class="tsd-signature-type">Successes</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/client/types.ts#L375">src/client/types.ts:375</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/client/types.ts#L167">src/client/types.ts:167</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="totaltime" class="tsd-anchor"></a>
+					<h3>total<wbr>Time</h3>
+					<div class="tsd-signature tsd-kind-icon">total<wbr>Time<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a081724/src/client/types.ts#L168">src/client/types.ts:168</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -165,25 +176,28 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="queryresult.html" class="tsd-kind-icon">Query<wbr>Result</a>
+						<a href="runtestresult.html" class="tsd-kind-icon">Run<wbr>Test<wbr>Result</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="queryresult.html#done" class="tsd-kind-icon">done</a>
+								<a href="runtestresult.html#codecoverage" class="tsd-kind-icon">code<wbr>Coverage</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="queryresult.html#entitytypename" class="tsd-kind-icon">entity<wbr>Type<wbr>Name</a>
+								<a href="runtestresult.html#codecoveragewarnings" class="tsd-kind-icon">code<wbr>Coverage<wbr>Warnings</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="queryresult.html#querylocator" class="tsd-kind-icon">query<wbr>Locator</a>
+								<a href="runtestresult.html#failures" class="tsd-kind-icon">failures</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="queryresult.html#records" class="tsd-kind-icon">records</a>
+								<a href="runtestresult.html#numfailures" class="tsd-kind-icon">num<wbr>Failures</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="queryresult.html#size" class="tsd-kind-icon">size</a>
+								<a href="runtestresult.html#numtestsrun" class="tsd-kind-icon">num<wbr>Tests<wbr>Run</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="queryresult.html#totalsize" class="tsd-kind-icon">total<wbr>Size</a>
+								<a href="runtestresult.html#successes" class="tsd-kind-icon">successes</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="runtestresult.html#totaltime" class="tsd-kind-icon">total<wbr>Time</a>
 							</li>
 						</ul>
 					</li>

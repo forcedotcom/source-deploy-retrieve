@@ -10,8 +10,6 @@
 
 - GetComponent won't throw when parent is ignored ([PR #418](https://github.com/forcedotcom/source-deploy-retrieve/pull/418))
 
-- Port pr v4.0.0 ([PR #387](https://github.com/forcedotcom/source-deploy-retrieve/pull/387))
-
 # 4.0.2 - August 5, 2021
 
 ## Added

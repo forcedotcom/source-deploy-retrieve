@@ -11,6 +11,7 @@ import {
   DirectoryConfig,
   ZipConfig,
 } from './types';
+import { DestructiveChangesType } from '../collections/types';
 import { SourceComponent } from '../resolve';
 import { promises } from 'fs';
 import { dirname, join, normalize } from 'path';
@@ -30,6 +31,8 @@ import { RegistryAccess } from '../registry';
 
 export class MetadataConverter {
   public static readonly PACKAGE_XML_FILE = 'package.xml';
+  public static readonly DESTRUCTIVE_CHANGES_POST_XML_FILE = 'destructiveChangesPost.xml';
+  public static readonly DESTRUCTIVE_CHANGES_PRE_XML_FILE = 'destructiveChangesPre.xml';
   public static readonly DEFAULT_PACKAGE_PREFIX = 'metadataPackage';
 
   private registry: RegistryAccess;
@@ -100,6 +103,14 @@ export class MetadataConverter {
           if (!isSource) {
             const manifestPath = join(packagePath, MetadataConverter.PACKAGE_XML_FILE);
             tasks.push(promises.writeFile(manifestPath, manifestContents));
+
+            // For deploying destructive changes
+            if (cs.hasDeletes) {
+              const manifestFileName = this.getDestructiveManifestFileName(cs);
+              const destructiveManifestContents = cs.getPackageXml(undefined, true);
+              const destructiveManifestPath = join(packagePath, manifestFileName);
+              tasks.push(promises.writeFile(destructiveManifestPath, destructiveManifestContents));
+            }
           }
           break;
         case 'zip':
@@ -112,6 +123,13 @@ export class MetadataConverter {
           writer = new ZipWriter(packagePath);
           if (!isSource) {
             (writer as ZipWriter).addToZip(manifestContents, MetadataConverter.PACKAGE_XML_FILE);
+
+            // For deploying destructive changes
+            if (cs.hasDeletes) {
+              const manifestFileName = this.getDestructiveManifestFileName(cs);
+              const destructiveManifestContents = cs.getPackageXml(undefined, true);
+              (writer as ZipWriter).addToZip(destructiveManifestContents, manifestFileName);
+            }
           }
           break;
         case 'merge':
@@ -146,6 +164,16 @@ export class MetadataConverter {
     } catch (e) {
       throw new ConversionError(e);
     }
+  }
+
+  private getDestructiveManifestFileName(cs: ComponentSet): string {
+    let manifestFileName: string;
+    if (cs.getDestructiveChangesType() === DestructiveChangesType.POST) {
+      manifestFileName = MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE;
+    } else {
+      manifestFileName = MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE;
+    }
+    return manifestFileName;
   }
 
   private getPackagePath(outputConfig: DirectoryConfig | ZipConfig): SourcePath | undefined {

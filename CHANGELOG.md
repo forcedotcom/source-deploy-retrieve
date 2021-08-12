@@ -4,7 +4,7 @@
 
 - Adds support for destructive changes ([PR #420](https://github.com/forcedotcom/source-deploy-retrieve/pull/420))
 
-- Enable typedoc generation in circleci publish job ([PR #392](https://github.com/forcedotcom/source-deploy-retrieve/pull/392))
+- Enable typedoc generation in CircleCI publish job ([PR #392](https://github.com/forcedotcom/source-deploy-retrieve/pull/392))
 
 ## Fixed
 

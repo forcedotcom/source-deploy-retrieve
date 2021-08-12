@@ -19,7 +19,7 @@ import {
 } from '../../src';
 import { ComponentSetError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { ManifestResolver, MetadataMember } from '../../src/resolve';
+import { ManifestResolver, MetadataMember, SourceComponent } from '../../src/resolve';
 import { mockConnection } from '../mock/client';
 import {
   mockRegistry,
@@ -91,6 +91,27 @@ describe('ComponentSet', () => {
         ).getComponentsFromPath('mixedSingleFiles');
 
         expect(result).to.deep.equal(expected);
+      });
+
+      it('should initialize with components marked for delete using options object', () => {
+        getComponentsStub.restore();
+
+        const compSet = ComponentSet.fromSource({
+          fsPaths: ['mixedSingleFiles'],
+          registry: mockRegistry,
+          tree: manifestFiles.TREE,
+          fsDeletePaths: ['decomposedTopLevels'],
+        });
+        const result = compSet.toArray();
+        const mdResolver = new MetadataResolver(mockRegistry, manifestFiles.TREE);
+        const expected = mdResolver.getComponentsFromPath('mixedSingleFiles');
+        mdResolver.getComponentsFromPath('decomposedTopLevels').forEach((comp) => {
+          comp.setMarkedForDelete(true);
+          expected.push(comp);
+        });
+
+        expect(result).to.deep.equal(expected);
+        expect(compSet.hasDeletes).to.be.true;
       });
     });
 
@@ -293,6 +314,31 @@ describe('ComponentSet', () => {
       });
     });
 
+    it('should return an object representing destructive changes manifest', () => {
+      const set = ComponentSet.fromSource({
+        fsPaths: [],
+        registry: mockRegistry,
+        tree: manifestFiles.TREE,
+        fsDeletePaths: ['.'],
+      });
+      expect(set.getObject(true)).to.deep.equal({
+        Package: {
+          fullName: undefined,
+          types: [
+            {
+              name: 'DecomposedTopLevel',
+              members: ['a'],
+            },
+            {
+              name: 'MixedContentSingleFile',
+              members: ['b', 'c'],
+            },
+          ],
+          version: mockRegistry.apiVersion,
+        },
+      });
+    });
+
     it('should return an object representing the package manifest with fullName', () => {
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
@@ -393,6 +439,16 @@ describe('ComponentSet', () => {
         tree: manifestFiles.TREE,
       });
       expect(set.getPackageXml(4)).to.equal(manifestFiles.BASIC.data.toString());
+    });
+
+    it('should return destructive changes manifest string when initialized from source', () => {
+      const set = ComponentSet.fromSource({
+        fsPaths: [],
+        registry: mockRegistry,
+        tree: manifestFiles.TREE,
+        fsDeletePaths: ['.'],
+      });
+      expect(set.getPackageXml(4, true)).to.equal(manifestFiles.BASIC.data.toString());
     });
   });
 
@@ -606,6 +662,22 @@ describe('ComponentSet', () => {
       set.add(component);
 
       expect(Array.from(set)).to.deep.equal([component]);
+    });
+
+    it('should add metadata component marked for delete to package components', async () => {
+      const set = new ComponentSet(undefined, mockRegistry);
+      expect(set.hasDeletes).to.be.false;
+
+      const component = new SourceComponent({
+        name: mixedContentSingleFile.COMPONENT.name,
+        type: mixedContentSingleFile.COMPONENT.type,
+        xml: mixedContentSingleFile.COMPONENT.xml,
+      });
+      set.add(component, true);
+
+      expect(set.hasDeletes).to.be.true;
+      expect(set.getSourceComponents().first().isMarkedForDelete()).to.be.true;
+      expect(set.has(component)).to.be.true;
     });
   });
 

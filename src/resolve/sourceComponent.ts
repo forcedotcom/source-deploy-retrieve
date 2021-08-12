@@ -35,6 +35,7 @@ export class SourceComponent implements MetadataComponent {
   public content?: string;
   private _tree: TreeContainer;
   private forceIgnore: ForceIgnore;
+  private markedForDelete = false;
 
   constructor(
     props: ComponentProperties,
@@ -115,6 +116,17 @@ export class SourceComponent implements MetadataComponent {
       return join(DEFAULT_PACKAGE_ROOT_SFDX, relativePath);
     }
     return relativePath;
+  }
+
+  /**
+   * @returns whether this component should be part of destructive changes.
+   */
+  public isMarkedForDelete(): boolean {
+    return this.markedForDelete;
+  }
+
+  public setMarkedForDelete(asDeletion: boolean): void {
+    this.markedForDelete = asDeletion;
   }
 
   private parse<T = JsonMap>(contents: string): T {

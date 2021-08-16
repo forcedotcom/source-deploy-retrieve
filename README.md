@@ -7,59 +7,9 @@
 
 ## Introduction
 
-A JavaScript toolkit for working with Salesforce metadata. Built to support the SFDX deploy and retrieve experience in the [Salesforce VS Code Extensions](https://github.com/forcedotcom/salesforcedx-vscode), CLI plugins, and other tools working with metadata.
-
-## Features
-
-- Resolve Salesforce metadata files into JavaScript objects
-- Parse and generate [manifest files](https://trailhead.salesforce.com/en/content/learn/modules/package-xml/package-xml-adventure)
-- Convert source files between [SFDX File Formats](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_source_file_format.htm)
-- Generate metadata packages with the option to automatically create a zip file
-- Deploy and retrieve metadata with an org
-- An [index](./src/registry/registry.json) to reference available metadata types.
-- Utilize promises with `async/await` syntax
-
-## Usage
-
-Install the package:
-
-```
-npm install @salesforce/source-deploy-retrieve
-```
-
-Examples:
-
-```typescript
-const { ComponentSet } = require('@salesforce/source-deploy-retrieve');
-
-// Deploy a local set of Apex classes to an org
-const deployResult = await ComponentSet
-  .fromSource('/dev/MyProject/force-app/main/default/classes')
-  .deploy({ usernameOrConnection: 'user@example.com' })
-  .start();
-
-// Retrieve metadata defined in a manifest file
-const retrieveResult = await ComponentSet
-  .fromManifest('/dev/my-project/manifest/package.xml')
-  .retrieve({
-    usernameOrConnection: 'user@example.com'
-    output: '/dev/retrieve-result'
-  })
-  .start();
-
-// Search for a particular CustomObject
-const myObject = ComponentSet
-  .fromSource([
-    '/dev/my-project/force-app',
-    '/dev/my-project/force-app-2'
-  ])
-  .find(component => {
-    return component.fullName === 'MyObject__c' && component.type.name === 'CustomObject')
-  });
-```
-
-See the [examples](./examples) folder for more code samples and guides.
-See the [API documentation](https://forcedotcom.github.io/source-deploy-retrieve/) for details on how to effectively use and integrate SDR.
+This repository provides:
+* [@salesforce/source-deploy-retrieve](https://www.npmjs.com/package/@salesforce/source-deploy-retrieve) A JavaScript toolkit for working with Salesforce metadata. Built to support the SFDX deploy and retrieve experience in the [Salesforce VS Code Extensions](https://github.com/forcedotcom/salesforcedx-vscode), CLI plugins, and other tools working with metadata.
+* [@salesforce/source-deploy-retrieve-test-utils](https://www.npmjs.com/package/@salesforce/source-deploy-retrieve-test-utils) A JavaScript toolkit providing test constants for classifications of metadata types. Used in testings in the [Salesforce VS Code Extensions](https://github.com/forcedotcom/salesforcedx-vscode) and [Source Deploy Retrieve](https://github.com/forcedotcom/source-deploy-retrieve).
 
 ## Contributing
 

@@ -16,7 +16,7 @@ function initializeChildRegistry(type, childNames) {
       directoryName: `${camelCase}s`,
       suffix: camelCase,
     };
-  }
+  };
 
   for (const name of childNames) {
     const childTypeId = name.toLowerCase();
@@ -29,11 +29,18 @@ function initializeChildRegistry(type, childNames) {
 }
 
 function update(registry, describeResult) {
-  const typeOverrides = JSON.parse(fs.readFileSync(path.join(__dirname, 'typeOverride.json')))
+  const typeOverrides = JSON.parse(fs.readFileSync(path.join(__dirname, 'typeOverride.json')));
 
   for (const object of describeResult.metadataObjects) {
     let typeId = object.xmlName.toLowerCase();
-    const { xmlName: name, suffix, directoryName, inFolder, childXmlNames, folderContentType } = object;
+    const {
+      xmlName: name,
+      suffix,
+      directoryName,
+      inFolder,
+      childXmlNames,
+      folderContentType,
+    } = object;
 
     // If it's a type with folders, process the folder type later
     let folderTypeId;
@@ -42,9 +49,9 @@ function update(registry, describeResult) {
         xmlName: `${name}Folder`,
         suffix: `${typeId}Folder`,
         directoryName,
-        folderContentType: typeId
+        folderContentType: typeId,
       });
-      folderTypeId = `${typeId}folder`
+      folderTypeId = `${typeId}folder`;
     }
 
     const generatedType = {
@@ -55,16 +62,16 @@ function update(registry, describeResult) {
       inFolder: inFolder === 'true' || inFolder === true,
       strictDirectoryName: !suffix,
       folderType: folderTypeId,
-      folderContentType
+      folderContentType,
     };
-    let type = deepmerge(generatedType, registry.types[typeId] || {})
+    let type = deepmerge(generatedType, registry.types[typeId] || {});
 
     // apply type override if one exists
-    const typeOverride = typeOverrides[typeId]
+    const typeOverride = typeOverrides[typeId];
     if (typeOverride) {
-      type = deepmerge(type, typeOverride)
+      type = deepmerge(type, typeOverride);
       if (typeOverride.id) {
-        typeId = typeOverride.id
+        typeId = typeOverride.id;
       }
     }
 
@@ -73,7 +80,7 @@ function update(registry, describeResult) {
       initializeChildRegistry(type, childNames, registry);
     }
 
-    registry.types[typeId] = type
+    registry.types[typeId] = type;
 
     // index file suffixes, otherwise require index type as requiring strict type folder
     if (type.suffix) {

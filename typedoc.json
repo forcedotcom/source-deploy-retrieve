@@ -1,5 +1,7 @@
 {
     "theme": "default",
+    "includes": "packages/source-deploy-retrieve",
+    "out": "docs",
     "excludePrivate": true,
     "excludeProtected": true
 }

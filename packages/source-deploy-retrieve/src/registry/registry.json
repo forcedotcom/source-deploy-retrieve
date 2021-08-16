@@ -2563,7 +2563,7 @@
     "bots": "bot",
     "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
-    "sites": "customsite",
+    "sites": "customsite"
   },
   "childTypes": {
     "customlabel": "customlabels",

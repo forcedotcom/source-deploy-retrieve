@@ -1,6 +1,9 @@
 {
-  "name": "source-deploy-retrieve",
+  "name": "@salesforce/source-deploy-retrieve",
+  "version": "4.0.2",
+  "gusBuild": "49.1.0",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
+  "main": "lib/src/index.js",
   "author": "Salesforce",
   "license": "BSD-3-Clause",
   "homepage": "https://github.com/forcedotcom/source-deploy-retrieve#readme",
@@ -17,6 +20,9 @@
     "metadata",
     "deploy",
     "retrieve"
+  ],
+  "files": [
+    "lib/src"
   ],
   "engines": {
     "node": ">=12.11.0"
@@ -50,39 +56,31 @@
     "@typescript-eslint/eslint-plugin": "^2.22.0",
     "@typescript-eslint/parser": "^2.22.0",
     "chai": "^4",
-    "commitizen": "^3.0.5",
-    "cz-conventional-changelog": "^2.1.0",
     "deep-equal-in-any-order": "^1.1.4",
     "deepmerge": "^4.2.2",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-header": "^3.0.0",
-    "eslint-plugin-jsdoc": "^19.1.0",
-    "eslint-plugin-prettier": "^3.1.4",
     "husky": "^4.2.5",
-    "lerna": "^3.20.2",
     "lint-staged": "^10.2.11",
     "mocha": "^5",
     "mocha-junit-reporter": "^1.23.3",
-    "prettier": "2.0.5",
+    "nyc": "^14.1.1",
     "shelljs": "0.8.4",
     "shx": "^0.3.2",
     "sinon": "^7.3.1",
     "source-map-support": "^0.5.16",
-    "typedoc": "~0.18.0",
+    "typedoc": "^0.20.33",
     "typescript": "3.9.7"
   },
   "scripts": {
-    "build": "lerna run build",
-    "ci-docs": "yarn sf-ci-docs",
-    "commit-init": "commitizen init cz-conventional-changelog --save-dev --save-exact --force",
-    "commit": "git-cz",
-    "docs": "./scripts/sf-docs.js",
-    "format": "lerna run format",
-    "lint": "lerna run lint",
-    "repl": "node --inspect ./packages/source-deploy-retrieve/scripts/repl.js",
-    "test": "lerna run test",
-    "package": "lerna run package"
+    "build": "shx rm -rf ./lib && tsc -b",
+    "format": "prettier --config .prettierrc --loglevel warn --write './{src,test,scripts}/**/*.{js,json,ts}'",
+    "lint": "eslint -c .eslintrc.json --ext .ts ./src ./test",
+    "local:install": "./scripts/localInstall.js install",
+    "local:link": "./scripts/localInstall.js link",
+    "local:unlink": "./scripts/localInstall.js unlink",
+    "test": "shx rm -rf ./test-results && nyc mocha && node ./scripts/verifyTestArtifacts.js",
+    "coverage": "nyc report --reporter=lcov",
+    "update-registry": "node ./scripts/update-registry",
+    "package": "npm pack"
   },
   "husky": {
     "hooks": {

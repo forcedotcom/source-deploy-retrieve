@@ -65,7 +65,7 @@ commands:
       - run:
           name: Archiving tarball
           command: |
-            yarn pack
+            yarn package
             mkdir artifact
             find . -name "*.tgz" -type f -exec cp {} ./artifact \;
       - store_artifacts:
@@ -148,7 +148,7 @@ jobs:
           command: |
             yarn version --<< pipeline.parameters.publish-type >> --no-git-tag-version
             git add package.json
-            export RELEASE_TAG="$(node -pe "require('./package.json').version")"
+            export RELEASE_TAG="$(node -pe "require('./lerna.json').version")"
             echo "export RELEASE_VERSION=$RELEASE_TAG" >> $BASH_ENV
             source $BASH_ENV
             git commit -m "chore: updated version $RELEASE_TAG"

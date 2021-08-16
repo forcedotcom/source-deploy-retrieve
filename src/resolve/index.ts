@@ -14,11 +14,12 @@ export {
 } from './treeContainers';
 export { SourceComponent } from './sourceComponent';
 export {
-  MetadataXml,
-  SourceAdapter,
-  VirtualDirectory,
   MetadataComponent,
-  ComponentLike,
   MetadataMember,
+  ComponentLike,
+  MetadataXml,
+  VirtualFile,
+  VirtualDirectory,
+  SourceAdapter,
 } from './types';
 export { ForceIgnore } from './forceIgnore';

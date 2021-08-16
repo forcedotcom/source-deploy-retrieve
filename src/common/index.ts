@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-export { SourcePath, OptionalTreeRegistryOptions } from './types';
+export { SourcePath, TreeOptions, OptionalTreeRegistryOptions, RegistryOptions } from './types';
 export {
   DEFAULT_PACKAGE_ROOT_SFDX,
   META_XML_SUFFIX,

@@ -5,16 +5,25 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { mockRegistry, mockRegistryData, decomposed } from '../../mock/registry';
+import {
+  mockRegistry,
+  mockRegistryData,
+  decomposed,
+  matchingContentFile,
+} from '../../mock/registry';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import { join } from 'path';
+import { baseName } from '../../../src/utils';
 import { JsToXml } from '../../../src/convert/streams';
 import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/registry/type-constants/decomposedTopLevelConstants';
 import { ComponentSet, SourceComponent } from '../../../src';
 import { XML_NS_URL, XML_NS_KEY } from '../../../src/common';
 import { ConvertContext } from '../../../src/convert/convertContext';
+import { TypeInferenceError } from '../../../src/errors';
+import { nls } from '../../../src/i18n';
+import { assert } from '@salesforce/ts-types';
 
 const env = createSandbox();
 
@@ -65,6 +74,48 @@ describe('DecomposedMetadataTransformer', () => {
           children: new ComponentSet([child].concat(component.getChildren()), mockRegistry),
         },
       });
+    });
+
+    it('should throw when an invalid child is included with the parent', async () => {
+      const { CONTENT_NAMES, XML_NAMES } = matchingContentFile;
+      const fsUnexpectedChild = [
+        {
+          dirPath: decomposed.DECOMPOSED_PATH,
+          children: [
+            decomposed.DECOMPOSED_CHILD_XML_NAME_1,
+            decomposed.DECOMPOSED_CHILD_DIR,
+            'classes',
+          ],
+        },
+        {
+          dirPath: decomposed.DECOMPOSED_CHILD_DIR_PATH,
+          children: [decomposed.DECOMPOSED_CHILD_XML_NAME_2],
+        },
+        {
+          dirPath: join(decomposed.DECOMPOSED_PATH, 'classes'),
+          children: [CONTENT_NAMES[0], XML_NAMES[0]],
+        },
+      ];
+      const parentComponent = SourceComponent.createVirtualComponent(
+        {
+          name: baseName(decomposed.DECOMPOSED_XML_PATH),
+          type: decomposed.DECOMPOSED_COMPONENT.type,
+          xml: decomposed.DECOMPOSED_XML_PATH,
+          content: decomposed.DECOMPOSED_PATH,
+        },
+        fsUnexpectedChild
+      );
+      const fsPath = join(decomposed.DECOMPOSED_PATH, 'classes', XML_NAMES[0]);
+      const transformer = new DecomposedMetadataTransformer(mockRegistry, new ConvertContext());
+
+      try {
+        await transformer.toMetadataFormat(parentComponent);
+        assert(false, 'expected TypeInferenceError to be thrown');
+      } catch (err) {
+        expect(err).to.be.instanceOf(TypeInferenceError);
+        const msg = nls.localize('error_unexpected_child_type', [fsPath, component.type.name]);
+        expect(err.message).to.equal(msg);
+      }
     });
   });
 

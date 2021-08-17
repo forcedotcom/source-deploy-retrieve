@@ -14,6 +14,7 @@ import { SourcePath, META_XML_SUFFIX, XML_NS_URL, XML_NS_KEY } from '../../commo
 import { ComponentSet } from '../../collections';
 import { DecompositionState } from '../convertContext';
 import { DecompositionStrategy } from '../../registry';
+import { TypeInferenceError } from '../../errors';
 
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
@@ -32,15 +33,20 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     } else {
       const { fullName } = component;
       this.context.recomposition.setState((state) => {
-        if (state[fullName]) {
-          for (const child of component.getChildren()) {
-            state[fullName].children.add(child);
+        if (!state[fullName]) {
+          state[fullName] = { component, children: new ComponentSet([], this.registry) };
+        }
+        const validParentTypes = Object.keys(component.type.children.types);
+        for (const child of component.getChildren()) {
+          // Ensure only valid child types are included with the parent.
+          if (!validParentTypes.includes(child.type?.id)) {
+            const filePath = child.xml || child.content;
+            throw new TypeInferenceError('error_unexpected_child_type', [
+              filePath,
+              component.type.name,
+            ]);
           }
-        } else {
-          state[fullName] = {
-            component,
-            children: new ComponentSet(component.getChildren(), this.registry),
-          };
+          state[fullName].children.add(child);
         }
       });
     }

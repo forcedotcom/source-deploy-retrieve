@@ -151,7 +151,7 @@ export class StandardWriter extends ComponentWriter {
       try {
         const toResolve: string[] = [];
         const writeTasks = chunk.writeInfos.map((info: WriteInfo) => {
-          let fullDest = isAbsolute(info.output)
+          const fullDest = isAbsolute(info.output)
             ? info.output
             : join(this.rootDestination, info.output);
           if (!fs.fileExistsSync(fullDest)) {
@@ -160,12 +160,9 @@ export class StandardWriter extends ComponentWriter {
                 dirname(ignoredPath).includes(dirname(fullDest)) &&
                 basename(ignoredPath).includes(basename(fullDest))
               ) {
-                fullDest = ignoredPath;
+                return;
               }
             }
-          }
-          if (this.forceIgnoredPaths.has(fullDest)) {
-            return;
           }
           // if there are children, resolve each file. o/w just pick one of the files to resolve
           if (toResolve.length === 0 || chunk.component.type.children) {

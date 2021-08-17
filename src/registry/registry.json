@@ -11,7 +11,7 @@
     "customlabels": {
       "id": "customlabels",
       "name": "CustomLabels",
-      "ignoreTypeName": true,
+      "ignoreParsedFullName": true,
       "suffix": "labels",
       "directoryName": "labels",
       "inFolder": false,

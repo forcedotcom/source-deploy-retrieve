@@ -218,7 +218,7 @@ export class SourceComponent implements MetadataComponent {
   }
 
   get fullName(): string {
-    if (this.type.ignoreTypeName) {
+    if (this.type.ignoreParsedFullName) {
       return this.type.name;
     }
     if (this.parent && this.type.ignoreParentName) {

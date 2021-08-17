@@ -11,6 +11,7 @@
     "customlabels": {
       "id": "customlabels",
       "name": "CustomLabels",
+      "ignoreTypeName": true,
       "suffix": "labels",
       "directoryName": "labels",
       "inFolder": false,
@@ -2563,7 +2564,7 @@
     "bots": "bot",
     "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
-    "sites": "customsite",
+    "sites": "customsite"
   },
   "childTypes": {
     "customlabel": "customlabels",

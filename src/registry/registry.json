@@ -319,6 +319,7 @@
         "suffixes": {
           "field": "customfield",
           "index": "index",
+          "indexe": "index",
           "businessProcess": "businessprocess",
           "recordType": "recordtype",
           "compactLayout": "compactlayout",
@@ -2384,6 +2385,7 @@
     "feedFilter": "customfeedfilter",
     "layout": "layout",
     "weblink": "custompageweblink",
+    "custompageweblink": "custompageweblink",
     "letter": "letterhead",
     "email": "emailtemplate",
     "quickAction": "quickaction",

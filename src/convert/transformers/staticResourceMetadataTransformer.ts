@@ -141,7 +141,16 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   }
 
   private async getContentType(component: SourceComponent): Promise<string> {
-    return ((await component.parseXml()).StaticResource as JsonMap).contentType as string;
+    try {
+      return ((await component.parseXml()).StaticResource as JsonMap).contentType as string;
+    } catch (e) {
+      if ((e as Error).message.includes("Cannot read property 'contentType' of undefined")) {
+        throw new LibraryError('error_static_resource_expected_archive_type', [
+          'undefined',
+          component.name,
+        ]);
+      }
+    }
   }
 
   private getExtensionFromType(contentType: string): string {

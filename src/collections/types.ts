@@ -21,6 +21,11 @@ export interface PackageManifestObject {
   };
 }
 
+export enum DestructiveChangesType {
+  POST = 'post',
+  PRE = 'pre',
+}
+
 export interface FromSourceOptions extends OptionalTreeRegistryOptions {
   /**
    * File paths or directory paths to resolve components against
@@ -30,6 +35,10 @@ export interface FromSourceOptions extends OptionalTreeRegistryOptions {
    * Only resolve components contained in the given set
    */
   include?: ComponentSet;
+  /**
+   * File paths or directory paths of deleted components, i.e., destructive changes.
+   */
+  fsDeletePaths?: string[];
 }
 
 export interface FromManifestOptions extends OptionalTreeRegistryOptions {

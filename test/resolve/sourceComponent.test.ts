@@ -33,6 +33,17 @@ describe('SourceComponent', () => {
     expect(DECOMPOSED_COMPONENT.fullName).to.equal(DECOMPOSED_COMPONENT.name);
   });
 
+  it('should return correct markedForDelete status', () => {
+    expect(COMPONENT.isMarkedForDelete()).to.be.false;
+    try {
+      COMPONENT.setMarkedForDelete(true);
+      expect(COMPONENT.isMarkedForDelete()).to.be.true;
+    } finally {
+      COMPONENT.setMarkedForDelete(false);
+      expect(COMPONENT.isMarkedForDelete()).to.be.false;
+    }
+  });
+
   describe('parseXml', () => {
     afterEach(() => env.restore());
 

@@ -179,6 +179,29 @@ describe('Streams', () => {
       });
     });
 
+    it('should not transform source that is marked for delete', (done) => {
+      const myComp = new SourceComponent({
+        name: component.name,
+        type: component.type,
+        xml: component.xml,
+      });
+      myComp.setMarkedForDelete(true);
+      const converter = new streams.ComponentConverter('source', mockRegistry);
+
+      converter._transform(myComp, '', async (err: Error, data: WriterFormat) => {
+        try {
+          expect(err).to.be.undefined;
+          expect(data).to.deep.equal({
+            component: myComp,
+            writeInfos: [],
+          });
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
+    });
+
     describe('Transaction Finalizers', () => {
       let converter: streams.ComponentConverter;
 

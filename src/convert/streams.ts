@@ -74,32 +74,37 @@ export class ComponentConverter extends Transform {
   ): Promise<void> {
     let err: Error;
     const writeInfos: WriteInfo[] = [];
-    try {
-      const converts: Promise<WriteInfo[]>[] = [];
-      const transformer = this.transformerFactory.getTransformer(chunk);
-      const mergeWith = this.mergeSet?.getSourceComponents(chunk);
-      switch (this.targetFormat) {
-        case 'source':
-          if (mergeWith) {
-            for (const mergeComponent of mergeWith) {
-              converts.push(transformer.toSourceFormat(chunk, mergeComponent));
+
+    // Only transform components not marked for delete.
+    if (!chunk.isMarkedForDelete()) {
+      try {
+        const converts: Promise<WriteInfo[]>[] = [];
+        const transformer = this.transformerFactory.getTransformer(chunk);
+        const mergeWith = this.mergeSet?.getSourceComponents(chunk);
+        switch (this.targetFormat) {
+          case 'source':
+            if (mergeWith) {
+              for (const mergeComponent of mergeWith) {
+                converts.push(transformer.toSourceFormat(chunk, mergeComponent));
+              }
             }
-          }
-          if (converts.length === 0) {
-            converts.push(transformer.toSourceFormat(chunk));
-          }
-          break;
-        case 'metadata':
-          converts.push(transformer.toMetadataFormat(chunk));
-          break;
-        default:
-          throw new LibraryError('error_convert_invalid_format', this.targetFormat);
+            if (converts.length === 0) {
+              converts.push(transformer.toSourceFormat(chunk));
+            }
+            break;
+          case 'metadata':
+            converts.push(transformer.toMetadataFormat(chunk));
+            break;
+          default:
+            throw new LibraryError('error_convert_invalid_format', this.targetFormat);
+        }
+        // could maybe improve all this with lazy async collections...
+        (await Promise.all(converts)).forEach((infos) => writeInfos.push(...infos));
+      } catch (e) {
+        err = e;
       }
-      // could maybe improve all this with lazy async collections...
-      (await Promise.all(converts)).forEach((infos) => writeInfos.push(...infos));
-    } catch (e) {
-      err = e;
     }
+
     callback(err, { component: chunk, writeInfos });
   }
 

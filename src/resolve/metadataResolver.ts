@@ -130,12 +130,22 @@ export class MetadataResolver {
       // source path or allowed content-only path, otherwise the adapter
       // knows how to handle it
       const shouldResolve =
+        this.parseAsRootMetadataXml(fsPath) ||
         isResolvingSource ||
         !this.parseAsContentMetadataXml(fsPath) ||
         !adapter.allowMetadataWithContent();
       return shouldResolve ? adapter.getComponent(fsPath, isResolvingSource) : undefined;
     }
     throw new TypeInferenceError('error_could_not_infer_type', fsPath);
+  }
+
+  /**
+   * Any metadata xml file (-meta.xml) is potentially a root metadata file.
+   *
+   * @param fsPath File path of a potential metadata xml file
+   */
+  private parseAsRootMetadataXml(fsPath: string): boolean {
+    return !!parseMetadataXml(fsPath);
   }
 
   private resolveType(fsPath: string): MetadataType | undefined {

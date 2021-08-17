@@ -128,7 +128,10 @@ jobs:
 
   publish:
     <<: *defaults
+    working_directory: ~/cli/packages/source-deploy-retrieve
     steps:
+      - attach_workspace:
+          at: ~/cli
       - slack/notify:
           channel: 'pdt_releases'
           color: '#FFDEAD'
@@ -142,6 +145,7 @@ jobs:
       - release-management/install-change-case-mgmt
       - release-management/change-case-create
       - run: *build
+      - run: yarn package
       - run: *docs-deploy
       - run:
           name: Bump package version

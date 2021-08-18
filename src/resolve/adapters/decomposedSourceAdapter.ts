@@ -9,7 +9,7 @@ import { SourcePath } from '../../common';
 import { SourceComponent } from '../sourceComponent';
 import { baseName, parentName, parseMetadataXml } from '../../utils';
 import { DecompositionStrategy } from '../../registry';
-import { UnexpectedForceIgnore } from '../../errors';
+import { TypeInferenceError } from '../../errors';
 
 /**
  * Handles decomposed types. A flavor of mixed content where a component can
@@ -115,6 +115,11 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
         );
       }
       if (!triggerIsAChild) {
+        if (!component) {
+          // This is most likely metadata found within a CustomObject folder that is not a
+          // child type of CustomObject. E.g., Layout, SharingRules, ApexClass.
+          throw new TypeInferenceError('error_unexpected_child_type', [trigger, this.type.name]);
+        }
         component.content = pathToContent;
       }
     }

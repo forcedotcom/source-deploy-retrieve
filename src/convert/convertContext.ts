@@ -11,6 +11,7 @@ import { JsToXml } from './streams';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../common';
 import { getString, JsonArray, JsonMap } from '@salesforce/ts-types';
 import { ComponentSet } from '../collections';
+import { normalizeToArray } from '../utils/collections';
 import { RecompositionStrategy } from '../registry/types';
 import { isEmpty } from '@salesforce/kit';
 
@@ -89,7 +90,8 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
         parent[groupName] = [];
       }
 
-      const group = parent[groupName] as JsonArray;
+      // it might be an object and not an array.  Example: custom object with a Field property containing a single field
+      const group = normalizeToArray(parent[groupName]) as JsonArray;
 
       group.push(childContents);
     }
@@ -306,8 +308,7 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
         parent[groupName] = [];
       }
 
-      const group = parent[groupName] as JsonArray;
-
+      const group = normalizeToArray(parent[groupName]) as JsonArray;
       group.push(child);
     }
 

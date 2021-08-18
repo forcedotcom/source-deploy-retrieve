@@ -7,8 +7,9 @@
 export { registry } from './registry';
 export { RegistryAccess } from './registryAccess';
 export {
-  MetadataType,
   MetadataRegistry,
+  MetadataType,
   DecompositionStrategy,
+  RecompositionStrategy,
   TransformerStrategy,
 } from './types';

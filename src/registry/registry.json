@@ -320,6 +320,7 @@
         "suffixes": {
           "field": "customfield",
           "index": "index",
+          "indexe": "index",
           "businessProcess": "businessprocess",
           "recordType": "recordtype",
           "compactLayout": "compactlayout",
@@ -422,7 +423,8 @@
       "suffix": "weblink",
       "directoryName": "weblinks",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "legacySuffix": "custompageweblink"
     },
     "letterhead": {
       "id": "letterhead",
@@ -2385,6 +2387,7 @@
     "feedFilter": "customfeedfilter",
     "layout": "layout",
     "weblink": "custompageweblink",
+    "custompageweblink": "custompageweblink",
     "letter": "letterhead",
     "email": "emailtemplate",
     "quickAction": "quickaction",

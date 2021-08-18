@@ -75,6 +75,11 @@ export interface MetadataType {
    */
   ignoreParentName?: boolean;
   /**
+   * When converting deploying source, this will update the suffix in the output or temporary directory (metadata format)
+   * Use this, along with additional suffix keys in the registry, to support incorrect suffixes from existing code
+   */
+  legacySuffix?: string;
+  /**
    * The xml attribute used as the unique identifier when parsing the xml
    */
   uniqueIdElement?: string;

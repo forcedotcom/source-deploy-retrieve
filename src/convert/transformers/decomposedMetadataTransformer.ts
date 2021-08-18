@@ -14,6 +14,7 @@ import { SourcePath, META_XML_SUFFIX, XML_NS_URL, XML_NS_KEY } from '../../commo
 import { ComponentSet } from '../../collections';
 import { DecompositionState } from '../convertContext';
 import { DecompositionStrategy } from '../../registry';
+import { TypeInferenceError } from '../../errors';
 
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
@@ -32,16 +33,10 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     } else {
       const { fullName } = component;
       this.context.recomposition.setState((state) => {
-        if (state[fullName]) {
-          for (const child of component.getChildren()) {
-            state[fullName].children.add(child);
-          }
-        } else {
-          state[fullName] = {
-            component,
-            children: new ComponentSet(component.getChildren(), this.registry),
-          };
+        if (!state[fullName]) {
+          state[fullName] = { component, children: new ComponentSet([], this.registry) };
         }
+        state[fullName].children = this.ensureValidChildren(component, state[fullName].children);
       });
     }
     // noop since the finalizer will push the writes to the component writer
@@ -53,11 +48,9 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     mergeWith?: SourceComponent
   ): Promise<WriteInfo[]> {
     const writeInfos: WriteInfo[] = [];
+    const childrenOfMergeComponent = mergeWith && this.ensureValidChildren(mergeWith);
     const { type, fullName: parentFullName } = component;
 
-    const childrenOfMergeComponent = mergeWith
-      ? new ComponentSet(mergeWith.getChildren(), this.registry)
-      : undefined;
     let parentXmlObject: JsonMap;
     const composedMetadata = await this.getComposedMetadataEntries(component);
 
@@ -145,6 +138,27 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     }
 
     return writeInfos;
+  }
+
+  // Ensures that the children of the provided SourceComponent are valid child
+  // types before adding them to the returned ComponentSet. Invalid child types
+  // can occur when projects are structured in an atypical way such as having
+  // ApexClasses or Layouts within a CustomObject folder.
+  private ensureValidChildren(component: SourceComponent, compSet?: ComponentSet): ComponentSet {
+    compSet = compSet || new ComponentSet([], this.registry);
+    const validChildTypes = Object.keys(component.type.children.types);
+    for (const child of component.getChildren()) {
+      // Ensure only valid child types are included with the parent.
+      if (!validChildTypes.includes(child.type?.id)) {
+        const filePath = child.xml || child.content;
+        throw new TypeInferenceError('error_unexpected_child_type', [
+          filePath,
+          component.type.name,
+        ]);
+      }
+      compSet.add(child);
+    }
+    return compSet;
   }
 
   private async getComposedMetadataEntries(component: SourceComponent): Promise<[string, any][]> {

@@ -164,6 +164,9 @@ export class StandardWriter extends ComponentWriter {
               }
             }
           }
+          if (this.forceIgnoredPaths.has(fullDest)) {
+            return;
+          }
           // if there are children, resolve each file. o/w just pick one of the files to resolve
           if (toResolve.length === 0 || chunk.component.type.children) {
             // This is a workaround for a server side ListViews bug where

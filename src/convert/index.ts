@@ -6,10 +6,13 @@
  */
 export { MetadataConverter } from './metadataConverter';
 export {
-  ConvertResult,
-  ConvertOutputConfig,
-  SfdxFileFormat,
   WriteInfo,
   WriterFormat,
+  DirectoryConfig,
+  ZipConfig,
+  MergeConfig,
   MetadataTransformer,
+  SfdxFileFormat,
+  ConvertOutputConfig,
+  ConvertResult,
 } from './types';

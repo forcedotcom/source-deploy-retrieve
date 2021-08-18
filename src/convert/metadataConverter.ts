@@ -143,6 +143,7 @@ export class MetadataConverter {
             mergeSet.add(component.parent ?? component);
           }
           writer = new StandardWriter(output.defaultDirectory);
+          writer.forceIgnoredPaths = output.forceIgnoredPaths;
           break;
       }
 

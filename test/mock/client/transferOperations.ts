@@ -258,6 +258,7 @@ export async function stubMetadataRetrieve(
       type: 'merge',
       mergeWith: retrievedComponents.getSourceComponents(),
       defaultDirectory: MOCK_DEFAULT_OUTPUT,
+      forceIgnoredPaths: retrievedComponents.forceIgnoredPaths ?? new Set<string>(),
     });
     converted = source;
 
@@ -266,6 +267,7 @@ export async function stubMetadataRetrieve(
         type: 'merge',
         mergeWith: retrievedComponents.getSourceComponents(),
         defaultDirectory: pkg.outputDir,
+        forceIgnoredPaths: retrievedComponents.forceIgnoredPaths ?? new Set<string>(),
       })
     );
   } else {
@@ -297,7 +299,12 @@ export async function stubMetadataRetrieve(
   }
   const convertStub = sandbox.stub(MetadataConverter.prototype, 'convert');
   outputConfigs.forEach((outputCfg) => {
-    convertStub.withArgs(match.any, 'source', outputCfg).resolves({ converted });
+    const notForceIgnoredConverted = converted.filter(
+      (component) => !retrievedComponents.forceIgnoredPaths ?? [].includes(component.xml)
+    );
+    convertStub
+      .withArgs(match.any, 'source', outputCfg)
+      .resolves({ converted: notForceIgnoredConverted });
   });
 
   return {

@@ -58,6 +58,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    */
   public sourceApiVersion: string;
   public fullName?: string;
+  public forceIgnoredPaths?: Set<string>;
   private logger: Logger;
   private registry: RegistryAccess;
   private components = new Map<string, Map<string, SourceComponent>>();
@@ -137,6 +138,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     buildComponents(fsPaths, false);
     buildComponents(fsDeletePaths, true);
 
+    set.forceIgnoredPaths = resolver.forceIgnoredPaths;
+
     return set;
   }
 
@@ -192,6 +195,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         include: resolveIncludeSet,
         registry: options.registry,
       });
+      result.forceIgnoredPaths = components.forceIgnoredPaths;
       for (const component of components) {
         result.add(component);
       }

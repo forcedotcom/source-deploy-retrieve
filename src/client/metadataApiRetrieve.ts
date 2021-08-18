@@ -216,6 +216,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
             type: 'merge',
             mergeWith: this.components.getSourceComponents(),
             defaultDirectory: pkg.outputDir,
+            forceIgnoredPaths: this.components.forceIgnoredPaths ?? new Set<string>(),
           }
         : {
             type: 'directory',
@@ -229,7 +230,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<
         .getSourceComponents()
         .toArray();
       const convertResult = await converter.convert(zipComponents, 'source', outputConfig);
-      components.push(...convertResult.converted);
+      if (convertResult) {
+        components.push(...convertResult.converted);
+      }
     }
     return new ComponentSet(components, registry);
   }

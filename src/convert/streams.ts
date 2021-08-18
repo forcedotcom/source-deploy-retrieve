@@ -6,13 +6,13 @@
  */
 import { Archiver, create as createArchive } from 'archiver';
 import { createWriteStream } from 'fs';
-import { isAbsolute, join } from 'path';
+import { basename, dirname, isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
 import { SourceComponent, MetadataResolver } from '../resolve';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
-import { SourcePath, XML_DECL } from '../common';
+import { META_XML_SUFFIX, SourcePath, XML_DECL } from '../common';
 import { ConvertContext } from './convertContext';
 import { MetadataTransformerFactory } from './transformers';
 import { JsonMap } from '@salesforce/ts-types';
@@ -20,7 +20,7 @@ import { j2xParser } from 'fast-xml-parser';
 import { ComponentSet } from '../collections';
 import { LibraryError } from '../errors';
 import { RegistryAccess } from '../registry';
-import { Logger } from '@salesforce/core';
+import { fs, Logger } from '@salesforce/core';
 export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
@@ -126,6 +126,7 @@ export class ComponentConverter extends Transform {
 }
 
 export abstract class ComponentWriter extends Writable {
+  public forceIgnoredPaths?: Set<string> = new Set<string>();
   protected rootDestination?: SourcePath;
 
   constructor(rootDestination?: SourcePath) {
@@ -158,6 +159,19 @@ export class StandardWriter extends ComponentWriter {
           const fullDest = isAbsolute(info.output)
             ? info.output
             : join(this.rootDestination, info.output);
+          if (!fs.fileExistsSync(fullDest)) {
+            for (const ignoredPath of this.forceIgnoredPaths) {
+              if (
+                dirname(ignoredPath).includes(dirname(fullDest)) &&
+                basename(ignoredPath).includes(basename(fullDest))
+              ) {
+                return;
+              }
+            }
+          }
+          if (this.forceIgnoredPaths.has(fullDest)) {
+            return;
+          }
           // if there are children, resolve each file. o/w just pick one of the files to resolve
           if (toResolve.length === 0 || chunk.component.type.children) {
             // This is a workaround for a server side ListViews bug where

@@ -336,6 +336,7 @@ describe('MetadataApiRetrieve', async () => {
             type: 'merge',
             mergeWith: toRetrieve.getSourceComponents(),
             defaultDirectory: MOCK_DEFAULT_OUTPUT,
+            forceIgnoredPaths: new Set<string>(),
           })
         ).to.be.true;
       });
@@ -353,6 +354,21 @@ describe('MetadataApiRetrieve', async () => {
         const expected = new RetrieveResult(response, toRetrieve);
 
         expect(result).to.deep.equal(expected);
+      });
+
+      it('should construct a result object with no components when components are forceIgnored', async () => {
+        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        toRetrieve.forceIgnoredPaths = new Set([COMPONENT.xml, COMPONENT.content]);
+        const { operation } = await stubMetadataRetrieve(env, {
+          toRetrieve,
+          merge: true,
+          successes: toRetrieve,
+        });
+
+        await operation.start();
+        const result = await operation.pollStatus();
+
+        expect(result.components.size).to.equal(0);
       });
 
       it('should construct a result object with no components when no components are retrieved', async () => {

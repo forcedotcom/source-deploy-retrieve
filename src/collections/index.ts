@@ -6,4 +6,10 @@
  */
 export { LazyCollection } from './lazyCollection';
 export { ComponentSet, DeploySetOptions, RetrieveSetOptions } from './componentSet';
-export { FromSourceOptions, FromManifestOptions } from './types';
+export {
+  PackageTypeMembers,
+  PackageManifestObject,
+  DestructiveChangesType,
+  FromSourceOptions,
+  FromManifestOptions,
+} from './types';

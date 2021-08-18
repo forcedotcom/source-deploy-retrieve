@@ -423,7 +423,8 @@
       "suffix": "weblink",
       "directoryName": "weblinks",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "legacySuffix": "custompageweblink"
     },
     "letterhead": {
       "id": "letterhead",

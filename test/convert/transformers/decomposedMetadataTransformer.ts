@@ -357,6 +357,50 @@ describe('DecomposedMetadataTransformer', () => {
         ]);
       });
 
+      it('should throw when an invalid merge child is included with the parent', async () => {
+        const { CONTENT_NAMES, XML_NAMES } = matchingContentFile;
+        const fsUnexpectedChild = [
+          {
+            dirPath: decomposed.DECOMPOSED_PATH,
+            children: [
+              decomposed.DECOMPOSED_CHILD_XML_NAME_1,
+              decomposed.DECOMPOSED_CHILD_DIR,
+              'classes',
+            ],
+          },
+          {
+            dirPath: decomposed.DECOMPOSED_CHILD_DIR_PATH,
+            children: [decomposed.DECOMPOSED_CHILD_XML_NAME_2],
+          },
+          {
+            dirPath: join(decomposed.DECOMPOSED_PATH, 'classes'),
+            children: [CONTENT_NAMES[0], XML_NAMES[0]],
+          },
+        ];
+        const parentComponent = SourceComponent.createVirtualComponent(
+          {
+            name: baseName(decomposed.DECOMPOSED_XML_PATH),
+            type: decomposed.DECOMPOSED_COMPONENT.type,
+            xml: decomposed.DECOMPOSED_XML_PATH,
+            content: decomposed.DECOMPOSED_PATH,
+          },
+          fsUnexpectedChild
+        );
+        const fsPath = join(decomposed.DECOMPOSED_PATH, 'classes', XML_NAMES[0]);
+        const transformer = new DecomposedMetadataTransformer(mockRegistry, new ConvertContext());
+
+        try {
+          // NOTE: it doesn't matter what the first component is for this test since it's all
+          // about the child components of the parentComponent.
+          await transformer.toSourceFormat(component, parentComponent);
+          assert(false, 'expected TypeInferenceError to be thrown');
+        } catch (err) {
+          expect(err).to.be.instanceOf(TypeInferenceError);
+          const msg = nls.localize('error_unexpected_child_type', [fsPath, component.type.name]);
+          expect(err.message).to.equal(msg);
+        }
+      });
+
       it('should defer write operations for children that are not members of merge component', async () => {
         const mergeComponentChild = component.getChildren()[0];
         const { fullName, type } = component;

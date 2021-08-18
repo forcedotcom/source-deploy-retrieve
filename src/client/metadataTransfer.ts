@@ -111,6 +111,10 @@ export abstract class MetadataTransfer<
       return result;
     } catch (e) {
       const error = new MetadataTransferError('md_request_fail', e.message);
+      if (error.stack && e.stack) {
+        // append the original stack to this new error
+        error.stack += `\nDUE TO:\n${e.stack}`;
+      }
       if (this.event.listenerCount('error') === 0) {
         throw error;
       }

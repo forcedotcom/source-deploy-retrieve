@@ -58,6 +58,11 @@ export interface MetadataType {
    */
   strictDirectoryName?: boolean;
   /**
+   * Whether or not to ignore the fullName that's parsed from the file path. If true, the metadata type's
+   * name will be used instead. For example, CustomLabels instead of MyLabels.
+   */
+  ignoreParsedFullName?: boolean;
+  /**
    * If the type is a folder type (container for components), the id of the type it is a container for.
    */
   folderContentType?: string;

@@ -1,3 +1,21 @@
+# 4.0.3 - August 19, 2021
+
+## Fixed
+
+- Support toolbelt suffixes ([PR #428](https://github.com/forcedotcom/source-deploy-retrieve/pull/428))
+
+- Wr/content type of undefined ([PR #429](https://github.com/forcedotcom/source-deploy-retrieve/pull/429))
+
+- ForceIgnore does not work for `SFDX: Retrieve Source in Manifest from Org` in vscode extension ([PR #413](https://github.com/forcedotcom/source-deploy-retrieve/pull/413))
+
+- Force fullName to CustomLabels ([PR #427](https://github.com/forcedotcom/source-deploy-retrieve/pull/427))
+
+- Throw an error for unexpected child types ([PR #426](https://github.com/forcedotcom/source-deploy-retrieve/pull/426))
+
+- Xml nodes might not be arrays ([PR #424](https://github.com/forcedotcom/source-deploy-retrieve/pull/424))
+
+- Export all public TS types and interfaces ([PR #423](https://github.com/forcedotcom/source-deploy-retrieve/pull/423))
+
 # 4.1.0 - August 12, 2021
 
 ## Added

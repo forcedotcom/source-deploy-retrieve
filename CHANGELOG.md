@@ -16,10 +16,6 @@
 
 - Export all public TS types and interfaces ([PR #423](https://github.com/forcedotcom/source-deploy-retrieve/pull/423))
 
-- Port pr v4.1.0 ([PR #422](https://github.com/forcedotcom/source-deploy-retrieve/pull/422))
-
-- Port pr v4.0.0 ([PR #387](https://github.com/forcedotcom/source-deploy-retrieve/pull/387))
-
 # 4.1.0 - August 12, 2021
 
 ## Added

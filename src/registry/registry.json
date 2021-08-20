@@ -11,6 +11,7 @@
     "customlabels": {
       "id": "customlabels",
       "name": "CustomLabels",
+      "ignoreParsedFullName": true,
       "suffix": "labels",
       "directoryName": "labels",
       "inFolder": false,
@@ -319,6 +320,7 @@
         "suffixes": {
           "field": "customfield",
           "index": "index",
+          "indexe": "index",
           "businessProcess": "businessprocess",
           "recordType": "recordtype",
           "compactLayout": "compactlayout",
@@ -421,7 +423,8 @@
       "suffix": "weblink",
       "directoryName": "weblinks",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "legacySuffix": "custompageweblink"
     },
     "letterhead": {
       "id": "letterhead",
@@ -2384,6 +2387,7 @@
     "feedFilter": "customfeedfilter",
     "layout": "layout",
     "weblink": "custompageweblink",
+    "custompageweblink": "custompageweblink",
     "letter": "letterhead",
     "email": "emailtemplate",
     "quickAction": "quickaction",
@@ -2563,7 +2567,7 @@
     "bots": "bot",
     "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
-    "sites": "customsite",
+    "sites": "customsite"
   },
   "childTypes": {
     "customlabel": "customlabels",

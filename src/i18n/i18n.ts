@@ -30,6 +30,7 @@ export const messages = {
   error_convert_invalid_format: "Invalid conversion format '%s'",
   error_convert_not_implemented: '%s format conversion not yet implemented for type %s',
   error_could_not_infer_type: '%s: Could not infer a metadata type',
+  error_unexpected_child_type: 'Unexpected child metadata [%s] found for parent type [%s]',
   error_expected_source_files: "%s: Expected source files for type '%s'",
   error_failed_convert: 'Component conversion failed: %s',
   error_merge_metadata_target_unsupported:
@@ -60,6 +61,8 @@ export const messages = {
   error_invalid_package: 'The metadata pacakge was not initialized properly',
   error_static_resource_expected_archive_type:
     'A StaticResource directory must have a content type of application/zip or application/jar - found %s for %s',
+  error_static_resource_missing_resource_file:
+    'A StaticResource must have an associated .resource file, missing %s.resource-meta.xml',
   error_no_job_id:
     'The %s operation is missing a job ID. Initialize an operation with an ID, or start a new job.',
   tapi_deploy_component_limit_error:

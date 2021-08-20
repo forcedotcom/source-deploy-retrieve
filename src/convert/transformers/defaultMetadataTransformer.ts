@@ -86,7 +86,7 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
       return mergeWith.xml;
     }
 
-    const { folderContentType, suffix } = component.type;
+    const { folderContentType, suffix, legacySuffix } = component.type;
     let xmlDestination = component.getPackageRelativePath(component.xml, targetFormat);
 
     // quirks:
@@ -117,7 +117,9 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
         );
       }
     }
-
+    if (legacySuffix && suffix && xmlDestination.includes(legacySuffix)) {
+      xmlDestination = xmlDestination.replace(legacySuffix, suffix);
+    }
     return xmlDestination;
   }
 }

@@ -109,6 +109,26 @@ describe('StaticResourceMetadataTransformer', () => {
         );
       }
     });
+
+    it('should throw an error if content is directory but there is no resource file', async () => {
+      const component = SourceComponent.createVirtualComponent(
+        MIXED_CONTENT_DIRECTORY_COMPONENT,
+        MIXED_CONTENT_DIRECTORY_VIRTUAL_FS
+      );
+
+      // when there's no matching component.resource-meta.xml file
+      env.stub(component, 'parseXml').resolves({ StaticResource: undefined });
+
+      try {
+        await transformer.toMetadataFormat(component);
+      } catch (e) {
+        expect(e.message).to.equal(
+          nls.localize('error_static_resource_missing_resource_file', [
+            join('staticresources', component.name),
+          ])
+        );
+      }
+    });
   });
 
   describe('toSourceFormat', () => {

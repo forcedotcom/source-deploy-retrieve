@@ -64,6 +64,7 @@ export type MergeConfig = {
    * Location to store components that aren't merged.
    */
   defaultDirectory: SourcePath;
+  forceIgnoredPaths?: Set<string>;
 };
 
 /**

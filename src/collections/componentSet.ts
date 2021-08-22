@@ -37,7 +37,7 @@ export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
 
 /**
  * A collection containing no duplicate metadata members (`fullName` and `type` pairs). `ComponentSets`
- * are a convinient way of constructing a unique collection of components to perform operations such as
+ * are a convenient way of constructing a unique collection of components to perform operations such as
  * deploying and retrieving.
  *
  * Multiple {@link SourceComponent}s can be present in the set and correspond to the same member.

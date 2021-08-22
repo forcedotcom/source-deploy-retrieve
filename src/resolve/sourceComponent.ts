@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join, basename } from 'path';
+import { join, basename, sep } from 'path';
 import { parse } from 'fast-xml-parser';
 import { ForceIgnore } from './forceIgnore';
 import { NodeFSTreeContainer, TreeContainer, VirtualTreeContainer } from './treeContainers';
@@ -14,7 +14,7 @@ import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { SfdxFileFormat } from '../convert';
 import { trimUntil } from '../utils/path';
-import { MetadataType } from '../registry';
+import { MetadataType, RegistryAccess } from '../registry';
 
 export type ComponentProperties = {
   name: string;
@@ -36,6 +36,7 @@ export class SourceComponent implements MetadataComponent {
   private _tree: TreeContainer;
   private forceIgnore: ForceIgnore;
   private markedForDelete = false;
+  private registry = new RegistryAccess();
 
   constructor(
     props: ComponentProperties,
@@ -98,24 +99,9 @@ export class SourceComponent implements MetadataComponent {
   }
 
   public getPackageRelativePath(fsPath: string, format: SfdxFileFormat): string {
-    const { directoryName, suffix, inFolder, folderType } = this.type;
-    // if there isn't a suffix, assume this is a mixed content component that must
-    // reside in the directoryName of its type. trimUntil maintains the folder structure
-    // the file resides in for the new destination.
-    let relativePath: string;
-    if (!suffix) {
-      relativePath = trimUntil(fsPath, directoryName);
-    } else if (folderType || inFolder) {
-      const folderName = this.fullName.split('/')[0];
-      relativePath = join(directoryName, folderName, basename(fsPath));
-    } else {
-      relativePath = join(directoryName, basename(fsPath));
-    }
-
-    if (format === 'source') {
-      return join(DEFAULT_PACKAGE_ROOT_SFDX, relativePath);
-    }
-    return relativePath;
+    return format === 'source'
+      ? join(DEFAULT_PACKAGE_ROOT_SFDX, this.calculateRelativePath(fsPath))
+      : this.calculateRelativePath(fsPath);
   }
 
   /**
@@ -127,6 +113,30 @@ export class SourceComponent implements MetadataComponent {
 
   public setMarkedForDelete(asDeletion: boolean): void {
     this.markedForDelete = asDeletion;
+  }
+
+  private calculateRelativePath(fsPath: string): string {
+    const { directoryName, suffix, inFolder, folderType } = this.type;
+    // if there isn't a suffix, assume this is a mixed content component that must
+    // reside in the directoryName of its type. trimUntil maintains the folder structure
+    // the file resides in for the new destination.
+    if (!suffix) {
+      return trimUntil(fsPath, directoryName);
+    }
+    // legacy version of folderType
+    if (inFolder) {
+      return join(directoryName, this.fullName.split('/')[0], basename(fsPath));
+    }
+    if (folderType) {
+      // types like Territory2Model have child types inside them.  We have to preserve those folder structures
+      const parentType = this.registry.getTypeByName(folderType);
+      if (parentType.folderType && parentType.folderType !== this.type.id) {
+        const fsPathSplits = fsPath.split(sep);
+        return fsPathSplits.slice(fsPathSplits.indexOf(parentType.directoryName)).join(sep);
+      }
+      return join(directoryName, this.fullName.split('/')[0], basename(fsPath));
+    }
+    return join(directoryName, basename(fsPath));
   }
 
   private parse<T = JsonMap>(contents: string): T {

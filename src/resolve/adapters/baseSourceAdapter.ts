@@ -54,12 +54,9 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
 
     let component: SourceComponent;
     if (rootMetadata) {
-      const componentName = this.type.folderType
-        ? `${parentName(rootMetadata.path)}/${rootMetadata.fullName}`
-        : rootMetadata.fullName;
       component = new SourceComponent(
         {
-          name: componentName,
+          name: this.calculateName(rootMetadata),
           type: this.type,
           xml: rootMetadata.path,
         },
@@ -144,6 +141,24 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     if (match && !match[1].includes('.') && parts.length > 1) {
       return { fullName: match[1], suffix: undefined, path: fsPath };
     }
+  }
+
+  private calculateName(rootMetadata: MetadataXml): string {
+    if (!this.type.folderType) {
+      return rootMetadata.fullName;
+    }
+    const grandparentType = this.registry.getTypeByName(this.type.folderType);
+    if (grandparentType.folderType && grandparentType.folderType !== this.type.id) {
+      const splits = rootMetadata.path.split(sep);
+      return `${splits[splits.indexOf(grandparentType.directoryName) + 1]}.${
+        rootMetadata.fullName
+      }`;
+    }
+    if (grandparentType.folderType === this.type.id) {
+      return rootMetadata.fullName;
+    }
+
+    return `${parentName(rootMetadata.path)}/${rootMetadata.fullName}`;
   }
 
   /**

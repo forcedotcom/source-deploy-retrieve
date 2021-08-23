@@ -62,17 +62,13 @@ jobs:
           name: swap dependencies
           command: yarn remove @salesforce/source-deploy-retrieve && yarn add $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME#$CIRCLE_SHA1
       - run:
-          name: install/build this project's node module
+          name: install/build <<parameters.external_project_git_url> in node_modules
           # why doesn't SDR put the registry.json in the lib?  I don't know.
           command: |
             yarn install
             yarn build
             cp src/registry/registry.json lib/src/registry
           working_directory: node_modules/@salesforce/source-deploy-retrieve
-      # - run:
-      #     name: remove command/core
-      #     # deletes command/core to prevent ts conflicts
-      #     command: rm -rf node_modules/\@salesforce/command/node_modules/\@salesforce/core
       - run:
           name: Build the external project
           command: |
@@ -88,7 +84,7 @@ jobs:
             echo "Using node: $(node --version)"
             echo "Environment Variables:"
             env
-            yarn test:nuts:manifest:create
+            yarn test:nuts
           # this is in the command instead of the circle project environment to prevent it from happening on windows
       - store_artifacts:
           path: artifacts

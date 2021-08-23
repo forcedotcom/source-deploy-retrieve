@@ -11,6 +11,7 @@ import {
   matchingContentFile,
   mockRegistry,
   mockRegistryData,
+  nestedTypes,
 } from '../../mock/registry';
 import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';
 import { WriteInfo } from '../../../src/convert';
@@ -120,6 +121,45 @@ describe('DefaultMetadataTransformer', () => {
         },
       ];
 
+      expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
+    });
+
+    it('should handle nested components (parent)', async () => {
+      // ex: territory2Models/someModel/
+      const component = nestedTypes.NESTED_PARENT_COMPONENT;
+      const expectedInfos: WriteInfo[] = [
+        {
+          output: join(
+            component.type.directoryName,
+            component.fullName,
+            `${component.fullName}.${component.type.suffix}`
+          ),
+          source: component.tree.stream(component.xml),
+        },
+      ];
+
+      expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
+    });
+
+    it('should handle nested components (parent)', async () => {
+      // ex: territory2Models/someModel/rules/someRule.Territory2Rule-meta.xml
+      const component = nestedTypes.NESTED_CHILD_COMPONENT;
+      const parentComponent = nestedTypes.NESTED_PARENT_COMPONENT;
+
+      const expectedInfos: WriteInfo[] = [
+        {
+          output: join(
+            component.parentType.directoryName,
+            parentComponent.fullName,
+            component.type.directoryName,
+            component.fullName,
+            `${component.fullName}.${component.type.suffix}`
+          ),
+          source: component.tree.stream(component.xml),
+        },
+      ];
+
+      console.log(expectedInfos);
       expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
     });
   });

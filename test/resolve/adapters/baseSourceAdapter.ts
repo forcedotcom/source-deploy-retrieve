@@ -13,6 +13,7 @@ import {
   mixedContentSingleFile,
   decomposed,
   matchingContentFile,
+  nestedTypes,
 } from '../../mock/registry';
 import { BaseSourceAdapter, DefaultSourceAdapter } from '../../../src/resolve/adapters';
 import { META_XML_SUFFIX } from '../../../src/common';
@@ -95,5 +96,19 @@ describe('BaseSourceAdapter', () => {
     const type = mockRegistryData.types.xmlinfolder;
     const adapter = new DefaultSourceAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.be.undefined;
+  });
+
+  describe('handling nested types (Territory2Model)', () => {
+    it('should resolve the parent name and type', () => {
+      const component = nestedTypes.NESTED_PARENT_COMPONENT;
+      const adapter = new DefaultSourceAdapter(component.type, mockRegistry);
+      expect(adapter.getComponent(component.xml)).to.deep.equal(component);
+    });
+
+    it('should resolve the child name and type AND parentType', () => {
+      const component = nestedTypes.NESTED_CHILD_COMPONENT;
+      const adapter = new DefaultSourceAdapter(component.type, mockRegistry);
+      expect(adapter.getComponent(component.xml)).to.deep.equal(component);
+    });
   });
 });

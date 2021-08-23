@@ -1,7 +1,7 @@
 version: 2.1
 orbs:
   release-management: salesforce/npm-release-management@4
-  slack: circleci/slack@4.4.4
+  slack: circleci/slack@3.4.2
 
 workflows:
   version: 2
@@ -28,20 +28,8 @@ workflows:
             - run: yarn ci-docs
             - slack/notify:
                 channel: 'cli-team-notifications'
-                custom: |
-                  {
-                    "blocks": [
-                      {
-                        "type": "section",
-                        "fields": [
-                          {
-                            "type": "plain_text",
-                            "text":  "SDR Library v${RELEASE_VERSION} has been published to npm"
-                          }
-                        ]
-                      }
-                    ]
-                  }
+                color: '#9bcd9b'
+                message: 'SDR Library v${RELEASE_VERSION} has been published to npm'
                 event: pass
           requires:
             - release-management/test-package

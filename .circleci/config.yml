@@ -20,7 +20,9 @@ workflows:
                 - lts
                 - maintenance
       - release-management/release-package:
-          github-release: true
+          github-release: false
+          tag: pubtest
+          prerelease: true
           post-job-steps:
             - run: yarn ci-docs
             - slack/notify:

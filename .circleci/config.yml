@@ -36,6 +36,6 @@ workflows:
             # - external-nut
           filters:
             branches:
-              only: sm/publish-via-orb
+              only: orb
               # only: main
           context: CLI_CTC

@@ -30,11 +30,12 @@ workflows:
           tag: pubtest
           prerelease: true
           post-job-steps:
+            - when: on_success
             - run: yarn ci-docs
             - slack/notify:
                 channel: 'cli-team-notifications'
                 color: '#9bcd9b'
-                message: 'SDR Library v${RELEASE_VERSION} has been published to npm'
+                message: 'SDR Library has been published to npm'
                 # event: pass
           requires:
             - release-management/test-package

@@ -30,7 +30,7 @@ workflows:
                 channel: 'cli-team-notifications'
                 color: '#9bcd9b'
                 message: 'SDR Library v${RELEASE_VERSION} has been published to npm'
-                event: pass
+                # event: pass
           requires:
             - release-management/test-package
             # - external-nut

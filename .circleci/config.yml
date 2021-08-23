@@ -84,6 +84,7 @@ jobs:
             echo "Using node: $(node --version)"
             echo "Environment Variables:"
             env
+            export NODE_OPTIONS="--max-old-space-size=8192"
             yarn test:nuts
           # this is in the command instead of the circle project environment to prevent it from happening on windows
       - store_artifacts:

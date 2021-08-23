@@ -59,6 +59,9 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
           name: this.calculateName(rootMetadata),
           type: this.type,
           xml: rootMetadata.path,
+          parentType: this.type.folderType
+            ? this.registry.getTypeByName(this.type.folderType)
+            : undefined,
         },
         this.tree,
         this.forceIgnore

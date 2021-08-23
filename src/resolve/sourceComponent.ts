@@ -14,7 +14,7 @@ import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { SfdxFileFormat } from '../convert';
 import { trimUntil } from '../utils/path';
-import { MetadataType, RegistryAccess } from '../registry';
+import { MetadataType } from '../registry';
 
 export type ComponentProperties = {
   name: string;
@@ -22,6 +22,7 @@ export type ComponentProperties = {
   xml?: string;
   content?: string;
   parent?: SourceComponent;
+  parentType?: MetadataType;
 };
 
 /**
@@ -32,11 +33,11 @@ export class SourceComponent implements MetadataComponent {
   public readonly type: MetadataType;
   public readonly xml?: string;
   public readonly parent?: SourceComponent;
+  public parentType?: MetadataType;
   public content?: string;
   private _tree: TreeContainer;
   private forceIgnore: ForceIgnore;
   private markedForDelete = false;
-  private registry = new RegistryAccess();
 
   constructor(
     props: ComponentProperties,
@@ -48,6 +49,7 @@ export class SourceComponent implements MetadataComponent {
     this.xml = props.xml;
     this.parent = props.parent;
     this.content = props.content;
+    this.parentType = props.parentType;
     this._tree = tree;
     this.forceIgnore = forceIgnore;
   }
@@ -129,10 +131,9 @@ export class SourceComponent implements MetadataComponent {
     }
     if (folderType) {
       // types like Territory2Model have child types inside them.  We have to preserve those folder structures
-      const parentType = this.registry.getTypeByName(folderType);
-      if (parentType.folderType && parentType.folderType !== this.type.id) {
+      if (this.parentType?.folderType && this.parentType?.folderType !== this.type.id) {
         const fsPathSplits = fsPath.split(sep);
-        return fsPathSplits.slice(fsPathSplits.indexOf(parentType.directoryName)).join(sep);
+        return fsPathSplits.slice(fsPathSplits.indexOf(this.parentType.directoryName)).join(sep);
       }
       return join(directoryName, this.fullName.split('/')[0], basename(fsPath));
     }

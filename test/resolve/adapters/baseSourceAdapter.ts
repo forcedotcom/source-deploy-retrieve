@@ -99,16 +99,25 @@ describe('BaseSourceAdapter', () => {
   });
 
   describe('handling nested types (Territory2Model)', () => {
+    // mocha was throwing errors about private property _tree not matching
+    const sourceComponentKeys = ['type', 'name', 'xml', 'parent', 'parentType', 'content'];
+
     it('should resolve the parent name and type', () => {
       const component = nestedTypes.NESTED_PARENT_COMPONENT;
       const adapter = new DefaultSourceAdapter(component.type, mockRegistry);
-      expect(adapter.getComponent(component.xml)).to.deep.equal(component);
+      const componentFromAdapter = adapter.getComponent(component.xml);
+      sourceComponentKeys.map((prop: keyof SourceComponent) =>
+        expect(componentFromAdapter[prop]).to.deep.equal(component[prop])
+      );
     });
 
     it('should resolve the child name and type AND parentType', () => {
       const component = nestedTypes.NESTED_CHILD_COMPONENT;
       const adapter = new DefaultSourceAdapter(component.type, mockRegistry);
-      expect(adapter.getComponent(component.xml)).to.deep.equal(component);
+      const componentFromAdapter = adapter.getComponent(component.xml);
+      sourceComponentKeys.map((prop: keyof SourceComponent) =>
+        expect(componentFromAdapter[prop]).to.deep.equal(component[prop])
+      );
     });
   });
 });

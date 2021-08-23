@@ -141,7 +141,7 @@ describe('DefaultMetadataTransformer', () => {
       expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
     });
 
-    it('should handle nested components (parent)', async () => {
+    it('should handle nested components (children)', async () => {
       // ex: territory2Models/someModel/rules/someRule.Territory2Rule-meta.xml
       const component = nestedTypes.NESTED_CHILD_COMPONENT;
       const parentComponent = nestedTypes.NESTED_PARENT_COMPONENT;
@@ -152,8 +152,7 @@ describe('DefaultMetadataTransformer', () => {
             component.parentType.directoryName,
             parentComponent.fullName,
             component.type.directoryName,
-            component.fullName,
-            `${component.fullName}.${component.type.suffix}`
+            `${nestedTypes.CHILD_COMPONENT_NAME}.${component.type.suffix}`
           ),
           source: component.tree.stream(component.xml),
         },

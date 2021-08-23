@@ -61,30 +61,27 @@ jobs:
       - run:
           name: swap dependencies
           command: yarn remove @salesforce/source-deploy-retrieve && yarn add $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME#$CIRCLE_SHA1
-      # install and build in the core module
       - run:
-          name: install/build this project
+          name: install/build this project's node module
+          # why doesn't SDR put the registry.json in the lib?  I don't know.
           command: |
             yarn install
             yarn build
+            cp src/registry/registry.json lib/src/registry
           working_directory: node_modules/@salesforce/source-deploy-retrieve
       # - run:
       #     name: remove command/core
       #     # deletes command/core to prevent ts conflicts
       #     command: rm -rf node_modules/\@salesforce/command/node_modules/\@salesforce/core
       - run:
-          name: Build
+          name: Build the external project
           command: |
             yarn build
       - release-management/verify-installed-plugin
       - run:
           name: set TESTKIT_ENABLE_ZIP for artifacts on linux
-          command: |
-            echo "export TESTKIT_ENABLE_ZIP=true" >> $BASH_ENV
-      - run:
-          name: Create artifact dir
-          command: |
-            mkdir artifacts
+          command: echo "export TESTKIT_ENABLE_ZIP=true" >> $BASH_ENV
+      - run: mkdir artifacts
       - run:
           name: Nuts
           command: |

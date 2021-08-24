@@ -48,6 +48,14 @@ describe('ManifestResolver', () => {
           type: mockRegistryData.types.decomposedtoplevel,
         },
         {
+          fullName: 'a.child1',
+          type: mockRegistryData.types.decomposedtoplevel.children.types.g,
+        },
+        {
+          fullName: 'a.child2',
+          type: mockRegistryData.types.decomposedtoplevel.children.types.g,
+        },
+        {
           fullName: 'b',
           type: mockRegistryData.types.mixedcontentsinglefile,
         },

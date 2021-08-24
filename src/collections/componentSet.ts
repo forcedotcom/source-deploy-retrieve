@@ -268,6 +268,14 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
 
     const typeMap = new Map<string, string[]>();
+
+    const addToTypeMap = (typeName: string, fullName: string): void => {
+      if (!typeMap.has(typeName)) {
+        typeMap.set(typeName, []);
+      }
+      typeMap.get(typeName).push(fullName);
+    };
+
     for (const key of components.keys()) {
       const [typeId, fullName] = key.split(ComponentSet.KEY_DELIMITER);
       let type = this.registry.getTypeByName(typeId);
@@ -275,12 +283,15 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       if (type.folderContentType) {
         type = this.registry.getTypeByName(type.folderContentType);
       }
+      addToTypeMap(type.name, fullName);
 
-      if (!typeMap.has(type.name)) {
-        typeMap.set(type.name, []);
+      // Add children
+      const componentMap = components.get(key);
+      for (const comp of componentMap.values()) {
+        for (const child of comp.getChildren()) {
+          addToTypeMap(child.type.name, child.fullName);
+        }
       }
-
-      typeMap.get(type.name).push(fullName);
     }
 
     const typeMembers: PackageTypeMembers[] = [];

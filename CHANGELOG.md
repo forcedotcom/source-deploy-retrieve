@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.0.0-orb.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.0-orb.1...v5.0.0-orb.5) (2021-08-24)
+
 ## [5.0.0-orb.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.0-orb.0...v5.0.0-orb.1) (2021-08-23)
 
 ## [5.0.0-orb.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v1.0.7...v5.0.0-orb.0) (2021-08-23)

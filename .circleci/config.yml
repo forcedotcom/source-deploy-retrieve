@@ -124,7 +124,7 @@ workflows:
                   'https://github.com/salesforcecli/plugin-source'
                 ]
       - release-management/release-package:
-          github-release: false
+          github-release: true
           tag: pubtest
           prerelease: true
           post-job-steps:

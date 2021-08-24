@@ -63,7 +63,7 @@ jobs:
           command: yarn remove @salesforce/source-deploy-retrieve && yarn add $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME#$CIRCLE_SHA1
       - run:
           name: install/build <<parameters.external_project_git_url>> in node_modules
-          # why doesn't SDR put the registry.json in the lib?  I don't know.
+          # why doesn't SDR put the registry.json in the lib when run from inside a node module?  I don't know.
           command: |
             yarn install
             yarn build
@@ -110,6 +110,9 @@ workflows:
       - external-nut:
           filters:
             branches:
+              # we don't run again on main because
+              # 1) we already ran on a branch
+              # 2) they aren't required and would run in parallel to release job
               ignore: main
           requires:
             - release-management/test-package
@@ -125,8 +128,6 @@ workflows:
                 ]
       - release-management/release-package:
           github-release: true
-          tag: pubtest
-          prerelease: true
           post-job-steps:
             - when: on_success
             - run: yarn ci-docs
@@ -134,11 +135,9 @@ workflows:
                 channel: 'cli-team-notifications'
                 color: '#9bcd9b'
                 message: 'SDR Library has been published to npm'
-                # event: pass
           requires:
             - release-management/test-package
           filters:
             branches:
-              only: orb
-              # only: main
+              only: main
           context: CLI_CTC

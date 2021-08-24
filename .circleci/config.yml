@@ -77,18 +77,13 @@ jobs:
       - run:
           name: set TESTKIT_ENABLE_ZIP for artifacts on linux
           command: echo "export TESTKIT_ENABLE_ZIP=true" >> $BASH_ENV
-      - run: mkdir artifacts
       - run:
           name: Nuts
           command: |
             echo "Using node: $(node --version)"
             echo "Environment Variables:"
             env
-            export NODE_OPTIONS="--max-old-space-size=8192"
-            yarn test:nuts
-          # this is in the command instead of the circle project environment to prevent it from happening on windows
-      - store_artifacts:
-          path: artifacts
+            NODE_OPTIONS=--max-old-space-size=8192 yarn test:nuts
 
 workflows:
   version: 2
@@ -119,7 +114,7 @@ workflows:
           requires:
             - release-management/test-package
           sfdx_version: latest
-          size: large
+          size: 2xlarge
           matrix:
             parameters:
               os: [linux]

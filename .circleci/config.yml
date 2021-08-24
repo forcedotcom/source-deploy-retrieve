@@ -113,10 +113,13 @@ workflows:
               - os: windows
                 node_version: maintenance
       - external-nut:
+          filters:
+            branches:
+              ignore: main
           requires:
             - release-management/test-package
           sfdx_version: latest
-          size: 2xlarge
+          size: large
           matrix:
             parameters:
               os: [linux]
@@ -139,7 +142,6 @@ workflows:
                 # event: pass
           requires:
             - release-management/test-package
-            - external-nut
           filters:
             branches:
               only: orb

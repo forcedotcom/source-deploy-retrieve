@@ -1831,6 +1831,17 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "inboundcertificate": {
+      "id": "inboundcertificate",
+      "name": "InboundCertificate",
+      "suffix": "inboundCertificate",
+      "directoryName": "inboundCertificates",
+      "inFolder": false,
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
+    },
     "mutingpermissionset": {
       "id": "mutingpermissionset",
       "name": "MutingPermissionSet",
@@ -2534,6 +2545,7 @@
     "emailFolder": "emailfolder",
     "inboundNetworkConnection": "inboundnetworkconnection",
     "outboundNetworkConnection": "outboundnetworkconnection",
+    "inboundCertificate": "inboundcertificate",
     "mutingpermissionset": "mutingpermissionset",
     "myDomainDiscoverableLogin": "mydomaindiscoverablelogin",
     "blacklistedConsumer": "blacklistedconsumer",

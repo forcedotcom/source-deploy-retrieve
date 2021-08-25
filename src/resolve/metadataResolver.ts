@@ -90,7 +90,9 @@ export class MetadataResolver {
       } else if (this.isMetadata(fsPath)) {
         const component = this.resolveComponent(fsPath, false);
         if (component) {
-          component.ensureValidChildren(inclusiveFilter, this.registry);
+          if (component.type?.children) {
+            component.ensureValidChildren();
+          }
           if (!inclusiveFilter || inclusiveFilter.has(component)) {
             components.push(component);
             ignore.add(component.content);

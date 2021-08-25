@@ -93,16 +93,21 @@ export class SourceComponent implements MetadataComponent {
     }
     return {} as T;
   }
-  // Ensures that the children of the provided SourceComponent are valid child
-  // types before adding them to the returned ComponentSet. Invalid child types
-  // can occur when projects are structured in an atypical way such as having
-  // ApexClasses or Layouts within a CustomObject folder.
+
+  /**
+   * Ensures that the children of the provided SourceComponent are valid child
+   * types before adding them to the returned ComponentSet. Invalid child types
+   * can occur when projects are structured in an atypical way such as having
+   * ApexClasses or Layouts within a CustomObject folder.
+   * @param compSet a component set to add children to
+   * @param registry the metadata registry access
+   */
   public ensureValidChildren(
     compSet?: ComponentSet,
     registry: RegistryAccess = new RegistryAccess()
   ): ComponentSet {
     compSet = compSet || new ComponentSet([], registry);
-    const validChildTypes = this.type.children ? Object.keys(this.type.children?.types) : [];
+    const validChildTypes = this.type?.children ? Object.keys(this.type?.children?.types) : [];
     for (const child of this.getChildren()) {
       // Ensure only valid child types are included with the parent.
       if (!validChildTypes.includes(child.type?.id)) {

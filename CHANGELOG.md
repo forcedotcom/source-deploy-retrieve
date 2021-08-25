@@ -1,3 +1,9 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [4.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.1.1...v4.2.0) (2021-08-25)
+
 # 4.0.3 - August 19, 2021
 
 ## Fixed

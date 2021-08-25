@@ -1,231 +1,143 @@
----
 version: 2.1
-
 orbs:
-  win: circleci/windows@2.2.0
-  release-management: salesforce/npm-release-management@4.12.1
+  release-management: salesforce/npm-release-management@4
   slack: circleci/slack@3.4.2
 
-parameters:
-  publish:
-    type: boolean
-    default: false
-  publish-type:
-    type: string
-    default: patch
-  scheduled-build:
-    type: string
-    default: ''
-
-_refs:
-  defaults: &defaults
-    working_directory: ~/cli
-    docker:
-      - image: node:12
-  ssh-config: &ssh-config
-    fingerprints:
-      - '1d:a9:9c:29:62:13:c9:db:f6:df:06:89:02:24:40:4a'
-  restore_cache: &restore_cache
-    keys:
-      - v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "yarn.lock"}}
-      - v1-npm-{{checksum ".circleci/config.yml"}}
-  gh-config: &gh-config
-    name: Configuring GitHub
-    command: |
-      git config credential.helper 'cache --timeout=120'
-      git config user.email "$GH_EMAIL"
-      git config user.name "Release Bot"
-  lint: &lint
-    name: Lint source files
-    command: yarn lint
-  install: &install
-    name: Install dependencies
-    command: |
-      yarn --version
-      node --version
-      yarn
-  build: &build
-    name: Build project
-    command: yarn build
-  test: &test
-    name: Run tests
-    command: yarn test
-  gus-prepare-environment-variables: &gus-prepare-environment-variables
-    name: 'Prepare environment variables for GUS Change Case Management'
-    command: |
-      export GUS_BUILD="<< pipeline.parameters.scheduled-build >>"
-      echo "export SF_CHANGE_CASE_SCHEDULE_BUILD=offcore.tooling.$GUS_BUILD" >> $BASH_ENV
-  docs-deploy: &docs-deploy
-    name: Generate and deploy docs
-    command: yarn ci-docs
-
-commands:
-  build-artifact:
-    steps: 
-      - run:
-          name: Archiving tarball
-          command: |
-            yarn pack
-            mkdir artifact
-            find . -name "*.tgz" -type f -exec cp {} ./artifact \;
-      - store_artifacts:
-          path: ./artifact
-
 jobs:
-  node-latest: &node-test
-    docker:
-      - image: node:latest
-    working_directory: ~/cli
+  external-nut:
+    description: Runs NUTs from other (external) repos by cloning them.  Substitutes a dependency for the current pull request.  For example, you're testing a PR to a library and want to test a plugin in another repo that uses the library.
+
+    parameters:
+      node_version:
+        description: version of node to run tests against
+        type: string
+        default: 'latest'
+      os:
+        description: operating system to run tests on
+        type: enum
+        enum: ['linux', 'windows']
+        default: 'linux'
+      sfdx_version:
+        description: 'By default, the latest version of the standalone CLI will be installed. To install via npm, supply a version tag such as "latest" or "6".'
+        default: ''
+        type: string
+      sfdx_executable_path:
+        description: "Path to sfdx executable to be used by NUTs, defaults to ''"
+        default: ''
+        type: string
+      external_project_git_url:
+        description: 'The url that will be cloned.  This contains the NUTs you want to run.  Ex: https://github.com/salesforcecli/plugin-user'
+        type: string
+        default: ''
+      size:
+        type: enum
+        description: |
+          The size of machine resource to use. Defaults to medium.
+        default: medium
+        enum:
+          - medium
+          - large
+          - xlarge
+          - 2xlarge
+
+    executor:
+      name: release-management/<< parameters.os >>
+      size: << parameters.size >>
+
+    environment:
+      TESTKIT_EXECUTABLE_PATH: <<parameters.sfdx_executable_path>>
+
     steps:
-      - checkout
-      - restore_cache: *restore_cache
-      - run: *install
-      - run: *lint
-      - run: *build
-      - run: *test
-      - store_test_results:
-          path: test-results
-      - build-artifact
-
-  node-12:
-    <<: *node-test
-    docker:
-      - image: node:12
-
-  cache:
-    <<: *node-test
-    steps:
-      - checkout
-      - run: *install
-      - save_cache:
-          key: v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "yarn.lock"}}
-          paths:
-            - ~/cli/node_modules
-            - /usr/local/share/.cache/yarn
-            - /usr/local/share/.config/yarn
-
-  run-win-tests:
-    description: 'Run tests on Windows'
-    executor: win/default
-    steps:
-      - run: git config --global core.autocrlf false
-      - checkout
-      - restore_cache:
-          keys:
-            - dependency-cache-win1-{{checksum ".circleci/config.yml"}}-{{checksum "yarn.lock"}}
-            # if cache for exact version of 'package.json' is not present, then load the most recent cache
-            - dependency-cache-win1-
-      - run: *install
-      - save_cache:
-          key: dependency-cache-win1-{{checksum ".circleci/config.yml"}}-{{checksum "yarn.lock"}}
-          paths:
-            - node_modules
-      - run: *lint
-      - run: *build
-      - run: *test
-      - store_test_results:
-          path: test-results
-
-  publish:
-    <<: *defaults
-    steps:
-      - slack/notify:
-          channel: 'pdt_releases'
-          color: '#FFDEAD'
-          message: 'Starting Publish for SDR Library'
-      - add_ssh_keys: *ssh-config
-      - checkout
-      - restore_cache: *restore_cache
-      - run: *gh-config
-      - run: *install
-      - run: *gus-prepare-environment-variables
-      - release-management/install-change-case-mgmt
-      - release-management/change-case-create
-      - run: *build
-      - run: *docs-deploy
+      - release-management/install-node:
+          version: <<parameters.node_version>>
+          os: <<parameters.os>>
+      - release-management/install-sfdx:
+          version: <<parameters.sfdx_version>>
+          os: <<parameters.os>>
+      - run: git clone <<parameters.external_project_git_url>> $(pwd)
       - run:
-          name: Bump package version
+          name: Install dependencies
+          command: yarn
+      - run:
+          name: swap dependencies
+          command: yarn remove @salesforce/source-deploy-retrieve && yarn add $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME#$CIRCLE_SHA1
+      - run:
+          name: install/build <<parameters.external_project_git_url>> in node_modules
+          # why doesn't SDR put the registry.json in the lib when run from inside a node module?  I don't know.
           command: |
-            yarn version --<< pipeline.parameters.publish-type >> --no-git-tag-version
-            git add package.json
-            export RELEASE_TAG="$(node -pe "require('./package.json').version")"
-            echo "export RELEASE_VERSION=$RELEASE_TAG" >> $BASH_ENV
-            source $BASH_ENV
-            git commit -m "chore: updated version $RELEASE_TAG"
+            yarn install
+            yarn build
+            cp src/registry/registry.json lib/src/registry
+          working_directory: node_modules/@salesforce/source-deploy-retrieve
       - run:
-          name: Set .npmrc
-          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-      - run: yarn publish --non-interactive
-      - run: git push origin main
-      - run:
-          name: Tag the release and push to repo
+          name: Build the external project
           command: |
-            git tag v${RELEASE_VERSION}
-            git push --tags
-      - slack/notify:
-          channel: 'pdt_releases'
-          color: '#9bcd9b'
-          message: 'SDR Library v${RELEASE_VERSION} has been published to npm'
-      - slack/status:
-          channel: 'pdt_releases'
-          fail_only: true
+            yarn build
+      - release-management/verify-installed-plugin
       - run:
-          when: on_fail
-          name: Close CTC case as Not Implemented
-          command: |
-            if [ -z "${SF_CHANGE_CASE_SFDX_AUTH_URL}" ] || [ -z "${SF_CHANGE_CASE_TEMPLATE_ID}" ] || [ -z "${SF_CHANGE_CASE_SCHEDULE_BUILD}" ]; then
-                echo "Environment not configured for CTC"
-            else
-                sfchangecase close --location "https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME" --status "Not Implemented"
-            fi
+          name: set TESTKIT_ENABLE_ZIP for artifacts on linux
+          command: echo "export TESTKIT_ENABLE_ZIP=true" >> $BASH_ENV
       - run:
-          when: on_success
-          name: All Good! Close CTC case/implementations
+          name: Nuts
           command: |
-            if [ -z "${SF_CHANGE_CASE_SFDX_AUTH_URL}" ] || [ -z "${SF_CHANGE_CASE_TEMPLATE_ID}" ] || [ -z "${SF_CHANGE_CASE_SCHEDULE_BUILD}" ]; then
-                echo "Environment not configured for CTC"
-            else
-                sfchangecase close --location "https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME"
-            fi
-
+            echo "Using node: $(node --version)"
+            echo "Environment Variables:"
+            env
+            NODE_OPTIONS=--max-old-space-size=8192 yarn test:nuts
 workflows:
-  version: 2.1
-
-  commit-workflow:
-    unless: << pipeline.parameters.publish >>
+  version: 2
+  test-and-release:
     jobs:
-      - node-latest
-      - node-12
-      - cache:
+      - release-management/validate-pr:
           filters:
-            tags:
-              only: /^v.*/
             branches:
-              ignore: /.*/
-      - run-win-tests
-
-  publish-workflow:
-      when: << pipeline.parameters.publish >>
-      jobs:
-        - slack/approval-notification:
-            message: Pending Approval for Publish of SDRL (Source Deploy Retrieve Library)
-            channel: 'pdt_releases'
-            color: '#0E1111'
-        - node-latest
-        - node-12
-        - run-win-tests
-        - hold: # Requires manual approval in Circle Ci
-            type: approval
-        - publish:
-            context:
-              - pdt-publish-restricted-context
-              - CLI_CTC
-            filters:
-              branches:
-                only:
-                  - main
-            requires:
-              - node-latest
-              - node-12
-              - run-win-tests
-              - hold
+              ignore: main
+      - release-management/test-package:
+          matrix:
+            parameters:
+              os:
+                - linux
+                - windows
+              node_version:
+                - latest
+                - lts
+                - maintenance
+            exclude:
+              - os: windows
+                node_version: lts
+              - os: windows
+                node_version: maintenance
+      - external-nut:
+          filters:
+            branches:
+              # we don't run again on main because
+              # 1) we already ran on a branch
+              # 2) they aren't required and would run in parallel to release job
+              ignore: main
+          requires:
+            - release-management/test-package
+          sfdx_version: latest
+          size: 2xlarge
+          matrix:
+            parameters:
+              os: [linux]
+              node_version: [lts]
+              external_project_git_url:
+                [
+                  'https://github.com/salesforcecli/plugin-source'
+                ]
+      - release-management/release-package:
+          github-release: true
+          post-job-steps:
+            - when: on_success
+            - run: yarn ci-docs
+            - slack/notify:
+                channel: 'cli-team-notifications'
+                color: '#9bcd9b'
+                message: 'SDR Library has been published to npm'
+          requires:
+            - release-management/test-package
+          filters:
+            branches:
+              only: main
+          context: CLI_CTC

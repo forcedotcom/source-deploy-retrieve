@@ -18,10 +18,9 @@ $ yarn build
 
 ## Branches
 
-- We work in `develop`
 - Our released (_production_) branch is `main`
 - Our work happens in _topic_ branches (feature and/or bug fix)
-  - These branches are based on `develop` and can live in forks for external contributors or within this repository for authors
+  - These branches are based on `main` and can live in forks for external contributors or within this repository for authors
   - Be sure to prefix branches in this repository with `<developer-name>/`
   - Be sure to keep branches up-to-date using `rebase`
 
@@ -72,7 +71,7 @@ yarn local:install /path/to/other/package
 
 ## Updating the registry
 
-The library uses the [registry file](../src/registry/registry.json) to resolve how to process metadata types. This needs to be updated on every mayor platform release to add all the new metadata types. Run the command below against an org on the latest platform API version:
+The library uses the [registry file](../src/registry/registry.json) to resolve how to process metadata types. This needs to be updated as new metadata types are added to the platform at major releases. Run the command below against an org on the latest platform API version:
 
 ```
 yarn update-registry <api version e.g. 51.0> -u <username>

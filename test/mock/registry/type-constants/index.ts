@@ -14,6 +14,7 @@ import * as mixedContentSingleFile from './mixedContentSingleFileConstants';
 import * as decomposed from './decomposedConstants';
 import * as decomposedtoplevel from './decomposedTopLevelConstants';
 import * as nonDecomposed from './nonDecomposedConstants';
+import * as nestedTypes from './nestedTypesConstants';
 export {
   xmlInFolder,
   document,
@@ -25,4 +26,5 @@ export {
   decomposed,
   decomposedtoplevel,
   nonDecomposed,
+  nestedTypes,
 };

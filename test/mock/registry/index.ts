@@ -16,5 +16,6 @@ export {
   decomposed,
   nonDecomposed,
   decomposedtoplevel,
+  nestedTypes,
 } from './type-constants';
 export { mockRegistry, mockRegistryData } from './mockRegistry';

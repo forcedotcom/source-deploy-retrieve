@@ -54,14 +54,14 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
 
     let component: SourceComponent;
     if (rootMetadata) {
-      const componentName = this.type.folderType
-        ? `${parentName(rootMetadata.path)}/${rootMetadata.fullName}`
-        : rootMetadata.fullName;
       component = new SourceComponent(
         {
-          name: componentName,
+          name: this.calculateName(rootMetadata),
           type: this.type,
           xml: rootMetadata.path,
+          parentType: this.type.folderType
+            ? this.registry.getTypeByName(this.type.folderType)
+            : undefined,
         },
         this.tree,
         this.forceIgnore
@@ -144,6 +144,28 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     if (match && !match[1].includes('.') && parts.length > 1) {
       return { fullName: match[1], suffix: undefined, path: fsPath };
     }
+  }
+
+  private calculateName(rootMetadata: MetadataXml): string {
+    // not using folders?  then name is fullname
+    if (!this.type.folderType) {
+      return rootMetadata.fullName;
+    }
+    const grandparentType = this.registry.getTypeByName(this.type.folderType);
+
+    // type is in a nested inside another type (ex: Territory2Model).  So the names are modelName.ruleName or modelName.territoryName
+    if (grandparentType.folderType && grandparentType.folderType !== this.type.id) {
+      const splits = rootMetadata.path.split(sep);
+      return `${splits[splits.indexOf(grandparentType.directoryName) + 1]}.${
+        rootMetadata.fullName
+      }`;
+    }
+    // this is the top level of nested types (ex: in a Territory2Model, the Territory2Model)
+    if (grandparentType.folderType === this.type.id) {
+      return rootMetadata.fullName;
+    }
+    // other folderType scenarios (report, dashboard, emailTemplate, etc) where the parent is of a different type
+    return `${parentName(rootMetadata.path)}/${rootMetadata.fullName}`;
   }
 
   /**

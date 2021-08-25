@@ -305,6 +305,10 @@ describe('ComponentSet', () => {
               members: ['a'],
             },
             {
+              name: 'G',
+              members: ['a.child1', 'a.child2'],
+            },
+            {
               name: 'MixedContentSingleFile',
               members: ['b', 'c'],
             },
@@ -328,6 +332,10 @@ describe('ComponentSet', () => {
             {
               name: 'DecomposedTopLevel',
               members: ['a'],
+            },
+            {
+              name: 'G',
+              members: ['a.child1', 'a.child2'],
             },
             {
               name: 'MixedContentSingleFile',
@@ -355,6 +363,10 @@ describe('ComponentSet', () => {
               members: ['a'],
             },
             {
+              name: 'G',
+              members: ['a.child1', 'a.child2'],
+            },
+            {
               name: 'MixedContentSingleFile',
               members: ['b', 'c'],
             },
@@ -378,6 +390,10 @@ describe('ComponentSet', () => {
             {
               name: 'DecomposedTopLevel',
               members: ['a'],
+            },
+            {
+              name: 'G',
+              members: ['a.child1', 'a.child2'],
             },
             {
               name: 'MixedContentSingleFile',

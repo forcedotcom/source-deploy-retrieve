@@ -21,6 +21,11 @@ export const BASIC: VirtualFile = {
         <name>${decomposedtoplevel.name}</name>
     </types>
     <types>
+        <members>a.child1</members>
+        <members>a.child2</members>
+        <name>G</name>
+    </types>
+    <types>
         <members>b</members>
         <members>c</members>
         <name>${mixedcontentsinglefile.name}</name>

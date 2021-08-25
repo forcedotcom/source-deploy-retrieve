@@ -66,3 +66,7 @@ See the [API documentation](https://forcedotcom.github.io/source-deploy-retrieve
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for details on how to contribute to the library.
 
 See [developing.md](./contributing/developing.md) for details on building and testing the library locally.
+
+## Publishing
+
+SDR publishes when changes are merged into `main`.

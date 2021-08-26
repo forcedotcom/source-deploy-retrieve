@@ -95,6 +95,7 @@ export class MetadataResolver {
             ignore.add(component.content);
           } else {
             for (const child of component.getChildren()) {
+              component.ensureValidChildren(new ComponentSet([]), this.registry);
               if (inclusiveFilter.has(child)) {
                 components.push(child);
               }

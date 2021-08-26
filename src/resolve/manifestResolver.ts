@@ -62,10 +62,11 @@ export class ManifestResolver {
 
     for (const typeMembers of packageTypeMembers) {
       const typeName = typeMembers.name;
+      let type = this.registry.getTypeByName(typeName);
+      const parentType = type.folderType ? this.registry.getTypeByName(type.folderType) : undefined;
       for (const fullName of normalizeToArray(typeMembers.members)) {
-        let type = this.registry.getTypeByName(typeName);
-        // if there is no / delimiter and it's a type in folders, infer folder component
-        if (type.folderType && !fullName.includes('/')) {
+        // if there is no / delimiter and it's a type in folders that aren't nestedType, infer folder component
+        if (type.folderType && !fullName.includes('/') && parentType.folderType !== parentType.id) {
           type = this.registry.getTypeByName(type.folderType);
         }
         components.push({ fullName, type });

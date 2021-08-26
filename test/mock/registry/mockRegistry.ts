@@ -15,6 +15,26 @@ import { RegistryAccess } from '../../../src';
 export const mockRegistryData = {
   types: {
     /**
+     * nested folder types
+     *
+     * e.g. territoryRules goes inside a folder for each territory2Model
+     */
+    nestedparent: {
+      id: 'nestedparent',
+      directoryName: 'nestedParents',
+      name: 'NestedParent',
+      suffix: 'nestedParent',
+      folderType: 'nestedparent',
+    },
+    nestedchild: {
+      id: 'nestedchild',
+      directoryName: 'nestedChildren',
+      name: 'NestedChild',
+      suffix: 'nestedChild',
+      folderType: 'nestedparent',
+    },
+
+    /**
      * Metadata with no content and is contained in a folder type component
      *
      * e.g. Report in ReportFolder

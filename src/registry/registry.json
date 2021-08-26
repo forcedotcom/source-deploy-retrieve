@@ -1397,21 +1397,21 @@
       "name": "Territory2Model",
       "suffix": "territory2Model",
       "directoryName": "territory2Models",
-      "inFolder": false
+      "folderType": "territory2model"
     },
     "territory2rule": {
       "id": "territory2rule",
       "name": "Territory2Rule",
       "suffix": "territory2Rule",
-      "directoryName": "territory2Models",
-      "inFolder": false
+      "directoryName": "rules",
+      "folderType": "territory2model"
     },
     "territory2": {
       "id": "territory2",
       "name": "Territory2",
       "suffix": "territory2",
-      "directoryName": "territory2Models",
-      "inFolder": false
+      "directoryName": "territories",
+      "folderType": "territory2model"
     },
     "campaigninfluencemodel": {
       "id": "campaigninfluencemodel",

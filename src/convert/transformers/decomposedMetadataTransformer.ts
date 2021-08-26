@@ -51,7 +51,8 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     mergeWith?: SourceComponent
   ): Promise<WriteInfo[]> {
     const writeInfos: WriteInfo[] = [];
-    const childrenOfMergeComponent = mergeWith && mergeWith.ensureValidChildren();
+    const childrenOfMergeComponent =
+      mergeWith && mergeWith.ensureValidChildren(new ComponentSet([]), this.registry);
     const { type, fullName: parentFullName } = component;
 
     let parentXmlObject: JsonMap;

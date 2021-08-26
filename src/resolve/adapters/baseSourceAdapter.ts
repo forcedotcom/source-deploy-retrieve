@@ -126,7 +126,11 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     const parentPath = dirname(path);
     const parts = parentPath.split(sep);
     const typeFolderIndex = parts.lastIndexOf(this.type.directoryName);
-    const allowedIndex = this.type.inFolder ? parts.length - 2 : parts.length - 1;
+    // nestedTypes (ex: territory2) have a folderType equal to their type but are themselves in a folder per metadata item, with child folders for rules/territories
+    const allowedIndex =
+      this.type.inFolder || this.type.folderType === this.type.id
+        ? parts.length - 2
+        : parts.length - 1;
 
     if (typeFolderIndex !== allowedIndex) {
       return undefined;

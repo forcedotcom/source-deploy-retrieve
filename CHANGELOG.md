@@ -1,3 +1,23 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [4.3.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.3.0...v4.3.1) (2021-08-25)
+
+
+### Bug Fixes
+
+* add children to manifest during convert ([#442](https://github.com/forcedotcom/source-deploy-retrieve/issues/442)) ([3017e9d](https://github.com/forcedotcom/source-deploy-retrieve/commit/3017e9d45c6f0bbbb9adefaa455ce9775128e2bf))
+
+## [4.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.2.0...v4.3.0) (2021-08-25)
+
+
+### Features
+
+* add InboundCertificate to metadata registry ([#441](https://github.com/forcedotcom/source-deploy-retrieve/issues/441)) ([d833485](https://github.com/forcedotcom/source-deploy-retrieve/commit/d833485b5e9aeebfb9dd5baf89fab95f4e6032d8))
+
+## [4.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.1.1...v4.2.0) (2021-08-25)
+
 # 4.0.3 - August 19, 2021
 
 ## Fixed

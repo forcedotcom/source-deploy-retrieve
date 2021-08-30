@@ -36,10 +36,10 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
         if (!state[fullName]) {
           state[fullName] = { component, children: new ComponentSet([], this.registry) };
         }
-        state[fullName].children = component.ensureValidChildren(
-          state[fullName].children,
-          this.registry
-        );
+        const children = component.getChildren();
+        if (children) {
+          state[fullName].children = new ComponentSet(children, this.registry);
+        }
       });
     }
     // noop since the finalizer will push the writes to the component writer
@@ -51,8 +51,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     mergeWith?: SourceComponent
   ): Promise<WriteInfo[]> {
     const writeInfos: WriteInfo[] = [];
-    const childrenOfMergeComponent =
-      mergeWith && mergeWith.ensureValidChildren(new ComponentSet([]), this.registry);
+    const childrenOfMergeComponent = new ComponentSet(mergeWith?.getChildren());
     const { type, fullName: parentFullName } = component;
 
     let parentXmlObject: JsonMap;

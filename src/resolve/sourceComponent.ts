@@ -76,12 +76,28 @@ export class SourceComponent implements MetadataComponent {
     }
     return sources;
   }
-
+  /**
+   * Ensures that the children of SourceComponent are valid child
+   * types. Invalid child types can occur when projects are structured in an atypical way such as having
+   * ApexClasses or Layouts within a CustomObject folder.
+   *
+   * @return SourceComponent[] containing valid children
+   */
   public getChildren(): SourceComponent[] {
     if (!this.parent && this.type.children) {
-      return this.content
+      const children = this.content
         ? this.getDecomposedChildren(this.content)
         : this.getNonDecomposedChildren();
+
+      const validChildTypes = this.type?.children ? Object.keys(this.type?.children?.types) : [];
+      for (const child of children) {
+        // Ensure only valid child types are included with the parent.
+        if (!validChildTypes.includes(child.type?.id)) {
+          const filePath = child.xml || child.content;
+          throw new TypeInferenceError('error_unexpected_child_type', [filePath, this.type.name]);
+        }
+      }
+      return children;
     }
     return [];
   }
@@ -92,31 +108,6 @@ export class SourceComponent implements MetadataComponent {
       return this.parse<T>(contents.toString());
     }
     return {} as T;
-  }
-
-  /**
-   * Ensures that the children of the provided SourceComponent are valid child
-   * types before adding them to the returned ComponentSet. Invalid child types
-   * can occur when projects are structured in an atypical way such as having
-   * ApexClasses or Layouts within a CustomObject folder.
-   * @param compSet a component set to add children to
-   * @param registry the metadata registry access
-   */
-  public ensureValidChildren(
-    compSet?: ComponentSet,
-    registry: RegistryAccess = new RegistryAccess()
-  ): ComponentSet {
-    compSet = compSet || new ComponentSet([], registry);
-    const validChildTypes = this.type?.children ? Object.keys(this.type?.children?.types) : [];
-    for (const child of this.getChildren()) {
-      // Ensure only valid child types are included with the parent.
-      if (!validChildTypes.includes(child.type?.id)) {
-        const filePath = child.xml || child.content;
-        throw new TypeInferenceError('error_unexpected_child_type', [filePath, this.type.name]);
-      }
-      compSet.add(child);
-    }
-    return compSet;
   }
 
   public parseXmlSync<T = JsonMap>(): T {

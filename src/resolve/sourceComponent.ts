@@ -9,13 +9,11 @@ import { parse } from 'fast-xml-parser';
 import { ForceIgnore } from './forceIgnore';
 import { NodeFSTreeContainer, TreeContainer, VirtualTreeContainer } from './treeContainers';
 import { MetadataComponent, VirtualDirectory } from './types';
-import { baseName, normalizeToArray, parseMetadataXml } from '../utils';
+import { baseName, normalizeToArray, parseMetadataXml, trimUntil } from '../utils';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { SfdxFileFormat } from '../convert';
-import { trimUntil } from '../utils/path';
-import { MetadataType, RegistryAccess } from '../registry';
-import { ComponentSet } from '../collections';
+import { MetadataType } from '../registry';
 import { TypeInferenceError } from '../errors';
 
 export type ComponentProperties = {
@@ -77,8 +75,10 @@ export class SourceComponent implements MetadataComponent {
     return sources;
   }
   /**
-   * Ensures that the children of SourceComponent are valid child
-   * types. Invalid child types can occur when projects are structured in an atypical way such as having
+   * returns the children of a parent SourceComponent
+   *
+   * Ensures that the children of SourceComponent are valid child types.
+   * Invalid child types can occur when projects are structured in an atypical way such as having
    * ApexClasses or Layouts within a CustomObject folder.
    *
    * @return SourceComponent[] containing valid children

@@ -251,9 +251,12 @@ export class SourceComponent implements MetadataComponent {
    * be in the registry for proper classification and for possible use in
    * decomposition/recomposition.
    *
+   * Default value is true, so the only way to return false is to explicitly
+   * set it in the registry as false.
+   *
    * E.g., CustomFieldTranslation.
    */
   get isAddressable(): boolean {
-    return this.type.isAddressable;
+    return this.type.isAddressable !== false;
   }
 }

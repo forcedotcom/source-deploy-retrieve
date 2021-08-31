@@ -36,7 +36,12 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
         if (!state[fullName]) {
           state[fullName] = { component, children: new ComponentSet([], this.registry) };
         }
-        state[fullName].children = this.ensureValidChildren(component, state[fullName].children);
+        const children = component.getChildren();
+        if (children) {
+          children.map((child) => {
+            state[fullName].children.add(child);
+          });
+        }
       });
     }
     // noop since the finalizer will push the writes to the component writer
@@ -48,7 +53,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     mergeWith?: SourceComponent
   ): Promise<WriteInfo[]> {
     const writeInfos: WriteInfo[] = [];
-    const childrenOfMergeComponent = mergeWith && this.ensureValidChildren(mergeWith);
+    const childrenOfMergeComponent = new ComponentSet(mergeWith?.getChildren());
     const { type, fullName: parentFullName } = component;
 
     let parentXmlObject: JsonMap;
@@ -138,27 +143,6 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     }
 
     return writeInfos;
-  }
-
-  // Ensures that the children of the provided SourceComponent are valid child
-  // types before adding them to the returned ComponentSet. Invalid child types
-  // can occur when projects are structured in an atypical way such as having
-  // ApexClasses or Layouts within a CustomObject folder.
-  private ensureValidChildren(component: SourceComponent, compSet?: ComponentSet): ComponentSet {
-    compSet = compSet || new ComponentSet([], this.registry);
-    const validChildTypes = Object.keys(component.type.children.types);
-    for (const child of component.getChildren()) {
-      // Ensure only valid child types are included with the parent.
-      if (!validChildTypes.includes(child.type?.id)) {
-        const filePath = child.xml || child.content;
-        throw new TypeInferenceError('error_unexpected_child_type', [
-          filePath,
-          component.type.name,
-        ]);
-      }
-      compSet.add(child);
-    }
-    return compSet;
   }
 
   private async getComposedMetadataEntries(component: SourceComponent): Promise<[string, any][]> {

@@ -126,41 +126,4 @@ describe('DecomposedSourceAdapter', () => {
     const adapter = new DefaultSourceAdapter(type, mockRegistry);
     expect(adapter.getComponent(path)).to.be.undefined;
   });
-
-  it('should throw an Error when unexpected child type found in parent folder', () => {
-    // This is most likely an odd project structure such as metadata found within a CustomObject
-    // folder that is not a child type of CustomObject. E.g., Layout, SharingRules, ApexClass.
-    // This test adds an ApexClass to the equivalent of here:
-    // .../main/default/objects/MyObject/classes/MyApexClass.cls-meta.xml
-    // The actual ApexClass file path for the test is:
-    // path/to/decomposeds/a/classes/a.mcf-meta.xml
-    const { CONTENT_NAMES, XML_NAMES } = matchingContentFile;
-    const fsUnexpectedChild = [
-      {
-        dirPath: decomposed.DECOMPOSED_PATH,
-        children: [
-          decomposed.DECOMPOSED_CHILD_XML_NAME_1,
-          decomposed.DECOMPOSED_CHILD_DIR,
-          'classes',
-        ],
-      },
-      {
-        dirPath: decomposed.DECOMPOSED_CHILD_DIR_PATH,
-        children: [decomposed.DECOMPOSED_CHILD_XML_NAME_2],
-      },
-      {
-        dirPath: join(decomposed.DECOMPOSED_PATH, 'classes'),
-        children: [CONTENT_NAMES[0], XML_NAMES[0]],
-      },
-    ];
-    const tree = new VirtualTreeContainer(fsUnexpectedChild);
-    const adapter = new DecomposedSourceAdapter(type, mockRegistry, undefined, tree);
-    const fsPath = join(decomposed.DECOMPOSED_PATH, 'classes', XML_NAMES[0]);
-
-    assert.throws(
-      () => adapter.getComponent(fsPath, false),
-      TypeInferenceError,
-      nls.localize('error_unexpected_child_type', [fsPath, type.name])
-    );
-  });
 });

@@ -25,12 +25,29 @@ import {
   MATCHING_RULES_COMPONENT,
 } from '../mock/registry/type-constants/nonDecomposedConstants';
 import { createSandbox } from 'sinon';
+import { MetadataType } from '../../src';
 
 const env = createSandbox();
 
 describe('SourceComponent', () => {
   it('should return correct fullName for components without a parent', () => {
     expect(DECOMPOSED_COMPONENT.fullName).to.equal(DECOMPOSED_COMPONENT.name);
+  });
+
+  it('should return whether the type is addressable', () => {
+    const type: MetadataType = {
+      id: 'customfieldtranslation',
+      name: 'CustomFieldTranslation',
+      directoryName: 'fields',
+      suffix: 'fieldTranslation',
+    };
+    expect(new SourceComponent({ name: type.name, type }).isAddressable).to.equal(true);
+    type.isAddressable = false;
+    expect(new SourceComponent({ name: type.name, type }).isAddressable).to.equal(false);
+    type.isAddressable = true;
+    expect(new SourceComponent({ name: type.name, type }).isAddressable).to.equal(true);
+    type.isAddressable = undefined;
+    expect(new SourceComponent({ name: type.name, type }).isAddressable).to.equal(true);
   });
 
   it('should return correct markedForDelete status', () => {

@@ -283,7 +283,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       if (type.folderContentType) {
         type = this.registry.getTypeByName(type.folderContentType);
       }
-      addToTypeMap(type.name, fullName);
+      if (type.isAddressable !== false) {
+        addToTypeMap(type.name, fullName);
+      }
 
       // Add children
       const componentMap = components.get(key);

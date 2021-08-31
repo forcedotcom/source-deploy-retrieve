@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.3.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.3.2...v4.3.3) (2021-08-31)
+
+
+### Bug Fixes
+
+* Wr/aura under object main ([#443](https://github.com/forcedotcom/source-deploy-retrieve/issues/443)) ([cc5e471](https://github.com/forcedotcom/source-deploy-retrieve/commit/cc5e471b347ca1c2ed764de9c1db21d29d7af01e))
+
 ### [4.3.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.3.1...v4.3.2) (2021-08-26)
 
 ### [4.3.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.3.0...v4.3.1) (2021-08-25)

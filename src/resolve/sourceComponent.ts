@@ -9,12 +9,12 @@ import { parse } from 'fast-xml-parser';
 import { ForceIgnore } from './forceIgnore';
 import { NodeFSTreeContainer, TreeContainer, VirtualTreeContainer } from './treeContainers';
 import { MetadataComponent, VirtualDirectory } from './types';
-import { baseName, normalizeToArray, parseMetadataXml } from '../utils';
+import { baseName, normalizeToArray, parseMetadataXml, trimUntil } from '../utils';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { SfdxFileFormat } from '../convert';
-import { trimUntil } from '../utils/path';
 import { MetadataType } from '../registry';
+import { TypeInferenceError } from '../errors';
 
 export type ComponentProperties = {
   name: string;
@@ -74,12 +74,30 @@ export class SourceComponent implements MetadataComponent {
     }
     return sources;
   }
-
+  /**
+   * returns the children of a parent SourceComponent
+   *
+   * Ensures that the children of SourceComponent are valid child types.
+   * Invalid child types can occur when projects are structured in an atypical way such as having
+   * ApexClasses or Layouts within a CustomObject folder.
+   *
+   * @return SourceComponent[] containing valid children
+   */
   public getChildren(): SourceComponent[] {
     if (!this.parent && this.type.children) {
-      return this.content
+      const children = this.content
         ? this.getDecomposedChildren(this.content)
         : this.getNonDecomposedChildren();
+
+      const validChildTypes = this.type?.children ? Object.keys(this.type?.children?.types) : [];
+      for (const child of children) {
+        // Ensure only valid child types are included with the parent.
+        if (!validChildTypes.includes(child.type?.id)) {
+          const filePath = child.xml || child.content;
+          throw new TypeInferenceError('error_unexpected_child_type', [filePath, this.type.name]);
+        }
+      }
+      return children;
     }
     return [];
   }

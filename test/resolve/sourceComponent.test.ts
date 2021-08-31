@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SourceComponent } from '../../src/resolve';
+import { SourceComponent, VirtualTreeContainer } from '../../src/resolve';
 import { RegistryTestUtil } from './registryTestUtil';
 import {
   xmlInFolder,
@@ -12,8 +12,9 @@ import {
   mixedContentDirectory,
   matchingContentFile,
   mockRegistryData,
+  mockRegistry,
 } from '../mock/registry';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { DECOMPOSED_COMPONENT } from '../mock/registry/type-constants/decomposedConstants';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
 import {
@@ -26,6 +27,10 @@ import {
 } from '../mock/registry/type-constants/nonDecomposedConstants';
 import { createSandbox } from 'sinon';
 import { MetadataType } from '../../src';
+import { join } from 'path';
+import { DecomposedSourceAdapter } from '../../src/resolve/adapters';
+import { TypeInferenceError } from '../../src/errors';
+import { nls } from '../../src/i18n';
 
 const env = createSandbox();
 
@@ -236,6 +241,43 @@ describe('SourceComponent', () => {
         []
       );
       expect(noXml.getChildren()).to.be.empty;
+    });
+
+    it('should throw an Error when unexpected child type found in parent folder - regardless of metadata type category', () => {
+      // This is most likely an odd project structure such as metadata found within a CustomObject
+      // folder that is not a child type of CustomObject. E.g., Layout, SharingRules, ApexClass.
+      // This test adds an ApexClass to the equivalent of here:
+      // .../main/default/objects/MyObject/classes/MyApexClass.cls-meta.xml
+      // The actual ApexClass file path for the test is:
+      // path/to/decomposeds/a/classes/a.mcf-meta.xml
+      const { CONTENT_NAMES, XML_NAMES } = matchingContentFile;
+      const fsUnexpectedChild = [
+        {
+          dirPath: decomposed.DECOMPOSED_PATH,
+          children: [
+            decomposed.DECOMPOSED_CHILD_XML_NAME_1,
+            decomposed.DECOMPOSED_CHILD_DIR,
+            'classes',
+          ],
+        },
+        {
+          dirPath: decomposed.DECOMPOSED_CHILD_DIR_PATH,
+          children: [decomposed.DECOMPOSED_CHILD_XML_NAME_2],
+        },
+        {
+          dirPath: join(decomposed.DECOMPOSED_PATH, 'classes'),
+          children: [CONTENT_NAMES[0], XML_NAMES[0]],
+        },
+      ];
+      const tree = new VirtualTreeContainer(fsUnexpectedChild);
+      const adapter = new DecomposedSourceAdapter(type, mockRegistry, undefined, tree);
+      const fsPath = join(decomposed.DECOMPOSED_PATH, 'classes', XML_NAMES[0]);
+
+      assert.throws(
+        () => adapter.getComponent(fsPath, false),
+        TypeInferenceError,
+        nls.localize('error_unexpected_child_type', [fsPath, type.name])
+      );
     });
   });
 

@@ -242,4 +242,18 @@ export class SourceComponent implements MetadataComponent {
   get tree(): TreeContainer {
     return this._tree;
   }
+
+  /**
+   * Returns whether this component type is supported by the Metadata API
+   * and therefore should have an entry added to the manifest.
+   *
+   * This is defined on the type in the registry. The type is required to
+   * be in the registry for proper classification and for possible use in
+   * decomposition/recomposition.
+   *
+   * E.g., CustomFieldTranslation.
+   */
+  get isAddressable(): boolean {
+    return this.type.isAddressable;
+  }
 }

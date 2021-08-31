@@ -289,7 +289,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       const componentMap = components.get(key);
       for (const comp of componentMap.values()) {
         for (const child of comp.getChildren()) {
-          addToTypeMap(child.type.name, child.fullName);
+          if (child.isAddressable) {
+            addToTypeMap(child.type.name, child.fullName);
+          }
         }
       }
     }

@@ -135,6 +135,21 @@ export class SourceComponent implements MetadataComponent {
     this.markedForDelete = asDeletion;
   }
 
+  /**
+   * When deploying certain parent metadata types to orgs for packaging,
+   * the child type entries must also be included within the manifest or
+   * the deployment will fail.
+   *
+   * @returns Whether this component requires its child types in a manifest.
+   */
+  public requiresChildren(): boolean {
+    // If the registry defines this type to have children and there
+    // isn't an adapter strategy then the child types need to be included.
+    // When the component has an adapter strategy we don't need to do this
+    // because the strategy handles it for us.
+    return !this.parent && this.type.children && !this.type.strategies?.adapter;
+  }
+
   private calculateRelativePath(fsPath: string): string {
     const { directoryName, suffix, inFolder, folderType } = this.type;
     // if there isn't a suffix, assume this is a mixed content component that must

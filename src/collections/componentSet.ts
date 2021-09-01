@@ -288,8 +288,15 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       // Add children
       const componentMap = components.get(key);
       for (const comp of componentMap.values()) {
-        for (const child of comp.getChildren()) {
-          addToTypeMap(child.type.name, child.fullName);
+        if (comp.requiresChildren()) {
+          const childTypes = comp.type.children.types;
+          for (const childTypeId of Object.keys(childTypes)) {
+            addToTypeMap(childTypes[childTypeId].name, '*');
+          }
+        } else {
+          for (const child of comp.getChildren()) {
+            addToTypeMap(child.type.name, child.fullName);
+          }
         }
       }
     }

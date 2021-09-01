@@ -30,6 +30,7 @@ import { join } from 'path';
 import { DecomposedSourceAdapter } from '../../src/resolve/adapters';
 import { TypeInferenceError } from '../../src/errors';
 import { nls } from '../../src/i18n';
+import { MetadataType } from '../../src';
 
 const env = createSandbox();
 
@@ -47,6 +48,40 @@ describe('SourceComponent', () => {
       COMPONENT.setMarkedForDelete(false);
       expect(COMPONENT.isMarkedForDelete()).to.be.false;
     }
+  });
+
+  it('should return correct requiresChildren() boolean', () => {
+    // See comments for SourceComponent.requireChildren. This applies
+    // to most Rules types and Workflows, but for a complete list search
+    // the registry for types with children without strategies defined.
+    const type: MetadataType = {
+      id: 'assignmentrules',
+      name: 'AssignmentRules',
+      suffix: 'assignmentRules',
+      directoryName: 'assignmentRules',
+      inFolder: false,
+      strictDirectoryName: false,
+      children: {
+        types: {
+          assignmentrule: {
+            id: 'assignmentrule',
+            name: 'AssignmentRule',
+            directoryName: 'assignmentRules',
+            suffix: 'assignmentRule',
+          },
+        },
+        suffixes: {
+          assignmentRule: 'assignmentrule',
+        },
+      },
+    };
+    expect(new SourceComponent({ name: type.name, type }).requiresChildren()).to.equal(true);
+    type.strategies = {
+      adapter: 'decomposed',
+      transformer: 'decomposed',
+      decomposition: 'folderPerType',
+    };
+    expect(new SourceComponent({ name: type.name, type }).requiresChildren()).to.equal(false);
   });
 
   describe('parseXml', () => {

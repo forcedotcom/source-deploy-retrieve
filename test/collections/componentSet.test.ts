@@ -15,6 +15,7 @@ import {
   MetadataApiRetrieve,
   MetadataComponent,
   MetadataResolver,
+  MetadataType,
   RegistryAccess,
 } from '../../src';
 import { ComponentSetError } from '../../src/errors';
@@ -415,6 +416,47 @@ describe('ComponentSet', () => {
           name: 'MixedContentInFolder',
           members: ['Test_Folder'],
         },
+      ]);
+    });
+
+    it('should include required child types as defined in the registry', () => {
+      // The key for this test type is that is has children but does not define
+      // a strategies section for adapters and transformers. Note this does not
+      // exactly match the Workflow type in the registry but it doesn't have to.
+      const type: MetadataType = {
+        id: 'workflow',
+        name: 'Workflow',
+        suffix: 'workflow',
+        directoryName: 'workflows',
+        inFolder: false,
+        strictDirectoryName: false,
+        children: {
+          types: {
+            workflowfieldupdate: {
+              id: 'workflowfieldupdate',
+              name: 'WorkflowFieldUpdate',
+              directoryName: 'workflowFieldUpdates',
+              suffix: 'workflowFieldUpdate',
+            },
+            workflowrule: {
+              id: 'workflowrule',
+              name: 'WorkflowRule',
+              directoryName: 'workflowRules',
+              suffix: 'workflowRule',
+            },
+          },
+          suffixes: {
+            workflowFieldUpdate: 'workflowfieldupdate',
+            workflowRule: 'workflowrule',
+          },
+        },
+      };
+      const set = new ComponentSet();
+      set.add(new SourceComponent({ name: type.name, type }));
+      expect(set.getObject().Package.types).to.deep.equal([
+        { name: type.name, members: [type.name] },
+        { name: 'WorkflowFieldUpdate', members: ['*'] },
+        { name: 'WorkflowRule', members: ['*'] },
       ]);
     });
 

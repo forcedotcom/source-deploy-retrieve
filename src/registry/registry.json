@@ -2069,7 +2069,7 @@
       "name": "RestrictionRule",
       "suffix": "rule",
       "directoryName": "restrictionRules",
-      "strictDirectoryName": false
+      "strictDirectoryName": true
     },
     "functionreference": {
       "id": "functionreference",
@@ -2579,7 +2579,8 @@
     "bots": "bot",
     "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
-    "sites": "customsite"
+    "sites": "customsite",
+    "restrictionRules": "restrictionrule"
   },
   "childTypes": {
     "customlabel": "customlabels",

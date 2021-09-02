@@ -15,6 +15,7 @@ import {
   MetadataApiRetrieve,
   MetadataComponent,
   MetadataResolver,
+  MetadataType,
   RegistryAccess,
 } from '../../src';
 import { ComponentSetError } from '../../src/errors';
@@ -414,6 +415,64 @@ describe('ComponentSet', () => {
         {
           name: 'MixedContentInFolder',
           members: ['Test_Folder'],
+        },
+      ]);
+    });
+
+    it('should exclude components that are not addressable as defined in the registry', () => {
+      const type: MetadataType = {
+        id: 'customfieldtranslation',
+        name: 'CustomFieldTranslation',
+        directoryName: 'fields',
+        suffix: 'fieldTranslation',
+        isAddressable: false,
+      };
+      const set = new ComponentSet();
+      set.add(new SourceComponent({ name: type.name, type }));
+      expect(set.getObject().Package.types).to.deep.equal([]);
+    });
+
+    it('should exclude child components that are not addressable as defined in the registry', () => {
+      const childType: MetadataType = {
+        id: 'customfieldtranslation',
+        name: 'CustomFieldTranslation',
+        directoryName: 'fields',
+        suffix: 'fieldTranslation',
+        isAddressable: false,
+      };
+      const type: MetadataType = {
+        id: 'customobjecttranslation',
+        name: 'CustomObjectTranslation',
+        suffix: 'objectTranslation',
+        directoryName: 'objectTranslations',
+        inFolder: false,
+        strictDirectoryName: true,
+        children: {
+          types: {
+            customfieldtranslation: childType,
+          },
+          suffixes: {
+            fieldTranslation: 'customfieldtranslation',
+          },
+          directories: {
+            fields: 'customfieldtranslation',
+          },
+        },
+        strategies: {
+          adapter: 'decomposed',
+          transformer: 'decomposed',
+          decomposition: 'topLevel',
+        },
+      };
+      const set = new ComponentSet();
+      const testComp = new SourceComponent({ name: type.name, type });
+      const childComp = new SourceComponent({ name: childType.name, type: childType });
+      $$.SANDBOX.stub(testComp, 'getChildren').returns([childComp]);
+      set.add(testComp);
+      expect(set.getObject().Package.types).to.deep.equal([
+        {
+          name: 'CustomObjectTranslation',
+          members: ['CustomObjectTranslation'],
         },
       ]);
     });

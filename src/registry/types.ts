@@ -84,6 +84,10 @@ export interface MetadataType {
    */
   uniqueIdElement?: string;
   /**
+   * Whether the component is supported by the Metadata API and therefore should be included within a manifest.
+   */
+  isAddressable?: boolean;
+  /**
    * Type definitions for child types, if the type has any.
    *
    * __Examples:__ `CustomField` and `CompactLayout` on `CustomObject`

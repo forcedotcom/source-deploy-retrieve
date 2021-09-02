@@ -775,7 +775,8 @@
             "id": "customfieldtranslation",
             "name": "CustomFieldTranslation",
             "directoryName": "fields",
-            "suffix": "fieldTranslation"
+            "suffix": "fieldTranslation",
+            "isAddressable": false
           }
         },
         "suffixes": {

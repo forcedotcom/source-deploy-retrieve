@@ -135,21 +135,6 @@ export class SourceComponent implements MetadataComponent {
     this.markedForDelete = asDeletion;
   }
 
-  /**
-   * When deploying certain parent metadata types to orgs for packaging,
-   * the child type entries must also be included within the manifest or
-   * the deployment will fail.
-   *
-   * @returns Whether this component requires its child types in a manifest.
-   */
-  public requiresChildren(): boolean {
-    // If the registry defines this type to have children and there
-    // isn't an adapter strategy then the child types need to be included.
-    // When the component has an adapter strategy we don't need to do this
-    // because the strategy handles it for us.
-    return !this.parent && this.type.children && !this.type.strategies?.adapter;
-  }
-
   private calculateRelativePath(fsPath: string): string {
     const { directoryName, suffix, inFolder, folderType } = this.type;
     // if there isn't a suffix, assume this is a mixed content component that must
@@ -216,15 +201,17 @@ export class SourceComponent implements MetadataComponent {
     return children;
   }
 
+  // Get the children for non-decomposed types that have an xmlElementName
+  // and uniqueIdElement defined in the registry.
+  // E.g., CustomLabels, Workflows, SharingRules, AssignmentRules.
   private getNonDecomposedChildren(): SourceComponent[] {
-    // this method only applies to customlabels type
     const parsed = this.parseXmlSync();
-    const xmlPathToChildren = `${this.type.name}.${this.type.directoryName}`;
     const children: SourceComponent[] = [];
     for (const childTypeId of Object.keys(this.type.children.types)) {
       const childType = this.type.children.types[childTypeId];
       const uniqueIdElement = childType.uniqueIdElement;
       if (uniqueIdElement) {
+        const xmlPathToChildren = `${this.type.name}.${childType.xmlElementName}`;
         const elements = normalizeToArray(get(parsed, xmlPathToChildren, []));
         const childComponents = elements.map((element) => {
           return new SourceComponent(
@@ -274,5 +261,22 @@ export class SourceComponent implements MetadataComponent {
 
   get tree(): TreeContainer {
     return this._tree;
+  }
+
+  /**
+   * Returns whether this component type is supported by the Metadata API
+   * and therefore should have an entry added to the manifest.
+   *
+   * This is defined on the type in the registry. The type is required to
+   * be in the registry for proper classification and for possible use in
+   * decomposition/recomposition.
+   *
+   * Default value is true, so the only way to return false is to explicitly
+   * set it in the registry as false.
+   *
+   * E.g., CustomFieldTranslation.
+   */
+  get isAddressable(): boolean {
+    return this.type.isAddressable !== false;
   }
 }

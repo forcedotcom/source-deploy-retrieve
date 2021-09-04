@@ -75,6 +75,10 @@ export interface MetadataType {
    */
   ignoreParentName?: boolean;
   /**
+   * The XML element name for the type in the xml file used for constructing child components.
+   */
+  xmlElementName?: string;
+  /**
    * When converting deploying source, this will update the suffix in the output or temporary directory (metadata format)
    * Use this, along with additional suffix keys in the registry, to support incorrect suffixes from existing code
    */
@@ -83,6 +87,10 @@ export interface MetadataType {
    * The xml attribute used as the unique identifier when parsing the xml
    */
   uniqueIdElement?: string;
+  /**
+   * Whether the component is supported by the Metadata API and therefore should be included within a manifest.
+   */
+  isAddressable?: boolean;
   /**
    * Type definitions for child types, if the type has any.
    *

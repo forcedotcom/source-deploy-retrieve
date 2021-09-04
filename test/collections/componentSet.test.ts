@@ -29,6 +29,7 @@ import {
   decomposedtoplevel,
   matchingContentFile,
 } from '../mock/registry';
+import { MATCHING_RULES_COMPONENT } from '../mock/registry/type-constants/nonDecomposedConstants';
 import * as manifestFiles from '../mock/registry/manifestConstants';
 
 const env = createSandbox();
@@ -420,43 +421,68 @@ describe('ComponentSet', () => {
     });
 
     it('should include required child types as defined in the registry', () => {
-      // The key for this test type is that is has children but does not define
-      // a strategies section for adapters and transformers. Note this does not
-      // exactly match the Workflow type in the registry but it doesn't have to.
+      const set = new ComponentSet([MATCHING_RULES_COMPONENT]);
+      expect(set.getObject().Package.types).to.deep.equal([
+        { name: MATCHING_RULES_COMPONENT.type.name, members: [MATCHING_RULES_COMPONENT.name] },
+        { name: 'MatchingRule', members: ['MatchingRules.My_Account_Matching_Rule'] },
+      ]);
+    });
+
+    it('should exclude components that are not addressable as defined in the registry', () => {
       const type: MetadataType = {
-        id: 'workflow',
-        name: 'Workflow',
-        suffix: 'workflow',
-        directoryName: 'workflows',
-        inFolder: false,
-        strictDirectoryName: false,
-        children: {
-          types: {
-            workflowfieldupdate: {
-              id: 'workflowfieldupdate',
-              name: 'WorkflowFieldUpdate',
-              directoryName: 'workflowFieldUpdates',
-              suffix: 'workflowFieldUpdate',
-            },
-            workflowrule: {
-              id: 'workflowrule',
-              name: 'WorkflowRule',
-              directoryName: 'workflowRules',
-              suffix: 'workflowRule',
-            },
-          },
-          suffixes: {
-            workflowFieldUpdate: 'workflowfieldupdate',
-            workflowRule: 'workflowrule',
-          },
-        },
+        id: 'customfieldtranslation',
+        name: 'CustomFieldTranslation',
+        directoryName: 'fields',
+        suffix: 'fieldTranslation',
+        isAddressable: false,
       };
       const set = new ComponentSet();
       set.add(new SourceComponent({ name: type.name, type }));
+      expect(set.getObject().Package.types).to.deep.equal([]);
+    });
+
+    it('should exclude child components that are not addressable as defined in the registry', () => {
+      const childType: MetadataType = {
+        id: 'customfieldtranslation',
+        name: 'CustomFieldTranslation',
+        directoryName: 'fields',
+        suffix: 'fieldTranslation',
+        isAddressable: false,
+      };
+      const type: MetadataType = {
+        id: 'customobjecttranslation',
+        name: 'CustomObjectTranslation',
+        suffix: 'objectTranslation',
+        directoryName: 'objectTranslations',
+        inFolder: false,
+        strictDirectoryName: true,
+        children: {
+          types: {
+            customfieldtranslation: childType,
+          },
+          suffixes: {
+            fieldTranslation: 'customfieldtranslation',
+          },
+          directories: {
+            fields: 'customfieldtranslation',
+          },
+        },
+        strategies: {
+          adapter: 'decomposed',
+          transformer: 'decomposed',
+          decomposition: 'topLevel',
+        },
+      };
+      const set = new ComponentSet();
+      const testComp = new SourceComponent({ name: type.name, type });
+      const childComp = new SourceComponent({ name: childType.name, type: childType });
+      $$.SANDBOX.stub(testComp, 'getChildren').returns([childComp]);
+      set.add(testComp);
       expect(set.getObject().Package.types).to.deep.equal([
-        { name: type.name, members: [type.name] },
-        { name: 'WorkflowFieldUpdate', members: ['*'] },
-        { name: 'WorkflowRule', members: ['*'] },
+        {
+          name: 'CustomObjectTranslation',
+          members: ['CustomObjectTranslation'],
+        },
       ]);
     });
 

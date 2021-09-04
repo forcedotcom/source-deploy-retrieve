@@ -23,7 +23,9 @@ import {
   VIRTUAL_DIR,
   COMPONENT_1_XML_PATH,
   CHILD_2_NAME,
-  MATCHING_RULES_COMPONENT,
+  MATCHING_RULES_TYPE,
+  MATCHING_RULES_COMPONENT_XML_PATH,
+  TREE,
 } from '../mock/registry/type-constants/nonDecomposedConstants';
 import { createSandbox } from 'sinon';
 import { join } from 'path';
@@ -39,6 +41,22 @@ describe('SourceComponent', () => {
     expect(DECOMPOSED_COMPONENT.fullName).to.equal(DECOMPOSED_COMPONENT.name);
   });
 
+  it('should return whether the type is addressable', () => {
+    const type: MetadataType = {
+      id: 'customfieldtranslation',
+      name: 'CustomFieldTranslation',
+      directoryName: 'fields',
+      suffix: 'fieldTranslation',
+    };
+    expect(new SourceComponent({ name: type.name, type }).isAddressable).to.equal(true);
+    type.isAddressable = false;
+    expect(new SourceComponent({ name: type.name, type }).isAddressable).to.equal(false);
+    type.isAddressable = true;
+    expect(new SourceComponent({ name: type.name, type }).isAddressable).to.equal(true);
+    type.isAddressable = undefined;
+    expect(new SourceComponent({ name: type.name, type }).isAddressable).to.equal(true);
+  });
+
   it('should return correct markedForDelete status', () => {
     expect(COMPONENT.isMarkedForDelete()).to.be.false;
     try {
@@ -48,40 +66,6 @@ describe('SourceComponent', () => {
       COMPONENT.setMarkedForDelete(false);
       expect(COMPONENT.isMarkedForDelete()).to.be.false;
     }
-  });
-
-  it('should return correct requiresChildren() boolean', () => {
-    // See comments for SourceComponent.requireChildren. This applies
-    // to most Rules types and Workflows, but for a complete list search
-    // the registry for types with children without strategies defined.
-    const type: MetadataType = {
-      id: 'assignmentrules',
-      name: 'AssignmentRules',
-      suffix: 'assignmentRules',
-      directoryName: 'assignmentRules',
-      inFolder: false,
-      strictDirectoryName: false,
-      children: {
-        types: {
-          assignmentrule: {
-            id: 'assignmentrule',
-            name: 'AssignmentRule',
-            directoryName: 'assignmentRules',
-            suffix: 'assignmentRule',
-          },
-        },
-        suffixes: {
-          assignmentRule: 'assignmentrule',
-        },
-      },
-    };
-    expect(new SourceComponent({ name: type.name, type }).requiresChildren()).to.equal(true);
-    type.strategies = {
-      adapter: 'decomposed',
-      transformer: 'decomposed',
-      decomposition: 'folderPerType',
-    };
-    expect(new SourceComponent({ name: type.name, type }).requiresChildren()).to.equal(false);
   });
 
   describe('parseXml', () => {
@@ -330,7 +314,18 @@ describe('SourceComponent', () => {
 
     // https://github.com/forcedotcom/salesforcedx-vscode/issues/3210
     it('should return empty children for types that do not have uniqueIdElement but xmlPathToChildren returns elements', () => {
-      expect(MATCHING_RULES_COMPONENT.getChildren()).to.deep.equal([]);
+      const noUniqueIdElementType: MetadataType = JSON.parse(JSON.stringify(MATCHING_RULES_TYPE));
+      // remove the uniqueElementType
+      delete noUniqueIdElementType.children.types.matchingrule.uniqueIdElement;
+      const noUniqueIdElement_Component = new SourceComponent(
+        {
+          name: noUniqueIdElementType.name,
+          type: noUniqueIdElementType,
+          xml: MATCHING_RULES_COMPONENT_XML_PATH,
+        },
+        TREE
+      );
+      expect(noUniqueIdElement_Component.getChildren()).to.deep.equal([]);
     });
   });
 });

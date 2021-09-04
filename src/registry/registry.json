@@ -21,6 +21,7 @@
           "customlabel": {
             "id": "customlabel",
             "name": "CustomLabel",
+            "xmlElementName": "labels",
             "ignoreParentName": true,
             "uniqueIdElement": "fullName",
             "directoryName": "labels",
@@ -599,42 +600,56 @@
           "workflowfieldupdate": {
             "id": "workflowfieldupdate",
             "name": "WorkflowFieldUpdate",
+            "xmlElementName": "fieldUpdates",
+            "uniqueIdElement": "fullName",
             "directoryName": "workflowFieldUpdates",
             "suffix": "workflowFieldUpdate"
           },
           "workflowknowledgepublish": {
             "id": "workflowknowledgepublish",
             "name": "WorkflowKnowledgePublish",
+            "xmlElementName": "knowledgePublishes",
+            "uniqueIdElement": "fullName",
             "directoryName": "workflowKnowledgePublishs",
             "suffix": "workflowKnowledgePublish"
           },
           "workflowtask": {
             "id": "workflowtask",
             "name": "WorkflowTask",
+            "xmlElementName": "tasks",
+            "uniqueIdElement": "fullName",
             "directoryName": "workflowTasks",
             "suffix": "workflowTask"
           },
           "workflowalert": {
             "id": "workflowalert",
             "name": "WorkflowAlert",
+            "xmlElementName": "alerts",
+            "uniqueIdElement": "fullName",
             "directoryName": "workflowAlerts",
             "suffix": "workflowAlert"
           },
           "workflowsend": {
             "id": "workflowsend",
             "name": "WorkflowSend",
+            "xmlElementName": "sends",
+            "uniqueIdElement": "fullName",
             "directoryName": "workflowSends",
             "suffix": "workflowSend"
           },
           "workflowoutboundmessage": {
             "id": "workflowoutboundmessage",
             "name": "WorkflowOutboundMessage",
+            "xmlElementName": "outboundMessages",
+            "uniqueIdElement": "fullName",
             "directoryName": "workflowOutboundMessages",
             "suffix": "workflowOutboundMessage"
           },
           "workflowrule": {
             "id": "workflowrule",
             "name": "WorkflowRule",
+            "xmlElementName": "rules",
+            "uniqueIdElement": "fullName",
             "directoryName": "workflowRules",
             "suffix": "workflowRule"
           }
@@ -670,6 +685,8 @@
           "assignmentrule": {
             "id": "assignmentrule",
             "name": "AssignmentRule",
+            "xmlElementName": "assignmentRule",
+            "uniqueIdElement": "fullName",
             "directoryName": "assignmentRules",
             "suffix": "assignmentRule"
           }
@@ -694,6 +711,8 @@
           "autoresponserule": {
             "id": "autoresponserule",
             "name": "AutoResponseRule",
+            "xmlElementName": "autoResponseRule",
+            "uniqueIdElement": "fullName",
             "directoryName": "autoResponseRules",
             "suffix": "autoResponseRule"
           }
@@ -718,6 +737,8 @@
           "escalationrule": {
             "id": "escalationrule",
             "name": "EscalationRule",
+            "xmlElementName": "escalationRule",
+            "uniqueIdElement": "fullName",
             "directoryName": "escalationRules",
             "suffix": "escalationRule"
           }
@@ -775,7 +796,8 @@
             "id": "customfieldtranslation",
             "name": "CustomFieldTranslation",
             "directoryName": "fields",
-            "suffix": "fieldTranslation"
+            "suffix": "fieldTranslation",
+            "isAddressable": false
           }
         },
         "suffixes": {
@@ -928,6 +950,8 @@
           "matchingrule": {
             "id": "matchingrule",
             "name": "MatchingRule",
+            "xmlElementName": "matchingRules",
+            "uniqueIdElement": "fullName",
             "directoryName": "matchingRules",
             "suffix": "matchingRule"
           }
@@ -1133,24 +1157,32 @@
           "sharingownerrule": {
             "id": "sharingownerrule",
             "name": "SharingOwnerRule",
+            "xmlElementName": "sharingOwnerRules",
+            "uniqueIdElement": "fullName",
             "directoryName": "sharingOwnerRules",
             "suffix": "sharingOwnerRule"
           },
           "sharingcriteriarule": {
             "id": "sharingcriteriarule",
             "name": "SharingCriteriaRule",
+            "xmlElementName": "sharingCriteriaRules",
+            "uniqueIdElement": "fullName",
             "directoryName": "sharingCriteriaRules",
             "suffix": "sharingCriteriaRule"
           },
           "sharingguestrule": {
             "id": "sharingguestrule",
             "name": "SharingGuestRule",
+            "xmlElementName": "sharingGuestRules",
+            "uniqueIdElement": "fullName",
             "directoryName": "sharingGuestRules",
             "suffix": "sharingGuestRule"
           },
           "sharingterritoryrule": {
             "id": "sharingterritoryrule",
             "name": "SharingTerritoryRule",
+            "xmlElementName": "sharingTerritoryRules",
+            "uniqueIdElement": "fullName",
             "directoryName": "sharingTerritoryRules",
             "suffix": "sharingTerritoryRule"
           }
@@ -1349,6 +1381,8 @@
           "managedtopic": {
             "id": "managedtopic",
             "name": "ManagedTopic",
+            "xmlElementName": "managedTopic",
+            "uniqueIdElement": "fullName",
             "directoryName": "managedTopics",
             "suffix": "managedTopic"
           }

@@ -315,7 +315,7 @@ describe('SourceComponent', () => {
     // https://github.com/forcedotcom/salesforcedx-vscode/issues/3210
     it('should return empty children for types that do not have uniqueIdElement but xmlPathToChildren returns elements', () => {
       const noUniqueIdElementType: MetadataType = JSON.parse(JSON.stringify(MATCHING_RULES_TYPE));
-      // remove the uniqueElementType
+      // remove the uniqueElementType for this test
       delete noUniqueIdElementType.children.types.matchingrule.uniqueIdElement;
       const noUniqueIdElement_Component = new SourceComponent(
         {

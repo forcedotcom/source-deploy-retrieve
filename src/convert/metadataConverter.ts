@@ -5,10 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import {
-  SfdxFileFormat,
   ConvertOutputConfig,
   ConvertResult,
   DirectoryConfig,
+  SfdxFileFormat,
   ZipConfig,
 } from './types';
 import { DestructiveChangesType } from '../collections/types';
@@ -17,12 +17,12 @@ import { promises } from 'fs';
 import { dirname, join, normalize } from 'path';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
 import {
-  ComponentReader,
   ComponentConverter,
-  StandardWriter,
-  pipeline,
-  ZipWriter,
+  ComponentReader,
   ComponentWriter,
+  pipeline,
+  StandardWriter,
+  ZipWriter,
 } from './streams';
 import { ConversionError, LibraryError } from '../errors';
 import { SourcePath } from '../common';
@@ -106,10 +106,19 @@ export class MetadataConverter {
 
             // For deploying destructive changes
             if (cs.hasDeletes) {
-              const manifestFileName = this.getDestructiveManifestFileName(cs);
-              const destructiveManifestContents = cs.getPackageXml(undefined, true);
-              const destructiveManifestPath = join(packagePath, manifestFileName);
-              tasks.push(promises.writeFile(destructiveManifestPath, destructiveManifestContents));
+              const destructiveChangesTypes = cs.getDestructiveChangesTypes();
+              destructiveChangesTypes.map((destructiveChangesType: DestructiveChangesType) => {
+                const file = this.convertTypeToManifest(destructiveChangesType);
+                const destructiveManifestContents = cs.getPackageXml(
+                  undefined,
+                  true,
+                  destructiveChangesType
+                );
+                const destructiveManifestPath = join(packagePath, file);
+                tasks.push(
+                  promises.writeFile(destructiveManifestPath, destructiveManifestContents)
+                );
+              });
             }
           }
           break;
@@ -126,9 +135,18 @@ export class MetadataConverter {
 
             // For deploying destructive changes
             if (cs.hasDeletes) {
-              const manifestFileName = this.getDestructiveManifestFileName(cs);
-              const destructiveManifestContents = cs.getPackageXml(undefined, true);
-              (writer as ZipWriter).addToZip(destructiveManifestContents, manifestFileName);
+              const destructiveChangesTypes = cs.getDestructiveChangesTypes();
+              console.log('change types', destructiveChangesTypes);
+              destructiveChangesTypes.map((destructiveChangeType) => {
+                console.log('type', destructiveChangeType);
+                const file = this.convertTypeToManifest(destructiveChangeType);
+                const destructiveManifestContents = cs.getPackageXml(
+                  undefined,
+                  true,
+                  destructiveChangeType
+                );
+                (writer as ZipWriter).addToZip(destructiveManifestContents, file);
+              });
             }
           }
           break;
@@ -167,15 +185,15 @@ export class MetadataConverter {
     }
   }
 
-  private getDestructiveManifestFileName(cs: ComponentSet): string {
-    let manifestFileName: string;
-    if (cs.getDestructiveChangesType() === DestructiveChangesType.POST) {
-      manifestFileName = MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE;
-    } else {
-      manifestFileName = MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE;
-    }
-    return manifestFileName;
-  }
+  // private getDestructiveManifestFileName(cs: ComponentSet): string[] {
+  //   let manifestFileName: string;
+  //   if (cs.getDestructiveChangesType() === DestructiveChangesType.POST) {
+  //     manifestFileName = MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE;
+  //   } else {
+  //     manifestFileName = MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE;
+  //   }
+  //   return manifestFileName;
+  // }
 
   private getPackagePath(outputConfig: DirectoryConfig | ZipConfig): SourcePath | undefined {
     let packagePath: SourcePath;
@@ -202,5 +220,13 @@ export class MetadataConverter {
       }
     }
     return packagePath;
+  }
+
+  private convertTypeToManifest(manifestFileName: DestructiveChangesType): string {
+    if (manifestFileName === DestructiveChangesType.POST) {
+      console.log(manifestFileName);
+      return MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE;
+    }
+    return MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE;
   }
 }

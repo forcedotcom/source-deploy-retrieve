@@ -213,8 +213,9 @@ describe('MetadataConverter', () => {
         type: DECOMPOSED_CHILD_COMPONENT_2.type,
         xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
       });
-      const compSet = new ComponentSet([component1, component2], mockRegistry);
+      const compSet = new ComponentSet([component2], mockRegistry);
       compSet.setDestructiveChangesType(DestructiveChangesType.PRE);
+      compSet.add(component1, true);
       const expectedDestructiveContents = compSet.getPackageXml(undefined, true);
       const expectedContents = compSet.getPackageXml();
 
@@ -403,8 +404,9 @@ describe('MetadataConverter', () => {
         type: DECOMPOSED_CHILD_COMPONENT_2.type,
         xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
       });
-      const compSet = new ComponentSet([component1, component2], mockRegistry);
+      const compSet = new ComponentSet([component2], mockRegistry);
       compSet.setDestructiveChangesType(DestructiveChangesType.PRE);
+      compSet.add(component1, true);
       const expectedDestructiveContents = compSet.getPackageXml(undefined, true);
       const expectedContents = compSet.getPackageXml();
       const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');

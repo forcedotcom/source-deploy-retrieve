@@ -75,6 +75,10 @@ export interface MetadataType {
    */
   ignoreParentName?: boolean;
   /**
+   * The XML element name for the type in the xml file used for constructing child components.
+   */
+  xmlElementName?: string;
+  /**
    * When converting deploying source, this will update the suffix in the output or temporary directory (metadata format)
    * Use this, along with additional suffix keys in the registry, to support incorrect suffixes from existing code
    */

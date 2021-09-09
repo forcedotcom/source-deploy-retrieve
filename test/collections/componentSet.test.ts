@@ -29,6 +29,7 @@ import {
   decomposedtoplevel,
   matchingContentFile,
 } from '../mock/registry';
+import { MATCHING_RULES_COMPONENT } from '../mock/registry/type-constants/nonDecomposedConstants';
 import * as manifestFiles from '../mock/registry/manifestConstants';
 
 const env = createSandbox();
@@ -416,6 +417,14 @@ describe('ComponentSet', () => {
           name: 'MixedContentInFolder',
           members: ['Test_Folder'],
         },
+      ]);
+    });
+
+    it('should include required child types as defined in the registry', () => {
+      const set = new ComponentSet([MATCHING_RULES_COMPONENT]);
+      expect(set.getObject().Package.types).to.deep.equal([
+        { name: MATCHING_RULES_COMPONENT.type.name, members: [MATCHING_RULES_COMPONENT.name] },
+        { name: 'MatchingRule', members: ['MatchingRules.My_Account_Matching_Rule'] },
       ]);
     });
 

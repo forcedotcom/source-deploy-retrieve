@@ -201,15 +201,17 @@ export class SourceComponent implements MetadataComponent {
     return children;
   }
 
+  // Get the children for non-decomposed types that have an xmlElementName
+  // and uniqueIdElement defined in the registry.
+  // E.g., CustomLabels, Workflows, SharingRules, AssignmentRules.
   private getNonDecomposedChildren(): SourceComponent[] {
-    // this method only applies to customlabels type
     const parsed = this.parseXmlSync();
-    const xmlPathToChildren = `${this.type.name}.${this.type.directoryName}`;
     const children: SourceComponent[] = [];
     for (const childTypeId of Object.keys(this.type.children.types)) {
       const childType = this.type.children.types[childTypeId];
       const uniqueIdElement = childType.uniqueIdElement;
       if (uniqueIdElement) {
+        const xmlPathToChildren = `${this.type.name}.${childType.xmlElementName}`;
         const elements = normalizeToArray(get(parsed, xmlPathToChildren, []));
         const childComponents = elements.map((element) => {
           return new SourceComponent(

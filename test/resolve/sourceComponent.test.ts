@@ -23,14 +23,16 @@ import {
   VIRTUAL_DIR,
   COMPONENT_1_XML_PATH,
   CHILD_2_NAME,
-  MATCHING_RULES_COMPONENT,
+  MATCHING_RULES_TYPE,
+  MATCHING_RULES_COMPONENT_XML_PATH,
+  TREE,
 } from '../mock/registry/type-constants/nonDecomposedConstants';
 import { createSandbox } from 'sinon';
-import { MetadataType } from '../../src';
 import { join } from 'path';
 import { DecomposedSourceAdapter } from '../../src/resolve/adapters';
 import { TypeInferenceError } from '../../src/errors';
 import { nls } from '../../src/i18n';
+import { MetadataType } from '../../src';
 
 const env = createSandbox();
 
@@ -312,7 +314,18 @@ describe('SourceComponent', () => {
 
     // https://github.com/forcedotcom/salesforcedx-vscode/issues/3210
     it('should return empty children for types that do not have uniqueIdElement but xmlPathToChildren returns elements', () => {
-      expect(MATCHING_RULES_COMPONENT.getChildren()).to.deep.equal([]);
+      const noUniqueIdElementType: MetadataType = JSON.parse(JSON.stringify(MATCHING_RULES_TYPE));
+      // remove the uniqueElementType for this test
+      delete noUniqueIdElementType.children.types.matchingrule.uniqueIdElement;
+      const noUniqueIdElement_Component = new SourceComponent(
+        {
+          name: noUniqueIdElementType.name,
+          type: noUniqueIdElementType,
+          xml: MATCHING_RULES_COMPONENT_XML_PATH,
+        },
+        TREE
+      );
+      expect(noUniqueIdElement_Component.getChildren()).to.deep.equal([]);
     });
   });
 });

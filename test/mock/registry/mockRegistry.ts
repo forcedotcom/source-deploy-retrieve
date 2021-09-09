@@ -124,6 +124,7 @@ export const mockRegistryData = {
           nondecomposedchild: {
             id: 'nondecomposedchild',
             name: 'nondecomposedchild',
+            xmlElementName: 'nondecomposed',
             ignoreParentName: true,
             uniqueIdElement: 'id',
             directoryName: 'nondecomposed',

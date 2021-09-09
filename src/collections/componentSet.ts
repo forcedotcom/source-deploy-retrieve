@@ -30,7 +30,7 @@ import {
 import { LazyCollection } from './lazyCollection';
 import { j2xParser } from 'fast-xml-parser';
 import { Logger } from '@salesforce/core';
-import { RegistryAccess } from '../registry';
+import { MetadataType, RegistryAccess } from '../registry';
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
@@ -269,11 +269,21 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     const typeMap = new Map<string, string[]>();
 
-    const addToTypeMap = (typeName: string, fullName: string): void => {
-      if (!typeMap.has(typeName)) {
-        typeMap.set(typeName, []);
+    const addToTypeMap = (type: MetadataType, fullName: string): void => {
+      if (type.isAddressable !== false) {
+        const typeName = type.name;
+        if (!typeMap.has(typeName)) {
+          typeMap.set(typeName, []);
+        }
+        const typeEntry = typeMap.get(typeName);
+        if (fullName === ComponentSet.WILDCARD) {
+          typeMap.set(typeName, [fullName]);
+        } else {
+          if (!typeEntry.includes(fullName) && !typeEntry.includes(ComponentSet.WILDCARD)) {
+            typeMap.get(typeName).push(fullName);
+          }
+        }
       }
-      typeMap.get(typeName).push(fullName);
     };
 
     for (const key of components.keys()) {
@@ -283,17 +293,13 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       if (type.folderContentType) {
         type = this.registry.getTypeByName(type.folderContentType);
       }
-      if (type.isAddressable !== false) {
-        addToTypeMap(type.name, fullName);
-      }
+      addToTypeMap(type, fullName);
 
       // Add children
       const componentMap = components.get(key);
       for (const comp of componentMap.values()) {
         for (const child of comp.getChildren()) {
-          if (child.isAddressable) {
-            addToTypeMap(child.type.name, child.fullName);
-          }
+          addToTypeMap(child.type, child.fullName);
         }
       }
     }

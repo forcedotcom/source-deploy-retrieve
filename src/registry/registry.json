@@ -2378,7 +2378,7 @@
     "businessProcessGroup": "businessprocessgroup",
     "model": "discoveryaimodel",
     "goal": "discoverygoal",
-    "functions": "functionreference",
+    "function": "functionreference",
     "participantRole": "participantrole",
     "gatewayProviderPaymentMethodType": "gatewayproviderpaymentmethodtype",
     "careProviderSearchConfig": "careprovidersearchconfig",

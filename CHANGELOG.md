@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.3.5...v4.4.0) (2021-09-09)
+
+
+### Features
+
+* add required child type entries to manifest ([#446](https://github.com/forcedotcom/source-deploy-retrieve/issues/446)) ([c99198b](https://github.com/forcedotcom/source-deploy-retrieve/commit/c99198b37cd752f10b7c12e72ccf1304464cfccf))
+
+
+### Bug Fixes
+
+* node 16 error parsing issue ([#448](https://github.com/forcedotcom/source-deploy-retrieve/issues/448)) ([54e1fdd](https://github.com/forcedotcom/source-deploy-retrieve/commit/54e1fddc5fb26675aad69c27036b9cb7ac7e978c))
+
 ### [4.3.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.3.4...v4.3.5) (2021-09-02)
 
 

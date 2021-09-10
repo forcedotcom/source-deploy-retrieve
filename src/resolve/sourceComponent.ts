@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join, basename, sep } from 'path';
+import { basename, join, sep } from 'path';
 import { parse } from 'fast-xml-parser';
 import { ForceIgnore } from './forceIgnore';
 import { NodeFSTreeContainer, TreeContainer, VirtualTreeContainer } from './treeContainers';
@@ -15,6 +15,7 @@ import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { SfdxFileFormat } from '../convert';
 import { MetadataType } from '../registry';
 import { TypeInferenceError } from '../errors';
+import { DestructiveChangesType } from '../collections';
 
 export type ComponentProperties = {
   name: string;
@@ -38,6 +39,7 @@ export class SourceComponent implements MetadataComponent {
   private _tree: TreeContainer;
   private forceIgnore: ForceIgnore;
   private markedForDelete = false;
+  private destructiveChangesType: DestructiveChangesType;
 
   constructor(
     props: ComponentProperties,
@@ -131,8 +133,16 @@ export class SourceComponent implements MetadataComponent {
     return this.markedForDelete;
   }
 
-  public setMarkedForDelete(asDeletion: boolean): void {
+  public getDestructiveChangesType(): DestructiveChangesType {
+    return this.destructiveChangesType;
+  }
+
+  public setMarkedForDelete(
+    asDeletion: boolean,
+    destructiveChangeType = DestructiveChangesType.POST
+  ): void {
     this.markedForDelete = asDeletion;
+    this.destructiveChangesType = destructiveChangeType;
   }
 
   private calculateRelativePath(fsPath: string): string {

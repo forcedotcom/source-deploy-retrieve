@@ -80,10 +80,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     for (const component of components) {
       let asDeletion = false;
+      let destructiveType = this.destructiveChangesType;
       if (component instanceof SourceComponent) {
         asDeletion = component.isMarkedForDelete();
+        destructiveType = component.getDestructiveChangesType();
       }
-      this.add(component, asDeletion, this.destructiveChangesType);
+      this.add(component, asDeletion, destructiveType);
     }
   }
 
@@ -115,7 +117,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     let registry: RegistryAccess;
     let tree: TreeContainer;
     let inclusiveFilter: ComponentSet;
-    let fsDeletePaths: string[] = [];
+    let fsDeletePathsPre: string[] = [];
+    let fsDeletePathsPost: string[] = [];
 
     if (Array.isArray(input)) {
       fsPaths = input;
@@ -124,22 +127,28 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       registry = input.registry ?? registry;
       tree = input.tree ?? tree;
       inclusiveFilter = input.include;
-      fsDeletePaths = input.fsDeletePaths ?? fsDeletePaths;
+      fsDeletePathsPre = input.fsDeletePathsPre ?? fsDeletePathsPre;
+      fsDeletePathsPost = input.fsDeletePaths ?? fsDeletePathsPost;
     } else {
       fsPaths = [input];
     }
 
     const resolver = new MetadataResolver(registry, tree);
     const set = new ComponentSet([], registry);
-    const buildComponents = (paths: string[], asDeletes: boolean): void => {
+    const buildComponents = (
+      paths: string[],
+      asDeletes: boolean,
+      destructiveType?: DestructiveChangesType
+    ): void => {
       for (const path of paths) {
         for (const component of resolver.getComponentsFromPath(path, inclusiveFilter)) {
-          set.add(component, asDeletes);
+          set.add(component, asDeletes, destructiveType);
         }
       }
     };
     buildComponents(fsPaths, false);
-    buildComponents(fsDeletePaths, true);
+    buildComponents(fsDeletePathsPre, true, DestructiveChangesType.PRE);
+    buildComponents(fsDeletePathsPost, true, DestructiveChangesType.POST);
 
     set.forceIgnoredPaths = resolver.forceIgnoredPaths;
 
@@ -171,9 +180,19 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public static async fromManifest(input: string | FromManifestOptions): Promise<ComponentSet> {
     const manifestPath = typeof input === 'string' ? input : input.manifestPath;
     const options = (typeof input === 'object' ? input : {}) as Partial<FromManifestOptions>;
+    let manifestPre;
+    let manifestPost;
+    const hasManifestPre = !!options.destructivePre;
+    const hasManifestPost = !!options.destructivePost;
 
     const manifestResolver = new ManifestResolver(options.tree, options.registry);
     const manifest = await manifestResolver.resolve(manifestPath);
+    if (hasManifestPre) {
+      manifestPre = await manifestResolver.resolve(options.destructivePre);
+    }
+    if (hasManifestPost) {
+      manifestPost = await manifestResolver.resolve(options.destructivePost);
+    }
     const resolveIncludeSet = options.resolveSourcePaths
       ? new ComponentSet([], options.registry)
       : undefined;
@@ -181,13 +200,45 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     result.apiVersion = manifest.apiVersion;
     result.fullName = manifest.fullName;
 
-    for (const component of manifest.components) {
+    const addComponent = (
+      component: MetadataComponent,
+      asDeletion = false,
+      deletionType: DestructiveChangesType = DestructiveChangesType.POST
+    ): void => {
       if (resolveIncludeSet) {
-        resolveIncludeSet.add(component);
+        resolveIncludeSet.add(component, asDeletion, deletionType);
       }
       const memberIsWildcard = component.fullName === ComponentSet.WILDCARD;
       if (!memberIsWildcard || options.forceAddWildcards || !options.resolveSourcePaths) {
-        result.add(component);
+        result.add(component, asDeletion, deletionType);
+      }
+    };
+
+    for (const component of manifest.components) {
+      addComponent(component);
+    }
+    if (hasManifestPost) {
+      for (const component of manifestPost.components) {
+        addComponent(
+          new SourceComponent({
+            type: component.type,
+            name: component.fullName,
+          }),
+          true,
+          DestructiveChangesType.POST
+        );
+      }
+    }
+    if (hasManifestPre) {
+      for (const component of manifestPre.components) {
+        addComponent(
+          new SourceComponent({
+            type: component.type,
+            name: component.fullName,
+          }),
+          true,
+          DestructiveChangesType.PRE
+        );
       }
     }
 
@@ -376,16 +427,22 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     deletionType: DestructiveChangesType = this.destructiveChangesType
   ): void {
     const key = this.simpleKey(component);
-    if (!this.components.has(key)) {
+    // if we're adding a component meant for deletion, don't write it to this.components
+    if (!this.components.has(key) && !asDeletion) {
       this.components.set(key, new Map<string, SourceComponent>());
     }
     if (component instanceof SourceComponent) {
-      this.components.get(key).set(this.sourceKey(component), component);
+      if (!asDeletion) {
+        // if we're adding a component meant for deletion, don't write it to this.components
+        this.components.get(key).set(this.sourceKey(component), component);
+      }
 
       // Build maps of destructive components and regular components as they are added
       // as an optimization when building manifests.
       if (asDeletion) {
-        component.setMarkedForDelete(true);
+        // ensure that any components marked for deletion aren't in the componetns marked for constructive deployments
+        this.components.delete(key);
+        component.setMarkedForDelete(true, deletionType);
         this.logger.debug(`Marking component for delete: ${component.fullName}`);
         if (!this.destructiveComponents[deletionType].has(key)) {
           this.destructiveComponents[deletionType].set(key, new Map<string, SourceComponent>());
@@ -488,19 +545,15 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     return this.destructiveChangesType;
   }
 
-  public getDestructiveChangesTypes(): DestructiveChangesType[] {
+  public getIncludedDestructiveChanges(): DestructiveChangesType[] {
     const pre = this.destructiveComponents[DestructiveChangesType.PRE].size;
     const post = this.destructiveComponents[DestructiveChangesType.POST].size;
-    const preOnly = pre && !post;
-    if (preOnly) {
+
+    if (pre && !post) {
       return [DestructiveChangesType.PRE];
-    }
-    const postOnly = post && !pre;
-    if (postOnly) {
+    } else if (post && !pre) {
       return [DestructiveChangesType.POST];
-    }
-    const includesBoth = pre && post;
-    if (includesBoth) {
+    } else {
       return [DestructiveChangesType.PRE, DestructiveChangesType.POST];
     }
   }
@@ -524,8 +577,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * Returns `true` if this `ComponentSet` contains components marked for deletion.
    */
   get hasDeletes(): boolean {
-    console.log('post size', this.destructiveComponents[DestructiveChangesType.POST].size);
-    console.log('pre size', this.destructiveComponents[DestructiveChangesType.PRE].size);
     return (
       this.destructiveComponents[DestructiveChangesType.POST].size > 0 ||
       this.destructiveComponents[DestructiveChangesType.PRE].size > 0

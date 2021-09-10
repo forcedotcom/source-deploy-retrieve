@@ -35,9 +35,11 @@ export interface FromSourceOptions extends OptionalTreeRegistryOptions {
    * Only resolve components contained in the given set
    */
   include?: ComponentSet;
+  // TODO: decide if there's a non-breaking change possible here
   /**
    * File paths or directory paths of deleted components, i.e., destructive changes.
    */
+  fsDeletePathsPre?: string[];
   fsDeletePaths?: string[];
 }
 
@@ -62,4 +64,7 @@ export interface FromManifestOptions extends OptionalTreeRegistryOptions {
    * conditions.
    */
   forceAddWildcards?: boolean;
+
+  destructivePre?: string;
+  destructivePost?: string;
 }

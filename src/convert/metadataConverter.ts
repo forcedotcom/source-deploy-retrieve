@@ -103,11 +103,10 @@ export class MetadataConverter {
           if (!isSource) {
             const manifestPath = join(packagePath, MetadataConverter.PACKAGE_XML_FILE);
             tasks.push(promises.writeFile(manifestPath, manifestContents));
-
             // For deploying destructive changes
             if (cs.hasDeletes) {
-              const destructiveChangesTypes = cs.getDestructiveChangesTypes();
-              destructiveChangesTypes.map((destructiveChangesType: DestructiveChangesType) => {
+              const destructiveChangesTypes = cs.getIncludedDestructiveChanges();
+              destructiveChangesTypes.map((destructiveChangesType) => {
                 const file = this.convertTypeToManifest(destructiveChangesType);
                 const destructiveManifestContents = cs.getPackageXml(
                   undefined,
@@ -132,13 +131,10 @@ export class MetadataConverter {
           writer = new ZipWriter(packagePath);
           if (!isSource) {
             (writer as ZipWriter).addToZip(manifestContents, MetadataConverter.PACKAGE_XML_FILE);
-
             // For deploying destructive changes
             if (cs.hasDeletes) {
-              const destructiveChangesTypes = cs.getDestructiveChangesTypes();
-              console.log('change types', destructiveChangesTypes);
+              const destructiveChangesTypes = cs.getIncludedDestructiveChanges();
               destructiveChangesTypes.map((destructiveChangeType) => {
-                console.log('type', destructiveChangeType);
                 const file = this.convertTypeToManifest(destructiveChangeType);
                 const destructiveManifestContents = cs.getPackageXml(
                   undefined,
@@ -185,16 +181,6 @@ export class MetadataConverter {
     }
   }
 
-  // private getDestructiveManifestFileName(cs: ComponentSet): string[] {
-  //   let manifestFileName: string;
-  //   if (cs.getDestructiveChangesType() === DestructiveChangesType.POST) {
-  //     manifestFileName = MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE;
-  //   } else {
-  //     manifestFileName = MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE;
-  //   }
-  //   return manifestFileName;
-  // }
-
   private getPackagePath(outputConfig: DirectoryConfig | ZipConfig): SourcePath | undefined {
     let packagePath: SourcePath;
     const { genUniqueDir = true, outputDirectory, packageName, type } = outputConfig;
@@ -224,9 +210,10 @@ export class MetadataConverter {
 
   private convertTypeToManifest(manifestFileName: DestructiveChangesType): string {
     if (manifestFileName === DestructiveChangesType.POST) {
-      console.log(manifestFileName);
       return MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE;
+    } else if (manifestFileName === DestructiveChangesType.PRE) {
+      return MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE;
     }
-    return MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE;
+    return MetadataConverter.PACKAGE_XML_FILE;
   }
 }

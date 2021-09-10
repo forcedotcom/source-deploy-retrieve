@@ -5,21 +5,25 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { createSandbox, SinonStub } from 'sinon';
-import { xmlInFolder, mockRegistry } from '../mock/registry';
+import { mockRegistry, xmlInFolder } from '../mock/registry';
 import * as streams from '../../src/convert/streams';
 import * as fs from 'fs';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { dirname, join } from 'path';
-import { expect, assert } from 'chai';
+import { assert, expect } from 'chai';
 import { ConversionError, LibraryError } from '../../src/errors';
 import { COMPONENTS } from '../mock/registry/type-constants/mixedContentInFolderConstants';
 import { fail } from 'assert';
-import { ComponentSet, MetadataConverter, SourceComponent } from '../../src';
+import {
+  ComponentSet,
+  DestructiveChangesType,
+  MetadataConverter,
+  SourceComponent,
+} from '../../src';
 import {
   DECOMPOSED_CHILD_COMPONENT_1,
   DECOMPOSED_CHILD_COMPONENT_2,
 } from '../mock/registry/type-constants/decomposedConstants';
-import { DestructiveChangesType } from '../../src/collections/types';
 
 const env = createSandbox();
 
@@ -207,15 +211,14 @@ describe('MetadataConverter', () => {
         type: DECOMPOSED_CHILD_COMPONENT_1.type,
         xml: DECOMPOSED_CHILD_COMPONENT_1.xml,
       });
-      component1.setMarkedForDelete(true);
+      component1.setMarkedForDelete(true, DestructiveChangesType.PRE);
       const component2 = new SourceComponent({
         name: DECOMPOSED_CHILD_COMPONENT_2.name,
         type: DECOMPOSED_CHILD_COMPONENT_2.type,
         xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
       });
-      const compSet = new ComponentSet([component2], mockRegistry);
+      const compSet = new ComponentSet([component1, component2], mockRegistry);
       compSet.setDestructiveChangesType(DestructiveChangesType.PRE);
-      compSet.add(component1, true);
       const expectedDestructiveContents = compSet.getPackageXml(undefined, true);
       const expectedContents = compSet.getPackageXml();
 
@@ -398,15 +401,14 @@ describe('MetadataConverter', () => {
         type: DECOMPOSED_CHILD_COMPONENT_1.type,
         xml: DECOMPOSED_CHILD_COMPONENT_1.xml,
       });
-      component1.setMarkedForDelete(true);
+      component1.setMarkedForDelete(true, DestructiveChangesType.PRE);
       const component2 = new SourceComponent({
         name: DECOMPOSED_CHILD_COMPONENT_2.name,
         type: DECOMPOSED_CHILD_COMPONENT_2.type,
         xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
       });
-      const compSet = new ComponentSet([component2], mockRegistry);
+      const compSet = new ComponentSet([component1, component2], mockRegistry);
       compSet.setDestructiveChangesType(DestructiveChangesType.PRE);
-      compSet.add(component1, true);
       const expectedDestructiveContents = compSet.getPackageXml(undefined, true);
       const expectedContents = compSet.getPackageXml();
       const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');

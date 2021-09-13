@@ -427,21 +427,15 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     deletionType: DestructiveChangesType = this.destructiveChangesType
   ): void {
     const key = this.simpleKey(component);
-    // if we're adding a component meant for deletion, don't write it to this.components
-    if (!this.components.has(key) && !asDeletion) {
+    if (!this.components.has(key)) {
       this.components.set(key, new Map<string, SourceComponent>());
     }
     if (component instanceof SourceComponent) {
-      if (!asDeletion) {
-        // if we're adding a component meant for deletion, don't write it to this.components
-        this.components.get(key).set(this.sourceKey(component), component);
-      }
+      this.components.get(key).set(this.sourceKey(component), component);
 
       // Build maps of destructive components and regular components as they are added
       // as an optimization when building manifests.
       if (asDeletion) {
-        // ensure that any components marked for deletion aren't in the componetns marked for constructive deployments
-        this.components.delete(key);
         component.setMarkedForDelete(true, deletionType);
         this.logger.debug(`Marking component for delete: ${component.fullName}`);
         if (!this.destructiveComponents[deletionType].has(key)) {
@@ -453,6 +447,18 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
           this.manifestComponents.set(key, new Map<string, SourceComponent>());
         }
         this.manifestComponents.get(key).set(this.sourceKey(component), component);
+      }
+
+      // something could try adding a component meant for deletion improperly, which would be marked as an addition
+      // specifically the ComponentSet.fromManifest with the `resolveSourcePaths` options which calls
+      // ComponentSet.fromSource, and adds everything as an addition
+      if (
+        this.manifestComponents.has(key) &&
+        (this.destructiveChangesPre.has(key) || this.destructiveChangesPost.has(key))
+      ) {
+        // if a component is in the manifestComponents, as well as being part of a destructive manifest, keep in the destructive manifest
+        component.setMarkedForDelete(true, deletionType);
+        this.manifestComponents.delete(key);
       }
     }
   }
@@ -545,9 +551,14 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     return this.destructiveChangesType;
   }
 
-  public getIncludedDestructiveChanges(): DestructiveChangesType[] {
-    const pre = this.destructiveComponents[DestructiveChangesType.PRE].size;
-    const post = this.destructiveComponents[DestructiveChangesType.POST].size;
+  /**
+   * Will return the types of destructive changes in the component set
+   *
+   * @return DestructiveChangesType[]
+   */
+  public getTypesOfDestructiveChanges(): DestructiveChangesType[] {
+    const pre = this.destructiveChangesPre.size;
+    const post = this.destructiveChangesPost.size;
 
     if (pre && !post) {
       return [DestructiveChangesType.PRE];
@@ -577,10 +588,15 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * Returns `true` if this `ComponentSet` contains components marked for deletion.
    */
   get hasDeletes(): boolean {
-    return (
-      this.destructiveComponents[DestructiveChangesType.POST].size > 0 ||
-      this.destructiveComponents[DestructiveChangesType.PRE].size > 0
-    );
+    return this.destructiveChangesPost.size > 0 || this.destructiveChangesPre.size > 0;
+  }
+
+  get destructiveChangesPre(): Map<string, Map<string, SourceComponent>> {
+    return this.destructiveComponents[DestructiveChangesType.PRE];
+  }
+
+  get destructiveChangesPost(): Map<string, Map<string, SourceComponent>> {
+    return this.destructiveComponents[DestructiveChangesType.POST];
   }
 
   private sourceKey(component: SourceComponent): string {

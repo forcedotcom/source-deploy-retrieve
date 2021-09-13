@@ -11,7 +11,6 @@ import {
   SfdxFileFormat,
   ZipConfig,
 } from './types';
-import { DestructiveChangesType } from '../collections/types';
 import { SourceComponent } from '../resolve';
 import { promises } from 'fs';
 import { dirname, join, normalize } from 'path';
@@ -26,7 +25,7 @@ import {
 } from './streams';
 import { ConversionError, LibraryError } from '../errors';
 import { SourcePath } from '../common';
-import { ComponentSet } from '../collections';
+import { ComponentSet, DestructiveChangesType } from '../collections';
 import { RegistryAccess } from '../registry';
 
 export class MetadataConverter {
@@ -105,11 +104,13 @@ export class MetadataConverter {
             tasks.push(promises.writeFile(manifestPath, manifestContents));
             // For deploying destructive changes
             if (cs.hasDeletes) {
-              const destructiveChangesTypes = cs.getIncludedDestructiveChanges();
+              // for each of the destructive changes in the component set, convert and write the correct metadata
+              // to each manifest
+              const destructiveChangesTypes = cs.getTypesOfDestructiveChanges();
               destructiveChangesTypes.map((destructiveChangesType) => {
                 const file = this.convertTypeToManifest(destructiveChangesType);
                 const destructiveManifestContents = cs.getPackageXml(
-                  undefined,
+                  4,
                   true,
                   destructiveChangesType
                 );
@@ -133,11 +134,13 @@ export class MetadataConverter {
             (writer as ZipWriter).addToZip(manifestContents, MetadataConverter.PACKAGE_XML_FILE);
             // For deploying destructive changes
             if (cs.hasDeletes) {
-              const destructiveChangesTypes = cs.getIncludedDestructiveChanges();
+              const destructiveChangesTypes = cs.getTypesOfDestructiveChanges();
+              // for each of the destructive changes in the component set, convert and write the correct metadata
+              // to each manifest
               destructiveChangesTypes.map((destructiveChangeType) => {
                 const file = this.convertTypeToManifest(destructiveChangeType);
                 const destructiveManifestContents = cs.getPackageXml(
-                  undefined,
+                  4,
                   true,
                   destructiveChangeType
                 );

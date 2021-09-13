@@ -137,12 +137,19 @@ export class SourceComponent implements MetadataComponent {
     return this.destructiveChangesType;
   }
 
-  public setMarkedForDelete(
-    asDeletion: boolean,
-    destructiveChangeType = DestructiveChangesType.POST
-  ): void {
-    this.markedForDelete = asDeletion;
-    this.destructiveChangesType = destructiveChangeType;
+  public setMarkedForDelete(destructiveChangeType?: DestructiveChangesType | boolean): void {
+    if (
+      destructiveChangeType === DestructiveChangesType.PRE ||
+      destructiveChangeType === DestructiveChangesType.POST ||
+      destructiveChangeType === true ||
+      destructiveChangeType === undefined
+    ) {
+      this.markedForDelete = true;
+      this.destructiveChangesType =
+        (destructiveChangeType as DestructiveChangesType) || DestructiveChangesType.POST;
+    } else {
+      this.markedForDelete = false;
+    }
   }
 
   private calculateRelativePath(fsPath: string): string {

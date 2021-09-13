@@ -60,7 +60,7 @@ describe('SourceComponent', () => {
   it('should return correct markedForDelete status', () => {
     expect(COMPONENT.isMarkedForDelete()).to.be.false;
     try {
-      COMPONENT.setMarkedForDelete(true);
+      COMPONENT.setMarkedForDelete();
       expect(COMPONENT.isMarkedForDelete()).to.be.true;
     } finally {
       COMPONENT.setMarkedForDelete(false);

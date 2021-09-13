@@ -176,14 +176,17 @@ describe('MetadataConverter', () => {
         type: DECOMPOSED_CHILD_COMPONENT_1.type,
         xml: DECOMPOSED_CHILD_COMPONENT_1.xml,
       });
-      component1.setMarkedForDelete(true);
+      component1.setMarkedForDelete(DestructiveChangesType.POST);
       const component2 = new SourceComponent({
         name: DECOMPOSED_CHILD_COMPONENT_2.name,
         type: DECOMPOSED_CHILD_COMPONENT_2.type,
         xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
       });
       const compSet = new ComponentSet([component1, component2], mockRegistry);
-      const expectedDestructiveContents = compSet.getPackageXml(undefined, true);
+      const expectedDestructiveContents = compSet.getPackageXml(
+        undefined,
+        DestructiveChangesType.POST
+      );
       const expectedContents = compSet.getPackageXml();
 
       await converter.convert(compSet, 'metadata', { type: 'directory', outputDirectory });
@@ -211,7 +214,7 @@ describe('MetadataConverter', () => {
         type: DECOMPOSED_CHILD_COMPONENT_1.type,
         xml: DECOMPOSED_CHILD_COMPONENT_1.xml,
       });
-      component1.setMarkedForDelete(true, DestructiveChangesType.PRE);
+      component1.setMarkedForDelete(DestructiveChangesType.PRE);
       const component2 = new SourceComponent({
         name: DECOMPOSED_CHILD_COMPONENT_2.name,
         type: DECOMPOSED_CHILD_COMPONENT_2.type,
@@ -219,7 +222,10 @@ describe('MetadataConverter', () => {
       });
       const compSet = new ComponentSet([component1, component2], mockRegistry);
       compSet.setDestructiveChangesType(DestructiveChangesType.PRE);
-      const expectedDestructiveContents = compSet.getPackageXml(undefined, true);
+      const expectedDestructiveContents = compSet.getPackageXml(
+        undefined,
+        DestructiveChangesType.PRE
+      );
       const expectedContents = compSet.getPackageXml();
 
       await converter.convert(compSet, 'metadata', { type: 'directory', outputDirectory });
@@ -371,14 +377,17 @@ describe('MetadataConverter', () => {
         type: DECOMPOSED_CHILD_COMPONENT_1.type,
         xml: DECOMPOSED_CHILD_COMPONENT_1.xml,
       });
-      component1.setMarkedForDelete(true);
+      component1.setMarkedForDelete();
       const component2 = new SourceComponent({
         name: DECOMPOSED_CHILD_COMPONENT_2.name,
         type: DECOMPOSED_CHILD_COMPONENT_2.type,
         xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
       });
       const compSet = new ComponentSet([component1, component2], mockRegistry);
-      const expectedDestructiveContents = compSet.getPackageXml(undefined, true);
+      const expectedDestructiveContents = compSet.getPackageXml(
+        undefined,
+        DestructiveChangesType.POST
+      );
       const expectedContents = compSet.getPackageXml();
       const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
 
@@ -395,13 +404,13 @@ describe('MetadataConverter', () => {
       ]);
     });
 
-    it('should write destructive changes pre manifest when ComponentSet has deletes', async () => {
+    it('should write destructive changes pre manifest when ComponentSet has deletes marked for pre', async () => {
       const component1 = new SourceComponent({
         name: DECOMPOSED_CHILD_COMPONENT_1.name,
         type: DECOMPOSED_CHILD_COMPONENT_1.type,
         xml: DECOMPOSED_CHILD_COMPONENT_1.xml,
       });
-      component1.setMarkedForDelete(true, DestructiveChangesType.PRE);
+      component1.setMarkedForDelete(DestructiveChangesType.PRE);
       const component2 = new SourceComponent({
         name: DECOMPOSED_CHILD_COMPONENT_2.name,
         type: DECOMPOSED_CHILD_COMPONENT_2.type,
@@ -409,7 +418,7 @@ describe('MetadataConverter', () => {
       });
       const compSet = new ComponentSet([component1, component2], mockRegistry);
       compSet.setDestructiveChangesType(DestructiveChangesType.PRE);
-      const expectedDestructiveContents = compSet.getPackageXml(undefined, true);
+      const expectedDestructiveContents = compSet.getPackageXml(4, DestructiveChangesType.PRE);
       const expectedContents = compSet.getPackageXml();
       const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
 

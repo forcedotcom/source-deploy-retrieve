@@ -109,11 +109,7 @@ export class MetadataConverter {
               const destructiveChangesTypes = cs.getTypesOfDestructiveChanges();
               destructiveChangesTypes.map((destructiveChangesType) => {
                 const file = this.convertTypeToManifest(destructiveChangesType);
-                const destructiveManifestContents = cs.getPackageXml(
-                  4,
-                  true,
-                  destructiveChangesType
-                );
+                const destructiveManifestContents = cs.getPackageXml(4, destructiveChangesType);
                 const destructiveManifestPath = join(packagePath, file);
                 tasks.push(
                   promises.writeFile(destructiveManifestPath, destructiveManifestContents)
@@ -139,11 +135,7 @@ export class MetadataConverter {
               // to each manifest
               destructiveChangesTypes.map((destructiveChangeType) => {
                 const file = this.convertTypeToManifest(destructiveChangeType);
-                const destructiveManifestContents = cs.getPackageXml(
-                  4,
-                  true,
-                  destructiveChangeType
-                );
+                const destructiveManifestContents = cs.getPackageXml(4, destructiveChangeType);
                 (writer as ZipWriter).addToZip(destructiveManifestContents, file);
               });
             }

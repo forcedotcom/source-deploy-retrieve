@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.4.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.0...v4.4.1) (2021-09-09)
+
+
+### Bug Fixes
+
+* fix functions to function suffix ([#449](https://github.com/forcedotcom/source-deploy-retrieve/issues/449)) ([7c2ba22](https://github.com/forcedotcom/source-deploy-retrieve/commit/7c2ba22cd47c89e11a480d7b9d8ac7c909283427))
+
 ## [4.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.3.5...v4.4.0) (2021-09-09)
 
 

@@ -34,7 +34,10 @@ export const DECOMPOSED_VIRTUAL_FS: VirtualDirectory[] = [
         name: DECOMPOSED_XML_NAME,
         data: Buffer.from(`<Decomposed xmlns="${XML_NS_URL}"><fullName>a</fullName></Decomposed>`),
       },
-      { name: DECOMPOSED_CHILD_XML_NAME_1, data: Buffer.from('<Y><test>child1</test></Y>') },
+      {
+        name: DECOMPOSED_CHILD_XML_NAME_1,
+        data: Buffer.from('<Y xmlns="${XML_NS_URL}"><test>child1</test></Y>'),
+      },
       DECOMPOSED_CHILD_DIR,
     ],
   },

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.4.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.1...v4.4.2) (2021-09-16)
+
+
+### Bug Fixes
+
+* **registry.json:** registry update for ManagedTopics ([#453](https://github.com/forcedotcom/source-deploy-retrieve/issues/453)) ([70f7ca8](https://github.com/forcedotcom/source-deploy-retrieve/commit/70f7ca82491b900836216bad86e99cc976044635))
+
 ### [4.4.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.0...v4.4.1) (2021-09-09)
 
 

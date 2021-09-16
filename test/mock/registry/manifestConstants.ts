@@ -62,6 +62,20 @@ export const ONE_FOLDER_MEMBER: VirtualFile = {
 </Package>\n`),
 };
 
+export const IN_FOLDER_WITH_CONTENT: VirtualFile = {
+  name: 'in-folder-with-content.xml',
+  data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Test_Folder</members>
+        <members>Test_Folder/report1</members>
+        <members>Test_Folder/report2</members>
+        <name>${mixedcontentinfolder.name}</name>
+    </types>
+    <version>${mockRegistry.apiVersion}</version>
+</Package>\n`),
+};
+
 export const ONE_WILDCARD: VirtualFile = {
   name: 'one-wildcard.xml',
   data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
@@ -84,6 +98,7 @@ export const TREE = new VirtualTreeContainer([
       ONE_OF_EACH,
       ONE_WILDCARD,
       ONE_FOLDER_MEMBER,
+      IN_FOLDER_WITH_CONTENT,
     ],
   },
   {

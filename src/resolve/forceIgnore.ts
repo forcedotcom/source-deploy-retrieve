@@ -6,26 +6,17 @@
  */
 
 import ignore, { Ignore } from 'ignore/index';
-import { dirname, join, relative, sep } from 'path';
+import { dirname, join, relative } from 'path';
 import { readFileSync } from 'fs';
 import { SourcePath } from '../common';
 import { searchUp } from '../utils/fileSystemHandler';
-// @ts-ignore this doesn't have typings
-import * as gitignoreParser from 'gitignore-parser';
-import { Lifecycle } from '@salesforce/core';
-
-let warn = true;
-const troubleEmittedForPattern = new Set<string>();
 
 export class ForceIgnore {
   public static readonly FILE_NAME = '.forceignore';
 
   private readonly parser: Ignore;
   private readonly forceIgnoreDirectory: string;
-  // TODO: REMOVE THE BELOW CLASS MEMBERS
-  private readonly gitignoreParser: gitignoreParser;
   private readonly contents?: string;
-  private readonly useNewParser: boolean;
   private DEFAULT_IGNORE: string[] = [
     '**/*.dup',
     '**/.*',
@@ -37,17 +28,9 @@ export class ForceIgnore {
     try {
       this.contents = readFileSync(forceIgnorePath, 'utf-8');
       // add the default ignore paths, and then parse the .forceignore file
-      // DO NOT CALL parseContents FOR THE NEW PARSER
-      // the new library handles it's own unix/windows file path separators, let it handle it
       this.parser = ignore().add(`${this.contents}\n${this.DEFAULT_IGNORE.join('\n')}`);
-      // TODO: START REMOVE AFTER GITIGNORE-PARSER DEPRECATED
-      // add the default and send to the old gitignore-parser
-      this.gitignoreParser = gitignoreParser.compile(this.parseContents(this.contents));
+      this.contents = this.contents.split('\n').join('\n');
       this.forceIgnoreDirectory = dirname(forceIgnorePath);
-
-      // read the file to determine which parser to use
-      this.useNewParser = this.contents.includes('# .forceignore v2');
-      // END REMOVE
     } catch (e) {
       // TODO: log no force ignore
     }
@@ -71,18 +54,7 @@ export class ForceIgnore {
 
   public denies(fsPath: SourcePath): boolean {
     try {
-      // AFTER GITIGNORE-PARSER DEPRECATED, change this to `return this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));`
-      let denies = false;
-      let fctResult = false;
-      // if there's a parser, and we're not trying to .forceignore the .forceignore
-      const relativePath = relative(this.forceIgnoreDirectory, fsPath);
-      if (this.parser && this.gitignoreParser && !!relativePath) {
-        denies = this.parser.ignores(relativePath);
-        fctResult = this.gitignoreParser.denies(relativePath);
-        // send to look for differences, analytics
-        this.resolveConflict(denies, fctResult, relativePath);
-      }
-      return this.useNewParser ? denies : fctResult;
+      return this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));
     } catch (e) {
       return false;
     }
@@ -90,80 +62,9 @@ export class ForceIgnore {
 
   public accepts(fsPath: SourcePath): boolean {
     try {
-      // AFTER GITIGNORE-PARSER DEPRECATED, change this to `return !this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));`
-      let accepts = true;
-      let fctResult = true;
-      const relativePath = relative(this.forceIgnoreDirectory, fsPath);
-      if (this.parser && this.gitignoreParser && !!relativePath) {
-        accepts = !this.parser.ignores(relativePath);
-        fctResult = this.gitignoreParser.accepts(relativePath);
-        // send to look for differences, analytics
-        this.resolveConflict(accepts, fctResult, relativePath);
-      }
-
-      return this.useNewParser ? accepts : fctResult;
+      return !this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));
     } catch (e) {
       return true;
     }
-  }
-
-  // REMOVE THIS AFTER GITIGNORE-PARSER DEPRECATED
-  private parseContents(contents: string): string {
-    return contents
-      .split('\n')
-      .map((line) => line.trim())
-      .map((line) => line.replace(/[\\\/]/g, sep))
-      .map((line) => line.replace(/^\\/, ''))
-      .join('\n');
-  }
-
-  // AFTER GITIGNORE-PARSER DEPRECATED, remove this method
-  private resolveConflict(
-    newLibraryResults: boolean,
-    oldLibraryResults: boolean,
-    fsPath: string
-  ): void {
-    const ignoreItems = this.contents.split('\n');
-    const troubledIgnoreLines: Set<string> = new Set<string>();
-
-    if (newLibraryResults !== oldLibraryResults && ignoreItems) {
-      ignoreItems
-        .filter((ignoreItem) => ignoreItem.length)
-        .forEach((ignoreItem) => {
-          // we need to run the both of the compilers for a single line to find the problem entry
-          const gitignoreResult = gitignoreParser
-            .compile(this.parseContents(ignoreItem))
-            .accepts(fsPath);
-          const ignoreResult = !ignore().add([ignoreItem]).ignores(fsPath);
-          // print the warning only once per forceignore line item
-          if (ignoreResult !== gitignoreResult && !troubledIgnoreLines.has(ignoreItem)) {
-            // only show the warning once, it could come from denies() or accepts()
-            if (warn) {
-              warn = false;
-              this.emitWarning(
-                'We\'re replacing the current ".forceignore" parser with one that uses the same patterns as "git" uses with ".gitignore". Until we remove the old one, both parsers are available. But we recommend you start using the new parser soon by adding this line to the top of your ".forceignore" file:  "# .forceignore v2". Read about the new ".gitgnore" pattern format here: https://git-scm.com/docs/gitignore. Then fix the following lines in your ".forceignore" file because they don\'t adhere to the new formatting rules.'
-              );
-            }
-            if (!troubleEmittedForPattern.has(ignoreItem)) {
-              troubleEmittedForPattern.add(ignoreItem);
-              this.emitWarning('\t' + ignoreItem);
-            }
-          }
-          troubledIgnoreLines.add(ignoreItem);
-        });
-
-      // send analytics, if they exist.
-      Lifecycle.getInstance().emit('telemetry', {
-        eventName: 'FORCE_IGNORE_DIFFERENCE',
-        content: this.contents,
-        oldLibraryResults,
-        newLibraryResults,
-        ignoreLines: Array.from(troubledIgnoreLines),
-        file: fsPath,
-      });
-    }
-  }
-  private emitWarning(warning: string): void {
-    process.emitWarning(warning);
   }
 }

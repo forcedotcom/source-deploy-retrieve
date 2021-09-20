@@ -14,15 +14,13 @@ const { expect } = chai;
 import { join } from 'path';
 import { createSandbox, match } from 'sinon';
 import { Readable } from 'stream';
-import { SourceComponent } from '../../src';
-import { ComponentSet } from '../../src/collections';
+import { SourceComponent, ComponentSet, WriterFormat } from '../../src';
 import {
   DEFAULT_PACKAGE_ROOT_SFDX,
   META_XML_SUFFIX,
   XML_NS_KEY,
   XML_NS_URL,
 } from '../../src/common';
-import { WriterFormat } from '../../src/convert';
 import { ConvertContext } from '../../src/convert/convertContext';
 import { JsToXml } from '../../src/convert/streams';
 import { matchingContentFile, mockRegistry, decomposed, nonDecomposed } from '../mock/registry';
@@ -57,7 +55,7 @@ describe('Convert Transaction Constructs', () => {
     });
 
     describe('Recomposition', () => {
-      it('should return a WriterFormat with recomposed data', async () => {
+      it('should return a WriterFormat with recomposed data and remove XML_NS_KEY from child components', async () => {
         const component = decomposed.DECOMPOSED_COMPONENT;
         const context = new ConvertContext();
         context.recomposition.setState((state) => {

@@ -12,7 +12,7 @@ import { promisify } from 'util';
 import { SourceComponent, MetadataResolver } from '../resolve';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 import { ensureFileExists } from '../utils/fileSystemHandler';
-import { META_XML_SUFFIX, SourcePath, XML_DECL } from '../common';
+import { SourcePath, XML_DECL } from '../common';
 import { ConvertContext } from './convertContext';
 import { MetadataTransformerFactory } from './transformers';
 import { JsonMap } from '@salesforce/ts-types';

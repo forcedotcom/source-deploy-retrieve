@@ -90,6 +90,22 @@ describe('BaseSourceAdapter', () => {
     expect(adapter.getComponent(component.xml)).to.deep.equal(component);
   });
 
+  it('should resolve a nested folder component in metadata format', () => {
+    const fullName = `subfolder/${xmlInFolder.COMPONENT_FOLDER_NAME}`;
+    const component = new SourceComponent({
+      name: fullName,
+      type: mockRegistryData.types.xmlinfolderfolder,
+      xml: join(
+        xmlInFolder.TYPE_DIRECTORY,
+        'subfolder',
+        `${xmlInFolder.COMPONENT_FOLDER_NAME}${META_XML_SUFFIX}`
+      ),
+    });
+    const adapter = new DefaultSourceAdapter(component.type, mockRegistry);
+
+    expect(adapter.getComponent(component.xml)).to.deep.equal(component);
+  });
+
   it('should not recognize an xml only component in metadata format when in the wrong directory', () => {
     // not in the right type directory
     const path = join('path', 'to', 'something', 'My_Test.xif');

@@ -6,5 +6,12 @@
  */
 export { createFiles } from './fileSystemHandler';
 export { generateMetaXML, generateMetaXMLPath, trimMetaXmlSuffix } from './metadata';
-export { extName, baseName, parseMetadataXml, parentName, trimUntil } from './path';
+export {
+  extName,
+  baseName,
+  parseMetadataXml,
+  parentName,
+  trimUntil,
+  parseNestedFullName,
+} from './path';
 export { normalizeToArray, deepFreeze } from './collections';

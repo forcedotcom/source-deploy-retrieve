@@ -8,7 +8,12 @@
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import { MetadataComponent, RegistryAccess } from '../../src';
-import { ManifestResolver, NodeFSTreeContainer } from '../../src/resolve';
+import {
+  ManifestResolver,
+  NodeFSTreeContainer,
+  VirtualFile,
+  VirtualTreeContainer,
+} from '../../src/resolve';
 import { mockRegistry, mockRegistryData } from '../mock/registry';
 import * as mockManifests from '../mock/registry/manifestConstants';
 
@@ -80,6 +85,142 @@ describe('ManifestResolver', () => {
         },
       ];
 
+      expect(result.components).to.deep.equal(expected);
+    });
+
+    it('should resolve nested InFolder types', async () => {
+      const registry = new RegistryAccess();
+      const reportType = registry.getTypeByName('report');
+      const reportFolderType = registry.getTypeByName('reportFolder');
+      const folderManifest: VirtualFile = {
+        name: 'reports-package.xml',
+        data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+      <Package xmlns="http://soap.sforce.com/2006/04/metadata">
+        <types>
+          <members>foo</members>
+          <members>foo/subfoo</members>
+          <members>foo/subfoo/MySubFooReport1</members>
+          <members>foo/subfoo/MySubFooReport2</members>
+          <members>bar/MyBarReport1</members>
+          <members>bar/MyBarReport2</members>
+          <name>Report</name>
+        </types>
+        <version>52.0</version>
+      </Package>\n`),
+      };
+      const tree = new VirtualTreeContainer([
+        {
+          dirPath: '.',
+          children: [folderManifest],
+        },
+      ]);
+      const resolver = new ManifestResolver(tree);
+      const result = await resolver.resolve(folderManifest.name);
+      const expected: MetadataComponent[] = [
+        {
+          fullName: 'foo',
+          type: reportFolderType,
+        },
+        {
+          fullName: 'foo/subfoo',
+          type: reportFolderType,
+        },
+        {
+          fullName: 'foo/subfoo/MySubFooReport1',
+          type: reportType,
+        },
+        {
+          fullName: 'foo/subfoo/MySubFooReport2',
+          type: reportType,
+        },
+        {
+          fullName: 'bar/MyBarReport1',
+          type: reportType,
+        },
+        {
+          fullName: 'bar/MyBarReport2',
+          type: reportType,
+        },
+      ];
+
+      expect(result.components).to.deep.equal(expected);
+    });
+
+    it('should resolve folderType types (Territory2*)', async () => {
+      const registry = new RegistryAccess();
+      const t2ModelType = registry.getTypeByName('Territory2Model');
+      const t2RuleType = registry.getTypeByName('Territory2Rule');
+      const t2Type = registry.getTypeByName('Territory2');
+      const t2TypeType = registry.getTypeByName('Territory2Type');
+      const t2Manifest: VirtualFile = {
+        name: 'territory2-package.xml',
+        data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+      <Package xmlns="http://soap.sforce.com/2006/04/metadata">
+        <types>
+          <members>My_Territory_Model</members>
+          <name>Territory2Model</name>
+        </types>
+        <types>
+          <members>My_Territory_Model.Fishing_Stores</members>
+          <name>Territory2Rule</name>
+        </types>
+        <types>
+          <members>My_Territory_Model.Austin</members>
+          <members>My_Territory_Model.Texas</members>
+          <members>My_Territory_Model.USA</members>
+          <name>Territory2</name>
+        </types>
+        <types>
+          <members>City</members>
+          <members>Country</members>
+          <members>State</members>
+          <name>Territory2Type</name>
+        </types>
+        <version>52.0</version>
+      </Package>\n`),
+      };
+      const tree = new VirtualTreeContainer([
+        {
+          dirPath: '.',
+          children: [t2Manifest],
+        },
+      ]);
+      const resolver = new ManifestResolver(tree);
+      const result = await resolver.resolve(t2Manifest.name);
+      const expected: MetadataComponent[] = [
+        {
+          fullName: 'My_Territory_Model',
+          type: t2ModelType,
+        },
+        {
+          fullName: 'My_Territory_Model.Fishing_Stores',
+          type: t2RuleType,
+        },
+        {
+          fullName: 'My_Territory_Model.Austin',
+          type: t2Type,
+        },
+        {
+          fullName: 'My_Territory_Model.Texas',
+          type: t2Type,
+        },
+        {
+          fullName: 'My_Territory_Model.USA',
+          type: t2Type,
+        },
+        {
+          fullName: 'City',
+          type: t2TypeType,
+        },
+        {
+          fullName: 'Country',
+          type: t2TypeType,
+        },
+        {
+          fullName: 'State',
+          type: t2TypeType,
+        },
+      ];
       expect(result.components).to.deep.equal(expected);
     });
   });

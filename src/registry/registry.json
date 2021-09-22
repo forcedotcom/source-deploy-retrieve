@@ -1431,6 +1431,7 @@
       "name": "Territory2Model",
       "suffix": "territory2Model",
       "directoryName": "territory2Models",
+      "inFolder": false,
       "folderType": "territory2model"
     },
     "territory2rule": {
@@ -1438,6 +1439,7 @@
       "name": "Territory2Rule",
       "suffix": "territory2Rule",
       "directoryName": "rules",
+      "inFolder": false,
       "folderType": "territory2model"
     },
     "territory2": {
@@ -1445,6 +1447,7 @@
       "name": "Territory2",
       "suffix": "territory2",
       "directoryName": "territories",
+      "inFolder": false,
       "folderType": "territory2model"
     },
     "campaigninfluencemodel": {

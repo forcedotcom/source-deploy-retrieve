@@ -27,10 +27,12 @@ export class ForceIgnore {
   public constructor(forceIgnorePath = '') {
     try {
       this.contents = readFileSync(forceIgnorePath, 'utf-8');
-      // add the default ignore paths, and then parse the .forceignore file
-      this.parser = ignore().add(`${this.contents}\n${this.DEFAULT_IGNORE.join('\n')}`);
-      this.contents = this.contents.split('\n').join('\n');
-      this.forceIgnoreDirectory = dirname(forceIgnorePath);
+      // check if file `.forceignore` exists
+      if (this.contents !== undefined) {
+        // add the default ignore paths, and then parse the .forceignore file
+        this.parser = ignore().add(`${this.contents}\n${this.DEFAULT_IGNORE.join('\n')}`);
+        this.forceIgnoreDirectory = dirname(forceIgnorePath);
+      }
     } catch (e) {
       // TODO: log no force ignore
     }

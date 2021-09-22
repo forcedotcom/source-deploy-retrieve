@@ -51,15 +51,30 @@ describe('Path Utils', () => {
 
   describe('parseNestedFullName', () => {
     it('should return fullName for deeply nested file in source format', () => {
-      const expectedFullName = 'foo/bar';
-      const filePath = 'force-app/main/default/reports/foo/bar.reportFolder-meta.xml';
+      const expectedFullName = join('foo', 'bar');
+      const filePath = join(
+        'force-app',
+        'main',
+        'default',
+        'reports',
+        'foo',
+        'bar.reportFolder-meta.xml'
+      );
       const dirName = 'reports';
       expect(parseNestedFullName(filePath, dirName)).to.equal(expectedFullName);
     });
 
     it('should return fullName for deeply nested file in mdapi format', () => {
-      const expectedFullName = 'foo/bar/baz';
-      const filePath = 'force-app/main/default/reports/foo/bar/baz-meta.xml';
+      const expectedFullName = join('foo', 'bar', 'baz');
+      const filePath = join(
+        'force-app',
+        'main',
+        'default',
+        'reports',
+        'foo',
+        'bar',
+        'baz-meta.xml'
+      );
       const dirName = 'reports';
       expect(parseNestedFullName(filePath, dirName)).to.equal(expectedFullName);
     });

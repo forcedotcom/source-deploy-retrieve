@@ -164,7 +164,7 @@ describe('MetadataConverter', () => {
       ]);
     });
 
-    it('should write destructive changes post manifest when ComponentSet has deletes', async () => {
+    it('should write destructive changes post manifest when ComponentSet has deletes marked for post', async () => {
       const timestamp = 123456;
       const packagePath = join(
         outputDirectory,

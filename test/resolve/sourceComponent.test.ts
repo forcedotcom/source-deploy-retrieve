@@ -4,35 +4,39 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SourceComponent, VirtualTreeContainer } from '../../src/resolve';
+import {
+  DestructiveChangesType,
+  MetadataType,
+  SourceComponent,
+  VirtualTreeContainer,
+} from '../../src';
 import { RegistryTestUtil } from './registryTestUtil';
 import {
-  xmlInFolder,
   decomposed,
-  mixedContentDirectory,
   matchingContentFile,
-  mockRegistryData,
+  mixedContentDirectory,
   mockRegistry,
+  mockRegistryData,
+  xmlInFolder,
 } from '../mock/registry';
 import { assert, expect } from 'chai';
 import { DECOMPOSED_COMPONENT } from '../mock/registry/type-constants/decomposedConstants';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
 import {
-  COMPONENT_1,
   CHILD_1_NAME,
-  VIRTUAL_DIR,
-  COMPONENT_1_XML_PATH,
   CHILD_2_NAME,
-  MATCHING_RULES_TYPE,
+  COMPONENT_1,
+  COMPONENT_1_XML_PATH,
   MATCHING_RULES_COMPONENT_XML_PATH,
+  MATCHING_RULES_TYPE,
   TREE,
+  VIRTUAL_DIR,
 } from '../mock/registry/type-constants/nonDecomposedConstants';
 import { createSandbox } from 'sinon';
 import { join } from 'path';
 import { DecomposedSourceAdapter } from '../../src/resolve/adapters';
 import { TypeInferenceError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { MetadataType } from '../../src';
 
 const env = createSandbox();
 
@@ -58,14 +62,25 @@ describe('SourceComponent', () => {
   });
 
   it('should return correct markedForDelete status', () => {
-    expect(COMPONENT.isMarkedForDelete()).to.be.false;
-    try {
-      COMPONENT.setMarkedForDelete();
-      expect(COMPONENT.isMarkedForDelete()).to.be.true;
-    } finally {
-      COMPONENT.setMarkedForDelete(false);
-      expect(COMPONENT.isMarkedForDelete()).to.be.false;
-    }
+    const comp = new SourceComponent({ name: 'test', type: undefined });
+    expect(comp.isMarkedForDelete()).to.be.false;
+    expect(comp.getDestructiveChangesType()).to.equal(undefined);
+
+    comp.setMarkedForDelete();
+    expect(comp.isMarkedForDelete()).to.be.true;
+    expect(comp.getDestructiveChangesType()).to.equal(DestructiveChangesType.POST);
+
+    comp.setMarkedForDelete(DestructiveChangesType.PRE);
+    expect(comp.isMarkedForDelete()).to.be.true;
+    expect(comp.getDestructiveChangesType()).to.equal(DestructiveChangesType.PRE);
+
+    comp.setMarkedForDelete(false);
+    expect(comp.isMarkedForDelete()).to.be.false;
+    expect(comp.getDestructiveChangesType()).to.equal(undefined);
+
+    comp.setMarkedForDelete(true);
+    expect(comp.isMarkedForDelete()).to.be.true;
+    expect(comp.getDestructiveChangesType()).to.equal(DestructiveChangesType.POST);
   });
 
   describe('parseXml', () => {

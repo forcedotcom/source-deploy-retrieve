@@ -103,10 +103,10 @@ export class MetadataConverter {
             const manifestPath = join(packagePath, MetadataConverter.PACKAGE_XML_FILE);
             tasks.push(promises.writeFile(manifestPath, manifestContents));
             // For deploying destructive changes
-            if (cs.hasDeletes) {
+            const destructiveChangesTypes = cs.getTypesOfDestructiveChanges();
+            if (destructiveChangesTypes) {
               // for each of the destructive changes in the component set, convert and write the correct metadata
               // to each manifest
-              const destructiveChangesTypes = cs.getTypesOfDestructiveChanges();
               destructiveChangesTypes.map((destructiveChangesType) => {
                 const file = this.convertTypeToManifest(destructiveChangesType);
                 const destructiveManifestContents = cs.getPackageXml(4, destructiveChangesType);
@@ -129,8 +129,8 @@ export class MetadataConverter {
           if (!isSource) {
             (writer as ZipWriter).addToZip(manifestContents, MetadataConverter.PACKAGE_XML_FILE);
             // For deploying destructive changes
-            if (cs.hasDeletes) {
-              const destructiveChangesTypes = cs.getTypesOfDestructiveChanges();
+            const destructiveChangesTypes = cs.getTypesOfDestructiveChanges();
+            if (destructiveChangesTypes.length) {
               // for each of the destructive changes in the component set, convert and write the correct metadata
               // to each manifest
               destructiveChangesTypes.map((destructiveChangeType) => {

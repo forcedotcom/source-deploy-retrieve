@@ -138,17 +138,15 @@ export class SourceComponent implements MetadataComponent {
   }
 
   public setMarkedForDelete(destructiveChangeType?: DestructiveChangesType | boolean): void {
-    if (
-      destructiveChangeType === DestructiveChangesType.PRE ||
-      destructiveChangeType === DestructiveChangesType.POST ||
-      destructiveChangeType === true ||
-      destructiveChangeType === undefined
-    ) {
-      this.markedForDelete = true;
-      this.destructiveChangesType =
-        (destructiveChangeType as DestructiveChangesType) || DestructiveChangesType.POST;
-    } else {
+    if (destructiveChangeType === false) {
       this.markedForDelete = false;
+      // unset destructiveChangesType if it was already set
+      delete this.destructiveChangesType;
+    } else {
+      this.markedForDelete = true;
+      destructiveChangeType === DestructiveChangesType.PRE
+        ? (this.destructiveChangesType = DestructiveChangesType.PRE)
+        : (this.destructiveChangesType = DestructiveChangesType.POST);
     }
   }
 

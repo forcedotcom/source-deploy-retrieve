@@ -82,5 +82,26 @@ describe('ManifestResolver', () => {
 
       expect(result.components).to.deep.equal(expected);
     });
+
+    it('should resolve inFolder types with folder content', async () => {
+      const resolver = new ManifestResolver(mockManifests.TREE, mockRegistry);
+      const result = await resolver.resolve(mockManifests.IN_FOLDER_WITH_CONTENT.name);
+      const expected: MetadataComponent[] = [
+        {
+          fullName: 'Test_Folder',
+          type: mockRegistryData.types.mciffolder,
+        },
+        {
+          fullName: 'Test_Folder/report1',
+          type: mockRegistryData.types.mixedcontentinfolder,
+        },
+        {
+          fullName: 'Test_Folder/report2',
+          type: mockRegistryData.types.mixedcontentinfolder,
+        },
+      ];
+
+      expect(result.components).to.deep.equal(expected);
+    });
   });
 });

@@ -7,7 +7,7 @@
 import { assert, expect } from 'chai';
 import { RegistryError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { MetadataRegistry, MetadataType } from '../../src/registry';
+import { MetadataRegistry, MetadataType, RegistryAccess } from '../../src/registry';
 import { mockRegistry, mockRegistryData } from '../mock/registry';
 
 describe('RegistryAccess', () => {
@@ -78,6 +78,14 @@ describe('RegistryAccess', () => {
         (typeId) => (mockRegistryData as MetadataRegistry).types[typeId]
       );
       expect(mockRegistry.getStrictFolderTypes()).to.deep.equal(types);
+    });
+  });
+
+  describe('getFolderContentTypes', () => {
+    it('should return all the types with a folderContentType property defined', () => {
+      const type = mockRegistryData.types.xmlinfolderfolder;
+      const type2 = mockRegistryData.types.mciffolder;
+      expect(mockRegistry.getFolderContentTypes()).to.deep.equal([type, type2]);
     });
   });
 });

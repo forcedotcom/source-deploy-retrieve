@@ -91,7 +91,7 @@ describe('BaseSourceAdapter', () => {
   });
 
   it('should resolve a nested folder component in metadata format', () => {
-    const fullName = `subfolder/${xmlInFolder.COMPONENT_FOLDER_NAME}`;
+    const fullName = join(`subfolder`, xmlInFolder.COMPONENT_FOLDER_NAME);
     const component = new SourceComponent({
       name: fullName,
       type: mockRegistryData.types.xmlinfolderfolder,

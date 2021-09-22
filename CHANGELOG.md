@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.4.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.3...v4.4.4) (2021-09-20)
+
+
+### Bug Fixes
+
+* remove XML_NS_KEY from children when written in metadata format ([#451](https://github.com/forcedotcom/source-deploy-retrieve/issues/451)) ([991ba16](https://github.com/forcedotcom/source-deploy-retrieve/commit/991ba161be918c4475381b657d768d8a88a32521))
+
+### [4.4.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.2...v4.4.3) (2021-09-16)
+
+
+### Bug Fixes
+
+* better support for non-nested inFolder types ([#452](https://github.com/forcedotcom/source-deploy-retrieve/issues/452)) ([f1237cb](https://github.com/forcedotcom/source-deploy-retrieve/commit/f1237cb887f1a24d121aadac9e5cf5f059d5203f))
+
+### [4.4.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.1...v4.4.2) (2021-09-16)
+
+
+### Bug Fixes
+
+* **registry.json:** registry update for ManagedTopics ([#453](https://github.com/forcedotcom/source-deploy-retrieve/issues/453)) ([70f7ca8](https://github.com/forcedotcom/source-deploy-retrieve/commit/70f7ca82491b900836216bad86e99cc976044635))
+
 ### [4.4.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.0...v4.4.1) (2021-09-09)
 
 

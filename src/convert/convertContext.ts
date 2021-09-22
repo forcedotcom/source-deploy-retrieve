@@ -84,6 +84,12 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
         parentXmlObj[parentName] = { [XML_NS_KEY]: XML_NS_URL };
       }
 
+      // type safe way of checking childContents for the key
+      if (getString(childContents, XML_NS_KEY)) {
+        // child don't need to be written with `xmlns="http://soap.sforce.com/2006/04/metadata"` attribute
+        delete (childContents as JsonMap)[XML_NS_KEY];
+      }
+
       const parent = parentXmlObj[parentName] as JsonMap;
 
       if (!parent[groupName]) {

@@ -1381,8 +1381,6 @@
           "managedtopic": {
             "id": "managedtopic",
             "name": "ManagedTopic",
-            "xmlElementName": "managedTopic",
-            "uniqueIdElement": "fullName",
             "directoryName": "managedTopics",
             "suffix": "managedTopic"
           }

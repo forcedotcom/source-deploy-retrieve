@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.4.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.3...v4.4.4) (2021-09-20)
+
+
+### Bug Fixes
+
+* remove XML_NS_KEY from children when written in metadata format ([#451](https://github.com/forcedotcom/source-deploy-retrieve/issues/451)) ([991ba16](https://github.com/forcedotcom/source-deploy-retrieve/commit/991ba161be918c4475381b657d768d8a88a32521))
+
 ### [4.4.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.2...v4.4.3) (2021-09-16)
 
 

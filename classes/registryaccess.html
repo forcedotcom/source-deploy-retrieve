@@ -97,6 +97,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="registryaccess.html#findtype" class="tsd-kind-icon">find<wbr>Type</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="registryaccess.html#getfoldercontenttypes" class="tsd-kind-icon">get<wbr>Folder<wbr>Content<wbr>Types</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="registryaccess.html#getstrictfoldertypes" class="tsd-kind-icon">get<wbr>Strict<wbr>Folder<wbr>Types</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="registryaccess.html#gettypebyname" class="tsd-kind-icon">get<wbr>Type<wbr>ByName</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="registryaccess.html#gettypebysuffix" class="tsd-kind-icon">get<wbr>Type<wbr>BySuffix</a></li>
@@ -117,7 +118,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a68cb51/src/registry/registryAccess.ts#L15">src/registry/registryAccess.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/dd765da/src/registry/registryAccess.ts#L18">src/registry/registryAccess.ts:18</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -143,7 +144,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a68cb51/src/registry/registryAccess.ts#L79">src/registry/registryAccess.ts:79</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/dd765da/src/registry/registryAccess.ts#L104">src/registry/registryAccess.ts:104</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -163,7 +164,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a68cb51/src/registry/registryAccess.ts#L63">src/registry/registryAccess.ts:63</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/dd765da/src/registry/registryAccess.ts#L66">src/registry/registryAccess.ts:66</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -205,6 +206,35 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getfoldercontenttypes" class="tsd-anchor"></a>
+					<h3>get<wbr>Folder<wbr>Content<wbr>Types</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Folder<wbr>Content<wbr>Types<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/metadatatype.html" class="tsd-signature-type">MetadataType</a><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/dd765da/src/registry/registryAccess.ts#L92">src/registry/registryAccess.ts:92</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Query for the types that have the folderContentType property defined.
+									E.g., reportFolder, dashboardFolder, documentFolder, emailFolder</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>see</dt>
+									<dd><p><a href="../interfaces/metadatatype.html#foldercontenttype">MetadataType.folderContentType</a></p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/metadatatype.html" class="tsd-signature-type">MetadataType</a><span class="tsd-signature-symbol">[]</span></h4>
+							<p>An array of metadata type objects that have folder content</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="getstrictfoldertypes" class="tsd-anchor"></a>
 					<h3>get<wbr>Strict<wbr>Folder<wbr>Types</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -214,7 +244,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a68cb51/src/registry/registryAccess.ts#L73">src/registry/registryAccess.ts:73</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/dd765da/src/registry/registryAccess.ts#L76">src/registry/registryAccess.ts:76</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -242,7 +272,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a68cb51/src/registry/registryAccess.ts#L27">src/registry/registryAccess.ts:27</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/dd765da/src/registry/registryAccess.ts#L30">src/registry/registryAccess.ts:30</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -274,7 +304,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/a68cb51/src/registry/registryAccess.ts#L49">src/registry/registryAccess.ts:49</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/dd765da/src/registry/registryAccess.ts#L52">src/registry/registryAccess.ts:52</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -321,6 +351,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="registryaccess.html#findtype" class="tsd-kind-icon">find<wbr>Type</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="registryaccess.html#getfoldercontenttypes" class="tsd-kind-icon">get<wbr>Folder<wbr>Content<wbr>Types</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="registryaccess.html#getstrictfoldertypes" class="tsd-kind-icon">get<wbr>Strict<wbr>Folder<wbr>Types</a>

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.4.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.4...v4.4.5) (2021-09-23)
+
+
+### Bug Fixes
+
+* adds support for nested InFolder metadata types ([#455](https://github.com/forcedotcom/source-deploy-retrieve/issues/455)) ([b2b90a7](https://github.com/forcedotcom/source-deploy-retrieve/commit/b2b90a7093a60d264776b663f6280ba3a101c237))
+
 ### [4.4.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.3...v4.4.4) (2021-09-20)
 
 

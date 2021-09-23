@@ -95,5 +95,5 @@ export function parseNestedFullName(fsPath: string, directoryName: string): Opti
   const pathPrefix = pathSplits.slice(pathSplits.lastIndexOf(directoryName) + 1);
   const fileName = pathSplits.pop().replace('-meta.xml', '').split('.')[0];
   pathPrefix[pathPrefix.length - 1] = fileName;
-  return pathPrefix.join(sep);
+  return pathPrefix.join('/');
 }

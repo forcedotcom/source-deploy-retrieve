@@ -14,6 +14,9 @@ import { MetadataRegistry, MetadataType } from './types';
 export class RegistryAccess {
   private registry: MetadataRegistry;
 
+  private strictFolderTypes: MetadataType[];
+  private folderContentTypes: MetadataType[];
+
   constructor(registry: MetadataRegistry = defaultRegistry) {
     this.registry = registry;
   }
@@ -71,9 +74,31 @@ export class RegistryAccess {
    * @returns An array of metadata type objects that require strict parent folder names
    */
   public getStrictFolderTypes(): MetadataType[] {
-    return Object.values(this.registry.strictDirectoryNames).map(
-      (typeId) => this.registry.types[typeId]
-    );
+    if (!this.strictFolderTypes) {
+      this.strictFolderTypes = Object.values(this.registry.strictDirectoryNames).map(
+        (typeId) => this.registry.types[typeId]
+      );
+    }
+    return this.strictFolderTypes;
+  }
+
+  /**
+   * Query for the types that have the folderContentType property defined.
+   * E.g., reportFolder, dashboardFolder, documentFolder, emailFolder
+   * @see {@link MetadataType.folderContentType}
+   *
+   * @returns An array of metadata type objects that have folder content
+   */
+  public getFolderContentTypes(): MetadataType[] {
+    if (!this.folderContentTypes) {
+      this.folderContentTypes = [];
+      for (const type of Object.values(this.registry.types)) {
+        if (type.folderContentType) {
+          this.folderContentTypes.push(type);
+        }
+      }
+    }
+    return this.folderContentTypes;
   }
 
   get apiVersion(): string {

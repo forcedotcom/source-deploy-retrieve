@@ -8,6 +8,7 @@
 import { basename, dirname, extname, sep } from 'path';
 import { SourcePath } from '../common';
 import { MetadataXml } from '../resolve';
+import { Optional } from '@salesforce/ts-types';
 
 /**
  * Get the file or directory name at the end of a path. Different from `path.basename`
@@ -59,9 +60,40 @@ export function trimUntil(fsPath: SourcePath, part: string): string {
  * @param fsPath - File path to parse
  * @returns MetadataXml info or undefined
  */
-export function parseMetadataXml(fsPath: string): MetadataXml | undefined {
+export function parseMetadataXml(fsPath: string): Optional<MetadataXml> {
   const match = basename(fsPath).match(/(.+)\.(.+)-meta\.xml/);
   if (match) {
     return { fullName: match[1], suffix: match[2], path: fsPath };
   }
+}
+
+/**
+ * Returns the fullName for a nested metadata source file. This is for metadata
+ * types that can be nested more than 1 level such as report and reportFolder,
+ * dashboard and dashboardFolder, etc. It uses the directory name for the metadata type
+ * as the starting point (non-inclusively) to parse the fullName.
+ *
+ * Examples:
+ * (source format path)
+ * fsPath: force-app/main/default/reports/foo/bar/My_Report.report-meta.xml
+ * returns: foo/bar/My_Report
+ *
+ * (mdapi format path)
+ * fsPath: unpackaged/reports/foo/bar-meta.xml
+ * returns: foo/bar
+ *
+ * @param fsPath - File path to parse
+ * @param directoryName - name of directory to use as a parsing index
+ * @returns the FullName
+ */
+export function parseNestedFullName(fsPath: string, directoryName: string): Optional<string> {
+  const pathSplits = fsPath.split(sep);
+  // Exit if the directoryName is not included in the file path.
+  if (!pathSplits.includes(directoryName)) {
+    return;
+  }
+  const pathPrefix = pathSplits.slice(pathSplits.lastIndexOf(directoryName) + 1);
+  const fileName = pathSplits.pop().replace('-meta.xml', '').split('.')[0];
+  pathPrefix[pathPrefix.length - 1] = fileName;
+  return pathPrefix.join('/');
 }

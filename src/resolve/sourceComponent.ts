@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, join, sep } from 'path';
+import { join, basename } from 'path';
 import { parse } from 'fast-xml-parser';
 import { ForceIgnore } from './forceIgnore';
 import { NodeFSTreeContainer, TreeContainer, VirtualTreeContainer } from './treeContainers';
@@ -151,22 +151,21 @@ export class SourceComponent implements MetadataComponent {
   }
 
   private calculateRelativePath(fsPath: string): string {
-    const { directoryName, suffix, inFolder, folderType } = this.type;
+    const { directoryName, suffix, inFolder, folderType, folderContentType } = this.type;
+
     // if there isn't a suffix, assume this is a mixed content component that must
     // reside in the directoryName of its type. trimUntil maintains the folder structure
-    // the file resides in for the new destination.
-    if (!suffix) {
+    // the file resides in for the new destination. This also applies to inFolder types:
+    // (report, dashboard, emailTemplate, document) and their folder container types:
+    // (reportFolder, dashboardFolder, emailFolder, documentFolder)
+    if (!suffix || inFolder || folderContentType) {
       return trimUntil(fsPath, directoryName);
     }
-    // legacy version of folderType
-    if (inFolder) {
-      return join(directoryName, this.fullName.split('/')[0], basename(fsPath));
-    }
+
     if (folderType) {
       // types like Territory2Model have child types inside them.  We have to preserve those folder structures
       if (this.parentType?.folderType && this.parentType?.folderType !== this.type.id) {
-        const fsPathSplits = fsPath.split(sep);
-        return fsPathSplits.slice(fsPathSplits.indexOf(this.parentType.directoryName)).join(sep);
+        return trimUntil(fsPath, this.parentType.directoryName);
       }
       return join(directoryName, this.fullName.split('/')[0], basename(fsPath));
     }

@@ -42,6 +42,7 @@ export const mockRegistryData = {
     xmlinfolder: {
       id: 'xmlinfolder',
       directoryName: 'xmlinfolders',
+      inFolder: true,
       name: 'XmlInFolder',
       suffix: 'xif',
       folderType: 'xmlinfolderfolder',

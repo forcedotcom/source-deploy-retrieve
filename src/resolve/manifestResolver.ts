@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { RegistryAccess } from '../registry';
+import { MetadataType, RegistryAccess } from '../registry';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
 import { MetadataComponent } from './types';
 import { parse as parseXml } from 'fast-xml-parser';
@@ -64,16 +64,46 @@ export class ManifestResolver {
       const typeName = typeMembers.name;
       const type = this.registry.getTypeByName(typeName);
       const parentType = type.folderType ? this.registry.getTypeByName(type.folderType) : undefined;
-      for (const fullName of normalizeToArray(typeMembers.members)) {
+      const members = normalizeToArray(typeMembers.members);
+
+      for (const fullName of members) {
         let mdType = type;
-        // if there is no / delimiter and it's a type in folders that aren't nestedType, infer folder component
-        if (type.folderType && !fullName.includes('/') && parentType.folderType !== parentType.id) {
-          mdType = this.registry.getTypeByName(type.folderType);
+        if (this.isNestedInFolder(fullName, type, parentType, members)) {
+          mdType = parentType;
         }
         components.push({ fullName, type: mdType });
       }
     }
 
     return { components, apiVersion };
+  }
+
+  // Use the folderType instead of the type from the manifest when:
+  //  1. InFolder types: (report, dashboard, emailTemplate, document)
+  //    1a. type.inFolder === true (from registry.json) AND
+  //    1b. The fullName doesn't contain a forward slash character AND
+  //    1c. The fullName with a slash appended is contained in another member entry
+  // OR
+  //  2. Non-InFolder, folder types: (territory2, territory2Model, territory2Type, territory2Rule)
+  //    2a. type.inFolder !== true (from registry.json) AND
+  //    2b. type.folderType has a value (from registry.json) AND
+  //    2c. This type's parent type has a folderType that doesn't match its ID.
+  private isNestedInFolder(
+    fullName: string,
+    type: MetadataType,
+    parentType: MetadataType,
+    members: string[]
+  ): boolean {
+    // Quick short-circuit for non-folderTypes
+    if (!type.folderType) {
+      return false;
+    }
+
+    const isInFolderType = type.inFolder;
+    const isNestedInFolder =
+      !fullName.includes('/') || members.some((m) => m.includes(`${fullName}/`));
+    const isNonMatchingFolder = parentType && parentType.folderType !== parentType.id;
+
+    return (isInFolderType && isNestedInFolder) || (!isInFolderType && isNonMatchingFolder);
   }
 }

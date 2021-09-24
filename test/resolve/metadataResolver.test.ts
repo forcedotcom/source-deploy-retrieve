@@ -6,7 +6,12 @@
  */
 
 import { assert, expect } from 'chai';
-import { MetadataResolver, SourceComponent, VirtualTreeContainer } from '../../src/resolve';
+import {
+  MetadataResolver,
+  SourceComponent,
+  VirtualDirectory,
+  VirtualTreeContainer,
+} from '../../src/resolve';
 import { nls } from '../../src/i18n';
 import {
   mockRegistry,
@@ -38,7 +43,7 @@ import {
   MIXED_CONTENT_DIRECTORY_VIRTUAL_FS,
   MIXED_CONTENT_DIRECTORY_XML_PATHS,
 } from '../mock/registry/type-constants/mixedContentDirectoryConstants';
-import { ComponentSet } from '../../src';
+import { ComponentSet, RegistryAccess } from '../../src';
 
 const testUtil = new RegistryTestUtil();
 
@@ -179,6 +184,21 @@ describe('MetadataResolver', () => {
           },
         ]);
         expect(access.getComponentsFromPath(path)).to.deep.equal([xmlInFolder.FOLDER_COMPONENT]);
+      });
+
+      it('should resolve folderContentTypes (e.g. reportFolder, emailFolder) in mdapi format', () => {
+        const registryAccess = new RegistryAccess();
+        const reportFolderDir = join('unpackaged', 'reports', 'foo');
+        const virtualFS: VirtualDirectory[] = [
+          { dirPath: reportFolderDir, children: ['bar-meta.xml'] },
+        ];
+        const tree = new VirtualTreeContainer(virtualFS);
+        const mdResolver = new MetadataResolver(registryAccess, tree);
+        const reportFolderPath = join(reportFolderDir, 'bar-meta.xml');
+        const comp = mdResolver.getComponentsFromPath(reportFolderPath);
+        expect(comp).to.be.an('array').with.lengthOf(1);
+        expect(comp[0]).to.have.property('name', 'foo/bar');
+        expect(comp[0]).to.have.deep.property('type', registryAccess.getTypeByName('ReportFolder'));
       });
 
       it('Should not mistake folder component of a mixed content type as that type', () => {

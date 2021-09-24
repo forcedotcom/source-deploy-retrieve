@@ -6,7 +6,7 @@
  */
 import { join } from 'path';
 import { expect } from 'chai';
-import { parseMetadataXml, trimUntil, baseName } from '../../src/utils';
+import { parseMetadataXml, trimUntil, baseName, parseNestedFullName } from '../../src/utils';
 
 describe('Path Utils', () => {
   const root = join('path', 'to', 'whatever');
@@ -46,6 +46,37 @@ describe('Path Utils', () => {
     it('Should return undefined for file name not in metadata xml format', () => {
       const path = join(root, 'a.ext');
       expect(parseMetadataXml(path)).to.be.undefined;
+    });
+  });
+
+  describe('parseNestedFullName', () => {
+    it('should return fullName for deeply nested file in source format', () => {
+      const expectedFullName = 'foo/bar';
+      const filePath = join(
+        'force-app',
+        'main',
+        'default',
+        'reports',
+        'foo',
+        'bar.reportFolder-meta.xml'
+      );
+      const dirName = 'reports';
+      expect(parseNestedFullName(filePath, dirName)).to.equal(expectedFullName);
+    });
+
+    it('should return fullName for deeply nested file in mdapi format', () => {
+      const expectedFullName = 'foo/bar/baz';
+      const filePath = join(
+        'force-app',
+        'main',
+        'default',
+        'reports',
+        'foo',
+        'bar',
+        'baz-meta.xml'
+      );
+      const dirName = 'reports';
+      expect(parseNestedFullName(filePath, dirName)).to.equal(expectedFullName);
     });
   });
 });

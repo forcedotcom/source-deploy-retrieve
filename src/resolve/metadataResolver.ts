@@ -25,6 +25,7 @@ export class MetadataResolver {
   private sourceAdapterFactory: SourceAdapterFactory;
   private tree: TreeContainer;
   private registry: RegistryAccess;
+  private folderContentTypeDirNames: string[];
 
   /**
    * @param registry Custom registry data
@@ -234,19 +235,41 @@ export class MetadataResolver {
     return !!this.registry.getTypeBySuffix(extName(fsPath));
   }
 
+  // Get the array of directoryNames for types that have folderContentType
+  private getFolderContentTypeDirNames(): string[] {
+    if (!this.folderContentTypeDirNames) {
+      this.folderContentTypeDirNames = this.registry
+        .getFolderContentTypes()
+        .map((t) => t.directoryName);
+    }
+    return this.folderContentTypeDirNames;
+  }
+
   /**
    * Identify metadata xml for a folder component:
    *    .../email/TestFolder-meta.xml
+   *    .../reports/foo/bar-meta.xml
    *
    * Do not match this pattern:
    *    .../tabs/TestFolder.tab-meta.xml
    */
   private parseAsFolderMetadataXml(fsPath: string): string {
+    let folderName;
     const match = basename(fsPath).match(/(.+)-meta\.xml/);
     if (match && !match[1].includes('.')) {
       const parts = fsPath.split(sep);
-      return parts.length > 1 ? parts[parts.length - 2] : undefined;
+      if (parts.length > 1) {
+        const folderContentTypesDirs = this.getFolderContentTypeDirNames();
+        // check if the path contains a folder content name as a directory
+        // e.g., `/reports/` and if it does return that folder name.
+        folderContentTypesDirs.some((dirName) => {
+          if (fsPath.includes(`${sep}${dirName}${sep}`)) {
+            folderName = dirName;
+          }
+        });
+      }
     }
+    return folderName;
   }
 
   private isMetadata(fsPath: string): boolean {

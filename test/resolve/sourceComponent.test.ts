@@ -37,6 +37,7 @@ import { join } from 'path';
 import { DecomposedSourceAdapter } from '../../src/resolve/adapters';
 import { TypeInferenceError } from '../../src/errors';
 import { nls } from '../../src/i18n';
+import { MetadataType, RegistryAccess } from '../../src';
 
 const env = createSandbox();
 
@@ -81,6 +82,28 @@ describe('SourceComponent', () => {
     comp.setMarkedForDelete(true);
     expect(comp.isMarkedForDelete()).to.be.true;
     expect(comp.getDestructiveChangesType()).to.equal(DestructiveChangesType.POST);
+  });
+
+  it('should return correct relative path for a nested component', () => {
+    const registry = new RegistryAccess();
+    const inFolderType = registry.getTypeBySuffix('report');
+    const folderContentType = registry.getTypeByName('ReportFolder');
+    expect(inFolderType.inFolder).to.be.true;
+    expect(folderContentType.folderContentType).to.equal('report');
+    const inFolderComp = new SourceComponent({ name: inFolderType.name, type: inFolderType });
+    const folderContentComp = new SourceComponent({
+      name: folderContentType.name,
+      type: folderContentType,
+    });
+    const inFolderPath = join('my', 'pkg', 'reports', 'foo', 'bar', 'baz.report-meta.xml');
+    const expectedPath1 = join('reports', 'foo', 'bar', 'baz.report-meta.xml');
+    const relPath1 = inFolderComp.getPackageRelativePath(inFolderPath, 'metadata');
+    expect(relPath1).to.equal(expectedPath1);
+
+    const folderContentPath = join('my', 'pkg', 'reports', 'foo', 'bar.reportFolder-meta.xml');
+    const expectedPath2 = join('reports', 'foo', 'bar.reportFolder-meta.xml');
+    const relPath2 = folderContentComp.getPackageRelativePath(folderContentPath, 'metadata');
+    expect(relPath2).to.equal(expectedPath2);
   });
 
   describe('parseXml', () => {

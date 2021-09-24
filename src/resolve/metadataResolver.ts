@@ -263,7 +263,7 @@ export class MetadataResolver {
         // check if the path contains a folder content name as a directory
         // e.g., `/reports/` and if it does return that folder name.
         folderContentTypesDirs.some((dirName) => {
-          if (fsPath.includes(`/${dirName}/`)) {
+          if (fsPath.includes(`${sep}${dirName}${sep}`)) {
             folderName = dirName;
           }
         });

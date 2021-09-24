@@ -289,7 +289,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
   /**
    * Get an object representation of a package manifest based on the set components.
-   *
+   * @param destructiveType Optional value for generating objects representing destructive change manifests
    * @returns Object representation of a package manifest
    */
   public getObject(destructiveType?: DestructiveChangesType): PackageManifestObject {
@@ -436,6 +436,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       // if a component is in the manifestComponents, as well as being part of a destructive manifest, keep in the destructive manifest
       component.setMarkedForDelete(deletionType);
       this.manifestComponents.delete(key);
+      this.logger.debug(
+        `Component: ${key} was found in both destructive and constructive manifests - keeping as a destructive change`
+      );
     }
   }
 
@@ -533,18 +536,14 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @return DestructiveChangesType[]
    */
   public getTypesOfDestructiveChanges(): DestructiveChangesType[] {
-    const pre = this.destructiveChangesPre.size;
-    const post = this.destructiveChangesPost.size;
-
-    if (!pre && !post) {
-      return [];
-    } else if (pre && !post) {
-      return [DestructiveChangesType.PRE];
-    } else if (post && !pre) {
-      return [DestructiveChangesType.POST];
-    } else if (post && pre) {
-      return [DestructiveChangesType.PRE, DestructiveChangesType.POST];
+    const destructiveChangesTypes: DestructiveChangesType[] = [];
+    if (this.destructiveChangesPre.size) {
+      destructiveChangesTypes.push(DestructiveChangesType.PRE);
     }
+    if (this.destructiveChangesPost.size) {
+      destructiveChangesTypes.push(DestructiveChangesType.POST);
+    }
+    return destructiveChangesTypes;
   }
 
   /**

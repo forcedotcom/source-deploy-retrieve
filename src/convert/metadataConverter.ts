@@ -104,11 +104,11 @@ export class MetadataConverter {
             tasks.push(promises.writeFile(manifestPath, manifestContents));
             // For deploying destructive changes
             const destructiveChangesTypes = cs.getTypesOfDestructiveChanges();
-            if (destructiveChangesTypes) {
+            if (destructiveChangesTypes.length) {
               // for each of the destructive changes in the component set, convert and write the correct metadata
               // to each manifest
               destructiveChangesTypes.map((destructiveChangesType) => {
-                const file = this.convertTypeToManifest(destructiveChangesType);
+                const file = this.getDestructiveManifest(destructiveChangesType);
                 const destructiveManifestContents = cs.getPackageXml(4, destructiveChangesType);
                 const destructiveManifestPath = join(packagePath, file);
                 tasks.push(
@@ -134,7 +134,7 @@ export class MetadataConverter {
               // for each of the destructive changes in the component set, convert and write the correct metadata
               // to each manifest
               destructiveChangesTypes.map((destructiveChangeType) => {
-                const file = this.convertTypeToManifest(destructiveChangeType);
+                const file = this.getDestructiveManifest(destructiveChangeType);
                 const destructiveManifestContents = cs.getPackageXml(4, destructiveChangeType);
                 (writer as ZipWriter).addToZip(destructiveManifestContents, file);
               });
@@ -203,12 +203,11 @@ export class MetadataConverter {
     return packagePath;
   }
 
-  private convertTypeToManifest(manifestFileName: DestructiveChangesType): string {
-    if (manifestFileName === DestructiveChangesType.POST) {
+  private getDestructiveManifest(destructiveChangesType: DestructiveChangesType): string {
+    if (destructiveChangesType === DestructiveChangesType.POST) {
       return MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE;
-    } else if (manifestFileName === DestructiveChangesType.PRE) {
+    } else if (destructiveChangesType === DestructiveChangesType.PRE) {
       return MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE;
     }
-    return MetadataConverter.PACKAGE_XML_FILE;
   }
 }

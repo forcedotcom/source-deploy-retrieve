@@ -7,6 +7,7 @@
 import {
   DestructiveChangesType,
   MetadataType,
+  RegistryAccess,
   SourceComponent,
   VirtualTreeContainer,
 } from '../../src';
@@ -37,7 +38,6 @@ import { join } from 'path';
 import { DecomposedSourceAdapter } from '../../src/resolve/adapters';
 import { TypeInferenceError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { MetadataType, RegistryAccess } from '../../src';
 
 const env = createSandbox();
 

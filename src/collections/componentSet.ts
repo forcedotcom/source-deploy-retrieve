@@ -196,30 +196,24 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       }
     };
 
-    if (options.destructivePre) {
-      const manifestPre = await manifestResolver.resolve(options.destructivePre);
-      for (const component of manifestPre.components) {
+    const resolveDestructiveChanges = async (
+      path: string,
+      destructiveChangeType: DestructiveChangesType
+    ) => {
+      const manifest = await manifestResolver.resolve(path);
+      for (const comp of manifest.components) {
         addComponent(
-          new SourceComponent({
-            type: component.type,
-            name: component.fullName,
-          }),
-          DestructiveChangesType.PRE
+          new SourceComponent({ type: comp.type, name: comp.fullName }),
+          destructiveChangeType
         );
       }
-    }
+    };
 
+    if (options.destructivePre) {
+      await resolveDestructiveChanges(options.destructivePre, DestructiveChangesType.PRE);
+    }
     if (options.destructivePost) {
-      const manifestPost = await manifestResolver.resolve(options.destructivePost);
-      for (const component of manifestPost.components) {
-        addComponent(
-          new SourceComponent({
-            type: component.type,
-            name: component.fullName,
-          }),
-          DestructiveChangesType.POST
-        );
-      }
+      await resolveDestructiveChanges(options.destructivePost, DestructiveChangesType.POST);
     }
 
     for (const component of manifest.components) {

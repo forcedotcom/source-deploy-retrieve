@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.4.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.5...v4.4.6) (2021-09-24)
+
+
+### Bug Fixes
+
+* resolve folderContentTypes in mdapi format for windows ([#457](https://github.com/forcedotcom/source-deploy-retrieve/issues/457)) ([25fbec5](https://github.com/forcedotcom/source-deploy-retrieve/commit/25fbec55720e7bab39a9e7e4f0368f44882c15de))
+
 ### [4.4.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.4...v4.4.5) (2021-09-23)
 
 

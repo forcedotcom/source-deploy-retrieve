@@ -7,12 +7,70 @@
 import { expect } from 'chai';
 import { MetadataRegistry } from '../../src';
 import { registry as defaultRegistry } from '../../src/registry/registry';
+import got from 'got';
+
+interface CoverageObject {
+  types: {
+    [key: string]: {
+      scratchDefinitions: {
+        professional: string;
+        group: string;
+        enterprise: string;
+        developer: string;
+      };
+      channels: {
+        metadataApi: boolean;
+        sourceTracking: boolean;
+        toolingApi: boolean;
+      };
+    };
+  };
+  versions: {
+    selected: number;
+    max: number;
+    min: number;
+  };
+}
 
 describe('Registry Validation', () => {
+  const registry = defaultRegistry as MetadataRegistry;
+  const typesWithChildren = Object.values(registry.types).filter((type) => type.children);
+
+  describe('every type from metadata coverage is in the SDR registry', () => {
+    before(async function () {
+      this.timeout(10000);
+      const metadataCoverage = JSON.parse(
+        (await got('https://mdcoverage.secure.force.com/services/apexrest/report')).body
+      ) as CoverageObject;
+
+      // these include child types
+      const metadataApiTypes = Object.entries(metadataCoverage.types).filter(
+        ([key, value]) => value.channels.metadataApi && !key.endsWith('Settings')
+      );
+      expect(metadataApiTypes.length).to.be.greaterThan(200);
+
+      describe('generated type specs', () => {
+        metadataApiTypes.forEach((mdType) => {
+          it(`${mdType[0]}`, () => {
+            const found =
+              // the mdapi type could be a top-level type or a child type
+              Object.values(registry.types).findIndex((regType) => regType.name === mdType[0]) >
+                -1 ||
+              typesWithChildren.some((type) =>
+                Object.values(type.children.types).find((childType) => childType.name === mdType[0])
+              );
+
+            expect(found).to.be.true;
+          });
+        });
+      });
+    });
+
+    it('Dummy test case, so before is executed', () => expect(true).to.be.true);
+  });
+
   describe('every child type has an entry in children', () => {
-    const registry = defaultRegistry as MetadataRegistry;
     const childMapping = new Map<string, string>();
-    const typesWithChildren = Object.values(registry.types).filter((type) => type.children);
 
     typesWithChildren.map((parentType) =>
       Object.values(parentType.children.types).map((childType) => {

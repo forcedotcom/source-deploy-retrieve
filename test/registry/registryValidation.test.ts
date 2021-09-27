@@ -9,6 +9,7 @@ import { MetadataRegistry } from '../../src';
 import { registry as defaultRegistry } from '../../src/registry/registry';
 import got from 'got';
 
+const apiVersionMax = 52;
 interface CoverageObject {
   types: {
     [key: string]: {
@@ -40,7 +41,11 @@ describe('Registry Validation', () => {
     before(async function () {
       this.timeout(10000);
       const metadataCoverage = JSON.parse(
-        (await got('https://mdcoverage.secure.force.com/services/apexrest/report')).body
+        (
+          await got(
+            `https://mdcoverage.secure.force.com/services/apexrest/report?version=${apiVersionMax}`
+          )
+        ).body
       ) as CoverageObject;
 
       // these include child types

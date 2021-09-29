@@ -13,19 +13,19 @@ import {
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSetError } from '../errors';
 import {
-  MetadataResolver,
+  ComponentLike,
   ManifestResolver,
+  MetadataComponent,
+  MetadataResolver,
   SourceComponent,
   TreeContainer,
-  MetadataComponent,
-  ComponentLike,
 } from '../resolve';
 import {
-  PackageTypeMembers,
-  FromManifestOptions,
-  PackageManifestObject,
-  FromSourceOptions,
   DestructiveChangesType,
+  FromManifestOptions,
+  FromSourceOptions,
+  PackageManifestObject,
+  PackageTypeMembers,
 } from './types';
 import { LazyCollection } from './lazyCollection';
 import { j2xParser } from 'fast-xml-parser';
@@ -276,12 +276,15 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
           typeMap.set(typeName, []);
         }
         const typeEntry = typeMap.get(typeName);
-        if (fullName === ComponentSet.WILDCARD) {
+        if (fullName === ComponentSet.WILDCARD && !type.supportsWildcardAndName) {
+          // if the type doesn't support mixed wildcards and specific names, overwrite the names to be a wildcard
           typeMap.set(typeName, [fullName]);
-        } else {
-          if (!typeEntry.includes(fullName) && !typeEntry.includes(ComponentSet.WILDCARD)) {
-            typeMap.get(typeName).push(fullName);
-          }
+        } else if (
+          type.supportsWildcardAndName ||
+          (!typeEntry.includes(fullName) && !typeEntry.includes(ComponentSet.WILDCARD))
+        ) {
+          // if the type supports both wildcards and names, add them regardless
+          typeMap.get(typeName).push(fullName);
         }
       }
     };

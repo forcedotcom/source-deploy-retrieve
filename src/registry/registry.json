@@ -254,6 +254,7 @@
       "suffix": "object",
       "directoryName": "objects",
       "inFolder": false,
+      "supportsWildcardAndName": true,
       "strictDirectoryName": true,
       "children": {
         "types": {

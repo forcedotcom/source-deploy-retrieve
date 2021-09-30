@@ -85,7 +85,10 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
     if (metaXml) {
       const pathToContent = this.trimPathToContent(trigger);
       const childTypeId = this.type.children.suffixes[metaXml.suffix];
-      const triggerIsAChild = !!childTypeId;
+
+      // If the child is explicitly not addressable, return the parent SourceComponent.
+      const triggerIsAChild =
+        !!childTypeId && this.type.children.types[childTypeId].isAddressable !== false;
       const strategy = this.type.strategies.decomposition;
       if (
         triggerIsAChild &&

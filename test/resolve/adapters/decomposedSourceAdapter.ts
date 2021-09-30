@@ -11,15 +11,12 @@ import {
   decomposedtoplevel,
   mockRegistryData,
   xmlInFolder,
-  matchingContentFile,
 } from '../../mock/registry';
-import { assert, expect } from 'chai';
-import { VirtualTreeContainer, SourceComponent } from '../../../src';
+import { expect } from 'chai';
+import { VirtualTreeContainer, SourceComponent, MetadataType } from '../../../src';
 import { RegistryTestUtil } from '../registryTestUtil';
 import { join } from 'path';
 import { META_XML_SUFFIX } from '../../../src/common';
-import { TypeInferenceError } from '../../../src/errors';
-import { nls } from '../../../src/i18n';
 
 describe('DecomposedSourceAdapter', () => {
   const type = mockRegistryData.types.decomposed;
@@ -37,6 +34,27 @@ describe('DecomposedSourceAdapter', () => {
     expect(adapter.getComponent(decomposed.DECOMPOSED_CHILD_XML_PATH_1)).to.deep.equal(
       expectedChild
     );
+  });
+
+  it('should return parent SourceComponent when given a child xml of non-addressable type', () => {
+    const nonAddressableType = JSON.parse(
+      JSON.stringify(mockRegistryData.types.decomposedtoplevel)
+    ) as MetadataType;
+    nonAddressableType.children.types.g.isAddressable = false;
+    const decompTree = new VirtualTreeContainer(decomposedtoplevel.DECOMPOSED_VIRTUAL_FS);
+    const decompAdapter = new DecomposedSourceAdapter(
+      nonAddressableType,
+      mockRegistry,
+      undefined,
+      decompTree
+    );
+    const expectedComp = new SourceComponent(
+      decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT,
+      decompTree
+    );
+    expectedComp.type.children.types.g.isAddressable = false;
+    const childComp = decomposedtoplevel.DECOMPOSED_TOP_LEVEL_CHILD_XML_PATHS[0];
+    expect(decompAdapter.getComponent(childComp)).to.deep.equal(expectedComp);
   });
 
   it('should return expected SourceComponent when given a child xml in its decomposed folder', () => {

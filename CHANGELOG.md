@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.4.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.7...v4.4.8) (2021-09-30)
+
+
+### Bug Fixes
+
+* resolve CustomFieldTranslations properly ([#461](https://github.com/forcedotcom/source-deploy-retrieve/issues/461)) ([cf764bb](https://github.com/forcedotcom/source-deploy-retrieve/commit/cf764bb9ce02844553e6374efa1d538e414ab697))
+
 ### [4.4.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.6...v4.4.7) (2021-09-28)
 
 

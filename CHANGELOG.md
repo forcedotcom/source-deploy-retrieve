@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.4.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.6...v4.4.7) (2021-09-28)
+
+
+### Bug Fixes
+
+* release sfdx-core update ([#462](https://github.com/forcedotcom/source-deploy-retrieve/issues/462)) ([ed44dff](https://github.com/forcedotcom/source-deploy-retrieve/commit/ed44dfff1757eb307f24fcbcdc1efa0e7f197ca7))
+
 ### [4.4.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.5...v4.4.6) (2021-09-24)
 
 

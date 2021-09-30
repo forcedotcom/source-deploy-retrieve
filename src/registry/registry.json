@@ -1,5 +1,37 @@
 {
   "types": {
+    "aiapplication": {
+      "id": "aiapplication",
+      "name": "AIApplication",
+      "suffix": "ai",
+      "directoryName": "aiApplications",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "aiapplicationconfig": {
+      "id": "aiapplicationconfig",
+      "suffix": "aiapplicationconfig",
+      "directoryName": "aiApplicationConfigs",
+      "name": "AIApplicationConfig",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "mlprediction": {
+      "id": "mlprediction",
+      "name": "MLPredictionDefinition",
+      "suffix": "mlPrediction",
+      "directoryName": "mlPredictions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "mldatadefinition": {
+      "id": "mldatadefinition",
+      "name": "MLDataDefinition",
+      "suffix": "mlDataDefinition",
+      "directoryName": "mlDataDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "installedpackage": {
       "id": "installedpackage",
       "name": "InstalledPackage",
@@ -2374,6 +2406,10 @@
     }
   },
   "suffixes": {
+    "ai": "aiapplication",
+    "aiapplicationconfig": "aiapplicationconfig",
+    "mlprediction": "mlPrediction",
+    "mlDataDefinition": "mldatadefinition",
     "sites": "customsite",
     "icon": "icon",
     "businessProcessGroup": "businessprocessgroup",

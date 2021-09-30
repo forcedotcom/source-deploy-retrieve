@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.8...v4.5.0) (2021-09-30)
+
+
+### Features
+
+* support epb types ([#463](https://github.com/forcedotcom/source-deploy-retrieve/issues/463)) ([1963483](https://github.com/forcedotcom/source-deploy-retrieve/commit/1963483ca9795437cba09568f1bd0f29d33affd1))
+
 ### [4.4.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.7...v4.4.8) (2021-09-30)
 
 

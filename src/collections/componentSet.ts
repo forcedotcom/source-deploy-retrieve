@@ -280,8 +280,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
           // if the type doesn't support mixed wildcards and specific names, overwrite the names to be a wildcard
           typeMap.set(typeName, [fullName]);
         } else if (
-          type.supportsWildcardAndName ||
-          (!typeEntry.includes(fullName) && !typeEntry.includes(ComponentSet.WILDCARD))
+          !typeEntry.includes(fullName) &&
+          (!typeEntry.includes(ComponentSet.WILDCARD) || type.supportsWildcardAndName)
         ) {
           // if the type supports both wildcards and names, add them regardless
           typeMap.get(typeName).push(fullName);

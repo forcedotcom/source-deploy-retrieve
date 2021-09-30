@@ -451,6 +451,7 @@ describe('ComponentSet', () => {
       set.add(new SourceComponent({ name: 'myType', type }));
       set.add(new SourceComponent({ name: '*', type }));
       set.add(new SourceComponent({ name: 'myType2', type }));
+      set.add(new SourceComponent({ name: 'myType', type }));
       expect(set.getObject().Package.types).to.deep.equal([
         { members: ['myType', '*', 'myType2'], name: 'CustomObject' },
       ]);
@@ -466,6 +467,7 @@ describe('ComponentSet', () => {
       set.add(new SourceComponent({ name: 'myType', type }));
       set.add(new SourceComponent({ name: '*', type }));
       set.add(new SourceComponent({ name: 'myType2', type }));
+      set.add(new SourceComponent({ name: 'myType', type }));
       expect(set.getObject().Package.types).to.deep.equal([{ members: ['*'], name: 'ApexClass' }]);
     });
 

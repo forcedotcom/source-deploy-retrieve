@@ -17,7 +17,6 @@ export const features = [
   'SUSTAINABILITYAPP',
   'SERVICECATALOG',
   'INSURANCECALCULATIONUSER',
-  'WORKFLOWFLOWACTIONFEATURE',
   'HEALTHCLOUDUSER',
   'TERRITORYMANAGEMENT',
   'ASSOCIATIONENGINE',
@@ -25,15 +24,25 @@ export const features = [
   'AIREPLYRECOMMENDATIONS',
   'DOCGEN',
   'SERVICECLOUDVOICEPARTNERTELEPHONY:1',
-  'EINSTEINASSISTANT',
   'PSAPPLICATIONUSAGECREDITS',
   'INDUSTRIESMFGACCOUNTFORECAST',
 ];
 
-export const settings = ['botSettings'];
+export const settings = [
+  'botSettings', // have not successfully described this because of licensing errors when deploying settings
+];
 export const metadataTypes = [
-  'PicklistValue', // only existed in v37, so it's hard to describe!
   'EmailTemplateFolder', // not a real addressable type (parent of email template)
+
+  // things that don't show up in describe so far
+  'PicklistValue', // only existed in v37, so it's hard to describe!
+  'FieldRestrictionRule', // not in describe for devorg.  ScratchDef might need feature 'EMPLOYEEEXPERIENCE' but it doesn't say that
+  'AppointmentSchedulingPolicy', // not in describe?
+  'WorkflowFlowAction', // not in describe
+
+  // two children of GlobalValueSet
+  'CustomValue',
+  'StandardValue',
 ];
 
 export const hasUnsupportedFeatures = (type: CoverageObjectType): boolean => {

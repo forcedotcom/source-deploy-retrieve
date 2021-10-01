@@ -27,7 +27,7 @@ describe
       const metadataApiTypesFromCoverage = Object.entries(metadataCoverage.types).filter(
         ([key, value]) =>
           value.channels.metadataApi && // if it's not in the mdapi, we don't worry about the registry
-          metadataTypes.includes(key) && // types we should ignore, see the imported file for explanations
+          !metadataTypes.includes(key) && // types we should ignore, see the imported file for explanations
           !key.endsWith('Settings') && // individual settings shouldn't be in the registry
           !hasUnsupportedFeatures(value) // explicitly not supported for now
       );

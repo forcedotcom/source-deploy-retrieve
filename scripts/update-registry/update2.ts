@@ -6,18 +6,21 @@ import { exit } from 'process';
 import { fs } from '@salesforce/core';
 import * as deepmerge from 'deepmerge';
 import { CoverageObjectType, CoverageObject } from '../../src/registry/types';
-import { features, hasUnsupportedFeatures } from '../../src/registry/nonSupportedTypes';
+import { hasUnsupportedFeatures, metadataTypes } from '../../src/registry/nonSupportedTypes';
+import { AnyJson } from '@salesforce/ts-types';
 
 const registry = fs.readJsonSync('./src/registry/registry.json') as unknown as MetadataRegistry;
 let metadataCoverage: CoverageObject;
 let missingTypes: [string, CoverageObjectType][];
 
 interface DescribeResult {
-  "directoryName": string,
-  "inFolder": boolean,
-  "metaFile": boolean,
-  "suffix": string,
-  "xmlName": string;
+  directoryName: string,
+  inFolder: boolean,
+  metaFile: boolean,
+  suffix: string,
+  xmlName: string;
+  folderContentType: string;
+  childXmlNames: string[];
 }
 
 // get the coverage report
@@ -45,12 +48,38 @@ interface DescribeResult {
   // describe the org
   const missingTypesAsDescribeResult = getMissingTypesAsDescribeResult();
   console.log(missingTypesAsDescribeResult);
+  registryUpdate(missingTypesAsDescribeResult);
   // update the registry
 
   // destroy the scratch org and the project
   shelljs.exec('sfdx force:org:delete -u registryBuilder --noprompt');
   shelljs.rm('-rf', 'registryBuilder');
 })();
+
+/**
+ * Simple type implementation.  Not handling children.
+ */
+const registryUpdate = (missingTypesAsDescribeResult: DescribeResult[]) => {
+  missingTypesAsDescribeResult.map(missingTypeDescribe => {
+    if (missingTypeDescribe.childXmlNames || missingTypeDescribe.folderContentType) {
+      console.log(`Skipping ${missingTypeDescribe.xmlName} because it is a folder or has children`);
+      return;
+    }
+    const { xmlName: name, suffix, directoryName, inFolder } = missingTypeDescribe;
+    let typeId = missingTypeDescribe.xmlName.toLowerCase();
+
+    const generatedType = {
+      id: typeId,
+      name,
+      suffix,
+      directoryName,
+      inFolder,
+    };
+    registry.types[typeId] = generatedType;
+    registry.suffixes[suffix] = typeId;
+  })
+  fs.writeJsonSync('./src/registry/registry.json', registry as unknown as AnyJson);
+}
 
 const getMissingTypesAsDescribeResult = (): DescribeResult[] => {
   const describeResult = shelljs.exec('sfdx force:mdapi:describemetadata -u registryBuilder --json', {silent: true});
@@ -67,6 +96,7 @@ const getMissingTypes = (): [string, CoverageObjectType][] => {
   const metadataApiTypesFromCoverage = Object.entries(metadataCoverage.types).filter(
         ([key, value]) =>
           value.channels.metadataApi && // if it's not in the mdapi, we don't worry about the registry
+          !metadataTypes.includes(key) && // types we should ignore, see the imported file for explanations
           !key.endsWith('Settings') && // individual settings shouldn't be in the registry
           !hasUnsupportedFeatures(value) // we don't support these types
       );
@@ -93,6 +123,7 @@ const updateProjectScratchDef = () => {
 
   scratchDefSummary.features = [...new Set(scratchDefSummary.features)];
   fs.writeJsonSync('./registryBuilder/config/project-scratch-def.json', scratchDefSummary)
+  console.log(`Creating org with features ${scratchDefSummary.features.join(',')}`);
 }
 
 

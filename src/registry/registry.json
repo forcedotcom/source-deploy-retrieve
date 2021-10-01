@@ -1537,7 +1537,8 @@
       "name": "AccessControlPolicy",
       "suffix": "policy",
       "directoryName": "accessControlPolicies",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": true
     },
     "skill": {
       "id": "skill",
@@ -1655,7 +1656,8 @@
       "name": "IntegrationHubSettings",
       "suffix": "settings",
       "directoryName": "integrationHub",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": true
     },
     "orchestrationcontext": {
       "id": "orchestrationcontext",
@@ -1970,7 +1972,8 @@
       "name": "AppointmentSchedulingPolicy",
       "suffix": "policy",
       "directoryName": "appointmentSchedulingPolicies",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "notificationtypeconfig": {
       "id": "notificationtypeconfig",
@@ -2248,7 +2251,7 @@
       "name": "ObjectHierarchyRelationship",
       "suffix": "settings",
       "directoryName": "ObjectHierarchyRelationship",
-      "strictDirectoryName": false
+      "strictDirectoryName": true
     },
     "salesagreementsettings": {
       "id": "salesagreementsettings",
@@ -2276,7 +2279,7 @@
       "name": "IndustriesManufacturingSettings",
       "suffix": "settings",
       "directoryName": "IndustriesManufacturingSettings",
-      "strictDirectoryName": false
+      "strictDirectoryName": true
     },
     "fieldservicemobileextension": {
       "id": "fieldservicemobileextension",
@@ -2290,7 +2293,7 @@
       "name": "DataSource",
       "suffix": "dataSource",
       "directoryName": "mktDataSources",
-      "strictDirectoryName": false
+      "strictDirectoryName": true
     },
     "datasourceobject": {
       "id": "datasourceobject",
@@ -2684,7 +2687,12 @@
     "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
     "sites": "customsite",
-    "restrictionRules": "restrictionrule"
+    "restrictionRules": "restrictionrule",
+    "mktDataSources" : "datasource",
+    "accessControlPolicies" : "accesscontrolpolicy",
+    "integrationHub" : "integrationhubsettings",
+    "ObjectHierarchyRelationship" : "objecthierarchyrelationship",
+    "IndustriesManufacturingSettings" : "industriesmanufacturingsettings"
   },
   "childTypes": {
     "customlabel": "customlabels",

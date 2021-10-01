@@ -166,3 +166,34 @@ export const enum TransformerStrategy {
   StaticResource = 'staticResource',
   NonDecomposed = 'nonDecomposed',
 }
+
+/**
+ * Subset of an item from the Metadata Coverage Report
+ */
+export interface CoverageObjectType {
+  scratchDefinitions: {
+    professional: string;
+    group: string;
+    enterprise: string;
+    developer: string;
+  };
+  channels: {
+    metadataApi: boolean;
+    sourceTracking: boolean;
+    toolingApi: boolean;
+  };
+}
+
+/**
+ * The structure returned by the metadata coverage report
+ */
+export interface CoverageObject {
+  types: {
+    [key: string]: CoverageObjectType;
+  };
+  versions: {
+    selected: number;
+    max: number;
+    min: number;
+  };
+}

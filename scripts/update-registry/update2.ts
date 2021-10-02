@@ -6,12 +6,12 @@ import { exit } from 'process';
 import { fs } from '@salesforce/core';
 import * as deepmerge from 'deepmerge';
 import { CoverageObjectType, CoverageObject } from '../../src/registry/types';
-import { hasUnsupportedFeatures, metadataTypes } from '../../src/registry/nonSupportedTypes';
 import { AnyJson } from '@salesforce/ts-types';
+import { getMissingTypes } from '../../test/utils/getMissingTypes';
 
-const registry = fs.readJsonSync('./src/registry/registry.json') as unknown as MetadataRegistry;
-let metadataCoverage: CoverageObject;
-let missingTypes: [string, CoverageObjectType][];
+export const registry = fs.readJsonSync('./src/registry/registry.json') as unknown as MetadataRegistry;
+export let metadataCoverage: CoverageObject;
+export let missingTypes: [string, CoverageObjectType][];
 
 interface DescribeResult {
   directoryName: string,
@@ -30,7 +30,7 @@ interface DescribeResult {
       ) as CoverageObject;
   console.log(`CoverageReport shows ${Object.keys(metadataCoverage.types).length} items in the metadata coverage report`);
 
-  const missingTypes = getMissingTypes();
+  const missingTypes = getMissingTypes(metadataCoverage, registry);
   if (missingTypes.length === 0) {
     console.log(
       `Your registry is complete!  Congratulations!`
@@ -89,25 +89,6 @@ const getMissingTypesAsDescribeResult = (): DescribeResult[] => {
   })
   // get the missingTypes from the describe
   return missingTypes.map(([key]) => metadataObjectsByName.get(key)).filter(Boolean);
-}
-
-const getMissingTypes = (): [string, CoverageObjectType][] => {
-
-  const metadataApiTypesFromCoverage = Object.entries(metadataCoverage.types).filter(
-        ([key, value]) =>
-          value.channels.metadataApi && // if it's not in the mdapi, we don't worry about the registry
-          !metadataTypes.includes(key) && // types we should ignore, see the imported file for explanations
-          !key.endsWith('Settings') && // individual settings shouldn't be in the registry
-          !hasUnsupportedFeatures(value) // we don't support these types
-      );
-  const registryTypeNames = Object.values(registry.types).flatMap((regType) => [
-    regType.name,
-    ...(regType.children ? Object.values(regType.children.types).map((child) => child.name) : []),
-  ]);
-  missingTypes = metadataApiTypesFromCoverage.filter(
-    ([key]) => !registryTypeNames.includes(key)
-  );
-  return missingTypes;
 }
 
 const updateProjectScratchDef = () => {

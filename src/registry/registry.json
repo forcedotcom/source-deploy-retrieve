@@ -2518,6 +2518,20 @@
       "suffix": "applicationRecordTypeConfig",
       "directoryName": "ApplicationRecordTypeConfig",
       "inFolder": false
+    },
+    "mktcalcinsightobjectdef": {
+      "id": "mktcalcinsightobjectdef",
+      "name": "MktCalcInsightObjectDef",
+      "suffix": "mktCalcInsightObjectDef",
+      "directoryName": "mktCalcInsightObjectDefs",
+      "inFolder": false
+    },
+    "internalorganization": {
+      "id": "internalorganization",
+      "name": "InternalOrganization",
+      "suffix": "internalOrganization",
+      "directoryName": "internalOrganizations",
+      "inFolder": false
     }
   },
   "suffixes": {
@@ -2802,7 +2816,9 @@
     "uiObjectRelationConfig": "uiobjectrelationconfig",
     "careRequestConfiguration": "carerequestconfiguration",
     "mlRecommendation": "mlrecommendationdefinition",
-    "applicationRecordTypeConfig": "applicationrecordtypeconfig"
+    "applicationRecordTypeConfig": "applicationrecordtypeconfig",
+    "mktCalcInsightObjectDef": "mktcalcinsightobjectdef",
+    "internalOrganization": "internalorganization"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

@@ -2483,6 +2483,41 @@
       "suffix": "advAccountForecastSet",
       "directoryName": "AdvAccountForecastSet",
       "inFolder": false
+    },
+    "documentgenerationsetting": {
+      "id": "documentgenerationsetting",
+      "name": "DocumentGenerationSetting",
+      "suffix": "documentGenerationSetting",
+      "directoryName": "documentGenerationSettings",
+      "inFolder": false
+    },
+    "uiobjectrelationconfig": {
+      "id": "uiobjectrelationconfig",
+      "name": "UIObjectRelationConfig",
+      "suffix": "uiObjectRelationConfig",
+      "directoryName": "uiObjectRelationConfigs",
+      "inFolder": false
+    },
+    "carerequestconfiguration": {
+      "id": "carerequestconfiguration",
+      "name": "CareRequestConfiguration",
+      "suffix": "careRequestConfiguration",
+      "directoryName": "careRequestConfigurations",
+      "inFolder": false
+    },
+    "mlrecommendationdefinition": {
+      "id": "mlrecommendationdefinition",
+      "name": "MLRecommendationDefinition",
+      "suffix": "mlRecommendation",
+      "directoryName": "mlRecommendations",
+      "inFolder": false
+    },
+    "applicationrecordtypeconfig": {
+      "id": "applicationrecordtypeconfig",
+      "name": "ApplicationRecordTypeConfig",
+      "suffix": "applicationRecordTypeConfig",
+      "directoryName": "ApplicationRecordTypeConfig",
+      "inFolder": false
     }
   },
   "suffixes": {
@@ -2762,7 +2797,12 @@
     "assistantDefinition": "assistantdefinition",
     "assistantContextItem": "assistantcontextitem",
     "advAcctForecastPeriodGroup": "advacctforecastperiodgroup",
-    "advAccountForecastSet": "advaccountforecastset"
+    "advAccountForecastSet": "advaccountforecastset",
+    "documentGenerationSetting": "documentgenerationsetting",
+    "uiObjectRelationConfig": "uiobjectrelationconfig",
+    "careRequestConfiguration": "carerequestconfiguration",
+    "mlRecommendation": "mlrecommendationdefinition",
+    "applicationRecordTypeConfig": "applicationrecordtypeconfig"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

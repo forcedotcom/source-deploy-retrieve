@@ -17,15 +17,9 @@ export const features = [
   'SUSTAINABILITYAPP',
   'SERVICECATALOG',
   'INSURANCECALCULATIONUSER',
-  'HEALTHCLOUDUSER',
-  'TERRITORYMANAGEMENT',
   'ASSOCIATIONENGINE',
   'CUSTOMERDATAPLATFORM',
-  'AIREPLYRECOMMENDATIONS',
-  'DOCGEN',
   'SERVICECLOUDVOICEPARTNERTELEPHONY:1',
-  'PSAPPLICATIONUSAGECREDITS',
-  // 'INDUSTRIESMFGACCOUNTFORECAST',
 ];
 
 export const settings = [
@@ -40,7 +34,8 @@ export const metadataTypes = [
   'AppointmentSchedulingPolicy', // not in describe?
   'AppointmentAssignmentPolicy', // not in describe?
   'WorkflowFlowAction', // not in describe
-
+  'AdvAcctForecastDimSource', // not in describe
+  'CareLimitType', // not in describe
   // two children of GlobalValueSet
   'CustomValue',
   'StandardValue',

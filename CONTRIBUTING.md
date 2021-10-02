@@ -26,7 +26,7 @@ Before commit and push, Husky runs several hooks to ensure the commit message is
 ### CLA
 
 External contributors are required to sign a Contributor's License
-Agreement. You can do so by going to https://cla.salesforce.com/sign-cla.
+Agreement. You can do so by going to <https://cla.salesforce.com/sign-cla>.
 
 ### Merging Pull Requests
 

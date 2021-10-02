@@ -85,7 +85,7 @@ The library uses the [registry file](../src/registry/registry.json) to resolve h
 The completeness is checked by comparing the registry to the metadata coverage report, but excluding
 
 1. Types that aren't supported in the metadata API
-2. Types in the nonSupportedTypes (think of it as a registry-ignore file).  You can ignore the types themselves, or the feature/settings they depend on.  Be sure to explain why you're choosing to ignore that type.
+2. Types in the [nonSupportedTypes file](../src/registry/nonSupportedTypes.ts)  (think of it as a registry-ignore file).  You can ignore the types themselves, or the feature/settings they depend on.  Be sure to explain why you're choosing to ignore that type.
 
 ### Adding new types to the registry
 

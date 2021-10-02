@@ -2469,6 +2469,20 @@
       "suffix": "assistantContextItem",
       "directoryName": "assistantContextItems",
       "inFolder": false
+    },
+    "advacctforecastperiodgroup": {
+      "id": "advacctforecastperiodgroup",
+      "name": "AdvAcctForecastPeriodGroup",
+      "suffix": "advAcctForecastPeriodGroup",
+      "directoryName": "AdvAcctForecastPeriodGroup",
+      "inFolder": false
+    },
+    "advaccountforecastset": {
+      "id": "advaccountforecastset",
+      "name": "AdvAccountForecastSet",
+      "suffix": "advAccountForecastSet",
+      "directoryName": "AdvAccountForecastSet",
+      "inFolder": false
     }
   },
   "suffixes": {
@@ -2746,7 +2760,9 @@
     "assistantSkillSobjectAction": "assistantskillsobjectaction",
     "assistantSkillQuickAction": "assistantskillquickaction",
     "assistantDefinition": "assistantdefinition",
-    "assistantContextItem": "assistantcontextitem"
+    "assistantContextItem": "assistantcontextitem",
+    "advAcctForecastPeriodGroup": "advacctforecastperiodgroup",
+    "advAccountForecastSet": "advaccountforecastset"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

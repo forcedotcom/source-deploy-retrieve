@@ -25,7 +25,7 @@ export const features = [
   'DOCGEN',
   'SERVICECLOUDVOICEPARTNERTELEPHONY:1',
   'PSAPPLICATIONUSAGECREDITS',
-  'INDUSTRIESMFGACCOUNTFORECAST',
+  // 'INDUSTRIESMFGACCOUNTFORECAST',
 ];
 
 export const settings = [
@@ -38,6 +38,7 @@ export const metadataTypes = [
   'PicklistValue', // only existed in v37, so it's hard to describe!
   'FieldRestrictionRule', // not in describe for devorg.  ScratchDef might need feature 'EMPLOYEEEXPERIENCE' but it doesn't say that
   'AppointmentSchedulingPolicy', // not in describe?
+  'AppointmentAssignmentPolicy', // not in describe?
   'WorkflowFlowAction', // not in describe
 
   // two children of GlobalValueSet

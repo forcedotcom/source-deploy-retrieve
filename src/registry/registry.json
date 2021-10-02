@@ -2532,6 +2532,13 @@
       "suffix": "internalOrganization",
       "directoryName": "internalOrganizations",
       "inFolder": false
+    },
+    "callcenterroutingmap": {
+      "id": "callcenterroutingmap",
+      "name": "CallCenterRoutingMap",
+      "suffix": "callCenterRoutingMap",
+      "directoryName": "callCenterRoutingMaps",
+      "inFolder": false
     }
   },
   "suffixes": {
@@ -2818,7 +2825,8 @@
     "mlRecommendation": "mlrecommendationdefinition",
     "applicationRecordTypeConfig": "applicationrecordtypeconfig",
     "mktCalcInsightObjectDef": "mktcalcinsightobjectdef",
-    "internalOrganization": "internalorganization"
+    "internalOrganization": "internalorganization",
+    "callCenterRoutingMap": "callcenterroutingmap"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

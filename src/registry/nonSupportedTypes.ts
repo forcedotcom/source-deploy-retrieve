@@ -16,14 +16,11 @@ export const features = [
   'SLACK',
   'SUSTAINABILITYAPP',
   'SERVICECATALOG',
-  'INSURANCECALCULATIONUSER',
-  'ASSOCIATIONENGINE',
-  // 'CUSTOMERDATAPLATFORM',
-  'SERVICECLOUDVOICEPARTNERTELEPHONY:1',
+  // 'SERVICECLOUDVOICEPARTNERTELEPHONY:1',
 ];
 
 export const settings = [
-  'botSettings', // have not successfully described this because of licensing errors when deploying settings
+  'botSettings', // have not successfully deployed this because of licensing errors when deploying settings
 ];
 export const metadataTypes = [
   'EmailTemplateFolder', // not a real addressable type (parent of email template)
@@ -36,6 +33,8 @@ export const metadataTypes = [
   'WorkflowFlowAction', // not in describe
   'AdvAcctForecastDimSource', // not in describe
   'CareLimitType', // not in describe
+  'RelatedRecordAssocCriteria', // not in describe
+  'OmniInteractionAccessConfig', // not in describe
   // two children of GlobalValueSet
   'CustomValue',
   'StandardValue',

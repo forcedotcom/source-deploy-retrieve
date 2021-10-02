@@ -4,6 +4,16 @@ orbs:
   slack: circleci/slack@3.4.2
 
 jobs:
+  registry-check:
+    description: Checks registry against metadataCoverageReport
+    docker:
+      - image: node:lts
+    steps:
+      - checkout
+      - run: yarn install
+      - run: yarn build
+      - run: yarn test:registry
+
   external-nut:
     description: Runs NUTs from other (external) repos by cloning them.  Substitutes a dependency for the current pull request.  For example, you're testing a PR to a library and want to test a plugin in another repo that uses the library.
 
@@ -86,6 +96,17 @@ jobs:
             NODE_OPTIONS=--max-old-space-size=8192 yarn test:nuts
 workflows:
   version: 2
+  registry-check:
+    triggers:
+      - schedule:
+          # early in the morning (cron is GMT)
+          cron: 8 22 * * *
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - registry-check
   test-and-release:
     jobs:
       - release-management/validate-pr:

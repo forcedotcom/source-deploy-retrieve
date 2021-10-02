@@ -6,6 +6,7 @@
  */
 
 import { CoverageObjectType } from './types';
+
 /**
  * when checking for completeness or building registries
  * this is the list of features that are not available,
@@ -13,10 +14,9 @@ import { CoverageObjectType } from './types';
  *
  * */
 export const features = [
-  'SLACK',
-  'SUSTAINABILITYAPP',
-  'SERVICECATALOG',
-  // 'SERVICECLOUDVOICEPARTNERTELEPHONY:1',
+  'SLACK', // not available in BT as of 10/2/2021
+  'SUSTAINABILITYAPP', // ERROR running force:org:create:  SustainabilityApp is not a valid Features value.
+  'SERVICECATALOG', // ERROR running force:org:create:  ServiceCatalog is not a valid Features value.
 ];
 
 export const settings = [

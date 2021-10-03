@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.5.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.0...v4.5.1) (2021-09-30)
+
 ## [4.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.8...v4.5.0) (2021-09-30)
 
 

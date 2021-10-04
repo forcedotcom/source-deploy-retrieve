@@ -29,21 +29,22 @@ export type MetadataApiRetrieveOptions = MetadataTransferOptions &
   RetrieveOptions & { registry?: RegistryAccess };
 
 export class RetrieveResult implements MetadataTransferResult {
-  public readonly response: MetadataApiRetrieveStatus;
-  // The ComponentSet of retrieved components.
-  public readonly components: ComponentSet;
-
-  // The ComponentSet of just the components on the local file system.
+  // This ComponentSet is most likely just the components on the local file
+  // system and is used to set the state of a SourceComponent to "Created"
+  // rather than "Changed".
   private localComponents: ComponentSet;
   private fileResponses: FileResponse[];
 
+  /**
+   * @param response The metadata retrieve response from the server
+   * @param components The ComponentSet of retrieved source components
+   * @param localComponents The ComponentSet used to create the retrieve request
+   */
   constructor(
-    response: MetadataApiRetrieveStatus,
-    components: ComponentSet,
+    readonly response: MetadataApiRetrieveStatus,
+    readonly components: ComponentSet,
     localComponents?: ComponentSet
   ) {
-    this.response = response;
-    this.components = components;
     this.localComponents = new ComponentSet(localComponents?.getSourceComponents());
   }
 

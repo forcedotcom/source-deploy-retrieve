@@ -23,11 +23,11 @@ import { nls } from '../../src/i18n';
 import { ManifestResolver, MetadataMember, SourceComponent } from '../../src/resolve';
 import { mockConnection } from '../mock/client';
 import {
-  mockRegistry,
-  mockRegistryData,
-  mixedContentSingleFile,
   decomposedtoplevel,
   matchingContentFile,
+  mixedContentSingleFile,
+  mockRegistry,
+  mockRegistryData,
 } from '../mock/registry';
 import { MATCHING_RULES_COMPONENT } from '../mock/registry/type-constants/nonDecomposedConstants';
 import * as manifestFiles from '../mock/registry/manifestConstants';
@@ -439,6 +439,36 @@ describe('ComponentSet', () => {
       const set = new ComponentSet();
       set.add(new SourceComponent({ name: type.name, type }));
       expect(set.getObject().Package.types).to.deep.equal([]);
+    });
+
+    it('should write wildcards and names of types with supportsWildcardAndName=true, regardless of order', () => {
+      const type: MetadataType = {
+        id: 'customobject',
+        name: 'CustomObject',
+        supportsWildcardAndName: true,
+      };
+      const set = new ComponentSet();
+      set.add(new SourceComponent({ name: 'myType', type }));
+      set.add(new SourceComponent({ name: '*', type }));
+      set.add(new SourceComponent({ name: 'myType2', type }));
+      set.add(new SourceComponent({ name: 'myType', type }));
+      expect(set.getObject().Package.types).to.deep.equal([
+        { members: ['myType', '*', 'myType2'], name: 'CustomObject' },
+      ]);
+    });
+
+    it('should overwrite a singular name with wildcard when supportsWildcardAndName=false', () => {
+      const type: MetadataType = {
+        id: 'apexclass',
+        name: 'ApexClass',
+        supportsWildcardAndName: false,
+      };
+      const set = new ComponentSet();
+      set.add(new SourceComponent({ name: 'myType', type }));
+      set.add(new SourceComponent({ name: '*', type }));
+      set.add(new SourceComponent({ name: 'myType2', type }));
+      set.add(new SourceComponent({ name: 'myType', type }));
+      expect(set.getObject().Package.types).to.deep.equal([{ members: ['*'], name: 'ApexClass' }]);
     });
 
     it('should exclude child components that are not addressable as defined in the registry', () => {

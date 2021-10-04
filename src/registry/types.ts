@@ -91,6 +91,17 @@ export interface MetadataType {
    * Whether the component is supported by the Metadata API and therefore should be included within a manifest.
    */
   isAddressable?: boolean;
+
+  /**
+   * Whether or not components of the same type can be can be specified with the wildcard character, and by name in a manifest
+   *
+   ```
+   <members>*</members>
+   <members>Account</members>
+   <name>CustomObject</name>
+   ```
+   */
+  supportsWildcardAndName?: boolean;
   /**
    * Type definitions for child types, if the type has any.
    *

@@ -105,6 +105,29 @@ describe('SourceComponent', () => {
       });
     });
 
+    it('should parse the child components xml content to js object', async () => {
+      const component = new SourceComponent({
+        name: 'nondecomposedchild',
+        type: mockRegistryData.types.nondecomposed.children.types.nondecomposedchild,
+        xml: COMPONENT_1_XML_PATH,
+        parent: new SourceComponent({
+          name: 'nondecomposed',
+          type: mockRegistryData.types.nondecomposed,
+        }),
+      });
+      env
+        .stub(component.tree, 'readFile')
+        .resolves(
+          Buffer.from(
+            '<nondecomposedparent><nondecomposed><id>nondecomposedchild</id><content>something</content></nondecomposed></nondecomposedparent>'
+          )
+        );
+      expect(await component.parseXml()).to.deep.equal({
+        content: 'something',
+        id: 'nondecomposedchild',
+      });
+    });
+
     it('should return empty object if component does not have an xml', async () => {
       const component = new SourceComponent({
         name: 'a',

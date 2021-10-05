@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { Connection } from '@salesforce/core';
-import { readFileSync } from 'fs';
+import { readFileSync } from 'graceful-fs';
 import { sep } from 'path';
 import { DeployError } from '../../errors';
 import { SourceComponent } from '../../resolve';

@@ -7,7 +7,7 @@
 
 import ignore, { Ignore } from 'ignore/index';
 import { dirname, join, relative } from 'path';
-import { readFileSync } from 'fs';
+import { readFileSync } from 'graceful-fs';
 import { SourcePath } from '../common';
 import { searchUp } from '../utils/fileSystemHandler';
 

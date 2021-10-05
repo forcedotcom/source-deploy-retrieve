@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { Archiver, create as createArchive } from 'archiver';
-import { createWriteStream } from 'fs';
+import { createWriteStream } from 'graceful-fs';
 import { basename, dirname, isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { Archiver, create as createArchive } from 'archiver';
-import { createWriteStream } from 'graceful-fs';
+import { createWriteStream, existsSync } from 'graceful-fs';
 import { basename, dirname, isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
@@ -20,7 +20,7 @@ import { j2xParser } from 'fast-xml-parser';
 import { ComponentSet } from '../collections';
 import { LibraryError } from '../errors';
 import { RegistryAccess } from '../registry';
-import { fs, Logger } from '@salesforce/core';
+import { Logger } from '@salesforce/core';
 export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
@@ -159,7 +159,7 @@ export class StandardWriter extends ComponentWriter {
           const fullDest = isAbsolute(info.output)
             ? info.output
             : join(this.rootDestination, info.output);
-          if (!fs.fileExistsSync(fullDest)) {
+          if (!existsSync(fullDest)) {
             for (const ignoredPath of this.forceIgnoredPaths) {
               if (
                 dirname(ignoredPath).includes(dirname(fullDest)) &&

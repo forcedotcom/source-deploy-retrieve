@@ -28,7 +28,7 @@ import { mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
 import { DECOMPOSED_COMPONENT } from '../mock/registry/type-constants/decomposedConstants';
 import { getString } from '@salesforce/ts-types';
-import { fs } from '@salesforce/core';
+import * as fs from 'graceful-fs';
 
 const env = createSandbox();
 

@@ -41,8 +41,8 @@ export class RetrieveResult implements MetadataTransferResult {
    * @param localComponents The ComponentSet used to create the retrieve request
    */
   constructor(
-    readonly response: MetadataApiRetrieveStatus,
-    readonly components: ComponentSet,
+    public readonly response: MetadataApiRetrieveStatus,
+    public readonly components: ComponentSet,
     localComponents?: ComponentSet
   ) {
     this.localComponents = new ComponentSet(localComponents?.getSourceComponents());

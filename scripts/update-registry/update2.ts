@@ -11,7 +11,6 @@ import { getMissingTypes } from '../../test/utils/getMissingTypes';
 
 export const registry = fs.readJsonSync('./src/registry/registry.json') as unknown as MetadataRegistry;
 export let metadataCoverage: CoverageObject;
-export let missingTypes: [string, CoverageObjectType][];
 
 interface DescribeResult {
   directoryName: string,
@@ -41,13 +40,13 @@ interface DescribeResult {
 
   // create an org we can describe
   shelljs.exec('sfdx force:project:create -n registryBuilder', {silent: true});
-  updateProjectScratchDef();
+  updateProjectScratchDef(missingTypes);
   // TODO: sourceApi has to match the coverage report
   if (!process.env.RB_EXISTING_ORG) {
     shelljs.exec('sfdx force:org:create -f registryBuilder/config/project-scratch-def.json -d 1 -a registryBuilder');
   }
   // describe the org
-  const missingTypesAsDescribeResult = getMissingTypesAsDescribeResult();
+  const missingTypesAsDescribeResult = getMissingTypesAsDescribeResult(missingTypes);
   console.log(missingTypesAsDescribeResult);
   registryUpdate(missingTypesAsDescribeResult);
   // update the registry
@@ -68,7 +67,7 @@ const registryUpdate = (missingTypesAsDescribeResult: DescribeResult[]) => {
       console.log(`Skipping ${missingTypeDescribe.xmlName} because it is a folder or has children`);
       return;
     }
-    const { xmlName: name, suffix, directoryName, inFolder } = missingTypeDescribe;
+    const { xmlName: name, suffix, metaFile, directoryName, inFolder } = missingTypeDescribe;
     let typeId = missingTypeDescribe.xmlName.toLowerCase();
 
     const generatedType = {
@@ -77,14 +76,15 @@ const registryUpdate = (missingTypesAsDescribeResult: DescribeResult[]) => {
       suffix,
       directoryName,
       inFolder,
+      strictDirectoryName: false,
     };
-    registry.types[typeId] = generatedType;
+    registry.types[typeId] = { ...generatedType, ...(metaFile ? { strategies: { adapter: 'matchingContentFile' } } : {}) };
     registry.suffixes[suffix] = typeId;
   })
   fs.writeJsonSync('./src/registry/registry.json', registry as unknown as AnyJson);
 }
 
-const getMissingTypesAsDescribeResult = (): DescribeResult[] => {
+const getMissingTypesAsDescribeResult = (missingTypes: [string, CoverageObjectType][]): DescribeResult[] => {
   const describeResult = shelljs.exec('sfdx force:mdapi:describemetadata -u registryBuilder --json', {silent: true});
   const metadataObjectsByName = new Map<string, DescribeResult>();
   (JSON.parse(describeResult.stdout).result.metadataObjects as DescribeResult[]).map(describeObj => {
@@ -94,7 +94,7 @@ const getMissingTypesAsDescribeResult = (): DescribeResult[] => {
   return missingTypes.map(([key]) => metadataObjectsByName.get(key)).filter(Boolean);
 }
 
-const updateProjectScratchDef = () => {
+const updateProjectScratchDef = (missingTypes: [string, CoverageObjectType][]) => {
   const scratchDefSummary = deepmerge.all(
         [{}].concat(
           missingTypes.map(([key, missingType]) =>

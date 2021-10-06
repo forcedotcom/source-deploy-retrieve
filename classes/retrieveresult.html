@@ -108,22 +108,42 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Retrieve<wbr>Result<span class="tsd-signature-symbol">(</span>response<span class="tsd-signature-symbol">: </span><a href="../interfaces/metadataapiretrievestatus.html" class="tsd-signature-type">MetadataApiRetrieveStatus</a>, components<span class="tsd-signature-symbol">: </span><a href="componentset.html" class="tsd-signature-type">ComponentSet</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="retrieveresult.html" class="tsd-signature-type">RetrieveResult</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Retrieve<wbr>Result<span class="tsd-signature-symbol">(</span>response<span class="tsd-signature-symbol">: </span><a href="../interfaces/metadataapiretrievestatus.html" class="tsd-signature-type">MetadataApiRetrieveStatus</a>, components<span class="tsd-signature-symbol">: </span><a href="componentset.html" class="tsd-signature-type">ComponentSet</a>, localComponents<span class="tsd-signature-symbol">?: </span><a href="componentset.html" class="tsd-signature-type">ComponentSet</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="retrieveresult.html" class="tsd-signature-type">RetrieveResult</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/6a964c9/src/client/metadataApiRetrieve.ts#L33">src/client/metadataApiRetrieve.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/4923b25/src/client/metadataApiRetrieve.ts#L36">src/client/metadataApiRetrieve.ts:36</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>response: <a href="../interfaces/metadataapiretrievestatus.html" class="tsd-signature-type">MetadataApiRetrieveStatus</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The metadata retrieve response from the server</p>
+										</div>
+									</div>
 								</li>
 								<li>
 									<h5>components: <a href="componentset.html" class="tsd-signature-type">ComponentSet</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The ComponentSet of retrieved source components</p>
+										</div>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> localComponents: <a href="componentset.html" class="tsd-signature-type">ComponentSet</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The ComponentSet used to create the retrieve request</p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="retrieveresult.html" class="tsd-signature-type">RetrieveResult</a></h4>
@@ -140,9 +160,14 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/metadatatransferresult.html">MetadataTransferResult</a>.<a href="../interfaces/metadatatransferresult.html#components">components</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/6a964c9/src/client/metadataApiRetrieve.ts#L33">src/client/metadataApiRetrieve.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/4923b25/src/client/metadataApiRetrieve.ts#L45">src/client/metadataApiRetrieve.ts:45</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The ComponentSet of retrieved source components</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="response" class="tsd-anchor"></a>
@@ -151,9 +176,14 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/metadatatransferresult.html">MetadataTransferResult</a>.<a href="../interfaces/metadatatransferresult.html#response">response</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/6a964c9/src/client/metadataApiRetrieve.ts#L32">src/client/metadataApiRetrieve.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/4923b25/src/client/metadataApiRetrieve.ts#L44">src/client/metadataApiRetrieve.ts:44</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The metadata retrieve response from the server</p>
+						</div>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -169,7 +199,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/metadatatransferresult.html">MetadataTransferResult</a>.<a href="../interfaces/metadatatransferresult.html#getfileresponses">getFileResponses</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/6a964c9/src/client/metadataApiRetrieve.ts#L40">src/client/metadataApiRetrieve.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/4923b25/src/client/metadataApiRetrieve.ts#L51">src/client/metadataApiRetrieve.ts:51</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../globals.html#fileresponse" class="tsd-signature-type">FileResponse</a><span class="tsd-signature-symbol">[]</span></h4>

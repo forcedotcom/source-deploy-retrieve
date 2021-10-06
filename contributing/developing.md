@@ -97,12 +97,16 @@ You can manually edit types in registry.json.  To simplify that work, there's a 
 4. Modifying the registry to include the newly found types
 
 ```
-`yarn update:registry`
+`yarn update-registry`
 ```
 
 NOTE:
 inFolderTypes and types with childXml in their describe are not supported.  You **want** to explore the various strategies for those and create NUTs.
 
-Tricks:
-If you get a whole bunch of new types, you can "ignore" all the features and work through them in chunks (uncomment a feature at a time)
-Some features require modifications to the DevHub (licenses, etc) and some may have to stay ignored.
+### Tricks
+
+- If you get a whole bunch of new types, you can "ignore" all the features and work through them in chunks (uncomment a feature at a time)
+- Some features require modifications to the DevHub (licenses, etc) and some may have to stay ignored.
+- You can use an existing org for the metadata describe.
+  1. setting its alias to `registryBuilder`
+  2. setting the env `RB_EXISTING_ORG` ex: `RB_EXISTING_ORG=true yarn update-registry`

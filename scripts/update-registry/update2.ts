@@ -43,8 +43,9 @@ interface DescribeResult {
   shelljs.exec('sfdx force:project:create -n registryBuilder', {silent: true});
   updateProjectScratchDef();
   // TODO: sourceApi has to match the coverage report
-
-  shelljs.exec('sfdx force:org:create -f registryBuilder/config/project-scratch-def.json -d 1 -a registryBuilder');
+  if (!process.env.RB_EXISTING_ORG) {
+    shelljs.exec('sfdx force:org:create -f registryBuilder/config/project-scratch-def.json -d 1 -a registryBuilder');
+  }
   // describe the org
   const missingTypesAsDescribeResult = getMissingTypesAsDescribeResult();
   console.log(missingTypesAsDescribeResult);
@@ -52,7 +53,9 @@ interface DescribeResult {
   // update the registry
 
   // destroy the scratch org and the project
-  shelljs.exec('sfdx force:org:delete -u registryBuilder --noprompt');
+  if (!process.env.RB_EXISTING_ORG) {
+    shelljs.exec('sfdx force:org:delete -u registryBuilder --noprompt');
+  }
   shelljs.rm('-rf', 'registryBuilder');
 })();
 

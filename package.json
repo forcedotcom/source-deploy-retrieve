@@ -91,7 +91,7 @@
     "local:link": "./scripts/localInstall.js link",
     "local:unlink": "./scripts/localInstall.js unlink",
     "repl": "node --inspect ./scripts/repl.js",
-    "test": "shx rm -rf ./test-results && nyc mocha lib/test/**/*.test.js && node ./scripts/verifyTestArtifacts.js",
+    "test": "shx rm -rf ./test-results && nyc mocha \"lib/test/**/*.js\" && node ./scripts/verifyTestArtifacts.js",
     "test:registry": "mocha ./lib/test/registry/registryCompleteness.test.js",
     "coverage": "nyc report --reporter=lcov",
     "update-registry": "npx ts-node scripts/update-registry/update2.ts"

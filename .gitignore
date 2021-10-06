@@ -110,3 +110,6 @@ package-lock.json
 .repl_history
 
 docs/
+
+# registry temporary files
+registryBuilder

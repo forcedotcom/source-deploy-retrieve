@@ -1,3 +1,5 @@
+// Deprecated in favor of update2.ts.  Keeping it for reference.
+
 const fs = require('fs');
 const path = require('path');
 const deepmerge = require('deepmerge');

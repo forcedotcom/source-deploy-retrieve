@@ -49,6 +49,7 @@
     "@types/mkdirp": "0.5.2",
     "@types/mocha": "^5",
     "@types/node": "^12.11.0",
+    "@types/shelljs": "^0.8.9",
     "@types/sinon": "^7.5.2",
     "@types/unzipper": "^0.10.3",
     "@typescript-eslint/eslint-plugin": "^2.22.0",
@@ -63,6 +64,7 @@
     "eslint-plugin-header": "^3.0.0",
     "eslint-plugin-jsdoc": "^19.1.0",
     "eslint-plugin-prettier": "^3.1.4",
+    "got": "^11.8.2",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
     "mocha": "^5",
@@ -73,6 +75,7 @@
     "shx": "^0.3.2",
     "sinon": "^7.3.1",
     "source-map-support": "^0.5.16",
+    "ts-node": "^10.2.1",
     "typedoc": "^0.20.33",
     "typescript": "3.9.7"
   },
@@ -88,9 +91,10 @@
     "local:link": "./scripts/localInstall.js link",
     "local:unlink": "./scripts/localInstall.js unlink",
     "repl": "node --inspect ./scripts/repl.js",
-    "test": "shx rm -rf ./test-results && nyc mocha && node ./scripts/verifyTestArtifacts.js",
+    "test": "shx rm -rf ./test-results && nyc mocha lib/test/**/*.test.js && node ./scripts/verifyTestArtifacts.js",
+    "test:registry": "mocha ./lib/test/registry/registryCompleteness.test.js",
     "coverage": "nyc report --reporter=lcov",
-    "update-registry": "node ./scripts/update-registry"
+    "update-registry": "npx ts-node scripts/update-registry/update2.ts"
   },
   "husky": {
     "hooks": {

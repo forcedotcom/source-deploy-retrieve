@@ -7,7 +7,7 @@
 import { ForceIgnore } from '../../src/resolve';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
-import * as fs from 'fs';
+import * as fs from 'graceful-fs';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { join } from 'path';
 const env = createSandbox();

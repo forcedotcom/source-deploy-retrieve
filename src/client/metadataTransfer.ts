@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { AuthInfo, Connection, fs, Logger, PollingClient, StatusResult } from '@salesforce/core';
+import { AuthInfo, Connection, Logger, PollingClient, StatusResult } from '@salesforce/core';
 import { EventEmitter } from 'events';
 import { ComponentSet } from '../collections';
 import { MetadataTransferError } from '../errors';
@@ -13,6 +13,7 @@ import { MetadataConverter, SfdxFileFormat } from '../convert';
 import { join } from 'path';
 import { Duration } from '@salesforce/kit';
 import { AnyJson, isNumber } from '@salesforce/ts-types';
+import * as fs from 'graceful-fs';
 
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;

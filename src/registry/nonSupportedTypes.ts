@@ -14,7 +14,6 @@ import { CoverageObjectType } from './types';
  *
  * */
 export const features = [
-  // 'SLACK', // not available in BT as of 10/2/2021
   'SUSTAINABILITYAPP', // ERROR running force:org:create:  SustainabilityApp is not a valid Features value.
   'SERVICECATALOG', // ERROR running force:org:create:  ServiceCatalog is not a valid Features value.
 ];

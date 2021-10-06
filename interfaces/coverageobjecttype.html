@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>RegistryOptions | @salesforce/source-deploy-retrieve</title>
+	<title>CoverageObjectType | @salesforce/source-deploy-retrieve</title>
 	<meta name="description" content="Documentation for @salesforce/source-deploy-retrieve">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -52,21 +52,28 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="registryoptions.html">RegistryOptions</a>
+					<a href="coverageobjecttype.html">CoverageObjectType</a>
 				</li>
 			</ul>
-			<h1>Interface RegistryOptions</h1>
+			<h1>Interface CoverageObjectType</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Subset of an item from the Metadata Coverage Report</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">RegistryOptions</span>
+						<span class="target">CoverageObjectType</span>
 					</li>
 				</ul>
 			</section>
@@ -77,7 +84,8 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="registryoptions.html#registry" class="tsd-kind-icon">registry</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="coverageobjecttype.html#channels" class="tsd-kind-icon">channels</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="coverageobjecttype.html#scratchdefinitions" class="tsd-kind-icon">scratch<wbr>Definitions</a></li>
 							</ul>
 						</section>
 					</div>
@@ -86,14 +94,55 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="registry" class="tsd-anchor"></a>
-					<h3>registry</h3>
-					<div class="tsd-signature tsd-kind-icon">registry<span class="tsd-signature-symbol">:</span> <a href="../classes/registryaccess.html" class="tsd-signature-type">RegistryAccess</a></div>
+					<a name="channels" class="tsd-anchor"></a>
+					<h3>channels</h3>
+					<div class="tsd-signature tsd-kind-icon">channels<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>metadataApi<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>sourceTracking<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>toolingApi<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/59c99ce/src/common/types.ts#L21">src/common/types.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/59c99ce/src/registry/types.ts#L191">src/registry/types.ts:191</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>metadata<wbr>Api<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>source<wbr>Tracking<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>tooling<wbr>Api<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="scratchdefinitions" class="tsd-anchor"></a>
+					<h3>scratch<wbr>Definitions</h3>
+					<div class="tsd-signature tsd-kind-icon">scratch<wbr>Definitions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>developer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>enterprise<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>group<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>professional<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/59c99ce/src/registry/types.ts#L185">src/registry/types.ts:185</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>developer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>enterprise<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>group<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>professional<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+							</li>
+						</ul>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -110,10 +159,13 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="registryoptions.html" class="tsd-kind-icon">Registry<wbr>Options</a>
+						<a href="coverageobjecttype.html" class="tsd-kind-icon">Coverage<wbr>Object<wbr>Type</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="registryoptions.html#registry" class="tsd-kind-icon">registry</a>
+								<a href="coverageobjecttype.html#channels" class="tsd-kind-icon">channels</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="coverageobjecttype.html#scratchdefinitions" class="tsd-kind-icon">scratch<wbr>Definitions</a>
 							</li>
 						</ul>
 					</li>

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>QueryResult | @salesforce/source-deploy-retrieve</title>
+	<title>DescribeResult | @salesforce/source-deploy-retrieve</title>
 	<meta name="description" content="Documentation for @salesforce/source-deploy-retrieve">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -52,10 +52,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="queryresult.html">QueryResult</a>
+					<a href="describeresult.html">DescribeResult</a>
 				</li>
 			</ul>
-			<h1>Interface QueryResult</h1>
+			<h1>Interface DescribeResult</h1>
 		</div>
 	</div>
 </header>
@@ -66,7 +66,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">QueryResult</span>
+						<span class="target">DescribeResult</span>
 					</li>
 				</ul>
 			</section>
@@ -77,12 +77,13 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="queryresult.html#done" class="tsd-kind-icon">done</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="queryresult.html#entitytypename" class="tsd-kind-icon">entity<wbr>Type<wbr>Name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="queryresult.html#querylocator" class="tsd-kind-icon">query<wbr>Locator</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="queryresult.html#records" class="tsd-kind-icon">records</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="queryresult.html#size" class="tsd-kind-icon">size</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="queryresult.html#totalsize" class="tsd-kind-icon">total<wbr>Size</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="describeresult.html#childxmlnames" class="tsd-kind-icon">child<wbr>Xml<wbr>Names</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="describeresult.html#directoryname" class="tsd-kind-icon">directory<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="describeresult.html#foldercontenttype" class="tsd-kind-icon">folder<wbr>Content<wbr>Type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="describeresult.html#infolder" class="tsd-kind-icon">in<wbr>Folder</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="describeresult.html#metafile" class="tsd-kind-icon">meta<wbr>File</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="describeresult.html#suffix" class="tsd-kind-icon">suffix</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="describeresult.html#xmlname" class="tsd-kind-icon">xml<wbr>Name</a></li>
 							</ul>
 						</section>
 					</div>
@@ -91,62 +92,72 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="done" class="tsd-anchor"></a>
-					<h3>done</h3>
-					<div class="tsd-signature tsd-kind-icon">done<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<a name="childxmlnames" class="tsd-anchor"></a>
+					<h3>child<wbr>Xml<wbr>Names</h3>
+					<div class="tsd-signature tsd-kind-icon">child<wbr>Xml<wbr>Names<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/59c99ce/src/client/types.ts#L376">src/client/types.ts:376</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/59c99ce/scripts/update-registry/update2.ts#L23">scripts/update-registry/update2.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="entitytypename" class="tsd-anchor"></a>
-					<h3>entity<wbr>Type<wbr>Name</h3>
-					<div class="tsd-signature tsd-kind-icon">entity<wbr>Type<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="directoryname" class="tsd-anchor"></a>
+					<h3>directory<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">directory<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/59c99ce/src/client/types.ts#L378">src/client/types.ts:378</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/59c99ce/scripts/update-registry/update2.ts#L17">scripts/update-registry/update2.ts:17</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="querylocator" class="tsd-anchor"></a>
-					<h3>query<wbr>Locator</h3>
-					<div class="tsd-signature tsd-kind-icon">query<wbr>Locator<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="foldercontenttype" class="tsd-anchor"></a>
+					<h3>folder<wbr>Content<wbr>Type</h3>
+					<div class="tsd-signature tsd-kind-icon">folder<wbr>Content<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/59c99ce/src/client/types.ts#L377">src/client/types.ts:377</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/59c99ce/scripts/update-registry/update2.ts#L22">scripts/update-registry/update2.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="records" class="tsd-anchor"></a>
-					<h3>records</h3>
-					<div class="tsd-signature tsd-kind-icon">records<span class="tsd-signature-symbol">:</span> <a href="apexrecord.html" class="tsd-signature-type">ApexRecord</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="aurarecord.html" class="tsd-signature-type">AuraRecord</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="lwcrecord.html" class="tsd-signature-type">LWCRecord</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="vfrecord.html" class="tsd-signature-type">VFRecord</a><span class="tsd-signature-symbol">[]</span></div>
+					<a name="infolder" class="tsd-anchor"></a>
+					<h3>in<wbr>Folder</h3>
+					<div class="tsd-signature tsd-kind-icon">in<wbr>Folder<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/59c99ce/src/client/types.ts#L379">src/client/types.ts:379</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/59c99ce/scripts/update-registry/update2.ts#L18">scripts/update-registry/update2.ts:18</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="size" class="tsd-anchor"></a>
-					<h3>size</h3>
-					<div class="tsd-signature tsd-kind-icon">size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="metafile" class="tsd-anchor"></a>
+					<h3>meta<wbr>File</h3>
+					<div class="tsd-signature tsd-kind-icon">meta<wbr>File<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/59c99ce/src/client/types.ts#L374">src/client/types.ts:374</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/59c99ce/scripts/update-registry/update2.ts#L19">scripts/update-registry/update2.ts:19</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="totalsize" class="tsd-anchor"></a>
-					<h3>total<wbr>Size</h3>
-					<div class="tsd-signature tsd-kind-icon">total<wbr>Size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="suffix" class="tsd-anchor"></a>
+					<h3>suffix</h3>
+					<div class="tsd-signature tsd-kind-icon">suffix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/59c99ce/src/client/types.ts#L375">src/client/types.ts:375</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/59c99ce/scripts/update-registry/update2.ts#L20">scripts/update-registry/update2.ts:20</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="xmlname" class="tsd-anchor"></a>
+					<h3>xml<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">xml<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/59c99ce/scripts/update-registry/update2.ts#L21">scripts/update-registry/update2.ts:21</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -165,25 +176,28 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="queryresult.html" class="tsd-kind-icon">Query<wbr>Result</a>
+						<a href="describeresult.html" class="tsd-kind-icon">Describe<wbr>Result</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="queryresult.html#done" class="tsd-kind-icon">done</a>
+								<a href="describeresult.html#childxmlnames" class="tsd-kind-icon">child<wbr>Xml<wbr>Names</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="queryresult.html#entitytypename" class="tsd-kind-icon">entity<wbr>Type<wbr>Name</a>
+								<a href="describeresult.html#directoryname" class="tsd-kind-icon">directory<wbr>Name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="queryresult.html#querylocator" class="tsd-kind-icon">query<wbr>Locator</a>
+								<a href="describeresult.html#foldercontenttype" class="tsd-kind-icon">folder<wbr>Content<wbr>Type</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="queryresult.html#records" class="tsd-kind-icon">records</a>
+								<a href="describeresult.html#infolder" class="tsd-kind-icon">in<wbr>Folder</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="queryresult.html#size" class="tsd-kind-icon">size</a>
+								<a href="describeresult.html#metafile" class="tsd-kind-icon">meta<wbr>File</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="queryresult.html#totalsize" class="tsd-kind-icon">total<wbr>Size</a>
+								<a href="describeresult.html#suffix" class="tsd-kind-icon">suffix</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="describeresult.html#xmlname" class="tsd-kind-icon">xml<wbr>Name</a>
 							</li>
 						</ul>
 					</li>

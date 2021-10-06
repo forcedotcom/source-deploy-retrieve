@@ -5,15 +5,15 @@
 Clone the project and `cd` into it:
 
 ```
-$ git clone git@github.com:forcedotcom/source-deploy-retrieve.git
-$ cd source-deploy-retrieve
+git clone git@github.com:forcedotcom/source-deploy-retrieve.git
+cd source-deploy-retrieve
 ```
 
 Ensure you have [Yarn](https://yarnpkg.com/) installed, then run:
 
 ```
-$ yarn install
-$ yarn build
+yarn install
+yarn build
 ```
 
 ## Branches
@@ -71,8 +71,38 @@ yarn local:install /path/to/other/package
 
 ## Updating the registry
 
-The library uses the [registry file](../src/registry/registry.json) to resolve how to process metadata types. This needs to be updated as new metadata types are added to the platform at major releases. Run the command below against an org on the latest platform API version:
+The tests include 2 registry-related tests.
+
+### Validate the registry is correctly
+
+Test failures here could be types that exist in the `types` section but don't have entries in `suffixes` or `strictDirectoryNames`.
+It also checks that for types which share a suffix, only one can have non-strict directory (otherwise, how would you tell them apart)?
+
+### Validate the registry is complete
+
+The library uses the [registry file](../src/registry/registry.json) to resolve how to process metadata types. This needs to be updated as new metadata types are added to the platform at major releases.
+
+The completeness is checked by comparing the registry to the metadata coverage report, but excluding
+
+1. Types that aren't supported in the metadata API
+2. Types in the [nonSupportedTypes file](../src/registry/nonSupportedTypes.ts)  (think of it as a registry-ignore file).  You can ignore the types themselves, or the feature/settings they depend on.  Be sure to explain why you're choosing to ignore that type.
+
+### Adding new types to the registry
+
+You can manually edit types in registry.json.  To simplify that work, there's a registry-building script
+
+1. looks for missing types (similar to the completeness test)
+2. For missing types, generate a project and scratch org that includes the Features/Settings
+3. Running force:mdapi:describemetadata to get the describe
+4. Modifying the registry to include the newly found types
 
 ```
-yarn update-registry <api version e.g. 51.0> -u <username>
+`yarn update:registry`
 ```
+
+NOTE:
+inFolderTypes and types with childXml in their describe are not supported.  You **want** to explore the various strategies for those and create NUTs.
+
+Tricks:
+If you get a whole bunch of new types, you can "ignore" all the features and work through them in chunks (uncomment a feature at a time)
+Some features require modifications to the DevHub (licenses, etc) and some may have to stay ignored.

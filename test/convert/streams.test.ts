@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as fs from 'fs';
+import * as fs from 'graceful-fs';
 import * as archiver from 'archiver';
 import { Logger } from '@salesforce/core';
 import * as streams from '../../src/convert/streams';

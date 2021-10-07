@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "4.5.4",
+  "version": "4.5.6",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/src/index.js",
   "author": "Salesforce",
@@ -32,6 +32,7 @@
     "@salesforce/ts-types": "^1.4.2",
     "archiver": "^5.3.0",
     "fast-xml-parser": "^3.17.4",
+    "graceful-fs": "^4.2.8",
     "ignore": "^5.1.8",
     "mime": "2.4.6",
     "unzipper": "0.10.11",
@@ -91,7 +92,7 @@
     "local:link": "./scripts/localInstall.js link",
     "local:unlink": "./scripts/localInstall.js unlink",
     "repl": "node --inspect ./scripts/repl.js",
-    "test": "shx rm -rf ./test-results && nyc mocha lib/test/**/*.test.js && node ./scripts/verifyTestArtifacts.js",
+    "test": "shx rm -rf ./test-results && nyc mocha \"lib/test/**/*.js\" && node ./scripts/verifyTestArtifacts.js",
     "test:registry": "mocha ./lib/test/registry/registryCompleteness.test.js",
     "coverage": "nyc report --reporter=lcov",
     "update-registry": "npx ts-node scripts/update-registry/update2.ts"

@@ -14,7 +14,7 @@ import {
   ComponentStatus,
   LightningComponentResource,
 } from '../types';
-import { readFileSync } from 'fs';
+import { readFileSync } from 'graceful-fs';
 import { extName } from '../../utils';
 import { normalize } from 'path';
 import { deployTypes } from '../toolingApi';

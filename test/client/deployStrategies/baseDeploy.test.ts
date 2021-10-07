@@ -8,7 +8,7 @@
 import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { assert, expect } from 'chai';
-import * as fs from 'fs';
+import * as fs from 'graceful-fs';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ContainerDeploy } from '../../../src/client/deployStrategies';
 import { nls } from '../../../src/i18n';

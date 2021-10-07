@@ -7,7 +7,7 @@
 import { createSandbox, SinonStub } from 'sinon';
 import { xmlInFolder, mockRegistry } from '../mock/registry';
 import * as streams from '../../src/convert/streams';
-import * as fs from 'fs';
+import * as fs from 'graceful-fs';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { dirname, join } from 'path';
 import { expect, assert } from 'chai';

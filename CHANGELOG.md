@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.5.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.5...v4.5.6) (2021-10-07)
+
+### [4.5.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.4...v4.5.5) (2021-10-06)
+
+
+### Bug Fixes
+
+* replace fs with graceful-fs ([#468](https://github.com/forcedotcom/source-deploy-retrieve/issues/468)) ([2b5214c](https://github.com/forcedotcom/source-deploy-retrieve/commit/2b5214c655b94e009e18482f50f121c6217c5e24))
+
 ### [4.5.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.3...v4.5.4) (2021-10-06)
 
 ### [4.5.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.2...v4.5.3) (2021-10-06)

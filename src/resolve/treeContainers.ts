@@ -6,7 +6,7 @@
  */
 import { join, dirname, basename, normalize } from 'path';
 import { baseName, parseMetadataXml } from '../utils';
-import { lstatSync, existsSync, readdirSync, createReadStream, readFileSync } from 'fs';
+import { lstatSync, existsSync, readdirSync, createReadStream, readFileSync } from 'graceful-fs';
 import { LibraryError } from '../errors';
 import { SourcePath } from '../common';
 import * as unzipper from 'unzipper';

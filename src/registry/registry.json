@@ -2540,6 +2540,28 @@
       "suffix": "callCenterRoutingMap",
       "directoryName": "callCenterRoutingMaps",
       "inFolder": false
+    },
+    "viewdefinition": {
+      "id": "viewdefinition",
+      "name": "ViewDefinition",
+      "suffix": "view",
+      "directoryName": "viewdefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
+    },
+    "slackapp": {
+      "id": "slackapp",
+      "name": "SlackApp",
+      "suffix": "slackapp",
+      "directoryName": "slackapps",
+      "inFolder": false,
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     }
   },
   "suffixes": {
@@ -2827,7 +2849,9 @@
     "applicationRecordTypeConfig": "applicationrecordtypeconfig",
     "mktCalcInsightObjectDef": "mktcalcinsightobjectdef",
     "internalOrganization": "internalorganization",
-    "callCenterRoutingMap": "callcenterroutingmap"
+    "callCenterRoutingMap": "callcenterroutingmap",
+    "view": "viewdefinition",
+    "slackapp": "slackapp"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

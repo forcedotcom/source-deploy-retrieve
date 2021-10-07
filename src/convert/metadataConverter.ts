@@ -13,7 +13,7 @@ import {
 } from './types';
 import { DestructiveChangesType } from '../collections/types';
 import { SourceComponent } from '../resolve';
-import { promises } from 'fs';
+import { promises } from 'graceful-fs';
 import { dirname, join, normalize } from 'path';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
 import {

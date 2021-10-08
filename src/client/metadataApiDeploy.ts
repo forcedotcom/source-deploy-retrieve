@@ -54,7 +54,7 @@ export class DeployResult implements MetadataTransferResult {
       }
     }
 
-    return fileResponses;
+    return fileResponses.concat(this.deleteNotFoundToFileResponses(messages));
   }
 
   private createResponses(component: SourceComponent, messages: DeployMessage[]): FileResponse[] {
@@ -144,6 +144,46 @@ export class DeployResult implements MetadataTransferResult {
     }
 
     return messageMap;
+  }
+
+  /**
+   * If a components fails to delete because it doesn't exist in the org, you get a message like
+   * key: 'ApexClass#destructiveChanges.xml'
+   * value:[{
+   *  fullName: 'destructiveChanges.xml',
+   *  fileName: 'destructiveChanges.xml',
+   *  componentType: 'ApexClass',
+   *  problem: 'No ApexClass named: test1 found',
+   *  problemType: 'Warning'
+   * }]
+   */
+  private deleteNotFoundToFileResponses(messageMap: Map<string, DeployMessage[]>): FileResponse[] {
+    const fileResponses: FileResponse[] = [];
+    messageMap.forEach((messages, key) => {
+      if (key.includes('destructiveChanges.xml')) {
+        messages.forEach((message) => {
+          if (
+            message.problemType === 'Warning' &&
+            message.problem.startsWith(`No ${message.componentType} named: `)
+          ) {
+            const fullName = message.problem
+              .replace(`No ${message.componentType} named: `, '')
+              .replace(' found', '');
+            this.components
+              .getComponentFilenamesByNameAndType(fullName, message.componentType)
+              .forEach((fileName) => {
+                fileResponses.push({
+                  fullName,
+                  type: message.componentType,
+                  filePath: fileName,
+                  state: ComponentStatus.Deleted,
+                });
+              });
+          }
+        });
+      }
+    });
+    return fileResponses;
   }
 
   /**

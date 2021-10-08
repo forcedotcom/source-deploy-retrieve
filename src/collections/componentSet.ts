@@ -439,6 +439,21 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     return false;
   }
 
+  public getComponentFilenamesByNameAndType(name: string, type: string): string[] {
+    const key = this.simpleKey({ fullName: name, type });
+    const componentMap = this.components.get(key);
+    if (!componentMap) {
+      return [];
+    }
+    const output = new Set<string>();
+    componentMap.forEach((component) => {
+      [...component.walkContent(), component.content, component.xml]
+        .filter(Boolean)
+        .map((filename) => output.add(filename));
+    });
+    return Array.from(output);
+  }
+
   public *[Symbol.iterator](): Iterator<MetadataComponent> {
     for (const [key, sourceComponents] of this.components.entries()) {
       if (sourceComponents.size === 0) {

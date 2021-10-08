@@ -99,7 +99,10 @@
       "suffix": "scf",
       "directoryName": "scontrols",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "experiencebundle": {
       "id": "experiencebundle",
@@ -1085,7 +1088,10 @@
       "suffix": "geodata",
       "directoryName": "eclair",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "wavelens": {
       "id": "wavelens",

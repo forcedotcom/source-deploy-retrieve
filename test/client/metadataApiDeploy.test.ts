@@ -33,6 +33,7 @@ import {
   DECOMPOSED_CHILD_COMPONENT_2,
   DECOMPOSED_COMPONENT,
 } from '../mock/registry/type-constants/decomposedConstants';
+import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
 import { AnyJson, getString } from '@salesforce/ts-types';
 import { PollingClient, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
@@ -722,6 +723,43 @@ describe('MetadataApiDeploy', () => {
             fullName: component.fullName,
             type: component.type.name,
             state: ComponentStatus.Changed,
+            filePath: component.xml,
+          },
+        ];
+
+        expect(responses).to.deep.equal(expected);
+      });
+
+      it('should report "Deleted" when no component in org', () => {
+        const component = COMPONENT;
+        const deployedSet = new ComponentSet([component]);
+        const apiStatus: Partial<MetadataApiDeployStatus> = {
+          details: {
+            componentFailures: {
+              changed: 'false',
+              created: 'false',
+              deleted: 'false',
+              fullName: 'destructiveChanges.xml',
+              componentType: component.type.name,
+              problem: `No ${component.type.name} named: ${component.fullName} found`,
+              problemType: 'Warning',
+            } as DeployMessage,
+          },
+        };
+        const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+        const responses = result.getFileResponses();
+        const expected: FileResponse[] = [
+          {
+            fullName: component.fullName,
+            type: component.type.name,
+            state: ComponentStatus.Deleted,
+            filePath: component.content,
+          },
+          {
+            fullName: component.fullName,
+            type: component.type.name,
+            state: ComponentStatus.Deleted,
             filePath: component.xml,
           },
         ];

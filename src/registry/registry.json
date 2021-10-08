@@ -248,6 +248,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "permissionsetlicensedefinition": {
+      "id": "permissionsetlicensedefinition",
+      "name": "PermissionSetLicenseDefinition",
+      "suffix": "permissionSetLicenseDefinition",
+      "directoryName": "permissionSetLicenseDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "customobject": {
       "id": "customobject",
       "name": "CustomObject",

@@ -118,6 +118,25 @@ export class SourceComponent implements MetadataComponent {
     return {} as T;
   }
 
+  /**
+   * As a performance enhancement, use the already parsed parent xml source
+   * to return the child section of xml source. This is useful for non-decomposed
+   * transformers where all child source components reference the parent's
+   * xml file to prevent re-reading the same file multiple times.
+   *
+   * @param parentXml parsed parent XMl source as an object
+   * @returns child section of the parent's xml
+   */
+  public parseFromParentXml<T = JsonMap>(parentXml: T): T {
+    if (!this.parent) {
+      return parentXml;
+    }
+    const children = normalizeToArray(
+      get(parentXml, `${this.parent.type.name}.${this.type.directoryName}`)
+    ) as T[];
+    return children.find((c) => getString(c, this.type.uniqueIdElement) === this.name);
+  }
+
   public getPackageRelativePath(fsPath: string, format: SfdxFileFormat): string {
     return format === 'source'
       ? join(DEFAULT_PACKAGE_ROOT_SFDX, this.calculateRelativePath(fsPath))
@@ -167,10 +186,7 @@ export class SourceComponent implements MetadataComponent {
     if (firstElement === this.type.name) {
       return parsed;
     } else if (this.parent) {
-      const children = normalizeToArray(
-        get(parsed, `${this.parent.type.name}.${this.type.directoryName}`)
-      ) as T[];
-      return children.find((c) => getString(c, this.type.uniqueIdElement) === this.name);
+      return this.parseFromParentXml(parsed);
     } else {
       return parsed;
     }

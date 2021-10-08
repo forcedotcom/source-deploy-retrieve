@@ -65,6 +65,8 @@ describe('Convert Transaction Constructs', () => {
           };
         });
 
+        const readFileSpy = env.spy(component.tree, 'readFile');
+
         const result = await context.recomposition.finalize();
 
         expect(result).to.deep.equal([
@@ -85,6 +87,7 @@ describe('Convert Transaction Constructs', () => {
             ],
           },
         ]);
+        expect(readFileSpy.callCount).to.equal(3);
       });
 
       it('should still recompose if parent xml is empty', async () => {
@@ -123,6 +126,39 @@ describe('Convert Transaction Constructs', () => {
             ],
           },
         ]);
+      });
+
+      it('should only read parent xml file once for non-decomposed components with children', async () => {
+        const component = nonDecomposed.COMPONENT_1;
+        const context = new ConvertContext();
+        context.recomposition.setState((state) => {
+          state[component.type.name] = {
+            component,
+            children: new ComponentSet(component.getChildren(), mockRegistry),
+          };
+        });
+
+        const readFileSpy = env.spy(component.tree, 'readFile');
+
+        const result = await context.recomposition.finalize();
+        expect(result).to.deep.equal([
+          {
+            component,
+            writeInfos: [
+              {
+                source: new JsToXml({
+                  nondecomposedparent: {
+                    [XML_NS_KEY]: XML_NS_URL,
+                    nondecomposed: [nonDecomposed.CHILD_1_XML, nonDecomposed.CHILD_2_XML],
+                  },
+                }),
+                output: join('nondecomposed', 'nondecomposedparent.nondecomposed'),
+              },
+            ],
+          },
+        ]);
+
+        expect(readFileSpy.callCount).to.equal(1);
       });
     });
 

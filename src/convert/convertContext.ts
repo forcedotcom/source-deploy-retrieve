@@ -12,7 +12,7 @@ import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../common';
 import { getString, JsonArray, JsonMap } from '@salesforce/ts-types';
 import { ComponentSet } from '../collections';
 import { normalizeToArray } from '../utils/collections';
-import { RecompositionStrategy } from '../registry/types';
+import { RecompositionStrategy, TransformerStrategy } from '../registry/types';
 import { isEmpty } from '@salesforce/kit';
 
 abstract class ConvertTransactionFinalizer<T> {
@@ -51,7 +51,6 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
 
   public async finalize(): Promise<WriterFormat[]> {
     const writerData: WriterFormat[] = [];
-
     for (const { component: parent, children } of Object.values(this.state)) {
       const recomposedXmlObj = await this.recompose(children, parent);
       writerData.push({
@@ -69,15 +68,26 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
   }
 
   private async recompose(children: ComponentSet, parent: SourceComponent): Promise<JsonMap> {
+    // When recomposing children that are non-decomposed, use the parent XML to prevent
+    // reading the parent source file (referenced in all child SourceComponents) multiple times.
+    let parentXml: JsonMap;
+    if (parent.type.strategies.transformer === TransformerStrategy.NonDecomposed) {
+      parentXml = await parent.parseXml();
+    }
+
     const parentXmlObj =
       parent.type.strategies.recomposition === RecompositionStrategy.StartEmpty
         ? {}
-        : await parent.parseXml();
+        : parentXml ?? (await parent.parseXml());
 
     for (const child of children) {
       const { directoryName: groupName } = child.type;
       const { name: parentName } = child.parent.type;
-      const xmlObj = await (child as SourceComponent).parseXml();
+      const childSourceComponent = child as SourceComponent;
+
+      const xmlObj = parentXml
+        ? childSourceComponent.parseFromParentXml(parentXml)
+        : await childSourceComponent.parseXml();
       const childContents = xmlObj[child.type.name] || xmlObj;
 
       if (!parentXmlObj[parentName]) {

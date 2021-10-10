@@ -17,6 +17,7 @@ import {
   ManifestResolver,
   MetadataComponent,
   MetadataResolver,
+  ConnectionResolver,
   SourceComponent,
   TreeContainer,
 } from '../resolve';
@@ -24,12 +25,13 @@ import {
   DestructiveChangesType,
   FromManifestOptions,
   FromSourceOptions,
+  FromConnectionOptions,
   PackageManifestObject,
   PackageTypeMembers,
 } from './types';
 import { LazyCollection } from './lazyCollection';
 import { j2xParser } from 'fast-xml-parser';
-import { Logger } from '@salesforce/core';
+import { Connection, Logger } from '@salesforce/core';
 import { MetadataType, RegistryAccess } from '../registry';
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
@@ -199,6 +201,37 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       for (const component of components) {
         result.add(component);
       }
+    }
+
+    return result;
+  }
+
+  /**
+   * Resolve components from an org connection.
+   *
+   * @param connection org connection
+   * @returns ComponentSet of source resolved components
+   */
+  public static async fromConnection(connection: Connection): Promise<ComponentSet>;
+  /**
+   * Resolve components from an org connection.
+   *
+   * @param options
+   * @returns ComponentSet of source resolved components
+   */
+  public static async fromConnection(options: FromConnectionOptions): Promise<ComponentSet>;
+  public static async fromConnection(
+    input: Connection | FromConnectionOptions
+  ): Promise<ComponentSet> {
+    const connection = input instanceof Connection ? input : input.connection;
+    const options = (typeof input === 'object' ? input : {}) as Partial<FromConnectionOptions>;
+
+    const connectionResolver = new ConnectionResolver(connection, options.registry);
+    const manifest = await connectionResolver.resolve();
+    const result = new ComponentSet([], options.registry);
+
+    for (const component of manifest.components) {
+      result.add(component);
     }
 
     return result;

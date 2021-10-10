@@ -376,7 +376,7 @@ export interface QueryResult {
   done: boolean;
   queryLocator: string;
   entityTypeName: string;
-  records: ApexRecord[] | AuraRecord[] | LWCRecord[] | VFRecord[];
+  records: ApexRecord[] | AuraRecord[] | LWCRecord[] | VFRecord[] | StdValueSetRecord[];
 }
 
 export interface ApexRecord {
@@ -415,6 +415,17 @@ export interface LWCRecord {
     DeveloperName: string;
     NamespacePrefix: string;
   };
+}
+
+export interface StdValueSetRecord {
+  Id: string;
+  MasterLabel: string;
+  Metadata: { standardValue: Record<string, unknown>[] };
+}
+
+export interface ListMetadataQuery {
+  type: string;
+  folder?: string;
 }
 
 export interface ToolingCreateResult {

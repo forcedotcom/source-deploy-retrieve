@@ -37,7 +37,7 @@ export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
 
 /**
  * A collection containing no duplicate metadata members (`fullName` and `type` pairs). `ComponentSets`
- * are a convinient way of constructing a unique collection of components to perform operations such as
+ * are a convenient way of constructing a unique collection of components to perform operations such as
  * deploying and retrieving.
  *
  * Multiple {@link SourceComponent}s can be present in the set and correspond to the same member.
@@ -290,7 +290,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     };
 
     for (const key of components.keys()) {
-      const [typeId, fullName] = key.split(ComponentSet.KEY_DELIMITER);
+      const [typeId, fullName] = this.splitOnFirstDelimiter(key);
       let type = this.registry.getTypeByName(typeId);
 
       if (type.folderContentType) {
@@ -442,7 +442,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public *[Symbol.iterator](): Iterator<MetadataComponent> {
     for (const [key, sourceComponents] of this.components.entries()) {
       if (sourceComponents.size === 0) {
-        const [typeName, fullName] = key.split(ComponentSet.KEY_DELIMITER);
+        const [typeName, fullName] = this.splitOnFirstDelimiter(key);
         yield {
           fullName,
           type: this.registry.getTypeByName(typeName),
@@ -508,5 +508,10 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const typeName =
       typeof component.type === 'string' ? component.type.toLowerCase().trim() : component.type.id;
     return `${typeName}${ComponentSet.KEY_DELIMITER}${component.fullName}`;
+  }
+
+  private splitOnFirstDelimiter(input: string): [string, string] {
+    const indexOfSplitChar = input.indexOf(ComponentSet.KEY_DELIMITER);
+    return [input.substring(0, indexOfSplitChar), input.substring(indexOfSplitChar + 1)];
   }
 }

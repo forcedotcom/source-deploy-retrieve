@@ -49,6 +49,10 @@ export interface RecompositionState {
 class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionState> {
   protected _state: RecompositionState = {};
 
+  // A cache of SourceComponent xml file paths to parsed contents so that identical child xml
+  // files are not read and parsed multiple times.
+  private parsedXmlCache = new Map<string, JsonMap>();
+
   public async finalize(): Promise<WriterFormat[]> {
     const writerData: WriterFormat[] = [];
     for (const { component: parent, children } of Object.values(this.state)) {
@@ -68,11 +72,12 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
   }
 
   private async recompose(children: ComponentSet, parent: SourceComponent): Promise<JsonMap> {
-    // When recomposing children that are non-decomposed, use the parent XML to prevent
+    // When recomposing children that are non-decomposed, read and cache the parent XML to prevent
     // reading the parent source file (referenced in all child SourceComponents) multiple times.
     let parentXml: JsonMap;
     if (parent.type.strategies.transformer === TransformerStrategy.NonDecomposed) {
       parentXml = await parent.parseXml();
+      this.parsedXmlCache.set(parent.xml, parentXml);
     }
 
     const parentXmlObj =
@@ -85,9 +90,22 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
       const { name: parentName } = child.parent.type;
       const childSourceComponent = child as SourceComponent;
 
-      const xmlObj = parentXml
-        ? childSourceComponent.parseFromParentXml(parentXml)
-        : await childSourceComponent.parseXml();
+      let xmlObj: JsonMap;
+      if (parentXml) {
+        // If the xml file for the child is in the cache, use it. Otherwise
+        // read and cache the xml file that contains this child and use it.
+        if (!this.parsedXmlCache.has(childSourceComponent.xml)) {
+          this.parsedXmlCache.set(
+            childSourceComponent.xml,
+            await parent.parseXml(childSourceComponent.xml)
+          );
+        }
+        xmlObj = childSourceComponent.parseFromParentXml(
+          this.parsedXmlCache.get(childSourceComponent.xml)
+        );
+      } else {
+        xmlObj = await childSourceComponent.parseXml();
+      }
       const childContents = xmlObj[child.type.name] || xmlObj;
 
       if (!parentXmlObj[parentName]) {
@@ -100,14 +118,14 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
         delete (childContents as JsonMap)[XML_NS_KEY];
       }
 
-      const parent = parentXmlObj[parentName] as JsonMap;
+      const parentObj = parentXmlObj[parentName] as JsonMap;
 
-      if (!parent[groupName]) {
-        parent[groupName] = [];
+      if (!parentObj[groupName]) {
+        parentObj[groupName] = [];
       }
 
       // it might be an object and not an array.  Example: custom object with a Field property containing a single field
-      const group = normalizeToArray(parent[groupName]) as JsonArray;
+      const group = normalizeToArray(parentObj[groupName]) as JsonArray;
 
       group.push(childContents);
     }

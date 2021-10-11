@@ -102,17 +102,19 @@ export class SourceComponent implements MetadataComponent {
     return [];
   }
 
-  public async parseXml<T = JsonMap>(): Promise<T> {
-    if (this.xml) {
-      const contents = await this.tree.readFile(this.xml);
+  public async parseXml<T = JsonMap>(xmlFilePath?: string): Promise<T> {
+    const xml = xmlFilePath ?? this.xml;
+    if (xml) {
+      const contents = await this.tree.readFile(xml);
       return this.parse<T>(contents.toString());
     }
     return {} as T;
   }
 
-  public parseXmlSync<T = JsonMap>(): T {
-    if (this.xml) {
-      const contents = this.tree.readFileSync(this.xml);
+  public parseXmlSync<T = JsonMap>(xmlFilePath?: string): T {
+    const xml = xmlFilePath ?? this.xml;
+    if (xml) {
+      const contents = this.tree.readFileSync(xml);
       return this.parse<T>(contents.toString());
     }
     return {} as T;

@@ -12,7 +12,7 @@ import {
 } from '../../src/resolve/treeContainers';
 import { expect, assert } from 'chai';
 import { createSandbox } from 'sinon';
-import * as fs from 'fs';
+import * as fs from 'graceful-fs';
 import { join, normalize } from 'path';
 import { LibraryError } from '../../src/errors';
 import { nls } from '../../src/i18n';

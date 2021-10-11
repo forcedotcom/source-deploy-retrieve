@@ -91,6 +91,17 @@ export interface MetadataType {
    * Whether the component is supported by the Metadata API and therefore should be included within a manifest.
    */
   isAddressable?: boolean;
+
+  /**
+   * Whether or not components of the same type can be can be specified with the wildcard character, and by name in a manifest
+   *
+   ```
+   <members>*</members>
+   <members>Account</members>
+   <name>CustomObject</name>
+   ```
+   */
+  supportsWildcardAndName?: boolean;
   /**
    * Type definitions for child types, if the type has any.
    *
@@ -165,4 +176,35 @@ export const enum TransformerStrategy {
   Decomposed = 'decomposed',
   StaticResource = 'staticResource',
   NonDecomposed = 'nonDecomposed',
+}
+
+/**
+ * Subset of an item from the Metadata Coverage Report
+ */
+export interface CoverageObjectType {
+  scratchDefinitions: {
+    professional: string;
+    group: string;
+    enterprise: string;
+    developer: string;
+  };
+  channels: {
+    metadataApi: boolean;
+    sourceTracking: boolean;
+    toolingApi: boolean;
+  };
+}
+
+/**
+ * The structure returned by the metadata coverage report
+ */
+export interface CoverageObject {
+  types: {
+    [key: string]: CoverageObjectType;
+  };
+  versions: {
+    selected: number;
+    max: number;
+    min: number;
+  };
 }

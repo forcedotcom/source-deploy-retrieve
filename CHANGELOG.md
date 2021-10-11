@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.5.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.6...v4.5.7) (2021-10-11)
+
+
+### Bug Fixes
+
+* use parent xml to parse child ([#470](https://github.com/forcedotcom/source-deploy-retrieve/issues/470)) ([440d2be](https://github.com/forcedotcom/source-deploy-retrieve/commit/440d2beda3cdd8cc64137ac64d361e230d8f5e30))
+
 ### [4.5.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.5...v4.5.6) (2021-10-07)
 
 ### [4.5.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.4...v4.5.5) (2021-10-06)

@@ -2,6 +2,63 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.5.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.7...v4.5.8) (2021-10-12)
+
+### [4.5.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.6...v4.5.7) (2021-10-11)
+
+
+### Bug Fixes
+
+* use parent xml to parse child ([#470](https://github.com/forcedotcom/source-deploy-retrieve/issues/470)) ([440d2be](https://github.com/forcedotcom/source-deploy-retrieve/commit/440d2beda3cdd8cc64137ac64d361e230d8f5e30))
+
+### [4.5.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.5...v4.5.6) (2021-10-07)
+
+### [4.5.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.4...v4.5.5) (2021-10-06)
+
+
+### Bug Fixes
+
+* replace fs with graceful-fs ([#468](https://github.com/forcedotcom/source-deploy-retrieve/issues/468)) ([2b5214c](https://github.com/forcedotcom/source-deploy-retrieve/commit/2b5214c655b94e009e18482f50f121c6217c5e24))
+
+### [4.5.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.3...v4.5.4) (2021-10-06)
+
+### [4.5.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.2...v4.5.3) (2021-10-06)
+
+
+### Bug Fixes
+
+* set correct status on file responses ([#465](https://github.com/forcedotcom/source-deploy-retrieve/issues/465)) ([3e95508](https://github.com/forcedotcom/source-deploy-retrieve/commit/3e9550846a0528f7c6c5ea02881003a87601fc1f))
+
+### [4.5.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.1...v4.5.2) (2021-10-03)
+
+
+### Bug Fixes
+
+* support mixed wildcards and names in manifests ([#464](https://github.com/forcedotcom/source-deploy-retrieve/issues/464)) ([58e14ba](https://github.com/forcedotcom/source-deploy-retrieve/commit/58e14ba1b89ec6b63cfc748ef46d39d40ab8f348))
+
+### [4.5.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.0...v4.5.1) (2021-09-30)
+
+## [4.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.8...v4.5.0) (2021-09-30)
+
+
+### Features
+
+* support epb types ([#463](https://github.com/forcedotcom/source-deploy-retrieve/issues/463)) ([1963483](https://github.com/forcedotcom/source-deploy-retrieve/commit/1963483ca9795437cba09568f1bd0f29d33affd1))
+
+### [4.4.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.7...v4.4.8) (2021-09-30)
+
+
+### Bug Fixes
+
+* resolve CustomFieldTranslations properly ([#461](https://github.com/forcedotcom/source-deploy-retrieve/issues/461)) ([cf764bb](https://github.com/forcedotcom/source-deploy-retrieve/commit/cf764bb9ce02844553e6374efa1d538e414ab697))
+
+### [4.4.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.6...v4.4.7) (2021-09-28)
+
+
+### Bug Fixes
+
+* release sfdx-core update ([#462](https://github.com/forcedotcom/source-deploy-retrieve/issues/462)) ([ed44dff](https://github.com/forcedotcom/source-deploy-retrieve/commit/ed44dfff1757eb307f24fcbcdc1efa0e7f197ca7))
+
 ### [4.4.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.5...v4.4.6) (2021-09-24)
 
 

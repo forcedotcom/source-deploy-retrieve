@@ -29,16 +29,31 @@ export type MetadataApiRetrieveOptions = MetadataTransferOptions &
   RetrieveOptions & { registry?: RegistryAccess };
 
 export class RetrieveResult implements MetadataTransferResult {
-  public readonly response: MetadataApiRetrieveStatus;
-  public readonly components: ComponentSet;
+  // This ComponentSet is most likely just the components on the local file
+  // system and is used to set the state of a SourceComponent to "Created"
+  // rather than "Changed".
+  private localComponents: ComponentSet;
+  private fileResponses: FileResponse[];
 
-  constructor(response: MetadataApiRetrieveStatus, components: ComponentSet) {
-    this.response = response;
-    this.components = components;
+  /**
+   * @param response The metadata retrieve response from the server
+   * @param components The ComponentSet of retrieved source components
+   * @param localComponents The ComponentSet used to create the retrieve request
+   */
+  constructor(
+    public readonly response: MetadataApiRetrieveStatus,
+    public readonly components: ComponentSet,
+    localComponents?: ComponentSet
+  ) {
+    this.localComponents = new ComponentSet(localComponents?.getSourceComponents());
   }
 
   public getFileResponses(): FileResponse[] {
-    const responses: FileResponse[] = [];
+    if (this.response && this.fileResponses) {
+      return this.fileResponses;
+    }
+
+    this.fileResponses = [];
 
     // construct failures
     if (this.response.messages) {
@@ -49,7 +64,7 @@ export class RetrieveResult implements MetadataTransferResult {
         const matches = message.problem.match(/.+'(.+)'.+'(.+)'/);
         if (matches) {
           const [typeName, fullName] = matches.slice(1);
-          responses.push({
+          this.fileResponses.push({
             fullName,
             type: typeName,
             state: ComponentStatus.Failed,
@@ -57,7 +72,7 @@ export class RetrieveResult implements MetadataTransferResult {
             problemType: 'Error',
           });
         } else {
-          responses.push({
+          this.fileResponses.push({
             fullName: '',
             type: '',
             problemType: 'Error',
@@ -74,21 +89,23 @@ export class RetrieveResult implements MetadataTransferResult {
       const baseResponse: FileResponse = {
         fullName,
         type: type.name,
-        state: ComponentStatus.Changed,
+        state: this.localComponents.has(retrievedComponent)
+          ? ComponentStatus.Changed
+          : ComponentStatus.Created,
       };
 
       if (!type.children) {
         for (const filePath of retrievedComponent.walkContent()) {
-          responses.push(Object.assign({}, baseResponse, { filePath }));
+          this.fileResponses.push(Object.assign({}, baseResponse, { filePath }));
         }
       }
 
       if (xml) {
-        responses.push(Object.assign({}, baseResponse, { filePath: xml }));
+        this.fileResponses.push(Object.assign({}, baseResponse, { filePath: xml }));
       }
     }
 
-    return responses;
+    return this.fileResponses;
   }
 }
 
@@ -175,7 +192,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
 
     await this.maybeSaveTempDirectory('source', components);
 
-    return new RetrieveResult(result, components);
+    return new RetrieveResult(result, components, this.components);
   }
 
   private getPackageNames(): string[] {

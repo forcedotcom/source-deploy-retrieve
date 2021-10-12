@@ -8,7 +8,7 @@
 import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
-import * as fs from 'fs';
+import * as fs from 'graceful-fs';
 import { join, basename } from 'path';
 import { RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';

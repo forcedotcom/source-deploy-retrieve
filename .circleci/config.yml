@@ -4,6 +4,16 @@ orbs:
   slack: circleci/slack@3.4.2
 
 jobs:
+  registry-check:
+    description: Checks registry against metadataCoverageReport
+    docker:
+      - image: node:lts
+    steps:
+      - checkout
+      - run: yarn install
+      - run: yarn build
+      - run: yarn test:registry
+
   external-nut:
     description: Runs NUTs from other (external) repos by cloning them.  Substitutes a dependency for the current pull request.  For example, you're testing a PR to a library and want to test a plugin in another repo that uses the library.
 
@@ -64,8 +74,12 @@ jobs:
       - run:
           name: install/build <<parameters.external_project_git_url>> in node_modules
           # why doesn't SDR put the registry.json in the lib when run from inside a node module?  I don't know.
+          # prevent dependency conflicts between plugin's top-level imports and imported SDR's deps by deleting them
+          # If there are real conflicts, we'll catch them when bumping a version in the plugin (same nuts)
           command: |
             yarn install
+            rm -rf node_modules/@salesforce/kit
+            rm -rf node_modules/@salesforce/core
             yarn build
             cp src/registry/registry.json lib/src/registry
           working_directory: node_modules/@salesforce/source-deploy-retrieve
@@ -86,6 +100,17 @@ jobs:
             NODE_OPTIONS=--max-old-space-size=8192 yarn test:nuts
 workflows:
   version: 2
+  registry-check:
+    triggers:
+      - schedule:
+          # early in the morning (cron is GMT)
+          cron: 8 22 * * *
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - registry-check
   test-and-release:
     jobs:
       - release-management/validate-pr:

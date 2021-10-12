@@ -444,6 +444,36 @@ describe('ComponentSet', () => {
       expect(set.getObject().Package.types).to.deep.equal([]);
     });
 
+    it('should write wildcards and names of types with supportsWildcardAndName=true, regardless of order', () => {
+      const type: MetadataType = {
+        id: 'customobject',
+        name: 'CustomObject',
+        supportsWildcardAndName: true,
+      };
+      const set = new ComponentSet();
+      set.add(new SourceComponent({ name: 'myType', type }));
+      set.add(new SourceComponent({ name: '*', type }));
+      set.add(new SourceComponent({ name: 'myType2', type }));
+      set.add(new SourceComponent({ name: 'myType', type }));
+      expect(set.getObject().Package.types).to.deep.equal([
+        { members: ['myType', '*', 'myType2'], name: 'CustomObject' },
+      ]);
+    });
+
+    it('should overwrite a singular name with wildcard when supportsWildcardAndName=false', () => {
+      const type: MetadataType = {
+        id: 'apexclass',
+        name: 'ApexClass',
+        supportsWildcardAndName: false,
+      };
+      const set = new ComponentSet();
+      set.add(new SourceComponent({ name: 'myType', type }));
+      set.add(new SourceComponent({ name: '*', type }));
+      set.add(new SourceComponent({ name: 'myType2', type }));
+      set.add(new SourceComponent({ name: 'myType', type }));
+      expect(set.getObject().Package.types).to.deep.equal([{ members: ['*'], name: 'ApexClass' }]);
+    });
+
     it('should exclude child components that are not addressable as defined in the registry', () => {
       const childType: MetadataType = {
         id: 'customfieldtranslation',

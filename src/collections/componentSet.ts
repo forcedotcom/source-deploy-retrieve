@@ -306,12 +306,15 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
           typeMap.set(typeName, []);
         }
         const typeEntry = typeMap.get(typeName);
-        if (fullName === ComponentSet.WILDCARD && !destructiveType) {
+        if (fullName === ComponentSet.WILDCARD && !type.supportsWildcardAndName && !destructiveType) {
+          // if the type doesn't support mixed wildcards and specific names, overwrite the names to be a wildcard
           typeMap.set(typeName, [fullName]);
-        } else {
-          if (!typeEntry.includes(fullName) && !typeEntry.includes(ComponentSet.WILDCARD)) {
-            typeMap.get(typeName).push(fullName);
-          }
+        } else if (
+          !typeEntry.includes(fullName) &&
+          (!typeEntry.includes(ComponentSet.WILDCARD) || type.supportsWildcardAndName)
+        ) {
+          // if the type supports both wildcards and names, add them regardless
+          typeMap.get(typeName).push(fullName);
         }
       }
     };

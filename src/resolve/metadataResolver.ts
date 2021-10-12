@@ -14,7 +14,6 @@ import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
 import { RegistryAccess } from '../registry/registryAccess';
 import { ComponentSet } from '../collections';
 import { MetadataType } from '../registry';
-
 /**
  * Resolver for metadata type and component objects.
  * @internal
@@ -149,22 +148,43 @@ export class MetadataResolver {
     return !!parseMetadataXml(fsPath);
   }
 
-  private resolveType(fsPath: string): MetadataType | undefined {
+  private resolveTypeFromStrictFolder(fsPath: string): MetadataType | undefined {
     let resolvedType: MetadataType;
 
-    // attempt 1 - check if the file is part of a component that requires a strict type folder
-    const pathParts = new Set(fsPath.split(sep));
+    const pathParts = fsPath.split(sep);
     for (const type of this.registry.getStrictFolderTypes()) {
-      if (pathParts.has(type.directoryName)) {
-        // types with folders only have folder components living at the top level.
-        // if the fsPath is a folder component, let a future strategy deal with it
-        // const isFolderType = this.getTypeFromName(typeId).inFolder;
-        if (!type.inFolder || parentName(fsPath) !== type.directoryName) {
-          resolvedType = type;
-        }
+      if (!pathParts.includes(type.directoryName)) {
+        continue;
+      }
+      // types with folders only have folder components living at the top level.
+      // if the fsPath is a folder component, let a future strategy deal with it
+      // const isFolderType = this.getTypeFromName(typeId).inFolder;
+      if (type.inFolder && parentName(fsPath) === type.directoryName) {
+        continue;
+      }
+
+      // any of the following 3 options is considered a good match
+      if (
+        // mixedContent and bundles don't have a suffix to match
+        ['mixedContent', 'bundle'].includes(type.strategies?.adapter) ||
+        // the suffix matches the type we think it is
+        (type.suffix && fsPath.endsWith(`${type.suffix}`)) ||
+        // the type has children and the path also includes THAT directory
+        (type.children?.types &&
+          Object.entries(type.children?.types)
+            .map(([id, childType]) => childType.directoryName)
+            .some((dirName) => pathParts.includes(dirName)))
+      ) {
+        resolvedType = type;
         break;
       }
     }
+    return resolvedType;
+  }
+
+  private resolveType(fsPath: string): MetadataType | undefined {
+    // attempt 1 - check if the file is part of a component that requires a strict type folder
+    let resolvedType = this.resolveTypeFromStrictFolder(fsPath);
 
     // attempt 2 - check if it's a metadata xml file
     if (!resolvedType) {

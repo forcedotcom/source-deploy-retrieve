@@ -2859,7 +2859,8 @@
     "internalOrganization": "internalorganization",
     "callCenterRoutingMap": "callcenterroutingmap",
     "view": "viewdefinition",
-    "slackapp": "slackapp"
+    "slackapp": "slackapp",
+    "permissionSetLicenseDefinition":"permissionsetlicensedefinition"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -2877,8 +2878,7 @@
     "accessControlPolicies": "accesscontrolpolicy",
     "integrationHub": "integrationhubsettings",
     "ObjectHierarchyRelationship": "objecthierarchyrelationship",
-    "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
-    "permissionSetLicenseDefinition":"permissionsetlicensedefinition"
+    "IndustriesManufacturingSettings": "industriesmanufacturingsettings"
   },
   "childTypes": {
     "customlabel": "customlabels",

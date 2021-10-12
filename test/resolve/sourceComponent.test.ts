@@ -31,11 +31,9 @@ import {
   COMPONENT_1_XML_PATH,
   CHILD_2_NAME,
   COMPONENT_1,
-  COMPONENT_1_XML_PATH,
   MATCHING_RULES_COMPONENT_XML_PATH,
   MATCHING_RULES_TYPE,
   TREE,
-  VIRTUAL_DIR,
 } from '../mock/registry/type-constants/nonDecomposedConstants';
 import { createSandbox } from 'sinon';
 import { join } from 'path';

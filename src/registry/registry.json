@@ -2877,7 +2877,8 @@
     "accessControlPolicies": "accesscontrolpolicy",
     "integrationHub": "integrationhubsettings",
     "ObjectHierarchyRelationship": "objecthierarchyrelationship",
-    "IndustriesManufacturingSettings": "industriesmanufacturingsettings"
+    "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
+    "permissionSetLicenseDefinition":"permissionsetlicensedefinition"
   },
   "childTypes": {
     "customlabel": "customlabels",

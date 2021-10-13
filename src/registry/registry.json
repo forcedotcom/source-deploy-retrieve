@@ -283,6 +283,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "permissionsetlicensedefinition": {
+      "id": "permissionsetlicensedefinition",
+      "name": "PermissionSetLicenseDefinition",
+      "suffix": "permissionSetLicenseDefinition",
+      "directoryName": "permissionSetLicenseDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "customobject": {
       "id": "customobject",
       "name": "CustomObject",
@@ -2857,7 +2865,8 @@
     "internalOrganization": "internalorganization",
     "callCenterRoutingMap": "callcenterroutingmap",
     "view": "viewdefinition",
-    "slackapp": "slackapp"
+    "slackapp": "slackapp",
+    "permissionSetLicenseDefinition": "permissionsetlicensedefinition"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -2910,5 +2919,5 @@
     "botversion": "bot",
     "customfieldtranslation": "customobjecttranslation"
   },
-  "apiVersion": "52.0"
+  "apiVersion": "53.0"
 }

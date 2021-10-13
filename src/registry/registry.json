@@ -99,7 +99,10 @@
       "suffix": "scf",
       "directoryName": "scontrols",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "experiencebundle": {
       "id": "experiencebundle",
@@ -277,6 +280,14 @@
       "name": "CustomPermission",
       "suffix": "customPermission",
       "directoryName": "customPermissions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "permissionsetlicensedefinition": {
+      "id": "permissionsetlicensedefinition",
+      "name": "PermissionSetLicenseDefinition",
+      "suffix": "permissionSetLicenseDefinition",
+      "directoryName": "permissionSetLicenseDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -1085,7 +1096,10 @@
       "suffix": "geodata",
       "directoryName": "eclair",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "wavelens": {
       "id": "wavelens",
@@ -2851,7 +2865,8 @@
     "internalOrganization": "internalorganization",
     "callCenterRoutingMap": "callcenterroutingmap",
     "view": "viewdefinition",
-    "slackapp": "slackapp"
+    "slackapp": "slackapp",
+    "permissionSetLicenseDefinition": "permissionsetlicensedefinition"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

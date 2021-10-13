@@ -172,8 +172,8 @@ export class MetadataResolver {
         (type.suffix && fsPath.endsWith(`${type.suffix}`)) ||
         // the type has children and the path also includes THAT directory
         (type.children?.types &&
-          Object.entries(type.children?.types)
-            .map(([id, childType]) => childType.directoryName)
+          Object.values(type.children?.types)
+            .map((childType) => childType.directoryName)
             .some((dirName) => pathParts.includes(dirName)))
       ) {
         resolvedType = type;

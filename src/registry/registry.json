@@ -2401,6 +2401,35 @@
       "directoryName": "dataMappingSchema",
       "strictDirectoryName": false
     },
+    "datamappingobjectdefinition": {
+      "id": "datamappingobjectdefinition",
+      "name": "DataMappingObjectDefinition",
+      "suffix": "dataMappingObjectDefinition",
+      "directoryName": "dataMappingObjectDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "children": {
+        "types": {
+          "datamappingfielddefinition": {
+            "id": "datamappingfielddefinition",
+            "name": "DataMappingFieldDefinition",
+            "directoryName": "fieldDefinitions",
+            "suffix": "fieldDefinition"
+          }
+        },
+        "directories": {
+          "fieldDefinitions": "datamappingfielddefinition"
+        },
+        "suffixes": {
+          "fieldDefinition": "datamappingfielddefinition"
+        }
+      },
+      "strategies": {
+        "adapter": "decomposed",
+        "transformer": "decomposed",
+        "decomposition": "topLevel"
+      }
+    },
     "datamapping": {
       "id": "datamapping",
       "name": "DataMapping",
@@ -2842,6 +2871,8 @@
     "ConversationVendorFieldDefinition": "conversationvendorfielddef",
     "schedulingRule": "schedulingrule",
     "dataMappingSchema": "datamappingschema",
+    "dataMappingObjectDefinition": "datamappingobjectdefinition",
+    "fieldDefinition": "datamappingfielddefinition",
     "dataMapping": "datamapping",
     "federationDataMappingUsage": "federationdatamappingusage",
     "connectedSystem": "connectedsystem",
@@ -2884,7 +2915,8 @@
     "accessControlPolicies": "accesscontrolpolicy",
     "integrationHub": "integrationhubsettings",
     "ObjectHierarchyRelationship": "objecthierarchyrelationship",
-    "IndustriesManufacturingSettings": "industriesmanufacturingsettings"
+    "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
+    "dataMappingObjectDefinitions": "datamappingobjectdefinition"
   },
   "childTypes": {
     "customlabel": "customlabels",
@@ -2917,7 +2949,8 @@
     "managedtopic": "managedtopics",
     "sharingcriteriarule": "sharingrules",
     "botversion": "bot",
-    "customfieldtranslation": "customobjecttranslation"
+    "customfieldtranslation": "customobjecttranslation",
+    "datamappingfielddefinition": "datamappingobjectdefinition"
   },
-  "apiVersion": "53.0"
+  "apiVersion": "54.0"
 }

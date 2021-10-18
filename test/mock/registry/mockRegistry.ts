@@ -128,7 +128,7 @@ export const mockRegistryData = {
             xmlElementName: 'nondecomposed',
             ignoreParentName: true,
             uniqueIdElement: 'id',
-            directoryName: 'nondecomposed',
+            directoryName: 'nondecomposeddir',
             suffix: 'nondecomposed',
           },
         },

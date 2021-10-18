@@ -20,7 +20,9 @@ import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileCo
 import {
   COMPONENT_1,
   CHILD_1_NAME,
+  CHILD_1_XML,
   VIRTUAL_DIR,
+  COMPONENT_1_XML,
   COMPONENT_1_XML_PATH,
   CHILD_2_NAME,
   MATCHING_RULES_TYPE,
@@ -102,6 +104,29 @@ describe('SourceComponent', () => {
         MatchingContentFile: {
           test: 'something',
         },
+      });
+    });
+
+    it('should parse the child components xml content to js object', async () => {
+      const component = new SourceComponent({
+        name: 'nondecomposedchild',
+        type: mockRegistryData.types.nondecomposed.children.types.nondecomposedchild,
+        xml: COMPONENT_1_XML_PATH,
+        parent: new SourceComponent({
+          name: 'nondecomposed',
+          type: mockRegistryData.types.nondecomposed,
+        }),
+      });
+      env
+        .stub(component.tree, 'readFile')
+        .resolves(
+          Buffer.from(
+            '<nondecomposedparent><nondecomposed><id>nondecomposedchild</id><content>something</content></nondecomposed></nondecomposedparent>'
+          )
+        );
+      expect(await component.parseXml()).to.deep.equal({
+        content: 'something',
+        id: 'nondecomposedchild',
       });
     });
 
@@ -332,6 +357,12 @@ describe('SourceComponent', () => {
 
     it('should return correct fullName', () => {
       expect(expectedChild.fullName).to.equal(expectedChild.name);
+    });
+
+    it('should parse child xml from parent xml', () => {
+      const childXml = expectedChild.parseFromParentXml(COMPONENT_1_XML);
+      expect(childXml).to.deep.equal(CHILD_1_XML);
+      expect(COMPONENT_1.parseFromParentXml(COMPONENT_1_XML)).to.deep.equal(COMPONENT_1_XML);
     });
 
     // https://github.com/forcedotcom/salesforcedx-vscode/issues/3210

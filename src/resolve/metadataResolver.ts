@@ -32,7 +32,7 @@ export class MetadataResolver {
   constructor(
     private registry = new RegistryAccess(),
     private tree: TreeContainer = new NodeFSTreeContainer(),
-    private useRealForceIgnore = true
+    private useFsForceIgnore = true
   ) {
     this.sourceAdapterFactory = new SourceAdapterFactory(this.registry, tree);
     this.forceIgnoredPaths = new Set<string>();
@@ -50,7 +50,7 @@ export class MetadataResolver {
     }
 
     // use the default ignore if we aren't using a real one
-    this.forceIgnore = this.useRealForceIgnore
+    this.forceIgnore = this.useFsForceIgnore
       ? ForceIgnore.findAndCreate(fsPath)
       : new ForceIgnore();
 

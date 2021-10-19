@@ -10,7 +10,7 @@ import { SourcePath } from '../common';
 import { MetadataType } from '../registry';
 
 export class LibraryError extends Error {
-  constructor(messageKey: string, args?: string | string[]) {
+  public constructor(messageKey: string, args?: string | string[]) {
     super(nls.localize(messageKey, args));
     this.name = this.constructor.name;
     Error.captureStackTrace(this, this.constructor);
@@ -18,19 +18,19 @@ export class LibraryError extends Error {
 }
 
 export class RegistryError extends LibraryError {
-  constructor(messageKey: string, args?: string | string[]) {
+  public constructor(messageKey: string, args?: string | string[]) {
     super(messageKey, args);
   }
 }
 
 export class TypeInferenceError extends RegistryError {
-  constructor(messageKey: string, args?: string | string[]) {
+  public constructor(messageKey: string, args?: string | string[]) {
     super(messageKey, args);
   }
 }
 
 export class ExpectedSourceFilesError extends RegistryError {
-  constructor(
+  public constructor(
     type: MetadataType,
     originalPath: SourcePath,
     messageKey = 'error_expected_source_files'
@@ -40,19 +40,19 @@ export class ExpectedSourceFilesError extends RegistryError {
 }
 
 export class UnexpectedForceIgnore extends RegistryError {
-  constructor(messageKey: string, args?: string | string[]) {
+  public constructor(messageKey: string, args?: string | string[]) {
     super(messageKey, args);
   }
 }
 
 export class SourceClientError extends LibraryError {
-  constructor(messageKey: string, args?: string | string[]) {
+  public constructor(messageKey: string, args?: string | string[]) {
     super(messageKey, args);
   }
 }
 
 export class DeployError extends SourceClientError {
-  constructor(messageKey: string, args?: string | string[]) {
+  public constructor(messageKey: string, args?: string | string[]) {
     super(messageKey, args);
   }
 }
@@ -67,26 +67,26 @@ export class MetadataTransferError extends LibraryError {
  * A wrapper for any errors thrown in the conversion pipeline
  */
 export class ConversionError extends LibraryError {
-  constructor(originalError: Error) {
+  public constructor(originalError: Error) {
     super('error_failed_convert', originalError.message);
     this.stack = originalError.stack;
   }
 }
 
 export class ComponentSetError extends LibraryError {
-  constructor(messageKey: string, args?: string | string[]) {
+  public constructor(messageKey: string, args?: string | string[]) {
     super(messageKey, args);
   }
 }
 
 export class MetadataApiRetrieveError extends LibraryError {
-  constructor(messageKey: string, args?: string | string[]) {
+  public constructor(messageKey: string, args?: string | string[]) {
     super(messageKey, args);
   }
 }
 
 export class MissingJobIdError extends LibraryError {
-  constructor(operation: string) {
+  public constructor(operation: string) {
     super('error_no_job_id', [operation]);
   }
 }

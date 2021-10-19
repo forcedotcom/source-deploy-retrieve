@@ -28,7 +28,7 @@ export function deepFreeze<T>(object: T): Readonly<T> {
   const propNames = Object.getOwnPropertyNames(object);
   for (const name of propNames) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const val = ((object as unknown) as any)[name];
+    const val = (object as unknown as any)[name];
     if (val && typeof val === 'object') {
       deepFreeze(val);
     }

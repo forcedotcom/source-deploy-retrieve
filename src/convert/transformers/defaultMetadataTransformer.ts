@@ -4,13 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { basename, dirname, join } from 'path';
 import { META_XML_SUFFIX, SourcePath } from '../../common';
-import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { SfdxFileFormat, WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve';
 import { trimUntil } from '../../utils/path';
-import { basename, dirname, join } from 'path';
 import { extName } from '../../utils';
+import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 const ORIGINAL_SUFFIX_REGEX = new RegExp('(.)([a-zA-Z]+)(' + META_XML_SUFFIX + ')$');
 
@@ -23,14 +23,14 @@ const ORIGINAL_SUFFIX_REGEX = new RegExp('(.)([a-zA-Z]+)(' + META_XML_SUFFIX + '
  */
 export class DefaultMetadataTransformer extends BaseMetadataTransformer {
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
-    return this.getWriteInfos(component, 'metadata');
+    return new Promise((resolve) => resolve(this.getWriteInfos(component, 'metadata')));
   }
 
   public async toSourceFormat(
     component: SourceComponent,
     mergeWith?: SourceComponent
   ): Promise<WriteInfo[]> {
-    return this.getWriteInfos(component, 'source', mergeWith);
+    return new Promise((resolve) => resolve(this.getWriteInfos(component, 'source', mergeWith)));
   }
 
   private getWriteInfos(

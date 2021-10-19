@@ -5,9 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { fail } from 'assert';
+import { join } from 'path';
 import { expect } from 'chai';
 import { createSandbox, match } from 'sinon';
-import { join } from 'path';
+import { getString } from '@salesforce/ts-types';
+import * as fs from 'graceful-fs';
 import {
   RetrieveResult,
   ComponentSet,
@@ -27,8 +29,6 @@ import {
 import { mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
 import { DECOMPOSED_COMPONENT } from '../mock/registry/type-constants/decomposedConstants';
-import { getString } from '@salesforce/ts-types';
-import * as fs from 'graceful-fs';
 
 const env = createSandbox();
 
@@ -40,7 +40,7 @@ describe('MetadataApiRetrieve', async () => {
       it('should throw error if there are no components to retrieve', async () => {
         const toRetrieve = new ComponentSet([], mockRegistry);
         const { operation } = await stubMetadataRetrieve(env, {
-          toRetrieve: toRetrieve,
+          toRetrieve,
           merge: true,
         });
 
@@ -56,7 +56,7 @@ describe('MetadataApiRetrieve', async () => {
       it('should throw error if packageNames list is empty', async () => {
         const toRetrieve = new ComponentSet([], mockRegistry);
         const { operation } = await stubMetadataRetrieve(env, {
-          toRetrieve: toRetrieve,
+          toRetrieve,
           merge: true,
           packageOptions: [],
         });

@@ -4,6 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { join } from 'path';
+import { expect } from 'chai';
 import { DecomposedSourceAdapter, DefaultSourceAdapter } from '../../../src/resolve/adapters';
 import {
   mockRegistry,
@@ -12,10 +14,8 @@ import {
   mockRegistryData,
   xmlInFolder,
 } from '../../mock/registry';
-import { expect } from 'chai';
 import { VirtualTreeContainer, SourceComponent, MetadataType } from '../../../src';
 import { RegistryTestUtil } from '../registryTestUtil';
-import { join } from 'path';
 import { META_XML_SUFFIX } from '../../../src/common';
 
 describe('DecomposedSourceAdapter', () => {

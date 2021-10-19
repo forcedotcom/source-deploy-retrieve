@@ -4,6 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { join, basename } from 'path';
+import { createSandbox } from 'sinon';
+import { expect } from 'chai';
 import {
   bundle,
   xmlInFolder,
@@ -15,10 +18,7 @@ import {
 } from '../../mock/registry';
 import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';
 import { WriteInfo } from '../../../src/convert';
-import { join, basename } from 'path';
-import { createSandbox } from 'sinon';
 import { TestReadable } from '../../mock/convert/readables';
-import { expect } from 'chai';
 import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX } from '../../../src/common';
 import { SourceComponent, VirtualTreeContainer } from '../../../src';
 import {
@@ -158,7 +158,6 @@ describe('DefaultMetadataTransformer', () => {
         },
       ];
 
-      console.log(expectedInfos);
       expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
     });
   });

@@ -4,10 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+/* eslint no-case-declarations: 0 */
 import { dirname, join, sep } from 'path';
 import { generateMetaXML, generateMetaXMLPath, trimMetaXmlSuffix } from '../utils';
-import { ApexRecord, AuraRecord, LWCRecord, VFRecord, QueryResult } from './types';
 import { SourceComponent } from '../resolve';
+import { ApexRecord, AuraRecord, LWCRecord, VFRecord, QueryResult } from './types';
 
 export function buildQuery(mdComponent: SourceComponent, namespace = ''): string {
   let queryString = '';

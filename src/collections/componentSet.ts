@@ -4,6 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { j2xParser } from 'fast-xml-parser';
+import { Logger } from '@salesforce/core';
 import {
   MetadataApiDeploy,
   MetadataApiDeployOptions,
@@ -20,6 +22,7 @@ import {
   SourceComponent,
   TreeContainer,
 } from '../resolve';
+import { MetadataType, RegistryAccess } from '../registry';
 import {
   DestructiveChangesType,
   FromManifestOptions,
@@ -28,9 +31,6 @@ import {
   PackageTypeMembers,
 } from './types';
 import { LazyCollection } from './lazyCollection';
-import { j2xParser } from 'fast-xml-parser';
-import { Logger } from '@salesforce/core';
-import { MetadataType, RegistryAccess } from '../registry';
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
@@ -87,26 +87,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   /**
    * Resolve metadata components from a file or directory path in a file system.
    *
-   * @param fsPath File or directory path to resolve against
    * @returns ComponentSet of source resolved components
+   * @param input
    */
-  public static fromSource(fsPath: string): ComponentSet;
-  /**
-   * Resolve metadata components from multiple file paths or directory paths in a file system.
-   *
-   * @param fsPaths File or directory paths to resolve against
-   * @returns ComponentSet of source resolved components
-   */
-  public static fromSource(fsPaths: string[]): ComponentSet;
-  /**
-   * Resolve metadata components from file or directory paths in a file system.
-   * Customize the resolution process using an options object, such as specifying filters
-   * and resolving against a different file system abstraction (see {@link TreeContainer}).
-   *
-   * @param options
-   * @returns ComponentSet of source resolved components
-   */
-  public static fromSource(options: FromSourceOptions): ComponentSet;
   public static fromSource(input: string | string[] | FromSourceOptions): ComponentSet {
     let fsPaths = [];
     let registry: RegistryAccess;
@@ -358,9 +341,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       iter = this;
     }
 
-    return new LazyCollection(iter).filter((c) => c instanceof SourceComponent) as LazyCollection<
-      SourceComponent
-    >;
+    return new LazyCollection(iter).filter(
+      (c) => c instanceof SourceComponent
+    ) as LazyCollection<SourceComponent>;
   }
 
   public add(component: ComponentLike, asDeletion?: boolean): void {

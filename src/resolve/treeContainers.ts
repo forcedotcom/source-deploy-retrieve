@@ -5,12 +5,12 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join, dirname, basename, normalize } from 'path';
-import { baseName, parseMetadataXml } from '../utils';
+import { Readable } from 'stream';
 import { lstatSync, existsSync, readdirSync, createReadStream, readFileSync } from 'graceful-fs';
+import * as unzipper from 'unzipper';
+import { baseName, parseMetadataXml } from '../utils';
 import { LibraryError } from '../errors';
 import { SourcePath } from '../common';
-import * as unzipper from 'unzipper';
-import { Readable } from 'stream';
 import { VirtualDirectory } from './types';
 
 /**
@@ -213,7 +213,7 @@ export class VirtualTreeContainer extends TreeContainer {
   private tree = new Map<SourcePath, Set<SourcePath>>();
   private fileContents = new Map<SourcePath, Buffer>();
 
-  constructor(virtualFs: VirtualDirectory[]) {
+  public constructor(virtualFs: VirtualDirectory[]) {
     super();
     this.populate(virtualFs);
   }

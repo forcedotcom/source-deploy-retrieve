@@ -18,8 +18,8 @@ import {
   ToolingCreateResult,
 } from '../types';
 import { baseName } from '../../utils/path';
-import { BaseDeploy } from './baseDeploy';
 import { SourceComponent } from '../../resolve';
+import { BaseDeploy } from './baseDeploy';
 
 export class ContainerDeploy extends BaseDeploy {
   private static readonly CONTAINER_ASYNC_REQUEST = 'ContainerAsyncRequest';

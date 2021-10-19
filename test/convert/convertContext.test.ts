@@ -8,10 +8,7 @@
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import chai = require('chai');
 
-chai.use(deepEqualInAnyOrder);
-
 const { expect } = chai;
-import { join } from 'path';
 import { createSandbox, match } from 'sinon';
 import { Readable } from 'stream';
 import {
@@ -22,6 +19,8 @@ import {
   VirtualTreeContainer,
   VirtualDirectory,
 } from '../../src';
+import { join } from 'path';
+
 import {
   DEFAULT_PACKAGE_ROOT_SFDX,
   META_XML_SUFFIX,
@@ -31,6 +30,8 @@ import {
 import { ConvertContext } from '../../src/convert/convertContext';
 import { JsToXml } from '../../src/convert/streams';
 import { matchingContentFile, mockRegistry, decomposed, nonDecomposed } from '../mock/registry';
+
+chai.use(deepEqualInAnyOrder);
 
 const env = createSandbox();
 

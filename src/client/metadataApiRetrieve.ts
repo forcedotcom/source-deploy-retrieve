@@ -4,9 +4,14 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { asBoolean, isString } from '@salesforce/ts-types';
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
 import { SourceComponent, ZipTreeContainer } from '../resolve';
+import { MetadataApiRetrieveError, MissingJobIdError } from '../errors';
+import { normalizeToArray } from '../utils';
+import { RegistryAccess } from '../registry';
+import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import {
   AsyncResult,
   ComponentStatus,
@@ -19,11 +24,6 @@ import {
   PackageOption,
   RetrieveExtractOptions,
 } from './types';
-import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
-import { MetadataApiRetrieveError, MissingJobIdError } from '../errors';
-import { normalizeToArray } from '../utils';
-import { RegistryAccess } from '../registry';
-import { asBoolean, isString } from '@salesforce/ts-types';
 
 export type MetadataApiRetrieveOptions = MetadataTransferOptions &
   RetrieveOptions & { registry?: RegistryAccess };
@@ -40,7 +40,7 @@ export class RetrieveResult implements MetadataTransferResult {
    * @param components The ComponentSet of retrieved source components
    * @param localComponents The ComponentSet used to create the retrieve request
    */
-  constructor(
+  public constructor(
     public readonly response: MetadataApiRetrieveStatus,
     public readonly components: ComponentSet,
     localComponents?: ComponentSet
@@ -116,7 +116,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   public static DEFAULT_OPTIONS: Partial<MetadataApiRetrieveOptions> = { merge: false };
   private options: MetadataApiRetrieveOptions;
 
-  constructor(options: MetadataApiRetrieveOptions) {
+  public constructor(options: MetadataApiRetrieveOptions) {
     super(options);
     this.options = Object.assign({}, MetadataApiRetrieve.DEFAULT_OPTIONS, options);
   }
@@ -157,6 +157,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<
    */
   public async cancel(): Promise<void> {
     this.canceled = true;
+    return new Promise<void>((resolve) => {
+      resolve();
+    });
   }
 
   protected async pre(): Promise<AsyncResult> {

@@ -4,11 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { join } from 'path';
+import { expect, assert } from 'chai';
 import { MatchingContentSourceAdapter } from '../../../src/resolve/adapters/matchingContentSourceAdapter';
 import { mockRegistry, matchingContentFile, mockRegistryData } from '../../mock/registry';
-import { expect, assert } from 'chai';
 import { ExpectedSourceFilesError, UnexpectedForceIgnore } from '../../../src/errors';
-import { join } from 'path';
 import { RegistryTestUtil } from '../registryTestUtil';
 import { nls } from '../../../src/i18n';
 import { VirtualTreeContainer } from '../../../src/resolve/treeContainers';
@@ -16,14 +16,8 @@ import { SourceComponent } from '../../../src/resolve';
 
 describe('MatchingContentSourceAdapter', () => {
   const type = mockRegistryData.types.matchingcontentfile;
-  const {
-    CONTENT_PATHS,
-    XML_PATHS,
-    COMPONENT,
-    TYPE_DIRECTORY,
-    CONTENT_NAMES,
-    XML_NAMES,
-  } = matchingContentFile;
+  const { CONTENT_PATHS, XML_PATHS, COMPONENT, TYPE_DIRECTORY, CONTENT_NAMES, XML_NAMES } =
+    matchingContentFile;
   const tree = new VirtualTreeContainer([
     {
       dirPath: TYPE_DIRECTORY,
@@ -31,7 +25,7 @@ describe('MatchingContentSourceAdapter', () => {
     },
   ]);
   const expectedComponent = new SourceComponent(COMPONENT, tree);
-  const adapter = new MatchingContentSourceAdapter(type, mockRegistry, undefined, tree);
+  let adapter = new MatchingContentSourceAdapter(type, mockRegistry, undefined, tree);
 
   it('Should return expected SourceComponent when given a root metadata xml path', () => {
     expect(adapter.getComponent(XML_PATHS[0])).to.deep.equal(expectedComponent);
@@ -58,7 +52,7 @@ describe('MatchingContentSourceAdapter', () => {
       seed: XML_PATHS[0],
       deny: [path],
     });
-    const adapter = new MatchingContentSourceAdapter(type, mockRegistry, forceIgnore, tree);
+    adapter = new MatchingContentSourceAdapter(type, mockRegistry, forceIgnore, tree);
     assert.throws(
       () => adapter.getComponent(path),
       UnexpectedForceIgnore,

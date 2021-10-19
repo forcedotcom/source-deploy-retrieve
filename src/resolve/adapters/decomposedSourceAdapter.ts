@@ -4,12 +4,12 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { SourcePath } from '../../common';
 import { SourceComponent } from '../sourceComponent';
 import { baseName, parentName, parseMetadataXml } from '../../utils';
 import { DecompositionStrategy } from '../../registry';
 import { TypeInferenceError } from '../../errors';
+import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 
 /**
  * Handles decomposed types. A flavor of mixed content where a component can

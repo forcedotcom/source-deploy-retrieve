@@ -6,12 +6,12 @@
  */
 import { RegistryError } from '../../errors';
 import { MetadataTransformer } from '../types';
-import { DefaultMetadataTransformer } from './defaultMetadataTransformer';
 import { SourceComponent } from '../../resolve/sourceComponent';
-import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 import { ConvertContext } from '../convertContext';
-import { StaticResourceMetadataTransformer } from './staticResourceMetadataTransformer';
 import { RegistryAccess, TransformerStrategy } from '../../registry';
+import { DefaultMetadataTransformer } from './defaultMetadataTransformer';
+import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
+import { StaticResourceMetadataTransformer } from './staticResourceMetadataTransformer';
 import { NonDecomposedMetadataTransformer } from './nonDecomposedMetadataTransformer';
 
 export class MetadataTransformerFactory {

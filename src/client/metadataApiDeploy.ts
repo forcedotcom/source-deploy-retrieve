@@ -4,8 +4,15 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { basename, dirname, extname, join } from 'path';
+import { isString } from '@salesforce/ts-types';
 import { MetadataConverter } from '../convert';
-import { DiagnosticUtil } from './diagnosticUtil';
+import { ComponentLike, SourceComponent } from '../resolve';
+import { normalizeToArray } from '../utils';
+import { ComponentSet } from '../collections';
+import { registry } from '../registry';
+import { MissingJobIdError } from '../errors';
+import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import {
   AsyncResult,
   ComponentStatus,
@@ -15,21 +22,14 @@ import {
   MetadataApiDeployStatus,
   MetadataTransferResult,
 } from './types';
-import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
-import { basename, dirname, extname, join } from 'path';
-import { ComponentLike, SourceComponent } from '../resolve';
-import { normalizeToArray } from '../utils';
-import { ComponentSet } from '../collections';
-import { registry } from '../registry';
-import { isString } from '@salesforce/ts-types';
-import { MissingJobIdError } from '../errors';
+import { DiagnosticUtil } from './diagnosticUtil';
 
 export class DeployResult implements MetadataTransferResult {
   public readonly response: MetadataApiDeployStatus;
   public readonly components: ComponentSet;
   private readonly diagnosticUtil = new DiagnosticUtil('metadata');
 
-  constructor(response: MetadataApiDeployStatus, components: ComponentSet) {
+  public constructor(response: MetadataApiDeployStatus, components: ComponentSet) {
     this.response = response;
     this.components = components;
   }
@@ -190,7 +190,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
   };
   private options: MetadataApiDeployOptions;
 
-  constructor(options: MetadataApiDeployOptions) {
+  public constructor(options: MetadataApiDeployOptions) {
     super(options);
     options.apiOptions = { ...MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions, ...options.apiOptions };
     this.options = Object.assign({}, options);
@@ -204,8 +204,8 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
    * - The components have been validated successfully for the target environment within the last 10 days.
    * - As part of the validation, Apex tests in the target org have passed.
    * - Code coverage requirements are met.
-   *   - If all tests in the org or all local tests are run, overall code coverage is at least 75%, and Apex triggers have some coverage.
-   *   - If specific tests are run with the RunSpecifiedTests test level, each class and trigger that was deployed is covered by at least 75% individually.
+   * - If all tests in the org or all local tests are run, overall code coverage is at least 75%, and Apex triggers have some coverage.
+   * - If specific tests are run with the RunSpecifiedTests test level, each class and trigger that was deployed is covered by at least 75% individually.
    *
    * See [deployRecentValidation()](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_deployRecentValidation.htm)
    *
@@ -217,11 +217,11 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
       throw new MissingJobIdError('deploy');
     }
     const conn = await this.getConnection();
-    const response = ((await conn.deployRecentValidation({
+    const response = (await conn.deployRecentValidation({
       id: this.id,
       rest,
-    })) as unknown) as AsyncResult | string;
-    return isString(response) ? response : (response as AsyncResult).id;
+    })) as unknown as AsyncResult | string;
+    return isString(response) ? response : response.id;
   }
 
   /**
@@ -235,10 +235,10 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     }
     const connection = await this.getConnection();
     // Recasting to use the project's version of the type
-    return (connection.metadata.checkDeployStatus(
+    return connection.metadata.checkDeployStatus(
       this.id,
       true
-    ) as unknown) as MetadataApiDeployStatus;
+    ) as unknown as MetadataApiDeployStatus;
   }
 
   /**
@@ -255,10 +255,12 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     const connection = await this.getConnection();
 
     return new Promise((resolve, reject) => {
+      // eslint-disable-next-line no-underscore-dangle
       connection.metadata
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
         // @ts-ignore _invoke is private on the jsforce metadata object, and cancelDeploy is not an exposed method
         ._invoke('cancelDeploy', { id: this.id })
-        .thenCall((result: any) => {
+        .thenCall((result: unknown): unknown => {
           // this does not return CancelDeployResult as documented in the API.
           // a null result seems to indicate the request was successful
           if (result) {
@@ -279,6 +281,6 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
   }
 
   protected async post(result: MetadataApiDeployStatus): Promise<DeployResult> {
-    return new DeployResult(result, this.components);
+    return new Promise((resolve) => resolve(new DeployResult(result, this.components)));
   }
 }

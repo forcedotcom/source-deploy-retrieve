@@ -4,10 +4,10 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { testSetup } from '@salesforce/core/lib/testSetup';
 import { fail } from 'assert';
-import { expect } from 'chai';
 import { join } from 'path';
+import { testSetup } from '@salesforce/core/lib/testSetup';
+import { expect } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
 import {
   ComponentSet,

@@ -6,15 +6,15 @@
  */
 import { join, basename } from 'path';
 import { parse } from 'fast-xml-parser';
-import { ForceIgnore } from './forceIgnore';
-import { NodeFSTreeContainer, TreeContainer, VirtualTreeContainer } from './treeContainers';
-import { MetadataComponent, VirtualDirectory } from './types';
+import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { baseName, normalizeToArray, parseMetadataXml, trimUntil } from '../utils';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common';
-import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { SfdxFileFormat } from '../convert';
 import { MetadataType } from '../registry';
 import { TypeInferenceError } from '../errors';
+import { MetadataComponent, VirtualDirectory } from './types';
+import { NodeFSTreeContainer, TreeContainer, VirtualTreeContainer } from './treeContainers';
+import { ForceIgnore } from './forceIgnore';
 
 export type ComponentProperties = {
   name: string;
@@ -134,7 +134,10 @@ export class SourceComponent implements MetadataComponent {
       return parentXml;
     }
     const children = normalizeToArray(
-      get(parentXml, `${this.parent.type.name}.${this.type.xmlElementName || this.type.directoryName}`)
+      get(
+        parentXml,
+        `${this.parent.type.name}.${this.type.xmlElementName || this.type.directoryName}`
+      )
     ) as T[];
     return children.find((c) => getString(c, this.type.uniqueIdElement) === this.name);
   }

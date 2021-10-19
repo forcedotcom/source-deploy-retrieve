@@ -20,17 +20,22 @@ import {
   mixedContentDirectory,
   mixedContentSingleFile,
 } from '../../mock/registry';
+import { MetadataType } from "../../../src";
 
 describe('MixedContentSourceAdapter', () => {
+  let tree;
+  let type: MetadataType;
+  let adapter;
+  let expectedComponent;
   it('Should throw ExpectedSourceFilesError if content does not exist', () => {
-    const type = mockRegistryData.types.mixedcontentsinglefile;
-    const tree = new VirtualTreeContainer([
+    type = mockRegistryData.types.mixedcontentsinglefile;
+    tree = new VirtualTreeContainer([
       {
         dirPath: mixedContentSingleFile.TYPE_DIRECTORY,
         children: [mixedContentSingleFile.XML_NAMES[0]],
       },
     ]);
-    const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
+    adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
     assert.throws(
       () => adapter.getComponent(mixedContentSingleFile.COMPONENT.content),
       ExpectedSourceFilesError
@@ -39,7 +44,7 @@ describe('MixedContentSourceAdapter', () => {
 
   describe('File Content', () => {
     const component = mixedContentSingleFile.COMPONENT;
-    const adapter = new MixedContentSourceAdapter(
+    adapter = new MixedContentSourceAdapter(
       mockRegistryData.types.mixedcontentsinglefile,
       mockRegistry,
       undefined,
@@ -66,10 +71,10 @@ describe('MixedContentSourceAdapter', () => {
       MIXED_CONTENT_DIRECTORY_XML_PATHS,
       MIXED_CONTENT_DIRECTORY_VIRTUAL_FS,
     } = mixedContentDirectory;
-    const type = mockRegistryData.types.mixedcontentdirectory;
-    const tree = new VirtualTreeContainer(MIXED_CONTENT_DIRECTORY_VIRTUAL_FS);
-    const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
-    const expectedComponent = new SourceComponent(MIXED_CONTENT_DIRECTORY_COMPONENT, tree);
+    type = mockRegistryData.types.mixedcontentdirectory;
+    tree = new VirtualTreeContainer(MIXED_CONTENT_DIRECTORY_VIRTUAL_FS);
+    adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
+    expectedComponent = new SourceComponent(MIXED_CONTENT_DIRECTORY_COMPONENT, tree);
 
     it('Should return expected SourceComponent when given a root metadata xml path', () => {
       expect(adapter.getComponent(MIXED_CONTENT_DIRECTORY_XML_PATHS[0])).to.deep.equal(
@@ -86,9 +91,9 @@ describe('MixedContentSourceAdapter', () => {
     });
 
     it('should return expected SourceComponent when there is no metadata xml', () => {
-      const tree = new VirtualTreeContainer(MIXED_CONTENT_DIRECTORY_VIRTUAL_FS_NO_XML);
-      const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
-      const expectedComponent = new SourceComponent(
+      tree = new VirtualTreeContainer(MIXED_CONTENT_DIRECTORY_VIRTUAL_FS_NO_XML);
+      adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
+      expectedComponent = new SourceComponent(
         {
           name: 'a',
           type,

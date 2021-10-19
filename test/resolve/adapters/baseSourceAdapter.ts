@@ -25,7 +25,7 @@ import { ForceIgnore, SourceComponent } from '../../../src';
 class TestAdapter extends BaseSourceAdapter {
   public readonly component: SourceComponent;
 
-  constructor(component: SourceComponent, forceIgnore?: ForceIgnore) {
+  public constructor(component: SourceComponent, forceIgnore?: ForceIgnore) {
     super(component.type, mockRegistry, forceIgnore);
     this.component = component;
   }

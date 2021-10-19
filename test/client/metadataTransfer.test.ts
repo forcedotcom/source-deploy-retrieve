@@ -4,8 +4,12 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { fail } from 'assert';
 import { createSandbox, SinonStub } from 'sinon';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
+import { AuthInfo, Connection } from '@salesforce/core';
+import { expect } from 'chai';
+import { sleep } from '@salesforce/kit';
 import { ComponentSet } from '../../src';
 import { MetadataTransfer } from '../../src/client/metadataTransfer';
 import {
@@ -13,12 +17,8 @@ import {
   MetadataTransferResult,
   RequestStatus,
 } from '../../src/client/types';
-import { AuthInfo, Connection } from '@salesforce/core';
-import { expect } from 'chai';
 import { MetadataTransferError } from '../../src/errors';
 import { mockConnection } from '../mock/client';
-import { fail } from 'assert';
-import { sleep } from '@salesforce/kit';
 
 const $$ = testSetup();
 const env = createSandbox();

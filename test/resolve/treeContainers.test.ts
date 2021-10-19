@@ -4,50 +4,50 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { join, normalize } from 'path';
+import { Readable, Writable, pipeline as cbPipeline } from 'stream';
+import { promisify } from 'util';
+import { expect, assert } from 'chai';
+import { createSandbox } from 'sinon';
+import * as fs from 'graceful-fs';
+import * as unzipper from 'unzipper';
+import { create as createArchive } from 'archiver';
 import {
   TreeContainer,
   NodeFSTreeContainer,
   VirtualTreeContainer,
   ZipTreeContainer,
 } from '../../src/resolve/treeContainers';
-import { expect, assert } from 'chai';
-import { createSandbox } from 'sinon';
-import * as fs from 'graceful-fs';
-import { join, normalize } from 'path';
 import { LibraryError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { VirtualDirectory } from '../../src';
-import { Readable, Writable, pipeline as cbPipeline } from 'stream';
-import * as unzipper from 'unzipper';
-import { create as createArchive } from 'archiver';
-import { promisify } from 'util';
 
 describe('Tree Containers', () => {
   const readDirResults = ['a.q', 'a.x-meta.xml', 'b', 'b.x-meta.xml', 'c.z', 'c.x-meta.xml'];
 
   describe('TreeContainer Base Class', () => {
     class TestTreeContainer extends TreeContainer {
-      readDirectory(): string[] {
+      public readDirectory(): string[] {
         return readDirResults;
       }
 
-      exists(): boolean {
+      public exists(): boolean {
         return false;
       }
 
-      isDirectory(): boolean {
+      public isDirectory(): boolean {
         return false;
       }
 
-      readFile(): Promise<Buffer> {
+      public readFile(): Promise<Buffer> {
         return Promise.resolve(Buffer.from(''));
       }
 
-      readFileSync(): Buffer {
+      public readFileSync(): Buffer {
         return Buffer.from('');
       }
 
-      stream(): Readable {
+      public stream(): Readable {
         return;
       }
     }
@@ -130,6 +130,7 @@ describe('Tree Containers', () => {
       const archive = createArchive('zip', { zlib: { level: 3 } });
       const bufferWritable = new Writable();
       const buffers: Buffer[] = [];
+      // eslint-disable-next-line no-underscore-dangle
       bufferWritable._write = (chunk: Buffer, encoding: string, cb: () => void): void => {
         buffers.push(chunk);
         cb();

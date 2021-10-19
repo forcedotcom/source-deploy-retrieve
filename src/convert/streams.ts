@@ -4,29 +4,29 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Archiver, create as createArchive } from 'archiver';
-import { createWriteStream, existsSync } from 'graceful-fs';
 import { basename, dirname, isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
-import { SourceComponent, MetadataResolver } from '../resolve';
-import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
-import { ensureFileExists } from '../utils/fileSystemHandler';
-import { SourcePath, XML_DECL } from '../common';
-import { ConvertContext } from './convertContext';
-import { MetadataTransformerFactory } from './transformers';
+import { Archiver, create as createArchive } from 'archiver';
+import { createWriteStream, existsSync } from 'graceful-fs';
 import { JsonMap } from '@salesforce/ts-types';
 import { j2xParser } from 'fast-xml-parser';
+import { Logger } from '@salesforce/core';
+import { SourceComponent, MetadataResolver } from '../resolve';
+import { ensureFileExists } from '../utils/fileSystemHandler';
+import { SourcePath, XML_DECL } from '../common';
 import { ComponentSet } from '../collections';
 import { LibraryError } from '../errors';
 import { RegistryAccess } from '../registry';
-import { Logger } from '@salesforce/core';
+import { MetadataTransformerFactory } from './transformers';
+import { ConvertContext } from './convertContext';
+import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
   private iter: Iterator<SourceComponent>;
 
-  constructor(components: Iterable<SourceComponent>) {
+  public constructor(components: Iterable<SourceComponent>) {
     super({ objectMode: true });
     this.iter = this.createIterator(components);
   }
@@ -78,7 +78,7 @@ export class ComponentConverter extends Transform {
     // Only transform components not marked for delete.
     if (!chunk.isMarkedForDelete()) {
       try {
-        const converts: Promise<WriteInfo[]>[] = [];
+        const converts: Array<Promise<WriteInfo[]>> = [];
         const transformer = this.transformerFactory.getTransformer(chunk);
         const mergeWith = this.mergeSet?.getSourceComponents(chunk);
         switch (this.targetFormat) {

@@ -5,18 +5,18 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { join } from 'path';
 import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import * as fs from 'graceful-fs';
-import { join } from 'path';
 import { RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { nls } from '../../../src/i18n';
 import { ToolingDeployStatus, ComponentStatus } from '../../../src/client';
-import { auraContents, auraComponent, auraFiles, testAuraList } from './auraDeployMocks';
 import { AuraDeploy } from '../../../src/client/deployStrategies';
 import { ToolingCreateResult, AuraDefinition } from '../../../src/client/types';
+import { auraContents, auraComponent, auraFiles, testAuraList } from './auraDeployMocks';
 
 const $$ = testSetup();
 

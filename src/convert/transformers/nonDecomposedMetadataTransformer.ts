@@ -5,11 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { WriteInfo } from '../types';
-import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
+import { WriteInfo } from '../types';
 import { normalizeToArray } from '../../utils';
 import { SourceComponent } from '../../resolve';
+import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 
 /**
  * Metadata Transformer for metadata types with children types that are NOT decomposed into separate files.

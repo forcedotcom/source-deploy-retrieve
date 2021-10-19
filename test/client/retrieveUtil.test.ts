@@ -9,6 +9,8 @@ import * as path from 'path';
 import { expect } from 'chai';
 import { buildQuery, queryToFileMap } from '../../src/client/retrieveUtil';
 import { QueryResult } from '../../src/client/types';
+import { SourceComponent, VirtualTreeContainer } from '../../src/resolve';
+import { registry } from '../../src';
 import {
   auraComponent,
   auraApplication,
@@ -17,8 +19,6 @@ import {
   auraTokens,
 } from './auraDefinitionMocks';
 import { lwcComponentMock } from './lightningComponentMocks';
-import { SourceComponent, VirtualTreeContainer } from '../../src/resolve';
-import { registry } from '../../src';
 
 describe('Tooling Retrieve Util', () => {
   const rootPath = path.join('file', 'path');
@@ -69,7 +69,7 @@ describe('Tooling Retrieve Util', () => {
     const queryString = buildQuery(classMDComponent, '');
 
     expect(queryString).to.equal(
-      `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'myTestClass' and NamespacePrefix = ''`
+      "Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'myTestClass' and NamespacePrefix = ''"
     );
   });
 
@@ -77,7 +77,7 @@ describe('Tooling Retrieve Util', () => {
     const queryString = buildQuery(pageMDComponent, '');
 
     expect(queryString).to.equal(
-      `Select Id, ApiVersion, Name, NamespacePrefix, Markup from ApexPage where Name = 'myPage' and NamespacePrefix = ''`
+      "Select Id, ApiVersion, Name, NamespacePrefix, Markup from ApexPage where Name = 'myPage' and NamespacePrefix = ''"
     );
   });
 
@@ -86,7 +86,8 @@ describe('Tooling Retrieve Util', () => {
     let expectedQuery =
       'Select Id, AuraDefinitionBundle.ApiVersion, AuraDefinitionBundle.DeveloperName, ';
     expectedQuery += 'AuraDefinitionBundle.NamespacePrefix, DefType, Source ';
-    expectedQuery += `from AuraDefinition where AuraDefinitionBundle.DeveloperName = 'testApp' and AuraDefinitionBundle.NamespacePrefix = ''`;
+    expectedQuery +=
+      "from AuraDefinition where AuraDefinitionBundle.DeveloperName = 'testApp' and AuraDefinitionBundle.NamespacePrefix = ''";
     expect(queryString).to.equal(expectedQuery);
   });
 
@@ -95,7 +96,8 @@ describe('Tooling Retrieve Util', () => {
     let expectedQuery =
       'Select Id, AuraDefinitionBundle.ApiVersion, AuraDefinitionBundle.DeveloperName, ';
     expectedQuery += 'AuraDefinitionBundle.NamespacePrefix, DefType, Source ';
-    expectedQuery += `from AuraDefinition where AuraDefinitionBundle.DeveloperName = 'testApp' and AuraDefinitionBundle.NamespacePrefix = 't3str'`;
+    expectedQuery +=
+      "from AuraDefinition where AuraDefinitionBundle.DeveloperName = 'testApp' and AuraDefinitionBundle.NamespacePrefix = 't3str'";
     expect(queryString).to.equal(expectedQuery);
   });
 
@@ -245,7 +247,7 @@ describe('Tooling Retrieve Util', () => {
     expect(resultMap.get(cmpMetaPath)).to.equal(expectedMetaXML);
     expect(resultMap.has(cmpPath)).to.be.true;
     expect(resultMap.get(cmpPath)).to.equal(
-      `<aura:component>\n    //that's what's up\n</aura:component>`
+      "<aura:component>\n    //that's what's up\n</aura:component>"
     );
     expect(resultMap.has(auraDocPath)).to.be.true;
     expect(resultMap.get(auraDocPath)).to.equal(

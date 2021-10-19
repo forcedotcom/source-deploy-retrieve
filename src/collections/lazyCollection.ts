@@ -8,7 +8,7 @@
 export class LazyCollection<T> implements Iterable<T> {
   protected iterable: Iterable<T>;
 
-  constructor(iterable?: Iterable<T>) {
+  public constructor(iterable?: Iterable<T>) {
     this.iterable = iterable;
   }
 
@@ -29,7 +29,8 @@ export class LazyCollection<T> implements Iterable<T> {
 
   public filter(predicate: (element: T) => boolean): this {
     const iter = this.getIterator();
-    //@ts-ignore: valid syntax - invokes the constructor of the instance's type
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore: valid syntax - invokes the constructor of the instance's type
     return new this.constructor(
       (function* (): Iterable<T> {
         let next = iter.next();

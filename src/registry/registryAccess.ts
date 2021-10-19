@@ -4,8 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { registry as defaultRegistry } from './registry';
 import { RegistryError } from '../errors';
+import { registry as defaultRegistry } from './registry';
 import { MetadataRegistry, MetadataType } from './types';
 
 /**
@@ -69,6 +69,7 @@ export class RegistryAccess {
 
   /**
    * Query the types that require a strict parent directory
+   *
    * @see {@link MetadataType.strictDirectoryName}
    *
    * @returns An array of metadata type objects that require strict parent folder names
@@ -85,6 +86,7 @@ export class RegistryAccess {
   /**
    * Query for the types that have the folderContentType property defined.
    * E.g., reportFolder, dashboardFolder, documentFolder, emailFolder
+   *
    * @see {@link MetadataType.folderContentType}
    *
    * @returns An array of metadata type objects that have folder content

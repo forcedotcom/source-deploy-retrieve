@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { join, basename, dirname } from 'path';
 import { assert, expect } from 'chai';
 import {
   MetadataResolver,
@@ -23,9 +24,7 @@ import {
   mockRegistryData,
   decomposedtoplevel,
 } from '../mock/registry';
-import { join, basename, dirname } from 'path';
 import { TypeInferenceError } from '../../src/errors';
-import { RegistryTestUtil } from './registryTestUtil';
 import {
   DECOMPOSED_VIRTUAL_FS,
   DECOMPOSED_PATH,
@@ -44,11 +43,12 @@ import {
   MIXED_CONTENT_DIRECTORY_XML_PATHS,
 } from '../mock/registry/type-constants/mixedContentDirectoryConstants';
 import { ComponentSet, RegistryAccess } from '../../src';
+import { RegistryTestUtil } from './registryTestUtil';
 
 const testUtil = new RegistryTestUtil();
 
 describe('MetadataResolver', () => {
-  const resolver = new MetadataResolver(mockRegistry);
+  let resolver = new MetadataResolver(mockRegistry);
 
   describe('getComponentsFromPath', () => {
     afterEach(() => testUtil.restore());
@@ -298,7 +298,7 @@ describe('MetadataResolver', () => {
 
     describe('Directory Paths', () => {
       it('Should return all components in a directory', () => {
-        const resolver = testUtil.createMetadataResolver([
+        resolver = testUtil.createMetadataResolver([
           {
             dirPath: xmlInFolder.COMPONENT_FOLDER_PATH,
             children: xmlInFolder.XML_NAMES,
@@ -425,7 +425,8 @@ describe('MetadataResolver', () => {
       });
 
       it('Should return a component for a directory that is content or a child of content', () => {
-        const { MIXED_CONTENT_DIRECTORY_CONTENT_PATH } = mixedContentDirectory;
+        const MIXED_CONTENT_DIRECTORY_CONTENT_PATH =
+          mixedContentDirectory.MIXED_CONTENT_DIRECTORY_CONTENT_PATH;
         const access = testUtil.createMetadataResolver([
           {
             dirPath: MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
@@ -624,7 +625,7 @@ describe('MetadataResolver', () => {
 
     describe('Filtering', () => {
       it('should only return components present in filter', async () => {
-        const resolver = testUtil.createMetadataResolver([
+        resolver = testUtil.createMetadataResolver([
           {
             dirPath: xmlInFolder.COMPONENT_FOLDER_PATH,
             children: xmlInFolder.XML_NAMES,
@@ -652,7 +653,7 @@ describe('MetadataResolver', () => {
       });
 
       it('should resolve child components when present in filter', async () => {
-        const resolver = testUtil.createMetadataResolver(decomposedtoplevel.DECOMPOSED_VIRTUAL_FS);
+        resolver = testUtil.createMetadataResolver(decomposedtoplevel.DECOMPOSED_VIRTUAL_FS);
         const children = decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT.getChildren();
         const componentMappings = children.map((c: SourceComponent) => ({
           path: c.xml,
@@ -689,7 +690,7 @@ describe('MetadataResolver', () => {
       });
 
       it('should resolve directory component if in filter', () => {
-        const resolver = new MetadataResolver(mockRegistry, bundle.COMPONENT.tree);
+        resolver = new MetadataResolver(mockRegistry, bundle.COMPONENT.tree);
         testUtil.stubAdapters([
           {
             type: mockRegistryData.types.bundle,
@@ -714,7 +715,7 @@ describe('MetadataResolver', () => {
       });
 
       it('should not resolve directory component if not in filter', () => {
-        const resolver = testUtil.createMetadataResolver([
+        resolver = testUtil.createMetadataResolver([
           {
             dirPath: bundle.TYPE_DIRECTORY,
             children: [basename(bundle.CONTENT_PATH)],

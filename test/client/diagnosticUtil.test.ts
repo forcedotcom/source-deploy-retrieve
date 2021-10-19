@@ -4,10 +4,10 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { DiagnosticUtil } from '../../src/client/diagnosticUtil';
-import { SourceComponent } from '../../src/resolve/sourceComponent';
 import { join } from 'path';
 import { expect } from 'chai';
+import { DiagnosticUtil } from '../../src/client/diagnosticUtil';
+import { SourceComponent } from '../../src/resolve/sourceComponent';
 import { DeployMessage } from '../../src/client/types';
 import { registry } from '../../src';
 

@@ -5,18 +5,18 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import * as path from 'path';
+import * as stream from 'stream';
+import { fail } from 'assert';
 import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import * as fs from 'graceful-fs';
-import * as path from 'path';
-import * as stream from 'stream';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ToolingApi } from '../../src/client';
 import { MetadataResolver, SourceComponent } from '../../src/resolve';
 import { QueryResult, RequestStatus, SourceRetrieveResult } from '../../src/client/types';
 import { nls } from '../../src/i18n';
-import { fail } from 'assert';
 import { ComponentSet, registry } from '../../src';
 
 const $$ = testSetup();
@@ -109,7 +109,7 @@ describe('Tooling Retrieve', () => {
     expect(retrieveResults.success).to.equal(true);
     expect(
       toolingQueryStub.calledOnceWith(
-        `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'myTestClass' and NamespacePrefix = ''`
+        "Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'myTestClass' and NamespacePrefix = ''"
       )
     ).to.equal(true);
   });
@@ -140,7 +140,7 @@ describe('Tooling Retrieve', () => {
     expect(retrieveResults.success).to.equal(true);
     expect(
       toolingQueryStub.calledOnceWith(
-        `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'myTestClass' and NamespacePrefix = 'tstr'`
+        "Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'myTestClass' and NamespacePrefix = 'tstr'"
       )
     ).to.equal(true);
   });

@@ -7,16 +7,17 @@
 import { basename, dirname, join, sep } from 'path';
 import { TypeInferenceError } from '../errors';
 import { extName, parentName, parseMetadataXml } from '../utils';
+import { RegistryAccess } from '../registry/registryAccess';
+import { ComponentSet } from '../collections';
+import { MetadataType } from '../registry';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
-import { RegistryAccess } from '../registry/registryAccess';
-import { ComponentSet } from '../collections';
-import { MetadataType } from '../registry';
 
 /**
  * Resolver for metadata type and component objects.
+ *
  * @internal
  */
 export class MetadataResolver {

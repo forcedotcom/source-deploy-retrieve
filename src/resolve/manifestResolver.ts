@@ -5,11 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { parse as parseXml } from 'fast-xml-parser';
 import { MetadataType, RegistryAccess } from '../registry';
+import { normalizeToArray } from '../utils';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
 import { MetadataComponent } from './types';
-import { parse as parseXml } from 'fast-xml-parser';
-import { normalizeToArray } from '../utils';
 
 export interface PackageTypeMembers {
   name: string;

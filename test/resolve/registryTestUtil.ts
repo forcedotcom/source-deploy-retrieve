@@ -16,7 +16,7 @@ import { SourcePath } from '../../src/common';
 export class RegistryTestUtil {
   private env: SinonSandbox;
 
-  constructor(env: SinonSandbox = createSandbox()) {
+  public constructor(env: SinonSandbox = createSandbox()) {
     this.env = env;
   }
 
@@ -29,11 +29,11 @@ export class RegistryTestUtil {
   }
 
   public stubAdapters(
-    config: {
+    config: Array<{
       type: MetadataType;
-      componentMappings: { path: SourcePath; component: SourceComponent }[];
+      componentMappings: Array<{ path: SourcePath; component: SourceComponent }>;
       allowContent?: boolean;
-    }[]
+    }>
   ): void {
     const getAdapterStub = this.env.stub(SourceAdapterFactory.prototype, 'getAdapter');
     for (const entry of config) {

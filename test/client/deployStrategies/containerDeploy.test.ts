@@ -463,7 +463,7 @@ describe('Container Deploy Strategy', () => {
     expect(mockToolingQuery.calledOnce).to.be.true;
     expect(
       mockToolingQuery.calledWith(
-        `Select Id from ApexComponent where Name = 'one' and NamespacePrefix = 't5tr'`
+        "Select Id from ApexComponent where Name = 'one' and NamespacePrefix = 't5tr'"
       )
     ).to.be.true;
     expect(result).to.deep.equals({

@@ -4,9 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { sep } from 'path';
 import { Connection } from '@salesforce/core';
 import { readFileSync } from 'graceful-fs';
-import { sep } from 'path';
 import { DeployError } from '../../errors';
 import { SourceComponent } from '../../resolve';
 import { SourceDeployResult, ToolingCreateResult } from '../types';
@@ -21,13 +21,11 @@ export abstract class BaseDeploy {
   public component: SourceComponent;
   public namespace: string;
 
-  constructor(connection: Connection) {
+  public constructor(connection: Connection) {
     this.connection = connection;
   }
 
-  public buildMetadataField(
-    metadataContent: string
-  ): {
+  public buildMetadataField(metadataContent: string): {
     label?: string;
     packageVersions?: string;
     status?: string;

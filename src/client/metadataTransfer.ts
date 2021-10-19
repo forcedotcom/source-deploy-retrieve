@@ -4,16 +4,16 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { AuthInfo, Connection, Logger, PollingClient, StatusResult } from '@salesforce/core';
 import { EventEmitter } from 'events';
-import { ComponentSet } from '../collections';
-import { MetadataTransferError } from '../errors';
-import { AsyncResult, MetadataRequestStatus, RequestStatus, MetadataTransferResult } from './types';
-import { MetadataConverter, SfdxFileFormat } from '../convert';
 import { join } from 'path';
+import { AuthInfo, Connection, Logger, PollingClient, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
 import { AnyJson, isNumber } from '@salesforce/ts-types';
 import * as fs from 'graceful-fs';
+import { MetadataConverter, SfdxFileFormat } from '../convert';
+import { MetadataTransferError } from '../errors';
+import { ComponentSet } from '../collections';
+import { AsyncResult, MetadataRequestStatus, RequestStatus, MetadataTransferResult } from './types';
 
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
@@ -29,21 +29,26 @@ export abstract class MetadataTransfer<
   protected components: ComponentSet;
   protected logger: Logger;
   protected canceled = false;
-  private _id?: string;
+  private deployId?: string;
   private event = new EventEmitter();
   private usernameOrConnection: string | Connection;
   private apiVersion: string;
 
-  constructor({ usernameOrConnection, components, apiVersion, id }: MetadataTransferOptions) {
+  public constructor({
+    usernameOrConnection,
+    components,
+    apiVersion,
+    id,
+  }: MetadataTransferOptions) {
     this.usernameOrConnection = usernameOrConnection;
     this.components = components;
     this.apiVersion = apiVersion;
-    this._id = id;
+    this.deployId = id;
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
-  get id(): string | undefined {
-    return this._id;
+  public get id(): string | undefined {
+    return this.deployId;
   }
 
   /**
@@ -54,7 +59,7 @@ export abstract class MetadataTransfer<
   public async start(): Promise<AsyncResult> {
     this.canceled = false;
     const asyncResult = await this.pre();
-    this._id = asyncResult.id;
+    this.deployId = asyncResult.id;
     this.logger.debug(`Started metadata transfer. ID = ${this.id}`);
     return asyncResult;
   }
@@ -102,7 +107,7 @@ export abstract class MetadataTransfer<
       this.logger.debug(`Polling for metadata transfer status. ID = ${this.id}`);
       this.logger.debug(`Polling frequency (ms): ${pollingOptions.frequency.milliseconds}`);
       this.logger.debug(`Polling timeout (min): ${pollingOptions.timeout.minutes}`);
-      const completedMdapiStatus = ((await pollingClient.subscribe()) as unknown) as Status;
+      const completedMdapiStatus = (await pollingClient.subscribe()) as unknown as Status;
       const result = await this.post(completedMdapiStatus);
       if (completedMdapiStatus.status === RequestStatus.Canceled) {
         this.event.emit('cancel', completedMdapiStatus);
@@ -114,7 +119,7 @@ export abstract class MetadataTransfer<
       const error = new MetadataTransferError('md_request_fail', e.message);
       if (error.stack && e.stack) {
         // append the original stack to this new error
-        error.stack += `\nDUE TO:\n${e.stack}`;
+        error.stack += `\nDUE TO:\n${(e as Error).stack}`;
       }
       if (this.event.listenerCount('error') === 0) {
         throw error;
@@ -200,7 +205,7 @@ export abstract class MetadataTransfer<
     }
     this.logger.debug(`MDAPI status update: ${mdapiStatus.status}`);
 
-    return { completed, payload: (mdapiStatus as unknown) as AnyJson };
+    return { completed, payload: mdapiStatus as unknown as AnyJson };
   }
 
   public abstract checkStatus(): Promise<Status>;

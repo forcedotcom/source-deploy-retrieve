@@ -10,9 +10,9 @@ import { Localization, Message } from './localization';
 
 function loadMessageBundle(): Message {
   try {
-    const layer = new Message(messages);
-    return layer;
+    return new Message(messages);
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error('Cannot find messages in i18n module');
   }
 }

@@ -5,6 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { join } from 'path';
+import { expect } from 'chai';
+import { createSandbox } from 'sinon';
+import { assert } from '@salesforce/ts-types';
 import {
   mockRegistry,
   mockRegistryData,
@@ -12,9 +16,6 @@ import {
   matchingContentFile,
 } from '../../mock/registry';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
-import { expect } from 'chai';
-import { createSandbox } from 'sinon';
-import { join } from 'path';
 import { baseName } from '../../../src/utils';
 import { JsToXml } from '../../../src/convert/streams';
 import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/registry/type-constants/decomposedTopLevelConstants';
@@ -23,12 +24,11 @@ import { XML_NS_URL, XML_NS_KEY } from '../../../src/common';
 import { ConvertContext } from '../../../src/convert/convertContext';
 import { TypeInferenceError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
-import { assert } from '@salesforce/ts-types';
 
 const env = createSandbox();
 
 describe('DecomposedMetadataTransformer', () => {
-  const component = decomposed.DECOMPOSED_COMPONENT;
+  let component = decomposed.DECOMPOSED_COMPONENT;
 
   afterEach(() => env.restore());
 
@@ -185,7 +185,7 @@ describe('DecomposedMetadataTransformer', () => {
     });
 
     it('should push writes for component and its children when type config is "TopLevel"', async () => {
-      const component = DECOMPOSED_TOP_LEVEL_COMPONENT;
+      component = DECOMPOSED_TOP_LEVEL_COMPONENT;
       const { fullName, type } = component;
       const transformer = new DecomposedMetadataTransformer(mockRegistry);
       const root = join('main', 'default', type.directoryName, fullName);

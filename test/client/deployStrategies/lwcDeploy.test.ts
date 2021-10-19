@@ -5,11 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { join, basename } from 'path';
 import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import * as fs from 'graceful-fs';
-import { join, basename } from 'path';
 import { RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { nls } from '../../../src/i18n';
@@ -42,8 +42,8 @@ describe('LWC Deploy Strategy', () => {
     join(bundlePath, 'mockLwcCmp.js-meta.xml'),
   ];
   const lwcContents = [
-    `import { LightningElement } from 'lwc';export default class TestLwc extends LightningElement {}`,
-    `<template></template>`,
+    "import { LightningElement } from 'lwc';export default class TestLwc extends LightningElement {}",
+    '<template></template>',
     simpleMetaXMLString,
   ];
   const tree = new VirtualTreeContainer([

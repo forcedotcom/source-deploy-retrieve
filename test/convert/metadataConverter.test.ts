@@ -4,16 +4,16 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { dirname, join } from 'path';
+import { fail } from 'assert';
 import { createSandbox, SinonStub } from 'sinon';
+import * as fs from 'graceful-fs';
+import { expect, assert } from 'chai';
 import { xmlInFolder, mockRegistry } from '../mock/registry';
 import * as streams from '../../src/convert/streams';
-import * as fs from 'graceful-fs';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
-import { dirname, join } from 'path';
-import { expect, assert } from 'chai';
 import { ConversionError, LibraryError } from '../../src/errors';
 import { COMPONENTS } from '../mock/registry/type-constants/mixedContentInFolderConstants';
-import { fail } from 'assert';
 import { ComponentSet, MetadataConverter, SourceComponent } from '../../src';
 import {
   DECOMPOSED_CHILD_COMPONENT_1,

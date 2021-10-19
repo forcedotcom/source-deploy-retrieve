@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { mockRegistry, bundle } from '../../mock/registry';
 import { expect } from 'chai';
+import { mockRegistry, bundle } from '../../mock/registry';
 import { BundleSourceAdapter } from '../../../src/resolve/adapters';
 import { CONTENT_PATH } from '../../mock/registry/type-constants/bundleConstants';
 

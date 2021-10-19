@@ -6,13 +6,14 @@
  */
 
 import { basename, dirname, extname, sep } from 'path';
+import { Optional } from '@salesforce/ts-types';
 import { SourcePath } from '../common';
 import { MetadataXml } from '../resolve';
-import { Optional } from '@salesforce/ts-types';
 
 /**
  * Get the file or directory name at the end of a path. Different from `path.basename`
  * in that it strips anything after the first '.' in the name.
+ *
  * @param fsPath The path to evaluate
  */
 export function baseName(fsPath: SourcePath): string {
@@ -23,6 +24,7 @@ export function baseName(fsPath: SourcePath): string {
  * Get the name of file path extension. Different from path.extname in that it
  * does not include the '.' in the extension name. Returns an empty string if
  * there is no extension.
+ *
  * @param fsPath The path to evaluate
  */
 export function extName(fsPath: SourcePath): string {
@@ -32,6 +34,7 @@ export function extName(fsPath: SourcePath): string {
 
 /**
  * Get the name of the parent to the last portion of a path
+ *
  * @param fsPath The path to evaluate
  */
 export function parentName(fsPath: SourcePath): string {
@@ -41,6 +44,7 @@ export function parentName(fsPath: SourcePath): string {
 /**
  * Trim a path up until and including the given part. Returns `fsPath`
  * if the path `part` was not found.
+ *
  * @param fsPath Path to trim
  * @param part Path part to trim up until
  */

@@ -5,15 +5,15 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { basename, join, sep } from 'path';
+import { Readable, Writable } from 'stream';
 import * as fs from 'graceful-fs';
 import * as archiver from 'archiver';
 import { Logger } from '@salesforce/core';
+import { expect } from 'chai';
+import { createSandbox, SinonStub } from 'sinon';
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
-import { expect } from 'chai';
-import { basename, join, sep } from 'path';
-import { createSandbox, SinonStub } from 'sinon';
-import { Readable, Writable } from 'stream';
 import { MetadataResolver, SourceComponent, ComponentSet } from '../../src';
 import { WriteInfo, WriterFormat } from '../../src/convert';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
@@ -33,10 +33,10 @@ const env = createSandbox();
 
 class TestTransformer extends BaseMetadataTransformer {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
+  public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     return [{ output: '/type/file.m', source: new Readable() }];
   }
-  async toSourceFormat(
+  public async toSourceFormat(
     component: SourceComponent,
     mergeWith?: SourceComponent
   ): Promise<WriteInfo[]> {
@@ -78,6 +78,7 @@ describe('Streams', () => {
       const converter = new streams.ComponentConverter('badformat', mockRegistry);
       const expectedError = new LibraryError('error_convert_invalid_format', 'badformat');
 
+      // eslint-disable-next-line no-underscore-dangle
       converter._transform(component, '', (err: Error) => {
         try {
           expect(err.message).to.equal(expectedError.message);
@@ -92,6 +93,7 @@ describe('Streams', () => {
     it('should transform to metadata format', (done) => {
       const converter = new streams.ComponentConverter('metadata', mockRegistry);
 
+      // eslint-disable-next-line no-underscore-dangle
       converter._transform(component, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
@@ -109,6 +111,7 @@ describe('Streams', () => {
     it('should transform to source format', (done) => {
       const converter = new streams.ComponentConverter('source', mockRegistry);
 
+      // eslint-disable-next-line no-underscore-dangle
       converter._transform(component, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
@@ -135,6 +138,7 @@ describe('Streams', () => {
       const mergeSet = new ComponentSet([component]);
       const converter = new streams.ComponentConverter('source', mockRegistry, mergeSet);
 
+      // eslint-disable-next-line no-underscore-dangle
       converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
@@ -163,6 +167,7 @@ describe('Streams', () => {
       const mergeSet = new ComponentSet([component, secondMergeComponent]);
       const converter = new streams.ComponentConverter('source', mockRegistry, mergeSet);
 
+      // eslint-disable-next-line no-underscore-dangle
       converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
@@ -188,6 +193,7 @@ describe('Streams', () => {
       myComp.setMarkedForDelete(true);
       const converter = new streams.ComponentConverter('source', mockRegistry);
 
+      // eslint-disable-next-line no-underscore-dangle
       converter._transform(myComp, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
@@ -214,6 +220,7 @@ describe('Streams', () => {
         const pushStub = env.stub(converter, 'push');
         env.stub(converter.context.recomposition, 'finalize').resolves([format]);
 
+        // eslint-disable-next-line no-underscore-dangle
         await converter._flush((err) => expect(err).to.be.undefined);
 
         expect(pushStub.calledOnce).to.be.true;
@@ -226,6 +233,7 @@ describe('Streams', () => {
         const results = [format, format];
         env.stub(converter.context.recomposition, 'finalize').resolves(results);
 
+        // eslint-disable-next-line no-underscore-dangle
         await converter._flush((err) => expect(err).to.be.undefined);
 
         expect(pushStub.calledTwice).to.be.true;
@@ -237,6 +245,7 @@ describe('Streams', () => {
         const expectedError = new Error('whoops');
         env.stub(converter.context, 'executeFinalizers').throws(expectedError);
 
+        // eslint-disable-next-line no-underscore-dangle
         await converter._flush((err: Error) => expect(err).to.deep.equal(expectedError));
       });
     });
@@ -247,6 +256,7 @@ describe('Streams', () => {
     const absoluteRootDestination = join(sep, 'absolute', 'path');
     const fsWritableMock = new Writable();
     const readableMock = new Readable();
+    // eslint-disable-next-line no-underscore-dangle
     readableMock._read = (): void => {
       readableMock.push('hi');
       readableMock.push(null);
@@ -335,7 +345,7 @@ describe('Streams', () => {
         pipelineStub.resolves();
 
         const formatWithAbsoluteOutput: WriterFormat = {
-          component: component,
+          component,
           writeInfos: [
             {
               source: readableMock,
@@ -499,6 +509,7 @@ describe('Streams', () => {
         const whoops = new Error('whoops!');
         env.stub(archive, 'finalize').throws(whoops);
 
+        // eslint-disable-next-line no-underscore-dangle
         await writer._final((err: Error) => {
           expect(err.message).to.equal(whoops.message);
           expect(err.name).to.equal(whoops.name);

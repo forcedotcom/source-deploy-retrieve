@@ -6,9 +6,9 @@
  */
 
 import { join } from 'path';
-import { mockRegistry, mockRegistryData } from '.';
 import { VirtualTreeContainer } from '../../../src';
 import { VirtualFile } from '../../../src/resolve/types';
+import { mockRegistry, mockRegistryData } from '.';
 
 const { decomposedtoplevel, mixedcontentsinglefile, mixedcontentinfolder } = mockRegistryData.types;
 

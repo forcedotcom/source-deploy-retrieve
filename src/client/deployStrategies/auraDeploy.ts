@@ -15,9 +15,9 @@ import {
   AuraDefinition,
 } from '../types';
 import { deployTypes } from '../toolingApi';
-import { BaseDeploy } from './baseDeploy';
 import { SourceComponent } from '../../resolve';
 import { DiagnosticUtil } from '../diagnosticUtil';
+import { BaseDeploy } from './baseDeploy';
 
 export class AuraDeploy extends BaseDeploy {
   private static readonly AURA_DEF_TYPES = ['APPLICATION', 'COMPONENT', 'EVENT', 'INTERFACE'];
@@ -52,7 +52,7 @@ export class AuraDeploy extends BaseDeploy {
       : await this.upsertBundle();
     const bundleId = auraBundle.id;
 
-    sourceFiles.forEach(async (sourceFile: SourcePath) => {
+    sourceFiles.forEach((sourceFile: SourcePath) => {
       const source = readFileSync(sourceFile, 'utf8');
       const suffix = extName(sourceFile);
       const defType = this.getAuraDefType(sourceFile, suffix);
@@ -75,9 +75,11 @@ export class AuraDeploy extends BaseDeploy {
 
       // This is to ensure we return the correct project path when reporting errors
       // must be the file associated with the specified aura type
-      AuraDeploy.AURA_DEF_TYPES.includes(auraDef.DefType)
-        ? auraDefinitions.unshift(auraDef)
-        : auraDefinitions.push(auraDef);
+      if (AuraDeploy.AURA_DEF_TYPES.includes(auraDef.DefType)) {
+        auraDefinitions.unshift(auraDef);
+      } else {
+        auraDefinitions.push(auraDef);
+      }
     });
 
     return auraDefinitions;
@@ -94,33 +96,31 @@ export class AuraDeploy extends BaseDeploy {
 
     let partialSuccess = false;
     let allCreate = true;
-    const deployPromises = auraDefinitions.map(
-      async (definition): Promise<void> => {
-        try {
-          if (definition.Id) {
-            const formattedDef = {
-              Source: definition.Source,
-              Id: definition.Id,
-            };
-            await this.connection.tooling.update(deployTypes.get(type), formattedDef);
-            allCreate = false;
-            partialSuccess = true;
-          } else {
-            const formattedDef = {
-              AuraDefinitionBundleId: definition.AuraDefinitionBundleId,
-              DefType: definition.DefType,
-              Format: definition.Format,
-              Source: definition.Source,
-            };
-            await this.toolingCreate(deployTypes.get(type), formattedDef);
-            partialSuccess = true;
-          }
-        } catch (e) {
-          const diagnostic = diagnosticUtil.parseDeployDiagnostic(this.component, e.message);
-          deployment.diagnostics.push(diagnostic);
+    const deployPromises = auraDefinitions.map(async (definition): Promise<void> => {
+      try {
+        if (definition.Id) {
+          const formattedDef = {
+            Source: definition.Source,
+            Id: definition.Id,
+          };
+          await this.connection.tooling.update(deployTypes.get(type), formattedDef);
+          allCreate = false;
+          partialSuccess = true;
+        } else {
+          const formattedDef = {
+            AuraDefinitionBundleId: definition.AuraDefinitionBundleId,
+            DefType: definition.DefType,
+            Format: definition.Format,
+            Source: definition.Source,
+          };
+          await this.toolingCreate(deployTypes.get(type), formattedDef);
+          partialSuccess = true;
         }
+      } catch (e) {
+        const diagnostic = diagnosticUtil.parseDeployDiagnostic(this.component, e.message);
+        deployment.diagnostics.push(diagnostic);
       }
-    );
+    });
 
     await Promise.all(deployPromises);
 

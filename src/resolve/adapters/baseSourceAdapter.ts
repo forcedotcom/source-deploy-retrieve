@@ -4,11 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { dirname, basename, sep } from 'path';
 import { SourceAdapter, MetadataXml } from '../types';
 import { parseMetadataXml, parseNestedFullName } from '../../utils';
 import { UnexpectedForceIgnore } from '../../errors';
 import { ForceIgnore } from '../forceIgnore';
-import { dirname, basename, sep } from 'path';
 import { NodeFSTreeContainer, TreeContainer } from '../treeContainers';
 import { SourceComponent } from '../sourceComponent';
 import { SourcePath } from '../../common';
@@ -145,7 +145,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
 
     const match = basename(path).match(/(.+)\.(.+)/);
     if (match && this.type.suffix === match[2]) {
-      return { fullName: match[1], suffix: match[2], path: path };
+      return { fullName: match[1], suffix: match[2], path };
     }
   }
 

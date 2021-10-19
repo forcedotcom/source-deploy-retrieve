@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import ignore, { Ignore } from 'ignore/index';
 import { dirname, join, relative } from 'path';
+import ignore, { Ignore } from 'ignore/index';
 import { readFileSync } from 'graceful-fs';
 import { SourcePath } from '../common';
 import { searchUp } from '../utils/fileSystemHandler';

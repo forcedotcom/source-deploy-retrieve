@@ -4,18 +4,15 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import {
-  SfdxFileFormat,
-  ConvertOutputConfig,
-  ConvertResult,
-  DirectoryConfig,
-  ZipConfig,
-} from './types';
-import { DestructiveChangesType } from '../collections/types';
-import { SourceComponent } from '../resolve';
-import { promises } from 'graceful-fs';
 import { dirname, join, normalize } from 'path';
+import { promises } from 'graceful-fs';
+import { SourceComponent } from '../resolve';
+import { DestructiveChangesType } from '../collections/types';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
+import { ConversionError, LibraryError } from '../errors';
+import { SourcePath } from '../common';
+import { ComponentSet } from '../collections';
+import { RegistryAccess } from '../registry';
 import {
   ComponentReader,
   ComponentConverter,
@@ -24,10 +21,13 @@ import {
   ZipWriter,
   ComponentWriter,
 } from './streams';
-import { ConversionError, LibraryError } from '../errors';
-import { SourcePath } from '../common';
-import { ComponentSet } from '../collections';
-import { RegistryAccess } from '../registry';
+import {
+  SfdxFileFormat,
+  ConvertOutputConfig,
+  ConvertResult,
+  DirectoryConfig,
+  ZipConfig,
+} from './types';
 
 export class MetadataConverter {
   public static readonly PACKAGE_XML_FILE = 'package.xml';
@@ -37,36 +37,9 @@ export class MetadataConverter {
 
   private registry: RegistryAccess;
 
-  constructor(registry = new RegistryAccess()) {
+  public constructor(registry = new RegistryAccess()) {
     this.registry = registry;
   }
-
-  /**
-   * Convert metadata components to another SFDX file format.
-   *
-   * @param components Components to convert
-   * @param targetFormat Format to convert the component files to
-   * @param output Configuration for outputting the converted files
-   */
-  public async convert(
-    components: Iterable<SourceComponent>,
-    targetFormat: SfdxFileFormat,
-    output: ConvertOutputConfig
-  ): Promise<ConvertResult>;
-
-  /**
-   * Convert metadata components within a `ComponentSet` to another SFDX file format.
-   *
-   * @param componentSet ComponentSet to convert
-   * @param targetFormat Format to convert the component files to
-   * @param output Configuration for outputting the converted files
-   */
-  public async convert(
-    componentSet: ComponentSet,
-    targetFormat: SfdxFileFormat,
-    output: ConvertOutputConfig
-  ): Promise<ConvertResult>;
-
   public async convert(
     comps: ComponentSet | Iterable<SourceComponent>,
     targetFormat: SfdxFileFormat,

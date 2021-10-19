@@ -4,17 +4,16 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { WriteInfo } from '../types';
-import { BaseMetadataTransformer } from './baseMetadataTransformer';
-import { MetadataComponent, SourceComponent } from '../../resolve';
-import { JsonMap } from '@salesforce/ts-types';
-import { JsToXml } from '../streams';
 import { join } from 'path';
+import { JsonMap } from '@salesforce/ts-types';
+import { MetadataComponent, SourceComponent } from '../../resolve';
+import { JsToXml } from '../streams';
+import { WriteInfo } from '../types';
 import { SourcePath, META_XML_SUFFIX, XML_NS_URL, XML_NS_KEY } from '../../common';
 import { ComponentSet } from '../../collections';
 import { DecompositionState } from '../convertContext';
 import { DecompositionStrategy } from '../../registry';
-import { TypeInferenceError } from '../../errors';
+import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
@@ -145,13 +144,16 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     return writeInfos;
   }
 
-  private async getComposedMetadataEntries(component: SourceComponent): Promise<[string, any][]> {
+  private async getComposedMetadataEntries(
+    component: SourceComponent
+  ): Promise<Array<[string, any]>> {
     const composedMetadata = (await component.parseXml())[component.type.name];
     return Object.entries(composedMetadata);
   }
 
   /**
    * Helper for setting the decomposed transaction state
+   *
    * @param forComponent
    * @param props
    */

@@ -4,16 +4,16 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { WriteInfo, WriterFormat } from './types';
-import { MetadataComponent, SourceComponent } from '../resolve';
 import { basename, dirname, join, resolve, sep } from 'path';
-import { JsToXml } from './streams';
-import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../common';
 import { getString, JsonArray, JsonMap } from '@salesforce/ts-types';
+import { isEmpty } from '@salesforce/kit';
+import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSet } from '../collections';
 import { normalizeToArray } from '../utils/collections';
 import { RecompositionStrategy, TransformerStrategy } from '../registry/types';
-import { isEmpty } from '@salesforce/kit';
+import { MetadataComponent, SourceComponent } from '../resolve';
+import { JsToXml } from './streams';
+import { WriteInfo, WriterFormat } from './types';
 
 abstract class ConvertTransactionFinalizer<T> {
   protected abstract _state: T;

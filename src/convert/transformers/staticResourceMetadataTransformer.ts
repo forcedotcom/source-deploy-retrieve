@@ -4,18 +4,18 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { BaseMetadataTransformer } from './baseMetadataTransformer';
-import { WriteInfo } from '..';
+import { basename, dirname, join } from 'path';
+import { Readable } from 'stream';
 import { create as createArchive } from 'archiver';
 import { getExtension } from 'mime';
 import { Open } from 'unzipper';
-import { basename, dirname, join } from 'path';
-import { baseName } from '../../utils';
 import { JsonMap } from '@salesforce/ts-types';
-import { Readable } from 'stream';
+import { baseName } from '../../utils';
+import { WriteInfo } from '..';
 import { LibraryError } from '../../errors';
 import { SourceComponent } from '../../resolve';
 import { SourcePath } from '../../common';
+import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public static readonly ARCHIVE_MIME_TYPES = new Set([

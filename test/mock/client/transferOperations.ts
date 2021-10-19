@@ -5,11 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { PollingClient } from '@salesforce/core';
-import { testSetup } from '@salesforce/core/lib/testSetup';
 import { join, sep } from 'path';
+import { testSetup } from '@salesforce/core/lib/testSetup';
+import { PollingClient } from '@salesforce/core';
 import { match, SinonSandbox, SinonSpy, SinonStub } from 'sinon';
-import { createMockZip, mockConnection } from '.';
+import { DeployResultLocator, AsyncResult } from 'jsforce';
 import {
   ComponentSet,
   ConvertOutputConfig,
@@ -19,7 +19,6 @@ import {
   MetadataApiDeploy,
   MetadataApiRetrieve,
 } from '../../../src';
-import { DeployResultLocator, AsyncResult } from 'jsforce';
 import {
   DeployMessage,
   MetadataApiDeployStatus,
@@ -32,6 +31,7 @@ import {
 import { ComponentProperties } from '../../../src/resolve/sourceComponent';
 import { normalizeToArray } from '../../../src/utils';
 import { mockRegistry } from '../registry';
+import { createMockZip, mockConnection } from '.';
 
 export const MOCK_ASYNC_RESULT = { id: '1234', state: RequestStatus.Pending, done: false };
 export const MOCK_DEFAULT_OUTPUT = sep + 'test';
@@ -40,8 +40,8 @@ export const MOCK_RECENTLY_VALIDATED_ID_SOAP = '0987654321';
 
 interface DeployStubOptions {
   components?: ComponentSet;
-  componentSuccesses?: Partial<DeployMessage> | Partial<DeployMessage>[];
-  componentFailures?: Partial<DeployMessage> | Partial<DeployMessage>[];
+  componentSuccesses?: Partial<DeployMessage> | Array<Partial<DeployMessage>>;
+  componentFailures?: Partial<DeployMessage> | Array<Partial<DeployMessage>>;
   apiOptions?: MetadataApiDeployOptions;
   id?: string;
 }
@@ -71,7 +71,7 @@ export async function stubMetadataDeploy(
   deployStub
     .withArgs(zipBuffer, options.apiOptions ?? MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions)
     // overriding return type to match API
-    .resolves((MOCK_ASYNC_RESULT as unknown) as DeployResultLocator<AsyncResult>);
+    .resolves(MOCK_ASYNC_RESULT as unknown as DeployResultLocator<AsyncResult>);
 
   const deployRecentlyValidatedIdStub = sandbox.stub(connection, 'deployRecentValidation');
   deployRecentlyValidatedIdStub
@@ -116,7 +116,7 @@ export async function stubMetadataDeploy(
   const invokeStub = sandbox.stub(connection.metadata, '_invoke');
   const invokeResultStub = sandbox.stub();
   invokeStub.returns({
-    thenCall: (f: (result: any | null) => void) => {
+    thenCall: (f: (result: unknown | null) => void) => {
       return f(invokeResultStub());
     },
   });
@@ -142,7 +142,7 @@ interface RetrieveStubOptions {
   merge?: boolean;
   packageOptions?: string[] | PackageOption[];
   toRetrieve?: ComponentSet;
-  messages?: Partial<RetrieveMessage> | Partial<RetrieveMessage>[];
+  messages?: Partial<RetrieveMessage> | Array<Partial<RetrieveMessage>>;
   successes?: ComponentSet;
 }
 
@@ -183,7 +183,7 @@ export async function stubMetadataRetrieve(
   if (successes?.length > 0) {
     retrieveStatus.success = true;
     retrieveStatus.status = RequestStatus.Succeeded;
-    const fileProperties: Partial<FileProperties>[] = [];
+    const fileProperties: Array<Partial<FileProperties>> = [];
 
     for (const success of successes) {
       const contentFiles = success.walkContent();

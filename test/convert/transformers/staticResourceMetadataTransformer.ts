@@ -4,9 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { join, basename } from 'path';
 import * as archiver from 'archiver';
 import { expect } from 'chai';
-import { join, basename } from 'path';
 import { createSandbox } from 'sinon';
 import { Entry, CentralDirectory, Open } from 'unzipper';
 import { SourceComponent, VirtualTreeContainer } from '../../../src';

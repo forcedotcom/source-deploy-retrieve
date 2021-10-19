@@ -255,7 +255,8 @@ describe('MetadataResolver', () => {
         expect(access.getComponentsFromPath(path).length).to.equal(0);
       });
 
-      it('Should return a component if path to metadata xml is forceignored but forceignore is ignored', () => {
+      // metadataResolver has the option to NOT use the forceIgnore file.
+      it('Should return a component if path to metadata xml is forceignored but forceignore is not used', () => {
         const path = matchingContentFile.XML_PATHS[0];
         const access = testUtil.createMetadataResolver(
           [

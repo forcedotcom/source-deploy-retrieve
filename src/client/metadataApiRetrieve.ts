@@ -61,7 +61,7 @@ export class RetrieveResult implements MetadataTransferResult {
 
       for (const message of retrieveMessages) {
         // match type name and fullname of problem component
-        const matches = message.problem.match(/.+'(.+)'.+'(.+)'/);
+        const matches = new RegExp(/.+'(.+)'.+'(.+)'/).exec(message.problem);
         if (matches) {
           const [typeName, fullName] = matches.slice(1);
           this.fileResponses.push({
@@ -181,6 +181,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       requestBody.packageNames = packageNames;
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore required callback
     return connection.metadata.retrieve(requestBody);
   }
@@ -226,6 +227,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       { zipTreeLocation: 'unpackaged', outputDir: output },
     ];
     const packageOpts = this.getPackageOptions();
+    // eslint-disable-next-line no-unused-expressions
     packageOpts?.forEach(({ name, outputDir }) => {
       packages.push({ zipTreeLocation: name, outputDir });
     });

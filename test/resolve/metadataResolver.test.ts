@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
 import { join, basename, dirname } from 'path';
 import { assert, expect } from 'chai';
 import {
@@ -12,7 +11,7 @@ import {
   SourceComponent,
   VirtualDirectory,
   VirtualTreeContainer,
-} from '../../src/resolve';
+} from '../../src';
 import { nls } from '../../src/i18n';
 import {
   mockRegistry,
@@ -425,6 +424,7 @@ describe('MetadataResolver', () => {
       });
 
       it('Should return a component for a directory that is content or a child of content', () => {
+        // eslint-disable-next-line no-shadow
         const MIXED_CONTENT_DIRECTORY_CONTENT_PATH =
           mixedContentDirectory.MIXED_CONTENT_DIRECTORY_CONTENT_PATH;
         const access = testUtil.createMetadataResolver([

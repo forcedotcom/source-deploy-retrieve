@@ -18,7 +18,7 @@ export class MetadataTransformerFactory {
   private registry: RegistryAccess;
   private context: ConvertContext;
 
-  constructor(registry: RegistryAccess, context = new ConvertContext()) {
+  public constructor(registry: RegistryAccess, context = new ConvertContext()) {
     this.registry = registry;
     this.context = context;
   }

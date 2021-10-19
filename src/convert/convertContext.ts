@@ -4,6 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+/* eslint no-shadow: 0 */
 import { basename, dirname, join, resolve, sep } from 'path';
 import { getString, JsonArray, JsonMap } from '@salesforce/ts-types';
 import { isEmpty } from '@salesforce/kit';
@@ -16,14 +17,14 @@ import { JsToXml } from './streams';
 import { WriteInfo, WriterFormat } from './types';
 
 abstract class ConvertTransactionFinalizer<T> {
-  protected abstract _state: T;
+  protected abstract status: T;
 
   public setState(props: (state: T) => void): void {
-    props(this._state);
+    props(this.status);
   }
 
-  get state(): T {
-    return this._state;
+  public get state(): T {
+    return this.status;
   }
 
   public abstract finalize(defaultDirectory?: string): Promise<WriterFormat[]>;
@@ -47,7 +48,7 @@ export interface RecompositionState {
  * into a single file.
  */
 class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionState> {
-  protected _state: RecompositionState = {};
+  protected status: RecompositionState = {};
 
   // A cache of SourceComponent xml file paths to parsed contents so that identical child xml
   // files are not read and parsed multiple times.
@@ -147,12 +148,12 @@ export interface DecompositionState {
  * with in the conversion pipeline.
  */
 class DecompositionFinalizer extends ConvertTransactionFinalizer<DecompositionState> {
-  protected _state: DecompositionState = {};
+  protected status: DecompositionState = {};
 
   public async finalize(): Promise<WriterFormat[]> {
     const writerData: WriterFormat[] = [];
 
-    for (const toDecompose of Object.values(this._state)) {
+    for (const toDecompose of Object.values(this.status)) {
       if (!toDecompose.foundMerge) {
         writerData.push({
           component: toDecompose.origin.parent ?? toDecompose.origin,
@@ -161,7 +162,7 @@ class DecompositionFinalizer extends ConvertTransactionFinalizer<DecompositionSt
       }
     }
 
-    return writerData;
+    return new Promise((resolve) => resolve(writerData));
   }
 }
 
@@ -186,7 +187,7 @@ type ChildIndex = {
  * Inserts unclaimed child components into the parent that belongs to the default package
  */
 class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecompositionState> {
-  protected _state: NonDecompositionState = {
+  protected status: NonDecompositionState = {
     unclaimed: {},
     claimed: {},
   };
@@ -219,12 +220,10 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
 
   /**
    * This method finalizes the state by:
-   * - finding any "unprocessed components" (nondecomposed metadata types can exist in multiple locations under the same name
-   *   so we have to find all components that could potentially claim children)
+   * - finding any "unprocessed components" (nondecomposed metadata types can exist in multiple locations under the same name so we have to find all components that could potentially claim children)
    * - removing any children from the unclaimed state that have been claimed by the unprocessed components
    * - removing any children from the unclaimed state that have already been claimed by a prent in the claimed state
-   * - merging the remaining unclaimed children into the default parent component (either the component that matches the
-   *   defaultDirectory or the first parent component)
+   * - merging the remaining unclaimed children into the default parent component (either the component that matches the defaultDirectory or the first parent component)
    */
   private async finalizeState(defaultDirectory: string): Promise<void> {
     if (isEmpty(this.state.claimed)) {
@@ -377,6 +376,7 @@ export class ConvertContext {
   public readonly recomposition = new RecompositionFinalizer();
   public readonly nonDecomposition = new NonDecompositionFinalizer();
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async *executeFinalizers(defaultDirectory?: string): AsyncIterable<WriterFormat[]> {
     for (const member of Object.values(this)) {
       if (member instanceof ConvertTransactionFinalizer) {

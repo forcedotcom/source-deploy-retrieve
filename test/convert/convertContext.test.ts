@@ -5,12 +5,12 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import deepEqualInAnyOrder = require('deep-equal-in-any-order');
+import { Readable } from 'stream';
+import { join } from 'path';
 import chai = require('chai');
 
-const { expect } = chai;
 import { createSandbox, match } from 'sinon';
-import { Readable } from 'stream';
+import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import {
   SourceComponent,
   ComponentSet,
@@ -19,7 +19,7 @@ import {
   VirtualTreeContainer,
   VirtualDirectory,
 } from '../../src';
-import { join } from 'path';
+const { expect } = chai;
 
 import {
   DEFAULT_PACKAGE_ROOT_SFDX,
@@ -340,6 +340,7 @@ describe('Convert Transaction Constructs', () => {
 
         env
           .stub(ComponentSet, 'fromSource')
+          // @ts-ignore
           .withArgs({ fsPaths: [match(nonDecomposed.NON_DEFAULT_DIR)], include: match.any })
           .returns(new ComponentSet([unprocessedComponent]));
 
@@ -381,6 +382,7 @@ describe('Convert Transaction Constructs', () => {
 
         env
           .stub(ComponentSet, 'fromSource')
+          // @ts-ignore
           .withArgs({ fsPaths: [match(nonDecomposed.NON_DEFAULT_DIR)], include: match.any })
           .returns(new ComponentSet([unprocessedComponent]));
 

@@ -32,6 +32,7 @@ import { DECOMPOSED_COMPONENT } from '../mock/registry/type-constants/decomposed
 
 const env = createSandbox();
 
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 describe('MetadataApiRetrieve', async () => {
   afterEach(() => env.restore());
 

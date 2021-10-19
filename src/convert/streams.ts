@@ -54,7 +54,7 @@ export class ComponentConverter extends Transform {
   private transformerFactory: MetadataTransformerFactory;
   private defaultDirectory: string;
 
-  constructor(
+  public constructor(
     targetFormat: SfdxFileFormat,
     registry: RegistryAccess,
     mergeSet?: ComponentSet,
@@ -129,7 +129,7 @@ export abstract class ComponentWriter extends Writable {
   public forceIgnoredPaths?: Set<string> = new Set<string>();
   protected rootDestination?: SourcePath;
 
-  constructor(rootDestination?: SourcePath) {
+  public constructor(rootDestination?: SourcePath) {
     super({ objectMode: true });
     this.rootDestination = rootDestination;
   }
@@ -140,7 +140,7 @@ export class StandardWriter extends ComponentWriter {
   private resolver: MetadataResolver;
   private logger: Logger;
 
-  constructor(rootDestination: SourcePath, resolver = new MetadataResolver()) {
+  public constructor(rootDestination: SourcePath, resolver = new MetadataResolver()) {
     super(rootDestination);
     this.resolver = resolver;
     this.logger = Logger.childFromRoot(this.constructor.name);
@@ -209,11 +209,12 @@ export class ZipWriter extends ComponentWriter {
   private zip: Archiver = createArchive('zip', { zlib: { level: 3 } });
   private buffers: Buffer[] = [];
 
-  constructor(rootDestination?: SourcePath) {
+  public constructor(rootDestination?: SourcePath) {
     super(rootDestination);
     pipeline(this.zip, this.getOutputStream());
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async _write(
     chunk: WriterFormat,
     encoding: string,
@@ -249,6 +250,7 @@ export class ZipWriter extends ComponentWriter {
       return createWriteStream(this.rootDestination);
     } else {
       const bufferWritable = new Writable();
+      // eslint-disable-next-line no-underscore-dangle
       bufferWritable._write = (chunk: Buffer, encoding: string, cb: () => void): void => {
         this.buffers.push(chunk);
         cb();
@@ -257,7 +259,7 @@ export class ZipWriter extends ComponentWriter {
     }
   }
 
-  get buffer(): Buffer | undefined {
+  public get buffer(): Buffer | undefined {
     return Buffer.concat(this.buffers);
   }
 }
@@ -270,7 +272,7 @@ export class ZipWriter extends ComponentWriter {
 export class JsToXml extends Readable {
   private xmlObject: JsonMap;
 
-  constructor(xmlObject: JsonMap) {
+  public constructor(xmlObject: JsonMap) {
     super();
     this.xmlObject = xmlObject;
   }

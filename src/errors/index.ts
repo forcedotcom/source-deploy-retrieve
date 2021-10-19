@@ -58,7 +58,7 @@ export class DeployError extends SourceClientError {
 }
 
 export class MetadataTransferError extends LibraryError {
-  constructor(messageKey: string, args?: string | string[]) {
+  public constructor(messageKey: string, args?: string | string[]) {
     super(messageKey, args);
   }
 }

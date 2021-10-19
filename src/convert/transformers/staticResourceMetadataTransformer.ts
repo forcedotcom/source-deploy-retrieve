@@ -143,7 +143,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   private async getContentType(component: SourceComponent): Promise<string> {
     const resource = (await component.parseXml()).StaticResource as JsonMap;
 
-    if (!resource || !resource.hasOwnProperty('contentType')) {
+    if (!resource || !Object.prototype.hasOwnProperty.call(resource, 'contentType')) {
       throw new LibraryError('error_static_resource_missing_resource_file', [
         join('staticresources', component.name),
       ]);

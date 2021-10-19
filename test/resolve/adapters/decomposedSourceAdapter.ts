@@ -4,6 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+/* eslint no-shadow: 0 */
 import { join } from 'path';
 import { expect } from 'chai';
 import { DecomposedSourceAdapter, DefaultSourceAdapter } from '../../../src/resolve/adapters';

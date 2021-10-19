@@ -13,7 +13,7 @@ export abstract class BaseMetadataTransformer implements MetadataTransformer {
   public readonly context: ConvertContext;
   protected registry: RegistryAccess;
 
-  constructor(registry = new RegistryAccess(), context = new ConvertContext()) {
+  public constructor(registry = new RegistryAccess(), context = new ConvertContext()) {
     this.registry = registry;
     this.context = context;
   }

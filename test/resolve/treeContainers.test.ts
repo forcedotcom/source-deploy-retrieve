@@ -224,6 +224,7 @@ describe('Tree Containers', () => {
 
       it('should throw an error if path is to directory', () => {
         assert.throws(
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
           () => tree.readFile(filesRoot),
           LibraryError,
           nls.localize('error_expected_file_path', filesRoot)

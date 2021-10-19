@@ -32,7 +32,10 @@ export class MetadataResolver {
    * @param registry Custom registry data
    * @param tree `TreeContainer` to traverse with
    */
-  constructor(registry = new RegistryAccess(), tree: TreeContainer = new NodeFSTreeContainer()) {
+  public constructor(
+    registry = new RegistryAccess(),
+    tree: TreeContainer = new NodeFSTreeContainer()
+  ) {
     this.registry = registry;
     this.tree = tree;
     this.sourceAdapterFactory = new SourceAdapterFactory(this.registry, tree);
@@ -112,8 +115,8 @@ export class MetadataResolver {
       }
     }
 
-    for (const dir of dirQueue) {
-      components.push(...this.getComponentsFromPathRecursive(dir, inclusiveFilter));
+    for (const directory of dirQueue) {
+      components.push(...this.getComponentsFromPathRecursive(directory, inclusiveFilter));
     }
 
     return components;
@@ -248,15 +251,15 @@ export class MetadataResolver {
 
   /**
    * Identify metadata xml for a folder component:
-   *    .../email/TestFolder-meta.xml
-   *    .../reports/foo/bar-meta.xml
+   * .../email/TestFolder-meta.xml
+   * .../reports/foo/bar-meta.xml
    *
    * Do not match this pattern:
-   *    .../tabs/TestFolder.tab-meta.xml
+   * .../tabs/TestFolder.tab-meta.xml
    */
   private parseAsFolderMetadataXml(fsPath: string): string {
     let folderName;
-    const match = basename(fsPath).match(/(.+)-meta\.xml/);
+    const match = new RegExp(/(.+)-meta\.xml/).exec(basename(fsPath));
     if (match && !match[1].includes('.')) {
       const parts = fsPath.split(sep);
       if (parts.length > 1) {

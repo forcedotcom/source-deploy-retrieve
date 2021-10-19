@@ -17,7 +17,7 @@ export class RegistryAccess {
   private strictFolderTypes: MetadataType[];
   private folderContentTypes: MetadataType[];
 
-  constructor(registry: MetadataRegistry = defaultRegistry) {
+  public constructor(registry: MetadataRegistry = defaultRegistry) {
     this.registry = registry;
   }
 
@@ -103,7 +103,7 @@ export class RegistryAccess {
     return this.folderContentTypes;
   }
 
-  get apiVersion(): string {
+  public get apiVersion(): string {
     return this.registry.apiVersion;
   }
 }

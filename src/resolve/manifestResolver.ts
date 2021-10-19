@@ -44,7 +44,10 @@ export class ManifestResolver {
   private tree: TreeContainer;
   private registry: RegistryAccess;
 
-  constructor(tree: TreeContainer = new NodeFSTreeContainer(), registry = new RegistryAccess()) {
+  public constructor(
+    tree: TreeContainer = new NodeFSTreeContainer(),
+    registry = new RegistryAccess()
+  ) {
     this.tree = tree;
     this.registry = registry;
   }

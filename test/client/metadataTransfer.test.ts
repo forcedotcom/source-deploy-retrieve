@@ -19,7 +19,7 @@ import {
 } from '../../src/client/types';
 import { MetadataTransferError } from '../../src/errors';
 import { mockConnection } from '../mock/client';
-
+/* eslint no-shadow: 0 */
 const $$ = testSetup();
 const env = createSandbox();
 

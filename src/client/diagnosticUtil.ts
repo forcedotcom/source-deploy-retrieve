@@ -74,7 +74,8 @@ export class DiagnosticUtil {
           .walkContent()
           .find((f) => f.includes((message as DeployMessage).fileName));
       }
-      const matches = problem.match(/(\[Line: (\d+), Col: (\d+)] )?(.*)/);
+
+      const matches = new RegExp(/(\[Line: (\d+), Col: (\d+)] )?(.*)/).exec(problem);
       if (matches && matches[2] && matches[3] && matches[4]) {
         diagnostic.lineNumber = Number(matches[2]);
         diagnostic.columnNumber = Number(matches[3]);
@@ -144,7 +145,7 @@ export class DiagnosticUtil {
 
     if (filePath) {
       diagnostic.filePath = filePath;
-      const matches = problem.match(/(\d+),\s?(\d+)/);
+      const matches = new RegExp(/(\d+),\s?(\d+)/).exec(problem);
       if (matches) {
         const lineNumber = Number(matches[1]);
         const columnNumber = Number(matches[2]);

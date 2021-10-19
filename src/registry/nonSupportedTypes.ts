@@ -46,7 +46,7 @@ export const hasUnsupportedFeatures = (type: CoverageObjectType): boolean => {
   const scratchDef = JSON.parse(type.scratchDefinitions.developer) as {
     features?: string[];
     settings?: {
-      [key: string]: any;
+      [key: string]: unknown;
     };
   };
   if (

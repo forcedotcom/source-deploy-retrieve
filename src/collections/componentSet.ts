@@ -126,28 +126,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     return set;
   }
 
-  /**
-   * Resolve components from a manifest file in XML format.
-   *
-   * see [Sample package.xml Manifest Files](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/manifest_samples.htm)
-   *
-   * @param manifestPath Path to XML file
-   * @returns Promise of a ComponentSet containing manifest components
-   */
-  public static async fromManifest(manifestPath: string): Promise<ComponentSet>;
-  /**
-   * Resolve components from a manifest file in XML format.
-   * Customize the resolution process using an options object. For example, resolve source-backed components
-   * while using the manifest file as a filter.
-   * process using an options object, such as resolving source-backed components
-   * and using the manifest file as a filter.
-   *
-   * see [Sample package.xml Manifest Files](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/manifest_samples.htm)
-   *
-   * @param options
-   * @returns Promise of a ComponentSet containing manifest components
-   */
-  public static async fromManifest(options: FromManifestOptions): Promise<ComponentSet>;
   public static async fromManifest(input: string | FromManifestOptions): Promise<ComponentSet> {
     const manifestPath = typeof input === 'string' ? input : input.manifestPath;
     const options = (typeof input === 'object' ? input : {}) as Partial<FromManifestOptions>;
@@ -466,7 +444,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    *
    * @returns number of metadata components in the set
    */
-  get size(): number {
+  public get size(): number {
     let size = 0;
     for (const collection of this.components.values()) {
       // just having an entry in the parent map counts as 1
@@ -478,7 +456,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   /**
    * Returns `true` if this `ComponentSet` contains components marked for deletion.
    */
-  get hasDeletes(): boolean {
+  public get hasDeletes(): boolean {
     return this.destructiveComponents.size > 0;
   }
 

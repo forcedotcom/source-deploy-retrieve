@@ -27,7 +27,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   protected ownFolder = false;
   protected metadataWithContent = true;
 
-  constructor(
+  public constructor(
     type: MetadataType,
     registry = new RegistryAccess(),
     forceIgnore: ForceIgnore = new ForceIgnore(),
@@ -117,7 +117,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    * for a component, parse the name and return it. This allows matching files in metadata
    * format such as:
    *
-   *   .../tabs/MyTab.tab
+   * .../tabs/MyTab.tab
    *
    * @param path File path of a metadata component
    */
@@ -143,14 +143,14 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       return undefined;
     }
 
-    const match = basename(path).match(/(.+)\.(.+)/);
+    const match = new RegExp(/(.+)\.(.+)/).exec(basename(path));
     if (match && this.type.suffix === match[2]) {
       return { fullName: match[1], suffix: match[2], path };
     }
   }
 
   private parseAsFolderMetadataXml(fsPath: SourcePath): MetadataXml {
-    const match = basename(fsPath).match(/(.+)-meta\.xml$/);
+    const match = new RegExp(/(.+)-meta\.xml$/).exec(basename(fsPath));
     const parts = fsPath.split(sep);
     if (match && !match[1].includes('.') && parts.length > 1) {
       return { fullName: match[1], suffix: undefined, path: fsPath };

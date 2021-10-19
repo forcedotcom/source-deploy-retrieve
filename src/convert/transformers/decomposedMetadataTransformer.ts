@@ -44,7 +44,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       });
     }
     // noop since the finalizer will push the writes to the component writer
-    return [];
+    return new Promise((resolve) => resolve([]));
   }
 
   public async toSourceFormat(
@@ -146,7 +146,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
 
   private async getComposedMetadataEntries(
     component: SourceComponent
-  ): Promise<Array<[string, any]>> {
+  ): Promise<Array<[string, { fullname?: string; name?: string }]>> {
     const composedMetadata = (await component.parseXml())[component.type.name];
     return Object.entries(composedMetadata);
   }

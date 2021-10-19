@@ -27,7 +27,7 @@ export class SourceAdapterFactory {
   private registry: RegistryAccess;
   private tree: TreeContainer;
 
-  constructor(registry: RegistryAccess, tree: TreeContainer) {
+  public constructor(registry: RegistryAccess, tree: TreeContainer) {
     this.registry = registry;
     this.tree = tree;
   }

@@ -35,11 +35,11 @@ export class SourceComponent implements MetadataComponent {
   public readonly parent?: SourceComponent;
   public parentType?: MetadataType;
   public content?: string;
-  private _tree: TreeContainer;
+  private treeContainer: TreeContainer;
   private forceIgnore: ForceIgnore;
   private markedForDelete = false;
 
-  constructor(
+  public constructor(
     props: ComponentProperties,
     tree: TreeContainer = new NodeFSTreeContainer(),
     forceIgnore = new ForceIgnore()
@@ -50,7 +50,7 @@ export class SourceComponent implements MetadataComponent {
     this.parent = props.parent;
     this.content = props.content;
     this.parentType = props.parentType;
-    this._tree = tree;
+    this.treeContainer = tree;
     this.forceIgnore = forceIgnore;
   }
 
@@ -212,7 +212,7 @@ export class SourceComponent implements MetadataComponent {
             xml: fsPath,
             parent: this,
           },
-          this._tree,
+          this.treeContainer,
           this.forceIgnore
         );
         children.push(childComponent);
@@ -241,7 +241,7 @@ export class SourceComponent implements MetadataComponent {
               xml: this.xml,
               parent: this,
             },
-            this._tree,
+            this.treeContainer,
             this.forceIgnore
           );
         });
@@ -252,14 +252,14 @@ export class SourceComponent implements MetadataComponent {
   }
 
   private *walk(fsPath: string): IterableIterator<string> {
-    if (!this._tree.isDirectory(fsPath)) {
+    if (!this.treeContainer.isDirectory(fsPath)) {
       yield fsPath;
     } else {
-      for (const child of this._tree.readDirectory(fsPath)) {
+      for (const child of this.treeContainer.readDirectory(fsPath)) {
         const childPath = join(fsPath, child);
         if (this.forceIgnore.denies(childPath)) {
           continue;
-        } else if (this._tree.isDirectory(childPath)) {
+        } else if (this.treeContainer.isDirectory(childPath)) {
           yield* this.walk(childPath);
         } else {
           yield childPath;
@@ -268,7 +268,7 @@ export class SourceComponent implements MetadataComponent {
     }
   }
 
-  get fullName(): string {
+  public get fullName(): string {
     if (this.type.ignoreParsedFullName) {
       return this.type.name;
     }
@@ -279,8 +279,8 @@ export class SourceComponent implements MetadataComponent {
     }
   }
 
-  get tree(): TreeContainer {
-    return this._tree;
+  public get tree(): TreeContainer {
+    return this.treeContainer;
   }
 
   /**
@@ -296,7 +296,7 @@ export class SourceComponent implements MetadataComponent {
    *
    * E.g., CustomFieldTranslation.
    */
-  get isAddressable(): boolean {
+  public get isAddressable(): boolean {
     return this.type.isAddressable !== false;
   }
 }

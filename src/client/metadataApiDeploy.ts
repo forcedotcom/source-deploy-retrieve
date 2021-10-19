@@ -260,13 +260,11 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
         // @ts-ignore _invoke is private on the jsforce metadata object, and cancelDeploy is not an exposed method
         ._invoke('cancelDeploy', { id: this.id })
-        .thenCall((result: unknown): unknown => {
+        .thenCall((result: unknown) => {
           // this does not return CancelDeployResult as documented in the API.
           // a null result seems to indicate the request was successful
           if (result) {
             reject(result);
-          } else {
-            resolve(result);
           }
         });
     });

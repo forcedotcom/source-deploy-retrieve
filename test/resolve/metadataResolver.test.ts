@@ -255,6 +255,28 @@ describe('MetadataResolver', () => {
         expect(access.getComponentsFromPath(path).length).to.equal(0);
       });
 
+      it('Should return a component if path to metadata xml is forceignored but forceignore is ignored', () => {
+        const path = matchingContentFile.XML_PATHS[0];
+        const access = testUtil.createMetadataResolver(
+          [
+            {
+              dirPath: dirname(path),
+              children: [basename(path)],
+            },
+          ],
+          false
+        );
+        testUtil.stubForceIgnore({ seed: path, deny: [path] });
+        testUtil.stubAdapters([
+          {
+            type: mockRegistryData.types.matchingcontentfile,
+            // should not be returned
+            componentMappings: [{ path, component: matchingContentFile.COMPONENT }],
+          },
+        ]);
+        expect(access.getComponentsFromPath(path).length).to.equal(1);
+      });
+
       it('Should not return a component if path to content metadata xml is forceignored', () => {
         const path = matchingContentFile.XML_PATHS[0];
         const access = testUtil.createMetadataResolver([

@@ -26,10 +26,7 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
     return new Promise((resolve) => resolve(this.getWriteInfos(component, 'metadata')));
   }
 
-  public async toSourceFormat(
-    component: SourceComponent,
-    mergeWith?: SourceComponent
-  ): Promise<WriteInfo[]> {
+  public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
     return new Promise((resolve) => resolve(this.getWriteInfos(component, 'source', mergeWith)));
   }
 
@@ -111,10 +108,7 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
           '.' + extName(component.content) + META_XML_SUFFIX
         );
       } else {
-        xmlDestination = xmlDestination.replace(
-          ORIGINAL_SUFFIX_REGEX,
-          '.' + suffix + META_XML_SUFFIX
-        );
+        xmlDestination = xmlDestination.replace(ORIGINAL_SUFFIX_REGEX, '.' + suffix + META_XML_SUFFIX);
       }
     }
     if (legacySuffix && suffix && xmlDestination.includes(legacySuffix)) {

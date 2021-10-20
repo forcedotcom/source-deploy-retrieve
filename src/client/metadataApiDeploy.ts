@@ -10,7 +10,7 @@ import { MetadataConverter } from '../convert';
 import { ComponentLike, SourceComponent } from '../resolve';
 import { normalizeToArray } from '../utils';
 import { ComponentSet } from '../collections';
-import { registry } from '../registry';
+import { frozenRegistry } from '../registry';
 import { MissingJobIdError } from '../errors';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import {
@@ -152,16 +152,13 @@ export class DeployResult implements MetadataTransferResult {
    */
   private sanitizeDeployMessage(message: DeployMessage): DeployMessage {
     switch (message.componentType) {
-      case registry.types.lightningcomponentbundle.name:
+      case frozenRegistry.types.lightningcomponentbundle.name:
         // remove the markup scheme from fullName
         message.fullName = message.fullName.replace(/markup:\/\/c:/, '');
         break;
-      case registry.types.document.name:
+      case frozenRegistry.types.document.name:
         // strip document extension from fullName
-        message.fullName = join(
-          dirname(message.fullName),
-          basename(message.fullName, extname(message.fullName))
-        );
+        message.fullName = join(dirname(message.fullName), basename(message.fullName, extname(message.fullName)));
         break;
       default:
     }
@@ -235,10 +232,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     }
     const connection = await this.getConnection();
     // Recasting to use the project's version of the type
-    return connection.metadata.checkDeployStatus(
-      this.id,
-      true
-    ) as unknown as MetadataApiDeployStatus;
+    return connection.metadata.checkDeployStatus(this.id, true) as unknown as MetadataApiDeployStatus;
   }
 
   /**

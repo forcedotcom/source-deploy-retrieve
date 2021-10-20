@@ -69,4 +69,4 @@ See [developing.md](./contributing/developing.md) for details on building and te
 
 ## Publishing
 
-SDR publishes when changes are merged into `main`.  The version is bumped per the rules of the release orb and [standard-version](https://github.com/conventional-changelog/standard-version).
+SDR publishes when changes are merged into `main`. The version is bumped per the rules of the release orb and [standard-version](https://github.com/conventional-changelog/standard-version).

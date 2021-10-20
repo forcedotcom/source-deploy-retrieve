@@ -10,26 +10,15 @@ import { assert, expect } from 'chai';
 import { AnyJson, getString } from '@salesforce/ts-types';
 import { PollingClient, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
-import {
-  ComponentSet,
-  registry,
-  SourceComponent,
-  DeployResult,
-  MetadataApiDeploy,
-} from '../../src';
-import {
-  ComponentStatus,
-  DeployMessage,
-  FileResponse,
-  MetadataApiDeployStatus,
-} from '../../src/client/types';
+import { ComponentSet, DeployResult, frozenRegistry, MetadataApiDeploy, SourceComponent } from '../../src';
+import { ComponentStatus, DeployMessage, FileResponse, MetadataApiDeployStatus } from '../../src/client/types';
 import {
   MOCK_ASYNC_RESULT,
   MOCK_RECENTLY_VALIDATED_ID_REST,
   MOCK_RECENTLY_VALIDATED_ID_SOAP,
   stubMetadataDeploy,
 } from '../mock/client/transferOperations';
-import { mockRegistry, matchingContentFile } from '../mock/registry';
+import { matchingContentFile, mockRegistry } from '../mock/registry';
 import { META_XML_SUFFIX } from '../../src/common';
 import {
   DECOMPOSED_CHILD_COMPONENT_1,
@@ -250,10 +239,7 @@ describe('MetadataApiDeploy', () => {
       await operation.cancel();
 
       expect(invokeStub.calledOnce).to.be.true;
-      expect(invokeStub.firstCall.args).to.deep.equal([
-        'cancelDeploy',
-        { id: MOCK_ASYNC_RESULT.id },
-      ]);
+      expect(invokeStub.firstCall.args).to.deep.equal(['cancelDeploy', { id: MOCK_ASYNC_RESULT.id }]);
     });
 
     it('should throw an error when a job ID is not set', async () => {
@@ -276,7 +262,7 @@ describe('MetadataApiDeploy', () => {
           const bundlePath = join('path', 'to', 'lwc', 'test');
           const props = {
             name: 'test',
-            type: registry.types.lightningcomponentbundle,
+            type: frozenRegistry.types.lightningcomponentbundle,
             xml: join(bundlePath, 'test.js-meta.xml'),
             content: bundlePath,
           };
@@ -370,7 +356,7 @@ describe('MetadataApiDeploy', () => {
         });
 
         it('should fix deploy message issue for "Document" type', () => {
-          const type = registry.types.document;
+          const type = frozenRegistry.types.document;
           const name = 'test';
           const contentName = `${name}.xyz`;
           const basePath = join('path', 'to', type.directoryName, 'A_Folder');

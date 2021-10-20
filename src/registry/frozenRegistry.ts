@@ -10,4 +10,4 @@ import * as registryData from './registry.json';
 /**
  * The default metadata registry.
  */
-export const registry = deepFreeze(registryData);
+export const frozenRegistry = deepFreeze(registryData);

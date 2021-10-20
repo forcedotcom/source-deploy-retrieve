@@ -44,10 +44,7 @@ export class ManifestResolver {
   private tree: TreeContainer;
   private registry: RegistryAccess;
 
-  public constructor(
-    tree: TreeContainer = new NodeFSTreeContainer(),
-    registry = new RegistryAccess()
-  ) {
+  public constructor(tree: TreeContainer = new NodeFSTreeContainer(), registry = new RegistryAccess()) {
     this.tree = tree;
     this.registry = registry;
   }
@@ -91,20 +88,14 @@ export class ManifestResolver {
   //    2a. type.inFolder !== true (from registry.json) AND
   //    2b. type.folderType has a value (from registry.json) AND
   //    2c. This type's parent type has a folderType that doesn't match its ID.
-  private isNestedInFolder(
-    fullName: string,
-    type: MetadataType,
-    parentType: MetadataType,
-    members: string[]
-  ): boolean {
+  private isNestedInFolder(fullName: string, type: MetadataType, parentType: MetadataType, members: string[]): boolean {
     // Quick short-circuit for non-folderTypes
     if (!type.folderType) {
       return false;
     }
 
     const isInFolderType = type.inFolder;
-    const isNestedInFolder =
-      !fullName.includes('/') || members.some((m) => m.includes(`${fullName}/`));
+    const isNestedInFolder = !fullName.includes('/') || members.some((m) => m.includes(`${fullName}/`));
     const isNonMatchingFolder = parentType && parentType.folderType !== parentType.id;
 
     return (isInFolderType && isNestedInFolder) || (!isInFolderType && isNonMatchingFolder);

@@ -183,11 +183,7 @@ describe('Tree Containers', () => {
 
       it('should throw an error if path does not exist', () => {
         const path = 'dne';
-        assert.throws(
-          () => tree.isDirectory(path),
-          LibraryError,
-          nls.localize('error_path_not_found', path)
-        );
+        assert.throws(() => tree.isDirectory(path), LibraryError, nls.localize('error_path_not_found', path));
       });
     });
 
@@ -234,11 +230,7 @@ describe('Tree Containers', () => {
 
     describe('readFileSync', () => {
       it('should throw an error because it is not implemented yet', () => {
-        assert.throws(
-          () => tree.readFileSync(join(filesRoot, 'test.txt')),
-          Error,
-          'Method not implemented'
-        );
+        assert.throws(() => tree.readFileSync(join(filesRoot, 'test.txt')), Error, 'Method not implemented');
       });
     });
 
@@ -314,11 +306,7 @@ describe('Tree Containers', () => {
 
       it('should throw an error if path does not exist', () => {
         const path = 'dne';
-        assert.throws(
-          () => tree.isDirectory(path),
-          LibraryError,
-          nls.localize('error_path_not_found', path)
-        );
+        assert.throws(() => tree.isDirectory(path), LibraryError, nls.localize('error_path_not_found', path));
       });
     });
 

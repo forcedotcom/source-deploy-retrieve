@@ -7,8 +7,8 @@
 import { basename } from 'path';
 import { SourcePath } from '../common';
 import { SourceComponent } from '../resolve';
-import { registry } from '../registry';
-import { DeployMessage, ComponentDiagnostic } from './types';
+import { frozenRegistry } from '../registry';
+import { ComponentDiagnostic, DeployMessage } from './types';
 
 export class DiagnosticUtil {
   private api: 'metadata' | 'tooling';
@@ -17,15 +17,12 @@ export class DiagnosticUtil {
     this.api = api;
   }
 
-  public parseDeployDiagnostic(
-    component: SourceComponent,
-    message: string | DeployMessage
-  ): ComponentDiagnostic {
+  public parseDeployDiagnostic(component: SourceComponent, message: string | DeployMessage): ComponentDiagnostic {
     const { name: typeName } = component.type;
     switch (typeName) {
-      case registry.types.lightningcomponentbundle.name:
+      case frozenRegistry.types.lightningcomponentbundle.name:
         return this.parseLwc(component, message);
-      case registry.types.auradefinitionbundle.name:
+      case frozenRegistry.types.auradefinitionbundle.name:
         return this.parseAura(component, message);
       default:
         if (typeof message !== 'string') {
@@ -42,9 +39,7 @@ export class DiagnosticUtil {
     };
 
     if (fileName) {
-      const localProblemFile = component
-        .walkContent()
-        .find((f) => f.endsWith(basename(message.fileName)));
+      const localProblemFile = component.walkContent().find((f) => f.endsWith(basename(message.fileName)));
       diagnostic.filePath = localProblemFile ?? component.xml;
     }
 
@@ -57,10 +52,7 @@ export class DiagnosticUtil {
     return diagnostic;
   }
 
-  private parseLwc(
-    component: SourceComponent,
-    message: string | DeployMessage
-  ): ComponentDiagnostic {
+  private parseLwc(component: SourceComponent, message: string | DeployMessage): ComponentDiagnostic {
     const problem = typeof message === 'string' ? message : message.problem;
     const diagnostic: ComponentDiagnostic = {
       error: problem,
@@ -70,20 +62,14 @@ export class DiagnosticUtil {
     if (this.api === 'metadata') {
       const deployMessage = message as DeployMessage;
       if (deployMessage.fileName) {
-        diagnostic.filePath = component
-          .walkContent()
-          .find((f) => f.includes((message as DeployMessage).fileName));
+        diagnostic.filePath = component.walkContent().find((f) => f.includes((message as DeployMessage).fileName));
       }
 
       const matches = new RegExp(/(\[Line: (\d+), Col: (\d+)] )?(.*)/).exec(problem);
       if (matches && matches[2] && matches[3] && matches[4]) {
         diagnostic.lineNumber = Number(matches[2]);
         diagnostic.columnNumber = Number(matches[3]);
-        diagnostic.error = this.appendErrorWithLocation(
-          matches[4],
-          diagnostic.lineNumber,
-          diagnostic.columnNumber
-        );
+        diagnostic.error = this.appendErrorWithLocation(matches[4], diagnostic.lineNumber, diagnostic.columnNumber);
       } else {
         diagnostic.error = problem;
       }
@@ -113,10 +99,7 @@ export class DiagnosticUtil {
     return diagnostic;
   }
 
-  private parseAura(
-    component: SourceComponent,
-    message: string | DeployMessage
-  ): ComponentDiagnostic {
+  private parseAura(component: SourceComponent, message: string | DeployMessage): ComponentDiagnostic {
     const problem = typeof message === 'string' ? message : message.problem;
     const diagnostic: ComponentDiagnostic = {
       error: problem,
@@ -137,9 +120,7 @@ export class DiagnosticUtil {
     } else {
       const deployMessage = message as DeployMessage;
       if (deployMessage.fileName) {
-        filePath = component
-          .walkContent()
-          .find((f) => f.endsWith(basename(deployMessage.fileName)));
+        filePath = component.walkContent().find((f) => f.endsWith(basename(deployMessage.fileName)));
       }
     }
 
@@ -158,11 +139,7 @@ export class DiagnosticUtil {
     return diagnostic;
   }
 
-  private appendErrorWithLocation(
-    error: string,
-    line: string | number,
-    column: string | number
-  ): string {
+  private appendErrorWithLocation(error: string, line: string | number, column: string | number): string {
     return `${error} (${line}:${column})`;
   }
 }

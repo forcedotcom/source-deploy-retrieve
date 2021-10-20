@@ -40,18 +40,14 @@ describe('SourceAdapterFactory', () => {
   it('Should return MixedContentSourceAdapter for mixedContent AdapterId', () => {
     const type = mockRegistryData.types.mixedcontentsinglefile;
     const adapter = factory.getAdapter(type);
-    expect(adapter).to.deep.equal(
-      new MixedContentSourceAdapter(type, mockRegistry, undefined, tree)
-    );
+    expect(adapter).to.deep.equal(new MixedContentSourceAdapter(type, mockRegistry, undefined, tree));
     tree;
   });
 
   it('Should return MatchingContentSourceAdapter for matchingContentFile AdapterId', () => {
     const type = mockRegistryData.types.matchingcontentfile;
     const adapter = factory.getAdapter(type);
-    expect(adapter).to.deep.equal(
-      new MatchingContentSourceAdapter(type, mockRegistry, undefined, tree)
-    );
+    expect(adapter).to.deep.equal(new MatchingContentSourceAdapter(type, mockRegistry, undefined, tree));
   });
 
   it('Should return BundleSourceAdapter for bundle AdapterId', () => {

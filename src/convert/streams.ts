@@ -146,19 +146,13 @@ export class StandardWriter extends ComponentWriter {
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
-  public async _write(
-    chunk: WriterFormat,
-    encoding: string,
-    callback: (err?: Error) => void
-  ): Promise<void> {
+  public async _write(chunk: WriterFormat, encoding: string, callback: (err?: Error) => void): Promise<void> {
     let err: Error;
     if (chunk.writeInfos.length !== 0) {
       try {
         const toResolve: string[] = [];
         const writeTasks = chunk.writeInfos.map((info: WriteInfo) => {
-          const fullDest = isAbsolute(info.output)
-            ? info.output
-            : join(this.rootDestination, info.output);
+          const fullDest = isAbsolute(info.output) ? info.output : join(this.rootDestination, info.output);
           if (!existsSync(fullDest)) {
             for (const ignoredPath of this.forceIgnoredPaths) {
               if (
@@ -215,11 +209,7 @@ export class ZipWriter extends ComponentWriter {
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  public async _write(
-    chunk: WriterFormat,
-    encoding: string,
-    callback: (err?: Error) => void
-  ): Promise<void> {
+  public async _write(chunk: WriterFormat, encoding: string, callback: (err?: Error) => void): Promise<void> {
     let err: Error;
     try {
       for (const info of chunk.writeInfos) {

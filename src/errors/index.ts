@@ -30,11 +30,7 @@ export class TypeInferenceError extends RegistryError {
 }
 
 export class ExpectedSourceFilesError extends RegistryError {
-  public constructor(
-    type: MetadataType,
-    originalPath: SourcePath,
-    messageKey = 'error_expected_source_files'
-  ) {
+  public constructor(type: MetadataType, originalPath: SourcePath, messageKey = 'error_expected_source_files') {
     super(messageKey, [originalPath, type.name]);
   }
 }

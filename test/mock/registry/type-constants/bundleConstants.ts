@@ -16,11 +16,7 @@ export const CONTENT_PATH = join(TYPE_DIRECTORY, 'a');
 export const XML_NAME = `${COMPONENT_NAME}.js-meta.xml`;
 export const XML_PATH = join(CONTENT_PATH, XML_NAME);
 export const SUBTYPE_XML_PATH = join(CONTENT_PATH, 'b.z-meta.xml');
-export const SOURCE_PATHS = [
-  join(CONTENT_PATH, 'a.js'),
-  join(CONTENT_PATH, 'a.css'),
-  join(CONTENT_PATH, 'a.html'),
-];
+export const SOURCE_PATHS = [join(CONTENT_PATH, 'a.js'), join(CONTENT_PATH, 'a.css'), join(CONTENT_PATH, 'a.html')];
 export const COMPONENT = SourceComponent.createVirtualComponent(
   {
     name: 'a',

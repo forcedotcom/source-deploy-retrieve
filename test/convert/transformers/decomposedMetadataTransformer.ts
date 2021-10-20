@@ -9,12 +9,7 @@ import { join } from 'path';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import { assert } from '@salesforce/ts-types';
-import {
-  mockRegistry,
-  mockRegistryData,
-  decomposed,
-  matchingContentFile,
-} from '../../mock/registry';
+import { mockRegistry, mockRegistryData, decomposed, matchingContentFile } from '../../mock/registry';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
 import { baseName } from '../../../src/utils';
 import { JsToXml } from '../../../src/convert/streams';
@@ -81,11 +76,7 @@ describe('DecomposedMetadataTransformer', () => {
       const fsUnexpectedChild = [
         {
           dirPath: decomposed.DECOMPOSED_PATH,
-          children: [
-            decomposed.DECOMPOSED_CHILD_XML_NAME_1,
-            decomposed.DECOMPOSED_CHILD_DIR,
-            'classes',
-          ],
+          children: [decomposed.DECOMPOSED_CHILD_XML_NAME_1, decomposed.DECOMPOSED_CHILD_DIR, 'classes'],
         },
         {
           dirPath: decomposed.DECOMPOSED_CHILD_DIR_PATH,
@@ -362,11 +353,7 @@ describe('DecomposedMetadataTransformer', () => {
         const fsUnexpectedChild = [
           {
             dirPath: decomposed.DECOMPOSED_PATH,
-            children: [
-              decomposed.DECOMPOSED_CHILD_XML_NAME_1,
-              decomposed.DECOMPOSED_CHILD_DIR,
-              'classes',
-            ],
+            children: [decomposed.DECOMPOSED_CHILD_XML_NAME_1, decomposed.DECOMPOSED_CHILD_DIR, 'classes'],
           },
           {
             dirPath: decomposed.DECOMPOSED_CHILD_DIR_PATH,

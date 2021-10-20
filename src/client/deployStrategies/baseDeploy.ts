@@ -90,9 +90,7 @@ export abstract class BaseDeploy {
   protected getFormattedPaths(filepath: string): string[] {
     const pathParts = filepath.split(sep);
 
-    const typeFolderIndex = pathParts.findIndex(
-      (part) => part === this.component.type.directoryName
-    );
+    const typeFolderIndex = pathParts.findIndex((part) => part === this.component.type.directoryName);
 
     return [
       pathParts.slice(typeFolderIndex).join(BaseDeploy.TOOLING_PATH_SEP),
@@ -100,8 +98,5 @@ export abstract class BaseDeploy {
     ];
   }
 
-  public abstract deploy(
-    component: SourceComponent,
-    namespace: string
-  ): Promise<SourceDeployResult>;
+  public abstract deploy(component: SourceComponent, namespace: string): Promise<SourceDeployResult>;
 }

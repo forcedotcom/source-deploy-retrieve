@@ -85,9 +85,7 @@ export class SourceComponent implements MetadataComponent {
    */
   public getChildren(): SourceComponent[] {
     if (!this.parent && this.type.children) {
-      const children = this.content
-        ? this.getDecomposedChildren(this.content)
-        : this.getNonDecomposedChildren();
+      const children = this.content ? this.getDecomposedChildren(this.content) : this.getNonDecomposedChildren();
 
       const validChildTypes = this.type?.children ? Object.keys(this.type?.children?.types) : [];
       for (const child of children) {
@@ -134,10 +132,7 @@ export class SourceComponent implements MetadataComponent {
       return parentXml;
     }
     const children = normalizeToArray(
-      get(
-        parentXml,
-        `${this.parent.type.name}.${this.type.xmlElementName || this.type.directoryName}`
-      )
+      get(parentXml, `${this.parent.type.name}.${this.type.xmlElementName || this.type.directoryName}`)
     ) as T[];
     return children.find((c) => getString(c, this.type.uniqueIdElement) === this.name);
   }

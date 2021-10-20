@@ -217,18 +217,14 @@ export async function stubMetadataRetrieve(
       }
     }
     retrieveStatus.fileProperties =
-      fileProperties.length === 1
-        ? (fileProperties[0] as FileProperties)
-        : (fileProperties as FileProperties[]);
+      fileProperties.length === 1 ? (fileProperties[0] as FileProperties) : (fileProperties as FileProperties[]);
   }
 
   const messages = normalizeToArray(options.messages);
 
   if (messages.length > 0) {
     retrieveStatus.status =
-      retrieveStatus.status === RequestStatus.Succeeded
-        ? RequestStatus.SucceededPartial
-        : RequestStatus.Failed;
+      retrieveStatus.status === RequestStatus.Succeeded ? RequestStatus.SucceededPartial : RequestStatus.Failed;
     retrieveStatus.messages =
       messages.length === 1 ? (messages[0] as RetrieveMessage) : (messages as RetrieveMessage[]);
   }
@@ -302,9 +298,7 @@ export async function stubMetadataRetrieve(
     const notForceIgnoredConverted = converted.filter(
       (component) => !retrievedComponents.forceIgnoredPaths ?? [].includes(component.xml)
     );
-    convertStub
-      .withArgs(match.any, 'source', outputCfg)
-      .resolves({ converted: notForceIgnoredConverted });
+    convertStub.withArgs(match.any, 'source', outputCfg).resolves({ converted: notForceIgnoredConverted });
   });
 
   return {

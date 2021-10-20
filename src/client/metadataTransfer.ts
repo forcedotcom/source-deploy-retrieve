@@ -22,10 +22,7 @@ export interface MetadataTransferOptions {
   id?: string;
 }
 
-export abstract class MetadataTransfer<
-  Status extends MetadataRequestStatus,
-  Result extends MetadataTransferResult
-> {
+export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Result extends MetadataTransferResult> {
   protected components: ComponentSet;
   protected logger: Logger;
   protected canceled = false;
@@ -34,12 +31,7 @@ export abstract class MetadataTransfer<
   private usernameOrConnection: string | Connection;
   private apiVersion: string;
 
-  public constructor({
-    usernameOrConnection,
-    components,
-    apiVersion,
-    id,
-  }: MetadataTransferOptions) {
+  public constructor({ usernameOrConnection, components, apiVersion, id }: MetadataTransferOptions) {
     this.usernameOrConnection = usernameOrConnection;
     this.components = components;
     this.apiVersion = apiVersion;
@@ -147,9 +139,7 @@ export abstract class MetadataTransfer<
   protected async maybeSaveTempDirectory(target: SfdxFileFormat, cs?: ComponentSet): Promise<void> {
     const mdapiTempDir = process.env.SFDX_MDAPI_TEMP_DIR;
     if (mdapiTempDir) {
-      process.emitWarning(
-        'The SFDX_MDAPI_TEMP_DIR environment variable is set, which may degrade performance'
-      );
+      process.emitWarning('The SFDX_MDAPI_TEMP_DIR environment variable is set, which may degrade performance');
       this.logger.debug(
         `Converting metadata to: ${mdapiTempDir} because the SFDX_MDAPI_TEMP_DIR environment variable is set`
       );

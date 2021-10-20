@@ -18,10 +18,7 @@ import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
  * - CustomLabels
  */
 export class NonDecomposedMetadataTransformer extends DecomposedMetadataTransformer {
-  public async toSourceFormat(
-    component: SourceComponent,
-    mergeWith?: SourceComponent
-  ): Promise<WriteInfo[]> {
+  public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
     const parentXml = await component.parseXml();
     const xmlPathToChildren = `${component.type.name}.${component.type.directoryName}`;
     const incomingChildrenXml = normalizeToArray(get(parentXml, xmlPathToChildren)) as JsonMap[];

@@ -25,8 +25,7 @@ import {
   RetrieveExtractOptions,
 } from './types';
 
-export type MetadataApiRetrieveOptions = MetadataTransferOptions &
-  RetrieveOptions & { registry?: RegistryAccess };
+export type MetadataApiRetrieveOptions = MetadataTransferOptions & RetrieveOptions & { registry?: RegistryAccess };
 
 export class RetrieveResult implements MetadataTransferResult {
   // This ComponentSet is most likely just the components on the local file
@@ -89,9 +88,7 @@ export class RetrieveResult implements MetadataTransferResult {
       const baseResponse: FileResponse = {
         fullName,
         type: type.name,
-        state: this.localComponents.has(retrievedComponent)
-          ? ComponentStatus.Changed
-          : ComponentStatus.Created,
+        state: this.localComponents.has(retrievedComponent) ? ComponentStatus.Changed : ComponentStatus.Created,
       };
 
       if (!type.children) {
@@ -109,10 +106,7 @@ export class RetrieveResult implements MetadataTransferResult {
   }
 }
 
-export class MetadataApiRetrieve extends MetadataTransfer<
-  MetadataApiRetrieveStatus,
-  RetrieveResult
-> {
+export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveStatus, RetrieveResult> {
   public static DEFAULT_OPTIONS: Partial<MetadataApiRetrieveOptions> = { merge: false };
   private options: MetadataApiRetrieveOptions;
 
@@ -140,9 +134,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     const connection = await this.getConnection();
 
     // Cast RetrieveResult returned by jsForce to MetadataApiRetrieveStatus
-    const status = (await connection.metadata.checkRetrieveStatus(
-      this.id
-    )) as MetadataApiRetrieveStatus;
+    const status = (await connection.metadata.checkRetrieveStatus(this.id)) as MetadataApiRetrieveStatus;
     status.fileProperties = normalizeToArray(status.fileProperties);
     status.success = coerceBoolean(status.success);
     status.done = coerceBoolean(status.done);
@@ -223,9 +215,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     const converter = new MetadataConverter(registry);
     const tree = await ZipTreeContainer.create(zip);
 
-    const packages: RetrieveExtractOptions[] = [
-      { zipTreeLocation: 'unpackaged', outputDir: output },
-    ];
+    const packages: RetrieveExtractOptions[] = [{ zipTreeLocation: 'unpackaged', outputDir: output }];
     const packageOpts = this.getPackageOptions();
     // eslint-disable-next-line no-unused-expressions
     packageOpts?.forEach(({ name, outputDir }) => {

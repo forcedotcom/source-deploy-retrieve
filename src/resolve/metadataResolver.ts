@@ -32,10 +32,7 @@ export class MetadataResolver {
    * @param registry Custom registry data
    * @param tree `TreeContainer` to traverse with
    */
-  public constructor(
-    registry = new RegistryAccess(),
-    tree: TreeContainer = new NodeFSTreeContainer()
-  ) {
+  public constructor(registry = new RegistryAccess(), tree: TreeContainer = new NodeFSTreeContainer()) {
     this.registry = registry;
     this.tree = tree;
     this.sourceAdapterFactory = new SourceAdapterFactory(this.registry, tree);
@@ -63,10 +60,7 @@ export class MetadataResolver {
     return component ? [component] : [];
   }
 
-  private getComponentsFromPathRecursive(
-    dir: string,
-    inclusiveFilter?: ComponentSet
-  ): SourceComponent[] {
+  private getComponentsFromPathRecursive(dir: string, inclusiveFilter?: ComponentSet): SourceComponent[] {
     const dirQueue: string[] = [];
     const components: SourceComponent[] = [];
     const ignore = new Set();
@@ -183,9 +177,7 @@ export class MetadataResolver {
       const metadataFolder = this.parseAsFolderMetadataXml(fsPath);
       if (metadataFolder) {
         // multiple matching directories may exist - folder components are not 'inFolder'
-        resolvedType = this.registry.findType(
-          (type) => type.directoryName === metadataFolder && !type.inFolder
-        );
+        resolvedType = this.registry.findType((type) => type.directoryName === metadataFolder && !type.inFolder);
       }
     }
 
@@ -242,9 +234,7 @@ export class MetadataResolver {
   // Get the array of directoryNames for types that have folderContentType
   private getFolderContentTypeDirNames(): string[] {
     if (!this.folderContentTypeDirNames) {
-      this.folderContentTypeDirNames = this.registry
-        .getFolderContentTypes()
-        .map((t) => t.directoryName);
+      this.folderContentTypeDirNames = this.registry.getFolderContentTypes().map((t) => t.directoryName);
     }
     return this.folderContentTypeDirNames;
   }
@@ -278,9 +268,7 @@ export class MetadataResolver {
 
   private isMetadata(fsPath: string): boolean {
     return (
-      !!parseMetadataXml(fsPath) ||
-      this.parseAsContentMetadataXml(fsPath) ||
-      !!this.parseAsFolderMetadataXml(fsPath)
+      !!parseMetadataXml(fsPath) || this.parseAsContentMetadataXml(fsPath) || !!this.parseAsFolderMetadataXml(fsPath)
     );
   }
 }

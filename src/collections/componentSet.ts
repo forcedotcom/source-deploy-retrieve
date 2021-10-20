@@ -132,9 +132,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     const manifestResolver = new ManifestResolver(options.tree, options.registry);
     const manifest = await manifestResolver.resolve(manifestPath);
-    const resolveIncludeSet = options.resolveSourcePaths
-      ? new ComponentSet([], options.registry)
-      : undefined;
+    const resolveIncludeSet = options.resolveSourcePaths ? new ComponentSet([], options.registry) : undefined;
     const result = new ComponentSet([], options.registry);
     result.apiVersion = manifest.apiVersion;
     result.fullName = manifest.fullName;
@@ -319,9 +317,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       iter = this;
     }
 
-    return new LazyCollection(iter).filter(
-      (c) => c instanceof SourceComponent
-    ) as LazyCollection<SourceComponent>;
+    return new LazyCollection(iter).filter((c) => c instanceof SourceComponent) as LazyCollection<SourceComponent>;
   }
 
   public add(component: ComponentLike, asDeletion?: boolean): void {
@@ -466,8 +462,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   }
 
   private simpleKey(component: ComponentLike): string {
-    const typeName =
-      typeof component.type === 'string' ? component.type.toLowerCase().trim() : component.type.id;
+    const typeName = typeof component.type === 'string' ? component.type.toLowerCase().trim() : component.type.id;
     return `${typeName}${ComponentSet.KEY_DELIMITER}${component.fullName}`;
   }
 }

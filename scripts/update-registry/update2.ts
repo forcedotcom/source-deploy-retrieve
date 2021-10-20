@@ -5,7 +5,7 @@ import { MetadataRegistry } from '../../src';
 import { exit } from 'process';
 import { fs } from '@salesforce/core';
 import * as deepmerge from 'deepmerge';
-import { CoverageObjectType, CoverageObject } from '../../src/registry/types';
+import { CoverageObject, CoverageObjectType } from '../../src/registry/types';
 import { AnyJson } from '@salesforce/ts-types';
 import { getMissingTypes } from '../../test/utils/getMissingTypes';
 
@@ -13,10 +13,10 @@ export const registry = fs.readJsonSync('./src/registry/registry.json') as unkno
 export let metadataCoverage: CoverageObject;
 
 interface DescribeResult {
-  directoryName: string,
-  inFolder: boolean,
-  metaFile: boolean,
-  suffix: string,
+  directoryName: string;
+  inFolder: boolean;
+  metaFile: boolean;
+  suffix: string;
   xmlName: string;
   folderContentType: string;
   childXmlNames: string[];
@@ -25,21 +25,25 @@ interface DescribeResult {
 // get the coverage report
 (async () => {
   metadataCoverage = JSON.parse(
-        (await got(`https://mdcoverage.secure.force.com/services/apexrest/report`)).body
-      ) as CoverageObject;
-  console.log(`CoverageReport shows ${Object.keys(metadataCoverage.types).length} items in the metadata coverage report`);
+    (await got(`https://mdcoverage.secure.force.com/services/apexrest/report`)).body
+  ) as CoverageObject;
+  console.log(
+    `CoverageReport shows ${Object.keys(metadataCoverage.types).length} items in the metadata coverage report`
+  );
 
   const missingTypes = getMissingTypes(metadataCoverage, registry);
   if (missingTypes.length === 0) {
-    console.log(
-      `Your registry is complete!  Congratulations!`
-    );
+    console.log(`Your registry is complete!  Congratulations!`);
     exit(0);
   }
-  console.log(`There are ${missingTypes.length} items missing from your registry: ${missingTypes.map(([typeName]) => typeName).join('\n')}`);
+  console.log(
+    `There are ${missingTypes.length} items missing from your registry: ${missingTypes
+      .map(([typeName]) => typeName)
+      .join('\n')}`
+  );
 
   // create an org we can describe
-  shelljs.exec('sfdx force:project:create -n registryBuilder', {silent: true});
+  shelljs.exec('sfdx force:project:create -n registryBuilder', { silent: true });
   updateProjectScratchDef(missingTypes);
   // TODO: sourceApi has to match the coverage report
   if (!process.env.RB_EXISTING_ORG) {
@@ -62,7 +66,7 @@ interface DescribeResult {
  * Simple type implementation.  Not handling children.
  */
 const registryUpdate = (missingTypesAsDescribeResult: DescribeResult[]) => {
-  missingTypesAsDescribeResult.map(missingTypeDescribe => {
+  missingTypesAsDescribeResult.map((missingTypeDescribe) => {
     if (missingTypeDescribe.childXmlNames || missingTypeDescribe.folderContentType) {
       console.log(`Skipping ${missingTypeDescribe.xmlName} because it is a folder or has children`);
       return;
@@ -78,38 +82,33 @@ const registryUpdate = (missingTypesAsDescribeResult: DescribeResult[]) => {
       inFolder,
       strictDirectoryName: false,
     };
-    registry.types[typeId] = { ...generatedType, ...(metaFile ? { strategies: { adapter: 'matchingContentFile' } } : {}) };
+    registry.types[typeId] = {
+      ...generatedType,
+      ...(metaFile ? { strategies: { adapter: 'matchingContentFile' } } : {}),
+    };
     registry.suffixes[suffix] = typeId;
-  })
+  });
   fs.writeJsonSync('./src/registry/registry.json', registry as unknown as AnyJson);
-}
+};
 
 const getMissingTypesAsDescribeResult = (missingTypes: [string, CoverageObjectType][]): DescribeResult[] => {
-  const describeResult = shelljs.exec('sfdx force:mdapi:describemetadata -u registryBuilder --json', {silent: true});
+  const describeResult = shelljs.exec('sfdx force:mdapi:describemetadata -u registryBuilder --json', { silent: true });
   const metadataObjectsByName = new Map<string, DescribeResult>();
-  (JSON.parse(describeResult.stdout).result.metadataObjects as DescribeResult[]).map(describeObj => {
+  (JSON.parse(describeResult.stdout).result.metadataObjects as DescribeResult[]).map((describeObj) => {
     metadataObjectsByName.set(describeObj.xmlName, describeObj);
-  })
+  });
   // get the missingTypes from the describe
   return missingTypes.map(([key]) => metadataObjectsByName.get(key)).filter(Boolean);
-}
+};
 
 const updateProjectScratchDef = (missingTypes: [string, CoverageObjectType][]) => {
   const scratchDefSummary = deepmerge.all(
-        [{}].concat(
-          missingTypes.map(([key, missingType]) =>
-            JSON.parse(missingType.scratchDefinitions.developer)
-          )
-        )
-      ) as {
-        features: string[];
-      };
+    [{}].concat(missingTypes.map(([key, missingType]) => JSON.parse(missingType.scratchDefinitions.developer)))
+  ) as {
+    features: string[];
+  };
 
   scratchDefSummary.features = [...new Set(scratchDefSummary.features)];
-  fs.writeJsonSync('./registryBuilder/config/project-scratch-def.json', scratchDefSummary)
+  fs.writeJsonSync('./registryBuilder/config/project-scratch-def.json', scratchDefSummary);
   console.log(`Creating org with features ${scratchDefSummary.features.join(',')}`);
-}
-
-
-
-
+};

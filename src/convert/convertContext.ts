@@ -96,14 +96,9 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
         // If the xml file for the child is in the cache, use it. Otherwise
         // read and cache the xml file that contains this child and use it.
         if (!this.parsedXmlCache.has(childSourceComponent.xml)) {
-          this.parsedXmlCache.set(
-            childSourceComponent.xml,
-            await parent.parseXml(childSourceComponent.xml)
-          );
+          this.parsedXmlCache.set(childSourceComponent.xml, await parent.parseXml(childSourceComponent.xml));
         }
-        xmlObj = childSourceComponent.parseFromParentXml(
-          this.parsedXmlCache.get(childSourceComponent.xml)
-        );
+        xmlObj = childSourceComponent.parseFromParentXml(this.parsedXmlCache.get(childSourceComponent.xml));
       } else {
         xmlObj = await childSourceComponent.parseXml();
       }
@@ -209,9 +204,7 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
       const recomposedXmlObj = await this.recompose(Object.values(children), parent);
       writerData.push({
         component: parent,
-        writeInfos: [
-          { source: new JsToXml(recomposedXmlObj), output: this.getDefaultOutput(parent) },
-        ],
+        writeInfos: [{ source: new JsToXml(recomposedXmlObj), output: this.getDefaultOutput(parent) }],
       });
     }
 
@@ -231,12 +224,9 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
     }
 
     const unprocessedComponents = this.getUnprocessedComponents(defaultDirectory);
-    const parentPaths = Object.keys(this.state.claimed).concat(
-      unprocessedComponents.map((c) => c.xml)
-    );
+    const parentPaths = Object.keys(this.state.claimed).concat(unprocessedComponents.map((c) => c.xml));
 
-    const defaultComponentKey =
-      parentPaths.find((p) => p.startsWith(defaultDirectory)) || parentPaths[0];
+    const defaultComponentKey = parentPaths.find((p) => p.startsWith(defaultDirectory)) || parentPaths[0];
 
     const claimedChildren = [
       ...this.getClaimedChildrenNames(),
@@ -246,9 +236,7 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
     // merge unclaimed children into default parent component
     for (const [key, childIndex] of Object.entries(this.state.unclaimed)) {
       const pruned = Object.entries(childIndex.children).reduce((result, [childName, childXml]) => {
-        return !claimedChildren.includes(childName)
-          ? Object.assign(result, { [childName]: childXml })
-          : result;
+        return !claimedChildren.includes(childName) ? Object.assign(result, { [childName]: childXml }) : result;
       }, {});
       delete this.state.unclaimed[key];
       if (this.state.claimed[defaultComponentKey]) {
@@ -309,9 +297,7 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
   /**
    * Returns the children of "unprocessed components"
    */
-  private async getChildrenOfUnprocessedComponents(
-    unprocessedComponents: SourceComponent[]
-  ): Promise<string[]> {
+  private async getChildrenOfUnprocessedComponents(unprocessedComponents: SourceComponent[]): Promise<string[]> {
     const childrenOfUnprocessed = [];
     for (const component of unprocessedComponents) {
       for (const child of component.getChildren()) {
@@ -325,9 +311,7 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
 
   private async recompose(children: JsonMap[], parent: SourceComponent): Promise<JsonMap> {
     const parentXmlObj =
-      parent.type.strategies.recomposition === RecompositionStrategy.StartEmpty
-        ? {}
-        : await parent.parseXml();
+      parent.type.strategies.recomposition === RecompositionStrategy.StartEmpty ? {} : await parent.parseXml();
     const groupName = parent.type.directoryName;
     const parentName = parent.type.name;
     for (const child of children) {
@@ -357,10 +341,7 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
   }
 
   private getClaimedChildrenNames(): string[] {
-    return Object.values(this.state.claimed).reduce(
-      (x, y) => x.concat(Object.keys(y.children)),
-      []
-    );
+    return Object.values(this.state.claimed).reduce((x, y) => x.concat(Object.keys(y.children)), []);
   }
 
   private getParentsOfClaimedChildren(): SourceComponent[] {

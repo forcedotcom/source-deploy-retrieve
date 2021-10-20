@@ -47,10 +47,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     return new Promise((resolve) => resolve([]));
   }
 
-  public async toSourceFormat(
-    component: SourceComponent,
-    mergeWith?: SourceComponent
-  ): Promise<WriteInfo[]> {
+  public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
     const writeInfos: WriteInfo[] = [];
     const childrenOfMergeComponent = new ComponentSet(mergeWith?.getChildren());
     const { type, fullName: parentFullName } = component;
@@ -83,9 +80,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
           // if the merge parent has a child that can be merged with, push write
           // operation now and mark it as merged in the state
           else if (childrenOfMergeComponent.has(childComponent)) {
-            const mergeChild: SourceComponent = childrenOfMergeComponent
-              .getSourceComponents(childComponent)
-              .first();
+            const mergeChild: SourceComponent = childrenOfMergeComponent.getSourceComponents(childComponent).first();
             writeInfos.push({
               source,
               output: mergeChild.xml,
@@ -168,9 +163,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     });
   }
 
-  private getDecomposedState<T extends string>(
-    forComponent: MetadataComponent
-  ): DecompositionState[T] {
+  private getDecomposedState<T extends string>(forComponent: MetadataComponent): DecompositionState[T] {
     const key = `${forComponent.type.name}#${forComponent.fullName}`;
     return this.context.decomposition.state[key];
   }

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { RegistryError } from '../errors';
-import { registry as defaultRegistry } from './registry';
+import { frozenRegistry as defaultRegistry } from './frozenRegistry';
 import { MetadataRegistry, MetadataType } from './types';
 
 /**

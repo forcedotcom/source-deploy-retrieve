@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { Connection } from '@salesforce/core';
-import { registry } from '../../registry';
+import { frozenRegistry } from '../../registry';
 import { BaseDeploy } from './baseDeploy';
 import { ContainerDeploy } from './containerDeploy';
 import { AuraDeploy } from './auraDeploy';
@@ -17,9 +17,9 @@ export { LwcDeploy } from './lwcDeploy';
 
 export const getDeployStrategy = (type: string, connection: Connection): BaseDeploy => {
   switch (type) {
-    case registry.types.auradefinitionbundle.name:
+    case frozenRegistry.types.auradefinitionbundle.name:
       return new AuraDeploy(connection);
-    case registry.types.lightningcomponentbundle.name:
+    case frozenRegistry.types.lightningcomponentbundle.name:
       return new LwcDeploy(connection);
     default:
       return new ContainerDeploy(connection);

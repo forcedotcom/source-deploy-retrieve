@@ -12,11 +12,7 @@ import { expect } from 'chai';
 import { sleep } from '@salesforce/kit';
 import { ComponentSet } from '../../src';
 import { MetadataTransfer } from '../../src/client/metadataTransfer';
-import {
-  MetadataRequestStatus,
-  MetadataTransferResult,
-  RequestStatus,
-} from '../../src/client/types';
+import { MetadataRequestStatus, MetadataTransferResult, RequestStatus } from '../../src/client/types';
 import { MetadataTransferError } from '../../src/errors';
 import { mockConnection } from '../mock/client';
 /* eslint no-shadow: 0 */
@@ -27,9 +23,7 @@ class TestTransfer extends MetadataTransfer<MetadataRequestStatus, MetadataTrans
   public request = { done: true, status: RequestStatus.Succeeded, id: '1', success: true };
   public lifecycle = {
     pre: env.stub().returns({ id: '1' }),
-    checkStatus: env
-      .stub()
-      .returns({ done: true, status: RequestStatus.Succeeded, id: '1', success: true }),
+    checkStatus: env.stub().returns({ done: true, status: RequestStatus.Succeeded, id: '1', success: true }),
     post: env.stub().returns({ id: '1' }),
     cancel: env.stub().returns(true),
   };
@@ -211,9 +205,7 @@ describe('MetadataTransfer', () => {
         fail('should have thrown an error');
       } catch (err) {
         expect(callCount).to.be.greaterThan(15);
-        expect(err.name, 'Polling function should have timed out').to.equal(
-          'MetadataTransferError'
-        );
+        expect(err.name, 'Polling function should have timed out').to.equal('MetadataTransferError');
         expect(err.message).to.equal('Metadata API request failed: The client has timed out.');
       }
     });

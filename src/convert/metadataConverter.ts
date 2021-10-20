@@ -13,21 +13,8 @@ import { ConversionError, LibraryError } from '../errors';
 import { SourcePath } from '../common';
 import { ComponentSet } from '../collections';
 import { RegistryAccess } from '../registry';
-import {
-  ComponentReader,
-  ComponentConverter,
-  StandardWriter,
-  pipeline,
-  ZipWriter,
-  ComponentWriter,
-} from './streams';
-import {
-  SfdxFileFormat,
-  ConvertOutputConfig,
-  ConvertResult,
-  DirectoryConfig,
-  ZipConfig,
-} from './types';
+import { ComponentReader, ComponentConverter, StandardWriter, pipeline, ZipWriter, ComponentWriter } from './streams';
+import { SfdxFileFormat, ConvertOutputConfig, ConvertResult, DirectoryConfig, ZipConfig } from './types';
 
 export class MetadataConverter {
   public static readonly PACKAGE_XML_FILE = 'package.xml';
@@ -158,10 +145,7 @@ export class MetadataConverter {
         packagePath = join(outputDirectory, packageName);
       } else {
         if (genUniqueDir) {
-          packagePath = join(
-            outputDirectory,
-            `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${Date.now()}`
-          );
+          packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${Date.now()}`);
         } else {
           packagePath = normalize(outputDirectory);
         }

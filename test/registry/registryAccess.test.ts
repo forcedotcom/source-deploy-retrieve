@@ -23,15 +23,11 @@ describe('RegistryAccess', () => {
     });
 
     it('should ignore leading and trailing spaces', () => {
-      expect(mockRegistry.getTypeByName('  xmlinFolder ')).to.deep.equal(
-        mockRegistryData.types.xmlinfolder
-      );
+      expect(mockRegistry.getTypeByName('  xmlinFolder ')).to.deep.equal(mockRegistryData.types.xmlinfolder);
     });
 
     it('should fetch child type definition', () => {
-      expect(mockRegistry.getTypeByName('x')).to.deep.equal(
-        mockRegistryData.types.decomposed.children.types.x
-      );
+      expect(mockRegistry.getTypeByName('x')).to.deep.equal(mockRegistryData.types.decomposed.children.types.x);
     });
 
     it('should throw an error if type definition missing', () => {
@@ -46,10 +42,7 @@ describe('RegistryAccess', () => {
       assert.throws(
         () => mockRegistry.getTypeByName('badchildtype'),
         RegistryError,
-        nls.localize('error_missing_child_type_definition', [
-          'mixedcontentsinglefile',
-          'badchildtype',
-        ])
+        nls.localize('error_missing_child_type_definition', ['mixedcontentsinglefile', 'badchildtype'])
       );
     });
   });

@@ -13,7 +13,7 @@ import { MetadataResolver, SourceComponent } from '../../src/resolve';
 import { ComponentStatus, ToolingApi, ToolingDeployStatus } from '../../src/client';
 import { ContainerDeploy } from '../../src/client/deployStrategies';
 import { nls } from '../../src/i18n';
-import { registry } from '../../src';
+import { frozenRegistry } from '../../src';
 
 const $$ = testSetup();
 
@@ -46,7 +46,7 @@ describe('Tooling API tests', () => {
   it('should go ahead with deploy for supported types', async () => {
     const deployLibrary = new ToolingApi(mockConnection, resolver);
     const component = new SourceComponent({
-      type: registry.types.apexclass,
+      type: frozenRegistry.types.apexclass,
       name: 'myTestClass',
       xml: 'myTestClass.cls-meta.xml',
       content: 'file/path/myTestClass.cls',
@@ -74,7 +74,7 @@ describe('Tooling API tests', () => {
   it('should exit deploy for unsupported types', async () => {
     sandboxStub.stub(MetadataResolver.prototype, 'getComponentsFromPath').returns([
       new SourceComponent({
-        type: registry.types.flexipage,
+        type: frozenRegistry.types.flexipage,
         name: '',
         xml: '',
       }),
@@ -85,9 +85,7 @@ describe('Tooling API tests', () => {
       await deployLibrary.deployWithPaths('file/path/myTestClass.flexipage');
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal(
-        nls.localize('beta_tapi_membertype_unsupported_error', 'FlexiPage')
-      );
+      expect(e.message).to.equal(nls.localize('beta_tapi_membertype_unsupported_error', 'FlexiPage'));
       expect(e.name).to.be.equal('SourceClientError');
     }
   });

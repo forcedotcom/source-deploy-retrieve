@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import { DiagnosticUtil } from '../../src/client/diagnosticUtil';
 import { SourceComponent } from '../../src/resolve/sourceComponent';
 import { DeployMessage } from '../../src/client/types';
-import { registry } from '../../src';
+import { frozenRegistry } from '../../src';
 
 type MockDeployMessage = {
   problem?: string;
@@ -31,7 +31,7 @@ describe('DiagnosticUtil', () => {
     const component = SourceComponent.createVirtualComponent(
       {
         name: 'Test',
-        type: registry.types.apexclass,
+        type: frozenRegistry.types.apexclass,
         content: join(classes, 'Test.cls'),
         xml: join(classes, 'Test.cls-meta.xml'),
       },
@@ -81,7 +81,7 @@ describe('DiagnosticUtil', () => {
     const component = SourceComponent.createVirtualComponent(
       {
         name: 'Test',
-        type: registry.types.lightningcomponentbundle,
+        type: frozenRegistry.types.lightningcomponentbundle,
         xml: join(bundlePath, 'test.js-meta.xml'),
         content: bundlePath,
       },
@@ -157,7 +157,7 @@ describe('DiagnosticUtil', () => {
     const component = SourceComponent.createVirtualComponent(
       {
         name: 'Test',
-        type: registry.types.auradefinitionbundle,
+        type: frozenRegistry.types.auradefinitionbundle,
         xml: join(bundlePath, 'test.app-meta.xml'),
         content: bundlePath,
       },
@@ -218,8 +218,7 @@ describe('DiagnosticUtil', () => {
     it('should create diagnostic for problem with file line and column info using tooling api', () => {
       const util = new DiagnosticUtil('tooling');
       const message = createDeployMessage({
-        problem:
-          "c.TestApp: Failed to parse HELPER for js://c.TestApp: Expected ',' or '}' [5, 1]: 's'",
+        problem: "c.TestApp: Failed to parse HELPER for js://c.TestApp: Expected ',' or '}' [5, 1]: 's'",
         problemType: 'Error',
         fileName: join('test', 'testHelper.js'),
       });

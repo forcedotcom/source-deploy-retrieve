@@ -48,11 +48,7 @@ export class RegistryTestUtil {
     }
   }
 
-  public stubForceIgnore(config: {
-    seed: SourcePath;
-    accept?: SourcePath[];
-    deny?: SourcePath[];
-  }): ForceIgnore {
+  public stubForceIgnore(config: { seed: SourcePath; accept?: SourcePath[]; deny?: SourcePath[] }): ForceIgnore {
     const forceIgnore = new ForceIgnore();
     const acceptStub = this.env.stub(forceIgnore, 'accepts');
     const denyStub = this.env.stub(forceIgnore, 'denies');

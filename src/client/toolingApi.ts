@@ -43,19 +43,13 @@ export class ToolingApi {
   protected resolver: MetadataResolver;
   protected registry: RegistryAccess;
 
-  public constructor(
-    connection: Connection,
-    resolver: MetadataResolver,
-    registry = new RegistryAccess()
-  ) {
+  public constructor(connection: Connection, resolver: MetadataResolver, registry = new RegistryAccess()) {
     this.connection = connection;
     this.resolver = resolver;
     this.registry = registry;
   }
 
-  public async retrieveWithPaths(
-    options: ToolingRetrieveOptions & { paths: string[] }
-  ): Promise<SourceRetrieveResult> {
+  public async retrieveWithPaths(options: ToolingRetrieveOptions & { paths: string[] }): Promise<SourceRetrieveResult> {
     return this.retrieve({
       output: options.output,
       namespace: options.namespace,
@@ -63,9 +57,7 @@ export class ToolingApi {
     });
   }
 
-  public async retrieve(
-    options: ToolingRetrieveOptions & { components: ComponentSet }
-  ): Promise<SourceRetrieveResult> {
+  public async retrieve(options: ToolingRetrieveOptions & { components: ComponentSet }): Promise<SourceRetrieveResult> {
     let retrieveResult: SourceRetrieveResult;
     if (options.components.size > 1) {
       const retrieveError = new Error();
@@ -77,10 +69,7 @@ export class ToolingApi {
 
     if (!retrieveTypes.has(mdComponent.type.name)) {
       const retrieveError = new Error();
-      retrieveError.message = nls.localize(
-        'beta_tapi_membertype_unsupported_error',
-        mdComponent.type.name
-      );
+      retrieveError.message = nls.localize('beta_tapi_membertype_unsupported_error', mdComponent.type.name);
       retrieveError.name = 'MetadataTypeUnsupported';
       throw retrieveError;
     }
@@ -148,10 +137,7 @@ export class ToolingApi {
     return deployStrategy.deploy(mdComponent, namespace);
   }
 
-  public async deployWithPaths(
-    path: SourcePath,
-    options?: ToolingDeployOptions
-  ): Promise<SourceDeployResult> {
+  public async deployWithPaths(path: SourcePath, options?: ToolingDeployOptions): Promise<SourceDeployResult> {
     return this.deploy(this.resolver.getComponentsFromPath(path), options);
   }
 }

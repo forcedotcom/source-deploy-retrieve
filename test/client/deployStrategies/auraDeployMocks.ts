@@ -4,10 +4,10 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join, basename } from 'path';
+import { basename, join } from 'path';
 import { AuraDefinition } from '../../../src/client/types';
 import { SourceComponent, VirtualTreeContainer } from '../../../src/resolve';
-import { registry } from '../../../src';
+import { frozenRegistry } from '../../../src';
 
 const bundlePath = join('file', 'path', 'aura', 'mockAuraCmp');
 const auraXml = join(bundlePath, 'mockAuraCmp.cmp-meta.xml');
@@ -42,7 +42,7 @@ const tree = new VirtualTreeContainer([
 ]);
 export const auraComponent = new SourceComponent(
   {
-    type: registry.types.auradefinitionbundle,
+    type: frozenRegistry.types.auradefinitionbundle,
     name: 'mockAuraCmp',
     content: bundlePath,
     xml: auraXml,

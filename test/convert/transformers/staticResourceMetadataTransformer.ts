@@ -29,9 +29,7 @@ describe('StaticResourceMetadataTransformer', () => {
   const transformer = new StaticResourceMetadataTransformer(mockRegistry);
 
   beforeEach(() =>
-    env
-      .stub(VirtualTreeContainer.prototype, 'stream')
-      .callsFake((fsPath: string) => new TestReadable(fsPath))
+    env.stub(VirtualTreeContainer.prototype, 'stream').callsFake((fsPath: string) => new TestReadable(fsPath))
   );
 
   afterEach(() => env.restore());
@@ -123,9 +121,7 @@ describe('StaticResourceMetadataTransformer', () => {
         await transformer.toMetadataFormat(component);
       } catch (e) {
         expect(e.message).to.equal(
-          nls.localize('error_static_resource_missing_resource_file', [
-            join('staticresources', component.name),
-          ])
+          nls.localize('error_static_resource_missing_resource_file', [join('staticresources', component.name)])
         );
       }
     });
@@ -310,9 +306,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equal(
-        expectedInfos
-      );
+      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equal(expectedInfos);
     });
 
     it('should merge output with merge component when content is single file', async () => {
@@ -352,9 +346,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equal(
-        expectedInfos
-      );
+      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equal(expectedInfos);
     });
   });
 });

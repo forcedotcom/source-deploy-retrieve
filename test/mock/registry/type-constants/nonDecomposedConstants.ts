@@ -7,7 +7,7 @@
 
 import { join } from 'path';
 import { mockRegistryData } from '../mockRegistry';
-import { registry, SourceComponent, VirtualDirectory, VirtualTreeContainer } from '../../../../src';
+import { frozenRegistry, SourceComponent, VirtualDirectory, VirtualTreeContainer } from '../../../../src';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../../../src/common';
 import { JsToXml } from '../../../../src/convert/streams';
 
@@ -71,16 +71,13 @@ export const FULL_XML_CONTENT = {
   },
 };
 
-export const MATCHING_RULES_TYPE = registry.types.matchingrules;
+export const MATCHING_RULES_TYPE = frozenRegistry.types.matchingrules;
 // NOTE: directory name uses the string literal rather than getting from MATCHING_RULES_TYPE
 // so it explictly shows that this matches the xml field
 export const MATCHING_RULES_TYPE_DIRECTORY_NAME = 'matchingRules';
 export const MATCHING_RULES_XML_NAME = 'Account.matchingRule-meta.xml';
 export const MATCHING_RULES_COMPONENT_DIR = join(DEFAULT_DIR, MATCHING_RULES_TYPE_DIRECTORY_NAME);
-export const MATCHING_RULES_COMPONENT_XML_PATH = join(
-  MATCHING_RULES_COMPONENT_DIR,
-  MATCHING_RULES_XML_NAME
-);
+export const MATCHING_RULES_COMPONENT_XML_PATH = join(MATCHING_RULES_COMPONENT_DIR, MATCHING_RULES_XML_NAME);
 export const MATCHING_RULES_COMPONENT_XML = {
   MatchingRules: {
     '@_xmlns': 'http://soap.sforce.com/2006/04/metadata',
@@ -111,15 +108,11 @@ export const VIRTUAL_DIR: VirtualDirectory[] = [
   { dirPath: NON_DEFAULT_DIR, children: [] },
   {
     dirPath: COMPONENT_1_TYPE_DIR,
-    children: [
-      { name: XML_NAME, data: Buffer.from(new JsToXml(COMPONENT_1_XML).read().toString()) },
-    ],
+    children: [{ name: XML_NAME, data: Buffer.from(new JsToXml(COMPONENT_1_XML).read().toString()) }],
   },
   {
     dirPath: COMPONENT_2_TYPE_DIR,
-    children: [
-      { name: XML_NAME, data: Buffer.from(new JsToXml(COMPONENT_2_XML).read().toString()) },
-    ],
+    children: [{ name: XML_NAME, data: Buffer.from(new JsToXml(COMPONENT_2_XML).read().toString()) }],
   },
   {
     dirPath: MATCHING_RULES_COMPONENT_DIR,
@@ -134,15 +127,9 @@ export const VIRTUAL_DIR: VirtualDirectory[] = [
 
 export const TREE = new VirtualTreeContainer(VIRTUAL_DIR);
 
-export const COMPONENT_1 = new SourceComponent(
-  { name: type.name, type, xml: COMPONENT_1_XML_PATH },
-  TREE
-);
+export const COMPONENT_1 = new SourceComponent({ name: type.name, type, xml: COMPONENT_1_XML_PATH }, TREE);
 
-export const COMPONENT_2 = new SourceComponent(
-  { name: type.name, type, xml: COMPONENT_2_XML_PATH },
-  TREE
-);
+export const COMPONENT_2 = new SourceComponent({ name: type.name, type, xml: COMPONENT_2_XML_PATH }, TREE);
 
 export const MATCHING_RULES_COMPONENT = new SourceComponent(
   {

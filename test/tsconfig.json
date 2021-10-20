@@ -1,4 +1,8 @@
 {
   "extends": "@salesforce/dev-config/tsconfig-test",
-  "include": ["./**/*.ts"],
+  "include": ["./**/*.ts", "../src/registry/registry.json"],
+  "compilerOptions": {
+    // Needed in order to import registry.json
+    "resolveJsonModule": true
+  }
 }

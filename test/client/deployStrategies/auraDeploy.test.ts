@@ -13,10 +13,9 @@ import * as fs from 'graceful-fs';
 import { RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { nls } from '../../../src/i18n';
-import { ToolingDeployStatus, ComponentStatus } from '../../../src/client';
+import { AuraDefinition, ComponentStatus, ToolingCreateResult, ToolingDeployStatus } from '../../../src';
 import { AuraDeploy } from '../../../src/client/deployStrategies';
-import { ToolingCreateResult, AuraDefinition } from '../../../src/client/types';
-import { auraContents, auraComponent, auraFiles, testAuraList } from './auraDeployMocks';
+import { auraComponent, auraContents, auraFiles, testAuraList } from './auraDeployMocks';
 
 const $$ = testSetup();
 
@@ -212,9 +211,7 @@ describe('Aura Deploy Strategy', () => {
       await auraDeploy.upsertBundle();
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal(
-        nls.localize('error_creating_metadata_type', 'AuraDefinitionBundle')
-      );
+      expect(e.message).to.equal(nls.localize('error_creating_metadata_type', 'AuraDefinitionBundle'));
       expect(e.name).to.be.equal('DeployError');
     }
   });

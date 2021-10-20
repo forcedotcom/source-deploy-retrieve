@@ -58,9 +58,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
           name: this.calculateName(rootMetadata),
           type: this.type,
           xml: rootMetadata.path,
-          parentType: this.type.folderType
-            ? this.registry.getTypeByName(this.type.folderType)
-            : undefined,
+          parentType: this.type.folderType ? this.registry.getTypeByName(this.type.folderType) : undefined,
         },
         this.tree,
         this.forceIgnore
@@ -136,8 +134,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     const typeFolderIndex = parts.lastIndexOf(this.type.directoryName);
     // nestedTypes (ex: territory2) have a folderType equal to their type but are themselves
     // in a folder per metadata item, with child folders for rules/territories
-    const allowedIndex =
-      this.type.folderType === this.type.id ? parts.length - 2 : parts.length - 1;
+    const allowedIndex = this.type.folderType === this.type.id ? parts.length - 2 : parts.length - 1;
 
     if (typeFolderIndex !== allowedIndex) {
       return undefined;
@@ -176,9 +173,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     // type is nested inside another type (ex: Territory2Model).  So the names are modelName.ruleName or modelName.territoryName
     if (grandparentType.folderType && grandparentType.folderType !== this.type.id) {
       const splits = rootMetadata.path.split(sep);
-      return `${splits[splits.indexOf(grandparentType.directoryName) + 1]}.${
-        rootMetadata.fullName
-      }`;
+      return `${splits[splits.indexOf(grandparentType.directoryName) + 1]}.${rootMetadata.fullName}`;
     }
     // this is the top level of nested types (ex: in a Territory2Model, the Territory2Model)
     if (grandparentType.folderType === this.type.id) {

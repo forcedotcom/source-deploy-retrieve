@@ -33,9 +33,7 @@ describe('DefaultMetadataTransformer', () => {
   const transformer = new DefaultMetadataTransformer(mockRegistry);
 
   beforeEach(() =>
-    env
-      .stub(VirtualTreeContainer.prototype, 'stream')
-      .callsFake((fsPath: string) => new TestReadable(fsPath))
+    env.stub(VirtualTreeContainer.prototype, 'stream').callsFake((fsPath: string) => new TestReadable(fsPath))
   );
 
   afterEach(() => env.restore());
@@ -80,11 +78,7 @@ describe('DefaultMetadataTransformer', () => {
       const { directoryName } = component.type;
       const expectedInfos: WriteInfo[] = [
         {
-          output: join(
-            directoryName,
-            fullNameParts[0],
-            `${fullNameParts[1]}.${component.type.suffix}`
-          ),
+          output: join(directoryName, fullNameParts[0], `${fullNameParts[1]}.${component.type.suffix}`),
           source: component.tree.stream(component.xml),
         },
       ];
@@ -105,10 +99,7 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should replace document suffix with original suffix', async () => {
-      const component = SourceComponent.createVirtualComponent(
-        document.COMPONENT_MD,
-        document.COMPONENT_VIRTUAL_FS
-      );
+      const component = SourceComponent.createVirtualComponent(document.COMPONENT_MD, document.COMPONENT_VIRTUAL_FS);
       const outputPath = join(component.type.directoryName, component.fullName);
       const expectedInfos: WriteInfo[] = [
         {
@@ -166,11 +157,7 @@ describe('DefaultMetadataTransformer', () => {
     it('should create a WriteInfo for each file in the component', async () => {
       const component = bundle.COMPONENT;
       const { directoryName } = component.type;
-      const relativeBundle = join(
-        DEFAULT_PACKAGE_ROOT_SFDX,
-        directoryName,
-        basename(bundle.CONTENT_PATH)
-      );
+      const relativeBundle = join(DEFAULT_PACKAGE_ROOT_SFDX, directoryName, basename(bundle.CONTENT_PATH));
       const expectedInfos: WriteInfo[] = [];
       for (const source of component.walkContent()) {
         expectedInfos.push({
@@ -187,10 +174,7 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should add in the -meta.xml suffix for components with no content', async () => {
-      const component = SourceComponent.createVirtualComponent(
-        xmlInFolder.COMPONENTS_MD_FORMAT[0],
-        []
-      );
+      const component = SourceComponent.createVirtualComponent(xmlInFolder.COMPONENTS_MD_FORMAT[0], []);
       const { directoryName } = component.type;
       const fileName = `${component.fullName}.${component.type.suffix}${META_XML_SUFFIX}`;
       const expectedInfos: WriteInfo[] = [
@@ -204,10 +188,7 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should handle components in folders with no content', async () => {
-      const component = SourceComponent.createVirtualComponent(
-        xmlInFolder.COMPONENTS_MD_FORMAT[0],
-        []
-      );
+      const component = SourceComponent.createVirtualComponent(xmlInFolder.COMPONENTS_MD_FORMAT[0], []);
       const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;
       const expectedInfos: WriteInfo[] = [
@@ -243,13 +224,7 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should merge output with merge component when content is a directory', async () => {
-      const root = join(
-        'path',
-        'to',
-        'another',
-        bundle.COMPONENT.type.directoryName,
-        bundle.COMPONENT.name
-      );
+      const root = join('path', 'to', 'another', bundle.COMPONENT.type.directoryName, bundle.COMPONENT.name);
       const component = SourceComponent.createVirtualComponent(
         {
           name: 'a',
@@ -284,12 +259,7 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should merge output with merge component when content is a file', async () => {
-      const root = join(
-        'path',
-        'to',
-        'another',
-        mockRegistryData.types.matchingcontentfile.directoryName
-      );
+      const root = join('path', 'to', 'another', mockRegistryData.types.matchingcontentfile.directoryName);
       const component = SourceComponent.createVirtualComponent(
         {
           name: 'a',
@@ -353,15 +323,8 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should replace original suffix with type suffix', async () => {
-      const component = SourceComponent.createVirtualComponent(
-        document.COMPONENT,
-        document.COMPONENT_VIRTUAL_FS
-      );
-      const outputPath = join(
-        DEFAULT_PACKAGE_ROOT_SFDX,
-        component.type.directoryName,
-        component.fullName
-      );
+      const component = SourceComponent.createVirtualComponent(document.COMPONENT, document.COMPONENT_VIRTUAL_FS);
+      const outputPath = join(DEFAULT_PACKAGE_ROOT_SFDX, component.type.directoryName, component.fullName);
       const expectedInfos: WriteInfo[] = [
         {
           output: outputPath + '.' + extName(component.content),

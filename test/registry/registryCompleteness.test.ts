@@ -6,9 +6,9 @@
  */
 import got from 'got';
 import { expect } from 'chai';
-import { CoverageObjectType, CoverageObject } from '../../src/registry/types';
-import { getMissingTypes } from '../../test/utils/getMissingTypes';
-import { registry } from '../../src';
+import { CoverageObject, CoverageObjectType } from '../../src/registry/types';
+import { getMissingTypes } from '../utils/getMissingTypes';
+import { frozenRegistry } from '../../src';
 
 describe('registry completeness', () => {
   let metadataCoverage: CoverageObject;
@@ -20,7 +20,7 @@ describe('registry completeness', () => {
       (await got('https://mdcoverage.secure.force.com/services/apexrest/report')).body
     ) as CoverageObject;
 
-    missingTypes = getMissingTypes(metadataCoverage, registry);
+    missingTypes = getMissingTypes(metadataCoverage, frozenRegistry);
   });
 
   it('every type from metadata coverage is in the SDR registry', () => {

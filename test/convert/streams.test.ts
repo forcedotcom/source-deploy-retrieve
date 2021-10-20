@@ -36,10 +36,7 @@ class TestTransformer extends BaseMetadataTransformer {
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     return [{ output: '/type/file.m', source: new Readable() }];
   }
-  public async toSourceFormat(
-    component: SourceComponent,
-    mergeWith?: SourceComponent
-  ): Promise<WriteInfo[]> {
+  public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
     const output = mergeWith ? mergeWith.content || mergeWith.xml : '/type/file.s';
     return [{ output, source: new Readable() }];
   }
@@ -278,10 +275,7 @@ describe('Streams', () => {
           source: readableMock,
         },
         {
-          output: join(
-            absoluteRootDestination,
-            component.getPackageRelativePath(component.xml, 'metadata')
-          ),
+          output: join(absoluteRootDestination, component.getPackageRelativePath(component.xml, 'metadata')),
           source: readableMock,
         },
       ],
@@ -325,10 +319,7 @@ describe('Streams', () => {
           expect(err).to.be.undefined;
           expect(ensureFile.firstCall.args[0]).to.equal(join(root, basename(COMPONENT.xml)));
           expect(ensureFile.secondCall.args[0]).to.equal(join(root, basename(COMPONENT.content)));
-          expect(pipelineStub.firstCall.args).to.deep.equal([
-            chunk.writeInfos[0].source,
-            fsWritableMock,
-          ]);
+          expect(pipelineStub.firstCall.args).to.deep.equal([chunk.writeInfos[0].source, fsWritableMock]);
         });
       });
 
@@ -340,29 +331,19 @@ describe('Streams', () => {
           writeInfos: [
             {
               source: readableMock,
-              output: join(
-                absoluteRootDestination,
-                component.getPackageRelativePath(component.xml, 'metadata')
-              ),
+              output: join(absoluteRootDestination, component.getPackageRelativePath(component.xml, 'metadata')),
             },
             {
               source: readableMock,
-              output: join(
-                absoluteRootDestination,
-                component.getPackageRelativePath(component.content, 'metadata')
-              ),
+              output: join(absoluteRootDestination, component.getPackageRelativePath(component.content, 'metadata')),
             },
           ],
         };
 
         await writer._write(formatWithAbsoluteOutput, '', (err: Error) => {
           expect(err).to.be.undefined;
-          expect(ensureFile.firstCall.args).to.deep.equal([
-            formatWithAbsoluteOutput.writeInfos[0].output,
-          ]);
-          expect(ensureFile.secondCall.args).to.deep.equal([
-            formatWithAbsoluteOutput.writeInfos[1].output,
-          ]);
+          expect(ensureFile.firstCall.args).to.deep.equal([formatWithAbsoluteOutput.writeInfos[0].output]);
+          expect(ensureFile.secondCall.args).to.deep.equal([formatWithAbsoluteOutput.writeInfos[1].output]);
           expect(pipelineStub.firstCall.args).to.deep.equal([
             formatWithAbsoluteOutput.writeInfos[0].source,
             fsWritableMock,

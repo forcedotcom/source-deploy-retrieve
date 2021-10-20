@@ -61,10 +61,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     ];
   }
 
-  public async toSourceFormat(
-    component: SourceComponent,
-    mergeWith?: SourceComponent
-  ): Promise<WriteInfo[]> {
+  public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
     const { xml, content } = component;
     const writeInfos: WriteInfo[] = [];
 
@@ -101,8 +98,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   }
 
   private getBaseContentPath(component: SourceComponent, mergeWith?: SourceComponent): SourcePath {
-    const baseContentPath =
-      mergeWith?.content || component.getPackageRelativePath(component.content, 'source');
+    const baseContentPath = mergeWith?.content || component.getPackageRelativePath(component.content, 'source');
     return join(dirname(baseContentPath), baseName(baseContentPath));
   }
 
@@ -117,18 +113,12 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       if (StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(contentType)) {
         return true;
       }
-      throw new LibraryError('error_static_resource_expected_archive_type', [
-        contentType,
-        component.name,
-      ]);
+      throw new LibraryError('error_static_resource_expected_archive_type', [contentType, component.name]);
     }
     return false;
   }
 
-  private async *createWriteInfosFromArchive(
-    zipBuffer: Buffer,
-    baseDir: string
-  ): AsyncIterable<WriteInfo> {
+  private async *createWriteInfosFromArchive(zipBuffer: Buffer, baseDir: string): AsyncIterable<WriteInfo> {
     const directory = await Open.buffer(zipBuffer);
     for (const entry of directory.files) {
       if (entry.type === 'File') {
@@ -144,9 +134,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     const resource = (await component.parseXml()).StaticResource as JsonMap;
 
     if (!resource || !Object.prototype.hasOwnProperty.call(resource, 'contentType')) {
-      throw new LibraryError('error_static_resource_missing_resource_file', [
-        join('staticresources', component.name),
-      ]);
+      throw new LibraryError('error_static_resource_missing_resource_file', [join('staticresources', component.name)]);
     }
 
     return resource.contentType as string;

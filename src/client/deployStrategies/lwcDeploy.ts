@@ -57,9 +57,7 @@ export class LwcDeploy extends BaseDeploy {
       const format = isMetaSource ? 'js' : extName(sourceFile);
       let match: LightningComponentResource;
       if (existingResources.length > 0) {
-        match = existingResources.find((resource) =>
-          sourceFile.endsWith(normalize(resource.FilePath))
-        );
+        match = existingResources.find((resource) => sourceFile.endsWith(normalize(resource.FilePath)));
       }
       // If resource exists in org, assign the matching Id
       // else, assign the id of the bundle it's associated with
@@ -79,9 +77,7 @@ export class LwcDeploy extends BaseDeploy {
     });
     return lightningResources;
   }
-  public async upsert(
-    lightningResources: LightningComponentResource[]
-  ): Promise<ComponentDeployment> {
+  public async upsert(lightningResources: LightningComponentResource[]): Promise<ComponentDeployment> {
     const type = this.component.type.name;
     const deployment: ComponentDeployment = {
       status: ComponentStatus.Unchanged,

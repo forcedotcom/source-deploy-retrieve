@@ -53,10 +53,7 @@ describe('MetadataConverter', () => {
 
   it('should generate package name using timestamp when option omitted', async () => {
     const timestamp = 123456;
-    const packagePath = join(
-      outputDirectory,
-      `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`
-    );
+    const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
     env.stub(Date, 'now').returns(timestamp);
 
     await converter.convert(components, 'metadata', {
@@ -144,10 +141,7 @@ describe('MetadataConverter', () => {
 
     it('should write manifest for metadata format conversion', async () => {
       const timestamp = 123456;
-      const packagePath = join(
-        outputDirectory,
-        `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`
-      );
+      const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
       env.stub(Date, 'now').returns(timestamp);
       const expectedContents = new ComponentSet(components, mockRegistry).getPackageXml();
 
@@ -162,10 +156,7 @@ describe('MetadataConverter', () => {
 
     it('should write destructive changes post manifest when ComponentSet has deletes', async () => {
       const timestamp = 123456;
-      const packagePath = join(
-        outputDirectory,
-        `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`
-      );
+      const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
       env.stub(Date, 'now').returns(timestamp);
       const component1 = new SourceComponent({
         name: DECOMPOSED_CHILD_COMPONENT_1.name,
@@ -197,10 +188,7 @@ describe('MetadataConverter', () => {
 
     it('should write destructive changes pre manifest when ComponentSet has deletes', async () => {
       const timestamp = 123456;
-      const packagePath = join(
-        outputDirectory,
-        `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`
-      );
+      const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
       env.stub(Date, 'now').returns(timestamp);
       const component1 = new SourceComponent({
         name: DECOMPOSED_CHILD_COMPONENT_1.name,
@@ -233,10 +221,7 @@ describe('MetadataConverter', () => {
 
     it('should write manifest for metadata format conversion with sourceApiVersion', async () => {
       const timestamp = 123456;
-      const packagePath = join(
-        outputDirectory,
-        `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`
-      );
+      const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
       env.stub(Date, 'now').returns(timestamp);
       const compSet = new ComponentSet(components, mockRegistry);
       compSet.sourceApiVersion = '45.0';
@@ -355,10 +340,7 @@ describe('MetadataConverter', () => {
       await converter.convert(components, 'metadata', { type: 'zip' });
 
       expect(addToZipStub.calledBefore(pipelineStub)).to.be.true;
-      expect(addToZipStub.firstCall.args).to.deep.equal([
-        expectedContents,
-        MetadataConverter.PACKAGE_XML_FILE,
-      ]);
+      expect(addToZipStub.firstCall.args).to.deep.equal([expectedContents, MetadataConverter.PACKAGE_XML_FILE]);
     });
 
     it('should write destructive changes post manifest when ComponentSet has deletes', async () => {
@@ -381,10 +363,7 @@ describe('MetadataConverter', () => {
       await converter.convert(compSet, 'metadata', { type: 'zip' });
 
       expect(addToZipStub.calledBefore(pipelineStub)).to.be.true;
-      expect(addToZipStub.firstCall.args).to.deep.equal([
-        expectedContents,
-        MetadataConverter.PACKAGE_XML_FILE,
-      ]);
+      expect(addToZipStub.firstCall.args).to.deep.equal([expectedContents, MetadataConverter.PACKAGE_XML_FILE]);
       expect(addToZipStub.secondCall.args).to.deep.equal([
         expectedDestructiveContents,
         MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE,
@@ -412,10 +391,7 @@ describe('MetadataConverter', () => {
       await converter.convert(compSet, 'metadata', { type: 'zip' });
 
       expect(addToZipStub.calledBefore(pipelineStub)).to.be.true;
-      expect(addToZipStub.firstCall.args).to.deep.equal([
-        expectedContents,
-        MetadataConverter.PACKAGE_XML_FILE,
-      ]);
+      expect(addToZipStub.firstCall.args).to.deep.equal([expectedContents, MetadataConverter.PACKAGE_XML_FILE]);
       expect(addToZipStub.secondCall.args).to.deep.equal([
         expectedDestructiveContents,
         MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE,
@@ -435,9 +411,7 @@ describe('MetadataConverter', () => {
     const defaultDirectory = join('path', 'to', 'default');
 
     it('should throw error if merge config provided for metadata target format', async () => {
-      const expectedError = new ConversionError(
-        new LibraryError('error_merge_metadata_target_unsupported')
-      );
+      const expectedError = new ConversionError(new LibraryError('error_merge_metadata_target_unsupported'));
       try {
         await converter.convert(components, 'metadata', {
           type: 'merge',
@@ -473,9 +447,7 @@ describe('MetadataConverter', () => {
 
       const pipelineArgs = pipelineStub.firstCall.args;
       validatePipelineArgs(pipelineArgs, 'source');
-      expect(pipelineArgs[1].mergeSet).to.deep.equal(
-        new ComponentSet([DECOMPOSED_CHILD_COMPONENT_1.parent])
-      );
+      expect(pipelineArgs[1].mergeSet).to.deep.equal(new ComponentSet([DECOMPOSED_CHILD_COMPONENT_1.parent]));
     });
   });
 });

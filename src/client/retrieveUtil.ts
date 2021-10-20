@@ -25,8 +25,7 @@ export function buildQuery(mdComponent: SourceComponent, namespace = ''): string
       queryString = `Select Id, ApiVersion, Name, NamespacePrefix, Markup from ${typeName} where Name = '${fullName}' and NamespacePrefix = '${namespace}'`;
       break;
     case 'AuraDefinitionBundle':
-      queryString =
-        'Select Id, AuraDefinitionBundle.ApiVersion, AuraDefinitionBundle.DeveloperName, ';
+      queryString = 'Select Id, AuraDefinitionBundle.ApiVersion, AuraDefinitionBundle.DeveloperName, ';
       queryString += `AuraDefinitionBundle.NamespacePrefix, DefType, Source from AuraDefinition where AuraDefinitionBundle.DeveloperName = '${fullName}' and AuraDefinitionBundle.NamespacePrefix = '${namespace}'`;
       break;
     case 'LightningComponentBundle':
@@ -83,9 +82,7 @@ export function queryToFileMap(
   let apiVersion: string;
   let status: string;
   // If output is defined it overrides where the component will be stored
-  const mdSourcePath = overrideOutputPath
-    ? trimMetaXmlSuffix(overrideOutputPath)
-    : mdComponent.walkContent()[0];
+  const mdSourcePath = overrideOutputPath ? trimMetaXmlSuffix(overrideOutputPath) : mdComponent.walkContent()[0];
   const saveFilesMap = new Map();
   switch (typeName) {
     case 'ApexClass':
@@ -122,10 +119,7 @@ export function queryToFileMap(
 
   // NOTE: LightningComponentBundle query results returns the -meta.xml file
   if (typeName !== 'LightningComponentBundle') {
-    saveFilesMap.set(
-      generateMetaXMLPath(mdSourcePath),
-      generateMetaXML(typeName, apiVersion, status)
-    );
+    saveFilesMap.set(generateMetaXMLPath(mdSourcePath), generateMetaXML(typeName, apiVersion, status));
   }
 
   return saveFilesMap;

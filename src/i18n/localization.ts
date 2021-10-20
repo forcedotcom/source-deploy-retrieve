@@ -6,6 +6,7 @@
  */
 
 import * as util from 'util';
+
 const MISSING_LABEL_MSG = '!!! MISSING LABEL !!!';
 // tslint:disable: no-any
 export interface LocalizationProvider {
@@ -68,9 +69,7 @@ export class Message implements LocalizationProvider {
       if (args.length !== expectedNumArgs) {
         // just log it, we might want to hide some in some languages on purpose
         // eslint-disable-next-line no-console
-        console.log(
-          `Arguments do not match for label '${label}', got ${args.length} but want ${expectedNumArgs}`
-        );
+        console.log(`Arguments do not match for label '${label}', got ${args.length} but want ${expectedNumArgs}`);
       }
 
       args.unshift(possibleLabel);

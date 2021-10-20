@@ -76,14 +76,14 @@
     "shelljs": "0.8.4",
     "shx": "^0.3.2",
     "sinon": "^9.0.2",
-    "ts-node": "^8.10.2",
+    "ts-node": "^10.3.0",
     "typescript": "^3.9.3"
   },
   "scripts": {
     "build": "sf-build",
     "ci-docs": "yarn sf-ci-docs",
     "clean": "sf-clean",
-    "clean-all": "-clean all",
+    "clean-all": "sf-clean all",
     "commit": "git-cz",
     "commit-init": "commitizen init cz-conventional-changelog --save-dev --save-exact --force",
     "compile": "sf-compile",
@@ -98,7 +98,7 @@
     "pretest": "sf-compile-test",
     "repl": "node --inspect ./scripts/repl.js",
     "test": "sf-test",
-    "test:registry": "mocha ./lib/test/registry/registryCompleteness.test.js",
+    "test:registry": "nyc mocha ./test/registry/registryCompleteness.test.ts",
     "update-registry": "npx ts-node scripts/update-registry/update2.ts"
   },
   "husky": {

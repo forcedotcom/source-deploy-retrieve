@@ -33,8 +33,7 @@ export const messages = {
   error_unexpected_child_type: 'Unexpected child metadata [%s] found for parent type [%s]',
   error_expected_source_files: "%s: Expected source files for type '%s'",
   error_failed_convert: 'Component conversion failed: %s',
-  error_merge_metadata_target_unsupported:
-    'Merge convert for metadata target format currently unsupported',
+  error_merge_metadata_target_unsupported: 'Merge convert for metadata target format currently unsupported',
   error_in_tooling_retrieve: 'Unexpected error while retrieving using Tooling API. Stack trace: %s',
   error_md_not_present_in_org: '%s was not found in org',
   error_missing_adapter: "Missing adapter '%s' for metadata type '%s'",
@@ -46,8 +45,7 @@ export const messages = {
   error_no_metadata_xml_ignore: 'Metadata xml file %s is forceignored but is required for %s',
   error_no_source_ignore: '%s types require source to be present and %s is forceignored.',
   error_path_not_found: '%s: File or folder not found',
-  tapi_retrieve_component_limit_error:
-    'This retrieve method only supports retrieving one metadata component at a time',
+  tapi_retrieve_component_limit_error: 'This retrieve method only supports retrieving one metadata component at a time',
   error_on_manifest_creation: "Unexpected error while creating manifest for '%s'. Stack trace: %s",
   error_creating_metadata_type: "Unexpected error creating '%s'",
   error_updating_metadata_type: "Unexpected error updating '%s'",
@@ -63,10 +61,7 @@ export const messages = {
     'A StaticResource directory must have a content type of application/zip or application/jar - found %s for %s',
   error_static_resource_missing_resource_file:
     'A StaticResource must have an associated .resource file, missing %s.resource-meta.xml',
-  error_no_job_id:
-    'The %s operation is missing a job ID. Initialize an operation with an ID, or start a new job.',
-  tapi_deploy_component_limit_error:
-    'This deploy method only supports deploying one metadata component at a time',
-  warn_unresolved_source_for_components:
-    'The following components will not be deployed due to unresolved source: %s',
+  error_no_job_id: 'The %s operation is missing a job ID. Initialize an operation with an ID, or start a new job.',
+  tapi_deploy_component_limit_error: 'This deploy method only supports deploying one metadata component at a time',
+  warn_unresolved_source_for_components: 'The following components will not be deployed due to unresolved source: %s',
 };

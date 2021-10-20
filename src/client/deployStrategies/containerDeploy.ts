@@ -59,11 +59,7 @@ export class ContainerDeploy extends BaseDeploy {
     const body = readFileSync(outboundFiles[0], 'utf8');
     const fileName = baseName(outboundFiles[0]);
 
-    const entityId = await this.getContentEntity(
-      this.component.type.name,
-      fileName,
-      this.namespace
-    );
+    const entityId = await this.getContentEntity(this.component.type.name, fileName, this.namespace);
 
     const containerMemberObject = {
       MetadataContainerId: id,
@@ -73,10 +69,7 @@ export class ContainerDeploy extends BaseDeploy {
       ...(entityId ? { contentEntityId: entityId } : {}),
     };
 
-    const containerMember = await this.toolingCreate(
-      deployTypes.get(this.component.type.name),
-      containerMemberObject
-    );
+    const containerMember = await this.toolingCreate(deployTypes.get(this.component.type.name), containerMemberObject);
 
     if (!containerMember.success) {
       throw new DeployError('beta_tapi_membertype_error', this.component.type.name);
@@ -96,9 +89,7 @@ export class ContainerDeploy extends BaseDeploy {
     return queryResult && queryResult.records.length === 1 ? queryResult.records[0].Id : undefined;
   }
 
-  public async createContainerAsyncRequest(
-    container: ToolingCreateResult
-  ): Promise<ToolingCreateResult> {
+  public async createContainerAsyncRequest(container: ToolingCreateResult): Promise<ToolingCreateResult> {
     const contAsyncRequest = await this.toolingCreate(ContainerDeploy.CONTAINER_ASYNC_REQUEST, {
       MetadataContainerId: container.id,
     });

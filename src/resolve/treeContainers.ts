@@ -28,11 +28,7 @@ export abstract class TreeContainer {
    * @param directory - The directory to search in
    * @returns The first path that meets the criteria, or `undefined` if none were found
    */
-  public find(
-    fileType: 'content' | 'metadataXml',
-    name: string,
-    directory: string
-  ): string | undefined {
+  public find(fileType: 'content' | 'metadataXml', name: string, directory: string): string | undefined {
     const fileName = this.readDirectory(directory).find((entry) => {
       const parsed = parseMetadataXml(join(directory, entry));
       const metaXmlCondition = fileType === 'metadataXml' ? !!parsed : !parsed;

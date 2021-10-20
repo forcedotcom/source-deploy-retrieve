@@ -158,9 +158,7 @@ describe('SourceComponent', () => {
       const component = COMPONENT;
       env
         .stub(component.tree, 'readFile')
-        .resolves(
-          Buffer.from('<MatchingContentFile a="test"><test>something</test></MatchingContentFile>')
-        );
+        .resolves(Buffer.from('<MatchingContentFile a="test"><test>something</test></MatchingContentFile>'));
 
       const result = await component.parseXml();
       const expected = {
@@ -204,9 +202,7 @@ describe('SourceComponent', () => {
         },
         mixedContentDirectory.MIXED_CONTENT_DIRECTORY_VIRTUAL_FS
       );
-      expect(component.walkContent()).to.deep.equal(
-        mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS
-      );
+      expect(component.walkContent()).to.deep.equal(mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS);
     });
 
     it('Should not include source paths that are forceignored', () => {
@@ -225,9 +221,7 @@ describe('SourceComponent', () => {
         mixedContentDirectory.MIXED_CONTENT_DIRECTORY_VIRTUAL_FS,
         forceIgnore
       );
-      expect(component.walkContent()).to.deep.equal([
-        mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[1],
-      ]);
+      expect(component.walkContent()).to.deep.equal([mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[1]]);
       testUtil.restore();
     });
   });
@@ -254,10 +248,7 @@ describe('SourceComponent', () => {
     );
 
     it('should return child components for a component', () => {
-      expect(decomposed.DECOMPOSED_COMPONENT.getChildren()).to.deep.equal([
-        expectedChild,
-        expectedChild2,
-      ]);
+      expect(decomposed.DECOMPOSED_COMPONENT.getChildren()).to.deep.equal([expectedChild, expectedChild2]);
     });
 
     it('should not include children that are forceignored', () => {
@@ -276,9 +267,7 @@ describe('SourceComponent', () => {
     });
 
     it('should return correct fullName for components with a parent', () => {
-      expect(expectedChild.fullName).to.equal(
-        `${decomposed.DECOMPOSED_COMPONENT.name}.${expectedChild.name}`
-      );
+      expect(expectedChild.fullName).to.equal(`${decomposed.DECOMPOSED_COMPONENT.name}.${expectedChild.name}`);
     });
 
     it('should return empty array if there is no metadata xml', () => {
@@ -303,11 +292,7 @@ describe('SourceComponent', () => {
       const fsUnexpectedChild = [
         {
           dirPath: decomposed.DECOMPOSED_PATH,
-          children: [
-            decomposed.DECOMPOSED_CHILD_XML_NAME_1,
-            decomposed.DECOMPOSED_CHILD_DIR,
-            'classes',
-          ],
+          children: [decomposed.DECOMPOSED_CHILD_XML_NAME_1, decomposed.DECOMPOSED_CHILD_DIR, 'classes'],
         },
         {
           dirPath: decomposed.DECOMPOSED_CHILD_DIR_PATH,

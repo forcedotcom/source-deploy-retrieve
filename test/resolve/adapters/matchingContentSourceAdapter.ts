@@ -16,8 +16,7 @@ import { SourceComponent } from '../../../src/resolve';
 
 describe('MatchingContentSourceAdapter', () => {
   const type = mockRegistryData.types.matchingcontentfile;
-  const { CONTENT_PATHS, XML_PATHS, COMPONENT, TYPE_DIRECTORY, CONTENT_NAMES, XML_NAMES } =
-    matchingContentFile;
+  const { CONTENT_PATHS, XML_PATHS, COMPONENT, TYPE_DIRECTORY, CONTENT_NAMES, XML_NAMES } = matchingContentFile;
   const tree = new VirtualTreeContainer([
     {
       dirPath: TYPE_DIRECTORY,

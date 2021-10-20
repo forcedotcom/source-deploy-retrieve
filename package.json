@@ -6,10 +6,7 @@
   "author": "Salesforce",
   "license": "BSD-3-Clause",
   "homepage": "https://github.com/forcedotcom/source-deploy-retrieve#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/forcedotcom/source-deploy-retrieve.git"
-  },
+  "repository": "forcedotcom/source-deploy-retrieve",
   "bugs": {
     "url": "https://github.com/forcedotcom/source-deploy-retrieve/issues"
   },

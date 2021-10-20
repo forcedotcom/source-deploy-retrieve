@@ -6,26 +6,27 @@
  */
 
 /* eslint-disable no-console */
-
+import { join } from 'path';
 import { expect } from 'chai';
 import { MetadataResolver } from '../../src/resolve/metadataResolver';
 import { filenamesToVirtualTree } from '../../src/resolve/filenamesToVirtualTree';
 
 describe('two deleted files from an apex class', () => {
+  const classesPath = join('force-app', 'main', 'default', 'classes');
   const tree = filenamesToVirtualTree([
-    'force-app/main/default/classes/TestOrderController.cls',
-    'force-app/main/default/classes/TestOrderController.cls-meta.xml',
+    join(classesPath, 'TestOrderController.cls'),
+    join(classesPath, 'TestOrderController.cls-meta.xml'),
   ]);
 
   it('tree has expected structure', () => {
     expect(tree.isDirectory('force-app'), 'force-app').to.equal(true);
-    expect(tree.isDirectory('force-app/main'), 'force-app/main').to.equal(true);
-    expect(tree.isDirectory('force-app/main/default'), 'force-app/main/default').to.equal(true);
+    expect(tree.isDirectory(join('force-app', 'main')), 'force-app/main').to.equal(true);
     expect(
-      tree.isDirectory('force-app/main/default/classes'),
-      'force-app/main/default/classes'
+      tree.isDirectory(join('force-app', 'main', 'default')),
+      'force-app/main/default'
     ).to.equal(true);
-    expect(tree.readDirectory('force-app/main/default/classes')).to.deep.equal([
+    expect(tree.isDirectory(classesPath), classesPath).to.equal(true);
+    expect(tree.readDirectory(classesPath)).to.deep.equal([
       'TestOrderController.cls',
       'TestOrderController.cls-meta.xml',
     ]);

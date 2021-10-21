@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.0.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.0...v5.0.1) (2021-10-21)
+
+
+### Bug Fixes
+
+* migrate registry.json from fork ([#482](https://github.com/forcedotcom/source-deploy-retrieve/issues/482)) ([cad3700](https://github.com/forcedotcom/source-deploy-retrieve/commit/cad370037ef529a575723f89061d46b9503a1a60))
+
 ## [5.0.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.12...v5.0.0) (2021-10-21)
 
 ### [4.5.12](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.11...v4.5.12) (2021-10-20)

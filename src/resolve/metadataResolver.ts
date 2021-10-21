@@ -152,23 +152,28 @@ export class MetadataResolver {
   }
 
   private resolveTypeFromStrictFolder(fsPath: string): MetadataType | undefined {
-    let resolvedType: MetadataType;
-
     const pathParts = fsPath.split(sep);
+    console.log(pathParts);
     // first, filter out types that don't appear in the path
     // then iterate using for/of to allow for early break
-    for (const type of this.registry.getStrictFolderTypes().filter(
+    // const resolvedType = this.registry
+    //   .getStrictFolderTypes()
+    const strictTypes = this.registry.getStrictFolderTypes();
+    console.log(strictTypes);
+
+    const filteredStrictTypes = strictTypes.filter(
       (type) =>
         // the type's directory is in the path, AND
-        !pathParts.includes(type.directoryName) &&
+        pathParts.includes(type.directoryName) &&
         // types with folders only have folder components living at the top level.
         // if the fsPath is a folder component, let a future strategy deal with it
         // const isFolderType = this.getTypeFromName(typeId).inFolder;
-        type.inFolder &&
-        parentName(fsPath) === type.directoryName
-    )) {
-      // any of the following 3 options is considered a good match
-      if (
+        (!type.inFolder || parentName(fsPath) !== type.directoryName)
+    );
+    console.log(filteredStrictTypes);
+    const resolvedType = filteredStrictTypes.find(
+      (type) =>
+        // any of the following 3 options is considered a good match
         // mixedContent and bundles don't have a suffix to match
         ['mixedContent', 'bundle'].includes(type.strategies?.adapter) ||
         // the suffix matches the type we think it is
@@ -178,11 +183,8 @@ export class MetadataResolver {
           Object.values(type.children?.types)
             .map((childType) => childType.directoryName)
             .some((dirName) => pathParts.includes(dirName)))
-      ) {
-        resolvedType = type;
-        break;
-      }
-    }
+    );
+    console.log(resolvedType);
     return resolvedType;
   }
 

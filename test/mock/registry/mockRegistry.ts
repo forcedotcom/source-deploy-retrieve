@@ -286,9 +286,9 @@ export const mockRegistryData = {
     ms: 'missingstrategies',
   },
   strictDirectoryNames: {
-    mixedContentDirectories: 'mixedcontentdirectory',
+    mixedcontentdirectories: 'mixedcontentdirectory',
     bundles: 'bundle',
-    decomposed: 'decomposed',
+    decomposeds: 'decomposed',
     mixedSingleFiles: 'mixedcontentsinglefile',
     mixedContentInFolders: 'mixedcontentinfolder',
     decomposedTopLevels: 'decomposedtoplevel',

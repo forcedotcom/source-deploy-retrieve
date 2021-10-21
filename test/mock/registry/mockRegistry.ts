@@ -284,6 +284,10 @@ export const mockRegistryData = {
     mixedSingleFile: 'mixedcontentsinglefile',
     dtl: 'decomposedtoplevel',
     ms: 'missingstrategies',
+    nestedParent: 'nestedparent',
+    nestedChild: 'nestedchild',
+    document: 'document',
+    nondecomposed: 'nondecomposedchild',
   },
   strictDirectoryNames: {
     mixedcontentdirectories: 'mixedcontentdirectory',
@@ -298,6 +302,7 @@ export const mockRegistryData = {
     y: 'decomposed',
     g: 'decomposedtoplevel',
     badchildtype: 'mixedcontentsinglefile',
+    nondecomposedchild: 'nondecomposedparent',
   },
   apiVersion: '48.0',
 };

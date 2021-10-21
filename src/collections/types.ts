@@ -62,4 +62,13 @@ export interface FromManifestOptions extends OptionalTreeRegistryOptions {
    * conditions.
    */
   forceAddWildcards?: boolean;
+
+  /**
+   * path to a `destructiveChangesPre.xml` file in XML format
+   */
+  destructivePre?: string;
+  /**
+   * path to a `destructiveChangesPost.xml` file in XML format
+   */
+  destructivePost?: string;
 }

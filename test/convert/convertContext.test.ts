@@ -156,7 +156,7 @@ describe('Convert Transaction Constructs', () => {
                 source: new JsToXml({
                   nondecomposedparent: {
                     [XML_NS_KEY]: XML_NS_URL,
-                    nondecomposed: [nonDecomposed.CHILD_1_XML, nonDecomposed.CHILD_2_XML],
+                    nondecomposeddir: [nonDecomposed.CHILD_1_XML, nonDecomposed.CHILD_2_XML],
                   },
                 }),
                 output: join('nondecomposed', 'nondecomposedparent.nondecomposed'),

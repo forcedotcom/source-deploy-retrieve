@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.0.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.12...v5.0.0) (2021-10-21)
+
+### [4.5.12](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.11...v4.5.12) (2021-10-20)
+
+### [4.5.11](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.10...v4.5.11) (2021-10-13)
+
+### [4.5.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.9...v4.5.10) (2021-10-13)
+
+
+### Bug Fixes
+
+* use matching content file strategy ([#471](https://github.com/forcedotcom/source-deploy-retrieve/issues/471)) ([86b21d6](https://github.com/forcedotcom/source-deploy-retrieve/commit/86b21d69b913058f3b3fc641f6ef7ce9a0c2fe92))
+
 ### [4.5.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.8...v4.5.9) (2021-10-12)
 
 

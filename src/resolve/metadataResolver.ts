@@ -22,17 +22,17 @@ export class MetadataResolver {
   public forceIgnoredPaths: Set<string>;
   private forceIgnore: ForceIgnore;
   private sourceAdapterFactory: SourceAdapterFactory;
-  private tree: TreeContainer;
-  private registry: RegistryAccess;
   private folderContentTypeDirNames: string[];
 
   /**
    * @param registry Custom registry data
    * @param tree `TreeContainer` to traverse with
    */
-  constructor(registry = new RegistryAccess(), tree: TreeContainer = new NodeFSTreeContainer()) {
-    this.registry = registry;
-    this.tree = tree;
+  constructor(
+    private registry = new RegistryAccess(),
+    private tree: TreeContainer = new NodeFSTreeContainer(),
+    private useFsForceIgnore = true
+  ) {
     this.sourceAdapterFactory = new SourceAdapterFactory(this.registry, tree);
     this.forceIgnoredPaths = new Set<string>();
   }
@@ -48,7 +48,10 @@ export class MetadataResolver {
       throw new TypeInferenceError('error_path_not_found', fsPath);
     }
 
-    this.forceIgnore = ForceIgnore.findAndCreate(fsPath);
+    // use the default ignore if we aren't using a real one
+    this.forceIgnore = this.useFsForceIgnore
+      ? ForceIgnore.findAndCreate(fsPath)
+      : new ForceIgnore();
 
     if (this.tree.isDirectory(fsPath) && !this.resolveDirectoryAsComponent(fsPath)) {
       return this.getComponentsFromPathRecursive(fsPath, inclusiveFilter);

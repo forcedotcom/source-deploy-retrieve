@@ -4,29 +4,35 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SourceComponent, VirtualTreeContainer } from '../../src/resolve';
+import {
+  DestructiveChangesType,
+  MetadataType,
+  RegistryAccess,
+  SourceComponent,
+  VirtualTreeContainer,
+} from '../../src';
 import { RegistryTestUtil } from './registryTestUtil';
 import {
-  xmlInFolder,
   decomposed,
-  mixedContentDirectory,
   matchingContentFile,
-  mockRegistryData,
+  mixedContentDirectory,
   mockRegistry,
+  mockRegistryData,
+  xmlInFolder,
 } from '../mock/registry';
 import { assert, expect } from 'chai';
 import { DECOMPOSED_COMPONENT } from '../mock/registry/type-constants/decomposedConstants';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
 import {
-  COMPONENT_1,
   CHILD_1_NAME,
   CHILD_1_XML,
   VIRTUAL_DIR,
   COMPONENT_1_XML,
   COMPONENT_1_XML_PATH,
   CHILD_2_NAME,
-  MATCHING_RULES_TYPE,
+  COMPONENT_1,
   MATCHING_RULES_COMPONENT_XML_PATH,
+  MATCHING_RULES_TYPE,
   TREE,
 } from '../mock/registry/type-constants/nonDecomposedConstants';
 import { createSandbox } from 'sinon';
@@ -34,7 +40,6 @@ import { join } from 'path';
 import { DecomposedSourceAdapter } from '../../src/resolve/adapters';
 import { TypeInferenceError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { MetadataType, RegistryAccess } from '../../src';
 
 const env = createSandbox();
 
@@ -60,14 +65,25 @@ describe('SourceComponent', () => {
   });
 
   it('should return correct markedForDelete status', () => {
-    expect(COMPONENT.isMarkedForDelete()).to.be.false;
-    try {
-      COMPONENT.setMarkedForDelete(true);
-      expect(COMPONENT.isMarkedForDelete()).to.be.true;
-    } finally {
-      COMPONENT.setMarkedForDelete(false);
-      expect(COMPONENT.isMarkedForDelete()).to.be.false;
-    }
+    const comp = new SourceComponent({ name: 'test', type: undefined });
+    expect(comp.isMarkedForDelete()).to.be.false;
+    expect(comp.getDestructiveChangesType()).to.equal(undefined);
+
+    comp.setMarkedForDelete();
+    expect(comp.isMarkedForDelete()).to.be.true;
+    expect(comp.getDestructiveChangesType()).to.equal(DestructiveChangesType.POST);
+
+    comp.setMarkedForDelete(DestructiveChangesType.PRE);
+    expect(comp.isMarkedForDelete()).to.be.true;
+    expect(comp.getDestructiveChangesType()).to.equal(DestructiveChangesType.PRE);
+
+    comp.setMarkedForDelete(false);
+    expect(comp.isMarkedForDelete()).to.be.false;
+    expect(comp.getDestructiveChangesType()).to.equal(undefined);
+
+    comp.setMarkedForDelete(true);
+    expect(comp.isMarkedForDelete()).to.be.true;
+    expect(comp.getDestructiveChangesType()).to.equal(DestructiveChangesType.POST);
   });
 
   it('should return correct relative path for a nested component', () => {
@@ -104,6 +120,29 @@ describe('SourceComponent', () => {
         MatchingContentFile: {
           test: 'something',
         },
+      });
+    });
+
+    it('should parse the child components xml content to js object', async () => {
+      const component = new SourceComponent({
+        name: 'nondecomposedchild',
+        type: mockRegistryData.types.nondecomposed.children.types.nondecomposedchild,
+        xml: COMPONENT_1_XML_PATH,
+        parent: new SourceComponent({
+          name: 'nondecomposed',
+          type: mockRegistryData.types.nondecomposed,
+        }),
+      });
+      env
+        .stub(component.tree, 'readFile')
+        .resolves(
+          Buffer.from(
+            '<nondecomposedparent><nondecomposed><id>nondecomposedchild</id><content>something</content></nondecomposed></nondecomposedparent>'
+          )
+        );
+      expect(await component.parseXml()).to.deep.equal({
+        content: 'something',
+        id: 'nondecomposedchild',
       });
     });
 

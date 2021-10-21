@@ -24,8 +24,15 @@ export class RegistryTestUtil {
     this.env.restore();
   }
 
-  public createMetadataResolver(virtualFS: VirtualDirectory[]): MetadataResolver {
-    return new MetadataResolver(mockRegistry, new VirtualTreeContainer(virtualFS));
+  public createMetadataResolver(
+    virtualFS: VirtualDirectory[],
+    useRealForceIgnore = true
+  ): MetadataResolver {
+    return new MetadataResolver(
+      mockRegistry,
+      new VirtualTreeContainer(virtualFS),
+      useRealForceIgnore
+    );
   }
 
   public stubAdapters(

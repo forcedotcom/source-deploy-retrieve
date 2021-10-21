@@ -11,16 +11,19 @@ import { join } from 'path';
 import { createSandbox, SinonStub } from 'sinon';
 import {
   ComponentSet,
+  DestructiveChangesType,
+  ManifestResolver,
   MetadataApiDeploy,
   MetadataApiRetrieve,
   MetadataComponent,
+  MetadataMember,
   MetadataResolver,
   MetadataType,
   RegistryAccess,
+  SourceComponent,
 } from '../../src';
 import { ComponentSetError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { ManifestResolver, MetadataMember, SourceComponent } from '../../src/resolve';
 import { mockConnection } from '../mock/client';
 import {
   decomposedtoplevel,
@@ -108,12 +111,12 @@ describe('ComponentSet', () => {
         const mdResolver = new MetadataResolver(mockRegistry, manifestFiles.TREE);
         const expected = mdResolver.getComponentsFromPath('mixedSingleFiles');
         mdResolver.getComponentsFromPath('decomposedTopLevels').forEach((comp) => {
-          comp.setMarkedForDelete(true);
+          comp.setMarkedForDelete();
           expected.push(comp);
         });
 
         expect(result).to.deep.equal(expected);
-        expect(compSet.hasDeletes).to.be.true;
+        expect(!!compSet.getTypesOfDestructiveChanges().length).to.be.true;
       });
     });
 
@@ -327,7 +330,7 @@ describe('ComponentSet', () => {
         tree: manifestFiles.TREE,
         fsDeletePaths: ['.'],
       });
-      expect(set.getObject(true)).to.deep.equal({
+      expect(set.getObject(DestructiveChangesType.POST)).to.deep.equal({
         Package: {
           fullName: undefined,
           types: [
@@ -562,7 +565,9 @@ describe('ComponentSet', () => {
         tree: manifestFiles.TREE,
         fsDeletePaths: ['.'],
       });
-      expect(set.getPackageXml(4, true)).to.equal(manifestFiles.BASIC.data.toString());
+      expect(set.getPackageXml(4, DestructiveChangesType.POST)).to.equal(
+        manifestFiles.BASIC.data.toString()
+      );
     });
   });
 
@@ -780,18 +785,41 @@ describe('ComponentSet', () => {
 
     it('should add metadata component marked for delete to package components', async () => {
       const set = new ComponentSet(undefined, mockRegistry);
-      expect(set.hasDeletes).to.be.false;
+      expect(!!set.getTypesOfDestructiveChanges().length).to.be.false;
 
       const component = new SourceComponent({
         name: mixedContentSingleFile.COMPONENT.name,
         type: mixedContentSingleFile.COMPONENT.type,
         xml: mixedContentSingleFile.COMPONENT.xml,
       });
-      set.add(component, true);
+      set.add(component, DestructiveChangesType.POST);
 
-      expect(set.hasDeletes).to.be.true;
+      expect(!!set.getTypesOfDestructiveChanges().length).to.be.true;
       expect(set.getSourceComponents().first().isMarkedForDelete()).to.be.true;
       expect(set.has(component)).to.be.true;
+    });
+
+    it('should delete metadata from package components, if its present in destructive changes', async () => {
+      const set = new ComponentSet(undefined, mockRegistry);
+      expect(!!set.getTypesOfDestructiveChanges().length).to.be.false;
+
+      const component = new SourceComponent({
+        name: mixedContentSingleFile.COMPONENT.name,
+        type: mixedContentSingleFile.COMPONENT.type,
+        xml: mixedContentSingleFile.COMPONENT.xml,
+      });
+      set.add(component, DestructiveChangesType.POST);
+
+      expect(!!set.getTypesOfDestructiveChanges().length).to.be.true;
+      expect(set.getDestructiveChangesType()).to.equal(DestructiveChangesType.POST);
+      expect(set.getSourceComponents().first().isMarkedForDelete()).to.be.true;
+
+      set.add(component);
+      set.setDestructiveChangesType(DestructiveChangesType.PRE);
+      expect(set.getDestructiveChangesType()).to.equal(DestructiveChangesType.PRE);
+      expect(set.getSourceComponents().first().isMarkedForDelete()).to.be.true;
+      expect(set.has(component)).to.be.true;
+      expect(set.getSourceComponents().toArray().length).to.equal(1);
     });
   });
 

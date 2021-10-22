@@ -31,6 +31,7 @@ import { LazyCollection } from './lazyCollection';
 import { j2xParser } from 'fast-xml-parser';
 import { Logger } from '@salesforce/core';
 import { MetadataType, RegistryAccess } from '../registry';
+import { MetadataMember } from '../resolve/types';
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
@@ -306,7 +307,11 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
           typeMap.set(typeName, []);
         }
         const typeEntry = typeMap.get(typeName);
-        if (fullName === ComponentSet.WILDCARD && !type.supportsWildcardAndName && !destructiveType) {
+        if (
+          fullName === ComponentSet.WILDCARD &&
+          !type.supportsWildcardAndName &&
+          !destructiveType
+        ) {
           // if the type doesn't support mixed wildcards and specific names, overwrite the names to be a wildcard
           typeMap.set(typeName, [fullName]);
         } else if (
@@ -489,8 +494,14 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     return false;
   }
 
-  public getComponentFilenamesByNameAndType(name: string, type: string): string[] {
-    const key = this.simpleKey({ fullName: name, type });
+  /**
+   * For a fullName and type, this returns the filenames the matching component, or an empty array if the component is not present
+   *
+   * @param param Object with fullName and type properties
+   * @returns string[]
+   */
+  public getComponentFilenamesByNameAndType({ fullName, type }: MetadataMember): string[] {
+    const key = this.simpleKey({ fullName, type });
     const componentMap = this.components.get(key);
     if (!componentMap) {
       return [];

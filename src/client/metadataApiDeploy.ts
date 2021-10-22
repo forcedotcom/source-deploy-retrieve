@@ -170,7 +170,7 @@ export class DeployResult implements MetadataTransferResult {
               .replace(`No ${message.componentType} named: `, '')
               .replace(' found', '');
             this.components
-              .getComponentFilenamesByNameAndType(fullName, message.componentType)
+              .getComponentFilenamesByNameAndType({ fullName, type: message.componentType })
               .forEach((fileName) => {
                 fileResponses.push({
                   fullName,

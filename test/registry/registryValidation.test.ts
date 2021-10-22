@@ -13,6 +13,19 @@ describe('Registry Validation', () => {
   const registry = defaultRegistry as MetadataRegistry;
   const typesWithChildren = Object.values(registry.types).filter((type) => type.children);
 
+  describe('child types are configured properly', () => {
+    typesWithChildren.forEach((type) => {
+      it(`${type.name} has a valid children configuration`, () => {
+        expect(type.children).to.have.property('types');
+        expect(type.children).to.have.property('suffixes');
+        expect(type.children).to.have.property('directories');
+        Object.values(type.children.types).forEach((childType) => {
+          expect(type.children.suffixes[childType.suffix]).to.equal(childType.id);
+          expect(type.children.directories[childType.directoryName]).to.equal(childType.id);
+        });
+      });
+    });
+  });
   describe('every child type has an entry in children', () => {
     const childMapping = new Map<string, string>();
 

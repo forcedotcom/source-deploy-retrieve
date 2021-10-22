@@ -15,6 +15,7 @@ import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { SfdxFileFormat } from '../convert';
 import { MetadataType } from '../registry';
 import { TypeInferenceError } from '../errors';
+import { DestructiveChangesType } from '../collections';
 
 export type ComponentProperties = {
   name: string;
@@ -38,6 +39,7 @@ export class SourceComponent implements MetadataComponent {
   private _tree: TreeContainer;
   private forceIgnore: ForceIgnore;
   private markedForDelete = false;
+  private destructiveChangesType: DestructiveChangesType;
 
   constructor(
     props: ComponentProperties,
@@ -134,7 +136,7 @@ export class SourceComponent implements MetadataComponent {
       return parentXml;
     }
     const children = normalizeToArray(
-      get(parentXml, `${this.parent.type.name}.${this.type.directoryName}`)
+      get(parentXml, `${this.parent.type.name}.${this.type.xmlElementName || this.type.directoryName}`)
     ) as T[];
     return children.find((c) => getString(c, this.type.uniqueIdElement) === this.name);
   }
@@ -152,8 +154,21 @@ export class SourceComponent implements MetadataComponent {
     return this.markedForDelete;
   }
 
-  public setMarkedForDelete(asDeletion: boolean): void {
-    this.markedForDelete = asDeletion;
+  public getDestructiveChangesType(): DestructiveChangesType {
+    return this.destructiveChangesType;
+  }
+
+  public setMarkedForDelete(destructiveChangeType?: DestructiveChangesType | boolean): void {
+    if (destructiveChangeType === false) {
+      this.markedForDelete = false;
+      // unset destructiveChangesType if it was already set
+      delete this.destructiveChangesType;
+    } else {
+      this.markedForDelete = true;
+      destructiveChangeType === DestructiveChangesType.PRE
+        ? (this.destructiveChangesType = DestructiveChangesType.PRE)
+        : (this.destructiveChangesType = DestructiveChangesType.POST);
+    }
   }
 
   private calculateRelativePath(fsPath: string): string {

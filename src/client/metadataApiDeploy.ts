@@ -10,7 +10,7 @@ import { MetadataConverter } from '../convert';
 import { ComponentLike, SourceComponent } from '../resolve';
 import { normalizeToArray } from '../utils';
 import { ComponentSet } from '../collections';
-import { frozenRegistry } from '../registry';
+import { registry } from '../registry';
 import { MissingJobIdError } from '../errors';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import {
@@ -152,11 +152,11 @@ export class DeployResult implements MetadataTransferResult {
    */
   private sanitizeDeployMessage(message: DeployMessage): DeployMessage {
     switch (message.componentType) {
-      case frozenRegistry.types.lightningcomponentbundle.name:
+      case registry.types.lightningcomponentbundle.name:
         // remove the markup scheme from fullName
         message.fullName = message.fullName.replace(/markup:\/\/c:/, '');
         break;
-      case frozenRegistry.types.document.name:
+      case registry.types.document.name:
         // strip document extension from fullName
         message.fullName = join(dirname(message.fullName), basename(message.fullName, extname(message.fullName)));
         break;
@@ -248,7 +248,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
 
     const connection = await this.getConnection();
 
-    return new Promise((resolve, reject) => {
+    await new Promise((resolve, reject) => {
       // eslint-disable-next-line no-underscore-dangle
       connection.metadata
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -259,6 +259,8 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
           // a null result seems to indicate the request was successful
           if (result) {
             reject(result);
+          } else {
+            resolve(result);
           }
         });
     });

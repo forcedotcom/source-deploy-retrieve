@@ -97,7 +97,7 @@ export {
 } from './collections';
 export {
   RegistryAccess,
-  frozenRegistry,
+  registry,
   MetadataRegistry,
   MetadataType,
   DecompositionStrategy,

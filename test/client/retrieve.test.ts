@@ -13,17 +13,11 @@ import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import * as fs from 'graceful-fs';
 import { createSandbox, SinonSandbox } from 'sinon';
-import {
-  ComponentSet,
-  frozenRegistry,
-  MetadataResolver,
-  QueryResult,
-  RequestStatus,
-  SourceComponent,
-  SourceRetrieveResult,
-  ToolingApi,
-} from '../../src';
+import { ToolingApi } from '../../src/client';
+import { MetadataResolver, SourceComponent } from '../../src/resolve';
+import { QueryResult, RequestStatus, SourceRetrieveResult } from '../../src/client/types';
 import { nls } from '../../src/i18n';
+import { ComponentSet, registry } from '../../src';
 
 const $$ = testSetup();
 describe('Tooling Retrieve', () => {
@@ -36,10 +30,9 @@ describe('Tooling Retrieve', () => {
   metaXMLFile += '\t<apiVersion>32.0</apiVersion>\n';
   metaXMLFile += '\t<status>Active</status>\n';
   metaXMLFile += '</ApexClass>';
-
   const mdComponents: SourceComponent[] = [
     new SourceComponent({
-      type: frozenRegistry.types.apexclass,
+      type: registry.types.apexclass,
       name: 'myTestClass',
       xml: path.join('file', 'path', 'myTestClass.cls-meta.xml'),
       content: path.join('file', 'path', 'myTestClass.cls'),
@@ -152,7 +145,7 @@ describe('Tooling Retrieve', () => {
 
   it('should retrieve an ApexClass using filepath', async () => {
     const component = new SourceComponent({
-      type: frozenRegistry.types.apexclass,
+      type: registry.types.apexclass,
       name: 'myTestClass',
       xml: path.join('file', 'path', 'myTestClass.cls-meta.xml'),
       content: path.join('file', 'path', 'myTestClass.cls'),
@@ -254,7 +247,7 @@ describe('Tooling Retrieve', () => {
   it('should throw an error when trying to retrieve more than one type at a time', async () => {
     mdComponents.push(
       new SourceComponent({
-        type: frozenRegistry.types.apexclass,
+        type: registry.types.apexclass,
         name: 'anotherClass',
         xml: path.join('file', 'path', 'anotherClass.cls-meta.xml'),
         content: path.join('file', 'path', 'anotherClass.cls'),

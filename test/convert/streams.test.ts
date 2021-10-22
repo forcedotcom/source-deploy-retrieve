@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-/* eslint no-underscore-dangle: 0, @typescript-eslint/no-misused-promises: 0 */
+
 import { basename, join, sep } from 'path';
 import { Readable, Writable } from 'stream';
 import * as fs from 'graceful-fs';
@@ -14,17 +14,17 @@ import { expect } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
-import { MetadataResolver, SourceComponent, ComponentSet } from '../../src';
-import { WriteInfo, WriterFormat } from '../../src';
+import { ComponentSet, MetadataResolver, SourceComponent } from '../../src';
+import { WriteInfo, WriterFormat } from '../../src/convert';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
 import { LibraryError } from '../../src/errors';
 import { mockRegistry } from '../mock/registry';
 import { COMPONENTS } from '../mock/registry/type-constants/xmlInFolderConstants';
-import { XML_NS_URL, XML_DECL, XML_NS_KEY } from '../../src/common';
+import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import {
-  TYPE_DIRECTORY,
   COMPONENT,
   CONTENT_NAMES,
+  TYPE_DIRECTORY,
   XML_NAMES,
 } from '../mock/registry/type-constants/matchingContentFileConstants';
 import { BaseMetadataTransformer } from '../../src/convert/transformers/baseMetadataTransformer';
@@ -74,7 +74,8 @@ describe('Streams', () => {
       // @ts-ignore constructor argument invalid
       const converter = new streams.ComponentConverter('badformat', mockRegistry);
       const expectedError = new LibraryError('error_convert_invalid_format', 'badformat');
-
+      // convert overrides node's Transform _transform method
+      // eslint-disable-next-line no-underscore-dangle
       converter._transform(component, '', (err: Error) => {
         try {
           expect(err.message).to.equal(expectedError.message);
@@ -89,6 +90,7 @@ describe('Streams', () => {
     it('should transform to metadata format', (done) => {
       const converter = new streams.ComponentConverter('metadata', mockRegistry);
 
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       converter._transform(component, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
@@ -106,6 +108,7 @@ describe('Streams', () => {
     it('should transform to source format', (done) => {
       const converter = new streams.ComponentConverter('source', mockRegistry);
 
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       converter._transform(component, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
@@ -132,6 +135,7 @@ describe('Streams', () => {
       const mergeSet = new ComponentSet([component]);
       const converter = new streams.ComponentConverter('source', mockRegistry, mergeSet);
 
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
@@ -160,6 +164,7 @@ describe('Streams', () => {
       const mergeSet = new ComponentSet([component, secondMergeComponent]);
       const converter = new streams.ComponentConverter('source', mockRegistry, mergeSet);
 
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
@@ -185,6 +190,7 @@ describe('Streams', () => {
       myComp.setMarkedForDelete();
       const converter = new streams.ComponentConverter('source', mockRegistry);
 
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       converter._transform(myComp, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
@@ -244,7 +250,6 @@ describe('Streams', () => {
     const absoluteRootDestination = join(sep, 'absolute', 'path');
     const fsWritableMock = new Writable();
     const readableMock = new Readable();
-    // eslint-disable-next-line no-underscore-dangle
     readableMock._read = (): void => {
       readableMock.push('hi');
       readableMock.push(null);

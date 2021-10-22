@@ -16,7 +16,7 @@ A JavaScript toolkit for working with Salesforce metadata. Built to support the 
 - Convert source files between [SFDX File Formats](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_source_file_format.htm)
 - Generate metadata packages with the option to automatically create a zip file
 - Deploy and retrieve metadata with an org
-- An [index](./src/registry/registry.json) to reference available metadata types.
+- An [index](./src/registry/metadataRegistry.json) to reference available metadata types.
 - Utilize promises with `async/await` syntax
 
 ## Usage

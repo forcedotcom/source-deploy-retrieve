@@ -11,12 +11,12 @@ import { createSandbox, match } from 'sinon';
 import { getString } from '@salesforce/ts-types';
 import * as fs from 'graceful-fs';
 import {
-  RetrieveResult,
   ComponentSet,
-  SourceComponent,
   ComponentStatus,
   FileResponse,
   MetadataApiRetrieveStatus,
+  RetrieveResult,
+  SourceComponent,
   VirtualTreeContainer,
 } from '../../src';
 import { MetadataApiRetrieveError, MissingJobIdError } from '../../src/errors';
@@ -28,8 +28,7 @@ import { DECOMPOSED_COMPONENT } from '../mock/registry/type-constants/decomposed
 
 const env = createSandbox();
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-describe('MetadataApiRetrieve', async () => {
+describe('MetadataApiRetrieve', () => {
   afterEach(() => env.restore());
 
   describe('Lifecycle', () => {

@@ -1,11 +1,11 @@
 {
   "extends": "@salesforce/dev-config/tsconfig",
   "compilerOptions": {
-    // Needed in order to import registry.json
+    // Needed in order to import metadataRegistry.json
     "resolveJsonModule": true,
     "outDir": "lib",
     "rootDir": "src"
   },
-  "include": ["./src/**/*.ts", "./src/registry/registry.json"],
+  "include": ["./src/**/*.ts", "./src/registry/metadataRegistry.json"],
   "exclude": ["node_modules", "lib", "examples"]
 }

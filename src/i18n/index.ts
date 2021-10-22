@@ -12,8 +12,7 @@ function loadMessageBundle(): Message {
   try {
     return new Message(messages);
   } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error('Cannot find messages in i18n module');
+    process.emitWarning('Cannot find messages in i18n module');
   }
 }
 

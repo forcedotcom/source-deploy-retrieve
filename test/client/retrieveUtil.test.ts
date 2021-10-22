@@ -10,15 +10,15 @@ import { expect } from 'chai';
 import { buildQuery, queryToFileMap } from '../../src/client/retrieveUtil';
 import { QueryResult } from '../../src/client/types';
 import { SourceComponent, VirtualTreeContainer } from '../../src/resolve';
-import { frozenRegistry } from '../../src';
-import { auraApplication, auraComponent, auraEvent, auraInterface, auraTokens } from './auraDefinitionMocks';
+import { registry } from '../../src';
+import { auraComponent, auraApplication, auraEvent, auraInterface, auraTokens } from './auraDefinitionMocks';
 import { lwcComponentMock } from './lightningComponentMocks';
 
 describe('Tooling Retrieve Util', () => {
   const rootPath = path.join('file', 'path');
   const classMDComponent: SourceComponent = SourceComponent.createVirtualComponent(
     {
-      type: frozenRegistry.types.apexclass,
+      type: registry.types.apexclass,
       name: 'myTestClass',
       xml: path.join(rootPath, 'myTestClass.cls-meta.xml'),
       content: path.join(rootPath, 'myTestClass.cls'),
@@ -32,7 +32,7 @@ describe('Tooling Retrieve Util', () => {
   );
   const pageMDComponent: SourceComponent = SourceComponent.createVirtualComponent(
     {
-      type: frozenRegistry.types.apexpage,
+      type: registry.types.apexpage,
       name: 'myPage',
       xml: path.join(rootPath, 'myPage.page-meta.xml'),
       content: path.join(rootPath, 'myPage.page'),
@@ -46,7 +46,7 @@ describe('Tooling Retrieve Util', () => {
   );
   const auraMDComponent: SourceComponent = SourceComponent.createVirtualComponent(
     {
-      type: frozenRegistry.types.auradefinitionbundle,
+      type: registry.types.auradefinitionbundle,
       name: 'testApp',
       xml: path.join(rootPath, 'testApp.app-meta.xml'),
       content: path.join(rootPath, 'testApp.app'),
@@ -197,7 +197,7 @@ describe('Tooling Retrieve Util', () => {
     const rendererPath = path.join(bundlePath, 'myAuraCmpRenderer.js');
     const auraComponentMD = SourceComponent.createVirtualComponent(
       {
-        type: frozenRegistry.types.auradefinitionbundle,
+        type: registry.types.auradefinitionbundle,
         name: 'myAuraCmp',
         xml: cmpMetaPath,
         content: bundlePath,
@@ -264,7 +264,7 @@ describe('Tooling Retrieve Util', () => {
     ]);
     const auraApplicationMD: SourceComponent = new SourceComponent(
       {
-        type: frozenRegistry.types.auradefinitionbundle,
+        type: registry.types.auradefinitionbundle,
         name: 'myAuraApp',
         xml: appMetaPath,
         content: bundlePath,
@@ -296,7 +296,7 @@ describe('Tooling Retrieve Util', () => {
     ]);
     const auraEventMD: SourceComponent = new SourceComponent(
       {
-        type: frozenRegistry.types.auradefinitionbundle,
+        type: registry.types.auradefinitionbundle,
         name: 'myAuraEvent',
         xml: eventMetaPath,
         content: bundlePath,
@@ -328,7 +328,7 @@ describe('Tooling Retrieve Util', () => {
     ]);
     const auraInterfaceMD: SourceComponent = new SourceComponent(
       {
-        type: frozenRegistry.types.auradefinitionbundle,
+        type: registry.types.auradefinitionbundle,
         name: 'myAuraInterface',
         xml: interfaceMetaPath,
         content: bundlePath,
@@ -356,7 +356,7 @@ describe('Tooling Retrieve Util', () => {
     const tokensMetaPath = path.join(bundlePath, 'myAuraToken.tokens-meta.xml');
     const auraTokenMD: SourceComponent = SourceComponent.createVirtualComponent(
       {
-        type: frozenRegistry.types.auradefinitionbundle,
+        type: registry.types.auradefinitionbundle,
         name: 'myAuraToken',
         xml: tokensMetaPath,
         content: bundlePath,
@@ -389,7 +389,7 @@ describe('Tooling Retrieve Util', () => {
     const metaPath = path.join(bundlePath, 'myLWCComponent.js-meta.xml');
     const lwcMD: SourceComponent = SourceComponent.createVirtualComponent(
       {
-        type: frozenRegistry.types.lightningcomponentbundle,
+        type: registry.types.lightningcomponentbundle,
         name: 'myLWCComponent',
         xml: metaPath,
         content: bundlePath,

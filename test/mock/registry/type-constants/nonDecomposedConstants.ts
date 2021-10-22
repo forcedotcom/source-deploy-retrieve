@@ -7,7 +7,7 @@
 
 import { join } from 'path';
 import { mockRegistryData } from '../mockRegistry';
-import { frozenRegistry, SourceComponent, VirtualDirectory, VirtualTreeContainer } from '../../../../src';
+import { registry, SourceComponent, VirtualDirectory, VirtualTreeContainer } from '../../../../src';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../../../src/common';
 import { JsToXml } from '../../../../src/convert/streams';
 
@@ -71,7 +71,7 @@ export const FULL_XML_CONTENT = {
   },
 };
 
-export const MATCHING_RULES_TYPE = frozenRegistry.types.matchingrules;
+export const MATCHING_RULES_TYPE = registry.types.matchingrules;
 // NOTE: directory name uses the string literal rather than getting from MATCHING_RULES_TYPE
 // so it explictly shows that this matches the xml field
 export const MATCHING_RULES_TYPE_DIRECTORY_NAME = 'matchingRules';

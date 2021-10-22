@@ -4,6 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+/* eslint  @typescript-eslint/unified-signatures:0 */
 import { j2xParser } from 'fast-xml-parser';
 import { Logger } from '@salesforce/core';
 import {
@@ -89,9 +90,26 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   /**
    * Resolve metadata components from a file or directory path in a file system.
    *
+   * @param fsPath File or directory path to resolve against
    * @returns ComponentSet of source resolved components
-   * @param input
    */
+  public static fromSource(fsPath: string): ComponentSet;
+  /**
+   * Resolve metadata components from multiple file paths or directory paths in a file system.
+   *
+   * @param fsPaths File or directory paths to resolve against
+   * @returns ComponentSet of source resolved components
+   */
+  public static fromSource(fsPaths: string[]): ComponentSet;
+  /**
+   * Resolve metadata components from file or directory paths in a file system.
+   * Customize the resolution process using an options object, such as specifying filters
+   * and resolving against a different file system abstraction (see {@link TreeContainer}).
+   *
+   * @param options
+   * @returns ComponentSet of source resolved components
+   */
+  public static fromSource(options: FromSourceOptions): ComponentSet;
   public static fromSource(input: string | string[] | FromSourceOptions): ComponentSet {
     let fsPaths = [];
     let registry: RegistryAccess;
@@ -128,6 +146,28 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     return set;
   }
 
+  /**
+   * Resolve components from a manifest file in XML format.
+   *
+   * see [Sample package.xml Manifest Files](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/manifest_samples.htm)
+   *
+   * @param manifestPath Path to XML file
+   * @returns Promise of a ComponentSet containing manifest components
+   */
+  public static async fromManifest(manifestPath: string): Promise<ComponentSet>;
+  /**
+   * Resolve components from a manifest file in XML format.
+   * Custo mize the resolution process using an options object. For example, resolve source-backed components
+   * while using the manifest file as a filter.
+   * process using an options object, such as resolving source-backed components
+   * and using the manifest file as a filter.
+   *
+   * see [Sample package.xml Manifest Files](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/manifest_samples.htm)
+   *
+   * @param options
+   * @returns Promise of a ComponentSet containing manifest components
+   */
+  public static async fromManifest(options: FromManifestOptions): Promise<ComponentSet>;
   public static async fromManifest(input: string | FromManifestOptions): Promise<ComponentSet> {
     const manifestPath = typeof input === 'string' ? input : input.manifestPath;
     const options = (typeof input === 'object' ? input : {}) as Partial<FromManifestOptions>;
@@ -136,7 +176,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const manifest = await manifestResolver.resolve(manifestPath);
 
     const resolveIncludeSet = options.resolveSourcePaths ? new ComponentSet([], options.registry) : undefined;
-
     const result = new ComponentSet([], options.registry);
     result.apiVersion = manifest.apiVersion;
     result.fullName = manifest.fullName;
@@ -151,11 +190,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       }
     };
 
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    const resolveDestructiveChanges = async (path: string, destructiveChangeType: DestructiveChangesType) => {
-      // eslint-disable-next-line no-shadow
-      const manifest = await manifestResolver.resolve(path);
-      for (const comp of manifest.components) {
+    const resolveDestructiveChanges = async (
+      path: string,
+      destructiveChangeType: DestructiveChangesType
+    ): Promise<void> => {
+      const destructiveManifest = await manifestResolver.resolve(path);
+      for (const comp of destructiveManifest.components) {
         addComponent(new SourceComponent({ type: comp.type, name: comp.fullName }), destructiveChangeType);
       }
     };

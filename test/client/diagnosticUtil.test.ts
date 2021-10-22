@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import { DiagnosticUtil } from '../../src/client/diagnosticUtil';
 import { SourceComponent } from '../../src/resolve/sourceComponent';
 import { DeployMessage } from '../../src/client/types';
-import { frozenRegistry } from '../../src';
+import { registry } from '../../src';
 
 type MockDeployMessage = {
   problem?: string;
@@ -31,7 +31,7 @@ describe('DiagnosticUtil', () => {
     const component = SourceComponent.createVirtualComponent(
       {
         name: 'Test',
-        type: frozenRegistry.types.apexclass,
+        type: registry.types.apexclass,
         content: join(classes, 'Test.cls'),
         xml: join(classes, 'Test.cls-meta.xml'),
       },
@@ -81,7 +81,7 @@ describe('DiagnosticUtil', () => {
     const component = SourceComponent.createVirtualComponent(
       {
         name: 'Test',
-        type: frozenRegistry.types.lightningcomponentbundle,
+        type: registry.types.lightningcomponentbundle,
         xml: join(bundlePath, 'test.js-meta.xml'),
         content: bundlePath,
       },
@@ -157,7 +157,7 @@ describe('DiagnosticUtil', () => {
     const component = SourceComponent.createVirtualComponent(
       {
         name: 'Test',
-        type: frozenRegistry.types.auradefinitionbundle,
+        type: registry.types.auradefinitionbundle,
         xml: join(bundlePath, 'test.app-meta.xml'),
         content: bundlePath,
       },

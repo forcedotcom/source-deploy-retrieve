@@ -80,13 +80,13 @@ export class ManifestResolver {
 
   // Use the folderType instead of the type from the manifest when:
   //  1. InFolder types: (report, dashboard, emailTemplate, document)
-  //    1a. type.inFolder === true (from registry.json) AND
+  //    1a. type.inFolder === true (from metadataRegistry.json) AND
   //    1b. The fullName doesn't contain a forward slash character AND
   //    1c. The fullName with a slash appended is contained in another member entry
   // OR
   //  2. Non-InFolder, folder types: (territory2, territory2Model, territory2Type, territory2Rule)
-  //    2a. type.inFolder !== true (from registry.json) AND
-  //    2b. type.folderType has a value (from registry.json) AND
+  //    2a. type.inFolder !== true (from metadataRegistry.json) AND
+  //    2b. type.folderType has a value (from metadataRegistry.json) AND
   //    2c. This type's parent type has a folderType that doesn't match its ID.
   private isNestedInFolder(fullName: string, type: MetadataType, parentType: MetadataType, members: string[]): boolean {
     // Quick short-circuit for non-folderTypes

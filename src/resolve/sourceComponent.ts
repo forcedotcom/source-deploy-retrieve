@@ -163,11 +163,10 @@ export class SourceComponent implements MetadataComponent {
       delete this.destructiveChangesType;
     } else {
       this.markedForDelete = true;
-      if (destructiveChangeType === DestructiveChangesType.PRE) {
-        this.destructiveChangesType = DestructiveChangesType.PRE;
-      } else {
-        this.destructiveChangesType = DestructiveChangesType.POST;
-      }
+      // eslint-disable-next-line no-unused-expressions
+      destructiveChangeType === DestructiveChangesType.PRE
+        ? (this.destructiveChangesType = DestructiveChangesType.PRE)
+        : (this.destructiveChangesType = DestructiveChangesType.POST);
     }
   }
 

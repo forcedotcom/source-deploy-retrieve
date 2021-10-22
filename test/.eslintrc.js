@@ -13,6 +13,8 @@ module.exports = {
     // Allow assert style expressions. i.e. expect(true).to.be.true
     'no-unused-expressions': 'off',
     '@typescript-eslint/ban-ts-ignore': 'off',
+    'no-shadow': 'off',
+    'no-underscore-dangle': 'off',
 
     // It is common for tests to stub out method.
     // Return types are defined by the source code. Allows for quick overwrites.

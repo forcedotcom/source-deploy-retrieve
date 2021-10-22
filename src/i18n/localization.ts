@@ -52,8 +52,7 @@ export class Message implements LocalizationProvider {
     }
 
     if (!possibleLabel) {
-      // eslint-disable-next-line no-console
-      console.warn(`Missing label for key: ${label}`);
+      process.emitWarning(`Missing label for key: ${label}`);
       possibleLabel = `${MISSING_LABEL_MSG} ${label}`;
 
       if (Array.isArray(args) && args.length >= 1) {
@@ -68,8 +67,9 @@ export class Message implements LocalizationProvider {
       const expectedNumArgs = possibleLabel.split('%s').length - 1;
       if (args.length !== expectedNumArgs) {
         // just log it, we might want to hide some in some languages on purpose
-        // eslint-disable-next-line no-console
-        console.log(`Arguments do not match for label '${label}', got ${args.length} but want ${expectedNumArgs}`);
+        process.emitWarning(
+          `Arguments do not match for label '${label}', got ${args.length} but want ${expectedNumArgs}`
+        );
       }
 
       args.unshift(possibleLabel);

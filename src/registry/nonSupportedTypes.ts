@@ -56,8 +56,5 @@ export const hasUnsupportedFeatures = (type: CoverageObjectType): boolean => {
   ) {
     return true;
   }
-  if (scratchDef.settings && settings.some((setting) => scratchDef.settings[setting])) {
-    return true;
-  }
-  return false;
+  return scratchDef.settings && settings.some((setting) => scratchDef.settings[setting]);
 };

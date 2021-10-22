@@ -24,7 +24,7 @@ describe('MatchingContentSourceAdapter', () => {
     },
   ]);
   const expectedComponent = new SourceComponent(COMPONENT, tree);
-  let adapter = new MatchingContentSourceAdapter(type, mockRegistry, undefined, tree);
+  const adapter = new MatchingContentSourceAdapter(type, mockRegistry, undefined, tree);
 
   it('Should return expected SourceComponent when given a root metadata xml path', () => {
     expect(adapter.getComponent(XML_PATHS[0])).to.deep.equal(expectedComponent);
@@ -51,7 +51,7 @@ describe('MatchingContentSourceAdapter', () => {
       seed: XML_PATHS[0],
       deny: [path],
     });
-    adapter = new MatchingContentSourceAdapter(type, mockRegistry, forceIgnore, tree);
+    const adapter = new MatchingContentSourceAdapter(type, mockRegistry, forceIgnore, tree);
     assert.throws(
       () => adapter.getComponent(path),
       UnexpectedForceIgnore,

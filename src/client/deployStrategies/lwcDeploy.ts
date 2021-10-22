@@ -9,11 +9,11 @@ import { normalize } from 'path';
 import { readFileSync } from 'graceful-fs';
 import { SourceComponent } from '../..';
 import {
-  SourceDeployResult,
-  ToolingDeployStatus,
   ComponentDeployment,
   ComponentStatus,
   LightningComponentResource,
+  SourceDeployResult,
+  ToolingDeployStatus,
 } from '../types';
 import { extName } from '../../utils';
 import { deployTypes } from '../toolingApi';
@@ -69,11 +69,10 @@ export class LwcDeploy extends BaseDeploy {
       };
       // This is to ensure that the base file is deployed first for lwc
       // otherwise there is a `no base file found` error
-      if (lightningResource.Format === 'js' && !isMetaSource) {
-        lightningResources.unshift(lightningResource);
-      } else {
-        lightningResources.push(lightningResource);
-      }
+      // eslint-disable-next-line no-unused-expressions
+      lightningResource.Format === 'js' && !isMetaSource
+        ? lightningResources.unshift(lightningResource)
+        : lightningResources.push(lightningResource);
     });
     return lightningResources;
   }

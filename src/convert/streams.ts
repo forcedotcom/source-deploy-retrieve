@@ -12,7 +12,7 @@ import { createWriteStream, existsSync } from 'graceful-fs';
 import { JsonMap } from '@salesforce/ts-types';
 import { j2xParser } from 'fast-xml-parser';
 import { Logger } from '@salesforce/core';
-import { SourceComponent, MetadataResolver } from '../resolve';
+import { MetadataResolver, SourceComponent } from '../resolve';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { SourcePath, XML_DECL } from '../common';
 import { ComponentSet } from '../collections';
@@ -21,6 +21,7 @@ import { RegistryAccess } from '../registry';
 import { MetadataTransformerFactory } from './transformers';
 import { ConvertContext } from './convertContext';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
+
 export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
@@ -208,6 +209,7 @@ export class ZipWriter extends ComponentWriter {
     pipeline(this.zip, this.getOutputStream());
   }
 
+  // required to be async to override Node's Writable class
   // eslint-disable-next-line @typescript-eslint/require-await
   public async _write(chunk: WriterFormat, encoding: string, callback: (err?: Error) => void): Promise<void> {
     let err: Error;

@@ -27,7 +27,8 @@ export function normalizeToArray<T>(entryOrArray: T | T[] | undefined): T[] {
 export function deepFreeze<T>(object: T): Readonly<T> {
   const propNames = Object.getOwnPropertyNames(object);
   for (const name of propNames) {
-    const val = object[name];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const val = (object as unknown as any)[name];
     if (val && typeof val === 'object') {
       deepFreeze(val);
     }

@@ -13,7 +13,7 @@ import * as fs from 'graceful-fs';
 import { MetadataConverter, SfdxFileFormat } from '../convert';
 import { MetadataTransferError } from '../errors';
 import { ComponentSet } from '../collections';
-import { AsyncResult, MetadataRequestStatus, RequestStatus, MetadataTransferResult } from './types';
+import { AsyncResult, MetadataRequestStatus, MetadataTransferResult, RequestStatus } from './types';
 
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
@@ -26,7 +26,7 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
   protected components: ComponentSet;
   protected logger: Logger;
   protected canceled = false;
-  private deployId?: string;
+  private transferId?: string;
   private event = new EventEmitter();
   private usernameOrConnection: string | Connection;
   private apiVersion: string;
@@ -35,12 +35,12 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
     this.usernameOrConnection = usernameOrConnection;
     this.components = components;
     this.apiVersion = apiVersion;
-    this.deployId = id;
+    this.transferId = id;
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
   public get id(): string | undefined {
-    return this.deployId;
+    return this.transferId;
   }
 
   /**
@@ -51,7 +51,7 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
   public async start(): Promise<AsyncResult> {
     this.canceled = false;
     const asyncResult = await this.pre();
-    this.deployId = asyncResult.id;
+    this.transferId = asyncResult.id;
     this.logger.debug(`Started metadata transfer. ID = ${this.id}`);
     return asyncResult;
   }

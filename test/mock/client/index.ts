@@ -18,8 +18,6 @@ export async function createMockZip(entries: string[]): Promise<Buffer> {
   await archive.finalize();
   const bufferWritable = new Writable();
   const buffers: Buffer[] = [];
-  // node method
-  // eslint-disable-next-line no-underscore-dangle
   bufferWritable._write = (chunk: Buffer, encoding: string, cb: () => void): void => {
     buffers.push(chunk);
     cb();

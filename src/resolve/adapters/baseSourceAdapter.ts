@@ -4,8 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { dirname, basename, sep } from 'path';
-import { SourceAdapter, MetadataXml } from '../types';
+import { basename, dirname, sep } from 'path';
+import { MetadataXml, SourceAdapter } from '../types';
 import { parseMetadataXml, parseNestedFullName } from '../../utils';
 import { UnexpectedForceIgnore } from '../../errors';
 import { ForceIgnore } from '../forceIgnore';

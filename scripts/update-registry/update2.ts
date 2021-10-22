@@ -9,7 +9,7 @@ import { CoverageObject, CoverageObjectType } from '../../src/registry/types';
 import { AnyJson } from '@salesforce/ts-types';
 import { getMissingTypes } from '../../test/utils/getMissingTypes';
 
-export const registry = fs.readJsonSync('./src/registry/registry.json') as unknown as MetadataRegistry;
+export const registry = fs.readJsonSync('./src/registry/metadataRegistry.json') as unknown as MetadataRegistry;
 export let metadataCoverage: CoverageObject;
 
 interface DescribeResult {
@@ -88,7 +88,7 @@ const registryUpdate = (missingTypesAsDescribeResult: DescribeResult[]) => {
     };
     registry.suffixes[suffix] = typeId;
   });
-  fs.writeJsonSync('./src/registry/registry.json', registry as unknown as AnyJson);
+  fs.writeJsonSync('./src/registry/metadataRegistry.json', registry as unknown as AnyJson);
 };
 
 const getMissingTypesAsDescribeResult = (missingTypes: [string, CoverageObjectType][]): DescribeResult[] => {

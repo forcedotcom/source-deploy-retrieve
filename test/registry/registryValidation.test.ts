@@ -6,7 +6,7 @@
  */
 import { expect } from 'chai';
 import { MetadataRegistry } from '../../src';
-import { frozenRegistry as defaultRegistry } from '../../src/registry/frozenRegistry';
+import { registry as defaultRegistry } from '../../src/registry/registry';
 import { MetadataType } from '../../src/registry/types';
 
 describe('Registry Validation', () => {

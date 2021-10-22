@@ -4,27 +4,26 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-/* eslint no-shadow: 0 */
 import { basename, dirname, join, resolve, sep } from 'path';
 import { getString, JsonArray, JsonMap } from '@salesforce/ts-types';
 import { isEmpty } from '@salesforce/kit';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSet } from '../collections';
-import { normalizeToArray } from '../utils/collections';
-import { RecompositionStrategy, TransformerStrategy } from '../registry/types';
+import { normalizeToArray } from '../utils';
+import { RecompositionStrategy, TransformerStrategy } from '../registry';
 import { MetadataComponent, SourceComponent } from '../resolve';
 import { JsToXml } from './streams';
 import { WriteInfo, WriterFormat } from './types';
 
 abstract class ConvertTransactionFinalizer<T> {
-  protected abstract status: T;
+  protected abstract transactionState: T;
 
   public setState(props: (state: T) => void): void {
-    props(this.status);
+    props(this.transactionState);
   }
 
   public get state(): T {
-    return this.status;
+    return this.transactionState;
   }
 
   public abstract finalize(defaultDirectory?: string): Promise<WriterFormat[]>;
@@ -48,7 +47,7 @@ export interface RecompositionState {
  * into a single file.
  */
 class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionState> {
-  protected status: RecompositionState = {};
+  protected transactionState: RecompositionState = {};
 
   // A cache of SourceComponent xml file paths to parsed contents so that identical child xml
   // files are not read and parsed multiple times.
@@ -143,12 +142,12 @@ export interface DecompositionState {
  * with in the conversion pipeline.
  */
 class DecompositionFinalizer extends ConvertTransactionFinalizer<DecompositionState> {
-  protected status: DecompositionState = {};
+  protected transactionState: DecompositionState = {};
 
   public async finalize(): Promise<WriterFormat[]> {
     const writerData: WriterFormat[] = [];
 
-    for (const toDecompose of Object.values(this.status)) {
+    for (const toDecompose of Object.values(this.transactionState)) {
       if (!toDecompose.foundMerge) {
         writerData.push({
           component: toDecompose.origin.parent ?? toDecompose.origin,
@@ -156,8 +155,7 @@ class DecompositionFinalizer extends ConvertTransactionFinalizer<DecompositionSt
         });
       }
     }
-
-    return new Promise((resolve) => resolve(writerData));
+    return new Promise((res) => res(writerData));
   }
 }
 
@@ -182,7 +180,7 @@ type ChildIndex = {
  * Inserts unclaimed child components into the parent that belongs to the default package
  */
 class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecompositionState> {
-  protected status: NonDecompositionState = {
+  protected transactionState: NonDecompositionState = {
     unclaimed: {},
     claimed: {},
   };
@@ -309,11 +307,13 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
     return childrenOfUnprocessed;
   }
 
-  private async recompose(children: JsonMap[], parent: SourceComponent): Promise<JsonMap> {
+  private async recompose(children: JsonMap[], parentSourceComponent: SourceComponent): Promise<JsonMap> {
     const parentXmlObj =
-      parent.type.strategies.recomposition === RecompositionStrategy.StartEmpty ? {} : await parent.parseXml();
-    const groupName = parent.type.directoryName;
-    const parentName = parent.type.name;
+      parentSourceComponent.type.strategies.recomposition === RecompositionStrategy.StartEmpty
+        ? {}
+        : await parentSourceComponent.parseXml();
+    const groupName = parentSourceComponent.type.directoryName;
+    const parentName = parentSourceComponent.type.name;
     for (const child of children) {
       if (!parentXmlObj[parentName]) {
         parentXmlObj[parentName] = { [XML_NS_KEY]: XML_NS_URL };
@@ -356,6 +356,7 @@ export class ConvertContext {
   public readonly decomposition = new DecompositionFinalizer();
   public readonly recomposition = new RecompositionFinalizer();
   public readonly nonDecomposition = new NonDecompositionFinalizer();
+  // todo
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async *executeFinalizers(defaultDirectory?: string): AsyncIterable<WriterFormat[]> {

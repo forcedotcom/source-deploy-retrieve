@@ -15,7 +15,7 @@ import {
   MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
 } from '../../mock/registry/type-constants/mixedContentDirectoryConstants';
 import { mockRegistry, mockRegistryData, mixedContentDirectory, mixedContentSingleFile } from '../../mock/registry';
-/* eslint no-shadow: 0 */
+
 describe('MixedContentSourceAdapter', () => {
   it('Should throw ExpectedSourceFilesError if content does not exist', () => {
     const type = mockRegistryData.types.mixedcontentsinglefile;

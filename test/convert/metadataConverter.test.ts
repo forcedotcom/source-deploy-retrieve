@@ -29,7 +29,7 @@ describe('MetadataConverter', () => {
 
   const converter = new MetadataConverter(mockRegistry);
   const components = xmlInFolder.COMPONENTS;
-  let packageName = 'test';
+  const packageName = 'test';
   const outputDirectory = join('path', 'to', 'output');
   const packageOutput = join(outputDirectory, packageName);
 
@@ -238,7 +238,7 @@ describe('MetadataConverter', () => {
 
     it('should write the fullName entry when packageName is provided', async () => {
       const timestamp = 123456;
-      packageName = 'examplePackage';
+      const packageName = 'examplePackage';
       const packagePath = join(outputDirectory, packageName);
       env.stub(Date, 'now').returns(timestamp);
       const cs = new ComponentSet(components, mockRegistry);

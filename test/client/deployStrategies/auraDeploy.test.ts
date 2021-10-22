@@ -13,9 +13,10 @@ import * as fs from 'graceful-fs';
 import { RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { nls } from '../../../src/i18n';
-import { AuraDefinition, ComponentStatus, ToolingCreateResult, ToolingDeployStatus } from '../../../src';
+import { ToolingDeployStatus, ComponentStatus } from '../../../src/client';
 import { AuraDeploy } from '../../../src/client/deployStrategies';
-import { auraComponent, auraContents, auraFiles, testAuraList } from './auraDeployMocks';
+import { ToolingCreateResult, AuraDefinition } from '../../../src/client/types';
+import { auraContents, auraComponent, auraFiles, testAuraList } from './auraDeployMocks';
 
 const $$ = testSetup();
 

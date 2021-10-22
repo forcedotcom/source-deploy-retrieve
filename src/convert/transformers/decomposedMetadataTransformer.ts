@@ -9,7 +9,7 @@ import { JsonMap } from '@salesforce/ts-types';
 import { MetadataComponent, SourceComponent } from '../../resolve';
 import { JsToXml } from '../streams';
 import { WriteInfo } from '../types';
-import { SourcePath, META_XML_SUFFIX, XML_NS_URL, XML_NS_KEY } from '../../common';
+import { META_XML_SUFFIX, SourcePath, XML_NS_KEY, XML_NS_URL } from '../../common';
 import { ComponentSet } from '../../collections';
 import { DecompositionState } from '../convertContext';
 import { DecompositionStrategy } from '../../registry';

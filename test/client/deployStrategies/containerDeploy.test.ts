@@ -13,9 +13,9 @@ import { Record, RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ContainerDeploy } from '../../../src/client/deployStrategies';
 import { nls } from '../../../src/i18n';
-import { ComponentStatus, QueryResult, ToolingCreateResult, ToolingDeployStatus } from '../../../src/client/types';
+import { QueryResult, ToolingDeployStatus, ComponentStatus, ToolingCreateResult } from '../../../src/client/types';
 import { SourceComponent } from '../../../src/resolve';
-import { frozenRegistry } from '../../../src';
+import { registry } from '../../../src';
 
 const $$ = testSetup();
 
@@ -33,25 +33,25 @@ describe('Container Deploy Strategy', () => {
     message: '',
   };
   const apexClassCmp = new SourceComponent({
-    type: frozenRegistry.types.apexclass,
+    type: registry.types.apexclass,
     name: 'one',
     content: 'file/path/one.cls',
     xml: 'file/path/one.cls-meta.xml',
   });
   const apexTriggerCmp = new SourceComponent({
-    type: frozenRegistry.types.apextrigger,
+    type: registry.types.apextrigger,
     name: 'one',
     content: 'file/path/one.trigger',
     xml: 'file/path/one.trigger-meta.xml',
   });
   const apexPageCmp = new SourceComponent({
-    type: frozenRegistry.types.apexpage,
+    type: registry.types.apexpage,
     name: 'one',
     content: 'file/path/one.page',
     xml: 'file/path/one.page-meta.xml',
   });
   const apexComponent = new SourceComponent({
-    type: frozenRegistry.types.apexcomponent,
+    type: registry.types.apexcomponent,
     name: 'one',
     content: 'file/path/one.component',
     xml: 'file/path/one.component-meta.xml',

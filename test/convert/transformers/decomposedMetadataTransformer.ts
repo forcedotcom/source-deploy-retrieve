@@ -23,7 +23,7 @@ import { nls } from '../../../src/i18n';
 const env = createSandbox();
 
 describe('DecomposedMetadataTransformer', () => {
-  let component = decomposed.DECOMPOSED_COMPONENT;
+  const component = decomposed.DECOMPOSED_COMPONENT;
 
   afterEach(() => env.restore());
 
@@ -176,7 +176,7 @@ describe('DecomposedMetadataTransformer', () => {
     });
 
     it('should push writes for component and its children when type config is "TopLevel"', async () => {
-      component = DECOMPOSED_TOP_LEVEL_COMPONENT;
+      const component = DECOMPOSED_TOP_LEVEL_COMPONENT;
       const { fullName, type } = component;
       const transformer = new DecomposedMetadataTransformer(mockRegistry);
       const root = join('main', 'default', type.directoryName, fullName);

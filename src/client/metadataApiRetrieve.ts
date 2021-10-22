@@ -17,12 +17,12 @@ import {
   ComponentStatus,
   FileResponse,
   MetadataApiRetrieveStatus,
-  RequestStatus,
-  RetrieveOptions,
   MetadataTransferResult,
-  RetrieveRequest,
   PackageOption,
+  RequestStatus,
   RetrieveExtractOptions,
+  RetrieveOptions,
+  RetrieveRequest,
 } from './types';
 
 export type MetadataApiRetrieveOptions = MetadataTransferOptions & RetrieveOptions & { registry?: RegistryAccess };

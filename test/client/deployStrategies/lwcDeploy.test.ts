@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { basename, join } from 'path';
+import { join, basename } from 'path';
 import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
@@ -16,8 +16,8 @@ import { nls } from '../../../src/i18n';
 import { LwcDeploy } from '../../../src/client/deployStrategies';
 import { LightningComponentResource, ToolingCreateResult } from '../../../src/client/types';
 import { SourceComponent, VirtualTreeContainer } from '../../../src/resolve';
-import { ComponentStatus, ToolingDeployStatus } from '../../../src/client';
-import { frozenRegistry } from '../../../src';
+import { ToolingDeployStatus, ComponentStatus } from '../../../src/client';
+import { registry } from '../../../src';
 
 const $$ = testSetup();
 
@@ -54,7 +54,7 @@ describe('LWC Deploy Strategy', () => {
   ]);
   const lwcComponent = new SourceComponent(
     {
-      type: frozenRegistry.types.lightningcomponentbundle,
+      type: registry.types.lightningcomponentbundle,
       name: 'mockLwcCmp',
       content: bundlePath,
       xml: join(bundlePath, 'mockLwcCmp.js-meta.xml'),

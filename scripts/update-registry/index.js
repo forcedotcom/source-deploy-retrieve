@@ -5,7 +5,7 @@ const path = require('path');
 const update = require('./update');
 const { run, execSilent } = require('../util');
 
-const REGISTRY_PATH = path.join(__dirname, '..', '..', 'src', 'registry', 'registry.json');
+const REGISTRY_PATH = path.join(__dirname, '..', '..', 'src', 'registry', 'metadataRegistry.json');
 
 function printHelp() {
   const message = `

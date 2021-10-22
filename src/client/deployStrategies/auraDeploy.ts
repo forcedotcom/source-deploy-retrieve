@@ -5,14 +5,14 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { readFileSync } from 'graceful-fs';
-import { extName, baseName } from '../../utils';
+import { baseName, extName } from '../../utils';
 import { SourcePath } from '../../common';
 import {
-  ComponentStatus,
-  ComponentDeployment,
-  ToolingDeployStatus,
-  SourceDeployResult,
   AuraDefinition,
+  ComponentDeployment,
+  ComponentStatus,
+  SourceDeployResult,
+  ToolingDeployStatus,
 } from '../types';
 import { deployTypes } from '../toolingApi';
 import { SourceComponent } from '../../resolve';
@@ -75,11 +75,10 @@ export class AuraDeploy extends BaseDeploy {
 
       // This is to ensure we return the correct project path when reporting errors
       // must be the file associated with the specified aura type
-      if (AuraDeploy.AURA_DEF_TYPES.includes(auraDef.DefType)) {
-        auraDefinitions.unshift(auraDef);
-      } else {
-        auraDefinitions.push(auraDef);
-      }
+      // eslint-disable-next-line no-unused-expressions
+      AuraDeploy.AURA_DEF_TYPES.includes(auraDef.DefType)
+        ? auraDefinitions.unshift(auraDef)
+        : auraDefinitions.push(auraDef);
     });
 
     return auraDefinitions;

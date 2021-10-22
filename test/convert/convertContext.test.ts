@@ -7,24 +7,24 @@
 
 import { Readable } from 'stream';
 import { join } from 'path';
-import chai = require('chai');
 
 import { createSandbox, match } from 'sinon';
+import chai = require('chai');
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import {
-  SourceComponent,
   ComponentSet,
-  WriterFormat,
   RegistryAccess,
-  VirtualTreeContainer,
+  SourceComponent,
   VirtualDirectory,
+  VirtualTreeContainer,
+  WriterFormat,
 } from '../../src';
-const { expect } = chai;
-
 import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { ConvertContext } from '../../src/convert/convertContext';
 import { JsToXml } from '../../src/convert/streams';
-import { matchingContentFile, mockRegistry, decomposed, nonDecomposed } from '../mock/registry';
+import { decomposed, matchingContentFile, mockRegistry, nonDecomposed } from '../mock/registry';
+
+const { expect } = chai;
 
 chai.use(deepEqualInAnyOrder);
 
@@ -331,7 +331,6 @@ describe('Convert Transaction Constructs', () => {
 
         env
           .stub(ComponentSet, 'fromSource')
-          // @ts-ignore
           .withArgs({ fsPaths: [match(nonDecomposed.NON_DEFAULT_DIR)], include: match.any })
           .returns(new ComponentSet([unprocessedComponent]));
 

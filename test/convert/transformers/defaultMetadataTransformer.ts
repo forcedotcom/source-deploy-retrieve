@@ -4,17 +4,17 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join, basename } from 'path';
+import { basename, join } from 'path';
 import { createSandbox } from 'sinon';
 import { expect } from 'chai';
 import {
   bundle,
-  xmlInFolder,
   document,
   matchingContentFile,
   mockRegistry,
   mockRegistryData,
   nestedTypes,
+  xmlInFolder,
 } from '../../mock/registry';
 import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';
 import { WriteInfo } from '../../../src/convert';
@@ -135,13 +135,11 @@ describe('DefaultMetadataTransformer', () => {
     it('should handle nested components (children)', async () => {
       // ex: territory2Models/someModel/rules/someRule.Territory2Rule-meta.xml
       const component = nestedTypes.NESTED_CHILD_COMPONENT;
-      const parentComponent = nestedTypes.NESTED_PARENT_COMPONENT;
-
       const expectedInfos: WriteInfo[] = [
         {
           output: join(
             component.parentType.directoryName,
-            parentComponent.fullName,
+            nestedTypes.NESTED_PARENT_COMPONENT.fullName,
             component.type.directoryName,
             `${nestedTypes.CHILD_COMPONENT_NAME}.${component.type.suffix}`
           ),

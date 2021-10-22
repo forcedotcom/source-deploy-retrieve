@@ -4,17 +4,18 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+
 import { dirname, join, normalize } from 'path';
 import { promises } from 'graceful-fs';
 import { SourceComponent } from '../resolve';
-import { DestructiveChangesType } from '../collections/types';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
+
 import { ConversionError, LibraryError } from '../errors';
 import { SourcePath } from '../common';
-import { ComponentSet } from '../collections';
+import { ComponentSet, DestructiveChangesType } from '../collections';
 import { RegistryAccess } from '../registry';
-import { ComponentReader, ComponentConverter, StandardWriter, pipeline, ZipWriter, ComponentWriter } from './streams';
-import { SfdxFileFormat, ConvertOutputConfig, ConvertResult, DirectoryConfig, ZipConfig } from './types';
+import { ComponentConverter, ComponentReader, ComponentWriter, pipeline, StandardWriter, ZipWriter } from './streams';
+import { ConvertOutputConfig, ConvertResult, DirectoryConfig, SfdxFileFormat, ZipConfig } from './types';
 
 export class MetadataConverter {
   public static readonly PACKAGE_XML_FILE = 'package.xml';
@@ -63,13 +64,17 @@ export class MetadataConverter {
           if (!isSource) {
             const manifestPath = join(packagePath, MetadataConverter.PACKAGE_XML_FILE);
             tasks.push(promises.writeFile(manifestPath, manifestContents));
-
             // For deploying destructive changes
-            if (cs.hasDeletes) {
-              const manifestFileName = this.getDestructiveManifestFileName(cs);
-              const destructiveManifestContents = cs.getPackageXml(undefined, true);
-              const destructiveManifestPath = join(packagePath, manifestFileName);
-              tasks.push(promises.writeFile(destructiveManifestPath, destructiveManifestContents));
+            const destructiveChangesTypes = cs.getTypesOfDestructiveChanges();
+            if (destructiveChangesTypes.length) {
+              // for each of the destructive changes in the component set, convert and write the correct metadata
+              // to each manifest
+              destructiveChangesTypes.map((destructiveChangesType) => {
+                const file = this.getDestructiveManifest(destructiveChangesType);
+                const destructiveManifestContents = cs.getPackageXml(4, destructiveChangesType);
+                const destructiveManifestPath = join(packagePath, file);
+                tasks.push(promises.writeFile(destructiveManifestPath, destructiveManifestContents));
+              });
             }
           }
           break;
@@ -83,12 +88,16 @@ export class MetadataConverter {
           writer = new ZipWriter(packagePath);
           if (!isSource) {
             (writer as ZipWriter).addToZip(manifestContents, MetadataConverter.PACKAGE_XML_FILE);
-
             // For deploying destructive changes
-            if (cs.hasDeletes) {
-              const manifestFileName = this.getDestructiveManifestFileName(cs);
-              const destructiveManifestContents = cs.getPackageXml(undefined, true);
-              (writer as ZipWriter).addToZip(destructiveManifestContents, manifestFileName);
+            const destructiveChangesTypes = cs.getTypesOfDestructiveChanges();
+            if (destructiveChangesTypes.length) {
+              // for each of the destructive changes in the component set, convert and write the correct metadata
+              // to each manifest
+              destructiveChangesTypes.map((destructiveChangeType) => {
+                const file = this.getDestructiveManifest(destructiveChangeType);
+                const destructiveManifestContents = cs.getPackageXml(4, destructiveChangeType);
+                (writer as ZipWriter).addToZip(destructiveManifestContents, file);
+              });
             }
           }
           break;
@@ -127,16 +136,6 @@ export class MetadataConverter {
     }
   }
 
-  private getDestructiveManifestFileName(cs: ComponentSet): string {
-    let manifestFileName: string;
-    if (cs.getDestructiveChangesType() === DestructiveChangesType.POST) {
-      manifestFileName = MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE;
-    } else {
-      manifestFileName = MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE;
-    }
-    return manifestFileName;
-  }
-
   private getPackagePath(outputConfig: DirectoryConfig | ZipConfig): SourcePath | undefined {
     let packagePath: SourcePath;
     const { genUniqueDir = true, outputDirectory, packageName, type } = outputConfig;
@@ -159,5 +158,13 @@ export class MetadataConverter {
       }
     }
     return packagePath;
+  }
+
+  private getDestructiveManifest(destructiveChangesType: DestructiveChangesType): string {
+    if (destructiveChangesType === DestructiveChangesType.POST) {
+      return MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE;
+    } else if (destructiveChangesType === DestructiveChangesType.PRE) {
+      return MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE;
+    }
   }
 }

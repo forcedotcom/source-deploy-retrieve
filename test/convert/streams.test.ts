@@ -182,7 +182,7 @@ describe('Streams', () => {
         type: component.type,
         xml: component.xml,
       });
-      myComp.setMarkedForDelete(true);
+      myComp.setMarkedForDelete();
       const converter = new streams.ComponentConverter('source', mockRegistry);
 
       converter._transform(myComp, '', async (err: Error, data: WriterFormat) => {

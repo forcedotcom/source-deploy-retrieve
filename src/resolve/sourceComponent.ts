@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join, basename } from 'path';
+import { basename, join } from 'path';
 import { parse } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { baseName, normalizeToArray, parseMetadataXml, trimUntil } from '../utils';
@@ -12,6 +12,7 @@ import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common';
 import { SfdxFileFormat } from '../convert';
 import { MetadataType } from '../registry';
 import { TypeInferenceError } from '../errors';
+import { DestructiveChangesType } from '../collections';
 import { MetadataComponent, VirtualDirectory } from './types';
 import { NodeFSTreeContainer, TreeContainer, VirtualTreeContainer } from './treeContainers';
 import { ForceIgnore } from './forceIgnore';
@@ -38,6 +39,7 @@ export class SourceComponent implements MetadataComponent {
   private treeContainer: TreeContainer;
   private forceIgnore: ForceIgnore;
   private markedForDelete = false;
+  private destructiveChangesType: DestructiveChangesType;
 
   public constructor(
     props: ComponentProperties,
@@ -150,8 +152,23 @@ export class SourceComponent implements MetadataComponent {
     return this.markedForDelete;
   }
 
-  public setMarkedForDelete(asDeletion: boolean): void {
-    this.markedForDelete = asDeletion;
+  public getDestructiveChangesType(): DestructiveChangesType {
+    return this.destructiveChangesType;
+  }
+
+  public setMarkedForDelete(destructiveChangeType?: DestructiveChangesType | boolean): void {
+    if (destructiveChangeType === false) {
+      this.markedForDelete = false;
+      // unset destructiveChangesType if it was already set
+      delete this.destructiveChangesType;
+    } else {
+      this.markedForDelete = true;
+      if (destructiveChangeType === DestructiveChangesType.PRE) {
+        this.destructiveChangesType = DestructiveChangesType.PRE;
+      } else {
+        this.destructiveChangesType = DestructiveChangesType.POST;
+      }
+    }
   }
 
   private calculateRelativePath(fsPath: string): string {

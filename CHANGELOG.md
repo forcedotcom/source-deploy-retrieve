@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.0.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.0...v5.0.1) (2021-10-21)
+
+
+### Bug Fixes
+
+* migrate registry.json from fork ([#482](https://github.com/forcedotcom/source-deploy-retrieve/issues/482)) ([cad3700](https://github.com/forcedotcom/source-deploy-retrieve/commit/cad370037ef529a575723f89061d46b9503a1a60))
+
+## [5.0.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.12...v5.0.0) (2021-10-21)
+
+### [4.5.12](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.11...v4.5.12) (2021-10-20)
+
+### [4.5.11](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.10...v4.5.11) (2021-10-13)
+
+### [4.5.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.9...v4.5.10) (2021-10-13)
+
+
+### Bug Fixes
+
+* use matching content file strategy ([#471](https://github.com/forcedotcom/source-deploy-retrieve/issues/471)) ([86b21d6](https://github.com/forcedotcom/source-deploy-retrieve/commit/86b21d69b913058f3b3fc641f6ef7ce9a0c2fe92))
+
+### [4.5.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.8...v4.5.9) (2021-10-12)
+
+
+### Bug Fixes
+
+* bump api version to 53.0 ([#476](https://github.com/forcedotcom/source-deploy-retrieve/issues/476)) ([a62aac5](https://github.com/forcedotcom/source-deploy-retrieve/commit/a62aac52037e40f3bfbf0ff516054d8096ecbfed))
+
+### [4.5.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.7...v4.5.8) (2021-10-12)
+
+### [4.5.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.6...v4.5.7) (2021-10-11)
+
+
+### Bug Fixes
+
+* use parent xml to parse child ([#470](https://github.com/forcedotcom/source-deploy-retrieve/issues/470)) ([440d2be](https://github.com/forcedotcom/source-deploy-retrieve/commit/440d2beda3cdd8cc64137ac64d361e230d8f5e30))
+
 ### [4.5.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.5...v4.5.6) (2021-10-07)
 
 ### [4.5.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.4...v4.5.5) (2021-10-06)

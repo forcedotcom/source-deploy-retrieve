@@ -99,7 +99,10 @@
       "suffix": "scf",
       "directoryName": "scontrols",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "experiencebundle": {
       "id": "experiencebundle",
@@ -277,6 +280,14 @@
       "name": "CustomPermission",
       "suffix": "customPermission",
       "directoryName": "customPermissions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "permissionsetlicensedefinition": {
+      "id": "permissionsetlicensedefinition",
+      "name": "PermissionSetLicenseDefinition",
+      "suffix": "permissionSetLicenseDefinition",
+      "directoryName": "permissionSetLicenseDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -1090,7 +1101,10 @@
       "suffix": "geodata",
       "directoryName": "eclair",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "wavelens": {
       "id": "wavelens",
@@ -2397,6 +2411,35 @@
       "directoryName": "dataMappingSchema",
       "strictDirectoryName": false
     },
+    "datamappingobjectdefinition": {
+      "id": "datamappingobjectdefinition",
+      "name": "DataMappingObjectDefinition",
+      "suffix": "dataMappingObjectDefinition",
+      "directoryName": "dataMappingObjectDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "children": {
+        "types": {
+          "datamappingfielddefinition": {
+            "id": "datamappingfielddefinition",
+            "name": "DataMappingFieldDefinition",
+            "directoryName": "fieldDefinitions",
+            "suffix": "fieldDefinition"
+          }
+        },
+        "directories": {
+          "fieldDefinitions": "datamappingfielddefinition"
+        },
+        "suffixes": {
+          "fieldDefinition": "datamappingfielddefinition"
+        }
+      },
+      "strategies": {
+        "adapter": "decomposed",
+        "transformer": "decomposed",
+        "decomposition": "topLevel"
+      }
+    },
     "datamapping": {
       "id": "datamapping",
       "name": "DataMapping",
@@ -2834,6 +2877,8 @@
     "ConversationVendorFieldDefinition": "conversationvendorfielddef",
     "schedulingRule": "schedulingrule",
     "dataMappingSchema": "datamappingschema",
+    "dataMappingObjectDefinition": "datamappingobjectdefinition",
+    "fieldDefinition": "datamappingfielddefinition",
     "dataMapping": "datamapping",
     "federationDataMappingUsage": "federationdatamappingusage",
     "connectedSystem": "connectedsystem",
@@ -2857,7 +2902,8 @@
     "internalOrganization": "internalorganization",
     "callCenterRoutingMap": "callcenterroutingmap",
     "view": "viewdefinition",
-    "slackapp": "slackapp"
+    "slackapp": "slackapp",
+    "permissionSetLicenseDefinition": "permissionsetlicensedefinition"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -2875,7 +2921,8 @@
     "accessControlPolicies": "accesscontrolpolicy",
     "integrationHub": "integrationhubsettings",
     "ObjectHierarchyRelationship": "objecthierarchyrelationship",
-    "IndustriesManufacturingSettings": "industriesmanufacturingsettings"
+    "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
+    "dataMappingObjectDefinitions": "datamappingobjectdefinition"
   },
   "childTypes": {
     "customlabel": "customlabels",
@@ -2908,7 +2955,8 @@
     "managedtopic": "managedtopics",
     "sharingcriteriarule": "sharingrules",
     "botversion": "bot",
-    "customfieldtranslation": "customobjecttranslation"
+    "customfieldtranslation": "customobjecttranslation",
+    "datamappingfielddefinition": "datamappingobjectdefinition"
   },
-  "apiVersion": "52.0"
+  "apiVersion": "53.0"
 }

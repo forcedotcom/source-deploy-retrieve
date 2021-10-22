@@ -15,6 +15,7 @@ import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { SfdxFileFormat } from '../convert';
 import { MetadataType } from '../registry';
 import { TypeInferenceError } from '../errors';
+import { DestructiveChangesType } from '../collections';
 
 export type ComponentProperties = {
   name: string;
@@ -38,6 +39,7 @@ export class SourceComponent implements MetadataComponent {
   private _tree: TreeContainer;
   private forceIgnore: ForceIgnore;
   private markedForDelete = false;
+  private destructiveChangesType: DestructiveChangesType;
 
   constructor(
     props: ComponentProperties,
@@ -102,20 +104,44 @@ export class SourceComponent implements MetadataComponent {
     return [];
   }
 
-  public async parseXml<T = JsonMap>(): Promise<T> {
-    if (this.xml) {
-      const contents = await this.tree.readFile(this.xml);
+  public async parseXml<T = JsonMap>(xmlFilePath?: string): Promise<T> {
+    const xml = xmlFilePath ?? this.xml;
+    if (xml) {
+      const contents = await this.tree.readFile(xml);
       return this.parse<T>(contents.toString());
     }
     return {} as T;
   }
 
-  public parseXmlSync<T = JsonMap>(): T {
-    if (this.xml) {
-      const contents = this.tree.readFileSync(this.xml);
+  public parseXmlSync<T = JsonMap>(xmlFilePath?: string): T {
+    const xml = xmlFilePath ?? this.xml;
+    if (xml) {
+      const contents = this.tree.readFileSync(xml);
       return this.parse<T>(contents.toString());
     }
     return {} as T;
+  }
+
+  /**
+   * As a performance enhancement, use the already parsed parent xml source
+   * to return the child section of xml source. This is useful for non-decomposed
+   * transformers where all child source components reference the parent's
+   * xml file to prevent re-reading the same file multiple times.
+   *
+   * @param parentXml parsed parent XMl source as an object
+   * @returns child section of the parent's xml
+   */
+  public parseFromParentXml<T = JsonMap>(parentXml: T): T {
+    if (!this.parent) {
+      return parentXml;
+    }
+    const children = normalizeToArray(
+      get(
+        parentXml,
+        `${this.parent.type.name}.${this.type.xmlElementName || this.type.directoryName}`
+      )
+    ) as T[];
+    return children.find((c) => getString(c, this.type.uniqueIdElement) === this.name);
   }
 
   public getPackageRelativePath(fsPath: string, format: SfdxFileFormat): string {
@@ -131,8 +157,21 @@ export class SourceComponent implements MetadataComponent {
     return this.markedForDelete;
   }
 
-  public setMarkedForDelete(asDeletion: boolean): void {
-    this.markedForDelete = asDeletion;
+  public getDestructiveChangesType(): DestructiveChangesType {
+    return this.destructiveChangesType;
+  }
+
+  public setMarkedForDelete(destructiveChangeType?: DestructiveChangesType | boolean): void {
+    if (destructiveChangeType === false) {
+      this.markedForDelete = false;
+      // unset destructiveChangesType if it was already set
+      delete this.destructiveChangesType;
+    } else {
+      this.markedForDelete = true;
+      destructiveChangeType === DestructiveChangesType.PRE
+        ? (this.destructiveChangesType = DestructiveChangesType.PRE)
+        : (this.destructiveChangesType = DestructiveChangesType.POST);
+    }
   }
 
   private calculateRelativePath(fsPath: string): string {
@@ -167,10 +206,7 @@ export class SourceComponent implements MetadataComponent {
     if (firstElement === this.type.name) {
       return parsed;
     } else if (this.parent) {
-      const children = normalizeToArray(
-        get(parsed, `${this.parent.type.name}.${this.type.directoryName}`)
-      ) as T[];
-      return children.find((c) => getString(c, this.type.uniqueIdElement) === this.name);
+      return this.parseFromParentXml(parsed);
     } else {
       return parsed;
     }

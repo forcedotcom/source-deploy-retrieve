@@ -12,7 +12,7 @@ import { createFiles } from '../utils';
 import { MetadataResolver, SourceComponent } from '../resolve';
 import { ComponentSet } from '../collections';
 import { RegistryAccess } from '../registry';
-import { SourceDeployResult, QueryResult, SourceRetrieveResult, RequestStatus } from './types';
+import { QueryResult, RequestStatus, SourceDeployResult, SourceRetrieveResult } from './types';
 import { buildQuery, queryToFileMap } from './retrieveUtil';
 import { getDeployStrategy } from './deployStrategies';
 
@@ -39,15 +39,11 @@ export const deployTypes = new Map([
 ]);
 
 export class ToolingApi {
-  protected connection: Connection;
-  protected resolver: MetadataResolver;
-  protected registry: RegistryAccess;
-
-  public constructor(connection: Connection, resolver: MetadataResolver, registry = new RegistryAccess()) {
-    this.connection = connection;
-    this.resolver = resolver;
-    this.registry = registry;
-  }
+  public constructor(
+    protected connection: Connection,
+    protected resolver: MetadataResolver,
+    protected registry = new RegistryAccess()
+  ) {}
 
   public async retrieveWithPaths(options: ToolingRetrieveOptions & { paths: string[] }): Promise<SourceRetrieveResult> {
     return this.retrieve({

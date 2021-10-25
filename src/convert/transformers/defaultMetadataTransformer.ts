@@ -8,8 +8,7 @@ import { basename, dirname, join } from 'path';
 import { META_XML_SUFFIX, SourcePath } from '../../common';
 import { SfdxFileFormat, WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve';
-import { trimUntil } from '../../utils/path';
-import { extName } from '../../utils';
+import { extName, trimUntil } from '../../utils';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 const ORIGINAL_SUFFIX_REGEX = new RegExp('(.)([a-zA-Z]+)(' + META_XML_SUFFIX + ')$');
@@ -22,12 +21,14 @@ const ORIGINAL_SUFFIX_REGEX = new RegExp('(.)([a-zA-Z]+)(' + META_XML_SUFFIX + '
  * files as-is.
  */
 export class DefaultMetadataTransformer extends BaseMetadataTransformer {
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
-    return new Promise((resolve) => resolve(this.getWriteInfos(component, 'metadata')));
+    return this.getWriteInfos(component, 'metadata');
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
-    return new Promise((resolve) => resolve(this.getWriteInfos(component, 'source', mergeWith)));
+    return this.getWriteInfos(component, 'source', mergeWith);
   }
 
   private getWriteInfos(

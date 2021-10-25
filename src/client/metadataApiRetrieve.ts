@@ -147,11 +147,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
    * Canceling a retrieve occurs immediately and requires no additional status
    * checks to the org, unlike {@link MetadataApiDeploy.cancel}.
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async cancel(): Promise<void> {
     this.canceled = true;
-    return new Promise<void>((resolve) => {
-      resolve();
-    });
   }
 
   protected async pre(): Promise<AsyncResult> {

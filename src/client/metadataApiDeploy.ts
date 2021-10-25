@@ -274,7 +274,8 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     return connection.deploy(zipBuffer, this.options.apiOptions);
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   protected async post(result: MetadataApiDeployStatus): Promise<DeployResult> {
-    return new Promise((resolve) => resolve(new DeployResult(result, this.components)));
+    return new DeployResult(result, this.components);
   }
 }

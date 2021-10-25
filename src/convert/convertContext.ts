@@ -144,6 +144,7 @@ export interface DecompositionState {
 class DecompositionFinalizer extends ConvertTransactionFinalizer<DecompositionState> {
   protected transactionState: DecompositionState = {};
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async finalize(): Promise<WriterFormat[]> {
     const writerData: WriterFormat[] = [];
 
@@ -155,7 +156,7 @@ class DecompositionFinalizer extends ConvertTransactionFinalizer<DecompositionSt
         });
       }
     }
-    return new Promise((res) => res(writerData));
+    return writerData;
   }
 }
 

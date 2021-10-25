@@ -16,6 +16,7 @@ import { DecompositionStrategy } from '../../registry';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     if (component.parent) {
       const { fullName: parentName } = component.parent;
@@ -44,7 +45,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       });
     }
     // noop since the finalizer will push the writes to the component writer
-    return new Promise((resolve) => resolve([]));
+    return [];
   }
 
   public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {

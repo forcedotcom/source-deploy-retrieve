@@ -3,8 +3,8 @@
   "compilerOptions": {
     // Needed in order to import metadataRegistry.json
     "resolveJsonModule": true,
-    "outDir": "lib",
-    "rootDir": "src"
+    "rootDir": ".",
+    "outDir": "lib"
   },
   "include": ["./src/**/*.ts", "./src/registry/metadataRegistry.json"],
   "exclude": ["node_modules", "lib", "examples"]

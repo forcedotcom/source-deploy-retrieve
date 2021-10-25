@@ -147,7 +147,8 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
 
   private async getComposedMetadataEntries(component: SourceComponent): Promise<[string, any][]> {
     const composedMetadata = (await component.parseXml())[component.type.name];
-    return Object.entries(composedMetadata);
+    // composedMetadata might be undefined if you call toSourceFormat() from a non-source-backed Component
+    return composedMetadata ? Object.entries(composedMetadata) : [];
   }
 
   /**

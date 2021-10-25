@@ -102,7 +102,7 @@ export class ComponentConverter extends Transform {
         // could maybe improve all this with lazy async collections...
         (await Promise.all(converts)).forEach((infos) => writeInfos.push(...infos));
       } catch (e) {
-        err = e;
+        err = e as Error;
       }
     }
 
@@ -120,7 +120,7 @@ export class ComponentConverter extends Transform {
         finalizerResult.forEach((result) => this.push(result));
       }
     } catch (e) {
-      err = e;
+      err = e as Error;
     }
     callback(err);
   }
@@ -190,7 +190,7 @@ export class StandardWriter extends ComponentWriter {
           this.converted.push(...this.resolver.getComponentsFromPath(fsPath));
         }
       } catch (e) {
-        err = e;
+        err = e as Error;
       }
     }
     callback(err);
@@ -206,7 +206,7 @@ export class ZipWriter extends ComponentWriter {
 
   public constructor(rootDestination?: SourcePath) {
     super(rootDestination);
-    pipeline(this.zip, this.getOutputStream());
+    void pipeline(this.zip, this.getOutputStream());
   }
 
   // required to be async to override Node's Writable class
@@ -218,7 +218,7 @@ export class ZipWriter extends ComponentWriter {
         this.addToZip(info.source, info.output);
       }
     } catch (e) {
-      err = e;
+      err = e as Error;
     }
     callback(err);
   }
@@ -228,7 +228,7 @@ export class ZipWriter extends ComponentWriter {
     try {
       await this.zip.finalize();
     } catch (e) {
-      err = e;
+      err = e as Error;
     }
     callback(err);
   }

@@ -80,10 +80,10 @@ export function queryToFileMap(
   const typeName = mdComponent.type.name;
   let apiVersion: string;
   let status: string;
-  let record;
+  let record: ApexRecord | VFRecord;
   // If output is defined it overrides where the component will be stored
   const mdSourcePath = overrideOutputPath ? trimMetaXmlSuffix(overrideOutputPath) : mdComponent.walkContent()[0];
-  const saveFilesMap = new Map();
+  const saveFilesMap = new Map<string, string>();
   switch (typeName) {
     case 'ApexClass':
     case 'ApexTrigger':

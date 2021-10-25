@@ -61,8 +61,8 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       if (childTypeId) {
         const childType = type.children.types[childTypeId];
         const tagValues = Array.isArray(tagValue) ? tagValue : [tagValue];
-        for (const value of tagValues) {
-          const entryName = (value.fullName || value.name) as string;
+        for (const value of tagValues as [{ fullName: string; name: string }]) {
+          const entryName = value.fullName || value.name;
           const childComponent: MetadataComponent = {
             fullName: `${parentFullName}.${entryName}`,
             type: childType,

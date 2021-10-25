@@ -73,7 +73,7 @@ export class Message implements LocalizationProvider {
       }
 
       args.unshift(possibleLabel);
-      // eslint-disable-next-line prefer-spread
+      // eslint-disable-next-line prefer-spread,@typescript-eslint/no-unsafe-return
       return util.format.apply(util, args);
     }
 

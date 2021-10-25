@@ -171,7 +171,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
       requestBody.packageNames = packageNames;
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore required callback
     return connection.metadata.retrieve(requestBody);
   }

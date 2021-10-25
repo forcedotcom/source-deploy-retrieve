@@ -54,9 +54,11 @@ export class ManifestResolver {
 
     const file = await this.tree.readFile(manifestPath);
 
-    const parsedManifest: ParsedPackageManifest = parseXml(file.toString(), {
-      stopNodes: ['version'],
-    }).Package;
+    const parsedManifest: ParsedPackageManifest = (
+      parseXml(file.toString(), {
+        stopNodes: ['version'],
+      }) as { Package: ParsedPackageManifest }
+    ).Package;
     const packageTypeMembers = normalizeToArray(parsedManifest.types);
     const apiVersion = parsedManifest.version;
 

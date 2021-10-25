@@ -82,6 +82,7 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
     let pollingOptions: PollingClient.Options = {
       frequency: Duration.milliseconds(100),
       timeout: Duration.minutes(60),
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       poll: this.poll.bind(this),
     };
     if (isNumber(frequencyOrOptions)) {
@@ -108,10 +109,11 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
       }
       return result;
     } catch (e) {
-      const error = new MetadataTransferError('md_request_fail', e.message);
-      if (error.stack && e.stack) {
+      const err = e as Error;
+      const error = new MetadataTransferError('md_request_fail', err.message);
+      if (error.stack && err.stack) {
         // append the original stack to this new error
-        error.stack += `\nDUE TO:\n${(e as Error).stack}`;
+        error.stack += `\nDUE TO:\n${err.stack}`;
       }
       if (this.event.listenerCount('error') === 0) {
         throw error;

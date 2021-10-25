@@ -109,7 +109,7 @@ export class LwcDeploy extends BaseDeploy {
           await this.toolingCreate(deployTypes.get(type), formattedDef);
         }
       } catch (e) {
-        const diagnostic = diagnosticUtil.parseDeployDiagnostic(this.component, e.message);
+        const diagnostic = diagnosticUtil.parseDeployDiagnostic(this.component, (e as Error).message);
         deployment.diagnostics.push(diagnostic);
       }
     }

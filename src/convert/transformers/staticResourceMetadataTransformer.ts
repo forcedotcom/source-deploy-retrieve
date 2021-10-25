@@ -43,7 +43,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       // Otherwise, you'll see errors like https://github.com/forcedotcom/cli/issues/1098
       const zip = createArchive('zip', { zlib: { level: 9 } });
       zip.directory(content, false);
-      zip.finalize();
+      void zip.finalize();
       contentSource = zip;
     } else {
       contentSource = component.tree.stream(content);

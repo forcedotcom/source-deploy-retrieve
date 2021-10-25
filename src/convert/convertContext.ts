@@ -297,7 +297,7 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
    * Returns the children of "unprocessed components"
    */
   private async getChildrenOfUnprocessedComponents(unprocessedComponents: SourceComponent[]): Promise<string[]> {
-    const childrenOfUnprocessed = [];
+    const childrenOfUnprocessed: string[] = [];
     for (const component of unprocessedComponents) {
       for (const child of component.getChildren()) {
         const xml = await child.parseXml();
@@ -342,11 +342,14 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
   }
 
   private getClaimedChildrenNames(): string[] {
-    return Object.values(this.state.claimed).reduce((x, y) => x.concat(Object.keys(y.children)), []);
+    return Object.values(this.state.claimed).reduce(
+      (x: unknown[], y) => x.concat(Object.keys(y.children)),
+      []
+    ) as string[];
   }
 
   private getParentsOfClaimedChildren(): SourceComponent[] {
-    return Object.values(this.state.claimed).reduce((x, y) => x.concat([y.parent]), []);
+    return Object.values(this.state.claimed).reduce((x: unknown[], y) => x.concat([y.parent]), []) as SourceComponent[];
   }
 }
 
@@ -357,7 +360,6 @@ export class ConvertContext {
   public readonly decomposition = new DecompositionFinalizer();
   public readonly recomposition = new RecompositionFinalizer();
   public readonly nonDecomposition = new NonDecompositionFinalizer();
-  // todo
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async *executeFinalizers(defaultDirectory?: string): AsyncIterable<WriterFormat[]> {

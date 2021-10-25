@@ -13,6 +13,7 @@ export class LazyCollection<T> implements Iterable<T> {
   }
 
   public first(): T | undefined {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.getIterator().next().value;
   }
 
@@ -21,6 +22,7 @@ export class LazyCollection<T> implements Iterable<T> {
     let next = iter.next();
     while (!next.done) {
       if (predicate(next.value)) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return next.value;
       }
       next = iter.next();
@@ -29,8 +31,10 @@ export class LazyCollection<T> implements Iterable<T> {
 
   public filter(predicate: (element: T) => boolean): this {
     const iter = this.getIterator();
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore: valid syntax - invokes the constructor of the instance's type
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return new this.constructor(
       (function* (): Iterable<T> {
         let next = iter.next();

@@ -249,7 +249,7 @@ export class MetadataResolver {
    * .../tabs/TestFolder.tab-meta.xml
    */
   private parseAsFolderMetadataXml(fsPath: string): string {
-    let folderName;
+    let folderName: string;
     const match = new RegExp(/(.+)-meta\.xml/).exec(basename(fsPath));
     if (match && !match[1].includes('.')) {
       const parts = fsPath.split(sep);

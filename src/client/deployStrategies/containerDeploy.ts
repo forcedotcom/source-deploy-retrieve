@@ -8,14 +8,15 @@ import { readFileSync } from 'graceful-fs';
 import { deployTypes } from '../toolingApi';
 import { DeployError } from '../../errors';
 import {
-  QueryResult,
-  SourceDeployResult,
-  ContainerAsyncRequest,
-  ToolingDeployStatus,
-  RecordId,
   ComponentDeployment,
   ComponentStatus,
+  ContainerAsyncRequest,
+  DeployMessage,
+  QueryResult,
+  RecordId,
+  SourceDeployResult,
   ToolingCreateResult,
+  ToolingDeployStatus,
 } from '../types';
 import { baseName } from '../../utils/path';
 import { SourceComponent } from '../../resolve';
@@ -102,7 +103,7 @@ export class ContainerDeploy extends BaseDeploy {
 
   public async pollContainerStatus(containerId: RecordId): Promise<ContainerAsyncRequest> {
     let count = 0;
-    let containerStatus;
+    let containerStatus: ContainerAsyncRequest;
     do {
       if (count > 0) {
         await this.sleep(100);
@@ -127,7 +128,7 @@ export class ContainerDeploy extends BaseDeploy {
       diagnostics: [],
     };
 
-    const messages = [];
+    const messages: DeployMessage[] = [];
     const { componentSuccesses, componentFailures } = containerRequest.DeployDetails;
     if (componentSuccesses) {
       if (Array.isArray(componentSuccesses)) {

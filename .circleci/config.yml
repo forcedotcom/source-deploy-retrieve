@@ -81,7 +81,7 @@ jobs:
             rm -rf node_modules/@salesforce/kit
             rm -rf node_modules/@salesforce/core
             yarn build
-            cp src/registry/registry.json lib/src/registry
+            cp src/registry/metadataRegistry.json lib/src/registry
           working_directory: node_modules/@salesforce/source-deploy-retrieve
       - run:
           name: Build the external project

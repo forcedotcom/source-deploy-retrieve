@@ -80,6 +80,11 @@ jobs:
             yarn install
             rm -rf node_modules/@salesforce/kit
             rm -rf node_modules/@salesforce/core
+            rm -rf node_modules/@typescript-eslint
+            rm -rf node_modules/eslint-plugin-header
+            rm -rf node_modules/eslint-plugin-import
+            rm -rf node_modules/eslint-plugin-jsdoc
+            rm -rf node_modules/eslint-plugin-prettier
             yarn build
             cp src/registry/metadataRegistry.json lib/src/registry
           working_directory: node_modules/@salesforce/source-deploy-retrieve

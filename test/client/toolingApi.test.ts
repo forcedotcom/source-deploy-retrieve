@@ -85,9 +85,7 @@ describe('Tooling API tests', () => {
       await deployLibrary.deployWithPaths('file/path/myTestClass.flexipage');
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal(
-        nls.localize('beta_tapi_membertype_unsupported_error', 'FlexiPage')
-      );
+      expect(e.message).to.equal(nls.localize('beta_tapi_membertype_unsupported_error', 'FlexiPage'));
       expect(e.name).to.be.equal('SourceClientError');
     }
   });

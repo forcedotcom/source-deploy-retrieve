@@ -12,12 +12,12 @@ import { registry } from '../../src';
 
 describe('registry completeness', () => {
   let metadataCoverage: CoverageObject;
-  let missingTypes: [string, CoverageObjectType][];
+  let missingTypes: Array<[string, CoverageObjectType]>;
 
   before(async function () {
     this.timeout(10000);
     metadataCoverage = JSON.parse(
-      (await got(`https://mdcoverage.secure.force.com/services/apexrest/report`)).body
+      (await got('https://mdcoverage.secure.force.com/services/apexrest/report')).body
     ) as CoverageObject;
 
     missingTypes = getMissingTypes(metadataCoverage, registry);

@@ -18,15 +18,9 @@ export const COMPONENT_FOLDER_PATH = join(TYPE_DIRECTORY, COMPONENT_FOLDER_NAME)
 export const COMPONENT_NAMES = ['a', 'b', 'c'];
 const CONTENT_FILE_EXTS = ['x', 'y', 'z'];
 
-export const FOLDER_XML_PATH = join(
-  TYPE_DIRECTORY,
-  `${COMPONENT_FOLDER_NAME}.${folderType.suffix}${META_XML_SUFFIX}`
-);
+export const FOLDER_XML_PATH = join(TYPE_DIRECTORY, `${COMPONENT_FOLDER_NAME}.${folderType.suffix}${META_XML_SUFFIX}`);
 export const FOLDER_XML_NAME = basename(FOLDER_XML_PATH);
-export const FOLDER_XML_PATH_MD_FORMAT = join(
-  TYPE_DIRECTORY,
-  `${COMPONENT_FOLDER_NAME}${META_XML_SUFFIX}`
-);
+export const FOLDER_XML_PATH_MD_FORMAT = join(TYPE_DIRECTORY, `${COMPONENT_FOLDER_NAME}${META_XML_SUFFIX}`);
 export const XML_PATHS = COMPONENT_NAMES.map((name) =>
   join(COMPONENT_FOLDER_PATH, `${name}.${type.suffix}${META_XML_SUFFIX}`)
 );

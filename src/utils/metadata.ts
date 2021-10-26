@@ -23,7 +23,5 @@ export function generateMetaXMLPath(sourcePath: string): string {
 }
 
 export function trimMetaXmlSuffix(sourcePath: string): string {
-  return sourcePath.endsWith(META_XML_SUFFIX)
-    ? sourcePath.replace(META_XML_SUFFIX, '')
-    : sourcePath;
+  return sourcePath.endsWith(META_XML_SUFFIX) ? sourcePath.replace(META_XML_SUFFIX, '') : sourcePath;
 }

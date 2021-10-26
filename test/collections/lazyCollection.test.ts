@@ -136,10 +136,7 @@ describe('LazyCollection', () => {
       const collection = new LazyCollection();
       let elementCount = 0;
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      for (const element of collection) {
-        elementCount += 1;
-      }
+      elementCount += collection.toArray().length;
 
       expect(elementCount).to.equal(0);
     });

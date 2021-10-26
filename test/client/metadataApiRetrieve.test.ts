@@ -5,34 +5,30 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { fail } from 'assert';
+import { join } from 'path';
 import { expect } from 'chai';
 import { createSandbox, match } from 'sinon';
-import { join } from 'path';
+import { getString } from '@salesforce/ts-types';
+import * as fs from 'graceful-fs';
 import {
-  RetrieveResult,
   ComponentSet,
-  SourceComponent,
   ComponentStatus,
   FileResponse,
   MetadataApiRetrieveStatus,
+  RetrieveResult,
+  SourceComponent,
   VirtualTreeContainer,
 } from '../../src';
 import { MetadataApiRetrieveError, MissingJobIdError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import {
-  MOCK_ASYNC_RESULT,
-  MOCK_DEFAULT_OUTPUT,
-  stubMetadataRetrieve,
-} from '../mock/client/transferOperations';
+import { MOCK_ASYNC_RESULT, MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
 import { mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
 import { DECOMPOSED_COMPONENT } from '../mock/registry/type-constants/decomposedConstants';
-import { getString } from '@salesforce/ts-types';
-import * as fs from 'graceful-fs';
 
 const env = createSandbox();
 
-describe('MetadataApiRetrieve', async () => {
+describe('MetadataApiRetrieve', () => {
   afterEach(() => env.restore());
 
   describe('Lifecycle', () => {
@@ -40,7 +36,7 @@ describe('MetadataApiRetrieve', async () => {
       it('should throw error if there are no components to retrieve', async () => {
         const toRetrieve = new ComponentSet([], mockRegistry);
         const { operation } = await stubMetadataRetrieve(env, {
-          toRetrieve: toRetrieve,
+          toRetrieve,
           merge: true,
         });
 
@@ -56,7 +52,7 @@ describe('MetadataApiRetrieve', async () => {
       it('should throw error if packageNames list is empty', async () => {
         const toRetrieve = new ComponentSet([], mockRegistry);
         const { operation } = await stubMetadataRetrieve(env, {
-          toRetrieve: toRetrieve,
+          toRetrieve,
           merge: true,
           packageOptions: [],
         });
@@ -434,11 +430,7 @@ describe('MetadataApiRetrieve', async () => {
         const component = COMPONENT;
         const retrievedSet = new ComponentSet([component]);
         const apiStatus = {};
-        const result = new RetrieveResult(
-          apiStatus as MetadataApiRetrieveStatus,
-          retrievedSet,
-          retrievedSet
-        );
+        const result = new RetrieveResult(apiStatus as MetadataApiRetrieveStatus, retrievedSet, retrievedSet);
 
         const responses = result.getFileResponses();
         const baseResponse: FileResponse = {
@@ -461,11 +453,7 @@ describe('MetadataApiRetrieve', async () => {
       const retrievedSet = new ComponentSet([component, newComponent]);
       const localSet = new ComponentSet([component]);
       const apiStatus = {};
-      const result = new RetrieveResult(
-        apiStatus as MetadataApiRetrieveStatus,
-        retrievedSet,
-        localSet
-      );
+      const result = new RetrieveResult(apiStatus as MetadataApiRetrieveStatus, retrievedSet, localSet);
 
       const responses = result.getFileResponses();
       const baseResponse: FileResponse = {
@@ -527,11 +515,7 @@ describe('MetadataApiRetrieve', async () => {
           },
         ],
       };
-      const result = new RetrieveResult(
-        apiStatus as MetadataApiRetrieveStatus,
-        retrievedSet,
-        retrievedSet
-      );
+      const result = new RetrieveResult(apiStatus as MetadataApiRetrieveStatus, retrievedSet, retrievedSet);
 
       const responses = result.getFileResponses();
       const expected: FileResponse[] = [
@@ -587,11 +571,7 @@ describe('MetadataApiRetrieve', async () => {
       const component = DECOMPOSED_COMPONENT;
       const retrievedSet = new ComponentSet([component]);
       const apiStatus = {};
-      const result = new RetrieveResult(
-        apiStatus as MetadataApiRetrieveStatus,
-        retrievedSet,
-        retrievedSet
-      );
+      const result = new RetrieveResult(apiStatus as MetadataApiRetrieveStatus, retrievedSet, retrievedSet);
 
       const responses = result.getFileResponses();
       const expected: FileResponse[] = [
@@ -617,11 +597,7 @@ describe('MetadataApiRetrieve', async () => {
       );
       const retrievedSet = new ComponentSet([component]);
       const apiStatus = {};
-      const result = new RetrieveResult(
-        apiStatus as MetadataApiRetrieveStatus,
-        retrievedSet,
-        retrievedSet
-      );
+      const result = new RetrieveResult(apiStatus as MetadataApiRetrieveStatus, retrievedSet, retrievedSet);
 
       const responses = result.getFileResponses();
       const expected: FileResponse[] = [

@@ -8,18 +8,19 @@ import { readFileSync } from 'graceful-fs';
 import { deployTypes } from '../toolingApi';
 import { DeployError } from '../../errors';
 import {
-  QueryResult,
-  SourceDeployResult,
-  ContainerAsyncRequest,
-  ToolingDeployStatus,
-  RecordId,
   ComponentDeployment,
   ComponentStatus,
+  ContainerAsyncRequest,
+  DeployMessage,
+  QueryResult,
+  RecordId,
+  SourceDeployResult,
   ToolingCreateResult,
+  ToolingDeployStatus,
 } from '../types';
 import { baseName } from '../../utils/path';
-import { BaseDeploy } from './baseDeploy';
 import { SourceComponent } from '../../resolve';
+import { BaseDeploy } from './baseDeploy';
 
 export class ContainerDeploy extends BaseDeploy {
   private static readonly CONTAINER_ASYNC_REQUEST = 'ContainerAsyncRequest';
@@ -59,11 +60,7 @@ export class ContainerDeploy extends BaseDeploy {
     const body = readFileSync(outboundFiles[0], 'utf8');
     const fileName = baseName(outboundFiles[0]);
 
-    const entityId = await this.getContentEntity(
-      this.component.type.name,
-      fileName,
-      this.namespace
-    );
+    const entityId = await this.getContentEntity(this.component.type.name, fileName, this.namespace);
 
     const containerMemberObject = {
       MetadataContainerId: id,
@@ -73,10 +70,7 @@ export class ContainerDeploy extends BaseDeploy {
       ...(entityId ? { contentEntityId: entityId } : {}),
     };
 
-    const containerMember = await this.toolingCreate(
-      deployTypes.get(this.component.type.name),
-      containerMemberObject
-    );
+    const containerMember = await this.toolingCreate(deployTypes.get(this.component.type.name), containerMemberObject);
 
     if (!containerMember.success) {
       throw new DeployError('beta_tapi_membertype_error', this.component.type.name);
@@ -96,9 +90,7 @@ export class ContainerDeploy extends BaseDeploy {
     return queryResult && queryResult.records.length === 1 ? queryResult.records[0].Id : undefined;
   }
 
-  public async createContainerAsyncRequest(
-    container: ToolingCreateResult
-  ): Promise<ToolingCreateResult> {
+  public async createContainerAsyncRequest(container: ToolingCreateResult): Promise<ToolingCreateResult> {
     const contAsyncRequest = await this.toolingCreate(ContainerDeploy.CONTAINER_ASYNC_REQUEST, {
       MetadataContainerId: container.id,
     });
@@ -111,7 +103,7 @@ export class ContainerDeploy extends BaseDeploy {
 
   public async pollContainerStatus(containerId: RecordId): Promise<ContainerAsyncRequest> {
     let count = 0;
-    let containerStatus;
+    let containerStatus: ContainerAsyncRequest;
     do {
       if (count > 0) {
         await this.sleep(100);
@@ -136,7 +128,7 @@ export class ContainerDeploy extends BaseDeploy {
       diagnostics: [],
     };
 
-    const messages = [];
+    const messages: DeployMessage[] = [];
     const { componentSuccesses, componentFailures } = containerRequest.DeployDetails;
     if (componentSuccesses) {
       if (Array.isArray(componentSuccesses)) {

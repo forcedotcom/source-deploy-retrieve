@@ -4,29 +4,28 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { asBoolean, isString } from '@salesforce/ts-types';
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
 import { SourceComponent, ZipTreeContainer } from '../resolve';
+import { MetadataApiRetrieveError, MissingJobIdError } from '../errors';
+import { normalizeToArray } from '../utils';
+import { RegistryAccess } from '../registry';
+import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import {
   AsyncResult,
   ComponentStatus,
   FileResponse,
   MetadataApiRetrieveStatus,
-  RequestStatus,
-  RetrieveOptions,
   MetadataTransferResult,
-  RetrieveRequest,
   PackageOption,
+  RequestStatus,
   RetrieveExtractOptions,
+  RetrieveOptions,
+  RetrieveRequest,
 } from './types';
-import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
-import { MetadataApiRetrieveError, MissingJobIdError } from '../errors';
-import { normalizeToArray } from '../utils';
-import { RegistryAccess } from '../registry';
-import { asBoolean, isString } from '@salesforce/ts-types';
 
-export type MetadataApiRetrieveOptions = MetadataTransferOptions &
-  RetrieveOptions & { registry?: RegistryAccess };
+export type MetadataApiRetrieveOptions = MetadataTransferOptions & RetrieveOptions & { registry?: RegistryAccess };
 
 export class RetrieveResult implements MetadataTransferResult {
   // This ComponentSet is most likely just the components on the local file
@@ -40,7 +39,7 @@ export class RetrieveResult implements MetadataTransferResult {
    * @param components The ComponentSet of retrieved source components
    * @param localComponents The ComponentSet used to create the retrieve request
    */
-  constructor(
+  public constructor(
     public readonly response: MetadataApiRetrieveStatus,
     public readonly components: ComponentSet,
     localComponents?: ComponentSet
@@ -61,7 +60,7 @@ export class RetrieveResult implements MetadataTransferResult {
 
       for (const message of retrieveMessages) {
         // match type name and fullname of problem component
-        const matches = message.problem.match(/.+'(.+)'.+'(.+)'/);
+        const matches = new RegExp(/.+'(.+)'.+'(.+)'/).exec(message.problem);
         if (matches) {
           const [typeName, fullName] = matches.slice(1);
           this.fileResponses.push({
@@ -89,9 +88,7 @@ export class RetrieveResult implements MetadataTransferResult {
       const baseResponse: FileResponse = {
         fullName,
         type: type.name,
-        state: this.localComponents.has(retrievedComponent)
-          ? ComponentStatus.Changed
-          : ComponentStatus.Created,
+        state: this.localComponents.has(retrievedComponent) ? ComponentStatus.Changed : ComponentStatus.Created,
       };
 
       if (!type.children) {
@@ -109,14 +106,11 @@ export class RetrieveResult implements MetadataTransferResult {
   }
 }
 
-export class MetadataApiRetrieve extends MetadataTransfer<
-  MetadataApiRetrieveStatus,
-  RetrieveResult
-> {
+export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveStatus, RetrieveResult> {
   public static DEFAULT_OPTIONS: Partial<MetadataApiRetrieveOptions> = { merge: false };
   private options: MetadataApiRetrieveOptions;
 
-  constructor(options: MetadataApiRetrieveOptions) {
+  public constructor(options: MetadataApiRetrieveOptions) {
     super(options);
     this.options = Object.assign({}, MetadataApiRetrieve.DEFAULT_OPTIONS, options);
   }
@@ -140,9 +134,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     const connection = await this.getConnection();
 
     // Cast RetrieveResult returned by jsForce to MetadataApiRetrieveStatus
-    const status = (await connection.metadata.checkRetrieveStatus(
-      this.id
-    )) as MetadataApiRetrieveStatus;
+    const status = (await connection.metadata.checkRetrieveStatus(this.id)) as MetadataApiRetrieveStatus;
     status.fileProperties = normalizeToArray(status.fileProperties);
     status.success = coerceBoolean(status.success);
     status.done = coerceBoolean(status.done);
@@ -155,6 +147,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
    * Canceling a retrieve occurs immediately and requires no additional status
    * checks to the org, unlike {@link MetadataApiDeploy.cancel}.
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async cancel(): Promise<void> {
     this.canceled = true;
   }
@@ -178,6 +171,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       requestBody.packageNames = packageNames;
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore required callback
     return connection.metadata.retrieve(requestBody);
   }
@@ -219,10 +213,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     const converter = new MetadataConverter(registry);
     const tree = await ZipTreeContainer.create(zip);
 
-    const packages: RetrieveExtractOptions[] = [
-      { zipTreeLocation: 'unpackaged', outputDir: output },
-    ];
+    const packages: RetrieveExtractOptions[] = [{ zipTreeLocation: 'unpackaged', outputDir: output }];
     const packageOpts = this.getPackageOptions();
+    // eslint-disable-next-line no-unused-expressions
     packageOpts?.forEach(({ name, outputDir }) => {
       packages.push({ zipTreeLocation: name, outputDir });
     });

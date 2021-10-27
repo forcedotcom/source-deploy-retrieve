@@ -4,8 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { mockRegistry, mockRegistryData } from '../../mock/registry';
 import { expect, assert } from 'chai';
+import { mockRegistry, mockRegistryData } from '../../mock/registry';
 import { DefaultSourceAdapter } from '../../../src/resolve/adapters/defaultSourceAdapter';
 import { MixedContentSourceAdapter } from '../../../src/resolve/adapters/mixedContentSourceAdapter';
 import { MatchingContentSourceAdapter } from '../../../src/resolve/adapters/matchingContentSourceAdapter';
@@ -40,18 +40,14 @@ describe('SourceAdapterFactory', () => {
   it('Should return MixedContentSourceAdapter for mixedContent AdapterId', () => {
     const type = mockRegistryData.types.mixedcontentsinglefile;
     const adapter = factory.getAdapter(type);
-    expect(adapter).to.deep.equal(
-      new MixedContentSourceAdapter(type, mockRegistry, undefined, tree)
-    );
+    expect(adapter).to.deep.equal(new MixedContentSourceAdapter(type, mockRegistry, undefined, tree));
     tree;
   });
 
   it('Should return MatchingContentSourceAdapter for matchingContentFile AdapterId', () => {
     const type = mockRegistryData.types.matchingcontentfile;
     const adapter = factory.getAdapter(type);
-    expect(adapter).to.deep.equal(
-      new MatchingContentSourceAdapter(type, mockRegistry, undefined, tree)
-    );
+    expect(adapter).to.deep.equal(new MatchingContentSourceAdapter(type, mockRegistry, undefined, tree));
   });
 
   it('Should return BundleSourceAdapter for bundle AdapterId', () => {

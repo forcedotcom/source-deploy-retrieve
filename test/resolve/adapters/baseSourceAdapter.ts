@@ -25,7 +25,7 @@ import { ForceIgnore, SourceComponent } from '../../../src';
 class TestAdapter extends BaseSourceAdapter {
   public readonly component: SourceComponent;
 
-  constructor(component: SourceComponent, forceIgnore?: ForceIgnore) {
+  public constructor(component: SourceComponent, forceIgnore?: ForceIgnore) {
     super(component.type, mockRegistry, forceIgnore);
     this.component = component;
   }
@@ -95,11 +95,7 @@ describe('BaseSourceAdapter', () => {
     const component = new SourceComponent({
       name: fullName,
       type: mockRegistryData.types.xmlinfolderfolder,
-      xml: join(
-        xmlInFolder.TYPE_DIRECTORY,
-        'subfolder',
-        `${xmlInFolder.COMPONENT_FOLDER_NAME}${META_XML_SUFFIX}`
-      ),
+      xml: join(xmlInFolder.TYPE_DIRECTORY, 'subfolder', `${xmlInFolder.COMPONENT_FOLDER_NAME}${META_XML_SUFFIX}`),
     });
     const adapter = new DefaultSourceAdapter(component.type, mockRegistry);
 

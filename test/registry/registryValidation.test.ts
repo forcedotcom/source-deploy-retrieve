@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { expect } from 'chai';
-import { dirname } from 'path';
 import { MetadataRegistry } from '../../src';
 import { registry as defaultRegistry } from '../../src/registry/registry';
 import { MetadataType } from '../../src/registry/types';
@@ -64,14 +63,10 @@ describe('Registry Validation', () => {
           // could be a parent type or a child type
           // exclusion for legacy suffixes
           if (registry.childTypes[typeId]) {
-            expect(
-              registry.types[registry.childTypes[typeId]].children.types[typeId].suffix
-            ).to.equal(suffix);
+            expect(registry.types[registry.childTypes[typeId]].children.types[typeId].suffix).to.equal(suffix);
           } else if (registry.types[typeId].legacySuffix) {
             // if there are legacy suffixes, this could be either that or the regular suffix
-            expect([registry.types[typeId].legacySuffix, registry.types[typeId].suffix]).to.include(
-              suffix
-            );
+            expect([registry.types[typeId].legacySuffix, registry.types[typeId].suffix]).to.include(suffix);
           } else {
             expect(registry.types[typeId].suffix).to.equal(suffix);
           }
@@ -92,9 +87,7 @@ describe('Registry Validation', () => {
 
       const suffixMap = new Map<string, string>();
       Object.values(registry.types)
-        .filter(
-          (type) => type.suffix && !type.strictDirectoryName && !knownExceptions.includes(type.name)
-        )
+        .filter((type) => type.suffix && !type.strictDirectoryName && !knownExceptions.includes(type.name))
         .map((type) => {
           // mapping for the type's suffix
           suffixMap.set(type.suffix, type.id);
@@ -119,10 +112,7 @@ describe('Registry Validation', () => {
       Object.values(registry.types).map((type) => {
         if (type.suffix) {
           // some bundle types have no suffix
-          suffixMap.set(
-            type.suffix,
-            suffixMap.has(type.suffix) ? [...suffixMap.get(type.suffix), type] : [type]
-          );
+          suffixMap.set(type.suffix, suffixMap.has(type.suffix) ? [...suffixMap.get(type.suffix), type] : [type]);
         }
       });
       suffixMap.forEach((types, suffix) => {
@@ -133,10 +123,7 @@ describe('Registry Validation', () => {
             .map((type) => type.name)
             .join(',')}) should have only 1 non-strict directory`, () => {
             const nonStrictTypes = types.filter((type) => !type.strictDirectoryName);
-            expect(
-              nonStrictTypes.length,
-              nonStrictTypes.map((type) => type.name).join(',')
-            ).lessThan(2);
+            expect(nonStrictTypes.length, nonStrictTypes.map((type) => type.name).join(',')).lessThan(2);
           });
         }
       });
@@ -163,7 +150,7 @@ describe('Registry Validation', () => {
 
     describe('strictDirectoryNames all map to types with strictDirectoryName and correct directoryName', () => {
       Object.entries(registry.strictDirectoryNames).forEach(([dirName, typeId]) => {
-        it(`directory member ${dirname} matches a parent type ${typeId}`, () => {
+        it(`directory member ${dirName} matches a parent type ${typeId}`, () => {
           expect(registry.types[typeId].directoryName).equal(dirName);
           expect(registry.types[typeId].strictDirectoryName).equal(true);
         });

@@ -134,10 +134,7 @@ export class SourceComponent implements MetadataComponent {
       return parentXml;
     }
     const children = normalizeToArray(
-      get(
-        parentXml,
-        `${this.parent.type.name}.${this.type.xmlElementName || this.type.directoryName}`
-      )
+      get(parentXml, `${this.parent.type.name}.${this.type.xmlElementName || this.type.directoryName}`)
     ) as T[];
     return children.find((c) => getString(c, this.type.uniqueIdElement) === this.name);
   }

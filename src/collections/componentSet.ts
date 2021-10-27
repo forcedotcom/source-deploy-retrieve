@@ -296,11 +296,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
           typeMap.set(typeName, []);
         }
         const typeEntry = typeMap.get(typeName);
-        if (
-          fullName === ComponentSet.WILDCARD &&
-          !type.supportsWildcardAndName &&
-          !destructiveType
-        ) {
+        if (fullName === ComponentSet.WILDCARD && !type.supportsWildcardAndName && !destructiveType) {
           // if the type doesn't support mixed wildcards and specific names, overwrite the names to be a wildcard
           typeMap.set(typeName, [fullName]);
         } else if (

@@ -4,11 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { BaseSourceAdapter } from './baseSourceAdapter';
 import { ExpectedSourceFilesError, UnexpectedForceIgnore } from '../../errors';
 import { SourcePath, META_XML_SUFFIX } from '../../common';
 import { extName } from '../../utils/path';
 import { SourceComponent } from '../sourceComponent';
+import { BaseSourceAdapter } from './baseSourceAdapter';
 
 /**
  * Handles types with a single content file with a matching file extension.

@@ -6,8 +6,8 @@
  */
 
 import { SourcePath } from '../common/types';
-import { SourceComponent } from '.';
 import { MetadataType } from '../registry';
+import { SourceComponent } from '.';
 
 export interface MetadataComponent {
   fullName: string;
@@ -38,7 +38,7 @@ export type VirtualFile = {
 
 export type VirtualDirectory = {
   dirPath: SourcePath;
-  children: (VirtualFile | string)[];
+  children: Array<VirtualFile | string>;
 };
 
 /**

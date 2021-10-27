@@ -73,15 +73,20 @@ jobs:
           command: yarn remove @salesforce/source-deploy-retrieve && yarn add $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME#$CIRCLE_SHA1
       - run:
           name: install/build <<parameters.external_project_git_url>> in node_modules
-          # why doesn't SDR put the registry.json in the lib when run from inside a node module?  I don't know.
+          # why doesn't SDR put the metadataRegistry.json in the lib when run from inside a node module?  I don't know.
           # prevent dependency conflicts between plugin's top-level imports and imported SDR's deps by deleting them
           # If there are real conflicts, we'll catch them when bumping a version in the plugin (same nuts)
           command: |
             yarn install
             rm -rf node_modules/@salesforce/kit
             rm -rf node_modules/@salesforce/core
+            rm -rf node_modules/@typescript-eslint
+            rm -rf node_modules/eslint-plugin-header
+            rm -rf node_modules/eslint-plugin-import
+            rm -rf node_modules/eslint-plugin-jsdoc
+            rm -rf node_modules/eslint-plugin-prettier
             yarn build
-            cp src/registry/registry.json lib/src/registry
+            cp src/registry/metadataRegistry.json lib/src/registry
           working_directory: node_modules/@salesforce/source-deploy-retrieve
       - run:
           name: Build the external project
@@ -147,10 +152,7 @@ workflows:
             parameters:
               os: [linux]
               node_version: [lts]
-              external_project_git_url:
-                [
-                  'https://github.com/salesforcecli/plugin-source'
-                ]
+              external_project_git_url: ['https://github.com/salesforcecli/plugin-source']
       - release-management/release-package:
           github-release: true
           post-job-steps:

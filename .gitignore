@@ -113,3 +113,9 @@ docs/
 
 # registry temporary files
 registryBuilder
+
+# -- CLEAN ALL
+node_modules
+
+# --
+# put files here you don't want cleaned with sf-clean

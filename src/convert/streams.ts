@@ -4,29 +4,30 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Archiver, create as createArchive } from 'archiver';
-import { createWriteStream, existsSync } from 'graceful-fs';
 import { basename, dirname, isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
 import { promisify } from 'util';
-import { SourceComponent, MetadataResolver } from '../resolve';
-import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
-import { ensureFileExists } from '../utils/fileSystemHandler';
-import { SourcePath, XML_DECL } from '../common';
-import { ConvertContext } from './convertContext';
-import { MetadataTransformerFactory } from './transformers';
+import { Archiver, create as createArchive } from 'archiver';
+import { createWriteStream, existsSync } from 'graceful-fs';
 import { JsonMap } from '@salesforce/ts-types';
 import { j2xParser } from 'fast-xml-parser';
+import { Logger } from '@salesforce/core';
+import { MetadataResolver, SourceComponent } from '../resolve';
+import { ensureFileExists } from '../utils/fileSystemHandler';
+import { SourcePath, XML_DECL } from '../common';
 import { ComponentSet } from '../collections';
 import { LibraryError } from '../errors';
 import { RegistryAccess } from '../registry';
-import { Logger } from '@salesforce/core';
+import { MetadataTransformerFactory } from './transformers';
+import { ConvertContext } from './convertContext';
+import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
+
 export const pipeline = promisify(cbPipeline);
 
 export class ComponentReader extends Readable {
   private iter: Iterator<SourceComponent>;
 
-  constructor(components: Iterable<SourceComponent>) {
+  public constructor(components: Iterable<SourceComponent>) {
     super({ objectMode: true });
     this.iter = this.createIterator(components);
   }
@@ -54,7 +55,7 @@ export class ComponentConverter extends Transform {
   private transformerFactory: MetadataTransformerFactory;
   private defaultDirectory: string;
 
-  constructor(
+  public constructor(
     targetFormat: SfdxFileFormat,
     registry: RegistryAccess,
     mergeSet?: ComponentSet,
@@ -78,7 +79,7 @@ export class ComponentConverter extends Transform {
     // Only transform components not marked for delete.
     if (!chunk.isMarkedForDelete()) {
       try {
-        const converts: Promise<WriteInfo[]>[] = [];
+        const converts: Array<Promise<WriteInfo[]>> = [];
         const transformer = this.transformerFactory.getTransformer(chunk);
         const mergeWith = this.mergeSet?.getSourceComponents(chunk);
         switch (this.targetFormat) {
@@ -101,7 +102,7 @@ export class ComponentConverter extends Transform {
         // could maybe improve all this with lazy async collections...
         (await Promise.all(converts)).forEach((infos) => writeInfos.push(...infos));
       } catch (e) {
-        err = e;
+        err = e as Error;
       }
     }
 
@@ -119,7 +120,7 @@ export class ComponentConverter extends Transform {
         finalizerResult.forEach((result) => this.push(result));
       }
     } catch (e) {
-      err = e;
+      err = e as Error;
     }
     callback(err);
   }
@@ -129,7 +130,7 @@ export abstract class ComponentWriter extends Writable {
   public forceIgnoredPaths?: Set<string> = new Set<string>();
   protected rootDestination?: SourcePath;
 
-  constructor(rootDestination?: SourcePath) {
+  public constructor(rootDestination?: SourcePath) {
     super({ objectMode: true });
     this.rootDestination = rootDestination;
   }
@@ -140,25 +141,19 @@ export class StandardWriter extends ComponentWriter {
   private resolver: MetadataResolver;
   private logger: Logger;
 
-  constructor(rootDestination: SourcePath, resolver = new MetadataResolver()) {
+  public constructor(rootDestination: SourcePath, resolver = new MetadataResolver()) {
     super(rootDestination);
     this.resolver = resolver;
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
-  public async _write(
-    chunk: WriterFormat,
-    encoding: string,
-    callback: (err?: Error) => void
-  ): Promise<void> {
+  public async _write(chunk: WriterFormat, encoding: string, callback: (err?: Error) => void): Promise<void> {
     let err: Error;
     if (chunk.writeInfos.length !== 0) {
       try {
         const toResolve: string[] = [];
         const writeTasks = chunk.writeInfos.map((info: WriteInfo) => {
-          const fullDest = isAbsolute(info.output)
-            ? info.output
-            : join(this.rootDestination, info.output);
+          const fullDest = isAbsolute(info.output) ? info.output : join(this.rootDestination, info.output);
           if (!existsSync(fullDest)) {
             for (const ignoredPath of this.forceIgnoredPaths) {
               if (
@@ -195,7 +190,7 @@ export class StandardWriter extends ComponentWriter {
           this.converted.push(...this.resolver.getComponentsFromPath(fsPath));
         }
       } catch (e) {
-        err = e;
+        err = e as Error;
       }
     }
     callback(err);
@@ -209,23 +204,21 @@ export class ZipWriter extends ComponentWriter {
   private zip: Archiver = createArchive('zip', { zlib: { level: 3 } });
   private buffers: Buffer[] = [];
 
-  constructor(rootDestination?: SourcePath) {
+  public constructor(rootDestination?: SourcePath) {
     super(rootDestination);
-    pipeline(this.zip, this.getOutputStream());
+    void pipeline(this.zip, this.getOutputStream());
   }
 
-  public async _write(
-    chunk: WriterFormat,
-    encoding: string,
-    callback: (err?: Error) => void
-  ): Promise<void> {
+  // required to be async to override Node's Writable class
+  // eslint-disable-next-line @typescript-eslint/require-await
+  public async _write(chunk: WriterFormat, encoding: string, callback: (err?: Error) => void): Promise<void> {
     let err: Error;
     try {
       for (const info of chunk.writeInfos) {
         this.addToZip(info.source, info.output);
       }
     } catch (e) {
-      err = e;
+      err = e as Error;
     }
     callback(err);
   }
@@ -235,7 +228,7 @@ export class ZipWriter extends ComponentWriter {
     try {
       await this.zip.finalize();
     } catch (e) {
-      err = e;
+      err = e as Error;
     }
     callback(err);
   }
@@ -249,6 +242,7 @@ export class ZipWriter extends ComponentWriter {
       return createWriteStream(this.rootDestination);
     } else {
       const bufferWritable = new Writable();
+      // eslint-disable-next-line no-underscore-dangle
       bufferWritable._write = (chunk: Buffer, encoding: string, cb: () => void): void => {
         this.buffers.push(chunk);
         cb();
@@ -257,7 +251,7 @@ export class ZipWriter extends ComponentWriter {
     }
   }
 
-  get buffer(): Buffer | undefined {
+  public get buffer(): Buffer | undefined {
     return Buffer.concat(this.buffers);
   }
 }
@@ -270,7 +264,7 @@ export class ZipWriter extends ComponentWriter {
 export class JsToXml extends Readable {
   private xmlObject: JsonMap;
 
-  constructor(xmlObject: JsonMap) {
+  public constructor(xmlObject: JsonMap) {
     super();
     this.xmlObject = xmlObject;
   }

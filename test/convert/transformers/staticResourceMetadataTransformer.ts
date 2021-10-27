@@ -4,9 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { join, basename } from 'path';
 import * as archiver from 'archiver';
 import { expect } from 'chai';
-import { join, basename } from 'path';
 import { createSandbox } from 'sinon';
 import { Entry, CentralDirectory, Open } from 'unzipper';
 import { SourceComponent, VirtualTreeContainer } from '../../../src';
@@ -29,9 +29,7 @@ describe('StaticResourceMetadataTransformer', () => {
   const transformer = new StaticResourceMetadataTransformer(mockRegistry);
 
   beforeEach(() =>
-    env
-      .stub(VirtualTreeContainer.prototype, 'stream')
-      .callsFake((fsPath: string) => new TestReadable(fsPath))
+    env.stub(VirtualTreeContainer.prototype, 'stream').callsFake((fsPath: string) => new TestReadable(fsPath))
   );
 
   afterEach(() => env.restore());
@@ -123,9 +121,7 @@ describe('StaticResourceMetadataTransformer', () => {
         await transformer.toMetadataFormat(component);
       } catch (e) {
         expect(e.message).to.equal(
-          nls.localize('error_static_resource_missing_resource_file', [
-            join('staticresources', component.name),
-          ])
+          nls.localize('error_static_resource_missing_resource_file', [join('staticresources', component.name)])
         );
       }
     });
@@ -310,9 +306,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equal(
-        expectedInfos
-      );
+      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equal(expectedInfos);
     });
 
     it('should merge output with merge component when content is single file', async () => {
@@ -352,9 +346,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equal(
-        expectedInfos
-      );
+      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equal(expectedInfos);
     });
   });
 });

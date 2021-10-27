@@ -4,8 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { mockRegistryData } from '../mockRegistry';
 import { join } from 'path';
+import { mockRegistryData } from '../mockRegistry';
 import { SourceComponent } from '../../../../src';
 
 const parentType = mockRegistryData.types.nestedparent;

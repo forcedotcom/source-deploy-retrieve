@@ -22,10 +22,7 @@ export const DECOMPOSED_CHILD_XML_PATH_1 = join(DECOMPOSED_PATH, DECOMPOSED_CHIL
 export const DECOMPOSED_CHILD_DIR = 'xs';
 export const DECOMPOSED_CHILD_DIR_PATH = join(DECOMPOSED_PATH, DECOMPOSED_CHILD_DIR);
 export const DECOMPOSED_CHILD_XML_NAME_2 = 'w.x-meta.xml';
-export const DECOMPOSED_CHILD_XML_PATH_2 = join(
-  DECOMPOSED_CHILD_DIR_PATH,
-  DECOMPOSED_CHILD_XML_NAME_2
-);
+export const DECOMPOSED_CHILD_XML_PATH_2 = join(DECOMPOSED_CHILD_DIR_PATH, DECOMPOSED_CHILD_XML_NAME_2);
 export const DECOMPOSED_VIRTUAL_FS: VirtualDirectory[] = [
   {
     dirPath: DECOMPOSED_PATH,
@@ -43,9 +40,7 @@ export const DECOMPOSED_VIRTUAL_FS: VirtualDirectory[] = [
   },
   {
     dirPath: DECOMPOSED_CHILD_DIR_PATH,
-    children: [
-      { name: DECOMPOSED_CHILD_XML_NAME_2, data: Buffer.from('<X><test>child2</test></X>') },
-    ],
+    children: [{ name: DECOMPOSED_CHILD_XML_NAME_2, data: Buffer.from('<X><test>child2</test></X>') }],
   },
 ];
 export const DECOMPOSED_COMPONENT = SourceComponent.createVirtualComponent(

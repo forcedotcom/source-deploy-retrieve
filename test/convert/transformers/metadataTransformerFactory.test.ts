@@ -23,18 +23,14 @@ describe('MetadataTransformerFactory', () => {
   it('should return DefaultMetadataTransformer', () => {
     const component = matchingContentFile.COMPONENT;
     const factory = new MetadataTransformerFactory(mockRegistry);
-    expect(factory.getTransformer(component)).to.deep.equal(
-      new DefaultMetadataTransformer(mockRegistry)
-    );
+    expect(factory.getTransformer(component)).to.deep.equal(new DefaultMetadataTransformer(mockRegistry));
   });
 
   it('should return DecomposedMetadataTransformer', () => {
     const component = DECOMPOSED_COMPONENT;
     const context = new ConvertContext();
     const factory = new MetadataTransformerFactory(mockRegistry, context);
-    expect(factory.getTransformer(component)).to.deep.equal(
-      new DecomposedMetadataTransformer(mockRegistry, context)
-    );
+    expect(factory.getTransformer(component)).to.deep.equal(new DecomposedMetadataTransformer(mockRegistry, context));
   });
 
   it('should return NonDecomposedMetadataTransformer', () => {
@@ -49,18 +45,14 @@ describe('MetadataTransformerFactory', () => {
   it('should return StaticResourceMetadataTransformer', () => {
     const component = mixedContentSingleFile.COMPONENT;
     const factory = new MetadataTransformerFactory(mockRegistry);
-    expect(factory.getTransformer(component)).to.deep.equal(
-      new StaticResourceMetadataTransformer(mockRegistry)
-    );
+    expect(factory.getTransformer(component)).to.deep.equal(new StaticResourceMetadataTransformer(mockRegistry));
   });
 
   it('should return transformer that maps to parent type of a component', () => {
     const [child] = DECOMPOSED_COMPONENT.getChildren();
     const context = new ConvertContext();
     const factory = new MetadataTransformerFactory(mockRegistry, context);
-    expect(factory.getTransformer(child)).to.deep.equal(
-      new DecomposedMetadataTransformer(mockRegistry, context)
-    );
+    expect(factory.getTransformer(child)).to.deep.equal(new DecomposedMetadataTransformer(mockRegistry, context));
   });
 
   it('should throw an error for a missing transformer mapping', () => {

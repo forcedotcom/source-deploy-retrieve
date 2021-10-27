@@ -5,26 +5,26 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { basename, join, sep } from 'path';
+import { Readable, Writable } from 'stream';
 import * as fs from 'graceful-fs';
 import * as archiver from 'archiver';
 import { Logger } from '@salesforce/core';
+import { expect } from 'chai';
+import { createSandbox, SinonStub } from 'sinon';
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
-import { expect } from 'chai';
-import { basename, join, sep } from 'path';
-import { createSandbox, SinonStub } from 'sinon';
-import { Readable, Writable } from 'stream';
-import { MetadataResolver, SourceComponent, ComponentSet } from '../../src';
+import { ComponentSet, MetadataResolver, SourceComponent } from '../../src';
 import { WriteInfo, WriterFormat } from '../../src/convert';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
 import { LibraryError } from '../../src/errors';
 import { mockRegistry } from '../mock/registry';
 import { COMPONENTS } from '../mock/registry/type-constants/xmlInFolderConstants';
-import { XML_NS_URL, XML_DECL, XML_NS_KEY } from '../../src/common';
+import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import {
-  TYPE_DIRECTORY,
   COMPONENT,
   CONTENT_NAMES,
+  TYPE_DIRECTORY,
   XML_NAMES,
 } from '../mock/registry/type-constants/matchingContentFileConstants';
 import { BaseMetadataTransformer } from '../../src/convert/transformers/baseMetadataTransformer';
@@ -33,13 +33,10 @@ const env = createSandbox();
 
 class TestTransformer extends BaseMetadataTransformer {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
+  public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     return [{ output: '/type/file.m', source: new Readable() }];
   }
-  async toSourceFormat(
-    component: SourceComponent,
-    mergeWith?: SourceComponent
-  ): Promise<WriteInfo[]> {
+  public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
     const output = mergeWith ? mergeWith.content || mergeWith.xml : '/type/file.s';
     return [{ output, source: new Readable() }];
   }
@@ -77,7 +74,8 @@ describe('Streams', () => {
       // @ts-ignore constructor argument invalid
       const converter = new streams.ComponentConverter('badformat', mockRegistry);
       const expectedError = new LibraryError('error_convert_invalid_format', 'badformat');
-
+      // convert overrides node's Transform _transform method
+      // eslint-disable-next-line no-underscore-dangle
       converter._transform(component, '', (err: Error) => {
         try {
           expect(err.message).to.equal(expectedError.message);
@@ -92,6 +90,7 @@ describe('Streams', () => {
     it('should transform to metadata format', (done) => {
       const converter = new streams.ComponentConverter('metadata', mockRegistry);
 
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       converter._transform(component, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
@@ -109,6 +108,7 @@ describe('Streams', () => {
     it('should transform to source format', (done) => {
       const converter = new streams.ComponentConverter('source', mockRegistry);
 
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       converter._transform(component, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
@@ -135,6 +135,7 @@ describe('Streams', () => {
       const mergeSet = new ComponentSet([component]);
       const converter = new streams.ComponentConverter('source', mockRegistry, mergeSet);
 
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
@@ -163,6 +164,7 @@ describe('Streams', () => {
       const mergeSet = new ComponentSet([component, secondMergeComponent]);
       const converter = new streams.ComponentConverter('source', mockRegistry, mergeSet);
 
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
@@ -188,6 +190,7 @@ describe('Streams', () => {
       myComp.setMarkedForDelete();
       const converter = new streams.ComponentConverter('source', mockRegistry);
 
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       converter._transform(myComp, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
@@ -277,10 +280,7 @@ describe('Streams', () => {
           source: readableMock,
         },
         {
-          output: join(
-            absoluteRootDestination,
-            component.getPackageRelativePath(component.xml, 'metadata')
-          ),
+          output: join(absoluteRootDestination, component.getPackageRelativePath(component.xml, 'metadata')),
           source: readableMock,
         },
       ],
@@ -324,10 +324,7 @@ describe('Streams', () => {
           expect(err).to.be.undefined;
           expect(ensureFile.firstCall.args[0]).to.equal(join(root, basename(COMPONENT.xml)));
           expect(ensureFile.secondCall.args[0]).to.equal(join(root, basename(COMPONENT.content)));
-          expect(pipelineStub.firstCall.args).to.deep.equal([
-            chunk.writeInfos[0].source,
-            fsWritableMock,
-          ]);
+          expect(pipelineStub.firstCall.args).to.deep.equal([chunk.writeInfos[0].source, fsWritableMock]);
         });
       });
 
@@ -335,33 +332,23 @@ describe('Streams', () => {
         pipelineStub.resolves();
 
         const formatWithAbsoluteOutput: WriterFormat = {
-          component: component,
+          component,
           writeInfos: [
             {
               source: readableMock,
-              output: join(
-                absoluteRootDestination,
-                component.getPackageRelativePath(component.xml, 'metadata')
-              ),
+              output: join(absoluteRootDestination, component.getPackageRelativePath(component.xml, 'metadata')),
             },
             {
               source: readableMock,
-              output: join(
-                absoluteRootDestination,
-                component.getPackageRelativePath(component.content, 'metadata')
-              ),
+              output: join(absoluteRootDestination, component.getPackageRelativePath(component.content, 'metadata')),
             },
           ],
         };
 
         await writer._write(formatWithAbsoluteOutput, '', (err: Error) => {
           expect(err).to.be.undefined;
-          expect(ensureFile.firstCall.args).to.deep.equal([
-            formatWithAbsoluteOutput.writeInfos[0].output,
-          ]);
-          expect(ensureFile.secondCall.args).to.deep.equal([
-            formatWithAbsoluteOutput.writeInfos[1].output,
-          ]);
+          expect(ensureFile.firstCall.args).to.deep.equal([formatWithAbsoluteOutput.writeInfos[0].output]);
+          expect(ensureFile.secondCall.args).to.deep.equal([formatWithAbsoluteOutput.writeInfos[1].output]);
           expect(pipelineStub.firstCall.args).to.deep.equal([
             formatWithAbsoluteOutput.writeInfos[0].source,
             fsWritableMock,

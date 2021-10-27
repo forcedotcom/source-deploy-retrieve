@@ -6,8 +6,8 @@
  */
 import { dirname, join, sep } from 'path';
 import { generateMetaXML, generateMetaXMLPath, trimMetaXmlSuffix } from '../utils';
-import { ApexRecord, AuraRecord, LWCRecord, VFRecord, QueryResult } from './types';
 import { SourceComponent } from '../resolve';
+import { ApexRecord, AuraRecord, LWCRecord, QueryResult, VFRecord } from './types';
 
 export function buildQuery(mdComponent: SourceComponent, namespace = ''): string {
   let queryString = '';
@@ -24,8 +24,7 @@ export function buildQuery(mdComponent: SourceComponent, namespace = ''): string
       queryString = `Select Id, ApiVersion, Name, NamespacePrefix, Markup from ${typeName} where Name = '${fullName}' and NamespacePrefix = '${namespace}'`;
       break;
     case 'AuraDefinitionBundle':
-      queryString =
-        'Select Id, AuraDefinitionBundle.ApiVersion, AuraDefinitionBundle.DeveloperName, ';
+      queryString = 'Select Id, AuraDefinitionBundle.ApiVersion, AuraDefinitionBundle.DeveloperName, ';
       queryString += `AuraDefinitionBundle.NamespacePrefix, DefType, Source from AuraDefinition where AuraDefinitionBundle.DeveloperName = '${fullName}' and AuraDefinitionBundle.NamespacePrefix = '${namespace}'`;
       break;
     case 'LightningComponentBundle':
@@ -81,26 +80,25 @@ export function queryToFileMap(
   const typeName = mdComponent.type.name;
   let apiVersion: string;
   let status: string;
+  let record: ApexRecord | VFRecord;
   // If output is defined it overrides where the component will be stored
-  const mdSourcePath = overrideOutputPath
-    ? trimMetaXmlSuffix(overrideOutputPath)
-    : mdComponent.walkContent()[0];
-  const saveFilesMap = new Map();
+  const mdSourcePath = overrideOutputPath ? trimMetaXmlSuffix(overrideOutputPath) : mdComponent.walkContent()[0];
+  const saveFilesMap = new Map<string, string>();
   switch (typeName) {
     case 'ApexClass':
     case 'ApexTrigger':
-      const apexRecord = queryResult.records[0] as ApexRecord;
-      status = apexRecord.Status;
-      apiVersion = apexRecord.ApiVersion;
-      saveFilesMap.set(mdSourcePath, apexRecord.Body);
+      record = queryResult.records[0] as ApexRecord;
+      status = record.Status;
+      apiVersion = record.ApiVersion;
+      saveFilesMap.set(mdSourcePath, record.Body);
       break;
     case 'ApexComponent':
     case 'ApexPage':
-      const vfRecord = queryResult.records[0] as VFRecord;
-      apiVersion = vfRecord.ApiVersion;
-      saveFilesMap.set(mdSourcePath, vfRecord.Markup);
+      record = queryResult.records[0] as VFRecord;
+      apiVersion = record.ApiVersion;
+      saveFilesMap.set(mdSourcePath, record.Markup);
       break;
-    case 'AuraDefinitionBundle':
+    case 'AuraDefinitionBundle': {
       const auraRecord = queryResult.records as AuraRecord[];
       apiVersion = auraRecord[0].AuraDefinitionBundle.ApiVersion;
       auraRecord.forEach((item) => {
@@ -108,7 +106,8 @@ export function queryToFileMap(
         saveFilesMap.set(cmpName, item.Source);
       });
       break;
-    case 'LightningComponentBundle':
+    }
+    case 'LightningComponentBundle': {
       const lwcRecord = queryResult.records as LWCRecord[];
       const bundleParentPath = mdSourcePath.substring(0, mdSourcePath.lastIndexOf(`${sep}lwc`));
       lwcRecord.forEach((item) => {
@@ -116,15 +115,13 @@ export function queryToFileMap(
         saveFilesMap.set(cmpName, item.Source);
       });
       break;
+    }
     default:
   }
 
   // NOTE: LightningComponentBundle query results returns the -meta.xml file
   if (typeName !== 'LightningComponentBundle') {
-    saveFilesMap.set(
-      generateMetaXMLPath(mdSourcePath),
-      generateMetaXML(typeName, apiVersion, status)
-    );
+    saveFilesMap.set(generateMetaXMLPath(mdSourcePath), generateMetaXML(typeName, apiVersion, status));
   }
 
   return saveFilesMap;

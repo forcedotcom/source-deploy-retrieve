@@ -14,12 +14,7 @@ import {
   MIXED_CONTENT_DIRECTORY_VIRTUAL_FS_NO_XML,
   MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
 } from '../../mock/registry/type-constants/mixedContentDirectoryConstants';
-import {
-  mockRegistry,
-  mockRegistryData,
-  mixedContentDirectory,
-  mixedContentSingleFile,
-} from '../../mock/registry';
+import { mockRegistry, mockRegistryData, mixedContentDirectory, mixedContentSingleFile } from '../../mock/registry';
 
 describe('MixedContentSourceAdapter', () => {
   it('Should throw ExpectedSourceFilesError if content does not exist', () => {
@@ -31,10 +26,7 @@ describe('MixedContentSourceAdapter', () => {
       },
     ]);
     const adapter = new MixedContentSourceAdapter(type, mockRegistry, undefined, tree);
-    assert.throws(
-      () => adapter.getComponent(mixedContentSingleFile.COMPONENT.content),
-      ExpectedSourceFilesError
-    );
+    assert.throws(() => adapter.getComponent(mixedContentSingleFile.COMPONENT.content), ExpectedSourceFilesError);
   });
 
   describe('File Content', () => {
@@ -72,9 +64,7 @@ describe('MixedContentSourceAdapter', () => {
     const expectedComponent = new SourceComponent(MIXED_CONTENT_DIRECTORY_COMPONENT, tree);
 
     it('Should return expected SourceComponent when given a root metadata xml path', () => {
-      expect(adapter.getComponent(MIXED_CONTENT_DIRECTORY_XML_PATHS[0])).to.deep.equal(
-        expectedComponent
-      );
+      expect(adapter.getComponent(MIXED_CONTENT_DIRECTORY_XML_PATHS[0])).to.deep.equal(expectedComponent);
     });
 
     it('Should return expected SourceComponent when given a source path', () => {
@@ -96,9 +86,9 @@ describe('MixedContentSourceAdapter', () => {
         },
         tree
       );
-      expect(
-        adapter.getComponent(mixedContentDirectory.MIXED_CONTENT_DIRECTORY_CONTENT_PATH)
-      ).to.deep.equal(expectedComponent);
+      expect(adapter.getComponent(mixedContentDirectory.MIXED_CONTENT_DIRECTORY_CONTENT_PATH)).to.deep.equal(
+        expectedComponent
+      );
     });
   });
 });

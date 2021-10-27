@@ -5,11 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { Connection } from '@salesforce/core';
+import { registry } from '../../registry';
 import { BaseDeploy } from './baseDeploy';
 import { ContainerDeploy } from './containerDeploy';
 import { AuraDeploy } from './auraDeploy';
 import { LwcDeploy } from './lwcDeploy';
-import { registry } from '../../registry';
 
 export { ContainerDeploy } from './containerDeploy';
 export { AuraDeploy } from './auraDeploy';

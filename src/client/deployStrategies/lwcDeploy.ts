@@ -5,20 +5,20 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { BaseDeploy } from './baseDeploy';
+import { normalize } from 'path';
+import { readFileSync } from 'graceful-fs';
 import { SourceComponent } from '../..';
 import {
-  SourceDeployResult,
-  ToolingDeployStatus,
   ComponentDeployment,
   ComponentStatus,
   LightningComponentResource,
+  SourceDeployResult,
+  ToolingDeployStatus,
 } from '../types';
-import { readFileSync } from 'graceful-fs';
 import { extName } from '../../utils';
-import { normalize } from 'path';
 import { deployTypes } from '../toolingApi';
 import { DiagnosticUtil } from '../diagnosticUtil';
+import { BaseDeploy } from './baseDeploy';
 
 export class LwcDeploy extends BaseDeploy {
   public async deploy(component: SourceComponent, namespace: string): Promise<SourceDeployResult> {
@@ -51,15 +51,13 @@ export class LwcDeploy extends BaseDeploy {
       ? await this.upsertBundle(existingResources[0].LightningComponentBundleId)
       : await this.upsertBundle();
     const bundleId = lightningBundle.id;
-    sourceFiles.forEach(async (sourceFile) => {
+    sourceFiles.forEach((sourceFile) => {
       const source = readFileSync(sourceFile, 'utf8');
       const isMetaSource = sourceFile === this.component.xml;
       const format = isMetaSource ? 'js' : extName(sourceFile);
       let match: LightningComponentResource;
       if (existingResources.length > 0) {
-        match = existingResources.find((resource) =>
-          sourceFile.endsWith(normalize(resource.FilePath))
-        );
+        match = existingResources.find((resource) => sourceFile.endsWith(normalize(resource.FilePath)));
       }
       // If resource exists in org, assign the matching Id
       // else, assign the id of the bundle it's associated with
@@ -71,15 +69,14 @@ export class LwcDeploy extends BaseDeploy {
       };
       // This is to ensure that the base file is deployed first for lwc
       // otherwise there is a `no base file found` error
+      // eslint-disable-next-line no-unused-expressions
       lightningResource.Format === 'js' && !isMetaSource
         ? lightningResources.unshift(lightningResource)
         : lightningResources.push(lightningResource);
     });
     return lightningResources;
   }
-  public async upsert(
-    lightningResources: LightningComponentResource[]
-  ): Promise<ComponentDeployment> {
+  public async upsert(lightningResources: LightningComponentResource[]): Promise<ComponentDeployment> {
     const type = this.component.type.name;
     const deployment: ComponentDeployment = {
       status: ComponentStatus.Unchanged,
@@ -112,7 +109,7 @@ export class LwcDeploy extends BaseDeploy {
           await this.toolingCreate(deployTypes.get(type), formattedDef);
         }
       } catch (e) {
-        const diagnostic = diagnosticUtil.parseDeployDiagnostic(this.component, e.message);
+        const diagnostic = diagnosticUtil.parseDeployDiagnostic(this.component, (e as Error).message);
         deployment.diagnostics.push(diagnostic);
       }
     }

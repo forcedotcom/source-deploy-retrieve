@@ -51,7 +51,6 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
         rootMetadata = parseMetadataXml(rootMetadataPath);
       }
     }
-
     let component: SourceComponent;
     if (rootMetadata) {
       const componentName = this.type.folderType
@@ -81,42 +80,42 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
     if (metaXml) {
       const pathToContent = this.trimPathToContent(trigger);
       const childTypeId = this.type.children.suffixes[metaXml.suffix];
-
-      // If the child is explicitly not addressable, return the parent SourceComponent.
-      const triggerIsAChild = !!childTypeId && this.type.children.types[childTypeId].isAddressable !== false;
+      const triggerIsAChild = !!childTypeId;
       const strategy = this.type.strategies.decomposition;
-      if (triggerIsAChild && (strategy === DecompositionStrategy.FolderPerType || isResolvingSource)) {
-        let parent = component;
-        if (!parent) {
-          parent = new SourceComponent(
+
+      if (triggerIsAChild) {
+        if (strategy === DecompositionStrategy.FolderPerType || isResolvingSource) {
+          let parent = component;
+          if (!parent) {
+            parent = new SourceComponent(
+              {
+                name: baseName(pathToContent),
+                type: this.type,
+              },
+              this.tree,
+              this.forceIgnore
+            );
+          }
+          parent.content = pathToContent;
+          return new SourceComponent(
             {
-              name: baseName(pathToContent),
-              type: this.type,
+              name: metaXml.fullName,
+              type: this.type.children.types[childTypeId],
+              xml: trigger,
+              parent,
             },
             this.tree,
             this.forceIgnore
           );
         }
-        parent.content = pathToContent;
-        return new SourceComponent(
-          {
-            name: metaXml.fullName,
-            type: this.type.children.types[childTypeId],
-            xml: trigger,
-            parent,
-          },
-          this.tree,
-          this.forceIgnore
-        );
-      }
-      if (!triggerIsAChild) {
+      } else {
         if (!component) {
           // This is most likely metadata found within a CustomObject folder that is not a
           // child type of CustomObject. E.g., Layout, SharingRules, ApexClass.
           throw new TypeInferenceError('error_unexpected_child_type', [trigger, this.type.name]);
         }
-        component.content = pathToContent;
       }
+      component.content = pathToContent;
     }
     return component;
   }

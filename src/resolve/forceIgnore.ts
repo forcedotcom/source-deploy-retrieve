@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import ignore, { Ignore } from 'ignore/index';
 import { dirname, join, relative } from 'path';
+import ignore, { Ignore } from 'ignore/index';
 import { readFileSync } from 'graceful-fs';
 import { SourcePath } from '../common';
 import { searchUp } from '../utils/fileSystemHandler';
@@ -17,12 +17,7 @@ export class ForceIgnore {
   private readonly parser: Ignore;
   private readonly forceIgnoreDirectory: string;
   private readonly contents?: string;
-  private DEFAULT_IGNORE: string[] = [
-    '**/*.dup',
-    '**/.*',
-    '**/package2-descriptor.json',
-    '**/package2-manifest.json',
-  ];
+  private DEFAULT_IGNORE: string[] = ['**/*.dup', '**/.*', '**/package2-descriptor.json', '**/package2-manifest.json'];
 
   public constructor(forceIgnorePath = '') {
     try {

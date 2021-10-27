@@ -7,8 +7,9 @@
 import { Readable } from 'stream';
 
 export class TestReadable extends Readable {
+  // @ts-ignore
   private fsPath: string;
-  constructor(fsPath: string) {
+  public constructor(fsPath: string) {
     super();
     this.fsPath = fsPath;
   }

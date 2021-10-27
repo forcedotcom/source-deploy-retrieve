@@ -4,19 +4,19 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { WriteInfo } from '../types';
-import { BaseMetadataTransformer } from './baseMetadataTransformer';
-import { MetadataComponent, SourceComponent } from '../../resolve';
-import { JsonMap } from '@salesforce/ts-types';
-import { JsToXml } from '../streams';
 import { join } from 'path';
-import { SourcePath, META_XML_SUFFIX, XML_NS_URL, XML_NS_KEY } from '../../common';
+import { JsonMap } from '@salesforce/ts-types';
+import { MetadataComponent, SourceComponent } from '../../resolve';
+import { JsToXml } from '../streams';
+import { WriteInfo } from '../types';
+import { META_XML_SUFFIX, SourcePath, XML_NS_KEY, XML_NS_URL } from '../../common';
 import { ComponentSet } from '../../collections';
 import { DecompositionState } from '../convertContext';
 import { DecompositionStrategy } from '../../registry';
-import { TypeInferenceError } from '../../errors';
+import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     if (component.parent) {
       const { fullName: parentName } = component.parent;
@@ -48,10 +48,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     return [];
   }
 
-  public async toSourceFormat(
-    component: SourceComponent,
-    mergeWith?: SourceComponent
-  ): Promise<WriteInfo[]> {
+  public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
     const writeInfos: WriteInfo[] = [];
     const childrenOfMergeComponent = new ComponentSet(mergeWith?.getChildren());
     const { type, fullName: parentFullName } = component;
@@ -64,8 +61,8 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       if (childTypeId) {
         const childType = type.children.types[childTypeId];
         const tagValues = Array.isArray(tagValue) ? tagValue : [tagValue];
-        for (const value of tagValues) {
-          const entryName = (value.fullName || value.name) as string;
+        for (const value of tagValues as [{ fullName: string; name: string }]) {
+          const entryName = value.fullName || value.name;
           const childComponent: MetadataComponent = {
             fullName: `${parentFullName}.${entryName}`,
             type: childType,
@@ -84,9 +81,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
           // if the merge parent has a child that can be merged with, push write
           // operation now and mark it as merged in the state
           else if (childrenOfMergeComponent.has(childComponent)) {
-            const mergeChild: SourceComponent = childrenOfMergeComponent
-              .getSourceComponents(childComponent)
-              .first();
+            const mergeChild: SourceComponent = childrenOfMergeComponent.getSourceComponents(childComponent).first();
             writeInfos.push({
               source,
               output: mergeChild.xml,
@@ -145,7 +140,9 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     return writeInfos;
   }
 
-  private async getComposedMetadataEntries(component: SourceComponent): Promise<[string, any][]> {
+  private async getComposedMetadataEntries(
+    component: SourceComponent
+  ): Promise<Array<[string, { fullname?: string; name?: string }]>> {
     const composedMetadata = (await component.parseXml())[component.type.name];
     // composedMetadata might be undefined if you call toSourceFormat() from a non-source-backed Component
     return composedMetadata ? Object.entries(composedMetadata) : [];
@@ -153,6 +150,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
 
   /**
    * Helper for setting the decomposed transaction state
+   *
    * @param forComponent
    * @param props
    */
@@ -167,9 +165,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     });
   }
 
-  private getDecomposedState<T extends string>(
-    forComponent: MetadataComponent
-  ): DecompositionState[T] {
+  private getDecomposedState<T extends string>(forComponent: MetadataComponent): DecompositionState[T] {
     const key = `${forComponent.type.name}#${forComponent.fullName}`;
     return this.context.decomposition.state[key];
   }

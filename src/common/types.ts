@@ -21,6 +21,4 @@ export interface RegistryOptions {
   registry: RegistryAccess;
 }
 
-export interface OptionalTreeRegistryOptions
-  extends Partial<TreeOptions>,
-    Partial<RegistryOptions> {}
+export interface OptionalTreeRegistryOptions extends Partial<TreeOptions>, Partial<RegistryOptions> {}

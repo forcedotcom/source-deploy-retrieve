@@ -4,21 +4,17 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { fail } from 'assert';
 import { createSandbox, SinonStub } from 'sinon';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
-import { ComponentSet } from '../../src';
-import { MetadataTransfer } from '../../src/client/metadataTransfer';
-import {
-  MetadataRequestStatus,
-  MetadataTransferResult,
-  RequestStatus,
-} from '../../src/client/types';
 import { AuthInfo, Connection } from '@salesforce/core';
 import { expect } from 'chai';
+import { sleep } from '@salesforce/kit';
+import { ComponentSet } from '../../src';
+import { MetadataTransfer } from '../../src/client/metadataTransfer';
+import { MetadataRequestStatus, MetadataTransferResult, RequestStatus } from '../../src/client/types';
 import { MetadataTransferError } from '../../src/errors';
 import { mockConnection } from '../mock/client';
-import { fail } from 'assert';
-import { sleep } from '@salesforce/kit';
 
 const $$ = testSetup();
 const env = createSandbox();
@@ -27,9 +23,7 @@ class TestTransfer extends MetadataTransfer<MetadataRequestStatus, MetadataTrans
   public request = { done: true, status: RequestStatus.Succeeded, id: '1', success: true };
   public lifecycle = {
     pre: env.stub().returns({ id: '1' }),
-    checkStatus: env
-      .stub()
-      .returns({ done: true, status: RequestStatus.Succeeded, id: '1', success: true }),
+    checkStatus: env.stub().returns({ done: true, status: RequestStatus.Succeeded, id: '1', success: true }),
     post: env.stub().returns({ id: '1' }),
     cancel: env.stub().returns(true),
   };
@@ -211,9 +205,7 @@ describe('MetadataTransfer', () => {
         fail('should have thrown an error');
       } catch (err) {
         expect(callCount).to.be.greaterThan(15);
-        expect(err.name, 'Polling function should have timed out').to.equal(
-          'MetadataTransferError'
-        );
+        expect(err.name, 'Polling function should have timed out').to.equal('MetadataTransferError');
         expect(err.message).to.equal('Metadata API request failed: The client has timed out.');
       }
     });

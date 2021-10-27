@@ -5,13 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { join, basename, dirname } from 'path';
 import { assert, expect } from 'chai';
-import {
-  MetadataResolver,
-  SourceComponent,
-  VirtualDirectory,
-  VirtualTreeContainer,
-} from '../../src/resolve';
+import { MetadataResolver, SourceComponent, VirtualDirectory, VirtualTreeContainer } from '../../src/resolve';
 import { nls } from '../../src/i18n';
 import {
   mockRegistry,
@@ -23,9 +19,7 @@ import {
   mockRegistryData,
   decomposedtoplevel,
 } from '../mock/registry';
-import { join, basename, dirname } from 'path';
 import { TypeInferenceError } from '../../src/errors';
-import { RegistryTestUtil } from './registryTestUtil';
 import {
   DECOMPOSED_VIRTUAL_FS,
   DECOMPOSED_PATH,
@@ -44,6 +38,7 @@ import {
   MIXED_CONTENT_DIRECTORY_XML_PATHS,
 } from '../mock/registry/type-constants/mixedContentDirectoryConstants';
 import { ComponentSet, RegistryAccess } from '../../src';
+import { RegistryTestUtil } from './registryTestUtil';
 
 const testUtil = new RegistryTestUtil();
 
@@ -114,9 +109,7 @@ describe('MetadataResolver', () => {
         testUtil.stubAdapters([
           {
             type: mockRegistryData.types.mixedcontentdirectory,
-            componentMappings: [
-              { path, component: mixedContentDirectory.MIXED_CONTENT_DIRECTORY_COMPONENT },
-            ],
+            componentMappings: [{ path, component: mixedContentDirectory.MIXED_CONTENT_DIRECTORY_COMPONENT }],
           },
         ]);
         expect(access.getComponentsFromPath(path)).to.deep.equal([
@@ -139,9 +132,7 @@ describe('MetadataResolver', () => {
             allowContent: false,
           },
         ]);
-        expect(access.getComponentsFromPath(path)).to.deep.equal([
-          matchingContentFile.CONTENT_COMPONENT,
-        ]);
+        expect(access.getComponentsFromPath(path)).to.deep.equal([matchingContentFile.CONTENT_COMPONENT]);
       });
 
       it('Should determine type for inFolder path content files', () => {
@@ -177,9 +168,7 @@ describe('MetadataResolver', () => {
         testUtil.stubAdapters([
           {
             type: mockRegistryData.types.xmlinfolderfolder,
-            componentMappings: [
-              { path: xmlInFolder.FOLDER_XML_PATH, component: xmlInFolder.FOLDER_COMPONENT },
-            ],
+            componentMappings: [{ path: xmlInFolder.FOLDER_XML_PATH, component: xmlInFolder.FOLDER_COMPONENT }],
             allowContent: false,
           },
         ]);
@@ -189,9 +178,7 @@ describe('MetadataResolver', () => {
       it('should resolve folderContentTypes (e.g. reportFolder, emailFolder) in mdapi format', () => {
         const registryAccess = new RegistryAccess();
         const reportFolderDir = join('unpackaged', 'reports', 'foo');
-        const virtualFS: VirtualDirectory[] = [
-          { dirPath: reportFolderDir, children: ['bar-meta.xml'] },
-        ];
+        const virtualFS: VirtualDirectory[] = [{ dirPath: reportFolderDir, children: ['bar-meta.xml'] }];
         const tree = new VirtualTreeContainer(virtualFS);
         const mdResolver = new MetadataResolver(registryAccess, tree);
         const reportFolderPath = join(reportFolderDir, 'bar-meta.xml');
@@ -216,9 +203,7 @@ describe('MetadataResolver', () => {
             componentMappings: [{ path, component: mixedContentInFolder.FOLDER_COMPONENT }],
           },
         ]);
-        expect(access.getComponentsFromPath(path)).to.deep.equal([
-          mixedContentInFolder.FOLDER_COMPONENT,
-        ]);
+        expect(access.getComponentsFromPath(path)).to.deep.equal([mixedContentInFolder.FOLDER_COMPONENT]);
       });
 
       it('Should throw type id error if one could not be determined', () => {
@@ -310,9 +295,7 @@ describe('MetadataResolver', () => {
           {
             type: mockRegistryData.types.xmlinfolder,
             // should not be returned
-            componentMappings: [
-              { path: xmlInFolder.FOLDER_XML_PATH, component: xmlInFolder.FOLDER_COMPONENT },
-            ],
+            componentMappings: [{ path: xmlInFolder.FOLDER_XML_PATH, component: xmlInFolder.FOLDER_COMPONENT }],
           },
         ]);
         expect(access.getComponentsFromPath(path).length).to.equal(0);
@@ -337,9 +320,7 @@ describe('MetadataResolver', () => {
             componentMappings,
           },
         ]);
-        expect(resolver.getComponentsFromPath(xmlInFolder.COMPONENT_FOLDER_PATH)).to.deep.equal(
-          xmlInFolder.COMPONENTS
-        );
+        expect(resolver.getComponentsFromPath(xmlInFolder.COMPONENT_FOLDER_PATH)).to.deep.equal(xmlInFolder.COMPONENTS);
       });
 
       it('Should walk all file and directory children', () => {
@@ -354,13 +335,7 @@ describe('MetadataResolver', () => {
         const tree = new VirtualTreeContainer([
           {
             dirPath: MCF_DIR,
-            children: [
-              basename(mcfXml),
-              basename(mcfContent),
-              xmlInFolder.XML_NAMES[0],
-              'hasStuff',
-              'noStuff',
-            ],
+            children: [basename(mcfXml), basename(mcfContent), xmlInFolder.XML_NAMES[0], 'hasStuff', 'noStuff'],
           },
           {
             dirPath: noStuffDir,
@@ -442,9 +417,10 @@ describe('MetadataResolver', () => {
             ],
           },
         ]);
-        expect(
-          access.getComponentsFromPath(mixedContentInFolder.COMPONENT_FOLDER_PATH)
-        ).to.deep.equal([mixedContentInFolder.COMPONENTS[0], mixedContentInFolder.COMPONENTS[1]]);
+        expect(access.getComponentsFromPath(mixedContentInFolder.COMPONENT_FOLDER_PATH)).to.deep.equal([
+          mixedContentInFolder.COMPONENTS[0],
+          mixedContentInFolder.COMPONENTS[1],
+        ]);
       });
 
       it('Should return a component for a directory that is content or a child of content', () => {
@@ -522,9 +498,7 @@ describe('MetadataResolver', () => {
           },
         ]);
 
-        expect(access.getComponentsFromPath(MIXED_CONTENT_DIRECTORY_DIR)).to.deep.equal([
-          component,
-        ]);
+        expect(access.getComponentsFromPath(MIXED_CONTENT_DIRECTORY_DIR)).to.deep.equal([component]);
       });
 
       it('should stop resolution if parent component is resolved', () => {
@@ -547,9 +521,7 @@ describe('MetadataResolver', () => {
         const expectedComponent = new SourceComponent(DECOMPOSED_COMPONENT, tree);
         const children = expectedComponent.getChildren();
         const expectedChild = children.find((c) => c.xml === DECOMPOSED_CHILD_XML_PATH_2);
-        expect(access.getComponentsFromPath(DECOMPOSED_CHILD_DIR_PATH)).to.deep.equal([
-          expectedChild,
-        ]);
+        expect(access.getComponentsFromPath(DECOMPOSED_CHILD_DIR_PATH)).to.deep.equal([expectedChild]);
       });
 
       /**
@@ -703,10 +675,7 @@ describe('MetadataResolver', () => {
         ];
         const filter = new ComponentSet(toFilter);
 
-        const result = resolver.getComponentsFromPath(
-          decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT_PATH,
-          filter
-        );
+        const result = resolver.getComponentsFromPath(decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT_PATH, filter);
 
         expect(result).to.deep.equal(children);
       });

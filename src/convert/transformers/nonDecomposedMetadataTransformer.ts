@@ -5,11 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { WriteInfo } from '../types';
-import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
+import { WriteInfo } from '../types';
 import { normalizeToArray } from '../../utils';
 import { SourceComponent } from '../../resolve';
+import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 
 /**
  * Metadata Transformer for metadata types with children types that are NOT decomposed into separate files.
@@ -18,10 +18,7 @@ import { SourceComponent } from '../../resolve';
  * - CustomLabels
  */
 export class NonDecomposedMetadataTransformer extends DecomposedMetadataTransformer {
-  public async toSourceFormat(
-    component: SourceComponent,
-    mergeWith?: SourceComponent
-  ): Promise<WriteInfo[]> {
+  public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
     const parentXml = await component.parseXml();
     const xmlPathToChildren = `${component.type.name}.${component.type.directoryName}`;
     const incomingChildrenXml = normalizeToArray(get(parentXml, xmlPathToChildren)) as JsonMap[];

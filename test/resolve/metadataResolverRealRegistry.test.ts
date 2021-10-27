@@ -5,18 +5,12 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { join } from 'path';
 import { expect } from 'chai';
-import {
-  MetadataResolver,
-  SourceComponent,
-  VirtualDirectory,
-  VirtualTreeContainer,
-} from '../../src/resolve';
-import { META_XML_SUFFIX } from '../../src/common';
 
-import { join, basename, dirname } from 'path';
-import { TypeInferenceError } from '../../src/errors';
-import { ComponentSet, registry, RegistryAccess } from '../../src';
+import { MetadataResolver, SourceComponent, VirtualTreeContainer } from '../../src/resolve';
+import { META_XML_SUFFIX } from '../../src/common';
+import { registry, RegistryAccess } from '../../src';
 
 describe('MetadataResolver', () => {
   const registryAccess = new RegistryAccess(registry);

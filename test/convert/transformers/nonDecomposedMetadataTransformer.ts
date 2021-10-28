@@ -5,10 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { mockRegistry, mockRegistryData, nonDecomposed } from '../../mock/registry';
-import { NonDecomposedMetadataTransformer } from '../../../src/convert/transformers/nonDecomposedMetadataTransformer';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
+import { mockRegistry, mockRegistryData, nonDecomposed } from '../../mock/registry';
+import { NonDecomposedMetadataTransformer } from '../../../src/convert/transformers/nonDecomposedMetadataTransformer';
 import { ComponentSet, SourceComponent } from '../../../src';
 import { ConvertContext } from '../../../src/convert/convertContext';
 

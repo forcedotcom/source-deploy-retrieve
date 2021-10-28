@@ -4,18 +4,12 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { DecomposedSourceAdapter, DefaultSourceAdapter } from '../../../src/resolve/adapters';
-import {
-  mockRegistry,
-  decomposed,
-  decomposedtoplevel,
-  mockRegistryData,
-  xmlInFolder,
-} from '../../mock/registry';
+import { join } from 'path';
 import { expect } from 'chai';
+import { DecomposedSourceAdapter, DefaultSourceAdapter } from '../../../src/resolve/adapters';
+import { mockRegistry, decomposed, decomposedtoplevel, mockRegistryData, xmlInFolder } from '../../mock/registry';
 import { VirtualTreeContainer, SourceComponent, MetadataType } from '../../../src';
 import { RegistryTestUtil } from '../registryTestUtil';
-import { join } from 'path';
 import { META_XML_SUFFIX } from '../../../src/common';
 
 describe('DecomposedSourceAdapter', () => {
@@ -31,27 +25,15 @@ describe('DecomposedSourceAdapter', () => {
 
   it('should return expected SourceComponent when given a child xml', () => {
     const expectedChild = children.find((c) => c.xml === decomposed.DECOMPOSED_CHILD_XML_PATH_1);
-    expect(adapter.getComponent(decomposed.DECOMPOSED_CHILD_XML_PATH_1)).to.deep.equal(
-      expectedChild
-    );
+    expect(adapter.getComponent(decomposed.DECOMPOSED_CHILD_XML_PATH_1)).to.deep.equal(expectedChild);
   });
 
   it('should return parent SourceComponent when given a child xml of non-addressable type', () => {
-    const nonAddressableType = JSON.parse(
-      JSON.stringify(mockRegistryData.types.decomposedtoplevel)
-    ) as MetadataType;
+    const nonAddressableType = JSON.parse(JSON.stringify(mockRegistryData.types.decomposedtoplevel)) as MetadataType;
     nonAddressableType.children.types.g.isAddressable = false;
     const decompTree = new VirtualTreeContainer(decomposedtoplevel.DECOMPOSED_VIRTUAL_FS);
-    const decompAdapter = new DecomposedSourceAdapter(
-      nonAddressableType,
-      mockRegistry,
-      undefined,
-      decompTree
-    );
-    const expectedComp = new SourceComponent(
-      decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT,
-      decompTree
-    );
+    const decompAdapter = new DecomposedSourceAdapter(nonAddressableType, mockRegistry, undefined, decompTree);
+    const expectedComp = new SourceComponent(decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT, decompTree);
     expectedComp.type.children.types.g.isAddressable = false;
     const childComp = decomposedtoplevel.DECOMPOSED_TOP_LEVEL_CHILD_XML_PATHS[0];
     expect(decompAdapter.getComponent(childComp)).to.deep.equal(expectedComp);
@@ -59,9 +41,7 @@ describe('DecomposedSourceAdapter', () => {
 
   it('should return expected SourceComponent when given a child xml in its decomposed folder', () => {
     const expectedChild = children.find((c) => c.xml === decomposed.DECOMPOSED_CHILD_XML_PATH_2);
-    expect(adapter.getComponent(decomposed.DECOMPOSED_CHILD_XML_PATH_2)).to.deep.equal(
-      expectedChild
-    );
+    expect(adapter.getComponent(decomposed.DECOMPOSED_CHILD_XML_PATH_2)).to.deep.equal(expectedChild);
   });
 
   it('should create a parent placeholder component if parent xml does not exist', () => {
@@ -82,9 +62,7 @@ describe('DecomposedSourceAdapter', () => {
       tree
     );
 
-    expect(adapter.getComponent(decomposed.DECOMPOSED_CHILD_XML_PATH_2).parent).to.deep.equal(
-      expectedParent
-    );
+    expect(adapter.getComponent(decomposed.DECOMPOSED_CHILD_XML_PATH_2).parent).to.deep.equal(expectedParent);
   });
 
   it('should return expected SourceComponent when given a topLevel parent component', () => {
@@ -92,9 +70,7 @@ describe('DecomposedSourceAdapter', () => {
     const tree = new VirtualTreeContainer(decomposedtoplevel.DECOMPOSED_VIRTUAL_FS);
     const component = new SourceComponent(decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT, tree);
     const adapter = new DecomposedSourceAdapter(type, mockRegistry, undefined, tree);
-    expect(adapter.getComponent(decomposedtoplevel.DECOMPOSED_TOP_LEVEL_XML_PATH)).to.deep.equal(
-      component
-    );
+    expect(adapter.getComponent(decomposedtoplevel.DECOMPOSED_TOP_LEVEL_XML_PATH)).to.deep.equal(component);
   });
 
   it('should defer parsing metadata xml to child adapter if path is not a root metadata xml', () => {
@@ -107,12 +83,7 @@ describe('DecomposedSourceAdapter', () => {
   it('should NOT throw an error if a parent metadata xml file is forceignored', () => {
     let testUtil;
     try {
-      const path = join(
-        'path',
-        'to',
-        type.directoryName,
-        `My_Test.${type.suffix}${META_XML_SUFFIX}`
-      );
+      const path = join('path', 'to', type.directoryName, `My_Test.${type.suffix}${META_XML_SUFFIX}`);
 
       testUtil = new RegistryTestUtil();
 

@@ -80,16 +80,16 @@ It also checks that for types which share a suffix, only one can have non-strict
 
 ### Validate the registry is complete
 
-The library uses the [registry file](../src/registry/registry.json) to resolve how to process metadata types. This needs to be updated as new metadata types are added to the platform at major releases.
+The library uses the [registry file](../src/registry/metadataRegistry.json) to resolve how to process metadata types. This needs to be updated as new metadata types are added to the platform at major releases.
 
 The completeness is checked by comparing the registry to the metadata coverage report, but excluding
 
 1. Types that aren't supported in the metadata API
-2. Types in the [nonSupportedTypes file](../src/registry/nonSupportedTypes.ts)  (think of it as a registry-ignore file).  You can ignore the types themselves, or the feature/settings they depend on.  Be sure to explain why you're choosing to ignore that type.
+2. Types in the [nonSupportedTypes file](../src/registry/nonSupportedTypes.ts) (think of it as a registry-ignore file). You can ignore the types themselves, or the feature/settings they depend on. Be sure to explain why you're choosing to ignore that type.
 
 ### Adding new types to the registry
 
-You can manually edit types in registry.json.  To simplify that work, there's a registry-building script
+You can manually edit types in registry.json. To simplify that work, there's a registry-building script
 
 1. looks for missing types (similar to the completeness test)
 2. For missing types, generate a project and scratch org that includes the Features/Settings
@@ -101,7 +101,7 @@ You can manually edit types in registry.json.  To simplify that work, there's a 
 ```
 
 NOTE:
-inFolderTypes and types with childXml in their describe are not supported.  You **want** to explore the various strategies for those and create NUTs.
+inFolderTypes and types with childXml in their describe are not supported. You **want** to explore the various strategies for those and create NUTs.
 
 ### Tricks
 

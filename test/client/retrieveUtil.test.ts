@@ -9,16 +9,10 @@ import * as path from 'path';
 import { expect } from 'chai';
 import { buildQuery, queryToFileMap } from '../../src/client/retrieveUtil';
 import { QueryResult } from '../../src/client/types';
-import {
-  auraComponent,
-  auraApplication,
-  auraEvent,
-  auraInterface,
-  auraTokens,
-} from './auraDefinitionMocks';
-import { lwcComponentMock } from './lightningComponentMocks';
 import { SourceComponent, VirtualTreeContainer } from '../../src/resolve';
 import { registry } from '../../src';
+import { auraComponent, auraApplication, auraEvent, auraInterface, auraTokens } from './auraDefinitionMocks';
+import { lwcComponentMock } from './lightningComponentMocks';
 
 describe('Tooling Retrieve Util', () => {
   const rootPath = path.join('file', 'path');
@@ -69,7 +63,7 @@ describe('Tooling Retrieve Util', () => {
     const queryString = buildQuery(classMDComponent, '');
 
     expect(queryString).to.equal(
-      `Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'myTestClass' and NamespacePrefix = ''`
+      "Select Id, ApiVersion, Body, Name, NamespacePrefix, Status from ApexClass where Name = 'myTestClass' and NamespacePrefix = ''"
     );
   });
 
@@ -77,25 +71,25 @@ describe('Tooling Retrieve Util', () => {
     const queryString = buildQuery(pageMDComponent, '');
 
     expect(queryString).to.equal(
-      `Select Id, ApiVersion, Name, NamespacePrefix, Markup from ApexPage where Name = 'myPage' and NamespacePrefix = ''`
+      "Select Id, ApiVersion, Name, NamespacePrefix, Markup from ApexPage where Name = 'myPage' and NamespacePrefix = ''"
     );
   });
 
   it('should generate correct query to retrieve an AuraDefinition', () => {
     const queryString = buildQuery(auraMDComponent, '');
-    let expectedQuery =
-      'Select Id, AuraDefinitionBundle.ApiVersion, AuraDefinitionBundle.DeveloperName, ';
+    let expectedQuery = 'Select Id, AuraDefinitionBundle.ApiVersion, AuraDefinitionBundle.DeveloperName, ';
     expectedQuery += 'AuraDefinitionBundle.NamespacePrefix, DefType, Source ';
-    expectedQuery += `from AuraDefinition where AuraDefinitionBundle.DeveloperName = 'testApp' and AuraDefinitionBundle.NamespacePrefix = ''`;
+    expectedQuery +=
+      "from AuraDefinition where AuraDefinitionBundle.DeveloperName = 'testApp' and AuraDefinitionBundle.NamespacePrefix = ''";
     expect(queryString).to.equal(expectedQuery);
   });
 
   it('should generate correct query to retrieve an AuraDefinition with namespace', () => {
     const queryString = buildQuery(auraMDComponent, 't3str');
-    let expectedQuery =
-      'Select Id, AuraDefinitionBundle.ApiVersion, AuraDefinitionBundle.DeveloperName, ';
+    let expectedQuery = 'Select Id, AuraDefinitionBundle.ApiVersion, AuraDefinitionBundle.DeveloperName, ';
     expectedQuery += 'AuraDefinitionBundle.NamespacePrefix, DefType, Source ';
-    expectedQuery += `from AuraDefinition where AuraDefinitionBundle.DeveloperName = 'testApp' and AuraDefinitionBundle.NamespacePrefix = 't3str'`;
+    expectedQuery +=
+      "from AuraDefinition where AuraDefinitionBundle.DeveloperName = 'testApp' and AuraDefinitionBundle.NamespacePrefix = 't3str'";
     expect(queryString).to.equal(expectedQuery);
   });
 
@@ -127,9 +121,7 @@ describe('Tooling Retrieve Util', () => {
     expectedMetaXML += '</ApexClass>';
     expect(resultMap.get(classMDComponent.xml)).to.equal(expectedMetaXML);
     expect(resultMap.has(classMDComponent.content)).to.be.true;
-    expect(resultMap.get(classMDComponent.content)).to.equal(
-      'public with sharing class myTestClass {}'
-    );
+    expect(resultMap.get(classMDComponent.content)).to.equal('public with sharing class myTestClass {}');
   });
 
   it('should generate correct file map for ApexPage metadata', () => {
@@ -158,9 +150,7 @@ describe('Tooling Retrieve Util', () => {
     expectedMetaXML += '</ApexPage>';
     expect(resultMap.get(pageMDComponent.xml)).to.equal(expectedMetaXML);
     expect(resultMap.has(pageMDComponent.content)).to.be.true;
-    expect(resultMap.get(pageMDComponent.content)).to.equal(
-      '<apex:page>\n<h1>Hello</h1>\n</apex:page>'
-    );
+    expect(resultMap.get(pageMDComponent.content)).to.equal('<apex:page>\n<h1>Hello</h1>\n</apex:page>');
   });
 
   it('should generate correct file map for ApexPage metadata with overrideOutput param', () => {
@@ -180,12 +170,7 @@ describe('Tooling Retrieve Util', () => {
       totalSize: 1,
       queryLocator: null,
     };
-    const overrideOutputPathMeta = path.join(
-      'file',
-      'different',
-      'path',
-      'myTestClass.cls-meta.xml'
-    );
+    const overrideOutputPathMeta = path.join('file', 'different', 'path', 'myTestClass.cls-meta.xml');
     const overrideOutputPath = path.join('file', 'different', 'path', 'myTestClass.cls');
     const resultMap = queryToFileMap(apexPageQueryResult, pageMDComponent, overrideOutputPathMeta);
     expect(resultMap.size).to.equal(2);
@@ -244,9 +229,7 @@ describe('Tooling Retrieve Util', () => {
     expectedMetaXML += '</AuraDefinitionBundle>';
     expect(resultMap.get(cmpMetaPath)).to.equal(expectedMetaXML);
     expect(resultMap.has(cmpPath)).to.be.true;
-    expect(resultMap.get(cmpPath)).to.equal(
-      `<aura:component>\n    //that's what's up\n</aura:component>`
-    );
+    expect(resultMap.get(cmpPath)).to.equal("<aura:component>\n    //that's what's up\n</aura:component>");
     expect(resultMap.has(auraDocPath)).to.be.true;
     expect(resultMap.get(auraDocPath)).to.equal(
       '<aura:documentation>\n\t<aura:description>Documentation</aura:description>\n\t<aura:example name="ExampleName" ref="exampleComponentName" label="Label">\n\t\tExample Description\n\t</aura:example>\n</aura:documentation>'
@@ -266,9 +249,7 @@ describe('Tooling Retrieve Util', () => {
     expect(resultMap.has(helperPath)).to.be.true;
     expect(resultMap.get(helperPath)).to.equal('({\n    helperMethod : function() {\n\n    }\n})');
     expect(resultMap.has(rendererPath)).to.be.true;
-    expect(resultMap.get(rendererPath)).to.equal(
-      '({\n\n// Your renderer method overrides go here\n\n})'
-    );
+    expect(resultMap.get(rendererPath)).to.equal('({\n\n// Your renderer method overrides go here\n\n})');
   });
 
   it('should generate correct file map for AuraDefinition application metadata', () => {
@@ -332,9 +313,7 @@ describe('Tooling Retrieve Util', () => {
     expectedMetaXML += '</AuraDefinitionBundle>';
     expect(resultMap.get(eventMetaPath)).to.equal(expectedMetaXML);
     expect(resultMap.has(eventPath)).to.be.true;
-    expect(resultMap.get(eventPath)).to.equal(
-      '<aura:event type="APPLICATION" description="Event template"/>'
-    );
+    expect(resultMap.get(eventPath)).to.equal('<aura:event type="APPLICATION" description="Event template"/>');
   });
 
   it('should generate correct file map for AuraDefinition interface metadata', () => {
@@ -418,12 +397,7 @@ describe('Tooling Retrieve Util', () => {
       [
         {
           dirPath: bundlePath,
-          children: [
-            path.basename(htmlPath),
-            path.basename(jsPath),
-            path.basename(cssPath),
-            path.basename(metaPath),
-          ],
+          children: [path.basename(htmlPath), path.basename(jsPath), path.basename(cssPath), path.basename(metaPath)],
         },
       ]
     );

@@ -4,14 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import {
-  DestructiveChangesType,
-  MetadataType,
-  RegistryAccess,
-  SourceComponent,
-  VirtualTreeContainer,
-} from '../../src';
-import { RegistryTestUtil } from './registryTestUtil';
+import { join } from 'path';
+import { assert, expect } from 'chai';
+import { createSandbox } from 'sinon';
 import {
   decomposed,
   matchingContentFile,
@@ -20,26 +15,25 @@ import {
   mockRegistryData,
   xmlInFolder,
 } from '../mock/registry';
-import { assert, expect } from 'chai';
 import { DECOMPOSED_COMPONENT } from '../mock/registry/type-constants/decomposedConstants';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
 import {
   CHILD_1_NAME,
   CHILD_1_XML,
-  VIRTUAL_DIR,
-  COMPONENT_1_XML,
-  COMPONENT_1_XML_PATH,
   CHILD_2_NAME,
   COMPONENT_1,
+  COMPONENT_1_XML,
+  COMPONENT_1_XML_PATH,
   MATCHING_RULES_COMPONENT_XML_PATH,
   MATCHING_RULES_TYPE,
   TREE,
+  VIRTUAL_DIR,
 } from '../mock/registry/type-constants/nonDecomposedConstants';
-import { createSandbox } from 'sinon';
-import { join } from 'path';
+import { DestructiveChangesType, MetadataType, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../src';
 import { DecomposedSourceAdapter } from '../../src/resolve/adapters';
 import { TypeInferenceError } from '../../src/errors';
 import { nls } from '../../src/i18n';
+import { RegistryTestUtil } from './registryTestUtil';
 
 const env = createSandbox();
 
@@ -174,9 +168,7 @@ describe('SourceComponent', () => {
       const component = COMPONENT;
       env
         .stub(component.tree, 'readFile')
-        .resolves(
-          Buffer.from('<MatchingContentFile a="test"><test>something</test></MatchingContentFile>')
-        );
+        .resolves(Buffer.from('<MatchingContentFile a="test"><test>something</test></MatchingContentFile>'));
 
       const result = await component.parseXml();
       const expected = {
@@ -220,9 +212,7 @@ describe('SourceComponent', () => {
         },
         mixedContentDirectory.MIXED_CONTENT_DIRECTORY_VIRTUAL_FS
       );
-      expect(component.walkContent()).to.deep.equal(
-        mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS
-      );
+      expect(component.walkContent()).to.deep.equal(mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS);
     });
 
     it('Should not include source paths that are forceignored', () => {
@@ -241,9 +231,7 @@ describe('SourceComponent', () => {
         mixedContentDirectory.MIXED_CONTENT_DIRECTORY_VIRTUAL_FS,
         forceIgnore
       );
-      expect(component.walkContent()).to.deep.equal([
-        mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[1],
-      ]);
+      expect(component.walkContent()).to.deep.equal([mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[1]]);
       testUtil.restore();
     });
   });
@@ -270,10 +258,7 @@ describe('SourceComponent', () => {
     );
 
     it('should return child components for a component', () => {
-      expect(decomposed.DECOMPOSED_COMPONENT.getChildren()).to.deep.equal([
-        expectedChild,
-        expectedChild2,
-      ]);
+      expect(decomposed.DECOMPOSED_COMPONENT.getChildren()).to.deep.equal([expectedChild, expectedChild2]);
     });
 
     it('should not include children that are forceignored', () => {
@@ -292,9 +277,7 @@ describe('SourceComponent', () => {
     });
 
     it('should return correct fullName for components with a parent', () => {
-      expect(expectedChild.fullName).to.equal(
-        `${decomposed.DECOMPOSED_COMPONENT.name}.${expectedChild.name}`
-      );
+      expect(expectedChild.fullName).to.equal(`${decomposed.DECOMPOSED_COMPONENT.name}.${expectedChild.name}`);
     });
 
     it('should return empty array if there is no metadata xml', () => {
@@ -319,11 +302,7 @@ describe('SourceComponent', () => {
       const fsUnexpectedChild = [
         {
           dirPath: decomposed.DECOMPOSED_PATH,
-          children: [
-            decomposed.DECOMPOSED_CHILD_XML_NAME_1,
-            decomposed.DECOMPOSED_CHILD_DIR,
-            'classes',
-          ],
+          children: [decomposed.DECOMPOSED_CHILD_XML_NAME_1, decomposed.DECOMPOSED_CHILD_DIR, 'classes'],
         },
         {
           dirPath: decomposed.DECOMPOSED_CHILD_DIR_PATH,
@@ -386,7 +365,7 @@ describe('SourceComponent', () => {
       const noUniqueIdElementType: MetadataType = JSON.parse(JSON.stringify(MATCHING_RULES_TYPE));
       // remove the uniqueElementType for this test
       delete noUniqueIdElementType.children.types.matchingrule.uniqueIdElement;
-      const noUniqueIdElement_Component = new SourceComponent(
+      const noUniqueIdElementComponent = new SourceComponent(
         {
           name: noUniqueIdElementType.name,
           type: noUniqueIdElementType,
@@ -394,7 +373,7 @@ describe('SourceComponent', () => {
         },
         TREE
       );
-      expect(noUniqueIdElement_Component.getChildren()).to.deep.equal([]);
+      expect(noUniqueIdElementComponent.getChildren()).to.deep.equal([]);
     });
   });
 });

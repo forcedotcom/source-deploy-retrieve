@@ -4,23 +4,23 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { join, normalize } from 'path';
+import { pipeline as cbPipeline, Readable, Writable } from 'stream';
+import { promisify } from 'util';
+import { assert, expect } from 'chai';
+import { createSandbox } from 'sinon';
+import * as fs from 'graceful-fs';
+import * as unzipper from 'unzipper';
+import { create as createArchive } from 'archiver';
 import {
-  TreeContainer,
   NodeFSTreeContainer,
+  TreeContainer,
   VirtualTreeContainer,
   ZipTreeContainer,
 } from '../../src/resolve/treeContainers';
-import { expect, assert } from 'chai';
-import { createSandbox } from 'sinon';
-import * as fs from 'graceful-fs';
-import { join, normalize } from 'path';
 import { LibraryError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { VirtualDirectory } from '../../src';
-import { Readable, Writable, pipeline as cbPipeline } from 'stream';
-import * as unzipper from 'unzipper';
-import { create as createArchive } from 'archiver';
-import { promisify } from 'util';
 import { MetadataResolver } from '../../src/resolve/metadataResolver';
 
 describe('Tree Containers', () => {
@@ -28,27 +28,27 @@ describe('Tree Containers', () => {
 
   describe('TreeContainer Base Class', () => {
     class TestTreeContainer extends TreeContainer {
-      readDirectory(): string[] {
+      public readDirectory(): string[] {
         return readDirResults;
       }
 
-      exists(): boolean {
+      public exists(): boolean {
         return false;
       }
 
-      isDirectory(): boolean {
+      public isDirectory(): boolean {
         return false;
       }
 
-      readFile(): Promise<Buffer> {
+      public readFile(): Promise<Buffer> {
         return Promise.resolve(Buffer.from(''));
       }
 
-      readFileSync(): Buffer {
+      public readFileSync(): Buffer {
         return Buffer.from('');
       }
 
-      stream(): Readable {
+      public stream(): Readable {
         return;
       }
     }
@@ -183,11 +183,7 @@ describe('Tree Containers', () => {
 
       it('should throw an error if path does not exist', () => {
         const path = 'dne';
-        assert.throws(
-          () => tree.isDirectory(path),
-          LibraryError,
-          nls.localize('error_path_not_found', path)
-        );
+        assert.throws(() => tree.isDirectory(path), LibraryError, nls.localize('error_path_not_found', path));
       });
     });
 
@@ -224,6 +220,7 @@ describe('Tree Containers', () => {
 
       it('should throw an error if path is to directory', () => {
         assert.throws(
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
           () => tree.readFile(filesRoot),
           LibraryError,
           nls.localize('error_expected_file_path', filesRoot)
@@ -233,11 +230,7 @@ describe('Tree Containers', () => {
 
     describe('readFileSync', () => {
       it('should throw an error because it is not implemented yet', () => {
-        assert.throws(
-          () => tree.readFileSync(join(filesRoot, 'test.txt')),
-          Error,
-          'Method not implemented'
-        );
+        assert.throws(() => tree.readFileSync(join(filesRoot, 'test.txt')), Error, 'Method not implemented');
       });
     });
 
@@ -313,11 +306,7 @@ describe('Tree Containers', () => {
 
       it('should throw an error if path does not exist', () => {
         const path = 'dne';
-        assert.throws(
-          () => tree.isDirectory(path),
-          LibraryError,
-          nls.localize('error_path_not_found', path)
-        );
+        assert.throws(() => tree.isDirectory(path), LibraryError, nls.localize('error_path_not_found', path));
       });
     });
 
@@ -395,10 +384,7 @@ describe('Tree Containers', () => {
       it('tree has expected structure', () => {
         expect(tree.isDirectory('force-app'), 'force-app').to.equal(true);
         expect(tree.isDirectory(join('force-app', 'main')), 'force-app/main').to.equal(true);
-        expect(
-          tree.isDirectory(join('force-app', 'main', 'default')),
-          'force-app/main/default'
-        ).to.equal(true);
+        expect(tree.isDirectory(join('force-app', 'main', 'default')), 'force-app/main/default').to.equal(true);
         expect(tree.isDirectory(classesPath), classesPath).to.equal(true);
         expect(tree.readDirectory(classesPath)).to.deep.equal([
           'TestOrderController.cls',

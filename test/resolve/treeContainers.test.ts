@@ -20,7 +20,7 @@ import {
 } from '../../src/resolve/treeContainers';
 import { LibraryError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { VirtualDirectory } from '../../src';
+import { MetadataResolver, VirtualDirectory } from '../../src';
 
 describe('Tree Containers', () => {
   const readDirResults = ['a.q', 'a.x-meta.xml', 'b', 'b.x-meta.xml', 'c.z', 'c.x-meta.xml'];
@@ -370,6 +370,32 @@ describe('Tree Containers', () => {
     describe('stream', () => {
       it('should throw a not implemented error', () => {
         assert.throws(() => tree.stream('file'), 'Method not implemented');
+      });
+    });
+
+    describe('fromFilePaths', () => {
+      const classesPath = join('force-app', 'main', 'default', 'classes');
+      const tree = VirtualTreeContainer.fromFilePaths([
+        join(classesPath, 'TestOrderController.cls'),
+        join(classesPath, 'TestOrderController.cls-meta.xml'),
+      ]);
+
+      it('tree has expected structure', () => {
+        expect(tree.isDirectory('force-app'), 'force-app').to.equal(true);
+        expect(tree.isDirectory(join('force-app', 'main')), 'force-app/main').to.equal(true);
+        expect(tree.isDirectory(join('force-app', 'main', 'default')), 'force-app/main/default').to.equal(true);
+        expect(tree.isDirectory(classesPath), classesPath).to.equal(true);
+        expect(tree.readDirectory(classesPath)).to.deep.equal([
+          'TestOrderController.cls',
+          'TestOrderController.cls-meta.xml',
+        ]);
+      });
+
+      it('tree resolves to a class', () => {
+        const resolver = new MetadataResolver(undefined, tree);
+        const resolved = resolver.getComponentsFromPath('force-app');
+        expect(resolved.length).to.equal(1);
+        expect(resolved[0].type.name).to.equal('ApexClass');
       });
     });
   });

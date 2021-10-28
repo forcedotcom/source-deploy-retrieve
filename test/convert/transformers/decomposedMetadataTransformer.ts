@@ -278,6 +278,15 @@ describe('DecomposedMetadataTransformer', () => {
       ]);
     });
 
+    it('should handle decomposed parents with no files', async () => {
+      const transformer = new DecomposedMetadataTransformer(mockRegistry);
+      env.stub(component, 'parseXml').resolves({});
+
+      const result = await transformer.toSourceFormat(component);
+
+      expect(result).to.deep.equal([]);
+    });
+
     describe('Merging Components', () => {
       it('should merge output with merge component that only has children', async () => {
         const mergeComponentChild = component.getChildren()[0];

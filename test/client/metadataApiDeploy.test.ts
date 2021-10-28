@@ -4,22 +4,14 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { createSandbox } from 'sinon';
-import {
-  ComponentSet,
-  registry,
-  SourceComponent,
-  DeployResult,
-  MetadataApiDeploy,
-} from '../../src';
-import {
-  ComponentStatus,
-  DeployMessage,
-  FileResponse,
-  MetadataApiDeployStatus,
-} from '../../src/client/types';
-import { assert, expect } from 'chai';
 import { basename, join } from 'path';
+import { createSandbox } from 'sinon';
+import { assert, expect } from 'chai';
+import { AnyJson, getString } from '@salesforce/ts-types';
+import { PollingClient, StatusResult } from '@salesforce/core';
+import { Duration } from '@salesforce/kit';
+import { ComponentSet, registry, SourceComponent, DeployResult, MetadataApiDeploy } from '../../src';
+import { ComponentStatus, DeployMessage, FileResponse, MetadataApiDeployStatus } from '../../src/client/types';
 import {
   MOCK_ASYNC_RESULT,
   MOCK_RECENTLY_VALIDATED_ID_REST,
@@ -34,9 +26,6 @@ import {
   DECOMPOSED_COMPONENT,
 } from '../mock/registry/type-constants/decomposedConstants';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
-import { AnyJson, getString } from '@salesforce/ts-types';
-import { PollingClient, StatusResult } from '@salesforce/core';
-import { Duration } from '@salesforce/kit';
 import { MissingJobIdError } from '../../src/errors';
 
 const env = createSandbox();
@@ -251,10 +240,7 @@ describe('MetadataApiDeploy', () => {
       await operation.cancel();
 
       expect(invokeStub.calledOnce).to.be.true;
-      expect(invokeStub.firstCall.args).to.deep.equal([
-        'cancelDeploy',
-        { id: MOCK_ASYNC_RESULT.id },
-      ]);
+      expect(invokeStub.firstCall.args).to.deep.equal(['cancelDeploy', { id: MOCK_ASYNC_RESULT.id }]);
     });
 
     it('should throw an error when a job ID is not set', async () => {
@@ -308,14 +294,14 @@ describe('MetadataApiDeploy', () => {
             .walkContent()
             .map((f) => {
               return {
-                fullName: fullName,
+                fullName,
                 type: type.name,
                 state: ComponentStatus.Changed,
                 filePath: f,
               };
             })
             .concat({
-              fullName: fullName,
+              fullName,
               type: type.name,
               state: ComponentStatus.Changed,
               filePath: xml,
@@ -443,13 +429,13 @@ describe('MetadataApiDeploy', () => {
         const responses = result.getFileResponses();
         const expected: FileResponse[] = [
           {
-            fullName: fullName,
+            fullName,
             type: type.name,
             state: ComponentStatus.Changed,
             filePath: content,
           },
           {
-            fullName: fullName,
+            fullName,
             type: type.name,
             state: ComponentStatus.Changed,
             filePath: xml,
@@ -479,13 +465,13 @@ describe('MetadataApiDeploy', () => {
         const responses = result.getFileResponses();
         const expected: FileResponse[] = [
           {
-            fullName: fullName,
+            fullName,
             type: type.name,
             state: ComponentStatus.Created,
             filePath: content,
           },
           {
-            fullName: fullName,
+            fullName,
             type: type.name,
             state: ComponentStatus.Created,
             filePath: xml,
@@ -515,13 +501,13 @@ describe('MetadataApiDeploy', () => {
         const responses = result.getFileResponses();
         const expected: FileResponse[] = [
           {
-            fullName: fullName,
+            fullName,
             type: type.name,
             state: ComponentStatus.Deleted,
             filePath: content,
           },
           {
-            fullName: fullName,
+            fullName,
             type: type.name,
             state: ComponentStatus.Deleted,
             filePath: xml,
@@ -557,7 +543,7 @@ describe('MetadataApiDeploy', () => {
         const responses = result.getFileResponses();
         const expected: FileResponse[] = [
           {
-            fullName: fullName,
+            fullName,
             type: type.name,
             state: ComponentStatus.Failed,
             filePath: content,
@@ -590,13 +576,13 @@ describe('MetadataApiDeploy', () => {
         const responses = result.getFileResponses();
         const expected: FileResponse[] = [
           {
-            fullName: fullName,
+            fullName,
             type: type.name,
             state: ComponentStatus.Unchanged,
             filePath: content,
           },
           {
-            fullName: fullName,
+            fullName,
             type: type.name,
             state: ComponentStatus.Unchanged,
             filePath: xml,
@@ -649,7 +635,7 @@ describe('MetadataApiDeploy', () => {
         const responses = result.getFileResponses();
         const expected: FileResponse[] = [
           {
-            fullName: fullName,
+            fullName,
             type: type.name,
             state: ComponentStatus.Failed,
             filePath: content,
@@ -659,7 +645,7 @@ describe('MetadataApiDeploy', () => {
             problemType,
           },
           {
-            fullName: fullName,
+            fullName,
             type: type.name,
             state: ComponentStatus.Failed,
             filePath: content,

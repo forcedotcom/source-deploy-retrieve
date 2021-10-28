@@ -5,32 +5,28 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import deepEqualInAnyOrder = require('deep-equal-in-any-order');
-import chai = require('chai');
-
-chai.use(deepEqualInAnyOrder);
-
-const { expect } = chai;
-import { join } from 'path';
-import { createSandbox, match } from 'sinon';
 import { Readable } from 'stream';
+import { join } from 'path';
+
+import { createSandbox, match } from 'sinon';
+import chai = require('chai');
+import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import {
-  SourceComponent,
   ComponentSet,
-  WriterFormat,
   RegistryAccess,
-  VirtualTreeContainer,
+  SourceComponent,
   VirtualDirectory,
+  VirtualTreeContainer,
+  WriterFormat,
 } from '../../src';
-import {
-  DEFAULT_PACKAGE_ROOT_SFDX,
-  META_XML_SUFFIX,
-  XML_NS_KEY,
-  XML_NS_URL,
-} from '../../src/common';
+import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { ConvertContext } from '../../src/convert/convertContext';
 import { JsToXml } from '../../src/convert/streams';
-import { matchingContentFile, mockRegistry, decomposed, nonDecomposed } from '../mock/registry';
+import { decomposed, matchingContentFile, mockRegistry, nonDecomposed } from '../mock/registry';
+
+const { expect } = chai;
+
+chai.use(deepEqualInAnyOrder);
 
 const env = createSandbox();
 
@@ -40,12 +36,8 @@ describe('Convert Transaction Constructs', () => {
   describe('ConvertContext', () => {
     it('should yield results of finalizers upon executeFinalizers', async () => {
       const context = new ConvertContext();
-      const result1: WriterFormat[] = [
-        { component: matchingContentFile.COMPONENT, writeInfos: [] },
-      ];
-      const result2: WriterFormat[] = [
-        { component: decomposed.DECOMPOSED_COMPONENT, writeInfos: [] },
-      ];
+      const result1: WriterFormat[] = [{ component: matchingContentFile.COMPONENT, writeInfos: [] }];
+      const result2: WriterFormat[] = [{ component: decomposed.DECOMPOSED_COMPONENT, writeInfos: [] }];
       const result3: WriterFormat[] = [{ component: nonDecomposed.COMPONENT_1, writeInfos: [] }];
       env.stub(context.recomposition, 'finalize').resolves(result1);
       env.stub(context.decomposition, 'finalize').resolves(result2);
@@ -344,9 +336,7 @@ describe('Convert Transaction Constructs', () => {
 
         const context = new ConvertContext();
 
-        const writeInfos = [
-          { output: component.xml, source: new JsToXml(nonDecomposed.FULL_XML_CONTENT) },
-        ];
+        const writeInfos = [{ output: component.xml, source: new JsToXml(nonDecomposed.FULL_XML_CONTENT) }];
         context.nonDecomposition.setState((state) => {
           state.claimed = {
             [component.xml]: {
@@ -380,12 +370,11 @@ describe('Convert Transaction Constructs', () => {
 
         env
           .stub(ComponentSet, 'fromSource')
+          // @ts-ignore
           .withArgs({ fsPaths: [match(nonDecomposed.NON_DEFAULT_DIR)], include: match.any })
           .returns(new ComponentSet([unprocessedComponent]));
 
-        const writeInfos = [
-          { output: component.xml, source: new JsToXml(nonDecomposed.COMPONENT_1_XML) },
-        ];
+        const writeInfos = [{ output: component.xml, source: new JsToXml(nonDecomposed.COMPONENT_1_XML) }];
         context.nonDecomposition.setState((state) => {
           state.claimed = {
             [component.xml]: {

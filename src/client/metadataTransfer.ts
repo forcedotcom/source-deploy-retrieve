@@ -4,16 +4,16 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { AuthInfo, Connection, Logger, PollingClient, StatusResult } from '@salesforce/core';
 import { EventEmitter } from 'events';
-import { ComponentSet } from '../collections';
-import { MetadataTransferError } from '../errors';
-import { AsyncResult, MetadataRequestStatus, RequestStatus, MetadataTransferResult } from './types';
-import { MetadataConverter, SfdxFileFormat } from '../convert';
 import { join } from 'path';
+import { AuthInfo, Connection, Logger, PollingClient, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
 import { AnyJson, isNumber } from '@salesforce/ts-types';
 import * as fs from 'graceful-fs';
+import { MetadataConverter, SfdxFileFormat } from '../convert';
+import { MetadataTransferError } from '../errors';
+import { ComponentSet } from '../collections';
+import { AsyncResult, MetadataRequestStatus, MetadataTransferResult, RequestStatus } from './types';
 
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
@@ -22,28 +22,25 @@ export interface MetadataTransferOptions {
   id?: string;
 }
 
-export abstract class MetadataTransfer<
-  Status extends MetadataRequestStatus,
-  Result extends MetadataTransferResult
-> {
+export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Result extends MetadataTransferResult> {
   protected components: ComponentSet;
   protected logger: Logger;
   protected canceled = false;
-  private _id?: string;
+  private transferId?: string;
   private event = new EventEmitter();
   private usernameOrConnection: string | Connection;
   private apiVersion: string;
 
-  constructor({ usernameOrConnection, components, apiVersion, id }: MetadataTransferOptions) {
+  public constructor({ usernameOrConnection, components, apiVersion, id }: MetadataTransferOptions) {
     this.usernameOrConnection = usernameOrConnection;
     this.components = components;
     this.apiVersion = apiVersion;
-    this._id = id;
+    this.transferId = id;
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
-  get id(): string | undefined {
-    return this._id;
+  public get id(): string | undefined {
+    return this.transferId;
   }
 
   /**
@@ -54,7 +51,7 @@ export abstract class MetadataTransfer<
   public async start(): Promise<AsyncResult> {
     this.canceled = false;
     const asyncResult = await this.pre();
-    this._id = asyncResult.id;
+    this.transferId = asyncResult.id;
     this.logger.debug(`Started metadata transfer. ID = ${this.id}`);
     return asyncResult;
   }
@@ -85,6 +82,7 @@ export abstract class MetadataTransfer<
     let pollingOptions: PollingClient.Options = {
       frequency: Duration.milliseconds(100),
       timeout: Duration.minutes(60),
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       poll: this.poll.bind(this),
     };
     if (isNumber(frequencyOrOptions)) {
@@ -102,7 +100,7 @@ export abstract class MetadataTransfer<
       this.logger.debug(`Polling for metadata transfer status. ID = ${this.id}`);
       this.logger.debug(`Polling frequency (ms): ${pollingOptions.frequency.milliseconds}`);
       this.logger.debug(`Polling timeout (min): ${pollingOptions.timeout.minutes}`);
-      const completedMdapiStatus = ((await pollingClient.subscribe()) as unknown) as Status;
+      const completedMdapiStatus = (await pollingClient.subscribe()) as unknown as Status;
       const result = await this.post(completedMdapiStatus);
       if (completedMdapiStatus.status === RequestStatus.Canceled) {
         this.event.emit('cancel', completedMdapiStatus);
@@ -111,10 +109,11 @@ export abstract class MetadataTransfer<
       }
       return result;
     } catch (e) {
-      const error = new MetadataTransferError('md_request_fail', e.message);
-      if (error.stack && e.stack) {
+      const err = e as Error;
+      const error = new MetadataTransferError('md_request_fail', err.message);
+      if (error.stack && err.stack) {
         // append the original stack to this new error
-        error.stack += `\nDUE TO:\n${e.stack}`;
+        error.stack += `\nDUE TO:\n${err.stack}`;
       }
       if (this.event.listenerCount('error') === 0) {
         throw error;
@@ -142,9 +141,7 @@ export abstract class MetadataTransfer<
   protected async maybeSaveTempDirectory(target: SfdxFileFormat, cs?: ComponentSet): Promise<void> {
     const mdapiTempDir = process.env.SFDX_MDAPI_TEMP_DIR;
     if (mdapiTempDir) {
-      process.emitWarning(
-        'The SFDX_MDAPI_TEMP_DIR environment variable is set, which may degrade performance'
-      );
+      process.emitWarning('The SFDX_MDAPI_TEMP_DIR environment variable is set, which may degrade performance');
       this.logger.debug(
         `Converting metadata to: ${mdapiTempDir} because the SFDX_MDAPI_TEMP_DIR environment variable is set`
       );
@@ -200,7 +197,7 @@ export abstract class MetadataTransfer<
     }
     this.logger.debug(`MDAPI status update: ${mdapiStatus.status}`);
 
-    return { completed, payload: (mdapiStatus as unknown) as AnyJson };
+    return { completed, payload: mdapiStatus as unknown as AnyJson };
   }
 
   public abstract checkStatus(): Promise<Status>;

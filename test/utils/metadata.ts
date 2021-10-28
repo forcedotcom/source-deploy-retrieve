@@ -5,9 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { generateMetaXML, generateMetaXMLPath, trimMetaXmlSuffix } from '../../src/utils';
 import * as path from 'path';
 import { expect } from 'chai';
+import { generateMetaXML, generateMetaXMLPath, trimMetaXmlSuffix } from '../../src/utils';
 
 describe('Metadata Utils', () => {
   let metaXMLFile = '<?xml version="1.0" encoding="UTF-8"?>\n';

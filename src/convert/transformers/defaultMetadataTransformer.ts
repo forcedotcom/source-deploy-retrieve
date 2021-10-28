@@ -4,13 +4,12 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { basename, dirname, join } from 'path';
 import { META_XML_SUFFIX, SourcePath } from '../../common';
-import { BaseMetadataTransformer } from './baseMetadataTransformer';
 import { SfdxFileFormat, WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve';
-import { trimUntil } from '../../utils/path';
-import { basename, dirname, join } from 'path';
-import { extName } from '../../utils';
+import { extName, trimUntil } from '../../utils';
+import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 const ORIGINAL_SUFFIX_REGEX = new RegExp('(.)([a-zA-Z]+)(' + META_XML_SUFFIX + ')$');
 
@@ -22,14 +21,13 @@ const ORIGINAL_SUFFIX_REGEX = new RegExp('(.)([a-zA-Z]+)(' + META_XML_SUFFIX + '
  * files as-is.
  */
 export class DefaultMetadataTransformer extends BaseMetadataTransformer {
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     return this.getWriteInfos(component, 'metadata');
   }
 
-  public async toSourceFormat(
-    component: SourceComponent,
-    mergeWith?: SourceComponent
-  ): Promise<WriteInfo[]> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
     return this.getWriteInfos(component, 'source', mergeWith);
   }
 
@@ -111,10 +109,7 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
           '.' + extName(component.content) + META_XML_SUFFIX
         );
       } else {
-        xmlDestination = xmlDestination.replace(
-          ORIGINAL_SUFFIX_REGEX,
-          '.' + suffix + META_XML_SUFFIX
-        );
+        xmlDestination = xmlDestination.replace(ORIGINAL_SUFFIX_REGEX, '.' + suffix + META_XML_SUFFIX);
       }
     }
     if (legacySuffix && suffix && xmlDestination.includes(legacySuffix)) {

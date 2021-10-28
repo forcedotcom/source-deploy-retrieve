@@ -45,9 +45,7 @@ describe('Registry Validation', () => {
 
     const suffixMap = new Map<string, string>();
     Object.values(registry.types)
-      .filter(
-        (type) => type.suffix && !type.strictDirectoryName && !knownExceptions.includes(type.name)
-      )
+      .filter((type) => type.suffix && !type.strictDirectoryName && !knownExceptions.includes(type.name))
       .map((type) => {
         // mapping for the type's suffix
         suffixMap.set(type.suffix, type.id);
@@ -72,10 +70,7 @@ describe('Registry Validation', () => {
     Object.values(registry.types).map((type) => {
       if (type.suffix) {
         // some bundle types have no suffix
-        suffixMap.set(
-          type.suffix,
-          suffixMap.has(type.suffix) ? [...suffixMap.get(type.suffix), type] : [type]
-        );
+        suffixMap.set(type.suffix, suffixMap.has(type.suffix) ? [...suffixMap.get(type.suffix), type] : [type]);
       }
     });
     suffixMap.forEach((types, suffix) => {
@@ -86,9 +81,7 @@ describe('Registry Validation', () => {
           .map((type) => type.name)
           .join(',')}) should have only 1 non-strict directory`, () => {
           const nonStrictTypes = types.filter((type) => !type.strictDirectoryName);
-          expect(nonStrictTypes.length, nonStrictTypes.map((type) => type.name).join(',')).lessThan(
-            2
-          );
+          expect(nonStrictTypes.length, nonStrictTypes.map((type) => type.name).join(',')).lessThan(2);
         });
       }
     });

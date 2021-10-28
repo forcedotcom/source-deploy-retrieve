@@ -4,18 +4,18 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { BaseMetadataTransformer } from './baseMetadataTransformer';
-import { WriteInfo } from '..';
+import { basename, dirname, join } from 'path';
+import { Readable } from 'stream';
 import { create as createArchive } from 'archiver';
 import { getExtension } from 'mime';
 import { Open } from 'unzipper';
-import { basename, dirname, join } from 'path';
-import { baseName } from '../../utils';
 import { JsonMap } from '@salesforce/ts-types';
-import { Readable } from 'stream';
+import { baseName } from '../../utils';
+import { WriteInfo } from '..';
 import { LibraryError } from '../../errors';
 import { SourceComponent } from '../../resolve';
 import { SourcePath } from '../../common';
+import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public static readonly ARCHIVE_MIME_TYPES = new Set([
@@ -43,7 +43,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       // Otherwise, you'll see errors like https://github.com/forcedotcom/cli/issues/1098
       const zip = createArchive('zip', { zlib: { level: 9 } });
       zip.directory(content, false);
-      zip.finalize();
+      void zip.finalize();
       contentSource = zip;
     } else {
       contentSource = component.tree.stream(content);
@@ -61,10 +61,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     ];
   }
 
-  public async toSourceFormat(
-    component: SourceComponent,
-    mergeWith?: SourceComponent
-  ): Promise<WriteInfo[]> {
+  public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
     const { xml, content } = component;
     const writeInfos: WriteInfo[] = [];
 
@@ -101,8 +98,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   }
 
   private getBaseContentPath(component: SourceComponent, mergeWith?: SourceComponent): SourcePath {
-    const baseContentPath =
-      mergeWith?.content || component.getPackageRelativePath(component.content, 'source');
+    const baseContentPath = mergeWith?.content || component.getPackageRelativePath(component.content, 'source');
     return join(dirname(baseContentPath), baseName(baseContentPath));
   }
 
@@ -117,18 +113,12 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       if (StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(contentType)) {
         return true;
       }
-      throw new LibraryError('error_static_resource_expected_archive_type', [
-        contentType,
-        component.name,
-      ]);
+      throw new LibraryError('error_static_resource_expected_archive_type', [contentType, component.name]);
     }
     return false;
   }
 
-  private async *createWriteInfosFromArchive(
-    zipBuffer: Buffer,
-    baseDir: string
-  ): AsyncIterable<WriteInfo> {
+  private async *createWriteInfosFromArchive(zipBuffer: Buffer, baseDir: string): AsyncIterable<WriteInfo> {
     const directory = await Open.buffer(zipBuffer);
     for (const entry of directory.files) {
       if (entry.type === 'File') {
@@ -143,10 +133,8 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   private async getContentType(component: SourceComponent): Promise<string> {
     const resource = (await component.parseXml()).StaticResource as JsonMap;
 
-    if (!resource || !resource.hasOwnProperty('contentType')) {
-      throw new LibraryError('error_static_resource_missing_resource_file', [
-        join('staticresources', component.name),
-      ]);
+    if (!resource || !Object.prototype.hasOwnProperty.call(resource, 'contentType')) {
+      throw new LibraryError('error_static_resource_missing_resource_file', [join('staticresources', component.name)]);
     }
 
     return resource.contentType as string;

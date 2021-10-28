@@ -13,12 +13,7 @@ import { Record, RecordResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { ContainerDeploy } from '../../../src/client/deployStrategies';
 import { nls } from '../../../src/i18n';
-import {
-  QueryResult,
-  ToolingDeployStatus,
-  ComponentStatus,
-  ToolingCreateResult,
-} from '../../../src/client/types';
+import { QueryResult, ToolingDeployStatus, ComponentStatus, ToolingCreateResult } from '../../../src/client/types';
 import { SourceComponent } from '../../../src/resolve';
 import { registry } from '../../../src';
 
@@ -129,8 +124,7 @@ describe('Container Deploy Strategy', () => {
       errorCode: 'DUPLICATE_VALUE',
       message: 'duplicate value found: Name duplicates value on record with id : 1dcxxx000000034',
       name: 'DUPLICATE_VALUE',
-      stack:
-        'DUPLICATE_VALUE: duplicate value found: Name duplicates value on record with id : 1dcxxx000000034',
+      stack: 'DUPLICATE_VALUE: duplicate value found: Name duplicates value on record with id : 1dcxxx000000034',
     };
     sandboxStub.stub(mockConnection.tooling, 'create').throws(errorObj);
     const deployLibrary = new ContainerDeploy(mockConnection);
@@ -138,9 +132,7 @@ describe('Container Deploy Strategy', () => {
       await deployLibrary.createMetadataContainer();
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal(
-        'duplicate value found: Name duplicates value on record with id : 1dcxxx000000034'
-      );
+      expect(e.message).to.equal('duplicate value found: Name duplicates value on record with id : 1dcxxx000000034');
       expect(e.name).to.be.equal('DUPLICATE_VALUE');
     }
   });
@@ -365,9 +357,7 @@ describe('Container Deploy Strategy', () => {
       await deployLibrary.createContainerAsyncRequest(successfulContainerResult);
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal(
-        'insufficient access rights on cross-reference id: 1drxx000000xUHs'
-      );
+      expect(e.message).to.equal('insufficient access rights on cross-reference id: 1drxx000000xUHs');
       expect(e.name).to.be.equal('INSUFFICIENT_ACCESS_ON_CROSS_REFERENCE_ENTITY');
     }
   });
@@ -461,11 +451,8 @@ describe('Container Deploy Strategy', () => {
     const result = await deployLibrary.deploy(apexComponent, 't5tr');
     expect(mockToolingCreate.calledThrice).to.be.true;
     expect(mockToolingQuery.calledOnce).to.be.true;
-    expect(
-      mockToolingQuery.calledWith(
-        `Select Id from ApexComponent where Name = 'one' and NamespacePrefix = 't5tr'`
-      )
-    ).to.be.true;
+    expect(mockToolingQuery.calledWith("Select Id from ApexComponent where Name = 'one' and NamespacePrefix = 't5tr'"))
+      .to.be.true;
     expect(result).to.deep.equals({
       id: undefined,
       status: ToolingDeployStatus.Completed,

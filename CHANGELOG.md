@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.3...v5.1.0) (2021-10-28)
+
+
+### Features
+
+* construct virtual tree from array of paths ([#480](https://github.com/forcedotcom/source-deploy-retrieve/issues/480)) ([99954dc](https://github.com/forcedotcom/source-deploy-retrieve/commit/99954dc731d078e99283eed940b98ee63688a024))
+
 ### [5.0.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.2...v5.0.3) (2021-10-28)
 
 ### Bug Fixes

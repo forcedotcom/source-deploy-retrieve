@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.0.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.1...v5.0.2) (2021-10-28)
+
+
+### Bug Fixes
+
+* doesn't call Object.entries on undefined ([#484](https://github.com/forcedotcom/source-deploy-retrieve/issues/484)) ([089198e](https://github.com/forcedotcom/source-deploy-retrieve/commit/089198e7e1472724951765c2bca7be7003609b64))
+
 ### [5.0.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.0...v5.0.1) (2021-10-21)
 
 ### Bug Fixes

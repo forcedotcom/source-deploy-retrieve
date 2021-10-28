@@ -4,12 +4,12 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { BaseSourceAdapter } from './baseSourceAdapter';
 import { dirname, basename, sep } from 'path';
 import { ExpectedSourceFilesError } from '../../errors';
 import { baseName } from '../../utils/path';
 import { SourcePath } from '../../common';
 import { SourceComponent } from '../sourceComponent';
+import { BaseSourceAdapter } from './baseSourceAdapter';
 
 /**
  * Handles types with mixed content. Mixed content means there are one or more additional

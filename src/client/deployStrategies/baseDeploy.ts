@@ -4,14 +4,15 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+/* eslint @typescript-eslint/no-unsafe-assignment:0, @typescript-eslint/no-unsafe-call:0, @typescript-eslint/no-unsafe-member-access:0  */
+import { sep } from 'path';
 import { Connection } from '@salesforce/core';
 import { readFileSync } from 'graceful-fs';
-import { sep } from 'path';
 import { DeployError } from '../../errors';
 import { SourceComponent } from '../../resolve';
 import { SourceDeployResult, ToolingCreateResult } from '../types';
 
-// tslint:disable-next-line:no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
 const DOMParser = require('xmldom-sfdx-encoding').DOMParser;
 
 export abstract class BaseDeploy {
@@ -21,13 +22,11 @@ export abstract class BaseDeploy {
   public component: SourceComponent;
   public namespace: string;
 
-  constructor(connection: Connection) {
+  public constructor(connection: Connection) {
     this.connection = connection;
   }
 
-  public buildMetadataField(
-    metadataContent: string
-  ): {
+  public buildMetadataField(metadataContent: string): {
     label?: string;
     packageVersions?: string;
     status?: string;
@@ -42,14 +41,13 @@ export abstract class BaseDeploy {
       const descriptionNode = document.getElementsByTagName('description')[0];
       const labelNode = document.getElementsByTagName('label')[0];
 
-      const metadataField = {
+      return {
         apiVersion,
         ...(statusNode ? { status: statusNode.textContent } : {}),
         ...(packageNode ? { packageVersions: packageNode.textContent } : {}),
         ...(descriptionNode ? { description: descriptionNode.textContent } : {}),
         ...(labelNode ? { label: labelNode.textContent } : {}),
       };
-      return metadataField;
     } catch (e) {
       throw new DeployError('error_parsing_metadata_file');
     }
@@ -85,16 +83,14 @@ export abstract class BaseDeploy {
     return bundleResult;
   }
 
-  protected async toolingCreate(type: string, record: object): Promise<ToolingCreateResult> {
+  protected async toolingCreate(type: string, record: Record<string, unknown>): Promise<ToolingCreateResult> {
     return (await this.connection.tooling.create(type, record)) as ToolingCreateResult;
   }
 
   protected getFormattedPaths(filepath: string): string[] {
     const pathParts = filepath.split(sep);
 
-    const typeFolderIndex = pathParts.findIndex(
-      (part) => part === this.component.type.directoryName
-    );
+    const typeFolderIndex = pathParts.findIndex((part) => part === this.component.type.directoryName);
 
     return [
       pathParts.slice(typeFolderIndex).join(BaseDeploy.TOOLING_PATH_SEP),
@@ -102,8 +98,5 @@ export abstract class BaseDeploy {
     ];
   }
 
-  public abstract deploy(
-    component: SourceComponent,
-    namespace: string
-  ): Promise<SourceDeployResult>;
+  public abstract deploy(component: SourceComponent, namespace: string): Promise<SourceDeployResult>;
 }

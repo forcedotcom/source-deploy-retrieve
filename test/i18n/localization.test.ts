@@ -44,8 +44,6 @@ describe('Localization tests', () => {
 
   it('Should append args for missing label', () => {
     const nls = new Localization(loadMessageBundle());
-    expect(nls.localize('non_existent_key', 'John')).to.be.equals(
-      '!!! MISSING LABEL !!! non_existent_key (John)'
-    );
+    expect(nls.localize('non_existent_key', 'John')).to.be.equals('!!! MISSING LABEL !!! non_existent_key (John)');
   });
 });

@@ -20,9 +20,7 @@ export const XML_PATHS = COMPONENT_NAMES.map((name) =>
   join(COMPONENT_FOLDER_PATH, `${name}.${type.suffix}${META_XML_SUFFIX}`)
 );
 export const XML_NAMES = XML_PATHS.map((path) => basename(path));
-export const XML_PATHS_MD_FORMAT = COMPONENT_NAMES.map((name) =>
-  join(COMPONENT_FOLDER_PATH, `${name}.${type.suffix}`)
-);
+export const XML_PATHS_MD_FORMAT = COMPONENT_NAMES.map((name) => join(COMPONENT_FOLDER_PATH, `${name}.${type.suffix}`));
 export const COMPONENTS: SourceComponent[] = COMPONENT_NAMES.map(
   (name, index) =>
     new SourceComponent({
@@ -32,10 +30,7 @@ export const COMPONENTS: SourceComponent[] = COMPONENT_NAMES.map(
     })
 );
 
-export const FOLDER_XML_PATH = join(
-  TYPE_DIRECTORY,
-  `${COMPONENT_FOLDER_NAME}.${folderType.suffix}${META_XML_SUFFIX}`
-);
+export const FOLDER_XML_PATH = join(TYPE_DIRECTORY, `${COMPONENT_FOLDER_NAME}.${folderType.suffix}${META_XML_SUFFIX}`);
 export const FOLDER_XML_NAME = basename(FOLDER_XML_PATH);
 export const FOLDER_COMPONENT = new SourceComponent({
   name: COMPONENT_FOLDER_NAME,

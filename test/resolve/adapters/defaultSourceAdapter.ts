@@ -5,9 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
+import { expect } from 'chai';
 import { mockRegistry, mockRegistryData } from '../../mock/registry';
 import { DefaultSourceAdapter } from '../../../src/resolve/adapters/defaultSourceAdapter';
-import { expect } from 'chai';
 import { SourceComponent } from '../../../src/resolve';
 import { META_XML_SUFFIX } from '../../../src/common';
 

@@ -16,7 +16,7 @@ import { SourcePath } from '../../src/common';
 export class RegistryTestUtil {
   private env: SinonSandbox;
 
-  constructor(env: SinonSandbox = createSandbox()) {
+  public constructor(env: SinonSandbox = createSandbox()) {
     this.env = env;
   }
 
@@ -24,23 +24,16 @@ export class RegistryTestUtil {
     this.env.restore();
   }
 
-  public createMetadataResolver(
-    virtualFS: VirtualDirectory[],
-    useRealForceIgnore = true
-  ): MetadataResolver {
-    return new MetadataResolver(
-      mockRegistry,
-      new VirtualTreeContainer(virtualFS),
-      useRealForceIgnore
-    );
+  public createMetadataResolver(virtualFS: VirtualDirectory[], useRealForceIgnore = true): MetadataResolver {
+    return new MetadataResolver(mockRegistry, new VirtualTreeContainer(virtualFS), useRealForceIgnore);
   }
 
   public stubAdapters(
-    config: {
+    config: Array<{
       type: MetadataType;
-      componentMappings: { path: SourcePath; component: SourceComponent }[];
+      componentMappings: Array<{ path: SourcePath; component: SourceComponent }>;
       allowContent?: boolean;
-    }[]
+    }>
   ): void {
     const getAdapterStub = this.env.stub(SourceAdapterFactory.prototype, 'getAdapter');
     for (const entry of config) {
@@ -55,11 +48,7 @@ export class RegistryTestUtil {
     }
   }
 
-  public stubForceIgnore(config: {
-    seed: SourcePath;
-    accept?: SourcePath[];
-    deny?: SourcePath[];
-  }): ForceIgnore {
+  public stubForceIgnore(config: { seed: SourcePath; accept?: SourcePath[]; deny?: SourcePath[] }): ForceIgnore {
     const forceIgnore = new ForceIgnore();
     const acceptStub = this.env.stub(forceIgnore, 'accepts');
     const denyStub = this.env.stub(forceIgnore, 'denies');

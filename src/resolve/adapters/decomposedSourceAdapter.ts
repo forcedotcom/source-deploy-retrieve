@@ -115,7 +115,9 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
           throw new TypeInferenceError('error_unexpected_child_type', [trigger, this.type.name]);
         }
       }
-      component.content = pathToContent;
+      if (component) {
+        component.content = pathToContent;
+      }
     }
     return component;
   }

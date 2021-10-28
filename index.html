@@ -80,7 +80,7 @@
 					<li>Convert source files between <a href="https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_source_file_format.htm">SFDX File Formats</a></li>
 					<li>Generate metadata packages with the option to automatically create a zip file</li>
 					<li>Deploy and retrieve metadata with an org</li>
-					<li>An <a href="./src/registry/registry.json">index</a> to reference available metadata types.</li>
+					<li>An <a href="./src/registry/metadataRegistry.json">index</a> to reference available metadata types.</li>
 					<li>Utilize promises with <code>async/await</code> syntax</li>
 				</ul>
 				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
@@ -127,7 +127,7 @@
 				<a href="#publishing" id="publishing" style="color: inherit; text-decoration: none;">
 					<h2>Publishing</h2>
 				</a>
-				<p>SDR publishes when changes are merged into <code>main</code>.  The version is bumped per the rules of the release orb and <a href="https://github.com/conventional-changelog/standard-version">standard-version</a>.</p>
+				<p>SDR publishes when changes are merged into <code>main</code>. The version is bumped per the rules of the release orb and <a href="https://github.com/conventional-changelog/standard-version">standard-version</a>.</p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -312,9 +312,6 @@
 						<a href="classes/registryerror.html" class="tsd-kind-icon">Registry<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class">
-						<a href="classes/registrytestutil.html" class="tsd-kind-icon">Registry<wbr>Test<wbr>Util</a>
-					</li>
-					<li class=" tsd-kind-class">
 						<a href="classes/retrieveresult.html" class="tsd-kind-icon">Retrieve<wbr>Result</a>
 					</li>
 					<li class=" tsd-kind-class">
@@ -331,21 +328,6 @@
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/staticresourcemetadatatransformer.html" class="tsd-kind-icon">Static<wbr>Resource<wbr>Metadata<wbr>Transformer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/testadapter.html" class="tsd-kind-icon">Test<wbr>Adapter</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/testcollection.html" class="tsd-kind-icon">Test<wbr>Collection</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/testreadable.html" class="tsd-kind-icon">Test<wbr>Readable</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/testtransfer.html" class="tsd-kind-icon">Test<wbr>Transfer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/testtransformer.html" class="tsd-kind-icon">Test<wbr>Transformer</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/toolingapi.html" class="tsd-kind-icon">Tooling<wbr>Api</a>
@@ -394,15 +376,6 @@
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/decompositionstate.html" class="tsd-kind-icon">Decomposition<wbr>State</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/deployoperationlifecycle.html" class="tsd-kind-icon">Deploy<wbr>Operation<wbr>Lifecycle</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/deploystuboptions.html" class="tsd-kind-icon">Deploy<wbr>Stub<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/describeresult.html" class="tsd-kind-icon">Describe<wbr>Result</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/directoryindex.html" class="tsd-kind-icon">Directory<wbr>Index</a>
@@ -510,13 +483,7 @@
 						<a href="interfaces/retrieveextractoptions.html" class="tsd-kind-icon">Retrieve<wbr>Extract<wbr>Options</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="interfaces/retrieveoperationlifecycle.html" class="tsd-kind-icon">Retrieve<wbr>Operation<wbr>Lifecycle</a>
-					</li>
-					<li class=" tsd-kind-interface">
 						<a href="interfaces/retrieveoptions.html" class="tsd-kind-icon">Retrieve<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/retrievestuboptions.html" class="tsd-kind-icon">Retrieve<wbr>Stub<wbr>Options</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/runtestresult.html" class="tsd-kind-icon">Run<wbr>Test<wbr>Result</a>
@@ -615,9 +582,6 @@
 						<a href="globals.html#metadataxml" class="tsd-kind-icon">Metadata<wbr>Xml</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#mockdeploymessage" class="tsd-kind-icon">Mock<wbr>Deploy<wbr>Message</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#packagename" class="tsd-kind-icon">Package<wbr>Name</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
@@ -675,205 +639,10 @@
 						<a href="globals.html#zipconfig" class="tsd-kind-icon">Zip<wbr>Config</a>
 					</li>
 					<li class=" tsd-kind-variable">
-						<a href="globals.html#__" class="tsd-kind-icon">$$</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#child_1_name" class="tsd-kind-icon">CHILD_<wbr>1_NAME</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#child_2_name" class="tsd-kind-icon">CHILD_<wbr>2_NAME</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#child_3_name" class="tsd-kind-icon">CHILD_<wbr>3_NAME</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#child_component_name" class="tsd-kind-icon">CHILD_<wbr>COMPONENT_<wbr>NAME</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#child_type_directory" class="tsd-kind-icon">CHILD_<wbr>TYPE_<wbr>DIRECTORY</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#child_xml_name" class="tsd-kind-icon">CHILD_<wbr>XML_<wbr>NAME</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#child_xml_path" class="tsd-kind-icon">CHILD_<wbr>XML_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#component" class="tsd-kind-icon">COMPONENT</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#components" class="tsd-kind-icon">COMPONENTS</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#components_md_format" class="tsd-kind-icon">COMPONENTS_<wbr>MD_<wbr>FORMAT</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#component_1" class="tsd-kind-icon">COMPONENT_<wbr>1</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#component_1_type_dir" class="tsd-kind-icon">COMPONENT_<wbr>1_TYPE_<wbr>DIR</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#component_1_xml_path" class="tsd-kind-icon">COMPONENT_<wbr>1_XML_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#component_2" class="tsd-kind-icon">COMPONENT_<wbr>2</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#component_2_type_dir" class="tsd-kind-icon">COMPONENT_<wbr>2_TYPE_<wbr>DIR</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#component_2_xml_path" class="tsd-kind-icon">COMPONENT_<wbr>2_XML_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#component_folder_name" class="tsd-kind-icon">COMPONENT_<wbr>FOLDER_<wbr>NAME</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#component_folder_path" class="tsd-kind-icon">COMPONENT_<wbr>FOLDER_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#component_md" class="tsd-kind-icon">COMPONENT_<wbr>MD</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#component_name" class="tsd-kind-icon">COMPONENT_<wbr>NAME</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#component_names" class="tsd-kind-icon">COMPONENT_<wbr>NAMES</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#component_suffix" class="tsd-kind-icon">COMPONENT_<wbr>SUFFIX</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#component_virtual_fs" class="tsd-kind-icon">COMPONENT_<wbr>VIRTUAL_<wbr>FS</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#content_component" class="tsd-kind-icon">CONTENT_<wbr>COMPONENT</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#content_file_exts" class="tsd-kind-icon">CONTENT_<wbr>FILE_<wbr>EXTS</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#content_names" class="tsd-kind-icon">CONTENT_<wbr>NAMES</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#content_path" class="tsd-kind-icon">CONTENT_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#content_paths" class="tsd-kind-icon">CONTENT_<wbr>PATHS</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#converted_xml_path" class="tsd-kind-icon">CONVERTED_<wbr>XML_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposeds_path" class="tsd-kind-icon">DECOMPOSEDS_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_child_component_1" class="tsd-kind-icon">DECOMPOSED_<wbr>CHILD_<wbr>COMPONENT_<wbr>1</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_child_component_2" class="tsd-kind-icon">DECOMPOSED_<wbr>CHILD_<wbr>COMPONENT_<wbr>2</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_child_dir" class="tsd-kind-icon">DECOMPOSED_<wbr>CHILD_<wbr>DIR</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_child_dir_path" class="tsd-kind-icon">DECOMPOSED_<wbr>CHILD_<wbr>DIR_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_child_xml_name_1" class="tsd-kind-icon">DECOMPOSED_<wbr>CHILD_<wbr>XML_<wbr>NAME_<wbr>1</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_child_xml_name_2" class="tsd-kind-icon">DECOMPOSED_<wbr>CHILD_<wbr>XML_<wbr>NAME_<wbr>2</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_child_xml_path_1" class="tsd-kind-icon">DECOMPOSED_<wbr>CHILD_<wbr>XML_<wbr>PATH_<wbr>1</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_child_xml_path_2" class="tsd-kind-icon">DECOMPOSED_<wbr>CHILD_<wbr>XML_<wbr>PATH_<wbr>2</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_component" class="tsd-kind-icon">DECOMPOSED_<wbr>COMPONENT</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_path" class="tsd-kind-icon">DECOMPOSED_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_top_level_child_xml_names" class="tsd-kind-icon">DECOMPOSED_<wbr>TOP_<wbr>LEVEL_<wbr>CHILD_<wbr>XML_<wbr>NAMES</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_top_level_child_xml_paths" class="tsd-kind-icon">DECOMPOSED_<wbr>TOP_<wbr>LEVEL_<wbr>CHILD_<wbr>XML_<wbr>PATHS</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_top_level_component" class="tsd-kind-icon">DECOMPOSED_<wbr>TOP_<wbr>LEVEL_<wbr>COMPONENT</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_top_level_component_path" class="tsd-kind-icon">DECOMPOSED_<wbr>TOP_<wbr>LEVEL_<wbr>COMPONENT_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_top_level_dir" class="tsd-kind-icon">DECOMPOSED_<wbr>TOP_<wbr>LEVEL_<wbr>DIR</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_top_level_xml_names" class="tsd-kind-icon">DECOMPOSED_<wbr>TOP_<wbr>LEVEL_<wbr>XML_<wbr>NAMES</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_top_level_xml_path" class="tsd-kind-icon">DECOMPOSED_<wbr>TOP_<wbr>LEVEL_<wbr>XML_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_virtual_fs" class="tsd-kind-icon">DECOMPOSED_<wbr>VIRTUAL_<wbr>FS</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_xml_name" class="tsd-kind-icon">DECOMPOSED_<wbr>XML_<wbr>NAME</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposed_xml_path" class="tsd-kind-icon">DECOMPOSED_<wbr>XML_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#default_dir" class="tsd-kind-icon">DEFAULT_<wbr>DIR</a>
-					</li>
-					<li class=" tsd-kind-variable">
 						<a href="globals.html#default_package_root_sfdx" class="tsd-kind-icon">DEFAULT_<wbr>PACKAGE_<wbr>ROOT_<wbr>SFDX</a>
 					</li>
 					<li class=" tsd-kind-variable">
-						<a href="globals.html#documents_directory" class="tsd-kind-icon">DOCUMENTS_<wbr>DIRECTORY</a>
-					</li>
-					<li class=" tsd-kind-variable">
 						<a href="globals.html#domparser" class="tsd-kind-icon">DOMParser</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#empty_bundle" class="tsd-kind-icon">EMPTY_<wbr>BUNDLE</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#folder_component" class="tsd-kind-icon">FOLDER_<wbr>COMPONENT</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#folder_component_md_format" class="tsd-kind-icon">FOLDER_<wbr>COMPONENT_<wbr>MD_<wbr>FORMAT</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#folder_xml_name" class="tsd-kind-icon">FOLDER_<wbr>XML_<wbr>NAME</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#folder_xml_path" class="tsd-kind-icon">FOLDER_<wbr>XML_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#folder_xml_path_md_format" class="tsd-kind-icon">FOLDER_<wbr>XML_<wbr>PATH_<wbr>MD_<wbr>FORMAT</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#matching_rules_component" class="tsd-kind-icon">MATCHING_<wbr>RULES_<wbr>COMPONENT</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#matching_rules_component_dir" class="tsd-kind-icon">MATCHING_<wbr>RULES_<wbr>COMPONENT_<wbr>DIR</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#matching_rules_component_xml_path" class="tsd-kind-icon">MATCHING_<wbr>RULES_<wbr>COMPONENT_<wbr>XML_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#matching_rules_type" class="tsd-kind-icon">MATCHING_<wbr>RULES_<wbr>TYPE</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#matching_rules_type_directory_name" class="tsd-kind-icon">MATCHING_<wbr>RULES_<wbr>TYPE_<wbr>DIRECTORY_<wbr>NAME</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#matching_rules_xml_name" class="tsd-kind-icon">MATCHING_<wbr>RULES_<wbr>XML_<wbr>NAME</a>
 					</li>
 					<li class=" tsd-kind-variable">
 						<a href="globals.html#meta_xml_suffix" class="tsd-kind-icon">META_<wbr>XML_<wbr>SUFFIX</a>
@@ -882,91 +651,10 @@
 						<a href="globals.html#missing_label_msg" class="tsd-kind-icon">MISSING_<wbr>LABEL_<wbr>MSG</a>
 					</li>
 					<li class=" tsd-kind-variable">
-						<a href="globals.html#mixed_content_directory_component" class="tsd-kind-icon">MIXED_<wbr>CONTENT_<wbr>DIRECTORY_<wbr>COMPONENT</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#mixed_content_directory_content_path" class="tsd-kind-icon">MIXED_<wbr>CONTENT_<wbr>DIRECTORY_<wbr>CONTENT_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#mixed_content_directory_dir" class="tsd-kind-icon">MIXED_<wbr>CONTENT_<wbr>DIRECTORY_<wbr>DIR</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#mixed_content_directory_source_paths" class="tsd-kind-icon">MIXED_<wbr>CONTENT_<wbr>DIRECTORY_<wbr>SOURCE_<wbr>PATHS</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#mixed_content_directory_virtual_fs" class="tsd-kind-icon">MIXED_<wbr>CONTENT_<wbr>DIRECTORY_<wbr>VIRTUAL_<wbr>FS</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#mixed_content_directory_virtual_fs_no_xml" class="tsd-kind-icon">MIXED_<wbr>CONTENT_<wbr>DIRECTORY_<wbr>VIRTUAL_<wbr>FS_<wbr>NO_<wbr>XML</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#mixed_content_directory_xml_names" class="tsd-kind-icon">MIXED_<wbr>CONTENT_<wbr>DIRECTORY_<wbr>XML_<wbr>NAMES</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#mixed_content_directory_xml_paths" class="tsd-kind-icon">MIXED_<wbr>CONTENT_<wbr>DIRECTORY_<wbr>XML_<wbr>PATHS</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#mock_default_output" class="tsd-kind-icon">MOCK_<wbr>DEFAULT_<wbr>OUTPUT</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#mock_recently_validated_id_soap" class="tsd-kind-icon">MOCK_<wbr>RECENTLY_<wbr>VALIDATED_<wbr>ID_<wbr>SOAP</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#nested_child_component" class="tsd-kind-icon">NESTED_<wbr>CHILD_<wbr>COMPONENT</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#nested_parent_component" class="tsd-kind-icon">NESTED_<wbr>PARENT_<wbr>COMPONENT</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#non_default_dir" class="tsd-kind-icon">NON_<wbr>DEFAULT_<wbr>DIR</a>
-					</li>
-					<li class=" tsd-kind-variable">
 						<a href="globals.html#original_suffix_regex" class="tsd-kind-icon">ORIGINAL_<wbr>SUFFIX_<wbr>REGEX</a>
 					</li>
 					<li class=" tsd-kind-variable">
-						<a href="globals.html#parent_component_name" class="tsd-kind-icon">PARENT_<wbr>COMPONENT_<wbr>NAME</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#parent_content_path" class="tsd-kind-icon">PARENT_<wbr>CONTENT_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#parent_type_directory" class="tsd-kind-icon">PARENT_<wbr>TYPE_<wbr>DIRECTORY</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#parent_xml_name" class="tsd-kind-icon">PARENT_<wbr>XML_<wbr>NAME</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#parent_xml_path" class="tsd-kind-icon">PARENT_<wbr>XML_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#source_paths" class="tsd-kind-icon">SOURCE_<wbr>PATHS</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#subtype_xml_path" class="tsd-kind-icon">SUBTYPE_<wbr>XML_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#tree" class="tsd-kind-icon">TREE</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#type_directory" class="tsd-kind-icon">TYPE_<wbr>DIRECTORY</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#unclaimed_child_name" class="tsd-kind-icon">UNCLAIMED_<wbr>CHILD_<wbr>NAME</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#virtual_dir" class="tsd-kind-icon">VIRTUAL_<wbr>DIR</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#working_dir" class="tsd-kind-icon">WORKING_<wbr>DIR</a>
-					</li>
-					<li class=" tsd-kind-variable">
 						<a href="globals.html#xml_decl" class="tsd-kind-icon">XML_<wbr>DECL</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#xml_name" class="tsd-kind-icon">XML_<wbr>NAME</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#xml_names" class="tsd-kind-icon">XML_<wbr>NAMES</a>
 					</li>
 					<li class=" tsd-kind-variable">
 						<a href="globals.html#xml_ns_key" class="tsd-kind-icon">XML_<wbr>NS_<wbr>KEY</a>
@@ -975,76 +663,16 @@
 						<a href="globals.html#xml_ns_url" class="tsd-kind-icon">XML_<wbr>NS_<wbr>URL</a>
 					</li>
 					<li class=" tsd-kind-variable">
-						<a href="globals.html#xml_path" class="tsd-kind-icon">XML_<wbr>PATH</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#xml_paths" class="tsd-kind-icon">XML_<wbr>PATHS</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#xml_paths_md_format" class="tsd-kind-icon">XML_<wbr>PATHS_<wbr>MD_<wbr>FORMAT</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#auracontents" class="tsd-kind-icon">aura<wbr>Contents</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#aurafiles" class="tsd-kind-icon">aura<wbr>Files</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#auraxml" class="tsd-kind-icon">aura<wbr>Xml</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#bundlepath" class="tsd-kind-icon">bundle<wbr>Path</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#chai" class="tsd-kind-icon">chai</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#childtype" class="tsd-kind-icon">child<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#createaurasuccesses" class="tsd-kind-icon">create<wbr>Aura<wbr>Successes</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#decomposedtoplevel" class="tsd-kind-icon">decomposedtoplevel</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#deepequalinanyorder" class="tsd-kind-icon">deep<wbr>Equal<wbr>InAny<wbr>Order</a>
-					</li>
-					<li class=" tsd-kind-variable">
 						<a href="globals.html#deploytypes" class="tsd-kind-icon">deploy<wbr>Types</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#env" class="tsd-kind-icon">env</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#expect" class="tsd-kind-icon">expect</a>
 					</li>
 					<li class=" tsd-kind-variable">
 						<a href="globals.html#features" class="tsd-kind-icon">features</a>
 					</li>
 					<li class=" tsd-kind-variable">
-						<a href="globals.html#foldertype" class="tsd-kind-icon">folder<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#metadatacoverage" class="tsd-kind-icon">metadata<wbr>Coverage</a>
-					</li>
-					<li class=" tsd-kind-variable">
 						<a href="globals.html#metadatatypes" class="tsd-kind-icon">metadata<wbr>Types</a>
 					</li>
 					<li class=" tsd-kind-variable">
-						<a href="globals.html#mixedcontentinfolder" class="tsd-kind-icon">mixedcontentinfolder</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#mixedcontentsinglefile" class="tsd-kind-icon">mixedcontentsinglefile</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#mockregistry" class="tsd-kind-icon">mock<wbr>Registry</a>
-					</li>
-					<li class=" tsd-kind-variable">
 						<a href="globals.html#nls" class="tsd-kind-icon">nls</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#parenttype" class="tsd-kind-icon">parent<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-variable">
 						<a href="globals.html#pipeline" class="tsd-kind-icon">pipeline</a>
@@ -1058,21 +686,6 @@
 					<li class=" tsd-kind-variable">
 						<a href="globals.html#settings" class="tsd-kind-icon">settings</a>
 					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#testauralist" class="tsd-kind-icon">test<wbr>Aura<wbr>List</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#testutil" class="tsd-kind-icon">test<wbr>Util</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#tree" class="tsd-kind-icon">tree</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#type" class="tsd-kind-icon">type</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#updatecreatesuccesses" class="tsd-kind-icon">update<wbr>Create<wbr>Successes</a>
-					</li>
 					<li class=" tsd-kind-function">
 						<a href="globals.html#basename" class="tsd-kind-icon">base<wbr>Name</a>
 					</li>
@@ -1080,13 +693,7 @@
 						<a href="globals.html#buildquery" class="tsd-kind-icon">build<wbr>Query</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="globals.html#createdeploymessage" class="tsd-kind-icon">create<wbr>Deploy<wbr>Message</a>
-					</li>
-					<li class=" tsd-kind-function">
 						<a href="globals.html#createfiles" class="tsd-kind-icon">create<wbr>Files</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#createmockzip" class="tsd-kind-icon">create<wbr>Mock<wbr>Zip</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="globals.html#deepfreeze" class="tsd-kind-icon">deep<wbr>Freeze</a>
@@ -1113,19 +720,10 @@
 						<a href="globals.html#getdeploystrategy" class="tsd-kind-icon">get<wbr>Deploy<wbr>Strategy</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="globals.html#getmissingtypes" class="tsd-kind-icon">get<wbr>Missing<wbr>Types</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#getmissingtypesasdescriberesult" class="tsd-kind-icon">get<wbr>Missing<wbr>Types<wbr>AsDescribe<wbr>Result</a>
-					</li>
-					<li class=" tsd-kind-function">
 						<a href="globals.html#hasunsupportedfeatures" class="tsd-kind-icon">has<wbr>Unsupported<wbr>Features</a>
 					</li>
 					<li class=" tsd-kind-function">
 						<a href="globals.html#loadmessagebundle" class="tsd-kind-icon">load<wbr>Message<wbr>Bundle</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#mockconnection" class="tsd-kind-icon">mock<wbr>Connection</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="globals.html#normalizetoarray" class="tsd-kind-icon">normalize<wbr>ToArray</a>
@@ -1143,16 +741,7 @@
 						<a href="globals.html#querytofilemap" class="tsd-kind-icon">query<wbr>ToFile<wbr>Map</a>
 					</li>
 					<li class=" tsd-kind-function">
-						<a href="globals.html#registryupdate" class="tsd-kind-icon">registry<wbr>Update</a>
-					</li>
-					<li class=" tsd-kind-function">
 						<a href="globals.html#searchup" class="tsd-kind-icon">search<wbr>Up</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#stubmetadatadeploy" class="tsd-kind-icon">stub<wbr>Metadata<wbr>Deploy</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#stubmetadataretrieve" class="tsd-kind-icon">stub<wbr>Metadata<wbr>Retrieve</a>
 					</li>
 					<li class=" tsd-kind-function">
 						<a href="globals.html#trimmetaxmlsuffix" class="tsd-kind-icon">trim<wbr>Meta<wbr>Xml<wbr>Suffix</a>
@@ -1160,83 +749,8 @@
 					<li class=" tsd-kind-function">
 						<a href="globals.html#trimuntil" class="tsd-kind-icon">trim<wbr>Until</a>
 					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#updateprojectscratchdef" class="tsd-kind-icon">update<wbr>Project<wbr>Scratch<wbr>Def</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#basic" class="tsd-kind-icon">BASIC</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#child_1_xml" class="tsd-kind-icon">CHILD_<wbr>1_XML</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#child_2_xml" class="tsd-kind-icon">CHILD_<wbr>2_XML</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#child_3_xml" class="tsd-kind-icon">CHILD_<wbr>3_XML</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#claimed_xml_content" class="tsd-kind-icon">CLAIMED_<wbr>XML_<wbr>CONTENT</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#component_1_xml" class="tsd-kind-icon">COMPONENT_<wbr>1_XML</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#component_2_xml" class="tsd-kind-icon">COMPONENT_<wbr>2_XML</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#full_xml_content" class="tsd-kind-icon">FULL_<wbr>XML_<wbr>CONTENT</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#in_folder_with_content" class="tsd-kind-icon">IN_<wbr>FOLDER_<wbr>WITH_<wbr>CONTENT</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#matching_rules_component_xml" class="tsd-kind-icon">MATCHING_<wbr>RULES_<wbr>COMPONENT_<wbr>XML</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#mock_async_result" class="tsd-kind-icon">MOCK_<wbr>ASYNC_<wbr>RESULT</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#mock_recently_validated_id_rest" class="tsd-kind-icon">MOCK_<wbr>RECENTLY_<wbr>VALIDATED_<wbr>ID_<wbr>REST</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#one_folder_member" class="tsd-kind-icon">ONE_<wbr>FOLDER_<wbr>MEMBER</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#one_of_each" class="tsd-kind-icon">ONE_<wbr>OF_<wbr>EACH</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#one_wildcard" class="tsd-kind-icon">ONE_<wbr>WILDCARD</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#unclaimed_child_xml" class="tsd-kind-icon">UNCLAIMED_<wbr>CHILD_<wbr>XML</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#unclaimed_xml_content" class="tsd-kind-icon">UNCLAIMED_<wbr>XML_<wbr>CONTENT</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#auraapplication" class="tsd-kind-icon">aura<wbr>Application</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#auracomponent" class="tsd-kind-icon">aura<wbr>Component</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#auraevent" class="tsd-kind-icon">aura<wbr>Event</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#aurainterface" class="tsd-kind-icon">aura<wbr>Interface</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#auratokens" class="tsd-kind-icon">aura<wbr>Tokens</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#lwccomponentmock" class="tsd-kind-icon">lwc<wbr>Component<wbr>Mock</a>
-					</li>
 					<li class=" tsd-kind-object-literal">
 						<a href="globals.html#messages" class="tsd-kind-icon">messages</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#mockregistrydata" class="tsd-kind-icon">mock<wbr>Registry<wbr>Data</a>
 					</li>
 				</ul>
 			</nav>

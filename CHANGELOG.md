@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.0.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.2...v5.0.3) (2021-10-28)
+
+
+### Bug Fixes
+
+* keys split into 2 strings, which allows # in fullName ([#474](https://github.com/forcedotcom/source-deploy-retrieve/issues/474)) ([79aec1f](https://github.com/forcedotcom/source-deploy-retrieve/commit/79aec1f7af6db21ee498721f425b122a53f14310))
+
 ### [5.0.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.1...v5.0.2) (2021-10-28)
 
 

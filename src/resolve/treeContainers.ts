@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join, dirname, basename, normalize } from 'path';
+import { join, dirname, basename, normalize, sep } from 'path';
 import { Readable } from 'stream';
 import { lstatSync, existsSync, readdirSync, createReadStream, readFileSync } from 'graceful-fs';
 import * as unzipper from 'unzipper';
@@ -212,6 +212,31 @@ export class VirtualTreeContainer extends TreeContainer {
   public constructor(virtualFs: VirtualDirectory[]) {
     super();
     this.populate(virtualFs);
+  }
+
+  /**
+   * Designed for recreating virtual files from deleted files where the only information we have is the file's former location
+   * Any use of MetadataResolver was trying to access the non-existent files and throwing
+   *
+   * @param paths full paths to files
+   * @returns VirtualTreeContainer
+   */
+  public static fromFilePaths(paths: string[]): VirtualTreeContainer {
+    // a map to reduce array iterations
+    const virtualDirectoryByFullPath = new Map<string, VirtualDirectory>();
+    paths.map((filename) => {
+      const splits = filename.split(sep);
+      for (let i = 0; i < splits.length - 1; i++) {
+        const fullPathSoFar = splits.slice(0, i + 1).join(sep);
+        const existing = virtualDirectoryByFullPath.get(fullPathSoFar);
+        virtualDirectoryByFullPath.set(fullPathSoFar, {
+          dirPath: fullPathSoFar,
+          // only add to children if we don't already have it
+          children: Array.from(new Set(existing?.children ?? []).add(splits[i + 1])),
+        });
+      }
+    });
+    return new VirtualTreeContainer(Array.from(virtualDirectoryByFullPath.values()));
   }
 
   public isDirectory(fsPath: string): boolean {

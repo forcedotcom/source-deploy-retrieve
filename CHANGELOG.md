@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.1.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.1.0...v5.1.1) (2021-10-28)
+
+
+### Bug Fixes
+
+* ensure component.content is always assigned ([#485](https://github.com/forcedotcom/source-deploy-retrieve/issues/485)) ([d77f475](https://github.com/forcedotcom/source-deploy-retrieve/commit/d77f47502634206ac59181362b7f17da82ed01e7))
+
 ## [5.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.3...v5.1.0) (2021-10-28)
 
 

@@ -160,7 +160,7 @@ export class DeployResult implements MetadataTransferResult {
   private deleteNotFoundToFileResponses(messageMap: Map<string, DeployMessage[]>): FileResponse[] {
     const fileResponses: FileResponse[] = [];
     messageMap.forEach((messages, key) => {
-      if (key.includes('destructiveChanges.xml')) {
+      if (key.includes('destructiveChanges') && key.endsWith('.xml')) {
         messages.forEach((message) => {
           if (message.problemType === 'Warning' && message.problem.startsWith(`No ${message.componentType} named: `)) {
             const fullName = message.problem.replace(`No ${message.componentType} named: `, '').replace(' found', '');

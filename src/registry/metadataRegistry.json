@@ -2615,6 +2615,13 @@
       "strategies": {
         "adapter": "matchingContentFile"
       }
+    },
+    "omniuicard": {
+      "id": "omniuicard",
+      "name": "OmniUiCard",
+      "suffix": "ouc",
+      "directoryName": "omniUiCard",
+      "inFolder": false
     }
   },
   "suffixes": {
@@ -2903,7 +2910,8 @@
     "callCenterRoutingMap": "callcenterroutingmap",
     "view": "viewdefinition",
     "slackapp": "slackapp",
-    "permissionSetLicenseDefinition": "permissionsetlicensedefinition"
+    "permissionSetLicenseDefinition": "permissionsetlicensedefinition",
+    "ouc": "omniuicard"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

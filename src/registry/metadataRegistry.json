@@ -2605,6 +2605,14 @@
       "strategies": {
         "adapter": "matchingContentFile"
       }
+    },
+    "fieldrestrictionrule": {
+      "id": "fieldrestrictionrule",
+      "name": "FieldRestrictionRule",
+      "suffix": "rule",
+      "directoryName": "fieldRestrictionRules",
+      "inFolder": false,
+      "strictDirectoryName": true
     }
   },
   "suffixes": {
@@ -2916,7 +2924,8 @@
     "integrationHub": "integrationhubsettings",
     "ObjectHierarchyRelationship": "objecthierarchyrelationship",
     "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
-    "dataMappingObjectDefinitions": "datamappingobjectdefinition"
+    "dataMappingObjectDefinitions": "datamappingobjectdefinition",
+    "fieldRestrictionRules": "fieldrestrictionrule"
   },
   "childTypes": {
     "customlabel": "customlabels",

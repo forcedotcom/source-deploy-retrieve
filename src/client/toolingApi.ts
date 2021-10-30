@@ -4,17 +4,17 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { getDeployStrategy } from './deployStrategies';
+import { Connection } from '@salesforce/core';
 import { SourceClientError } from '../errors';
 import { SourcePath } from '../common';
 import { nls } from '../i18n';
-import { buildQuery, queryToFileMap } from './retrieveUtil';
 import { createFiles } from '../utils';
 import { MetadataResolver, SourceComponent } from '../resolve';
-import { SourceDeployResult, QueryResult, SourceRetrieveResult, RequestStatus } from './types';
 import { ComponentSet } from '../collections';
-import { Connection } from '@salesforce/core';
 import { RegistryAccess } from '../registry';
+import { QueryResult, RequestStatus, SourceDeployResult, SourceRetrieveResult } from './types';
+import { buildQuery, queryToFileMap } from './retrieveUtil';
+import { getDeployStrategy } from './deployStrategies';
 
 type WithNamespace = { namespace?: string };
 export type ToolingDeployOptions = WithNamespace;
@@ -39,19 +39,13 @@ export const deployTypes = new Map([
 ]);
 
 export class ToolingApi {
-  protected connection: Connection;
-  protected resolver: MetadataResolver;
-  protected registry: RegistryAccess;
+  public constructor(
+    protected connection: Connection,
+    protected resolver: MetadataResolver,
+    protected registry = new RegistryAccess()
+  ) {}
 
-  constructor(connection: Connection, resolver: MetadataResolver, registry = new RegistryAccess()) {
-    this.connection = connection;
-    this.resolver = resolver;
-    this.registry = registry;
-  }
-
-  public async retrieveWithPaths(
-    options: ToolingRetrieveOptions & { paths: string[] }
-  ): Promise<SourceRetrieveResult> {
+  public async retrieveWithPaths(options: ToolingRetrieveOptions & { paths: string[] }): Promise<SourceRetrieveResult> {
     return this.retrieve({
       output: options.output,
       namespace: options.namespace,
@@ -59,9 +53,7 @@ export class ToolingApi {
     });
   }
 
-  public async retrieve(
-    options: ToolingRetrieveOptions & { components: ComponentSet }
-  ): Promise<SourceRetrieveResult> {
+  public async retrieve(options: ToolingRetrieveOptions & { components: ComponentSet }): Promise<SourceRetrieveResult> {
     let retrieveResult: SourceRetrieveResult;
     if (options.components.size > 1) {
       const retrieveError = new Error();
@@ -73,10 +65,7 @@ export class ToolingApi {
 
     if (!retrieveTypes.has(mdComponent.type.name)) {
       const retrieveError = new Error();
-      retrieveError.message = nls.localize(
-        'beta_tapi_membertype_unsupported_error',
-        mdComponent.type.name
-      );
+      retrieveError.message = nls.localize('beta_tapi_membertype_unsupported_error', mdComponent.type.name);
       retrieveError.name = 'MetadataTypeUnsupported';
       throw retrieveError;
     }
@@ -144,10 +133,7 @@ export class ToolingApi {
     return deployStrategy.deploy(mdComponent, namespace);
   }
 
-  public async deployWithPaths(
-    path: SourcePath,
-    options?: ToolingDeployOptions
-  ): Promise<SourceDeployResult> {
+  public async deployWithPaths(path: SourcePath, options?: ToolingDeployOptions): Promise<SourceDeployResult> {
     return this.deploy(this.resolver.getComponentsFromPath(path), options);
   }
 }

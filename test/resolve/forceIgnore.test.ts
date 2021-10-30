@@ -4,12 +4,12 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { ForceIgnore } from '../../src/resolve';
+import { join } from 'path';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import * as fs from 'graceful-fs';
+import { ForceIgnore } from '../../src/resolve';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
-import { join } from 'path';
 const env = createSandbox();
 
 describe('ForceIgnore', () => {

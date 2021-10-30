@@ -6,11 +6,7 @@
  */
 
 export { MetadataApiDeploy, MetadataApiDeployOptions, DeployResult } from './metadataApiDeploy';
-export {
-  MetadataApiRetrieve,
-  MetadataApiRetrieveOptions,
-  RetrieveResult,
-} from './metadataApiRetrieve';
+export { MetadataApiRetrieve, MetadataApiRetrieveOptions, RetrieveResult } from './metadataApiRetrieve';
 export { ToolingApi, ToolingDeployOptions, ToolingRetrieveOptions } from './toolingApi';
 export {
   ComponentDeployment,

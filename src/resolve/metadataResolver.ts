@@ -7,33 +7,34 @@
 import { basename, dirname, join, sep } from 'path';
 import { TypeInferenceError } from '../errors';
 import { extName, parentName, parseMetadataXml } from '../utils';
+import { RegistryAccess } from '../registry/registryAccess';
+import { ComponentSet } from '../collections';
+import { MetadataType } from '../registry';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
-import { RegistryAccess } from '../registry/registryAccess';
-import { ComponentSet } from '../collections';
-import { MetadataType } from '../registry';
 
 /**
  * Resolver for metadata type and component objects.
+ *
  * @internal
  */
 export class MetadataResolver {
   public forceIgnoredPaths: Set<string>;
   private forceIgnore: ForceIgnore;
   private sourceAdapterFactory: SourceAdapterFactory;
-  private tree: TreeContainer;
-  private registry: RegistryAccess;
   private folderContentTypeDirNames: string[];
 
   /**
    * @param registry Custom registry data
    * @param tree `TreeContainer` to traverse with
    */
-  constructor(registry = new RegistryAccess(), tree: TreeContainer = new NodeFSTreeContainer()) {
-    this.registry = registry;
-    this.tree = tree;
+  public constructor(
+    private registry = new RegistryAccess(),
+    private tree: TreeContainer = new NodeFSTreeContainer(),
+    private useFsForceIgnore = true
+  ) {
     this.sourceAdapterFactory = new SourceAdapterFactory(this.registry, tree);
     this.forceIgnoredPaths = new Set<string>();
   }
@@ -49,7 +50,8 @@ export class MetadataResolver {
       throw new TypeInferenceError('error_path_not_found', fsPath);
     }
 
-    this.forceIgnore = ForceIgnore.findAndCreate(fsPath);
+    // use the default ignore if we aren't using a real one
+    this.forceIgnore = this.useFsForceIgnore ? ForceIgnore.findAndCreate(fsPath) : new ForceIgnore();
 
     if (this.tree.isDirectory(fsPath) && !this.resolveDirectoryAsComponent(fsPath)) {
       return this.getComponentsFromPathRecursive(fsPath, inclusiveFilter);
@@ -59,10 +61,7 @@ export class MetadataResolver {
     return component ? [component] : [];
   }
 
-  private getComponentsFromPathRecursive(
-    dir: string,
-    inclusiveFilter?: ComponentSet
-  ): SourceComponent[] {
+  private getComponentsFromPathRecursive(dir: string, inclusiveFilter?: ComponentSet): SourceComponent[] {
     const dirQueue: string[] = [];
     const components: SourceComponent[] = [];
     const ignore = new Set();
@@ -111,8 +110,8 @@ export class MetadataResolver {
       }
     }
 
-    for (const dir of dirQueue) {
-      components.push(...this.getComponentsFromPathRecursive(dir, inclusiveFilter));
+    for (const directory of dirQueue) {
+      components.push(...this.getComponentsFromPathRecursive(directory, inclusiveFilter));
     }
 
     return components;
@@ -179,9 +178,7 @@ export class MetadataResolver {
       const metadataFolder = this.parseAsFolderMetadataXml(fsPath);
       if (metadataFolder) {
         // multiple matching directories may exist - folder components are not 'inFolder'
-        resolvedType = this.registry.findType(
-          (type) => type.directoryName === metadataFolder && !type.inFolder
-        );
+        resolvedType = this.registry.findType((type) => type.directoryName === metadataFolder && !type.inFolder);
       }
     }
 
@@ -238,24 +235,22 @@ export class MetadataResolver {
   // Get the array of directoryNames for types that have folderContentType
   private getFolderContentTypeDirNames(): string[] {
     if (!this.folderContentTypeDirNames) {
-      this.folderContentTypeDirNames = this.registry
-        .getFolderContentTypes()
-        .map((t) => t.directoryName);
+      this.folderContentTypeDirNames = this.registry.getFolderContentTypes().map((t) => t.directoryName);
     }
     return this.folderContentTypeDirNames;
   }
 
   /**
    * Identify metadata xml for a folder component:
-   *    .../email/TestFolder-meta.xml
-   *    .../reports/foo/bar-meta.xml
+   * .../email/TestFolder-meta.xml
+   * .../reports/foo/bar-meta.xml
    *
    * Do not match this pattern:
-   *    .../tabs/TestFolder.tab-meta.xml
+   * .../tabs/TestFolder.tab-meta.xml
    */
   private parseAsFolderMetadataXml(fsPath: string): string {
-    let folderName;
-    const match = basename(fsPath).match(/(.+)-meta\.xml/);
+    let folderName: string;
+    const match = new RegExp(/(.+)-meta\.xml/).exec(basename(fsPath));
     if (match && !match[1].includes('.')) {
       const parts = fsPath.split(sep);
       if (parts.length > 1) {
@@ -274,9 +269,7 @@ export class MetadataResolver {
 
   private isMetadata(fsPath: string): boolean {
     return (
-      !!parseMetadataXml(fsPath) ||
-      this.parseAsContentMetadataXml(fsPath) ||
-      !!this.parseAsFolderMetadataXml(fsPath)
+      !!parseMetadataXml(fsPath) || this.parseAsContentMetadataXml(fsPath) || !!this.parseAsFolderMetadataXml(fsPath)
     );
   }
 }

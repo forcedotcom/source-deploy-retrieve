@@ -61,10 +61,10 @@
           }
         },
         "suffixes": {
-          "customLabel": "labels"
+          "labels": "customlabel"
         },
         "directories": {
-          "customLabels": "labels"
+          "labels": "customlabel"
         }
       },
       "strategies": {
@@ -99,7 +99,10 @@
       "suffix": "scf",
       "directoryName": "scontrols",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "experiencebundle": {
       "id": "experiencebundle",
@@ -277,6 +280,14 @@
       "name": "CustomPermission",
       "suffix": "customPermission",
       "directoryName": "customPermissions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "permissionsetlicensedefinition": {
+      "id": "permissionsetlicensedefinition",
+      "name": "PermissionSetLicenseDefinition",
+      "suffix": "permissionSetLicenseDefinition",
+      "directoryName": "permissionSetLicenseDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -505,6 +516,9 @@
         },
         "suffixes": {
           "formSection": "formsection"
+        },
+        "directories": {
+          "formSections": "formsection"
         }
       }
     },
@@ -665,7 +679,7 @@
           "workflowsend": {
             "id": "workflowsend",
             "name": "WorkflowSend",
-            "xmlElementName": "sends",
+            "xmlElementName": "send",
             "uniqueIdElement": "fullName",
             "directoryName": "workflowSends",
             "suffix": "workflowSend"
@@ -698,6 +712,7 @@
         },
         "directories": {
           "workflowFieldUpdates": "workflowfieldupdate",
+          "workflowKnowledgePublishs": "workflowknowledgepublish",
           "workflowTasks": "workflowtask",
           "workflowAlerts": "workflowalert",
           "workflowSends": "workflowsend",
@@ -1061,6 +1076,7 @@
       "name": "WaveTemplateBundle",
       "directoryName": "waveTemplates",
       "inFolder": false,
+      "strictDirectoryName": true,
       "strategies": {
         "adapter": "bundle"
       }
@@ -1085,7 +1101,10 @@
       "suffix": "geodata",
       "directoryName": "eclair",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "wavelens": {
       "id": "wavelens",
@@ -1228,7 +1247,9 @@
         },
         "directories": {
           "sharingOwnerRules": "sharingownerrule",
-          "sharingCriteriaRules": "sharingcriteriarule"
+          "sharingCriteriaRules": "sharingcriteriarule",
+          "sharingGuestRules": "sharingguestrule",
+          "sharingTerritoryRules": "sharingterritoryrule"
         }
       }
     },
@@ -2072,6 +2093,9 @@
         },
         "suffixes": {
           "workSkillRoutingAttribute": "workskillroutingattribute"
+        },
+        "directories": {
+          "workSkillRoutingAttributes": "workskillroutingattribute"
         }
       }
     },
@@ -2387,6 +2411,35 @@
       "directoryName": "dataMappingSchema",
       "strictDirectoryName": false
     },
+    "datamappingobjectdefinition": {
+      "id": "datamappingobjectdefinition",
+      "name": "DataMappingObjectDefinition",
+      "suffix": "dataMappingObjectDefinition",
+      "directoryName": "dataMappingObjectDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "children": {
+        "types": {
+          "datamappingfielddefinition": {
+            "id": "datamappingfielddefinition",
+            "name": "DataMappingFieldDefinition",
+            "directoryName": "fieldDefinitions",
+            "suffix": "fieldDefinition"
+          }
+        },
+        "directories": {
+          "fieldDefinitions": "datamappingfielddefinition"
+        },
+        "suffixes": {
+          "fieldDefinition": "datamappingfielddefinition"
+        }
+      },
+      "strategies": {
+        "adapter": "decomposed",
+        "transformer": "decomposed",
+        "decomposition": "topLevel"
+      }
+    },
     "datamapping": {
       "id": "datamapping",
       "name": "DataMapping",
@@ -2567,9 +2620,7 @@
   "suffixes": {
     "ai": "aiapplication",
     "aiapplicationconfig": "aiapplicationconfig",
-    "mlprediction": "mlPrediction",
     "mlDataDefinition": "mldatadefinition",
-    "sites": "customsite",
     "icon": "icon",
     "businessProcessGroup": "businessprocessgroup",
     "model": "discoveryaimodel",
@@ -2587,7 +2638,6 @@
     "decisionTableDatasetLink": "decisiontabledatasetlink",
     "briefcaseDefinition": "briefcasedefinition",
     "batchProcessJobDefinition": "batchprocessjobdefinition",
-    "webstoretemplate": "webstoretemplate",
     "acctMgrTargetSetting": "acctmgrtargetsettings",
     "dataSourceObject": "datasourceobject",
     "externalDataConnector": "externaldataconnector",
@@ -2599,7 +2649,6 @@
     "installedPackage": "installedpackage",
     "labels": "customlabels",
     "navigationMenu": "navigationmenu",
-    "resource": "staticresource",
     "scf": "scontrol",
     "crt": "certificate",
     "messageChannel": "lightningmessagechannel",
@@ -2828,6 +2877,8 @@
     "ConversationVendorFieldDefinition": "conversationvendorfielddef",
     "schedulingRule": "schedulingrule",
     "dataMappingSchema": "datamappingschema",
+    "dataMappingObjectDefinition": "datamappingobjectdefinition",
+    "fieldDefinition": "datamappingfielddefinition",
     "dataMapping": "datamapping",
     "federationDataMappingUsage": "federationdatamappingusage",
     "connectedSystem": "connectedsystem",
@@ -2851,7 +2902,8 @@
     "internalOrganization": "internalorganization",
     "callCenterRoutingMap": "callcenterroutingmap",
     "view": "viewdefinition",
-    "slackapp": "slackapp"
+    "slackapp": "slackapp",
+    "permissionSetLicenseDefinition": "permissionsetlicensedefinition"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -2869,7 +2921,8 @@
     "accessControlPolicies": "accesscontrolpolicy",
     "integrationHub": "integrationhubsettings",
     "ObjectHierarchyRelationship": "objecthierarchyrelationship",
-    "IndustriesManufacturingSettings": "industriesmanufacturingsettings"
+    "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
+    "dataMappingObjectDefinitions": "datamappingobjectdefinition"
   },
   "childTypes": {
     "customlabel": "customlabels",
@@ -2902,7 +2955,8 @@
     "managedtopic": "managedtopics",
     "sharingcriteriarule": "sharingrules",
     "botversion": "bot",
-    "customfieldtranslation": "customobjecttranslation"
+    "customfieldtranslation": "customobjecttranslation",
+    "datamappingfielddefinition": "datamappingobjectdefinition"
   },
-  "apiVersion": "52.0"
+  "apiVersion": "53.0"
 }

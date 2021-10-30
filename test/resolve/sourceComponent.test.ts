@@ -4,35 +4,36 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SourceComponent, VirtualTreeContainer } from '../../src/resolve';
-import { RegistryTestUtil } from './registryTestUtil';
-import {
-  xmlInFolder,
-  decomposed,
-  mixedContentDirectory,
-  matchingContentFile,
-  mockRegistryData,
-  mockRegistry,
-} from '../mock/registry';
+import { join } from 'path';
 import { assert, expect } from 'chai';
+import { createSandbox } from 'sinon';
+import {
+  decomposed,
+  matchingContentFile,
+  mixedContentDirectory,
+  mockRegistry,
+  mockRegistryData,
+  xmlInFolder,
+} from '../mock/registry';
 import { DECOMPOSED_COMPONENT } from '../mock/registry/type-constants/decomposedConstants';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
 import {
-  COMPONENT_1,
   CHILD_1_NAME,
-  VIRTUAL_DIR,
-  COMPONENT_1_XML_PATH,
+  CHILD_1_XML,
   CHILD_2_NAME,
-  MATCHING_RULES_TYPE,
+  COMPONENT_1,
+  COMPONENT_1_XML,
+  COMPONENT_1_XML_PATH,
   MATCHING_RULES_COMPONENT_XML_PATH,
+  MATCHING_RULES_TYPE,
   TREE,
+  VIRTUAL_DIR,
 } from '../mock/registry/type-constants/nonDecomposedConstants';
-import { createSandbox } from 'sinon';
-import { join } from 'path';
+import { DestructiveChangesType, MetadataType, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../src';
 import { DecomposedSourceAdapter } from '../../src/resolve/adapters';
 import { TypeInferenceError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { MetadataType, RegistryAccess } from '../../src';
+import { RegistryTestUtil } from './registryTestUtil';
 
 const env = createSandbox();
 
@@ -58,14 +59,25 @@ describe('SourceComponent', () => {
   });
 
   it('should return correct markedForDelete status', () => {
-    expect(COMPONENT.isMarkedForDelete()).to.be.false;
-    try {
-      COMPONENT.setMarkedForDelete(true);
-      expect(COMPONENT.isMarkedForDelete()).to.be.true;
-    } finally {
-      COMPONENT.setMarkedForDelete(false);
-      expect(COMPONENT.isMarkedForDelete()).to.be.false;
-    }
+    const comp = new SourceComponent({ name: 'test', type: undefined });
+    expect(comp.isMarkedForDelete()).to.be.false;
+    expect(comp.getDestructiveChangesType()).to.equal(undefined);
+
+    comp.setMarkedForDelete();
+    expect(comp.isMarkedForDelete()).to.be.true;
+    expect(comp.getDestructiveChangesType()).to.equal(DestructiveChangesType.POST);
+
+    comp.setMarkedForDelete(DestructiveChangesType.PRE);
+    expect(comp.isMarkedForDelete()).to.be.true;
+    expect(comp.getDestructiveChangesType()).to.equal(DestructiveChangesType.PRE);
+
+    comp.setMarkedForDelete(false);
+    expect(comp.isMarkedForDelete()).to.be.false;
+    expect(comp.getDestructiveChangesType()).to.equal(undefined);
+
+    comp.setMarkedForDelete(true);
+    expect(comp.isMarkedForDelete()).to.be.true;
+    expect(comp.getDestructiveChangesType()).to.equal(DestructiveChangesType.POST);
   });
 
   it('should return correct relative path for a nested component', () => {
@@ -105,6 +117,29 @@ describe('SourceComponent', () => {
       });
     });
 
+    it('should parse the child components xml content to js object', async () => {
+      const component = new SourceComponent({
+        name: 'nondecomposedchild',
+        type: mockRegistryData.types.nondecomposed.children.types.nondecomposedchild,
+        xml: COMPONENT_1_XML_PATH,
+        parent: new SourceComponent({
+          name: 'nondecomposed',
+          type: mockRegistryData.types.nondecomposed,
+        }),
+      });
+      env
+        .stub(component.tree, 'readFile')
+        .resolves(
+          Buffer.from(
+            '<nondecomposedparent><nondecomposed><id>nondecomposedchild</id><content>something</content></nondecomposed></nondecomposedparent>'
+          )
+        );
+      expect(await component.parseXml()).to.deep.equal({
+        content: 'something',
+        id: 'nondecomposedchild',
+      });
+    });
+
     it('should return empty object if component does not have an xml', async () => {
       const component = new SourceComponent({
         name: 'a',
@@ -133,9 +168,7 @@ describe('SourceComponent', () => {
       const component = COMPONENT;
       env
         .stub(component.tree, 'readFile')
-        .resolves(
-          Buffer.from('<MatchingContentFile a="test"><test>something</test></MatchingContentFile>')
-        );
+        .resolves(Buffer.from('<MatchingContentFile a="test"><test>something</test></MatchingContentFile>'));
 
       const result = await component.parseXml();
       const expected = {
@@ -179,9 +212,7 @@ describe('SourceComponent', () => {
         },
         mixedContentDirectory.MIXED_CONTENT_DIRECTORY_VIRTUAL_FS
       );
-      expect(component.walkContent()).to.deep.equal(
-        mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS
-      );
+      expect(component.walkContent()).to.deep.equal(mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS);
     });
 
     it('Should not include source paths that are forceignored', () => {
@@ -200,9 +231,7 @@ describe('SourceComponent', () => {
         mixedContentDirectory.MIXED_CONTENT_DIRECTORY_VIRTUAL_FS,
         forceIgnore
       );
-      expect(component.walkContent()).to.deep.equal([
-        mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[1],
-      ]);
+      expect(component.walkContent()).to.deep.equal([mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[1]]);
       testUtil.restore();
     });
   });
@@ -229,10 +258,7 @@ describe('SourceComponent', () => {
     );
 
     it('should return child components for a component', () => {
-      expect(decomposed.DECOMPOSED_COMPONENT.getChildren()).to.deep.equal([
-        expectedChild,
-        expectedChild2,
-      ]);
+      expect(decomposed.DECOMPOSED_COMPONENT.getChildren()).to.deep.equal([expectedChild, expectedChild2]);
     });
 
     it('should not include children that are forceignored', () => {
@@ -251,9 +277,7 @@ describe('SourceComponent', () => {
     });
 
     it('should return correct fullName for components with a parent', () => {
-      expect(expectedChild.fullName).to.equal(
-        `${decomposed.DECOMPOSED_COMPONENT.name}.${expectedChild.name}`
-      );
+      expect(expectedChild.fullName).to.equal(`${decomposed.DECOMPOSED_COMPONENT.name}.${expectedChild.name}`);
     });
 
     it('should return empty array if there is no metadata xml', () => {
@@ -278,11 +302,7 @@ describe('SourceComponent', () => {
       const fsUnexpectedChild = [
         {
           dirPath: decomposed.DECOMPOSED_PATH,
-          children: [
-            decomposed.DECOMPOSED_CHILD_XML_NAME_1,
-            decomposed.DECOMPOSED_CHILD_DIR,
-            'classes',
-          ],
+          children: [decomposed.DECOMPOSED_CHILD_XML_NAME_1, decomposed.DECOMPOSED_CHILD_DIR, 'classes'],
         },
         {
           dirPath: decomposed.DECOMPOSED_CHILD_DIR_PATH,
@@ -334,12 +354,18 @@ describe('SourceComponent', () => {
       expect(expectedChild.fullName).to.equal(expectedChild.name);
     });
 
+    it('should parse child xml from parent xml', () => {
+      const childXml = expectedChild.parseFromParentXml(COMPONENT_1_XML);
+      expect(childXml).to.deep.equal(CHILD_1_XML);
+      expect(COMPONENT_1.parseFromParentXml(COMPONENT_1_XML)).to.deep.equal(COMPONENT_1_XML);
+    });
+
     // https://github.com/forcedotcom/salesforcedx-vscode/issues/3210
     it('should return empty children for types that do not have uniqueIdElement but xmlPathToChildren returns elements', () => {
       const noUniqueIdElementType: MetadataType = JSON.parse(JSON.stringify(MATCHING_RULES_TYPE));
       // remove the uniqueElementType for this test
       delete noUniqueIdElementType.children.types.matchingrule.uniqueIdElement;
-      const noUniqueIdElement_Component = new SourceComponent(
+      const noUniqueIdElementComponent = new SourceComponent(
         {
           name: noUniqueIdElementType.name,
           type: noUniqueIdElementType,
@@ -347,7 +373,7 @@ describe('SourceComponent', () => {
         },
         TREE
       );
-      expect(noUniqueIdElement_Component.getChildren()).to.deep.equal([]);
+      expect(noUniqueIdElementComponent.getChildren()).to.deep.equal([]);
     });
   });
 });

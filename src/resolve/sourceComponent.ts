@@ -4,17 +4,18 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join, basename } from 'path';
+import { basename, join } from 'path';
 import { parse } from 'fast-xml-parser';
-import { ForceIgnore } from './forceIgnore';
-import { NodeFSTreeContainer, TreeContainer, VirtualTreeContainer } from './treeContainers';
-import { MetadataComponent, VirtualDirectory } from './types';
+import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { baseName, normalizeToArray, parseMetadataXml, trimUntil } from '../utils';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common';
-import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { SfdxFileFormat } from '../convert';
 import { MetadataType } from '../registry';
 import { TypeInferenceError } from '../errors';
+import { DestructiveChangesType } from '../collections';
+import { MetadataComponent, VirtualDirectory } from './types';
+import { NodeFSTreeContainer, TreeContainer, VirtualTreeContainer } from './treeContainers';
+import { ForceIgnore } from './forceIgnore';
 
 export type ComponentProperties = {
   name: string;
@@ -35,11 +36,12 @@ export class SourceComponent implements MetadataComponent {
   public readonly parent?: SourceComponent;
   public parentType?: MetadataType;
   public content?: string;
-  private _tree: TreeContainer;
+  private treeContainer: TreeContainer;
   private forceIgnore: ForceIgnore;
   private markedForDelete = false;
+  private destructiveChangesType: DestructiveChangesType;
 
-  constructor(
+  public constructor(
     props: ComponentProperties,
     tree: TreeContainer = new NodeFSTreeContainer(),
     forceIgnore = new ForceIgnore()
@@ -50,7 +52,7 @@ export class SourceComponent implements MetadataComponent {
     this.parent = props.parent;
     this.content = props.content;
     this.parentType = props.parentType;
-    this._tree = tree;
+    this.treeContainer = tree;
     this.forceIgnore = forceIgnore;
   }
 
@@ -85,9 +87,7 @@ export class SourceComponent implements MetadataComponent {
    */
   public getChildren(): SourceComponent[] {
     if (!this.parent && this.type.children) {
-      const children = this.content
-        ? this.getDecomposedChildren(this.content)
-        : this.getNonDecomposedChildren();
+      const children = this.content ? this.getDecomposedChildren(this.content) : this.getNonDecomposedChildren();
 
       const validChildTypes = this.type?.children ? Object.keys(this.type?.children?.types) : [];
       for (const child of children) {
@@ -102,20 +102,41 @@ export class SourceComponent implements MetadataComponent {
     return [];
   }
 
-  public async parseXml<T = JsonMap>(): Promise<T> {
-    if (this.xml) {
-      const contents = await this.tree.readFile(this.xml);
+  public async parseXml<T = JsonMap>(xmlFilePath?: string): Promise<T> {
+    const xml = xmlFilePath ?? this.xml;
+    if (xml) {
+      const contents = await this.tree.readFile(xml);
       return this.parse<T>(contents.toString());
     }
     return {} as T;
   }
 
-  public parseXmlSync<T = JsonMap>(): T {
-    if (this.xml) {
-      const contents = this.tree.readFileSync(this.xml);
+  public parseXmlSync<T = JsonMap>(xmlFilePath?: string): T {
+    const xml = xmlFilePath ?? this.xml;
+    if (xml) {
+      const contents = this.tree.readFileSync(xml);
       return this.parse<T>(contents.toString());
     }
     return {} as T;
+  }
+
+  /**
+   * As a performance enhancement, use the already parsed parent xml source
+   * to return the child section of xml source. This is useful for non-decomposed
+   * transformers where all child source components reference the parent's
+   * xml file to prevent re-reading the same file multiple times.
+   *
+   * @param parentXml parsed parent XMl source as an object
+   * @returns child section of the parent's xml
+   */
+  public parseFromParentXml<T = JsonMap>(parentXml: T): T {
+    if (!this.parent) {
+      return parentXml;
+    }
+    const children = normalizeToArray(
+      get(parentXml, `${this.parent.type.name}.${this.type.xmlElementName || this.type.directoryName}`)
+    ) as T[];
+    return children.find((c) => getString(c, this.type.uniqueIdElement) === this.name);
   }
 
   public getPackageRelativePath(fsPath: string, format: SfdxFileFormat): string {
@@ -131,8 +152,22 @@ export class SourceComponent implements MetadataComponent {
     return this.markedForDelete;
   }
 
-  public setMarkedForDelete(asDeletion: boolean): void {
-    this.markedForDelete = asDeletion;
+  public getDestructiveChangesType(): DestructiveChangesType {
+    return this.destructiveChangesType;
+  }
+
+  public setMarkedForDelete(destructiveChangeType?: DestructiveChangesType | boolean): void {
+    if (destructiveChangeType === false) {
+      this.markedForDelete = false;
+      // unset destructiveChangesType if it was already set
+      delete this.destructiveChangesType;
+    } else {
+      this.markedForDelete = true;
+      // eslint-disable-next-line no-unused-expressions
+      destructiveChangeType === DestructiveChangesType.PRE
+        ? (this.destructiveChangesType = DestructiveChangesType.PRE)
+        : (this.destructiveChangesType = DestructiveChangesType.POST);
+    }
   }
 
   private calculateRelativePath(fsPath: string): string {
@@ -167,10 +202,7 @@ export class SourceComponent implements MetadataComponent {
     if (firstElement === this.type.name) {
       return parsed;
     } else if (this.parent) {
-      const children = normalizeToArray(
-        get(parsed, `${this.parent.type.name}.${this.type.directoryName}`)
-      ) as T[];
-      return children.find((c) => getString(c, this.type.uniqueIdElement) === this.name);
+      return this.parseFromParentXml(parsed);
     } else {
       return parsed;
     }
@@ -191,7 +223,7 @@ export class SourceComponent implements MetadataComponent {
             xml: fsPath,
             parent: this,
           },
-          this._tree,
+          this.treeContainer,
           this.forceIgnore
         );
         children.push(childComponent);
@@ -220,7 +252,7 @@ export class SourceComponent implements MetadataComponent {
               xml: this.xml,
               parent: this,
             },
-            this._tree,
+            this.treeContainer,
             this.forceIgnore
           );
         });
@@ -231,14 +263,14 @@ export class SourceComponent implements MetadataComponent {
   }
 
   private *walk(fsPath: string): IterableIterator<string> {
-    if (!this._tree.isDirectory(fsPath)) {
+    if (!this.treeContainer.isDirectory(fsPath)) {
       yield fsPath;
     } else {
-      for (const child of this._tree.readDirectory(fsPath)) {
+      for (const child of this.treeContainer.readDirectory(fsPath)) {
         const childPath = join(fsPath, child);
         if (this.forceIgnore.denies(childPath)) {
           continue;
-        } else if (this._tree.isDirectory(childPath)) {
+        } else if (this.treeContainer.isDirectory(childPath)) {
           yield* this.walk(childPath);
         } else {
           yield childPath;
@@ -247,7 +279,7 @@ export class SourceComponent implements MetadataComponent {
     }
   }
 
-  get fullName(): string {
+  public get fullName(): string {
     if (this.type.ignoreParsedFullName) {
       return this.type.name;
     }
@@ -258,8 +290,8 @@ export class SourceComponent implements MetadataComponent {
     }
   }
 
-  get tree(): TreeContainer {
-    return this._tree;
+  public get tree(): TreeContainer {
+    return this.treeContainer;
   }
 
   /**
@@ -275,7 +307,7 @@ export class SourceComponent implements MetadataComponent {
    *
    * E.g., CustomFieldTranslation.
    */
-  get isAddressable(): boolean {
+  public get isAddressable(): boolean {
     return this.type.isAddressable !== false;
   }
 }

@@ -76,9 +76,6 @@ describe('Base Deploy Strategy', () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
     const metaXMLString = 'Incorrect metadata file';
 
-    assert.throws(
-      () => deployLibrary.buildMetadataField(metaXMLString),
-      nls.localize('error_parsing_metadata_file')
-    );
+    assert.throws(() => deployLibrary.buildMetadataField(metaXMLString), nls.localize('error_parsing_metadata_file'));
   });
 });

@@ -11,7 +11,7 @@ import { MetadataRegistry } from '../../src';
 export const getMissingTypes = (
   metadataCoverage: CoverageObject,
   registry: MetadataRegistry
-): [string, CoverageObjectType][] => {
+): Array<[string, CoverageObjectType]> => {
   const metadataApiTypesFromCoverage = Object.entries(metadataCoverage.types).filter(
     ([key, value]) =>
       value.channels.metadataApi && // if it's not in the mdapi, we don't worry about the registry
@@ -23,8 +23,6 @@ export const getMissingTypes = (
     regType.name,
     ...(regType.children ? Object.values(regType.children.types).map((child) => child.name) : []),
   ]);
-  const missingTypes = metadataApiTypesFromCoverage.filter(
-    ([key]) => !registryTypeNames.includes(key)
-  );
+  const missingTypes = metadataApiTypesFromCoverage.filter(([key]) => !registryTypeNames.includes(key));
   return missingTypes;
 };

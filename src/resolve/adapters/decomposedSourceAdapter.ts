@@ -4,12 +4,12 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { SourcePath } from '../../common';
 import { SourceComponent } from '../sourceComponent';
 import { baseName, parentName, parseMetadataXml } from '../../utils';
 import { DecompositionStrategy } from '../../registry';
 import { TypeInferenceError } from '../../errors';
+import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 
 /**
  * Handles decomposed types. A flavor of mixed content where a component can
@@ -51,7 +51,6 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
         rootMetadata = parseMetadataXml(rootMetadataPath);
       }
     }
-
     let component: SourceComponent;
     if (rootMetadata) {
       const componentName = this.type.folderType
@@ -76,53 +75,47 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
    * the child component, set its parent property to the one created by the
    * `BaseSourceAdapter`, and return the child component instead.
    */
-  protected populate(
-    trigger: SourcePath,
-    component?: SourceComponent,
-    isResolvingSource?: boolean
-  ): SourceComponent {
+  protected populate(trigger: SourcePath, component?: SourceComponent, isResolvingSource?: boolean): SourceComponent {
     const metaXml = parseMetadataXml(trigger);
     if (metaXml) {
       const pathToContent = this.trimPathToContent(trigger);
       const childTypeId = this.type.children.suffixes[metaXml.suffix];
-
-      // If the child is explicitly not addressable, return the parent SourceComponent.
-      const triggerIsAChild =
-        !!childTypeId && this.type.children.types[childTypeId].isAddressable !== false;
+      const triggerIsAChild = !!childTypeId;
       const strategy = this.type.strategies.decomposition;
-      if (
-        triggerIsAChild &&
-        (strategy === DecompositionStrategy.FolderPerType || isResolvingSource)
-      ) {
-        let parent = component;
-        if (!parent) {
-          parent = new SourceComponent(
+
+      if (triggerIsAChild) {
+        if (strategy === DecompositionStrategy.FolderPerType || isResolvingSource) {
+          let parent = component;
+          if (!parent) {
+            parent = new SourceComponent(
+              {
+                name: baseName(pathToContent),
+                type: this.type,
+              },
+              this.tree,
+              this.forceIgnore
+            );
+          }
+          parent.content = pathToContent;
+          return new SourceComponent(
             {
-              name: baseName(pathToContent),
-              type: this.type,
+              name: metaXml.fullName,
+              type: this.type.children.types[childTypeId],
+              xml: trigger,
+              parent,
             },
             this.tree,
             this.forceIgnore
           );
         }
-        parent.content = pathToContent;
-        return new SourceComponent(
-          {
-            name: metaXml.fullName,
-            type: this.type.children.types[childTypeId],
-            xml: trigger,
-            parent,
-          },
-          this.tree,
-          this.forceIgnore
-        );
-      }
-      if (!triggerIsAChild) {
+      } else {
         if (!component) {
           // This is most likely metadata found within a CustomObject folder that is not a
           // child type of CustomObject. E.g., Layout, SharingRules, ApexClass.
           throw new TypeInferenceError('error_unexpected_child_type', [trigger, this.type.name]);
         }
+      }
+      if (component) {
         component.content = pathToContent;
       }
     }

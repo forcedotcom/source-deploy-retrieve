@@ -4,11 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SourceAdapter, MetadataXml } from '../types';
+import { basename, dirname, sep } from 'path';
+import { MetadataXml, SourceAdapter } from '../types';
 import { parseMetadataXml, parseNestedFullName } from '../../utils';
 import { UnexpectedForceIgnore } from '../../errors';
 import { ForceIgnore } from '../forceIgnore';
-import { dirname, basename, sep } from 'path';
 import { NodeFSTreeContainer, TreeContainer } from '../treeContainers';
 import { SourceComponent } from '../sourceComponent';
 import { SourcePath } from '../../common';
@@ -27,7 +27,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   protected ownFolder = false;
   protected metadataWithContent = true;
 
-  constructor(
+  public constructor(
     type: MetadataType,
     registry = new RegistryAccess(),
     forceIgnore: ForceIgnore = new ForceIgnore(),
@@ -58,9 +58,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
           name: this.calculateName(rootMetadata),
           type: this.type,
           xml: rootMetadata.path,
-          parentType: this.type.folderType
-            ? this.registry.getTypeByName(this.type.folderType)
-            : undefined,
+          parentType: this.type.folderType ? this.registry.getTypeByName(this.type.folderType) : undefined,
         },
         this.tree,
         this.forceIgnore
@@ -117,7 +115,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    * for a component, parse the name and return it. This allows matching files in metadata
    * format such as:
    *
-   *   .../tabs/MyTab.tab
+   * .../tabs/MyTab.tab
    *
    * @param path File path of a metadata component
    */
@@ -136,21 +134,20 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     const typeFolderIndex = parts.lastIndexOf(this.type.directoryName);
     // nestedTypes (ex: territory2) have a folderType equal to their type but are themselves
     // in a folder per metadata item, with child folders for rules/territories
-    const allowedIndex =
-      this.type.folderType === this.type.id ? parts.length - 2 : parts.length - 1;
+    const allowedIndex = this.type.folderType === this.type.id ? parts.length - 2 : parts.length - 1;
 
     if (typeFolderIndex !== allowedIndex) {
       return undefined;
     }
 
-    const match = basename(path).match(/(.+)\.(.+)/);
+    const match = new RegExp(/(.+)\.(.+)/).exec(basename(path));
     if (match && this.type.suffix === match[2]) {
-      return { fullName: match[1], suffix: match[2], path: path };
+      return { fullName: match[1], suffix: match[2], path };
     }
   }
 
   private parseAsFolderMetadataXml(fsPath: SourcePath): MetadataXml {
-    const match = basename(fsPath).match(/(.+)-meta\.xml$/);
+    const match = new RegExp(/(.+)-meta\.xml$/).exec(basename(fsPath));
     const parts = fsPath.split(sep);
     if (match && !match[1].includes('.') && parts.length > 1) {
       return { fullName: match[1], suffix: undefined, path: fsPath };
@@ -176,9 +173,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     // type is nested inside another type (ex: Territory2Model).  So the names are modelName.ruleName or modelName.territoryName
     if (grandparentType.folderType && grandparentType.folderType !== this.type.id) {
       const splits = rootMetadata.path.split(sep);
-      return `${splits[splits.indexOf(grandparentType.directoryName) + 1]}.${
-        rootMetadata.fullName
-      }`;
+      return `${splits[splits.indexOf(grandparentType.directoryName) + 1]}.${rootMetadata.fullName}`;
     }
     // this is the top level of nested types (ex: in a Territory2Model, the Territory2Model)
     if (grandparentType.folderType === this.type.id) {

@@ -2,139 +2,181 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [4.5.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.5...v4.5.6) (2021-10-07)
+### [5.1.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.1.1...v5.1.2) (2021-10-29)
 
-### [4.5.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.4...v4.5.5) (2021-10-06)
+### [5.1.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.1.0...v5.1.1) (2021-10-28)
 
 
 ### Bug Fixes
 
-* replace fs with graceful-fs ([#468](https://github.com/forcedotcom/source-deploy-retrieve/issues/468)) ([2b5214c](https://github.com/forcedotcom/source-deploy-retrieve/commit/2b5214c655b94e009e18482f50f121c6217c5e24))
+* ensure component.content is always assigned ([#485](https://github.com/forcedotcom/source-deploy-retrieve/issues/485)) ([d77f475](https://github.com/forcedotcom/source-deploy-retrieve/commit/d77f47502634206ac59181362b7f17da82ed01e7))
+
+## [5.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.3...v5.1.0) (2021-10-28)
+
+
+### Features
+
+* construct virtual tree from array of paths ([#480](https://github.com/forcedotcom/source-deploy-retrieve/issues/480)) ([99954dc](https://github.com/forcedotcom/source-deploy-retrieve/commit/99954dc731d078e99283eed940b98ee63688a024))
+
+### [5.0.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.2...v5.0.3) (2021-10-28)
+
+### Bug Fixes
+
+- keys split into 2 strings, which allows # in fullName ([#474](https://github.com/forcedotcom/source-deploy-retrieve/issues/474)) ([79aec1f](https://github.com/forcedotcom/source-deploy-retrieve/commit/79aec1f7af6db21ee498721f425b122a53f14310))
+
+### [5.0.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.1...v5.0.2) (2021-10-28)
+
+### Bug Fixes
+
+- doesn't call Object.entries on undefined ([#484](https://github.com/forcedotcom/source-deploy-retrieve/issues/484)) ([089198e](https://github.com/forcedotcom/source-deploy-retrieve/commit/089198e7e1472724951765c2bca7be7003609b64))
+
+### [5.0.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.0...v5.0.1) (2021-10-21)
+
+### Bug Fixes
+
+- migrate registry.json from fork ([#482](https://github.com/forcedotcom/source-deploy-retrieve/issues/482)) ([cad3700](https://github.com/forcedotcom/source-deploy-retrieve/commit/cad370037ef529a575723f89061d46b9503a1a60))
+
+## [5.0.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.12...v5.0.0) (2021-10-21)
+
+### [4.5.12](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.11...v4.5.12) (2021-10-20)
+
+### [4.5.11](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.10...v4.5.11) (2021-10-13)
+
+### [4.5.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.9...v4.5.10) (2021-10-13)
+
+### Bug Fixes
+
+- use matching content file strategy ([#471](https://github.com/forcedotcom/source-deploy-retrieve/issues/471)) ([86b21d6](https://github.com/forcedotcom/source-deploy-retrieve/commit/86b21d69b913058f3b3fc641f6ef7ce9a0c2fe92))
+
+### [4.5.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.8...v4.5.9) (2021-10-12)
+
+### Bug Fixes
+
+- bump api version to 53.0 ([#476](https://github.com/forcedotcom/source-deploy-retrieve/issues/476)) ([a62aac5](https://github.com/forcedotcom/source-deploy-retrieve/commit/a62aac52037e40f3bfbf0ff516054d8096ecbfed))
+
+### [4.5.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.7...v4.5.8) (2021-10-12)
+
+### [4.5.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.6...v4.5.7) (2021-10-11)
+
+### Bug Fixes
+
+- use parent xml to parse child ([#470](https://github.com/forcedotcom/source-deploy-retrieve/issues/470)) ([440d2be](https://github.com/forcedotcom/source-deploy-retrieve/commit/440d2beda3cdd8cc64137ac64d361e230d8f5e30))
+
+### [4.5.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.5...v4.5.6) (2021-10-07)
+
+### [4.5.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.4...v4.5.5) (2021-10-06)
+
+### Bug Fixes
+
+- replace fs with graceful-fs ([#468](https://github.com/forcedotcom/source-deploy-retrieve/issues/468)) ([2b5214c](https://github.com/forcedotcom/source-deploy-retrieve/commit/2b5214c655b94e009e18482f50f121c6217c5e24))
 
 ### [4.5.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.3...v4.5.4) (2021-10-06)
 
 ### [4.5.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.2...v4.5.3) (2021-10-06)
 
-
 ### Bug Fixes
 
-* set correct status on file responses ([#465](https://github.com/forcedotcom/source-deploy-retrieve/issues/465)) ([3e95508](https://github.com/forcedotcom/source-deploy-retrieve/commit/3e9550846a0528f7c6c5ea02881003a87601fc1f))
+- set correct status on file responses ([#465](https://github.com/forcedotcom/source-deploy-retrieve/issues/465)) ([3e95508](https://github.com/forcedotcom/source-deploy-retrieve/commit/3e9550846a0528f7c6c5ea02881003a87601fc1f))
 
 ### [4.5.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.1...v4.5.2) (2021-10-03)
 
-
 ### Bug Fixes
 
-* support mixed wildcards and names in manifests ([#464](https://github.com/forcedotcom/source-deploy-retrieve/issues/464)) ([58e14ba](https://github.com/forcedotcom/source-deploy-retrieve/commit/58e14ba1b89ec6b63cfc748ef46d39d40ab8f348))
+- support mixed wildcards and names in manifests ([#464](https://github.com/forcedotcom/source-deploy-retrieve/issues/464)) ([58e14ba](https://github.com/forcedotcom/source-deploy-retrieve/commit/58e14ba1b89ec6b63cfc748ef46d39d40ab8f348))
 
 ### [4.5.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.5.0...v4.5.1) (2021-09-30)
 
 ## [4.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.8...v4.5.0) (2021-09-30)
 
-
 ### Features
 
-* support epb types ([#463](https://github.com/forcedotcom/source-deploy-retrieve/issues/463)) ([1963483](https://github.com/forcedotcom/source-deploy-retrieve/commit/1963483ca9795437cba09568f1bd0f29d33affd1))
+- support epb types ([#463](https://github.com/forcedotcom/source-deploy-retrieve/issues/463)) ([1963483](https://github.com/forcedotcom/source-deploy-retrieve/commit/1963483ca9795437cba09568f1bd0f29d33affd1))
 
 ### [4.4.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.7...v4.4.8) (2021-09-30)
 
-
 ### Bug Fixes
 
-* resolve CustomFieldTranslations properly ([#461](https://github.com/forcedotcom/source-deploy-retrieve/issues/461)) ([cf764bb](https://github.com/forcedotcom/source-deploy-retrieve/commit/cf764bb9ce02844553e6374efa1d538e414ab697))
+- resolve CustomFieldTranslations properly ([#461](https://github.com/forcedotcom/source-deploy-retrieve/issues/461)) ([cf764bb](https://github.com/forcedotcom/source-deploy-retrieve/commit/cf764bb9ce02844553e6374efa1d538e414ab697))
 
 ### [4.4.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.6...v4.4.7) (2021-09-28)
 
-
 ### Bug Fixes
 
-* release sfdx-core update ([#462](https://github.com/forcedotcom/source-deploy-retrieve/issues/462)) ([ed44dff](https://github.com/forcedotcom/source-deploy-retrieve/commit/ed44dfff1757eb307f24fcbcdc1efa0e7f197ca7))
+- release sfdx-core update ([#462](https://github.com/forcedotcom/source-deploy-retrieve/issues/462)) ([ed44dff](https://github.com/forcedotcom/source-deploy-retrieve/commit/ed44dfff1757eb307f24fcbcdc1efa0e7f197ca7))
 
 ### [4.4.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.5...v4.4.6) (2021-09-24)
 
-
 ### Bug Fixes
 
-* resolve folderContentTypes in mdapi format for windows ([#457](https://github.com/forcedotcom/source-deploy-retrieve/issues/457)) ([25fbec5](https://github.com/forcedotcom/source-deploy-retrieve/commit/25fbec55720e7bab39a9e7e4f0368f44882c15de))
+- resolve folderContentTypes in mdapi format for windows ([#457](https://github.com/forcedotcom/source-deploy-retrieve/issues/457)) ([25fbec5](https://github.com/forcedotcom/source-deploy-retrieve/commit/25fbec55720e7bab39a9e7e4f0368f44882c15de))
 
 ### [4.4.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.4...v4.4.5) (2021-09-23)
 
-
 ### Bug Fixes
 
-* adds support for nested InFolder metadata types ([#455](https://github.com/forcedotcom/source-deploy-retrieve/issues/455)) ([b2b90a7](https://github.com/forcedotcom/source-deploy-retrieve/commit/b2b90a7093a60d264776b663f6280ba3a101c237))
+- adds support for nested InFolder metadata types ([#455](https://github.com/forcedotcom/source-deploy-retrieve/issues/455)) ([b2b90a7](https://github.com/forcedotcom/source-deploy-retrieve/commit/b2b90a7093a60d264776b663f6280ba3a101c237))
 
 ### [4.4.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.3...v4.4.4) (2021-09-20)
 
-
 ### Bug Fixes
 
-* remove XML_NS_KEY from children when written in metadata format ([#451](https://github.com/forcedotcom/source-deploy-retrieve/issues/451)) ([991ba16](https://github.com/forcedotcom/source-deploy-retrieve/commit/991ba161be918c4475381b657d768d8a88a32521))
+- remove XML_NS_KEY from children when written in metadata format ([#451](https://github.com/forcedotcom/source-deploy-retrieve/issues/451)) ([991ba16](https://github.com/forcedotcom/source-deploy-retrieve/commit/991ba161be918c4475381b657d768d8a88a32521))
 
 ### [4.4.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.2...v4.4.3) (2021-09-16)
 
-
 ### Bug Fixes
 
-* better support for non-nested inFolder types ([#452](https://github.com/forcedotcom/source-deploy-retrieve/issues/452)) ([f1237cb](https://github.com/forcedotcom/source-deploy-retrieve/commit/f1237cb887f1a24d121aadac9e5cf5f059d5203f))
+- better support for non-nested inFolder types ([#452](https://github.com/forcedotcom/source-deploy-retrieve/issues/452)) ([f1237cb](https://github.com/forcedotcom/source-deploy-retrieve/commit/f1237cb887f1a24d121aadac9e5cf5f059d5203f))
 
 ### [4.4.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.1...v4.4.2) (2021-09-16)
 
-
 ### Bug Fixes
 
-* **registry.json:** registry update for ManagedTopics ([#453](https://github.com/forcedotcom/source-deploy-retrieve/issues/453)) ([70f7ca8](https://github.com/forcedotcom/source-deploy-retrieve/commit/70f7ca82491b900836216bad86e99cc976044635))
+- **registry.json:** registry update for ManagedTopics ([#453](https://github.com/forcedotcom/source-deploy-retrieve/issues/453)) ([70f7ca8](https://github.com/forcedotcom/source-deploy-retrieve/commit/70f7ca82491b900836216bad86e99cc976044635))
 
 ### [4.4.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.4.0...v4.4.1) (2021-09-09)
 
-
 ### Bug Fixes
 
-* fix functions to function suffix ([#449](https://github.com/forcedotcom/source-deploy-retrieve/issues/449)) ([7c2ba22](https://github.com/forcedotcom/source-deploy-retrieve/commit/7c2ba22cd47c89e11a480d7b9d8ac7c909283427))
+- fix functions to function suffix ([#449](https://github.com/forcedotcom/source-deploy-retrieve/issues/449)) ([7c2ba22](https://github.com/forcedotcom/source-deploy-retrieve/commit/7c2ba22cd47c89e11a480d7b9d8ac7c909283427))
 
 ## [4.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.3.5...v4.4.0) (2021-09-09)
 
-
 ### Features
 
-* add required child type entries to manifest ([#446](https://github.com/forcedotcom/source-deploy-retrieve/issues/446)) ([c99198b](https://github.com/forcedotcom/source-deploy-retrieve/commit/c99198b37cd752f10b7c12e72ccf1304464cfccf))
-
+- add required child type entries to manifest ([#446](https://github.com/forcedotcom/source-deploy-retrieve/issues/446)) ([c99198b](https://github.com/forcedotcom/source-deploy-retrieve/commit/c99198b37cd752f10b7c12e72ccf1304464cfccf))
 
 ### Bug Fixes
 
-* node 16 error parsing issue ([#448](https://github.com/forcedotcom/source-deploy-retrieve/issues/448)) ([54e1fdd](https://github.com/forcedotcom/source-deploy-retrieve/commit/54e1fddc5fb26675aad69c27036b9cb7ac7e978c))
+- node 16 error parsing issue ([#448](https://github.com/forcedotcom/source-deploy-retrieve/issues/448)) ([54e1fdd](https://github.com/forcedotcom/source-deploy-retrieve/commit/54e1fddc5fb26675aad69c27036b9cb7ac7e978c))
 
 ### [4.3.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.3.4...v4.3.5) (2021-09-02)
 
-
 ### Bug Fixes
 
-* force RestrictionRule to a strict directory ([#447](https://github.com/forcedotcom/source-deploy-retrieve/issues/447)) ([00b5315](https://github.com/forcedotcom/source-deploy-retrieve/commit/00b531559774036df5d45baf1d0da9e83c3262e9))
+- force RestrictionRule to a strict directory ([#447](https://github.com/forcedotcom/source-deploy-retrieve/issues/447)) ([00b5315](https://github.com/forcedotcom/source-deploy-retrieve/commit/00b531559774036df5d45baf1d0da9e83c3262e9))
 
 ### [4.3.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.3.3...v4.3.4) (2021-09-02)
 
 ### [4.3.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.3.2...v4.3.3) (2021-08-31)
 
-
 ### Bug Fixes
 
-* Wr/aura under object main ([#443](https://github.com/forcedotcom/source-deploy-retrieve/issues/443)) ([cc5e471](https://github.com/forcedotcom/source-deploy-retrieve/commit/cc5e471b347ca1c2ed764de9c1db21d29d7af01e))
+- Wr/aura under object main ([#443](https://github.com/forcedotcom/source-deploy-retrieve/issues/443)) ([cc5e471](https://github.com/forcedotcom/source-deploy-retrieve/commit/cc5e471b347ca1c2ed764de9c1db21d29d7af01e))
 
 ### [4.3.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.3.1...v4.3.2) (2021-08-26)
 
 ### [4.3.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.3.0...v4.3.1) (2021-08-25)
 
-
 ### Bug Fixes
 
-* add children to manifest during convert ([#442](https://github.com/forcedotcom/source-deploy-retrieve/issues/442)) ([3017e9d](https://github.com/forcedotcom/source-deploy-retrieve/commit/3017e9d45c6f0bbbb9adefaa455ce9775128e2bf))
+- add children to manifest during convert ([#442](https://github.com/forcedotcom/source-deploy-retrieve/issues/442)) ([3017e9d](https://github.com/forcedotcom/source-deploy-retrieve/commit/3017e9d45c6f0bbbb9adefaa455ce9775128e2bf))
 
 ## [4.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.2.0...v4.3.0) (2021-08-25)
 
-
 ### Features
 
-* add InboundCertificate to metadata registry ([#441](https://github.com/forcedotcom/source-deploy-retrieve/issues/441)) ([d833485](https://github.com/forcedotcom/source-deploy-retrieve/commit/d833485b5e9aeebfb9dd5baf89fab95f4e6032d8))
+- add InboundCertificate to metadata registry ([#441](https://github.com/forcedotcom/source-deploy-retrieve/issues/441)) ([d833485](https://github.com/forcedotcom/source-deploy-retrieve/commit/d833485b5e9aeebfb9dd5baf89fab95f4e6032d8))
 
 ## [4.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v4.1.1...v4.2.0) (2021-08-25)
 
@@ -354,7 +396,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 - Fix for recompostion failure when the parent xml did not exist ([PR #245](https://github.com/forcedotcom/source-deploy-retrieve/pull/245))
 
-- Fix conversion failure to source format for StaticResource component with `octet-stream` content type  ([PR #244](https://github.com/forcedotcom/source-deploy-retrieve/pull/244))
+- Fix conversion failure to source format for StaticResource component with `octet-stream` content type ([PR #244](https://github.com/forcedotcom/source-deploy-retrieve/pull/244))
 
 - Fix timeout during metadata api deploy and retrieve operations ([PR #236](https://github.com/forcedotcom/source-deploy-retrieve/pull/236))
 
@@ -377,11 +419,13 @@ All notable changes to this project will be documented in this file. See [standa
 - Fix issue setting up connection when deploying or retrieving ComponentSet ([PR #226](https://github.com/forcedotcom/source-deploy-retrieve/pull/226))
 
 # 1.1.14 - December 7, 2020
+
 ## Fixed
 
 - Fix issue with deploying individual child components ([#220](https://github.com/forcedotcom/source-deploy-retrieve/pull/220))
 
 # 1.1.13 - December 3, 2020
+
 ## Fixed
 
 - Add non-source components when initializing ComponentSets with resolve option ([#217](https://github.com/forcedotcom/source-deploy-retrieve/pull/217))
@@ -422,7 +466,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## Added
 
-- Move `RegistryAccess` functionality to new  `MetadataResolver` class ([PR #194](https://github.com/forcedotcom/source-deploy-retrieve/pull/194), [PR #199](https://github.com/forcedotcom/source-deploy-retrieve/pull/199))
+- Move `RegistryAccess` functionality to new `MetadataResolver` class ([PR #194](https://github.com/forcedotcom/source-deploy-retrieve/pull/194), [PR #199](https://github.com/forcedotcom/source-deploy-retrieve/pull/199))
 
 # 1.1.9 - October 28, 2020
 

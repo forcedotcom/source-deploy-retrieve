@@ -8,7 +8,7 @@
 import { RegistryAccess, registry, MetadataType } from '../registry';
 import { standardValueSet } from '../registry/standardvalueset';
 import { Connection, Logger } from '@salesforce/core';
-import { FileProperties, QueryResult, StdValueSetRecord, ListMetadataQuery } from '../client/types';
+import { FileProperties, StdValueSetRecord, ListMetadataQuery } from '../client/types';
 import { normalizeToArray } from '../utils';
 import { MetadataComponent } from './types';
 export interface ResolveConnectionResult {
@@ -111,10 +111,10 @@ export class ConnectionResolver {
       const standardValueSetPromises = standardValueSet.fullNames.map(
         async (standardValueSetFullName) => {
           try {
-            const queryResult = (await this.connection.tooling.query(
-              `SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = '${standardValueSetFullName}'`
-            )) as QueryResult;
-            const standardValueSetRecord = queryResult.records[0] as StdValueSetRecord;
+            const standardValueSetRecord: StdValueSetRecord = await this.connection.singleRecordQuery(
+              `SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = '${standardValueSetFullName}'`,
+              { tooling: true }
+            );
             return (
               standardValueSetRecord.Metadata.standardValue.length && {
                 fullName: standardValueSetRecord.MasterLabel,

@@ -11,7 +11,7 @@ import { createSandbox, SinonSandbox } from 'sinon';
 import { Connection } from '@salesforce/core';
 import { mockConnection } from '../mock/client';
 import { ConnectionResolver } from '../../src/resolve';
-import { MetadataComponent, QueryResult, registry } from '../../src/';
+import { MetadataComponent, registry } from '../../src/';
 
 const $$ = testSetup();
 
@@ -23,13 +23,6 @@ const StdFileProperty = {
   lastModifiedById: 'lastModifiedById',
   lastModifiedByName: 'lastModifiedByName',
   lastModifiedDate: 'lastModifiedDate',
-};
-
-const StdQueryResult = {
-  size: 1,
-  totalSize: 1,
-  done: true,
-  queryLocator: 'null',
 };
 
 describe('ConnectionResolver', () => {
@@ -186,43 +179,31 @@ describe('ConnectionResolver', () => {
     it('should resolve standardValueSet components from tooling api', async () => {
       sandboxStub.stub(connection.metadata, 'list');
 
-      const mockToolingQuery = sandboxStub.stub(connection.tooling, 'query');
+      const mockToolingQuery = sandboxStub.stub(connection, 'singleRecordQuery');
       mockToolingQuery
         .withArgs(
           "SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = 'AccountOwnership'"
         )
         .resolves({
-          ...StdQueryResult,
-          entityTypeName: 'StandardValueSet',
-          records: [
-            {
-              Id: '00X1x000003Hs4ZEAS',
-              MasterLabel: 'AccountOwnership',
-              Metadata: {
-                standardValue: [
-                  {
-                    property: null,
-                  },
-                ],
+          Id: '00X1x000003Hs4ZEAS',
+          MasterLabel: 'AccountOwnership',
+          Metadata: {
+            standardValue: [
+              {
+                property: null,
               },
-            },
-          ],
-        } as QueryResult);
+            ],
+          },
+        });
 
       mockToolingQuery
         .withArgs(
           "SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = 'AccountContactMultiRoles'"
         )
         .resolves({
-          ...StdQueryResult,
-          entityTypeName: 'StandardValueSet',
-          records: [
-            {
-              Id: '00X1x000003Hs4ZEAS',
-              MasterLabel: 'AccountContactMultiRoles',
-            },
-          ],
-        } as QueryResult);
+          Id: '00X1x000003Hs4ZEAS',
+          MasterLabel: 'AccountContactMultiRoles',
+        });
 
       const resolver = new ConnectionResolver(connection);
       const result = await resolver.resolve();

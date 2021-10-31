@@ -181,9 +181,7 @@ describe('ConnectionResolver', () => {
 
       const mockToolingQuery = sandboxStub.stub(connection, 'singleRecordQuery');
       mockToolingQuery
-        .withArgs(
-          "SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = 'AccountOwnership'"
-        )
+        .withArgs("SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = 'AccountOwnership'")
         .resolves({
           Id: '00X1x000003Hs4ZEAS',
           MasterLabel: 'AccountOwnership',

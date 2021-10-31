@@ -5,9 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { RegistryAccess, registry, MetadataType } from '../registry';
-import { standardValueSet } from '../registry/standardvalueset';
 import { Connection, Logger } from '@salesforce/core';
+import { RegistryAccess, registry as defaultRegistry, MetadataType } from '../registry';
+import { standardValueSet } from '../registry/standardvalueset';
 import { FileProperties, StdValueSetRecord, ListMetadataQuery } from '../client/types';
 import { normalizeToArray } from '../utils';
 import { MetadataComponent } from './types';
@@ -23,19 +23,19 @@ export class ConnectionResolver {
   private connection: Connection;
   private registry: RegistryAccess;
 
-  constructor(connection: Connection, registry = new RegistryAccess()) {
+  public constructor(connection: Connection, registry = new RegistryAccess()) {
     this.connection = connection;
     this.registry = registry;
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
   public async resolve(excludeManagedComponents = true): Promise<ResolveConnectionResult> {
-    const Aggregator: Partial<FileProperties>[] = [];
+    const Aggregator: Array<Partial<FileProperties>> = [];
     const childrenPromises: Array<Promise<FileProperties[]>> = [];
     const componentTypes: Set<MetadataType> = new Set();
 
     const componentPromises: Array<Promise<FileProperties[]>> = [];
-    for (const type of Object.values(registry.types)) {
+    for (const type of Object.values(defaultRegistry.types)) {
       componentPromises.push(this.listMembers({ type: type.name }));
     }
     for await (const componentResult of componentPromises) {
@@ -70,11 +70,7 @@ export class ConnectionResolver {
 
     const components = Aggregator.filter(
       (component) =>
-        !(
-          excludeManagedComponents &&
-          component.namespacePrefix &&
-          component.manageableState !== 'unmanaged'
-        )
+        !(excludeManagedComponents && component.namespacePrefix && component.manageableState !== 'unmanaged')
     )
       .map((component) => {
         return { fullName: component.fullName, type: this.registry.getTypeByName(component.type) };
@@ -91,49 +87,42 @@ export class ConnectionResolver {
     };
   }
 
-  private async listMembers(
-    query: ListMetadataQuery,
-    apiVersion?: string
-  ): Promise<FileProperties[]> {
+  private async listMembers(query: ListMetadataQuery, apiVersion?: string): Promise<FileProperties[]> {
     let members: FileProperties[];
 
     try {
-      members = normalizeToArray(
-        (await this.connection.metadata.list(query, apiVersion)) as FileProperties[]
-      );
+      members = normalizeToArray((await this.connection.metadata.list(query, apiVersion)) as FileProperties[]);
     } catch (error) {
-      this.logger.error(error.message);
+      this.logger.debug((error as Error).message);
       members = [];
     }
 
     // Workaround because metadata.list({ type: 'StandardValueSet' }) returns []
-    if (query.type === registry.types.standardvalueset.name && members.length === 0) {
-      const standardValueSetPromises = standardValueSet.fullNames.map(
-        async (standardValueSetFullName) => {
-          try {
-            const standardValueSetRecord: StdValueSetRecord = await this.connection.singleRecordQuery(
-              `SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = '${standardValueSetFullName}'`,
-              { tooling: true }
-            );
-            return (
-              standardValueSetRecord.Metadata.standardValue.length && {
-                fullName: standardValueSetRecord.MasterLabel,
-                fileName: `${registry.types.standardvalueset.directoryName}/${standardValueSetRecord.MasterLabel}.${registry.types.standardvalueset.suffix}`,
-                type: registry.types.standardvalueset.name,
-                createdById: '',
-                createdByName: '',
-                createdDate: '',
-                id: '',
-                lastModifiedById: '',
-                lastModifiedByName: '',
-                lastModifiedDate: '',
-              }
-            );
-          } catch (error) {
-            this.logger.debug((error as Error).message);
-          }
+    if (query.type === defaultRegistry.types.standardvalueset.name && members.length === 0) {
+      const standardValueSetPromises = standardValueSet.fullnames.map(async (standardValueSetFullName) => {
+        try {
+          const standardValueSetRecord: StdValueSetRecord = await this.connection.singleRecordQuery(
+            `SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = '${standardValueSetFullName}'`,
+            { tooling: true }
+          );
+          return (
+            standardValueSetRecord.Metadata.standardValue.length && {
+              fullName: standardValueSetRecord.MasterLabel,
+              fileName: `${defaultRegistry.types.standardvalueset.directoryName}/${standardValueSetRecord.MasterLabel}.${defaultRegistry.types.standardvalueset.suffix}`,
+              type: defaultRegistry.types.standardvalueset.name,
+              createdById: '',
+              createdByName: '',
+              createdDate: '',
+              id: '',
+              lastModifiedById: '',
+              lastModifiedByName: '',
+              lastModifiedDate: '',
+            }
+          );
+        } catch (error) {
+          this.logger.debug((error as Error).message);
         }
-      );
+      });
       for await (const standardValueSetResult of standardValueSetPromises) {
         if (standardValueSetResult) {
           members.push(standardValueSetResult);

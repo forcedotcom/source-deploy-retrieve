@@ -243,9 +243,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @returns ComponentSet of source resolved components
    */
   public static async fromConnection(options: FromConnectionOptions): Promise<ComponentSet>;
-  public static async fromConnection(
-    input: Connection | FromConnectionOptions
-  ): Promise<ComponentSet> {
+  public static async fromConnection(input: Connection | FromConnectionOptions): Promise<ComponentSet> {
     const connection = input instanceof Connection ? input : input.connection;
     const options = (typeof input === 'object' ? input : {}) as Partial<FromConnectionOptions>;
 

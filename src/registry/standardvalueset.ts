@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { deepFreeze } from '../utils';
-import * as standardValueSetData from './standardvalueset.json';
+import * as standardValueSetData from './stdValueSetRegistry.json';
 
 /**
  * The standardValueSet fullNames.

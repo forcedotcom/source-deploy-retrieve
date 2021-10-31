@@ -420,7 +420,7 @@ export interface LWCRecord {
 export interface StdValueSetRecord {
   Id: string;
   MasterLabel: string;
-  Metadata: { standardValue: Record<string, unknown>[] };
+  Metadata: { standardValue: Array<Record<string, unknown>> };
 }
 
 export interface ListMetadataQuery {

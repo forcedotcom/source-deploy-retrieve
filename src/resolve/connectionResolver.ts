@@ -87,11 +87,11 @@ export class ConnectionResolver {
     };
   }
 
-  private async listMembers(query: ListMetadataQuery, apiVersion?: string): Promise<FileProperties[]> {
+  private async listMembers(query: ListMetadataQuery): Promise<FileProperties[]> {
     let members: FileProperties[];
 
     try {
-      members = normalizeToArray((await this.connection.metadata.list(query, apiVersion)) as FileProperties[]);
+      members = normalizeToArray((await this.connection.metadata.list(query)) as FileProperties[]);
     } catch (error) {
       this.logger.debug((error as Error).message);
       members = [];

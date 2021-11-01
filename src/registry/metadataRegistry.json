@@ -2615,6 +2615,13 @@
       "strategies": {
         "adapter": "matchingContentFile"
       }
+    },
+    "omnidatatransform": {
+      "id": "omnidatatransform",
+      "name": "OmniDataTransform",
+      "suffix": "rpt",
+      "directoryName": "omniDataTransforms",
+      "inFolder": false
     }
   },
   "suffixes": {
@@ -2903,7 +2910,8 @@
     "callCenterRoutingMap": "callcenterroutingmap",
     "view": "viewdefinition",
     "slackapp": "slackapp",
-    "permissionSetLicenseDefinition": "permissionsetlicensedefinition"
+    "permissionSetLicenseDefinition": "permissionsetlicensedefinition",
+    "rpt":"omnidatatransform"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

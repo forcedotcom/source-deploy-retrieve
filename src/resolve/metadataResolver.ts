@@ -152,8 +152,6 @@ export class MetadataResolver {
     const pathParts = fsPath.split(sep);
     // first, filter out types that don't appear in the path
     // then iterate using for/of to allow for early break
-    // const resolvedType = this.registry
-    //   .getStrictFolderTypes()
     return this.registry
       .getStrictFolderTypes()
       .filter(
@@ -162,7 +160,6 @@ export class MetadataResolver {
           pathParts.includes(type.directoryName) &&
           // types with folders only have folder components living at the top level.
           // if the fsPath is a folder component, let a future strategy deal with it
-          // const isFolderType = this.getTypeFromName(typeId).inFolder;
           (!type.inFolder || parentName(fsPath) !== type.directoryName)
       )
       .find(

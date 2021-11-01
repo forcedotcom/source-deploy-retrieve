@@ -408,8 +408,8 @@ describe('ComponentSet', () => {
     it('should include required child types as defined in the registry', () => {
       const set = new ComponentSet([MATCHING_RULES_COMPONENT]);
       expect(set.getObject().Package.types).to.deep.equal([
-        { name: MATCHING_RULES_COMPONENT.type.name, members: [MATCHING_RULES_COMPONENT.name] },
         { name: 'MatchingRule', members: ['MatchingRules.My_Account_Matching_Rule'] },
+        { name: MATCHING_RULES_COMPONENT.type.name, members: [MATCHING_RULES_COMPONENT.name] },
       ]);
     });
 
@@ -438,7 +438,7 @@ describe('ComponentSet', () => {
       set.add(new SourceComponent({ name: 'myType2', type }));
       set.add(new SourceComponent({ name: 'myType', type }));
       expect(set.getObject().Package.types).to.deep.equal([
-        { members: ['myType', '*', 'myType2'], name: 'CustomObject' },
+        { members: ['*', 'myType', 'myType2'], name: 'CustomObject' },
       ]);
     });
 

@@ -19,6 +19,33 @@ export const filePathsFromMetadataComponent = (
     return [join(packageDirWithTypeDir, `${fullName}.${type.suffix}${META_XML_SUFFIX}`)];
   }
 
+  // basic metadata in folders
+  if (!type.children && !type.strategies && (type.inFolder || type.folderType)) {
+    return generateFolders({ fullName, type }, packageDirWithTypeDir).concat([
+      join(packageDirWithTypeDir, `${fullName}.${type.suffix}${META_XML_SUFFIX}`),
+    ]);
+  }
+
+  // mixed content in folder (ex: document)
+  if (type.strategies?.adapter === 'mixedContent' && type.inFolder && !type.strategies.transformer) {
+    return generateFolders({ fullName, type }, packageDirWithTypeDir).concat([
+      join(packageDirWithTypeDir, `${fullName}${META_XML_SUFFIX}`),
+      join(packageDirWithTypeDir, `${fullName}`),
+    ]);
+  }
+
+  // mixed content not in folder (ex: staticResource,experienceBundle)
+  if (type.strategies?.adapter === 'mixedContent' && !type.inFolder) {
+    return [
+      join(
+        packageDirWithTypeDir,
+        // registry doesn't have a suffix for EB (it comes down inside the mdapi response)
+        `${fullName}.${type.strategies?.transformer === 'staticResource' ? type.suffix : 'site'}${META_XML_SUFFIX}`
+      ),
+      join(packageDirWithTypeDir, `${fullName}`),
+    ];
+  }
+
   // matching content not in folders
   if (type.strategies?.adapter === 'matchingContentFile') {
     return (type.inFolder ? generateFolders({ fullName, type }, packageDirWithTypeDir) : []).concat([
@@ -27,11 +54,17 @@ export const filePathsFromMetadataComponent = (
     ]);
   }
 
-  // basic metadata in folders
-  if ((!type.children && !type.strategies && type.inFolder) || type.folderType) {
-    return generateFolders({ fullName, type }, packageDirWithTypeDir).concat([
-      join(packageDirWithTypeDir, `${fullName}.${type.suffix}${META_XML_SUFFIX}`),
+  // lwc, aura, waveTemplate
+  if (type.strategies?.adapter === 'bundle') {
+    const mappings = new Map<string, string>([
+      ['WaveTemplateBundle', join(packageDirWithTypeDir, `${fullName}${sep}template-info.json`)],
+      ['LightningComponentBundle', join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.js${META_XML_SUFFIX}`)],
+      ['AuraDefinitionBundle', join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.cmp${META_XML_SUFFIX}`)],
     ]);
+    if (!mappings.has(type.name)) {
+      throw new Error(`Unsupported Bundle Type: ${type.name}`);
+    }
+    return [mappings.get(type.name)];
   }
 };
 

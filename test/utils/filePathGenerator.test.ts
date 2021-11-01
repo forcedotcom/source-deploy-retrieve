@@ -119,16 +119,140 @@ describe.only('generating virtual tree from component name/type', () => {
   });
 
   describe('strategy = mixedContent', () => {
-    it('mixedContent without folder (experiencebundle)');
-    it('mixedContent in folder (Document)');
-    it('mixedContent w/ transformer (staticResource)');
+    it('mixedContent without folder (experiencebundle)', () => {
+      const component = {
+        fullName: 'E_Bikes1',
+        type: registryAccess.getTypeByName('ExperienceBundle'),
+      };
+      const filenames = filePathsFromMetadataComponent(component, packageDir);
+      expect(filenames).to.deep.equalInAnyOrder(
+        ['experiences/E_Bikes1.site-meta.xml', 'experiences/E_Bikes1'].map((f) =>
+          path.join(packageDir, path.normalize(f))
+        )
+      );
+      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
+
+      const components = resolver.getComponentsFromPath(packageDir);
+      expect(components).to.have.lengthOf(1);
+      expect(components[0]).to.include({
+        xml: filenames.find((f) => f.endsWith('site-meta.xml')),
+        name: 'E_Bikes1',
+        type: component.type,
+      });
+    });
+    it('mixedContent in folder (Document)', () => {
+      const component = {
+        fullName: 'MyDocumentFolder/MyDocumentName.png',
+        type: registryAccess.getTypeByName('Document'),
+      };
+      const filenames = filePathsFromMetadataComponent(component, packageDir);
+      expect(filenames).to.deep.equalInAnyOrder(
+        [
+          'documents/MyDocumentFolder.documentFolder-meta.xml',
+          'documents/MyDocumentFolder/MyDocumentName.png',
+          'documents/MyDocumentFolder/MyDocumentName.png-meta.xml',
+        ].map((f) => path.join(packageDir, path.normalize(f)))
+      );
+      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
+
+      const components = resolver.getComponentsFromPath(packageDir);
+      expect(components).to.have.lengthOf(2);
+      expect(components[1]).to.include({
+        xml: filenames.find((f) => f.endsWith('png-meta.xml')),
+        content: filenames.find((f) => f.endsWith('MyDocumentName.png')),
+        name: 'MyDocumentFolder/MyDocumentName',
+        type: component.type,
+      });
+      expect(components[0]).to.include({
+        xml: filenames.find((f) => f.endsWith('documentFolder-meta.xml')),
+        name: 'MyDocumentFolder',
+        type: registryAccess.getTypeByName('DocumentFolder'),
+      });
+    });
+    it('mixedContent w/ transformer (staticResource)', () => {
+      const component = {
+        fullName: 'zippedResource',
+        type: registryAccess.getTypeByName('StaticResource'),
+      };
+      const filenames = filePathsFromMetadataComponent(component, packageDir);
+      expect(filenames).to.deep.equalInAnyOrder(
+        ['staticresources/zippedResource.resource-meta.xml', 'staticresources/zippedResource'].map((f) =>
+          path.join(packageDir, path.normalize(f))
+        )
+      );
+      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
+
+      const components = resolver.getComponentsFromPath(packageDir);
+      expect(components).to.have.lengthOf(1);
+
+      expect(components[0]).to.include({
+        xml: filenames.find((f) => f.endsWith('resource-meta.xml')),
+        name: 'zippedResource',
+        type: component.type,
+      });
+    });
   });
 
   describe('strategy = bundle', () => {
-    it('aura');
-    it('lwc');
-    it('waveTemplate');
+    it('lwc', () => {
+      const component = {
+        fullName: 'MyLwc',
+        type: registryAccess.getTypeByName('LightningComponentBundle'),
+      };
+      const filenames = filePathsFromMetadataComponent(component, packageDir);
+      expect(filenames).to.deep.equalInAnyOrder(
+        ['lwc/MyLwc/MyLwc.js-meta.xml'].map((f) => path.join(packageDir, path.normalize(f)))
+      );
+      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
+
+      const components = resolver.getComponentsFromPath(packageDir);
+      expect(components).to.have.lengthOf(1);
+      expect(components[0]).to.include({
+        xml: filenames.find((f) => f.endsWith('js-meta.xml')),
+        name: component.fullName,
+        type: component.type,
+      });
+    });
+    it('aura', () => {
+      const component = {
+        fullName: 'MyCmp',
+        type: registryAccess.getTypeByName('AuraDefinitionBundle'),
+      };
+      const filenames = filePathsFromMetadataComponent(component, packageDir);
+      expect(filenames).to.deep.equalInAnyOrder(
+        ['aura/MyCmp/MyCmp.cmp-meta.xml'].map((f) => path.join(packageDir, path.normalize(f)))
+      );
+      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
+
+      const components = resolver.getComponentsFromPath(packageDir);
+      expect(components).to.have.lengthOf(1);
+      expect(components[0]).to.include({
+        xml: filenames.find((f) => f.endsWith('cmp-meta.xml')),
+        name: component.fullName,
+        type: component.type,
+      });
+    });
+    it('waveTemplate', () => {
+      const component = {
+        fullName: 'WT',
+        type: registryAccess.getTypeByName('WaveTemplateBundle'),
+      };
+      const filenames = filePathsFromMetadataComponent(component, packageDir);
+      expect(filenames).to.deep.equalInAnyOrder(
+        ['waveTemplates/WT/template-info.json'].map((f) => path.join(packageDir, path.normalize(f)))
+      );
+      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
+
+      const components = resolver.getComponentsFromPath(packageDir);
+      expect(components).to.have.lengthOf(1);
+      expect(components[0]).to.include({
+        content: path.join(packageDir, 'waveTemplates', component.fullName),
+        name: component.fullName,
+        type: component.type,
+      });
+    });
   });
 
   describe('adapter = decomposed', () => {});
+  describe('adapter = nondecomposed', () => {});
 });

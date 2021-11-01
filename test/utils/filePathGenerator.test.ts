@@ -6,10 +6,14 @@
  */
 import * as path from 'path';
 import { expect } from 'chai';
+import deepEqualInAnyOrder = require('deep-equal-in-any-order');
+import chai = require('chai');
 import { filePathsFromMetadataComponent } from '../../src/utils/filePathGenerator';
 import { RegistryAccess } from '../../src/registry';
 import { MetadataResolver } from '../../src/resolve';
 import { VirtualTreeContainer } from '../../src/resolve/treeContainers';
+
+chai.use(deepEqualInAnyOrder);
 
 describe.only('generating virtual tree from component name/type', () => {
   const packageDir = path.normalize('force-app/main/default');
@@ -46,7 +50,7 @@ describe.only('generating virtual tree from component name/type', () => {
     it('works for a report in a folder', () => {
       const component = { fullName: 'myFolder/MyReport', type: registryAccess.getTypeByName('Report') };
       const filenames = filePathsFromMetadataComponent(component, packageDir);
-      expect(filenames).to.deep.equal(
+      expect(filenames).to.deep.equalInAnyOrder(
         ['reports/myFolder.reportFolder-meta.xml', 'reports/myFolder/MyReport.report-meta.xml'].map((f) =>
           path.join(packageDir, path.normalize(f))
         )
@@ -56,7 +60,7 @@ describe.only('generating virtual tree from component name/type', () => {
       const component = { fullName: 'myFolder/otherFolder/MyReport', type: registryAccess.getTypeByName('Report') };
       const filenames = filePathsFromMetadataComponent(component, packageDir);
       expect(filenames).to.have.lengthOf(3);
-      expect(filenames).to.have.members(
+      expect(filenames).to.deep.equalInAnyOrder(
         [
           'reports/myFolder.reportFolder-meta.xml',
           'reports/myFolder/otherFolder.reportFolder-meta.xml',
@@ -85,10 +89,32 @@ describe.only('generating virtual tree from component name/type', () => {
         type: component.type,
       });
     });
-    it('works for matchingContentFile with folder (emailTemplate)', () => {
-      // const component = { fullName: 'MyClass', type: registryAccess.getTypeByName('ApexClass') };
-      // const filenames = filePathsFromMetadataComponent(component, packageDir);
-      // expect(filenames).to.deep.equal(['classes/MyClass.cls-meta.xml', 'classes/MyClass.cls']);
+    it('works for matchingContentFile with folder (emailTemplate and emailFolder)', () => {
+      const component = { fullName: 'aFolder/someTemplate', type: registryAccess.getTypeByName('EmailTemplate') };
+      const filenames = filePathsFromMetadataComponent(component, packageDir);
+      expect(filenames).to.deep.equalInAnyOrder(
+        [
+          'email/aFolder.emailFolder-meta.xml',
+          'email/aFolder/someTemplate.email',
+          'email/aFolder/someTemplate.email-meta.xml',
+        ].map((f) => path.join(packageDir, path.normalize(f)))
+      );
+
+      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
+
+      const components = resolver.getComponentsFromPath(packageDir);
+      expect(components).to.have.lengthOf(2);
+      expect(components[1]).to.include({
+        xml: filenames.find((f) => f.endsWith('email-meta.xml')),
+        content: filenames.find((f) => f.endsWith('email')),
+        name: component.fullName,
+        type: component.type,
+      });
+      expect(components[0]).to.include({
+        xml: filenames.find((f) => f.endsWith('emailFolder-meta.xml')),
+        name: 'aFolder',
+        type: registryAccess.getTypeByName('EmailFolder'),
+      });
     });
   });
 

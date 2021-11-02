@@ -11,7 +11,7 @@ import { createSandbox, SinonSandbox } from 'sinon';
 import { Connection } from '@salesforce/core';
 import { mockConnection } from '../mock/client';
 import { ConnectionResolver } from '../../src/resolve';
-import { MetadataComponent, registry } from '../../src/';
+import { MetadataComponent, registry, ComponentSet } from '../../src/';
 
 const $$ = testSetup();
 
@@ -96,6 +96,14 @@ describe('ConnectionResolver', () => {
         },
       ];
       expect(result.components).to.deep.equal(expected);
+      const resultComponentSet = new ComponentSet([]);
+      for (const component of result.components) {
+        resultComponentSet.add(component);
+      }
+      expect(resultComponentSet.getObject().Package.types).to.deep.equal([
+        { members: ['Account.testa', 'Account.testb', 'Account.testc'], name: 'CustomField' },
+        { members: ['Account'], name: 'CustomObject' },
+      ]);
     });
     it('should resolve components with different types', async () => {
       const metadataQueryStub = sandboxStub.stub(connection.metadata, 'list');

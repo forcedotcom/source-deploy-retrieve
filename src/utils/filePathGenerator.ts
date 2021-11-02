@@ -8,21 +8,36 @@ import { join, sep } from 'path';
 import { MetadataComponent } from '../resolve/types';
 import { META_XML_SUFFIX } from '../common/constants';
 import { RegistryAccess } from '../registry/registryAccess';
+import { registry } from '..';
+const registryAccess = new RegistryAccess();
 
 export const filePathsFromMetadataComponent = (
   { fullName, type }: MetadataComponent,
   packageDir?: string
 ): string[] => {
   const packageDirWithTypeDir = packageDir ? join(packageDir, type.directoryName) : type.directoryName;
-  // the basic metadata file pattern
-  if (!type.children && !type.strategies && !type.inFolder && !type.folderType) {
-    return [join(packageDirWithTypeDir, `${fullName}.${type.suffix}${META_XML_SUFFIX}`)];
+
+  if (type.strategies?.adapter === 'decomposed') {
+    return [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.${type.suffix}${META_XML_SUFFIX}`)];
   }
 
-  // basic metadata in folders
-  if (!type.children && !type.strategies && (type.inFolder || type.folderType)) {
-    return generateFolders({ fullName, type }, packageDirWithTypeDir).concat([
+  // this needs to be done before the other types because of potential overlaps
+  if (!type.children && Object.keys(registry.childTypes).includes(type.id)) {
+    return getDecomposedChildType({ fullName, type }, packageDir);
+  }
+
+  // basic metadata (with or without folders)
+  if ((!type.children && !type.strategies) || type.strategies.transformer === 'nonDecomposed') {
+    return (type.inFolder || type.folderType ? generateFolders({ fullName, type }, packageDirWithTypeDir) : []).concat([
       join(packageDirWithTypeDir, `${fullName}.${type.suffix}${META_XML_SUFFIX}`),
+    ]);
+  }
+
+  // matching content (with or without folders)
+  if (type.strategies?.adapter === 'matchingContentFile') {
+    return (type.inFolder ? generateFolders({ fullName, type }, packageDirWithTypeDir) : []).concat([
+      join(packageDirWithTypeDir, `${fullName}.${type.suffix}${META_XML_SUFFIX}`),
+      join(packageDirWithTypeDir, `${fullName}.${type.suffix}`),
     ]);
   }
 
@@ -46,14 +61,6 @@ export const filePathsFromMetadataComponent = (
     ];
   }
 
-  // matching content not in folders
-  if (type.strategies?.adapter === 'matchingContentFile') {
-    return (type.inFolder ? generateFolders({ fullName, type }, packageDirWithTypeDir) : []).concat([
-      join(packageDirWithTypeDir, `${fullName}.${type.suffix}${META_XML_SUFFIX}`),
-      join(packageDirWithTypeDir, `${fullName}.${type.suffix}`),
-    ]);
-  }
-
   // lwc, aura, waveTemplate
   if (type.strategies?.adapter === 'bundle') {
     const mappings = new Map<string, string>([
@@ -61,16 +68,17 @@ export const filePathsFromMetadataComponent = (
       ['LightningComponentBundle', join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.js${META_XML_SUFFIX}`)],
       ['AuraDefinitionBundle', join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.cmp${META_XML_SUFFIX}`)],
     ]);
+
     if (!mappings.has(type.name)) {
       throw new Error(`Unsupported Bundle Type: ${type.name}`);
     }
     return [mappings.get(type.name)];
   }
+
+  throw new Error(`type not supported for filepath generation: ${type.name}`);
 };
 
 const generateFolders = ({ fullName, type }: MetadataComponent, packageDirWithTypeDir: string): string[] => {
-  const registryAccess = new RegistryAccess();
-
   // create a folder for each part of the filename between the directory name and the fullname
   const splits = fullName.split('/');
   return splits
@@ -83,4 +91,24 @@ const generateFolders = ({ fullName, type }: MetadataComponent, packageDirWithTy
         }${META_XML_SUFFIX}`
       )
     );
+};
+
+const getDecomposedChildType = ({ fullName, type }: MetadataComponent, packageDir?: string): string[] => {
+  const topLevelType = registryAccess.findType((t) => t.children && Object.keys(t.children.types).includes(type.id));
+  const topLevelTypeDir = packageDir ? join(packageDir, topLevelType.directoryName) : topLevelType.directoryName;
+
+  return [
+    // parent
+    join(
+      topLevelTypeDir,
+      `${fullName.split('.')[0]}${sep}${fullName.split('.')[0]}.${topLevelType.suffix}${META_XML_SUFFIX}`
+    ),
+    // child
+    join(
+      topLevelTypeDir,
+      fullName.split('.')[0],
+      type.directoryName,
+      `${fullName.split('.')[1]}.${type.suffix}${META_XML_SUFFIX}`
+    ),
+  ];
 };

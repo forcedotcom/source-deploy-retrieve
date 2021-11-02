@@ -253,6 +253,73 @@ describe.only('generating virtual tree from component name/type', () => {
     });
   });
 
-  describe('adapter = decomposed', () => {});
-  describe('adapter = nondecomposed', () => {});
+  describe('adapter = nondecomposed', () => {
+    const component = {
+      fullName: 'CustomLabels',
+      type: registryAccess.getTypeByName('CustomLabels'),
+    };
+    const filenames = filePathsFromMetadataComponent(component, packageDir);
+    expect(filenames).to.deep.equal(
+      ['labels/CustomLabels.labels-meta.xml'].map((f) => path.join(packageDir, path.normalize(f)))
+    );
+    const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
+    const components = resolver.getComponentsFromPath(packageDir);
+    expect(components).to.have.lengthOf(1);
+    expect(components[0]).to.include({
+      xml: filenames[0],
+      name: component.fullName,
+      type: component.type,
+    });
+  });
+  describe('adapter = decomposed', () => {
+    it('sanityCheck of childComponent behavior', () => {
+      const component = {
+        fullName: 'Stuff__c.Field__c',
+        type: registryAccess.getTypeByName('CustomField'),
+      };
+      expect(component.type.children).to.equal(undefined);
+      const topLevelType = component.type.children
+        ? component.type
+        : registryAccess.findType((t) => t.children && Object.keys(t.children.types).includes(component.type.id));
+      expect(topLevelType).to.deep.equal(registryAccess.getTypeByName('CustomObject'));
+    });
+    it('parent object', () => {
+      const component = {
+        fullName: 'Stuff__c',
+        type: registryAccess.getTypeByName('CustomObject'),
+      };
+      const filenames = filePathsFromMetadataComponent(component, packageDir);
+      expect(filenames).to.deep.equal(
+        ['objects/Stuff__c/Stuff__c.object-meta.xml'].map((f) => path.join(packageDir, path.normalize(f)))
+      );
+      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
+      const components = resolver.getComponentsFromPath(packageDir);
+      expect(components).to.have.lengthOf(1);
+      expect(components[0]).to.include({
+        xml: filenames[0],
+        name: component.fullName,
+        type: component.type,
+      });
+    });
+    it('child field', () => {
+      const component = {
+        fullName: 'Stuff__c.Field__c',
+        type: registryAccess.getTypeByName('CustomField'),
+      };
+      const filenames = filePathsFromMetadataComponent(component, packageDir);
+      expect(filenames).to.deep.equalInAnyOrder(
+        ['objects/Stuff__c/Stuff__c.object-meta.xml', 'objects/Stuff__c/fields/Field__c.field-meta.xml'].map((f) =>
+          path.join(packageDir, path.normalize(f))
+        )
+      );
+      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
+      const components = resolver.getComponentsFromPath(packageDir);
+      // it'll return the parent type
+      expect(components[0]).to.include({
+        xml: filenames[0],
+        name: component.fullName.split('.')[0],
+        type: registryAccess.getTypeByName('CustomObject'),
+      });
+    });
+  });
 });

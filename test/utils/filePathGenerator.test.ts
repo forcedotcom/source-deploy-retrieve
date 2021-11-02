@@ -15,7 +15,7 @@ import { VirtualTreeContainer } from '../../src/resolve/treeContainers';
 
 chai.use(deepEqualInAnyOrder);
 
-describe.only('generating virtual tree from component name/type', () => {
+describe('generating virtual tree from component name/type', () => {
   const packageDir = path.normalize('force-app/main/default');
   const registryAccess = new RegistryAccess();
 

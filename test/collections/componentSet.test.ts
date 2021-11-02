@@ -11,6 +11,7 @@ import { expect } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
 import {
   ComponentSet,
+  ConnectionResolver,
   DestructiveChangesType,
   ManifestResolver,
   MetadataApiDeploy,
@@ -242,6 +243,73 @@ describe('ComponentSet', () => {
           },
         ];
 
+        expect(result).to.deep.equal(expected);
+      });
+    });
+
+    describe('fromConnection', () => {
+      it('should initialize using a connection', async () => {
+        const connection = await mockConnection($$);
+        const expected: MetadataComponent[] = [
+          {
+            fullName: 'Test',
+            type: mockRegistryData.types.matchingcontentfile,
+          },
+        ];
+        const resolveStub = env.stub(ConnectionResolver.prototype, 'resolve').resolves({
+          components: expected,
+          apiVersion: mockRegistryData.apiVersion,
+        });
+        env.stub(RegistryAccess.prototype, 'getTypeByName').returns(mockRegistryData.types.matchingcontentfile);
+        const set = await ComponentSet.fromConnection({ usernameOrConnection: connection });
+
+        const result = set.toArray();
+
+        expect(resolveStub.callCount).to.equal(1);
+        expect(result).to.deep.equal(expected);
+      });
+
+      it('should initialize using an username with apiVersion', async () => {
+        const expected: MetadataComponent[] = [
+          {
+            fullName: 'Test',
+            type: mockRegistryData.types.matchingcontentfile,
+          },
+        ];
+        const resolveStub = env.stub(ConnectionResolver.prototype, 'resolve').resolves({
+          components: expected,
+          apiVersion: '50.0',
+        });
+        env.stub(RegistryAccess.prototype, 'getTypeByName').returns(mockRegistryData.types.matchingcontentfile);
+        const set = await ComponentSet.fromConnection({
+          usernameOrConnection: 'test@foobar.com',
+          apiVersion: '50.0',
+        });
+
+        const result = set.toArray();
+        expect(set.apiVersion).to.be.equal('50.0');
+        expect(resolveStub.callCount).to.equal(1);
+        expect(result).to.deep.equal(expected);
+      });
+
+      it('should initialize using an username', async () => {
+        const connection = await mockConnection($$);
+        const expected: MetadataComponent[] = [
+          {
+            fullName: 'Test',
+            type: mockRegistryData.types.matchingcontentfile,
+          },
+        ];
+        const resolveStub = env.stub(ConnectionResolver.prototype, 'resolve').resolves({
+          components: expected,
+          apiVersion: connection.getApiVersion(),
+        });
+        env.stub(RegistryAccess.prototype, 'getTypeByName').returns(mockRegistryData.types.matchingcontentfile);
+        const set = await ComponentSet.fromConnection('test@foobar.com');
+
+        const result = set.toArray();
+        expect(set.apiVersion).to.be.equal(connection.getApiVersion());
+        expect(resolveStub.callCount).to.equal(1);
         expect(result).to.deep.equal(expected);
       });
     });

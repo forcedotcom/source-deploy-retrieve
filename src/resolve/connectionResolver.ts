@@ -13,6 +13,7 @@ import { normalizeToArray } from '../utils';
 import { MetadataComponent } from './types';
 export interface ResolveConnectionResult {
   components: MetadataComponent[];
+  apiVersion: string;
 }
 
 /**
@@ -84,6 +85,7 @@ export class ConnectionResolver {
 
     return {
       components,
+      apiVersion: this.connection.getApiVersion(),
     };
   }
 

@@ -76,7 +76,11 @@ export interface FromManifestOptions extends OptionalTreeRegistryOptions {
 
 export interface FromConnectionOptions extends OptionalTreeRegistryOptions {
   /**
-   * connection to an org
+   * username or connection to an org
    */
-  connection: Connection;
+  usernameOrConnection: string | Connection;
+  /**
+   * the metadata API version to use
+   */
+  apiVersion?: string;
 }

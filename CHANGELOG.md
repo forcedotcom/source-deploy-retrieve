@@ -2,21 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [5.1.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.1.1...v5.1.2) (2021-10-29)
-
-### [5.1.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.1.0...v5.1.1) (2021-10-28)
-
-
-### Bug Fixes
-
-* ensure component.content is always assigned ([#485](https://github.com/forcedotcom/source-deploy-retrieve/issues/485)) ([d77f475](https://github.com/forcedotcom/source-deploy-retrieve/commit/d77f47502634206ac59181362b7f17da82ed01e7))
-
-## [5.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.3...v5.1.0) (2021-10-28)
+## [5.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.1.3...v5.2.0) (2021-11-02)
 
 
 ### Features
 
-* construct virtual tree from array of paths ([#480](https://github.com/forcedotcom/source-deploy-retrieve/issues/480)) ([99954dc](https://github.com/forcedotcom/source-deploy-retrieve/commit/99954dc731d078e99283eed940b98ee63688a024))
+* modify fileResponse for not found in org on Deletes ([#472](https://github.com/forcedotcom/source-deploy-retrieve/issues/472)) ([9d258fc](https://github.com/forcedotcom/source-deploy-retrieve/commit/9d258fc3f46989de2a89d429ca4994d5ed756eab))
+
+### [5.1.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.1.2...v5.1.3) (2021-11-02)
+
+### [5.1.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.1.1...v5.1.2) (2021-10-29)
+
+### [5.1.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.1.0...v5.1.1) (2021-10-28)
+
+### Bug Fixes
+
+- ensure component.content is always assigned ([#485](https://github.com/forcedotcom/source-deploy-retrieve/issues/485)) ([d77f475](https://github.com/forcedotcom/source-deploy-retrieve/commit/d77f47502634206ac59181362b7f17da82ed01e7))
+
+## [5.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.3...v5.1.0) (2021-10-28)
+
+### Features
+
+- construct virtual tree from array of paths ([#480](https://github.com/forcedotcom/source-deploy-retrieve/issues/480)) ([99954dc](https://github.com/forcedotcom/source-deploy-retrieve/commit/99954dc731d078e99283eed940b98ee63688a024))
 
 ### [5.0.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.0.2...v5.0.3) (2021-10-28)
 

@@ -148,22 +148,38 @@ export class MetadataResolver {
     return !!parseMetadataXml(fsPath);
   }
 
-  private resolveType(fsPath: string): MetadataType | undefined {
-    let resolvedType: MetadataType;
+  private resolveTypeFromStrictFolder(fsPath: string): MetadataType | undefined {
+    const pathParts = fsPath.split(sep);
+    // first, filter out types that don't appear in the path
+    // then iterate using for/of to allow for early break
+    return this.registry
+      .getStrictFolderTypes()
+      .filter(
+        (type) =>
+          // the type's directory is in the path, AND
+          pathParts.includes(type.directoryName) &&
+          // types with folders only have folder components living at the top level.
+          // if the fsPath is a folder component, let a future strategy deal with it
+          (!type.inFolder || parentName(fsPath) !== type.directoryName)
+      )
+      .find(
+        (type) =>
+          // any of the following 3 options is considered a good match
+          // mixedContent and bundles don't have a suffix to match
+          ['mixedContent', 'bundle'].includes(type.strategies?.adapter) ||
+          // the suffix matches the type we think it is
+          (type.suffix && fsPath.endsWith(`${type.suffix}`)) ||
+          // the type has children and the path also includes THAT directory
+          (type.children?.types &&
+            Object.values(type.children?.types)
+              .map((childType) => childType.directoryName)
+              .some((dirName) => pathParts.includes(dirName)))
+      );
+  }
 
+  private resolveType(fsPath: string): MetadataType | undefined {
     // attempt 1 - check if the file is part of a component that requires a strict type folder
-    const pathParts = new Set(fsPath.split(sep));
-    for (const type of this.registry.getStrictFolderTypes()) {
-      if (pathParts.has(type.directoryName)) {
-        // types with folders only have folder components living at the top level.
-        // if the fsPath is a folder component, let a future strategy deal with it
-        // const isFolderType = this.getTypeFromName(typeId).inFolder;
-        if (!type.inFolder || parentName(fsPath) !== type.directoryName) {
-          resolvedType = type;
-        }
-        break;
-      }
-    }
+    let resolvedType = this.resolveTypeFromStrictFolder(fsPath);
 
     // attempt 2 - check if it's a metadata xml file
     if (!resolvedType) {

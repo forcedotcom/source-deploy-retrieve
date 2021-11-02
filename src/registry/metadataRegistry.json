@@ -2615,6 +2615,30 @@
       "strategies": {
         "adapter": "matchingContentFile"
       }
+    },
+    "svccatalogcategory": {
+      "id": "svccatalogcategory",
+      "name": "SvcCatalogCategory",
+      "suffix": "category",
+      "directoryName": "svcCatalogCategories",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "svccatalogfulfillmentflow": {
+      "id": "svccatalogfulfillmentflow",
+      "name": "SvcCatalogFulfillmentFlow",
+      "suffix": "fulfillmentFlow",
+      "directoryName": "svcCatalogFulfillmentFlows",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "svccatalogitemdef": {
+      "id": "svccatalogitemdef",
+      "name": "SvcCatalogItemDef",
+      "suffix": "catalogItem",
+      "directoryName": "svcCatalogItems",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -2903,7 +2927,10 @@
     "callCenterRoutingMap": "callcenterroutingmap",
     "view": "viewdefinition",
     "slackapp": "slackapp",
-    "permissionSetLicenseDefinition": "permissionsetlicensedefinition"
+    "permissionSetLicenseDefinition": "permissionsetlicensedefinition",
+    "category": "svccatalogcategory",
+    "fulfillmentFlow": "svccatalogfulfillmentflow",
+    "catalogItem": "svccatalogitemdef"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

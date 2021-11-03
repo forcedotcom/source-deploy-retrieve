@@ -43,7 +43,8 @@ export const messages = {
   error_missing_type_definition: "Missing metadata type definition in registry for id '%s'",
   error_missing_child_type_definition: 'Type %s does not have a child type definition %s',
   error_no_metadata_xml_ignore: 'Metadata xml file %s is forceignored but is required for %s',
-  error_no_source_ignore: '%s types require source to be present and %s is forceignored.',
+  error_no_source_ignore:
+    '%s types require source to be present and %s is forceignored. \n ACTION: Both the content file, and -meta.xml file must be ignored, try appending * to your .forceignore entry',
   error_path_not_found: '%s: File or folder not found',
   tapi_retrieve_component_limit_error: 'This retrieve method only supports retrieving one metadata component at a time',
   error_on_manifest_creation: "Unexpected error while creating manifest for '%s'. Stack trace: %s",
@@ -56,7 +57,7 @@ export const messages = {
   error_no_directory_stream: '%s does not support readable streams on directories',
   error_no_source_to_deploy: 'No source backed components present in the package',
   error_no_components_to_retrieve: 'No components in the package to retrieve',
-  error_invalid_package: 'The metadata pacakge was not initialized properly',
+  error_invalid_package: 'The metadata package was not initialized properly',
   error_static_resource_expected_archive_type:
     'A StaticResource directory must have a content type of application/zip or application/jar - found %s for %s',
   error_static_resource_missing_resource_file:

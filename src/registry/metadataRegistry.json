@@ -2647,6 +2647,13 @@
       "directoryName": "svcCatalogItems",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "omniuicard": {
+      "id": "omniuicard",
+      "name": "OmniUiCard",
+      "suffix": "ouc",
+      "directoryName": "omniUiCard",
+      "inFolder": false
     }
   },
   "suffixes": {
@@ -2938,7 +2945,8 @@
     "permissionSetLicenseDefinition": "permissionsetlicensedefinition",
     "category": "svccatalogcategory",
     "fulfillmentFlow": "svccatalogfulfillmentflow",
-    "catalogItem": "svccatalogitemdef"
+    "catalogItem": "svccatalogitemdef",
+    "ouc": "omniuicard"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

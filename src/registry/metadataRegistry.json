@@ -2661,7 +2661,16 @@
       "name": "OmniUiCard",
       "suffix": "ouc",
       "directoryName": "omniUiCard",
-      "inFolder": false
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omnidatatransform": {
+      "id": "omnidatatransform",
+      "name": "OmniDataTransform",
+      "suffix": "rpt",
+      "directoryName": "omniDataTransforms",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -2955,7 +2964,8 @@
     "category": "svccatalogcategory",
     "fulfillmentFlow": "svccatalogfulfillmentflow",
     "catalogItem": "svccatalogitemdef",
-    "ouc": "omniuicard"
+    "ouc": "omniuicard",
+    "rpt": "omnidatatransform"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

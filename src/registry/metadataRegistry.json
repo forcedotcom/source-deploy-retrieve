@@ -61,10 +61,10 @@
           }
         },
         "suffixes": {
-          "customLabel": "labels"
+          "labels": "customlabel"
         },
         "directories": {
-          "customLabels": "labels"
+          "labels": "customlabel"
         }
       },
       "strategies": {
@@ -516,6 +516,9 @@
         },
         "suffixes": {
           "formSection": "formsection"
+        },
+        "directories": {
+          "formSections": "formsection"
         }
       }
     },
@@ -676,7 +679,7 @@
           "workflowsend": {
             "id": "workflowsend",
             "name": "WorkflowSend",
-            "xmlElementName": "sends",
+            "xmlElementName": "send",
             "uniqueIdElement": "fullName",
             "directoryName": "workflowSends",
             "suffix": "workflowSend"
@@ -709,6 +712,7 @@
         },
         "directories": {
           "workflowFieldUpdates": "workflowfieldupdate",
+          "workflowKnowledgePublishs": "workflowknowledgepublish",
           "workflowTasks": "workflowtask",
           "workflowAlerts": "workflowalert",
           "workflowSends": "workflowsend",
@@ -1072,6 +1076,7 @@
       "name": "WaveTemplateBundle",
       "directoryName": "waveTemplates",
       "inFolder": false,
+      "strictDirectoryName": true,
       "strategies": {
         "adapter": "bundle"
       }
@@ -1242,7 +1247,9 @@
         },
         "directories": {
           "sharingOwnerRules": "sharingownerrule",
-          "sharingCriteriaRules": "sharingcriteriarule"
+          "sharingCriteriaRules": "sharingcriteriarule",
+          "sharingGuestRules": "sharingguestrule",
+          "sharingTerritoryRules": "sharingterritoryrule"
         }
       }
     },
@@ -2086,6 +2093,9 @@
         },
         "suffixes": {
           "workSkillRoutingAttribute": "workskillroutingattribute"
+        },
+        "directories": {
+          "workSkillRoutingAttributes": "workskillroutingattribute"
         }
       }
     },
@@ -2605,14 +2615,44 @@
       "strategies": {
         "adapter": "matchingContentFile"
       }
+    },
+    "fieldrestrictionrule": {
+      "id": "fieldrestrictionrule",
+      "name": "FieldRestrictionRule",
+      "suffix": "rule",
+      "directoryName": "fieldRestrictionRules",
+      "inFolder": false,
+      "strictDirectoryName": true
+    },
+    "svccatalogcategory": {
+      "id": "svccatalogcategory",
+      "name": "SvcCatalogCategory",
+      "suffix": "category",
+      "directoryName": "svcCatalogCategories",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "svccatalogfulfillmentflow": {
+      "id": "svccatalogfulfillmentflow",
+      "name": "SvcCatalogFulfillmentFlow",
+      "suffix": "fulfillmentFlow",
+      "directoryName": "svcCatalogFulfillmentFlows",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "svccatalogitemdef": {
+      "id": "svccatalogitemdef",
+      "name": "SvcCatalogItemDef",
+      "suffix": "catalogItem",
+      "directoryName": "svcCatalogItems",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
     "ai": "aiapplication",
     "aiapplicationconfig": "aiapplicationconfig",
-    "mlprediction": "mlPrediction",
     "mlDataDefinition": "mldatadefinition",
-    "sites": "customsite",
     "icon": "icon",
     "businessProcessGroup": "businessprocessgroup",
     "model": "discoveryaimodel",
@@ -2630,7 +2670,6 @@
     "decisionTableDatasetLink": "decisiontabledatasetlink",
     "briefcaseDefinition": "briefcasedefinition",
     "batchProcessJobDefinition": "batchprocessjobdefinition",
-    "webstoretemplate": "webstoretemplate",
     "acctMgrTargetSetting": "acctmgrtargetsettings",
     "dataSourceObject": "datasourceobject",
     "externalDataConnector": "externaldataconnector",
@@ -2642,7 +2681,6 @@
     "installedPackage": "installedpackage",
     "labels": "customlabels",
     "navigationMenu": "navigationmenu",
-    "resource": "staticresource",
     "scf": "scontrol",
     "crt": "certificate",
     "messageChannel": "lightningmessagechannel",
@@ -2897,7 +2935,10 @@
     "callCenterRoutingMap": "callcenterroutingmap",
     "view": "viewdefinition",
     "slackapp": "slackapp",
-    "permissionSetLicenseDefinition": "permissionsetlicensedefinition"
+    "permissionSetLicenseDefinition": "permissionsetlicensedefinition",
+    "category": "svccatalogcategory",
+    "fulfillmentFlow": "svccatalogfulfillmentflow",
+    "catalogItem": "svccatalogitemdef"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -2916,7 +2957,8 @@
     "integrationHub": "integrationhubsettings",
     "ObjectHierarchyRelationship": "objecthierarchyrelationship",
     "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
-    "dataMappingObjectDefinitions": "datamappingobjectdefinition"
+    "dataMappingObjectDefinitions": "datamappingobjectdefinition",
+    "fieldRestrictionRules": "fieldrestrictionrule"
   },
   "childTypes": {
     "customlabel": "customlabels",

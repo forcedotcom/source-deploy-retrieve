@@ -89,7 +89,7 @@ The completeness is checked by comparing the registry to the metadata coverage r
 
 ### Adding new types to the registry
 
-You can manually edit types in registry.json. To simplify that work, there's a registry-building script
+You can manually edit types in metadataRegistry.json. To simplify that work, there's a registry-building script - the script is, currently, unreliable
 
 1. looks for missing types (similar to the completeness test)
 2. For missing types, generate a project and scratch org that includes the Features/Settings

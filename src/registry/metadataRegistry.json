@@ -2076,6 +2076,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "userprofilesearchscope": {
+      "id": "userprofilesearchscope",
+      "name": "UserProfileSearchScope",
+      "suffix": "userProfileSearchScope",
+      "directoryName": "userProfileSearchScopes",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "workskillrouting": {
       "id": "workskillrouting",
       "name": "WorkSkillRouting",
@@ -2866,6 +2874,7 @@
     "audience": "audience",
     "cmsConnectSource": "cmsconnectsource",
     "platformEventSubscriberConfig": "platformeventsubscriberconfig",
+    "userProfileSearchScope": "userprofilesearchscope",
     "workSkillRouting": "workskillrouting",
     "timeSheetTemplate": "timesheettemplate",
     "accountRelationshipShareRule": "accountrelationshipsharerule",

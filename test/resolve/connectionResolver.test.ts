@@ -11,7 +11,7 @@ import { createSandbox, SinonSandbox } from 'sinon';
 import { Connection } from '@salesforce/core';
 import { mockConnection } from '../mock/client';
 import { ConnectionResolver } from '../../src/resolve';
-import { MetadataComponent, registry, ComponentSet } from '../../src/';
+import { MetadataComponent, registry } from '../../src/';
 
 const $$ = testSetup();
 
@@ -79,6 +79,14 @@ describe('ConnectionResolver', () => {
       const result = await resolver.resolve();
       const expected: MetadataComponent[] = [
         {
+          fullName: 'Account',
+          type: registry.types.customobject,
+        },
+        {
+          fullName: 'Account.testc',
+          type: registry.types.customobject.children.types.customfield,
+        },
+        {
           fullName: 'Account.testa',
           type: registry.types.customobject.children.types.customfield,
         },
@@ -86,24 +94,8 @@ describe('ConnectionResolver', () => {
           fullName: 'Account.testb',
           type: registry.types.customobject.children.types.customfield,
         },
-        {
-          fullName: 'Account.testc',
-          type: registry.types.customobject.children.types.customfield,
-        },
-        {
-          fullName: 'Account',
-          type: registry.types.customobject,
-        },
       ];
       expect(result.components).to.deep.equal(expected);
-      const resultComponentSet = new ComponentSet([]);
-      for (const component of result.components) {
-        resultComponentSet.add(component);
-      }
-      expect(resultComponentSet.getObject().Package.types).to.deep.equal([
-        { members: ['Account.testa', 'Account.testb', 'Account.testc'], name: 'CustomField' },
-        { members: ['Account'], name: 'CustomObject' },
-      ]);
     });
     it('should resolve components with different types', async () => {
       const metadataQueryStub = sandboxStub.stub(connection.metadata, 'list');
@@ -163,12 +155,12 @@ describe('ConnectionResolver', () => {
       const result = await resolver.resolve();
       const expected: MetadataComponent[] = [
         {
-          fullName: 'unfiled$public',
-          type: registry.types.emailfolder,
-        },
-        {
           fullName: 'unfiled$public/test',
           type: registry.types.emailtemplate,
+        },
+        {
+          fullName: 'unfiled$public',
+          type: registry.types.emailfolder,
         },
       ];
       expect(result.components).to.deep.equal(expected);
@@ -275,12 +267,12 @@ describe('ConnectionResolver', () => {
       const result = await resolver.resolve(false);
       const expected: MetadataComponent[] = [
         {
-          fullName: 'SK__Knowledge_Dashboard',
-          type: registry.types.dashboardfolder,
-        },
-        {
           fullName: 'SK',
           type: registry.types.installedpackage,
+        },
+        {
+          fullName: 'SK__Knowledge_Dashboard',
+          type: registry.types.dashboardfolder,
         },
       ];
       expect(result.components).to.deep.equal(expected);

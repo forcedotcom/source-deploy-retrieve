@@ -72,16 +72,9 @@ export class ConnectionResolver {
     const components = Aggregator.filter(
       (component) =>
         !(excludeManagedComponents && component.namespacePrefix && component.manageableState !== 'unmanaged')
-    )
-      .map((component) => {
-        return { fullName: component.fullName, type: this.registry.getTypeByName(component.type) };
-      })
-      .sort((a, b) => {
-        if (a.type.name === b.type.name) {
-          return a.fullName.toLowerCase() > b.fullName.toLowerCase() ? 1 : -1;
-        }
-        return a.type.name.toLowerCase() > b.type.name.toLowerCase() ? 1 : -1;
-      });
+    ).map((component) => {
+      return { fullName: component.fullName, type: this.registry.getTypeByName(component.type) };
+    });
 
     return {
       components,

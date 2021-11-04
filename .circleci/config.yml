@@ -1,9 +1,30 @@
 version: 2.1
 orbs:
   release-management: salesforce/npm-release-management@4
-  slack: circleci/slack@3.4.2
+  slack: circleci/slack@4.4.4
 
 jobs:
+  slack-notify-test:
+    docker:
+      - image: node:lts
+    steps:
+      - slack/notify:
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "*This is a text notification* :tada:",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+          event: always
   registry-check:
     description: Checks registry against metadataCoverageReport
     docker:
@@ -118,6 +139,11 @@ workflows:
       - registry-check
   test-and-release:
     jobs:
+      - slack-notify-test:
+          filters:
+            branches:
+              only: sm/gauntlet-docs
+          context: salesforce-cli
       - release-management/validate-pr:
           filters:
             branches:

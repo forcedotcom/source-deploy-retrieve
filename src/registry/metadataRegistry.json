@@ -2624,6 +2624,14 @@
         "adapter": "matchingContentFile"
       }
     },
+    "fieldrestrictionrule": {
+      "id": "fieldrestrictionrule",
+      "name": "FieldRestrictionRule",
+      "suffix": "rule",
+      "directoryName": "fieldRestrictionRules",
+      "inFolder": false,
+      "strictDirectoryName": true
+    },
     "svccatalogcategory": {
       "id": "svccatalogcategory",
       "name": "SvcCatalogCategory",
@@ -2645,6 +2653,22 @@
       "name": "SvcCatalogItemDef",
       "suffix": "catalogItem",
       "directoryName": "svcCatalogItems",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omniuicard": {
+      "id": "omniuicard",
+      "name": "OmniUiCard",
+      "suffix": "ouc",
+      "directoryName": "omniUiCard",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omnidatatransform": {
+      "id": "omnidatatransform",
+      "name": "OmniDataTransform",
+      "suffix": "rpt",
+      "directoryName": "omniDataTransforms",
       "inFolder": false,
       "strictDirectoryName": false
     }
@@ -2939,7 +2963,9 @@
     "permissionSetLicenseDefinition": "permissionsetlicensedefinition",
     "category": "svccatalogcategory",
     "fulfillmentFlow": "svccatalogfulfillmentflow",
-    "catalogItem": "svccatalogitemdef"
+    "catalogItem": "svccatalogitemdef",
+    "ouc": "omniuicard",
+    "rpt": "omnidatatransform"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -2958,7 +2984,8 @@
     "integrationHub": "integrationhubsettings",
     "ObjectHierarchyRelationship": "objecthierarchyrelationship",
     "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
-    "dataMappingObjectDefinitions": "datamappingobjectdefinition"
+    "dataMappingObjectDefinitions": "datamappingobjectdefinition",
+    "fieldRestrictionRules": "fieldrestrictionrule"
   },
   "childTypes": {
     "customlabel": "customlabels",

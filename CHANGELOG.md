@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.3.0...v5.4.0) (2021-11-03)
+
+
+### Features
+
+* new types OmniUiCard, OmniDataTransform ([3460dde](https://github.com/forcedotcom/source-deploy-retrieve/commit/3460dde71a274c23031f33ae8d408f755198f65d))
+
+## [5.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.2.0...v5.3.0) (2021-11-03)
+
+
+### Features
+
+* registry support for fieldRestrictionRule ([#486](https://github.com/forcedotcom/source-deploy-retrieve/issues/486)) ([abf0cdd](https://github.com/forcedotcom/source-deploy-retrieve/commit/abf0cdd722507fcc8c8d66aa37a13b02b2f72776))
+
 ## [5.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.1.3...v5.2.0) (2021-11-02)
 
 

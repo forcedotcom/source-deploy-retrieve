@@ -16,8 +16,8 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
-    "mlprediction": {
-      "id": "mlprediction",
+    "mlpredictiondefinition": {
+      "id": "mlpredictiondefinition",
       "name": "MLPredictionDefinition",
       "suffix": "mlPrediction",
       "directoryName": "mlPredictions",
@@ -2904,7 +2904,7 @@
     "accountRelationshipShareRule": "accountrelationshipsharerule",
     "IPAddressRange": "ipaddressrange",
     "xml": "emailservicesfunction",
-    "mlPrediction": "mlprediction",
+    "mlPrediction": "mlpredictiondefinition",
     "formSection": "formsection",
     "workflowFieldUpdate": "workflowfieldupdate",
     "workflowKnowledgePublish": "workflowknowledgepublish",

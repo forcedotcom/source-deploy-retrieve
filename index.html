@@ -89,36 +89,7 @@
 				<p>Install the package:</p>
 				<pre><code><span class="hljs-built_in">npm</span> install @salesforce/source-deploy-retrieve
 </code></pre>
-				<p>Examples:</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> { ComponentSet } = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@salesforce/source-deploy-retrieve&#x27;</span>);
-
-<span class="hljs-comment">// Deploy a local set of Apex classes to an org</span>
-<span class="hljs-keyword">const</span> deployResult = <span class="hljs-keyword">await</span> ComponentSet
-  .fromSource(<span class="hljs-string">&#x27;/dev/MyProject/force-app/main/default/classes&#x27;</span>)
-  .deploy({ <span class="hljs-attr">usernameOrConnection</span>: <span class="hljs-string">&#x27;user@example.com&#x27;</span> })
-  .start();
-
-<span class="hljs-comment">// Retrieve metadata defined in a manifest file</span>
-<span class="hljs-keyword">const</span> retrieveResult = <span class="hljs-keyword">await</span> ComponentSet
-  .fromManifest(<span class="hljs-string">&#x27;/dev/my-project/manifest/package.xml&#x27;</span>)
-  .retrieve({
-    <span class="hljs-attr">usernameOrConnection</span>: <span class="hljs-string">&#x27;user@example.com&#x27;</span>
-    <span class="hljs-attr">output</span>: <span class="hljs-string">&#x27;/dev/retrieve-result&#x27;</span>
-  })
-  .start();
-
-<span class="hljs-comment">// Search for a particular CustomObject</span>
-<span class="hljs-keyword">const</span> myObject = ComponentSet
-  .fromSource([
-    <span class="hljs-string">&#x27;/dev/my-project/force-app&#x27;</span>,
-    <span class="hljs-string">&#x27;/dev/my-project/force-app-2&#x27;</span>
-  ])
-  .find(<span class="hljs-function"><span class="hljs-params">component</span> =&gt;</span> {
-    <span class="hljs-keyword">return</span> component.fullName === <span class="hljs-string">&#x27;MyObject__c&#x27;</span> &amp;&amp; component.type.name === <span class="hljs-string">&#x27;CustomObject&#x27;</span>)
-  });
-</code></pre>
-				<p>See the <a href="./examples">examples</a> folder for more code samples and guides.
-				See the <a href="https://forcedotcom.github.io/source-deploy-retrieve/">API documentation</a> for details on how to effectively use and integrate SDR.</p>
+				<p>See <a href="./HANDBOOK.md">HANDBOOK.md</a> for usage and examples.</p>
 				<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
 					<h2>Contributing</h2>
 				</a>

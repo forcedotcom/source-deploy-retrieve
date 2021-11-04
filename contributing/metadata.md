@@ -1,5 +1,7 @@
 # Contributing Metadata Types to the Registry
 
+> NOTE: If you have a “Settings” metadata type, you do not need to follow these instructions. Support for your type is already built into SDR.
+
 ## Adding new types to the registry via a script
 
 To simplify modifying the registry, there's a script.

@@ -311,7 +311,8 @@
             "id": "index",
             "name": "Index",
             "directoryName": "indexes",
-            "suffix": "index"
+            "suffix": "index",
+            "legacySuffix": "indexe"
           },
           "businessprocess": {
             "id": "businessprocess",

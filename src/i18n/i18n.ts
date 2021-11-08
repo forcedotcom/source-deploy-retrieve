@@ -44,7 +44,7 @@ export const messages = {
   error_missing_child_type_definition: 'Type %s does not have a child type definition %s',
   error_no_metadata_xml_ignore: 'Metadata xml file %s is forceignored but is required for %s',
   error_no_source_ignore:
-    '%s types require source to be present and %s is forceignored. \n ACTION: Both the content file, and -meta.xml file must be ignored, try appending * to your .forceignore entry',
+    '%s metadata types require source files, but %s is forceignored. \n\tACTION: Metadata types with content are composed of two files: a content file (ie MyApexClass.cls) and a -meta.xml file (i.e MyApexClass.cls-meta.xml). You must include both files in your .forceignore file. Or try appending “*” to your existisng .forceignore entry.',
   error_path_not_found: '%s: File or folder not found',
   tapi_retrieve_component_limit_error: 'This retrieve method only supports retrieving one metadata component at a time',
   error_on_manifest_creation: "Unexpected error while creating manifest for '%s'. Stack trace: %s",

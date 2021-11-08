@@ -10,6 +10,7 @@ import { extName, parentName, parseMetadataXml } from '../utils';
 import { RegistryAccess } from '../registry/registryAccess';
 import { ComponentSet } from '../collections';
 import { MetadataType } from '../registry';
+import { META_XML_SUFFIX } from '../common';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
@@ -168,7 +169,7 @@ export class MetadataResolver {
           // mixedContent and bundles don't have a suffix to match
           ['mixedContent', 'bundle'].includes(type.strategies?.adapter) ||
           // the suffix matches the type we think it is
-          (type.suffix && fsPath.endsWith(`${type.suffix}`)) ||
+          (type.suffix && fsPath.endsWith(`${type.suffix}${META_XML_SUFFIX}`)) ||
           // the type has children and the path also includes THAT directory
           (type.children?.types &&
             Object.values(type.children?.types)

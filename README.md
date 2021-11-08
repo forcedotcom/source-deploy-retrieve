@@ -27,39 +27,7 @@ Install the package:
 npm install @salesforce/source-deploy-retrieve
 ```
 
-Examples:
-
-```typescript
-const { ComponentSet } = require('@salesforce/source-deploy-retrieve');
-
-// Deploy a local set of Apex classes to an org
-const deployResult = await ComponentSet
-  .fromSource('/dev/MyProject/force-app/main/default/classes')
-  .deploy({ usernameOrConnection: 'user@example.com' })
-  .start();
-
-// Retrieve metadata defined in a manifest file
-const retrieveResult = await ComponentSet
-  .fromManifest('/dev/my-project/manifest/package.xml')
-  .retrieve({
-    usernameOrConnection: 'user@example.com'
-    output: '/dev/retrieve-result'
-  })
-  .start();
-
-// Search for a particular CustomObject
-const myObject = ComponentSet
-  .fromSource([
-    '/dev/my-project/force-app',
-    '/dev/my-project/force-app-2'
-  ])
-  .find(component => {
-    return component.fullName === 'MyObject__c' && component.type.name === 'CustomObject')
-  });
-```
-
-See the [examples](./examples) folder for more code samples and guides.
-See the [API documentation](https://forcedotcom.github.io/source-deploy-retrieve/) for details on how to effectively use and integrate SDR.
+See [HANDBOOK.md](./HANDBOOK.md) for usage and examples.
 
 ## Contributing
 

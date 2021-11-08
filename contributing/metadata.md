@@ -17,7 +17,7 @@ To simplify modifying the registry, there's a script.
 yarn update-registry
 ```
 
-## More complicated types
+### What the script can't do
 
 inFolderTypes and types with childXml in their describe are not supported. You **want** to explore the various strategies for those (see the SDR Handbook in this repo) and create NUTs to validate that your types are being handled correctly.
 
@@ -25,7 +25,7 @@ For those situations, refer to another existing type in the registry that you wa
 
 If that's confusing, it's a great time to reach out to the CLI team.
 
-### Manual Edits
+## Manual Edits
 
 You can do what the script does yourself. As you work, run `./node_modules/mocha/bin/mocha test/registry/registryValidation.test.ts` to check your entries
 

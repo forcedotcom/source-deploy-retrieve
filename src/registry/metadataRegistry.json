@@ -250,7 +250,10 @@
       "name": "UiPlugin",
       "suffix": "uiplugin",
       "directoryName": "uiplugins",
-      "inFolder": false
+      "inFolder": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "globalvalueset": {
       "id": "globalvalueset",
@@ -846,7 +849,8 @@
             "name": "CustomFieldTranslation",
             "directoryName": "fields",
             "suffix": "fieldTranslation",
-            "isAddressable": false
+            "isAddressable": false,
+            "uniqueIdElement": "name"
           }
         },
         "suffixes": {
@@ -1523,7 +1527,10 @@
       "name": "DataPipeline",
       "suffix": "dataPipeline",
       "directoryName": "dataPipelines",
-      "inFolder": false
+      "inFolder": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "corswhitelistorigin": {
       "id": "corswhitelistorigin",
@@ -1561,7 +1568,10 @@
       "suffix": "policy",
       "directoryName": "accessControlPolicies",
       "inFolder": false,
-      "strictDirectoryName": true
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "skill": {
       "id": "skill",
@@ -1694,7 +1704,10 @@
       "name": "Orchestration",
       "suffix": "orchestration",
       "directoryName": "iot",
-      "inFolder": false
+      "inFolder": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "aiassistanttemplate": {
       "id": "aiassistanttemplate",
@@ -2333,7 +2346,7 @@
       "id": "datasourceobject",
       "name": "DataSourceObject",
       "suffix": "dataSourceObject",
-      "directoryName": "mktDataSourceObjects",
+      "directoryName": "dataSourceObjects",
       "strictDirectoryName": false
     },
     "externaldataconnector": {
@@ -2362,7 +2375,23 @@
       "name": "MktDataTranObject",
       "suffix": "mktDataTranObject",
       "directoryName": "mktDataTranObjects",
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "children": {
+        "types": {
+          "mktdatatranfield": {
+            "id": "mktdatatranfield",
+            "name": "MktDataTranField",
+            "directoryName": "mktDataTranFields",
+            "suffix": "mktDataTranField"
+          }
+        },
+        "suffixes": {
+          "mktDataTranField": "mktdatatranfield"
+        },
+        "directories": {
+          "mktDataTranFields": "mktdatatranfield"
+        }
+      }
     },
     "fieldsrctrgtrelationship": {
       "id": "fieldsrctrgtrelationship",
@@ -2966,7 +2995,8 @@
     "fulfillmentFlow": "svccatalogfulfillmentflow",
     "catalogItem": "svccatalogitemdef",
     "ouc": "omniuicard",
-    "rpt": "omnidatatransform"
+    "rpt": "omnidatatransform",
+    "mktDataTranField": "mktdatatranfield"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -3020,7 +3050,8 @@
     "sharingcriteriarule": "sharingrules",
     "botversion": "bot",
     "customfieldtranslation": "customobjecttranslation",
-    "datamappingfielddefinition": "datamappingobjectdefinition"
+    "datamappingfielddefinition": "datamappingobjectdefinition",
+    "mktdatatranfield": "mktdatatranobject"
   },
   "apiVersion": "53.0"
 }

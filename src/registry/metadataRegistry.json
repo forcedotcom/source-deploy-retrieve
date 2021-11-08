@@ -1344,7 +1344,7 @@
       "suffix": "site",
       "directoryName": "siteDotComSites",
       "inFolder": false,
-      "strictDirectoryName": false,
+      "strictDirectoryName": true,
       "strategies": {
         "adapter": "matchingContentFile"
       }
@@ -2076,6 +2076,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "userprofilesearchscope": {
+      "id": "userprofilesearchscope",
+      "name": "UserProfileSearchScope",
+      "suffix": "userProfileSearchScope",
+      "directoryName": "userProfileSearchScopes",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "workskillrouting": {
       "id": "workskillrouting",
       "name": "WorkSkillRouting",
@@ -2647,6 +2655,22 @@
       "directoryName": "svcCatalogItems",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "omniuicard": {
+      "id": "omniuicard",
+      "name": "OmniUiCard",
+      "suffix": "ouc",
+      "directoryName": "omniUiCard",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omnidatatransform": {
+      "id": "omnidatatransform",
+      "name": "OmniDataTransform",
+      "suffix": "rpt",
+      "directoryName": "omniDataTransforms",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -2874,6 +2898,7 @@
     "audience": "audience",
     "cmsConnectSource": "cmsconnectsource",
     "platformEventSubscriberConfig": "platformeventsubscriberconfig",
+    "userProfileSearchScope": "userprofilesearchscope",
     "workSkillRouting": "workskillrouting",
     "timeSheetTemplate": "timesheettemplate",
     "accountRelationshipShareRule": "accountrelationshipsharerule",
@@ -2938,7 +2963,9 @@
     "permissionSetLicenseDefinition": "permissionsetlicensedefinition",
     "category": "svccatalogcategory",
     "fulfillmentFlow": "svccatalogfulfillmentflow",
-    "catalogItem": "svccatalogitemdef"
+    "catalogItem": "svccatalogitemdef",
+    "ouc": "omniuicard",
+    "rpt": "omnidatatransform"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -2958,7 +2985,8 @@
     "ObjectHierarchyRelationship": "objecthierarchyrelationship",
     "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
     "dataMappingObjectDefinitions": "datamappingobjectdefinition",
-    "fieldRestrictionRules": "fieldrestrictionrule"
+    "fieldRestrictionRules": "fieldrestrictionrule",
+    "siteDotComSites": "sitedotcom"
   },
   "childTypes": {
     "customlabel": "customlabels",

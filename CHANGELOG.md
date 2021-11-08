@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.4.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.4.0...v5.4.1) (2021-11-04)
+
+
+### Bug Fixes
+
+* unconfuse sitedotcom vs site ([#498](https://github.com/forcedotcom/source-deploy-retrieve/issues/498)) ([5a55d02](https://github.com/forcedotcom/source-deploy-retrieve/commit/5a55d0290a5aed128be061d249aa4b5245be1f5d))
+
+## [5.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.3.0...v5.4.0) (2021-11-03)
+
+
+### Features
+
+* new types OmniUiCard, OmniDataTransform ([3460dde](https://github.com/forcedotcom/source-deploy-retrieve/commit/3460dde71a274c23031f33ae8d408f755198f65d))
+
 ## [5.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.2.0...v5.3.0) (2021-11-03)
 
 

@@ -6,7 +6,7 @@
  */
 import { EventEmitter } from 'events';
 import { join } from 'path';
-import { AuthInfo, Connection, Logger, PollingClient, StatusResult } from '@salesforce/core';
+import { AuthInfo, Connection, Lifecycle, Logger, PollingClient, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
 import { AnyJson, isNumber } from '@salesforce/ts-types';
 import * as fs from 'graceful-fs';
@@ -141,7 +141,9 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
   protected async maybeSaveTempDirectory(target: SfdxFileFormat, cs?: ComponentSet): Promise<void> {
     const mdapiTempDir = process.env.SFDX_MDAPI_TEMP_DIR;
     if (mdapiTempDir) {
-      process.emitWarning('The SFDX_MDAPI_TEMP_DIR environment variable is set, which may degrade performance');
+      await Lifecycle.getInstance().emitWarning(
+        'The SFDX_MDAPI_TEMP_DIR environment variable is set, which may degrade performance'
+      );
       this.logger.debug(
         `Converting metadata to: ${mdapiTempDir} because the SFDX_MDAPI_TEMP_DIR environment variable is set`
       );

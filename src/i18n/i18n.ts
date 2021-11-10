@@ -54,10 +54,10 @@ export const messages = {
   error_parsing_xml: 'SourceComponent %s does not have an associated metadata xml to parse',
   error_expected_file_path: '%s: path is to a directory, expected a file',
   error_expected_directory_path: '%s: path is to a file, expected a directory',
-  error_no_directory_stream: '%s doesn\'t support readable streams on directories.',
+  error_no_directory_stream: "%s doesn't support readable streams on directories.",
   error_no_source_to_deploy: 'No source-backed components present in the package.',
   error_no_components_to_retrieve: 'No components in the package to retrieve.',
-  error_invalid_package: 'The metadata package wasn\'t properly initialized.',
+  error_invalid_package: "The metadata package wasn't properly initialized.",
   error_static_resource_expected_archive_type:
     'A StaticResource directory must have a content type of application/zip or application/jar - found %s for %s.',
   error_static_resource_missing_resource_file:

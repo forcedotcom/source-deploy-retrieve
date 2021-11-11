@@ -11,6 +11,24 @@ import { RegistryAccess } from '../registry/registryAccess';
 import { registry } from '..';
 const registryAccess = new RegistryAccess();
 
+/**
+ * Provided a metadata fullName and type pair, return an array of file paths that should
+ * be expected based on the type's definition in the metadata registry.
+ *
+ * This won't give all the filenames for decomposed types (that would require retrieving
+ * the actual parent xml) but should provide enough of the filePath to figure out if the
+ * forceignore would ignore it.
+ *
+ * Example:
+ * `const type = new RegistryAccess().getTypeByName('ApexClass');`
+ * `filePathsFromMetadataComponent({ fullName: 'MyClass', type }, 'myPackageDir');`
+ * returns:
+ * `['myPackageDir/classes/MyClass.cls', 'myPackageDir/classes/MyClass.cls-meta.xml']`
+ *
+ * @param param a MetadataComponent (type/name pair) for which to generate file paths
+ * @param packageDir optional package directory to apply to the file paths
+ * @returns array of file paths
+ */
 export const filePathsFromMetadataComponent = (
   { fullName, type }: MetadataComponent,
   packageDir?: string
@@ -26,8 +44,13 @@ export const filePathsFromMetadataComponent = (
     return getDecomposedChildType({ fullName, type }, packageDir);
   }
 
+  // Non-decomposed parents (i.e., any type that defines children and not a decomposed transformer)
+  if (type.children) {
+    return [join(packageDirWithTypeDir, `${fullName}.${type.suffix}${META_XML_SUFFIX}`)];
+  }
+
   // basic metadata (with or without folders)
-  if ((!type.children && !type.strategies) || type.strategies.transformer === 'nonDecomposed') {
+  if (!type.children && !type.strategies) {
     return (type.inFolder || type.folderType ? generateFolders({ fullName, type }, packageDirWithTypeDir) : []).concat([
       join(packageDirWithTypeDir, `${fullName}.${type.suffix}${META_XML_SUFFIX}`),
     ]);

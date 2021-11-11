@@ -9,34 +9,210 @@ import { expect } from 'chai';
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import chai = require('chai');
 import { filePathsFromMetadataComponent } from '../../src/utils/filePathGenerator';
-import { RegistryAccess } from '../../src/registry';
-import { MetadataResolver } from '../../src/resolve';
+import { MetadataType, RegistryAccess } from '../../src/registry';
+import { MetadataComponent, MetadataResolver } from '../../src/resolve';
 import { VirtualTreeContainer } from '../../src/resolve/treeContainers';
 
 chai.use(deepEqualInAnyOrder);
 
-describe('generating virtual tree from component name/type', () => {
-  const packageDir = path.normalize('force-app/main/default');
-  const registryAccess = new RegistryAccess();
+interface TypeEntry {
+  fullName: string;
+  typeName: string;
+  expectedFilePaths: string[];
+  expectedComponents?: Array<{
+    name?: string;
+    type?: MetadataType;
+    content?: string;
+    xml?: string;
+  }>;
+}
 
-  it('works for default type (flow)', () => {
+const registryAccess = new RegistryAccess();
+const packageDir = path.normalize('force-app/main/default');
+
+const getFilePath = (f: string) => path.join(packageDir, path.normalize(f));
+
+const testData = {
+  default: {
+    fullName: 'MyFlow',
+    typeName: 'Flow',
+    expectedFilePaths: [getFilePath('flows/MyFlow.flow-meta.xml')],
+  },
+  matchingContent: {
+    fullName: 'MyClass',
+    typeName: 'ApexClass',
+    expectedFilePaths: [getFilePath('classes/MyClass.cls-meta.xml'), getFilePath('classes/MyClass.cls')],
+    expectedComponents: [
+      {
+        content: getFilePath('classes/MyClass.cls'),
+        xml: getFilePath('classes/MyClass.cls-meta.xml'),
+      },
+    ],
+  },
+  matchingContentInFolder: {
+    fullName: 'aFolder/someTemplate',
+    typeName: 'EmailTemplate',
+    expectedFilePaths: [
+      getFilePath('email/aFolder.emailFolder-meta.xml'),
+      getFilePath('email/aFolder/someTemplate.email-meta.xml'),
+      getFilePath('email/aFolder/someTemplate.email'),
+    ],
+    expectedComponents: [
+      {
+        name: 'aFolder',
+        type: registryAccess.getTypeByName('EmailFolder'),
+        xml: getFilePath('email/aFolder.emailFolder-meta.xml'),
+      },
+      {
+        content: getFilePath('email/aFolder/someTemplate.email'),
+        xml: getFilePath('email/aFolder/someTemplate.email-meta.xml'),
+      },
+    ],
+  },
+  mixedContent: {
+    fullName: 'E_Bikes1',
+    typeName: 'ExperienceBundle',
+    expectedFilePaths: [getFilePath('experiences/E_Bikes1.site-meta.xml'), getFilePath('experiences/E_Bikes1')],
+  },
+  mixedContentInFolder: {
+    fullName: 'MyDocumentFolder/MyDocumentName.png',
+    typeName: 'Document',
+    expectedFilePaths: [
+      getFilePath('documents/MyDocumentFolder.documentFolder-meta.xml'),
+      getFilePath('documents/MyDocumentFolder/MyDocumentName.png-meta.xml'),
+      getFilePath('documents/MyDocumentFolder/MyDocumentName.png'),
+    ],
+    expectedComponents: [
+      {
+        name: 'MyDocumentFolder',
+        type: registryAccess.getTypeByName('DocumentFolder'),
+        xml: getFilePath('documents/MyDocumentFolder.documentFolder-meta.xml'),
+      },
+      {
+        name: 'MyDocumentFolder/MyDocumentName',
+        content: getFilePath('documents/MyDocumentFolder/MyDocumentName.png'),
+        xml: getFilePath('documents/MyDocumentFolder/MyDocumentName.png-meta.xml'),
+      },
+    ],
+  },
+  mixedContentTransformed: {
+    fullName: 'zippedResource',
+    typeName: 'StaticResource',
+    expectedFilePaths: [
+      getFilePath('staticresources/zippedResource.resource-meta.xml'),
+      getFilePath('staticresources/zippedResource'),
+    ],
+    expectedComponents: [
+      {
+        xml: getFilePath('staticresources/zippedResource.resource-meta.xml'),
+      },
+    ],
+  },
+  bundleLwc: {
+    fullName: 'MyLwc',
+    typeName: 'LightningComponentBundle',
+    expectedFilePaths: [getFilePath('lwc/MyLwc/MyLwc.js-meta.xml')],
+    expectedComponents: [
+      {
+        xml: getFilePath('lwc/MyLwc/MyLwc.js-meta.xml'),
+      },
+    ],
+  },
+  bundleAura: {
+    fullName: 'MyCmp',
+    typeName: 'AuraDefinitionBundle',
+    expectedFilePaths: [getFilePath('aura/MyCmp/MyCmp.cmp-meta.xml')],
+    expectedComponents: [
+      {
+        xml: getFilePath('aura/MyCmp/MyCmp.cmp-meta.xml'),
+      },
+    ],
+  },
+  bundleWave: {
+    fullName: 'WT',
+    typeName: 'WaveTemplateBundle',
+    expectedFilePaths: [getFilePath('waveTemplates/WT/template-info.json')],
+    expectedComponents: [
+      {
+        content: getFilePath('waveTemplates/WT'),
+      },
+    ],
+  },
+  nonDecomposedExplicit: {
+    fullName: 'CustomLabels',
+    typeName: 'CustomLabels',
+    expectedFilePaths: [getFilePath('labels/CustomLabels.labels-meta.xml')],
+    expectedComponents: [
+      {
+        xml: getFilePath('labels/CustomLabels.labels-meta.xml'),
+      },
+    ],
+  },
+  nonDecomposedImplicit: {
+    fullName: 'MyWorkflow',
+    typeName: 'Workflow',
+    expectedFilePaths: [getFilePath('workflows/MyWorkflow.workflow-meta.xml')],
+    expectedComponents: [
+      {
+        xml: getFilePath('workflows/MyWorkflow.workflow-meta.xml'),
+      },
+    ],
+  },
+  decomposedParent: {
+    fullName: 'Stuff__c',
+    typeName: 'CustomObject',
+    expectedFilePaths: [getFilePath('objects/Stuff__c/Stuff__c.object-meta.xml')],
+    expectedComponents: [
+      {
+        xml: getFilePath('objects/Stuff__c/Stuff__c.object-meta.xml'),
+      },
+    ],
+  },
+  decomposedChild: {
+    fullName: 'Stuff__c.Field__c',
+    typeName: 'CustomField',
+    expectedFilePaths: [
+      getFilePath('objects/Stuff__c/Stuff__c.object-meta.xml'),
+      getFilePath('objects/Stuff__c/fields/Field__c.field-meta.xml'),
+    ],
+    expectedComponents: [
+      {
+        name: 'Stuff__c',
+        type: registryAccess.getTypeByName('CustomObject'),
+        xml: getFilePath('objects/Stuff__c/Stuff__c.object-meta.xml'),
+      },
+    ],
+  },
+};
+
+describe('generating virtual tree from component name/type', () => {
+  const generateComponent = (fullName: string, typeName: string): MetadataComponent => ({
+    fullName,
+    type: registryAccess.getTypeByName(typeName),
+  });
+
+  const runTest = (typeEntry: TypeEntry) => {
     // part 1: do you get the files you expect
-    const component = { fullName: 'MyFlow', type: registryAccess.getTypeByName('Flow') };
-    const filenames = filePathsFromMetadataComponent(component, packageDir);
-    expect(filenames).to.deep.equal(
-      ['flows/MyFlow.flow-meta.xml'].map((f) => path.join(packageDir, path.normalize(f)))
-    );
+    const component = generateComponent(typeEntry.fullName, typeEntry.typeName);
+    const filePaths = filePathsFromMetadataComponent(component, packageDir);
+    expect(filePaths).to.deep.equal(typeEntry.expectedFilePaths);
 
     // part 2: are the files resolvable into the expected component?
-    const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
+    const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filePaths));
 
     const components = resolver.getComponentsFromPath(packageDir);
-    expect(components).to.have.lengthOf(1);
-    expect(components[0]).to.include({
-      xml: filenames[0],
-      name: component.fullName,
-      type: component.type,
-    });
+    const expectedComponentsSize = typeEntry.expectedComponents?.length || 1;
+    expect(components).to.have.lengthOf(expectedComponentsSize);
+
+    for (let i = 0; i < expectedComponentsSize; i++) {
+      const definedExpComp = typeEntry.expectedComponents ? typeEntry.expectedComponents[i] : {};
+      const expectedComp = Object.assign({}, { name: component.fullName, type: component.type }, definedExpComp);
+      expect(components[i]).to.include(expectedComp);
+    }
+  };
+
+  it('works for default type (flow)', () => {
+    runTest(testData.default);
   });
 
   describe('no strategy, with folders (report)', () => {
@@ -72,205 +248,52 @@ describe('generating virtual tree from component name/type', () => {
 
   describe('strategy = matchingContentFile', () => {
     it('works for matchingContentFile without folder (apexClass)', () => {
-      const component = { fullName: 'MyClass', type: registryAccess.getTypeByName('ApexClass') };
-      const filenames = filePathsFromMetadataComponent(component, packageDir);
-      expect(filenames).to.deep.equal(
-        ['classes/MyClass.cls-meta.xml', 'classes/MyClass.cls'].map((f) => path.join(packageDir, path.normalize(f)))
-      );
-
-      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
-
-      const components = resolver.getComponentsFromPath(packageDir);
-      expect(components).to.have.lengthOf(1);
-      expect(components[0]).to.include({
-        xml: filenames.find((f) => f.endsWith('cls-meta.xml')),
-        content: filenames.find((f) => f.endsWith('cls')),
-        name: component.fullName,
-        type: component.type,
-      });
+      runTest(testData.matchingContent);
     });
+
     it('works for matchingContentFile with folder (emailTemplate and emailFolder)', () => {
-      const component = { fullName: 'aFolder/someTemplate', type: registryAccess.getTypeByName('EmailTemplate') };
-      const filenames = filePathsFromMetadataComponent(component, packageDir);
-      expect(filenames).to.deep.equalInAnyOrder(
-        [
-          'email/aFolder.emailFolder-meta.xml',
-          'email/aFolder/someTemplate.email',
-          'email/aFolder/someTemplate.email-meta.xml',
-        ].map((f) => path.join(packageDir, path.normalize(f)))
-      );
-
-      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
-
-      const components = resolver.getComponentsFromPath(packageDir);
-      expect(components).to.have.lengthOf(2);
-      expect(components[1]).to.include({
-        xml: filenames.find((f) => f.endsWith('email-meta.xml')),
-        content: filenames.find((f) => f.endsWith('email')),
-        name: component.fullName,
-        type: component.type,
-      });
-      expect(components[0]).to.include({
-        xml: filenames.find((f) => f.endsWith('emailFolder-meta.xml')),
-        name: 'aFolder',
-        type: registryAccess.getTypeByName('EmailFolder'),
-      });
+      runTest(testData.matchingContentInFolder);
     });
   });
 
   describe('strategy = mixedContent', () => {
     it('mixedContent without folder (experiencebundle)', () => {
-      const component = {
-        fullName: 'E_Bikes1',
-        type: registryAccess.getTypeByName('ExperienceBundle'),
-      };
-      const filenames = filePathsFromMetadataComponent(component, packageDir);
-      expect(filenames).to.deep.equalInAnyOrder(
-        ['experiences/E_Bikes1.site-meta.xml', 'experiences/E_Bikes1'].map((f) =>
-          path.join(packageDir, path.normalize(f))
-        )
-      );
-      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
-
-      const components = resolver.getComponentsFromPath(packageDir);
-      expect(components).to.have.lengthOf(1);
-      expect(components[0]).to.include({
-        xml: filenames.find((f) => f.endsWith('site-meta.xml')),
-        name: 'E_Bikes1',
-        type: component.type,
-      });
+      runTest(testData.mixedContent);
     });
+
     it('mixedContent in folder (Document)', () => {
-      const component = {
-        fullName: 'MyDocumentFolder/MyDocumentName.png',
-        type: registryAccess.getTypeByName('Document'),
-      };
-      const filenames = filePathsFromMetadataComponent(component, packageDir);
-      expect(filenames).to.deep.equalInAnyOrder(
-        [
-          'documents/MyDocumentFolder.documentFolder-meta.xml',
-          'documents/MyDocumentFolder/MyDocumentName.png',
-          'documents/MyDocumentFolder/MyDocumentName.png-meta.xml',
-        ].map((f) => path.join(packageDir, path.normalize(f)))
-      );
-      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
-
-      const components = resolver.getComponentsFromPath(packageDir);
-      expect(components).to.have.lengthOf(2);
-      expect(components[1]).to.include({
-        xml: filenames.find((f) => f.endsWith('png-meta.xml')),
-        content: filenames.find((f) => f.endsWith('MyDocumentName.png')),
-        name: 'MyDocumentFolder/MyDocumentName',
-        type: component.type,
-      });
-      expect(components[0]).to.include({
-        xml: filenames.find((f) => f.endsWith('documentFolder-meta.xml')),
-        name: 'MyDocumentFolder',
-        type: registryAccess.getTypeByName('DocumentFolder'),
-      });
+      runTest(testData.mixedContentInFolder);
     });
+
     it('mixedContent w/ transformer (staticResource)', () => {
-      const component = {
-        fullName: 'zippedResource',
-        type: registryAccess.getTypeByName('StaticResource'),
-      };
-      const filenames = filePathsFromMetadataComponent(component, packageDir);
-      expect(filenames).to.deep.equalInAnyOrder(
-        ['staticresources/zippedResource.resource-meta.xml', 'staticresources/zippedResource'].map((f) =>
-          path.join(packageDir, path.normalize(f))
-        )
-      );
-      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
-
-      const components = resolver.getComponentsFromPath(packageDir);
-      expect(components).to.have.lengthOf(1);
-
-      expect(components[0]).to.include({
-        xml: filenames.find((f) => f.endsWith('resource-meta.xml')),
-        name: 'zippedResource',
-        type: component.type,
-      });
+      runTest(testData.mixedContentTransformed);
     });
   });
 
   describe('strategy = bundle', () => {
     it('lwc', () => {
-      const component = {
-        fullName: 'MyLwc',
-        type: registryAccess.getTypeByName('LightningComponentBundle'),
-      };
-      const filenames = filePathsFromMetadataComponent(component, packageDir);
-      expect(filenames).to.deep.equalInAnyOrder(
-        ['lwc/MyLwc/MyLwc.js-meta.xml'].map((f) => path.join(packageDir, path.normalize(f)))
-      );
-      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
-
-      const components = resolver.getComponentsFromPath(packageDir);
-      expect(components).to.have.lengthOf(1);
-      expect(components[0]).to.include({
-        xml: filenames.find((f) => f.endsWith('js-meta.xml')),
-        name: component.fullName,
-        type: component.type,
-      });
+      runTest(testData.bundleLwc);
     });
+
     it('aura', () => {
-      const component = {
-        fullName: 'MyCmp',
-        type: registryAccess.getTypeByName('AuraDefinitionBundle'),
-      };
-      const filenames = filePathsFromMetadataComponent(component, packageDir);
-      expect(filenames).to.deep.equalInAnyOrder(
-        ['aura/MyCmp/MyCmp.cmp-meta.xml'].map((f) => path.join(packageDir, path.normalize(f)))
-      );
-      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
-
-      const components = resolver.getComponentsFromPath(packageDir);
-      expect(components).to.have.lengthOf(1);
-      expect(components[0]).to.include({
-        xml: filenames.find((f) => f.endsWith('cmp-meta.xml')),
-        name: component.fullName,
-        type: component.type,
-      });
+      runTest(testData.bundleAura);
     });
-    it('waveTemplate', () => {
-      const component = {
-        fullName: 'WT',
-        type: registryAccess.getTypeByName('WaveTemplateBundle'),
-      };
-      const filenames = filePathsFromMetadataComponent(component, packageDir);
-      expect(filenames).to.deep.equalInAnyOrder(
-        ['waveTemplates/WT/template-info.json'].map((f) => path.join(packageDir, path.normalize(f)))
-      );
-      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
 
-      const components = resolver.getComponentsFromPath(packageDir);
-      expect(components).to.have.lengthOf(1);
-      expect(components[0]).to.include({
-        content: path.join(packageDir, 'waveTemplates', component.fullName),
-        name: component.fullName,
-        type: component.type,
-      });
+    it('waveTemplate', () => {
+      runTest(testData.bundleWave);
     });
   });
 
   describe('adapter = nondecomposed', () => {
-    const component = {
-      fullName: 'CustomLabels',
-      type: registryAccess.getTypeByName('CustomLabels'),
-    };
-    const filenames = filePathsFromMetadataComponent(component, packageDir);
-    expect(filenames).to.deep.equal(
-      ['labels/CustomLabels.labels-meta.xml'].map((f) => path.join(packageDir, path.normalize(f)))
-    );
-    const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
-    const components = resolver.getComponentsFromPath(packageDir);
-    expect(components).to.have.lengthOf(1);
-    expect(components[0]).to.include({
-      xml: filenames[0],
-      name: component.fullName,
-      type: component.type,
+    it('CustomLabels (explicit nondecomposed)', () => {
+      runTest(testData.nonDecomposedExplicit);
+    });
+
+    it('Workflow (implicit nondecomposed)', () => {
+      runTest(testData.nonDecomposedImplicit);
     });
   });
+
   describe('adapter = decomposed', () => {
     it('sanityCheck of childComponent behavior', () => {
       const component = {
@@ -283,43 +306,13 @@ describe('generating virtual tree from component name/type', () => {
         : registryAccess.findType((t) => t.children && Object.keys(t.children.types).includes(component.type.id));
       expect(topLevelType).to.deep.equal(registryAccess.getTypeByName('CustomObject'));
     });
+
     it('parent object', () => {
-      const component = {
-        fullName: 'Stuff__c',
-        type: registryAccess.getTypeByName('CustomObject'),
-      };
-      const filenames = filePathsFromMetadataComponent(component, packageDir);
-      expect(filenames).to.deep.equal(
-        ['objects/Stuff__c/Stuff__c.object-meta.xml'].map((f) => path.join(packageDir, path.normalize(f)))
-      );
-      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
-      const components = resolver.getComponentsFromPath(packageDir);
-      expect(components).to.have.lengthOf(1);
-      expect(components[0]).to.include({
-        xml: filenames[0],
-        name: component.fullName,
-        type: component.type,
-      });
+      runTest(testData.decomposedParent);
     });
+
     it('child field', () => {
-      const component = {
-        fullName: 'Stuff__c.Field__c',
-        type: registryAccess.getTypeByName('CustomField'),
-      };
-      const filenames = filePathsFromMetadataComponent(component, packageDir);
-      expect(filenames).to.deep.equalInAnyOrder(
-        ['objects/Stuff__c/Stuff__c.object-meta.xml', 'objects/Stuff__c/fields/Field__c.field-meta.xml'].map((f) =>
-          path.join(packageDir, path.normalize(f))
-        )
-      );
-      const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filenames));
-      const components = resolver.getComponentsFromPath(packageDir);
-      // it'll return the parent type
-      expect(components[0]).to.include({
-        xml: filenames[0],
-        name: component.fullName.split('.')[0],
-        type: registryAccess.getTypeByName('CustomObject'),
-      });
+      runTest(testData.decomposedChild);
     });
   });
 });

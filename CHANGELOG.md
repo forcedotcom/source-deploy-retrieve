@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.4.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.4.1...v5.4.2) (2021-11-10)
+
+
+### Bug Fixes
+
+* adds an action when only one of the required for MCT was ignored ([#494](https://github.com/forcedotcom/source-deploy-retrieve/issues/494)) ([3ee999c](https://github.com/forcedotcom/source-deploy-retrieve/commit/3ee999c84ad52077e5d090a854baabd4853a1957))
+
 ### [5.4.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.4.0...v5.4.1) (2021-11-04)
 
 

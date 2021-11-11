@@ -237,7 +237,9 @@ describe('ConnectionResolver', () => {
       ]);
 
       const resolver = new ConnectionResolver(connection);
-      const result = await resolver.resolve();
+      const result = await resolver.resolve(
+        (component) => !(component.namespacePrefix && component.manageableState !== 'unmanaged')
+      );
       expect(result.components).to.deep.equal([]);
     });
     it('should resolve managed components if excludeManaged is false', async () => {
@@ -264,7 +266,7 @@ describe('ConnectionResolver', () => {
       ]);
 
       const resolver = new ConnectionResolver(connection);
-      const result = await resolver.resolve(false);
+      const result = await resolver.resolve();
       const expected: MetadataComponent[] = [
         {
           fullName: 'SK',

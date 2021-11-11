@@ -30,7 +30,9 @@ export class ConnectionResolver {
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
-  public async resolve(excludeManagedComponents = true): Promise<ResolveConnectionResult> {
+  public async resolve(
+    componentFilter = (component: Partial<FileProperties>): boolean => !!component
+  ): Promise<ResolveConnectionResult> {
     const Aggregator: Array<Partial<FileProperties>> = [];
     const childrenPromises: Array<Promise<FileProperties[]>> = [];
     const componentTypes: Set<MetadataType> = new Set();
@@ -69,15 +71,10 @@ export class ConnectionResolver {
       Aggregator.push(...childrenResult);
     }
 
-    const components = Aggregator.filter(
-      (component) =>
-        !(excludeManagedComponents && component.namespacePrefix && component.manageableState !== 'unmanaged')
-    ).map((component) => {
-      return { fullName: component.fullName, type: this.registry.getTypeByName(component.type) };
-    });
-
     return {
-      components,
+      components: Aggregator.filter(componentFilter).map((component) => {
+        return { fullName: component.fullName, type: this.registry.getTypeByName(component.type) };
+      }),
       apiVersion: this.connection.getApiVersion(),
     };
   }

@@ -6,6 +6,7 @@
  */
 import { Connection } from '@salesforce/core';
 import { OptionalTreeRegistryOptions, XML_NS_KEY } from '../common';
+import { FileProperties } from '../client/types';
 import { ComponentSet } from './componentSet';
 
 export interface PackageTypeMembers {
@@ -83,4 +84,8 @@ export interface FromConnectionOptions extends OptionalTreeRegistryOptions {
    * the metadata API version to use
    */
   apiVersion?: string;
+  /**
+   * filter the result components to e.g. remove managed components
+   */
+  componentFilter?: (component: Partial<FileProperties>) => boolean;
 }

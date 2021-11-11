@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.4.2...v5.5.0) (2021-11-11)
+
+
+### Features
+
+* construct virtual tree from name/type ([e475175](https://github.com/forcedotcom/source-deploy-retrieve/commit/e475175799c90c0d62fe9eda782e9ebd025c3990))
+
 ### [5.4.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.4.1...v5.4.2) (2021-11-10)
 
 

@@ -1349,7 +1349,7 @@
       "suffix": "site",
       "directoryName": "siteDotComSites",
       "inFolder": false,
-      "strictDirectoryName": false,
+      "strictDirectoryName": true,
       "strategies": {
         "adapter": "matchingContentFile"
       }
@@ -3016,7 +3016,8 @@
     "ObjectHierarchyRelationship": "objecthierarchyrelationship",
     "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
     "dataMappingObjectDefinitions": "datamappingobjectdefinition",
-    "fieldRestrictionRules": "fieldrestrictionrule"
+    "fieldRestrictionRules": "fieldrestrictionrule",
+    "siteDotComSites": "sitedotcom"
   },
   "childTypes": {
     "customlabel": "customlabels",

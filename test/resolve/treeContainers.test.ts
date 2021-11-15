@@ -20,7 +20,8 @@ import {
 } from '../../src/resolve/treeContainers';
 import { LibraryError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { MetadataResolver, VirtualDirectory } from '../../src';
+import { VirtualDirectory } from '../../src';
+import { MetadataResolver } from '../../src/resolve/metadataResolver';
 
 describe('Tree Containers', () => {
   const readDirResults = ['a.q', 'a.x-meta.xml', 'b', 'b.x-meta.xml', 'c.z', 'c.x-meta.xml'];

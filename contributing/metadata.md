@@ -6,7 +6,7 @@
 
 To simplify modifying the registry, there's a script.
 
-> Note: The script depends on being able to create an org that will have your type. If you have a working org but your type isn't compatible with scratch org, you can use an existing org [^1]
+> Note: The script depends on being able to create an org that will have your type. If you have a working org but your type isn't compatible with scratch org, you can [use an existing org](#use-an-existing-org)
 
 1. looks for missing types (similar to the completeness test)
 2. For missing types, generate a project and scratch org that includes the Features/Settings
@@ -87,16 +87,16 @@ Then also add an entry in the `strictDirectoryNames` section.
 
 To preserve existing behavior, use `strictDirectoryName` on the new types, not the old ones.
 
-## Testing
+# Testing
 
 SDR include 2 registry-related tests to check your changes to the metdataRegistry.json
 
-### Validate the registry is correct
+## Validate the registry is correct
 
 Test failures here could be types that exist in the `types` section but don't have entries in `suffixes` or `strictDirectoryNames`.
 It also checks that suffixes are unique OR only one type that shares a suffix isn't `strictDirectoryName`.
 
-### Validate the registry is complete
+## Validate the registry is complete
 
 The library uses the [registry file](../src/registry/metadataRegistry.json) to resolve how to process metadata types. This needs to be updated as new metadata types are added to the platform at major releases.
 
@@ -105,7 +105,7 @@ The completeness is checked by comparing the registry to the metadata coverage r
 1. Types that aren't supported in the metadata API
 2. Types in the [nonSupportedTypes file](../src/registry/nonSupportedTypes.ts) (think of it as a registry-ignore file). You can ignore the types themselves, or the feature/settings they depend on. Be sure to explain why you're choosing to ignore that type.
 
-### Manual Testing
+## Manual Testing
 
 Want to make sure your types are working as expected?
 
@@ -126,11 +126,11 @@ Want to make sure your types are working as expected?
 1. Convert back from mdapi to source format `sfdx force:mdapi:convert -r mdapiOut -d force-app`
 1. `sfdx force:source:beta:push`
 
-#### Caveats
+### Caveats
 
 Only source:push and source:pull support source tracking so the target types must be MDAPI addressable on the server. If they aren’t then special code is needed to support source tracking for these components. See the document [Metadata API Types: End to End, Cradle to Grave](https://docs.google.com/document/d/13jJLbM_ztS0tOOV8bQzNAnEFbL5MY4rNLa18oDV2SCs/edit?usp=sharing) (Salesforce internal only) for more details.
 
-### Unit Testing
+## Unit Testing
 
 SDR Unit tests are abstract (mockRegistry tries to represent possible patterns). If your type uses a combination of properties that don't match an existing type in the registry, there's a chance the behavior isn't covered.
 
@@ -138,7 +138,7 @@ Reach out to the CLI team for help with unit tests.
 
 [metadataResolverRealRegistry.ts](../test/resolve/metadataResolverRealRegistry.test.ts) is an example of unit testing one behavior (resolving from source files) of a real metadata type.
 
-### Integration Testing
+## Integration Testing
 
 If you're doing anything complex (you've used any of the following properties `strategies`, `folderType`, `inFolder=true`, `ignoreParsedFullName`, `folderContentType`, `ignoreParentName`) then you'll wanted to add some NUTs that verify the behavior or your types using real orgs and to prevent SDR changes from causing regressions on your types.
 
@@ -148,7 +148,7 @@ NUTs live in [plugin-source](https://github.com/salesforcecli/plugin-source) but
 
 See [testkit](https://github.com/salesforcecli/cli-plugins-testkit) for examples and usage.
 
-## Tips and Tricks
+# Tips and Tricks
 
 ### Work in stages
 
@@ -158,9 +158,7 @@ If you see a whole bunch of new unsupported types, you can "ignore" all the feat
 
 Some metadata types require features which require modifications to the DevHub (licenses, etc) and some may have to stay ignored (ex: a pilot feature you can't enable)
 
-### Using an existing org
-
-[^1]: If you do have an org with the feature enabled, but can't enable the feature on additional scratch orgs, you can use it for the script.
+### Use an existing org
 
 You can use an existing org for the metadata describe portion of the script by
 

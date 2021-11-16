@@ -141,7 +141,7 @@ Reach out to the CLI team for help with unit tests.
 
 ## Integration Testing
 
-If you're doing anything complex (you've used any of the following properties `strategies`, `folderType`, `inFolder=true`, `ignoreParsedFullName`, `folderContentType`, `ignoreParentName`) then you'll wanted to add some NUTs that verify the behavior or your types using real orgs and to prevent SDR changes from causing regressions on your types.
+If you're doing anything complex (you've used any of the following properties `strategies`, `folderType`, `inFolder=true`, `ignoreParsedFullName`, `folderContentType`, `ignoreParentName`), you'll want to add some NUTs that verify the behavior or your types using real orgs and to prevent SDR changes from causing regressions on your types.
 
 [This NUT](https://github.com/salesforcecli/plugin-source/blob/main/test/nuts/territory2.nut.ts) validates the behavior for a particularly bizarre metadataType, territory2.
 

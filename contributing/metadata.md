@@ -30,7 +30,7 @@ If that's confusing, it's a great time to reach out to the CLI team.
 
 You can do what the script does yourself. As you work, run `./node_modules/mocha/bin/mocha test/registry/registryValidation.test.ts` to check your entries
 
-Run `sfdx force:mdapi:describemetadata --json` to get the describe. `>` it to a file or use `|jq` to find your type.
+Run `sfdx force:mdapi:describemetadata --json` to get the describe. `>` the output to a file or pipe it to [jq](https://stedolan.github.io/jq/) (` | jq`) to find your type.
 
 Your describe will contains something like this
 

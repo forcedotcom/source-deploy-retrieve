@@ -26,7 +26,7 @@ yarn update-registry
 
 ### What the script can't do
 
-inFolderTypes and types with childXml in their describe are not supported. You **want** to explore the various strategies for those see the [(SDR Handbook](../HANDBOOK.md) in this repo) and create NUTs to validate that your types are being handled correctly.
+inFolderTypes and types with childXml in their describe are not supported. You **want** to explore the various strategies for those see the [SDR Handbook](../HANDBOOK.md) in this repo) and [create tests](#integration-testing) to validate that your types are being handled correctly.
 
 For those situations, refer to another existing type in the registry that you want yours to behave like.
 
@@ -147,7 +147,7 @@ Reach out to the CLI team for help with unit tests. .
 
 ## Integration Testing
 
-If you're doing anything complex (you've used any of the following properties `strategies`, `folderType`, `inFolder=true`, `ignoreParsedFullName`, `folderContentType`, `ignoreParentName`), you'll want to add some NUTs that verify the behavior or your types using real orgs and to prevent SDR changes from causing regressions on your types.
+If you're doing anything complex (you've used any of the following properties `strategies`, `folderType`, `inFolder=true`, `ignoreParsedFullName`, `folderContentType`, `ignoreParentName`), you'll want to add some NUTs (not-unit-tests) that verify the behavior or your types using real orgs and to prevent SDR changes from causing regressions on your types.
 
 [This NUT](https://github.com/salesforcecli/plugin-source/blob/main/test/nuts/territory2.nut.ts) validates the behavior for a particularly bizarre metadataType, territory2.
 

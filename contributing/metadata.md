@@ -44,7 +44,7 @@ Your describe will contains something like this
 },
 ```
 
-Entries in the describe.json have the following shape:
+Entries in the `describe.json` have the following shape:
 | Property | Description|
 | --- | --- |
 |childXmlNames | List of child sub-components for this component|

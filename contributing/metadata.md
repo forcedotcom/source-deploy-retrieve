@@ -11,7 +11,7 @@ To simplify modifying the registry, there's a script.
 The script will:
 1. Look for missing types (similar to the completeness test)
 2. For missing types, generate a project and scratch org that includes the Features/Settings
-3. Running force:mdapi:describemetadata to get the describe
+3. Run `force:mdapi:describemetadata` to get the describe
 4. Modifying the registry to include the newly found types
 
 ```shell

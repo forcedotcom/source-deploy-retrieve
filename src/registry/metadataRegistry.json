@@ -2384,6 +2384,13 @@
       "directoryName": "benefitActions",
       "strictDirectoryName": false
     },
+    "loyaltyprogramsetup": {
+      "id": "loyaltyprogramsetup",
+      "name": "LoyaltyProgramSetup",
+      "suffix": "loyaltyProgramSetup",
+      "directoryName": "loyaltyProgramSetups",
+      "strictDirectoryName": false
+    },
     "channelobjectlinkingrule": {
       "id": "channelobjectlinkingrule",
       "name": "ChannelObjectLinkingRule",
@@ -2718,6 +2725,7 @@
     "fieldSrcTrgtRelationship": "fieldsrctrgtrelationship",
     "objectSourceTargetMap": "objectsourcetargetmap",
     "benefitAction": "benefitaction",
+    "loyaltyProgramSetup": "loyaltyprogramsetup",
     "installedPackage": "installedpackage",
     "labels": "customlabels",
     "navigationMenu": "navigationmenu",

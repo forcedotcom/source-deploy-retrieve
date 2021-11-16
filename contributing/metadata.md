@@ -77,7 +77,7 @@ add a matching entry in `suffixes`
 
 ### When suffixes aren't unique
 
-If your type uses a suffix already in use, you'll need to tell SDR to use the directoryName as well by setting `"strictDirectoryName"` : `"true"`
+If your type uses a suffix already in use, tell SDR to use the `directoryName` as well by setting `"strictDirectoryName"` : `"true"`
 
 Then also add an entry in the `strictDirectoryNames` section.
 

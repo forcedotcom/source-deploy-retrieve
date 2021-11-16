@@ -9,6 +9,7 @@ To simplify modifying the registry, there's a script.
 > Note: The script depends on being able to create an org that will have your type. If you have a working org, but your type isn't compatible with scratch org, you can [use an existing org](#use-an-existing-org)
 
 The script will:
+
 1. Look for missing types (similar to the completeness test)
 2. For missing types, generate a project and scratch org that includes the Features/Settings
 3. Run `force:mdapi:describemetadata` to get the describe
@@ -90,7 +91,7 @@ To preserve existing behavior, use `strictDirectoryName` on the new types, not t
 
 # Testing
 
-SDR include 2 registry-related tests to check your changes to the metdataRegistry.json
+SDR includes 2 registry-related tests to check your changes to the metdataRegistry.json
 
 ## Validate the registry is correct
 
@@ -114,13 +115,13 @@ Want to make sure your types are working as expected?
 1. Create a scratch org `sfdx force:org:create`
 1. Open the org and create your types.
 1. Run `sfdx force:source:beta:status` and verify the remote add.
-1. `sfdx force:source:beta:pull` to pull the metadata and examine what is retrieved
+1. Run `sfdx force:source:beta:pull` to pull the metadata and examine what is retrieved
 1. Run `sfdx force:source:beta:status` and verify the changes were retrieved and no longer appear.
 1. Delete the org `sfdx force:org:delete --noprompt`
 1. Create a new scratch org. `sfdx force:org:create`
 1. Push the source `sfdx force:source:beta:push`
 1. Convert the source to mdapi format `sfdx force:source:convert -d mdapiOut`
-1. look in the resulting `metadataPackage_` and `package.xml` to see that it looks as expected
+1. Look in the resulting `metadataPackage_` and `package.xml` to see that it looks as expected
 1. Deploy it to the org using `sfdx force:mdapi:deploy --deploydir mdapiOut --wait 30` and verify that it succeeds
 1. Delete the source directory `rm -rf force-app/main/default/*`
 1. Create a new scratch org and convert the source back

@@ -8,10 +8,11 @@ To simplify modifying the registry, there's a script.
 
 > Note: The script depends on being able to create an org that will have your type. If you have a working org but your type isn't compatible with scratch org, you can [use an existing org](#use-an-existing-org)
 
-1. looks for missing types (similar to the completeness test)
+The script will:
+1. Look for missing types (similar to the completeness test)
 2. For missing types, generate a project and scratch org that includes the Features/Settings
-3. Running force:mdapi:describemetadata to get the describe
-4. Modifying the registry to include the newly found types
+3. Run `force:mdapi:describemetadata` to get the describe
+4. Modify the registry to include the newly found types
 
 ```shell
 yarn update-registry
@@ -120,8 +121,8 @@ Want to make sure your types are working as expected?
 1. Push the source `sfdx force:source:beta:push`
 1. Convert the source to mdapi format `sfdx force:source:convert -d mdapiOut`
 1. look in the resulting `metadataPackage_` and `package.xml` to see that it looks as expected
-1. deploy it to the org using `sfdx force:mdapi:deploy --deploydir mdapiOut --wait 30` and verify that it succeeds
-1. delete the source directory `rm -rf force-app/main/default/*`
+1. Deploy it to the org using `sfdx force:mdapi:deploy --deploydir mdapiOut --wait 30` and verify that it succeeds
+1. Delete the source directory `rm -rf force-app/main/default/*`
 1. Create a new scratch org and convert the source back
 1. Convert back from mdapi to source format `sfdx force:mdapi:convert -r mdapiOut -d force-app`
 1. `sfdx force:source:beta:push`
@@ -140,7 +141,7 @@ Reach out to the CLI team for help with unit tests. If you work for Salesforce, 
 
 ## Integration Testing
 
-If you're doing anything complex (you've used any of the following properties `strategies`, `folderType`, `inFolder=true`, `ignoreParsedFullName`, `folderContentType`, `ignoreParentName`) then you'll wanted to add some NUTs that verify the behavior or your types using real orgs and to prevent SDR changes from causing regressions on your types.
+If you're doing anything complex (you've used any of the following properties `strategies`, `folderType`, `inFolder=true`, `ignoreParsedFullName`, `folderContentType`, `ignoreParentName`), you'll want to add some NUTs that verify the behavior or your types using real orgs and to prevent SDR changes from causing regressions on your types.
 
 [This NUT](https://github.com/salesforcecli/plugin-source/blob/main/test/nuts/territory2.nut.ts) validates the behavior for a particularly bizarre metadataType, territory2.
 

@@ -2983,7 +2983,7 @@
     "ouc": "omniuicard",
     "rpt": "omnidatatransform",
     "os": "omniscript",
-    "oip": "Omniintegrationprocedure"
+    "oip": "omniintegrationprocedure"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

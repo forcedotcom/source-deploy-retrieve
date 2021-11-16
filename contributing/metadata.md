@@ -1,8 +1,13 @@
 # Contributing Metadata Types to the Registry
 
-> NOTE: If you have a “Settings” metadata type, you do not need to follow these instructions. Support for your type is already built into SDR.
+Got questions?
+
+- If you work for Salesforce, [#platform-cli](https://salesforce-internal.slack.com/archives/C01LKDT1P6J).
+- If not, [open an issue](https://github.com/forcedotcom/cli/issues)
 
 ## Adding new types to the registry via a script
+
+> NOTE: If you have a “Settings” metadata type, you do not need to follow these instructions. Support for your type is already built into SDR.
 
 To simplify modifying the registry, there's a script.
 
@@ -31,7 +36,7 @@ If that's confusing, it's a great time to reach out to the CLI team.
 
 You can do what the script does yourself. As you work, run `./node_modules/mocha/bin/mocha test/registry/registryValidation.test.ts` to check your entries
 
-Run `sfdx force:mdapi:describemetadata --json` to get the describe. `>` the output to a file or pipe it to [jq](https://stedolan.github.io/jq/) (` | jq`) to find your type.
+Run `sfdx force:mdapi:describemetadata --json` to get the describe. `>` the output to a file or pipe it to [jq](https://stedolan.github.io/jq/) (`| jq`) to find your type.
 
 Your describe will contains something like this
 
@@ -55,7 +60,7 @@ Entries in the `describe.json` have the following shape:
 |suffix| The file suffix for this component.|
 |xmlName| The name of the root element in the metadata file for this component. This name also appears in the Packages > types > name field in the manifest file package.xml.|
 
-You'd create an entry in the `types` property.
+Create an entry in the `types` property:
 
 > this fictitious type COULD HAVE used the automated script
 
@@ -136,7 +141,7 @@ Only `source:push` and `source:pull` support source tracking, so the target type
 
 SDR Unit tests are abstract (mockRegistry tries to represent possible patterns). If your type uses a combination of properties that don't match an existing type in the registry, there's a chance the behavior isn't covered.
 
-Reach out to the CLI team for help with unit tests. If you work for Salesforce, [#platform-cli](https://salesforce-internal.slack.com/archives/C01LKDT1P6J). If not, [open an issue](https://github.com/forcedotcom/cli/issues).
+Reach out to the CLI team for help with unit tests. .
 
 [metadataResolverRealRegistry.ts](../test/resolve/metadataResolverRealRegistry.test.ts) is an example of unit testing one behavior (resolving from source files) of a real metadata type.
 

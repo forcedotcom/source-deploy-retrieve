@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, join, sep } from 'path';
+import { Lifecycle } from '@salesforce/core';
 import { TypeInferenceError } from '../errors';
 import { extName, parentName, parseMetadataXml } from '../utils';
 import { RegistryAccess } from '../registry/registryAccess';
@@ -15,7 +16,6 @@ import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
-
 /**
  * Resolver for metadata type and component objects.
  *
@@ -137,6 +137,12 @@ export class MetadataResolver {
         !adapter.allowMetadataWithContent();
       return shouldResolve ? adapter.getComponent(fsPath, isResolvingSource) : undefined;
     }
+    void Lifecycle.getInstance().emitTelemetry({
+      eventName: 'metadata_resolver_type_inference_error',
+      library: 'SDR',
+      function: 'resolveComponent',
+      path: fsPath,
+    });
     throw new TypeInferenceError('error_could_not_infer_type', fsPath);
   }
 

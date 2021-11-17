@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.6.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.5.0...v5.6.0) (2021-11-16)
+
+
+### Features
+
+* support new OmniScript and OmniIntegrationProcedure type ([#502](https://github.com/forcedotcom/source-deploy-retrieve/issues/502)) ([9e1c089](https://github.com/forcedotcom/source-deploy-retrieve/commit/9e1c089fcff06491a3dca55c86098b29377b3764))
+
 ## [5.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.4.2...v5.5.0) (2021-11-11)
 
 

@@ -63,13 +63,13 @@ SDR was built to accomplish the task of deploying and retrieving metadata. There
 
 ## Metadata Registry
 
-**Module:** https://github.com/forcedotcom/source-deploy-retrieve/tree/develop/src/registry
+**Module:** <https://github.com/forcedotcom/source-deploy-retrieve/tree/main/src/registry>
 
 ### Overview
 
 The metadata registry is the foundation of the library. It is a module to describe available metadata types on the platform, provide metadata about them (metadata of metadata woah), and other configuration. It is based off of the [describeMetadata()](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_describe.htm) API call, which provides information such as a type’s file suffix, directory name of its component files, whether or not components live in a folder type, etc. Additional information may also be added to a type definition to support functionality in the library. Not only is it an index of metadata types, but it also contains indexes on properties of metadata types to increase performance on certain operations — more on this later.
 
-### The [registry.json](https://github.com/forcedotcom/source-deploy-retrieve/blob/develop/src/registry/registry.json) file
+### The [registry.json](https://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/registry/registry.json) file
 
 The config file consists of a handful of different indexes.
 
@@ -140,7 +140,7 @@ Object.values(registry.strictDirectoryNames).map(
 
 ## Component Resolution
 
-**Module:** https://github.com/forcedotcom/source-deploy-retrieve/tree/develop/src/resolve
+**Module:** <https://github.com/forcedotcom/source-deploy-retrieve/tree/main/src/resolve>
 
 ### Overview
 
@@ -167,7 +167,7 @@ Metadata types often follow a pattern of how files are structured for one of its
 - [class name].[file suffix]
 - [class name].[file suffix]-meta.xml
 
-The resolver constructs components based on the rules of such a pattern. It takes advantage of the fact there aren’t very many unique patterns/classifications, and for each one there is a `SourceAdapter` implementation that is responsible for populating the properties of a component based on the rules. Types are assigned adapters with the `strategies` property of the type definition in registry configuration. See the [adapters module](https://github.com/forcedotcom/source-deploy-retrieve/tree/develop/src/resolve/adapters) for all of the available adapters for different type classifications. The resolver’s algorithm when walking a file is:
+The resolver constructs components based on the rules of such a pattern. It takes advantage of the fact there aren’t very many unique patterns/classifications, and for each one there is a `SourceAdapter` implementation that is responsible for populating the properties of a component based on the rules. Types are assigned adapters with the `strategies` property of the type definition in registry configuration. See the [adapters module](https://github.com/forcedotcom/source-deploy-retrieve/tree/main/src/resolve/adapters) for all of the available adapters for different type classifications. The resolver’s algorithm when walking a file is:
 
 1. Determine the associated type by parsing the file suffix. Utilize the registry indexes to determine a type
 2. If the type has a source adapter assigned to it, construct the associated adapter. Otherwise use the default one
@@ -256,7 +256,7 @@ console.log(await layout.parseXml()) // => "<Layout></Layout>"
 
 ## Component Packaging
 
-**Module:** https://github.com/forcedotcom/source-deploy-retrieve/tree/develop/src/convert
+**Module:** <https://github.com/forcedotcom/source-deploy-retrieve/tree/main/src/convert>
 
 ### Overview
 
@@ -264,7 +264,7 @@ Another key building block for deploying and retrieving is copying metadata file
 
 ### Converting metadata
 
-We can resolve, convert, and copy metadata using the `[MetadataConverter](https://github.com/forcedotcom/source-deploy-retrieve/blob/develop/src/convert/metadataConverter.ts)` class. Because we’re dealing with files here, the components must be source-backed to perform the operation.
+We can resolve, convert, and copy metadata using the `[MetadataConverter](https://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/convert/metadataConverter.ts)` class. Because we’re dealing with files here, the components must be source-backed to perform the operation.
 
 ```
 import {
@@ -346,7 +346,7 @@ Once finalizers have state data set, it needs to be processed at the end of the 
 
 In less general terms, this concept was created out of necessity to support converting decomposed components like CustomObjects. When processing a CustomObject, we need to combine the contents of all of its files, which are components themselves, into a single file for deployment. If we are processing a CustomField in the pipeline, we don’t want to tell the component writer to write a file just yet because we’re still waiting on any other child components of the same object to be included in the file. So instead of returning a write info, we save the same information in the `RecompositionFinalizer`’s state. Once all components of the convert have been processed, `RecompositionFinalizer.prototype.finalize()` is called to combine all of an object’s child components into a single write info, and to push that to the component writer.
 
-#### In [decomposedMetadataTransformer.ts](https://github.com/forcedotcom/source-deploy-retrieve/blob/develop/src/convert/transformers/decomposedMetadataTransformer.ts)
+#### In [decomposedMetadataTransformer.ts](https://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/convert/transformers/decomposedMetadataTransformer.ts)
 
 ```
 // in decomposedMetadataTransformer.ts
@@ -377,7 +377,7 @@ public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> 
 }
 ```
 
-#### In [convertContext.ts](https://github.com/forcedotcom/source-deploy-retrieve/blob/develop/src/convert/convertContext.ts)
+#### In [convertContext.ts](https://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/convert/convertContext.ts)
 
 ```
 class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionState> {
@@ -463,7 +463,7 @@ Let’s say in this scenario the object we’re working with is MyObj\_\_c
 
 ## Component Sets
 
-**Module:** https://github.com/forcedotcom/source-deploy-retrieve/tree/develop/src/collections
+**Module:** <https://github.com/forcedotcom/source-deploy-retrieve/tree/main/src/collections>
 
 ### Overview
 
@@ -612,7 +612,7 @@ const testClassPaths = ComponentSet
 
 ## Deploying and Retrieving
 
-**Module:** https://github.com/forcedotcom/source-deploy-retrieve/tree/develop/src/client
+**Module:** <https://github.com/forcedotcom/source-deploy-retrieve/tree/main/src/client>
 
 ### Overview
 
@@ -893,4 +893,4 @@ import { MetadataApiRetrieve } from '@salesforce/source-deploy-retrieve'
 
 ## Further Examples
 
-For more code snippet examples similar to those found here, see the [examples](https://github.com/forcedotcom/source-deploy-retrieve/tree/develop/examples) folder of the repository.
+For more code snippet examples similar to those found here, see the [examples](https://github.com/forcedotcom/source-deploy-retrieve/tree/main/examples) folder of the repository.

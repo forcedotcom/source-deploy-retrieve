@@ -26,7 +26,7 @@ yarn update-registry
 
 ### What the script can't do
 
-inFolderTypes and types with childXml in their describe are not supported. You **want** to explore the various strategies for those see the [SDR Handbook](../HANDBOOK.md) in this repo) and [create tests](#integration-testing) to validate that your types are being handled correctly.
+inFolderTypes and types with childXml in their describe are not supported. You **want** to explore the various strategies for those (see the [SDR Handbook](../HANDBOOK.md) in this repo) and [create tests](#integration-testing) to validate that your types are being handled correctly.
 
 For those situations, refer to another existing type in the registry that you want yours to behave like.
 
@@ -40,7 +40,7 @@ Run `sfdx force:mdapi:describemetadata --json` to get the describe. `>` the outp
 
 Your describe will contains something like this
 
-```json
+```js
 {
     "directoryName": "yourTypes",
     "inFolder": "false",
@@ -64,7 +64,7 @@ Create an entry in the `types` property:
 
 > this fictitious type COULD HAVE used the automated script
 
-```json
+```js
 "yournewtype": { // the key is lowercased xmlName
       "id": "yournewtype", // lowercased xmlName
       "name": "YourNewType", // xmlName
@@ -72,12 +72,12 @@ Create an entry in the `types` property:
       "directoryName": "yourTypes", //directoryName
       "inFolder": false, // inFolder
       "strictDirectoryName": false // set to true when suffixes are not unique in the registry
-    },
+},
 ```
 
 add a matching entry in `suffixes`
 
-```json
+```js
   "yourtype": "yournewtype" // "suffix": "id"
 ```
 
@@ -141,7 +141,7 @@ Only `source:push` and `source:pull` support source tracking, so the target type
 
 SDR Unit tests are abstract (mockRegistry tries to represent possible patterns). If your type uses a combination of properties that don't match an existing type in the registry, there's a chance the behavior isn't covered.
 
-Reach out to the CLI team for help with unit tests. .
+Reach out to the CLI team for help with unit tests.
 
 [metadataResolverRealRegistry.ts](../test/resolve/metadataResolverRealRegistry.test.ts) is an example of unit testing one behavior (resolving from source files) of a real metadata type.
 

@@ -2678,6 +2678,22 @@
       "directoryName": "omniDataTransforms",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "omniscript": {
+      "id": "omniscript",
+      "name": "OmniScript",
+      "suffix": "os",
+      "directoryName": "omniScripts",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omniintegrationprocedure": {
+      "id": "omniintegrationprocedure",
+      "name": "OmniIntegrationProcedure",
+      "suffix": "oip",
+      "directoryName": "omniIntegrationProcedures",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -2973,7 +2989,9 @@
     "fulfillmentFlow": "svccatalogfulfillmentflow",
     "catalogItem": "svccatalogitemdef",
     "ouc": "omniuicard",
-    "rpt": "omnidatatransform"
+    "rpt": "omnidatatransform",
+    "os": "omniscript",
+    "oip": "omniintegrationprocedure"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

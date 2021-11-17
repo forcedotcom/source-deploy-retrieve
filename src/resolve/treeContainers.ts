@@ -12,7 +12,6 @@ import { baseName, parseMetadataXml } from '../utils';
 import { LibraryError } from '../errors';
 import { SourcePath } from '../common';
 import { VirtualDirectory } from './types';
-
 /**
  * A container for interacting with a file system. Operations such as component resolution,
  * conversion, and packaging perform I/O against `TreeContainer` abstractions.

@@ -2680,8 +2680,8 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
-    "omniintegrationirocedure":{
-      "id": "omniintegrationirocedure",
+    "omniintegrationprocedure": {
+      "id": "omniintegrationprocedure",
       "name": "OmniIntegrationProcedure",
       "suffix": "oip",
       "directoryName": "omniIntegrationProcedures",

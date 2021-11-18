@@ -194,7 +194,7 @@ describe('DecomposedMetadataTransformer', () => {
       env
         .stub(ForceIgnore.prototype, 'accepts')
         .returns(true)
-        .withArgs('main/default/decomposeds/a/ys/child.y-meta.xml')
+        .withArgs(join('main', 'default', 'decomposeds', 'a', 'ys', 'child.y-meta.xml'))
         .returns(false);
 
       const result = await transformer.toSourceFormat(component);

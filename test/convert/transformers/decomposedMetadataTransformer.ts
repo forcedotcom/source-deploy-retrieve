@@ -9,13 +9,13 @@ import { join } from 'path';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import { assert } from '@salesforce/ts-types';
-import { mockRegistry, mockRegistryData, decomposed, matchingContentFile } from '../../mock/registry';
+import { decomposed, matchingContentFile, mockRegistry, mockRegistryData } from '../../mock/registry';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
 import { baseName } from '../../../src/utils';
 import { JsToXml } from '../../../src/convert/streams';
 import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/registry/type-constants/decomposedTopLevelConstants';
-import { ComponentSet, SourceComponent } from '../../../src';
-import { XML_NS_URL, XML_NS_KEY } from '../../../src/common';
+import { ComponentSet, ForceIgnore, SourceComponent } from '../../../src';
+import { XML_NS_KEY, XML_NS_URL } from '../../../src/common';
 import { ConvertContext } from '../../../src/convert/convertContext';
 import { TypeInferenceError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
@@ -142,6 +142,65 @@ describe('DecomposedMetadataTransformer', () => {
           }),
           output: join(root, type.children.types.y.directoryName, 'child.y-meta.xml'),
         },
+        {
+          source: new JsToXml({
+            X: {
+              [XML_NS_KEY]: XML_NS_URL,
+              fullName: 'child2',
+              test: 'testVal2',
+            },
+          }),
+          output: join(root, type.children.types.x.directoryName, 'child2.x-meta.xml'),
+        },
+        {
+          source: new JsToXml({
+            X: {
+              [XML_NS_KEY]: XML_NS_URL,
+              fullName: 'child3',
+              test: 'testVal3',
+            },
+          }),
+          output: join(root, type.children.types.x.directoryName, 'child3.x-meta.xml'),
+        },
+        {
+          source: new JsToXml({
+            Decomposed: {
+              [XML_NS_KEY]: XML_NS_URL,
+              fullName: component.fullName,
+              foo: 'bar',
+            },
+          }),
+          output: join(root, `${fullName}.${type.suffix}-meta.xml`),
+        },
+      ]);
+    });
+
+    it('should push writes for component and its non-forceignored children', async () => {
+      const { fullName, type } = component;
+      const root = join('main', 'default', type.directoryName, fullName);
+      const context = new ConvertContext();
+      const transformer = new DecomposedMetadataTransformer(mockRegistry, context);
+      env.stub(component, 'parseXml').resolves({
+        Decomposed: {
+          fullName,
+          foo: 'bar',
+          ys: { fullName: 'child', test: 'testVal' },
+          xs: [
+            { fullName: 'child2', test: 'testVal2' },
+            { fullName: 'child3', test: 'testVal3' },
+          ],
+        },
+      });
+      env
+        .stub(ForceIgnore.prototype, 'accepts')
+        .returns(true)
+        .withArgs('main/default/decomposeds/a/ys/child.y-meta.xml')
+        .returns(false);
+
+      const result = await transformer.toSourceFormat(component);
+
+      expect(context.decomposition.state).to.deep.equal({});
+      expect(result).to.deep.equal([
         {
           source: new JsToXml({
             X: {

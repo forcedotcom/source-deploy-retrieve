@@ -1,7 +1,6 @@
 version: 2.1
 orbs:
   release-management: salesforce/npm-release-management@4
-  slack: circleci/slack@3.4.2
 
 jobs:
   registry-check:
@@ -158,10 +157,6 @@ workflows:
           post-job-steps:
             - when: on_success
             - run: yarn ci-docs
-            - slack/notify:
-                channel: 'cli-team-notifications'
-                color: '#9bcd9b'
-                message: 'SDR Library has been published to npm'
           requires:
             - release-management/test-package
           filters:

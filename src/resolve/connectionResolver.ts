@@ -9,7 +9,7 @@ import { Connection, Logger } from '@salesforce/core';
 import { RegistryAccess, registry as defaultRegistry, MetadataType } from '../registry';
 import { standardValueSet } from '../registry/standardvalueset';
 import { FileProperties, StdValueSetRecord, ListMetadataQuery } from '../client/types';
-import { normalizeToArray } from '../utils';
+import { normalizeToArray, extName } from '../utils';
 import { MetadataComponent } from './types';
 export interface ResolveConnectionResult {
   components: MetadataComponent[];
@@ -42,9 +42,16 @@ export class ConnectionResolver {
       componentPromises.push(this.listMembers({ type: type.name }));
     }
     for await (const componentResult of componentPromises) {
-      Aggregator.push(...componentResult);
       for (const component of componentResult) {
-        const componentType = this.registry.getTypeByName(component.type);
+        let componentType: MetadataType;
+        if (typeof component.type === 'string') {
+          componentType = this.registry.getTypeByName(component.type);
+        } else {
+          // fix { type: { "$": { "xsi:nil": "true" } } }
+          componentType = this.registry.getTypeBySuffix(extName(component.fileName));
+          component.type = componentType.name;
+        }
+        Aggregator.push(component);
         componentTypes.add(componentType);
         const folderContentType = componentType.folderContentType;
         if (folderContentType) {

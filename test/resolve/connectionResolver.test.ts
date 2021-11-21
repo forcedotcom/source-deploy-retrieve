@@ -131,6 +131,28 @@ describe('ConnectionResolver', () => {
       ];
       expect(result.components).to.deep.equal(expected);
     });
+    it('should resolve components with invalid type returned by metadata api', async () => {
+      const metadataQueryStub = sandboxStub.stub(connection.metadata, 'list');
+      metadataQueryStub.withArgs({ type: 'CustomLabels' }).resolves([
+        {
+          ...StdFileProperty,
+          fileName: 'standardValueSetTranslations/CaseOrigin-de.standardValueSetTranslation',
+          fullName: 'CaseOrigin-de',
+          // @ts-ignore
+          type: { $: { 'xsi:nil': 'true' } },
+        },
+      ]);
+
+      const resolver = new ConnectionResolver(connection);
+      const result = await resolver.resolve();
+      const expected: MetadataComponent[] = [
+        {
+          fullName: 'CaseOrigin-de',
+          type: registry.types.standardvaluesettranslation,
+        },
+      ];
+      expect(result.components).to.deep.equal(expected);
+    });
     it('should resolve components with folderContentType', async () => {
       const metadataQueryStub = sandboxStub.stub(connection.metadata, 'list');
 

@@ -16,8 +16,8 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
-    "mlprediction": {
-      "id": "mlprediction",
+    "mlpredictiondefinition": {
+      "id": "mlpredictiondefinition",
       "name": "MLPredictionDefinition",
       "suffix": "mlPrediction",
       "directoryName": "mlPredictions",
@@ -250,7 +250,10 @@
       "name": "UiPlugin",
       "suffix": "uiplugin",
       "directoryName": "uiplugins",
-      "inFolder": false
+      "inFolder": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "globalvalueset": {
       "id": "globalvalueset",
@@ -311,7 +314,8 @@
             "id": "index",
             "name": "Index",
             "directoryName": "indexes",
-            "suffix": "index"
+            "suffix": "index",
+            "legacySuffix": "indexe"
           },
           "businessprocess": {
             "id": "businessprocess",
@@ -845,7 +849,8 @@
             "name": "CustomFieldTranslation",
             "directoryName": "fields",
             "suffix": "fieldTranslation",
-            "isAddressable": false
+            "isAddressable": false,
+            "uniqueIdElement": "name"
           }
         },
         "suffixes": {
@@ -1344,7 +1349,7 @@
       "suffix": "site",
       "directoryName": "siteDotComSites",
       "inFolder": false,
-      "strictDirectoryName": false,
+      "strictDirectoryName": true,
       "strategies": {
         "adapter": "matchingContentFile"
       }
@@ -1522,7 +1527,10 @@
       "name": "DataPipeline",
       "suffix": "dataPipeline",
       "directoryName": "dataPipelines",
-      "inFolder": false
+      "inFolder": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "corswhitelistorigin": {
       "id": "corswhitelistorigin",
@@ -1560,7 +1568,10 @@
       "suffix": "policy",
       "directoryName": "accessControlPolicies",
       "inFolder": false,
-      "strictDirectoryName": true
+      "strictDirectoryName": true,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "skill": {
       "id": "skill",
@@ -1693,7 +1704,10 @@
       "name": "Orchestration",
       "suffix": "orchestration",
       "directoryName": "iot",
-      "inFolder": false
+      "inFolder": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "aiassistanttemplate": {
       "id": "aiassistanttemplate",
@@ -2076,6 +2090,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "userprofilesearchscope": {
+      "id": "userprofilesearchscope",
+      "name": "UserProfileSearchScope",
+      "suffix": "userProfileSearchScope",
+      "directoryName": "userProfileSearchScopes",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "workskillrouting": {
       "id": "workskillrouting",
       "name": "WorkSkillRouting",
@@ -2324,7 +2346,7 @@
       "id": "datasourceobject",
       "name": "DataSourceObject",
       "suffix": "dataSourceObject",
-      "directoryName": "mktDataSourceObjects",
+      "directoryName": "dataSourceObjects",
       "strictDirectoryName": false
     },
     "externaldataconnector": {
@@ -2353,7 +2375,23 @@
       "name": "MktDataTranObject",
       "suffix": "mktDataTranObject",
       "directoryName": "mktDataTranObjects",
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "children": {
+        "types": {
+          "mktdatatranfield": {
+            "id": "mktdatatranfield",
+            "name": "MktDataTranField",
+            "directoryName": "mktDataTranFields",
+            "suffix": "mktDataTranField"
+          }
+        },
+        "suffixes": {
+          "mktDataTranField": "mktdatatranfield"
+        },
+        "directories": {
+          "mktDataTranFields": "mktdatatranfield"
+        }
+      }
     },
     "fieldsrctrgtrelationship": {
       "id": "fieldsrctrgtrelationship",
@@ -2374,6 +2412,13 @@
       "name": "BenefitAction",
       "suffix": "benefitAction",
       "directoryName": "benefitActions",
+      "strictDirectoryName": false
+    },
+    "loyaltyprogramsetup": {
+      "id": "loyaltyprogramsetup",
+      "name": "LoyaltyProgramSetup",
+      "suffix": "loyaltyProgramSetup",
+      "directoryName": "loyaltyProgramSetups",
       "strictDirectoryName": false
     },
     "channelobjectlinkingrule": {
@@ -2615,6 +2660,70 @@
       "strategies": {
         "adapter": "matchingContentFile"
       }
+    },
+    "fieldrestrictionrule": {
+      "id": "fieldrestrictionrule",
+      "name": "FieldRestrictionRule",
+      "suffix": "rule",
+      "directoryName": "fieldRestrictionRules",
+      "inFolder": false,
+      "strictDirectoryName": true
+    },
+    "svccatalogcategory": {
+      "id": "svccatalogcategory",
+      "name": "SvcCatalogCategory",
+      "suffix": "category",
+      "directoryName": "svcCatalogCategories",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "svccatalogfulfillmentflow": {
+      "id": "svccatalogfulfillmentflow",
+      "name": "SvcCatalogFulfillmentFlow",
+      "suffix": "fulfillmentFlow",
+      "directoryName": "svcCatalogFulfillmentFlows",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "svccatalogitemdef": {
+      "id": "svccatalogitemdef",
+      "name": "SvcCatalogItemDef",
+      "suffix": "catalogItem",
+      "directoryName": "svcCatalogItems",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omniuicard": {
+      "id": "omniuicard",
+      "name": "OmniUiCard",
+      "suffix": "ouc",
+      "directoryName": "omniUiCard",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omnidatatransform": {
+      "id": "omnidatatransform",
+      "name": "OmniDataTransform",
+      "suffix": "rpt",
+      "directoryName": "omniDataTransforms",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omniscript": {
+      "id": "omniscript",
+      "name": "OmniScript",
+      "suffix": "os",
+      "directoryName": "omniScripts",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omniintegrationprocedure": {
+      "id": "omniintegrationprocedure",
+      "name": "OmniIntegrationProcedure",
+      "suffix": "oip",
+      "directoryName": "omniIntegrationProcedures",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -2646,6 +2755,7 @@
     "fieldSrcTrgtRelationship": "fieldsrctrgtrelationship",
     "objectSourceTargetMap": "objectsourcetargetmap",
     "benefitAction": "benefitaction",
+    "loyaltyProgramSetup": "loyaltyprogramsetup",
     "installedPackage": "installedpackage",
     "labels": "customlabels",
     "navigationMenu": "navigationmenu",
@@ -2842,12 +2952,13 @@
     "audience": "audience",
     "cmsConnectSource": "cmsconnectsource",
     "platformEventSubscriberConfig": "platformeventsubscriberconfig",
+    "userProfileSearchScope": "userprofilesearchscope",
     "workSkillRouting": "workskillrouting",
     "timeSheetTemplate": "timesheettemplate",
     "accountRelationshipShareRule": "accountrelationshipsharerule",
     "IPAddressRange": "ipaddressrange",
     "xml": "emailservicesfunction",
-    "mlPrediction": "mlprediction",
+    "mlPrediction": "mlpredictiondefinition",
     "formSection": "formsection",
     "workflowFieldUpdate": "workflowfieldupdate",
     "workflowKnowledgePublish": "workflowknowledgepublish",
@@ -2903,7 +3014,15 @@
     "callCenterRoutingMap": "callcenterroutingmap",
     "view": "viewdefinition",
     "slackapp": "slackapp",
-    "permissionSetLicenseDefinition": "permissionsetlicensedefinition"
+    "permissionSetLicenseDefinition": "permissionsetlicensedefinition",
+    "category": "svccatalogcategory",
+    "fulfillmentFlow": "svccatalogfulfillmentflow",
+    "catalogItem": "svccatalogitemdef",
+    "ouc": "omniuicard",
+    "rpt": "omnidatatransform",
+    "mktDataTranField": "mktdatatranfield",
+    "os": "omniscript",
+    "oip": "omniintegrationprocedure"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -2922,7 +3041,9 @@
     "integrationHub": "integrationhubsettings",
     "ObjectHierarchyRelationship": "objecthierarchyrelationship",
     "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
-    "dataMappingObjectDefinitions": "datamappingobjectdefinition"
+    "dataMappingObjectDefinitions": "datamappingobjectdefinition",
+    "fieldRestrictionRules": "fieldrestrictionrule",
+    "siteDotComSites": "sitedotcom"
   },
   "childTypes": {
     "customlabel": "customlabels",
@@ -2956,7 +3077,8 @@
     "sharingcriteriarule": "sharingrules",
     "botversion": "bot",
     "customfieldtranslation": "customobjecttranslation",
-    "datamappingfielddefinition": "datamappingobjectdefinition"
+    "datamappingfielddefinition": "datamappingobjectdefinition",
+    "mktdatatranfield": "mktdatatranobject"
   },
   "apiVersion": "53.0"
 }

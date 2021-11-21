@@ -1,6 +1,9 @@
 {
   "require": "ts-node/register,source-map-support/register",
   "watch-extensions": "ts",
+  "extensions": [".ts", ".js", ".json"],
+  "spec": ["./test/**/*.test.ts"],
+  "watch-files": ["src", "test"],
   "recursive": true,
   "reporter": "spec",
   "timeout": 5000

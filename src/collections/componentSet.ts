@@ -25,6 +25,7 @@ import {
   TreeContainer,
 } from '../resolve';
 import { MetadataType, RegistryAccess } from '../registry';
+import { MetadataMember } from '../resolve/types';
 import {
   DestructiveChangesType,
   FromManifestOptions,
@@ -516,6 +517,27 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
 
     return false;
+  }
+
+  /**
+   * For a fullName and type, this returns the filenames the matching component, or an empty array if the component is not present
+   *
+   * @param param Object with fullName and type properties
+   * @returns string[]
+   */
+  public getComponentFilenamesByNameAndType({ fullName, type }: MetadataMember): string[] {
+    const key = this.simpleKey({ fullName, type });
+    const componentMap = this.components.get(key);
+    if (!componentMap) {
+      return [];
+    }
+    const output = new Set<string>();
+    componentMap.forEach((component) => {
+      [...component.walkContent(), component.content, component.xml]
+        .filter(Boolean)
+        .map((filename) => output.add(filename));
+    });
+    return Array.from(output);
   }
 
   public *[Symbol.iterator](): Iterator<MetadataComponent> {

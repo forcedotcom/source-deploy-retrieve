@@ -13,6 +13,7 @@ import { SfdxFileFormat } from '../convert';
 import { MetadataType } from '../registry';
 import { TypeInferenceError } from '../errors';
 import { DestructiveChangesType } from '../collections';
+import { filePathsFromMetadataComponent } from '../utils/filePathGenerator';
 import { MetadataComponent, VirtualDirectory } from './types';
 import { NodeFSTreeContainer, TreeContainer, VirtualTreeContainer } from './treeContainers';
 import { ForceIgnore } from './forceIgnore';
@@ -56,12 +57,22 @@ export class SourceComponent implements MetadataComponent {
     this.forceIgnore = forceIgnore;
   }
 
+  /**
+   *
+   * @param props component properties (at a minimum, name and type)
+   * @param fs VirtualTree.  If not provided, one will be constructed based on the name/type of the props
+   * @param forceIgnore
+   * @returns SourceComponent
+   */
   public static createVirtualComponent(
     props: ComponentProperties,
-    fs: VirtualDirectory[],
+    fs?: VirtualDirectory[],
     forceIgnore?: ForceIgnore
   ): SourceComponent {
-    const tree = new VirtualTreeContainer(fs);
+    const tree = fs
+      ? new VirtualTreeContainer(fs)
+      : VirtualTreeContainer.fromFilePaths(filePathsFromMetadataComponent({ fullName: props.name, type: props.type }));
+
     return new SourceComponent(props, tree, forceIgnore);
   }
 

@@ -5,16 +5,17 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, join, sep } from 'path';
+import { Lifecycle } from '@salesforce/core';
 import { TypeInferenceError } from '../errors';
 import { extName, parentName, parseMetadataXml } from '../utils';
 import { RegistryAccess } from '../registry/registryAccess';
 import { ComponentSet } from '../collections';
 import { MetadataType } from '../registry';
+import { META_XML_SUFFIX } from '../common';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
-
 /**
  * Resolver for metadata type and component objects.
  *
@@ -136,6 +137,12 @@ export class MetadataResolver {
         !adapter.allowMetadataWithContent();
       return shouldResolve ? adapter.getComponent(fsPath, isResolvingSource) : undefined;
     }
+    void Lifecycle.getInstance().emitTelemetry({
+      eventName: 'metadata_resolver_type_inference_error',
+      library: 'SDR',
+      function: 'resolveComponent',
+      path: fsPath,
+    });
     throw new TypeInferenceError('error_could_not_infer_type', fsPath);
   }
 
@@ -168,7 +175,7 @@ export class MetadataResolver {
           // mixedContent and bundles don't have a suffix to match
           ['mixedContent', 'bundle'].includes(type.strategies?.adapter) ||
           // the suffix matches the type we think it is
-          (type.suffix && fsPath.endsWith(`${type.suffix}`)) ||
+          (type.suffix && fsPath.endsWith(`${type.suffix}${META_XML_SUFFIX}`)) ||
           // the type has children and the path also includes THAT directory
           (type.children?.types &&
             Object.values(type.children?.types)

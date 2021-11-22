@@ -132,6 +132,19 @@ export class SourceComponent implements MetadataComponent {
   }
 
   /**
+   * will return this instance of the forceignore, or will create one if undefined
+   *
+   * @return ForceIgnore
+   */
+  public getForceIgnore(): ForceIgnore {
+    if (this.forceIgnore) {
+      return this.forceIgnore;
+    } else {
+      return ForceIgnore.findAndCreate(this.content);
+    }
+  }
+
+  /**
    * As a performance enhancement, use the already parsed parent xml source
    * to return the child section of xml source. This is useful for non-decomposed
    * transformers where all child source components reference the parent's

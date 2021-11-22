@@ -52,6 +52,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const writeInfos: WriteInfo[] = [];
     const childrenOfMergeComponent = new ComponentSet(mergeWith?.getChildren());
     const { type, fullName: parentFullName } = component;
+    const forceIgnore = component.getForceIgnore();
 
     let parentXmlObject: JsonMap;
     const composedMetadata = await this.getComposedMetadataEntries(component);
@@ -68,36 +69,39 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
             type: childType,
             parent: component,
           };
-          const source = new JsToXml({
-            [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
-          });
-          // if there's nothing to merge with, push write operation now to default location
-          if (!mergeWith) {
-            writeInfos.push({
-              source,
-              output: this.getDefaultOutput(childComponent),
+          // only process child types that aren't forceignored
+          if (forceIgnore.accepts(this.getDefaultOutput(childComponent))) {
+            const source = new JsToXml({
+              [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
             });
-          }
-          // if the merge parent has a child that can be merged with, push write
-          // operation now and mark it as merged in the state
-          else if (childrenOfMergeComponent.has(childComponent)) {
-            const mergeChild: SourceComponent = childrenOfMergeComponent.getSourceComponents(childComponent).first();
-            writeInfos.push({
-              source,
-              output: mergeChild.xml,
-            });
-            this.setDecomposedState(childComponent, { foundMerge: true });
-          }
-          // if no child component is found to merge with yet, mark it as so in
-          // the state
-          else if (!this.getDecomposedState(childComponent)?.foundMerge) {
-            this.setDecomposedState(childComponent, {
-              foundMerge: false,
-              writeInfo: {
+            // if there's nothing to merge with, push write operation now to default location
+            if (!mergeWith) {
+              writeInfos.push({
                 source,
                 output: this.getDefaultOutput(childComponent),
-              },
-            });
+              });
+            }
+            // if the merge parent has a child that can be merged with, push write
+            // operation now and mark it as merged in the state
+            else if (childrenOfMergeComponent.has(childComponent)) {
+              const mergeChild: SourceComponent = childrenOfMergeComponent.getSourceComponents(childComponent).first();
+              writeInfos.push({
+                source,
+                output: mergeChild.xml,
+              });
+              this.setDecomposedState(childComponent, { foundMerge: true });
+            }
+            // if no child component is found to merge with yet, mark it as so in
+            // the state
+            else if (!this.getDecomposedState(childComponent)?.foundMerge) {
+              this.setDecomposedState(childComponent, {
+                foundMerge: false,
+                writeInfo: {
+                  source,
+                  output: this.getDefaultOutput(childComponent),
+                },
+              });
+            }
           }
         }
       } else {

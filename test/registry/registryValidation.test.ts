@@ -172,4 +172,26 @@ describe('Registry Validation', () => {
       });
     });
   });
+
+  describe('ids match keys and are lowercase of xmlName', () => {
+    Object.entries(registry.types).forEach(([key, type]) => {
+      it(`id ${type.id} matches key ${key}`, () => {
+        expect(type.id).to.equal(key);
+      });
+      it(`id ${type.id} is lowercased xmlName ${type.name}`, () => {
+        expect(type.id).to.equal(type.name.toLowerCase());
+      });
+    });
+    describe('check ids on child types', () => {
+      Object.values(registry.types)
+        .filter((type) => type.children)
+        .forEach((type) => {
+          Object.entries(type.children.types).forEach(([key, childType]) => {
+            it(`id ${childType.id} matches key ${key}`, () => {
+              expect(childType.id).to.equal(key);
+            });
+          });
+        });
+    });
+  });
 });

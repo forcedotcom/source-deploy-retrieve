@@ -2,44 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.6.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.2...v5.6.3) (2021-11-18)
+
 ### [5.6.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.1...v5.6.2) (2021-11-18)
 
 ### [5.6.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.0...v5.6.1) (2021-11-17)
 
 ## [5.6.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.5.0...v5.6.0) (2021-11-16)
 
-
 ### Features
 
-* support new OmniScript and OmniIntegrationProcedure type ([#502](https://github.com/forcedotcom/source-deploy-retrieve/issues/502)) ([9e1c089](https://github.com/forcedotcom/source-deploy-retrieve/commit/9e1c089fcff06491a3dca55c86098b29377b3764))
+- support new OmniScript and OmniIntegrationProcedure type ([#502](https://github.com/forcedotcom/source-deploy-retrieve/issues/502)) ([9e1c089](https://github.com/forcedotcom/source-deploy-retrieve/commit/9e1c089fcff06491a3dca55c86098b29377b3764))
 
 ## [5.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.4.2...v5.5.0) (2021-11-11)
 
-
 ### Features
 
-* construct virtual tree from name/type ([e475175](https://github.com/forcedotcom/source-deploy-retrieve/commit/e475175799c90c0d62fe9eda782e9ebd025c3990))
+- construct virtual tree from name/type ([e475175](https://github.com/forcedotcom/source-deploy-retrieve/commit/e475175799c90c0d62fe9eda782e9ebd025c3990))
 
 ### [5.4.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.4.1...v5.4.2) (2021-11-10)
 
-
 ### Bug Fixes
 
-* adds an action when only one of the required for MCT was ignored ([#494](https://github.com/forcedotcom/source-deploy-retrieve/issues/494)) ([3ee999c](https://github.com/forcedotcom/source-deploy-retrieve/commit/3ee999c84ad52077e5d090a854baabd4853a1957))
+- adds an action when only one of the required for MCT was ignored ([#494](https://github.com/forcedotcom/source-deploy-retrieve/issues/494)) ([3ee999c](https://github.com/forcedotcom/source-deploy-retrieve/commit/3ee999c84ad52077e5d090a854baabd4853a1957))
 
 ### [5.4.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.4.0...v5.4.1) (2021-11-04)
 
-
 ### Bug Fixes
 
-* unconfuse sitedotcom vs site ([#498](https://github.com/forcedotcom/source-deploy-retrieve/issues/498)) ([5a55d02](https://github.com/forcedotcom/source-deploy-retrieve/commit/5a55d0290a5aed128be061d249aa4b5245be1f5d))
+- unconfuse sitedotcom vs site ([#498](https://github.com/forcedotcom/source-deploy-retrieve/issues/498)) ([5a55d02](https://github.com/forcedotcom/source-deploy-retrieve/commit/5a55d0290a5aed128be061d249aa4b5245be1f5d))
 
 ## [5.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.3.0...v5.4.0) (2021-11-03)
 
-
 ### Features
 
-* new types OmniUiCard, OmniDataTransform ([3460dde](https://github.com/forcedotcom/source-deploy-retrieve/commit/3460dde71a274c23031f33ae8d408f755198f65d))
+- new types OmniUiCard, OmniDataTransform ([3460dde](https://github.com/forcedotcom/source-deploy-retrieve/commit/3460dde71a274c23031f33ae8d408f755198f65d))
 
 ## [5.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.2.0...v5.3.0) (2021-11-03)
 

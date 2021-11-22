@@ -6,7 +6,7 @@
  */
 import { join } from 'path';
 import { JsonMap } from '@salesforce/ts-types';
-import { ForceIgnore, MetadataComponent, SourceComponent } from '../../resolve';
+import { MetadataComponent, SourceComponent } from '../../resolve';
 import { JsToXml } from '../streams';
 import { WriteInfo } from '../types';
 import { META_XML_SUFFIX, SourcePath, XML_NS_KEY, XML_NS_URL } from '../../common';
@@ -52,7 +52,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const writeInfos: WriteInfo[] = [];
     const childrenOfMergeComponent = new ComponentSet(mergeWith?.getChildren());
     const { type, fullName: parentFullName } = component;
-    const forceIgnore = new ForceIgnore();
+    const forceIgnore = component.getForceIgnore();
 
     let parentXmlObject: JsonMap;
     const composedMetadata = await this.getComposedMetadataEntries(component);

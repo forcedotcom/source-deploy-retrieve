@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.6.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.3...v5.6.4) (2021-11-22)
+
+
+### Bug Fixes
+
+* run unspecified child types through forceignore to avoid retrieving ([#505](https://github.com/forcedotcom/source-deploy-retrieve/issues/505)) ([4e327b6](https://github.com/forcedotcom/source-deploy-retrieve/commit/4e327b60de27168dc0b3e8a63ba70dbce96df03a))
+
 ### [5.6.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.2...v5.6.3) (2021-11-18)
 
 ### [5.6.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.1...v5.6.2) (2021-11-18)

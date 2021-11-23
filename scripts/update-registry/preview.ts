@@ -17,9 +17,6 @@ import { registry } from '../../src';
   const missingTypes = getMissingTypes(nextCoverage, registry).map((type) => type[0]);
 
   console.log(`There are ${missingTypes.length} new types for v${nextCoverage.apiVersion} not in the registry.`);
-  // console.log(
-  //   `${missingTypes.map((t) => `${t} (${nextCoverage.types[t].orgShapes.developer.features.join(';')})`).join('\n')}`
-  // );
 
   const typesByFeature = new Map<string, string[]>();
   missingTypes.map((t) => {
@@ -27,10 +24,7 @@ import { registry } from '../../src';
     typesByFeature.set(featureLabel, [...(typesByFeature.get(featureLabel) ?? []), t]);
   });
   console.log(typesByFeature);
-  const formattedTypes: string[] = [];
-  typesByFeature.forEach((types, feature) => {
-    formattedTypes.push(`*${feature}*\n  -  ${types.join(', ')}`);
-  });
+  const formattedTypes = Array.from(typesByFeature, ([feature, types]) => `*${feature}*\n  -  ${types.join(', ')}`);
 
   const json = {
     blocks: [
@@ -45,7 +39,7 @@ import { registry } from '../../src';
         type: 'section',
         text: {
           type: 'plain_text',
-          text: `There are ${missingTypes.length} new types not in the registry, organized by required features (if any).  Slack can show a max of 50.`,
+          text: `There are ${missingTypes.length} new types not in the registry, organized by required features (if any).`,
         },
       },
       {

@@ -51,7 +51,6 @@ import { registry } from '../../src';
       },
     ],
   };
-  // console.log(JSON.stringify(json, null, 2));
   try {
     await got.post(process.env.DEFAULT_SLACK_WEBHOOK, {
       json,

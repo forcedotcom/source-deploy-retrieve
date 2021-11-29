@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.7.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.4...v5.7.0) (2021-11-24)
+
+
+### Features
+
+* add metadata types StnryAssetEnvSrcCnfg, BldgEnrgyIntensityCnfg, VehicleAssetEmssnSrcCnfg ([#508](https://github.com/forcedotcom/source-deploy-retrieve/issues/508)) ([e3dc3ef](https://github.com/forcedotcom/source-deploy-retrieve/commit/e3dc3ef51d8fba19ec9dfda43ca41ddaf26c9bc0))
+
 ### [5.6.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.3...v5.6.4) (2021-11-22)
 
 

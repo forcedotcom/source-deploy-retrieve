@@ -2724,6 +2724,30 @@
       "directoryName": "omniIntegrationProcedures",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "bldgenrgyintensitycnfg": {
+      "id": "bldgenrgyintensitycnfg",
+      "name": "BldgEnrgyIntensityCnfg",
+      "suffix": "buildingEnergyIntensityConfig",
+      "directoryName": "buildingEnergyIntensityConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "stnryassetenvsrccnfg": {
+      "id": "stnryassetenvsrccnfg",
+      "name": "StnryAssetEnvSrcCnfg",
+      "suffix": "stationaryAssetEnvSourceConfig",
+      "directoryName": "stationaryAssetEnvSourceConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "vehicleassetemssnsrccnfg": {
+      "id": "vehicleassetemssnsrccnfg",
+      "name": "VehicleAssetEmssnSrcCnfg",
+      "suffix": "vehicleAssetEmssnSourceConfig",
+      "directoryName": "vehicleAssetEmssnSourceConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3022,7 +3046,10 @@
     "rpt": "omnidatatransform",
     "mktDataTranField": "mktdatatranfield",
     "os": "omniscript",
-    "oip": "omniintegrationprocedure"
+    "oip": "omniintegrationprocedure",
+    "buildingEnergyIntensityConfig": "bldgenrgyintensitycnfg",
+    "stationaryAssetEnvSourceConfig": "stnryassetenvsrccnfg",
+    "vehicleAssetEmssnSourceConfig": "vehicleassetemssnsrccnfg"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

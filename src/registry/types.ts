@@ -178,20 +178,23 @@ export const enum TransformerStrategy {
   NonDecomposed = 'nonDecomposed',
 }
 
+interface Channel {
+  exposed: boolean;
+}
 /**
  * Subset of an item from the Metadata Coverage Report
  */
 export interface CoverageObjectType {
-  scratchDefinitions: {
-    professional: string;
-    group: string;
-    enterprise: string;
-    developer: string;
+  orgShapes: {
+    developer: {
+      features?: string[];
+      settings?: Record<string, Record<string, unknown>>;
+    };
   };
   channels: {
-    metadataApi: boolean;
-    sourceTracking: boolean;
-    toolingApi: boolean;
+    metadataApi: Channel;
+    sourceTracking: Channel;
+    toolingApi: Channel;
   };
 }
 
@@ -202,9 +205,7 @@ export interface CoverageObject {
   types: {
     [key: string]: CoverageObjectType;
   };
-  versions: {
-    selected: number;
-    max: number;
-    min: number;
-  };
+  // only exists on the test1 instances flavor of coverage report
+  apiVersion: number;
+  release: string;
 }

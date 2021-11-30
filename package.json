@@ -91,6 +91,7 @@
     "local:install": "./scripts/localInstall.js install",
     "local:link": "./scripts/localInstall.js link",
     "local:unlink": "./scripts/localInstall.js unlink",
+    "metadata:preview": "npx ts-node scripts/update-registry/preview.ts",
     "prepack": "sf-prepack",
     "pretest": "sf-compile-test",
     "repl": "node --inspect ./scripts/repl.js",

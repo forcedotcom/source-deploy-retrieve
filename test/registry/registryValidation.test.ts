@@ -7,7 +7,7 @@
 import { expect } from 'chai';
 import { MetadataRegistry } from '../../src';
 import { registry as defaultRegistry } from '../../src/registry/registry';
-import { MetadataType } from '../../src/registry/types';
+import { MetadataType, TransformerStrategy, DecompositionStrategy } from '../../src/registry/types';
 
 describe('Registry Validation', () => {
   const registry = defaultRegistry as MetadataRegistry;
@@ -192,6 +192,110 @@ describe('Registry Validation', () => {
             });
           });
         });
+    });
+  });
+
+  describe('top level required properties', () => {
+    describe('all have names and directoryName', () => {
+      Object.entries(registry.types).forEach(([key, type]) => {
+        it(`${type.id} has a name`, () => {
+          expect(type.name).to.be.a('string');
+        });
+        it(`${type.id} has a directoryName`, () => {
+          expect(type.directoryName).to.be.a('string');
+        });
+      });
+    });
+  });
+
+  describe('valid strategies', () => {
+    const typesWithStrategies = Object.values(registry.types).filter((type) => type.strategies);
+
+    // there isn't an enum for this in Types, to the known are hardcoded here
+    describe('valid, known adapters', () => {
+      typesWithStrategies.forEach((type) => {
+        it(`${type.id} has a valid adapter`, () => {
+          expect(['default', 'mixedContent', 'bundle', 'matchingContentFile', 'decomposed']).includes(
+            type.strategies.adapter
+          );
+        });
+      });
+    });
+
+    describe('adapter = matchingContentFile => no other strategy properties', () => {
+      typesWithStrategies
+        .filter((t) => t.strategies.adapter === 'matchingContentFile')
+        .forEach((type) => {
+          it(`${type.id} has no other strategy properties`, () => {
+            expect(type.strategies.decomposition).to.be.undefined;
+            expect(type.strategies.recomposition).to.be.undefined;
+            expect(type.strategies.transformer).to.be.undefined;
+          });
+        });
+    });
+
+    describe('adapter = bundle => no other strategy properties', () => {
+      typesWithStrategies
+        .filter((t) => t.strategies.adapter === 'bundle')
+        .forEach((type) => {
+          it(`${type.id} has no other strategy properties`, () => {
+            expect(type.strategies.decomposition).to.be.undefined;
+            expect(type.strategies.recomposition).to.be.undefined;
+            expect(type.strategies.transformer).to.be.undefined;
+          });
+        });
+    });
+
+    describe('adapter = decomposed => has transformer and decomposition props', () => {
+      typesWithStrategies
+        .filter((t) => t.strategies.adapter === 'decomposed')
+        .forEach((type) => {
+          it(`${type.id} has expected properties`, () => {
+            expect(type.strategies.decomposition).to.be.a('string');
+            expect(
+              [DecompositionStrategy.FolderPerType.valueOf(), DecompositionStrategy.TopLevel.valueOf()].includes(
+                type.strategies.decomposition
+              )
+            ).to.be.true;
+            expect(type.strategies.transformer).to.be.a('string');
+            expect(
+              [
+                TransformerStrategy.Standard.valueOf(),
+                TransformerStrategy.Decomposed.valueOf(),
+                TransformerStrategy.StaticResource.valueOf(),
+                TransformerStrategy.NonDecomposed.valueOf(),
+              ].includes(type.strategies.transformer)
+            ).to.be.true;
+            expect(type.strategies.recomposition).to.be.undefined;
+          });
+        });
+    });
+    it('no standard types specified in registry', () => {
+      expect(typesWithStrategies.filter((t) => t.strategies.transformer === 'standard')).to.have.length(0);
+    });
+    describe('adapter = mixedContent => has no decomposition/recomposition props', () => {
+      typesWithStrategies
+        .filter((t) => t.strategies.adapter === 'mixedContent')
+        .forEach((type) => {
+          it(`${type.id} has expected properties`, () => {
+            expect(type.strategies.decomposition).to.be.undefined;
+            expect(type.strategies.recomposition).to.be.undefined;
+            type.strategies.transformer
+              ? expect(type.strategies.transformer).to.be.a('string')
+              : expect(type.strategies.transformer).to.be.undefined;
+          });
+        });
+    });
+  });
+
+  describe('folders', () => {
+    const folderTypes = Object.values(registry.types).filter((type) => type.inFolder);
+
+    folderTypes.forEach((type) => {
+      it(`${type.name} has a valid folderType in the registry`, () => {
+        expect(type.folderType).to.not.be.undefined;
+        expect(registry.types[type.folderType]).to.be.an('object');
+      });
     });
   });
 });

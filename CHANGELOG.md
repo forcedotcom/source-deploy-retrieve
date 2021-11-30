@@ -6,17 +6,15 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [5.7.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.4...v5.7.0) (2021-11-24)
 
-
 ### Features
 
-* add metadata types StnryAssetEnvSrcCnfg, BldgEnrgyIntensityCnfg, VehicleAssetEmssnSrcCnfg ([#508](https://github.com/forcedotcom/source-deploy-retrieve/issues/508)) ([e3dc3ef](https://github.com/forcedotcom/source-deploy-retrieve/commit/e3dc3ef51d8fba19ec9dfda43ca41ddaf26c9bc0))
+- add metadata types StnryAssetEnvSrcCnfg, BldgEnrgyIntensityCnfg, VehicleAssetEmssnSrcCnfg ([#508](https://github.com/forcedotcom/source-deploy-retrieve/issues/508)) ([e3dc3ef](https://github.com/forcedotcom/source-deploy-retrieve/commit/e3dc3ef51d8fba19ec9dfda43ca41ddaf26c9bc0))
 
 ### [5.6.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.3...v5.6.4) (2021-11-22)
 
-
 ### Bug Fixes
 
-* run unspecified child types through forceignore to avoid retrieving ([#505](https://github.com/forcedotcom/source-deploy-retrieve/issues/505)) ([4e327b6](https://github.com/forcedotcom/source-deploy-retrieve/commit/4e327b60de27168dc0b3e8a63ba70dbce96df03a))
+- run unspecified child types through forceignore to avoid retrieving ([#505](https://github.com/forcedotcom/source-deploy-retrieve/issues/505)) ([4e327b6](https://github.com/forcedotcom/source-deploy-retrieve/commit/4e327b60de27168dc0b3e8a63ba70dbce96df03a))
 
 ### [5.6.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.2...v5.6.3) (2021-11-18)
 

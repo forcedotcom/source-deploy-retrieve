@@ -24,7 +24,7 @@ import { registry } from '../../src';
     typesByFeature.set(featureLabel, [...(typesByFeature.get(featureLabel) ?? []), t]);
   });
   console.log(typesByFeature);
-  const formattedTypes = Array.from(typesByFeature, ([feature, types]) => `*${feature}*\n  -  ${types.join(', ')}`);
+  const formattedTypes = Array.from(typesByFeature, ([feature, types]) => `*${feature}*\n - ${types.join('\n - ')}`);
 
   const json = {
     blocks: [

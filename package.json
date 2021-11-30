@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "5.7.0",
+  "version": "5.7.1",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/src/index.js",
   "author": "Salesforce",
@@ -91,6 +91,7 @@
     "local:install": "./scripts/localInstall.js install",
     "local:link": "./scripts/localInstall.js link",
     "local:unlink": "./scripts/localInstall.js unlink",
+    "metadata:preview": "npx ts-node scripts/update-registry/preview.ts",
     "prepack": "sf-prepack",
     "pretest": "sf-compile-test",
     "repl": "node --inspect ./scripts/repl.js",

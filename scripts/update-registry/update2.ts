@@ -103,7 +103,7 @@ const getMissingTypesAsDescribeResult = (missingTypes: [string, CoverageObjectTy
 
 const updateProjectScratchDef = (missingTypes: [string, CoverageObjectType][]) => {
   const scratchDefSummary = deepmerge.all(
-    [{}].concat(missingTypes.map(([key, missingType]) => JSON.parse(missingType.scratchDefinitions.developer)))
+    [{}].concat(missingTypes.map(([key, missingType]) => missingType.orgShapes.developer))
   ) as {
     features: string[];
   };

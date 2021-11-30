@@ -8,10 +8,26 @@ import { expect } from 'chai';
 import { MetadataRegistry } from '../../src';
 import { registry as defaultRegistry } from '../../src/registry/registry';
 import { MetadataType } from '../../src/registry/types';
+import { metadataTypes as UnsupportedTypes } from '../../src/registry/nonSupportedTypes';
 
 describe('Registry Validation', () => {
   const registry = defaultRegistry as MetadataRegistry;
   const typesWithChildren = Object.values(registry.types).filter((type) => type.children);
+
+  describe('non-supported types', () => {
+    Object.values(registry.types).forEach((type) => {
+      it(`${type.name} should not be in UnsupportedTypes`, () => {
+        expect(UnsupportedTypes).to.not.include(type.name);
+      });
+    });
+    typesWithChildren.forEach((type) => {
+      Object.values(type.children.types).forEach((child) => {
+        it(`${child.name} should not be in UnsupportedTypes`, () => {
+          expect(UnsupportedTypes).to.not.include(child.name);
+        });
+      });
+    });
+  });
 
   describe('child types', () => {
     describe('child types are configured properly', () => {

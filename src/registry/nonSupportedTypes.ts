@@ -26,8 +26,6 @@ export const metadataTypes = [
 
   // things that don't show up in describe so far
   'PicklistValue', // only existed in v37, so it's hard to describe!
-  'FieldRestrictionRule', // not in describe for devorg.  ScratchDef might need feature 'EMPLOYEEEXPERIENCE' but it doesn't say that
-  'AppointmentSchedulingPolicy', // not in describe?
   'AppointmentAssignmentPolicy', // not in describe?
   'WorkflowFlowAction', // not in describe
   'AdvAcctForecastDimSource', // not in describe

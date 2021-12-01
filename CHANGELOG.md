@@ -2,21 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [5.7.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.7.0...v5.7.1) (2021-11-30)
-
-## [5.7.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.4...v5.7.0) (2021-11-24)
+## [5.8.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.7.1...v5.8.0) (2021-12-01)
 
 
 ### Features
 
-* add metadata types StnryAssetEnvSrcCnfg, BldgEnrgyIntensityCnfg, VehicleAssetEmssnSrcCnfg ([#508](https://github.com/forcedotcom/source-deploy-retrieve/issues/508)) ([e3dc3ef](https://github.com/forcedotcom/source-deploy-retrieve/commit/e3dc3ef51d8fba19ec9dfda43ca41ddaf26c9bc0))
+* update version of core ([#511](https://github.com/forcedotcom/source-deploy-retrieve/issues/511)) ([172df7a](https://github.com/forcedotcom/source-deploy-retrieve/commit/172df7ab980aed2b25d92f9d950147eeae76b846))
+
+### [5.7.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.7.0...v5.7.1) (2021-11-30)
+
+## [5.7.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.4...v5.7.0) (2021-11-24)
+
+### Features
+
+- add metadata types StnryAssetEnvSrcCnfg, BldgEnrgyIntensityCnfg, VehicleAssetEmssnSrcCnfg ([#508](https://github.com/forcedotcom/source-deploy-retrieve/issues/508)) ([e3dc3ef](https://github.com/forcedotcom/source-deploy-retrieve/commit/e3dc3ef51d8fba19ec9dfda43ca41ddaf26c9bc0))
 
 ### [5.6.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.3...v5.6.4) (2021-11-22)
 
-
 ### Bug Fixes
 
-* run unspecified child types through forceignore to avoid retrieving ([#505](https://github.com/forcedotcom/source-deploy-retrieve/issues/505)) ([4e327b6](https://github.com/forcedotcom/source-deploy-retrieve/commit/4e327b60de27168dc0b3e8a63ba70dbce96df03a))
+- run unspecified child types through forceignore to avoid retrieving ([#505](https://github.com/forcedotcom/source-deploy-retrieve/issues/505)) ([4e327b6](https://github.com/forcedotcom/source-deploy-retrieve/commit/4e327b60de27168dc0b3e8a63ba70dbce96df03a))
 
 ### [5.6.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.2...v5.6.3) (2021-11-18)
 

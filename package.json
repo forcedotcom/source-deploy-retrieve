@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "5.7.1",
+  "version": "5.8.0",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/src/index.js",
   "author": "Salesforce",
@@ -24,7 +24,7 @@
     "node": ">=12.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "2.29.0",
+    "@salesforce/core": "2.31.0",
     "@salesforce/kit": "^1.5.0",
     "@salesforce/ts-types": "^1.4.2",
     "archiver": "^5.3.0",

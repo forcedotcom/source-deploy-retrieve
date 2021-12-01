@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.8.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.7.1...v5.8.0) (2021-12-01)
+
+
+### Features
+
+* update version of core ([#511](https://github.com/forcedotcom/source-deploy-retrieve/issues/511)) ([172df7a](https://github.com/forcedotcom/source-deploy-retrieve/commit/172df7ab980aed2b25d92f9d950147eeae76b846))
+
 ### [5.7.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.7.0...v5.7.1) (2021-11-30)
 
 ## [5.7.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.4...v5.7.0) (2021-11-24)

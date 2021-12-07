@@ -109,13 +109,13 @@ The following types are supported by the CLI but not in the coverage reports for
 ${additionalCLISupport.map((t) => `- ${t}`).join('\n')}
 `;
 
-  await fs.promises.writeFile('coverage.md', contents);
-  console.log('Wrote Coverage.md');
+  await fs.promises.writeFile('METADATA_SUPPORT.md', contents);
+  console.log('Wrote METADATA_SUPPORT.md');
 
-  shell.exec(`git add coverage.md`);
+  shell.exec(`git add METADATA_SUPPORT.md`);
   if (shell.exec(`git commit -am "chore: adding types for SDR" --no-verify`).code !== 0) {
     shell.echo(
-      'Error: Git commit failed - usually nothing to commit which means there are no new metadata type support added in this version of salesforce-alm'
+      'Error: Git commit failed - usually nothing to commit which means there are no new metadata type support added in this version of SDR'
     );
   }
 })().catch(console.error);

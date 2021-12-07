@@ -1,4 +1,5 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+echo "pre-commit husky2"
 yarn build && yarn test && yarn update-supported-metadata

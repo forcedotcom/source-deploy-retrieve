@@ -23,7 +23,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ActivitiesSettings|✅||
 |AddressSettings|✅||
 |AdvAccountForecastSet|✅||
-|AdvAcctForecastDimSource|❌|Not supported by CLI, but support can be added|
+|AdvAcctForecastDimSource|❌|Not supported by CLI, but support could be added|
 |AdvAcctForecastPeriodGroup|✅||
 |AnalyticSnapshot|✅||
 |AnalyticsSettings|✅||
@@ -39,7 +39,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AppExperienceSettings|✅||
 |AppMenu|✅||
 |ApplicationRecordTypeConfig|✅||
-|AppointmentAssignmentPolicy|❌|Not supported by CLI, but support can be added|
+|AppointmentAssignmentPolicy|❌|Not supported by CLI, but support could be added|
 |AppointmentSchedulingPolicy|✅||
 |ApprovalProcess|✅||
 |ArchiveSettings|✅||
@@ -77,7 +77,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CampaignSettings|✅||
 |CanvasMetadata|✅||
 |CareBenefitVerifySettings|✅||
-|CareLimitType|❌|Not supported by CLI, but support can be added|
+|CareLimitType|❌|Not supported by CLI, but support could be added|
 |CareProviderSearchConfig|✅||
 |CareRequestConfiguration|✅||
 |CareSystemFieldMapping|✅||
@@ -125,7 +125,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CustomPermission|✅||
 |CustomSite|✅||
 |CustomTab|✅||
-|CustomValue|❌|Not supported by CLI, but support can be added|
+|CustomValue|❌|Not supported by CLI, but support could be added|
 |CustomerDataPlatformSettings|✅||
 |Dashboard|✅||
 |DashboardFolder|✅||
@@ -161,7 +161,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |EmailIntegrationSettings|✅||
 |EmailServicesFunction|✅||
 |EmailTemplate|✅||
-|EmailTemplateFolder|❌|Not supported by CLI, but support can be added|
+|EmailTemplateFolder|❌|Not supported by CLI, but support could be added|
 |EmailTemplateSettings|✅||
 |EmbeddedServiceBranding|✅||
 |EmbeddedServiceConfig|✅||
@@ -180,7 +180,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |EventSettings|✅||
 |ExperienceBundle|✅||
 |ExperienceBundleSettings|✅||
-|ExternalAIModel|❌|Not supported by CLI, but support can be added|
+|ExternalAIModel|❌|Not supported by CLI, but support could be added|
 |ExternalDataConnector|✅||
 |ExternalDataSource|✅||
 |ExternalServiceRegistration|✅||
@@ -284,7 +284,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |OcrSampleDocument|✅||
 |OcrTemplate|✅||
 |OmniChannelSettings|✅||
-|OmniInteractionAccessConfig|❌|Not supported by CLI, but support can be added|
+|OmniInteractionAccessConfig|❌|Not supported by CLI, but support could be added|
 |OnlineSalesSettings|✅||
 |OpportunityInsightsSettings|✅||
 |OpportunityScoreSettings|✅||
@@ -303,7 +303,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PermissionSet|✅||
 |PermissionSetGroup|✅||
 |PicklistSettings|✅||
-|PicklistValue|❌|Not supported by CLI, but support can be added|
+|PicklistValue|❌|Not supported by CLI, but support could be added|
 |PlatformCachePartition|✅||
 |PlatformEventChannel|✅||
 |PlatformEventChannelMember|✅||
@@ -332,7 +332,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |RecordPageSettings|✅||
 |RecordType|✅||
 |RedirectWhitelistUrl|✅||
-|RelatedRecordAssocCriteria|❌|Not supported by CLI, but support can be added|
+|RelatedRecordAssocCriteria|❌|Not supported by CLI, but support could be added|
 |RemoteSiteSetting|✅||
 |Report|✅||
 |ReportFolder|✅||
@@ -347,8 +347,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SchemaSettings|✅||
 |SearchSettings|✅||
 |SecuritySettings|✅||
-|ServiceAISetupDefinition|❌|Not supported by CLI, but support can be added|
-|ServiceAISetupField|❌|Not supported by CLI, but support can be added|
+|ServiceAISetupDefinition|❌|Not supported by CLI, but support could be added|
+|ServiceAISetupField|❌|Not supported by CLI, but support could be added|
 |ServiceChannel|✅||
 |ServiceCloudVoiceSettings|✅||
 |ServicePresenceStatus|✅||
@@ -367,11 +367,11 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SocialCustomerServiceSettings|✅||
 |SocialProfileSettings|✅||
 |SourceTrackingSettings|✅||
-|StandardValue|❌|Not supported by CLI, but support can be added|
+|StandardValue|❌|Not supported by CLI, but support could be added|
 |StandardValueSet|✅||
 |StandardValueSetTranslation|✅||
 |StaticResource|✅||
-|StnryAssetEnrgyUseCnfg|❌|Not supported by CLI, but support can be added|
+|StnryAssetEnrgyUseCnfg|❌|Not supported by CLI, but support could be added|
 |SurveySettings|✅||
 |SvcCatalogCategory|✅||
 |SvcCatalogFulfillmentFlow|✅||
@@ -399,7 +399,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |UserManagementSettings|✅||
 |UserProvisioningConfig|✅||
 |ValidationRule|✅||
-|VehAssetEnrgyUseCnfg|❌|Not supported by CLI, but support can be added|
+|VehAssetEnrgyUseCnfg|❌|Not supported by CLI, but support could be added|
 |ViewDefinition|✅||
 |WaveApplication|✅||
 |WaveComponent|✅||
@@ -418,7 +418,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |Workflow|✅||
 |WorkflowAlert|✅||
 |WorkflowFieldUpdate|✅||
-|WorkflowFlowAction|❌|Not supported by CLI, but support can be added|
+|WorkflowFlowAction|❌|Not supported by CLI, but support could be added|
 |WorkflowKnowledgePublish|✅||
 |WorkflowOutboundMessage|✅||
 |WorkflowRule|✅||
@@ -433,56 +433,56 @@ v54 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
-|ActivationPlatform|❌|Not supported by CLI, but support can be added|
+|ActivationPlatform|❌|Not supported by CLI, but support could be added|
 |AnalyticsDataServicesSettings|✅||
-|ApplicationSubtypeDefinition|❌|Not supported by CLI, but support can be added|
+|ApplicationSubtypeDefinition|❌|Not supported by CLI, but support could be added|
 |AssociationEngineSettings|✅||
-|AttributeDefinition2|❌|Not supported by CLI, but support can be added|
-|BusinessProcessTypeDefinition|❌|Not supported by CLI, but support can be added|
-|ContractType|❌|Not supported by CLI, but support can be added|
+|AttributeDefinition2|❌|Not supported by CLI, but support could be added|
+|BusinessProcessTypeDefinition|❌|Not supported by CLI, but support could be added|
+|ContractType|❌|Not supported by CLI, but support could be added|
 |DataMappingFieldDefinition|✅||
 |DataMappingObjectDefinition|✅||
-|DataSourceTenant|❌|Not supported by CLI, but support can be added|
-|DiscoveryStory|❌|Not supported by CLI, but support can be added|
-|ESignatureConfig|❌|Not supported by CLI, but support can be added|
-|ESignatureEnvelopeConfig|❌|Not supported by CLI, but support can be added|
+|DataSourceTenant|❌|Not supported by CLI, but support could be added|
+|DiscoveryStory|❌|Not supported by CLI, but support could be added|
+|ESignatureConfig|❌|Not supported by CLI, but support could be added|
+|ESignatureEnvelopeConfig|❌|Not supported by CLI, but support could be added|
 |EinsteinDealInsightsSettings|✅||
-|EmployeeDataSyncProfile|❌|Not supported by CLI, but support can be added|
-|ExplainabilityActionDefinition|❌|Not supported by CLI, but support can be added|
-|ExplainabilityActionVersion|❌|Not supported by CLI, but support can be added|
-|ExternalCredential|❌|Not supported by CLI, but support can be added|
-|IdentityVerificationProcDef|❌|Not supported by CLI, but support can be added|
-|IdentityVerificationProcDtl|❌|Not supported by CLI, but support can be added|
-|IdentityVerificationProcFld|❌|Not supported by CLI, but support can be added|
+|EmployeeDataSyncProfile|❌|Not supported by CLI, but support could be added|
+|ExplainabilityActionDefinition|❌|Not supported by CLI, but support could be added|
+|ExplainabilityActionVersion|❌|Not supported by CLI, but support could be added|
+|ExternalCredential|❌|Not supported by CLI, but support could be added|
+|IdentityVerificationProcDef|❌|Not supported by CLI, but support could be added|
+|IdentityVerificationProcDtl|❌|Not supported by CLI, but support could be added|
+|IdentityVerificationProcFld|❌|Not supported by CLI, but support could be added|
 |IncidentMgmtSettings|✅||
 |InterestTaggingSettings|✅||
-|InternalDataConnector|❌|Not supported by CLI, but support can be added|
+|InternalDataConnector|❌|Not supported by CLI, but support could be added|
 |LoyaltyProgramSetup|⚠️|Supports deploy/retrieve but not source tracking|
-|MarketingAppExtActivity|❌|Not supported by CLI, but support can be added|
-|MarketingAppExtension|❌|Not supported by CLI, but support can be added|
-|MfgProgramTemplate|❌|Not supported by CLI, but support can be added|
-|MobSecurityCertPinConfig|❌|Not supported by CLI, but support can be added|
-|MobileSecurityAssignment|❌|Not supported by CLI, but support can be added|
-|MobileSecurityPolicy|❌|Not supported by CLI, but support can be added|
-|MobileSecurityPolicySet|❌|Not supported by CLI, but support can be added|
+|MarketingAppExtActivity|❌|Not supported by CLI, but support could be added|
+|MarketingAppExtension|❌|Not supported by CLI, but support could be added|
+|MfgProgramTemplate|❌|Not supported by CLI, but support could be added|
+|MobSecurityCertPinConfig|❌|Not supported by CLI, but support could be added|
+|MobileSecurityAssignment|❌|Not supported by CLI, but support could be added|
+|MobileSecurityPolicy|❌|Not supported by CLI, but support could be added|
+|MobileSecurityPolicySet|❌|Not supported by CLI, but support could be added|
 |OmniDataTransform|✅||
 |OmniIntegrationProcedure|✅||
-|OmniInteractionConfig|❌|Not supported by CLI, but support can be added|
+|OmniInteractionConfig|❌|Not supported by CLI, but support could be added|
 |OmniScript|✅||
 |OmniUiCard|✅||
 |PermissionSetLicenseDefinition|✅||
-|ProductAttributeSet|❌|Not supported by CLI, but support can be added|
-|RecordAlertCategory|❌|Not supported by CLI, but support can be added|
-|RecordAlertDataSource|❌|Not supported by CLI, but support can be added|
-|ScoreCategory|❌|Not supported by CLI, but support can be added|
+|ProductAttributeSet|❌|Not supported by CLI, but support could be added|
+|RecordAlertCategory|❌|Not supported by CLI, but support could be added|
+|RecordAlertDataSource|❌|Not supported by CLI, but support could be added|
+|ScoreCategory|❌|Not supported by CLI, but support could be added|
 |SiteSettings|✅||
 |StnryAssetEnvSrcCnfg|✅||
-|TimelineObjectDefinition|❌|Not supported by CLI, but support can be added|
+|TimelineObjectDefinition|❌|Not supported by CLI, but support could be added|
 |UserProfileSearchScope|✅||
 |VehicleAssetEmssnSrcCnfg|✅||
-|VirtualVisitConfig|❌|Not supported by CLI, but support can be added|
+|VirtualVisitConfig|❌|Not supported by CLI, but support could be added|
 
-## Bonus Types
+## Additional Types
 
 > The following types are supported by the CLI but not in the coverage reports for either version.  These are typically
 >

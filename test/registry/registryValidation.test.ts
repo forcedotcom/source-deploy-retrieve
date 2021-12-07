@@ -213,7 +213,7 @@ describe('Registry Validation', () => {
 
   describe('top level required properties', () => {
     describe('all have names and directoryName', () => {
-      Object.entries(registry.types).forEach(([key, type]) => {
+      Object.values(registry.types).forEach((type) => {
         it(`${type.id} has a name`, () => {
           expect(type.name).to.be.a('string');
         });

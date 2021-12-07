@@ -1,10 +1,10 @@
 # Supported CLI Metadata Types
 
-This list compares metadata types found in Salesforce v53] with the metadata registry file includes in this repository.
+This list compares metadata types found in Salesforce v53 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository .
 
 Currently, there are 402/417 supported metadata types in Salesforce CLI.
-We are constantly adding more support with the eventual goal of zero metadata gaps.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
+To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|

@@ -82,13 +82,13 @@ import * as fs from 'fs';
   const tableHeaders = ['|Metadata Type|Support|Notes|', '|:---|:---|:---|'];
   const contents = `# Supported CLI Metadata Types
 
-This list compares metadata types found in Salesforce v${currentApiVersion}] with the metadata registry file includes in this repository.
+This list compares metadata types found in Salesforce v${currentApiVersion} with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository .
 
 Currently, there are ${currentOutput.fullCliSupport.length + currentOutput.cliNoTracking.length}/${
     Object.keys(currentCoverage.types).length
   } supported metadata types in Salesforce CLI.
-We are constantly adding more support with the eventual goal of zero metadata gaps.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
+To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
 ${tableHeaders.concat(getCoverageRows(currentCoverage.types)).join('\n')}
 

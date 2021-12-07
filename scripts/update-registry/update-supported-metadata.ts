@@ -59,10 +59,10 @@ import * as fs from 'fs';
       return { icon: '✅', note: '' };
     }
     if (releaseOutput.noMetadataAPI.includes(key)) {
-      return { icon: '❌', note: 'Not supported by CLI because the Metadata API support does not exist' };
+      return { icon: '❌', note: 'Not supported because the Metadata API support does not exist' };
     }
     if (releaseOutput.noCliSupport.includes(key)) {
-      return { icon: '❌', note: 'Not supported by CLI, but support could be added' };
+      return { icon: '❌', note: 'Not supported, but support could be added' };
     }
     if (releaseOutput.cliNoTracking.includes(key)) {
       return { icon: '⚠️', note: 'Supports deploy/retrieve but not source tracking' };
@@ -82,11 +82,13 @@ import * as fs from 'fs';
   const tableHeaders = ['|Metadata Type|Support|Notes|', '|:---|:---|:---|'];
   const contents = `# Supported CLI Metadata Types
 
-This list compares metadata types found in Salesforce v${currentApiVersion} with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository .
+This list compares metadata types found in Salesforce v${currentApiVersion} with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
+
+This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
 Currently, there are ${currentOutput.fullCliSupport.length + currentOutput.cliNoTracking.length}/${
     Object.keys(currentCoverage.types).length
-  } supported metadata types in Salesforce CLI.
+  } supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -101,7 +103,7 @@ ${tableHeaders.concat(getCoverageRows(nextCoverage.types, true)).join('\n')}
 
 ## Additional Types
 
-> The following types are supported by the CLI but not in the coverage reports for either version.  These are typically
+> The following types are supported by this library but not in the coverage reports for either version.  These are typically
 >
 > 1. types that have been removed from the metadata API but were supported in previous versions
 > 1. types that are available for pilots but not officially part of the metadata API (use with caution)

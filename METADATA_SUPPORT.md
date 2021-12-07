@@ -482,12 +482,14 @@ v54 introduces the following new types.  Here's their current level of support
 |VehicleAssetEmssnSrcCnfg|✅||
 |VirtualVisitConfig|❌|Not supported by CLI, but support can be added|
 
-## BonusTypes
+## Bonus Types
 
-The following types are supported by the CLI but not in the coverage reports for either version.  These are typically
+> The following types are supported by the CLI but not in the coverage reports for either version.  These are typically
 
-- types that have been removed from the metadata API but were supported in previous versions
-- types that exist only as a child type of other metadata types
+> 1. types that have been removed from the metadata API but were supported in previous versions
+> 1. types that are available for pilots but not officially part of the metadata API (use with caution)
+> 1. types that exist only as a child type of other metadata types
+> 1. settings types that are automatically supported
 
 - CustomLabel
 - Scontrol

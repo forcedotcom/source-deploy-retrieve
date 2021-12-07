@@ -99,12 +99,14 @@ v${currentApiVersion + 1} introduces the following new types.  Here's their curr
 
 ${tableHeaders.concat(getCoverageRows(nextCoverage.types, true)).join('\n')}
 
-## BonusTypes
+## Bonus Types
 
-The following types are supported by the CLI but not in the coverage reports for either version.  These are typically
+> The following types are supported by the CLI but not in the coverage reports for either version.  These are typically
 
-- types that have been removed from the metadata API but were supported in previous versions
-- types that exist only as a child type of other metadata types
+> 1. types that have been removed from the metadata API but were supported in previous versions
+> 1. types that are available for pilots but not officially part of the metadata API (use with caution)
+> 1. types that exist only as a child type of other metadata types
+> 1. settings types that are automatically supported
 
 ${additionalCLISupport.map((t) => `- ${t}`).join('\n')}
 `;

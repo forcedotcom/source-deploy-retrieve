@@ -485,7 +485,7 @@ v54 introduces the following new types.  Here's their current level of support
 ## Bonus Types
 
 > The following types are supported by the CLI but not in the coverage reports for either version.  These are typically
-
+>
 > 1. types that have been removed from the metadata API but were supported in previous versions
 > 1. types that are available for pilots but not officially part of the metadata API (use with caution)
 > 1. types that exist only as a child type of other metadata types

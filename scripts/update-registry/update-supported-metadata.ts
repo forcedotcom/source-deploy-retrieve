@@ -59,10 +59,10 @@ import * as fs from 'fs';
       return { icon: '✅', note: '' };
     }
     if (releaseOutput.noMetadataAPI.includes(key)) {
-      return { icon: '❌', note: 'Not supported by CLI because no Metadata API support' };
+      return { icon: '❌', note: 'Not supported by CLI because the Metadata API support does not exist' };
     }
     if (releaseOutput.noCliSupport.includes(key)) {
-      return { icon: '❌', note: 'Not supported by CLI, but support can be added' };
+      return { icon: '❌', note: 'Not supported by CLI, but support could be added' };
     }
     if (releaseOutput.cliNoTracking.includes(key)) {
       return { icon: '⚠️', note: 'Supports deploy/retrieve but not source tracking' };
@@ -99,7 +99,7 @@ v${currentApiVersion + 1} introduces the following new types.  Here's their curr
 
 ${tableHeaders.concat(getCoverageRows(nextCoverage.types, true)).join('\n')}
 
-## Bonus Types
+## Additional Types
 
 > The following types are supported by the CLI but not in the coverage reports for either version.  These are typically
 >

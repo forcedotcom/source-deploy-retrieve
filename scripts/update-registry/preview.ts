@@ -1,18 +1,11 @@
-import { CoverageObject } from '../../src/registry/types';
 import got from 'got';
 import { getMissingTypes } from '../../test/utils/getMissingTypes';
 import { registry } from '../../src';
+import {getCurrentApiVersion, getCoverage} from './shared'
 
 (async () => {
-  const currentApiVersion = (
-    JSON.parse((await got(`https://mdcoverage.secure.force.com/services/apexrest/report`)).body) as {
-      versions: { selected: number };
-    }
-  ).versions.selected;
-
-  const nextCoverage = JSON.parse(
-    (await got(`https://na${currentApiVersion - 8}.test1.pc-rnd.salesforce.com/mdcoverage/api.jsp`)).body
-  ) as CoverageObject;
+  const currentApiVersion = await getCurrentApiVersion();
+  const nextCoverage = await getCoverage(currentApiVersion + 1)
 
   const missingTypes = getMissingTypes(nextCoverage, registry).map((type) => type[0]);
 

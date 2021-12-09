@@ -199,8 +199,14 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
       } catch (e) {
         this.logger.error(e);
         // tolerate intermittent network errors upto retry limit
-        if (e instanceof Error && (e.message.includes('ETIMEDOUT') || e.message.includes('ENOTFOUND'))) {
-          this.logger.debug('Network error on the request (ETIMEDOUT or ENOTFOUND)');
+        if (
+          e instanceof Error &&
+          (e.message.includes('ETIMEDOUT') ||
+            e.message.includes('ENOTFOUND') ||
+            e.message.includes('ECONNRESET') ||
+            e.message.includes('socket hang up'))
+        ) {
+          this.logger.debug('Network error on the request', e);
           await Lifecycle.getInstance().emitWarning('Network error occurred.  Continuing to poll.');
           return { completed: false };
         }

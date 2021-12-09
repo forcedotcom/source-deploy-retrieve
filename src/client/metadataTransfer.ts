@@ -14,7 +14,6 @@ import { MetadataConverter, SfdxFileFormat } from '../convert';
 import { MetadataTransferError } from '../errors';
 import { ComponentSet } from '../collections';
 import { AsyncResult, MetadataRequestStatus, MetadataTransferResult, RequestStatus } from './types';
-
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
   components?: ComponentSet;
@@ -191,10 +190,21 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
       completed = true;
       this.canceled = false;
     } else {
-      mdapiStatus = await this.checkStatus();
-      completed = mdapiStatus?.done;
-      if (!completed) {
-        this.event.emit('update', mdapiStatus);
+      try {
+        mdapiStatus = await this.checkStatus();
+        completed = mdapiStatus?.done;
+        if (!completed) {
+          this.event.emit('update', mdapiStatus);
+        }
+      } catch (e) {
+        this.logger.error(e);
+        // tolerate intermittent network errors upto retry limit
+        if (e instanceof Error && (e.message.includes('ETIMEDOUT') || e.message.includes('ENOTFOUND'))) {
+          this.logger.debug('Network error on the request (ETIMEDOUT or ENOTFOUND)');
+          await Lifecycle.getInstance().emitWarning('Network error occurred.  Continuing to poll.');
+          return { completed: false };
+        }
+        throw e;
       }
     }
     this.logger.debug(`MDAPI status update: ${mdapiStatus.status}`);

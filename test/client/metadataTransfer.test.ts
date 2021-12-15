@@ -215,13 +215,24 @@ describe('MetadataTransfer', () => {
       const originalError = new Error('whoops');
       const expectedError = new MetadataTransferError('md_request_fail', originalError.message);
       checkStatus.throws(originalError);
-
       let error: Error;
       operation.onError((e) => (error = e));
       await operation.pollStatus();
 
       expect(error.name).to.deep.equal(expectedError.name);
       expect(error.message).to.deep.equal(expectedError.message);
+    });
+
+    it('should tolerate network errors', async () => {
+      const { checkStatus } = operation.lifecycle;
+      const networkError1 = new Error('something something ETIMEDOUT something');
+      const networkError2 = new Error('something something ENOTFOUND something');
+      checkStatus.onFirstCall().throws(networkError1);
+      checkStatus.onSecondCall().throws(networkError2);
+      checkStatus.onThirdCall().resolves({ done: true });
+
+      await operation.pollStatus();
+      expect(checkStatus.callCount).to.equal(3);
     });
 
     it('should throw wrapped error if there are no error listeners', async () => {

@@ -98,7 +98,8 @@
     "repl": "node --inspect ./scripts/repl.js",
     "test": "sf-test",
     "test:registry": "nyc mocha ./test/registry/registryCompleteness.test.ts",
-    "update-registry": "npx ts-node scripts/update-registry/update2.ts"
+    "update-registry": "npx ts-node scripts/update-registry/update2.ts",
+    "update-supported-metadata": "npx ts-node scripts/update-registry/update-supported-metadata.ts"
   },
   "lint-staged": {
     "./{src,test}/**/*.{ts,js}": [

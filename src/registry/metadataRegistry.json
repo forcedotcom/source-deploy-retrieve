@@ -2485,6 +2485,16 @@
         "decomposition": "topLevel"
       }
     },
+    "datamapping": {
+      "id": "datamapping",
+      "name": "DataMapping",
+      "suffix": "dataMapping",
+      "directoryName": "dataMapping",
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
+    },
     "federationdatamappingusage": {
       "id": "federationdatamappingusage",
       "name": "FederationDataMappingUsage",
@@ -3015,6 +3025,7 @@
     "dataMappingSchema": "datamappingschema",
     "dataMappingObjectDefinition": "datamappingobjectdefinition",
     "fieldDefinition": "datamappingfielddefinition",
+    "dataMapping": "datamapping",
     "federationDataMappingUsage": "federationdatamappingusage",
     "connectedSystem": "connectedsystem",
     "userAuthCertificate": "userauthcertificate",

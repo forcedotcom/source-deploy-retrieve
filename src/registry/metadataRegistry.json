@@ -2485,13 +2485,6 @@
         "decomposition": "topLevel"
       }
     },
-    "datamapping": {
-      "id": "datamapping",
-      "name": "DataMapping",
-      "suffix": "dataMapping",
-      "directoryName": "dataMapping",
-      "strictDirectoryName": false
-    },
     "federationdatamappingusage": {
       "id": "federationdatamappingusage",
       "name": "FederationDataMappingUsage",
@@ -2746,6 +2739,14 @@
       "name": "VehicleAssetEmssnSrcCnfg",
       "suffix": "vehicleAssetEmssnSourceConfig",
       "directoryName": "vehicleAssetEmssnSourceConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omniinteractionconfig": {
+      "id": "omniinteractionconfig",
+      "name": "OmniInteractionConfig",
+      "suffix": "omniInteractionConfig",
+      "directoryName": "OmniInteractionConfig",
       "inFolder": false,
       "strictDirectoryName": false
     }
@@ -3014,7 +3015,6 @@
     "dataMappingSchema": "datamappingschema",
     "dataMappingObjectDefinition": "datamappingobjectdefinition",
     "fieldDefinition": "datamappingfielddefinition",
-    "dataMapping": "datamapping",
     "federationDataMappingUsage": "federationdatamappingusage",
     "connectedSystem": "connectedsystem",
     "userAuthCertificate": "userauthcertificate",
@@ -3049,7 +3049,8 @@
     "oip": "omniintegrationprocedure",
     "buildingEnergyIntensityConfig": "bldgenrgyintensitycnfg",
     "stationaryAssetEnvSourceConfig": "stnryassetenvsrccnfg",
-    "vehicleAssetEmssnSourceConfig": "vehicleassetemssnsrccnfg"
+    "vehicleAssetEmssnSourceConfig": "vehicleassetemssnsrccnfg",
+    "omniInteractionConfig": "omniinteractionconfig"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

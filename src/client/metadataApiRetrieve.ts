@@ -4,6 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import * as path from 'path';
+import * as fs from 'fs';
+import * as unzipper from 'unzipper';
 import { asBoolean, isString } from '@salesforce/ts-types';
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
@@ -170,6 +173,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
     if (packageNames?.length) {
       requestBody.packageNames = packageNames;
     }
+    if (this.options.singlePackage) {
+      requestBody.singlePackage = this.options.singlePackage;
+    }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore required callback
@@ -178,13 +184,31 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
 
   protected async post(result: MetadataApiRetrieveStatus): Promise<RetrieveResult> {
     let components: ComponentSet;
+    const isMdapiRetrieve = this.options.format === 'metadata';
+
     if (result.status === RequestStatus.Succeeded) {
-      components = await this.extract(Buffer.from(result.zipFile, 'base64'));
+      const zipFileContents = Buffer.from(result.zipFile, 'base64');
+      if (isMdapiRetrieve) {
+        const name = this.options.zipFileName || 'unpackaged.zip';
+        const zipFilePath = path.join(this.options.output, name);
+        fs.writeFileSync(zipFilePath, zipFileContents);
+
+        if (this.options.unzip) {
+          const dir = await unzipper.Open.buffer(zipFileContents);
+          await dir.extract({ path: this.options.output });
+        }
+      } else {
+        components = await this.extract(zipFileContents);
+      }
     }
 
     components = components ?? new ComponentSet(undefined, this.options.registry);
 
-    await this.maybeSaveTempDirectory('source', components);
+    if (!isMdapiRetrieve) {
+      // This should only be done when retrieving source format since retrieving
+      // mdapi format has no conversion.
+      await this.maybeSaveTempDirectory('source', components);
+    }
 
     return new RetrieveResult(result, components, this.components);
   }

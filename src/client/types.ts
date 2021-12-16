@@ -8,6 +8,7 @@ import { ComponentSet } from '../collections';
 import { PackageTypeMembers } from '../collections/types';
 import { SourcePath } from '../common/types';
 import { MetadataComponent, SourceComponent } from '../resolve';
+import { SfdxFileFormat } from '../convert';
 
 // ------------------------------------------------
 // API results reformatted for source development
@@ -326,6 +327,23 @@ export interface RetrieveOptions {
    * A list of package names to retrieve, or package names and their retrieval locations.
    */
   packageOptions?: PackageOptions;
+  /**
+   * The file format desired for the retrieved files.
+   */
+  format?: SfdxFileFormat;
+  /**
+   * Specifies whether only a single package is being retrieved (true) or not (false).
+   * If false, then more than one package is being retrieved.
+   */
+  singlePackage?: boolean;
+  /**
+   * The name of the retrieved zip file containing the source from the org. Only applies when `format: metadata`.
+   */
+  zipFileName?: string;
+  /**
+   * Specifies whether to unzip the retrieved zip file. Only applies when `format: metadata`.
+   */
+  unzip?: boolean;
 }
 
 export interface MetadataApiDeployOptions {

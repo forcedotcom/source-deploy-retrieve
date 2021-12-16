@@ -14,8 +14,17 @@ import { CoverageObjectType } from './types';
  *
  * */
 export const features = [
-  'SUSTAINABILITYAPP', // ERROR running force:org:create:  SustainabilityApp is not a valid Features value.
-  'SERVICECATALOG', // ERROR running force:org:create:  ServiceCatalog is not a valid Features value.
+  // ERROR running force:org:create: * is not a valid Features value.
+  // 'SUSTAINABILITYAPP',
+  'SERVICECATALOG',
+  'EXPLAINABILITY',
+  'DYNAMICATTRIBUTES',
+  'CONTRACTMGMT',
+  'CUSTOMIZABLENAMEDCREDENTIALS',
+  'INDUSTRIESMFGPROGRAMPILOT',
+  'HEALTHCLOUDHPIBETA',
+  'MANAGETIMELINE',
+  'HEALTHCLOUDBETA',
 ];
 
 export const settings = [

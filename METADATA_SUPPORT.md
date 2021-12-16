@@ -1,10 +1,10 @@
 # Supported CLI Metadata Types
 
-This list compares metadata types found in Salesforce v53 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
+This list compares metadata types found in Salesforce v54 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 402/417 supported metadata types.
+Currently, there are 420/464 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -22,12 +22,14 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ActionLinkGroupTemplate|✅||
 |ActionPlanTemplate|✅||
 |ActionsSettings|✅||
+|ActivationPlatform|❌|Not supported, but support could be added|
 |ActivitiesSettings|✅||
 |AddressSettings|✅||
 |AdvAccountForecastSet|✅||
 |AdvAcctForecastDimSource|❌|Not supported, but support could be added|
 |AdvAcctForecastPeriodGroup|✅||
 |AnalyticSnapshot|✅||
+|AnalyticsDataServicesSettings|✅||
 |AnalyticsSettings|✅||
 |AnimationRule|✅||
 |ApexClass|✅||
@@ -41,6 +43,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AppExperienceSettings|✅||
 |AppMenu|✅||
 |ApplicationRecordTypeConfig|✅||
+|ApplicationSubtypeDefinition|❌|Not supported, but support could be added|
 |AppointmentAssignmentPolicy|❌|Not supported, but support could be added|
 |AppointmentSchedulingPolicy|✅||
 |ApprovalProcess|✅||
@@ -51,6 +54,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AssistantSkillQuickAction|✅||
 |AssistantSkillSobjectAction|✅||
 |AssistantVersion|✅||
+|AssociationEngineSettings|✅||
+|AttributeDefinition2|❌|Not supported, but support could be added|
 |Audience|✅||
 |AuraDefinitionBundle|✅||
 |AuthProvider|✅||
@@ -71,6 +76,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |BusinessHoursSettings|✅||
 |BusinessProcess|✅||
 |BusinessProcessGroup|✅||
+|BusinessProcessTypeDefinition|❌|Not supported, but support could be added|
 |CMSConnectSource|✅||
 |CallCenter|✅||
 |CallCenterRoutingMap|✅||
@@ -107,6 +113,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ContentAsset|✅||
 |ContentSettings|✅||
 |ContractSettings|✅||
+|ContractType|❌|Not supported, but support could be added|
 |ConversationVendorInfo|✅||
 |ConversationalIntelligenceSettings|✅||
 |CorsWhitelistOrigin|✅||
@@ -135,9 +142,12 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DataConnectorS3|✅||
 |DataDotComSettings|✅||
 |DataMapping|✅||
+|DataMappingFieldDefinition|✅||
+|DataMappingObjectDefinition|✅||
 |DataMappingSchema|✅||
 |DataSource|✅||
 |DataSourceObject|✅||
+|DataSourceTenant|❌|Not supported, but support could be added|
 |DataStreamDefinition|✅||
 |DecisionTable|✅||
 |DecisionTableDatasetLink|✅||
@@ -147,6 +157,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DiscoveryAIModel|✅||
 |DiscoveryGoal|✅||
 |DiscoverySettings|✅||
+|DiscoveryStory|❌|Not supported, but support could be added|
 |Document|✅||
 |DocumentChecklistSettings|✅||
 |DocumentFolder|✅||
@@ -154,9 +165,12 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DocumentType|✅||
 |DuplicateRule|✅||
 |EACSettings|✅||
+|ESignatureConfig|❌|Not supported, but support could be added|
+|ESignatureEnvelopeConfig|❌|Not supported, but support could be added|
 |EclairGeoData|✅||
 |EinsteinAgentSettings|✅||
 |EinsteinAssistantSettings|✅||
+|EinsteinDealInsightsSettings|✅||
 |EinsteinDocumentCaptureSettings|✅||
 |EmailAdministrationSettings|✅||
 |EmailFolder|✅||
@@ -170,6 +184,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |EmbeddedServiceFlowConfig|✅||
 |EmbeddedServiceLiveAgent|✅||
 |EmbeddedServiceMenuSettings|✅||
+|EmployeeDataSyncProfile|❌|Not supported, but support could be added|
 |EmployeeFieldAccessSettings|✅||
 |EmployeeUserSettings|✅||
 |EnhancedNotesSettings|✅||
@@ -182,7 +197,10 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |EventSettings|✅||
 |ExperienceBundle|✅||
 |ExperienceBundleSettings|✅||
+|ExplainabilityActionDefinition|❌|Not supported, but support could be added|
+|ExplainabilityActionVersion|❌|Not supported, but support could be added|
 |ExternalAIModel|❌|Not supported, but support could be added|
+|ExternalCredential|❌|Not supported, but support could be added|
 |ExternalDataConnector|✅||
 |ExternalDataSource|✅||
 |ExternalServiceRegistration|✅||
@@ -221,14 +239,20 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |IPAddressRange|✅||
 |Icon|✅||
 |IdeasSettings|✅||
+|IdentityVerificationProcDef|❌|Not supported, but support could be added|
+|IdentityVerificationProcDtl|❌|Not supported, but support could be added|
+|IdentityVerificationProcFld|❌|Not supported, but support could be added|
 |IframeWhiteListUrlSettings|✅||
 |InboundCertificate|✅||
 |InboundNetworkConnection|✅||
+|IncidentMgmtSettings|✅||
 |Index|⚠️|Supports deploy/retrieve but not source tracking|
 |IndustriesLoyaltySettings|✅||
 |IndustriesManufacturingSettings|✅||
 |IndustriesSettings|✅||
 |InstalledPackage|⚠️|Supports deploy/retrieve but not source tracking|
+|InterestTaggingSettings|✅||
+|InternalDataConnector|❌|Not supported, but support could be added|
 |InventorySettings|✅||
 |InvocableActionSettings|✅||
 |IoTSettings|✅||
@@ -252,6 +276,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |LiveChatDeployment|✅||
 |LiveChatSensitiveDataRule|✅||
 |LiveMessageSettings|✅||
+|LoyaltyProgramSetup|⚠️|Supports deploy/retrieve but not source tracking|
 |MLDataDefinition|✅||
 |MLPredictionDefinition|✅||
 |MLRecommendationDefinition|✅||
@@ -260,13 +285,20 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ManagedContentType|⚠️|Supports deploy/retrieve but not source tracking|
 |ManagedTopics|✅||
 |MapsAndLocationSettings|✅||
+|MarketingAppExtActivity|❌|Not supported, but support could be added|
+|MarketingAppExtension|❌|Not supported, but support could be added|
 |MatchingRules|✅||
 |MediaAdSalesSettings|✅||
+|MfgProgramTemplate|❌|Not supported, but support could be added|
 |MilestoneType|✅||
 |MktCalcInsightObjectDef|✅||
 |MktDataTranObject|✅||
 |MlDomain|✅||
+|MobSecurityCertPinConfig|❌|Not supported, but support could be added|
 |MobileApplicationDetail|✅||
+|MobileSecurityAssignment|❌|Not supported, but support could be added|
+|MobileSecurityPolicy|❌|Not supported, but support could be added|
+|MobileSecurityPolicySet|❌|Not supported, but support could be added|
 |MobileSettings|✅||
 |ModerationRule|✅||
 |MutingPermissionSet|✅||
@@ -286,7 +318,12 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |OcrSampleDocument|✅||
 |OcrTemplate|✅||
 |OmniChannelSettings|✅||
+|OmniDataTransform|✅||
+|OmniIntegrationProcedure|✅||
 |OmniInteractionAccessConfig|❌|Not supported, but support could be added|
+|OmniInteractionConfig|✅||
+|OmniScript|✅||
+|OmniUiCard|✅||
 |OnlineSalesSettings|✅||
 |OpportunityInsightsSettings|✅||
 |OpportunityScoreSettings|✅||
@@ -304,6 +341,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PaymentGatewayProvider|✅||
 |PermissionSet|✅||
 |PermissionSetGroup|✅||
+|PermissionSetLicenseDefinition|✅||
 |PicklistSettings|✅||
 |PicklistValue|❌|Not supported, but support could be added|
 |PlatformCachePartition|✅||
@@ -317,6 +355,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PresenceDeclineReason|✅||
 |PresenceUserConfig|✅||
 |PrivacySettings|✅||
+|ProductAttributeSet|❌|Not supported, but support could be added|
 |ProductSettings|✅||
 |Profile|✅||
 |ProfilePasswordPolicy|✅||
@@ -331,6 +370,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |RecommendationBuilderSettings|✅||
 |RecommendationStrategy|✅||
 |RecordActionDeployment|✅||
+|RecordAlertCategory|❌|Not supported, but support could be added|
+|RecordAlertDataSource|❌|Not supported, but support could be added|
 |RecordPageSettings|✅||
 |RecordType|✅||
 |RedirectWhitelistUrl|✅||
@@ -347,6 +388,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SamlSsoConfig|✅||
 |SchedulingRule|✅||
 |SchemaSettings|✅||
+|ScoreCategory|❌|Not supported, but support could be added|
+|ScoreRange|❌|Not supported, but support could be added|
 |SearchSettings|✅||
 |SecuritySettings|✅||
 |ServiceAISetupDefinition|❌|Not supported, but support could be added|
@@ -364,6 +407,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SharingSettings|✅||
 |SharingTerritoryRule|✅||
 |SiteDotCom|✅||
+|SiteSettings|✅||
 |Skill|✅||
 |SlackApp|✅||
 |SocialCustomerServiceSettings|✅||
@@ -373,7 +417,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |StandardValueSet|✅||
 |StandardValueSetTranslation|✅||
 |StaticResource|✅||
-|StnryAssetEnrgyUseCnfg|❌|Not supported, but support could be added|
+|StnryAssetEnvSrcCnfg|✅||
 |SurveySettings|✅||
 |SvcCatalogCategory|✅||
 |SvcCatalogFulfillmentFlow|✅||
@@ -387,6 +431,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |Territory2Settings|✅||
 |Territory2Type|✅||
 |TimeSheetTemplate|✅||
+|TimelineObjectDefinition|❌|Not supported, but support could be added|
 |TopicsForObjects|✅||
 |TrailheadSettings|✅||
 |TransactionSecurityPolicy|✅||
@@ -399,10 +444,12 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |UserEngagementSettings|✅||
 |UserInterfaceSettings|✅||
 |UserManagementSettings|✅||
+|UserProfileSearchScope|✅||
 |UserProvisioningConfig|✅||
 |ValidationRule|✅||
-|VehAssetEnrgyUseCnfg|❌|Not supported, but support could be added|
+|VehicleAssetEmssnSrcCnfg|✅||
 |ViewDefinition|✅||
+|VirtualVisitConfig|❌|Not supported, but support could be added|
 |WaveApplication|✅||
 |WaveComponent|✅||
 |WaveDashboard|✅||
@@ -430,59 +477,11 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 
 
-## Next Release (v54)
-v54 introduces the following new types.  Here's their current level of support
+## Next Release (v55)
+v55 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
-|ActivationPlatform|❌|Not supported, but support could be added|
-|AnalyticsDataServicesSettings|✅||
-|ApplicationSubtypeDefinition|❌|Not supported, but support could be added|
-|AssociationEngineSettings|✅||
-|AttributeDefinition2|❌|Not supported, but support could be added|
-|BusinessProcessTypeDefinition|❌|Not supported, but support could be added|
-|ContractType|❌|Not supported, but support could be added|
-|DataMappingFieldDefinition|✅||
-|DataMappingObjectDefinition|✅||
-|DataSourceTenant|❌|Not supported, but support could be added|
-|DiscoveryStory|❌|Not supported, but support could be added|
-|ESignatureConfig|❌|Not supported, but support could be added|
-|ESignatureEnvelopeConfig|❌|Not supported, but support could be added|
-|EinsteinDealInsightsSettings|✅||
-|EmployeeDataSyncProfile|❌|Not supported, but support could be added|
-|ExplainabilityActionDefinition|❌|Not supported, but support could be added|
-|ExplainabilityActionVersion|❌|Not supported, but support could be added|
-|ExternalCredential|❌|Not supported, but support could be added|
-|IdentityVerificationProcDef|❌|Not supported, but support could be added|
-|IdentityVerificationProcDtl|❌|Not supported, but support could be added|
-|IdentityVerificationProcFld|❌|Not supported, but support could be added|
-|IncidentMgmtSettings|✅||
-|InterestTaggingSettings|✅||
-|InternalDataConnector|❌|Not supported, but support could be added|
-|LoyaltyProgramSetup|⚠️|Supports deploy/retrieve but not source tracking|
-|MarketingAppExtActivity|❌|Not supported, but support could be added|
-|MarketingAppExtension|❌|Not supported, but support could be added|
-|MfgProgramTemplate|❌|Not supported, but support could be added|
-|MobSecurityCertPinConfig|❌|Not supported, but support could be added|
-|MobileSecurityAssignment|❌|Not supported, but support could be added|
-|MobileSecurityPolicy|❌|Not supported, but support could be added|
-|MobileSecurityPolicySet|❌|Not supported, but support could be added|
-|OmniDataTransform|✅||
-|OmniIntegrationProcedure|✅||
-|OmniInteractionConfig|❌|Not supported, but support could be added|
-|OmniScript|✅||
-|OmniUiCard|✅||
-|PermissionSetLicenseDefinition|✅||
-|ProductAttributeSet|❌|Not supported, but support could be added|
-|RecordAlertCategory|❌|Not supported, but support could be added|
-|RecordAlertDataSource|❌|Not supported, but support could be added|
-|ScoreCategory|❌|Not supported, but support could be added|
-|SiteSettings|✅||
-|StnryAssetEnvSrcCnfg|✅||
-|TimelineObjectDefinition|❌|Not supported, but support could be added|
-|UserProfileSearchScope|✅||
-|VehicleAssetEmssnSrcCnfg|✅||
-|VirtualVisitConfig|❌|Not supported, but support could be added|
 
 ## Additional Types
 

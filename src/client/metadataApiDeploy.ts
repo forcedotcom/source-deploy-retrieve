@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, extname, join } from 'path';
-import { Stream } from 'stream';
 import { isString } from '@salesforce/ts-types';
 import { create as createArchive } from 'archiver';
 import * as fs from 'graceful-fs';
@@ -15,6 +14,7 @@ import { normalizeToArray } from '../utils';
 import { ComponentSet } from '../collections';
 import { registry } from '../registry';
 import { MissingJobIdError } from '../errors';
+import { stream2buffer } from '../convert/streams';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import {
   AsyncResult,
@@ -26,7 +26,6 @@ import {
   MetadataTransferResult,
 } from './types';
 import { DiagnosticUtil } from './diagnosticUtil';
-
 export class DeployResult implements MetadataTransferResult {
   public readonly response: MetadataApiDeployStatus;
   public readonly components: ComponentSet;
@@ -351,15 +350,3 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     }
   }
 }
-
-const stream2buffer = async (stream: Stream): Promise<Buffer> => {
-  return new Promise<Buffer>((resolve, reject) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const buf = Array<any>();
-
-    stream.on('data', (chunk) => buf.push(chunk));
-    stream.on('end', () => resolve(Buffer.concat(buf)));
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    stream.on('error', (err) => reject(`error converting stream - ${err}`));
-  });
-};

@@ -25,6 +25,7 @@ export interface MetadataRegistry {
  * Metadata type definition in the registry.
  */
 export interface MetadataType {
+  requiresParent?: boolean;
   /**
    * Unique identifier of the metadata type. Usually the API name lowercased.
    */

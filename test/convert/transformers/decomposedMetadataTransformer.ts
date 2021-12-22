@@ -336,6 +336,67 @@ describe('DecomposedMetadataTransformer', () => {
         },
       ]);
     });
+    it('should create a parent xml when requiresParent = true on the child type', async () => {
+      component.type.children.types.y.requiresParent = true;
+      component.type.children.types.x.requiresParent = true;
+      const { type, fullName } = component;
+      const transformer = new DecomposedMetadataTransformer(mockRegistry);
+      const root = join('main', 'default', type.directoryName, fullName);
+      env.stub(component, 'parseXml').resolves({
+        Decomposed: {
+          ys: { fullName: 'child', test: 'testVal' },
+          xs: [
+            { fullName: 'child2', test: 'testVal2' },
+            { fullName: 'child3', test: 'testVal3' },
+          ],
+        },
+      });
+
+      const result = await transformer.toSourceFormat(component);
+
+      expect(result).to.deep.equal([
+        {
+          source: new JsToXml({
+            Y: {
+              [XML_NS_KEY]: XML_NS_URL,
+              fullName: 'child',
+              test: 'testVal',
+            },
+          }),
+          output: join(root, type.children.types.y.directoryName, 'child.y-meta.xml'),
+        },
+        {
+          source: new JsToXml({
+            X: {
+              [XML_NS_KEY]: XML_NS_URL,
+              fullName: 'child2',
+              test: 'testVal2',
+            },
+          }),
+          output: join(root, type.children.types.x.directoryName, 'child2.x-meta.xml'),
+        },
+        {
+          source: new JsToXml({
+            X: {
+              [XML_NS_KEY]: XML_NS_URL,
+              fullName: 'child3',
+              test: 'testVal3',
+            },
+          }),
+          output: join(root, type.children.types.x.directoryName, 'child3.x-meta.xml'),
+        },
+        {
+          source: new JsToXml({
+            [type.name]: '',
+          }),
+          output: join(root, 'a.decomposed-meta.xml'),
+        },
+      ]);
+
+      // reset to avoid interfering with other tests
+      component.type.children.types.y.requiresParent = false;
+      component.type.children.types.x.requiresParent = false;
+    });
 
     it('should handle decomposed parents with no files', async () => {
       const transformer = new DecomposedMetadataTransformer(mockRegistry);

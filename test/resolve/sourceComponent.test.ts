@@ -117,7 +117,7 @@ describe('SourceComponent', () => {
       });
     });
 
-    it('should handle improperly formatted xml and throw a helpful message (sync)', async () => {
+    it('should handle improperly formatted xml and throw a helpful message (async)', async () => {
       const component = COMPONENT;
       env
         .stub(component.tree, 'readFile')
@@ -132,7 +132,7 @@ describe('SourceComponent', () => {
       }
     });
 
-    it('should handle improperly formatted xml and throw a helpful message (async)', async () => {
+    it('should handle improperly formatted xml and throw a helpful message (sync)', async () => {
       const component = COMPONENT;
       env
         .stub(component.tree, 'readFile')

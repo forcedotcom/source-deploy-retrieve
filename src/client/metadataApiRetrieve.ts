@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as path from 'path';
-import * as fs from 'fs';
+import * as fs from 'graceful-fs';
 import * as unzipper from 'unzipper';
 import { asBoolean, isString } from '@salesforce/ts-types';
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
@@ -155,34 +155,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
     this.canceled = true;
   }
 
-  protected async pre(): Promise<AsyncResult> {
-    const packageNames = this.getPackageNames();
-
-    if (this.components.size === 0 && !packageNames?.length) {
-      throw new MetadataApiRetrieveError('error_no_components_to_retrieve');
-    }
-
-    const connection = await this.getConnection();
-    const requestBody: RetrieveRequest = {
-      apiVersion: this.components.apiVersion,
-      unpackaged: this.components.getObject().Package,
-    };
-
-    // if we're retrieving with packageNames add it
-    // otherwise don't - it causes errors if undefined or an empty array
-    if (packageNames?.length) {
-      requestBody.packageNames = packageNames;
-    }
-    if (this.options.singlePackage) {
-      requestBody.singlePackage = this.options.singlePackage;
-    }
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore required callback
-    return connection.metadata.retrieve(requestBody);
-  }
-
-  protected async post(result: MetadataApiRetrieveStatus): Promise<RetrieveResult> {
+  public async post(result: MetadataApiRetrieveStatus): Promise<RetrieveResult> {
     let components: ComponentSet;
     const isMdapiRetrieve = this.options.format === 'metadata';
 
@@ -211,6 +184,33 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
     }
 
     return new RetrieveResult(result, components, this.components);
+  }
+
+  protected async pre(): Promise<AsyncResult> {
+    const packageNames = this.getPackageNames();
+
+    if (this.components.size === 0 && !packageNames?.length) {
+      throw new MetadataApiRetrieveError('error_no_components_to_retrieve');
+    }
+
+    const connection = await this.getConnection();
+    const requestBody: RetrieveRequest = {
+      apiVersion: this.components.apiVersion,
+      unpackaged: this.components.getObject().Package,
+    };
+
+    // if we're retrieving with packageNames add it
+    // otherwise don't - it causes errors if undefined or an empty array
+    if (packageNames?.length) {
+      requestBody.packageNames = packageNames;
+    }
+    if (this.options.singlePackage) {
+      requestBody.singlePackage = this.options.singlePackage;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore required callback
+    return connection.metadata.retrieve(requestBody);
   }
 
   private getPackageNames(): string[] {

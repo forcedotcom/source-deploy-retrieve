@@ -9,7 +9,7 @@ import { join } from 'path';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import { assert } from '@salesforce/ts-types';
-import { decomposed, matchingContentFile, mockRegistry, mockRegistryData } from '../../mock/registry';
+import { decomposed, matchingContentFile } from '../../mock/registry';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
 import { baseName } from '../../../src/utils';
 import { JsToXml } from '../../../src/convert/streams';

@@ -6,11 +6,7 @@
  */
 
 import { join } from 'path';
-import { VirtualTreeContainer } from '../../../src';
-import { VirtualFile } from '../../../src/resolve/types';
-import { mockRegistry, mockRegistryData } from '.';
-
-const { decomposedtoplevel, mixedcontentsinglefile, mixedcontentinfolder } = mockRegistryData.types;
+import { registry, VirtualFile, VirtualTreeContainer } from '../../../src';
 
 export const BASIC: VirtualFile = {
   name: 'basic.xml',
@@ -18,7 +14,7 @@ export const BASIC: VirtualFile = {
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>a</members>
-        <name>${decomposedtoplevel.name}</name>
+        <name>${registry.types.customobjecttranslation.name}</name>
     </types>
     <types>
         <members>a.child1</members>
@@ -28,9 +24,9 @@ export const BASIC: VirtualFile = {
     <types>
         <members>b</members>
         <members>c</members>
-        <name>${mixedcontentsinglefile.name}</name>
+        <name>${registry.types.staticresource.name}</name>
     </types>
-    <version>${mockRegistry.apiVersion}</version>
+    <version>${registry.apiVersion}</version>
 </Package>\n`),
 };
 
@@ -40,13 +36,13 @@ export const ONE_OF_EACH: VirtualFile = {
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>a</members>
-        <name>${decomposedtoplevel.name}</name>
+        <name>${registry.types.customobjecttranslation.name}</name>
     </types>
     <types>
         <members>b</members>
-        <name>${mixedcontentsinglefile.name}</name>
+        <name>${registry.types.staticresource.name}</name>
     </types>
-    <version>${mockRegistry.apiVersion}</version>
+    <version>${registry.apiVersion}</version>
 </Package>\n`),
 };
 
@@ -56,9 +52,9 @@ export const ONE_FOLDER_MEMBER: VirtualFile = {
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>Test_Folder</members>
-        <name>${mixedcontentinfolder.name}</name>
+        <name>${registry.types.documentfolder.name}</name>
     </types>
-    <version>${mockRegistry.apiVersion}</version>
+    <version>${registry.apiVersion}</version>
 </Package>\n`),
 };
 
@@ -70,9 +66,9 @@ export const IN_FOLDER_WITH_CONTENT: VirtualFile = {
         <members>Test_Folder</members>
         <members>Test_Folder/report1</members>
         <members>Test_Folder/report2</members>
-        <name>${mixedcontentinfolder.name}</name>
+        <name>${registry.types.documentfolder.name}</name>
     </types>
-    <version>${mockRegistry.apiVersion}</version>
+    <version>${registry.apiVersion}</version>
 </Package>\n`),
 };
 
@@ -82,9 +78,9 @@ export const ONE_WILDCARD: VirtualFile = {
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>*</members>
-        <name>${mixedcontentsinglefile.name}</name>
+        <name>${registry.types.staticresource.name}</name>
     </types>
-    <version>${mockRegistry.apiVersion}</version>
+    <version>${registry.apiVersion}</version>
 </Package>\n`),
 };
 

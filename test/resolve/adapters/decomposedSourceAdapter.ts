@@ -7,15 +7,15 @@
 import { join } from 'path';
 import { expect } from 'chai';
 import { DecomposedSourceAdapter, DefaultSourceAdapter } from '../../../src/resolve/adapters';
-import { mockRegistry, decomposed, decomposedtoplevel, mockRegistryData, xmlInFolder } from '../../mock/registry';
-import { VirtualTreeContainer, SourceComponent } from '../../../src';
+import { decomposed, decomposedtoplevel, xmlInFolder } from '../../mock/registry';
+import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../../src';
 import { RegistryTestUtil } from '../registryTestUtil';
 import { META_XML_SUFFIX } from '../../../src/common';
 
 describe('DecomposedSourceAdapter', () => {
-  const type = mockRegistryData.types.decomposed;
+  const type = registry.types.customlabels;
   const tree = new VirtualTreeContainer(decomposed.DECOMPOSED_VIRTUAL_FS);
-  const adapter = new DecomposedSourceAdapter(type, mockRegistry, undefined, tree);
+  const adapter = new DecomposedSourceAdapter(type, new RegistryAccess(), undefined, tree);
   const expectedComponent = new SourceComponent(decomposed.DECOMPOSED_COMPONENT, tree);
   const children = expectedComponent.getChildren();
 
@@ -31,8 +31,8 @@ describe('DecomposedSourceAdapter', () => {
   it('should set the component.content for a child when isResolvingSource = false', () => {
     const decompTree = new VirtualTreeContainer(decomposedtoplevel.DECOMPOSED_VIRTUAL_FS);
     const decompAdapter = new DecomposedSourceAdapter(
-      mockRegistryData.types.decomposedtoplevel,
-      mockRegistry,
+      registry.types.customobjecttranslation,
+      undefined,
       undefined,
       decompTree
     );
@@ -58,7 +58,7 @@ describe('DecomposedSourceAdapter', () => {
       },
     ];
     const tree = new VirtualTreeContainer(fsNoParentXml);
-    const adapter = new DecomposedSourceAdapter(type, mockRegistry, undefined, tree);
+    const adapter = new DecomposedSourceAdapter(type, undefined, undefined, tree);
     const expectedParent = new SourceComponent(
       { name: decomposed.DECOMPOSED_COMPONENT.name, type, content: decomposed.DECOMPOSED_PATH },
       tree
@@ -68,10 +68,10 @@ describe('DecomposedSourceAdapter', () => {
   });
 
   it('should return expected SourceComponent when given a topLevel parent component', () => {
-    const type = mockRegistryData.types.decomposedtoplevel;
+    const type = registry.types.customobjecttranslation;
     const tree = new VirtualTreeContainer(decomposedtoplevel.DECOMPOSED_VIRTUAL_FS);
     const component = new SourceComponent(decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT, tree);
-    const adapter = new DecomposedSourceAdapter(type, mockRegistry, undefined, tree);
+    const adapter = new DecomposedSourceAdapter(type, undefined, undefined, tree);
     expect(adapter.getComponent(decomposedtoplevel.DECOMPOSED_TOP_LEVEL_XML_PATH)).to.deep.equal(component);
   });
 
@@ -93,7 +93,7 @@ describe('DecomposedSourceAdapter', () => {
         seed: path,
         deny: [path],
       });
-      const adapter = new DecomposedSourceAdapter(type, mockRegistry, forceIgnore, tree);
+      const adapter = new DecomposedSourceAdapter(type, undefined, forceIgnore, tree);
       const result = adapter.getComponent(path);
       expect(result).to.not.be.undefined;
     } catch (e) {
@@ -105,7 +105,7 @@ describe('DecomposedSourceAdapter', () => {
 
   it('should resolve a folder component in metadata format', () => {
     const component = xmlInFolder.FOLDER_COMPONENT_MD_FORMAT;
-    const adapter = new DefaultSourceAdapter(component.type, mockRegistry);
+    const adapter = new DefaultSourceAdapter(component.type, undefined);
 
     expect(adapter.getComponent(component.xml)).to.deep.equal(component);
   });
@@ -113,8 +113,8 @@ describe('DecomposedSourceAdapter', () => {
   it('should not recognize an xml only component in metadata format when in the wrong directory', () => {
     // not in the right type directory
     const path = join('path', 'to', 'something', 'My_Test.xif');
-    const type = mockRegistryData.types.xmlinfolder;
-    const adapter = new DefaultSourceAdapter(type, mockRegistry);
+    const type = registry.types.report;
+    const adapter = new DefaultSourceAdapter(type, undefined);
     expect(adapter.getComponent(path)).to.be.undefined;
   });
 });

@@ -7,9 +7,15 @@
 
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
-import { MetadataComponent, RegistryAccess } from '../../src';
-import { ManifestResolver, NodeFSTreeContainer, VirtualFile, VirtualTreeContainer } from '../../src/resolve';
-import { mockRegistry, mockRegistryData } from '../mock/registry';
+import {
+  ManifestResolver,
+  MetadataComponent,
+  NodeFSTreeContainer,
+  registry,
+  RegistryAccess,
+  VirtualFile,
+  VirtualTreeContainer,
+} from '../../src';
 import * as mockManifests from '../mock/registry/manifestConstants';
 
 const env = createSandbox();
@@ -22,14 +28,14 @@ describe('ManifestResolver', () => {
       const readFileStub = env.stub(NodeFSTreeContainer.prototype, 'readFile');
       const getTypeStub = env.stub(RegistryAccess.prototype, 'getTypeByName');
       readFileStub.resolves(mockManifests.ONE_FOLDER_MEMBER.data);
-      getTypeStub.returns(mockRegistryData.types.mciffolder);
+      getTypeStub.returns(registry.types.dashboardfolder);
 
       const resolver = new ManifestResolver();
       const result = await resolver.resolve(mockManifests.ONE_FOLDER_MEMBER.name);
       const expected: MetadataComponent[] = [
         {
           fullName: 'Test_Folder',
-          type: mockRegistryData.types.mciffolder,
+          type: registry.types.dashboardfolder,
         },
       ];
 
@@ -39,44 +45,44 @@ describe('ManifestResolver', () => {
     });
 
     it('should resolve components and api version in a manifest file', async () => {
-      const resolver = new ManifestResolver(mockManifests.TREE, mockRegistry);
+      const resolver = new ManifestResolver(mockManifests.TREE);
 
       const result = await resolver.resolve(mockManifests.BASIC.name);
       const expected: MetadataComponent[] = [
         {
           fullName: 'a',
-          type: mockRegistryData.types.decomposedtoplevel,
+          type: registry.types.customobjecttranslation,
         },
         {
           fullName: 'a.child1',
-          type: mockRegistryData.types.decomposedtoplevel.children.types.g,
+          type: registry.types.customobjecttranslation.children.types.customfieldtranslation,
         },
         {
           fullName: 'a.child2',
-          type: mockRegistryData.types.decomposedtoplevel.children.types.g,
+          type: registry.types.customobjecttranslation.children.types.customfieldtranslation,
         },
         {
           fullName: 'b',
-          type: mockRegistryData.types.mixedcontentsinglefile,
+          type: registry.types.staticresource,
         },
         {
           fullName: 'c',
-          type: mockRegistryData.types.mixedcontentsinglefile,
+          type: registry.types.staticresource,
         },
       ];
 
       expect(result.components).to.deep.equal(expected);
-      expect(result.apiVersion).to.equal(mockRegistryData.apiVersion);
+      expect(result.apiVersion).to.equal(registry.apiVersion);
     });
 
     it('should interpret a member of a type in folders with no delimiter as its corresponding folder type', async () => {
-      const resolver = new ManifestResolver(mockManifests.TREE, mockRegistry);
+      const resolver = new ManifestResolver(mockManifests.TREE);
 
       const result = await resolver.resolve(mockManifests.ONE_FOLDER_MEMBER.name);
       const expected: MetadataComponent[] = [
         {
           fullName: 'Test_Folder',
-          type: mockRegistryData.types.mciffolder,
+          type: registry.types.dashboardfolder,
         },
       ];
 

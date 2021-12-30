@@ -5,28 +5,20 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { expect, assert } from 'chai';
-import {
-  xmlInFolder,
-  mockRegistry,
-  mockRegistryData,
-  mixedContentSingleFile,
-  decomposed,
-  matchingContentFile,
-  nestedTypes,
-} from '../../mock/registry';
+import { assert, expect } from 'chai';
+import { decomposed, matchingContentFile, mixedContentSingleFile, nestedTypes, xmlInFolder } from '../../mock/registry';
 import { BaseSourceAdapter, DefaultSourceAdapter } from '../../../src/resolve/adapters';
 import { META_XML_SUFFIX } from '../../../src/common';
 import { UnexpectedForceIgnore } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { RegistryTestUtil } from '../registryTestUtil';
-import { ForceIgnore, SourceComponent } from '../../../src';
+import { ForceIgnore, registry, SourceComponent } from '../../../src';
 
 class TestAdapter extends BaseSourceAdapter {
   public readonly component: SourceComponent;
 
   public constructor(component: SourceComponent, forceIgnore?: ForceIgnore) {
-    super(component.type, mockRegistry, forceIgnore);
+    super(component.type, undefined, forceIgnore);
     this.component = component;
   }
 
@@ -68,7 +60,7 @@ describe('BaseSourceAdapter', () => {
 
   it('should throw an error if a metadata xml file is forceignored', () => {
     const testUtil = new RegistryTestUtil();
-    const type = mockRegistryData.types.matchingcontentfile;
+    const type = registry.types.apexclass;
     const path = join('path', 'to', type.directoryName, `My_Test.${type.suffix}${META_XML_SUFFIX}`);
     const forceIgnore = testUtil.stubForceIgnore({
       seed: path,
@@ -85,7 +77,7 @@ describe('BaseSourceAdapter', () => {
 
   it('should resolve a folder component in metadata format', () => {
     const component = xmlInFolder.FOLDER_COMPONENT_MD_FORMAT;
-    const adapter = new DefaultSourceAdapter(component.type, mockRegistry);
+    const adapter = new DefaultSourceAdapter(component.type, undefined);
 
     expect(adapter.getComponent(component.xml)).to.deep.equal(component);
   });
@@ -94,10 +86,10 @@ describe('BaseSourceAdapter', () => {
     const fullName = `subfolder/${xmlInFolder.COMPONENT_FOLDER_NAME}`;
     const component = new SourceComponent({
       name: fullName,
-      type: mockRegistryData.types.xmlinfolderfolder,
+      type: registry.types.document,
       xml: join(xmlInFolder.TYPE_DIRECTORY, 'subfolder', `${xmlInFolder.COMPONENT_FOLDER_NAME}${META_XML_SUFFIX}`),
     });
-    const adapter = new DefaultSourceAdapter(component.type, mockRegistry);
+    const adapter = new DefaultSourceAdapter(component.type);
 
     expect(adapter.getComponent(component.xml)).to.deep.equal(component);
   });
@@ -105,8 +97,8 @@ describe('BaseSourceAdapter', () => {
   it('should not recognize an xml only component in metadata format when in the wrong directory', () => {
     // not in the right type directory
     const path = join('path', 'to', 'something', 'My_Test.xif');
-    const type = mockRegistryData.types.xmlinfolder;
-    const adapter = new DefaultSourceAdapter(type, mockRegistry);
+    const type = registry.types.document;
+    const adapter = new DefaultSourceAdapter(type);
     expect(adapter.getComponent(path)).to.be.undefined;
   });
 
@@ -116,7 +108,7 @@ describe('BaseSourceAdapter', () => {
 
     it('should resolve the parent name and type', () => {
       const component = nestedTypes.NESTED_PARENT_COMPONENT;
-      const adapter = new DefaultSourceAdapter(component.type, mockRegistry);
+      const adapter = new DefaultSourceAdapter(component.type);
       const componentFromAdapter = adapter.getComponent(component.xml);
       sourceComponentKeys.map((prop: keyof SourceComponent) =>
         expect(componentFromAdapter[prop]).to.deep.equal(component[prop])
@@ -125,7 +117,7 @@ describe('BaseSourceAdapter', () => {
 
     it('should resolve the child name and type AND parentType', () => {
       const component = nestedTypes.NESTED_CHILD_COMPONENT;
-      const adapter = new DefaultSourceAdapter(component.type, mockRegistry);
+      const adapter = new DefaultSourceAdapter(component.type);
       const componentFromAdapter = adapter.getComponent(component.xml);
       sourceComponentKeys.map((prop: keyof SourceComponent) =>
         expect(componentFromAdapter[prop]).to.deep.equal(component[prop])

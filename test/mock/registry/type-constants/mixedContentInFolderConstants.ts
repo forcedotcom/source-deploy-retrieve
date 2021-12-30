@@ -5,12 +5,12 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, join } from 'path';
-import { mockRegistryData } from '../mockRegistry';
-import { SourceComponent, VirtualTreeContainer } from '../../../../src';
+
+import { registry, SourceComponent, VirtualTreeContainer } from '../../../../src';
 import { META_XML_SUFFIX } from '../../../../src/common';
 
-const type = mockRegistryData.types.mixedcontentinfolder;
-const folderType = mockRegistryData.types.mciffolder;
+const type = registry.types.document;
+const folderType = registry.types.documentfolder;
 
 export const TYPE_DIRECTORY = join('path', 'to', type.directoryName);
 export const COMPONENT_FOLDER_NAME = 'A_Folder';

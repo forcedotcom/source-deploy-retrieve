@@ -5,13 +5,16 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { createSandbox, SinonSandbox } from 'sinon';
-import { MetadataType, VirtualDirectory } from '../../src';
-import { ForceIgnore } from '../../src/resolve/forceIgnore';
+import {
+  ForceIgnore,
+  MetadataResolver,
+  MetadataType,
+  SourceComponent,
+  SourcePath,
+  VirtualDirectory,
+  VirtualTreeContainer,
+} from '../../src';
 import { SourceAdapterFactory } from '../../src/resolve/adapters/sourceAdapterFactory';
-import { VirtualTreeContainer } from '../../src/resolve/treeContainers';
-import { mockRegistry } from '../mock/registry';
-import { MetadataResolver, SourceComponent } from '../../src/resolve';
-import { SourcePath } from '../../src/common';
 
 export class RegistryTestUtil {
   private env: SinonSandbox;
@@ -25,7 +28,7 @@ export class RegistryTestUtil {
   }
 
   public createMetadataResolver(virtualFS: VirtualDirectory[], useRealForceIgnore = true): MetadataResolver {
-    return new MetadataResolver(mockRegistry, new VirtualTreeContainer(virtualFS), useRealForceIgnore);
+    return new MetadataResolver(undefined, new VirtualTreeContainer(virtualFS), useRealForceIgnore);
   }
 
   public stubAdapters(

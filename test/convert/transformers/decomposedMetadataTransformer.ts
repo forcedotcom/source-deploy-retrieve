@@ -337,8 +337,8 @@ describe('DecomposedMetadataTransformer', () => {
       ]);
     });
     it('should create a parent xml when requiresParent = true on the child type', async () => {
-      component.type.children.types.y.requiresParent = true;
-      component.type.children.types.x.requiresParent = true;
+      component.type.children.types.y.unaddressableWithoutParent = true;
+      component.type.children.types.x.unaddressableWithoutParent = true;
       const { type, fullName } = component;
       const transformer = new DecomposedMetadataTransformer(mockRegistry);
       const root = join('main', 'default', type.directoryName, fullName);
@@ -385,6 +385,7 @@ describe('DecomposedMetadataTransformer', () => {
           }),
           output: join(root, type.children.types.x.directoryName, 'child3.x-meta.xml'),
         },
+        // the new parent was written
         {
           source: new JsToXml({
             [type.name]: '',
@@ -394,8 +395,8 @@ describe('DecomposedMetadataTransformer', () => {
       ]);
 
       // reset to avoid interfering with other tests
-      component.type.children.types.y.requiresParent = false;
-      component.type.children.types.x.requiresParent = false;
+      component.type.children.types.y.unaddressableWithoutParent = false;
+      component.type.children.types.x.unaddressableWithoutParent = false;
     });
 
     it('should handle decomposed parents with no files', async () => {

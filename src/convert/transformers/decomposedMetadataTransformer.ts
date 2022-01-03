@@ -86,7 +86,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
              CustomObjectFieldTranslations are only addressable through their parent, and require a
              CustomObjectTranslation file to be present
              */
-            if (childType.requiresParent && composedMetadata.length <= 2) {
+            if (childType.unaddressableWithoutParent && composedMetadata.length <= 2) {
               parentXmlObject = {
                 [component.type.name]: '',
               };

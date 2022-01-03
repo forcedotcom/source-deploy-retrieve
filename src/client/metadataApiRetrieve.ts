@@ -175,7 +175,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
       }
     }
 
-    components = components ?? new ComponentSet(undefined, this.options.registry);
+    components ??= new ComponentSet(undefined, this.options.registry);
 
     if (!isMdapiRetrieve) {
       // This should only be done when retrieving source format since retrieving

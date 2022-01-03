@@ -7,9 +7,9 @@
 import { fail } from 'assert';
 import { createSandbox, SinonStub } from 'sinon';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
-import { AuthInfo, Connection } from '@salesforce/core';
+import { AuthInfo, Connection, PollingClient } from '@salesforce/core';
 import { expect } from 'chai';
-import { sleep } from '@salesforce/kit';
+import { Duration, sleep } from '@salesforce/kit';
 import { ComponentSet } from '../../src';
 import { MetadataTransfer } from '../../src/client/metadataTransfer';
 import { MetadataRequestStatus, MetadataTransferResult, RequestStatus } from '../../src/client/types';
@@ -163,7 +163,68 @@ describe('MetadataTransfer', () => {
       expect(listenerStub.callCount).to.equal(1);
     });
 
-    it('should wait for polling function to return before queing another', async () => {
+    it('should calculate polling frequency based on source components, 0 -> 1000', async () => {
+      const pollingClientStub = env.stub(PollingClient, 'create').resolves(PollingClient.prototype);
+      env.stub(PollingClient.prototype, 'subscribe').resolves({ status: RequestStatus.Canceled, done: true });
+      const { checkStatus } = operation.lifecycle;
+      checkStatus.resolves({ status: RequestStatus.Canceled, done: true });
+
+      operation.onCancel(() => listenerStub());
+      await operation.pollStatus();
+
+      expect(pollingClientStub.calledOnce).to.be.true;
+      expect((pollingClientStub.firstCall.args[0] as { frequency: number }).frequency).to.deep.equal(
+        Duration.milliseconds(1000)
+      );
+    });
+
+    it('should calculate polling frequency based on source components, 10 -> 100', async () => {
+      // @ts-ignore protected member access
+      env.stub(operation.components, 'getSourceComponents').returns({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore only override length attribute
+        toArray: () => {
+          return { length: 1 };
+        },
+      });
+      const pollingClientStub = env.stub(PollingClient, 'create').resolves(PollingClient.prototype);
+      env.stub(PollingClient.prototype, 'subscribe').resolves({ status: RequestStatus.Canceled, done: true });
+      const { checkStatus } = operation.lifecycle;
+      checkStatus.resolves({ status: RequestStatus.Canceled, done: true });
+
+      operation.onCancel(() => listenerStub());
+      await operation.pollStatus({ frequency: undefined, timeout: Duration.minutes(60) });
+
+      expect(pollingClientStub.calledOnce).to.be.true;
+      expect((pollingClientStub.firstCall.args[0] as { frequency: number }).frequency).to.deep.equal(
+        Duration.milliseconds(100)
+      );
+    });
+
+    it('should calculate polling frequency based on source components, 2520 -> 2520', async () => {
+      // @ts-ignore protected member access
+      env.stub(operation.components, 'getSourceComponents').returns({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore only override length attribute
+        toArray: () => {
+          return { length: 2520 };
+        },
+      });
+      const pollingClientStub = env.stub(PollingClient, 'create').resolves(PollingClient.prototype);
+      env.stub(PollingClient.prototype, 'subscribe').resolves({ status: RequestStatus.Canceled, done: true });
+      const { checkStatus } = operation.lifecycle;
+      checkStatus.resolves({ status: RequestStatus.Canceled, done: true });
+
+      operation.onCancel(() => listenerStub());
+      await operation.pollStatus(undefined, 60);
+
+      expect(pollingClientStub.calledOnce).to.be.true;
+      expect((pollingClientStub.firstCall.args[0] as { frequency: number }).frequency).to.deep.equal(
+        Duration.milliseconds(2520)
+      );
+    });
+
+    it('should wait for polling function to return before queuing another', async () => {
       const { checkStatus } = operation.lifecycle;
       const checkStatusRuntime = 50;
       const callOrder: string[] = [];

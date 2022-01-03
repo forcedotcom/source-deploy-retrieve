@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.8.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.2...v5.8.3) (2022-01-03)
+
+### Bug Fixes
+
+- wrap error from fast-xml-parser when invalid xml parsed ([#518](https://github.com/forcedotcom/source-deploy-retrieve/issues/518)) ([407af67](https://github.com/forcedotcom/source-deploy-retrieve/commit/407af6754994b9b8b0484ee7a8dcb380ada2c554))
+
 ### [5.8.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.1...v5.8.2) (2021-12-16)
 
 ### [5.8.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.0...v5.8.1) (2021-12-15)

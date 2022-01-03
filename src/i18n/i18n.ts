@@ -65,4 +65,5 @@ export const messages = {
   error_no_job_id: 'The %s operation is missing a job ID. Initialize an operation with an ID, or start a new job.',
   tapi_deploy_component_limit_error: 'This deploy method only supports deploying one metadata component at a time',
   warn_unresolved_source_for_components: 'The following components will not be deployed due to unresolved source: %s',
+  invalid_xml_parsing: 'error parsing %s due to:\n  message: %s\n  line: %s\n  code: %s',
 };

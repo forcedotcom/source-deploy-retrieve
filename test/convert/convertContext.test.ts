@@ -22,7 +22,7 @@ import {
 import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { ConvertContext } from '../../src/convert/convertContext';
 import { JsToXml } from '../../src/convert/streams';
-import { decomposed, matchingContentFile, mockRegistry, nonDecomposed } from '../mock/registry';
+import { decomposed, matchingContentFile, nonDecomposed } from '../mock/registry';
 
 const { expect } = chai;
 
@@ -60,7 +60,7 @@ describe('Convert Transaction Constructs', () => {
         context.recomposition.setState((state) => {
           state['Test__c'] = {
             component,
-            children: new ComponentSet(component.getChildren(), mockRegistry),
+            children: new ComponentSet(component.getChildren()),
           };
         });
 
@@ -102,7 +102,7 @@ describe('Convert Transaction Constructs', () => {
         context.recomposition.setState((state) => {
           state['Test__c'] = {
             component,
-            children: new ComponentSet(component.getChildren(), mockRegistry),
+            children: new ComponentSet(component.getChildren()),
           };
         });
 
@@ -133,7 +133,7 @@ describe('Convert Transaction Constructs', () => {
         context.recomposition.setState((state) => {
           state[component.type.name] = {
             component,
-            children: new ComponentSet(component.getChildren(), mockRegistry),
+            children: new ComponentSet(component.getChildren()),
           };
         });
 

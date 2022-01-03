@@ -8,9 +8,8 @@
 import { join } from 'path';
 import { expect } from 'chai';
 
-import { MetadataResolver, SourceComponent, VirtualTreeContainer } from '../../src/resolve';
+import { MetadataResolver, registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../src';
 import { META_XML_SUFFIX } from '../../src/common';
-import { registry, RegistryAccess } from '../../src';
 
 describe('MetadataResolver', () => {
   const registryAccess = new RegistryAccess(registry);

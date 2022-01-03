@@ -5,10 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { mockRegistryData } from '../mockRegistry';
-import { SourceComponent } from '../../../../src';
+import { registry, SourceComponent } from '../../../../src';
 
-const type = mockRegistryData.types.bundle;
+const type = registry.types.auradefinitionbundle;
 
 export const TYPE_DIRECTORY = join('path', 'to', type.directoryName);
 const COMPONENT_NAME = 'a';

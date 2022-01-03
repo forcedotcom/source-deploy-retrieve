@@ -5,12 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { mockRegistryData } from '../mockRegistry';
-import { SourceComponent } from '../../../../src';
+import { registry, SourceComponent } from '../../../../src';
 import { META_XML_SUFFIX } from '../../../../src/common';
 import { extName } from '../../../../src/utils';
 
-const type = mockRegistryData.types.document;
+const type = registry.types.document;
 
 export const DOCUMENTS_DIRECTORY = join('path', 'to', type.directoryName);
 export const COMPONENT_NAME = 'a';

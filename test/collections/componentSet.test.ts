@@ -169,7 +169,7 @@ describe('ComponentSet', () => {
           tree: manifestFiles.TREE,
         });
 
-        const result = set.has({ fullName: '*', type: 'MixedContentSingleFile' });
+        const result = set.has({ fullName: '*', type: 'StaticResource' });
 
         expect(result).to.be.true;
       });
@@ -182,7 +182,7 @@ describe('ComponentSet', () => {
           forceAddWildcards: true,
         });
 
-        const result = set.has({ fullName: '*', type: 'MixedContentSingleFile' });
+        const result = set.has({ fullName: '*', type: 'StaticResource' });
 
         expect(result).to.be.true;
       });
@@ -234,7 +234,7 @@ describe('ComponentSet', () => {
         const expected = [
           {
             fullName: 'Test_Folder',
-            type: registry.types.dashboardfolder,
+            type: registry.types.documentfolder,
           },
         ];
 
@@ -248,11 +248,11 @@ describe('ComponentSet', () => {
           [
             {
               fullName: 'Test1',
-              type: 'DecomposedTopLevel',
+              type: 'CustomObjectTranslation',
             },
             {
               fullName: 'Test2',
-              type: 'MixedContentSingleFile',
+              type: 'StaticResource',
             },
           ],
           registryAccess
@@ -321,7 +321,7 @@ describe('ComponentSet', () => {
               members: ['a.child1', 'a.child2'],
             },
             {
-              name: 'MixedContentSingleFile',
+              name: 'EmailServicesFunction',
               members: ['b', 'c'],
             },
           ],
@@ -389,13 +389,13 @@ describe('ComponentSet', () => {
     });
 
     it('should interpret folder components as members of the type they are a container for', () => {
-      const member = { fullName: 'Test_Folder', type: 'McifFolder' };
+      const member = { fullName: 'Test_Folder', type: 'Document' };
       const set = new ComponentSet([member], registryAccess);
 
       expect(set.has(member)).to.be.true;
       expect(set.getObject().Package.types).to.deep.equal([
         {
-          name: 'MixedContentInFolder',
+          name: 'Document',
           members: ['Test_Folder'],
         },
       ]);
@@ -501,11 +501,11 @@ describe('ComponentSet', () => {
      * If component set keys are incorrectly handled, child component names may not be returned properly.
      */
     it('should correctly return addressable child components', () => {
-      const set = new ComponentSet([{ fullName: 'MyParent__c.Child__c', type: 'x' }], registryAccess);
+      const set = new ComponentSet([{ fullName: 'MyParent__c.Child__c', type: 'customfield' }], registryAccess);
 
       expect(set.getObject().Package.types).to.deep.equal([
         {
-          name: 'X',
+          name: 'CustomField',
           members: ['MyParent__c.Child__c'],
         },
       ]);
@@ -554,7 +554,7 @@ describe('ComponentSet', () => {
         registry: registryAccess,
         tree: manifestFiles.TREE,
       });
-      set.add({ fullName: 'Test', type: 'decomposedtoplevel' });
+      set.add({ fullName: 'Test', type: 'CustomObjectTranslation' });
       const expected = new MetadataResolver(registryAccess, manifestFiles.TREE).getComponentsFromPath(
         'mixedSingleFiles'
       );
@@ -573,9 +573,7 @@ describe('ComponentSet', () => {
       );
 
       expect(set.size).to.equal(3);
-      expect(Array.from(set.getSourceComponents({ fullName: 'b', type: 'mixedcontentsinglefile' }))).to.deep.equal(
-        expected
-      );
+      expect(Array.from(set.getSourceComponents({ fullName: 'b', type: 'staticresource' }))).to.deep.equal(expected);
     });
   });
 
@@ -738,12 +736,12 @@ describe('ComponentSet', () => {
 
       expect(set.size).to.equal(0);
 
-      set.add({ fullName: 'foo', type: 'DecomposedTopLevel' });
+      set.add({ fullName: 'foo', type: 'CustomObjectTranslation' });
 
       expect(Array.from(set)).to.deep.equal([
         {
           fullName: 'foo',
-          type: registry.types.decomposedtoplevel,
+          type: registry.types.customobjecttranslation,
         },
       ]);
     });
@@ -804,7 +802,7 @@ describe('ComponentSet', () => {
       const set = new ComponentSet(undefined, registryAccess);
       const member: MetadataMember = {
         fullName: 'a',
-        type: 'MixedContentSingleFile',
+        type: 'StaticResource',
       };
 
       expect(set.has(member)).to.be.false;
@@ -828,7 +826,7 @@ describe('ComponentSet', () => {
 
       set.add({
         fullName: 'a',
-        type: 'MixedContentSingleFile',
+        type: 'StaticResource',
       });
 
       expect(set.has(component)).to.be.true;

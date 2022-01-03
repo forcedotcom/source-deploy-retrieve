@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { assert, expect } from 'chai';
+import { expect } from 'chai';
 import { registry, VirtualTreeContainer } from '../../../src';
 import {
   BundleSourceAdapter,
@@ -13,8 +13,6 @@ import {
   MatchingContentSourceAdapter,
   MixedContentSourceAdapter,
 } from '../../../src/resolve/adapters';
-import { RegistryError } from '../../../src/errors';
-import { nls } from '../../../src/i18n';
 import { SourceAdapterFactory } from '../../../src/resolve/adapters/sourceAdapterFactory';
 
 /**
@@ -61,14 +59,5 @@ describe('SourceAdapterFactory', () => {
     const type = registry.types.customobject;
     const adapter = factory.getAdapter(type);
     expect(adapter).to.deep.equal(new DecomposedSourceAdapter(type, undefined, undefined, tree));
-  });
-
-  it('Should throw RegistryError for missing adapter', () => {
-    const type = undefined;
-    assert.throws(
-      () => factory.getAdapter(type),
-      RegistryError,
-      nls.localize('error_missing_adapter', [type.strategies.adapter, type.name])
-    );
   });
 });

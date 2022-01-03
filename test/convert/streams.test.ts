@@ -14,11 +14,9 @@ import { expect } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
-import { ComponentSet, MetadataResolver, SourceComponent } from '../../src';
-import { WriteInfo, WriterFormat } from '../../src/convert';
+import { ComponentSet, MetadataResolver, RegistryAccess, SourceComponent, WriteInfo, WriterFormat } from '../../src';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
 import { LibraryError } from '../../src/errors';
-import { mockRegistry } from '../mock/registry';
 import { COMPONENTS } from '../mock/registry/type-constants/xmlInFolderConstants';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import {
@@ -30,6 +28,7 @@ import {
 import { BaseMetadataTransformer } from '../../src/convert/transformers/baseMetadataTransformer';
 
 const env = createSandbox();
+const registryAccess = new RegistryAccess();
 
 class TestTransformer extends BaseMetadataTransformer {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -72,7 +71,7 @@ describe('Streams', () => {
 
     it('should throw error for unexpected conversion format', (done) => {
       // @ts-ignore constructor argument invalid
-      const converter = new streams.ComponentConverter('badformat', mockRegistry);
+      const converter = new streams.ComponentConverter('badformat');
       const expectedError = new LibraryError('error_convert_invalid_format', 'badformat');
       // convert overrides node's Transform _transform method
       // eslint-disable-next-line no-underscore-dangle
@@ -88,7 +87,7 @@ describe('Streams', () => {
     });
 
     it('should transform to metadata format', (done) => {
-      const converter = new streams.ComponentConverter('metadata', mockRegistry);
+      const converter = new streams.ComponentConverter('metadata', registryAccess);
 
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       converter._transform(component, '', async (err: Error, data: WriterFormat) => {
@@ -106,7 +105,7 @@ describe('Streams', () => {
     });
 
     it('should transform to source format', (done) => {
-      const converter = new streams.ComponentConverter('source', mockRegistry);
+      const converter = new streams.ComponentConverter('source', registryAccess);
 
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       converter._transform(component, '', async (err: Error, data: WriterFormat) => {
@@ -133,7 +132,7 @@ describe('Streams', () => {
         []
       );
       const mergeSet = new ComponentSet([component]);
-      const converter = new streams.ComponentConverter('source', mockRegistry, mergeSet);
+      const converter = new streams.ComponentConverter('source', registryAccess, mergeSet);
 
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {
@@ -162,7 +161,7 @@ describe('Streams', () => {
         xml: join('path', 'to', 'yetanother', 'kathys', 'a.kathy-meta.xml'),
       });
       const mergeSet = new ComponentSet([component, secondMergeComponent]);
-      const converter = new streams.ComponentConverter('source', mockRegistry, mergeSet);
+      const converter = new streams.ComponentConverter('source', registryAccess, mergeSet);
 
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {
@@ -188,7 +187,7 @@ describe('Streams', () => {
         xml: component.xml,
       });
       myComp.setMarkedForDelete();
-      const converter = new streams.ComponentConverter('source', mockRegistry);
+      const converter = new streams.ComponentConverter('source', registryAccess);
 
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       converter._transform(myComp, '', async (err: Error, data: WriterFormat) => {
@@ -209,7 +208,7 @@ describe('Streams', () => {
       let converter: streams.ComponentConverter;
 
       beforeEach(() => {
-        converter = new streams.ComponentConverter('metadata', mockRegistry);
+        converter = new streams.ComponentConverter('metadata', registryAccess);
       });
 
       it('should flush one result from a single transaction finalizer', async () => {
@@ -289,7 +288,7 @@ describe('Streams', () => {
     let pipelineStub: SinonStub;
 
     describe('StandardWriter', () => {
-      const resolver = new MetadataResolver(mockRegistry, component.tree);
+      const resolver = new MetadataResolver(registryAccess, component.tree);
       const resolverSpy = env.spy(resolver, 'getComponentsFromPath');
 
       let writer: streams.StandardWriter;
@@ -401,7 +400,7 @@ describe('Streams', () => {
             children: [basename(COMPONENT.xml), basename(COMPONENT.content)],
           },
         ]);
-        dupedComponent.type.children = mockRegistry.getTypeByName('decomposed').children;
+        // dupedComponent.type.children = registryAccess.getTypeByName('apexclass').children;
 
         const compWriteInfo: WriteInfo = {
           output: dupedComponent.getPackageRelativePath(component.xml, 'metadata'),

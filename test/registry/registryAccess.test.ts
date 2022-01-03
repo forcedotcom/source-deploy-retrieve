@@ -37,14 +37,6 @@ describe('RegistryAccess', () => {
         nls.localize('error_missing_type_definition', 'typewithoutdef')
       );
     });
-
-    it('should throw an error if child type definition missing', () => {
-      assert.throws(
-        () => registryAccess.getTypeByName('badchildtype'),
-        RegistryError,
-        nls.localize('error_missing_child_type_definition', ['mixedcontentsinglefile', 'badchildtype'])
-      );
-    });
   });
 
   describe('getTypeBySuffix', () => {
@@ -60,7 +52,7 @@ describe('RegistryAccess', () => {
 
   describe('findType', () => {
     it('should find a type using a given predicate', () => {
-      const foundType = registryAccess.findType((type: MetadataType) => type.suffix === 'dtl');
+      const foundType = registryAccess.findType((type: MetadataType) => type.suffix === 'objectTranslation');
       expect(foundType).to.deep.equal(registry.types.customobjecttranslation);
     });
   });
@@ -78,7 +70,9 @@ describe('RegistryAccess', () => {
     it('should return all the types with a folderContentType property defined', () => {
       const type = registry.types.reportfolder;
       const type2 = registry.types.dashboardfolder;
-      expect(registryAccess.getFolderContentTypes()).to.deep.equal([type, type2]);
+      const type3 = registry.types.documentfolder;
+      const type4 = registry.types.emailfolder;
+      expect(registryAccess.getFolderContentTypes()).to.deep.equal([type, type2, type3, type4]);
     });
   });
 });

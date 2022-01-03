@@ -5,8 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { mockRegistryData } from '../mockRegistry';
-import { SourceComponent } from '../../../../src';
+import { registry, SourceComponent } from '../../../../src';
 import { baseName } from '../../../../src/utils';
 
 export const DECOMPOSED_TOP_LEVEL_DIR = join('path', 'to', 'decomposedTopLevels');
@@ -35,7 +34,7 @@ export const DECOMPOSED_VIRTUAL_FS = [
 export const DECOMPOSED_TOP_LEVEL_COMPONENT = SourceComponent.createVirtualComponent(
   {
     name: baseName(DECOMPOSED_TOP_LEVEL_XML_PATH),
-    type: mockRegistryData.types.decomposedtoplevel,
+    type: registry.types.customobjecttranslation,
     xml: DECOMPOSED_TOP_LEVEL_XML_PATH,
     content: DECOMPOSED_TOP_LEVEL_COMPONENT_PATH,
   },

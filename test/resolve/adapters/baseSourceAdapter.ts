@@ -83,11 +83,11 @@ describe('BaseSourceAdapter', () => {
   });
 
   it('should resolve a nested folder component in metadata format', () => {
-    const fullName = `subfolder/${xmlInFolder.COMPONENT_FOLDER_NAME}`;
     const component = new SourceComponent({
-      name: fullName,
+      name: undefined,
       type: registry.types.document,
       xml: join(xmlInFolder.TYPE_DIRECTORY, 'subfolder', `${xmlInFolder.COMPONENT_FOLDER_NAME}${META_XML_SUFFIX}`),
+      parentType: registry.types.documentfolder,
     });
     const adapter = new DefaultSourceAdapter(component.type);
 

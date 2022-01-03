@@ -6,12 +6,12 @@
  */
 
 import { expect } from 'chai';
-import { mockRegistry, bundle } from '../../mock/registry';
+import { bundle } from '../../mock/registry';
 import { BundleSourceAdapter } from '../../../src/resolve/adapters';
 import { CONTENT_PATH } from '../../mock/registry/type-constants/bundleConstants';
 
 describe('BundleSourceAdapter', () => {
-  const adapter = new BundleSourceAdapter(bundle.COMPONENT.type, mockRegistry, undefined, bundle.COMPONENT.tree);
+  const adapter = new BundleSourceAdapter(bundle.COMPONENT.type, undefined, undefined, bundle.COMPONENT.tree);
 
   it('Should return expected SourceComponent when given a root metadata xml path', () => {
     expect(adapter.getComponent(bundle.XML_PATH)).to.deep.equal(bundle.COMPONENT);
@@ -24,7 +24,7 @@ describe('BundleSourceAdapter', () => {
   it('Should exclude empty bundle directories', () => {
     const emptyBundleAdapter = new BundleSourceAdapter(
       bundle.EMPTY_BUNDLE.type,
-      mockRegistry,
+      undefined,
       undefined,
       bundle.EMPTY_BUNDLE.tree
     );

@@ -19,7 +19,7 @@ export const BASIC: VirtualFile = {
     <types>
         <members>a.child1</members>
         <members>a.child2</members>
-        <name>G</name>
+        <name>${registry.types.customobjecttranslation.children.types.customfieldtranslation.name}</name>
     </types>
     <types>
         <members>b</members>

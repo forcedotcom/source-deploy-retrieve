@@ -7,20 +7,11 @@
 import { basename, join } from 'path';
 import { createSandbox } from 'sinon';
 import { expect } from 'chai';
-import {
-  bundle,
-  document,
-  matchingContentFile,
-  mockRegistry,
-  mockRegistryData,
-  nestedTypes,
-  xmlInFolder,
-} from '../../mock/registry';
+import { bundle, document, matchingContentFile, nestedTypes, xmlInFolder } from '../../mock/registry';
 import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';
-import { WriteInfo } from '../../../src/convert';
+import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer, WriteInfo } from '../../../src';
 import { TestReadable } from '../../mock/convert/readables';
 import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX } from '../../../src/common';
-import { SourceComponent, VirtualTreeContainer } from '../../../src';
 import {
   FOLDER_COMPONENT,
   FOLDER_COMPONENT_MD_FORMAT,
@@ -30,7 +21,7 @@ import { extName } from '../../../src/utils';
 const env = createSandbox();
 
 describe('DefaultMetadataTransformer', () => {
-  const transformer = new DefaultMetadataTransformer(mockRegistry);
+  const transformer = new DefaultMetadataTransformer();
 
   beforeEach(() =>
     env.stub(VirtualTreeContainer.prototype, 'stream').callsFake((fsPath: string) => new TestReadable(fsPath))
@@ -206,7 +197,8 @@ describe('DefaultMetadataTransformer', () => {
 
     it('should handle folder components', async () => {
       const component = FOLDER_COMPONENT_MD_FORMAT;
-      const { directoryName } = mockRegistry.getTypeByName(component.type.folderContentType);
+      const registryAccess = new RegistryAccess();
+      const { directoryName } = registryAccess.getTypeByName(component.type.folderContentType);
       const expectedInfos: WriteInfo[] = [
         {
           output: join(
@@ -226,7 +218,7 @@ describe('DefaultMetadataTransformer', () => {
       const component = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistryData.types.bundle,
+          type: registry.types.auradefinitionbundle,
           xml: join(root, 'a.js-meta.xml'),
           content: root,
         },
@@ -257,11 +249,11 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should merge output with merge component when content is a file', async () => {
-      const root = join('path', 'to', 'another', mockRegistryData.types.matchingcontentfile.directoryName);
+      const root = join('path', 'to', 'another', registry.types.apexclass.directoryName);
       const component = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistryData.types.matchingcontentfile,
+          type: registry.types.apexclass,
           xml: join(root, matchingContentFile.XML_NAMES[0]),
           content: join(root, matchingContentFile.CONTENT_NAMES[0]),
         },
@@ -309,7 +301,7 @@ describe('DefaultMetadataTransformer', () => {
       const mergeWith = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistryData.types.matchingcontentfile,
+          type: registry.types.apexclass,
         },
         []
       );

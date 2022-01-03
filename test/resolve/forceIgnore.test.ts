@@ -8,8 +8,9 @@ import { join } from 'path';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import * as fs from 'graceful-fs';
-import { ForceIgnore } from '../../src/resolve';
+import { ForceIgnore } from '../../src';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
+
 const env = createSandbox();
 
 describe('ForceIgnore', () => {

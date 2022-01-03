@@ -113,7 +113,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: registry.types.experiencebundle,
+            type: registry.types.staticresource,
             componentMappings: [{ path, component: mixedContentDirectory.MIXED_CONTENT_DIRECTORY_COMPONENT }],
           },
         ]);
@@ -154,7 +154,7 @@ describe('MetadataResolver', () => {
         }));
         testUtil.stubAdapters([
           {
-            type: registry.types.document,
+            type: registry.types.report,
             componentMappings,
             allowContent: false,
           },
@@ -172,7 +172,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: registry.types.documentfolder,
+            type: registry.types.reportfolder,
             componentMappings: [{ path: xmlInFolder.FOLDER_XML_PATH, component: xmlInFolder.FOLDER_COMPONENT }],
             allowContent: false,
           },
@@ -204,26 +204,11 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: registry.types.dashboardfolder,
+            type: registry.types.documentfolder,
             componentMappings: [{ path, component: mixedContentInFolder.FOLDER_COMPONENT }],
           },
         ]);
         expect(access.getComponentsFromPath(path)).to.deep.equal([mixedContentInFolder.FOLDER_COMPONENT]);
-      });
-
-      it('Should throw type id error if one could not be determined', () => {
-        const missing = join('path', 'to', 'whatever', 'a.b-meta.xml');
-        const access = testUtil.createMetadataResolver([
-          {
-            dirPath: dirname(missing),
-            children: [basename(missing)],
-          },
-        ]);
-        assert.throws(
-          () => access.getComponentsFromPath(missing),
-          TypeInferenceError,
-          nls.localize('error_could_not_infer_type', [missing])
-        );
       });
 
       it('Should not return a component if path to metadata xml is forceignored', () => {
@@ -321,7 +306,7 @@ describe('MetadataResolver', () => {
         }));
         testUtil.stubAdapters([
           {
-            type: registry.types.document,
+            type: registry.types.report,
             componentMappings,
           },
         ]);
@@ -371,7 +356,7 @@ describe('MetadataResolver', () => {
         const access = new MetadataResolver(undefined, tree);
         testUtil.stubAdapters([
           {
-            type: registry.types.document,
+            type: registry.types.report,
             componentMappings: [
               {
                 path: join(MCF_DIR, xmlInFolder.XML_NAMES[0]),
@@ -409,7 +394,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: registry.types.documentfolder,
+            type: registry.types.document,
             componentMappings: [
               {
                 path: mixedContentInFolder.XML_PATHS[0],
@@ -445,7 +430,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: registry.types.experiencebundle,
+            type: registry.types.staticresource,
             componentMappings: [
               {
                 path: MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
@@ -495,7 +480,7 @@ describe('MetadataResolver', () => {
         );
         testUtil.stubAdapters([
           {
-            type: registry.types.experiencebundle,
+            type: registry.types.staticresource,
             componentMappings: [
               { path: MIXED_CONTENT_DIRECTORY_CONTENT_PATH, component },
               { path: MIXED_CONTENT_DIRECTORY_XML_PATHS[0], component },
@@ -510,7 +495,7 @@ describe('MetadataResolver', () => {
         const access = testUtil.createMetadataResolver(DECOMPOSED_VIRTUAL_FS);
         testUtil.stubAdapters([
           {
-            type: registry.types.customobject,
+            type: registry.types.emailservicesfunction,
             componentMappings: [
               { path: DECOMPOSED_XML_PATH, component: DECOMPOSED_COMPONENT },
               { path: DECOMPOSED_CHILD_XML_PATH_1, component: DECOMPOSED_CHILD_COMPONENT_1 },
@@ -636,7 +621,7 @@ describe('MetadataResolver', () => {
         }));
         testUtil.stubAdapters([
           {
-            type: registry.types.document,
+            type: registry.types.report,
             componentMappings,
           },
         ]);

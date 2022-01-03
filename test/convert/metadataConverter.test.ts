@@ -9,7 +9,7 @@ import { fail } from 'assert';
 import { createSandbox, SinonStub } from 'sinon';
 import * as fs from 'graceful-fs';
 import { assert, expect } from 'chai';
-import { mockRegistry, xmlInFolder } from '../mock/registry';
+import { xmlInFolder } from '../mock/registry';
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { ConversionError, LibraryError } from '../../src/errors';
@@ -27,7 +27,7 @@ describe('MetadataConverter', () => {
   let pipelineStub: SinonStub;
   let writeFileStub: SinonStub;
 
-  const converter = new MetadataConverter(mockRegistry);
+  const converter = new MetadataConverter();
   const components = xmlInFolder.COMPONENTS;
   const packageName = 'test';
   const outputDirectory = join('path', 'to', 'output');
@@ -142,7 +142,7 @@ describe('MetadataConverter', () => {
       const timestamp = 123456;
       const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
       env.stub(Date, 'now').returns(timestamp);
-      const expectedContents = new ComponentSet(components, mockRegistry).getPackageXml();
+      const expectedContents = new ComponentSet(components).getPackageXml();
 
       await converter.convert(components, 'metadata', { type: 'directory', outputDirectory });
 
@@ -168,7 +168,7 @@ describe('MetadataConverter', () => {
         type: DECOMPOSED_CHILD_COMPONENT_2.type,
         xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
       });
-      const compSet = new ComponentSet([component1, component2], mockRegistry);
+      const compSet = new ComponentSet([component1, component2]);
       const expectedDestructiveContents = compSet.getPackageXml(undefined, DestructiveChangesType.POST);
       const expectedContents = compSet.getPackageXml();
 
@@ -200,7 +200,7 @@ describe('MetadataConverter', () => {
         type: DECOMPOSED_CHILD_COMPONENT_2.type,
         xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
       });
-      const compSet = new ComponentSet([component1, component2], mockRegistry);
+      const compSet = new ComponentSet([component1, component2]);
       compSet.setDestructiveChangesType(DestructiveChangesType.PRE);
       const expectedDestructiveContents = compSet.getPackageXml(undefined, DestructiveChangesType.PRE);
       const expectedContents = compSet.getPackageXml();
@@ -222,7 +222,7 @@ describe('MetadataConverter', () => {
       const timestamp = 123456;
       const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
       env.stub(Date, 'now').returns(timestamp);
-      const compSet = new ComponentSet(components, mockRegistry);
+      const compSet = new ComponentSet(components);
       compSet.sourceApiVersion = '45.0';
       const expectedContents = compSet.getPackageXml();
 
@@ -241,7 +241,7 @@ describe('MetadataConverter', () => {
       const packageName = 'examplePackage';
       const packagePath = join(outputDirectory, packageName);
       env.stub(Date, 'now').returns(timestamp);
-      const cs = new ComponentSet(components, mockRegistry);
+      const cs = new ComponentSet(components);
       cs.fullName = packageName;
       const expectedContents = cs.getPackageXml();
 
@@ -333,7 +333,7 @@ describe('MetadataConverter', () => {
     });
 
     it('should write manifest for metadata format conversion', async () => {
-      const expectedContents = new ComponentSet(components, mockRegistry).getPackageXml();
+      const expectedContents = new ComponentSet(components).getPackageXml();
       const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
 
       await converter.convert(components, 'metadata', { type: 'zip' });
@@ -354,7 +354,7 @@ describe('MetadataConverter', () => {
         type: DECOMPOSED_CHILD_COMPONENT_2.type,
         xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
       });
-      const compSet = new ComponentSet([component1, component2], mockRegistry);
+      const compSet = new ComponentSet([component1, component2]);
       const expectedDestructiveContents = compSet.getPackageXml(undefined, DestructiveChangesType.POST);
       const expectedContents = compSet.getPackageXml();
       const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
@@ -381,7 +381,7 @@ describe('MetadataConverter', () => {
         type: DECOMPOSED_CHILD_COMPONENT_2.type,
         xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
       });
-      const compSet = new ComponentSet([component1, component2], mockRegistry);
+      const compSet = new ComponentSet([component1, component2]);
       compSet.setDestructiveChangesType(DestructiveChangesType.PRE);
       const expectedDestructiveContents = compSet.getPackageXml(4, DestructiveChangesType.PRE);
       const expectedContents = compSet.getPackageXml();

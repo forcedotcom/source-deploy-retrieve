@@ -5,10 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { expect } from 'chai';
-import { MetadataRegistry } from '../../src';
+import { DecompositionStrategy, MetadataRegistry, MetadataType, TransformerStrategy } from '../../src';
 import { registry as defaultRegistry } from '../../src/registry/registry';
 import { metadataTypes as UnsupportedTypes } from '../../src/registry/nonSupportedTypes';
-import { MetadataType, TransformerStrategy, DecompositionStrategy } from '../../src/registry/types';
 
 describe('Registry Validation', () => {
   const registry = defaultRegistry as MetadataRegistry;

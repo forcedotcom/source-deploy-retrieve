@@ -82,7 +82,7 @@ describe('ManifestResolver', () => {
       const expected: MetadataComponent[] = [
         {
           fullName: 'Test_Folder',
-          type: registry.types.dashboardfolder,
+          type: registry.types.documentfolder,
         },
       ];
 

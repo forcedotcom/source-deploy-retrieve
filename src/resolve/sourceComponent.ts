@@ -232,7 +232,7 @@ export class SourceComponent implements MetadataComponent {
     }
   }
 
-  private parseAndValidateXML<T = JsonMap>(contents: string, xml: string): T {
+  private parseAndValidateXML<T = JsonMap>(contents: string, path: string): T {
     try {
       return this.parse<T>(contents);
     } catch (e) {
@@ -240,7 +240,7 @@ export class SourceComponent implements MetadataComponent {
       const validation = validate(contents);
       if (validation !== true) {
         throw new LibraryError('invalid_xml_parsing', [
-          xml,
+          path,
           validation.err.msg,
           validation.err.line.toString(),
           validation.err.code,

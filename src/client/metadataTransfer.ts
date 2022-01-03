@@ -95,8 +95,8 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
     }
     // from the overloaded methods, there's a possibility frequency/timeout isn't set
     // guarantee frequency and timeout are set
-    pollingOptions.frequency = pollingOptions.frequency ?? Duration.milliseconds(this.calculatePollingFrequency());
-    pollingOptions.timeout = pollingOptions.timeout ?? Duration.minutes(60);
+    pollingOptions.frequency ??= Duration.milliseconds(this.calculatePollingFrequency());
+    pollingOptions.timeout ??= Duration.minutes(60);
 
     const pollingClient = await PollingClient.create(pollingOptions);
 

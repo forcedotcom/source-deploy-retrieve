@@ -184,7 +184,7 @@ describe('MetadataTransfer', () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore only override length attribute
         toArray: () => {
-          return { length: 1 };
+          return { length: 10 };
         },
       });
       const pollingClientStub = env.stub(PollingClient, 'create').resolves(PollingClient.prototype);

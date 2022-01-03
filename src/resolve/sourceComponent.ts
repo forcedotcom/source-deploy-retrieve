@@ -117,21 +117,7 @@ export class SourceComponent implements MetadataComponent {
     const xml = xmlFilePath ?? this.xml;
     if (xml) {
       const contents = (await this.tree.readFile(xml)).toString();
-      try {
-        return this.parse<T>(contents);
-      } catch (e) {
-        // only attempt validating once there's an error to avoid the performance hit of validating every file
-        const validation = validate(contents);
-        if (validation !== true) {
-          throw new LibraryError('invalid_xml_parsing', [
-            xml,
-            validation.err.msg,
-            validation.err.line.toString(),
-            validation.err.code,
-          ]);
-        }
-        throw e;
-      }
+      return this.parseAndValidateXML(contents, xml);
     }
     return {} as T;
   }
@@ -140,21 +126,7 @@ export class SourceComponent implements MetadataComponent {
     const xml = xmlFilePath ?? this.xml;
     if (xml) {
       const contents = this.tree.readFileSync(xml).toString();
-      try {
-        return this.parse<T>(contents);
-      } catch (e) {
-        // only attempt validating once there's an error to avoid the performance hit of validating every file
-        const validation = validate(contents);
-        if (validation !== true) {
-          throw new LibraryError('invalid_xml_parsing', [
-            xml,
-            validation.err.msg,
-            validation.err.line.toString(),
-            validation.err.code,
-          ]);
-        }
-        throw e;
-      }
+      return this.parseAndValidateXML(contents, xml);
     }
     return {} as T;
   }
@@ -257,6 +229,24 @@ export class SourceComponent implements MetadataComponent {
       return this.parseFromParentXml(parsed);
     } else {
       return parsed;
+    }
+  }
+
+  private parseAndValidateXML<T = JsonMap>(contents: string, xml: string): T {
+    try {
+      return this.parse<T>(contents);
+    } catch (e) {
+      // only attempt validating once there's an error to avoid the performance hit of validating every file
+      const validation = validate(contents);
+      if (validation !== true) {
+        throw new LibraryError('invalid_xml_parsing', [
+          xml,
+          validation.err.msg,
+          validation.err.line.toString(),
+          validation.err.code,
+        ]);
+      }
+      throw e;
     }
   }
 

@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.8.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.4...v5.8.5) (2022-01-04)
+
+### Bug Fixes
+
+- can retrive COFT with COT automatically ([#517](https://github.com/forcedotcom/source-deploy-retrieve/issues/517)) ([7b9a464](https://github.com/forcedotcom/source-deploy-retrieve/commit/7b9a46483323921e69de88b086f602eaefa6f869))
+
+### [5.8.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.3...v5.8.4) (2022-01-03)
+
+### Bug Fixes
+
+- add variable polling times based on comp. set ([#520](https://github.com/forcedotcom/source-deploy-retrieve/issues/520)) ([e97744f](https://github.com/forcedotcom/source-deploy-retrieve/commit/e97744f243d943c85ca8df22e004c278fbad0715))
+
+### [5.8.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.2...v5.8.3) (2022-01-03)
+
+### Bug Fixes
+
+- wrap error from fast-xml-parser when invalid xml parsed ([#518](https://github.com/forcedotcom/source-deploy-retrieve/issues/518)) ([407af67](https://github.com/forcedotcom/source-deploy-retrieve/commit/407af6754994b9b8b0484ee7a8dcb380ada2c554))
+
 ### [5.8.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.1...v5.8.2) (2021-12-16)
 
 ### [5.8.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.0...v5.8.1) (2021-12-15)

@@ -850,6 +850,7 @@
             "directoryName": "fields",
             "suffix": "fieldTranslation",
             "isAddressable": false,
+            "unaddressableWithoutParent": true,
             "uniqueIdElement": "name"
           }
         },

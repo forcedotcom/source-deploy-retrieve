@@ -4,6 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import * as path from 'path';
+import * as fs from 'graceful-fs';
+import * as unzipper from 'unzipper';
 import { asBoolean, isString } from '@salesforce/ts-types';
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
@@ -152,6 +155,38 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
     this.canceled = true;
   }
 
+  public async post(result: MetadataApiRetrieveStatus): Promise<RetrieveResult> {
+    let components: ComponentSet;
+    const isMdapiRetrieve = this.options.format === 'metadata';
+
+    if (result.status === RequestStatus.Succeeded) {
+      const zipFileContents = Buffer.from(result.zipFile, 'base64');
+      if (isMdapiRetrieve) {
+        const name = this.options.zipFileName || 'unpackaged.zip';
+        const zipFilePath = path.join(this.options.output, name);
+        fs.writeFileSync(zipFilePath, zipFileContents);
+
+        if (this.options.unzip) {
+          const dir = await unzipper.Open.buffer(zipFileContents);
+          const extractPath = path.join(this.options.output, path.parse(name).name);
+          await dir.extract({ path: extractPath });
+        }
+      } else {
+        components = await this.extract(zipFileContents);
+      }
+    }
+
+    components ??= new ComponentSet(undefined, this.options.registry);
+
+    if (!isMdapiRetrieve) {
+      // This should only be done when retrieving source format since retrieving
+      // mdapi format has no conversion.
+      await this.maybeSaveTempDirectory('source', components);
+    }
+
+    return new RetrieveResult(result, components, this.components);
+  }
+
   protected async pre(): Promise<AsyncResult> {
     const packageNames = this.getPackageNames();
 
@@ -169,24 +204,19 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
     // otherwise don't - it causes errors if undefined or an empty array
     if (packageNames?.length) {
       requestBody.packageNames = packageNames;
+      // delete unpackaged when no components and metadata format to prevent
+      // sending an empty unpackaged manifest.
+      if (this.options.format === 'metadata' && this.components.size === 0) {
+        delete requestBody.unpackaged;
+      }
+    }
+    if (this.options.singlePackage) {
+      requestBody.singlePackage = this.options.singlePackage;
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore required callback
     return connection.metadata.retrieve(requestBody);
-  }
-
-  protected async post(result: MetadataApiRetrieveStatus): Promise<RetrieveResult> {
-    let components: ComponentSet;
-    if (result.status === RequestStatus.Succeeded) {
-      components = await this.extract(Buffer.from(result.zipFile, 'base64'));
-    }
-
-    components = components ?? new ComponentSet(undefined, this.options.registry);
-
-    await this.maybeSaveTempDirectory('source', components);
-
-    return new RetrieveResult(result, components, this.components);
   }
 
   private getPackageNames(): string[] {

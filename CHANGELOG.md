@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.8.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.4...v5.8.5) (2022-01-04)
+
+### Bug Fixes
+
+- can retrive COFT with COT automatically ([#517](https://github.com/forcedotcom/source-deploy-retrieve/issues/517)) ([7b9a464](https://github.com/forcedotcom/source-deploy-retrieve/commit/7b9a46483323921e69de88b086f602eaefa6f869))
+
 ### [5.8.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.3...v5.8.4) (2022-01-03)
 
 ### Bug Fixes

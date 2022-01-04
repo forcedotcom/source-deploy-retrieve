@@ -323,7 +323,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     return new DeployResult(result, this.components);
   }
 
-  private async getZipBuffer(): Promise<Buffer> | undefined {
+  private async getZipBuffer(): Promise<Buffer> {
     if (this.options.mdapiPath) {
       if (!fs.existsSync(this.options.mdapiPath) || !fs.lstatSync(this.options.mdapiPath).isDirectory()) {
         throw new Error(`Deploy directory ${this.options.mdapiPath} does not exist or is not a directory`);
@@ -348,5 +348,6 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
       const { zipBuffer } = await converter.convert(this.components, 'metadata', { type: 'zip' });
       return zipBuffer;
     }
+    throw new Error('Options should include components, zipPath, or mdapiPath');
   }
 }

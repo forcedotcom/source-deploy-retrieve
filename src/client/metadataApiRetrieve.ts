@@ -168,7 +168,8 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
 
         if (this.options.unzip) {
           const dir = await unzipper.Open.buffer(zipFileContents);
-          await dir.extract({ path: this.options.output });
+          const extractPath = path.join(this.options.output, path.parse(name).name);
+          await dir.extract({ path: extractPath });
         }
       } else {
         components = await this.extract(zipFileContents);
@@ -203,6 +204,11 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
     // otherwise don't - it causes errors if undefined or an empty array
     if (packageNames?.length) {
       requestBody.packageNames = packageNames;
+      // delete unpackaged when no components and metadata format to prevent
+      // sending an empty unpackaged manifest.
+      if (this.options.format === 'metadata' && this.components.size === 0) {
+        delete requestBody.unpackaged;
+      }
     }
     if (this.options.singlePackage) {
       requestBody.singlePackage = this.options.singlePackage;

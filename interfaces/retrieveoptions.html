@@ -77,9 +77,13 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="retrieveoptions.html#format" class="tsd-kind-icon">format</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="retrieveoptions.html#merge" class="tsd-kind-icon">merge</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="retrieveoptions.html#output" class="tsd-kind-icon">output</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="retrieveoptions.html#packageoptions" class="tsd-kind-icon">package<wbr>Options</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="retrieveoptions.html#singlepackage" class="tsd-kind-icon">single<wbr>Package</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="retrieveoptions.html#unzip" class="tsd-kind-icon">unzip</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="retrieveoptions.html#zipfilename" class="tsd-kind-icon">zip<wbr>File<wbr>Name</a></li>
 							</ul>
 						</section>
 					</div>
@@ -88,12 +92,27 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="format" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> format</h3>
+					<div class="tsd-signature tsd-kind-icon">format<span class="tsd-signature-symbol">:</span> <a href="../globals.html#sfdxfileformat" class="tsd-signature-type">SfdxFileFormat</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e36d531/src/client/types.ts#L333">src/client/types.ts:333</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The file format desired for the retrieved files.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="merge" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> merge</h3>
 					<div class="tsd-signature tsd-kind-icon">merge<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/53b6862/src/client/types.ts#L324">src/client/types.ts:324</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e36d531/src/client/types.ts#L325">src/client/types.ts:325</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -108,7 +127,7 @@
 					<div class="tsd-signature tsd-kind-icon">output<span class="tsd-signature-symbol">:</span> <a href="../globals.html#sourcepath" class="tsd-signature-type">SourcePath</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/53b6862/src/client/types.ts#L320">src/client/types.ts:320</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e36d531/src/client/types.ts#L321">src/client/types.ts:321</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -124,12 +143,58 @@
 					<div class="tsd-signature tsd-kind-icon">package<wbr>Options<span class="tsd-signature-symbol">:</span> <a href="../globals.html#packageoptions" class="tsd-signature-type">PackageOptions</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/53b6862/src/client/types.ts#L328">src/client/types.ts:328</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e36d531/src/client/types.ts#L329">src/client/types.ts:329</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>A list of package names to retrieve, or package names and their retrieval locations.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="singlepackage" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> single<wbr>Package</h3>
+					<div class="tsd-signature tsd-kind-icon">single<wbr>Package<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e36d531/src/client/types.ts#L338">src/client/types.ts:338</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Specifies whether only a single package is being retrieved (true) or not (false).
+							If false, then more than one package is being retrieved.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="unzip" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> unzip</h3>
+					<div class="tsd-signature tsd-kind-icon">unzip<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e36d531/src/client/types.ts#L346">src/client/types.ts:346</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Specifies whether to unzip the retrieved zip file. Only applies when <code>format: metadata</code>.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="zipfilename" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> zip<wbr>File<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">zip<wbr>File<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/e36d531/src/client/types.ts#L342">src/client/types.ts:342</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The name of the retrieved zip file containing the source from the org. Only applies when <code>format: metadata</code>.</p>
 						</div>
 					</div>
 				</section>
@@ -151,6 +216,9 @@
 						<a href="retrieveoptions.html" class="tsd-kind-icon">Retrieve<wbr>Options</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="retrieveoptions.html#format" class="tsd-kind-icon">format</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="retrieveoptions.html#merge" class="tsd-kind-icon">merge</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
@@ -158,6 +226,15 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="retrieveoptions.html#packageoptions" class="tsd-kind-icon">package<wbr>Options</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="retrieveoptions.html#singlepackage" class="tsd-kind-icon">single<wbr>Package</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="retrieveoptions.html#unzip" class="tsd-kind-icon">unzip</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="retrieveoptions.html#zipfilename" class="tsd-kind-icon">zip<wbr>File<wbr>Name</a>
 							</li>
 						</ul>
 					</li>

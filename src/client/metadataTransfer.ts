@@ -67,7 +67,7 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
   public async pollStatus(options?: Partial<PollingClient.Options>): Promise<Result>;
   /**
    * Poll for the status of the metadata transfer request.
-   * Default frequency is 100 ms.
+   * Default frequency is based on the number of SourceComponents, n, in the transfer, it ranges from 100ms -> n
    * Default timeout is 60 minutes.
    *
    * @param frequency Polling frequency in milliseconds.
@@ -80,7 +80,7 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
     timeout?: number
   ): Promise<Result> {
     let pollingOptions: PollingClient.Options = {
-      frequency: Duration.milliseconds(100),
+      frequency: Duration.milliseconds(this.calculatePollingFrequency()),
       timeout: Duration.minutes(60),
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       poll: this.poll.bind(this),
@@ -93,6 +93,10 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
     if (isNumber(timeout)) {
       pollingOptions.timeout = Duration.seconds(timeout);
     }
+    // from the overloaded methods, there's a possibility frequency/timeout isn't set
+    // guarantee frequency and timeout are set
+    pollingOptions.frequency ??= Duration.milliseconds(this.calculatePollingFrequency());
+    pollingOptions.timeout ??= Duration.minutes(60);
 
     const pollingClient = await PollingClient.create(pollingOptions);
 
@@ -191,15 +195,52 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
       completed = true;
       this.canceled = false;
     } else {
-      mdapiStatus = await this.checkStatus();
-      completed = mdapiStatus?.done;
-      if (!completed) {
-        this.event.emit('update', mdapiStatus);
+      try {
+        mdapiStatus = await this.checkStatus();
+        completed = mdapiStatus?.done;
+        if (!completed) {
+          this.event.emit('update', mdapiStatus);
+        }
+      } catch (e) {
+        this.logger.error(e);
+        // tolerate intermittent network errors upto retry limit
+        if (
+          ['ETIMEDOUT', 'ENOTFOUND', 'ECONNRESET', 'socket hang up'].some((retryableNetworkError) =>
+            (e as Error).message.includes(retryableNetworkError)
+          )
+        ) {
+          this.logger.debug('Network error on the request', e);
+          await Lifecycle.getInstance().emitWarning('Network error occurred.  Continuing to poll.');
+          return { completed: false };
+        }
+        throw e;
       }
     }
     this.logger.debug(`MDAPI status update: ${mdapiStatus.status}`);
 
     return { completed, payload: mdapiStatus as unknown as AnyJson };
+  }
+
+  /**
+   * Based on the source components in the component set, it will return a polling frequency in milliseconds
+   */
+  private calculatePollingFrequency(): number {
+    const size = this.components?.getSourceComponents().toArray().length || 0;
+    // take a piece-wise approach to encapsulate discrete deployment sizes in polling frequencies that "feel" good when deployed
+    if (size === 0) {
+      // no component set size is possible for retrieve
+      return 1000;
+    } else if (size <= 10) {
+      return 100;
+    } else if (size <= 50) {
+      return 250;
+    } else if (size <= 100) {
+      return 500;
+    } else if (size <= 1000) {
+      return 1000;
+    } else {
+      return size;
+    }
   }
 
   public abstract checkStatus(): Promise<Status>;

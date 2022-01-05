@@ -1,0 +1,5 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+echo "husky pre-push again"
+# builds the metadata support markdown file
+yarn build && yarn test && yarn update-supported-metadata

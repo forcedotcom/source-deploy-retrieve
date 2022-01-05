@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.9.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.5...v5.9.0) (2022-01-04)
+
+### Features
+
+- add retrieve in mdapi format ([#519](https://github.com/forcedotcom/source-deploy-retrieve/issues/519)) ([4db9b18](https://github.com/forcedotcom/source-deploy-retrieve/commit/4db9b1813712617970c714f30d7d2f1ef2578a2f))
+
 ### [5.8.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.4...v5.8.5) (2022-01-04)
 
 ### Bug Fixes

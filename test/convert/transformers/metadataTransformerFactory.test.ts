@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { expect } from 'chai';
-import { RegistryAccess } from '../../../src';
+import { assert, expect } from 'chai';
+import { RegistryAccess, SourceComponent } from '../../../src';
 import { ConvertContext } from '../../../src/convert/convertContext';
 import { MetadataTransformerFactory } from '../../../src/convert/transformers';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
@@ -16,6 +16,9 @@ import { StaticResourceMetadataTransformer } from '../../../src/convert/transfor
 import { matchingContentFile, mixedContentSingleFile } from '../../mock';
 import { DECOMPOSED_COMPONENT } from '../../mock/type-constants/decomposedConstants';
 import { COMPONENT_1 } from '../../mock/type-constants/nonDecomposedConstants';
+import { RegistryError } from '../../../src/errors';
+import { nls } from '../../../src/i18n';
+import { registry } from '../../../scripts/update-registry/update2';
 
 const registryAccess = new RegistryAccess();
 
@@ -51,5 +54,21 @@ describe('MetadataTransformerFactory', () => {
     const context = new ConvertContext();
     const factory = new MetadataTransformerFactory(undefined, context);
     expect(factory.getTransformer(child)).to.deep.equal(new DecomposedMetadataTransformer(undefined, context));
+  });
+
+  it('should throw an error for a missing transformer mapping', () => {
+    const component = new SourceComponent({
+      name: 'Test',
+      type: registry.types.apexclass,
+      xml: 'Test.xml',
+    });
+    component.type.strategies.transformer = 'MissingStrategies';
+    const { type } = component;
+    const factory = new MetadataTransformerFactory(registryAccess);
+    assert.throws(
+      () => factory.getTransformer(component),
+      RegistryError,
+      nls.localize('error_missing_transformer', [type.name, type.strategies.transformer])
+    );
   });
 });

@@ -8,7 +8,7 @@ import { join } from 'path';
 import { registry, SourceComponent } from '../../../src';
 import { baseName } from '../../../src/utils';
 
-export const DECOMPOSED_TOP_LEVEL_DIR = join('path', 'to', 'decomposedTopLevels');
+export const DECOMPOSED_TOP_LEVEL_DIR = join('path', 'to', 'objectTranslations');
 export const DECOMPOSED_TOP_LEVEL_COMPONENT_PATH = join(DECOMPOSED_TOP_LEVEL_DIR, 'myObject__c');
 export const DECOMPOSED_TOP_LEVEL_XML_NAMES = ['myObject__c.objectTranslation-meta.xml'];
 export const DECOMPOSED_TOP_LEVEL_XML_PATH = join(
@@ -20,6 +20,9 @@ export const DECOMPOSED_TOP_LEVEL_CHILD_XML_NAMES = [
   'Opportunity.fieldTranslation-meta.xml',
 ];
 DECOMPOSED_TOP_LEVEL_CHILD_XML_NAMES.map((n) => join(DECOMPOSED_TOP_LEVEL_COMPONENT_PATH, n));
+export const DECOMPOSED_TOP_LEVEL_CHILD_XML_PATHS = DECOMPOSED_TOP_LEVEL_CHILD_XML_NAMES.map((n) =>
+  join(DECOMPOSED_TOP_LEVEL_COMPONENT_PATH, n)
+);
 export const DECOMPOSED_VIRTUAL_FS = [
   {
     dirPath: DECOMPOSED_TOP_LEVEL_COMPONENT_PATH,

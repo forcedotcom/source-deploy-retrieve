@@ -211,6 +211,21 @@ describe('MetadataResolver', () => {
         expect(access.getComponentsFromPath(path)).to.deep.equal([mixedContentInFolder.FOLDER_COMPONENT]);
       });
 
+      it('Should throw type id error if one could not be determined', () => {
+        const missing = join('path', 'to', 'whatever', 'a.b-meta.afg');
+        const access = testUtil.createMetadataResolver([
+          {
+            dirPath: dirname(missing),
+            children: [basename(missing)],
+          },
+        ]);
+        assert.throws(
+          () => access.getComponentsFromPath(missing),
+          TypeInferenceError,
+          nls.localize('error_could_not_infer_type', [missing])
+        );
+      });
+
       it('Should not return a component if path to metadata xml is forceignored', () => {
         const path = matchingContentFile.XML_PATHS[0];
         const access = testUtil.createMetadataResolver([

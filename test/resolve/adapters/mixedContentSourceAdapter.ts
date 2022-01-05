@@ -74,7 +74,7 @@ describe('MixedContentSourceAdapter', () => {
       const adapter = new MixedContentSourceAdapter(type, undefined, undefined, tree);
       const expectedComponent = new SourceComponent(
         {
-          name: 'a',
+          name: 'aStaticResource',
           type,
           content: MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
         },

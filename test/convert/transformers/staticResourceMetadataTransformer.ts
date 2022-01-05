@@ -234,7 +234,13 @@ describe('StaticResourceMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           source: null,
-          output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, 'a', 'b', 'c.css'),
+          output: join(
+            DEFAULT_PACKAGE_ROOT_SFDX,
+            type.directoryName,
+            mixedContentSingleFile.COMPONENT_NAMES[0],
+            'b',
+            'c.css'
+          ),
         },
         {
           source: component.tree.stream(xml),

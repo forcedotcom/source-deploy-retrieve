@@ -20,7 +20,7 @@ export const DECOMPOSED_CHILD_XML_NAME_1 = 'Fields__c.field-meta.xml';
 export const DECOMPOSED_CHILD_XML_PATH_1 = join(DECOMPOSED_PATH, DECOMPOSED_CHILD_XML_NAME_1);
 export const DECOMPOSED_CHILD_DIR = 'validationRules';
 export const DECOMPOSED_CHILD_DIR_PATH = join(DECOMPOSED_PATH, DECOMPOSED_CHILD_DIR);
-export const DECOMPOSED_CHILD_XML_NAME_2 = 'w.validationRule-meta.xml';
+export const DECOMPOSED_CHILD_XML_NAME_2 = 'myValidationRule.validationRule-meta.xml';
 export const DECOMPOSED_CHILD_XML_PATH_2 = join(DECOMPOSED_CHILD_DIR_PATH, DECOMPOSED_CHILD_XML_NAME_2);
 export const DECOMPOSED_VIRTUAL_FS: VirtualDirectory[] = [
   {

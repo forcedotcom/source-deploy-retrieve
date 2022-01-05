@@ -53,20 +53,6 @@ export const COMPONENT_2_XML = {
   },
 };
 
-export const CLAIMED_XML_CONTENT = {
-  [type.name]: {
-    [XML_NS_KEY]: XML_NS_URL,
-    [type.directoryName]: [CHILD_1_XML, CHILD_2_XML, CHILD_3_XML],
-  },
-};
-
-export const UNCLAIMED_XML_CONTENT = {
-  [type.name]: {
-    [XML_NS_KEY]: XML_NS_URL,
-    [type.directoryName]: UNCLAIMED_CHILD_XML,
-  },
-};
-
 export const FULL_XML_CONTENT = {
   [type.name]: {
     [XML_NS_KEY]: XML_NS_URL,
@@ -77,7 +63,7 @@ export const FULL_XML_CONTENT = {
 export const MATCHING_RULES_TYPE = registry.types.matchingrules;
 // NOTE: directory name uses the string literal rather than getting from MATCHING_RULES_TYPE
 // so it explicitly shows that this matches the xml field
-export const MATCHING_RULES_TYPE_DIRECTORY_NAME = 'matchingRules';
+export const MATCHING_RULES_TYPE_DIRECTORY_NAME = MATCHING_RULES_TYPE.directoryName;
 export const MATCHING_RULES_XML_NAME = 'Account.matchingRule-meta.xml';
 export const MATCHING_RULES_COMPONENT_DIR = join(DEFAULT_DIR, MATCHING_RULES_TYPE_DIRECTORY_NAME);
 export const MATCHING_RULES_COMPONENT_XML_PATH = join(MATCHING_RULES_COMPONENT_DIR, MATCHING_RULES_XML_NAME);

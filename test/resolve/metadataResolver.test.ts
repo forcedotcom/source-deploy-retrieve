@@ -536,7 +536,7 @@ describe('MetadataResolver', () => {
         expect(access.getComponentsFromPath(bundle.TYPE_DIRECTORY)).to.deep.equal([
           new SourceComponent(
             {
-              name: 'a',
+              name: 'myComponent',
               type: registry.types.auradefinitionbundle,
               xml: join(bundle.CONTENT_PATH, matchingContentFile.XML_NAMES[0]),
               content: bundle.CONTENT_PATH,

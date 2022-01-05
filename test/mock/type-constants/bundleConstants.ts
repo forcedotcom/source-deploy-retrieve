@@ -10,15 +10,16 @@ import { registry, SourceComponent } from '../../../src';
 const type = registry.types.auradefinitionbundle;
 
 export const TYPE_DIRECTORY = join('path', 'to', type.directoryName);
-const COMPONENT_NAME = 'a';
+const COMPONENT_NAME = 'myComponent';
 export const CONTENT_PATH = join(TYPE_DIRECTORY, COMPONENT_NAME);
 export const XML_NAME = `${COMPONENT_NAME}.js-meta.xml`;
 export const XML_PATH = join(CONTENT_PATH, XML_NAME);
 export const SUBTYPE_XML_PATH = join(CONTENT_PATH, 'b.z-meta.xml');
-export const SOURCE_PATHS = [join(CONTENT_PATH, 'a.js'), join(CONTENT_PATH, 'a.css'), join(CONTENT_PATH, 'a.html')];
+export const COMPONENTS = ['myComponent.js', 'myComponent.css', 'myComponent.html'];
+export const SOURCE_PATHS = COMPONENTS.map((cmp) => join(CONTENT_PATH, cmp));
 export const COMPONENT = SourceComponent.createVirtualComponent(
   {
-    name: 'a',
+    name: 'myComponent',
     type,
     xml: XML_PATH,
     content: CONTENT_PATH,
@@ -30,14 +31,14 @@ export const COMPONENT = SourceComponent.createVirtualComponent(
     },
     {
       dirPath: CONTENT_PATH,
-      children: [XML_NAME, 'a.js', 'a.css', 'a.html'],
+      children: [XML_NAME, ...COMPONENTS],
     },
   ]
 );
 
 export const EMPTY_BUNDLE = SourceComponent.createVirtualComponent(
   {
-    name: 'a',
+    name: 'myComponent',
     type,
     xml: XML_PATH,
     content: CONTENT_PATH,

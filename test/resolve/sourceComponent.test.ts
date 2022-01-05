@@ -260,7 +260,7 @@ describe('SourceComponent', () => {
     );
     const expectedChild2 = SourceComponent.createVirtualComponent(
       {
-        name: 'w',
+        name: 'myValidationRule',
         type: type.children.types.validationrule,
         xml: decomposed.DECOMPOSED_CHILD_XML_PATH_2,
         parent: decomposed.DECOMPOSED_COMPONENT,

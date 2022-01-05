@@ -11,18 +11,18 @@ import { registry, SourceComponent } from '../../../src';
 const type = registry.types.staticresource;
 
 export const MIXED_CONTENT_DIRECTORY_DIR = join('path', 'to', 'staticresources');
-export const MIXED_CONTENT_DIRECTORY_CONTENT_PATH = join(MIXED_CONTENT_DIRECTORY_DIR, 'a');
-export const MIXED_CONTENT_DIRECTORY_XML_NAMES = ['a.resource-meta.xml'];
+export const MIXED_CONTENT_DIRECTORY_CONTENT_PATH = join(MIXED_CONTENT_DIRECTORY_DIR, 'aStaticResource.json');
+export const MIXED_CONTENT_DIRECTORY_XML_NAMES = ['aStaticResource.resource-meta.xml'];
 export const MIXED_CONTENT_DIRECTORY_XML_PATHS = MIXED_CONTENT_DIRECTORY_XML_NAMES.map((n) =>
   join(MIXED_CONTENT_DIRECTORY_DIR, n)
 );
 export const MIXED_CONTENT_DIRECTORY_SOURCE_PATHS = [
   join(MIXED_CONTENT_DIRECTORY_CONTENT_PATH, 'test.css'),
-  join(MIXED_CONTENT_DIRECTORY_CONTENT_PATH, 'b', 'test.js'),
-  join(MIXED_CONTENT_DIRECTORY_CONTENT_PATH, 'b', 'test2.pdf'),
+  join(MIXED_CONTENT_DIRECTORY_CONTENT_PATH, 'tests', 'test.js'),
+  join(MIXED_CONTENT_DIRECTORY_CONTENT_PATH, 'tests', 'test2.pdf'),
 ];
 export const MIXED_CONTENT_DIRECTORY_COMPONENT: SourceComponent = new SourceComponent({
-  name: 'a',
+  name: 'aStaticResource',
   type,
   xml: MIXED_CONTENT_DIRECTORY_XML_PATHS[0],
   content: MIXED_CONTENT_DIRECTORY_CONTENT_PATH,

@@ -15,8 +15,8 @@ const folderType = registry.types.documentfolder;
 export const TYPE_DIRECTORY = join('path', 'to', type.directoryName);
 export const COMPONENT_FOLDER_NAME = 'A_Folder';
 export const COMPONENT_FOLDER_PATH = join(TYPE_DIRECTORY, COMPONENT_FOLDER_NAME);
-export const COMPONENT_NAMES = ['a', 'b', 'c'];
-const CONTENT_FILE_EXTS = ['x', 'y', 'z'];
+export const COMPONENT_NAMES = ['comp1', 'comp2', 'comp3'];
+const CONTENT_FILE_EXTS = ['json', 'csv', 'jpg'];
 
 export const FOLDER_XML_PATH = join(TYPE_DIRECTORY, `${COMPONENT_FOLDER_NAME}.${folderType.suffix}${META_XML_SUFFIX}`);
 export const FOLDER_XML_NAME = basename(FOLDER_XML_PATH);

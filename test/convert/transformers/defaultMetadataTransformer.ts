@@ -237,7 +237,7 @@ describe('DefaultMetadataTransformer', () => {
           source: component.tree.stream(join(root, 'd.e')),
         },
         {
-          output: join(mergeWith.content, 'a.js-meta.xml'),
+          output: join(mergeWith.content, 'myComponent.js-meta.xml'),
           source: component.tree.stream(join(root, 'a.js-meta.xml')),
         },
       ];

@@ -12,7 +12,7 @@ import { extName } from '../../../src/utils';
 const type = registry.types.document;
 
 export const DOCUMENTS_DIRECTORY = join('path', 'to', type.directoryName);
-export const COMPONENT_NAME = 'a';
+export const COMPONENT_NAME = 'myDocument';
 export const COMPONENT_SUFFIX = 'png';
 export const COMPONENT_FOLDER_NAME = 'A_Folder';
 export const COMPONENT_FOLDER_PATH = join(DOCUMENTS_DIRECTORY, COMPONENT_FOLDER_NAME);

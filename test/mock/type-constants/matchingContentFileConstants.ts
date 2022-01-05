@@ -12,7 +12,7 @@ import { META_XML_SUFFIX } from '../../../src/common';
 const type = registry.types.apexclass;
 
 export const TYPE_DIRECTORY = join('path', 'to', type.directoryName);
-export const COMPONENT_NAMES = ['a', 'b'];
+export const COMPONENT_NAMES = ['myComponent', 'myOtherComponent'];
 export const XML_NAMES = COMPONENT_NAMES.map((name) => `${name}.${type.suffix}${META_XML_SUFFIX}`);
 export const XML_PATHS = XML_NAMES.map((name) => join(TYPE_DIRECTORY, name));
 export const CONTENT_NAMES = COMPONENT_NAMES.map((name) => `${name}.${type.suffix}`);
@@ -40,7 +40,7 @@ export const COMPONENTS = COMPONENT_NAMES.map(
 export const COMPONENT = COMPONENTS[0];
 
 export const CONTENT_COMPONENT = new SourceComponent({
-  name: 'a',
+  name: 'myComponent',
   type,
   xml: CONTENT_PATHS[0],
 });

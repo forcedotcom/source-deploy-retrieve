@@ -10,16 +10,13 @@ import { baseName } from '../../../../src/utils';
 
 export const DECOMPOSED_TOP_LEVEL_DIR = join('path', 'to', 'decomposedTopLevels');
 export const DECOMPOSED_TOP_LEVEL_COMPONENT_PATH = join(DECOMPOSED_TOP_LEVEL_DIR, 'a');
-export const DECOMPOSED_TOP_LEVEL_XML_NAMES = ['a.dtl-meta.xml'];
+export const DECOMPOSED_TOP_LEVEL_XML_NAMES = ['a.objectTranslation-meta.xml'];
 export const DECOMPOSED_TOP_LEVEL_XML_PATH = join(
   DECOMPOSED_TOP_LEVEL_COMPONENT_PATH,
   DECOMPOSED_TOP_LEVEL_XML_NAMES[0]
 );
-export const DECOMPOSED_TOP_LEVEL_CHILD_XML_NAMES = ['z.g-meta.xml', 'y.g-meta.xml'];
-export const DECOMPOSED_TOP_LEVEL_CHILD_XML_PATHS = DECOMPOSED_TOP_LEVEL_CHILD_XML_NAMES.map((n) =>
-  join(DECOMPOSED_TOP_LEVEL_COMPONENT_PATH, n)
-);
-
+export const DECOMPOSED_TOP_LEVEL_CHILD_XML_NAMES = ['z.fieldTranslation-meta.xml', 'y.fieldTranslation-meta.xml'];
+DECOMPOSED_TOP_LEVEL_CHILD_XML_NAMES.map((n) => join(DECOMPOSED_TOP_LEVEL_COMPONENT_PATH, n));
 export const DECOMPOSED_VIRTUAL_FS = [
   {
     dirPath: DECOMPOSED_TOP_LEVEL_COMPONENT_PATH,

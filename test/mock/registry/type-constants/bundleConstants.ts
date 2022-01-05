@@ -11,7 +11,7 @@ const type = registry.types.auradefinitionbundle;
 
 export const TYPE_DIRECTORY = join('path', 'to', type.directoryName);
 const COMPONENT_NAME = 'a';
-export const CONTENT_PATH = join(TYPE_DIRECTORY, 'a');
+export const CONTENT_PATH = join(TYPE_DIRECTORY, COMPONENT_NAME);
 export const XML_NAME = `${COMPONENT_NAME}.js-meta.xml`;
 export const XML_PATH = join(CONTENT_PATH, XML_NAME);
 export const SUBTYPE_XML_PATH = join(CONTENT_PATH, 'b.z-meta.xml');

@@ -54,14 +54,6 @@ describe('ManifestResolver', () => {
           type: registry.types.customobjecttranslation,
         },
         {
-          fullName: 'a.child1',
-          type: registry.types.customobjecttranslation.children.types.customfieldtranslation,
-        },
-        {
-          fullName: 'a.child2',
-          type: registry.types.customobjecttranslation.children.types.customfieldtranslation,
-        },
-        {
           fullName: 'b',
           type: registry.types.staticresource,
         },

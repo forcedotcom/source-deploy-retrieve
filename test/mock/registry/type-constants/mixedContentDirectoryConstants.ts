@@ -12,7 +12,7 @@ const type = registry.types.staticresource;
 
 export const MIXED_CONTENT_DIRECTORY_DIR = join('path', 'to', 'staticresources');
 export const MIXED_CONTENT_DIRECTORY_CONTENT_PATH = join(MIXED_CONTENT_DIRECTORY_DIR, 'a');
-export const MIXED_CONTENT_DIRECTORY_XML_NAMES = ['a.mixedcontentdirectory-meta.xml'];
+export const MIXED_CONTENT_DIRECTORY_XML_NAMES = ['a.resource-meta.xml'];
 export const MIXED_CONTENT_DIRECTORY_XML_PATHS = MIXED_CONTENT_DIRECTORY_XML_NAMES.map((n) =>
   join(MIXED_CONTENT_DIRECTORY_DIR, n)
 );

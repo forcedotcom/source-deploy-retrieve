@@ -30,10 +30,14 @@ export const CHILD_2_NAME = 'Child_2';
 export const CHILD_3_NAME = 'Child_3';
 export const UNCLAIMED_CHILD_NAME = 'Unclaimed_Child';
 
-export const CHILD_1_XML = { id: CHILD_1_NAME, description: 'the first child' };
-export const CHILD_2_XML = { id: CHILD_2_NAME, description: 'the second child' };
-export const CHILD_3_XML = { id: CHILD_3_NAME, description: 'the third child' };
-export const UNCLAIMED_CHILD_XML = { id: UNCLAIMED_CHILD_NAME, description: 'the unclaimed child' };
+export const CHILD_1_XML = { fullName: CHILD_1_NAME, shortDescription: 'the first child', value: 'the first child' };
+export const CHILD_2_XML = { fullName: CHILD_2_NAME, shortDescription: 'the second child', value: 'the second child' };
+export const CHILD_3_XML = { fullName: CHILD_3_NAME, shortDescription: 'the third child', value: 'the third child' };
+export const UNCLAIMED_CHILD_XML = {
+  fullName: UNCLAIMED_CHILD_NAME,
+  shortDescription: 'the unclaimed child',
+  value: 'the unclaimed child',
+};
 
 export const COMPONENT_1_XML = {
   [type.name]: {
@@ -72,7 +76,7 @@ export const FULL_XML_CONTENT = {
 
 export const MATCHING_RULES_TYPE = registry.types.matchingrules;
 // NOTE: directory name uses the string literal rather than getting from MATCHING_RULES_TYPE
-// so it explictly shows that this matches the xml field
+// so it explicitly shows that this matches the xml field
 export const MATCHING_RULES_TYPE_DIRECTORY_NAME = 'matchingRules';
 export const MATCHING_RULES_XML_NAME = 'Account.matchingRule-meta.xml';
 export const MATCHING_RULES_COMPONENT_DIR = join(DEFAULT_DIR, MATCHING_RULES_TYPE_DIRECTORY_NAME);

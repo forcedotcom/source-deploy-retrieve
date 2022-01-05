@@ -18,7 +18,6 @@ import {
   MetadataComponent,
   MetadataMember,
   MetadataResolver,
-  MetadataType,
   registry,
   RegistryAccess,
   SourceComponent,
@@ -77,12 +76,12 @@ describe('ComponentSet', () => {
         getComponentsStub.restore();
 
         const result = ComponentSet.fromSource({
-          fsPaths: ['mixedSingleFiles'],
+          fsPaths: ['staticresources'],
           registry: registryAccess,
           tree: manifestFiles.TREE,
         }).toArray();
         const expected = new MetadataResolver(registryAccess, manifestFiles.TREE).getComponentsFromPath(
-          'mixedSingleFiles'
+          'staticresources'
         );
 
         expect(result).to.deep.equal(expected);
@@ -92,15 +91,15 @@ describe('ComponentSet', () => {
         getComponentsStub.restore();
 
         const compSet = ComponentSet.fromSource({
-          fsPaths: ['mixedSingleFiles'],
+          fsPaths: ['staticresources'],
           registry: registryAccess,
           tree: manifestFiles.TREE,
-          fsDeletePaths: ['decomposedTopLevels'],
+          fsDeletePaths: ['objectTranslations'],
         });
         const result = compSet.toArray();
         const mdResolver = new MetadataResolver(registryAccess, manifestFiles.TREE);
-        const expected = mdResolver.getComponentsFromPath('mixedSingleFiles');
-        mdResolver.getComponentsFromPath('decomposedTopLevels').forEach((comp) => {
+        const expected = mdResolver.getComponentsFromPath('staticresources');
+        mdResolver.getComponentsFromPath('objectTranslations').forEach((comp) => {
           comp.setMarkedForDelete();
           expected.push(comp);
         });
@@ -151,7 +150,7 @@ describe('ComponentSet', () => {
           manifestPath: manifestFiles.ONE_OF_EACH.name,
           registry: registryAccess,
           tree: manifestFiles.TREE,
-          resolveSourcePaths: ['decomposedTopLevels', 'mixedSingleFiles'],
+          resolveSourcePaths: ['objectTranslations', 'staticresources'],
         });
 
         const result = set.toArray();
@@ -198,7 +197,7 @@ describe('ComponentSet', () => {
 
         const result = set.toArray();
         const expected = new MetadataResolver(registryAccess, manifestFiles.TREE).getComponentsFromPath(
-          'mixedSingleFiles'
+          'staticresources'
         );
 
         expect(result).to.deep.equal(expected);
@@ -213,7 +212,7 @@ describe('ComponentSet', () => {
           forceAddWildcards: true,
         });
         const sourceComponents = new MetadataResolver(registryAccess, manifestFiles.TREE).getComponentsFromPath(
-          'mixedSingleFiles'
+          'staticresources'
         );
 
         const result = set.toArray();
@@ -248,11 +247,11 @@ describe('ComponentSet', () => {
           [
             {
               fullName: 'Test1',
-              type: 'CustomObjectTranslation',
+              type: registry.types.customobjecttranslation.name,
             },
             {
               fullName: 'Test2',
-              type: 'StaticResource',
+              type: registry.types.staticresource.name,
             },
           ],
           registryAccess
@@ -284,15 +283,11 @@ describe('ComponentSet', () => {
           fullName: undefined,
           types: [
             {
-              name: 'DecomposedTopLevel',
+              name: registry.types.customobjecttranslation.name,
               members: ['a'],
             },
             {
-              name: 'G',
-              members: ['a.child1', 'a.child2'],
-            },
-            {
-              name: 'MixedContentSingleFile',
+              name: registry.types.staticresource.name,
               members: ['b', 'c'],
             },
           ],
@@ -313,15 +308,11 @@ describe('ComponentSet', () => {
           fullName: undefined,
           types: [
             {
-              name: 'DecomposedTopLevel',
+              name: registry.types.customobjecttranslation.name,
               members: ['a'],
             },
             {
-              name: 'G',
-              members: ['a.child1', 'a.child2'],
-            },
-            {
-              name: 'EmailServicesFunction',
+              name: registry.types.staticresource.name,
               members: ['b', 'c'],
             },
           ],
@@ -342,15 +333,11 @@ describe('ComponentSet', () => {
           fullName: 'testFullName',
           types: [
             {
-              name: 'DecomposedTopLevel',
+              name: registry.types.customobjecttranslation.name,
               members: ['a'],
             },
             {
-              name: 'G',
-              members: ['a.child1', 'a.child2'],
-            },
-            {
-              name: 'MixedContentSingleFile',
+              name: registry.types.staticresource.name,
               members: ['b', 'c'],
             },
           ],
@@ -371,15 +358,11 @@ describe('ComponentSet', () => {
           fullName: undefined,
           types: [
             {
-              name: 'DecomposedTopLevel',
+              name: registry.types.customobjecttranslation.name,
               members: ['a'],
             },
             {
-              name: 'G',
-              members: ['a.child1', 'a.child2'],
-            },
-            {
-              name: 'MixedContentSingleFile',
+              name: registry.types.staticresource.name,
               members: ['b', 'c'],
             },
           ],
@@ -395,7 +378,7 @@ describe('ComponentSet', () => {
       expect(set.has(member)).to.be.true;
       expect(set.getObject().Package.types).to.deep.equal([
         {
-          name: 'Document',
+          name: registry.types.document.name,
           members: ['Test_Folder'],
         },
       ]);
@@ -410,24 +393,14 @@ describe('ComponentSet', () => {
     });
 
     it('should exclude components that are not addressable as defined in the registry', () => {
-      const type: MetadataType = {
-        id: 'customfieldtranslation',
-        name: 'CustomFieldTranslation',
-        directoryName: 'fields',
-        suffix: 'fieldTranslation',
-        isAddressable: false,
-      };
+      const type = registry.types.customobjecttranslation.children.types.customfieldtranslation;
       const set = new ComponentSet();
       set.add(new SourceComponent({ name: type.name, type }));
       expect(set.getObject().Package.types).to.deep.equal([]);
     });
 
     it('should write wildcards and names of types with supportsWildcardAndName=true, regardless of order', () => {
-      const type: MetadataType = {
-        id: 'customobject',
-        name: 'CustomObject',
-        supportsWildcardAndName: true,
-      };
+      const type = registry.types.customobject;
       const set = new ComponentSet();
       set.add(new SourceComponent({ name: 'myType', type }));
       set.add(new SourceComponent({ name: '*', type }));
@@ -439,11 +412,7 @@ describe('ComponentSet', () => {
     });
 
     it('should overwrite a singular name with wildcard when supportsWildcardAndName=false', () => {
-      const type: MetadataType = {
-        id: 'apexclass',
-        name: 'ApexClass',
-        supportsWildcardAndName: false,
-      };
+      const type = registry.types.apexclass;
       const set = new ComponentSet();
       set.add(new SourceComponent({ name: 'myType', type }));
       set.add(new SourceComponent({ name: '*', type }));
@@ -453,37 +422,8 @@ describe('ComponentSet', () => {
     });
 
     it('should exclude child components that are not addressable as defined in the registry', () => {
-      const childType: MetadataType = {
-        id: 'customfieldtranslation',
-        name: 'CustomFieldTranslation',
-        directoryName: 'fields',
-        suffix: 'fieldTranslation',
-        isAddressable: false,
-      };
-      const type: MetadataType = {
-        id: 'customobjecttranslation',
-        name: 'CustomObjectTranslation',
-        suffix: 'objectTranslation',
-        directoryName: 'objectTranslations',
-        inFolder: false,
-        strictDirectoryName: true,
-        children: {
-          types: {
-            customfieldtranslation: childType,
-          },
-          suffixes: {
-            fieldTranslation: 'customfieldtranslation',
-          },
-          directories: {
-            fields: 'customfieldtranslation',
-          },
-        },
-        strategies: {
-          adapter: 'decomposed',
-          transformer: 'decomposed',
-          decomposition: 'topLevel',
-        },
-      };
+      const childType = registry.types.customobjecttranslation.children.types.customfieldtranslation;
+      const type = registry.types.customobjecttranslation;
       const set = new ComponentSet();
       const testComp = new SourceComponent({ name: type.name, type });
       const childComp = new SourceComponent({ name: childType.name, type: childType });
@@ -533,7 +473,7 @@ describe('ComponentSet', () => {
         registry: registryAccess,
         tree: manifestFiles.TREE,
       });
-      expect(set.getPackageXml(4)).to.equal(manifestFiles.BASIC.data.toString());
+      expect(set.getPackageXml(4).toString()).to.equal(manifestFiles.BASIC.data.toString());
     });
 
     it('should return destructive changes manifest string when initialized from source', () => {
@@ -550,13 +490,13 @@ describe('ComponentSet', () => {
   describe('getSourceComponents', () => {
     it('should return source-backed components in the set', () => {
       const set = ComponentSet.fromSource({
-        fsPaths: ['mixedSingleFiles'],
+        fsPaths: ['staticresources'],
         registry: registryAccess,
         tree: manifestFiles.TREE,
       });
       set.add({ fullName: 'Test', type: 'CustomObjectTranslation' });
       const expected = new MetadataResolver(registryAccess, manifestFiles.TREE).getComponentsFromPath(
-        'mixedSingleFiles'
+        'staticresources'
       );
 
       expect(set.getSourceComponents().toArray()).to.deep.equal(expected);
@@ -569,7 +509,7 @@ describe('ComponentSet', () => {
         tree: manifestFiles.TREE,
       });
       const expected = new MetadataResolver(registryAccess, manifestFiles.TREE).getComponentsFromPath(
-        join('mixedSingleFiles', 'b.foo')
+        join('staticresources', 'b.resource-meta.xml')
       );
 
       expect(set.size).to.equal(3);

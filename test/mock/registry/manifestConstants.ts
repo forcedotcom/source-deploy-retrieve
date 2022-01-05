@@ -17,11 +17,6 @@ export const BASIC: VirtualFile = {
         <name>${registry.types.customobjecttranslation.name}</name>
     </types>
     <types>
-        <members>a.child1</members>
-        <members>a.child2</members>
-        <name>${registry.types.customobjecttranslation.children.types.customfieldtranslation.name}</name>
-    </types>
-    <types>
         <members>b</members>
         <members>c</members>
         <name>${registry.types.staticresource.name}</name>
@@ -88,8 +83,8 @@ export const TREE = new VirtualTreeContainer([
   {
     dirPath: '.',
     children: [
-      'decomposedTopLevels',
-      'mixedSingleFiles',
+      'objectTranslations',
+      'staticresources',
       BASIC,
       ONE_OF_EACH,
       ONE_WILDCARD,
@@ -98,15 +93,15 @@ export const TREE = new VirtualTreeContainer([
     ],
   },
   {
-    dirPath: 'decomposedTopLevels',
+    dirPath: 'objectTranslations',
     children: ['a'],
   },
   {
-    dirPath: join('decomposedTopLevels', 'a'),
-    children: ['a.dtl-meta.xml', 'child1.g-meta.xml', 'child2.g-meta.xml'],
+    dirPath: join('objectTranslations', 'a'),
+    children: ['a.objectTranslation-meta.xml', 'child1.fieldTranslation-meta.xml', 'child2.fieldTranslation-meta.xml'],
   },
   {
-    dirPath: 'mixedSingleFiles',
-    children: ['b.foo', 'b.mixedSingleFile-meta.xml', 'c.bar', 'c.mixedSingleFile-meta.xml'],
+    dirPath: 'staticresources',
+    children: ['b.json', 'b.resource-meta.xml', 'c.csv', 'c.resource-meta.xml'],
   },
 ]);

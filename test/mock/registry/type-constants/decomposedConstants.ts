@@ -7,17 +7,18 @@
 import { join } from 'path';
 import { baseName } from '../../../../src/utils';
 import { registry, SourceComponent, VirtualDirectory } from '../../../../src';
+import { XML_NS_URL } from '../../../../src/common';
 
 // Constants for a decomposed type
 const type = registry.types.customobject;
 
-export const DECOMPOSEDS_PATH = join('path', 'to', 'decomposeds');
-export const DECOMPOSED_PATH = join(DECOMPOSEDS_PATH, 'a');
-export const DECOMPOSED_XML_NAME = 'a.index-meta.xml';
+export const DECOMPOSEDS_PATH = join('path', 'to', 'objects');
+export const DECOMPOSED_PATH = join(DECOMPOSEDS_PATH, 'customObject__c');
+export const DECOMPOSED_XML_NAME = 'customObject__c.object-meta.xml';
 export const DECOMPOSED_XML_PATH = join(DECOMPOSED_PATH, DECOMPOSED_XML_NAME);
-export const DECOMPOSED_CHILD_XML_NAME_1 = 'z.index-meta.xml';
+export const DECOMPOSED_CHILD_XML_NAME_1 = 'Fields__c.field-meta.xml';
 export const DECOMPOSED_CHILD_XML_PATH_1 = join(DECOMPOSED_PATH, DECOMPOSED_CHILD_XML_NAME_1);
-export const DECOMPOSED_CHILD_DIR = 'xs';
+export const DECOMPOSED_CHILD_DIR = 'validationRules';
 export const DECOMPOSED_CHILD_DIR_PATH = join(DECOMPOSED_PATH, DECOMPOSED_CHILD_DIR);
 export const DECOMPOSED_CHILD_XML_NAME_2 = 'w.validationRule-meta.xml';
 export const DECOMPOSED_CHILD_XML_PATH_2 = join(DECOMPOSED_CHILD_DIR_PATH, DECOMPOSED_CHILD_XML_NAME_2);
@@ -26,15 +27,33 @@ export const DECOMPOSED_VIRTUAL_FS: VirtualDirectory[] = [
     dirPath: DECOMPOSED_PATH,
     children: [
       {
+        name: DECOMPOSED_XML_NAME,
+        data: Buffer.from(`<CustomObject xmlns="${XML_NS_URL}"><fullName>customObject__c</fullName></CustomObject>`),
+      },
+      {
         name: DECOMPOSED_CHILD_XML_NAME_1,
-        data: Buffer.from('<Y xmlns="${XML_NS_URL}"><test>child1</test></Y>'),
+        data: Buffer.from(`<CustomField xmlns="${XML_NS_URL}"><fullName>child1</fullName></CustomField>`),
       },
       DECOMPOSED_CHILD_DIR,
     ],
   },
   {
     dirPath: DECOMPOSED_CHILD_DIR_PATH,
-    children: [{ name: DECOMPOSED_CHILD_XML_NAME_2, data: Buffer.from('<X><test>child2</test></X>') }],
+    children: [
+      {
+        name: DECOMPOSED_CHILD_XML_NAME_2,
+        data: Buffer.from('<ValidationRule><fullName>child2</fullName></ValidationRule>'),
+      },
+    ],
+  },
+  {
+    dirPath: 'fields',
+    children: [
+      {
+        name: DECOMPOSED_CHILD_XML_NAME_1,
+        data: Buffer.from('<CustomField><fullName>child3</fullName></CustomField>'),
+      },
+    ],
   },
 ];
 export const DECOMPOSED_COMPONENT = SourceComponent.createVirtualComponent(
@@ -49,7 +68,7 @@ export const DECOMPOSED_COMPONENT = SourceComponent.createVirtualComponent(
 export const DECOMPOSED_CHILD_COMPONENT_1 = SourceComponent.createVirtualComponent(
   {
     name: baseName(DECOMPOSED_CHILD_XML_NAME_1),
-    type: type.children.types.index,
+    type: type.children.types.customfield,
     xml: DECOMPOSED_CHILD_XML_PATH_1,
     parent: DECOMPOSED_COMPONENT,
   },

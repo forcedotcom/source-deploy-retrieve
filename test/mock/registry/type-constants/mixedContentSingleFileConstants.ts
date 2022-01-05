@@ -15,7 +15,7 @@ export const TYPE_DIRECTORY = join('path', 'to', type.directoryName);
 export const COMPONENT_NAMES = ['a'];
 export const XML_NAMES = COMPONENT_NAMES.map((name) => `${name}.${type.suffix}${META_XML_SUFFIX}`);
 export const XML_PATHS = XML_NAMES.map((n) => join(TYPE_DIRECTORY, n));
-export const CONTENT_NAMES = COMPONENT_NAMES.map((name) => `${name}.x`);
+export const CONTENT_NAMES = COMPONENT_NAMES.map((name) => `${name}.json`);
 export const CONTENT_PATHS = CONTENT_NAMES.map((n) => join(TYPE_DIRECTORY, n));
 export const COMPONENT = SourceComponent.createVirtualComponent(
   {

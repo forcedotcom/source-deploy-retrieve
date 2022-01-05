@@ -11,7 +11,9 @@ import { decomposed, matchingContentFile, mixedContentDirectory, xmlInFolder } f
 import { DECOMPOSED_COMPONENT } from '../mock/registry/type-constants/decomposedConstants';
 import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
 import {
+  CHILD_1_NAME,
   CHILD_1_XML,
+  CHILD_2_NAME,
   COMPONENT_1,
   COMPONENT_1_XML,
   COMPONENT_1_XML_PATH,
@@ -129,7 +131,8 @@ describe('SourceComponent', () => {
         .stub(component.tree, 'readFile')
         .resolves(
           Buffer.from(
-            '<CustomLabels><labels>\n' +
+            '<CustomLabels>' +
+              '   <labels>\n' +
               '        <fullName>mylabel</fullName>\n' +
               '        <language>en_US</language>\n' +
               '        <protected>true</protected>\n' +
@@ -248,8 +251,8 @@ describe('SourceComponent', () => {
     const type = registry.types.customobject;
     const expectedChild = SourceComponent.createVirtualComponent(
       {
-        name: 'z',
-        type: type.children.types.index,
+        name: 'Fields__c',
+        type: type.children.types.customfield,
         xml: decomposed.DECOMPOSED_CHILD_XML_PATH_1,
         parent: decomposed.DECOMPOSED_COMPONENT,
       },
@@ -305,7 +308,7 @@ describe('SourceComponent', () => {
       // This test adds an ApexClass to the equivalent of here:
       // .../main/default/objects/MyObject/classes/MyApexClass.cls-meta.xml
       // The actual ApexClass file path for the test is:
-      // path/to/decomposeds/a/classes/a.mcf-meta.xml
+      // path/to/objects/customObject__c/classes/a.cls
       const { CONTENT_NAMES, XML_NAMES } = matchingContentFile;
       const fsUnexpectedChild = [
         {
@@ -322,7 +325,7 @@ describe('SourceComponent', () => {
         },
       ];
       const tree = new VirtualTreeContainer(fsUnexpectedChild);
-      const adapter = new DecomposedSourceAdapter(type, undefined, undefined, tree);
+      const adapter = new DecomposedSourceAdapter(type, new RegistryAccess(), undefined, tree);
       const fsPath = join(decomposed.DECOMPOSED_PATH, 'classes', XML_NAMES[0]);
 
       assert.throws(
@@ -337,7 +340,7 @@ describe('SourceComponent', () => {
     const type = registry.types.customlabels;
     const expectedChild = SourceComponent.createVirtualComponent(
       {
-        name: undefined,
+        name: CHILD_1_NAME,
         type: type.children.types.customlabel,
         xml: COMPONENT_1_XML_PATH,
         parent: COMPONENT_1,
@@ -346,7 +349,7 @@ describe('SourceComponent', () => {
     );
     const expectedChild2 = SourceComponent.createVirtualComponent(
       {
-        name: undefined,
+        name: CHILD_2_NAME,
         type: type.children.types.customlabel,
         xml: COMPONENT_1_XML_PATH,
         parent: COMPONENT_1,

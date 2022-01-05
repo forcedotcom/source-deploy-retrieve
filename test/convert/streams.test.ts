@@ -400,7 +400,12 @@ describe('Streams', () => {
             children: [basename(COMPONENT.xml), basename(COMPONENT.content)],
           },
         ]);
-        // dupedComponent.type.children = registryAccess.getTypeByName('apexclass').children;
+
+        // @ts-ignore - we need to spoof the type for this test
+        dupedComponent.type = {
+          ...dupedComponent.type,
+          children: registryAccess.getTypeByName('customobject').children,
+        };
 
         const compWriteInfo: WriteInfo = {
           output: dupedComponent.getPackageRelativePath(component.xml, 'metadata'),

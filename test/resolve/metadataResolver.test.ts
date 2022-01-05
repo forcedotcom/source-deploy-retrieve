@@ -314,42 +314,42 @@ describe('MetadataResolver', () => {
       });
 
       it('Should walk all file and directory children', () => {
-        const { TYPE_DIRECTORY: MCF_DIR } = matchingContentFile;
-        const stuffDir = join(MCF_DIR, 'hasStuff');
-        const noStuffDir = join(MCF_DIR, 'noStuff');
-        const kathyXml = join(MCF_DIR, xmlInFolder.XML_NAMES[0]);
-        const mcfXml = matchingContentFile.XML_PATHS[0];
-        const mcfContent = matchingContentFile.CONTENT_PATHS[0];
-        const mcfXml2 = join(stuffDir, matchingContentFile.XML_NAMES[1]);
-        const mcfContent2 = join(stuffDir, matchingContentFile.CONTENT_NAMES[1]);
+        const { TYPE_DIRECTORY: apexDir } = matchingContentFile;
+        const populatedDir = join(apexDir, 'populated');
+        const emptyDir = join(apexDir, 'empty');
+        const documentXml = join(apexDir, xmlInFolder.XML_NAMES[0]);
+        const apexXml = matchingContentFile.XML_PATHS[0];
+        const apexContent = matchingContentFile.CONTENT_PATHS[0];
+        const apexBXml = join(populatedDir, matchingContentFile.XML_NAMES[1]);
+        const apexBContent = join(populatedDir, matchingContentFile.CONTENT_NAMES[1]);
         const tree = new VirtualTreeContainer([
           {
-            dirPath: MCF_DIR,
-            children: [basename(mcfXml), basename(mcfContent), xmlInFolder.XML_NAMES[0], 'hasStuff', 'noStuff'],
+            dirPath: apexDir,
+            children: [basename(apexXml), basename(apexContent), xmlInFolder.XML_NAMES[0], 'populated', 'empty'],
           },
           {
-            dirPath: noStuffDir,
+            dirPath: emptyDir,
             children: [],
           },
           {
-            dirPath: stuffDir,
-            children: [basename(mcfContent2), basename(mcfXml2)],
+            dirPath: populatedDir,
+            children: [basename(apexBContent), basename(apexBXml)],
           },
         ]);
-        const mcfComponent2: SourceComponent = new SourceComponent(
+        const apexComponentB = new SourceComponent(
           {
-            name: 'b',
+            name: 'classB',
             type: registry.types.apexclass,
-            xml: mcfXml2,
-            content: mcfContent2,
+            xml: apexBXml,
+            content: apexBContent,
           },
           tree
         );
-        const kathyComponent2 = new SourceComponent(
+        const reportComponent = new SourceComponent(
           {
-            name: 'a',
-            type: registry.types.document,
-            xml: kathyXml,
+            name: 'report',
+            type: registry.types.report,
+            xml: documentXml,
           },
           tree
         );
@@ -359,8 +359,8 @@ describe('MetadataResolver', () => {
             type: registry.types.report,
             componentMappings: [
               {
-                path: join(MCF_DIR, xmlInFolder.XML_NAMES[0]),
-                component: kathyComponent2,
+                path: join(apexDir, xmlInFolder.XML_NAMES[0]),
+                component: reportComponent,
               },
             ],
           },
@@ -368,20 +368,20 @@ describe('MetadataResolver', () => {
             type: registry.types.apexclass,
             componentMappings: [
               {
-                path: mcfXml,
+                path: apexXml,
                 component: matchingContentFile.COMPONENT,
               },
               {
-                path: mcfXml2,
-                component: mcfComponent2,
+                path: apexBXml,
+                component: apexComponentB,
               },
             ],
           },
         ]);
-        expect(access.getComponentsFromPath(MCF_DIR)).to.deep.equal([
+        expect(access.getComponentsFromPath(apexDir)).to.deep.equal([
           matchingContentFile.COMPONENT,
-          kathyComponent2,
-          mcfComponent2,
+          reportComponent,
+          apexComponentB,
         ]);
       });
 
@@ -495,7 +495,7 @@ describe('MetadataResolver', () => {
         const access = testUtil.createMetadataResolver(DECOMPOSED_VIRTUAL_FS);
         testUtil.stubAdapters([
           {
-            type: registry.types.emailservicesfunction,
+            type: registry.types.customobject,
             componentMappings: [
               { path: DECOMPOSED_XML_PATH, component: DECOMPOSED_COMPONENT },
               { path: DECOMPOSED_CHILD_XML_PATH_1, component: DECOMPOSED_CHILD_COMPONENT_1 },
@@ -627,7 +627,7 @@ describe('MetadataResolver', () => {
         ]);
         const toFilter = {
           fullName: xmlInFolder.COMPONENTS[0].fullName,
-          type: registry.types.document,
+          type: registry.types.report,
         };
         const filter = new ComponentSet([toFilter]);
 

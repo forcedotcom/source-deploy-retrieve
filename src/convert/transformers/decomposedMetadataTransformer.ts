@@ -13,6 +13,7 @@ import { META_XML_SUFFIX, SourcePath, XML_NS_KEY, XML_NS_URL } from '../../commo
 import { ComponentSet } from '../../collections';
 import { DecompositionState } from '../convertContext';
 import { DecompositionStrategy } from '../../registry';
+import { normalizeToArray } from '../../utils';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
@@ -61,7 +62,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       const childTypeId = type.children?.directories[tagKey];
       if (childTypeId) {
         const childType = type.children.types[childTypeId];
-        const tagValues = Array.isArray(tagValue) ? tagValue : [tagValue];
+        const tagValues = normalizeToArray(tagValue);
         for (const value of tagValues as [{ fullName: string; name: string }]) {
           const entryName = value.fullName || value.name;
           const childComponent: MetadataComponent = {

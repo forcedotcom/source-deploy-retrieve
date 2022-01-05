@@ -6,8 +6,8 @@
  */
 import { basename, join } from 'path';
 
-import { registry, SourceComponent, VirtualTreeContainer } from '../../../../src';
-import { META_XML_SUFFIX } from '../../../../src/common';
+import { registry, SourceComponent, VirtualTreeContainer } from '../../../src';
+import { META_XML_SUFFIX } from '../../../src/common';
 
 const type = registry.types.document;
 const folderType = registry.types.documentfolder;

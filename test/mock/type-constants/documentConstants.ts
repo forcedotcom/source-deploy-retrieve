@@ -5,9 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { registry, SourceComponent } from '../../../../src';
-import { META_XML_SUFFIX } from '../../../../src/common';
-import { extName } from '../../../../src/utils';
+import { registry, SourceComponent } from '../../../src';
+import { META_XML_SUFFIX } from '../../../src/common';
+import { extName } from '../../../src/utils';
 
 const type = registry.types.document;
 

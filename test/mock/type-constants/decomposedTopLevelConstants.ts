@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { registry, SourceComponent } from '../../../../src';
-import { baseName } from '../../../../src/utils';
+import { registry, SourceComponent } from '../../../src';
+import { baseName } from '../../../src/utils';
 
 export const DECOMPOSED_TOP_LEVEL_DIR = join('path', 'to', 'decomposedTopLevels');
 export const DECOMPOSED_TOP_LEVEL_COMPONENT_PATH = join(DECOMPOSED_TOP_LEVEL_DIR, 'a');

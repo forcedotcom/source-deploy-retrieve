@@ -6,9 +6,9 @@
  */
 
 import { expect } from 'chai';
-import { bundle } from '../../mock/registry';
+import { bundle } from '../../mock';
 import { BundleSourceAdapter } from '../../../src/resolve/adapters';
-import { CONTENT_PATH } from '../../mock/registry/type-constants/bundleConstants';
+import { CONTENT_PATH } from '../../mock/type-constants/bundleConstants';
 
 describe('BundleSourceAdapter', () => {
   const adapter = new BundleSourceAdapter(bundle.COMPONENT.type, undefined, undefined, bundle.COMPONENT.tree);

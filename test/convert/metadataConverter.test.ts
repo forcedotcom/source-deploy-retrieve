@@ -9,16 +9,13 @@ import { fail } from 'assert';
 import { createSandbox, SinonStub } from 'sinon';
 import * as fs from 'graceful-fs';
 import { assert, expect } from 'chai';
-import { xmlInFolder } from '../mock/registry';
+import { xmlInFolder } from '../mock';
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { ConversionError, LibraryError } from '../../src/errors';
-import { COMPONENTS } from '../mock/registry/type-constants/mixedContentInFolderConstants';
+import { COMPONENTS } from '../mock/type-constants/mixedContentInFolderConstants';
 import { ComponentSet, DestructiveChangesType, MetadataConverter, SourceComponent } from '../../src';
-import {
-  DECOMPOSED_CHILD_COMPONENT_1,
-  DECOMPOSED_CHILD_COMPONENT_2,
-} from '../mock/registry/type-constants/decomposedConstants';
+import { DECOMPOSED_CHILD_COMPONENT_1, DECOMPOSED_CHILD_COMPONENT_2 } from '../mock/type-constants/decomposedConstants';
 
 const env = createSandbox();
 

@@ -14,11 +14,11 @@ import { StaticResourceMetadataTransformer } from '../../../src/convert/transfor
 import { LibraryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { baseName } from '../../../src/utils';
-import { mixedContentSingleFile } from '../../mock/registry';
+import { mixedContentSingleFile } from '../../mock';
 import {
   MIXED_CONTENT_DIRECTORY_COMPONENT,
   MIXED_CONTENT_DIRECTORY_VIRTUAL_FS,
-} from '../../mock/registry/type-constants/mixedContentDirectoryConstants';
+} from '../../mock/type-constants/mixedContentDirectoryConstants';
 import { TestReadable } from '../../mock/convert/readables';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../../src/common';
 

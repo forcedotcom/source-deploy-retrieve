@@ -5,9 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { baseName } from '../../../../src/utils';
-import { registry, SourceComponent, VirtualDirectory } from '../../../../src';
-import { XML_NS_URL } from '../../../../src/common';
+import { baseName } from '../../../src/utils';
+import { registry, SourceComponent, VirtualDirectory } from '../../../src';
+import { XML_NS_URL } from '../../../src/common';
 
 // Constants for a decomposed type
 const type = registry.types.customobject;

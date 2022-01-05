@@ -13,9 +13,9 @@ import { DecomposedMetadataTransformer } from '../../../src/convert/transformers
 import { NonDecomposedMetadataTransformer } from '../../../src/convert/transformers/nonDecomposedMetadataTransformer';
 import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';
 import { StaticResourceMetadataTransformer } from '../../../src/convert/transformers/staticResourceMetadataTransformer';
-import { matchingContentFile, mixedContentSingleFile } from '../../mock/registry';
-import { DECOMPOSED_COMPONENT } from '../../mock/registry/type-constants/decomposedConstants';
-import { COMPONENT_1 } from '../../mock/registry/type-constants/nonDecomposedConstants';
+import { matchingContentFile, mixedContentSingleFile } from '../../mock';
+import { DECOMPOSED_COMPONENT } from '../../mock/type-constants/decomposedConstants';
+import { COMPONENT_1 } from '../../mock/type-constants/nonDecomposedConstants';
 
 const registryAccess = new RegistryAccess();
 

@@ -7,15 +7,12 @@
 import { basename, join } from 'path';
 import { createSandbox } from 'sinon';
 import { expect } from 'chai';
-import { bundle, document, matchingContentFile, nestedTypes, xmlInFolder } from '../../mock/registry';
+import { bundle, document, matchingContentFile, nestedTypes, xmlInFolder } from '../../mock';
 import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';
 import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer, WriteInfo } from '../../../src';
 import { TestReadable } from '../../mock/convert/readables';
 import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX } from '../../../src/common';
-import {
-  FOLDER_COMPONENT,
-  FOLDER_COMPONENT_MD_FORMAT,
-} from '../../mock/registry/type-constants/mixedContentInFolderConstants';
+import { FOLDER_COMPONENT, FOLDER_COMPONENT_MD_FORMAT } from '../../mock/type-constants/mixedContentInFolderConstants';
 import { extName } from '../../../src/utils';
 
 const env = createSandbox();

@@ -6,7 +6,7 @@
  */
 import { join } from 'path';
 
-import { registry, SourceComponent } from '../../../../src';
+import { registry, SourceComponent } from '../../../src';
 
 const parentType = registry.types.territory2model;
 const childType = registry.types.territory2rule;

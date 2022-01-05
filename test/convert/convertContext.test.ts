@@ -22,8 +22,8 @@ import {
 import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { ConvertContext } from '../../src/convert/convertContext';
 import { JsToXml } from '../../src/convert/streams';
-import { decomposed, matchingContentFile, nonDecomposed } from '../mock/registry';
-import { CHILD_1_XML, CHILD_2_XML } from '../mock/registry/type-constants/nonDecomposedConstants';
+import { decomposed, matchingContentFile, nonDecomposed } from '../mock';
+import { CHILD_1_XML, CHILD_2_XML } from '../mock/type-constants/nonDecomposedConstants';
 
 const { expect } = chai;
 

@@ -6,7 +6,7 @@
  */
 
 import { join } from 'path';
-import { registry, VirtualFile, VirtualTreeContainer } from '../../../src';
+import { registry, VirtualFile, VirtualTreeContainer } from '../../src';
 
 export const BASIC: VirtualFile = {
   name: 'basic.xml',

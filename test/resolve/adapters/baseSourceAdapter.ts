@@ -6,7 +6,7 @@
  */
 import { join } from 'path';
 import { assert, expect } from 'chai';
-import { decomposed, matchingContentFile, mixedContentSingleFile, nestedTypes, xmlInFolder } from '../../mock/registry';
+import { decomposed, matchingContentFile, mixedContentSingleFile, nestedTypes, xmlInFolder } from '../../mock';
 import { BaseSourceAdapter, DefaultSourceAdapter } from '../../../src/resolve/adapters';
 import { META_XML_SUFFIX } from '../../../src/common';
 import { UnexpectedForceIgnore } from '../../../src/errors';

@@ -6,9 +6,9 @@
  */
 
 import { join } from 'path';
-import { registry, SourceComponent, VirtualDirectory, VirtualTreeContainer } from '../../../../src';
-import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../../../src/common';
-import { JsToXml } from '../../../../src/convert/streams';
+import { registry, SourceComponent, VirtualDirectory, VirtualTreeContainer } from '../../../src';
+import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../../src/common';
+import { JsToXml } from '../../../src/convert/streams';
 
 // Constants for a matching content file type
 const type = registry.types.customlabels;

@@ -7,7 +7,7 @@
 
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
-import { nonDecomposed } from '../../mock/registry';
+import { nonDecomposed } from '../../mock';
 import { NonDecomposedMetadataTransformer } from '../../../src/convert/transformers/nonDecomposedMetadataTransformer';
 import { ComponentSet, registry, SourceComponent } from '../../../src';
 import { ConvertContext } from '../../../src/convert/convertContext';

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { registry, SourceComponent } from '../../../../src';
+import { registry, SourceComponent } from '../../../src';
 
 const type = registry.types.auradefinitionbundle;
 

@@ -24,7 +24,7 @@ import {
   mixedContentDirectory,
   mixedContentInFolder,
   xmlInFolder,
-} from '../mock/registry';
+} from '../mock';
 import { TypeInferenceError } from '../../src/errors';
 import {
   DECOMPOSED_CHILD_COMPONENT_1,
@@ -35,14 +35,14 @@ import {
   DECOMPOSED_PATH,
   DECOMPOSED_VIRTUAL_FS,
   DECOMPOSED_XML_PATH,
-} from '../mock/registry/type-constants/decomposedConstants';
+} from '../mock/type-constants/decomposedConstants';
 import {
   MIXED_CONTENT_DIRECTORY_COMPONENT,
   MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
   MIXED_CONTENT_DIRECTORY_DIR,
   MIXED_CONTENT_DIRECTORY_VIRTUAL_FS,
   MIXED_CONTENT_DIRECTORY_XML_PATHS,
-} from '../mock/registry/type-constants/mixedContentDirectoryConstants';
+} from '../mock/type-constants/mixedContentDirectoryConstants';
 import { RegistryTestUtil } from './registryTestUtil';
 
 const testUtil = new RegistryTestUtil();

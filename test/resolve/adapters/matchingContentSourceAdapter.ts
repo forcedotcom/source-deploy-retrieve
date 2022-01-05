@@ -7,7 +7,7 @@
 import { join } from 'path';
 import { assert, expect } from 'chai';
 import { MatchingContentSourceAdapter } from '../../../src/resolve/adapters';
-import { matchingContentFile } from '../../mock/registry';
+import { matchingContentFile } from '../../mock';
 import { ExpectedSourceFilesError, UnexpectedForceIgnore } from '../../../src/errors';
 import { RegistryTestUtil } from '../registryTestUtil';
 import { nls } from '../../../src/i18n';

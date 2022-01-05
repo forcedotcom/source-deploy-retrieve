@@ -27,14 +27,14 @@ import {
   MOCK_RECENTLY_VALIDATED_ID_SOAP,
   stubMetadataDeploy,
 } from '../mock/client/transferOperations';
-import { matchingContentFile } from '../mock/registry';
+import { matchingContentFile } from '../mock';
 import { META_XML_SUFFIX } from '../../src/common';
 import {
   DECOMPOSED_CHILD_COMPONENT_1,
   DECOMPOSED_CHILD_COMPONENT_2,
   DECOMPOSED_COMPONENT,
-} from '../mock/registry/type-constants/decomposedConstants';
-import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
+} from '../mock/type-constants/decomposedConstants';
+import { COMPONENT } from '../mock/type-constants/matchingContentFileConstants';
 import { MissingJobIdError } from '../../src/errors';
 
 const env = createSandbox();

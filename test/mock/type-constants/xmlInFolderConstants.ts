@@ -6,8 +6,8 @@
  */
 import { basename, join } from 'path';
 
-import { registry, SourceComponent } from '../../../../src';
-import { META_XML_SUFFIX } from '../../../../src/common';
+import { registry, SourceComponent } from '../../../src';
+import { META_XML_SUFFIX } from '../../../src/common';
 
 const type = registry.types.report;
 const folderType = registry.types.reportfolder;

@@ -12,8 +12,8 @@ import { registry, SourceComponent, VirtualTreeContainer } from '../../../src';
 import {
   MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
   MIXED_CONTENT_DIRECTORY_VIRTUAL_FS_NO_XML,
-} from '../../mock/registry/type-constants/mixedContentDirectoryConstants';
-import { mixedContentDirectory, mixedContentSingleFile } from '../../mock/registry';
+} from '../../mock/type-constants/mixedContentDirectoryConstants';
+import { mixedContentDirectory, mixedContentSingleFile } from '../../mock';
 
 describe('MixedContentSourceAdapter', () => {
   it('Should throw ExpectedSourceFilesError if content does not exist', () => {

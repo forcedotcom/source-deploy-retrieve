@@ -16,7 +16,7 @@ import {
   VirtualFile,
   VirtualTreeContainer,
 } from '../../src';
-import * as mockManifests from '../mock/registry/manifestConstants';
+import * as mockManifests from '../mock/manifestConstants';
 
 const env = createSandbox();
 

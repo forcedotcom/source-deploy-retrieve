@@ -23,9 +23,9 @@ import {
 import { MetadataApiRetrieveError, MissingJobIdError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { MOCK_ASYNC_RESULT, MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
-import { xmlInFolder } from '../mock/registry';
-import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
-import { DECOMPOSED_COMPONENT } from '../mock/registry/type-constants/decomposedConstants';
+import { xmlInFolder } from '../mock';
+import { COMPONENT } from '../mock/type-constants/matchingContentFileConstants';
+import { DECOMPOSED_COMPONENT } from '../mock/type-constants/decomposedConstants';
 
 const env = createSandbox();
 

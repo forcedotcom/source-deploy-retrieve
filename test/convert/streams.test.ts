@@ -17,14 +17,14 @@ import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { ComponentSet, MetadataResolver, RegistryAccess, SourceComponent, WriteInfo, WriterFormat } from '../../src';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
 import { LibraryError } from '../../src/errors';
-import { COMPONENTS } from '../mock/registry/type-constants/xmlInFolderConstants';
+import { COMPONENTS } from '../mock/type-constants/xmlInFolderConstants';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import {
   COMPONENT,
   CONTENT_NAMES,
   TYPE_DIRECTORY,
   XML_NAMES,
-} from '../mock/registry/type-constants/matchingContentFileConstants';
+} from '../mock/type-constants/matchingContentFileConstants';
 import { BaseMetadataTransformer } from '../../src/convert/transformers/baseMetadataTransformer';
 
 const env = createSandbox();

@@ -40,6 +40,8 @@ export const MOCK_RECENTLY_VALIDATED_ID_SOAP = '0987654321';
 
 interface DeployStubOptions {
   components?: ComponentSet;
+  zipPath?: string;
+  mdapiPath?: string;
   componentSuccesses?: Partial<DeployMessage> | Array<Partial<DeployMessage>>;
   componentFailures?: Partial<DeployMessage> | Array<Partial<DeployMessage>>;
   apiOptions?: MetadataApiDeployOptions;

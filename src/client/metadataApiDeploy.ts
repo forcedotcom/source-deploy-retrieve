@@ -6,12 +6,15 @@
  */
 import { basename, dirname, extname, join } from 'path';
 import { isString } from '@salesforce/ts-types';
+import { create as createArchive } from 'archiver';
+import * as fs from 'graceful-fs';
 import { MetadataConverter } from '../convert';
 import { ComponentLike, SourceComponent } from '../resolve';
 import { normalizeToArray } from '../utils';
 import { ComponentSet } from '../collections';
 import { registry } from '../registry';
 import { MissingJobIdError } from '../errors';
+import { stream2buffer } from '../convert/streams';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import {
   AsyncResult,
@@ -23,7 +26,6 @@ import {
   MetadataTransferResult,
 } from './types';
 import { DiagnosticUtil } from './diagnosticUtil';
-
 export class DeployResult implements MetadataTransferResult {
   public readonly response: MetadataApiDeployStatus;
   public readonly components: ComponentSet;
@@ -208,6 +210,14 @@ export class DeployResult implements MetadataTransferResult {
 
 export interface MetadataApiDeployOptions extends MetadataTransferOptions {
   apiOptions?: ApiOptions;
+  /**
+   * Path to a zip file containing mdapi-formatted code and a package.xml
+   */
+  zipPath?: string;
+  /**
+   * Path to a directory containing mdapi-formatted code and a package.xml
+   */
+  mdapiPath?: string;
 }
 
 export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus, DeployResult> {
@@ -302,8 +312,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
   }
 
   protected async pre(): Promise<AsyncResult> {
-    const converter = new MetadataConverter();
-    const { zipBuffer } = await converter.convert(this.components, 'metadata', { type: 'zip' });
+    const zipBuffer = await this.getZipBuffer();
     const connection = await this.getConnection();
     await this.maybeSaveTempDirectory('metadata');
     return connection.deploy(zipBuffer, this.options.apiOptions);
@@ -312,5 +321,33 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
   // eslint-disable-next-line @typescript-eslint/require-await
   protected async post(result: MetadataApiDeployStatus): Promise<DeployResult> {
     return new DeployResult(result, this.components);
+  }
+
+  private async getZipBuffer(): Promise<Buffer> {
+    if (this.options.mdapiPath) {
+      if (!fs.existsSync(this.options.mdapiPath) || !fs.lstatSync(this.options.mdapiPath).isDirectory()) {
+        throw new Error(`Deploy directory ${this.options.mdapiPath} does not exist or is not a directory`);
+      }
+      // make a zip from the given directory
+      const zip = createArchive('zip', { zlib: { level: 9 } });
+      // anywhere not at the root level is fine
+      zip.directory(this.options.mdapiPath, 'zip');
+      await zip.finalize();
+      return stream2buffer(zip);
+    }
+    // read the zip into a buffer
+    if (this.options.zipPath) {
+      if (!fs.existsSync(this.options.zipPath)) {
+        throw new Error(`Zip file ${this.options.zipPath} does not exist`);
+      }
+      // does encoding matter for zip files? I don't know
+      return fs.promises.readFile(this.options.zipPath);
+    }
+    if (this.options.components) {
+      const converter = new MetadataConverter();
+      const { zipBuffer } = await converter.convert(this.components, 'metadata', { type: 'zip' });
+      return zipBuffer;
+    }
+    throw new Error('Options should include components, zipPath, or mdapiPath');
   }
 }

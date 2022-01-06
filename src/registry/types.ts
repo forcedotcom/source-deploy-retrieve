@@ -91,6 +91,10 @@ export interface MetadataType {
    * Whether the component is supported by the Metadata API and therefore should be included within a manifest.
    */
   isAddressable?: boolean;
+  /**
+   * Whether the component requires the parent to be present when deploying/retrieving
+   */
+  unaddressableWithoutParent?: boolean;
 
   /**
    * Whether or not components of the same type can be can be specified with the wildcard character, and by name in a manifest

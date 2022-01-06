@@ -44,6 +44,9 @@ describe('MetadataApiDeploy', () => {
 
   describe('Lifecycle', () => {
     describe('start', () => {
+      it('should not convert zip, but read from fs', async () => {});
+      it('should not mdapiDir, but generate zip buffer from it', async () => {});
+
       it('should convert to metadata format and create zip', async () => {
         const components = new ComponentSet([matchingContentFile.COMPONENT]);
         const { operation, convertStub } = await stubMetadataDeploy(env, {
@@ -764,6 +767,26 @@ describe('MetadataApiDeploy', () => {
   });
 
   describe('Constructor', () => {
+    it('should allow zip file', () => {
+      const mdApiDeploy = new MetadataApiDeploy({
+        usernameOrConnection: 'testing',
+        zipPath: 'foo/myZip.zip',
+      });
+      // @ts-ignore testing private property
+      const mdOpts = mdApiDeploy.options;
+      expect(mdOpts.zipPath).to.equal('foo/myZip.zip');
+    });
+
+    it('should allow mdapi path', () => {
+      const mdApiDeploy = new MetadataApiDeploy({
+        usernameOrConnection: 'testing',
+        mdapiPath: 'foo/myDir',
+      });
+      // @ts-ignore testing private property
+      const mdOpts = mdApiDeploy.options;
+      expect(mdOpts.mdapiPath).to.equal('foo/myDir');
+    });
+
     it('should merge default API options', () => {
       const mdApiDeploy = new MetadataApiDeploy({
         usernameOrConnection: 'testing',

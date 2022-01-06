@@ -7,15 +7,17 @@
 import { fail } from 'assert';
 import { join } from 'path';
 import { expect } from 'chai';
-import { createSandbox, match } from 'sinon';
+import * as unzipper from 'unzipper';
+import { createSandbox, match, SinonStub } from 'sinon';
 import { getString } from '@salesforce/ts-types';
 import * as fs from 'graceful-fs';
 import {
   ComponentSet,
   ComponentStatus,
   FileResponse,
+  MetadataApiRetrieve,
   MetadataApiRetrieveStatus,
-  registry,
+  RequestStatus,
   RetrieveResult,
   SourceComponent,
   VirtualTreeContainer,
@@ -405,6 +407,67 @@ describe('MetadataApiRetrieve', () => {
         expect(e.name).to.equal(expectedError.name);
         expect(e.message).to.equal(expectedError.message);
       }
+    });
+  });
+
+  describe('post', () => {
+    const output = join('mdapi', 'retrieve', 'dir');
+    const format = 'metadata';
+    const zipFile = 'abcd1234';
+    const zipFileContents = Buffer.from(zipFile, 'base64');
+    const usernameOrConnection = 'retrieve@test.org';
+    const fakeResults = { status: RequestStatus.Succeeded, zipFile } as MetadataApiRetrieveStatus;
+    let writeFileStub: SinonStub;
+    let openBufferStub: SinonStub;
+    let extractStub: SinonStub;
+    const mdapiRetrieveExtractStub = env.stub().resolves({});
+
+    beforeEach(() => {
+      writeFileStub = env.stub(fs, 'writeFileSync');
+      extractStub = env.stub().resolves();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      openBufferStub = env.stub(unzipper.Open, 'buffer').resolves({ extract: extractStub } as any);
+    });
+
+    it('should write the retrieved zip when format=metadata', async () => {
+      const mdapiRetrieve = new MetadataApiRetrieve({ usernameOrConnection, output, format });
+      // @ts-ignore overriding private method
+      mdapiRetrieve.extract = mdapiRetrieveExtractStub;
+      await mdapiRetrieve.post(fakeResults);
+
+      expect(writeFileStub.calledOnce).to.be.true;
+      expect(writeFileStub.firstCall.args[0]).to.equal(join(output, 'unpackaged.zip'));
+      expect(writeFileStub.firstCall.args[1]).to.deep.equal(zipFileContents);
+      expect(openBufferStub.called).to.be.false;
+      expect(mdapiRetrieveExtractStub.called).to.be.false;
+    });
+
+    it('should unzip the retrieved zip when format=metadata and unzip=true', async () => {
+      const mdapiRetrieve = new MetadataApiRetrieve({ usernameOrConnection, output, format, unzip: true });
+      // @ts-ignore overriding private method
+      mdapiRetrieve.extract = mdapiRetrieveExtractStub;
+      await mdapiRetrieve.post(fakeResults);
+
+      expect(writeFileStub.calledOnce).to.be.true;
+      expect(writeFileStub.firstCall.args[0]).to.equal(join(output, 'unpackaged.zip'));
+      expect(writeFileStub.firstCall.args[1]).to.deep.equal(zipFileContents);
+      expect(openBufferStub.called).to.be.true;
+      expect(extractStub.called).to.be.true;
+      expect(mdapiRetrieveExtractStub.called).to.be.false;
+    });
+
+    it('should write the retrieved zip with specified name when format=metadata and zipFileName is set', async () => {
+      const zipFileName = 'retrievedFiles.zip';
+      const mdapiRetrieve = new MetadataApiRetrieve({ usernameOrConnection, output, format, zipFileName });
+      // @ts-ignore overriding private method
+      mdapiRetrieve.extract = mdapiRetrieveExtractStub;
+      await mdapiRetrieve.post(fakeResults);
+
+      expect(writeFileStub.calledOnce).to.be.true;
+      expect(writeFileStub.firstCall.args[0]).to.equal(join(output, zipFileName));
+      expect(writeFileStub.firstCall.args[1]).to.deep.equal(zipFileContents);
+      expect(openBufferStub.called).to.be.false;
+      expect(mdapiRetrieveExtractStub.called).to.be.false;
     });
   });
 

@@ -522,4 +522,17 @@ describe('Streams', () => {
       expect(jsToXml.read().toString()).to.be.equal(expectedBody);
     });
   });
+
+  describe('stream2buffer', () => {
+    it('returns the stream content in a buffer', async () => {
+      const stream = new Readable();
+      stream._read = (): void => {
+        stream.push('foo');
+        stream.push(null);
+      };
+      const buffer = await streams.stream2buffer(stream);
+      expect(buffer).to.be.instanceof(Buffer);
+      expect(buffer.toString()).to.equal('foo');
+    });
+  });
 });

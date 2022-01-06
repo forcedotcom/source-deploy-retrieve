@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, isAbsolute, join } from 'path';
-import { pipeline as cbPipeline, Readable, Transform, Writable } from 'stream';
+import { pipeline as cbPipeline, Readable, Transform, Writable, Stream } from 'stream';
 import { promisify } from 'util';
 import { Archiver, create as createArchive } from 'archiver';
 import { createWriteStream, existsSync } from 'graceful-fs';
@@ -24,6 +24,17 @@ import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 
 export const pipeline = promisify(cbPipeline);
 
+export const stream2buffer = async (stream: Stream): Promise<Buffer> => {
+  return new Promise<Buffer>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const buf = Array<any>();
+
+    stream.on('data', (chunk) => buf.push(chunk));
+    stream.on('end', () => resolve(Buffer.concat(buf)));
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    stream.on('error', (err) => reject(`error converting stream - ${err}`));
+  });
+};
 export class ComponentReader extends Readable {
   private iter: Iterator<SourceComponent>;
 

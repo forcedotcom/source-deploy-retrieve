@@ -75,6 +75,30 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
             const source = new JsToXml({
               [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
             });
+
+            /*
+             composedMetadata is a representation of the parent's xml
+             if there is no CustomObjectTranslation in the org, the composedMetadata will be 2 entries
+             the xml declaration, and a fields attribute, which points to the child CustomObjectFieldTranslation
+             because CustomObjectFieldTranslation is the only metadata type with 'requiresParent' = true we can
+             calculate if a CustomObjectTranslation was retrieved from the org (composedMetadata.length > 2), or,
+             if we'll have to write an empty CustomObjectTranslation file (composedMetadata.length <=2).
+             CustomObjectFieldTranslations are only addressable through their parent, and require a
+             CustomObjectTranslation file to be present
+             */
+            if (childType.unaddressableWithoutParent && composedMetadata.length <= 2) {
+              parentXmlObject = {
+                [component.type.name]: '',
+              };
+              this.setDecomposedState(childComponent, {
+                foundMerge: false,
+                writeInfo: {
+                  source: new JsToXml(parentXmlObject),
+                  output: this.getDefaultOutput(component),
+                },
+              });
+            }
+
             // if there's nothing to merge with, push write operation now to default location
             if (!mergeWith) {
               writeInfos.push({

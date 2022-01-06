@@ -117,6 +117,37 @@ describe('SourceComponent', () => {
       });
     });
 
+    it('should handle improperly formatted xml and throw a helpful message (async)', async () => {
+      const component = COMPONENT;
+      env
+        .stub(component.tree, 'readFile')
+        .resolves(Buffer.from('</CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata"></CustomLabels>'));
+      try {
+        await component.parseXml();
+      } catch (e) {
+        expect(e.message).to.include(`error parsing ${component.xml} due to:`);
+        expect(e.message).to.include("message: Closing tag 'CustomLabels' can't have attributes or invalid starting.");
+        expect(e.message).to.include('line: 1');
+        expect(e.message).to.include('code: InvalidTag');
+      }
+    });
+
+    it('should handle improperly formatted xml and throw a helpful message (sync)', async () => {
+      const component = COMPONENT;
+      env
+        .stub(component.tree, 'readFile')
+        .resolves(Buffer.from('</CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata"></CustomLabels>'));
+
+      try {
+        component.parseXmlSync();
+      } catch (e) {
+        expect(e.message).to.include(`error parsing ${component.xml} due to:`);
+        expect(e.message).to.include("message: Closing tag 'CustomLabels' can't have attributes or invalid starting.");
+        expect(e.message).to.include('line: 1');
+        expect(e.message).to.include('code: InvalidTag');
+      }
+    });
+
     it('should parse the child components xml content to js object', async () => {
       const component = new SourceComponent({
         name: 'mylabel',

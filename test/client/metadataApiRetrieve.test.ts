@@ -17,6 +17,7 @@ import {
   FileResponse,
   MetadataApiRetrieve,
   MetadataApiRetrieveStatus,
+  registry,
   RequestStatus,
   RetrieveResult,
   SourceComponent,

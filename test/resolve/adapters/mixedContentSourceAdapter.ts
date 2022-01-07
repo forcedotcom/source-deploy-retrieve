@@ -8,14 +8,15 @@
 import { assert, expect } from 'chai';
 import { MixedContentSourceAdapter } from '../../../src/resolve/adapters';
 import { ExpectedSourceFilesError } from '../../../src/errors';
-import { registry, SourceComponent, VirtualTreeContainer } from '../../../src';
+import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../../src';
 import {
   MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
   MIXED_CONTENT_DIRECTORY_VIRTUAL_FS_NO_XML,
-} from '../../mock/type-constants/mixedContentDirectoryConstants';
+} from '../../mock/type-constants/staticresourceConstant';
 import { mixedContentDirectory, mixedContentSingleFile } from '../../mock';
 
 describe('MixedContentSourceAdapter', () => {
+  const registryAccess = new RegistryAccess();
   it('Should throw ExpectedSourceFilesError if content does not exist', () => {
     const type = registry.types.staticresource;
     const tree = new VirtualTreeContainer([
@@ -24,13 +25,18 @@ describe('MixedContentSourceAdapter', () => {
         children: [mixedContentSingleFile.XML_NAMES[0]],
       },
     ]);
-    const adapter = new MixedContentSourceAdapter(type, undefined, undefined, tree);
+    const adapter = new MixedContentSourceAdapter(type, registryAccess, undefined, tree);
     assert.throws(() => adapter.getComponent(mixedContentSingleFile.COMPONENT.content), ExpectedSourceFilesError);
   });
 
   describe('File Content', () => {
     const component = mixedContentSingleFile.COMPONENT;
-    const adapter = new MixedContentSourceAdapter(registry.types.staticresource, undefined, undefined, component.tree);
+    const adapter = new MixedContentSourceAdapter(
+      registry.types.staticresource,
+      registryAccess,
+      undefined,
+      component.tree
+    );
 
     it('Should return expected SourceComponent when given a root metadata xml path', () => {
       const result = adapter.getComponent(component.xml);
@@ -54,7 +60,7 @@ describe('MixedContentSourceAdapter', () => {
     } = mixedContentDirectory;
     const type = registry.types.staticresource;
     const tree = new VirtualTreeContainer(MIXED_CONTENT_DIRECTORY_VIRTUAL_FS);
-    const adapter = new MixedContentSourceAdapter(type, undefined, undefined, tree);
+    const adapter = new MixedContentSourceAdapter(type, registryAccess, undefined, tree);
     const expectedComponent = new SourceComponent(MIXED_CONTENT_DIRECTORY_COMPONENT, tree);
 
     it('Should return expected SourceComponent when given a root metadata xml path', () => {
@@ -71,7 +77,7 @@ describe('MixedContentSourceAdapter', () => {
 
     it('should return expected SourceComponent when there is no metadata xml', () => {
       const tree = new VirtualTreeContainer(MIXED_CONTENT_DIRECTORY_VIRTUAL_FS_NO_XML);
-      const adapter = new MixedContentSourceAdapter(type, undefined, undefined, tree);
+      const adapter = new MixedContentSourceAdapter(type, registryAccess, undefined, tree);
       const expectedComponent = new SourceComponent(
         {
           name: 'aStaticResource',

@@ -8,8 +8,8 @@ import { join } from 'path';
 import { assert, expect } from 'chai';
 import { createSandbox } from 'sinon';
 import { decomposed, matchingContentFile, mixedContentDirectory, xmlInFolder } from '../mock';
-import { DECOMPOSED_COMPONENT } from '../mock/type-constants/decomposedConstants';
-import { COMPONENT } from '../mock/type-constants/matchingContentFileConstants';
+import { DECOMPOSED_COMPONENT } from '../mock/type-constants/customObjectConstant';
+import { COMPONENT } from '../mock/type-constants/apexClassConstant';
 import {
   CHILD_1_NAME,
   CHILD_1_XML,
@@ -21,7 +21,7 @@ import {
   MATCHING_RULES_TYPE,
   TREE,
   VIRTUAL_DIR,
-} from '../mock/type-constants/nonDecomposedConstants';
+} from '../mock/type-constants/customlabelsConstant';
 import {
   DestructiveChangesType,
   MetadataType,

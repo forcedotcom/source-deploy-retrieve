@@ -13,7 +13,7 @@ import { decomposed, matchingContentFile } from '../../mock';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
 import { baseName } from '../../../src/utils';
 import { JsToXml } from '../../../src/convert/streams';
-import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/type-constants/decomposedTopLevelConstants';
+import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/type-constants/customObjectTranslationConstant';
 import { ComponentSet, ForceIgnore, registry, RegistryAccess, SourceComponent } from '../../../src';
 import { XML_NS_KEY, XML_NS_URL } from '../../../src/common';
 import { ConvertContext } from '../../../src/convert/convertContext';

@@ -12,7 +12,7 @@ import { DefaultMetadataTransformer } from '../../../src/convert/transformers/de
 import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer, WriteInfo } from '../../../src';
 import { TestReadable } from '../../mock/convert/readables';
 import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX } from '../../../src/common';
-import { FOLDER_COMPONENT, FOLDER_COMPONENT_MD_FORMAT } from '../../mock/type-constants/mixedContentInFolderConstants';
+import { FOLDER_COMPONENT, FOLDER_COMPONENT_MD_FORMAT } from '../../mock/type-constants/documentFolderConstant';
 import { extName } from '../../../src/utils';
 
 const env = createSandbox();

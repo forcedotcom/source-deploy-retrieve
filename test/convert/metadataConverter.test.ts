@@ -13,9 +13,12 @@ import { xmlInFolder } from '../mock';
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { ConversionError, LibraryError } from '../../src/errors';
-import { COMPONENTS } from '../mock/type-constants/mixedContentInFolderConstants';
+import { COMPONENTS } from '../mock/type-constants/documentFolderConstant';
 import { ComponentSet, DestructiveChangesType, MetadataConverter, SourceComponent } from '../../src';
-import { DECOMPOSED_CHILD_COMPONENT_1, DECOMPOSED_CHILD_COMPONENT_2 } from '../mock/type-constants/decomposedConstants';
+import {
+  DECOMPOSED_CHILD_COMPONENT_1,
+  DECOMPOSED_CHILD_COMPONENT_2,
+} from '../mock/type-constants/customObjectConstant';
 
 const env = createSandbox();
 

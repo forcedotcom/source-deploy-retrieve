@@ -9,13 +9,14 @@ import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import { nonDecomposed } from '../../mock';
 import { NonDecomposedMetadataTransformer } from '../../../src/convert/transformers/nonDecomposedMetadataTransformer';
-import { ComponentSet, registry, SourceComponent } from '../../../src';
+import { ComponentSet, registry, RegistryAccess, SourceComponent } from '../../../src';
 import { ConvertContext } from '../../../src/convert/convertContext';
 
 const env = createSandbox();
 
 describe('NonDecomposedMetadataTransformer', () => {
   const component = nonDecomposed.COMPONENT_1;
+  const registryAccess = new RegistryAccess();
 
   afterEach(() => env.restore());
 
@@ -24,7 +25,7 @@ describe('NonDecomposedMetadataTransformer', () => {
       const [child1, child2] = component.getChildren();
 
       const context = new ConvertContext();
-      const transformer = new NonDecomposedMetadataTransformer(undefined, context);
+      const transformer = new NonDecomposedMetadataTransformer(registryAccess, context);
 
       expect(await transformer.toMetadataFormat(child1)).to.deep.equal([]);
       expect(await transformer.toMetadataFormat(child2)).to.deep.equal([]);
@@ -40,7 +41,7 @@ describe('NonDecomposedMetadataTransformer', () => {
   describe('toSourceFormat', () => {
     it('should defer write operations and set context state for unclaimed children', async () => {
       const context = new ConvertContext();
-      const transformer = new NonDecomposedMetadataTransformer(undefined, context);
+      const transformer = new NonDecomposedMetadataTransformer(registryAccess, context);
 
       const result = await transformer.toSourceFormat(component);
       expect(result).to.deep.equal([]);
@@ -62,7 +63,7 @@ describe('NonDecomposedMetadataTransformer', () => {
 
     it('should defer write operations and set context state for claimed children', async () => {
       const context = new ConvertContext();
-      const transformer = new NonDecomposedMetadataTransformer(undefined, context);
+      const transformer = new NonDecomposedMetadataTransformer(registryAccess, context);
       const componentToConvert = SourceComponent.createVirtualComponent(
         {
           name: component.type.name,

@@ -26,7 +26,7 @@ import { ComponentSetError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { mockConnection } from '../mock/client';
 import { decomposedtoplevel, matchingContentFile, mixedContentSingleFile } from '../mock';
-import { MATCHING_RULES_COMPONENT } from '../mock/type-constants/nonDecomposedConstants';
+import { MATCHING_RULES_COMPONENT } from '../mock/type-constants/customlabelsConstant';
 import * as manifestFiles from '../mock/manifestConstants';
 
 const env = createSandbox();

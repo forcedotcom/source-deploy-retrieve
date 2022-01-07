@@ -8,14 +8,15 @@ import { join } from 'path';
 import { expect } from 'chai';
 import { DecomposedSourceAdapter, DefaultSourceAdapter } from '../../../src/resolve/adapters';
 import { decomposed, decomposedtoplevel, xmlInFolder } from '../../mock';
-import { registry, SourceComponent, VirtualTreeContainer } from '../../../src';
+import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../../src';
 import { RegistryTestUtil } from '../registryTestUtil';
 import { META_XML_SUFFIX } from '../../../src/common';
 
 describe('DecomposedSourceAdapter', () => {
+  const registryAccess = new RegistryAccess();
   const type = registry.types.customobject;
   const tree = new VirtualTreeContainer(decomposed.DECOMPOSED_VIRTUAL_FS);
-  const adapter = new DecomposedSourceAdapter(type, undefined, undefined, tree);
+  const adapter = new DecomposedSourceAdapter(type, registryAccess, undefined, tree);
   const expectedComponent = new SourceComponent(decomposed.DECOMPOSED_COMPONENT, tree);
   const children = expectedComponent.getChildren();
 
@@ -32,7 +33,7 @@ describe('DecomposedSourceAdapter', () => {
     const decompTree = new VirtualTreeContainer(decomposedtoplevel.DECOMPOSED_VIRTUAL_FS);
     const decompAdapter = new DecomposedSourceAdapter(
       registry.types.customobjecttranslation,
-      undefined,
+      registryAccess,
       undefined,
       decompTree
     );
@@ -58,7 +59,7 @@ describe('DecomposedSourceAdapter', () => {
       },
     ];
     const tree = new VirtualTreeContainer(fsNoParentXml);
-    const adapter = new DecomposedSourceAdapter(type, undefined, undefined, tree);
+    const adapter = new DecomposedSourceAdapter(type, registryAccess, undefined, tree);
     const expectedParent = new SourceComponent(
       { name: decomposed.DECOMPOSED_COMPONENT.name, type, content: decomposed.DECOMPOSED_PATH },
       tree
@@ -71,7 +72,7 @@ describe('DecomposedSourceAdapter', () => {
     const type = registry.types.customobjecttranslation;
     const tree = new VirtualTreeContainer(decomposedtoplevel.DECOMPOSED_VIRTUAL_FS);
     const component = new SourceComponent(decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT, tree);
-    const adapter = new DecomposedSourceAdapter(type, undefined, undefined, tree);
+    const adapter = new DecomposedSourceAdapter(type, registryAccess, undefined, tree);
     expect(adapter.getComponent(decomposedtoplevel.DECOMPOSED_TOP_LEVEL_XML_PATH)).to.deep.equal(component);
   });
 
@@ -93,7 +94,7 @@ describe('DecomposedSourceAdapter', () => {
         seed: path,
         deny: [path],
       });
-      const adapter = new DecomposedSourceAdapter(type, undefined, forceIgnore, tree);
+      const adapter = new DecomposedSourceAdapter(type, registryAccess, forceIgnore, tree);
       const result = adapter.getComponent(path);
       expect(result).to.not.be.undefined;
     } catch (e) {
@@ -105,7 +106,7 @@ describe('DecomposedSourceAdapter', () => {
 
   it('should resolve a folder component in metadata format', () => {
     const component = xmlInFolder.FOLDER_COMPONENT_MD_FORMAT;
-    const adapter = new DefaultSourceAdapter(component.type, undefined);
+    const adapter = new DefaultSourceAdapter(component.type, registryAccess);
 
     expect(adapter.getComponent(component.xml)).to.deep.equal(component);
   });
@@ -114,7 +115,7 @@ describe('DecomposedSourceAdapter', () => {
     // not in the right type directory
     const path = join('path', 'to', 'something', 'My_Test.xif');
     const type = registry.types.report;
-    const adapter = new DefaultSourceAdapter(type, undefined);
+    const adapter = new DefaultSourceAdapter(type, registryAccess);
     expect(adapter.getComponent(path)).to.be.undefined;
   });
 });

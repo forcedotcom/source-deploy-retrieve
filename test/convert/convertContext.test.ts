@@ -23,7 +23,7 @@ import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } fr
 import { ConvertContext } from '../../src/convert/convertContext';
 import { JsToXml } from '../../src/convert/streams';
 import { decomposed, matchingContentFile, nonDecomposed } from '../mock';
-import { CHILD_1_XML, CHILD_2_XML } from '../mock/type-constants/nonDecomposedConstants';
+import { CHILD_1_XML, CHILD_2_XML } from '../mock/type-constants/customlabelsConstant';
 
 const { expect } = chai;
 

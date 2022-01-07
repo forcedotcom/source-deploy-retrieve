@@ -27,8 +27,8 @@ import { MetadataApiRetrieveError, MissingJobIdError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { MOCK_ASYNC_RESULT, MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
 import { xmlInFolder } from '../mock';
-import { COMPONENT } from '../mock/type-constants/matchingContentFileConstants';
-import { DECOMPOSED_COMPONENT } from '../mock/type-constants/decomposedConstants';
+import { COMPONENT } from '../mock/type-constants/apexClassConstant';
+import { DECOMPOSED_COMPONENT } from '../mock/type-constants/customObjectConstant';
 
 const env = createSandbox();
 

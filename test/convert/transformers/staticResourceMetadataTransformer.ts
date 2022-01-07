@@ -18,7 +18,7 @@ import { mixedContentSingleFile } from '../../mock';
 import {
   MIXED_CONTENT_DIRECTORY_COMPONENT,
   MIXED_CONTENT_DIRECTORY_VIRTUAL_FS,
-} from '../../mock/type-constants/mixedContentDirectoryConstants';
+} from '../../mock/type-constants/staticresourceConstant';
 import { TestReadable } from '../../mock/convert/readables';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../../src/common';
 

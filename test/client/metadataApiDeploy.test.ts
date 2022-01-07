@@ -33,8 +33,8 @@ import {
   DECOMPOSED_CHILD_COMPONENT_1,
   DECOMPOSED_CHILD_COMPONENT_2,
   DECOMPOSED_COMPONENT,
-} from '../mock/type-constants/decomposedConstants';
-import { COMPONENT } from '../mock/type-constants/matchingContentFileConstants';
+} from '../mock/type-constants/customObjectConstant';
+import { COMPONENT } from '../mock/type-constants/apexClassConstant';
 import { MissingJobIdError } from '../../src/errors';
 
 const env = createSandbox();

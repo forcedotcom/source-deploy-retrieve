@@ -14,8 +14,8 @@ import { NonDecomposedMetadataTransformer } from '../../../src/convert/transform
 import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';
 import { StaticResourceMetadataTransformer } from '../../../src/convert/transformers/staticResourceMetadataTransformer';
 import { matchingContentFile, mixedContentSingleFile } from '../../mock';
-import { DECOMPOSED_COMPONENT } from '../../mock/type-constants/decomposedConstants';
-import { COMPONENT_1 } from '../../mock/type-constants/nonDecomposedConstants';
+import { DECOMPOSED_COMPONENT } from '../../mock/type-constants/customObjectConstant';
+import { COMPONENT_1 } from '../../mock/type-constants/customlabelsConstant';
 import { RegistryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { registry } from '../../../scripts/update-registry/update2';
@@ -32,15 +32,17 @@ describe('MetadataTransformerFactory', () => {
   it('should return DecomposedMetadataTransformer', () => {
     const component = DECOMPOSED_COMPONENT;
     const context = new ConvertContext();
-    const factory = new MetadataTransformerFactory(undefined, context);
-    expect(factory.getTransformer(component)).to.deep.equal(new DecomposedMetadataTransformer(undefined, context));
+    const factory = new MetadataTransformerFactory(registryAccess, context);
+    expect(factory.getTransformer(component)).to.deep.equal(new DecomposedMetadataTransformer(registryAccess, context));
   });
 
   it('should return NonDecomposedMetadataTransformer', () => {
     const component = COMPONENT_1;
     const context = new ConvertContext();
-    const factory = new MetadataTransformerFactory(undefined, context);
-    expect(factory.getTransformer(component)).to.deep.equal(new NonDecomposedMetadataTransformer(undefined, context));
+    const factory = new MetadataTransformerFactory(registryAccess, context);
+    expect(factory.getTransformer(component)).to.deep.equal(
+      new NonDecomposedMetadataTransformer(registryAccess, context)
+    );
   });
 
   it('should return StaticResourceMetadataTransformer', () => {
@@ -52,8 +54,8 @@ describe('MetadataTransformerFactory', () => {
   it('should return transformer that maps to parent type of a component', () => {
     const [child] = DECOMPOSED_COMPONENT.getChildren();
     const context = new ConvertContext();
-    const factory = new MetadataTransformerFactory(undefined, context);
-    expect(factory.getTransformer(child)).to.deep.equal(new DecomposedMetadataTransformer(undefined, context));
+    const factory = new MetadataTransformerFactory(registryAccess, context);
+    expect(factory.getTransformer(child)).to.deep.equal(new DecomposedMetadataTransformer(registryAccess, context));
   });
 
   it('should throw an error for a missing transformer mapping', () => {

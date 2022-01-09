@@ -31,7 +31,7 @@
     "fast-xml-parser": "^3.17.4",
     "graceful-fs": "^4.2.8",
     "ignore": "^5.1.8",
-    "mime": "2.4.6",
+    "mime": "2.6.0",
     "unzipper": "0.10.11",
     "xmldom-sfdx-encoding": "^0.1.29"
   },

@@ -2,6 +2,60 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.9.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.9.0...v5.9.1) (2022-01-05)
+
+## [5.9.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.5...v5.9.0) (2022-01-04)
+
+### Features
+
+- add retrieve in mdapi format ([#519](https://github.com/forcedotcom/source-deploy-retrieve/issues/519)) ([4db9b18](https://github.com/forcedotcom/source-deploy-retrieve/commit/4db9b1813712617970c714f30d7d2f1ef2578a2f))
+
+### [5.8.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.4...v5.8.5) (2022-01-04)
+
+### Bug Fixes
+
+- can retrive COFT with COT automatically ([#517](https://github.com/forcedotcom/source-deploy-retrieve/issues/517)) ([7b9a464](https://github.com/forcedotcom/source-deploy-retrieve/commit/7b9a46483323921e69de88b086f602eaefa6f869))
+
+### [5.8.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.3...v5.8.4) (2022-01-03)
+
+### Bug Fixes
+
+- add variable polling times based on comp. set ([#520](https://github.com/forcedotcom/source-deploy-retrieve/issues/520)) ([e97744f](https://github.com/forcedotcom/source-deploy-retrieve/commit/e97744f243d943c85ca8df22e004c278fbad0715))
+
+### [5.8.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.2...v5.8.3) (2022-01-03)
+
+### Bug Fixes
+
+- wrap error from fast-xml-parser when invalid xml parsed ([#518](https://github.com/forcedotcom/source-deploy-retrieve/issues/518)) ([407af67](https://github.com/forcedotcom/source-deploy-retrieve/commit/407af6754994b9b8b0484ee7a8dcb380ada2c554))
+
+### [5.8.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.1...v5.8.2) (2021-12-16)
+
+### [5.8.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.0...v5.8.1) (2021-12-15)
+
+### Bug Fixes
+
+- network error tolerance ([#513](https://github.com/forcedotcom/source-deploy-retrieve/issues/513)) ([7042a79](https://github.com/forcedotcom/source-deploy-retrieve/commit/7042a79659ca1348118281a418eb559a3daf2305))
+
+## [5.8.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.7.1...v5.8.0) (2021-12-01)
+
+### Features
+
+- update version of core ([#511](https://github.com/forcedotcom/source-deploy-retrieve/issues/511)) ([172df7a](https://github.com/forcedotcom/source-deploy-retrieve/commit/172df7ab980aed2b25d92f9d950147eeae76b846))
+
+### [5.7.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.7.0...v5.7.1) (2021-11-30)
+
+## [5.7.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.4...v5.7.0) (2021-11-24)
+
+### Features
+
+- add metadata types StnryAssetEnvSrcCnfg, BldgEnrgyIntensityCnfg, VehicleAssetEmssnSrcCnfg ([#508](https://github.com/forcedotcom/source-deploy-retrieve/issues/508)) ([e3dc3ef](https://github.com/forcedotcom/source-deploy-retrieve/commit/e3dc3ef51d8fba19ec9dfda43ca41ddaf26c9bc0))
+
+### [5.6.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.3...v5.6.4) (2021-11-22)
+
+### Bug Fixes
+
+- run unspecified child types through forceignore to avoid retrieving ([#505](https://github.com/forcedotcom/source-deploy-retrieve/issues/505)) ([4e327b6](https://github.com/forcedotcom/source-deploy-retrieve/commit/4e327b60de27168dc0b3e8a63ba70dbce96df03a))
+
 ### [5.6.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.2...v5.6.3) (2021-11-18)
 
 ### [5.6.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.6.1...v5.6.2) (2021-11-18)

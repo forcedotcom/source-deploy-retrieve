@@ -5,13 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, join } from 'path';
-import { parse } from 'fast-xml-parser';
+import { parse, validate } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { baseName, normalizeToArray, parseMetadataXml, trimUntil } from '../utils';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common';
 import { SfdxFileFormat } from '../convert';
 import { MetadataType } from '../registry';
-import { TypeInferenceError } from '../errors';
+import { LibraryError, TypeInferenceError } from '../errors';
 import { DestructiveChangesType } from '../collections';
 import { filePathsFromMetadataComponent } from '../utils/filePathGenerator';
 import { MetadataComponent, VirtualDirectory } from './types';
@@ -116,8 +116,8 @@ export class SourceComponent implements MetadataComponent {
   public async parseXml<T = JsonMap>(xmlFilePath?: string): Promise<T> {
     const xml = xmlFilePath ?? this.xml;
     if (xml) {
-      const contents = await this.tree.readFile(xml);
-      return this.parse<T>(contents.toString());
+      const contents = (await this.tree.readFile(xml)).toString();
+      return this.parseAndValidateXML(contents, xml);
     }
     return {} as T;
   }
@@ -125,10 +125,23 @@ export class SourceComponent implements MetadataComponent {
   public parseXmlSync<T = JsonMap>(xmlFilePath?: string): T {
     const xml = xmlFilePath ?? this.xml;
     if (xml) {
-      const contents = this.tree.readFileSync(xml);
-      return this.parse<T>(contents.toString());
+      const contents = this.tree.readFileSync(xml).toString();
+      return this.parseAndValidateXML(contents, xml);
     }
     return {} as T;
+  }
+
+  /**
+   * will return this instance of the forceignore, or will create one if undefined
+   *
+   * @return ForceIgnore
+   */
+  public getForceIgnore(): ForceIgnore {
+    if (this.forceIgnore) {
+      return this.forceIgnore;
+    } else {
+      return ForceIgnore.findAndCreate(this.content);
+    }
   }
 
   /**
@@ -216,6 +229,24 @@ export class SourceComponent implements MetadataComponent {
       return this.parseFromParentXml(parsed);
     } else {
       return parsed;
+    }
+  }
+
+  private parseAndValidateXML<T = JsonMap>(contents: string, path: string): T {
+    try {
+      return this.parse<T>(contents);
+    } catch (e) {
+      // only attempt validating once there's an error to avoid the performance hit of validating every file
+      const validation = validate(contents);
+      if (validation !== true) {
+        throw new LibraryError('invalid_xml_parsing', [
+          path,
+          validation.err.msg,
+          validation.err.line.toString(),
+          validation.err.code,
+        ]);
+      }
+      throw e;
     }
   }
 

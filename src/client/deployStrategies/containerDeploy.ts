@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { readFileSync } from 'graceful-fs';
+import { sleep } from '@salesforce/kit';
+
 import { deployTypes } from '../toolingApi';
 import { DeployError } from '../../errors';
 import {
@@ -106,7 +108,7 @@ export class ContainerDeploy extends BaseDeploy {
     let containerStatus: ContainerAsyncRequest;
     do {
       if (count > 0) {
-        await this.sleep(100);
+        await sleep(100);
       }
       containerStatus = (await this.connection.tooling.retrieve(
         ContainerDeploy.CONTAINER_ASYNC_REQUEST,
@@ -115,10 +117,6 @@ export class ContainerDeploy extends BaseDeploy {
       count++;
     } while (containerStatus.State === ToolingDeployStatus.Queued && count <= 30);
     return containerStatus;
-  }
-
-  private sleep(ms: number): Promise<number> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   private buildSourceDeployResult(containerRequest: ContainerAsyncRequest): SourceDeployResult {

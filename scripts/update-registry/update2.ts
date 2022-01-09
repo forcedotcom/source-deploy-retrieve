@@ -1,5 +1,4 @@
 // determine missing types from metadataCoverageReport
-import got from 'got';
 import * as shelljs from 'shelljs';
 import { MetadataRegistry } from '../../src';
 import { exit } from 'process';
@@ -8,6 +7,7 @@ import * as deepmerge from 'deepmerge';
 import { CoverageObject, CoverageObjectType } from '../../src/registry/types';
 import { AnyJson } from '@salesforce/ts-types';
 import { getMissingTypes } from '../../test/utils/getMissingTypes';
+import { getCurrentApiVersion, getCoverage } from './shared';
 
 export const registry = fs.readJsonSync('./src/registry/metadataRegistry.json') as unknown as MetadataRegistry;
 export let metadataCoverage: CoverageObject;
@@ -24,13 +24,11 @@ interface DescribeResult {
 
 // get the coverage report
 (async () => {
-  metadataCoverage = JSON.parse(
-    (await got(`https://mdcoverage.secure.force.com/services/apexrest/report`)).body
-  ) as CoverageObject;
+  const currentApiVersion = await getCurrentApiVersion();
+  const metadataCoverage = await getCoverage(currentApiVersion);
   console.log(
     `CoverageReport shows ${Object.keys(metadataCoverage.types).length} items in the metadata coverage report`
   );
-
   const missingTypes = getMissingTypes(metadataCoverage, registry);
   if (missingTypes.length === 0) {
     console.log(`Your registry is complete!  Congratulations!`);
@@ -103,12 +101,12 @@ const getMissingTypesAsDescribeResult = (missingTypes: [string, CoverageObjectTy
 
 const updateProjectScratchDef = (missingTypes: [string, CoverageObjectType][]) => {
   const scratchDefSummary = deepmerge.all(
-    [{}].concat(missingTypes.map(([key, missingType]) => JSON.parse(missingType.scratchDefinitions.developer)))
+    [{}].concat(missingTypes.map(([key, missingType]) => missingType.orgShapes.developer))
   ) as {
     features: string[];
   };
 
   scratchDefSummary.features = [...new Set(scratchDefSummary.features)];
-  fs.writeJsonSync('./registryBuilder/config/project-scratch-def.json', scratchDefSummary);
+  fs.writeJsonSync('./registryBuilder/config/project-scratch-def.json', { edition: 'developer', ...scratchDefSummary });
   console.log(`Creating org with features ${scratchDefSummary.features.join(',')}`);
 };

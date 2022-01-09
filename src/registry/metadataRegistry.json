@@ -850,6 +850,7 @@
             "directoryName": "fields",
             "suffix": "fieldTranslation",
             "isAddressable": false,
+            "unaddressableWithoutParent": true,
             "uniqueIdElement": "name"
           }
         },
@@ -2490,7 +2491,10 @@
       "name": "DataMapping",
       "suffix": "dataMapping",
       "directoryName": "dataMapping",
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     },
     "federationdatamappingusage": {
       "id": "federationdatamappingusage",
@@ -2722,6 +2726,38 @@
       "name": "OmniIntegrationProcedure",
       "suffix": "oip",
       "directoryName": "omniIntegrationProcedures",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "bldgenrgyintensitycnfg": {
+      "id": "bldgenrgyintensitycnfg",
+      "name": "BldgEnrgyIntensityCnfg",
+      "suffix": "buildingEnergyIntensityConfig",
+      "directoryName": "buildingEnergyIntensityConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "stnryassetenvsrccnfg": {
+      "id": "stnryassetenvsrccnfg",
+      "name": "StnryAssetEnvSrcCnfg",
+      "suffix": "stationaryAssetEnvSourceConfig",
+      "directoryName": "stationaryAssetEnvSourceConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "vehicleassetemssnsrccnfg": {
+      "id": "vehicleassetemssnsrccnfg",
+      "name": "VehicleAssetEmssnSrcCnfg",
+      "suffix": "vehicleAssetEmssnSourceConfig",
+      "directoryName": "vehicleAssetEmssnSourceConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omniinteractionconfig": {
+      "id": "omniinteractionconfig",
+      "name": "OmniInteractionConfig",
+      "suffix": "omniInteractionConfig",
+      "directoryName": "OmniInteractionConfig",
       "inFolder": false,
       "strictDirectoryName": false
     }
@@ -3022,7 +3058,11 @@
     "rpt": "omnidatatransform",
     "mktDataTranField": "mktdatatranfield",
     "os": "omniscript",
-    "oip": "omniintegrationprocedure"
+    "oip": "omniintegrationprocedure",
+    "buildingEnergyIntensityConfig": "bldgenrgyintensitycnfg",
+    "stationaryAssetEnvSourceConfig": "stnryassetenvsrccnfg",
+    "vehicleAssetEmssnSourceConfig": "vehicleassetemssnsrccnfg",
+    "omniInteractionConfig": "omniinteractionconfig"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

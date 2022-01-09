@@ -14,7 +14,7 @@ export const getMissingTypes = (
 ): Array<[string, CoverageObjectType]> => {
   const metadataApiTypesFromCoverage = Object.entries(metadataCoverage.types).filter(
     ([key, value]) =>
-      value.channels.metadataApi && // if it's not in the mdapi, we don't worry about the registry
+      value.channels.metadataApi.exposed && // if it's not in the mdapi, we don't worry about the registry
       !metadataTypes.includes(key) && // types we should ignore, see the imported file for explanations
       !key.endsWith('Settings') && // individual settings shouldn't be in the registry
       !hasUnsupportedFeatures(value) // we don't support these types

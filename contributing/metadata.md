@@ -1,5 +1,7 @@
 # Contributing Metadata Types to the Registry
 
+You can view the existing metadata coverage by release using [METADATA_SUPPORT.md](../METADATA_SUPPORT.md)
+
 Got questions?
 
 - If you work for Salesforce, [#platform-cli](https://salesforce-internal.slack.com/archives/C01LKDT1P6J).

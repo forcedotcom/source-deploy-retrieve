@@ -13,6 +13,16 @@ jobs:
       - run: yarn build
       - run: yarn test:registry
 
+  registry-check-preview:
+    description: Checks registry against next version of metadataCoverageReport, reporting results to slack
+    docker:
+      - image: node:lts
+    steps:
+      - checkout
+      - run: yarn install
+      - run: yarn build
+      - run: yarn metadata:preview
+
   external-nut:
     description: Runs NUTs from other (external) repos by cloning them.  Substitutes a dependency for the current pull request.  For example, you're testing a PR to a library and want to test a plugin in another repo that uses the library.
 
@@ -102,8 +112,22 @@ jobs:
             echo "Environment Variables:"
             env
             NODE_OPTIONS=--max-old-space-size=8192 yarn test:nuts
+
 workflows:
   version: 2
+  registry-check-preview:
+    triggers:
+      - schedule:
+          # weekly on Monday morning
+          cron: 30 3 * * 1
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - registry-check-preview:
+          # required for slack webhook
+          context: salesforce-cli
   registry-check:
     triggers:
       - schedule:
@@ -163,3 +187,14 @@ workflows:
             branches:
               only: main
           context: CLI_CTC
+  dependabot-automerge:
+    triggers:
+      - schedule:
+          cron: '0 2,5,8,11 * * *'
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - release-management/dependabot-automerge:
+          merge-method: squash

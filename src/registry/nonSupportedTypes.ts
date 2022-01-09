@@ -14,8 +14,17 @@ import { CoverageObjectType } from './types';
  *
  * */
 export const features = [
-  'SUSTAINABILITYAPP', // ERROR running force:org:create:  SustainabilityApp is not a valid Features value.
-  'SERVICECATALOG', // ERROR running force:org:create:  ServiceCatalog is not a valid Features value.
+  // ERROR running force:org:create: * is not a valid Features value.
+  // 'SUSTAINABILITYAPP',
+  'SERVICECATALOG',
+  'EXPLAINABILITY',
+  'DYNAMICATTRIBUTES',
+  'CONTRACTMGMT',
+  'CUSTOMIZABLENAMEDCREDENTIALS',
+  'INDUSTRIESMFGPROGRAMPILOT',
+  'HEALTHCLOUDHPIBETA',
+  'MANAGETIMELINE',
+  'HEALTHCLOUDBETA',
 ];
 
 export const settings = [
@@ -26,8 +35,6 @@ export const metadataTypes = [
 
   // things that don't show up in describe so far
   'PicklistValue', // only existed in v37, so it's hard to describe!
-  'FieldRestrictionRule', // not in describe for devorg.  ScratchDef might need feature 'EMPLOYEEEXPERIENCE' but it doesn't say that
-  'AppointmentSchedulingPolicy', // not in describe?
   'AppointmentAssignmentPolicy', // not in describe?
   'WorkflowFlowAction', // not in describe
   'AdvAcctForecastDimSource', // not in describe
@@ -40,21 +47,15 @@ export const metadataTypes = [
 ];
 
 export const hasUnsupportedFeatures = (type: CoverageObjectType): boolean => {
-  if (!type.scratchDefinitions?.developer) {
+  if (!type.orgShapes?.developer) {
     return true;
   }
-  const scratchDef = JSON.parse(type.scratchDefinitions.developer) as {
-    features?: string[];
-    settings?: {
-      [key: string]: unknown;
-    };
-  };
+
   if (
-    scratchDef.features &&
-    scratchDef.features.length > 0 &&
-    features.some((feature) => scratchDef.features.includes(feature))
+    type.orgShapes.developer.features?.length &&
+    features.some((feature) => type.orgShapes?.developer.features.includes(feature))
   ) {
     return true;
   }
-  return scratchDef.settings && settings.some((setting) => scratchDef.settings[setting]);
+  return type.orgShapes?.developer.settings && settings.some((setting) => type.orgShapes?.developer.settings[setting]);
 };

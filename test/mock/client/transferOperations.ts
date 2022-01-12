@@ -9,28 +9,27 @@ import { join, sep } from 'path';
 import { testSetup } from '@salesforce/core/lib/testSetup';
 import { PollingClient } from '@salesforce/core';
 import { match, SinonSandbox, SinonSpy, SinonStub } from 'sinon';
-import { DeployResultLocator, AsyncResult } from 'jsforce';
+import { AsyncResult, DeployResultLocator } from 'jsforce';
 import {
   ComponentSet,
   ConvertOutputConfig,
+  MetadataApiDeploy,
+  MetadataApiRetrieve,
   MetadataConverter,
   RetrieveMessage,
   SourceComponent,
-  MetadataApiDeploy,
-  MetadataApiRetrieve,
 } from '../../../src';
 import {
   DeployMessage,
-  MetadataApiDeployStatus,
   FileProperties,
   MetadataApiDeployOptions,
-  RequestStatus,
+  MetadataApiDeployStatus,
   MetadataApiRetrieveStatus,
   PackageOption,
+  RequestStatus,
 } from '../../../src/client/types';
 import { ComponentProperties } from '../../../src/resolve/sourceComponent';
 import { normalizeToArray } from '../../../src/utils';
-import { mockRegistry } from '../registry';
 import { createMockZip, mockConnection } from '.';
 
 export const MOCK_ASYNC_RESULT = { id: '1234', state: RequestStatus.Pending, done: false };
@@ -312,7 +311,7 @@ export async function stubMetadataRetrieve(
       usernameOrConnection: connection,
       components: retrievedComponents,
       output: MOCK_DEFAULT_OUTPUT,
-      registry: mockRegistry,
+      registry: undefined,
       merge: options.merge,
     }),
     response: retrieveStatus as MetadataApiRetrieveStatus,

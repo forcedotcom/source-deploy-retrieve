@@ -5,17 +5,17 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { expect, assert } from 'chai';
-import { MatchingContentSourceAdapter } from '../../../src/resolve/adapters/matchingContentSourceAdapter';
-import { mockRegistry, matchingContentFile, mockRegistryData } from '../../mock/registry';
+import { assert, expect } from 'chai';
+import { MatchingContentSourceAdapter } from '../../../src/resolve/adapters';
+import { matchingContentFile } from '../../mock';
 import { ExpectedSourceFilesError, UnexpectedForceIgnore } from '../../../src/errors';
 import { RegistryTestUtil } from '../registryTestUtil';
 import { nls } from '../../../src/i18n';
-import { VirtualTreeContainer } from '../../../src/resolve/treeContainers';
-import { SourceComponent } from '../../../src/resolve';
+import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../../src';
 
 describe('MatchingContentSourceAdapter', () => {
-  const type = mockRegistryData.types.matchingcontentfile;
+  const registryAccess = new RegistryAccess();
+  const type = registry.types.apexclass;
   const { CONTENT_PATHS, XML_PATHS, COMPONENT, TYPE_DIRECTORY, CONTENT_NAMES, XML_NAMES } = matchingContentFile;
   const tree = new VirtualTreeContainer([
     {
@@ -24,7 +24,7 @@ describe('MatchingContentSourceAdapter', () => {
     },
   ]);
   const expectedComponent = new SourceComponent(COMPONENT, tree);
-  const adapter = new MatchingContentSourceAdapter(type, mockRegistry, undefined, tree);
+  const adapter = new MatchingContentSourceAdapter(type, registryAccess, undefined, tree);
 
   it('Should return expected SourceComponent when given a root metadata xml path', () => {
     expect(adapter.getComponent(XML_PATHS[0])).to.deep.equal(expectedComponent);
@@ -51,7 +51,7 @@ describe('MatchingContentSourceAdapter', () => {
       seed: XML_PATHS[0],
       deny: [path],
     });
-    const adapter = new MatchingContentSourceAdapter(type, mockRegistry, forceIgnore, tree);
+    const adapter = new MatchingContentSourceAdapter(type, registryAccess, forceIgnore, tree);
     assert.throws(
       () => adapter.getComponent(path),
       UnexpectedForceIgnore,

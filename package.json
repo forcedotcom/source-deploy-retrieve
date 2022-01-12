@@ -36,7 +36,7 @@
     "xmldom-sfdx-encoding": "^0.1.29"
   },
   "devDependencies": {
-    "@salesforce/dev-config": "^2.1.2",
+    "@salesforce/dev-config": "^2.1.3",
     "@salesforce/dev-scripts": "^1.0.2",
     "@salesforce/prettier-config": "^0.0.2",
     "@salesforce/ts-sinon": "^1.1.2",

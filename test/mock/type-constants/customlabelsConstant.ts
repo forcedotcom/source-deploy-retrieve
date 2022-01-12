@@ -6,13 +6,12 @@
  */
 
 import { join } from 'path';
-import { mockRegistryData } from '../mockRegistry';
-import { registry, SourceComponent, VirtualDirectory, VirtualTreeContainer } from '../../../../src';
-import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../../../src/common';
-import { JsToXml } from '../../../../src/convert/streams';
+import { registry, SourceComponent, VirtualDirectory, VirtualTreeContainer } from '../../../src';
+import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../../src/common';
+import { JsToXml } from '../../../src/convert/streams';
 
 // Constants for a matching content file type
-const type = mockRegistryData.types.nondecomposed;
+const type = registry.types.customlabels;
 
 export const WORKING_DIR = join(process.cwd(), 'my-project');
 
@@ -31,10 +30,14 @@ export const CHILD_2_NAME = 'Child_2';
 export const CHILD_3_NAME = 'Child_3';
 export const UNCLAIMED_CHILD_NAME = 'Unclaimed_Child';
 
-export const CHILD_1_XML = { id: CHILD_1_NAME, description: 'the first child' };
-export const CHILD_2_XML = { id: CHILD_2_NAME, description: 'the second child' };
-export const CHILD_3_XML = { id: CHILD_3_NAME, description: 'the third child' };
-export const UNCLAIMED_CHILD_XML = { id: UNCLAIMED_CHILD_NAME, description: 'the unclaimed child' };
+export const CHILD_1_XML = { fullName: CHILD_1_NAME, shortDescription: 'the first child', value: 'the first child' };
+export const CHILD_2_XML = { fullName: CHILD_2_NAME, shortDescription: 'the second child', value: 'the second child' };
+export const CHILD_3_XML = { fullName: CHILD_3_NAME, shortDescription: 'the third child', value: 'the third child' };
+export const UNCLAIMED_CHILD_XML = {
+  fullName: UNCLAIMED_CHILD_NAME,
+  shortDescription: 'the unclaimed child',
+  value: 'the unclaimed child',
+};
 
 export const COMPONENT_1_XML = {
   [type.name]: {
@@ -50,20 +53,6 @@ export const COMPONENT_2_XML = {
   },
 };
 
-export const CLAIMED_XML_CONTENT = {
-  [type.name]: {
-    [XML_NS_KEY]: XML_NS_URL,
-    [type.directoryName]: [CHILD_1_XML, CHILD_2_XML, CHILD_3_XML],
-  },
-};
-
-export const UNCLAIMED_XML_CONTENT = {
-  [type.name]: {
-    [XML_NS_KEY]: XML_NS_URL,
-    [type.directoryName]: UNCLAIMED_CHILD_XML,
-  },
-};
-
 export const FULL_XML_CONTENT = {
   [type.name]: {
     [XML_NS_KEY]: XML_NS_URL,
@@ -73,8 +62,8 @@ export const FULL_XML_CONTENT = {
 
 export const MATCHING_RULES_TYPE = registry.types.matchingrules;
 // NOTE: directory name uses the string literal rather than getting from MATCHING_RULES_TYPE
-// so it explictly shows that this matches the xml field
-export const MATCHING_RULES_TYPE_DIRECTORY_NAME = 'matchingRules';
+// so it explicitly shows that this matches the xml field
+export const MATCHING_RULES_TYPE_DIRECTORY_NAME = MATCHING_RULES_TYPE.directoryName;
 export const MATCHING_RULES_XML_NAME = 'Account.matchingRule-meta.xml';
 export const MATCHING_RULES_COMPONENT_DIR = join(DEFAULT_DIR, MATCHING_RULES_TYPE_DIRECTORY_NAME);
 export const MATCHING_RULES_COMPONENT_XML_PATH = join(MATCHING_RULES_COMPONENT_DIR, MATCHING_RULES_XML_NAME);

@@ -10,22 +10,31 @@ import { assert, expect } from 'chai';
 import { AnyJson, getString } from '@salesforce/ts-types';
 import { PollingClient, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
-import { ComponentSet, registry, SourceComponent, DeployResult, MetadataApiDeploy } from '../../src';
-import { ComponentStatus, DeployMessage, FileResponse, MetadataApiDeployStatus } from '../../src/client/types';
+import {
+  ComponentSet,
+  ComponentStatus,
+  DeployMessage,
+  DeployResult,
+  FileResponse,
+  MetadataApiDeploy,
+  MetadataApiDeployStatus,
+  registry,
+  SourceComponent,
+} from '../../src';
 import {
   MOCK_ASYNC_RESULT,
   MOCK_RECENTLY_VALIDATED_ID_REST,
   MOCK_RECENTLY_VALIDATED_ID_SOAP,
   stubMetadataDeploy,
 } from '../mock/client/transferOperations';
-import { mockRegistry, matchingContentFile } from '../mock/registry';
+import { matchingContentFile } from '../mock';
 import { META_XML_SUFFIX } from '../../src/common';
 import {
   DECOMPOSED_CHILD_COMPONENT_1,
   DECOMPOSED_CHILD_COMPONENT_2,
   DECOMPOSED_COMPONENT,
-} from '../mock/registry/type-constants/decomposedConstants';
-import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
+} from '../mock/type-constants/customObjectConstant';
+import { COMPONENT } from '../mock/type-constants/apexClassConstant';
 import { MissingJobIdError } from '../../src/errors';
 
 const env = createSandbox();
@@ -95,7 +104,7 @@ describe('MetadataApiDeploy', () => {
 
       it('should return an AsyncResult', async () => {
         const component = matchingContentFile.COMPONENT;
-        const deployedComponents = new ComponentSet([component], mockRegistry);
+        const deployedComponents = new ComponentSet([component]);
         const { operation } = await stubMetadataDeploy(env, {
           components: deployedComponents,
         });
@@ -107,7 +116,7 @@ describe('MetadataApiDeploy', () => {
 
       it('should set the deploy ID', async () => {
         const component = matchingContentFile.COMPONENT;
-        const deployedComponents = new ComponentSet([component], mockRegistry);
+        const deployedComponents = new ComponentSet([component]);
         const { operation, response } = await stubMetadataDeploy(env, {
           components: deployedComponents,
         });
@@ -121,7 +130,7 @@ describe('MetadataApiDeploy', () => {
     describe('pollStatus', () => {
       it('should construct a result object with deployed components', async () => {
         const component = matchingContentFile.COMPONENT;
-        const deployedComponents = new ComponentSet([component], mockRegistry);
+        const deployedComponents = new ComponentSet([component]);
         const { operation, response } = await stubMetadataDeploy(env, {
           components: deployedComponents,
         });
@@ -145,7 +154,7 @@ describe('MetadataApiDeploy', () => {
 
       it('should override timeout and frequency by number', async () => {
         const component = matchingContentFile.COMPONENT;
-        const deployedComponents = new ComponentSet([component], mockRegistry);
+        const deployedComponents = new ComponentSet([component]);
         const { operation, pollingClientSpy } = await stubMetadataDeploy(env, {
           components: deployedComponents,
         });
@@ -161,8 +170,7 @@ describe('MetadataApiDeploy', () => {
       });
 
       it('should override polling client options', async () => {
-        const component = matchingContentFile.COMPONENT;
-        const deployedComponents = new ComponentSet([component], mockRegistry);
+        const deployedComponents = new ComponentSet([matchingContentFile.COMPONENT]);
         const { operation, pollingClientSpy } = await stubMetadataDeploy(env, {
           components: deployedComponents,
         });

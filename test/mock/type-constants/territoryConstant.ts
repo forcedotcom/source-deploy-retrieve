@@ -5,11 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { mockRegistryData } from '../mockRegistry';
-import { SourceComponent } from '../../../../src';
 
-const parentType = mockRegistryData.types.nestedparent;
-const childType = mockRegistryData.types.nestedchild;
+import { registry, SourceComponent } from '../../../src';
+
+const parentType = registry.types.territory2model;
+const childType = registry.types.territory2rule;
 
 export const PARENT_COMPONENT_NAME = 'parentName';
 export const PARENT_TYPE_DIRECTORY = join('path', 'to', parentType.directoryName);

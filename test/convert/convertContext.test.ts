@@ -22,7 +22,8 @@ import {
 import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { ConvertContext } from '../../src/convert/convertContext';
 import { JsToXml } from '../../src/convert/streams';
-import { decomposed, matchingContentFile, mockRegistry, nonDecomposed } from '../mock/registry';
+import { decomposed, matchingContentFile, nonDecomposed } from '../mock';
+import { CHILD_1_XML, CHILD_2_XML } from '../mock/type-constants/customlabelsConstant';
 
 const { expect } = chai;
 
@@ -60,7 +61,7 @@ describe('Convert Transaction Constructs', () => {
         context.recomposition.setState((state) => {
           state['Test__c'] = {
             component,
-            children: new ComponentSet(component.getChildren(), mockRegistry),
+            children: new ComponentSet(component.getChildren()),
           };
         });
 
@@ -74,14 +75,14 @@ describe('Convert Transaction Constructs', () => {
             writeInfos: [
               {
                 source: new JsToXml({
-                  Decomposed: {
+                  CustomObject: {
                     [XML_NS_KEY]: XML_NS_URL,
-                    fullName: 'a',
-                    ys: [{ test: 'child1' }],
-                    xs: [{ test: 'child2' }],
+                    fullName: 'customObject__c',
+                    validationRules: [{ fullName: 'child2' }],
+                    fields: [{ fullName: 'child1' }],
                   },
                 }),
-                output: join('decomposeds', 'a.decomposed'),
+                output: join('objects', 'customObject__c.object'),
               },
             ],
           },
@@ -102,7 +103,7 @@ describe('Convert Transaction Constructs', () => {
         context.recomposition.setState((state) => {
           state['Test__c'] = {
             component,
-            children: new ComponentSet(component.getChildren(), mockRegistry),
+            children: new ComponentSet(component.getChildren()),
           };
         });
 
@@ -114,13 +115,13 @@ describe('Convert Transaction Constructs', () => {
             writeInfos: [
               {
                 source: new JsToXml({
-                  Decomposed: {
+                  CustomObject: {
                     [XML_NS_KEY]: XML_NS_URL,
-                    ys: [{ test: 'child1' }],
-                    xs: [{ test: 'child2' }],
+                    validationRules: [{ fullName: 'child2' }],
+                    fields: [{ fullName: 'child1' }],
                   },
                 }),
-                output: join('decomposeds', 'a.decomposed'),
+                output: join('objects', 'customObject__c.object'),
               },
             ],
           },
@@ -133,7 +134,7 @@ describe('Convert Transaction Constructs', () => {
         context.recomposition.setState((state) => {
           state[component.type.name] = {
             component,
-            children: new ComponentSet(component.getChildren(), mockRegistry),
+            children: new ComponentSet(component.getChildren()),
           };
         });
 
@@ -146,12 +147,12 @@ describe('Convert Transaction Constructs', () => {
             writeInfos: [
               {
                 source: new JsToXml({
-                  nondecomposedparent: {
+                  CustomLabels: {
                     [XML_NS_KEY]: XML_NS_URL,
-                    nondecomposeddir: [nonDecomposed.CHILD_1_XML, nonDecomposed.CHILD_2_XML],
+                    labels: [CHILD_1_XML, CHILD_2_XML],
                   },
                 }),
-                output: join('nondecomposed', 'nondecomposedparent.nondecomposed'),
+                output: join('labels', 'CustomLabels.labels'),
               },
             ],
           },
@@ -370,7 +371,6 @@ describe('Convert Transaction Constructs', () => {
 
         env
           .stub(ComponentSet, 'fromSource')
-          // @ts-ignore
           .withArgs({ fsPaths: [match(nonDecomposed.NON_DEFAULT_DIR)], include: match.any })
           .returns(new ComponentSet([unprocessedComponent]));
 

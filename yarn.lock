@@ -577,7 +577,7 @@
     sfdx-faye "^1.0.9"
     ts-retry-promise "^0.6.0"
 
-"@salesforce/dev-config@^2.1.2", "@salesforce/dev-config@^2.1.3":
+"@salesforce/dev-config@^2.1.3":
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/@salesforce/dev-config/-/dev-config-2.1.3.tgz#77fa29be9e1df2c5919c36d55b2fef9c9be27c46"
   integrity sha512-J6NRMfwzgbKgo6/mO0ZhPxDKVNhoEd044vCTAxWLVJA5Ld7mB+/Sx6oosW89FvIkl0098LyfIMmwRDu/zcZd9g==
@@ -817,6 +817,13 @@
   version "1.9.35"
   resolved "https://registry.yarnpkg.com/@types/jsforce/-/jsforce-1.9.35.tgz#abda87c796910d286420b07a97382c782b576ca8"
   integrity sha512-GEb1iMAK8raElbBbozR7aVEuMl47jrPYLNkeh+3h2vLJIG21uQ/kOk4kPgMiMFwCmgfX4/tPDugnjb7qrMav4A==
+  dependencies:
+    "@types/node" "*"
+
+"@types/jsforce@^1.9.38":
+  version "1.9.38"
+  resolved "https://registry.yarnpkg.com/@types/jsforce/-/jsforce-1.9.38.tgz#7c4b491d29e8becb9dcdd58c60472becce223139"
+  integrity sha512-+Iwf5jlDiK8z+zI2LAi4mzln8++5lETv2YofFEATu+dNkrP8LACB76lz2tPsXDx/a+5uW8HQhbwL/SyqIic0cg==
   dependencies:
     "@types/node" "*"
 

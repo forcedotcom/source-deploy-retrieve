@@ -246,18 +246,19 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
     }
 
     const defaultKeyItemMap = this.mergeMap.get(defaultKey);
-    for (const { children } of Object.values(this.state.incomingNonMatches)) {
-      for (const [childName, child] of Object.entries(children)) {
+
+    Object.values(this.state.incomingNonMatches)
+      .flatMap((c) => Object.entries(c.children))
+      .map(([childName, child]) => {
         defaultKeyItemMap.set(childName, child);
-      }
-    }
+      });
 
     // merge any found matches into their proper file
     Object.values(this.state.incomingMatches).map(({ parent, children }) => {
       const keyItemMap = this.mergeMap.get(parent.xml);
-      for (const [childName, child] of Object.entries(children)) {
+      Object.entries(children).map(([childName, child]) => {
         keyItemMap.set(childName, child);
-      }
+      });
     });
   }
 
@@ -359,15 +360,3 @@ export class ConvertContext {
     }
   }
 }
-
-/* nondecomposed methodology
-1. Find/read all the possible customLabels files
-2. For each labels file,
-  a. map< customLablesFilename, map< labelName, labelObject>> (we're using a map keyed by label name to avoid duplicates)
-  b. parse the file, and store the children in the map
-3. For the unmatched labels from the retrieve
-  a. add them to the appropriate default file (create in default location if it doesn't exist already)
-4. recompose and return the writers
-
-
-*/

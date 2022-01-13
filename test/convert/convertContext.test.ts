@@ -272,7 +272,7 @@ describe('Convert Transaction Constructs', () => {
       });
     });
 
-    describe('NonDecomposition', () => {
+    describe.skip('NonDecomposition', () => {
       it('should return WriterFormats for claimed children', async () => {
         const component = nonDecomposed.COMPONENT_1;
         const context = new ConvertContext();

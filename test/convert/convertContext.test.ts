@@ -282,7 +282,7 @@ describe('Convert Transaction Constructs', () => {
           },
         ];
         context.nonDecomposition.setState((state) => {
-          state.claimed = {
+          state.incomingMatches = {
             [component.xml]: {
               parent: component,
               children: {
@@ -309,7 +309,7 @@ describe('Convert Transaction Constructs', () => {
         );
         const writeInfos = [{ output, source: new JsToXml(nonDecomposed.COMPONENT_1_XML) }];
         context.nonDecomposition.setState((state) => {
-          state.unclaimed = {
+          state.incomingNonMatches = {
             [component.xml]: {
               parent: component,
               children: {
@@ -338,7 +338,7 @@ describe('Convert Transaction Constructs', () => {
 
         const writeInfos = [{ output: component.xml, source: new JsToXml(nonDecomposed.FULL_XML_CONTENT) }];
         context.nonDecomposition.setState((state) => {
-          state.claimed = {
+          state.incomingMatches = {
             [component.xml]: {
               parent: component,
               children: {
@@ -348,7 +348,7 @@ describe('Convert Transaction Constructs', () => {
               },
             },
           };
-          state.unclaimed = {
+          state.incomingNonMatches = {
             [component.xml]: {
               parent: component,
               children: {
@@ -376,7 +376,7 @@ describe('Convert Transaction Constructs', () => {
 
         const writeInfos = [{ output: component.xml, source: new JsToXml(nonDecomposed.COMPONENT_1_XML) }];
         context.nonDecomposition.setState((state) => {
-          state.claimed = {
+          state.incomingMatches = {
             [component.xml]: {
               parent: component,
               children: {
@@ -385,7 +385,7 @@ describe('Convert Transaction Constructs', () => {
               },
             },
           };
-          state.unclaimed = {
+          state.incomingNonMatches = {
             [component.xml]: {
               parent: component,
               children: {

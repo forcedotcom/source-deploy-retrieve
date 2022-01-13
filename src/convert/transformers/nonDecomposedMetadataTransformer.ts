@@ -19,43 +19,34 @@ import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
  */
 export class NonDecomposedMetadataTransformer extends DecomposedMetadataTransformer {
   public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
+    // this will only include the retrieved labels, not the entire file
     const parentXml = await component.parseXml();
     const xmlPathToChildren = `${component.type.name}.${component.type.directoryName}`;
     const incomingChildrenXml = normalizeToArray(get(parentXml, xmlPathToChildren)) as JsonMap[];
+    const childrenFromExisting = mergeWith?.getChildren().map((c) => c.name) ?? [];
 
-    const children = mergeWith?.getChildren() ?? [];
-    const claimedChildren = children.map((c) => c.name);
     const [childTypeId] = Object.keys(component.type.children.types);
     const { uniqueIdElement } = component.type.children.types[childTypeId];
 
-    for (const child of incomingChildrenXml) {
+    incomingChildrenXml.map((child) => {
       const childName = getString(child, uniqueIdElement);
-      if (claimedChildren.includes(childName)) {
-        this.setStateForClaimed(mergeWith, childName, child);
-      } else {
-        this.setStateForUnclaimed(component, childName, child);
-      }
-    }
+      this.setState(
+        childrenFromExisting.includes(childName),
+        childrenFromExisting.includes(childName) ? mergeWith : component,
+        childName,
+        child
+      );
+    });
 
     return [];
   }
 
-  private setStateForClaimed(parent: SourceComponent, childName: string, child: JsonMap): void {
+  private setState(matches: boolean, parent: SourceComponent, childName: string, child: JsonMap): void {
     this.context.nonDecomposition.setState((state) => {
-      const existingChildren = state.claimed[parent.xml]?.children ?? {};
+      const matchingProperty = matches ? 'incomingMatches' : 'incomingNonMatches';
+      const existingChildren = state[matchingProperty][parent.xml]?.children ?? {};
       const updatedChildren = Object.assign({}, existingChildren, { [childName]: child });
-      state.claimed[parent.xml] = Object.assign(state.claimed[parent.xml] ?? {}, {
-        parent,
-        children: updatedChildren,
-      });
-    });
-  }
-
-  private setStateForUnclaimed(parent: SourceComponent, childName: string, child: JsonMap): void {
-    this.context.nonDecomposition.setState((state) => {
-      const existingChildren = state.unclaimed[parent.xml]?.children ?? {};
-      const updatedChildren = Object.assign({}, existingChildren, { [childName]: child });
-      state.unclaimed[parent.xml] = Object.assign(state.unclaimed[parent.xml] ?? {}, {
+      state[matchingProperty][parent.xml] = Object.assign(state[matchingProperty][parent.xml] ?? {}, {
         parent,
         children: updatedChildren,
       });

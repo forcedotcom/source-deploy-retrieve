@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, join, resolve, sep } from 'path';
+import { dirname, join, resolve } from 'path';
 import { getString, JsonArray, JsonMap } from '@salesforce/ts-types';
 import { isEmpty } from '@salesforce/kit';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../common';
@@ -161,8 +161,8 @@ class DecompositionFinalizer extends ConvertTransactionFinalizer<DecompositionSt
 }
 
 export interface NonDecompositionState {
-  claimed: ChildIndex;
-  unclaimed: ChildIndex;
+  incomingMatches: ChildIndex;
+  incomingNonMatches: ChildIndex;
 }
 
 type ChildIndex = {
@@ -182,30 +182,26 @@ type ChildIndex = {
  */
 class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecompositionState> {
   protected transactionState: NonDecompositionState = {
-    unclaimed: {},
-    claimed: {},
+    incomingNonMatches: {},
+    incomingMatches: {},
   };
+
+  protected mergeMap = new Map<string, Map<string, JsonMap>>();
+  protected parentComponentMap = new Map<string, SourceComponent>();
 
   public async finalize(defaultDirectory: string): Promise<WriterFormat[]> {
     await this.finalizeState(defaultDirectory);
 
     const writerData: WriterFormat[] = [];
-    for (const { parent, children } of Object.values(this.state.claimed)) {
-      const recomposedXmlObj = await this.recompose(Object.values(children), parent);
 
+    this.mergeMap.forEach((children, parentKey) => {
+      const parentSourceComponent = this.parentComponentMap.get(parentKey);
+      const recomposedXmlObj = this.recompose(children, parentSourceComponent);
       writerData.push({
-        component: parent,
-        writeInfos: [{ source: new JsToXml(recomposedXmlObj), output: parent.xml }],
+        component: parentSourceComponent,
+        writeInfos: [{ source: new JsToXml(recomposedXmlObj), output: parentKey }],
       });
-    }
-
-    for (const { parent, children } of Object.values(this.state.unclaimed)) {
-      const recomposedXmlObj = await this.recompose(Object.values(children), parent);
-      writerData.push({
-        component: parent,
-        writeInfos: [{ source: new JsToXml(recomposedXmlObj), output: this.getDefaultOutput(parent) }],
-      });
-    }
+    });
 
     return writerData;
   }
@@ -214,38 +210,55 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
    * This method finalizes the state by:
    * - finding any "unprocessed components" (nondecomposed metadata types can exist in multiple locations under the same name so we have to find all components that could potentially claim children)
    * - removing any children from the unclaimed state that have been claimed by the unprocessed components
-   * - removing any children from the unclaimed state that have already been claimed by a prent in the claimed state
+   * - removing any children from the unclaimed state that have already been claimed by a parent in the claimed state
    * - merging the remaining unclaimed children into the default parent component (either the component that matches the defaultDirectory or the first parent component)
    */
   private async finalizeState(defaultDirectory: string): Promise<void> {
-    if (isEmpty(this.state.claimed)) {
+    if (isEmpty(this.state.incomingMatches) && isEmpty(this.state.incomingNonMatches)) {
       return;
     }
 
-    const unprocessedComponents = this.getUnprocessedComponents(defaultDirectory);
-    const parentPaths = Object.keys(this.state.claimed).concat(unprocessedComponents.map((c) => c.xml));
+    // we just need some source component to derive the default place to store it.
+    // could have just hardcoded CustomLabels as the type.
+    const firstComponentAvailable =
+      Object.values(this.state.incomingNonMatches)?.[0]?.parent ??
+      Object.values(this.state.incomingMatches)?.[0]?.parent;
 
-    const defaultComponentKey = parentPaths.find((p) => p.startsWith(defaultDirectory)) || parentPaths[0];
+    // handle all existing instances of the type across the project
+    const allNonDecomposed = this.getAllComponentsOfType(defaultDirectory, firstComponentAvailable.type.name);
+    await this.mapAllChildren(allNonDecomposed);
+    this.parentComponentMap = new Map(allNonDecomposed.map((c) => [c.xml, c]));
 
-    const claimedChildren = [
-      ...this.getClaimedChildrenNames(),
-      ...(await this.getChildrenOfUnprocessedComponents(unprocessedComponents)),
-    ];
+    // merge the new incoming nonMatches into the default location
+    const defaultKey = join(defaultDirectory, this.getDefaultOutput(firstComponentAvailable));
+    // there always has to be a default key map.  If you never had any files of this type,
+    // there won't be anything from allNonDecomposed.
+    if (!this.mergeMap.has(defaultKey)) {
+      this.mergeMap.set(defaultKey, new Map<string, JsonMap>());
+    }
+    if (!this.parentComponentMap.has(defaultKey)) {
+      // it's possible to get here if there are no files of this type in the project.
+      // we don't have any SourceComponent to reference except the new incoming ones
+      this.parentComponentMap.set(defaultKey, {
+        ...Object.values(this.state.incomingNonMatches)?.[0]?.parent,
+        xml: defaultKey,
+      } as SourceComponent);
+    }
 
-    // merge unclaimed children into default parent component
-    for (const [key, childIndex] of Object.entries(this.state.unclaimed)) {
-      const pruned = Object.entries(childIndex.children).reduce((result, [childName, childXml]) => {
-        return !claimedChildren.includes(childName) ? Object.assign(result, { [childName]: childXml }) : result;
-      }, {});
-      delete this.state.unclaimed[key];
-      if (this.state.claimed[defaultComponentKey]) {
-        this.state.claimed[defaultComponentKey].children = Object.assign(
-          {},
-          this.state.claimed[defaultComponentKey].children,
-          pruned
-        );
+    const defaultKeyItemMap = this.mergeMap.get(defaultKey);
+    for (const { children } of Object.values(this.state.incomingNonMatches)) {
+      for (const [childName, child] of Object.entries(children)) {
+        defaultKeyItemMap.set(childName, child);
       }
     }
+
+    // merge any found matches into their proper file
+    Object.values(this.state.incomingMatches).map(({ parent, children }) => {
+      const keyItemMap = this.mergeMap.get(parent.xml);
+      for (const [childName, child] of Object.entries(children)) {
+        keyItemMap.set(childName, child);
+      }
+    });
   }
 
   /**
@@ -257,65 +270,52 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
    * child type before recomposing the final xml. So in order for each of the children to be properly
    * claimed, we have to create new ComponentSet that will have all the parent components.
    */
-  private getUnprocessedComponents(defaultDirectory: string): SourceComponent[] {
-    if (isEmpty(this.state.unclaimed)) {
+  private getAllComponentsOfType(defaultDirectory: string, componentType: string): SourceComponent[] {
+    if (isEmpty(this.state.incomingNonMatches) && isEmpty(this.state.incomingMatches)) {
       return [];
     }
-    const parents = this.getParentsOfClaimedChildren();
-    const filterSet = new ComponentSet(parents);
 
-    const { tree } = parents[0];
+    // assumes that defaultDir is one level below project dir
     const projectDir = resolve(dirname(defaultDirectory));
-    const parentDirs = Object.keys(this.state.claimed).map((k) => {
-      const parts = k.split(sep);
-      const partIndex = parts.findIndex((p) => basename(projectDir) === p);
-      return parts[partIndex + 1];
-    });
+    const filterSet = new ComponentSet();
+    filterSet.add({ fullName: '*', type: componentType });
 
-    const fsPaths = tree
-      .readDirectory(projectDir)
-      .map((p) => join(projectDir, p))
-      .filter((p) => {
-        const dirName = basename(p);
-        // Only return directories that are likely to be a project directory
-        return (
-          tree.isDirectory(p) &&
-          !dirName.startsWith('.') &&
-          dirName !== 'config' &&
-          dirName !== 'node_modules' &&
-          !parentDirs.includes(dirName)
-        );
-      });
-
-    const unprocessedComponents = ComponentSet.fromSource({ fsPaths, include: filterSet })
-      .getSourceComponents()
-      .filter((component) => !this.state.claimed[component.xml]);
+    const unprocessedComponents = ComponentSet.fromSource({
+      fsPaths: [projectDir],
+      include: filterSet,
+    }).getSourceComponents();
     return unprocessedComponents.toArray();
   }
 
   /**
    * Returns the children of "unprocessed components"
    */
-  private async getChildrenOfUnprocessedComponents(unprocessedComponents: SourceComponent[]): Promise<string[]> {
-    const childrenOfUnprocessed: string[] = [];
-    for (const component of unprocessedComponents) {
-      for (const child of component.getChildren()) {
-        const xml = await child.parseXml();
-        const childName = getString(xml, child.type.uniqueIdElement);
-        childrenOfUnprocessed.push(childName);
-      }
-    }
-    return childrenOfUnprocessed;
+  private async mapAllChildren(allComponentsOfType: SourceComponent[]): Promise<void> {
+    const result = await Promise.all(
+      allComponentsOfType.map(
+        async (c): Promise<[string, Map<string, JsonMap>]> => [c.xml, await this.getMappedChildren(c)]
+      )
+    );
+
+    this.mergeMap = new Map(result);
   }
 
-  private async recompose(children: JsonMap[], parentSourceComponent: SourceComponent): Promise<JsonMap> {
-    const parentXmlObj =
-      parentSourceComponent.type.strategies.recomposition === RecompositionStrategy.StartEmpty
-        ? {}
-        : await parentSourceComponent.parseXml();
+  private async getMappedChildren(component: SourceComponent): Promise<Map<string, JsonMap>> {
+    const results = await Promise.all(
+      component.getChildren().map(async (child): Promise<[string, JsonMap]> => {
+        const childXml = await child.parseXml();
+        return [getString(childXml, child.type.uniqueIdElement), childXml];
+      })
+    );
+    return new Map(results);
+  }
+
+  private recompose(children: Map<string, JsonMap>, parentSourceComponent: SourceComponent): JsonMap {
     const groupName = parentSourceComponent.type.directoryName;
     const parentName = parentSourceComponent.type.name;
-    for (const child of children) {
+    const parentXmlObj = {};
+
+    for (const child of children.values()) {
       if (!parentXmlObj[parentName]) {
         parentXmlObj[parentName] = { [XML_NS_KEY]: XML_NS_URL };
       }
@@ -340,17 +340,6 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
 
     return join(component.getPackageRelativePath('', 'source'), output);
   }
-
-  private getClaimedChildrenNames(): string[] {
-    return Object.values(this.state.claimed).reduce(
-      (x: unknown[], y) => x.concat(Object.keys(y.children)),
-      []
-    ) as string[];
-  }
-
-  private getParentsOfClaimedChildren(): SourceComponent[] {
-    return Object.values(this.state.claimed).reduce((x: unknown[], y) => x.concat([y.parent]), []) as SourceComponent[];
-  }
 }
 
 /**
@@ -370,3 +359,15 @@ export class ConvertContext {
     }
   }
 }
+
+/* nondecomposed methodology
+1. Find/read all the possible customLabels files
+2. For each labels file,
+  a. map< customLablesFilename, map< labelName, labelObject>> (we're using a map keyed by label name to avoid duplicates)
+  b. parse the file, and store the children in the map
+3. For the unmatched labels from the retrieve
+  a. add them to the appropriate default file (create in default location if it doesn't exist already)
+4. recompose and return the writers
+
+
+*/

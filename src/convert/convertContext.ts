@@ -208,10 +208,11 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
 
   /**
    * This method finalizes the state by:
-   * - finding any "unprocessed components" (nondecomposed metadata types can exist in multiple locations under the same name so we have to find all components that could potentially claim children)
-   * - removing any children from the unclaimed state that have been claimed by the unprocessed components
-   * - removing any children from the unclaimed state that have already been claimed by a parent in the claimed state
-   * - merging the remaining unclaimed children into the default parent component (either the component that matches the defaultDirectory or the first parent component)
+   * - finding all "parent components" (nondecomposed metadata types can exist in multiple locations under the same name so we have to find all components that could potentially match inbound components)
+   * - add all their children to the class's merge map
+   * - init the parentComponentMap
+   * - overwrite the existing children with their incoming, matching child components
+   * - merging the remaining unmatched inbound children into the default parent component (either the component that matches the defaultDirectory or the first parent component)
    */
   private async finalizeState(defaultDirectory: string): Promise<void> {
     if (isEmpty(this.state.incomingMatches) && isEmpty(this.state.incomingNonMatches)) {
@@ -245,14 +246,6 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
       } as SourceComponent);
     }
 
-    const defaultKeyItemMap = this.mergeMap.get(defaultKey);
-
-    Object.values(this.state.incomingNonMatches)
-      .flatMap((c) => Object.entries(c.children))
-      .map(([childName, child]) => {
-        defaultKeyItemMap.set(childName, child);
-      });
-
     // merge any found matches into their proper file
     Object.values(this.state.incomingMatches).map(({ parent, children }) => {
       const keyItemMap = this.mergeMap.get(parent.xml);
@@ -260,12 +253,20 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
         keyItemMap.set(childName, child);
       });
     });
+
+    // overwrite anything done so far with the new incoming matches
+    const defaultKeyItemMap = this.mergeMap.get(defaultKey);
+    Object.values(this.state.incomingNonMatches)
+      .flatMap((c) => Object.entries(c.children))
+      .map(([childName, child]) => {
+        defaultKeyItemMap.set(childName, child);
+      });
   }
 
   /**
-   * Returns the "unprocessed components"
+   * Returns all the components of that type
    *
-   * An unprocessed component is a component that was not resolved during component resolution.
+   * Some components are not resolved during component resolution.
    * This typically only happens when a specific source path was resolved. This is problematic for
    * nondecomposed metadata types (like CustomLabels) because we need to know the location of each
    * child type before recomposing the final xml. So in order for each of the children to be properly
@@ -289,7 +290,7 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
   }
 
   /**
-   * Returns the children of "unprocessed components"
+   * Populates the mergeMap with all the children of all the components
    */
   private async mapAllChildren(allComponentsOfType: SourceComponent[]): Promise<void> {
     const result = await Promise.all(
@@ -311,6 +312,9 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
     return new Map(results);
   }
 
+  /**
+   * Return a json object that's built up from the mergeMap children
+   */
   private recompose(children: Map<string, JsonMap>, parentSourceComponent: SourceComponent): JsonMap {
     const groupName = parentSourceComponent.type.directoryName;
     const parentName = parentSourceComponent.type.name;

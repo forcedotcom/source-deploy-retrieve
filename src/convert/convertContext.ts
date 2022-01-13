@@ -247,17 +247,21 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
     }
 
     // merge any found matches into their proper file
-    Object.values(this.state.incomingMatches).map(({ parent, children }) => {
+    const matchedChildNames = Object.values(this.state.incomingMatches).flatMap(({ parent, children }) => {
       const keyItemMap = this.mergeMap.get(parent.xml);
-      Object.entries(children).map(([childName, child]) => {
+      return Object.entries(children).map(([childName, child]) => {
         keyItemMap.set(childName, child);
+        // we'll keep track of the names and get them out of nonMapped on the next step
+        return childName;
       });
     });
 
+    // there may be things in incomingNonMatches that could have matched but weren't done in the lucky order
     // overwrite anything done so far with the new incoming matches
     const defaultKeyItemMap = this.mergeMap.get(defaultKey);
     Object.values(this.state.incomingNonMatches)
       .flatMap((c) => Object.entries(c.children))
+      .filter(([childName]) => !matchedChildNames.includes(childName))
       .map(([childName, child]) => {
         defaultKeyItemMap.set(childName, child);
       });

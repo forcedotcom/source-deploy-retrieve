@@ -7,9 +7,7 @@
 import { join } from 'path';
 import { expect } from 'chai';
 import { DiagnosticUtil } from '../../src/client/diagnosticUtil';
-import { SourceComponent } from '../../src/resolve/sourceComponent';
-import { DeployMessage } from '../../src/client/types';
-import { registry } from '../../src';
+import { DeployMessage, registry, SourceComponent } from '../../src';
 
 type MockDeployMessage = {
   problem?: string;

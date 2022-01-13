@@ -17,6 +17,7 @@ import {
   FileResponse,
   MetadataApiRetrieve,
   MetadataApiRetrieveStatus,
+  registry,
   RequestStatus,
   RetrieveResult,
   SourceComponent,
@@ -25,9 +26,9 @@ import {
 import { MetadataApiRetrieveError, MissingJobIdError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { MOCK_ASYNC_RESULT, MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
-import { mockRegistry, mockRegistryData, xmlInFolder } from '../mock/registry';
-import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
-import { DECOMPOSED_COMPONENT } from '../mock/registry/type-constants/decomposedConstants';
+import { xmlInFolder } from '../mock';
+import { COMPONENT } from '../mock/type-constants/apexClassConstant';
+import { DECOMPOSED_COMPONENT } from '../mock/type-constants/customObjectConstant';
 
 const env = createSandbox();
 
@@ -37,7 +38,7 @@ describe('MetadataApiRetrieve', () => {
   describe('Lifecycle', () => {
     describe('start', () => {
       it('should throw error if there are no components to retrieve', async () => {
-        const toRetrieve = new ComponentSet([], mockRegistry);
+        const toRetrieve = new ComponentSet([]);
         const { operation } = await stubMetadataRetrieve(env, {
           toRetrieve,
           merge: true,
@@ -53,7 +54,7 @@ describe('MetadataApiRetrieve', () => {
       });
 
       it('should throw error if packageNames list is empty', async () => {
-        const toRetrieve = new ComponentSet([], mockRegistry);
+        const toRetrieve = new ComponentSet([]);
         const { operation } = await stubMetadataRetrieve(env, {
           toRetrieve,
           merge: true,
@@ -70,7 +71,7 @@ describe('MetadataApiRetrieve', () => {
       });
 
       it('should call retrieve for unpackaged data', async () => {
-        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const toRetrieve = new ComponentSet([COMPONENT]);
         const options = {
           toRetrieve,
           merge: true,
@@ -87,7 +88,7 @@ describe('MetadataApiRetrieve', () => {
       });
 
       it('should call retrieve for a package as string[]', async () => {
-        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const toRetrieve = new ComponentSet([COMPONENT]);
         const options = {
           toRetrieve,
           packageOptions: ['MyPackage'],
@@ -106,7 +107,7 @@ describe('MetadataApiRetrieve', () => {
       });
 
       it('should call retrieve for a package as PackageOptions[] with name only', async () => {
-        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const toRetrieve = new ComponentSet([COMPONENT]);
         const options = {
           toRetrieve,
           packageOptions: [{ name: 'MyPackage' }],
@@ -125,7 +126,7 @@ describe('MetadataApiRetrieve', () => {
       });
 
       it('should call retrieve for a package as PackageOptions[] with name and outputDir', async () => {
-        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const toRetrieve = new ComponentSet([COMPONENT]);
         const options = {
           toRetrieve,
           packageOptions: [{ name: 'MyPackage', outputDir: 'fake/output/dir' }],
@@ -144,7 +145,7 @@ describe('MetadataApiRetrieve', () => {
       });
 
       it('should return an AsyncResult', async () => {
-        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const toRetrieve = new ComponentSet([COMPONENT]);
         const options = {
           toRetrieve,
           packageNames: ['MyPackage'],
@@ -159,7 +160,7 @@ describe('MetadataApiRetrieve', () => {
       });
 
       it('should set the retrieve ID', async () => {
-        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const toRetrieve = new ComponentSet([COMPONENT]);
         const options = {
           toRetrieve,
           packageNames: ['MyPackage'],
@@ -178,7 +179,7 @@ describe('MetadataApiRetrieve', () => {
       const getPackageComponent = (packageName: string): SourceComponent => {
         const contentName = 'z.mcf';
         const metaName = `${contentName}-meta.xml`;
-        const type = mockRegistryData.types.matchingcontentfile;
+        const type = registry.types.apexclass;
         return new SourceComponent(
           {
             name: 'z',
@@ -197,7 +198,7 @@ describe('MetadataApiRetrieve', () => {
 
       it('should retrieve zip and extract to directory', async () => {
         const component = COMPONENT;
-        const toRetrieve = new ComponentSet([component], mockRegistry);
+        const toRetrieve = new ComponentSet([component]);
         const { operation, convertStub } = await stubMetadataRetrieve(env, {
           toRetrieve,
           successes: toRetrieve,
@@ -220,8 +221,8 @@ describe('MetadataApiRetrieve', () => {
         const packageName = 'MyPackage';
         const pkgComponent = getPackageComponent(packageName);
         const fromSourceSpy = env.spy(ComponentSet, 'fromSource');
-        const toRetrieve = new ComponentSet([component], mockRegistry);
-        const successesCompSet = new ComponentSet([component, pkgComponent], mockRegistry);
+        const toRetrieve = new ComponentSet([component]);
+        const successesCompSet = new ComponentSet([component, pkgComponent]);
         const { operation, convertStub } = await stubMetadataRetrieve(env, {
           toRetrieve,
           packageOptions: [packageName],
@@ -254,8 +255,8 @@ describe('MetadataApiRetrieve', () => {
         const packageOutputDir = 'myPackageDir';
         const pkgComponent = getPackageComponent(packageName);
         const fromSourceSpy = env.spy(ComponentSet, 'fromSource');
-        const toRetrieve = new ComponentSet([component], mockRegistry);
-        const successesCompSet = new ComponentSet([component, pkgComponent], mockRegistry);
+        const toRetrieve = new ComponentSet([component]);
+        const successesCompSet = new ComponentSet([component, pkgComponent]);
         const { operation, convertStub } = await stubMetadataRetrieve(env, {
           toRetrieve,
           packageOptions: [{ name: packageName, outputDir: packageOutputDir }],
@@ -285,7 +286,7 @@ describe('MetadataApiRetrieve', () => {
       it('should save the temp directory if the environment variable is set', async () => {
         try {
           process.env.SFDX_MDAPI_TEMP_DIR = 'test';
-          const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+          const toRetrieve = new ComponentSet([COMPONENT]);
           const { operation, convertStub } = await stubMetadataRetrieve(env, {
             toRetrieve,
             merge: true,
@@ -303,7 +304,7 @@ describe('MetadataApiRetrieve', () => {
       });
 
       it('should NOT save the temp directory if the environment variable is NOT set', async () => {
-        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const toRetrieve = new ComponentSet([COMPONENT]);
         const { operation, convertStub } = await stubMetadataRetrieve(env, {
           toRetrieve,
           merge: true,
@@ -319,7 +320,7 @@ describe('MetadataApiRetrieve', () => {
 
       it('should retrieve zip and merge with existing components', async () => {
         const component = COMPONENT;
-        const toRetrieve = new ComponentSet([component], mockRegistry);
+        const toRetrieve = new ComponentSet([component]);
         const { operation, convertStub } = await stubMetadataRetrieve(env, {
           toRetrieve,
           merge: true,
@@ -341,7 +342,7 @@ describe('MetadataApiRetrieve', () => {
       });
 
       it('should construct a result object with retrieved components', async () => {
-        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const toRetrieve = new ComponentSet([COMPONENT]);
         const { operation, response } = await stubMetadataRetrieve(env, {
           toRetrieve,
           merge: true,
@@ -356,7 +357,7 @@ describe('MetadataApiRetrieve', () => {
       });
 
       it('should construct a result object with no components when components are forceIgnored', async () => {
-        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const toRetrieve = new ComponentSet([COMPONENT]);
         toRetrieve.forceIgnoredPaths = new Set([COMPONENT.xml, COMPONENT.content]);
         const { operation } = await stubMetadataRetrieve(env, {
           toRetrieve,
@@ -371,7 +372,7 @@ describe('MetadataApiRetrieve', () => {
       });
 
       it('should construct a result object with no components when no components are retrieved', async () => {
-        const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+        const toRetrieve = new ComponentSet([COMPONENT]);
         const { operation, response } = await stubMetadataRetrieve(env, {
           toRetrieve,
           merge: true,
@@ -384,7 +385,7 @@ describe('MetadataApiRetrieve', () => {
 
         await operation.start();
         const result = await operation.pollStatus();
-        const compSet = new ComponentSet(undefined, mockRegistry);
+        const compSet = new ComponentSet(undefined);
         const expected = new RetrieveResult(response, compSet, toRetrieve);
 
         expect(result).to.deep.equal(expected);
@@ -394,7 +395,7 @@ describe('MetadataApiRetrieve', () => {
 
   describe('checkStatus', () => {
     it('should throw an error when attempting to call checkStatus without an id set', async () => {
-      const toRetrieve = new ComponentSet([COMPONENT], mockRegistry);
+      const toRetrieve = new ComponentSet([COMPONENT]);
       const { operation } = await stubMetadataRetrieve(env, {
         toRetrieve,
         merge: true,
@@ -474,7 +475,7 @@ describe('MetadataApiRetrieve', () => {
   describe('cancel', () => {
     it('should immediately stop polling', async () => {
       const component = COMPONENT;
-      const components = new ComponentSet([component], mockRegistry);
+      const components = new ComponentSet([component]);
       const { operation, checkStatusStub } = await stubMetadataRetrieve(env, {
         toRetrieve: components,
       });
@@ -654,7 +655,7 @@ describe('MetadataApiRetrieve', () => {
       const component = new SourceComponent(
         {
           name: 'OnlyContent',
-          type: mockRegistryData.types.matchingcontentfile,
+          type: registry.types.apexclass,
           content: COMPONENT.content,
         },
         COMPONENT.tree

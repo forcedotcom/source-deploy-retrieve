@@ -4,29 +4,28 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join, basename } from 'path';
+import { basename, join } from 'path';
 import * as archiver from 'archiver';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
-import { Entry, CentralDirectory, Open } from 'unzipper';
-import { SourceComponent, VirtualTreeContainer } from '../../../src';
-import { WriteInfo } from '../../../src/convert';
+import { CentralDirectory, Entry, Open } from 'unzipper';
+import { registry, SourceComponent, VirtualTreeContainer, WriteInfo } from '../../../src';
 import { StaticResourceMetadataTransformer } from '../../../src/convert/transformers/staticResourceMetadataTransformer';
 import { LibraryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 import { baseName } from '../../../src/utils';
-import { mixedContentSingleFile, mockRegistry, mockRegistryData } from '../../mock/registry';
+import { mixedContentSingleFile } from '../../mock';
 import {
   MIXED_CONTENT_DIRECTORY_COMPONENT,
   MIXED_CONTENT_DIRECTORY_VIRTUAL_FS,
-} from '../../mock/registry/type-constants/mixedContentDirectoryConstants';
+} from '../../mock/type-constants/staticresourceConstant';
 import { TestReadable } from '../../mock/convert/readables';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../../src/common';
 
 const env = createSandbox();
 
 describe('StaticResourceMetadataTransformer', () => {
-  const transformer = new StaticResourceMetadataTransformer(mockRegistry);
+  const transformer = new StaticResourceMetadataTransformer();
 
   beforeEach(() =>
     env.stub(VirtualTreeContainer.prototype, 'stream').callsFake((fsPath: string) => new TestReadable(fsPath))
@@ -235,7 +234,13 @@ describe('StaticResourceMetadataTransformer', () => {
       const expectedInfos: WriteInfo[] = [
         {
           source: null,
-          output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, 'a', 'b', 'c.css'),
+          output: join(
+            DEFAULT_PACKAGE_ROOT_SFDX,
+            type.directoryName,
+            mixedContentSingleFile.COMPONENT_NAMES[0],
+            'b',
+            'c.css'
+          ),
         },
         {
           source: component.tree.stream(xml),
@@ -274,7 +279,7 @@ describe('StaticResourceMetadataTransformer', () => {
       const mergeComponent = SourceComponent.createVirtualComponent(
         {
           name: mixedContentSingleFile.COMPONENT.name,
-          type: mockRegistryData.types.mixedcontentsinglefile,
+          type: registry.types.staticresource,
           xml: join(root, mixedContentSingleFile.XML_NAMES[0]),
           content: join(root, 'a'),
         },
@@ -315,7 +320,7 @@ describe('StaticResourceMetadataTransformer', () => {
       const mergeComponent = SourceComponent.createVirtualComponent(
         {
           name: mixedContentSingleFile.COMPONENT.name,
-          type: mockRegistryData.types.mixedcontentsinglefile,
+          type: registry.types.staticresource,
           xml: join(root, mixedContentSingleFile.XML_NAMES[0]),
           content: join(root, 'a'),
         },

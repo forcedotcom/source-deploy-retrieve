@@ -9,9 +9,7 @@ import { expect } from 'chai';
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import chai = require('chai');
 import { filePathsFromMetadataComponent } from '../../src/utils/filePathGenerator';
-import { MetadataType, RegistryAccess } from '../../src/registry';
-import { MetadataComponent, MetadataResolver } from '../../src/resolve';
-import { VirtualTreeContainer } from '../../src/resolve/treeContainers';
+import { MetadataComponent, MetadataResolver, MetadataType, RegistryAccess, VirtualTreeContainer } from '../../src';
 
 chai.use(deepEqualInAnyOrder);
 

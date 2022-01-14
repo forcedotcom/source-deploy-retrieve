@@ -51,17 +51,13 @@ describe('NonDecomposedMetadataTransformer', () => {
       expect(result).to.deep.equal([]);
       expect(context.decomposition.state).to.deep.equal({});
       expect(context.recomposition.state).to.deep.equal({});
+
       expect(context.nonDecomposition.state).to.deep.equal({
-        incomingNonMatches: {
-          [component.xml]: {
-            parent: component,
-            children: {
-              [nonDecomposed.CHILD_1_NAME]: nonDecomposed.CHILD_1_XML,
-              [nonDecomposed.CHILD_2_NAME]: nonDecomposed.CHILD_2_XML,
-            },
-          },
-        },
-        incomingMatches: {},
+        childrenByUniqueElement: new Map([
+          [nonDecomposed.CHILD_1_NAME, nonDecomposed.CHILD_1_XML],
+          [nonDecomposed.CHILD_2_NAME, nonDecomposed.CHILD_2_XML],
+        ]),
+        exampleComponent: component,
       });
     });
 
@@ -82,24 +78,13 @@ describe('NonDecomposedMetadataTransformer', () => {
       const result = await transformer.toSourceFormat(componentToConvert, component);
       expect(result).to.deep.equal([]);
       expect(context.nonDecomposition.state).to.deep.equal({
-        incomingNonMatches: {
-          [componentToConvert.xml]: {
-            parent: componentToConvert,
-            children: {
-              [nonDecomposed.UNCLAIMED_CHILD_NAME]: nonDecomposed.UNCLAIMED_CHILD_XML,
-              [nonDecomposed.CHILD_3_NAME]: nonDecomposed.CHILD_3_XML,
-            },
-          },
-        },
-        incomingMatches: {
-          [component.xml]: {
-            parent: component,
-            children: {
-              [nonDecomposed.CHILD_1_NAME]: nonDecomposed.CHILD_1_XML,
-              [nonDecomposed.CHILD_2_NAME]: nonDecomposed.CHILD_2_XML,
-            },
-          },
-        },
+        childrenByUniqueElement: new Map([
+          [nonDecomposed.CHILD_1_NAME, nonDecomposed.CHILD_1_XML],
+          [nonDecomposed.CHILD_2_NAME, nonDecomposed.CHILD_2_XML],
+          [nonDecomposed.UNCLAIMED_CHILD_NAME, nonDecomposed.UNCLAIMED_CHILD_XML],
+          [nonDecomposed.CHILD_3_NAME, nonDecomposed.CHILD_3_XML],
+        ]),
+        exampleComponent: componentToConvert,
       });
     });
   });

@@ -6,7 +6,7 @@
  */
 
 import { assert, expect } from 'chai';
-import { RegistryAccess, SourceComponent } from '../../../src';
+import { RegistryAccess, SourceComponent, registry } from '../../../src';
 import { ConvertContext } from '../../../src/convert/convertContext';
 import { MetadataTransformerFactory } from '../../../src/convert/transformers';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
@@ -18,7 +18,6 @@ import { DECOMPOSED_COMPONENT } from '../../mock/type-constants/customObjectCons
 import { COMPONENT_1 } from '../../mock/type-constants/customlabelsConstant';
 import { RegistryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
-import { registry } from '../../../scripts/update-registry/update2';
 
 const registryAccess = new RegistryAccess();
 

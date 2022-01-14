@@ -195,12 +195,14 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
     const writerData: WriterFormat[] = [];
 
     this.mergeMap.forEach((children, parentKey) => {
-      const parentSourceComponent = this.parentComponentMap.get(parentKey);
-      const recomposedXmlObj = this.recompose(children, parentSourceComponent);
-      writerData.push({
-        component: parentSourceComponent,
-        writeInfos: [{ source: new JsToXml(recomposedXmlObj), output: parentKey }],
-      });
+      if (children.size > 0) {
+        const parentSourceComponent = this.parentComponentMap.get(parentKey);
+        const recomposedXmlObj = this.recompose(children, parentSourceComponent);
+        writerData.push({
+          component: parentSourceComponent,
+          writeInfos: [{ source: new JsToXml(recomposedXmlObj), output: parentKey }],
+        });
+      }
     });
 
     return writerData;
@@ -256,21 +258,23 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
       });
     });
 
-    // it's also possible that some nonMatches are children of something in mergeMap that's already been matched
-    this.mergeMap.forEach((children) => {
+    // easily find the filename of any child name
+    const childNameToParentFilePath = new Map<string, string>();
+    this.mergeMap.forEach((children, parentKey) => {
       children.forEach((child, childName) => {
-        matchedChildNames.push(childName);
+        childNameToParentFilePath.set(childName, parentKey);
       });
     });
 
     // there may be things in incomingNonMatches that could have matched but weren't done in the lucky order
     // overwrite anything done so far with the new incoming matches
-    const defaultKeyItemMap = this.mergeMap.get(defaultKey);
     Object.values(this.state.incomingNonMatches)
       .flatMap((c) => Object.entries(c.children))
       .filter(([childName]) => !matchedChildNames.includes(childName))
       .map(([childName, child]) => {
-        defaultKeyItemMap.set(childName, child);
+        const parentKey = childNameToParentFilePath.get(childName) ?? defaultKey;
+        const parentItemMap = this.mergeMap.get(parentKey);
+        parentItemMap.set(childName, child);
       });
   }
 

@@ -251,8 +251,15 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
       const keyItemMap = this.mergeMap.get(parent.xml);
       return Object.entries(children).map(([childName, child]) => {
         keyItemMap.set(childName, child);
-        // we'll keep track of the names and get them out of nonMapped on the next step
+        // we'll keep track of the names and get them out of nonMatched on the next step
         return childName;
+      });
+    });
+
+    // it's also possible that some nonMatches are children of something in mergeMap that's already been matched
+    this.mergeMap.forEach((children) => {
+      children.forEach((child, childName) => {
+        matchedChildNames.push(childName);
       });
     });
 

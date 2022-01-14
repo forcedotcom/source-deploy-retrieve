@@ -6,12 +6,11 @@
  */
 import { dirname, join, resolve } from 'path';
 import { getString, JsonArray, JsonMap } from '@salesforce/ts-types';
-import { isEmpty } from '@salesforce/kit';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSet } from '../collections';
 import { normalizeToArray } from '../utils';
 import { RecompositionStrategy, TransformerStrategy } from '../registry';
-import { MetadataComponent, SourceComponent } from '../resolve';
+import { MetadataComponent, SourceComponent, NodeFSTreeContainer, TreeContainer } from '../resolve';
 import { JsToXml } from './streams';
 import { WriteInfo, WriterFormat } from './types';
 
@@ -161,18 +160,12 @@ class DecompositionFinalizer extends ConvertTransactionFinalizer<DecompositionSt
 }
 
 export interface NonDecompositionState {
-  incomingMatches: ChildIndex;
-  incomingNonMatches: ChildIndex;
+  /*
+   * Incoming child xml (ex CustomLabel) keyed by uniqueId (label name).
+   */
+  childrenByUniqueElement: Map<string, JsonMap>;
+  exampleComponent: SourceComponent;
 }
-
-type ChildIndex = {
-  [componentKey: string]: {
-    parent: SourceComponent;
-    children: {
-      [childName: string]: JsonMap;
-    };
-  };
-};
 
 /**
  * Merges child components that share the same parent in the conversion pipeline
@@ -182,20 +175,52 @@ type ChildIndex = {
  */
 class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecompositionState> {
   protected transactionState: NonDecompositionState = {
-    incomingNonMatches: {},
-    incomingMatches: {},
+    childrenByUniqueElement: new Map(),
+    exampleComponent: undefined,
   };
 
+  // filename => (childName => childXml)
   protected mergeMap = new Map<string, Map<string, JsonMap>>();
+
+  // filename => sourceComponent
   protected parentComponentMap = new Map<string, SourceComponent>();
+  protected tree: TreeContainer;
 
-  public async finalize(defaultDirectory: string): Promise<WriterFormat[]> {
-    await this.finalizeState(defaultDirectory);
-
+  public async finalize(defaultDirectory: string, tree = new NodeFSTreeContainer()): Promise<WriterFormat[]> {
     const writerData: WriterFormat[] = [];
 
+    if (this.transactionState.childrenByUniqueElement.size === 0) {
+      return writerData;
+    }
+    this.tree = tree;
+    // nondecomposed metadata types can exist in multiple locations under the same name
+    // so we have to find all components that could potentially match inbound components
+    const allNonDecomposed = this.getAllComponentsOfType(
+      defaultDirectory,
+      this.transactionState.exampleComponent.type.name
+    );
+
+    // prepare 3 maps to simplify component merging
+    await this.initMergeMap(allNonDecomposed);
+    this.parentComponentMap = new Map(allNonDecomposed.map((c) => [c.xml, c]));
+    const childNameToParentFilePath = this.initChildMapping();
+
+    // we'll merge any new labels into the default location
+    const defaultKey = join(defaultDirectory, this.getDefaultOutput(this.transactionState.exampleComponent));
+    this.ensureDefaults(defaultKey);
+
+    // put the incoming components into the mergeMap.  Keep track of any files we need to write
+    const filesToWrite = new Set<string>();
+    this.state.childrenByUniqueElement.forEach((child, childUniqueElement) => {
+      const parentKey = childNameToParentFilePath.get(childUniqueElement) ?? defaultKey;
+      const parentItemMap = this.mergeMap.get(parentKey);
+      parentItemMap.set(childUniqueElement, child);
+      filesToWrite.add(parentKey);
+    });
+
+    // use the mergeMap to return the writables
     this.mergeMap.forEach((children, parentKey) => {
-      if (children.size > 0) {
+      if (filesToWrite.has(parentKey)) {
         const parentSourceComponent = this.parentComponentMap.get(parentKey);
         const recomposedXmlObj = this.recompose(children, parentSourceComponent);
         writerData.push({
@@ -208,151 +233,96 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
     return writerData;
   }
 
+  private initChildMapping(): Map<string, string> {
+    const output = new Map<string, string>();
+    this.mergeMap.forEach((children, parentKey) => {
+      children.forEach((child, childName) => {
+        output.set(childName, parentKey);
+      });
+    });
+    return output;
+  }
+
   /**
-   * This method finalizes the state by:
-   * - finding all "parent components" (nondecomposed metadata types can exist in multiple locations under the same name so we have to find all components that could potentially match inbound components)
-   * - add all their children to the class's merge map
-   * - init the parentComponentMap
-   * - overwrite the existing children with their incoming, matching child components
-   * - merging the remaining unmatched inbound children into the default parent component (either the component that matches the defaultDirectory or the first parent component)
+   * check both top-level maps and make sure there are defaults
    */
-  private async finalizeState(defaultDirectory: string): Promise<void> {
-    if (isEmpty(this.state.incomingMatches) && isEmpty(this.state.incomingNonMatches)) {
-      return;
-    }
-
-    // we just need some source component to derive the default place to store it.
-    // could have just hardcoded CustomLabels as the type.
-    const firstComponentAvailable =
-      Object.values(this.state.incomingNonMatches)?.[0]?.parent ??
-      Object.values(this.state.incomingMatches)?.[0]?.parent;
-
-    // handle all existing instances of the type across the project
-    const allNonDecomposed = this.getAllComponentsOfType(defaultDirectory, firstComponentAvailable.type.name);
-    await this.mapAllChildren(allNonDecomposed);
-    this.parentComponentMap = new Map(allNonDecomposed.map((c) => [c.xml, c]));
-
-    // merge the new incoming nonMatches into the default location
-    const defaultKey = join(defaultDirectory, this.getDefaultOutput(firstComponentAvailable));
-    // there always has to be a default key map.  If you never had any files of this type,
-    // there won't be anything from allNonDecomposed.
+  private ensureDefaults(defaultKey: string): void {
     if (!this.mergeMap.has(defaultKey)) {
+      // If project has no files of this type, there won't be anything from allNonDecomposed.
       this.mergeMap.set(defaultKey, new Map<string, JsonMap>());
     }
     if (!this.parentComponentMap.has(defaultKey)) {
       // it's possible to get here if there are no files of this type in the project.
       // we don't have any SourceComponent to reference except the new incoming ones
+      // so this creates a "default" component with the correct path for the xml file
       this.parentComponentMap.set(defaultKey, {
-        ...Object.values(this.state.incomingNonMatches)?.[0]?.parent,
+        ...this.transactionState.exampleComponent,
         xml: defaultKey,
       } as SourceComponent);
     }
-
-    // merge any found matches into their proper file
-    const matchedChildNames = Object.values(this.state.incomingMatches).flatMap(({ parent, children }) => {
-      const keyItemMap = this.mergeMap.get(parent.xml);
-      return Object.entries(children).map(([childName, child]) => {
-        keyItemMap.set(childName, child);
-        // we'll keep track of the names and get them out of nonMatched on the next step
-        return childName;
-      });
-    });
-
-    // easily find the filename of any child name
-    const childNameToParentFilePath = new Map<string, string>();
-    this.mergeMap.forEach((children, parentKey) => {
-      children.forEach((child, childName) => {
-        childNameToParentFilePath.set(childName, parentKey);
-      });
-    });
-
-    // there may be things in incomingNonMatches that could have matched but weren't done in the lucky order
-    // overwrite anything done so far with the new incoming matches
-    Object.values(this.state.incomingNonMatches)
-      .flatMap((c) => Object.entries(c.children))
-      .filter(([childName]) => !matchedChildNames.includes(childName))
-      .map(([childName, child]) => {
-        const parentKey = childNameToParentFilePath.get(childName) ?? defaultKey;
-        const parentItemMap = this.mergeMap.get(parentKey);
-        parentItemMap.set(childName, child);
-      });
   }
 
   /**
-   * Returns all the components of that type
+   * Returns all the components of the incoming type in the project.
    *
    * Some components are not resolved during component resolution.
    * This typically only happens when a specific source path was resolved. This is problematic for
    * nondecomposed metadata types (like CustomLabels) because we need to know the location of each
-   * child type before recomposing the final xml. So in order for each of the children to be properly
-   * claimed, we have to create new ComponentSet that will have all the parent components.
+   * child type before recomposing the final xml.
+   * The labels could belong in any of the files OR need to go in the default location which already contains labels
    */
   private getAllComponentsOfType(defaultDirectory: string, componentType: string): SourceComponent[] {
-    if (isEmpty(this.state.incomingNonMatches) && isEmpty(this.state.incomingMatches)) {
-      return [];
-    }
-
     // assumes that defaultDir is one level below project dir
     const projectDir = resolve(dirname(defaultDirectory));
-    const filterSet = new ComponentSet();
-    filterSet.add({ fullName: '*', type: componentType });
-
     const unprocessedComponents = ComponentSet.fromSource({
       fsPaths: [projectDir],
-      include: filterSet,
+      include: new ComponentSet([{ fullName: '*', type: componentType }]),
+      tree: this.tree,
     }).getSourceComponents();
     return unprocessedComponents.toArray();
   }
 
   /**
-   * Populates the mergeMap with all the children of all the components
+   * Populate the mergeMap with all the children of all the local components
    */
-  private async mapAllChildren(allComponentsOfType: SourceComponent[]): Promise<void> {
+  private async initMergeMap(allComponentsOfType: SourceComponent[]): Promise<void> {
+    // A function we can parallelize since we have to parseXml for each local file
+    const getMappedChildren = async (component: SourceComponent): Promise<Map<string, JsonMap>> => {
+      const results = await Promise.all(
+        component.getChildren().map(async (child): Promise<[string, JsonMap]> => {
+          const childXml = await child.parseXml();
+          return [getString(childXml, child.type.uniqueIdElement), childXml];
+        })
+      );
+      return new Map(results);
+    };
+
     const result = await Promise.all(
-      allComponentsOfType.map(
-        async (c): Promise<[string, Map<string, JsonMap>]> => [c.xml, await this.getMappedChildren(c)]
-      )
+      allComponentsOfType.map(async (c): Promise<[string, Map<string, JsonMap>]> => [c.xml, await getMappedChildren(c)])
     );
 
     this.mergeMap = new Map(result);
   }
 
-  private async getMappedChildren(component: SourceComponent): Promise<Map<string, JsonMap>> {
-    const results = await Promise.all(
-      component.getChildren().map(async (child): Promise<[string, JsonMap]> => {
-        const childXml = await child.parseXml();
-        return [getString(childXml, child.type.uniqueIdElement), childXml];
-      })
-    );
-    return new Map(results);
-  }
+  // private async getMappedChildren(component: SourceComponent):
 
   /**
    * Return a json object that's built up from the mergeMap children
    */
   private recompose(children: Map<string, JsonMap>, parentSourceComponent: SourceComponent): JsonMap {
+    // for CustomLabels, that's `labels`
     const groupName = parentSourceComponent.type.directoryName;
-    const parentName = parentSourceComponent.type.name;
-    const parentXmlObj = {};
-
-    for (const child of children.values()) {
-      if (!parentXmlObj[parentName]) {
-        parentXmlObj[parentName] = { [XML_NS_KEY]: XML_NS_URL };
-      }
-
-      const parent = parentXmlObj[parentName] as JsonMap;
-
-      if (!parent[groupName]) {
-        parent[groupName] = [];
-      }
-
-      const group = normalizeToArray(parent[groupName]) as JsonArray;
-      group.push(child);
-    }
-
-    return parentXmlObj;
+    return {
+      [parentSourceComponent.type.name]: {
+        [XML_NS_KEY]: XML_NS_URL,
+        [groupName]: Array.from(children.values()),
+      },
+    };
   }
 
+  /**
+   * Return the default filepath for new metadata of this type
+   */
   private getDefaultOutput(component: SourceComponent): string {
     const { fullName } = component;
     const [baseName] = fullName.split('.');

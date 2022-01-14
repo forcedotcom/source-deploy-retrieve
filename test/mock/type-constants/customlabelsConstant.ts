@@ -20,7 +20,7 @@ export const NON_DEFAULT_DIR = join(WORKING_DIR, 'my-app');
 
 export const XML_NAME = `${type.name}.${type.suffix}${META_XML_SUFFIX}`;
 
-export const COMPONENT_1_TYPE_DIR = join(DEFAULT_DIR, 'path', 'to', type.directoryName);
+export const COMPONENT_1_TYPE_DIR = join(DEFAULT_DIR, 'main', 'default', type.directoryName);
 export const COMPONENT_2_TYPE_DIR = join(NON_DEFAULT_DIR, type.directoryName);
 export const COMPONENT_1_XML_PATH = join(COMPONENT_1_TYPE_DIR, XML_NAME);
 export const COMPONENT_2_XML_PATH = join(COMPONENT_2_TYPE_DIR, XML_NAME);
@@ -93,8 +93,13 @@ export const MATCHING_RULES_COMPONENT_XML = {
 
 export const VIRTUAL_DIR: VirtualDirectory[] = [
   { dirPath: WORKING_DIR, children: [DEFAULT_DIR, NON_DEFAULT_DIR] },
-  { dirPath: DEFAULT_DIR, children: [] },
-  { dirPath: NON_DEFAULT_DIR, children: [] },
+  { dirPath: DEFAULT_DIR, children: ['main'] },
+  { dirPath: join(DEFAULT_DIR, 'main'), children: [join(DEFAULT_DIR, 'main', 'default')] },
+  {
+    dirPath: join(DEFAULT_DIR, 'main', 'default'),
+    children: [join(DEFAULT_DIR, 'main', 'default', COMPONENT_1_TYPE_DIR)],
+  },
+  { dirPath: NON_DEFAULT_DIR, children: [join(NON_DEFAULT_DIR, COMPONENT_2_TYPE_DIR)] },
   {
     dirPath: COMPONENT_1_TYPE_DIR,
     children: [{ name: XML_NAME, data: Buffer.from(new JsToXml(COMPONENT_1_XML).read().toString()) }],

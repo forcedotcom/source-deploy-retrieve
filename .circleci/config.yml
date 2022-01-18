@@ -2,6 +2,58 @@ version: 2.1
 orbs:
   release-management: salesforce/npm-release-management@4
 
+parameters:
+  run-auto-workflows:
+    description: >
+      Boolean that controls when a workflow would run.
+
+      It is used to gate which workflows should run when github events occur.
+
+      This parameter is used by automation to determine if a workflow will run
+      within a pipeline.
+    type: boolean
+    default: true
+  run-triggers:
+    description: >
+      Boolean that controls when `triggers` will run
+
+      This parameter is used by an scheduled trigger to determine if the
+      `triggers` workflow will run.
+    type: boolean
+    default: false
+  run-dependabot-automerge:
+    description: >
+      Boolean that controls when `dependabot-automerge` will run
+
+      This parameter is used by an scheduled trigger to determine if the
+      `dependabot-automerge` workflow will run.
+    type: boolean
+    default: false
+  run-test-ts-update:
+    description: >
+      Boolean that controls when `test-ts-update` will run
+
+      This parameter is used by an scheduled trigger to determine if the
+      `test-ts-update` workflow will run.
+    type: boolean
+    default: false
+  run-registry-check-preview:
+    description: >
+      Boolean that controls when `registry-check-preview` will run
+
+      This parameter is used by an scheduled trigger to determine if the
+      `registry-check-preview` workflow will run.
+    type: boolean
+    default: false
+  run-registry-check:
+    description: >
+      Boolean that controls when `registry-check` will run
+
+      This parameter is used by an scheduled trigger to determine if the
+      `registry-check` workflow will run.
+    type: boolean
+    default: false
+
 jobs:
   registry-check:
     description: Checks registry against metadataCoverageReport
@@ -116,30 +168,17 @@ jobs:
 workflows:
   version: 2
   registry-check-preview:
-    triggers:
-      - schedule:
-          # weekly on Monday morning
-          cron: 30 3 * * 1
-          filters:
-            branches:
-              only:
-                - main
+    when: << pipeline.parameters.run-registry-check-preview >>
     jobs:
       - registry-check-preview:
           # required for slack webhook
           context: salesforce-cli
   registry-check:
-    triggers:
-      - schedule:
-          # early in the morning (cron is GMT)
-          cron: 8 22 * * *
-          filters:
-            branches:
-              only:
-                - main
+    when: << pipeline.parameters.run-registry-check >>
     jobs:
       - registry-check
   test-and-release:
+    when: << pipeline.parameters.run-auto-workflows >>
     jobs:
       - release-management/validate-pr:
           filters:
@@ -188,13 +227,11 @@ workflows:
               only: main
           context: CLI_CTC
   dependabot-automerge:
-    triggers:
-      - schedule:
-          cron: '0 2,5,8,11 * * *'
-          filters:
-            branches:
-              only:
-                - main
+    when: << pipeline.parameters.run-dependabot-automerge >>
     jobs:
       - release-management/dependabot-automerge:
           merge-method: squash
+  test-ts-update:
+    when: << pipeline.parameters.run-test-ts-update >>
+    jobs:
+      - release-management/test-ts-update

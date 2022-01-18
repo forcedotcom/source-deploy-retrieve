@@ -61,7 +61,10 @@ describe('MetadataTransformerFactory', () => {
   it('should throw an error for a missing transformer mapping', () => {
     const component = new SourceComponent({
       name: 'Test',
-      type: registry.types.apexclass,
+      type: {
+        ...registry.types.apexclass,
+        strategies: { adapter: 'matchingContentFile', transformer: 'MissingStrategies' },
+      },
       xml: 'Test.xml',
     });
     component.type.strategies.transformer = 'MissingStrategies';

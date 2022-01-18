@@ -108,6 +108,11 @@ export class MetadataResolver {
             return components;
           }
         }
+      } else {
+        // the file is not metadata, but could be in the forceignore, in which case we'd want to report it
+        if (this.forceIgnore.denies(fsPath)) {
+          this.forceIgnoredPaths.add(fsPath);
+        }
       }
     }
 

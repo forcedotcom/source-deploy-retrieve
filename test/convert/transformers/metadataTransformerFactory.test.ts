@@ -18,7 +18,7 @@ import { DECOMPOSED_COMPONENT } from '../../mock/type-constants/customObjectCons
 import { COMPONENT_1 } from '../../mock/type-constants/customlabelsConstant';
 import { RegistryError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
-import { registry } from '../../../scripts/update-registry/update2';
+import { registry } from '../../../src/registry';
 
 const registryAccess = new RegistryAccess();
 

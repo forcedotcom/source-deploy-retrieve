@@ -304,8 +304,6 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
     this.mergeMap = new Map(result);
   }
 
-  // private async getMappedChildren(component: SourceComponent):
-
   /**
    * Return a json object that's built up from the mergeMap children
    */

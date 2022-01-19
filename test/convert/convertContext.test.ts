@@ -299,7 +299,6 @@ describe('Convert Transaction Constructs', () => {
         });
 
         const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
-        // eslint-disable-next-line no-console
         expect(result).to.deep.equal([{ component, writeInfos }]);
       });
 

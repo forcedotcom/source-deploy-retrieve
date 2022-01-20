@@ -52,7 +52,7 @@ export interface FromManifestOptions extends OptionalTreeRegistryOptions {
    */
   resolveSourcePaths?: string[];
   /**
-   * By default, wildcard members encoutered in the manifest are added to the set
+   * By default, wildcard members encountered in the manifest are added to the set
    * e.g. `{ fullName: '*', type: 'ApexClass' }`. If `resolveSourcePaths` is set,
    * wildcard components are not added to the final set, but are used in the filter
    * when resolving source-backed components to match all components with the wildcard

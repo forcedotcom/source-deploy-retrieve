@@ -16,6 +16,7 @@ export class RegistryAccess {
 
   private strictFolderTypes: MetadataType[];
   private folderContentTypes: MetadataType[];
+  private aliasTypes: MetadataType[];
 
   public constructor(registry: MetadataRegistry = defaultRegistry) {
     this.registry = registry;
@@ -40,7 +41,10 @@ export class RegistryAccess {
     if (!this.registry.types[lower]) {
       throw new RegistryError('error_missing_type_definition', lower);
     }
-    return this.registry.types[lower];
+    // redirect via alias
+    return this.registry.types[lower].aliasFor
+      ? this.registry.types[this.registry.types[lower].aliasFor]
+      : this.registry.types[lower];
   }
 
   /**
@@ -64,7 +68,8 @@ export class RegistryAccess {
    * @returns The first metadata type object that fulfills the predicate
    */
   public findType(predicate: (type: MetadataType) => boolean): MetadataType {
-    return Object.values(this.registry.types).find(predicate);
+    const firstMatch = Object.values(this.registry.types).find(predicate);
+    return firstMatch.aliasFor ? this.registry.types[firstMatch.aliasFor] : firstMatch;
   }
 
   /**
@@ -93,14 +98,26 @@ export class RegistryAccess {
    */
   public getFolderContentTypes(): MetadataType[] {
     if (!this.folderContentTypes) {
-      this.folderContentTypes = [];
-      for (const type of Object.values(this.registry.types)) {
-        if (type.folderContentType) {
-          this.folderContentTypes.push(type);
-        }
-      }
+      this.folderContentTypes = Object.values(this.registry.types).filter(
+        (type) => type.folderContentType && !type.aliasFor
+      );
     }
     return this.folderContentTypes;
+  }
+
+  /**
+   * Query for the types that have the aliasFor property defined.
+   * E.g., EmailTemplateFolder
+   *
+   * @see {@link MetadataType.aliasFor}
+   *
+   * @returns An array of metadata type objects that have aliasFor
+   */
+  public getAliasTypes(): MetadataType[] {
+    if (!this.aliasTypes) {
+      this.aliasTypes = Object.values(this.registry.types).filter((type) => type.aliasFor);
+    }
+    return this.aliasTypes;
   }
 
   public get apiVersion(): string {

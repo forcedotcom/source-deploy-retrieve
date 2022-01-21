@@ -71,6 +71,18 @@ describe('Registry Validation', () => {
     });
   });
 
+  describe('aliases', () => {
+    describe('all aliases point to real types', () => {
+      Object.values(registry.types)
+        .filter((type) => type.aliasFor)
+        .forEach((aliasType) => {
+          it(`${aliasType.name} is aliased to  ${aliasType.aliasFor} and that exists`, () => {
+            expect(registry.types[aliasType.aliasFor]).to.exist;
+          });
+        });
+    });
+  });
+
   describe('suffixes', () => {
     describe('all properties of suffixes match a real parent or child type', () => {
       Object.entries(registry.suffixes).forEach(([suffix, typeId]) => {
@@ -102,7 +114,9 @@ describe('Registry Validation', () => {
 
       const suffixMap = new Map<string, string>();
       Object.values(registry.types)
-        .filter((type) => type.suffix && !type.strictDirectoryName && !knownExceptions.includes(type.name))
+        .filter(
+          (type) => type.suffix && !type.aliasFor && !type.strictDirectoryName && !knownExceptions.includes(type.name)
+        )
         .map((type) => {
           // mapping for the type's suffix
           suffixMap.set(type.suffix, type.id);

@@ -197,6 +197,10 @@ export class DeployResult implements MetadataTransferResult {
         // strip document extension from fullName
         message.fullName = join(dirname(message.fullName), basename(message.fullName, extname(message.fullName)));
         break;
+      // Treat emailTemplateFolder as EmailFolder
+      case registry.types.emailtemplatefolder.name:
+        message.componentType = registry.types.emailfolder.name;
+        break;
       default:
     }
     return message;

@@ -16,6 +16,10 @@ describe('RegistryAccess', () => {
   });
 
   describe('getTypeByName', () => {
+    it('should return alias of a type when one exists', () => {
+      expect(registryAccess.getTypeByName('EmailTemplateFolder')).to.deep.equal(registry.types.emailfolder);
+    });
+
     it('should fetch type regardless of casing', () => {
       expect(registryAccess.getTypeByName('apexclass')).to.deep.equal(registry.types.apexclass);
     });
@@ -55,6 +59,10 @@ describe('RegistryAccess', () => {
       const foundType = registryAccess.findType((type: MetadataType) => type.suffix === 'objectTranslation');
       expect(foundType).to.deep.equal(registry.types.customobjecttranslation);
     });
+    it('should resolve aliases', () => {
+      const foundType = registryAccess.findType((type: MetadataType) => type.suffix === 'emailTemplateFolder');
+      expect(foundType).to.deep.equal(registry.types.emailfolder);
+    });
   });
 
   describe('getStrictFolderTypes', () => {
@@ -66,6 +74,14 @@ describe('RegistryAccess', () => {
     });
   });
 
+  describe('aliasTypes', () => {
+    it('should return 1 aliases type', () => {
+      const aliasTypes = registryAccess.getAliasTypes();
+      expect(aliasTypes.length).to.equal(1);
+      expect(aliasTypes[0].name).to.equal('EmailTemplateFolder');
+    });
+  });
+
   describe('getFolderContentTypes', () => {
     it('should return all the types with a folderContentType property defined', () => {
       const type = registry.types.reportfolder;
@@ -73,6 +89,9 @@ describe('RegistryAccess', () => {
       const type3 = registry.types.documentfolder;
       const type4 = registry.types.emailfolder;
       expect(registryAccess.getFolderContentTypes()).to.deep.equal([type, type2, type3, type4]);
+    });
+    it('should not include EmailTemplateFolder', () => {
+      expect(registryAccess.getFolderContentTypes()).to.not.deep.include(registry.types.emailtemplatefolder);
     });
   });
 });

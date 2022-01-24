@@ -260,6 +260,16 @@ describe('Registry Validation', () => {
           });
         });
     });
+    describe('nondecomposed have exactly 1 child', () => {
+      typesWithStrategies
+        .filter((t) => t.strategies.adapter === 'nonDecomposed')
+        .forEach((type) => {
+          it(`${type.id} has one child`, () => {
+            expect(type.children.types).to.exist;
+            expect(Object.keys(type.children.types).length).to.equal(1);
+          });
+        });
+    });
 
     describe('adapter = decomposed => has transformer and decomposition props', () => {
       typesWithStrategies

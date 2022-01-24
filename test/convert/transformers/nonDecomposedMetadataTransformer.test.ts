@@ -29,12 +29,15 @@ describe('NonDecomposedMetadataTransformer', () => {
 
       expect(await transformer.toMetadataFormat(child1)).to.deep.equal([]);
       expect(await transformer.toMetadataFormat(child2)).to.deep.equal([]);
-      expect(context.recomposition.state).to.deep.equal({
-        [component.fullName]: {
-          component,
-          children: new ComponentSet([child1, child2]),
-        },
-      });
+      const expected = JSON.parse(
+        JSON.stringify({
+          [component.fullName]: {
+            component,
+            children: new ComponentSet([child1, child2]),
+          },
+        })
+      );
+      expect(JSON.parse(JSON.stringify(context.recomposition.state))).to.deep.equal(expected);
     });
   });
 
@@ -47,17 +50,13 @@ describe('NonDecomposedMetadataTransformer', () => {
       expect(result).to.deep.equal([]);
       expect(context.decomposition.state).to.deep.equal({});
       expect(context.recomposition.state).to.deep.equal({});
+
       expect(context.nonDecomposition.state).to.deep.equal({
-        unclaimed: {
-          [component.xml]: {
-            parent: component,
-            children: {
-              [nonDecomposed.CHILD_1_NAME]: nonDecomposed.CHILD_1_XML,
-              [nonDecomposed.CHILD_2_NAME]: nonDecomposed.CHILD_2_XML,
-            },
-          },
-        },
-        claimed: {},
+        childrenByUniqueElement: new Map([
+          [nonDecomposed.CHILD_1_NAME, nonDecomposed.CHILD_1_XML],
+          [nonDecomposed.CHILD_2_NAME, nonDecomposed.CHILD_2_XML],
+        ]),
+        exampleComponent: component,
       });
     });
 
@@ -78,24 +77,13 @@ describe('NonDecomposedMetadataTransformer', () => {
       const result = await transformer.toSourceFormat(componentToConvert, component);
       expect(result).to.deep.equal([]);
       expect(context.nonDecomposition.state).to.deep.equal({
-        unclaimed: {
-          [componentToConvert.xml]: {
-            parent: componentToConvert,
-            children: {
-              [nonDecomposed.UNCLAIMED_CHILD_NAME]: nonDecomposed.UNCLAIMED_CHILD_XML,
-              [nonDecomposed.CHILD_3_NAME]: nonDecomposed.CHILD_3_XML,
-            },
-          },
-        },
-        claimed: {
-          [component.xml]: {
-            parent: component,
-            children: {
-              [nonDecomposed.CHILD_1_NAME]: nonDecomposed.CHILD_1_XML,
-              [nonDecomposed.CHILD_2_NAME]: nonDecomposed.CHILD_2_XML,
-            },
-          },
-        },
+        childrenByUniqueElement: new Map([
+          [nonDecomposed.CHILD_1_NAME, nonDecomposed.CHILD_1_XML],
+          [nonDecomposed.CHILD_2_NAME, nonDecomposed.CHILD_2_XML],
+          [nonDecomposed.UNCLAIMED_CHILD_NAME, nonDecomposed.UNCLAIMED_CHILD_XML],
+          [nonDecomposed.CHILD_3_NAME, nonDecomposed.CHILD_3_XML],
+        ]),
+        exampleComponent: componentToConvert,
       });
     });
   });

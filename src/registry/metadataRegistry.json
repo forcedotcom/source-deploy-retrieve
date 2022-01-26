@@ -1921,6 +1921,16 @@
       "strictDirectoryName": false,
       "folderContentType": "emailtemplate"
     },
+    "emailtemplatefolder": {
+      "id": "emailtemplatefolder",
+      "name": "EmailTemplateFolder",
+      "suffix": "emailTemplateFolder",
+      "directoryName": "email",
+      "inFolder": false,
+      "strictDirectoryName": false,
+      "folderContentType": "emailtemplate",
+      "aliasFor": "emailfolder"
+    },
     "inboundnetworkconnection": {
       "id": "inboundnetworkconnection",
       "name": "InboundNetworkConnection",

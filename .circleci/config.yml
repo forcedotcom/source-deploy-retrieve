@@ -3,56 +3,14 @@ orbs:
   release-management: salesforce/npm-release-management@4
 
 parameters:
-  run-auto-workflows:
+  workflow:
     description: >
-      Boolean that controls when a workflow would run.
-
-      It is used to gate which workflows should run when github events occur.
+      String that controls which workflow would run.
 
       This parameter is used by automation to determine if a workflow will run
       within a pipeline.
-    type: boolean
-    default: true
-  run-triggers:
-    description: >
-      Boolean that controls when `triggers` will run
-
-      This parameter is used by an scheduled trigger to determine if the
-      `triggers` workflow will run.
-    type: boolean
-    default: false
-  run-dependabot-automerge:
-    description: >
-      Boolean that controls when `dependabot-automerge` will run
-
-      This parameter is used by an scheduled trigger to determine if the
-      `dependabot-automerge` workflow will run.
-    type: boolean
-    default: false
-  run-test-ts-update:
-    description: >
-      Boolean that controls when `test-ts-update` will run
-
-      This parameter is used by an scheduled trigger to determine if the
-      `test-ts-update` workflow will run.
-    type: boolean
-    default: false
-  run-registry-check-preview:
-    description: >
-      Boolean that controls when `registry-check-preview` will run
-
-      This parameter is used by an scheduled trigger to determine if the
-      `registry-check-preview` workflow will run.
-    type: boolean
-    default: false
-  run-registry-check:
-    description: >
-      Boolean that controls when `registry-check` will run
-
-      This parameter is used by an scheduled trigger to determine if the
-      `registry-check` workflow will run.
-    type: boolean
-    default: false
+    type: string
+    default: 'test-and-release'
 
 jobs:
   registry-check:
@@ -168,17 +126,20 @@ jobs:
 workflows:
   version: 2
   registry-check-preview:
-    when: << pipeline.parameters.run-registry-check-preview >>
+    when:
+      equal: ['registry-check-preview', << pipeline.parameters.workflow >>]
     jobs:
       - registry-check-preview:
           # required for slack webhook
           context: salesforce-cli
   registry-check:
-    when: << pipeline.parameters.run-registry-check >>
+    when:
+      equal: ['registry-check', << pipeline.parameters.workflow >>]
     jobs:
       - registry-check
   test-and-release:
-    when: << pipeline.parameters.run-auto-workflows >>
+    when:
+      equal: ['test-and-release', << pipeline.parameters.workflow >>]
     jobs:
       - release-management/validate-pr:
           filters:
@@ -227,11 +188,13 @@ workflows:
               only: main
           context: CLI_CTC
   dependabot-automerge:
-    when: << pipeline.parameters.run-dependabot-automerge >>
+    when:
+      equal: ['dependabot-automerge', << pipeline.parameters.workflow >>]
     jobs:
       - release-management/dependabot-automerge:
           merge-method: squash
   test-ts-update:
-    when: << pipeline.parameters.run-test-ts-update >>
+    when:
+      equal: ['test-ts-update', << pipeline.parameters.workflow >>]
     jobs:
       - release-management/test-ts-update

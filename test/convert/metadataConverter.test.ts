@@ -11,10 +11,11 @@ import * as fs from 'graceful-fs';
 import { assert, expect } from 'chai';
 import { xmlInFolder } from '../mock';
 import * as streams from '../../src/convert/streams';
+import { ComponentReader } from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { ConversionError, LibraryError } from '../../src/errors';
 import { COMPONENTS } from '../mock/type-constants/documentFolderConstant';
-import { ComponentSet, DestructiveChangesType, MetadataConverter, SourceComponent } from '../../src';
+import { ComponentSet, DestructiveChangesType, MetadataConverter, registry, SourceComponent } from '../../src';
 import {
   DECOMPOSED_CHILD_COMPONENT_1,
   DECOMPOSED_CHILD_COMPONENT_2,
@@ -434,6 +435,31 @@ describe('MetadataConverter', () => {
       const pipelineArgs = pipelineStub.firstCall.args;
       validatePipelineArgs(pipelineArgs, 'source');
       expect(pipelineArgs[1].mergeSet).to.deep.equal(new ComponentSet(COMPONENTS));
+      expect(pipelineArgs[2].rootDestination).to.equal(defaultDirectory);
+    });
+
+    it('should create conversion pipeline with addressable components', async () => {
+      // @ts-ignore private
+      const componentReaderSpy = env.spy(ComponentReader.prototype, 'createIterator');
+      components.push({
+        type: registry.types.customobjecttranslation.children.types.customfieldtranslation,
+        name: 'myFieldTranslation',
+      } as SourceComponent);
+
+      expect(components.length).to.equal(4);
+      await converter.convert(components, 'source', {
+        type: 'merge',
+        defaultDirectory,
+        mergeWith: COMPONENTS,
+      });
+
+      const pipelineArgs = pipelineStub.firstCall.args;
+      validatePipelineArgs(pipelineArgs, 'source');
+
+      expect(componentReaderSpy.firstCall.args[0].length).to.equal(3);
+      // pop off the CFT that should be filtered off for the assertion
+      components.pop();
+      expect(componentReaderSpy.firstCall.args[0]).to.deep.equal(components);
       expect(pipelineArgs[2].rootDestination).to.equal(defaultDirectory);
     });
 

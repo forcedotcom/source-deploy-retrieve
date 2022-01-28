@@ -114,6 +114,9 @@ export class MetadataConverter {
           break;
       }
 
+      // only types that are addressable should be written - I'm looking at you CustomFieldTranslation
+      components = Array.from(components).filter((comp) => comp.type.isAddressable !== false);
+
       const conversionPipeline = pipeline(
         new ComponentReader(components),
         new ComponentConverter(targetFormat, this.registry, mergeSet, defaultDirectory),

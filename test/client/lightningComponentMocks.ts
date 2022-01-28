@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { QueryResult } from '../../src/client/types';
+import { QueryResult } from '../../src';
 
 export const lwcComponentMock: QueryResult = {
   size: 4,

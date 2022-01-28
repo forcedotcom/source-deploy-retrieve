@@ -5,46 +5,90 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { join, basename, dirname } from 'path';
+import { basename, dirname, join } from 'path';
 import { assert, expect } from 'chai';
-import { MetadataResolver, SourceComponent, VirtualDirectory, VirtualTreeContainer } from '../../src/resolve';
+import {
+  ComponentSet,
+  MetadataResolver,
+  registry,
+  RegistryAccess,
+  SourceComponent,
+  VirtualDirectory,
+  VirtualTreeContainer,
+} from '../../src';
 import { nls } from '../../src/i18n';
 import {
-  mockRegistry,
-  xmlInFolder,
+  bundle,
+  decomposedtoplevel,
   matchingContentFile,
   mixedContentDirectory,
   mixedContentInFolder,
-  bundle,
-  mockRegistryData,
-  decomposedtoplevel,
-} from '../mock/registry';
+  xmlInFolder,
+} from '../mock';
 import { TypeInferenceError } from '../../src/errors';
 import {
-  DECOMPOSED_VIRTUAL_FS,
-  DECOMPOSED_PATH,
-  DECOMPOSED_COMPONENT,
-  DECOMPOSED_CHILD_XML_PATH_1,
   DECOMPOSED_CHILD_COMPONENT_1,
-  DECOMPOSED_XML_PATH,
   DECOMPOSED_CHILD_DIR_PATH,
+  DECOMPOSED_CHILD_XML_PATH_1,
   DECOMPOSED_CHILD_XML_PATH_2,
-} from '../mock/registry/type-constants/decomposedConstants';
+  DECOMPOSED_COMPONENT,
+  DECOMPOSED_PATH,
+  DECOMPOSED_VIRTUAL_FS,
+  DECOMPOSED_XML_PATH,
+} from '../mock/type-constants/customObjectConstant';
 import {
   MIXED_CONTENT_DIRECTORY_COMPONENT,
   MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
   MIXED_CONTENT_DIRECTORY_DIR,
   MIXED_CONTENT_DIRECTORY_VIRTUAL_FS,
   MIXED_CONTENT_DIRECTORY_XML_PATHS,
-} from '../mock/registry/type-constants/mixedContentDirectoryConstants';
-import { ComponentSet, RegistryAccess } from '../../src';
+} from '../mock/type-constants/staticresourceConstant';
+import { META_XML_SUFFIX } from '../../src/common';
 import { RegistryTestUtil } from './registryTestUtil';
 
 const testUtil = new RegistryTestUtil();
 
 describe('MetadataResolver', () => {
-  const resolver = new MetadataResolver(mockRegistry);
-
+  const resolver = new MetadataResolver();
+  const registryAccess = new RegistryAccess(registry);
+  describe('Should not resolve using strictDir when suffixes do not match', () => {
+    const type = registryAccess.getTypeByName('ApexClass');
+    const COMPONENT_NAMES = ['myClass'];
+    // real scenario: classes/foo/objects/myCls.cls (where objects is the strictDir of another type)
+    const TYPE_DIRECTORY = join('classes', 'subfolder', 'subfolder2', 'objects');
+    const XML_NAMES = COMPONENT_NAMES.map((name) => `${name}.${type.suffix}${META_XML_SUFFIX}`);
+    const XML_PATHS = XML_NAMES.map((name) => join(TYPE_DIRECTORY, name));
+    const CONTENT_NAMES = COMPONENT_NAMES.map((name) => `${name}.${type.suffix}`);
+    const CONTENT_PATHS = CONTENT_NAMES.map((name) => join(TYPE_DIRECTORY, name));
+    const TREE = new VirtualTreeContainer([
+      {
+        dirPath: TYPE_DIRECTORY,
+        children: XML_NAMES.concat(CONTENT_NAMES),
+      },
+    ]);
+    const COMPONENTS = COMPONENT_NAMES.map(
+      (name, index) =>
+        new SourceComponent(
+          {
+            name,
+            type,
+            xml: XML_PATHS[index],
+            content: CONTENT_PATHS[index],
+          },
+          TREE
+        )
+    );
+    it('metadata file', () => {
+      const resolver = new MetadataResolver(registryAccess, TREE);
+      const sourceComponent = resolver.getComponentsFromPath(XML_PATHS[0])[0];
+      expect(sourceComponent.type).to.deep.equal(type);
+      expect(sourceComponent).to.deep.equal(COMPONENTS[0]);
+    });
+    it('content file', () => {
+      const resolver = new MetadataResolver(registryAccess, TREE);
+      expect(resolver.getComponentsFromPath(CONTENT_PATHS[0])).to.deep.equal([COMPONENTS[0]]);
+    });
+  });
   describe('getComponentsFromPath', () => {
     afterEach(() => testUtil.restore());
 
@@ -69,7 +113,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.matchingcontentfile,
+            type: registry.types.apexclass,
             componentMappings: [
               {
                 path,
@@ -91,7 +135,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.matchingcontentfile,
+            type: registry.types.apexclass,
             componentMappings: [{ path, component: matchingContentFile.COMPONENT }],
           },
         ]);
@@ -108,7 +152,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.mixedcontentdirectory,
+            type: registry.types.staticresource,
             componentMappings: [{ path, component: mixedContentDirectory.MIXED_CONTENT_DIRECTORY_COMPONENT }],
           },
         ]);
@@ -127,7 +171,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.matchingcontentfile,
+            type: registry.types.apexclass,
             componentMappings: [{ path, component: matchingContentFile.CONTENT_COMPONENT }],
             allowContent: false,
           },
@@ -149,7 +193,7 @@ describe('MetadataResolver', () => {
         }));
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.xmlinfolder,
+            type: registry.types.report,
             componentMappings,
             allowContent: false,
           },
@@ -167,7 +211,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.xmlinfolderfolder,
+            type: registry.types.reportfolder,
             componentMappings: [{ path: xmlInFolder.FOLDER_XML_PATH, component: xmlInFolder.FOLDER_COMPONENT }],
             allowContent: false,
           },
@@ -199,7 +243,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.mciffolder,
+            type: registry.types.documentfolder,
             componentMappings: [{ path, component: mixedContentInFolder.FOLDER_COMPONENT }],
           },
         ]);
@@ -207,7 +251,7 @@ describe('MetadataResolver', () => {
       });
 
       it('Should throw type id error if one could not be determined', () => {
-        const missing = join('path', 'to', 'whatever', 'a.b-meta.xml');
+        const missing = join('path', 'to', 'whatever', 'a.b-meta.afg');
         const access = testUtil.createMetadataResolver([
           {
             dirPath: dirname(missing),
@@ -232,7 +276,7 @@ describe('MetadataResolver', () => {
         testUtil.stubForceIgnore({ seed: path, deny: [path] });
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.matchingcontentfile,
+            type: registry.types.apexclass,
             // should not be returned
             componentMappings: [{ path, component: matchingContentFile.COMPONENT }],
           },
@@ -255,7 +299,7 @@ describe('MetadataResolver', () => {
         testUtil.stubForceIgnore({ seed: path, deny: [path] });
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.matchingcontentfile,
+            type: registry.types.apexclass,
             // should not be returned
             componentMappings: [{ path, component: matchingContentFile.COMPONENT }],
           },
@@ -274,7 +318,7 @@ describe('MetadataResolver', () => {
         testUtil.stubForceIgnore({ seed: path, deny: [path] });
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.matchingcontentfile,
+            type: registry.types.apexclass,
             // should not be returned
             componentMappings: [{ path, component: matchingContentFile.COMPONENT }],
           },
@@ -293,7 +337,7 @@ describe('MetadataResolver', () => {
         testUtil.stubForceIgnore({ seed: path, deny: [path] });
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.xmlinfolder,
+            type: registry.types.document,
             // should not be returned
             componentMappings: [{ path: xmlInFolder.FOLDER_XML_PATH, component: xmlInFolder.FOLDER_COMPONENT }],
           },
@@ -316,7 +360,7 @@ describe('MetadataResolver', () => {
         }));
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.xmlinfolder,
+            type: registry.types.report,
             componentMappings,
           },
         ]);
@@ -324,74 +368,74 @@ describe('MetadataResolver', () => {
       });
 
       it('Should walk all file and directory children', () => {
-        const { TYPE_DIRECTORY: MCF_DIR } = matchingContentFile;
-        const stuffDir = join(MCF_DIR, 'hasStuff');
-        const noStuffDir = join(MCF_DIR, 'noStuff');
-        const kathyXml = join(MCF_DIR, xmlInFolder.XML_NAMES[0]);
-        const mcfXml = matchingContentFile.XML_PATHS[0];
-        const mcfContent = matchingContentFile.CONTENT_PATHS[0];
-        const mcfXml2 = join(stuffDir, matchingContentFile.XML_NAMES[1]);
-        const mcfContent2 = join(stuffDir, matchingContentFile.CONTENT_NAMES[1]);
+        const { TYPE_DIRECTORY: apexDir } = matchingContentFile;
+        const populatedDir = join(apexDir, 'populated');
+        const emptyDir = join(apexDir, 'empty');
+        const documentXml = join(apexDir, xmlInFolder.XML_NAMES[0]);
+        const apexXml = matchingContentFile.XML_PATHS[0];
+        const apexContent = matchingContentFile.CONTENT_PATHS[0];
+        const apexBXml = join(populatedDir, matchingContentFile.XML_NAMES[1]);
+        const apexBContent = join(populatedDir, matchingContentFile.CONTENT_NAMES[1]);
         const tree = new VirtualTreeContainer([
           {
-            dirPath: MCF_DIR,
-            children: [basename(mcfXml), basename(mcfContent), xmlInFolder.XML_NAMES[0], 'hasStuff', 'noStuff'],
+            dirPath: apexDir,
+            children: [basename(apexXml), basename(apexContent), xmlInFolder.XML_NAMES[0], 'populated', 'empty'],
           },
           {
-            dirPath: noStuffDir,
+            dirPath: emptyDir,
             children: [],
           },
           {
-            dirPath: stuffDir,
-            children: [basename(mcfContent2), basename(mcfXml2)],
+            dirPath: populatedDir,
+            children: [basename(apexBContent), basename(apexBXml)],
           },
         ]);
-        const mcfComponent2: SourceComponent = new SourceComponent(
+        const apexComponentB = new SourceComponent(
           {
-            name: 'b',
-            type: mockRegistryData.types.matchingcontentfile,
-            xml: mcfXml2,
-            content: mcfContent2,
+            name: 'classB',
+            type: registry.types.apexclass,
+            xml: apexBXml,
+            content: apexBContent,
           },
           tree
         );
-        const kathyComponent2 = new SourceComponent(
+        const reportComponent = new SourceComponent(
           {
-            name: 'a',
-            type: mockRegistryData.types.xmlinfolder,
-            xml: kathyXml,
+            name: 'report',
+            type: registry.types.report,
+            xml: documentXml,
           },
           tree
         );
-        const access = new MetadataResolver(mockRegistry, tree);
+        const access = new MetadataResolver(undefined, tree);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.xmlinfolder,
+            type: registry.types.report,
             componentMappings: [
               {
-                path: join(MCF_DIR, xmlInFolder.XML_NAMES[0]),
-                component: kathyComponent2,
+                path: join(apexDir, xmlInFolder.XML_NAMES[0]),
+                component: reportComponent,
               },
             ],
           },
           {
-            type: mockRegistryData.types.matchingcontentfile,
+            type: registry.types.apexclass,
             componentMappings: [
               {
-                path: mcfXml,
+                path: apexXml,
                 component: matchingContentFile.COMPONENT,
               },
               {
-                path: mcfXml2,
-                component: mcfComponent2,
+                path: apexBXml,
+                component: apexComponentB,
               },
             ],
           },
         ]);
-        expect(access.getComponentsFromPath(MCF_DIR)).to.deep.equal([
+        expect(access.getComponentsFromPath(apexDir)).to.deep.equal([
           matchingContentFile.COMPONENT,
-          kathyComponent2,
-          mcfComponent2,
+          reportComponent,
+          apexComponentB,
         ]);
       });
 
@@ -404,7 +448,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.mixedcontentinfolder,
+            type: registry.types.document,
             componentMappings: [
               {
                 path: mixedContentInFolder.XML_PATHS[0],
@@ -440,7 +484,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.mixedcontentdirectory,
+            type: registry.types.staticresource,
             componentMappings: [
               {
                 path: MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
@@ -468,7 +512,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.bundle,
+            type: registry.types.auradefinitionbundle,
             componentMappings: [
               { path: bundle.CONTENT_PATH, component: COMPONENT },
               { path: bundle.XML_PATH, component: COMPONENT },
@@ -490,7 +534,7 @@ describe('MetadataResolver', () => {
         );
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.mixedcontentdirectory,
+            type: registry.types.staticresource,
             componentMappings: [
               { path: MIXED_CONTENT_DIRECTORY_CONTENT_PATH, component },
               { path: MIXED_CONTENT_DIRECTORY_XML_PATHS[0], component },
@@ -505,7 +549,7 @@ describe('MetadataResolver', () => {
         const access = testUtil.createMetadataResolver(DECOMPOSED_VIRTUAL_FS);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.decomposed,
+            type: registry.types.customobject,
             componentMappings: [
               { path: DECOMPOSED_XML_PATH, component: DECOMPOSED_COMPONENT },
               { path: DECOMPOSED_CHILD_XML_PATH_1, component: DECOMPOSED_CHILD_COMPONENT_1 },
@@ -542,12 +586,12 @@ describe('MetadataResolver', () => {
             children: [matchingContentFile.XML_NAMES[0], basename(bundle.SOURCE_PATHS[0])],
           },
         ]);
-        const access = new MetadataResolver(mockRegistry, tree);
+        const access = new MetadataResolver(undefined, tree);
         expect(access.getComponentsFromPath(bundle.TYPE_DIRECTORY)).to.deep.equal([
           new SourceComponent(
             {
-              name: 'a',
-              type: mockRegistryData.types.bundle,
+              name: 'myComponent',
+              type: registry.types.auradefinitionbundle,
               xml: join(bundle.CONTENT_PATH, matchingContentFile.XML_NAMES[0]),
               content: bundle.CONTENT_PATH,
             },
@@ -567,7 +611,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.xmlinfolder,
+            type: registry.types.document,
             componentMappings: [
               {
                 path: xmlInFolder.XML_PATHS[0],
@@ -605,7 +649,7 @@ describe('MetadataResolver', () => {
       ]);
       testUtil.stubAdapters([
         {
-          type: mockRegistryData.types.mixedcontentdirectory,
+          type: registry.types.experiencebundle,
           componentMappings: [
             {
               path: topLevelXmlPath,
@@ -631,13 +675,13 @@ describe('MetadataResolver', () => {
         }));
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.xmlinfolder,
+            type: registry.types.report,
             componentMappings,
           },
         ]);
         const toFilter = {
           fullName: xmlInFolder.COMPONENTS[0].fullName,
-          type: mockRegistryData.types.xmlinfolder,
+          type: registry.types.report,
         };
         const filter = new ComponentSet([toFilter]);
 
@@ -659,7 +703,7 @@ describe('MetadataResolver', () => {
         });
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.decomposedtoplevel,
+            type: registry.types.customobjecttranslation,
             componentMappings,
           },
         ]);
@@ -681,10 +725,10 @@ describe('MetadataResolver', () => {
       });
 
       it('should resolve directory component if in filter', () => {
-        const resolver = new MetadataResolver(mockRegistry, bundle.COMPONENT.tree);
+        const resolver = new MetadataResolver(undefined, bundle.COMPONENT.tree);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.bundle,
+            type: registry.types.auradefinitionbundle,
             componentMappings: [
               {
                 path: bundle.CONTENT_PATH,
@@ -718,7 +762,7 @@ describe('MetadataResolver', () => {
         ]);
         testUtil.stubAdapters([
           {
-            type: mockRegistryData.types.bundle,
+            type: registry.types.auradefinitionbundle,
             componentMappings: [
               {
                 path: bundle.CONTENT_PATH,

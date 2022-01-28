@@ -31,8 +31,6 @@ export const settings = [
   'botSettings', // have not successfully deployed this because of licensing errors when deploying settings
 ];
 export const metadataTypes = [
-  'EmailTemplateFolder', // not a real addressable type (parent of email template)
-
   // things that don't show up in describe so far
   'PicklistValue', // only existed in v37, so it's hard to describe!
   'AppointmentAssignmentPolicy', // not in describe?

@@ -19,12 +19,12 @@ import {
   ComponentLike,
   ManifestResolver,
   MetadataComponent,
+  MetadataMember,
   MetadataResolver,
   SourceComponent,
   TreeContainer,
 } from '../resolve';
 import { MetadataType, RegistryAccess } from '../registry';
-import { MetadataMember } from '../resolve/types';
 import {
   DestructiveChangesType,
   FromManifestOptions,

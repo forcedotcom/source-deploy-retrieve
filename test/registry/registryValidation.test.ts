@@ -5,10 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { expect } from 'chai';
-import { MetadataRegistry } from '../../src';
+import { DecompositionStrategy, MetadataRegistry, MetadataType, TransformerStrategy } from '../../src';
 import { registry as defaultRegistry } from '../../src/registry/registry';
 import { metadataTypes as UnsupportedTypes } from '../../src/registry/nonSupportedTypes';
-import { MetadataType, TransformerStrategy, DecompositionStrategy } from '../../src/registry/types';
 
 describe('Registry Validation', () => {
   const registry = defaultRegistry as MetadataRegistry;
@@ -72,6 +71,18 @@ describe('Registry Validation', () => {
     });
   });
 
+  describe('aliases', () => {
+    describe('all aliases point to real types', () => {
+      Object.values(registry.types)
+        .filter((type) => type.aliasFor)
+        .forEach((aliasType) => {
+          it(`${aliasType.name} is aliased to  ${aliasType.aliasFor} and that exists`, () => {
+            expect(registry.types[aliasType.aliasFor]).to.exist;
+          });
+        });
+    });
+  });
+
   describe('suffixes', () => {
     describe('all properties of suffixes match a real parent or child type', () => {
       Object.entries(registry.suffixes).forEach(([suffix, typeId]) => {
@@ -103,7 +114,9 @@ describe('Registry Validation', () => {
 
       const suffixMap = new Map<string, string>();
       Object.values(registry.types)
-        .filter((type) => type.suffix && !type.strictDirectoryName && !knownExceptions.includes(type.name))
+        .filter(
+          (type) => type.suffix && !type.aliasFor && !type.strictDirectoryName && !knownExceptions.includes(type.name)
+        )
         .map((type) => {
           // mapping for the type's suffix
           suffixMap.set(type.suffix, type.id);
@@ -258,6 +271,16 @@ describe('Registry Validation', () => {
             expect(type.strategies.decomposition).to.be.undefined;
             expect(type.strategies.recomposition).to.be.undefined;
             expect(type.strategies.transformer).to.be.undefined;
+          });
+        });
+    });
+    describe('nondecomposed have exactly 1 child', () => {
+      typesWithStrategies
+        .filter((t) => t.strategies.adapter === 'nonDecomposed')
+        .forEach((type) => {
+          it(`${type.id} has one child`, () => {
+            expect(type.children.types).to.exist;
+            expect(Object.keys(type.children.types).length).to.equal(1);
           });
         });
     });

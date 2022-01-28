@@ -6,16 +6,15 @@
  */
 import { join } from 'path';
 import { expect } from 'chai';
-import { mockRegistry, mockRegistryData } from '../../mock/registry';
-import { DefaultSourceAdapter } from '../../../src/resolve/adapters/defaultSourceAdapter';
-import { SourceComponent } from '../../../src/resolve';
+import { DefaultSourceAdapter } from '../../../src/resolve/adapters';
+import { registry, SourceComponent } from '../../../src';
 import { META_XML_SUFFIX } from '../../../src/common';
 
 describe('DefaultSourceAdapter', () => {
   it('should return a SourceComponent when given a metadata xml file', () => {
-    const type = mockRegistryData.types.matchingcontentfile;
+    const type = registry.types.apexclass;
     const path = join('path', 'to', type.directoryName, `My_Test.${type.suffix}${META_XML_SUFFIX}`);
-    const adapter = new DefaultSourceAdapter(type, mockRegistry);
+    const adapter = new DefaultSourceAdapter(type);
     expect(adapter.getComponent(path)).to.deep.equal(
       new SourceComponent({
         name: 'My_Test',
@@ -26,9 +25,9 @@ describe('DefaultSourceAdapter', () => {
   });
 
   it('should return a SourceComponent when given a content-only metadata file', () => {
-    const type = mockRegistryData.types.matchingcontentfile;
+    const type = registry.types.apexclass;
     const path = join('path', 'to', type.directoryName, `My_Test.${type.suffix}`);
-    const adapter = new DefaultSourceAdapter(type, mockRegistry);
+    const adapter = new DefaultSourceAdapter(type);
     expect(adapter.getComponent(path)).to.deep.equal(
       new SourceComponent({
         name: 'My_Test',

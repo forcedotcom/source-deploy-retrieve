@@ -106,6 +106,11 @@ export interface MetadataType {
    ```
    */
   supportsWildcardAndName?: boolean;
+
+  /**
+   * Whenever this type is requested, return the aliasFor type instead
+   */
+  aliasFor?: string;
   /**
    * Type definitions for child types, if the type has any.
    *

@@ -32,15 +32,11 @@ export class MetadataConverter {
     output: ConvertOutputConfig
   ): Promise<ConvertResult> {
     try {
-      let cs: ComponentSet;
-      let components: Iterable<SourceComponent>;
-      if (comps instanceof ComponentSet) {
-        cs = comps;
-        components = Array.from(comps.getSourceComponents());
-      } else {
-        cs = new ComponentSet(comps, this.registry);
-        components = comps;
-      }
+      const cs = comps instanceof ComponentSet ? comps : new ComponentSet(comps, this.registry);
+      const components = (
+        (comps instanceof ComponentSet ? Array.from(comps.getSourceComponents()) : comps) as SourceComponent[]
+      ).filter((comp) => comp.type.isAddressable !== false);
+
       let manifestContents;
       const isSource = targetFormat === 'source';
       const tasks = [];

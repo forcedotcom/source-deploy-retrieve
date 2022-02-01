@@ -485,12 +485,15 @@ v55 introduces the following new types.  Here's their current level of support
 |:---|:---|:---|
 |DataActionDefinition|❌|Not supported, but support could be added|
 |Experience|undefined|undefined|
+|ExternalDataSrcDescriptor|❌|Not supported, but support could be added|
 |ExternalDataTranField|❌|Not supported, but support could be added|
 |ExternalDataTranObject|❌|Not supported, but support could be added|
 |IndustriesAutomotiveSettings|✅||
+|PaymentsManagementEnabledSettings|✅||
 |RegisteredExternalService|❌|Not supported, but support could be added|
 |SchedulingObjective|❌|Not supported, but support could be added|
 |StreamingAppDataConnector|❌|Not supported, but support could be added|
+|SubscriptionManagementSettings|✅||
 |VoiceSettings|✅||
 
 ## Additional Types

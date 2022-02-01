@@ -248,14 +248,14 @@ describe('ComponentSet', () => {
         const expected: MetadataComponent[] = [
           {
             fullName: 'Test',
-            type: mockRegistryData.types.matchingcontentfile,
+            type: registry.types.apexclass,
           },
         ];
         const resolveStub = env.stub(ConnectionResolver.prototype, 'resolve').resolves({
           components: expected,
-          apiVersion: mockRegistryData.apiVersion,
+          apiVersion: registry.apiVersion,
         });
-        env.stub(RegistryAccess.prototype, 'getTypeByName').returns(mockRegistryData.types.matchingcontentfile);
+        env.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
         const set = await ComponentSet.fromConnection({ usernameOrConnection: connection });
 
         const result = set.toArray();
@@ -268,14 +268,14 @@ describe('ComponentSet', () => {
         const expected: MetadataComponent[] = [
           {
             fullName: 'Test',
-            type: mockRegistryData.types.matchingcontentfile,
+            type: registry.types.apexclass,
           },
         ];
         const resolveStub = env.stub(ConnectionResolver.prototype, 'resolve').resolves({
           components: expected,
           apiVersion: '50.0',
         });
-        env.stub(RegistryAccess.prototype, 'getTypeByName').returns(mockRegistryData.types.matchingcontentfile);
+        env.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
         const set = await ComponentSet.fromConnection({
           usernameOrConnection: 'test@foobar.com',
           apiVersion: '50.0',
@@ -292,14 +292,14 @@ describe('ComponentSet', () => {
         const expected: MetadataComponent[] = [
           {
             fullName: 'Test',
-            type: mockRegistryData.types.matchingcontentfile,
+            type: registry.types.apexclass,
           },
         ];
         const resolveStub = env.stub(ConnectionResolver.prototype, 'resolve').resolves({
           components: expected,
           apiVersion: connection.getApiVersion(),
         });
-        env.stub(RegistryAccess.prototype, 'getTypeByName').returns(mockRegistryData.types.matchingcontentfile);
+        env.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
         const set = await ComponentSet.fromConnection('test@foobar.com');
 
         const result = set.toArray();

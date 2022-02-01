@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.9.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.9.4...v5.9.5) (2022-01-31)
+
+### Bug Fixes
+
+- convert CFT ([#558](https://github.com/forcedotcom/source-deploy-retrieve/issues/558)) ([4978247](https://github.com/forcedotcom/source-deploy-retrieve/commit/4978247f57b7db8e6b08c96d7a985dad67dc0dbc))
+
+### [5.9.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.9.3...v5.9.4) (2022-01-24)
+
+### [5.9.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.9.2...v5.9.3) (2022-01-20)
+
+### Bug Fixes
+
+- custom label merging ([2d5ded2](https://github.com/forcedotcom/source-deploy-retrieve/commit/2d5ded2f45242535061d545dc7de56d12630bce2))
+
+### [5.9.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.9.1...v5.9.2) (2022-01-12)
+
 ### [5.9.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.9.0...v5.9.1) (2022-01-05)
 
 ## [5.9.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.8.5...v5.9.0) (2022-01-04)

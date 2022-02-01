@@ -7,16 +7,9 @@
 import { join } from 'path';
 import { assert, expect } from 'chai';
 import { createSandbox } from 'sinon';
-import {
-  decomposed,
-  matchingContentFile,
-  mixedContentDirectory,
-  mockRegistry,
-  mockRegistryData,
-  xmlInFolder,
-} from '../mock/registry';
-import { DECOMPOSED_COMPONENT } from '../mock/registry/type-constants/decomposedConstants';
-import { COMPONENT } from '../mock/registry/type-constants/matchingContentFileConstants';
+import { decomposed, matchingContentFile, mixedContentDirectory, xmlInFolder } from '../mock';
+import { DECOMPOSED_COMPONENT } from '../mock/type-constants/customObjectConstant';
+import { COMPONENT } from '../mock/type-constants/apexClassConstant';
 import {
   CHILD_1_NAME,
   CHILD_1_XML,
@@ -28,8 +21,15 @@ import {
   MATCHING_RULES_TYPE,
   TREE,
   VIRTUAL_DIR,
-} from '../mock/registry/type-constants/nonDecomposedConstants';
-import { DestructiveChangesType, MetadataType, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../src';
+} from '../mock/type-constants/customlabelsConstant';
+import {
+  DestructiveChangesType,
+  MetadataType,
+  registry,
+  RegistryAccess,
+  SourceComponent,
+  VirtualTreeContainer,
+} from '../../src';
 import { DecomposedSourceAdapter } from '../../src/resolve/adapters';
 import { TypeInferenceError } from '../../src/errors';
 import { nls } from '../../src/i18n';
@@ -150,31 +150,42 @@ describe('SourceComponent', () => {
 
     it('should parse the child components xml content to js object', async () => {
       const component = new SourceComponent({
-        name: 'nondecomposedchild',
-        type: mockRegistryData.types.nondecomposed.children.types.nondecomposedchild,
+        name: 'mylabel',
+        type: registry.types.customlabels.children.types.customlabel,
         xml: COMPONENT_1_XML_PATH,
         parent: new SourceComponent({
           name: 'nondecomposed',
-          type: mockRegistryData.types.nondecomposed,
+          type: registry.types.customlabels,
         }),
       });
       env
         .stub(component.tree, 'readFile')
         .resolves(
           Buffer.from(
-            '<nondecomposedparent><nondecomposed><id>nondecomposedchild</id><content>something</content></nondecomposed></nondecomposedparent>'
+            '<CustomLabels>' +
+              '   <labels>\n' +
+              '        <fullName>mylabel</fullName>\n' +
+              '        <language>en_US</language>\n' +
+              '        <protected>true</protected>\n' +
+              '        <shortDescription>my-app Label 1</shortDescription>\n' +
+              '        <value>my-app</value>\n' +
+              '    </labels>\n' +
+              '</CustomLabels>'
           )
         );
       expect(await component.parseXml()).to.deep.equal({
-        content: 'something',
-        id: 'nondecomposedchild',
+        fullName: 'mylabel',
+        language: 'en_US',
+        protected: 'true',
+        shortDescription: 'my-app Label 1',
+        value: 'my-app',
       });
     });
 
     it('should return empty object if component does not have an xml', async () => {
       const component = new SourceComponent({
         name: 'a',
-        type: mockRegistryData.types.matchingcontentfile,
+        type: registry.types.apexclass,
       });
       expect(await component.parseXml()).to.deep.equal({});
     });
@@ -217,7 +228,7 @@ describe('SourceComponent', () => {
     it('should return empty array if no content is set', () => {
       const component = new SourceComponent({
         name: 'a',
-        type: mockRegistryData.types.xmlinfolder,
+        type: registry.types.document,
         xml: xmlInFolder.XML_PATHS[0],
       });
       expect(component.walkContent()).to.be.empty;
@@ -237,7 +248,7 @@ describe('SourceComponent', () => {
       const component = SourceComponent.createVirtualComponent(
         {
           name: 'a',
-          type: mockRegistryData.types.mixedcontentdirectory,
+          type: registry.types.experiencebundle,
           xml: mixedContentDirectory.MIXED_CONTENT_DIRECTORY_XML_PATHS[0],
           content: mixedContentDirectory.MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
         },
@@ -268,11 +279,11 @@ describe('SourceComponent', () => {
   });
 
   describe('Child Components', () => {
-    const type = mockRegistryData.types.decomposed;
+    const type = registry.types.customobject;
     const expectedChild = SourceComponent.createVirtualComponent(
       {
-        name: 'z',
-        type: type.children.types.y,
+        name: 'Fields__c',
+        type: type.children.types.customfield,
         xml: decomposed.DECOMPOSED_CHILD_XML_PATH_1,
         parent: decomposed.DECOMPOSED_COMPONENT,
       },
@@ -280,8 +291,8 @@ describe('SourceComponent', () => {
     );
     const expectedChild2 = SourceComponent.createVirtualComponent(
       {
-        name: 'w',
-        type: type.children.types.x,
+        name: 'myValidationRule',
+        type: type.children.types.validationrule,
         xml: decomposed.DECOMPOSED_CHILD_XML_PATH_2,
         parent: decomposed.DECOMPOSED_COMPONENT,
       },
@@ -315,7 +326,7 @@ describe('SourceComponent', () => {
       const noXml = SourceComponent.createVirtualComponent(
         {
           name: 'noXml',
-          type: mockRegistryData.types.mixedcontentinfolder,
+          type: registry.types.documentfolder,
         },
         []
       );
@@ -328,7 +339,7 @@ describe('SourceComponent', () => {
       // This test adds an ApexClass to the equivalent of here:
       // .../main/default/objects/MyObject/classes/MyApexClass.cls-meta.xml
       // The actual ApexClass file path for the test is:
-      // path/to/decomposeds/a/classes/a.mcf-meta.xml
+      // path/to/objects/customObject__c/classes/a.cls
       const { CONTENT_NAMES, XML_NAMES } = matchingContentFile;
       const fsUnexpectedChild = [
         {
@@ -345,7 +356,7 @@ describe('SourceComponent', () => {
         },
       ];
       const tree = new VirtualTreeContainer(fsUnexpectedChild);
-      const adapter = new DecomposedSourceAdapter(type, mockRegistry, undefined, tree);
+      const adapter = new DecomposedSourceAdapter(type, new RegistryAccess(), undefined, tree);
       const fsPath = join(decomposed.DECOMPOSED_PATH, 'classes', XML_NAMES[0]);
 
       assert.throws(
@@ -357,11 +368,11 @@ describe('SourceComponent', () => {
   });
 
   describe('Nondecomposed Child Components', () => {
-    const type = mockRegistryData.types.nondecomposed;
+    const type = registry.types.customlabels;
     const expectedChild = SourceComponent.createVirtualComponent(
       {
         name: CHILD_1_NAME,
-        type: type.children.types.nondecomposedchild,
+        type: type.children.types.customlabel,
         xml: COMPONENT_1_XML_PATH,
         parent: COMPONENT_1,
       },
@@ -370,7 +381,7 @@ describe('SourceComponent', () => {
     const expectedChild2 = SourceComponent.createVirtualComponent(
       {
         name: CHILD_2_NAME,
-        type: type.children.types.nondecomposedchild,
+        type: type.children.types.customlabel,
         xml: COMPONENT_1_XML_PATH,
         parent: COMPONENT_1,
       },

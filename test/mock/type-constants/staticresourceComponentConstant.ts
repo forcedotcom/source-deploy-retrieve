@@ -5,21 +5,21 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { mockRegistryData } from '../mockRegistry';
-import { SourceComponent } from '../../../../src';
-import { META_XML_SUFFIX } from '../../../../src/common';
 
-const type = mockRegistryData.types.mixedcontentsinglefile;
+import { registry, SourceComponent } from '../../../src';
+import { META_XML_SUFFIX } from '../../../src/common';
+
+const type = registry.types.staticresource;
 
 export const TYPE_DIRECTORY = join('path', 'to', type.directoryName);
-export const COMPONENT_NAMES = ['a'];
+export const COMPONENT_NAMES = ['staticResourceComponent'];
 export const XML_NAMES = COMPONENT_NAMES.map((name) => `${name}.${type.suffix}${META_XML_SUFFIX}`);
 export const XML_PATHS = XML_NAMES.map((n) => join(TYPE_DIRECTORY, n));
-export const CONTENT_NAMES = COMPONENT_NAMES.map((name) => `${name}.x`);
+export const CONTENT_NAMES = COMPONENT_NAMES.map((name) => `${name}.json`);
 export const CONTENT_PATHS = CONTENT_NAMES.map((n) => join(TYPE_DIRECTORY, n));
 export const COMPONENT = SourceComponent.createVirtualComponent(
   {
-    name: 'a',
+    name: COMPONENT_NAMES[0],
     type,
     content: CONTENT_PATHS[0],
     xml: XML_PATHS[0],

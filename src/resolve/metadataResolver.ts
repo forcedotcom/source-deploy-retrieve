@@ -8,14 +8,14 @@ import { basename, dirname, join, sep } from 'path';
 import { Lifecycle } from '@salesforce/core';
 import { TypeInferenceError } from '../errors';
 import { extName, parentName, parseMetadataXml } from '../utils';
-import { RegistryAccess } from '../registry/registryAccess';
+import { MetadataType, RegistryAccess } from '../registry';
 import { ComponentSet } from '../collections';
-import { MetadataType } from '../registry';
 import { META_XML_SUFFIX } from '../common';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
+
 /**
  * Resolver for metadata type and component objects.
  *

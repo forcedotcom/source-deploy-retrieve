@@ -9,16 +9,17 @@ import { fail } from 'assert';
 import { createSandbox, SinonStub } from 'sinon';
 import * as fs from 'graceful-fs';
 import { assert, expect } from 'chai';
-import { mockRegistry, xmlInFolder } from '../mock/registry';
+import { xmlInFolder } from '../mock';
 import * as streams from '../../src/convert/streams';
+import { ComponentReader } from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { ConversionError, LibraryError } from '../../src/errors';
-import { COMPONENTS } from '../mock/registry/type-constants/mixedContentInFolderConstants';
-import { ComponentSet, DestructiveChangesType, MetadataConverter, SourceComponent } from '../../src';
+import { COMPONENTS } from '../mock/type-constants/documentFolderConstant';
+import { ComponentSet, DestructiveChangesType, MetadataConverter, registry, SourceComponent } from '../../src';
 import {
   DECOMPOSED_CHILD_COMPONENT_1,
   DECOMPOSED_CHILD_COMPONENT_2,
-} from '../mock/registry/type-constants/decomposedConstants';
+} from '../mock/type-constants/customObjectConstant';
 
 const env = createSandbox();
 
@@ -27,7 +28,7 @@ describe('MetadataConverter', () => {
   let pipelineStub: SinonStub;
   let writeFileStub: SinonStub;
 
-  const converter = new MetadataConverter(mockRegistry);
+  const converter = new MetadataConverter();
   const components = xmlInFolder.COMPONENTS;
   const packageName = 'test';
   const outputDirectory = join('path', 'to', 'output');
@@ -142,7 +143,7 @@ describe('MetadataConverter', () => {
       const timestamp = 123456;
       const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
       env.stub(Date, 'now').returns(timestamp);
-      const expectedContents = new ComponentSet(components, mockRegistry).getPackageXml();
+      const expectedContents = new ComponentSet(components).getPackageXml();
 
       await converter.convert(components, 'metadata', { type: 'directory', outputDirectory });
 
@@ -168,7 +169,7 @@ describe('MetadataConverter', () => {
         type: DECOMPOSED_CHILD_COMPONENT_2.type,
         xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
       });
-      const compSet = new ComponentSet([component1, component2], mockRegistry);
+      const compSet = new ComponentSet([component1, component2]);
       const expectedDestructiveContents = compSet.getPackageXml(undefined, DestructiveChangesType.POST);
       const expectedContents = compSet.getPackageXml();
 
@@ -200,7 +201,7 @@ describe('MetadataConverter', () => {
         type: DECOMPOSED_CHILD_COMPONENT_2.type,
         xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
       });
-      const compSet = new ComponentSet([component1, component2], mockRegistry);
+      const compSet = new ComponentSet([component1, component2]);
       compSet.setDestructiveChangesType(DestructiveChangesType.PRE);
       const expectedDestructiveContents = compSet.getPackageXml(undefined, DestructiveChangesType.PRE);
       const expectedContents = compSet.getPackageXml();
@@ -222,7 +223,7 @@ describe('MetadataConverter', () => {
       const timestamp = 123456;
       const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
       env.stub(Date, 'now').returns(timestamp);
-      const compSet = new ComponentSet(components, mockRegistry);
+      const compSet = new ComponentSet(components);
       compSet.sourceApiVersion = '45.0';
       const expectedContents = compSet.getPackageXml();
 
@@ -241,7 +242,7 @@ describe('MetadataConverter', () => {
       const packageName = 'examplePackage';
       const packagePath = join(outputDirectory, packageName);
       env.stub(Date, 'now').returns(timestamp);
-      const cs = new ComponentSet(components, mockRegistry);
+      const cs = new ComponentSet(components);
       cs.fullName = packageName;
       const expectedContents = cs.getPackageXml();
 
@@ -333,7 +334,7 @@ describe('MetadataConverter', () => {
     });
 
     it('should write manifest for metadata format conversion', async () => {
-      const expectedContents = new ComponentSet(components, mockRegistry).getPackageXml();
+      const expectedContents = new ComponentSet(components).getPackageXml();
       const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
 
       await converter.convert(components, 'metadata', { type: 'zip' });
@@ -354,7 +355,7 @@ describe('MetadataConverter', () => {
         type: DECOMPOSED_CHILD_COMPONENT_2.type,
         xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
       });
-      const compSet = new ComponentSet([component1, component2], mockRegistry);
+      const compSet = new ComponentSet([component1, component2]);
       const expectedDestructiveContents = compSet.getPackageXml(undefined, DestructiveChangesType.POST);
       const expectedContents = compSet.getPackageXml();
       const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
@@ -381,7 +382,7 @@ describe('MetadataConverter', () => {
         type: DECOMPOSED_CHILD_COMPONENT_2.type,
         xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
       });
-      const compSet = new ComponentSet([component1, component2], mockRegistry);
+      const compSet = new ComponentSet([component1, component2]);
       compSet.setDestructiveChangesType(DestructiveChangesType.PRE);
       const expectedDestructiveContents = compSet.getPackageXml(4, DestructiveChangesType.PRE);
       const expectedContents = compSet.getPackageXml();
@@ -434,6 +435,31 @@ describe('MetadataConverter', () => {
       const pipelineArgs = pipelineStub.firstCall.args;
       validatePipelineArgs(pipelineArgs, 'source');
       expect(pipelineArgs[1].mergeSet).to.deep.equal(new ComponentSet(COMPONENTS));
+      expect(pipelineArgs[2].rootDestination).to.equal(defaultDirectory);
+    });
+
+    it('should create conversion pipeline with addressable components', async () => {
+      // @ts-ignore private
+      const componentReaderSpy = env.spy(ComponentReader.prototype, 'createIterator');
+      components.push({
+        type: registry.types.customobjecttranslation.children.types.customfieldtranslation,
+        name: 'myFieldTranslation',
+      } as SourceComponent);
+
+      expect(components.length).to.equal(4);
+      await converter.convert(components, 'source', {
+        type: 'merge',
+        defaultDirectory,
+        mergeWith: COMPONENTS,
+      });
+
+      const pipelineArgs = pipelineStub.firstCall.args;
+      validatePipelineArgs(pipelineArgs, 'source');
+
+      expect(componentReaderSpy.firstCall.args[0].length).to.equal(3);
+      // pop off the CFT that should be filtered off for the assertion
+      components.pop();
+      expect(componentReaderSpy.firstCall.args[0]).to.deep.equal(components);
       expect(pipelineArgs[2].rootDestination).to.equal(defaultDirectory);
     });
 

@@ -141,11 +141,9 @@ Only `source:push` and `source:pull` support source tracking, so the target type
 
 ## Unit Testing
 
-SDR Unit tests are abstract (mockRegistry tries to represent possible patterns). If your type uses a combination of properties that don't match an existing type in the registry, there's a chance the behavior isn't covered.
-
 Reach out to the CLI team for help with unit tests.
 
-[metadataResolverRealRegistry.ts](../test/resolve/metadataResolverRealRegistry.test.ts) is an example of unit testing one behavior (resolving from source files) of a real metadata type.
+[metadataResolverRegistry.ts](../test/resolve/metadataResolverRegistry.test.ts) is an example of unit testing one behavior (resolving from source files) of a real metadata type.
 
 ## Integration Testing
 

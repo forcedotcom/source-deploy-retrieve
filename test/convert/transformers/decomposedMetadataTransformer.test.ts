@@ -9,18 +9,19 @@ import { join } from 'path';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import { assert } from '@salesforce/ts-types';
-import { decomposed, matchingContentFile, mockRegistry, mockRegistryData } from '../../mock/registry';
+import { decomposed, matchingContentFile } from '../../mock';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
 import { baseName } from '../../../src/utils';
 import { JsToXml } from '../../../src/convert/streams';
-import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/registry/type-constants/decomposedTopLevelConstants';
-import { ComponentSet, ForceIgnore, SourceComponent } from '../../../src';
+import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/type-constants/customObjectTranslationConstant';
+import { ComponentSet, ForceIgnore, registry, RegistryAccess, SourceComponent } from '../../../src';
 import { XML_NS_KEY, XML_NS_URL } from '../../../src/common';
 import { ConvertContext } from '../../../src/convert/convertContext';
 import { TypeInferenceError } from '../../../src/errors';
 import { nls } from '../../../src/i18n';
 
 const env = createSandbox();
+const registryAccess = new RegistryAccess();
 
 describe('DecomposedMetadataTransformer', () => {
   const component = decomposed.DECOMPOSED_COMPONENT;
@@ -31,44 +32,50 @@ describe('DecomposedMetadataTransformer', () => {
     it('should defer write operations and set context state when a child components are given', async () => {
       const [child1, child2] = component.getChildren();
       const context = new ConvertContext();
-      const transformer = new DecomposedMetadataTransformer(mockRegistry, context);
+      const transformer = new DecomposedMetadataTransformer(registryAccess, context);
 
       expect(await transformer.toMetadataFormat(child1)).to.deep.equal([]);
       expect(await transformer.toMetadataFormat(child2)).to.deep.equal([]);
-      expect(context.recomposition.state).to.deep.equal({
-        [component.fullName]: {
-          component,
-          children: new ComponentSet([child1, child2], mockRegistry),
-        },
-      });
+      expect(JSON.stringify(context.recomposition.state)).to.deep.equal(
+        JSON.stringify({
+          [component.fullName]: {
+            component,
+            children: new ComponentSet([child1, child2], registryAccess),
+          },
+        })
+      );
     });
 
     it('should defer write operations and set context state when a parent component is given', async () => {
       const context = new ConvertContext();
-      const transformer = new DecomposedMetadataTransformer(mockRegistry, context);
+      const transformer = new DecomposedMetadataTransformer(registryAccess, context);
 
       expect(await transformer.toMetadataFormat(component)).to.deep.equal([]);
-      expect(context.recomposition.state).to.deep.equal({
-        [component.fullName]: {
-          component,
-          children: new ComponentSet(component.getChildren(), mockRegistry),
-        },
-      });
+      expect(JSON.stringify(context.recomposition.state)).to.deep.equal(
+        JSON.stringify({
+          [component.fullName]: {
+            component,
+            children: new ComponentSet(component.getChildren(), registryAccess),
+          },
+        })
+      );
     });
 
     it('should defer write operations and set context state when a child and parent component is given', async () => {
       const [child] = component.getChildren();
       const context = new ConvertContext();
-      const transformer = new DecomposedMetadataTransformer(mockRegistry, context);
+      const transformer = new DecomposedMetadataTransformer(registryAccess, context);
 
       expect(await transformer.toMetadataFormat(child)).to.deep.equal([]);
       expect(await transformer.toMetadataFormat(component)).to.deep.equal([]);
-      expect(context.recomposition.state).to.deep.equal({
-        [component.fullName]: {
-          component,
-          children: new ComponentSet([child].concat(component.getChildren()), mockRegistry),
-        },
-      });
+      expect(JSON.stringify(context.recomposition.state)).to.deep.equal(
+        JSON.stringify({
+          [component.fullName]: {
+            component,
+            children: new ComponentSet([child], registryAccess),
+          },
+        })
+      );
     });
 
     it('should throw when an invalid child is included with the parent', async () => {
@@ -97,7 +104,7 @@ describe('DecomposedMetadataTransformer', () => {
         fsUnexpectedChild
       );
       const fsPath = join(decomposed.DECOMPOSED_PATH, 'classes', XML_NAMES[0]);
-      const transformer = new DecomposedMetadataTransformer(mockRegistry, new ConvertContext());
+      const transformer = new DecomposedMetadataTransformer(registryAccess, new ConvertContext());
 
       try {
         await transformer.toMetadataFormat(parentComponent);
@@ -115,13 +122,12 @@ describe('DecomposedMetadataTransformer', () => {
       const { fullName, type } = component;
       const root = join('main', 'default', type.directoryName, fullName);
       const context = new ConvertContext();
-      const transformer = new DecomposedMetadataTransformer(mockRegistry, context);
+      const transformer = new DecomposedMetadataTransformer(registryAccess, context);
       env.stub(component, 'parseXml').resolves({
-        Decomposed: {
+        CustomObject: {
           fullName,
-          foo: 'bar',
-          ys: { fullName: 'child', test: 'testVal' },
-          xs: [
+          customField: [{ fullName: 'child', test: 'testVal' }],
+          validationRules: [
             { fullName: 'child2', test: 'testVal2' },
             { fullName: 'child3', test: 'testVal3' },
           ],
@@ -134,40 +140,30 @@ describe('DecomposedMetadataTransformer', () => {
       expect(result).to.deep.equal([
         {
           source: new JsToXml({
-            Y: {
-              [XML_NS_KEY]: XML_NS_URL,
-              fullName: 'child',
-              test: 'testVal',
-            },
-          }),
-          output: join(root, type.children.types.y.directoryName, 'child.y-meta.xml'),
-        },
-        {
-          source: new JsToXml({
-            X: {
+            ValidationRule: {
               [XML_NS_KEY]: XML_NS_URL,
               fullName: 'child2',
               test: 'testVal2',
             },
           }),
-          output: join(root, type.children.types.x.directoryName, 'child2.x-meta.xml'),
+          output: join(root, type.children.types.validationrule.directoryName, 'child2.validationRule-meta.xml'),
         },
         {
           source: new JsToXml({
-            X: {
+            ValidationRule: {
               [XML_NS_KEY]: XML_NS_URL,
               fullName: 'child3',
               test: 'testVal3',
             },
           }),
-          output: join(root, type.children.types.x.directoryName, 'child3.x-meta.xml'),
+          output: join(root, type.children.types.validationrule.directoryName, 'child3.validationRule-meta.xml'),
         },
         {
           source: new JsToXml({
-            Decomposed: {
+            CustomObject: {
               [XML_NS_KEY]: XML_NS_URL,
               fullName: component.fullName,
-              foo: 'bar',
+              customField: [{ fullName: 'child', test: 'testVal' }],
             },
           }),
           output: join(root, `${fullName}.${type.suffix}-meta.xml`),
@@ -179,13 +175,12 @@ describe('DecomposedMetadataTransformer', () => {
       const { fullName, type } = component;
       const root = join('main', 'default', type.directoryName, fullName);
       const context = new ConvertContext();
-      const transformer = new DecomposedMetadataTransformer(mockRegistry, context);
+      const transformer = new DecomposedMetadataTransformer(registryAccess, context);
       env.stub(component, 'parseXml').resolves({
-        Decomposed: {
+        CustomObject: {
           fullName,
-          foo: 'bar',
-          ys: { fullName: 'child', test: 'testVal' },
-          xs: [
+          customField: { fullName: 'child', test: 'testVal' },
+          validationRules: [
             { fullName: 'child2', test: 'testVal2' },
             { fullName: 'child3', test: 'testVal3' },
           ],
@@ -194,7 +189,9 @@ describe('DecomposedMetadataTransformer', () => {
       env
         .stub(ForceIgnore.prototype, 'accepts')
         .returns(true)
-        .withArgs(join('main', 'default', 'decomposeds', 'a', 'ys', 'child.y-meta.xml'))
+        .withArgs(
+          join('main', 'default', 'objects', 'customObject__c', 'validationRules', 'child2.validationRule-meta.xml')
+        )
         .returns(false);
 
       const result = await transformer.toSourceFormat(component);
@@ -203,30 +200,23 @@ describe('DecomposedMetadataTransformer', () => {
       expect(result).to.deep.equal([
         {
           source: new JsToXml({
-            X: {
-              [XML_NS_KEY]: XML_NS_URL,
-              fullName: 'child2',
-              test: 'testVal2',
-            },
-          }),
-          output: join(root, type.children.types.x.directoryName, 'child2.x-meta.xml'),
-        },
-        {
-          source: new JsToXml({
-            X: {
+            ValidationRule: {
               [XML_NS_KEY]: XML_NS_URL,
               fullName: 'child3',
               test: 'testVal3',
             },
           }),
-          output: join(root, type.children.types.x.directoryName, 'child3.x-meta.xml'),
+          output: join(root, type.children.types.validationrule.directoryName, 'child3.validationRule-meta.xml'),
         },
         {
           source: new JsToXml({
-            Decomposed: {
+            CustomObject: {
               [XML_NS_KEY]: XML_NS_URL,
               fullName: component.fullName,
-              foo: 'bar',
+              customField: {
+                fullName: 'child',
+                test: 'testVal',
+              },
             },
           }),
           output: join(root, `${fullName}.${type.suffix}-meta.xml`),
@@ -237,14 +227,13 @@ describe('DecomposedMetadataTransformer', () => {
     it('should push writes for component and its children when type config is "TopLevel"', async () => {
       const component = DECOMPOSED_TOP_LEVEL_COMPONENT;
       const { fullName, type } = component;
-      const transformer = new DecomposedMetadataTransformer(mockRegistry);
+      const transformer = new DecomposedMetadataTransformer();
       const root = join('main', 'default', type.directoryName, fullName);
       env.stub(component, 'parseXml').resolves({
-        DecomposedTopLevel: {
+        CustomObjectTranslation: {
           [XML_NS_KEY]: XML_NS_URL,
           fullName,
-          foo: 'bar',
-          gs: [
+          CustomFieldTranslation: [
             { name: 'child', test: 'testVal' },
             { name: 'child2', test: 'testVal2' },
           ],
@@ -256,30 +245,16 @@ describe('DecomposedMetadataTransformer', () => {
       expect(result).to.deep.equal([
         {
           source: new JsToXml({
-            G: {
+            CustomObjectTranslation: {
               [XML_NS_KEY]: XML_NS_URL,
-              name: 'child',
-              test: 'testVal',
-            },
-          }),
-          output: join(root, 'child.g-meta.xml'),
-        },
-        {
-          source: new JsToXml({
-            G: {
-              [XML_NS_KEY]: XML_NS_URL,
-              name: 'child2',
-              test: 'testVal2',
-            },
-          }),
-          output: join(root, 'child2.g-meta.xml'),
-        },
-        {
-          source: new JsToXml({
-            DecomposedTopLevel: {
-              [XML_NS_KEY]: XML_NS_URL,
+              CustomFieldTranslation: [
+                {
+                  name: 'child',
+                  test: 'testVal',
+                },
+                { name: 'child2', test: 'testVal2' },
+              ],
               fullName,
-              foo: 'bar',
             },
           }),
           output: join(root, `${fullName}.${type.suffix}-meta.xml`),
@@ -289,12 +264,12 @@ describe('DecomposedMetadataTransformer', () => {
 
     it('should not create parent xml when only children are being decomposed', async () => {
       const { type, fullName } = component;
-      const transformer = new DecomposedMetadataTransformer(mockRegistry);
+      const transformer = new DecomposedMetadataTransformer();
       const root = join('main', 'default', type.directoryName, fullName);
       env.stub(component, 'parseXml').resolves({
-        Decomposed: {
-          ys: { fullName: 'child', test: 'testVal' },
-          xs: [
+        CustomObject: {
+          customField: [{ fullName: 'child', test: 'testVal' }],
+          validationRules: [
             { fullName: 'child2', test: 'testVal2' },
             { fullName: 'child3', test: 'testVal3' },
           ],
@@ -306,48 +281,47 @@ describe('DecomposedMetadataTransformer', () => {
       expect(result).to.deep.equal([
         {
           source: new JsToXml({
-            Y: {
-              [XML_NS_KEY]: XML_NS_URL,
-              fullName: 'child',
-              test: 'testVal',
-            },
-          }),
-          output: join(root, type.children.types.y.directoryName, 'child.y-meta.xml'),
-        },
-        {
-          source: new JsToXml({
-            X: {
+            ValidationRule: {
               [XML_NS_KEY]: XML_NS_URL,
               fullName: 'child2',
               test: 'testVal2',
             },
           }),
-          output: join(root, type.children.types.x.directoryName, 'child2.x-meta.xml'),
+          output: join(root, type.children.types.validationrule.directoryName, 'child2.validationRule-meta.xml'),
         },
         {
           source: new JsToXml({
-            X: {
+            ValidationRule: {
               [XML_NS_KEY]: XML_NS_URL,
               fullName: 'child3',
               test: 'testVal3',
             },
           }),
-          output: join(root, type.children.types.x.directoryName, 'child3.x-meta.xml'),
+          output: join(root, type.children.types.validationrule.directoryName, 'child3.validationRule-meta.xml'),
+        },
+        {
+          source: new JsToXml({
+            CustomObject: {
+              [XML_NS_KEY]: XML_NS_URL,
+              customField: [{ fullName: 'child', test: 'testVal' }],
+            },
+          }),
+          output: join(root, 'customObject__c.object-meta.xml'),
         },
       ]);
     });
-    it('should create a parent xml when requiresParent = true on the child type', async () => {
-      component.type.children.types.y.unaddressableWithoutParent = true;
-      component.type.children.types.x.unaddressableWithoutParent = true;
+
+    it('should create a parent xml when unaddressableWithoutParent = true on the child type', async () => {
+      const component = DECOMPOSED_TOP_LEVEL_COMPONENT;
       const { type, fullName } = component;
-      const transformer = new DecomposedMetadataTransformer(mockRegistry);
+
+      const transformer = new DecomposedMetadataTransformer();
       const root = join('main', 'default', type.directoryName, fullName);
       env.stub(component, 'parseXml').resolves({
-        Decomposed: {
-          ys: { fullName: 'child', test: 'testVal' },
-          xs: [
-            { fullName: 'child2', test: 'testVal2' },
-            { fullName: 'child3', test: 'testVal3' },
+        CustomObjectTranslation: {
+          fields: [
+            { name: 'child', test: 'testVal' },
+            { name: 'child2', test: 'testVal2' },
           ],
         },
       });
@@ -357,50 +331,36 @@ describe('DecomposedMetadataTransformer', () => {
       expect(result).to.deep.equal([
         {
           source: new JsToXml({
-            Y: {
+            CustomFieldTranslation: {
               [XML_NS_KEY]: XML_NS_URL,
-              fullName: 'child',
+              name: 'child',
               test: 'testVal',
             },
           }),
-          output: join(root, type.children.types.y.directoryName, 'child.y-meta.xml'),
+          output: join(root, 'child.fieldTranslation-meta.xml'),
         },
         {
           source: new JsToXml({
-            X: {
+            CustomFieldTranslation: {
               [XML_NS_KEY]: XML_NS_URL,
-              fullName: 'child2',
+              name: 'child2',
               test: 'testVal2',
             },
           }),
-          output: join(root, type.children.types.x.directoryName, 'child2.x-meta.xml'),
-        },
-        {
-          source: new JsToXml({
-            X: {
-              [XML_NS_KEY]: XML_NS_URL,
-              fullName: 'child3',
-              test: 'testVal3',
-            },
-          }),
-          output: join(root, type.children.types.x.directoryName, 'child3.x-meta.xml'),
+          output: join(root, 'child2.fieldTranslation-meta.xml'),
         },
         // the new parent was written
         {
           source: new JsToXml({
             [type.name]: '',
           }),
-          output: join(root, 'a.decomposed-meta.xml'),
+          output: join(root, 'myObject__c.objectTranslation-meta.xml'),
         },
       ]);
-
-      // reset to avoid interfering with other tests
-      component.type.children.types.y.unaddressableWithoutParent = false;
-      component.type.children.types.x.unaddressableWithoutParent = false;
     });
 
     it('should handle decomposed parents with no files', async () => {
-      const transformer = new DecomposedMetadataTransformer(mockRegistry);
+      const transformer = new DecomposedMetadataTransformer();
       env.stub(component, 'parseXml').resolves({});
 
       const result = await transformer.toSourceFormat(component);
@@ -413,34 +373,36 @@ describe('DecomposedMetadataTransformer', () => {
         const mergeComponentChild = component.getChildren()[0];
         const componentToConvert = SourceComponent.createVirtualComponent(
           {
-            name: 'a',
-            type: mockRegistryData.types.decomposed,
+            name: 'CustomObject__c',
+            type: registry.types.customobject,
           },
           []
         );
         env.stub(componentToConvert, 'parseXml').resolves({
-          Decomposed: {
-            [XML_NS_KEY]: XML_NS_URL,
-            [mergeComponentChild.type.directoryName]: {
-              fullName: mergeComponentChild.name,
-              test: 'testVal',
-            },
+          [registry.types.customobject.name]: {
+            [registry.types.customobject.children.types.customfield.name]: [
+              { fullName: mergeComponentChild.fullName, test: 'testVal' },
+            ],
           },
         });
 
-        const transformer = new DecomposedMetadataTransformer(mockRegistry);
+        const transformer = new DecomposedMetadataTransformer(registryAccess);
         const result = await transformer.toSourceFormat(componentToConvert, component);
 
         expect(result).to.deep.equal([
           {
             source: new JsToXml({
-              [mergeComponentChild.type.name]: {
+              CustomObject: {
                 [XML_NS_KEY]: XML_NS_URL,
-                fullName: mergeComponentChild.name,
-                test: 'testVal',
+                [mergeComponentChild.type.name]: [
+                  {
+                    fullName: mergeComponentChild.fullName,
+                    test: 'testVal',
+                  },
+                ],
               },
             }),
-            output: mergeComponentChild.xml,
+            output: mergeComponentChild.parent.xml,
           },
         ]);
       });
@@ -449,18 +411,18 @@ describe('DecomposedMetadataTransformer', () => {
         const componentToConvert = SourceComponent.createVirtualComponent(
           {
             name: 'a',
-            type: mockRegistryData.types.decomposed,
+            type: registry.types.customobject,
           },
           []
         );
         env.stub(componentToConvert, 'parseXml').resolves({
-          Decomposed: {
+          [registry.types.customobject.name]: {
             [XML_NS_KEY]: XML_NS_URL,
             fullName: component.fullName,
             foo: 'bar',
           },
         });
-        const transformer = new DecomposedMetadataTransformer(mockRegistry);
+        const transformer = new DecomposedMetadataTransformer();
 
         const result = await transformer.toSourceFormat(componentToConvert, component);
 
@@ -504,7 +466,7 @@ describe('DecomposedMetadataTransformer', () => {
           fsUnexpectedChild
         );
         const fsPath = join(decomposed.DECOMPOSED_PATH, 'classes', XML_NAMES[0]);
-        const transformer = new DecomposedMetadataTransformer(mockRegistry, new ConvertContext());
+        const transformer = new DecomposedMetadataTransformer(registryAccess, new ConvertContext());
 
         try {
           // NOTE: it doesn't matter what the first component is for this test since it's all
@@ -525,12 +487,12 @@ describe('DecomposedMetadataTransformer', () => {
         const componentToMerge = SourceComponent.createVirtualComponent(
           {
             name: 'a',
-            type: mockRegistryData.types.decomposed,
+            type,
           },
           []
         );
         env.stub(component, 'parseXml').resolves({
-          Decomposed: {
+          [type.name]: {
             [XML_NS_KEY]: XML_NS_URL,
             [mergeComponentChild.type.directoryName]: {
               fullName: mergeComponentChild.name,
@@ -539,7 +501,7 @@ describe('DecomposedMetadataTransformer', () => {
           },
         });
         const context = new ConvertContext();
-        const transformer = new DecomposedMetadataTransformer(mockRegistry, context);
+        const transformer = new DecomposedMetadataTransformer(registryAccess, context);
 
         const result = await transformer.toSourceFormat(component, componentToMerge);
         expect(result).to.be.empty;
@@ -566,25 +528,24 @@ describe('DecomposedMetadataTransformer', () => {
       });
 
       it('should defer write operation for parent xml that is not a member of merge component', async () => {
-        // const mergeComponentChild = component.getChildren()[0];
         const { fullName, type } = component;
         const root = join('main', 'default', type.directoryName, fullName);
         const componentToMerge = SourceComponent.createVirtualComponent(
           {
             name: 'a',
-            type: mockRegistryData.types.decomposed,
+            type,
           },
           []
         );
         env.stub(component, 'parseXml').resolves({
-          Decomposed: {
+          [type.name]: {
             [XML_NS_KEY]: XML_NS_URL,
             fullName: component.fullName,
             foo: 'bar',
           },
         });
         const context = new ConvertContext();
-        const transformer = new DecomposedMetadataTransformer(mockRegistry, context);
+        const transformer = new DecomposedMetadataTransformer(registryAccess, context);
 
         const result = await transformer.toSourceFormat(component, componentToMerge);
         expect(result).to.be.empty;

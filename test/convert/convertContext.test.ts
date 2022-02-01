@@ -8,7 +8,7 @@
 import { Readable } from 'stream';
 import { join } from 'path';
 
-import { createSandbox, match } from 'sinon';
+import { createSandbox } from 'sinon';
 import chai = require('chai');
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import {
@@ -19,10 +19,19 @@ import {
   VirtualTreeContainer,
   WriterFormat,
 } from '../../src';
-import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../src/common';
+import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { ConvertContext } from '../../src/convert/convertContext';
 import { JsToXml } from '../../src/convert/streams';
-import { decomposed, matchingContentFile, mockRegistry, nonDecomposed } from '../mock/registry';
+import { decomposed, matchingContentFile, nonDecomposed } from '../mock';
+import {
+  CHILD_1_XML,
+  CHILD_2_XML,
+  DEFAULT_DIR,
+  NON_DEFAULT_DIR,
+  TREE,
+  VIRTUAL_DIR,
+  WORKING_DIR,
+} from '../mock/type-constants/customlabelsConstant';
 
 const { expect } = chai;
 
@@ -60,7 +69,7 @@ describe('Convert Transaction Constructs', () => {
         context.recomposition.setState((state) => {
           state['Test__c'] = {
             component,
-            children: new ComponentSet(component.getChildren(), mockRegistry),
+            children: new ComponentSet(component.getChildren()),
           };
         });
 
@@ -74,14 +83,14 @@ describe('Convert Transaction Constructs', () => {
             writeInfos: [
               {
                 source: new JsToXml({
-                  Decomposed: {
+                  CustomObject: {
                     [XML_NS_KEY]: XML_NS_URL,
-                    fullName: 'a',
-                    ys: [{ test: 'child1' }],
-                    xs: [{ test: 'child2' }],
+                    fullName: 'customObject__c',
+                    validationRules: [{ fullName: 'child2' }],
+                    fields: [{ fullName: 'child1' }],
                   },
                 }),
-                output: join('decomposeds', 'a.decomposed'),
+                output: join('objects', 'customObject__c.object'),
               },
             ],
           },
@@ -102,7 +111,7 @@ describe('Convert Transaction Constructs', () => {
         context.recomposition.setState((state) => {
           state['Test__c'] = {
             component,
-            children: new ComponentSet(component.getChildren(), mockRegistry),
+            children: new ComponentSet(component.getChildren()),
           };
         });
 
@@ -114,13 +123,13 @@ describe('Convert Transaction Constructs', () => {
             writeInfos: [
               {
                 source: new JsToXml({
-                  Decomposed: {
+                  CustomObject: {
                     [XML_NS_KEY]: XML_NS_URL,
-                    ys: [{ test: 'child1' }],
-                    xs: [{ test: 'child2' }],
+                    validationRules: [{ fullName: 'child2' }],
+                    fields: [{ fullName: 'child1' }],
                   },
                 }),
-                output: join('decomposeds', 'a.decomposed'),
+                output: join('objects', 'customObject__c.object'),
               },
             ],
           },
@@ -133,7 +142,7 @@ describe('Convert Transaction Constructs', () => {
         context.recomposition.setState((state) => {
           state[component.type.name] = {
             component,
-            children: new ComponentSet(component.getChildren(), mockRegistry),
+            children: new ComponentSet(component.getChildren()),
           };
         });
 
@@ -146,12 +155,12 @@ describe('Convert Transaction Constructs', () => {
             writeInfos: [
               {
                 source: new JsToXml({
-                  nondecomposedparent: {
+                  CustomLabels: {
                     [XML_NS_KEY]: XML_NS_URL,
-                    nondecomposeddir: [nonDecomposed.CHILD_1_XML, nonDecomposed.CHILD_2_XML],
+                    labels: [CHILD_1_XML, CHILD_2_XML],
                   },
                 }),
-                output: join('nondecomposed', 'nondecomposedparent.nondecomposed'),
+                output: join('labels', 'CustomLabels.labels'),
               },
             ],
           },
@@ -282,120 +291,133 @@ describe('Convert Transaction Constructs', () => {
           },
         ];
         context.nonDecomposition.setState((state) => {
-          state.claimed = {
-            [component.xml]: {
-              parent: component,
-              children: {
-                [nonDecomposed.CHILD_1_NAME]: nonDecomposed.CHILD_1_XML,
-                [nonDecomposed.CHILD_2_NAME]: nonDecomposed.CHILD_2_XML,
-              },
-            },
-          };
+          state.childrenByUniqueElement = new Map([
+            [nonDecomposed.CHILD_1_NAME, nonDecomposed.CHILD_1_XML],
+            [nonDecomposed.CHILD_2_NAME, nonDecomposed.CHILD_2_XML],
+          ]);
+          state.exampleComponent = component;
         });
 
-        const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR);
-
+        const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
         expect(result).to.deep.equal([{ component, writeInfos }]);
       });
 
-      it('should return WriterFormats for unclaimed children', async () => {
+      it('should return WriterFormats when no local files exist', async () => {
         const component = nonDecomposed.COMPONENT_1;
         const context = new ConvertContext();
         const [baseName] = component.fullName.split('.');
         const output = join(
-          DEFAULT_PACKAGE_ROOT_SFDX,
+          nonDecomposed.DEFAULT_DIR,
+          'main',
+          'default',
           component.type.directoryName,
           `${baseName}.${component.type.suffix}${META_XML_SUFFIX}`
         );
         const writeInfos = [{ output, source: new JsToXml(nonDecomposed.COMPONENT_1_XML) }];
         context.nonDecomposition.setState((state) => {
-          state.unclaimed = {
-            [component.xml]: {
-              parent: component,
-              children: {
-                [nonDecomposed.CHILD_1_NAME]: nonDecomposed.CHILD_1_XML,
-                [nonDecomposed.CHILD_2_NAME]: nonDecomposed.CHILD_2_XML,
-              },
-            },
-          };
+          state.childrenByUniqueElement = new Map([
+            [nonDecomposed.CHILD_1_NAME, nonDecomposed.CHILD_1_XML],
+            [nonDecomposed.CHILD_2_NAME, nonDecomposed.CHILD_2_XML],
+          ]);
+          state.exampleComponent = component;
         });
 
-        const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR);
+        const result = await context.nonDecomposition.finalize(
+          nonDecomposed.DEFAULT_DIR,
+          new VirtualTreeContainer(
+            // leave the 2 pkgDirs empty
+            VIRTUAL_DIR.filter((item) => [WORKING_DIR, DEFAULT_DIR, NON_DEFAULT_DIR].includes(item.dirPath)).map(
+              (item) => ([DEFAULT_DIR, NON_DEFAULT_DIR].includes(item.dirPath) ? { ...item, children: [] } : item)
+            )
+          )
+        );
 
         expect(result).to.deep.equal([{ component, writeInfos }]);
       });
 
-      it('should add unclaimed children to default parent component', async () => {
+      it('should merge unclaimed children to default parent component', async () => {
         const component = nonDecomposed.COMPONENT_1;
-        const unprocessedComponent = nonDecomposed.COMPONENT_2;
-
-        env
-          .stub(ComponentSet, 'fromSource')
-          .withArgs({ fsPaths: [match(nonDecomposed.NON_DEFAULT_DIR)], include: match.any })
-          .returns(new ComponentSet([unprocessedComponent]));
-
+        const type = component.type;
         const context = new ConvertContext();
 
-        const writeInfos = [{ output: component.xml, source: new JsToXml(nonDecomposed.FULL_XML_CONTENT) }];
+        const defaultPlusUnclaimed = {
+          [type.name]: {
+            [XML_NS_KEY]: XML_NS_URL,
+            [type.directoryName]: [
+              nonDecomposed.CHILD_1_XML,
+              nonDecomposed.CHILD_2_XML,
+              nonDecomposed.UNCLAIMED_CHILD_XML,
+            ],
+          },
+        };
+        const writeInfos = [{ output: component.xml, source: new JsToXml(defaultPlusUnclaimed) }];
         context.nonDecomposition.setState((state) => {
-          state.claimed = {
-            [component.xml]: {
-              parent: component,
-              children: {
-                [nonDecomposed.CHILD_1_NAME]: nonDecomposed.CHILD_1_XML,
-                [nonDecomposed.CHILD_2_NAME]: nonDecomposed.CHILD_2_XML,
-                [nonDecomposed.CHILD_3_NAME]: nonDecomposed.CHILD_3_XML,
-              },
-            },
-          };
-          state.unclaimed = {
-            [component.xml]: {
-              parent: component,
-              children: {
-                [nonDecomposed.UNCLAIMED_CHILD_NAME]: nonDecomposed.UNCLAIMED_CHILD_XML,
-              },
-            },
-          };
+          state.childrenByUniqueElement = new Map([
+            [nonDecomposed.CHILD_1_NAME, nonDecomposed.CHILD_1_XML],
+            [nonDecomposed.CHILD_2_NAME, nonDecomposed.CHILD_2_XML],
+            [nonDecomposed.UNCLAIMED_CHILD_NAME, nonDecomposed.UNCLAIMED_CHILD_XML],
+          ]);
+          state.exampleComponent = component;
         });
 
-        const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR);
+        const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
 
         expect(result).to.deep.equal([{ component, writeInfos }]);
       });
 
-      it('should find all unprocessed components so that unclaimed children can be claimed', async () => {
+      it('should merge 1 updated file', async () => {
         const component = nonDecomposed.COMPONENT_1;
-        const unprocessedComponent = nonDecomposed.COMPONENT_2;
         const context = new ConvertContext();
+        const type = component.type;
 
-        env
-          .stub(ComponentSet, 'fromSource')
-          // @ts-ignore
-          .withArgs({ fsPaths: [match(nonDecomposed.NON_DEFAULT_DIR)], include: match.any })
-          .returns(new ComponentSet([unprocessedComponent]));
+        // change the word first to 'updated'
+        const updatedChild1Xml = {
+          ...nonDecomposed.CHILD_1_XML,
+          value: nonDecomposed.CHILD_1_XML.value.replace('first', 'updated'),
+        };
 
-        const writeInfos = [{ output: component.xml, source: new JsToXml(nonDecomposed.COMPONENT_1_XML) }];
+        const updatedFullXml = {
+          [type.name]: {
+            [XML_NS_KEY]: XML_NS_URL,
+            [type.directoryName]: [updatedChild1Xml, CHILD_2_XML],
+          },
+        };
+
+        const writeInfos = [{ output: component.xml, source: new JsToXml(updatedFullXml) }];
         context.nonDecomposition.setState((state) => {
-          state.claimed = {
-            [component.xml]: {
-              parent: component,
-              children: {
-                [nonDecomposed.CHILD_1_NAME]: nonDecomposed.CHILD_1_XML,
-                [nonDecomposed.CHILD_2_NAME]: nonDecomposed.CHILD_2_XML,
-              },
-            },
-          };
-          state.unclaimed = {
-            [component.xml]: {
-              parent: component,
-              children: {
-                [nonDecomposed.CHILD_3_NAME]: nonDecomposed.CHILD_3_XML,
-              },
-            },
-          };
+          state.childrenByUniqueElement = new Map([[nonDecomposed.CHILD_1_NAME, updatedChild1Xml]]);
+          state.exampleComponent = component;
         });
 
-        const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR);
+        const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
+        expect(result).to.deep.equal([{ component, writeInfos }]);
+      });
+
+      it('should merge 1 updated file to non-default dir and not write default file', async () => {
+        const component = nonDecomposed.COMPONENT_2;
+        const context = new ConvertContext();
+        const type = component.type;
+
+        // change the word first to 'updated'
+        const updatedChild3Xml = {
+          ...nonDecomposed.CHILD_3_XML,
+          value: nonDecomposed.CHILD_3_XML.value.replace('third', 'updated'),
+        };
+
+        const updatedFullXml = {
+          [type.name]: {
+            [XML_NS_KEY]: XML_NS_URL,
+            [type.directoryName]: [updatedChild3Xml],
+          },
+        };
+
+        const writeInfos = [{ output: component.xml, source: new JsToXml(updatedFullXml) }];
+        context.nonDecomposition.setState((state) => {
+          state.childrenByUniqueElement = new Map([[nonDecomposed.CHILD_3_NAME, updatedChild3Xml]]);
+          state.exampleComponent = component;
+        });
+
+        const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
         expect(result).to.deep.equal([{ component, writeInfos }]);
       });
     });

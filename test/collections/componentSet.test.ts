@@ -19,25 +19,20 @@ import {
   MetadataComponent,
   MetadataMember,
   MetadataResolver,
-  MetadataType,
+  registry,
   RegistryAccess,
   SourceComponent,
 } from '../../src';
 import { ComponentSetError } from '../../src/errors';
 import { nls } from '../../src/i18n';
 import { mockConnection } from '../mock/client';
-import {
-  decomposedtoplevel,
-  matchingContentFile,
-  mixedContentSingleFile,
-  mockRegistry,
-  mockRegistryData,
-} from '../mock/registry';
-import { MATCHING_RULES_COMPONENT } from '../mock/registry/type-constants/nonDecomposedConstants';
-import * as manifestFiles from '../mock/registry/manifestConstants';
+import { decomposedtoplevel, matchingContentFile, mixedContentSingleFile } from '../mock';
+import { MATCHING_RULES_COMPONENT } from '../mock/type-constants/customlabelsConstant';
+import * as manifestFiles from '../mock/manifestConstants';
 
 const env = createSandbox();
 const $$ = testSetup(env);
+const registryAccess = new RegistryAccess();
 
 describe('ComponentSet', () => {
   afterEach(() => env.restore());
@@ -54,7 +49,7 @@ describe('ComponentSet', () => {
 
       it('should initialize with result from source resolver', () => {
         const result = ComponentSet.fromSource('.').toArray();
-        const expected = new MetadataResolver(mockRegistry, manifestFiles.TREE).getComponentsFromPath('.');
+        const expected = new MetadataResolver(registryAccess, manifestFiles.TREE).getComponentsFromPath('.');
 
         expect(result).to.deep.equal(expected);
       });
@@ -82,12 +77,12 @@ describe('ComponentSet', () => {
         getComponentsStub.restore();
 
         const result = ComponentSet.fromSource({
-          fsPaths: ['mixedSingleFiles'],
-          registry: mockRegistry,
+          fsPaths: ['staticresources'],
+          registry: registryAccess,
           tree: manifestFiles.TREE,
         }).toArray();
-        const expected = new MetadataResolver(mockRegistry, manifestFiles.TREE).getComponentsFromPath(
-          'mixedSingleFiles'
+        const expected = new MetadataResolver(registryAccess, manifestFiles.TREE).getComponentsFromPath(
+          'staticresources'
         );
 
         expect(result).to.deep.equal(expected);
@@ -97,15 +92,15 @@ describe('ComponentSet', () => {
         getComponentsStub.restore();
 
         const compSet = ComponentSet.fromSource({
-          fsPaths: ['mixedSingleFiles'],
-          registry: mockRegistry,
+          fsPaths: ['staticresources'],
+          registry: registryAccess,
           tree: manifestFiles.TREE,
-          fsDeletePaths: ['decomposedTopLevels'],
+          fsDeletePaths: ['objectTranslations'],
         });
         const result = compSet.toArray();
-        const mdResolver = new MetadataResolver(mockRegistry, manifestFiles.TREE);
-        const expected = mdResolver.getComponentsFromPath('mixedSingleFiles');
-        mdResolver.getComponentsFromPath('decomposedTopLevels').forEach((comp) => {
+        const mdResolver = new MetadataResolver(registryAccess, manifestFiles.TREE);
+        const expected = mdResolver.getComponentsFromPath('staticresources');
+        mdResolver.getComponentsFromPath('objectTranslations').forEach((comp) => {
           comp.setMarkedForDelete();
           expected.push(comp);
         });
@@ -120,14 +115,14 @@ describe('ComponentSet', () => {
         const expected: MetadataComponent[] = [
           {
             fullName: 'Test',
-            type: mockRegistryData.types.matchingcontentfile,
+            type: registry.types.apexclass,
           },
         ];
         const resolveStub = env.stub(ManifestResolver.prototype, 'resolve').resolves({
           components: expected,
-          apiVersion: mockRegistryData.apiVersion,
+          apiVersion: registry.apiVersion,
         });
-        env.stub(RegistryAccess.prototype, 'getTypeByName').returns(mockRegistryData.types.matchingcontentfile);
+        env.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
         const manifest = manifestFiles.ONE_FOLDER_MEMBER;
         const set = await ComponentSet.fromManifest(manifest.name);
 
@@ -141,12 +136,12 @@ describe('ComponentSet', () => {
         const manifest = manifestFiles.ONE_OF_EACH;
         const set = await ComponentSet.fromManifest({
           manifestPath: manifest.name,
-          registry: mockRegistry,
+          registry: registryAccess,
           tree: manifestFiles.TREE,
         });
 
         const result = set.toArray();
-        const expected = await new ManifestResolver(manifestFiles.TREE, mockRegistry).resolve(manifest.name);
+        const expected = await new ManifestResolver(manifestFiles.TREE, registryAccess).resolve(manifest.name);
 
         expect(result).to.deep.equal(expected.components);
       });
@@ -154,13 +149,13 @@ describe('ComponentSet', () => {
       it('should initialize with source backed components when specifying resolvePaths option', async () => {
         const set = await ComponentSet.fromManifest({
           manifestPath: manifestFiles.ONE_OF_EACH.name,
-          registry: mockRegistry,
+          registry: registryAccess,
           tree: manifestFiles.TREE,
-          resolveSourcePaths: ['decomposedTopLevels', 'mixedSingleFiles'],
+          resolveSourcePaths: ['objectTranslations', 'staticresources'],
         });
 
         const result = set.toArray();
-        const expected = new MetadataResolver(mockRegistry, manifestFiles.TREE).getComponentsFromPath('.');
+        const expected = new MetadataResolver(registryAccess, manifestFiles.TREE).getComponentsFromPath('.');
         const missingIndex = expected.findIndex((c) => c.fullName === 'c');
         expected.splice(missingIndex, 1);
 
@@ -170,11 +165,11 @@ describe('ComponentSet', () => {
       it('should resolve wildcard members by default', async () => {
         const set = await ComponentSet.fromManifest({
           manifestPath: manifestFiles.ONE_WILDCARD.name,
-          registry: mockRegistry,
+          registry: registryAccess,
           tree: manifestFiles.TREE,
         });
 
-        const result = set.has({ fullName: '*', type: 'MixedContentSingleFile' });
+        const result = set.has({ fullName: '*', type: 'StaticResource' });
 
         expect(result).to.be.true;
       });
@@ -182,12 +177,12 @@ describe('ComponentSet', () => {
       it('should resolve wildcard members when forceAddWildcards = true', async () => {
         const set = await ComponentSet.fromManifest({
           manifestPath: manifestFiles.ONE_WILDCARD.name,
-          registry: mockRegistry,
+          registry: registryAccess,
           tree: manifestFiles.TREE,
           forceAddWildcards: true,
         });
 
-        const result = set.has({ fullName: '*', type: 'MixedContentSingleFile' });
+        const result = set.has({ fullName: '*', type: 'StaticResource' });
 
         expect(result).to.be.true;
       });
@@ -195,15 +190,15 @@ describe('ComponentSet', () => {
       it('should resolve components and not wildcard members when forceAddWildcards = false', async () => {
         const set = await ComponentSet.fromManifest({
           manifestPath: manifestFiles.ONE_WILDCARD.name,
-          registry: mockRegistry,
+          registry: registryAccess,
           tree: manifestFiles.TREE,
           resolveSourcePaths: ['.'],
           forceAddWildcards: false,
         });
 
         const result = set.toArray();
-        const expected = new MetadataResolver(mockRegistry, manifestFiles.TREE).getComponentsFromPath(
-          'mixedSingleFiles'
+        const expected = new MetadataResolver(registryAccess, manifestFiles.TREE).getComponentsFromPath(
+          'staticresources'
         );
 
         expect(result).to.deep.equal(expected);
@@ -212,17 +207,17 @@ describe('ComponentSet', () => {
       it('should resolve source and wildcard components when forceAddWildcards = true and resolvePaths are specified', async () => {
         const set = await ComponentSet.fromManifest({
           manifestPath: manifestFiles.ONE_WILDCARD.name,
-          registry: mockRegistry,
+          registry: registryAccess,
           tree: manifestFiles.TREE,
           resolveSourcePaths: ['.'],
           forceAddWildcards: true,
         });
-        const sourceComponents = new MetadataResolver(mockRegistry, manifestFiles.TREE).getComponentsFromPath(
-          'mixedSingleFiles'
+        const sourceComponents = new MetadataResolver(registryAccess, manifestFiles.TREE).getComponentsFromPath(
+          'staticresources'
         );
 
         const result = set.toArray();
-        const expected = [{ fullName: '*', type: mockRegistryData.types.mixedcontentsinglefile }, ...sourceComponents];
+        const expected = [{ fullName: '*', type: registry.types.staticresource }, ...sourceComponents];
 
         expect(result).to.deep.equal(expected);
       });
@@ -230,7 +225,7 @@ describe('ComponentSet', () => {
       it('should add components even if they were not resolved', async () => {
         const set = await ComponentSet.fromManifest({
           manifestPath: manifestFiles.ONE_FOLDER_MEMBER.name,
-          registry: mockRegistry,
+          registry: registryAccess,
           tree: manifestFiles.TREE,
           resolveSourcePaths: ['.'],
         });
@@ -239,7 +234,7 @@ describe('ComponentSet', () => {
         const expected = [
           {
             fullName: 'Test_Folder',
-            type: mockRegistryData.types.mciffolder,
+            type: registry.types.documentfolder,
           },
         ];
 
@@ -320,24 +315,24 @@ describe('ComponentSet', () => {
           [
             {
               fullName: 'Test1',
-              type: 'DecomposedTopLevel',
+              type: registry.types.customobjecttranslation.name,
             },
             {
               fullName: 'Test2',
-              type: 'MixedContentSingleFile',
+              type: registry.types.staticresource.name,
             },
           ],
-          mockRegistry
+          registryAccess
         );
 
         expect(Array.from(set)).to.deep.equal([
           {
             fullName: 'Test1',
-            type: mockRegistryData.types.decomposedtoplevel,
+            type: registry.types.customobjecttranslation,
           },
           {
             fullName: 'Test2',
-            type: mockRegistryData.types.mixedcontentsinglefile,
+            type: registry.types.staticresource,
           },
         ]);
       });
@@ -348,7 +343,7 @@ describe('ComponentSet', () => {
     it('should return an object representing the package manifest', () => {
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
-        registry: mockRegistry,
+        registry: registryAccess,
         tree: manifestFiles.TREE,
       });
       expect(set.getObject()).to.deep.equal({
@@ -356,19 +351,15 @@ describe('ComponentSet', () => {
           fullName: undefined,
           types: [
             {
-              name: 'DecomposedTopLevel',
+              name: registry.types.customobjecttranslation.name,
               members: ['a'],
             },
             {
-              name: 'G',
-              members: ['a.child1', 'a.child2'],
-            },
-            {
-              name: 'MixedContentSingleFile',
+              name: registry.types.staticresource.name,
               members: ['b', 'c'],
             },
           ],
-          version: mockRegistry.apiVersion,
+          version: registryAccess.apiVersion,
         },
       });
     });
@@ -376,7 +367,7 @@ describe('ComponentSet', () => {
     it('should return an object representing destructive changes manifest', () => {
       const set = ComponentSet.fromSource({
         fsPaths: [],
-        registry: mockRegistry,
+        registry: registryAccess,
         tree: manifestFiles.TREE,
         fsDeletePaths: ['.'],
       });
@@ -385,19 +376,15 @@ describe('ComponentSet', () => {
           fullName: undefined,
           types: [
             {
-              name: 'DecomposedTopLevel',
+              name: registry.types.customobjecttranslation.name,
               members: ['a'],
             },
             {
-              name: 'G',
-              members: ['a.child1', 'a.child2'],
-            },
-            {
-              name: 'MixedContentSingleFile',
+              name: registry.types.staticresource.name,
               members: ['b', 'c'],
             },
           ],
-          version: mockRegistry.apiVersion,
+          version: registryAccess.apiVersion,
         },
       });
     });
@@ -405,7 +392,7 @@ describe('ComponentSet', () => {
     it('should return an object representing the package manifest with fullName', () => {
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
-        registry: mockRegistry,
+        registry: registryAccess,
         tree: manifestFiles.TREE,
       });
       set.fullName = 'testFullName';
@@ -414,19 +401,15 @@ describe('ComponentSet', () => {
           fullName: 'testFullName',
           types: [
             {
-              name: 'DecomposedTopLevel',
+              name: registry.types.customobjecttranslation.name,
               members: ['a'],
             },
             {
-              name: 'G',
-              members: ['a.child1', 'a.child2'],
-            },
-            {
-              name: 'MixedContentSingleFile',
+              name: registry.types.staticresource.name,
               members: ['b', 'c'],
             },
           ],
-          version: mockRegistry.apiVersion,
+          version: registryAccess.apiVersion,
         },
       });
     });
@@ -434,7 +417,7 @@ describe('ComponentSet', () => {
     it('should return an object representing the package manifest with sourceApiVersion', () => {
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
-        registry: mockRegistry,
+        registry: registryAccess,
         tree: manifestFiles.TREE,
       });
       set.sourceApiVersion = '45.0';
@@ -443,15 +426,11 @@ describe('ComponentSet', () => {
           fullName: undefined,
           types: [
             {
-              name: 'DecomposedTopLevel',
+              name: registry.types.customobjecttranslation.name,
               members: ['a'],
             },
             {
-              name: 'G',
-              members: ['a.child1', 'a.child2'],
-            },
-            {
-              name: 'MixedContentSingleFile',
+              name: registry.types.staticresource.name,
               members: ['b', 'c'],
             },
           ],
@@ -461,13 +440,13 @@ describe('ComponentSet', () => {
     });
 
     it('should interpret folder components as members of the type they are a container for', () => {
-      const member = { fullName: 'Test_Folder', type: 'McifFolder' };
-      const set = new ComponentSet([member], mockRegistry);
+      const member = { fullName: 'Test_Folder', type: 'Document' };
+      const set = new ComponentSet([member], registryAccess);
 
       expect(set.has(member)).to.be.true;
       expect(set.getObject().Package.types).to.deep.equal([
         {
-          name: 'MixedContentInFolder',
+          name: registry.types.document.name,
           members: ['Test_Folder'],
         },
       ]);
@@ -482,24 +461,14 @@ describe('ComponentSet', () => {
     });
 
     it('should exclude components that are not addressable as defined in the registry', () => {
-      const type: MetadataType = {
-        id: 'customfieldtranslation',
-        name: 'CustomFieldTranslation',
-        directoryName: 'fields',
-        suffix: 'fieldTranslation',
-        isAddressable: false,
-      };
+      const type = registry.types.customobjecttranslation.children.types.customfieldtranslation;
       const set = new ComponentSet();
       set.add(new SourceComponent({ name: type.name, type }));
       expect(set.getObject().Package.types).to.deep.equal([]);
     });
 
     it('should write wildcards and names of types with supportsWildcardAndName=true, regardless of order', () => {
-      const type: MetadataType = {
-        id: 'customobject',
-        name: 'CustomObject',
-        supportsWildcardAndName: true,
-      };
+      const type = registry.types.customobject;
       const set = new ComponentSet();
       set.add(new SourceComponent({ name: 'myType', type }));
       set.add(new SourceComponent({ name: '*', type }));
@@ -511,11 +480,7 @@ describe('ComponentSet', () => {
     });
 
     it('should overwrite a singular name with wildcard when supportsWildcardAndName=false', () => {
-      const type: MetadataType = {
-        id: 'apexclass',
-        name: 'ApexClass',
-        supportsWildcardAndName: false,
-      };
+      const type = registry.types.apexclass;
       const set = new ComponentSet();
       set.add(new SourceComponent({ name: 'myType', type }));
       set.add(new SourceComponent({ name: '*', type }));
@@ -525,37 +490,8 @@ describe('ComponentSet', () => {
     });
 
     it('should exclude child components that are not addressable as defined in the registry', () => {
-      const childType: MetadataType = {
-        id: 'customfieldtranslation',
-        name: 'CustomFieldTranslation',
-        directoryName: 'fields',
-        suffix: 'fieldTranslation',
-        isAddressable: false,
-      };
-      const type: MetadataType = {
-        id: 'customobjecttranslation',
-        name: 'CustomObjectTranslation',
-        suffix: 'objectTranslation',
-        directoryName: 'objectTranslations',
-        inFolder: false,
-        strictDirectoryName: true,
-        children: {
-          types: {
-            customfieldtranslation: childType,
-          },
-          suffixes: {
-            fieldTranslation: 'customfieldtranslation',
-          },
-          directories: {
-            fields: 'customfieldtranslation',
-          },
-        },
-        strategies: {
-          adapter: 'decomposed',
-          transformer: 'decomposed',
-          decomposition: 'topLevel',
-        },
-      };
+      const childType = registry.types.customobjecttranslation.children.types.customfieldtranslation;
+      const type = registry.types.customobjecttranslation;
       const set = new ComponentSet();
       const testComp = new SourceComponent({ name: type.name, type });
       const childComp = new SourceComponent({ name: childType.name, type: childType });
@@ -573,11 +509,11 @@ describe('ComponentSet', () => {
      * If component set keys are incorrectly handled, child component names may not be returned properly.
      */
     it('should correctly return addressable child components', () => {
-      const set = new ComponentSet([{ fullName: 'MyParent__c.Child__c', type: 'x' }], mockRegistry);
+      const set = new ComponentSet([{ fullName: 'MyParent__c.Child__c', type: 'customfield' }], registryAccess);
 
       expect(set.getObject().Package.types).to.deep.equal([
         {
-          name: 'X',
+          name: 'CustomField',
           members: ['MyParent__c.Child__c'],
         },
       ]);
@@ -589,7 +525,7 @@ describe('ComponentSet', () => {
       const manifest = manifestFiles.ONE_OF_EACH;
       const set = await ComponentSet.fromManifest({
         manifestPath: manifest.name,
-        registry: mockRegistry,
+        registry: registryAccess,
         tree: manifestFiles.TREE,
       });
 
@@ -602,16 +538,16 @@ describe('ComponentSet', () => {
     it('should return manifest string when initialized from source', () => {
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
-        registry: mockRegistry,
+        registry: registryAccess,
         tree: manifestFiles.TREE,
       });
-      expect(set.getPackageXml(4)).to.equal(manifestFiles.BASIC.data.toString());
+      expect(set.getPackageXml(4).toString()).to.equal(manifestFiles.BASIC.data.toString());
     });
 
     it('should return destructive changes manifest string when initialized from source', () => {
       const set = ComponentSet.fromSource({
         fsPaths: [],
-        registry: mockRegistry,
+        registry: registryAccess,
         tree: manifestFiles.TREE,
         fsDeletePaths: ['.'],
       });
@@ -622,12 +558,14 @@ describe('ComponentSet', () => {
   describe('getSourceComponents', () => {
     it('should return source-backed components in the set', () => {
       const set = ComponentSet.fromSource({
-        fsPaths: ['mixedSingleFiles'],
-        registry: mockRegistry,
+        fsPaths: ['staticresources'],
+        registry: registryAccess,
         tree: manifestFiles.TREE,
       });
-      set.add({ fullName: 'Test', type: 'decomposedtoplevel' });
-      const expected = new MetadataResolver(mockRegistry, manifestFiles.TREE).getComponentsFromPath('mixedSingleFiles');
+      set.add({ fullName: 'Test', type: 'CustomObjectTranslation' });
+      const expected = new MetadataResolver(registryAccess, manifestFiles.TREE).getComponentsFromPath(
+        'staticresources'
+      );
 
       expect(set.getSourceComponents().toArray()).to.deep.equal(expected);
     });
@@ -635,17 +573,15 @@ describe('ComponentSet', () => {
     it('should return source-backed components that match the given metadata member', () => {
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
-        registry: mockRegistry,
+        registry: registryAccess,
         tree: manifestFiles.TREE,
       });
-      const expected = new MetadataResolver(mockRegistry, manifestFiles.TREE).getComponentsFromPath(
-        join('mixedSingleFiles', 'b.foo')
+      const expected = new MetadataResolver(registryAccess, manifestFiles.TREE).getComponentsFromPath(
+        join('staticresources', 'b.resource-meta.xml')
       );
 
       expect(set.size).to.equal(3);
-      expect(Array.from(set.getSourceComponents({ fullName: 'b', type: 'mixedcontentsinglefile' }))).to.deep.equal(
-        expected
-      );
+      expect(Array.from(set.getSourceComponents({ fullName: 'b', type: 'staticresource' }))).to.deep.equal(expected);
     });
   });
 
@@ -654,7 +590,7 @@ describe('ComponentSet', () => {
       const connection = await mockConnection($$);
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
-        registry: mockRegistry,
+        registry: registryAccess,
         tree: manifestFiles.TREE,
       });
       const operationArgs = { components: set, usernameOrConnection: connection };
@@ -677,7 +613,7 @@ describe('ComponentSet', () => {
       const apiVersion = '50.0';
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
-        registry: mockRegistry,
+        registry: registryAccess,
         tree: manifestFiles.TREE,
       });
       set.apiVersion = apiVersion;
@@ -699,7 +635,7 @@ describe('ComponentSet', () => {
     it('should throw error if there are no source backed components when deploying', async () => {
       const set = await ComponentSet.fromManifest({
         manifestPath: manifestFiles.ONE_OF_EACH.name,
-        registry: mockRegistry,
+        registry: registryAccess,
         tree: manifestFiles.TREE,
       });
       try {
@@ -717,7 +653,7 @@ describe('ComponentSet', () => {
       const connection = await mockConnection($$);
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
-        registry: mockRegistry,
+        registry: registryAccess,
         tree: manifestFiles.TREE,
       });
       const operationArgs = {
@@ -747,7 +683,7 @@ describe('ComponentSet', () => {
       const apiVersion = '50.0';
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
-        registry: mockRegistry,
+        registry: registryAccess,
         tree: manifestFiles.TREE,
       });
       set.apiVersion = apiVersion;
@@ -804,23 +740,23 @@ describe('ComponentSet', () => {
 
   describe('add', () => {
     it('should add metadata member to package components', async () => {
-      const set = new ComponentSet(undefined, mockRegistry);
+      const set = new ComponentSet(undefined, registryAccess);
 
       expect(set.size).to.equal(0);
 
-      set.add({ fullName: 'foo', type: 'DecomposedTopLevel' });
+      set.add({ fullName: 'foo', type: 'CustomObjectTranslation' });
 
       expect(Array.from(set)).to.deep.equal([
         {
           fullName: 'foo',
-          type: mockRegistryData.types.decomposedtoplevel,
+          type: registry.types.customobjecttranslation,
         },
       ]);
     });
 
     it('should add metadata component to package components', async () => {
-      const set = new ComponentSet(undefined, mockRegistry);
-      const component = { fullName: 'bar', type: mockRegistryData.types.mixedcontentsinglefile };
+      const set = new ComponentSet(undefined, registryAccess);
+      const component = { fullName: 'bar', type: registry.types.staticresource };
 
       expect(set.size).to.equal(0);
 
@@ -830,7 +766,7 @@ describe('ComponentSet', () => {
     });
 
     it('should add metadata component marked for delete to package components', async () => {
-      const set = new ComponentSet(undefined, mockRegistry);
+      const set = new ComponentSet(undefined, registryAccess);
       expect(!!set.getTypesOfDestructiveChanges().length).to.be.false;
 
       const component = new SourceComponent({
@@ -846,7 +782,7 @@ describe('ComponentSet', () => {
     });
 
     it('should delete metadata from package components, if its present in destructive changes', async () => {
-      const set = new ComponentSet(undefined, mockRegistry);
+      const set = new ComponentSet(undefined, registryAccess);
       expect(!!set.getTypesOfDestructiveChanges().length).to.be.false;
 
       const component = new SourceComponent({
@@ -871,34 +807,34 @@ describe('ComponentSet', () => {
 
   describe('has', () => {
     it('should correctly evaluate membership with MetadataMember', () => {
-      const set = new ComponentSet(undefined, mockRegistry);
+      const set = new ComponentSet(undefined, registryAccess);
       const member: MetadataMember = {
         fullName: 'a',
-        type: 'MixedContentSingleFile',
+        type: 'StaticResource',
       };
 
       expect(set.has(member)).to.be.false;
 
       set.add({
         fullName: 'a',
-        type: mockRegistryData.types.mixedcontentsinglefile,
+        type: registry.types.staticresource,
       });
 
       expect(set.has(member)).to.be.true;
     });
 
     it('should correctly evaluate membership with MetadataComponent', () => {
-      const set = new ComponentSet(undefined, mockRegistry);
+      const set = new ComponentSet(undefined, registryAccess);
       const component: MetadataComponent = {
         fullName: 'a',
-        type: mockRegistryData.types.mixedcontentsinglefile,
+        type: registry.types.staticresource,
       };
 
       expect(set.has(component)).to.be.false;
 
       set.add({
         fullName: 'a',
-        type: 'MixedContentSingleFile',
+        type: 'StaticResource',
       });
 
       expect(set.has(component)).to.be.true;
@@ -906,7 +842,7 @@ describe('ComponentSet', () => {
 
     it('should correctly evaluate membership of component with wildcard of component type in set', () => {
       const component = mixedContentSingleFile.COMPONENT;
-      const set = new ComponentSet(undefined, mockRegistry);
+      const set = new ComponentSet(undefined, registryAccess);
 
       expect(set.has(component)).to.be.false;
 
@@ -918,7 +854,7 @@ describe('ComponentSet', () => {
     it('should correctly evaluate membership of component with parent in set', () => {
       const parent = decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT;
       const [child] = parent.getChildren();
-      const set = new ComponentSet(undefined, mockRegistry);
+      const set = new ComponentSet(undefined, registryAccess);
 
       expect(set.has(child)).to.be.false;
 
@@ -930,7 +866,7 @@ describe('ComponentSet', () => {
     it('should correctly evaluate membership of component with wildcard of parent type in set', () => {
       const parent = decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT;
       const [child] = parent.getChildren();
-      const set = new ComponentSet(undefined, mockRegistry);
+      const set = new ComponentSet(undefined, registryAccess);
 
       expect(set.has(child)).to.be.false;
 
@@ -943,7 +879,7 @@ describe('ComponentSet', () => {
   it('should calculate size correctly', () => {
     const set = ComponentSet.fromSource({
       fsPaths: ['.'],
-      registry: mockRegistry,
+      registry: registryAccess,
       tree: manifestFiles.TREE,
     });
 

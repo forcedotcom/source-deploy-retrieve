@@ -13,15 +13,15 @@ import * as fs from 'graceful-fs';
 import * as unzipper from 'unzipper';
 import { create as createArchive } from 'archiver';
 import {
+  MetadataResolver,
   NodeFSTreeContainer,
   TreeContainer,
+  VirtualDirectory,
   VirtualTreeContainer,
   ZipTreeContainer,
-} from '../../src/resolve/treeContainers';
+} from '../../src';
 import { LibraryError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { VirtualDirectory } from '../../src';
-import { MetadataResolver } from '../../src/resolve/metadataResolver';
 
 describe('Tree Containers', () => {
   const readDirResults = ['a.q', 'a.x-meta.xml', 'b', 'b.x-meta.xml', 'c.z', 'c.x-meta.xml'];

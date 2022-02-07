@@ -8,6 +8,7 @@ import { join } from 'path';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import * as fs from 'graceful-fs';
+import { Lifecycle } from '@salesforce/core';
 import { ForceIgnore } from '../../src';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 
@@ -35,6 +36,18 @@ describe('ForceIgnore', () => {
     expect(forceIgnore.denies(testPath)).to.be.true;
   });
 
+  it('Should ignore files with windows separators', () => {
+    const lifecycleStub = env.stub(Lifecycle.prototype, 'emitWarning');
+    const forceIgnoreEntry = 'force-app\\main\\default\\classes\\myApex.*';
+    const pathToClass = join('force-app', 'main', 'default', 'classes', 'myApex.cls');
+    env.stub(fs, 'readFileSync').returns(forceIgnoreEntry);
+
+    const forceIgnore = new ForceIgnore();
+
+    expect(forceIgnore.accepts(pathToClass)).to.be.false;
+    expect(lifecycleStub.callCount).to.equal(1);
+  });
+
   it('Should find a forceignore file from a given path', () => {
     const readStub = env.stub(fs, 'readFileSync');
     const searchStub = env.stub(fsUtil, 'searchUp');
@@ -56,7 +69,6 @@ describe('ForceIgnore', () => {
     const readStub = env.stub(fs, 'readFileSync');
     readStub.withArgs(forceIgnorePath).returns('force-app/main/default/classes/');
     const fi = new ForceIgnore(forceIgnorePath);
-    // @ts-ignore private field
     expect(fi.accepts(join('force-app', 'main', 'default', 'classes'))).to.be.true;
   });
 

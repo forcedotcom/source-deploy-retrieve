@@ -8,6 +8,7 @@
 import { dirname, join, relative } from 'path';
 import ignore, { Ignore } from 'ignore/index';
 import { readFileSync } from 'graceful-fs';
+import { Lifecycle } from '@salesforce/core';
 import { SourcePath } from '../common';
 import { searchUp } from '../utils/fileSystemHandler';
 
@@ -16,16 +17,26 @@ export class ForceIgnore {
 
   private readonly parser: Ignore;
   private readonly forceIgnoreDirectory: string;
-  private readonly contents?: string;
   private DEFAULT_IGNORE: string[] = ['**/*.dup', '**/.*', '**/package2-descriptor.json', '**/package2-manifest.json'];
 
   public constructor(forceIgnorePath = '') {
     try {
-      this.contents = readFileSync(forceIgnorePath, 'utf-8');
+      let contents = readFileSync(forceIgnorePath, 'utf-8');
       // check if file `.forceignore` exists
-      if (this.contents !== undefined) {
+      if (contents !== undefined) {
+        // check for windows style separators (\) and warn
+        if (contents.includes('\\')) {
+          const lifecycle = Lifecycle.getInstance();
+          // cannot await a method in a constructor
+          void lifecycle.emitWarning(
+            'Your .forceignore file incorrectly uses the backslash ("\\") as a folder separator; it should use the slash ("/") instead. We currently accept both separators, but we plan to stop supporting the backslash soon.'
+          );
+          // TODO: change this in v56 to only emit warning but NOT fix file
+          contents = contents.replace(/\\/g, '/');
+        }
+
         // add the default ignore paths, and then parse the .forceignore file
-        this.parser = ignore().add(`${this.contents}\n${this.DEFAULT_IGNORE.join('\n')}`);
+        this.parser = ignore().add(`${contents}\n${this.DEFAULT_IGNORE.join('\n')}`);
         this.forceIgnoreDirectory = dirname(forceIgnorePath);
       }
     } catch (e) {

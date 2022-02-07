@@ -27,6 +27,10 @@ jobs:
     description: Runs NUTs from other (external) repos by cloning them.  Substitutes a dependency for the current pull request.  For example, you're testing a PR to a library and want to test a plugin in another repo that uses the library.
 
     parameters:
+      test_command:
+        type: string
+        description: 'command to execute (ex: yarn test:nuts)'
+        default: 'yarn test:nuts'
       node_version:
         description: version of node to run tests against
         type: string
@@ -108,10 +112,7 @@ jobs:
       - run:
           name: Nuts
           command: |
-            echo "Using node: $(node --version)"
-            echo "Environment Variables:"
-            env
-            NODE_OPTIONS=--max-old-space-size=8192 yarn test:nuts
+            <<parameters.test_command>>
 
 workflows:
   version: 2
@@ -170,12 +171,24 @@ workflows:
           requires:
             - release-management/test-package
           sfdx_version: latest
-          size: 2xlarge
+          size: medium
           matrix:
             parameters:
               os: [linux]
               node_version: [lts]
               external_project_git_url: ['https://github.com/salesforcecli/plugin-source']
+              test_command:
+                [
+                  'yarn test:nuts:convert',
+                  'yarn test:nuts:delete',
+                  'yarn test:nuts:deploy',
+                  'yarn test:nuts:deploy:async',
+                  'yarn test:nuts:manifest:create',
+                  'yarn test:nuts:mdapi',
+                  'yarn test:nuts:retrieve',
+                  'yarn test:nuts:specialTypes',
+                  'yarn test:nuts:tracking',
+                ]
       - release-management/release-package:
           github-release: true
           post-job-steps:

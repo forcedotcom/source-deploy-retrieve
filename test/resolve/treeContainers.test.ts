@@ -78,7 +78,7 @@ describe('Tree Containers', () => {
     });
 
     it('should use expected Node API for isDirectory', () => {
-      const statStub = env.stub(fs, 'lstatSync');
+      const statStub = env.stub(fs, 'statSync');
       // @ts-ignore lstat returns more than isDirectory function
       statStub.withArgs(path).returns({ isDirectory: () => true });
       expect(tree.isDirectory(path)).to.be.true;

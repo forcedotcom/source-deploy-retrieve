@@ -170,9 +170,8 @@ workflows:
               ignore: main
           requires:
             - release-management/test-package
-            - release-management/test-nut
           sfdx_version: latest
-          size: large
+          size: medium
           matrix:
             parameters:
               os: [linux]
@@ -184,7 +183,6 @@ workflows:
                   'yarn test:nuts:delete',
                   'yarn test:nuts:deploy',
                   'yarn test:nuts:deploy:async',
-                  'yarn test:nuts:folders',
                   'yarn test:nuts:manifest:create',
                   'yarn test:nuts:mdapi',
                   'yarn test:nuts:retrieve',

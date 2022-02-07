@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.9.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.9.5...v5.9.6) (2022-02-07)
+
+### Bug Fixes
+
+- warn and convert on windows seps in .forceignore ([#557](https://github.com/forcedotcom/source-deploy-retrieve/issues/557)) ([a9700d7](https://github.com/forcedotcom/source-deploy-retrieve/commit/a9700d7132b891525459ee98b4a70dcdc066716e))
+
 ### [5.9.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.9.4...v5.9.5) (2022-01-31)
 
 ### Bug Fixes

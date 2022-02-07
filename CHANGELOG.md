@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.9.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.9.6...v5.9.7) (2022-02-07)
+
+### Bug Fixes
+
+- stat will follow symlinks ([#559](https://github.com/forcedotcom/source-deploy-retrieve/issues/559)) ([f52e3cf](https://github.com/forcedotcom/source-deploy-retrieve/commit/f52e3cf49da3584bbe4a315ef2872eafe17134e2))
+
 ### [5.9.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.9.5...v5.9.6) (2022-02-07)
 
 ### Bug Fixes

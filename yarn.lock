@@ -806,17 +806,10 @@
   resolved "https://registry.yarnpkg.com/@types/http-cache-semantics/-/http-cache-semantics-4.0.1.tgz#0ea7b61496902b95890dc4c3a116b60cb8dae812"
   integrity sha512-SZs7ekbP8CN0txVG2xVRH6EgKmEm31BOxA07vkFaETzZz1xh+cbt8BcI0slpymvwhx5dlFnQG2rTlPVQn+iRPQ==
 
-"@types/jsforce@^1.9.35":
-  version "1.9.35"
-  resolved "https://registry.yarnpkg.com/@types/jsforce/-/jsforce-1.9.35.tgz#abda87c796910d286420b07a97382c782b576ca8"
-  integrity sha512-GEb1iMAK8raElbBbozR7aVEuMl47jrPYLNkeh+3h2vLJIG21uQ/kOk4kPgMiMFwCmgfX4/tPDugnjb7qrMav4A==
-  dependencies:
-    "@types/node" "*"
-
-"@types/jsforce@^1.9.38":
-  version "1.9.38"
-  resolved "https://registry.yarnpkg.com/@types/jsforce/-/jsforce-1.9.38.tgz#7c4b491d29e8becb9dcdd58c60472becce223139"
-  integrity sha512-+Iwf5jlDiK8z+zI2LAi4mzln8++5lETv2YofFEATu+dNkrP8LACB76lz2tPsXDx/a+5uW8HQhbwL/SyqIic0cg==
+"@types/jsforce@^1.9.35", "@types/jsforce@^1.9.38":
+  version "1.9.40"
+  resolved "https://registry.yarnpkg.com/@types/jsforce/-/jsforce-1.9.40.tgz#fc83fd4b5d8b67f19543cf8b86d24653e3f13ede"
+  integrity sha512-Zj53GKHjmrpbVmItS+XlenPFHtQAntADjt8g1zEs05dVfvfCHEty9NnlKTjwYA49BRNi4tD3S8TZb/gRgC0FyA==
   dependencies:
     "@types/node" "*"
 

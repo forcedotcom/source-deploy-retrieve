@@ -108,10 +108,7 @@ jobs:
       - run:
           name: Nuts
           command: |
-            echo "Using node: $(node --version)"
-            echo "Environment Variables:"
-            env
-            NODE_OPTIONS=--max-old-space-size=8192 yarn test:nuts
+            <<parameters.test_command>>
 
 workflows:
   version: 2
@@ -169,13 +166,27 @@ workflows:
               ignore: main
           requires:
             - release-management/test-package
+            - release-management/test-nut
           sfdx_version: latest
-          size: 2xlarge
+          size: large
           matrix:
             parameters:
               os: [linux]
               node_version: [lts]
               external_project_git_url: ['https://github.com/salesforcecli/plugin-source']
+              test_command:
+                [
+                  'yarn test:nuts:convert',
+                  'yarn test:nuts:delete',
+                  'yarn test:nuts:deploy',
+                  'yarn test:nuts:deploy:async',
+                  'yarn test:nuts:folders',
+                  'yarn test:nuts:manifest:create',
+                  'yarn test:nuts:mdapi',
+                  'yarn test:nuts:retrieve',
+                  'yarn test:nuts:specialTypes',
+                  'yarn test:nuts:tracking',
+                ]
       - release-management/release-package:
           github-release: true
           post-job-steps:

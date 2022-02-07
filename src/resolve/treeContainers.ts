@@ -6,7 +6,7 @@
  */
 import { join, dirname, basename, normalize, sep } from 'path';
 import { Readable } from 'stream';
-import { lstatSync, existsSync, readdirSync, createReadStream, readFileSync } from 'graceful-fs';
+import { statSync, existsSync, readdirSync, createReadStream, readFileSync } from 'graceful-fs';
 import * as unzipper from 'unzipper';
 import { baseName, parseMetadataXml } from '../utils';
 import { LibraryError } from '../errors';
@@ -86,7 +86,8 @@ export abstract class TreeContainer {
  */
 export class NodeFSTreeContainer extends TreeContainer {
   public isDirectory(fsPath: SourcePath): boolean {
-    return lstatSync(fsPath).isDirectory();
+    // use stat instead of lstat to follow symlinks
+    return statSync(fsPath).isDirectory();
   }
 
   public exists(fsPath: SourcePath): boolean {

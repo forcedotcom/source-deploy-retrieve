@@ -6,6 +6,6 @@
     "rootDir": ".",
     "outDir": "lib"
   },
-  "include": ["./src/**/*.ts", "./src/registry/metadataRegistry.json"],
+  "include": ["./src/**/*.ts", "./src/registry/metadataRegistry.json", "./src/registry/stdValueSetRegistry.json"],
   "exclude": ["node_modules", "lib", "examples"]
 }

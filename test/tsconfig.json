@@ -1,6 +1,6 @@
 {
   "extends": "@salesforce/dev-config/tsconfig-test",
-  "include": ["./**/*.ts", "../src/registry/metadataRegistry.json"],
+  "include": ["./**/*.ts", "../src/registry/metadataRegistry.json", "../src/registry/stdValueSetRegistry.json"],
   "compilerOptions": {
     // Needed in order to import metadataRegistry.json
     "resolveJsonModule": true

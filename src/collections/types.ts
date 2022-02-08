@@ -4,7 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { Connection } from '@salesforce/core';
 import { OptionalTreeRegistryOptions, XML_NS_KEY } from '../common';
+import { FileProperties } from '../client/types';
 import { ComponentSet } from './componentSet';
 
 export interface PackageTypeMembers {
@@ -71,4 +73,19 @@ export interface FromManifestOptions extends OptionalTreeRegistryOptions {
    * path to a `destructiveChangesPost.xml` file in XML format
    */
   destructivePost?: string;
+}
+
+export interface FromConnectionOptions extends OptionalTreeRegistryOptions {
+  /**
+   * username or connection to an org
+   */
+  usernameOrConnection: string | Connection;
+  /**
+   * the metadata API version to use
+   */
+  apiVersion?: string;
+  /**
+   * filter the result components to e.g. remove managed components
+   */
+  componentFilter?: (component: Partial<FileProperties>) => boolean;
 }

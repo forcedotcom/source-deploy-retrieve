@@ -6,7 +6,7 @@
  */
 /* eslint  @typescript-eslint/unified-signatures:0 */
 import { j2xParser } from 'fast-xml-parser';
-import { Logger } from '@salesforce/core';
+import { AuthInfo, Connection, Logger } from '@salesforce/core';
 import {
   MetadataApiDeploy,
   MetadataApiDeployOptions,
@@ -21,6 +21,7 @@ import {
   MetadataComponent,
   MetadataMember,
   MetadataResolver,
+  ConnectionResolver,
   SourceComponent,
   TreeContainer,
 } from '../resolve';
@@ -29,6 +30,7 @@ import {
   DestructiveChangesType,
   FromManifestOptions,
   FromSourceOptions,
+  FromConnectionOptions,
   PackageManifestObject,
   PackageTypeMembers,
 } from './types';
@@ -223,6 +225,45 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       for (const component of components) {
         result.add(component);
       }
+    }
+
+    return result;
+  }
+
+  /**
+   * Resolve components from an org connection.
+   *
+   * @param username org connection username
+   * @returns ComponentSet of source resolved components
+   */
+  public static async fromConnection(username: string): Promise<ComponentSet>;
+  /**
+   * Resolve components from an org connection.
+   *
+   * @param options
+   * @returns ComponentSet of source resolved components
+   */
+  public static async fromConnection(options: FromConnectionOptions): Promise<ComponentSet>;
+  public static async fromConnection(input: string | FromConnectionOptions): Promise<ComponentSet> {
+    let usernameOrConnection = typeof input === 'string' ? input : input.usernameOrConnection;
+    const options = (typeof input === 'object' ? input : {}) as Partial<FromConnectionOptions>;
+
+    if (typeof usernameOrConnection === 'string') {
+      usernameOrConnection = await Connection.create({
+        authInfo: await AuthInfo.create({ username: usernameOrConnection }),
+      });
+      if (options.apiVersion && options.apiVersion !== usernameOrConnection.version) {
+        usernameOrConnection.setApiVersion(options.apiVersion);
+      }
+    }
+
+    const connectionResolver = new ConnectionResolver(usernameOrConnection, options.registry);
+    const manifest = await connectionResolver.resolve(options.componentFilter);
+    const result = new ComponentSet([], options.registry);
+    result.apiVersion = manifest.apiVersion;
+
+    for (const component of manifest.components) {
+      result.add(component);
     }
 
     return result;

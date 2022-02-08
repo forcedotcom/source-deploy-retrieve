@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.9.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.9.7...v5.9.8) (2022-02-08)
+
+### Bug Fixes
+
+- sort ComponentSet.getObject ([#570](https://github.com/forcedotcom/source-deploy-retrieve/issues/570)) ([ff3425c](https://github.com/forcedotcom/source-deploy-retrieve/commit/ff3425ca5e89e6e813a4fafe5f759c623c3f64fd))
+
 ### [5.9.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.9.6...v5.9.7) (2022-02-07)
 
 ### Bug Fixes

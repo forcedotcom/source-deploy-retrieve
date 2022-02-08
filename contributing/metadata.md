@@ -40,7 +40,7 @@ You can do what the script does yourself. As you work, run `./node_modules/mocha
 
 Run `sfdx force:mdapi:describemetadata --json` to get the describe. `>` the output to a file or pipe it to [jq](https://stedolan.github.io/jq/) (`| jq`) to find your type.
 
-Your describe will contains something like this
+Your describe will contain something like this
 
 ```js
 {
@@ -137,13 +137,13 @@ Want to make sure your types are working as expected?
 
 ### Caveats
 
-Only `source:push` and `source:pull` support source tracking, so the target types must be MDAPI addressable on the server. If they aren’t MDAPI addressable, special code is needed to support source tracking for these components. See the document [Metadata API Types: End to End, Cradle to Grave](https://docs.google.com/document/d/13jJLbM_ztS0tOOV8bQzNAnEFbL5MY4rNLa18oDV2SCs/edit?usp=sharing) (Salesforce internal only) for more details.
+Only `source:push` and `source:pull` support source tracking, so the target types must be MDAPI addressable on the server. If they aren’t MDAPI addressable, special code is needed to support source tracking for these components. See the document [Metadata API Types: End to End, Cradle to Grave](https://confluence.internal.salesforce.com/display/PLATFORMDX/Metadata+API+Types%3A+End+to+End%2C+Cradle+to+Grave) (Salesforce internal only) for more details.
 
 ## Unit Testing
 
 Reach out to the CLI team for help with unit tests.
 
-[metadataResolverRegistry.ts](../test/resolve/metadataResolverRegistry.test.ts) is an example of unit testing one behavior (resolving from source files) of a real metadata type.
+[metadataResolver.ts](../test/resolve/metadataResolver.test.ts) is an example of unit testing one behavior (resolving from source files) of a real metadata type.
 
 ## Integration Testing
 

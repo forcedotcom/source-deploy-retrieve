@@ -68,7 +68,7 @@ describe('Tooling Retrieve', () => {
     });
     sandboxStub.stub(fs, 'existsSync').returns(true);
     // @ts-ignore
-    sandboxStub.stub(fs, 'lstatSync').returns({ isDirectory: () => false });
+    sandboxStub.stub(fs, 'statSync').returns({ isDirectory: () => false });
     const mockFS = sandboxStub.stub(fs, 'readFileSync');
     mockFS
       .withArgs(path.join('file', 'path', 'MyTestClass.cls'), 'utf8')

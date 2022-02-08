@@ -371,12 +371,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     const typeMembers: PackageTypeMembers[] = [];
     for (const [typeName, members] of typeMap.entries()) {
-      typeMembers.push({ members, name: typeName });
+      typeMembers.push({ members: members.sort(), name: typeName });
     }
 
     return {
       Package: {
-        types: typeMembers,
+        types: typeMembers.sort((a, b) => (a.name > b.name ? 1 : -1)),
         version: this.sourceApiVersion || this.apiVersion,
         fullName: this.fullName,
       },

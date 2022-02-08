@@ -2770,6 +2770,14 @@
       "directoryName": "OmniInteractionConfig",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "uiviewdefinition": {
+      "id": "uiviewdefinition",
+      "name": "UiViewDefinition",
+      "suffix": "uiview",
+      "directoryName": "uiviews",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3072,7 +3080,8 @@
     "buildingEnergyIntensityConfig": "bldgenrgyintensitycnfg",
     "stationaryAssetEnvSourceConfig": "stnryassetenvsrccnfg",
     "vehicleAssetEmssnSourceConfig": "vehicleassetemssnsrccnfg",
-    "omniInteractionConfig": "omniinteractionconfig"
+    "omniInteractionConfig": "omniinteractionconfig",
+    "uiview": "uiviewdefinition"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

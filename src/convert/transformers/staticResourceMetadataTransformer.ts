@@ -76,9 +76,14 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
         (!mergeWith || mergeWith.tree.isDirectory(mergeContentPath));
 
       if (shouldUnzipArchive) {
-        const zipBuffer = await component.tree.readFile(content);
-        for await (const info of this.createWriteInfosFromArchive(zipBuffer, baseContentPath)) {
-          writeInfos.push(info);
+        for (const entry of (await Open.buffer(await component.tree.readFile(content))).files) {
+          if (entry.type === 'File') {
+            // push onto the pipeline and start writing now
+            writeInfos.push({
+              source: entry.stream(),
+              output: join(baseContentPath, entry.path),
+            });
+          }
         }
       } else {
         const extension = this.getExtensionFromType(componentContentType);
@@ -116,18 +121,6 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       throw new LibraryError('error_static_resource_expected_archive_type', [contentType, component.name]);
     }
     return false;
-  }
-
-  private async *createWriteInfosFromArchive(zipBuffer: Buffer, baseDir: string): AsyncIterable<WriteInfo> {
-    const directory = await Open.buffer(zipBuffer);
-    for (const entry of directory.files) {
-      if (entry.type === 'File') {
-        yield {
-          source: entry.stream(),
-          output: join(baseDir, entry.path),
-        };
-      }
-    }
   }
 
   private async getContentType(component: SourceComponent): Promise<string> {

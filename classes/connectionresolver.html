@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>MetadataTransformerFactory | @salesforce/source-deploy-retrieve</title>
+	<title>ConnectionResolver | @salesforce/source-deploy-retrieve</title>
 	<meta name="description" content="Documentation for @salesforce/source-deploy-retrieve">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -52,21 +52,28 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="metadatatransformerfactory.html">MetadataTransformerFactory</a>
+					<a href="connectionresolver.html">ConnectionResolver</a>
 				</li>
 			</ul>
-			<h1>Class MetadataTransformerFactory</h1>
+			<h1>Class ConnectionResolver</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Resolve MetadataComponents from an org connection</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">MetadataTransformerFactory</span>
+						<span class="target">ConnectionResolver</span>
 					</li>
 				</ul>
 			</section>
@@ -77,13 +84,13 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="metadatatransformerfactory.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="connectionresolver.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="metadatatransformerfactory.html#gettransformer" class="tsd-kind-icon">get<wbr>Transformer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="connectionresolver.html#resolve" class="tsd-kind-icon">resolve</a></li>
 							</ul>
 						</section>
 					</div>
@@ -95,25 +102,25 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Metadata<wbr>Transformer<wbr>Factory<span class="tsd-signature-symbol">(</span>registry<span class="tsd-signature-symbol">: </span><a href="registryaccess.html" class="tsd-signature-type">RegistryAccess</a>, context<span class="tsd-signature-symbol">?: </span><a href="convertcontext.html" class="tsd-signature-type">ConvertContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="metadatatransformerfactory.html" class="tsd-signature-type">MetadataTransformerFactory</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Connection<wbr>Resolver<span class="tsd-signature-symbol">(</span>connection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Connection</span>, registry<span class="tsd-signature-symbol">?: </span><a href="registryaccess.html" class="tsd-signature-type">RegistryAccess</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="connectionresolver.html" class="tsd-signature-type">ConnectionResolver</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/c76c6cee/src/convert/transformers/metadataTransformerFactory.ts#L19">src/convert/transformers/metadataTransformerFactory.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/c76c6cee/src/resolve/connectionResolver.ts#L25">src/resolve/connectionResolver.ts:25</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>registry: <a href="registryaccess.html" class="tsd-signature-type">RegistryAccess</a></h5>
+									<h5>connection: <span class="tsd-signature-type">Connection</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> context: <a href="convertcontext.html" class="tsd-signature-type">ConvertContext</a><span class="tsd-signature-symbol"> = new ConvertContext()</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> registry: <a href="registryaccess.html" class="tsd-signature-type">RegistryAccess</a><span class="tsd-signature-symbol"> = new RegistryAccess()</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="metadatatransformerfactory.html" class="tsd-signature-type">MetadataTransformerFactory</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="connectionresolver.html" class="tsd-signature-type">ConnectionResolver</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -121,25 +128,25 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="gettransformer" class="tsd-anchor"></a>
-					<h3>get<wbr>Transformer</h3>
+					<a name="resolve" class="tsd-anchor"></a>
+					<h3>resolve</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Transformer<span class="tsd-signature-symbol">(</span>component<span class="tsd-signature-symbol">: </span><a href="sourcecomponent.html" class="tsd-signature-type">SourceComponent</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/metadatatransformer.html" class="tsd-signature-type">MetadataTransformer</a></li>
+						<li class="tsd-signature tsd-kind-icon">resolve<span class="tsd-signature-symbol">(</span>componentFilter<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/resolveconnectionresult.html" class="tsd-signature-type">ResolveConnectionResult</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/c76c6cee/src/convert/transformers/metadataTransformerFactory.ts#L26">src/convert/transformers/metadataTransformerFactory.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/c76c6cee/src/resolve/connectionResolver.ts#L33">src/resolve/connectionResolver.ts:33</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>component: <a href="sourcecomponent.html" class="tsd-signature-type">SourceComponent</a></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> componentFilter: <span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol"> = (component: Partial&lt;FileProperties&gt;): boolean &#x3D;&gt; !!component</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/metadatatransformer.html" class="tsd-signature-type">MetadataTransformer</a></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/resolveconnectionresult.html" class="tsd-signature-type">ResolveConnectionResult</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -158,13 +165,13 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class">
-						<a href="metadatatransformerfactory.html" class="tsd-kind-icon">Metadata<wbr>Transformer<wbr>Factory</a>
+						<a href="connectionresolver.html" class="tsd-kind-icon">Connection<wbr>Resolver</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="metadatatransformerfactory.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="connectionresolver.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="metadatatransformerfactory.html#gettransformer" class="tsd-kind-icon">get<wbr>Transformer</a>
+								<a href="connectionresolver.html#resolve" class="tsd-kind-icon">resolve</a>
 							</li>
 						</ul>
 					</li>

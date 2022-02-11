@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Channel | @salesforce/source-deploy-retrieve</title>
+	<title>StdValueSetRecord | @salesforce/source-deploy-retrieve</title>
 	<meta name="description" content="Documentation for @salesforce/source-deploy-retrieve">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -52,10 +52,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="channel.html">Channel</a>
+					<a href="stdvaluesetrecord.html">StdValueSetRecord</a>
 				</li>
 			</ul>
-			<h1>Interface Channel</h1>
+			<h1>Interface StdValueSetRecord</h1>
 		</div>
 	</div>
 </header>
@@ -66,7 +66,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Channel</span>
+						<span class="target">StdValueSetRecord</span>
 					</li>
 				</ul>
 			</section>
@@ -77,7 +77,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="channel.html#exposed" class="tsd-kind-icon">exposed</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="stdvaluesetrecord.html#id" class="tsd-kind-icon">Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="stdvaluesetrecord.html#masterlabel" class="tsd-kind-icon">Master<wbr>Label</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="stdvaluesetrecord.html#metadata" class="tsd-kind-icon">Metadata</a></li>
 							</ul>
 						</section>
 					</div>
@@ -86,14 +88,42 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="exposed" class="tsd-anchor"></a>
-					<h3>exposed</h3>
-					<div class="tsd-signature tsd-kind-icon">exposed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<a name="id" class="tsd-anchor"></a>
+					<h3>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/c76c6cee/src/registry/types.ts#L191">src/registry/types.ts:191</a></li>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/c76c6cee/src/client/types.ts#L439">src/client/types.ts:439</a></li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="masterlabel" class="tsd-anchor"></a>
+					<h3>Master<wbr>Label</h3>
+					<div class="tsd-signature tsd-kind-icon">Master<wbr>Label<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/c76c6cee/src/client/types.ts#L440">src/client/types.ts:440</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="metadata" class="tsd-anchor"></a>
+					<h3>Metadata</h3>
+					<div class="tsd-signature tsd-kind-icon">Metadata<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>standardValue<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/forcedotcom/source-deploy-retrieve/blob/c76c6cee/src/client/types.ts#L441">src/client/types.ts:441</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>standard<wbr>Value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+							</li>
+						</ul>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -110,10 +140,16 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="channel.html" class="tsd-kind-icon">Channel</a>
+						<a href="stdvaluesetrecord.html" class="tsd-kind-icon">Std<wbr>Value<wbr>Set<wbr>Record</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="channel.html#exposed" class="tsd-kind-icon">exposed</a>
+								<a href="stdvaluesetrecord.html#id" class="tsd-kind-icon">Id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="stdvaluesetrecord.html#masterlabel" class="tsd-kind-icon">Master<wbr>Label</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="stdvaluesetrecord.html#metadata" class="tsd-kind-icon">Metadata</a>
 							</li>
 						</ul>
 					</li>

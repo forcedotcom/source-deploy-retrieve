@@ -4,17 +4,20 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, join } from 'path';
+import { basename, dirname, isAbsolute, join } from 'path';
 import { Readable } from 'stream';
 import { create as createArchive } from 'archiver';
 import { getExtension } from 'mime';
 import { Open } from 'unzipper';
 import { JsonMap } from '@salesforce/ts-types';
+import { createWriteStream } from 'graceful-fs';
 import { baseName } from '../../utils';
 import { WriteInfo } from '..';
 import { LibraryError } from '../../errors';
 import { SourceComponent } from '../../resolve';
 import { SourcePath } from '../../common';
+import { ensureFileExists } from '../../utils/fileSystemHandler';
+import { pipeline } from '../streams';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
@@ -76,13 +79,16 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
         (!mergeWith || mergeWith.tree.isDirectory(mergeContentPath));
 
       if (shouldUnzipArchive) {
-        for (const entry of (await Open.buffer(await component.tree.readFile(content))).files) {
-          if (entry.type === 'File') {
+        // for the bulk of static resource writing we'll start writing ASAP
+        // we'll still defer writing the resource-meta.xml file by pushing it onto the writeInfos
+        for (const info of (await Open.buffer(await component.tree.readFile(content))).files) {
+          if (info.type === 'File') {
+            const path = join(baseContentPath, info.path);
+            // figure out what to do when defaultdir is undefined
+            const fullDest = isAbsolute(path) ? path : join(this.defaultDirectory, path);
+            ensureFileExists(fullDest);
             // push onto the pipeline and start writing now
-            writeInfos.push({
-              source: entry.stream(),
-              output: join(baseContentPath, entry.path),
-            });
+            await pipeline(info.stream(), createWriteStream(fullDest));
           }
         }
       } else {

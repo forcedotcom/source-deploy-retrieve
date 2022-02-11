@@ -13,11 +13,11 @@ import { JsonMap } from '@salesforce/ts-types';
 import { j2xParser } from 'fast-xml-parser';
 import { Logger } from '@salesforce/core';
 import { MetadataResolver, SourceComponent } from '../resolve';
-import { ensureFileExists } from '../utils/fileSystemHandler';
 import { SourcePath, XML_DECL } from '../common';
 import { ComponentSet } from '../collections';
 import { LibraryError } from '../errors';
 import { RegistryAccess } from '../registry';
+import { ensureFileExists } from '../utils/fileSystemHandler';
 import { MetadataTransformerFactory } from './transformers';
 import { ConvertContext } from './convertContext';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
@@ -92,6 +92,7 @@ export class ComponentConverter extends Transform {
       try {
         const converts: Array<Promise<WriteInfo[]>> = [];
         const transformer = this.transformerFactory.getTransformer(chunk);
+        transformer.defaultDirectory = this.defaultDirectory;
         const mergeWith = this.mergeSet?.getSourceComponents(chunk);
         switch (this.targetFormat) {
           case 'source':

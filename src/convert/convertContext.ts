@@ -10,7 +10,7 @@ import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSet } from '../collections';
 import { normalizeToArray } from '../utils';
 import { RecompositionStrategy, TransformerStrategy } from '../registry';
-import { MetadataComponent, SourceComponent, NodeFSTreeContainer, TreeContainer } from '../resolve';
+import { MetadataComponent, NodeFSTreeContainer, SourceComponent, TreeContainer } from '../resolve';
 import { JsToXml } from './streams';
 import { WriteInfo, WriterFormat } from './types';
 
@@ -337,6 +337,7 @@ export class ConvertContext {
   public readonly decomposition = new DecompositionFinalizer();
   public readonly recomposition = new RecompositionFinalizer();
   public readonly nonDecomposition = new NonDecompositionFinalizer();
+  public readonly pipeline;
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async *executeFinalizers(defaultDirectory?: string): AsyncIterable<WriterFormat[]> {

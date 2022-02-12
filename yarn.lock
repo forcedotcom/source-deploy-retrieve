@@ -2119,12 +2119,12 @@ deep-eql@^3.0.1:
     type-detect "^4.0.0"
 
 deep-equal-in-any-order@^1.1.4:
-  version "1.1.4"
-  resolved "https://registry.npmjs.org/deep-equal-in-any-order/-/deep-equal-in-any-order-1.1.4.tgz#fed84839ebd6bfa53298142db35b0d8293677b92"
-  integrity sha512-yigFzn8ynCxq7ECTXiH/sS3as0QZaXDeSY6QmXPA67C+TwfilSh2AkNMrmmCYp+dh/UcA7UHTmpC7qwT4zEOLA==
+  version "1.1.15"
+  resolved "https://registry.yarnpkg.com/deep-equal-in-any-order/-/deep-equal-in-any-order-1.1.15.tgz#aa84501ff574fb92c79612ef83deeae6de89231c"
+  integrity sha512-/W36YW15Z+AymTkswOoCOX++gWLd0XBy1lFlxmML/m/PW0/0GuNkE65UTA2qiuPrKJTxXssKKrvtIZkOh+yEHA==
   dependencies:
     lodash.mapvalues "^4.6.0"
-    sort-any "^1.2.2"
+    sort-any "^2.0.0"
 
 deep-is@^0.1.3:
   version "0.1.4"
@@ -5799,10 +5799,10 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
-sort-any@^1.2.2:
-  version "1.2.3"
-  resolved "https://registry.npmjs.org/sort-any/-/sort-any-1.2.3.tgz#901806cb3ec769b95c6d8eade7528c4f8dda404c"
-  integrity sha512-yJLpmCgDOu7Z6XS6ofzcKRy/Id8yfGB8KkzC7oKAk1F7P3jPWEU8GMxBJWDo5fKp71JYY1bJ8tmaHBfoTx+y8w==
+sort-any@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/sort-any/-/sort-any-2.0.0.tgz#62a5409c9905c9483f03e41e17f46cc451aa7c55"
+  integrity sha512-T9JoiDewQEmWcnmPn/s9h/PH9t3d/LSWi0RgVmXSuDYeZXTZOZ1/wrK2PHaptuR1VXe3clLLt0pD6sgVOwjNEA==
   dependencies:
     lodash "^4.17.21"
 

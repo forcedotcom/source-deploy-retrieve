@@ -72,7 +72,6 @@ export type MergeConfig = {
  */
 export interface MetadataTransformer {
   defaultDirectory?: string;
-  writeAsSoonAsPossible?: boolean;
   toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]>;
   toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]>;
 }

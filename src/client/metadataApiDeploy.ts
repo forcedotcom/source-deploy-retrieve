@@ -193,6 +193,13 @@ export class DeployResult implements MetadataTransferResult {
    * TODO: remove cases if fixes are made in the api.
    */
   private sanitizeDeployMessage(message: DeployMessage): DeployMessage {
+    // mdapi error messages have the type as "FooSettings" but SDR only recognizes "Settings"
+    if (message.componentType.endsWith('Settings') && message.fileName.endsWith('.settings')) {
+      return {
+        ...message,
+        componentType: 'Settings',
+      };
+    }
     switch (message.componentType) {
       case registry.types.lightningcomponentbundle.name:
         // remove the markup scheme from fullName

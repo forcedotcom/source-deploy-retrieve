@@ -84,11 +84,11 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
         for (const info of (await Open.buffer(await component.tree.readFile(content))).files) {
           if (info.type === 'File') {
             const path = join(baseContentPath, info.path);
-            // figure out what to do when defaultdir is undefined
-            const fullDest = isAbsolute(path) ? path : join(this.defaultDirectory, path);
-            ensureFileExists(fullDest);
+            const fullDest = isAbsolute(path)
+              ? path
+              : join(this.defaultDirectory || component.getPackageRelativePath('', 'source'), path);
             // push onto the pipeline and start writing now
-            await pipeline(info.stream(), createWriteStream(fullDest));
+            await this.pipeline(info.stream(), fullDest);
           }
         }
       } else {
@@ -106,6 +106,19 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     }
 
     return writeInfos;
+  }
+
+  /**
+   * Only separated into its own method for unit testing purposes
+   * I was unable to find a way to stub/spy a pipline() call
+   *
+   * @param stream the data to be written
+   * @param destination the destination path to be written
+   * @private
+   */
+  private async pipeline(stream: Readable, destination: string): Promise<void> {
+    ensureFileExists(destination);
+    await pipeline(stream, createWriteStream(destination));
   }
 
   private getBaseContentPath(component: SourceComponent, mergeWith?: SourceComponent): SourcePath {

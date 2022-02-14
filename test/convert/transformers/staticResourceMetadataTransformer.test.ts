@@ -26,10 +26,14 @@ const env = createSandbox();
 
 describe('StaticResourceMetadataTransformer', () => {
   const transformer = new StaticResourceMetadataTransformer();
+  transformer.defaultDirectory = 'test';
+  let pipelineStub;
 
-  beforeEach(() =>
-    env.stub(VirtualTreeContainer.prototype, 'stream').callsFake((fsPath: string) => new TestReadable(fsPath))
-  );
+  beforeEach(() => {
+    env.stub(VirtualTreeContainer.prototype, 'stream').callsFake((fsPath: string) => new TestReadable(fsPath));
+    // @ts-ignore private method stub
+    pipelineStub = env.stub(transformer, 'pipeline').resolves();
+  });
 
   afterEach(() => env.restore());
 
@@ -233,22 +237,23 @@ describe('StaticResourceMetadataTransformer', () => {
       env.stub(Open, 'buffer').resolves(mockCentralDirectory);
       const expectedInfos: WriteInfo[] = [
         {
-          source: null,
-          output: join(
-            DEFAULT_PACKAGE_ROOT_SFDX,
-            type.directoryName,
-            mixedContentSingleFile.COMPONENT_NAMES[0],
-            'b',
-            'c.css'
-          ),
-        },
-        {
           source: component.tree.stream(xml),
           output: join(DEFAULT_PACKAGE_ROOT_SFDX, type.directoryName, basename(xml)),
         },
       ];
 
       expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
+      expect(pipelineStub.callCount).to.equal(1);
+      expect(pipelineStub.firstCall.args[1]).to.equal(
+        join(
+          transformer.defaultDirectory,
+          DEFAULT_PACKAGE_ROOT_SFDX,
+          type.directoryName,
+          mixedContentSingleFile.COMPONENT_NAMES[0],
+          'b',
+          'c.css'
+        )
+      );
     });
 
     it('should work well for null contentType', async () => {
@@ -302,16 +307,16 @@ describe('StaticResourceMetadataTransformer', () => {
       env.stub(Open, 'buffer').resolves(mockCentralDirectory);
       const expectedInfos: WriteInfo[] = [
         {
-          source: null,
-          output: join(mergeComponent.content, 'b', 'c.css'),
-        },
-        {
           source: component.tree.stream(component.xml),
           output: mergeComponent.xml,
         },
       ];
 
       expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equal(expectedInfos);
+      expect(pipelineStub.callCount).to.equal(1);
+      expect(pipelineStub.firstCall.args[1]).to.deep.equal(
+        join(transformer.defaultDirectory, mergeComponent.content, 'b', 'c.css')
+      );
     });
 
     it('should merge output with merge component when content is single file', async () => {

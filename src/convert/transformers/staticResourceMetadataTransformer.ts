@@ -66,46 +66,52 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
 
   public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
     const { xml, content } = component;
-    const writeInfos: WriteInfo[] = [];
 
-    if (content) {
-      const componentContentType = await this.getContentType(component);
-      const mergeContentPath = mergeWith?.content;
-      const baseContentPath = this.getBaseContentPath(component, mergeWith);
+    if (!content) {
+      return [];
+    }
+    const componentContentType = await this.getContentType(component);
+    const mergeContentPath = mergeWith?.content;
+    const baseContentPath = this.getBaseContentPath(component, mergeWith);
 
-      // only unzip an archive component if there isn't a merge component, or the merge component is itself expanded
-      const shouldUnzipArchive =
-        StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(componentContentType) &&
-        (!mergeWith || mergeWith.tree.isDirectory(mergeContentPath));
+    // only unzip an archive component if there isn't a merge component, or the merge component is itself expanded
+    const shouldUnzipArchive =
+      StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(componentContentType) &&
+      (!mergeWith || mergeWith.tree.isDirectory(mergeContentPath));
 
-      if (shouldUnzipArchive) {
-        // for the bulk of static resource writing we'll start writing ASAP
-        // we'll still defer writing the resource-meta.xml file by pushing it onto the writeInfos
-        for (const info of (await Open.buffer(await component.tree.readFile(content))).files) {
-          if (info.type === 'File') {
-            const path = join(baseContentPath, info.path);
+    if (shouldUnzipArchive) {
+      // for the bulk of static resource writing we'll start writing ASAP
+      // we'll still defer writing the resource-meta.xml file by pushing it onto the writeInfos
+      await Promise.all(
+        (
+          await Open.buffer(await component.tree.readFile(content))
+        ).files
+          .filter((f) => f.type === 'File')
+          .map(async (f) => {
+            const path = join(baseContentPath, f.path);
             const fullDest = isAbsolute(path)
               ? path
               : join(this.defaultDirectory || component.getPackageRelativePath('', 'source'), path);
             // push onto the pipeline and start writing now
-            await this.pipeline(info.stream(), fullDest);
-          }
-        }
-      } else {
-        const extension = this.getExtensionFromType(componentContentType);
-        writeInfos.push({
-          source: component.tree.stream(content),
-          output: `${baseContentPath}.${extension}`,
-        });
-      }
-
-      writeInfos.push({
+            return this.pipeline(f.stream(), fullDest);
+          })
+      );
+    }
+    return [
+      {
         source: component.tree.stream(xml),
         output: mergeWith?.xml || component.getPackageRelativePath(basename(xml), 'source'),
-      });
-    }
-
-    return writeInfos;
+      },
+    ].concat(
+      shouldUnzipArchive
+        ? []
+        : [
+            {
+              source: component.tree.stream(content),
+              output: `${baseContentPath}.${this.getExtensionFromType(componentContentType)}`,
+            },
+          ]
+    );
   }
 
   /**

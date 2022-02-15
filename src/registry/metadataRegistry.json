@@ -2777,7 +2777,10 @@
       "suffix": "uiview",
       "directoryName": "uiviews",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     }
   },
   "suffixes": {

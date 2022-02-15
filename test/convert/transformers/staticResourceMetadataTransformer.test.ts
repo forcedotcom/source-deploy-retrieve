@@ -5,10 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, join } from 'path';
+import deepEqualInAnyOrder = require('deep-equal-in-any-order');
+
 import * as archiver from 'archiver';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import { CentralDirectory, Entry, Open } from 'unzipper';
+import chai = require('chai');
 import { registry, SourceComponent, VirtualTreeContainer, WriteInfo } from '../../../src';
 import { StaticResourceMetadataTransformer } from '../../../src/convert/transformers/staticResourceMetadataTransformer';
 import { LibraryError } from '../../../src/errors';
@@ -21,6 +24,8 @@ import {
 } from '../../mock/type-constants/staticresourceConstant';
 import { TestReadable } from '../../mock/convert/readables';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../../src/common';
+
+chai.use(deepEqualInAnyOrder);
 
 const env = createSandbox();
 
@@ -123,7 +128,7 @@ describe('StaticResourceMetadataTransformer', () => {
       try {
         await transformer.toMetadataFormat(component);
       } catch (e) {
-        expect(e.message).to.equal(
+        expect(e.message).to.deep.equalInAnyOrder(
           nls.localize('error_static_resource_missing_resource_file', [join('staticresources', component.name)])
         );
       }
@@ -170,7 +175,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
+      expect(await transformer.toSourceFormat(component)).to.deep.equalInAnyOrder(expectedInfos);
     });
 
     it('should rename extension from .resource for a fallback mime extension', async () => {
@@ -193,7 +198,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
+      expect(await transformer.toSourceFormat(component)).to.deep.equalInAnyOrder(expectedInfos);
     });
 
     it('should rename extension from .resource for an unsupported mime extension', async () => {
@@ -216,7 +221,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
+      expect(await transformer.toSourceFormat(component)).to.deep.equalInAnyOrder(expectedInfos);
     });
 
     it('should ignore components without content', async () => {
@@ -242,7 +247,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
+      expect(await transformer.toSourceFormat(component)).to.deep.equalInAnyOrder(expectedInfos);
       expect(pipelineStub.callCount).to.equal(1);
       expect(pipelineStub.firstCall.args[1]).to.equal(
         join(
@@ -275,7 +280,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
+      expect(await transformer.toSourceFormat(component)).to.deep.equalInAnyOrder(expectedInfos);
     });
 
     it('should merge output with merge component when content is archive', async () => {
@@ -356,7 +361,7 @@ describe('StaticResourceMetadataTransformer', () => {
         },
       ];
 
-      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equal(expectedInfos);
+      expect(await transformer.toSourceFormat(component, mergeComponent)).to.deep.equalInAnyOrder(expectedInfos);
     });
   });
 });

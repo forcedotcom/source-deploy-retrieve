@@ -49,12 +49,11 @@ export class ComponentSetBuilder {
     try {
       if (sourcepath) {
         logger.debug(`Building ComponentSet from sourcepath: ${sourcepath.join(', ')}`);
-        const fsPaths: string[] = [];
-        sourcepath.forEach((filepath) => {
+        const fsPaths: string[] = sourcepath.map((filepath) => {
           if (!fs.existsSync(filepath)) {
             throw new SfdxError(`The sourcepath "${filepath}" is not a valid source file path.`);
           }
-          fsPaths.push(path.resolve(filepath));
+          return path.resolve(filepath);
         });
         componentSet = ComponentSet.fromSource({ fsPaths });
       }
@@ -72,7 +71,7 @@ export class ComponentSetBuilder {
         logger.debug(`Searching in packageDir: ${directoryPaths.join(', ')} for matching metadata`);
         componentSet = await ComponentSet.fromManifest({
           manifestPath: manifest.manifestPath,
-          resolveSourcePaths: options.manifest.directoryPaths,
+          resolveSourcePaths: directoryPaths,
           forceAddWildcards: true,
           destructivePre: options.manifest.destructiveChangesPre,
           destructivePost: options.manifest.destructiveChangesPost,

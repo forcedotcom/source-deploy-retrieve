@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, isAbsolute, join } from 'path';
-import { pipeline as cbPipeline, Readable, Transform, Writable, Stream } from 'stream';
+import { pipeline as cbPipeline, Readable, Stream, Transform, Writable } from 'stream';
 import { promisify } from 'util';
 import { Archiver, create as createArchive } from 'archiver';
 import { createWriteStream, existsSync } from 'graceful-fs';
@@ -13,11 +13,11 @@ import { JsonMap } from '@salesforce/ts-types';
 import { j2xParser } from 'fast-xml-parser';
 import { Logger } from '@salesforce/core';
 import { MetadataResolver, SourceComponent } from '../resolve';
-import { ensureFileExists } from '../utils/fileSystemHandler';
 import { SourcePath, XML_DECL } from '../common';
 import { ComponentSet } from '../collections';
 import { LibraryError } from '../errors';
 import { RegistryAccess } from '../registry';
+import { ensureFileExists } from '../utils/fileSystemHandler';
 import { MetadataTransformerFactory } from './transformers';
 import { ConvertContext } from './convertContext';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
@@ -92,6 +92,7 @@ export class ComponentConverter extends Transform {
       try {
         const converts: Array<Promise<WriteInfo[]>> = [];
         const transformer = this.transformerFactory.getTransformer(chunk);
+        transformer.defaultDirectory = this.defaultDirectory;
         const mergeWith = this.mergeSet?.getSourceComponents(chunk);
         switch (this.targetFormat) {
           case 'source':
@@ -163,43 +164,43 @@ export class StandardWriter extends ComponentWriter {
     if (chunk.writeInfos.length !== 0) {
       try {
         const toResolve: string[] = [];
-        const writeTasks = chunk.writeInfos.map((info: WriteInfo) => {
-          const fullDest = isAbsolute(info.output) ? info.output : join(this.rootDestination, info.output);
-          if (!existsSync(fullDest)) {
-            for (const ignoredPath of this.forceIgnoredPaths) {
-              if (
-                dirname(ignoredPath).includes(dirname(fullDest)) &&
-                basename(ignoredPath).includes(basename(fullDest))
-              ) {
-                return;
-              }
-            }
-          }
-          if (this.forceIgnoredPaths.has(fullDest)) {
-            return;
-          }
-          // if there are children, resolve each file. o/w just pick one of the files to resolve
-          if (toResolve.length === 0 || chunk.component.type.children) {
-            // This is a workaround for a server side ListViews bug where
-            // duplicate components are sent. W-9614275
-            if (toResolve.includes(fullDest)) {
-              this.logger.debug(`Ignoring duplicate metadata for: ${fullDest}`);
-              return;
-            }
-            toResolve.push(fullDest);
-          }
-          ensureFileExists(fullDest);
-          return pipeline(info.source, createWriteStream(fullDest));
-        });
-
         // it is a reasonable expectation that when a conversion call exits, the files of
         // every component has been written to the destination. This await ensures the microtask
         // queue is empty when that call exits and overall less memory is consumed.
-        await Promise.all(writeTasks);
+        await Promise.all(
+          chunk.writeInfos.map((info: WriteInfo) => {
+            const fullDest = isAbsolute(info.output) ? info.output : join(this.rootDestination, info.output);
+            if (!existsSync(fullDest)) {
+              for (const ignoredPath of this.forceIgnoredPaths) {
+                if (
+                  dirname(ignoredPath).includes(dirname(fullDest)) &&
+                  basename(ignoredPath).includes(basename(fullDest))
+                ) {
+                  return;
+                }
+              }
+            }
+            if (this.forceIgnoredPaths.has(fullDest)) {
+              return;
+            }
+            // if there are children, resolve each file. o/w just pick one of the files to resolve
+            if (toResolve.length === 0 || chunk.component.type.children) {
+              // This is a workaround for a server side ListViews bug where
+              // duplicate components are sent. W-9614275
+              if (toResolve.includes(fullDest)) {
+                this.logger.debug(`Ignoring duplicate metadata for: ${fullDest}`);
+                return;
+              }
+              toResolve.push(fullDest);
+            }
+            ensureFileExists(fullDest);
+            return pipeline(info.source, createWriteStream(fullDest));
+          })
+        );
 
-        for (const fsPath of toResolve) {
+        toResolve.map((fsPath) => {
           this.converted.push(...this.resolver.getComponentsFromPath(fsPath));
-        }
+        });
       } catch (e) {
         err = e as Error;
       }

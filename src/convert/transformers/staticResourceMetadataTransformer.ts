@@ -4,17 +4,20 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, join } from 'path';
+import { basename, dirname, isAbsolute, join } from 'path';
 import { Readable } from 'stream';
 import { create as createArchive } from 'archiver';
 import { getExtension } from 'mime';
 import { Open } from 'unzipper';
 import { JsonMap } from '@salesforce/ts-types';
+import { createWriteStream } from 'graceful-fs';
 import { baseName } from '../../utils';
 import { WriteInfo } from '..';
 import { LibraryError } from '../../errors';
 import { SourceComponent } from '../../resolve';
 import { SourcePath } from '../../common';
+import { ensureFileExists } from '../../utils/fileSystemHandler';
+import { pipeline } from '../streams';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
@@ -63,38 +66,65 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
 
   public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
     const { xml, content } = component;
-    const writeInfos: WriteInfo[] = [];
 
-    if (content) {
-      const componentContentType = await this.getContentType(component);
-      const mergeContentPath = mergeWith?.content;
-      const baseContentPath = this.getBaseContentPath(component, mergeWith);
+    if (!content) {
+      return [];
+    }
+    const componentContentType = await this.getContentType(component);
+    const mergeContentPath = mergeWith?.content;
+    const baseContentPath = this.getBaseContentPath(component, mergeWith);
 
-      // only unzip an archive component if there isn't a merge component, or the merge component is itself expanded
-      const shouldUnzipArchive =
-        StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(componentContentType) &&
-        (!mergeWith || mergeWith.tree.isDirectory(mergeContentPath));
+    // only unzip an archive component if there isn't a merge component, or the merge component is itself expanded
+    const shouldUnzipArchive =
+      StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(componentContentType) &&
+      (!mergeWith || mergeWith.tree.isDirectory(mergeContentPath));
 
-      if (shouldUnzipArchive) {
-        const zipBuffer = await component.tree.readFile(content);
-        for await (const info of this.createWriteInfosFromArchive(zipBuffer, baseContentPath)) {
-          writeInfos.push(info);
-        }
-      } else {
-        const extension = this.getExtensionFromType(componentContentType);
-        writeInfos.push({
-          source: component.tree.stream(content),
-          output: `${baseContentPath}.${extension}`,
-        });
-      }
-
-      writeInfos.push({
+    if (shouldUnzipArchive) {
+      // for the bulk of static resource writing we'll start writing ASAP
+      // we'll still defer writing the resource-meta.xml file by pushing it onto the writeInfos
+      await Promise.all(
+        (
+          await Open.buffer(await component.tree.readFile(content))
+        ).files
+          .filter((f) => f.type === 'File')
+          .map(async (f) => {
+            const path = join(baseContentPath, f.path);
+            const fullDest = isAbsolute(path)
+              ? path
+              : join(this.defaultDirectory || component.getPackageRelativePath('', 'source'), path);
+            // push onto the pipeline and start writing now
+            return this.pipeline(f.stream(), fullDest);
+          })
+      );
+    }
+    return [
+      {
         source: component.tree.stream(xml),
         output: mergeWith?.xml || component.getPackageRelativePath(basename(xml), 'source'),
-      });
-    }
+      },
+    ].concat(
+      shouldUnzipArchive
+        ? []
+        : [
+            {
+              source: component.tree.stream(content),
+              output: `${baseContentPath}.${this.getExtensionFromType(componentContentType)}`,
+            },
+          ]
+    );
+  }
 
-    return writeInfos;
+  /**
+   * Only separated into its own method for unit testing purposes
+   * I was unable to find a way to stub/spy a pipline() call
+   *
+   * @param stream the data to be written
+   * @param destination the destination path to be written
+   * @private
+   */
+  private async pipeline(stream: Readable, destination: string): Promise<void> {
+    ensureFileExists(destination);
+    await pipeline(stream, createWriteStream(destination));
   }
 
   private getBaseContentPath(component: SourceComponent, mergeWith?: SourceComponent): SourcePath {
@@ -116,18 +146,6 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       throw new LibraryError('error_static_resource_expected_archive_type', [contentType, component.name]);
     }
     return false;
-  }
-
-  private async *createWriteInfosFromArchive(zipBuffer: Buffer, baseDir: string): AsyncIterable<WriteInfo> {
-    const directory = await Open.buffer(zipBuffer);
-    for (const entry of directory.files) {
-      if (entry.type === 'File') {
-        yield {
-          source: entry.stream(),
-          output: join(baseDir, entry.path),
-        };
-      }
-    }
   }
 
   private async getContentType(component: SourceComponent): Promise<string> {

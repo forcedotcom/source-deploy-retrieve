@@ -168,7 +168,19 @@ export class ZipTreeContainer extends TreeContainer {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public readFileSync(fsPath: string): Buffer {
-    throw new Error('Method not implemented');
+    if (!this.isDirectory(fsPath)) {
+      const zipEntry = this.tree.get(fsPath) as ZipEntry;
+      let a = true;
+      let buf = Buffer.from('');
+      while (a) {
+        const read = zipEntry.stream().read();
+        buf = Buffer.concat([buf, read]);
+        if (read === undefined) {
+          a = false;
+        }
+      }
+      return buf;
+    }
   }
 
   public stream(fsPath: string): Readable {

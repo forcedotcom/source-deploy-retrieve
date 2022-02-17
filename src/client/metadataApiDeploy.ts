@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, extname, join } from 'path';
+import { basename, dirname, extname, join, posix, sep } from 'path';
 import { isString } from '@salesforce/ts-types';
 import { create as createArchive } from 'archiver';
 import * as fs from 'graceful-fs';
@@ -30,6 +30,7 @@ export class DeployResult implements MetadataTransferResult {
   public readonly response: MetadataApiDeployStatus;
   public readonly components: ComponentSet;
   private readonly diagnosticUtil = new DiagnosticUtil('metadata');
+  private readonly shouldConvertPaths = sep !== posix.sep;
 
   public constructor(response: MetadataApiDeployStatus, components: ComponentSet) {
     this.response = response;
@@ -188,6 +189,13 @@ export class DeployResult implements MetadataTransferResult {
    * TODO: remove cases if fixes are made in the api.
    */
   private sanitizeDeployMessage(message: DeployMessage): DeployMessage {
+    // mdapi error messages have the type as "FooSettings" but SDR only recognizes "Settings"
+    if (message.componentType.endsWith('Settings') && message.fileName.endsWith('.settings')) {
+      return {
+        ...message,
+        componentType: 'Settings',
+      };
+    }
     switch (message.componentType) {
       case registry.types.lightningcomponentbundle.name:
         // remove the markup scheme from fullName
@@ -208,7 +216,7 @@ export class DeployResult implements MetadataTransferResult {
 
   private key(component: ComponentLike): string {
     const type = typeof component.type === 'string' ? component.type : component.type.name;
-    return `${type}#${component.fullName}`;
+    return `${type}#${this.shouldConvertPaths ? component.fullName.split(sep).join(posix.sep) : component.fullName}`;
   }
 }
 

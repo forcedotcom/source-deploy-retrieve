@@ -230,7 +230,7 @@ describe('Tree Containers', () => {
       });
     });
 
-    describe('readFileSync', () => {
+    describe.skip('readFileSync', () => {
       it('should throw an error because it is not implemented yet', () => {
         assert.throws(
           () => tree.readFileSync(join(filesRoot, 'test.txt')),

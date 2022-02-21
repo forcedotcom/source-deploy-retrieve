@@ -12,6 +12,7 @@ import { SourcePath } from '../common';
 import * as unzipper from 'unzipper';
 import { Readable } from 'stream';
 import { VirtualDirectory } from './types';
+import * as deasync from 'deasync';
 
 /**
  * A container for interacting with a file system. Operations such as component resolution,
@@ -172,7 +173,17 @@ export class ZipTreeContainer extends TreeContainer {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public readFileSync(fsPath: string): Buffer {
-    throw new Error('Method not implemented');
+    var done = false;
+    var data: Buffer;
+    this.readFile(fsPath).then((buffer) => {
+      data = buffer;
+      done = true;
+    });
+
+    deasync.loopWhile(function () {
+      return !done;
+    });
+    return data;
   }
 
   public stream(fsPath: string): Readable {

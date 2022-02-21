@@ -6,7 +6,7 @@
  */
 
 import * as path from 'path';
-import { Logger, SfdxError } from '@salesforce/core';
+import { Aliases, Logger, SfdxError } from '@salesforce/core';
 import * as fs from 'graceful-fs';
 import { ComponentSet } from '../collections';
 import { RegistryAccess } from '../registry';
@@ -23,6 +23,11 @@ export type MetadataOption = {
   directoryPaths: string[];
 };
 
+export type OrgOption = {
+  username: string;
+  exclude?: string[];
+};
+
 export type ComponentSetOptions = {
   packagenames?: string[];
   sourcepath?: string[];
@@ -30,6 +35,7 @@ export type ComponentSetOptions = {
   metadata?: MetadataOption;
   apiversion?: string;
   sourceapiversion?: string;
+  org?: OrgOption;
 };
 
 export class ComponentSetBuilder {
@@ -45,7 +51,7 @@ export class ComponentSetBuilder {
     const logger = Logger.childFromRoot('componentSetBuilder');
     let componentSet: ComponentSet;
 
-    const { sourcepath, manifest, metadata, packagenames, apiversion, sourceapiversion } = options;
+    const { sourcepath, manifest, metadata, packagenames, apiversion, sourceapiversion, org } = options;
     try {
       if (sourcepath) {
         logger.debug(`Building ComponentSet from sourcepath: ${sourcepath.join(', ')}`);
@@ -107,6 +113,19 @@ export class ComponentSetBuilder {
         for (const comp of resolvedComponents) {
           componentSet.add(comp);
         }
+      }
+
+      // Resolve metadata entries with an org connection
+      if (org) {
+        logger.debug(`Building ComponentSet from targetUsername: ${org.username}`);
+        componentSet = await ComponentSet.fromConnection({
+          usernameOrConnection: (await Aliases.fetch(org.username)) || org.username,
+          // exclude components based on the results of componentFilter function
+          // components with namespacePrefix where org.exclude includes manageableState (to exclude managed packages)
+          // components with namespacePrefix where manageableState equals undefined (to exclude components e.g. InstalledPackage)
+          // components where org.exclude includes manageableState (to exclude packages without namespacePrefix e.g. unlocked packages)
+          componentFilter: (component): boolean => !(org.exclude && org.exclude.includes(component?.manageableState)),
+        });
       }
     } catch (e) {
       if ((e as Error).message.includes('Missing metadata type definition in registry for id')) {

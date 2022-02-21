@@ -38,11 +38,13 @@ describe('ComponentSetBuilder', () => {
     let fileExistsSyncStub: sinon.SinonStub;
     let fromSourceStub: sinon.SinonStub;
     let fromManifestStub: sinon.SinonStub;
+    let fromConnectionStub: sinon.SinonStub;
 
     beforeEach(() => {
       fileExistsSyncStub = stubMethod(sandbox, fs, 'existsSync');
       fromSourceStub = stubMethod(sandbox, ComponentSet, 'fromSource');
       fromManifestStub = stubMethod(sandbox, ComponentSet, 'fromManifest');
+      fromConnectionStub = stubMethod(sandbox, ComponentSet, 'fromConnection');
       componentSet = new ComponentSet();
     });
 
@@ -356,6 +358,27 @@ describe('ComponentSetBuilder', () => {
       expect(compSet.size).to.equal(2);
       expect(compSet.has(apexClassComponent)).to.equal(true);
       expect(compSet.has(apexClassComponent2)).to.equal(true);
+    });
+
+    it('should create ComponentSet from org connection', async () => {
+      componentSet.add(apexClassComponent);
+      fromConnectionStub.resolves(componentSet);
+      const options = {
+        sourcepath: undefined,
+        metadata: undefined,
+        manifest: undefined,
+        org: {
+          username: 'manifest-test@org.com',
+          exclude: [],
+        },
+      };
+
+      const compSet = await ComponentSetBuilder.build(options);
+      expect(fromConnectionStub.calledOnce).to.equal(true);
+      expect(fromConnectionStub.firstCall.firstArg['usernameOrConnection']).equal(options.org.username);
+      expect(fromConnectionStub.firstCall.firstArg['componentFilter'].call()).equal(true);
+      expect(compSet.size).to.equal(1);
+      expect(compSet.has(apexClassComponent)).to.equal(true);
     });
   });
 });

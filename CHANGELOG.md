@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.10.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.9.11...v5.10.0) (2022-02-17)
+
+### Features
+
+- new UiViewDefinition metadata type ([#572](https://github.com/forcedotcom/source-deploy-retrieve/issues/572)) ([9b3e0ea](https://github.com/forcedotcom/source-deploy-retrieve/commit/9b3e0ead89e87b17263b61b734a8edb1c900fc01))
+
+### [5.9.11](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.9.10...v5.9.11) (2022-02-17)
+
 ### [5.9.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.9.9...v5.9.10) (2022-02-15)
 
 ### [5.9.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.9.8...v5.9.9) (2022-02-11)

@@ -118,6 +118,30 @@ interface ZipEntry {
   buffer?: () => Promise<Buffer>;
 }
 
+function* bufferGenerator(zipEntry: ZipEntry): Generator<void, Buffer, void> {
+  let readBuffer: Buffer;
+  // eslint-disable-next-line no-console
+  console.log('bufferGenerator: 1');
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  zipEntry.buffer().then((result) => {
+    // eslint-disable-next-line no-console
+    console.log('bufferGenerator: 2');
+    readBuffer = result;
+  });
+  while (true) {
+    if (readBuffer) {
+      break;
+    } else {
+      // eslint-disable-next-line no-console
+      console.log('bufferGenerator: 3');
+      yield undefined;
+    }
+  }
+  // eslint-disable-next-line no-console
+  console.log('bufferGenerator: 4');
+  return readBuffer;
+}
+
 /**
  * A {@link TreeContainer} that utilizes the central directory of a zip file
  * to perform I/O without unzipping it to the disk first.
@@ -170,17 +194,32 @@ export class ZipTreeContainer extends TreeContainer {
   public readFileSync(fsPath: string): Buffer {
     if (!this.isDirectory(fsPath)) {
       const zipEntry = this.tree.get(fsPath) as ZipEntry;
-      let a = true;
-      let buf = Buffer.from('');
-      while (a) {
-        const read = zipEntry.stream().read();
-        buf = Buffer.concat([buf, read]);
-        if (read === undefined) {
-          a = false;
-        }
+      // eslint-disable-next-line no-console
+      console.log('GORDON: start');
+      const iter = bufferGenerator(zipEntry);
+      let curr = iter.next();
+      while (!curr.done) {
+        // eslint-disable-next-line no-console
+        console.log('GORDON: working');
+        curr = iter.next();
       }
-      return buf;
+      // eslint-disable-next-line no-console
+      console.log('GORDON: done');
+      return curr.value;
+      // let a = true;
+      // let buf: Buffer;
+      // while (a) {
+      //   const read = zipEntry.stream().read() as Uint8Array[];
+      //   const concatParams = buf ? [buf, read] : [read];
+      //   buf = Buffer.concat(concatParams);
+      //   if (read === undefined) {
+      //     a = false;
+      //   }
+      // }
+      // return buf;
     }
+
+    throw new LibraryError('error_expected_file_path', fsPath);
   }
 
   public stream(fsPath: string): Readable {

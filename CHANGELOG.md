@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.11.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.10.0...v5.11.0) (2022-02-22)
+
+### Features
+
+- cache fileResponses on deployResult ([#573](https://github.com/forcedotcom/source-deploy-retrieve/issues/573)) ([b38185b](https://github.com/forcedotcom/source-deploy-retrieve/commit/b38185b7cd73b05ef1e1940b878b09eb2d198101))
+
 ## [5.10.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.9.11...v5.10.0) (2022-02-17)
 
 ### Features

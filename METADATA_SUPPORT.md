@@ -492,7 +492,6 @@ v55 introduces the following new types.  Here's their current level of support
 |IndustriesAutomotiveSettings|✅||
 |IndustriesMfgServiceSettings|✅||
 |InvLatePymntRiskCalcSettings|✅||
-|LiveChatObjectAccessDefinition|❌|Not supported, but support could be added|
 |PaymentsManagementEnabledSettings|✅||
 |RegisteredExternalService|❌|Not supported, but support could be added|
 |StreamingAppDataConnector|❌|Not supported, but support could be added|

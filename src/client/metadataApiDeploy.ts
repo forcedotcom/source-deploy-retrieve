@@ -30,6 +30,7 @@ export class DeployResult implements MetadataTransferResult {
   public readonly response: MetadataApiDeployStatus;
   public readonly components: ComponentSet;
   private readonly diagnosticUtil = new DiagnosticUtil('metadata');
+  private fileResponses: FileResponse[];
   private readonly shouldConvertPaths = sep !== posix.sep;
 
   public constructor(response: MetadataApiDeployStatus, components: ComponentSet) {
@@ -38,26 +39,30 @@ export class DeployResult implements MetadataTransferResult {
   }
 
   public getFileResponses(): FileResponse[] {
-    // TODO: Log when messages can't be mapped to components
-    const messages = this.getDeployMessages(this.response);
-    const fileResponses: FileResponse[] = [];
+    // this involves FS operations, so only perform once!
+    if (!this.fileResponses) {
+      // TODO: Log when messages can't be mapped to components
+      const messages = this.getDeployMessages(this.response);
+      const fileResponses: FileResponse[] = [];
 
-    for (const deployedComponent of this.components.getSourceComponents()) {
-      if (deployedComponent.type.children) {
-        for (const child of deployedComponent.getChildren()) {
-          const childMessages = messages.get(this.key(child));
-          if (childMessages) {
-            fileResponses.push(...this.createResponses(child, childMessages));
+      for (const deployedComponent of this.components.getSourceComponents()) {
+        if (deployedComponent.type.children) {
+          for (const child of deployedComponent.getChildren()) {
+            const childMessages = messages.get(this.key(child));
+            if (childMessages) {
+              fileResponses.push(...this.createResponses(child, childMessages));
+            }
           }
         }
+        const componentMessages = messages.get(this.key(deployedComponent));
+        if (componentMessages) {
+          fileResponses.push(...this.createResponses(deployedComponent, componentMessages));
+        }
       }
-      const componentMessages = messages.get(this.key(deployedComponent));
-      if (componentMessages) {
-        fileResponses.push(...this.createResponses(deployedComponent, componentMessages));
-      }
-    }
 
-    return fileResponses.concat(this.deleteNotFoundToFileResponses(messages));
+      this.fileResponses = fileResponses.concat(this.deleteNotFoundToFileResponses(messages));
+    }
+    return this.fileResponses;
   }
 
   private createResponses(component: SourceComponent, messages: DeployMessage[]): FileResponse[] {

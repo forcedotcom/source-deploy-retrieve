@@ -618,6 +618,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "flowtest": {
+      "id": "flowtest",
+      "name": "FlowTest",
+      "suffix": "flowtest",
+      "directoryName": "flowTest",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "eventtype": {
       "id": "eventtype",
       "name": "EventType",
@@ -2861,6 +2869,7 @@
     "recommendationStrategy": "recommendationstrategy",
     "flow": "flow",
     "flowDefinition": "flowdefinition",
+    "flowtest": "flowtest",
     "eventType": "eventtype",
     "subscription": "eventsubscription",
     "delivery": "eventdelivery",

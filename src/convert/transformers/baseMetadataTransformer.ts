@@ -11,6 +11,7 @@ import { RegistryAccess } from '../../registry';
 
 export abstract class BaseMetadataTransformer implements MetadataTransformer {
   public readonly context: ConvertContext;
+  public defaultDirectory?: string;
   protected registry: RegistryAccess;
 
   public constructor(registry = new RegistryAccess(), context = new ConvertContext()) {

@@ -367,13 +367,16 @@ describe('MetadataApiDeploy', () => {
           expect(responses).to.deep.equal(expected);
         });
 
+        // folder types have a name like TestFolder/TestImageDoc
+        // which may include a platform-specific separator TestFolder\\TestImageDoc
         it('should fix deploy message issue for "Document" type', () => {
           const type = registry.types.document;
           const name = 'test';
+          const foldername = 'A_Folder';
           const contentName = `${name}.xyz`;
-          const basePath = join('path', 'to', type.directoryName, 'A_Folder');
+          const basePath = join('path', 'to', type.directoryName, foldername);
           const props = {
-            name: 'test',
+            name: join(foldername, name),
             type,
             xml: join(basePath, `${name}.document${META_XML_SUFFIX}`),
             content: join(basePath, contentName),
@@ -393,7 +396,7 @@ describe('MetadataApiDeploy', () => {
                 deleted: 'false',
                 success: 'true',
                 // fullname contains file extension that must be stripped
-                fullName: contentName,
+                fullName: join(foldername, name),
                 componentType: type.name,
               } as DeployMessage,
             },

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.12.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.11.0...v5.12.0) (2022-02-22)
+
+### Features
+
+- **metadata registry:** adding flowtest type to metadata registry ([#580](https://github.com/forcedotcom/source-deploy-retrieve/issues/580)) ([40431f6](https://github.com/forcedotcom/source-deploy-retrieve/commit/40431f60eb29d02e33b5fc4f5f2066271b06c630))
+
 ## [5.11.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.10.0...v5.11.0) (2022-02-22)
 
 ### Features

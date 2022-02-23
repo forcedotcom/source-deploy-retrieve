@@ -174,7 +174,7 @@ workflows:
           size: medium
           matrix:
             parameters:
-              os: [linux]
+              os: [linux, windows]
               node_version: [lts]
               external_project_git_url: ['https://github.com/salesforcecli/plugin-source']
               test_command:

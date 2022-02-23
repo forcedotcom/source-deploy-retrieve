@@ -186,17 +186,17 @@ workflows:
                   # 'yarn test:nuts:specialTypes',
                   # 'yarn test:nuts:tracking',
                 ]
-      - release-management/release-package:
-          github-release: true
-          post-job-steps:
-            - when: on_success
-            - run: yarn ci-docs
-          requires:
-            - release-management/test-package
-          filters:
-            branches:
-              only: main
-          context: CLI_CTC
+      # - release-management/release-package:
+      #     github-release: true
+      #     post-job-steps:
+      #       - when: on_success
+      #       - run: yarn ci-docs
+      #     requires:
+      #       - release-management/test-package
+      #     filters:
+      #       branches:
+      #         only: main
+      #     context: CLI_CTC
   dependabot-automerge:
     triggers:
       - schedule:

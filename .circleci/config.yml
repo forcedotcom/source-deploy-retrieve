@@ -91,13 +91,14 @@ jobs:
           # If there are real conflicts, we'll catch them when bumping a version in the plugin (same nuts)
           command: |
             yarn install
-            rm -rf node_modules/@salesforce/kit
-            rm -rf node_modules/@salesforce/core
-            rm -rf node_modules/@typescript-eslint
-            rm -rf node_modules/eslint-plugin-header
-            rm -rf node_modules/eslint-plugin-import
-            rm -rf node_modules/eslint-plugin-jsdoc
-            rm -rf node_modules/eslint-plugin-prettier
+            yarn install -g shx
+            shx rm -rf node_modules/@salesforce/kit
+            shx rm -rf node_modules/@salesforce/core
+            shx rm -rf node_modules/@typescript-eslint
+            shx rm -rf node_modules/eslint-plugin-header
+            shx rm -rf node_modules/eslint-plugin-import
+            shx rm -rf node_modules/eslint-plugin-jsdoc
+            shx rm -rf node_modules/eslint-plugin-prettier
             yarn build
             cp src/registry/metadataRegistry.json lib/src/registry
           working_directory: node_modules/@salesforce/source-deploy-retrieve
@@ -106,9 +107,6 @@ jobs:
           command: |
             yarn build
       - release-management/verify-installed-plugin
-      - run:
-          name: set TESTKIT_ENABLE_ZIP for artifacts on linux
-          command: echo "export TESTKIT_ENABLE_ZIP=true" >> $BASH_ENV
       - run:
           name: Nuts
           command: |
@@ -174,20 +172,19 @@ workflows:
           size: medium
           matrix:
             parameters:
-              os: [linux, windows]
+              os: [windows]
               node_version: [lts]
               external_project_git_url: ['https://github.com/salesforcecli/plugin-source']
-              test_command:
-                [
+              test_command: [
                   'yarn test:nuts:convert',
-                  'yarn test:nuts:delete',
-                  'yarn test:nuts:deploy',
-                  'yarn test:nuts:deploy:async',
-                  'yarn test:nuts:manifest:create',
-                  'yarn test:nuts:mdapi',
-                  'yarn test:nuts:retrieve',
-                  'yarn test:nuts:specialTypes',
-                  'yarn test:nuts:tracking',
+                  # 'yarn test:nuts:delete',
+                  # 'yarn test:nuts:deploy',
+                  # 'yarn test:nuts:deploy:async',
+                  # 'yarn test:nuts:manifest:create',
+                  # 'yarn test:nuts:mdapi',
+                  # 'yarn test:nuts:retrieve',
+                  # 'yarn test:nuts:specialTypes',
+                  # 'yarn test:nuts:tracking',
                 ]
       - release-management/release-package:
           github-release: true

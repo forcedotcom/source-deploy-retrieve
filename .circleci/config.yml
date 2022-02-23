@@ -81,11 +81,17 @@ jobs:
       - run:
           name: Install dependencies
           command: yarn
-      - run:
-          name: swap dependencies
-          command: |
-            yarn remove @salesforce/source-deploy-retrieve
-            yarn add $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME#$CIRCLE_SHA1
+      - run: yarn remove @salesforce/source-deploy-retrieve
+      - when:
+          condition:
+            equal: ['windows', <<parameters.os>>]
+          steps:
+            - run: yarn add $env:CIRCLE_PROJECT_USERNAME/$env:CIRCLE_PROJECT_REPONAME#$env:CIRCLE_SHA1
+      - when:
+          condition:
+            equal: ['linux', <<parameters.os>>]
+          steps:
+            - run: yarn add $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME#$CIRCLE_SHA1
       - run:
           name: install/build <<parameters.external_project_git_url>> in node_modules
           # why doesn't SDR put the metadataRegistry.json in the lib when run from inside a node module?  I don't know.
@@ -174,7 +180,7 @@ workflows:
           size: medium
           matrix:
             parameters:
-              os: [windows]
+              os: [windows, linux]
               node_version: [lts]
               external_project_git_url: ['https://github.com/salesforcecli/plugin-source']
               test_command: [

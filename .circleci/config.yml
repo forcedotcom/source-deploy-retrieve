@@ -83,7 +83,9 @@ jobs:
           command: yarn
       - run:
           name: swap dependencies
-          command: yarn remove @salesforce/source-deploy-retrieve && yarn add $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME#$CIRCLE_SHA1
+          command: |
+            yarn remove @salesforce/source-deploy-retrieve
+            yarn add $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME#$CIRCLE_SHA1
       - run:
           name: install/build <<parameters.external_project_git_url>> in node_modules
           # why doesn't SDR put the metadataRegistry.json in the lib when run from inside a node module?  I don't know.

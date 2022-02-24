@@ -2789,6 +2789,110 @@
       "strategies": {
         "adapter": "matchingContentFile"
       }
+    },
+    "productattributeset": {
+      "id": "productattributeset",
+      "name": "ProductAttributeSet",
+      "suffix": "productAttributeSet",
+      "directoryName": "productAttributeSets",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "recordalertcategory": {
+      "id": "recordalertcategory",
+      "name": "RecordAlertCategory",
+      "suffix": "recordAlertCategory",
+      "directoryName": "recordAlertCategories",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "recordalertdatasource": {
+      "id": "recordalertdatasource",
+      "name": "RecordAlertDataSource",
+      "suffix": "recordAlertDataSource",
+      "directoryName": "recordAlertDataSources",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "activationplatform": {
+      "id": "activationplatform",
+      "name": "ActivationPlatform",
+      "suffix": "activationPlatform",
+      "directoryName": "activationPlatforms",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "dataconnectoringestapi": {
+      "id": "dataconnectoringestapi",
+      "name": "DataConnectorIngestApi",
+      "suffix": "dataConnectorIngestApi",
+      "directoryName": "dataConnectorIngestApis",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "datasourcetenant": {
+      "id": "datasourcetenant",
+      "name": "DataSourceTenant",
+      "suffix": "dataSourceTenant",
+      "directoryName": "dataSourceTenants",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "esignatureconfig": {
+      "id": "esignatureconfig",
+      "name": "ESignatureConfig",
+      "suffix": "eSignatureConfig",
+      "directoryName": "eSignatureConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "esignatureenvelopeconfig": {
+      "id": "esignatureenvelopeconfig",
+      "name": "ESignatureEnvelopeConfig",
+      "suffix": "eSignatureEnvelopeConfig",
+      "directoryName": "eSignatureEnvelopeConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "internaldataconnector": {
+      "id": "internaldataconnector",
+      "name": "InternalDataConnector",
+      "suffix": "internalDataConnector",
+      "directoryName": "internalDataConnectors",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "mobsecuritycertpinconfig": {
+      "id": "mobsecuritycertpinconfig",
+      "name": "MobSecurityCertPinConfig",
+      "suffix": "mobSecurityCertPinConfig",
+      "directoryName": "mobSecurityCertPinConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "mobilesecurityassignment": {
+      "id": "mobilesecurityassignment",
+      "name": "MobileSecurityAssignment",
+      "suffix": "mobileSecurityAssignment",
+      "directoryName": "mobileSecurityAssignments",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "mobilesecuritypolicy": {
+      "id": "mobilesecuritypolicy",
+      "name": "MobileSecurityPolicy",
+      "suffix": "mobileSecurityPolicy",
+      "directoryName": "mobileSecurityPolicies",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "mobilesecuritypolicyset": {
+      "id": "mobilesecuritypolicyset",
+      "name": "MobileSecurityPolicySet",
+      "suffix": "mobileSecurityPolicySet",
+      "directoryName": "mobileSecurityPolicySets",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3093,7 +3197,20 @@
     "stationaryAssetEnvSourceConfig": "stnryassetenvsrccnfg",
     "vehicleAssetEmssnSourceConfig": "vehicleassetemssnsrccnfg",
     "omniInteractionConfig": "omniinteractionconfig",
-    "uiview": "uiviewdefinition"
+    "uiview": "uiviewdefinition",
+    "productAttributeSet": "productattributeset",
+    "recordAlertCategory": "recordalertcategory",
+    "recordAlertDataSource": "recordalertdatasource",
+    "activationPlatform": "activationplatform",
+    "dataConnectorIngestApi": "dataconnectoringestapi",
+    "dataSourceTenant": "datasourcetenant",
+    "eSignatureConfig": "esignatureconfig",
+    "eSignatureEnvelopeConfig": "esignatureenvelopeconfig",
+    "internalDataConnector": "internaldataconnector",
+    "mobSecurityCertPinConfig": "mobsecuritycertpinconfig",
+    "mobileSecurityAssignment": "mobilesecurityassignment",
+    "mobileSecurityPolicy": "mobilesecuritypolicy",
+    "mobileSecurityPolicySet": "mobilesecuritypolicyset"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

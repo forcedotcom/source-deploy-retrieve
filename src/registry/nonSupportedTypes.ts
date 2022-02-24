@@ -25,6 +25,7 @@ export const features = [
   'HEALTHCLOUDHPIBETA',
   'MANAGETIMELINE',
   'HEALTHCLOUDBETA',
+  'PARDOTADVANCED', // org:create throws a C-9999 when this is not excluded
 ];
 
 export const settings = [
@@ -39,6 +40,7 @@ export const metadataTypes = [
   'CareLimitType', // not in describe
   'RelatedRecordAssocCriteria', // not in describe
   'OmniInteractionAccessConfig', // not in describe
+  'ScoreRange', // not in describe but also has no features/settings required
   // two children of GlobalValueSet
   'CustomValue',
   'StandardValue',

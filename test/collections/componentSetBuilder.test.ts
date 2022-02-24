@@ -6,11 +6,11 @@
  */
 
 import * as path from 'path';
+import * as fs from 'graceful-fs';
 import * as sinon from 'sinon';
 import { assert, expect } from 'chai';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { SfdxError } from '@salesforce/core';
-import * as fs from 'graceful-fs';
 import { ComponentSet, ComponentSetBuilder, FromSourceOptions } from '../../src';
 
 describe('ComponentSetBuilder', () => {
@@ -330,6 +330,29 @@ describe('ComponentSetBuilder', () => {
       expect(compSet.has(apexClassComponent)).to.equal(true);
     });
 
+    it('should create ComponentSet from org connection', async () => {
+      componentSet.add(apexClassComponent);
+      fromConnectionStub.resolves(componentSet);
+      const options = {
+        sourcepath: undefined,
+        metadata: undefined,
+        manifest: undefined,
+        org: {
+          username: 'manifest-test@org.com',
+          exclude: [],
+        },
+      };
+
+      const compSet = await ComponentSetBuilder.build(options);
+      expect(fromConnectionStub.calledOnce).to.equal(true);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(fromConnectionStub.firstCall.firstArg['usernameOrConnection']).equal(options.org.username);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      expect(fromConnectionStub.firstCall.firstArg['componentFilter'].call()).equal(true);
+      expect(compSet.size).to.equal(1);
+      expect(compSet.has(apexClassComponent)).to.equal(true);
+    });
+
     it('should create ComponentSet from manifest and multiple package', async () => {
       componentSet.add(apexClassComponent);
       const apexClassComponent2 = { type: 'ApexClass', fullName: 'MyClass2' };
@@ -358,27 +381,6 @@ describe('ComponentSetBuilder', () => {
       expect(compSet.size).to.equal(2);
       expect(compSet.has(apexClassComponent)).to.equal(true);
       expect(compSet.has(apexClassComponent2)).to.equal(true);
-    });
-
-    it('should create ComponentSet from org connection', async () => {
-      componentSet.add(apexClassComponent);
-      fromConnectionStub.resolves(componentSet);
-      const options = {
-        sourcepath: undefined,
-        metadata: undefined,
-        manifest: undefined,
-        org: {
-          username: 'manifest-test@org.com',
-          exclude: [],
-        },
-      };
-
-      const compSet = await ComponentSetBuilder.build(options);
-      expect(fromConnectionStub.calledOnce).to.equal(true);
-      expect(fromConnectionStub.firstCall.firstArg['usernameOrConnection']).equal(options.org.username);
-      expect(fromConnectionStub.firstCall.firstArg['componentFilter'].call()).equal(true);
-      expect(compSet.size).to.equal(1);
-      expect(compSet.has(apexClassComponent)).to.equal(true);
     });
   });
 });

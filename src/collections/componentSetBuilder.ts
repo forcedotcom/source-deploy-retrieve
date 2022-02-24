@@ -17,21 +17,19 @@ export type ManifestOption = {
   destructiveChangesPre?: string;
   destructiveChangesPost?: string;
 };
-
 export type MetadataOption = {
   metadataEntries: string[];
   directoryPaths: string[];
 };
-
 export type OrgOption = {
   username: string;
-  exclude?: string[];
+  exclude: string[];
 };
-
 export type ComponentSetOptions = {
   packagenames?: string[];
   sourcepath?: string[];
   manifest?: ManifestOption;
+
   metadata?: MetadataOption;
   apiversion?: string;
   sourceapiversion?: string;
@@ -119,6 +117,7 @@ export class ComponentSetBuilder {
       if (org) {
         logger.debug(`Building ComponentSet from targetUsername: ${org.username}`);
         componentSet = await ComponentSet.fromConnection({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
           usernameOrConnection: (await Aliases.fetch(org.username)) || org.username,
           // exclude components based on the results of componentFilter function
           // components with namespacePrefix where org.exclude includes manageableState (to exclude managed packages)

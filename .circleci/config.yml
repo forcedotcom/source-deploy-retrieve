@@ -114,7 +114,6 @@ jobs:
           name: Build the external project
           command: |
             yarn build
-      - release-management/verify-installed-plugin
       - run:
           name: Nuts
           command: |

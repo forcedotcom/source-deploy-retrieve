@@ -17,19 +17,21 @@ export type ManifestOption = {
   destructiveChangesPre?: string;
   destructiveChangesPost?: string;
 };
+
 export type MetadataOption = {
   metadataEntries: string[];
   directoryPaths: string[];
 };
+
 export type OrgOption = {
   username: string;
   exclude: string[];
 };
+
 export type ComponentSetOptions = {
   packagenames?: string[];
   sourcepath?: string[];
   manifest?: ManifestOption;
-
   metadata?: MetadataOption;
   apiversion?: string;
   sourceapiversion?: string;

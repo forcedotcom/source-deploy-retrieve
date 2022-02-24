@@ -89,6 +89,7 @@ export {
   LazyCollection,
   ComponentSet,
   ComponentSetBuilder,
+  ComponentSetOptions,
   DeploySetOptions,
   RetrieveSetOptions,
   PackageTypeMembers,

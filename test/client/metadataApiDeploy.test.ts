@@ -766,6 +766,32 @@ describe('MetadataApiDeploy', () => {
 
         expect(responses).to.deep.equal(expected);
       });
+
+      it('should cache fileResponses', () => {
+        const component = COMPONENT;
+        const deployedSet = new ComponentSet([component]);
+        const apiStatus: Partial<MetadataApiDeployStatus> = {
+          details: {
+            componentFailures: {
+              changed: 'false',
+              created: 'false',
+              deleted: 'false',
+              fullName: 'destructiveChanges.xml',
+              componentType: component.type.name,
+              problem: `No ${component.type.name} named: ${component.fullName} found`,
+              problemType: 'Warning',
+            } as DeployMessage,
+          },
+        };
+        const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+        // @ts-ignore testing private property
+        const spy = env.spy(result, 'getDeployMessages');
+
+        result.getFileResponses();
+        expect(spy.callCount).to.equal(1);
+        result.getFileResponses();
+        expect(spy.callCount).to.equal(1);
+      });
     });
   });
 

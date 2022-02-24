@@ -15,6 +15,8 @@ To simplify modifying the registry, there's a script.
 
 > Note: The script depends on being able to create an org that will have your type. If you have a working org, but your type isn't compatible with scratch org, you can [use an existing org](#use-an-existing-org)
 
+> Note: The script will use your default dev hub. If you don't have one, set one up. If you want to use a different hub, update your default.
+
 The script will:
 
 1. Look for missing types (similar to the completeness test)

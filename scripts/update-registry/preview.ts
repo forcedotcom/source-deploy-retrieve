@@ -1,11 +1,11 @@
 import got from 'got';
 import { getMissingTypes } from '../../test/utils/getMissingTypes';
 import { registry } from '../../src';
-import {getCurrentApiVersion, getCoverage} from './shared'
+import { getCurrentApiVersion, getCoverage } from '../../src/registry/coverage';
 
 (async () => {
   const currentApiVersion = await getCurrentApiVersion();
-  const nextCoverage = await getCoverage(currentApiVersion + 1)
+  const nextCoverage = await getCoverage(currentApiVersion + 1);
 
   const missingTypes = getMissingTypes(nextCoverage, registry).map((type) => type[0]);
 

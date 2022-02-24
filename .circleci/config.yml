@@ -82,6 +82,7 @@ jobs:
           name: Install dependencies
           command: yarn
       - run: yarn remove @salesforce/source-deploy-retrieve
+      # windows/powershell does envs differently so we have to have conditional steps
       - when:
           condition:
             equal: ['windows', <<parameters.os>>]
@@ -147,25 +148,25 @@ workflows:
       - registry-check
   test-and-release:
     jobs:
-      # - release-management/validate-pr:
-      #     filters:
-      #       branches:
-      #         ignore: main
-      # - release-management/test-package:
-      #     matrix:
-      #       parameters:
-      #         os:
-      #           - linux
-      #           - windows
-      #         node_version:
-      #           - latest
-      #           - lts
-      #           - maintenance
-      #       exclude:
-      #         - os: windows
-      #           node_version: latest
-      #         - os: windows
-      #           node_version: maintenance
+      - release-management/validate-pr:
+          filters:
+            branches:
+              ignore: main
+      - release-management/test-package:
+          matrix:
+            parameters:
+              os:
+                - linux
+                - windows
+              node_version:
+                - latest
+                - lts
+                - maintenance
+            exclude:
+              - os: windows
+                node_version: latest
+              - os: windows
+                node_version: maintenance
       - external-nut:
           filters:
             branches:
@@ -173,8 +174,8 @@ workflows:
               # 1) we already ran on a branch
               # 2) they aren't required and would run in parallel to release job
               ignore: main
-          # requires:
-          #   - release-management/test-package
+          requires:
+            - release-management/test-package
           sfdx_version: latest
           size: medium
           matrix:
@@ -182,28 +183,29 @@ workflows:
               os: [windows, linux]
               node_version: [lts]
               external_project_git_url: ['https://github.com/salesforcecli/plugin-source']
-              test_command: [
+              test_command:
+                [
                   'yarn test:nuts:convert',
-                  # 'yarn test:nuts:delete',
-                  # 'yarn test:nuts:deploy',
-                  # 'yarn test:nuts:deploy:async',
-                  # 'yarn test:nuts:manifest:create',
-                  # 'yarn test:nuts:mdapi',
-                  # 'yarn test:nuts:retrieve',
-                  # 'yarn test:nuts:specialTypes',
-                  # 'yarn test:nuts:tracking',
+                  'yarn test:nuts:delete',
+                  'yarn test:nuts:deploy',
+                  'yarn test:nuts:deploy:async',
+                  'yarn test:nuts:manifest:create',
+                  'yarn test:nuts:mdapi',
+                  'yarn test:nuts:retrieve',
+                  'yarn test:nuts:specialTypes',
+                  'yarn test:nuts:tracking',
                 ]
-      # - release-management/release-package:
-      #     github-release: true
-      #     post-job-steps:
-      #       - when: on_success
-      #       - run: yarn ci-docs
-      #     requires:
-      #       - release-management/test-package
-      #     filters:
-      #       branches:
-      #         only: main
-      #     context: CLI_CTC
+      - release-management/release-package:
+          github-release: true
+          post-job-steps:
+            - when: on_success
+            - run: yarn ci-docs
+          requires:
+            - release-management/test-package
+          filters:
+            branches:
+              only: main
+          context: CLI_CTC
   dependabot-automerge:
     triggers:
       - schedule:

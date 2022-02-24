@@ -2893,6 +2893,70 @@
       "directoryName": "mobileSecurityPolicySets",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "applicationsubtypedefinition": {
+      "id": "applicationsubtypedefinition",
+      "name": "ApplicationSubtypeDefinition",
+      "suffix": "applicationSubtypeDefinition",
+      "directoryName": "ApplicationSubtypeDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "businessprocesstypedefinition": {
+      "id": "businessprocesstypedefinition",
+      "name": "BusinessProcessTypeDefinition",
+      "suffix": "businessProcessTypeDefinition",
+      "directoryName": "BusinessProcessTypeDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "explainabilityactiondefinition": {
+      "id": "explainabilityactiondefinition",
+      "name": "ExplainabilityActionDefinition",
+      "suffix": "explainabilityActionDefinition",
+      "directoryName": "ExplainabilityActionDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "explainabilityactionversion": {
+      "id": "explainabilityactionversion",
+      "name": "ExplainabilityActionVersion",
+      "suffix": "explainabilityActionVersion",
+      "directoryName": "ExplainabilityActionVersions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "advacctforecastdimsource": {
+      "id": "advacctforecastdimsource",
+      "name": "AdvAcctForecastDimSource",
+      "suffix": "advAcctForecastDimSource",
+      "directoryName": "AdvAcctForecastDimSource",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "appointmentassignmentpolicy": {
+      "id": "appointmentassignmentpolicy",
+      "name": "AppointmentAssignmentPolicy",
+      "suffix": "policy",
+      "directoryName": "appointmentAssignmentPolicies",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "carelimittype": {
+      "id": "carelimittype",
+      "name": "CareLimitType",
+      "suffix": "careLimitType",
+      "directoryName": "careLimitTypes",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omniinteractionaccessconfig": {
+      "id": "omniinteractionaccessconfig",
+      "name": "OmniInteractionAccessConfig",
+      "suffix": "omniInteractionAccessConfig",
+      "directoryName": "OmniInteractionAccessConfig",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3060,7 +3124,7 @@
     "actionLinkGroupTemplate": "actionlinkgrouptemplate",
     "licenseDefinition": "licensedefinition",
     "transactionSecurityPolicy": "transactionsecuritypolicy",
-    "policy": "appointmentschedulingpolicy",
+    "policy": "appointmentassignmentpolicy",
     "skill": "skill",
     "liveChatDeployment": "livechatdeployment",
     "liveChatButton": "livechatbutton",
@@ -3210,7 +3274,14 @@
     "mobSecurityCertPinConfig": "mobsecuritycertpinconfig",
     "mobileSecurityAssignment": "mobilesecurityassignment",
     "mobileSecurityPolicy": "mobilesecuritypolicy",
-    "mobileSecurityPolicySet": "mobilesecuritypolicyset"
+    "mobileSecurityPolicySet": "mobilesecuritypolicyset",
+    "applicationSubtypeDefinition": "applicationsubtypedefinition",
+    "businessProcessTypeDefinition": "businessprocesstypedefinition",
+    "explainabilityActionDefinition": "explainabilityactiondefinition",
+    "explainabilityActionVersion": "explainabilityactionversion",
+    "advAcctForecastDimSource": "advacctforecastdimsource",
+    "careLimitType": "carelimittype",
+    "omniInteractionAccessConfig": "omniinteractionaccessconfig"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

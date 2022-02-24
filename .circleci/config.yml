@@ -99,7 +99,7 @@ jobs:
           # If there are real conflicts, we'll catch them when bumping a version in the plugin (same nuts)
           command: |
             yarn install
-            yarn add -g shx
+            yarn add shx
             shx rm -rf node_modules/@salesforce/kit
             shx rm -rf node_modules/@salesforce/core
             shx rm -rf node_modules/@typescript-eslint

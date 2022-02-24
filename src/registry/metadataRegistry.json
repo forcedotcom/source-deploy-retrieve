@@ -2028,7 +2028,7 @@
       "suffix": "policy",
       "directoryName": "appointmentSchedulingPolicies",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": true
     },
     "notificationtypeconfig": {
       "id": "notificationtypeconfig",
@@ -2940,7 +2940,7 @@
       "suffix": "policy",
       "directoryName": "appointmentAssignmentPolicies",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": true
     },
     "carelimittype": {
       "id": "carelimittype",
@@ -3302,7 +3302,9 @@
     "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
     "dataMappingObjectDefinitions": "datamappingobjectdefinition",
     "fieldRestrictionRules": "fieldrestrictionrule",
-    "siteDotComSites": "sitedotcom"
+    "siteDotComSites": "sitedotcom",
+    "appointmentSchedulingPolicies": "appointmentschedulingpolicy",
+    "appointmentAssignmentPolicies": "appointmentassignmentpolicy"
   },
   "childTypes": {
     "customlabel": "customlabels",

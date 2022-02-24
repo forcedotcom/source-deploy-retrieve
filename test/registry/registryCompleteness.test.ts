@@ -14,7 +14,7 @@ describe('registry completeness', () => {
   let missingTypes: Array<[string, CoverageObjectType]>;
 
   before(async function () {
-    this.timeout(10000);
+    this.timeout(20000);
     missingTypes = getMissingTypes(await getCoverage(await getCurrentApiVersion()), registry);
   });
 

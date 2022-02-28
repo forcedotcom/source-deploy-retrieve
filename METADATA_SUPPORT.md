@@ -483,15 +483,19 @@ v55 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
+|AssessmentQuestion|❌|Not supported, but support could be added|
 |BotTemplate|❌|Not supported, but support could be added|
+|ConvReasonReportSegment|❌|Not supported, but support could be added|
 |Experience|undefined|undefined|
+|ExperienceMetadataResource|undefined|undefined|
+|ExperienceSpace|undefined|undefined|
 |ExternalDataSrcDescriptor|❌|Not supported, but support could be added|
 |ExternalDataTranField|❌|Not supported, but support could be added|
 |ExternalDataTranObject|❌|Not supported, but support could be added|
 |FavoriteTransferDestination|❌|Not supported, but support could be added|
 |IndustriesAutomotiveSettings|✅||
-|IndustriesMfgServiceSettings|✅||
 |InvLatePymntRiskCalcSettings|✅||
+|MarketingAppExtAction|❌|Not supported, but support could be added|
 |PaymentsManagementEnabledSettings|✅||
 |RegisteredExternalService|❌|Not supported, but support could be added|
 |StreamingAppDataConnector|❌|Not supported, but support could be added|
@@ -516,6 +520,7 @@ v55 introduces the following new types.  Here's their current level of support
 - FormSection
 - Portal
 - EmbeddedServiceFieldService
+- FlowTest
 - EventType
 - EventSubscription
 - EventDelivery

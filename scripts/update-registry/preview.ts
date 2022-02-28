@@ -4,6 +4,9 @@ import { registry } from '../../src';
 import { getCurrentApiVersion, getCoverage } from '../../src/registry/coverage';
 
 (async () => {
+  if (!process.env.DEFAULT_SLACK_WEBHOOK) {
+    throw new Error('DEFAULT_SLACK_WEBHOOK is not set in the environment');
+  }
   const currentApiVersion = await getCurrentApiVersion();
   const nextCoverage = await getCoverage(currentApiVersion + 1);
 

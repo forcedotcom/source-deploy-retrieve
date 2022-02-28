@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+/* eslint complexity: ["error", 21] */
+
 import * as path from 'path';
 import { Aliases, Logger, SfdxError } from '@salesforce/core';
 import * as fs from 'graceful-fs';
@@ -117,8 +119,9 @@ export class ComponentSetBuilder {
 
       // Resolve metadata entries with an org connection
       if (org) {
+        componentSet ??= new ComponentSet();
         logger.debug(`Building ComponentSet from targetUsername: ${org.username}`);
-        componentSet = await ComponentSet.fromConnection({
+        const fromConnection = await ComponentSet.fromConnection({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
           usernameOrConnection: (await Aliases.fetch(org.username)) || org.username,
           // exclude components based on the results of componentFilter function
@@ -127,6 +130,10 @@ export class ComponentSetBuilder {
           // components where org.exclude includes manageableState (to exclude packages without namespacePrefix e.g. unlocked packages)
           componentFilter: (component): boolean => !(org.exclude && org.exclude.includes(component?.manageableState)),
         });
+
+        for (const comp of fromConnection) {
+          componentSet.add(comp);
+        }
       }
     } catch (e) {
       if ((e as Error).message.includes('Missing metadata type definition in registry for id')) {
@@ -141,7 +148,7 @@ export class ComponentSetBuilder {
 
     // This is only for debug output of matched files based on the command flags.
     // It will log up to 20 file matches.
-    if (logger.debugEnabled && componentSet.size) {
+    if (componentSet?.size) {
       logger.debug(`Matching metadata files (${componentSet.size}):`);
       const components = componentSet.getSourceComponents().toArray();
       for (let i = 0; i < componentSet.size; i++) {

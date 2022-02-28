@@ -17,5 +17,7 @@ export const getCurrentApiVersion = async (): Promise<number> => {
 
 export const getCoverage = async (apiVersion: number): Promise<CoverageObject> =>
   JSON.parse(
+    // this is a constant offset between each apiVersion and the url.
+    // ex: v55=na46, v54=na45, etc.
     (await got(`https://na${apiVersion - 9}.test1.pc-rnd.salesforce.com/mdcoverage/api.jsp`)).body
   ) as CoverageObject;

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-/* eslint complexity: ["error", 21] */
+/* eslint complexity: ["error", 22] */
 
 import * as path from 'path';
 import { Aliases, Logger, SfdxError } from '@salesforce/core';
@@ -148,7 +148,7 @@ export class ComponentSetBuilder {
 
     // This is only for debug output of matched files based on the command flags.
     // It will log up to 20 file matches.
-    if (componentSet?.size) {
+    if (logger.debugEnabled && componentSet.size) {
       logger.debug(`Matching metadata files (${componentSet.size}):`);
       const components = componentSet.getSourceComponents().toArray();
       for (let i = 0; i < componentSet.size; i++) {

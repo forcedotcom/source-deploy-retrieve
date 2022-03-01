@@ -1,5 +1,5 @@
 import { CoverageObject } from '../../src/registry/types';
-import { getCurrentApiVersion, getCoverage } from './shared';
+import { getCurrentApiVersion, getCoverage } from '../../src/registry/coverage';
 import { registry as untypedRegistry } from '../../src';
 import { MetadataRegistry } from '../../src';
 import * as shell from 'shelljs';

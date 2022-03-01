@@ -1,11 +1,11 @@
 import got from 'got';
 import { getMissingTypes } from '../../test/utils/getMissingTypes';
 import { registry } from '../../src';
-import {getCurrentApiVersion, getCoverage} from './shared'
+import { getCurrentApiVersion, getCoverage } from '../../src/registry/coverage';
 
 (async () => {
   const currentApiVersion = await getCurrentApiVersion();
-  const nextCoverage = await getCoverage(currentApiVersion + 1)
+  const nextCoverage = await getCoverage(currentApiVersion + 1);
 
   const missingTypes = getMissingTypes(nextCoverage, registry).map((type) => type[0]);
 
@@ -44,6 +44,9 @@ import {getCurrentApiVersion, getCoverage} from './shared'
       },
     ],
   };
+  if (!process.env.DEFAULT_SLACK_WEBHOOK) {
+    throw new Error('DEFAULT_SLACK_WEBHOOK is not set in the environment');
+  }
   try {
     await got.post(process.env.DEFAULT_SLACK_WEBHOOK, {
       json,

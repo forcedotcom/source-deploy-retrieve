@@ -7,7 +7,7 @@ import * as deepmerge from 'deepmerge';
 import { CoverageObject, CoverageObjectType } from '../../src/registry/types';
 import { AnyJson } from '@salesforce/ts-types';
 import { getMissingTypes } from '../../test/utils/getMissingTypes';
-import { getCurrentApiVersion, getCoverage } from './shared';
+import { getCurrentApiVersion, getCoverage } from '../../src/registry/coverage';
 
 export const registry = fs.readJsonSync('./src/registry/metadataRegistry.json') as unknown as MetadataRegistry;
 export let metadataCoverage: CoverageObject;

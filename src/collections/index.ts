@@ -13,3 +13,4 @@ export {
   FromSourceOptions,
   FromManifestOptions,
 } from './types';
+export { ComponentSetBuilder, ComponentSetOptions } from './componentSetBuilder';

@@ -2028,7 +2028,7 @@
       "suffix": "policy",
       "directoryName": "appointmentSchedulingPolicies",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": true
     },
     "notificationtypeconfig": {
       "id": "notificationtypeconfig",
@@ -2789,6 +2789,174 @@
       "strategies": {
         "adapter": "matchingContentFile"
       }
+    },
+    "productattributeset": {
+      "id": "productattributeset",
+      "name": "ProductAttributeSet",
+      "suffix": "productAttributeSet",
+      "directoryName": "productAttributeSets",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "recordalertcategory": {
+      "id": "recordalertcategory",
+      "name": "RecordAlertCategory",
+      "suffix": "recordAlertCategory",
+      "directoryName": "recordAlertCategories",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "recordalertdatasource": {
+      "id": "recordalertdatasource",
+      "name": "RecordAlertDataSource",
+      "suffix": "recordAlertDataSource",
+      "directoryName": "recordAlertDataSources",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "activationplatform": {
+      "id": "activationplatform",
+      "name": "ActivationPlatform",
+      "suffix": "activationPlatform",
+      "directoryName": "activationPlatforms",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "dataconnectoringestapi": {
+      "id": "dataconnectoringestapi",
+      "name": "DataConnectorIngestApi",
+      "suffix": "dataConnectorIngestApi",
+      "directoryName": "dataConnectorIngestApis",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "datasourcetenant": {
+      "id": "datasourcetenant",
+      "name": "DataSourceTenant",
+      "suffix": "dataSourceTenant",
+      "directoryName": "dataSourceTenants",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "esignatureconfig": {
+      "id": "esignatureconfig",
+      "name": "ESignatureConfig",
+      "suffix": "eSignatureConfig",
+      "directoryName": "eSignatureConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "esignatureenvelopeconfig": {
+      "id": "esignatureenvelopeconfig",
+      "name": "ESignatureEnvelopeConfig",
+      "suffix": "eSignatureEnvelopeConfig",
+      "directoryName": "eSignatureEnvelopeConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "internaldataconnector": {
+      "id": "internaldataconnector",
+      "name": "InternalDataConnector",
+      "suffix": "internalDataConnector",
+      "directoryName": "internalDataConnectors",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "mobsecuritycertpinconfig": {
+      "id": "mobsecuritycertpinconfig",
+      "name": "MobSecurityCertPinConfig",
+      "suffix": "mobSecurityCertPinConfig",
+      "directoryName": "mobSecurityCertPinConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "mobilesecurityassignment": {
+      "id": "mobilesecurityassignment",
+      "name": "MobileSecurityAssignment",
+      "suffix": "mobileSecurityAssignment",
+      "directoryName": "mobileSecurityAssignments",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "mobilesecuritypolicy": {
+      "id": "mobilesecuritypolicy",
+      "name": "MobileSecurityPolicy",
+      "suffix": "mobileSecurityPolicy",
+      "directoryName": "mobileSecurityPolicies",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "mobilesecuritypolicyset": {
+      "id": "mobilesecuritypolicyset",
+      "name": "MobileSecurityPolicySet",
+      "suffix": "mobileSecurityPolicySet",
+      "directoryName": "mobileSecurityPolicySets",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "applicationsubtypedefinition": {
+      "id": "applicationsubtypedefinition",
+      "name": "ApplicationSubtypeDefinition",
+      "suffix": "applicationSubtypeDefinition",
+      "directoryName": "ApplicationSubtypeDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "businessprocesstypedefinition": {
+      "id": "businessprocesstypedefinition",
+      "name": "BusinessProcessTypeDefinition",
+      "suffix": "businessProcessTypeDefinition",
+      "directoryName": "BusinessProcessTypeDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "explainabilityactiondefinition": {
+      "id": "explainabilityactiondefinition",
+      "name": "ExplainabilityActionDefinition",
+      "suffix": "explainabilityActionDefinition",
+      "directoryName": "ExplainabilityActionDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "explainabilityactionversion": {
+      "id": "explainabilityactionversion",
+      "name": "ExplainabilityActionVersion",
+      "suffix": "explainabilityActionVersion",
+      "directoryName": "ExplainabilityActionVersions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "advacctforecastdimsource": {
+      "id": "advacctforecastdimsource",
+      "name": "AdvAcctForecastDimSource",
+      "suffix": "advAcctForecastDimSource",
+      "directoryName": "AdvAcctForecastDimSource",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "appointmentassignmentpolicy": {
+      "id": "appointmentassignmentpolicy",
+      "name": "AppointmentAssignmentPolicy",
+      "suffix": "policy",
+      "directoryName": "appointmentAssignmentPolicies",
+      "inFolder": false,
+      "strictDirectoryName": true
+    },
+    "carelimittype": {
+      "id": "carelimittype",
+      "name": "CareLimitType",
+      "suffix": "careLimitType",
+      "directoryName": "careLimitTypes",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omniinteractionaccessconfig": {
+      "id": "omniinteractionaccessconfig",
+      "name": "OmniInteractionAccessConfig",
+      "suffix": "omniInteractionAccessConfig",
+      "directoryName": "OmniInteractionAccessConfig",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -2956,7 +3124,7 @@
     "actionLinkGroupTemplate": "actionlinkgrouptemplate",
     "licenseDefinition": "licensedefinition",
     "transactionSecurityPolicy": "transactionsecuritypolicy",
-    "policy": "appointmentschedulingpolicy",
+    "policy": "appointmentassignmentpolicy",
     "skill": "skill",
     "liveChatDeployment": "livechatdeployment",
     "liveChatButton": "livechatbutton",
@@ -3093,7 +3261,27 @@
     "stationaryAssetEnvSourceConfig": "stnryassetenvsrccnfg",
     "vehicleAssetEmssnSourceConfig": "vehicleassetemssnsrccnfg",
     "omniInteractionConfig": "omniinteractionconfig",
-    "uiview": "uiviewdefinition"
+    "uiview": "uiviewdefinition",
+    "productAttributeSet": "productattributeset",
+    "recordAlertCategory": "recordalertcategory",
+    "recordAlertDataSource": "recordalertdatasource",
+    "activationPlatform": "activationplatform",
+    "dataConnectorIngestApi": "dataconnectoringestapi",
+    "dataSourceTenant": "datasourcetenant",
+    "eSignatureConfig": "esignatureconfig",
+    "eSignatureEnvelopeConfig": "esignatureenvelopeconfig",
+    "internalDataConnector": "internaldataconnector",
+    "mobSecurityCertPinConfig": "mobsecuritycertpinconfig",
+    "mobileSecurityAssignment": "mobilesecurityassignment",
+    "mobileSecurityPolicy": "mobilesecuritypolicy",
+    "mobileSecurityPolicySet": "mobilesecuritypolicyset",
+    "applicationSubtypeDefinition": "applicationsubtypedefinition",
+    "businessProcessTypeDefinition": "businessprocesstypedefinition",
+    "explainabilityActionDefinition": "explainabilityactiondefinition",
+    "explainabilityActionVersion": "explainabilityactionversion",
+    "advAcctForecastDimSource": "advacctforecastdimsource",
+    "careLimitType": "carelimittype",
+    "omniInteractionAccessConfig": "omniinteractionaccessconfig"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -3114,7 +3302,9 @@
     "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
     "dataMappingObjectDefinitions": "datamappingobjectdefinition",
     "fieldRestrictionRules": "fieldrestrictionrule",
-    "siteDotComSites": "sitedotcom"
+    "siteDotComSites": "sitedotcom",
+    "appointmentSchedulingPolicies": "appointmentschedulingpolicy",
+    "appointmentAssignmentPolicies": "appointmentassignmentpolicy"
   },
   "childTypes": {
     "customlabel": "customlabels",

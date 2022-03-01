@@ -15,16 +15,15 @@ import { CoverageObjectType } from './types';
  * */
 export const features = [
   // ERROR running force:org:create: * is not a valid Features value.
-  // 'SUSTAINABILITYAPP',
   'SERVICECATALOG',
-  'EXPLAINABILITY',
-  'DYNAMICATTRIBUTES',
+  'DYNAMICATTRIBUTES', // is not a valid Features value
   'CONTRACTMGMT',
   'CUSTOMIZABLENAMEDCREDENTIALS',
   'INDUSTRIESMFGPROGRAMPILOT',
-  'HEALTHCLOUDHPIBETA',
-  'MANAGETIMELINE',
-  'HEALTHCLOUDBETA',
+  'HEALTHCLOUDHPIBETA', // is not a valid Features value
+  'MANAGETIMELINE', // is not a valid Features value
+  'HEALTHCLOUDBETA', // is not a valid Features value
+  'PARDOTADVANCED', // org:create throws a C-9999 when this is not excluded
 ];
 
 export const settings = [
@@ -33,15 +32,19 @@ export const settings = [
 export const metadataTypes = [
   // things that don't show up in describe so far
   'PicklistValue', // only existed in v37, so it's hard to describe!
-  'AppointmentAssignmentPolicy', // not in describe?
-  'WorkflowFlowAction', // not in describe
-  'AdvAcctForecastDimSource', // not in describe
-  'CareLimitType', // not in describe
-  'RelatedRecordAssocCriteria', // not in describe
-  'OmniInteractionAccessConfig', // not in describe
   // two children of GlobalValueSet
   'CustomValue',
   'StandardValue',
+
+  // the following are not describable based on their features/settings, last checked 2/24/2022
+  'DiscoveryStory',
+  'EmployeeDataSyncProfile',
+  'IdentityVerificationProcDef',
+  'IdentityVerificationProcDtl',
+  'IdentityVerificationProcFld',
+  'RelatedRecordAssocCriteria',
+  'ScoreRange',
+  'WorkflowFlowAction',
 ];
 
 export const hasUnsupportedFeatures = (type: CoverageObjectType): boolean => {

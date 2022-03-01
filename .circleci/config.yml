@@ -81,9 +81,18 @@ jobs:
       - run:
           name: Install dependencies
           command: yarn
-      - run:
-          name: swap dependencies
-          command: yarn remove @salesforce/source-deploy-retrieve && yarn add $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME#$CIRCLE_SHA1
+      - run: yarn remove @salesforce/source-deploy-retrieve
+      # windows/powershell does envs differently so we have to have conditional steps
+      - when:
+          condition:
+            equal: ['windows', <<parameters.os>>]
+          steps:
+            - run: yarn add $env:CIRCLE_PROJECT_USERNAME/$env:CIRCLE_PROJECT_REPONAME#$env:CIRCLE_SHA1
+      - when:
+          condition:
+            equal: ['linux', <<parameters.os>>]
+          steps:
+            - run: yarn add $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME#$CIRCLE_SHA1
       - run:
           name: install/build <<parameters.external_project_git_url>> in node_modules
           # why doesn't SDR put the metadataRegistry.json in the lib when run from inside a node module?  I don't know.
@@ -91,13 +100,14 @@ jobs:
           # If there are real conflicts, we'll catch them when bumping a version in the plugin (same nuts)
           command: |
             yarn install
-            rm -rf node_modules/@salesforce/kit
-            rm -rf node_modules/@salesforce/core
-            rm -rf node_modules/@typescript-eslint
-            rm -rf node_modules/eslint-plugin-header
-            rm -rf node_modules/eslint-plugin-import
-            rm -rf node_modules/eslint-plugin-jsdoc
-            rm -rf node_modules/eslint-plugin-prettier
+            npm install shx -g
+            shx rm -rf node_modules/@salesforce/kit
+            shx rm -rf node_modules/@salesforce/core
+            shx rm -rf node_modules/@typescript-eslint
+            shx rm -rf node_modules/eslint-plugin-header
+            shx rm -rf node_modules/eslint-plugin-import
+            shx rm -rf node_modules/eslint-plugin-jsdoc
+            shx rm -rf node_modules/eslint-plugin-prettier
             yarn build
             cp src/registry/metadataRegistry.json lib/src/registry
           working_directory: node_modules/@salesforce/source-deploy-retrieve
@@ -105,10 +115,6 @@ jobs:
           name: Build the external project
           command: |
             yarn build
-      - release-management/verify-installed-plugin
-      - run:
-          name: set TESTKIT_ENABLE_ZIP for artifacts on linux
-          command: echo "export TESTKIT_ENABLE_ZIP=true" >> $BASH_ENV
       - run:
           name: Nuts
           command: |
@@ -174,7 +180,7 @@ workflows:
           size: medium
           matrix:
             parameters:
-              os: [linux]
+              os: [windows, linux]
               node_version: [lts]
               external_project_git_url: ['https://github.com/salesforcecli/plugin-source']
               test_command:

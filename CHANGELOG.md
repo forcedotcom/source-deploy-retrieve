@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.12.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.1...v5.12.2) (2022-03-01)
+
+### Bug Fixes
+
+- add ComponentSetBuilder from plugin-source ([#576](https://github.com/forcedotcom/source-deploy-retrieve/issues/576)) ([16c02d6](https://github.com/forcedotcom/source-deploy-retrieve/commit/16c02d611d442cc9efadc5fba51b8db8293ea7f5))
+
 ### [5.12.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.0...v5.12.1) (2022-03-01)
 
 ## [5.12.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.11.0...v5.12.0) (2022-02-22)

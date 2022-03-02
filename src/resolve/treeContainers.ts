@@ -8,6 +8,7 @@ import { join, dirname, basename, normalize, sep } from 'path';
 import { Readable } from 'stream';
 import { statSync, existsSync, readdirSync, createReadStream, readFileSync } from 'graceful-fs';
 import * as unzipper from 'unzipper';
+import deasync = require('deasync');
 import { baseName, parseMetadataXml } from '../utils';
 import { LibraryError } from '../errors';
 import { SourcePath } from '../common';
@@ -166,9 +167,23 @@ export class ZipTreeContainer extends TreeContainer {
     throw new LibraryError('error_expected_file_path', fsPath);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public readFileSync(fsPath: string): Buffer {
-    throw new Error('Method not implemented');
+    let done = false;
+    let dataBuffer: Buffer;
+    this.readFile(fsPath)
+      .then((buffer) => {
+        dataBuffer = buffer;
+        done = true;
+      })
+      .catch((error) => {
+        done = true;
+        throw error;
+      });
+
+    deasync.loopWhile(() => {
+      return !done;
+    });
+    return dataBuffer;
   }
 
   public stream(fsPath: string): Readable {

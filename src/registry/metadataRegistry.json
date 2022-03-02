@@ -622,7 +622,7 @@
       "id": "flowtest",
       "name": "FlowTest",
       "suffix": "flowtest",
-      "directoryName": "flowTest",
+      "directoryName": "flowtests",
       "inFolder": false,
       "strictDirectoryName": false
     },

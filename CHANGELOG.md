@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.12.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.2...v5.12.3) (2022-03-02)
+
+### Bug Fixes
+
+- **metadata registry:** update directory name for flowtest in registry ([#589](https://github.com/forcedotcom/source-deploy-retrieve/issues/589)) ([d6112a7](https://github.com/forcedotcom/source-deploy-retrieve/commit/d6112a7325289fb55d3aee343cf77bcd2f68eb7f))
+
 ### [5.12.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.1...v5.12.2) (2022-03-01)
 
 ### Bug Fixes

@@ -88,6 +88,8 @@ export { SourcePath, TreeOptions, OptionalTreeRegistryOptions, RegistryOptions }
 export {
   LazyCollection,
   ComponentSet,
+  ComponentSetBuilder,
+  ComponentSetOptions,
   DeploySetOptions,
   RetrieveSetOptions,
   PackageTypeMembers,

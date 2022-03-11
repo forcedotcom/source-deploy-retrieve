@@ -229,19 +229,8 @@ describe('Tree Containers', () => {
     });
 
     describe('readFileSync', () => {
-      it('should syncrounsly read contents of zip entry into buffer.', () => {
-        const path = join(filesRoot, 'test.txt');
-        const contents = tree.readFileSync(path).toString();
-        expect(contents).to.equal('test text');
-      });
-
-      it('should throw a library error if readFile throws', () => {
-        assert.throws(
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          () => tree.readFileSync(filesRoot),
-          LibraryError,
-          nls.localize('error_expected_file_path', filesRoot)
-        );
+      it('should throw an error because it is not implemented yet', () => {
+        assert.throws(() => tree.readFileSync(join(filesRoot, 'test.txt')), Error, 'Method not implemented');
       });
     });
 

@@ -489,6 +489,7 @@ v55 introduces the following new types.  Here's their current level of support
 |ConvReasonReportDefinition|❌|Not supported, but support could be added|
 |ConvReasonReportSegmentDef|❌|Not supported, but support could be added|
 |CustomAddressFieldSettings|✅||
+|DataImportManagementSettings|✅||
 |DecisionMatrixDefinition|❌|Not supported, but support could be added|
 |DecisionMatrixDefinitionVersion|❌|Not supported, but support could be added|
 |Experience|undefined|undefined|

@@ -2284,6 +2284,34 @@
       "directoryName": "decisionTableDatasetLinks",
       "strictDirectoryName": false
     },
+    "decisionmatrixdefinition": {
+      "id": "decisionmatrixdefinition",
+      "name": "DecisionMatrixDefinition",
+      "suffix": "decisionMatrixDefinition",
+      "directoryName": "decisionMatrixDefinitions",
+      "strictDirectoryName": false
+    },
+    "decisionmatrixdefinitionversion": {
+      "id": "decisionmatrixdefinitionversion",
+      "name": "DecisionMatrixDefinitionVersion",
+      "suffix": "decisionMatrixDefinitionVersion",
+      "directoryName": "decisionMatrixDefinitionVersions",
+      "strictDirectoryName": false
+    },
+    "expressionsetdefinition": {
+      "id": "expressionsetdefinitionversion",
+      "name": "ExpressionSetDefinitionVersion",
+      "suffix": "expressionSetDefinitionVersion",
+      "directoryName": "expressionSetDefinitionVersions",
+      "strictDirectoryName": false
+    },
+    "expressionsetdefinition": {
+      "id": "expressionsetdefinition",
+      "name": "ExpressionSetDefinition",
+      "suffix": "expressionSetDefinition",
+      "directoryName": "expressionSetDefinitions",
+      "strictDirectoryName": false
+    },
     "briefcasedefinition": {
       "id": "briefcasedefinition",
       "name": "BriefcaseDefinition",
@@ -2978,6 +3006,10 @@
     "apt": "actionplantemplate",
     "decisionTable": "decisiontable",
     "decisionTableDatasetLink": "decisiontabledatasetlink",
+    "decisionMatrixDefinition": "decisionmatrixdefinition",
+    "decisionMatrixDefinitionVersion": "decisionmatrixdefinitionversion",
+    "expressionSetDefinition": "expressionsetdefinition",
+    "expressionSetDefinitionVersion": "expressionsetdefinitionversion",
     "briefcaseDefinition": "briefcasedefinition",
     "batchProcessJobDefinition": "batchprocessjobdefinition",
     "acctMgrTargetSetting": "acctmgrtargetsettings",

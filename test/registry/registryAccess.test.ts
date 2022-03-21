@@ -11,9 +11,6 @@ import { MetadataRegistry, MetadataType, registry, RegistryAccess } from '../../
 
 describe('RegistryAccess', () => {
   const registryAccess = new RegistryAccess();
-  it('should return apiVersion of the registry', () => {
-    expect(registryAccess.apiVersion).to.equal(registry.apiVersion);
-  });
 
   describe('getTypeByName', () => {
     it('should return alias of a type when one exists', () => {

@@ -119,8 +119,4 @@ export class RegistryAccess {
     }
     return this.aliasTypes;
   }
-
-  public get apiVersion(): string {
-    return this.registry.apiVersion;
-  }
 }

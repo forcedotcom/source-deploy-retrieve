@@ -79,7 +79,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public constructor(components: Iterable<ComponentLike> = [], registry = new RegistryAccess()) {
     super();
     this.registry = registry;
-    this.apiVersion = this.registry.apiVersion;
     this.logger = Logger.childFromRoot(this.constructor.name);
 
     for (const component of components) {

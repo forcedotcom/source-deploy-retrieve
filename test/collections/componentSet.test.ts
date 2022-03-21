@@ -35,6 +35,8 @@ const $$ = testSetup(env);
 const registryAccess = new RegistryAccess();
 
 describe('ComponentSet', () => {
+  const testApiversion = '54.0';
+
   afterEach(() => env.restore());
 
   describe('Initializers', () => {
@@ -120,7 +122,7 @@ describe('ComponentSet', () => {
         ];
         const resolveStub = env.stub(ManifestResolver.prototype, 'resolve').resolves({
           components: expected,
-          apiVersion: registry.apiVersion,
+          apiVersion: testApiversion,
         });
         env.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
         const manifest = manifestFiles.ONE_FOLDER_MEMBER;
@@ -253,7 +255,7 @@ describe('ComponentSet', () => {
         ];
         const resolveStub = env.stub(ConnectionResolver.prototype, 'resolve').resolves({
           components: expected,
-          apiVersion: registry.apiVersion,
+          apiVersion: testApiversion,
         });
         env.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
         const set = await ComponentSet.fromConnection({ usernameOrConnection: connection });
@@ -359,7 +361,31 @@ describe('ComponentSet', () => {
               members: ['b', 'c'],
             },
           ],
-          version: registryAccess.apiVersion,
+        },
+      });
+    });
+
+    it('should allow the componentSet to set the apiVersion', () => {
+      const set = ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry: registryAccess,
+        tree: manifestFiles.TREE,
+      });
+      set.apiVersion = testApiversion;
+      expect(set.getObject()).to.deep.equal({
+        Package: {
+          fullName: undefined,
+          types: [
+            {
+              name: registry.types.customobjecttranslation.name,
+              members: ['a'],
+            },
+            {
+              name: registry.types.staticresource.name,
+              members: ['b', 'c'],
+            },
+          ],
+          apiVersion: testApiversion,
         },
       });
     });
@@ -384,7 +410,6 @@ describe('ComponentSet', () => {
               members: ['b', 'c'],
             },
           ],
-          version: registryAccess.apiVersion,
         },
       });
     });
@@ -409,7 +434,6 @@ describe('ComponentSet', () => {
               members: ['b', 'c'],
             },
           ],
-          version: registryAccess.apiVersion,
         },
       });
     });

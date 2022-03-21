@@ -18,7 +18,6 @@ export interface MetadataRegistry {
   childTypes: {
     [childTypeId: string]: string;
   };
-  apiVersion: string;
 }
 
 /**

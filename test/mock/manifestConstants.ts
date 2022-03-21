@@ -21,7 +21,6 @@ export const BASIC: VirtualFile = {
         <members>c</members>
         <name>${registry.types.staticresource.name}</name>
     </types>
-    <version>${registry.apiVersion}</version>
 </Package>\n`),
 };
 
@@ -37,7 +36,6 @@ export const ONE_OF_EACH: VirtualFile = {
         <members>b</members>
         <name>${registry.types.staticresource.name}</name>
     </types>
-    <version>${registry.apiVersion}</version>
 </Package>\n`),
 };
 
@@ -49,7 +47,6 @@ export const ONE_FOLDER_MEMBER: VirtualFile = {
         <members>Test_Folder</members>
         <name>${registry.types.documentfolder.name}</name>
     </types>
-    <version>${registry.apiVersion}</version>
 </Package>\n`),
 };
 
@@ -63,7 +60,6 @@ export const IN_FOLDER_WITH_CONTENT: VirtualFile = {
         <members>Test_Folder/report2</members>
         <name>${registry.types.documentfolder.name}</name>
     </types>
-    <version>${registry.apiVersion}</version>
 </Package>\n`),
 };
 
@@ -75,7 +71,6 @@ export const ONE_WILDCARD: VirtualFile = {
         <members>*</members>
         <name>${registry.types.staticresource.name}</name>
     </types>
-    <version>${registry.apiVersion}</version>
 </Package>\n`),
 };
 

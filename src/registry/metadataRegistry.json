@@ -3340,6 +3340,5 @@
     "customfieldtranslation": "customobjecttranslation",
     "datamappingfielddefinition": "datamappingobjectdefinition",
     "mktdatatranfield": "mktdatatranobject"
-  },
-  "apiVersion": "53.0"
+  }
 }

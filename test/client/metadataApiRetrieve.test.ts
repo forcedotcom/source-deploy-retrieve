@@ -11,6 +11,7 @@ import * as unzipper from 'unzipper';
 import { createSandbox, match, SinonStub } from 'sinon';
 import { getString } from '@salesforce/ts-types';
 import * as fs from 'graceful-fs';
+import { testSetup } from '@salesforce/core/lib/testSetup';
 import {
   ComponentSet,
   ComponentStatus,
@@ -29,6 +30,7 @@ import { MOCK_ASYNC_RESULT, MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '..
 import { xmlInFolder } from '../mock';
 import { COMPONENT } from '../mock/type-constants/apexClassConstant';
 import { DECOMPOSED_COMPONENT } from '../mock/type-constants/customObjectConstant';
+import { mockConnection } from '../mock/client';
 
 const env = createSandbox();
 
@@ -82,7 +84,7 @@ describe('MetadataApiRetrieve', () => {
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
-          apiVersion: toRetrieve.apiVersion,
+          apiVersion: (await mockConnection(testSetup())).getApiVersion(),
           unpackaged: toRetrieve.getObject().Package,
         });
       });
@@ -100,7 +102,7 @@ describe('MetadataApiRetrieve', () => {
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
-          apiVersion: toRetrieve.apiVersion,
+          apiVersion: (await mockConnection(testSetup())).getApiVersion(),
           packageNames: options.packageOptions,
           unpackaged: toRetrieve.getObject().Package,
         });
@@ -119,7 +121,7 @@ describe('MetadataApiRetrieve', () => {
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
-          apiVersion: toRetrieve.apiVersion,
+          apiVersion: (await mockConnection(testSetup())).getApiVersion(),
           packageNames: [options.packageOptions[0].name],
           unpackaged: toRetrieve.getObject().Package,
         });
@@ -138,7 +140,7 @@ describe('MetadataApiRetrieve', () => {
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
-          apiVersion: toRetrieve.apiVersion,
+          apiVersion: (await mockConnection(testSetup())).getApiVersion(),
           packageNames: [options.packageOptions[0].name],
           unpackaged: toRetrieve.getObject().Package,
         });

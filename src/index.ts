@@ -101,6 +101,7 @@ export {
 export {
   RegistryAccess,
   registry,
+  getCurrentApiVersion,
   MetadataRegistry,
   MetadataType,
   DecompositionStrategy,

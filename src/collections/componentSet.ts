@@ -25,7 +25,7 @@ import {
   SourceComponent,
   TreeContainer,
 } from '../resolve';
-import { MetadataType, RegistryAccess } from '../registry';
+import { getCurrentApiVersion, MetadataType, RegistryAccess } from '../registry';
 import {
   DestructiveChangesType,
   FromManifestOptions,
@@ -288,6 +288,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       registry: this.registry,
       apiVersion: this.apiVersion,
     });
+    if (!options.apiVersion && !this.apiVersion && !this.sourceApiVersion) {
+      operationOptions.apiVersion = `${await getCurrentApiVersion()}.0`;
+    }
 
     const mdapiDeploy = new MetadataApiDeploy(operationOptions);
     await mdapiDeploy.start();

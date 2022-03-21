@@ -385,7 +385,7 @@ describe('ComponentSet', () => {
               members: ['b', 'c'],
             },
           ],
-          apiVersion: testApiversion,
+          version: testApiversion,
         },
       });
     });

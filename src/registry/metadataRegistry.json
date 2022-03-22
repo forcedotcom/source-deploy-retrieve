@@ -2298,7 +2298,7 @@
       "directoryName": "decisionMatrixDefinitionVersions",
       "strictDirectoryName": false
     },
-    "expressionsetdefinition": {
+    "expressionsetdefinitionversion": {
       "id": "expressionsetdefinitionversion",
       "name": "ExpressionSetDefinitionVersion",
       "suffix": "expressionSetDefinitionVersion",

@@ -8,9 +8,10 @@
 import { sep } from 'path';
 import { Connection } from '@salesforce/core';
 import { readFileSync } from 'graceful-fs';
+import { SaveResult } from 'jsforce';
 import { DeployError } from '../../errors';
 import { SourceComponent } from '../../resolve';
-import { SourceDeployResult, ToolingCreateResult } from '../types';
+import { SourceDeployResult } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
 const DOMParser = require('xmldom-sfdx-encoding').DOMParser;
@@ -55,18 +56,15 @@ export abstract class BaseDeploy {
 
   // If bundle already exists then use Id and update existing
   // else, create a new bundle
-  public async upsertBundle(Id?: string): Promise<ToolingCreateResult> {
+  public async upsertBundle(Id?: string): Promise<SaveResult> {
     const metadataContent = readFileSync(this.component.xml, 'utf8');
     const metadataField = this.buildMetadataField(metadataContent);
 
-    let bundleResult: ToolingCreateResult;
+    let bundleResult: SaveResult;
     if (Id) {
       const bundleObject = { Id, Metadata: metadataField };
 
-      bundleResult = (await this.connection.tooling.update(
-        this.component.type.name,
-        bundleObject
-      )) as ToolingCreateResult;
+      bundleResult = await this.connection.tooling.update(this.component.type.name, bundleObject);
     } else {
       const bundleObject = {
         FullName: this.component.fullName,
@@ -83,8 +81,8 @@ export abstract class BaseDeploy {
     return bundleResult;
   }
 
-  protected async toolingCreate(type: string, record: Record<string, unknown>): Promise<ToolingCreateResult> {
-    return (await this.connection.tooling.create(type, record)) as ToolingCreateResult;
+  protected async toolingCreate(type: string, record: Record<string, unknown>): Promise<SaveResult> {
+    return await this.connection.tooling.create(type, record);
   }
 
   protected getFormattedPaths(filepath: string): string[] {

@@ -26,6 +26,7 @@ import {
   MetadataTransferResult,
 } from './types';
 import { DiagnosticUtil } from './diagnosticUtil';
+
 export class DeployResult implements MetadataTransferResult {
   public readonly response: MetadataApiDeployStatus;
   public readonly components: ComponentSet;
@@ -312,19 +313,11 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
 
     await new Promise((resolve, reject) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,no-underscore-dangle
-      connection.metadata
+      void connection.metadata
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore _invoke is private on the jsforce metadata object, and cancelDeploy is not an exposed method
         ._invoke('cancelDeploy', { id: this.id })
-        .thenCall((result: unknown) => {
-          // this does not return CancelDeployResult as documented in the API.
-          // a null result seems to indicate the request was successful
-          if (result) {
-            reject(result);
-          } else {
-            resolve(result);
-          }
-        });
+        .then((result) => (result ? reject(result) : resolve(result)));
     });
   }
 

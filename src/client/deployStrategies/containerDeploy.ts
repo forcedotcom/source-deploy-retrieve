@@ -7,6 +7,7 @@
 import { readFileSync } from 'graceful-fs';
 import { sleep } from '@salesforce/kit';
 
+import { SaveResult } from 'jsforce';
 import { deployTypes } from '../toolingApi';
 import { DeployError } from '../../errors';
 import {
@@ -17,7 +18,6 @@ import {
   QueryResult,
   RecordId,
   SourceDeployResult,
-  ToolingCreateResult,
   ToolingDeployStatus,
 } from '../types';
 import { baseName } from '../../utils/path';
@@ -41,7 +41,7 @@ export class ContainerDeploy extends BaseDeploy {
     return this.buildSourceDeployResult(containerRequestStatus);
   }
 
-  public async createMetadataContainer(): Promise<ToolingCreateResult> {
+  public async createMetadataContainer(): Promise<SaveResult> {
     const metadataContainer = await this.toolingCreate(ContainerDeploy.METADATA_CONTAINER, {
       Name: `Deploy_MDC_${Date.now()}`,
     });
@@ -52,10 +52,7 @@ export class ContainerDeploy extends BaseDeploy {
     return metadataContainer;
   }
 
-  public async createContainerMember(
-    outboundFiles: string[],
-    container: ToolingCreateResult
-  ): Promise<ToolingCreateResult> {
+  public async createContainerMember(outboundFiles: string[], container: SaveResult): Promise<SaveResult> {
     const id = container.id;
     const metadataContent = readFileSync(outboundFiles[1], 'utf8');
     const metadataField = this.buildMetadataField(metadataContent);
@@ -92,7 +89,7 @@ export class ContainerDeploy extends BaseDeploy {
     return queryResult && queryResult.records.length === 1 ? queryResult.records[0].Id : undefined;
   }
 
-  public async createContainerAsyncRequest(container: ToolingCreateResult): Promise<ToolingCreateResult> {
+  public async createContainerAsyncRequest(container: SaveResult): Promise<SaveResult> {
     const contAsyncRequest = await this.toolingCreate(ContainerDeploy.CONTAINER_ASYNC_REQUEST, {
       MetadataContainerId: container.id,
     });

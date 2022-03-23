@@ -8,7 +8,7 @@ You can view the existing metadata coverage by release using [METADATA_SUPPORT.m
 yarn update-supported-metadata
 ```
 
-- The above script is run automatically on `git push` to updating the [METADATA_SUPPORT.md](../METADATA_SUPPORT.md) file, and committing the changes.
+- The above script is run automatically on `git push` updating the [METADATA_SUPPORT.md](../METADATA_SUPPORT.md) file and committing the changes.
 
 Got questions?
 

@@ -118,8 +118,7 @@ ${additionalCLISupport.map((t) => `- ${t}`).join('\n')}
 
   shell.exec(`git add METADATA_SUPPORT.md`);
   if (
-    shell.exec(`git commit -am "chore: automatically adding types for SDR to METADATA_SUPPORT.md" --no-verify`).code !==
-    0
+    shell.exec(`git commit -am "chore: auto-update metadata coverage in METADATA_SUPPORT.md" --no-verify`).code !== 0
   ) {
     shell.echo(
       'Error: Git commit failed - usually nothing to commit which means there are no new metadata type support added in this version of SDR'

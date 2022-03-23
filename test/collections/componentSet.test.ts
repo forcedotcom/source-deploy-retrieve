@@ -348,7 +348,6 @@ describe('ComponentSet', () => {
       });
       expect(set.getObject()).to.deep.equal({
         Package: {
-          fullName: undefined,
           types: [
             {
               name: registry.types.customobjecttranslation.name,
@@ -373,7 +372,6 @@ describe('ComponentSet', () => {
       });
       expect(set.getObject(DestructiveChangesType.POST)).to.deep.equal({
         Package: {
-          fullName: undefined,
           types: [
             {
               name: registry.types.customobjecttranslation.name,
@@ -423,7 +421,6 @@ describe('ComponentSet', () => {
       set.sourceApiVersion = '45.0';
       expect(set.getObject()).to.deep.equal({
         Package: {
-          fullName: undefined,
           types: [
             {
               name: registry.types.customobjecttranslation.name,

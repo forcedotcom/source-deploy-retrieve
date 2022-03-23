@@ -486,22 +486,28 @@ v55 introduces the following new types.  Here's their current level of support
 |AssessmentQuestion|❌|Not supported, but support could be added|
 |AssessmentQuestionSet|❌|Not supported, but support could be added|
 |BotTemplate|❌|Not supported, but support could be added|
+|CallCtrAgentFavTrfrDest|❌|Not supported, but support could be added|
 |ConvReasonReportDefinition|❌|Not supported, but support could be added|
 |ConvReasonReportSegmentDef|❌|Not supported, but support could be added|
 |CustomAddressFieldSettings|✅||
+|DataImportManagementSettings|✅||
 |DecisionMatrixDefinition|❌|Not supported, but support could be added|
 |DecisionMatrixDefinitionVersion|❌|Not supported, but support could be added|
-|Experience|undefined|undefined|
-|ExperienceMetadataResource|undefined|undefined|
-|ExperienceSpace|undefined|undefined|
+|DigitalExperience|undefined|undefined|
+|DigitalExperienceBundle|undefined|undefined|
+|DigitalExperienceBundleSetting|undefined|undefined|
 |ExpressionSetDefinition|❌|Not supported, but support could be added|
 |ExpressionSetDefinitionVersion|❌|Not supported, but support could be added|
 |ExternalDataSrcDescriptor|❌|Not supported, but support could be added|
 |ExternalDataTranField|❌|Not supported, but support could be added|
 |ExternalDataTranObject|❌|Not supported, but support could be added|
-|FavoriteTransferDestination|❌|Not supported, but support could be added|
+|FlowTest|✅||
+|ForecastingFilter|❌|Not supported, but support could be added|
+|ForecastingFilterCondition|❌|Not supported, but support could be added|
 |IndustriesAutomotiveSettings|✅||
 |InvLatePymntRiskCalcSettings|✅||
+|MeetingsSettings|✅||
+|MessagingChannel|undefined|undefined|
 |PaymentsManagementEnabledSettings|✅||
 |RegisteredExternalService|❌|Not supported, but support could be added|
 |StreamingAppDataConnector|❌|Not supported, but support could be added|
@@ -526,7 +532,6 @@ v55 introduces the following new types.  Here's their current level of support
 - FormSection
 - Portal
 - EmbeddedServiceFieldService
-- FlowTest
 - EventType
 - EventSubscription
 - EventDelivery

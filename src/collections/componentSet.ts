@@ -7,6 +7,7 @@
 /* eslint  @typescript-eslint/unified-signatures:0 */
 import { j2xParser } from 'fast-xml-parser';
 import { AuthInfo, Connection, Logger } from '@salesforce/core';
+import TelemetryReporter from '@salesforce/telemetry';
 import {
   MetadataApiDeploy,
   MetadataApiDeployOptions,
@@ -292,6 +293,24 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     const mdapiDeploy = new MetadataApiDeploy(operationOptions);
     await mdapiDeploy.start();
+
+    // Creates an array of unique metadata types to be deployed, uses Set to avoid duplicates.
+    const listOfMetadataTypesDeployed = Array.from(new Set(toDeploy.map((c) => c.type.name)));
+
+    const reporter = await TelemetryReporter.create({
+      project: 'salesforce-cli',
+      key: '2ca64abb-6123-4c7b-bd9e-4fe73e71fe9c',
+    });
+    reporter.sendTelemetryEvent('SOURCE_OPERATION', {
+      operation: 'metadataApiDeploy',
+      type: 'EVENT',
+      totalNumberOfComponents: this.size,
+      numberOfComponentsDeployed: toDeploy.length,
+      componentsDeployed: listOfMetadataTypesDeployed.toString(),
+      componentsDeployedTruncated: listOfMetadataTypesDeployed.length < 800 ? false : true,
+    });
+    reporter.stop();
+
     return mdapiDeploy;
   }
 

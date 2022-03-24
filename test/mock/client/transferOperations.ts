@@ -9,7 +9,8 @@ import { join, sep } from 'path';
 import { testSetup } from '@salesforce/core/lib/testSetup';
 import { PollingClient } from '@salesforce/core';
 import { match, SinonSandbox, SinonSpy, SinonStub } from 'sinon';
-import { AsyncResult, DeployResultLocator } from 'jsforce';
+import { DeployResultLocator } from 'jsforce/lib/api/metadata';
+import { Schema } from 'jsforce';
 import {
   ComponentSet,
   ConvertOutputConfig,
@@ -72,7 +73,7 @@ export async function stubMetadataDeploy(
   deployStub
     .withArgs(zipBuffer, options.apiOptions ?? MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions)
     // overriding return type to match API
-    .resolves(MOCK_ASYNC_RESULT as unknown as DeployResultLocator<AsyncResult>);
+    .resolves(MOCK_ASYNC_RESULT as unknown as DeployResultLocator<Schema>);
 
   const deployRecentlyValidatedIdStub = sandbox.stub(connection, 'deployRecentValidation');
   deployRecentlyValidatedIdStub
@@ -117,7 +118,8 @@ export async function stubMetadataDeploy(
   const invokeStub = sandbox.stub(connection.metadata, '_invoke');
   const invokeResultStub = sandbox.stub();
   invokeStub.returns({
-    thenCall: (f: (result: unknown | null) => void) => {
+    // @ts-ignore
+    then: (f: (result: unknown | null) => void) => {
       return f(invokeResultStub());
     },
   });

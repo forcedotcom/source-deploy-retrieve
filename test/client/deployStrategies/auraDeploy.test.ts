@@ -10,13 +10,14 @@ import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import * as fs from 'graceful-fs';
-import { RecordResult } from 'jsforce';
+import { SaveError, SaveResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
+import { AnyJson } from '@salesforce/ts-types';
 import { nls } from '../../../src/i18n';
-import { ToolingDeployStatus, ComponentStatus } from '../../../src/client';
+import { ComponentStatus, ToolingDeployStatus } from '../../../src/client';
 import { AuraDeploy } from '../../../src/client/deployStrategies';
-import { ToolingCreateResult, AuraDefinition } from '../../../src/client/types';
-import { auraContents, auraComponent, auraFiles, testAuraList } from './auraDeployMocks';
+import { AuraDefinition, ToolingCreateResult } from '../../../src/client/types';
+import { auraComponent, auraContents, auraFiles, testAuraList } from './auraDeployMocks';
 
 const $$ = testSetup();
 
@@ -36,9 +37,13 @@ describe('Aura Deploy Strategy', () => {
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
-    $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig(),
-    });
+    $$.configStubs.GlobalInfo = {
+      contents: {
+        orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
+          [testData.username]: testData as unknown as AnyJson,
+        }),
+      },
+    };
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
         username: testData.username,
@@ -74,7 +79,7 @@ describe('Aura Deploy Strategy', () => {
       success: true,
       id: '1dcxxx000000060',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     const auraDeploy = new AuraDeploy(mockConnection);
     auraDeploy.component = auraComponent;
@@ -162,7 +167,7 @@ describe('Aura Deploy Strategy', () => {
       success: true,
       id: '1dcxxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     sandboxStub.stub(AuraDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const auraDeploy = new AuraDeploy(mockConnection);
@@ -183,7 +188,7 @@ describe('Aura Deploy Strategy', () => {
       success: true,
       id: '1dcxxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     sandboxStub.stub(AuraDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const auraDeploy = new AuraDeploy(mockConnection);
@@ -202,8 +207,8 @@ describe('Aura Deploy Strategy', () => {
     sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',
-      errors: ['Unexpected error while creating record'],
-    } as RecordResult);
+      errors: [{ message: 'Unexpected error while creating record', errorCode: '1' } as SaveError],
+    } as SaveResult);
 
     sandboxStub.stub(AuraDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const auraDeploy = new AuraDeploy(mockConnection);
@@ -223,7 +228,7 @@ describe('Aura Deploy Strategy', () => {
       success: true,
       id: '1dcxxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     sandboxStub.stub(AuraDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
 

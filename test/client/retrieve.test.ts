@@ -13,6 +13,7 @@ import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import * as fs from 'graceful-fs';
 import { createSandbox, SinonSandbox } from 'sinon';
+import { AnyJson } from '@salesforce/ts-types';
 import { ToolingApi } from '../../src/client';
 import { MetadataResolver, SourceComponent } from '../../src/resolve';
 import { QueryResult, RequestStatus, SourceRetrieveResult } from '../../src/client/types';
@@ -58,14 +59,19 @@ describe('Tooling Retrieve', () => {
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
-    $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig(),
-    });
+    $$.configStubs.GlobalInfo = {
+      contents: {
+        orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
+          [testData.username]: testData as unknown as AnyJson,
+        }),
+      },
+    };
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
         username: testData.username,
       }),
     });
+
     sandboxStub.stub(fs, 'existsSync').returns(true);
     // @ts-ignore
     sandboxStub.stub(fs, 'statSync').returns({ isDirectory: () => false });

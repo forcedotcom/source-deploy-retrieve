@@ -36,14 +36,13 @@
     "xmldom-sfdx-encoding": "^0.1.29"
   },
   "devDependencies": {
-    "jsforce": "^2.0.0-beta.8",
+    "jsforce": "2.0.0-beta.7",
     "@salesforce/dev-config": "^3.0.1",
     "@salesforce/dev-scripts": "^2.0.1",
     "@salesforce/prettier-config": "^0.0.2",
     "@salesforce/ts-sinon": "^1.1.2",
     "@types/archiver": "^5.1.1",
     "@types/deep-equal-in-any-order": "^1.0.1",
-    "@types/jsforce": "^1.9.38",
     "@types/mime": "2.0.3",
     "@types/mkdirp": "0.5.2",
     "@types/shelljs": "^0.8.9",

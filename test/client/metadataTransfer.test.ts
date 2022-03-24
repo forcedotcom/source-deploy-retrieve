@@ -6,7 +6,7 @@
  */
 import { fail } from 'assert';
 import { createSandbox, SinonStub } from 'sinon';
-import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
+import { testSetup } from '@salesforce/core/lib/testSetup';
 import { AuthInfo, Connection, PollingClient } from '@salesforce/core';
 import { expect } from 'chai';
 import { Duration, sleep } from '@salesforce/kit';
@@ -95,14 +95,13 @@ describe('MetadataTransfer', () => {
         return this.lifecycle.pre(connection);
       }
     }
-    const testData = new MockTestOrgData();
-    $$.setConfigStubContents('AuthInfoConfig', { contents: await testData.getConfig() });
-    const authInfo = await AuthInfo.create({ username: 'foo@example.com' });
-    env.stub(AuthInfo, 'create').withArgs({ username: 'foo@example.com' }).resolves(authInfo);
+    const username = connection.getUsername();
+    const authInfo = await AuthInfo.create({ username });
+    env.stub(AuthInfo, 'create').withArgs({ username }).resolves(authInfo);
     env.stub(Connection, 'create').withArgs({ authInfo }).resolves(connection);
     operation = new TestTransferConnection({
       components: new ComponentSet(),
-      usernameOrConnection: 'foo@example.com',
+      usernameOrConnection: username,
     });
 
     await operation.start();
@@ -118,15 +117,15 @@ describe('MetadataTransfer', () => {
       }
     }
     const apiVersion = '50.0';
-    const testData = new MockTestOrgData();
-    $$.setConfigStubContents('AuthInfoConfig', { contents: await testData.getConfig() });
-    const authInfo = await AuthInfo.create({ username: 'foo@example.com' });
-    env.stub(AuthInfo, 'create').withArgs({ username: 'foo@example.com' }).resolves(authInfo);
+    const username = connection.getUsername();
+
+    const authInfo = await AuthInfo.create({ username });
+    env.stub(AuthInfo, 'create').withArgs({ username }).resolves(authInfo);
     env.stub(Connection, 'create').withArgs({ authInfo }).resolves(connection);
     const setApiVersionSpy = env.spy(Connection.prototype, 'setApiVersion');
     operation = new TestTransferConnection({
       components: new ComponentSet(),
-      usernameOrConnection: 'foo@example.com',
+      usernameOrConnection: username,
       apiVersion,
     });
 

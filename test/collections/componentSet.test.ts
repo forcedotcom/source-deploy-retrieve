@@ -29,14 +29,15 @@ import { mockConnection } from '../mock/client';
 import { decomposedtoplevel, matchingContentFile, mixedContentSingleFile } from '../mock';
 import { MATCHING_RULES_COMPONENT } from '../mock/type-constants/customlabelsConstant';
 import * as manifestFiles from '../mock/manifestConstants';
+import { testApiVersionAsString } from '../mock/manifestConstants';
+import * as coverage from '../../src/registry/coverage';
+import { testApiVersion } from '../mock/manifestConstants';
 
 const env = createSandbox();
 const $$ = testSetup(env);
 const registryAccess = new RegistryAccess();
 
 describe('ComponentSet', () => {
-  const testApiversion = '54.0';
-
   afterEach(() => env.restore());
 
   describe('Initializers', () => {
@@ -122,7 +123,7 @@ describe('ComponentSet', () => {
         ];
         const resolveStub = env.stub(ManifestResolver.prototype, 'resolve').resolves({
           components: expected,
-          apiVersion: testApiversion,
+          apiVersion: testApiVersionAsString,
         });
         env.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
         const manifest = manifestFiles.ONE_FOLDER_MEMBER;
@@ -255,7 +256,7 @@ describe('ComponentSet', () => {
         ];
         const resolveStub = env.stub(ConnectionResolver.prototype, 'resolve').resolves({
           components: expected,
-          apiVersion: testApiversion,
+          apiVersion: testApiVersionAsString,
         });
         env.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
         const set = await ComponentSet.fromConnection({ usernameOrConnection: connection });
@@ -342,13 +343,17 @@ describe('ComponentSet', () => {
   });
 
   describe('getObject', () => {
-    it('should return an object representing the package manifest', () => {
+    beforeEach(() => {
+      env.stub(coverage, 'getCurrentApiVersion').resolves(testApiVersion);
+    });
+
+    it('should return an object representing the package manifest', async () => {
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
         registry: registryAccess,
         tree: manifestFiles.TREE,
       });
-      expect(set.getObject()).to.deep.equal({
+      expect(await set.getObject()).to.deep.equal({
         Package: {
           types: [
             {
@@ -360,20 +365,20 @@ describe('ComponentSet', () => {
               members: ['b', 'c'],
             },
           ],
+          version: testApiVersionAsString,
         },
       });
     });
 
-    it('should allow the componentSet to set the apiVersion', () => {
+    it('should allow the componentSet to set the apiVersion', async () => {
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
         registry: registryAccess,
         tree: manifestFiles.TREE,
       });
-      set.apiVersion = testApiversion;
-      expect(set.getObject()).to.deep.equal({
+      set.apiVersion = testApiVersionAsString;
+      expect(await set.getObject()).to.deep.equal({
         Package: {
-          fullName: undefined,
           types: [
             {
               name: registry.types.customobjecttranslation.name,
@@ -384,19 +389,19 @@ describe('ComponentSet', () => {
               members: ['b', 'c'],
             },
           ],
-          version: testApiversion,
+          version: testApiVersionAsString,
         },
       });
     });
 
-    it('should return an object representing destructive changes manifest', () => {
+    it('should return an object representing destructive changes manifest', async () => {
       const set = ComponentSet.fromSource({
         fsPaths: [],
         registry: registryAccess,
         tree: manifestFiles.TREE,
         fsDeletePaths: ['.'],
       });
-      expect(set.getObject(DestructiveChangesType.POST)).to.deep.equal({
+      expect(await set.getObject(DestructiveChangesType.POST)).to.deep.equal({
         Package: {
           types: [
             {
@@ -408,18 +413,19 @@ describe('ComponentSet', () => {
               members: ['b', 'c'],
             },
           ],
+          version: testApiVersionAsString,
         },
       });
     });
 
-    it('should return an object representing the package manifest with fullName', () => {
+    it('should return an object representing the package manifest with fullName', async () => {
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
         registry: registryAccess,
         tree: manifestFiles.TREE,
       });
       set.fullName = 'testFullName';
-      expect(set.getObject()).to.deep.equal({
+      expect(await set.getObject()).to.deep.equal({
         Package: {
           fullName: 'testFullName',
           types: [
@@ -432,18 +438,19 @@ describe('ComponentSet', () => {
               members: ['b', 'c'],
             },
           ],
+          version: testApiVersionAsString,
         },
       });
     });
 
-    it('should return an object representing the package manifest with sourceApiVersion', () => {
+    it('should return an object representing the package manifest with sourceApiVersion', async () => {
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
         registry: registryAccess,
         tree: manifestFiles.TREE,
       });
       set.sourceApiVersion = '45.0';
-      expect(set.getObject()).to.deep.equal({
+      expect(await set.getObject()).to.deep.equal({
         Package: {
           types: [
             {
@@ -460,12 +467,12 @@ describe('ComponentSet', () => {
       });
     });
 
-    it('should interpret folder components as members of the type they are a container for', () => {
+    it('should interpret folder components as members of the type they are a container for', async () => {
       const member = { fullName: 'Test_Folder', type: 'Document' };
       const set = new ComponentSet([member], registryAccess);
 
       expect(set.has(member)).to.be.true;
-      expect(set.getObject().Package.types).to.deep.equal([
+      expect((await set.getObject()).Package.types).to.deep.equal([
         {
           name: registry.types.document.name,
           members: ['Test_Folder'],
@@ -473,44 +480,44 @@ describe('ComponentSet', () => {
       ]);
     });
 
-    it('should include required child types as defined in the registry', () => {
+    it('should include required child types as defined in the registry', async () => {
       const set = new ComponentSet([MATCHING_RULES_COMPONENT]);
-      expect(set.getObject().Package.types).to.deep.equal([
+      expect((await set.getObject()).Package.types).to.deep.equal([
         { name: 'MatchingRule', members: ['MatchingRules.My_Account_Matching_Rule'] },
         { name: MATCHING_RULES_COMPONENT.type.name, members: [MATCHING_RULES_COMPONENT.name] },
       ]);
     });
 
-    it('should exclude components that are not addressable as defined in the registry', () => {
+    it('should exclude components that are not addressable as defined in the registry', async () => {
       const type = registry.types.customobjecttranslation.children.types.customfieldtranslation;
       const set = new ComponentSet();
       set.add(new SourceComponent({ name: type.name, type }));
-      expect(set.getObject().Package.types).to.deep.equal([]);
+      expect((await set.getObject()).Package.types).to.deep.equal([]);
     });
 
-    it('should write wildcards and names of types with supportsWildcardAndName=true, regardless of order', () => {
+    it('should write wildcards and names of types with supportsWildcardAndName=true, regardless of order', async () => {
       const type = registry.types.customobject;
       const set = new ComponentSet();
       set.add(new SourceComponent({ name: 'myType', type }));
       set.add(new SourceComponent({ name: '*', type }));
       set.add(new SourceComponent({ name: 'myType2', type }));
       set.add(new SourceComponent({ name: 'myType', type }));
-      expect(set.getObject().Package.types).to.deep.equal([
+      expect((await set.getObject()).Package.types).to.deep.equal([
         { members: ['*', 'myType', 'myType2'], name: 'CustomObject' },
       ]);
     });
 
-    it('should overwrite a singular name with wildcard when supportsWildcardAndName=false', () => {
+    it('should overwrite a singular name with wildcard when supportsWildcardAndName=false', async () => {
       const type = registry.types.apexclass;
       const set = new ComponentSet();
       set.add(new SourceComponent({ name: 'myType', type }));
       set.add(new SourceComponent({ name: '*', type }));
       set.add(new SourceComponent({ name: 'myType2', type }));
       set.add(new SourceComponent({ name: 'myType', type }));
-      expect(set.getObject().Package.types).to.deep.equal([{ members: ['*'], name: 'ApexClass' }]);
+      expect((await set.getObject()).Package.types).to.deep.equal([{ members: ['*'], name: 'ApexClass' }]);
     });
 
-    it('should exclude child components that are not addressable as defined in the registry', () => {
+    it('should exclude child components that are not addressable as defined in the registry', async () => {
       const childType = registry.types.customobjecttranslation.children.types.customfieldtranslation;
       const type = registry.types.customobjecttranslation;
       const set = new ComponentSet();
@@ -518,7 +525,7 @@ describe('ComponentSet', () => {
       const childComp = new SourceComponent({ name: childType.name, type: childType });
       $$.SANDBOX.stub(testComp, 'getChildren').returns([childComp]);
       set.add(testComp);
-      expect(set.getObject().Package.types).to.deep.equal([
+      expect((await set.getObject()).Package.types).to.deep.equal([
         {
           name: 'CustomObjectTranslation',
           members: ['CustomObjectTranslation'],
@@ -529,10 +536,10 @@ describe('ComponentSet', () => {
     /**
      * If component set keys are incorrectly handled, child component names may not be returned properly.
      */
-    it('should correctly return addressable child components', () => {
+    it('should correctly return addressable child components', async () => {
       const set = new ComponentSet([{ fullName: 'MyParent__c.Child__c', type: 'customfield' }], registryAccess);
 
-      expect(set.getObject().Package.types).to.deep.equal([
+      expect((await set.getObject()).Package.types).to.deep.equal([
         {
           name: 'CustomField',
           members: ['MyParent__c.Child__c'],
@@ -542,6 +549,9 @@ describe('ComponentSet', () => {
   });
 
   describe('getPackageXml', () => {
+    beforeEach(() => {
+      env.stub(coverage, 'getCurrentApiVersion').resolves(testApiVersion);
+    });
     it('should return manifest string when initialized from manifest file', async () => {
       const manifest = manifestFiles.ONE_OF_EACH;
       const set = await ComponentSet.fromManifest({
@@ -550,29 +560,29 @@ describe('ComponentSet', () => {
         tree: manifestFiles.TREE,
       });
 
-      const result = set.getPackageXml();
+      const result = await set.getPackageXml();
       const expected = manifest.data.toString();
 
       expect(result).to.equal(expected);
     });
 
-    it('should return manifest string when initialized from source', () => {
+    it('should return manifest string when initialized from source', async () => {
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
         registry: registryAccess,
         tree: manifestFiles.TREE,
       });
-      expect(set.getPackageXml(4).toString()).to.equal(manifestFiles.BASIC.data.toString());
+      expect((await set.getPackageXml(4)).toString()).to.equal(manifestFiles.BASIC.data.toString());
     });
 
-    it('should return destructive changes manifest string when initialized from source', () => {
+    it('should return destructive changes manifest string when initialized from source', async () => {
       const set = ComponentSet.fromSource({
         fsPaths: [],
         registry: registryAccess,
         tree: manifestFiles.TREE,
         fsDeletePaths: ['.'],
       });
-      expect(set.getPackageXml(4, DestructiveChangesType.POST)).to.equal(manifestFiles.BASIC.data.toString());
+      expect(await set.getPackageXml(4, DestructiveChangesType.POST)).to.equal(manifestFiles.BASIC.data.toString());
     });
   });
 

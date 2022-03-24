@@ -31,10 +31,15 @@ import { xmlInFolder } from '../mock';
 import { COMPONENT } from '../mock/type-constants/apexClassConstant';
 import { DECOMPOSED_COMPONENT } from '../mock/type-constants/customObjectConstant';
 import { mockConnection } from '../mock/client';
+import * as coverage from '../../src/registry/coverage';
+import { testApiVersion } from '../mock/manifestConstants';
 
 const env = createSandbox();
 
 describe('MetadataApiRetrieve', () => {
+  beforeEach(() => {
+    env.stub(coverage, 'getCurrentApiVersion').resolves(testApiVersion);
+  });
   afterEach(() => env.restore());
 
   describe('Lifecycle', () => {
@@ -85,7 +90,7 @@ describe('MetadataApiRetrieve', () => {
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
           apiVersion: (await mockConnection(testSetup())).getApiVersion(),
-          unpackaged: toRetrieve.getObject().Package,
+          unpackaged: (await toRetrieve.getObject()).Package,
         });
       });
 
@@ -104,7 +109,7 @@ describe('MetadataApiRetrieve', () => {
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
           apiVersion: (await mockConnection(testSetup())).getApiVersion(),
           packageNames: options.packageOptions,
-          unpackaged: toRetrieve.getObject().Package,
+          unpackaged: (await toRetrieve.getObject()).Package,
         });
       });
 
@@ -123,7 +128,7 @@ describe('MetadataApiRetrieve', () => {
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
           apiVersion: (await mockConnection(testSetup())).getApiVersion(),
           packageNames: [options.packageOptions[0].name],
-          unpackaged: toRetrieve.getObject().Package,
+          unpackaged: (await toRetrieve.getObject()).Package,
         });
       });
 
@@ -142,7 +147,7 @@ describe('MetadataApiRetrieve', () => {
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
           apiVersion: (await mockConnection(testSetup())).getApiVersion(),
           packageNames: [options.packageOptions[0].name],
-          unpackaged: toRetrieve.getObject().Package,
+          unpackaged: (await toRetrieve.getObject()).Package,
         });
       });
 
@@ -631,7 +636,7 @@ describe('MetadataApiRetrieve', () => {
 
     /**
      * This is tested on the assumption that the ComponentWriter result directly
-     * includes children in the returned set, so we don't need to eagrly resolve
+     * includes children in the returned set, so we don't need to eagerly resolve
      * the children of a parent.
      */
     it('should not report content files if component type has children', () => {

@@ -160,7 +160,7 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
         });
         if (target === 'source') {
           // for source convert the package.xml isn't included so write it separately
-          fs.writeFileSync(join(mdapiTempDir, 'package.xml'), source.getPackageXml());
+          fs.writeFileSync(join(mdapiTempDir, 'package.xml'), await source.getPackageXml());
         }
       } catch (e) {
         this.logger.debug(e);

@@ -322,7 +322,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @param destructiveType Optional value for generating objects representing destructive change manifests
    * @returns Object representation of a package manifest
    */
-  public getObject(destructiveType?: DestructiveChangesType): PackageManifestObject {
+  public async getObject(destructiveType?: DestructiveChangesType): Promise<PackageManifestObject> {
+    const version = this.sourceApiVersion ?? this.apiVersion ?? `${await getCurrentApiVersion()}.0`;
+
     // If this ComponentSet has components marked for delete, we need to
     // only include those components in a destructiveChanges.xml and
     // all other components in the regular manifest.
@@ -380,8 +382,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       Package: {
         ...{
           types: typeMembers.sort((a, b) => (a.name > b.name ? 1 : -1)),
-          fullName: this.fullName,
-          version: this.sourceApiVersion ?? this.apiVersion,
+          version,
         },
         ...(this.fullName ? { fullName: this.fullName } : {}),
       },
@@ -399,13 +400,13 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @param indentation Number of spaces to indent lines by.
    * @param forDestructiveChanges Whether to build a manifest for destructive changes.
    */
-  public getPackageXml(indentation = 4, destructiveType?: DestructiveChangesType): string {
+  public async getPackageXml(indentation = 4, destructiveType?: DestructiveChangesType): Promise<string> {
     const j2x = new j2xParser({
       format: true,
       indentBy: new Array(indentation + 1).join(' '),
       ignoreAttributes: false,
     });
-    const toParse = this.getObject(destructiveType);
+    const toParse = await this.getObject(destructiveType);
     toParse.Package[XML_NS_KEY] = XML_NS_URL;
     return XML_DECL.concat(j2x.parse(toParse));
   }

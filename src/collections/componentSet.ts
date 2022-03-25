@@ -393,13 +393,18 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       typeMembers.push({ members: members.sort(), name: typeName });
     }
 
-    return {
+    const pkg: PackageManifestObject = {
       Package: {
         types: typeMembers.sort((a, b) => (a.name > b.name ? 1 : -1)),
         version: this.sourceApiVersion || this.apiVersion,
-        fullName: this.fullName,
       },
     };
+
+    if (this.fullName) {
+      pkg.Package.fullName = this.fullName;
+    }
+
+    return pkg;
   }
 
   /**

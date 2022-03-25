@@ -506,10 +506,12 @@ v55 introduces the following new types.  Here's their current level of support
 |ForecastingFilterCondition|❌|Not supported, but support could be added|
 |IndustriesAutomotiveSettings|✅||
 |InvLatePymntRiskCalcSettings|✅||
+|MarketSegmentDefinition|undefined|undefined|
 |MeetingsSettings|✅||
 |MessagingChannel|undefined|undefined|
 |PaymentsManagementEnabledSettings|✅||
 |RegisteredExternalService|❌|Not supported, but support could be added|
+|SchedulingObjective|❌|Not supported, but support could be added|
 |StreamingAppDataConnector|❌|Not supported, but support could be added|
 |SubscriptionManagementSettings|✅||
 |VoiceSettings|✅||

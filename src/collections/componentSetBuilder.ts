@@ -123,7 +123,7 @@ export class ComponentSetBuilder {
         logger.debug(`Building ComponentSet from targetUsername: ${org.username}`);
         const fromConnection = await ComponentSet.fromConnection({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
-          usernameOrConnection: (await GlobalInfo.create()).aliases.get(org.username) || org.username,
+          usernameOrConnection: (await GlobalInfo.getInstance()).aliases.getUsername(org.username) || org.username,
           // exclude components based on the results of componentFilter function
           // components with namespacePrefix where org.exclude includes manageableState (to exclude managed packages)
           // components with namespacePrefix where manageableState equals undefined (to exclude components e.g. InstalledPackage)

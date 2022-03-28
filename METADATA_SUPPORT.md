@@ -491,13 +491,13 @@ v55 introduces the following new types.  Here's their current level of support
 |ConvReasonReportSegmentDef|❌|Not supported, but support could be added|
 |CustomAddressFieldSettings|✅||
 |DataImportManagementSettings|✅||
-|DecisionMatrixDefinition|❌|Not supported, but support could be added|
-|DecisionMatrixDefinitionVersion|❌|Not supported, but support could be added|
+|DecisionMatrixDefinition|✅||
+|DecisionMatrixDefinitionVersion|✅||
 |DigitalExperience|undefined|undefined|
 |DigitalExperienceBundle|undefined|undefined|
 |DigitalExperienceBundleSetting|undefined|undefined|
-|ExpressionSetDefinition|❌|Not supported, but support could be added|
-|ExpressionSetDefinitionVersion|❌|Not supported, but support could be added|
+|ExpressionSetDefinition|✅||
+|ExpressionSetDefinitionVersion|✅||
 |ExternalDataSrcDescriptor|❌|Not supported, but support could be added|
 |ExternalDataTranField|❌|Not supported, but support could be added|
 |ExternalDataTranObject|❌|Not supported, but support could be added|

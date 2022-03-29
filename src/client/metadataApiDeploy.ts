@@ -102,13 +102,13 @@ export class DeployResult implements MetadataTransferResult {
   }
 
   private getState(message: DeployMessage): ComponentStatus {
-    if (message.created === 'true') {
+    if (message.created === 'true' || message.created === true) {
       return ComponentStatus.Created;
-    } else if (message.changed === 'true') {
+    } else if (message.changed === 'true' || message.changed === true) {
       return ComponentStatus.Changed;
-    } else if (message.deleted === 'true') {
+    } else if (message.deleted === 'true' || message.deleted === true) {
       return ComponentStatus.Deleted;
-    } else if (message.success === 'false') {
+    } else if (message.success === 'false' || message.success === true) {
       return ComponentStatus.Failed;
     }
     return ComponentStatus.Unchanged;

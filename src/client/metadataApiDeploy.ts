@@ -311,14 +311,8 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
 
     const connection = await this.getConnection();
 
-    await new Promise((resolve, reject) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,no-underscore-dangle
-      void connection.metadata
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore _invoke is private on the jsforce metadata object, and cancelDeploy is not an exposed method
-        ._invoke('cancelDeploy', { id: this.id })
-        .then((result) => (result ? reject(result) : resolve(result)));
-    });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,no-underscore-dangle
+    await connection.metadata._invoke('cancelDeploy', { id: this.id });
   }
 
   protected async pre(): Promise<AsyncResult> {

@@ -108,7 +108,7 @@ export class DeployResult implements MetadataTransferResult {
       return ComponentStatus.Changed;
     } else if (message.deleted === 'true' || message.deleted === true) {
       return ComponentStatus.Deleted;
-    } else if (message.success === 'false' || message.success === true) {
+    } else if (message.success === 'false' || message.success === false) {
       return ComponentStatus.Failed;
     }
     return ComponentStatus.Unchanged;

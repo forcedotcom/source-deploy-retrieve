@@ -337,4 +337,15 @@ describe('Registry Validation', () => {
       });
     });
   });
+
+  describe('thou shalt not use .xml as a suffix without strictDir', () => {
+    // this causes lots of cases of mistaken identity
+    const xmlIsMySuffix = Object.values(registry.types).filter((type) => type.suffix === '.xml');
+
+    xmlIsMySuffix.forEach((type) => {
+      it(`${type.name} has strictDir: true`, () => {
+        expect(type.strictDirectoryName).to.equal(true);
+      });
+    });
+  });
 });

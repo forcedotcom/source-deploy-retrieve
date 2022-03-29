@@ -10,6 +10,7 @@ import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { assert, expect } from 'chai';
 import * as fs from 'graceful-fs';
 import { createSandbox, SinonSandbox } from 'sinon';
+import { AnyJson } from '@salesforce/ts-types';
 import { ContainerDeploy } from '../../../src/client/deployStrategies';
 import { nls } from '../../../src/i18n';
 
@@ -27,14 +28,19 @@ describe('Base Deploy Strategy', () => {
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
-    $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig(),
-    });
+    $$.configStubs.GlobalInfo = {
+      contents: {
+        orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
+          [testData.username]: testData as unknown as AnyJson,
+        }),
+      },
+    };
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
         username: testData.username,
       }),
     });
+
     const mockFS = sandboxStub.stub(fs, 'readFileSync');
     mockFS.withArgs('file/path/one.cls', 'utf8').returns('public with sharing class TestAPI {}');
 

@@ -8,7 +8,7 @@
 /* eslint complexity: ["error", 22] */
 
 import * as path from 'path';
-import { Aliases, Logger, SfdxError } from '@salesforce/core';
+import { GlobalInfo, Logger, SfError } from '@salesforce/core';
 import * as fs from 'graceful-fs';
 import { ComponentSet } from '../collections';
 import { RegistryAccess } from '../registry';
@@ -59,7 +59,7 @@ export class ComponentSetBuilder {
         logger.debug(`Building ComponentSet from sourcepath: ${sourcepath.join(', ')}`);
         const fsPaths: string[] = sourcepath.map((filepath) => {
           if (!fs.existsSync(filepath)) {
-            throw new SfdxError(`The sourcepath "${filepath}" is not a valid source file path.`);
+            throw new SfError(`The sourcepath "${filepath}" is not a valid source file path.`);
           }
           return path.resolve(filepath);
         });
@@ -123,7 +123,7 @@ export class ComponentSetBuilder {
         logger.debug(`Building ComponentSet from targetUsername: ${org.username}`);
         const fromConnection = await ComponentSet.fromConnection({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
-          usernameOrConnection: (await Aliases.fetch(org.username)) || org.username,
+          usernameOrConnection: (await GlobalInfo.getInstance()).aliases.getUsername(org.username) || org.username,
           // exclude components based on the results of componentFilter function
           // components with namespacePrefix where org.exclude includes manageableState (to exclude managed packages)
           // components with namespacePrefix where manageableState equals undefined (to exclude components e.g. InstalledPackage)
@@ -140,7 +140,7 @@ export class ComponentSetBuilder {
         // to remain generic to catch missing metadata types regardless of parameters, split on '
         // example message : Missing metadata type definition in registry for id 'NonExistentType'
         const issueType = (e as Error).message.split("'")[1];
-        throw new SfdxError(`The specified metadata type is unsupported: [${issueType}]`);
+        throw new SfError(`The specified metadata type is unsupported: [${issueType}]`);
       } else {
         throw e;
       }

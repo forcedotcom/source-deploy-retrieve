@@ -10,7 +10,7 @@ import * as fs from 'graceful-fs';
 import * as sinon from 'sinon';
 import { assert, expect } from 'chai';
 import { stubMethod } from '@salesforce/ts-sinon';
-import { SfdxError } from '@salesforce/core';
+import { SfError } from '@salesforce/core';
 import { ComponentSet, ComponentSetBuilder, FromSourceOptions } from '../../src';
 
 describe('ComponentSetBuilder', () => {
@@ -132,9 +132,9 @@ describe('ComponentSetBuilder', () => {
           manifest: undefined,
           metadata: undefined,
         });
-        assert(false, 'should have thrown SfdxError');
+        assert(false, 'should have thrown SfError');
       } catch (e: unknown) {
-        const err = e as SfdxError;
+        const err = e as SfError;
         expect(fromSourceStub.notCalled).to.equal(true);
         expect(err.message).to.include(sourcepath[0]);
       }

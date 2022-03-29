@@ -24,9 +24,9 @@
     "node": ">=12.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^2.35.0",
-    "@salesforce/kit": "^1.5.32",
-    "@salesforce/ts-types": "^1.4.2",
+    "@salesforce/core": "^3.7.9",
+    "@salesforce/kit": "^1.5.34",
+    "@salesforce/ts-types": "^1.5.20",
     "archiver": "^5.3.0",
     "fast-xml-parser": "^3.17.4",
     "graceful-fs": "^4.2.8",
@@ -36,13 +36,13 @@
     "xmldom-sfdx-encoding": "^0.1.29"
   },
   "devDependencies": {
-    "@salesforce/dev-config": "^2.1.3",
-    "@salesforce/dev-scripts": "^1.0.2",
+    "jsforce": "2.0.0-beta.7",
+    "@salesforce/dev-config": "^3.0.1",
+    "@salesforce/dev-scripts": "^2.0.1",
     "@salesforce/prettier-config": "^0.0.2",
     "@salesforce/ts-sinon": "^1.1.2",
     "@types/archiver": "^5.1.1",
     "@types/deep-equal-in-any-order": "^1.0.1",
-    "@types/jsforce": "^1.9.38",
     "@types/mime": "2.0.3",
     "@types/mkdirp": "0.5.2",
     "@types/shelljs": "^0.8.9",
@@ -66,7 +66,7 @@
     "got": "^11.8.2",
     "husky": "^7.0.4",
     "lint-staged": "^10.2.11",
-    "mocha": "^8.4.0",
+    "mocha": "^9.1.3",
     "mocha-junit-reporter": "^1.23.3",
     "nyc": "^15.1.0",
     "prettier": "^2.0.5",

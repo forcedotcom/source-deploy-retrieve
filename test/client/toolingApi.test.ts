@@ -9,6 +9,7 @@ import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import { createSandbox, SinonSandbox } from 'sinon';
+import { AnyJson } from '@salesforce/ts-types';
 import { MetadataResolver, SourceComponent } from '../../src/resolve';
 import { ComponentStatus, ToolingApi, ToolingDeployStatus } from '../../src/client';
 import { ContainerDeploy } from '../../src/client/deployStrategies';
@@ -29,9 +30,13 @@ describe('Tooling API tests', () => {
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
-    $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig(),
-    });
+    $$.configStubs.GlobalInfo = {
+      contents: {
+        orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
+          [testData.username]: testData as unknown as AnyJson,
+        }),
+      },
+    };
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
         username: testData.username,

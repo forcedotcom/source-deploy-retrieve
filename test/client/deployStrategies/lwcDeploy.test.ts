@@ -5,18 +5,19 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { join, basename } from 'path';
+import { basename, join } from 'path';
 import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import * as fs from 'graceful-fs';
-import { RecordResult } from 'jsforce';
+import { SaveError, SaveResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
+import { AnyJson } from '@salesforce/ts-types';
 import { nls } from '../../../src/i18n';
 import { LwcDeploy } from '../../../src/client/deployStrategies';
 import { LightningComponentResource, ToolingCreateResult } from '../../../src/client/types';
 import { SourceComponent, VirtualTreeContainer } from '../../../src/resolve';
-import { ToolingDeployStatus, ComponentStatus } from '../../../src/client';
+import { ComponentStatus, ToolingDeployStatus } from '../../../src/client';
 import { registry } from '../../../src';
 
 const $$ = testSetup();
@@ -84,9 +85,13 @@ describe('LWC Deploy Strategy', () => {
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
-    $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig(),
-    });
+    $$.configStubs.GlobalInfo = {
+      contents: {
+        orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
+          [testData.username]: testData as unknown as AnyJson,
+        }),
+      },
+    };
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
         username: testData.username,
@@ -113,7 +118,7 @@ describe('LWC Deploy Strategy', () => {
       success: true,
       id: '1dcxxx000000060',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     const lwcDeploy = new LwcDeploy(mockConnection);
     lwcDeploy.component = lwcComponent;
@@ -189,7 +194,7 @@ describe('LWC Deploy Strategy', () => {
       success: true,
       id: '1dcxxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const lwcDeploy = new LwcDeploy(mockConnection);
@@ -210,7 +215,7 @@ describe('LWC Deploy Strategy', () => {
       success: true,
       id: '1dcxxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const lwcDeploy = new LwcDeploy(mockConnection);
@@ -229,8 +234,8 @@ describe('LWC Deploy Strategy', () => {
     sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',
-      errors: ['Unexpected error while creating record'],
-    } as RecordResult);
+      errors: [{ message: 'Unexpected error while creating record', errorCode: '1' } as SaveError],
+    } as SaveResult);
 
     sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const lwcDeploy = new LwcDeploy(mockConnection);
@@ -250,7 +255,7 @@ describe('LWC Deploy Strategy', () => {
       success: true,
       id: '1dcxxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
 
@@ -288,7 +293,7 @@ describe('LWC Deploy Strategy', () => {
       success: true,
       id: '1dcxxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     sandboxStub
       .stub(mockConnection.tooling, 'update')

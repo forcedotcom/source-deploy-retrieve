@@ -50,7 +50,6 @@ export {
   VFRecord,
   AuraRecord,
   LWCRecord,
-  ToolingCreateResult,
   AuraDefinition,
   LightningComponentResource,
 } from './client';

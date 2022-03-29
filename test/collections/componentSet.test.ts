@@ -6,9 +6,11 @@
  */
 import { fail } from 'assert';
 import { join } from 'path';
-import { testSetup } from '@salesforce/core/lib/testSetup';
+import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
+import { AnyJson } from '@salesforce/ts-types';
+import { AuthInfo, Connection } from '@salesforce/core';
 import {
   ComponentSet,
   ConnectionResolver,
@@ -279,8 +281,18 @@ describe('ComponentSet', () => {
           apiVersion: '50.0',
         });
         env.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
+        const testData = new MockTestOrgData();
+        const username = 'test@foobar.com';
+
+        $$.configStubs.GlobalInfo = {
+          contents: {
+            orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
+              [username]: testData as unknown as AnyJson,
+            }),
+          },
+        };
         const set = await ComponentSet.fromConnection({
-          usernameOrConnection: 'test@foobar.com',
+          usernameOrConnection: username,
           apiVersion: '50.0',
         });
 
@@ -291,13 +303,27 @@ describe('ComponentSet', () => {
       });
 
       it('should initialize using an username', async () => {
-        const connection = await mockConnection($$);
+        const testData = new MockTestOrgData();
+        const username = 'test@foobar.com';
+        $$.configStubs.GlobalInfo = {
+          contents: {
+            orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
+              [username]: testData as unknown as AnyJson,
+            }),
+          },
+        };
+        const connection = await Connection.create({
+          authInfo: await AuthInfo.create({
+            username: 'test@foobar.com',
+          }),
+        });
         const expected: MetadataComponent[] = [
           {
             fullName: 'Test',
             type: registry.types.apexclass,
           },
         ];
+
         const resolveStub = env.stub(ConnectionResolver.prototype, 'resolve').resolves({
           components: expected,
           apiVersion: connection.getApiVersion(),

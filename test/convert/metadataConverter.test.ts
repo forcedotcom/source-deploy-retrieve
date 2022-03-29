@@ -16,6 +16,7 @@ import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { ConversionError, LibraryError } from '../../src/errors';
 import { COMPONENTS } from '../mock/type-constants/documentFolderConstant';
 import { ComponentSet, DestructiveChangesType, MetadataConverter, registry, SourceComponent } from '../../src';
+import * as coverage from '../../src/registry/coverage';
 import {
   DECOMPOSED_CHILD_COMPONENT_1,
   DECOMPOSED_CHILD_COMPONENT_2,
@@ -33,6 +34,7 @@ describe('MetadataConverter', () => {
   const packageName = 'test';
   const outputDirectory = join('path', 'to', 'output');
   const packageOutput = join(outputDirectory, packageName);
+  const testApiversion = '50.0';
 
   /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
   function validatePipelineArgs(pipelineArgs: any[], targetFormat = 'metadata'): void {
@@ -47,6 +49,7 @@ describe('MetadataConverter', () => {
     pipelineStub = env.stub(streams, 'pipeline').resolves();
     writeFileStub = env.stub(fs.promises, 'writeFile').resolves();
     env.stub(fs, 'createWriteStream');
+    env.stub(coverage, 'getCurrentApiVersion').resolves(50);
   });
 
   afterEach(() => env.restore());
@@ -143,7 +146,7 @@ describe('MetadataConverter', () => {
       const timestamp = 123456;
       const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
       env.stub(Date, 'now').returns(timestamp);
-      const expectedContents = new ComponentSet(components).getPackageXml();
+      const expectedContents = await new ComponentSet(components).getPackageXml();
 
       await converter.convert(components, 'metadata', { type: 'directory', outputDirectory });
 
@@ -170,8 +173,8 @@ describe('MetadataConverter', () => {
         xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
       });
       const compSet = new ComponentSet([component1, component2]);
-      const expectedDestructiveContents = compSet.getPackageXml(undefined, DestructiveChangesType.POST);
-      const expectedContents = compSet.getPackageXml();
+      const expectedDestructiveContents = await compSet.getPackageXml(undefined, DestructiveChangesType.POST);
+      const expectedContents = await compSet.getPackageXml();
 
       await converter.convert(compSet, 'metadata', { type: 'directory', outputDirectory });
 
@@ -203,8 +206,8 @@ describe('MetadataConverter', () => {
       });
       const compSet = new ComponentSet([component1, component2]);
       compSet.setDestructiveChangesType(DestructiveChangesType.PRE);
-      const expectedDestructiveContents = compSet.getPackageXml(undefined, DestructiveChangesType.PRE);
-      const expectedContents = compSet.getPackageXml();
+      const expectedDestructiveContents = await compSet.getPackageXml(undefined, DestructiveChangesType.PRE);
+      const expectedContents = await compSet.getPackageXml();
 
       await converter.convert(compSet, 'metadata', { type: 'directory', outputDirectory });
 
@@ -224,8 +227,8 @@ describe('MetadataConverter', () => {
       const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
       env.stub(Date, 'now').returns(timestamp);
       const compSet = new ComponentSet(components);
-      compSet.sourceApiVersion = '45.0';
-      const expectedContents = compSet.getPackageXml();
+      compSet.sourceApiVersion = testApiversion;
+      const expectedContents = await compSet.getPackageXml();
 
       await converter.convert(compSet, 'metadata', { type: 'directory', outputDirectory });
 
@@ -234,7 +237,7 @@ describe('MetadataConverter', () => {
         join(packagePath, MetadataConverter.PACKAGE_XML_FILE),
         expectedContents,
       ]);
-      expect(expectedContents).to.contain(`<version>${compSet.sourceApiVersion}</version>`);
+      expect(expectedContents).to.contain(`<version>${testApiversion}</version>`);
     });
 
     it('should write the fullName entry when packageName is provided', async () => {
@@ -244,7 +247,7 @@ describe('MetadataConverter', () => {
       env.stub(Date, 'now').returns(timestamp);
       const cs = new ComponentSet(components);
       cs.fullName = packageName;
-      const expectedContents = cs.getPackageXml();
+      const expectedContents = await cs.getPackageXml();
 
       await converter.convert(components, 'metadata', {
         type: 'directory',
@@ -334,7 +337,7 @@ describe('MetadataConverter', () => {
     });
 
     it('should write manifest for metadata format conversion', async () => {
-      const expectedContents = new ComponentSet(components).getPackageXml();
+      const expectedContents = await new ComponentSet(components).getPackageXml();
       const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
 
       await converter.convert(components, 'metadata', { type: 'zip' });
@@ -356,8 +359,10 @@ describe('MetadataConverter', () => {
         xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
       });
       const compSet = new ComponentSet([component1, component2]);
-      const expectedDestructiveContents = compSet.getPackageXml(undefined, DestructiveChangesType.POST);
-      const expectedContents = compSet.getPackageXml();
+      compSet.apiVersion = testApiversion;
+
+      const expectedDestructiveContents = await compSet.getPackageXml(undefined, DestructiveChangesType.POST);
+      const expectedContents = await compSet.getPackageXml();
       const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
 
       await converter.convert(compSet, 'metadata', { type: 'zip' });
@@ -383,9 +388,10 @@ describe('MetadataConverter', () => {
         xml: DECOMPOSED_CHILD_COMPONENT_2.xml,
       });
       const compSet = new ComponentSet([component1, component2]);
+      compSet.apiVersion = testApiversion;
       compSet.setDestructiveChangesType(DestructiveChangesType.PRE);
-      const expectedDestructiveContents = compSet.getPackageXml(4, DestructiveChangesType.PRE);
-      const expectedContents = compSet.getPackageXml();
+      const expectedDestructiveContents = await compSet.getPackageXml(4, DestructiveChangesType.PRE);
+      const expectedContents = await compSet.getPackageXml();
       const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
 
       await converter.convert(compSet, 'metadata', { type: 'zip' });

@@ -17,8 +17,8 @@ export interface PackageTypeMembers {
 export interface PackageManifestObject {
   Package: {
     types: PackageTypeMembers[];
-    version?: string;
-    fullName: string;
+    version: string;
+    fullName?: string;
     [XML_NS_KEY]?: string;
   };
 }

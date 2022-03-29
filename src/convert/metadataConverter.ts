@@ -51,7 +51,7 @@ export class MetadataConverter {
           if (output.packageName) {
             cs.fullName = output.packageName;
           }
-          manifestContents = cs.getPackageXml();
+          manifestContents = await cs.getPackageXml();
           packagePath = this.getPackagePath(output);
           defaultDirectory = packagePath;
           writer = new StandardWriter(packagePath);
@@ -63,12 +63,14 @@ export class MetadataConverter {
             if (destructiveChangesTypes.length) {
               // for each of the destructive changes in the component set, convert and write the correct metadata
               // to each manifest
-              destructiveChangesTypes.map((destructiveChangesType) => {
-                const file = this.getDestructiveManifest(destructiveChangesType);
-                const destructiveManifestContents = cs.getPackageXml(4, destructiveChangesType);
-                const destructiveManifestPath = join(packagePath, file);
-                tasks.push(promises.writeFile(destructiveManifestPath, destructiveManifestContents));
-              });
+              tasks.push(
+                destructiveChangesTypes.map(async (destructiveChangesType) =>
+                  promises.writeFile(
+                    join(packagePath, this.getDestructiveManifest(destructiveChangesType)),
+                    await cs.getPackageXml(4, destructiveChangesType)
+                  )
+                )
+              );
             }
           }
           break;
@@ -76,7 +78,7 @@ export class MetadataConverter {
           if (output.packageName) {
             cs.fullName = output.packageName;
           }
-          manifestContents = cs.getPackageXml();
+          manifestContents = await cs.getPackageXml();
           packagePath = this.getPackagePath(output);
           defaultDirectory = packagePath;
           writer = new ZipWriter(packagePath);
@@ -87,9 +89,9 @@ export class MetadataConverter {
             if (destructiveChangesTypes.length) {
               // for each of the destructive changes in the component set, convert and write the correct metadata
               // to each manifest
-              destructiveChangesTypes.map((destructiveChangeType) => {
+              destructiveChangesTypes.map(async (destructiveChangeType) => {
                 const file = this.getDestructiveManifest(destructiveChangeType);
-                const destructiveManifestContents = cs.getPackageXml(4, destructiveChangeType);
+                const destructiveManifestContents = await cs.getPackageXml(4, destructiveChangeType);
                 (writer as ZipWriter).addToZip(destructiveManifestContents, file);
               });
             }

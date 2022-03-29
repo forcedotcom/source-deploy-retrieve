@@ -197,7 +197,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
     const connection = await this.getConnection();
     const requestBody: RetrieveRequest = {
       apiVersion: this.components.apiVersion ?? (await connection.retrieveMaxApiVersion()),
-      unpackaged: this.components.getObject().Package,
+      unpackaged: (await this.components.getObject()).Package,
     };
 
     // if we're retrieving with packageNames add it

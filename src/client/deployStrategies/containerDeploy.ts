@@ -141,13 +141,13 @@ export class ContainerDeploy extends BaseDeploy {
     }
 
     for (const message of messages) {
-      if (message.changed) {
+      if (message.changed === true || message.changed === 'true') {
         componentDeployment.status = ComponentStatus.Changed;
-      } else if (message.created) {
+      } else if (message.created === true || message.created === 'true') {
         componentDeployment.status = ComponentStatus.Created;
-      } else if (message.deleted) {
+      } else if (message.deleted === true || message.deleted === 'true') {
         componentDeployment.status = ComponentStatus.Deleted;
-      } else if (!message.success) {
+      } else if (message.success === false || message.success === 'false') {
         componentDeployment.status = ComponentStatus.Failed;
         componentDeployment.diagnostics.push({
           error: message.problem,

@@ -39,7 +39,7 @@ export class MetadataConverter {
 
       let manifestContents;
       const isSource = targetFormat === 'source';
-      const tasks = [];
+      const tasks: Array<Promise<void>> = [];
 
       let writer: ComponentWriter;
       let mergeSet: ComponentSet;
@@ -64,7 +64,7 @@ export class MetadataConverter {
               // for each of the destructive changes in the component set, convert and write the correct metadata
               // to each manifest
               tasks.push(
-                destructiveChangesTypes.map(async (destructiveChangesType) =>
+                ...destructiveChangesTypes.map(async (destructiveChangesType) =>
                   promises.writeFile(
                     join(packagePath, this.getDestructiveManifest(destructiveChangesType)),
                     await cs.getPackageXml(4, destructiveChangesType)

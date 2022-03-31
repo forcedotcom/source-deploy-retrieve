@@ -174,8 +174,8 @@ export class MetadataResolver {
           // any of the following 3 options is considered a good match
           // mixedContent and bundles don't have a suffix to match
           ['mixedContent', 'bundle'].includes(type.strategies?.adapter) ||
-          // the suffix matches the type we think it is
-          (type.suffix && fsPath.endsWith(`${type.suffix}${META_XML_SUFFIX}`)) ||
+          // the file suffix (in source or mdapi format) matches the type suffix we think it is
+          (type.suffix && [type.suffix, `${type.suffix}${META_XML_SUFFIX}`].some((s) => fsPath.endsWith(s))) ||
           // the type has children and the path also includes THAT directory
           (type.children?.types &&
             Object.values(type.children?.types)

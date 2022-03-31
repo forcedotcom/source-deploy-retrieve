@@ -299,7 +299,7 @@ describe('MetadataApiRetrieve', () => {
             merge: true,
             successes: toRetrieve,
           });
-          env.stub(fs, 'writeFileSync');
+          env.stub(fs.promises, 'writeFile');
 
           await operation.start();
           await operation.pollStatus();

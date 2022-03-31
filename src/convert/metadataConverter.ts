@@ -12,7 +12,7 @@ import { ConversionError, LibraryError } from '../errors';
 import { SourcePath } from '../common';
 import { ComponentSet, DestructiveChangesType } from '../collections';
 import { RegistryAccess } from '../registry';
-import { ComponentConverter, ComponentReader, ComponentWriter, pipeline, StandardWriter, ZipWriter } from './streams';
+import { ComponentConverter, ComponentReader, pipeline, StandardWriter, ZipWriter } from './streams';
 import { ConvertOutputConfig, ConvertResult, DirectoryConfig, SfdxFileFormat, ZipConfig } from './types';
 
 export class MetadataConverter {
@@ -41,7 +41,7 @@ export class MetadataConverter {
       const isSource = targetFormat === 'source';
       const tasks: Array<Promise<void>> = [];
 
-      let writer: ComponentWriter;
+      let writer: StandardWriter | ZipWriter;
       let mergeSet: ComponentSet;
       let packagePath: SourcePath;
       let defaultDirectory: SourcePath;
@@ -57,21 +57,17 @@ export class MetadataConverter {
           writer = new StandardWriter(packagePath);
           if (!isSource) {
             const manifestPath = join(packagePath, MetadataConverter.PACKAGE_XML_FILE);
-            tasks.push(promises.writeFile(manifestPath, manifestContents));
-            // For deploying destructive changes
-            const destructiveChangesTypes = cs.getTypesOfDestructiveChanges();
-            if (destructiveChangesTypes.length) {
-              // for each of the destructive changes in the component set, convert and write the correct metadata
-              // to each manifest
-              tasks.push(
-                ...destructiveChangesTypes.map(async (destructiveChangesType) =>
-                  promises.writeFile(
-                    join(packagePath, this.getDestructiveManifest(destructiveChangesType)),
-                    await cs.getPackageXml(4, destructiveChangesType)
-                  )
+            tasks.push(
+              promises.writeFile(manifestPath, manifestContents),
+              ...cs.getTypesOfDestructiveChanges().map(async (destructiveChangesType) =>
+                // for each of the destructive changes in the component set, convert and write the correct metadata
+                // to each manifest
+                promises.writeFile(
+                  join(packagePath, this.getDestructiveManifest(destructiveChangesType)),
+                  await cs.getPackageXml(4, destructiveChangesType)
                 )
-              );
-            }
+              )
+            );
           }
           break;
         case 'zip':
@@ -83,17 +79,14 @@ export class MetadataConverter {
           defaultDirectory = packagePath;
           writer = new ZipWriter(packagePath);
           if (!isSource) {
-            (writer as ZipWriter).addToZip(manifestContents, MetadataConverter.PACKAGE_XML_FILE);
-            // For deploying destructive changes
-            const destructiveChangesTypes = cs.getTypesOfDestructiveChanges();
-            if (destructiveChangesTypes.length) {
-              // for each of the destructive changes in the component set, convert and write the correct metadata
-              // to each manifest
-              destructiveChangesTypes.map(async (destructiveChangeType) => {
-                const file = this.getDestructiveManifest(destructiveChangeType);
-                const destructiveManifestContents = await cs.getPackageXml(4, destructiveChangeType);
-                (writer as ZipWriter).addToZip(destructiveManifestContents, file);
-              });
+            writer.addToZip(manifestContents, MetadataConverter.PACKAGE_XML_FILE);
+            // for each of the destructive changes in the component set, convert and write the correct metadata
+            // to each manifest
+            for (const destructiveChangeType of cs.getTypesOfDestructiveChanges()) {
+              writer.addToZip(
+                await cs.getPackageXml(4, destructiveChangeType),
+                this.getDestructiveManifest(destructiveChangeType)
+              );
             }
           }
           break;
@@ -117,8 +110,7 @@ export class MetadataConverter {
         new ComponentConverter(targetFormat, this.registry, mergeSet, defaultDirectory),
         writer
       );
-      tasks.push(conversionPipeline);
-      await Promise.all(tasks);
+      await Promise.all([conversionPipeline, ...tasks]);
 
       const result: ConvertResult = { packagePath };
       if (output.type === 'zip' && !packagePath) {

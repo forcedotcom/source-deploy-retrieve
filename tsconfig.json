@@ -4,7 +4,10 @@
     // Needed in order to import metadataRegistry.json
     "resolveJsonModule": true,
     "rootDir": ".",
-    "outDir": "lib"
+    "outDir": "lib",
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {"@salesforce/kit": ["node_modules/@salesforce/kit"]},
   },
   "include": ["./src/**/*.ts", "./src/registry/metadataRegistry.json", "./src/registry/stdValueSetRegistry.json"],
   "exclude": ["node_modules", "lib", "examples"]

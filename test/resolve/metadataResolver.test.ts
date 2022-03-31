@@ -182,6 +182,21 @@ describe('MetadataResolver', () => {
         expect(mdResolver.getComponentsFromPath(path)).to.deep.equal([expectedComponent]);
       });
 
+      it('Should determine type for EmailServicesFunction metadata file (mdapi format)', () => {
+        const path = join('unpackaged', 'emailservices', 'MyEmailServices.xml');
+        const treeContainer = VirtualTreeContainer.fromFilePaths([path]);
+        const mdResolver = new MetadataResolver(undefined, treeContainer);
+        const expectedComponent = new SourceComponent(
+          {
+            name: 'MyEmailServices',
+            type: registry.types.emailservicesfunction,
+            xml: path,
+          },
+          treeContainer
+        );
+        expect(mdResolver.getComponentsFromPath(path)).to.deep.equal([expectedComponent]);
+      });
+
       it('Should determine type for path of mixed content type', () => {
         const path = mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[1];
         const access = testUtil.createMetadataResolver([

@@ -5,36 +5,49 @@
 - [Introduction](#introduction)
 - [Symbol Key](#symbol-key)
 - [Metadata Registry](#metadata-registry)
-  - [The registry.json file](#the-registryjson-file)
-  - [Updating the registry.json file](#updating-the-registryjson-file)
+  - [Overview](#overview)
+  - [Metadata registry file](#metadata-registry-file)
+  - [Updating the Metadata registry file](#updating-the-metadata-registry-file)
   - [The registry object](#the-registry-object)
   - [Querying registry data](#querying-registry-data)
 - [Component Resolution](#component-resolution)
+  - [Overview](#overview-1)
   - [Resolving from metadata files](#resolving-from-metadata-files)
   - [Resolving from a manifest file (package.xml)](#resolving-from-a-manifest-file-packagexml)
   - [Tree containers](#tree-containers)
     - [Creating mock components with the VirtualTreeContainer](#creating-mock-components-with-the-virtualtreecontainer)
 - [Component Packaging](#component-packaging)
+  - [Overview](#overview-2)
   - [Converting metadata](#converting-metadata)
   - [The conversion pipeline](#the-conversion-pipeline)
     - [ComponentReader](#componentreader)
     - [ComponentConverter](#componentconverter)
     - [ComponentWriter](#componentwriter)
     - [ConvertContext](#convertcontext)
-    - [Example code](#in-decomposedmetadatatransformerts)
+    - [In decomposedMetadataTransformer.ts](#in-decomposedmetadatatransformerts)
+    - [In convertContext.ts](#in-convertcontextts)
 - [Component Merging](#component-merging)
-  - [CustomObjects across multiple package directories](#customobjects-across-multiple-package-directories)
+  - [Overview](#overview-3)
+  - [**CustomObjects across multiple package directories**](#customobjects-across-multiple-package-directories)
 - [Component Sets](#component-sets)
+  - [Overview](#overview-4)
   - [Creating a set](#creating-a-set)
-  - [Initializing a set from metadata files](#initializing-a-set-from-metadata-files)
-  - [Initializing a set from a manifest file](#initializing-a-set-from-a-manifest-file)
+  - [**Initializing a set from metadata files**](#initializing-a-set-from-metadata-files)
+  - [**Initializing a set from a manifest file**](#initializing-a-set-from-a-manifest-file)
   - [Lazy pipeline methods](#lazy-pipeline-methods)
 - [Deploying and Retrieving](#deploying-and-retrieving)
+  - [Overview](#overview-5)
   - [Establishing an org connection](#establishing-an-org-connection)
   - [Deploying](#deploying)
-    - [Example code](#deploy-with-a-source-path)
+    - [Deploy with a source path](#deploy-with-a-source-path)
+    - [Deploy with a manifest file](#deploy-with-a-manifest-file)
+    - [Canceling a deploy](#canceling-a-deploy)
+    - [Make requests with an existing deploy](#make-requests-with-an-existing-deploy)
   - [Retrieving](#retrieving)
-    - [Example code](#retrieve-with-a-source-path)
+    - [Retrieve with a source path](#retrieve-with-a-source-path)
+    - [Retrieve with a manifest file](#retrieve-with-a-manifest-file)
+    - [Canceling a retrieve](#canceling-a-retrieve)
+    - [Make requests with an existing retrieve](#make-requests-with-an-existing-retrieve)
 - [Further Examples](#further-examples)
 
 ## Introduction
@@ -69,7 +82,7 @@ SDR was built to accomplish the task of deploying and retrieving metadata. There
 
 The metadata registry is the foundation of the library. It is a module to describe available metadata types on the platform, provide metadata about them (metadata of metadata woah), and other configuration. It is based off of the [describeMetadata()](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_describe.htm) API call, which provides information such as a type’s file suffix, directory name of its component files, whether or not components live in a folder type, etc. Additional information may also be added to a type definition to support functionality in the library. Not only is it an index of metadata types, but it also contains indexes on properties of metadata types to increase performance on certain operations — more on this later.
 
-### The [registry.json](https://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/registry/registry.json) file
+### [Metadata registry file]
 
 The config file consists of a handful of different indexes.
 
@@ -87,9 +100,9 @@ The config file consists of a handful of different indexes.
 
 `apiVersion` is meant to reflect the api version the registry configuration is aligned with. It’s also used as the default api version for a handful of operations like generating package XMLs or deploying/retrieving.
 
-### Updating the registry.json file
+### Updating the [Metadata registry file]
 
-This file is large and luckily, not entirely crafted by hand. And because new metadata types are being added to the platform each release, we’ll need to update the registry.json file. The update-registry module in the scripts folder automatically updates the registry as best it can using a describeMetadata() call against a provided Salesforce org, without overwriting manual changes. It also attempts to update the indexes listed in the previous section. When generating a new version of the registry, it’s important to manually review the changes to ensure they make sense and aren’t destructive. When in doubt, test functionality with the new version. See [Contributing Metadata Types to the Registry](./contributing/metadata.md) in the development README on how to invoke the script with Yarn.
+This file is large and luckily, not entirely crafted by hand. And because new metadata types are being added to the platform each release, we’ll need to update the [Metadata registry file]. The update-registry module in the scripts folder automatically updates the registry as best it can using a describeMetadata() call against a provided Salesforce org, without overwriting manual changes. It also attempts to update the indexes listed in the previous section. When generating a new version of the registry, it’s important to manually review the changes to ensure they make sense and aren’t destructive. When in doubt, test functionality with the new version. See [Contributing Metadata Types to the Registry](./contributing/metadata.md) in the development README on how to invoke the script with Yarn.
 
 Unfortunately. we sometimes need to manually change a type definition, albeit rarely. The `typeOverride.json` file allows us to overwrite any updates the script attempts to make that we don’t want to happen.
 
@@ -99,7 +112,7 @@ Unfortunately. we sometimes need to manually change a type definition, albeit ra
 
 ### The registry object
 
-The library exports at the public API level a JavaScript object version of the registry.json file. This object is also used internally to reference registry data. If a consumer finds themselves needing references to metadata types or describe information, they can use this object:
+The library exports at the public API level a JavaScript object version of the [Metadata registry file]. This object is also used internally to reference registry data. If a consumer finds themselves needing references to metadata types or describe information, they can use this object:
 
 ```
 import { registry } from '@salesforce/source-deploy-retrieve'
@@ -894,3 +907,5 @@ import { MetadataApiRetrieve } from '@salesforce/source-deploy-retrieve'
 ## Further Examples
 
 For more code snippet examples similar to those found here, see the [examples](https://github.com/forcedotcom/source-deploy-retrieve/tree/main/examples) folder of the repository.
+
+[metadata registry file]: https://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/registry/metadataRegistry.json

@@ -2,6 +2,14 @@
 
 You can view the existing metadata coverage by release using [METADATA_SUPPORT.md](../METADATA_SUPPORT.md)
 
+- It can be updated by running
+
+```shell
+yarn update-supported-metadata
+```
+
+- The above script is run automatically on `git push` updating the [METADATA_SUPPORT.md](../METADATA_SUPPORT.md) file and committing the changes.
+
 Got questions?
 
 - If you work for Salesforce, [#platform-cli](https://salesforce-internal.slack.com/archives/C01LKDT1P6J).

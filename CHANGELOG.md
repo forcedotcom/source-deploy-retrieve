@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.12.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.6...v5.12.7) (2022-04-01)
+
+### Bug Fixes
+
+- resolve strictDirectoryName types in mdapi format ([#601](https://github.com/forcedotcom/source-deploy-retrieve/issues/601)) ([823966e](https://github.com/forcedotcom/source-deploy-retrieve/commit/823966e8e003151c97700a397d467a794794e902))
+
 ### [5.12.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.5...v5.12.6) (2022-03-28)
 
 ### [5.12.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.4...v5.12.5) (2022-03-25)

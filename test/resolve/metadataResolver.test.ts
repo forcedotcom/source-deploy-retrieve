@@ -142,6 +142,61 @@ describe('MetadataResolver', () => {
         expect(access.getComponentsFromPath(path)).to.deep.equal([matchingContentFile.COMPONENT]);
       });
 
+      it('Should determine type for metadata file with known suffix and strictDirectoryName', () => {
+        // CustomSite is an example.  The conditions are:
+        //   1. Type has "strictDirectoryName": true
+        //   2. Type strategy adapter is neither "mixedContent" nor "bundle"
+        //   3. Type doesn't have children
+        //   4. mdapi format file path (E_Bikes.site)
+        const path = join('unpackaged', 'sites', 'E_Bikes.site');
+        const treeContainer = VirtualTreeContainer.fromFilePaths([path]);
+        const mdResolver = new MetadataResolver(undefined, treeContainer);
+        const expectedComponent = new SourceComponent(
+          {
+            name: 'E_Bikes',
+            type: registry.types.customsite,
+            xml: path,
+          },
+          treeContainer
+        );
+        expect(mdResolver.getComponentsFromPath(path)).to.deep.equal([expectedComponent]);
+      });
+
+      it('Should determine type for source file with known suffix and strictDirectoryName', () => {
+        // CustomSite is an example.  The conditions are:
+        //   1. Type has "strictDirectoryName": true
+        //   2. Type strategy adapter is neither "mixedContent" nor "bundle"
+        //   3. Type doesn't have children
+        //   4. source format file path (E_Bikes.site-meta.xml)
+        const path = join('unpackaged', 'sites', 'E_Bikes.site-meta.xml');
+        const treeContainer = VirtualTreeContainer.fromFilePaths([path]);
+        const mdResolver = new MetadataResolver(undefined, treeContainer);
+        const expectedComponent = new SourceComponent(
+          {
+            name: 'E_Bikes',
+            type: registry.types.customsite,
+            xml: path,
+          },
+          treeContainer
+        );
+        expect(mdResolver.getComponentsFromPath(path)).to.deep.equal([expectedComponent]);
+      });
+
+      it('Should determine type for EmailServicesFunction metadata file (mdapi format)', () => {
+        const path = join('unpackaged', 'emailservices', 'MyEmailServices.xml');
+        const treeContainer = VirtualTreeContainer.fromFilePaths([path]);
+        const mdResolver = new MetadataResolver(undefined, treeContainer);
+        const expectedComponent = new SourceComponent(
+          {
+            name: 'MyEmailServices',
+            type: registry.types.emailservicesfunction,
+            xml: path,
+          },
+          treeContainer
+        );
+        expect(mdResolver.getComponentsFromPath(path)).to.deep.equal([expectedComponent]);
+      });
+
       it('Should determine type for path of mixed content type', () => {
         const path = mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[1];
         const access = testUtil.createMetadataResolver([

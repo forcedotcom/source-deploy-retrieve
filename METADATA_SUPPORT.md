@@ -499,8 +499,6 @@ v55 introduces the following new types.  Here's their current level of support
 |ExpressionSetDefinition|✅||
 |ExpressionSetDefinitionVersion|✅||
 |ExternalDataSrcDescriptor|❌|Not supported, but support could be added|
-|ExternalDataTranField|❌|Not supported, but support could be added|
-|ExternalDataTranObject|❌|Not supported, but support could be added|
 |FlowTest|✅||
 |ForecastingFilter|❌|Not supported, but support could be added|
 |ForecastingFilterCondition|❌|Not supported, but support could be added|
@@ -511,10 +509,11 @@ v55 introduces the following new types.  Here's their current level of support
 |MessagingChannel|undefined|undefined|
 |PaymentsManagementEnabledSettings|✅||
 |RegisteredExternalService|❌|Not supported, but support could be added|
-|SchedulingObjective|❌|Not supported, but support could be added|
+|SchedulingObjective|undefined|undefined|
 |StreamingAppDataConnector|❌|Not supported, but support could be added|
 |SubscriptionManagementSettings|✅||
 |VoiceSettings|✅||
+|WarrantyLifecycleMgmtSettings|✅||
 
 ## Additional Types
 

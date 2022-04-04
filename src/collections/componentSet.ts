@@ -5,8 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 /* eslint  @typescript-eslint/unified-signatures:0 */
+
 import { j2xParser } from 'fast-xml-parser';
-import { AuthInfo, Connection, Logger } from '@salesforce/core';
+
+import { AuthInfo, Connection, Lifecycle, Logger } from '@salesforce/core';
+
 import {
   MetadataApiDeploy,
   MetadataApiDeployOptions,
@@ -15,26 +18,26 @@ import {
 } from '../client';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSetError } from '../errors';
+import { MetadataType, RegistryAccess } from '../registry';
 import {
   ComponentLike,
+  ConnectionResolver,
   ManifestResolver,
   MetadataComponent,
   MetadataMember,
   MetadataResolver,
-  ConnectionResolver,
   SourceComponent,
   TreeContainer,
 } from '../resolve';
-import { MetadataType, RegistryAccess } from '../registry';
+import { LazyCollection } from './lazyCollection';
 import {
   DestructiveChangesType,
+  FromConnectionOptions,
   FromManifestOptions,
   FromSourceOptions,
-  FromConnectionOptions,
   PackageManifestObject,
   PackageTypeMembers,
 } from './types';
-import { LazyCollection } from './lazyCollection';
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
@@ -292,6 +295,20 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     const mdapiDeploy = new MetadataApiDeploy(operationOptions);
     await mdapiDeploy.start();
+
+    // Creates an array of unique metadata types to be deployed, uses Set to avoid duplicates.
+    const listOfMetadataTypesDeployed = Array.from(new Set(toDeploy.map((c) => c.type.name)));
+
+    void Lifecycle.getInstance().emitTelemetry({
+      eventName: 'metadata_api_deploy',
+      library: 'SDR',
+      function: 'ComponentSet.deploy',
+      totalNumberOfComponents: this.size,
+      numberOfComponentsDeployed: toDeploy.length,
+      componentsDeployed: listOfMetadataTypesDeployed.toString(),
+      componentsDeployedTruncated: listOfMetadataTypesDeployed.length < 8000 ? false : true,
+    });
+
     return mdapiDeploy;
   }
 

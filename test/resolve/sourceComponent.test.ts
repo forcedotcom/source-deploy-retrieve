@@ -206,6 +206,22 @@ describe('SourceComponent', () => {
       expect(result).to.deep.equal(expected);
     });
 
+    it('should parse cdata node values', async () => {
+      const component = COMPONENT;
+      env
+        .stub(component.tree, 'readFile')
+        .resolves(Buffer.from('<MatchingContentFile><test><![CDATA[<p>Hello</p>]]></test></MatchingContentFile>'));
+
+      const result = await component.parseXml();
+      const expected = {
+        MatchingContentFile: {
+          test: { __cdata: '<p>Hello</p>' },
+        },
+      };
+
+      expect(result).to.deep.equal(expected);
+    });
+
     it('should parse attributes of nodes', async () => {
       const component = COMPONENT;
       env

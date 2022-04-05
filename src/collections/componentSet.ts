@@ -305,7 +305,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       function: 'ComponentSet.deploy',
       totalNumberOfComponents: this.size,
       numberOfComponentsToBeDeployed: toDeploy.length,
-      metadataTypedToBeDeployed: listOfMetadataTypesToBeDeployed.toString(),
+      metadataTypesToBeDeployed: listOfMetadataTypesToBeDeployed.toString(),
       metadataTypesToBeDeployedTruncated: listOfMetadataTypesToBeDeployed.length < 8000 ? false : true,
     });
 

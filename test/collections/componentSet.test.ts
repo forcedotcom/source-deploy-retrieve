@@ -675,8 +675,8 @@ describe('ComponentSet', () => {
         function: 'ComponentSet.deploy',
         totalNumberOfComponents: 3,
         numberOfComponentsToBeDeployed: 3,
-        metadataTypedToBeDeployed: 'CustomObjectTranslation,StaticResource',
-        metadataTypedToBeDeployedTruncated: false,
+        metadataTypesToBeDeployed: 'CustomObjectTranslation,StaticResource',
+        metadataTypesToBeDeployedTruncated: false,
       });
     });
   });

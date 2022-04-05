@@ -297,16 +297,16 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     await mdapiDeploy.start();
 
     // Creates an array of unique metadata types to be deployed, uses Set to avoid duplicates.
-    const listOfMetadataTypesDeployed = Array.from(new Set(toDeploy.map((c) => c.type.name)));
+    const listOfMetadataTypesToBeDeployed = Array.from(new Set(toDeploy.map((c) => c.type.name)));
 
     void Lifecycle.getInstance().emitTelemetry({
       eventName: 'metadata_api_deploy',
       library: 'SDR',
       function: 'ComponentSet.deploy',
       totalNumberOfComponents: this.size,
-      numberOfComponentsDeployed: toDeploy.length,
-      componentsDeployed: listOfMetadataTypesDeployed.toString(),
-      componentsDeployedTruncated: listOfMetadataTypesDeployed.length < 8000 ? false : true,
+      numberOfComponentsToBeDeployed: toDeploy.length,
+      metadataTypedToBeDeployed: listOfMetadataTypesToBeDeployed.toString(),
+      metadataTypesToBeDeployedTruncated: listOfMetadataTypesToBeDeployed.length < 8000 ? false : true,
     });
 
     return mdapiDeploy;

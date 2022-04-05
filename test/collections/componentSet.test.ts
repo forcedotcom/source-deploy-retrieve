@@ -674,9 +674,9 @@ describe('ComponentSet', () => {
         library: 'SDR',
         function: 'ComponentSet.deploy',
         totalNumberOfComponents: 3,
-        numberOfComponentsDeployed: 3,
-        componentsDeployed: 'CustomObjectTranslation,StaticResource',
-        componentsDeployedTruncated: false,
+        numberOfComponentsToBeDeployed: 3,
+        metadataTypedToBeDeployed: 'CustomObjectTranslation,StaticResource',
+        metadataTypedToBeDeployedTruncated: false,
       });
     });
   });

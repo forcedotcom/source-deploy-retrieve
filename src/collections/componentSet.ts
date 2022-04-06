@@ -11,6 +11,7 @@ import { j2xParser } from 'fast-xml-parser';
 import { AuthInfo, Connection, Lifecycle, Logger } from '@salesforce/core';
 
 import {
+  DeployResult,
   MetadataApiDeploy,
   MetadataApiDeployOptions,
   MetadataApiRetrieve,
@@ -294,6 +295,28 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     });
 
     const mdapiDeploy = new MetadataApiDeploy(operationOptions);
+
+    mdapiDeploy.onFinish((result: DeployResult) => {
+      // Creates an array of unique metadata types that were deployed, uses Set to avoid duplicates.
+      const listOfMetadataTypesDeployed = Array.from(new Set(result.components.map((c) => c.type.name)));
+
+      void Lifecycle.getInstance().emitTelemetry({
+        eventName: 'metadata_api_deploy_result',
+        library: 'SDR',
+        componentFailures: result.response.details.componentFailures,
+        componentSuccesses: result.response.details.componentSuccesses,
+        metadataTypesDeployed: listOfMetadataTypesDeployed.toString(),
+        numberComponentErrors: result.response.numberComponentErrors,
+        numberComponentsDeployed: result.response.numberComponentsDeployed,
+        numberComponentsTotal: result.response.numberComponentsTotal,
+        numberTestErrors: result.response.numberTestErrors,
+        numberTestsCompleted: result.response.numberTestsCompleted,
+        numTestsFailures: result.response.details.runTestResult.numFailures,
+        numTestsRun: result.response.details.runTestResult.numTestsRun,
+        status: result.response.status,
+      });
+    });
+
     await mdapiDeploy.start();
 
     // Creates an array of unique metadata types to be deployed, uses Set to avoid duplicates.
@@ -302,11 +325,11 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     void Lifecycle.getInstance().emitTelemetry({
       eventName: 'metadata_api_deploy',
       library: 'SDR',
-      function: 'ComponentSet.deploy',
-      totalNumberOfComponents: this.size,
-      numberOfComponentsToBeDeployed: toDeploy.length,
-      metadataTypesToBeDeployed: listOfMetadataTypesToBeDeployed.toString(),
-      metadataTypesToBeDeployedTruncated: listOfMetadataTypesToBeDeployed.length < 8000 ? false : true,
+      apiVersion: operationOptions.apiVersion,
+      componentsToDeploySize: toDeploy.length,
+      metadataTypesToDeploy: listOfMetadataTypesToBeDeployed.toString(),
+      protocol: options.apiOptions?.rest ? 'REST' : 'SOAP',
+      ...options.apiOptions,
     });
 
     return mdapiDeploy;

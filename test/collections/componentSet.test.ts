@@ -658,6 +658,7 @@ describe('ComponentSet', () => {
         registry: registryAccess,
         tree: manifestFiles.TREE,
       });
+      set.apiVersion = '50.0';
       const operationArgs = { components: set, usernameOrConnection: connection };
       const expectedOperation = new MetadataApiDeploy(operationArgs);
       env.stub(expectedOperation, 'start').resolves();
@@ -672,11 +673,10 @@ describe('ComponentSet', () => {
       expect(telemetryStub.args[0][0]).to.deep.equal({
         eventName: 'metadata_api_deploy',
         library: 'SDR',
-        function: 'ComponentSet.deploy',
-        totalNumberOfComponents: 3,
-        numberOfComponentsToBeDeployed: 3,
-        metadataTypesToBeDeployed: 'CustomObjectTranslation,StaticResource',
-        metadataTypesToBeDeployedTruncated: false,
+        apiVersion: '50.0',
+        componentsToDeploySize: 3,
+        metadataTypesToDeploy: 'CustomObjectTranslation,StaticResource',
+        protocol: 'SOAP',
       });
     });
   });

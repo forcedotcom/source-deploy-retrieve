@@ -516,6 +516,26 @@ describe('Streams', () => {
 
       expect(jsToXml.read().toString()).to.be.equal(expectedBody);
     });
+
+    it('should transform js object with cdata to xml string', () => {
+      const xmlObj = {
+        TestType: {
+          [XML_NS_KEY]: XML_NS_URL,
+          foo: 'bar',
+          value: { __cdata: '<p>Hello</p>' },
+        },
+      };
+      const jsToXml = new streams.JsToXml(xmlObj);
+      let expectedBody = XML_DECL;
+      expectedBody += `<TestType xmlns="${XML_NS_URL}">\n`;
+      expectedBody += '    <foo>bar</foo>\n';
+      expectedBody += '    <value>\n';
+      expectedBody += '<![CDATA[<p>Hello</p>]]>\n';
+      expectedBody += '    </value>\n';
+      expectedBody += '</TestType>\n';
+
+      expect(jsToXml.read().toString()).to.be.equal(expectedBody);
+    });
   });
 
   describe('stream2buffer', () => {

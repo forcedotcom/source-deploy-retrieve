@@ -4,16 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
 import { fail } from 'assert';
 import { join } from 'path';
-
-import { expect } from 'chai';
-import { SinonStub, createSandbox } from 'sinon';
-
-import { Lifecycle } from '@salesforce/core';
 import { testSetup } from '@salesforce/core/lib/testSetup';
-
+import { expect } from 'chai';
+import { createSandbox, SinonStub } from 'sinon';
 import {
   ComponentSet,
   ConnectionResolver,
@@ -24,16 +19,16 @@ import {
   MetadataComponent,
   MetadataMember,
   MetadataResolver,
+  registry,
   RegistryAccess,
   SourceComponent,
-  registry,
 } from '../../src';
 import { ComponentSetError } from '../../src/errors';
 import { nls } from '../../src/i18n';
-import { decomposedtoplevel, matchingContentFile, mixedContentSingleFile } from '../mock';
 import { mockConnection } from '../mock/client';
-import * as manifestFiles from '../mock/manifestConstants';
+import { decomposedtoplevel, matchingContentFile, mixedContentSingleFile } from '../mock';
 import { MATCHING_RULES_COMPONENT } from '../mock/type-constants/customlabelsConstant';
+import * as manifestFiles from '../mock/manifestConstants';
 
 const env = createSandbox();
 const $$ = testSetup(env);
@@ -647,37 +642,6 @@ describe('ComponentSet', () => {
         expect(e.name).to.equal(ComponentSetError.name);
         expect(e.message).to.equal(nls.localize('error_no_source_to_deploy'));
       }
-    });
-
-    it('should emit a telemetry event when deploying', async () => {
-      const telemetryStub = env.stub(Lifecycle.prototype, 'emitTelemetry');
-
-      const connection = await mockConnection($$);
-      const set = ComponentSet.fromSource({
-        fsPaths: ['.'],
-        registry: registryAccess,
-        tree: manifestFiles.TREE,
-      });
-      set.apiVersion = '50.0';
-      const operationArgs = { components: set, usernameOrConnection: connection };
-      const expectedOperation = new MetadataApiDeploy(operationArgs);
-      env.stub(expectedOperation, 'start').resolves();
-      const constructorStub = env
-        .stub()
-        .withArgs(operationArgs)
-        .callsFake(() => expectedOperation);
-      Object.setPrototypeOf(MetadataApiDeploy, constructorStub);
-      await set.deploy({ usernameOrConnection: connection });
-
-      expect(telemetryStub.calledOnce).to.be.true;
-      expect(telemetryStub.args[0][0]).to.deep.equal({
-        eventName: 'metadata_api_deploy',
-        library: 'SDR',
-        apiVersion: '50.0',
-        componentsToDeploySize: 3,
-        metadataTypesToDeploy: 'CustomObjectTranslation,StaticResource',
-        protocol: 'SOAP',
-      });
     });
   });
 

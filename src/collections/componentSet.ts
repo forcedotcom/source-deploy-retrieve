@@ -5,13 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 /* eslint  @typescript-eslint/unified-signatures:0 */
-
 import { j2xParser } from 'fast-xml-parser';
-
-import { AuthInfo, Connection, Lifecycle, Logger } from '@salesforce/core';
-
+import { AuthInfo, Connection, Logger } from '@salesforce/core';
 import {
-  DeployResult,
   MetadataApiDeploy,
   MetadataApiDeployOptions,
   MetadataApiRetrieve,
@@ -19,26 +15,26 @@ import {
 } from '../client';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSetError } from '../errors';
-import { MetadataType, RegistryAccess } from '../registry';
 import {
   ComponentLike,
-  ConnectionResolver,
   ManifestResolver,
   MetadataComponent,
   MetadataMember,
   MetadataResolver,
+  ConnectionResolver,
   SourceComponent,
   TreeContainer,
 } from '../resolve';
-import { LazyCollection } from './lazyCollection';
+import { MetadataType, RegistryAccess } from '../registry';
 import {
   DestructiveChangesType,
-  FromConnectionOptions,
   FromManifestOptions,
   FromSourceOptions,
+  FromConnectionOptions,
   PackageManifestObject,
   PackageTypeMembers,
 } from './types';
+import { LazyCollection } from './lazyCollection';
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
@@ -295,43 +291,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     });
 
     const mdapiDeploy = new MetadataApiDeploy(operationOptions);
-
-    mdapiDeploy.onFinish((result: DeployResult) => {
-      // Creates an array of unique metadata types that were deployed, uses Set to avoid duplicates.
-      const listOfMetadataTypesDeployed = Array.from(new Set(result.components.map((c) => c.type.name)));
-
-      void Lifecycle.getInstance().emitTelemetry({
-        eventName: 'metadata_api_deploy_result',
-        library: 'SDR',
-        componentFailures: result.response.details.componentFailures,
-        componentSuccesses: result.response.details.componentSuccesses,
-        metadataTypesDeployed: listOfMetadataTypesDeployed.toString(),
-        numberComponentErrors: result.response.numberComponentErrors,
-        numberComponentsDeployed: result.response.numberComponentsDeployed,
-        numberComponentsTotal: result.response.numberComponentsTotal,
-        numberTestErrors: result.response.numberTestErrors,
-        numberTestsCompleted: result.response.numberTestsCompleted,
-        numTestsFailures: result.response.details.runTestResult.numFailures,
-        numTestsRun: result.response.details.runTestResult.numTestsRun,
-        status: result.response.status,
-      });
-    });
-
     await mdapiDeploy.start();
-
-    // Creates an array of unique metadata types to be deployed, uses Set to avoid duplicates.
-    const listOfMetadataTypesToBeDeployed = Array.from(new Set(toDeploy.map((c) => c.type.name)));
-
-    void Lifecycle.getInstance().emitTelemetry({
-      eventName: 'metadata_api_deploy',
-      library: 'SDR',
-      apiVersion: operationOptions.apiVersion,
-      componentsToDeploySize: toDeploy.length,
-      metadataTypesToDeploy: listOfMetadataTypesToBeDeployed.toString(),
-      protocol: options.apiOptions?.rest ? 'REST' : 'SOAP',
-      ...options.apiOptions,
-    });
-
     return mdapiDeploy;
   }
 

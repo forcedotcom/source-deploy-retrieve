@@ -221,6 +221,7 @@ export class SourceComponent implements MetadataComponent {
     const parsed = parse(contents.toString(), {
       ignoreAttributes: false,
       parseNodeValue: false,
+      cdataTagName: '__cdata',
     }) as T;
     const [firstElement] = Object.keys(parsed);
     if (firstElement === this.type.name) {

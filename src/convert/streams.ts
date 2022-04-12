@@ -282,7 +282,7 @@ export class JsToXml extends Readable {
   }
 
   public _read(): void {
-    const js2Xml = new j2xParser({ format: true, indentBy: '    ', ignoreAttributes: false });
+    const js2Xml = new j2xParser({ format: true, indentBy: '    ', ignoreAttributes: false, cdataTagName: '__cdata' });
     const xmlContent = XML_DECL.concat(js2Xml.parse(this.xmlObject));
     this.push(xmlContent);
     this.push(null);

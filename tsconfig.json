@@ -4,7 +4,9 @@
     // Needed in order to import metadataRegistry.json
     "resolveJsonModule": true,
     "rootDir": ".",
-    "outDir": "lib"
+    "outDir": "lib",
+    "lib": ["es2020"],
+    "target": "es2020"
   },
   "include": ["./src/**/*.ts", "./src/registry/metadataRegistry.json", "./src/registry/stdValueSetRegistry.json"],
   "exclude": ["node_modules", "lib", "examples"]

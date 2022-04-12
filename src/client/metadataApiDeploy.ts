@@ -250,10 +250,15 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
   };
   private options: MetadataApiDeployOptions;
 
+  // Keep track of rest deploys separately since Connection.deploy() removes it
+  // from the apiOptions and we need it for telemetry.
+  private isRestDeploy: boolean;
+
   public constructor(options: MetadataApiDeployOptions) {
     super(options);
     options.apiOptions = { ...MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions, ...options.apiOptions };
     this.options = Object.assign({}, options);
+    this.isRestDeploy = !!options.apiOptions?.rest;
   }
 
   /**
@@ -338,23 +343,40 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
 
   // eslint-disable-next-line @typescript-eslint/require-await
   protected async post(result: MetadataApiDeployStatus): Promise<DeployResult> {
-    // Creates an array of unique metadata types that were deployed, uses Set to avoid duplicates.
-    const listOfMetadataTypesDeployed = Array.from(new Set(this.options.components.map((c) => c.type.name)));
+    try {
+      // Creates an array of unique metadata types that were deployed, uses Set to avoid duplicates.
+      const listOfMetadataTypesDeployed = Array.from(new Set(this.options.components.map((c) => c.type.name)));
 
-    void Lifecycle.getInstance().emitTelemetry({
-      eventName: 'metadata_api_deploy_result',
-      library: 'SDR',
-      apiVersion: this.options.apiVersion,
-      metadataTypesDeployed: listOfMetadataTypesDeployed.toString(),
-      // Removes the `result.details` property from the result since it's a complex JSON object and `emitTelemetry` doesn't support that.
-      ...Object.fromEntries(Object.entries(result).filter((entry) => entry[0] !== 'details')),
-      // Include select info from `result.details` property.
-      componentFailures: result.details?.componentFailures,
-      componentSuccesses: result.details?.componentSuccesses,
-      numTestsFailures: result.details?.runTestResult.numFailures,
-      numTestsRun: result.details?.runTestResult.numTestsRun,
-      testsTotalTime: result.details?.runTestResult.totalTime,
-    });
+      void Lifecycle.getInstance().emitTelemetry({
+        eventName: 'metadata_api_deploy_result',
+        library: 'SDR',
+        status: result.status,
+        apiVersion: this.options.apiVersion,
+        sourceApiVersion: this.options.components?.sourceApiVersion,
+        createdDate: result.createdDate,
+        startDate: result.startDate,
+        completedDate: result.completedDate,
+        rollbackOnError: result.rollbackOnError,
+        runTestsEnabled: result.runTestsEnabled,
+        isRestDeploy: this.isRestDeploy,
+        checkOnly: result.checkOnly,
+        done: result.done,
+        ignoreWarnings: result.ignoreWarnings,
+        metadataTypesDeployed: listOfMetadataTypesDeployed.toString(),
+        numberComponentErrors: result.numberComponentErrors,
+        numberComponentsDeployed: result.numberComponentsDeployed,
+        numberComponentsTotal: result.numberComponentsTotal,
+        numberTestErrors: result.numberTestErrors,
+        numberTestsCompleted: result.numberTestsCompleted,
+        numberTestsTotal: result.numberTestsTotal,
+        testsTotalTime: result.details?.runTestResult.totalTime,
+      });
+    } catch (err) {
+      const error = err as Error;
+      this.logger.debug(
+        `Error trying to compile/send deploy telemetry data for deploy ID: ${this.id}\nError: ${error.message}`
+      );
+    }
 
     return new DeployResult(result, this.components);
   }

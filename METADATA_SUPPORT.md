@@ -493,9 +493,9 @@ v55 introduces the following new types.  Here's their current level of support
 |DataImportManagementSettings|✅||
 |DecisionMatrixDefinition|✅||
 |DecisionMatrixDefinitionVersion|✅||
-|DigitalExperience|undefined|undefined|
-|DigitalExperienceBundle|undefined|undefined|
-|DigitalExperienceBundleSetting|undefined|undefined|
+|DigitalExperience|❌|Not supported, but support could be added (but not for tracking)|
+|DigitalExperienceBundle|❌|Not supported, but support could be added (but not for tracking)|
+|DigitalExperienceBundleSetting|❌|Not supported, but support could be added (but not for tracking)|
 |ExpressionSetDefinition|✅||
 |ExpressionSetDefinitionVersion|✅||
 |ExternalDataSrcDescriptor|❌|Not supported, but support could be added|
@@ -504,13 +504,13 @@ v55 introduces the following new types.  Here's their current level of support
 |ForecastingFilterCondition|❌|Not supported, but support could be added|
 |IndustriesAutomotiveSettings|✅||
 |InvLatePymntRiskCalcSettings|✅||
-|MarketSegmentDefinition|undefined|undefined|
+|MarketSegmentDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |MeetingsSettings|✅||
-|MessagingChannel|undefined|undefined|
+|MessagingChannel|❌|Not supported, but support could be added (but not for tracking)|
 |PaymentsManagementEnabledSettings|✅||
 |RegisteredExternalService|❌|Not supported, but support could be added|
 |RelationshipGraphDefinition|❌|Not supported, but support could be added|
-|SchedulingObjective|undefined|undefined|
+|SchedulingObjective|❌|Not supported, but support could be added (but not for tracking)|
 |StreamingAppDataConnector|❌|Not supported, but support could be added|
 |SubscriptionManagementSettings|✅||
 |VoiceSettings|✅||

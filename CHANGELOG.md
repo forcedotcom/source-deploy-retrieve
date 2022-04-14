@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.12.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.8...v5.12.9) (2022-04-13)
+
+### Bug Fixes
+
+- add telemetry to metadata api deploy ([#606](https://github.com/forcedotcom/source-deploy-retrieve/issues/606)) ([c9d584c](https://github.com/forcedotcom/source-deploy-retrieve/commit/c9d584c28aad4f444548b1e4c357f714d82cd669))
+
 ### [5.12.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.7...v5.12.8) (2022-04-07)
 
 ### [5.12.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.6...v5.12.7) (2022-04-01)

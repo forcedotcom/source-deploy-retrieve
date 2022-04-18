@@ -198,6 +198,7 @@ export interface CoverageObjectType {
     developer: {
       features?: string[];
       settings?: Record<string, Record<string, unknown>>;
+      missingSettings?: string[];
     };
   };
   channels: {

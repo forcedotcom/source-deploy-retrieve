@@ -3,6 +3,8 @@
   "include": ["./**/*.ts", "../src/registry/metadataRegistry.json", "../src/registry/stdValueSetRegistry.json"],
   "compilerOptions": {
     // Needed in order to import metadataRegistry.json
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "lib": ["es2020"],
+    "target": "es2020"
   }
 }

@@ -6,12 +6,11 @@
  */
 import { EventEmitter } from 'events';
 import { join } from 'path';
-import { AuthInfo, Connection, Lifecycle, Logger, PollingClient, StatusResult } from '@salesforce/core';
+import { AuthInfo, Connection, Lifecycle, Logger, PollingClient, SfdxError, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
 import { AnyJson, isNumber } from '@salesforce/ts-types';
 import * as fs from 'graceful-fs';
 import { MetadataConverter, SfdxFileFormat } from '../convert';
-import { MetadataTransferError } from '../errors';
 import { ComponentSet } from '../collections';
 import { AsyncResult, MetadataRequestStatus, MetadataTransferResult, RequestStatus } from './types';
 
@@ -114,11 +113,8 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
       return result;
     } catch (e) {
       const err = e as Error;
-      const error = new MetadataTransferError('md_request_fail', err.message);
-      if (error.stack && err.stack) {
-        // append the original stack to this new error
-        error.stack += `\nDUE TO:\n${err.stack}`;
-      }
+      const error = new SfdxError(`Metadata API request failed: ${err.message}`, 'MetadataTransferError', [], 1, err);
+      error.setData({ id: this.id });
       if (this.event.listenerCount('error') === 0) {
         throw error;
       }

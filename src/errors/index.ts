@@ -10,9 +10,11 @@ import { SourcePath } from '../common';
 import { MetadataType } from '../registry';
 
 export class LibraryError extends Error {
-  public constructor(messageKey: string, args?: string | string[]) {
+  public data: unknown;
+  public constructor(messageKey: string, args?: string | string[], data?: unknown) {
     super(nls.localize(messageKey, args));
     this.name = this.constructor.name;
+    this.data = data;
     Error.captureStackTrace(this, this.constructor);
   }
 }
@@ -54,8 +56,8 @@ export class DeployError extends SourceClientError {
 }
 
 export class MetadataTransferError extends LibraryError {
-  public constructor(messageKey: string, args?: string | string[]) {
-    super(messageKey, args);
+  public constructor(messageKey: string, args?: string | string[], data?: unknown) {
+    super(messageKey, args, data);
   }
 }
 

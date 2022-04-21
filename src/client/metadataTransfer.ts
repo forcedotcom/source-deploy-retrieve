@@ -114,7 +114,8 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
       return result;
     } catch (e) {
       const err = e as Error;
-      const error = new MetadataTransferError('md_request_fail', err.message);
+      const error = new MetadataTransferError('md_request_fail', err.message, { id: this.id });
+
       if (error.stack && err.stack) {
         // append the original stack to this new error
         error.stack += `\nDUE TO:\n${err.stack}`;

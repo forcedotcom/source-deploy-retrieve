@@ -195,6 +195,8 @@ workflows:
                   'yarn test:nuts:specialTypes',
                   'yarn test:nuts:tracking',
                 ]
+          context:
+            - salesforce-cli-na40-auth-url
       - release-management/release-package:
           github-release: true
           post-job-steps:
@@ -205,7 +207,9 @@ workflows:
           filters:
             branches:
               only: main
-          context: CLI_CTC
+          context:
+            - CLI_CTC
+            - salesforce-cli
   dependabot-automerge:
     triggers:
       - schedule:
@@ -217,3 +221,4 @@ workflows:
     jobs:
       - release-management/dependabot-automerge:
           merge-method: squash
+          context: salesforce-cli

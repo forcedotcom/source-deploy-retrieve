@@ -176,11 +176,11 @@ export class MetadataResolver {
           ['mixedContent', 'bundle'].includes(type.strategies?.adapter) ||
           // the file suffix (in source or mdapi format) matches the type suffix we think it is
           (type.suffix && [type.suffix, `${type.suffix}${META_XML_SUFFIX}`].some((s) => fsPath.endsWith(s))) ||
-          // the type has children and the path also includes THAT directory
+          // the type has children and the file suffix (in source format) matches a child type suffix of the type we think it is
           (type.children?.types &&
             Object.values(type.children?.types)
-              .map((childType) => childType.directoryName)
-              .some((dirName) => pathParts.includes(dirName)))
+              .map((childType) => `${childType.suffix}${META_XML_SUFFIX}`)
+              .some((s) => fsPath.endsWith(s)))
       );
   }
 

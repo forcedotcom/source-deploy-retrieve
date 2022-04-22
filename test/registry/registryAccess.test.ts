@@ -5,9 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { assert, expect } from 'chai';
-import { RegistryError } from '../../src/errors';
-import { nls } from '../../src/i18n';
+import { Messages, SfError } from '@salesforce/core';
 import { MetadataRegistry, MetadataType, registry, RegistryAccess } from '../../src';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_missing_type_definition']);
 
 describe('RegistryAccess', () => {
   const registryAccess = new RegistryAccess();
@@ -34,8 +36,8 @@ describe('RegistryAccess', () => {
     it('should throw an error if type definition missing', () => {
       assert.throws(
         () => registryAccess.getTypeByName('TypeWithoutDef'),
-        RegistryError,
-        nls.localize('error_missing_type_definition', 'typewithoutdef')
+        SfError,
+        messages.getMessage('error_missing_type_definition', ['typewithoutdef'])
       );
     });
   });

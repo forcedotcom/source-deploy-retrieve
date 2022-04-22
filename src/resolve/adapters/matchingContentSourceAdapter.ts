@@ -4,11 +4,18 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { ExpectedSourceFilesError, UnexpectedForceIgnore } from '../../errors';
+import { Messages, SfError } from '@salesforce/core';
+
 import { SourcePath, META_XML_SUFFIX } from '../../common';
 import { extName } from '../../utils/path';
 import { SourceComponent } from '../sourceComponent';
 import { BaseSourceAdapter } from './baseSourceAdapter';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_no_source_ignore',
+  'error_expected_source_files',
+]);
 
 /**
  * Handles types with a single content file with a matching file extension.
@@ -43,9 +50,16 @@ export class MatchingContentSourceAdapter extends BaseSourceAdapter {
     }
 
     if (!sourcePath) {
-      throw new ExpectedSourceFilesError(this.type, trigger);
+      throw new SfError(
+        messages.getMessage('error_expected_source_files', [trigger, this.type.name]),
+        'ExpectedSourceFilesError'
+      );
+      // throw new ExpectedSourceFilesError(this.type, trigger);
     } else if (this.forceIgnore.denies(sourcePath)) {
-      throw new UnexpectedForceIgnore('error_no_source_ignore', [this.type.name, sourcePath]);
+      throw new SfError(
+        messages.getMessage('error_no_source_ignore', [this.type.name, sourcePath]),
+        'UnexpectedForceIgnore'
+      );
     }
 
     component.content = sourcePath;

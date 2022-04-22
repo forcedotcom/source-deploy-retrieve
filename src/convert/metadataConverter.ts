@@ -5,15 +5,21 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { dirname, join, normalize } from 'path';
+import { Messages, SfError } from '@salesforce/core';
 import { promises } from 'graceful-fs';
 import { SourceComponent } from '../resolve';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
-import { ConversionError, LibraryError } from '../errors';
 import { SourcePath } from '../common';
 import { ComponentSet, DestructiveChangesType } from '../collections';
 import { RegistryAccess } from '../registry';
 import { ComponentConverter, ComponentReader, pipeline, StandardWriter, ZipWriter } from './streams';
 import { ConvertOutputConfig, ConvertResult, DirectoryConfig, SfdxFileFormat, ZipConfig } from './types';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_failed_convert',
+  'error_merge_metadata_target_unsupported',
+]);
 
 export class MetadataConverter {
   public static readonly PACKAGE_XML_FILE = 'package.xml';
@@ -92,7 +98,7 @@ export class MetadataConverter {
           break;
         case 'merge':
           if (!isSource) {
-            throw new LibraryError('error_merge_metadata_target_unsupported');
+            throw new SfError(messages.getMessage('error_merge_metadata_target_unsupported'));
           }
           defaultDirectory = output.defaultDirectory;
           mergeSet = new ComponentSet();
@@ -120,7 +126,12 @@ export class MetadataConverter {
       }
       return result;
     } catch (e) {
-      throw new ConversionError(e);
+      throw new SfError(
+        messages.getMessage('error_failed_convert', [(e as Error).message]),
+        'ConversionError',
+        [],
+        e as Error
+      );
     }
   }
 

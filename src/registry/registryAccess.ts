@@ -4,13 +4,20 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { RegistryError } from '../errors';
+import { Messages, SfError } from '@salesforce/core';
 import { registry as defaultRegistry } from './registry';
 import { MetadataRegistry, MetadataType } from './types';
 
 /**
  * Container for querying metadata registry data.
  */
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_missing_child_type_definition',
+  'error_missing_type_definition',
+]);
+
 export class RegistryAccess {
   private registry: MetadataRegistry;
 
@@ -36,10 +43,13 @@ export class RegistryAccess {
       if (childType) {
         return childType;
       }
-      throw new RegistryError('error_missing_child_type_definition', [parentTypeId, lower]);
+      throw new SfError(
+        messages.getMessage('error_missing_child_type_definition', [parentTypeId, lower]),
+        'RegistryError'
+      );
     }
     if (!this.registry.types[lower]) {
-      throw new RegistryError('error_missing_type_definition', lower);
+      throw new SfError(messages.getMessage('error_missing_type_definition', [lower]), 'RegistryError');
     }
     // redirect via alias
     return this.registry.types[lower].aliasFor

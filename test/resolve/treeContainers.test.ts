@@ -7,6 +7,7 @@
 import { join, normalize } from 'path';
 import { pipeline as cbPipeline, Readable, Writable } from 'stream';
 import { promisify } from 'util';
+import { Messages, SfError } from '@salesforce/core';
 import { assert, expect } from 'chai';
 import { createSandbox } from 'sinon';
 import * as fs from 'graceful-fs';
@@ -20,8 +21,14 @@ import {
   VirtualTreeContainer,
   ZipTreeContainer,
 } from '../../src';
-import { LibraryError } from '../../src/errors';
-import { nls } from '../../src/i18n';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_expected_directory_path',
+  'error_path_not_found',
+  'error_expected_file_path',
+  'error_no_directory_stream',
+]);
 
 describe('Tree Containers', () => {
   const readDirResults = ['a.q', 'a.x-meta.xml', 'b', 'b.x-meta.xml', 'c.z', 'c.x-meta.xml'];
@@ -183,7 +190,7 @@ describe('Tree Containers', () => {
 
       it('should throw an error if path does not exist', () => {
         const path = 'dne';
-        assert.throws(() => tree.isDirectory(path), LibraryError, nls.localize('error_path_not_found', path));
+        assert.throws(() => tree.isDirectory(path), SfError, messages.getMessage('error_path_not_found', [path]));
       });
     });
 
@@ -205,8 +212,8 @@ describe('Tree Containers', () => {
         const path = join(filesRoot, 'test2.txt');
         assert.throws(
           () => tree.readDirectory(path),
-          LibraryError,
-          nls.localize('error_expected_directory_path', path)
+          SfError,
+          messages.getMessage('error_expected_directory_path', [path])
         );
       });
     });
@@ -222,8 +229,8 @@ describe('Tree Containers', () => {
         assert.throws(
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           () => tree.readFile(filesRoot),
-          LibraryError,
-          nls.localize('error_expected_file_path', filesRoot)
+          SfError,
+          messages.getMessage('error_expected_file_path', [filesRoot])
         );
       });
     });
@@ -247,8 +254,8 @@ describe('Tree Containers', () => {
       it('should throw an error if given path is to a directory', () => {
         assert.throws(
           () => tree.stream(filesRoot),
-          LibraryError,
-          nls.localize('error_no_directory_stream', tree.constructor.name)
+          SfError,
+          messages.getMessage('error_no_directory_stream', [tree.constructor.name])
         );
       });
     });
@@ -306,7 +313,7 @@ describe('Tree Containers', () => {
 
       it('should throw an error if path does not exist', () => {
         const path = 'dne';
-        assert.throws(() => tree.isDirectory(path), LibraryError, nls.localize('error_path_not_found', path));
+        assert.throws(() => tree.isDirectory(path), SfError, messages.getMessage('error_path_not_found', [path]));
       });
     });
 
@@ -318,8 +325,8 @@ describe('Tree Containers', () => {
       it('should throw an error if path is not a directory', () => {
         assert.throws(
           () => tree.readDirectory('test.txt'),
-          LibraryError,
-          nls.localize('error_expected_directory_path', 'test.txt')
+          SfError,
+          messages.getMessage('error_expected_directory_path', ['test.txt'])
         );
       });
     });
@@ -341,7 +348,7 @@ describe('Tree Containers', () => {
           await tree.readFile(path);
           assert.fail('should have thrown an error');
         } catch (e) {
-          expect(e.message).to.deep.equal(nls.localize('error_path_not_found', path));
+          expect(e.message).to.deep.equal(messages.getMessage('error_path_not_found', [path]));
         }
       });
     });
@@ -363,7 +370,7 @@ describe('Tree Containers', () => {
           tree.readFileSync(path);
           assert.fail('should have thrown an error');
         } catch (e) {
-          expect(e.message).to.deep.equal(nls.localize('error_path_not_found', path));
+          expect(e.message).to.deep.equal(messages.getMessage('error_path_not_found', [path]));
         }
       });
     });

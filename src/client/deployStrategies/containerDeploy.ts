@@ -6,10 +6,10 @@
  */
 import { readFileSync } from 'graceful-fs';
 import { sleep } from '@salesforce/kit';
+import { Messages, SfError } from '@salesforce/core';
 
 import { SaveResult } from 'jsforce';
 import { deployTypes } from '../toolingApi';
-import { DeployError } from '../../errors';
 import {
   ComponentDeployment,
   ComponentStatus,
@@ -23,6 +23,13 @@ import {
 import { baseName } from '../../utils/path';
 import { SourceComponent } from '../../resolve';
 import { BaseDeploy } from './baseDeploy';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'beta_tapi_mdcontainer_error',
+  'beta_tapi_car_error',
+  'beta_tapi_membertype_error',
+]);
 
 export class ContainerDeploy extends BaseDeploy {
   private static readonly CONTAINER_ASYNC_REQUEST = 'ContainerAsyncRequest';
@@ -47,7 +54,7 @@ export class ContainerDeploy extends BaseDeploy {
     });
 
     if (!metadataContainer.success) {
-      throw new DeployError('beta_tapi_mdcontainer_error');
+      throw new SfError(messages.getMessage('beta_tapi_mdcontainer_error'), 'DeployError');
     }
     return metadataContainer;
   }
@@ -72,7 +79,7 @@ export class ContainerDeploy extends BaseDeploy {
     const containerMember = await this.toolingCreate(deployTypes.get(this.component.type.name), containerMemberObject);
 
     if (!containerMember.success) {
-      throw new DeployError('beta_tapi_membertype_error', this.component.type.name);
+      throw new SfError(messages.getMessage('beta_tapi_membertype_error', [this.component.type.name]), 'DeployError');
     }
     return containerMember;
   }
@@ -95,7 +102,7 @@ export class ContainerDeploy extends BaseDeploy {
     });
 
     if (!contAsyncRequest.success) {
-      throw new DeployError('beta_tapi_car_error');
+      throw new SfError(messages.getMessage('beta_tapi_car_error'), 'DeployError');
     }
     return contAsyncRequest;
   }
@@ -123,24 +130,24 @@ export class ContainerDeploy extends BaseDeploy {
       diagnostics: [],
     };
 
-    const messages: DeployMessage[] = [];
+    const deployMessages: DeployMessage[] = [];
     const { componentSuccesses, componentFailures } = containerRequest.DeployDetails;
     if (componentSuccesses) {
       if (Array.isArray(componentSuccesses)) {
-        messages.push(...componentSuccesses);
+        deployMessages.push(...componentSuccesses);
       } else {
-        messages.push(componentSuccesses);
+        deployMessages.push(componentSuccesses);
       }
     }
     if (componentFailures) {
       if (Array.isArray(componentFailures)) {
-        messages.push(...componentFailures);
+        deployMessages.push(...componentFailures);
       } else {
-        messages.push(componentFailures);
+        deployMessages.push(componentFailures);
       }
     }
 
-    for (const message of messages) {
+    for (const message of deployMessages) {
       if (message.changed === true || message.changed === 'true') {
         componentDeployment.status = ComponentStatus.Changed;
       } else if (message.created === true || message.created === 'true') {

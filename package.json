@@ -18,7 +18,8 @@
     "retrieve"
   ],
   "files": [
-    "lib/src"
+    "lib/src",
+    "messages"
   ],
   "engines": {
     "node": ">=12.0.0"

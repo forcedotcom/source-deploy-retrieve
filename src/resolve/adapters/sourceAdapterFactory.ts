@@ -4,8 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { Messages, SfError } from '@salesforce/core';
 import { SourceAdapter } from '../types';
-import { RegistryError } from '../../errors';
 import { ForceIgnore } from '../forceIgnore';
 import { MetadataType, RegistryAccess } from '../../registry';
 import { TreeContainer } from '../treeContainers';
@@ -22,6 +22,9 @@ enum AdapterId {
   MatchingContentFile = 'matchingContentFile',
   MixedContent = 'mixedContent',
 }
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_missing_adapter']);
 
 export class SourceAdapterFactory {
   private registry: RegistryAccess;
@@ -48,7 +51,7 @@ export class SourceAdapterFactory {
       case undefined:
         return new DefaultSourceAdapter(type, this.registry, forceIgnore, this.tree);
       default:
-        throw new RegistryError('error_missing_adapter', [adapterId, type.name]);
+        throw new SfError(messages.getMessage('error_missing_adapter', [adapterId, type.name]), 'RegistryError');
     }
   }
 }

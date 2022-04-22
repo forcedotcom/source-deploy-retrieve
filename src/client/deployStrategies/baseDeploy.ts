@@ -6,15 +6,20 @@
  */
 /* eslint @typescript-eslint/no-unsafe-assignment:0, @typescript-eslint/no-unsafe-call:0, @typescript-eslint/no-unsafe-member-access:0  */
 import { sep } from 'path';
-import { Connection } from '@salesforce/core';
+import { Connection, Messages, SfError } from '@salesforce/core';
 import { readFileSync } from 'graceful-fs';
 import { SaveResult } from 'jsforce';
-import { DeployError } from '../../errors';
 import { SourceComponent } from '../../resolve';
 import { SourceDeployResult } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
 const DOMParser = require('xmldom-sfdx-encoding').DOMParser;
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_parsing_metadata_file',
+  'error_creating_metadata_type',
+]);
 
 export abstract class BaseDeploy {
   private static readonly TOOLING_PATH_SEP = '/';
@@ -50,7 +55,7 @@ export abstract class BaseDeploy {
         ...(labelNode ? { label: labelNode.textContent } : {}),
       };
     } catch (e) {
-      throw new DeployError('error_parsing_metadata_file');
+      throw new SfError(messages.getMessage('error_parsing_metadata_file'), 'DeployError');
     }
   }
 
@@ -75,7 +80,7 @@ export abstract class BaseDeploy {
     }
 
     if (!bundleResult.success) {
-      throw new DeployError('error_creating_metadata_type', this.component.type.name);
+      throw new SfError(messages.getMessage('error_creating_metadata_type', [this.component.type.name]), 'DeployError');
     }
 
     return bundleResult;

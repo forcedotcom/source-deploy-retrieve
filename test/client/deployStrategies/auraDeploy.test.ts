@@ -13,13 +13,15 @@ import * as fs from 'graceful-fs';
 import { SaveError, SaveResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { AnyJson } from '@salesforce/ts-types';
-import { nls } from '../../../src/i18n';
+import { Messages } from '@salesforce/core';
 import { ComponentStatus, ToolingDeployStatus } from '../../../src/client';
 import { AuraDeploy } from '../../../src/client/deployStrategies';
 import { AuraDefinition, ToolingCreateResult } from '../../../src/client/types';
 import { auraComponent, auraContents, auraFiles, testAuraList } from './auraDeployMocks';
-
 const $$ = testSetup();
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_creating_metadata_type']);
 
 describe('Aura Deploy Strategy', () => {
   const testMetadataField = {
@@ -217,7 +219,7 @@ describe('Aura Deploy Strategy', () => {
       await auraDeploy.upsertBundle();
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal(nls.localize('error_creating_metadata_type', 'AuraDefinitionBundle'));
+      expect(e.message).to.equal(messages.getMessage('error_creating_metadata_type', ['AuraDefinitionBundle']));
       expect(e.name).to.be.equal('DeployError');
     }
   });

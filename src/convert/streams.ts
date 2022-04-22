@@ -7,6 +7,7 @@
 import { basename, dirname, isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Stream, Transform, Writable } from 'stream';
 import { promisify } from 'util';
+import { Messages, SfError } from '@salesforce/core';
 import { Archiver, create as createArchive } from 'archiver';
 import { createWriteStream, existsSync } from 'graceful-fs';
 import { JsonMap } from '@salesforce/ts-types';
@@ -15,12 +16,14 @@ import { Logger } from '@salesforce/core';
 import { MetadataResolver, SourceComponent } from '../resolve';
 import { SourcePath, XML_DECL } from '../common';
 import { ComponentSet } from '../collections';
-import { LibraryError } from '../errors';
 import { RegistryAccess } from '../registry';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { MetadataTransformerFactory } from './transformers';
 import { ConvertContext } from './convertContext';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_convert_invalid_format']);
 
 export const pipeline = promisify(cbPipeline);
 
@@ -109,7 +112,7 @@ export class ComponentConverter extends Transform {
             converts.push(transformer.toMetadataFormat(chunk));
             break;
           default:
-            throw new LibraryError('error_convert_invalid_format', this.targetFormat);
+            throw new SfError(messages.getMessage('error_convert_invalid_format', [this.targetFormat]), 'LibraryError');
         }
         // could maybe improve all this with lazy async collections...
         (await Promise.all(converts)).forEach((infos) => writeInfos.push(...infos));

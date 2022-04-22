@@ -32,6 +32,11 @@ import * as fs from 'fs';
     type.channels.metadataApi.exposed &&
     type.channels.sourceTracking.exposed &&
     !inRegistry(key);
+  const filterCliNoSupportMetadataApiOnly = ([key, type]) =>
+    !key.endsWith('Settings') &&
+    type.channels.metadataApi.exposed &&
+    !type.channels.sourceTracking.exposed &&
+    !inRegistry(key);
 
   const [currentOutput, nextOutput] = [currentCoverage, nextCoverage].map((coverage) => ({
     noMetadataAPI: Object.entries(coverage.types)
@@ -45,6 +50,9 @@ import * as fs from 'fs';
       .map(([key, type]) => key),
     noCliSupport: Object.entries(coverage.types)
       .filter(filterCliNoSupport)
+      .map(([key, type]) => key),
+    noCliSupportMetadataApiOnly: Object.entries(coverage.types)
+      .filter(filterCliNoSupportMetadataApiOnly)
       .map(([key, type]) => key),
   }));
 
@@ -63,6 +71,9 @@ import * as fs from 'fs';
     }
     if (releaseOutput.noCliSupport.includes(key)) {
       return { icon: '❌', note: 'Not supported, but support could be added' };
+    }
+    if (releaseOutput.noCliSupportMetadataApiOnly.includes(key)) {
+      return { icon: '❌', note: 'Not supported, but support could be added (but not for tracking)' };
     }
     if (releaseOutput.cliNoTracking.includes(key)) {
       return { icon: '⚠️', note: 'Supports deploy/retrieve but not source tracking' };
@@ -117,7 +128,9 @@ ${additionalCLISupport.map((t) => `- ${t}`).join('\n')}
   console.log('Wrote METADATA_SUPPORT.md');
 
   shell.exec(`git add METADATA_SUPPORT.md`);
-  if (shell.exec(`git commit -am "chore: adding types for SDR" --no-verify`).code !== 0) {
+  if (
+    shell.exec(`git commit -am "chore: auto-update metadata coverage in METADATA_SUPPORT.md" --no-verify`).code !== 0
+  ) {
     shell.echo(
       'Error: Git commit failed - usually nothing to commit which means there are no new metadata type support added in this version of SDR'
     );

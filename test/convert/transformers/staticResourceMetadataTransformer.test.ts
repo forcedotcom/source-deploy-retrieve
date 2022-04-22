@@ -6,7 +6,7 @@
  */
 import { basename, join } from 'path';
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
-
+import { Messages } from '@salesforce/core';
 import * as archiver from 'archiver';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
@@ -14,8 +14,6 @@ import { CentralDirectory, Entry, Open } from 'unzipper';
 import chai = require('chai');
 import { registry, SourceComponent, VirtualTreeContainer, WriteInfo } from '../../../src';
 import { StaticResourceMetadataTransformer } from '../../../src/convert/transformers/staticResourceMetadataTransformer';
-import { LibraryError } from '../../../src/errors';
-import { nls } from '../../../src/i18n';
 import { baseName } from '../../../src/utils';
 import { mixedContentSingleFile } from '../../mock';
 import {
@@ -28,6 +26,12 @@ import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../../src/common';
 chai.use(deepEqualInAnyOrder);
 
 const env = createSandbox();
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_static_resource_expected_archive_type',
+  'error_static_resource_missing_resource_file',
+]);
 
 describe('StaticResourceMetadataTransformer', () => {
   const transformer = new StaticResourceMetadataTransformer();
@@ -109,9 +113,9 @@ describe('StaticResourceMetadataTransformer', () => {
       try {
         await transformer.toMetadataFormat(component);
       } catch (e) {
-        expect(e.name).to.equal(LibraryError.name);
+        expect(e.name).to.equal('LibraryError');
         expect(e.message).to.equal(
-          nls.localize('error_static_resource_expected_archive_type', [contentType, component.name])
+          messages.getMessage('error_static_resource_expected_archive_type', [contentType, component.name])
         );
       }
     });
@@ -129,7 +133,7 @@ describe('StaticResourceMetadataTransformer', () => {
         await transformer.toMetadataFormat(component);
       } catch (e) {
         expect(e.message).to.deep.equalInAnyOrder(
-          nls.localize('error_static_resource_missing_resource_file', [join('staticresources', component.name)])
+          messages.getMessage('error_static_resource_missing_resource_file', [join('staticresources', component.name)])
         );
       }
     });

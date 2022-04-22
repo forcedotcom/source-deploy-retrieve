@@ -8,7 +8,7 @@ import { basename, join } from 'path';
 import { createSandbox } from 'sinon';
 import { assert, expect } from 'chai';
 import { AnyJson, getString } from '@salesforce/ts-types';
-import { PollingClient, StatusResult } from '@salesforce/core';
+import { PollingClient, StatusResult, Messages } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
 import {
   ComponentSet,
@@ -35,9 +35,15 @@ import {
   DECOMPOSED_COMPONENT,
 } from '../mock/type-constants/customObjectConstant';
 import { COMPONENT } from '../mock/type-constants/apexClassConstant';
-import { MissingJobIdError } from '../../src/errors';
 
 const env = createSandbox();
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_job_id']);
+const expectedError = {
+  name: 'MissingJobIdError',
+  message: messages.getMessage('error_no_job_id', ['deploy']),
+};
 
 describe('MetadataApiDeploy', () => {
   afterEach(() => env.restore());
@@ -200,7 +206,6 @@ describe('MetadataApiDeploy', () => {
         await operation.checkStatus();
         assert.fail('should have thrown an error');
       } catch (e) {
-        const expectedError = new MissingJobIdError('deploy');
         expect(e.name).to.equal(expectedError.name);
         expect(e.message).to.equal(expectedError.message);
       }
@@ -234,7 +239,6 @@ describe('MetadataApiDeploy', () => {
         await operation.deployRecentValidation(false);
         assert.fail('should have thrown an error');
       } catch (e) {
-        const expectedError = new MissingJobIdError('deploy');
         expect(e.name).to.equal(expectedError.name);
         expect(e.message).to.equal(expectedError.message);
       }
@@ -260,7 +264,6 @@ describe('MetadataApiDeploy', () => {
         await operation.cancel();
         assert.fail('should have thrown an error');
       } catch (e) {
-        const expectedError = new MissingJobIdError('deploy');
         expect(e.name).to.equal(expectedError.name);
         expect(e.message).to.equal(expectedError.message);
       }

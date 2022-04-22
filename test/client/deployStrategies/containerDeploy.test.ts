@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { AuthInfo, Connection } from '@salesforce/core';
+import { AuthInfo, Connection, Messages } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import * as fs from 'graceful-fs';
@@ -13,10 +13,16 @@ import { Record, SaveError, SaveResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { AnyJson } from '@salesforce/ts-types';
 import { ContainerDeploy } from '../../../src/client/deployStrategies';
-import { nls } from '../../../src/i18n';
 import { ComponentStatus, QueryResult, ToolingCreateResult, ToolingDeployStatus } from '../../../src/client/types';
 import { SourceComponent } from '../../../src/resolve';
 import { registry } from '../../../src';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'beta_tapi_car_error',
+  'beta_tapi_mdcontainer_error',
+  'beta_tapi_membertype_error',
+]);
 
 const $$ = testSetup();
 
@@ -120,7 +126,7 @@ describe('Container Deploy Strategy', () => {
       await deployLibrary.createMetadataContainer();
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal(nls.localize('beta_tapi_mdcontainer_error'));
+      expect(e.message).to.equal(messages.getMessage('beta_tapi_mdcontainer_error'));
       expect(e.name).to.be.equal('DeployError');
     }
   });
@@ -310,7 +316,7 @@ describe('Container Deploy Strategy', () => {
       );
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal(nls.localize('beta_tapi_membertype_error', 'ApexClass'));
+      expect(e.message).to.equal(messages.getMessage('beta_tapi_membertype_error', ['ApexClass']));
       expect(e.name).to.be.equal('DeployError');
     }
   });
@@ -346,7 +352,7 @@ describe('Container Deploy Strategy', () => {
       await deployLibrary.createContainerAsyncRequest(successfulContainerResult);
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal(nls.localize('beta_tapi_car_error'));
+      expect(e.message).to.equal(messages.getMessage('beta_tapi_car_error'));
       expect(e.name).to.be.equal('DeployError');
     }
   });

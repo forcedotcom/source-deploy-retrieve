@@ -5,12 +5,14 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { dirname, basename, sep } from 'path';
-import { ExpectedSourceFilesError } from '../../errors';
+import { Messages, SfError } from '@salesforce/core';
 import { baseName } from '../../utils/path';
 import { SourcePath } from '../../common';
 import { SourceComponent } from '../sourceComponent';
 import { BaseSourceAdapter } from './baseSourceAdapter';
 
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_expected_source_files']);
 /**
  * Handles types with mixed content. Mixed content means there are one or more additional
  * file(s) associated with a component with any file extension. Even an entire folder
@@ -51,7 +53,10 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
     }
 
     if (!this.tree.exists(contentPath)) {
-      throw new ExpectedSourceFilesError(this.type, trigger);
+      throw new SfError(
+        messages.getMessage('error_expected_source_files', [trigger, this.type.name]),
+        'ExpectedSourceFilesError'
+      );
     }
 
     if (component) {

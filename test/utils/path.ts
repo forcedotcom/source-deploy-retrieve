@@ -31,6 +31,18 @@ describe('Path Utils', () => {
     it('should return trimmed path up until and including the given part', () => {
       expect(trimUntil(root, 'to')).to.equal(join('to', 'whatever'));
     });
+
+    describe('until last', () => {
+      const path = join('proj', 'lwc', 'folder1', 'lwc', 'myCmp');
+
+      it('should return trimmed until first unless last is requested', () => {
+        expect(trimUntil(path, 'lwc')).to.equal(join('lwc', 'folder1', 'lwc', 'myCmp'));
+      });
+
+      it('should return trimmed until last if requested', () => {
+        expect(trimUntil(path, 'lwc', true)).to.equal(join('lwc', 'myCmp'));
+      });
+    });
   });
 
   describe('parseMetadataXml', () => {

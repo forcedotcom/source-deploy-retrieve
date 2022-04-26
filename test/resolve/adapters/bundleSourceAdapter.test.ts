@@ -6,9 +6,9 @@
  */
 
 import { expect } from 'chai';
-import { bundle } from '../../mock';
+import { bundle, lwcBundle } from '../../mock';
 import { BundleSourceAdapter } from '../../../src/resolve/adapters';
-import { CONTENT_PATH } from '../../mock/type-constants/auraBundleConstant';
+import { CONTENT_PATH } from '../../mock/type-constants/lwcBundleConstant';
 import { RegistryAccess } from '../../../src';
 
 describe('BundleSourceAdapter', () => {
@@ -36,5 +36,26 @@ describe('BundleSourceAdapter', () => {
   it('Should return expected SourceComponent when given a source path', () => {
     const randomSource = bundle.SOURCE_PATHS[1];
     expect(adapter.getComponent(randomSource)).to.deep.equal(bundle.COMPONENT);
+  });
+
+  describe('deeply nested LWC', () => {
+    const lwcAdapter = new BundleSourceAdapter(
+      lwcBundle.COMPONENT.type,
+      registryAccess,
+      undefined,
+      lwcBundle.COMPONENT.tree
+    );
+    it('Should return expected SourceComponent when given a root metadata xml path', () => {
+      expect(lwcAdapter.getComponent(lwcBundle.XML_PATH)).to.deep.equal(lwcBundle.COMPONENT);
+    });
+
+    it('Should return expected SourceComponent when given a lwcBundle directory', () => {
+      expect(lwcAdapter.getComponent(lwcBundle.CONTENT_PATH)).to.deep.equal(lwcBundle.COMPONENT);
+    });
+
+    it('Should return expected SourceComponent when given a source path', () => {
+      const randomSource = lwcBundle.SOURCE_PATHS[1];
+      expect(lwcAdapter.getComponent(randomSource)).to.deep.equal(lwcBundle.COMPONENT);
+    });
   });
 });

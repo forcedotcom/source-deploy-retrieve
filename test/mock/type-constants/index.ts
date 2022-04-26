@@ -15,6 +15,7 @@ import * as decomposed from './customObjectConstant';
 import * as decomposedtoplevel from './customObjectTranslationConstant';
 import * as nonDecomposed from './customlabelsConstant';
 import * as nestedTypes from './territoryConstant';
+import * as lwcBundle from './lwcBundleConstant';
 
 export {
   xmlInFolder,
@@ -28,4 +29,5 @@ export {
   decomposedtoplevel,
   nonDecomposed,
   nestedTypes,
+  lwcBundle,
 };

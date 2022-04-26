@@ -22,6 +22,7 @@ export const XML_PATH = join(CONTENT_PATH, XML_NAME);
 export const SUBTYPE_XML_PATH = join(CONTENT_PATH, `${COMPONENT_NAME}.js-meta.xml`);
 export const COMPONENTS = [`${COMPONENT_NAME}.js`, `${COMPONENT_NAME}.css`, `${COMPONENT_NAME}.html`];
 export const SOURCE_PATHS = COMPONENTS.map((cmp) => join(CONTENT_PATH, cmp));
+
 export const COMPONENT = SourceComponent.createVirtualComponent(
   {
     name: COMPONENT_NAME,
@@ -37,6 +38,25 @@ export const COMPONENT = SourceComponent.createVirtualComponent(
     {
       dirPath: CONTENT_PATH,
       children: [XML_NAME, ...COMPONENTS],
+    },
+  ]
+);
+
+export const EMPTY_BUNDLE = SourceComponent.createVirtualComponent(
+  {
+    name: COMPONENT_NAME,
+    type,
+    xml: XML_PATH,
+    content: CONTENT_PATH,
+  },
+  [
+    {
+      dirPath: TYPE_DIRECTORY,
+      children: [COMPONENT_NAME],
+    },
+    {
+      dirPath: CONTENT_PATH,
+      children: [],
     },
   ]
 );

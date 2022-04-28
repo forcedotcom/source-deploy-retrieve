@@ -230,10 +230,12 @@ export class MetadataResolver {
       const { directoryName, inFolder } = type;
       const parts = dirPath.split(sep);
       const folderOffset = inFolder ? 2 : 1;
-      const typeDirectoryIndex = parts.indexOf(directoryName);
+      const typeDirectoryIndex = parts.lastIndexOf(directoryName);
       if (
         typeDirectoryIndex === -1 ||
         parts.length - folderOffset <= typeDirectoryIndex ||
+        // ex: /lwc/folder/lwc/cmp
+        this.tree.readDirectory(dirPath).includes(type.directoryName) ||
         // types with children may want to resolve them individually
         type.children
       ) {

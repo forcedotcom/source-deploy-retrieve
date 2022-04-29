@@ -66,8 +66,8 @@ export class DeployResult implements MetadataTransferResult {
       } else {
         // if no this.components, this was likely a metadata format deploy so we need to process
         // the componentSuccesses and componentFailures instead.
-        const successes = normalizeToArray(this.response.details.componentSuccesses);
-        const failures = normalizeToArray(this.response.details.componentFailures);
+        const successes = normalizeToArray(this.response.details?.componentSuccesses || []);
+        const failures = normalizeToArray(this.response.details?.componentFailures || []);
         for (const component of [...successes, ...failures]) {
           if (component.fullName === 'package.xml') continue;
           const baseResponse: Partial<FileResponse> = {

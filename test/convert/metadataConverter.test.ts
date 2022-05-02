@@ -6,6 +6,7 @@
  */
 import { dirname, join } from 'path';
 import { fail } from 'assert';
+import { Messages, SfError } from '@salesforce/core';
 import { createSandbox, SinonStub } from 'sinon';
 import * as fs from 'graceful-fs';
 import { assert, expect } from 'chai';
@@ -13,7 +14,6 @@ import { xmlInFolder } from '../mock';
 import * as streams from '../../src/convert/streams';
 import { ComponentReader } from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
-import { ConversionError, LibraryError } from '../../src/errors';
 import { COMPONENTS } from '../mock/type-constants/documentFolderConstant';
 import { ComponentSet, DestructiveChangesType, MetadataConverter, registry, SourceComponent } from '../../src';
 import * as coverage from '../../src/registry/coverage';
@@ -21,6 +21,12 @@ import {
   DECOMPOSED_CHILD_COMPONENT_1,
   DECOMPOSED_CHILD_COMPONENT_2,
 } from '../mock/type-constants/customObjectConstant';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_failed_convert',
+  'error_merge_metadata_target_unsupported',
+]);
 
 const env = createSandbox();
 
@@ -79,7 +85,12 @@ describe('MetadataConverter', () => {
 
   it('should throw ConversionError when an error occurs', async () => {
     const error = new Error('whoops!');
-    const expectedError = new ConversionError(error);
+    const expectedError = new SfError(
+      messages.getMessage('error_failed_convert', [error.message]),
+      'ConversionError',
+      [],
+      error
+    );
     pipelineStub.rejects(error);
 
     try {
@@ -417,7 +428,14 @@ describe('MetadataConverter', () => {
     const defaultDirectory = join('path', 'to', 'default');
 
     it('should throw error if merge config provided for metadata target format', async () => {
-      const expectedError = new ConversionError(new LibraryError('error_merge_metadata_target_unsupported'));
+      const errorToWrap = new SfError(messages.getMessage('error_merge_metadata_target_unsupported'));
+      const expectedError = new SfError(
+        messages.getMessage('error_failed_convert', [errorToWrap.message]),
+        'ConversionError',
+        [],
+        errorToWrap
+      );
+
       try {
         await converter.convert(components, 'metadata', {
           type: 'merge',
@@ -426,7 +444,7 @@ describe('MetadataConverter', () => {
         });
         fail(`should have thrown a ${expectedError.name} error`);
       } catch (e) {
-        expect(e.name).to.equal(ConversionError.name);
+        expect(e.name).to.equal('ConversionError');
         expect(e.message).to.equal(expectedError.message);
       }
     });

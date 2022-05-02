@@ -5,8 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, join, sep } from 'path';
-import { Lifecycle } from '@salesforce/core';
-import { TypeInferenceError } from '../errors';
+import { Lifecycle, Messages, SfError } from '@salesforce/core';
 import { extName, parentName, parseMetadataXml } from '../utils';
 import { MetadataType, RegistryAccess } from '../registry';
 import { ComponentSet } from '../collections';
@@ -15,6 +14,12 @@ import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_path_not_found',
+  'error_could_not_infer_type',
+]);
 
 /**
  * Resolver for metadata type and component objects.
@@ -48,7 +53,7 @@ export class MetadataResolver {
    */
   public getComponentsFromPath(fsPath: string, inclusiveFilter?: ComponentSet): SourceComponent[] {
     if (!this.tree.exists(fsPath)) {
-      throw new TypeInferenceError('error_path_not_found', fsPath);
+      throw new SfError(messages.getMessage('error_path_not_found', [fsPath]), 'TypeInferenceError');
     }
 
     // use the default ignore if we aren't using a real one
@@ -143,7 +148,7 @@ export class MetadataResolver {
       function: 'resolveComponent',
       path: fsPath,
     });
-    throw new TypeInferenceError('error_could_not_infer_type', fsPath);
+    throw new SfError(messages.getMessage('error_could_not_infer_type', [fsPath]), 'TypeInferenceError');
   }
 
   /**

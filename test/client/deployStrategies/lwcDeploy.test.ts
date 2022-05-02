@@ -6,19 +6,21 @@
  */
 
 import { basename, join } from 'path';
-import { AuthInfo, Connection } from '@salesforce/core';
+import { AuthInfo, Connection, Messages } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import * as fs from 'graceful-fs';
 import { SaveError, SaveResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
 import { AnyJson } from '@salesforce/ts-types';
-import { nls } from '../../../src/i18n';
 import { LwcDeploy } from '../../../src/client/deployStrategies';
 import { LightningComponentResource, ToolingCreateResult } from '../../../src/client/types';
 import { SourceComponent, VirtualTreeContainer } from '../../../src/resolve';
 import { ComponentStatus, ToolingDeployStatus } from '../../../src/client';
 import { registry } from '../../../src';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_creating_metadata_type']);
 
 const $$ = testSetup();
 
@@ -244,7 +246,7 @@ describe('LWC Deploy Strategy', () => {
       await lwcDeploy.upsertBundle();
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal(nls.localize('error_creating_metadata_type', 'LightningComponentBundle'));
+      expect(e.message).to.equal(messages.getMessage('error_creating_metadata_type', ['LightningComponentBundle']));
       expect(e.name).to.be.equal('DeployError');
     }
   });

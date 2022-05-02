@@ -9,14 +9,13 @@ import { basename, join, sep } from 'path';
 import { Readable, Writable } from 'stream';
 import * as fs from 'graceful-fs';
 import * as archiver from 'archiver';
-import { Logger } from '@salesforce/core';
+import { Logger, SfError, Messages } from '@salesforce/core';
 import { expect } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { ComponentSet, MetadataResolver, RegistryAccess, SourceComponent, WriteInfo, WriterFormat } from '../../src';
 import { MetadataTransformerFactory } from '../../src/convert/transformers';
-import { LibraryError } from '../../src/errors';
 import { COMPONENTS } from '../mock/type-constants/reportConstant';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { COMPONENT, CONTENT_NAMES, TYPE_DIRECTORY, XML_NAMES } from '../mock/type-constants/apexClassConstant';
@@ -24,6 +23,9 @@ import { BaseMetadataTransformer } from '../../src/convert/transformers/baseMeta
 
 const env = createSandbox();
 const registryAccess = new RegistryAccess();
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_convert_invalid_format']);
 
 class TestTransformer extends BaseMetadataTransformer {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -67,7 +69,10 @@ describe('Streams', () => {
     it('should throw error for unexpected conversion format', (done) => {
       // @ts-ignore constructor argument invalid
       const converter = new streams.ComponentConverter('badformat');
-      const expectedError = new LibraryError('error_convert_invalid_format', 'badformat');
+      const expectedError = new SfError(
+        messages.getMessage('error_convert_invalid_format', ['badformat']),
+        'LibraryError'
+      );
       // convert overrides node's Transform _transform method
       // eslint-disable-next-line no-underscore-dangle
       converter._transform(component, '', (err: Error) => {

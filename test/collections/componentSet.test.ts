@@ -10,7 +10,7 @@ import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
 import { AnyJson } from '@salesforce/ts-types';
-import { AuthInfo, Connection } from '@salesforce/core';
+import { AuthInfo, Connection, Messages } from '@salesforce/core';
 import {
   ComponentSet,
   ConnectionResolver,
@@ -25,8 +25,6 @@ import {
   RegistryAccess,
   SourceComponent,
 } from '../../src';
-import { ComponentSetError } from '../../src/errors';
-import { nls } from '../../src/i18n';
 import { mockConnection } from '../mock/client';
 import { decomposedtoplevel, matchingContentFile, mixedContentSingleFile } from '../mock';
 import { MATCHING_RULES_COMPONENT } from '../mock/type-constants/customlabelsConstant';
@@ -699,8 +697,11 @@ describe('ComponentSet', () => {
         await set.deploy({ usernameOrConnection: 'test@foobar.com' });
         fail('should have thrown an error');
       } catch (e) {
-        expect(e.name).to.equal(ComponentSetError.name);
-        expect(e.message).to.equal(nls.localize('error_no_source_to_deploy'));
+        Messages.importMessagesDirectory(__dirname);
+        const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_source_to_deploy']);
+
+        expect(e.name).to.equal('ComponentSetError');
+        expect(e.message).to.equal(messages.getMessage('error_no_source_to_deploy'));
       }
     });
   });

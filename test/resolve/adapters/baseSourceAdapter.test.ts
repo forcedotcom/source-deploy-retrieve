@@ -5,14 +5,17 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
+import { Messages, SfError } from '@salesforce/core';
+
 import { assert, expect } from 'chai';
 import { decomposed, matchingContentFile, mixedContentSingleFile, nestedTypes, xmlInFolder } from '../../mock';
 import { BaseSourceAdapter, DefaultSourceAdapter } from '../../../src/resolve/adapters';
 import { META_XML_SUFFIX } from '../../../src/common';
-import { UnexpectedForceIgnore } from '../../../src/errors';
-import { nls } from '../../../src/i18n';
 import { RegistryTestUtil } from '../registryTestUtil';
 import { ForceIgnore, registry, SourceComponent } from '../../../src';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_metadata_xml_ignore']);
 
 class TestAdapter extends BaseSourceAdapter {
   public readonly component: SourceComponent;
@@ -67,10 +70,11 @@ describe('BaseSourceAdapter', () => {
       deny: [path],
     });
     const adapter = new TestAdapter(matchingContentFile.COMPONENT, forceIgnore);
+
     assert.throws(
       () => adapter.getComponent(path),
-      UnexpectedForceIgnore,
-      nls.localize('error_no_metadata_xml_ignore', [path, path])
+      SfError,
+      messages.getMessage('error_no_metadata_xml_ignore', [path, path])
     );
     testUtil.restore();
   });

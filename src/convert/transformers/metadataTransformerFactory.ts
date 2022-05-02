@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { RegistryError } from '../../errors';
+import { Messages, SfError } from '@salesforce/core';
 import { MetadataTransformer } from '../types';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { ConvertContext } from '../convertContext';
@@ -13,6 +13,9 @@ import { DefaultMetadataTransformer } from './defaultMetadataTransformer';
 import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 import { StaticResourceMetadataTransformer } from './staticResourceMetadataTransformer';
 import { NonDecomposedMetadataTransformer } from './nonDecomposedMetadataTransformer';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_missing_transformer']);
 
 export class MetadataTransformerFactory {
   private registry: RegistryAccess;
@@ -38,7 +41,10 @@ export class MetadataTransformerFactory {
       case TransformerStrategy.NonDecomposed:
         return new NonDecomposedMetadataTransformer(this.registry, this.context);
       default:
-        throw new RegistryError('error_missing_transformer', [type.name, transformerId]);
+        throw new SfError(
+          messages.getMessage('error_missing_transformer', [type.name, transformerId]),
+          'RegistryError'
+        );
     }
   }
 }

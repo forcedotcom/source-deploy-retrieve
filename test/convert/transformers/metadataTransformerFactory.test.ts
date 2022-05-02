@@ -6,6 +6,7 @@
  */
 
 import { assert, expect } from 'chai';
+import { Messages, SfError } from '@salesforce/core';
 import { RegistryAccess, SourceComponent, registry } from '../../../src';
 import { ConvertContext } from '../../../src/convert/convertContext';
 import { MetadataTransformerFactory } from '../../../src/convert/transformers';
@@ -16,8 +17,9 @@ import { StaticResourceMetadataTransformer } from '../../../src/convert/transfor
 import { matchingContentFile, mixedContentSingleFile } from '../../mock';
 import { DECOMPOSED_COMPONENT } from '../../mock/type-constants/customObjectConstant';
 import { COMPONENT_1 } from '../../mock/type-constants/customlabelsConstant';
-import { RegistryError } from '../../../src/errors';
-import { nls } from '../../../src/i18n';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_missing_transformer']);
 
 const registryAccess = new RegistryAccess();
 
@@ -70,8 +72,8 @@ describe('MetadataTransformerFactory', () => {
     const factory = new MetadataTransformerFactory(registryAccess);
     assert.throws(
       () => factory.getTransformer(component),
-      RegistryError,
-      nls.localize('error_missing_transformer', [type.name, type.strategies.transformer])
+      SfError,
+      messages.getMessage('error_missing_transformer', [type.name, type.strategies.transformer])
     );
   });
 });

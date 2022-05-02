@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { assert, expect } from 'chai';
+import { Messages, SfError } from '@salesforce/core';
 import { MetadataType, registry, RegistryAccess, VirtualTreeContainer } from '../../../src';
 import {
   BundleSourceAdapter,
@@ -14,8 +15,9 @@ import {
   MixedContentSourceAdapter,
 } from '../../../src/resolve/adapters';
 import { SourceAdapterFactory } from '../../../src/resolve/adapters/sourceAdapterFactory';
-import { RegistryError } from '../../../src/errors';
-import { nls } from '../../../src/i18n';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_missing_adapter']);
 
 /**
  * The types being passed to getAdapter don't really matter in these tests. We're
@@ -73,8 +75,8 @@ describe('SourceAdapterFactory', () => {
 
     assert.throws(
       () => factory.getAdapter(type),
-      RegistryError,
-      nls.localize('error_missing_adapter', [type.strategies.adapter, type.name])
+      SfError,
+      messages.getMessage('error_missing_adapter', [type.strategies.adapter, type.name])
     );
   });
 });

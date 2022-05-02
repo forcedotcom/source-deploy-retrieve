@@ -6,6 +6,7 @@
  */
 import { fail } from 'assert';
 import { join } from 'path';
+import { Messages } from '@salesforce/core';
 import { expect } from 'chai';
 import * as unzipper from 'unzipper';
 import { createSandbox, match, SinonStub } from 'sinon';
@@ -24,8 +25,6 @@ import {
   SourceComponent,
   VirtualTreeContainer,
 } from '../../src';
-import { MetadataApiRetrieveError, MissingJobIdError } from '../../src/errors';
-import { nls } from '../../src/i18n';
 import { MOCK_ASYNC_RESULT, MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
 import { xmlInFolder } from '../mock';
 import { COMPONENT } from '../mock/type-constants/apexClassConstant';
@@ -36,6 +35,12 @@ import { testApiVersion } from '../mock/manifestConstants';
 
 const env = createSandbox();
 
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_no_job_id',
+  'error_no_components_to_retrieve',
+]);
+
 describe('MetadataApiRetrieve', () => {
   beforeEach(() => {
     env.stub(coverage, 'getCurrentApiVersion').resolves(testApiVersion);
@@ -44,6 +49,10 @@ describe('MetadataApiRetrieve', () => {
 
   describe('Lifecycle', () => {
     describe('start', () => {
+      const expectedError = {
+        name: 'MetadataApiRetrieveError',
+        message: messages.getMessage('error_no_components_to_retrieve'),
+      };
       it('should throw error if there are no components to retrieve', async () => {
         const toRetrieve = new ComponentSet([]);
         const { operation } = await stubMetadataRetrieve(env, {
@@ -55,8 +64,8 @@ describe('MetadataApiRetrieve', () => {
           await operation.start();
           fail('should have thrown an error');
         } catch (e) {
-          expect(e.name).to.equal(MetadataApiRetrieveError.name);
-          expect(e.message).to.equal(nls.localize('error_no_components_to_retrieve'));
+          expect(e.name).to.equal(expectedError.name);
+          expect(e.message).to.equal(expectedError.message);
         }
       });
 
@@ -72,8 +81,8 @@ describe('MetadataApiRetrieve', () => {
           await operation.start();
           fail('should have thrown an error');
         } catch (e) {
-          expect(e.name).to.equal(MetadataApiRetrieveError.name);
-          expect(e.message).to.equal(nls.localize('error_no_components_to_retrieve'));
+          expect(e.name).to.equal(expectedError.name);
+          expect(e.message).to.equal(expectedError.message);
         }
       });
 
@@ -411,7 +420,10 @@ describe('MetadataApiRetrieve', () => {
         await operation.checkStatus();
         chai.assert.fail('the above should throw an error');
       } catch (e) {
-        const expectedError = new MissingJobIdError('retrieve');
+        const expectedError = {
+          name: 'MissingJobIdError',
+          message: messages.getMessage('error_no_job_id', ['retrieve']),
+        };
         expect(e.name).to.equal(expectedError.name);
         expect(e.message).to.equal(expectedError.message);
       }

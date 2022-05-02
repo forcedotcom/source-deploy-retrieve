@@ -6,7 +6,7 @@
  */
 /* eslint  @typescript-eslint/unified-signatures:0 */
 import { j2xParser } from 'fast-xml-parser';
-import { AuthInfo, Connection, Logger } from '@salesforce/core';
+import { AuthInfo, Connection, Logger, Messages, SfError } from '@salesforce/core';
 import {
   MetadataApiDeploy,
   MetadataApiDeployOptions,
@@ -14,7 +14,6 @@ import {
   MetadataApiRetrieveOptions,
 } from '../client';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
-import { ComponentSetError } from '../errors';
 import {
   ComponentLike,
   ManifestResolver,
@@ -35,6 +34,9 @@ import {
   PackageTypeMembers,
 } from './types';
 import { LazyCollection } from './lazyCollection';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_source_to_deploy']);
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
@@ -280,7 +282,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const toDeploy = Array.from(this.getSourceComponents());
 
     if (toDeploy.length === 0) {
-      throw new ComponentSetError('error_no_source_to_deploy');
+      throw new SfError(messages.getMessage('error_no_source_to_deploy'), 'ComponentSetError');
     }
 
     const operationOptions = Object.assign({}, options, {

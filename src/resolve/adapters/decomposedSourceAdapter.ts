@@ -4,12 +4,15 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { Messages, SfError } from '@salesforce/core';
 import { SourcePath } from '../../common';
 import { SourceComponent } from '../sourceComponent';
 import { baseName, parentName, parseMetadataXml } from '../../utils';
 import { DecompositionStrategy } from '../../registry';
-import { TypeInferenceError } from '../../errors';
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_unexpected_child_type']);
 
 /**
  * Handles decomposed types. A flavor of mixed content where a component can
@@ -112,7 +115,10 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
         if (!component) {
           // This is most likely metadata found within a CustomObject folder that is not a
           // child type of CustomObject. E.g., Layout, SharingRules, ApexClass.
-          throw new TypeInferenceError('error_unexpected_child_type', [trigger, this.type.name]);
+          throw new SfError(
+            messages.getMessage('error_unexpected_child_type', [trigger, this.type.name]),
+            'TypeInferenceError'
+          );
         }
       }
       if (component) {

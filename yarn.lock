@@ -556,9 +556,9 @@
     safe-json-stringify "~1"
 
 "@salesforce/core@^2.35.0":
-  version "2.36.0"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-2.36.0.tgz#eadade3d663f0a2e11d0cc9f9097c528c182997d"
-  integrity sha512-VsKt7SXArxrOelaJl5Ez21Pmtdp2eU6qimqZ5clxnNaZDZKOySDPYnKHu7AYCt1LUNFN9cfsX8K5yOHxS+wT+w==
+  version "2.36.4"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-2.36.4.tgz#1e683bb06ca60356f7a8376d0ac022c526781587"
+  integrity sha512-h2wCbKJJbsULinbk9JgW1ZGHiuxGwjzSqRjxx5S1Zou2ikHFjNnlfUvLPexc42m3unoCbLmtwUExlXsY5l0N0g==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
     "@salesforce/kit" "^1.5.17"
@@ -567,12 +567,12 @@
     "@types/graceful-fs" "^4.1.5"
     "@types/jsforce" "^1.9.41"
     "@types/mkdirp" "^1.0.1"
+    ajv "^8.11.0"
     archiver "^5.3.0"
     debug "^3.1.0"
     faye "^1.4.0"
     graceful-fs "^4.2.4"
     js2xmlparser "^4.0.1"
-    jsen "0.6.6"
     jsforce "^1.11.0"
     jsonwebtoken "8.5.0"
     mkdirp "1.0.4"
@@ -1027,17 +1027,7 @@ aggregate-error@^3.0.0:
     clean-stack "^2.0.0"
     indent-string "^4.0.0"
 
-ajv@^6.10.0, ajv@^6.12.3:
-  version "6.12.5"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.5.tgz#19b0e8bae8f476e5ba666300387775fb1a00a4da"
-  integrity sha512-lRF8RORchjpKG50/WFf8xmg7sgCLFiYNNnqdKflk63whMQcWR5ngGjiSXkL9bjxy6B2npOK2HSMN49jEBMSkag==
-  dependencies:
-    fast-deep-equal "^3.1.1"
-    fast-json-stable-stringify "^2.0.0"
-    json-schema-traverse "^0.4.1"
-    uri-js "^4.2.2"
-
-ajv@^6.12.4:
+ajv@^6.10.0, ajv@^6.12.3, ajv@^6.12.4:
   version "6.12.6"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.6.tgz#baf5a62e802b07d977034586f8c3baf5adf26df4"
   integrity sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==
@@ -1047,10 +1037,10 @@ ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-ajv@^8.0.1:
-  version "8.6.3"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.6.3.tgz#11a66527761dc3e9a3845ea775d2d3c0414e8764"
-  integrity sha512-SMJOdDP6LqTkD0Uq8qLi+gMwSt0imXLSV080qFVwJCpH9U6Mb+SUGHAXM0KNbcBPguytWyvFxcHgMLe2D2XSpw==
+ajv@^8.0.1, ajv@^8.11.0:
+  version "8.11.0"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.11.0.tgz#977e91dd96ca669f54a11e23e378e33b884a565f"
+  integrity sha512-wGgprdCvMalC0BztXvitD2hC04YffAvtsUn93JbGXYLAtCUO4xd17mCCZQxUOItiBwZvJScWo8NIvQMQ71rdpg==
   dependencies:
     fast-deep-equal "^3.1.1"
     json-schema-traverse "^1.0.0"
@@ -3912,11 +3902,6 @@ jsdoc-type-pratt-parser@^1.0.4:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/jsdoc-type-pratt-parser/-/jsdoc-type-pratt-parser-1.2.0.tgz#3482a3833b74a88c95a6ba7253f0c0de3b77b9f5"
   integrity sha512-4STjeF14jp4bqha44nKMY1OUI6d2/g6uclHWUCZ7B4DoLzaB5bmpTkQrpqU+vSVzMD0LsKAOskcnI3I3VfIpmg==
-
-jsen@0.6.6:
-  version "0.6.6"
-  resolved "https://registry.yarnpkg.com/jsen/-/jsen-0.6.6.tgz#0240c18cf11350ac021456f48a7eb13bd67e0420"
-  integrity sha1-AkDBjPETUKwCFFb0in6xO9Z+BCA=
 
 jsesc@^2.5.1:
   version "2.5.2"

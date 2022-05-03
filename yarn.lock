@@ -2109,9 +2109,9 @@ deep-eql@^3.0.1:
     type-detect "^4.0.0"
 
 deep-equal-in-any-order@^1.1.4:
-  version "1.1.15"
-  resolved "https://registry.yarnpkg.com/deep-equal-in-any-order/-/deep-equal-in-any-order-1.1.15.tgz#aa84501ff574fb92c79612ef83deeae6de89231c"
-  integrity sha512-/W36YW15Z+AymTkswOoCOX++gWLd0XBy1lFlxmML/m/PW0/0GuNkE65UTA2qiuPrKJTxXssKKrvtIZkOh+yEHA==
+  version "1.1.17"
+  resolved "https://registry.yarnpkg.com/deep-equal-in-any-order/-/deep-equal-in-any-order-1.1.17.tgz#74d133a084b333665d5471e24a3234738a07c9b3"
+  integrity sha512-kHjMQtRlhmN66mf2FQvBfPxAPh0Bn9NONn2lA+ksAYcejnng5YwRnyS+4PAj8Fs8h5EVrcYIIJ0NbQAp9WRqCg==
   dependencies:
     lodash.mapvalues "^4.6.0"
     sort-any "^2.0.0"
@@ -3202,9 +3202,9 @@ got@^11.8.2:
     responselike "^2.0.0"
 
 graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.2.0, graceful-fs@^4.2.2, graceful-fs@^4.2.4, graceful-fs@^4.2.8:
-  version "4.2.9"
-  resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.9.tgz#041b05df45755e587a24942279b9d113146e1c96"
-  integrity sha512-NtNxqUcXgpW2iMrfqSfR73Glt39K+BLwWsPs94yR63v45T0Wbej7eRmL5cWfwEgqXnmjQp3zaJTshdRW/qC2ZQ==
+  version "4.2.10"
+  resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.10.tgz#147d3a006da4ca3ce14728c7aefc287c367d7a6c"
+  integrity sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==
 
 growl@1.10.5:
   version "1.10.5"

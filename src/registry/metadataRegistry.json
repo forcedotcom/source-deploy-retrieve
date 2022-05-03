@@ -2985,6 +2985,14 @@
       "directoryName": "OmniInteractionAccessConfig",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "dataweaveresource": {
+      "id": "dataweaveresource",
+      "name": "DataWeaveResource",
+      "suffix": "dwl",
+      "directoryName": "dw",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3313,7 +3321,8 @@
     "explainabilityActionVersion": "explainabilityactionversion",
     "advAcctForecastDimSource": "advacctforecastdimsource",
     "careLimitType": "carelimittype",
-    "omniInteractionAccessConfig": "omniinteractionaccessconfig"
+    "omniInteractionAccessConfig": "omniinteractionaccessconfig",
+    "dwl": "dataweaveresource"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

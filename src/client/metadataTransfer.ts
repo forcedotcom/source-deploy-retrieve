@@ -20,7 +20,6 @@ import { Duration } from '@salesforce/kit';
 import { AnyJson, isNumber } from '@salesforce/ts-types';
 import * as fs from 'graceful-fs';
 import { MetadataConverter, SfdxFileFormat } from '../convert';
-
 import { ComponentSet } from '../collections';
 import { AsyncResult, MetadataRequestStatus, MetadataTransferResult, RequestStatus } from './types';
 

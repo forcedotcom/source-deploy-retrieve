@@ -17,4 +17,5 @@ export {
   nonDecomposed,
   decomposedtoplevel,
   nestedTypes,
+  lwcBundle,
 } from './type-constants';

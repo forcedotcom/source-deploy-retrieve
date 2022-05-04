@@ -212,7 +212,7 @@ export class SourceComponent implements MetadataComponent {
     // (report, dashboard, emailTemplate, document) and their folder container types:
     // (reportFolder, dashboardFolder, emailFolder, documentFolder)
     if (!suffix || inFolder || folderContentType) {
-      return trimUntil(fsPath, directoryName);
+      return trimUntil(fsPath, directoryName, true);
     }
 
     if (folderType) {
@@ -230,6 +230,7 @@ export class SourceComponent implements MetadataComponent {
     const parsed = parse(contents.toString(), {
       ignoreAttributes: false,
       parseNodeValue: false,
+      cdataTagName: '__cdata',
     }) as T;
     const [firstElement] = Object.keys(parsed);
     if (firstElement === this.type.name) {

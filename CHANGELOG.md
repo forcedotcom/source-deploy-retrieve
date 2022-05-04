@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.12.12](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.11...v5.12.12) (2022-04-28)
+
+### [5.12.11](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.10...v5.12.11) (2022-04-21)
+
+### [5.12.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.9...v5.12.10) (2022-04-18)
+
+### [5.12.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.8...v5.12.9) (2022-04-13)
+
+### Bug Fixes
+
+- add telemetry to metadata api deploy ([#606](https://github.com/forcedotcom/source-deploy-retrieve/issues/606)) ([c9d584c](https://github.com/forcedotcom/source-deploy-retrieve/commit/c9d584c28aad4f444548b1e4c357f714d82cd669))
+
+### [5.12.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.7...v5.12.8) (2022-04-07)
+
+### [5.12.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.6...v5.12.7) (2022-04-01)
+
+### Bug Fixes
+
+- resolve strictDirectoryName types in mdapi format ([#601](https://github.com/forcedotcom/source-deploy-retrieve/issues/601)) ([823966e](https://github.com/forcedotcom/source-deploy-retrieve/commit/823966e8e003151c97700a397d467a794794e902))
+
 ### [5.12.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.5...v5.12.6) (2022-03-28)
 
 ### [5.12.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.4...v5.12.5) (2022-03-25)

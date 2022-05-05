@@ -86,8 +86,8 @@ export class DeployResult implements MetadataTransferResult {
         }
         this.fileResponses = fileResponses;
       }
-      return this.fileResponses;
     }
+    return this.fileResponses;
   }
 
   private createResponses(component: SourceComponent, messages: DeployMessage[]): FileResponse[] {

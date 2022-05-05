@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.12.13](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.12...v5.12.13) (2022-05-05)
+
+### Bug Fixes
+
+- resolveTypeFromStrictFolder for children of decomposed types with decomposition topLevel ([#628](https://github.com/forcedotcom/source-deploy-retrieve/issues/628)) ([8bef60b](https://github.com/forcedotcom/source-deploy-retrieve/commit/8bef60b43f56ce249022912b75769b92f31c209e))
+
 ### [5.12.12](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.11...v5.12.12) (2022-04-28)
 
 ### [5.12.11](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.10...v5.12.11) (2022-04-21)

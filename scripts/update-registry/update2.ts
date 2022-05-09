@@ -29,7 +29,9 @@ interface DescribeResult {
   console.log(
     `CoverageReport shows ${Object.keys(metadataCoverage.types).length} items in the metadata coverage report`
   );
-  const missingTypes = getMissingTypes(metadataCoverage, registry);
+  const missingTypes = getMissingTypes(metadataCoverage, registry).filter(([name]) =>
+    process.argv.length > 2 ? process.argv.includes(name) : true
+  );
   if (missingTypes.length === 0) {
     console.log(`Your registry is complete!  Congratulations!`);
     exit(0);

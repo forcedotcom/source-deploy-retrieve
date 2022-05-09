@@ -169,7 +169,16 @@ See [testkit](https://github.com/salesforcecli/cli-plugins-testkit) for examples
 
 ### Work in stages
 
-If you see a whole bunch of new unsupported types, you can "ignore" all the features and work through them in chunks (uncomment a feature at a time)
+If you see a whole bunch of new unsupported types, you can "ignore" all the features and work through them in chunks (uncomment a feature at a time) using nonSupportedTypes.ts
+
+If you want to update the registry for only a subset of the currently missing metadata types, add your types as arguments to the script.
+
+```bash
+# normal, update all missing types
+yarn update-registry
+# only update the 2 types listed
+yarn update-registry AssessmentQuestion AssessmentQuestionSet
+```
 
 ### DevHub settings
 

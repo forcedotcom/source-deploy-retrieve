@@ -555,10 +555,10 @@
     mv "~2"
     safe-json-stringify "~1"
 
-"@salesforce/core@^2.35.0":
-  version "2.36.4"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-2.36.4.tgz#1e683bb06ca60356f7a8376d0ac022c526781587"
-  integrity sha512-h2wCbKJJbsULinbk9JgW1ZGHiuxGwjzSqRjxx5S1Zou2ikHFjNnlfUvLPexc42m3unoCbLmtwUExlXsY5l0N0g==
+"@salesforce/core@^2.37.1":
+  version "2.37.1"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-2.37.1.tgz#bfb6634e068278c7761d694a15e09a680b407137"
+  integrity sha512-Jyppt6fc8uEBQgfD2uIvZlUVSTSkhgU4i+N0B4mQJ+0yeAu5foiGJnn7u6/GPkpLSgof8IZKC6f4crsi/9xyLA==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
     "@salesforce/kit" "^1.5.17"
@@ -624,10 +624,19 @@
     typedoc-plugin-external-module-name "~4.0.0"
     typescript "^4.1.3"
 
-"@salesforce/kit@^1.5.17", "@salesforce/kit@^1.5.32":
+"@salesforce/kit@^1.5.17":
   version "1.5.38"
   resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-1.5.38.tgz#a7ff915d75e387475a370ad7087690fde1832821"
   integrity sha512-tAz5oWTlHW4VkQqWilaHihuiFf/opzbhfL6JK1TPtY8CyKCwCMPchoWafe+pCKWOSFTu+WzT/er06zVYC4ITrw==
+  dependencies:
+    "@salesforce/ts-types" "^1.5.20"
+    shx "^0.3.3"
+    tslib "^2.2.0"
+
+"@salesforce/kit@^1.5.41":
+  version "1.5.41"
+  resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-1.5.41.tgz#3248d4d28fe24ed47827716cfe416c21a2a90651"
+  integrity sha512-nhi7jw3LNITl7rHSnCLnEDTaq6nvolSMFBg7poniG84Q7kJPezgTEj5OKAyQ9hJoRE4u59n5M5bUFvwRoXmJzQ==
   dependencies:
     "@salesforce/ts-types" "^1.5.20"
     shx "^0.3.3"

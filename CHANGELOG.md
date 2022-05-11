@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.13.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.13.0...v5.13.1) (2022-05-11)
+
+### Bug Fixes
+
+- support file responses for metadata format deploys ([#619](https://github.com/forcedotcom/source-deploy-retrieve/issues/619)) ([9cceb4c](https://github.com/forcedotcom/source-deploy-retrieve/commit/9cceb4c082031e9d6c3dbe386d83493a0c101dfc))
+
 ## [5.13.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.14...v5.13.0) (2022-05-11)
 
 ### Features

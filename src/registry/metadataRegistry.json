@@ -2985,6 +2985,22 @@
       "directoryName": "OmniInteractionAccessConfig",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "assessmentquestion": {
+      "id": "assessmentquestion",
+      "name": "AssessmentQuestion",
+      "suffix": "aq",
+      "directoryName": "AssessmentQuestions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "assessmentquestionset": {
+      "id": "assessmentquestionset",
+      "name": "AssessmentQuestionSet",
+      "suffix": "aqs",
+      "directoryName": "AssessmentQuestionSets",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3313,7 +3329,9 @@
     "explainabilityActionVersion": "explainabilityactionversion",
     "advAcctForecastDimSource": "advacctforecastdimsource",
     "careLimitType": "carelimittype",
-    "omniInteractionAccessConfig": "omniinteractionaccessconfig"
+    "omniInteractionAccessConfig": "omniinteractionaccessconfig",
+    "aq": "assessmentquestion",
+    "aqs": "assessmentquestionset"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

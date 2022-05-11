@@ -2992,7 +2992,10 @@
       "suffix": "dwl",
       "directoryName": "dw",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
     }
   },
   "suffixes": {

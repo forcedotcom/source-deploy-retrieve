@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.13.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.13.0...v5.13.1) (2022-05-11)
+
+### Bug Fixes
+
+- support file responses for metadata format deploys ([#619](https://github.com/forcedotcom/source-deploy-retrieve/issues/619)) ([9cceb4c](https://github.com/forcedotcom/source-deploy-retrieve/commit/9cceb4c082031e9d6c3dbe386d83493a0c101dfc))
+
+## [5.13.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.14...v5.13.0) (2022-05-11)
+
+### Features
+
+- 2 new metadata types for Assessment ([1ac6eeb](https://github.com/forcedotcom/source-deploy-retrieve/commit/1ac6eebd6e13b954b41a457a2a2ff5e4eca85a1e))
+
+### [5.12.14](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.13...v5.12.14) (2022-05-09)
+
+### [5.12.13](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.12...v5.12.13) (2022-05-05)
+
+### Bug Fixes
+
+- resolveTypeFromStrictFolder for children of decomposed types with decomposition topLevel ([#628](https://github.com/forcedotcom/source-deploy-retrieve/issues/628)) ([8bef60b](https://github.com/forcedotcom/source-deploy-retrieve/commit/8bef60b43f56ce249022912b75769b92f31c209e))
+
 ### [5.12.12](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.11...v5.12.12) (2022-04-28)
 
 ### [5.12.11](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.12.10...v5.12.11) (2022-04-21)

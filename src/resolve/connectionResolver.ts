@@ -96,6 +96,14 @@ export class ConnectionResolver {
       members = [];
     }
 
+    // if the Metadata Type doesn't return a correct fileName then help it out
+    for (const m of members) {
+      if (typeof m.fileName == 'object') {
+        const t = this.registry.getTypeByName(query.type);
+        m.fileName = `${t.directoryName}/${m.fullName}.${t.suffix}`;
+      }
+    }
+
     // Workaround because metadata.list({ type: 'StandardValueSet' }) returns []
     if (query.type === defaultRegistry.types.standardvalueset.name && members.length === 0) {
       const standardValueSetPromises = standardValueSet.fullnames.map(async (standardValueSetFullName) => {

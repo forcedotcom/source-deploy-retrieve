@@ -2995,7 +2995,8 @@
       "strictDirectoryName": false,
       "strategies": {
         "adapter": "matchingContentFile"
-      },
+      }
+    },
     "assessmentquestion": {
       "id": "assessmentquestion",
       "name": "AssessmentQuestion",

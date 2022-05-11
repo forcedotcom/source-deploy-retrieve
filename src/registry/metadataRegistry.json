@@ -2986,6 +2986,16 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "dataweaveresource": {
+      "id": "dataweaveresource",
+      "name": "DataWeaveResource",
+      "suffix": "dwl",
+      "directoryName": "dw",
+      "inFolder": false,
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      },
     "assessmentquestion": {
       "id": "assessmentquestion",
       "name": "AssessmentQuestion",
@@ -3330,6 +3340,7 @@
     "advAcctForecastDimSource": "advacctforecastdimsource",
     "careLimitType": "carelimittype",
     "omniInteractionAccessConfig": "omniinteractionaccessconfig",
+    "dwl": "dataweaveresource",
     "aq": "assessmentquestion",
     "aqs": "assessmentquestionset"
   },

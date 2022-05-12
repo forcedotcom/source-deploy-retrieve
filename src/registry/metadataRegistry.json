@@ -2993,6 +2993,33 @@
       "directoryName": "OmniInteractionAccessConfig",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "dataweaveresource": {
+      "id": "dataweaveresource",
+      "name": "DataWeaveResource",
+      "suffix": "dwl",
+      "directoryName": "dw",
+      "inFolder": false,
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
+    },
+    "assessmentquestion": {
+      "id": "assessmentquestion",
+      "name": "AssessmentQuestion",
+      "suffix": "aq",
+      "directoryName": "AssessmentQuestions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "assessmentquestionset": {
+      "id": "assessmentquestionset",
+      "name": "AssessmentQuestionSet",
+      "suffix": "aqs",
+      "directoryName": "AssessmentQuestionSets",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3322,7 +3349,10 @@
     "explainabilityActionVersion": "explainabilityactionversion",
     "advAcctForecastDimSource": "advacctforecastdimsource",
     "careLimitType": "carelimittype",
-    "omniInteractionAccessConfig": "omniinteractionaccessconfig"
+    "omniInteractionAccessConfig": "omniinteractionaccessconfig",
+    "dwl": "dataweaveresource",
+    "aq": "assessmentquestion",
+    "aqs": "assessmentquestionset"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -3383,5 +3413,5 @@
     "datamappingfielddefinition": "datamappingobjectdefinition",
     "mktdatatranfield": "mktdatatranobject"
   },
-  "apiVersion": "53.0"
+  "apiVersion": "54.0"
 }

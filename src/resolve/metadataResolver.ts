@@ -176,11 +176,11 @@ export class MetadataResolver {
           ['mixedContent', 'bundle'].includes(type.strategies?.adapter) ||
           // the file suffix (in source or mdapi format) matches the type suffix we think it is
           (type.suffix && [type.suffix, `${type.suffix}${META_XML_SUFFIX}`].some((s) => fsPath.endsWith(s))) ||
-          // the type has children and the path also includes THAT directory
+          // the type has children and the file suffix (in source format) matches a child type suffix of the type we think it is
           (type.children?.types &&
             Object.values(type.children?.types)
-              .map((childType) => childType.directoryName)
-              .some((dirName) => pathParts.includes(dirName)))
+              .map((childType) => `${childType.suffix}${META_XML_SUFFIX}`)
+              .some((s) => fsPath.endsWith(s)))
       );
   }
 
@@ -230,10 +230,12 @@ export class MetadataResolver {
       const { directoryName, inFolder } = type;
       const parts = dirPath.split(sep);
       const folderOffset = inFolder ? 2 : 1;
-      const typeDirectoryIndex = parts.indexOf(directoryName);
+      const typeDirectoryIndex = parts.lastIndexOf(directoryName);
       if (
         typeDirectoryIndex === -1 ||
         parts.length - folderOffset <= typeDirectoryIndex ||
+        // ex: /lwc/folder/lwc/cmp
+        this.tree.readDirectory(dirPath).includes(type.directoryName) ||
         // types with children may want to resolve them individually
         type.children
       ) {

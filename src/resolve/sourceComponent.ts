@@ -203,7 +203,7 @@ export class SourceComponent implements MetadataComponent {
     // (report, dashboard, emailTemplate, document) and their folder container types:
     // (reportFolder, dashboardFolder, emailFolder, documentFolder)
     if (!suffix || inFolder || folderContentType) {
-      return trimUntil(fsPath, directoryName);
+      return trimUntil(fsPath, directoryName, true);
     }
 
     if (folderType) {

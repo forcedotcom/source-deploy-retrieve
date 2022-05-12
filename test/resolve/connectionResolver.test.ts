@@ -153,6 +153,29 @@ describe('ConnectionResolver', () => {
       ];
       expect(result.components).to.deep.equal(expected);
     });
+    it('should resolve components with invalid fileName returned by metadata api', async () => {
+      const metadataQueryStub = sandboxStub.stub(connection.metadata, 'list');
+      metadataQueryStub.withArgs({ type: 'SynonymDictionary' }).resolves([
+        {
+          ...StdFileProperty,
+          // @ts-ignore
+          fileName: { $: { 'xsi:nil': 'true' } },
+          fullName: '_Default',
+          // @ts-ignore
+          type: { $: { 'xsi:nil': 'true' } },
+        },
+      ]);
+
+      const resolver = new ConnectionResolver(connection);
+      const result = await resolver.resolve();
+      const expected: MetadataComponent[] = [
+        {
+          fullName: '_Default',
+          type: registry.types.synonymdictionary,
+        },
+      ];
+      expect(result.components).to.deep.equal(expected);
+    });
     it('should resolve components with folderContentType', async () => {
       const metadataQueryStub = sandboxStub.stub(connection.metadata, 'list');
 

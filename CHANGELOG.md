@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.15.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.14.0...v5.15.0) (2022-05-12)
+
+### Features
+
+- **metadata registry:** adding BotTemplate to metadata registry ([#616](https://github.com/forcedotcom/source-deploy-retrieve/issues/616)) ([c1da4da](https://github.com/forcedotcom/source-deploy-retrieve/commit/c1da4dadc2cd268871b4f0933f431031159d4bf8))
+
 ## [5.14.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.13.1...v5.14.0) (2022-05-11)
 
 ### Features

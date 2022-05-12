@@ -190,3 +190,43 @@ You can use an existing org for the metadata describe portion of the script by
 
 1. setting its alias to `registryBuilder`
 2. setting the env `RB_EXISTING_ORG` ex: `RB_EXISTING_ORG=true yarn update-registry`
+
+### Steps to add your metadata in registry
+
+## prerequisites:
+
+    1. A sfdx project must exists in local.
+      `sfdx force:project:create --projectname <projectname> --defaultpackagedir <directory> -x`
+    2. An authorised devhub org must exists
+      `sfdx force:auth:web:login -a <alias> -r <localhost url> -d`
+    3. A scratch org must exists with alias `registryBuilder`
+      1. Update `project-scratch-def.json` as per your requirements.
+      2. `sfdx force:org:create -f config/project-scratch-def.json -a registryBuilder -t scratch -s`
+
+## Steps:
+
+    1. Fork SourceDeployRetrieve github repo
+      (https://github.com/forcedotcom/source-deploy-retrieve)
+    2. Clone forked repo in local and checkout a new branch
+    3. Setup Yarn
+      1. Go to the repo directory
+      2. Run `yarn install && yarn build`
+    4. Setup an environment variable by executing command
+      `export RB_EXISTING_ORG=true`
+    5. Execute yarn update command for required metadata entities
+      `yarn update-registry <MetadataEntity1> <MetadataEntity2>`
+    6. Check if respective file(`src/registry/metadataRegistry.json`)
+      got updated. `git status`
+    7. Execute yarn update command to update support doc
+      `yarn update-supported-metadata <MetadataEntity1> <MetadataEntity2>`
+      1. This will update METADATA_SUPPORT.md and commit the changes.
+      2. You can raise the PR with these changes after running test cases.
+
+    Now changes are available in local, we have to link the registry with sfdx project
+
+    8. From SDR git repo directory, run `yarn build; yarn link`
+    9. Clone sfdx plugins repo (https://github.com/salesforcecli/plugin-source)
+    10. Execute `yarn link @salesforce/source-deploy-retrieve` and `sfdx plugins:link .` from cloned plugins repo directory
+
+    Registry has been set for your entities, now you can run `sfdx force:source` command for your entities:
+    Proceed to `Manual Testing` section above in this document.

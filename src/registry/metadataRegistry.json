@@ -1837,6 +1837,14 @@
         "decomposition": "topLevel"
       }
     },
+    "bottemplate": {
+      "id": "bottemplate",
+      "name": "BotTemplate",
+      "suffix": "botTemplate",
+      "directoryName": "botTemplates",
+      "inFolder": false,
+      "strictDirectoryName": true
+    },
     "animationrule": {
       "id": "animationrule",
       "name": "AnimationRule",
@@ -3213,6 +3221,7 @@
     "prompt": "prompt",
     "mlDomain": "mldomain",
     "bot": "bot",
+    "botTemplate": "bottemplate",
     "botVersion": "botversion",
     "animationRule": "animationrule",
     "deployment": "recordactiondeployment",
@@ -3353,6 +3362,7 @@
     "waveTemplates": "wavetemplatebundle",
     "objects": "customobject",
     "bots": "bot",
+    "botTemplates": "bottemplate",
     "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
     "sites": "customsite",

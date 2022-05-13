@@ -49,22 +49,46 @@ export class DeployResult implements MetadataTransferResult {
       const responseMessages = this.getDeployMessages(this.response);
       const fileResponses: FileResponse[] = [];
 
-      for (const deployedComponent of this.components.getSourceComponents()) {
-        if (deployedComponent.type.children) {
-          for (const child of deployedComponent.getChildren()) {
-            const childMessages = responseMessages.get(this.key(child));
-            if (childMessages) {
-              fileResponses.push(...this.createResponses(child, childMessages));
+      if (this.components) {
+        for (const deployedComponent of this.components.getSourceComponents()) {
+          if (deployedComponent.type.children) {
+            for (const child of deployedComponent.getChildren()) {
+              const childMessages = responseMessages.get(this.key(child));
+              if (childMessages) {
+                fileResponses.push(...this.createResponses(child, childMessages));
+              }
             }
           }
+          const componentMessages = responseMessages.get(this.key(deployedComponent));
+          if (componentMessages) {
+            fileResponses.push(...this.createResponses(deployedComponent, componentMessages));
+          }
         }
-        const componentMessages = responseMessages.get(this.key(deployedComponent));
-        if (componentMessages) {
-          fileResponses.push(...this.createResponses(deployedComponent, componentMessages));
-        }
-      }
 
-      this.fileResponses = fileResponses.concat(this.deleteNotFoundToFileResponses(responseMessages));
+        this.fileResponses = fileResponses.concat(this.deleteNotFoundToFileResponses(responseMessages));
+      } else {
+        // if no this.components, this was likely a metadata format deploy so we need to process
+        // the componentSuccesses and componentFailures instead.
+        const successes = normalizeToArray(this.response.details?.componentSuccesses || []);
+        const failures = normalizeToArray(this.response.details?.componentFailures || []);
+        for (const component of [...successes, ...failures]) {
+          if (component.fullName === 'package.xml') continue;
+          const baseResponse: Partial<FileResponse> = {
+            fullName: component.fullName,
+            type: component.componentType,
+            state: this.getState(component),
+            filePath: component.fileName.replace(`zip${sep}`, ''),
+          };
+
+          if (baseResponse.state === ComponentStatus.Failed) {
+            baseResponse.error = component.problem;
+            baseResponse.problemType = component.problemType;
+          }
+
+          fileResponses.push(baseResponse as FileResponse);
+        }
+        this.fileResponses = fileResponses;
+      }
     }
     return this.fileResponses;
   }

@@ -1837,6 +1837,14 @@
         "decomposition": "topLevel"
       }
     },
+    "bottemplate": {
+      "id": "bottemplate",
+      "name": "BotTemplate",
+      "suffix": "botTemplate",
+      "directoryName": "botTemplates",
+      "inFolder": false,
+      "strictDirectoryName": true
+    },
     "animationrule": {
       "id": "animationrule",
       "name": "AnimationRule",
@@ -2985,6 +2993,33 @@
       "directoryName": "OmniInteractionAccessConfig",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "dataweaveresource": {
+      "id": "dataweaveresource",
+      "name": "DataWeaveResource",
+      "suffix": "dwl",
+      "directoryName": "dw",
+      "inFolder": false,
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
+    },
+    "assessmentquestion": {
+      "id": "assessmentquestion",
+      "name": "AssessmentQuestion",
+      "suffix": "aq",
+      "directoryName": "AssessmentQuestions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "assessmentquestionset": {
+      "id": "assessmentquestionset",
+      "name": "AssessmentQuestionSet",
+      "suffix": "aqs",
+      "directoryName": "AssessmentQuestionSets",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3186,6 +3221,7 @@
     "prompt": "prompt",
     "mlDomain": "mldomain",
     "bot": "bot",
+    "botTemplate": "bottemplate",
     "botVersion": "botversion",
     "animationRule": "animationrule",
     "deployment": "recordactiondeployment",
@@ -3313,7 +3349,10 @@
     "explainabilityActionVersion": "explainabilityactionversion",
     "advAcctForecastDimSource": "advacctforecastdimsource",
     "careLimitType": "carelimittype",
-    "omniInteractionAccessConfig": "omniinteractionaccessconfig"
+    "omniInteractionAccessConfig": "omniinteractionaccessconfig",
+    "dwl": "dataweaveresource",
+    "aq": "assessmentquestion",
+    "aqs": "assessmentquestionset"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -3323,6 +3362,7 @@
     "waveTemplates": "wavetemplatebundle",
     "objects": "customobject",
     "bots": "bot",
+    "botTemplates": "bottemplate",
     "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
     "sites": "customsite",

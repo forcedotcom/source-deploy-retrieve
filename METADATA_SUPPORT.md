@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v55 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 456/495 supported metadata types.
+Currently, there are 458/491 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -49,8 +49,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | AppointmentSchedulingPolicy           | ✅      |                                                                  |
 | ApprovalProcess                       | ✅      |                                                                  |
 | ArchiveSettings                       | ✅      |                                                                  |
-| AssessmentQuestion                    | ❌      | Not supported, but support could be added                        |
-| AssessmentQuestionSet                 | ❌      | Not supported, but support could be added                        |
+| AssessmentQuestion                    | ✅      |                                                                  |
+| AssessmentQuestionSet                 | ✅      |                                                                  |
 | AssignmentRules                       | ✅      |                                                                  |
 | AssistantContextItem                  | ✅      |                                                                  |
 | AssistantDefinition                   | ✅      |                                                                  |
@@ -163,9 +163,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | DelegateGroup                         | ✅      |                                                                  |
 | DeploymentSettings                    | ✅      |                                                                  |
 | DevHubSettings                        | ✅      |                                                                  |
-| DigitalExperience                     | ❌      | Not supported, but support could be added (but not for tracking) |
-| DigitalExperienceBundle               | ❌      | Not supported, but support could be added (but not for tracking) |
-| DigitalExperienceConfig               | ❌      | Not supported, but support could be added (but not for tracking) |
 | DiscoveryAIModel                      | ✅      |                                                                  |
 | DiscoveryGoal                         | ✅      |                                                                  |
 | DiscoverySettings                     | ✅      |                                                                  |
@@ -416,7 +413,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 | SchedulingRule                        | ✅      |                                                                  |
 | SchemaSettings                        | ✅      |                                                                  |
 | ScoreCategory                         | ❌      | Not supported, but support could be added                        |
-| ScoreRange                            | ❌      | Not supported, but support could be added                        |
 | SearchSettings                        | ✅      |                                                                  |
 | SecuritySettings                      | ✅      |                                                                  |
 | ServiceAISetupDefinition              | ❌      | Not supported, but support could be added                        |
@@ -508,10 +504,9 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 ## Next Release (v56)
 
-v56 introduces the following new types. Here's their current level of support
-
-| Metadata Type | Support | Notes |
-| :------------ | :------ | :---- |
+| Metadata Type               | Support | Notes                                     |
+| :-------------------------- | :------ | :---------------------------------------- |
+| ForecastingColumnDefinition | ❌      | Not supported, but support could be added |
 
 ## Additional Types
 
@@ -561,3 +556,4 @@ v56 introduces the following new types. Here's their current level of support
 - ConversationVendorFieldDef
 - InternalOrganization
 - UiViewDefinition
+- DataWeaveResource

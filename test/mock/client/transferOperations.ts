@@ -9,8 +9,7 @@ import { join, sep } from 'path';
 import { testSetup } from '@salesforce/core/lib/testSetup';
 import { PollingClient } from '@salesforce/core';
 import { match, SinonSandbox, SinonSpy, SinonStub } from 'sinon';
-import { DeployResultLocator } from 'jsforce/lib/api/metadata';
-import { Schema } from 'jsforce';
+import { AsyncResult } from 'jsforce/lib/api/metadata';
 import {
   ComponentSet,
   ConvertOutputConfig,
@@ -33,7 +32,7 @@ import { ComponentProperties } from '../../../src/resolve/sourceComponent';
 import { normalizeToArray } from '../../../src/utils';
 import { createMockZip, mockConnection } from '.';
 
-export const MOCK_ASYNC_RESULT = { id: '1234', state: RequestStatus.Pending, done: false };
+export const MOCK_ASYNC_RESULT: AsyncResult = { id: '1234', state: RequestStatus.Pending, done: false };
 export const MOCK_DEFAULT_OUTPUT = sep + 'test';
 export const MOCK_RECENTLY_VALIDATED_ID_REST = { id: '1234567890' };
 export const MOCK_RECENTLY_VALIDATED_ID_SOAP = '0987654321';
@@ -67,13 +66,13 @@ export async function stubMetadataDeploy(
   const zipBuffer = Buffer.from('1234');
   const connection = await mockConnection(testSetup());
 
-  const deployStub = sandbox.stub(connection, 'deploy');
+  const deployStub = sandbox.stub(connection.metadata, 'deploy');
   const pollingClientSpy = sandbox.spy(PollingClient, 'create');
 
   deployStub
     .withArgs(zipBuffer, options.apiOptions ?? MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions)
     // overriding return type to match API
-    .resolves(MOCK_ASYNC_RESULT as unknown as DeployResultLocator<Schema>);
+    .resolves(MOCK_ASYNC_RESULT);
 
   const deployRecentlyValidatedIdStub = sandbox.stub(connection, 'deployRecentValidation');
   deployRecentlyValidatedIdStub

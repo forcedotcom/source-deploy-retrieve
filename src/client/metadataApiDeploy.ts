@@ -352,7 +352,9 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     const zipBuffer = await this.getZipBuffer();
     const connection = await this.getConnection();
     await this.maybeSaveTempDirectory('metadata');
-    return connection.deploy(zipBuffer, this.options.apiOptions);
+    return this.isRestDeploy
+      ? connection.metadata.deployRest(zipBuffer, this.options.apiOptions)
+      : connection.metadata.deploy(zipBuffer, this.options.apiOptions);
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

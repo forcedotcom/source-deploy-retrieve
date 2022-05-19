@@ -276,7 +276,6 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     },
   };
   private options: MetadataApiDeployOptions;
-
   // Keep track of rest deploys separately since Connection.deploy() removes it
   // from the apiOptions and we need it for telemetry.
   private isRestDeploy: boolean;
@@ -349,12 +348,16 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
   }
 
   protected async pre(): Promise<AsyncResult> {
-    const zipBuffer = await this.getZipBuffer();
-    const connection = await this.getConnection();
-    await this.maybeSaveTempDirectory('metadata');
+    const [zipBuffer, connection] = await Promise.all([
+      this.getZipBuffer(),
+      this.getConnection(),
+      this.maybeSaveTempDirectory('metadata'),
+    ]);
+    // SDR modifies what the mdapi expects by adding a rest param
+    const { rest, ...optionsWithoutRest } = this.options.apiOptions;
     return this.isRestDeploy
-      ? connection.metadata.deployRest(zipBuffer, this.options.apiOptions)
-      : connection.metadata.deploy(zipBuffer, this.options.apiOptions);
+      ? connection.metadata.deployRest(zipBuffer, optionsWithoutRest)
+      : connection.metadata.deploy(zipBuffer, optionsWithoutRest);
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

@@ -6,7 +6,7 @@
  */
 
 import { join, sep } from 'path';
-import { testSetup } from '@salesforce/core/lib/testSetup';
+import { testSetup, TestContext } from '@salesforce/core/lib/testSetup';
 import { PollingClient } from '@salesforce/core';
 import { match, SinonSandbox, SinonSpy, SinonStub } from 'sinon';
 import { AsyncResult } from 'jsforce/lib/api/metadata';
@@ -60,19 +60,21 @@ interface DeployOperationLifecycle {
 }
 
 export async function stubMetadataDeploy(
-  sandbox: SinonSandbox,
+  context: TestContext,
   options: DeployStubOptions = { components: new ComponentSet() }
 ): Promise<DeployOperationLifecycle> {
+  const sandbox = context.SANDBOX;
   const zipBuffer = Buffer.from('1234');
-  const connection = await mockConnection(testSetup());
+  const connection = await mockConnection(context);
 
   const deployStub = sandbox.stub(connection.metadata, 'deploy');
+  const deployRestStub = sandbox.stub(connection.metadata, 'deployRest');
   const pollingClientSpy = sandbox.spy(PollingClient, 'create');
 
-  deployStub
-    .withArgs(zipBuffer, options.apiOptions ?? MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions)
-    // overriding return type to match API
-    .resolves(MOCK_ASYNC_RESULT);
+  const { rest, ...defaultOptions } = MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions;
+  deployRestStub.withArgs(zipBuffer, options.apiOptions ?? defaultOptions).resolves(MOCK_ASYNC_RESULT);
+
+  deployStub.withArgs(zipBuffer, options.apiOptions ?? defaultOptions).resolves(MOCK_ASYNC_RESULT);
 
   const deployRecentlyValidatedIdStub = sandbox.stub(connection, 'deployRecentValidation');
   deployRecentlyValidatedIdStub

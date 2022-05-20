@@ -11,14 +11,20 @@ import { getExtension } from 'mime';
 import { Open } from 'unzipper';
 import { JsonMap } from '@salesforce/ts-types';
 import { createWriteStream } from 'graceful-fs';
+import { Messages, SfError } from '@salesforce/core';
 import { baseName } from '../../utils';
 import { WriteInfo } from '..';
-import { LibraryError } from '../../errors';
 import { SourceComponent } from '../../resolve';
 import { SourcePath } from '../../common';
 import { ensureFileExists } from '../../utils/fileSystemHandler';
 import { pipeline } from '../streams';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_static_resource_expected_archive_type',
+  'error_static_resource_missing_resource_file',
+]);
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public static readonly ARCHIVE_MIME_TYPES = new Set([
@@ -143,7 +149,10 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       if (StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(contentType)) {
         return true;
       }
-      throw new LibraryError('error_static_resource_expected_archive_type', [contentType, component.name]);
+      throw new SfError(
+        messages.getMessage('error_static_resource_expected_archive_type', [contentType, component.name]),
+        'LibraryError'
+      );
     }
     return false;
   }
@@ -152,7 +161,10 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     const resource = (await component.parseXml()).StaticResource as JsonMap;
 
     if (!resource || !Object.prototype.hasOwnProperty.call(resource, 'contentType')) {
-      throw new LibraryError('error_static_resource_missing_resource_file', [join('staticresources', component.name)]);
+      throw new SfError(
+        messages.getMessage('error_static_resource_missing_resource_file', [join('staticresources', component.name)]),
+        'LibraryError'
+      );
     }
 
     return resource.contentType as string;

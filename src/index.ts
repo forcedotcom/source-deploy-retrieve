@@ -50,7 +50,6 @@ export {
   VFRecord,
   AuraRecord,
   LWCRecord,
-  ToolingCreateResult,
   AuraDefinition,
   LightningComponentResource,
 } from './client';
@@ -101,6 +100,7 @@ export {
 export {
   RegistryAccess,
   registry,
+  getCurrentApiVersion,
   MetadataRegistry,
   MetadataType,
   DecompositionStrategy,

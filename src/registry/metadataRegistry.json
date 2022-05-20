@@ -1684,7 +1684,7 @@
       "suffix": "xml",
       "directoryName": "emailservices",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": true
     },
     "integrationhubsettingstype": {
       "id": "integrationhubsettingstype",
@@ -3376,7 +3376,8 @@
     "fieldRestrictionRules": "fieldrestrictionrule",
     "siteDotComSites": "sitedotcom",
     "appointmentSchedulingPolicies": "appointmentschedulingpolicy",
-    "appointmentAssignmentPolicies": "appointmentassignmentpolicy"
+    "appointmentAssignmentPolicies": "appointmentassignmentpolicy",
+    "emailservices": "emailservicesfunction"
   },
   "childTypes": {
     "customlabel": "customlabels",
@@ -3412,6 +3413,5 @@
     "customfieldtranslation": "customobjecttranslation",
     "datamappingfielddefinition": "datamappingobjectdefinition",
     "mktdatatranfield": "mktdatatranobject"
-  },
-  "apiVersion": "54.0"
+  }
 }

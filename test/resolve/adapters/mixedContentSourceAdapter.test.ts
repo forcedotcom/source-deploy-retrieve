@@ -6,14 +6,16 @@
  */
 
 import { assert, expect } from 'chai';
+import { Messages, SfError } from '@salesforce/core';
 import { MixedContentSourceAdapter } from '../../../src/resolve/adapters';
-import { ExpectedSourceFilesError } from '../../../src/errors';
 import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../../src';
 import {
   MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
   MIXED_CONTENT_DIRECTORY_VIRTUAL_FS_NO_XML,
 } from '../../mock/type-constants/staticresourceConstant';
 import { mixedContentDirectory, mixedContentSingleFile } from '../../mock';
+
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_expected_source_files']);
 
 describe('MixedContentSourceAdapter', () => {
   const registryAccess = new RegistryAccess();
@@ -26,7 +28,11 @@ describe('MixedContentSourceAdapter', () => {
       },
     ]);
     const adapter = new MixedContentSourceAdapter(type, registryAccess, undefined, tree);
-    assert.throws(() => adapter.getComponent(mixedContentSingleFile.COMPONENT.content), ExpectedSourceFilesError);
+    assert.throws(
+      () => adapter.getComponent(mixedContentSingleFile.COMPONENT.content),
+      SfError,
+      messages.getMessage('error_expected_source_files', [mixedContentSingleFile.CONTENT_PATHS[0], type.name])
+    );
   });
 
   describe('File Content', () => {

@@ -5,14 +5,17 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, sep } from 'path';
+import { Messages, SfError } from '@salesforce/core';
 import { MetadataXml, SourceAdapter } from '../types';
 import { parseMetadataXml, parseNestedFullName } from '../../utils';
-import { UnexpectedForceIgnore } from '../../errors';
 import { ForceIgnore } from '../forceIgnore';
 import { NodeFSTreeContainer, TreeContainer } from '../treeContainers';
 import { SourceComponent } from '../sourceComponent';
 import { SourcePath } from '../../common';
 import { MetadataType, RegistryAccess } from '../../registry';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_metadata_xml_ignore']);
 
 export abstract class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;
@@ -48,7 +51,10 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       }
     }
     if (rootMetadata && this.forceIgnore.denies(rootMetadata.path)) {
-      throw new UnexpectedForceIgnore('error_no_metadata_xml_ignore', [rootMetadata.path, path]);
+      throw new SfError(
+        messages.getMessage('error_no_metadata_xml_ignore', [rootMetadata.path, path]),
+        'UnexpectedForceIgnore'
+      );
     }
 
     let component: SourceComponent;

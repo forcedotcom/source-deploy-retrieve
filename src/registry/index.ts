@@ -7,6 +7,7 @@
 export { registry } from './registry';
 export { standardValueSet } from './standardvalueset';
 export { RegistryAccess } from './registryAccess';
+export { getCurrentApiVersion } from './coverage';
 export {
   MetadataRegistry,
   MetadataType,

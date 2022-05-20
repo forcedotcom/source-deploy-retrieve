@@ -5,19 +5,22 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { join, basename } from 'path';
-import { AuthInfo, Connection } from '@salesforce/core';
+import { basename, join } from 'path';
+import { AuthInfo, Connection, Messages } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import * as fs from 'graceful-fs';
-import { RecordResult } from 'jsforce';
+import { SaveError, SaveResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
-import { nls } from '../../../src/i18n';
+import { AnyJson } from '@salesforce/ts-types';
 import { LwcDeploy } from '../../../src/client/deployStrategies';
 import { LightningComponentResource, ToolingCreateResult } from '../../../src/client/types';
 import { SourceComponent, VirtualTreeContainer } from '../../../src/resolve';
-import { ToolingDeployStatus, ComponentStatus } from '../../../src/client';
+import { ComponentStatus, ToolingDeployStatus } from '../../../src/client';
 import { registry } from '../../../src';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_creating_metadata_type']);
 
 const $$ = testSetup();
 
@@ -84,9 +87,13 @@ describe('LWC Deploy Strategy', () => {
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
-    $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig(),
-    });
+    $$.configStubs.GlobalInfo = {
+      contents: {
+        orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
+          [testData.username]: testData as unknown as AnyJson,
+        }),
+      },
+    };
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
         username: testData.username,
@@ -113,7 +120,7 @@ describe('LWC Deploy Strategy', () => {
       success: true,
       id: '1dcxxx000000060',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     const lwcDeploy = new LwcDeploy(mockConnection);
     lwcDeploy.component = lwcComponent;
@@ -189,7 +196,7 @@ describe('LWC Deploy Strategy', () => {
       success: true,
       id: '1dcxxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const lwcDeploy = new LwcDeploy(mockConnection);
@@ -210,7 +217,7 @@ describe('LWC Deploy Strategy', () => {
       success: true,
       id: '1dcxxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const lwcDeploy = new LwcDeploy(mockConnection);
@@ -229,8 +236,8 @@ describe('LWC Deploy Strategy', () => {
     sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',
-      errors: ['Unexpected error while creating record'],
-    } as RecordResult);
+      errors: [{ message: 'Unexpected error while creating record', errorCode: '1' } as SaveError],
+    } as SaveResult);
 
     sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
     const lwcDeploy = new LwcDeploy(mockConnection);
@@ -239,7 +246,7 @@ describe('LWC Deploy Strategy', () => {
       await lwcDeploy.upsertBundle();
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal(nls.localize('error_creating_metadata_type', 'LightningComponentBundle'));
+      expect(e.message).to.equal(messages.getMessage('error_creating_metadata_type', ['LightningComponentBundle']));
       expect(e.name).to.be.equal('DeployError');
     }
   });
@@ -250,7 +257,7 @@ describe('LWC Deploy Strategy', () => {
       success: true,
       id: '1dcxxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     sandboxStub.stub(LwcDeploy.prototype, 'buildMetadataField').returns(testMetadataField);
 
@@ -288,7 +295,7 @@ describe('LWC Deploy Strategy', () => {
       success: true,
       id: '1dcxxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     sandboxStub
       .stub(mockConnection.tooling, 'update')

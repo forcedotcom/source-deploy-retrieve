@@ -7,6 +7,8 @@
 import { join } from 'path';
 import { assert, expect } from 'chai';
 import { createSandbox } from 'sinon';
+import { Messages, SfError } from '@salesforce/core';
+
 import { decomposed, matchingContentFile, mixedContentDirectory, xmlInFolder } from '../mock';
 import { DECOMPOSED_COMPONENT } from '../mock/type-constants/customObjectConstant';
 import { COMPONENT } from '../mock/type-constants/apexClassConstant';
@@ -31,9 +33,10 @@ import {
   VirtualTreeContainer,
 } from '../../src';
 import { DecomposedSourceAdapter } from '../../src/resolve/adapters';
-import { TypeInferenceError } from '../../src/errors';
-import { nls } from '../../src/i18n';
 import { RegistryTestUtil } from './registryTestUtil';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_unexpected_child_type']);
 
 const env = createSandbox();
 
@@ -377,8 +380,8 @@ describe('SourceComponent', () => {
 
       assert.throws(
         () => adapter.getComponent(fsPath, false),
-        TypeInferenceError,
-        nls.localize('error_unexpected_child_type', [fsPath, type.name])
+        SfError,
+        messages.getMessage('error_unexpected_child_type', [fsPath, type.name])
       );
     });
   });

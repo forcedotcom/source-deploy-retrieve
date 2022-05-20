@@ -6,11 +6,13 @@
  */
 import { fail } from 'assert';
 import { join } from 'path';
+import { Messages } from '@salesforce/core';
 import { expect } from 'chai';
 import * as unzipper from 'unzipper';
 import { createSandbox, match, SinonStub } from 'sinon';
 import { getString } from '@salesforce/ts-types';
 import * as fs from 'graceful-fs';
+import { testSetup } from '@salesforce/core/lib/testSetup';
 import {
   ComponentSet,
   ComponentStatus,
@@ -23,20 +25,34 @@ import {
   SourceComponent,
   VirtualTreeContainer,
 } from '../../src';
-import { MetadataApiRetrieveError, MissingJobIdError } from '../../src/errors';
-import { nls } from '../../src/i18n';
 import { MOCK_ASYNC_RESULT, MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '../mock/client/transferOperations';
 import { xmlInFolder } from '../mock';
 import { COMPONENT } from '../mock/type-constants/apexClassConstant';
 import { DECOMPOSED_COMPONENT } from '../mock/type-constants/customObjectConstant';
+import { mockConnection } from '../mock/client';
+import * as coverage from '../../src/registry/coverage';
+import { testApiVersion } from '../mock/manifestConstants';
 
 const env = createSandbox();
 
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_no_job_id',
+  'error_no_components_to_retrieve',
+]);
+
 describe('MetadataApiRetrieve', () => {
+  beforeEach(() => {
+    env.stub(coverage, 'getCurrentApiVersion').resolves(testApiVersion);
+  });
   afterEach(() => env.restore());
 
   describe('Lifecycle', () => {
     describe('start', () => {
+      const expectedError = {
+        name: 'MetadataApiRetrieveError',
+        message: messages.getMessage('error_no_components_to_retrieve'),
+      };
       it('should throw error if there are no components to retrieve', async () => {
         const toRetrieve = new ComponentSet([]);
         const { operation } = await stubMetadataRetrieve(env, {
@@ -48,8 +64,8 @@ describe('MetadataApiRetrieve', () => {
           await operation.start();
           fail('should have thrown an error');
         } catch (e) {
-          expect(e.name).to.equal(MetadataApiRetrieveError.name);
-          expect(e.message).to.equal(nls.localize('error_no_components_to_retrieve'));
+          expect(e.name).to.equal(expectedError.name);
+          expect(e.message).to.equal(expectedError.message);
         }
       });
 
@@ -65,8 +81,8 @@ describe('MetadataApiRetrieve', () => {
           await operation.start();
           fail('should have thrown an error');
         } catch (e) {
-          expect(e.name).to.equal(MetadataApiRetrieveError.name);
-          expect(e.message).to.equal(nls.localize('error_no_components_to_retrieve'));
+          expect(e.name).to.equal(expectedError.name);
+          expect(e.message).to.equal(expectedError.message);
         }
       });
 
@@ -82,8 +98,8 @@ describe('MetadataApiRetrieve', () => {
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
-          apiVersion: toRetrieve.apiVersion,
-          unpackaged: toRetrieve.getObject().Package,
+          apiVersion: (await mockConnection(testSetup())).getApiVersion(),
+          unpackaged: (await toRetrieve.getObject()).Package,
         });
       });
 
@@ -100,9 +116,9 @@ describe('MetadataApiRetrieve', () => {
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
-          apiVersion: toRetrieve.apiVersion,
+          apiVersion: (await mockConnection(testSetup())).getApiVersion(),
           packageNames: options.packageOptions,
-          unpackaged: toRetrieve.getObject().Package,
+          unpackaged: (await toRetrieve.getObject()).Package,
         });
       });
 
@@ -119,9 +135,9 @@ describe('MetadataApiRetrieve', () => {
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
-          apiVersion: toRetrieve.apiVersion,
+          apiVersion: (await mockConnection(testSetup())).getApiVersion(),
           packageNames: [options.packageOptions[0].name],
-          unpackaged: toRetrieve.getObject().Package,
+          unpackaged: (await toRetrieve.getObject()).Package,
         });
       });
 
@@ -138,9 +154,9 @@ describe('MetadataApiRetrieve', () => {
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
-          apiVersion: toRetrieve.apiVersion,
+          apiVersion: (await mockConnection(testSetup())).getApiVersion(),
           packageNames: [options.packageOptions[0].name],
-          unpackaged: toRetrieve.getObject().Package,
+          unpackaged: (await toRetrieve.getObject()).Package,
         });
       });
 
@@ -292,7 +308,7 @@ describe('MetadataApiRetrieve', () => {
             merge: true,
             successes: toRetrieve,
           });
-          env.stub(fs, 'writeFileSync');
+          env.stub(fs.promises, 'writeFile');
 
           await operation.start();
           await operation.pollStatus();
@@ -404,7 +420,10 @@ describe('MetadataApiRetrieve', () => {
         await operation.checkStatus();
         chai.assert.fail('the above should throw an error');
       } catch (e) {
-        const expectedError = new MissingJobIdError('retrieve');
+        const expectedError = {
+          name: 'MissingJobIdError',
+          message: messages.getMessage('error_no_job_id', ['retrieve']),
+        };
         expect(e.name).to.equal(expectedError.name);
         expect(e.message).to.equal(expectedError.message);
       }
@@ -629,7 +648,7 @@ describe('MetadataApiRetrieve', () => {
 
     /**
      * This is tested on the assumption that the ComponentWriter result directly
-     * includes children in the returned set, so we don't need to eagrly resolve
+     * includes children in the returned set, so we don't need to eagerly resolve
      * the children of a parent.
      */
     it('should not report content files if component type has children', () => {

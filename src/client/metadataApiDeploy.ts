@@ -8,13 +8,12 @@ import { basename, dirname, extname, join, posix, sep } from 'path';
 import { isString } from '@salesforce/ts-types';
 import { create as createArchive } from 'archiver';
 import * as fs from 'graceful-fs';
-import { Lifecycle } from '@salesforce/core';
+import { Lifecycle, Messages, SfError } from '@salesforce/core';
 import { MetadataConverter } from '../convert';
 import { ComponentLike, SourceComponent } from '../resolve';
 import { normalizeToArray } from '../utils';
 import { ComponentSet } from '../collections';
 import { registry } from '../registry';
-import { MissingJobIdError } from '../errors';
 import { stream2buffer } from '../convert/streams';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import {
@@ -27,6 +26,10 @@ import {
   MetadataTransferResult,
 } from './types';
 import { DiagnosticUtil } from './diagnosticUtil';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_job_id']);
+
 export class DeployResult implements MetadataTransferResult {
   public readonly response: MetadataApiDeployStatus;
   public readonly components: ComponentSet;
@@ -43,26 +46,26 @@ export class DeployResult implements MetadataTransferResult {
     // this involves FS operations, so only perform once!
     if (!this.fileResponses) {
       // TODO: Log when messages can't be mapped to components
-      const messages = this.getDeployMessages(this.response);
+      const responseMessages = this.getDeployMessages(this.response);
       const fileResponses: FileResponse[] = [];
 
       if (this.components) {
         for (const deployedComponent of this.components.getSourceComponents()) {
           if (deployedComponent.type.children) {
             for (const child of deployedComponent.getChildren()) {
-              const childMessages = messages.get(this.key(child));
+              const childMessages = responseMessages.get(this.key(child));
               if (childMessages) {
                 fileResponses.push(...this.createResponses(child, childMessages));
               }
             }
           }
-          const componentMessages = messages.get(this.key(deployedComponent));
+          const componentMessages = responseMessages.get(this.key(deployedComponent));
           if (componentMessages) {
             fileResponses.push(...this.createResponses(deployedComponent, componentMessages));
           }
         }
 
-        this.fileResponses = fileResponses.concat(this.deleteNotFoundToFileResponses(messages));
+        this.fileResponses = fileResponses.concat(this.deleteNotFoundToFileResponses(responseMessages));
       } else {
         // if no this.components, this was likely a metadata format deploy so we need to process
         // the componentSuccesses and componentFailures instead.
@@ -90,11 +93,11 @@ export class DeployResult implements MetadataTransferResult {
     return this.fileResponses;
   }
 
-  private createResponses(component: SourceComponent, messages: DeployMessage[]): FileResponse[] {
+  private createResponses(component: SourceComponent, responseMessages: DeployMessage[]): FileResponse[] {
     const { fullName, type, xml, content } = component;
     const responses: FileResponse[] = [];
 
-    for (const message of messages) {
+    for (const message of responseMessages) {
       const baseResponse: Partial<FileResponse> = {
         fullName,
         type: type.name,
@@ -126,13 +129,13 @@ export class DeployResult implements MetadataTransferResult {
   }
 
   private getState(message: DeployMessage): ComponentStatus {
-    if (message.created === 'true') {
+    if (message.created === 'true' || message.created === true) {
       return ComponentStatus.Created;
-    } else if (message.changed === 'true') {
+    } else if (message.changed === 'true' || message.changed === true) {
       return ComponentStatus.Changed;
-    } else if (message.deleted === 'true') {
+    } else if (message.deleted === 'true' || message.deleted === true) {
       return ComponentStatus.Deleted;
-    } else if (message.success === 'false') {
+    } else if (message.success === 'false' || message.success === false) {
       return ComponentStatus.Failed;
     }
     return ComponentStatus.Unchanged;
@@ -192,9 +195,9 @@ export class DeployResult implements MetadataTransferResult {
    */
   private deleteNotFoundToFileResponses(messageMap: Map<string, DeployMessage[]>): FileResponse[] {
     const fileResponses: FileResponse[] = [];
-    messageMap.forEach((messages, key) => {
+    messageMap.forEach((responseMessages, key) => {
       if (key.includes('destructiveChanges') && key.endsWith('.xml')) {
-        messages.forEach((message) => {
+        responseMessages.forEach((message) => {
           if (message.problemType === 'Warning' && message.problem.startsWith(`No ${message.componentType} named: `)) {
             const fullName = message.problem.replace(`No ${message.componentType} named: `, '').replace(' found', '');
             this.components
@@ -273,7 +276,6 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     },
   };
   private options: MetadataApiDeployOptions;
-
   // Keep track of rest deploys separately since Connection.deploy() removes it
   // from the apiOptions and we need it for telemetry.
   private isRestDeploy: boolean;
@@ -303,8 +305,9 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
    */
   public async deployRecentValidation(rest = false): Promise<string> {
     if (!this.id) {
-      throw new MissingJobIdError('deploy');
+      throw new SfError(messages.getMessage('error_no_job_id', ['deploy']), 'MissingJobIdError');
     }
+
     const conn = await this.getConnection();
     const response = (await conn.deployRecentValidation({
       id: this.id,
@@ -320,7 +323,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
    */
   public async checkStatus(): Promise<MetadataApiDeployStatus> {
     if (!this.id) {
-      throw new MissingJobIdError('deploy');
+      throw new SfError(messages.getMessage('error_no_job_id', ['deploy']), 'MissingJobIdError');
     }
     const connection = await this.getConnection();
     // Recasting to use the project's version of the type
@@ -335,34 +338,26 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
    */
   public async cancel(): Promise<void> {
     if (!this.id) {
-      throw new MissingJobIdError('deploy');
+      throw new SfError(messages.getMessage('error_no_job_id', ['deploy']), 'MissingJobIdError');
     }
 
     const connection = await this.getConnection();
 
-    await new Promise((resolve, reject) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,no-underscore-dangle
-      connection.metadata
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore _invoke is private on the jsforce metadata object, and cancelDeploy is not an exposed method
-        ._invoke('cancelDeploy', { id: this.id })
-        .thenCall((result: unknown) => {
-          // this does not return CancelDeployResult as documented in the API.
-          // a null result seems to indicate the request was successful
-          if (result) {
-            reject(result);
-          } else {
-            resolve(result);
-          }
-        });
-    });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,no-underscore-dangle
+    await connection.metadata._invoke('cancelDeploy', { id: this.id });
   }
 
   protected async pre(): Promise<AsyncResult> {
-    const zipBuffer = await this.getZipBuffer();
-    const connection = await this.getConnection();
-    await this.maybeSaveTempDirectory('metadata');
-    return connection.deploy(zipBuffer, this.options.apiOptions);
+    const [zipBuffer, connection] = await Promise.all([
+      this.getZipBuffer(),
+      this.getConnection(),
+      this.maybeSaveTempDirectory('metadata'),
+    ]);
+    // SDR modifies what the mdapi expects by adding a rest param
+    const { rest, ...optionsWithoutRest } = this.options.apiOptions;
+    return this.isRestDeploy
+      ? connection.metadata.deployRest(zipBuffer, optionsWithoutRest)
+      : connection.metadata.deploy(zipBuffer, optionsWithoutRest);
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

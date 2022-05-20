@@ -8,10 +8,19 @@ import { join, dirname, basename, normalize, sep } from 'path';
 import { Readable } from 'stream';
 import { statSync, existsSync, readdirSync, createReadStream, readFileSync } from 'graceful-fs';
 import * as unzipper from 'unzipper';
+import { Messages, SfError } from '@salesforce/core';
 import { baseName, parseMetadataXml } from '../utils';
-import { LibraryError } from '../errors';
 import { SourcePath } from '../common';
 import { VirtualDirectory } from './types';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_no_directory_stream',
+  'error_expected_file_path',
+  'error_expected_directory_path',
+  'error_path_not_found',
+]);
+
 /**
  * A container for interacting with a file system. Operations such as component resolution,
  * conversion, and packaging perform I/O against `TreeContainer` abstractions.
@@ -149,21 +158,21 @@ export class ZipTreeContainer extends TreeContainer {
     if (this.exists(fsPath)) {
       return Array.isArray(this.tree.get(fsPath));
     }
-    throw new LibraryError('error_path_not_found', fsPath);
+    throw new SfError(messages.getMessage('error_path_not_found', [fsPath]), 'LibraryError');
   }
 
   public readDirectory(fsPath: string): string[] {
     if (this.isDirectory(fsPath)) {
       return (this.tree.get(fsPath) as ZipEntry[]).map((entry) => basename(entry.path));
     }
-    throw new LibraryError('error_expected_directory_path', fsPath);
+    throw new SfError(messages.getMessage('error_expected_directory_path', [fsPath]), 'LibraryError');
   }
 
   public readFile(fsPath: string): Promise<Buffer> {
     if (!this.isDirectory(fsPath)) {
       return (this.tree.get(fsPath) as ZipEntry).buffer();
     }
-    throw new LibraryError('error_expected_file_path', fsPath);
+    throw new SfError(messages.getMessage('error_expected_file_path', [fsPath]), 'LibraryError');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -175,7 +184,7 @@ export class ZipTreeContainer extends TreeContainer {
     if (!this.isDirectory(fsPath)) {
       return (this.tree.get(fsPath) as ZipEntry).stream();
     }
-    throw new LibraryError('error_no_directory_stream', this.constructor.name);
+    throw new SfError(messages.getMessage('error_no_directory_stream', [this.constructor.name]), 'LibraryError');
   }
 
   private populate(directory: unzipper.CentralDirectory): void {
@@ -243,7 +252,7 @@ export class VirtualTreeContainer extends TreeContainer {
     if (this.exists(fsPath)) {
       return this.tree.has(fsPath);
     }
-    throw new LibraryError('error_path_not_found', fsPath);
+    throw new SfError(messages.getMessage('error_path_not_found', [fsPath]), 'LibraryError');
   }
 
   public exists(fsPath: string): boolean {
@@ -256,7 +265,7 @@ export class VirtualTreeContainer extends TreeContainer {
     if (this.isDirectory(fsPath)) {
       return Array.from(this.tree.get(fsPath)).map((p) => basename(p));
     }
-    throw new LibraryError('error_expected_directory_path', fsPath);
+    throw new SfError(messages.getMessage('error_expected_directory_path', [fsPath]), 'LibraryError');
   }
 
   public readFile(fsPath: SourcePath): Promise<Buffer> {
@@ -272,7 +281,7 @@ export class VirtualTreeContainer extends TreeContainer {
       }
       return data;
     }
-    throw new LibraryError('error_path_not_found', fsPath);
+    throw new SfError(messages.getMessage('error_path_not_found', [fsPath]), 'LibraryError');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

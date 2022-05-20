@@ -8,6 +8,7 @@
 import { join } from 'path';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
+import { Messages } from '@salesforce/core';
 import { assert } from '@salesforce/ts-types';
 import { decomposed, matchingContentFile } from '../../mock';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
@@ -17,11 +18,12 @@ import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/type-constants/custom
 import { ComponentSet, ForceIgnore, registry, RegistryAccess, SourceComponent } from '../../../src';
 import { XML_NS_KEY, XML_NS_URL } from '../../../src/common';
 import { ConvertContext } from '../../../src/convert/convertContext';
-import { TypeInferenceError } from '../../../src/errors';
-import { nls } from '../../../src/i18n';
 
 const env = createSandbox();
 const registryAccess = new RegistryAccess();
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_unexpected_child_type']);
 
 describe('DecomposedMetadataTransformer', () => {
   const component = decomposed.DECOMPOSED_COMPONENT;
@@ -110,9 +112,8 @@ describe('DecomposedMetadataTransformer', () => {
         await transformer.toMetadataFormat(parentComponent);
         assert(false, 'expected TypeInferenceError to be thrown');
       } catch (err) {
-        expect(err).to.be.instanceOf(TypeInferenceError);
-        const msg = nls.localize('error_unexpected_child_type', [fsPath, component.type.name]);
-        expect(err.message).to.equal(msg);
+        expect(err.name).to.equal('TypeInferenceError');
+        expect(err.message).to.equal(messages.getMessage('error_unexpected_child_type', [fsPath, component.type.name]));
       }
     });
   });
@@ -474,9 +475,10 @@ describe('DecomposedMetadataTransformer', () => {
           await transformer.toSourceFormat(component, parentComponent);
           assert(false, 'expected TypeInferenceError to be thrown');
         } catch (err) {
-          expect(err).to.be.instanceOf(TypeInferenceError);
-          const msg = nls.localize('error_unexpected_child_type', [fsPath, component.type.name]);
-          expect(err.message).to.equal(msg);
+          expect(err.name).to.equal('TypeInferenceError');
+          expect(err.message).to.equal(
+            messages.getMessage('error_unexpected_child_type', [fsPath, component.type.name])
+          );
         }
       });
 

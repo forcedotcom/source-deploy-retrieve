@@ -4,10 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Connection } from '@salesforce/core';
-import { SourceClientError } from '../errors';
+import { Connection, Messages, SfError } from '@salesforce/core';
 import { SourcePath } from '../common';
-import { nls } from '../i18n';
 import { createFiles } from '../utils';
 import { MetadataResolver, SourceComponent } from '../resolve';
 import { ComponentSet } from '../collections';
@@ -15,6 +13,15 @@ import { RegistryAccess } from '../registry';
 import { QueryResult, RequestStatus, SourceDeployResult, SourceRetrieveResult } from './types';
 import { buildQuery, queryToFileMap } from './retrieveUtil';
 import { getDeployStrategy } from './deployStrategies';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'beta_tapi_membertype_unsupported_error',
+  'tapi_deploy_component_limit_error',
+  'tapi_retrieve_component_limit_error',
+  'error_in_tooling_retrieve',
+  'error_md_not_present_in_org',
+]);
 
 type WithNamespace = { namespace?: string };
 export type ToolingDeployOptions = WithNamespace;
@@ -56,18 +63,15 @@ export class ToolingApi {
   public async retrieve(options: ToolingRetrieveOptions & { components: ComponentSet }): Promise<SourceRetrieveResult> {
     let retrieveResult: SourceRetrieveResult;
     if (options.components.size > 1) {
-      const retrieveError = new Error();
-      retrieveError.message = nls.localize('tapi_retrieve_component_limit_error');
-      retrieveError.name = 'MetadataRetrieveLimit';
-      throw retrieveError;
+      throw new SfError(messages.getMessage('tapi_retrieve_component_limit_error'), 'MetadataRetrieveLimit');
     }
     const mdComponent: SourceComponent = options.components.getSourceComponents().first();
 
     if (!retrieveTypes.has(mdComponent.type.name)) {
-      const retrieveError = new Error();
-      retrieveError.message = nls.localize('beta_tapi_membertype_unsupported_error', mdComponent.type.name);
-      retrieveError.name = 'MetadataTypeUnsupported';
-      throw retrieveError;
+      throw new SfError(
+        messages.getMessage('beta_tapi_membertype_unsupported_error', [mdComponent.type.name]),
+        'MetadataTypeUnsupported'
+      );
     }
 
     try {
@@ -86,7 +90,7 @@ export class ToolingApi {
                 fullName: mdComponent.fullName,
                 type: mdComponent.type,
               },
-              message: nls.localize('error_md_not_present_in_org', mdComponent.fullName),
+              message: messages.getMessage('error_md_not_present_in_org', [mdComponent.fullName]),
             },
           ],
         };
@@ -102,7 +106,8 @@ export class ToolingApi {
         failures: [],
       };
     } catch (err) {
-      throw new Error(nls.localize('error_in_tooling_retrieve', err));
+      const error = err as Error;
+      throw new SfError(messages.getMessage('error_in_tooling_retrieve'), error.name, [], err, err);
     }
 
     return retrieveResult;
@@ -115,8 +120,7 @@ export class ToolingApi {
     let mdComponent: SourceComponent;
     if (Array.isArray(components)) {
       if (components.length > 1) {
-        const deployError = new SourceClientError('tapi_deploy_component_limit_error');
-        throw deployError;
+        throw new SfError(messages.getMessage('tapi_deploy_component_limit_error'), 'SourceClientError');
       }
       mdComponent = components[0];
     } else {
@@ -125,7 +129,10 @@ export class ToolingApi {
     const metadataType = mdComponent.type.name;
 
     if (!deployTypes.get(metadataType)) {
-      throw new SourceClientError('beta_tapi_membertype_unsupported_error', metadataType);
+      throw new SfError(
+        messages.getMessage('beta_tapi_membertype_unsupported_error', [metadataType]),
+        'SourceClientError'
+      );
     }
 
     const deployStrategy = getDeployStrategy(metadataType, this.connection);

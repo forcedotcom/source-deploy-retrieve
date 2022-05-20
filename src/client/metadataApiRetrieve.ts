@@ -8,10 +8,10 @@ import * as path from 'path';
 import * as fs from 'graceful-fs';
 import * as unzipper from 'unzipper';
 import { asBoolean, isString } from '@salesforce/ts-types';
+import { Messages, SfError } from '@salesforce/core';
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
 import { SourceComponent, ZipTreeContainer } from '../resolve';
-import { MetadataApiRetrieveError, MissingJobIdError } from '../errors';
 import { normalizeToArray } from '../utils';
 import { RegistryAccess } from '../registry';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
@@ -27,6 +27,12 @@ import {
   RetrieveOptions,
   RetrieveRequest,
 } from './types';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_no_job_id',
+  'error_no_components_to_retrieve',
+]);
 
 export type MetadataApiRetrieveOptions = MetadataTransferOptions & RetrieveOptions & { registry?: RegistryAccess };
 
@@ -125,7 +131,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
    */
   public async checkStatus(): Promise<MetadataApiRetrieveStatus> {
     if (!this.id) {
-      throw new MissingJobIdError('retrieve');
+      throw new SfError(messages.getMessage('error_no_job_id', ['retrieve']), 'MissingJobIdError');
     }
 
     const coerceBoolean = (field: unknown): boolean => {
@@ -191,13 +197,13 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
     const packageNames = this.getPackageNames();
 
     if (this.components.size === 0 && !packageNames?.length) {
-      throw new MetadataApiRetrieveError('error_no_components_to_retrieve');
+      throw new SfError(messages.getMessage('error_no_components_to_retrieve'), 'MetadataApiRetrieveError');
     }
 
     const connection = await this.getConnection();
     const requestBody: RetrieveRequest = {
-      apiVersion: this.components.apiVersion,
-      unpackaged: this.components.getObject().Package,
+      apiVersion: this.components.apiVersion ?? (await connection.retrieveMaxApiVersion()),
+      unpackaged: (await this.components.getObject()).Package,
     };
 
     // if we're retrieving with packageNames add it

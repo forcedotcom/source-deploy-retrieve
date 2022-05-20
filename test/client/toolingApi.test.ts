@@ -5,15 +5,18 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { AuthInfo, Connection } from '@salesforce/core';
+import { AuthInfo, Connection, Messages } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import { createSandbox, SinonSandbox } from 'sinon';
+import { AnyJson } from '@salesforce/ts-types';
 import { MetadataResolver, SourceComponent } from '../../src/resolve';
 import { ComponentStatus, ToolingApi, ToolingDeployStatus } from '../../src/client';
 import { ContainerDeploy } from '../../src/client/deployStrategies';
-import { nls } from '../../src/i18n';
 import { registry } from '../../src';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['beta_tapi_membertype_unsupported_error']);
 
 const $$ = testSetup();
 
@@ -29,9 +32,13 @@ describe('Tooling API tests', () => {
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
-    $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig(),
-    });
+    $$.configStubs.GlobalInfo = {
+      contents: {
+        orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
+          [testData.username]: testData as unknown as AnyJson,
+        }),
+      },
+    };
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
         username: testData.username,
@@ -85,7 +92,7 @@ describe('Tooling API tests', () => {
       await deployLibrary.deployWithPaths('file/path/myTestClass.flexipage');
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal(nls.localize('beta_tapi_membertype_unsupported_error', 'FlexiPage'));
+      expect(e.message).to.equal(messages.getMessage('beta_tapi_membertype_unsupported_error', ['FlexiPage']));
       expect(e.name).to.be.equal('SourceClientError');
     }
   });

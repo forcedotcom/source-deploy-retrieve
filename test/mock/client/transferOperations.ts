@@ -6,10 +6,10 @@
  */
 
 import { join, sep } from 'path';
-import { testSetup } from '@salesforce/core/lib/testSetup';
+import { testSetup, TestContext } from '@salesforce/core/lib/testSetup';
 import { PollingClient } from '@salesforce/core';
 import { match, SinonSandbox, SinonSpy, SinonStub } from 'sinon';
-import { AsyncResult, DeployResultLocator } from 'jsforce';
+import { AsyncResult } from 'jsforce/lib/api/metadata';
 import {
   ComponentSet,
   ConvertOutputConfig,
@@ -32,7 +32,7 @@ import { ComponentProperties } from '../../../src/resolve/sourceComponent';
 import { normalizeToArray } from '../../../src/utils';
 import { createMockZip, mockConnection } from '.';
 
-export const MOCK_ASYNC_RESULT = { id: '1234', state: RequestStatus.Pending, done: false };
+export const MOCK_ASYNC_RESULT: AsyncResult = { id: '1234', state: RequestStatus.Pending, done: false };
 export const MOCK_DEFAULT_OUTPUT = sep + 'test';
 export const MOCK_RECENTLY_VALIDATED_ID_REST = { id: '1234567890' };
 export const MOCK_RECENTLY_VALIDATED_ID_SOAP = '0987654321';
@@ -60,19 +60,21 @@ interface DeployOperationLifecycle {
 }
 
 export async function stubMetadataDeploy(
-  sandbox: SinonSandbox,
+  context: TestContext,
   options: DeployStubOptions = { components: new ComponentSet() }
 ): Promise<DeployOperationLifecycle> {
+  const sandbox = context.SANDBOX;
   const zipBuffer = Buffer.from('1234');
-  const connection = await mockConnection(testSetup());
+  const connection = await mockConnection(context);
 
-  const deployStub = sandbox.stub(connection, 'deploy');
+  const deployStub = sandbox.stub(connection.metadata, 'deploy');
+  const deployRestStub = sandbox.stub(connection.metadata, 'deployRest');
   const pollingClientSpy = sandbox.spy(PollingClient, 'create');
 
-  deployStub
-    .withArgs(zipBuffer, options.apiOptions ?? MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions)
-    // overriding return type to match API
-    .resolves(MOCK_ASYNC_RESULT as unknown as DeployResultLocator<AsyncResult>);
+  const { rest, ...defaultOptions } = MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions;
+  deployRestStub.withArgs(zipBuffer, options.apiOptions ?? defaultOptions).resolves(MOCK_ASYNC_RESULT);
+
+  deployStub.withArgs(zipBuffer, options.apiOptions ?? defaultOptions).resolves(MOCK_ASYNC_RESULT);
 
   const deployRecentlyValidatedIdStub = sandbox.stub(connection, 'deployRecentValidation');
   deployRecentlyValidatedIdStub
@@ -117,7 +119,8 @@ export async function stubMetadataDeploy(
   const invokeStub = sandbox.stub(connection.metadata, '_invoke');
   const invokeResultStub = sandbox.stub();
   invokeStub.returns({
-    thenCall: (f: (result: unknown | null) => void) => {
+    // @ts-ignore
+    then: (f: (result: unknown | null) => void) => {
       return f(invokeResultStub());
     },
   });

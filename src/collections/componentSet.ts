@@ -6,7 +6,7 @@
  */
 /* eslint  @typescript-eslint/unified-signatures:0 */
 import { j2xParser } from 'fast-xml-parser';
-import { AuthInfo, Connection, Logger } from '@salesforce/core';
+import { AuthInfo, Connection, Logger, Messages, SfError } from '@salesforce/core';
 import {
   MetadataApiDeploy,
   MetadataApiDeployOptions,
@@ -14,7 +14,6 @@ import {
   MetadataApiRetrieveOptions,
 } from '../client';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
-import { ComponentSetError } from '../errors';
 import {
   ComponentLike,
   ManifestResolver,
@@ -25,7 +24,7 @@ import {
   SourceComponent,
   TreeContainer,
 } from '../resolve';
-import { MetadataType, RegistryAccess } from '../registry';
+import { getCurrentApiVersion, MetadataType, RegistryAccess } from '../registry';
 import {
   DestructiveChangesType,
   FromManifestOptions,
@@ -35,6 +34,9 @@ import {
   PackageTypeMembers,
 } from './types';
 import { LazyCollection } from './lazyCollection';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_source_to_deploy']);
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
@@ -79,7 +81,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public constructor(components: Iterable<ComponentLike> = [], registry = new RegistryAccess()) {
     super();
     this.registry = registry;
-    this.apiVersion = this.registry.apiVersion;
     this.logger = Logger.childFromRoot(this.constructor.name);
 
     for (const component of components) {
@@ -281,7 +282,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const toDeploy = Array.from(this.getSourceComponents());
 
     if (toDeploy.length === 0) {
-      throw new ComponentSetError('error_no_source_to_deploy');
+      throw new SfError(messages.getMessage('error_no_source_to_deploy'), 'ComponentSetError');
     }
 
     const operationOptions = Object.assign({}, options, {
@@ -289,6 +290,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       registry: this.registry,
       apiVersion: this.apiVersion,
     });
+    if (!options.apiVersion && !this.apiVersion && !this.sourceApiVersion) {
+      operationOptions.apiVersion = `${await getCurrentApiVersion()}.0`;
+    }
 
     const mdapiDeploy = new MetadataApiDeploy(operationOptions);
     await mdapiDeploy.start();
@@ -320,7 +324,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @param destructiveType Optional value for generating objects representing destructive change manifests
    * @returns Object representation of a package manifest
    */
-  public getObject(destructiveType?: DestructiveChangesType): PackageManifestObject {
+  public async getObject(destructiveType?: DestructiveChangesType): Promise<PackageManifestObject> {
+    const version = this.sourceApiVersion ?? this.apiVersion ?? `${await getCurrentApiVersion()}.0`;
+
     // If this ComponentSet has components marked for delete, we need to
     // only include those components in a destructiveChanges.xml and
     // all other components in the regular manifest.
@@ -374,16 +380,15 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       typeMembers.push({ members: members.sort(), name: typeName });
     }
 
-    const pkg: PackageManifestObject = {
+    const pkg = {
       Package: {
-        types: typeMembers.sort((a, b) => (a.name > b.name ? 1 : -1)),
-        version: this.sourceApiVersion || this.apiVersion,
+        ...{
+          types: typeMembers.sort((a, b) => (a.name > b.name ? 1 : -1)),
+          version,
+        },
+        ...(this.fullName ? { fullName: this.fullName } : {}),
       },
     };
-
-    if (this.fullName) {
-      pkg.Package.fullName = this.fullName;
-    }
 
     return pkg;
   }
@@ -397,13 +402,13 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @param indentation Number of spaces to indent lines by.
    * @param forDestructiveChanges Whether to build a manifest for destructive changes.
    */
-  public getPackageXml(indentation = 4, destructiveType?: DestructiveChangesType): string {
+  public async getPackageXml(indentation = 4, destructiveType?: DestructiveChangesType): Promise<string> {
     const j2x = new j2xParser({
       format: true,
       indentBy: new Array(indentation + 1).join(' '),
       ignoreAttributes: false,
     });
-    const toParse = this.getObject(destructiveType);
+    const toParse = await this.getObject(destructiveType);
     toParse.Package[XML_NS_KEY] = XML_NS_URL;
     return XML_DECL.concat(j2x.parse(toParse));
   }

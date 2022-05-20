@@ -5,17 +5,24 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { AuthInfo, Connection } from '@salesforce/core';
+import { AuthInfo, Connection, Messages } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import * as fs from 'graceful-fs';
-import { Record, RecordResult } from 'jsforce';
+import { Record, SaveError, SaveResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
+import { AnyJson } from '@salesforce/ts-types';
 import { ContainerDeploy } from '../../../src/client/deployStrategies';
-import { nls } from '../../../src/i18n';
-import { QueryResult, ToolingDeployStatus, ComponentStatus, ToolingCreateResult } from '../../../src/client/types';
+import { ComponentStatus, QueryResult, ToolingCreateResult, ToolingDeployStatus } from '../../../src/client/types';
 import { SourceComponent } from '../../../src/resolve';
 import { registry } from '../../../src';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'beta_tapi_car_error',
+  'beta_tapi_mdcontainer_error',
+  'beta_tapi_membertype_error',
+]);
 
 const $$ = testSetup();
 
@@ -28,7 +35,7 @@ describe('Container Deploy Strategy', () => {
   const successfulContainerResult: ToolingCreateResult = {
     success: true,
     id: '1dcxxx000000034',
-    errors: [],
+    errors: undefined,
     name: 'VSCode_MDC_',
     message: '',
   };
@@ -62,14 +69,19 @@ describe('Container Deploy Strategy', () => {
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
-    $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig(),
-    });
+    $$.configStubs.GlobalInfo = {
+      contents: {
+        orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
+          [testData.username]: testData as unknown as AnyJson,
+        }),
+      },
+    };
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
         username: testData.username,
       }),
     });
+
     const mockFS = sandboxStub.stub(fs, 'readFileSync');
     mockFS.withArgs('file/path/one.cls', 'utf8').returns('public with sharing class TestAPI {}');
 
@@ -91,7 +103,7 @@ describe('Container Deploy Strategy', () => {
       success: true,
       id: '1dcxxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     const container = await deployLibrary.createMetadataContainer();
 
@@ -108,13 +120,13 @@ describe('Container Deploy Strategy', () => {
     sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',
-      errors: ['Unexpected error while creating record'],
-    } as RecordResult);
+      errors: [{ message: 'Unexpected error while creating record', errorCode: '1' } as SaveError],
+    } as SaveResult);
     try {
       await deployLibrary.createMetadataContainer();
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal(nls.localize('beta_tapi_mdcontainer_error'));
+      expect(e.message).to.equal(messages.getMessage('beta_tapi_mdcontainer_error'));
       expect(e.name).to.be.equal('DeployError');
     }
   });
@@ -144,7 +156,7 @@ describe('Container Deploy Strategy', () => {
       success: true,
       id: '400xxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     deployLibrary.component = apexClassCmp;
     const containerMember = await deployLibrary.createContainerMember(
@@ -165,7 +177,7 @@ describe('Container Deploy Strategy', () => {
       success: true,
       id: '400xxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     deployLibrary.component = apexTriggerCmp;
     const containerMember = await deployLibrary.createContainerMember(
@@ -186,7 +198,7 @@ describe('Container Deploy Strategy', () => {
       success: true,
       id: '400xxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     deployLibrary.component = apexPageCmp;
     const containerMember = await deployLibrary.createContainerMember(
@@ -207,7 +219,7 @@ describe('Container Deploy Strategy', () => {
       success: true,
       id: '400xxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     deployLibrary.component = apexComponent;
     const containerMember = await deployLibrary.createContainerMember(
@@ -228,7 +240,7 @@ describe('Container Deploy Strategy', () => {
       success: true,
       id: '400xxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     deployLibrary.component = apexClassCmp;
     await deployLibrary.createContainerMember(
@@ -261,7 +273,7 @@ describe('Container Deploy Strategy', () => {
       success: true,
       id: '400xxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     deployLibrary.component = apexClassCmp;
     await deployLibrary.createContainerMember(
@@ -293,8 +305,8 @@ describe('Container Deploy Strategy', () => {
     sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',
-      errors: ['Unexpected error while creating record'],
-    } as RecordResult);
+      errors: [{ message: 'Unexpected error while creating record', errorCode: '1' } as SaveError],
+    } as SaveResult);
 
     deployLibrary.component = apexClassCmp;
     try {
@@ -304,7 +316,7 @@ describe('Container Deploy Strategy', () => {
       );
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal(nls.localize('beta_tapi_membertype_error', 'ApexClass'));
+      expect(e.message).to.equal(messages.getMessage('beta_tapi_membertype_error', ['ApexClass']));
       expect(e.name).to.be.equal('DeployError');
     }
   });
@@ -315,7 +327,7 @@ describe('Container Deploy Strategy', () => {
       success: true,
       id: '1drxxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     const car = await deployLibrary.createContainerAsyncRequest(successfulContainerResult);
     expect(car.id).to.equal('1drxxx000000034');
@@ -333,14 +345,14 @@ describe('Container Deploy Strategy', () => {
     sandboxStub.stub(mockConnection.tooling, 'create').resolves({
       success: false,
       id: '',
-      errors: ['Unexpected error while creating record'],
-    } as RecordResult);
+      errors: [{ message: 'Unexpected error while creating record', errorCode: '1' } as SaveError],
+    } as SaveResult);
 
     try {
       await deployLibrary.createContainerAsyncRequest(successfulContainerResult);
       expect.fail('Should have failed');
     } catch (e) {
-      expect(e.message).to.equal(nls.localize('beta_tapi_car_error'));
+      expect(e.message).to.equal(messages.getMessage('beta_tapi_car_error'));
       expect(e.name).to.be.equal('DeployError');
     }
   });
@@ -383,7 +395,7 @@ describe('Container Deploy Strategy', () => {
     const asyncRequestMock: ToolingCreateResult = {
       success: true,
       id: '1drxxx000000034',
-      errors: [],
+      errors: undefined,
       name: 'TestCAR',
       message: '',
     };
@@ -399,7 +411,7 @@ describe('Container Deploy Strategy', () => {
       success: true,
       id: '1dcxxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     // mock tooling query
     const mockToolingQuery = sandboxStub.stub(mockConnection.tooling, 'query');
@@ -417,14 +429,14 @@ describe('Container Deploy Strategy', () => {
       success: true,
       id: '400xxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     // mock container async request creation
     mockToolingCreate.onCall(2).resolves({
       success: true,
       id: '1drxxx000000034',
       errors: [],
-    } as RecordResult);
+    } as SaveResult);
 
     // mock status check
     sandboxStub.stub(mockConnection.tooling, 'retrieve').resolves({

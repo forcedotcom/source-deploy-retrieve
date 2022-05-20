@@ -6,12 +6,17 @@
  */
 import { join } from 'path';
 import { assert, expect } from 'chai';
+import { Messages, SfError } from '@salesforce/core';
 import { MatchingContentSourceAdapter } from '../../../src/resolve/adapters';
 import { matchingContentFile } from '../../mock';
-import { ExpectedSourceFilesError, UnexpectedForceIgnore } from '../../../src/errors';
 import { RegistryTestUtil } from '../registryTestUtil';
-import { nls } from '../../../src/i18n';
 import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../../src';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_no_source_ignore',
+  'error_expected_source_files',
+]);
 
 describe('MatchingContentSourceAdapter', () => {
   const registryAccess = new RegistryAccess();
@@ -36,12 +41,20 @@ describe('MatchingContentSourceAdapter', () => {
 
   it('Should throw an ExpectedSourceFilesError if no source is found from xml', () => {
     const path = join(TYPE_DIRECTORY, 'b.xyz-meta.xml');
-    assert.throws(() => adapter.getComponent(path), ExpectedSourceFilesError);
+    assert.throws(
+      () => adapter.getComponent(path),
+      SfError,
+      messages.getMessage('error_expected_source_files', [path, type.name])
+    );
   });
 
   it('Should throw an ExpectedSourceFilesError if source and suffix not found', () => {
     const path = join(TYPE_DIRECTORY, 'b.xyz');
-    assert.throws(() => adapter.getComponent(path), ExpectedSourceFilesError);
+    assert.throws(
+      () => adapter.getComponent(path),
+      SfError,
+      messages.getMessage('error_expected_source_files', [path, type.name])
+    );
   });
 
   it('Should throw an error if content file is forceignored', () => {
@@ -54,8 +67,8 @@ describe('MatchingContentSourceAdapter', () => {
     const adapter = new MatchingContentSourceAdapter(type, registryAccess, forceIgnore, tree);
     assert.throws(
       () => adapter.getComponent(path),
-      UnexpectedForceIgnore,
-      nls.localize('error_no_source_ignore', [type.name, path])
+      SfError,
+      messages.getMessage('error_no_source_ignore', [type.name, path])
     );
     testUtil.restore();
   });

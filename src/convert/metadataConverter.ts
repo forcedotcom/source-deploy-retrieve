@@ -5,15 +5,21 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { dirname, join, normalize } from 'path';
+import { Messages, SfError } from '@salesforce/core';
 import { promises } from 'graceful-fs';
 import { SourceComponent } from '../resolve';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
-import { ConversionError, LibraryError } from '../errors';
 import { SourcePath } from '../common';
 import { ComponentSet, DestructiveChangesType } from '../collections';
 import { RegistryAccess } from '../registry';
-import { ComponentConverter, ComponentReader, ComponentWriter, pipeline, StandardWriter, ZipWriter } from './streams';
+import { ComponentConverter, ComponentReader, pipeline, StandardWriter, ZipWriter } from './streams';
 import { ConvertOutputConfig, ConvertResult, DirectoryConfig, SfdxFileFormat, ZipConfig } from './types';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_failed_convert',
+  'error_merge_metadata_target_unsupported',
+]);
 
 export class MetadataConverter {
   public static readonly PACKAGE_XML_FILE = 'package.xml';
@@ -39,9 +45,9 @@ export class MetadataConverter {
 
       let manifestContents;
       const isSource = targetFormat === 'source';
-      const tasks = [];
+      const tasks: Array<Promise<void>> = [];
 
-      let writer: ComponentWriter;
+      let writer: StandardWriter | ZipWriter;
       let mergeSet: ComponentSet;
       let packagePath: SourcePath;
       let defaultDirectory: SourcePath;
@@ -51,53 +57,48 @@ export class MetadataConverter {
           if (output.packageName) {
             cs.fullName = output.packageName;
           }
-          manifestContents = cs.getPackageXml();
+          manifestContents = await cs.getPackageXml();
           packagePath = this.getPackagePath(output);
           defaultDirectory = packagePath;
           writer = new StandardWriter(packagePath);
           if (!isSource) {
             const manifestPath = join(packagePath, MetadataConverter.PACKAGE_XML_FILE);
-            tasks.push(promises.writeFile(manifestPath, manifestContents));
-            // For deploying destructive changes
-            const destructiveChangesTypes = cs.getTypesOfDestructiveChanges();
-            if (destructiveChangesTypes.length) {
-              // for each of the destructive changes in the component set, convert and write the correct metadata
-              // to each manifest
-              destructiveChangesTypes.map((destructiveChangesType) => {
-                const file = this.getDestructiveManifest(destructiveChangesType);
-                const destructiveManifestContents = cs.getPackageXml(4, destructiveChangesType);
-                const destructiveManifestPath = join(packagePath, file);
-                tasks.push(promises.writeFile(destructiveManifestPath, destructiveManifestContents));
-              });
-            }
+            tasks.push(
+              promises.writeFile(manifestPath, manifestContents),
+              ...cs.getTypesOfDestructiveChanges().map(async (destructiveChangesType) =>
+                // for each of the destructive changes in the component set, convert and write the correct metadata
+                // to each manifest
+                promises.writeFile(
+                  join(packagePath, this.getDestructiveManifest(destructiveChangesType)),
+                  await cs.getPackageXml(4, destructiveChangesType)
+                )
+              )
+            );
           }
           break;
         case 'zip':
           if (output.packageName) {
             cs.fullName = output.packageName;
           }
-          manifestContents = cs.getPackageXml();
+          manifestContents = await cs.getPackageXml();
           packagePath = this.getPackagePath(output);
           defaultDirectory = packagePath;
           writer = new ZipWriter(packagePath);
           if (!isSource) {
-            (writer as ZipWriter).addToZip(manifestContents, MetadataConverter.PACKAGE_XML_FILE);
-            // For deploying destructive changes
-            const destructiveChangesTypes = cs.getTypesOfDestructiveChanges();
-            if (destructiveChangesTypes.length) {
-              // for each of the destructive changes in the component set, convert and write the correct metadata
-              // to each manifest
-              destructiveChangesTypes.map((destructiveChangeType) => {
-                const file = this.getDestructiveManifest(destructiveChangeType);
-                const destructiveManifestContents = cs.getPackageXml(4, destructiveChangeType);
-                (writer as ZipWriter).addToZip(destructiveManifestContents, file);
-              });
+            writer.addToZip(manifestContents, MetadataConverter.PACKAGE_XML_FILE);
+            // for each of the destructive changes in the component set, convert and write the correct metadata
+            // to each manifest
+            for (const destructiveChangeType of cs.getTypesOfDestructiveChanges()) {
+              writer.addToZip(
+                await cs.getPackageXml(4, destructiveChangeType),
+                this.getDestructiveManifest(destructiveChangeType)
+              );
             }
           }
           break;
         case 'merge':
           if (!isSource) {
-            throw new LibraryError('error_merge_metadata_target_unsupported');
+            throw new SfError(messages.getMessage('error_merge_metadata_target_unsupported'));
           }
           defaultDirectory = output.defaultDirectory;
           mergeSet = new ComponentSet();
@@ -115,8 +116,7 @@ export class MetadataConverter {
         new ComponentConverter(targetFormat, this.registry, mergeSet, defaultDirectory),
         writer
       );
-      tasks.push(conversionPipeline);
-      await Promise.all(tasks);
+      await Promise.all([conversionPipeline, ...tasks]);
 
       const result: ConvertResult = { packagePath };
       if (output.type === 'zip' && !packagePath) {
@@ -126,7 +126,12 @@ export class MetadataConverter {
       }
       return result;
     } catch (e) {
-      throw new ConversionError(e);
+      throw new SfError(
+        messages.getMessage('error_failed_convert', [(e as Error).message]),
+        'ConversionError',
+        [],
+        e as Error
+      );
     }
   }
 

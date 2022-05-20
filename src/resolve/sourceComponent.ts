@@ -5,18 +5,24 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, join } from 'path';
+import { Messages, SfError } from '@salesforce/core';
 import { parse, validate } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { baseName, normalizeToArray, parseMetadataXml, trimUntil } from '../utils';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common';
 import { SfdxFileFormat } from '../convert';
 import { MetadataType } from '../registry';
-import { LibraryError, TypeInferenceError } from '../errors';
 import { DestructiveChangesType } from '../collections';
 import { filePathsFromMetadataComponent } from '../utils/filePathGenerator';
 import { MetadataComponent, VirtualDirectory } from './types';
 import { NodeFSTreeContainer, TreeContainer, VirtualTreeContainer } from './treeContainers';
 import { ForceIgnore } from './forceIgnore';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_unexpected_child_type',
+  'invalid_xml_parsing',
+]);
 
 export type ComponentProperties = {
   name: string;
@@ -105,7 +111,10 @@ export class SourceComponent implements MetadataComponent {
         // Ensure only valid child types are included with the parent.
         if (!validChildTypes.includes(child.type?.id)) {
           const filePath = child.xml || child.content;
-          throw new TypeInferenceError('error_unexpected_child_type', [filePath, this.type.name]);
+          throw new SfError(
+            messages.getMessage('error_unexpected_child_type', [filePath, this.type.name]),
+            'TypeInferenceError'
+          );
         }
       }
       return children;
@@ -240,12 +249,15 @@ export class SourceComponent implements MetadataComponent {
       // only attempt validating once there's an error to avoid the performance hit of validating every file
       const validation = validate(contents);
       if (validation !== true) {
-        throw new LibraryError('invalid_xml_parsing', [
-          path,
-          validation.err.msg,
-          validation.err.line.toString(),
-          validation.err.code,
-        ]);
+        throw new SfError(
+          messages.getMessage('invalid_xml_parsing', [
+            path,
+            validation.err.msg,
+            validation.err.line.toString(),
+            validation.err.code,
+          ]),
+          'LibraryError'
+        );
       }
       throw e;
     }

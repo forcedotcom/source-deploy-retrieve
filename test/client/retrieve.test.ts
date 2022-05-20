@@ -8,16 +8,23 @@
 import * as path from 'path';
 import * as stream from 'stream';
 import { fail } from 'assert';
-import { AuthInfo, Connection } from '@salesforce/core';
+import { AuthInfo, Connection, Messages } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import * as fs from 'graceful-fs';
 import { createSandbox, SinonSandbox } from 'sinon';
+import { AnyJson } from '@salesforce/ts-types';
 import { ToolingApi } from '../../src/client';
 import { MetadataResolver, SourceComponent } from '../../src/resolve';
 import { QueryResult, RequestStatus, SourceRetrieveResult } from '../../src/client/types';
-import { nls } from '../../src/i18n';
 import { ComponentSet, registry } from '../../src';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_md_not_present_in_org',
+  'beta_tapi_membertype_unsupported_error',
+  'tapi_retrieve_component_limit_error',
+]);
 
 const $$ = testSetup();
 describe('Tooling Retrieve', () => {
@@ -58,14 +65,19 @@ describe('Tooling Retrieve', () => {
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
-    $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig(),
-    });
+    $$.configStubs.GlobalInfo = {
+      contents: {
+        orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
+          [testData.username]: testData as unknown as AnyJson,
+        }),
+      },
+    };
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
         username: testData.username,
       }),
     });
+
     sandboxStub.stub(fs, 'existsSync').returns(true);
     // @ts-ignore
     sandboxStub.stub(fs, 'statSync').returns({ isDirectory: () => false });
@@ -238,7 +250,7 @@ describe('Tooling Retrieve', () => {
             fullName: mdComponents[0].fullName,
             type: mdComponents[0].type,
           },
-          message: nls.localize('error_md_not_present_in_org', 'myTestClass'),
+          message: messages.getMessage('error_md_not_present_in_org', ['myTestClass']),
         },
       ],
     });
@@ -262,7 +274,7 @@ describe('Tooling Retrieve', () => {
       });
       fail('Retrieve should have thrown an error');
     } catch (e) {
-      expect(e.message).to.equals(nls.localize('tapi_retrieve_component_limit_error'));
+      expect(e.message).to.equals(messages.getMessage('tapi_retrieve_component_limit_error'));
       expect(e.name).to.equals('MetadataRetrieveLimit');
     }
   });
@@ -291,7 +303,7 @@ describe('Tooling Retrieve', () => {
       });
       fail('Retrieve should have thrown an error');
     } catch (e) {
-      expect(e.message).to.equals(nls.localize('beta_tapi_membertype_unsupported_error', 'FancyType'));
+      expect(e.message).to.equals(messages.getMessage('beta_tapi_membertype_unsupported_error', ['FancyType']));
       expect(e.name).to.equals('MetadataTypeUnsupported');
     }
   });

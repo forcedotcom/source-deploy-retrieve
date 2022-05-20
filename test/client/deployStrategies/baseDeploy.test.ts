@@ -5,13 +5,16 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { AuthInfo, Connection } from '@salesforce/core';
+import { AuthInfo, Connection, Messages } from '@salesforce/core';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { assert, expect } from 'chai';
 import * as fs from 'graceful-fs';
 import { createSandbox, SinonSandbox } from 'sinon';
+import { AnyJson } from '@salesforce/ts-types';
 import { ContainerDeploy } from '../../../src/client/deployStrategies';
-import { nls } from '../../../src/i18n';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_parsing_metadata_file']);
 
 const $$ = testSetup();
 
@@ -27,14 +30,19 @@ describe('Base Deploy Strategy', () => {
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
-    $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig(),
-    });
+    $$.configStubs.GlobalInfo = {
+      contents: {
+        orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
+          [testData.username]: testData as unknown as AnyJson,
+        }),
+      },
+    };
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
         username: testData.username,
       }),
     });
+
     const mockFS = sandboxStub.stub(fs, 'readFileSync');
     mockFS.withArgs('file/path/one.cls', 'utf8').returns('public with sharing class TestAPI {}');
 
@@ -76,6 +84,9 @@ describe('Base Deploy Strategy', () => {
     const deployLibrary = new ContainerDeploy(mockConnection);
     const metaXMLString = 'Incorrect metadata file';
 
-    assert.throws(() => deployLibrary.buildMetadataField(metaXMLString), nls.localize('error_parsing_metadata_file'));
+    assert.throws(
+      () => deployLibrary.buildMetadataField(metaXMLString),
+      messages.getMessage('error_parsing_metadata_file')
+    );
   });
 });

@@ -7,6 +7,7 @@
 
 import { basename, dirname, join } from 'path';
 import { assert, expect } from 'chai';
+import { Messages, SfError } from '@salesforce/core';
 import {
   ComponentSet,
   MetadataResolver,
@@ -16,7 +17,6 @@ import {
   VirtualDirectory,
   VirtualTreeContainer,
 } from '../../src';
-import { nls } from '../../src/i18n';
 import {
   bundle,
   decomposedtoplevel,
@@ -25,7 +25,6 @@ import {
   mixedContentInFolder,
   xmlInFolder,
 } from '../mock';
-import { TypeInferenceError } from '../../src/errors';
 import {
   DECOMPOSED_CHILD_COMPONENT_1,
   DECOMPOSED_CHILD_DIR_PATH,
@@ -47,6 +46,12 @@ import { META_XML_SUFFIX } from '../../src/common';
 import { RegistryTestUtil } from './registryTestUtil';
 
 const testUtil = new RegistryTestUtil();
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
+  'error_path_not_found',
+  'error_could_not_infer_type',
+]);
 
 describe('MetadataResolver', () => {
   const resolver = new MetadataResolver();
@@ -98,8 +103,8 @@ describe('MetadataResolver', () => {
 
         assert.throws(
           () => resolver.getComponentsFromPath(path),
-          TypeInferenceError,
-          nls.localize('error_path_not_found', [path])
+          SfError,
+          messages.getMessage('error_path_not_found', [path])
         );
       });
 
@@ -315,8 +320,8 @@ describe('MetadataResolver', () => {
         ]);
         assert.throws(
           () => access.getComponentsFromPath(missing),
-          TypeInferenceError,
-          nls.localize('error_could_not_infer_type', [missing])
+          SfError,
+          messages.getMessage('error_could_not_infer_type', [missing])
         );
       });
 

@@ -8,7 +8,7 @@ import * as path from 'path';
 import * as fs from 'graceful-fs';
 import * as unzipper from 'unzipper';
 import { asBoolean, isString } from '@salesforce/ts-types';
-import { Messages, SfError } from '@salesforce/core';
+import { Messages, SfError, Lifecycle } from '@salesforce/core';
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
 import { SourceComponent, ZipTreeContainer } from '../resolve';
@@ -190,10 +190,15 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
       await this.maybeSaveTempDirectory('source', components);
     }
 
-    return new RetrieveResult(result, components, this.components);
+    const retrieveResult = new RetrieveResult(result, components, this.components);
+    await Lifecycle.getInstance().emit('postretrieve', retrieveResult);
+    return retrieveResult;
   }
 
   protected async pre(): Promise<AsyncResult> {
+    if (this.options.components) {
+      await Lifecycle.getInstance().emit('preretrieve', this.options.components.toArray());
+    }
     const packageNames = this.getPackageNames();
 
     if (this.components.size === 0 && !packageNames?.length) {

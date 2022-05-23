@@ -348,6 +348,9 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
   }
 
   protected async pre(): Promise<AsyncResult> {
+    if (this.options.components) {
+      await Lifecycle.getInstance().emit('predeploy', this.options.components.toArray());
+    }
     const [zipBuffer, connection] = await Promise.all([
       this.getZipBuffer(),
       this.getConnection(),
@@ -362,11 +365,12 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
 
   // eslint-disable-next-line @typescript-eslint/require-await
   protected async post(result: MetadataApiDeployStatus): Promise<DeployResult> {
+    const lifecycle = Lifecycle.getInstance();
     try {
       // Creates an array of unique metadata types that were deployed, uses Set to avoid duplicates.
       const listOfMetadataTypesDeployed = Array.from(new Set(this.options.components.map((c) => c.type.name)));
 
-      void Lifecycle.getInstance().emitTelemetry({
+      void lifecycle.emitTelemetry({
         eventName: 'metadata_api_deploy_result',
         library: 'SDR',
         status: result.status,
@@ -396,8 +400,9 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
         `Error trying to compile/send deploy telemetry data for deploy ID: ${this.id}\nError: ${error.message}`
       );
     }
-
-    return new DeployResult(result, this.components);
+    const deployResult = new DeployResult(result, this.components);
+    await lifecycle.emit('postdeploy', deployResult);
+    return deployResult;
   }
 
   private async getZipBuffer(): Promise<Buffer> {

@@ -509,6 +509,7 @@ v56 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
+|AccountingSettings|✅||
 |CollectionsDashboardSettings|✅||
 |MfgServiceConsoleSettings|✅||
 

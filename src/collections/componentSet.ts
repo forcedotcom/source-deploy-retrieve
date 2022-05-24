@@ -290,9 +290,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       registry: this.registry,
       apiVersion: this.apiVersion,
     });
-    if (!options.apiVersion && !this.apiVersion && !this.sourceApiVersion) {
-      operationOptions.apiVersion = `${await getCurrentApiVersion()}.0`;
-    }
+    // if (!options.apiVersion && !this.apiVersion && !this.sourceApiVersion) {
+    //   operationOptions.apiVersion = `${await getCurrentApiVersion()}.0`;
+    // }
 
     const mdapiDeploy = new MetadataApiDeploy(operationOptions);
     await mdapiDeploy.start();

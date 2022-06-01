@@ -276,6 +276,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     },
   };
   private options: MetadataApiDeployOptions;
+  private orgId: string;
   // Keep track of rest deploys separately since Connection.deploy() removes it
   // from the apiOptions and we need it for telemetry.
   private isRestDeploy: boolean;
@@ -348,14 +349,17 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
   }
 
   protected async pre(): Promise<AsyncResult> {
+    const connection = await this.getConnection();
+    // store for use in the scopedPostDeploy event
+    this.orgId = connection.getAuthInfoFields().orgId;
+    // only do even hooks if source, (NOT a metadata format) deploy
     if (this.options.components) {
-      await Lifecycle.getInstance().emit('predeploy', this.options.components.toArray());
+      await Lifecycle.getInstance().emit('scopedPreDeploy', {
+        componentSet: this.options.components,
+        orgId: this.orgId,
+      } as ScopedPreDeploy);
     }
-    const [zipBuffer, connection] = await Promise.all([
-      this.getZipBuffer(),
-      this.getConnection(),
-      this.maybeSaveTempDirectory('metadata'),
-    ]);
+    const [zipBuffer] = await Promise.all([this.getZipBuffer(), this.maybeSaveTempDirectory('metadata')]);
     // SDR modifies what the mdapi expects by adding a rest param
     const { rest, ...optionsWithoutRest } = this.options.apiOptions;
     return this.isRestDeploy
@@ -401,7 +405,10 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
       );
     }
     const deployResult = new DeployResult(result, this.components);
-    await lifecycle.emit('postdeploy', deployResult);
+    // only do event hooks if source, (NOT a metadata format) deploy
+    if (this.options.components) {
+      await lifecycle.emit('scopedPostDeploy', { deployResult, orgId: this.orgId } as ScopedPostDeploy);
+    }
     return deployResult;
   }
 
@@ -432,4 +439,20 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     }
     throw new Error('Options should include components, zipPath, or mdapiPath');
   }
+}
+
+/**
+ * register a listener to `scopedPreDeploy`
+ */
+export interface ScopedPreDeploy {
+  componentSet: ComponentSet;
+  orgId: string;
+}
+
+/**
+ * register a listener to `scopedPostDeploy`
+ */
+export interface ScopedPostDeploy {
+  deployResult: DeployResult;
+  orgId: string;
 }

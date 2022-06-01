@@ -118,6 +118,7 @@ export class RetrieveResult implements MetadataTransferResult {
 export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveStatus, RetrieveResult> {
   public static DEFAULT_OPTIONS: Partial<MetadataApiRetrieveOptions> = { merge: false };
   private options: MetadataApiRetrieveOptions;
+  private orgId: string;
 
   public constructor(options: MetadataApiRetrieveOptions) {
     super(options);
@@ -184,21 +185,21 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
 
     components ??= new ComponentSet(undefined, this.options.registry);
 
+    const retrieveResult = new RetrieveResult(result, components, this.components);
     if (!isMdapiRetrieve) {
       // This should only be done when retrieving source format since retrieving
-      // mdapi format has no conversion.
+      // mdapi format has no conversion or events/hooks
       await this.maybeSaveTempDirectory('source', components);
+      await Lifecycle.getInstance().emit('scopedPostRetrieve', {
+        retrieveResult,
+        orgId: this.orgId,
+      } as ScopedPostRetrieve);
     }
 
-    const retrieveResult = new RetrieveResult(result, components, this.components);
-    await Lifecycle.getInstance().emit('postretrieve', retrieveResult);
     return retrieveResult;
   }
 
   protected async pre(): Promise<AsyncResult> {
-    if (this.options.components) {
-      await Lifecycle.getInstance().emit('preretrieve', this.options.components.toArray());
-    }
     const packageNames = this.getPackageNames();
 
     if (this.components.size === 0 && !packageNames?.length) {
@@ -206,6 +207,16 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
     }
 
     const connection = await this.getConnection();
+    this.orgId = connection.getAuthInfoFields().orgId;
+
+    // only do event hooks if source, (NOT a metadata format) retrieve
+    if (this.options.components) {
+      await Lifecycle.getInstance().emit('scopedPreRetrieve', {
+        componentSet: this.options.components,
+        orgId: this.orgId,
+      } as ScopedPreRetrieve);
+    }
+
     const requestBody: RetrieveRequest = {
       apiVersion: this.components.apiVersion ?? (await connection.retrieveMaxApiVersion()),
       unpackaged: (await this.components.getObject()).Package,
@@ -287,4 +298,20 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
     }
     return new ComponentSet(components, registry);
   }
+}
+
+/**
+ * register a listener to `scopedPreRetrieve`
+ */
+export interface ScopedPreRetrieve {
+  componentSet: ComponentSet;
+  orgId: string;
+}
+
+/**
+ * register a listener to `scopedPostRetrieve`
+ */
+export interface ScopedPostRetrieve {
+  retrieveResult: RetrieveResult;
+  orgId: string;
 }

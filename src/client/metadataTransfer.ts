@@ -217,6 +217,13 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
         }
       } catch (e) {
         this.logger.error(e);
+        // tolerate a known mdapi problem 500/INVALID_CROSS_REFERENCE_KEY: invalid cross reference id
+        // that happens when request moves out of Pending
+        if (e instanceof Error && e.name === 'JsonParseError') {
+          this.logger.debug('Metadata API response not parseable', e);
+          await Lifecycle.getInstance().emitWarning('Metadata API response not parseable');
+          return { completed: false };
+        }
         // tolerate intermittent network errors upto retry limit
         if (
           ['ETIMEDOUT', 'ENOTFOUND', 'ECONNRESET', 'socket hang up'].some((retryableNetworkError) =>

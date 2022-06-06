@@ -281,7 +281,7 @@ describe('ComponentSet', () => {
         const username = 'test@foobar.com';
         const testData = new MockTestOrgData($$.uniqid(), { username });
 
-        $$.stubAuths(testData);
+        await $$.stubAuths(testData);
         const set = await ComponentSet.fromConnection({
           usernameOrConnection: username,
           apiVersion: '50.0',
@@ -296,7 +296,7 @@ describe('ComponentSet', () => {
       it('should initialize using an username', async () => {
         const username = 'test@foobar.com';
         const testData = new MockTestOrgData($$.uniqid(), { username });
-        $$.stubAuths(testData);
+        await $$.stubAuths(testData);
         const connection = await Connection.create({
           authInfo: await AuthInfo.create({
             username: 'test@foobar.com',

@@ -28,7 +28,7 @@ export async function createMockZip(entries: string[]): Promise<Buffer> {
 
 export async function mockConnection($$: TestContext): Promise<Connection> {
   const testData = new MockTestOrgData();
-  $$.stubAuths(testData);
+  await $$.stubAuths(testData);
   return Connection.create({
     authInfo: await AuthInfo.create({
       username: testData.username,

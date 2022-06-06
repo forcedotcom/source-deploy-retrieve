@@ -31,7 +31,7 @@ describe('Tooling API tests', () => {
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
-    $$.stubAuths(testData);
+    await $$.stubAuths(testData);
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
         username: testData.username,

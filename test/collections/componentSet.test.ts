@@ -9,7 +9,6 @@ import { join } from 'path';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
-import { AnyJson } from '@salesforce/ts-types';
 import { AuthInfo, Connection, Messages } from '@salesforce/core';
 import {
   ComponentSet,
@@ -279,16 +278,10 @@ describe('ComponentSet', () => {
           apiVersion: '50.0',
         });
         env.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
-        const testData = new MockTestOrgData();
         const username = 'test@foobar.com';
+        const testData = new MockTestOrgData($$.uniqid(), { username });
 
-        $$.configStubs.GlobalInfo = {
-          contents: {
-            orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
-              [username]: testData as unknown as AnyJson,
-            }),
-          },
-        };
+        $$.stubAuths(testData);
         const set = await ComponentSet.fromConnection({
           usernameOrConnection: username,
           apiVersion: '50.0',
@@ -301,15 +294,9 @@ describe('ComponentSet', () => {
       });
 
       it('should initialize using an username', async () => {
-        const testData = new MockTestOrgData();
         const username = 'test@foobar.com';
-        $$.configStubs.GlobalInfo = {
-          contents: {
-            orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
-              [username]: testData as unknown as AnyJson,
-            }),
-          },
-        };
+        const testData = new MockTestOrgData($$.uniqid(), { username });
+        $$.stubAuths(testData);
         const connection = await Connection.create({
           authInfo: await AuthInfo.create({
             username: 'test@foobar.com',

@@ -11,7 +11,6 @@ import { expect } from 'chai';
 import * as fs from 'graceful-fs';
 import { Record, SaveError, SaveResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
-import { AnyJson } from '@salesforce/ts-types';
 import { ContainerDeploy } from '../../../src/client/deployStrategies';
 import { ComponentStatus, QueryResult, ToolingCreateResult, ToolingDeployStatus } from '../../../src/client/types';
 import { SourceComponent } from '../../../src/resolve';
@@ -69,13 +68,7 @@ describe('Container Deploy Strategy', () => {
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
-    $$.configStubs.GlobalInfo = {
-      contents: {
-        orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
-          [testData.username]: testData as unknown as AnyJson,
-        }),
-      },
-    };
+    $$.stubAuths(testData);
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
         username: testData.username,

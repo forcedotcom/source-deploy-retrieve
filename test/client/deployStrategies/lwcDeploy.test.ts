@@ -12,7 +12,6 @@ import { expect } from 'chai';
 import * as fs from 'graceful-fs';
 import { SaveError, SaveResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
-import { AnyJson } from '@salesforce/ts-types';
 import { LwcDeploy } from '../../../src/client/deployStrategies';
 import { LightningComponentResource, ToolingCreateResult } from '../../../src/client/types';
 import { SourceComponent, VirtualTreeContainer } from '../../../src/resolve';
@@ -87,13 +86,7 @@ describe('LWC Deploy Strategy', () => {
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
-    $$.configStubs.GlobalInfo = {
-      contents: {
-        orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
-          [testData.username]: testData as unknown as AnyJson,
-        }),
-      },
-    };
+    $$.stubAuths(testData);
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
         username: testData.username,

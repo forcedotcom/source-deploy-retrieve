@@ -9,7 +9,6 @@ import { promisify } from 'util';
 import { AuthInfo, Connection } from '@salesforce/core';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { create as createArchive } from 'archiver';
-import { AnyJson } from '@salesforce/ts-types';
 
 export async function createMockZip(entries: string[]): Promise<Buffer> {
   const archive = createArchive('zip');
@@ -29,13 +28,7 @@ export async function createMockZip(entries: string[]): Promise<Buffer> {
 
 export async function mockConnection($$: TestContext): Promise<Connection> {
   const testData = new MockTestOrgData();
-  $$.configStubs.GlobalInfo = {
-    contents: {
-      orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
-        [testData.username]: testData as unknown as AnyJson,
-      }),
-    },
-  };
+  $$.stubAuths(testData);
   return Connection.create({
     authInfo: await AuthInfo.create({
       username: testData.username,

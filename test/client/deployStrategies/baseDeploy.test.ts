@@ -10,7 +10,6 @@ import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { assert, expect } from 'chai';
 import * as fs from 'graceful-fs';
 import { createSandbox, SinonSandbox } from 'sinon';
-import { AnyJson } from '@salesforce/ts-types';
 import { ContainerDeploy } from '../../../src/client/deployStrategies';
 
 Messages.importMessagesDirectory(__dirname);
@@ -30,13 +29,7 @@ describe('Base Deploy Strategy', () => {
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
-    $$.configStubs.GlobalInfo = {
-      contents: {
-        orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
-          [testData.username]: testData as unknown as AnyJson,
-        }),
-      },
-    };
+    $$.stubAuths(testData);
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
         username: testData.username,

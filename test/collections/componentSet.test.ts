@@ -246,7 +246,7 @@ describe('ComponentSet', () => {
 
     describe('fromConnection', () => {
       it('should initialize using a connection', async () => {
-        const connection = await mockConnection($$);
+        const connection = await mockConnection();
         const expected: MetadataComponent[] = [
           {
             fullName: 'Test',
@@ -629,7 +629,7 @@ describe('ComponentSet', () => {
 
   describe('deploy', () => {
     it('should properly construct a deploy operation', async () => {
-      const connection = await mockConnection($$);
+      const connection = await mockConnection();
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
         registry: registryAccess,
@@ -651,7 +651,7 @@ describe('ComponentSet', () => {
     });
 
     it('should properly construct a deploy operation with overridden apiVersion', async () => {
-      const connection = await mockConnection($$);
+      const connection = await mockConnection();
       const apiVersion = '50.0';
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
@@ -695,7 +695,7 @@ describe('ComponentSet', () => {
 
   describe('retrieve', () => {
     it('should properly construct a retrieve operation', async () => {
-      const connection = await mockConnection($$);
+      const connection = await mockConnection();
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
         registry: registryAccess,
@@ -724,7 +724,7 @@ describe('ComponentSet', () => {
     });
 
     it('should properly construct a retrieve operation with overridden apiVersion', async () => {
-      const connection = await mockConnection($$);
+      const connection = await mockConnection();
       const apiVersion = '50.0';
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
@@ -756,7 +756,7 @@ describe('ComponentSet', () => {
     });
 
     it('should properly construct a retrieve operation with packageName', async () => {
-      const connection = await mockConnection($$);
+      const connection = await mockConnection();
       const set = new ComponentSet([]);
       const operationArgs = {
         components: set,

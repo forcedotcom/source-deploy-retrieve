@@ -12,7 +12,6 @@ import * as unzipper from 'unzipper';
 import { createSandbox, match, SinonStub } from 'sinon';
 import { getString } from '@salesforce/ts-types';
 import * as fs from 'graceful-fs';
-import { testSetup } from '@salesforce/core/lib/testSetup';
 import {
   ComponentSet,
   ComponentStatus,
@@ -98,7 +97,7 @@ describe('MetadataApiRetrieve', () => {
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
-          apiVersion: (await mockConnection(testSetup())).getApiVersion(),
+          apiVersion: (await mockConnection()).getApiVersion(),
           unpackaged: (await toRetrieve.getObject()).Package,
         });
       });
@@ -116,7 +115,7 @@ describe('MetadataApiRetrieve', () => {
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
-          apiVersion: (await mockConnection(testSetup())).getApiVersion(),
+          apiVersion: (await mockConnection()).getApiVersion(),
           packageNames: options.packageOptions,
           unpackaged: (await toRetrieve.getObject()).Package,
         });
@@ -135,7 +134,7 @@ describe('MetadataApiRetrieve', () => {
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
-          apiVersion: (await mockConnection(testSetup())).getApiVersion(),
+          apiVersion: (await mockConnection()).getApiVersion(),
           packageNames: [options.packageOptions[0].name],
           unpackaged: (await toRetrieve.getObject()).Package,
         });
@@ -154,7 +153,7 @@ describe('MetadataApiRetrieve', () => {
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
-          apiVersion: (await mockConnection(testSetup())).getApiVersion(),
+          apiVersion: (await mockConnection()).getApiVersion(),
           packageNames: [options.packageOptions[0].name],
           unpackaged: (await toRetrieve.getObject()).Package,
         });

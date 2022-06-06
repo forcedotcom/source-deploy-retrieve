@@ -6,7 +6,6 @@
  */
 import { fail } from 'assert';
 import { createSandbox, SinonStub } from 'sinon';
-import { testSetup } from '@salesforce/core/lib/testSetup';
 import { AuthInfo, Connection, PollingClient, Messages } from '@salesforce/core';
 import { expect } from 'chai';
 import { Duration, sleep } from '@salesforce/kit';
@@ -18,7 +17,6 @@ import { mockConnection } from '../mock/client';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['md_request_fail']);
 
-const $$ = testSetup();
 const env = createSandbox();
 
 class TestTransfer extends MetadataTransfer<MetadataRequestStatus, MetadataTransferResult> {
@@ -52,7 +50,7 @@ describe('MetadataTransfer', () => {
   let operation: TestTransfer;
 
   beforeEach(async () => {
-    connection = await mockConnection($$);
+    connection = await mockConnection();
     operation = new TestTransfer({
       components: new ComponentSet(),
       usernameOrConnection: connection,

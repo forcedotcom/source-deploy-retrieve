@@ -352,7 +352,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     const connection = await this.getConnection();
     // store for use in the scopedPostDeploy event
     this.orgId = connection.getAuthInfoFields().orgId;
-    // only do even hooks if source, (NOT a metadata format) deploy
+    // only do event hooks if source, (NOT a metadata format) deploy
     if (this.options.components) {
       await Lifecycle.getInstance().emit('scopedPreDeploy', {
         componentSet: this.options.components,

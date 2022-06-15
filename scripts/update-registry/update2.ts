@@ -1,15 +1,17 @@
 // determine missing types from metadataCoverageReport
 import * as shelljs from 'shelljs';
+import * as fs from 'fs';
 import { MetadataRegistry } from '../../src';
 import { exit } from 'process';
-import { fs } from '@salesforce/core';
 import * as deepmerge from 'deepmerge';
 import { CoverageObject, CoverageObjectType } from '../../src/registry/types';
-import { AnyJson } from '@salesforce/ts-types';
 import { getMissingTypes } from '../../test/utils/getMissingTypes';
 import { getCurrentApiVersion, getCoverage } from '../../src/registry/coverage';
 
-export const registry = fs.readJsonSync('./src/registry/metadataRegistry.json') as unknown as MetadataRegistry;
+const registry = JSON.parse(
+  fs.readFileSync('./src/registry/metadataRegistry.json', 'utf8')
+) as unknown as MetadataRegistry;
+
 export let metadataCoverage: CoverageObject;
 
 interface DescribeResult {
@@ -88,7 +90,8 @@ const registryUpdate = (missingTypesAsDescribeResult: DescribeResult[]) => {
     };
     registry.suffixes[suffix] = typeId;
   });
-  fs.writeJsonSync('./src/registry/metadataRegistry.json', registry as unknown as AnyJson);
+  const jsonData = JSON.stringify(registry);
+  fs.writeFileSync('./src/registry/metadataRegistry.json', jsonData);
 };
 
 const getMissingTypesAsDescribeResult = (missingTypes: [string, CoverageObjectType][]): DescribeResult[] => {
@@ -109,6 +112,7 @@ const updateProjectScratchDef = (missingTypes: [string, CoverageObjectType][]) =
   };
 
   scratchDefSummary.features = [...new Set(scratchDefSummary.features)];
-  fs.writeJsonSync('./registryBuilder/config/project-scratch-def.json', { edition: 'developer', ...scratchDefSummary });
+  const jsonData = JSON.stringify({ edition: 'developer', ...scratchDefSummary });
+  fs.writeFileSync('./registryBuilder/config/project-scratch-def.json', jsonData);
   console.log(`Creating org with features ${scratchDefSummary.features.join(',')}`);
 };

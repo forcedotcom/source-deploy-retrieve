@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.0.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.0.2...v6.0.3) (2022-06-07)
+
+### [6.0.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.0.1...v6.0.2) (2022-05-24)
+
+### Bug Fixes
+
+- remove api version default ([6ea4ebd](https://github.com/forcedotcom/source-deploy-retrieve/commit/6ea4ebd867ab8246ea04035afc5ba93f57427827))
+
+### [6.0.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.0.0...v6.0.1) (2022-05-23)
+
 ## [6.0.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.15.0...v6.0.0) (2022-05-20)
 
 ## [5.15.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v5.14.0...v5.15.0) (2022-05-12)

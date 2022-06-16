@@ -188,6 +188,7 @@ workflows:
                   'yarn test:nuts:convert',
                   'yarn test:nuts:delete',
                   'yarn test:nuts:deploy',
+                  # TODO: restore after https://github.com/salesforcecli/plugin-source/pull/515
                   # 'yarn test:nuts:deploy:async',
                   'yarn test:nuts:manifest:create',
                   'yarn test:nuts:mdapi',

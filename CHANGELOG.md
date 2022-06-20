@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.0.4...v6.1.0) (2022-06-20)
+
+### Features
+
+- SDR emits new lifecycle events ([d92b491](https://github.com/forcedotcom/source-deploy-retrieve/commit/d92b49163a02837da118f932dde394d78c3fbfa8))
+
 ### [6.0.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.0.3...v6.0.4) (2022-06-16)
 
 ### Bug Fixes

@@ -276,6 +276,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     },
   };
   private options: MetadataApiDeployOptions;
+  private orgId: string;
   // Keep track of rest deploys separately since Connection.deploy() removes it
   // from the apiOptions and we need it for telemetry.
   private isRestDeploy: boolean;
@@ -348,11 +349,17 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
   }
 
   protected async pre(): Promise<AsyncResult> {
-    const [zipBuffer, connection] = await Promise.all([
-      this.getZipBuffer(),
-      this.getConnection(),
-      this.maybeSaveTempDirectory('metadata'),
-    ]);
+    const connection = await this.getConnection();
+    // store for use in the scopedPostDeploy event
+    this.orgId = connection.getAuthInfoFields().orgId;
+    // only do event hooks if source, (NOT a metadata format) deploy
+    if (this.options.components) {
+      await Lifecycle.getInstance().emit('scopedPreDeploy', {
+        componentSet: this.options.components,
+        orgId: this.orgId,
+      } as ScopedPreDeploy);
+    }
+    const [zipBuffer] = await Promise.all([this.getZipBuffer(), this.maybeSaveTempDirectory('metadata')]);
     // SDR modifies what the mdapi expects by adding a rest param
     const { rest, ...optionsWithoutRest } = this.options.apiOptions;
     return this.isRestDeploy
@@ -362,11 +369,12 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
 
   // eslint-disable-next-line @typescript-eslint/require-await
   protected async post(result: MetadataApiDeployStatus): Promise<DeployResult> {
+    const lifecycle = Lifecycle.getInstance();
     try {
       // Creates an array of unique metadata types that were deployed, uses Set to avoid duplicates.
       const listOfMetadataTypesDeployed = Array.from(new Set(this.options.components.map((c) => c.type.name)));
 
-      void Lifecycle.getInstance().emitTelemetry({
+      void lifecycle.emitTelemetry({
         eventName: 'metadata_api_deploy_result',
         library: 'SDR',
         status: result.status,
@@ -396,8 +404,12 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
         `Error trying to compile/send deploy telemetry data for deploy ID: ${this.id}\nError: ${error.message}`
       );
     }
-
-    return new DeployResult(result, this.components);
+    const deployResult = new DeployResult(result, this.components);
+    // only do event hooks if source, (NOT a metadata format) deploy
+    if (this.options.components) {
+      await lifecycle.emit('scopedPostDeploy', { deployResult, orgId: this.orgId } as ScopedPostDeploy);
+    }
+    return deployResult;
   }
 
   private async getZipBuffer(): Promise<Buffer> {
@@ -427,4 +439,20 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     }
     throw new Error('Options should include components, zipPath, or mdapiPath');
   }
+}
+
+/**
+ * register a listener to `scopedPreDeploy`
+ */
+export interface ScopedPreDeploy {
+  componentSet: ComponentSet;
+  orgId: string;
+}
+
+/**
+ * register a listener to `scopedPostDeploy`
+ */
+export interface ScopedPostDeploy {
+  deployResult: DeployResult;
+  orgId: string;
 }

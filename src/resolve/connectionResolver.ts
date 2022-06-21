@@ -6,6 +6,7 @@
  */
 
 import { Connection, Logger } from '@salesforce/core';
+import { retry, NotRetryableError, RetryError } from 'ts-retry-promise';
 import { RegistryAccess, registry as defaultRegistry, MetadataType } from '../registry';
 import { standardValueSet } from '../registry/standardvalueset';
 import { FileProperties, StdValueSetRecord, ListMetadataQuery } from '../client/types';
@@ -108,10 +109,32 @@ export class ConnectionResolver {
     if (query.type === defaultRegistry.types.standardvalueset.name && members.length === 0) {
       const standardValueSetPromises = standardValueSet.fullnames.map(async (standardValueSetFullName) => {
         try {
-          const standardValueSetRecord: StdValueSetRecord = await this.connection.singleRecordQuery(
-            `SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = '${standardValueSetFullName}'`,
-            { tooling: true }
-          );
+          // The 'singleRecordQuery' method was having connection errors, using `retry` resolves this
+          // Note that this type of connection retry logic may someday be added to jsforce v2
+          // Once that happens this logic could be reverted
+          const standardValueSetRecord: StdValueSetRecord = await retry(async () => {
+            let result: StdValueSetRecord;
+
+            try {
+              result = await this.connection.singleRecordQuery(
+                `SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = '${standardValueSetFullName}'`,
+                { tooling: true }
+              );
+            } catch (err) {
+              // We exit the retry loop with `NotRetryableError` if we get an (expected) unsupported metadata type error
+              const error = err as Error;
+              if (error.message.includes('either inaccessible or not supported in Metadata API')) {
+                this.logger.debug('Expected error:', error.message);
+                throw new NotRetryableError(error.message);
+              }
+
+              // Otherwise throw the err so we can retry again
+              throw err;
+            }
+
+            return result;
+          });
+
           return (
             standardValueSetRecord.Metadata.standardValue.length && {
               fullName: standardValueSetRecord.MasterLabel,
@@ -126,8 +149,15 @@ export class ConnectionResolver {
               lastModifiedDate: '',
             }
           );
-        } catch (error) {
-          this.logger.debug((error as Error).message);
+        } catch (err) {
+          // error.message here will be overwritten by 'ts-retry-promise'
+          // Example error.message from the library: "All retries failed" or "Met not retryable error"
+          // 'ts-retry-promise' exposes the actual error on `error.lastError`
+          const error = err as RetryError;
+
+          if (error.lastError && error.lastError.message) {
+            this.logger.debug(error.lastError.message);
+          }
         }
       });
       for await (const standardValueSetResult of standardValueSetPromises) {

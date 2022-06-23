@@ -509,6 +509,7 @@ v56 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
+|AccountingFieldMapping|❌|Not supported, but support could be added|
 |AccountingSettings|✅||
 |BotBlock|❌|Not supported, but support could be added|
 |CollectionsDashboardSettings|✅||
@@ -518,9 +519,10 @@ v56 introduces the following new types.  Here's their current level of support
 |DataSourceBundleDefinition|❌|Not supported, but support could be added|
 |DataSrcDataModelFieldMap|❌|Not supported, but support could be added|
 |DataStreamTemplate|❌|Not supported, but support could be added|
-|ExperienceContainer|❌|Not supported, but support could be added|
 |ExplainabilityMsgActionDefinition|❌|Not supported, but support could be added|
+|ExpressionSetObjectAlias|❌|Not supported, but support could be added|
 |FuelType|❌|Not supported, but support could be added|
+|FuelTypeSustnUom|❌|Not supported, but support could be added|
 |IncludeEstTaxInQuoteSettings|✅||
 |MfgServiceConsoleSettings|✅||
 |OauthOidcSettings|✅||
@@ -528,6 +530,7 @@ v56 introduces the following new types.  Here's their current level of support
 |SearchExperienceField|❌|Not supported, but support could be added|
 |SearchExperienceObject|❌|Not supported, but support could be added|
 |SustainabilityUom|❌|Not supported, but support could be added|
+|SustnUomConversion|❌|Not supported, but support could be added|
 
 ## Additional Types
 

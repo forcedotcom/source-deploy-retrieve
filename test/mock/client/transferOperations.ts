@@ -6,7 +6,7 @@
  */
 
 import { join, sep } from 'path';
-import { testSetup, TestContext } from '@salesforce/core/lib/testSetup';
+import { TestContext } from '@salesforce/core/lib/testSetup';
 import { PollingClient } from '@salesforce/core';
 import { match, SinonSandbox, SinonSpy, SinonStub } from 'sinon';
 import { AsyncResult } from 'jsforce/lib/api/metadata';
@@ -65,7 +65,7 @@ export async function stubMetadataDeploy(
 ): Promise<DeployOperationLifecycle> {
   const sandbox = context.SANDBOX;
   const zipBuffer = Buffer.from('1234');
-  const connection = await mockConnection(context);
+  const connection = await mockConnection();
 
   const deployStub = sandbox.stub(connection.metadata, 'deploy');
   const deployRestStub = sandbox.stub(connection.metadata, 'deployRest');
@@ -169,7 +169,7 @@ export async function stubMetadataRetrieve(
   options: RetrieveStubOptions
 ): Promise<RetrieveOperationLifecycle> {
   const { toRetrieve: retrievedComponents, packageOptions: packages } = options;
-  const connection = await mockConnection(testSetup());
+  const connection = await mockConnection();
 
   const retrieveStub = sandbox.stub(connection.metadata, 'retrieve').resolves(MOCK_ASYNC_RESULT);
 

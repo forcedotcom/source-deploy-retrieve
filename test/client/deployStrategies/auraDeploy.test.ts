@@ -12,7 +12,6 @@ import { expect } from 'chai';
 import * as fs from 'graceful-fs';
 import { SaveError, SaveResult } from 'jsforce';
 import { createSandbox, SinonSandbox } from 'sinon';
-import { AnyJson } from '@salesforce/ts-types';
 import { Messages } from '@salesforce/core';
 import { ComponentStatus, ToolingDeployStatus } from '../../../src/client';
 import { AuraDeploy } from '../../../src/client/deployStrategies';
@@ -39,13 +38,7 @@ describe('Aura Deploy Strategy', () => {
 
   beforeEach(async () => {
     sandboxStub = createSandbox();
-    $$.configStubs.GlobalInfo = {
-      contents: {
-        orgs: Object.assign($$.configStubs.GlobalInfo?.contents?.orgs || {}, {
-          [testData.username]: testData as unknown as AnyJson,
-        }),
-      },
-    };
+    await $$.stubAuths(testData);
     mockConnection = await Connection.create({
       authInfo: await AuthInfo.create({
         username: testData.username,

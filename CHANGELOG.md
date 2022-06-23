@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.1.0...v6.2.0) (2022-06-23)
+
+### Features
+
+- use StateAggregator ([#646](https://github.com/forcedotcom/source-deploy-retrieve/issues/646)) ([f1d8848](https://github.com/forcedotcom/source-deploy-retrieve/commit/f1d8848c747362594abd519c579f3aebfee48bec))
+
 ## [6.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.0.4...v6.1.0) (2022-06-20)
 
 ### Features

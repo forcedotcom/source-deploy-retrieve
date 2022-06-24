@@ -97,6 +97,7 @@ jobs:
           # STL could also have an SDR inside it.  Take it out to prevent conflicts
           name: remove sdr from source-tracking
           command: |
+            npm install shx -g
             shx rm -rf node_modules/@salesforce/source-deploy-retrieve
           working_directory: node_modules/@salesforce/source-tracking
       - run:
@@ -106,7 +107,6 @@ jobs:
           # If there are real conflicts, we'll catch them when bumping a version in the plugin (same nuts)
           command: |
             yarn install
-            npm install shx -g
             shx rm -rf node_modules/@salesforce/kit
             # until plugin is parking-orbited, they'll need 2 different major versions of core
             # shx rm -rf node_modules/@salesforce/core

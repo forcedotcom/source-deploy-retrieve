@@ -524,7 +524,6 @@ v56 introduces the following new types.  Here's their current level of support
 |FuelType|❌|Not supported, but support could be added|
 |FuelTypeSustnUom|❌|Not supported, but support could be added|
 |IncludeEstTaxInQuoteSettings|✅||
-|MarketSegmentReference|❌|Not supported, but support could be added (but not for tracking)|
 |MfgServiceConsoleSettings|✅||
 |OauthOidcSettings|✅||
 |SearchExperience|❌|Not supported, but support could be added|

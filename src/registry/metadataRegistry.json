@@ -16,6 +16,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+  "aiusecasedefinition": {
+      "id": "aiusecasedefinition",
+      "name": "AIUsecaseDefinition",
+      "suffix": "aiUsecaseDefinitions",
+      "directoryName": "aiUsecaseDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "mlpredictiondefinition": {
       "id": "mlpredictiondefinition",
       "name": "MLPredictionDefinition",
@@ -3025,6 +3033,7 @@
   "suffixes": {
     "ai": "aiapplication",
     "aiapplicationconfig": "aiapplicationconfig",
+    "aiUsecaseDefinitions": "aiusecasedefinition",
     "mlDataDefinition": "mldatadefinition",
     "icon": "icon",
     "businessProcessGroup": "businessprocessgroup",

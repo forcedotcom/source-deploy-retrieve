@@ -6,7 +6,7 @@
  */
 
 import { Readable } from 'stream';
-import { join } from 'path';
+import { join, dirname } from 'path';
 
 import { createSandbox } from 'sinon';
 import chai = require('chai');
@@ -398,7 +398,7 @@ describe('Convert Transaction Constructs', () => {
         const context = new ConvertContext();
         const type = component.type;
 
-        // change the word first to 'updated'
+        // change the word 'third' to 'updated'
         const updatedChild3Xml = {
           ...nonDecomposed.CHILD_3_XML,
           value: nonDecomposed.CHILD_3_XML.value.replace('third', 'updated'),
@@ -417,7 +417,7 @@ describe('Convert Transaction Constructs', () => {
           state.exampleComponent = component;
         });
 
-        const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
+        const result = await context.nonDecomposition.finalize(dirname(nonDecomposed.DEFAULT_DIR), TREE);
         expect(result).to.deep.equal([{ component, writeInfos }]);
       });
     });

@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { dirname, join, resolve } from 'path';
+import { join, resolve } from 'path';
 import { getString, JsonArray, JsonMap } from '@salesforce/ts-types';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSet } from '../collections';
@@ -273,7 +273,7 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
    */
   private getAllComponentsOfType(defaultDirectory: string, componentType: string): SourceComponent[] {
     // assumes that defaultDir is one level below project dir
-    const projectDir = resolve(dirname(defaultDirectory));
+    const projectDir = resolve(defaultDirectory);
     const unprocessedComponents = ComponentSet.fromSource({
       fsPaths: [projectDir],
       include: new ComponentSet([{ fullName: '*', type: componentType }]),

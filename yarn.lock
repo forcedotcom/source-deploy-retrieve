@@ -616,9 +616,9 @@
     safe-json-stringify "~1"
 
 "@salesforce/core@^3.21.1":
-  version "3.21.2"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.21.2.tgz#7c01d0307830d8af2ad63970c23264863f280142"
-  integrity sha512-B8Qe2qeS0RsPg8nzMNA7SB6grgJOEJTVET8gyOfhEsfdYpgKH0XVn8ox+gCAha4bdj2ebiDrba7IeMMx7nl7Mw==
+  version "3.23.6"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.23.6.tgz#b784158c63068f958c7bb02b46c211ff06b28594"
+  integrity sha512-bsDzpLta9vNnAncLPbcoGddwmOE4GoGutW/oZ8DW5h/AcnBT1xbP8ySaNE6efk5B5CcVR+D5cTv2xZRp83falQ==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
     "@salesforce/kit" "^1.5.41"
@@ -635,7 +635,7 @@
     form-data "^4.0.0"
     graceful-fs "^4.2.9"
     js2xmlparser "^4.0.1"
-    jsforce "2.0.0-beta.11"
+    jsforce "2.0.0-beta.14"
     jsonwebtoken "8.5.1"
     mkdirp "1.0.4"
     ts-retry-promise "^0.6.0"
@@ -4122,10 +4122,10 @@ jsforce@2.0.0-beta.10:
     strip-ansi "^6.0.0"
     xml2js "^0.4.22"
 
-jsforce@2.0.0-beta.11:
-  version "2.0.0-beta.11"
-  resolved "https://registry.yarnpkg.com/jsforce/-/jsforce-2.0.0-beta.11.tgz#3bce7a91aee425e72392057bb3fda53b6b2b829f"
-  integrity sha512-K/4F7mqMya2mnT16aFvd743MMQCA7MfXR85aKd1V87b2Ol/MDzfxTDwXWC8iXWDjTCT7KkZtcYMnY7ZxqbUOQA==
+jsforce@2.0.0-beta.14:
+  version "2.0.0-beta.14"
+  resolved "https://registry.yarnpkg.com/jsforce/-/jsforce-2.0.0-beta.14.tgz#237753bdabb7e80447b5b266eaefc4abf8b6c951"
+  integrity sha512-j66PaKroshB4VZbfKBAx9+lJy8etFfGG1hGFsI7ufwxvacXxLTAxZwOEZPkYPMigiHrPlEMtIwh5NqwBsIn9HA==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@babel/runtime-corejs3" "^7.12.5"

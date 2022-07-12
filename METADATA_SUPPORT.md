@@ -509,7 +509,7 @@ v56 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
-|AIUsecaseDefinition|❌|Not supported, but support could be added (but not for tracking)|
+|AIUsecaseDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |AccountingFieldMapping|❌|Not supported, but support could be added|
 |AccountingSettings|✅||
 |BotBlock|❌|Not supported, but support could be added|
@@ -521,6 +521,9 @@ v56 introduces the following new types.  Here's their current level of support
 |DataSourceBundleDefinition|✅||
 |DataSrcDataModelFieldMap|✅||
 |DataStreamTemplate|✅||
+|DigitalExperience|❌|Not supported, but support could be added (but not for tracking)|
+|DigitalExperienceBundle|❌|Not supported, but support could be added (but not for tracking)|
+|DigitalExperienceConfig|❌|Not supported, but support could be added (but not for tracking)|
 |ExplainabilityMsgActionDefinition|❌|Not supported, but support could be added|
 |ExpressionSetObjectAlias|❌|Not supported, but support could be added|
 |FuelType|❌|Not supported, but support could be added|

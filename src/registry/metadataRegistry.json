@@ -2433,6 +2433,41 @@
       "directoryName": "dataStreamDefinitions",
       "strictDirectoryName": false
     },
+    "datapackagekitdefinition": {
+      "id": "datapackagekitdefinition",
+      "name": "DataPackageKitDefinition",
+      "suffix": "dataPackageKitDefinition",
+      "directoryName": "dataPackageKitDefinitions",
+      "strictDirectoryName": false
+    },
+    "datasourcebundledefinition": {
+      "id": "datasourcebundledefinition",
+      "name": "DataSourceBundleDefinition",
+      "suffix": "dataSourceBundleDefinition",
+      "directoryName": "dataSourceBundleDefinitions",
+      "strictDirectoryName": false
+    },
+    "datapackagekitobject": {
+      "id": "datapackagekitobject",
+      "name": "DataPackageKitObject",
+      "suffix": "DataPackageKitObject",
+      "directoryName": "DataPackageKitObjects",
+      "strictDirectoryName": false
+    },
+    "datastreamtemplate": {
+      "id": "datastreamtemplate",
+      "name": "DataStreamTemplate",
+      "suffix": "dataStreamTemplate",
+      "directoryName": "dataStreamTemplates",
+      "strictDirectoryName": false
+    },
+    "datasrcdatamodelfieldmap": {
+      "id": "datasrcdatamodelfieldmap",
+      "name": "DataSrcDataModelFieldMap",
+      "suffix": "dataSrcDataModelFieldMap",
+      "directoryName": "dataSrcDataModelFieldMaps",
+      "strictDirectoryName": false
+    },
     "mktdatatranobject": {
       "id": "mktdatatranobject",
       "name": "MktDataTranObject",
@@ -3294,6 +3329,11 @@
     "accountForecastSetting": "accountforecastsettings",
     "fieldServiceMobileExtension": "fieldservicemobileextension",
     "dataStreamDefinition": "datastreamdefinition",
+    "dataPackageKitDefinition": "datapackagekitdefinition",
+    "dataSourceBundleDefinition": "datasourcebundledefinition",
+    "DataPackageKitObject" : "datapackagekitobject",
+    "dataStreamTemplate":"datastreamtemplate",
+    "dataSrcDataModelFieldMap":"datasrcdatamodelfieldmap",
     "ChannelObjectLinkingRule": "channelobjectlinkingrule",
     "ConversationVendorInformation": "conversationvendorinfo",
     "ConversationVendorFieldDefinition": "conversationvendorfielddef",

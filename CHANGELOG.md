@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.2.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.0...v6.2.1) (2022-07-07)
+
+### Bug Fixes
+
+- proxy support for coverage report ([#659](https://github.com/forcedotcom/source-deploy-retrieve/issues/659)) ([8121a94](https://github.com/forcedotcom/source-deploy-retrieve/commit/8121a94e0ca9d2d96e4c5711c2844eb88500dfac))
+
 ## [6.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.1.0...v6.2.0) (2022-06-23)
 
 ### Features

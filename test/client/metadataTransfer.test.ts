@@ -6,7 +6,6 @@
  */
 import { fail } from 'assert';
 import { createSandbox, SinonStub } from 'sinon';
-import { testSetup } from '@salesforce/core/lib/testSetup';
 import { AuthInfo, Connection, PollingClient, Messages } from '@salesforce/core';
 import { expect } from 'chai';
 import { Duration, sleep } from '@salesforce/kit';
@@ -18,7 +17,6 @@ import { mockConnection } from '../mock/client';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['md_request_fail']);
 
-const $$ = testSetup();
 const env = createSandbox();
 
 class TestTransfer extends MetadataTransfer<MetadataRequestStatus, MetadataTransferResult> {
@@ -52,7 +50,7 @@ describe('MetadataTransfer', () => {
   let operation: TestTransfer;
 
   beforeEach(async () => {
-    connection = await mockConnection($$);
+    connection = await mockConnection();
     operation = new TestTransfer({
       components: new ComponentSet(),
       usernameOrConnection: connection,
@@ -294,6 +292,18 @@ describe('MetadataTransfer', () => {
       const networkError2 = new Error('something something ENOTFOUND something');
       checkStatus.onFirstCall().throws(networkError1);
       checkStatus.onSecondCall().throws(networkError2);
+      checkStatus.onThirdCall().resolves({ done: true });
+
+      await operation.pollStatus();
+      expect(checkStatus.callCount).to.equal(3);
+    });
+
+    it('should tolerate known mdapi error', async () => {
+      const { checkStatus } = operation.lifecycle;
+      const networkError1 = new Error('foo');
+      networkError1.name = 'JsonParseError';
+      checkStatus.onFirstCall().throws(networkError1);
+      checkStatus.onSecondCall().throws(networkError1);
       checkStatus.onThirdCall().resolves({ done: true });
 
       await operation.pollStatus();

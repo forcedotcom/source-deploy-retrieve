@@ -6,18 +6,25 @@
  */
 /* eslint-disable no-console */
 
+import { OptionsOfTextResponseBody } from 'got';
 import got from 'got';
+import * as ProxyAgent from 'proxy-agent';
+import { getProxyForUrl } from 'proxy-from-env';
 import { CoverageObject } from '../../src/registry/types';
 
-const gotOptions = {
+const getProxiedOptions = (url: string): OptionsOfTextResponseBody => ({
   timeout: {
     request: 10000,
   },
-};
+  agent: {
+    https: ProxyAgent(getProxyForUrl(url)),
+  },
+  url,
+});
 
 export const getCurrentApiVersion = async (): Promise<number> =>
   (
-    await got('https://mdcoverage.secure.force.com/services/apexrest/report', gotOptions).json<{
+    await got(getProxiedOptions('https://mdcoverage.secure.force.com/services/apexrest/report')).json<{
       versions: { selected: number };
     }>()
   ).versions.selected;
@@ -27,7 +34,9 @@ export const getCoverage = async (apiVersion: number): Promise<CoverageObject> =
     // one of these will match the current version, but they differ during the release cycle
     [44, 45, 46].map(
       async (na) =>
-        await got(`https://na${na}.test1.pc-rnd.salesforce.com/mdcoverage/api.jsp`, gotOptions).json<CoverageObject>()
+        await got(
+          getProxiedOptions(`https://na${na}.test1.pc-rnd.salesforce.com/mdcoverage/api.jsp`)
+        ).json<CoverageObject>()
     )
   );
   for (const result of results) {

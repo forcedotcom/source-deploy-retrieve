@@ -509,9 +509,30 @@ v56 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
+|AIUsecaseDefinition|❌|Not supported, but support could be added (but not for tracking)|
+|AccountingFieldMapping|❌|Not supported, but support could be added|
 |AccountingSettings|✅||
+|BotBlock|❌|Not supported, but support could be added|
+|BotBlockVersion|❌|Not supported, but support could be added|
 |CollectionsDashboardSettings|✅||
+|CustomizablePropensityScoringSettings|✅||
+|DataPackageKitDefinition|✅||
+|DataPackageKitObject|✅||
+|DataSourceBundleDefinition|✅||
+|DataSrcDataModelFieldMap|✅||
+|DataStreamTemplate|✅||
+|ExplainabilityMsgActionDefinition|❌|Not supported, but support could be added|
+|ExpressionSetObjectAlias|❌|Not supported, but support could be added|
+|FuelType|❌|Not supported, but support could be added|
+|FuelTypeSustnUom|❌|Not supported, but support could be added|
+|IncludeEstTaxInQuoteSettings|✅||
+|MarketSegmentReference|❌|Not supported, but support could be added (but not for tracking)|
 |MfgServiceConsoleSettings|✅||
+|OauthOidcSettings|✅||
+|ReportingTypeConfig|❌|Not supported, but support could be added|
+|SustainabilityUom|❌|Not supported, but support could be added|
+|SustnUomConversion|❌|Not supported, but support could be added|
+|UserAccessPolicy|❌|Not supported, but support could be added|
 
 ## Additional Types
 

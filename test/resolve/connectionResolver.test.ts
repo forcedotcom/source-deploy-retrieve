@@ -35,7 +35,7 @@ describe('ConnectionResolver', () => {
     $$.setConfigStubContents('AuthInfoConfig', {
       contents: await testData.getConfig(),
     });
-    connection = await mockConnection($$);
+    connection = await mockConnection();
   });
 
   afterEach(() => {

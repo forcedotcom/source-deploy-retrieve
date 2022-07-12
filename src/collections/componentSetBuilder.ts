@@ -8,7 +8,7 @@
 /* eslint complexity: ["error", 22] */
 
 import * as path from 'path';
-import { GlobalInfo, Logger, SfError } from '@salesforce/core';
+import { StateAggregator, Logger, SfError } from '@salesforce/core';
 import * as fs from 'graceful-fs';
 import { ComponentSet } from '../collections';
 import { RegistryAccess } from '../registry';
@@ -122,8 +122,7 @@ export class ComponentSetBuilder {
         componentSet ??= new ComponentSet();
         logger.debug(`Building ComponentSet from targetUsername: ${org.username}`);
         const fromConnection = await ComponentSet.fromConnection({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
-          usernameOrConnection: (await GlobalInfo.getInstance()).aliases.getUsername(org.username) || org.username,
+          usernameOrConnection: (await StateAggregator.getInstance()).aliases.getUsername(org.username) || org.username,
           // exclude components based on the results of componentFilter function
           // components with namespacePrefix where org.exclude includes manageableState (to exclude managed packages)
           // components with namespacePrefix where manageableState equals undefined (to exclude components e.g. InstalledPackage)

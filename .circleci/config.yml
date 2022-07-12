@@ -102,8 +102,6 @@ jobs:
             yarn install
             npm install shx -g
             shx rm -rf node_modules/@salesforce/kit
-            # until plugin is parking-orbited, they'll need 2 different major versions of core
-            # shx rm -rf node_modules/@salesforce/core
             shx rm -rf node_modules/@typescript-eslint
             shx rm -rf node_modules/eslint-plugin-header
             shx rm -rf node_modules/eslint-plugin-import
@@ -112,6 +110,10 @@ jobs:
             yarn build
             cp src/registry/metadataRegistry.json lib/src/registry
           working_directory: node_modules/@salesforce/source-deploy-retrieve
+      - run:
+          name: clean SDR from source-tracking
+          working_directory: node_modules/@salesforce/source-tracking
+          command: shx rm -rf node_modules/@salesforce/source-deploy-retrieve
       - run:
           name: Build the external project
           command: |
@@ -184,12 +186,12 @@ workflows:
               os: [windows, linux]
               node_version: [lts]
               external_project_git_url: ['https://github.com/salesforcecli/plugin-source']
-              test_command:
-                [
+              test_command: [
                   'yarn test:nuts:convert',
                   'yarn test:nuts:delete',
                   'yarn test:nuts:deploy',
-                  'yarn test:nuts:deploy:async',
+                  # TODO: restore after https://github.com/salesforcecli/plugin-source/pull/515
+                  # 'yarn test:nuts:deploy:async',
                   'yarn test:nuts:manifest:create',
                   'yarn test:nuts:mdapi',
                   'yarn test:nuts:retrieve',

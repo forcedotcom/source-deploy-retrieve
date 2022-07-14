@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v55 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 459/491 supported metadata types.
+Currently, there are 461/491 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -415,8 +415,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ScoreCategory|❌|Not supported, but support could be added|
 |SearchSettings|✅||
 |SecuritySettings|✅||
-|ServiceAISetupDefinition|❌|Not supported, but support could be added|
-|ServiceAISetupField|❌|Not supported, but support could be added|
+|ServiceAISetupDefinition|✅||
+|ServiceAISetupField|✅||
 |ServiceChannel|✅||
 |ServiceCloudVoiceSettings|✅||
 |ServicePresenceStatus|✅||
@@ -532,6 +532,7 @@ v56 introduces the following new types.  Here's their current level of support
 |MarketSegmentReference|❌|Not supported, but support could be added (but not for tracking)|
 |MfgServiceConsoleSettings|✅||
 |OauthOidcSettings|✅||
+|PortalDelegablePermissionSet|❌|Not supported, but support could be added|
 |ReportingTypeConfig|❌|Not supported, but support could be added|
 |SustainabilityUom|❌|Not supported, but support could be added|
 |SustnUomConversion|❌|Not supported, but support could be added|

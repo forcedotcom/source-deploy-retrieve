@@ -4,8 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { dirname, join, resolve } from 'path';
+import { join } from 'path';
 import { getString, JsonArray, JsonMap } from '@salesforce/ts-types';
+import { SfProject } from '@salesforce/core';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSet } from '../collections';
 import { normalizeToArray } from '../utils';
@@ -193,12 +194,21 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
       return writerData;
     }
     this.tree = tree;
+
+    const packageDirectories = SfProject.getInstance().getPackageDirectories();
+    const pkgPaths = packageDirectories.map((pkg) => pkg.fullPath);
+
     // nondecomposed metadata types can exist in multiple locations under the same name
     // so we have to find all components that could potentially match inbound components
-    const allNonDecomposed = this.getAllComponentsOfType(
-      defaultDirectory,
-      this.transactionState.exampleComponent.type.name
-    );
+    let allNonDecomposed: SourceComponent[];
+
+    if (pkgPaths.includes(defaultDirectory)) {
+      allNonDecomposed = this.getAllComponentsOfType(pkgPaths, this.transactionState.exampleComponent.type.name);
+    } else {
+      // defaultDirectory isn't a package, assumes it's the target output dir for conversion
+      // so no need to scan this folder
+      allNonDecomposed = [];
+    }
 
     // prepare 3 maps to simplify component merging
     await this.initMergeMap(allNonDecomposed);
@@ -271,11 +281,9 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
    * child type before recomposing the final xml.
    * The labels could belong in any of the files OR need to go in the default location which already contains labels
    */
-  private getAllComponentsOfType(defaultDirectory: string, componentType: string): SourceComponent[] {
-    // assumes that defaultDir is one level below project dir
-    const projectDir = resolve(dirname(defaultDirectory));
+  private getAllComponentsOfType(pkgDirs: string[], componentType: string): SourceComponent[] {
     const unprocessedComponents = ComponentSet.fromSource({
-      fsPaths: [projectDir],
+      fsPaths: pkgDirs,
       include: new ComponentSet([{ fullName: '*', type: componentType }]),
       tree: this.tree,
     }).getSourceComponents();

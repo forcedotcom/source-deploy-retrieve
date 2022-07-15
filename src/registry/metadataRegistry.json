@@ -1,5 +1,21 @@
 {
   "types": {
+    "serviceaisetupdefinition": {
+      "id": "serviceaisetupdefinition",
+      "name": "ServiceAISetupDefinition",
+      "suffix": "serviceAISetupDescription",
+      "directoryName": "serviceAISetupDescriptions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "serviceaisetupfield": {
+      "id": "serviceaisetupfield",
+      "name": "ServiceAISetupField",
+      "suffix": "serviceAISetupField",
+      "directoryName": "serviceAISetupFields",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "aiapplication": {
       "id": "aiapplication",
       "name": "AIApplication",
@@ -16,7 +32,7 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
-  "aiusecasedefinition": {
+    "aiusecasedefinition": {
       "id": "aiusecasedefinition",
       "name": "AIUsecaseDefinition",
       "suffix": "aiUsecaseDefinitions",
@@ -3066,6 +3082,8 @@
     }
   },
   "suffixes": {
+    "serviceAISetupDescription": "serviceaisetupdefinition",
+    "serviceAISetupField": "serviceaisetupfield",
     "ai": "aiapplication",
     "aiapplicationconfig": "aiapplicationconfig",
     "aiUsecaseDefinitions": "aiusecasedefinition",
@@ -3331,9 +3349,9 @@
     "dataStreamDefinition": "datastreamdefinition",
     "dataPackageKitDefinition": "datapackagekitdefinition",
     "dataSourceBundleDefinition": "datasourcebundledefinition",
-    "DataPackageKitObject" : "datapackagekitobject",
-    "dataStreamTemplate":"datastreamtemplate",
-    "dataSrcDataModelFieldMap":"datasrcdatamodelfieldmap",
+    "DataPackageKitObject": "datapackagekitobject",
+    "dataStreamTemplate": "datastreamtemplate",
+    "dataSrcDataModelFieldMap": "datasrcdatamodelfieldmap",
     "ChannelObjectLinkingRule": "channelobjectlinkingrule",
     "ConversationVendorInformation": "conversationvendorinfo",
     "ConversationVendorFieldDefinition": "conversationvendorfielddef",

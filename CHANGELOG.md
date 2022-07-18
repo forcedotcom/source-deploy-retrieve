@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.2.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.2...v6.2.3) (2022-07-15)
+
+### [6.2.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.1...v6.2.2) (2022-07-12)
+
 ### [6.2.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.0...v6.2.1) (2022-07-07)
 
 ### Bug Fixes

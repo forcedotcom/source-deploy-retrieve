@@ -120,6 +120,7 @@ jobs:
             yarn build
       - run:
           name: Nuts
+          no_output_timeout: 20m
           command: |
             <<parameters.test_command>>
 

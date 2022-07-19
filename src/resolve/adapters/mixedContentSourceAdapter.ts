@@ -52,7 +52,8 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
       contentPath = this.tree.find('content', baseName(contentPath), dirname(contentPath));
     }
 
-    if (!this.tree.exists(contentPath)) {
+    // Content path might be undefined for staticResource where all files are ignored and only the xml is included.
+    if (!contentPath || !this.tree.exists(contentPath)) {
       throw new SfError(
         messages.getMessage('error_expected_source_files', [trigger, this.type.name]),
         'ExpectedSourceFilesError'

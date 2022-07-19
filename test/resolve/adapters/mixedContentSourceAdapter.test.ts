@@ -4,11 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
+import { join } from 'path';
 import { assert, expect } from 'chai';
+import * as fs from 'graceful-fs';
 import { Messages, SfError } from '@salesforce/core';
+import { createSandbox } from 'sinon';
 import { MixedContentSourceAdapter } from '../../../src/resolve/adapters';
-import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../../src';
+import { ForceIgnore, registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../../src';
 import {
   MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
   MIXED_CONTENT_DIRECTORY_VIRTUAL_FS_NO_XML,
@@ -18,6 +20,8 @@ import { mixedContentDirectory, mixedContentSingleFile } from '../../mock';
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_expected_source_files']);
 
 describe('MixedContentSourceAdapter', () => {
+  const env = createSandbox();
+
   const registryAccess = new RegistryAccess();
   it('Should throw ExpectedSourceFilesError if content does not exist', () => {
     const type = registry.types.staticresource;
@@ -28,6 +32,22 @@ describe('MixedContentSourceAdapter', () => {
       },
     ]);
     const adapter = new MixedContentSourceAdapter(type, registryAccess, undefined, tree);
+    assert.throws(
+      () => adapter.getComponent(mixedContentSingleFile.COMPONENT.content),
+      SfError,
+      messages.getMessage('error_expected_source_files', [mixedContentSingleFile.CONTENT_PATHS[0], type.name])
+    );
+  });
+
+  it('Should throw ExpectedSourceFilesError if ALL folder content is forceignored', () => {
+    const forceIgnorePath = join('mcsa', ForceIgnore.FILE_NAME);
+    const readStub = env.stub(fs, 'readFileSync');
+    readStub.withArgs(forceIgnorePath).returns(mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS.join('\n'));
+
+    const type = registry.types.staticresource;
+    const tree = new VirtualTreeContainer(mixedContentDirectory.MIXED_CONTENT_DIRECTORY_VIRTUAL_FS);
+    const adapter = new MixedContentSourceAdapter(type, registryAccess, new ForceIgnore(forceIgnorePath), tree);
+    env.restore();
     assert.throws(
       () => adapter.getComponent(mixedContentSingleFile.COMPONENT.content),
       SfError,

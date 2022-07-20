@@ -3079,6 +3079,14 @@
       "directoryName": "AssessmentQuestionSets",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "identityverificationprocdef": {
+      "id": "identityverificationprocdef",
+      "name": "IdentityVerificationProcDef",
+      "suffix": "identityverificationprocdef",
+      "directoryName": "IdentityVerificationProcDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3419,7 +3427,8 @@
     "omniInteractionAccessConfig": "omniinteractionaccessconfig",
     "dwl": "dataweaveresource",
     "aq": "assessmentquestion",
-    "aqs": "assessmentquestionset"
+    "aqs": "assessmentquestionset",
+    "identityverificationprocdef": "identityverificationprocdef"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

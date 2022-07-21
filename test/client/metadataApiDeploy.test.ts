@@ -322,6 +322,91 @@ describe('MetadataApiDeploy', () => {
           expect(responses).to.deep.equal(expected);
         });
 
+        describe('namespaced lwc failures', () => {
+          const bundlePath = join('path', 'to', 'lwc', 'test');
+          const props = {
+            name: 'test',
+            type: registry.types.lightningcomponentbundle,
+            xml: join(bundlePath, 'test.js-meta.xml'),
+            content: bundlePath,
+          };
+          const component = SourceComponent.createVirtualComponent(props, [
+            {
+              dirPath: bundlePath,
+              children: [basename(props.xml), 'test.js', 'test.html'],
+            },
+          ]);
+          const deployedSet = new ComponentSet([component]);
+          const { fullName, type } = component;
+          const problem = 'something went wrong';
+          const problemType = 'Error';
+          const componentSuccesses = {
+            changed: 'true',
+            created: 'false',
+            deleted: 'false',
+            success: 'true',
+            fullName,
+            componentType: type.name,
+          } as DeployMessage;
+
+          const componentFailures = {
+            changed: 'false',
+            created: 'false',
+            deleted: 'false',
+            success: 'false',
+            problem,
+            problemType,
+            fileName: join(bundlePath, `${fullName}.html`),
+            componentType: type.name,
+          } as DeployMessage;
+
+          it('should handle default namespace failure for "LightningComponentBundle" type', () => {
+            const apiStatus: Partial<MetadataApiDeployStatus> = {
+              details: {
+                componentSuccesses,
+                componentFailures: { ...componentFailures, fullName: `markup://c:${fullName}` },
+              },
+            };
+            const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+            const responses = result.getFileResponses();
+            const expected = [
+              {
+                fullName,
+                type: type.name,
+                error: problem,
+                problemType,
+                state: ComponentStatus.Failed,
+                filePath: componentFailures.fileName,
+              },
+            ] as FileResponse[];
+            expect(responses).to.deep.equal(expected);
+          });
+
+          it('should handle custom namespace failure for "LightningComponentBundle" type', () => {
+            const apiStatus: Partial<MetadataApiDeployStatus> = {
+              details: {
+                componentSuccesses,
+                componentFailures: { ...componentFailures, fullName: `markup://my_NS:${fullName}` },
+              },
+            };
+            const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+            const responses = result.getFileResponses();
+            const expected = [
+              {
+                fullName,
+                type: type.name,
+                error: problem,
+                problemType,
+                state: ComponentStatus.Failed,
+                filePath: componentFailures.fileName,
+              },
+            ] as FileResponse[];
+            expect(responses).to.deep.equal(expected);
+          });
+        });
+
         it('should report component as failed if component has success and failure messages', () => {
           const component = matchingContentFile.COMPONENT;
           const deployedSet = new ComponentSet([component]);

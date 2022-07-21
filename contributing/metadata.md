@@ -197,7 +197,7 @@ You can use an existing org for the metadata describe portion of the script by
 
     1. A sfdx project must exists in local.
       `sfdx force:project:create --projectname <projectname> --defaultpackagedir <directory> -x`
-    2. An authorised devhub org must exists
+    2. An authorized devhub org must exists
       `sfdx force:auth:web:login -a <alias> -r <localhost url> -d`
     3. A scratch org must exists with alias `registryBuilder`
       1. Update `project-scratch-def.json` as per your requirements.

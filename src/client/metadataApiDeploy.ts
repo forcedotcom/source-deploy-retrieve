@@ -232,7 +232,7 @@ export class DeployResult implements MetadataTransferResult {
     switch (message.componentType) {
       case registry.types.lightningcomponentbundle.name:
         // remove the markup scheme from fullName, including c: or custom namespaces
-        message.fullName = message.fullName.replace(/markup:\/\/[A-z|a-z|0-9|_]+:/, '');
+        message.fullName = message.fullName.replace(/markup:\/\/[a-z|0-9|_]+:/i, '');
         break;
       case registry.types.document.name:
         // strip document extension from fullName

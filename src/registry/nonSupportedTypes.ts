@@ -45,9 +45,6 @@ export const metadataTypes = [
   // the following are not describable based on their features/settings, last checked 2/24/2022
   'DiscoveryStory',
   'EmployeeDataSyncProfile',
-  'IdentityVerificationProcDef',
-  'IdentityVerificationProcDtl',
-  'IdentityVerificationProcFld',
   'RelatedRecordAssocCriteria',
   'ScoreRange',
   'WorkflowFlowAction',

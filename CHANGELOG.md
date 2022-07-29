@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.2.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.5...v6.2.6) (2022-07-25)
+
+### Bug Fixes
+
+- only scan pkgDirs when merging non-decomposed MD ([#666](https://github.com/forcedotcom/source-deploy-retrieve/issues/666)) ([098875f](https://github.com/forcedotcom/source-deploy-retrieve/commit/098875f547ba7fcc8d35ccc8f2cce60ee04ece77))
+
+### [6.2.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.4...v6.2.5) (2022-07-21)
+
+### Bug Fixes
+
+- handle namespaces on lwc markup ([#669](https://github.com/forcedotcom/source-deploy-retrieve/issues/669)) ([8817545](https://github.com/forcedotcom/source-deploy-retrieve/commit/8817545a43f78f7327745e4638c74f6f838fa6ea))
+
+### [6.2.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.3...v6.2.4) (2022-07-18)
+
+### Bug Fixes
+
+- static resources without content due to ignore produce nice error ([#663](https://github.com/forcedotcom/source-deploy-retrieve/issues/663)) ([cf18e1b](https://github.com/forcedotcom/source-deploy-retrieve/commit/cf18e1b5bb0bacf398e69b247520c019a2b00498))
+
+### [6.2.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.2...v6.2.3) (2022-07-15)
+
+### [6.2.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.1...v6.2.2) (2022-07-12)
+
+### [6.2.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.0...v6.2.1) (2022-07-07)
+
+### Bug Fixes
+
+- proxy support for coverage report ([#659](https://github.com/forcedotcom/source-deploy-retrieve/issues/659)) ([8121a94](https://github.com/forcedotcom/source-deploy-retrieve/commit/8121a94e0ca9d2d96e4c5711c2844eb88500dfac))
+
 ## [6.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.1.0...v6.2.0) (2022-06-23)
 
 ### Features

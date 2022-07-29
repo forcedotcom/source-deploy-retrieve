@@ -8,6 +8,7 @@
 import { Readable } from 'stream';
 import { join } from 'path';
 
+import { SfProject } from '@salesforce/core';
 import { createSandbox } from 'sinon';
 import chai = require('chai');
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
@@ -281,6 +282,20 @@ describe('Convert Transaction Constructs', () => {
     });
 
     describe('NonDecomposition', () => {
+      let sfProjectStub: sinon.SinonStub;
+      beforeEach(() => {
+        sfProjectStub = env.stub(SfProject, 'getInstance').returns({
+          getPackageDirectories: () => {
+            return [
+              {
+                name: 'force-app',
+                path: 'force-app',
+                fullPath: nonDecomposed.DEFAULT_DIR,
+              },
+            ];
+          },
+        } as unknown as SfProject);
+      });
       it('should return WriterFormats for claimed children', async () => {
         const component = nonDecomposed.COMPONENT_1;
         const context = new ConvertContext();
@@ -394,11 +409,28 @@ describe('Convert Transaction Constructs', () => {
       });
 
       it('should merge 1 updated file to non-default dir and not write default file', async () => {
+        sfProjectStub.restore();
+        env.stub(SfProject, 'getInstance').returns({
+          getPackageDirectories: () => {
+            return [
+              {
+                name: 'my-app',
+                path: 'my-app',
+                fullPath: nonDecomposed.NON_DEFAULT_DIR,
+              },
+              {
+                name: 'force-app',
+                path: 'force-app',
+                fullPath: nonDecomposed.DEFAULT_DIR,
+              },
+            ];
+          },
+        } as unknown as SfProject);
         const component = nonDecomposed.COMPONENT_2;
         const context = new ConvertContext();
         const type = component.type;
 
-        // change the word first to 'updated'
+        // change the word 'third' to 'updated'
         const updatedChild3Xml = {
           ...nonDecomposed.CHILD_3_XML,
           value: nonDecomposed.CHILD_3_XML.value.replace('third', 'updated'),

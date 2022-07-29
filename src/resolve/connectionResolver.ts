@@ -45,7 +45,7 @@ export class ConnectionResolver {
     for await (const componentResult of componentPromises) {
       for (const component of componentResult) {
         let componentType: MetadataType;
-        if (typeof component.type === 'string') {
+        if (typeof component.type === 'string' && component.type.length) {
           componentType = this.registry.getTypeByName(component.type);
         } else {
           // fix { type: { "$": { "xsi:nil": "true" } } }

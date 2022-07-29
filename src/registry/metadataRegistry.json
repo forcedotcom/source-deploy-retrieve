@@ -1,5 +1,21 @@
 {
   "types": {
+    "serviceaisetupdefinition": {
+      "id": "serviceaisetupdefinition",
+      "name": "ServiceAISetupDefinition",
+      "suffix": "serviceAISetupDescription",
+      "directoryName": "serviceAISetupDescriptions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "serviceaisetupfield": {
+      "id": "serviceaisetupfield",
+      "name": "ServiceAISetupField",
+      "suffix": "serviceAISetupField",
+      "directoryName": "serviceAISetupFields",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "aiapplication": {
       "id": "aiapplication",
       "name": "AIApplication",
@@ -13,6 +29,14 @@
       "suffix": "aiapplicationconfig",
       "directoryName": "aiApplicationConfigs",
       "name": "AIApplicationConfig",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "aiusecasedefinition": {
+      "id": "aiusecasedefinition",
+      "name": "AIUsecaseDefinition",
+      "suffix": "aiUsecaseDefinitions",
+      "directoryName": "aiUsecaseDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -2425,6 +2449,41 @@
       "directoryName": "dataStreamDefinitions",
       "strictDirectoryName": false
     },
+    "datapackagekitdefinition": {
+      "id": "datapackagekitdefinition",
+      "name": "DataPackageKitDefinition",
+      "suffix": "dataPackageKitDefinition",
+      "directoryName": "dataPackageKitDefinitions",
+      "strictDirectoryName": false
+    },
+    "datasourcebundledefinition": {
+      "id": "datasourcebundledefinition",
+      "name": "DataSourceBundleDefinition",
+      "suffix": "dataSourceBundleDefinition",
+      "directoryName": "dataSourceBundleDefinitions",
+      "strictDirectoryName": false
+    },
+    "datapackagekitobject": {
+      "id": "datapackagekitobject",
+      "name": "DataPackageKitObject",
+      "suffix": "DataPackageKitObject",
+      "directoryName": "DataPackageKitObjects",
+      "strictDirectoryName": false
+    },
+    "datastreamtemplate": {
+      "id": "datastreamtemplate",
+      "name": "DataStreamTemplate",
+      "suffix": "dataStreamTemplate",
+      "directoryName": "dataStreamTemplates",
+      "strictDirectoryName": false
+    },
+    "datasrcdatamodelfieldmap": {
+      "id": "datasrcdatamodelfieldmap",
+      "name": "DataSrcDataModelFieldMap",
+      "suffix": "dataSrcDataModelFieldMap",
+      "directoryName": "dataSrcDataModelFieldMaps",
+      "strictDirectoryName": false
+    },
     "mktdatatranobject": {
       "id": "mktdatatranobject",
       "name": "MktDataTranObject",
@@ -3020,11 +3079,22 @@
       "directoryName": "AssessmentQuestionSets",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "identityverificationprocdef": {
+      "id": "identityverificationprocdef",
+      "name": "IdentityVerificationProcDef",
+      "suffix": "identityverificationprocdef",
+      "directoryName": "IdentityVerificationProcDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
+    "serviceAISetupDescription": "serviceaisetupdefinition",
+    "serviceAISetupField": "serviceaisetupfield",
     "ai": "aiapplication",
     "aiapplicationconfig": "aiapplicationconfig",
+    "aiUsecaseDefinitions": "aiusecasedefinition",
     "mlDataDefinition": "mldatadefinition",
     "icon": "icon",
     "businessProcessGroup": "businessprocessgroup",
@@ -3285,6 +3355,11 @@
     "accountForecastSetting": "accountforecastsettings",
     "fieldServiceMobileExtension": "fieldservicemobileextension",
     "dataStreamDefinition": "datastreamdefinition",
+    "dataPackageKitDefinition": "datapackagekitdefinition",
+    "dataSourceBundleDefinition": "datasourcebundledefinition",
+    "DataPackageKitObject": "datapackagekitobject",
+    "dataStreamTemplate": "datastreamtemplate",
+    "dataSrcDataModelFieldMap": "datasrcdatamodelfieldmap",
     "ChannelObjectLinkingRule": "channelobjectlinkingrule",
     "ConversationVendorInformation": "conversationvendorinfo",
     "ConversationVendorFieldDefinition": "conversationvendorfielddef",
@@ -3352,7 +3427,8 @@
     "omniInteractionAccessConfig": "omniinteractionaccessconfig",
     "dwl": "dataweaveresource",
     "aq": "assessmentquestion",
-    "aqs": "assessmentquestionset"
+    "aqs": "assessmentquestionset",
+    "identityverificationprocdef": "identityverificationprocdef"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

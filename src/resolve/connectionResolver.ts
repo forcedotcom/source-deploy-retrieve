@@ -113,10 +113,8 @@ export class ConnectionResolver {
           // Note that this type of connection retry logic may someday be added to jsforce v2
           // Once that happens this logic could be reverted
           const standardValueSetRecord: StdValueSetRecord = await retry(async () => {
-            let result: StdValueSetRecord;
-
             try {
-              result = await this.connection.singleRecordQuery(
+              return await this.connection.singleRecordQuery(
                 `SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = '${standardValueSetFullName}'`,
                 { tooling: true }
               );
@@ -131,8 +129,6 @@ export class ConnectionResolver {
               // Otherwise throw the err so we can retry again
               throw err;
             }
-
-            return result;
           });
 
           return (

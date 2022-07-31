@@ -25,6 +25,7 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
+    "@salesforce/cli-plugins-testkit": "^2.3.4",
     "@salesforce/core": "^3.21.1",
     "@salesforce/kit": "^1.5.41",
     "@salesforce/ts-types": "^1.5.20",

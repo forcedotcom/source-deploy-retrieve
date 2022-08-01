@@ -175,8 +175,6 @@ workflows:
           sfdx_version: latest
           node_version: lts
           size: large
-          requires:
-            - release-management/test-package
           command: 'yarn test:nuts:scale:record'
           matrix:
             parameters:
@@ -192,6 +190,7 @@ workflows:
               ignore: main
           requires:
             - release-management/test-package
+            - release-management/test-nut
           sfdx_version: latest
           size: medium
           matrix:

@@ -175,7 +175,7 @@ workflows:
           sfdx_version: latest
           node_version: lts
           size: large
-          command: 'yarn test:nuts:scale:record'
+          command: 'git config --global push.default current && yarn test:nuts:scale:record'
           matrix:
             parameters:
               os:

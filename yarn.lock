@@ -2204,9 +2204,9 @@ deep-eql@^3.0.1:
     type-detect "^4.0.0"
 
 deep-equal-in-any-order@^1.1.19:
-  version "1.1.19"
-  resolved "https://registry.yarnpkg.com/deep-equal-in-any-order/-/deep-equal-in-any-order-1.1.19.tgz#54aa9e97eae87345f2086b81773051cb11579d4d"
-  integrity sha512-7R7lJt8PwUtDp+qOx/9fXjvkitEPLoogMb1B2G2Ibcfq3EHZdWZGZzgbwznN/LimgfFbyekupMPItTCsQ1k9nQ==
+  version "1.1.20"
+  resolved "https://registry.yarnpkg.com/deep-equal-in-any-order/-/deep-equal-in-any-order-1.1.20.tgz#04328876a10864cc2af1325186a970aa5a845486"
+  integrity sha512-GTpQxcQx28KvV6ChrHb4AcL5z+eFEymtoSUaWe+FEakEpZ/66jTvz52xLUym/sK4Pn1sbYLsCV5rEURDeiFl3w==
   dependencies:
     lodash.mapvalues "^4.6.0"
     sort-any "^2.0.0"

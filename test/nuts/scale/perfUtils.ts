@@ -10,7 +10,10 @@ import { Performance } from 'node:perf_hooks';
 import * as fs from 'graceful-fs';
 
 const getPerfDir = (): string =>
-  path.join('test', 'nuts', 'perfResults', `${os.arch()}-${os.platform()}-${os.cpus().length}x${os.cpus()[0].model}`);
+  path
+    .join('test', 'nuts', 'perfResults', `${os.arch()}-${os.platform()}-${os.cpus().length}x${os.cpus()[0].model}`)
+    .replace(/\s/g, '')
+    .replace('@', '');
 
 export const recordPerf = async (testName: string, performance: Performance): Promise<void> => {
   const testPath = getPerfDir();

@@ -181,6 +181,8 @@ workflows:
               os:
                 - linux
                 - windows
+          # required because this will commit to github
+          context: salesforce-cli
       - external-nut:
           filters:
             branches:

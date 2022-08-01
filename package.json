@@ -25,7 +25,6 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@salesforce/cli-plugins-testkit": "^2.3.4",
     "@salesforce/core": "^3.21.1",
     "@salesforce/kit": "^1.5.41",
     "@salesforce/ts-types": "^1.5.20",
@@ -41,6 +40,7 @@
     "xmldom-sfdx-encoding": "^0.1.29"
   },
   "devDependencies": {
+    "@salesforce/cli-plugins-testkit": "^2.3.4",
     "@salesforce/dev-config": "^3.0.1",
     "@salesforce/dev-scripts": "^2.0.1",
     "@salesforce/prettier-config": "^0.0.2",

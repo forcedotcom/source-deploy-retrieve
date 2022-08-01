@@ -14,8 +14,8 @@ import { MetadataConverter } from '../../../src';
 import { ComponentSetBuilder } from '../../../src';
 import { recordPerf } from './perfUtils';
 
-const dirCount = 200;
-const classesPerDir = 200;
+const dirCount = 50;
+const classesPerDir = 100;
 const classCount = dirCount * classesPerDir;
 
 const testName = 'lotsOfClasses';

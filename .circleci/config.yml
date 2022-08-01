@@ -175,6 +175,7 @@ workflows:
           sfdx_version: latest
           node_version: lts
           size: large
+          # git config so it can push without --set-upstream
           command: 'git config --global push.default current && yarn test:nuts:scale:record'
           matrix:
             parameters:
@@ -183,6 +184,9 @@ workflows:
                 - windows
           # required because this will commit to github
           context: salesforce-cli
+          filters:
+            branches:
+              ignore: main
       - external-nut:
           filters:
             branches:

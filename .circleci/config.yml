@@ -176,7 +176,7 @@ workflows:
           node_version: lts
           size: large
           # git config so it can push without --set-upstream
-          command: 'git config --global push.default current; git config --global user.email alm-cli@salesforce.com yarn test:nuts:scale:record'
+          command: 'git config --global push.default current; git config --global user.email alm-cli@salesforce.com;  yarn test:nuts:scale:record'
           matrix:
             parameters:
               os:

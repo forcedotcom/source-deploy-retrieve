@@ -171,6 +171,18 @@ workflows:
                 node_version: latest
               - os: windows
                 node_version: maintenance
+      - release-management/test-nut:
+          sfdx_version: latest
+          node_version: lts
+          size: large
+          requires:
+            - release-management/test-package
+          command: 'yarn test:nuts:scale:record'
+          matrix:
+            parameters:
+              os:
+                - linux
+                - windows
       - external-nut:
           filters:
             branches:

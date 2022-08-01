@@ -5,42 +5,17 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { PerformanceObserver, performance } from 'node:perf_hooks';
+import { performance } from 'node:perf_hooks';
 import * as path from 'path';
-import * as os from 'os';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
-// import { expect } from 'chai';
-import * as fs from 'graceful-fs';
 import { MetadataResolver } from '../../../src';
 import { MetadataConverter } from '../../../src';
 import { ComponentSetBuilder } from '../../../src';
-const dirCount = 1;
-const classesPerDir = 1;
-const classCount = dirCount * classesPerDir;
+import { recordPerf } from './perfUtils';
 
 const testName = 'eda';
-const testPath = path.join(
-  'test',
-  'nuts',
-  'perf',
-  testName,
-  `${os.arch()}-${os.platform()}-${os.cpus().length}x${os.cpus()[0].model}`
-);
-const obs = new PerformanceObserver((items) => {
-  // eslint-disable-next-line no-console
-  console.log(items.getEntries()[0].duration);
-  fs.mkdirSync(testPath, { recursive: true });
-  fs.writeFileSync(
-    path.join(testPath, `${items.getEntries()[0].name}.json`),
-    items.getEntries()[0].duration.toString()
-  );
-  performance.clearMarks();
-});
-obs.observe({ type: 'measure' });
 
-describe(`handles ${classCount.toLocaleString()} classes (${(
-  classCount * 2
-).toLocaleString()} files across ${dirCount.toLocaleString()} folders)`, () => {
+describe('tests using EDA', () => {
   let session: TestSession;
 
   before(async () => {
@@ -53,6 +28,7 @@ describe(`handles ${classCount.toLocaleString()} classes (${(
   });
 
   after(async () => {
+    recordPerf(testName, performance);
     await session?.clean();
   });
 
@@ -62,7 +38,7 @@ describe(`handles ${classCount.toLocaleString()} classes (${(
     await ComponentSetBuilder.build({
       sourcepath: [session.project.dir],
     });
-    performance.measure('ComponentSetBuild to Now', 'ComponentSetBuild');
+    performance.measure('componentSetCreate', 'ComponentSetBuild');
   });
 
   it('convert source to mdapi', async () => {
@@ -77,9 +53,22 @@ describe(`handles ${classCount.toLocaleString()} classes (${(
       outputDirectory: path.join(session.project.dir, 'mdapiOut'),
       packageName: 'MetadataFormatPackage',
     });
-    performance.measure('SourceToMdapi to Now', 'SourceToMdapi');
+    performance.measure('sourceToMdapi', 'SourceToMdapi');
   });
-  it('convert source to zip', async () => {});
+  it('convert source to zip', async () => {
+    const resolver = new MetadataResolver();
+    const converter = new MetadataConverter();
+
+    performance.mark('SourceToZip');
+
+    const components = resolver.getComponentsFromPath(path.join(session.project.dir, 'force-app'));
+    await converter.convert(components, 'metadata', {
+      type: 'zip',
+      outputDirectory: path.join(session.project.dir, 'mdapiOut'),
+      packageName: 'MetadataFormatPackage',
+    });
+    performance.measure('sourceToZip', 'SourceToZip');
+  });
   it('convert mdapi to source', async () => {
     const resolver = new MetadataResolver();
     const converter = new MetadataConverter();
@@ -92,7 +81,7 @@ describe(`handles ${classCount.toLocaleString()} classes (${(
       outputDirectory: path.join(session.project.dir, 'mdapiOut'),
       packageName: 'SourceFormatPackage',
     });
-    performance.measure('MdapiToSource to Now', 'MdapiToSource');
+    performance.measure('mdapiToSource', 'MdapiToSource');
   });
   it('convert zip to source', async () => {});
 });

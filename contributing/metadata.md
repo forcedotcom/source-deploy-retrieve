@@ -193,17 +193,17 @@ You can use an existing org for the metadata describe portion of the script by
 
 ### Steps to add your metadata in registry
 
-## prerequisites:
+## Prerequisites
 
     1. A sfdx project must exists in local.
       `sfdx force:project:create --projectname <projectname> --defaultpackagedir <directory> -x`
-    2. An authorised devhub org must exists
+    2. An authorized devhub org must exists
       `sfdx force:auth:web:login -a <alias> -r <localhost url> -d`
     3. A scratch org must exists with alias `registryBuilder`
       1. Update `project-scratch-def.json` as per your requirements.
       2. `sfdx force:org:create -f config/project-scratch-def.json -a registryBuilder -t scratch -s`
 
-## Steps:
+## Steps
 
     1. Fork SourceDeployRetrieve github repo
       (https://github.com/forcedotcom/source-deploy-retrieve)

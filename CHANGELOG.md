@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.2.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.5...v6.2.6) (2022-07-25)
+
+### Bug Fixes
+
+- only scan pkgDirs when merging non-decomposed MD ([#666](https://github.com/forcedotcom/source-deploy-retrieve/issues/666)) ([098875f](https://github.com/forcedotcom/source-deploy-retrieve/commit/098875f547ba7fcc8d35ccc8f2cce60ee04ece77))
+
+### [6.2.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.4...v6.2.5) (2022-07-21)
+
+### Bug Fixes
+
+- handle namespaces on lwc markup ([#669](https://github.com/forcedotcom/source-deploy-retrieve/issues/669)) ([8817545](https://github.com/forcedotcom/source-deploy-retrieve/commit/8817545a43f78f7327745e4638c74f6f838fa6ea))
+
 ### [6.2.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.3...v6.2.4) (2022-07-18)
 
 ### Bug Fixes

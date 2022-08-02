@@ -12,7 +12,6 @@ import { SaveResult } from 'jsforce';
 import { DOMParser } from '@xmldom/xmldom';
 import { SourceComponent } from '../../resolve';
 import { SourceDeployResult } from '../types';
-// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [

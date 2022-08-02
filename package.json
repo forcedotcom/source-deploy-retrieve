@@ -28,6 +28,7 @@
     "@salesforce/core": "^3.21.1",
     "@salesforce/kit": "^1.5.41",
     "@salesforce/ts-types": "^1.5.20",
+    "@xmldom/xmldom": "^0.8.2",
     "archiver": "^5.3.0",
     "fast-xml-parser": "^3.17.4",
     "got": "^11.8.5",
@@ -36,8 +37,7 @@
     "mime": "2.6.0",
     "proxy-agent": "^5.0.0",
     "proxy-from-env": "^1.1.0",
-    "unzipper": "0.10.11",
-    "xmldom-sfdx-encoding": "^0.1.29"
+    "unzipper": "0.10.11"
   },
   "devDependencies": {
     "@salesforce/dev-config": "^3.0.1",

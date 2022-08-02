@@ -83,5 +83,4 @@ describe('tests using EDA', () => {
     });
     performance.measure('mdapiToSource', 'MdapiToSource');
   });
-  it('convert zip to source', async () => {});
 });

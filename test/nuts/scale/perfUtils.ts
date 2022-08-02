@@ -12,9 +12,10 @@ import * as fs from 'graceful-fs';
 const getPerfDir = (): string =>
   path
     .join('test', 'nuts', 'perfResults', `${os.arch()}-${os.platform()}-${os.cpus().length}x${os.cpus()[0].model}`)
-    .replace('@', '')
-    .replace('(R)', '')
-    .replace('(TM)', '')
+    .replace(/@/g, '')
+    .replace(/\(R\)/, '')
+    .replace(/\(TM\)/, '')
+    .replace(/\./, '-')
     .replace(/\s/g, '-');
 
 export const recordPerf = async (testName: string, performance: Performance): Promise<void> => {

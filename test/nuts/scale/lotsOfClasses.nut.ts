@@ -16,6 +16,7 @@ import { recordPerf } from './perfUtils';
 
 const dirCount = 50;
 const classesPerDir = 100;
+const linesInClass = 150;
 const classCount = dirCount * classesPerDir;
 
 const testName = 'lotsOfClasses';
@@ -44,7 +45,9 @@ describe(`handles ${classCount.toLocaleString()} classes (${(
         await Promise.all([
           fs.promises.writeFile(
             path.join(dirName, `${className}.cls`),
-            `public with sharing class ${className} {public ${className}() {}}`
+            `public with sharing class ${className} {public ${className}() { ${Array(linesInClass)
+              .fill('// this is a comment meant to take up space in the filesystem')
+              .join(path.sep)} } }`
           ),
           fs.promises.writeFile(
             path.join(dirName, `${className}.cls-meta.xml`),
@@ -111,5 +114,4 @@ describe(`handles ${classCount.toLocaleString()} classes (${(
     });
     performance.measure('mdapiToSource', 'MdapiToSource');
   });
-  it('convert zip to source', async () => {});
 });

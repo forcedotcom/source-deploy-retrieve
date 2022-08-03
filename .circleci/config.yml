@@ -196,7 +196,8 @@ workflows:
               ignore: main
           requires:
             - release-management/test-package
-            - release-management/test-nut
+            # commented out until the windows EMFILE is fixed.  This lets us know when it's fixed and prevents future regressions
+            # - release-management/test-nut
           sfdx_version: latest
           size: medium
           matrix:

@@ -94,13 +94,19 @@ jobs:
           steps:
             - run: yarn add $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME#$CIRCLE_SHA1
       - run:
+          # STL could also have an SDR inside it.  Take it out to prevent conflicts
+          name: remove sdr from source-tracking
+          command: |
+            npm install shx -g
+            shx rm -rf node_modules/@salesforce/source-deploy-retrieve
+          working_directory: node_modules/@salesforce/source-tracking
+      - run:
           name: install/build <<parameters.external_project_git_url>> in node_modules
           # why doesn't SDR put the metadataRegistry.json in the lib when run from inside a node module?  I don't know.
           # prevent dependency conflicts between plugin's top-level imports and imported SDR's deps by deleting them
           # If there are real conflicts, we'll catch them when bumping a version in the plugin (same nuts)
           command: |
             yarn install
-            npm install shx -g
             shx rm -rf node_modules/@salesforce/kit
             shx rm -rf node_modules/@typescript-eslint
             shx rm -rf node_modules/eslint-plugin-header

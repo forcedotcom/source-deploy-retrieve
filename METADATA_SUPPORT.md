@@ -1,10 +1,10 @@
 # Supported CLI Metadata Types
 
-This list compares metadata types found in Salesforce v55 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
+This list compares metadata types found in Salesforce v56 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 462/491 supported metadata types.
+Currently, there are 466/511 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -13,11 +13,15 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AIApplication|✅||
 |AIApplicationConfig|✅||
 |AIReplyRecommendationsSettings|✅||
+|AIUsecaseDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |AccountForecastSettings|✅||
 |AccountInsightsSettings|✅||
 |AccountIntelligenceSettings|✅||
 |AccountRelationshipShareRule|✅||
 |AccountSettings|✅||
+|AccountingFieldMapping|❌|Not supported, but support could be added|
+|AccountingModelConfig|❌|Not supported, but support could be added|
+|AccountingSettings|✅||
 |AcctMgrTargetSettings|✅||
 |ActionLinkGroupTemplate|✅||
 |ActionPlanTemplate|✅||
@@ -29,7 +33,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AdvAcctForecastDimSource|✅||
 |AdvAcctForecastPeriodGroup|✅||
 |AnalyticSnapshot|✅||
-|AnalyticsDataServicesSettings|✅||
 |AnalyticsSettings|✅||
 |AnimationRule|✅||
 |ApexClass|✅||
@@ -70,6 +73,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |BldgEnrgyIntensityCnfg|✅||
 |BlockchainSettings|✅||
 |Bot|✅||
+|BotBlock|❌|Not supported, but support could be added|
+|BotBlockVersion|❌|Not supported, but support could be added|
 |BotSettings|✅||
 |BotTemplate|✅||
 |BotVersion|✅||
@@ -103,6 +108,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ChatterExtension|✅||
 |ChatterSettings|✅||
 |CleanDataService|✅||
+|CollectionsDashboardSettings|✅||
 |CommandAction|✅||
 |CommerceSettings|✅||
 |CommunitiesSettings|✅||
@@ -113,7 +119,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CompanySettings|✅||
 |ConnectedApp|✅||
 |ConnectedAppSettings|✅||
-|ConnectedSystem|✅||
 |ContentAsset|✅||
 |ContentSettings|✅||
 |ContractSettings|✅||
@@ -141,6 +146,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CustomTab|✅||
 |CustomValue|❌|Not supported, but support could be added|
 |CustomerDataPlatformSettings|✅||
+|CustomizablePropensityScoringSettings|✅||
 |Dashboard|✅||
 |DashboardFolder|✅||
 |DataCategoryGroup|✅||
@@ -148,14 +154,15 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DataConnectorS3|✅||
 |DataDotComSettings|✅||
 |DataImportManagementSettings|✅||
-|DataMapping|✅||
-|DataMappingFieldDefinition|✅||
-|DataMappingObjectDefinition|✅||
-|DataMappingSchema|✅||
+|DataPackageKitDefinition|✅||
+|DataPackageKitObject|✅||
 |DataSource|✅||
+|DataSourceBundleDefinition|✅||
 |DataSourceObject|✅||
 |DataSourceTenant|✅||
+|DataSrcDataModelFieldMap|✅||
 |DataStreamDefinition|✅||
+|DataStreamTemplate|✅||
 |DecisionMatrixDefinition|✅||
 |DecisionMatrixDefinitionVersion|✅||
 |DecisionTable|✅||
@@ -163,6 +170,9 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DelegateGroup|✅||
 |DeploymentSettings|✅||
 |DevHubSettings|✅||
+|DigitalExperience|❌|Not supported, but support could be added (but not for tracking)|
+|DigitalExperienceBundle|❌|Not supported, but support could be added (but not for tracking)|
+|DigitalExperienceConfig|❌|Not supported, but support could be added (but not for tracking)|
 |DiscoveryAIModel|✅||
 |DiscoveryGoal|✅||
 |DiscoverySettings|✅||
@@ -208,8 +218,10 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExperienceBundleSettings|✅||
 |ExplainabilityActionDefinition|✅||
 |ExplainabilityActionVersion|✅||
+|ExplainabilityMsgTemplate|❌|Not supported, but support could be added|
 |ExpressionSetDefinition|✅||
 |ExpressionSetDefinitionVersion|✅||
+|ExpressionSetObjectAlias|❌|Not supported, but support could be added|
 |ExternalAIModel|❌|Not supported, but support could be added|
 |ExternalCredential|❌|Not supported, but support could be added|
 |ExternalDataConnector|✅||
@@ -222,7 +234,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |FeatureParameterBoolean|✅||
 |FeatureParameterDate|✅||
 |FeatureParameterInteger|✅||
-|FederationDataMappingUsage|✅||
 |FieldRestrictionRule|✅||
 |FieldServiceMobileExtension|✅||
 |FieldServiceSettings|✅||
@@ -244,6 +255,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ForecastingType|✅||
 |ForecastingTypeSource|✅||
 |FormulaSettings|✅||
+|FuelType|❌|Not supported, but support could be added|
+|FuelTypeSustnUom|❌|Not supported, but support could be added|
 |FunctionReference|⚠️|Supports deploy/retrieve but not source tracking|
 |GatewayProviderPaymentMethodType|✅||
 |GlobalValueSet|✅||
@@ -261,6 +274,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |InboundCertificate|✅||
 |InboundNetworkConnection|✅||
 |IncidentMgmtSettings|✅||
+|IncludeEstTaxInQuoteSettings|✅||
 |Index|⚠️|Supports deploy/retrieve but not source tracking|
 |IndustriesAutomotiveSettings|✅||
 |IndustriesLoyaltySettings|✅||
@@ -310,6 +324,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |MeetingsSettings|✅||
 |MessagingChannel|❌|Not supported, but support could be added (but not for tracking)|
 |MfgProgramTemplate|❌|Not supported, but support could be added|
+|MfgServiceConsoleSettings|✅||
 |MilestoneType|✅||
 |MktCalcInsightObjectDef|✅||
 |MktDataTranObject|✅||
@@ -318,7 +333,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |MobileApplicationDetail|✅||
 |MobileSecurityAssignment|✅||
 |MobileSecurityPolicy|✅||
-|MobileSecurityPolicySet|✅||
 |MobileSettings|✅||
 |ModerationRule|✅||
 |MutingPermissionSet|✅||
@@ -332,6 +346,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |NotificationTypeConfig|✅||
 |NotificationsSettings|✅||
 |OauthCustomScope|✅||
+|OauthOidcSettings|✅||
 |ObjectHierarchyRelationship|✅||
 |ObjectLinkingSettings|✅||
 |ObjectSourceTargetMap|✅||
@@ -370,6 +385,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PlatformEventChannelMember|✅||
 |PlatformEventSubscriberConfig|✅||
 |PlatformSlackSettings|✅||
+|PortalDelegablePermissionSet|❌|Not supported, but support could be added|
 |PortalsSettings|✅||
 |PostTemplate|✅||
 |PredictionBuilderSettings|✅||
@@ -403,6 +419,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |Report|✅||
 |ReportFolder|✅||
 |ReportType|✅||
+|ReportingTypeConfig|❌|Not supported, but support could be added|
 |RestrictionRule|✅||
 |RetailExecutionSettings|✅||
 |Role|✅||
@@ -444,6 +461,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |StreamingAppDataConnector|❌|Not supported, but support could be added|
 |SubscriptionManagementSettings|✅||
 |SurveySettings|✅||
+|SustainabilityUom|❌|Not supported, but support could be added|
+|SustnUomConversion|❌|Not supported, but support could be added|
 |SvcCatalogCategory|✅||
 |SvcCatalogFulfillmentFlow|✅||
 |SvcCatalogItemDef|✅||
@@ -464,6 +483,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |TrialOrgSettings|✅||
 |UIObjectRelationConfig|✅||
 |UiPlugin|✅||
+|UserAccessPolicy|❌|Not supported, but support could be added|
 |UserAuthCertificate|✅||
 |UserCriteria|✅||
 |UserEngagementSettings|✅||
@@ -504,39 +524,12 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 
 
-## Next Release (v56)
-v56 introduces the following new types.  Here's their current level of support
+## Next Release (v57)
+v57 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
-|AIUsecaseDefinition|⚠️|Supports deploy/retrieve but not source tracking|
-|AccountingFieldMapping|❌|Not supported, but support could be added|
-|AccountingModelConfig|❌|Not supported, but support could be added|
-|AccountingSettings|✅||
-|BotBlock|❌|Not supported, but support could be added|
-|BotBlockVersion|❌|Not supported, but support could be added|
-|CollectionsDashboardSettings|✅||
-|CustomizablePropensityScoringSettings|✅||
-|DataPackageKitDefinition|✅||
-|DataPackageKitObject|✅||
-|DataSourceBundleDefinition|✅||
-|DataSrcDataModelFieldMap|✅||
-|DataStreamTemplate|✅||
-|DigitalExperience|❌|Not supported, but support could be added (but not for tracking)|
-|DigitalExperienceBundle|❌|Not supported, but support could be added (but not for tracking)|
-|DigitalExperienceConfig|❌|Not supported, but support could be added (but not for tracking)|
-|ExplainabilityMsgTemplate|❌|Not supported, but support could be added|
-|ExpressionSetObjectAlias|❌|Not supported, but support could be added|
-|FuelType|❌|Not supported, but support could be added|
-|FuelTypeSustnUom|❌|Not supported, but support could be added|
-|IncludeEstTaxInQuoteSettings|✅||
-|MfgServiceConsoleSettings|✅||
-|OauthOidcSettings|✅||
-|PortalDelegablePermissionSet|❌|Not supported, but support could be added|
-|ReportingTypeConfig|❌|Not supported, but support could be added|
-|SustainabilityUom|❌|Not supported, but support could be added|
-|SustnUomConversion|❌|Not supported, but support could be added|
-|UserAccessPolicy|❌|Not supported, but support could be added|
+|ReferencedDashboard|❌|Not supported, but support could be added|
 
 ## Additional Types
 
@@ -584,6 +577,13 @@ v56 introduces the following new types.  Here's their current level of support
 - DynamicTrigger
 - MktDataTranField
 - ConversationVendorFieldDef
+- DataMappingSchema
+- DataMappingObjectDefinition
+- DataMappingFieldDefinition
+- DataMapping
+- FederationDataMappingUsage
+- ConnectedSystem
 - InternalOrganization
 - UiViewDefinition
+- MobileSecurityPolicySet
 - DataWeaveResource

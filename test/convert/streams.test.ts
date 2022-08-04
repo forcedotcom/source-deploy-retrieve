@@ -445,19 +445,26 @@ describe('Streams', () => {
         writer = new streams.ZipWriter();
       });
 
-      it.skip('should add entries to zip based on given write infos', async () => {
+      it('should add entries to zip based on given write infos', async () => {
         writer = new streams.ZipWriter(`${rootDestination}.zip`);
         const appendStub = env.stub(archive, 'append');
+        env.stub(streams, 'stream2buffer').resolves(Buffer.from('hi'));
 
-        const expected = [
-          await streams.stream2buffer(chunk.writeInfos[0].source),
-          { name: chunk.writeInfos[0].output },
-        ];
-        expect(expected[0].toString()).to.equal('hi');
         await writer._write(chunk, '', (err: Error) => {
           expect(err).to.be.undefined;
         });
-        expect(appendStub.firstCall.args).to.deep.equal(expected);
+        expect(appendStub.firstCall.args[0].toString()).to.equal('hi');
+      });
+
+      it('should add entries to zip based on given write infos when zip is in-memory only', async () => {
+        writer = new streams.ZipWriter();
+        const appendStub = env.stub(archive, 'append');
+        env.stub(streams, 'stream2buffer').resolves(Buffer.from('hi'));
+
+        await writer._write(chunk, '', (err: Error) => {
+          expect(err).to.be.undefined;
+        });
+        expect(appendStub.firstCall.args[0].toString()).to.equal('hi');
       });
 
       it('should finalize zip when stream is finished', async () => {
@@ -469,7 +476,7 @@ describe('Streams', () => {
         });
       });
 
-      it.skip('should write zip to buffer if no fs destination given', async () => {
+      it('should write zip to buffer if no fs destination given', async () => {
         await writer._write(chunk, '', (err: Error) => {
           expect(err).to.be.undefined;
         });
@@ -478,9 +485,10 @@ describe('Streams', () => {
         });
       });
 
-      it.skip('should pass errors to _write callback', async () => {
+      it('should pass errors to _write callback', async () => {
         const whoops = new Error('whoops!');
         env.stub(archive, 'append').throws(whoops);
+        env.stub(streams, 'stream2buffer').resolves(Buffer.from('hi'));
 
         await writer._write(chunk, '', (err: Error) => {
           expect(err.message).to.equal(whoops.message);

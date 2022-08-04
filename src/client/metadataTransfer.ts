@@ -192,7 +192,7 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
         this.logger.debug(`Overriding apiVersion to: ${this.apiVersion}`);
       }
     }
-    return this.usernameOrConnection;
+    return getConnectionNoHigherThanOrgAllows(this.usernameOrConnection, this.apiVersion);
   }
 
   private async poll(): Promise<StatusResult> {
@@ -269,3 +269,16 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
   protected abstract pre(): Promise<AsyncResult>;
   protected abstract post(result: Status): Promise<Result>;
 }
+
+/* prevent requests on apiVersions higher than the org supports */
+const getConnectionNoHigherThanOrgAllows = async (conn: Connection, requestedVersion: string): Promise<Connection> => {
+  // uses a TTL cache, so mostly won't hit the server
+  const maxApiVersion = await conn.retrieveMaxApiVersion();
+  if (requestedVersion && parseInt(requestedVersion, 10) > parseInt(maxApiVersion, 10)) {
+    await Lifecycle.getInstance().emitWarning(
+      `The requested API version (${requestedVersion}) is higher than the org supports.  Using ${maxApiVersion}.`
+    );
+    conn.setApiVersion(maxApiVersion);
+  }
+  return conn;
+};

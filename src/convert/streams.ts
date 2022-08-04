@@ -228,7 +228,17 @@ export class ZipWriter extends ComponentWriter {
     let err: Error;
     try {
       await Promise.all(
-        chunk.writeInfos.map(async (info) => this.addToZip(await stream2buffer(info.source), info.output))
+        chunk.writeInfos.map(async (writeInfo) =>
+          this.addToZip(
+            chunk.component.type.folderType ?? chunk.component.type.folderContentType
+              ? // we don't want to prematurely zip folder types when their children my still be not in the zip
+                // those files we'll leave held open as Readable until finalize
+                writeInfo.source
+              : // everything else can be zipped immediately
+                await stream2buffer(writeInfo.source),
+            writeInfo.output
+          )
+        )
       );
     } catch (e) {
       err = e as Error;

@@ -577,6 +577,12 @@ v57 introduces the following new types.  Here's their current level of support
 - DynamicTrigger
 - MktDataTranField
 - ConversationVendorFieldDef
+- DataMappingSchema
+- DataMappingObjectDefinition
+- DataMappingFieldDefinition
+- DataMapping
+- FederationDataMappingUsage
+- ConnectedSystem
 - InternalOrganization
 - UiViewDefinition
 - MobileSecurityPolicySet

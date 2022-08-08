@@ -317,7 +317,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |MapsAndLocationSettings|✅||
 |MarketSegmentDefinition|❌|Not supported, but support could be added|
 |MarketingAppExtActivity|❌|Not supported, but support could be added|
-|MarketingAppExtension|❌|Not supported, but support could be added|
+|MarketingAppExtension|✅||
 |MatchingRules|✅||
 |MediaAdSalesSettings|✅||
 |MeetingsSettings|✅||

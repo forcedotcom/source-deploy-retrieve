@@ -2570,66 +2570,6 @@
       "directoryName": "SchedulingRules",
       "strictDirectoryName": false
     },
-    "datamappingschema": {
-      "id": "datamappingschema",
-      "name": "DataMappingSchema",
-      "suffix": "dataMappingSchema",
-      "directoryName": "dataMappingSchema",
-      "strictDirectoryName": false
-    },
-    "datamappingobjectdefinition": {
-      "id": "datamappingobjectdefinition",
-      "name": "DataMappingObjectDefinition",
-      "suffix": "dataMappingObjectDefinition",
-      "directoryName": "dataMappingObjectDefinitions",
-      "inFolder": false,
-      "strictDirectoryName": true,
-      "children": {
-        "types": {
-          "datamappingfielddefinition": {
-            "id": "datamappingfielddefinition",
-            "name": "DataMappingFieldDefinition",
-            "directoryName": "fieldDefinitions",
-            "suffix": "fieldDefinition"
-          }
-        },
-        "directories": {
-          "fieldDefinitions": "datamappingfielddefinition"
-        },
-        "suffixes": {
-          "fieldDefinition": "datamappingfielddefinition"
-        }
-      },
-      "strategies": {
-        "adapter": "decomposed",
-        "transformer": "decomposed",
-        "decomposition": "topLevel"
-      }
-    },
-    "datamapping": {
-      "id": "datamapping",
-      "name": "DataMapping",
-      "suffix": "dataMapping",
-      "directoryName": "dataMapping",
-      "strictDirectoryName": false,
-      "strategies": {
-        "adapter": "matchingContentFile"
-      }
-    },
-    "federationdatamappingusage": {
-      "id": "federationdatamappingusage",
-      "name": "FederationDataMappingUsage",
-      "suffix": "federationDataMappingUsage",
-      "directoryName": "federationDataMappingUsage",
-      "strictDirectoryName": false
-    },
-    "connectedsystem": {
-      "id": "connectedsystem",
-      "name": "ConnectedSystem",
-      "suffix": "connectedSystem",
-      "directoryName": "ConnectedSystem",
-      "strictDirectoryName": false
-    },
     "userauthcertificate": {
       "id": "userauthcertificate",
       "name": "UserAuthCertificate",
@@ -3372,12 +3312,6 @@
     "ConversationVendorInformation": "conversationvendorinfo",
     "ConversationVendorFieldDefinition": "conversationvendorfielddef",
     "schedulingRule": "schedulingrule",
-    "dataMappingSchema": "datamappingschema",
-    "dataMappingObjectDefinition": "datamappingobjectdefinition",
-    "fieldDefinition": "datamappingfielddefinition",
-    "dataMapping": "datamapping",
-    "federationDataMappingUsage": "federationdatamappingusage",
-    "connectedSystem": "connectedsystem",
     "userAuthCertificate": "userauthcertificate",
     "forecastingTypeSource": "forecastingtypesource",
     "forecastingType": "forecastingtype",
@@ -3456,7 +3390,6 @@
     "integrationHub": "integrationhubsettings",
     "ObjectHierarchyRelationship": "objecthierarchyrelationship",
     "IndustriesManufacturingSettings": "industriesmanufacturingsettings",
-    "dataMappingObjectDefinitions": "datamappingobjectdefinition",
     "fieldRestrictionRules": "fieldrestrictionrule",
     "siteDotComSites": "sitedotcom",
     "appointmentSchedulingPolicies": "appointmentschedulingpolicy",
@@ -3495,7 +3428,6 @@
     "sharingcriteriarule": "sharingrules",
     "botversion": "bot",
     "customfieldtranslation": "customobjecttranslation",
-    "datamappingfielddefinition": "datamappingobjectdefinition",
     "mktdatatranfield": "mktdatatranobject"
   }
 }

@@ -135,6 +135,33 @@ describe('MetadataTransfer', () => {
     expect(setApiVersionSpy.calledWith(apiVersion)).to.equal(true);
   });
 
+  it('caps api version at the org max', async () => {
+    class TestTransferConnection extends TestTransfer {
+      protected async pre(): Promise<{ id: string }> {
+        const connection = await this.getConnection();
+        return this.lifecycle.pre(connection);
+      }
+    }
+    const apiVersion = '51.0';
+    const maxApiVersion = '50.0';
+    const username = connection.getUsername();
+
+    const authInfo = await AuthInfo.create({ username });
+    env.stub(AuthInfo, 'create').withArgs({ username }).resolves(authInfo);
+    env.stub(Connection, 'create').withArgs({ authInfo }).resolves(connection);
+    env.stub(connection, 'retrieveMaxApiVersion').resolves(maxApiVersion);
+    const setApiVersionSpy = env.spy(Connection.prototype, 'setApiVersion');
+    operation = new TestTransferConnection({
+      components: new ComponentSet(),
+      usernameOrConnection: username,
+      apiVersion,
+    });
+
+    await operation.start();
+
+    expect(setApiVersionSpy.calledWith(maxApiVersion)).to.equal(true);
+  });
+
   describe('Polling and Event Listeners', () => {
     let listenerStub: SinonStub;
 

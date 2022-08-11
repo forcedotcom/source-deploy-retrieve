@@ -177,6 +177,26 @@ workflows:
                 node_version: latest
               - os: windows
                 node_version: maintenance
+      - release-management/test-nut:
+          name: nuts-on-linux
+          sfdx_version: latest
+          node_version: lts
+          size: large
+          # git config so it can push without --set-upstream
+          command: 'git config --global push.default current; git config --global user.email alm-cli@salesforce.com;  yarn test:nuts:scale:record'
+          os: linux
+      # I wish we could *also* record the CI perf for windows, but I can't figure out the syntax
+      # until then, run as a separate job to test scaling for larger repos
+      - release-management/test-nut:
+          name: nuts-on-windows
+          sfdx_version: latest
+          node_version: lts
+          size: large
+          command: 'yarn test:nuts:scale'
+          os: windows
+          filters:
+            branches:
+              ignore: main
       - external-nut:
           filters:
             branches:
@@ -186,6 +206,8 @@ workflows:
               ignore: main
           requires:
             - release-management/test-package
+            # commented out until the windows EMFILE is fixed.  This lets us know when it's fixed and prevents future regressions
+            # - release-management/test-nut
           sfdx_version: latest
           size: medium
           matrix:

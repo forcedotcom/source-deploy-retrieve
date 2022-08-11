@@ -224,14 +224,22 @@ export class ZipWriter extends ComponentWriter {
     void pipeline(this.zip, this.getOutputStream());
   }
 
-  // required to be async to override Node's Writable class
-  // eslint-disable-next-line @typescript-eslint/require-await
   public async _write(chunk: WriterFormat, encoding: string, callback: (err?: Error) => void): Promise<void> {
     let err: Error;
     try {
-      for (const info of chunk.writeInfos) {
-        this.addToZip(info.source, info.output);
-      }
+      await Promise.all(
+        chunk.writeInfos.map(async (writeInfo) =>
+          this.addToZip(
+            chunk.component.type.folderType ?? chunk.component.type.folderContentType
+              ? // we don't want to prematurely zip folder types when their children might still be not in the zip
+                // those files we'll leave held open as Readable until finalize
+                writeInfo.source
+              : // everything else can be zipped immediately
+                await stream2buffer(writeInfo.source),
+            writeInfo.output
+          )
+        )
+      );
     } catch (e) {
       err = e as Error;
     }

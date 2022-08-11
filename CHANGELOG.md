@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.2.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.8...v6.2.9) (2022-08-09)
+
+### Bug Fixes
+
+- removing support for connect center [#671](https://github.com/forcedotcom/source-deploy-retrieve/issues/671) ([#682](https://github.com/forcedotcom/source-deploy-retrieve/issues/682)) ([7810733](https://github.com/forcedotcom/source-deploy-retrieve/commit/78107335d20c20bcf9a1ebfc4cefc2693267bac4))
+
+### [6.2.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.7...v6.2.8) (2022-08-08)
+
+### [6.2.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.6...v6.2.7) (2022-08-03)
+
 ### [6.2.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.5...v6.2.6) (2022-07-25)
 
 ### Bug Fixes

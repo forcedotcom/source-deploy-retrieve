@@ -8,7 +8,7 @@
 import { expect } from 'chai';
 import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
 import { createSandbox, SinonSandbox } from 'sinon';
-import { Connection } from '@salesforce/core';
+import { Connection, Logger } from '@salesforce/core';
 import { mockConnection } from '../mock/client';
 import { ConnectionResolver } from '../../src/resolve';
 import { MetadataComponent, registry } from '../../src/';
@@ -258,6 +258,52 @@ describe('ConnectionResolver', () => {
       ];
       expect(result.components).to.deep.equal(expected);
     });
+
+    it('should retry (ten times) if unexpected error occurs', async () => {
+      const loggerStub = sandboxStub.stub(Logger.prototype, 'debug');
+
+      sandboxStub.stub(connection.metadata, 'list');
+
+      const query = "SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = 'AccountOwnership'";
+
+      const mockToolingQuery = sandboxStub.stub(connection, 'singleRecordQuery');
+      mockToolingQuery.withArgs(query).rejects(new Error('Something happened. Oh no.'));
+
+      const resolver = new ConnectionResolver(connection);
+      const result = await resolver.resolve();
+      const expected: MetadataComponent[] = [];
+
+      // filter over queries and find ones called with `query`
+      const retries = mockToolingQuery.args.filter((call) => call[0] === query);
+
+      expect(retries.length).to.equal(11); // first call plus 10 retries
+      expect(loggerStub.calledOnce).to.be.true;
+      expect(loggerStub.args[0][0]).to.equal('Something happened. Oh no.');
+      expect(result.components).to.deep.equal(expected);
+    });
+
+    it('should not retry query if expected unsupported metadata error is encountered', async () => {
+      const loggerStub = sandboxStub.stub(Logger.prototype, 'debug');
+
+      sandboxStub.stub(connection.metadata, 'list');
+
+      const errorMessage = 'WorkTypeGroupAddInfo is either inaccessible or not supported in Metadata API';
+
+      const mockToolingQuery = sandboxStub.stub(connection, 'singleRecordQuery');
+      mockToolingQuery
+        .withArgs("SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = 'WorkTypeGroupAddInfo'")
+        .rejects(new Error(errorMessage));
+
+      const resolver = new ConnectionResolver(connection);
+      const result = await resolver.resolve();
+      const expected: MetadataComponent[] = [];
+
+      expect(loggerStub.calledOnce).to.be.true;
+      expect(loggerStub.args[0][0]).to.equal('Expected error:');
+      expect(loggerStub.args[0][1]).to.equal(errorMessage);
+      expect(result.components).to.deep.equal(expected);
+    });
+
     it('should resolve no managed components', async () => {
       const metadataQueryStub = sandboxStub.stub(connection.metadata, 'list');
 

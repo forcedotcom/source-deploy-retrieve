@@ -180,7 +180,7 @@ workflows:
           os: linux
       # I wish we could *also* record the CI perf for windows, but I can't figure out the syntax
       # until then, run as a separate job to test scaling for larger repos
-      - release-management/test-nut:
+      - release-management/test-nut-windows:
           sfdx_version: latest
           node_version: lts
           size: large

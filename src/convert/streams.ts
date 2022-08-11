@@ -231,7 +231,7 @@ export class ZipWriter extends ComponentWriter {
         chunk.writeInfos.map(async (writeInfo) =>
           this.addToZip(
             chunk.component.type.folderType ?? chunk.component.type.folderContentType
-              ? // we don't want to prematurely zip folder types when their children my still be not in the zip
+              ? // we don't want to prematurely zip folder types when their children might still be not in the zip
                 // those files we'll leave held open as Readable until finalize
                 writeInfo.source
               : // everything else can be zipped immediately

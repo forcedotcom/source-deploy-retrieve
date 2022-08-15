@@ -6,11 +6,12 @@
  */
 
 import { Connection, Logger } from '@salesforce/core';
+import { ensureArray } from '@salesforce/kit';
 import { retry, NotRetryableError, RetryError } from 'ts-retry-promise';
 import { RegistryAccess, registry as defaultRegistry, MetadataType } from '../registry';
 import { standardValueSet } from '../registry/standardvalueset';
 import { FileProperties, StdValueSetRecord, ListMetadataQuery } from '../client/types';
-import { normalizeToArray, extName } from '../utils';
+import { extName } from '../utils';
 import { MetadataComponent } from './types';
 export interface ResolveConnectionResult {
   components: MetadataComponent[];
@@ -91,7 +92,7 @@ export class ConnectionResolver {
     let members: FileProperties[];
 
     try {
-      members = normalizeToArray((await this.connection.metadata.list(query)) as FileProperties[]);
+      members = ensureArray((await this.connection.metadata.list(query)) as FileProperties[]);
     } catch (error) {
       this.logger.debug((error as Error).message);
       members = [];

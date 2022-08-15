@@ -6,6 +6,7 @@
  */
 import { join } from 'path';
 import { JsonMap } from '@salesforce/ts-types';
+import { ensureArray } from '@salesforce/kit';
 import { MetadataComponent, SourceComponent } from '../../resolve';
 import { JsToXml } from '../streams';
 import { WriteInfo } from '../types';
@@ -13,7 +14,6 @@ import { META_XML_SUFFIX, SourcePath, XML_NS_KEY, XML_NS_URL } from '../../commo
 import { ComponentSet } from '../../collections';
 import { DecompositionState } from '../convertContext';
 import { DecompositionStrategy } from '../../registry';
-import { normalizeToArray } from '../../utils';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
@@ -62,7 +62,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       const childTypeId = type.children?.directories[tagKey];
       if (childTypeId) {
         const childType = type.children.types[childTypeId];
-        const tagValues = normalizeToArray(tagValue);
+        const tagValues = ensureArray(tagValue);
         for (const value of tagValues as [{ fullName: string; name: string }]) {
           const entryName = value.fullName || value.name;
           const childComponent: MetadataComponent = {

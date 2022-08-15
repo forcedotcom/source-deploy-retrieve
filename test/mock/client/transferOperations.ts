@@ -7,6 +7,7 @@
 
 import { join, sep } from 'path';
 import { TestContext } from '@salesforce/core/lib/testSetup';
+import { ensureArray } from '@salesforce/kit';
 import { PollingClient } from '@salesforce/core';
 import { match, SinonSandbox, SinonSpy, SinonStub } from 'sinon';
 import { AsyncResult } from 'jsforce/lib/api/metadata';
@@ -29,7 +30,6 @@ import {
   RequestStatus,
 } from '../../../src/client/types';
 import { ComponentProperties } from '../../../src/resolve/sourceComponent';
-import { normalizeToArray } from '../../../src/utils';
 import { createMockZip, mockConnection } from '.';
 
 export const MOCK_ASYNC_RESULT: AsyncResult = { id: '1234', state: RequestStatus.Pending, done: false };
@@ -224,7 +224,7 @@ export async function stubMetadataRetrieve(
       fileProperties.length === 1 ? (fileProperties[0] as FileProperties) : (fileProperties as FileProperties[]);
   }
 
-  const messages = normalizeToArray(options.messages);
+  const messages = ensureArray(options.messages);
 
   if (messages.length > 0) {
     retrieveStatus.status =

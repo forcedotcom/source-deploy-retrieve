@@ -9,9 +9,9 @@ import { isString } from '@salesforce/ts-types';
 import { create as createArchive } from 'archiver';
 import * as fs from 'graceful-fs';
 import { Lifecycle, Messages, SfError } from '@salesforce/core';
+import { ensureArray } from '@salesforce/kit';
 import { MetadataConverter } from '../convert';
 import { ComponentLike, SourceComponent } from '../resolve';
-import { normalizeToArray } from '../utils';
 import { ComponentSet } from '../collections';
 import { registry } from '../registry';
 import { stream2buffer } from '../convert/streams';
@@ -69,8 +69,8 @@ export class DeployResult implements MetadataTransferResult {
       } else {
         // if no this.components, this was likely a metadata format deploy so we need to process
         // the componentSuccesses and componentFailures instead.
-        const successes = normalizeToArray(this.response.details?.componentSuccesses || []);
-        const failures = normalizeToArray(this.response.details?.componentFailures || []);
+        const successes = ensureArray(this.response.details?.componentSuccesses);
+        const failures = ensureArray(this.response.details?.componentFailures);
         for (const component of [...successes, ...failures]) {
           if (component.fullName === 'package.xml') continue;
           const baseResponse: Partial<FileResponse> = {
@@ -148,8 +148,8 @@ export class DeployResult implements MetadataTransferResult {
     const messageMap = new Map<string, DeployMessage[]>();
 
     const failedComponents = new ComponentSet();
-    const failureMessages = normalizeToArray(result.details.componentFailures);
-    const successMessages = normalizeToArray(result.details.componentSuccesses);
+    const failureMessages = ensureArray(result.details.componentFailures);
+    const successMessages = ensureArray(result.details.componentSuccesses);
 
     for (const failure of failureMessages) {
       const sanitized = this.sanitizeDeployMessage(failure);

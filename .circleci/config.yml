@@ -114,21 +114,6 @@ workflows:
   version: 2
   test-and-release:
     jobs:
-      # - release-management/test-package:
-      #     matrix:
-      #       parameters:
-      #         os:
-      #           - linux
-      #           - windows
-      #         node_version:
-      #           - latest
-      #           - lts
-      #           - maintenance
-      #       exclude:
-      #         - os: windows
-      #           node_version: latest
-      #         - os: windows
-      #           node_version: maintenance
       # - release-management/test-nut:
       #     name: nuts-on-linux
       #     sfdx_version: latest

@@ -117,5 +117,8 @@ registryBuilder
 # -- CLEAN ALL
 node_modules
 
+# -- nuts test dirs
+test_session*
+
 # --
 # put files here you don't want cleaned with sf-clean

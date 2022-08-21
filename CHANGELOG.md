@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.9...v6.3.0) (2022-08-11)
+
+### Features
+
+- don't run nuts on release/main ([#690](https://github.com/forcedotcom/source-deploy-retrieve/issues/690)) ([9d6d92e](https://github.com/forcedotcom/source-deploy-retrieve/commit/9d6d92e6840dc8897543d57a7b770c6d2c0b32dd))
+
 ### [6.2.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.8...v6.2.9) (2022-08-09)
 
 ### Bug Fixes

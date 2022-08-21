@@ -9,11 +9,9 @@ import { sep } from 'path';
 import { Connection, Messages, SfError } from '@salesforce/core';
 import { readFileSync } from 'graceful-fs';
 import { SaveResult } from 'jsforce';
+import { DOMParser } from '@xmldom/xmldom';
 import { SourceComponent } from '../../resolve';
 import { SourceDeployResult } from '../types';
-
-// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
-const DOMParser = require('xmldom-sfdx-encoding').DOMParser;
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [

@@ -21,6 +21,7 @@ jobs:
       - run: yarn install
       - run: yarn build
       - run: yarn test:nuts:scale
+      - run: git status
       - run: git add test/nuts/perfResults
       - run: 'git commit -m "test: record perf [ci skip]" --no-verify'
       - run: git push --no-verify

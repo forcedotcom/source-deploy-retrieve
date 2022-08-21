@@ -6,7 +6,8 @@ jobs:
   perf-scale-nuts:
     strategy:
       matrix:
-        os: ['ubuntu-latest', 'windows-latest']
+        # os: ['ubuntu-latest', 'windows-latest']
+        os: ['ubuntu-latest']
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -16,6 +17,7 @@ jobs:
       - run: npm install -g sfdx-cli --omit=dev
       - run: git config --global push.default current
       - run: git config --global user.email alm-cli@salesforce.com
+      - run: git config user.name SF-CLI-BOT
       - run: yarn install
       - run: yarn build
       - run: yarn test:nuts:scale

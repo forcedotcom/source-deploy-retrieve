@@ -9,8 +9,15 @@ jobs:
         os: ['ubuntu-latest', 'windows-latest']
     runs-on: ${{ matrix.os }}
     steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: latest
+      - run: npm install -g sfdx-cli --omit=dev
       - run: git config --global push.default current
       - run: git config --global user.email alm-cli@salesforce.com
+      - run: yarn install
+      - run: yarn build
       - run: yarn test:nuts:scale
       - run: git add test/nuts/perfResults
       - run: 'git commit -m "test: record perf [ci skip]" --no-verify'

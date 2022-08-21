@@ -3,7 +3,7 @@ on:
   workflow_call:
 
 jobs:
-  linux-scale-perf:
+  perf-scale-nuts:
     strategy:
       matrix:
         os: ['ubuntu-latest', 'windows-latest']

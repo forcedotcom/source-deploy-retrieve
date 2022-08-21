@@ -1,0 +1,14 @@
+# test push
+name: tests
+on:
+  push:
+    paths-ignore:
+      - 'test/nuts/perfResults/**'
+  workflow_dispatch:
+
+jobs:
+  # unit-tests:
+  #   uses: salesforcecli/github-workflows/.github/workflows/unitTest.yml@main
+  perf-scale-nuts:
+    uses: ./.github/workflows/perfScaleNut.yml
+  #  needs: unit-tests

@@ -1,0 +1,17 @@
+name: perf-scale-nuts
+on:
+  workflow_call:
+
+jobs:
+  linux-scale-perf:
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - run: git config --global push.default current
+      - run: git config --global user.email alm-cli@salesforce.com
+      - run: yarn test:nuts:scale
+      - run: git add test/nuts/perfResults
+      - run: 'git commit -m "test: record perf [ci skip]" --no-verify'
+      - run: git push --no-verify

@@ -26,6 +26,6 @@ jobs:
       - run: 'git commit -m "test: record perf [ci skip]" --no-verify'
         # git on windows won't recognize the changes in the results files
         # when that is working, remove these if statements so we can track perf
-        if: runner.os == 'Windows'
+        if: runner.os != 'Windows'
       - run: git push --no-verify
-        if: runner.os == 'Windows'
+        if: runner.os != 'Windows'

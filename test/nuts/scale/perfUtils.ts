@@ -20,11 +20,13 @@ const getPerfDir = (): string =>
 
 export const recordPerf = async (testName: string, performance: Performance): Promise<void> => {
   const testPath = getPerfDir();
+  const fileTarget = path.join(testPath, `${testName}.json`);
+
   // eslint-disable-next-line no-console
   console.log(`will save results to ${testPath}`);
   await fs.promises.mkdir(testPath, { recursive: true });
   await fs.promises.writeFile(
-    path.join(testPath, `${testName}.json`),
+    fileTarget,
     JSON.stringify(
       // TS doesn't seem to know about the node16 perf hooks :(
       // @ts-ignore
@@ -33,5 +35,9 @@ export const recordPerf = async (testName: string, performance: Performance): Pr
       2
     )
   );
+  // eslint-disable-next-line no-console
+  console.log(`file exists: ${fs.existsSync(fileTarget)}`);
+  // eslint-disable-next-line no-console
+  console.log(await fs.promises.readFile(fileTarget));
   performance.clearMarks();
 };

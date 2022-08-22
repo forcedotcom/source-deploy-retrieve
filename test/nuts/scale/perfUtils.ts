@@ -20,6 +20,8 @@ const getPerfDir = (): string =>
 
 export const recordPerf = async (testName: string, performance: Performance): Promise<void> => {
   const testPath = getPerfDir();
+  // eslint-disable-next-line no-console
+  console.log(`will save results to ${testPath}`);
   await fs.promises.mkdir(testPath, { recursive: true });
   await fs.promises.writeFile(
     path.join(testPath, `${testName}.json`),

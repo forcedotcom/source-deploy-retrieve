@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.3.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.3.0...v6.3.1) (2022-08-22)
+
+### Bug Fixes
+
+- use standard xmldom module ([5d2fc96](https://github.com/forcedotcom/source-deploy-retrieve/commit/5d2fc968df16f784c8f5d3b57d056c4a5772aa53))
+
 ## [6.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/v6.2.9...v6.3.0) (2022-08-11)
 
 ### Features

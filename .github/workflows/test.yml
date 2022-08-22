@@ -38,6 +38,7 @@ jobs:
   # now run the rest of the nuts using cached version of al the setup steps
   external-nuts-full:
     # needs: [perf-scale-nuts, external-nuts-primer]
+    needs: external-nuts-primer
     name: extNUTs-${{matrix.os}}
     # your linter may complain about this, but it is valid (originally wasn't)
     strategy:

@@ -11,9 +11,14 @@ jobs:
 
   unit-tests:
     uses: salesforcecli/github-workflows/.github/workflows/unitTest.yml@main
-  perf-scale-nuts:
+  perf-scale-nuts-linux:
     uses: ./.github/workflows/perfScaleNut.yml
     needs: unit-tests
+  perf-scale-nuts-windows:
+    uses: ./.github/workflows/perfScaleNut.yml
+    needs: unit-tests
+    with:
+      os: 'windows-latest'
 
   # run a quick nut on each OS to populate the cache
   # the following is highly duplicative to allow linux to start all the nuts without waiting for windows primer
@@ -47,7 +52,7 @@ jobs:
 
   # now run the rest of the nuts for each os via cached version of al the setup steps
   external-nuts-full-linux:
-    needs: [perf-scale-nuts, extNuts-primer-linux]
+    needs: [perf-scale-nuts-linux, extNuts-primer-linux]
     name: extNUTs-linux
     # your linter may complain about this, but it is valid (originally wasn't)
     strategy:
@@ -67,7 +72,7 @@ jobs:
 
   # now run the rest of the nuts for each os via cached version of al the setup steps
   external-nuts-full-windows:
-    needs: [perf-scale-nuts, extNuts-primer-windows]
+    needs: [perf-scale-nuts-windows, extNuts-primer-windows]
     name: extNUTs-linux
     # your linter may complain about this, but it is valid (originally wasn't)
     strategy:

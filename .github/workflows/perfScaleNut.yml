@@ -1,13 +1,15 @@
 name: perf-scale-nuts
 on:
   workflow_call:
+    inputs:
+      os:
+        type: string
+        required: false
+        default: 'ubuntu-latest'
 
 jobs:
   perf-scale-nuts:
-    strategy:
-      matrix:
-        os: ['ubuntu-latest', 'windows-latest']
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3

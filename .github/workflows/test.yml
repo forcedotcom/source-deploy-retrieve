@@ -16,6 +16,7 @@ jobs:
   #  needs: unit-tests
   # run a quick nut on both OSes to populate the cache
   external-nuts-primer:
+    # your linter may complain about this, but it is valid (originally wasn't)
     strategy:
       matrix:
         os: ['ubuntu-latest', 'windows-latest']

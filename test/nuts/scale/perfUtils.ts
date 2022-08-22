@@ -25,7 +25,7 @@ export const recordPerf = async (testName: string, performance: Performance): Pr
   const fileTarget = path.join(testPath, `${testName}.json`);
 
   // eslint-disable-next-line no-console
-  console.log(`will save results to ${testPath}`);
+  console.log(`will save results to ${fileTarget}`);
   await fs.promises.mkdir(testPath, { recursive: true });
   expect(fs.existsSync(testPath)).to.be.true;
   await fs.promises.writeFile(
@@ -38,8 +38,8 @@ export const recordPerf = async (testName: string, performance: Performance): Pr
       2
     )
   );
+  performance.clearMarks();
   expect(fs.existsSync(fileTarget)).to.be.true;
   // eslint-disable-next-line no-console
   console.log(await fs.promises.readFile(fileTarget, 'utf8'));
-  performance.clearMarks();
 };

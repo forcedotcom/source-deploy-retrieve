@@ -8,6 +8,7 @@ import * as path from 'path';
 import * as os from 'os';
 import { Performance } from 'node:perf_hooks';
 import * as fs from 'graceful-fs';
+import { expect } from 'chai';
 
 const getPerfDir = (): string =>
   path
@@ -16,6 +17,7 @@ const getPerfDir = (): string =>
     .replace(/\(R\)/g, '')
     .replace(/\(TM\)/g, '')
     .replace(/\./g, '-')
+    .replace(/-{2,}/g, '-')
     .replace(/\s/g, '-');
 
 export const recordPerf = async (testName: string, performance: Performance): Promise<void> => {
@@ -25,6 +27,7 @@ export const recordPerf = async (testName: string, performance: Performance): Pr
   // eslint-disable-next-line no-console
   console.log(`will save results to ${testPath}`);
   await fs.promises.mkdir(testPath, { recursive: true });
+  expect(fs.existsSync(testPath)).to.be.true;
   await fs.promises.writeFile(
     fileTarget,
     JSON.stringify(
@@ -35,8 +38,7 @@ export const recordPerf = async (testName: string, performance: Performance): Pr
       2
     )
   );
-  // eslint-disable-next-line no-console
-  console.log(`file exists: ${fs.existsSync(fileTarget)}`);
+  expect(fs.existsSync(fileTarget)).to.be.true;
   // eslint-disable-next-line no-console
   console.log(await fs.promises.readFile(fileTarget));
   performance.clearMarks();

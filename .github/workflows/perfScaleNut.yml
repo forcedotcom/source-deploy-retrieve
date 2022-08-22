@@ -21,7 +21,7 @@ jobs:
       # - run: git config --global push.default current
       # - run: git config --global user.email alm-cli@salesforce.com
       # - run: git config user.name SF-CLI-BOT
-      - uses: salesforcecli/github-workflows/.github/actions/gitconfig@main
+      - uses: salesforcecli/github-workflows/.github/actions/gitConfig@main
       - run: git status
       - run: git add test/nuts/perfResults
       - run: 'git commit -m "test: record perf [ci skip]" --no-verify'

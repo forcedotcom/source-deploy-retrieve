@@ -10,6 +10,16 @@ on:
 jobs:
   # unit-tests:
   #   uses: salesforcecli/github-workflows/.github/workflows/unitTest.yml@main
-  perf-scale-nuts:
-    uses: ./.github/workflows/perfScaleNut.yml
+  # perf-scale-nuts:
+  #   uses: ./.github/workflows/perfScaleNut.yml
   #  needs: unit-tests
+  external-nuts:
+    # needs: perf-scale-nuts
+    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
+    with:
+      packageName: "@salesforce/source-deploy-retrieve"
+      externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-source'
+      command: 'yarn test:nuts:manifest:create'
+      preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
+      postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
+      preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'

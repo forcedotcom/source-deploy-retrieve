@@ -17,8 +17,8 @@ const getPerfDir = (): string =>
     .replace(/\(R\)/g, '')
     .replace(/\(TM\)/g, '')
     .replace(/\./g, '-')
-    .replace(/-{2,}/g, '-')
-    .replace(/\s/g, '-');
+    .replace(/\s/g, '-')
+    .replace(/-{2,}/g, '-');
 
 export const recordPerf = async (testName: string, performance: Performance): Promise<void> => {
   const testPath = getPerfDir();

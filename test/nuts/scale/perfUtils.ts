@@ -40,6 +40,6 @@ export const recordPerf = async (testName: string, performance: Performance): Pr
   );
   expect(fs.existsSync(fileTarget)).to.be.true;
   // eslint-disable-next-line no-console
-  console.log(await fs.promises.readFile(fileTarget));
+  console.log(await fs.promises.readFile(fileTarget, 'utf8'));
   performance.clearMarks();
 };

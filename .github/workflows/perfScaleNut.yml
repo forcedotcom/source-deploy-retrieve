@@ -7,7 +7,6 @@ jobs:
     strategy:
       matrix:
         os: ['ubuntu-latest', 'windows-latest']
-        # os: ['windows-latest']
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -16,13 +15,17 @@ jobs:
           node-version: latest
           cache: yarn
       - run: npm install -g sfdx-cli --omit=dev
-      - run: git config --global push.default current
-      - run: git config --global user.email alm-cli@salesforce.com
-      - run: git config user.name SF-CLI-BOT
       - run: yarn install
       - run: yarn build
       - run: yarn test:nuts:scale
+      - run: git config --global push.default current
+      - run: git config --global user.email alm-cli@salesforce.com
+      - run: git config user.name SF-CLI-BOT
       - run: git status
       - run: git add test/nuts/perfResults
       - run: 'git commit -m "test: record perf [ci skip]" --no-verify'
+        # git on windows won't recognize the changes in the results files
+        # when that is working, remove these if statements so we can track perf
+        if: runner.os == 'Windows'
       - run: git push --no-verify
+        if: runner.os == 'Windows'

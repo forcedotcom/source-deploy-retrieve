@@ -8,12 +8,17 @@ on:
   workflow_dispatch:
 
 jobs:
+
   # unit-tests:
   #   uses: salesforcecli/github-workflows/.github/workflows/unitTest.yml@main
   # perf-scale-nuts:
   #   uses: ./.github/workflows/perfScaleNut.yml
   #  needs: unit-tests
-  external-nuts:
+  # run a quick nut on both OSes to populate the cache
+  external-nuts-primer:
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest']
     # needs: perf-scale-nuts
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
@@ -23,4 +28,5 @@ jobs:
       preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
       postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
       preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
+      os: ${{matrix.os}}
     secrets: inherit

@@ -1,34 +1,18 @@
 [
   {
     "name": "componentSetCreate",
-    "duration": 224.0794370000076
+    "duration": 435.34202700000606
   },
   {
     "name": "sourceToMdapi",
-    "duration": 5308.544207999992
+    "duration": 8456.889236999996
   },
   {
     "name": "sourceToZip",
-    "duration": 4620.575552000009
+    "duration": 8068.568870999996
   },
   {
     "name": "mdapiToSource",
-    "duration": 6902.020572999987
-  },
-  {
-    "name": "componentSetCreate",
-    "duration": 428.50368900000467
-  },
-  {
-    "name": "sourceToMdapi",
-    "duration": 6684.112303000002
-  },
-  {
-    "name": "sourceToZip",
-    "duration": 6792.074997999996
-  },
-  {
-    "name": "mdapiToSource",
-    "duration": 6852.288754000008
+    "duration": 7121.708337999997
   }
 ]

@@ -13,9 +13,9 @@ const getPerfDir = (): string =>
   path
     .join('test', 'nuts', 'perfResults', `${os.arch()}-${os.platform()}-${os.cpus().length}x${os.cpus()[0].model}`)
     .replace(/@/g, '')
-    .replace(/\(R\)/, '')
-    .replace(/\(TM\)/, '')
-    .replace(/\./, '-')
+    .replace(/\(R\)/g, '')
+    .replace(/\(TM\)/g, '')
+    .replace(/\./g, '-')
     .replace(/\s/g, '-');
 
 export const recordPerf = async (testName: string, performance: Performance): Promise<void> => {

@@ -9,20 +9,17 @@ on:
 
 jobs:
 
-  # unit-tests:
-  #   uses: salesforcecli/github-workflows/.github/workflows/unitTest.yml@main
-  # perf-scale-nuts:
-  #   uses: ./.github/workflows/perfScaleNut.yml
-  #   needs: unit-tests
-  # run a quick nut on both OSes to populate the cache
-  # You can get more results, faster, by duplicating a lot of this and letting linux nuts start as soon as the linux primer is done
-  external-nuts-primer:
-    name: extNUTs-${{matrix.os}}
-    # your linter may complain about this, but it is valid (originally wasn't)
-    strategy:
-      matrix:
-        os: ['ubuntu-latest', 'windows-latest']
-    # needs: unit-tests
+  unit-tests:
+    uses: salesforcecli/github-workflows/.github/workflows/unitTest.yml@main
+  perf-scale-nuts:
+    uses: ./.github/workflows/perfScaleNut.yml
+    needs: unit-tests
+
+  # run a quick nut on each OS to populate the cache
+  # the following is highly duplicative to allow linux to start all the nuts without waiting for windows primer
+  extNuts-primer-linux:
+    name: extNUTs-linux
+    needs: unit-tests
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
       packageName: '@salesforce/source-deploy-retrieve'
@@ -31,19 +28,30 @@ jobs:
       preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
       postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
       preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
-      os: ${{matrix.os}}
+      os: 'ubuntu-latest'
     secrets: inherit
 
+  extNuts-primer-windows:
+    name: extNUTs-windows
+    needs: unit-tests
+    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
+    with:
+      packageName: '@salesforce/source-deploy-retrieve'
+      externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-source'
+      command: 'yarn test:nuts:manifest:create'
+      preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
+      postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
+      preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
+      os: 'windows-latest'
+    secrets: inherit
 
-  # now run the rest of the nuts using cached version of al the setup steps
-  external-nuts-full:
-    # needs: [perf-scale-nuts, external-nuts-primer]
-    needs: external-nuts-primer
-    name: extNUTs-${{matrix.os}}
+  # now run the rest of the nuts for each os via cached version of al the setup steps
+  external-nuts-full-linux:
+    needs: [perf-scale-nuts, extNuts-primer-linux]
+    name: extNUTs-linux
     # your linter may complain about this, but it is valid (originally wasn't)
     strategy:
       matrix:
-        os: ['ubuntu-latest', 'windows-latest']
         command: ['yarn test:nuts:convert', 'yarn test:nuts:delete', 'yarn test:nuts:deploy', 'yarn test:nuts:deploy:async', 'yarn test:nuts:mdapi', 'yarn test:nuts:retrieve', 'yarn test:nuts:specialTypes', 'yarn test:nuts:tracking']
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
@@ -54,5 +62,25 @@ jobs:
       preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
       postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
       preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
-      os: ${{matrix.os}}
+      os: ubuntu-latest
+    secrets: inherit
+
+  # now run the rest of the nuts for each os via cached version of al the setup steps
+  external-nuts-full-windows:
+    needs: [perf-scale-nuts, extNuts-primer-windows]
+    name: extNUTs-linux
+    # your linter may complain about this, but it is valid (originally wasn't)
+    strategy:
+      matrix:
+        command: ['yarn test:nuts:convert', 'yarn test:nuts:delete', 'yarn test:nuts:deploy', 'yarn test:nuts:deploy:async', 'yarn test:nuts:mdapi', 'yarn test:nuts:retrieve', 'yarn test:nuts:specialTypes', 'yarn test:nuts:tracking']
+    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
+    with:
+      packageName: '@salesforce/source-deploy-retrieve'
+      externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-source'
+      command: ${{matrix.command}}
+      # the next 3 lines are likely unnecessary due to cache use
+      preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
+      postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
+      preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
+      os: windows-latest
     secrets: inherit

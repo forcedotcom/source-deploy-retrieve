@@ -1,4 +1,4 @@
-name: registry-check
+name: registry-check-preview
 on:
   workflow_dispatch:
   schedule:

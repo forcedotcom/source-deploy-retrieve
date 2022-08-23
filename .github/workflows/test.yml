@@ -23,7 +23,7 @@ jobs:
   # run a quick nut on each OS to populate the cache
   # the following is highly duplicative to allow linux to start all the nuts without waiting for windows primer
   extNuts-primer-linux:
-    name: extNUTs-linux
+    name: extNUTs-linux-prime
     needs: unit-tests
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
@@ -37,7 +37,7 @@ jobs:
     secrets: inherit
 
   extNuts-primer-windows:
-    name: extNUTs-windows
+    name: extNUTs-windows-prime
     needs: unit-tests
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
@@ -57,7 +57,21 @@ jobs:
     # your linter may complain about this, but it is valid (originally wasn't)
     strategy:
       matrix:
-        command: ['yarn test:nuts:convert', 'yarn test:nuts:delete', 'yarn test:nuts:deploy', 'yarn test:nuts:deploy:async', 'yarn test:nuts:mdapi', 'yarn test:nuts:retrieve', 'yarn test:nuts:specialTypes', 'yarn test:nuts:tracking']
+        command:
+          - 'yarn test:nuts:convert'
+          - 'yarn test:nuts:delete'
+          - 'yarn test:nuts:deploy:async'
+          - 'yarn test:nuts:deploy:destructive'
+          - 'yarn test:nuts:deploy:manifest'
+          - 'yarn test:nuts:deploy:metadata'
+          - 'yarn test:nuts:deploy:quick'
+          - 'yarn test:nuts:deploy:rest'
+          - 'yarn test:nuts:deploy:sourcepath'
+          - 'yarn test:nuts:deploy:testlevel'
+          - 'yarn test:nuts:mdapi'
+          - 'yarn test:nuts:retrieve'
+          - 'yarn test:nuts:specialTypes'
+          - 'yarn test:nuts:tracking'
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
       packageName: '@salesforce/source-deploy-retrieve'
@@ -73,11 +87,25 @@ jobs:
   # now run the rest of the nuts for each os via cached version of al the setup steps
   external-nuts-full-windows:
     needs: [perf-scale-nuts-windows, extNuts-primer-windows]
-    name: extNUTs-linux
+    name: extNUTs-windows
     # your linter may complain about this, but it is valid (originally wasn't)
     strategy:
       matrix:
-        command: ['yarn test:nuts:convert', 'yarn test:nuts:delete', 'yarn test:nuts:deploy', 'yarn test:nuts:deploy:async', 'yarn test:nuts:mdapi', 'yarn test:nuts:retrieve', 'yarn test:nuts:specialTypes', 'yarn test:nuts:tracking']
+        command:
+          - 'yarn test:nuts:convert'
+          - 'yarn test:nuts:delete'
+          - 'yarn test:nuts:deploy:async'
+          - 'yarn test:nuts:deploy:destructive'
+          - 'yarn test:nuts:deploy:manifest'
+          - 'yarn test:nuts:deploy:metadata'
+          - 'yarn test:nuts:deploy:quick'
+          - 'yarn test:nuts:deploy:rest'
+          - 'yarn test:nuts:deploy:sourcepath'
+          - 'yarn test:nuts:deploy:testlevel'
+          - 'yarn test:nuts:mdapi'
+          - 'yarn test:nuts:retrieve'
+          - 'yarn test:nuts:specialTypes'
+          - 'yarn test:nuts:tracking'
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
       packageName: '@salesforce/source-deploy-retrieve'

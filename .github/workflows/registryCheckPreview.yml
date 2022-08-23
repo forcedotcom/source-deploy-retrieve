@@ -6,7 +6,7 @@ on:
     - cron: 34 3 * * 1
 
 jobs:
-  registry-check:
+  registry-check-preview:
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v3

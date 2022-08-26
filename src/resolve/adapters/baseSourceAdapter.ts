@@ -47,7 +47,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     if (!rootMetadata) {
       const rootMetadataPath = this.getRootMetadataXmlPath(path);
       if (rootMetadataPath) {
-        rootMetadata = parseMetadataXml(rootMetadataPath);
+        rootMetadata = this.parseMetadataXml(rootMetadataPath);
       }
     }
     if (rootMetadata && this.forceIgnore.denies(rootMetadata.path)) {
@@ -89,7 +89,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    * @param path File path of a metadata component
    */
   protected parseAsRootMetadataXml(path: SourcePath): MetadataXml {
-    const metaXml = parseMetadataXml(path);
+    const metaXml = this.parseMetadataXml(path);
     if (metaXml) {
       let isRootMetadataXml = false;
       if (this.type.strictDirectoryName) {
@@ -114,6 +114,10 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     if (!this.allowMetadataWithContent()) {
       return this.parseAsContentMetadataXml(path);
     }
+  }
+
+  protected parseMetadataXml(path: SourcePath): MetadataXml {
+    return parseMetadataXml(path);
   }
 
   /**

@@ -105,6 +105,43 @@ describe('SourceComponent', () => {
     expect(relPath2).to.equal(expectedPath2);
   });
 
+  it('should return correct relative path for DigitalExperienceBundle', () => {
+    const registry = new RegistryAccess();
+    const debType = registry.getTypeByName('DigitalExperienceBundle');
+    const cmp = new SourceComponent({ name: debType.name, type: debType });
+
+    const metaFile = join('my', 'pkg', 'digitalExperiences', 'site', 'foo', 'foo.digitalExperience-meta.xml');
+    const expectedPath = join('digitalExperiences', 'site', 'foo', 'foo.digitalExperience-meta.xml');
+    expect(cmp.getPackageRelativePath(metaFile, 'metadata')).to.equal(expectedPath);
+  });
+
+  it('should return correct relative path for DigitalExperience', () => {
+    const registry = new RegistryAccess();
+    const deType = registry.getTypeByName('DigitalExperience');
+    const cmp = new SourceComponent({ name: deType.name, type: deType });
+
+    const contentFile = join(
+      'my',
+      'pkg',
+      'digitalExperiences',
+      'site',
+      'foo',
+      'sfdc_cms__view',
+      'home',
+      'content.json'
+    );
+    const expectedContentPath = join('digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home', 'content.json');
+    expect(cmp.getPackageRelativePath(contentFile, 'metadata')).to.equal(expectedContentPath);
+
+    const metaFile = join('my', 'pkg', 'digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home', '_meta.json');
+    const expectedMetaPath = join('digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home', '_meta.json');
+    expect(cmp.getPackageRelativePath(metaFile, 'metadata')).to.equal(expectedMetaPath);
+
+    const variantFile = join('my', 'pkg', 'digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home', 'fr.json');
+    const expectedVariantPath = join('digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home', 'fr.json');
+    expect(cmp.getPackageRelativePath(variantFile, 'metadata')).to.equal(expectedVariantPath);
+  });
+
   describe('parseXml', () => {
     afterEach(() => env.restore());
 

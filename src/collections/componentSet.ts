@@ -523,6 +523,14 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         if (parentInWildcard) {
           return true;
         }
+        const partialWildcardKey = this.simpleKey({
+          fullName: `${parent.fullName}.${ComponentSet.WILDCARD}`,
+          type: component.type,
+        });
+        const parentInPartialWildcard = this.components.has(partialWildcardKey);
+        if (parentInPartialWildcard) {
+          return true;
+        }
       }
     }
 

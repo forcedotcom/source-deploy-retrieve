@@ -3027,6 +3027,44 @@
       "directoryName": "IdentityVerificationProcDefs",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "digitalexperiencebundle": {
+      "id": "digitalexperiencebundle",
+      "name": "DigitalExperienceBundle",
+      "directoryName": "digitalExperiences",
+      "inFolder": false,
+      "supportsWildcardAndName": true,
+      "suffix": "digitalExperience",
+      "children": {
+        "types": {
+          "digitalexperience": {
+            "id": "digitalexperience",
+            "name": "DigitalExperience",
+            "directoryName": "digitalExperiences",
+            "suffix": "digitalExperience",
+            "strategies": {
+              "adapter": "digitalExperience"
+            }
+          }
+        },
+        "suffixes": {
+          "digitalExperience": "digitalexperience"
+        },
+        "directories": {
+          "digitalExperiences": "digitalexperience"
+        }
+      },
+      "strategies": {
+        "adapter": "digitalExperience"
+      }
+    },
+    "digitalexperienceconfig": {
+      "id": "digitalexperienceconfig",
+      "name": "DigitalExperienceConfig",
+      "suffix": "digitalExperienceConfig",
+      "directoryName": "digitalExperienceConfigs",
+      "inFolder": false,
+      "strictDirectoryName": true
     }
   },
   "suffixes": {
@@ -3362,7 +3400,9 @@
     "dwl": "dataweaveresource",
     "aq": "assessmentquestion",
     "aqs": "assessmentquestionset",
-    "identityverificationprocdef": "identityverificationprocdef"
+    "identityverificationprocdef": "identityverificationprocdef",
+    "digitalExperience": "digitalexperiencebundle",
+    "digitalExperienceConfig": "digitalexperienceconfig"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -3386,7 +3426,8 @@
     "siteDotComSites": "sitedotcom",
     "appointmentSchedulingPolicies": "appointmentschedulingpolicy",
     "appointmentAssignmentPolicies": "appointmentassignmentpolicy",
-    "emailservices": "emailservicesfunction"
+    "emailservices": "emailservicesfunction",
+    "digitalExperienceConfigs": "digitalexperienceconfig"
   },
   "childTypes": {
     "customlabel": "customlabels",
@@ -3420,6 +3461,7 @@
     "sharingcriteriarule": "sharingrules",
     "botversion": "bot",
     "customfieldtranslation": "customobjecttranslation",
-    "mktdatatranfield": "mktdatatranobject"
+    "mktdatatranfield": "mktdatatranobject",
+    "digitalexperience": "digitalexperiencebundle"
   }
 }

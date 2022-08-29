@@ -1,4 +1,5 @@
-# test push
+# runs ut and nuts for SDR, plus the nuts from plugin-source
+
 name: tests
 on:
   push:
@@ -8,7 +9,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
   unit-tests:
     uses: salesforcecli/github-workflows/.github/workflows/unitTest.yml@main
   perf-scale-nuts-linux:

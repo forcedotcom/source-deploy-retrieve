@@ -1,3 +1,4 @@
+# runs some very-large-repo tests (for windows filesystem limits) and commits perf results for comparison
 name: perf-scale-nuts
 on:
   workflow_call:

@@ -1,6 +1,7 @@
+# when a github release happens, publish an npm package,
 on:
   release:
-    types: [published]
+    types: [released]
   # support manual release
   workflow_dispatch:
     inputs:

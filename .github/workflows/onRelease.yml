@@ -10,9 +10,8 @@ on:
         required: true
 jobs:
   npm:
-    uses: salesforcecli/github-workflows/.github/workflows/npmPublish.yml
+    uses: salesforcecli/github-workflows/.github/workflows/npmPublish.yml@main
     with:
       ctc: false
-      tag: latest
       githubTag: ${{ github.event.release.tag_name || inputs.tag }}
     secrets: inherit

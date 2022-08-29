@@ -6,5 +6,9 @@ on:
 
 jobs:
   release:
-    uses: salesforcecli/github-workflows/.github/workflows/githubRelease.yml
+    uses: salesforcecli/github-workflows/.github/workflows/githubRelease.yml@main
     secrets: inherit
+  docs:
+    uses: salesforcecli/github-workflows/.github/workflows/publishTypedoc.yml@main
+    secrets: inherit
+    needs: release

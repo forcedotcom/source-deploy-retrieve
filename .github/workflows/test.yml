@@ -54,7 +54,6 @@ jobs:
   external-nuts-full-linux:
     needs: [perf-scale-nuts-linux, extNuts-primer-linux]
     name: extNUTs-linux
-    # your linter may complain about this, but it is valid (originally wasn't)
     strategy:
       fail-fast: false
       matrix:
@@ -85,11 +84,10 @@ jobs:
       os: ubuntu-latest
     secrets: inherit
 
-  # now run the rest of the nuts for each os via cached version of al the setup steps
+  # now run the rest of the nuts for each os via cached version of all the setup steps
   external-nuts-full-windows:
     needs: [perf-scale-nuts-windows, extNuts-primer-windows]
     name: extNUTs-windows
-    # your linter may complain about this, but it is valid (originally wasn't)
     strategy:
       fail-fast: false
       matrix:

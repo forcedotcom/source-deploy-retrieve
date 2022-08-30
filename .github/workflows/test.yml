@@ -56,6 +56,7 @@ jobs:
     name: extNUTs-linux
     # your linter may complain about this, but it is valid (originally wasn't)
     strategy:
+      fail-fast: false
       matrix:
         command:
           - 'yarn test:nuts:convert'
@@ -90,6 +91,7 @@ jobs:
     name: extNUTs-windows
     # your linter may complain about this, but it is valid (originally wasn't)
     strategy:
+      fail-fast: false
       matrix:
         command:
           - 'yarn test:nuts:convert'

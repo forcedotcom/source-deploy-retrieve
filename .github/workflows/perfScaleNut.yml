@@ -24,7 +24,7 @@ jobs:
       - uses: salesforcecli/github-workflows/.github/actions/gitConfig@main
       - run: git status
       - run: git add test/nuts/perfResults
-      - run: 'git commit -m "test: record perf [ci skip]" --no-verify'
+      - run: 'git commit -m "test: record perf" --no-verify'
         # git on windows won't recognize the changes in the results files
         # when that is working, remove these if statements so we can track perf
         if: runner.os != 'Windows'

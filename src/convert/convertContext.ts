@@ -7,9 +7,9 @@
 import { join } from 'path';
 import { getString, JsonArray, JsonMap } from '@salesforce/ts-types';
 import { SfProject } from '@salesforce/core';
+import { ensureArray } from '@salesforce/kit';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSet } from '../collections';
-import { normalizeToArray } from '../utils';
 import { RecompositionStrategy, TransformerStrategy } from '../registry';
 import { MetadataComponent, SourceComponent, NodeFSTreeContainer, TreeContainer } from '../resolve';
 import { JsToXml } from './streams';
@@ -120,7 +120,7 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
       }
 
       // it might be an object and not an array.  Example: custom object with a Field property containing a single field
-      const group = normalizeToArray(parentObj[groupName]) as JsonArray;
+      const group = ensureArray(parentObj[groupName]) as JsonArray;
 
       group.push(childContents);
     }

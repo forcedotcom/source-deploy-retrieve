@@ -1235,6 +1235,13 @@
       "directoryName": "marketingResourceType",
       "inFolder": false
     },
+    "marketingappextension": {
+      "id": "marketingappextension",
+      "name": "MarketingAppExtension",
+      "suffix": "marketingAppExtension",
+      "directoryName": "marketingAppExtensions",
+      "inFolder": false
+    },
     "sharingrules": {
       "id": "sharingrules",
       "name": "SharingRules",
@@ -3165,6 +3172,7 @@
     "channelLayout": "channellayout",
     "asset": "contentasset",
     "marketingResourceType": "marketingresourcetype",
+    "marketingAppExtension": "marketingappextension",
     "sharingRules": "sharingrules",
     "sharingSet": "sharingset",
     "community": "community",

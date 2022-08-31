@@ -1,0 +1,20 @@
+# Checks registry against metadataCoverageReport (current release)
+name: registry-check
+
+on:
+  workflow_dispatch:
+  schedule:
+    # early in the morning (cron is GMT)
+    - cron: 8 22 * * *
+
+jobs:
+  registry-check:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: latest
+      - run: yarn install
+      - run: yarn build
+      - run: yarn test:registry

@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "6.3.0",
+  "version": "7.0.0",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/src/index.js",
   "author": "Salesforce",
@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@salesforce/core": "^3.26.1",
-    "@salesforce/kit": "^1.5.45",
+    "@salesforce/kit": "^1.6.0",
     "@salesforce/ts-types": "^1.5.20",
     "@xmldom/xmldom": "^0.8.2",
     "archiver": "^5.3.1",
@@ -103,7 +103,7 @@
     "pretest": "sf-compile-test",
     "repl": "node --inspect ./scripts/repl.js",
     "test": "sf-test",
-    "test:nuts:scale": "mocha \"test/nuts/scale/eda.nut.ts\" --timeout 500000 && mocha \"test/nuts/scale/lotsOfClasses.nut.ts\" --timeout 500000 && mocha \"test/nuts/scale/lotsOfClassesOneDir.nut.ts\" --timeout 500000",
+    "test:nuts:scale": "mocha \"test/nuts/scale/eda.nut.ts\" --timeout 500000; mocha \"test/nuts/scale/lotsOfClasses.nut.ts\" --timeout 500000; mocha \"test/nuts/scale/lotsOfClassesOneDir.nut.ts\" --timeout 500000",
     "test:nuts:scale:record": "yarn test:nuts:scale && git add . && git commit -m \"test: record perf [ci skip]\" --no-verify && git push --no-verify",
     "test:registry": "mocha ./test/registry/registryCompleteness.test.ts",
     "update-registry": "npx ts-node scripts/update-registry/update2.ts",

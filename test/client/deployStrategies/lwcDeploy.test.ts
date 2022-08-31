@@ -23,7 +23,7 @@ const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['er
 
 const $$ = testSetup();
 
-describe('LWC Deploy Strategy', () => {
+describe.skip('LWC Deploy Strategy', () => {
   const testMetadataField = {
     apiVersion: '32.0',
     status: 'Active',

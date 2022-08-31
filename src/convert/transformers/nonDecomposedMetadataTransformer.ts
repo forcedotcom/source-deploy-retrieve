@@ -6,8 +6,8 @@
  */
 
 import { get, getString, JsonMap } from '@salesforce/ts-types';
+import { ensureArray } from '@salesforce/kit';
 import { WriteInfo } from '../types';
-import { normalizeToArray } from '../../utils';
 import { SourceComponent } from '../../resolve';
 import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 
@@ -24,7 +24,7 @@ export class NonDecomposedMetadataTransformer extends DecomposedMetadataTransfor
     // this will only include the incoming (retrieved) labels, not the local file
     const parentXml = await component.parseXml();
     const xmlPathToChildren = `${component.type.name}.${component.type.directoryName}`;
-    const incomingChildrenXml = normalizeToArray(get(parentXml, xmlPathToChildren)) as JsonMap[];
+    const incomingChildrenXml = ensureArray(get(parentXml, xmlPathToChildren)) as JsonMap[];
     // presumes they only have 1 child!
     const [childTypeId] = Object.keys(component.type.children.types);
     const { uniqueIdElement } = component.type.children.types[childTypeId];

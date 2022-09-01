@@ -22,11 +22,14 @@ jobs:
       - run: yarn build
       - run: yarn test:nuts:scale
       - uses: salesforcecli/github-workflows/.github/actions/gitConfig@main
+        if: runner.os != 'Windows' && github.actor != 'dependabot[bot]'
       - run: git status
+        if: runner.os != 'Windows' && github.actor != 'dependabot[bot]'
       - run: git add test/nuts/perfResults
+        if: runner.os != 'Windows' && github.actor != 'dependabot[bot]'
       - run: 'git commit -m "test: record perf" --no-verify'
         # git on windows won't recognize the changes in the results files
         # when that is working, remove these if statements so we can track perf
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' && github.actor != 'dependabot[bot]'
       - run: git push --no-verify
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' && github.actor != 'dependabot[bot]'

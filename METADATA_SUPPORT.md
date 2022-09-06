@@ -531,6 +531,9 @@ v57 introduces the following new types.  Here's their current level of support
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
 |ActionableListDefinition|❌|Not supported, but support could be added|
+|ExternalClientApplication|❌|Not supported, but support could be added|
+|GearDescriptor|❌|Not supported, but support could be added|
+|ProductSpecificationTypeDefinition|❌|Not supported, but support could be added|
 
 ## Additional Types
 

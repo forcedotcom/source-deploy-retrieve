@@ -134,15 +134,13 @@ export class RegistryAccess {
    * Return the parent metadata type from the registry for the given child type
    *
    * @param childName - Child metadata type name
-   * @returns Parent metadata type object
+   * @returns Parent metadata type object or undefined if no parent exists
    */
-  public getParentType(childName: string): MetadataType {
-    let parent: MetadataType;
+  public getParentType(childName: string): MetadataType | undefined {
     const lower = childName.toLowerCase().trim();
     if (this.registry.childTypes[lower]) {
       const parentTypeId = this.registry.childTypes[lower];
-      parent = this.registry.types[parentTypeId];
+      return this.registry.types[parentTypeId];
     }
-    return parent;
   }
 }

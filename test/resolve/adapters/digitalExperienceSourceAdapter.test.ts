@@ -6,39 +6,11 @@
  */
 import { join } from 'path';
 import { expect } from 'chai';
-import {
-  RegistryAccess,
-  registry,
-  VirtualTreeContainer,
-  ForceIgnore,
-  SourceComponent,
-  MetadataXml,
-} from '../../../src';
+import { RegistryAccess, registry, VirtualTreeContainer, ForceIgnore, SourceComponent } from '../../../src';
 import { DigitalExperienceSourceAdapter } from '../../../src/resolve/adapters/digitalExperienceSourceAdapter';
 import { META_XML_SUFFIX } from '../../../src/common';
 
 describe('DigitalExperienceSourceAdapter', () => {
-  /**
-   * Stub class used for unit testing protected methods
-   */
-  class DigitalExperienceSourceAdapterStub extends DigitalExperienceSourceAdapter {
-    public getRootMetadataXmlPath(trigger: string): string {
-      return super.getRootMetadataXmlPath(trigger);
-    }
-    public calculateNameFromPath(contentPath: string): string {
-      return super.calculateNameFromPath(contentPath);
-    }
-    public trimPathToContent(path: string): string {
-      return super.trimPathToContent(path);
-    }
-    public populate(trigger: string, component?: SourceComponent): SourceComponent {
-      return super.populate(trigger, component);
-    }
-    public parseMetadataXml(path: string): MetadataXml {
-      return super.parseMetadataXml(path);
-    }
-  }
-
   const BASE_PATH = join('path', 'to', registry.types.digitalexperiencebundle.directoryName);
 
   const BUNDLE_NAME = join('site', 'foo');
@@ -60,111 +32,71 @@ describe('DigitalExperienceSourceAdapter', () => {
     HOME_VIEW_FRENCH_VARIANT_FILE,
   ]);
 
-  const bundleAdapter = new DigitalExperienceSourceAdapterStub(
+  const bundleAdapter = new DigitalExperienceSourceAdapter(
     registry.types.digitalexperiencebundle,
     registryAccess,
     forceIgnore,
     tree
   );
 
-  const digitalExperienceAdapter = new DigitalExperienceSourceAdapterStub(
+  const digitalExperienceAdapter = new DigitalExperienceSourceAdapter(
     registry.types.digitalexperiencebundle.children.types.digitalexperience,
     registryAccess,
     forceIgnore,
     tree
   );
 
-  describe('getRootMetadataXmlPath', () => {
-    it('should return metadata file for content.json', () => {
-      expect(digitalExperienceAdapter.getRootMetadataXmlPath(HOME_VIEW_CONTENT_FILE)).to.be.equal(HOME_VIEW_META_FILE);
-      expect(bundleAdapter.getRootMetadataXmlPath(HOME_VIEW_CONTENT_FILE)).to.be.equal(BUNDLE_META_FILE);
-    });
-
-    it('should return metadata file for variant file', () => {
-      expect(digitalExperienceAdapter.getRootMetadataXmlPath(HOME_VIEW_FRENCH_VARIANT_FILE)).to.be.equal(
-        HOME_VIEW_META_FILE
-      );
-      expect(bundleAdapter.getRootMetadataXmlPath(HOME_VIEW_FRENCH_VARIANT_FILE)).to.be.equal(BUNDLE_META_FILE);
-    });
-
-    it('should return metadata file for _meta.json file', () => {
-      expect(digitalExperienceAdapter.getRootMetadataXmlPath(HOME_VIEW_META_FILE)).to.be.equal(HOME_VIEW_META_FILE);
-      expect(bundleAdapter.getRootMetadataXmlPath(HOME_VIEW_META_FILE)).to.be.equal(BUNDLE_META_FILE);
-    });
-
-    it('should return metadata file for bundle', () => {
-      expect(bundleAdapter.getRootMetadataXmlPath(BUNDLE_META_FILE)).to.be.equal(BUNDLE_META_FILE);
-    });
-  });
-
-  describe('calculateNameFromPath', () => {
-    it('should return content full name in proper format', () => {
-      expect(digitalExperienceAdapter.calculateNameFromPath(HOME_VIEW_PATH)).to.be.equal(HOME_VIEW_NAME);
-    });
-
-    it('should return space full name in proper format', () => {
-      expect(bundleAdapter.calculateNameFromPath(BUNDLE_PATH)).to.be.equal(BUNDLE_NAME);
-    });
-  });
-
-  describe('trimPathToContent', () => {
-    it('should get the content folder for contents', () => {
-      expect(digitalExperienceAdapter.trimPathToContent(HOME_VIEW_CONTENT_FILE)).to.be.equal(HOME_VIEW_PATH);
-      expect(digitalExperienceAdapter.trimPathToContent(HOME_VIEW_FRENCH_VARIANT_FILE)).to.be.equal(HOME_VIEW_PATH);
-      expect(digitalExperienceAdapter.trimPathToContent(HOME_VIEW_META_FILE)).to.be.equal(HOME_VIEW_PATH);
-    });
-
-    it('returns undefined for DEB', () => {
-      expect(bundleAdapter.trimPathToContent(BUNDLE_META_FILE)).to.be.undefined;
-    });
-  });
-
-  describe('populate', () => {
-    it('returns the same component for DEB', () => {
-      const component = SourceComponent.createVirtualComponent({
-        name: BUNDLE_NAME,
-        type: registry.types.digitalexperiencebundle,
-        xml: BUNDLE_META_FILE,
-      });
-      expect(bundleAdapter.populate('', component)).to.be.equal(component);
-      expect(bundleAdapter.populate('', undefined)).to.be.undefined;
-    });
-  });
-
-  it('constructs proper parent for contents', () => {
-    const parent = new SourceComponent(
+  describe('DigitalExperienceSourceAdapter for DEB', () => {
+    const component = new SourceComponent(
       {
         name: BUNDLE_NAME,
         type: registry.types.digitalexperiencebundle,
         xml: BUNDLE_META_FILE,
       },
-      tree,
-      forceIgnore
+      tree
     );
+
+    it('should return a SourceComponent for meta xml', () => {
+      expect(bundleAdapter.getComponent(BUNDLE_META_FILE)).to.deep.equal(component);
+    });
+
+    it('should return a SourceComponent for content and variant json', () => {
+      expect(bundleAdapter.getComponent(HOME_VIEW_CONTENT_FILE)).to.deep.equal(component);
+      expect(bundleAdapter.getComponent(HOME_VIEW_META_FILE)).to.deep.equal(component);
+      expect(bundleAdapter.getComponent(HOME_VIEW_FRENCH_VARIANT_FILE)).to.deep.equal(component);
+    });
+
+    it('should return a SourceComponent when a bundle path is provided', () => {
+      expect(bundleAdapter.getComponent(HOME_VIEW_PATH)).to.deep.equal(component);
+      expect(bundleAdapter.getComponent(BUNDLE_PATH)).to.deep.equal(component);
+    });
+  });
+
+  describe('DigitalExperienceSourceAdapter for DE', () => {
     const component = new SourceComponent(
       {
         name: HOME_VIEW_NAME,
         type: registry.types.digitalexperiencebundle.children.types.digitalexperience,
         content: HOME_VIEW_PATH,
-        parent,
+        parent: new SourceComponent(
+          {
+            name: BUNDLE_NAME,
+            type: registry.types.digitalexperiencebundle,
+            xml: BUNDLE_META_FILE,
+          },
+          tree,
+          forceIgnore
+        ),
         parentType: registry.types.digitalexperiencebundle,
       },
       tree,
       forceIgnore
     );
-    expect(digitalExperienceAdapter.populate(HOME_VIEW_CONTENT_FILE, undefined)).to.deep.equal(component);
-    expect(digitalExperienceAdapter.populate(HOME_VIEW_META_FILE, undefined)).to.deep.equal(component);
-    expect(digitalExperienceAdapter.populate(HOME_VIEW_FRENCH_VARIANT_FILE, undefined)).to.deep.equal(component);
-  });
 
-  describe('parseMetadataXml', () => {
-    it('returns proper name in MetadataXml', () => {
-      const xml = {
-        fullName: BUNDLE_NAME,
-        suffix: registry.types.digitalexperiencebundle.suffix,
-        path: BUNDLE_META_FILE,
-      };
-      expect(bundleAdapter.parseMetadataXml(BUNDLE_META_FILE)).to.deep.equal(xml);
+    it('should return a SourceComponent for content and variant json', () => {
+      expect(digitalExperienceAdapter.getComponent(HOME_VIEW_CONTENT_FILE)).to.deep.equal(component);
+      expect(digitalExperienceAdapter.getComponent(HOME_VIEW_META_FILE)).to.deep.equal(component);
+      expect(digitalExperienceAdapter.getComponent(HOME_VIEW_FRENCH_VARIANT_FILE)).to.deep.equal(component);
     });
   });
 });

@@ -3064,7 +3064,7 @@
       "suffix": "digitalExperienceConfig",
       "directoryName": "digitalExperienceConfigs",
       "inFolder": false,
-      "strictDirectoryName": true
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3426,8 +3426,7 @@
     "siteDotComSites": "sitedotcom",
     "appointmentSchedulingPolicies": "appointmentschedulingpolicy",
     "appointmentAssignmentPolicies": "appointmentassignmentpolicy",
-    "emailservices": "emailservicesfunction",
-    "digitalExperienceConfigs": "digitalexperienceconfig"
+    "emailservices": "emailservicesfunction"
   },
   "childTypes": {
     "customlabel": "customlabels",

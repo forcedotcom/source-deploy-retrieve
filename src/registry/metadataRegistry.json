@@ -3191,7 +3191,7 @@
     "entitlementTemplate": "entitlementtemplate",
     "notiftype": "customnotificationtype",
     "connectedApp": "connectedapp",
-    "ExternalClientApplication": "ExternalClientApplication",
+    "externalClientApp": "externalclientapplication",
     "appMenu": "appmenu",
     "delegateGroup": "delegategroup",
     "network": "network",

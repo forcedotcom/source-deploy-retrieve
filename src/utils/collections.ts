@@ -6,19 +6,6 @@
  */
 
 /**
- * Normalize an object to be an array if it isn't one.
- *
- * @param entryOrArray - An object that could be an array of it's type or just its type
- * @returns An array of the input element
- */
-export function normalizeToArray<T>(entryOrArray: T | T[] | undefined): T[] {
-  if (entryOrArray) {
-    return Array.isArray(entryOrArray) ? entryOrArray : [entryOrArray];
-  }
-  return [];
-}
-
-/**
  * Deeply freezes an object, making the entire thing immutable.
  *
  * @param object - Object to deep freeze

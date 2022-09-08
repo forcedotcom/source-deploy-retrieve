@@ -8,21 +8,26 @@ import * as path from 'path';
 import * as os from 'os';
 import { Performance } from 'node:perf_hooks';
 import * as fs from 'graceful-fs';
+import { expect } from 'chai';
 
 const getPerfDir = (): string =>
   path
     .join('test', 'nuts', 'perfResults', `${os.arch()}-${os.platform()}-${os.cpus().length}x${os.cpus()[0].model}`)
     .replace(/@/g, '')
-    .replace(/\(R\)/, '')
-    .replace(/\(TM\)/, '')
-    .replace(/\./, '-')
-    .replace(/\s/g, '-');
+    .replace(/\(R\)/g, '')
+    .replace(/\(TM\)/g, '')
+    .replace(/\./g, '-')
+    .replace(/\s/g, '-')
+    .replace(/-{2,}/g, '-');
 
 export const recordPerf = async (testName: string, performance: Performance): Promise<void> => {
   const testPath = getPerfDir();
+  const fileTarget = path.join(testPath, `${testName}.json`);
+
   await fs.promises.mkdir(testPath, { recursive: true });
+  expect(fs.existsSync(testPath)).to.be.true;
   await fs.promises.writeFile(
-    path.join(testPath, `${testName}.json`),
+    fileTarget,
     JSON.stringify(
       // TS doesn't seem to know about the node16 perf hooks :(
       // @ts-ignore
@@ -32,4 +37,5 @@ export const recordPerf = async (testName: string, performance: Performance): Pr
     )
   );
   performance.clearMarks();
+  expect(fs.existsSync(fileTarget)).to.be.true;
 };

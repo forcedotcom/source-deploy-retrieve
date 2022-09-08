@@ -10,3 +10,4 @@ export { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 export { DecomposedSourceAdapter } from './decomposedSourceAdapter';
 export { DefaultSourceAdapter } from './defaultSourceAdapter';
 export { BaseSourceAdapter } from './baseSourceAdapter';
+export { DigitalExperienceSourceAdapter } from './digitalExperienceSourceAdapter';

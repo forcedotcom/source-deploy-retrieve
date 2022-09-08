@@ -22,7 +22,7 @@ const $$ = testSetup();
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_creating_metadata_type']);
 
-describe('Aura Deploy Strategy', () => {
+describe.skip('Aura Deploy Strategy', () => {
   const testMetadataField = {
     apiVersion: '32.0',
     status: 'Active',

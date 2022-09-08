@@ -1235,6 +1235,13 @@
       "directoryName": "marketingResourceType",
       "inFolder": false
     },
+    "marketingappextension": {
+      "id": "marketingappextension",
+      "name": "MarketingAppExtension",
+      "suffix": "marketingAppExtension",
+      "directoryName": "marketingAppExtensions",
+      "inFolder": false
+    },
     "sharingrules": {
       "id": "sharingrules",
       "name": "SharingRules",
@@ -1357,6 +1364,14 @@
       "name": "ConnectedApp",
       "suffix": "connectedApp",
       "directoryName": "connectedApps",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "externalclientapplication": {
+      "id": "externalclientapplication",
+      "name": "ExternalClientApplication",
+      "suffix": "externalClientApp",
+      "directoryName": "externalClientApps",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -3065,6 +3080,30 @@
       "directoryName": "digitalExperienceConfigs",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "forecastingfilter": {
+      "id": "forecastingfilter",
+      "name": "ForecastingFilter",
+      "suffix": "forecastingFilter",
+      "directoryName": "forecastingFilters",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "forecastingfiltercondition": {
+      "id": "forecastingfiltercondition",
+      "name": "ForecastingFilterCondition",
+      "suffix": "forecastingFilterCondition",
+      "directoryName": "forecastingFilterConditions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "schedulingobjective": {
+      "id": "schedulingobjective",
+      "name": "SchedulingObjective",
+      "suffix": "schedulingObjective",
+      "directoryName": "SchedulingObjectives",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3203,6 +3242,7 @@
     "channelLayout": "channellayout",
     "asset": "contentasset",
     "marketingResourceType": "marketingresourcetype",
+    "marketingAppExtension": "marketingappextension",
     "sharingRules": "sharingrules",
     "sharingSet": "sharingset",
     "community": "community",
@@ -3213,6 +3253,7 @@
     "entitlementTemplate": "entitlementtemplate",
     "notiftype": "customnotificationtype",
     "connectedApp": "connectedapp",
+    "externalClientApp": "externalclientapplication",
     "appMenu": "appmenu",
     "delegateGroup": "delegategroup",
     "network": "network",
@@ -3402,7 +3443,10 @@
     "aqs": "assessmentquestionset",
     "identityverificationprocdef": "identityverificationprocdef",
     "digitalExperience": "digitalexperiencebundle",
-    "digitalExperienceConfig": "digitalexperienceconfig"
+    "digitalExperienceConfig": "digitalexperienceconfig",
+    "forecastingFilter": "forecastingfilter",
+    "forecastingFilterCondition": "forecastingfiltercondition",
+    "schedulingObjective": "schedulingobjective"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

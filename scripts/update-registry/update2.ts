@@ -69,7 +69,7 @@ interface DescribeResult {
  */
 const registryUpdate = (missingTypesAsDescribeResult: DescribeResult[]) => {
   missingTypesAsDescribeResult.map((missingTypeDescribe) => {
-    if (missingTypeDescribe.childXmlNames || missingTypeDescribe.folderContentType) {
+    if (missingTypeDescribe.childXmlNames?.length || missingTypeDescribe.folderContentType) {
       console.log(`Skipping ${missingTypeDescribe.xmlName} because it is a folder or has children`);
       return;
     }
@@ -90,7 +90,7 @@ const registryUpdate = (missingTypesAsDescribeResult: DescribeResult[]) => {
     };
     registry.suffixes[suffix] = typeId;
   });
-  const jsonData = JSON.stringify(registry);
+  const jsonData = JSON.stringify(registry, null, 2);
   fs.writeFileSync('./src/registry/metadataRegistry.json', jsonData);
 };
 

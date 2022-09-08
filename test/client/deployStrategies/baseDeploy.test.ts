@@ -17,7 +17,7 @@ const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['er
 
 const $$ = testSetup();
 
-describe('Base Deploy Strategy', () => {
+describe.skip('Base Deploy Strategy', () => {
   let simpleMetaXMLString = '<?xml version="1.0" encoding="UTF-8"?>';
   simpleMetaXMLString += '<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">';
   simpleMetaXMLString += '    <apiVersion>32.0</apiVersion>';

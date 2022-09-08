@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "6.3.0",
+  "version": "6.7.0",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/src/index.js",
   "author": "Salesforce",
@@ -25,8 +25,8 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^3.26.1",
-    "@salesforce/kit": "^1.5.45",
+    "@salesforce/core": "^3.26.2",
+    "@salesforce/kit": "^1.6.0",
     "@salesforce/ts-types": "^1.5.20",
     "@xmldom/xmldom": "^0.8.2",
     "archiver": "^5.3.1",
@@ -49,9 +49,9 @@
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/mime": "2.0.3",
     "@types/mkdirp": "0.5.2",
+    "@types/proxy-from-env": "^1.0.1",
     "@types/shelljs": "^0.8.11",
     "@types/unzipper": "^0.10.5",
-    "@types/proxy-from-env": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "chai": "^4.3.6",
@@ -103,7 +103,7 @@
     "pretest": "sf-compile-test",
     "repl": "node --inspect ./scripts/repl.js",
     "test": "sf-test",
-    "test:nuts:scale": "mocha \"test/nuts/scale/eda.nut.ts\" --timeout 500000 && mocha \"test/nuts/scale/lotsOfClasses.nut.ts\" --timeout 500000 && mocha \"test/nuts/scale/lotsOfClassesOneDir.nut.ts\" --timeout 500000",
+    "test:nuts:scale": "mocha \"test/nuts/scale/eda.nut.ts\" --timeout 500000; mocha \"test/nuts/scale/lotsOfClasses.nut.ts\" --timeout 500000; mocha \"test/nuts/scale/lotsOfClassesOneDir.nut.ts\" --timeout 500000",
     "test:nuts:scale:record": "yarn test:nuts:scale && git add . && git commit -m \"test: record perf [ci skip]\" --no-verify && git push --no-verify",
     "test:registry": "mocha ./test/registry/registryCompleteness.test.ts",
     "update-registry": "npx ts-node scripts/update-registry/update2.ts",

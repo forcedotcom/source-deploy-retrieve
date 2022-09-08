@@ -6,8 +6,8 @@
  */
 
 import { parse as parseXml } from 'fast-xml-parser';
+import { ensureArray } from '@salesforce/kit';
 import { MetadataType, RegistryAccess } from '../registry';
-import { normalizeToArray } from '../utils';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
 import { MetadataComponent } from './types';
 
@@ -59,14 +59,14 @@ export class ManifestResolver {
         stopNodes: ['version'],
       }) as { Package: ParsedPackageManifest }
     ).Package;
-    const packageTypeMembers = normalizeToArray(parsedManifest.types);
+    const packageTypeMembers = ensureArray(parsedManifest.types);
     const apiVersion = parsedManifest.version;
 
     for (const typeMembers of packageTypeMembers) {
       const typeName = typeMembers.name;
       const type = this.registry.getTypeByName(typeName);
       const parentType = type.folderType ? this.registry.getTypeByName(type.folderType) : undefined;
-      const members = normalizeToArray(typeMembers.members);
+      const members = ensureArray(typeMembers.members);
 
       for (const fullName of members) {
         let mdType = type;

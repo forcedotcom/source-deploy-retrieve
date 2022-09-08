@@ -615,14 +615,15 @@
     mv "~2"
     safe-json-stringify "~1"
 
-"@salesforce/cli-plugins-testkit@^2.3.4":
-  version "2.3.10"
-  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-2.3.10.tgz#bd2596259b5f3ee67fe535c01ee5aa68e55a17e4"
-  integrity sha512-6NFnfTyG927OGZcYwfPSShXs+s+uq9Kat5HQEzFx+I/FLwfoa2vLfEvchSxaoJexg/1ZkMaoWCRjABivCRgloQ==
+"@salesforce/cli-plugins-testkit@^2.3.13":
+  version "2.3.13"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-2.3.13.tgz#d3179403f1264b8c11bc021768ae1a8b70cc8eb8"
+  integrity sha512-vyz+1E7sPBD+BubvOF6OJYIV4e6J5PB/v9V77GQjGXx3FI0J09OLjvGe2rjIW+Vm1rbjLBVjtIAZvKlpGYx/Uw==
   dependencies:
     "@salesforce/core" "^3.20.1"
     "@salesforce/kit" "^1.5.42"
     "@salesforce/ts-types" "^1.5.17"
+    "@types/shelljs" "^0.8.11"
     archiver "^5.2.0"
     debug "^4.3.1"
     shelljs "^0.8.4"

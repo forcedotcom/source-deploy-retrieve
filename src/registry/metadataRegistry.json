@@ -3058,6 +3058,14 @@
       "directoryName": "forecastingFilterConditions",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "schedulingobjective": {
+      "id": "schedulingobjective",
+      "name": "SchedulingObjective",
+      "suffix": "schedulingObjective",
+      "directoryName": "SchedulingObjectives",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3397,7 +3405,8 @@
     "aqs": "assessmentquestionset",
     "identityverificationprocdef": "identityverificationprocdef",
     "forecastingFilter": "forecastingfilter",
-    "forecastingFilterCondition": "forecastingfiltercondition"
+    "forecastingFilterCondition": "forecastingfiltercondition",
+    "schedulingObjective": "schedulingobjective"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

@@ -69,7 +69,7 @@ interface DescribeResult {
  */
 const registryUpdate = (missingTypesAsDescribeResult: DescribeResult[]) => {
   missingTypesAsDescribeResult.map((missingTypeDescribe) => {
-    if (missingTypeDescribe.childXmlNames || missingTypeDescribe.folderContentType) {
+    if (missingTypeDescribe.childXmlNames?.length || missingTypeDescribe.folderContentType) {
       console.log(`Skipping ${missingTypeDescribe.xmlName} because it is a folder or has children`);
       return;
     }

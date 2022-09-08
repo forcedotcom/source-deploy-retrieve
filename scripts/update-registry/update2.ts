@@ -90,7 +90,7 @@ const registryUpdate = (missingTypesAsDescribeResult: DescribeResult[]) => {
     };
     registry.suffixes[suffix] = typeId;
   });
-  const jsonData = JSON.stringify(registry);
+  const jsonData = JSON.stringify(registry, null, 2);
   fs.writeFileSync('./src/registry/metadataRegistry.json', jsonData);
 };
 

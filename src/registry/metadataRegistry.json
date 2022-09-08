@@ -3042,6 +3042,30 @@
       "directoryName": "IdentityVerificationProcDefs",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "forecastingfilter": {
+      "id": "forecastingfilter",
+      "name": "ForecastingFilter",
+      "suffix": "forecastingFilter",
+      "directoryName": "forecastingFilters",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "forecastingfiltercondition": {
+      "id": "forecastingfiltercondition",
+      "name": "ForecastingFilterCondition",
+      "suffix": "forecastingFilterCondition",
+      "directoryName": "forecastingFilterConditions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "schedulingobjective": {
+      "id": "schedulingobjective",
+      "name": "SchedulingObjective",
+      "suffix": "schedulingObjective",
+      "directoryName": "SchedulingObjectives",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3379,7 +3403,10 @@
     "dwl": "dataweaveresource",
     "aq": "assessmentquestion",
     "aqs": "assessmentquestionset",
-    "identityverificationprocdef": "identityverificationprocdef"
+    "identityverificationprocdef": "identityverificationprocdef",
+    "forecastingFilter": "forecastingfilter",
+    "forecastingFilterCondition": "forecastingfiltercondition",
+    "schedulingObjective": "schedulingobjective"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

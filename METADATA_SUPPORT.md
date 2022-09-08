@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v56 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 467/512 supported metadata types.
+Currently, there are 470/512 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -246,8 +246,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |FlowDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |FlowSettings|✅||
 |FlowTest|✅||
-|ForecastingFilter|❌|Not supported, but support could be added|
-|ForecastingFilterCondition|❌|Not supported, but support could be added|
+|ForecastingFilter|✅||
+|ForecastingFilterCondition|✅||
 |ForecastingObjectListSettings|✅||
 |ForecastingSettings|✅||
 |ForecastingSourceDefinition|✅||
@@ -427,7 +427,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SalesAgreementSettings|✅||
 |SalesWorkQueueSettings|✅||
 |SamlSsoConfig|✅||
-|SchedulingObjective|❌|Not supported, but support could be added|
+|SchedulingObjective|✅||
 |SchedulingRule|✅||
 |SchemaSettings|✅||
 |ScoreCategory|❌|Not supported, but support could be added|

@@ -1367,6 +1367,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "externalclientapplication": {
+      "id": "externalclientapplication",
+      "name": "ExternalClientApplication",
+      "suffix": "externalClientApp",
+      "directoryName": "externalClientApps",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "appmenu": {
       "id": "appmenu",
       "name": "AppMenu",
@@ -3183,6 +3191,7 @@
     "entitlementTemplate": "entitlementtemplate",
     "notiftype": "customnotificationtype",
     "connectedApp": "connectedapp",
+    "externalClientApp": "externalclientapplication",
     "appMenu": "appmenu",
     "delegateGroup": "delegategroup",
     "network": "network",

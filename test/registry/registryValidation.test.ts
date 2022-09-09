@@ -110,6 +110,7 @@ describe('Registry Validation', () => {
         // things that use the suffix .settings (!)
         'IndustriesManufacturingSettings',
         'ObjectHierarchyRelationship',
+        'DigitalExperienceBundle', // no suffix for DigitalExperience child md type
       ];
 
       const suffixMap = new Map<string, string>();
@@ -244,9 +245,14 @@ describe('Registry Validation', () => {
     describe('valid, known adapters', () => {
       typesWithStrategies.forEach((type) => {
         it(`${type.id} has a valid adapter`, () => {
-          expect(['default', 'mixedContent', 'bundle', 'matchingContentFile', 'decomposed']).includes(
-            type.strategies.adapter
-          );
+          expect([
+            'default',
+            'mixedContent',
+            'bundle',
+            'matchingContentFile',
+            'decomposed',
+            'digitalExperience',
+          ]).includes(type.strategies.adapter);
         });
       });
     });

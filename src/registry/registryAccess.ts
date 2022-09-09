@@ -129,4 +129,18 @@ export class RegistryAccess {
     }
     return this.aliasTypes;
   }
+
+  /**
+   * Return the parent metadata type from the registry for the given child type
+   *
+   * @param childName - Child metadata type name
+   * @returns Parent metadata type object or undefined if no parent exists
+   */
+  public getParentType(childName: string): MetadataType | undefined {
+    const lower = childName.toLowerCase().trim();
+    if (this.registry.childTypes[lower]) {
+      const parentTypeId = this.registry.childTypes[lower];
+      return this.registry.types[parentTypeId];
+    }
+  }
 }

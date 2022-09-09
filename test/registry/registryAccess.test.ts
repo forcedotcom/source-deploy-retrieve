@@ -93,4 +93,20 @@ describe('RegistryAccess', () => {
       expect(registryAccess.getFolderContentTypes()).to.not.deep.include(registry.types.emailtemplatefolder);
     });
   });
+
+  describe('getParentType', () => {
+    it('should return a valid parent for a child metadata type', () => {
+      expect(
+        registryAccess.getParentType(registry.types.digitalexperiencebundle.children.types.digitalexperience.id)
+      ).to.be.equal(registry.types.digitalexperiencebundle);
+      expect(registryAccess.getParentType(registry.types.customobject.children.types.customfield.id)).to.be.equal(
+        registry.types.customobject
+      );
+    });
+
+    it('should return undefined parent for a top level metadata type', () => {
+      expect(registryAccess.getParentType(registry.types.experiencebundle.id)).to.be.undefined;
+      expect(registryAccess.getParentType(registry.types.digitalexperienceconfig.id)).to.be.undefined;
+    });
+  });
 });

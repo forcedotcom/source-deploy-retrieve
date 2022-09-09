@@ -24,7 +24,6 @@ export const features = [
   'MANAGETIMELINE', // is not a valid Features value
   'HEALTHCLOUDBETA', // is not a valid Features value
   'PARDOTADVANCED', // org:create throws a C-9999 when this is not excluded
-  'MCONTENTMETADATA',
   'EMBEDDEDSERVICEMESSAGING',
   'ARCGRAPHCOMMUNITY',
   'UNIFIEDHEALTHSCORING',

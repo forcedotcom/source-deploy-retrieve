@@ -74,6 +74,28 @@ describe('DefaultMetadataTransformer', () => {
       expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
     });
 
+    it('should not remove file extension and preserve -meta.xml for DigitalExperienceBundle', async () => {
+      const component = SourceComponent.createVirtualComponent({
+        name: 'site/foo',
+        type: registry.types.digitalexperiencebundle,
+        xml: join(
+          'path',
+          'to',
+          registry.types.digitalexperiencebundle.directoryName,
+          'site',
+          'foo',
+          `foo.${registry.types.digitalexperiencebundle.suffix}${META_XML_SUFFIX}`
+        ),
+      });
+      const expectedInfos: WriteInfo[] = [
+        {
+          source: component.tree.stream(component.xml),
+          output: join(component.type.directoryName, 'site', 'foo', `foo.${component.type.suffix}${META_XML_SUFFIX}`),
+        },
+      ];
+      expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
+    });
+
     it('should remove file extension and preserve -meta.xml for folder components', async () => {
       const component = FOLDER_COMPONENT;
       const expectedInfos: WriteInfo[] = [
@@ -189,6 +211,33 @@ describe('DefaultMetadataTransformer', () => {
         },
       ];
 
+      expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
+    });
+
+    it('should not remove file extension and preserve -meta.xml for DigitalExperienceBundle', async () => {
+      const component = SourceComponent.createVirtualComponent({
+        name: 'site/foo',
+        type: registry.types.digitalexperiencebundle,
+        xml: join(
+          DEFAULT_PACKAGE_ROOT_SFDX,
+          registry.types.digitalexperiencebundle.directoryName,
+          'site',
+          'foo',
+          `foo.${registry.types.digitalexperiencebundle.suffix}${META_XML_SUFFIX}`
+        ),
+      });
+      const expectedInfos: WriteInfo[] = [
+        {
+          source: component.tree.stream(component.xml),
+          output: join(
+            DEFAULT_PACKAGE_ROOT_SFDX,
+            component.type.directoryName,
+            'site',
+            'foo',
+            `foo.${component.type.suffix}${META_XML_SUFFIX}`
+          ),
+        },
+      ];
       expect(await transformer.toSourceFormat(component)).to.deep.equal(expectedInfos);
     });
 

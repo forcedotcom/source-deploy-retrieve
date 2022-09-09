@@ -176,6 +176,18 @@ describe('ComponentSet', () => {
         expect(result).to.be.true;
       });
 
+      it('should resolve partial wildcard members by default', async () => {
+        const set = await ComponentSet.fromManifest({
+          manifestPath: manifestFiles.ONE_PARTIAL_WILDCARD.name,
+          registry: registryAccess,
+          tree: manifestFiles.TREE,
+        });
+
+        const result = set.has({ fullName: 'site/foo.*', type: 'DigitalExperience' });
+
+        expect(result).to.be.true;
+      });
+
       it('should resolve wildcard members when forceAddWildcards = true', async () => {
         const set = await ComponentSet.fromManifest({
           manifestPath: manifestFiles.ONE_WILDCARD.name,

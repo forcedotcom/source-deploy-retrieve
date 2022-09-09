@@ -14,6 +14,7 @@ import { DecomposedSourceAdapter } from './decomposedSourceAdapter';
 import { MatchingContentSourceAdapter } from './matchingContentSourceAdapter';
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { DefaultSourceAdapter } from './defaultSourceAdapter';
+import { DigitalExperienceSourceAdapter } from './digitalExperienceSourceAdapter';
 
 enum AdapterId {
   Bundle = 'bundle',
@@ -21,6 +22,7 @@ enum AdapterId {
   Default = 'default',
   MatchingContentFile = 'matchingContentFile',
   MixedContent = 'mixedContent',
+  DigitalExperience = 'digitalExperience',
 }
 
 Messages.importMessagesDirectory(__dirname);
@@ -48,6 +50,8 @@ export class SourceAdapterFactory {
         return new MixedContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case AdapterId.Default:
         return new DefaultSourceAdapter(type, this.registry, forceIgnore, this.tree);
+      case AdapterId.DigitalExperience:
+        return new DigitalExperienceSourceAdapter(type, this.registry, forceIgnore, this.tree);
       case undefined:
         return new DefaultSourceAdapter(type, this.registry, forceIgnore, this.tree);
       default:

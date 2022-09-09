@@ -215,6 +215,14 @@ export class MetadataResolver {
       resolvedType = this.registry.getTypeBySuffix(extName(fsPath));
     }
 
+    // attempt 4 - try treating the content as metadata
+    if (!resolvedType) {
+      const metadata = this.parseAsMetadata(fsPath);
+      if (metadata) {
+        resolvedType = this.registry.getTypeByName(metadata);
+      }
+    }
+
     return resolvedType;
   }
 
@@ -297,9 +305,24 @@ export class MetadataResolver {
     return folderName;
   }
 
+  /**
+   * If this file should be considered as a metadata file then return the metadata type
+   */
+  private parseAsMetadata(fsPath: string): string {
+    if (this.tree.isDirectory(fsPath)) {
+      return;
+    }
+    return ['DigitalExperience']
+      .map((type) => this.registry.getTypeByName(type))
+      .find((type) => fsPath.split(sep).includes(type.directoryName))?.name;
+  }
+
   private isMetadata(fsPath: string): boolean {
     return (
-      !!parseMetadataXml(fsPath) || this.parseAsContentMetadataXml(fsPath) || !!this.parseAsFolderMetadataXml(fsPath)
+      !!parseMetadataXml(fsPath) ||
+      this.parseAsContentMetadataXml(fsPath) ||
+      !!this.parseAsFolderMetadataXml(fsPath) ||
+      !!this.parseAsMetadata(fsPath)
     );
   }
 }

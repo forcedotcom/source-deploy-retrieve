@@ -88,11 +88,11 @@ export class DefaultMetadataTransformer extends BaseMetadataTransformer {
     let xmlDestination = component.getPackageRelativePath(component.xml, targetFormat);
 
     // quirks:
-    // - append or strip the -meta.xml suffix to the path if there's no content
+    // - append or strip the -meta.xml suffix to the path if there's no content and if it's not DigitalExperienceBundle
     //  for folder components:
     //    - remove file extension but preserve -meta.xml suffix if folder type and to 'metadata format'
     //    - insert file extension behind the -meta.xml suffix if folder type and to 'source format'
-    if (!component.content) {
+    if (!component.content && !['digitalexperiencebundle'].includes(component.type.id)) {
       if (targetFormat === 'metadata') {
         xmlDestination = folderContentType
           ? xmlDestination.replace(`.${suffix}`, '')

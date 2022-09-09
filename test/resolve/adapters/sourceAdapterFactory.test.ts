@@ -15,6 +15,7 @@ import {
   MixedContentSourceAdapter,
 } from '../../../src/resolve/adapters';
 import { SourceAdapterFactory } from '../../../src/resolve/adapters/sourceAdapterFactory';
+import { DigitalExperienceSourceAdapter } from '../../../src/resolve/adapters/digitalExperienceSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_missing_adapter']);
@@ -52,6 +53,16 @@ describe('SourceAdapterFactory', () => {
     const type = registry.types.apexclass;
     const adapter = factory.getAdapter(type);
     expect(adapter).to.deep.equal(new MatchingContentSourceAdapter(type, registryAccess, undefined, tree));
+  });
+
+  it('Should return DigitalExperienceSourceAdapter for digitalExperience AdapterId', () => {
+    const type = registry.types.digitalexperiencebundle;
+    const adapter = factory.getAdapter(type);
+    expect(adapter).to.deep.equal(new DigitalExperienceSourceAdapter(type, registryAccess, undefined, tree));
+
+    const childType = registry.types.digitalexperiencebundle.children.types.digitalexperience;
+    const childAdapter = factory.getAdapter(childType);
+    expect(childAdapter).to.deep.equal(new DigitalExperienceSourceAdapter(childType, registryAccess, undefined, tree));
   });
 
   it('Should return BundleSourceAdapter for bundle AdapterId', () => {

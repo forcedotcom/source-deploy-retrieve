@@ -212,7 +212,13 @@ export class SourceComponent implements MetadataComponent {
     // the file resides in for the new destination. This also applies to inFolder types:
     // (report, dashboard, emailTemplate, document) and their folder container types:
     // (reportFolder, dashboardFolder, emailFolder, documentFolder)
-    if (!suffix || inFolder || folderContentType) {
+    // It also applies to DigitalExperienceBundle types as we need to maintain the folder structure
+    if (
+      !suffix ||
+      inFolder ||
+      folderContentType ||
+      ['digitalexperiencebundle', 'digitalexperience'].includes(this.type.id)
+    ) {
       return trimUntil(fsPath, directoryName, true);
     }
 

@@ -564,5 +564,15 @@ describe('Streams', () => {
       expect(buffer).to.be.instanceof(Buffer);
       expect(buffer.toString()).to.equal('foo');
     });
+
+    it('returns expected result for empty files', async () => {
+      const stream = new Readable();
+      stream._read = (): void => {
+        stream.push(null);
+      };
+      const buffer = await streams.stream2buffer(stream);
+      expect(buffer).to.be.instanceof(Buffer);
+      expect(buffer.toString()).to.equal('');
+    });
   });
 });

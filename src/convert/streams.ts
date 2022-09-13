@@ -31,7 +31,6 @@ export const stream2buffer = async (stream: Stream): Promise<Buffer> => {
   return new Promise<Buffer>((resolve, reject) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const buf = Array<any>();
-
     stream.on('data', (chunk) => buf.push(chunk));
     stream.on('end', () => resolve(Buffer.concat(buf)));
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -228,17 +227,20 @@ export class ZipWriter extends ComponentWriter {
     let err: Error;
     try {
       await Promise.all(
-        chunk.writeInfos.map(async (writeInfo) =>
-          this.addToZip(
-            chunk.component.type.folderType ?? chunk.component.type.folderContentType
-              ? // we don't want to prematurely zip folder types when their children might still be not in the zip
-                // those files we'll leave held open as Readable until finalize
-                writeInfo.source
-              : // everything else can be zipped immediately
-                await stream2buffer(writeInfo.source),
-            writeInfo.output
-          )
-        )
+        chunk.writeInfos.map(async (writeInfo) => {
+          // we don't want to prematurely zip folder types when their children might still be not in the zip
+          // those files we'll leave open as ReadableStreams until the zip finalizes
+          if (chunk.component.type.folderType || chunk.component.type.folderContentType) {
+            return this.addToZip(writeInfo.source, writeInfo.output);
+          }
+          const streamAsBuffer = await stream2buffer(writeInfo.source);
+          // everything else can be zipped immediately to reduce the number of open files (windows has a low limit!) and help perf
+          if (streamAsBuffer.length) {
+            return this.addToZip(streamAsBuffer, writeInfo.output);
+          }
+          // these will be zero-length files, which archiver supports via stream but not buffer
+          return this.addToZip(writeInfo.source, writeInfo.output);
+        })
       );
     } catch (e) {
       err = e as Error;

@@ -615,24 +615,25 @@
     mv "~2"
     safe-json-stringify "~1"
 
-"@salesforce/cli-plugins-testkit@^2.3.4":
-  version "2.3.10"
-  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-2.3.10.tgz#bd2596259b5f3ee67fe535c01ee5aa68e55a17e4"
-  integrity sha512-6NFnfTyG927OGZcYwfPSShXs+s+uq9Kat5HQEzFx+I/FLwfoa2vLfEvchSxaoJexg/1ZkMaoWCRjABivCRgloQ==
+"@salesforce/cli-plugins-testkit@^2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-2.4.0.tgz#dcf62c5f62591ea331d046348516849e03f4f73e"
+  integrity sha512-RlK5HxwGOfHd+mNYtE5kz5DHrS/VLfnMrQn7r2/Ppdtv4vOVY4VHPp6SH/ox9zS/8DII3RL7DTDJFOcOxlor7A==
   dependencies:
-    "@salesforce/core" "^3.20.1"
+    "@salesforce/core" "^3.30.2"
     "@salesforce/kit" "^1.5.42"
-    "@salesforce/ts-types" "^1.5.17"
+    "@salesforce/ts-types" "^1.5.21"
+    "@types/shelljs" "^0.8.11"
     archiver "^5.2.0"
     debug "^4.3.1"
     shelljs "^0.8.4"
     strip-ansi "6.0.1"
     ts-retry-promise "^0.7.0"
 
-"@salesforce/core@^3.20.1", "@salesforce/core@^3.26.3":
-  version "3.26.3"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.26.3.tgz#842a5375a4bed14ce50e7296a8aa632a83ab2ceb"
-  integrity sha512-uGF3fQQLAtyNd2qY2c13dcIc6RrS8lX7AqRBwzCnrSOPcYPEZb/PP1lBkJJVMpT6FqASjaYDaMBC3xVlf7i3aw==
+"@salesforce/core@^3.26.3", "@salesforce/core@^3.30.2":
+  version "3.30.2"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.30.2.tgz#fe7bd430e98b358003cf8892a753aaee88e3fd7f"
+  integrity sha512-MSDCbml/HOF8ZIMnYBQLnilXRTxOLnE8EJdCnO9XjIwMG8x9mVvn7EQEMxAS4G+e5oqXfpMtgxEN1fFJY/dbcA==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
     "@salesforce/kit" "^1.5.41"
@@ -725,7 +726,7 @@
     sinon "^5.1.1"
     tslib "^2.2.0"
 
-"@salesforce/ts-types@^1.5.17", "@salesforce/ts-types@^1.5.20", "@salesforce/ts-types@^1.5.21":
+"@salesforce/ts-types@^1.5.20", "@salesforce/ts-types@^1.5.21":
   version "1.5.21"
   resolved "https://registry.yarnpkg.com/@salesforce/ts-types/-/ts-types-1.5.21.tgz#e62784872f0e74bf4ae13381dc58aa4644ee2df3"
   integrity sha512-qG8r8WOzqpFOHaH3EGU3IwGrY/pSv9NQp4B0wGxOuPDBbraXVvd3KhWVStxaLGKBkJClJ7/+t+iCSP82sEiGcg==

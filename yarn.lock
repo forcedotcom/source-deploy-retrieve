@@ -629,10 +629,10 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.7.0"
 
-"@salesforce/core@^3.20.1", "@salesforce/core@^3.26.3":
-  version "3.26.3"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.26.3.tgz#842a5375a4bed14ce50e7296a8aa632a83ab2ceb"
-  integrity sha512-uGF3fQQLAtyNd2qY2c13dcIc6RrS8lX7AqRBwzCnrSOPcYPEZb/PP1lBkJJVMpT6FqASjaYDaMBC3xVlf7i3aw==
+"@salesforce/core@^3.20.1", "@salesforce/core@^3.30.8":
+  version "3.30.8"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.30.8.tgz#e40ee555b4eae5c74ae337d74c5db5a8f0d5fc59"
+  integrity sha512-5ixL5R9F600RfHtskuFLossGWAa2BDzysQk6Ns5OsHLY87U/1bH8edf+fubamf3aDaZaMIrcBoucQ2OJVmPtYw==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
     "@salesforce/kit" "^1.5.41"

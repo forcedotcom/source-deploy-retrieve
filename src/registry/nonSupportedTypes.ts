@@ -25,7 +25,6 @@ export const features = [
   'HEALTHCLOUDBETA', // is not a valid Features value
   'PARDOTADVANCED', // org:create throws a C-9999 when this is not excluded
   'EMBEDDEDSERVICEMESSAGING',
-  'ARCGRAPHCOMMUNITY',
   'UNIFIEDHEALTHSCORING',
   'HEALTHCLOUDADDON',
   'EINSTEINDOCREADER',

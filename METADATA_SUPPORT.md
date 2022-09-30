@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v56 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 473/512 supported metadata types.
+Currently, there are 474/512 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -415,7 +415,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ReferencedDashboard|❌|Not supported, but support could be added|
 |RegisteredExternalService|❌|Not supported, but support could be added|
 |RelatedRecordAssocCriteria|❌|Not supported, but support could be added|
-|RelationshipGraphDefinition|❌|Not supported, but support could be added|
+|RelationshipGraphDefinition|✅||
 |RemoteSiteSetting|✅||
 |Report|✅||
 |ReportFolder|✅||
@@ -522,33 +522,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |WorkflowSend|✅||
 |WorkflowTask|✅||
 |WorkforceEngagementSettings|✅||
-
-
-
-## Next Release (v57)
-v57 introduces the following new types.  Here's their current level of support
-
-|Metadata Type|Support|Notes|
-|:---|:---|:---|
-|ActionableListDefinition|❌|Not supported, but support could be added|
-|CampaignTemplateDefinition|❌|Not supported, but support could be added|
-|ClauseCatgConfiguration|❌|Not supported, but support could be added|
-|DisclosureDefinition|❌|Not supported, but support could be added|
-|DisclosureDefinitionVersion|❌|Not supported, but support could be added|
-|DisclosureType|❌|Not supported, but support could be added|
-|ExternalClientApplication|✅||
-|ExternalDocStorageConfig|❌|Not supported, but support could be added|
-|Gear|❌|Not supported, but support could be added|
-|GearDescriptor|❌|Not supported, but support could be added|
-|GearLifecycle|❌|Not supported, but support could be added|
-|GearRule|❌|Not supported, but support could be added|
-|GearRuleTest|❌|Not supported, but support could be added|
-|IdentityProviderSettings|✅||
-|LightningPropertyTypeBundle|❌|Not supported, but support could be added (but not for tracking)|
-|LocationUse|❌|Not supported, but support could be added|
-|OmniSupervisorConfig|❌|Not supported, but support could be added (but not for tracking)|
-|ProductSpecificationTypeDefinition|❌|Not supported, but support could be added|
-|WaveAnalyticAssetCollection|❌|Not supported, but support could be added|
 
 ## Additional Types
 

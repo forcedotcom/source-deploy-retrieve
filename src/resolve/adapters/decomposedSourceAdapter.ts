@@ -111,8 +111,7 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
             this.forceIgnore
           );
         }
-      } else {
-        if (!component) {
+      } else if (!component) {
           // This is most likely metadata found within a CustomObject folder that is not a
           // child type of CustomObject. E.g., Layout, SharingRules, ApexClass.
           throw new SfError(
@@ -120,7 +119,6 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
             'TypeInferenceError'
           );
         }
-      }
       if (component) {
         component.content = pathToContent;
       }

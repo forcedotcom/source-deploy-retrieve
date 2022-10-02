@@ -145,16 +145,12 @@ describe('StaticResourceMetadataTransformer', () => {
         {
           path: 'a',
           type: 'Directory',
-          stream: (): Entry => {
-            return null;
-          },
+          stream: (): Entry => null,
         },
         {
           path: 'b/c.css',
           type: 'File',
-          stream: (): Entry => {
-            return null;
-          },
+          stream: (): Entry => null,
         },
       ],
     } as CentralDirectory;

@@ -85,7 +85,7 @@ export abstract class BaseDeploy {
   }
 
   protected async toolingCreate(type: string, record: Record<string, unknown>): Promise<SaveResult> {
-    return await this.connection.tooling.create(type, record);
+    return this.connection.tooling.create(type, record);
   }
 
   protected getFormattedPaths(filepath: string): string[] {

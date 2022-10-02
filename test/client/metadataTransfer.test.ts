@@ -209,9 +209,7 @@ describe('MetadataTransfer', () => {
       env.stub(operation.components, 'getSourceComponents').returns({
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore only override length attribute
-        toArray: () => {
-          return { length: 10 };
-        },
+        toArray: () => ({ length: 10 }),
       });
       const pollingClientStub = env.stub(PollingClient, 'create').resolves(PollingClient.prototype);
       env.stub(PollingClient.prototype, 'subscribe').resolves({ status: RequestStatus.Canceled, done: true });
@@ -232,9 +230,7 @@ describe('MetadataTransfer', () => {
       env.stub(operation.components, 'getSourceComponents').returns({
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore only override length attribute
-        toArray: () => {
-          return { length: 2520 };
-        },
+        toArray: () => ({ length: 2520 }),
       });
       const pollingClientStub = env.stub(PollingClient, 'create').resolves(PollingClient.prototype);
       env.stub(PollingClient.prototype, 'subscribe').resolves({ status: RequestStatus.Canceled, done: true });

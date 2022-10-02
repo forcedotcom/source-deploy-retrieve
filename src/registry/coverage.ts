@@ -34,7 +34,7 @@ export const getCoverage = async (apiVersion: number): Promise<CoverageObject> =
     // one of these will match the current version, but they differ during the release cycle
     [44, 45, 46].map(
       async (na) =>
-        await got(
+        got(
           getProxiedOptions(`https://na${na}.test1.pc-rnd.salesforce.com/mdcoverage/api.jsp`)
         ).json<CoverageObject>()
     )

@@ -81,9 +81,7 @@ export class ConnectionResolver {
     }
 
     return {
-      components: Aggregator.filter(componentFilter).map((component) => {
-        return { fullName: component.fullName, type: this.registry.getTypeByName(component.type) };
-      }),
+      components: Aggregator.filter(componentFilter).map((component) => ({ fullName: component.fullName, type: this.registry.getTypeByName(component.type) })),
       apiVersion: this.connection.getApiVersion(),
     };
   }

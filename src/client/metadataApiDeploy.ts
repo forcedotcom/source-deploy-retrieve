@@ -106,20 +106,23 @@ export class DeployResult implements MetadataTransferResult {
 
       if (baseResponse.state === ComponentStatus.Failed) {
         const diagnostic = this.diagnosticUtil.parseDeployDiagnostic(component, message);
-        const response = Object.assign(baseResponse, diagnostic) as FileResponse;
+        const response = { ...baseResponse, diagnostic } as FileResponse;
         responses.push(response);
       } else {
         // components with children are already taken care of through the messages,
         // so don't walk their content directories.
-        if (content && !type.children) {
+        if (
+          content &&
+          (!type.children || Object.values(type.children.types).some((t) => t.unaddressableWithoutParent))
+        ) {
           for (const filePath of component.walkContent()) {
-            const response = Object.assign({}, baseResponse, { filePath }) as FileResponse;
+            const response = { ...baseResponse, filePath } as FileResponse;
             responses.push(response);
           }
         }
 
         if (xml) {
-          const response = Object.assign({}, baseResponse, { filePath: xml }) as FileResponse;
+          const response = { ...baseResponse, filePath: xml } as FileResponse;
           responses.push(response);
         }
       }

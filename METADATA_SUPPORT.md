@@ -531,14 +531,24 @@ v57 introduces the following new types.  Here's their current level of support
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
 |ActionableListDefinition|❌|Not supported, but support could be added|
+|CampaignTemplateDefinition|❌|Not supported, but support could be added|
 |ClauseCatgConfiguration|❌|Not supported, but support could be added|
+|DisclosureDefinition|❌|Not supported, but support could be added|
+|DisclosureDefinitionVersion|❌|Not supported, but support could be added|
 |DisclosureType|❌|Not supported, but support could be added|
 |ExternalClientApplication|✅||
+|ExternalDocStorageConfig|❌|Not supported, but support could be added|
+|Gear|❌|Not supported, but support could be added|
 |GearDescriptor|❌|Not supported, but support could be added|
+|GearLifecycle|❌|Not supported, but support could be added|
 |GearRule|❌|Not supported, but support could be added|
+|GearRuleTest|❌|Not supported, but support could be added|
 |IdentityProviderSettings|✅||
+|LightningPropertyTypeBundle|❌|Not supported, but support could be added (but not for tracking)|
+|LocationUse|❌|Not supported, but support could be added|
 |OmniSupervisorConfig|❌|Not supported, but support could be added (but not for tracking)|
 |ProductSpecificationTypeDefinition|❌|Not supported, but support could be added|
+|WaveAnalyticAssetCollection|❌|Not supported, but support could be added|
 
 ## Additional Types
 

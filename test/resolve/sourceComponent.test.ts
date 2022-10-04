@@ -437,8 +437,6 @@ describe('SourceComponent', () => {
       );
 
       const result = adapter.getComponent(DECOMPOSED_TOP_LEVEL_CHILD_XML_PATHS[0], true);
-      // eslint-disable-next-line no-console
-      console.log(result);
       expect(result.type).to.deep.equal(expectedTopLevel.type);
       expect(result.xml).to.equal(expectedTopLevel.xml);
     });

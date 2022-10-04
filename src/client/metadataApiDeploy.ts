@@ -106,7 +106,7 @@ export class DeployResult implements MetadataTransferResult {
 
       if (baseResponse.state === ComponentStatus.Failed) {
         const diagnostic = this.diagnosticUtil.parseDeployDiagnostic(component, message);
-        const response = { ...baseResponse, diagnostic } as FileResponse;
+        const response = Object.assign(baseResponse, diagnostic) as FileResponse;
         responses.push(response);
       } else {
         // components with children are already taken care of through the messages,

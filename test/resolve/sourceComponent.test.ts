@@ -8,7 +8,6 @@ import { join } from 'path';
 import { assert, expect } from 'chai';
 import { createSandbox } from 'sinon';
 import { Messages, SfError } from '@salesforce/core';
-
 import { decomposed, matchingContentFile, mixedContentDirectory, xmlInFolder } from '../mock';
 import { DECOMPOSED_COMPONENT } from '../mock/type-constants/customObjectConstant';
 import { COMPONENT } from '../mock/type-constants/apexClassConstant';
@@ -32,6 +31,10 @@ import {
   SourceComponent,
   VirtualTreeContainer,
 } from '../../src';
+import {
+  DECOMPOSED_TOP_LEVEL_CHILD_XML_PATHS,
+  DECOMPOSED_TOP_LEVEL_COMPONENT,
+} from '../mock/type-constants/customObjectTranslationConstant';
 import { DecomposedSourceAdapter } from '../../src/resolve/adapters';
 import { RegistryTestUtil } from './registryTestUtil';
 
@@ -420,6 +423,24 @@ describe('SourceComponent', () => {
         SfError,
         messages.getMessage('error_unexpected_child_type', [fsPath, type.name])
       );
+    });
+  });
+
+  describe('Un-addressable decomposed child (cot/cof)', () => {
+    it('gets parent when asked to resolve a child by filePath', () => {
+      const expectedTopLevel = DECOMPOSED_TOP_LEVEL_COMPONENT;
+      const adapter = new DecomposedSourceAdapter(
+        expectedTopLevel.type,
+        new RegistryAccess(),
+        undefined,
+        expectedTopLevel.tree
+      );
+
+      const result = adapter.getComponent(DECOMPOSED_TOP_LEVEL_CHILD_XML_PATHS[0], true);
+      // eslint-disable-next-line no-console
+      console.log(result);
+      expect(result.type).to.deep.equal(expectedTopLevel.type);
+      expect(result.xml).to.equal(expectedTopLevel.xml);
     });
   });
 

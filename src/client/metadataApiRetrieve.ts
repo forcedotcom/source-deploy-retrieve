@@ -100,7 +100,7 @@ export class RetrieveResult implements MetadataTransferResult {
         state: this.localComponents.has(retrievedComponent) ? ComponentStatus.Changed : ComponentStatus.Created,
       };
 
-      if (!type.children) {
+      if (!type.children || Object.values(type.children.types).some((t) => t.unaddressableWithoutParent)) {
         for (const filePath of retrievedComponent.walkContent()) {
           this.fileResponses.push(Object.assign({}, baseResponse, { filePath }));
         }

@@ -86,7 +86,7 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
       const triggerIsAChild = !!childTypeId;
       const strategy = this.type.strategies.decomposition;
 
-      if (triggerIsAChild) {
+      if (triggerIsAChild && !this.type.children.types[childTypeId].unaddressableWithoutParent) {
         if (strategy === DecompositionStrategy.FolderPerType || isResolvingSource) {
           let parent = component;
           if (!parent) {
@@ -111,15 +111,13 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
             this.forceIgnore
           );
         }
-      } else {
-        if (!component) {
-          // This is most likely metadata found within a CustomObject folder that is not a
-          // child type of CustomObject. E.g., Layout, SharingRules, ApexClass.
-          throw new SfError(
-            messages.getMessage('error_unexpected_child_type', [trigger, this.type.name]),
-            'TypeInferenceError'
-          );
-        }
+      } else if (!component) {
+        // This is most likely metadata found within a CustomObject folder that is not a
+        // child type of CustomObject. E.g., Layout, SharingRules, ApexClass.
+        throw new SfError(
+          messages.getMessage('error_unexpected_child_type', [trigger, this.type.name]),
+          'TypeInferenceError'
+        );
       }
       if (component) {
         component.content = pathToContent;

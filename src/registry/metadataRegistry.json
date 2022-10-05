@@ -3104,6 +3104,14 @@
       "directoryName": "SchedulingObjectives",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "relationshipgraphdefinition": {
+      "id": "relationshipgraphdefinition",
+      "name": "RelationshipGraphDefinition",
+      "suffix": "relationshipGraphDefinition",
+      "directoryName": "relationshipGraphDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3446,7 +3454,8 @@
     "digitalExperienceConfig": "digitalexperienceconfig",
     "forecastingFilter": "forecastingfilter",
     "forecastingFilterCondition": "forecastingfiltercondition",
-    "schedulingObjective": "schedulingobjective"
+    "schedulingObjective": "schedulingobjective",
+    "relationshipGraphDefinition": "relationshipgraphdefinition"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

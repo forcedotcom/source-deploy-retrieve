@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v56 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 473/512 supported metadata types.
+Currently, there are 474/512 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -415,7 +415,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ReferencedDashboard|❌|Not supported, but support could be added|
 |RegisteredExternalService|❌|Not supported, but support could be added|
 |RelatedRecordAssocCriteria|❌|Not supported, but support could be added|
-|RelationshipGraphDefinition|❌|Not supported, but support could be added|
+|RelationshipGraphDefinition|✅||
 |RemoteSiteSetting|✅||
 |Report|✅||
 |ReportFolder|✅||

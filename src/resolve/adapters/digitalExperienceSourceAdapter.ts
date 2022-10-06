@@ -57,6 +57,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
    * @param contentPath This hook is called only after trimPathToContent() is called. so this will always be a folder strcture
    * @returns name of type/apiName format
    */
+  // eslint-disable-next-line class-methods-use-this
   protected calculateNameFromPath(contentPath: string): string {
     return `${parentName(contentPath)}${sep}${baseName(contentPath)}`;
   }

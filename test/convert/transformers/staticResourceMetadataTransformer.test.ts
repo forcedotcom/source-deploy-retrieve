@@ -95,6 +95,7 @@ describe('StaticResourceMetadataTransformer', () => {
 
       for (const contentType of StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES) {
         parseXmlStub.resolves({ StaticResource: { contentType } });
+        // eslint-disable-next-line no-await-in-loop
         expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
         expect(archiveDirStub.calledOnceWith(content, false)).to.be.true;
         expect(archiveFinalizeStub.calledImmediatelyAfter(archiveDirStub)).to.be.true;

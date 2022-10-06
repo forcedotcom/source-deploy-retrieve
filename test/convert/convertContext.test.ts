@@ -201,6 +201,7 @@ describe('Convert Transaction Constructs', () => {
             children: [
               {
                 name: labelsFileName,
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 data: Buffer.from(new JsToXml(labelsXmls[0]).read().toString()),
               },
             ],
@@ -210,6 +211,7 @@ describe('Convert Transaction Constructs', () => {
             children: [
               {
                 name: labelsFileName,
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 data: Buffer.from(new JsToXml(labelsXmls[1]).read().toString()),
               },
             ],

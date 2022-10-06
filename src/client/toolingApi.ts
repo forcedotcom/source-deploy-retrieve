@@ -106,8 +106,10 @@ export class ToolingApi {
         failures: [],
       };
     } catch (err) {
-      const error = err as Error;
-      throw new SfError(messages.getMessage('error_in_tooling_retrieve'), error.name, [], err, err);
+      if (!(err instanceof Error)) {
+        throw err;
+      }
+      throw new SfError(messages.getMessage('error_in_tooling_retrieve'), err.name, [], err, err);
     }
 
     return retrieveResult;
@@ -136,7 +138,7 @@ export class ToolingApi {
     }
 
     const deployStrategy = getDeployStrategy(metadataType, this.connection);
-    const namespace = options && options.namespace ? options.namespace : '';
+    const namespace = options?.namespace ?? '';
     return deployStrategy.deploy(mdComponent, namespace);
   }
 

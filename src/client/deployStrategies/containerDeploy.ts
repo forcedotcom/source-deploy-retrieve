@@ -112,8 +112,10 @@ export class ContainerDeploy extends BaseDeploy {
     let containerStatus: ContainerAsyncRequest;
     do {
       if (count > 0) {
+        // eslint-disable-next-line no-await-in-loop
         await sleep(100);
       }
+      // eslint-disable-next-line no-await-in-loop
       containerStatus = (await this.connection.tooling.retrieve(
         ContainerDeploy.CONTAINER_ASYNC_REQUEST,
         containerId

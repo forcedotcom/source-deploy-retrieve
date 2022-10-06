@@ -136,7 +136,7 @@ export class MetadataResolver {
       // source path or allowed content-only path, otherwise the adapter
       // knows how to handle it
       const shouldResolve =
-        this.parseAsRootMetadataXml(fsPath) ||
+        parseAsRootMetadataXml(fsPath) ||
         isResolvingSource ||
         !this.parseAsContentMetadataXml(fsPath) ||
         !adapter.allowMetadataWithContent();
@@ -149,15 +149,6 @@ export class MetadataResolver {
       path: fsPath,
     });
     throw new SfError(messages.getMessage('error_could_not_infer_type', [fsPath]), 'TypeInferenceError');
-  }
-
-  /**
-   * Any metadata xml file (-meta.xml) is potentially a root metadata file.
-   *
-   * @param fsPath File path of a potential metadata xml file
-   */
-  private parseAsRootMetadataXml(fsPath: string): boolean {
-    return !!parseMetadataXml(fsPath);
   }
 
   private resolveTypeFromStrictFolder(fsPath: string): MetadataType | undefined {
@@ -326,3 +317,10 @@ export class MetadataResolver {
     );
   }
 }
+
+/**
+ * Any metadata xml file (-meta.xml) is potentially a root metadata file.
+ *
+ * @param fsPath File path of a potential metadata xml file
+ */
+const parseAsRootMetadataXml = (fsPath: string): boolean => Boolean(parseMetadataXml(fsPath));

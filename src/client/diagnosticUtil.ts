@@ -26,30 +26,9 @@ export class DiagnosticUtil {
         return this.parseAura(component, message);
       default:
         if (typeof message !== 'string') {
-          return this.parseDefault(component, message);
+          return parseDefault(component, message);
         }
     }
-  }
-
-  private parseDefault(component: SourceComponent, message: DeployMessage): ComponentDiagnostic {
-    const { problem, problemType, fileName, lineNumber, columnNumber } = message;
-    const diagnostic: ComponentDiagnostic = {
-      error: problem,
-      problemType,
-    };
-
-    if (fileName) {
-      const localProblemFile = component.walkContent().find((f) => f.endsWith(basename(message.fileName)));
-      diagnostic.filePath = localProblemFile ?? component.xml;
-    }
-
-    if (lineNumber && columnNumber) {
-      diagnostic.lineNumber = Number(lineNumber);
-      diagnostic.columnNumber = Number(columnNumber);
-      diagnostic.error = this.appendErrorWithLocation(diagnostic.error, lineNumber, columnNumber);
-    }
-
-    return diagnostic;
   }
 
   private parseLwc(component: SourceComponent, message: string | DeployMessage): ComponentDiagnostic {
@@ -66,10 +45,10 @@ export class DiagnosticUtil {
       }
 
       const matches = new RegExp(/(\[Line: (\d+), Col: (\d+)] )?(.*)/).exec(problem);
-      if (matches && matches[2] && matches[3] && matches[4]) {
+      if (matches?.[2] && matches[3] && matches[4]) {
         diagnostic.lineNumber = Number(matches[2]);
         diagnostic.columnNumber = Number(matches[3]);
-        diagnostic.error = this.appendErrorWithLocation(matches[4], diagnostic.lineNumber, diagnostic.columnNumber);
+        diagnostic.error = appendErrorWithLocation(matches[4], diagnostic.lineNumber, diagnostic.columnNumber);
       } else {
         diagnostic.error = problem;
       }
@@ -85,11 +64,7 @@ export class DiagnosticUtil {
         diagnostic.filePath = component.walkContent().find((f) => f.includes(fileName));
         diagnostic.lineNumber = Number(errLocation.split(',')[0]);
         diagnostic.columnNumber = Number(errLocation.split(',')[1]);
-        diagnostic.error = this.appendErrorWithLocation(
-          diagnostic.error,
-          diagnostic.lineNumber,
-          diagnostic.columnNumber
-        );
+        diagnostic.error = appendErrorWithLocation(diagnostic.error, diagnostic.lineNumber, diagnostic.columnNumber);
       } catch (e) {
         // TODO: log error with parsing error message
         diagnostic.error = problem;
@@ -132,14 +107,34 @@ export class DiagnosticUtil {
         const columnNumber = Number(matches[2]);
         diagnostic.lineNumber = lineNumber;
         diagnostic.columnNumber = columnNumber;
-        diagnostic.error = this.appendErrorWithLocation(diagnostic.error, lineNumber, columnNumber);
+        diagnostic.error = appendErrorWithLocation(diagnostic.error, lineNumber, columnNumber);
       }
     }
 
     return diagnostic;
   }
-
-  private appendErrorWithLocation(error: string, line: string | number, column: string | number): string {
-    return `${error} (${line}:${column})`;
-  }
 }
+
+const appendErrorWithLocation = (error: string, line: string | number, column: string | number): string =>
+  `${error} (${line}:${column})`;
+
+const parseDefault = (component: SourceComponent, message: DeployMessage): ComponentDiagnostic => {
+  const { problem, problemType, fileName, lineNumber, columnNumber } = message;
+  const diagnostic: ComponentDiagnostic = {
+    error: problem,
+    problemType,
+  };
+
+  if (fileName) {
+    const localProblemFile = component.walkContent().find((f) => f.endsWith(basename(message.fileName)));
+    diagnostic.filePath = localProblemFile ?? component.xml;
+  }
+
+  if (lineNumber && columnNumber) {
+    diagnostic.lineNumber = Number(lineNumber);
+    diagnostic.columnNumber = Number(columnNumber);
+    diagnostic.error = appendErrorWithLocation(diagnostic.error, lineNumber, columnNumber);
+  }
+
+  return diagnostic;
+};

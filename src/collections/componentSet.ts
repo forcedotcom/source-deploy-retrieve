@@ -41,6 +41,8 @@ const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['er
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
 
+const KEY_DELIMITER = '#';
+
 /**
  * A collection containing no duplicate metadata members (`fullName` and `type` pairs). `ComponentSets`
  * are a convenient way of constructing a unique collection of components to perform operations such as
@@ -53,7 +55,6 @@ export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
  */
 export class ComponentSet extends LazyCollection<MetadataComponent> {
   public static readonly WILDCARD = '*';
-  private static readonly KEY_DELIMITER = '#';
   /**
    * The metadata API version to use. E.g., 52.0
    */
@@ -92,6 +93,29 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   }
 
   /**
+   * Each {@link SourceComponent} counts as an element in the set, even if multiple
+   * ones map to the same `fullName` and `type` pair.
+   *
+   * @returns number of metadata components in the set
+   */
+  public get size(): number {
+    let size = 0;
+    for (const collection of this.components.values()) {
+      // just having an entry in the parent map counts as 1
+      size += collection.size === 0 ? 1 : collection.size;
+    }
+    return size;
+  }
+
+  public get destructiveChangesPre(): Map<string, Map<string, SourceComponent>> {
+    return this.destructiveComponents[DestructiveChangesType.PRE];
+  }
+
+  public get destructiveChangesPost(): Map<string, Map<string, SourceComponent>> {
+    return this.destructiveComponents[DestructiveChangesType.POST];
+  }
+
+  /**
    * Resolve metadata components from a file or directory path in a file system.
    *
    * @param fsPath File or directory path to resolve against
@@ -115,7 +139,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    */
   public static fromSource(options: FromSourceOptions): ComponentSet;
   public static fromSource(input: string | string[] | FromSourceOptions): ComponentSet {
-    let fsPaths = [];
+    let fsPaths: string[] = [];
     let registry: RegistryAccess;
     let tree: TreeContainer;
     let inclusiveFilter: ComponentSet;
@@ -358,7 +382,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     };
 
     for (const key of components.keys()) {
-      const [typeId, fullName] = this.splitOnFirstDelimiter(key);
+      const [typeId, fullName] = splitOnFirstDelimiter(key);
       let type = this.registry.getTypeByName(typeId);
 
       if (type.folderContentType) {
@@ -410,7 +434,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     });
     const toParse = await this.getObject(destructiveType);
     toParse.Package[XML_NS_KEY] = XML_NS_URL;
-    return XML_DECL.concat(j2x.parse(toParse));
+    return XML_DECL.concat(j2x.parse(toParse) as string);
   }
 
   /**
@@ -424,9 +448,10 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     if (member) {
       // filter optimization
-      const memberCollection = this.components.get(this.simpleKey(member));
+      const memberCollection = this.components.get(simpleKey(member));
       iter = memberCollection?.size > 0 ? memberCollection.values() : [];
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
       iter = this;
     }
 
@@ -434,7 +459,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   }
 
   public add(component: ComponentLike, deletionType?: DestructiveChangesType): void {
-    const key = this.simpleKey(component);
+    const key = simpleKey(component);
     if (!this.components.has(key)) {
       this.components.set(key, new Map<string, SourceComponent>());
     }
@@ -444,7 +469,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
 
     // we're working with SourceComponents now
-    this.components.get(key).set(this.sourceKey(component), component);
+    this.components.get(key).set(sourceKey(component), component);
 
     // Build maps of destructive components and regular components as they are added
     // as an optimization when building manifests.
@@ -455,12 +480,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       if (!deletions.has(key)) {
         deletions.set(key, new Map<string, SourceComponent>());
       }
-      deletions.get(key).set(this.sourceKey(component), component);
+      deletions.get(key).set(sourceKey(component), component);
     } else {
       if (!this.manifestComponents.has(key)) {
         this.manifestComponents.set(key, new Map<string, SourceComponent>());
       }
-      this.manifestComponents.get(key).set(this.sourceKey(component), component);
+      this.manifestComponents.get(key).set(sourceKey(component), component);
     }
 
     // something could try adding a component meant for deletion improperly, which would be marked as an addition
@@ -493,7 +518,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @returns `true` if the component is in the set
    */
   public has(component: ComponentLike): boolean {
-    const isDirectlyInSet = this.components.has(this.simpleKey(component));
+    const isDirectlyInSet = this.components.has(simpleKey(component));
     if (isDirectlyInSet) {
       return true;
     }
@@ -502,7 +527,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       fullName: ComponentSet.WILDCARD,
       type: typeof component.type === 'object' ? component.type.name : component.type,
     };
-    const isIncludedInWildcard = this.components.has(this.simpleKey(wildcardMember));
+    const isIncludedInWildcard = this.components.has(simpleKey(wildcardMember));
     if (isIncludedInWildcard) {
       return true;
     }
@@ -510,12 +535,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     if (typeof component.type === 'object') {
       const { parent } = component as MetadataComponent;
       if (parent) {
-        const parentDirectlyInSet = this.components.has(this.simpleKey(parent));
+        const parentDirectlyInSet = this.components.has(simpleKey(parent));
         if (parentDirectlyInSet) {
           return true;
         }
 
-        const wildcardKey = this.simpleKey({
+        const wildcardKey = simpleKey({
           fullName: ComponentSet.WILDCARD,
           type: parent.type,
         });
@@ -523,7 +548,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         if (parentInWildcard) {
           return true;
         }
-        const partialWildcardKey = this.simpleKey({
+        const partialWildcardKey = simpleKey({
           fullName: `${parent.fullName}.${ComponentSet.WILDCARD}`,
           type: component.type,
         });
@@ -544,7 +569,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @returns string[]
    */
   public getComponentFilenamesByNameAndType({ fullName, type }: MetadataMember): string[] {
-    const key = this.simpleKey({ fullName, type });
+    const key = simpleKey({ fullName, type });
     const componentMap = this.components.get(key);
     if (!componentMap) {
       return [];
@@ -561,7 +586,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public *[Symbol.iterator](): Iterator<MetadataComponent> {
     for (const [key, sourceComponents] of this.components.entries()) {
       if (sourceComponents.size === 0) {
-        const [typeName, fullName] = this.splitOnFirstDelimiter(key);
+        const [typeName, fullName] = splitOnFirstDelimiter(key);
         yield {
           fullName,
           type: this.registry.getTypeByName(typeName),
@@ -612,42 +637,19 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
     return destructiveChangesTypes;
   }
-
-  /**
-   * Each {@link SourceComponent} counts as an element in the set, even if multiple
-   * ones map to the same `fullName` and `type` pair.
-   *
-   * @returns number of metadata components in the set
-   */
-  public get size(): number {
-    let size = 0;
-    for (const collection of this.components.values()) {
-      // just having an entry in the parent map counts as 1
-      size += collection.size === 0 ? 1 : collection.size;
-    }
-    return size;
-  }
-
-  public get destructiveChangesPre(): Map<string, Map<string, SourceComponent>> {
-    return this.destructiveComponents[DestructiveChangesType.PRE];
-  }
-
-  public get destructiveChangesPost(): Map<string, Map<string, SourceComponent>> {
-    return this.destructiveComponents[DestructiveChangesType.POST];
-  }
-
-  private sourceKey(component: SourceComponent): string {
-    const { fullName, type, xml, content } = component;
-    return `${type.name}${fullName}${xml ?? ''}${content ?? ''}`;
-  }
-
-  private simpleKey(component: ComponentLike): string {
-    const typeName = typeof component.type === 'string' ? component.type.toLowerCase().trim() : component.type.id;
-    return `${typeName}${ComponentSet.KEY_DELIMITER}${component.fullName}`;
-  }
-
-  private splitOnFirstDelimiter(input: string): [string, string] {
-    const indexOfSplitChar = input.indexOf(ComponentSet.KEY_DELIMITER);
-    return [input.substring(0, indexOfSplitChar), input.substring(indexOfSplitChar + 1)];
-  }
 }
+
+const sourceKey = (component: SourceComponent): string => {
+  const { fullName, type, xml, content } = component;
+  return `${type.name}${fullName}${xml ?? ''}${content ?? ''}`;
+};
+
+const simpleKey = (component: ComponentLike): string => {
+  const typeName = typeof component.type === 'string' ? component.type.toLowerCase().trim() : component.type.id;
+  return `${typeName}${KEY_DELIMITER}${component.fullName}`;
+};
+
+const splitOnFirstDelimiter = (input: string): [string, string] => {
+  const indexOfSplitChar = input.indexOf(KEY_DELIMITER);
+  return [input.substring(0, indexOfSplitChar), input.substring(indexOfSplitChar + 1)];
+};

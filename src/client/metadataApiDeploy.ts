@@ -76,7 +76,7 @@ export class DeployResult implements MetadataTransferResult {
           const baseResponse: Partial<FileResponse> = {
             fullName: component.fullName,
             type: component.componentType,
-            state: this.getState(component),
+            state: getState(component),
             filePath: component.fileName.replace(`zip${sep}`, ''),
           };
 
@@ -101,7 +101,7 @@ export class DeployResult implements MetadataTransferResult {
       const baseResponse: Partial<FileResponse> = {
         fullName,
         type: type.name,
-        state: this.getState(message),
+        state: getState(message),
       };
 
       if (baseResponse.state === ComponentStatus.Failed) {
@@ -131,19 +131,6 @@ export class DeployResult implements MetadataTransferResult {
     return responses;
   }
 
-  private getState(message: DeployMessage): ComponentStatus {
-    if (message.created === 'true' || message.created === true) {
-      return ComponentStatus.Created;
-    } else if (message.changed === 'true' || message.changed === true) {
-      return ComponentStatus.Changed;
-    } else if (message.deleted === 'true' || message.deleted === true) {
-      return ComponentStatus.Deleted;
-    } else if (message.success === 'false' || message.success === false) {
-      return ComponentStatus.Failed;
-    }
-    return ComponentStatus.Unchanged;
-  }
-
   /**
    * Groups messages from the deploy result by component fullName and type
    */
@@ -155,7 +142,7 @@ export class DeployResult implements MetadataTransferResult {
     const successMessages = ensureArray(result.details.componentSuccesses);
 
     for (const failure of failureMessages) {
-      const sanitized = this.sanitizeDeployMessage(failure);
+      const sanitized = sanitizeDeployMessage(failure);
       const componentLike: ComponentLike = {
         fullName: sanitized.fullName,
         type: sanitized.componentType,
@@ -169,7 +156,7 @@ export class DeployResult implements MetadataTransferResult {
     }
 
     for (const success of successMessages) {
-      const sanitized = this.sanitizeDeployMessage(success);
+      const sanitized = sanitizeDeployMessage(success);
       const componentLike: ComponentLike = {
         fullName: sanitized.fullName,
         type: sanitized.componentType,
@@ -218,36 +205,6 @@ export class DeployResult implements MetadataTransferResult {
       }
     });
     return fileResponses;
-  }
-
-  /**
-   * Fix any issues with the deploy message returned by the api.
-   * TODO: remove cases if fixes are made in the api.
-   */
-  private sanitizeDeployMessage(message: DeployMessage): DeployMessage {
-    // mdapi error messages have the type as "FooSettings" but SDR only recognizes "Settings"
-    if (message.componentType.endsWith('Settings') && message.fileName.endsWith('.settings')) {
-      return {
-        ...message,
-        componentType: 'Settings',
-      };
-    }
-    switch (message.componentType) {
-      case registry.types.lightningcomponentbundle.name:
-        // remove the markup scheme from fullName, including c: or custom namespaces
-        message.fullName = message.fullName.replace(/markup:\/\/[a-z|0-9|_]+:/i, '');
-        break;
-      case registry.types.document.name:
-        // strip document extension from fullName
-        message.fullName = join(dirname(message.fullName), basename(message.fullName, extname(message.fullName)));
-        break;
-      // Treat emailTemplateFolder as EmailFolder
-      case registry.types.emailtemplatefolder.name:
-        message.componentType = registry.types.emailfolder.name;
-        break;
-      default:
-    }
-    return message;
   }
 
   private key(component: ComponentLike): string {
@@ -464,3 +421,46 @@ export interface ScopedPostDeploy {
   deployResult: DeployResult;
   orgId: string;
 }
+
+const getState = (message: DeployMessage): ComponentStatus => {
+  if (message.created === 'true' || message.created === true) {
+    return ComponentStatus.Created;
+  } else if (message.changed === 'true' || message.changed === true) {
+    return ComponentStatus.Changed;
+  } else if (message.deleted === 'true' || message.deleted === true) {
+    return ComponentStatus.Deleted;
+  } else if (message.success === 'false' || message.success === false) {
+    return ComponentStatus.Failed;
+  }
+  return ComponentStatus.Unchanged;
+};
+
+/**
+ * Fix any issues with the deploy message returned by the api.
+ * TODO: remove cases if fixes are made in the api.
+ */
+const sanitizeDeployMessage = (message: DeployMessage): DeployMessage => {
+  // mdapi error messages have the type as "FooSettings" but SDR only recognizes "Settings"
+  if (message.componentType.endsWith('Settings') && message.fileName.endsWith('.settings')) {
+    return {
+      ...message,
+      componentType: 'Settings',
+    };
+  }
+  switch (message.componentType) {
+    case registry.types.lightningcomponentbundle.name:
+      // remove the markup scheme from fullName, including c: or custom namespaces
+      message.fullName = message.fullName.replace(/markup:\/\/[a-z|0-9|_]+:/i, '');
+      break;
+    case registry.types.document.name:
+      // strip document extension from fullName
+      message.fullName = join(dirname(message.fullName), basename(message.fullName, extname(message.fullName)));
+      break;
+    // Treat emailTemplateFolder as EmailFolder
+    case registry.types.emailtemplatefolder.name:
+      message.componentType = registry.types.emailfolder.name;
+      break;
+    default:
+  }
+  return message;
+};

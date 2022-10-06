@@ -33,6 +33,7 @@ const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
  *```
  */
 export class MatchingContentSourceAdapter extends BaseSourceAdapter {
+  // eslint-disable-next-line class-methods-use-this
   protected getRootMetadataXmlPath(trigger: SourcePath): SourcePath {
     return `${trigger}${META_XML_SUFFIX}`;
   }
@@ -41,7 +42,7 @@ export class MatchingContentSourceAdapter extends BaseSourceAdapter {
     let sourcePath: SourcePath;
 
     if (component.xml === trigger) {
-      const fsPath = this.removeMetaXmlSuffix(trigger);
+      const fsPath = removeMetaXmlSuffix(trigger);
       if (this.tree.exists(fsPath)) {
         sourcePath = fsPath;
       }
@@ -66,11 +67,9 @@ export class MatchingContentSourceAdapter extends BaseSourceAdapter {
     return component;
   }
 
-  private removeMetaXmlSuffix(fsPath: SourcePath): SourcePath {
-    return fsPath.slice(0, fsPath.lastIndexOf(META_XML_SUFFIX));
-  }
-
   private extensionMatchesType(fsPath: SourcePath): boolean {
     return this.registry.getTypeBySuffix(extName(fsPath)) === this.type;
   }
 }
+
+const removeMetaXmlSuffix = (fsPath: SourcePath): SourcePath => fsPath.slice(0, fsPath.lastIndexOf(META_XML_SUFFIX));

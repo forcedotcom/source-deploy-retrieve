@@ -70,7 +70,7 @@ export class ManifestResolver {
 
       for (const fullName of members) {
         let mdType = type;
-        if (this.isNestedInFolder(fullName, type, parentType, members)) {
+        if (isMemberNestedInFolder(fullName, type, parentType, members)) {
           mdType = parentType;
         }
         components.push({ fullName, type: mdType });
@@ -79,27 +79,32 @@ export class ManifestResolver {
 
     return { components, apiVersion };
   }
-
-  // Use the folderType instead of the type from the manifest when:
-  //  1. InFolder types: (report, dashboard, emailTemplate, document)
-  //    1a. type.inFolder === true (from metadataRegistry.json) AND
-  //    1b. The fullName doesn't contain a forward slash character AND
-  //    1c. The fullName with a slash appended is contained in another member entry
-  // OR
-  //  2. Non-InFolder, folder types: (territory2, territory2Model, territory2Type, territory2Rule)
-  //    2a. type.inFolder !== true (from metadataRegistry.json) AND
-  //    2b. type.folderType has a value (from metadataRegistry.json) AND
-  //    2c. This type's parent type has a folderType that doesn't match its ID.
-  private isNestedInFolder(fullName: string, type: MetadataType, parentType: MetadataType, members: string[]): boolean {
-    // Quick short-circuit for non-folderTypes
-    if (!type.folderType) {
-      return false;
-    }
-
-    const isInFolderType = type.inFolder;
-    const isNestedInFolder = !fullName.includes('/') || members.some((m) => m.includes(`${fullName}/`));
-    const isNonMatchingFolder = parentType && parentType.folderType !== parentType.id;
-
-    return (isInFolderType && isNestedInFolder) || (!isInFolderType && isNonMatchingFolder);
-  }
 }
+
+// Use the folderType instead of the type from the manifest when:
+//  1. InFolder types: (report, dashboard, emailTemplate, document)
+//    1a. type.inFolder === true (from metadataRegistry.json) AND
+//    1b. The fullName doesn't contain a forward slash character AND
+//    1c. The fullName with a slash appended is contained in another member entry
+// OR
+//  2. Non-InFolder, folder types: (territory2, territory2Model, territory2Type, territory2Rule)
+//    2a. type.inFolder !== true (from metadataRegistry.json) AND
+//    2b. type.folderType has a value (from metadataRegistry.json) AND
+//    2c. This type's parent type has a folderType that doesn't match its ID.
+const isMemberNestedInFolder = (
+  fullName: string,
+  type: MetadataType,
+  parentType: MetadataType,
+  members: string[]
+): boolean => {
+  // Quick short-circuit for non-folderTypes
+  if (!type.folderType) {
+    return false;
+  }
+
+  const isInFolderType = type.inFolder;
+  const isNestedInFolder = !fullName.includes('/') || members.some((m) => m.includes(`${fullName}/`));
+  const isNonMatchingFolder = parentType && parentType.folderType !== parentType.id;
+
+  return (isInFolderType && isNestedInFolder) || (!isInFolderType && isNonMatchingFolder);
+};

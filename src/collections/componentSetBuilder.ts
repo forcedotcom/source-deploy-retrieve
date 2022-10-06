@@ -127,7 +127,7 @@ export class ComponentSetBuilder {
           // components with namespacePrefix where org.exclude includes manageableState (to exclude managed packages)
           // components with namespacePrefix where manageableState equals undefined (to exclude components e.g. InstalledPackage)
           // components where org.exclude includes manageableState (to exclude packages without namespacePrefix e.g. unlocked packages)
-          componentFilter: (component): boolean => !(org.exclude && org.exclude.includes(component?.manageableState)),
+          componentFilter: (component): boolean => !org.exclude?.includes(component?.manageableState),
         });
 
         for (const comp of fromConnection) {

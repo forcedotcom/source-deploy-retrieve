@@ -55,8 +55,8 @@ export class AuraDeploy extends BaseDeploy {
     sourceFiles.forEach((sourceFile: SourcePath) => {
       const source = readFileSync(sourceFile, 'utf8');
       const suffix = extName(sourceFile);
-      const defType = this.getAuraDefType(sourceFile, suffix);
-      const format = this.getAuraFormat(suffix);
+      const defType = getAuraDefType(sourceFile, suffix);
+      const format = getAuraFormat(suffix);
 
       let match: AuraDefinition;
       if (existingDefinitions.length > 0) {
@@ -134,54 +134,6 @@ export class AuraDeploy extends BaseDeploy {
     return deployment;
   }
 
-  private getAuraFormat(suffix: string): string {
-    switch (suffix) {
-      case 'js':
-        return 'JS';
-      case 'css':
-        return 'CSS';
-      case 'svg':
-        return 'SVG';
-      default:
-        return 'XML';
-    }
-  }
-
-  private getAuraDefType(sourcePath: string, suffix: string): string {
-    const fileName = baseName(sourcePath);
-    switch (suffix) {
-      case 'app':
-        return 'APPLICATION';
-      case 'cmp':
-        return 'COMPONENT';
-      case 'auradoc':
-        return 'DOCUMENTATION';
-      case 'css':
-        return 'STYLE';
-      case 'evt':
-        return 'EVENT';
-      case 'design':
-        return 'DESIGN';
-      case 'svg':
-        return 'SVG';
-      case 'js':
-        if (fileName.endsWith('Controller')) {
-          return 'CONTROLLER';
-        } else if (fileName.endsWith('Helper')) {
-          return 'HELPER';
-        } else if (fileName.endsWith('Renderer')) {
-          return 'RENDERER';
-        }
-        break;
-      case 'tokens':
-        return 'TOKENS';
-      case 'intf':
-        return 'INTERFACE';
-      default:
-        return '';
-    }
-  }
-
   private async findAuraDefinitions(): Promise<AuraDefinition[]> {
     const auraDefResult = await this.connection.tooling.query(
       `Select AuraDefinitionBundleId, Id, Format, Source, DefType from AuraDefinition where AuraDefinitionBundle.DeveloperName = '${this.component.fullName}' and AuraDefinitionBundle.NamespacePrefix = '${this.namespace}'`
@@ -189,3 +141,51 @@ export class AuraDeploy extends BaseDeploy {
     return auraDefResult.records as AuraDefinition[];
   }
 }
+
+const getAuraFormat = (suffix: string): string => {
+  switch (suffix) {
+    case 'js':
+      return 'JS';
+    case 'css':
+      return 'CSS';
+    case 'svg':
+      return 'SVG';
+    default:
+      return 'XML';
+  }
+};
+
+const getAuraDefType = (sourcePath: string, suffix: string): string => {
+  const fileName = baseName(sourcePath);
+  switch (suffix) {
+    case 'app':
+      return 'APPLICATION';
+    case 'cmp':
+      return 'COMPONENT';
+    case 'auradoc':
+      return 'DOCUMENTATION';
+    case 'css':
+      return 'STYLE';
+    case 'evt':
+      return 'EVENT';
+    case 'design':
+      return 'DESIGN';
+    case 'svg':
+      return 'SVG';
+    case 'js':
+      if (fileName.endsWith('Controller')) {
+        return 'CONTROLLER';
+      } else if (fileName.endsWith('Helper')) {
+        return 'HELPER';
+      } else if (fileName.endsWith('Renderer')) {
+        return 'RENDERER';
+      }
+      break;
+    case 'tokens':
+      return 'TOKENS';
+    case 'intf':
+      return 'INTERFACE';
+    default:
+      return '';
+  }
+};

@@ -96,6 +96,7 @@ export class LwcDeploy extends BaseDeploy {
             Source: resource.Source,
             Id: resource.Id,
           };
+          // eslint-disable-next-line no-await-in-loop
           await this.connection.tooling.update(deployTypes.get(type), formattedDef);
           allCreate = false;
           partialSuccess = true;
@@ -106,6 +107,7 @@ export class LwcDeploy extends BaseDeploy {
             Source: resource.Source,
             FilePath: this.getFormattedPaths(resource.FilePath)[0],
           };
+          // eslint-disable-next-line no-await-in-loop
           await this.toolingCreate(deployTypes.get(type), formattedDef);
         }
       } catch (e) {

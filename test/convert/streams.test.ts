@@ -28,10 +28,11 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_convert_invalid_format']);
 
 class TestTransformer extends BaseMetadataTransformer {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, class-methods-use-this
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     return [{ output: '/type/file.m', source: new Readable() }];
   }
+  // eslint-disable-next-line class-methods-use-this
   public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
     const output = mergeWith ? mergeWith.content || mergeWith.xml : '/type/file.s';
     return [{ output, source: new Readable() }];

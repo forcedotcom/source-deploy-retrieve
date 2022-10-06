@@ -116,6 +116,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   protected parseMetadataXml(path: SourcePath): MetadataXml {
     return parseMetadataXml(path);
   }
@@ -156,6 +157,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private parseAsFolderMetadataXml(fsPath: SourcePath): MetadataXml {
     const match = new RegExp(/(.+)-meta\.xml$/).exec(basename(fsPath));
     const parts = fsPath.split(sep);

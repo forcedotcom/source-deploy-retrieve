@@ -30,6 +30,7 @@ export abstract class BaseDeploy {
     this.connection = connection;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   public buildMetadataField(metadataContent: string): {
     label?: string;
     packageVersions?: string;

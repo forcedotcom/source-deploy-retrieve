@@ -53,6 +53,7 @@ export class ComponentReader extends Readable {
     this.push(null);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private *createIterator(components: Iterable<SourceComponent>): Iterator<SourceComponent> {
     for (const component of components) {
       yield component;
@@ -222,6 +223,10 @@ export class ZipWriter extends ComponentWriter {
     void pipeline(this.zip, this.getOutputStream());
   }
 
+  public get buffer(): Buffer | undefined {
+    return Buffer.concat(this.buffers);
+  }
+
   public async _write(chunk: WriterFormat, encoding: string, callback: (err?: Error) => void): Promise<void> {
     let err: Error;
     try {
@@ -274,10 +279,6 @@ export class ZipWriter extends ComponentWriter {
       return bufferWritable;
     }
   }
-
-  public get buffer(): Buffer | undefined {
-    return Buffer.concat(this.buffers);
-  }
 }
 
 /**
@@ -295,7 +296,7 @@ export class JsToXml extends Readable {
 
   public _read(): void {
     const js2Xml = new j2xParser({ format: true, indentBy: '    ', ignoreAttributes: false, cdataTagName: '__cdata' });
-    const xmlContent = XML_DECL.concat(js2Xml.parse(this.xmlObject));
+    const xmlContent = XML_DECL.concat(js2Xml.parse(this.xmlObject) as string);
     this.push(xmlContent);
     this.push(null);
   }

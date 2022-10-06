@@ -32,22 +32,14 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     'application/x-zip-compressed',
     'application/jar',
   ]);
-  private static readonly DEFAULT_CONTENT_TYPE = 'application/octet-stream';
-  private static readonly FALLBACK_TYPE_MAP = new Map<string, string>([
-    ['text/javascript', 'js'],
-    ['application/x-javascript', 'js'],
-    ['application/x-zip-compressed', 'zip'],
-    ['text/x-haml', 'haml'],
-    ['image/x-png', 'png'],
-    ['text/xml', 'xml'],
-  ]);
 
+  // eslint-disable-next-line class-methods-use-this
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     const { content, type, xml } = component;
 
     let contentSource: Readable;
 
-    if (await this.componentIsExpandedArchive(component)) {
+    if (await componentIsExpandedArchive(component)) {
       // toolbelt was using level 9 for static resources, so we'll do the same.
       // Otherwise, you'll see errors like https://github.com/forcedotcom/cli/issues/1098
       const zip = createArchive('zip', { zlib: { level: 9 } });
@@ -76,9 +68,9 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     if (!content) {
       return [];
     }
-    const componentContentType = await this.getContentType(component);
+    const componentContentType = await getContentType(component);
     const mergeContentPath = mergeWith?.content;
-    const baseContentPath = this.getBaseContentPath(component, mergeWith);
+    const baseContentPath = getBaseContentPath(component, mergeWith);
 
     // only unzip an archive component if there isn't a merge component, or the merge component is itself expanded
     const shouldUnzipArchive =
@@ -114,7 +106,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
         : [
             {
               source: component.tree.stream(content),
-              output: `${baseContentPath}.${this.getExtensionFromType(componentContentType)}`,
+              output: `${baseContentPath}.${getExtensionFromType(componentContentType)}`,
             },
           ]
     );
@@ -128,54 +120,61 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
    * @param destination the destination path to be written
    * @private
    */
+  // eslint-disable-next-line class-methods-use-this
   private async pipeline(stream: Readable, destination: string): Promise<void> {
     ensureFileExists(destination);
     await pipeline(stream, createWriteStream(destination));
-  }
-
-  private getBaseContentPath(component: SourceComponent, mergeWith?: SourceComponent): SourcePath {
-    const baseContentPath = mergeWith?.content || component.getPackageRelativePath(component.content, 'source');
-    return join(dirname(baseContentPath), baseName(baseContentPath));
   }
 
   /**
    * "Expanded" refers to a component whose content file is a zip file, and its current
    * state is unzipped.
    */
-  private async componentIsExpandedArchive(component: SourceComponent): Promise<boolean> {
-    const { content, tree } = component;
-    if (tree.isDirectory(content)) {
-      const contentType = await this.getContentType(component);
-      if (StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(contentType)) {
-        return true;
-      }
-      throw new SfError(
-        messages.getMessage('error_static_resource_expected_archive_type', [contentType, component.name]),
-        'LibraryError'
-      );
-    }
-    return false;
-  }
+}
 
-  private async getContentType(component: SourceComponent): Promise<string> {
-    const resource = (await component.parseXml()).StaticResource as JsonMap;
+const DEFAULT_CONTENT_TYPE = 'application/octet-stream';
+const FALLBACK_TYPE_MAP = new Map<string, string>([
+  ['text/javascript', 'js'],
+  ['application/x-javascript', 'js'],
+  ['application/x-zip-compressed', 'zip'],
+  ['text/x-haml', 'haml'],
+  ['image/x-png', 'png'],
+  ['text/xml', 'xml'],
+]);
 
-    if (!resource || !Object.prototype.hasOwnProperty.call(resource, 'contentType')) {
-      throw new SfError(
-        messages.getMessage('error_static_resource_missing_resource_file', [join('staticresources', component.name)]),
-        'LibraryError'
-      );
-    }
+const getContentType = async (component: SourceComponent): Promise<string> => {
+  const resource = (await component.parseXml()).StaticResource as JsonMap;
 
-    return resource.contentType as string;
-  }
-
-  private getExtensionFromType(contentType: string): string {
-    // return registered ext, fallback, or the default (application/octet-stream -> bin)
-    return (
-      getExtension(contentType) ||
-      StaticResourceMetadataTransformer.FALLBACK_TYPE_MAP.get(contentType) ||
-      getExtension(StaticResourceMetadataTransformer.DEFAULT_CONTENT_TYPE)
+  if (!resource || !Object.prototype.hasOwnProperty.call(resource, 'contentType')) {
+    throw new SfError(
+      messages.getMessage('error_static_resource_missing_resource_file', [join('staticresources', component.name)]),
+      'LibraryError'
     );
   }
-}
+
+  return resource.contentType as string;
+};
+
+const getBaseContentPath = (component: SourceComponent, mergeWith?: SourceComponent): SourcePath => {
+  const baseContentPath = mergeWith?.content || component.getPackageRelativePath(component.content, 'source');
+  return join(dirname(baseContentPath), baseName(baseContentPath));
+};
+
+const getExtensionFromType = (contentType: string): string =>
+  // return registered ext, fallback, or the default (application/octet-stream -> bin)
+  getExtension(contentType) ?? FALLBACK_TYPE_MAP.get(contentType) ?? getExtension(DEFAULT_CONTENT_TYPE);
+
+const componentIsExpandedArchive = async (component: SourceComponent): Promise<boolean> => {
+  const { content, tree } = component;
+  if (tree.isDirectory(content)) {
+    const contentType = await getContentType(component);
+    if (StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(contentType)) {
+      return true;
+    }
+    throw new SfError(
+      messages.getMessage('error_static_resource_expected_archive_type', [contentType, component.name]),
+      'LibraryError'
+    );
+  }
+  return false;
+};

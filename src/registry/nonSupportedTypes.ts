@@ -16,18 +16,21 @@ import { CoverageObjectType } from './types';
 export const features = [
   // ERROR running force:org:create: * is not a valid Features value.
   'SERVICECATALOG',
-  'DYNAMICATTRIBUTES', // is not a valid Features value
+  'DYNAMICATTRIBUTES',
   'CONTRACTMGMT',
   'CUSTOMIZABLENAMEDCREDENTIALS',
   'INDUSTRIESMFGPROGRAMPILOT',
-  'HEALTHCLOUDHPIBETA', // is not a valid Features value
-  'MANAGETIMELINE', // is not a valid Features value
-  'HEALTHCLOUDBETA', // is not a valid Features value
-  'PARDOTADVANCED', // org:create throws a C-9999 when this is not excluded
+  'HEALTHCLOUDHPIBETA',
+  'MANAGETIMELINE',
+  'HEALTHCLOUDBETA',
   'EMBEDDEDSERVICEMESSAGING',
   'UNIFIEDHEALTHSCORING',
   'HEALTHCLOUDADDON',
   'EINSTEINDOCREADER',
+  'ACCOUNTINGSUBLEDGERACCESS',
+  'BOTBLOCKS',
+
+  'PARDOTADVANCED', // org:create throws a C-9999 when this is not excluded
 ];
 
 export const settings = [

@@ -3112,6 +3112,14 @@
       "directoryName": "relationshipGraphDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "callctragentfavtrfrdest": {
+      "id": "callctragentfavtrfrdest",
+      "name": "CallCtrAgentFavTrfrDest",
+      "suffix": "callCtrAgentFavTrfrDest",
+      "directoryName": "callCtrAgentFavTrfrDests",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3455,7 +3463,8 @@
     "forecastingFilter": "forecastingfilter",
     "forecastingFilterCondition": "forecastingfiltercondition",
     "schedulingObjective": "schedulingobjective",
-    "relationshipGraphDefinition": "relationshipgraphdefinition"
+    "relationshipGraphDefinition": "relationshipgraphdefinition",
+    "callCtrAgentFavTrfrDest": "callctragentfavtrfrdest"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

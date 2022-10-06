@@ -3144,6 +3144,14 @@
       "directoryName": "MfgProgramTemplate",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "streamingappdataconnector": {
+      "id": "streamingappdataconnector",
+      "name": "StreamingAppDataConnector",
+      "suffix": "streamingAppDataConnector",
+      "directoryName": "streamingAppDataConnectors",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3491,7 +3499,8 @@
     "callCtrAgentFavTrfrDest": "callctragentfavtrfrdest",
     "externalCredential": "externalcredential",
     "marketSegmentDefinition": "marketsegmentdefinition",
-    "mfgProgramTemplate": "mfgprogramtemplate"
+    "mfgProgramTemplate": "mfgprogramtemplate",
+    "streamingAppDataConnector": "streamingappdataconnector"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

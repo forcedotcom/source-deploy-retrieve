@@ -43,7 +43,6 @@ export class MetadataConverter {
         (comps instanceof ComponentSet ? Array.from(comps.getSourceComponents()) : comps) as SourceComponent[]
       ).filter((comp) => comp.type.isAddressable !== false);
 
-      let manifestContents;
       const isSource = targetFormat === 'source';
       const tasks: Array<Promise<void>> = [];
 
@@ -57,14 +56,13 @@ export class MetadataConverter {
           if (output.packageName) {
             cs.fullName = output.packageName;
           }
-          manifestContents = await cs.getPackageXml();
           packagePath = this.getPackagePath(output);
           defaultDirectory = packagePath;
           writer = new StandardWriter(packagePath);
           if (!isSource) {
             const manifestPath = join(packagePath, MetadataConverter.PACKAGE_XML_FILE);
             tasks.push(
-              promises.writeFile(manifestPath, manifestContents),
+              promises.writeFile(manifestPath, await cs.getPackageXml()),
               ...cs.getTypesOfDestructiveChanges().map(async (destructiveChangesType) =>
                 // for each of the destructive changes in the component set, convert and write the correct metadata
                 // to each manifest
@@ -80,12 +78,11 @@ export class MetadataConverter {
           if (output.packageName) {
             cs.fullName = output.packageName;
           }
-          manifestContents = await cs.getPackageXml();
           packagePath = this.getPackagePath(output);
           defaultDirectory = packagePath;
           writer = new ZipWriter(packagePath);
           if (!isSource) {
-            writer.addToZip(manifestContents, MetadataConverter.PACKAGE_XML_FILE);
+            writer.addToZip(await cs.getPackageXml(), MetadataConverter.PACKAGE_XML_FILE);
             // for each of the destructive changes in the component set, convert and write the correct metadata
             // to each manifest
             for (const destructiveChangeType of cs.getTypesOfDestructiveChanges()) {

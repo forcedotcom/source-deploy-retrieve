@@ -16,18 +16,27 @@ import { CoverageObjectType } from './types';
 export const features = [
   // ERROR running force:org:create: * is not a valid Features value.
   'SERVICECATALOG',
-  'DYNAMICATTRIBUTES', // is not a valid Features value
+  'DYNAMICATTRIBUTES',
   'CONTRACTMGMT',
   'CUSTOMIZABLENAMEDCREDENTIALS',
   'INDUSTRIESMFGPROGRAMPILOT',
-  'HEALTHCLOUDHPIBETA', // is not a valid Features value
-  'MANAGETIMELINE', // is not a valid Features value
-  'HEALTHCLOUDBETA', // is not a valid Features value
-  'PARDOTADVANCED', // org:create throws a C-9999 when this is not excluded
+  'HEALTHCLOUDHPIBETA',
+  'MANAGETIMELINE',
+  'HEALTHCLOUDBETA',
   'EMBEDDEDSERVICEMESSAGING',
   'UNIFIEDHEALTHSCORING',
   'HEALTHCLOUDADDON',
   'EINSTEINDOCREADER',
+  'ACCOUNTINGSUBLEDGERACCESS',
+  'BOTBLOCKS',
+  'INSURANCECALCULATIONUSER',
+  'SCFUELTYPEPILOTFEATURE',
+  'B2CEREPRICINGKILLSWITCH',
+  'USERACCESSPOLICIESFORPILOTVISIBILITY',
+  'BOTBLOCKS',
+  'INDUSTRIESINTERACTIONCALCULATION',
+
+  'PARDOTADVANCED', // org:create throws a C-9999 when this is not excluded
 ];
 
 export const settings = [
@@ -40,12 +49,32 @@ export const metadataTypes = [
   'CustomValue',
   'StandardValue',
 
-  // the following are not describable based on their features/settings, last checked 2/24/2022
+  // the following are not describable based on their features/settings, see git blame for last time checked
   'DiscoveryStory',
   'EmployeeDataSyncProfile',
   'RelatedRecordAssocCriteria',
   'ScoreRange',
   'WorkflowFlowAction',
+
+  // org spins up fine, but describe is empty
+  'SustainabilityUom',
+
+  // the metadata coverage report seems to be missing a setting:
+  // A scratch org was created with username test-o87upqyaagax@example.com, but the settings failed to deploy due to: enableInsights
+  'ReferencedDashboard',
+
+  // spins up fine with feature B2CLOYALTYMANAGEMENT, not in describe
+  'ExpressionSetObjectAlias',
+
+  // requires no features, but not in describe
+  'ExternalDataSrcDescriptor',
+
+  // spun up with COMMONPRM, not in describe
+  'PortalDelegablePermissionSet',
+
+  // spun up with CUSTOMERDATAPLATFORM, not in describe
+  'ExternalDataTranField',
+  'ExternalDataTranObject',
 ];
 
 export const hasUnsupportedFeatures = (type: CoverageObjectType): boolean => {

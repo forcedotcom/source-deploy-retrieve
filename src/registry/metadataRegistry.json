@@ -230,6 +230,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "externalcredential": {
+      "id": "externalcredential",
+      "name": "ExternalCredential",
+      "suffix": "externalCredential",
+      "directoryName": "externalCredentials",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "namedcredential": {
       "id": "namedcredential",
       "name": "NamedCredential",
@@ -3104,6 +3112,46 @@
       "directoryName": "SchedulingObjectives",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "relationshipgraphdefinition": {
+      "id": "relationshipgraphdefinition",
+      "name": "RelationshipGraphDefinition",
+      "suffix": "relationshipGraphDefinition",
+      "directoryName": "relationshipGraphDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "callctragentfavtrfrdest": {
+      "id": "callctragentfavtrfrdest",
+      "name": "CallCtrAgentFavTrfrDest",
+      "suffix": "callCtrAgentFavTrfrDest",
+      "directoryName": "callCtrAgentFavTrfrDests",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "marketsegmentdefinition": {
+      "id": "marketsegmentdefinition",
+      "name": "MarketSegmentDefinition",
+      "suffix": "marketSegmentDefinition",
+      "directoryName": "marketSegmentDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "mfgprogramtemplate": {
+      "id": "mfgprogramtemplate",
+      "name": "MfgProgramTemplate",
+      "suffix": "mfgProgramTemplate",
+      "directoryName": "MfgProgramTemplate",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "streamingappdataconnector": {
+      "id": "streamingappdataconnector",
+      "name": "StreamingAppDataConnector",
+      "suffix": "streamingAppDataConnector",
+      "directoryName": "streamingAppDataConnectors",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3446,7 +3494,13 @@
     "digitalExperienceConfig": "digitalexperienceconfig",
     "forecastingFilter": "forecastingfilter",
     "forecastingFilterCondition": "forecastingfiltercondition",
-    "schedulingObjective": "schedulingobjective"
+    "schedulingObjective": "schedulingobjective",
+    "relationshipGraphDefinition": "relationshipgraphdefinition",
+    "callCtrAgentFavTrfrDest": "callctragentfavtrfrdest",
+    "externalCredential": "externalcredential",
+    "marketSegmentDefinition": "marketsegmentdefinition",
+    "mfgProgramTemplate": "mfgprogramtemplate",
+    "streamingAppDataConnector": "streamingappdataconnector"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

@@ -49,7 +49,7 @@ export const metadataTypes = [
   'CustomValue',
   'StandardValue',
 
-  // the following are not describable based on their features/settings, last checked 2/24/2022
+  // the following are not describable based on their features/settings, see git blame for last time checked
   'DiscoveryStory',
   'EmployeeDataSyncProfile',
   'RelatedRecordAssocCriteria',

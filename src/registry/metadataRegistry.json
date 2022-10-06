@@ -3136,6 +3136,14 @@
       "directoryName": "marketSegmentDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "mfgprogramtemplate": {
+      "id": "mfgprogramtemplate",
+      "name": "MfgProgramTemplate",
+      "suffix": "mfgProgramTemplate",
+      "directoryName": "MfgProgramTemplate",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3482,7 +3490,8 @@
     "relationshipGraphDefinition": "relationshipgraphdefinition",
     "callCtrAgentFavTrfrDest": "callctragentfavtrfrdest",
     "externalCredential": "externalcredential",
-    "marketSegmentDefinition": "marketsegmentdefinition"
+    "marketSegmentDefinition": "marketsegmentdefinition",
+    "mfgProgramTemplate": "mfgprogramtemplate"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

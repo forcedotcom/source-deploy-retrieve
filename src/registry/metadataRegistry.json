@@ -3128,6 +3128,14 @@
       "directoryName": "callCtrAgentFavTrfrDests",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "marketsegmentdefinition": {
+      "id": "marketsegmentdefinition",
+      "name": "MarketSegmentDefinition",
+      "suffix": "marketSegmentDefinition",
+      "directoryName": "marketSegmentDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3473,7 +3481,8 @@
     "schedulingObjective": "schedulingobjective",
     "relationshipGraphDefinition": "relationshipgraphdefinition",
     "callCtrAgentFavTrfrDest": "callctragentfavtrfrdest",
-    "externalCredential": "externalcredential"
+    "externalCredential": "externalcredential",
+    "marketSegmentDefinition": "marketsegmentdefinition"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

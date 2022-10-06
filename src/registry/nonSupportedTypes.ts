@@ -29,6 +29,10 @@ export const features = [
   'EINSTEINDOCREADER',
   'ACCOUNTINGSUBLEDGERACCESS',
   'BOTBLOCKS',
+  'INSURANCECALCULATIONUSER',
+  'SCFUELTYPEPILOTFEATURE',
+  'B2CEREPRICINGKILLSWITCH',
+  'userAccessPoliciesForPilotVisibility',
 
   'PARDOTADVANCED', // org:create throws a C-9999 when this is not excluded
 ];

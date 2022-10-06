@@ -27,7 +27,8 @@ const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['er
 
 export const pipeline = promisify(cbPipeline);
 
-export const stream2buffer = async (stream: Stream): Promise<Buffer> => new Promise<Buffer>((resolve, reject) => {
+export const stream2buffer = async (stream: Stream): Promise<Buffer> =>
+  new Promise<Buffer>((resolve, reject) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const buf = Array<any>();
     stream.on('data', (chunk) => buf.push(chunk));

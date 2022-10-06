@@ -305,11 +305,11 @@ describe('MetadataApiDeploy', () => {
           const expected = component
             .walkContent()
             .map((f) => ({
-                fullName,
-                type: type.name,
-                state: ComponentStatus.Changed,
-                filePath: f,
-              }))
+              fullName,
+              type: type.name,
+              state: ComponentStatus.Changed,
+              filePath: f,
+            }))
             .concat({
               fullName,
               type: type.name,

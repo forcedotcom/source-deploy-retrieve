@@ -139,10 +139,10 @@ export class MetadataConverter {
       if (packageName) {
         packagePath = join(outputDirectory, packageName);
       } else if (genUniqueDir) {
-          packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${Date.now()}`);
-        } else {
-          packagePath = normalize(outputDirectory);
-        }
+        packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${Date.now()}`);
+      } else {
+        packagePath = normalize(outputDirectory);
+      }
 
       if (type === 'zip') {
         packagePath += '.zip';

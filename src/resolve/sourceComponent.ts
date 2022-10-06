@@ -306,16 +306,19 @@ export class SourceComponent implements MetadataComponent {
       if (uniqueIdElement) {
         const xmlPathToChildren = `${this.type.name}.${childType.xmlElementName}`;
         const elements = ensureArray(get(parsed, xmlPathToChildren, []));
-        const childComponents = elements.map((element) => new SourceComponent(
-            {
-              name: getString(element, uniqueIdElement),
-              type: childType,
-              xml: this.xml,
-              parent: this,
-            },
-            this.treeContainer,
-            this.forceIgnore
-          ));
+        const childComponents = elements.map(
+          (element) =>
+            new SourceComponent(
+              {
+                name: getString(element, uniqueIdElement),
+                type: childType,
+                xml: this.xml,
+                parent: this,
+              },
+              this.treeContainer,
+              this.forceIgnore
+            )
+        );
         children.push(...childComponents);
       }
     }

@@ -230,6 +230,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "externalcredential": {
+      "id": "externalcredential",
+      "name": "ExternalCredential",
+      "suffix": "externalCredential",
+      "directoryName": "externalCredentials",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "namedcredential": {
       "id": "namedcredential",
       "name": "NamedCredential",
@@ -3464,7 +3472,8 @@
     "forecastingFilterCondition": "forecastingfiltercondition",
     "schedulingObjective": "schedulingobjective",
     "relationshipGraphDefinition": "relationshipgraphdefinition",
-    "callCtrAgentFavTrfrDest": "callctragentfavtrfrdest"
+    "callCtrAgentFavTrfrDest": "callctragentfavtrfrdest",
+    "externalCredential": "externalcredential"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

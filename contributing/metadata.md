@@ -126,6 +126,8 @@ The completeness is checked by comparing the registry to the metadata coverage r
 1. Types that aren't supported in the metadata API
 2. Types in the [nonSupportedTypes file](../src/registry/nonSupportedTypes.ts) (think of it as a registry-ignore file). You can ignore the types themselves, or the feature/settings they depend on. Be sure to explain why you're choosing to ignore that type.
 
+If you find your types (or the features they require) excluded by `nonSupportedTypes.ts` but think they're ready to go, feel free to remove them from the list. This can happen after something is available to scratch orgs when it previously wasn't.
+
 ## Manual Testing
 
 Want to make sure your types are working as expected?
@@ -133,19 +135,19 @@ Want to make sure your types are working as expected?
 1. Create a new project with `sfdx force:project:create -n registryTest`
 1. Create a scratch org `sfdx force:org:create`
 1. Open the org and create your types.
-1. Run `sfdx force:source:beta:status` and verify the remote add.
-1. Run `sfdx force:source:beta:pull` to pull the metadata and examine what is retrieved
-1. Run `sfdx force:source:beta:status` and verify the changes were retrieved and no longer appear.
+1. Run `sfdx force:source:status` and verify the remote add.
+1. Run `sfdx force:source:pull` to pull the metadata and examine what is retrieved
+1. Run `sfdx force:source:status` and verify the changes were retrieved and no longer appear.
 1. Delete the org `sfdx force:org:delete --noprompt`
 1. Create a new scratch org. `sfdx force:org:create`
-1. Push the source `sfdx force:source:beta:push`
+1. Push the source `sfdx force:source:push`
 1. Convert the source to mdapi format `sfdx force:source:convert -d mdapiOut`
 1. Look in the resulting `metadataPackage_` and `package.xml` to see that it looks as expected
 1. Deploy it to the org using `sfdx force:mdapi:deploy --deploydir mdapiOut --wait 30` and verify that it succeeds
 1. Delete the source directory `rm -rf force-app/main/default/*`
 1. Create a new scratch org and convert the source back
 1. Convert back from mdapi to source format `sfdx force:mdapi:convert -r mdapiOut -d force-app`
-1. `sfdx force:source:beta:push`
+1. `sfdx force:source:push`
 
 ### Caveats
 

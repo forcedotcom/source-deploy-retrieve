@@ -32,7 +32,9 @@ export const features = [
   'INSURANCECALCULATIONUSER',
   'SCFUELTYPEPILOTFEATURE',
   'B2CEREPRICINGKILLSWITCH',
-  'userAccessPoliciesForPilotVisibility',
+  'USERACCESSPOLICIESFORPILOTVISIBILITY',
+  'BOTBLOCKS',
+  'INDUSTRIESINTERACTIONCALCULATION',
 
   'PARDOTADVANCED', // org:create throws a C-9999 when this is not excluded
 ];
@@ -53,6 +55,26 @@ export const metadataTypes = [
   'RelatedRecordAssocCriteria',
   'ScoreRange',
   'WorkflowFlowAction',
+
+  // org spins up fine, but describe is empty
+  'SustainabilityUom',
+
+  // the metadata coverage report seems to be missing a setting:
+  // A scratch org was created with username test-o87upqyaagax@example.com, but the settings failed to deploy due to: enableInsights
+  'ReferencedDashboard',
+
+  // spins up fine with feature B2CLOYALTYMANAGEMENT, not in describe
+  'ExpressionSetObjectAlias',
+
+  // requires no features, but not in describe
+  'ExternalDataSrcDescriptor',
+
+  // spun up with COMMONPRM, not in describe
+  'PortalDelegablePermissionSet',
+
+  // spun up with CUSTOMERDATAPLATFORM, not in describe
+  'ExternalDataTranField',
+  'ExternalDataTranObject',
 ];
 
 export const hasUnsupportedFeatures = (type: CoverageObjectType): boolean => {

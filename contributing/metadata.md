@@ -119,6 +119,8 @@ It also checks that suffixes are unique OR only one type that shares a suffix is
 
 ## Validate the registry is complete
 
+`yarn test:registry`
+
 The library uses the [registry file](../src/registry/metadataRegistry.json) to resolve how to process metadata types. This needs to be updated as new metadata types are added to the platform at major releases.
 
 The completeness is checked by comparing the registry to the metadata coverage report, but excluding
@@ -126,7 +128,14 @@ The completeness is checked by comparing the registry to the metadata coverage r
 1. Types that aren't supported in the metadata API
 2. Types in the [nonSupportedTypes file](../src/registry/nonSupportedTypes.ts) (think of it as a registry-ignore file). You can ignore the types themselves, or the feature/settings they depend on. Be sure to explain why you're choosing to ignore that type.
 
-If you find your types (or the features they require) excluded by `nonSupportedTypes.ts` but think they're ready to go, feel free to remove them from the list. This can happen after something is available to scratch orgs when it previously wasn't.
+If you find your types (or the features they require) excluded by `nonSupportedTypes.ts` but think they're ready to go, feel free to remove them from the list.
+
+There are 2 main ways this happens (or ways to make this work if it currently isn't)
+
+1. A feature is available to scratch orgs when it previously wasn't
+1. The metadata coverage report's "settings" were not sufficient to enable your type to appear in the `describe` call.
+
+Fixing those problems not only makes it easier to automate your type's support in the library, but also makes your type usable by customers (features) and fixes your documentation (coverageReport).
 
 ## Manual Testing
 

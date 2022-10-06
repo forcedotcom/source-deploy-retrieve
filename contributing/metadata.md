@@ -112,6 +112,8 @@ SDR includes 2 registry-related tests to check your changes to the metdataRegist
 
 ## Validate the registry is correct
 
+`yarn mocha test/registry/registryValidation.test.ts`
+
 Test failures here could be types that exist in the `types` section but don't have entries in `suffixes` or `strictDirectoryNames`.
 It also checks that suffixes are unique OR only one type that shares a suffix isn't `strictDirectoryName`.
 

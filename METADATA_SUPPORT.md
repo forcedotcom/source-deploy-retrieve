@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v56 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 474/512 supported metadata types.
+Currently, there are 479/512 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -89,7 +89,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CallCenter|✅||
 |CallCenterRoutingMap|✅||
 |CallCoachingMediaProvider|⚠️|Supports deploy/retrieve but not source tracking|
-|CallCtrAgentFavTrfrDest|❌|Not supported, but support could be added|
+|CallCtrAgentFavTrfrDest|✅||
 |CampaignInfluenceModel|✅||
 |CampaignSettings|✅||
 |CanvasMetadata|✅||
@@ -223,7 +223,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExpressionSetDefinitionVersion|✅||
 |ExpressionSetObjectAlias|❌|Not supported, but support could be added|
 |ExternalAIModel|❌|Not supported, but support could be added|
-|ExternalCredential|❌|Not supported, but support could be added|
+|ExternalCredential|✅||
 |ExternalDataConnector|✅||
 |ExternalDataSource|✅||
 |ExternalDataSrcDescriptor|❌|Not supported, but support could be added|
@@ -315,14 +315,14 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ManagedContentType|⚠️|Supports deploy/retrieve but not source tracking|
 |ManagedTopics|✅||
 |MapsAndLocationSettings|✅||
-|MarketSegmentDefinition|❌|Not supported, but support could be added|
+|MarketSegmentDefinition|✅||
 |MarketingAppExtActivity|❌|Not supported, but support could be added|
 |MarketingAppExtension|✅||
 |MatchingRules|✅||
 |MediaAdSalesSettings|✅||
 |MeetingsSettings|✅||
 |MessagingChannel|❌|Not supported, but support could be added (but not for tracking)|
-|MfgProgramTemplate|❌|Not supported, but support could be added|
+|MfgProgramTemplate|✅||
 |MfgServiceConsoleSettings|✅||
 |MilestoneType|✅||
 |MktCalcInsightObjectDef|✅||
@@ -459,7 +459,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |StandardValueSetTranslation|✅||
 |StaticResource|✅||
 |StnryAssetEnvSrcCnfg|✅||
-|StreamingAppDataConnector|❌|Not supported, but support could be added|
+|StreamingAppDataConnector|✅||
 |SubscriptionManagementSettings|✅||
 |SurveySettings|✅||
 |SustainabilityUom|❌|Not supported, but support could be added|

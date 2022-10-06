@@ -112,10 +112,14 @@ SDR includes 2 registry-related tests to check your changes to the metdataRegist
 
 ## Validate the registry is correct
 
+`yarn mocha test/registry/registryValidation.test.ts`
+
 Test failures here could be types that exist in the `types` section but don't have entries in `suffixes` or `strictDirectoryNames`.
 It also checks that suffixes are unique OR only one type that shares a suffix isn't `strictDirectoryName`.
 
 ## Validate the registry is complete
+
+`yarn test:registry`
 
 The library uses the [registry file](../src/registry/metadataRegistry.json) to resolve how to process metadata types. This needs to be updated as new metadata types are added to the platform at major releases.
 
@@ -124,6 +128,15 @@ The completeness is checked by comparing the registry to the metadata coverage r
 1. Types that aren't supported in the metadata API
 2. Types in the [nonSupportedTypes file](../src/registry/nonSupportedTypes.ts) (think of it as a registry-ignore file). You can ignore the types themselves, or the feature/settings they depend on. Be sure to explain why you're choosing to ignore that type.
 
+If you find your types (or the features they require) excluded by `nonSupportedTypes.ts` but think they're ready to go, feel free to remove them from the list.
+
+There are 2 main ways this happens (or ways to make this work if it currently isn't)
+
+1. A feature is available to scratch orgs when it previously wasn't
+1. The metadata coverage report's "settings" were not sufficient to enable your type to appear in the `describe` call.
+
+Fixing those problems not only makes it easier to automate your type's support in the library, but also makes your type usable by customers (features) and fixes your documentation (coverageReport).
+
 ## Manual Testing
 
 Want to make sure your types are working as expected?
@@ -131,19 +144,19 @@ Want to make sure your types are working as expected?
 1. Create a new project with `sfdx force:project:create -n registryTest`
 1. Create a scratch org `sfdx force:org:create`
 1. Open the org and create your types.
-1. Run `sfdx force:source:beta:status` and verify the remote add.
-1. Run `sfdx force:source:beta:pull` to pull the metadata and examine what is retrieved
-1. Run `sfdx force:source:beta:status` and verify the changes were retrieved and no longer appear.
+1. Run `sfdx force:source:status` and verify the remote add.
+1. Run `sfdx force:source:pull` to pull the metadata and examine what is retrieved
+1. Run `sfdx force:source:status` and verify the changes were retrieved and no longer appear.
 1. Delete the org `sfdx force:org:delete --noprompt`
 1. Create a new scratch org. `sfdx force:org:create`
-1. Push the source `sfdx force:source:beta:push`
+1. Push the source `sfdx force:source:push`
 1. Convert the source to mdapi format `sfdx force:source:convert -d mdapiOut`
 1. Look in the resulting `metadataPackage_` and `package.xml` to see that it looks as expected
 1. Deploy it to the org using `sfdx force:mdapi:deploy --deploydir mdapiOut --wait 30` and verify that it succeeds
 1. Delete the source directory `rm -rf force-app/main/default/*`
 1. Create a new scratch org and convert the source back
 1. Convert back from mdapi to source format `sfdx force:mdapi:convert -r mdapiOut -d force-app`
-1. `sfdx force:source:beta:push`
+1. `sfdx force:source:push`
 
 ### Caveats
 

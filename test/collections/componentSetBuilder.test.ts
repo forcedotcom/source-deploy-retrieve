@@ -41,7 +41,8 @@ describe('ComponentSetBuilder', () => {
     let fromConnectionStub: sinon.SinonStub;
 
     beforeEach(() => {
-      fileExistsSyncStub = stubMethod(sandbox, fs, 'existsSync');
+      fileExistsSyncStub = sandbox.stub(fs, 'existsSync');
+      // fileExistsSyncStub = stubMethod(sandbox, fs, 'existsSync');
       fromSourceStub = stubMethod(sandbox, ComponentSet, 'fromSource');
       fromManifestStub = stubMethod(sandbox, ComponentSet, 'fromManifest');
       fromConnectionStub = stubMethod(sandbox, ComponentSet, 'fromConnection');

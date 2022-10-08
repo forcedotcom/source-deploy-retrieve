@@ -69,7 +69,7 @@
     "eslint-plugin-jsdoc": "^35.5.1",
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.4",
-    "jsforce": "2.0.0-beta.18",
+    "jsforce": "2.0.0-beta.19",
     "lint-staged": "^10.5.4",
     "mocha": "^9.2.2",
     "mocha-junit-reporter": "^1.23.3",

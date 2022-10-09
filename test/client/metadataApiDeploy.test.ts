@@ -304,14 +304,12 @@ describe('MetadataApiDeploy', () => {
           const responses = result.getFileResponses();
           const expected = component
             .walkContent()
-            .map((f) => {
-              return {
+            .map((f) => ({
                 fullName,
                 type: type.name,
                 state: ComponentStatus.Changed,
                 filePath: f,
-              };
-            })
+              }))
             .concat({
               fullName,
               type: type.name,

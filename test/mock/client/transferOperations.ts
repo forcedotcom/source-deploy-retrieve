@@ -120,9 +120,7 @@ export async function stubMetadataDeploy(
   const invokeResultStub = sandbox.stub();
   invokeStub.returns({
     // @ts-ignore
-    then: (f: (result: unknown | null) => void) => {
-      return f(invokeResultStub());
-    },
+    then: (f: (result: unknown | null) => void) => f(invokeResultStub()),
   });
 
   return {

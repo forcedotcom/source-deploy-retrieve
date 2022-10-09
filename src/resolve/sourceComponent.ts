@@ -306,8 +306,7 @@ export class SourceComponent implements MetadataComponent {
       if (uniqueIdElement) {
         const xmlPathToChildren = `${this.type.name}.${childType.xmlElementName}`;
         const elements = ensureArray(get(parsed, xmlPathToChildren, []));
-        const childComponents = elements.map((element) => {
-          return new SourceComponent(
+        const childComponents = elements.map((element) => new SourceComponent(
             {
               name: getString(element, uniqueIdElement),
               type: childType,
@@ -316,8 +315,7 @@ export class SourceComponent implements MetadataComponent {
             },
             this.treeContainer,
             this.forceIgnore
-          );
-        });
+          ));
         children.push(...childComponents);
       }
     }

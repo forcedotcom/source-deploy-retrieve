@@ -30,6 +30,6 @@ module.exports = {
     // Mocked out the methods that shouldn't do anything in the tests.
     '@typescript-eslint/no-empty-function': 'off',
     // Easily return a promise in a mocked method.
-    '@typescript-eslint/require-await': 'off',
+    // '@typescript-eslint/require-await': 'off',
   },
 };

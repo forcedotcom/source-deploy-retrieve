@@ -46,6 +46,10 @@ const expectedError = {
 describe('MetadataApiDeploy', () => {
   const $$ = testSetup();
 
+  afterEach(() => {
+    $$.SANDBOX.restore();
+  });
+
   describe('Lifecycle', () => {
     describe('start', () => {
       it('should not convert zip, but read from fs');
@@ -507,7 +511,7 @@ describe('MetadataApiDeploy', () => {
         });
       });
 
-      it('should set "Changed" component status for changed component', async () => {
+      it('should set "Changed" component status for changed component', () => {
         const component = matchingContentFile.COMPONENT;
         const deployedSet = new ComponentSet([component]);
         const { fullName, type, content, xml } = component;
@@ -543,7 +547,7 @@ describe('MetadataApiDeploy', () => {
         expect(responses).to.deep.equal(expected);
       });
 
-      it('should set "Created" component status for changed component', async () => {
+      it('should set "Created" component status for changed component', () => {
         const component = matchingContentFile.COMPONENT;
         const deployedSet = new ComponentSet([component]);
         const { fullName, type, content, xml } = component;
@@ -579,7 +583,7 @@ describe('MetadataApiDeploy', () => {
         expect(responses).to.deep.equal(expected);
       });
 
-      it('should set "Deleted" component status for deleted component', async () => {
+      it('should set "Deleted" component status for deleted component', () => {
         const component = matchingContentFile.COMPONENT;
         const deployedSet = new ComponentSet([component]);
         const { fullName, type, content, xml } = component;
@@ -615,7 +619,7 @@ describe('MetadataApiDeploy', () => {
         expect(responses).to.deep.equal(expected);
       });
 
-      it('should set "Failed" component status for failed component', async () => {
+      it('should set "Failed" component status for failed component', () => {
         const component = matchingContentFile.COMPONENT;
         const deployedSet = new ComponentSet([component]);
         const { fullName, type, content } = component;
@@ -653,7 +657,7 @@ describe('MetadataApiDeploy', () => {
         expect(responses).to.deep.equal(expected);
       });
 
-      it('should set "Unchanged" component status for an unchanged component', async () => {
+      it('should set "Unchanged" component status for an unchanged component', () => {
         const component = matchingContentFile.COMPONENT;
         const deployedSet = new ComponentSet([component]);
         const { fullName, type, content, xml } = component;

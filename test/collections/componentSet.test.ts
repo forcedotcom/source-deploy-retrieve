@@ -796,7 +796,7 @@ describe('ComponentSet', () => {
   });
 
   describe('add', () => {
-    it('should add metadata member to package components', async () => {
+    it('should add metadata member to package components', () => {
       const set = new ComponentSet(undefined, registryAccess);
 
       expect(set.size).to.equal(0);
@@ -811,7 +811,7 @@ describe('ComponentSet', () => {
       ]);
     });
 
-    it('should add metadata component to package components', async () => {
+    it('should add metadata component to package components', () => {
       const set = new ComponentSet(undefined, registryAccess);
       const component = { fullName: 'bar', type: registry.types.staticresource };
 
@@ -822,7 +822,7 @@ describe('ComponentSet', () => {
       expect(Array.from(set)).to.deep.equal([component]);
     });
 
-    it('should add metadata component marked for delete to package components', async () => {
+    it('should add metadata component marked for delete to package components', () => {
       const set = new ComponentSet(undefined, registryAccess);
       expect(!!set.getTypesOfDestructiveChanges().length).to.be.false;
 
@@ -838,7 +838,7 @@ describe('ComponentSet', () => {
       expect(set.has(component)).to.be.true;
     });
 
-    it('should delete metadata from package components, if its present in destructive changes', async () => {
+    it('should delete metadata from package components, if its present in destructive changes', () => {
       const set = new ComponentSet(undefined, registryAccess);
       expect(!!set.getTypesOfDestructiveChanges().length).to.be.false;
 

@@ -120,7 +120,7 @@ describe('Tree Containers', () => {
       expect(readFileStub.calledOnce).to.be.true;
     });
 
-    it('should use expected Node API for stream', async () => {
+    it('should use expected Node API for stream', () => {
       const readable = new Readable();
       const createReadStreamStub = env.stub(fs, 'createReadStream');
       // @ts-ignore wants ReadStream but Readable works for testing

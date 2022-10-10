@@ -29,6 +29,7 @@ abstract class ConvertTransactionFinalizer<T> {
   public abstract finalize(defaultDirectory?: string): Promise<WriterFormat[]>;
 }
 
+// must remain an export because vscode reaches in and imports it
 export interface RecompositionState {
   [componentKey: string]: {
     /**
@@ -166,7 +167,7 @@ class DecompositionFinalizer extends ConvertTransactionFinalizer<DecompositionSt
   }
 }
 
-export interface NonDecompositionState {
+interface NonDecompositionState {
   /*
    * Incoming child xml (ex CustomLabel) keyed by uniqueId (label name).
    */

@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SaveResult } from 'jsforce';
 import { ComponentSet } from '../collections';
 import { PackageTypeMembers } from '../collections/types';
 import { SourcePath } from '../common/types';
@@ -72,18 +71,8 @@ export interface MetadataTransferResult {
   getFileResponses(): FileResponse[];
 }
 
-export interface SourceApiResult {
-  success: boolean;
-}
-
 export interface AsyncResult {
   id: RecordId;
-}
-
-export interface SourceDeployResult extends SourceApiResult {
-  id: RecordId;
-  components?: ComponentDeployment[];
-  status: RequestStatus | ToolingDeployStatus;
 }
 
 export enum RequestStatus {
@@ -112,13 +101,6 @@ export type RetrieveSuccess = {
   component: SourceComponent;
   properties?: FileProperties;
 };
-
-export interface SourceRetrieveResult extends SourceApiResult {
-  id?: RecordId;
-  successes: RetrieveSuccess[];
-  failures: RetrieveFailure[];
-  status: RequestStatus;
-}
 
 // ------------------------------------------------
 // Metadata API result types
@@ -365,77 +347,6 @@ export interface MetadataApiDeployOptions {
   rest?: boolean;
 }
 
-// ------------------------------------------------
-// Tooling API
-// ------------------------------------------------
-
-export type ContainerAsyncRequest = {
-  Id: RecordId;
-  DeployDetails?: DeployDetails;
-  ErrorMsg?: string;
-  State?: ToolingDeployStatus;
-};
-
-export const enum ToolingDeployStatus {
-  // ContainerAsyncRequest states
-  Queued = 'Queued',
-  Invalidated = 'Invalidated',
-  Error = 'Error',
-  Aborted = 'Aborted',
-  // Shared
-  Completed = 'Completed',
-  Failed = 'Failed',
-  // unique to bundle requests
-  CompletedPartial = 'CompletedPartial',
-}
-
-export interface QueryResult {
-  size: number;
-  totalSize: number;
-  done: boolean;
-  queryLocator: string;
-  entityTypeName: string;
-  records: ApexRecord[] | AuraRecord[] | LWCRecord[] | VFRecord[] | StdValueSetRecord[];
-}
-
-export interface ApexRecord {
-  Id: string;
-  Name: string;
-  NamespacePrefix: string;
-  Body: string;
-  ApiVersion: string;
-  Status: string;
-}
-
-export interface VFRecord {
-  Id: string;
-  Name: string;
-  NamespacePrefix: string;
-  Markup: string;
-  ApiVersion: string;
-}
-
-export interface AuraRecord {
-  Id: string;
-  DefType: string;
-  Source: string;
-  AuraDefinitionBundle: {
-    ApiVersion: string;
-    DeveloperName: string;
-    NamespacePrefix: string;
-  };
-}
-
-export interface LWCRecord {
-  Id: string;
-  FilePath: string;
-  Source: string;
-  LightningComponentBundle: {
-    DeveloperName: string;
-    NamespacePrefix: string;
-  };
-}
-
 export interface StdValueSetRecord {
   Id: string;
   MasterLabel: string;
@@ -445,27 +356,4 @@ export interface StdValueSetRecord {
 export interface ListMetadataQuery {
   type: string;
   folder?: string;
-}
-
-export type ToolingCreateResult = SaveResult & {
-  id: string;
-  name: string;
-  message: string;
-};
-
-export interface AuraDefinition {
-  FilePath: string;
-  DefType: string;
-  Source: string;
-  Format: string;
-  Id?: string;
-  AuraDefinitionBundleId?: string;
-}
-
-export interface LightningComponentResource {
-  FilePath: string;
-  Source: string;
-  Format: string;
-  Id?: string;
-  LightningComponentBundleId?: string;
 }

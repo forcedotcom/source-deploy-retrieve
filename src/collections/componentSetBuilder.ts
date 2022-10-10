@@ -20,12 +20,12 @@ export type ManifestOption = {
   destructiveChangesPost?: string;
 };
 
-export type MetadataOption = {
+type MetadataOption = {
   metadataEntries: string[];
   directoryPaths: string[];
 };
 
-export type OrgOption = {
+type OrgOption = {
   username: string;
   exclude: string[];
 };

@@ -43,13 +43,9 @@ const expectedError = {
   message: messages.getMessage('error_no_job_id', ['deploy']),
 };
 
+const $$ = testSetup();
+
 describe('MetadataApiDeploy', () => {
-  const $$ = testSetup();
-
-  afterEach(() => {
-    $$.SANDBOX.restore();
-  });
-
   describe('Lifecycle', () => {
     describe('start', () => {
       it('should not convert zip, but read from fs');

@@ -8,10 +8,13 @@ import { fail } from 'assert';
 import { join } from 'path';
 import { Messages } from '@salesforce/core';
 import { expect } from 'chai';
+import chai = require('chai');
+import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import * as unzipper from 'unzipper';
-import { createSandbox, match, SinonStub } from 'sinon';
+import { SinonStub } from 'sinon';
 import { getString } from '@salesforce/ts-types';
 import * as fs from 'graceful-fs';
+import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import {
   ComponentSet,
   ComponentStatus,
@@ -28,11 +31,10 @@ import { MOCK_ASYNC_RESULT, MOCK_DEFAULT_OUTPUT, stubMetadataRetrieve } from '..
 import { xmlInFolder } from '../mock';
 import { COMPONENT } from '../mock/type-constants/apexClassConstant';
 import { DECOMPOSED_COMPONENT } from '../mock/type-constants/customObjectConstant';
-import { mockConnection } from '../mock/client';
 import * as coverage from '../../src/registry/coverage';
 import { testApiVersion } from '../mock/manifestConstants';
 
-const env = createSandbox();
+chai.use(deepEqualInAnyOrder);
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
@@ -40,11 +42,14 @@ const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
   'error_no_components_to_retrieve',
 ]);
 
-describe.skip('MetadataApiRetrieve', () => {
-  beforeEach(() => {
-    env.stub(coverage, 'getCurrentApiVersion').resolves(testApiVersion);
+describe('MetadataApiRetrieve', () => {
+  const $$ = new TestContext();
+  const testOrg = new MockTestOrgData();
+
+  beforeEach(async () => {
+    await $$.stubAuths(testOrg);
+    $$.SANDBOX.stub(coverage, 'getCurrentApiVersion').resolves(testApiVersion);
   });
-  afterEach(() => env.restore());
 
   describe('Lifecycle', () => {
     describe('start', () => {
@@ -54,7 +59,7 @@ describe.skip('MetadataApiRetrieve', () => {
       };
       it('should throw error if there are no components to retrieve', async () => {
         const toRetrieve = new ComponentSet([]);
-        const { operation } = await stubMetadataRetrieve(env, {
+        const { operation } = await stubMetadataRetrieve($$, testOrg, {
           toRetrieve,
           merge: true,
         });
@@ -70,7 +75,7 @@ describe.skip('MetadataApiRetrieve', () => {
 
       it('should throw error if packageNames list is empty', async () => {
         const toRetrieve = new ComponentSet([]);
-        const { operation } = await stubMetadataRetrieve(env, {
+        const { operation } = await stubMetadataRetrieve($$, testOrg, {
           toRetrieve,
           merge: true,
           packageOptions: [],
@@ -92,12 +97,12 @@ describe.skip('MetadataApiRetrieve', () => {
           merge: true,
           successes: toRetrieve,
         };
-        const { operation, retrieveStub } = await stubMetadataRetrieve(env, options);
+        const { operation, retrieveStub } = await stubMetadataRetrieve($$, testOrg, options);
         await operation.start();
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
-          apiVersion: (await mockConnection()).getApiVersion(),
+          apiVersion: (await testOrg.getConnection()).getApiVersion(),
           unpackaged: (await toRetrieve.getObject()).Package,
         });
       });
@@ -110,12 +115,12 @@ describe.skip('MetadataApiRetrieve', () => {
           merge: true,
           successes: toRetrieve,
         };
-        const { operation, retrieveStub } = await stubMetadataRetrieve(env, options);
+        const { operation, retrieveStub } = await stubMetadataRetrieve($$, testOrg, options);
         await operation.start();
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
-          apiVersion: (await mockConnection()).getApiVersion(),
+          apiVersion: (await testOrg.getConnection()).getApiVersion(),
           packageNames: options.packageOptions,
           unpackaged: (await toRetrieve.getObject()).Package,
         });
@@ -129,12 +134,12 @@ describe.skip('MetadataApiRetrieve', () => {
           merge: true,
           successes: toRetrieve,
         };
-        const { operation, retrieveStub } = await stubMetadataRetrieve(env, options);
+        const { operation, retrieveStub } = await stubMetadataRetrieve($$, testOrg, options);
         await operation.start();
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
-          apiVersion: (await mockConnection()).getApiVersion(),
+          apiVersion: (await testOrg.getConnection()).getApiVersion(),
           packageNames: [options.packageOptions[0].name],
           unpackaged: (await toRetrieve.getObject()).Package,
         });
@@ -148,12 +153,12 @@ describe.skip('MetadataApiRetrieve', () => {
           merge: true,
           successes: toRetrieve,
         };
-        const { operation, retrieveStub } = await stubMetadataRetrieve(env, options);
+        const { operation, retrieveStub } = await stubMetadataRetrieve($$, testOrg, options);
         await operation.start();
 
         expect(retrieveStub.calledOnce).to.be.true;
         expect(retrieveStub.firstCall.args[0]).to.deep.equal({
-          apiVersion: (await mockConnection()).getApiVersion(),
+          apiVersion: (await testOrg.getConnection()).getApiVersion(),
           packageNames: [options.packageOptions[0].name],
           unpackaged: (await toRetrieve.getObject()).Package,
         });
@@ -167,7 +172,7 @@ describe.skip('MetadataApiRetrieve', () => {
           merge: true,
           successes: toRetrieve,
         };
-        const { operation } = await stubMetadataRetrieve(env, options);
+        const { operation } = await stubMetadataRetrieve($$, testOrg, options);
 
         const result = await operation.start();
 
@@ -182,7 +187,7 @@ describe.skip('MetadataApiRetrieve', () => {
           merge: true,
           successes: toRetrieve,
         };
-        const { operation, response } = await stubMetadataRetrieve(env, options);
+        const { operation, response } = await stubMetadataRetrieve($$, testOrg, options);
 
         await operation.start();
 
@@ -214,7 +219,7 @@ describe.skip('MetadataApiRetrieve', () => {
       it('should retrieve zip and extract to directory', async () => {
         const component = COMPONENT;
         const toRetrieve = new ComponentSet([component]);
-        const { operation, convertStub } = await stubMetadataRetrieve(env, {
+        const { operation, convertStub } = await stubMetadataRetrieve($$, testOrg, {
           toRetrieve,
           successes: toRetrieve,
         });
@@ -223,22 +228,21 @@ describe.skip('MetadataApiRetrieve', () => {
         await operation.pollStatus();
 
         expect(convertStub.calledOnce).to.be.true;
-        expect(
-          convertStub.calledWith(match.any, 'source', {
-            type: 'directory',
-            outputDirectory: MOCK_DEFAULT_OUTPUT,
-          })
-        ).to.be.true;
+        expect(convertStub.firstCall.args).to.deep.equal([
+          [],
+          'source',
+          { type: 'directory', outputDirectory: MOCK_DEFAULT_OUTPUT },
+        ]);
       });
 
       it('should retrieve zip with packages and extract to default directory', async () => {
         const component = COMPONENT;
         const packageName = 'MyPackage';
         const pkgComponent = getPackageComponent(packageName);
-        const fromSourceSpy = env.spy(ComponentSet, 'fromSource');
+        const fromSourceSpy = $$.SANDBOX.spy(ComponentSet, 'fromSource');
         const toRetrieve = new ComponentSet([component]);
         const successesCompSet = new ComponentSet([component, pkgComponent]);
-        const { operation, convertStub } = await stubMetadataRetrieve(env, {
+        const { operation, convertStub } = await stubMetadataRetrieve($$, testOrg, {
           toRetrieve,
           packageOptions: [packageName],
           successes: successesCompSet,
@@ -269,10 +273,10 @@ describe.skip('MetadataApiRetrieve', () => {
         const packageName = 'MyPackage';
         const packageOutputDir = 'myPackageDir';
         const pkgComponent = getPackageComponent(packageName);
-        const fromSourceSpy = env.spy(ComponentSet, 'fromSource');
+        const fromSourceSpy = $$.SANDBOX.spy(ComponentSet, 'fromSource');
         const toRetrieve = new ComponentSet([component]);
         const successesCompSet = new ComponentSet([component, pkgComponent]);
-        const { operation, convertStub } = await stubMetadataRetrieve(env, {
+        const { operation, convertStub } = await stubMetadataRetrieve($$, testOrg, {
           toRetrieve,
           packageOptions: [{ name: packageName, outputDir: packageOutputDir }],
           successes: successesCompSet,
@@ -302,12 +306,12 @@ describe.skip('MetadataApiRetrieve', () => {
         try {
           process.env.SFDX_MDAPI_TEMP_DIR = 'test';
           const toRetrieve = new ComponentSet([COMPONENT]);
-          const { operation, convertStub } = await stubMetadataRetrieve(env, {
+          const { operation, convertStub } = await stubMetadataRetrieve($$, testOrg, {
             toRetrieve,
             merge: true,
             successes: toRetrieve,
           });
-          env.stub(fs.promises, 'writeFile');
+          $$.SANDBOX.stub(fs.promises, 'writeFile');
 
           await operation.start();
           await operation.pollStatus();
@@ -320,23 +324,23 @@ describe.skip('MetadataApiRetrieve', () => {
 
       it('should NOT save the temp directory if the environment variable is NOT set', async () => {
         const toRetrieve = new ComponentSet([COMPONENT]);
-        const { operation, convertStub } = await stubMetadataRetrieve(env, {
+        const { operation, convertStub } = await stubMetadataRetrieve($$, testOrg, {
           toRetrieve,
           merge: true,
           successes: toRetrieve,
         });
-        env.stub(fs, 'writeFileSync');
+        $$.SANDBOX.stub(fs, 'writeFileSync');
 
         await operation.start();
         await operation.pollStatus();
-        // if the env var is set the callCount will be 2
+        // if the $$.SANDBOX var is set the callCount will be 2
         expect(convertStub.callCount).to.equal(1);
       });
 
       it('should retrieve zip and merge with existing components', async () => {
         const component = COMPONENT;
         const toRetrieve = new ComponentSet([component]);
-        const { operation, convertStub } = await stubMetadataRetrieve(env, {
+        const { operation, convertStub } = await stubMetadataRetrieve($$, testOrg, {
           toRetrieve,
           merge: true,
           successes: toRetrieve,
@@ -346,19 +350,21 @@ describe.skip('MetadataApiRetrieve', () => {
         await operation.pollStatus();
 
         expect(convertStub.calledOnce).to.be.true;
-        expect(
-          convertStub.calledWith(match.any, 'source', {
+        expect(convertStub.firstCall.args).to.deep.equal([
+          [],
+          'source',
+          {
             type: 'merge',
             mergeWith: toRetrieve.getSourceComponents(),
             defaultDirectory: MOCK_DEFAULT_OUTPUT,
             forceIgnoredPaths: new Set<string>(),
-          })
-        ).to.be.true;
+          },
+        ]);
       });
 
       it('should construct a result object with retrieved components', async () => {
         const toRetrieve = new ComponentSet([COMPONENT]);
-        const { operation, response } = await stubMetadataRetrieve(env, {
+        const { operation, response } = await stubMetadataRetrieve($$, testOrg, {
           toRetrieve,
           merge: true,
           successes: toRetrieve,
@@ -367,14 +373,13 @@ describe.skip('MetadataApiRetrieve', () => {
         await operation.start();
         const result = await operation.pollStatus();
         const expected = new RetrieveResult(response, toRetrieve, toRetrieve);
-
-        expect(result).to.deep.equal(expected);
+        expect(result).to.deep.equalInAnyOrder(expected);
       });
 
       it('should construct a result object with no components when components are forceIgnored', async () => {
         const toRetrieve = new ComponentSet([COMPONENT]);
         toRetrieve.forceIgnoredPaths = new Set([COMPONENT.xml, COMPONENT.content]);
-        const { operation } = await stubMetadataRetrieve(env, {
+        const { operation } = await stubMetadataRetrieve($$, testOrg, {
           toRetrieve,
           merge: true,
           successes: toRetrieve,
@@ -388,7 +393,7 @@ describe.skip('MetadataApiRetrieve', () => {
 
       it('should construct a result object with no components when no components are retrieved', async () => {
         const toRetrieve = new ComponentSet([COMPONENT]);
-        const { operation, response } = await stubMetadataRetrieve(env, {
+        const { operation, response } = await stubMetadataRetrieve($$, testOrg, {
           toRetrieve,
           merge: true,
           messages: [
@@ -411,7 +416,7 @@ describe.skip('MetadataApiRetrieve', () => {
   describe('checkStatus', () => {
     it('should throw an error when attempting to call checkStatus without an id set', async () => {
       const toRetrieve = new ComponentSet([COMPONENT]);
-      const { operation } = await stubMetadataRetrieve(env, {
+      const { operation } = await stubMetadataRetrieve($$, testOrg, {
         toRetrieve,
         merge: true,
       });
@@ -439,13 +444,13 @@ describe.skip('MetadataApiRetrieve', () => {
     let writeFileStub: SinonStub;
     let openBufferStub: SinonStub;
     let extractStub: SinonStub;
-    const mdapiRetrieveExtractStub = env.stub().resolves({});
+    const mdapiRetrieveExtractStub = $$.SANDBOX.stub().resolves({});
 
     beforeEach(() => {
-      writeFileStub = env.stub(fs, 'writeFileSync');
-      extractStub = env.stub().resolves();
+      writeFileStub = $$.SANDBOX.stub(fs, 'writeFileSync');
+      extractStub = $$.SANDBOX.stub().resolves();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-      openBufferStub = env.stub(unzipper.Open, 'buffer').resolves({ extract: extractStub } as any);
+      openBufferStub = $$.SANDBOX.stub(unzipper.Open, 'buffer').resolves({ extract: extractStub } as any);
     });
 
     it('should write the retrieved zip when format=metadata', async () => {
@@ -494,7 +499,7 @@ describe.skip('MetadataApiRetrieve', () => {
     it('should immediately stop polling', async () => {
       const component = COMPONENT;
       const components = new ComponentSet([component]);
-      const { operation, checkStatusStub } = await stubMetadataRetrieve(env, {
+      const { operation, checkStatusStub } = await stubMetadataRetrieve($$, testOrg, {
         toRetrieve: components,
       });
 

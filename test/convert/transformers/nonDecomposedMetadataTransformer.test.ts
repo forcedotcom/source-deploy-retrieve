@@ -6,19 +6,16 @@
  */
 
 import { expect } from 'chai';
-import { createSandbox } from 'sinon';
+import { TestContext } from '@salesforce/core/lib/testSetup';
 import { nonDecomposed } from '../../mock';
 import { NonDecomposedMetadataTransformer } from '../../../src/convert/transformers/nonDecomposedMetadataTransformer';
 import { ComponentSet, registry, RegistryAccess, SourceComponent } from '../../../src';
 import { ConvertContext } from '../../../src/convert/convertContext';
 
-const env = createSandbox();
-
 describe('NonDecomposedMetadataTransformer', () => {
+  const $$ = new TestContext();
   const component = nonDecomposed.COMPONENT_1;
   const registryAccess = new RegistryAccess();
-
-  afterEach(() => env.restore());
 
   describe('toMetadataFormat', () => {
     it('should defer write operations and set context state', async () => {
@@ -71,8 +68,8 @@ describe('NonDecomposedMetadataTransformer', () => {
         },
         []
       );
-      env.stub(componentToConvert, 'parseXml').resolves(nonDecomposed.FULL_XML_CONTENT);
-      env.stub(componentToConvert, 'parseXmlSync').returns(nonDecomposed.FULL_XML_CONTENT);
+      $$.SANDBOX.stub(componentToConvert, 'parseXml').resolves(nonDecomposed.FULL_XML_CONTENT);
+      $$.SANDBOX.stub(componentToConvert, 'parseXmlSync').returns(nonDecomposed.FULL_XML_CONTENT);
 
       const result = await transformer.toSourceFormat(componentToConvert, component);
       expect(result).to.deep.equal([]);

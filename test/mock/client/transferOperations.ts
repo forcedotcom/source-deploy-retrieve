@@ -6,10 +6,10 @@
  */
 
 import { join, sep } from 'path';
-import { TestContext } from '@salesforce/core/lib/testSetup';
+import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { ensureArray } from '@salesforce/kit';
 import { PollingClient } from '@salesforce/core';
-import { match, SinonSandbox, SinonSpy, SinonStub } from 'sinon';
+import { match, SinonSpy, SinonStub } from 'sinon';
 import { AsyncResult } from 'jsforce/lib/api/metadata';
 import {
   ComponentSet,
@@ -30,7 +30,7 @@ import {
   RequestStatus,
 } from '../../../src/client/types';
 import { ComponentProperties } from '../../../src/resolve/sourceComponent';
-import { createMockZip, mockConnection } from '.';
+import { createMockZip } from '.';
 
 export const MOCK_ASYNC_RESULT: AsyncResult = { id: '1234', state: RequestStatus.Pending, done: false };
 export const MOCK_DEFAULT_OUTPUT = sep + 'test';
@@ -60,12 +60,13 @@ interface DeployOperationLifecycle {
 }
 
 export async function stubMetadataDeploy(
-  context: TestContext,
+  $$: TestContext,
+  testOrg: MockTestOrgData,
   options: DeployStubOptions = { components: new ComponentSet() }
 ): Promise<DeployOperationLifecycle> {
-  const sandbox = context.SANDBOX;
+  const sandbox = $$.SANDBOX;
   const zipBuffer = Buffer.from('1234');
-  const connection = await mockConnection();
+  const connection = await testOrg.getConnection();
 
   const deployStub = sandbox.stub(connection.metadata, 'deploy');
   const deployRestStub = sandbox.stub(connection.metadata, 'deployRest');
@@ -159,17 +160,18 @@ interface RetrieveOperationLifecycle {
 /**
  * A stubber that simulates the API retrieve.
  *
- * @param sandbox Sinon sandbox to stub against
+ * @param $$ TestContext to stub against
  * @param options Options to stub out the retrieve
  */
 export async function stubMetadataRetrieve(
-  sandbox: SinonSandbox,
+  $$: TestContext,
+  testOrg: MockTestOrgData,
   options: RetrieveStubOptions
 ): Promise<RetrieveOperationLifecycle> {
   const { toRetrieve: retrievedComponents, packageOptions: packages } = options;
-  const connection = await mockConnection();
+  const connection = await testOrg.getConnection();
 
-  const retrieveStub = sandbox.stub(connection.metadata, 'retrieve').resolves(MOCK_ASYNC_RESULT);
+  const retrieveStub = $$.SANDBOX.stub(connection.metadata, 'retrieve').resolves(MOCK_ASYNC_RESULT);
 
   const retrieveStatus: Partial<MetadataApiRetrieveStatus> = {
     id: MOCK_ASYNC_RESULT.id,
@@ -233,7 +235,7 @@ export async function stubMetadataRetrieve(
 
   retrieveStatus.zipFile = (await createMockZip(zipEntries)).toString('base64');
 
-  const checkStatusStub = sandbox.stub(connection.metadata, 'checkRetrieveStatus');
+  const checkStatusStub = $$.SANDBOX.stub(connection.metadata, 'checkRetrieveStatus');
   // @ts-ignore force returning project's RetrieveResult type
   checkStatusStub.withArgs(MOCK_ASYNC_RESULT.id).resolves(retrieveStatus);
 
@@ -295,7 +297,7 @@ export async function stubMetadataRetrieve(
       })
     );
   }
-  const convertStub = sandbox.stub(MetadataConverter.prototype, 'convert');
+  const convertStub = $$.SANDBOX.stub(MetadataConverter.prototype, 'convert');
   outputConfigs.forEach((outputCfg) => {
     const notForceIgnoredConverted = converted.filter(
       (component) => !retrievedComponents.forceIgnoredPaths ?? [].includes(component.xml)

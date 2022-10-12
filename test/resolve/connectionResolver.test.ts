@@ -6,13 +6,10 @@
  */
 
 import { expect } from 'chai';
-import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
+import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { Connection, Logger } from '@salesforce/core';
-import { mockConnection } from '../mock/client';
 import { ConnectionResolver } from '../../src/resolve';
 import { MetadataComponent, registry } from '../../src/';
-
-const $$ = testSetup();
 
 const StdFileProperty = {
   createdById: 'createdById',
@@ -25,12 +22,14 @@ const StdFileProperty = {
 };
 
 describe('ConnectionResolver', () => {
+  const $$ = new TestContext();
+
   let connection: Connection;
   const testData = new MockTestOrgData();
 
   beforeEach(async () => {
-    $$.stubAuths(testData);
-    connection = await mockConnection();
+    await $$.stubAuths(testData);
+    connection = await testData.getConnection();
   });
 
   afterEach(() => {

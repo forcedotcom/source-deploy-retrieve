@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, join } from 'path';
-import { testSetup } from '@salesforce/core/lib/testSetup';
+import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { assert, expect } from 'chai';
 import { AnyJson, getString } from '@salesforce/ts-types';
 import { PollingClient, StatusResult, Messages } from '@salesforce/core';
@@ -43,9 +43,14 @@ const expectedError = {
   message: messages.getMessage('error_no_job_id', ['deploy']),
 };
 
-const $$ = testSetup();
-
 describe('MetadataApiDeploy', () => {
+  const $$ = new TestContext();
+  const testOrg = new MockTestOrgData();
+
+  beforeEach(async () => {
+    await $$.stubAuths(testOrg);
+  });
+
   describe('Lifecycle', () => {
     describe('start', () => {
       it('should not convert zip, but read from fs');
@@ -53,7 +58,7 @@ describe('MetadataApiDeploy', () => {
 
       it('should convert to metadata format and create zip', async () => {
         const components = new ComponentSet([matchingContentFile.COMPONENT]);
-        const { operation, convertStub } = await stubMetadataDeploy($$, {
+        const { operation, convertStub } = await stubMetadataDeploy($$, testOrg, {
           components,
         });
 
@@ -64,7 +69,7 @@ describe('MetadataApiDeploy', () => {
 
       it('should call deploy with zip', async () => {
         const components = new ComponentSet([matchingContentFile.COMPONENT]);
-        const { operation, convertStub, deployStub } = await stubMetadataDeploy($$, {
+        const { operation, convertStub, deployStub } = await stubMetadataDeploy($$, testOrg, {
           components,
         });
 
@@ -79,7 +84,7 @@ describe('MetadataApiDeploy', () => {
         try {
           process.env.SFDX_MDAPI_TEMP_DIR = 'test';
           const components = new ComponentSet([matchingContentFile.COMPONENT]);
-          const { operation, convertStub, deployStub } = await stubMetadataDeploy($$, {
+          const { operation, convertStub, deployStub } = await stubMetadataDeploy($$, testOrg, {
             components,
           });
 
@@ -96,7 +101,7 @@ describe('MetadataApiDeploy', () => {
 
       it('should NOT save the temp directory if the environment variable is NOT set', async () => {
         const components = new ComponentSet([matchingContentFile.COMPONENT]);
-        const { operation, convertStub } = await stubMetadataDeploy($$, {
+        const { operation, convertStub } = await stubMetadataDeploy($$, testOrg, {
           components,
         });
 
@@ -109,7 +114,7 @@ describe('MetadataApiDeploy', () => {
       it('should return an AsyncResult', async () => {
         const component = matchingContentFile.COMPONENT;
         const deployedComponents = new ComponentSet([component]);
-        const { operation } = await stubMetadataDeploy($$, {
+        const { operation } = await stubMetadataDeploy($$, testOrg, {
           components: deployedComponents,
         });
 
@@ -121,7 +126,7 @@ describe('MetadataApiDeploy', () => {
       it('should set the deploy ID', async () => {
         const component = matchingContentFile.COMPONENT;
         const deployedComponents = new ComponentSet([component]);
-        const { operation, response } = await stubMetadataDeploy($$, {
+        const { operation, response } = await stubMetadataDeploy($$, testOrg, {
           components: deployedComponents,
         });
 
@@ -135,7 +140,7 @@ describe('MetadataApiDeploy', () => {
       it('should construct a result object with deployed components', async () => {
         const component = matchingContentFile.COMPONENT;
         const deployedComponents = new ComponentSet([component]);
-        const { operation, response } = await stubMetadataDeploy($$, {
+        const { operation, response } = await stubMetadataDeploy($$, testOrg, {
           components: deployedComponents,
         });
 
@@ -147,7 +152,7 @@ describe('MetadataApiDeploy', () => {
       });
 
       it('should stop polling when checkStatus returns done = true', async () => {
-        const { operation, checkStatusStub } = await stubMetadataDeploy($$);
+        const { operation, checkStatusStub } = await stubMetadataDeploy($$, testOrg);
         checkStatusStub.withArgs(MOCK_ASYNC_RESULT.id, true).resolves({ done: true });
 
         await operation.start();
@@ -159,7 +164,7 @@ describe('MetadataApiDeploy', () => {
       it('should override timeout and frequency by number', async () => {
         const component = matchingContentFile.COMPONENT;
         const deployedComponents = new ComponentSet([component]);
-        const { operation, pollingClientSpy } = await stubMetadataDeploy($$, {
+        const { operation, pollingClientSpy } = await stubMetadataDeploy($$, testOrg, {
           components: deployedComponents,
         });
         const frequency = Duration.milliseconds(500);
@@ -175,7 +180,7 @@ describe('MetadataApiDeploy', () => {
 
       it('should override polling client options', async () => {
         const deployedComponents = new ComponentSet([matchingContentFile.COMPONENT]);
-        const { operation, pollingClientSpy } = await stubMetadataDeploy($$, {
+        const { operation, pollingClientSpy } = await stubMetadataDeploy($$, testOrg, {
           components: deployedComponents,
         });
         const frequency = Duration.milliseconds(500);
@@ -199,7 +204,7 @@ describe('MetadataApiDeploy', () => {
 
   describe('checkStatus', () => {
     it('should throw an error when a job ID is not set', async () => {
-      const { operation } = await stubMetadataDeploy($$);
+      const { operation } = await stubMetadataDeploy($$, testOrg);
       try {
         await operation.checkStatus();
         assert.fail('should have thrown an error');
@@ -212,7 +217,7 @@ describe('MetadataApiDeploy', () => {
 
   describe('deployRecentValidation', () => {
     it('should return new ID for SOAP version', async () => {
-      const { operation } = await stubMetadataDeploy($$, {
+      const { operation } = await stubMetadataDeploy($$, testOrg, {
         id: '1234',
         components: new ComponentSet(),
       });
@@ -222,7 +227,7 @@ describe('MetadataApiDeploy', () => {
     });
 
     it('should return new ID for REST version', async () => {
-      const { operation } = await stubMetadataDeploy($$, {
+      const { operation } = await stubMetadataDeploy($$, testOrg, {
         id: '1234',
         components: new ComponentSet(),
       });
@@ -232,7 +237,7 @@ describe('MetadataApiDeploy', () => {
     });
 
     it('should throw an error when a job ID is not set', async () => {
-      const { operation } = await stubMetadataDeploy($$);
+      const { operation } = await stubMetadataDeploy($$, testOrg);
       try {
         await operation.deployRecentValidation(false);
         assert.fail('should have thrown an error');
@@ -245,7 +250,7 @@ describe('MetadataApiDeploy', () => {
 
   describe('cancel', () => {
     it('should send cancelDeploy request to org if cancel is called', async () => {
-      const { operation, invokeStub } = await stubMetadataDeploy($$, {
+      const { operation, invokeStub } = await stubMetadataDeploy($$, testOrg, {
         id: MOCK_ASYNC_RESULT.id,
         components: new ComponentSet(),
       });
@@ -257,7 +262,7 @@ describe('MetadataApiDeploy', () => {
     });
 
     it('should throw an error when a job ID is not set', async () => {
-      const { operation } = await stubMetadataDeploy($$);
+      const { operation } = await stubMetadataDeploy($$, testOrg);
       try {
         await operation.cancel();
         assert.fail('should have thrown an error');

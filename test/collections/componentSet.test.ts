@@ -6,9 +6,9 @@
  */
 import { fail } from 'assert';
 import { join } from 'path';
-import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
+import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
-import { createSandbox, SinonStub } from 'sinon';
+import { SinonStub } from 'sinon';
 import { AuthInfo, Connection, Messages } from '@salesforce/core';
 import {
   ComponentSet,
@@ -24,7 +24,6 @@ import {
   RegistryAccess,
   SourceComponent,
 } from '../../src';
-import { mockConnection } from '../mock/client';
 import { decomposedtoplevel, matchingContentFile, mixedContentSingleFile } from '../mock';
 import { MATCHING_RULES_COMPONENT } from '../mock/type-constants/customlabelsConstant';
 import * as manifestFiles from '../mock/manifestConstants';
@@ -32,12 +31,11 @@ import { testApiVersionAsString } from '../mock/manifestConstants';
 import * as coverage from '../../src/registry/coverage';
 import { testApiVersion } from '../mock/manifestConstants';
 
-const env = createSandbox();
-const $$ = testSetup(env);
 const registryAccess = new RegistryAccess();
 
 describe('ComponentSet', () => {
-  afterEach(() => env.restore());
+  const $$ = new TestContext();
+  const testOrg = new MockTestOrgData();
 
   describe('Initializers', () => {
     describe('fromSource', () => {
@@ -46,7 +44,7 @@ describe('ComponentSet', () => {
       let getComponentsStub: SinonStub;
 
       beforeEach(() => {
-        getComponentsStub = env.stub(MetadataResolver.prototype, 'getComponentsFromPath').returns(resolved);
+        getComponentsStub = $$.SANDBOX.stub(MetadataResolver.prototype, 'getComponentsFromPath').returns(resolved);
       });
 
       it('should initialize with result from source resolver', () => {
@@ -120,11 +118,11 @@ describe('ComponentSet', () => {
             type: registry.types.apexclass,
           },
         ];
-        const resolveStub = env.stub(ManifestResolver.prototype, 'resolve').resolves({
+        const resolveStub = $$.SANDBOX.stub(ManifestResolver.prototype, 'resolve').resolves({
           components: expected,
           apiVersion: testApiVersionAsString,
         });
-        env.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
+        $$.SANDBOX.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
         const manifest = manifestFiles.ONE_FOLDER_MEMBER;
         const set = await ComponentSet.fromManifest(manifest.name);
 
@@ -258,18 +256,18 @@ describe('ComponentSet', () => {
 
     describe('fromConnection', () => {
       it('should initialize using a connection', async () => {
-        const connection = await mockConnection();
+        const connection = await testOrg.getConnection();
         const expected: MetadataComponent[] = [
           {
             fullName: 'Test',
             type: registry.types.apexclass,
           },
         ];
-        const resolveStub = env.stub(ConnectionResolver.prototype, 'resolve').resolves({
+        const resolveStub = $$.SANDBOX.stub(ConnectionResolver.prototype, 'resolve').resolves({
           components: expected,
           apiVersion: testApiVersionAsString,
         });
-        env.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
+        $$.SANDBOX.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
         const set = await ComponentSet.fromConnection({ usernameOrConnection: connection });
 
         const result = set.toArray();
@@ -285,11 +283,11 @@ describe('ComponentSet', () => {
             type: registry.types.apexclass,
           },
         ];
-        const resolveStub = env.stub(ConnectionResolver.prototype, 'resolve').resolves({
+        const resolveStub = $$.SANDBOX.stub(ConnectionResolver.prototype, 'resolve').resolves({
           components: expected,
           apiVersion: '50.0',
         });
-        env.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
+        $$.SANDBOX.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
         const username = 'test@foobar.com';
         const testData = new MockTestOrgData($$.uniqid(), { username });
 
@@ -321,11 +319,11 @@ describe('ComponentSet', () => {
           },
         ];
 
-        const resolveStub = env.stub(ConnectionResolver.prototype, 'resolve').resolves({
+        const resolveStub = $$.SANDBOX.stub(ConnectionResolver.prototype, 'resolve').resolves({
           components: expected,
           apiVersion: connection.getApiVersion(),
         });
-        env.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
+        $$.SANDBOX.stub(RegistryAccess.prototype, 'getTypeByName').returns(registry.types.apexclass);
         const set = await ComponentSet.fromConnection('test@foobar.com');
 
         const result = set.toArray();
@@ -367,7 +365,7 @@ describe('ComponentSet', () => {
 
   describe('getObject', () => {
     beforeEach(() => {
-      env.stub(coverage, 'getCurrentApiVersion').resolves(testApiVersion);
+      $$.SANDBOX.stub(coverage, 'getCurrentApiVersion').resolves(testApiVersion);
     });
 
     it('should return an object representing the package manifest', async () => {
@@ -573,7 +571,7 @@ describe('ComponentSet', () => {
 
   describe('getPackageXml', () => {
     beforeEach(() => {
-      env.stub(coverage, 'getCurrentApiVersion').resolves(testApiVersion);
+      $$.SANDBOX.stub(coverage, 'getCurrentApiVersion').resolves(testApiVersion);
     });
     it('should return manifest string when initialized from manifest file', async () => {
       const manifest = manifestFiles.ONE_OF_EACH;
@@ -641,7 +639,7 @@ describe('ComponentSet', () => {
 
   describe('deploy', () => {
     it('should properly construct a deploy operation', async () => {
-      const connection = await mockConnection();
+      const connection = await testOrg.getConnection();
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
         registry: registryAccess,
@@ -649,9 +647,8 @@ describe('ComponentSet', () => {
       });
       const operationArgs = { components: set, usernameOrConnection: connection };
       const expectedOperation = new MetadataApiDeploy(operationArgs);
-      const startStub = env.stub(expectedOperation, 'start').resolves();
-      const constructorStub = env
-        .stub()
+      const startStub = $$.SANDBOX.stub(expectedOperation, 'start').resolves();
+      const constructorStub = $$.SANDBOX.stub()
         .withArgs(operationArgs)
         .callsFake(() => expectedOperation);
       Object.setPrototypeOf(MetadataApiDeploy, constructorStub);
@@ -663,7 +660,7 @@ describe('ComponentSet', () => {
     });
 
     it('should properly construct a deploy operation with overridden apiVersion', async () => {
-      const connection = await mockConnection();
+      const connection = await testOrg.getConnection();
       const apiVersion = '50.0';
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
@@ -673,9 +670,8 @@ describe('ComponentSet', () => {
       set.apiVersion = apiVersion;
       const operationArgs = { components: set, usernameOrConnection: connection, apiVersion };
       const expectedOperation = new MetadataApiDeploy(operationArgs);
-      const startStub = env.stub(expectedOperation, 'start').resolves();
-      const constructorStub = env
-        .stub()
+      const startStub = $$.SANDBOX.stub(expectedOperation, 'start').resolves();
+      const constructorStub = $$.SANDBOX.stub()
         .withArgs(operationArgs)
         .callsFake(() => expectedOperation);
       Object.setPrototypeOf(MetadataApiDeploy, constructorStub);
@@ -707,7 +703,7 @@ describe('ComponentSet', () => {
 
   describe('retrieve', () => {
     it('should properly construct a retrieve operation', async () => {
-      const connection = await mockConnection();
+      const connection = await testOrg.getConnection();
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
         registry: registryAccess,
@@ -719,9 +715,8 @@ describe('ComponentSet', () => {
         usernameOrConnection: connection,
       };
       const expectedOperation = new MetadataApiRetrieve(operationArgs);
-      const startStub = env.stub(expectedOperation, 'start').resolves();
-      const constructorStub = env
-        .stub()
+      const startStub = $$.SANDBOX.stub(expectedOperation, 'start').resolves();
+      const constructorStub = $$.SANDBOX.stub()
         .withArgs(operationArgs)
         .callsFake(() => expectedOperation);
       Object.setPrototypeOf(MetadataApiRetrieve, constructorStub);
@@ -736,7 +731,7 @@ describe('ComponentSet', () => {
     });
 
     it('should properly construct a retrieve operation with overridden apiVersion', async () => {
-      const connection = await mockConnection();
+      const connection = await testOrg.getConnection();
       const apiVersion = '50.0';
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
@@ -751,9 +746,8 @@ describe('ComponentSet', () => {
         usernameOrConnection: connection,
       };
       const expectedOperation = new MetadataApiRetrieve(operationArgs);
-      const startStub = env.stub(expectedOperation, 'start').resolves();
-      const constructorStub = env
-        .stub()
+      const startStub = $$.SANDBOX.stub(expectedOperation, 'start').resolves();
+      const constructorStub = $$.SANDBOX.stub()
         .withArgs(operationArgs)
         .callsFake(() => expectedOperation);
       Object.setPrototypeOf(MetadataApiRetrieve, constructorStub);
@@ -768,7 +762,7 @@ describe('ComponentSet', () => {
     });
 
     it('should properly construct a retrieve operation with packageName', async () => {
-      const connection = await mockConnection();
+      const connection = await testOrg.getConnection();
       const set = new ComponentSet([]);
       const operationArgs = {
         components: set,
@@ -777,9 +771,8 @@ describe('ComponentSet', () => {
         packages: ['MyPackage'],
       };
       const expectedOperation = new MetadataApiRetrieve(operationArgs);
-      const startStub = env.stub(expectedOperation, 'start').resolves();
-      const constructorStub = env
-        .stub()
+      const startStub = $$.SANDBOX.stub(expectedOperation, 'start').resolves();
+      const constructorStub = $$.SANDBOX.stub()
         .withArgs(operationArgs)
         .callsFake(() => expectedOperation);
       Object.setPrototypeOf(MetadataApiRetrieve, constructorStub);

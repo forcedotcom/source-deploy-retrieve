@@ -678,10 +678,10 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.7.0"
 
-"@salesforce/core@^3.30.14":
-  version "3.30.14"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.30.14.tgz#9f792ce0390e97992b5a2450b893adc9b81ebfeb"
-  integrity sha512-vQ1LZfNaWD75haBmfjCXT6j0M5iCi+op6LH9jM4cdGGHdoNahD/OJCQAFc5W/NE+CozNOUJChTqvAbhz52Xs9A==
+"@salesforce/core@^3.30.8":
+  version "3.30.12"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.30.12.tgz#9bd81770a8c7c909b01c7736283d6d3376915fa7"
+  integrity sha512-2p2EPGsjOdj9m2BzjDyFtSvvyDukyg/sZ07tdxsQC4NXNqE/NfvsbgpitxQRxFGVAwLaJvuaO3LVv7g4lA4PpA==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
     "@salesforce/kit" "^1.7.0"
@@ -701,10 +701,10 @@
     jsonwebtoken "8.5.1"
     ts-retry-promise "^0.7.0"
 
-"@salesforce/core@^3.30.8":
-  version "3.30.12"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.30.12.tgz#9bd81770a8c7c909b01c7736283d6d3376915fa7"
-  integrity sha512-2p2EPGsjOdj9m2BzjDyFtSvvyDukyg/sZ07tdxsQC4NXNqE/NfvsbgpitxQRxFGVAwLaJvuaO3LVv7g4lA4PpA==
+"@salesforce/core@^3.31.9":
+  version "3.31.9"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.31.9.tgz#af9161e72a18d2232f17938503376379af725b15"
+  integrity sha512-aRgp7m4P2yOMloOnBpamVBv/ykN27/kqm5ZxbQCsMYYHTx9s2/yOs4jCsXElIyYt3G/BvhGYpIzvW7LI/OO64A==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
     "@salesforce/kit" "^1.7.0"

@@ -6,8 +6,6 @@
  */
 import { pipeline, Writable } from 'stream';
 import { promisify } from 'util';
-import { AuthInfo, Connection } from '@salesforce/core';
-import { MockTestOrgData } from '@salesforce/core/lib/testSetup';
 import { create as createArchive } from 'archiver';
 
 export async function createMockZip(entries: string[]): Promise<Buffer> {
@@ -24,13 +22,4 @@ export async function createMockZip(entries: string[]): Promise<Buffer> {
   };
   await promisify(pipeline)(archive, bufferWritable);
   return Buffer.concat(buffers);
-}
-
-export async function mockConnection(): Promise<Connection> {
-  const testData = new MockTestOrgData();
-  return Connection.create({
-    authInfo: await AuthInfo.create({
-      username: testData.username,
-    }),
-  });
 }

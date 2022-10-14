@@ -42,7 +42,6 @@ describe('ComponentSetBuilder', () => {
 
     beforeEach(() => {
       fileExistsSyncStub = sandbox.stub(fs, 'existsSync');
-      // fileExistsSyncStub = stubMethod(sandbox, fs, 'existsSync');
       fromSourceStub = stubMethod(sandbox, ComponentSet, 'fromSource');
       fromManifestStub = stubMethod(sandbox, ComponentSet, 'fromManifest');
       fromConnectionStub = stubMethod(sandbox, ComponentSet, 'fromConnection');

@@ -29,7 +29,5 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     // Mocked out the methods that shouldn't do anything in the tests.
     '@typescript-eslint/no-empty-function': 'off',
-    // Easily return a promise in a mocked method.
-    // '@typescript-eslint/require-await': 'off',
   },
 };

@@ -29,8 +29,7 @@ abstract class ConvertTransactionFinalizer<T> {
   public abstract finalize(defaultDirectory?: string): Promise<WriterFormat[]>;
 }
 
-// must remain an export because vscode reaches in and imports it
-export interface RecompositionState {
+interface RecompositionState {
   [componentKey: string]: {
     /**
      * Parent component that children are rolled up into

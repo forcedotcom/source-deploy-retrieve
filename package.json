@@ -28,7 +28,7 @@
     "@salesforce/core": "^3.30.10",
     "@salesforce/kit": "^1.7.0",
     "@salesforce/ts-types": "^1.5.20",
-    "@xmldom/xmldom": "^0.8.2",
+    "@xmldom/xmldom": "^0.8.3",
     "archiver": "^5.3.1",
     "fast-xml-parser": "^3.21.1",
     "got": "^11.8.5",

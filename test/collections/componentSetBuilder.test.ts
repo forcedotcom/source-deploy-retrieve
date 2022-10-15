@@ -305,6 +305,7 @@ describe('ComponentSetBuilder', () => {
     });
 
     it('should create ComponentSet from manifest', async () => {
+      fileExistsSyncStub.returns(true);
       componentSet.add(apexClassComponent);
       fromManifestStub.resolves(componentSet);
       const packageDir1 = path.resolve('force-app');
@@ -354,6 +355,8 @@ describe('ComponentSetBuilder', () => {
     });
 
     it('should create ComponentSet from manifest and multiple package', async () => {
+      fileExistsSyncStub.returns(true);
+
       componentSet.add(apexClassComponent);
       const apexClassComponent2 = { type: 'ApexClass', fullName: 'MyClass2' };
       componentSet.add(apexClassComponent2);

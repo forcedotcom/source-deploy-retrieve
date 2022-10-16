@@ -285,15 +285,13 @@ describe('Convert Transaction Constructs', () => {
       let sfProjectStub: sinon.SinonStub;
       beforeEach(() => {
         sfProjectStub = env.stub(SfProject, 'getInstance').returns({
-          getPackageDirectories: () => {
-            return [
+          getPackageDirectories: () => [
               {
                 name: 'force-app',
                 path: 'force-app',
                 fullPath: nonDecomposed.DEFAULT_DIR,
               },
-            ];
-          },
+            ],
         } as unknown as SfProject);
       });
       it('should return WriterFormats for claimed children', async () => {
@@ -411,8 +409,7 @@ describe('Convert Transaction Constructs', () => {
       it('should merge 1 updated file to non-default dir and not write default file', async () => {
         sfProjectStub.restore();
         env.stub(SfProject, 'getInstance').returns({
-          getPackageDirectories: () => {
-            return [
+          getPackageDirectories: () => [
               {
                 name: 'my-app',
                 path: 'my-app',
@@ -423,8 +420,7 @@ describe('Convert Transaction Constructs', () => {
                 path: 'force-app',
                 fullPath: nonDecomposed.DEFAULT_DIR,
               },
-            ];
-          },
+            ],
         } as unknown as SfProject);
         const component = nonDecomposed.COMPONENT_2;
         const context = new ConvertContext();

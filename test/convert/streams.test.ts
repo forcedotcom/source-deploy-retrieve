@@ -28,10 +28,13 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_convert_invalid_format']);
 
 class TestTransformer extends BaseMetadataTransformer {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // partial implementation only for tests
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, class-methods-use-this, @typescript-eslint/require-await
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     return [{ output: '/type/file.m', source: new Readable() }];
   }
+  // partial implementation only for tests
+  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/require-await
   public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
     const output = mergeWith ? mergeWith.content || mergeWith.xml : '/type/file.s';
     return [{ output, source: new Readable() }];
@@ -189,7 +192,7 @@ describe('Streams', () => {
       myComp.setMarkedForDelete();
       const converter = new streams.ComponentConverter('source', registryAccess);
 
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises, @typescript-eslint/require-await
       converter._transform(myComp, '', async (err: Error, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;

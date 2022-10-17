@@ -6,14 +6,10 @@
  */
 
 import { expect } from 'chai';
-import { MockTestOrgData, testSetup } from '@salesforce/core/lib/testSetup';
-import { createSandbox, SinonSandbox } from 'sinon';
+import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { Connection, Logger } from '@salesforce/core';
-import { mockConnection } from '../mock/client';
 import { ConnectionResolver } from '../../src/resolve';
 import { MetadataComponent, registry } from '../../src/';
-
-const $$ = testSetup();
 
 const StdFileProperty = {
   createdById: 'createdById',
@@ -26,25 +22,23 @@ const StdFileProperty = {
 };
 
 describe('ConnectionResolver', () => {
-  let sandboxStub: SinonSandbox;
+  const $$ = new TestContext();
+
   let connection: Connection;
   const testData = new MockTestOrgData();
 
   beforeEach(async () => {
-    sandboxStub = createSandbox();
-    $$.setConfigStubContents('AuthInfoConfig', {
-      contents: await testData.getConfig(),
-    });
-    connection = await mockConnection();
+    await $$.stubAuths(testData);
+    connection = await testData.getConnection();
   });
 
   afterEach(() => {
-    sandboxStub.restore();
+    $$.SANDBOX.restore();
   });
 
   describe('resolve', () => {
     it('should resolve parent and child components', async () => {
-      const metadataQueryStub = sandboxStub.stub(connection.metadata, 'list');
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
 
       metadataQueryStub.withArgs({ type: 'CustomObject' }).resolves([
         {
@@ -98,7 +92,7 @@ describe('ConnectionResolver', () => {
       expect(result.components).to.deep.equal(expected);
     });
     it('should resolve components with different types', async () => {
-      const metadataQueryStub = sandboxStub.stub(connection.metadata, 'list');
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
 
       metadataQueryStub.withArgs({ type: 'CustomLabels' }).resolves([
         {
@@ -132,7 +126,7 @@ describe('ConnectionResolver', () => {
       expect(result.components).to.deep.equal(expected);
     });
     it('should resolve components with invalid type returned by metadata api', async () => {
-      const metadataQueryStub = sandboxStub.stub(connection.metadata, 'list');
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
       metadataQueryStub.withArgs({ type: 'CustomLabels' }).resolves([
         {
           ...StdFileProperty,
@@ -154,7 +148,7 @@ describe('ConnectionResolver', () => {
       expect(result.components).to.deep.equal(expected);
     });
     it('should resolve components with invalid fileName returned by metadata api', async () => {
-      const metadataQueryStub = sandboxStub.stub(connection.metadata, 'list');
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
       metadataQueryStub.withArgs({ type: 'SynonymDictionary' }).resolves([
         {
           ...StdFileProperty,
@@ -177,7 +171,7 @@ describe('ConnectionResolver', () => {
       expect(result.components).to.deep.equal(expected);
     });
     it('should resolve components with folderContentType', async () => {
-      const metadataQueryStub = sandboxStub.stub(connection.metadata, 'list');
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
 
       metadataQueryStub.withArgs({ type: 'EmailFolder' }).resolves([
         {
@@ -211,7 +205,7 @@ describe('ConnectionResolver', () => {
       expect(result.components).to.deep.equal(expected);
     });
     it('should catch error if MetadataType is not supported', async () => {
-      const metadataQueryStub = sandboxStub.stub(connection.metadata, 'list');
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
 
       metadataQueryStub
         .withArgs({ type: 'EventType' })
@@ -222,9 +216,9 @@ describe('ConnectionResolver', () => {
       expect(result.components).to.deep.equal([]);
     });
     it('should resolve standardValueSet components from tooling api', async () => {
-      sandboxStub.stub(connection.metadata, 'list');
+      $$.SANDBOX.stub(connection.metadata, 'list');
 
-      const mockToolingQuery = sandboxStub.stub(connection, 'singleRecordQuery');
+      const mockToolingQuery = $$.SANDBOX.stub(connection, 'singleRecordQuery');
       mockToolingQuery
         .withArgs("SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = 'AccountOwnership'")
         .resolves({
@@ -260,13 +254,13 @@ describe('ConnectionResolver', () => {
     });
 
     it('should retry (ten times) if unexpected error occurs', async () => {
-      const loggerStub = sandboxStub.stub(Logger.prototype, 'debug');
+      const loggerStub = $$.SANDBOX.stub(Logger.prototype, 'debug');
 
-      sandboxStub.stub(connection.metadata, 'list');
+      $$.SANDBOX.stub(connection.metadata, 'list');
 
       const query = "SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = 'AccountOwnership'";
 
-      const mockToolingQuery = sandboxStub.stub(connection, 'singleRecordQuery');
+      const mockToolingQuery = $$.SANDBOX.stub(connection, 'singleRecordQuery');
       mockToolingQuery.withArgs(query).rejects(new Error('Something happened. Oh no.'));
 
       const resolver = new ConnectionResolver(connection);
@@ -283,13 +277,13 @@ describe('ConnectionResolver', () => {
     });
 
     it('should not retry query if expected unsupported metadata error is encountered', async () => {
-      const loggerStub = sandboxStub.stub(Logger.prototype, 'debug');
+      const loggerStub = $$.SANDBOX.stub(Logger.prototype, 'debug');
 
-      sandboxStub.stub(connection.metadata, 'list');
+      $$.SANDBOX.stub(connection.metadata, 'list');
 
       const errorMessage = 'WorkTypeGroupAddInfo is either inaccessible or not supported in Metadata API';
 
-      const mockToolingQuery = sandboxStub.stub(connection, 'singleRecordQuery');
+      const mockToolingQuery = $$.SANDBOX.stub(connection, 'singleRecordQuery');
       mockToolingQuery
         .withArgs("SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = 'WorkTypeGroupAddInfo'")
         .rejects(new Error(errorMessage));
@@ -305,7 +299,7 @@ describe('ConnectionResolver', () => {
     });
 
     it('should resolve no managed components', async () => {
-      const metadataQueryStub = sandboxStub.stub(connection.metadata, 'list');
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
 
       metadataQueryStub.withArgs({ type: 'DashboardFolder' }).resolves([
         {
@@ -334,7 +328,7 @@ describe('ConnectionResolver', () => {
       expect(result.components).to.deep.equal([]);
     });
     it('should resolve managed components if excludeManaged is false', async () => {
-      const metadataQueryStub = sandboxStub.stub(connection.metadata, 'list');
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
 
       metadataQueryStub.withArgs({ type: 'DashboardFolder' }).resolves([
         {

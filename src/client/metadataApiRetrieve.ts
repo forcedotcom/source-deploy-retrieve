@@ -291,6 +291,8 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
       })
         .getSourceComponents()
         .toArray();
+      // this is intentional sequential
+      // eslint-disable-next-line no-await-in-loop
       const convertResult = await converter.convert(zipComponents, 'source', outputConfig);
       if (convertResult) {
         components.push(...convertResult.converted);

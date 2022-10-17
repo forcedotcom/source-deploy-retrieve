@@ -94,6 +94,7 @@ describe('DecomposedSourceAdapter', () => {
         seed: path,
         deny: [path],
       });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const adapter = new DecomposedSourceAdapter(type, registryAccess, forceIgnore, tree);
       const result = adapter.getComponent(path);
       expect(result).to.not.be.undefined;

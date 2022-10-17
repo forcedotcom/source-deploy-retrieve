@@ -53,14 +53,6 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     return join(dirname(trigger), '_meta.json');
   }
 
-  /**
-   * @param contentPath This hook is called only after trimPathToContent() is called. so this will always be a folder strcture
-   * @returns name of type/apiName format
-   */
-  protected calculateNameFromPath(contentPath: string): string {
-    return `${parentName(contentPath)}${sep}${baseName(contentPath)}`;
-  }
-
   protected trimPathToContent(path: string): string {
     if (this.isBundleType()) {
       return;
@@ -86,7 +78,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     );
     return new SourceComponent(
       {
-        name: this.calculateNameFromPath(source.content),
+        name: calculateNameFromPath(source.content),
         type: this.type,
         content: source.content,
         parent,
@@ -131,3 +123,10 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     return this.type.id === 'digitalexperiencebundle';
   }
 }
+
+/**
+ * @param contentPath This hook is called only after trimPathToContent() is called. so this will always be a folder structure
+ * @returns name of type/apiName format
+ */
+const calculateNameFromPath = (contentPath: string): string =>
+  `${parentName(contentPath)}${sep}${baseName(contentPath)}`;

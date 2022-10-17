@@ -25,10 +25,9 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^3.30.10",
+    "@salesforce/core": "^3.31.9",
     "@salesforce/kit": "^1.7.0",
     "@salesforce/ts-types": "^1.5.20",
-    "@xmldom/xmldom": "^0.8.2",
     "archiver": "^5.3.1",
     "fast-xml-parser": "^3.21.1",
     "got": "^11.8.5",
@@ -42,35 +41,31 @@
   "devDependencies": {
     "@salesforce/cli-plugins-testkit": "^2.5.2",
     "@salesforce/dev-config": "^3.0.1",
-    "@salesforce/dev-scripts": "^2.0.3",
+    "@salesforce/dev-scripts": "^3.1.0",
     "@salesforce/prettier-config": "^0.0.2",
     "@salesforce/ts-sinon": "^1.4.0",
     "@types/archiver": "^5.3.1",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/mime": "2.0.3",
-    "@types/mkdirp": "0.5.2",
     "@types/proxy-from-env": "^1.0.1",
     "@types/shelljs": "^0.8.11",
     "@types/unzipper": "^0.10.5",
-    "@typescript-eslint/eslint-plugin": "^4.33.0",
-    "@typescript-eslint/parser": "^4.33.0",
+    "@typescript-eslint/eslint-plugin": "^5.33.0",
+    "@typescript-eslint/parser": "^5.33.0",
     "chai": "^4.3.6",
     "commitizen": "^3.1.2",
-    "cz-conventional-changelog": "^2.1.0",
     "deep-equal-in-any-order": "^1.1.19",
     "deepmerge": "^4.2.2",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^6.15.0",
-    "eslint-config-salesforce": "^0.1.6",
+    "eslint": "^8.21.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-salesforce": "^1.1.0",
     "eslint-config-salesforce-license": "^0.1.6",
-    "eslint-config-salesforce-typescript": "^0.2.8",
+    "eslint-config-salesforce-typescript": "^1.1.1",
     "eslint-plugin-header": "^3.1.1",
     "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-jsdoc": "^35.5.1",
-    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-jsdoc": "^39.3.6",
     "husky": "^7.0.4",
-    "jsforce": "2.0.0-beta.18",
-    "lint-staged": "^10.5.4",
+    "jsforce": "^2.0.0-beta.19",
     "mocha": "^9.2.2",
     "mocha-junit-reporter": "^1.23.3",
     "nyc": "^15.1.0",
@@ -118,9 +113,5 @@
     "node": "16.16.0",
     "yarn": "1.22.4"
   },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
-  }
+  "config": {}
 }

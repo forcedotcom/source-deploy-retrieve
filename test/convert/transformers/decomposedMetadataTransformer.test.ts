@@ -7,9 +7,9 @@
 
 import { join } from 'path';
 import { expect } from 'chai';
-import { createSandbox } from 'sinon';
 import { Messages } from '@salesforce/core';
 import { assert } from '@salesforce/ts-types';
+import { TestContext } from '@salesforce/core/lib/testSetup';
 import { decomposed, matchingContentFile } from '../../mock';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
 import { baseName } from '../../../src/utils';
@@ -19,16 +19,14 @@ import { ComponentSet, ForceIgnore, registry, RegistryAccess, SourceComponent } 
 import { XML_NS_KEY, XML_NS_URL } from '../../../src/common';
 import { ConvertContext } from '../../../src/convert/convertContext';
 
-const env = createSandbox();
 const registryAccess = new RegistryAccess();
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_unexpected_child_type']);
 
 describe('DecomposedMetadataTransformer', () => {
+  const $$ = new TestContext();
   const component = decomposed.DECOMPOSED_COMPONENT;
-
-  afterEach(() => env.restore());
 
   describe('toMetadataFormat', () => {
     it('should defer write operations and set context state when a child components are given', async () => {
@@ -124,7 +122,7 @@ describe('DecomposedMetadataTransformer', () => {
       const root = join('main', 'default', type.directoryName, fullName);
       const context = new ConvertContext();
       const transformer = new DecomposedMetadataTransformer(registryAccess, context);
-      env.stub(component, 'parseXml').resolves({
+      $$.SANDBOX.stub(component, 'parseXml').resolves({
         CustomObject: {
           fullName,
           customField: [{ fullName: 'child', test: 'testVal' }],
@@ -177,7 +175,7 @@ describe('DecomposedMetadataTransformer', () => {
       const root = join('main', 'default', type.directoryName, fullName);
       const context = new ConvertContext();
       const transformer = new DecomposedMetadataTransformer(registryAccess, context);
-      env.stub(component, 'parseXml').resolves({
+      $$.SANDBOX.stub(component, 'parseXml').resolves({
         CustomObject: {
           fullName,
           customField: { fullName: 'child', test: 'testVal' },
@@ -187,8 +185,7 @@ describe('DecomposedMetadataTransformer', () => {
           ],
         },
       });
-      env
-        .stub(ForceIgnore.prototype, 'accepts')
+      $$.SANDBOX.stub(ForceIgnore.prototype, 'accepts')
         .returns(true)
         .withArgs(
           join('main', 'default', 'objects', 'customObject__c', 'validationRules', 'child2.validationRule-meta.xml')
@@ -230,7 +227,7 @@ describe('DecomposedMetadataTransformer', () => {
       const { fullName, type } = component;
       const transformer = new DecomposedMetadataTransformer();
       const root = join('main', 'default', type.directoryName, fullName);
-      env.stub(component, 'parseXml').resolves({
+      $$.SANDBOX.stub(component, 'parseXml').resolves({
         CustomObjectTranslation: {
           [XML_NS_KEY]: XML_NS_URL,
           fullName,
@@ -267,7 +264,7 @@ describe('DecomposedMetadataTransformer', () => {
       const { type, fullName } = component;
       const transformer = new DecomposedMetadataTransformer();
       const root = join('main', 'default', type.directoryName, fullName);
-      env.stub(component, 'parseXml').resolves({
+      $$.SANDBOX.stub(component, 'parseXml').resolves({
         CustomObject: {
           customField: [{ fullName: 'child', test: 'testVal' }],
           validationRules: [
@@ -318,7 +315,7 @@ describe('DecomposedMetadataTransformer', () => {
 
       const transformer = new DecomposedMetadataTransformer();
       const root = join('main', 'default', type.directoryName, fullName);
-      env.stub(component, 'parseXml').resolves({
+      $$.SANDBOX.stub(component, 'parseXml').resolves({
         CustomObjectTranslation: {
           fields: [
             { name: 'child', test: 'testVal' },
@@ -362,7 +359,7 @@ describe('DecomposedMetadataTransformer', () => {
 
     it('should handle decomposed parents with no files', async () => {
       const transformer = new DecomposedMetadataTransformer();
-      env.stub(component, 'parseXml').resolves({});
+      $$.SANDBOX.stub(component, 'parseXml').resolves({});
 
       const result = await transformer.toSourceFormat(component);
 
@@ -379,7 +376,7 @@ describe('DecomposedMetadataTransformer', () => {
           },
           []
         );
-        env.stub(componentToConvert, 'parseXml').resolves({
+        $$.SANDBOX.stub(componentToConvert, 'parseXml').resolves({
           [registry.types.customobject.name]: {
             [registry.types.customobject.children.types.customfield.name]: [
               { fullName: mergeComponentChild.fullName, test: 'testVal' },
@@ -416,7 +413,7 @@ describe('DecomposedMetadataTransformer', () => {
           },
           []
         );
-        env.stub(componentToConvert, 'parseXml').resolves({
+        $$.SANDBOX.stub(componentToConvert, 'parseXml').resolves({
           [registry.types.customobject.name]: {
             [XML_NS_KEY]: XML_NS_URL,
             fullName: component.fullName,
@@ -493,7 +490,7 @@ describe('DecomposedMetadataTransformer', () => {
           },
           []
         );
-        env.stub(component, 'parseXml').resolves({
+        $$.SANDBOX.stub(component, 'parseXml').resolves({
           [type.name]: {
             [XML_NS_KEY]: XML_NS_URL,
             [mergeComponentChild.type.directoryName]: {
@@ -539,7 +536,7 @@ describe('DecomposedMetadataTransformer', () => {
           },
           []
         );
-        env.stub(component, 'parseXml').resolves({
+        $$.SANDBOX.stub(component, 'parseXml').resolves({
           [type.name]: {
             [XML_NS_KEY]: XML_NS_URL,
             fullName: component.fullName,

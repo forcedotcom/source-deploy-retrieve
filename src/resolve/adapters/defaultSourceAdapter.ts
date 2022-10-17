@@ -26,6 +26,8 @@ export class DefaultSourceAdapter extends BaseSourceAdapter {
   protected metadataWithContent = false;
 
   /* istanbul ignore next */
+  // retained to preserve API
+  // eslint-disable-next-line class-methods-use-this
   protected getRootMetadataXmlPath(trigger: string): SourcePath {
     // istanbul ignored for code coverage since this return won't ever be hit,
     // unless future changes permit otherwise. Remove the ignore and these comments
@@ -33,6 +35,8 @@ export class DefaultSourceAdapter extends BaseSourceAdapter {
     return trigger;
   }
 
+  // retained to preserve API
+  // eslint-disable-next-line class-methods-use-this
   protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
     return component;
   }

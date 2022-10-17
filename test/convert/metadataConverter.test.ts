@@ -7,9 +7,10 @@
 import { dirname, join } from 'path';
 import { fail } from 'assert';
 import { Messages, SfError } from '@salesforce/core';
-import { createSandbox, SinonStub } from 'sinon';
+import { SinonStub } from 'sinon';
 import * as fs from 'graceful-fs';
 import { assert, expect } from 'chai';
+import { TestContext } from '@salesforce/core/lib/testSetup';
 import { xmlInFolder } from '../mock';
 import * as streams from '../../src/convert/streams';
 import { ComponentReader } from '../../src/convert/streams';
@@ -28,9 +29,9 @@ const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
   'error_merge_metadata_target_unsupported',
 ]);
 
-const env = createSandbox();
-
 describe('MetadataConverter', () => {
+  const $$ = new TestContext();
+
   let ensureDirectoryStub: SinonStub;
   let pipelineStub: SinonStub;
   let writeFileStub: SinonStub;
@@ -51,19 +52,17 @@ describe('MetadataConverter', () => {
   }
 
   beforeEach(() => {
-    ensureDirectoryStub = env.stub(fsUtil, 'ensureDirectoryExists');
-    pipelineStub = env.stub(streams, 'pipeline').resolves();
-    writeFileStub = env.stub(fs.promises, 'writeFile').resolves();
-    env.stub(fs, 'createWriteStream');
-    env.stub(coverage, 'getCurrentApiVersion').resolves(50);
+    ensureDirectoryStub = $$.SANDBOX.stub(fsUtil, 'ensureDirectoryExists');
+    pipelineStub = $$.SANDBOX.stub(streams, 'pipeline').resolves();
+    writeFileStub = $$.SANDBOX.stub(fs.promises, 'writeFile').resolves();
+    $$.SANDBOX.stub(fs, 'createWriteStream');
+    $$.SANDBOX.stub(coverage, 'getCurrentApiVersion').resolves(50);
   });
-
-  afterEach(() => env.restore());
 
   it('should generate package name using timestamp when option omitted', async () => {
     const timestamp = 123456;
     const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
-    env.stub(Date, 'now').returns(timestamp);
+    $$.SANDBOX.stub(Date, 'now').returns(timestamp);
 
     await converter.convert(components, 'metadata', {
       type: 'directory',
@@ -156,7 +155,7 @@ describe('MetadataConverter', () => {
     it('should write manifest for metadata format conversion', async () => {
       const timestamp = 123456;
       const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
-      env.stub(Date, 'now').returns(timestamp);
+      $$.SANDBOX.stub(Date, 'now').returns(timestamp);
       const expectedContents = await new ComponentSet(components).getPackageXml();
 
       await converter.convert(components, 'metadata', { type: 'directory', outputDirectory });
@@ -171,7 +170,7 @@ describe('MetadataConverter', () => {
     it('should write destructive changes post manifest when ComponentSet has deletes marked for post', async () => {
       const timestamp = 123456;
       const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
-      env.stub(Date, 'now').returns(timestamp);
+      $$.SANDBOX.stub(Date, 'now').returns(timestamp);
       const component1 = new SourceComponent({
         name: DECOMPOSED_CHILD_COMPONENT_1.name,
         type: DECOMPOSED_CHILD_COMPONENT_1.type,
@@ -203,7 +202,7 @@ describe('MetadataConverter', () => {
     it('should write destructive changes pre manifest when ComponentSet has deletes', async () => {
       const timestamp = 123456;
       const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
-      env.stub(Date, 'now').returns(timestamp);
+      $$.SANDBOX.stub(Date, 'now').returns(timestamp);
       const component1 = new SourceComponent({
         name: DECOMPOSED_CHILD_COMPONENT_1.name,
         type: DECOMPOSED_CHILD_COMPONENT_1.type,
@@ -236,7 +235,7 @@ describe('MetadataConverter', () => {
     it('should write manifest for metadata format conversion with sourceApiVersion', async () => {
       const timestamp = 123456;
       const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
-      env.stub(Date, 'now').returns(timestamp);
+      $$.SANDBOX.stub(Date, 'now').returns(timestamp);
       const compSet = new ComponentSet(components);
       compSet.sourceApiVersion = testApiversion;
       const expectedContents = await compSet.getPackageXml();
@@ -255,7 +254,7 @@ describe('MetadataConverter', () => {
       const timestamp = 123456;
       const packageName = 'examplePackage';
       const packagePath = join(outputDirectory, packageName);
-      env.stub(Date, 'now').returns(timestamp);
+      $$.SANDBOX.stub(Date, 'now').returns(timestamp);
       const cs = new ComponentSet(components);
       cs.fullName = packageName;
       const expectedContents = await cs.getPackageXml();
@@ -330,7 +329,7 @@ describe('MetadataConverter', () => {
 
     it('should return zipBuffer result for in-memory configuration', async () => {
       const testBuffer = Buffer.from('oh hi mark');
-      env.stub(streams.ZipWriter.prototype, 'buffer').value(testBuffer);
+      $$.SANDBOX.stub(streams.ZipWriter.prototype, 'buffer').value(testBuffer);
 
       const result = await converter.convert(components, 'metadata', { type: 'zip' });
 
@@ -349,7 +348,7 @@ describe('MetadataConverter', () => {
 
     it('should write manifest for metadata format conversion', async () => {
       const expectedContents = await new ComponentSet(components).getPackageXml();
-      const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
+      const addToZipStub = $$.SANDBOX.stub(streams.ZipWriter.prototype, 'addToZip');
 
       await converter.convert(components, 'metadata', { type: 'zip' });
 
@@ -374,7 +373,7 @@ describe('MetadataConverter', () => {
 
       const expectedDestructiveContents = await compSet.getPackageXml(undefined, DestructiveChangesType.POST);
       const expectedContents = await compSet.getPackageXml();
-      const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
+      const addToZipStub = $$.SANDBOX.stub(streams.ZipWriter.prototype, 'addToZip');
 
       await converter.convert(compSet, 'metadata', { type: 'zip' });
 
@@ -403,7 +402,7 @@ describe('MetadataConverter', () => {
       compSet.setDestructiveChangesType(DestructiveChangesType.PRE);
       const expectedDestructiveContents = await compSet.getPackageXml(4, DestructiveChangesType.PRE);
       const expectedContents = await compSet.getPackageXml();
-      const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
+      const addToZipStub = $$.SANDBOX.stub(streams.ZipWriter.prototype, 'addToZip');
 
       await converter.convert(compSet, 'metadata', { type: 'zip' });
 
@@ -416,7 +415,7 @@ describe('MetadataConverter', () => {
     });
 
     it('should not write manifest for source format conversion', async () => {
-      const addToZipStub = env.stub(streams.ZipWriter.prototype, 'addToZip');
+      const addToZipStub = $$.SANDBOX.stub(streams.ZipWriter.prototype, 'addToZip');
 
       await converter.convert(components, 'source', { type: 'zip' });
 
@@ -464,7 +463,7 @@ describe('MetadataConverter', () => {
 
     it('should create conversion pipeline with addressable components', async () => {
       // @ts-ignore private
-      const componentReaderSpy = env.spy(ComponentReader.prototype, 'createIterator');
+      const componentReaderSpy = $$.SANDBOX.spy(ComponentReader.prototype, 'createIterator');
       components.push({
         type: registry.types.customobjecttranslation.children.types.customfieldtranslation,
         name: 'myFieldTranslation',

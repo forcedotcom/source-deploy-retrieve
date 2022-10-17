@@ -5,59 +5,63 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { fail } from 'assert';
-import { createSandbox, SinonStub } from 'sinon';
+import { SinonStub } from 'sinon';
 import { AuthInfo, Connection, PollingClient, Messages } from '@salesforce/core';
 import { expect } from 'chai';
 import { Duration, sleep } from '@salesforce/kit';
+import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { ComponentSet } from '../../src';
 import { MetadataTransfer } from '../../src/client/metadataTransfer';
 import { MetadataRequestStatus, MetadataTransferResult, RequestStatus } from '../../src/client/types';
-import { mockConnection } from '../mock/client';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['md_request_fail']);
 
-const env = createSandbox();
-
-class TestTransfer extends MetadataTransfer<MetadataRequestStatus, MetadataTransferResult> {
-  public request = { done: true, status: RequestStatus.Succeeded, id: '1', success: true };
-  public lifecycle = {
-    pre: env.stub().returns({ id: '1' }),
-    checkStatus: env.stub().returns({ done: true, status: RequestStatus.Succeeded, id: '1', success: true }),
-    post: env.stub().returns({ id: '1' }),
-    cancel: env.stub().returns(true),
-  };
-  public async checkStatus(): Promise<MetadataRequestStatus> {
-    return this.lifecycle.checkStatus();
-  }
-
-  public async cancel(): Promise<void> {
-    this.canceled = this.lifecycle.cancel();
-  }
-
-  protected async pre(): Promise<{ id: string }> {
-    return this.lifecycle.pre();
-  }
-
-  protected async post(): Promise<MetadataTransferResult> {
-    return this.lifecycle.post();
-  }
-}
-
 describe('MetadataTransfer', () => {
+  const $$ = new TestContext();
+  const testOrg = new MockTestOrgData();
+
+  class TestTransfer extends MetadataTransfer<MetadataRequestStatus, MetadataTransferResult> {
+    public request = { done: true, status: RequestStatus.Succeeded, id: '1', success: true };
+    public lifecycle = {
+      pre: $$.SANDBOX.stub().returns({ id: '1' }),
+      checkStatus: $$.SANDBOX.stub().returns({ done: true, status: RequestStatus.Succeeded, id: '1', success: true }),
+      post: $$.SANDBOX.stub().returns({ id: '1' }),
+      cancel: $$.SANDBOX.stub().returns(true),
+    };
+    // eslint-disable-next-line @typescript-eslint/require-await
+    public async checkStatus(): Promise<MetadataRequestStatus> {
+      return this.lifecycle.checkStatus();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/require-await
+    public async cancel(): Promise<void> {
+      this.canceled = this.lifecycle.cancel();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/require-await
+    protected async pre(): Promise<{ id: string }> {
+      return this.lifecycle.pre();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/require-await
+    protected async post(): Promise<MetadataTransferResult> {
+      return this.lifecycle.post();
+    }
+  }
+
   let connection: Connection;
 
   let operation: TestTransfer;
 
   beforeEach(async () => {
-    connection = await mockConnection();
+    await $$.stubAuths(testOrg);
+    connection = await testOrg.getConnection();
     operation = new TestTransfer({
       components: new ComponentSet(),
       usernameOrConnection: connection,
     });
   });
-
-  afterEach(() => env.restore());
 
   it('should run lifecycle in correct order', async () => {
     const { pre, checkStatus, post } = operation.lifecycle;
@@ -97,8 +101,8 @@ describe('MetadataTransfer', () => {
     }
     const username = connection.getUsername();
     const authInfo = await AuthInfo.create({ username });
-    env.stub(AuthInfo, 'create').withArgs({ username }).resolves(authInfo);
-    env.stub(Connection, 'create').withArgs({ authInfo }).resolves(connection);
+    $$.SANDBOX.stub(AuthInfo, 'create').withArgs({ username }).resolves(authInfo);
+    $$.SANDBOX.stub(Connection, 'create').withArgs({ authInfo }).resolves(connection);
     operation = new TestTransferConnection({
       components: new ComponentSet(),
       usernameOrConnection: username,
@@ -120,9 +124,9 @@ describe('MetadataTransfer', () => {
     const username = connection.getUsername();
 
     const authInfo = await AuthInfo.create({ username });
-    env.stub(AuthInfo, 'create').withArgs({ username }).resolves(authInfo);
-    env.stub(Connection, 'create').withArgs({ authInfo }).resolves(connection);
-    const setApiVersionSpy = env.spy(Connection.prototype, 'setApiVersion');
+    $$.SANDBOX.stub(AuthInfo, 'create').withArgs({ username }).resolves(authInfo);
+    $$.SANDBOX.stub(Connection, 'create').withArgs({ authInfo }).resolves(connection);
+    const setApiVersionSpy = $$.SANDBOX.spy(Connection.prototype, 'setApiVersion');
     operation = new TestTransferConnection({
       components: new ComponentSet(),
       usernameOrConnection: username,
@@ -147,10 +151,10 @@ describe('MetadataTransfer', () => {
     const username = connection.getUsername();
 
     const authInfo = await AuthInfo.create({ username });
-    env.stub(AuthInfo, 'create').withArgs({ username }).resolves(authInfo);
-    env.stub(Connection, 'create').withArgs({ authInfo }).resolves(connection);
-    env.stub(connection, 'retrieveMaxApiVersion').resolves(maxApiVersion);
-    const setApiVersionSpy = env.spy(Connection.prototype, 'setApiVersion');
+    $$.SANDBOX.stub(AuthInfo, 'create').withArgs({ username }).resolves(authInfo);
+    $$.SANDBOX.stub(Connection, 'create').withArgs({ authInfo }).resolves(connection);
+    $$.SANDBOX.stub(connection, 'retrieveMaxApiVersion').resolves(maxApiVersion);
+    const setApiVersionSpy = $$.SANDBOX.spy(Connection.prototype, 'setApiVersion');
     operation = new TestTransferConnection({
       components: new ComponentSet(),
       usernameOrConnection: username,
@@ -165,7 +169,7 @@ describe('MetadataTransfer', () => {
   describe('Polling and Event Listeners', () => {
     let listenerStub: SinonStub;
 
-    beforeEach(() => (listenerStub = env.stub()));
+    beforeEach(() => (listenerStub = $$.SANDBOX.stub()));
 
     it('should exit and fire "finish" event when done = true', async () => {
       const { checkStatus } = operation.lifecycle;
@@ -190,8 +194,8 @@ describe('MetadataTransfer', () => {
     });
 
     it('should calculate polling frequency based on source components, 0 -> 1000', async () => {
-      const pollingClientStub = env.stub(PollingClient, 'create').resolves(PollingClient.prototype);
-      env.stub(PollingClient.prototype, 'subscribe').resolves({ status: RequestStatus.Canceled, done: true });
+      const pollingClientStub = $$.SANDBOX.stub(PollingClient, 'create').resolves(PollingClient.prototype);
+      $$.SANDBOX.stub(PollingClient.prototype, 'subscribe').resolves({ status: RequestStatus.Canceled, done: true });
       const { checkStatus } = operation.lifecycle;
       checkStatus.resolves({ status: RequestStatus.Canceled, done: true });
 
@@ -206,15 +210,13 @@ describe('MetadataTransfer', () => {
 
     it('should calculate polling frequency based on source components, 10 -> 100', async () => {
       // @ts-ignore protected member access
-      env.stub(operation.components, 'getSourceComponents').returns({
+      $$.SANDBOX.stub(operation.components, 'getSourceComponents').returns({
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore only override length attribute
-        toArray: () => {
-          return { length: 10 };
-        },
+        toArray: () => ({ length: 10 }),
       });
-      const pollingClientStub = env.stub(PollingClient, 'create').resolves(PollingClient.prototype);
-      env.stub(PollingClient.prototype, 'subscribe').resolves({ status: RequestStatus.Canceled, done: true });
+      const pollingClientStub = $$.SANDBOX.stub(PollingClient, 'create').resolves(PollingClient.prototype);
+      $$.SANDBOX.stub(PollingClient.prototype, 'subscribe').resolves({ status: RequestStatus.Canceled, done: true });
       const { checkStatus } = operation.lifecycle;
       checkStatus.resolves({ status: RequestStatus.Canceled, done: true });
 
@@ -229,15 +231,13 @@ describe('MetadataTransfer', () => {
 
     it('should calculate polling frequency based on source components, 2520 -> 2520', async () => {
       // @ts-ignore protected member access
-      env.stub(operation.components, 'getSourceComponents').returns({
+      $$.SANDBOX.stub(operation.components, 'getSourceComponents').returns({
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore only override length attribute
-        toArray: () => {
-          return { length: 2520 };
-        },
+        toArray: () => ({ length: 2520 }),
       });
-      const pollingClientStub = env.stub(PollingClient, 'create').resolves(PollingClient.prototype);
-      env.stub(PollingClient.prototype, 'subscribe').resolves({ status: RequestStatus.Canceled, done: true });
+      const pollingClientStub = $$.SANDBOX.stub(PollingClient, 'create').resolves(PollingClient.prototype);
+      $$.SANDBOX.stub(PollingClient.prototype, 'subscribe').resolves({ status: RequestStatus.Canceled, done: true });
       const { checkStatus } = operation.lifecycle;
       checkStatus.resolves({ status: RequestStatus.Canceled, done: true });
 
@@ -260,6 +260,7 @@ describe('MetadataTransfer', () => {
         callOrder.push('firstCall2');
         return { done: false };
       });
+      // eslint-disable-next-line @typescript-eslint/require-await
       checkStatus.onSecondCall().callsFake(async () => {
         callOrder.push('secondCall1');
         return { done: true };
@@ -277,6 +278,7 @@ describe('MetadataTransfer', () => {
       // until the timeout is exceeded.
       const { checkStatus } = operation.lifecycle;
       let callCount = 0;
+      // eslint-disable-next-line @typescript-eslint/require-await
       checkStatus.callsFake(async () => {
         callCount += 1;
         if (callCount > 22) {
@@ -359,8 +361,8 @@ describe('MetadataTransfer', () => {
   describe('Cancellation', () => {
     it('should exit without calling checkStatus if transfer is immediately canceled', async () => {
       const { checkStatus } = operation.lifecycle;
-      const cancelListenerStub = env.stub();
-      const updateListenerStub = env.stub();
+      const cancelListenerStub = $$.SANDBOX.stub();
+      const updateListenerStub = $$.SANDBOX.stub();
       operation.onCancel(() => cancelListenerStub());
       operation.onUpdate(() => updateListenerStub());
 
@@ -377,8 +379,8 @@ describe('MetadataTransfer', () => {
 
     it('should exit after checkStatus if transfer is marked for cancelation', async () => {
       const { checkStatus } = operation.lifecycle;
-      const cancelListenerStub = env.stub();
-      const updateListenerStub = env.stub();
+      const cancelListenerStub = $$.SANDBOX.stub();
+      const updateListenerStub = $$.SANDBOX.stub();
       operation.onCancel(() => cancelListenerStub());
       operation.onUpdate(() => updateListenerStub());
       checkStatus.onFirstCall().callsFake(async () => {

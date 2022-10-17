@@ -8,6 +8,8 @@ import { expect } from 'chai';
 import { LazyCollection } from '../../src/collections';
 
 class TestCollection extends LazyCollection<number> {
+  // partial implementation only for tests
+  // eslint-disable-next-line class-methods-use-this
   public *[Symbol.iterator](): Iterator<number> {
     yield 2;
     yield 4;

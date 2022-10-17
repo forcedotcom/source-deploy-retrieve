@@ -81,9 +81,10 @@ export class ConnectionResolver {
     }
 
     return {
-      components: Aggregator.filter(componentFilter).map((component) => {
-        return { fullName: component.fullName, type: this.registry.getTypeByName(component.type) };
-      }),
+      components: Aggregator.filter(componentFilter).map((component) => ({
+        fullName: component.fullName,
+        type: this.registry.getTypeByName(component.type),
+      })),
       apiVersion: this.connection.getApiVersion(),
     };
   }
@@ -152,7 +153,7 @@ export class ConnectionResolver {
           // 'ts-retry-promise' exposes the actual error on `error.lastError`
           const error = err as RetryError;
 
-          if (error.lastError && error.lastError.message) {
+          if (error.lastError?.message) {
             this.logger.debug(error.lastError.message);
           }
         }

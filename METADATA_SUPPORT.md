@@ -540,6 +540,7 @@ v57 introduces the following new types.  Here's their current level of support
 |ExternalClientApplication|✅||
 |ExternalDocStorageConfig|❌|Not supported, but support could be added|
 |ExtlClntAppMobileSet|❌|Not supported, but support could be added|
+|ExtlClntAppOauthPlcyCnfg|❌|Not supported, but support could be added|
 |IdentityProviderSettings|✅||
 |IntegrationProviderDef|❌|Not supported, but support could be added|
 |LocationUse|❌|Not supported, but support could be added|

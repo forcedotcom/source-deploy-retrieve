@@ -27,6 +27,7 @@ export class RegistryTestUtil {
     this.env.restore();
   }
 
+  // excluded from rules because it's exposed publicly
   // eslint-disable-next-line class-methods-use-this
   public createMetadataResolver(virtualFS: VirtualDirectory[], useRealForceIgnore = true): MetadataResolver {
     return new MetadataResolver(undefined, new VirtualTreeContainer(virtualFS), useRealForceIgnore);

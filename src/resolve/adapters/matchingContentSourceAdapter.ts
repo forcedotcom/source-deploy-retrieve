@@ -33,6 +33,7 @@ const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
  *```
  */
 export class MatchingContentSourceAdapter extends BaseSourceAdapter {
+  // disabled since used by subclasses
   // eslint-disable-next-line class-methods-use-this
   protected getRootMetadataXmlPath(trigger: SourcePath): SourcePath {
     return `${trigger}${META_XML_SUFFIX}`;

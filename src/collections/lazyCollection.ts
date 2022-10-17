@@ -21,6 +21,7 @@ export class LazyCollection<T> implements Iterable<T> {
     const iter = this.getIterator();
     let next = iter.next();
     while (!next.done) {
+      // here and elsewhere in this file, disabled since this.getIterator includes an explicit <any> in its type
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       if (predicate(next.value)) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return

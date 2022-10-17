@@ -33,6 +33,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     'application/jar',
   ]);
 
+  // allowed to preserve API
   // eslint-disable-next-line class-methods-use-this
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     const { content, type, xml } = component;

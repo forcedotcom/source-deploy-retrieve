@@ -53,6 +53,8 @@ export class ComponentReader extends Readable {
     this.push(null);
   }
 
+  // preserved to isolate from other classes in this file
+  // componentReader should go away (see note in handbook)
   // eslint-disable-next-line class-methods-use-this
   private *createIterator(components: Iterable<SourceComponent>): Iterator<SourceComponent> {
     for (const component of components) {

@@ -1892,6 +1892,14 @@
       "inFolder": false,
       "strictDirectoryName": true
     },
+    "botblock": {
+      "id": "botblock",
+      "name": "BotBlock",
+      "suffix": "botBlock",
+      "directoryName": "botBlocks",
+      "inFolder": false,
+      "strictDirectoryName": true
+    },
     "animationrule": {
       "id": "animationrule",
       "name": "AnimationRule",
@@ -3359,6 +3367,7 @@
     "mlDomain": "mldomain",
     "bot": "bot",
     "botTemplate": "bottemplate",
+    "botBlock": "botblock",
     "botVersion": "botversion",
     "animationRule": "animationrule",
     "deployment": "recordactiondeployment",
@@ -3511,6 +3520,7 @@
     "objects": "customobject",
     "bots": "bot",
     "botTemplates": "bottemplate",
+    "botBlocks": "botblock",
     "objectTranslations": "customobjecttranslation",
     "staticresources": "staticresource",
     "sites": "customsite",

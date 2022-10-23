@@ -387,7 +387,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
       const zip = createArchive('zip', { zlib: { level: 9 } });
       // anywhere not at the root level is fine
       zip.directory(this.options.mdapiPath, 'zip');
-      void zip.finalize();
+      await zip.finalize();
       return stream2buffer(zip);
     }
     // read the zip into a buffer

@@ -239,13 +239,12 @@ export class ZipWriter extends ComponentWriter {
           if (chunk.component.type.folderType || chunk.component.type.folderContentType) {
             return this.addToZip(writeInfo.source, writeInfo.output);
           }
-          const streamAsBuffer = await stream2buffer(writeInfo.source);
           // everything else can be zipped immediately to reduce the number of open files (windows has a low limit!) and help perf
-          if (streamAsBuffer.length) {
-            return this.addToZip(streamAsBuffer, writeInfo.output);
-          }
-          // these will be zero-length files, which archiver supports via stream but not buffer
-          return this.addToZip(writeInfo.source, writeInfo.output);
+          const streamAsBuffer = await stream2buffer(writeInfo.source);
+          return streamAsBuffer.length
+            ? this.addToZip(streamAsBuffer, writeInfo.output)
+            : // these will be zero-length files, which archiver supports via stream but not buffer
+              this.addToZip(writeInfo.source, writeInfo.output);
         })
       );
     } catch (e) {

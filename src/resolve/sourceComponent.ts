@@ -179,11 +179,7 @@ export class SourceComponent implements MetadataComponent {
    * @return ForceIgnore
    */
   public getForceIgnore(): ForceIgnore {
-    if (this.forceIgnore) {
-      return this.forceIgnore;
-    } else {
-      return ForceIgnore.findAndCreate(this.content);
-    }
+    return this.forceIgnore ?? ForceIgnore.findAndCreate(this.content);
   }
 
   /**

@@ -13,7 +13,6 @@ import { assert, expect } from 'chai';
 import { TestContext } from '@salesforce/core/lib/testSetup';
 import { xmlInFolder } from '../mock';
 import * as streams from '../../src/convert/streams';
-import { ComponentReader } from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { COMPONENTS } from '../mock/type-constants/documentFolderConstant';
 import { ComponentSet, DestructiveChangesType, MetadataConverter, registry, SourceComponent } from '../../src';
@@ -45,7 +44,6 @@ describe('MetadataConverter', () => {
 
   /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
   function validatePipelineArgs(pipelineArgs: any[], targetFormat = 'metadata'): void {
-    expect(pipelineArgs[0] instanceof streams.ComponentReader).to.be.true;
     expect(pipelineArgs[1] instanceof streams.ComponentConverter).to.be.true;
     expect(pipelineArgs[1].targetFormat).to.equal(targetFormat);
     expect(pipelineArgs[2] instanceof streams.ComponentWriter).to.be.true;
@@ -462,8 +460,6 @@ describe('MetadataConverter', () => {
     });
 
     it('should create conversion pipeline with addressable components', async () => {
-      // @ts-ignore private
-      const componentReaderSpy = $$.SANDBOX.spy(ComponentReader.prototype, 'createIterator');
       components.push({
         type: registry.types.customobjecttranslation.children.types.customfieldtranslation,
         name: 'myFieldTranslation',
@@ -479,10 +475,8 @@ describe('MetadataConverter', () => {
       const pipelineArgs = pipelineStub.firstCall.args;
       validatePipelineArgs(pipelineArgs, 'source');
 
-      expect(componentReaderSpy.firstCall.args[0].length).to.equal(3);
       // pop off the CFT that should be filtered off for the assertion
       components.pop();
-      expect(componentReaderSpy.firstCall.args[0]).to.deep.equal(components);
       expect(pipelineArgs[2].rootDestination).to.equal(defaultDirectory);
     });
 

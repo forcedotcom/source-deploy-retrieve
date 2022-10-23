@@ -20,7 +20,6 @@
   - [Overview](#overview-2)
   - [Converting metadata](#converting-metadata)
   - [The conversion pipeline](#the-conversion-pipeline)
-    - [ComponentReader](#componentreader)
     - [ComponentConverter](#componentconverter)
     - [ComponentWriter](#componentwriter)
     - [ConvertContext](#convertcontext)
@@ -214,7 +213,7 @@ A `TreeContainer` is an encapsulation of a file system that enables I/O against 
 
 Clients can implement new tree containers by extending the `TreeContainer` base class and expanding functionality. Not all methods of a tree container have to be implemented, but an error will be thrown if the container is being used in a context that requires particular methods.
 
-💡*The author, Brian, demonstrated the extensibility of tree containers for a side project by creating a* `GitTreeContainer`_. This enabled resolving components against a git object tree, allowing us to perform component diffs between git refs and analyze GitHub projects. See the [SFDX Badge Generator](https://sfdx-badge.herokuapp.com/). This could be expanded into a plugin of some sort._
+💡_The author, Brian, demonstrated the extensibility of tree containers for a side project by creating a_ `GitTreeContainer`_. This enabled resolving components against a git object tree, allowing us to perform component diffs between git refs and analyze GitHub projects. See the [SFDX Badge Generator](https://sfdx-badge.herokuapp.com/). This could be expanded into a plugin of some sort._
 
 #### Creating mock components with the VirtualTreeContainer
 
@@ -314,12 +313,6 @@ const converter = new MetadataConverter();
 ### The conversion pipeline
 
 When `convert` is called, the method prepares the inputs for setting up the conversion pipeline. The pipeline consists of chaining three custom NodeJS stream, one for each stage of the copy operation. To more deeply understand what is happening in the conversion process, it’s recommended to familiarize yourself with streaming concepts and the NodeJS API. See [Stream NodeJS documentation](https://nodejs.org/api/stream.html) and [Understanding Streams in NodeJS](https://nodesource.com/blog/understanding-streams-in-nodejs/).
-
-#### ComponentReader
-
-The reader is fairly simple, it takes a collection of source components and implements the stream API to push them out one-by-one.
-
-🧽 _When this aspect of the library was first written,_ `Readable.from(iterable)` _was not yet available. This simple API could probably replace the_ `ComponentReader`_._
 
 #### ComponentConverter
 

@@ -36,32 +36,6 @@ export const stream2buffer = async (stream: Stream): Promise<Buffer> =>
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     stream.on('error', (err) => reject(`error converting stream - ${err}`));
   });
-export class ComponentReader extends Readable {
-  private iter: Iterator<SourceComponent>;
-
-  public constructor(components: Iterable<SourceComponent>) {
-    super({ objectMode: true });
-    this.iter = this.createIterator(components);
-  }
-
-  public _read(): void {
-    let next = this.iter.next();
-    while (!next.done) {
-      this.push(next.value);
-      next = this.iter.next();
-    }
-    this.push(null);
-  }
-
-  // preserved to isolate from other classes in this file
-  // componentReader should go away (see note in handbook)
-  // eslint-disable-next-line class-methods-use-this
-  private *createIterator(components: Iterable<SourceComponent>): Iterator<SourceComponent> {
-    for (const component of components) {
-      yield component;
-    }
-  }
-}
 
 export class ComponentConverter extends Transform {
   public readonly context = new ConvertContext();

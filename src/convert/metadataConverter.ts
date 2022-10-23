@@ -4,6 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { Readable } from 'stream';
 import { dirname, join, normalize } from 'path';
 import { Messages, SfError } from '@salesforce/core';
 import { promises } from 'graceful-fs';
@@ -12,7 +13,7 @@ import { ensureDirectoryExists } from '../utils/fileSystemHandler';
 import { SourcePath } from '../common';
 import { ComponentSet, DestructiveChangesType } from '../collections';
 import { RegistryAccess } from '../registry';
-import { ComponentConverter, ComponentReader, pipeline, StandardWriter, ZipWriter } from './streams';
+import { ComponentConverter, pipeline, StandardWriter, ZipWriter } from './streams';
 import { ConvertOutputConfig, ConvertResult, DirectoryConfig, SfdxFileFormat, ZipConfig } from './types';
 
 Messages.importMessagesDirectory(__dirname);
@@ -111,7 +112,7 @@ export class MetadataConverter {
       }
 
       const conversionPipeline = pipeline(
-        new ComponentReader(components),
+        Readable.from(components),
         new ComponentConverter(targetFormat, this.registry, mergeSet, defaultDirectory),
         writer
       );

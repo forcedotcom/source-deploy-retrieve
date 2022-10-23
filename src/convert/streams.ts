@@ -65,22 +65,16 @@ export class ComponentReader extends Readable {
 
 export class ComponentConverter extends Transform {
   public readonly context = new ConvertContext();
-  private targetFormat: SfdxFileFormat;
-  private mergeSet: ComponentSet;
   private transformerFactory: MetadataTransformerFactory;
-  private defaultDirectory: string;
 
   public constructor(
-    targetFormat: SfdxFileFormat,
+    private targetFormat: SfdxFileFormat,
     registry: RegistryAccess,
-    mergeSet?: ComponentSet,
-    defaultDirectory?: string
+    private mergeSet?: ComponentSet,
+    private defaultDirectory?: string
   ) {
     super({ objectMode: true });
-    this.targetFormat = targetFormat;
-    this.mergeSet = mergeSet;
     this.transformerFactory = new MetadataTransformerFactory(registry, this.context);
-    this.defaultDirectory = defaultDirectory;
   }
 
   public async _transform(
@@ -154,12 +148,10 @@ export abstract class ComponentWriter extends Writable {
 
 export class StandardWriter extends ComponentWriter {
   public converted: SourceComponent[] = [];
-  private resolver: MetadataResolver;
   private logger: Logger;
 
-  public constructor(rootDestination: SourcePath, resolver = new MetadataResolver()) {
+  public constructor(rootDestination: SourcePath, private resolver = new MetadataResolver()) {
     super(rootDestination);
-    this.resolver = resolver;
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
@@ -288,11 +280,8 @@ export class ZipWriter extends ComponentWriter {
  * even though it's not beneficial in the typical way a stream is.
  */
 export class JsToXml extends Readable {
-  private xmlObject: JsonMap;
-
-  public constructor(xmlObject: JsonMap) {
+  public constructor(private xmlObject: JsonMap) {
     super();
-    this.xmlObject = xmlObject;
   }
 
   public _read(): void {

@@ -58,3 +58,32 @@ export interface SourceAdapter {
    */
   allowMetadataWithContent(): boolean;
 }
+
+// TODO: what's the right way to get this into core/sfdxProjectJson
+export type ReplacementConfig =
+  // requires a filename or a glob
+  {
+    filename?: string;
+
+    glob?: string;
+
+    stringToReplace?: string;
+
+    regexToReplace?: string;
+
+    replaceWithEnv?: string;
+
+    replaceWithFile?: string;
+
+    replaceWhenEnv?: [
+      {
+        env: string;
+        value: string | number | boolean;
+      }
+    ];
+  };
+
+export interface MarkedReplacement {
+  toReplace: string | RegExp;
+  replaceWith: string;
+}

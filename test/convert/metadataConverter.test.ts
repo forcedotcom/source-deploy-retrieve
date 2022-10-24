@@ -44,9 +44,9 @@ describe('MetadataConverter', () => {
 
   /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
   function validatePipelineArgs(pipelineArgs: any[], targetFormat = 'metadata'): void {
-    expect(pipelineArgs[1] instanceof streams.ComponentConverter).to.be.true;
-    expect(pipelineArgs[1].targetFormat).to.equal(targetFormat);
-    expect(pipelineArgs[2] instanceof streams.ComponentWriter).to.be.true;
+    expect(pipelineArgs[2] instanceof streams.ComponentConverter).to.be.true;
+    expect(pipelineArgs[2].targetFormat).to.equal(targetFormat);
+    expect(pipelineArgs[3] instanceof streams.ComponentWriter).to.be.true;
   }
 
   beforeEach(() => {
@@ -67,7 +67,7 @@ describe('MetadataConverter', () => {
       outputDirectory,
     });
 
-    expect(pipelineStub.firstCall.args[2].rootDestination).to.equal(packagePath);
+    expect(pipelineStub.firstCall.args[3].rootDestination).to.equal(packagePath);
   });
 
   it('should convert to specified output dir', async () => {
@@ -77,7 +77,7 @@ describe('MetadataConverter', () => {
       genUniqueDir: false,
     });
 
-    expect(pipelineStub.firstCall.args[2].rootDestination).to.equal(outputDirectory);
+    expect(pipelineStub.firstCall.args[3].rootDestination).to.equal(outputDirectory);
   });
 
   it('should throw ConversionError when an error occurs', async () => {
@@ -123,8 +123,8 @@ describe('MetadataConverter', () => {
 
       const pipelineArgs = pipelineStub.firstCall.args;
       validatePipelineArgs(pipelineArgs);
-      expect(pipelineArgs[2] instanceof streams.StandardWriter).to.be.true;
-      expect(pipelineArgs[2].rootDestination).to.equal(packageOutput);
+      expect(pipelineArgs[3] instanceof streams.StandardWriter).to.be.true;
+      expect(pipelineArgs[3].rootDestination).to.equal(packageOutput);
     });
 
     it('should create conversion pipeline with normalized output directory', async () => {
@@ -136,8 +136,8 @@ describe('MetadataConverter', () => {
 
       const pipelineArgs = pipelineStub.firstCall.args;
       validatePipelineArgs(pipelineArgs);
-      expect(pipelineArgs[2] instanceof streams.StandardWriter).to.be.true;
-      expect(pipelineArgs[2].rootDestination).to.equal(packageName);
+      expect(pipelineArgs[3] instanceof streams.StandardWriter).to.be.true;
+      expect(pipelineArgs[3].rootDestination).to.equal(packageName);
     });
 
     it('should return packagePath in result', async () => {
@@ -312,8 +312,8 @@ describe('MetadataConverter', () => {
       // secondCall is used because ZipWriter uses pipeline upon construction
       const pipelineArgs = pipelineStub.secondCall.args;
       validatePipelineArgs(pipelineArgs);
-      expect(pipelineArgs[2] instanceof streams.ZipWriter).to.be.true;
-      expect(pipelineArgs[2].rootDestination).to.equal(`${packageOutput}.zip`);
+      expect(pipelineArgs[3] instanceof streams.ZipWriter).to.be.true;
+      expect(pipelineArgs[3].rootDestination).to.equal(`${packageOutput}.zip`);
     });
 
     it('should create conversion pipeline with in-memory configuration', async () => {
@@ -321,8 +321,8 @@ describe('MetadataConverter', () => {
 
       const pipelineArgs = pipelineStub.secondCall.args;
       validatePipelineArgs(pipelineArgs);
-      expect(pipelineArgs[2] instanceof streams.ZipWriter).to.be.true;
-      expect(pipelineArgs[2].rootDestination).to.be.undefined;
+      expect(pipelineArgs[3] instanceof streams.ZipWriter).to.be.true;
+      expect(pipelineArgs[3].rootDestination).to.be.undefined;
     });
 
     it('should return zipBuffer result for in-memory configuration', async () => {
@@ -455,8 +455,8 @@ describe('MetadataConverter', () => {
 
       const pipelineArgs = pipelineStub.firstCall.args;
       validatePipelineArgs(pipelineArgs, 'source');
-      expect(pipelineArgs[1].mergeSet).to.deep.equal(new ComponentSet(COMPONENTS));
-      expect(pipelineArgs[2].rootDestination).to.equal(defaultDirectory);
+      expect(pipelineArgs[2].mergeSet).to.deep.equal(new ComponentSet(COMPONENTS));
+      expect(pipelineArgs[3].rootDestination).to.equal(defaultDirectory);
     });
 
     it('should create conversion pipeline with addressable components', async () => {
@@ -477,7 +477,7 @@ describe('MetadataConverter', () => {
 
       // pop off the CFT that should be filtered off for the assertion
       components.pop();
-      expect(pipelineArgs[2].rootDestination).to.equal(defaultDirectory);
+      expect(pipelineArgs[3].rootDestination).to.equal(defaultDirectory);
     });
 
     it('should ensure merge set contains parents of child components instead of the children themselves', async () => {
@@ -489,7 +489,7 @@ describe('MetadataConverter', () => {
 
       const pipelineArgs = pipelineStub.firstCall.args;
       validatePipelineArgs(pipelineArgs, 'source');
-      expect(pipelineArgs[1].mergeSet).to.deep.equal(new ComponentSet([DECOMPOSED_CHILD_COMPONENT_1.parent]));
+      expect(pipelineArgs[2].mergeSet).to.deep.equal(new ComponentSet([DECOMPOSED_CHILD_COMPONENT_1.parent]));
     });
   });
 });

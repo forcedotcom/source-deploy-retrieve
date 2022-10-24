@@ -15,7 +15,7 @@ import { SfdxFileFormat } from '../convert';
 import { MetadataType } from '../registry';
 import { DestructiveChangesType } from '../collections';
 import { filePathsFromMetadataComponent } from '../utils/filePathGenerator';
-import { MetadataComponent, VirtualDirectory } from './types';
+import { MarkedReplacement, MetadataComponent, VirtualDirectory } from './types';
 import { NodeFSTreeContainer, TreeContainer, VirtualTreeContainer } from './treeContainers';
 import { ForceIgnore } from './forceIgnore';
 
@@ -44,6 +44,7 @@ export class SourceComponent implements MetadataComponent {
   public readonly parent?: SourceComponent;
   public parentType?: MetadataType;
   public content?: string;
+  public replacements: Record<string, MarkedReplacement[]>;
   private treeContainer: TreeContainer;
   private forceIgnore: ForceIgnore;
   private markedForDelete = false;

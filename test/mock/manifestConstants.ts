@@ -82,6 +82,18 @@ export const ONE_WILDCARD: VirtualFile = {
 </Package>\n`),
 };
 
+export const ONE_PARTIAL_WILDCARD: VirtualFile = {
+  name: 'one-partial-wildcard.xml',
+  data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>site/foo.*</members>
+        <name>${registry.types.digitalexperiencebundle.children.types.digitalexperience.name}</name>
+    </types>
+    <version>${testApiVersionAsString}</version>
+</Package>\n`),
+};
+
 export const TREE = new VirtualTreeContainer([
   {
     dirPath: '.',
@@ -91,6 +103,7 @@ export const TREE = new VirtualTreeContainer([
       BASIC,
       ONE_OF_EACH,
       ONE_WILDCARD,
+      ONE_PARTIAL_WILDCARD,
       ONE_FOLDER_MEMBER,
       IN_FOLDER_WITH_CONTENT,
     ],

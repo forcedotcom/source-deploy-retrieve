@@ -4,6 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+/* eslint-disable class-methods-use-this */
+
 import { join, normalize } from 'path';
 import { pipeline as cbPipeline, Readable, Writable } from 'stream';
 import { promisify } from 'util';
@@ -118,7 +120,7 @@ describe('Tree Containers', () => {
       expect(readFileStub.calledOnce).to.be.true;
     });
 
-    it('should use expected Node API for stream', async () => {
+    it('should use expected Node API for stream', () => {
       const readable = new Readable();
       const createReadStreamStub = env.stub(fs, 'createReadStream');
       // @ts-ignore wants ReadStream but Readable works for testing

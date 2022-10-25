@@ -8,7 +8,6 @@ import { join } from 'path';
 import { assert, expect } from 'chai';
 import { createSandbox } from 'sinon';
 import { Messages, SfError } from '@salesforce/core';
-
 import { decomposed, matchingContentFile, mixedContentDirectory, xmlInFolder } from '../mock';
 import { DECOMPOSED_COMPONENT } from '../mock/type-constants/customObjectConstant';
 import { COMPONENT } from '../mock/type-constants/apexClassConstant';
@@ -32,6 +31,10 @@ import {
   SourceComponent,
   VirtualTreeContainer,
 } from '../../src';
+import {
+  DECOMPOSED_TOP_LEVEL_CHILD_XML_PATHS,
+  DECOMPOSED_TOP_LEVEL_COMPONENT,
+} from '../mock/type-constants/customObjectTranslationConstant';
 import { DecomposedSourceAdapter } from '../../src/resolve/adapters';
 import { RegistryTestUtil } from './registryTestUtil';
 
@@ -105,6 +108,43 @@ describe('SourceComponent', () => {
     expect(relPath2).to.equal(expectedPath2);
   });
 
+  it('should return correct relative path for DigitalExperienceBundle', () => {
+    const registry = new RegistryAccess();
+    const debType = registry.getTypeByName('DigitalExperienceBundle');
+    const cmp = new SourceComponent({ name: debType.name, type: debType });
+
+    const metaFile = join('my', 'pkg', 'digitalExperiences', 'site', 'foo', 'foo.digitalExperience-meta.xml');
+    const expectedPath = join('digitalExperiences', 'site', 'foo', 'foo.digitalExperience-meta.xml');
+    expect(cmp.getPackageRelativePath(metaFile, 'metadata')).to.equal(expectedPath);
+  });
+
+  it('should return correct relative path for DigitalExperience', () => {
+    const registry = new RegistryAccess();
+    const deType = registry.getTypeByName('DigitalExperience');
+    const cmp = new SourceComponent({ name: deType.name, type: deType });
+
+    const contentFile = join(
+      'my',
+      'pkg',
+      'digitalExperiences',
+      'site',
+      'foo',
+      'sfdc_cms__view',
+      'home',
+      'content.json'
+    );
+    const expectedContentPath = join('digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home', 'content.json');
+    expect(cmp.getPackageRelativePath(contentFile, 'metadata')).to.equal(expectedContentPath);
+
+    const metaFile = join('my', 'pkg', 'digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home', '_meta.json');
+    const expectedMetaPath = join('digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home', '_meta.json');
+    expect(cmp.getPackageRelativePath(metaFile, 'metadata')).to.equal(expectedMetaPath);
+
+    const variantFile = join('my', 'pkg', 'digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home', 'fr.json');
+    const expectedVariantPath = join('digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home', 'fr.json');
+    expect(cmp.getPackageRelativePath(variantFile, 'metadata')).to.equal(expectedVariantPath);
+  });
+
   describe('parseXml', () => {
     afterEach(() => env.restore());
 
@@ -135,7 +175,7 @@ describe('SourceComponent', () => {
       }
     });
 
-    it('should handle improperly formatted xml and throw a helpful message (sync)', async () => {
+    it('should handle improperly formatted xml and throw a helpful message (sync)', () => {
       const component = COMPONENT;
       env
         .stub(component.tree, 'readFile')
@@ -383,6 +423,22 @@ describe('SourceComponent', () => {
         SfError,
         messages.getMessage('error_unexpected_child_type', [fsPath, type.name])
       );
+    });
+  });
+
+  describe('Un-addressable decomposed child (cot/cof)', () => {
+    it('gets parent when asked to resolve a child by filePath', () => {
+      const expectedTopLevel = DECOMPOSED_TOP_LEVEL_COMPONENT;
+      const adapter = new DecomposedSourceAdapter(
+        expectedTopLevel.type,
+        new RegistryAccess(),
+        undefined,
+        expectedTopLevel.tree
+      );
+
+      const result = adapter.getComponent(DECOMPOSED_TOP_LEVEL_CHILD_XML_PATHS[0], true);
+      expect(result.type).to.deep.equal(expectedTopLevel.type);
+      expect(result.xml).to.equal(expectedTopLevel.xml);
     });
   });
 

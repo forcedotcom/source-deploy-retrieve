@@ -9,9 +9,9 @@ import { isString } from '@salesforce/ts-types';
 import { create as createArchive } from 'archiver';
 import * as fs from 'graceful-fs';
 import { Lifecycle, Messages, SfError } from '@salesforce/core';
+import { ensureArray } from '@salesforce/kit';
 import { MetadataConverter } from '../convert';
 import { ComponentLike, SourceComponent } from '../resolve';
-import { normalizeToArray } from '../utils';
 import { ComponentSet } from '../collections';
 import { registry } from '../registry';
 import { stream2buffer } from '../convert/streams';
@@ -69,14 +69,14 @@ export class DeployResult implements MetadataTransferResult {
       } else {
         // if no this.components, this was likely a metadata format deploy so we need to process
         // the componentSuccesses and componentFailures instead.
-        const successes = normalizeToArray(this.response.details?.componentSuccesses || []);
-        const failures = normalizeToArray(this.response.details?.componentFailures || []);
+        const successes = ensureArray(this.response.details?.componentSuccesses);
+        const failures = ensureArray(this.response.details?.componentFailures);
         for (const component of [...successes, ...failures]) {
           if (component.fullName === 'package.xml') continue;
           const baseResponse: Partial<FileResponse> = {
             fullName: component.fullName,
             type: component.componentType,
-            state: this.getState(component),
+            state: getState(component),
             filePath: component.fileName.replace(`zip${sep}`, ''),
           };
 
@@ -101,7 +101,7 @@ export class DeployResult implements MetadataTransferResult {
       const baseResponse: Partial<FileResponse> = {
         fullName,
         type: type.name,
-        state: this.getState(message),
+        state: getState(message),
       };
 
       if (baseResponse.state === ComponentStatus.Failed) {
@@ -111,34 +111,24 @@ export class DeployResult implements MetadataTransferResult {
       } else {
         // components with children are already taken care of through the messages,
         // so don't walk their content directories.
-        if (content && !type.children) {
+        if (
+          content &&
+          (!type.children || Object.values(type.children.types).some((t) => t.unaddressableWithoutParent))
+        ) {
           for (const filePath of component.walkContent()) {
-            const response = Object.assign({}, baseResponse, { filePath }) as FileResponse;
+            const response = { ...baseResponse, filePath } as FileResponse;
             responses.push(response);
           }
         }
 
         if (xml) {
-          const response = Object.assign({}, baseResponse, { filePath: xml }) as FileResponse;
+          const response = { ...baseResponse, filePath: xml } as FileResponse;
           responses.push(response);
         }
       }
     }
 
     return responses;
-  }
-
-  private getState(message: DeployMessage): ComponentStatus {
-    if (message.created === 'true' || message.created === true) {
-      return ComponentStatus.Created;
-    } else if (message.changed === 'true' || message.changed === true) {
-      return ComponentStatus.Changed;
-    } else if (message.deleted === 'true' || message.deleted === true) {
-      return ComponentStatus.Deleted;
-    } else if (message.success === 'false' || message.success === false) {
-      return ComponentStatus.Failed;
-    }
-    return ComponentStatus.Unchanged;
   }
 
   /**
@@ -148,11 +138,11 @@ export class DeployResult implements MetadataTransferResult {
     const messageMap = new Map<string, DeployMessage[]>();
 
     const failedComponents = new ComponentSet();
-    const failureMessages = normalizeToArray(result.details.componentFailures);
-    const successMessages = normalizeToArray(result.details.componentSuccesses);
+    const failureMessages = ensureArray(result.details.componentFailures);
+    const successMessages = ensureArray(result.details.componentSuccesses);
 
     for (const failure of failureMessages) {
-      const sanitized = this.sanitizeDeployMessage(failure);
+      const sanitized = sanitizeDeployMessage(failure);
       const componentLike: ComponentLike = {
         fullName: sanitized.fullName,
         type: sanitized.componentType,
@@ -166,7 +156,7 @@ export class DeployResult implements MetadataTransferResult {
     }
 
     for (const success of successMessages) {
-      const sanitized = this.sanitizeDeployMessage(success);
+      const sanitized = sanitizeDeployMessage(success);
       const componentLike: ComponentLike = {
         fullName: sanitized.fullName,
         type: sanitized.componentType,
@@ -215,36 +205,6 @@ export class DeployResult implements MetadataTransferResult {
       }
     });
     return fileResponses;
-  }
-
-  /**
-   * Fix any issues with the deploy message returned by the api.
-   * TODO: remove cases if fixes are made in the api.
-   */
-  private sanitizeDeployMessage(message: DeployMessage): DeployMessage {
-    // mdapi error messages have the type as "FooSettings" but SDR only recognizes "Settings"
-    if (message.componentType.endsWith('Settings') && message.fileName.endsWith('.settings')) {
-      return {
-        ...message,
-        componentType: 'Settings',
-      };
-    }
-    switch (message.componentType) {
-      case registry.types.lightningcomponentbundle.name:
-        // remove the markup scheme from fullName, including c: or custom namespaces
-        message.fullName = message.fullName.replace(/markup:\/\/[a-z|0-9|_]+:/i, '');
-        break;
-      case registry.types.document.name:
-        // strip document extension from fullName
-        message.fullName = join(dirname(message.fullName), basename(message.fullName, extname(message.fullName)));
-        break;
-      // Treat emailTemplateFolder as EmailFolder
-      case registry.types.emailtemplatefolder.name:
-        message.componentType = registry.types.emailfolder.name;
-        break;
-      default:
-    }
-    return message;
   }
 
   private key(component: ComponentLike): string {
@@ -344,6 +304,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
 
     const connection = await this.getConnection();
 
+    // jsforce has an <any> on this
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,no-underscore-dangle
     await connection.metadata._invoke('cancelDeploy', { id: this.id });
   }
@@ -461,3 +422,46 @@ export interface ScopedPostDeploy {
   deployResult: DeployResult;
   orgId: string;
 }
+
+const getState = (message: DeployMessage): ComponentStatus => {
+  if (message.created === 'true' || message.created === true) {
+    return ComponentStatus.Created;
+  } else if (message.changed === 'true' || message.changed === true) {
+    return ComponentStatus.Changed;
+  } else if (message.deleted === 'true' || message.deleted === true) {
+    return ComponentStatus.Deleted;
+  } else if (message.success === 'false' || message.success === false) {
+    return ComponentStatus.Failed;
+  }
+  return ComponentStatus.Unchanged;
+};
+
+/**
+ * Fix any issues with the deploy message returned by the api.
+ * TODO: remove cases if fixes are made in the api.
+ */
+const sanitizeDeployMessage = (message: DeployMessage): DeployMessage => {
+  // mdapi error messages have the type as "FooSettings" but SDR only recognizes "Settings"
+  if (message.componentType.endsWith('Settings') && message.fileName.endsWith('.settings')) {
+    return {
+      ...message,
+      componentType: 'Settings',
+    };
+  }
+  switch (message.componentType) {
+    case registry.types.lightningcomponentbundle.name:
+      // remove the markup scheme from fullName, including c: or custom namespaces
+      message.fullName = message.fullName.replace(/markup:\/\/[a-z|0-9|_]+:/i, '');
+      break;
+    case registry.types.document.name:
+      // strip document extension from fullName
+      message.fullName = join(dirname(message.fullName), basename(message.fullName, extname(message.fullName)));
+      break;
+    // Treat emailTemplateFolder as EmailFolder
+    case registry.types.emailtemplatefolder.name:
+      message.componentType = registry.types.emailfolder.name;
+      break;
+    default:
+  }
+  return message;
+};

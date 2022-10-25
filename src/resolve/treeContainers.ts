@@ -4,6 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+/* eslint-disable class-methods-use-this */
 import { join, dirname, basename, normalize, sep } from 'path';
 import { Readable } from 'stream';
 import { statSync, existsSync, readdirSync, createReadStream, readFileSync } from 'graceful-fs';
@@ -257,7 +258,7 @@ export class VirtualTreeContainer extends TreeContainer {
 
   public exists(fsPath: string): boolean {
     const files = this.tree.get(dirname(fsPath));
-    const isFile = files && files.has(fsPath);
+    const isFile = files?.has(fsPath);
     return isFile || this.tree.has(fsPath);
   }
 

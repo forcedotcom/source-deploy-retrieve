@@ -7,9 +7,9 @@
 import { join } from 'path';
 import { getString, JsonArray, JsonMap } from '@salesforce/ts-types';
 import { SfProject } from '@salesforce/core';
+import { ensureArray } from '@salesforce/kit';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSet } from '../collections';
-import { normalizeToArray } from '../utils';
 import { RecompositionStrategy, TransformerStrategy } from '../registry';
 import { MetadataComponent, SourceComponent, NodeFSTreeContainer, TreeContainer } from '../resolve';
 import { JsToXml } from './streams';
@@ -18,18 +18,18 @@ import { WriteInfo, WriterFormat } from './types';
 abstract class ConvertTransactionFinalizer<T> {
   protected abstract transactionState: T;
 
-  public setState(props: (state: T) => void): void {
-    props(this.transactionState);
-  }
-
   public get state(): T {
     return this.transactionState;
+  }
+
+  public setState(props: (state: T) => void): void {
+    props(this.transactionState);
   }
 
   public abstract finalize(defaultDirectory?: string): Promise<WriterFormat[]>;
 }
 
-export interface RecompositionState {
+interface RecompositionState {
   [componentKey: string]: {
     /**
      * Parent component that children are rolled up into
@@ -56,6 +56,8 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
   public async finalize(): Promise<WriterFormat[]> {
     const writerData: WriterFormat[] = [];
     for (const { component: parent, children } of Object.values(this.state)) {
+      // TODO: can we safely parallelize this?
+      // eslint-disable-next-line no-await-in-loop
       const recomposedXmlObj = await this.recompose(children, parent);
       writerData.push({
         component: parent,
@@ -95,10 +97,14 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
         // If the xml file for the child is in the cache, use it. Otherwise
         // read and cache the xml file that contains this child and use it.
         if (!this.parsedXmlCache.has(childSourceComponent.xml)) {
+          // TODO: can we safely parallelize this?
+          // eslint-disable-next-line no-await-in-loop
           this.parsedXmlCache.set(childSourceComponent.xml, await parent.parseXml(childSourceComponent.xml));
         }
         xmlObj = childSourceComponent.parseFromParentXml(this.parsedXmlCache.get(childSourceComponent.xml));
       } else {
+        // TODO: can we safely parallelize this?
+        // eslint-disable-next-line no-await-in-loop
         xmlObj = await childSourceComponent.parseXml();
       }
       const childContents = xmlObj[child.type.name] || xmlObj;
@@ -120,7 +126,7 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
       }
 
       // it might be an object and not an array.  Example: custom object with a Field property containing a single field
-      const group = normalizeToArray(parentObj[groupName]) as JsonArray;
+      const group = ensureArray(parentObj[groupName]) as JsonArray;
 
       group.push(childContents);
     }
@@ -160,7 +166,7 @@ class DecompositionFinalizer extends ConvertTransactionFinalizer<DecompositionSt
   }
 }
 
-export interface NonDecompositionState {
+interface NonDecompositionState {
   /*
    * Incoming child xml (ex CustomLabel) keyed by uniqueId (label name).
    */
@@ -216,7 +222,7 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
     const childNameToParentFilePath = this.initChildMapping();
 
     // we'll merge any new labels into the default location
-    const defaultKey = join(defaultDirectory, this.getDefaultOutput(this.transactionState.exampleComponent));
+    const defaultKey = join(defaultDirectory, getDefaultOutput(this.transactionState.exampleComponent));
     this.ensureDefaults(defaultKey);
 
     // put the incoming components into the mergeMap.  Keep track of any files we need to write
@@ -232,7 +238,7 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
     this.mergeMap.forEach((children, parentKey) => {
       if (filesToWrite.has(parentKey)) {
         const parentSourceComponent = this.parentComponentMap.get(parentKey);
-        const recomposedXmlObj = this.recompose(children, parentSourceComponent);
+        const recomposedXmlObj = recompose(children, parentSourceComponent);
         writerData.push({
           component: parentSourceComponent,
           writeInfos: [{ source: new JsToXml(recomposedXmlObj), output: parentKey }],
@@ -311,31 +317,6 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
 
     this.mergeMap = new Map(result);
   }
-
-  /**
-   * Return a json object that's built up from the mergeMap children
-   */
-  private recompose(children: Map<string, JsonMap>, parentSourceComponent: SourceComponent): JsonMap {
-    // for CustomLabels, that's `labels`
-    const groupName = parentSourceComponent.type.directoryName;
-    return {
-      [parentSourceComponent.type.name]: {
-        [XML_NS_KEY]: XML_NS_URL,
-        [groupName]: Array.from(children.values()),
-      },
-    };
-  }
-
-  /**
-   * Return the default filepath for new metadata of this type
-   */
-  private getDefaultOutput(component: SourceComponent): string {
-    const { fullName } = component;
-    const [baseName] = fullName.split('.');
-    const output = `${baseName}.${component.type.suffix}${META_XML_SUFFIX}`;
-
-    return join(component.getPackageRelativePath('', 'source'), output);
-  }
 }
 
 /**
@@ -355,3 +336,28 @@ export class ConvertContext {
     }
   }
 }
+
+/**
+ * Return a json object that's built up from the mergeMap children
+ */
+const recompose = (children: Map<string, JsonMap>, parentSourceComponent: SourceComponent): JsonMap => {
+  // for CustomLabels, that's `labels`
+  const groupName = parentSourceComponent.type.directoryName;
+  return {
+    [parentSourceComponent.type.name]: {
+      [XML_NS_KEY]: XML_NS_URL,
+      [groupName]: Array.from(children.values()),
+    },
+  };
+};
+
+/**
+ * Return the default filepath for new metadata of this type
+ */
+const getDefaultOutput = (component: SourceComponent): string => {
+  const { fullName } = component;
+  const [baseName] = fullName.split('.');
+  const output = `${baseName}.${component.type.suffix}${META_XML_SUFFIX}`;
+
+  return join(component.getPackageRelativePath('', 'source'), output);
+};

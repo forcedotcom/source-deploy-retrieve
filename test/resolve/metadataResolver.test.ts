@@ -202,6 +202,33 @@ describe('MetadataResolver', () => {
         expect(mdResolver.getComponentsFromPath(path)).to.deep.equal([expectedComponent]);
       });
 
+      it('Should determine type for DigitalExperience metadata file (_meta.json file)', () => {
+        const parent = join('unpackaged', 'digitalExperiences', 'site', 'foo');
+        const parent_meta_file = join(parent, 'foo.digitalExperience-meta.xml');
+        const path = join(parent, 'sfdc_cms__view', 'home', '_meta.json');
+        const treeContainer = VirtualTreeContainer.fromFilePaths([path, parent_meta_file]);
+        const mdResolver = new MetadataResolver(undefined, treeContainer);
+        const parentComponent = new SourceComponent(
+          {
+            name: join('site', 'foo'),
+            type: registry.types.digitalexperiencebundle,
+            xml: parent_meta_file,
+          },
+          treeContainer
+        );
+        const expectedComponent = new SourceComponent(
+          {
+            name: join('sfdc_cms__view', 'home'),
+            type: registry.types.digitalexperiencebundle.children.types.digitalexperience,
+            content: dirname(path),
+            parent: parentComponent,
+            parentType: registry.types.digitalexperiencebundle,
+          },
+          treeContainer
+        );
+        expect(mdResolver.getComponentsFromPath(path)).to.deep.equal([expectedComponent]);
+      });
+
       it('Should determine type for path of mixed content type', () => {
         const path = mixedContentDirectory.MIXED_CONTENT_DIRECTORY_SOURCE_PATHS[1];
         const access = testUtil.createMetadataResolver([
@@ -722,7 +749,7 @@ describe('MetadataResolver', () => {
     });
 
     describe('Filtering', () => {
-      it('should only return components present in filter', async () => {
+      it('should only return components present in filter', () => {
         const resolver = testUtil.createMetadataResolver([
           {
             dirPath: xmlInFolder.COMPONENT_FOLDER_PATH,
@@ -750,7 +777,7 @@ describe('MetadataResolver', () => {
         expect(result).to.deep.equal([xmlInFolder.COMPONENTS[0]]);
       });
 
-      it('should resolve child components when present in filter', async () => {
+      it('should resolve child components when present in filter', () => {
         const resolver = testUtil.createMetadataResolver(decomposedtoplevel.DECOMPOSED_VIRTUAL_FS);
         const children = decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT.getChildren();
         const componentMappings = children.map((c: SourceComponent) => ({

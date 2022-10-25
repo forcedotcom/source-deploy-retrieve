@@ -28,7 +28,7 @@ describe('tests using EDA', () => {
   });
 
   after(async () => {
-    recordPerf(testName, performance);
+    await recordPerf(testName, performance);
     await session?.clean();
   });
 

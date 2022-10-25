@@ -9,10 +9,10 @@ import * as fs from 'graceful-fs';
 import * as unzipper from 'unzipper';
 import { asBoolean, isString } from '@salesforce/ts-types';
 import { Messages, SfError, Lifecycle } from '@salesforce/core';
+import { ensureArray } from '@salesforce/kit';
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
 import { SourceComponent, ZipTreeContainer } from '../resolve';
-import { normalizeToArray } from '../utils';
 import { RegistryAccess } from '../registry';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import {
@@ -65,7 +65,7 @@ export class RetrieveResult implements MetadataTransferResult {
 
     // construct failures
     if (this.response.messages) {
-      const retrieveMessages = normalizeToArray(this.response.messages);
+      const retrieveMessages = ensureArray(this.response.messages);
 
       for (const message of retrieveMessages) {
         // match type name and fullname of problem component
@@ -100,7 +100,7 @@ export class RetrieveResult implements MetadataTransferResult {
         state: this.localComponents.has(retrievedComponent) ? ComponentStatus.Changed : ComponentStatus.Created,
       };
 
-      if (!type.children) {
+      if (!type.children || Object.values(type.children.types).some((t) => t.unaddressableWithoutParent)) {
         for (const filePath of retrievedComponent.walkContent()) {
           this.fileResponses.push(Object.assign({}, baseResponse, { filePath }));
         }
@@ -145,7 +145,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
 
     // Cast RetrieveResult returned by jsForce to MetadataApiRetrieveStatus
     const status = (await connection.metadata.checkRetrieveStatus(this.id)) as MetadataApiRetrieveStatus;
-    status.fileProperties = normalizeToArray(status.fileProperties);
+    status.fileProperties = ensureArray(status.fileProperties);
     status.success = coerceBoolean(status.success);
     status.done = coerceBoolean(status.done);
     return status;
@@ -291,6 +291,8 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
       })
         .getSourceComponents()
         .toArray();
+      // this is intentional sequential
+      // eslint-disable-next-line no-await-in-loop
       const convertResult = await converter.convert(zipComponents, 'source', outputConfig);
       if (convertResult) {
         components.push(...convertResult.converted);

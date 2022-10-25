@@ -80,6 +80,36 @@ describe('ManifestResolver', () => {
       expect(result.components).to.deep.equal(expected);
     });
 
+    it('should throw when type is empty', async () => {
+      const badManifest: VirtualFile = {
+        name: 'bad-package.xml',
+        data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+      <Package xmlns="http://soap.sforce.com/2006/04/metadata">
+        <types>
+          <members></members>
+          <name></name>
+        </types>
+        <version>52.0</version>
+      </Package>\n`),
+      };
+      const tree = new VirtualTreeContainer([
+        {
+          dirPath: '.',
+          children: [badManifest],
+        },
+      ]);
+      const resolver = new ManifestResolver(tree);
+      try {
+        await resolver.resolve(badManifest.name);
+        expect(true, 'expected invalid types definition error').to.be.false;
+      } catch (error) {
+        expect(error).to.have.property('name', 'InvalidManifest');
+        expect(error)
+          .to.have.property('message')
+          .and.include(`Invalid types definition in manifest file: ${badManifest.name}`);
+      }
+    });
+
     it('should resolve nested InFolder types', async () => {
       const registry = new RegistryAccess();
       const reportType = registry.getTypeByName('report');

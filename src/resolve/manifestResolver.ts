@@ -6,8 +6,8 @@
  */
 
 import { parse as parseXml } from 'fast-xml-parser';
+import { ensureArray } from '@salesforce/kit';
 import { MetadataType, RegistryAccess } from '../registry';
-import { normalizeToArray } from '../utils';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
 import { MetadataComponent } from './types';
 
@@ -59,18 +59,27 @@ export class ManifestResolver {
         stopNodes: ['version'],
       }) as { Package: ParsedPackageManifest }
     ).Package;
-    const packageTypeMembers = normalizeToArray(parsedManifest.types);
+    const packageTypeMembers = ensureArray(parsedManifest.types);
     const apiVersion = parsedManifest.version;
 
     for (const typeMembers of packageTypeMembers) {
-      const typeName = typeMembers.name;
+      let typeName = typeMembers.name;
+      // protect against empty/invalid typeMember definitions in the manifest
+      if (typeof typeName !== 'string' || typeName.length === 0) {
+        if (typeof typeName === 'object') {
+          typeName = JSON.stringify(typeName);
+        }
+        const err = new Error(`Invalid types definition in manifest file: ${manifestPath}\nFound: "${typeName ?? ''}"`);
+        err.name = 'InvalidManifest';
+        throw err;
+      }
       const type = this.registry.getTypeByName(typeName);
       const parentType = type.folderType ? this.registry.getTypeByName(type.folderType) : undefined;
-      const members = normalizeToArray(typeMembers.members);
+      const members = ensureArray(typeMembers.members);
 
       for (const fullName of members) {
         let mdType = type;
-        if (this.isNestedInFolder(fullName, type, parentType, members)) {
+        if (isMemberNestedInFolder(fullName, type, parentType, members)) {
           mdType = parentType;
         }
         components.push({ fullName, type: mdType });
@@ -79,27 +88,32 @@ export class ManifestResolver {
 
     return { components, apiVersion };
   }
-
-  // Use the folderType instead of the type from the manifest when:
-  //  1. InFolder types: (report, dashboard, emailTemplate, document)
-  //    1a. type.inFolder === true (from metadataRegistry.json) AND
-  //    1b. The fullName doesn't contain a forward slash character AND
-  //    1c. The fullName with a slash appended is contained in another member entry
-  // OR
-  //  2. Non-InFolder, folder types: (territory2, territory2Model, territory2Type, territory2Rule)
-  //    2a. type.inFolder !== true (from metadataRegistry.json) AND
-  //    2b. type.folderType has a value (from metadataRegistry.json) AND
-  //    2c. This type's parent type has a folderType that doesn't match its ID.
-  private isNestedInFolder(fullName: string, type: MetadataType, parentType: MetadataType, members: string[]): boolean {
-    // Quick short-circuit for non-folderTypes
-    if (!type.folderType) {
-      return false;
-    }
-
-    const isInFolderType = type.inFolder;
-    const isNestedInFolder = !fullName.includes('/') || members.some((m) => m.includes(`${fullName}/`));
-    const isNonMatchingFolder = parentType && parentType.folderType !== parentType.id;
-
-    return (isInFolderType && isNestedInFolder) || (!isInFolderType && isNonMatchingFolder);
-  }
 }
+
+// Use the folderType instead of the type from the manifest when:
+//  1. InFolder types: (report, dashboard, emailTemplate, document)
+//    1a. type.inFolder === true (from metadataRegistry.json) AND
+//    1b. The fullName doesn't contain a forward slash character AND
+//    1c. The fullName with a slash appended is contained in another member entry
+// OR
+//  2. Non-InFolder, folder types: (territory2, territory2Model, territory2Type, territory2Rule)
+//    2a. type.inFolder !== true (from metadataRegistry.json) AND
+//    2b. type.folderType has a value (from metadataRegistry.json) AND
+//    2c. This type's parent type has a folderType that doesn't match its ID.
+const isMemberNestedInFolder = (
+  fullName: string,
+  type: MetadataType,
+  parentType: MetadataType,
+  members: string[]
+): boolean => {
+  // Quick short-circuit for non-folderTypes
+  if (!type.folderType) {
+    return false;
+  }
+
+  const isInFolderType = type.inFolder;
+  const isNestedInFolder = !fullName.includes('/') || members.some((m) => m.includes(`${fullName}/`));
+  const isNonMatchingFolder = parentType && parentType.folderType !== parentType.id;
+
+  return (isInFolderType && isNestedInFolder) || (!isInFolderType && isNonMatchingFolder);
+};

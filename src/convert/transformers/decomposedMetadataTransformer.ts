@@ -6,6 +6,7 @@
  */
 import { join } from 'path';
 import { JsonMap } from '@salesforce/ts-types';
+import { ensureArray } from '@salesforce/kit';
 import { MetadataComponent, SourceComponent } from '../../resolve';
 import { JsToXml } from '../streams';
 import { WriteInfo } from '../types';
@@ -13,7 +14,6 @@ import { META_XML_SUFFIX, SourcePath, XML_NS_KEY, XML_NS_URL } from '../../commo
 import { ComponentSet } from '../../collections';
 import { DecompositionState } from '../convertContext';
 import { DecompositionStrategy } from '../../registry';
-import { normalizeToArray } from '../../utils';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
@@ -56,13 +56,13 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const forceIgnore = component.getForceIgnore();
 
     let parentXmlObject: JsonMap;
-    const composedMetadata = await this.getComposedMetadataEntries(component);
+    const composedMetadata = await getComposedMetadataEntries(component);
 
     for (const [tagKey, tagValue] of composedMetadata) {
       const childTypeId = type.children?.directories[tagKey];
       if (childTypeId) {
         const childType = type.children.types[childTypeId];
-        const tagValues = normalizeToArray(tagValue);
+        const tagValues = ensureArray(tagValue);
         for (const value of tagValues as [{ fullName: string; name: string }]) {
           const entryName = value.fullName || value.name;
           const childComponent: MetadataComponent = {
@@ -71,7 +71,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
             parent: component,
           };
           // only process child types that aren't forceignored
-          if (forceIgnore.accepts(this.getDefaultOutput(childComponent))) {
+          if (forceIgnore.accepts(getDefaultOutput(childComponent))) {
             const source = new JsToXml({
               [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
             });
@@ -94,7 +94,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
                 foundMerge: false,
                 writeInfo: {
                   source: new JsToXml(parentXmlObject),
-                  output: this.getDefaultOutput(component),
+                  output: getDefaultOutput(component),
                 },
               });
             }
@@ -103,7 +103,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
             if (!mergeWith) {
               writeInfos.push({
                 source,
-                output: this.getDefaultOutput(childComponent),
+                output: getDefaultOutput(childComponent),
               });
             }
             // if the merge parent has a child that can be merged with, push write
@@ -123,21 +123,19 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
                 foundMerge: false,
                 writeInfo: {
                   source,
-                  output: this.getDefaultOutput(childComponent),
+                  output: getDefaultOutput(childComponent),
                 },
               });
             }
           }
         }
-      } else {
+      } else if (tagKey !== XML_NS_KEY) {
         // tag entry isn't a child type, so add it to the parent xml
-        if (tagKey !== XML_NS_KEY) {
-          if (!parentXmlObject) {
-            parentXmlObject = { [type.name]: { [XML_NS_KEY]: XML_NS_URL } };
-          }
-          const tagGroup = parentXmlObject[type.name] as JsonMap;
-          tagGroup[tagKey] = tagValue;
+        if (!parentXmlObject) {
+          parentXmlObject = { [type.name]: { [XML_NS_KEY]: XML_NS_URL } };
         }
+        const tagGroup = parentXmlObject[type.name] as JsonMap;
+        tagGroup[tagKey] = tagValue;
       }
     }
 
@@ -147,7 +145,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       if (!mergeWith) {
         writeInfos.push({
           source: parentSource,
-          output: this.getDefaultOutput(component),
+          output: getDefaultOutput(component),
         });
       } else if (mergeWith.xml) {
         writeInfos.push({
@@ -160,21 +158,13 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
           foundMerge: false,
           writeInfo: {
             source: parentSource,
-            output: this.getDefaultOutput(component),
+            output: getDefaultOutput(component),
           },
         });
       }
     }
 
     return writeInfos;
-  }
-
-  private async getComposedMetadataEntries(
-    component: SourceComponent
-  ): Promise<Array<[string, { fullname?: string; name?: string }]>> {
-    const composedMetadata = (await component.parseXml())[component.type.name];
-    // composedMetadata might be undefined if you call toSourceFormat() from a non-source-backed Component
-    return composedMetadata ? Object.entries(composedMetadata) : [];
   }
 
   /**
@@ -198,15 +188,23 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const key = `${forComponent.type.name}#${forComponent.fullName}`;
     return this.context.decomposition.state[key];
   }
-
-  private getDefaultOutput(component: MetadataComponent): SourcePath {
-    const { parent, fullName, type } = component;
-    const [baseName, childName] = fullName.split('.');
-    const baseComponent = (parent ?? component) as SourceComponent;
-    let output = `${childName ?? baseName}.${component.type.suffix}${META_XML_SUFFIX}`;
-    if (parent?.type.strategies.decomposition === DecompositionStrategy.FolderPerType) {
-      output = join(type.directoryName, output);
-    }
-    return join(baseComponent.getPackageRelativePath(baseName, 'source'), output);
-  }
 }
+
+const getComposedMetadataEntries = async (
+  component: SourceComponent
+): Promise<Array<[string, { fullname?: string; name?: string }]>> => {
+  const composedMetadata = (await component.parseXml())[component.type.name];
+  // composedMetadata might be undefined if you call toSourceFormat() from a non-source-backed Component
+  return composedMetadata ? Object.entries(composedMetadata) : [];
+};
+
+const getDefaultOutput = (component: MetadataComponent): SourcePath => {
+  const { parent, fullName, type } = component;
+  const [baseName, childName] = fullName.split('.');
+  const baseComponent = (parent ?? component) as SourceComponent;
+  let output = `${childName ?? baseName}.${component.type.suffix}${META_XML_SUFFIX}`;
+  if (parent?.type.strategies.decomposition === DecompositionStrategy.FolderPerType) {
+    output = join(type.directoryName, output);
+  }
+  return join(baseComponent.getPackageRelativePath(baseName, 'source'), output);
+};

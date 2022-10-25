@@ -20,12 +20,12 @@ export type ManifestOption = {
   destructiveChangesPost?: string;
 };
 
-export type MetadataOption = {
+type MetadataOption = {
   metadataEntries: string[];
   directoryPaths: string[];
 };
 
-export type OrgOption = {
+type OrgOption = {
   username: string;
   exclude: string[];
 };
@@ -49,6 +49,7 @@ export class ComponentSetBuilder {
    *
    * @param options: options for creating a ComponentSet
    */
+  // eslint-disable-next-line complexity
   public static async build(options: ComponentSetOptions): Promise<ComponentSet> {
     const logger = Logger.childFromRoot('componentSetBuilder');
     let componentSet: ComponentSet;
@@ -75,6 +76,9 @@ export class ComponentSetBuilder {
       // Resolve manifest with source in package directories.
       if (manifest) {
         logger.debug(`Building ComponentSet from manifest: ${manifest.manifestPath}`);
+        if (!fs.existsSync(manifest.manifestPath)) {
+          throw new SfError(`The manifest path "${manifest.manifestPath}" does not exist.`);
+        }
         const directoryPaths = options.manifest.directoryPaths;
         logger.debug(`Searching in packageDir: ${directoryPaths.join(', ')} for matching metadata`);
         componentSet = await ComponentSet.fromManifest({
@@ -127,7 +131,7 @@ export class ComponentSetBuilder {
           // components with namespacePrefix where org.exclude includes manageableState (to exclude managed packages)
           // components with namespacePrefix where manageableState equals undefined (to exclude components e.g. InstalledPackage)
           // components where org.exclude includes manageableState (to exclude packages without namespacePrefix e.g. unlocked packages)
-          componentFilter: (component): boolean => !(org.exclude && org.exclude.includes(component?.manageableState)),
+          componentFilter: (component): boolean => !org.exclude?.includes(component?.manageableState),
         });
 
         for (const comp of fromConnection) {

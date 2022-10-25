@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v56 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 467/512 supported metadata types.
+Currently, there are 480/512 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -89,7 +89,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CallCenter|✅||
 |CallCenterRoutingMap|✅||
 |CallCoachingMediaProvider|⚠️|Supports deploy/retrieve but not source tracking|
-|CallCtrAgentFavTrfrDest|❌|Not supported, but support could be added|
+|CallCtrAgentFavTrfrDest|✅||
 |CampaignInfluenceModel|✅||
 |CampaignSettings|✅||
 |CanvasMetadata|✅||
@@ -170,9 +170,9 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DelegateGroup|✅||
 |DeploymentSettings|✅||
 |DevHubSettings|✅||
-|DigitalExperience|❌|Not supported, but support could be added (but not for tracking)|
-|DigitalExperienceBundle|❌|Not supported, but support could be added (but not for tracking)|
-|DigitalExperienceConfig|❌|Not supported, but support could be added (but not for tracking)|
+|DigitalExperience|⚠️|Supports deploy/retrieve but not source tracking|
+|DigitalExperienceBundle|⚠️|Supports deploy/retrieve but not source tracking|
+|DigitalExperienceConfig|⚠️|Supports deploy/retrieve but not source tracking|
 |DiscoveryAIModel|✅||
 |DiscoveryGoal|✅||
 |DiscoverySettings|✅||
@@ -223,7 +223,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExpressionSetDefinitionVersion|✅||
 |ExpressionSetObjectAlias|❌|Not supported, but support could be added|
 |ExternalAIModel|❌|Not supported, but support could be added|
-|ExternalCredential|❌|Not supported, but support could be added|
+|ExternalCredential|✅||
 |ExternalDataConnector|✅||
 |ExternalDataSource|✅||
 |ExternalDataSrcDescriptor|❌|Not supported, but support could be added|
@@ -246,8 +246,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |FlowDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |FlowSettings|✅||
 |FlowTest|✅||
-|ForecastingFilter|❌|Not supported, but support could be added|
-|ForecastingFilterCondition|❌|Not supported, but support could be added|
+|ForecastingFilter|✅||
+|ForecastingFilterCondition|✅||
 |ForecastingObjectListSettings|✅||
 |ForecastingSettings|✅||
 |ForecastingSourceDefinition|✅||
@@ -315,14 +315,14 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ManagedContentType|⚠️|Supports deploy/retrieve but not source tracking|
 |ManagedTopics|✅||
 |MapsAndLocationSettings|✅||
-|MarketSegmentDefinition|❌|Not supported, but support could be added|
+|MarketSegmentDefinition|✅||
 |MarketingAppExtActivity|❌|Not supported, but support could be added|
-|MarketingAppExtension|❌|Not supported, but support could be added|
+|MarketingAppExtension|✅||
 |MatchingRules|✅||
 |MediaAdSalesSettings|✅||
 |MeetingsSettings|✅||
 |MessagingChannel|❌|Not supported, but support could be added (but not for tracking)|
-|MfgProgramTemplate|❌|Not supported, but support could be added|
+|MfgProgramTemplate|✅||
 |MfgServiceConsoleSettings|✅||
 |MilestoneType|✅||
 |MktCalcInsightObjectDef|✅||
@@ -415,7 +415,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ReferencedDashboard|❌|Not supported, but support could be added|
 |RegisteredExternalService|❌|Not supported, but support could be added|
 |RelatedRecordAssocCriteria|❌|Not supported, but support could be added|
-|RelationshipGraphDefinition|❌|Not supported, but support could be added|
+|RelationshipGraphDefinition|✅||
 |RemoteSiteSetting|✅||
 |Report|✅||
 |ReportFolder|✅||
@@ -427,7 +427,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SalesWorkQueueSettings|✅||
 |SamlSsoConfig|✅||
 |SandboxSettings|✅||
-|SchedulingObjective|❌|Not supported, but support could be added|
+|SchedulingObjective|✅||
 |SchedulingRule|✅||
 |SchemaSettings|✅||
 |ScoreCategory|❌|Not supported, but support could be added|
@@ -459,7 +459,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |StandardValueSetTranslation|✅||
 |StaticResource|✅||
 |StnryAssetEnvSrcCnfg|✅||
-|StreamingAppDataConnector|❌|Not supported, but support could be added|
+|StreamingAppDataConnector|✅||
 |SubscriptionManagementSettings|✅||
 |SurveySettings|✅||
 |SustainabilityUom|❌|Not supported, but support could be added|
@@ -532,13 +532,14 @@ v57 introduces the following new types.  Here's their current level of support
 |:---|:---|:---|
 |ActionableListDefinition|❌|Not supported, but support could be added|
 |AffinityScoreDefinition|❌|Not supported, but support could be added|
+|CampaignTemplateDefinition|❌|Not supported, but support could be added|
 |ClauseCatgConfiguration|❌|Not supported, but support could be added|
 |DisclosureDefinition|❌|Not supported, but support could be added|
 |DisclosureDefinitionVersion|❌|Not supported, but support could be added|
 |DisclosureType|❌|Not supported, but support could be added|
 |EngagementMessagingSettings|✅||
 |ExternalClientAppSettings|✅||
-|ExternalClientApplication|❌|Not supported, but support could be added|
+|ExternalClientApplication|✅||
 |ExternalDocStorageConfig|❌|Not supported, but support could be added|
 |ExtlClntAppMobileSet|❌|Not supported, but support could be added|
 |ExtlClntAppOauthPlcyCnfg|❌|Not supported, but support could be added|

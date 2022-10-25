@@ -6,11 +6,12 @@
  */
 
 import { Connection, Logger } from '@salesforce/core';
+import { ensureArray } from '@salesforce/kit';
 import { retry, NotRetryableError, RetryError } from 'ts-retry-promise';
 import { RegistryAccess, registry as defaultRegistry, MetadataType } from '../registry';
 import { standardValueSet } from '../registry/standardvalueset';
 import { FileProperties, StdValueSetRecord, ListMetadataQuery } from '../client/types';
-import { normalizeToArray, extName } from '../utils';
+import { extName } from '../utils';
 import { MetadataComponent } from './types';
 export interface ResolveConnectionResult {
   components: MetadataComponent[];
@@ -80,9 +81,10 @@ export class ConnectionResolver {
     }
 
     return {
-      components: Aggregator.filter(componentFilter).map((component) => {
-        return { fullName: component.fullName, type: this.registry.getTypeByName(component.type) };
-      }),
+      components: Aggregator.filter(componentFilter).map((component) => ({
+        fullName: component.fullName,
+        type: this.registry.getTypeByName(component.type),
+      })),
       apiVersion: this.connection.getApiVersion(),
     };
   }
@@ -91,7 +93,7 @@ export class ConnectionResolver {
     let members: FileProperties[];
 
     try {
-      members = normalizeToArray((await this.connection.metadata.list(query)) as FileProperties[]);
+      members = ensureArray((await this.connection.metadata.list(query)) as FileProperties[]);
     } catch (error) {
       this.logger.debug((error as Error).message);
       members = [];
@@ -151,7 +153,7 @@ export class ConnectionResolver {
           // 'ts-retry-promise' exposes the actual error on `error.lastError`
           const error = err as RetryError;
 
-          if (error.lastError && error.lastError.message) {
+          if (error.lastError?.message) {
             this.logger.debug(error.lastError.message);
           }
         }

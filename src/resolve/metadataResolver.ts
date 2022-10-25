@@ -136,7 +136,7 @@ export class MetadataResolver {
       // source path or allowed content-only path, otherwise the adapter
       // knows how to handle it
       const shouldResolve =
-        this.parseAsRootMetadataXml(fsPath) ||
+        parseAsRootMetadataXml(fsPath) ||
         isResolvingSource ||
         !this.parseAsContentMetadataXml(fsPath) ||
         !adapter.allowMetadataWithContent();
@@ -149,15 +149,6 @@ export class MetadataResolver {
       path: fsPath,
     });
     throw new SfError(messages.getMessage('error_could_not_infer_type', [fsPath]), 'TypeInferenceError');
-  }
-
-  /**
-   * Any metadata xml file (-meta.xml) is potentially a root metadata file.
-   *
-   * @param fsPath File path of a potential metadata xml file
-   */
-  private parseAsRootMetadataXml(fsPath: string): boolean {
-    return !!parseMetadataXml(fsPath);
   }
 
   private resolveTypeFromStrictFolder(fsPath: string): MetadataType | undefined {
@@ -213,6 +204,14 @@ export class MetadataResolver {
     // attempt 3 - try treating the file extension name as a suffix
     if (!resolvedType) {
       resolvedType = this.registry.getTypeBySuffix(extName(fsPath));
+    }
+
+    // attempt 4 - try treating the content as metadata
+    if (!resolvedType) {
+      const metadata = this.parseAsMetadata(fsPath);
+      if (metadata) {
+        resolvedType = this.registry.getTypeByName(metadata);
+      }
     }
 
     return resolvedType;
@@ -297,9 +296,31 @@ export class MetadataResolver {
     return folderName;
   }
 
+  /**
+   * If this file should be considered as a metadata file then return the metadata type
+   */
+  private parseAsMetadata(fsPath: string): string {
+    if (this.tree.isDirectory(fsPath)) {
+      return;
+    }
+    return ['DigitalExperience']
+      .map((type) => this.registry.getTypeByName(type))
+      .find((type) => fsPath.split(sep).includes(type.directoryName))?.name;
+  }
+
   private isMetadata(fsPath: string): boolean {
     return (
-      !!parseMetadataXml(fsPath) || this.parseAsContentMetadataXml(fsPath) || !!this.parseAsFolderMetadataXml(fsPath)
+      !!parseMetadataXml(fsPath) ||
+      this.parseAsContentMetadataXml(fsPath) ||
+      !!this.parseAsFolderMetadataXml(fsPath) ||
+      !!this.parseAsMetadata(fsPath)
     );
   }
 }
+
+/**
+ * Any metadata xml file (-meta.xml) is potentially a root metadata file.
+ *
+ * @param fsPath File path of a potential metadata xml file
+ */
+const parseAsRootMetadataXml = (fsPath: string): boolean => Boolean(parseMetadataXml(fsPath));

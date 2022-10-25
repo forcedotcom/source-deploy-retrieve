@@ -41,7 +41,7 @@ describe('ComponentSetBuilder', () => {
     let fromConnectionStub: sinon.SinonStub;
 
     beforeEach(() => {
-      fileExistsSyncStub = stubMethod(sandbox, fs, 'existsSync');
+      fileExistsSyncStub = sandbox.stub(fs, 'existsSync');
       fromSourceStub = stubMethod(sandbox, ComponentSet, 'fromSource');
       fromManifestStub = stubMethod(sandbox, ComponentSet, 'fromManifest');
       fromConnectionStub = stubMethod(sandbox, ComponentSet, 'fromConnection');
@@ -305,6 +305,7 @@ describe('ComponentSetBuilder', () => {
     });
 
     it('should create ComponentSet from manifest', async () => {
+      fileExistsSyncStub.returns(true);
       componentSet.add(apexClassComponent);
       fromManifestStub.resolves(componentSet);
       const packageDir1 = path.resolve('force-app');
@@ -354,6 +355,8 @@ describe('ComponentSetBuilder', () => {
     });
 
     it('should create ComponentSet from manifest and multiple package', async () => {
+      fileExistsSyncStub.returns(true);
+
       componentSet.add(apexClassComponent);
       const apexClassComponent2 = { type: 'ApexClass', fullName: 'MyClass2' };
       componentSet.add(apexClassComponent2);

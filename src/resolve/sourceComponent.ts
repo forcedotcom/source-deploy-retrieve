@@ -8,7 +8,8 @@ import { basename, join } from 'path';
 import { Messages, SfError } from '@salesforce/core';
 import { parse, validate } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
-import { baseName, normalizeToArray, parseMetadataXml, trimUntil } from '../utils';
+import { ensureArray } from '@salesforce/kit';
+import { baseName, parseMetadataXml, trimUntil } from '../utils';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common';
 import { SfdxFileFormat } from '../convert';
 import { MetadataType } from '../registry';
@@ -61,6 +62,38 @@ export class SourceComponent implements MetadataComponent {
     this.parentType = props.parentType;
     this.treeContainer = tree;
     this.forceIgnore = forceIgnore;
+  }
+
+  public get fullName(): string {
+    if (this.type.ignoreParsedFullName) {
+      return this.type.name;
+    }
+    if (this.parent && this.type.ignoreParentName) {
+      return this.name;
+    } else {
+      return `${this.parent ? `${this.parent.fullName}.` : ''}${this.name}`;
+    }
+  }
+
+  public get tree(): TreeContainer {
+    return this.treeContainer;
+  }
+
+  /**
+   * Returns whether this component type is supported by the Metadata API
+   * and therefore should have an entry added to the manifest.
+   *
+   * This is defined on the type in the registry. The type is required to
+   * be in the registry for proper classification and for possible use in
+   * decomposition/recomposition.
+   *
+   * Default value is true, so the only way to return false is to explicitly
+   * set it in the registry as false.
+   *
+   * E.g., CustomFieldTranslation.
+   */
+  public get isAddressable(): boolean {
+    return this.type.isAddressable !== false;
   }
 
   /**
@@ -166,7 +199,7 @@ export class SourceComponent implements MetadataComponent {
     if (!this.parent) {
       return parentXml;
     }
-    const children = normalizeToArray(
+    const children = ensureArray(
       get(parentXml, `${this.parent.type.name}.${this.type.xmlElementName || this.type.directoryName}`)
     ) as T[];
     return children.find((c) => getString(c, this.type.uniqueIdElement) === this.name);
@@ -211,7 +244,13 @@ export class SourceComponent implements MetadataComponent {
     // the file resides in for the new destination. This also applies to inFolder types:
     // (report, dashboard, emailTemplate, document) and their folder container types:
     // (reportFolder, dashboardFolder, emailFolder, documentFolder)
-    if (!suffix || inFolder || folderContentType) {
+    // It also applies to DigitalExperienceBundle types as we need to maintain the folder structure
+    if (
+      !suffix ||
+      inFolder ||
+      folderContentType ||
+      ['digitalexperiencebundle', 'digitalexperience'].includes(this.type.id)
+    ) {
       return trimUntil(fsPath, directoryName, true);
     }
 
@@ -298,19 +337,20 @@ export class SourceComponent implements MetadataComponent {
       const uniqueIdElement = childType.uniqueIdElement;
       if (uniqueIdElement) {
         const xmlPathToChildren = `${this.type.name}.${childType.xmlElementName}`;
-        const elements = normalizeToArray(get(parsed, xmlPathToChildren, []));
-        const childComponents = elements.map((element) => {
-          return new SourceComponent(
-            {
-              name: getString(element, uniqueIdElement),
-              type: childType,
-              xml: this.xml,
-              parent: this,
-            },
-            this.treeContainer,
-            this.forceIgnore
-          );
-        });
+        const elements = ensureArray(get(parsed, xmlPathToChildren, []));
+        const childComponents = elements.map(
+          (element) =>
+            new SourceComponent(
+              {
+                name: getString(element, uniqueIdElement),
+                type: childType,
+                xml: this.xml,
+                parent: this,
+              },
+              this.treeContainer,
+              this.forceIgnore
+            )
+        );
         children.push(...childComponents);
       }
     }
@@ -332,37 +372,5 @@ export class SourceComponent implements MetadataComponent {
         }
       }
     }
-  }
-
-  public get fullName(): string {
-    if (this.type.ignoreParsedFullName) {
-      return this.type.name;
-    }
-    if (this.parent && this.type.ignoreParentName) {
-      return this.name;
-    } else {
-      return `${this.parent ? `${this.parent.fullName}.` : ''}${this.name}`;
-    }
-  }
-
-  public get tree(): TreeContainer {
-    return this.treeContainer;
-  }
-
-  /**
-   * Returns whether this component type is supported by the Metadata API
-   * and therefore should have an entry added to the manifest.
-   *
-   * This is defined on the type in the registry. The type is required to
-   * be in the registry for proper classification and for possible use in
-   * decomposition/recomposition.
-   *
-   * Default value is true, so the only way to return false is to explicitly
-   * set it in the registry as false.
-   *
-   * E.g., CustomFieldTranslation.
-   */
-  public get isAddressable(): boolean {
-    return this.type.isAddressable !== false;
   }
 }

@@ -13,12 +13,11 @@ import { getCoverage, getCurrentApiVersion } from '../../src/registry/coverage';
 describe('registry completeness', () => {
   let missingTypes: Array<[string, CoverageObjectType]>;
 
-  before(async function () {
-    this.timeout(20000);
+  before(async () => {
     missingTypes = getMissingTypes(await getCoverage(await getCurrentApiVersion()), registry);
   });
 
   it('every type from metadata coverage is in the SDR registry', () => {
     expect(missingTypes.map(([key]) => key).sort()).to.deep.equal([]);
   });
-}).timeout(10000);
+});

@@ -201,6 +201,7 @@ describe('Convert Transaction Constructs', () => {
             children: [
               {
                 name: labelsFileName,
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 data: Buffer.from(new JsToXml(labelsXmls[0]).read().toString()),
               },
             ],
@@ -210,6 +211,7 @@ describe('Convert Transaction Constructs', () => {
             children: [
               {
                 name: labelsFileName,
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 data: Buffer.from(new JsToXml(labelsXmls[1]).read().toString()),
               },
             ],
@@ -285,15 +287,13 @@ describe('Convert Transaction Constructs', () => {
       let sfProjectStub: sinon.SinonStub;
       beforeEach(() => {
         sfProjectStub = env.stub(SfProject, 'getInstance').returns({
-          getPackageDirectories: () => {
-            return [
-              {
-                name: 'force-app',
-                path: 'force-app',
-                fullPath: nonDecomposed.DEFAULT_DIR,
-              },
-            ];
-          },
+          getPackageDirectories: () => [
+            {
+              name: 'force-app',
+              path: 'force-app',
+              fullPath: nonDecomposed.DEFAULT_DIR,
+            },
+          ],
         } as unknown as SfProject);
       });
       it('should return WriterFormats for claimed children', async () => {
@@ -411,20 +411,18 @@ describe('Convert Transaction Constructs', () => {
       it('should merge 1 updated file to non-default dir and not write default file', async () => {
         sfProjectStub.restore();
         env.stub(SfProject, 'getInstance').returns({
-          getPackageDirectories: () => {
-            return [
-              {
-                name: 'my-app',
-                path: 'my-app',
-                fullPath: nonDecomposed.NON_DEFAULT_DIR,
-              },
-              {
-                name: 'force-app',
-                path: 'force-app',
-                fullPath: nonDecomposed.DEFAULT_DIR,
-              },
-            ];
-          },
+          getPackageDirectories: () => [
+            {
+              name: 'my-app',
+              path: 'my-app',
+              fullPath: nonDecomposed.NON_DEFAULT_DIR,
+            },
+            {
+              name: 'force-app',
+              path: 'force-app',
+              fullPath: nonDecomposed.DEFAULT_DIR,
+            },
+          ],
         } as unknown as SfProject);
         const component = nonDecomposed.COMPONENT_2;
         const context = new ConvertContext();

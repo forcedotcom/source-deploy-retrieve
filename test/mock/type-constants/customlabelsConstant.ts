@@ -102,10 +102,12 @@ export const VIRTUAL_DIR: VirtualDirectory[] = [
   { dirPath: NON_DEFAULT_DIR, children: [join(NON_DEFAULT_DIR, COMPONENT_2_TYPE_DIR)] },
   {
     dirPath: COMPONENT_1_TYPE_DIR,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     children: [{ name: XML_NAME, data: Buffer.from(new JsToXml(COMPONENT_1_XML).read().toString()) }],
   },
   {
     dirPath: COMPONENT_2_TYPE_DIR,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     children: [{ name: XML_NAME, data: Buffer.from(new JsToXml(COMPONENT_2_XML).read().toString()) }],
   },
   {
@@ -113,6 +115,7 @@ export const VIRTUAL_DIR: VirtualDirectory[] = [
     children: [
       {
         name: MATCHING_RULES_XML_NAME,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         data: Buffer.from(new JsToXml(MATCHING_RULES_COMPONENT_XML).read().toString()),
       },
     ],

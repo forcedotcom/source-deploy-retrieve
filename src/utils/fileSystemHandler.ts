@@ -23,21 +23,6 @@ export function ensureFileExists(filePath: string): void {
 }
 
 /**
- * Method to save multiple files on disk.
- *
- * @param fileMap key = filePath, value = file contents
- */
-export function createFiles(fileMap: Map<string, string>): void {
-  for (const filePath of fileMap.keys()) {
-    ensureFileExists(filePath);
-
-    const writeStream = fs.createWriteStream(filePath);
-    writeStream.write(fileMap.get(filePath));
-    writeStream.end();
-  }
-}
-
-/**
  * Traverse up a file path and search for the given file name.
  *
  * @param start File or folder path to start searching from

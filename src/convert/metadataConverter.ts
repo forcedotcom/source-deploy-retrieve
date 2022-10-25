@@ -43,7 +43,6 @@ export class MetadataConverter {
         (comps instanceof ComponentSet ? Array.from(comps.getSourceComponents()) : comps) as SourceComponent[]
       ).filter((comp) => comp.type.isAddressable !== false);
 
-      let manifestContents;
       const isSource = targetFormat === 'source';
       const tasks: Array<Promise<void>> = [];
 
@@ -57,19 +56,18 @@ export class MetadataConverter {
           if (output.packageName) {
             cs.fullName = output.packageName;
           }
-          manifestContents = await cs.getPackageXml();
-          packagePath = this.getPackagePath(output);
+          packagePath = getPackagePath(output);
           defaultDirectory = packagePath;
           writer = new StandardWriter(packagePath);
           if (!isSource) {
             const manifestPath = join(packagePath, MetadataConverter.PACKAGE_XML_FILE);
             tasks.push(
-              promises.writeFile(manifestPath, manifestContents),
+              promises.writeFile(manifestPath, await cs.getPackageXml()),
               ...cs.getTypesOfDestructiveChanges().map(async (destructiveChangesType) =>
                 // for each of the destructive changes in the component set, convert and write the correct metadata
                 // to each manifest
                 promises.writeFile(
-                  join(packagePath, this.getDestructiveManifest(destructiveChangesType)),
+                  join(packagePath, getDestructiveManifest(destructiveChangesType)),
                   await cs.getPackageXml(4, destructiveChangesType)
                 )
               )
@@ -80,18 +78,19 @@ export class MetadataConverter {
           if (output.packageName) {
             cs.fullName = output.packageName;
           }
-          manifestContents = await cs.getPackageXml();
-          packagePath = this.getPackagePath(output);
+          packagePath = getPackagePath(output);
           defaultDirectory = packagePath;
           writer = new ZipWriter(packagePath);
           if (!isSource) {
-            writer.addToZip(manifestContents, MetadataConverter.PACKAGE_XML_FILE);
+            writer.addToZip(await cs.getPackageXml(), MetadataConverter.PACKAGE_XML_FILE);
             // for each of the destructive changes in the component set, convert and write the correct metadata
             // to each manifest
             for (const destructiveChangeType of cs.getTypesOfDestructiveChanges()) {
               writer.addToZip(
+                // TODO: can this be safely parallelized?
+                // eslint-disable-next-line no-await-in-loop
                 await cs.getPackageXml(4, destructiveChangeType),
-                this.getDestructiveManifest(destructiveChangeType)
+                getDestructiveManifest(destructiveChangeType)
               );
             }
           }
@@ -134,36 +133,34 @@ export class MetadataConverter {
       );
     }
   }
-
-  private getPackagePath(outputConfig: DirectoryConfig | ZipConfig): SourcePath | undefined {
-    let packagePath: SourcePath;
-    const { genUniqueDir = true, outputDirectory, packageName, type } = outputConfig;
-    if (outputDirectory) {
-      if (packageName) {
-        packagePath = join(outputDirectory, packageName);
-      } else {
-        if (genUniqueDir) {
-          packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${Date.now()}`);
-        } else {
-          packagePath = normalize(outputDirectory);
-        }
-      }
-
-      if (type === 'zip') {
-        packagePath += '.zip';
-        ensureDirectoryExists(dirname(packagePath));
-      } else {
-        ensureDirectoryExists(packagePath);
-      }
-    }
-    return packagePath;
-  }
-
-  private getDestructiveManifest(destructiveChangesType: DestructiveChangesType): string {
-    if (destructiveChangesType === DestructiveChangesType.POST) {
-      return MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE;
-    } else if (destructiveChangesType === DestructiveChangesType.PRE) {
-      return MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE;
-    }
-  }
 }
+
+const getPackagePath = (outputConfig: DirectoryConfig | ZipConfig): SourcePath | undefined => {
+  let packagePath: SourcePath;
+  const { genUniqueDir = true, outputDirectory, packageName, type } = outputConfig;
+  if (outputDirectory) {
+    if (packageName) {
+      packagePath = join(outputDirectory, packageName);
+    } else if (genUniqueDir) {
+      packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${Date.now()}`);
+    } else {
+      packagePath = normalize(outputDirectory);
+    }
+
+    if (type === 'zip') {
+      packagePath += '.zip';
+      ensureDirectoryExists(dirname(packagePath));
+    } else {
+      ensureDirectoryExists(packagePath);
+    }
+  }
+  return packagePath;
+};
+
+const getDestructiveManifest = (destructiveChangesType: DestructiveChangesType): string => {
+  if (destructiveChangesType === DestructiveChangesType.POST) {
+    return MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE;
+  } else if (destructiveChangesType === DestructiveChangesType.PRE) {
+    return MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE;
+  }
+};

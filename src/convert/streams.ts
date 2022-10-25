@@ -27,17 +27,15 @@ const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['er
 
 export const pipeline = promisify(cbPipeline);
 
-export const stream2buffer = async (stream: Stream): Promise<Buffer> => {
-  return new Promise<Buffer>((resolve, reject) => {
+export const stream2buffer = async (stream: Stream): Promise<Buffer> =>
+  new Promise<Buffer>((resolve, reject) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const buf = Array<any>();
-
     stream.on('data', (chunk) => buf.push(chunk));
     stream.on('end', () => resolve(Buffer.concat(buf)));
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     stream.on('error', (err) => reject(`error converting stream - ${err}`));
   });
-};
 export class ComponentReader extends Readable {
   private iter: Iterator<SourceComponent>;
 
@@ -55,6 +53,9 @@ export class ComponentReader extends Readable {
     this.push(null);
   }
 
+  // preserved to isolate from other classes in this file
+  // componentReader should go away (see note in handbook)
+  // eslint-disable-next-line class-methods-use-this
   private *createIterator(components: Iterable<SourceComponent>): Iterator<SourceComponent> {
     for (const component of components) {
       yield component;
@@ -224,21 +225,28 @@ export class ZipWriter extends ComponentWriter {
     void pipeline(this.zip, this.getOutputStream());
   }
 
+  public get buffer(): Buffer | undefined {
+    return Buffer.concat(this.buffers);
+  }
+
   public async _write(chunk: WriterFormat, encoding: string, callback: (err?: Error) => void): Promise<void> {
     let err: Error;
     try {
       await Promise.all(
-        chunk.writeInfos.map(async (writeInfo) =>
-          this.addToZip(
-            chunk.component.type.folderType ?? chunk.component.type.folderContentType
-              ? // we don't want to prematurely zip folder types when their children might still be not in the zip
-                // those files we'll leave held open as Readable until finalize
-                writeInfo.source
-              : // everything else can be zipped immediately
-                await stream2buffer(writeInfo.source),
-            writeInfo.output
-          )
-        )
+        chunk.writeInfos.map(async (writeInfo) => {
+          // we don't want to prematurely zip folder types when their children might still be not in the zip
+          // those files we'll leave open as ReadableStreams until the zip finalizes
+          if (chunk.component.type.folderType || chunk.component.type.folderContentType) {
+            return this.addToZip(writeInfo.source, writeInfo.output);
+          }
+          const streamAsBuffer = await stream2buffer(writeInfo.source);
+          // everything else can be zipped immediately to reduce the number of open files (windows has a low limit!) and help perf
+          if (streamAsBuffer.length) {
+            return this.addToZip(streamAsBuffer, writeInfo.output);
+          }
+          // these will be zero-length files, which archiver supports via stream but not buffer
+          return this.addToZip(writeInfo.source, writeInfo.output);
+        })
       );
     } catch (e) {
       err = e as Error;
@@ -273,10 +281,6 @@ export class ZipWriter extends ComponentWriter {
       return bufferWritable;
     }
   }
-
-  public get buffer(): Buffer | undefined {
-    return Buffer.concat(this.buffers);
-  }
 }
 
 /**
@@ -294,7 +298,7 @@ export class JsToXml extends Readable {
 
   public _read(): void {
     const js2Xml = new j2xParser({ format: true, indentBy: '    ', ignoreAttributes: false, cdataTagName: '__cdata' });
-    const xmlContent = XML_DECL.concat(js2Xml.parse(this.xmlObject));
+    const xmlContent = XML_DECL.concat(js2Xml.parse(this.xmlObject) as string);
     this.push(xmlContent);
     this.push(null);
   }

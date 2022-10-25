@@ -47,7 +47,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     if (!rootMetadata) {
       const rootMetadataPath = this.getRootMetadataXmlPath(path);
       if (rootMetadataPath) {
-        rootMetadata = parseMetadataXml(rootMetadataPath);
+        rootMetadata = this.parseMetadataXml(rootMetadataPath);
       }
     }
     if (rootMetadata && this.forceIgnore.denies(rootMetadata.path)) {
@@ -89,7 +89,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    * @param path File path of a metadata component
    */
   protected parseAsRootMetadataXml(path: SourcePath): MetadataXml {
-    const metaXml = parseMetadataXml(path);
+    const metaXml = this.parseMetadataXml(path);
     if (metaXml) {
       let isRootMetadataXml = false;
       if (this.type.strictDirectoryName) {
@@ -106,7 +106,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       return isRootMetadataXml ? metaXml : undefined;
     }
 
-    const folderMetadataXml = this.parseAsFolderMetadataXml(path);
+    const folderMetadataXml = parseAsFolderMetadataXml(path);
     if (folderMetadataXml) {
       return folderMetadataXml;
     }
@@ -114,6 +114,12 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     if (!this.allowMetadataWithContent()) {
       return this.parseAsContentMetadataXml(path);
     }
+  }
+
+  // allowed to preserve API
+  // eslint-disable-next-line class-methods-use-this
+  protected parseMetadataXml(path: SourcePath): MetadataXml {
+    return parseMetadataXml(path);
   }
 
   /**
@@ -149,14 +155,6 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     const match = new RegExp(/(.+)\.(.+)/).exec(basename(path));
     if (match && this.type.suffix === match[2]) {
       return { fullName: match[1], suffix: match[2], path };
-    }
-  }
-
-  private parseAsFolderMetadataXml(fsPath: SourcePath): MetadataXml {
-    const match = new RegExp(/(.+)-meta\.xml$/).exec(basename(fsPath));
-    const parts = fsPath.split(sep);
-    if (match && !match[1].includes('.') && parts.length > 1) {
-      return { fullName: match[1], suffix: undefined, path: fsPath };
     }
   }
 
@@ -207,3 +205,11 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     isResolvingSource?: boolean
   ): SourceComponent;
 }
+
+const parseAsFolderMetadataXml = (fsPath: SourcePath): MetadataXml => {
+  const match = new RegExp(/(.+)-meta\.xml$/).exec(basename(fsPath));
+  const parts = fsPath.split(sep);
+  if (match && !match[1].includes('.') && parts.length > 1) {
+    return { fullName: match[1], suffix: undefined, path: fsPath };
+  }
+};

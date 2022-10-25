@@ -129,29 +129,36 @@ export const getContents = async (path: string): Promise<string> => {
 export const getReplacements = async (
   cmp: SourceComponent,
   replacementConfigs: ReplacementConfig[] = []
-): Promise<SourceComponent['replacements']> => {
+): Promise<SourceComponent['replacements'] | undefined> => {
   // all possible filenames for this component
   const filenames = [cmp.xml, ...cmp.walkContent()].filter(Boolean);
-  // eslint-disable-next-line no-console
   const replacementsForComponent = (
     await Promise.all(
+      // build a nested array that can be run through Object.fromEntries
+      // one MarkedReplacement[] for each file in the component
       filenames.map(
         async (f): Promise<[string, MarkedReplacement[]]> => [
           f,
           await Promise.all(
             replacementConfigs
+              // filter out any that don't match the current file
               .filter((r) => matchesFile(f, r))
               .map(async (r) => ({
+                // Config is json which might use the regex.  If so, turn it into an actual regex
                 toReplace: r.stringToReplace ?? new RegExp(r.regexToReplace, 'g'),
+                // get the literal replacement (either from env or file contents)
                 replaceWith: r.replaceWithEnv ? getEnvValue(r.replaceWithEnv) : await getContents(r.replaceWithFile),
               }))
           ),
         ]
       )
     )
-  ).filter(([, replacements]) => replacements.length > 0);
+  )
+    // filter out any that don't have any replacements
+    .filter(([, replacements]) => replacements.length > 0);
 
   if (replacementsForComponent.length) {
+    // turn into a Dictionary-style object so it's easier to lookup by filename
     return Object.fromEntries(replacementsForComponent);
   }
 };

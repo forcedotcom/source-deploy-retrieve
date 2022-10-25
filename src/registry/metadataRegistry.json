@@ -3027,9 +3027,18 @@
       "directoryName": "IdentityVerificationProcDefs",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "omnisupervisorconfig": {
+      "id": "omnisupervisorconfig",
+      "name": "OmniSupervisorConfig",
+      "suffix": "omniSupervisorConfig",
+      "directoryName": "omniSupervisorConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
+    "omniSupervisorConfig": "omnisupervisorconfig",
     "serviceAISetupDescription": "serviceaisetupdefinition",
     "serviceAISetupField": "serviceaisetupfield",
     "ai": "aiapplication",

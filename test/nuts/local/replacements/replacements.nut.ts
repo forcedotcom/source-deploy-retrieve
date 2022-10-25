@@ -61,6 +61,9 @@ describe('e2e replacements test', () => {
         await fs.promises.readFile(path.join(session.project.dir, 'replacements.txt'), 'utf8')
       );
       expect(classContents).to.include('foo');
+
+      expect(classContents).to.include('doNotReplaceThis');
+      expect(classContents).to.not.include('conditionallyReplaceThis');
     });
     it('decomposed object replacements as expected', async () => {
       const objectContents = await fs.promises.readFile(

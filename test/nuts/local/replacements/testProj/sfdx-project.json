@@ -17,6 +17,28 @@
     },
     {
       "glob": "force-app/**/*.cls",
+      "stringToReplace": "doNotReplaceThis",
+      "replaceWithEnv": "THE_REPLACEMENT",
+      "replaceWhenEnv": [
+        {
+          "env": "THE_REPLACEMENT",
+          "value": "bar"
+        }
+      ]
+    },
+    {
+      "glob": "force-app/**/*.cls",
+      "stringToReplace": "conditionallyReplaceThis",
+      "replaceWithEnv": "THE_REPLACEMENT",
+      "replaceWhenEnv": [
+        {
+          "env": "THE_REPLACEMENT",
+          "value": "foo"
+        }
+      ]
+    },
+    {
+      "glob": "force-app/**/*.cls",
       "stringToReplace": "replaceMeWithFile",
       "replaceWithFile": "replacements.txt"
     },

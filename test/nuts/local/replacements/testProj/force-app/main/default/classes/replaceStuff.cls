@@ -5,6 +5,9 @@ public with sharing class replaceStuff {
   // replaceEachOfTheseValuesWithAValueFromTheEnvUsingRegex
   // replaceEachOfTheseValuesWithAValueFromTheEnvUsingRegex
   // replaceEachOfTheseValuesWithAValueFromTheEnvUsingRegex
+
+  // doNotReplaceThis
+  // conditionallyReplaceThis
     public replaceStuff() {
 
     }

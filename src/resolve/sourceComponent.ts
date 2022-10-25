@@ -9,6 +9,7 @@ import { Messages, SfError } from '@salesforce/core';
 import { parse, validate } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
+import { replacementIterations } from '../../src/convert/replacements';
 import { baseName, parseMetadataXml, trimUntil } from '../utils';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common';
 import { SfdxFileFormat } from '../convert';
@@ -162,7 +163,11 @@ export class SourceComponent implements MetadataComponent {
     const xml = xmlFilePath ?? this.xml;
     if (xml) {
       const contents = (await this.tree.readFile(xml)).toString();
-      return this.parseAndValidateXML(contents, xml);
+      const replacements = this.replacements?.[xml] ?? this.parent?.replacements?.[xml];
+      return this.parseAndValidateXML(
+        replacements ? await replacementIterations(contents, replacements) : contents,
+        xml
+      );
     }
     return {} as T;
   }

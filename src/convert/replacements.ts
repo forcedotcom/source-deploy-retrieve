@@ -56,7 +56,6 @@ export const replacementIterations = async (input: string, replacements: MarkedR
     // TODO: node 16+ has String.replaceAll for non-regex scenarios
     const regex =
       typeof replacement.toReplace === 'string' ? new RegExp(replacement.toReplace, 'g') : replacement.toReplace;
-    // TODO: warn when the replacement is not found
     const replaced = output.replace(regex, replacement.replaceWith);
     if (replaced === output) {
       // replacements need to be done sequentially

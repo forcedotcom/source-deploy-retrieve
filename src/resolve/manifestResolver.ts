@@ -63,7 +63,16 @@ export class ManifestResolver {
     const apiVersion = parsedManifest.version;
 
     for (const typeMembers of packageTypeMembers) {
-      const typeName = typeMembers.name;
+      let typeName = typeMembers.name;
+      // protect against empty/invalid typeMember definitions in the manifest
+      if (typeof typeName !== 'string' || typeName.length === 0) {
+        if (typeof typeName === 'object') {
+          typeName = JSON.stringify(typeName);
+        }
+        const err = new Error(`Invalid types definition in manifest file: ${manifestPath}\nFound: "${typeName ?? ''}"`);
+        err.name = 'InvalidManifest';
+        throw err;
+      }
       const type = this.registry.getTypeByName(typeName);
       const parentType = type.folderType ? this.registry.getTypeByName(type.folderType) : undefined;
       const members = ensureArray(typeMembers.members);

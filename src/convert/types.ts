@@ -85,7 +85,7 @@ export interface MetadataTransformer {
  *
  * `metadata` - Structure for use with the metadata api.
  *
- * `source` - Friendly for local editing and comitting files to source control.
+ * `source` - Friendly for local editing and committing files to source control.
  */
 export type SfdxFileFormat = 'metadata' | 'source';
 
@@ -101,10 +101,16 @@ export type ConvertResult = {
    */
   zipBuffer?: Buffer;
   /**
-   * Converted source components. Not set if archving the package.
+   * Converted source components. Not set if archiving the package.
    */
   converted?: SourceComponent[];
 };
+
+/** Stored by file on SourceComponent for stream processing */
+export interface MarkedReplacement {
+  toReplace: string | RegExp;
+  replaceWith: string;
+}
 
 // TODO: what's the right way to get this into core/sfdxProjectJson
 export type ReplacementConfig = Location &
@@ -119,21 +125,15 @@ export type ReplacementConfig = Location &
     ];
   };
 
-/** Stored by file on SourceComponent for stream processing */
-export interface MarkedReplacement {
-  toReplace: string | RegExp;
-  replaceWith: string;
-}
-
-type Location = { filename: string; glob: never } | { filename: never; glob: string };
+type Location = { filename: string; glob?: never } | { filename?: never; glob: string };
 type ReplacementSource =
-  | { replaceWithEnv: string; replaceWithFile: never }
-  | { replaceWithEnv: never; replaceWithFile: string };
+  | { replaceWithEnv: string; replaceWithFile?: never }
+  | { replaceWithEnv?: never; replaceWithFile: string };
 
 type ReplacementTarget =
-  | { stringToReplace: string; regexToReplace: never }
+  | { stringToReplace: string; regexToReplace?: never }
   | {
-      stringToReplace: never;
+      stringToReplace?: never;
       /** When putting regex into json, you have to use an extra backslash to escape your regex backslashes because JSON also treats backslash as an escape character */
       regexToReplace: string;
     };

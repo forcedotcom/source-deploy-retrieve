@@ -11,15 +11,16 @@ import { matchingContentFile } from '../mock';
 import * as replacementsForMock from '../../src/convert/replacements';
 
 describe('file matching', () => {
+  const base = { replaceWithEnv: 'foo', stringToReplace: 'foo' };
   it('file matches string', () => {
-    expect(matchesFile('foo', { filename: 'foo' })).to.be.true;
-    expect(matchesFile('bar', { filename: 'foo' })).to.not.be.true;
+    expect(matchesFile('foo', { filename: 'foo', ...base })).to.be.true;
+    expect(matchesFile('bar', { filename: 'foo', ...base })).to.not.be.true;
   });
   it('file matches glob', () => {
-    expect(matchesFile('foo/bar', { glob: 'foo/**' })).to.be.true;
-    expect(matchesFile('foo/bar', { glob: 'foo/*' })).to.be.true;
-    expect(matchesFile('foo/bar', { glob: 'foo' })).to.be.false;
-    expect(matchesFile('foo/bar', { glob: '**/*' })).to.be.true;
+    expect(matchesFile('foo/bar', { glob: 'foo/**', ...base })).to.be.true;
+    expect(matchesFile('foo/bar', { glob: 'foo/*', ...base })).to.be.true;
+    expect(matchesFile('foo/bar', { glob: 'foo', ...base })).to.be.false;
+    expect(matchesFile('foo/bar', { glob: '**/*', ...base })).to.be.true;
   });
   it('test absolute vs. relative paths');
 });

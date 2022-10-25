@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v56 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 480/512 supported metadata types.
+Currently, there are 481/512 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -73,7 +73,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |BldgEnrgyIntensityCnfg|✅||
 |BlockchainSettings|✅||
 |Bot|✅||
-|BotBlock|❌|Not supported, but support could be added|
+|BotBlock|✅||
 |BotBlockVersion|❌|Not supported, but support could be added|
 |BotSettings|✅||
 |BotTemplate|✅||
@@ -532,11 +532,12 @@ v57 introduces the following new types.  Here's their current level of support
 |:---|:---|:---|
 |ActionableListDefinition|❌|Not supported, but support could be added|
 |AffinityScoreDefinition|❌|Not supported, but support could be added|
-|CampaignTemplateDefinition|❌|Not supported, but support could be added|
-|ClauseCatgConfiguration|❌|Not supported, but support could be added|
-|DisclosureDefinition|❌|Not supported, but support could be added|
-|DisclosureDefinitionVersion|❌|Not supported, but support could be added|
-|DisclosureType|❌|Not supported, but support could be added|
+|ClauseCatgConfiguration|✅||
+|DisclosureDefinition|✅||
+|DisclosureDefinitionVersion|✅||
+|DisclosureType|✅||
+|EngagementMessagingSettings|✅||
+|ExternalClientAppSettings|✅||
 |ExternalClientApplication|✅||
 |ExternalDocStorageConfig|❌|Not supported, but support could be added|
 |ExtlClntAppMobileSet|❌|Not supported, but support could be added|
@@ -545,7 +546,9 @@ v57 introduces the following new types.  Here's their current level of support
 |IntegrationProviderDef|❌|Not supported, but support could be added|
 |LocationUse|❌|Not supported, but support could be added|
 |OmniSupervisorConfig|❌|Not supported, but support could be added (but not for tracking)|
+|PipelineInspMetricConfig|❌|Not supported, but support could be added|
 |ProductSpecificationTypeDefinition|❌|Not supported, but support could be added|
+|ServiceProcess|❌|Not supported, but support could be added|
 |WaveAnalyticAssetCollection|❌|Not supported, but support could be added|
 
 ## Additional Types

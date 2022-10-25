@@ -76,7 +76,7 @@ describe('marking replacements on a component', () => {
     expect(result).to.deep.equal({
       [cmp.xml]: [
         {
-          toReplace: /.*foo.*/,
+          toReplace: /.*foo.*/g,
           replaceWith: 'bar',
         },
       ],

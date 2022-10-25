@@ -33,7 +33,7 @@ describe('e2e replacements test', () => {
   });
 
   after(async () => {
-    // await session?.clean();
+    await session?.clean();
   });
 
   describe('various types of replacements', () => {

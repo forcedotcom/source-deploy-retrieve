@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join } from 'path';
 import { readFile } from 'fs/promises';
 import { Transform, Readable } from 'stream';
 import { Lifecycle, SfError, SfProject } from '@salesforce/core';
@@ -70,15 +69,6 @@ export const replacementIterations = async (input: string, replacements: MarkedR
 };
 
 /**
- * Read the `replacement` property from sfdx-project.json
- */
-const readReplacementsFromProject = async (): Promise<ReplacementConfig[]> => {
-  const proj = await SfProject.resolve();
-  const projJson = (await proj.resolveProjectConfig()) as { replacements?: ReplacementConfig[] };
-  return projJson.replacements;
-};
-
-/**
  * Reads the project, gets replacements, removes an that aren't applicable due ot environment conditionals, and returns an instance of the ReplacementMarkingStream
  */
 export const getReplacementMarkingStream = async (): Promise<ReplacementMarkingStream | undefined> => {
@@ -134,17 +124,6 @@ export const getContents = async (path: string): Promise<string> => {
 };
 
 /**
- * Regardless of any components, return the ReplacementConfig that are valid with the current env.
- * These can be checked globally and don't need to be checked per component.
- */
-const envFilter = (replacementConfigs: ReplacementConfig[] = []): ReplacementConfig[] =>
-  replacementConfigs.filter(
-    (replacement) =>
-      !replacement.replaceWhenEnv ||
-      replacement.replaceWhenEnv.every((envConditional) => process.env[envConditional.env] === envConditional.value)
-  );
-
-/**
  * Build the replacements property for a sourceComponent
  */
 export const getReplacements = async (
@@ -180,8 +159,20 @@ export const getReplacements = async (
 export const matchesFile = (f: string, r: ReplacementConfig): boolean =>
   // filenames will be absolute.  We don't have convenient access to the pkgDirs,
   // so we need to be more open than an exact match
-  f.endsWith(r.filename) || (r.glob && minimatch(f, join('**', r.glob)));
+  f.endsWith(r.filename) || (r.glob && minimatch(f, `**/${r.glob}`));
 
+/**
+ * Regardless of any components, return the ReplacementConfig that are valid with the current env.
+ * These can be checked globally and don't need to be checked per component.
+ */
+const envFilter = (replacementConfigs: ReplacementConfig[] = []): ReplacementConfig[] =>
+  replacementConfigs.filter(
+    (replacement) =>
+      !replacement.replaceWhenEnv ||
+      replacement.replaceWhenEnv.every((envConditional) => process.env[envConditional.env] === envConditional.value)
+  );
+
+/** A "getter" for envs to implement the warning when an expected env is not present */
 const getEnvValue = (env: string): string => {
   if (process.env[env]) {
     return process.env[env];
@@ -189,4 +180,13 @@ const getEnvValue = (env: string): string => {
   throw new SfError(
     `"${env}" is in sfdx-project.json as a value for "replaceWithEnv" property, but it's not set in your environment.`
   );
+};
+
+/**
+ * Read the `replacement` property from sfdx-project.json
+ */
+const readReplacementsFromProject = async (): Promise<ReplacementConfig[]> => {
+  const proj = await SfProject.resolve();
+  const projJson = (await proj.resolveProjectConfig()) as { replacements?: ReplacementConfig[] };
+  return projJson.replacements;
 };

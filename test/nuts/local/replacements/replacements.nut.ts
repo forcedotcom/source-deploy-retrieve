@@ -27,8 +27,12 @@ describe('e2e replacements test', () => {
     await fs.promises.writeFile(
       projectJsonPath,
       original
-        .replace('replacements.txt', path.join(session.project.dir, 'replacements.txt'))
-        .replace('label.txt', path.join(session.project.dir, 'label.txt'))
+        // we're putting this in a json file which doesnt like windows backslashes.  The file will require posix paths
+        .replace(
+          'replacements.txt',
+          path.join(session.project.dir, 'replacements.txt').split(path.sep).join(path.posix.sep)
+        )
+        .replace('label.txt', path.join(session.project.dir, 'label.txt').split(path.sep).join(path.posix.sep))
     );
   });
 

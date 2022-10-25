@@ -105,3 +105,35 @@ export type ConvertResult = {
    */
   converted?: SourceComponent[];
 };
+
+// TODO: what's the right way to get this into core/sfdxProjectJson
+export type ReplacementConfig = Location &
+  ReplacementSource &
+  ReplacementTarget & {
+    /** Only do the replacement if ALL of the environment values in this array match */
+    replaceWhenEnv?: [
+      {
+        env: string;
+        value: string | number | boolean;
+      }
+    ];
+  };
+
+/** Stored by file on SourceComponent for stream processing */
+export interface MarkedReplacement {
+  toReplace: string | RegExp;
+  replaceWith: string;
+}
+
+type Location = { filename: string; glob: never } | { filename: never; glob: string };
+type ReplacementSource =
+  | { replaceWithEnv: string; replaceWithFile: never }
+  | { replaceWithEnv: never; replaceWithFile: string };
+
+type ReplacementTarget =
+  | { stringToReplace: string; regexToReplace: never }
+  | {
+      stringToReplace: never;
+      /** When putting regex into json, you have to use an extra backslash to escape your regex backslashes because JSON also treats backslash as an escape character */
+      regexToReplace: string;
+    };

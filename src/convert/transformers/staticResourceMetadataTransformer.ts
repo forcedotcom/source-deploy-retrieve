@@ -18,6 +18,7 @@ import { SourceComponent } from '../../resolve';
 import { SourcePath } from '../../common';
 import { ensureFileExists } from '../../utils/fileSystemHandler';
 import { pipeline } from '../streams';
+import { getReplacementStreamForReadable } from '../replacements';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 Messages.importMessagesDirectory(__dirname);
@@ -42,20 +43,29 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       // toolbelt was using level 9 for static resources, so we'll do the same.
       // Otherwise, you'll see errors like https://github.com/forcedotcom/cli/issues/1098
       const zip = createArchive('zip', { zlib: { level: 9 } });
-      zip.directory(content, false);
+      if (!component.replacements) {
+        // the easy way...no replacements required
+        zip.directory(content, false);
+      } else {
+        // the hard way--we have to walk the content and do replacements on each of the files.
+        for (const path of component.walkContent()) {
+          const replacementStream = getReplacementStreamForReadable(component, path);
+          zip.append(replacementStream, { name: path });
+        }
+      }
       await zip.finalize();
       return zip;
     };
 
-    // const contentSource = (;
-
     return [
       {
-        source: (await componentIsExpandedArchive(component)) ? await zipIt() : component.tree.stream(content),
+        source: (await componentIsExpandedArchive(component))
+          ? await zipIt()
+          : getReplacementStreamForReadable(component, content),
         output: join(type.directoryName, `${baseName(content)}.${type.suffix}`),
       },
       {
-        source: component.tree.stream(xml),
+        source: getReplacementStreamForReadable(component, xml),
         output: join(type.directoryName, basename(xml)),
       },
     ];

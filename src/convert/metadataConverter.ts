@@ -15,7 +15,7 @@ import { ComponentSet, DestructiveChangesType } from '../collections';
 import { RegistryAccess } from '../registry';
 import { ComponentConverter, pipeline, StandardWriter, ZipWriter } from './streams';
 import { ConvertOutputConfig, ConvertResult, DirectoryConfig, SfdxFileFormat, ZipConfig } from './types';
-import { getReplacementStream } from './replacements';
+import { getReplacementMarkingStream } from './replacements';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
@@ -118,9 +118,9 @@ export class MetadataConverter {
 
       const conversionPipeline = pipeline(
         Readable.from(components),
-        output.type === 'zip' && !targetFormatIsSource
-          ? (await getReplacementStream()) ?? new PassThrough()
-          : new PassThrough(),
+        !targetFormatIsSource && (process.env.DEBUG_REPLACEMENTS_VIA_CONVERT === 'true' || output.type === 'zip')
+          ? (await getReplacementMarkingStream()) ?? new PassThrough({ objectMode: true })
+          : new PassThrough({ objectMode: true }),
         new ComponentConverter(targetFormat, this.registry, mergeSet, defaultDirectory),
         writer
       );

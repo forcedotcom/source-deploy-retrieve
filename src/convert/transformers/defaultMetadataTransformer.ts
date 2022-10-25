@@ -9,6 +9,7 @@ import { META_XML_SUFFIX, SourcePath } from '../../common';
 import { SfdxFileFormat, WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve';
 import { extName, trimUntil } from '../../utils';
+import { getReplacementStreamForReadable } from '../replacements';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 const ORIGINAL_SUFFIX_REGEX = new RegExp('(.)([a-zA-Z]+)(' + META_XML_SUFFIX + ')$');
@@ -40,14 +41,14 @@ const getWriteInfos = (
   component
     .walkContent()
     .map((path) => ({
-      source: component.tree.stream(path),
+      source: getReplacementStreamForReadable(component, path),
       output: getContentSourceDestination(path, targetFormat, component, mergeWith),
     }))
     .concat(
       component.xml
         ? [
             {
-              source: component.tree.stream(component.xml),
+              source: getReplacementStreamForReadable(component, component.xml),
               output: getXmlDestination(targetFormat, component, mergeWith),
             },
           ]

@@ -15,7 +15,9 @@ import { SfdxFileFormat } from '../convert';
 import { MetadataType } from '../registry';
 import { DestructiveChangesType } from '../collections';
 import { filePathsFromMetadataComponent } from '../utils/filePathGenerator';
-import { MarkedReplacement, MetadataComponent, VirtualDirectory } from './types';
+import { MarkedReplacement } from '../convert/types';
+import { MetadataComponent, VirtualDirectory } from './types';
+
 import { NodeFSTreeContainer, TreeContainer, VirtualTreeContainer } from './treeContainers';
 import { ForceIgnore } from './forceIgnore';
 

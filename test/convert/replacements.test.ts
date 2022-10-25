@@ -6,7 +6,8 @@
  */
 import { expect } from 'chai';
 import Sinon = require('sinon');
-import { getReplacements, matchesFile } from '../../src/convert/replacements';
+import { Lifecycle } from '@salesforce/core';
+import { getReplacements, matchesFile, replacementIterations } from '../../src/convert/replacements';
 import { matchingContentFile } from '../mock';
 import * as replacementsForMock from '../../src/convert/replacements';
 
@@ -31,6 +32,10 @@ describe('marking replacements on a component', () => {
   before(() => {
     // replaceFromFile uses the contents of a file.  This prevents the test from hitting real FS for that.
     Sinon.stub(replacementsForMock, 'getContents').resolves('bar');
+  });
+
+  after(() => {
+    Sinon.restore();
   });
 
   process.env.FOO_REPLACEMENT = 'bar';
@@ -137,6 +142,61 @@ describe('marking replacements on a component', () => {
           replaceWith: 'bar',
         },
       ],
+    });
+  });
+  it('throws when env is missing');
+});
+
+describe('executes replacements on a string', () => {
+  describe('string', () => {
+    it('basic replacement', async () => {
+      expect(await replacementIterations('ThisIsATest', [{ toReplace: 'This', replaceWith: 'That' }])).to.equal(
+        'ThatIsATest'
+      );
+    });
+    it('same replacement occuring multiple times', async () => {
+      expect(
+        await replacementIterations('ThisIsATestWithThisAndThis', [{ toReplace: 'This', replaceWith: 'That' }])
+      ).to.equal('ThatIsATestWithThatAndThat');
+    });
+    it('multiple replacements', async () => {
+      expect(
+        await replacementIterations('ThisIsATestWithThisAndThis', [
+          { toReplace: 'This', replaceWith: 'That' },
+          { toReplace: 'ATest', replaceWith: 'AnAwesomeTest' },
+        ])
+      ).to.equal('ThatIsAnAwesomeTestWithThatAndThat');
+    });
+  });
+  describe('regex', () => {
+    it('basic replacement', async () => {
+      expect(await replacementIterations('ThisIsATest', [{ toReplace: /Is/g, replaceWith: 'IsNot' }])).to.equal(
+        'ThisIsNotATest'
+      );
+    });
+    it('same replacement occuring multiple times', async () => {
+      expect(
+        await replacementIterations('ThisIsATestWithThisAndThis', [{ toReplace: /s/g, replaceWith: 'S' }])
+      ).to.equal('ThiSISATeStWithThiSAndThiS');
+    });
+    it('multiple replacements', async () => {
+      expect(
+        await replacementIterations('This Is A Test With This And This', [
+          { toReplace: /^T.{2}s/, replaceWith: 'That' },
+          { toReplace: /T.{2}s$/, replaceWith: 'Stuff' },
+        ])
+      ).to.equal('That Is A Test With This And Stuff');
+    });
+  });
+
+  describe('warning when no replacement happened', () => {
+    it('emits warning only when no change', async () => {
+      const warnSpy = Sinon.spy(Lifecycle.getInstance(), 'emitWarning');
+      await replacementIterations('ThisIsATest', [{ toReplace: 'Nope', replaceWith: 'Nah' }]);
+      expect(warnSpy.calledOnce).to.be.true;
+      await replacementIterations('ThisIsATest', [{ toReplace: 'Test', replaceWith: 'SpyTest' }]);
+      expect(warnSpy.calledOnce).to.be.true;
+      warnSpy.restore();
     });
   });
 });

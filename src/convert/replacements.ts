@@ -30,7 +30,7 @@ export const getReplacementStreamForReadable = (
  * A stream for replacing the contents of a single SourceComponent.
  *
  */
-export class ReplacementStream extends Transform {
+class ReplacementStream extends Transform {
   public constructor(private readonly replacements: MarkedReplacement[]) {
     super({ objectMode: true });
   }
@@ -46,6 +46,10 @@ export class ReplacementStream extends Transform {
   }
 }
 
+/**
+ * perform an array of replacements on a string
+ * emits warnings when an expected replacement target isn't found
+ */
 export const replacementIterations = async (input: string, replacements: MarkedReplacement[]): Promise<string> => {
   let output = input;
   for (const replacement of replacements) {
@@ -69,7 +73,7 @@ export const replacementIterations = async (input: string, replacements: MarkedR
 /**
  * Read the `replacement` property from sfdx-project.json
  */
-export const readReplacementsFromProject = async (): Promise<ReplacementConfig[]> => {
+const readReplacementsFromProject = async (): Promise<ReplacementConfig[]> => {
   const proj = await SfProject.resolve();
   const projJson = (await proj.resolveProjectConfig()) as { replacements?: ReplacementConfig[] };
   return projJson.replacements;
@@ -91,7 +95,7 @@ export const getReplacementMarkingStream = async (): Promise<ReplacementMarkingS
  * Returns a mutated component with a `replacements` property if any replacements are found.
  * Throws if any replacements reference a file or env that does not exist
  */
-export class ReplacementMarkingStream extends Transform {
+class ReplacementMarkingStream extends Transform {
   public constructor(private readonly replacementConfigs: ReplacementConfig[]) {
     super({ objectMode: true });
   }
@@ -134,7 +138,7 @@ export const getContents = async (path: string): Promise<string> => {
  * Regardless of any components, return the ReplacementConfig that are valid with the current env.
  * These can be checked globally and don't need to be checked per component.
  */
-export const envFilter = (replacementConfigs: ReplacementConfig[] = []): ReplacementConfig[] =>
+const envFilter = (replacementConfigs: ReplacementConfig[] = []): ReplacementConfig[] =>
   replacementConfigs.filter(
     (replacement) =>
       !replacement.replaceWhenEnv ||

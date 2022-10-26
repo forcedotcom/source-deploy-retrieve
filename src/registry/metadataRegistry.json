@@ -1892,6 +1892,38 @@
       "inFolder": false,
       "strictDirectoryName": true
     },
+    "clausecatgconfiguration": {
+      "id": "clausecatgconfiguration",
+      "name": "ClauseCatgConfiguration",
+      "suffix": "clauseCatgConfiguration",
+      "directoryName": "clauseCatgConfigurations",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "disclosuretype": {
+      "id": "disclosuretype",
+      "name": "DisclosureType",
+      "suffix": "disclosureType",
+      "directoryName": "disclosureTypes",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "disclosuredefinition": {
+      "id": "disclosuredefinition",
+      "name": "DisclosureDefinition",
+      "suffix": "disclosureDefinition",
+      "directoryName": "disclosureDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "disclosuredefinitionversion": {
+      "id": "disclosuredefinitionversion",
+      "name": "DisclosureDefinitionVersion",
+      "suffix": "disclosureDefinitionVersion",
+      "directoryName": "disclosureDefinitionVersions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "botblock": {
       "id": "botblock",
       "name": "BotBlock",
@@ -3367,6 +3399,10 @@
     "mlDomain": "mldomain",
     "bot": "bot",
     "botTemplate": "bottemplate",
+    "clauseCatgConfiguration": "clausecatgconfiguration",
+    "disclosureType": "disclosuretype",
+    "disclosureDefinition": "disclosuredefinition",
+    "disclosureDefinitionVersion": "disclosuredefinitionversion",
     "botBlock": "botblock",
     "botVersion": "botversion",
     "animationRule": "animationrule",

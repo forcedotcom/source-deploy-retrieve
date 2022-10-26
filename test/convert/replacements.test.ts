@@ -38,7 +38,7 @@ describe('env filters', () => {});
 describe('marking replacements on a component', () => {
   before(() => {
     // replaceFromFile uses the contents of a file.  This prevents the test from hitting real FS for that.
-    Sinon.stub(replacementsForMock, 'getContents').resolves('bar');
+    Sinon.stub(replacementsForMock, 'getContentsOfReplacementFile').resolves('bar');
   });
 
   after(() => {

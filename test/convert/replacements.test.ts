@@ -24,7 +24,7 @@ describe('file matching', () => {
     expect(matchesFile('foo/bar', { glob: 'foo', ...base })).to.be.false;
     expect(matchesFile('foo/bar', { glob: '**/*', ...base })).to.be.true;
   });
-  it('file matches glob (os-dependet paths)', () => {
+  it('file matches glob (os-dependent paths)', () => {
     expect(matchesFile(path.join('foo', 'bar'), { glob: 'foo/**', ...base })).to.be.true;
     expect(matchesFile(path.join('foo', 'bar'), { glob: 'foo/*', ...base })).to.be.true;
     expect(matchesFile(path.join('foo', 'bar'), { glob: 'foo', ...base })).to.be.false;

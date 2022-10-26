@@ -110,10 +110,10 @@ class ReplacementMarkingStream extends Transform {
   }
 }
 
-export const getContents = async (path: string): Promise<string> => {
+export const getContentsOfReplacementFile = async (path: string): Promise<string> => {
   if (!fileContentsCache.has(path)) {
     try {
-      fileContentsCache.set(path, await readFile(path, 'utf8'));
+      fileContentsCache.set(path, (await readFile(path, 'utf8')).trim());
     } catch (e) {
       throw new SfError(
         `The file "${path}" specified in the "replacements" property of sfdx-project.json could not be read.`
@@ -147,7 +147,9 @@ export const getReplacements = async (
                 // Config is json which might use the regex.  If so, turn it into an actual regex
                 toReplace: r.stringToReplace ?? new RegExp(r.regexToReplace, 'g'),
                 // get the literal replacement (either from env or file contents)
-                replaceWith: r.replaceWithEnv ? getEnvValue(r.replaceWithEnv) : await getContents(r.replaceWithFile),
+                replaceWith: r.replaceWithEnv
+                  ? getEnvValue(r.replaceWithEnv)
+                  : await getContentsOfReplacementFile(r.replaceWithFile),
               }))
           ),
         ]

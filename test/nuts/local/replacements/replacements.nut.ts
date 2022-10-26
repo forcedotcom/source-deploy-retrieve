@@ -62,7 +62,7 @@ describe('e2e replacements test', () => {
       expect(classContents).to.not.include('replaceEachOfTheseValuesWithAValueFromTheEnvUsingRegex');
       expect(classContents).to.include('foo');
       expect(classContents).to.include(
-        await fs.promises.readFile(path.join(session.project.dir, 'replacements.txt'), 'utf8')
+        (await fs.promises.readFile(path.join(session.project.dir, 'replacements.txt'), 'utf8')).trim()
       );
       expect(classContents).to.include('foo');
 
@@ -77,7 +77,7 @@ describe('e2e replacements test', () => {
       expect(objectContents).to.not.include('placeholder');
       expect(objectContents).to.include('foo');
       expect(objectContents).to.include(
-        await fs.promises.readFile(path.join(session.project.dir, 'label.txt'), 'utf8')
+        (await fs.promises.readFile(path.join(session.project.dir, 'label.txt'), 'utf8')).trim()
       );
     });
     it('static resource object replacements as expected', async () => {

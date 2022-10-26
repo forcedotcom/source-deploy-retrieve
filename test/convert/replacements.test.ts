@@ -65,6 +65,7 @@ describe('marking replacements on a component', () => {
         {
           toReplace: 'foo',
           replaceWith: 'bar',
+          singleFile: true,
         },
       ],
     });
@@ -76,6 +77,7 @@ describe('marking replacements on a component', () => {
         {
           toReplace: 'foo',
           replaceWith: 'bar',
+          singleFile: true,
         },
       ],
     });
@@ -90,6 +92,7 @@ describe('marking replacements on a component', () => {
         {
           toReplace: /.*foo.*/g,
           replaceWith: 'bar',
+          singleFile: true,
         },
       ],
     });
@@ -104,10 +107,12 @@ describe('marking replacements on a component', () => {
         {
           toReplace: 'foo',
           replaceWith: 'bar',
+          singleFile: true,
         },
         {
           toReplace: 'baz',
           replaceWith: 'bar',
+          singleFile: true,
         },
       ],
     });
@@ -121,12 +126,14 @@ describe('marking replacements on a component', () => {
         {
           toReplace: 'foo',
           replaceWith: 'bar',
+          singleFile: false,
         },
       ],
       [cmp.content]: [
         {
           toReplace: 'foo',
           replaceWith: 'bar',
+          singleFile: false,
         },
       ],
     });
@@ -141,12 +148,14 @@ describe('marking replacements on a component', () => {
         {
           toReplace: 'foo',
           replaceWith: 'bar',
+          singleFile: true,
         },
       ],
       [cmp.content]: [
         {
           toReplace: 'foo',
           replaceWith: 'bar',
+          singleFile: true,
         },
       ],
     });
@@ -157,13 +166,15 @@ describe('marking replacements on a component', () => {
 describe('executes replacements on a string', () => {
   describe('string', () => {
     it('basic replacement', async () => {
-      expect(await replacementIterations('ThisIsATest', [{ toReplace: 'This', replaceWith: 'That' }])).to.equal(
-        'ThatIsATest'
-      );
+      expect(
+        await replacementIterations('ThisIsATest', [{ toReplace: 'This', replaceWith: 'That', singleFile: true }])
+      ).to.equal('ThatIsATest');
     });
     it('same replacement occuring multiple times', async () => {
       expect(
-        await replacementIterations('ThisIsATestWithThisAndThis', [{ toReplace: 'This', replaceWith: 'That' }])
+        await replacementIterations('ThisIsATestWithThisAndThis', [
+          { toReplace: 'This', replaceWith: 'That', singleFile: true },
+        ])
       ).to.equal('ThatIsATestWithThatAndThat');
     });
     it('multiple replacements', async () => {
@@ -177,33 +188,47 @@ describe('executes replacements on a string', () => {
   });
   describe('regex', () => {
     it('basic replacement', async () => {
-      expect(await replacementIterations('ThisIsATest', [{ toReplace: /Is/g, replaceWith: 'IsNot' }])).to.equal(
-        'ThisIsNotATest'
-      );
+      expect(
+        await replacementIterations('ThisIsATest', [{ toReplace: /Is/g, replaceWith: 'IsNot', singleFile: true }])
+      ).to.equal('ThisIsNotATest');
     });
     it('same replacement occuring multiple times', async () => {
       expect(
-        await replacementIterations('ThisIsATestWithThisAndThis', [{ toReplace: /s/g, replaceWith: 'S' }])
+        await replacementIterations('ThisIsATestWithThisAndThis', [
+          { toReplace: /s/g, replaceWith: 'S', singleFile: true },
+        ])
       ).to.equal('ThiSISATeStWithThiSAndThiS');
     });
     it('multiple replacements', async () => {
       expect(
         await replacementIterations('This Is A Test With This And This', [
-          { toReplace: /^T.{2}s/, replaceWith: 'That' },
-          { toReplace: /T.{2}s$/, replaceWith: 'Stuff' },
+          { toReplace: /^T.{2}s/, replaceWith: 'That', singleFile: false },
+          { toReplace: /T.{2}s$/, replaceWith: 'Stuff', singleFile: false },
         ])
       ).to.equal('That Is A Test With This And Stuff');
     });
   });
 
   describe('warning when no replacement happened', () => {
-    it('emits warning only when no change', async () => {
-      const warnSpy = Sinon.spy(Lifecycle.getInstance(), 'emitWarning');
-      await replacementIterations('ThisIsATest', [{ toReplace: 'Nope', replaceWith: 'Nah' }]);
-      expect(warnSpy.calledOnce).to.be.true;
-      await replacementIterations('ThisIsATest', [{ toReplace: 'Test', replaceWith: 'SpyTest' }]);
-      expect(warnSpy.calledOnce).to.be.true;
+    let warnSpy: Sinon.SinonSpy;
+
+    beforeEach(() => {
+      warnSpy = Sinon.spy(Lifecycle.getInstance(), 'emitWarning');
+    });
+    afterEach(() => {
       warnSpy.restore();
+    });
+    it('emits warning only when no change', async () => {
+      await replacementIterations('ThisIsATest', [{ toReplace: 'Nope', replaceWith: 'Nah', singleFile: true }]);
+      expect(warnSpy.callCount).to.equal(1);
+    });
+    it('no warning when string is replaced', async () => {
+      await replacementIterations('ThisIsATest', [{ toReplace: 'Test', replaceWith: 'SpyTest', singleFile: true }]);
+      expect(warnSpy.callCount).to.equal(0);
+    });
+    it('no warning when no replacement but not a single file (ex: glob)', async () => {
+      await replacementIterations('ThisIsATest', [{ toReplace: 'Nope', replaceWith: 'Nah', singleFile: false }]);
+      expect(warnSpy.callCount).to.equal(0);
     });
   });
 });

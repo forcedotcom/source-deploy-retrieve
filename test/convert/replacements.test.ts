@@ -4,6 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import * as path from 'path';
 import { expect } from 'chai';
 import Sinon = require('sinon');
 import { Lifecycle } from '@salesforce/core';
@@ -17,11 +18,17 @@ describe('file matching', () => {
     expect(matchesFile('foo', { filename: 'foo', ...base })).to.be.true;
     expect(matchesFile('bar', { filename: 'foo', ...base })).to.not.be.true;
   });
-  it('file matches glob', () => {
+  it('file matches glob (posix paths)', () => {
     expect(matchesFile('foo/bar', { glob: 'foo/**', ...base })).to.be.true;
     expect(matchesFile('foo/bar', { glob: 'foo/*', ...base })).to.be.true;
     expect(matchesFile('foo/bar', { glob: 'foo', ...base })).to.be.false;
     expect(matchesFile('foo/bar', { glob: '**/*', ...base })).to.be.true;
+  });
+  it('file matches glob (os-dependet paths)', () => {
+    expect(matchesFile(path.join('foo', 'bar'), { glob: 'foo/**', ...base })).to.be.true;
+    expect(matchesFile(path.join('foo', 'bar'), { glob: 'foo/*', ...base })).to.be.true;
+    expect(matchesFile(path.join('foo', 'bar'), { glob: 'foo', ...base })).to.be.false;
+    expect(matchesFile(path.join('foo', 'bar'), { glob: '**/*', ...base })).to.be.true;
   });
   it('test absolute vs. relative paths');
 });

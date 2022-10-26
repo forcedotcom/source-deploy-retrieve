@@ -179,7 +179,7 @@ const envFilter = (replacementConfigs: ReplacementConfig[] = []): ReplacementCon
       replacement.replaceWhenEnv.every((envConditional) => process.env[envConditional.env] === envConditional.value)
   );
 
-/** A "getter" for envs to implement the warning when an expected env is not present */
+/** A "getter" for envs to throw an error when an expected env is not present */
 const getEnvValue = (env: string): string => {
   if (process.env[env]) {
     return process.env[env];

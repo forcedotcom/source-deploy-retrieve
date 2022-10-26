@@ -107,13 +107,14 @@ export type ConvertResult = {
 };
 
 /** Stored by file on SourceComponent for stream processing */
-export interface MarkedReplacement {
+export type MarkedReplacement = {
   toReplace: string | RegExp;
   replaceWith: string;
-}
+  singleFile?: boolean;
+};
 
 // TODO: what's the right way to get this into core/sfdxProjectJson
-export type ReplacementConfig = Location &
+export type ReplacementConfig = ReplacementLocation &
   ReplacementSource &
   ReplacementTarget & {
     /** Only do the replacement if ALL of the environment values in this array match */
@@ -125,7 +126,7 @@ export type ReplacementConfig = Location &
     ];
   };
 
-type Location = { filename: string; glob?: never } | { filename?: never; glob: string };
+type ReplacementLocation = { filename: string; glob?: never } | { filename?: never; glob: string };
 type ReplacementSource =
   | { replaceWithEnv: string; replaceWithFile?: never }
   | { replaceWithEnv?: never; replaceWithFile: string };

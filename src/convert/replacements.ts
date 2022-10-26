@@ -56,7 +56,7 @@ export const replacementIterations = async (input: string, replacements: MarkedR
     const regex =
       typeof replacement.toReplace === 'string' ? new RegExp(replacement.toReplace, 'g') : replacement.toReplace;
     const replaced = output.replace(regex, replacement.replaceWith);
-    if (replaced === output) {
+    if (replacement.singleFile && replaced === output) {
       // replacements need to be done sequentially
       // eslint-disable-next-line no-await-in-loop
       await Lifecycle.getInstance().emitWarning(
@@ -144,6 +144,8 @@ export const getReplacements = async (
               // filter out any that don't match the current file
               .filter((r) => matchesFile(f, r))
               .map(async (r) => ({
+                // used during replacement stream to limit warnings to explicit filenames, not globs
+                singleFile: Boolean(r.filename),
                 // Config is json which might use the regex.  If so, turn it into an actual regex
                 toReplace: r.stringToReplace ?? new RegExp(r.regexToReplace, 'g'),
                 // get the literal replacement (either from env or file contents)

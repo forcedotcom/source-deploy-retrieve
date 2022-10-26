@@ -532,10 +532,11 @@ v57 introduces the following new types.  Here's their current level of support
 |:---|:---|:---|
 |ActionableListDefinition|❌|Not supported, but support could be added|
 |AffinityScoreDefinition|❌|Not supported, but support could be added|
-|ClauseCatgConfiguration|❌|Not supported, but support could be added|
-|DisclosureDefinition|❌|Not supported, but support could be added|
-|DisclosureDefinitionVersion|❌|Not supported, but support could be added|
-|DisclosureType|❌|Not supported, but support could be added|
+|CampaignTemplateDefinition|❌|Not supported, but support could be added|
+|ClauseCatgConfiguration|✅||
+|DisclosureDefinition|✅||
+|DisclosureDefinitionVersion|✅||
+|DisclosureType|✅||
 |EngagementMessagingSettings|✅||
 |ExternalClientAppSettings|✅||
 |ExternalClientApplication|✅||
@@ -545,7 +546,7 @@ v57 introduces the following new types.  Here's their current level of support
 |IdentityProviderSettings|✅||
 |IntegrationProviderDef|❌|Not supported, but support could be added|
 |LocationUse|❌|Not supported, but support could be added|
-|OmniSupervisorConfig|❌|Not supported, but support could be added (but not for tracking)|
+|OmniSupervisorConfig|⚠️|Supports deploy/retrieve but not source tracking|
 |PipelineInspMetricConfig|❌|Not supported, but support could be added|
 |ProductSpecificationTypeDefinition|❌|Not supported, but support could be added|
 |ServiceProcess|❌|Not supported, but support could be added|

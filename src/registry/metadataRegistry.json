@@ -1246,8 +1246,8 @@
     "marketingappextension": {
       "id": "marketingappextension",
       "name": "MarketingAppExtension",
-      "suffix": "marketingAppExtension",
-      "directoryName": "marketingAppExtensions",
+      "suffix": "marketingappextension",
+      "directoryName": "marketingappextensions",
       "inFolder": false
     },
     "sharingrules": {
@@ -3298,7 +3298,7 @@
     "channelLayout": "channellayout",
     "asset": "contentasset",
     "marketingResourceType": "marketingresourcetype",
-    "marketingAppExtension": "marketingappextension",
+    "marketingappextension": "marketingappextension",
     "sharingRules": "sharingrules",
     "sharingSet": "sharingset",
     "community": "community",

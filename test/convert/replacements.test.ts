@@ -63,6 +63,7 @@ describe('marking replacements on a component', () => {
     expect(result).to.deep.equal({
       [cmp.xml]: [
         {
+          matchedFilename: cmp.xml,
           toReplace: 'foo',
           replaceWith: 'bar',
           singleFile: true,
@@ -75,6 +76,7 @@ describe('marking replacements on a component', () => {
     expect(result).to.deep.equal({
       [cmp.xml]: [
         {
+          matchedFilename: cmp.xml,
           toReplace: 'foo',
           replaceWith: 'bar',
           singleFile: true,
@@ -90,6 +92,7 @@ describe('marking replacements on a component', () => {
     expect(result).to.deep.equal({
       [cmp.xml]: [
         {
+          matchedFilename: 'path/to/classes/myComponent.cls-meta.xml',
           toReplace: /.*foo.*/g,
           replaceWith: 'bar',
           singleFile: true,
@@ -105,11 +108,13 @@ describe('marking replacements on a component', () => {
     expect(result).to.deep.equal({
       [cmp.xml]: [
         {
+          matchedFilename: cmp.xml,
           toReplace: 'foo',
           replaceWith: 'bar',
           singleFile: true,
         },
         {
+          matchedFilename: cmp.xml,
           toReplace: 'baz',
           replaceWith: 'bar',
           singleFile: true,
@@ -124,6 +129,7 @@ describe('marking replacements on a component', () => {
     expect(result).to.deep.equal({
       [cmp.xml]: [
         {
+          matchedFilename: 'path/to/classes/myComponent.cls-meta.xml',
           toReplace: 'foo',
           replaceWith: 'bar',
           singleFile: false,
@@ -131,6 +137,7 @@ describe('marking replacements on a component', () => {
       ],
       [cmp.content]: [
         {
+          matchedFilename: 'path/to/classes/myComponent.cls',
           toReplace: 'foo',
           replaceWith: 'bar',
           singleFile: false,
@@ -146,6 +153,7 @@ describe('marking replacements on a component', () => {
     expect(result).to.deep.equal({
       [cmp.xml]: [
         {
+          matchedFilename: 'path/to/classes/myComponent.cls-meta.xml',
           toReplace: 'foo',
           replaceWith: 'bar',
           singleFile: true,
@@ -153,6 +161,7 @@ describe('marking replacements on a component', () => {
       ],
       [cmp.content]: [
         {
+          matchedFilename: 'path/to/classes/myComponent.cls',
           toReplace: 'foo',
           replaceWith: 'bar',
           singleFile: true,
@@ -164,24 +173,27 @@ describe('marking replacements on a component', () => {
 });
 
 describe('executes replacements on a string', () => {
+  const matchedFilename = 'foo';
   describe('string', () => {
     it('basic replacement', async () => {
       expect(
-        await replacementIterations('ThisIsATest', [{ toReplace: 'This', replaceWith: 'That', singleFile: true }])
+        await replacementIterations('ThisIsATest', [
+          { matchedFilename, toReplace: 'This', replaceWith: 'That', singleFile: true },
+        ])
       ).to.equal('ThatIsATest');
     });
     it('same replacement occuring multiple times', async () => {
       expect(
         await replacementIterations('ThisIsATestWithThisAndThis', [
-          { toReplace: 'This', replaceWith: 'That', singleFile: true },
+          { matchedFilename, toReplace: 'This', replaceWith: 'That', singleFile: true },
         ])
       ).to.equal('ThatIsATestWithThatAndThat');
     });
     it('multiple replacements', async () => {
       expect(
         await replacementIterations('ThisIsATestWithThisAndThis', [
-          { toReplace: 'This', replaceWith: 'That' },
-          { toReplace: 'ATest', replaceWith: 'AnAwesomeTest' },
+          { matchedFilename, toReplace: 'This', replaceWith: 'That' },
+          { matchedFilename, toReplace: 'ATest', replaceWith: 'AnAwesomeTest' },
         ])
       ).to.equal('ThatIsAnAwesomeTestWithThatAndThat');
     });
@@ -189,21 +201,23 @@ describe('executes replacements on a string', () => {
   describe('regex', () => {
     it('basic replacement', async () => {
       expect(
-        await replacementIterations('ThisIsATest', [{ toReplace: /Is/g, replaceWith: 'IsNot', singleFile: true }])
+        await replacementIterations('ThisIsATest', [
+          { toReplace: /Is/g, replaceWith: 'IsNot', singleFile: true, matchedFilename },
+        ])
       ).to.equal('ThisIsNotATest');
     });
     it('same replacement occuring multiple times', async () => {
       expect(
         await replacementIterations('ThisIsATestWithThisAndThis', [
-          { toReplace: /s/g, replaceWith: 'S', singleFile: true },
+          { toReplace: /s/g, replaceWith: 'S', singleFile: true, matchedFilename },
         ])
       ).to.equal('ThiSISATeStWithThiSAndThiS');
     });
     it('multiple replacements', async () => {
       expect(
         await replacementIterations('This Is A Test With This And This', [
-          { toReplace: /^T.{2}s/, replaceWith: 'That', singleFile: false },
-          { toReplace: /T.{2}s$/, replaceWith: 'Stuff', singleFile: false },
+          { toReplace: /^T.{2}s/, replaceWith: 'That', singleFile: false, matchedFilename },
+          { toReplace: /T.{2}s$/, replaceWith: 'Stuff', singleFile: false, matchedFilename },
         ])
       ).to.equal('That Is A Test With This And Stuff');
     });
@@ -211,24 +225,38 @@ describe('executes replacements on a string', () => {
 
   describe('warning when no replacement happened', () => {
     let warnSpy: Sinon.SinonSpy;
+    let emitSpy: Sinon.SinonSpy;
 
     beforeEach(() => {
+      // everything is an emit.  Warn calls emit, too.
       warnSpy = Sinon.spy(Lifecycle.getInstance(), 'emitWarning');
+      emitSpy = Sinon.spy(Lifecycle.getInstance(), 'emit');
     });
     afterEach(() => {
       warnSpy.restore();
+      emitSpy.restore();
     });
     it('emits warning only when no change', async () => {
-      await replacementIterations('ThisIsATest', [{ toReplace: 'Nope', replaceWith: 'Nah', singleFile: true }]);
+      await replacementIterations('ThisIsATest', [
+        { toReplace: 'Nope', replaceWith: 'Nah', singleFile: true, matchedFilename },
+      ]);
       expect(warnSpy.callCount).to.equal(1);
+      expect(emitSpy.callCount).to.equal(1);
     });
     it('no warning when string is replaced', async () => {
-      await replacementIterations('ThisIsATest', [{ toReplace: 'Test', replaceWith: 'SpyTest', singleFile: true }]);
+      await replacementIterations('ThisIsATest', [
+        { toReplace: 'Test', replaceWith: 'SpyTest', singleFile: true, matchedFilename },
+      ]);
       expect(warnSpy.callCount).to.equal(0);
+      // because it emits the replacement event
+      expect(emitSpy.callCount).to.equal(1);
     });
     it('no warning when no replacement but not a single file (ex: glob)', async () => {
-      await replacementIterations('ThisIsATest', [{ toReplace: 'Nope', replaceWith: 'Nah', singleFile: false }]);
+      await replacementIterations('ThisIsATest', [
+        { toReplace: 'Nope', replaceWith: 'Nah', singleFile: false, matchedFilename },
+      ]);
       expect(warnSpy.callCount).to.equal(0);
+      expect(emitSpy.callCount).to.equal(0);
     });
   });
 });

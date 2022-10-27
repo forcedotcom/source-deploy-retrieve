@@ -110,6 +110,7 @@ export type ConvertResult = {
 export type MarkedReplacement = {
   toReplace: string | RegExp;
   replaceWith: string;
+  matchedFilename: string;
   singleFile?: boolean;
 };
 
@@ -138,3 +139,8 @@ type ReplacementTarget =
       /** When putting regex into json, you have to use an extra backslash to escape your regex backslashes because JSON also treats backslash as an escape character */
       regexToReplace: string;
     };
+
+export type ReplacementEvent = {
+  filename: string;
+  replaced: string;
+};

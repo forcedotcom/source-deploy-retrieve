@@ -10,6 +10,7 @@ import { create as createArchive } from 'archiver';
 import * as fs from 'graceful-fs';
 import { Lifecycle, Messages, SfError } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
+import { ReplacementEvent } from '../convert/types';
 import { MetadataConverter } from '../convert';
 import { ComponentLike, SourceComponent } from '../resolve';
 import { ComponentSet } from '../collections';
@@ -31,16 +32,15 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_job_id']);
 
 export class DeployResult implements MetadataTransferResult {
-  public readonly response: MetadataApiDeployStatus;
-  public readonly components: ComponentSet;
   private readonly diagnosticUtil = new DiagnosticUtil('metadata');
   private fileResponses: FileResponse[];
   private readonly shouldConvertPaths = sep !== posix.sep;
 
-  public constructor(response: MetadataApiDeployStatus, components: ComponentSet) {
-    this.response = response;
-    this.components = components;
-  }
+  public constructor(
+    public readonly response: MetadataApiDeployStatus,
+    public readonly components: ComponentSet,
+    public readonly replacements: Map<string, string[]> = new Map<string, string[]>()
+  ) {}
 
   public getFileResponses(): FileResponse[] {
     // this involves FS operations, so only perform once!
@@ -236,6 +236,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     },
   };
   private options: MetadataApiDeployOptions;
+  private replacements: Map<string, string[]> = new Map();
   private orgId: string;
   // Keep track of rest deploys separately since Connection.deploy() removes it
   // from the apiOptions and we need it for telemetry.
@@ -310,6 +311,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
   }
 
   protected async pre(): Promise<AsyncResult> {
+    const LifecycleInstance = Lifecycle.getInstance();
     const connection = await this.getConnection();
     // store for use in the scopedPostDeploy event
     this.orgId = connection.getAuthInfoFields().orgId;
@@ -320,11 +322,26 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     }
     // only do event hooks if source, (NOT a metadata format) deploy
     if (this.options.components) {
-      await Lifecycle.getInstance().emit('scopedPreDeploy', {
+      await LifecycleInstance.emit('scopedPreDeploy', {
         componentSet: this.options.components,
         orgId: this.orgId,
       } as ScopedPreDeploy);
     }
+
+    LifecycleInstance.on(
+      'replacement',
+      async (replacement: ReplacementEvent) =>
+        // lifecycle have to be async, so wrapped in a promise
+        new Promise((resolve) => {
+          if (!this.replacements.has(replacement.filename)) {
+            this.replacements.set(replacement.filename, [replacement.replaced]);
+          } else {
+            this.replacements.get(replacement.filename).push(replacement.replaced);
+          }
+          resolve();
+        })
+    );
+
     const [zipBuffer] = await Promise.all([this.getZipBuffer(), this.maybeSaveTempDirectory('metadata')]);
     // SDR modifies what the mdapi expects by adding a rest param
     const { rest, ...optionsWithoutRest } = this.options.apiOptions;
@@ -370,7 +387,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
         `Error trying to compile/send deploy telemetry data for deploy ID: ${this.id}\nError: ${error.message}`
       );
     }
-    const deployResult = new DeployResult(result, this.components);
+    const deployResult = new DeployResult(result, this.components, this.replacements);
     // only do event hooks if source, (NOT a metadata format) deploy
     if (this.options.components) {
       await lifecycle.emit('scopedPostDeploy', { deployResult, orgId: this.orgId } as ScopedPostDeploy);

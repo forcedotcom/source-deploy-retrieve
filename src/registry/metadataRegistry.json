@@ -3377,7 +3377,7 @@
     "externalClientApp": "externalclientapplication",
     "oauthPolicy": "extlclntappoauthplcycnfg",
     "extlClntAppMobileSet": "extlclntappmobileset",
-    "extlClntAppOauthSettings": "extlclntappoauthsettings",
+    "oauth": "extlclntappoauthsettings",
     "appMenu": "appmenu",
     "delegateGroup": "delegategroup",
     "network": "network",

@@ -1383,6 +1383,30 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "extlclntappoauthplcycnfg": {
+      "id": "extlclntappoauthplcycnfg",
+      "name": "ExtlClntAppOauthPlcyCnfg",
+      "suffix": "oauthPolicy",
+      "directoryName": "oauthPolicies",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "extlclntappoauthsettings": {
+      "id": "extlclntappoauthsettings",
+      "name": "ExtlClntAppOauthSettings",
+      "suffix": "oauth",
+      "directoryName": "extlClntAppOauthSettings",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "extlclntappmobileset": {
+      "id": "extlclntappmobileset",
+      "name": "ExtlClntAppMobileSet",
+      "suffix": "extlClntAppMobileSet",
+      "directoryName": "extlClntAppMobileSets",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "appmenu": {
       "id": "appmenu",
       "name": "AppMenu",
@@ -3351,6 +3375,9 @@
     "notiftype": "customnotificationtype",
     "connectedApp": "connectedapp",
     "externalClientApp": "externalclientapplication",
+    "oauthPolicy": "extlclntappoauthplcycnfg",
+    "extlClntAppMobileSet": "extlclntappmobileset",
+    "extlClntAppOauthSettings": "extlclntappoauthsettings",
     "appMenu": "appmenu",
     "delegateGroup": "delegategroup",
     "network": "network",

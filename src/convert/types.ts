@@ -108,7 +108,7 @@ export type ConvertResult = {
 
 /** Stored by file on SourceComponent for stream processing */
 export type MarkedReplacement = {
-  toReplace: string | RegExp;
+  toReplace: RegExp;
   replaceWith: string;
   matchedFilename: string;
   singleFile?: boolean;

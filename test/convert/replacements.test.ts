@@ -8,7 +8,7 @@ import * as path from 'path';
 import { expect } from 'chai';
 import Sinon = require('sinon');
 import { Lifecycle } from '@salesforce/core';
-import { getReplacements, matchesFile, replacementIterations } from '../../src/convert/replacements';
+import { getReplacements, matchesFile, replacementIterations, stringToRegex } from '../../src/convert/replacements';
 import { matchingContentFile } from '../mock';
 import * as replacementsForMock from '../../src/convert/replacements';
 
@@ -64,7 +64,7 @@ describe('marking replacements on a component', () => {
       [cmp.xml]: [
         {
           matchedFilename: cmp.xml,
-          toReplace: 'foo',
+          toReplace: stringToRegex('foo'),
           replaceWith: 'bar',
           singleFile: true,
         },
@@ -77,7 +77,7 @@ describe('marking replacements on a component', () => {
       [cmp.xml]: [
         {
           matchedFilename: cmp.xml,
-          toReplace: 'foo',
+          toReplace: stringToRegex('foo'),
           replaceWith: 'bar',
           singleFile: true,
         },
@@ -109,13 +109,13 @@ describe('marking replacements on a component', () => {
       [cmp.xml]: [
         {
           matchedFilename: cmp.xml,
-          toReplace: 'foo',
+          toReplace: stringToRegex('foo'),
           replaceWith: 'bar',
           singleFile: true,
         },
         {
           matchedFilename: cmp.xml,
-          toReplace: 'baz',
+          toReplace: stringToRegex('baz'),
           replaceWith: 'bar',
           singleFile: true,
         },
@@ -130,7 +130,7 @@ describe('marking replacements on a component', () => {
       [cmp.xml]: [
         {
           matchedFilename: cmp.xml,
-          toReplace: 'foo',
+          toReplace: stringToRegex('foo'),
           replaceWith: 'bar',
           singleFile: false,
         },
@@ -138,7 +138,7 @@ describe('marking replacements on a component', () => {
       [cmp.content]: [
         {
           matchedFilename: cmp.content,
-          toReplace: 'foo',
+          toReplace: stringToRegex('foo'),
           replaceWith: 'bar',
           singleFile: false,
         },
@@ -154,7 +154,7 @@ describe('marking replacements on a component', () => {
       [cmp.xml]: [
         {
           matchedFilename: cmp.xml,
-          toReplace: 'foo',
+          toReplace: stringToRegex('foo'),
           replaceWith: 'bar',
           singleFile: true,
         },
@@ -162,7 +162,7 @@ describe('marking replacements on a component', () => {
       [cmp.content]: [
         {
           matchedFilename: cmp.content,
-          toReplace: 'foo',
+          toReplace: stringToRegex('foo'),
           replaceWith: 'bar',
           singleFile: true,
         },
@@ -178,22 +178,22 @@ describe('executes replacements on a string', () => {
     it('basic replacement', async () => {
       expect(
         await replacementIterations('ThisIsATest', [
-          { matchedFilename, toReplace: 'This', replaceWith: 'That', singleFile: true },
+          { matchedFilename, toReplace: stringToRegex('This'), replaceWith: 'That', singleFile: true },
         ])
       ).to.equal('ThatIsATest');
     });
     it('same replacement occuring multiple times', async () => {
       expect(
         await replacementIterations('ThisIsATestWithThisAndThis', [
-          { matchedFilename, toReplace: 'This', replaceWith: 'That', singleFile: true },
+          { matchedFilename, toReplace: stringToRegex('This'), replaceWith: 'That', singleFile: true },
         ])
       ).to.equal('ThatIsATestWithThatAndThat');
     });
     it('multiple replacements', async () => {
       expect(
         await replacementIterations('ThisIsATestWithThisAndThis', [
-          { matchedFilename, toReplace: 'This', replaceWith: 'That' },
-          { matchedFilename, toReplace: 'ATest', replaceWith: 'AnAwesomeTest' },
+          { matchedFilename, toReplace: stringToRegex('This'), replaceWith: 'That' },
+          { matchedFilename, toReplace: stringToRegex('ATest'), replaceWith: 'AnAwesomeTest' },
         ])
       ).to.equal('ThatIsAnAwesomeTestWithThatAndThat');
     });
@@ -238,14 +238,14 @@ describe('executes replacements on a string', () => {
     });
     it('emits warning only when no change', async () => {
       await replacementIterations('ThisIsATest', [
-        { toReplace: 'Nope', replaceWith: 'Nah', singleFile: true, matchedFilename },
+        { toReplace: stringToRegex('Nope'), replaceWith: 'Nah', singleFile: true, matchedFilename },
       ]);
       expect(warnSpy.callCount).to.equal(1);
       expect(emitSpy.callCount).to.equal(1);
     });
     it('no warning when string is replaced', async () => {
       await replacementIterations('ThisIsATest', [
-        { toReplace: 'Test', replaceWith: 'SpyTest', singleFile: true, matchedFilename },
+        { toReplace: stringToRegex('Test'), replaceWith: 'SpyTest', singleFile: true, matchedFilename },
       ]);
       expect(warnSpy.callCount).to.equal(0);
       // because it emits the replacement event
@@ -253,7 +253,7 @@ describe('executes replacements on a string', () => {
     });
     it('no warning when no replacement but not a single file (ex: glob)', async () => {
       await replacementIterations('ThisIsATest', [
-        { toReplace: 'Nope', replaceWith: 'Nah', singleFile: false, matchedFilename },
+        { toReplace: stringToRegex('Nope'), replaceWith: 'Nah', singleFile: false, matchedFilename },
       ]);
       expect(warnSpy.callCount).to.equal(0);
       expect(emitSpy.callCount).to.equal(0);

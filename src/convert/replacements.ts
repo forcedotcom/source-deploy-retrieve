@@ -79,7 +79,7 @@ export const replacementIterations = async (input: string, replacements: MarkedR
 };
 
 /**
- * Reads the project, gets replacements, removes an that aren't applicable due ot environment conditionals, and returns an instance of the ReplacementMarkingStream
+ * Reads the project, gets replacements, removes any that aren't applicable due to environment conditionals, and returns an instance of the ReplacementMarkingStream
  */
 export const getReplacementMarkingStream = async (): Promise<ReplacementMarkingStream | undefined> => {
   // remove any that don't agree with current env
@@ -158,7 +158,7 @@ export const getReplacements = async (
                 // used during replacement stream to limit warnings to explicit filenames, not globs
                 singleFile: Boolean(r.filename),
                 // Config is json which might use the regex.  If so, turn it into an actual regex
-                toReplace: r.stringToReplace ?? new RegExp(r.regexToReplace, 'g'),
+                toReplace: r.stringToReplace ? stringToRegex(r.stringToReplace) : new RegExp(r.regexToReplace, 'g'),
                 // get the literal replacement (either from env or file contents)
                 replaceWith: r.replaceWithEnv
                   ? getEnvValue(r.replaceWithEnv)
@@ -212,3 +212,9 @@ const readReplacementsFromProject = async (): Promise<ReplacementConfig[]> => {
   const projJson = (await proj.resolveProjectConfig()) as { replacements?: ReplacementConfig[] };
   return projJson.replacements;
 };
+
+/** escape any special characters used in the string so it can be used as a regex */
+export const stringToRegex = (input: string): RegExp =>
+  // being overly conservative
+  // eslint-disable-next-line no-useless-escape
+  new RegExp(input.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');

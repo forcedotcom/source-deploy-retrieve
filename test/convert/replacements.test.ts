@@ -92,7 +92,7 @@ describe('marking replacements on a component', () => {
     expect(result).to.deep.equal({
       [cmp.xml]: [
         {
-          matchedFilename: 'path/to/classes/myComponent.cls-meta.xml',
+          matchedFilename: cmp.xml,
           toReplace: /.*foo.*/g,
           replaceWith: 'bar',
           singleFile: true,
@@ -129,7 +129,7 @@ describe('marking replacements on a component', () => {
     expect(result).to.deep.equal({
       [cmp.xml]: [
         {
-          matchedFilename: 'path/to/classes/myComponent.cls-meta.xml',
+          matchedFilename: cmp.xml,
           toReplace: 'foo',
           replaceWith: 'bar',
           singleFile: false,
@@ -137,7 +137,7 @@ describe('marking replacements on a component', () => {
       ],
       [cmp.content]: [
         {
-          matchedFilename: 'path/to/classes/myComponent.cls',
+          matchedFilename: cmp.content,
           toReplace: 'foo',
           replaceWith: 'bar',
           singleFile: false,
@@ -153,7 +153,7 @@ describe('marking replacements on a component', () => {
     expect(result).to.deep.equal({
       [cmp.xml]: [
         {
-          matchedFilename: 'path/to/classes/myComponent.cls-meta.xml',
+          matchedFilename: cmp.xml,
           toReplace: 'foo',
           replaceWith: 'bar',
           singleFile: true,
@@ -161,7 +161,7 @@ describe('marking replacements on a component', () => {
       ],
       [cmp.content]: [
         {
-          matchedFilename: 'path/to/classes/myComponent.cls',
+          matchedFilename: cmp.content,
           toReplace: 'foo',
           replaceWith: 'bar',
           singleFile: true,

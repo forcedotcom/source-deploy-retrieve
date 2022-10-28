@@ -10,7 +10,7 @@ import { Lifecycle, SfError, SfProject } from '@salesforce/core';
 import * as minimatch from 'minimatch';
 import { SourcePath } from '../common';
 import { SourceComponent } from '../resolve/sourceComponent';
-import { MarkedReplacement, ReplacementConfig } from './types';
+import { MarkedReplacement, ReplacementConfig, ReplacementEvent } from './types';
 
 const fileContentsCache = new Map<string, string>();
 
@@ -50,20 +50,30 @@ class ReplacementStream extends Transform {
  * emits warnings when an expected replacement target isn't found
  */
 export const replacementIterations = async (input: string, replacements: MarkedReplacement[]): Promise<string> => {
+  const lifecycleInstance = Lifecycle.getInstance();
   let output = input;
   for (const replacement of replacements) {
     // TODO: node 16+ has String.replaceAll for non-regex scenarios
     const regex =
       typeof replacement.toReplace === 'string' ? new RegExp(replacement.toReplace, 'g') : replacement.toReplace;
     const replaced = output.replace(regex, replacement.replaceWith);
-    if (replacement.singleFile && replaced === output) {
+
+    if (replaced !== output) {
+      output = replaced;
+      // eslint-disable-next-line no-await-in-loop
+      await lifecycleInstance.emit('replacement', {
+        filename: replacement.matchedFilename,
+        replaced: replacement.toReplace.toString(),
+      } as ReplacementEvent);
+    } else if (replacement.singleFile) {
       // replacements need to be done sequentially
       // eslint-disable-next-line no-await-in-loop
-      await Lifecycle.getInstance().emitWarning(
-        `Your sfdx-project.json specifies that ${replacement.toReplace.toString()} should be replaced, but it was not found.`
+      await lifecycleInstance.emitWarning(
+        `Your sfdx-project.json specifies that ${replacement.toReplace.toString()} should be replaced in ${
+          replacement.matchedFilename
+        }, but it was not found.`
       );
     }
-    output = replaced;
   }
   return output;
 };
@@ -144,6 +154,7 @@ export const getReplacements = async (
               // filter out any that don't match the current file
               .filter((r) => matchesFile(f, r))
               .map(async (r) => ({
+                matchedFilename: f,
                 // used during replacement stream to limit warnings to explicit filenames, not globs
                 singleFile: Boolean(r.filename),
                 // Config is json which might use the regex.  If so, turn it into an actual regex

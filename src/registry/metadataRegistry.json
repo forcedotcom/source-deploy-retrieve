@@ -1246,8 +1246,8 @@
     "marketingappextension": {
       "id": "marketingappextension",
       "name": "MarketingAppExtension",
-      "suffix": "marketingAppExtension",
-      "directoryName": "marketingAppExtensions",
+      "suffix": "marketingappextension",
+      "directoryName": "marketingappextensions",
       "inFolder": false
     },
     "sharingrules": {
@@ -1380,6 +1380,30 @@
       "name": "ExternalClientApplication",
       "suffix": "externalClientApp",
       "directoryName": "externalClientApps",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "extlclntappoauthplcycnfg": {
+      "id": "extlclntappoauthplcycnfg",
+      "name": "ExtlClntAppOauthPlcyCnfg",
+      "suffix": "oauthPolicy",
+      "directoryName": "oauthPolicies",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "extlclntappoauthsettings": {
+      "id": "extlclntappoauthsettings",
+      "name": "ExtlClntAppOauthSettings",
+      "suffix": "oauth",
+      "directoryName": "extlClntAppOauthSettings",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "extlclntappmobileset": {
+      "id": "extlclntappmobileset",
+      "name": "ExtlClntAppMobileSet",
+      "suffix": "extlClntAppMobileSet",
+      "directoryName": "extlClntAppMobileSets",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -1891,6 +1915,38 @@
       "directoryName": "botTemplates",
       "inFolder": false,
       "strictDirectoryName": true
+    },
+    "clausecatgconfiguration": {
+      "id": "clausecatgconfiguration",
+      "name": "ClauseCatgConfiguration",
+      "suffix": "clauseCatgConfiguration",
+      "directoryName": "clauseCatgConfigurations",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "disclosuretype": {
+      "id": "disclosuretype",
+      "name": "DisclosureType",
+      "suffix": "disclosureType",
+      "directoryName": "disclosureTypes",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "disclosuredefinition": {
+      "id": "disclosuredefinition",
+      "name": "DisclosureDefinition",
+      "suffix": "disclosureDefinition",
+      "directoryName": "disclosureDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "disclosuredefinitionversion": {
+      "id": "disclosuredefinitionversion",
+      "name": "DisclosureDefinitionVersion",
+      "suffix": "disclosureDefinitionVersion",
+      "directoryName": "disclosureDefinitionVersions",
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "botblock": {
       "id": "botblock",
@@ -3160,9 +3216,18 @@
       "directoryName": "streamingAppDataConnectors",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "omnisupervisorconfig": {
+      "id": "omnisupervisorconfig",
+      "name": "OmniSupervisorConfig",
+      "suffix": "omniSupervisorConfig",
+      "directoryName": "omniSupervisorConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
+    "omniSupervisorConfig": "omnisupervisorconfig",
     "serviceAISetupDescription": "serviceaisetupdefinition",
     "serviceAISetupField": "serviceaisetupfield",
     "ai": "aiapplication",
@@ -3298,7 +3363,7 @@
     "channelLayout": "channellayout",
     "asset": "contentasset",
     "marketingResourceType": "marketingresourcetype",
-    "marketingAppExtension": "marketingappextension",
+    "marketingappextension": "marketingappextension",
     "sharingRules": "sharingrules",
     "sharingSet": "sharingset",
     "community": "community",
@@ -3310,6 +3375,9 @@
     "notiftype": "customnotificationtype",
     "connectedApp": "connectedapp",
     "externalClientApp": "externalclientapplication",
+    "oauthPolicy": "extlclntappoauthplcycnfg",
+    "extlClntAppMobileSet": "extlclntappmobileset",
+    "oauth": "extlclntappoauthsettings",
     "appMenu": "appmenu",
     "delegateGroup": "delegategroup",
     "network": "network",
@@ -3367,6 +3435,10 @@
     "mlDomain": "mldomain",
     "bot": "bot",
     "botTemplate": "bottemplate",
+    "clauseCatgConfiguration": "clausecatgconfiguration",
+    "disclosureType": "disclosuretype",
+    "disclosureDefinition": "disclosuredefinition",
+    "disclosureDefinitionVersion": "disclosuredefinitionversion",
     "botBlock": "botblock",
     "botVersion": "botversion",
     "animationRule": "animationrule",

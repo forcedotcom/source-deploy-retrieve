@@ -9,6 +9,7 @@ import { META_XML_SUFFIX, SourcePath } from '../../common';
 import { SfdxFileFormat, WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve';
 import { extName, trimUntil } from '../../utils';
+import { getReplacementStreamForReadable } from '../replacements';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 const ORIGINAL_SUFFIX_REGEX = new RegExp('(.)([a-zA-Z]+)(' + META_XML_SUFFIX + ')$');
@@ -36,27 +37,23 @@ const getWriteInfos = (
   component: SourceComponent,
   targetFormat: SfdxFileFormat,
   mergeWith?: SourceComponent
-): WriteInfo[] => {
-  const writeInfos: WriteInfo[] = [];
-
-  if (component.content) {
-    for (const source of component.walkContent()) {
-      writeInfos.push({
-        source: component.tree.stream(source),
-        output: getContentSourceDestination(source, targetFormat, component, mergeWith),
-      });
-    }
-  }
-
-  if (component.xml) {
-    writeInfos.push({
-      source: component.tree.stream(component.xml),
-      output: getXmlDestination(targetFormat, component, mergeWith),
-    });
-  }
-
-  return writeInfos;
-};
+): WriteInfo[] =>
+  component
+    .walkContent()
+    .map((path) => ({
+      source: getReplacementStreamForReadable(component, path),
+      output: getContentSourceDestination(path, targetFormat, component, mergeWith),
+    }))
+    .concat(
+      component.xml
+        ? [
+            {
+              source: getReplacementStreamForReadable(component, component.xml),
+              output: getXmlDestination(targetFormat, component, mergeWith),
+            },
+          ]
+        : []
+    );
 
 // assumes component has content
 const getContentSourceDestination = (

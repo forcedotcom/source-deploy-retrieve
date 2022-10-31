@@ -9,13 +9,16 @@ import { Messages, SfError } from '@salesforce/core';
 import { parse, validate } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
+import { replacementIterations } from '../../src/convert/replacements';
 import { baseName, parseMetadataXml, trimUntil } from '../utils';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common';
 import { SfdxFileFormat } from '../convert';
 import { MetadataType } from '../registry';
 import { DestructiveChangesType } from '../collections';
 import { filePathsFromMetadataComponent } from '../utils/filePathGenerator';
+import { MarkedReplacement } from '../convert/types';
 import { MetadataComponent, VirtualDirectory } from './types';
+
 import { NodeFSTreeContainer, TreeContainer, VirtualTreeContainer } from './treeContainers';
 import { ForceIgnore } from './forceIgnore';
 
@@ -44,6 +47,7 @@ export class SourceComponent implements MetadataComponent {
   public readonly parent?: SourceComponent;
   public parentType?: MetadataType;
   public content?: string;
+  public replacements: Record<string, MarkedReplacement[]>;
   private treeContainer: TreeContainer;
   private forceIgnore: ForceIgnore;
   private markedForDelete = false;
@@ -159,7 +163,11 @@ export class SourceComponent implements MetadataComponent {
     const xml = xmlFilePath ?? this.xml;
     if (xml) {
       const contents = (await this.tree.readFile(xml)).toString();
-      return this.parseAndValidateXML(contents, xml);
+      const replacements = this.replacements?.[xml] ?? this.parent?.replacements?.[xml];
+      return this.parseAndValidateXML(
+        replacements ? await replacementIterations(contents, replacements) : contents,
+        xml
+      );
     }
     return {} as T;
   }
@@ -179,11 +187,7 @@ export class SourceComponent implements MetadataComponent {
    * @return ForceIgnore
    */
   public getForceIgnore(): ForceIgnore {
-    if (this.forceIgnore) {
-      return this.forceIgnore;
-    } else {
-      return ForceIgnore.findAndCreate(this.content);
-    }
+    return this.forceIgnore ?? ForceIgnore.findAndCreate(this.content);
   }
 
   /**

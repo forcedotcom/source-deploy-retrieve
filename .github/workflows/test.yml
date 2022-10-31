@@ -11,12 +11,22 @@ on:
 jobs:
   unit-tests:
     uses: salesforcecli/github-workflows/.github/workflows/unitTest.yml@main
+  nuts:
+    uses: salesforcecli/github-workflows/.github/workflows/nut.yml@main
+    secrets: inherit
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+      fail-fast: false
+    with:
+      os: ${{ matrix.os }}
+
   perf-scale-nuts-linux:
     uses: ./.github/workflows/perfScaleNut.yml
-    needs: unit-tests
+    needs: [unit-tests, nuts]
   perf-scale-nuts-windows:
     uses: ./.github/workflows/perfScaleNut.yml
-    needs: unit-tests
+    needs: [unit-tests, nuts]
     with:
       os: 'windows-latest'
 
@@ -24,7 +34,7 @@ jobs:
   # the following is highly duplicative to allow linux to start all the nuts without waiting for windows primer
   extNuts-primer-linux:
     name: extNUTs-linux-prime
-    needs: unit-tests
+    needs: [unit-tests, nuts]
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
       packageName: '@salesforce/source-deploy-retrieve'
@@ -38,7 +48,7 @@ jobs:
 
   extNuts-primer-windows:
     name: extNUTs-windows-prime
-    needs: unit-tests
+    needs: [unit-tests, nuts]
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
       packageName: '@salesforce/source-deploy-retrieve'

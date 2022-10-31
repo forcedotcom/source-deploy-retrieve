@@ -4,6 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { Readable, PassThrough } from 'stream';
 import { dirname, join, normalize } from 'path';
 import { Messages, SfError } from '@salesforce/core';
 import { promises } from 'graceful-fs';
@@ -12,8 +13,9 @@ import { ensureDirectoryExists } from '../utils/fileSystemHandler';
 import { SourcePath } from '../common';
 import { ComponentSet, DestructiveChangesType } from '../collections';
 import { RegistryAccess } from '../registry';
-import { ComponentConverter, ComponentReader, pipeline, StandardWriter, ZipWriter } from './streams';
+import { ComponentConverter, pipeline, StandardWriter, ZipWriter } from './streams';
 import { ConvertOutputConfig, ConvertResult, DirectoryConfig, SfdxFileFormat, ZipConfig } from './types';
+import { getReplacementMarkingStream } from './replacements';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
@@ -32,6 +34,7 @@ export class MetadataConverter {
   public constructor(registry = new RegistryAccess()) {
     this.registry = registry;
   }
+  // eslint-disable-next-line complexity
   public async convert(
     comps: ComponentSet | Iterable<SourceComponent>,
     targetFormat: SfdxFileFormat,
@@ -43,7 +46,7 @@ export class MetadataConverter {
         (comps instanceof ComponentSet ? Array.from(comps.getSourceComponents()) : comps) as SourceComponent[]
       ).filter((comp) => comp.type.isAddressable !== false);
 
-      const isSource = targetFormat === 'source';
+      const targetFormatIsSource = targetFormat === 'source';
       const tasks: Array<Promise<void>> = [];
 
       let writer: StandardWriter | ZipWriter;
@@ -59,7 +62,7 @@ export class MetadataConverter {
           packagePath = getPackagePath(output);
           defaultDirectory = packagePath;
           writer = new StandardWriter(packagePath);
-          if (!isSource) {
+          if (!targetFormatIsSource) {
             const manifestPath = join(packagePath, MetadataConverter.PACKAGE_XML_FILE);
             tasks.push(
               promises.writeFile(manifestPath, await cs.getPackageXml()),
@@ -78,13 +81,16 @@ export class MetadataConverter {
           if (output.packageName) {
             cs.fullName = output.packageName;
           }
+
           packagePath = getPackagePath(output);
           defaultDirectory = packagePath;
           writer = new ZipWriter(packagePath);
-          if (!isSource) {
+          if (!targetFormatIsSource) {
             writer.addToZip(await cs.getPackageXml(), MetadataConverter.PACKAGE_XML_FILE);
+
             // for each of the destructive changes in the component set, convert and write the correct metadata
             // to each manifest
+
             for (const destructiveChangeType of cs.getTypesOfDestructiveChanges()) {
               writer.addToZip(
                 // TODO: can this be safely parallelized?
@@ -96,7 +102,7 @@ export class MetadataConverter {
           }
           break;
         case 'merge':
-          if (!isSource) {
+          if (!targetFormatIsSource) {
             throw new SfError(messages.getMessage('error_merge_metadata_target_unsupported'));
           }
           defaultDirectory = output.defaultDirectory;
@@ -111,7 +117,10 @@ export class MetadataConverter {
       }
 
       const conversionPipeline = pipeline(
-        new ComponentReader(components),
+        Readable.from(components),
+        !targetFormatIsSource && (process.env.SF_APPLY_REPLACEMENTS_ON_CONVERT === 'true' || output.type === 'zip')
+          ? (await getReplacementMarkingStream()) ?? new PassThrough({ objectMode: true })
+          : new PassThrough({ objectMode: true }),
         new ComponentConverter(targetFormat, this.registry, mergeSet, defaultDirectory),
         writer
       );

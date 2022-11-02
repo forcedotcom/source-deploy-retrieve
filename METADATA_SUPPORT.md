@@ -581,7 +581,7 @@ v57 introduces the following new types.  Here's their current level of support
 - MatchingRule
 - MarketingResourceType
 - ExtlClntAppOauthConfigurablePolicies
-- ExtlClntAppMobileConfigurablePolices
+- ExtlClntAppMobileConfigurablePolicies
 - CustomExperience
 - ManagedTopic
 - DataPipeline

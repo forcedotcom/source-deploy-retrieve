@@ -533,6 +533,7 @@ v57 introduces the following new types.  Here's their current level of support
 |ActionableListDefinition|❌|Not supported, but support could be added|
 |AffinityScoreDefinition|❌|Not supported, but support could be added|
 |ClauseCatgConfiguration|✅||
+|CommerceRuleSettings|✅||
 |DisclosureDefinition|✅||
 |DisclosureDefinitionVersion|✅||
 |DisclosureType|✅||
@@ -540,12 +541,13 @@ v57 introduces the following new types.  Here's their current level of support
 |ExternalClientAppSettings|✅||
 |ExternalClientApplication|✅||
 |ExternalDocStorageConfig|❌|Not supported, but support could be added|
-|ExtlClntAppMobileSet|✅||
-|ExtlClntAppOauthPlcyCnfg|✅||
+|ExtlClntAppMobileSettings|✅||
+|ExtlClntAppOauthPlcyCnfg|❌|Not supported, but support could be added|
+|ExtlClntAppOauthSettings|✅||
 |IdentityProviderSettings|✅||
 |IntegrationProviderDef|❌|Not supported, but support could be added|
 |LocationUse|❌|Not supported, but support could be added|
-|OmniSupervisorConfig|⚠️|Supports deploy/retrieve but not source tracking|
+|OmniSupervisorConfig|✅||
 |PipelineInspMetricConfig|❌|Not supported, but support could be added|
 |ProductSpecificationTypeDefinition|❌|Not supported, but support could be added|
 |ServiceProcess|❌|Not supported, but support could be added|
@@ -578,7 +580,7 @@ v57 introduces the following new types.  Here's their current level of support
 - CustomFieldTranslation
 - MatchingRule
 - MarketingResourceType
-- ExtlClntAppOauthSettings
+- ExtlClntAppOauthConfigurablePolicies
 - CustomExperience
 - ManagedTopic
 - DataPipeline

@@ -39,7 +39,9 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     const { content, type, xml } = component;
 
-    // archiver/zip.finalize is async.  If you await it, bad things happen https://github.com/forcedotcom/cli/issues/1791
+    // archiver/zip.finalize looks like it is async, because it extends streams, but it is not meant to be used that way
+    // the typings on it are misleading and unintended.  More info https://github.com/archiverjs/node-archiver/issues/476
+    // If you await it, bad things happen, like the convert process exiting silently.  https://github.com/forcedotcom/cli/issues/1791
     // leave the void as it is
     // eslint-disable-next-line @typescript-eslint/require-await
     const zipIt = async (): Promise<Archiver> => {

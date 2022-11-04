@@ -532,6 +532,7 @@ v57 introduces the following new types.  Here's their current level of support
 |:---|:---|:---|
 |ActionableListDefinition|❌|Not supported, but support could be added|
 |AffinityScoreDefinition|❌|Not supported, but support could be added|
+|ClaimFinancialSettings|✅||
 |ClauseCatgConfiguration|✅||
 |CommerceRuleSettings|✅||
 |DisclosureDefinition|✅||
@@ -541,8 +542,9 @@ v57 introduces the following new types.  Here's their current level of support
 |ExternalClientAppSettings|✅||
 |ExternalClientApplication|✅||
 |ExternalDocStorageConfig|❌|Not supported, but support could be added|
+|ExtlClntAppMobilePolicies|❌|Not supported, but support could be added|
 |ExtlClntAppMobileSettings|✅||
-|ExtlClntAppOauthPlcyCnfg|❌|Not supported, but support could be added|
+|ExtlClntAppOauthConfigurablePolicies|✅||
 |ExtlClntAppOauthSettings|✅||
 |IdentityProviderSettings|✅||
 |IntegrationProviderDef|❌|Not supported, but support could be added|
@@ -580,7 +582,6 @@ v57 introduces the following new types.  Here's their current level of support
 - CustomFieldTranslation
 - MatchingRule
 - MarketingResourceType
-- ExtlClntAppOauthConfigurablePolicies
 - CustomExperience
 - ManagedTopic
 - DataPipeline

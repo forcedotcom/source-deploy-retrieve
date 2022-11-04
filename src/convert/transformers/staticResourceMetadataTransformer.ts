@@ -39,6 +39,9 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     const { content, type, xml } = component;
 
+    // archiver/zip.finalize is async.  If you await it, bad things happen https://github.com/forcedotcom/cli/issues/1791
+    // leave the void as it is
+    // eslint-disable-next-line @typescript-eslint/require-await
     const zipIt = async (): Promise<Archiver> => {
       // toolbelt was using level 9 for static resources, so we'll do the same.
       // Otherwise, you'll see errors like https://github.com/forcedotcom/cli/issues/1098
@@ -53,7 +56,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
           zip.append(replacementStream, { name: relative(content, path) });
         }
       }
-      await zip.finalize();
+      void zip.finalize();
       return zip;
     };
 

@@ -3224,6 +3224,14 @@
       "directoryName": "omniSupervisorConfigs",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "timelineobjectdefinition": {
+      "id": "timelineobjectdefinition",
+      "name": "TimelineObjectDefinition",
+      "suffix": "timelineObjectDefinition",
+      "directoryName": "timelineObjectDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3581,7 +3589,8 @@
     "externalCredential": "externalcredential",
     "marketSegmentDefinition": "marketsegmentdefinition",
     "mfgProgramTemplate": "mfgprogramtemplate",
-    "streamingAppDataConnector": "streamingappdataconnector"
+    "streamingAppDataConnector": "streamingappdataconnector",
+    "timelineObjectDefinition": "timelineobjectdefinition"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

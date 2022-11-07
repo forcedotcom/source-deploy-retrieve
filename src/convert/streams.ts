@@ -36,51 +36,19 @@ export const stream2buffer = async (stream: Stream): Promise<Buffer> =>
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     stream.on('error', (err) => reject(`error converting stream - ${err}`));
   });
-export class ComponentReader extends Readable {
-  private iter: Iterator<SourceComponent>;
-
-  public constructor(components: Iterable<SourceComponent>) {
-    super({ objectMode: true });
-    this.iter = this.createIterator(components);
-  }
-
-  public _read(): void {
-    let next = this.iter.next();
-    while (!next.done) {
-      this.push(next.value);
-      next = this.iter.next();
-    }
-    this.push(null);
-  }
-
-  // preserved to isolate from other classes in this file
-  // componentReader should go away (see note in handbook)
-  // eslint-disable-next-line class-methods-use-this
-  private *createIterator(components: Iterable<SourceComponent>): Iterator<SourceComponent> {
-    for (const component of components) {
-      yield component;
-    }
-  }
-}
 
 export class ComponentConverter extends Transform {
   public readonly context = new ConvertContext();
-  private targetFormat: SfdxFileFormat;
-  private mergeSet: ComponentSet;
   private transformerFactory: MetadataTransformerFactory;
-  private defaultDirectory: string;
 
   public constructor(
-    targetFormat: SfdxFileFormat,
+    private targetFormat: SfdxFileFormat,
     registry: RegistryAccess,
-    mergeSet?: ComponentSet,
-    defaultDirectory?: string
+    private mergeSet?: ComponentSet,
+    private defaultDirectory?: string
   ) {
     super({ objectMode: true });
-    this.targetFormat = targetFormat;
-    this.mergeSet = mergeSet;
     this.transformerFactory = new MetadataTransformerFactory(registry, this.context);
-    this.defaultDirectory = defaultDirectory;
   }
 
   public async _transform(
@@ -154,12 +122,10 @@ export abstract class ComponentWriter extends Writable {
 
 export class StandardWriter extends ComponentWriter {
   public converted: SourceComponent[] = [];
-  private resolver: MetadataResolver;
   private logger: Logger;
 
-  public constructor(rootDestination: SourcePath, resolver = new MetadataResolver()) {
+  public constructor(rootDestination: SourcePath, private resolver = new MetadataResolver()) {
     super(rootDestination);
-    this.resolver = resolver;
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
@@ -239,13 +205,12 @@ export class ZipWriter extends ComponentWriter {
           if (chunk.component.type.folderType || chunk.component.type.folderContentType) {
             return this.addToZip(writeInfo.source, writeInfo.output);
           }
-          const streamAsBuffer = await stream2buffer(writeInfo.source);
           // everything else can be zipped immediately to reduce the number of open files (windows has a low limit!) and help perf
-          if (streamAsBuffer.length) {
-            return this.addToZip(streamAsBuffer, writeInfo.output);
-          }
-          // these will be zero-length files, which archiver supports via stream but not buffer
-          return this.addToZip(writeInfo.source, writeInfo.output);
+          const streamAsBuffer = await stream2buffer(writeInfo.source);
+          return streamAsBuffer.length
+            ? this.addToZip(streamAsBuffer, writeInfo.output)
+            : // these will be zero-length files, which archiver supports via stream but not buffer
+              this.addToZip(writeInfo.source, writeInfo.output);
         })
       );
     } catch (e) {
@@ -289,11 +254,8 @@ export class ZipWriter extends ComponentWriter {
  * even though it's not beneficial in the typical way a stream is.
  */
 export class JsToXml extends Readable {
-  private xmlObject: JsonMap;
-
-  public constructor(xmlObject: JsonMap) {
+  public constructor(private xmlObject: JsonMap) {
     super();
-    this.xmlObject = xmlObject;
   }
 
   public _read(): void {

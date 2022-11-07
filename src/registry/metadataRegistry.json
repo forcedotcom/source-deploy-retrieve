@@ -1378,15 +1378,15 @@
     "externalclientapplication": {
       "id": "externalclientapplication",
       "name": "ExternalClientApplication",
-      "suffix": "externalClientApp",
+      "suffix": "eca",
       "directoryName": "externalClientApps",
       "inFolder": false,
       "strictDirectoryName": false
     },
-    "extlclntappoauthplcycnfg": {
-      "id": "extlclntappoauthplcycnfg",
-      "name": "ExtlClntAppOauthPlcyCnfg",
-      "suffix": "oauthPolicy",
+    "extlclntappoauthconfigurablepolicies": {
+      "id": "extlclntappoauthconfigurablepolicies",
+      "name": "ExtlClntAppOauthConfigurablePolicies",
+      "suffix": "ecaOauthPlcy",
       "directoryName": "oauthPolicies",
       "inFolder": false,
       "strictDirectoryName": false
@@ -1394,16 +1394,16 @@
     "extlclntappoauthsettings": {
       "id": "extlclntappoauthsettings",
       "name": "ExtlClntAppOauthSettings",
-      "suffix": "oauth",
+      "suffix": "ecaOauth",
       "directoryName": "extlClntAppOauthSettings",
       "inFolder": false,
       "strictDirectoryName": false
     },
-    "extlclntappmobileset": {
-      "id": "extlclntappmobileset",
-      "name": "ExtlClntAppMobileSet",
-      "suffix": "extlClntAppMobileSet",
-      "directoryName": "extlClntAppMobileSets",
+    "extlclntappmobilesettings": {
+      "id": "extlclntappmobilesettings",
+      "name": "ExtlClntAppMobileSettings",
+      "suffix": "ecaMob",
+      "directoryName": "extlClntAppMobileSettings",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -3244,6 +3244,14 @@
       "directoryName": "omniSupervisorConfigs",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "timelineobjectdefinition": {
+      "id": "timelineobjectdefinition",
+      "name": "TimelineObjectDefinition",
+      "suffix": "timelineObjectDefinition",
+      "directoryName": "timelineObjectDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3394,10 +3402,10 @@
     "entitlementTemplate": "entitlementtemplate",
     "notiftype": "customnotificationtype",
     "connectedApp": "connectedapp",
-    "externalClientApp": "externalclientapplication",
-    "oauthPolicy": "extlclntappoauthplcycnfg",
-    "extlClntAppMobileSet": "extlclntappmobileset",
-    "oauth": "extlclntappoauthsettings",
+    "eca": "externalclientapplication",
+    "ecaOauthPlcy": "extlclntappoauthconfigurablepolicies",
+    "ecaMob": "extlclntappmobilesettings",
+    "ecaOauth": "extlclntappoauthsettings",
     "appMenu": "appmenu",
     "delegateGroup": "delegategroup",
     "network": "network",
@@ -3601,7 +3609,8 @@
     "externalCredential": "externalcredential",
     "marketSegmentDefinition": "marketsegmentdefinition",
     "mfgProgramTemplate": "mfgprogramtemplate",
-    "streamingAppDataConnector": "streamingappdataconnector"
+    "streamingAppDataConnector": "streamingappdataconnector",
+    "timelineObjectDefinition": "timelineobjectdefinition"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

@@ -532,6 +532,7 @@ v57 introduces the following new types.  Here's their current level of support
 |:---|:---|:---|
 |ActionableListDefinition|❌|Not supported, but support could be added|
 |AffinityScoreDefinition|❌|Not supported, but support could be added|
+|ClaimFinancialSettings|✅||
 |ClauseCatgConfiguration|✅||
 |CommerceRuleSettings|✅||
 |DisclosureDefinition|✅||

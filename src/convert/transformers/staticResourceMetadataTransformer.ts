@@ -4,9 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, isAbsolute, join } from 'path';
+import { basename, dirname, isAbsolute, join, relative } from 'path';
 import { Readable } from 'stream';
-import { create as createArchive } from 'archiver';
+import { create as createArchive, Archiver } from 'archiver';
 import { getExtension } from 'mime';
 import { Open } from 'unzipper';
 import { JsonMap } from '@salesforce/ts-types';
@@ -18,6 +18,7 @@ import { SourceComponent } from '../../resolve';
 import { SourcePath } from '../../common';
 import { ensureFileExists } from '../../utils/fileSystemHandler';
 import { pipeline } from '../streams';
+import { getReplacementStreamForReadable } from '../replacements';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 Messages.importMessagesDirectory(__dirname);
@@ -38,26 +39,38 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     const { content, type, xml } = component;
 
-    let contentSource: Readable;
-
-    if (await componentIsExpandedArchive(component)) {
+    // archiver/zip.finalize looks like it is async, because it extends streams, but it is not meant to be used that way
+    // the typings on it are misleading and unintended.  More info https://github.com/archiverjs/node-archiver/issues/476
+    // If you await it, bad things happen, like the convert process exiting silently.  https://github.com/forcedotcom/cli/issues/1791
+    // leave the void as it is
+    // eslint-disable-next-line @typescript-eslint/require-await
+    const zipIt = async (): Promise<Archiver> => {
       // toolbelt was using level 9 for static resources, so we'll do the same.
       // Otherwise, you'll see errors like https://github.com/forcedotcom/cli/issues/1098
       const zip = createArchive('zip', { zlib: { level: 9 } });
-      zip.directory(content, false);
+      if (!component.replacements) {
+        // the easy way...no replacements required
+        zip.directory(content, false);
+      } else {
+        // the hard way--we have to walk the content and do replacements on each of the files.
+        for (const path of component.walkContent()) {
+          const replacementStream = getReplacementStreamForReadable(component, path);
+          zip.append(replacementStream, { name: relative(content, path) });
+        }
+      }
       void zip.finalize();
-      contentSource = zip;
-    } else {
-      contentSource = component.tree.stream(content);
-    }
+      return zip;
+    };
 
     return [
       {
-        source: contentSource,
+        source: (await componentIsExpandedArchive(component))
+          ? await zipIt()
+          : getReplacementStreamForReadable(component, content),
         output: join(type.directoryName, `${baseName(content)}.${type.suffix}`),
       },
       {
-        source: component.tree.stream(xml),
+        source: getReplacementStreamForReadable(component, xml),
         output: join(type.directoryName, basename(xml)),
       },
     ];

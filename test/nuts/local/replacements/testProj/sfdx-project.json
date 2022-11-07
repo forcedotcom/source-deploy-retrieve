@@ -1,0 +1,66 @@
+{
+  "packageDirectories": [
+    {
+      "path": "force-app",
+      "default": true
+    }
+  ],
+  "name": "replacementTest",
+  "namespace": "",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "55.0",
+  "replacements": [
+    {
+      "glob": "force-app/**/*.cls",
+      "stringToReplace": "replaceMeWithEnv",
+      "replaceWithEnv": "THE_REPLACEMENT"
+    },
+    {
+      "glob": "force-app/**/*.cls",
+      "stringToReplace": "doNotReplaceThis",
+      "replaceWithEnv": "THE_REPLACEMENT",
+      "replaceWhenEnv": [
+        {
+          "env": "THE_REPLACEMENT",
+          "value": "bar"
+        }
+      ]
+    },
+    {
+      "glob": "force-app/**/*.cls",
+      "stringToReplace": "conditionallyReplaceThis",
+      "replaceWithEnv": "THE_REPLACEMENT",
+      "replaceWhenEnv": [
+        {
+          "env": "THE_REPLACEMENT",
+          "value": "foo"
+        }
+      ]
+    },
+    {
+      "glob": "force-app/**/*.cls",
+      "stringToReplace": "replaceMeWithFile",
+      "replaceWithFile": "replacements.txt"
+    },
+    {
+      "glob": "force-app/**/*.cls",
+      "regexToReplace": "\\b.*Regex",
+      "replaceWithEnv": "THE_REPLACEMENT"
+    },
+    {
+      "glob": "force-app/main/default/objects/**/*",
+      "stringToReplace": "placeholder",
+      "replaceWithEnv": "THE_REPLACEMENT"
+    },
+    {
+      "glob": "**/*.field-meta.xml",
+      "stringToReplace": "<label>FieldA</label>",
+      "replaceWithFile": "label.txt"
+    },
+    {
+      "glob": "**/*.css",
+      "stringToReplace": "placeholder",
+      "replaceWithEnv": "THE_REPLACEMENT"
+    }
+  ]
+}

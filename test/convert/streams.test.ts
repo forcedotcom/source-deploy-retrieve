@@ -44,18 +44,6 @@ class TestTransformer extends BaseMetadataTransformer {
 describe('Streams', () => {
   afterEach(() => env.restore());
 
-  describe('ComponentReader', () => {
-    it('should read metadata components one at a time', async () => {
-      const reader = new streams.ComponentReader(COMPONENTS);
-      let currentIndex = 0;
-      for await (const component of reader) {
-        expect(component).to.deep.equal(COMPONENTS[currentIndex]);
-        currentIndex += 1;
-      }
-      expect(currentIndex).to.equal(COMPONENTS.length);
-    });
-  });
-
   /**
    * NOTE: tests that call _transform methods must utilize Mocha.done to signal
    * when a test has finished and to pass on any assertion failures to the test

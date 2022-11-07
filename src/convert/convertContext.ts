@@ -206,15 +206,10 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
 
     // nondecomposed metadata types can exist in multiple locations under the same name
     // so we have to find all components that could potentially match inbound components
-    let allNonDecomposed: SourceComponent[];
-
-    if (pkgPaths.includes(defaultDirectory)) {
-      allNonDecomposed = this.getAllComponentsOfType(pkgPaths, this.transactionState.exampleComponent.type.name);
-    } else {
-      // defaultDirectory isn't a package, assumes it's the target output dir for conversion
-      // so no need to scan this folder
-      allNonDecomposed = [];
-    }
+    const allNonDecomposed = pkgPaths.includes(defaultDirectory)
+      ? this.getAllComponentsOfType(pkgPaths, this.transactionState.exampleComponent.type.name)
+      : // defaultDirectory isn't a package, assume it's the target output dir for conversion so don't scan folder
+        [];
 
     // prepare 3 maps to simplify component merging
     await this.initMergeMap(allNonDecomposed);

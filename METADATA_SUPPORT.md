@@ -544,7 +544,7 @@ v57 introduces the following new types.  Here's their current level of support
 |ExternalDocStorageConfig|❌|Not supported, but support could be added|
 |ExtlClntAppMobilePolicies|❌|Not supported, but support could be added|
 |ExtlClntAppMobileSettings|✅||
-|ExtlClntAppOauthConfigurablePolicies|✅||
+|ExtlClntAppOauthConfigurablePolicies|❌|Not supported, but support could be added|
 |ExtlClntAppOauthSettings|✅||
 |IdentityProviderSettings|✅||
 |IntegrationProviderDef|❌|Not supported, but support could be added|
@@ -582,6 +582,8 @@ v57 introduces the following new types.  Here's their current level of support
 - CustomFieldTranslation
 - MatchingRule
 - MarketingResourceType
+- ExtlClntAppOauthPlcyCnfg
+- ExtlClntAppMobileSet
 - CustomExperience
 - ManagedTopic
 - DataPipeline

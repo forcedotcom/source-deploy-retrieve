@@ -2407,29 +2407,49 @@
       "id": "decisionmatrixdefinition",
       "name": "DecisionMatrixDefinition",
       "suffix": "decisionMatrixDefinition",
-      "directoryName": "decisionMatrixDefinitions",
-      "strictDirectoryName": false
-    },
-    "decisionmatrixdefinitionversion": {
-      "id": "decisionmatrixdefinitionversion",
-      "name": "DecisionMatrixDefinitionVersion",
-      "suffix": "decisionMatrixDefinitionVersion",
-      "directoryName": "decisionMatrixDefinitionVersions",
-      "strictDirectoryName": false
-    },
-    "expressionsetdefinitionversion": {
-      "id": "expressionsetdefinitionversion",
-      "name": "ExpressionSetDefinitionVersion",
-      "suffix": "expressionSetDefinitionVersion",
-      "directoryName": "expressionSetDefinitionVersions",
-      "strictDirectoryName": false
+      "directoryName": "decisionMatrixDefinition",
+      "inFolder": false,
+      "strictDirectoryName": false,
+      "children": {
+        "types": {
+          "decisionmatrixdefinitionversion": {
+            "id": "decisionmatrixdefinitionversion",
+            "name": "DecisionMatrixDefinitionVersion",
+            "directoryName": "versions",
+            "suffix": "decisionMatrixDefinitionVersion"
+          }
+        },
+        "directories": {
+          "versions": "decisionmatrixdefinitionversion"
+        },
+        "suffixes": {
+          "decisionMatrixDefinitionVersion": "decisionmatrixdefinitionversion"
+        }
+      }
     },
     "expressionsetdefinition": {
       "id": "expressionsetdefinition",
       "name": "ExpressionSetDefinition",
       "suffix": "expressionSetDefinition",
-      "directoryName": "expressionSetDefinitions",
-      "strictDirectoryName": false
+      "directoryName": "expressionSetDefinition",
+      "inFolder": false,
+      "strictDirectoryName": false,
+      "children": {
+        "types": {
+          "expressionsetdefinitionversion": {
+            "id": "expressionsetdefinitionversion",
+            "name": "ExpressionSetDefinitionVersion",
+            "directoryName": "versions",
+            "suffix": "expressionSetDefinitionVersion"
+          }
+        },
+        "directories": {
+          "versions": "expressionsetdefinitionversion"
+        },
+        "suffixes": {
+          "expressionSetDefinitionVersion": "expressionsetdefinitionversion"
+        }
+      }
     },
     "briefcasedefinition": {
       "id": "briefcasedefinition",
@@ -3650,6 +3670,8 @@
     "botversion": "bot",
     "customfieldtranslation": "customobjecttranslation",
     "mktdatatranfield": "mktdatatranobject",
-    "digitalexperience": "digitalexperiencebundle"
+    "digitalexperience": "digitalexperiencebundle",
+    "decisionmatrixdefinitionversion": "decisionmatrixdefinition",
+    "expressionsetdefinitionversion": "expressionsetdefinition"
   }
 }

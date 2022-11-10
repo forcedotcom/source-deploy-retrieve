@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v56 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 481/512 supported metadata types.
+Currently, there are 482/512 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -476,7 +476,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |Territory2Settings|✅||
 |Territory2Type|✅||
 |TimeSheetTemplate|✅||
-|TimelineObjectDefinition|❌|Not supported, but support could be added|
+|TimelineObjectDefinition|✅||
 |TopicsForObjects|✅||
 |TrailheadSettings|✅||
 |TransactionSecurityPolicy|✅||
@@ -534,17 +534,15 @@ v57 introduces the following new types.  Here's their current level of support
 |AffinityScoreDefinition|❌|Not supported, but support could be added|
 |ClaimFinancialSettings|✅||
 |ClauseCatgConfiguration|✅||
-|CommerceRuleSettings|✅||
 |DisclosureDefinition|✅||
 |DisclosureDefinitionVersion|✅||
 |DisclosureType|✅||
 |EngagementMessagingSettings|✅||
 |ExternalClientAppSettings|✅||
 |ExternalClientApplication|✅||
-|ExternalDocStorageConfig|❌|Not supported, but support could be added|
 |ExtlClntAppMobilePolicies|❌|Not supported, but support could be added|
 |ExtlClntAppMobileSettings|✅||
-|ExtlClntAppOauthConfigurablePolicies|❌|Not supported, but support could be added|
+|ExtlClntAppOauthConfigurablePolicies|✅||
 |ExtlClntAppOauthSettings|✅||
 |IdentityProviderSettings|✅||
 |IntegrationProviderDef|❌|Not supported, but support could be added|
@@ -582,8 +580,6 @@ v57 introduces the following new types.  Here's their current level of support
 - CustomFieldTranslation
 - MatchingRule
 - MarketingResourceType
-- ExtlClntAppOauthPlcyCnfg
-- ExtlClntAppMobileSet
 - CustomExperience
 - ManagedTopic
 - DataPipeline

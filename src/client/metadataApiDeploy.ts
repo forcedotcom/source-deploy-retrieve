@@ -236,7 +236,7 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     },
   };
   private options: MetadataApiDeployOptions;
-  private replacements: Map<string, string[]> = new Map();
+  private replacements: Map<string, Set<string>> = new Map();
   private orgId: string;
   // Keep track of rest deploys separately since Connection.deploy() removes it
   // from the apiOptions and we need it for telemetry.
@@ -334,9 +334,9 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
         // lifecycle have to be async, so wrapped in a promise
         new Promise((resolve) => {
           if (!this.replacements.has(replacement.filename)) {
-            this.replacements.set(replacement.filename, [replacement.replaced]);
+            this.replacements.set(replacement.filename, new Set([replacement.replaced]));
           } else {
-            this.replacements.get(replacement.filename).push(replacement.replaced);
+            this.replacements.get(replacement.filename).add(replacement.replaced);
           }
           resolve();
         })
@@ -387,7 +387,11 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
         `Error trying to compile/send deploy telemetry data for deploy ID: ${this.id}\nError: ${error.message}`
       );
     }
-    const deployResult = new DeployResult(result, this.components, this.replacements);
+    const deployResult = new DeployResult(
+      result,
+      this.components,
+      new Map(Array.from(this.replacements).map(([k, v]) => [k, Array.from(v)]))
+    );
     // only do event hooks if source, (NOT a metadata format) deploy
     if (this.options.components) {
       await lifecycle.emit('scopedPostDeploy', { deployResult, orgId: this.orgId } as ScopedPostDeploy);

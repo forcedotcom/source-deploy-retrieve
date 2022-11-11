@@ -219,10 +219,11 @@ export class ZipWriter extends ComponentWriter {
     callback(err);
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async _final(callback: (err?: Error) => void): Promise<void> {
     let err: Error;
     try {
-      await this.zip.finalize();
+      void this.zip.finalize();
     } catch (e) {
       err = e as Error;
     }

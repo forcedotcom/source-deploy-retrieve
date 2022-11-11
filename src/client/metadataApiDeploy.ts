@@ -408,7 +408,11 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
       const zip = createArchive('zip', { zlib: { level: 9 } });
       // anywhere not at the root level is fine
       zip.directory(this.options.mdapiPath, 'zip');
-      await zip.finalize();
+      // archiver/zip.finalize looks like it is async, because it extends streams, but it is not meant to be used that way
+      // the typings on it are misleading and unintended.  More info https://github.com/archiverjs/node-archiver/issues/476
+      // If you await it, bad things happen, like the convert process exiting silently.  https://github.com/forcedotcom/cli/issues/1791
+      // leave the void as it is
+      void zip.finalize();
       return stream2buffer(zip);
     }
     // read the zip into a buffer

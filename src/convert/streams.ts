@@ -222,6 +222,8 @@ export class ZipWriter extends ComponentWriter {
   public async _final(callback: (err?: Error) => void): Promise<void> {
     let err: Error;
     try {
+      // Unlike the other 2 places where zip.finalize is called, this one DOES need to be awaited
+      // the e2e replacement nuts will fail otherwise
       await this.zip.finalize();
     } catch (e) {
       err = e as Error;

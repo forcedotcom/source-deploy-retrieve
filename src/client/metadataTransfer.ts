@@ -36,6 +36,8 @@ export interface MetadataTransferOptions {
 export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Result extends MetadataTransferResult> {
   protected components: ComponentSet;
   protected logger: Logger;
+  protected profiles: string[];
+  protected idempotentQueryResult;
   protected canceled = false;
   private transferId?: string;
   private event = new EventEmitter();
@@ -61,8 +63,12 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
    */
   public async start(): Promise<AsyncResult> {
     this.canceled = false;
-    const asyncResult = await this.pre();
+    this.components = this.filterIdempotentTypes();
+    const [asyncResult, queryResult] = await Promise.all([this.pre(), this.idempotentQuery()]);
+    // eslint-disable-next-line no-console
+    console.log('query ', queryResult);
     this.transferId = asyncResult.id;
+    this.idempotentQueryResult = queryResult;
     this.logger.debug(`Started metadata transfer. ID = ${this.id}`);
     return asyncResult;
   }
@@ -193,6 +199,32 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
       }
     }
     return getConnectionNoHigherThanOrgAllows(this.usernameOrConnection, this.apiVersion);
+  }
+
+  private async idempotentQuery(): Promise<Promise<{ Metadata: Record<string, unknown> }> | Promise<false>> {
+    if (this.profiles) {
+      const conn = await this.getConnection();
+      // TODO: this will have to query more than just the Profile table
+      return (
+        await conn.tooling.query<{ Metadata: Record<string, unknown> }>(
+          `SELECT Metadata FROM Profile WHERE Name IN(${this.profiles.join(',')})`
+        )
+      ).records;
+    } else return false;
+  }
+
+  private filterIdempotentTypes(): ComponentSet {
+    if (this.components.has({ type: 'Profile', fullName: ComponentSet.WILDCARD })) {
+      this.profiles = this.components
+        .toArray()
+        .filter((component) => component.type.name === 'Profile')
+        .map((component) => {
+          // don't need to check every element exists in remove here, because we're starting with this.components
+          this.components.unsafeDelete(component);
+          return `'${component.fullName}'`;
+        });
+    }
+    return this.components;
   }
 
   private async poll(): Promise<StatusResult> {

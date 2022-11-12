@@ -437,6 +437,10 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     return XML_DECL.concat(j2x.parse(toParse) as string);
   }
 
+  public unsafeDelete(component: ComponentLike): void {
+    this.components.delete(simpleKey(component));
+  }
+
   /**
    * Get only the source-backed metadata components in the set.
    *

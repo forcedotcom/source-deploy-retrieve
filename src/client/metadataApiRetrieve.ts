@@ -167,6 +167,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
     const isMdapiRetrieve = this.options.format === 'metadata';
 
     if (result.status === RequestStatus.Succeeded) {
+      // TOOO: convert json, write xml file, write and create CS items from  idempotentqueryresult
+
+      // this.idempotentQueryResult;
       const zipFileContents = Buffer.from(result.zipFile, 'base64');
       if (isMdapiRetrieve) {
         const name = this.options.zipFileName || 'unpackaged.zip';
@@ -202,7 +205,8 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
   protected async pre(): Promise<AsyncResult> {
     const packageNames = this.getPackageNames();
 
-    if (this.components.size === 0 && !packageNames?.length) {
+    if (this.components.size === 0 && !packageNames?.length && !this.profiles) {
+      // TODO && sfproject entry?
       throw new SfError(messages.getMessage('error_no_components_to_retrieve'), 'MetadataApiRetrieveError');
     }
 

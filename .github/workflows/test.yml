@@ -9,9 +9,17 @@ on:
   workflow_dispatch:
 
 jobs:
-  unit-tests:
-    uses: salesforcecli/github-workflows/.github/workflows/unitTest.yml@main
+  yarn-lockfile-check:
+    uses: salesforcecli/github-workflows/.github/workflows/lockFileCheck.yml@main
+  # Since the Windows unit tests take much longer, we run the linux unit tests first and then run the windows unit tests in parallel with NUTs
+  linux-unit-tests:
+    needs: yarn-lockfile-check
+    uses: salesforcecli/github-workflows/.github/workflows/unitTestsLinux.yml@main
+  windows-unit-tests:
+    needs: linux-unit-tests
+    uses: salesforcecli/github-workflows/.github/workflows/unitTestsWindows.yml@main
   nuts:
+    needs: linux-unit-tests
     uses: salesforcecli/github-workflows/.github/workflows/nut.yml@main
     secrets: inherit
     strategy:
@@ -23,10 +31,10 @@ jobs:
 
   perf-scale-nuts-linux:
     uses: ./.github/workflows/perfScaleNut.yml
-    needs: [unit-tests, nuts]
+    needs: nuts
   perf-scale-nuts-windows:
     uses: ./.github/workflows/perfScaleNut.yml
-    needs: [unit-tests, nuts]
+    needs: nuts
     with:
       os: 'windows-latest'
 
@@ -34,7 +42,7 @@ jobs:
   # the following is highly duplicative to allow linux to start all the nuts without waiting for windows primer
   extNuts-primer-linux:
     name: extNUTs-linux-prime
-    needs: [unit-tests, nuts]
+    needs: nuts
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
       packageName: '@salesforce/source-deploy-retrieve'
@@ -48,7 +56,7 @@ jobs:
 
   extNuts-primer-windows:
     name: extNUTs-windows-prime
-    needs: [unit-tests, nuts]
+    needs: nuts
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
       packageName: '@salesforce/source-deploy-retrieve'

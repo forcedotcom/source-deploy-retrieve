@@ -529,18 +529,17 @@ v57 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
+|ActionLauncherItemDef|❌|Not supported, but support could be added|
 |ActionableListDefinition|❌|Not supported, but support could be added|
-|AffinityScoreDefinition|❌|Not supported, but support could be added|
 |AppExplorationDataConsent|❌|Not supported, but support could be added|
 |ClaimFinancialSettings|✅||
 |ClauseCatgConfiguration|✅||
 |DisclosureDefinition|✅||
 |DisclosureDefinitionVersion|✅||
 |DisclosureType|✅||
-|EngagementMessagingSettings|✅||
 |ExternalClientAppSettings|✅||
 |ExternalClientApplication|✅||
-|ExtlClntAppMobilePolicies|❌|Not supported, but support could be added|
+|ExtlClntAppMobileConfigurablePolicies|✅||
 |ExtlClntAppMobileSettings|✅||
 |ExtlClntAppOauthConfigurablePolicies|✅||
 |ExtlClntAppOauthSettings|✅||
@@ -549,6 +548,7 @@ v57 introduces the following new types.  Here's their current level of support
 |LocationUse|❌|Not supported, but support could be added|
 |OmniSupervisorConfig|✅||
 |PaymentsIngestEnabledSettings|✅||
+|PersonAccountOwnerPowerUser|❌|Not supported, but support could be added|
 |PipelineInspMetricConfig|❌|Not supported, but support could be added|
 |ProductSpecificationTypeDefinition|❌|Not supported, but support could be added|
 |ServiceProcess|❌|Not supported, but support could be added|

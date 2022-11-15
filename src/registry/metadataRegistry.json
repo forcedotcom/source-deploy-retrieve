@@ -1391,6 +1391,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "extlclntappmobileconfigurablepolicies": {
+      "id": "extlclntappmobileconfigurablepolicies",
+      "name": "ExtlClntAppMobileConfigurablePolicies",
+      "suffix": "ecaMobPlcy",
+      "directoryName": "mobilePolicies",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "extlclntappoauthsettings": {
       "id": "extlclntappoauthsettings",
       "name": "ExtlClntAppOauthSettings",
@@ -3404,6 +3412,7 @@
     "connectedApp": "connectedapp",
     "eca": "externalclientapplication",
     "ecaOauthPlcy": "extlclntappoauthconfigurablepolicies",
+    "ecaMobPlcy": "extlclntappmobileconfigurablepolicies",
     "ecaMob": "extlclntappmobilesettings",
     "ecaOauth": "extlclntappoauthsettings",
     "appMenu": "appmenu",

@@ -112,6 +112,7 @@
       "directoryName": "staticresources",
       "inFolder": false,
       "strictDirectoryName": true,
+      "supportsPartialDelete": true,
       "strategies": {
         "adapter": "mixedContent",
         "transformer": "staticResource"
@@ -134,6 +135,7 @@
       "directoryName": "experiences",
       "inFolder": false,
       "strictDirectoryName": true,
+      "supportsPartialDelete": true,
       "strategies": {
         "adapter": "mixedContent"
       }
@@ -163,6 +165,7 @@
       "directoryName": "aura",
       "inFolder": false,
       "strictDirectoryName": true,
+      "supportsPartialDelete": true,
       "strategies": {
         "adapter": "bundle"
       }
@@ -173,6 +176,7 @@
       "directoryName": "lwc",
       "inFolder": false,
       "strictDirectoryName": true,
+      "supportsPartialDelete": true,
       "strategies": {
         "adapter": "bundle"
       }
@@ -1123,6 +1127,7 @@
       "directoryName": "waveTemplates",
       "inFolder": false,
       "strictDirectoryName": true,
+      "supportsPartialDelete": true,
       "strategies": {
         "adapter": "bundle"
       }
@@ -1388,6 +1393,14 @@
       "name": "ExtlClntAppOauthConfigurablePolicies",
       "suffix": "ecaOauthPlcy",
       "directoryName": "oauthPolicies",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "extlclntappmobileconfigurablepolicies": {
+      "id": "extlclntappmobileconfigurablepolicies",
+      "name": "ExtlClntAppMobileConfigurablePolicies",
+      "suffix": "ecaMobPlcy",
+      "directoryName": "mobilePolicies",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -3141,6 +3154,7 @@
       "directoryName": "digitalExperiences",
       "inFolder": false,
       "supportsWildcardAndName": true,
+      "supportsPartialDelete": true,
       "suffix": "digitalExperience",
       "children": {
         "types": {
@@ -3149,6 +3163,7 @@
             "name": "DigitalExperience",
             "directoryName": "digitalExperiences",
             "suffix": "digitalExperience",
+            "supportsPartialDelete": true,
             "strategies": {
               "adapter": "digitalExperience"
             }
@@ -3404,6 +3419,7 @@
     "connectedApp": "connectedapp",
     "eca": "externalclientapplication",
     "ecaOauthPlcy": "extlclntappoauthconfigurablepolicies",
+    "ecaMobPlcy": "extlclntappmobileconfigurablepolicies",
     "ecaMob": "extlclntappmobilesettings",
     "ecaOauth": "extlclntappoauthsettings",
     "appMenu": "appmenu",

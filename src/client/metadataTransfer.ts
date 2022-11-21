@@ -14,6 +14,7 @@ import {
   Messages,
   PollingClient,
   SfError,
+  SfProject,
   StatusResult,
 } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
@@ -26,6 +27,8 @@ import { AsyncResult, MetadataRequestStatus, MetadataTransferResult, RequestStat
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['md_request_fail']);
 
+export type ProfileMetadata = { Metadata: Record<string, unknown>; FullName: string };
+
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
   components?: ComponentSet;
@@ -36,8 +39,8 @@ export interface MetadataTransferOptions {
 export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Result extends MetadataTransferResult> {
   protected components: ComponentSet;
   protected logger: Logger;
-  protected profiles: string[];
-  protected idempotentQueryResult;
+  protected profiles: string[] = [];
+  protected idempotentQueryResult: ProfileMetadata[] = [];
   protected canceled = false;
   private transferId?: string;
   private event = new EventEmitter();
@@ -63,10 +66,8 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
    */
   public async start(): Promise<AsyncResult> {
     this.canceled = false;
-    this.components = this.filterIdempotentTypes();
-    const [asyncResult, queryResult] = await Promise.all([this.pre(), this.idempotentQuery()]);
-    // eslint-disable-next-line no-console
-    console.log('query ', queryResult);
+    this.filterProfiles();
+    const [asyncResult, queryResult] = await Promise.all([this.pre(), this.profileQuery()]);
     this.transferId = asyncResult.id;
     this.idempotentQueryResult = queryResult;
     this.logger.debug(`Started metadata transfer. ID = ${this.id}`);
@@ -201,30 +202,25 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
     return getConnectionNoHigherThanOrgAllows(this.usernameOrConnection, this.apiVersion);
   }
 
-  private async idempotentQuery(): Promise<Promise<{ Metadata: Record<string, unknown> }> | Promise<false>> {
-    if (this.profiles) {
+  private async profileQuery(): Promise<ProfileMetadata[]> {
+    if (this.profiles.length) {
       const conn = await this.getConnection();
-      // TODO: this will have to query more than just the Profile table
-      return (
-        await conn.tooling.query<{ Metadata: Record<string, unknown> }>(
-          `SELECT Metadata FROM Profile WHERE Name IN(${this.profiles.join(',')})`
-        )
-      ).records;
-    } else return false;
+      const results = (await conn.tooling.query<ProfileMetadata>('SELECT FullName, Metadata FROM Profile')).records;
+      // we can't do this in the query, because Profiles doesn't support "FullName IN ('x','y')"
+      // https://developer.salesforce.com/docs/atlas.en-us.api_tooling.meta/api_tooling/tooling_api_objects_profile.htm
+      // > Query this field only if the query result contains no more than one record. Otherwise, an error is returned. If more than one record exists, use multiple queries to retrieve the records. This limit protects performance.
+      return results.filter((result) => this.profiles.includes(result.FullName));
+    } else return [];
   }
 
-  private filterIdempotentTypes(): ComponentSet {
-    if (this.components.has({ type: 'Profile', fullName: ComponentSet.WILDCARD })) {
-      this.profiles = this.components
-        .toArray()
-        .filter((component) => component.type.name === 'Profile')
-        .map((component) => {
-          // don't need to check every element exists in remove here, because we're starting with this.components
-          this.components.unsafeDelete(component);
-          return `'${component.fullName}'`;
-        });
+  private filterProfiles(): void {
+    if (SfProject.getInstance().getSfProjectJson().getContents()['fullProfileRetrieves']) {
+      this.profiles = this.components.getByType('Profile').map((component) => {
+        // don't need to check every element exists in remove here, because we're starting with this.components
+        this.components.unsafeDelete(component);
+        return component.fullName;
+      });
     }
-    return this.components;
   }
 
   private async poll(): Promise<StatusResult> {

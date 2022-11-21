@@ -10,10 +10,12 @@ import * as unzipper from 'unzipper';
 import { asBoolean, isString } from '@salesforce/ts-types';
 import { Messages, SfError, Lifecycle } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
+import { j2xParser } from 'fast-xml-parser';
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
 import { SourceComponent, ZipTreeContainer } from '../resolve';
 import { RegistryAccess } from '../registry';
+import { XML_DECL, XML_NS_URL } from '../common';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import {
   AsyncResult,
@@ -167,9 +169,6 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
     const isMdapiRetrieve = this.options.format === 'metadata';
 
     if (result.status === RequestStatus.Succeeded) {
-      // TOOO: convert json, write xml file, write and create CS items from  idempotentqueryresult
-
-      // this.idempotentQueryResult;
       const zipFileContents = Buffer.from(result.zipFile, 'base64');
       if (isMdapiRetrieve) {
         const name = this.options.zipFileName || 'unpackaged.zip';
@@ -184,9 +183,11 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
       } else {
         components = await this.extract(zipFileContents);
       }
-    }
 
-    components ??= new ComponentSet(undefined, this.options.registry);
+      components ??= new ComponentSet(undefined, this.options.registry);
+
+      this.writeProfilesIfQueried(components);
+    }
 
     const retrieveResult = new RetrieveResult(result, components, this.components);
     if (!isMdapiRetrieve) {
@@ -205,8 +206,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
   protected async pre(): Promise<AsyncResult> {
     const packageNames = this.getPackageNames();
 
-    if (this.components.size === 0 && !packageNames?.length && !this.profiles) {
-      // TODO && sfproject entry?
+    if (this.components.size === 0 && !packageNames?.length && this.profiles.length === 0) {
       throw new SfError(messages.getMessage('error_no_components_to_retrieve'), 'MetadataApiRetrieveError');
     }
 
@@ -247,6 +247,38 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
 
   private getPackageNames(): string[] {
     return this.getPackageOptions()?.map((pkg) => pkg.name);
+  }
+
+  private writeProfilesIfQueried(components: ComponentSet): void {
+    if (this.idempotentQueryResult.length > 0) {
+      const j2x = new j2xParser({
+        format: true,
+        indentBy: '    ',
+      });
+      const profileType = this.options.registry.getTypeByName('profile');
+
+      this.idempotentQueryResult.forEach((profile) => {
+        const bodyContent = (j2x.parse(profile.Metadata) as string).replace(/\n/g, '\n    ');
+        const xml = `${XML_DECL}<Profile xmlns="${XML_NS_URL}">
+    ${bodyContent.substring(0, bodyContent.lastIndexOf('    '))}</Profile>\n`;
+
+        const xmlPath = path.join(
+          this.options.output,
+          'main',
+          'default',
+          profileType.directoryName,
+          `${profile.FullName}.${profileType.suffix}-meta.xml`
+        );
+        const sc = new SourceComponent({
+          name: profile.FullName,
+          type: profileType,
+          xml: xmlPath,
+        });
+
+        fs.writeFileSync(xmlPath, xml);
+        components.add(sc);
+      });
+    }
   }
 
   private getPackageOptions(): PackageOption[] {

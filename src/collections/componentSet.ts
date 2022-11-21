@@ -16,20 +16,20 @@ import {
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
 import {
   ComponentLike,
+  ConnectionResolver,
   ManifestResolver,
   MetadataComponent,
   MetadataMember,
   MetadataResolver,
-  ConnectionResolver,
   SourceComponent,
   TreeContainer,
 } from '../resolve';
 import { getCurrentApiVersion, MetadataType, RegistryAccess } from '../registry';
 import {
   DestructiveChangesType,
+  FromConnectionOptions,
   FromManifestOptions,
   FromSourceOptions,
-  FromConnectionOptions,
   PackageManifestObject,
   PackageTypeMembers,
 } from './types';
@@ -404,7 +404,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       typeMembers.push({ members: members.sort(), name: typeName });
     }
 
-    const pkg = {
+    return {
       Package: {
         ...{
           types: typeMembers.sort((a, b) => (a.name > b.name ? 1 : -1)),
@@ -413,8 +413,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         ...(this.fullName ? { fullName: this.fullName } : {}),
       },
     };
-
-    return pkg;
   }
 
   /**
@@ -424,7 +422,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * E.g. package.xml or destructiveChanges.xml
    *
    * @param indentation Number of spaces to indent lines by.
-   * @param forDestructiveChanges Whether to build a manifest for destructive changes.
+   * @param destructiveType wether to create a preDestructiveChanges, or postDestructiveChanges
    */
   public async getPackageXml(indentation = 4, destructiveType?: DestructiveChangesType): Promise<string> {
     const j2x = new j2xParser({
@@ -564,6 +562,18 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
 
     return false;
+  }
+
+  public getByType(type: string): ComponentLike[] {
+    const res: ComponentLike[] = [];
+    const registryType = this.registry.getTypeByName(type);
+    for (const key of this.components.keys()) {
+      if (key.split('#')[0] === registryType.id) {
+        const component = this.components.get(key);
+        res.push(...component.values());
+      }
+    }
+    return res;
   }
 
   /**

@@ -9,7 +9,7 @@ import { Messages, SfError } from '@salesforce/core';
 import { parse, validate } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
-import { replacementIterations } from '../../src/convert/replacements';
+import { replacementIterations } from '../convert/replacements';
 import { baseName, parseMetadataXml, trimUntil } from '../utils';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common';
 import { SfdxFileFormat } from '../convert';

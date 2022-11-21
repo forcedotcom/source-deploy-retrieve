@@ -107,6 +107,13 @@ export interface MetadataType {
   supportsWildcardAndName?: boolean;
 
   /**
+   * Whether the component can be partially deleted, such as metadata types that are made up of multiple files.
+   *
+   * __Examples:__ `LightningComponentBundle`, `ExperienceBundle`, `StaticResource`, and `DigitalExperienceBundle`
+   */
+  supportsPartialDelete?: boolean;
+
+  /**
    * Whenever this type is requested, return the aliasFor type instead
    */
   aliasFor?: string;

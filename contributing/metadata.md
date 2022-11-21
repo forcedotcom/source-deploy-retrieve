@@ -40,6 +40,8 @@ yarn update-registry
 
 inFolderTypes and types with childXml in their describe are not supported. You **want** to explore the various strategies for those (see the [SDR Handbook](../HANDBOOK.md) in this repo) and [create tests](#integration-testing) to validate that your types are being handled correctly.
 
+For types that contain multiple files (e.g., bundles such as LWC, Aura, ExperienceBundle) where deleting 1 file should not delete the entire component you should set `supportsPartialDelete` on the type definition. For an example of this see the `ExperienceBundle` definition in `metadataRegistry.json`.
+
 For those situations, refer to another existing type in the registry that you want yours to behave like.
 
 If that's confusing, it's a great time to reach out to the CLI team.

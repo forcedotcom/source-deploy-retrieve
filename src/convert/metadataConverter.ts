@@ -134,8 +134,11 @@ export class MetadataConverter {
         result.converted = (writer as StandardWriter).converted;
       }
       return result;
-    } catch (err: unknown) {
-      const error = isString(err) ? new Error(err) : (err as Error);
+    } catch (err) {
+      if (!(err instanceof Error) && !isString(err)) {
+        throw err;
+      }
+      const error = isString(err) ? new Error(err) : err;
       throw new SfError(messages.getMessage('error_failed_convert', [error.message]), 'ConversionError', [], error);
     }
   }

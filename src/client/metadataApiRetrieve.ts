@@ -15,7 +15,7 @@ import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
 import { SourceComponent, ZipTreeContainer } from '../resolve';
 import { RegistryAccess } from '../registry';
-import { XML_DECL, XML_NS_URL } from '../common';
+import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX, XML_DECL, XML_NS_URL } from '../common';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import {
   AsyncResult,
@@ -183,11 +183,10 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
       } else {
         components = await this.extract(zipFileContents);
       }
-
-      components ??= new ComponentSet(undefined, this.options.registry);
-
-      this.writeProfilesIfQueried(components);
     }
+    components ??= new ComponentSet(undefined, this.options.registry);
+
+    this.writeProfilesIfQueried(components);
 
     const retrieveResult = new RetrieveResult(result, components, this.components);
     if (!isMdapiRetrieve) {
@@ -250,25 +249,21 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
   }
 
   private writeProfilesIfQueried(components: ComponentSet): void {
-    if (this.idempotentQueryResult.length > 0) {
+    if (this.profileQueryResult.length > 0) {
       const j2x = new j2xParser({
         format: true,
         indentBy: '    ',
       });
       const profileType = this.options.registry.getTypeByName('profile');
+      const profileDir = path.join(this.options.output, DEFAULT_PACKAGE_ROOT_SFDX, profileType.directoryName);
+      fs.mkdirSync(profileDir, { recursive: true });
 
-      this.idempotentQueryResult.forEach((profile) => {
+      this.profileQueryResult.forEach((profile) => {
         const bodyContent = (j2x.parse(profile.Metadata) as string).replace(/\n/g, '\n    ');
         const xml = `${XML_DECL}<Profile xmlns="${XML_NS_URL}">
     ${bodyContent.substring(0, bodyContent.lastIndexOf('    '))}</Profile>\n`;
 
-        const xmlPath = path.join(
-          this.options.output,
-          'main',
-          'default',
-          profileType.directoryName,
-          `${profile.FullName}.${profileType.suffix}-meta.xml`
-        );
+        const xmlPath = path.join(profileDir, `${profile.FullName}.${profileType.suffix}${META_XML_SUFFIX}`);
         const sc = new SourceComponent({
           name: profile.FullName,
           type: profileType,

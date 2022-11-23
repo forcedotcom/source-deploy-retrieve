@@ -6,15 +6,15 @@
  */
 import { fail } from 'assert';
 import { join } from 'path';
-import { Messages } from '@salesforce/core';
+import { Messages, SfProject } from '@salesforce/core';
 import { expect } from 'chai';
-import chai = require('chai');
-import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import * as unzipper from 'unzipper';
 import { SinonStub } from 'sinon';
 import { getString } from '@salesforce/ts-types';
 import * as fs from 'graceful-fs';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+import chai = require('chai');
+import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import {
   ComponentSet,
   ComponentStatus,
@@ -22,6 +22,7 @@ import {
   MetadataApiRetrieve,
   MetadataApiRetrieveStatus,
   registry,
+  RegistryAccess,
   RequestStatus,
   RetrieveResult,
   SourceComponent,
@@ -33,6 +34,7 @@ import { COMPONENT } from '../mock/type-constants/apexClassConstant';
 import { DECOMPOSED_COMPONENT } from '../mock/type-constants/customObjectConstant';
 import * as coverage from '../../src/registry/coverage';
 import { testApiVersion } from '../mock/manifestConstants';
+import { PROFILE } from '../mock/type-constants/profileConstant';
 
 chai.use(deepEqualInAnyOrder);
 
@@ -192,6 +194,142 @@ describe('MetadataApiRetrieve', () => {
         await operation.start();
 
         expect(operation.id).to.deep.equal(response.id);
+      });
+
+      describe('full profile retrieves', () => {
+        it('should remove all Profiles and query', async () => {
+          $$.SANDBOX.stub(SfProject, 'getInstance').returns({
+            // no need to implement all members of SfProjectJson
+            // @ts-ignore
+            getSfProjectJson: () => ({ getContents: () => ({ fullProfileRetrieves: true }) }),
+          });
+          const toRetrieve = new ComponentSet([PROFILE]);
+          const options = {
+            toRetrieve,
+            merge: true,
+            successes: toRetrieve,
+          };
+          const queryResult = [{ Metadata: '{name: admin}', FullName: 'Admin' }];
+          const { operation, retrieveStub } = await stubMetadataRetrieve($$, testOrg, options);
+          // @ts-ignore - must stub from the operation's connection, but getConnection is protected
+          const conn = await operation.getConnection();
+          $$.SANDBOX.stub(conn.tooling, 'query').resolves({
+            done: true,
+            totalSize: 1,
+            records: queryResult,
+          });
+          await operation.start();
+          // @ts-ignore - protected member, but we'll access it for assertions
+          const components = operation.components;
+
+          expect(retrieveStub.calledOnce).to.be.true;
+          expect(retrieveStub.firstCall.args[0]).to.deep.equal({
+            apiVersion: (await testOrg.getConnection()).getApiVersion(),
+            unpackaged: (await toRetrieve.getObject()).Package,
+          });
+          expect(components.size).to.equal(0);
+          // @ts-ignore
+          expect(operation.profileQueryResult).to.deep.equal(queryResult);
+          // @ts-ignore
+          expect(operation.profiles).to.deep.equal(['Admin']);
+        });
+
+        it('should remove all Profiles and retrieve other metadata', async () => {
+          $$.SANDBOX.stub(SfProject, 'getInstance').returns({
+            // no need to implement all members of SfProjectJson
+            // @ts-ignore
+            getSfProjectJson: () => ({ getContents: () => ({ fullProfileRetrieves: true }) }),
+          });
+          const toRetrieve = new ComponentSet([PROFILE, COMPONENT]);
+          const options = {
+            toRetrieve,
+            merge: true,
+            successes: toRetrieve,
+          };
+          const queryResult = [{ Metadata: '{name: admin}', FullName: 'Admin' }];
+          const { operation, retrieveStub } = await stubMetadataRetrieve($$, testOrg, options);
+          // @ts-ignore - must stub from the operation's connection, but getConnection is protected
+          const conn = await operation.getConnection();
+          $$.SANDBOX.stub(conn.tooling, 'query').resolves({
+            done: true,
+            totalSize: 1,
+            records: queryResult,
+          });
+          await operation.start();
+          // @ts-ignore - protected member, but we'll access it for assertions
+          const components = operation.components;
+
+          expect(retrieveStub.calledOnce).to.be.true;
+          expect(retrieveStub.firstCall.args[0]).to.deep.equal({
+            apiVersion: (await testOrg.getConnection()).getApiVersion(),
+            unpackaged: (await toRetrieve.getObject()).Package,
+          });
+          expect(components.size).to.equal(1);
+          // @ts-ignore
+          expect(operation.profileQueryResult).to.deep.equal(queryResult);
+          // @ts-ignore
+          expect(operation.profiles).to.deep.equal(['Admin']);
+        });
+
+        it('should not do anything different if sfdx-project.json entry is false', async () => {
+          $$.SANDBOX.stub(SfProject, 'getInstance').returns({
+            // no need to implement all members of SfProjectJson
+            // @ts-ignore
+            getSfProjectJson: () => ({ getContents: () => ({ fullProfileRetrieves: false }) }),
+          });
+          const toRetrieve = new ComponentSet([PROFILE, COMPONENT]);
+          const options = {
+            toRetrieve,
+            merge: true,
+            successes: toRetrieve,
+          };
+          const { operation, retrieveStub } = await stubMetadataRetrieve($$, testOrg, options);
+
+          await operation.start();
+          // @ts-ignore - protected member, but we'll access it for assertions
+          const components = operation.components;
+
+          expect(retrieveStub.calledOnce).to.be.true;
+          expect(retrieveStub.firstCall.args[0]).to.deep.equal({
+            apiVersion: (await testOrg.getConnection()).getApiVersion(),
+            unpackaged: (await toRetrieve.getObject()).Package,
+          });
+          expect(components.size).to.equal(2);
+          // @ts-ignore
+          expect(operation.profileQueryResult).to.deep.equal([]);
+          // @ts-ignore
+          expect(operation.profiles).to.deep.equal([]);
+        });
+
+        it('should not do anything different if sfdx-project.json entry is undefined', async () => {
+          $$.SANDBOX.stub(SfProject, 'getInstance').returns({
+            // no need to implement all members of SfProjectJson
+            // @ts-ignore
+            getSfProjectJson: () => ({ getContents: () => ({}) }),
+          });
+          const toRetrieve = new ComponentSet([PROFILE, COMPONENT]);
+          const options = {
+            toRetrieve,
+            merge: true,
+            successes: toRetrieve,
+          };
+          const { operation, retrieveStub } = await stubMetadataRetrieve($$, testOrg, options);
+
+          await operation.start();
+          // @ts-ignore - protected member, but we'll access it for assertions
+          const components = operation.components;
+
+          expect(retrieveStub.calledOnce).to.be.true;
+          expect(retrieveStub.firstCall.args[0]).to.deep.equal({
+            apiVersion: (await testOrg.getConnection()).getApiVersion(),
+            unpackaged: (await toRetrieve.getObject()).Package,
+          });
+          expect(components.size).to.equal(2);
+          // @ts-ignore
+          expect(operation.profileQueryResult).to.deep.equal([]);
+          // @ts-ignore
+          expect(operation.profiles).to.deep.equal([]);
+        });
       });
     });
 
@@ -492,6 +630,61 @@ describe('MetadataApiRetrieve', () => {
       expect(writeFileStub.firstCall.args[1]).to.deep.equal(zipFileContents);
       expect(openBufferStub.called).to.be.false;
       expect(mdapiRetrieveExtractStub.called).to.be.false;
+    });
+
+    describe('full Profile retrieves', () => {
+      it('will correctly write new profile', () => {
+        const zipFileName = 'retrievedFiles.zip';
+        const registryAccess = new RegistryAccess();
+        const mdapiRetrieve = new MetadataApiRetrieve({
+          usernameOrConnection,
+          output,
+          format,
+          zipFileName,
+          registry: registryAccess,
+        });
+        // @ts-ignore - overriding a protected member
+        mdapiRetrieve.profileQueryResult = [{ Metadata: { name: 'admin' }, FullName: 'Admin' }];
+        mdapiRetrieve.post({
+          success: true,
+          status: RequestStatus.Succeeded,
+          id: '123',
+          zipFile: zipFileName,
+          done: true,
+          messages: [],
+          fileProperties: [],
+        });
+        const xmlPath = join(output, 'main', 'default', 'profiles', 'Admin.profile-meta.xml');
+        expect(writeFileStub.callCount).to.equal(2);
+        expect(writeFileStub.secondCall.args[0]).to.equal(xmlPath);
+        expect(writeFileStub.secondCall.args[1]).to.equal(
+          '<?xml version="1.0" encoding="UTF-8"?>\n<Profile xmlns="http://soap.sforce.com/2006/04/metadata">\n    <name>admin</name>\n</Profile>\n'
+        );
+      });
+
+      it('will not write extra Profiles if not retrieved', () => {
+        const zipFileName = 'retrievedFiles.zip';
+        const registryAccess = new RegistryAccess();
+        const mdapiRetrieve = new MetadataApiRetrieve({
+          usernameOrConnection,
+          output,
+          format,
+          zipFileName,
+          registry: registryAccess,
+        });
+        // @ts-ignore - overriding a protected member
+        mdapiRetrieve.profileQueryResult = [];
+        mdapiRetrieve.post({
+          success: true,
+          status: RequestStatus.Succeeded,
+          id: '123',
+          zipFile: zipFileName,
+          done: true,
+          messages: [],
+          fileProperties: [],
+        });
+        expect(writeFileStub.callCount).to.equal(1);
+      });
     });
   });
 

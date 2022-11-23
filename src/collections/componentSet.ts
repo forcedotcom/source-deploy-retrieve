@@ -314,9 +314,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       registry: this.registry,
       apiVersion: this.apiVersion,
     });
-    // if (!options.apiVersion && !this.apiVersion && !this.sourceApiVersion) {
-    //   operationOptions.apiVersion = `${await getCurrentApiVersion()}.0`;
-    // }
 
     const mdapiDeploy = new MetadataApiDeploy(operationOptions);
     await mdapiDeploy.start();
@@ -568,7 +565,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const res: ComponentLike[] = [];
     const registryType = this.registry.getTypeByName(type);
     for (const key of this.components.keys()) {
-      if (key.split('#')[0] === registryType.id) {
+      if (key.split(KEY_DELIMITER)[0] === registryType.id) {
         const component = this.components.get(key);
         res.push(...component.values());
       }

@@ -40,7 +40,7 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
   protected components: ComponentSet;
   protected logger: Logger;
   protected profiles: string[] = [];
-  protected idempotentQueryResult: ProfileMetadata[] = [];
+  protected profileQueryResult: ProfileMetadata[] = [];
   protected canceled = false;
   private transferId?: string;
   private event = new EventEmitter();
@@ -69,7 +69,8 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
     this.filterProfiles();
     const [asyncResult, queryResult] = await Promise.all([this.pre(), this.profileQuery()]);
     this.transferId = asyncResult.id;
-    this.idempotentQueryResult = queryResult;
+    this.profileQueryResult = queryResult;
+    this.logger.debug(`found the following profiles to query separately ${this.profiles.join(', ')}`);
     this.logger.debug(`Started metadata transfer. ID = ${this.id}`);
     return asyncResult;
   }
@@ -215,6 +216,7 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
 
   private filterProfiles(): void {
     if (SfProject.getInstance().getSfProjectJson().getContents()['fullProfileRetrieves']) {
+      this.logger.debug('Removing Profiles from component set and querying separately');
       this.profiles = this.components.getByType('Profile').map((component) => {
         // don't need to check every element exists in remove here, because we're starting with this.components
         this.components.unsafeDelete(component);

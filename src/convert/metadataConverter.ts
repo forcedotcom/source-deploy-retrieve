@@ -8,6 +8,7 @@ import { Readable, PassThrough } from 'stream';
 import { dirname, join, normalize } from 'path';
 import { Messages, SfError } from '@salesforce/core';
 import { promises } from 'graceful-fs';
+import { isString } from '@salesforce/ts-types';
 import { SourceComponent } from '../resolve';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
 import { SourcePath } from '../common';
@@ -133,13 +134,12 @@ export class MetadataConverter {
         result.converted = (writer as StandardWriter).converted;
       }
       return result;
-    } catch (e) {
-      throw new SfError(
-        messages.getMessage('error_failed_convert', [(e as Error).message]),
-        'ConversionError',
-        [],
-        e as Error
-      );
+    } catch (err) {
+      if (!(err instanceof Error) && !isString(err)) {
+        throw err;
+      }
+      const error = isString(err) ? new Error(err) : err;
+      throw new SfError(messages.getMessage('error_failed_convert', [error.message]), 'ConversionError', [], error);
     }
   }
 }

@@ -13,6 +13,7 @@ import { SinonStub } from 'sinon';
 import { getString } from '@salesforce/ts-types';
 import * as fs from 'graceful-fs';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+import { stubMethod } from '@salesforce/ts-sinon';
 import chai = require('chai');
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import {
@@ -198,9 +199,7 @@ describe('MetadataApiRetrieve', () => {
 
       describe('full profile retrieves', () => {
         it('should remove all Profiles and query', async () => {
-          $$.SANDBOX.stub(SfProject, 'getInstance').returns({
-            // no need to implement all members of SfProjectJson
-            // @ts-ignore
+          stubMethod($$.SANDBOX, SfProject, 'getInstance').returns({
             getSfProjectJson: () => ({ getContents: () => ({ fullProfileRetrieves: true }) }),
           });
           const toRetrieve = new ComponentSet([PROFILE]);
@@ -219,25 +218,23 @@ describe('MetadataApiRetrieve', () => {
             records: queryResult,
           });
           await operation.start();
-          // @ts-ignore - protected member, but we'll access it for assertions
-          const components = operation.components;
 
           expect(retrieveStub.calledOnce).to.be.true;
           expect(retrieveStub.firstCall.args[0]).to.deep.equal({
             apiVersion: (await testOrg.getConnection()).getApiVersion(),
             unpackaged: (await toRetrieve.getObject()).Package,
           });
-          expect(components.size).to.equal(0);
-          // @ts-ignore
+          // Because this is testing 'pre' we've only populated members on the class at that point
+          // @ts-ignore - protected member, but we'll access it for assertions
+          expect(operation.components.size).to.equal(0);
+          // @ts-ignore - protected member, but we'll access it for assertions
           expect(operation.profileQueryResult).to.deep.equal(queryResult);
-          // @ts-ignore
+          // @ts-ignore - protected member, but we'll access it for assertions
           expect(operation.profiles).to.deep.equal(['Admin']);
         });
 
         it('should remove all Profiles and retrieve other metadata', async () => {
-          $$.SANDBOX.stub(SfProject, 'getInstance').returns({
-            // no need to implement all members of SfProjectJson
-            // @ts-ignore
+          stubMethod($$.SANDBOX, SfProject, 'getInstance').returns({
             getSfProjectJson: () => ({ getContents: () => ({ fullProfileRetrieves: true }) }),
           });
           const toRetrieve = new ComponentSet([PROFILE, COMPONENT]);
@@ -256,25 +253,22 @@ describe('MetadataApiRetrieve', () => {
             records: queryResult,
           });
           await operation.start();
-          // @ts-ignore - protected member, but we'll access it for assertions
-          const components = operation.components;
 
           expect(retrieveStub.calledOnce).to.be.true;
           expect(retrieveStub.firstCall.args[0]).to.deep.equal({
             apiVersion: (await testOrg.getConnection()).getApiVersion(),
             unpackaged: (await toRetrieve.getObject()).Package,
           });
-          expect(components.size).to.equal(1);
-          // @ts-ignore
+          // @ts-ignore - protected member, but we'll access it for assertions
+          expect(operation.components.size).to.equal(1);
+          // @ts-ignore - protected member, but we'll access it for assertions
           expect(operation.profileQueryResult).to.deep.equal(queryResult);
-          // @ts-ignore
+          // @ts-ignore - protected member, but we'll access it for assertions
           expect(operation.profiles).to.deep.equal(['Admin']);
         });
 
         it('should not do anything different if sfdx-project.json entry is false', async () => {
-          $$.SANDBOX.stub(SfProject, 'getInstance').returns({
-            // no need to implement all members of SfProjectJson
-            // @ts-ignore
+          stubMethod($$.SANDBOX, SfProject, 'getInstance').returns({
             getSfProjectJson: () => ({ getContents: () => ({ fullProfileRetrieves: false }) }),
           });
           const toRetrieve = new ComponentSet([PROFILE, COMPONENT]);
@@ -286,15 +280,14 @@ describe('MetadataApiRetrieve', () => {
           const { operation, retrieveStub } = await stubMetadataRetrieve($$, testOrg, options);
 
           await operation.start();
-          // @ts-ignore - protected member, but we'll access it for assertions
-          const components = operation.components;
 
           expect(retrieveStub.calledOnce).to.be.true;
           expect(retrieveStub.firstCall.args[0]).to.deep.equal({
             apiVersion: (await testOrg.getConnection()).getApiVersion(),
             unpackaged: (await toRetrieve.getObject()).Package,
           });
-          expect(components.size).to.equal(2);
+          // @ts-ignore - protected member, but we'll access it for assertions
+          expect(operation.components.size).to.equal(2);
           // @ts-ignore
           expect(operation.profileQueryResult).to.deep.equal([]);
           // @ts-ignore
@@ -302,10 +295,8 @@ describe('MetadataApiRetrieve', () => {
         });
 
         it('should not do anything different if sfdx-project.json entry is undefined', async () => {
-          $$.SANDBOX.stub(SfProject, 'getInstance').returns({
-            // no need to implement all members of SfProjectJson
-            // @ts-ignore
-            getSfProjectJson: () => ({ getContents: () => ({}) }),
+          stubMethod($$.SANDBOX, SfProject, 'getInstance').returns({
+            getSfProjectJson: () => ({ getContents: () => {} }),
           });
           const toRetrieve = new ComponentSet([PROFILE, COMPONENT]);
           const options = {
@@ -316,15 +307,14 @@ describe('MetadataApiRetrieve', () => {
           const { operation, retrieveStub } = await stubMetadataRetrieve($$, testOrg, options);
 
           await operation.start();
-          // @ts-ignore - protected member, but we'll access it for assertions
-          const components = operation.components;
 
           expect(retrieveStub.calledOnce).to.be.true;
           expect(retrieveStub.firstCall.args[0]).to.deep.equal({
             apiVersion: (await testOrg.getConnection()).getApiVersion(),
             unpackaged: (await toRetrieve.getObject()).Package,
           });
-          expect(components.size).to.equal(2);
+          // @ts-ignore - protected member, but we'll access it for assertions
+          expect(operation.components.size).to.equal(2);
           // @ts-ignore
           expect(operation.profileQueryResult).to.deep.equal([]);
           // @ts-ignore
@@ -355,8 +345,7 @@ describe('MetadataApiRetrieve', () => {
       };
 
       it('should retrieve zip and extract to directory', async () => {
-        const component = COMPONENT;
-        const toRetrieve = new ComponentSet([component]);
+        const toRetrieve = new ComponentSet([COMPONENT]);
         const { operation, convertStub } = await stubMetadataRetrieve($$, testOrg, {
           toRetrieve,
           successes: toRetrieve,
@@ -476,8 +465,7 @@ describe('MetadataApiRetrieve', () => {
       });
 
       it('should retrieve zip and merge with existing components', async () => {
-        const component = COMPONENT;
-        const toRetrieve = new ComponentSet([component]);
+        const toRetrieve = new ComponentSet([COMPONENT]);
         const { operation, convertStub } = await stubMetadataRetrieve($$, testOrg, {
           toRetrieve,
           merge: true,
@@ -635,13 +623,12 @@ describe('MetadataApiRetrieve', () => {
     describe('full Profile retrieves', () => {
       it('will correctly write new profile', () => {
         const zipFileName = 'retrievedFiles.zip';
-        const registryAccess = new RegistryAccess();
         const mdapiRetrieve = new MetadataApiRetrieve({
           usernameOrConnection,
           output,
           format,
           zipFileName,
-          registry: registryAccess,
+          registry: new RegistryAccess(),
         });
         // @ts-ignore - overriding a protected member
         mdapiRetrieve.profileQueryResult = [{ Metadata: { name: 'admin' }, FullName: 'Admin' }];
@@ -655,10 +642,95 @@ describe('MetadataApiRetrieve', () => {
           fileProperties: [],
         });
         const xmlPath = join(output, 'main', 'default', 'profiles', 'Admin.profile-meta.xml');
+
         expect(writeFileStub.callCount).to.equal(2);
         expect(writeFileStub.secondCall.args[0]).to.equal(xmlPath);
         expect(writeFileStub.secondCall.args[1]).to.equal(
           '<?xml version="1.0" encoding="UTF-8"?>\n<Profile xmlns="http://soap.sforce.com/2006/04/metadata">\n    <name>admin</name>\n</Profile>\n'
+        );
+      });
+
+      it('will correctly write the xml to avoid diffs', () => {
+        const zipFileName = 'retrievedFiles.zip';
+        const mdapiRetrieve = new MetadataApiRetrieve({
+          usernameOrConnection,
+          output,
+          format,
+          zipFileName,
+          registry: new RegistryAccess(),
+        });
+        // @ts-ignore - overriding a protected member
+        mdapiRetrieve.profileQueryResult = [
+          {
+            Metadata: {
+              applicationVisibilities: [],
+              categoryGroupVisibilities: null,
+              classAccesses: [],
+              custom: false,
+              customMetadataTypeAccesses: [],
+              customPermissions: [],
+              customSettingAccesses: [],
+              description: null,
+              externalDataSourceAccesses: [],
+              fieldPermissions: [],
+              flowAccesses: [],
+              loginFlows: null,
+              loginHours: null,
+              loginIpRanges: [],
+              objectPermissions: [],
+              pageAccesses: [],
+              profileActionOverrides: null,
+              recordTypeVisibilities: [],
+              tabVisibilities: [],
+              urls: null,
+              userLicense: 'Salesforce',
+              userPermissions: [
+                {
+                  enabled: true,
+                  name: 'AIViewInsightObjects',
+                },
+                {
+                  enabled: true,
+                  name: 'ActivateContract',
+                },
+              ],
+            },
+            FullName: 'Admin',
+          },
+        ];
+        mdapiRetrieve.post({
+          success: true,
+          status: RequestStatus.Succeeded,
+          id: '123',
+          zipFile: zipFileName,
+          done: true,
+          messages: [],
+          fileProperties: [],
+        });
+        const xmlPath = join(output, 'main', 'default', 'profiles', 'Admin.profile-meta.xml');
+
+        expect(writeFileStub.callCount).to.equal(2);
+        expect(writeFileStub.secondCall.args[0]).to.equal(xmlPath);
+        expect(writeFileStub.secondCall.args[1]).to.equal(
+          '<?xml version="1.0" encoding="UTF-8"?>\n' +
+            '<Profile xmlns="http://soap.sforce.com/2006/04/metadata">\n' +
+            '    <categoryGroupVisibilities/>\n' +
+            '    <custom>false</custom>\n' +
+            '    <description/>\n' +
+            '    <loginFlows/>\n' +
+            '    <loginHours/>\n' +
+            '    <profileActionOverrides/>\n' +
+            '    <urls/>\n' +
+            '    <userLicense>Salesforce</userLicense>\n' +
+            '    <userPermissions>\n' +
+            '        <enabled>true</enabled>\n' +
+            '        <name>AIViewInsightObjects</name>\n' +
+            '    </userPermissions>\n' +
+            '    <userPermissions>\n' +
+            '        <enabled>true</enabled>\n' +
+            '        <name>ActivateContract</name>\n' +
+            '    </userPermissions>\n' +
+            '</Profile>\n'
         );
       });
 
@@ -690,8 +762,7 @@ describe('MetadataApiRetrieve', () => {
 
   describe('cancel', () => {
     it('should immediately stop polling', async () => {
-      const component = COMPONENT;
-      const components = new ComponentSet([component]);
+      const components = new ComponentSet([COMPONENT]);
       const { operation, checkStatusStub } = await stubMetadataRetrieve($$, testOrg, {
         toRetrieve: components,
       });
@@ -730,8 +801,7 @@ describe('MetadataApiRetrieve', () => {
 
     it('should report correct file status', () => {
       const component = COMPONENT;
-      const newComponent = DECOMPOSED_COMPONENT;
-      const retrievedSet = new ComponentSet([component, newComponent]);
+      const retrievedSet = new ComponentSet([component, DECOMPOSED_COMPONENT]);
       const localSet = new ComponentSet([component]);
       const apiStatus = {};
       const result = new RetrieveResult(apiStatus as MetadataApiRetrieveStatus, retrievedSet, localSet);

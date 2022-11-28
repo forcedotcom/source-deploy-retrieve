@@ -432,6 +432,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     return XML_DECL.concat(j2x.parse(toParse) as string);
   }
 
+  /**
+   * Calls .delete for the specified component without any safety checking
+   * useful for deleting an item when you're already iterating over the set so you can guarantee it currently exists
+   *
+   * @param component
+   */
   public unsafeDelete(component: ComponentLike): void {
     this.components.delete(simpleKey(component));
   }
@@ -561,13 +567,17 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     return false;
   }
 
-  public getByType(type: string): ComponentLike[] {
-    const res: ComponentLike[] = [];
+  /**
+   * returns all components of a specified type
+   *
+   * @param type id of the type. E.G. 'profile'
+   */
+  public getByType(type: string): MetadataComponent[] {
+    const res: MetadataComponent[] = [];
     const registryType = this.registry.getTypeByName(type);
     for (const key of this.components.keys()) {
       if (key.split(KEY_DELIMITER)[0] === registryType.id) {
-        const component = this.components.get(key);
-        res.push(...component.values());
+        res.push(...this.components.get(key).values());
       }
     }
     return res;

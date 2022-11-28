@@ -215,7 +215,7 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
   }
 
   private filterProfiles(): void {
-    if (SfProject.getInstance().getSfProjectJson().getContents()['fullProfileRetrieves']) {
+    if (SfProject.getInstance().getSfProjectJson().getContents()?.fullProfileRetrieves) {
       this.logger.debug('Removing Profiles from component set and querying separately');
       this.profiles = this.components.getByType('Profile').map((component) => {
         // don't need to check every element exists in remove here, because we're starting with this.components

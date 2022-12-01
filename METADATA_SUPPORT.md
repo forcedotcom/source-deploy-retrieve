@@ -351,12 +351,12 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |OcrSampleDocument|✅||
 |OcrTemplate|✅||
 |OmniChannelSettings|✅||
-|OmniDataTransform|✅||
-|OmniIntegrationProcedure|✅||
-|OmniInteractionAccessConfig|✅||
-|OmniInteractionConfig|✅||
-|OmniScript|✅||
-|OmniUiCard|✅||
+|OmniDataTransform|⚠️|Supports deploy/retrieve but not source tracking|
+|OmniIntegrationProcedure|⚠️|Supports deploy/retrieve but not source tracking|
+|OmniInteractionAccessConfig|⚠️|Supports deploy/retrieve but not source tracking|
+|OmniInteractionConfig|⚠️|Supports deploy/retrieve but not source tracking|
+|OmniScript|⚠️|Supports deploy/retrieve but not source tracking|
+|OmniUiCard|⚠️|Supports deploy/retrieve but not source tracking|
 |OnlineSalesSettings|✅||
 |OpportunityInsightsSettings|✅||
 |OpportunityScoreSettings|✅||

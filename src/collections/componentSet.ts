@@ -205,7 +205,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     const resolveIncludeSet = options.resolveSourcePaths ? new ComponentSet([], options.registry) : undefined;
     const result = new ComponentSet([], options.registry);
-    result.apiVersion = manifest.apiVersion;
+
+    result.logger.debug(`Setting sourceApiVersion of ${manifest.apiVersion} on ComponentSet from manifest`);
+    result.sourceApiVersion = manifest.apiVersion;
     result.fullName = manifest.fullName;
 
     const addComponent = (component: MetadataComponent, deletionType?: DestructiveChangesType): void => {

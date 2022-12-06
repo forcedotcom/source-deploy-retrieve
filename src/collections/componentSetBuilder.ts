@@ -168,13 +168,10 @@ export class ComponentSetBuilder {
       }
     }
 
-    if (apiversion) {
-      componentSet.apiVersion = apiversion;
-    }
-
-    if (sourceapiversion) {
-      componentSet.sourceApiVersion = sourceapiversion;
-    }
+    componentSet.apiVersion ??= apiversion;
+    componentSet.sourceApiVersion ??= sourceapiversion;
+    logger.debug(`ComponentSet apiVersion = ${componentSet.apiVersion}`);
+    logger.debug(`ComponentSet sourceApiVersion = ${componentSet.sourceApiVersion}`);
 
     return componentSet;
   }

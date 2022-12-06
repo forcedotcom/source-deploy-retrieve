@@ -373,7 +373,8 @@ describe('MetadataApiRetrieve', () => {
         await operation.start();
         const result = await operation.pollStatus();
         const expected = new RetrieveResult(response, toRetrieve, toRetrieve);
-        expect(result).to.deep.equalInAnyOrder(expected);
+        expect(result.response).to.deep.equalInAnyOrder(expected.response);
+        expect(result.components.toArray()).to.deep.equalInAnyOrder(expected.components.toArray());
       });
 
       it('should construct a result object with no components when components are forceIgnored', async () => {

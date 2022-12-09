@@ -45,6 +45,7 @@ describe('ComponentSet', () => {
     const componentSetVersion = '53.0';
     const sourceApiVersion = '52.0';
     const manifestVersion = '51.0';
+    const sourcepath = join(process.cwd(), 'test', 'nuts', 'local', 'replacements', 'testProj');
 
     let connection: Connection;
     let lifecycleEmitStub: sinon.SinonStub;
@@ -93,7 +94,7 @@ describe('ComponentSet', () => {
 
     describe('retrieve', () => {
       it('should default to max version supported by the target org', async () => {
-        componentSet = await ComponentSetBuilder.build({ sourcepath: ['.'] });
+        componentSet = await ComponentSetBuilder.build({ sourcepath: [sourcepath] });
         await stubConnection();
         await componentSet.retrieve({ output: '', usernameOrConnection: connection });
 
@@ -108,7 +109,7 @@ describe('ComponentSet', () => {
       });
 
       it('should use the version in the sfdx config', async () => {
-        componentSet = await ComponentSetBuilder.build({ sourcepath: ['.'] });
+        componentSet = await ComponentSetBuilder.build({ sourcepath: [sourcepath] });
         stubConfig();
         await stubConnection();
         await componentSet.retrieve({ output: '', usernameOrConnection: connection });
@@ -127,7 +128,7 @@ describe('ComponentSet', () => {
         // This usecase is when you call ComponentSet.retrieve() passing in a
         // connection object rather than an org username. The request is made using the apiVersion
         // from the ComponentSet.
-        componentSet = await ComponentSetBuilder.build({ sourcepath: ['.'], apiversion: componentSetVersion });
+        componentSet = await ComponentSetBuilder.build({ sourcepath: [sourcepath], apiversion: componentSetVersion });
         stubConfig();
         await stubConnection();
         await componentSet.retrieve({ output: '', usernameOrConnection: connection });
@@ -146,7 +147,7 @@ describe('ComponentSet', () => {
         // This usecase is when you call ComponentSet.retrieve() passing in an org
         // username rather than a connection. The request is made using the apiVersion
         // from the ComponentSet.
-        componentSet = await ComponentSetBuilder.build({ sourcepath: ['.'], apiversion: componentSetVersion });
+        componentSet = await ComponentSetBuilder.build({ sourcepath: [sourcepath], apiversion: componentSetVersion });
         stubConfig();
         await stubConnection();
         // Have to stub `Connection.create()` because passing an org username will result
@@ -166,7 +167,7 @@ describe('ComponentSet', () => {
 
       it('should use the sourceApiVersion from a ComponentSet', async () => {
         componentSet = await ComponentSetBuilder.build({
-          sourcepath: ['.'],
+          sourcepath: [sourcepath],
           apiversion: componentSetVersion,
           sourceapiversion: sourceApiVersion,
         });
@@ -190,7 +191,7 @@ describe('ComponentSet', () => {
           apiVersion: manifestVersion,
         });
         componentSet = await ComponentSetBuilder.build({
-          manifest: { directoryPaths: ['.'], manifestPath: '.' },
+          manifest: { directoryPaths: [sourcepath], manifestPath: '.' },
           apiversion: componentSetVersion,
           sourceapiversion: sourceApiVersion,
         });
@@ -217,7 +218,7 @@ describe('ComponentSet', () => {
       };
 
       it('should default to max version supported by the target org', async () => {
-        componentSet = await ComponentSetBuilder.build({ sourcepath: ['.'] });
+        componentSet = await ComponentSetBuilder.build({ sourcepath: [sourcepath] });
         await stubConnection();
         await componentSet.deploy({ usernameOrConnection: connection });
 
@@ -230,7 +231,7 @@ describe('ComponentSet', () => {
       });
 
       it('should use the version in the sfdx config', async () => {
-        componentSet = await ComponentSetBuilder.build({ sourcepath: ['.'] });
+        componentSet = await ComponentSetBuilder.build({ sourcepath: [sourcepath] });
         stubConfig();
         await stubConnection();
         await componentSet.deploy({ usernameOrConnection: connection });
@@ -247,7 +248,7 @@ describe('ComponentSet', () => {
         // This usecase is when you call ComponentSet.retrieve() passing in a
         // connection object rather than an org username. The request is made using the apiVersion
         // from the ComponentSet.
-        componentSet = await ComponentSetBuilder.build({ sourcepath: ['.'], apiversion: componentSetVersion });
+        componentSet = await ComponentSetBuilder.build({ sourcepath: [sourcepath], apiversion: componentSetVersion });
         stubConfig();
         await stubConnection();
         await componentSet.deploy({ usernameOrConnection: connection });
@@ -268,7 +269,7 @@ describe('ComponentSet', () => {
         // This usecase is when you call ComponentSet.retrieve() passing in an org
         // username rather than a connection. The request is made using the apiVersion
         // from the ComponentSet.
-        componentSet = await ComponentSetBuilder.build({ sourcepath: ['.'], apiversion: componentSetVersion });
+        componentSet = await ComponentSetBuilder.build({ sourcepath: [sourcepath], apiversion: componentSetVersion });
         stubConfig();
         await stubConnection();
         // Have to stub `Connection.create()` because passing an org username will result
@@ -290,7 +291,7 @@ describe('ComponentSet', () => {
 
       it('should use the sourceApiVersion from a ComponentSet', async () => {
         componentSet = await ComponentSetBuilder.build({
-          sourcepath: ['.'],
+          sourcepath: [sourcepath],
           apiversion: componentSetVersion,
           sourceapiversion: sourceApiVersion,
         });
@@ -316,7 +317,7 @@ describe('ComponentSet', () => {
           apiVersion: manifestVersion,
         });
         componentSet = await ComponentSetBuilder.build({
-          manifest: { directoryPaths: ['.'], manifestPath: '.' },
+          manifest: { directoryPaths: [sourcepath], manifestPath: '.' },
           apiversion: componentSetVersion,
           sourceapiversion: sourceApiVersion,
         });

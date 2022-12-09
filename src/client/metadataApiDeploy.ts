@@ -313,16 +313,18 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
   protected async pre(): Promise<AsyncResult> {
     const LifecycleInstance = Lifecycle.getInstance();
     const connection = await this.getConnection();
+    const apiVersion = connection.getApiVersion();
+
     // store for use in the scopedPostDeploy event
     this.orgId = connection.getAuthInfoFields().orgId;
 
     // If we have a ComponentSet but no version info, use the apiVersion from the Connection.
     if (this.components) {
       // this is the SOAP/REST API version of the connection
-      this.components.apiVersion ??= connection.getApiVersion();
+      this.components.apiVersion ??= apiVersion;
 
       // this is used as the version in the manifest (package.xml).
-      this.components.sourceApiVersion ??= connection.getApiVersion();
+      this.components.sourceApiVersion ??= apiVersion;
     }
 
     // only do event hooks if source, (NOT a metadata format) deploy
@@ -353,7 +355,6 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
 
     // Debug output for API version and source API version used for deploy
     if (this.components?.apiVersion) {
-      const apiVersion = this.components?.apiVersion;
       const manifestVersion = this.components?.sourceApiVersion ?? apiVersion;
       const webService = rest ? 'REST' : 'SOAP';
 

@@ -311,14 +311,22 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       throw new SfError(messages.getMessage('error_no_source_to_deploy'), 'ComponentSetError');
     }
 
+    if (
+      typeof options.usernameOrConnection !== 'string' &&
+      this.apiVersion &&
+      this.apiVersion !== options.usernameOrConnection.version
+    ) {
+      options.usernameOrConnection.setApiVersion(this.apiVersion);
+      this.logger.debug(
+        `Received conflicting apiVersion values for deploy. Using option=${this.apiVersion}, Ignoring apiVersion on connection=${options.usernameOrConnection.version}.`
+      );
+    }
+
     const operationOptions = Object.assign({}, options, {
       components: this,
       registry: this.registry,
       apiVersion: this.apiVersion,
     });
-    // if (!options.apiVersion && !this.apiVersion && !this.sourceApiVersion) {
-    //   operationOptions.apiVersion = `${await getCurrentApiVersion()}.0`;
-    // }
 
     const mdapiDeploy = new MetadataApiDeploy(operationOptions);
     await mdapiDeploy.start();
@@ -338,6 +346,17 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       registry: this.registry,
       apiVersion: this.apiVersion,
     });
+
+    if (
+      typeof options.usernameOrConnection !== 'string' &&
+      this.apiVersion &&
+      this.apiVersion !== options.usernameOrConnection.version
+    ) {
+      options.usernameOrConnection.setApiVersion(this.apiVersion);
+      this.logger.debug(
+        `Received conflicting apiVersion values for retrieve. Using option=${this.apiVersion}, Ignoring apiVersion on connection=${options.usernameOrConnection.version}.`
+      );
+    }
 
     const mdapiRetrieve = new MetadataApiRetrieve(operationOptions);
     await mdapiRetrieve.start();

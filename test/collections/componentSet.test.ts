@@ -9,9 +9,10 @@ import { join } from 'path';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import { SinonStub } from 'sinon';
-import { AuthInfo, Connection, Messages } from '@salesforce/core';
+import { AuthInfo, ConfigAggregator, Connection, Lifecycle, Messages } from '@salesforce/core';
 import {
   ComponentSet,
+  ComponentSetBuilder,
   ConnectionResolver,
   DestructiveChangesType,
   ManifestResolver,
@@ -23,6 +24,7 @@ import {
   registry,
   RegistryAccess,
   SourceComponent,
+  ZipTreeContainer,
 } from '../../src';
 import { decomposedtoplevel, matchingContentFile, mixedContentSingleFile } from '../mock';
 import { MATCHING_RULES_COMPONENT } from '../mock/type-constants/customlabelsConstant';
@@ -36,6 +38,301 @@ const registryAccess = new RegistryAccess();
 describe('ComponentSet', () => {
   const $$ = new TestContext();
   const testOrg = new MockTestOrgData();
+
+  describe('apiVersion and sourceApiVersion', () => {
+    const maxVersion = '55.0';
+    const configVersion = '54.0';
+    const componentSetVersion = '53.0';
+    const sourceApiVersion = '52.0';
+    const manifestVersion = '51.0';
+
+    let connection: Connection;
+    let lifecycleEmitStub: sinon.SinonStub;
+    let connectionRetrieveStub: sinon.SinonStub;
+    let connectionDeployStub: sinon.SinonStub;
+    let retrieveMaxApiVersionStub: sinon.SinonStub;
+    let componentSet: ComponentSet;
+
+    beforeEach(() => {
+      lifecycleEmitStub = $$.SANDBOX.stub(Lifecycle.prototype, 'emit');
+    });
+
+    const stubConnection = async () => {
+      retrieveMaxApiVersionStub = $$.SANDBOX.stub(Connection.prototype, 'retrieveMaxApiVersion');
+      retrieveMaxApiVersionStub.resolves(maxVersion);
+      connection = await testOrg.getConnection();
+      connectionRetrieveStub = $$.SANDBOX.stub(connection.metadata, 'retrieve');
+      connectionRetrieveStub.resolves({ id: '00DCompsetTest' });
+      connectionDeployStub = $$.SANDBOX.stub(connection.metadata, 'deploy');
+      connectionDeployStub.resolves({ id: '00DCompsetTest' });
+    };
+
+    const stubConfig = () => {
+      $$.SANDBOX.stub(ConfigAggregator.prototype, 'getInfo')
+        .withArgs('org-api-version')
+        .returns({
+          key: 'org-api-version',
+          location: ConfigAggregator.Location.LOCAL,
+          value: configVersion,
+          path: '',
+          isLocal: () => true,
+          isGlobal: () => false,
+          isEnvVar: () => false,
+        });
+    };
+
+    const getManifestContent = (version) => ({
+      types: [
+        { members: ['replaceStuff'], name: 'ApexClass' },
+        { members: ['TestObj__c.FieldA__c'], name: 'CustomField' },
+        { members: ['TestObj__c'], name: 'CustomObject' },
+        { members: ['Test'], name: 'StaticResource' },
+      ],
+      version,
+    });
+
+    describe('retrieve', () => {
+      it('should default to max version supported by the target org', async () => {
+        componentSet = await ComponentSetBuilder.build({ sourcepath: ['.'] });
+        await stubConnection();
+        await componentSet.retrieve({ output: '', usernameOrConnection: connection });
+
+        const expectedPayload = { apiVersion: maxVersion, manifestVersion: maxVersion };
+        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(connectionRetrieveStub.called).to.be.true;
+        expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
+          apiVersion: maxVersion,
+          unpackaged: getManifestContent(maxVersion),
+        });
+      });
+
+      it('should use the version in the sfdx config', async () => {
+        componentSet = await ComponentSetBuilder.build({ sourcepath: ['.'] });
+        stubConfig();
+        await stubConnection();
+        await componentSet.retrieve({ output: '', usernameOrConnection: connection });
+
+        const expectedPayload = { apiVersion: configVersion, manifestVersion: configVersion };
+        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(connectionRetrieveStub.called).to.be.true;
+        expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
+          apiVersion: configVersion,
+          unpackaged: getManifestContent(configVersion),
+        });
+      });
+
+      it('should use the version from a ComponentSet (usernameOrConnection = Connection)', async () => {
+        // This usecase is when you call ComponentSet.retrieve() passing in a
+        // connection object rather than an org username. The request is made using the apiVersion
+        // from the ComponentSet.
+        componentSet = await ComponentSetBuilder.build({ sourcepath: ['.'], apiversion: componentSetVersion });
+        stubConfig();
+        await stubConnection();
+        await componentSet.retrieve({ output: '', usernameOrConnection: connection });
+
+        const expectedPayload = { apiVersion: componentSetVersion, manifestVersion: componentSetVersion };
+        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(connectionRetrieveStub.called).to.be.true;
+        expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
+          apiVersion: componentSetVersion,
+          unpackaged: getManifestContent(componentSetVersion),
+        });
+      });
+
+      it('should use the version from a ComponentSet (usernameOrConnection = string)', async () => {
+        // This usecase is when you call ComponentSet.retrieve() passing in an org
+        // username rather than a connection. The request is made using the apiVersion
+        // from the ComponentSet.
+        componentSet = await ComponentSetBuilder.build({ sourcepath: ['.'], apiversion: componentSetVersion });
+        stubConfig();
+        await stubConnection();
+        // Have to stub `Connection.create()` because passing an org username will result
+        // in calling MetadataTransfer.getConnection(), and we want to return our stub.
+        $$.SANDBOX.stub(Connection, 'create').resolves(connection);
+        await componentSet.retrieve({ output: '', usernameOrConnection: 'testorg' });
+
+        const expectedPayload = { apiVersion: componentSetVersion, manifestVersion: componentSetVersion };
+        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(connectionRetrieveStub.called).to.be.true;
+        expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
+          apiVersion: componentSetVersion,
+          unpackaged: getManifestContent(componentSetVersion),
+        });
+      });
+
+      it('should use the sourceApiVersion from a ComponentSet', async () => {
+        componentSet = await ComponentSetBuilder.build({
+          sourcepath: ['.'],
+          apiversion: componentSetVersion,
+          sourceapiversion: sourceApiVersion,
+        });
+        stubConfig();
+        await stubConnection();
+        await componentSet.retrieve({ output: '', usernameOrConnection: connection });
+
+        const expectedPayload = { apiVersion: componentSetVersion, manifestVersion: sourceApiVersion };
+        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(connectionRetrieveStub.called).to.be.true;
+        expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
+          apiVersion: sourceApiVersion,
+          unpackaged: getManifestContent(sourceApiVersion),
+        });
+      });
+
+      it('should use the version from the manifest', async () => {
+        $$.SANDBOX.stub(ManifestResolver.prototype, 'resolve').resolves({
+          components: [{ fullName: 'Test', type: registry.types.apexclass }],
+          apiVersion: manifestVersion,
+        });
+        componentSet = await ComponentSetBuilder.build({
+          manifest: { directoryPaths: ['.'], manifestPath: '.' },
+          apiversion: componentSetVersion,
+          sourceapiversion: sourceApiVersion,
+        });
+        stubConfig();
+        await stubConnection();
+        await componentSet.retrieve({ output: '', usernameOrConnection: connection });
+
+        const expectedPayload = { apiVersion: componentSetVersion, manifestVersion };
+        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(connectionRetrieveStub.called).to.be.true;
+        expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
+          apiVersion: manifestVersion,
+          unpackaged: { types: [{ members: ['Test'], name: 'ApexClass' }], version: manifestVersion },
+        });
+      });
+    });
+
+    describe('deploy', () => {
+      const verifyManifestVersionInZip = async (zipBuffer: Buffer, expectedVersion: string) => {
+        const tree = await ZipTreeContainer.create(zipBuffer);
+        const packageXmlBuffer = await tree.readFile('package.xml');
+        expect(packageXmlBuffer.toString()).includes(`<version>${expectedVersion}</version>`);
+      };
+
+      it('should default to max version supported by the target org', async () => {
+        componentSet = await ComponentSetBuilder.build({ sourcepath: ['.'] });
+        await stubConnection();
+        await componentSet.deploy({ usernameOrConnection: connection });
+
+        const expectedPayload = { apiVersion: maxVersion, manifestVersion: maxVersion, webService: 'SOAP' };
+        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
+        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(connectionDeployStub.called).to.be.true;
+        await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, maxVersion);
+        expect(connection.getApiVersion()).to.equal(maxVersion);
+      });
+
+      it('should use the version in the sfdx config', async () => {
+        componentSet = await ComponentSetBuilder.build({ sourcepath: ['.'] });
+        stubConfig();
+        await stubConnection();
+        await componentSet.deploy({ usernameOrConnection: connection });
+
+        const expectedPayload = { apiVersion: configVersion, manifestVersion: configVersion, webService: 'SOAP' };
+        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
+        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(connectionDeployStub.called).to.be.true;
+        await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, configVersion);
+        expect(connection.getApiVersion()).to.equal(configVersion);
+      });
+
+      it('should use the version from a ComponentSet (usernameOrConnection = connection)', async () => {
+        // This usecase is when you call ComponentSet.retrieve() passing in a
+        // connection object rather than an org username. The request is made using the apiVersion
+        // from the ComponentSet.
+        componentSet = await ComponentSetBuilder.build({ sourcepath: ['.'], apiversion: componentSetVersion });
+        stubConfig();
+        await stubConnection();
+        await componentSet.deploy({ usernameOrConnection: connection });
+
+        const expectedPayload = {
+          apiVersion: componentSetVersion,
+          manifestVersion: componentSetVersion,
+          webService: 'SOAP',
+        };
+        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
+        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(connectionDeployStub.called).to.be.true;
+        await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, componentSetVersion);
+        expect(connection.getApiVersion()).to.equal(componentSetVersion);
+      });
+
+      it('should use the version from a ComponentSet (usernameOrConnection = string)', async () => {
+        // This usecase is when you call ComponentSet.retrieve() passing in an org
+        // username rather than a connection. The request is made using the apiVersion
+        // from the ComponentSet.
+        componentSet = await ComponentSetBuilder.build({ sourcepath: ['.'], apiversion: componentSetVersion });
+        stubConfig();
+        await stubConnection();
+        // Have to stub `Connection.create()` because passing an org username will result
+        // in calling MetadataTransfer.getConnection(), and we want to return our stub.
+        $$.SANDBOX.stub(Connection, 'create').resolves(connection);
+        await componentSet.deploy({ usernameOrConnection: 'testorg' });
+
+        const expectedPayload = {
+          apiVersion: componentSetVersion,
+          manifestVersion: componentSetVersion,
+          webService: 'SOAP',
+        };
+        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
+        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(connectionDeployStub.called).to.be.true;
+        await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, componentSetVersion);
+        expect(connection.getApiVersion()).to.equal(componentSetVersion);
+      });
+
+      it('should use the sourceApiVersion from a ComponentSet', async () => {
+        componentSet = await ComponentSetBuilder.build({
+          sourcepath: ['.'],
+          apiversion: componentSetVersion,
+          sourceapiversion: sourceApiVersion,
+        });
+        stubConfig();
+        await stubConnection();
+        await componentSet.deploy({ usernameOrConnection: connection });
+
+        const expectedPayload = {
+          apiVersion: componentSetVersion,
+          manifestVersion: sourceApiVersion,
+          webService: 'SOAP',
+        };
+        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
+        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(connectionDeployStub.called).to.be.true;
+        await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, sourceApiVersion);
+        expect(connection.getApiVersion()).to.equal(componentSetVersion);
+      });
+
+      it('should use the version from the manifest', async () => {
+        $$.SANDBOX.stub(ManifestResolver.prototype, 'resolve').resolves({
+          components: [{ fullName: 'replaceStuff', type: registry.types.apexclass }],
+          apiVersion: manifestVersion,
+        });
+        componentSet = await ComponentSetBuilder.build({
+          manifest: { directoryPaths: ['.'], manifestPath: '.' },
+          apiversion: componentSetVersion,
+          sourceapiversion: sourceApiVersion,
+        });
+        stubConfig();
+        await stubConnection();
+        await componentSet.deploy({ usernameOrConnection: connection });
+
+        const expectedPayload = { apiVersion: componentSetVersion, manifestVersion, webService: 'SOAP' };
+        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
+        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(connectionDeployStub.called).to.be.true;
+        await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, manifestVersion);
+        expect(connection.getApiVersion()).to.equal(componentSetVersion);
+      });
+    });
+  });
 
   describe('Initializers', () => {
     describe('fromSource', () => {

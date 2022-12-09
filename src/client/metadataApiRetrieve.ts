@@ -245,7 +245,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
     }
 
     // Debug output for API version used for retrieve
-    const manifestVersion = manifestData.version ?? requestBody.apiVersion;
+    const manifestVersion = manifestData.version;
     this.logger.debug(`Retrieving source in v${manifestVersion} shape using SOAP v${apiVersion}`);
     await Lifecycle.getInstance().emit('apiVersionRetrieve', { manifestVersion, apiVersion });
 

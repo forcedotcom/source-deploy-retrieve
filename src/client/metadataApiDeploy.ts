@@ -313,13 +313,20 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
   protected async pre(): Promise<AsyncResult> {
     const LifecycleInstance = Lifecycle.getInstance();
     const connection = await this.getConnection();
+    const apiVersion = connection.getApiVersion();
+
     // store for use in the scopedPostDeploy event
     this.orgId = connection.getAuthInfoFields().orgId;
-    if (this.components && !this.components.apiVersion && !this.components.sourceApiVersion) {
-      // if we have a ComponentSet, but got no version info, let's use the org's max version for calculating what goes into the package.xml
-      this.components.apiVersion = connection.getApiVersion();
-      this.components.sourceApiVersion = connection.getApiVersion();
+
+    // If we have a ComponentSet but no version info, use the apiVersion from the Connection.
+    if (this.components) {
+      // this is the SOAP/REST API version of the connection
+      this.components.apiVersion ??= apiVersion;
+
+      // this is used as the version in the manifest (package.xml).
+      this.components.sourceApiVersion ??= apiVersion;
     }
+
     // only do event hooks if source, (NOT a metadata format) deploy
     if (this.options.components) {
       await LifecycleInstance.emit('scopedPreDeploy', {
@@ -345,6 +352,16 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     const [zipBuffer] = await Promise.all([this.getZipBuffer(), this.maybeSaveTempDirectory('metadata')]);
     // SDR modifies what the mdapi expects by adding a rest param
     const { rest, ...optionsWithoutRest } = this.options.apiOptions;
+
+    // Debug output for API version and source API version used for deploy
+    if (this.components?.apiVersion) {
+      const manifestVersion = this.components?.sourceApiVersion ?? apiVersion;
+      const webService = rest ? 'REST' : 'SOAP';
+
+      this.logger.debug(`Deploying metadata source in v${manifestVersion} shape using ${webService} v${apiVersion}`);
+      await LifecycleInstance.emit('apiVersionDeploy', { webService, manifestVersion, apiVersion });
+    }
+
     return this.isRestDeploy
       ? connection.metadata.deployRest(zipBuffer, optionsWithoutRest)
       : connection.metadata.deploy(zipBuffer, optionsWithoutRest);

@@ -207,7 +207,11 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
     }
 
     const connection = await this.getConnection();
+    const apiVersion = connection.getApiVersion();
     this.orgId = connection.getAuthInfoFields().orgId;
+
+    this.components.apiVersion ??= apiVersion;
+    this.components.sourceApiVersion ??= apiVersion;
 
     // only do event hooks if source, (NOT a metadata format) retrieve
     if (this.options.components) {
@@ -217,9 +221,13 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
       } as ScopedPreRetrieve);
     }
 
+    const manifestData = (await this.components.getObject()).Package;
+
     const requestBody: RetrieveRequest = {
-      apiVersion: this.components.apiVersion ?? (await connection.retrieveMaxApiVersion()),
-      unpackaged: (await this.components.getObject()).Package,
+      // This apiVersion is only used when the version in the package.xml (manifestData) is not defined.
+      // see docs here: https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_retrieve_request.htm
+      apiVersion: this.components.sourceApiVersion ?? (await connection.retrieveMaxApiVersion()),
+      unpackaged: manifestData,
     };
 
     // if we're retrieving with packageNames add it
@@ -235,6 +243,11 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
     if (this.options.singlePackage) {
       requestBody.singlePackage = this.options.singlePackage;
     }
+
+    // Debug output for API version used for retrieve
+    const manifestVersion = manifestData.version;
+    this.logger.debug(`Retrieving source in v${manifestVersion} shape using SOAP v${apiVersion}`);
+    await Lifecycle.getInstance().emit('apiVersionRetrieve', { manifestVersion, apiVersion });
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore required callback

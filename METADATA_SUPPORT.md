@@ -1,10 +1,10 @@
 # Supported CLI Metadata Types
 
-This list compares metadata types found in Salesforce v56 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
+This list compares metadata types found in Salesforce v57 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 482/511 supported metadata types.
+Currently, there are 495/534 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -23,8 +23,10 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AccountingModelConfig|❌|Not supported, but support could be added|
 |AccountingSettings|✅||
 |AcctMgrTargetSettings|✅||
+|ActionLauncherItemDef|❌|Not supported, but support could be added|
 |ActionLinkGroupTemplate|✅||
 |ActionPlanTemplate|✅||
+|ActionableListDefinition|❌|Not supported, but support could be added|
 |ActionsSettings|✅||
 |ActivationPlatform|✅||
 |ActivitiesSettings|✅||
@@ -44,6 +46,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ApexTrigger|✅||
 |AppAnalyticsSettings|✅||
 |AppExperienceSettings|✅||
+|AppExplorationDataConsent|❌|Not supported, but support could be added|
 |AppMenu|✅||
 |ApplicationRecordTypeConfig|✅||
 |ApplicationSubtypeDefinition|✅||
@@ -106,6 +109,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ChatterEmailsMDSettings|✅||
 |ChatterExtension|✅||
 |ChatterSettings|✅||
+|ClauseCatgConfiguration|✅||
 |CleanDataService|✅||
 |CollectionsDashboardSettings|✅||
 |CommandAction|✅||
@@ -169,9 +173,12 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DelegateGroup|✅||
 |DeploymentSettings|✅||
 |DevHubSettings|✅||
-|DigitalExperience|⚠️|Supports deploy/retrieve but not source tracking|
-|DigitalExperienceBundle|⚠️|Supports deploy/retrieve but not source tracking|
-|DigitalExperienceConfig|⚠️|Supports deploy/retrieve but not source tracking|
+|DigitalExperience|✅||
+|DigitalExperienceBundle|✅||
+|DigitalExperienceConfig|✅||
+|DisclosureDefinition|✅||
+|DisclosureDefinitionVersion|✅||
+|DisclosureType|✅||
 |DiscoveryAIModel|✅||
 |DiscoveryGoal|✅||
 |DiscoverySettings|✅||
@@ -222,6 +229,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExpressionSetDefinitionVersion|✅||
 |ExpressionSetObjectAlias|❌|Not supported, but support could be added|
 |ExternalAIModel|❌|Not supported, but support could be added|
+|ExternalClientAppSettings|✅||
+|ExternalClientApplication|✅||
 |ExternalCredential|✅||
 |ExternalDataConnector|✅||
 |ExternalDataSource|✅||
@@ -229,6 +238,10 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExternalDataTranField|❌|Not supported, but support could be added|
 |ExternalDataTranObject|❌|Not supported, but support could be added|
 |ExternalServiceRegistration|✅||
+|ExtlClntAppMobileConfigurablePolicies|✅||
+|ExtlClntAppMobileSettings|✅||
+|ExtlClntAppOauthConfigurablePolicies|✅||
+|ExtlClntAppOauthSettings|✅||
 |FeatureParameterBoolean|✅||
 |FeatureParameterDate|✅||
 |FeatureParameterInteger|✅||
@@ -267,6 +280,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |IPAddressRange|✅||
 |Icon|✅||
 |IdeasSettings|✅||
+|IdentityProviderSettings|✅||
 |IdentityVerificationProcDef|✅||
 |IframeWhiteListUrlSettings|✅||
 |InboundCertificate|✅||
@@ -279,6 +293,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |IndustriesManufacturingSettings|✅||
 |IndustriesSettings|✅||
 |InstalledPackage|⚠️|Supports deploy/retrieve but not source tracking|
+|IntegrationProviderDef|❌|Not supported, but support could be added|
 |InterestTaggingSettings|✅||
 |InternalDataConnector|✅||
 |InvLatePymntRiskCalcSettings|✅||
@@ -305,6 +320,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |LiveChatDeployment|✅||
 |LiveChatSensitiveDataRule|✅||
 |LiveMessageSettings|✅||
+|LocationUse|❌|Not supported, but support could be added|
 |LoyaltyProgramSetup|⚠️|Supports deploy/retrieve but not source tracking|
 |MLDataDefinition|✅||
 |MLPredictionDefinition|✅||
@@ -356,6 +372,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |OmniInteractionAccessConfig|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniInteractionConfig|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniScript|⚠️|Supports deploy/retrieve but not source tracking|
+|OmniSupervisorConfig|✅||
 |OmniUiCard|⚠️|Supports deploy/retrieve but not source tracking|
 |OnlineSalesSettings|✅||
 |OpportunityInsightsSettings|✅||
@@ -372,13 +389,16 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PathAssistant|✅||
 |PathAssistantSettings|✅||
 |PaymentGatewayProvider|✅||
+|PaymentsIngestEnabledSettings|✅||
 |PaymentsManagementEnabledSettings|✅||
 |PaymentsSettings|✅||
 |PermissionSet|✅||
 |PermissionSetGroup|✅||
 |PermissionSetLicenseDefinition|✅||
+|PersonAccountOwnerPowerUser|❌|Not supported, but support could be added|
 |PicklistSettings|✅||
 |PicklistValue|❌|Not supported, but support could be added|
+|PipelineInspMetricConfig|❌|Not supported, but support could be added|
 |PlatformCachePartition|✅||
 |PlatformEventChannel|✅||
 |PlatformEventChannelMember|✅||
@@ -393,6 +413,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PrivacySettings|✅||
 |ProductAttributeSet|✅||
 |ProductSettings|✅||
+|ProductSpecificationTypeDefinition|❌|Not supported, but support could be added|
 |Profile|✅||
 |ProfilePasswordPolicy|✅||
 |ProfileSessionSetting|✅||
@@ -437,6 +458,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ServiceChannel|✅||
 |ServiceCloudVoiceSettings|✅||
 |ServicePresenceStatus|✅||
+|ServiceProcess|❌|Not supported, but support could be added|
 |ServiceSetupAssistantSettings|✅||
 |SharingCriteriaRule|✅||
 |SharingGuestRule|✅||
@@ -497,6 +519,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |VirtualVisitConfig|❌|Not supported, but support could be added|
 |VoiceSettings|✅||
 |WarrantyLifecycleMgmtSettings|✅||
+|WaveAnalyticAssetCollection|❌|Not supported, but support could be added|
 |WaveApplication|✅||
 |WaveComponent|✅||
 |WaveDashboard|✅||
@@ -524,35 +547,11 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 
 
-## Next Release (v57)
-v57 introduces the following new types.  Here's their current level of support
+## Next Release (v58)
+v58 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
-|ActionLauncherItemDef|❌|Not supported, but support could be added|
-|ActionableListDefinition|❌|Not supported, but support could be added|
-|AppExplorationDataConsent|❌|Not supported, but support could be added|
-|ClaimFinancialSettings|✅||
-|ClauseCatgConfiguration|✅||
-|DisclosureDefinition|✅||
-|DisclosureDefinitionVersion|✅||
-|DisclosureType|✅||
-|ExternalClientAppSettings|✅||
-|ExternalClientApplication|✅||
-|ExtlClntAppMobileConfigurablePolicies|✅||
-|ExtlClntAppMobileSettings|✅||
-|ExtlClntAppOauthConfigurablePolicies|✅||
-|ExtlClntAppOauthSettings|✅||
-|IdentityProviderSettings|✅||
-|IntegrationProviderDef|❌|Not supported, but support could be added|
-|LocationUse|❌|Not supported, but support could be added|
-|OmniSupervisorConfig|✅||
-|PaymentsIngestEnabledSettings|✅||
-|PersonAccountOwnerPowerUser|❌|Not supported, but support could be added|
-|PipelineInspMetricConfig|❌|Not supported, but support could be added|
-|ProductSpecificationTypeDefinition|❌|Not supported, but support could be added|
-|ServiceProcess|❌|Not supported, but support could be added|
-|WaveAnalyticAssetCollection|❌|Not supported, but support could be added|
 
 ## Additional Types
 

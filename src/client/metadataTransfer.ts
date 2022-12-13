@@ -226,9 +226,14 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
         }
         // tolerate intermittent network errors upto retry limit
         if (
-          ['ETIMEDOUT', 'ENOTFOUND', 'ECONNRESET', 'socket hang up'].some((retryableNetworkError) =>
-            (e as Error).message.includes(retryableNetworkError)
-          )
+          [
+            'ETIMEDOUT',
+            'ENOTFOUND',
+            'ECONNRESET',
+            'socket hang up',
+            'INVALID_QUERY_LOCATOR',
+            '<h1>Bad Message 400</h1><pre>reason: Bad Request</pre>',
+          ].some((retryableNetworkError) => (e as Error).message.includes(retryableNetworkError))
         ) {
           this.logger.debug('Network error on the request', e);
           await Lifecycle.getInstance().emitWarning('Network error occurred.  Continuing to poll.');

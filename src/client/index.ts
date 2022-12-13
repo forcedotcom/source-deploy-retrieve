@@ -46,4 +46,6 @@ export {
   PackageOption,
   PackageOptions,
   RetrieveOptions,
+  DeployVersionData,
+  RetrieveVersionData,
 } from './types';

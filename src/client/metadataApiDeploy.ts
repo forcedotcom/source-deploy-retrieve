@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, extname, join, posix, sep } from 'path';
+import { format } from 'util';
 import { isString } from '@salesforce/ts-types';
 import { create as createArchive } from 'archiver';
 import * as fs from 'graceful-fs';
@@ -353,14 +354,13 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
     // SDR modifies what the mdapi expects by adding a rest param
     const { rest, ...optionsWithoutRest } = this.options.apiOptions;
 
-    // Debug output for API version and source API version used for deploy
-    if (this.components?.apiVersion) {
-      const manifestVersion = this.components?.sourceApiVersion ?? apiVersion;
-      const webService = rest ? 'REST' : 'SOAP';
-
-      this.logger.debug(`Deploying metadata source in v${manifestVersion} shape using ${webService} v${apiVersion}`);
-      await LifecycleInstance.emit('apiVersionDeploy', { webService, manifestVersion, apiVersion });
-    }
+    // Event and Debug output for API version and source API version used for deploy
+    const manifestVersion = this.components?.sourceApiVersion;
+    const webService = rest ? 'REST' : 'SOAP';
+    const manifestMsg = manifestVersion ? ` in v${manifestVersion} shape` : '';
+    const debugMsg = format(`Deploying metadata source%s using ${webService} v${apiVersion}`, manifestMsg);
+    this.logger.debug(debugMsg);
+    await LifecycleInstance.emit('apiVersionDeploy', { webService, manifestVersion, apiVersion });
 
     return this.isRestDeploy
       ? connection.metadata.deployRest(zipBuffer, optionsWithoutRest)
@@ -371,15 +371,27 @@ export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus,
   protected async post(result: MetadataApiDeployStatus): Promise<DeployResult> {
     const lifecycle = Lifecycle.getInstance();
     try {
+      const connection = await this.getConnection();
+      const apiVersion = connection.getApiVersion();
       // Creates an array of unique metadata types that were deployed, uses Set to avoid duplicates.
-      const listOfMetadataTypesDeployed = Array.from(new Set(this.options.components.map((c) => c.type.name)));
+      let listOfMetadataTypesDeployed: string[];
+      if (this.options.components) {
+        listOfMetadataTypesDeployed = Array.from(new Set(this.options.components.map((c) => c.type.name)));
+      } else {
+        // mdapi deploys don't have a ComponentSet, so using the result
+        const types = new Set<string>();
+        const successes = ensureArray(result.details?.componentSuccesses);
+        const failures = ensureArray(result.details?.componentFailures);
+        [...successes, ...failures].forEach((c) => c.componentType && types.add(c.componentType));
+        listOfMetadataTypesDeployed = Array.from(types);
+      }
 
       void lifecycle.emitTelemetry({
         eventName: 'metadata_api_deploy_result',
         library: 'SDR',
         status: result.status,
-        apiVersion: this.options.apiVersion,
-        sourceApiVersion: this.options.components?.sourceApiVersion,
+        apiVersion,
+        sourceApiVersion: this.components?.sourceApiVersion,
         createdDate: result.createdDate,
         startDate: result.startDate,
         completedDate: result.completedDate,

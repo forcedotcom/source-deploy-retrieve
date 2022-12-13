@@ -41,6 +41,8 @@ export {
   PackageOption,
   PackageOptions,
   RetrieveOptions,
+  DeployVersionData,
+  RetrieveVersionData,
 } from './client';
 export {
   MetadataConverter,

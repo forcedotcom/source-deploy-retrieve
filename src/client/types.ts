@@ -356,3 +356,14 @@ export interface ListMetadataQuery {
   type: string;
   folder?: string;
 }
+
+export interface DeployVersionData {
+  apiVersion: string;
+  manifestVersion: string | undefined;
+  webService: 'SOAP' | 'REST';
+}
+
+export interface RetrieveVersionData {
+  apiVersion: string;
+  manifestVersion: string;
+}

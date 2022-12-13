@@ -1961,6 +1961,20 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "fueltype": {
+      "id": "fueltype",
+      "name": "FuelType",
+      "suffix": "fuelType",
+      "directoryName": "fuelTypes",
+      "strictDirectoryName": false
+    },
+    "sustainabilityuom": {
+      "id": "sustainabilityuom",
+      "name": "SustainabilityUom",
+      "suffix": "sustainabilityUom",
+      "directoryName": "sustainabilityUoms",
+      "strictDirectoryName": false
+    },
     "botblock": {
       "id": "botblock",
       "name": "BotBlock",
@@ -3483,6 +3497,8 @@
     "disclosureType": "disclosuretype",
     "disclosureDefinition": "disclosuredefinition",
     "disclosureDefinitionVersion": "disclosuredefinitionversion",
+    "sustainabilityUom": "sustainabilityuom",
+    "fuelType": "fueltype",
     "botBlock": "botblock",
     "botVersion": "botversion",
     "animationRule": "animationrule",

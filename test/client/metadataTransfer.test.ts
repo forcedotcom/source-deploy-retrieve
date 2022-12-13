@@ -339,6 +339,28 @@ describe('MetadataTransfer', () => {
       expect(checkStatus.callCount).to.equal(3);
     });
 
+    it('should tolerate 2 known mdapi errors', async () => {
+      const { checkStatus } = operation.lifecycle;
+      checkStatus.onFirstCall().throws(new Error('<h1>Bad Message 400</h1><pre>reason: Bad Request</pre>'));
+      checkStatus.onSecondCall().throws(new Error('INVALID_QUERY_LOCATOR'));
+      checkStatus.onThirdCall().resolves({ done: true });
+
+      await operation.pollStatus();
+      expect(checkStatus.callCount).to.equal(3);
+    });
+
+    it('should tolerate known mdapi error', async () => {
+      const { checkStatus } = operation.lifecycle;
+      const networkError1 = new Error('foo');
+      networkError1.name = 'JsonParseError';
+      checkStatus.onFirstCall().throws(networkError1);
+      checkStatus.onSecondCall().throws(networkError1);
+      checkStatus.onThirdCall().resolves({ done: true });
+
+      await operation.pollStatus();
+      expect(checkStatus.callCount).to.equal(3);
+    });
+
     it('should throw wrapped error if there are no error listeners', async () => {
       const { checkStatus } = operation.lifecycle;
       const originalError = new Error('whoops');

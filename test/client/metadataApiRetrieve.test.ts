@@ -54,10 +54,6 @@ describe('MetadataApiRetrieve', () => {
     $$.SANDBOX.stub(coverage, 'getCurrentApiVersion').resolves(testApiVersion);
   });
 
-  afterEach(() => {
-    $$.SANDBOX.restore();
-  });
-
   describe('Lifecycle', () => {
     describe('start', () => {
       const expectedError = {

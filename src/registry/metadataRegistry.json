@@ -1961,6 +1961,38 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "fueltype": {
+      "id": "fueltype",
+      "name": "FuelType",
+      "suffix": "fuelType",
+      "directoryName": "fuelTypes",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "fueltypesustnuom": {
+      "id": "fueltypesustnuom",
+      "name": "FuelTypeSustnUom",
+      "suffix": "fuelTypeSustnUom",
+      "directoryName": "fuelTypeSustnUoms",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "sustainabilityuom": {
+      "id": "sustainabilityuom",
+      "name": "SustainabilityUom",
+      "suffix": "sustainabilityUom",
+      "directoryName": "sustainabilityUoms",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "sustnuomconversion": {
+      "id": "sustnuomconversion",
+      "name": "SustnUomConversion",
+      "suffix": "sustnUomConversion",
+      "directoryName": "sustnUomConversions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "botblock": {
       "id": "botblock",
       "name": "BotBlock",
@@ -3483,6 +3515,10 @@
     "disclosureType": "disclosuretype",
     "disclosureDefinition": "disclosuredefinition",
     "disclosureDefinitionVersion": "disclosuredefinitionversion",
+    "fuelType": "fueltype",
+    "fuelTypeSustnUom": "fueltypesustnuom",
+    "sustainabilityUom": "sustainabilityuom",
+    "sustnUomConversion": "sustnuomconversion",
     "botBlock": "botblock",
     "botVersion": "botversion",
     "animationRule": "animationrule",

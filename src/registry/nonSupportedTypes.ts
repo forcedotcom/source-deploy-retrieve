@@ -55,9 +55,6 @@ export const metadataTypes = [
   'ScoreRange',
   'WorkflowFlowAction',
 
-  // org spins up fine, but describe is empty
-  'SustainabilityUom',
-
   // the metadata coverage report seems to be missing a setting:
   // A scratch org was created with username test-o87upqyaagax@example.com, but the settings failed to deploy due to: enableInsights
   'ReferencedDashboard',

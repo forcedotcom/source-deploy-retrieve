@@ -1,3 +1,12 @@
+## [7.5.17](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.5.16...7.5.17) (2022-12-14)
+
+
+### Bug Fixes
+
+* **types:** FuelType, FuelTypeSustnUom, SustainabilityUom, SustnUomConversion ([d4f7b53](https://github.com/forcedotcom/source-deploy-retrieve/commit/d4f7b534a349dbedcc9109533d8d53e491bac2d2))
+
+
+
 ## [7.5.16](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.5.15...7.5.16) (2022-12-13)
 
 

@@ -7,7 +7,7 @@
 import { fail } from 'assert';
 import { join } from 'path';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { SinonStub } from 'sinon';
 import { AuthInfo, ConfigAggregator, Connection, Lifecycle, Messages } from '@salesforce/core';
 import {
@@ -902,6 +902,54 @@ describe('ComponentSet', () => {
         fsDeletePaths: ['.'],
       });
       expect(await set.getPackageXml(4, DestructiveChangesType.POST)).to.equal(manifestFiles.BASIC.data.toString());
+    });
+  });
+
+  describe('getByType', () => {
+    it('should return only the specified type', () => {
+      const sr = 'StaticResource';
+      const set = ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry: registryAccess,
+        tree: manifestFiles.TREE,
+      });
+      const result = set.getByType(sr);
+      expect(set.size).to.equal(3);
+      // filtered a COFT
+      expect(result.length).to.equal(2);
+      expect(result[0].type.name).to.equal(sr);
+      expect(result[1].type.name).to.equal(sr);
+    });
+
+    it('should return only the specified type - case insensitive', () => {
+      const sr = 'StaticResource';
+      const set = ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry: registryAccess,
+        tree: manifestFiles.TREE,
+      });
+      const result = set.getByType('StATIcResOURce');
+      expect(set.size).to.equal(3);
+      // filtered a COFT
+      expect(result.length).to.equal(2);
+      expect(result[0].type.name).to.equal(sr);
+      expect(result[1].type.name).to.equal(sr);
+    });
+
+    it('should invalid type', () => {
+      const set = ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry: registryAccess,
+        tree: manifestFiles.TREE,
+      });
+      try {
+        set.getByType('NotAType');
+        assert.fail('the above should throw a Missing Metadata type error');
+      } catch (e) {
+        const err = e as Error;
+        expect(err.message).to.equal("Missing metadata type definition in registry for id 'notatype'.");
+        expect(err.name).to.equal('RegistryError');
+      }
     });
   });
 

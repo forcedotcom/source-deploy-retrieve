@@ -8,12 +8,14 @@ import * as path from 'path';
 import * as fs from 'graceful-fs';
 import * as unzipper from 'unzipper';
 import { asBoolean, isString } from '@salesforce/ts-types';
-import { Messages, SfError, Lifecycle } from '@salesforce/core';
+import { Messages, SfError, Lifecycle, SfProject } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
+import { j2xParser } from 'fast-xml-parser';
 import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
 import { SourceComponent, ZipTreeContainer } from '../resolve';
 import { RegistryAccess } from '../registry';
+import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX, XML_DECL, XML_NS_URL } from '../common';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import {
   AsyncResult,
@@ -33,6 +35,7 @@ const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
   'error_no_job_id',
   'error_no_components_to_retrieve',
 ]);
+export type ProfileMetadata = { Metadata: Record<string, unknown>; FullName: string };
 
 export type MetadataApiRetrieveOptions = MetadataTransferOptions & RetrieveOptions & { registry?: RegistryAccess };
 
@@ -119,6 +122,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
   public static DEFAULT_OPTIONS: Partial<MetadataApiRetrieveOptions> = { merge: false };
   private options: MetadataApiRetrieveOptions;
   private orgId: string;
+  private profiles: string[] = [];
 
   public constructor(options: MetadataApiRetrieveOptions) {
     super(options);
@@ -181,6 +185,10 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
       } else {
         components = await this.extract(zipFileContents);
       }
+
+      if (SfProject.getInstance().getSfProjectJson().has('standardProfileRetrieve')) {
+        await this.retrieveProfiles();
+      }
     }
 
     components ??= new ComponentSet(undefined, this.options.registry);
@@ -202,7 +210,11 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
   protected async pre(): Promise<AsyncResult> {
     const packageNames = this.getPackageNames();
 
-    if (this.components.size === 0 && !packageNames?.length) {
+    if (SfProject.getInstance().getSfProjectJson().has('standardProfileRetrieve')) {
+      this.filterProfiles();
+    }
+
+    if (this.components.size === 0 && !packageNames?.length && this.profiles.length === 0) {
       throw new SfError(messages.getMessage('error_no_components_to_retrieve'), 'MetadataApiRetrieveError');
     }
 
@@ -256,6 +268,53 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
 
   private getPackageNames(): string[] {
     return this.getPackageOptions()?.map((pkg) => pkg.name);
+  }
+
+  private async retrieveProfiles(): Promise<void> {
+    if (this.profiles.length) {
+      const conn = await this.getConnection();
+      const results = (await conn.tooling.query<ProfileMetadata>('SELECT FullName, Metadata FROM Profile')).records;
+      // we can't do this in the query, because Profiles don't support "FullName IN ('x','y')"
+      // https://developer.salesforce.com/docs/atlas.en-us.api_tooling.meta/api_tooling/tooling_api_objects_profile.htm
+      // > Query this field only if the query result contains no more than one record. Otherwise, an error is returned. If more than one record exists, use multiple queries to retrieve the records. This limit protects performance.
+      this.writeProfiles(results.filter((result) => this.profiles.includes(result.FullName)));
+      this.logger.debug(`found the following profiles to query separately ${this.profiles.join(', ')}`);
+    }
+  }
+
+  private filterProfiles(): void {
+    this.logger.debug('Removing Profiles from component set and querying separately');
+    this.profiles = this.components.getByType('Profile').map((component) => {
+      // don't need to check every element exists in remove here, because we're starting with this.components
+      this.components.unsafeDelete(component);
+      return component.fullName;
+    });
+  }
+
+  private writeProfiles(profiles: ProfileMetadata[]): void {
+    const j2x = new j2xParser({
+      format: true,
+      indentBy: '    ',
+    });
+    const profileType = this.options.registry.getTypeByName('profile');
+    const profileDir = path.join(this.options.output, DEFAULT_PACKAGE_ROOT_SFDX, profileType.directoryName);
+    fs.mkdirSync(profileDir, { recursive: true });
+
+    profiles.forEach((profile) => {
+      const bodyContent = (j2x.parse(profile.Metadata) as string).replace(/\n/g, '\n    ');
+      const xml = `${XML_DECL}<Profile xmlns="${XML_NS_URL}">
+    ${bodyContent.substring(0, bodyContent.lastIndexOf('    '))}</Profile>\n`;
+      const xmlPath = path.join(profileDir, `${profile.FullName}.${profileType.suffix}${META_XML_SUFFIX}`);
+
+      fs.writeFileSync(xmlPath, xml);
+      this.components.add(
+        new SourceComponent({
+          name: profile.FullName,
+          type: profileType,
+          xml: xmlPath,
+        })
+      );
+    });
   }
 
   private getPackageOptions(): PackageOption[] {

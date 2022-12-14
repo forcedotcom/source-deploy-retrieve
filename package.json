@@ -40,7 +40,7 @@
     "unzipper": "0.10.11"
   },
   "devDependencies": {
-    "@salesforce/cli-plugins-testkit": "^2.5.3",
+    "@salesforce/cli-plugins-testkit": "^3.2.13",
     "@salesforce/dev-config": "^3.0.1",
     "@salesforce/dev-scripts": "^3.1.0",
     "@salesforce/prettier-config": "^0.0.2",

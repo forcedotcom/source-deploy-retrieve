@@ -31,7 +31,7 @@ describe(`handles ${classCount.toLocaleString()} classes (${(
       project: {
         name: 'lotsOfClasses',
       },
-      authStrategy: 'NONE',
+      devhubAuthStrategy: 'NONE',
     });
     // create some number of files
     const classdir = path.join(session.project.dir, 'force-app', 'main', 'default', 'classes');

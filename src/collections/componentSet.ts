@@ -459,6 +459,16 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   }
 
   /**
+   * Calls .delete for the specified component without any safety checking
+   * useful for deleting an item when you're already iterating over the set so you can guarantee it currently exists
+   *
+   * @param component
+   */
+  public unsafeDelete(component: ComponentLike): void {
+    this.components.delete(simpleKey(component));
+  }
+
+  /**
    * Get only the source-backed metadata components in the set.
    *
    * @param member Member to retrieve source-backed components for.
@@ -581,6 +591,22 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
 
     return false;
+  }
+
+  /**
+   * returns all components of a specified type
+   *
+   * @param type id of the type. E.G. 'profile'
+   */
+  public getByType(type: string): MetadataComponent[] {
+    const res: MetadataComponent[] = [];
+    const registryType = this.registry.getTypeByName(type);
+    for (const key of this.components.keys()) {
+      if (key.split(KEY_DELIMITER)[0] === registryType.id) {
+        res.push(...this.components.get(key).values());
+      }
+    }
+    return res;
   }
 
   /**

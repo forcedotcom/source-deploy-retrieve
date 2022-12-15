@@ -19,12 +19,14 @@ describe('full Profile retrieves', () => {
   let output: string;
   const adminProfileName = 'Admin.profile-meta.xml';
 
+  const readAdminProfile = (): string => fs.readFileSync(join(profileDir, adminProfileName), 'utf-8');
+
   before(async () => {
     session = await TestSession.create({
       project: {
         gitClone: 'https://github.com/WillieRuemmele/ebikes-lwc',
       },
-      devhubAuthStrategy: 'NONE',
+      devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {
           executable: 'sfdx',
@@ -39,7 +41,7 @@ describe('full Profile retrieves', () => {
     username = session.orgs.get('default').username;
 
     profileDir = join(session.project.dir, 'force-app', 'main', 'default', 'profiles');
-    output = join(session.project.dir, 'output');
+    output = join(session.project.dir, 'force-app');
     // retrieved via force:source:retrieve -m Profile with standardProfileRetrieve = false
     adminProfileContent = fs.readFileSync(join(profileDir, adminProfileName), 'utf-8');
   });
@@ -52,8 +54,14 @@ describe('full Profile retrieves', () => {
     const compSet = await ComponentSetBuilder.build({ sourcepath: [join(profileDir, adminProfileName)] });
     const retrieve = await compSet.retrieve({ output, usernameOrConnection: username, format: 'source' });
     await retrieve.pollStatus({ timeout: Duration.minutes(10) });
-    const updatedAdminProfile = fs.readFileSync(join(output, 'main', 'default', 'profiles', adminProfileName), 'utf-8');
-    expect(updatedAdminProfile).to.not.equal(adminProfileContent);
+    const updatedAdminProfile = readAdminProfile();
+    expect(updatedAdminProfile).to.include('<categoryGroupVisibilities/>');
+    expect(updatedAdminProfile).to.include('<description/>');
+    expect(updatedAdminProfile).to.include('<loginFlows/>');
+    expect(updatedAdminProfile).to.include('<loginHours/>');
+    expect(updatedAdminProfile).to.include('<profileActionOverrides/>');
+    expect(updatedAdminProfile).to.include('<urls/>');
+    expect(adminProfileContent).to.not.equal(updatedAdminProfile);
   });
 
   it('will retrieve the Admin Profile using the tooling api and other MD using MDAPI', async () => {
@@ -66,17 +74,33 @@ describe('full Profile retrieves', () => {
     const retrieve = await compSet.retrieve({ output, usernameOrConnection: username, format: 'source' });
     await retrieve.pollStatus({ timeout: Duration.minutes(10) });
 
-    const updatedAdminProfile = fs.readFileSync(join(output, 'main', 'default', 'profiles', adminProfileName), 'utf-8');
+    const updatedAdminProfile = readAdminProfile();
     const updatedApexClass = fs.readFileSync(apexClassPath, 'utf-8');
-    expect(updatedAdminProfile).to.not.equal(adminProfileContent);
+    expect(updatedAdminProfile).to.include('<categoryGroupVisibilities/>');
+    expect(updatedAdminProfile).to.include('<description/>');
+    expect(updatedAdminProfile).to.include('<loginFlows/>');
+    expect(updatedAdminProfile).to.include('<loginHours/>');
+    expect(updatedAdminProfile).to.include('<profileActionOverrides/>');
+    expect(updatedAdminProfile).to.include('<urls/>');
+    expect(adminProfileContent).to.not.equal(updatedAdminProfile);
     expect(apexContentBefore).to.equal(updatedApexClass);
   });
 
   it('will retrieve the Admin Profile using the tooling api (METADATA format)', async () => {
     const compSet = await ComponentSetBuilder.build({ sourcepath: [join(profileDir, adminProfileName)] });
-    const retrieve = await compSet.retrieve({ output, usernameOrConnection: username, format: 'metadata' });
+    const retrieve = await compSet.retrieve({
+      output,
+      usernameOrConnection: username,
+      format: 'metadata',
+    });
     await retrieve.pollStatus({ timeout: Duration.minutes(10) });
-    const updatedAdminProfile = fs.readFileSync(join(output, 'main', 'default', 'profiles', adminProfileName), 'utf-8');
-    expect(updatedAdminProfile).to.not.equal(adminProfileContent);
+    const updatedAdminProfile = readAdminProfile();
+    expect(updatedAdminProfile).to.include('<categoryGroupVisibilities/>');
+    expect(updatedAdminProfile).to.include('<description/>');
+    expect(updatedAdminProfile).to.include('<loginFlows/>');
+    expect(updatedAdminProfile).to.include('<loginHours/>');
+    expect(updatedAdminProfile).to.include('<profileActionOverrides/>');
+    expect(updatedAdminProfile).to.include('<urls/>');
+    expect(adminProfileContent).to.not.equal(updatedAdminProfile);
   });
 });

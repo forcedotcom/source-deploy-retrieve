@@ -19,7 +19,7 @@ describe('e2e replacements test', () => {
       project: {
         sourceDir: path.join('test', 'nuts', 'local', 'replacements', 'testProj'),
       },
-      devhubAuthStrategy: 'NONE',
+      devhubAuthStrategy: 'AUTO',
     });
     // Hack: rewrite the file replacement locations relative to the project
     const projectJsonPath = path.join(session.project.dir, 'sfdx-project.json');

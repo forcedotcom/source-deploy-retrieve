@@ -53,7 +53,7 @@
     "@types/shelljs": "^0.8.11",
     "@types/unzipper": "^0.10.5",
     "@typescript-eslint/eslint-plugin": "^5.44.0",
-    "@typescript-eslint/parser": "^5.44.0",
+    "@typescript-eslint/parser": "^5.46.1",
     "chai": "^4.3.7",
     "commitizen": "^3.1.2",
     "deep-equal-in-any-order": "^1.1.19",

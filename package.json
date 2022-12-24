@@ -30,7 +30,7 @@
     "@salesforce/ts-types": "^1.7.1",
     "archiver": "^5.3.1",
     "fast-xml-parser": "^3.21.1",
-    "got": "^11.8.5",
+    "got": "^11.8.6",
     "graceful-fs": "^4.2.10",
     "ignore": "^5.2.1",
     "mime": "2.6.0",

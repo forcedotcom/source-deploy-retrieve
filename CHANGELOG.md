@@ -1,3 +1,12 @@
+## [7.5.19](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.5.18...7.5.19) (2022-12-25)
+
+
+### Bug Fixes
+
+* **deps:** bump got from 11.8.5 to 11.8.6 ([#805](https://github.com/forcedotcom/source-deploy-retrieve/issues/805)) ([856e99a](https://github.com/forcedotcom/source-deploy-retrieve/commit/856e99a1ad6921637e6a63b88d4b12d860818b18))
+
+
+
 ## [7.5.18](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.5.17...7.5.18) (2022-12-18)
 
 

@@ -10,7 +10,7 @@ import * as unzipper from 'unzipper';
 import { asBoolean, isString } from '@salesforce/ts-types';
 import { Messages, SfError, Lifecycle } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
-import { ConvertOutputConfig, MetadataConverter } from '../convert';
+import { ConvertOutputConfig, MergeConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
 import { SourceComponent, ZipTreeContainer } from '../resolve';
 import { RegistryAccess } from '../registry';
@@ -33,6 +33,8 @@ const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
   'error_no_job_id',
   'error_no_components_to_retrieve',
 ]);
+
+const partialDeleteFileResponses: FileResponse[] = [];
 
 export type MetadataApiRetrieveOptions = MetadataTransferOptions & RetrieveOptions & { registry?: RegistryAccess };
 
@@ -109,6 +111,12 @@ export class RetrieveResult implements MetadataTransferResult {
       if (xml) {
         this.fileResponses.push(Object.assign({}, baseResponse, { filePath: xml }));
       }
+    }
+
+    // Add file responses for components that support partial delete (e.g., DigitalExperience)
+    // where pieces of the component were deleted in the org, then retrieved.
+    while (partialDeleteFileResponses.length) {
+      this.fileResponses.push(partialDeleteFileResponses.pop());
     }
 
     return this.fileResponses;
@@ -304,6 +312,12 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
       })
         .getSourceComponents()
         .toArray();
+
+      if (merge) {
+        const mergeWithComponents = Array.from((outputConfig as MergeConfig).mergeWith);
+        this.handlePartialDeleteMerges(zipComponents, mergeWithComponents, tree);
+      }
+
       // this is intentional sequential
       // eslint-disable-next-line no-await-in-loop
       const convertResult = await converter.convert(zipComponents, 'source', outputConfig);
@@ -312,6 +326,66 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
       }
     }
     return new ComponentSet(components, registry);
+  }
+
+  // Some bundle-like components can be partially deleted in the org, then retrieved. When this
+  // happens, the deleted files need to be deleted on the file system and added to the FileResponses
+  // that are returned by `RetrieveResult.getFileResponses()` for accuracy. The component types that
+  // support this behavior are defined in the metadata registry with `"supportsPartialDelete": true`.
+  // However, not all types can be partially deleted in the org. Currently this only applies to
+  // DigitalExperienceBundle and ExperienceBundle.
+  private handlePartialDeleteMerges(
+    retrievedComponents: SourceComponent[],
+    mergeWithComponents: SourceComponent[],
+    tree: ZipTreeContainer
+  ): void {
+    interface PartialDeleteComp {
+      contentPath: string;
+      contentList: string[];
+    }
+    const partialDeleteComponents = new Map<string, PartialDeleteComp>();
+
+    mergeWithComponents.forEach((comp) => {
+      if (comp.type.supportsPartialDelete && comp.content && fs.statSync(comp.content).isDirectory()) {
+        const contentList = fs.readdirSync(comp.content);
+        partialDeleteComponents.set(comp.fullName, { contentPath: comp.content, contentList });
+      }
+    });
+
+    // if no partial delete components were in the mergeWith ComponentSet, no need to continue
+    if (partialDeleteComponents.size === 0) {
+      return;
+    }
+
+    retrievedComponents.forEach((comp) => {
+      if (comp.type.supportsPartialDelete && partialDeleteComponents.has(comp.fullName)) {
+        const localComp = partialDeleteComponents.get(comp.fullName);
+        if (localComp.contentPath && tree.isDirectory(comp.content)) {
+          const remoteContentList = tree.readDirectory(comp.content);
+          let deleteLocalComp = false;
+          while (localComp.contentList?.length) {
+            const fileName = localComp.contentList.pop();
+            if (!remoteContentList.includes(fileName)) {
+              this.logger.debug(
+                `Local component (${comp.fullName}) contains ${fileName} while remote component does not. This file is being removed.`
+              );
+              deleteLocalComp = true;
+              partialDeleteFileResponses.push({
+                fullName: comp.fullName,
+                type: comp.type.name,
+                state: ComponentStatus.Deleted,
+                filePath: path.join(localComp.contentPath, fileName),
+              });
+            }
+          }
+          if (deleteLocalComp) {
+            this.logger.debug(`Replacing local component: ${localComp.contentPath} with same component from org`);
+            fs.rmSync(localComp.contentPath, { recursive: true, force: true });
+          }
+        }
+        partialDeleteComponents.delete(comp.fullName);
+      }
+    });
   }
 }
 

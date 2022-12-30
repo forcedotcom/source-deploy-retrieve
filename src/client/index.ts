@@ -24,6 +24,8 @@ export {
   ComponentRetrieval,
   ComponentDiagnostic,
   FileResponse,
+  FileResponseFailure,
+  FileResponseSuccess,
   AsyncResult,
   RequestStatus,
   MetadataRequestStatus,

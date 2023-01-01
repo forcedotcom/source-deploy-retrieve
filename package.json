@@ -34,7 +34,7 @@
     "graceful-fs": "^4.2.10",
     "ignore": "^5.2.4",
     "mime": "2.6.0",
-    "minimatch": "^5.1.0",
+    "minimatch": "^5.1.2",
     "proxy-agent": "^5.0.0",
     "proxy-from-env": "^1.1.0",
     "unzipper": "0.10.11"

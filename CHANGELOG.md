@@ -1,3 +1,12 @@
+## [7.5.20](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.5.19...7.5.20) (2023-01-01)
+
+
+### Bug Fixes
+
+* **deps:** bump ignore from 5.2.1 to 5.2.4 ([#812](https://github.com/forcedotcom/source-deploy-retrieve/issues/812)) ([ff96534](https://github.com/forcedotcom/source-deploy-retrieve/commit/ff96534c542a02df3628dfd23e2248c99209a844))
+
+
+
 ## [7.5.19](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.5.18...7.5.19) (2022-12-25)
 
 

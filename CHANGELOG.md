@@ -1,3 +1,12 @@
+## [7.5.22](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.5.21...7.5.22) (2023-01-01)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 3.32.8 to 3.32.12 ([#810](https://github.com/forcedotcom/source-deploy-retrieve/issues/810)) ([bcf8412](https://github.com/forcedotcom/source-deploy-retrieve/commit/bcf8412faa1ee0d65f53fcb69ee0896887350325))
+
+
+
 ## [7.5.21](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.5.20...7.5.21) (2023-01-01)
 
 

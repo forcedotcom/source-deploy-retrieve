@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "7.5.19",
+  "version": "7.5.22",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/src/index.js",
   "author": "Salesforce",
@@ -32,9 +32,9 @@
     "fast-xml-parser": "^3.21.1",
     "got": "^11.8.6",
     "graceful-fs": "^4.2.10",
-    "ignore": "^5.2.1",
+    "ignore": "^5.2.4",
     "mime": "2.6.0",
-    "minimatch": "^5.1.0",
+    "minimatch": "^5.1.2",
     "proxy-agent": "^5.0.0",
     "proxy-from-env": "^1.1.0",
     "unzipper": "0.10.11"

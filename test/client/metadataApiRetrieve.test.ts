@@ -350,13 +350,16 @@ describe('MetadataApiRetrieve', () => {
         await operation.pollStatus();
 
         expect(convertStub.calledOnce).to.be.true;
-        const convertCallArgs = convertStub.firstCall.args;
-        expect(convertCallArgs[0]).to.deep.equal([]);
-        expect(convertCallArgs[1]).to.equal('source');
-        expect(convertCallArgs[2]).to.have.property('type', 'merge');
-        expect(convertCallArgs[2]).to.have.deep.property('defaultDirectory', MOCK_DEFAULT_OUTPUT);
-        expect(convertCallArgs[2]).to.have.deep.property('forceIgnoredPaths', new Set<string>());
-        expect(convertCallArgs[2]).to.have.property('mergeWith');
+        expect(convertStub.firstCall.args).to.deep.equal([
+          [],
+          'source',
+          {
+            type: 'merge',
+            mergeWith: toRetrieve.getSourceComponents(),
+            defaultDirectory: MOCK_DEFAULT_OUTPUT,
+            forceIgnoredPaths: new Set<string>(),
+          },
+        ]);
       });
 
       it('should construct a result object with retrieved components', async () => {

@@ -10,7 +10,7 @@ import * as unzipper from 'unzipper';
 import { asBoolean, isString } from '@salesforce/ts-types';
 import { Messages, SfError, Lifecycle } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
-import { ConvertOutputConfig, MergeConfig, MetadataConverter } from '../convert';
+import { ConvertOutputConfig, MetadataConverter } from '../convert';
 import { ComponentSet } from '../collections';
 import { SourceComponent, ZipTreeContainer } from '../resolve';
 import { RegistryAccess } from '../registry';
@@ -314,8 +314,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
         .toArray();
 
       if (merge) {
-        const mergeWithComponents = Array.from((outputConfig as MergeConfig).mergeWith);
-        this.handlePartialDeleteMerges(zipComponents, mergeWithComponents, tree);
+        this.handlePartialDeleteMerges(zipComponents, tree);
       }
 
       // this is intentional sequential
@@ -334,16 +333,13 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
   // support this behavior are defined in the metadata registry with `"supportsPartialDelete": true`.
   // However, not all types can be partially deleted in the org. Currently this only applies to
   // DigitalExperienceBundle and ExperienceBundle.
-  private handlePartialDeleteMerges(
-    retrievedComponents: SourceComponent[],
-    mergeWithComponents: SourceComponent[],
-    tree: ZipTreeContainer
-  ): void {
+  private handlePartialDeleteMerges(retrievedComponents: SourceComponent[], tree: ZipTreeContainer): void {
     interface PartialDeleteComp {
       contentPath: string;
       contentList: string[];
     }
     const partialDeleteComponents = new Map<string, PartialDeleteComp>();
+    const mergeWithComponents = this.components.getSourceComponents().toArray();
 
     mergeWithComponents.forEach((comp) => {
       if (comp.type.supportsPartialDelete && comp.content && fs.statSync(comp.content).isDirectory()) {

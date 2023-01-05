@@ -341,6 +341,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
     const partialDeleteComponents = new Map<string, PartialDeleteComp>();
     const mergeWithComponents = this.components.getSourceComponents().toArray();
 
+    // Find all merge (local) components that support partial delete.
     mergeWithComponents.forEach((comp) => {
       if (comp.type.supportsPartialDelete && comp.content && fs.statSync(comp.content).isDirectory()) {
         const contentList = fs.readdirSync(comp.content);
@@ -348,19 +349,22 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
       }
     });
 
-    // if no partial delete components were in the mergeWith ComponentSet, no need to continue
+    // If no partial delete components were in the mergeWith ComponentSet, no need to continue.
     if (partialDeleteComponents.size === 0) {
       return;
     }
 
+    // Compare the contents of the retrieved components that support partial delete with the
+    // matching merge components. If the merge components have files that the retrieved components
+    // don't, delete the merge component and add all locally deleted files to the partial delete list
+    // so that they are added to the `FileResponses` as deletes.
     retrievedComponents.forEach((comp) => {
       if (comp.type.supportsPartialDelete && partialDeleteComponents.has(comp.fullName)) {
         const localComp = partialDeleteComponents.get(comp.fullName);
         if (localComp.contentPath && tree.isDirectory(comp.content)) {
           const remoteContentList = tree.readDirectory(comp.content);
           let deleteLocalComp = false;
-          while (localComp.contentList?.length) {
-            const fileName = localComp.contentList.pop();
+          localComp.contentList.forEach((fileName) => {
             if (!remoteContentList.includes(fileName)) {
               this.logger.debug(
                 `Local component (${comp.fullName}) contains ${fileName} while remote component does not. This file is being removed.`
@@ -373,13 +377,12 @@ export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveSta
                 filePath: path.join(localComp.contentPath, fileName),
               });
             }
-          }
+          });
           if (deleteLocalComp) {
             this.logger.debug(`Replacing local component: ${localComp.contentPath} with same component from org`);
             fs.rmSync(localComp.contentPath, { recursive: true, force: true });
           }
         }
-        partialDeleteComponents.delete(comp.fullName);
       }
     });
   }

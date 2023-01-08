@@ -1,3 +1,12 @@
+## [7.5.23](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.5.22...7.5.23) (2023-01-08)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/ts-types from 1.7.1 to 1.7.2 ([#815](https://github.com/forcedotcom/source-deploy-retrieve/issues/815)) ([820becb](https://github.com/forcedotcom/source-deploy-retrieve/commit/820becbe2e6e2105963873d12fb2f6aa4d858d7a))
+
+
+
 ## [7.5.22](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.5.21...7.5.22) (2023-01-01)
 
 

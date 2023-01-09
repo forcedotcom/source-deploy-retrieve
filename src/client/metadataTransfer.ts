@@ -33,7 +33,11 @@ export interface MetadataTransferOptions {
   id?: string;
 }
 
-export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Result extends MetadataTransferResult> {
+export abstract class MetadataTransfer<
+  Status extends MetadataRequestStatus,
+  Result extends MetadataTransferResult,
+  Options extends MetadataTransferOptions
+> {
   protected components: ComponentSet;
   protected logger: Logger;
   protected canceled = false;
@@ -42,7 +46,7 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
   private usernameOrConnection: string | Connection;
   private apiVersion: string;
 
-  public constructor({ usernameOrConnection, components, apiVersion, id }: MetadataTransferOptions) {
+  public constructor({ usernameOrConnection, components, apiVersion, id }: Options) {
     this.usernameOrConnection = usernameOrConnection;
     this.components = components;
     this.apiVersion = apiVersion;
@@ -50,7 +54,8 @@ export abstract class MetadataTransfer<Status extends MetadataRequestStatus, Res
     this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
-  public get id(): string | undefined {
+  // if you passed in an id, you don't have to worry about whether there'll be one if you ask for it
+  public get id(): Options['id'] extends MetadataTransferOptions['id'] ? string : string | undefined {
     return this.transferId;
   }
 

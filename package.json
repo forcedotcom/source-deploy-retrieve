@@ -40,7 +40,7 @@
     "unzipper": "0.10.11"
   },
   "devDependencies": {
-    "@salesforce/cli-plugins-testkit": "^2.5.3",
+    "@salesforce/cli-plugins-testkit": "^3.2.16",
     "@salesforce/dev-config": "^3.0.1",
     "@salesforce/dev-scripts": "^3.1.0",
     "@salesforce/prettier-config": "^0.0.2",
@@ -55,7 +55,6 @@
     "@typescript-eslint/eslint-plugin": "^5.44.0",
     "@typescript-eslint/parser": "^5.46.1",
     "chai": "^4.3.7",
-    "commitizen": "^3.1.2",
     "deep-equal-in-any-order": "^1.1.19",
     "deepmerge": "^4.2.2",
     "eslint": "^8.30.0",
@@ -84,8 +83,6 @@
     "ci-docs": "yarn sf-ci-docs",
     "clean": "sf-clean",
     "clean-all": "sf-clean all",
-    "commit": "git-cz",
-    "commit-init": "commitizen init cz-conventional-changelog --save-dev --save-exact --force",
     "compile": "sf-compile",
     "coverage": "nyc report --reporter=lcov",
     "docs": "sf-docs",

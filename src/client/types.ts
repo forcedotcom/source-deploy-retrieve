@@ -51,11 +51,11 @@ interface FileResponseBase {
   filePath?: string;
 }
 
-interface FileResponseSuccess extends FileResponseBase {
+export interface FileResponseSuccess extends FileResponseBase {
   state: Exclude<ComponentStatus, ComponentStatus.Failed>;
 }
 
-interface FileResponseFailure extends FileResponseBase {
+export interface FileResponseFailure extends FileResponseBase {
   state: ComponentStatus.Failed;
   lineNumber?: number;
   columnNumber?: number;

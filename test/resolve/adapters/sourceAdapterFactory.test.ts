@@ -79,6 +79,7 @@ describe('SourceAdapterFactory', () => {
 
   it('Should throw RegistryError for missing adapter', () => {
     const type: MetadataType = {
+      directoryName: 'myTypes',
       strategies: { adapter: 'missingAdapter' },
       name: 'myType',
       id: 'mytype',

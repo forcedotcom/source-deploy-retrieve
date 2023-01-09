@@ -72,6 +72,7 @@ export async function stubMetadataDeploy(
   const deployRestStub = sandbox.stub(connection.metadata, 'deployRest');
   const pollingClientSpy = sandbox.spy(PollingClient, 'create');
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { rest, ...defaultOptions } = MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions;
   deployRestStub.withArgs(zipBuffer, options.apiOptions ?? defaultOptions).resolves(MOCK_ASYNC_RESULT);
 

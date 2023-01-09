@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { Duration, sleep } from '@salesforce/kit';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { ComponentSet } from '../../src';
-import { MetadataTransfer } from '../../src/client/metadataTransfer';
+import { MetadataTransfer, MetadataTransferOptions } from '../../src/client/metadataTransfer';
 import { MetadataRequestStatus, MetadataTransferResult, RequestStatus } from '../../src/client/types';
 
 Messages.importMessagesDirectory(__dirname);
@@ -21,7 +21,7 @@ describe('MetadataTransfer', () => {
   const $$ = new TestContext();
   const testOrg = new MockTestOrgData();
 
-  class TestTransfer extends MetadataTransfer<MetadataRequestStatus, MetadataTransferResult> {
+  class TestTransfer extends MetadataTransfer<MetadataRequestStatus, MetadataTransferResult, MetadataTransferOptions> {
     public request = { done: true, status: RequestStatus.Succeeded, id: '1', success: true };
     public lifecycle = {
       pre: $$.SANDBOX.stub().returns({ id: '1' }),

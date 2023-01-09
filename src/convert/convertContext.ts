@@ -201,7 +201,7 @@ class NonDecompositionFinalizer extends ConvertTransactionFinalizer<NonDecomposi
     }
     this.tree = tree;
 
-    const packageDirectories = SfProject.getInstance().getPackageDirectories();
+    const packageDirectories = SfProject.getInstance(defaultDirectory).getPackageDirectories();
     const pkgPaths = packageDirectories.map((pkg) => pkg.fullPath);
 
     // nondecomposed metadata types can exist in multiple locations under the same name

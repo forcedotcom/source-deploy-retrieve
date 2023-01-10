@@ -226,7 +226,11 @@ export interface MetadataApiDeployOptions extends MetadataTransferOptions {
   mdapiPath?: string;
 }
 
-export class MetadataApiDeploy extends MetadataTransfer<MetadataApiDeployStatus, DeployResult> {
+export class MetadataApiDeploy extends MetadataTransfer<
+  MetadataApiDeployStatus,
+  DeployResult,
+  MetadataApiDeployOptions
+> {
   public static readonly DEFAULT_OPTIONS: Partial<MetadataApiDeployOptions> = {
     apiOptions: {
       rollbackOnError: true,

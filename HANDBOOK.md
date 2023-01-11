@@ -85,7 +85,7 @@ The metadata registry is the foundation of the library. It is a module to descri
 
 The config file consists of a handful of different indexes.
 
-`types` contains an entry for each supported metadata type. As already mentioned, these entries contain metadata the library relies on to perform a variety of operations that will be described later.
+`types` contains an entry for each supported metadata type. As already mentioned, these entries contain metadata the library relies on to perform a variety of operations that will be described (later)[Breaking Down a Metadata Type Entry].
 
 `suffixes` maps file suffixes to metadata type ids. When parsing a file path, we can examine the file suffix and use this index to map what type it belongs to, providing a performance optimization. Not every metadata type has an associated file suffix, for those we use the following index instead.
 
@@ -97,8 +97,6 @@ The config file consists of a handful of different indexes.
 
 `childTypes` maps child component file suffixes to their parent’s type id. This helps when, for instance, we are parsing a decomposed component file such as a CustomField on a CustomObject. We are then able to quickly identify the parent type of the file. This is primarily beneficial for decomposed components but may have other uses in the future.
 
-`apiVersion` is meant to reflect the api version the registry configuration is aligned with. It’s also used as the default api version for a handful of operations like generating package XMLs or deploying/retrieving.
-
 ### Updating the [Metadata registry file]
 
 This file is large and luckily, not entirely crafted by hand. And because new metadata types are being added to the platform each release, we’ll need to update the [Metadata registry file]. The update-registry module in the scripts folder automatically updates the registry as best it can using a describeMetadata() call against a provided Salesforce org, without overwriting manual changes. It also attempts to update the indexes listed in the previous section. When generating a new version of the registry, it’s important to manually review the changes to ensure they make sense and aren’t destructive. When in doubt, test functionality with the new version. See [Contributing Metadata Types to the Registry](./contributing/metadata.md) in the development README on how to invoke the script with Yarn.
@@ -108,6 +106,39 @@ Unfortunately. we sometimes need to manually change a type definition, albeit ra
 🛠 _At the moment, updating the registry is a manual process when it should be something that runs after a major release automatically. We are investigating how to best make this happen as of 7/01/2021._
 
 🛠 _Another issue is we are limited by the permissions and licenses of the org that we are running the update script on, which may return incomplete describe information. We need to address this as soon as possible to not run into type gaps between releases. This is being worked on as of 7/16/2021._
+
+### Breaking Down a Metadata Type Entry
+
+Luckily we're able to automatically generate most metadata type entries without any human interaction. However, we sometimes get it wrong, or we can't account for a setting. When this happens, we'll need to manually update the registry to get the desired behavior.
+
+There's a lot of options, and toggles that will affect what happens to a metadata type, below, we'll explain what each does, and more importantly, when you'd want to enable each one.
+
+In SDR, a metadata type entry is required to have, at minimum, 2 values, the `id` and the `name`
+
+- `id` The `id` is a unique identifier for the metadata type. It's usually the API name lowercased. For `ApexClass` this becomes, `apexclass`
+- `name` The `name` is the API name of the metadata type, as you would see it, so `ApexClass`.
+
+Now, for all the optional properties which define how the metadata type is converted, where it's stored, and how we can recognize it.
+
+- `directoryName` The `directoryName` is the name of the directory where components are located in a package. Continuing with the `ApexClass` type, this would be `classes`.
+- `suffix` The `suffix` is the suffix of the metadata type file, which is also in the `suffixes` entry in the registry. You might be wondering why is this an optional property? Well, some types, such as `LightningComponentBundles` and `Documents` don't require a certain suffix, or are a "bundle" type which is made of multiple files and directories. For ApexClass, this is `.cls`
+- `strictDirectoryName` The `strictDirectoryName` is a boolean that determines whether components MUST reside in a folder named after the type's `directoryName`
+- `ignoreParsedFullName` This is a boolean that dictates whether to ignore the `fullName` that's parsed from the file path. If set to `true` the metadata type's name will be used instead. This is set to true for `CustomLabels`
+- `folderContentType` If the type is a folder type, which means it is made up multiple files inside a directory, this is the id of the type it is a container for. For `<x>Folder` this is set to `<x>`, the `DashboardFolder` type has `folderContentType` set to `Dashboard`
+- `folderType` If the type is contained in folders, the id of the type that contains it. This is like the inverse of `folderContentType` the `Dashboard` metadata type has `folderType` set to `DashboardFolder`
+- `ignoreParentName` This boolean, when set to `true` will ignore the parent's name when constructing this type's `fullName`. This is only set on the `CustomLabel` type, the child of `CustomLabels`.
+- `xmlElementName` This is the XML element name for the type in the xml file used for constructing child components.
+- `legacySuffix` When converting/deploying source, this will update the suffix in the output or temporary directory (metadata format) Use this, along with additional suffix keys in the registry, to support incorrect suffixes from existing code. `CustomPageWebLinks` used to use the `.custompageweblink` suffix, now they use `.weblink` this property was added to maintain existing projects functionality
+- `uniqueIdElements` This is the xml attribute that acts as the unique identifier when parsing the xml, usually `fullName`
+- `isAddressable` this is a boolean that determines if a metadata type is supported by the Metadata API and if it should be written to a manifest, this is used for `CustomFieldTranslation`.
+- `unaddressableWithoutParent` This applies to child types, and if `true` will require the parent type to be included when deploying/retrieving the child type
+- `supportsWildcardAndName` This boolean determines whether or not a type can be referred to by both the `*` and by name in a manifest. This is `true` for both `CustomObject` and `DigitalExperienceBundle`
+- `supportsPartialDelete` this boolean indicates whether or not partial pieces of metadata can be deleted. Imagine bundle types removing some, but not all of their components
+- `aliasFor` This is used as a redirect, whenever this type is requested, return the value of `aliasFor` instead.
+
+One of SDR's main goals and dogmas, is to be a metadata type generalist, meaning that it won't have to accommodate for a certain metadata type over another. We should be able to group metadata types into similar categories, or classes and handle them all.
+This works pretty well, but from some the options above you can see that we've had to make some compromises to handle certain types. `CustomLabels`, `CustomFieldTranslations`, and `DigitalExperienceBundle` have had settings created just for those types to function
+We're hoping, that as new metadata types get released, that they'll fall into one of these preexisting categories, and we'll already have the ability to handle any of their specific functionality.
 
 ### The registry object
 
@@ -213,7 +244,7 @@ A `TreeContainer` is an encapsulation of a file system that enables I/O against 
 
 Clients can implement new tree containers by extending the `TreeContainer` base class and expanding functionality. Not all methods of a tree container have to be implemented, but an error will be thrown if the container is being used in a context that requires particular methods.
 
-💡_The author, Brian, demonstrated the extensibility of tree containers for a side project by creating a_ `GitTreeContainer`_. This enabled resolving components against a git object tree, allowing us to perform component diffs between git refs and analyze GitHub projects. See the [SFDX Badge Generator](https://sfdx-badge.herokuapp.com/). This could be expanded into a plugin of some sort._
+💡*The author, Brian, demonstrated the extensibility of tree containers for a side project by creating a* `GitTreeContainer`_. This enabled resolving components against a git object tree, allowing us to perform component diffs between git refs and analyze GitHub projects. See the [SFDX Badge Generator](https://sfdx-badge.herokuapp.com/). This could be expanded into a plugin of some sort._
 
 #### Creating mock components with the VirtualTreeContainer
 

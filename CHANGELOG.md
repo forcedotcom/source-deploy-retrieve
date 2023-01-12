@@ -1,3 +1,12 @@
+# [7.7.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.6.0...7.7.0) (2023-01-12)
+
+
+### Features
+
+* replacement telemetry ([4c442ea](https://github.com/forcedotcom/source-deploy-retrieve/commit/4c442ea9e931d78bcad3cfe4278190a797abfe45))
+
+
+
 # [7.6.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.5.23...7.6.0) (2023-01-09)
 
 

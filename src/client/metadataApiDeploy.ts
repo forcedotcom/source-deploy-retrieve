@@ -413,6 +413,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
         numberTestsCompleted: result.numberTestsCompleted,
         numberTestsTotal: result.numberTestsTotal,
         testsTotalTime: result.details?.runTestResult.totalTime,
+        filesWithReplacementsQuantity: this.replacements.size ?? 0,
       });
     } catch (err) {
       const error = err as Error;

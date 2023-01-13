@@ -7,6 +7,7 @@
 - [Metadata Registry](#metadata-registry)
   - [Overview](#overview)
   - [Metadata registry file](#metadata-registry-file)
+  - [Metadata registry entries](#metadata-registry-file)
   - [Updating the Metadata registry file](#updating-the-metadata-registry-file)
   - [The registry object](#the-registry-object)
   - [Querying registry data](#querying-registry-data)
@@ -103,8 +104,6 @@ This file is large and luckily, not entirely crafted by hand. And because new me
 
 Unfortunately. we sometimes need to manually change a type definition, albeit rarely. The `typeOverride.json` file allows us to overwrite any updates the script attempts to make that we don’t want to happen.
 
-🛠 _At the moment, updating the registry is a manual process when it should be something that runs after a major release automatically. We are investigating how to best make this happen as of 7/01/2021._
-
 🛠 _Another issue is we are limited by the permissions and licenses of the org that we are running the update script on, which may return incomplete describe information. We need to address this as soon as possible to not run into type gaps between releases. This is being worked on as of 7/16/2021._
 
 ### Breaking Down a Metadata Type Entry
@@ -135,10 +134,6 @@ Now, for all the optional properties which define how the metadata type is conve
 - `supportsWildcardAndName` This boolean determines whether or not a type can be referred to by both the `*` and by name in a manifest. This is `true` for both `CustomObject` and `DigitalExperienceBundle`
 - `supportsPartialDelete` this boolean indicates whether or not partial pieces of metadata can be deleted. Imagine bundle types removing some, but not all of their components
 - `aliasFor` This is used as a redirect, whenever this type is requested, return the value of `aliasFor` instead.
-
-One of SDR's main goals and dogmas, is to be a metadata type generalist, meaning that it won't have to accommodate for a certain metadata type over another. We should be able to group metadata types into similar categories, or classes and handle them all.
-This works pretty well, but from some the options above you can see that we've had to make some compromises to handle certain types. `CustomLabels`, `CustomFieldTranslations`, and `DigitalExperienceBundle` have had settings created just for those types to function
-We're hoping, that as new metadata types get released, that they'll fall into one of these preexisting categories, and we'll already have the ability to handle any of their specific functionality.
 
 ### The registry object
 
@@ -237,6 +232,184 @@ import { ManifestResolver } from '@salesforce/source-deploy-retrieve';
 ```
 
 📝 _So if the manifest resolver doesn’t create source-backed components, how do the deploy/retrieve commands work that utilize a manifest? We’ll go over this in the section Initializing a set from a manifest file. Those objects have an initializer that combines the efforts of the source and manifest resolvers to do exactly that. Following the principles of the library, we make pieces of functionality as building block modules to support larger operations. A tool author may just want to build something that analyzes and manipulates manifest files, so we don’t tightly couple it with assumptions about deploying and retrieving._
+
+### Adapters
+
+One of SDR's main goals and dogmas, is to be a metadata type generalist, meaning that it won't have to accommodate for a certain metadata type over another. We should be able to group metadata types into similar categories, or classes and handle them all.
+This works pretty well, but from some the options above you can see that we've had to make some compromises to handle certain types. `CustomLabels`, `CustomFieldTranslations`, and `DigitalExperienceBundle` have had settings created just for those types to function
+We're hoping, that as new metadata types get released, that they'll fall into one of these preexisting categories, and we'll already have the ability to handle any of their specific functionality.
+We'll continue to see examples of this as we look at the `strategies` that can be defined for each metadata type. These different strategies define how a metadata type is resolved and converted between source and metadata formats.
+These strategies are optional, but all have a default transformer, and converted assigned to them, which assume nothing special needs to be done and that their source and metadata format are identical, _link to these files_.
+Luckily, lots of type use the default transformers and adapters.
+
+The `strategies` property, of a metadatata type entry in the registry, can define four properties, the `adapter`,`transformer`,`decompositon`, and `recomposition`. How SDR uses these values is explained more in detail later on, but we'll go through each of the options for these values, what they do, what behavior they enable, and the types that use them.
+
+The "adapters", or "source adapters", are responsible for understanding how a metadata type should be represented in source format and recognizing that pattern when constructing `Component Sets`
+
+- The `defaultSourceAdapter`:
+
+This adapter handles most of the types in the registry, this can be used when the metadata type follows the following pattern
+The default source adapter. Handles simple types with no additional content.
+
+**Example Structure**:
+
+```text
+foos/
+├── foo.ext-meta.xml
+├── bar.ext-meta.xml
+```
+
+Types that follow this pattern
+
+Layouts, PermissionSets, FlexiPages and any other types that don't explicitly list an adapter
+
+**Example Structure**:
+
+```text
+layouts/
+├── Broker__c-Broker Layout.layout-meta.xml
+```
+
+- The `bundleSourceAdapter`:
+
+Like the name suggest, this adapter handles bundle types, so `AuraDefinitionBundles`, `LightningWebComponents`. A bundle component has all its source files, including the root metadata xml, contained in its own directory.
+
+**Example Structure**:
+
+```text
+ lwc/
+ ├── myFoo/
+ |   ├── myFoo.js
+ |   ├── myFooStyle.css
+ |   ├── myFoo.html
+ |   ├── myFoo.js-meta.xml
+```
+
+- The `decomposedSourceAdapter`:
+
+Handles decomposed types. A flavor of mixed content where a component can have additional `-meta.xml` files that represent child components of the main component. It's helpful to remember that in metadata format, `CustomObjects`
+for example, are stored in a singular file, the adapters will rewrite that file into a directory that is easier to use in source-tracking, work with as a team, and easier to understand as a human.
+
+**Example Types**:
+
+CustomObject, CustomObjectTranslation
+
+**Example Structures**:
+
+```text
+objects/
+├── MyFoo__c/
+|   ├── MyFoo__c.object-meta.xml
+|   ├── fields/
+|      ├── a.field-meta.xml
+|      ├── b.field-meta.xml
+|      ├── c.field-meta.xml
+
+```
+
+- The `digitalExperienceAdapter`:
+
+Source Adapter for DigitalExperience metadata types. This metadata type is a bundled type of the format.
+
+🧽 This is an example of SDR extending one of the "classes of metadata" to add support for DigitalExperienceBundle.
+Ideally this adapter would've been named something without the specific metadata type in its name, but until another type comes along and uses this adapter it'll be ok.
+
+**Example Structure**:
+
+```text
+site/
+├── foos/
+|   ├── sfdc_cms__appPage/
+|   |   ├── mainAppPage/
+|   |   |  ├── _meta.json
+|   |   |  ├── content.json
+|   ├── sfdc_cms__view/
+|   |   ├── view1/
+|   |   |  ├── _meta.json
+|   |   |  ├── content.json
+|   |   |  ├── fr.json
+|   |   |  ├── en.json
+|   |   ├── view2/
+|   |   |  ├── _meta.json
+|   |   |  ├── content.json
+|   |   |  ├── ar.json
+|   ├── foos.digitalExperience-meta.xml
+content/
+├── bars/
+|   ├── bars.digitalExperience-meta.xml
+```
+
+In the above structure the metadata xml file ending with "digitalExperience-meta.xml" belongs to DigitalExperienceBundle MD type.
+The "\_meta.json" files are child metadata files of DigitalExperienceBundle belonging to DigitalExperience MD type. The rest of the files in the
+corresponding folder are the contents to the DigitalExperience metadata. So, in case of DigitalExperience the metadata file is a JSON file
+and not an XML file.
+
+- The `matchingContentAdapter`:
+
+This adapter is used for `ApexClass` or other types where there is a "content" file and an .xml file. In source-format, an `ApexClass` is made up of two files, the `.cls` which contains the actual code from the class, and an accompanying "meta" file
+
+```text
+classes/
+ ├── myApexClass.cls
+ ├── myApexClass.cls-meta.xml
+```
+
+- The `mixedContentAdapter`:
+
+Handles types with mixed content. Mixed content means there are one or more additional file(s) associated with a component with any file extension. Even an entire folder can be considered "the content".
+
+**Example Types**:
+
+StaticResources, Documents, Bundle Types
+
+**Example Structures**:
+
+```text
+staticresources/
+├── data.resource
+├── data.resource-meta.xml/
+
+bars/
+├── myBar.xyz
+├── myBar.ext2-meta.xml
+```
+
+### Transformers
+
+So now that we're able to recognize different "classes" of metadata based on either their file structure, their extensions, matching files, or any of the adapters listed above, we can start to convert them from source, or metadata format, to the other
+SDR accomplishes this conversion with "Transformers" which will transform the metadata. Similar to how there was a default adapter that handled most of the metadata types, this is true for transformers as well, but because we've committed to doing all of this work on the client, we have to support some complicated types, and have a few more transformers to help handle the edge-case types.
+Each of these transformrs implements two different methods, a `toSourceFormat` and `toMetadataFormat` which are both hopefully self-explanatory. In most cases the transformers follow the adapters naming conventions... so there's a `decomposedMetadataTransformer`, a `staticResourceMetadataTransformer`...
+
+### Decomposition
+
+The Decomposition entry is rarely defined, but plays a large part in breaking down larger types into a more manageable state. There's two options that hopefully make sense with the types that set each of them.
+
+- The `topLevel` option is used for the `Bot` and `CustomObjectTranslations` types. These types have their children types stored at their top level directory. Below, the `Bot` is broken up, and each file is stored directly under its "parent" Bot entry. While in the next example, the CustomObject is broken apart, and each piece is stored in its own subfolder, underneath the parent object
+
+**Example Structures**:
+
+```text
+bots/
+├── MyBot/
+|   ├── MyBot.Bot-meta.xml
+|   ├── MyBot.template-meta.xml
+```
+
+- The `folderPerType` option is used for `CustomObjects` where each child type has its own folder.
+
+**Example Structures**:
+
+```text
+objects/
+├── MyFoo__c/
+|   ├── MyFoo__c.object-meta.xml
+|   ├── fields/
+|      ├── a.field-meta.xml
+```
+
+### Recomposition
+
+This is a snowflake entry, and unfortunately is only used when working with `CustomLabels`. The only value this can be set to is: `startEmpty` which allows us to skip searching for and reading a parent's xml file.
 
 ### Tree containers
 

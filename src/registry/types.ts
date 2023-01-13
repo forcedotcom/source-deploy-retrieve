@@ -131,10 +131,17 @@ export interface MetadataType {
    * Configuration for resolving and converting components of the type.
    */
   strategies?: {
-    adapter: string;
-    transformer?: string;
-    decomposition?: string;
-    recomposition?: string;
+    adapter:
+      | 'sourceAdapter'
+      | 'mixedContent'
+      | 'matchingContentFile'
+      | 'decomposed'
+      | 'nonDecomposed'
+      | 'digitalExperience'
+      | 'bundle';
+    transformer?: 'decomposed' | 'staticResource' | 'nonDecomposed' | 'standard';
+    decomposition?: 'topLevel' | 'folderPerType';
+    recomposition?: 'startEmpty';
   };
 }
 

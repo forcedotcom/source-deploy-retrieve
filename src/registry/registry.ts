@@ -6,8 +6,9 @@
  */
 import { deepFreeze } from '../utils';
 import * as registryData from './metadataRegistry.json';
+import { MetadataRegistry } from './types';
 
 /**
  * The default metadata registry.
  */
-export const registry = deepFreeze(registryData);
+export const registry = deepFreeze(registryData) as MetadataRegistry;

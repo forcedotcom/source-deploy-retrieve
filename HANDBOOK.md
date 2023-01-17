@@ -378,7 +378,14 @@ bars/
 
 So now that we're able to recognize different "classes" of metadata based on either their file structure, their extensions, matching files, or any of the adapters listed above, we can start to convert them from source, or metadata format, to the other
 SDR accomplishes this conversion with "Transformers" which will transform the metadata. Similar to how there was a default adapter that handled most of the metadata types, this is true for transformers as well, but because we've committed to doing all of this work on the client, we have to support some complicated types, and have a few more transformers to help handle the edge-case types.
-Each of these transformrs implements two different methods, a `toSourceFormat` and `toMetadataFormat` which are both hopefully self-explanatory. In most cases the transformers follow the adapters naming conventions... so there's a `decomposedMetadataTransformer`, a `staticResourceMetadataTransformer`...
+Each of these transformers implements two different methods, a `toSourceFormat` and `toMetadataFormat` which are both hopefully self-explanatory. In most cases the transformers follow the adapters naming conventions... so there's a
+
+- `decomposedMetadataTransformer`
+- `staticResourceMetadataTransformer`
+- `defaultMetadataTransfomer`
+- `nonDecomposedMetadataTransformer`
+
+There are fewer transformers than adapters because many types that have different adapters can share a transformer. A Bundle type and a MatchingContent type (`LWC` and `ApexClass`) are written the same in metadata and source format, but they're recognized in different ways.
 
 ### Decomposition
 

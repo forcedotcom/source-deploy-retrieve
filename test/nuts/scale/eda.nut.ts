@@ -23,7 +23,7 @@ describe('tests using EDA', () => {
       project: {
         gitClone: 'https://github.com/mshanemc/eda',
       },
-      authStrategy: 'NONE',
+      devhubAuthStrategy: 'NONE',
     });
   });
 

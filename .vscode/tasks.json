@@ -26,29 +26,13 @@
       "args": ["run", "commit"],
       "isBackground": false
     },
-    {
-      "label": "Commitizen Initialization",
-      "command": "yarn",
-      "type": "shell",
-      "presentation": {
-        "focus": false,
-        "panel": "shared"
-      },
-      "args": ["run", "commit-init"],
-      "isBackground": false
-    },
+
     {
       "label": "Create Change Log",
       "command": "./scripts/change-log-generator.js",
       "type": "shell",
-      "args": [
-        "${input:verboseOutput}",
-        "-r",
-        "${input:publishType}",
-        "-t",
-        "${input:date}"
-      ]
-    },
+      "args": ["${input:verboseOutput}", "-r", "${input:publishType}", "-t", "${input:date}"]
+    }
   ],
   "inputs": [
     {

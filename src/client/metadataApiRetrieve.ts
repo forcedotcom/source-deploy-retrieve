@@ -123,7 +123,11 @@ export class RetrieveResult implements MetadataTransferResult {
   }
 }
 
-export class MetadataApiRetrieve extends MetadataTransfer<MetadataApiRetrieveStatus, RetrieveResult> {
+export class MetadataApiRetrieve extends MetadataTransfer<
+  MetadataApiRetrieveStatus,
+  RetrieveResult,
+  MetadataApiRetrieveOptions
+> {
   public static DEFAULT_OPTIONS: Partial<MetadataApiRetrieveOptions> = { merge: false };
   private options: MetadataApiRetrieveOptions;
   private orgId: string;

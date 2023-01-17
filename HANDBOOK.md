@@ -246,7 +246,7 @@ The `strategies` property, of a metadatata type entry in the registry, can defin
 
 The "adapters", or "source adapters", are responsible for understanding how a metadata type should be represented in source format and recognizing that pattern when constructing `Component Sets`
 
-- The `defaultSourceAdapter`:
+### The `defaultSourceAdapter`:
 
 This adapter handles most of the types in the registry, this can be used when the metadata type follows the following pattern
 The default source adapter. Handles simple types with no additional content.
@@ -270,7 +270,7 @@ layouts/
 ├── Broker__c-Broker Layout.layout-meta.xml
 ```
 
-- The `bundleSourceAdapter`:
+### The `bundleSourceAdapter`:
 
 Like the name suggest, this adapter handles bundle types, so `AuraDefinitionBundles`, `LightningWebComponents`. A bundle component has all its source files, including the root metadata xml, contained in its own directory.
 
@@ -285,7 +285,7 @@ Like the name suggest, this adapter handles bundle types, so `AuraDefinitionBund
  |   ├── myFoo.js-meta.xml
 ```
 
-- The `decomposedSourceAdapter`:
+### The `decomposedSourceAdapter`:
 
 Handles decomposed types. A flavor of mixed content where a component can have additional `-meta.xml` files that represent child components of the main component. It's helpful to remember that in metadata format, `CustomObjects`
 for example, are stored in a singular file, the adapters will rewrite that file into a directory that is easier to use in source-tracking, work with as a team, and easier to understand as a human.
@@ -307,7 +307,7 @@ objects/
 
 ```
 
-- The `digitalExperienceAdapter`:
+### The `digitalExperienceAdapter`:
 
 Source Adapter for DigitalExperience metadata types. This metadata type is a bundled type of the format.
 
@@ -344,7 +344,7 @@ The "\_meta.json" files are child metadata files of DigitalExperienceBundle belo
 corresponding folder are the contents to the DigitalExperience metadata. So, in case of DigitalExperience the metadata file is a JSON file
 and not an XML file.
 
-- The `matchingContentAdapter`:
+### The `matchingContentAdapter`:
 
 This adapter is used for `ApexClass` or other types where there is a "content" file and an .xml file. In source-format, an `ApexClass` is made up of two files, the `.cls` which contains the actual code from the class, and an accompanying "meta" file
 
@@ -354,7 +354,7 @@ classes/
  ├── myApexClass.cls-meta.xml
 ```
 
-- The `mixedContentAdapter`:
+### The `mixedContentAdapter`:
 
 Handles types with mixed content. Mixed content means there are one or more additional file(s) associated with a component with any file extension. Even an entire folder can be considered "the content".
 
@@ -384,7 +384,9 @@ Each of these transformrs implements two different methods, a `toSourceFormat` a
 
 The Decomposition entry is rarely defined, but plays a large part in breaking down larger types into a more manageable state. There's two options that hopefully make sense with the types that set each of them.
 
-- The `topLevel` option is used for the `Bot` and `CustomObjectTranslations` types. These types have their children types stored at their top level directory. Below, the `Bot` is broken up, and each file is stored directly under its "parent" Bot entry. While in the next example, the CustomObject is broken apart, and each piece is stored in its own subfolder, underneath the parent object
+### `topLevel`
+
+option is used for the `Bot` and `CustomObjectTranslations` types. These types have their children types stored at their top level directory. Below, the `Bot` is broken up, and each file is stored directly under its "parent" Bot entry. While in the next example, the CustomObject is broken apart, and each piece is stored in its own subfolder, underneath the parent object
 
 **Example Structures**:
 
@@ -395,7 +397,9 @@ bots/
 |   ├── MyBot.template-meta.xml
 ```
 
-- The `folderPerType` option is used for `CustomObjects` where each child type has its own folder.
+### `folderPerType`
+
+The `folderPerType` is used for `CustomObjects` where each child type has its own folder.
 
 **Example Structures**:
 

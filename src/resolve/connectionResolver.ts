@@ -43,7 +43,7 @@ export class ConnectionResolver {
     for (const type of Object.values(defaultRegistry.types)) {
       componentPromises.push(this.listMembers({ type: type.name }));
     }
-    for await (const componentResult of componentPromises) {
+    (await Promise.all(componentPromises)).map((componentResult) => {
       for (const component of componentResult) {
         let componentType: MetadataType;
         if (typeof component.type === 'string' && component.type.length) {
@@ -65,7 +65,7 @@ export class ConnectionResolver {
           );
         }
       }
-    }
+    });
 
     for (const componentType of componentTypes) {
       const childTypes = componentType.children?.types;

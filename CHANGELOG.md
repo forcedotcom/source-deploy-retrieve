@@ -1,3 +1,12 @@
+## [7.7.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.7.4...7.7.5) (2023-01-20)
+
+
+### Bug Fixes
+
+* only emit events once per lifecycle ([#825](https://github.com/forcedotcom/source-deploy-retrieve/issues/825)) ([22324bd](https://github.com/forcedotcom/source-deploy-retrieve/commit/22324bda69bc61730e7db75aed1a4689de8df229))
+
+
+
 ## [7.7.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.7.3...7.7.4) (2023-01-20)
 
 

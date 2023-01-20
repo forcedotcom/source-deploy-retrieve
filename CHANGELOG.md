@@ -1,3 +1,12 @@
+## [7.7.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.7.3...7.7.4) (2023-01-20)
+
+
+### Bug Fixes
+
+* await SVS promises to write to manifest ([#824](https://github.com/forcedotcom/source-deploy-retrieve/issues/824)) ([02895e2](https://github.com/forcedotcom/source-deploy-retrieve/commit/02895e287e4af2672316a07103307b1bd1b7354c))
+
+
+
 ## [7.7.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.7.2...7.7.3) (2023-01-17)
 
 

@@ -27,6 +27,8 @@ interface DescribeResult {
 // get the coverage report
 (async () => {
   const currentApiVersion = await getCurrentApiVersion();
+  console.log(`Using API version: ${currentApiVersion}`);
+
   const metadataCoverage = await getCoverage(currentApiVersion);
   console.log(
     `CoverageReport shows ${Object.keys(metadataCoverage.types).length} items in the metadata coverage report`

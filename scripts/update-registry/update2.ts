@@ -129,5 +129,7 @@ const updateProjectScratchDef = (missingTypes: [string, CoverageObjectType][]) =
   scratchDefSummary.features = [...new Set(scratchDefSummary.features)];
   const jsonData = JSON.stringify({ edition: 'developer', ...scratchDefSummary });
   fs.writeFileSync('./registryBuilder/config/project-scratch-def.json', jsonData);
-  console.log(`Creating org with features ${scratchDefSummary.features.join(',')}`);
+  if (scratchDefSummary.features.length > 0) {
+    console.log(`Creating org with features ${scratchDefSummary.features.join(',')}`);
+  }
 };

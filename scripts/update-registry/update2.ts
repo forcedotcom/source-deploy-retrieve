@@ -51,6 +51,19 @@ interface DescribeResult {
   updateProjectScratchDef(missingTypes);
   // TODO: sourceApi has to match the coverage report
   if (!process.env.RB_EXISTING_ORG) {
+    const hasDefaultDevHub = Boolean(
+      JSON.parse(shelljs.exec('sfdx config:get defaultdevhubusername --json', { silent: true }).stdout).result[0].value
+    );
+
+    if (!hasDefaultDevHub) {
+      console.log(`
+Failed to create scratch org: default Dev Hub not found.
+To create the scratch org you need to set a default Dev Hub with \`sfdx\`.
+Example: \`sfdx config:set defaultdevhubusername=<devhub-username> --global\`
+`);
+      exit(1);
+    }
+
     shelljs.exec('sfdx force:org:create -f registryBuilder/config/project-scratch-def.json -d 1 -a registryBuilder');
   }
   // describe the org

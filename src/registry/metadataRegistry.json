@@ -3299,6 +3299,14 @@
       "directoryName": "timelineObjectDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "actionlauncheritemdef": {
+      "id": "actionlauncheritemdef",
+      "name": "ActionLauncherItemDef",
+      "suffix": "actionLauncherItemDef",
+      "directoryName": "ActionLauncherItemDef",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3662,7 +3670,8 @@
     "marketSegmentDefinition": "marketsegmentdefinition",
     "mfgProgramTemplate": "mfgprogramtemplate",
     "streamingAppDataConnector": "streamingappdataconnector",
-    "timelineObjectDefinition": "timelineobjectdefinition"
+    "timelineObjectDefinition": "timelineobjectdefinition",
+    "actionLauncherItemDef": "actionlauncheritemdef"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

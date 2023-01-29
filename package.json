@@ -58,7 +58,7 @@
     "deep-equal-in-any-order": "^1.1.19",
     "deepmerge": "^4.2.2",
     "eslint": "^8.32.0",
-    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-prettier": "^8.6.0",
     "eslint-config-salesforce": "^1.1.0",
     "eslint-config-salesforce-license": "^0.1.6",
     "eslint-config-salesforce-typescript": "^1.1.1",

@@ -1,3 +1,12 @@
+## [7.7.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.7.5...7.7.6) (2023-01-29)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/kit from 1.8.0 to 1.8.3 ([#835](https://github.com/forcedotcom/source-deploy-retrieve/issues/835)) ([61f4856](https://github.com/forcedotcom/source-deploy-retrieve/commit/61f48562a898c9f94d4062eab1fc699878f3c9de))
+
+
+
 ## [7.7.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.7.4...7.7.5) (2023-01-20)
 
 

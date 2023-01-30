@@ -140,6 +140,17 @@
         "adapter": "mixedContent"
       }
     },
+    "experiencepropertytypebundle": {
+      "id": "experiencepropertytypebundle",
+      "name": "ExperiencePropertyTypeBundle",
+      "directoryName": "experiencePropertyTypeBundles",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "supportsPartialDelete": false,
+      "strategies": {
+        "adapter": "mixedContent"
+      }
+    },
     "certificate": {
       "id": "certificate",
       "name": "Certificate",

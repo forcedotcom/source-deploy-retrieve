@@ -3677,6 +3677,7 @@
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
+    "experiencePropertyTypeBundles": "experiencepropertytypebundle",
     "aura": "auradefinitionbundle",
     "lwc": "lightningcomponentbundle",
     "documents": "document",

@@ -555,8 +555,10 @@ v58 introduces the following new types.  Here's their current level of support
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
 |Ai4mSettings|✅||
+|DataTypeToDisplayType|❌|Not supported, but support could be added|
+|DataWeaveResource|✅||
 |OmniChannelPricingSettings|✅||
-|PriceSheetDefinition|❌|Not supported, but support could be added|
+|ProcessFlowMigration|❌|Not supported, but support could be added|
 
 ## Additional Types
 
@@ -607,4 +609,3 @@ v58 introduces the following new types.  Here's their current level of support
 - InternalOrganization
 - UiViewDefinition
 - MobileSecurityPolicySet
-- DataWeaveResource

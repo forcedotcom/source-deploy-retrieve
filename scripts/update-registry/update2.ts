@@ -27,6 +27,8 @@ interface DescribeResult {
 // get the coverage report
 (async () => {
   const currentApiVersion = await getCurrentApiVersion();
+  console.log(`Using API version: ${currentApiVersion}`);
+
   const metadataCoverage = await getCoverage(currentApiVersion);
   console.log(
     `CoverageReport shows ${Object.keys(metadataCoverage.types).length} items in the metadata coverage report`
@@ -49,6 +51,19 @@ interface DescribeResult {
   updateProjectScratchDef(missingTypes);
   // TODO: sourceApi has to match the coverage report
   if (!process.env.RB_EXISTING_ORG) {
+    const hasDefaultDevHub = Boolean(
+      JSON.parse(shelljs.exec('sfdx config:get defaultdevhubusername --json', { silent: true }).stdout).result[0].value
+    );
+
+    if (!hasDefaultDevHub) {
+      console.log(`
+Failed to create scratch org: default Dev Hub not found.
+To create the scratch org you need to set a default Dev Hub with \`sfdx\`.
+Example: \`sfdx config:set defaultdevhubusername=<devhub-username> --global\`
+`);
+      exit(1);
+    }
+
     shelljs.exec('sfdx force:org:create -f registryBuilder/config/project-scratch-def.json -d 1 -a registryBuilder');
   }
   // describe the org
@@ -114,5 +129,7 @@ const updateProjectScratchDef = (missingTypes: [string, CoverageObjectType][]) =
   scratchDefSummary.features = [...new Set(scratchDefSummary.features)];
   const jsonData = JSON.stringify({ edition: 'developer', ...scratchDefSummary });
   fs.writeFileSync('./registryBuilder/config/project-scratch-def.json', jsonData);
-  console.log(`Creating org with features ${scratchDefSummary.features.join(',')}`);
+  if (scratchDefSummary.features.length > 0) {
+    console.log(`Creating org with features ${scratchDefSummary.features.join(',')}`);
+  }
 };

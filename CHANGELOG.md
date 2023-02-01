@@ -1,3 +1,12 @@
+## [7.7.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.7.6...7.7.7) (2023-02-01)
+
+
+### Bug Fixes
+
+* **mdTypes:** AccountingFieldMapping, AccountingModelConfig, ActionLauncherItemDef, PipelineInspMetricConfig , ActionableListDefinition, LocationUse, ExplainabilityMsgTemplate, IntegrationProviderDef, PersonAccountOwnerPowerUser, ProductSpecificationTypeDefinition ([98ce025](https://github.com/forcedotcom/source-deploy-retrieve/commit/98ce025adaf22bba6429f50ffa78c0d3ee442973))
+
+
+
 ## [7.7.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.7.5...7.7.6) (2023-01-29)
 
 

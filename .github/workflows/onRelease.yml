@@ -1,7 +1,7 @@
 # when a github release happens, publish an npm package,
 on:
   release:
-    types: [published]
+    types: [released]
   # support manual release
   workflow_dispatch:
     inputs:
@@ -10,21 +10,9 @@ on:
         type: string
         required: true
 jobs:
-  getDistTag:
-    outputs:
-      tag: ${{ steps.distTag.outputs.tag }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.release.tag_name || inputs.tag  }}
-      - uses: salesforcecli/github-workflows/.github/actions/getPreReleaseTag@main
-        id: distTag
   npm:
-    needs: [getDistTag]
     uses: salesforcecli/github-workflows/.github/workflows/npmPublish.yml@main
     with:
       ctc: false
-      tag: ${{ needs.getDistTag.outputs.tag || 'latest' }}
       githubTag: ${{ github.event.release.tag_name || inputs.tag }}
     secrets: inherit

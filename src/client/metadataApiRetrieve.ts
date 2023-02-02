@@ -370,6 +370,20 @@ export class MetadataApiRetrieve extends MetadataTransfer<
           let deleteLocalComp = false;
           localComp.contentList.forEach((fileName) => {
             if (!remoteContentList.includes(fileName)) {
+              // If fileName is forceignored it is not counted as a diff. If fileName is a directory
+              // we have to read the contents to check forceignore status or we might get a false
+              // negative with `denies()` due to how the ignore library works.
+              const fileNameFullPath = path.join(localComp.contentPath, fileName);
+              if (fs.statSync(fileNameFullPath).isDirectory()) {
+                const nestedFiles = fs.readdirSync(fileNameFullPath);
+                if (nestedFiles.some((f) => comp.getForceIgnore().denies(path.join(fileNameFullPath, f)))) {
+                  this.logger.debug(
+                    `Local component has ${fileNameFullPath} while remote does not, but it is forceignored so ignoring.`
+                  );
+                  return;
+                }
+              }
+
               this.logger.debug(
                 `Local component (${comp.fullName}) contains ${fileName} while remote component does not. This file is being removed.`
               );

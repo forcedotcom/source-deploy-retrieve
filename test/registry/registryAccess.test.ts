@@ -6,7 +6,7 @@
  */
 import { assert, expect } from 'chai';
 import { Messages, SfError } from '@salesforce/core';
-import { MetadataRegistry, MetadataType, registry, RegistryAccess } from '../../src';
+import { MetadataType, registry, RegistryAccess } from '../../src';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_missing_type_definition']);
@@ -66,9 +66,7 @@ describe('RegistryAccess', () => {
 
   describe('getStrictFolderTypes', () => {
     it('should return all the types requiring a parent directory named after its type', () => {
-      const types = Object.values(registry.strictDirectoryNames).map(
-        (typeId) => (registry as MetadataRegistry).types[typeId]
-      );
+      const types = Object.values(registry.strictDirectoryNames).map((typeId) => registry.types[typeId]);
       expect(registryAccess.getStrictFolderTypes()).to.deep.equal(types);
     });
   });

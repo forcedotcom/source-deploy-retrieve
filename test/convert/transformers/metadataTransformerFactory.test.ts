@@ -64,6 +64,7 @@ describe('MetadataTransformerFactory', () => {
       name: 'Test',
       type: {
         ...registry.types.apexclass,
+        // @ts-ignore
         strategies: { adapter: 'matchingContentFile', transformer: 'MissingStrategies' },
       },
       xml: 'Test.xml',

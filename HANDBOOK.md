@@ -7,6 +7,7 @@
 - [Metadata Registry](#metadata-registry)
   - [Overview](#overview)
   - [Metadata registry file](#metadata-registry-file)
+  - [Metadata registry entries](#metadata-registry-file)
   - [Updating the Metadata registry file](#updating-the-metadata-registry-file)
   - [The registry object](#the-registry-object)
   - [Querying registry data](#querying-registry-data)
@@ -85,7 +86,7 @@ The metadata registry is the foundation of the library. It is a module to descri
 
 The config file consists of a handful of different indexes.
 
-`types` contains an entry for each supported metadata type. As already mentioned, these entries contain metadata the library relies on to perform a variety of operations that will be described later.
+`types` contains an entry for each supported metadata type. As already mentioned, these entries contain metadata the library relies on to perform a variety of operations that will be described (later)[Breaking Down a Metadata Type Entry].
 
 `suffixes` maps file suffixes to metadata type ids. When parsing a file path, we can examine the file suffix and use this index to map what type it belongs to, providing a performance optimization. Not every metadata type has an associated file suffix, for those we use the following index instead.
 
@@ -97,17 +98,42 @@ The config file consists of a handful of different indexes.
 
 `childTypes` maps child component file suffixes to their parent’s type id. This helps when, for instance, we are parsing a decomposed component file such as a CustomField on a CustomObject. We are then able to quickly identify the parent type of the file. This is primarily beneficial for decomposed components but may have other uses in the future.
 
-`apiVersion` is meant to reflect the api version the registry configuration is aligned with. It’s also used as the default api version for a handful of operations like generating package XMLs or deploying/retrieving.
-
 ### Updating the [Metadata registry file]
 
 This file is large and luckily, not entirely crafted by hand. And because new metadata types are being added to the platform each release, we’ll need to update the [Metadata registry file]. The update-registry module in the scripts folder automatically updates the registry as best it can using a describeMetadata() call against a provided Salesforce org, without overwriting manual changes. It also attempts to update the indexes listed in the previous section. When generating a new version of the registry, it’s important to manually review the changes to ensure they make sense and aren’t destructive. When in doubt, test functionality with the new version. See [Contributing Metadata Types to the Registry](./contributing/metadata.md) in the development README on how to invoke the script with Yarn.
 
 Unfortunately. we sometimes need to manually change a type definition, albeit rarely. The `typeOverride.json` file allows us to overwrite any updates the script attempts to make that we don’t want to happen.
 
-🛠 _At the moment, updating the registry is a manual process when it should be something that runs after a major release automatically. We are investigating how to best make this happen as of 7/01/2021._
-
 🛠 _Another issue is we are limited by the permissions and licenses of the org that we are running the update script on, which may return incomplete describe information. We need to address this as soon as possible to not run into type gaps between releases. This is being worked on as of 7/16/2021._
+
+### Breaking Down a Metadata Type Entry
+
+Luckily we're able to automatically generate most metadata type entries without any human interaction. However, we sometimes get it wrong, or we can't account for a setting. When this happens, we'll need to manually update the registry to get the desired behavior.
+
+There's a lot of options, and toggles that will affect what happens to a metadata type, below, we'll explain what each does, and more importantly, when you'd want to enable each one.
+
+In SDR, a metadata type entry is required to have, at minimum, 2 values, the `id` and the `name`
+
+- `id` The `id` is a unique identifier for the metadata type. It's usually the API name lowercased. For `ApexClass` this becomes, `apexclass`
+- `name` The `name` is the API name of the metadata type, as you would see it, so `ApexClass`.
+
+Now, for all the optional properties which define how the metadata type is converted, where it's stored, and how we can recognize it.
+
+- `aliasFor` This is used as a redirect, whenever this type is requested, return the value of `aliasFor` instead.
+- `directoryName` The `directoryName` is the name of the directory where components are located in a package. Continuing with the `ApexClass` type, this would be `classes`.
+- `folderContentType` If the type is a folder type, which means it is made up multiple files inside a directory, this is the id of the type it is a container for. For `<x>Folder` this is set to `<x>`, the `DashboardFolder` type has `folderContentType` set to `Dashboard`
+- `folderType` If the type is contained in folders, the id of the type that contains it. This is like the inverse of `folderContentType` the `Dashboard` metadata type has `folderType` set to `DashboardFolder`
+- `ignoreParentName` This boolean, when set to `true` will ignore the parent's name when constructing this type's `fullName`. This is only set on the `CustomLabel` type, the child of `CustomLabels`.
+- `ignoreParsedFullName` This is a boolean that dictates whether to ignore the `fullName` (see [Component Resolution](#component-resolution) for a detailed breakdown of the `fullName` attribute) that's parsed from the file path. If set to `true` the metadata type's name will be used instead. This is set to true for `CustomLabels`
+- `isAddressable` this is a boolean that determines if a metadata type is supported by the Metadata API and if it should be written to a manifest, this is used for `CustomFieldTranslation`.
+- `legacySuffix` When converting/deploying source, this will update the suffix in the output or temporary directory (metadata format) Use this, along with additional suffix keys in the registry, to support incorrect suffixes from existing code. `CustomPageWebLinks` used to use the `.custompageweblink` suffix, now they use `.weblink` this property was added to maintain existing projects functionality
+- `strictDirectoryName` The `strictDirectoryName` is a boolean that determines whether components MUST reside in a folder named after the type's `directoryName`
+- `suffix` The `suffix` is the suffix of the metadata type file, which is also in the `suffixes` entry in the registry. You might be wondering why is this an optional property? Well, some types, such as `LightningComponentBundles` and `Documents` don't require a certain suffix, or are a "bundle" type which is made of multiple files and directories. For ApexClass, this is `.cls`
+- `supportsPartialDelete` this boolean indicates whether or not partial pieces of metadata can be deleted. Imagine bundle types removing some, but not all of their components
+- `supportsWildcardAndName` This boolean determines whether or not a type can be referred to by both the `*` and by name in a manifest. This is `true` for both `CustomObject` and `DigitalExperienceBundle`
+- `unaddressableWithoutParent` This applies to child types, and if `true` will require the parent type to be included when deploying/retrieving the child type
+- `uniqueIdElements` This is the xml attribute that acts as the unique identifier when parsing the xml, usually `fullName`
+- `xmlElementName` This is the XML element name for the type in the xml file used for constructing child components.
 
 ### The registry object
 
@@ -207,13 +233,202 @@ import { ManifestResolver } from '@salesforce/source-deploy-retrieve';
 
 📝 _So if the manifest resolver doesn’t create source-backed components, how do the deploy/retrieve commands work that utilize a manifest? We’ll go over this in the section Initializing a set from a manifest file. Those objects have an initializer that combines the efforts of the source and manifest resolvers to do exactly that. Following the principles of the library, we make pieces of functionality as building block modules to support larger operations. A tool author may just want to build something that analyzes and manipulates manifest files, so we don’t tightly couple it with assumptions about deploying and retrieving._
 
+### Adapters
+
+One of SDR's main goals and dogmas, is to be a metadata type generalist, meaning that it won't have to accommodate for a certain metadata type over another. We should be able to group metadata types into similar categories, or classes and handle them all.
+This works pretty well, but from some the options above you can see that we've had to make some compromises to handle certain types. `CustomLabels`, `CustomFieldTranslations`, and `DigitalExperienceBundle` have had settings created just for those types to function
+We're hoping, that as new metadata types get released, that they'll fall into one of these preexisting categories, and we'll already have the ability to handle any of their specific functionality.
+We'll continue to see examples of this as we look at the `strategies` that can be defined for each metadata type. These different strategies define how a metadata type is resolved and converted between source and metadata formats.
+These strategies are optional, but all have a default transformer, and converter assigned to them, which assumes nothing special needs to be done and that their source and metadata format are identical, _link to these files_.
+Luckily, lots of type use the default transformers and adapters.
+
+The `strategies` property, of a metadatata type entry in the registry, can define four properties, the `adapter`,`transformer`,`decompositon`, and `recomposition`. How SDR uses these values is explained more in detail later on, but we'll go through each of the options for these values, what they do, what behavior they enable, and the types that use them.
+
+The "adapters", or "source adapters", are responsible for understanding how a metadata type should be represented in source format and recognizing that pattern when constructing `Component Sets`
+
+### The `defaultSourceAdapter`:
+
+This adapter handles most of the types in the registry, this can be used when the metadata type follows the following pattern
+The default source adapter. Handles simple types with no additional content.
+
+**Example Structure**:
+
+```text
+foos/
+├── foo.ext-meta.xml
+├── bar.ext-meta.xml
+```
+
+Types that follow this pattern
+
+Layouts, PermissionSets, FlexiPages and any other types that don't explicitly list an adapter
+
+**Example Structure**:
+
+```text
+layouts/
+├── Broker__c-Broker Layout.layout-meta.xml
+```
+
+### The `bundleSourceAdapter`:
+
+Like the name suggests, this adapter handles bundle types, so `AuraDefinitionBundles`, `LightningWebComponents`. A bundle component has all its source files, including the root metadata xml, contained in its own directory.
+
+**Example Structure**:
+
+```text
+ lwc/
+ ├── myFoo/
+ |   ├── myFoo.js
+ |   ├── myFooStyle.css
+ |   ├── myFoo.html
+ |   ├── myFoo.js-meta.xml
+```
+
+### The `decomposedSourceAdapter`:
+
+Handles decomposed types. A flavor of mixed content where a component can have additional `-meta.xml` files that represent child components of the main component. It's helpful to remember that in metadata format, `CustomObjects`,
+for example, are stored in a singular file, the adapters will rewrite that file into a directory that is easier to use in source-tracking, work with as a team, and easier to understand as a human.
+
+**Example Types**:
+
+CustomObject, CustomObjectTranslation
+
+**Example Structures**:
+
+```text
+objects/
+├── MyFoo__c/
+|   ├── MyFoo__c.object-meta.xml
+|   ├── fields/
+|      ├── a.field-meta.xml
+|      ├── b.field-meta.xml
+|      ├── c.field-meta.xml
+
+```
+
+### The `digitalExperienceAdapter`:
+
+Source Adapter for DigitalExperience metadata types. This metadata type is a bundled type of the format.
+
+🧽 This is an example of SDR extending one of the "classes of metadata" to add support for DigitalExperienceBundle.
+Ideally this adapter would've been named something without the specific metadata type in its name, but until another type comes along and uses this adapter it'll be ok.
+
+**Example Structure**:
+
+```text
+site/
+├── foos/
+|   ├── sfdc_cms__appPage/
+|   |   ├── mainAppPage/
+|   |   |  ├── _meta.json
+|   |   |  ├── content.json
+|   ├── sfdc_cms__view/
+|   |   ├── view1/
+|   |   |  ├── _meta.json
+|   |   |  ├── content.json
+|   |   |  ├── fr.json
+|   |   |  ├── en.json
+|   |   ├── view2/
+|   |   |  ├── _meta.json
+|   |   |  ├── content.json
+|   |   |  ├── ar.json
+|   ├── foos.digitalExperience-meta.xml
+content/
+├── bars/
+|   ├── bars.digitalExperience-meta.xml
+```
+
+In the above structure the metadata xml file ending with "digitalExperience-meta.xml" belongs to DigitalExperienceBundle MD type.
+The "\_meta.json" files are child metadata files of DigitalExperienceBundle belonging to DigitalExperience MD type. The rest of the files in the
+corresponding folder are the contents to the DigitalExperience metadata. So, in case of DigitalExperience the metadata file is a JSON file
+and not an XML file.
+
+### The `matchingContentAdapter`:
+
+This adapter is used for `ApexClass` or other types where there is a "content" file and an .xml file. In source-format, an `ApexClass` is made up of two files, the `.cls` which contains the actual code from the class, and an accompanying "meta" file
+
+```text
+classes/
+ ├── myApexClass.cls
+ ├── myApexClass.cls-meta.xml
+```
+
+### The `mixedContentAdapter`:
+
+Handles types with mixed content. Mixed content means there are one or more additional file(s) associated with a component with any file extension. Even an entire folder can be considered "the content".
+
+**Example Types**:
+
+StaticResources, Documents, Bundle Types
+
+**Example Structures**:
+
+```text
+staticresources/
+├── data.resource
+├── data.resource-meta.xml/
+
+bars/
+├── myBar.xyz
+├── myBar.ext2-meta.xml
+```
+
+### Transformers
+
+So now that we're able to recognize different "classes" of metadata based on either their file structure, their extensions, matching files, or any of the adapters listed above, we can start to convert them from source, or metadata format, to the other
+SDR accomplishes this conversion with "Transformers" that will transform the metadata. Similar to how there was a default adapter that handled most of the metadata types, this is true for transformers as well, but because we've committed to doing all of this work on the client, we have to support some complicated types, and have a few more transformers to help handle the edge-case types.
+Each of these transformers implements two different methods, a `toSourceFormat` and `toMetadataFormat` which are both hopefully self-explanatory. In most cases the transformers follow the adapters naming conventions... so there's a
+
+- `decomposedMetadataTransformer`
+- `staticResourceMetadataTransformer`
+- `defaultMetadataTransfomer`
+- `nonDecomposedMetadataTransformer`
+
+There are fewer transformers than adapters because many types that have different adapters can share a transformer. A Bundle type and a MatchingContent type (`LWC` and `ApexClass`) are written the same in metadata and source format, but they're recognized in different ways.
+
+### Decomposition
+
+The Decomposition entry is rarely defined, but plays a large part in breaking down larger types into a more manageable state. There's two options that hopefully make sense with the types that set each of them.
+
+### `topLevel`
+
+option is used for the `Bot` and `CustomObjectTranslations` types. These types have their children types stored at their top level directory. Below, the `Bot` is broken up, and each file is stored directly under its "parent" Bot entry. While in the next example, the CustomObject is broken apart, and each piece is stored in its own subfolder, underneath the parent object
+
+**Example Structures**:
+
+```text
+bots/
+├── MyBot/
+|   ├── MyBot.Bot-meta.xml
+|   ├── MyBot.template-meta.xml
+```
+
+### `folderPerType`
+
+The `folderPerType` is used for `CustomObjects` where each child type has its own folder.
+
+**Example Structures**:
+
+```text
+objects/
+├── MyFoo__c/
+|   ├── MyFoo__c.object-meta.xml
+|   ├── fields/
+|      ├── a.field-meta.xml
+```
+
+### Recomposition
+
+This is a snowflake entry, and unfortunately is only used when working with `CustomLabels`. The only value this can be set to is: `startEmpty` which allows us to skip searching for and reading a parent's xml file.
+
 ### Tree containers
 
 A `TreeContainer` is an encapsulation of a file system that enables I/O against anything that can be abstracted as one. The implication is a client can resolve source-backed components against alternate file system abstractions. By default for most operations, the `NodeFSTreeContainer` is used, which is simply a wrapper of the Node file system api calls. There is also the `ZipTreeContainer`, which is used for scanning components against the central directory of a zip file, and the `VirtualTreeContainer`, helpful for creating mock components in testing scenarios. This concept is central to how we resolve and extract components in a retrieved zip file.
 
 Clients can implement new tree containers by extending the `TreeContainer` base class and expanding functionality. Not all methods of a tree container have to be implemented, but an error will be thrown if the container is being used in a context that requires particular methods.
 
-💡_The author, Brian, demonstrated the extensibility of tree containers for a side project by creating a_ `GitTreeContainer`_. This enabled resolving components against a git object tree, allowing us to perform component diffs between git refs and analyze GitHub projects. See the [SFDX Badge Generator](https://sfdx-badge.herokuapp.com/). This could be expanded into a plugin of some sort._
+💡*The author, Brian, demonstrated the extensibility of tree containers for a side project by creating a* `GitTreeContainer`_. This enabled resolving components against a git object tree, allowing us to perform component diffs between git refs and analyze GitHub projects. See the [SFDX Badge Generator](https://sfdx-badge.herokuapp.com/). This could be expanded into a plugin of some sort._
 
 #### Creating mock components with the VirtualTreeContainer
 

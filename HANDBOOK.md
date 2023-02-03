@@ -119,21 +119,21 @@ In SDR, a metadata type entry is required to have, at minimum, 2 values, the `id
 
 Now, for all the optional properties which define how the metadata type is converted, where it's stored, and how we can recognize it.
 
+- `aliasFor` This is used as a redirect, whenever this type is requested, return the value of `aliasFor` instead.
 - `directoryName` The `directoryName` is the name of the directory where components are located in a package. Continuing with the `ApexClass` type, this would be `classes`.
-- `suffix` The `suffix` is the suffix of the metadata type file, which is also in the `suffixes` entry in the registry. You might be wondering why is this an optional property? Well, some types, such as `LightningComponentBundles` and `Documents` don't require a certain suffix, or are a "bundle" type which is made of multiple files and directories. For ApexClass, this is `.cls`
-- `strictDirectoryName` The `strictDirectoryName` is a boolean that determines whether components MUST reside in a folder named after the type's `directoryName`
-- `ignoreParsedFullName` This is a boolean that dictates whether to ignore the `fullName` that's parsed from the file path. If set to `true` the metadata type's name will be used instead. This is set to true for `CustomLabels`
 - `folderContentType` If the type is a folder type, which means it is made up multiple files inside a directory, this is the id of the type it is a container for. For `<x>Folder` this is set to `<x>`, the `DashboardFolder` type has `folderContentType` set to `Dashboard`
 - `folderType` If the type is contained in folders, the id of the type that contains it. This is like the inverse of `folderContentType` the `Dashboard` metadata type has `folderType` set to `DashboardFolder`
 - `ignoreParentName` This boolean, when set to `true` will ignore the parent's name when constructing this type's `fullName`. This is only set on the `CustomLabel` type, the child of `CustomLabels`.
-- `xmlElementName` This is the XML element name for the type in the xml file used for constructing child components.
-- `legacySuffix` When converting/deploying source, this will update the suffix in the output or temporary directory (metadata format) Use this, along with additional suffix keys in the registry, to support incorrect suffixes from existing code. `CustomPageWebLinks` used to use the `.custompageweblink` suffix, now they use `.weblink` this property was added to maintain existing projects functionality
-- `uniqueIdElements` This is the xml attribute that acts as the unique identifier when parsing the xml, usually `fullName`
+- `ignoreParsedFullName` This is a boolean that dictates whether to ignore the `fullName` (see [Component Resolution](#component-resolution) for a detailed breakdown of the `fullName` attribute) that's parsed from the file path. If set to `true` the metadata type's name will be used instead. This is set to true for `CustomLabels`
 - `isAddressable` this is a boolean that determines if a metadata type is supported by the Metadata API and if it should be written to a manifest, this is used for `CustomFieldTranslation`.
-- `unaddressableWithoutParent` This applies to child types, and if `true` will require the parent type to be included when deploying/retrieving the child type
-- `supportsWildcardAndName` This boolean determines whether or not a type can be referred to by both the `*` and by name in a manifest. This is `true` for both `CustomObject` and `DigitalExperienceBundle`
+- `legacySuffix` When converting/deploying source, this will update the suffix in the output or temporary directory (metadata format) Use this, along with additional suffix keys in the registry, to support incorrect suffixes from existing code. `CustomPageWebLinks` used to use the `.custompageweblink` suffix, now they use `.weblink` this property was added to maintain existing projects functionality
+- `strictDirectoryName` The `strictDirectoryName` is a boolean that determines whether components MUST reside in a folder named after the type's `directoryName`
+- `suffix` The `suffix` is the suffix of the metadata type file, which is also in the `suffixes` entry in the registry. You might be wondering why is this an optional property? Well, some types, such as `LightningComponentBundles` and `Documents` don't require a certain suffix, or are a "bundle" type which is made of multiple files and directories. For ApexClass, this is `.cls`
 - `supportsPartialDelete` this boolean indicates whether or not partial pieces of metadata can be deleted. Imagine bundle types removing some, but not all of their components
-- `aliasFor` This is used as a redirect, whenever this type is requested, return the value of `aliasFor` instead.
+- `supportsWildcardAndName` This boolean determines whether or not a type can be referred to by both the `*` and by name in a manifest. This is `true` for both `CustomObject` and `DigitalExperienceBundle`
+- `unaddressableWithoutParent` This applies to child types, and if `true` will require the parent type to be included when deploying/retrieving the child type
+- `uniqueIdElements` This is the xml attribute that acts as the unique identifier when parsing the xml, usually `fullName`
+- `xmlElementName` This is the XML element name for the type in the xml file used for constructing child components.
 
 ### The registry object
 
@@ -239,7 +239,7 @@ One of SDR's main goals and dogmas, is to be a metadata type generalist, meaning
 This works pretty well, but from some the options above you can see that we've had to make some compromises to handle certain types. `CustomLabels`, `CustomFieldTranslations`, and `DigitalExperienceBundle` have had settings created just for those types to function
 We're hoping, that as new metadata types get released, that they'll fall into one of these preexisting categories, and we'll already have the ability to handle any of their specific functionality.
 We'll continue to see examples of this as we look at the `strategies` that can be defined for each metadata type. These different strategies define how a metadata type is resolved and converted between source and metadata formats.
-These strategies are optional, but all have a default transformer, and converted assigned to them, which assume nothing special needs to be done and that their source and metadata format are identical, _link to these files_.
+These strategies are optional, but all have a default transformer, and converter assigned to them, which assumes nothing special needs to be done and that their source and metadata format are identical, _link to these files_.
 Luckily, lots of type use the default transformers and adapters.
 
 The `strategies` property, of a metadatata type entry in the registry, can define four properties, the `adapter`,`transformer`,`decompositon`, and `recomposition`. How SDR uses these values is explained more in detail later on, but we'll go through each of the options for these values, what they do, what behavior they enable, and the types that use them.
@@ -272,7 +272,7 @@ layouts/
 
 ### The `bundleSourceAdapter`:
 
-Like the name suggest, this adapter handles bundle types, so `AuraDefinitionBundles`, `LightningWebComponents`. A bundle component has all its source files, including the root metadata xml, contained in its own directory.
+Like the name suggests, this adapter handles bundle types, so `AuraDefinitionBundles`, `LightningWebComponents`. A bundle component has all its source files, including the root metadata xml, contained in its own directory.
 
 **Example Structure**:
 
@@ -287,7 +287,7 @@ Like the name suggest, this adapter handles bundle types, so `AuraDefinitionBund
 
 ### The `decomposedSourceAdapter`:
 
-Handles decomposed types. A flavor of mixed content where a component can have additional `-meta.xml` files that represent child components of the main component. It's helpful to remember that in metadata format, `CustomObjects`
+Handles decomposed types. A flavor of mixed content where a component can have additional `-meta.xml` files that represent child components of the main component. It's helpful to remember that in metadata format, `CustomObjects`,
 for example, are stored in a singular file, the adapters will rewrite that file into a directory that is easier to use in source-tracking, work with as a team, and easier to understand as a human.
 
 **Example Types**:
@@ -377,7 +377,7 @@ bars/
 ### Transformers
 
 So now that we're able to recognize different "classes" of metadata based on either their file structure, their extensions, matching files, or any of the adapters listed above, we can start to convert them from source, or metadata format, to the other
-SDR accomplishes this conversion with "Transformers" which will transform the metadata. Similar to how there was a default adapter that handled most of the metadata types, this is true for transformers as well, but because we've committed to doing all of this work on the client, we have to support some complicated types, and have a few more transformers to help handle the edge-case types.
+SDR accomplishes this conversion with "Transformers" that will transform the metadata. Similar to how there was a default adapter that handled most of the metadata types, this is true for transformers as well, but because we've committed to doing all of this work on the client, we have to support some complicated types, and have a few more transformers to help handle the edge-case types.
 Each of these transformers implements two different methods, a `toSourceFormat` and `toMetadataFormat` which are both hopefully self-explanatory. In most cases the transformers follow the adapters naming conventions... so there's a
 
 - `decomposedMetadataTransformer`

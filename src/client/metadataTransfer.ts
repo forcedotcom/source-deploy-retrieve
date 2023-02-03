@@ -280,14 +280,20 @@ export abstract class MetadataTransfer<
   protected abstract post(result: Status): Promise<Result>;
 }
 
+let emitted = false;
 /* prevent requests on apiVersions higher than the org supports */
 const getConnectionNoHigherThanOrgAllows = async (conn: Connection, requestedVersion: string): Promise<Connection> => {
   // uses a TTL cache, so mostly won't hit the server
   const maxApiVersion = await conn.retrieveMaxApiVersion();
   if (requestedVersion && parseInt(requestedVersion, 10) > parseInt(maxApiVersion, 10)) {
-    await Lifecycle.getInstance().emitWarning(
-      `The requested API version (${requestedVersion}) is higher than the org supports.  Using ${maxApiVersion}.`
-    );
+    // the once function from kit wasn't working with this async method, manually create a "once" method for the warning
+    if (!emitted) {
+      await Lifecycle.getInstance().emitWarning(
+        `The requested API version (${requestedVersion}) is higher than the org supports.  Using ${maxApiVersion}.`
+      );
+      emitted = true;
+    }
+
     conn.setApiVersion(maxApiVersion);
   }
   return conn;

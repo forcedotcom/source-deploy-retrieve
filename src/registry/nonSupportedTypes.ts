@@ -58,6 +58,7 @@ export const metadataTypes = [
   // the metadata coverage report seems to be missing a setting:
   // A scratch org was created with username test-o87upqyaagax@example.com, but the settings failed to deploy due to: enableInsights
   'ReferencedDashboard',
+  'WaveAnalyticAssetCollection',
 
   // spins up fine with feature B2CLOYALTYMANAGEMENT, not in describe
   'ExpressionSetObjectAlias',

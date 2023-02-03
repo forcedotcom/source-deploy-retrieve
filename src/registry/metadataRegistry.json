@@ -3299,6 +3299,86 @@
       "directoryName": "timelineObjectDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "accountingfieldmapping": {
+      "id": "accountingfieldmapping",
+      "name": "AccountingFieldMapping",
+      "suffix": "accountingFieldMapping",
+      "directoryName": "accountingFieldMappings",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "accountingmodelconfig": {
+      "id": "accountingmodelconfig",
+      "name": "AccountingModelConfig",
+      "suffix": "accountingModelConfig",
+      "directoryName": "accountingModelConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "actionlauncheritemdef": {
+      "id": "actionlauncheritemdef",
+      "name": "ActionLauncherItemDef",
+      "suffix": "actionLauncherItemDef",
+      "directoryName": "ActionLauncherItemDef",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "actionablelistdefinition": {
+      "id": "actionablelistdefinition",
+      "name": "ActionableListDefinition",
+      "suffix": "actionableListDefinition",
+      "directoryName": "actionableListDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "explainabilitymsgtemplate": {
+      "id": "explainabilitymsgtemplate",
+      "name": "ExplainabilityMsgTemplate",
+      "suffix": "explainabilityMsgTemplate",
+      "directoryName": "ExplainabilityMsgTemplates",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "integrationproviderdef": {
+      "id": "integrationproviderdef",
+      "name": "IntegrationProviderDef",
+      "suffix": "integrationProviderDefinition",
+      "directoryName": "integrationProviderDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "locationuse": {
+      "id": "locationuse",
+      "name": "LocationUse",
+      "suffix": "locationUse",
+      "directoryName": "locationUses",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "personaccountownerpoweruser": {
+      "id": "personaccountownerpoweruser",
+      "name": "PersonAccountOwnerPowerUser",
+      "suffix": "personAccountOwnerPowerUser",
+      "directoryName": "personAccountOwnerPowerUsers",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "pipelineinspmetricconfig": {
+      "id": "pipelineinspmetricconfig",
+      "name": "PipelineInspMetricConfig",
+      "suffix": "pipelineInspMetricConfig",
+      "directoryName": "pipelineInspMetricConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "productspecificationtypedefinition": {
+      "id": "productspecificationtypedefinition",
+      "name": "ProductSpecificationTypeDefinition",
+      "suffix": "productSpecificationTypeDefinition",
+      "directoryName": "productSpecificationTypeDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3662,7 +3742,17 @@
     "marketSegmentDefinition": "marketsegmentdefinition",
     "mfgProgramTemplate": "mfgprogramtemplate",
     "streamingAppDataConnector": "streamingappdataconnector",
-    "timelineObjectDefinition": "timelineobjectdefinition"
+    "timelineObjectDefinition": "timelineobjectdefinition",
+    "accountingFieldMapping": "accountingfieldmapping",
+    "accountingModelConfig": "accountingmodelconfig",
+    "actionLauncherItemDef": "actionlauncheritemdef",
+    "actionableListDefinition": "actionablelistdefinition",
+    "explainabilityMsgTemplate": "explainabilitymsgtemplate",
+    "integrationProviderDefinition": "integrationproviderdef",
+    "locationUse": "locationuse",
+    "personAccountOwnerPowerUser": "personaccountownerpoweruser",
+    "pipelineInspMetricConfig": "pipelineinspmetricconfig",
+    "productSpecificationTypeDefinition": "productspecificationtypedefinition"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

@@ -1,3 +1,12 @@
+## [7.8.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.8.1...7.8.2) (2023-02-05)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 3.32.13 to 3.33.1 ([#843](https://github.com/forcedotcom/source-deploy-retrieve/issues/843)) ([19fde88](https://github.com/forcedotcom/source-deploy-retrieve/commit/19fde88795de4b9ef0c1cb14b32a155924b0fcbc))
+
+
+
 ## [7.8.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.8.0...7.8.1) (2023-02-05)
 
 

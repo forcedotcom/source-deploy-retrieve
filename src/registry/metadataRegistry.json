@@ -3379,6 +3379,17 @@
       "directoryName": "productSpecificationTypeDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "experiencepropertytypebundle": {
+      "id": "experiencepropertytypebundle",
+      "name": "ExperiencePropertyTypeBundle",
+      "directoryName": "experiencePropertyTypeBundles",
+      "inFolder": false,
+      "strictDirectoryName": true,
+      "supportsPartialDelete": true,
+      "strategies": {
+        "adapter": "bundle"
+      }
     }
   },
   "suffixes": {
@@ -3777,7 +3788,8 @@
     "siteDotComSites": "sitedotcom",
     "appointmentSchedulingPolicies": "appointmentschedulingpolicy",
     "appointmentAssignmentPolicies": "appointmentassignmentpolicy",
-    "emailservices": "emailservicesfunction"
+    "emailservices": "emailservicesfunction",
+    "experiencePropertyTypeBundles": "experiencepropertytypebundle"
   },
   "childTypes": {
     "customlabel": "customlabels",

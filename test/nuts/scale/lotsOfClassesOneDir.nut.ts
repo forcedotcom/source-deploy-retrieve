@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { performance } from 'node:perf_hooks';
 import * as path from 'path';
+import { performance } from 'node:perf_hooks';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import * as fs from 'graceful-fs';
 import { MetadataResolver } from '../../../src';

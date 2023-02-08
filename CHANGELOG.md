@@ -1,3 +1,12 @@
+# [7.9.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.8.2...7.9.0) (2023-02-08)
+
+
+### Features
+
+* **mdTypes:** support for ExperiencePropertyType Bundle ([#846](https://github.com/forcedotcom/source-deploy-retrieve/issues/846)) ([63a9989](https://github.com/forcedotcom/source-deploy-retrieve/commit/63a9989345106e8fd970622974145ab207a45e75))
+
+
+
 ## [7.8.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.8.1...7.8.2) (2023-02-05)
 
 

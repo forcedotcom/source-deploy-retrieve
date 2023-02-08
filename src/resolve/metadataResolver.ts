@@ -303,7 +303,7 @@ export class MetadataResolver {
     if (this.tree.isDirectory(fsPath)) {
       return;
     }
-    return ['DigitalExperience']
+    return ['DigitalExperience', 'ExperiencePropertyTypeBundle']
       .map((type) => this.registry.getTypeByName(type))
       .find((type) => fsPath.split(sep).includes(type.directoryName))?.name;
   }

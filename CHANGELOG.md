@@ -1,3 +1,12 @@
+## [7.9.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.9.0...7.9.1) (2023-02-09)
+
+
+### Bug Fixes
+
+* only delete non-forceignored sub-directories ([#847](https://github.com/forcedotcom/source-deploy-retrieve/issues/847)) ([90e9415](https://github.com/forcedotcom/source-deploy-retrieve/commit/90e941522898ec68c55e3dcce95fb5468fa5f2c0))
+
+
+
 # [7.9.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.8.2...7.9.0) (2023-02-08)
 
 

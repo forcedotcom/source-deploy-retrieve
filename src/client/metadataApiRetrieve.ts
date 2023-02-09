@@ -367,7 +367,17 @@ export class MetadataApiRetrieve extends MetadataTransfer<
         const localComp = partialDeleteComponents.get(comp.fullName);
         if (localComp.contentPath && tree.isDirectory(comp.content)) {
           const remoteContentList = tree.readDirectory(comp.content);
-          let deleteLocalComp = false;
+
+          const isForceIgnored = (filePath: string): boolean => {
+            const ignored = comp.getForceIgnore().denies(filePath);
+            if (ignored) {
+              this.logger.debug(
+                `Local component has ${filePath} while remote does not, but it is forceignored so ignoring.`
+              );
+            }
+            return ignored;
+          };
+
           localComp.contentList.forEach((fileName) => {
             if (!remoteContentList.includes(fileName)) {
               // If fileName is forceignored it is not counted as a diff. If fileName is a directory
@@ -376,30 +386,27 @@ export class MetadataApiRetrieve extends MetadataTransfer<
               const fileNameFullPath = path.join(localComp.contentPath, fileName);
               if (fs.statSync(fileNameFullPath).isDirectory()) {
                 const nestedFiles = fs.readdirSync(fileNameFullPath);
-                if (nestedFiles.some((f) => comp.getForceIgnore().denies(path.join(fileNameFullPath, f)))) {
-                  this.logger.debug(
-                    `Local component has ${fileNameFullPath} while remote does not, but it is forceignored so ignoring.`
-                  );
+                if (nestedFiles.some((f) => isForceIgnored(path.join(fileNameFullPath, f)))) {
                   return;
                 }
+              } else if (isForceIgnored(fileNameFullPath)) {
+                return;
               }
 
               this.logger.debug(
                 `Local component (${comp.fullName}) contains ${fileName} while remote component does not. This file is being removed.`
               );
-              deleteLocalComp = true;
+
+              const filePath = path.join(localComp.contentPath, fileName);
               partialDeleteFileResponses.push({
                 fullName: comp.fullName,
                 type: comp.type.name,
                 state: ComponentStatus.Deleted,
-                filePath: path.join(localComp.contentPath, fileName),
+                filePath,
               });
+              fs.rmSync(filePath, { recursive: true, force: true });
             }
           });
-          if (deleteLocalComp) {
-            this.logger.debug(`Replacing local component: ${localComp.contentPath} with same component from org`);
-            fs.rmSync(localComp.contentPath, { recursive: true, force: true });
-          }
         }
       }
     });

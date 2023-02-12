@@ -1,3 +1,12 @@
+## [7.9.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.9.1...7.9.2) (2023-02-12)
+
+
+### Bug Fixes
+
+* **deps:** bump minimatch from 5.1.2 to 5.1.6 ([#848](https://github.com/forcedotcom/source-deploy-retrieve/issues/848)) ([cb92e33](https://github.com/forcedotcom/source-deploy-retrieve/commit/cb92e334847d859c2bc2850136167ef9033b3f33))
+
+
+
 ## [7.9.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.9.0...7.9.1) (2023-02-09)
 
 

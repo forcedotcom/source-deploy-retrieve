@@ -238,6 +238,9 @@ export abstract class MetadataTransfer<
             'socket hang up',
             'INVALID_QUERY_LOCATOR',
             '<h1>Bad Message 400</h1><pre>reason: Bad Request</pre>',
+            'Unable to complete the creation of the query cursor at this time',
+            'Client network socket disconnected before secure TLS connection was established',
+            'Unexpected internal servlet state',
           ].some((retryableNetworkError) => (e as Error).message.includes(retryableNetworkError))
         ) {
           this.logger.debug('Network error on the request', e);

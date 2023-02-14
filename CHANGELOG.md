@@ -1,3 +1,12 @@
+## [7.9.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.9.2...7.9.3) (2023-02-14)
+
+
+### Bug Fixes
+
+* more retryable mdapi errors ([e84ffc1](https://github.com/forcedotcom/source-deploy-retrieve/commit/e84ffc1e377fb75040dde76b818bcba3831d92cd))
+
+
+
 ## [7.9.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.9.1...7.9.2) (2023-02-12)
 
 

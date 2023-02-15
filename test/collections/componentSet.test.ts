@@ -214,9 +214,7 @@ describe('ComponentSet', () => {
         await stubConnection();
         await componentSet.retrieve({ output: '', usernameOrConnection: connection, suppressEvents: true });
 
-        expect(lifecycleEmitStub.args[0]).not.to.equal(undefined);
         expect(lifecycleEmitStub.args[0][0]).to.equal('apiVersionRetrieve');
-        expect(lifecycleEmitStub.args[1]).to.equal(undefined);
         expect(lifecycleEmitStub.args.length).to.equal(1);
       });
     });

@@ -209,7 +209,7 @@ describe('ComponentSet', () => {
         });
       });
 
-      it('should not emit retrieve events with the suppressEvents setting set to true', async () => {
+      it('should not emit pre- or post-retrieve events with the suppressEvents setting set to true', async () => {
         componentSet = await ComponentSetBuilder.build({ sourcepath: [sourcepath] });
         await stubConnection();
         await componentSet.retrieve({ output: '', usernameOrConnection: connection, suppressEvents: true });

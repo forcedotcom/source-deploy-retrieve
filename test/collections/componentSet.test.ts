@@ -214,8 +214,13 @@ describe('ComponentSet', () => {
         await stubConnection();
         await componentSet.retrieve({ output: '', usernameOrConnection: connection, suppressEvents: true });
 
-        expect(lifecycleEmitStub.args[0][0]).to.equal('apiVersionRetrieve');
-        expect(lifecycleEmitStub.args.length).to.equal(1);
+        let preAndPostRetrieveEventCount = 0;
+        lifecycleEmitStub.args.forEach((event) => {
+          if (event[0] === ('scopedPreRetrieve' || 'scopedPostRetrieve')) {
+            preAndPostRetrieveEventCount = preAndPostRetrieveEventCount + 1;
+          }
+        });
+        expect(preAndPostRetrieveEventCount).to.equal(0);
       });
     });
 

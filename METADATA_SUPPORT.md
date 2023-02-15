@@ -557,6 +557,7 @@ v58 introduces the following new types.  Here's their current level of support
 |Ai4mSettings|✅||
 |CodeBuilderSettings|✅||
 |DataWeaveResource|✅||
+|DynamicFormsSettings|✅||
 |OmniChannelPricingSettings|✅||
 |PriceSheetDefinition|❌|Not supported, but support could be added|
 |ProcessFlowMigration|❌|Not supported, but support could be added|

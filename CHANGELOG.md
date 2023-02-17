@@ -1,3 +1,12 @@
+# [7.10.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.9.3...7.10.0) (2023-02-17)
+
+
+### Features
+
+* Add Option to Suppress Pre- and Post-Retrieve Events ([#854](https://github.com/forcedotcom/source-deploy-retrieve/issues/854)) ([2eef7d5](https://github.com/forcedotcom/source-deploy-retrieve/commit/2eef7d5ffc81c51e8f30748f475484ccf2876e5b))
+
+
+
 ## [7.9.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.9.2...7.9.3) (2023-02-14)
 
 

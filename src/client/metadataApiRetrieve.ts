@@ -198,7 +198,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     components ??= new ComponentSet(undefined, this.options.registry);
 
     const retrieveResult = new RetrieveResult(result, components, this.components);
-    if (!isMdapiRetrieve) {
+    if (!isMdapiRetrieve && !this.options.suppressEvents) {
       // This should only be done when retrieving source format since retrieving
       // mdapi format has no conversion or events/hooks
       await this.maybeSaveTempDirectory('source', components);
@@ -226,7 +226,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     this.components.sourceApiVersion ??= apiVersion;
 
     // only do event hooks if source, (NOT a metadata format) retrieve
-    if (this.options.components) {
+    if (this.options.components && !this.options.suppressEvents) {
       await Lifecycle.getInstance().emit('scopedPreRetrieve', {
         componentSet: this.options.components,
         orgId: this.orgId,

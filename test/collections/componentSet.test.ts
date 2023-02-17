@@ -208,6 +208,20 @@ describe('ComponentSet', () => {
           unpackaged: { types: [{ members: ['Test'], name: 'ApexClass' }], version: manifestVersion },
         });
       });
+
+      it('should not emit pre- or post-retrieve events with the suppressEvents setting set to true', async () => {
+        componentSet = await ComponentSetBuilder.build({ sourcepath: [sourcepath] });
+        await stubConnection();
+        await componentSet.retrieve({ output: '', usernameOrConnection: connection, suppressEvents: true });
+
+        let preAndPostRetrieveEventCount = 0;
+        lifecycleEmitStub.args.forEach((event) => {
+          if (event[0] === ('scopedPreRetrieve' || 'scopedPostRetrieve')) {
+            preAndPostRetrieveEventCount = preAndPostRetrieveEventCount + 1;
+          }
+        });
+        expect(preAndPostRetrieveEventCount).to.equal(0);
+      });
     });
 
     describe('deploy', () => {

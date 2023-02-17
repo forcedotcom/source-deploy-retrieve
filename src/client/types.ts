@@ -326,6 +326,10 @@ export interface RetrieveOptions {
    * Specifies whether to unzip the retrieved zip file. Only applies when `format: metadata`.
    */
   unzip?: boolean;
+  /**
+   * Specifies whether to suppress the <Pre|Post><Retrieve> events
+   */
+  suppressEvents?: boolean;
 }
 
 export interface MetadataApiDeployOptions {

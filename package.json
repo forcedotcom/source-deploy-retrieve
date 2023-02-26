@@ -42,7 +42,7 @@
   "devDependencies": {
     "@salesforce/cli-plugins-testkit": "^3.2.22",
     "@salesforce/dev-config": "^3.0.1",
-    "@salesforce/dev-scripts": "^3.1.1",
+    "@salesforce/dev-scripts": "^4.1.1",
     "@salesforce/prettier-config": "^0.0.2",
     "@salesforce/ts-sinon": "^1.4.2",
     "@types/archiver": "^5.3.1",
@@ -76,30 +76,31 @@
     "shx": "^0.3.4",
     "sinon": "10.0.0",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "wireit": "^0.9.5"
   },
   "scripts": {
-    "build": "sf-build",
+    "build": "wireit",
     "ci-docs": "yarn sf-ci-docs",
     "clean": "sf-clean",
     "clean-all": "sf-clean all",
-    "compile": "sf-compile",
+    "compile": "wireit",
     "coverage": "nyc report --reporter=lcov",
     "docs": "sf-docs",
-    "format": "sf-format",
-    "lint": "sf-lint",
+    "format": "wireit",
+    "lint": "wireit",
     "local:install": "./scripts/localInstall.js install",
     "local:link": "./scripts/localInstall.js link",
     "local:unlink": "./scripts/localInstall.js unlink",
     "metadata:preview": "npx ts-node scripts/update-registry/preview.ts",
     "prepack": "sf-prepack",
     "prepare": "sf-install",
-    "pretest": "sf-compile-test",
     "repl": "node --inspect ./scripts/repl.js",
-    "test": "sf-test",
+    "test": "wireit",
     "test:nuts": "mocha \"test/nuts/local/**/*.nut.ts\" --timeout 500000",
     "test:nuts:scale": "mocha \"test/nuts/scale/eda.nut.ts\" --timeout 500000; mocha \"test/nuts/scale/lotsOfClasses.nut.ts\" --timeout 500000; mocha \"test/nuts/scale/lotsOfClassesOneDir.nut.ts\" --timeout 500000",
     "test:nuts:scale:record": "yarn test:nuts:scale && git add . && git commit -m \"test: record perf [ci skip]\" --no-verify && git push --no-verify",
+    "test:only": "wireit",
     "test:registry": "mocha ./test/registry/registryCompleteness.test.ts --timeout 50000",
     "update-registry": "npx ts-node scripts/update-registry/update2.ts",
     "update-supported-metadata": "npx ts-node scripts/update-registry/update-supported-metadata.ts"
@@ -113,5 +114,75 @@
     "node": "16.16.0",
     "yarn": "1.22.4"
   },
-  "config": {}
+  "config": {},
+  "wireit": {
+    "build": {
+      "dependencies": [
+        "compile",
+        "lint"
+      ]
+    },
+    "compile": {
+      "command": "tsc -p . --pretty --incremental",
+      "files": [
+        "src/**/*.ts",
+        "tsconfig.json",
+        "messages/**"
+      ],
+      "output": [
+        "lib/**",
+        "*.tsbuildinfo"
+      ],
+      "clean": "if-file-deleted"
+    },
+    "format": {
+      "command": "prettier --write \"+(src|test|schemas)/**/*.+(ts|js|json)|command-snapshot.json\"",
+      "files": [
+        "src/**/*.ts",
+        "test/**/*.ts",
+        "schemas/**/*.json",
+        "command-snapshot.json",
+        ".prettier*"
+      ],
+      "output": []
+    },
+    "lint": {
+      "command": "eslint src test --color --cache --cache-location .eslintcache",
+      "files": [
+        "src/**/*.ts",
+        "test/**/*.ts",
+        "messages/**",
+        ".eslint*"
+      ],
+      "output": []
+    },
+    "test:compile": {
+      "command": "tsc -p \"./test\" --pretty",
+      "files": [
+        "test/**/*.ts",
+        "tsconfig.json",
+        "test/tsconfig.json"
+      ],
+      "output": []
+    },
+    "test": {
+      "dependencies": [
+        "test:only",
+        "test:compile"
+      ]
+    },
+    "test:only": {
+      "command": "nyc mocha \"test/**/*.test.ts\"",
+      "files": [
+        "test/**/*.ts",
+        "src/**/*.ts",
+        "tsconfig.json",
+        ".mocha*",
+        "test/tsconfig.json",
+        "!*.nut.ts",
+        ".nycrc"
+      ],
+      "output": []
+    }
+  }
 }

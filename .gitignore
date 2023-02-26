@@ -115,6 +115,7 @@ docs/
 registryBuilder
 
 # -- CLEAN ALL
+.wireit
 node_modules
 
 # -- nuts test dirs

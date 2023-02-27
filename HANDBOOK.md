@@ -139,7 +139,7 @@ Now, for all the optional properties which define how the metadata type is conve
 
 The library exports at the public API level a JavaScript object version of the [Metadata registry file]. This object is also used internally to reference registry data. If a consumer finds themselves needing references to metadata types or describe information, they can use this object:
 
-```
+```typescript
 import { registry } from '@salesforce/source-deploy-retrieve'
 
 registry.types.apexclass.name === 'ApexClass' // => true
@@ -152,7 +152,7 @@ registry.types.auradefinitionbundle.directoryName // => 'aura'
 
 While it’s perfectly fine to reference the registry export directly, the `RegistryAccess` class was created to make accessing the object a bit more streamlined. Querying types and searching the registry is oftentimes easier and cleaner this way and contains built-in checking for whether or not a metadata type exists. Here’s a comparison of using each:
 
-```
+```typescript
 import { RegistryAccess, registry } from '@salesforce/source-deploy-retrieve'
 
 // we can optionally pass custom registry data to the constructor
@@ -188,7 +188,7 @@ Almost every operation consists of working with metadata components. SDR abstrac
 
 Constructing component objects from files is a core feature of the library. This is the basis of the source deploy and source retrieve commands of the VSCode extensions and the CLI. The `MetadataResolver` class walks files from a given file path and constructs `SourceComponent` instances. This class implements the `MetadataComponent` interface and contains additional properties and methods to work with the collection of files that belong to a component. These are also referred to as **source-backed components**, since the components have files associated with them.
 
-```
+```typescript
 import { MetadataResolver } from '@salesforce/source-deploy-retrieve'
 
 const resolver = new MetadataResolver();
@@ -221,7 +221,7 @@ The resolver constructs components based on the rules of such a pattern. It take
 
 The `ManifestResolver` class parses a [manifest file](https://trailhead.salesforce.com/en/content/learn/modules/package-xml/package-xml-adventure) to construct components. **Unlike resolving from files, this resolver does not construct source-backed components** because a manifest tells us nothing about where files live. If you think about it, some operations don’t require local files at all, such as when retrieving components to a blank new project.
 
-```
+```typescript
 import { ManifestResolver } from '@salesforce/source-deploy-retrieve';
 
 (async () => {
@@ -434,7 +434,7 @@ Clients can implement new tree containers by extending the `TreeContainer` base 
 
 If a consumer needs to create fake components for testing, the `VirtualTreeContainer` is a great way to do so without having to create real local files in a project. This is how the library tests its own functionality in fact.
 
-```
+```typescript
 import {
    ComponentSet,
    registry,
@@ -493,7 +493,7 @@ Another key building block for deploying and retrieving is copying metadata file
 
 We can resolve, convert, and copy metadata using the `[MetadataConverter](https://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/convert/metadataConverter.ts)` class. Because we’re dealing with files here, the components must be source-backed to perform the operation.
 
-```
+```typescript
 import {
     MetadataConverter,
     MetadataResolver
@@ -535,7 +535,7 @@ Here is where file transformation is done, but without being written to the dest
 
 Let’s say we’re converting a Layout from source format to metadata format. The write infos returned would look something like this:
 
-```
+```typescript
 const xmlFile = component.xml // path/to/source/MyLayout.layout-meta.xml
 return [
    {
@@ -569,7 +569,7 @@ In less general terms, this concept was created out of necessity to support conv
 
 #### In [decomposedMetadataTransformer.ts](https://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/convert/transformers/decomposedMetadataTransformer.ts)
 
-```
+```typescript
 // in decomposedMetadataTransformer.ts
 
 public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
@@ -600,7 +600,7 @@ public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> 
 
 #### In [convertContext.ts](https://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/convert/convertContext.ts)
 
-```
+```typescript
 class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionState> {
   protected _state: RecompositionState = {};
 
@@ -639,7 +639,7 @@ Component merging refers to replacing the files of one component with the files 
 
 The following is an example of what a retrieve call is more or less doing under the hood when extracting components to an existing project:
 
-```
+```typescript
 import {
     MetadataConverter,
     MetadataResolver,
@@ -696,7 +696,7 @@ Component sets key components using their fullName and type id, i.e. only one pa
 
 Let’s look at some examples of adding components and testing membership:
 
-```
+```typescript
 import {
     ComponentSet,
     MetadataResolver
@@ -728,7 +728,7 @@ Up to this point, we have demonstrated resolving source-backed components using 
 - Use a component set initializer to resolve components if you intend to perform a common operation that requires a unique collection - deploying, retrieving, package xml generation, etc
 - Use the resolver directly if you purely want to do some component analysis that doesn’t require a unique collection
 
-```
+```typescript
 import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 
 const fromOnePath = ComponentSet.fromSource('/path/to/force-app');
@@ -768,7 +768,7 @@ Similar to how `fromSource` is a wrapper for the source resolver, `fromManifest`
 
 Here are examples of the above scenarios:
 
-```
+```typescript
 import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 
 /**
@@ -820,7 +820,7 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 
 Component sets contain similar methods to those found on JavaScript Arrays, such as `map` and `filter`, as well as others like `first()`, `find()`, and `filter()`. These are obtained from extending the `LazyCollection` class. The only key difference with arrays is that these use iterators to lazily process components, meaning that components will pass through an entire chain before the previous component.
 
-```
+```typescript
 import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 
 // Get paths to all of the classes with "Test" in the name
@@ -845,7 +845,7 @@ Metadata API deploys and retrieves are asynchronous operations. Once a request h
 
 Before we can perform either operation, we must establish a connection to an org. The library utilizes [sfdx-core](https://www.npmjs.com/package/@salesforce/core) connection objects to do. Currently there are two options when using SDR — either the consumer supplies a connection instance themselves or they pass an org username. The former requires authentication to have been persisted in `~/.sfdx` at some point prior. This is typically done by authorizing an org through the CLI or the VS Code extensions.
 
-```
+```typescript
 import { AuthInfo, Connection } from '@salesforce/core'
 
 (async () => {
@@ -870,7 +870,7 @@ The simplest way to kick off a new deploy is through a component set. `Component
 
 #### Deploy with a source path
 
-```
+```typescript
 import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 
 (async () => {
@@ -896,7 +896,7 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 
 #### Deploy with a manifest file
 
-```
+```typescript
 import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 
 (async () => {
@@ -933,7 +933,7 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 
 The Metadata API supports canceling a deploy in progress, and that is exposed through the `cancel()` method on the transfer object. Cancelations are also asynchronous operations - we need to poll to monitor when a cancelation actually finishes.
 
-```
+```typescript
 import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 
 (async () => {
@@ -959,7 +959,7 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 
 If a deploy was started by some other client or routine, as long as we have the deploy ID we can still make requests to monitor the status or cancel the operation. This is done by constructing a `MetadataApiDeploy` object with the ID as an option.
 
-```
+```typescript
 import { MetadataApiDeploy } from '@salesforce/source-deploy-retrieve'
 
 (async () => {
@@ -999,7 +999,7 @@ We also have the option of merging components that are retrieved in the org with
 
 #### Retrieve with a source path
 
-```
+```typescript
 import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 
 (async () => {
@@ -1026,7 +1026,7 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 
 #### Retrieve with a manifest file
 
-```
+```typescript
 import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 
 (async () => {
@@ -1066,7 +1066,7 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 
 Unlike deploys, there isn’t a mechanism for signaling a retrieve cancelation with the Metadata API. The library will simply break any potential polling of the retrieved status, and that is exposed through the `cancel()` method on the transfer object.
 
-```
+```typescript
 import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 
 (async () => {
@@ -1095,7 +1095,7 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 
 If a retrieve was started by some other client or routine, as long as we have the retrieve ID we can still make requests to monitor the status or cancel the operation. This is done by constructing a `MetadataApiRetrieve` object with the ID as an option.
 
-```
+```typescript
 import { MetadataApiRetrieve } from '@salesforce/source-deploy-retrieve'
 
 (async () => {

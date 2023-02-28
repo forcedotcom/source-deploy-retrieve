@@ -374,8 +374,8 @@ export class MetadataApiDeploy extends MetadataTransfer<
   // eslint-disable-next-line @typescript-eslint/require-await
   protected async post(result: MetadataApiDeployStatus): Promise<DeployResult> {
     const lifecycle = Lifecycle.getInstance();
+    const connection = await this.getConnection();
     try {
-      const connection = await this.getConnection();
       const apiVersion = connection.getApiVersion();
       // Creates an array of unique metadata types that were deployed, uses Set to avoid duplicates.
       let listOfMetadataTypesDeployed: string[];
@@ -428,7 +428,11 @@ export class MetadataApiDeploy extends MetadataTransfer<
     );
     // only do event hooks if source, (NOT a metadata format) deploy
     if (this.options.components) {
-      await lifecycle.emit('scopedPostDeploy', { deployResult, orgId: this.orgId } as ScopedPostDeploy);
+      // this may not be set if you resume a deploy so that `pre` is skipped.
+      if (!this.orgId) {
+        this.orgId = connection.getAuthInfoFields().orgId;
+      }
+      await lifecycle.emit('scopedPostDeploy', { deployResult, orgId: this.orgId } satisfies ScopedPostDeploy);
     }
     return deployResult;
   }

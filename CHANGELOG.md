@@ -1,3 +1,12 @@
+# [7.11.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.10.1...7.11.0) (2023-02-28)
+
+
+### Features
+
+* handle QueryLocator issues ([e4e7c5c](https://github.com/forcedotcom/source-deploy-retrieve/commit/e4e7c5ce21a69b360bd4a38fcd674a589619bf7e))
+
+
+
 ## [7.10.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.10.0...7.10.1) (2023-02-19)
 
 

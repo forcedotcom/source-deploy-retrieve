@@ -26,7 +26,7 @@ import {
   SourceComponent,
   ZipTreeContainer,
 } from '../../src';
-import { decomposedtoplevel, matchingContentFile, mixedContentSingleFile } from '../mock';
+import { decomposedtoplevel, matchingContentFile, mixedContentSingleFile, digitalExperienceBundle } from '../mock';
 import { MATCHING_RULES_COMPONENT } from '../mock/type-constants/customlabelsConstant';
 import * as manifestFiles from '../mock/manifestConstants';
 import { testApiVersionAsString } from '../mock/manifestConstants';
@@ -1246,5 +1246,38 @@ describe('ComponentSet', () => {
     });
 
     expect(set.size).to.equal(3);
+  });
+
+  describe('getComponentFilenamesByNameAndType', () => {
+    it('should correctly return DEB (DigitalExperienceBundle) component file paths', () => {
+      const set = new ComponentSet([digitalExperienceBundle.DEB_COMPONENT], registryAccess);
+
+      const deb: MetadataMember = {
+        fullName: digitalExperienceBundle.BUNDLE_FULL_NAME,
+        type: digitalExperienceBundle.DEB_TYPE.id,
+      };
+
+      expect(set.getComponentFilenamesByNameAndType(deb)).to.have.members([
+        'path/to/digitalExperiences/site/foo/foo.digitalExperience-meta.xml',
+      ]);
+    });
+
+    it('should correctly return DE (DigitalExperience) component file paths', () => {
+      const set = new ComponentSet(
+        [digitalExperienceBundle.DE_CONTENT_COMPONENT, digitalExperienceBundle.DE_FR_VARIENT_COMPONENT],
+        registryAccess
+      );
+
+      const de: MetadataMember = {
+        fullName: digitalExperienceBundle.HOME_VIEW_FULL_NAME,
+        type: digitalExperienceBundle.DE_TYPE.id,
+      };
+
+      expect(set.getComponentFilenamesByNameAndType(de)).to.have.members([
+        'path/to/digitalExperiences/site/foo/sfdc_cms__view/home/content.json',
+        'path/to/digitalExperiences/site/foo/sfdc_cms__view/home/fr.json',
+        'path/to/digitalExperiences/site/foo/sfdc_cms__view/home/_meta.json',
+      ]);
+    });
   });
 });

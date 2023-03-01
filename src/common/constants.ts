@@ -8,6 +8,7 @@ import { join } from 'path';
 
 export const DEFAULT_PACKAGE_ROOT_SFDX = join('main', 'default');
 export const META_XML_SUFFIX = '-meta.xml';
+export const META_JSON_FILE = '_meta.json';
 export const XML_DECL = '<?xml version="1.0" encoding="UTF-8"?>\n';
 export const XML_NS_URL = 'http://soap.sforce.com/2006/04/metadata';
 export const XML_NS_KEY = '@_xmlns';

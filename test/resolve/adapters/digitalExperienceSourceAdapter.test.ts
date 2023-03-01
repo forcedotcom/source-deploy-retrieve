@@ -8,7 +8,7 @@ import { join } from 'path';
 import { expect } from 'chai';
 import { RegistryAccess, registry, VirtualTreeContainer, ForceIgnore, SourceComponent } from '../../../src';
 import { DigitalExperienceSourceAdapter } from '../../../src/resolve/adapters/digitalExperienceSourceAdapter';
-import { META_XML_SUFFIX } from '../../../src/common';
+import { META_XML_SUFFIX, META_JSON_FILE } from '../../../src/common';
 
 describe('DigitalExperienceSourceAdapter', () => {
   const BASE_PATH = join('path', 'to', registry.types.digitalexperiencebundle.directoryName);
@@ -20,7 +20,7 @@ describe('DigitalExperienceSourceAdapter', () => {
   const HOME_VIEW_NAME = join('sfdc_cms__view', 'home');
   const HOME_VIEW_PATH = join(BUNDLE_PATH, HOME_VIEW_NAME);
   const HOME_VIEW_CONTENT_FILE = join(HOME_VIEW_PATH, 'content.json');
-  const HOME_VIEW_META_FILE = join(HOME_VIEW_PATH, '_meta.json');
+  const HOME_VIEW_META_FILE = join(HOME_VIEW_PATH, META_JSON_FILE);
   const HOME_VIEW_FRENCH_VARIANT_FILE = join(HOME_VIEW_PATH, 'fr.json');
 
   const registryAccess = new RegistryAccess();

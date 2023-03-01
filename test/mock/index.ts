@@ -18,4 +18,5 @@ export {
   decomposedtoplevel,
   nestedTypes,
   lwcBundle,
+  digitalExperienceBundle,
 } from './type-constants';

@@ -42,7 +42,7 @@ import {
   MIXED_CONTENT_DIRECTORY_VIRTUAL_FS,
   MIXED_CONTENT_DIRECTORY_XML_PATHS,
 } from '../mock/type-constants/staticresourceConstant';
-import { META_XML_SUFFIX } from '../../src/common';
+import { META_XML_SUFFIX, META_JSON_FILE } from '../../src/common';
 import { RegistryTestUtil } from './registryTestUtil';
 
 const testUtil = new RegistryTestUtil();
@@ -205,7 +205,7 @@ describe('MetadataResolver', () => {
       it('Should determine type for DigitalExperience metadata file (_meta.json file)', () => {
         const parent = join('unpackaged', 'digitalExperiences', 'site', 'foo');
         const parent_meta_file = join(parent, 'foo.digitalExperience-meta.xml');
-        const path = join(parent, 'sfdc_cms__view', 'home', '_meta.json');
+        const path = join(parent, 'sfdc_cms__view', 'home', META_JSON_FILE);
         const treeContainer = VirtualTreeContainer.fromFilePaths([path, parent_meta_file]);
         const mdResolver = new MetadataResolver(undefined, treeContainer);
         const parentComponent = new SourceComponent(

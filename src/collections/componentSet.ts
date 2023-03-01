@@ -5,8 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 /* eslint  @typescript-eslint/unified-signatures:0 */
+import { dirname, join } from 'path';
 import { j2xParser } from 'fast-xml-parser';
 import { AuthInfo, Connection, Logger, Messages, SfError } from '@salesforce/core';
+import { META_JSON_FILE } from '../common';
 import {
   MetadataApiDeploy,
   MetadataApiDeployOptions,
@@ -294,6 +296,21 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
 
     return result;
+  }
+
+  /**
+   * Gets the metafile path for a source component. Not all the components have an XML metafile,
+   * e.g., DigitalExperience has a JSON metafile (_meta.json).
+   *
+   * @param component The source component
+   * @returns The metafile path
+   */
+  public static getComponentMetaFilePath(component: SourceComponent): string {
+    if (['digitalexperience'].includes(component.type.id)) {
+      return join(dirname(component.content), META_JSON_FILE);
+    }
+
+    return component.xml;
   }
 
   /**
@@ -597,7 +614,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
     const output = new Set<string>();
     componentMap.forEach((component) => {
-      [...component.walkContent(), component.content, component.xml]
+      [...component.walkContent(), component.content, ComponentSet.getComponentMetaFilePath(component)]
         .filter(Boolean)
         .map((filename) => output.add(filename));
     });

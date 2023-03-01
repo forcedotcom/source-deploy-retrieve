@@ -181,6 +181,29 @@ const testData = {
       },
     ],
   },
+  digitalExperienceBundle: {
+    fullName: 'site/foo',
+    typeName: 'DigitalExperienceBundle',
+    expectedFilePaths: [getFilePath('digitalExperiences/site/foo/foo.digitalExperience-meta.xml')],
+    expectedComponents: [
+      {
+        name: 'site/foo',
+        type: registryAccess.getTypeByName('DigitalExperienceBundle'),
+        xml: getFilePath('digitalExperiences/site/foo/foo.digitalExperience-meta.xml'),
+      },
+    ],
+  },
+  digitalExperience: {
+    fullName: 'site/foo.sfdc_cms__view/home',
+    typeName: 'DigitalExperience',
+    expectedFilePaths: [getFilePath('digitalExperiences/site/foo/sfdc_cms__view/home/_meta.json')],
+    expectedComponents: [
+      {
+        name: 'sfdc_cms__view/home',
+        type: registryAccess.getTypeByName('DigitalExperience'),
+      },
+    ],
+  },
 };
 
 describe('generating virtual tree from component name/type', () => {
@@ -311,6 +334,15 @@ describe('generating virtual tree from component name/type', () => {
 
     it('child field', () => {
       runTest(testData.decomposedChild);
+    });
+  });
+
+  describe('adapter = digitalExperience', () => {
+    it('works for DEB - DigitalExperienceBundle', () => {
+      runTest(testData.digitalExperienceBundle);
+    });
+    it('works for DE - DigitalExperience', () => {
+      runTest(testData.digitalExperience);
     });
   });
 });

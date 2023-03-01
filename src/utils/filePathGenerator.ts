@@ -4,9 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join, sep } from 'path';
+import { join, sep, basename } from 'path';
 import { MetadataComponent } from '../resolve/types';
-import { META_XML_SUFFIX } from '../common/constants';
+import { META_XML_SUFFIX, META_JSON_FILE } from '../common/constants';
 import { RegistryAccess } from '../registry/registryAccess';
 import { registry } from '..';
 const registryAccess = new RegistryAccess();
@@ -29,11 +29,26 @@ const registryAccess = new RegistryAccess();
  * @param packageDir optional package directory to apply to the file paths
  * @returns array of file paths
  */
+// eslint-disable-next-line complexity
 export const filePathsFromMetadataComponent = (
   { fullName, type }: MetadataComponent,
   packageDir?: string
 ): string[] => {
   const packageDirWithTypeDir = packageDir ? join(packageDir, type.directoryName) : type.directoryName;
+
+  if (type.strategies?.adapter === 'digitalExperience') {
+    // child MD Type, the metafile is a JSON, not an XML
+    if (['digitalexperience'].includes(type.id)) {
+      return [
+        join(packageDirWithTypeDir, `${fullName.split('.')[0]}${sep}${fullName.split('.')[1]}${sep}${META_JSON_FILE}`),
+      ];
+    }
+
+    // parent MD Type
+    if (['digitalexperiencebundle'].includes(type.id)) {
+      return [join(packageDirWithTypeDir, `${fullName}${sep}${basename(fullName)}.${type.suffix}${META_XML_SUFFIX}`)];
+    }
+  }
 
   if (type.strategies?.adapter === 'decomposed') {
     return [join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.${type.suffix}${META_XML_SUFFIX}`)];

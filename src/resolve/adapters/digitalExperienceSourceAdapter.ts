@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { dirname, join, sep } from 'path';
-import { META_XML_SUFFIX } from '../../common';
+import { META_XML_SUFFIX, META_JSON_FILE } from '../../common';
 import { SourceComponent } from '..';
 import { MetadataXml } from '../types';
 import { baseName, parentName } from '../../utils';
@@ -50,7 +50,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     if (this.isBundleType()) {
       return this.getBundleMetadataXmlPath(trigger);
     }
-    return join(dirname(trigger), '_meta.json');
+    return join(dirname(trigger), META_JSON_FILE);
   }
 
   protected trimPathToContent(path: string): string {

@@ -562,12 +562,13 @@ v58 introduces the following new types.  Here's their current level of support
 |CodeBuilderSettings|✅||
 |DataWeaveResource|✅||
 |DynamicFormsSettings|✅||
+|ExperiencePropertyTypeBundle|✅||
 |FundraisingConfig|❌|Not supported, but support could be added|
 |LicensingSettings|✅||
 |OmniChannelPricingSettings|✅||
-|PaymentsBuyerAPIEnabledSettings|✅||
-|PriceSheetDefinition|❌|Not supported, but support could be added|
 |ProcessFlowMigration|❌|Not supported, but support could be added|
+|ProductSpecificationType|❌|Not supported, but support could be added|
+|SkillType|❌|Not supported, but support could be added|
 |Web3Settings|✅||
 |WebStoreBundle|❌|Not supported, but support could be added|
 
@@ -620,4 +621,3 @@ v58 introduces the following new types.  Here's their current level of support
 - InternalOrganization
 - UiViewDefinition
 - MobileSecurityPolicySet
-- ExperiencePropertyTypeBundle

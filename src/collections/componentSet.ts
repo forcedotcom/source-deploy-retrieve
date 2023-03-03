@@ -306,7 +306,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @returns The metafile path
    */
   public static getComponentMetaFilePath(component: SourceComponent): string {
-    if (['digitalexperience'].includes(component.type.id)) {
+    if (component.type.id === 'digitalexperience') {
       return join(dirname(component.content), META_JSON_FILE);
     }
 

@@ -38,14 +38,14 @@ export const filePathsFromMetadataComponent = (
 
   if (type.strategies?.adapter === 'digitalExperience') {
     // child MD Type, the metafile is a JSON, not an XML
-    if (['digitalexperience'].includes(type.id)) {
+    if (type.id === 'digitalexperience') {
       return [
         join(packageDirWithTypeDir, `${fullName.split('.')[0]}${sep}${fullName.split('.')[1]}${sep}${META_JSON_FILE}`),
       ];
     }
 
     // parent MD Type
-    if (['digitalexperiencebundle'].includes(type.id)) {
+    if (type.id === 'digitalexperiencebundle') {
       return [join(packageDirWithTypeDir, `${fullName}${sep}${basename(fullName)}.${type.suffix}${META_XML_SUFFIX}`)];
     }
   }

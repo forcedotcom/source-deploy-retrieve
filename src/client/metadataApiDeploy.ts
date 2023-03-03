@@ -432,7 +432,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
       if (!this.orgId) {
         this.orgId = connection.getAuthInfoFields().orgId;
       }
-      await lifecycle.emit('scopedPostDeploy', { deployResult, orgId: this.orgId } satisfies ScopedPostDeploy);
+      await lifecycle.emit<ScopedPostDeploy>('scopedPostDeploy', { deployResult, orgId: this.orgId });
     }
     return deployResult;
   }

@@ -6,10 +6,13 @@
  */
 import { join } from 'path';
 import { registry, SourceComponent } from '../../../src';
-import { META_XML_SUFFIX, META_JSON_FILE } from '../../../src/common';
+import { META_XML_SUFFIX } from '../../../src/common';
 
 export const DE_TYPE = registry.types.digitalexperiencebundle.children.types.digitalexperience;
 export const DEB_TYPE = registry.types.digitalexperiencebundle;
+
+// metaFileName = metaFileSuffix for DigitalExperience.
+export const DE_METAFILE = DE_TYPE.metaFileSuffix;
 
 export const BUNDLE_NAME = join('site', 'foo');
 export const BUNDLE_FULL_NAME = BUNDLE_NAME;
@@ -17,7 +20,7 @@ export const HOME_VIEW_NAME = join('sfdc_cms__view', 'home');
 export const HOME_VIEW_FULL_NAME = `${BUNDLE_FULL_NAME}.${HOME_VIEW_NAME}`;
 
 export const BUNDLE_META_FILE = `foo.${DEB_TYPE.suffix}${META_XML_SUFFIX}`;
-export const HOME_VIEW_META_FILE = META_JSON_FILE;
+export const HOME_VIEW_META_FILE = DE_METAFILE;
 export const HOME_VIEW_CONTENT_FILE = 'content.json';
 export const HOME_VIEW_FRENCH_VARIANT_FILE = 'fr.json';
 

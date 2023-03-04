@@ -36,7 +36,7 @@ import {
   DECOMPOSED_TOP_LEVEL_COMPONENT,
 } from '../mock/type-constants/customObjectTranslationConstant';
 import { DecomposedSourceAdapter } from '../../src/resolve/adapters';
-import { META_JSON_FILE } from '../../src/common';
+import { DE_METAFILE } from '../mock/type-constants/digitalExperienceBundleConstants';
 import { RegistryTestUtil } from './registryTestUtil';
 
 Messages.importMessagesDirectory(__dirname);
@@ -137,8 +137,8 @@ describe('SourceComponent', () => {
     const expectedContentPath = join('digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home', 'content.json');
     expect(cmp.getPackageRelativePath(contentFile, 'metadata')).to.equal(expectedContentPath);
 
-    const metaFile = join('my', 'pkg', 'digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home', META_JSON_FILE);
-    const expectedMetaPath = join('digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home', META_JSON_FILE);
+    const metaFile = join('my', 'pkg', 'digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home', DE_METAFILE);
+    const expectedMetaPath = join('digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home', DE_METAFILE);
     expect(cmp.getPackageRelativePath(metaFile, 'metadata')).to.equal(expectedMetaPath);
 
     const variantFile = join('my', 'pkg', 'digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home', 'fr.json');

@@ -6,7 +6,7 @@
  */
 import { join, sep, basename } from 'path';
 import { MetadataComponent } from '../resolve/types';
-import { META_XML_SUFFIX, META_JSON_FILE } from '../common/constants';
+import { META_XML_SUFFIX } from '../common/constants';
 import { RegistryAccess } from '../registry/registryAccess';
 import { registry } from '..';
 const registryAccess = new RegistryAccess();
@@ -39,8 +39,12 @@ export const filePathsFromMetadataComponent = (
   if (type.strategies?.adapter === 'digitalExperience') {
     // child MD Type, the metafile is a JSON, not an XML
     if (type.id === 'digitalexperience') {
+      // metaFileName = metaFileSuffix for DigitalExperience.
       return [
-        join(packageDirWithTypeDir, `${fullName.split('.')[0]}${sep}${fullName.split('.')[1]}${sep}${META_JSON_FILE}`),
+        join(
+          packageDirWithTypeDir,
+          `${fullName.split('.')[0]}${sep}${fullName.split('.')[1]}${sep}${type.metaFileSuffix}`
+        ),
       ];
     }
 

@@ -42,7 +42,7 @@
   "devDependencies": {
     "@salesforce/cli-plugins-testkit": "^3.2.24",
     "@salesforce/dev-config": "^3.0.1",
-    "@salesforce/dev-scripts": "^4.1.1",
+    "@salesforce/dev-scripts": "^4.1.2",
     "@salesforce/prettier-config": "^0.0.2",
     "@salesforce/ts-sinon": "^1.4.6",
     "@types/archiver": "^5.3.1",
@@ -173,6 +173,9 @@
     },
     "test:only": {
       "command": "nyc mocha \"test/**/*.test.ts\"",
+      "env": {
+        "FORCE_COLOR": "2"
+      },
       "files": [
         "test/**/*.ts",
         "src/**/*.ts",

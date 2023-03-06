@@ -1257,9 +1257,8 @@ describe('ComponentSet', () => {
         type: digitalExperienceBundle.DEB_TYPE.id,
       };
 
-      expect(set.getComponentFilenamesByNameAndType(deb)).to.have.members([
-        'path/to/digitalExperiences/site/foo/foo.digitalExperience-meta.xml',
-      ]);
+      const debMetaFilePath = join('path', 'to', 'digitalExperiences', 'site', 'foo', 'foo.digitalExperience-meta.xml');
+      expect(set.getComponentFilenamesByNameAndType(deb)).to.have.members([debMetaFilePath]);
     });
 
     it('should correctly return DE (DigitalExperience) component file paths', () => {
@@ -1273,10 +1272,12 @@ describe('ComponentSet', () => {
         type: digitalExperienceBundle.DE_TYPE.id,
       };
 
+      const deViewHomePath = join('path', 'to', 'digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home');
+
       expect(set.getComponentFilenamesByNameAndType(de)).to.have.members([
-        'path/to/digitalExperiences/site/foo/sfdc_cms__view/home/content.json',
-        'path/to/digitalExperiences/site/foo/sfdc_cms__view/home/fr.json',
-        'path/to/digitalExperiences/site/foo/sfdc_cms__view/home/_meta.json',
+        join(deViewHomePath, 'content.json'),
+        join(deViewHomePath, 'fr.json'),
+        join(deViewHomePath, '_meta.json'),
       ]);
     });
   });

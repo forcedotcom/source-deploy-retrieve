@@ -187,7 +187,7 @@ const testData = {
     expectedFilePaths: [getFilePath('digitalExperiences/site/foo/foo.digitalExperience-meta.xml')],
     expectedComponents: [
       {
-        name: 'site/foo',
+        name: path.join('site', 'foo'), // as defined in digitalExperienceSourceAdapter.calculateNameFromPath()
         type: registryAccess.getTypeByName('DigitalExperienceBundle'),
         xml: getFilePath('digitalExperiences/site/foo/foo.digitalExperience-meta.xml'),
       },
@@ -199,7 +199,7 @@ const testData = {
     expectedFilePaths: [getFilePath('digitalExperiences/site/foo/sfdc_cms__view/home/_meta.json')],
     expectedComponents: [
       {
-        name: 'sfdc_cms__view/home',
+        name: path.join('sfdc_cms__view', 'home'), // as defined in digitalExperienceSourceAdapter.calculateNameFromPath()
         type: registryAccess.getTypeByName('DigitalExperience'),
       },
     ],

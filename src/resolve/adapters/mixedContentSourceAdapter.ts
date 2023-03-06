@@ -68,6 +68,7 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
           name: baseName(contentPath),
           type: this.type,
           content: contentPath,
+          xml: this.type.id === 'experiencepropertytypebundle' ? `${contentPath}/schema.json` : undefined,
         },
         this.tree,
         this.forceIgnore

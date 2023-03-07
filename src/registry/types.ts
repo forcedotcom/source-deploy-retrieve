@@ -53,6 +53,14 @@ export interface MetadataType {
    */
   suffix?: string;
   /**
+   * MetaFile suffix
+   *
+   * An override to the default "-meta.xml" suffix.
+   *
+   * __Examples:__ "_meta.json" for DigitalExperience.
+   */
+  metaFileSuffix?: string;
+  /**
    * Whether or not components are required to reside in a folder named after the type's directoryName.
    */
   strictDirectoryName?: boolean;

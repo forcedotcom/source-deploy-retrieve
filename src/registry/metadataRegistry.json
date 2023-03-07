@@ -3195,6 +3195,7 @@
             "name": "DigitalExperience",
             "directoryName": "digitalExperiences",
             "suffix": "digitalExperience",
+            "metaFileSuffix": "_meta.json",
             "supportsPartialDelete": true,
             "strategies": {
               "adapter": "digitalExperience"

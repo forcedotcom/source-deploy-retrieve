@@ -50,7 +50,8 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     if (this.isBundleType()) {
       return this.getBundleMetadataXmlPath(trigger);
     }
-    return join(dirname(trigger), '_meta.json');
+    // metaFileName = metaFileSuffix for DigitalExperience.
+    return join(dirname(trigger), this.type.metaFileSuffix);
   }
 
   protected trimPathToContent(path: string): string {

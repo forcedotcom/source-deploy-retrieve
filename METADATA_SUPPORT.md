@@ -554,18 +554,23 @@ v58 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
+|AIScoringModelDefVersion|❌|Not supported, but support could be added|
+|AIScoringModelDefinition|❌|Not supported, but support could be added|
 |Ai4mSettings|✅||
+|AssessmentConfiguration|❌|Not supported, but support could be added|
 |ClaimMgmtFoundationEnabledSettings|✅||
 |CodeBuilderSettings|✅||
 |DataWeaveResource|✅||
 |DynamicFormsSettings|✅||
+|ExperiencePropertyTypeBundle|✅||
+|FundraisingConfig|❌|Not supported, but support could be added|
 |LicensingSettings|✅||
 |OmniChannelPricingSettings|✅||
-|PaymentsBuyerAPIEnabledSettings|✅||
-|PriceSheetDefinition|❌|Not supported, but support could be added|
 |ProcessFlowMigration|❌|Not supported, but support could be added|
-|ProductSpecificationRecType|❌|Not supported, but support could be added|
+|ProductSpecificationType|❌|Not supported, but support could be added|
+|SkillType|❌|Not supported, but support could be added|
 |Web3Settings|✅||
+|WebStoreBundle|❌|Not supported, but support could be added|
 
 ## Additional Types
 
@@ -616,4 +621,3 @@ v58 introduces the following new types.  Here's their current level of support
 - InternalOrganization
 - UiViewDefinition
 - MobileSecurityPolicySet
-- ExperiencePropertyTypeBundle

@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { dirname, basename, sep } from 'path';
+import { dirname, basename, sep, join } from 'path';
 import { Messages, SfError } from '@salesforce/core';
 import { baseName } from '../../utils/path';
 import { SourcePath } from '../../common';
@@ -68,7 +68,7 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
           name: baseName(contentPath),
           type: this.type,
           content: contentPath,
-          xml: this.type.id === 'experiencepropertytypebundle' ? `${contentPath}/schema.json` : undefined,
+          xml: this.type.metaFileSuffix && join(contentPath, this.type.metaFileSuffix),
         },
         this.tree,
         this.forceIgnore

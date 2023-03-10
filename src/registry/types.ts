@@ -35,7 +35,7 @@ export interface MetadataType {
   /**
    * Name of the directory where components are located in a package.
    */
-  directoryName?: string;
+  directoryName: string;
   /**
    * Whether or not components are stored in folders.
    *

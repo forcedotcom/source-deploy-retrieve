@@ -847,13 +847,13 @@
     mv "~2"
     safe-json-stringify "~1"
 
-"@salesforce/cli-plugins-testkit@^3.2.24":
-  version "3.2.24"
-  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-3.2.24.tgz#4a57f4ed5549ad908bc13ab05cb8c17e683f1a8a"
-  integrity sha512-FhP8s0aerfDax8+ZNx0u8BKG1jau+Iyci9jCcdmWlT6gcc06zQWBlRCNsRbjF9rWyiAeSEB1ObTYpVUzVQkFUw==
+"@salesforce/cli-plugins-testkit@^3.2.25":
+  version "3.2.25"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-3.2.25.tgz#c0799b36bd3563950a057b0925a9879f4f80751f"
+  integrity sha512-bnzQnY/T7A2Wq894wmEvv9btxDhBSX8Iyq8XDUSgcMdjeWFuZS1JQHgazlSaDkfA/3J5tSbEyPY/vEAi0HRd4g==
   dependencies:
     "@salesforce/core" "^3.33.6"
-    "@salesforce/kit" "^1.9.0"
+    "@salesforce/kit" "^1.9.2"
     "@salesforce/ts-types" "^1.7.3"
     "@types/shelljs" "^0.8.11"
     archiver "^5.2.0"
@@ -930,10 +930,10 @@
     typescript "^4.1.3"
     wireit "^0.9.5"
 
-"@salesforce/kit@^1.9.0":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-1.9.0.tgz#ddc179ff588b68f3e8f5c237ab74ed4b9c8d5274"
-  integrity sha512-a1DnVf2ZN/fZ4Zq0T6pxrDpwOyWSKt6Es1erpUJLvM13H+Y3C4uxSUy4aS4WSHIJA8zvWvvEiWYOV17TD0Dmug==
+"@salesforce/kit@^1.9.0", "@salesforce/kit@^1.9.2":
+  version "1.9.2"
+  resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-1.9.2.tgz#d232f135428363cdfe2649cb99a94bc2eb0a12fd"
+  integrity sha512-kjZvjFNP6njhAiEa/ErdLXSDWZKafHYJyKCKz1wnSFmDM8TOpKHCCVw5cQo87ZQr8OqxqwUDIAlSBLyMzKi4Lg==
   dependencies:
     "@salesforce/ts-types" "^1.7.3"
     shx "^0.3.3"

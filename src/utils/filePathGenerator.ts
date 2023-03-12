@@ -146,6 +146,9 @@ const getDecomposedChildType = ({ fullName, type }: MetadataComponent, packageDi
   const topLevelType = registryAccess.findType(
     (t) => isPlainObject(t.children) && Object.keys(t.children.types).includes(type.id)
   );
+  if (!topLevelType) {
+    throw new SfError(`Could not find parent type for ${fullName} (${type.name})`);
+  }
   const topLevelTypeDir = packageDir ? join(packageDir, topLevelType.directoryName) : topLevelType.directoryName;
 
   return [

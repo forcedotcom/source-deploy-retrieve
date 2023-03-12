@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename } from 'path';
+import { SfError } from '@salesforce/core';
 import { SourcePath } from '../common';
 import { SourceComponent } from '../resolve';
 import { registry } from '../registry';
@@ -28,11 +29,12 @@ export class DiagnosticUtil {
         if (typeof message !== 'string') {
           return parseDefault(component, message);
         }
+        throw new SfError(`Unable to parse deploy diagnostic with string message: ${message}`);
     }
   }
 
   private parseLwc(component: SourceComponent, message: string | DeployMessage): ComponentDiagnostic {
-    const problem = typeof message === 'string' ? message : message.problem;
+    const problem = getProblemFromMessage(message);
     const diagnostic: ComponentDiagnostic = {
       error: problem,
       problemType: 'Error',
@@ -75,13 +77,13 @@ export class DiagnosticUtil {
   }
 
   private parseAura(component: SourceComponent, message: string | DeployMessage): ComponentDiagnostic {
-    const problem = typeof message === 'string' ? message : message.problem;
+    const problem = getProblemFromMessage(message);
     const diagnostic: ComponentDiagnostic = {
       error: problem,
       problemType: 'Error',
     };
 
-    let filePath: SourcePath;
+    let filePath: SourcePath | undefined;
     if (this.api === 'tooling') {
       const errorParts = problem.split(' ');
       const fileType = errorParts.find((part) => {
@@ -119,7 +121,11 @@ const appendErrorWithLocation = (error: string, line: string | number, column: s
   `${error} (${line}:${column})`;
 
 const parseDefault = (component: SourceComponent, message: DeployMessage): ComponentDiagnostic => {
-  const { problem, problemType, fileName, lineNumber, columnNumber } = message;
+  const { problemType, fileName, lineNumber, columnNumber } = message;
+  const problem = getProblemFromMessage(message);
+  if (!problemType) {
+    throw new SfError(`Unable to parse deploy diagnostic with empty problem type: ${message.toString()}`);
+  }
   const diagnostic: ComponentDiagnostic = {
     error: problem,
     problemType,
@@ -137,4 +143,12 @@ const parseDefault = (component: SourceComponent, message: DeployMessage): Compo
   }
 
   return diagnostic;
+};
+
+const getProblemFromMessage = (message: string | DeployMessage): string => {
+  const problem = typeof message === 'string' ? message : message.problem;
+  if (!problem) {
+    throw new SfError(`Unable to parse deploy diagnostic with empty problem: ${message.toString()}`);
+  }
+  return problem;
 };

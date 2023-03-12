@@ -52,7 +52,7 @@ export class ComponentSetBuilder {
   // eslint-disable-next-line complexity
   public static async build(options: ComponentSetOptions): Promise<ComponentSet> {
     const logger = Logger.childFromRoot('componentSetBuilder');
-    let componentSet: ComponentSet;
+    let componentSet: ComponentSet | undefined;
 
     const { sourcepath, manifest, metadata, packagenames, apiversion, sourceapiversion, org } = options;
     try {
@@ -79,14 +79,14 @@ export class ComponentSetBuilder {
         if (!fs.existsSync(manifest.manifestPath)) {
           throw new SfError(`The manifest path "${manifest.manifestPath}" does not exist.`);
         }
-        const directoryPaths = options.manifest.directoryPaths;
+        const directoryPaths = manifest.directoryPaths;
         logger.debug(`Searching in packageDir: ${directoryPaths.join(', ')} for matching metadata`);
         componentSet = await ComponentSet.fromManifest({
           manifestPath: manifest.manifestPath,
           resolveSourcePaths: directoryPaths,
           forceAddWildcards: true,
-          destructivePre: options.manifest.destructiveChangesPre,
-          destructivePost: options.manifest.destructiveChangesPost,
+          destructivePre: manifest.destructiveChangesPre,
+          destructivePost: manifest.destructiveChangesPost,
         });
       }
 
@@ -109,10 +109,10 @@ export class ComponentSetBuilder {
           // Add to the filtered ComponentSet for resolved source paths,
           // and the unfiltered ComponentSet to build the correct manifest.
           compSetFilter.add(entry);
-          componentSet.add(entry);
+          componentSet?.add(entry);
         });
 
-        const directoryPaths = options.metadata.directoryPaths;
+        const directoryPaths = metadata.directoryPaths;
         logger.debug(`Searching for matching metadata in directories: ${directoryPaths.join(', ')}`);
         const resolvedComponents = ComponentSet.fromSource({ fsPaths: directoryPaths, include: compSetFilter });
         componentSet.forceIgnoredPaths = resolvedComponents.forceIgnoredPaths;
@@ -126,12 +126,13 @@ export class ComponentSetBuilder {
         componentSet ??= new ComponentSet();
         logger.debug(`Building ComponentSet from targetUsername: ${org.username}`);
         const fromConnection = await ComponentSet.fromConnection({
-          usernameOrConnection: (await StateAggregator.getInstance()).aliases.getUsername(org.username) || org.username,
+          usernameOrConnection: (await StateAggregator.getInstance()).aliases.getUsername(org.username) ?? org.username,
           // exclude components based on the results of componentFilter function
           // components with namespacePrefix where org.exclude includes manageableState (to exclude managed packages)
           // components with namespacePrefix where manageableState equals undefined (to exclude components e.g. InstalledPackage)
           // components where org.exclude includes manageableState (to exclude packages without namespacePrefix e.g. unlocked packages)
-          componentFilter: (component): boolean => !org.exclude?.includes(component?.manageableState),
+          componentFilter: (component): boolean =>
+            !component?.manageableState || !org.exclude?.includes(component.manageableState),
         });
 
         for (const comp of fromConnection) {
@@ -151,7 +152,7 @@ export class ComponentSetBuilder {
 
     // This is only for debug output of matched files based on the command flags.
     // It will log up to 20 file matches.
-    if (logger.debugEnabled && componentSet.size) {
+    if (logger.debugEnabled && componentSet?.size) {
       logger.debug(`Matching metadata files (${componentSet.size}):`);
       const components = componentSet.getSourceComponents().toArray();
       for (let i = 0; i < componentSet.size; i++) {
@@ -166,6 +167,11 @@ export class ComponentSetBuilder {
           break;
         }
       }
+    }
+
+    // there should have been a componentSet created by this point.
+    if (componentSet === undefined) {
+      throw new SfError('Unable to construct a componentSet.  Check the logs for more information.');
     }
 
     componentSet.apiVersion ??= apiversion;

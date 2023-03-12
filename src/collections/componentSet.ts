@@ -7,6 +7,7 @@
 /* eslint  @typescript-eslint/unified-signatures:0 */
 import { j2xParser } from 'fast-xml-parser';
 import { AuthInfo, Connection, Logger, Messages, SfError } from '@salesforce/core';
+import { isString } from '@salesforce/ts-types';
 import {
   MetadataApiDeploy,
   MetadataApiDeployOptions,
@@ -58,12 +59,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   /**
    * The metadata API version to use. E.g., 52.0
    */
-  public apiVersion: string;
+  public apiVersion?: string;
   /**
    * The metadata API version of the deployed/retrieved source.
    * This is used as the value for the `version` field in the manifest.
    */
-  public sourceApiVersion: string;
+  public sourceApiVersion?: string;
   public fullName?: string;
   public forceIgnoredPaths?: Set<string>;
   private logger: Logger;
@@ -393,11 +394,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
           // if the type doesn't support mixed wildcards and specific names, overwrite the names to be a wildcard
           typeMap.set(typeName, [fullName]);
         } else if (
+          typeEntry &&
           !typeEntry.includes(fullName) &&
           (!typeEntry.includes(ComponentSet.WILDCARD) || type.supportsWildcardAndName)
         ) {
           // if the type supports both wildcards and names, add them regardless
-          typeMap.get(typeName).push(fullName);
+          typeMap.get(typeName)?.push(fullName);
         }
       }
     };
@@ -490,7 +492,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
 
     // we're working with SourceComponents now
-    this.components.get(key).set(sourceKey(component), component);
+    this.components.get(key)?.set(sourceKey(component), component);
 
     // Build maps of destructive components and regular components as they are added
     // as an optimization when building manifests.
@@ -598,7 +600,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const output = new Set<string>();
     componentMap.forEach((component) => {
       [...component.walkContent(), component.content, component.metaFilePath]
-        .filter(Boolean)
+        .filter(isString)
         .map((filename) => output.add(filename));
     });
     return Array.from(output);

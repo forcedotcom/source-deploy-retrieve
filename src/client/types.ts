@@ -214,7 +214,7 @@ export type RetrieveRequest = {
   packageNames?: string[];
   singlePackage?: boolean;
   specificFiles?: string[];
-  unpackaged: {
+  unpackaged?: {
     types: PackageTypeMembers[];
   };
 };

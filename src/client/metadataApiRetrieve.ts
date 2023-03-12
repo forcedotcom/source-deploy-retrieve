@@ -43,7 +43,7 @@ export class RetrieveResult implements MetadataTransferResult {
   // system and is used to set the state of a SourceComponent to "Created"
   // rather than "Changed".
   private localComponents: ComponentSet;
-  private fileResponses: FileResponse[];
+  private fileResponses?: FileResponse[];
 
   /**
    * @param response The metadata retrieve response from the server
@@ -116,7 +116,10 @@ export class RetrieveResult implements MetadataTransferResult {
     // Add file responses for components that support partial delete (e.g., DigitalExperience)
     // where pieces of the component were deleted in the org, then retrieved.
     while (partialDeleteFileResponses.length) {
-      this.fileResponses.push(partialDeleteFileResponses.pop());
+      const fromPartialDelete = partialDeleteFileResponses.pop();
+      if (fromPartialDelete) {
+        this.fileResponses.push(fromPartialDelete);
+      }
     }
 
     return this.fileResponses;
@@ -130,7 +133,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
 > {
   public static DEFAULT_OPTIONS: Partial<MetadataApiRetrieveOptions> = { merge: false };
   private options: MetadataApiRetrieveOptions;
-  private orgId: string;
+  private orgId?: string;
 
   public constructor(options: MetadataApiRetrieveOptions) {
     super(options);
@@ -181,7 +184,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     if (result.status === RequestStatus.Succeeded) {
       const zipFileContents = Buffer.from(result.zipFile, 'base64');
       if (isMdapiRetrieve) {
-        const name = this.options.zipFileName || 'unpackaged.zip';
+        const name = this.options.zipFileName ?? 'unpackaged.zip';
         const zipFilePath = path.join(this.options.output, name);
         fs.writeFileSync(zipFilePath, zipFileContents);
 
@@ -270,18 +273,11 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     return this.getPackageOptions()?.map((pkg) => pkg.name);
   }
 
-  private getPackageOptions(): PackageOption[] {
+  private getPackageOptions(): Array<Required<PackageOption>> {
     const { packageOptions } = this.options;
-    if (packageOptions?.length) {
-      if (isString(packageOptions[0])) {
-        const packageNames = packageOptions as string[];
-        return packageNames.map((pkg) => ({ name: pkg, outputDir: pkg }));
-      } else {
-        const pkgs = packageOptions as PackageOption[];
-        // If there isn't an outputDir specified, use the package name.
-        return pkgs.map(({ name, outputDir }) => ({ name, outputDir: outputDir || name }));
-      }
-    }
+    return (packageOptions ?? []).map((po: string | PackageOption) =>
+      isString(po) ? { name: po, outputDir: po } : { name: po.name, outputDir: po.outputDir ?? po.name }
+    );
   }
 
   private async extract(zip: Buffer): Promise<ComponentSet> {
@@ -292,7 +288,6 @@ export class MetadataApiRetrieve extends MetadataTransfer<
 
     const packages: RetrieveExtractOptions[] = [{ zipTreeLocation: 'unpackaged', outputDir: output }];
     const packageOpts = this.getPackageOptions();
-    // eslint-disable-next-line no-unused-expressions
     packageOpts?.forEach(({ name, outputDir }) => {
       packages.push({ zipTreeLocation: name, outputDir });
     });
@@ -324,7 +319,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       // this is intentional sequential
       // eslint-disable-next-line no-await-in-loop
       const convertResult = await converter.convert(zipComponents, 'source', outputConfig);
-      if (convertResult) {
+      if (convertResult?.converted) {
         components.push(...convertResult.converted);
       }
     }
@@ -365,7 +360,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     retrievedComponents.forEach((comp) => {
       if (comp.type.supportsPartialDelete && partialDeleteComponents.has(comp.fullName)) {
         const localComp = partialDeleteComponents.get(comp.fullName);
-        if (localComp.contentPath && tree.isDirectory(comp.content)) {
+        if (localComp?.contentPath && comp.content && tree.isDirectory(comp.content)) {
           const remoteContentList = tree.readDirectory(comp.content);
 
           const isForceIgnored = (filePath: string): boolean => {

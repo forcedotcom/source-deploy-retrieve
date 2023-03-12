@@ -167,9 +167,10 @@ const getPackagePath = (outputConfig: DirectoryConfig | ZipConfig): SourcePath |
 };
 
 const getDestructiveManifest = (destructiveChangesType: DestructiveChangesType): string => {
-  if (destructiveChangesType === DestructiveChangesType.POST) {
-    return MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE;
-  } else if (destructiveChangesType === DestructiveChangesType.PRE) {
-    return MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE;
+  switch (destructiveChangesType) {
+    case DestructiveChangesType.POST:
+      return MetadataConverter.DESTRUCTIVE_CHANGES_POST_XML_FILE;
+    case DestructiveChangesType.PRE:
+      return MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE;
   }
 };

@@ -6,7 +6,7 @@
  */
 
 export class LazyCollection<T> implements Iterable<T> {
-  protected iterable: Iterable<T>;
+  protected iterable: Iterable<T> | undefined;
 
   public constructor(iterable?: Iterable<T>) {
     this.iterable = iterable;

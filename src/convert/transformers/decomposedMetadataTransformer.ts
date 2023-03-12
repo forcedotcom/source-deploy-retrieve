@@ -7,6 +7,7 @@
 import { join } from 'path';
 import { JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
+import { SfError } from '@salesforce/core';
 import { MetadataComponent, SourceComponent } from '../../resolve';
 import { JsToXml } from '../streams';
 import { WriteInfo } from '../types';
@@ -23,7 +24,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       const { fullName: parentName } = component.parent;
       this.context.recomposition.setState((state) => {
         if (state[parentName]) {
-          state[parentName].children.add(component);
+          state[parentName].children?.add(component);
         } else {
           state[parentName] = {
             component: component.parent,
@@ -40,7 +41,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
         const children = component.getChildren();
         if (children) {
           children.map((child) => {
-            state[fullName].children.add(child);
+            state[fullName].children?.add(child);
           });
         }
       });
@@ -55,13 +56,16 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const { type, fullName: parentFullName } = component;
     const forceIgnore = component.getForceIgnore();
 
-    let parentXmlObject: JsonMap;
+    let parentXmlObject: JsonMap | undefined;
     const composedMetadata = await getComposedMetadataEntries(component);
 
     for (const [tagKey, tagValue] of composedMetadata) {
-      const childTypeId = type.children?.directories[tagKey];
+      const childTypeId = type.children?.directories?.[tagKey];
       if (childTypeId) {
-        const childType = type.children.types[childTypeId];
+        const childType = type.children?.types[childTypeId];
+        if (!childType) {
+          throw new SfError(`No registry is missing a child with ID ${childTypeId} for ${type.name}`);
+        }
         const tagValues = ensureArray(tagValue);
         for (const value of tagValues as [{ fullName: string; name: string }]) {
           const entryName = value.fullName || value.name;
@@ -109,7 +113,12 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
             // if the merge parent has a child that can be merged with, push write
             // operation now and mark it as merged in the state
             else if (childrenOfMergeComponent.has(childComponent)) {
-              const mergeChild: SourceComponent = childrenOfMergeComponent.getSourceComponents(childComponent).first();
+              const mergeChild = childrenOfMergeComponent.getSourceComponents(childComponent).first();
+              if (!mergeChild?.xml) {
+                throw new SfError(
+                  `No xml components found for ${childComponent.fullName} (${childComponent.type.name})`
+                );
+              }
               writeInfos.push({
                 source,
                 output: mergeChild.xml,
@@ -153,7 +162,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
           output: mergeWith.xml,
         });
         this.setDecomposedState(component, { foundMerge: true });
-      } else if (!parentState?.foundMerge) {
+      } else {
         this.setDecomposedState(component, {
           foundMerge: false,
           writeInfo: {
@@ -203,7 +212,7 @@ const getDefaultOutput = (component: MetadataComponent): SourcePath => {
   const [baseName, childName] = fullName.split('.');
   const baseComponent = (parent ?? component) as SourceComponent;
   let output = `${childName ?? baseName}.${component.type.suffix}${META_XML_SUFFIX}`;
-  if (parent?.type.strategies.decomposition === DecompositionStrategy.FolderPerType) {
+  if (parent?.type.strategies?.decomposition === DecompositionStrategy.FolderPerType) {
     output = join(type.directoryName, output);
   }
   return join(baseComponent.getPackageRelativePath(baseName, 'source'), output);

@@ -28,9 +28,9 @@ const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
  */
 export class MetadataResolver {
   public forceIgnoredPaths: Set<string>;
-  private forceIgnore: ForceIgnore;
+  private forceIgnore?: ForceIgnore;
   private sourceAdapterFactory: SourceAdapterFactory;
-  private folderContentTypeDirNames: string[];
+  private folderContentTypeDirNames?: string[];
 
   /**
    * @param registry Custom registry data
@@ -72,7 +72,7 @@ export class MetadataResolver {
     const components: SourceComponent[] = [];
     const ignore = new Set();
 
-    if (this.forceIgnore.denies(dir)) {
+    if (this.forceIgnore?.denies(dir)) {
       return components;
     }
 
@@ -123,8 +123,8 @@ export class MetadataResolver {
     return components;
   }
 
-  private resolveComponent(fsPath: string, isResolvingSource: boolean): SourceComponent {
-    if (this.forceIgnore.denies(fsPath)) {
+  private resolveComponent(fsPath: string, isResolvingSource: boolean): SourceComponent | undefined {
+    if (this.forceIgnore?.denies(fsPath)) {
       // don't resolve the component if the path is denied
       this.forceIgnoredPaths.add(fsPath);
       return;
@@ -169,7 +169,8 @@ export class MetadataResolver {
         (type) =>
           // any of the following 3 options is considered a good match
           // mixedContent and bundles don't have a suffix to match
-          ['mixedContent', 'bundle'].includes(type.strategies?.adapter) ||
+          (typeof type.strategies?.adapter === 'string' &&
+            ['mixedContent', 'bundle'].includes(type.strategies.adapter)) ||
           // the file suffix (in source or mdapi format) matches the type suffix we think it is
           (type.suffix && [type.suffix, `${type.suffix}${META_XML_SUFFIX}`].some((s) => fsPath.endsWith(s))) ||
           // the type has children and the file suffix (in source format) matches a child type suffix of the type we think it is
@@ -277,8 +278,8 @@ export class MetadataResolver {
    * Do not match this pattern:
    * .../tabs/TestFolder.tab-meta.xml
    */
-  private parseAsFolderMetadataXml(fsPath: string): string {
-    let folderName: string;
+  private parseAsFolderMetadataXml(fsPath: string): string | undefined {
+    let folderName: string | undefined;
     const match = new RegExp(/(.+)-meta\.xml/).exec(basename(fsPath));
     if (match && !match[1].includes('.')) {
       const parts = fsPath.split(sep);
@@ -299,7 +300,7 @@ export class MetadataResolver {
   /**
    * If this file should be considered as a metadata file then return the metadata type
    */
-  private parseAsMetadata(fsPath: string): string {
+  private parseAsMetadata(fsPath: string): string | undefined {
     if (this.tree.isDirectory(fsPath)) {
       return;
     }

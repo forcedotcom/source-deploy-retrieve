@@ -47,7 +47,7 @@ export class SourceComponent implements MetadataComponent {
   public readonly parent?: SourceComponent;
   public parentType?: MetadataType;
   public content?: string;
-  public replacements: Record<string, MarkedReplacement[]>;
+  public replacements?: Record<string, MarkedReplacement[]>;
   private treeContainer: TreeContainer;
   private forceIgnore: ForceIgnore;
   private markedForDelete = false;

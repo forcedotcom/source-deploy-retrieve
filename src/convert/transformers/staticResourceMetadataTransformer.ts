@@ -9,7 +9,7 @@ import { Readable } from 'stream';
 import { create as createArchive, Archiver } from 'archiver';
 import { getExtension } from 'mime';
 import { Open } from 'unzipper';
-import { JsonMap, Optional } from '@salesforce/ts-types';
+import { JsonMap } from '@salesforce/ts-types';
 import { createWriteStream } from 'graceful-fs';
 import { Messages, SfError } from '@salesforce/core';
 import { baseName } from '../../utils';
@@ -170,7 +170,7 @@ const FALLBACK_TYPE_MAP = new Map<string, string>([
   ['text/xml', 'xml'],
 ]);
 
-const getContentType = async (component: SourceComponent): Promise<Optional<string>> => {
+const getContentType = async (component: SourceComponent): Promise<string> => {
   const resource = (await component.parseXml()).StaticResource as JsonMap;
 
   if (!resource || !Object.keys(resource).includes('contentType')) {
@@ -182,15 +182,14 @@ const getContentType = async (component: SourceComponent): Promise<Optional<stri
     );
   }
 
-  if (typeof resource.contentType !== 'string' && typeof resource.contentType !== 'undefined') {
+  const output = resource.contentType ?? DEFAULT_CONTENT_TYPE;
+
+  if (typeof output !== 'string') {
     throw new SfError(
-      `Expected a string for contentType in ${component.name} (${
-        component.xml
-      }) but got ${resource.contentType.toString()}`
+      `Expected a string for contentType in ${component.name} (${component.xml}) but got ${output?.toString()}`
     );
   }
-
-  return resource.contentType;
+  return output;
 };
 
 const getBaseContentPath = (component: SourceComponent, mergeWith?: SourceComponent): SourcePath => {

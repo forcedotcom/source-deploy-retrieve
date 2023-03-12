@@ -188,7 +188,7 @@ export class MetadataResolver {
     // attempt 2 - check if it's a metadata xml file
     if (!resolvedType) {
       const parsedMetaXml = parseMetadataXml(fsPath);
-      if (parsedMetaXml) {
+      if (parsedMetaXml?.suffix) {
         resolvedType = this.registry.getTypeBySuffix(parsedMetaXml.suffix);
       }
     }

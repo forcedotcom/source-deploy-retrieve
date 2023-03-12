@@ -190,7 +190,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    *
    * @param trigger Path that `getComponent` was called with
    */
-  protected abstract getRootMetadataXmlPath(trigger: SourcePath): SourcePath;
+  protected abstract getRootMetadataXmlPath(trigger: SourcePath): SourcePath | undefined;
 
   /**
    * Populate additional properties on a SourceComponent, such as source files and child components.

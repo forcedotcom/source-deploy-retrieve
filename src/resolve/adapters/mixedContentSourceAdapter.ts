@@ -38,7 +38,11 @@ const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['er
  *```
  */
 export class MixedContentSourceAdapter extends BaseSourceAdapter {
-  protected getRootMetadataXmlPath(trigger: SourcePath): SourcePath {
+  /**
+   *
+   * Returns undefined if no matching file is found
+   */
+  protected getRootMetadataXmlPath(trigger: SourcePath): SourcePath | undefined {
     if (this.ownFolder) {
       const componentRoot = this.trimPathToContent(trigger);
       return this.tree.find('metadataXml', basename(componentRoot), componentRoot);
@@ -47,10 +51,11 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
   }
 
   protected populate(trigger: SourcePath, component?: SourceComponent): SourceComponent {
-    let contentPath = this.trimPathToContent(trigger);
-    if (contentPath === component?.xml) {
-      contentPath = this.tree.find('content', baseName(contentPath), dirname(contentPath));
-    }
+    const trimmedPath = this.trimPathToContent(trigger);
+    const contentPath =
+      trimmedPath === component?.xml
+        ? this.tree.find('content', baseName(trimmedPath), dirname(trimmedPath))
+        : trimmedPath;
 
     // Content path might be undefined for staticResource where all files are ignored and only the xml is included.
     if (!contentPath || !this.tree.exists(contentPath)) {
@@ -97,9 +102,11 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
    * content. "Content" can either be a single file or an entire directory. If the content
    * is a directory, the path can be files or other directories inside of it.
    *
+   * Returns undefined if no matching file is found
+   *
    * @param path Path to content or a child of the content
    */
-  private findMetadataFromContent(path: SourcePath): SourcePath {
+  private findMetadataFromContent(path: SourcePath): SourcePath | undefined {
     const rootContentPath = this.trimPathToContent(path);
     const rootTypeDirectory = dirname(rootContentPath);
     const contentFullName = baseName(rootContentPath);

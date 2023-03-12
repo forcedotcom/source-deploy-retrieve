@@ -23,7 +23,6 @@ import {
   MetadataResolver,
   ConnectionResolver,
   SourceComponent,
-  TreeContainer,
 } from '../resolve';
 import { getCurrentApiVersion, MetadataType, RegistryAccess } from '../registry';
 import {
@@ -140,29 +139,22 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    */
   public static fromSource(options: FromSourceOptions): ComponentSet;
   public static fromSource(input: string | string[] | FromSourceOptions): ComponentSet {
-    let fsPaths: string[] = [];
-    let registry: RegistryAccess;
-    let tree: TreeContainer;
-    let inclusiveFilter: ComponentSet;
-    let fsDeletePaths: string[] = [];
-
-    if (Array.isArray(input)) {
-      fsPaths = input;
-    } else if (typeof input === 'object') {
-      fsPaths = input.fsPaths;
-      registry = input.registry ?? registry;
-      tree = input.tree ?? tree;
-      inclusiveFilter = input.include;
-      fsDeletePaths = input.fsDeletePaths ?? fsDeletePaths;
-    } else {
-      fsPaths = [input];
-    }
+    const parseFromSourceInputs = (given: string | string[] | FromSourceOptions): FromSourceOptions => {
+      if (Array.isArray(given)) {
+        return { fsPaths: given };
+      } else if (typeof given === 'object') {
+        return given;
+      } else {
+        return { fsPaths: [given] };
+      }
+    };
+    const { fsPaths, registry, tree, include, fsDeletePaths = [] } = parseFromSourceInputs(input);
 
     const resolver = new MetadataResolver(registry, tree);
     const set = new ComponentSet([], registry);
     const buildComponents = (paths: string[], destructiveType?: DestructiveChangesType): void => {
       for (const path of paths) {
-        for (const component of resolver.getComponentsFromPath(path, inclusiveFilter)) {
+        for (const component of resolver.getComponentsFromPath(path, include)) {
           set.add(component, destructiveType);
         }
       }
@@ -415,9 +407,11 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
       // Add children
       const componentMap = components.get(key);
-      for (const comp of componentMap.values()) {
-        for (const child of comp.getChildren()) {
-          addToTypeMap(child.type, child.fullName);
+      if (componentMap) {
+        for (const comp of componentMap.values()) {
+          for (const child of comp.getChildren()) {
+            addToTypeMap(child.type, child.fullName);
+          }
         }
       }
     }
@@ -472,7 +466,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     if (member) {
       // filter optimization
       const memberCollection = this.components.get(simpleKey(member));
-      iter = memberCollection?.size > 0 ? memberCollection.values() : [];
+      iter = memberCollection && memberCollection.size > 0 ? memberCollection.values() : [];
     } else {
       // eslint-disable-next-line @typescript-eslint/no-this-alias
       iter = this;
@@ -503,12 +497,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       if (!deletions.has(key)) {
         deletions.set(key, new Map<string, SourceComponent>());
       }
-      deletions.get(key).set(sourceKey(component), component);
+      deletions.get(key)?.set(sourceKey(component), component);
     } else {
       if (!this.manifestComponents.has(key)) {
         this.manifestComponents.set(key, new Map<string, SourceComponent>());
       }
-      this.manifestComponents.get(key).set(sourceKey(component), component);
+      this.manifestComponents.get(key)?.set(sourceKey(component), component);
     }
 
     // something could try adding a component meant for deletion improperly, which would be marked as an addition

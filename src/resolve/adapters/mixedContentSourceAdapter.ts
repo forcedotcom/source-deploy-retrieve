@@ -50,7 +50,7 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
     return this.findMetadataFromContent(trigger);
   }
 
-  protected populate(trigger: SourcePath, component?: SourceComponent): SourceComponent {
+  protected populate(trigger: SourcePath, component?: SourceComponent): SourceComponent | undefined {
     const trimmedPath = this.trimPathToContent(trigger);
     const contentPath =
       trimmedPath === component?.xml

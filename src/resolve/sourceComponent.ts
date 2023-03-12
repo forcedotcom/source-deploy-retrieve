@@ -29,7 +29,7 @@ const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
 ]);
 
 export type ComponentProperties = {
-  name: string;
+  name: string | undefined;
   type: MetadataType;
   xml?: string;
   content?: string;

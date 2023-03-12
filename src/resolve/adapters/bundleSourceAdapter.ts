@@ -47,7 +47,7 @@ export class BundleSourceAdapter extends MixedContentSourceAdapter {
    * @param component Component to populate properties on
    * @protected
    */
-  protected populate(trigger: SourcePath, component?: SourceComponent): SourceComponent {
+  protected populate(trigger: SourcePath, component?: SourceComponent): SourceComponent | undefined {
     if (this.tree.isDirectory(trigger) && !this.tree.readDirectory(trigger)?.length) {
       // if it's an empty directory, don't include it (e.g., lwc/emptyLWC)
       return;

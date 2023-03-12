@@ -171,7 +171,7 @@ export abstract class MetadataTransfer<
         `Converting metadata to: ${mdapiTempDir} because the SFDX_MDAPI_TEMP_DIR environment variable is set`
       );
       try {
-        const source = cs || this.components || new ComponentSet();
+        const source = (cs ?? this.components) || new ComponentSet();
         const converter = new MetadataConverter();
         await converter.convert(source, target, {
           type: 'directory',

@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { dirname, join, sep } from 'path';
+import { SfError } from '@salesforce/core';
 import { META_XML_SUFFIX } from '../../common';
 import { SourceComponent } from '..';
 import { MetadataXml } from '../types';
@@ -51,23 +52,32 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
       return this.getBundleMetadataXmlPath(trigger);
     }
     // metaFileName = metaFileSuffix for DigitalExperience.
+    if (!this.type.metaFileSuffix) {
+      throw new SfError(
+        `The metadata registry is configured incorrectly for ${this.type.name}.  Expected a metaFileSuffix.`
+      );
+    }
     return join(dirname(trigger), this.type.metaFileSuffix);
   }
 
   protected trimPathToContent(path: string): string {
     if (this.isBundleType()) {
-      return;
+      return path;
     }
     return dirname(path);
   }
 
   protected populate(trigger: string, component?: SourceComponent): SourceComponent {
-    if (this.isBundleType()) {
+    if (this.isBundleType() && component) {
       // for top level types we don't need to resolve parent
       return component;
     }
     const source = super.populate(trigger, component);
     const parentType = this.registry.getParentType(this.type.id);
+    // we expect source, parentType and content to be defined.
+    if (!source || !parentType || !source.content) {
+      throw new SfError(`Unexpected error while resolving ${this.type.name} component`);
+    }
     const parent = new SourceComponent(
       {
         name: this.getBundleName(source.content),
@@ -90,7 +100,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     );
   }
 
-  protected parseMetadataXml(path: SourcePath): MetadataXml {
+  protected parseMetadataXml(path: SourcePath): MetadataXml | undefined {
     const xml = super.parseMetadataXml(path);
     if (xml) {
       return {
@@ -116,7 +126,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     // 3 because we want 'digitaExperiences' directory, 'baseType' directory and 'bundleName' directory
     const basePath = pathParts.slice(0, typeFolderIndex + 3).join(sep);
     const bundleFileName = pathParts[typeFolderIndex + 2];
-    const suffix = this.isBundleType() ? this.type.suffix : this.registry.getParentType(this.type.id).suffix;
+    const suffix = this.isBundleType() ? this.type.suffix : this.registry.getParentType(this.type.id)?.suffix;
     return `${basePath}${sep}${bundleFileName}.${suffix}${META_XML_SUFFIX}`;
   }
 

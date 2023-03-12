@@ -42,7 +42,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     this.tree = tree;
   }
 
-  public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent {
+  public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent | undefined {
     let rootMetadata = this.parseAsRootMetadataXml(path);
     if (!rootMetadata) {
       const rootMetadataPath = this.getRootMetadataXmlPath(path);
@@ -59,9 +59,10 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
 
     let component: SourceComponent | undefined;
     if (rootMetadata) {
+      const name = this.calculateName(rootMetadata);
       component = new SourceComponent(
         {
-          name: this.calculateName(rootMetadata),
+          name,
           type: this.type,
           xml: rootMetadata.path,
           parentType: this.type.folderType ? this.registry.getTypeByName(this.type.folderType) : undefined,
@@ -204,7 +205,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     trigger: SourcePath,
     component?: SourceComponent,
     isResolvingSource?: boolean
-  ): SourceComponent;
+  ): SourceComponent | undefined;
 }
 
 const parseAsFolderMetadataXml = (fsPath: SourcePath): MetadataXml | undefined => {

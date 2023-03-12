@@ -29,7 +29,7 @@ const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
 ]);
 
 export type ComponentProperties = {
-  name: string | undefined;
+  name?: string;
   type: MetadataType;
   xml?: string;
   content?: string;
@@ -41,7 +41,7 @@ export type ComponentProperties = {
  * Representation of a MetadataComponent in a file tree.
  */
 export class SourceComponent implements MetadataComponent {
-  public readonly name: string;
+  public readonly name?: string;
   public readonly type: MetadataType;
   public readonly xml?: string;
   public readonly parent?: SourceComponent;
@@ -51,7 +51,7 @@ export class SourceComponent implements MetadataComponent {
   private treeContainer: TreeContainer;
   private forceIgnore: ForceIgnore;
   private markedForDelete = false;
-  private destructiveChangesType: DestructiveChangesType;
+  private destructiveChangesType?: DestructiveChangesType;
 
   public constructor(
     props: ComponentProperties,
@@ -73,6 +73,9 @@ export class SourceComponent implements MetadataComponent {
       return this.type.name;
     }
     if (this.parent && this.type.ignoreParentName) {
+      if (!this.name) {
+        throw new SfError(`Component was initialized without a name: ${this.xml} (${this.type.name})`);
+      }
       return this.name;
     } else {
       return `${this.parent ? `${this.parent.fullName}.` : ''}${this.name}`;
@@ -85,8 +88,8 @@ export class SourceComponent implements MetadataComponent {
    *
    * @returns The metafile path
    */
-  public get metaFilePath(): string {
-    if (this.type.id === 'digitalexperience') {
+  public get metaFilePath(): string | undefined {
+    if (this.type.id === 'digitalexperience' && this.content && this.type.metaFileSuffix) {
       // metaFileName = metaFileSuffix for DigitalExperience.
       return join(dirname(this.content), this.type.metaFileSuffix);
     }
@@ -127,11 +130,16 @@ export class SourceComponent implements MetadataComponent {
     fs?: VirtualDirectory[],
     forceIgnore?: ForceIgnore
   ): SourceComponent {
-    const tree = fs
-      ? new VirtualTreeContainer(fs)
-      : VirtualTreeContainer.fromFilePaths(filePathsFromMetadataComponent({ fullName: props.name, type: props.type }));
+    if (props.name) {
+      const tree = fs
+        ? new VirtualTreeContainer(fs)
+        : VirtualTreeContainer.fromFilePaths(
+            filePathsFromMetadataComponent({ fullName: props.name, type: props.type })
+          );
 
-    return new SourceComponent(props, tree, forceIgnore);
+      return new SourceComponent(props, tree, forceIgnore);
+    }
+    throw new SfError(`Virtual Components must be constructed with a name: ${props.type.name}`);
   }
 
   public walkContent(): string[] {
@@ -162,7 +170,7 @@ export class SourceComponent implements MetadataComponent {
       for (const child of children) {
         // Ensure only valid child types are included with the parent.
         if (!validChildTypes.includes(child.type?.id)) {
-          const filePath = child.xml || child.content;
+          const filePath = child.xml ?? child.content;
           throw new SfError(
             messages.getMessage('error_unexpected_child_type', [filePath, this.type.name]),
             'TypeInferenceError'
@@ -174,12 +182,12 @@ export class SourceComponent implements MetadataComponent {
     return [];
   }
 
-  public async parseXml<T = JsonMap>(xmlFilePath?: string): Promise<T> {
+  public async parseXml<T extends JsonMap>(xmlFilePath?: string): Promise<T> {
     const xml = xmlFilePath ?? this.xml;
     if (xml) {
       const contents = (await this.tree.readFile(xml)).toString();
       const replacements = this.replacements?.[xml] ?? this.parent?.replacements?.[xml];
-      return this.parseAndValidateXML(
+      return this.parseAndValidateXML<T>(
         replacements ? await replacementIterations(contents, replacements) : contents,
         xml
       );
@@ -187,7 +195,7 @@ export class SourceComponent implements MetadataComponent {
     return {} as T;
   }
 
-  public parseXmlSync<T = JsonMap>(xmlFilePath?: string): T {
+  public parseXmlSync<T extends JsonMap>(xmlFilePath?: string): T {
     const xml = xmlFilePath ?? this.xml;
     if (xml) {
       const contents = this.tree.readFileSync(xml).toString();
@@ -202,7 +210,7 @@ export class SourceComponent implements MetadataComponent {
    * @return ForceIgnore
    */
   public getForceIgnore(): ForceIgnore {
-    return this.forceIgnore ?? ForceIgnore.findAndCreate(this.content);
+    return this.forceIgnore;
   }
 
   /**
@@ -219,9 +227,14 @@ export class SourceComponent implements MetadataComponent {
       return parentXml;
     }
     const children = ensureArray(
-      get(parentXml, `${this.parent.type.name}.${this.type.xmlElementName || this.type.directoryName}`)
+      get(parentXml, `${this.parent.type.name}.${this.type.xmlElementName ?? this.type.directoryName}`)
     ) as T[];
-    return children.find((c) => getString(c, this.type.uniqueIdElement) === this.name);
+    const uniqueElement = this.type.uniqueIdElement;
+    const matched = uniqueElement ? children.find((c) => getString(c, uniqueElement) === this.name) : undefined;
+    if (!matched) {
+      throw new SfError(`Unable to find matching parent xml file for ${this.xml}`);
+    }
+    return matched;
   }
 
   public getPackageRelativePath(fsPath: string, format: SfdxFileFormat): string {
@@ -237,7 +250,7 @@ export class SourceComponent implements MetadataComponent {
     return this.markedForDelete;
   }
 
-  public getDestructiveChangesType(): DestructiveChangesType {
+  public getDestructiveChangesType(): DestructiveChangesType | undefined {
     return this.destructiveChangesType;
   }
 
@@ -283,7 +296,7 @@ export class SourceComponent implements MetadataComponent {
     return join(directoryName, basename(fsPath));
   }
 
-  private parse<T = JsonMap>(contents: string): T {
+  private parse<T extends JsonMap>(contents: string): T {
     // include tag attributes and don't parse text node as number
     const parsed = parse(contents.toString(), {
       ignoreAttributes: false,
@@ -300,7 +313,7 @@ export class SourceComponent implements MetadataComponent {
     }
   }
 
-  private parseAndValidateXML<T = JsonMap>(contents: string, path: string): T {
+  private parseAndValidateXML<T extends JsonMap>(contents: string, path: string): T {
     try {
       return this.parse<T>(contents);
     } catch (e) {
@@ -326,9 +339,9 @@ export class SourceComponent implements MetadataComponent {
     for (const fsPath of this.walk(dirPath)) {
       const childXml = parseMetadataXml(fsPath);
       const fileIsRootXml = childXml?.suffix === this.type.suffix;
-      if (childXml && !fileIsRootXml) {
+      if (childXml && !fileIsRootXml && this.type.children && childXml.suffix) {
         // TODO: Log warning if missing child type definition
-        const childTypeId = this.type.children.suffixes[childXml.suffix];
+        const childTypeId = this.type.children?.suffixes[childXml.suffix];
         const childComponent = new SourceComponent(
           {
             name: baseName(fsPath),
@@ -351,6 +364,9 @@ export class SourceComponent implements MetadataComponent {
   private getNonDecomposedChildren(): SourceComponent[] {
     const parsed = this.parseXmlSync();
     const children: SourceComponent[] = [];
+    if (!this.type.children) {
+      throw new SfError(`There are no child types for ${this.type.name}`);
+    }
     for (const childTypeId of Object.keys(this.type.children.types)) {
       const childType = this.type.children.types[childTypeId];
       const uniqueIdElement = childType.uniqueIdElement;
@@ -361,7 +377,7 @@ export class SourceComponent implements MetadataComponent {
           (element) =>
             new SourceComponent(
               {
-                name: getString(element, uniqueIdElement),
+                name: getString(element, uniqueIdElement) ?? undefined,
                 type: childType,
                 xml: this.xml,
                 parent: this,

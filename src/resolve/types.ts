@@ -27,7 +27,7 @@ export type ComponentLike = MetadataComponent | MetadataMember;
  */
 export type MetadataXml = {
   fullName: string;
-  suffix: string;
+  suffix?: string;
   path: SourcePath;
 };
 

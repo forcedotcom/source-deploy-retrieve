@@ -57,7 +57,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       );
     }
 
-    let component: SourceComponent;
+    let component: SourceComponent | undefined;
     if (rootMetadata) {
       component = new SourceComponent(
         {
@@ -88,7 +88,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    *
    * @param path File path of a metadata component
    */
-  protected parseAsRootMetadataXml(path: SourcePath): MetadataXml {
+  protected parseAsRootMetadataXml(path: SourcePath): MetadataXml | undefined {
     const metaXml = this.parseMetadataXml(path);
     if (metaXml) {
       let isRootMetadataXml = false;
@@ -118,7 +118,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
 
   // allowed to preserve API
   // eslint-disable-next-line class-methods-use-this
-  protected parseMetadataXml(path: SourcePath): MetadataXml {
+  protected parseMetadataXml(path: SourcePath): MetadataXml | undefined {
     return parseMetadataXml(path);
   }
 
@@ -131,12 +131,12 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    *
    * @param path File path of a metadata component
    */
-  private parseAsContentMetadataXml(path: SourcePath): MetadataXml {
+  private parseAsContentMetadataXml(path: SourcePath): MetadataXml | undefined {
     // InFolder metadata can be nested more than 1 level beneath its
     // associated directoryName.
     if (this.type.inFolder) {
       const fullName = parseNestedFullName(path, this.type.directoryName);
-      if (fullName) {
+      if (fullName && this.type.suffix) {
         return { fullName, suffix: this.type.suffix, path };
       }
     }
@@ -159,7 +159,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   }
 
   // Given a MetadataXml, build a fullName from the path and type.
-  private calculateName(rootMetadata: MetadataXml): string {
+  private calculateName(rootMetadata: MetadataXml): string | undefined {
     const { directoryName, inFolder, folderType, folderContentType } = this.type;
 
     // inFolder types (report, dashboard, emailTemplate, document) and their folder
@@ -183,6 +183,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     if (grandparentType.folderType === this.type.id) {
       return rootMetadata.fullName;
     }
+    throw new SfError(`Unable to calculate fullName from path: ${rootMetadata.path} (${this.type.name})`);
   }
 
   /**
@@ -206,7 +207,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   ): SourceComponent;
 }
 
-const parseAsFolderMetadataXml = (fsPath: SourcePath): MetadataXml => {
+const parseAsFolderMetadataXml = (fsPath: SourcePath): MetadataXml | undefined => {
   const match = new RegExp(/(.+)-meta\.xml$/).exec(basename(fsPath));
   const parts = fsPath.split(sep);
   if (match && !match[1].includes('.') && parts.length > 1) {

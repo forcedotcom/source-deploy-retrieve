@@ -7,6 +7,7 @@
 
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
+import { SfError } from '@salesforce/core';
 import { WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve';
 import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
@@ -25,6 +26,11 @@ export class NonDecomposedMetadataTransformer extends DecomposedMetadataTransfor
     const parentXml = await component.parseXml();
     const xmlPathToChildren = `${component.type.name}.${component.type.directoryName}`;
     const incomingChildrenXml = ensureArray(get(parentXml, xmlPathToChildren)) as JsonMap[];
+    if (!component.type.children) {
+      throw new SfError(
+        `No child types found in registry for ${component.type.name} (reading ${component.fullName} ${component.xml})`
+      );
+    }
     // presumes they only have 1 child!
     const [childTypeId] = Object.keys(component.type.children.types);
     const { uniqueIdElement } = component.type.children.types[childTypeId];
@@ -34,7 +40,17 @@ export class NonDecomposedMetadataTransformer extends DecomposedMetadataTransfor
     });
 
     incomingChildrenXml.map((child) => {
+      if (!uniqueIdElement) {
+        throw new SfError(
+          `No uniqueIdElement found in registry for ${component.type.name} (reading ${component.fullName} ${component.xml})`
+        );
+      }
       const childName = getString(child, uniqueIdElement);
+      if (!childName) {
+        throw new SfError(
+          `The uniqueIdElement ${uniqueIdElement} was not found the child (reading ${component.fullName} ${component.xml})`
+        );
+      }
       this.context.nonDecomposition.setState((state) => {
         state.childrenByUniqueElement.set(childName, child);
       });

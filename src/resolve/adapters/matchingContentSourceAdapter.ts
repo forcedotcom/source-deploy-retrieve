@@ -40,7 +40,7 @@ export class MatchingContentSourceAdapter extends BaseSourceAdapter {
   }
 
   protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
-    let sourcePath: SourcePath;
+    let sourcePath: SourcePath | undefined;
 
     if (component.xml === trigger) {
       const fsPath = removeMetaXmlSuffix(trigger);

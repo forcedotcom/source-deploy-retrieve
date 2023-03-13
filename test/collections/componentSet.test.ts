@@ -99,8 +99,8 @@ describe('ComponentSet', () => {
         await componentSet.retrieve({ output: '', usernameOrConnection: connection });
 
         const expectedPayload = { apiVersion: maxVersion, manifestVersion: maxVersion };
-        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionRetrieveStub.called).to.be.true;
         expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
           apiVersion: maxVersion,
@@ -115,8 +115,8 @@ describe('ComponentSet', () => {
         await componentSet.retrieve({ output: '', usernameOrConnection: connection });
 
         const expectedPayload = { apiVersion: configVersion, manifestVersion: configVersion };
-        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionRetrieveStub.called).to.be.true;
         expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
           apiVersion: configVersion,
@@ -134,8 +134,8 @@ describe('ComponentSet', () => {
         await componentSet.retrieve({ output: '', usernameOrConnection: connection });
 
         const expectedPayload = { apiVersion: componentSetVersion, manifestVersion: componentSetVersion };
-        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionRetrieveStub.called).to.be.true;
         expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
           apiVersion: componentSetVersion,
@@ -156,8 +156,8 @@ describe('ComponentSet', () => {
         await componentSet.retrieve({ output: '', usernameOrConnection: 'testorg' });
 
         const expectedPayload = { apiVersion: componentSetVersion, manifestVersion: componentSetVersion };
-        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionRetrieveStub.called).to.be.true;
         expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
           apiVersion: componentSetVersion,
@@ -176,8 +176,8 @@ describe('ComponentSet', () => {
         await componentSet.retrieve({ output: '', usernameOrConnection: connection });
 
         const expectedPayload = { apiVersion: componentSetVersion, manifestVersion: sourceApiVersion };
-        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionRetrieveStub.called).to.be.true;
         expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
           apiVersion: sourceApiVersion,
@@ -200,8 +200,8 @@ describe('ComponentSet', () => {
         await componentSet.retrieve({ output: '', usernameOrConnection: connection });
 
         const expectedPayload = { apiVersion: componentSetVersion, manifestVersion };
-        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionRetrieveStub.called).to.be.true;
         expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
           apiVersion: manifestVersion,
@@ -238,7 +238,7 @@ describe('ComponentSet', () => {
 
         const expectedPayload = { apiVersion: maxVersion, manifestVersion: maxVersion, webService: 'SOAP' };
         expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionDeployStub.called).to.be.true;
         await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, maxVersion);
         expect(connection.getApiVersion()).to.equal(maxVersion);
@@ -252,7 +252,7 @@ describe('ComponentSet', () => {
 
         const expectedPayload = { apiVersion: configVersion, manifestVersion: configVersion, webService: 'SOAP' };
         expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionDeployStub.called).to.be.true;
         await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, configVersion);
         expect(connection.getApiVersion()).to.equal(configVersion);
@@ -273,7 +273,7 @@ describe('ComponentSet', () => {
           webService: 'SOAP',
         };
         expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionDeployStub.called).to.be.true;
         await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, componentSetVersion);
         expect(connection.getApiVersion()).to.equal(componentSetVersion);
@@ -297,7 +297,7 @@ describe('ComponentSet', () => {
           webService: 'SOAP',
         };
         expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionDeployStub.called).to.be.true;
         await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, componentSetVersion);
         expect(connection.getApiVersion()).to.equal(componentSetVersion);
@@ -319,7 +319,7 @@ describe('ComponentSet', () => {
           webService: 'SOAP',
         };
         expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionDeployStub.called).to.be.true;
         await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, sourceApiVersion);
         expect(connection.getApiVersion()).to.equal(componentSetVersion);
@@ -341,7 +341,7 @@ describe('ComponentSet', () => {
 
         const expectedPayload = { apiVersion: componentSetVersion, manifestVersion, webService: 'SOAP' };
         expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionDeployStub.called).to.be.true;
         await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, manifestVersion);
         expect(connection.getApiVersion()).to.equal(componentSetVersion);

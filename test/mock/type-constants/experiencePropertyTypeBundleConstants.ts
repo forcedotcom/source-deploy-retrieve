@@ -8,15 +8,17 @@ import { join } from 'path';
 
 import { registry, SourceComponent } from '../../../src';
 
-/** Experience Property Type Bundle will be of the following shape.
-experiencePropertyTypeBundles/
-prop1/
-schema.json
-design.json
- 
- schema.json is always expected to be in the bundle, while design.json is optional.
- 
- Do note that we dont have any -meta.xml. We can consider schema.json as our meta XML file.
+/**
+ * Experience Property Type Bundle will be of the following shape:
+ *
+ * experiencePropertyTypeBundles/
+ * ├── prop1/
+ * |   ├── schema.json
+ * |   ├── design.json
+ *
+ * schema.json is always expected to be in the bundle, while design.json is optional.
+ *
+ * NOTE: there is no -meta.xml. schema.json acts as the meta XML file.
  */
 
 // This is the type defined in metadataRegistry.json

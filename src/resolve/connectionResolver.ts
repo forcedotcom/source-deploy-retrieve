@@ -8,6 +8,7 @@
 import { Connection, Logger } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
 import { retry, NotRetryableError, RetryError } from 'ts-retry-promise';
+import { ensurePlainObject, ensureString, isPlainObject } from '@salesforce/ts-types';
 import { RegistryAccess, registry as defaultRegistry, MetadataType } from '../registry';
 import { standardValueSet } from '../registry/standardvalueset';
 import { FileProperties, StdValueSetRecord, ListMetadataQuery } from '../client/types';
@@ -33,7 +34,7 @@ export class ConnectionResolver {
   }
 
   public async resolve(
-    componentFilter = (component: Partial<FileProperties>): boolean => !!component
+    componentFilter = (component: Partial<FileProperties>): boolean => isPlainObject(component)
   ): Promise<ResolveConnectionResult> {
     const Aggregator: Array<Partial<FileProperties>> = [];
     const childrenPromises: Array<Promise<FileProperties[]>> = [];
@@ -50,7 +51,10 @@ export class ConnectionResolver {
           componentType = this.registry.getTypeByName(component.type);
         } else {
           // fix { type: { "$": { "xsi:nil": "true" } } }
-          componentType = this.registry.getTypeBySuffix(extName(component.fileName));
+          componentType = ensurePlainObject(
+            this.registry.getTypeBySuffix(extName(component.fileName)),
+            `No type found for ${component.fileName} when matching by suffix.  Check the file extension.`
+          );
           component.type = componentType.name;
         }
         Aggregator.push(component);
@@ -82,8 +86,10 @@ export class ConnectionResolver {
 
     return {
       components: Aggregator.filter(componentFilter).map((component) => ({
-        fullName: component.fullName,
-        type: this.registry.getTypeByName(component.type),
+        fullName: ensureString(component.fullName, `Component fullName was not set for ${component.fileName}`),
+        type: this.registry.getTypeByName(
+          ensureString(component.type, `Component type was not set for ${component.fullName} (${component.fileName})`)
+        ),
       })),
       apiVersion: this.connection.getApiVersion(),
     };

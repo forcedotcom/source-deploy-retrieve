@@ -171,7 +171,17 @@ export class ZipTreeContainer extends TreeContainer {
 
   public readFile(fsPath: string): Promise<Buffer> {
     if (!this.isDirectory(fsPath)) {
-      return (this.tree.get(fsPath) as ZipEntry).buffer();
+      const matchingFile = this.tree.get(fsPath);
+      if (!matchingFile) {
+        throw new SfError(messages.getMessage('error_path_not_found', [fsPath]), 'LibraryError');
+      }
+      if (Array.isArray(matchingFile)) {
+        throw new SfError(`Multiple files found for path: ${fsPath}`, 'LibraryError');
+      }
+      if (matchingFile.buffer) {
+        return matchingFile.buffer();
+      }
+      throw new SfError(`The file at path ${fsPath} does not have a buffer method.`);
     }
     throw new SfError(messages.getMessage('error_expected_file_path', [fsPath]), 'LibraryError');
   }
@@ -183,7 +193,17 @@ export class ZipTreeContainer extends TreeContainer {
 
   public stream(fsPath: string): Readable {
     if (!this.isDirectory(fsPath)) {
-      return (this.tree.get(fsPath) as ZipEntry).stream();
+      const matchingFile = this.tree.get(fsPath);
+      if (!matchingFile) {
+        throw new SfError(messages.getMessage('error_path_not_found', [fsPath]), 'LibraryError');
+      }
+      if (Array.isArray(matchingFile)) {
+        throw new SfError(`Multiple files found for path: ${fsPath}`, 'LibraryError');
+      }
+      if (matchingFile.stream) {
+        return matchingFile.stream();
+      }
+      throw new SfError(`The file at path ${fsPath} does not have a stream method.`);
     }
     throw new SfError(messages.getMessage('error_no_directory_stream', [this.constructor.name]), 'LibraryError');
   }
@@ -264,7 +284,7 @@ export class VirtualTreeContainer extends TreeContainer {
 
   public readDirectory(fsPath: string): string[] {
     if (this.isDirectory(fsPath)) {
-      return Array.from(this.tree.get(fsPath)).map((p) => basename(p));
+      return Array.from(this.tree.get(fsPath) ?? []).map((p) => basename(p));
     }
     throw new SfError(messages.getMessage('error_expected_directory_path', [fsPath]), 'LibraryError');
   }
@@ -296,7 +316,7 @@ export class VirtualTreeContainer extends TreeContainer {
       this.tree.set(dirPath, new Set());
       for (const child of children) {
         let childPath: SourcePath;
-        let childData: Buffer;
+        let childData: Buffer | undefined;
         if (typeof child === 'string') {
           childPath = join(dirPath, child);
         } else {
@@ -304,7 +324,11 @@ export class VirtualTreeContainer extends TreeContainer {
           childData = child.data;
         }
 
-        this.tree.get(dirPath).add(childPath);
+        const dirPathFromTree = this.tree.get(dirPath);
+        if (!dirPathFromTree) {
+          throw new SfError(`The directory at path ${dirPath} does not exist in the virtual file system.`);
+        }
+        dirPathFromTree.add(childPath);
         if (childData) {
           this.fileContents.set(childPath, childData);
         }

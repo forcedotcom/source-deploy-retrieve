@@ -13,6 +13,7 @@ export {
   mixedContentDirectory,
   mixedContentInFolder,
   mixedContentSingleFile,
+  experiencePropertyTypeContentSingleFile,
   decomposed,
   nonDecomposed,
   decomposedtoplevel,

@@ -39,7 +39,7 @@ export class DeployResult implements MetadataTransferResult {
 
   public constructor(
     public readonly response: MetadataApiDeployStatus,
-    public readonly components: ComponentSet,
+    public readonly components?: ComponentSet,
     public readonly replacements: Map<string, string[]> = new Map<string, string[]>()
   ) {}
 
@@ -174,7 +174,7 @@ export class DeployResult implements MetadataTransferResult {
   }
 
   /**
-   * If a components fails to delete because it doesn't exist in the org, you get a message like
+   * If a component fails to delete because it doesn't exist in the org, you get a message like
    * key: 'ApexClass#destructiveChanges.xml'
    * value:[{
    * fullName: 'destructiveChanges.xml',
@@ -194,13 +194,15 @@ export class DeployResult implements MetadataTransferResult {
       .flatMap((message) => {
         const fullName = message.problem.replace(`No ${message.componentType} named: `, '').replace(' found', '');
         return this.components
-          .getComponentFilenamesByNameAndType({ fullName, type: message.componentType })
-          .map((fileName) => ({
-            fullName,
-            type: message.componentType,
-            filePath: fileName,
-            state: ComponentStatus.Deleted,
-          }));
+          ? this.components
+              .getComponentFilenamesByNameAndType({ fullName, type: message.componentType })
+              .map((fileName) => ({
+                fullName,
+                type: message.componentType,
+                filePath: fileName,
+                state: ComponentStatus.Deleted,
+              }))
+          : [];
       });
   }
 
@@ -458,7 +460,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
       // does encoding matter for zip files? I don't know
       return fs.promises.readFile(this.options.zipPath);
     }
-    if (this.options.components) {
+    if (this.options.components && this.components) {
       const converter = new MetadataConverter();
       const { zipBuffer } = await converter.convert(this.components, 'metadata', { type: 'zip' });
       if (!zipBuffer) {

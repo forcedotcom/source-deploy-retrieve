@@ -171,7 +171,7 @@ export abstract class MetadataTransfer<
         `Converting metadata to: ${mdapiTempDir} because the SFDX_MDAPI_TEMP_DIR environment variable is set`
       );
       try {
-        const source = (cs ?? this.components) || new ComponentSet();
+        const source = cs ?? this.components ?? new ComponentSet();
         const converter = new MetadataConverter();
         await converter.convert(source, target, {
           type: 'directory',
@@ -260,7 +260,7 @@ export abstract class MetadataTransfer<
    * Based on the source components in the component set, it will return a polling frequency in milliseconds
    */
   private calculatePollingFrequency(): number {
-    const size = this.components?.getSourceComponents().toArray().length || 0;
+    const size = this.components?.getSourceComponents().toArray().length ?? 0;
     // take a piece-wise approach to encapsulate discrete deployment sizes in polling frequencies that "feel" good when deployed
     if (size === 0) {
       // no component set size is possible for retrieve

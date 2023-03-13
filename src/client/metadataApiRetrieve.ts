@@ -217,7 +217,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   protected async pre(): Promise<AsyncResult> {
     const packageNames = this.getPackageNames();
 
-    if (this.components.size === 0 && !packageNames?.length) {
+    if (this.components?.size === 0 && !packageNames?.length) {
       throw new SfError(messages.getMessage('error_no_components_to_retrieve'), 'MetadataApiRetrieveError');
     }
 
@@ -225,8 +225,10 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     const apiVersion = connection.getApiVersion();
     this.orgId = connection.getAuthInfoFields().orgId;
 
-    this.components.apiVersion ??= apiVersion;
-    this.components.sourceApiVersion ??= apiVersion;
+    if (this.components) {
+      this.components.apiVersion ??= apiVersion;
+      this.components.sourceApiVersion ??= apiVersion;
+    }
 
     // only do event hooks if source, (NOT a metadata format) retrieve
     if (this.options.components && !this.options.suppressEvents) {
@@ -236,13 +238,13 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       } as ScopedPreRetrieve);
     }
 
-    const manifestData = (await this.components.getObject()).Package;
+    const manifestData = (await this.components?.getObject())?.Package;
 
     const requestBody: RetrieveRequest = {
       // This apiVersion is only used when the version in the package.xml (manifestData) is not defined.
       // see docs here: https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_retrieve_request.htm
-      apiVersion: this.components.sourceApiVersion ?? (await connection.retrieveMaxApiVersion()),
-      unpackaged: manifestData,
+      apiVersion: this.components?.sourceApiVersion ?? (await connection.retrieveMaxApiVersion()),
+      ...(manifestData ? { unpackaged: manifestData } : {}),
     };
 
     // if we're retrieving with packageNames add it
@@ -251,7 +253,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       requestBody.packageNames = packageNames;
       // delete unpackaged when no components and metadata format to prevent
       // sending an empty unpackaged manifest.
-      if (this.options.format === 'metadata' && this.components.size === 0) {
+      if (this.options.format === 'metadata' && this.components?.size === 0) {
         delete requestBody.unpackaged;
       }
     }
@@ -260,9 +262,11 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     }
 
     // Debug output for API version used for retrieve
-    const manifestVersion = manifestData.version;
-    this.logger.debug(`Retrieving source in v${manifestVersion} shape using SOAP v${apiVersion}`);
-    await Lifecycle.getInstance().emit('apiVersionRetrieve', { manifestVersion, apiVersion });
+    const manifestVersion = manifestData?.version;
+    if (manifestVersion) {
+      this.logger.debug(`Retrieving source in v${manifestVersion} shape using SOAP v${apiVersion}`);
+      await Lifecycle.getInstance().emit('apiVersionRetrieve', { manifestVersion, apiVersion });
+    }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore required callback
@@ -296,9 +300,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       const outputConfig: ConvertOutputConfig = merge
         ? {
             type: 'merge',
-            mergeWith: this.components.getSourceComponents(),
+            mergeWith: this.components?.getSourceComponents() ?? [],
             defaultDirectory: pkg.outputDir,
-            forceIgnoredPaths: this.components.forceIgnoredPaths ?? new Set<string>(),
+            forceIgnoredPaths: this.components?.forceIgnoredPaths ?? new Set<string>(),
           }
         : {
             type: 'directory',
@@ -338,7 +342,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       contentList: string[];
     }
     const partialDeleteComponents = new Map<string, PartialDeleteComp>();
-    const mergeWithComponents = this.components.getSourceComponents().toArray();
+    const mergeWithComponents = this.components?.getSourceComponents().toArray() ?? [];
 
     // Find all merge (local) components that support partial delete.
     mergeWithComponents.forEach((comp) => {

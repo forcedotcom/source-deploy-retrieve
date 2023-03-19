@@ -1,3 +1,12 @@
+## [7.12.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.12.0...7.12.1) (2023-03-19)
+
+
+### Bug Fixes
+
+* **deps:** bump graceful-fs from 4.2.10 to 4.2.11 ([#888](https://github.com/forcedotcom/source-deploy-retrieve/issues/888)) ([ba1943d](https://github.com/forcedotcom/source-deploy-retrieve/commit/ba1943d74e60c6a6d0f440b92bbb0aa91cfb70b5))
+
+
+
 # [7.12.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.11.3...7.12.0) (2023-03-13)
 
 

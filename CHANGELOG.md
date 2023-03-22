@@ -1,3 +1,12 @@
+# [7.13.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.12.2...7.13.0) (2023-03-22)
+
+
+### Features
+
+* enable cLI support for ExtlClntAppGlobalOauthSettings ([#893](https://github.com/forcedotcom/source-deploy-retrieve/issues/893)) ([eee8773](https://github.com/forcedotcom/source-deploy-retrieve/commit/eee8773a1fd6bb654349a3ec7483e14b12546bfc))
+
+
+
 ## [7.12.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.12.1...7.12.2) (2023-03-20)
 
 

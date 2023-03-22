@@ -1420,6 +1420,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "extlclntappglobaloauthsettings": {
+      "id": "extlclntappglobaloauthsettings",
+      "name": "ExtlClntAppGlobalOauthSettings",
+      "suffix": "ecaGlblOauth",
+      "directoryName": "extlClntAppGlobalOauthSets",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "appmenu": {
       "id": "appmenu",
       "name": "AppMenu",
@@ -3547,6 +3555,7 @@
     "ecaMobPlcy": "extlclntappmobileconfigurablepolicies",
     "ecaMob": "extlclntappmobilesettings",
     "ecaOauth": "extlclntappoauthsettings",
+    "ecaGlblOauth": "extlclntappglobaloauthsettings",
     "appMenu": "appmenu",
     "delegateGroup": "delegategroup",
     "network": "network",

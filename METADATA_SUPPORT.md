@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v57 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 511/536 supported metadata types.
+Currently, there are 510/535 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -91,7 +91,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CallCenter|✅||
 |CallCenterRoutingMap|✅||
 |CallCoachingMediaProvider|⚠️|Supports deploy/retrieve but not source tracking|
-|CallCtrAgentFavTrfrDest|✅||
 |CampaignInfluenceModel|✅||
 |CampaignSettings|✅||
 |CanvasMetadata|✅||
@@ -567,7 +566,10 @@ v58 introduces the following new types.  Here's their current level of support
 |LicensingSettings|✅||
 |OmniChannelPricingSettings|✅||
 |ProcessFlowMigration|❌|Not supported, but support could be added|
+|ProductAttrDisplayConfig|❌|Not supported, but support could be added|
+|ProductSpecificationRecType|❌|Not supported, but support could be added|
 |ProductSpecificationType|❌|Not supported, but support could be added|
+|RecAlrtDataSrcExpSetDef|❌|Not supported, but support could be added|
 |SkillType|❌|Not supported, but support could be added|
 |Web3Settings|✅||
 |WebStoreBundle|❌|Not supported, but support could be added|
@@ -599,6 +601,7 @@ v58 introduces the following new types.  Here's their current level of support
 - CustomFieldTranslation
 - MatchingRule
 - MarketingResourceType
+- ExtlClntAppGlobalOauthSettings
 - CustomExperience
 - ManagedTopic
 - DataPipeline
@@ -621,3 +624,4 @@ v58 introduces the following new types.  Here's their current level of support
 - InternalOrganization
 - UiViewDefinition
 - MobileSecurityPolicySet
+- CallCtrAgentFavTrfrDest

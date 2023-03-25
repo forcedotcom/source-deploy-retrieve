@@ -565,11 +565,13 @@ v58 introduces the following new types.  Here's their current level of support
 |FundraisingConfig|❌|Not supported, but support could be added|
 |LicensingSettings|✅||
 |OmniChannelPricingSettings|✅||
+|PlatformEventSettings|✅||
 |ProcessFlowMigration|❌|Not supported, but support could be added|
 |ProductAttrDisplayConfig|❌|Not supported, but support could be added|
 |ProductSpecificationRecType|❌|Not supported, but support could be added|
 |ProductSpecificationType|❌|Not supported, but support could be added|
 |RecAlrtDataSrcExpSetDef|❌|Not supported, but support could be added|
+|RecordAlertTemplate|❌|Not supported, but support could be added|
 |SkillType|❌|Not supported, but support could be added|
 |Web3Settings|✅||
 |WebStoreBundle|❌|Not supported, but support could be added|

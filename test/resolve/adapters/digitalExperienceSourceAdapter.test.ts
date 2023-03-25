@@ -14,12 +14,12 @@ import { DE_METAFILE } from '../../mock/type-constants/digitalExperienceBundleCo
 describe('DigitalExperienceSourceAdapter', () => {
   const BASE_PATH = join('path', 'to', registry.types.digitalexperiencebundle.directoryName);
 
-  const BUNDLE_NAME = join('site', 'foo');
-  const BUNDLE_PATH = join(BASE_PATH, BUNDLE_NAME);
+  const BUNDLE_NAME = 'site/foo';
+  const BUNDLE_PATH = join(BASE_PATH, 'site', 'foo');
   const BUNDLE_META_FILE = join(BUNDLE_PATH, `foo.${registry.types.digitalexperiencebundle.suffix}${META_XML_SUFFIX}`);
 
-  const HOME_VIEW_NAME = join('sfdc_cms__view', 'home');
-  const HOME_VIEW_PATH = join(BUNDLE_PATH, HOME_VIEW_NAME);
+  const HOME_VIEW_NAME = 'sfdc_cms__view/home';
+  const HOME_VIEW_PATH = join(BUNDLE_PATH, 'sfdc_cms__view', 'home');
   const HOME_VIEW_CONTENT_FILE = join(HOME_VIEW_PATH, 'content.json');
   const HOME_VIEW_META_FILE = join(HOME_VIEW_PATH, DE_METAFILE);
   const HOME_VIEW_FRENCH_VARIANT_FILE = join(HOME_VIEW_PATH, 'fr.json');

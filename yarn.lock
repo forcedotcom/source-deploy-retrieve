@@ -879,10 +879,10 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.7.0"
 
-"@salesforce/core@^3.33.6", "@salesforce/core@^3.34.1":
-  version "3.34.1"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.34.1.tgz#dd52254cc63143ebad58d53bb80c00a76b303868"
-  integrity sha512-mhq7pBU3aTaXdBeheIfsBa3/TxHW0ccLhTZ4pMHawViO+tubXvcU7oa7yWCwI9sQP3S1ZsXwlUPWasbbBEXKHw==
+"@salesforce/core@^3.33.6", "@salesforce/core@^3.34.4":
+  version "3.34.4"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.34.4.tgz#6fa11c32f14d20130a0c92c5d306f368671ec104"
+  integrity sha512-WasR/6IXKcNj3MgZIcVaT7W5Ic/blxOgpQIzob/7JEsnLVr3pPPb+9/axRvxEGdJr/gOnL1vR0NbBX+Mz6TtkQ==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
     "@salesforce/kit" "^1.9.2"
@@ -896,9 +896,9 @@
     debug "^3.2.7"
     faye "^1.4.0"
     form-data "^4.0.0"
-    graceful-fs "^4.2.9"
+    graceful-fs "^4.2.11"
     js2xmlparser "^4.0.1"
-    jsforce "^2.0.0-beta.19"
+    jsforce "^2.0.0-beta.20"
     jsonwebtoken "9.0.0"
     ts-retry-promise "^0.7.0"
 
@@ -3755,7 +3755,7 @@ got@^11, got@^11.8.6:
     p-cancelable "^2.0.0"
     responselike "^2.0.0"
 
-graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.5, graceful-fs@^4.1.6, graceful-fs@^4.2.0, graceful-fs@^4.2.11, graceful-fs@^4.2.2, graceful-fs@^4.2.4, graceful-fs@^4.2.6, graceful-fs@^4.2.9:
+graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.5, graceful-fs@^4.1.6, graceful-fs@^4.2.0, graceful-fs@^4.2.11, graceful-fs@^4.2.2, graceful-fs@^4.2.4, graceful-fs@^4.2.6:
   version "4.2.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.11.tgz#4183e4e8bf08bb6e05bbb2f7d2e0c8f712ca40e3"
   integrity sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==
@@ -4517,7 +4517,7 @@ jsesc@^2.5.1:
   resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-2.5.2.tgz#80564d2e483dacf6e8ef209650a67df3f0c283a4"
   integrity sha512-OYu7XEzjkCQ3C5Ps3QIZsQfNpqoJyZZA99wd9aWd05NCtC5pWOkShK2mkL6HXQR6/Cy2lbNdPlZBpuQHXE63gA==
 
-jsforce@^2.0.0-beta.19, jsforce@^2.0.0-beta.20:
+jsforce@^2.0.0-beta.20:
   version "2.0.0-beta.20"
   resolved "https://registry.yarnpkg.com/jsforce/-/jsforce-2.0.0-beta.20.tgz#907630942b2ecd653098caa3f87e7710874cb207"
   integrity sha512-5TpdU0MEUN34M0mSKmBwOMKaI8dllTYF8NzpJn0/9akrwqKEERK6K2jGiMWcs85Vx1HCHEcwU2n+5ij6z6zr2g==

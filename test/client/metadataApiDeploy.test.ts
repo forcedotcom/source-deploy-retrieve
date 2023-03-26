@@ -209,6 +209,7 @@ describe('MetadataApiDeploy', () => {
         await operation.checkStatus();
         assert.fail('should have thrown an error');
       } catch (e) {
+        assert(e instanceof Error);
         expect(e.name).to.equal(expectedError.name);
         expect(e.message).to.equal(expectedError.message);
       }
@@ -242,6 +243,7 @@ describe('MetadataApiDeploy', () => {
         await operation.deployRecentValidation(false);
         assert.fail('should have thrown an error');
       } catch (e) {
+        assert(e instanceof Error);
         expect(e.name).to.equal(expectedError.name);
         expect(e.message).to.equal(expectedError.message);
       }
@@ -267,6 +269,7 @@ describe('MetadataApiDeploy', () => {
         await operation.cancel();
         assert.fail('should have thrown an error');
       } catch (e) {
+        assert(e instanceof Error);
         expect(e.name).to.equal(expectedError.name);
         expect(e.message).to.equal(expectedError.message);
       }
@@ -292,6 +295,7 @@ describe('MetadataApiDeploy', () => {
           ]);
           const deployedSet = new ComponentSet([component]);
           const { fullName, type, xml } = component;
+          assert(xml);
           const apiStatus: Partial<MetadataApiDeployStatus> = {
             details: {
               componentSuccesses: {

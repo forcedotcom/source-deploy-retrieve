@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as path from 'path';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import Sinon = require('sinon');
 import { Lifecycle } from '@salesforce/core';
 import { getReplacements, matchesFile, replacementIterations, stringToRegex } from '../../src/convert/replacements';
@@ -57,6 +57,7 @@ describe('marking replacements on a component', () => {
     expect(await getReplacements(cmp, [])).to.be.undefined;
   });
   it('marks a string replacement from env', async () => {
+    assert(cmp.xml);
     const result = await getReplacements(cmp, [
       { filename: cmp.xml, stringToReplace: 'foo', replaceWithEnv: 'FOO_REPLACEMENT' },
     ]);
@@ -72,6 +73,7 @@ describe('marking replacements on a component', () => {
     });
   });
   it('marks string replacements from file', async () => {
+    assert(cmp.xml);
     const result = await getReplacements(cmp, [{ filename: cmp.xml, stringToReplace: 'foo', replaceWithFile: 'bar' }]);
     expect(result).to.deep.equal({
       [cmp.xml]: [
@@ -86,6 +88,7 @@ describe('marking replacements on a component', () => {
   });
 
   it('marks regex replacements on a matching file', async () => {
+    assert(cmp.xml);
     const result = await getReplacements(cmp, [
       { filename: cmp.xml, regexToReplace: '.*foo.*', replaceWithEnv: 'FOO_REPLACEMENT' },
     ]);
@@ -101,6 +104,7 @@ describe('marking replacements on a component', () => {
     });
   });
   it('marks 2 replacements on one file', async () => {
+    assert(cmp.xml);
     const result = await getReplacements(cmp, [
       { filename: cmp.xml, stringToReplace: 'foo', replaceWithEnv: 'FOO_REPLACEMENT' },
       { filename: cmp.xml, stringToReplace: 'baz', replaceWithEnv: 'FOO_REPLACEMENT' },
@@ -123,6 +127,8 @@ describe('marking replacements on a component', () => {
     });
   });
   it('marks two files with 1 replacement each for greedy glob', async () => {
+    assert(cmp.content);
+    assert(cmp.xml);
     const result = await getReplacements(cmp, [
       { glob: '**/*', stringToReplace: 'foo', replaceWithEnv: 'FOO_REPLACEMENT' },
     ]);
@@ -146,6 +152,8 @@ describe('marking replacements on a component', () => {
     });
   });
   it('marks replacement on multiple files from multiple configs', async () => {
+    assert(cmp.content);
+    assert(cmp.xml);
     const result = await getReplacements(cmp, [
       { filename: cmp.xml, stringToReplace: 'foo', replaceWithEnv: 'FOO_REPLACEMENT' },
       { filename: cmp.content, stringToReplace: 'foo', replaceWithEnv: 'FOO_REPLACEMENT' },

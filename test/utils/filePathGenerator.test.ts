@@ -324,7 +324,7 @@ describe('generating virtual tree from component name/type', () => {
       expect(component.type.children).to.equal(undefined);
       const topLevelType = component.type.children
         ? component.type
-        : registryAccess.findType((t) => t.children && Object.keys(t.children.types).includes(component.type.id));
+        : registryAccess.findType((t) => Object.keys(t.children?.types ?? {}).includes(component.type.id));
       expect(topLevelType).to.deep.equal(registryAccess.getTypeByName('CustomObject'));
     });
 

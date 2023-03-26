@@ -6,7 +6,7 @@
  */
 import { basename, join } from 'path';
 import { createSandbox } from 'sinon';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { bundle, document, matchingContentFile, nestedTypes, xmlInFolder } from '../../mock';
 import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';
 import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer, WriteInfo } from '../../../src';
@@ -29,6 +29,7 @@ describe('DefaultMetadataTransformer', () => {
   describe('toMetadataFormat', () => {
     it('should create a WriteInfo for each file in the component', async () => {
       const component = bundle.COMPONENT;
+      assert(typeof component.xml === 'string');
       const { directoryName } = component.type;
       const relativeBundle = join(directoryName, basename(bundle.CONTENT_PATH));
       const expectedInfos: WriteInfo[] = [];
@@ -48,6 +49,8 @@ describe('DefaultMetadataTransformer', () => {
 
     it('should strip the -meta.xml suffix for components with no content', async () => {
       const component = SourceComponent.createVirtualComponent(xmlInFolder.COMPONENTS[0], []);
+      assert(typeof component.xml === 'string');
+
       const { directoryName } = component.type;
       const fileName = `${component.fullName}.${component.type.suffix}`;
       const expectedInfos: WriteInfo[] = [
@@ -62,6 +65,8 @@ describe('DefaultMetadataTransformer', () => {
 
     it('should remove the -meta.xml suffix for components with no content and in folders', async () => {
       const component = SourceComponent.createVirtualComponent(xmlInFolder.COMPONENTS[0], []);
+      assert(typeof component.xml === 'string');
+
       const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;
       const expectedInfos: WriteInfo[] = [
@@ -87,6 +92,8 @@ describe('DefaultMetadataTransformer', () => {
           `foo.${registry.types.digitalexperiencebundle.suffix}${META_XML_SUFFIX}`
         ),
       });
+      assert(typeof component.xml === 'string');
+
       const expectedInfos: WriteInfo[] = [
         {
           source: component.tree.stream(component.xml),
@@ -98,6 +105,8 @@ describe('DefaultMetadataTransformer', () => {
 
     it('should remove file extension and preserve -meta.xml for folder components', async () => {
       const component = FOLDER_COMPONENT;
+      assert(typeof component.xml === 'string');
+
       const expectedInfos: WriteInfo[] = [
         {
           output: join(component.type.directoryName, `${component.fullName}${META_XML_SUFFIX}`),
@@ -110,6 +119,9 @@ describe('DefaultMetadataTransformer', () => {
 
     it('should replace document suffix with original suffix', async () => {
       const component = SourceComponent.createVirtualComponent(document.COMPONENT_MD, document.COMPONENT_VIRTUAL_FS);
+      assert(typeof component.xml === 'string');
+      assert(typeof component.content === 'string');
+
       const outputPath = join(component.type.directoryName, component.fullName);
       const expectedInfos: WriteInfo[] = [
         {
@@ -128,6 +140,8 @@ describe('DefaultMetadataTransformer', () => {
     it('should handle nested components (parent)', async () => {
       // ex: territory2Models/someModel/
       const component = nestedTypes.NESTED_PARENT_COMPONENT;
+      assert(typeof component.xml === 'string');
+
       const expectedInfos: WriteInfo[] = [
         {
           output: join(
@@ -145,6 +159,9 @@ describe('DefaultMetadataTransformer', () => {
     it('should handle nested components (children)', async () => {
       // ex: territory2Models/someModel/rules/someRule.Territory2Rule-meta.xml
       const component = nestedTypes.NESTED_CHILD_COMPONENT;
+      assert(typeof component.xml === 'string');
+      assert(component.parentType);
+
       const expectedInfos: WriteInfo[] = [
         {
           output: join(
@@ -164,6 +181,8 @@ describe('DefaultMetadataTransformer', () => {
   describe('toSourceFormat', () => {
     it('should create a WriteInfo for each file in the component', async () => {
       const component = bundle.COMPONENT;
+      assert(typeof component.xml === 'string');
+
       const { directoryName } = component.type;
       const relativeBundle = join(DEFAULT_PACKAGE_ROOT_SFDX, directoryName, basename(bundle.CONTENT_PATH));
       const expectedInfos: WriteInfo[] = [];
@@ -183,6 +202,8 @@ describe('DefaultMetadataTransformer', () => {
 
     it('should add in the -meta.xml suffix for components with no content', async () => {
       const component = SourceComponent.createVirtualComponent(xmlInFolder.COMPONENTS_MD_FORMAT[0], []);
+      assert(typeof component.xml === 'string');
+
       const { directoryName } = component.type;
       const fileName = `${component.fullName}.${component.type.suffix}${META_XML_SUFFIX}`;
       const expectedInfos: WriteInfo[] = [
@@ -197,6 +218,8 @@ describe('DefaultMetadataTransformer', () => {
 
     it('should handle components in folders with no content', async () => {
       const component = SourceComponent.createVirtualComponent(xmlInFolder.COMPONENTS_MD_FORMAT[0], []);
+      assert(typeof component.xml === 'string');
+
       const fullNameParts = component.fullName.split('/');
       const { directoryName } = component.type;
       const expectedInfos: WriteInfo[] = [
@@ -226,6 +249,8 @@ describe('DefaultMetadataTransformer', () => {
           `foo.${registry.types.digitalexperiencebundle.suffix}${META_XML_SUFFIX}`
         ),
       });
+      assert(typeof component.xml === 'string');
+
       const expectedInfos: WriteInfo[] = [
         {
           source: component.tree.stream(component.xml),
@@ -243,6 +268,9 @@ describe('DefaultMetadataTransformer', () => {
 
     it('should handle folder components', async () => {
       const component = FOLDER_COMPONENT_MD_FORMAT;
+      assert(typeof component.type.folderContentType === 'string');
+      assert(typeof component.xml === 'string');
+
       const registryAccess = new RegistryAccess();
       const { directoryName } = registryAccess.getTypeByName(component.type.folderContentType);
       const expectedInfos: WriteInfo[] = [
@@ -260,6 +288,7 @@ describe('DefaultMetadataTransformer', () => {
     });
 
     it('should merge output with merge component when content is a directory', async () => {
+      assert(typeof bundle.COMPONENT.name === 'string');
       const root = join('path', 'to', 'another', bundle.COMPONENT.type.directoryName, bundle.COMPONENT.name);
       const component = SourceComponent.createVirtualComponent(
         {
@@ -276,6 +305,8 @@ describe('DefaultMetadataTransformer', () => {
         ]
       );
       const mergeWith = bundle.COMPONENT;
+      assert(typeof mergeWith.content === 'string');
+
       const expectedInfos: WriteInfo[] = [
         {
           output: join(mergeWith.content, 'b.c'),
@@ -311,6 +342,9 @@ describe('DefaultMetadataTransformer', () => {
         ]
       );
       const mergeWith = matchingContentFile.COMPONENT;
+      assert(typeof mergeWith.content === 'string');
+      assert(typeof mergeWith.xml === 'string');
+
       const expectedInfos: WriteInfo[] = [
         {
           output: mergeWith.content,
@@ -327,6 +361,7 @@ describe('DefaultMetadataTransformer', () => {
 
     it('should use merge component xml path', async () => {
       const mergeWith = xmlInFolder.COMPONENTS[0];
+      assert(typeof mergeWith.xml === 'string');
       const component = SourceComponent.createVirtualComponent(
         {
           name: mergeWith.name,
@@ -335,7 +370,7 @@ describe('DefaultMetadataTransformer', () => {
         },
         []
       );
-
+      assert(typeof component.xml === 'string');
       expect(await transformer.toSourceFormat(component, mergeWith)).to.deep.contain({
         output: mergeWith.xml,
         source: component.tree.stream(component.xml),
@@ -351,6 +386,7 @@ describe('DefaultMetadataTransformer', () => {
         },
         []
       );
+      assert(typeof component.xml === 'string');
 
       expect(await transformer.toSourceFormat(component, mergeWith)).to.deep.contain({
         output: component.getPackageRelativePath(component.xml, 'source'),
@@ -360,14 +396,17 @@ describe('DefaultMetadataTransformer', () => {
 
     it('should replace original suffix with type suffix', async () => {
       const component = SourceComponent.createVirtualComponent(document.COMPONENT, document.COMPONENT_VIRTUAL_FS);
+      assert(typeof component.xml === 'string');
+      assert(typeof component.content === 'string');
+
       const outputPath = join(DEFAULT_PACKAGE_ROOT_SFDX, component.type.directoryName, component.fullName);
       const expectedInfos: WriteInfo[] = [
         {
-          output: outputPath + '.' + extName(component.content),
+          output: `${outputPath}.${extName(component.content)}`,
           source: component.tree.stream(component.content),
         },
         {
-          output: outputPath + '.' + component.type.suffix + META_XML_SUFFIX,
+          output: `${outputPath}.${component.type.suffix}${META_XML_SUFFIX}`,
           source: component.tree.stream(component.xml),
         },
       ];

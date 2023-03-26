@@ -8,7 +8,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { Open } from 'unzipper';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { ComponentSetBuilder, MetadataConverter } from '../../../../src';
 
 describe('e2e replacements test', () => {
@@ -48,7 +48,7 @@ describe('e2e replacements test', () => {
       const { zipBuffer } = await converter.convert(cs, 'metadata', {
         type: 'zip',
       });
-      expect(zipBuffer).to.not.be.undefined;
+      assert(zipBuffer, 'zipBuffer should be defined');
       await (await Open.buffer(zipBuffer)).extract({ path: path.join(session.project.dir, 'unzipped') });
     });
 

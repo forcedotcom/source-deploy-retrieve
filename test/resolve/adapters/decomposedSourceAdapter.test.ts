@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { DecomposedSourceAdapter, DefaultSourceAdapter } from '../../../src/resolve/adapters';
 import { decomposed, decomposedtoplevel, xmlInFolder } from '../../mock';
 import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../../src';
@@ -64,8 +64,7 @@ describe('DecomposedSourceAdapter', () => {
       { name: decomposed.DECOMPOSED_COMPONENT.name, type, content: decomposed.DECOMPOSED_PATH },
       tree
     );
-
-    expect(adapter.getComponent(decomposed.DECOMPOSED_CHILD_XML_PATH_2).parent).to.deep.equal(expectedParent);
+    expect(adapter.getComponent(decomposed.DECOMPOSED_CHILD_XML_PATH_2)?.parent).to.deep.equal(expectedParent);
   });
 
   it('should return expected SourceComponent when given a topLevel parent component', () => {
@@ -78,13 +77,14 @@ describe('DecomposedSourceAdapter', () => {
 
   it('should defer parsing metadata xml to child adapter if path is not a root metadata xml', () => {
     const component = decomposed.DECOMPOSED_CHILD_COMPONENT_1;
+    assert(decomposed.DECOMPOSED_CHILD_COMPONENT_1.xml);
     const result = adapter.getComponent(decomposed.DECOMPOSED_CHILD_COMPONENT_1.xml);
 
     expect(result).to.deep.equal(component);
   });
 
   it('should NOT throw an error if a parent metadata xml file is forceignored', () => {
-    let testUtil;
+    let testUtil: RegistryTestUtil | undefined;
     try {
       const path = join('path', 'to', type.directoryName, `My_Test.${type.suffix}${META_XML_SUFFIX}`);
 
@@ -101,12 +101,13 @@ describe('DecomposedSourceAdapter', () => {
     } catch (e) {
       expect(e).to.be.undefined;
     } finally {
-      testUtil.restore();
+      testUtil?.restore();
     }
   });
 
   it('should resolve a folder component in metadata format', () => {
     const component = xmlInFolder.FOLDER_COMPONENT_MD_FORMAT;
+    assert(component.xml);
     const adapter = new DefaultSourceAdapter(component.type, registryAccess);
 
     expect(adapter.getComponent(component.xml)).to.deep.equal(component);

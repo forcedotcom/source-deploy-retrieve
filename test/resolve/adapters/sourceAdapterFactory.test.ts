@@ -27,8 +27,8 @@ const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['er
  */
 describe('SourceAdapterFactory', () => {
   const tree = new VirtualTreeContainer([]);
-  const factory = new SourceAdapterFactory(undefined, tree);
   const registryAccess = new RegistryAccess();
+  const factory = new SourceAdapterFactory(registryAccess, tree);
 
   it('Should return DefaultSourceAdapter for type with no assigned AdapterId', () => {
     const type = registry.types.reportfolder;
@@ -56,6 +56,8 @@ describe('SourceAdapterFactory', () => {
   });
 
   it('Should return DigitalExperienceSourceAdapter for digitalExperience AdapterId', () => {
+    assert(registry.types.digitalexperiencebundle.children?.types.digitalexperience);
+
     const type = registry.types.digitalexperiencebundle;
     const adapter = factory.getAdapter(type);
     expect(adapter).to.deep.equal(new DigitalExperienceSourceAdapter(type, registryAccess, undefined, tree));
@@ -89,7 +91,7 @@ describe('SourceAdapterFactory', () => {
     assert.throws(
       () => factory.getAdapter(type),
       SfError,
-      messages.getMessage('error_missing_adapter', [type.strategies.adapter, type.name])
+      messages.getMessage('error_missing_adapter', [type.strategies?.adapter, type.name])
     );
   });
 });

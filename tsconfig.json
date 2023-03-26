@@ -1,5 +1,5 @@
 {
-  "extends": "@salesforce/dev-config/tsconfig",
+  "extends": "@salesforce/dev-config/tsconfig-strict",
   "compilerOptions": {
     // Needed in order to import metadataRegistry.json
     "resolveJsonModule": true,

@@ -74,7 +74,7 @@ describe('MetadataTransformerFactory', () => {
     assert.throws(
       () => factory.getTransformer(component),
       SfError,
-      messages.getMessage('error_missing_transformer', [type.name, type.strategies.transformer])
+      messages.getMessage('error_missing_transformer', [type.name, type.strategies?.transformer])
     );
   });
 });

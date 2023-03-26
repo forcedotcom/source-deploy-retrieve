@@ -66,7 +66,7 @@ describe('SourceComponent', () => {
   });
 
   it('should return correct markedForDelete status', () => {
-    const comp = new SourceComponent({ name: 'test', type: undefined });
+    const comp = new SourceComponent({ name: 'test', type: registry.types.apexclass });
     expect(comp.isMarkedForDelete()).to.be.false;
     expect(comp.getDestructiveChangesType()).to.equal(undefined);
 
@@ -90,6 +90,7 @@ describe('SourceComponent', () => {
   it('should return correct relative path for a nested component', () => {
     const registry = new RegistryAccess();
     const inFolderType = registry.getTypeBySuffix('report');
+    assert(inFolderType);
     const folderContentType = registry.getTypeByName('ReportFolder');
     expect(inFolderType.inFolder).to.be.true;
     expect(folderContentType.folderContentType).to.equal('report');
@@ -121,6 +122,8 @@ describe('SourceComponent', () => {
 
   it('should return correct relative path for DigitalExperience', () => {
     const registry = new RegistryAccess();
+    assert(typeof DE_METAFILE === 'string');
+
     const deType = registry.getTypeByName('DigitalExperience');
     const cmp = new SourceComponent({ name: deType.name, type: deType });
 
@@ -169,6 +172,7 @@ describe('SourceComponent', () => {
       try {
         await component.parseXml();
       } catch (e) {
+        assert(e instanceof Error);
         expect(e.message).to.include(`error parsing ${component.xml} due to:`);
         expect(e.message).to.include("message: Closing tag 'CustomLabels' can't have attributes or invalid starting.");
         expect(e.message).to.include('line: 1');
@@ -185,6 +189,8 @@ describe('SourceComponent', () => {
       try {
         component.parseXmlSync();
       } catch (e) {
+        assert(e instanceof Error);
+
         expect(e.message).to.include(`error parsing ${component.xml} due to:`);
         expect(e.message).to.include("message: Closing tag 'CustomLabels' can't have attributes or invalid starting.");
         expect(e.message).to.include('line: 1');
@@ -193,6 +199,7 @@ describe('SourceComponent', () => {
     });
 
     it('should parse the child components xml content to js object', async () => {
+      assert(registry.types.customlabels.children?.types.customlabel);
       const component = new SourceComponent({
         name: 'mylabel',
         type: registry.types.customlabels.children.types.customlabel,
@@ -340,6 +347,7 @@ describe('SourceComponent', () => {
 
   describe('Child Components', () => {
     const type = registry.types.customobject;
+    assert(type.children);
     const expectedChild = SourceComponent.createVirtualComponent(
       {
         name: 'Fields__c',
@@ -438,13 +446,14 @@ describe('SourceComponent', () => {
       );
 
       const result = adapter.getComponent(DECOMPOSED_TOP_LEVEL_CHILD_XML_PATHS[0], true);
-      expect(result.type).to.deep.equal(expectedTopLevel.type);
-      expect(result.xml).to.equal(expectedTopLevel.xml);
+      expect(result?.type).to.deep.equal(expectedTopLevel.type);
+      expect(result?.xml).to.equal(expectedTopLevel.xml);
     });
   });
 
   describe('Nondecomposed Child Components', () => {
     const type = registry.types.customlabels;
+    assert(type.children);
     const expectedChild = SourceComponent.createVirtualComponent(
       {
         name: CHILD_1_NAME,
@@ -481,6 +490,7 @@ describe('SourceComponent', () => {
     // https://github.com/forcedotcom/salesforcedx-vscode/issues/3210
     it('should return empty children for types that do not have uniqueIdElement but xmlPathToChildren returns elements', () => {
       const noUniqueIdElementType: MetadataType = JSON.parse(JSON.stringify(MATCHING_RULES_TYPE));
+      assert(noUniqueIdElementType.children);
       // remove the uniqueElementType for this test
       delete noUniqueIdElementType.children.types.matchingrule.uniqueIdElement;
       const noUniqueIdElementComponent = new SourceComponent(

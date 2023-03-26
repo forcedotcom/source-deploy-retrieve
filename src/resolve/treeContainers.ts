@@ -279,7 +279,7 @@ export class VirtualTreeContainer extends TreeContainer {
   public exists(fsPath: string): boolean {
     const files = this.tree.get(dirname(fsPath));
     const isFile = files?.has(fsPath);
-    return isFile || this.tree.has(fsPath);
+    return this.tree.has(fsPath) || Boolean(isFile);
   }
 
   public readDirectory(fsPath: string): string[] {

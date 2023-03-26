@@ -222,7 +222,7 @@ describe('generating virtual tree from component name/type', () => {
     const resolver = new MetadataResolver(registryAccess, VirtualTreeContainer.fromFilePaths(filePaths));
 
     const components = resolver.getComponentsFromPath(packageDir);
-    const expectedComponentsSize = typeEntry.expectedComponents?.length || 1;
+    const expectedComponentsSize = typeEntry.expectedComponents?.length ?? 1;
     expect(components).to.have.lengthOf(expectedComponentsSize);
 
     for (let i = 0; i < expectedComponentsSize; i++) {

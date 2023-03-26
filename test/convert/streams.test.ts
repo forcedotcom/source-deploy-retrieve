@@ -36,7 +36,7 @@ class TestTransformer extends BaseMetadataTransformer {
   // partial implementation only for tests
   // eslint-disable-next-line class-methods-use-this, @typescript-eslint/require-await
   public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
-    const output = mergeWith ? mergeWith.content || mergeWith.xml : '/type/file.s';
+    const output = mergeWith ? mergeWith.content ?? mergeWith.xml : '/type/file.s';
     assert(output);
     return [{ output, source: new Readable() }];
   }

@@ -1,18 +1,18 @@
 [
   {
     "name": "componentSetCreate",
-    "duration": 765.1924759999965
+    "duration": 754.8279489999986
   },
   {
     "name": "sourceToMdapi",
-    "duration": 12505.445792999992
+    "duration": 12162.005130999954
   },
   {
     "name": "sourceToZip",
-    "duration": 10468.818727000005
+    "duration": 10550.278282999992
   },
   {
     "name": "mdapiToSource",
-    "duration": 8742.701778000017
+    "duration": 8382.379116999975
   }
 ]

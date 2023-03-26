@@ -13,7 +13,7 @@ import { JsToXml } from '../streams';
 import { WriteInfo } from '../types';
 import { META_XML_SUFFIX, SourcePath, XML_NS_KEY, XML_NS_URL } from '../../common';
 import { ComponentSet } from '../../collections';
-import { DecompositionState } from '../convertContext';
+import { DecompositionStateValue } from '../convertContext';
 import { DecompositionStrategy } from '../../registry';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
@@ -22,29 +22,22 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     if (component.parent) {
       const { fullName: parentName } = component.parent;
-      this.context.recomposition.setState((state) => {
-        if (state[parentName]) {
-          state[parentName].children?.add(component);
-        } else {
-          state[parentName] = {
-            component: component.parent,
-            children: new ComponentSet([component], this.registry),
-          };
-        }
-      });
+      const stateForParent = this.context.recomposition.transactionState.get(parentName) ?? {
+        component: component.parent,
+        children: new ComponentSet([], this.registry),
+      };
+      stateForParent.children?.add(component);
+      this.context.recomposition.transactionState.set(parentName, stateForParent);
     } else {
       const { fullName } = component;
-      this.context.recomposition.setState((state) => {
-        if (!state[fullName]) {
-          state[fullName] = { component, children: new ComponentSet([], this.registry) };
-        }
-        const children = component.getChildren();
-        if (children) {
-          children.map((child) => {
-            state[fullName].children?.add(child);
-          });
-        }
+      const existing = this.context.recomposition.transactionState.get(fullName) ?? {
+        component,
+        children: new ComponentSet([], this.registry),
+      };
+      (component.getChildren() ?? []).map((child) => {
+        existing.children?.add(child);
       });
+      this.context.recomposition.transactionState.set(fullName, existing);
     }
     // noop since the finalizer will push the writes to the component writer
     return [];
@@ -184,18 +177,19 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
    */
   private setDecomposedState(
     forComponent: MetadataComponent,
-    props: Partial<Omit<DecompositionState[keyof DecompositionState], 'origin'>> = {}
+    props: Partial<Omit<DecompositionStateValue, 'origin'>> = {}
   ): void {
     const key = `${forComponent.type.name}#${forComponent.fullName}`;
     const withOrigin = Object.assign({ origin: forComponent.parent ?? forComponent }, props);
-    this.context.decomposition.setState((state) => {
-      state[key] = Object.assign(state[key] ?? {}, withOrigin);
+    this.context.decomposition.transactionState.set(key, {
+      ...(this.context.decomposition.transactionState.get(key) ?? {}),
+      ...withOrigin,
     });
   }
 
-  private getDecomposedState<T extends string>(forComponent: MetadataComponent): DecompositionState[T] {
+  private getDecomposedState(forComponent: MetadataComponent): DecompositionStateValue | undefined {
     const key = `${forComponent.type.name}#${forComponent.fullName}`;
-    return this.context.decomposition.state[key];
+    return this.context.decomposition.transactionState.get(key);
   }
 }
 

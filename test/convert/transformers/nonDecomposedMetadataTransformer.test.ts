@@ -26,15 +26,12 @@ describe('NonDecomposedMetadataTransformer', () => {
 
       expect(await transformer.toMetadataFormat(child1)).to.deep.equal([]);
       expect(await transformer.toMetadataFormat(child2)).to.deep.equal([]);
-      const expected = JSON.parse(
-        JSON.stringify({
-          [component.fullName]: {
-            component,
-            children: new ComponentSet([child1, child2]),
-          },
-        })
-      );
-      expect(JSON.parse(JSON.stringify(context.recomposition.state))).to.deep.equal(expected);
+
+      expect(context.recomposition.transactionState.size).to.equal(1);
+      expect(context.recomposition.transactionState.get(component.fullName)).to.deep.equal({
+        component,
+        children: new ComponentSet([child1, child2]),
+      });
     });
   });
 
@@ -45,10 +42,10 @@ describe('NonDecomposedMetadataTransformer', () => {
 
       const result = await transformer.toSourceFormat(component);
       expect(result).to.deep.equal([]);
-      expect(context.decomposition.state).to.deep.equal({});
-      expect(context.recomposition.state).to.deep.equal({});
+      expect(context.decomposition.transactionState).to.deep.equal(new Map());
+      expect(context.recomposition.transactionState).to.deep.equal(new Map());
 
-      expect(context.nonDecomposition.state).to.deep.equal({
+      expect(context.nonDecomposition.transactionState).to.deep.equal({
         childrenByUniqueElement: new Map([
           [nonDecomposed.CHILD_1_NAME, nonDecomposed.CHILD_1_XML],
           [nonDecomposed.CHILD_2_NAME, nonDecomposed.CHILD_2_XML],
@@ -73,7 +70,7 @@ describe('NonDecomposedMetadataTransformer', () => {
 
       const result = await transformer.toSourceFormat(componentToConvert, component);
       expect(result).to.deep.equal([]);
-      expect(context.nonDecomposition.state).to.deep.equal({
+      expect(context.nonDecomposition.transactionState).to.deep.equal({
         childrenByUniqueElement: new Map([
           [nonDecomposed.CHILD_1_NAME, nonDecomposed.CHILD_1_XML],
           [nonDecomposed.CHILD_2_NAME, nonDecomposed.CHILD_2_XML],

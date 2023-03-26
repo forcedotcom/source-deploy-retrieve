@@ -35,9 +35,7 @@ export class NonDecomposedMetadataTransformer extends DecomposedMetadataTransfor
     const [childTypeId] = Object.keys(component.type.children.types);
     const { uniqueIdElement } = component.type.children.types[childTypeId];
 
-    this.context.nonDecomposition.setState((state) => {
-      state.exampleComponent ??= component;
-    });
+    this.context.nonDecomposition.transactionState.exampleComponent ??= component;
 
     incomingChildrenXml.map((child) => {
       if (!uniqueIdElement) {
@@ -51,9 +49,7 @@ export class NonDecomposedMetadataTransformer extends DecomposedMetadataTransfor
           `The uniqueIdElement ${uniqueIdElement} was not found the child (reading ${component.fullName} ${component.xml})`
         );
       }
-      this.context.nonDecomposition.setState((state) => {
-        state.childrenByUniqueElement.set(childName, child);
-      });
+      this.context.nonDecomposition.transactionState.childrenByUniqueElement.set(childName, child);
     });
 
     return [];

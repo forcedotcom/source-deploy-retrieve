@@ -52,8 +52,8 @@ export class MetadataConverter {
 
       let writer: StandardWriter | ZipWriter;
       let mergeSet: ComponentSet;
-      let packagePath: SourcePath;
-      let defaultDirectory: SourcePath;
+      let packagePath: SourcePath | undefined;
+      let defaultDirectory: SourcePath | undefined;
 
       switch (output.type) {
         case 'directory':

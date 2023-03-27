@@ -1,3 +1,12 @@
+## [7.13.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.13.1...7.13.2) (2023-03-27)
+
+
+### Reverts
+
+* Revert "chore: auto-update metadata coverage in METADATA_SUPPORT.md" ([a43597e](https://github.com/forcedotcom/source-deploy-retrieve/commit/a43597e048752faa13efe2d6aff516eed97fd53d))
+
+
+
 ## [7.13.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.13.0...7.13.1) (2023-03-26)
 
 

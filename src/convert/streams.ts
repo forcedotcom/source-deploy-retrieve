@@ -38,16 +38,18 @@ export const stream2buffer = async (stream: Stream): Promise<Buffer> =>
   });
 
 export class ComponentConverter extends Transform {
-  public readonly context = new ConvertContext();
+  public readonly context: ConvertContext;
   private transformerFactory: MetadataTransformerFactory;
 
   public constructor(
     private targetFormat: SfdxFileFormat,
     registry: RegistryAccess,
     private mergeSet?: ComponentSet,
-    private defaultDirectory?: string
+    private defaultDirectory?: string,
+    projectDirectory?: string
   ) {
     super({ objectMode: true });
+    this.context = new ConvertContext(projectDirectory);
     this.transformerFactory = new MetadataTransformerFactory(registry, this.context);
   }
 

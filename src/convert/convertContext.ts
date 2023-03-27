@@ -322,11 +322,13 @@ export class ConvertContext {
   public readonly recomposition = new RecompositionFinalizer();
   public readonly nonDecomposition = new NonDecompositionFinalizer();
 
+  public constructor(private readonly projectDirectory?: string) {}
+
   // eslint-disable-next-line @typescript-eslint/require-await
   public async *executeFinalizers(defaultDirectory?: string): AsyncIterable<WriterFormat[]> {
     for (const member of Object.values(this)) {
       if (member instanceof ConvertTransactionFinalizer) {
-        yield member.finalize(defaultDirectory);
+        yield member.finalize(defaultDirectory ?? this.projectDirectory);
       }
     }
   }

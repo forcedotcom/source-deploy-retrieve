@@ -64,6 +64,11 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * This is used as the value for the `version` field in the manifest.
    */
   public sourceApiVersion: string;
+  /**
+   * Used to explicitly set the project directory for the component set.
+   * When not present, sfdx-core's SfProject will use the current working directory.
+   */
+  public projectDirectory?: string;
   public fullName?: string;
   public forceIgnoredPaths?: Set<string>;
   private logger: Logger;

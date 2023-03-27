@@ -18,7 +18,7 @@ import {
 } from '../../mock/type-constants/staticresourceConstant';
 import { mixedContentDirectory, mixedContentSingleFile } from '../../mock';
 
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_expected_source_files']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('MixedContentSourceAdapter', () => {
   const env = createSandbox();

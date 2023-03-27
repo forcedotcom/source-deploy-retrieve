@@ -12,7 +12,7 @@ import { DecompositionStrategy } from '../../registry';
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_unexpected_child_type']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 /**
  * Handles decomposed types. A flavor of mixed content where a component can

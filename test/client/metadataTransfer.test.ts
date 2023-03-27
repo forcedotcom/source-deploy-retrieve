@@ -15,7 +15,7 @@ import { MetadataTransfer, MetadataTransferOptions } from '../../src/client/meta
 import { MetadataRequestStatus, MetadataTransferResult, RequestStatus } from '../../src/client/types';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['md_request_fail']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('MetadataTransfer', () => {
   const $$ = new TestContext();

@@ -13,10 +13,7 @@ import { MetadataRegistry, MetadataType } from './types';
  */
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_missing_child_type_definition',
-  'error_missing_type_definition',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export class RegistryAccess {
   private registry: MetadataRegistry;

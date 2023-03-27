@@ -6,7 +6,7 @@
  */
 import { join } from 'path';
 import { ensureString, getString, JsonArray, JsonMap } from '@salesforce/ts-types';
-import { SfProject } from '@salesforce/core';
+import { Messages, SfProject } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../common';
 import { ComponentSet } from '../collections';
@@ -15,6 +15,8 @@ import { MetadataComponent, SourceComponent, NodeFSTreeContainer, TreeContainer 
 import { JsToXml } from './streams';
 import { WriteInfo, WriterFormat } from './types';
 
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 abstract class ConvertTransactionFinalizer<T> {
   protected abstract transactionState: T;
 
@@ -89,7 +91,7 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
 
     for (const child of children) {
       if (!child.parent) {
-        throw new Error(`Child component ${child.fullName} has no parent type`);
+        throw messages.createError('noParent', [child.fullName, child.type.name]);
       }
       const { directoryName: groupName } = child.type;
       const { name: parentName } = child.parent.type;
@@ -115,7 +117,7 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
         xmlObj = await childSourceComponent.parseXml();
       }
       if (!xmlObj) {
-        throw new Error(`Failed to parse xml for child component ${child.fullName}`);
+        throw messages.createError('error_parsing_xml', [child.fullName, child.type.name]);
       }
       const childContents = xmlObj[child.type.name] ?? xmlObj;
 

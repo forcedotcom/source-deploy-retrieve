@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { dirname, join, sep } from 'path';
-import { SfError } from '@salesforce/core';
+import { Messages } from '@salesforce/core';
 import { META_XML_SUFFIX } from '../../common';
 import { SourceComponent } from '..';
 import { MetadataXml } from '../types';
@@ -13,6 +13,8 @@ import { baseName, parentName } from '../../utils';
 import { SourcePath } from '../../common';
 import { BundleSourceAdapter } from './bundleSourceAdapter';
 
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 /**
  * Source Adapter for DigitalExperience metadata types. This metadata type is a bundled type of the format
  *
@@ -53,9 +55,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     }
     // metaFileName = metaFileSuffix for DigitalExperience.
     if (!this.type.metaFileSuffix) {
-      throw new SfError(
-        `The metadata registry is configured incorrectly for ${this.type.name}.  Expected a metaFileSuffix.`
-      );
+      throw messages.createError('missingMetaFileSuffix', [this.type.name]);
     }
     return join(dirname(trigger), this.type.metaFileSuffix);
   }
@@ -76,7 +76,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     const parentType = this.registry.getParentType(this.type.id);
     // we expect source, parentType and content to be defined.
     if (!source || !parentType || !source.content) {
-      throw new SfError(`Unexpected error while resolving ${this.type.name} component`);
+      throw messages.createError('error_failed_convert', [component?.fullName ?? this.type.name]);
     }
     const parent = new SourceComponent(
       {

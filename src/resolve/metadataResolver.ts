@@ -16,10 +16,7 @@ import { SourceComponent } from './sourceComponent';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_path_not_found',
-  'error_could_not_infer_type',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 /**
  * Resolver for metadata type and component objects.

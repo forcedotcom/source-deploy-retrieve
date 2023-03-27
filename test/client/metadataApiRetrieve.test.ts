@@ -37,10 +37,7 @@ import { testApiVersion } from '../mock/manifestConstants';
 chai.use(deepEqualInAnyOrder);
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_no_job_id',
-  'error_no_components_to_retrieve',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('MetadataApiRetrieve', () => {
   const $$ = new TestContext();

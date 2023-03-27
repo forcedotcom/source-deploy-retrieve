@@ -1009,7 +1009,7 @@ describe('ComponentSet', () => {
       } catch (e) {
         assert(e instanceof Error);
         Messages.importMessagesDirectory(__dirname);
-        const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_source_to_deploy']);
+        const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
         expect(e.name).to.equal('ComponentSetError');
         expect(e.message).to.equal(messages.getMessage('error_no_source_to_deploy'));

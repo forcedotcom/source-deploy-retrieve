@@ -25,7 +25,7 @@ const env = createSandbox();
 const registryAccess = new RegistryAccess();
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_convert_invalid_format']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 class TestTransformer extends BaseMetadataTransformer {
   // partial implementation only for tests

@@ -18,7 +18,7 @@ import { SourceAdapterFactory } from '../../../src/resolve/adapters/sourceAdapte
 import { DigitalExperienceSourceAdapter } from '../../../src/resolve/adapters/digitalExperienceSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_missing_adapter']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 /**
  * The types being passed to getAdapter don't really matter in these tests. We're

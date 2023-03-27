@@ -6,13 +6,16 @@
  */
 import { readFile } from 'fs/promises';
 import { Transform, Readable } from 'stream';
-import { Lifecycle, SfError, SfProject } from '@salesforce/core';
+import { Lifecycle, Messages, SfProject } from '@salesforce/core';
 import * as minimatch from 'minimatch';
 import { Env } from '@salesforce/kit';
 import { ensureString, isString } from '@salesforce/ts-types';
 import { SourcePath } from '../common';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { MarkedReplacement, ReplacementConfig, ReplacementEvent } from './types';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 const fileContentsCache = new Map<string, string>();
 
@@ -127,16 +130,12 @@ export const getContentsOfReplacementFile = async (path: string): Promise<string
     try {
       fileContentsCache.set(path, (await readFile(path, 'utf8')).trim());
     } catch (e) {
-      throw new SfError(
-        `The file "${path}" specified in the "replacements" property of sfdx-project.json could not be read.`
-      );
+      throw messages.createError('replacementsFileNotRead', [path]);
     }
   }
   const output = fileContentsCache.get(path);
   if (!output) {
-    throw new SfError(
-      `The file "${path}" specified in the "replacements" property of sfdx-project.json could not be read.`
-    );
+    throw messages.createError('replacementsFileNotRead', [path]);
   }
   return output;
 };

@@ -15,12 +15,7 @@ import { SourcePath } from '../common';
 import { VirtualDirectory } from './types';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_no_directory_stream',
-  'error_expected_file_path',
-  'error_expected_directory_path',
-  'error_path_not_found',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 /**
  * A container for interacting with a file system. Operations such as component resolution,
@@ -173,10 +168,10 @@ export class ZipTreeContainer extends TreeContainer {
     if (!this.isDirectory(fsPath)) {
       const matchingFile = this.tree.get(fsPath);
       if (!matchingFile) {
-        throw new SfError(messages.getMessage('error_path_not_found', [fsPath]), 'LibraryError');
+        throw new SfError(messages.getMessage('error_path_not_found', [matchingFile]), 'LibraryError');
       }
       if (Array.isArray(matchingFile)) {
-        throw new SfError(`Multiple files found for path: ${fsPath}`, 'LibraryError');
+        throw messages.createError('tooManyFiles', [fsPath]);
       }
       if (matchingFile.buffer) {
         return matchingFile.buffer();
@@ -198,7 +193,7 @@ export class ZipTreeContainer extends TreeContainer {
         throw new SfError(messages.getMessage('error_path_not_found', [fsPath]), 'LibraryError');
       }
       if (Array.isArray(matchingFile)) {
-        throw new SfError(`Multiple files found for path: ${fsPath}`, 'LibraryError');
+        throw messages.createError('tooManyFiles', [fsPath]);
       }
       if (matchingFile.stream) {
         return matchingFile.stream();

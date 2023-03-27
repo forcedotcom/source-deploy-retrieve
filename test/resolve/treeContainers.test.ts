@@ -25,12 +25,7 @@ import {
 } from '../../src';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_expected_directory_path',
-  'error_path_not_found',
-  'error_expected_file_path',
-  'error_no_directory_stream',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('Tree Containers', () => {
   const readDirResults = ['a.q', 'a.x-meta.xml', 'b', 'b.x-meta.xml', 'c.z', 'c.x-meta.xml'];

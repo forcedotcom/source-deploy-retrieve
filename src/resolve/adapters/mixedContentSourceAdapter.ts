@@ -12,7 +12,7 @@ import { SourceComponent } from '../sourceComponent';
 import { BaseSourceAdapter } from './baseSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_expected_source_files']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 /**
  * Handles types with mixed content. Mixed content means there are one or more additional
  * file(s) associated with a component with any file extension. Even an entire folder

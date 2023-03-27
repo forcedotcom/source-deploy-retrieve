@@ -23,10 +23,7 @@ import { NodeFSTreeContainer, TreeContainer, VirtualTreeContainer } from './tree
 import { ForceIgnore } from './forceIgnore';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_unexpected_child_type',
-  'invalid_xml_parsing',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export type ComponentProperties = {
   name?: string;

@@ -30,7 +30,7 @@ import {
 import { DiagnosticUtil } from './diagnosticUtil';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_job_id']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export class DeployResult implements MetadataTransferResult {
   private readonly diagnosticUtil = new DiagnosticUtil('metadata');
@@ -439,7 +439,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
   private async getZipBuffer(): Promise<Buffer> {
     if (this.options.mdapiPath) {
       if (!fs.existsSync(this.options.mdapiPath) || !fs.lstatSync(this.options.mdapiPath).isDirectory()) {
-        throw new Error(`Deploy directory ${this.options.mdapiPath} does not exist or is not a directory`);
+        throw messages.createError('error_directory_not_found_or_not_directory', [this.options.mdapiPath]);
       }
       // make a zip from the given directory
       const zip = createArchive('zip', { zlib: { level: 9 } });
@@ -455,7 +455,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
     // read the zip into a buffer
     if (this.options.zipPath) {
       if (!fs.existsSync(this.options.zipPath)) {
-        throw new Error(`Zip file ${this.options.zipPath} does not exist`);
+        throw messages.createError('error_path_not_found', [this.options.zipPath]);
       }
       // does encoding matter for zip files? I don't know
       return fs.promises.readFile(this.options.zipPath);
@@ -464,7 +464,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
       const converter = new MetadataConverter();
       const { zipBuffer } = await converter.convert(this.components, 'metadata', { type: 'zip' });
       if (!zipBuffer) {
-        throw new Error('Zip buffer was not created during conversion');
+        throw new SfError(messages.getMessage('zipBufferError'));
       }
       return zipBuffer;
     }

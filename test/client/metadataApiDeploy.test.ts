@@ -37,7 +37,7 @@ import {
 import { COMPONENT } from '../mock/type-constants/apexClassConstant';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_job_id']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 const expectedError = {
   name: 'MissingJobIdError',
   message: messages.getMessage('error_no_job_id', ['deploy']),

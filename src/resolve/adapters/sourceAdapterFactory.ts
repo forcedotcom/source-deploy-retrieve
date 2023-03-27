@@ -26,7 +26,7 @@ enum AdapterId {
 }
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_missing_adapter']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export class SourceAdapterFactory {
   private registry: RegistryAccess;

@@ -28,10 +28,7 @@ chai.use(deepEqualInAnyOrder);
 const env = createSandbox();
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_static_resource_expected_archive_type',
-  'error_static_resource_missing_resource_file',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('StaticResourceMetadataTransformer', () => {
   const transformer = new StaticResourceMetadataTransformer();

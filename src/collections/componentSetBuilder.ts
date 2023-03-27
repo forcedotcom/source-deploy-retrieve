@@ -8,10 +8,13 @@
 /* eslint complexity: ["error", 22] */
 
 import * as path from 'path';
-import { StateAggregator, Logger, SfError } from '@salesforce/core';
+import { StateAggregator, Logger, SfError, Messages } from '@salesforce/core';
 import * as fs from 'graceful-fs';
 import { ComponentSet } from '../collections';
 import { RegistryAccess } from '../registry';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export type ManifestOption = {
   manifestPath: string;
@@ -60,7 +63,7 @@ export class ComponentSetBuilder {
         logger.debug(`Building ComponentSet from sourcepath: ${sourcepath.join(', ')}`);
         const fsPaths: string[] = sourcepath.map((filepath) => {
           if (!fs.existsSync(filepath)) {
-            throw new SfError(`The sourcepath "${filepath}" is not a valid source file path.`);
+            throw messages.createError('error_path_not_found', [filepath]);
           }
           return path.resolve(filepath);
         });
@@ -77,7 +80,7 @@ export class ComponentSetBuilder {
       if (manifest) {
         logger.debug(`Building ComponentSet from manifest: ${manifest.manifestPath}`);
         if (!fs.existsSync(manifest.manifestPath)) {
-          throw new SfError(`The manifest path "${manifest.manifestPath}" does not exist.`);
+          throw messages.createError('error_path_not_found', [manifest.manifestPath]);
         }
         const directoryPaths = manifest.directoryPaths;
         logger.debug(`Searching in packageDir: ${directoryPaths.join(', ')} for matching metadata`);
@@ -171,7 +174,7 @@ export class ComponentSetBuilder {
 
     // there should have been a componentSet created by this point.
     if (componentSet === undefined) {
-      throw new SfError('Unable to construct a componentSet.  Check the logs for more information.');
+      throw new SfError('undefinedComponentSet');
     }
 
     componentSet.apiVersion ??= apiversion;

@@ -19,7 +19,7 @@ import { DECOMPOSED_COMPONENT } from '../../mock/type-constants/customObjectCons
 import { COMPONENT_1 } from '../../mock/type-constants/customlabelsConstant';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_missing_transformer']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 const registryAccess = new RegistryAccess();
 

@@ -20,10 +20,7 @@ import { getReplacementMarkingStream } from './replacements';
 import { MergeConfig } from '.';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_failed_convert',
-  'error_merge_metadata_target_unsupported',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export class MetadataConverter {
   public static readonly PACKAGE_XML_FILE = 'package.xml';

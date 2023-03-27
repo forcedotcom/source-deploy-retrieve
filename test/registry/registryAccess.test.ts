@@ -9,7 +9,7 @@ import { Messages, SfError } from '@salesforce/core';
 import { MetadataType, registry, RegistryAccess } from '../../src';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_missing_type_definition']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('RegistryAccess', () => {
   const registryAccess = new RegistryAccess();

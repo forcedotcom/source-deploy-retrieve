@@ -40,7 +40,7 @@ import { DE_METAFILE } from '../mock/type-constants/digitalExperienceBundleConst
 import { RegistryTestUtil } from './registryTestUtil';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_unexpected_child_type']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 const env = createSandbox();
 

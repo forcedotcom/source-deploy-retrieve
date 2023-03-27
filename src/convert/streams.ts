@@ -23,7 +23,7 @@ import { ConvertContext } from './convertContext';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_convert_invalid_format']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export const pipeline = promisify(cbPipeline);
 

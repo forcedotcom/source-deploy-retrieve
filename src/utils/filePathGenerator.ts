@@ -5,12 +5,16 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join, sep, basename } from 'path';
-import { SfError } from '@salesforce/core';
+import { Messages } from '@salesforce/core';
 import { isPlainObject } from '@salesforce/ts-types';
 import { MetadataComponent } from '../resolve/types';
 import { META_XML_SUFFIX } from '../common/constants';
 import { RegistryAccess } from '../registry/registryAccess';
 import { registry } from '..';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
+
 const registryAccess = new RegistryAccess();
 
 /**
@@ -115,18 +119,18 @@ export const filePathsFromMetadataComponent = (
     ]);
     const matched = mappings.get(type.name);
     if (!matched) {
-      throw new Error(`Unsupported Bundle Type: ${type.name}`);
+      throw messages.createError('unsupportedBundleType', [type.name]);
     }
     return [matched];
   }
 
-  throw new Error(`type not supported for filepath generation: ${type.name}`);
+  throw messages.createError('filePathGeneratorNoTypeSupport', [type.name]);
 };
 
 const generateFolders = ({ fullName, type }: MetadataComponent, packageDirWithTypeDir: string): string[] => {
   const folderType = type.folderType;
   if (!folderType) {
-    throw new SfError(`type ${type.name} is inFolder but does not have a folderType`, 'MissingFolderType');
+    throw messages.createError('missingFolderType', [type.name]);
   }
   // create a folder for each part of the filename between the directory name and the fullname
   const splits = fullName.split('/');
@@ -147,7 +151,7 @@ const getDecomposedChildType = ({ fullName, type }: MetadataComponent, packageDi
     (t) => isPlainObject(t.children) && Object.keys(t.children.types).includes(type.id)
   );
   if (!topLevelType) {
-    throw new SfError(`Could not find parent type for ${fullName} (${type.name})`);
+    throw messages.createError('noParent', [fullName, type.name]);
   }
   const topLevelTypeDir = packageDir ? join(packageDir, topLevelType.directoryName) : topLevelType.directoryName;
 

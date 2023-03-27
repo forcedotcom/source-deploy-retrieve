@@ -21,7 +21,7 @@ import { ConvertContext } from '../../../src/convert/convertContext';
 const registryAccess = new RegistryAccess();
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_unexpected_child_type']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('DecomposedMetadataTransformer', () => {
   const $$ = new TestContext();

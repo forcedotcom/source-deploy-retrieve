@@ -50,10 +50,7 @@ import { RegistryTestUtil } from './registryTestUtil';
 const testUtil = new RegistryTestUtil();
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_path_not_found',
-  'error_could_not_infer_type',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('MetadataResolver', () => {
   const resolver = new MetadataResolver();

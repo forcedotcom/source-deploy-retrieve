@@ -15,7 +15,7 @@ import { RegistryTestUtil } from '../registryTestUtil';
 import { ForceIgnore, registry, SourceComponent } from '../../../src';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_metadata_xml_ignore']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 class TestAdapter extends BaseSourceAdapter {
   public readonly component: SourceComponent;

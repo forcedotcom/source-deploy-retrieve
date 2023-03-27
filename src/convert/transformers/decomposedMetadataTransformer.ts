@@ -7,7 +7,7 @@
 import { join } from 'path';
 import { JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
-import { SfError } from '@salesforce/core';
+import { Messages } from '@salesforce/core';
 import { MetadataComponent, SourceComponent } from '../../resolve';
 import { JsToXml } from '../streams';
 import { WriteInfo } from '../types';
@@ -17,6 +17,8 @@ import { DecompositionStateValue } from '../convertContext';
 import { DecompositionStrategy } from '../../registry';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   // eslint-disable-next-line @typescript-eslint/require-await
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
@@ -57,7 +59,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       if (childTypeId) {
         const childType = type.children?.types[childTypeId];
         if (!childType) {
-          throw new SfError(`No registry is missing a child with ID ${childTypeId} for ${type.name}`);
+          throw messages.createError('error_missing_child_type_definition', [type.name, childTypeId]);
         }
         const tagValues = ensureArray(tagValue);
         for (const value of tagValues as [{ fullName: string; name: string }]) {
@@ -108,9 +110,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
             else if (childrenOfMergeComponent.has(childComponent)) {
               const mergeChild = childrenOfMergeComponent.getSourceComponents(childComponent).first();
               if (!mergeChild?.xml) {
-                throw new SfError(
-                  `No xml components found for ${childComponent.fullName} (${childComponent.type.name})`
-                );
+                throw messages.createError('error_parsing_xml', [childComponent.fullName, childComponent.type.name]);
               }
               writeInfos.push({
                 source,

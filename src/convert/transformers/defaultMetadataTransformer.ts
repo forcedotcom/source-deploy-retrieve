@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, join } from 'path';
-import { SfError } from '@salesforce/core';
+import { Messages } from '@salesforce/core';
 import { META_XML_SUFFIX, SourcePath } from '../../common';
 import { SfdxFileFormat, WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve';
@@ -85,7 +85,9 @@ const getXmlDestination = (
 
   const { folderContentType, suffix, legacySuffix } = component.type;
   if (!component.xml) {
-    throw new SfError(`The component ${component.fullName} (${component.type.name}) has no xml file`);
+    Messages.importMessagesDirectory(__dirname);
+    const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
+    throw messages.createError('error_parsing_xml', [component.fullName, component.type.name]);
   }
   let xmlDestination = component.getPackageRelativePath(component.xml, targetFormat);
 

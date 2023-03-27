@@ -15,7 +15,7 @@ import { SourcePath } from '../../common';
 import { MetadataType, RegistryAccess } from '../../registry';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_metadata_xml_ignore']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export abstract class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;
@@ -184,7 +184,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     if (grandparentType.folderType === this.type.id) {
       return rootMetadata.fullName;
     }
-    throw new SfError(`Unable to calculate fullName from path: ${rootMetadata.path} (${this.type.name})`);
+    throw messages.createError('cantGetName', [rootMetadata.path, this.type.name]);
   }
 
   /**

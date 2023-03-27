@@ -23,10 +23,7 @@ import {
 } from '../mock/type-constants/customObjectConstant';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_failed_convert',
-  'error_merge_metadata_target_unsupported',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('MetadataConverter', () => {
   const $$ = new TestContext();

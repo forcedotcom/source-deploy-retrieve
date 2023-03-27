@@ -22,10 +22,7 @@ import { getReplacementStreamForReadable } from '../replacements';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_static_resource_expected_archive_type',
-  'error_static_resource_missing_resource_file',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public static readonly ARCHIVE_MIME_TYPES = new Set([
@@ -39,14 +36,10 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     const { content, type, xml } = component;
     if (!content) {
-      throw new SfError(
-        `The component ${component.fullName} of type ${type.name} cannot be converted because it has no content file`
-      );
+      throw messages.createError('noContentFound', [component.fullName, component.type.name]);
     }
     if (!xml) {
-      throw new SfError(
-        `The component ${component.fullName} of type ${type.name} cannot be converted because it has no xml file`
-      );
+      throw messages.createError('error_parsing_xml', [component.fullName, component.type.name]);
     }
     // archiver/zip.finalize looks like it is async, because it extends streams, but it is not meant to be used that way
     // the typings on it are misleading and unintended.  More info https://github.com/archiverjs/node-archiver/issues/476
@@ -119,9 +112,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       );
     }
     if (!xml) {
-      throw new SfError(
-        `The component ${component.fullName} of type ${component.type.name} cannot be converted because it has no xml file`
-      );
+      throw messages.createError('error_parsing_xml', [component.fullName, component.type.name]);
     }
     return [
       {

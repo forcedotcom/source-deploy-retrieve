@@ -81,11 +81,9 @@ export const replacementIterations = async (input: string, replacements: MarkedR
 /**
  * Reads the project, gets replacements, removes any that aren't applicable due to environment conditionals, and returns an instance of the ReplacementMarkingStream
  */
-export const getReplacementMarkingStream = async (
-  projectDir?: string
-): Promise<ReplacementMarkingStream | undefined> => {
+export const getReplacementMarkingStream = async (): Promise<ReplacementMarkingStream | undefined> => {
   // remove any that don't agree with current env
-  const filteredReplacements = envFilter(await readReplacementsFromProject(projectDir));
+  const filteredReplacements = envFilter(await readReplacementsFromProject());
   if (filteredReplacements.length) {
     return new ReplacementMarkingStream(filteredReplacements);
   }
@@ -209,8 +207,8 @@ const getEnvValue = (env: string): string => {
 /**
  * Read the `replacement` property from sfdx-project.json
  */
-const readReplacementsFromProject = async (projectDir?: string): Promise<ReplacementConfig[]> => {
-  const proj = await SfProject.resolve(projectDir);
+const readReplacementsFromProject = async (): Promise<ReplacementConfig[]> => {
+  const proj = await SfProject.resolve();
   const projJson = (await proj.resolveProjectConfig()) as { replacements?: ReplacementConfig[] };
   return projJson.replacements;
 };

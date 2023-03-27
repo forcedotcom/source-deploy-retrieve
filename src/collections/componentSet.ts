@@ -64,11 +64,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * This is used as the value for the `version` field in the manifest.
    */
   public sourceApiVersion: string;
-  /**
-   * Explicitly sets the projectDirectory
-   * By default, if project directory is needed, it'll use process.cwd.
-   * */
-  public projectDirectory?: string;
   public fullName?: string;
   public forceIgnoredPaths?: Set<string>;
   private logger: Logger;

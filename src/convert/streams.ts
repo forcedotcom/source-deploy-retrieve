@@ -267,7 +267,7 @@ export class JsToXml extends Readable {
       ignoreAttributes: false,
       cdataTagName: '__cdata',
     } as Partial<X2jOptions>);
-    const xmlContent = XML_DECL.concat(js2Xml.parse(JSON.stringify(this.xmlObject)) as string);
+    const xmlContent = XML_DECL.concat(js2Xml.parse(String(this.xmlObject)) as string);
     this.push(xmlContent);
     this.push(null);
   }

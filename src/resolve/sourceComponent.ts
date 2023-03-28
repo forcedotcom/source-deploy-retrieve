@@ -290,7 +290,7 @@ export class SourceComponent implements MetadataComponent {
       parseNodeValue: false,
       cdataTagName: '__cdata',
     } as Partial<X2jOptions>);
-    const parsed = js2Xml.parse(contents.toString()) as T;
+    const parsed = js2Xml.parse(String(contents)) as T;
     const [firstElement] = Object.keys(parsed);
     if (firstElement === this.type.name) {
       return parsed;

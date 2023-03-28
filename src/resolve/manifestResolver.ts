@@ -57,7 +57,7 @@ export class ManifestResolver {
     const js2Xml = new XMLParser({
       stopNodes: ['version'],
     } as Partial<X2jOptions>);
-    const parsedManifest: ParsedPackageManifest = (js2Xml.parse(file.toString()) as { Package: ParsedPackageManifest })
+    const parsedManifest: ParsedPackageManifest = (js2Xml.parse(String(file)) as { Package: ParsedPackageManifest })
       .Package;
     const packageTypeMembers = ensureArray(parsedManifest.types);
     const apiVersion = parsedManifest.version;

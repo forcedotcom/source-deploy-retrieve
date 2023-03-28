@@ -460,7 +460,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     } as Partial<X2jOptions>);
     const toParse = await this.getObject(destructiveType);
     toParse.Package[XML_NS_KEY] = XML_NS_URL;
-    return XML_DECL.concat(j2x.parse(JSON.stringify(toParse)) as string);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return XML_DECL.concat(j2x.parse(String(toParse)));
   }
 
   /**

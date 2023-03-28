@@ -88,7 +88,7 @@ jobs:
           - 'yarn test:nuts:deploy:testlevel'
           - 'yarn test:nuts:mdapi'
           - 'yarn test:nuts:retrieve'
-          - 'yarn test:nuts:specialTypes'
+          # - 'yarn test:nuts:specialTypes'
           - 'yarn test:nuts:tracking'
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
@@ -122,7 +122,7 @@ jobs:
           - 'yarn test:nuts:deploy:testlevel'
           - 'yarn test:nuts:mdapi'
           - 'yarn test:nuts:retrieve'
-          - 'yarn test:nuts:specialTypes'
+          # - 'yarn test:nuts:specialTypes'
           - 'yarn test:nuts:tracking'
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
@@ -134,4 +134,25 @@ jobs:
       postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
       preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
       os: windows-latest
+    secrets: inherit
+
+  external-nuts-for-deb:
+    name: extNUTs-windows
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        command:
+          - 'yarn test:nuts:specialTypes'
+    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@sm/ext-nut-branch
+    with:
+      branch: sm/qa-771
+      packageName: '@salesforce/source-deploy-retrieve'
+      externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-source'
+      command: ${{matrix.command}}
+      # the next 3 lines are likely unnecessary due to cache use
+      preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
+      postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
+      preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
+      os: ${{matrix.os}}
     secrets: inherit

@@ -11,7 +11,7 @@ import { Messages, SfError } from '@salesforce/core';
 import { Archiver, create as createArchive } from 'archiver';
 import { createWriteStream, existsSync } from 'graceful-fs';
 import { JsonMap } from '@salesforce/ts-types';
-import { j2xParser } from 'fast-xml-parser';
+import { XMLParser, X2jOptions } from 'fast-xml-parser';
 import { Logger } from '@salesforce/core';
 import { MetadataResolver, SourceComponent } from '../resolve';
 import { SourcePath, XML_DECL } from '../common';
@@ -261,8 +261,13 @@ export class JsToXml extends Readable {
   }
 
   public _read(): void {
-    const js2Xml = new j2xParser({ format: true, indentBy: '    ', ignoreAttributes: false, cdataTagName: '__cdata' });
-    const xmlContent = XML_DECL.concat(js2Xml.parse(this.xmlObject) as string);
+    const js2Xml = new XMLParser({
+      format: true,
+      indentBy: '    ',
+      ignoreAttributes: false,
+      cdataTagName: '__cdata',
+    } as Partial<X2jOptions>);
+    const xmlContent = XML_DECL.concat(js2Xml.parse(JSON.stringify(this.xmlObject)) as string);
     this.push(xmlContent);
     this.push(null);
   }

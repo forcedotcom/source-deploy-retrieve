@@ -6,7 +6,7 @@
  */
 import { basename, join, dirname } from 'path';
 import { Messages, SfError } from '@salesforce/core';
-import { parse, validate } from 'fast-xml-parser';
+import { XMLParser, X2jOptions, XMLValidator } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
 import { replacementIterations } from '../../src/convert/replacements';
@@ -285,11 +285,12 @@ export class SourceComponent implements MetadataComponent {
 
   private parse<T = JsonMap>(contents: string): T {
     // include tag attributes and don't parse text node as number
-    const parsed = parse(contents.toString(), {
+    const js2Xml = new XMLParser({
       ignoreAttributes: false,
       parseNodeValue: false,
       cdataTagName: '__cdata',
-    }) as T;
+    } as Partial<X2jOptions>);
+    const parsed = js2Xml.parse(contents.toString()) as T;
     const [firstElement] = Object.keys(parsed);
     if (firstElement === this.type.name) {
       return parsed;
@@ -305,7 +306,7 @@ export class SourceComponent implements MetadataComponent {
       return this.parse<T>(contents);
     } catch (e) {
       // only attempt validating once there's an error to avoid the performance hit of validating every file
-      const validation = validate(contents);
+      const validation = XMLValidator.validate(contents);
       if (validation !== true) {
         throw new SfError(
           messages.getMessage('invalid_xml_parsing', [

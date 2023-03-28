@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { parse as parseXml } from 'fast-xml-parser';
+import { XMLParser, X2jOptions } from 'fast-xml-parser';
 import { ensureArray } from '@salesforce/kit';
 import { MetadataType, RegistryAccess } from '../registry';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
@@ -54,11 +54,11 @@ export class ManifestResolver {
 
     const file = await this.tree.readFile(manifestPath);
 
-    const parsedManifest: ParsedPackageManifest = (
-      parseXml(file.toString(), {
-        stopNodes: ['version'],
-      }) as { Package: ParsedPackageManifest }
-    ).Package;
+    const js2Xml = new XMLParser({
+      stopNodes: ['version'],
+    } as Partial<X2jOptions>);
+    const parsedManifest: ParsedPackageManifest = (js2Xml.parse(file.toString()) as { Package: ParsedPackageManifest })
+      .Package;
     const packageTypeMembers = ensureArray(parsedManifest.types);
     const apiVersion = parsedManifest.version;
 

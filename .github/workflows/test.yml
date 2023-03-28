@@ -137,13 +137,13 @@ jobs:
     secrets: inherit
 
   external-nuts-for-deb:
-    name: extNUTs-windows
+    name: extNUTs-deb
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
         command:
-          - 'yarn test:nuts:specialTypes'
+          - 'yarn test:nuts:deb'
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@sm/ext-nut-branch
     with:
       branch: sm/qa-771

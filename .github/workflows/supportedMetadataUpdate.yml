@@ -17,13 +17,15 @@ jobs:
         with:
           node-version: lts/*
           cache: yarn
+      - run: |
+          git checkout -b supportedMetadata$(date +%F)
       - run: yarn install --network-timeout 600000
       - run: yarn build
       - run: yarn update-supported-metadata
       - run: |
           if [[ -n $(git status --short) ]]; then
             git METADATA_SUPPORT.md
-            git commit -am "chore: auto-update metadata coverage in METADATA_SUPPORT.md" --no-verify
+            git commit -am "chore: auto-update metadata coverage in METADATA_SUPPORT.md [no ci]" --no-verify
             git push --no-verify
           else
             echo "Already up to date"

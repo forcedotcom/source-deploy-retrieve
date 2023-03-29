@@ -841,13 +841,13 @@ describe('ComponentSet', () => {
     });
 
     it('should overwrite a singular name with wildcard when supportsWildcardAndName=false', async () => {
-      const type = registry.types.apexclass;
+      const type = registry.types.role;
       const set = new ComponentSet();
       set.add(new SourceComponent({ name: 'myType', type }));
       set.add(new SourceComponent({ name: '*', type }));
       set.add(new SourceComponent({ name: 'myType2', type }));
       set.add(new SourceComponent({ name: 'myType', type }));
-      expect((await set.getObject()).Package.types).to.deep.equal([{ members: ['*'], name: 'ApexClass' }]);
+      expect((await set.getObject()).Package.types).to.deep.equal([{ members: ['*'], name: 'Role' }]);
     });
 
     it('should exclude child components that are not addressable as defined in the registry', async () => {

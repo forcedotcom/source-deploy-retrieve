@@ -137,5 +137,4 @@ jobs:
       postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
       preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
       os: windows-latest
-      branch: sm/qa-771
     secrets: inherit

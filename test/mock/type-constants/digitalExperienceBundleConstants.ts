@@ -8,8 +8,8 @@ import { join } from 'path';
 import { registry, SourceComponent } from '../../../src';
 import { META_XML_SUFFIX } from '../../../src/common';
 
-export const DE_TYPE = registry.types.digitalexperiencebundle.children.types.digitalexperience;
 export const DEB_TYPE = registry.types.digitalexperiencebundle;
+export const DE_TYPE = DEB_TYPE.children.types.digitalexperience;
 
 // metaFileName = metaFileSuffix for DigitalExperience.
 export const DE_METAFILE = DE_TYPE.metaFileSuffix;

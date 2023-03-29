@@ -27,10 +27,10 @@ jobs:
             git METADATA_SUPPORT.md
             git commit -am "chore: auto-update metadata coverage in METADATA_SUPPORT.md [no ci]" --no-verify
             git push --no-verify
+            sleep 60
+            gh pr create --title 'chore: auto-update metadata coverage in METADATA_SUPPORT.md' --body 'created via github action [skip-validate-pr]'      
           else
             echo "Already up to date"
           fi
-          sleep 60
-          gh pr create --title 'chore: auto-update metadata coverage in METADATA_SUPPORT.md' --body 'created via github action [skip-validate-pr]'
         env:
           GH_TOKEN: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}

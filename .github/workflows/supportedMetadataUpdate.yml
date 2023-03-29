@@ -1,0 +1,22 @@
+name: supported metadata update
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 3 22 * * *
+
+jobs:
+  registry-check:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
+      - uses: salesforcecli/github-workflows/.github/actions/gitConfig@main
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+          cache: yarn
+      - run: yarn install  --network-timeout 600000
+      - run: yarn build
+      - run: yarn update-supported-metadata.ts

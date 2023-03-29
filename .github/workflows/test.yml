@@ -47,21 +47,49 @@ jobs:
     with:
       packageName: '@salesforce/source-deploy-retrieve'
       externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-source'
-      command: 'test:nuts:deploy:async'
+      command: 'yarn test:nuts:deploy:async'
       preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
       postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
       preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
       os: 'ubuntu-latest'
     secrets: inherit
 
-  xNuts-prime-win-ps:
+  xNuts-lin-prime-pdr:
+    name: extNUTs-linux-prime
+    needs: nuts
+    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
+    with:
+      packageName: '@salesforce/source-deploy-retrieve'
+      externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-deploy-retrieve'
+      command: 'yarn test:nuts:convert'
+      preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
+      postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
+      preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
+      os: 'ubuntu-latest'
+    secrets: inherit
+
+  xNuts-win-prime-ps:
     name: extNUTs-windows-prime
     needs: nuts
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
       packageName: '@salesforce/source-deploy-retrieve'
       externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-source'
-      command: 'test:nuts:deploy:async'
+      command: 'yarn test:nuts:deploy:async'
+      preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
+      postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
+      preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
+      os: 'windows-latest'
+    secrets: inherit
+
+  xNuts-win-prime-pdr:
+    name: extNUTs-windows-prime
+    needs: nuts
+    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
+    with:
+      packageName: '@salesforce/source-deploy-retrieve'
+      externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-deploy-retrieve'
+      command: 'yarn test:nuts:convert'
       preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
       postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
       preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
@@ -104,7 +132,7 @@ jobs:
 
   # now run the rest of the nuts for each os via cached version of all the setup steps
   xNuts-win-ps:
-    needs: [perf-scale-nuts-windows, xNuts-prime-win-ps]
+    needs: [perf-scale-nuts-windows, xNuts-win-prime-ps]
     name: extNUTs-windows
     strategy:
       fail-fast: false
@@ -134,4 +162,68 @@ jobs:
       postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
       preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
       os: windows-latest
+    secrets: inherit
+
+  xNuts-linux-pdr:
+    needs: [perf-scale-nuts-linux, xNuts-lin-prime-pdr]
+    name: extNUTs-linux
+    strategy:
+      fail-fast: false
+      matrix:
+        command:
+          - 'yarn test:nuts:deb'
+          - 'yarn test:nuts:delete'
+          - 'yarn test:nuts:deploy:metadata:manifest'
+          - 'yarn test:nuts:deploy:metadata:metadata'
+          - 'yarn test:nuts:deploy:metadata:metadata-dir'
+          - 'yarn test:nuts:deploy:metadata:source-dir'
+          - 'yarn test:nuts:deploy:metadata:test-level'
+          - 'yarn test:nuts:destructive'
+          - 'yarn test:nuts:manifest'
+          - 'yarn test:nuts:retrieve'
+          - 'yarn test:nuts:specialTypes'
+          - 'yarn test:nuts:static'
+          - 'yarn test:nuts:tracking'
+    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
+    with:
+      packageName: '@salesforce/source-deploy-retrieve'
+      externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-deploy-retrieve'
+      command: ${{matrix.command}}
+      # the next 3 lines are likely unnecessary due to cache use
+      preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
+      postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
+      preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
+      os: ubuntu-latest
+    secrets: inherit
+
+  xNuts-win-pdr:
+    needs: [perf-scale-nuts-windows, xNuts-win-prime-pdr]
+    name: extNUTs-win
+    strategy:
+      fail-fast: false
+      matrix:
+        command:
+          - 'yarn test:nuts:deb'
+          - 'yarn test:nuts:delete'
+          - 'yarn test:nuts:deploy:metadata:manifest'
+          - 'yarn test:nuts:deploy:metadata:metadata'
+          - 'yarn test:nuts:deploy:metadata:metadata-dir'
+          - 'yarn test:nuts:deploy:metadata:source-dir'
+          - 'yarn test:nuts:deploy:metadata:test-level'
+          - 'yarn test:nuts:destructive'
+          - 'yarn test:nuts:manifest'
+          - 'yarn test:nuts:retrieve'
+          - 'yarn test:nuts:specialTypes'
+          - 'yarn test:nuts:static'
+          - 'yarn test:nuts:tracking'
+    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
+    with:
+      packageName: '@salesforce/source-deploy-retrieve'
+      externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-deploy-retrieve'
+      command: ${{matrix.command}}
+      # the next 3 lines are likely unnecessary due to cache use
+      preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
+      postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
+      preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
+      os: ubuntu-latest
     secrets: inherit

@@ -15,9 +15,8 @@ import { SourcePath } from '../common';
 import { ComponentSet, DestructiveChangesType } from '../collections';
 import { RegistryAccess } from '../registry';
 import { ComponentConverter, pipeline, StandardWriter, ZipWriter } from './streams';
-import { ConvertOutputConfig, ConvertResult, DirectoryConfig, SfdxFileFormat, ZipConfig } from './types';
+import { ConvertOutputConfig, ConvertResult, DirectoryConfig, SfdxFileFormat, ZipConfig, MergeConfig } from './types';
 import { getReplacementMarkingStream } from './replacements';
-import { MergeConfig } from '.';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');

@@ -41,7 +41,7 @@ jobs:
   # run a quick nut on each OS to populate the cache
   # the following is highly duplicative to allow linux to start all the nuts without waiting for windows primer
   xNuts-lin-prime-ps:
-    name: extNUTs-linux-prime
+    name: xNuts-lin-prime-ps
     needs: nuts
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
@@ -55,7 +55,7 @@ jobs:
     secrets: inherit
 
   xNuts-lin-prime-pdr:
-    name: extNUTs-linux-prime
+    name: xNuts-lin-prime-pdr
     needs: nuts
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
@@ -69,7 +69,7 @@ jobs:
     secrets: inherit
 
   xNuts-win-prime-ps:
-    name: extNUTs-windows-prime
+    name: xNuts-win-prime-ps
     needs: nuts
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
@@ -83,7 +83,7 @@ jobs:
     secrets: inherit
 
   xNuts-win-prime-pdr:
-    name: extNUTs-windows-prime
+    name: xNuts-win-prime-pdr
     needs: nuts
     uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
@@ -99,14 +99,12 @@ jobs:
   # now run the rest of the nuts for each os via cached version of al the setup steps
   xNuts-linux-ps:
     needs: [perf-scale-nuts-linux, xNuts-lin-prime-ps]
-    name: extNUTs-linux
+    name: xNuts-linux-ps
     strategy:
       fail-fast: false
       matrix:
         command:
-          # - 'yarn test:nuts:convert'
           - 'yarn test:nuts:deb'
-          - 'yarn test:nuts:delete'
           - 'yarn test:nuts:deploy:destructive'
           - 'yarn test:nuts:deploy:manifest'
           - 'yarn test:nuts:deploy:metadata'
@@ -133,14 +131,12 @@ jobs:
   # now run the rest of the nuts for each os via cached version of all the setup steps
   xNuts-win-ps:
     needs: [perf-scale-nuts-windows, xNuts-win-prime-ps]
-    name: extNUTs-windows
+    name: xNuts-win-ps
     strategy:
       fail-fast: false
       matrix:
         command:
-          # - 'yarn test:nuts:convert'
           - 'yarn test:nuts:deb'
-          - 'yarn test:nuts:delete'
           - 'yarn test:nuts:deploy:destructive'
           - 'yarn test:nuts:deploy:manifest'
           - 'yarn test:nuts:deploy:metadata'
@@ -166,7 +162,7 @@ jobs:
 
   xNuts-linux-pdr:
     needs: [perf-scale-nuts-linux, xNuts-lin-prime-pdr]
-    name: extNUTs-linux
+    name: xNuts-linux-pdr
     strategy:
       fail-fast: false
       matrix:
@@ -198,7 +194,7 @@ jobs:
 
   xNuts-win-pdr:
     needs: [perf-scale-nuts-windows, xNuts-win-prime-pdr]
-    name: extNUTs-win
+    name: xNuts-win-pdr
     strategy:
       fail-fast: false
       matrix:

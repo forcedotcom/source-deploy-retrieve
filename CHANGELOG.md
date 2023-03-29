@@ -1,3 +1,12 @@
+## [7.14.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.1...7.14.2) (2023-03-29)
+
+
+### Bug Fixes
+
+* use always forward slash for DEB and DE fullName ([1511388](https://github.com/forcedotcom/source-deploy-retrieve/commit/1511388bd7953d849a269021f822acb4a69d07d7))
+
+
+
 ## [7.14.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.0...7.14.1) (2023-03-28)
 
 

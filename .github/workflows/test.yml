@@ -77,6 +77,7 @@ jobs:
       matrix:
         command:
           - 'yarn test:nuts:convert'
+          - 'yarn test:nuts:deb'
           - 'yarn test:nuts:delete'
           - 'yarn test:nuts:deploy:async'
           - 'yarn test:nuts:deploy:destructive'
@@ -100,6 +101,7 @@ jobs:
       postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
       preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
       os: ubuntu-latest
+      branch: sm/qa-771
     secrets: inherit
 
   # now run the rest of the nuts for each os via cached version of all the setup steps
@@ -111,6 +113,7 @@ jobs:
       matrix:
         command:
           - 'yarn test:nuts:convert'
+          - 'yarn test:nuts:deb'
           - 'yarn test:nuts:delete'
           - 'yarn test:nuts:deploy:async'
           - 'yarn test:nuts:deploy:destructive'
@@ -134,4 +137,5 @@ jobs:
       postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
       preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
       os: windows-latest
+      branch: sm/qa-771
     secrets: inherit

@@ -18,12 +18,15 @@ export const recordPerf = async (testName: string, performance: Performance): Pr
 
   await fs.promises.mkdir(testPath, { recursive: true });
   expect(fs.existsSync(testPath)).to.be.true;
+  const existing = fs.existsSync(fileTarget) ? JSON.parse(await fs.promises.readFile(fileTarget, 'utf8')) : [];
   await fs.promises.writeFile(
     fileTarget,
     JSON.stringify(
-      // TS doesn't seem to know about the node16 perf hooks :(
-      // @ts-ignore
-      performance.getEntriesByType('measure').map((m) => ({ name: m.name, value: m.duration, unit: 'ms' })),
+      existing.concat(
+        // TS doesn't seem to know about the node16 perf hooks :(
+        // @ts-ignore
+        performance.getEntriesByType('measure').map((m) => ({ name: m.name, value: m.duration, unit: 'ms' }))
+      ),
       null,
       2
     )

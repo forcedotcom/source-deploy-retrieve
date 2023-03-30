@@ -23,23 +23,16 @@ jobs:
       - run: yarn install
       - run: yarn test:nuts:scale
 
-      # - name: Download previous benchmark data
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ./cache
-      #     key: ${{ runner.os }}-benchmark
-
       # Run `github-action-benchmark` action
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@5bbce78ef18edf5b96cb2d23e8d240b485f9dc4a
         with:
-          # What benchmark tool the output.txt came from
           tool: 'customSmallerIsBetter'
-          # Where the output from the benchmark tool is stored
           output-file-path: test/nuts/scale/output.json
           comment-on-alert: true
           fail-on-alert: true
           summary-always: true
+          benchmark-data-dir-path: perf-${{ runner.os}}
           # Push and deploy GitHub pages branch automatically
           auto-push: true
           github-token: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}

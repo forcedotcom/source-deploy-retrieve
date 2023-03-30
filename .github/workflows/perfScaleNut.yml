@@ -5,6 +5,8 @@ on:
     branches-ignore: [main]
   workflow_dispatch:
 
+# linux will finish 10 min ahead of windows, but prevent other branches/commits from hitting simultaneously
+# since we're pushing git commits and there would be conflicts
 concurrency: perf-scale-nuts
 
 jobs:

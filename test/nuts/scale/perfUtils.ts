@@ -10,7 +10,7 @@ import { Performance } from 'node:perf_hooks';
 import * as fs from 'graceful-fs';
 import { expect } from 'chai';
 
-const getPerfDir = (): string => path.join('test', 'nuts', 'perfResults');
+const getPerfDir = (): string => path.resolve(path.join('test', 'nuts', 'perfResults'));
 
 export const recordPerf = async (testName: string, performance: Performance): Promise<void> => {
   const testPath = getPerfDir();
@@ -29,7 +29,11 @@ export const recordPerf = async (testName: string, performance: Performance): Pr
           // TS doesn't seem to know about the node16 perf hooks :(
           // @ts-ignore
           .getEntriesByType('measure')
-          .map((m) => ({ name: `${testName}-${m.name as string}-${os.platform()}`, value: m.duration, unit: 'ms' }))
+          .map((m) => ({
+            name: `${testName}-${m.name as string}-${os.platform()}`,
+            value: Math.trunc(m.duration as number),
+            unit: 'ms',
+          }))
       ),
       null,
       2

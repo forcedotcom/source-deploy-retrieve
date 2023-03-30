@@ -34,5 +34,6 @@ jobs:
           summary-always: true
           benchmark-data-dir-path: perf-${{ runner.os}}
           # Push and deploy GitHub pages branch automatically
-          auto-push: true
+          # this has a bug where it creates duplicate commits when summary-always
+          # auto-push: true
           github-token: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}

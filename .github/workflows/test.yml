@@ -39,6 +39,8 @@ jobs:
       fail-fast: false
     with:
       os: ${{ matrix.os }}
+    secrets:
+      SVC_CLI_BOT_GITHUB_TOKEN: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
 
   # run a quick nut on each OS to populate the cache
   # the following is highly duplicative to allow linux to start all the nuts without waiting for windows primer

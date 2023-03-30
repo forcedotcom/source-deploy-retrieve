@@ -18,8 +18,7 @@ export const recordPerf = async (testName: string, performance: Performance): Pr
     JSON.stringify(
       existing.concat(
         performance
-          // TS doesn't seem to know about the node16 perf hooks :(
-          // @ts-ignore
+          // @ts-expect-error TS doesn't seem to know about the node16 perf hooks :(
           .getEntriesByType('measure')
           .map((m) => ({
             name: `${testName}-${m.name as string}-${os.platform()}`,
@@ -32,8 +31,7 @@ export const recordPerf = async (testName: string, performance: Performance): Pr
     )
   );
   performance.clearMarks();
-  // TS doesn't seem to know about the node16 perf hooks :(
-  // @ts-ignore
+  // @ts-expect-error TS doesn't seem to know about the node16 perf hooks :(
   performance.clearMeasures();
   expect(fs.existsSync(fileTarget)).to.be.true;
 };

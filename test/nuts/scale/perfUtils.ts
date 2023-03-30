@@ -14,7 +14,7 @@ const getPerfDir = (): string => path.join('test', 'nuts', 'perfResults', `${os.
 
 export const recordPerf = async (testName: string, performance: Performance): Promise<void> => {
   const testPath = getPerfDir();
-  const fileTarget = path.join(testPath, `${testName}.json`);
+  const fileTarget = path.join(testPath, 'output.json');
 
   await fs.promises.mkdir(testPath, { recursive: true });
   expect(fs.existsSync(testPath)).to.be.true;

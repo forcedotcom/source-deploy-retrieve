@@ -1,19 +1,15 @@
 # runs some very-large-repo tests (for windows filesystem limits) and commits perf results for comparison
 name: perf-scale-nuts
 on:
-  workflow_call:
-    inputs:
-      os:
-        type: string
-        required: false
-        default: 'ubuntu-latest'
-    secrets:
-      SVC_CLI_BOT_GITHUB_TOKEN:
-        required: true
+  push:
+    branches-ignore: [main]
+  workflow_dispatch:
+
+concurrency: perf-scale-nuts
 
 jobs:
-  perf-scale-nuts:
-    runs-on: ${{ inputs.os }}
+  perf-scale-nuts-linux:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -32,7 +28,6 @@ jobs:
 
       # Run `github-action-benchmark` action
       - name: Store benchmark result
-        if: runner.os == 'Linux'
         uses: benchmark-action/github-action-benchmark@5bbce78ef18edf5b96cb2d23e8d240b485f9dc4a
         with:
           # What benchmark tool the output.txt came from
@@ -46,9 +41,26 @@ jobs:
           auto-push: true
           github-token: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
 
-          # Run `github-action-benchmark` action
+  perf-scale-nuts-win:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+      - run: npm install -g sfdx-cli --omit=dev
+      - run: yarn install
+      - run: yarn build
+      - run: yarn test:nuts:scale
+
+      - name: Download previous benchmark data
+        uses: actions/cache@v3
+        with:
+          path: ./cache
+          key: ${{ runner.os }}-benchmark
+
+      # Run `github-action-benchmark` action
       - name: Store benchmark result
-        if: runner.os == 'Windows'
         uses: benchmark-action/github-action-benchmark@5bbce78ef18edf5b96cb2d23e8d240b485f9dc4a
         with:
           # What benchmark tool the output.txt came from

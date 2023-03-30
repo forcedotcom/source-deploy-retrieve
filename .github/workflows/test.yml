@@ -3,15 +3,13 @@
 name: tests
 on:
   push:
-    paths-ignore:
-      - 'test/nuts/perfResults/**'
     branches-ignore: [main]
   workflow_dispatch:
 
 jobs:
-  # yarn-lockfile-check:
-  #   uses: salesforcecli/github-workflows/.github/workflows/lockFileCheck.yml@main
-  # # Since the Windows unit tests take much longer, we run the linux unit tests first and then run the windows unit tests in parallel with NUTs
+  yarn-lockfile-check:
+    uses: salesforcecli/github-workflows/.github/workflows/lockFileCheck.yml@main
+  # Since the Windows unit tests take much longer, we run the linux unit tests first and then run the windows unit tests in parallel with NUTs
   # linux-unit-tests:
   #   needs: yarn-lockfile-check
   #   uses: salesforcecli/github-workflows/.github/workflows/unitTestsLinux.yml@main
@@ -28,20 +26,6 @@ jobs:
   #     fail-fast: false
   #   with:
   #     os: ${{ matrix.os }}
-
-  perf-scale-nuts:
-    # because this is pushing to gh-pages, we don't want collisiosn to make us lose data
-    concurrency: perf-scale-nuts
-    uses: ./.github/workflows/perfScaleNut.yml
-    # needs: linux-unit-tests
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-      fail-fast: false
-    with:
-      os: ${{ matrix.os }}
-    secrets:
-      SVC_CLI_BOT_GITHUB_TOKEN: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
 
   # run a quick nut on each OS to populate the cache
   # the following is highly duplicative to allow linux to start all the nuts without waiting for windows primer

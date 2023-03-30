@@ -13,7 +13,6 @@ on:
 
 jobs:
   perf-scale-nuts:
-    concurrency: perf-scale-nuts
     runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v3
@@ -38,7 +37,7 @@ jobs:
           # What benchmark tool the output.txt came from
           tool: 'customSmallerIsBetter'
           # Where the output from the benchmark tool is stored
-          output-file-path: test/nuts/perfResults/linux/output.json
+          output-file-path: test/nuts/perfResults/output.json
           # Workflow will fail when an alert happens
           # fail-on-alert: true
           # Push and deploy GitHub pages branch automatically

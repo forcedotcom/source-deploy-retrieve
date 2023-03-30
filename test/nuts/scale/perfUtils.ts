@@ -10,7 +10,7 @@ import { Performance } from 'node:perf_hooks';
 import * as fs from 'graceful-fs';
 import { expect } from 'chai';
 
-const getPerfDir = (): string => path.join('test', 'nuts', 'perfResults', `${os.platform()}`);
+const getPerfDir = (): string => path.join('test', 'nuts', 'perfResults');
 
 export const recordPerf = async (testName: string, performance: Performance): Promise<void> => {
   const testPath = getPerfDir();

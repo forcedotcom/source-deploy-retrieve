@@ -38,8 +38,6 @@ jobs:
           tool: 'customSmallerIsBetter'
           # Where the output from the benchmark tool is stored
           output-file-path: test/nuts/perfResults/linux/lotsOfClassesOneDir.json
-          # Where the previous data file is stored
-          external-data-json-path: ./cache/benchmark-data.json
           # Workflow will fail when an alert happens
           # fail-on-alert: true
           # Push and deploy GitHub pages branch automatically

@@ -42,7 +42,7 @@ jobs:
           github-token: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
 
   perf-scale-nuts-win:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3

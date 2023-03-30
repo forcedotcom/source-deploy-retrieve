@@ -17,7 +17,7 @@ jobs:
           cache: yarn
       # - run: npm install -g sfdx-cli --omit=dev
       - run: yarn install
-      - run: yarn build
+      # - run: yarn build
       - run: yarn test:nuts:scale
 
       - name: Download previous benchmark data
@@ -50,7 +50,7 @@ jobs:
           cache: yarn
       # - run: npm install -g sfdx-cli --omit=dev
       - run: yarn install
-      - run: yarn build
+      # - run: yarn build
       - run: yarn test:nuts:scale
 
       - name: Download previous benchmark data

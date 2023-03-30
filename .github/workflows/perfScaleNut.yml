@@ -21,14 +21,13 @@ jobs:
           cache: yarn
       - run: npm install -g sfdx-cli --omit=dev
       - run: yarn install
-      # - run: yarn build
       - run: yarn test:nuts:scale
 
-      - name: Download previous benchmark data
-        uses: actions/cache@v3
-        with:
-          path: ./cache
-          key: ${{ runner.os }}-benchmark
+      # - name: Download previous benchmark data
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ./cache
+      #     key: ${{ runner.os }}-benchmark
 
       # Run `github-action-benchmark` action
       - name: Store benchmark result

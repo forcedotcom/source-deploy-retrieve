@@ -13,7 +13,7 @@ import { expect } from 'chai';
 export const recordPerf = async (testName: string, performance: Performance): Promise<void> => {
   const fileTarget = path.join(__dirname, 'output.json');
   // eslint-disable-next-line no-console
-  console.log(`writing file to ${fileTarget}`);
+  console.log(`writing ${testName} file to ${fileTarget}`);
   const existing = fs.existsSync(fileTarget) ? JSON.parse(await fs.promises.readFile(fileTarget, 'utf8')) : [];
   await fs.promises.writeFile(
     fileTarget,

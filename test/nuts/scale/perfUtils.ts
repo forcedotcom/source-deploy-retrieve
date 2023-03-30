@@ -23,9 +23,11 @@ export const recordPerf = async (testName: string, performance: Performance): Pr
     fileTarget,
     JSON.stringify(
       existing.concat(
-        // TS doesn't seem to know about the node16 perf hooks :(
-        // @ts-ignore
-        performance.getEntriesByType('measure').map((m) => ({ name: m.name, value: m.duration, unit: 'ms' }))
+        performance
+          // TS doesn't seem to know about the node16 perf hooks :(
+          // @ts-ignore
+          .getEntriesByType('measure')
+          .map((m) => ({ name: `${testName}-${m.name as string}-${os.platform()}`, value: m.duration, unit: 'ms' }))
       ),
       null,
       2

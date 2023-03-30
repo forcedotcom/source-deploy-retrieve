@@ -20,15 +20,24 @@ jobs:
       - run: yarn install
       - run: yarn build
       - run: yarn test:nuts:scale
-      - uses: salesforcecli/github-workflows/.github/actions/gitConfig@main
-        if: runner.os != 'Windows' && github.actor != 'dependabot[bot]'
-      - run: git status
-        if: runner.os != 'Windows' && github.actor != 'dependabot[bot]'
-      - run: git add test/nuts/perfResults
-        if: runner.os != 'Windows' && github.actor != 'dependabot[bot]'
-      - run: 'git commit -m "test: record perf" --no-verify'
-        # git on windows won't recognize the changes in the results files
-        # when that is working, remove these if statements so we can track perf
-        if: runner.os != 'Windows' && github.actor != 'dependabot[bot]'
-      - run: git push --no-verify
-        if: runner.os != 'Windows' && github.actor != 'dependabot[bot]'
+
+      - name: Download previous benchmark data
+        uses: actions/cache@v1
+        with:
+          path: ./cache
+          key: ${{ runner.os }}-benchmark
+
+      # Run `github-action-benchmark` action
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          # What benchmark tool the output.txt came from
+          tool: 'customSmallerIsBetter'
+          # Where the output from the benchmark tool is stored
+          output-file-path: test/nuts/perfResults/linux/lotsOfClassesOneDir.json
+          # Where the previous data file is stored
+          external-data-json-path: ./cache/benchmark-data.json
+          # Workflow will fail when an alert happens
+          # fail-on-alert: true
+          # Push and deploy GitHub pages branch automatically
+          auto-push: true

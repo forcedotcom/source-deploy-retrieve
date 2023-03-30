@@ -33,7 +33,7 @@ jobs:
           # What benchmark tool the output.txt came from
           tool: 'customSmallerIsBetter'
           # Where the output from the benchmark tool is stored
-          output-file-path: output.json
+          output-file-path: test/nuts/scale/output.json
           comment-on-alert: true
           fail-on-alert: true
           summary-always: true
@@ -66,7 +66,7 @@ jobs:
           # What benchmark tool the output.txt came from
           tool: 'customSmallerIsBetter'
           # Where the output from the benchmark tool is stored
-          output-file-path: output.json
+          output-file-path: test/nuts/scale/output.json
           comment-on-alert: true
           fail-on-alert: true
           summary-always: true

@@ -27,7 +27,8 @@ npm install @salesforce/source-deploy-retrieve
 ```
 
 See [HANDBOOK.md](./HANDBOOK.md) for usage and examples.
-See [API Docs] <https://forcedotcom.github.io/source-deploy-retrieve/>
+
+See [API Docs](https://forcedotcom.github.io/source-deploy-retrieve)
 
 ## Contributing
 

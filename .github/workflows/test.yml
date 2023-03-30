@@ -30,6 +30,8 @@ jobs:
   #     os: ${{ matrix.os }}
 
   perf-scale-nuts:
+    # because this is pushing to gh-pages, we don't want collisiosn to make us lose data
+    concurrency: perf-scale-nuts
     uses: ./.github/workflows/perfScaleNut.yml
     # needs: linux-unit-tests
     strategy:

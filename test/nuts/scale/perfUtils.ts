@@ -16,6 +16,8 @@ export const recordPerf = async (testName: string, performance: Performance): Pr
   const testPath = getPerfDir();
   const fileTarget = path.join(testPath, 'output.json');
 
+  // eslint-disable-next-line no-console
+  console.log(`writing file to ${fileTarget}`);
   await fs.promises.mkdir(testPath, { recursive: true });
   expect(fs.existsSync(testPath)).to.be.true;
   const existing = fs.existsSync(fileTarget) ? JSON.parse(await fs.promises.readFile(fileTarget, 'utf8')) : [];

@@ -32,12 +32,29 @@ jobs:
 
       # Run `github-action-benchmark` action
       - name: Store benchmark result
+        if: runner.os == 'Linux'
         uses: benchmark-action/github-action-benchmark@5bbce78ef18edf5b96cb2d23e8d240b485f9dc4a
         with:
           # What benchmark tool the output.txt came from
           tool: 'customSmallerIsBetter'
           # Where the output from the benchmark tool is stored
           output-file-path: test/nuts/perfResults/output.json
+          comment-on-alert: true
+          fail-on-alert: true
+          summary-always: true
+          # Push and deploy GitHub pages branch automatically
+          auto-push: true
+          github-token: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
+
+          # Run `github-action-benchmark` action
+      - name: Store benchmark result
+        if: runner.os == 'Windows'
+        uses: benchmark-action/github-action-benchmark@5bbce78ef18edf5b96cb2d23e8d240b485f9dc4a
+        with:
+          # What benchmark tool the output.txt came from
+          tool: 'customSmallerIsBetter'
+          # Where the output from the benchmark tool is stored
+          output-file-path: test\nuts\perfResults\output.json
           comment-on-alert: true
           fail-on-alert: true
           summary-always: true

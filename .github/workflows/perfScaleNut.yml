@@ -38,8 +38,9 @@ jobs:
           tool: 'customSmallerIsBetter'
           # Where the output from the benchmark tool is stored
           output-file-path: test/nuts/perfResults/output.json
-          # Workflow will fail when an alert happens
-          # fail-on-alert: true
+          comment-on-alert: true
+          fail-on-alert: true
+          summary-always: true
           # Push and deploy GitHub pages branch automatically
           auto-push: true
           github-token: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}

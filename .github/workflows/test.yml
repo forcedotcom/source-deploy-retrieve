@@ -58,6 +58,7 @@ jobs:
       postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
       preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
       os: ${{matrix.os}}
+      useCache: false
     secrets: inherit
 
   xNuts-pdr:
@@ -90,4 +91,5 @@ jobs:
       postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
       preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
       os: ${{matrix.os}}
+      useCache: false
     secrets: inherit

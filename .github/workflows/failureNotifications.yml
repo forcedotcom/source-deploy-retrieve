@@ -5,6 +5,7 @@ on:
     workflows:
       - version, tag and github release
       - publish
+      - supported metadata update
     types:
       - completed
 

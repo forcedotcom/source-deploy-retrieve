@@ -211,7 +211,7 @@ describe('MetadataResolver', () => {
         const mdResolver = new MetadataResolver(undefined, treeContainer);
         const parentComponent = new SourceComponent(
           {
-            name: join('site', 'foo'),
+            name: 'site/foo',
             type: registry.types.digitalexperiencebundle,
             xml: parent_meta_file,
           },
@@ -219,7 +219,7 @@ describe('MetadataResolver', () => {
         );
         const expectedComponent = new SourceComponent(
           {
-            name: join('sfdc_cms__view', 'home'),
+            name: 'sfdc_cms__view/home',
             type: registry.types.digitalexperiencebundle.children.types.digitalexperience,
             content: dirname(path),
             parent: parentComponent,

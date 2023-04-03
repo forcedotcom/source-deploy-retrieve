@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 /* eslint  @typescript-eslint/unified-signatures:0 */
-import { X2jOptions, XMLParser } from 'fast-xml-parser';
+import { XMLBuilder } from 'fast-xml-parser';
 import { AuthInfo, Connection, Logger, Messages, SfError } from '@salesforce/core';
 import {
   MetadataApiDeploy,
@@ -453,15 +453,15 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @param forDestructiveChanges Whether to build a manifest for destructive changes.
    */
   public async getPackageXml(indentation = 4, destructiveType?: DestructiveChangesType): Promise<string> {
-    const j2x = new XMLParser({
+    const j2x = new XMLBuilder({
       format: true,
       indentBy: new Array(indentation + 1).join(' '),
       ignoreAttributes: false,
-    } as Partial<X2jOptions>);
+    });
     const toParse = await this.getObject(destructiveType);
     toParse.Package[XML_NS_KEY] = XML_NS_URL;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    return XML_DECL.concat(j2x.parse(String(toParse)));
+    return XML_DECL.concat(j2x.build(toParse));
   }
 
   /**

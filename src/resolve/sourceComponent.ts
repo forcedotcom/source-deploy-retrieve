@@ -6,7 +6,7 @@
  */
 import { basename, join, dirname } from 'path';
 import { Messages, SfError } from '@salesforce/core';
-import { XMLParser, X2jOptions, XMLValidator } from 'fast-xml-parser';
+import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
 import { replacementIterations } from '../../src/convert/replacements';
@@ -290,8 +290,9 @@ export class SourceComponent implements MetadataComponent {
       parseTagValue: false,
       parseAttributeValue: false,
       cdataPropName: '__cdata',
+      ignoreDeclaration: true,
       numberParseOptions: { leadingZeros: false, hex: false },
-    } as Partial<X2jOptions>);
+    });
     const parsed = js2Xml.parse(String(contents)) as T;
     const [firstElement] = Object.keys(parsed);
     if (firstElement === this.type.name) {

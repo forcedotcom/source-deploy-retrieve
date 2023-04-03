@@ -287,8 +287,10 @@ export class SourceComponent implements MetadataComponent {
     // include tag attributes and don't parse text node as number
     const js2Xml = new XMLParser({
       ignoreAttributes: false,
-      parseNodeValue: false,
-      cdataTagName: '__cdata',
+      parseTagValue: false,
+      parseAttributeValue: false,
+      cdataPropName: '__cdata',
+      numberParseOptions: { leadingZeros: false, hex: false },
     } as Partial<X2jOptions>);
     const parsed = js2Xml.parse(String(contents)) as T;
     const [firstElement] = Object.keys(parsed);

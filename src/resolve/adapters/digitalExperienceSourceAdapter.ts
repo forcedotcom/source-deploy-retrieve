@@ -58,7 +58,17 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     if (this.isBundleType()) {
       return;
     }
-    return dirname(path);
+    let pathToContent = dirname(path);
+    const parts = pathToContent.split(sep);
+    // Handle mobile or tablet variants.Eg- digitalExperiences/site/lwr11/sfdc_cms__view/home/mobile/mobile
+    // Go back one level in that case
+    if (parts.length > 1 && (parts[parts.length - 1] === 'mobile' || parts[parts.length - 1] === 'tablet')) {
+      parts.pop();
+      pathToContent = parts.join(sep);
+    }
+    // eslint-disable-next-line no-console
+    // console.log(pathToContent+' pathToContent'+'\n');
+    return pathToContent;
   }
 
   protected populate(trigger: string, component?: SourceComponent): SourceComponent {

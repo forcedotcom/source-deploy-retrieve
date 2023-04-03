@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1680536220881,
+  "lastUpdate": 1680549685782,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -167,6 +167,80 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 7103,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kenneth.lewis@salesforce.com",
+            "name": "Kenneth Lewis",
+            "username": "klewis-sfdc"
+          },
+          "committer": {
+            "email": "kenneth.lewis@salesforce.com",
+            "name": "Kenneth Lewis",
+            "username": "klewis-sfdc"
+          },
+          "distinct": true,
+          "id": "ac63a7de6601042fa0de1d3d749504dd681ec800",
+          "message": "Merge branch 'main' into ken/W-12747980--upgrade-fast-xml-parser",
+          "timestamp": "2023-04-03T12:18:11-07:00",
+          "tree_id": "bfc958ac1e3f518fb292c72ad0f7b8a345726001",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/ac63a7de6601042fa0de1d3d749504dd681ec800"
+        },
+        "date": 1680549682980,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 204,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 1143,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 413,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 7890,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 7068,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 4016,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 702,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 10440,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 9375,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 6998,
             "unit": "ms"
           }
         ]

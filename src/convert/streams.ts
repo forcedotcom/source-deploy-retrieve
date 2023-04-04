@@ -261,15 +261,15 @@ export class JsToXml extends Readable {
   }
 
   public _read(): void {
-    const js2Xml = new XMLBuilder({
+    const builder = new XMLBuilder({
       format: true,
       indentBy: '    ',
       ignoreAttributes: false,
       cdataPropName: '__cdata',
     });
 
-    const parsed = String(js2Xml.build(this.xmlObject));
-    const xmlContent = XML_DECL.concat(parsed);
+    const builtXml = String(builder.build(this.xmlObject));
+    const xmlContent = XML_DECL.concat(builtXml);
     this.push(xmlContent);
     this.push(null);
   }

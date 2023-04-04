@@ -54,12 +54,13 @@ export class ManifestResolver {
 
     const file = await this.tree.readFile(manifestPath);
 
-    const js2Xml = new XMLParser({
+    const parser = new XMLParser({
       stopNodes: ['version'],
       // In order to preserve the .0 on the apiVersion skip parsing it
       numberParseOptions: { leadingZeros: false, hex: false, skipLike: /\.0$/ },
     });
-    const parsedManifest: ParsedPackageManifest = (js2Xml.parse(file) as { Package: ParsedPackageManifest }).Package;
+    const parsedManifest: ParsedPackageManifest = (parser.parse(String(file)) as { Package: ParsedPackageManifest })
+      .Package;
     const packageTypeMembers = ensureArray(parsedManifest.types);
     const apiVersion = parsedManifest.version;
 

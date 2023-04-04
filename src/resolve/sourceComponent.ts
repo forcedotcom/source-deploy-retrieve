@@ -285,7 +285,7 @@ export class SourceComponent implements MetadataComponent {
 
   private parse<T = JsonMap>(contents: string): T {
     // include tag attributes and don't parse text node as number
-    const js2Xml = new XMLParser({
+    const parser = new XMLParser({
       ignoreAttributes: false,
       parseTagValue: false,
       parseAttributeValue: false,
@@ -293,7 +293,7 @@ export class SourceComponent implements MetadataComponent {
       ignoreDeclaration: true,
       numberParseOptions: { leadingZeros: false, hex: false },
     });
-    const parsed = js2Xml.parse(String(contents)) as T;
+    const parsed = parser.parse(String(contents)) as T;
     const [firstElement] = Object.keys(parsed);
     if (firstElement === this.type.name) {
       return parsed;

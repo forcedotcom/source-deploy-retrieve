@@ -453,7 +453,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @param forDestructiveChanges Whether to build a manifest for destructive changes.
    */
   public async getPackageXml(indentation = 4, destructiveType?: DestructiveChangesType): Promise<string> {
-    const j2x = new XMLBuilder({
+    const builder = new XMLBuilder({
       format: true,
       indentBy: new Array(indentation + 1).join(' '),
       ignoreAttributes: false,
@@ -461,7 +461,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const toParse = await this.getObject(destructiveType);
     toParse.Package[XML_NS_KEY] = XML_NS_URL;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    return XML_DECL.concat(j2x.build(toParse));
+    return XML_DECL.concat(builder.build(toParse));
   }
 
   /**

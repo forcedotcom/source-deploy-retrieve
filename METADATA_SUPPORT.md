@@ -562,6 +562,8 @@ v58 introduces the following new types.  Here's their current level of support
 |DataWeaveResource|✅||
 |DynamicFormsSettings|✅||
 |ExperiencePropertyTypeBundle|✅||
+|ExternalDocStorageConfig|❌|Not supported, but support could be added|
+|ExtlClntAppGlobalOauthSettings|✅||
 |FundraisingConfig|❌|Not supported, but support could be added|
 |LicensingSettings|✅||
 |OmniChannelPricingSettings|✅||

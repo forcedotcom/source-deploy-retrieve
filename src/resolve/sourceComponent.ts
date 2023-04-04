@@ -29,7 +29,7 @@ const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
 ]);
 
 export type ComponentProperties = {
-  name?: string;
+  name: string;
   type: MetadataType;
   xml?: string;
   content?: string;
@@ -41,7 +41,7 @@ export type ComponentProperties = {
  * Representation of a MetadataComponent in a file tree.
  */
 export class SourceComponent implements MetadataComponent {
-  public readonly name?: string;
+  public readonly name: string;
   public readonly type: MetadataType;
   public readonly xml?: string;
   public readonly parent?: SourceComponent;
@@ -373,19 +373,22 @@ export class SourceComponent implements MetadataComponent {
       if (uniqueIdElement) {
         const xmlPathToChildren = `${this.type.name}.${childType.xmlElementName}`;
         const elements = ensureArray(get(parsed, xmlPathToChildren, []));
-        const childComponents = elements.map(
-          (element) =>
-            new SourceComponent(
-              {
-                name: getString(element, uniqueIdElement) ?? undefined,
-                type: childType,
-                xml: this.xml,
-                parent: this,
-              },
-              this.treeContainer,
-              this.forceIgnore
-            )
-        );
+        const childComponents = elements.map((element) => {
+          const name = getString(element, uniqueIdElement);
+          if (!name) {
+            throw new SfError(`Missing ${uniqueIdElement} on ${childType.name} in ${this.xml}`);
+          }
+          return new SourceComponent(
+            {
+              name,
+              type: childType,
+              xml: this.xml,
+              parent: this,
+            },
+            this.treeContainer,
+            this.forceIgnore
+          );
+        });
         children.push(...childComponents);
       }
     }

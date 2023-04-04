@@ -63,7 +63,7 @@ export class ComponentSetBuilder {
         logger.debug(`Building ComponentSet from sourcepath: ${sourcepath.join(', ')}`);
         const fsPaths: string[] = sourcepath.map((filepath) => {
           if (!fs.existsSync(filepath)) {
-            throw messages.createError('error_path_not_found', [filepath]);
+            throw new SfError(messages.getMessage('error_path_not_found', [filepath]));
           }
           return path.resolve(filepath);
         });
@@ -80,7 +80,7 @@ export class ComponentSetBuilder {
       if (manifest) {
         logger.debug(`Building ComponentSet from manifest: ${manifest.manifestPath}`);
         if (!fs.existsSync(manifest.manifestPath)) {
-          throw messages.createError('error_path_not_found', [manifest.manifestPath]);
+          throw new SfError(messages.getMessage('error_path_not_found', [manifest.manifestPath]));
         }
         const directoryPaths = manifest.directoryPaths;
         logger.debug(`Searching in packageDir: ${directoryPaths.join(', ')} for matching metadata`);

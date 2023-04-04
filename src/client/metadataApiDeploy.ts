@@ -455,7 +455,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
     // read the zip into a buffer
     if (this.options.zipPath) {
       if (!fs.existsSync(this.options.zipPath)) {
-        throw messages.createError('error_path_not_found', [this.options.zipPath]);
+        throw new SfError(messages.getMessage('error_path_not_found', [this.options.zipPath]));
       }
       // does encoding matter for zip files? I don't know
       return fs.promises.readFile(this.options.zipPath);

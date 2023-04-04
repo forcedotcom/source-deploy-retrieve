@@ -6,6 +6,7 @@
  */
 import { basename, dirname, sep } from 'path';
 import { Messages, SfError } from '@salesforce/core';
+import { ensureString } from '@salesforce/ts-types';
 import { MetadataXml, SourceAdapter } from '../types';
 import { parseMetadataXml, parseNestedFullName } from '../../utils';
 import { ForceIgnore } from '../forceIgnore';
@@ -160,13 +161,16 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   }
 
   // Given a MetadataXml, build a fullName from the path and type.
-  private calculateName(rootMetadata: MetadataXml): string | undefined {
+  private calculateName(rootMetadata: MetadataXml): string {
     const { directoryName, inFolder, folderType, folderContentType } = this.type;
 
     // inFolder types (report, dashboard, emailTemplate, document) and their folder
     // container types (reportFolder, dashboardFolder, emailFolder, documentFolder)
     if (inFolder || folderContentType) {
-      return parseNestedFullName(rootMetadata.path, directoryName);
+      return ensureString(
+        parseNestedFullName(rootMetadata.path, directoryName),
+        `Unable to calculate fullName from component at path: ${rootMetadata.path} (${this.type.name})`
+      );
     }
 
     // not using folders?  then name is fullname

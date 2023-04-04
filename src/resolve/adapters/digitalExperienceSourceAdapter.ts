@@ -103,7 +103,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
 
   private getBundleName(contentPath: string): string {
     const bundlePath = this.getBundleMetadataXmlPath(contentPath);
-    return `${parentName(dirname(bundlePath))}${sep}${parentName(bundlePath)}`;
+    return `${parentName(dirname(bundlePath))}/${parentName(bundlePath)}`;
   }
 
   private getBundleMetadataXmlPath(path: string): string {
@@ -129,5 +129,4 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
  * @param contentPath This hook is called only after trimPathToContent() is called. so this will always be a folder structure
  * @returns name of type/apiName format
  */
-const calculateNameFromPath = (contentPath: string): string =>
-  `${parentName(contentPath)}${sep}${baseName(contentPath)}`;
+const calculateNameFromPath = (contentPath: string): string => `${parentName(contentPath)}/${baseName(contentPath)}`;

@@ -3,12 +3,11 @@
 You can view the existing metadata coverage by release using [METADATA_SUPPORT.md](../METADATA_SUPPORT.md)
 
 - It can be updated by running
+- The script runs daily via github actions. You only need to run it if you want to see the results of your registry changes.
 
 ```shell
 yarn update-supported-metadata
 ```
-
-- The above script is run automatically on `git push` updating the [METADATA_SUPPORT.md](../METADATA_SUPPORT.md) file and committing the changes.
 
 Got questions?
 

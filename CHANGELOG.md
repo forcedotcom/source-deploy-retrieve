@@ -1,3 +1,21 @@
+## [7.14.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.1...7.14.2) (2023-03-29)
+
+### Bug Fixes
+
+- use always forward slash for DEB and DE fullName ([1511388](https://github.com/forcedotcom/source-deploy-retrieve/commit/1511388bd7953d849a269021f822acb4a69d07d7))
+
+## [7.14.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.0...7.14.1) (2023-03-28)
+
+### Bug Fixes
+
+- more types support wildcard and names ([#894](https://github.com/forcedotcom/source-deploy-retrieve/issues/894)) ([c62939c](https://github.com/forcedotcom/source-deploy-retrieve/commit/c62939c21e5ce2d8183961f95e385538821b8068))
+
+# [7.14.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.13.2...7.14.0) (2023-03-27)
+
+### Features
+
+- explicitly set projectDir on componentSet to prevent use of cwd ([55753d5](https://github.com/forcedotcom/source-deploy-retrieve/commit/55753d597f05ea2734f55bcd4839a35f2fffcb86))
+
 ## [7.13.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.13.1...7.13.2) (2023-03-27)
 
 ### Reverts

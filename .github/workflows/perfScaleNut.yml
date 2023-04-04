@@ -1,16 +1,21 @@
 # runs some very-large-repo tests (for windows filesystem limits) and commits perf results for comparison
 name: perf-scale-nuts
 on:
-  workflow_call:
-    inputs:
-      os:
-        type: string
-        required: false
-        default: 'ubuntu-latest'
+  push:
+    branches-ignore: [main]
+  workflow_dispatch:
+
+# linux will finish 10 min ahead of windows, but prevent other branches/commits from hitting simultaneously
+# since we're pushing git commits and there would be conflicts
+concurrency: perf-scale-nuts
 
 jobs:
   perf-scale-nuts:
-    runs-on: ${{ inputs.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -18,17 +23,20 @@ jobs:
           cache: yarn
       - run: npm install -g sfdx-cli --omit=dev
       - run: yarn install
-      - run: yarn build
       - run: yarn test:nuts:scale
-      - uses: salesforcecli/github-workflows/.github/actions/gitConfig@main
-        if: runner.os != 'Windows' && github.actor != 'dependabot[bot]'
-      - run: git status
-        if: runner.os != 'Windows' && github.actor != 'dependabot[bot]'
-      - run: git add test/nuts/perfResults
-        if: runner.os != 'Windows' && github.actor != 'dependabot[bot]'
-      - run: 'git commit -m "test: record perf" --no-verify'
-        # git on windows won't recognize the changes in the results files
-        # when that is working, remove these if statements so we can track perf
-        if: runner.os != 'Windows' && github.actor != 'dependabot[bot]'
-      - run: git push --no-verify
-        if: runner.os != 'Windows' && github.actor != 'dependabot[bot]'
+
+      # Run `github-action-benchmark` action
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@5bbce78ef18edf5b96cb2d23e8d240b485f9dc4a
+        with:
+          tool: 'customSmallerIsBetter'
+          output-file-path: test/nuts/scale/output.json
+          comment-on-alert: true
+          fail-on-alert: true
+          # Push and deploy GitHub pages branch automatically
+          # this has a bug where it creates duplicate commits when summary-always and aut-push are both true
+          # summary-always: true
+          comment-always: true
+          benchmark-data-dir-path: perf-${{ runner.os}}
+          auto-push: true
+          github-token: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}

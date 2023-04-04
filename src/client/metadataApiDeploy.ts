@@ -224,10 +224,10 @@ export interface MetadataApiDeployOptions extends MetadataTransferOptions {
   mdapiPath?: string;
 }
 
-export class MetadataApiDeploy extends MetadataTransfer<
+export class MetadataApiDeploy<O extends MetadataApiDeployOptions = MetadataApiDeployOptions> extends MetadataTransfer<
   MetadataApiDeployStatus,
   DeployResult,
-  MetadataApiDeployOptions
+  O
 > {
   public static readonly DEFAULT_OPTIONS: Partial<MetadataApiDeployOptions> = {
     apiOptions: {
@@ -238,17 +238,20 @@ export class MetadataApiDeploy extends MetadataTransfer<
       rest: false,
     },
   };
-  private options: MetadataApiDeployOptions;
+  private options: O;
   private replacements: Map<string, Set<string>> = new Map();
   private orgId?: string;
   // Keep track of rest deploys separately since Connection.deploy() removes it
   // from the apiOptions and we need it for telemetry.
   private isRestDeploy: boolean;
 
-  public constructor(options: MetadataApiDeployOptions) {
+  public constructor(options: O) {
     super(options);
-    options.apiOptions = { ...MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions, ...options.apiOptions };
-    this.options = Object.assign({}, options);
+    const apiOptions = { ...MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions, ...options.apiOptions };
+    this.options = {
+      ...options,
+      apiOptions,
+    };
     this.isRestDeploy = !!options.apiOptions?.rest;
   }
 

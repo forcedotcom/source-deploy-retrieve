@@ -300,9 +300,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * the set to create an operation.
    *
    * @param options
-   * @returns Metadata API deploy operation
+   * @returns Metadata API deploy operation, guaranteed to have an id since this method calls `start`
    */
-  public async deploy(options: DeploySetOptions): Promise<MetadataApiDeploy> {
+  public async deploy<O extends DeploySetOptions>(options: O): Promise<MetadataApiDeploy<O & { id: string }>> {
     const toDeploy = Array.from(this.getSourceComponents());
 
     if (toDeploy.length === 0) {
@@ -327,8 +327,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     });
 
     const mdapiDeploy = new MetadataApiDeploy(operationOptions);
-    await mdapiDeploy.start();
-    return mdapiDeploy;
+    const asyncResult = await mdapiDeploy.start();
+    return new MetadataApiDeploy<O & { id: string }>({ ...operationOptions, id: asyncResult.id });
   }
 
   /**

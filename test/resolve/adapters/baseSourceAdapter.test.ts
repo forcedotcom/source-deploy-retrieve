@@ -8,7 +8,14 @@ import { join } from 'path';
 import { Messages, SfError } from '@salesforce/core';
 
 import { assert, expect } from 'chai';
-import { decomposed, matchingContentFile, mixedContentSingleFile, nestedTypes, xmlInFolder } from '../../mock';
+import {
+  decomposed,
+  matchingContentFile,
+  mixedContentSingleFile,
+  nestedTypes,
+  xmlInFolder,
+  document,
+} from '../../mock';
 import { BaseSourceAdapter, DefaultSourceAdapter } from '../../../src/resolve/adapters';
 import { META_XML_SUFFIX } from '../../../src/common';
 import { RegistryTestUtil } from '../registryTestUtil';
@@ -90,11 +97,11 @@ describe('BaseSourceAdapter', () => {
     expect(adapter.getComponent(component.xml)).to.deep.equal(component);
   });
 
-  it('should resolve a nested folder component in metadata format', () => {
+  it('should resolve a nested folder component in metadata format (document)', () => {
     const component = new SourceComponent({
-      name: undefined,
+      name: `subfolder/${document.COMPONENT_FOLDER_NAME}`,
       type: registry.types.document,
-      xml: join(xmlInFolder.TYPE_DIRECTORY, 'subfolder', `${xmlInFolder.COMPONENT_FOLDER_NAME}${META_XML_SUFFIX}`),
+      xml: join(document.DOCUMENTS_DIRECTORY, 'subfolder', `${document.COMPONENT_FOLDER_NAME}${META_XML_SUFFIX}`),
       parentType: registry.types.documentfolder,
     });
     assert(component.xml);

@@ -91,7 +91,7 @@ export function parseMetadataXml(fsPath: string): Optional<MetadataXml> {
  * @param directoryName - name of directory to use as a parsing index
  * @returns the FullName
  */
-export function parseNestedFullName(fsPath: string, directoryName: string): Optional<string> {
+export function parseNestedFullName(fsPath: string, directoryName: string): string | undefined {
   const pathSplits = fsPath.split(sep);
   // Exit if the directoryName is not included in the file path.
   if (!pathSplits.includes(directoryName)) {

@@ -959,7 +959,7 @@ describe('ComponentSet', () => {
       });
       const operationArgs = { components: set, usernameOrConnection: connection };
       const expectedOperation = new MetadataApiDeploy(operationArgs);
-      const startStub = $$.SANDBOX.stub(expectedOperation, 'start').resolves({ id: '0AF123456789012' });
+      const startStub = $$.SANDBOX.stub(expectedOperation, 'start').resolves();
       const constructorStub = $$.SANDBOX.stub()
         .withArgs(operationArgs)
         .callsFake(() => expectedOperation);
@@ -982,7 +982,7 @@ describe('ComponentSet', () => {
       set.apiVersion = apiVersion;
       const operationArgs = { components: set, usernameOrConnection: connection, apiVersion };
       const expectedOperation = new MetadataApiDeploy(operationArgs);
-      const startStub = $$.SANDBOX.stub(expectedOperation, 'start').resolves({ id: '0AF123456789012' });
+      const startStub = $$.SANDBOX.stub(expectedOperation, 'start').resolves();
       const constructorStub = $$.SANDBOX.stub()
         .withArgs(operationArgs)
         .callsFake(() => expectedOperation);

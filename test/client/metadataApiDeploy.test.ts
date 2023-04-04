@@ -929,11 +929,11 @@ describe('MetadataApiDeploy', () => {
         components: new ComponentSet(),
       });
       // @ts-ignore testing private property
-      const mdOptsApiOptions = mdApiDeploy.options.apiOptions;
-      expect(mdOptsApiOptions).to.have.property('rollbackOnError', true);
-      expect(mdOptsApiOptions).to.have.property('ignoreWarnings', false);
-      expect(mdOptsApiOptions).to.have.property('checkOnly', false);
-      expect(mdOptsApiOptions).to.have.property('singlePackage', true);
+      const mdOpts = mdApiDeploy.options;
+      expect(mdOpts.apiOptions).to.have.property('rollbackOnError', true);
+      expect(mdOpts.apiOptions).to.have.property('ignoreWarnings', false);
+      expect(mdOpts.apiOptions).to.have.property('checkOnly', false);
+      expect(mdOpts.apiOptions).to.have.property('singlePackage', true);
     });
   });
 });

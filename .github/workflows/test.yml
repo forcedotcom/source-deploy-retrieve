@@ -92,5 +92,4 @@ jobs:
       preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
       os: ${{matrix.os}}
       useCache: false
-      branch: sm/sdr-strict-type-requirements
     secrets: inherit

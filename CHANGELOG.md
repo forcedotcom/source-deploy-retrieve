@@ -1,3 +1,12 @@
+## [7.14.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.2...7.14.3) (2023-04-04)
+
+
+### Bug Fixes
+
+* bump dev-scripts to avoid deleting perf data ([#927](https://github.com/forcedotcom/source-deploy-retrieve/issues/927)) ([90359a7](https://github.com/forcedotcom/source-deploy-retrieve/commit/90359a74203bda6cc264648dbbc2c43189c84a35))
+
+
+
 ## [7.14.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.1...7.14.2) (2023-03-29)
 
 

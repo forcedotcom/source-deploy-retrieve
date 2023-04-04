@@ -16,7 +16,7 @@ import {
   MIXED_CONTENT_DIRECTORY_CONTENT_PATH,
   MIXED_CONTENT_DIRECTORY_VIRTUAL_FS_NO_XML,
 } from '../../mock/type-constants/staticresourceConstant';
-import { mixedContentDirectory, mixedContentSingleFile } from '../../mock';
+import { mixedContentDirectory, mixedContentSingleFile, experiencePropertyTypeContentSingleFile } from '../../mock';
 
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_expected_source_files']);
 
@@ -74,6 +74,30 @@ describe('MixedContentSourceAdapter', () => {
     it('Should return expected SourceComponent when given a source path', () => {
       assert(component.content);
       const result = adapter.getComponent(component.content);
+      expect(result).to.deep.equal(component);
+    });
+  });
+
+  describe('Experience Property Type File Content', () => {
+    const component = experiencePropertyTypeContentSingleFile.COMPONENT;
+    const adapter = new MixedContentSourceAdapter(
+      registry.types.experiencepropertytypebundle,
+      registryAccess,
+      undefined,
+      component.tree
+    );
+
+    it('Should return expected SourceComponent when given a schema.json path', () => {
+      assert(component.xml);
+      const result = adapter.getComponent(component.xml);
+
+      expect(result).to.deep.equal(component);
+    });
+
+    it('Should return expected SourceComponent when given a source path', () => {
+      assert(component.content);
+      const result = adapter.getComponent(component.content);
+
       expect(result).to.deep.equal(component);
     });
   });

@@ -63,7 +63,7 @@ export class MetadataConverter {
       const conversionPipeline = pipeline(
         Readable.from(components),
         !targetFormatIsSource && (process.env.SF_APPLY_REPLACEMENTS_ON_CONVERT === 'true' || output.type === 'zip')
-          ? (await getReplacementMarkingStream()) ?? new PassThrough({ objectMode: true })
+          ? (await getReplacementMarkingStream(cs.projectDirectory)) ?? new PassThrough({ objectMode: true })
           : new PassThrough({ objectMode: true }),
         new ComponentConverter(targetFormat, this.registry, mergeSet, defaultDirectory),
         writer

@@ -842,13 +842,13 @@ describe('ComponentSet', () => {
     });
 
     it('should overwrite a singular name with wildcard when supportsWildcardAndName=false', async () => {
-      const type = registry.types.apexclass;
+      const type = registry.types.role;
       const set = new ComponentSet();
       set.add(new SourceComponent({ name: 'myType', type }));
       set.add(new SourceComponent({ name: '*', type }));
       set.add(new SourceComponent({ name: 'myType2', type }));
       set.add(new SourceComponent({ name: 'myType', type }));
-      expect((await set.getObject()).Package.types).to.deep.equal([{ members: ['*'], name: 'ApexClass' }]);
+      expect((await set.getObject()).Package.types).to.deep.equal([{ members: ['*'], name: 'Role' }]);
     });
 
     it('should exclude child components that are not addressable as defined in the registry', async () => {
@@ -1261,8 +1261,9 @@ describe('ComponentSet', () => {
         type: digitalExperienceBundle.DEB_TYPE.id,
       };
 
-      const debMetaFilePath = join('path', 'to', 'digitalExperiences', 'site', 'foo', 'foo.digitalExperience-meta.xml');
-      expect(set.getComponentFilenamesByNameAndType(deb)).to.have.members([debMetaFilePath]);
+      expect(set.getComponentFilenamesByNameAndType(deb)).to.have.members([
+        digitalExperienceBundle.BUNDLE_META_FILE_PATH,
+      ]);
     });
 
     it('should correctly return DE (DigitalExperience) component file paths', () => {
@@ -1276,12 +1277,10 @@ describe('ComponentSet', () => {
         type: digitalExperienceBundle.DE_TYPE.id,
       };
 
-      const deViewHomePath = join('path', 'to', 'digitalExperiences', 'site', 'foo', 'sfdc_cms__view', 'home');
-
       expect(set.getComponentFilenamesByNameAndType(de)).to.have.members([
-        join(deViewHomePath, 'content.json'),
-        join(deViewHomePath, 'fr.json'),
-        join(deViewHomePath, '_meta.json'),
+        join(digitalExperienceBundle.HOME_VIEW_PATH, 'content.json'),
+        join(digitalExperienceBundle.HOME_VIEW_PATH, 'fr.json'),
+        join(digitalExperienceBundle.HOME_VIEW_PATH, '_meta.json'),
       ]);
     });
   });

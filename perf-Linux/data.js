@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1680616296194,
+  "lastUpdate": 1680616723354,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -503,6 +503,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 23378,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "santhosh.e@salesforce.com",
+            "name": "Santhosh Emmadoju",
+            "username": "skesanthosh"
+          },
+          "committer": {
+            "email": "santhosh.e@salesforce.com",
+            "name": "Santhosh Emmadoju",
+            "username": "skesanthosh"
+          },
+          "distinct": true,
+          "id": "df845e07d7b3ac44600fbe227ed71e7111589d05",
+          "message": "fix: assign json metafile path to xml property for digitalexperience",
+          "timestamp": "2023-04-04T19:13:59+05:30",
+          "tree_id": "3130e7ce523cc67b9e542773ae969537d6b4adca",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/df845e07d7b3ac44600fbe227ed71e7111589d05"
+        },
+        "date": 1680616719248,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 415,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 9534,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 6356,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 7246,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 783,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 13293,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 10511,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 9146,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 1302,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 20960,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 17722,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 16127,
             "unit": "ms"
           }
         ]

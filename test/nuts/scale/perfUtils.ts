@@ -10,32 +10,28 @@ import { Performance } from 'node:perf_hooks';
 import * as fs from 'graceful-fs';
 import { expect } from 'chai';
 
-const getPerfDir = (): string =>
-  path
-    .join('test', 'nuts', 'perfResults', `${os.arch()}-${os.platform()}-${os.cpus().length}x${os.cpus()[0].model}`)
-    .replace(/@/g, '')
-    .replace(/\(R\)/g, '')
-    .replace(/\(TM\)/g, '')
-    .replace(/\./g, '-')
-    .replace(/\s/g, '-')
-    .replace(/-{2,}/g, '-');
-
 export const recordPerf = async (testName: string, performance: Performance): Promise<void> => {
-  const testPath = getPerfDir();
-  const fileTarget = path.join(testPath, `${testName}.json`);
-
-  await fs.promises.mkdir(testPath, { recursive: true });
-  expect(fs.existsSync(testPath)).to.be.true;
+  const fileTarget = path.join(__dirname, 'output.json');
+  const existing = fs.existsSync(fileTarget) ? JSON.parse(await fs.promises.readFile(fileTarget, 'utf8')) : [];
   await fs.promises.writeFile(
     fileTarget,
     JSON.stringify(
-      // TS doesn't seem to know about the node16 perf hooks :(
-      // @ts-ignore
-      performance.getEntriesByType('measure').map((m) => ({ name: m.name, duration: m.duration })),
+      existing.concat(
+        performance
+          // @ts-expect-error TS doesn't seem to know about the node16 perf hooks :(
+          .getEntriesByType('measure')
+          .map((m) => ({
+            name: `${testName}-${m.name as string}-${os.platform()}`,
+            value: Math.trunc(m.duration as number),
+            unit: 'ms',
+          }))
+      ),
       null,
       2
     )
   );
   performance.clearMarks();
+  // @ts-expect-error TS doesn't seem to know about the node16 perf hooks :(
+  performance.clearMeasures();
   expect(fs.existsSync(fileTarget)).to.be.true;
 };

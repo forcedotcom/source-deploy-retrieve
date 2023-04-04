@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "7.14.2-beta.1",
+  "version": "7.14.3-beta.0",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/src/index.js",
   "author": "Salesforce",

@@ -11,6 +11,7 @@ import * as document from './documentConstants';
 import * as mixedContentDirectory from './staticresourceConstant';
 import * as mixedContentInFolder from './documentFolderConstant';
 import * as mixedContentSingleFile from './staticresourceComponentConstant';
+import * as experiencePropertyTypeContentSingleFile from './experiencePropertyTypeBundleConstants';
 import * as decomposed from './customObjectConstant';
 import * as decomposedtoplevel from './customObjectTranslationConstant';
 import * as nonDecomposed from './customlabelsConstant';
@@ -32,4 +33,5 @@ export {
   nestedTypes,
   lwcBundle,
   digitalExperienceBundle,
+  experiencePropertyTypeContentSingleFile,
 };

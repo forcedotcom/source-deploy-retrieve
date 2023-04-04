@@ -81,6 +81,7 @@
             "ignoreParentName": true,
             "uniqueIdElement": "fullName",
             "directoryName": "labels",
+            "supportsWildcardAndName": true,
             "suffix": "labels"
           }
         },
@@ -199,6 +200,7 @@
       "directoryName": "pages",
       "inFolder": false,
       "strictDirectoryName": false,
+      "supportsWildcardAndName": true,
       "strategies": {
         "adapter": "matchingContentFile"
       }
@@ -297,6 +299,7 @@
       "suffix": "globalValueSet",
       "directoryName": "globalValueSets",
       "inFolder": false,
+      "supportsWildcardAndName": true,
       "strictDirectoryName": false
     },
     "globalpicklist": {
@@ -440,6 +443,7 @@
       "suffix": "reportType",
       "directoryName": "reportTypes",
       "inFolder": false,
+      "supportsWildcardAndName": true,
       "strictDirectoryName": false
     },
     "report": {
@@ -488,6 +492,7 @@
       "suffix": "layout",
       "directoryName": "layouts",
       "inFolder": false,
+      "supportsWildcardAndName": true,
       "strictDirectoryName": false
     },
     "document": {
@@ -517,6 +522,7 @@
       "suffix": "letter",
       "directoryName": "letterhead",
       "inFolder": false,
+      "supportsWildcardAndName": true,
       "strictDirectoryName": false
     },
     "emailtemplate": {
@@ -537,6 +543,7 @@
       "suffix": "quickAction",
       "directoryName": "quickActions",
       "inFolder": false,
+      "supportsWildcardAndName": true,
       "strictDirectoryName": false
     },
     "form": {
@@ -576,6 +583,7 @@
       "suffix": "tab",
       "directoryName": "tabs",
       "inFolder": false,
+      "supportsWildcardAndName": true,
       "strictDirectoryName": false
     },
     "customapplicationcomponent": {
@@ -591,6 +599,7 @@
       "suffix": "app",
       "directoryName": "applications",
       "inFolder": false,
+      "supportsWildcardAndName": true,
       "strictDirectoryName": false
     },
     "portal": {
@@ -644,6 +653,7 @@
       "suffix": "flow",
       "directoryName": "flows",
       "inFolder": false,
+      "supportsWildcardAndName": true,
       "strictDirectoryName": false
     },
     "flowdefinition": {
@@ -652,6 +662,7 @@
       "suffix": "flowDefinition",
       "directoryName": "flowDefinitions",
       "inFolder": false,
+      "supportsWildcardAndName": true,
       "strictDirectoryName": false
     },
     "flowtest": {
@@ -690,6 +701,7 @@
       "directoryName": "workflows",
       "inFolder": false,
       "strictDirectoryName": false,
+      "supportsWildcardAndName": true,
       "children": {
         "types": {
           "workflowfieldupdate": {
@@ -886,6 +898,7 @@
       "directoryName": "objectTranslations",
       "inFolder": false,
       "strictDirectoryName": true,
+      "supportsWildcardAndName": true,
       "children": {
         "types": {
           "customfieldtranslation": {
@@ -924,6 +937,7 @@
       "suffix": "globalValueSetTranslation",
       "directoryName": "globalValueSetTranslations",
       "inFolder": false,
+      "supportsWildcardAndName": true,
       "strictDirectoryName": false
     },
     "standardvaluesettranslation": {
@@ -941,6 +955,7 @@
       "directoryName": "classes",
       "inFolder": false,
       "strictDirectoryName": false,
+      "supportsWildcardAndName": true,
       "strategies": {
         "adapter": "matchingContentFile"
       }
@@ -994,6 +1009,7 @@
       "suffix": "md",
       "directoryName": "customMetadata",
       "inFolder": false,
+      "supportsWildcardAndName": true,
       "strictDirectoryName": false
     },
     "profilepasswordpolicy": {
@@ -1026,6 +1042,7 @@
       "suffix": "remoteSite",
       "directoryName": "remoteSiteSettings",
       "inFolder": false,
+      "supportsWildcardAndName": true,
       "strictDirectoryName": false
     },
     "csptrustedsite": {
@@ -1262,6 +1279,7 @@
       "directoryName": "sharingRules",
       "inFolder": false,
       "strictDirectoryName": false,
+      "supportsWildcardAndName": true,
       "children": {
         "types": {
           "sharingownerrule": {
@@ -1417,6 +1435,14 @@
       "name": "ExtlClntAppMobileSettings",
       "suffix": "ecaMob",
       "directoryName": "extlClntAppMobileSettings",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "extlclntappglobaloauthsettings": {
+      "id": "extlclntappglobaloauthsettings",
+      "name": "ExtlClntAppGlobalOauthSettings",
+      "suffix": "ecaGlblOauth",
+      "directoryName": "extlClntAppGlobalOauthSets",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -1715,6 +1741,7 @@
       "suffix": "pathAssistant",
       "directoryName": "pathAssistants",
       "inFolder": false,
+      "supportsWildcardAndName": true,
       "strictDirectoryName": false
     },
     "leadconvertsettings": {
@@ -3388,6 +3415,7 @@
       "inFolder": false,
       "strictDirectoryName": true,
       "supportsPartialDelete": true,
+      "metaFileSuffix": "schema.json",
       "strategies": {
         "adapter": "bundle"
       }
@@ -3546,6 +3574,7 @@
     "ecaMobPlcy": "extlclntappmobileconfigurablepolicies",
     "ecaMob": "extlclntappmobilesettings",
     "ecaOauth": "extlclntappoauthsettings",
+    "ecaGlblOauth": "extlclntappglobaloauthsettings",
     "appMenu": "appmenu",
     "delegateGroup": "delegategroup",
     "network": "network",

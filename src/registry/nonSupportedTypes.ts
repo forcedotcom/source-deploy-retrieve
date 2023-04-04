@@ -72,6 +72,12 @@ export const metadataTypes = [
   // spun up with CUSTOMERDATAPLATFORM, not in describe
   'ExternalDataTranField',
   'ExternalDataTranObject',
+
+  // spun up with HIGHSCALEORDERS, not in describe
+  'RegisteredExternalService',
+
+  // B2CLOYALTYMANAGEMENTPLUS, not in describe
+  'ServiceProcess',
 ];
 
 export const hasUnsupportedFeatures = (type: CoverageObjectType): boolean => {

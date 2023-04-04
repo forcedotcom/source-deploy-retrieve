@@ -1,3 +1,59 @@
+## [7.14.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.1...7.14.2) (2023-03-29)
+
+### Bug Fixes
+
+- use always forward slash for DEB and DE fullName ([1511388](https://github.com/forcedotcom/source-deploy-retrieve/commit/1511388bd7953d849a269021f822acb4a69d07d7))
+
+## [7.14.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.0...7.14.1) (2023-03-28)
+
+### Bug Fixes
+
+- more types support wildcard and names ([#894](https://github.com/forcedotcom/source-deploy-retrieve/issues/894)) ([c62939c](https://github.com/forcedotcom/source-deploy-retrieve/commit/c62939c21e5ce2d8183961f95e385538821b8068))
+
+# [7.14.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.13.2...7.14.0) (2023-03-27)
+
+### Features
+
+- explicitly set projectDir on componentSet to prevent use of cwd ([55753d5](https://github.com/forcedotcom/source-deploy-retrieve/commit/55753d597f05ea2734f55bcd4839a35f2fffcb86))
+
+## [7.13.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.13.1...7.13.2) (2023-03-27)
+
+### Reverts
+
+- Revert "chore: auto-update metadata coverage in METADATA_SUPPORT.md" ([a43597e](https://github.com/forcedotcom/source-deploy-retrieve/commit/a43597e048752faa13efe2d6aff516eed97fd53d))
+
+## [7.13.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.13.0...7.13.1) (2023-03-26)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 3.34.1 to 3.34.4 ([#898](https://github.com/forcedotcom/source-deploy-retrieve/issues/898)) ([d5c1b83](https://github.com/forcedotcom/source-deploy-retrieve/commit/d5c1b837ff56a3ff0305141e3742f42b882d2e60))
+
+# [7.13.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.12.2...7.13.0) (2023-03-22)
+
+### Features
+
+- enable cLI support for ExtlClntAppGlobalOauthSettings ([#893](https://github.com/forcedotcom/source-deploy-retrieve/issues/893)) ([eee8773](https://github.com/forcedotcom/source-deploy-retrieve/commit/eee8773a1fd6bb654349a3ec7483e14b12546bfc))
+
+## [7.12.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.12.1...7.12.2) (2023-03-20)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 3.33.6 to 3.34.1 ([#886](https://github.com/forcedotcom/source-deploy-retrieve/issues/886)) ([c9ed7c4](https://github.com/forcedotcom/source-deploy-retrieve/commit/c9ed7c4a6ea7074292396e2c9df269b911826db2))
+
+## [7.12.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.12.0...7.12.1) (2023-03-19)
+
+### Bug Fixes
+
+- **deps:** bump graceful-fs from 4.2.10 to 4.2.11 ([#888](https://github.com/forcedotcom/source-deploy-retrieve/issues/888)) ([ba1943d](https://github.com/forcedotcom/source-deploy-retrieve/commit/ba1943d74e60c6a6d0f440b92bbb0aa91cfb70b5))
+
+# [7.12.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.11.3...7.12.0) (2023-03-13)
+
+### Features
+
+- Pr/875 ([#885](https://github.com/forcedotcom/source-deploy-retrieve/issues/885)) ([411d011](https://github.com/forcedotcom/source-deploy-retrieve/commit/411d0111a0a5e7d932f885e3d772f8044f794ede))
+
+## [7.11.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.11.2...7.11.3) (2023-03-07)
+
 ## [7.11.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.11.1...7.11.2) (2023-03-04)
 
 ### Bug Fixes

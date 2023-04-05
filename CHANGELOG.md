@@ -1,3 +1,30 @@
+## [7.14.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.4...7.14.5) (2023-04-05)
+
+
+### Bug Fixes
+
+* get correct file paths for a DigitalExperience component ([#925](https://github.com/forcedotcom/source-deploy-retrieve/issues/925)) ([6ba8b87](https://github.com/forcedotcom/source-deploy-retrieve/commit/6ba8b878d7dff7ca316e719cc7cf28bc707b7653))
+
+
+
+## [7.14.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.3...7.14.4) (2023-04-04)
+
+
+### Bug Fixes
+
+* bump dev-scripts to avoid deleting perf data ([ddfa738](https://github.com/forcedotcom/source-deploy-retrieve/commit/ddfa73881a75d9cb61587ddb6950696dd805df06))
+
+
+
+## [7.14.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.2...7.14.3) (2023-04-04)
+
+
+### Bug Fixes
+
+* bump dev-scripts to avoid deleting perf data ([#927](https://github.com/forcedotcom/source-deploy-retrieve/issues/927)) ([90359a7](https://github.com/forcedotcom/source-deploy-retrieve/commit/90359a74203bda6cc264648dbbc2c43189c84a35))
+
+
+
 ## [7.14.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.1...7.14.2) (2023-03-29)
 
 

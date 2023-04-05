@@ -455,7 +455,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public async getPackageXml(indentation = 4, destructiveType?: DestructiveChangesType): Promise<string> {
     const builder = new XMLBuilder({
       format: true,
-      indentBy: new Array(indentation + 1).join(' '),
+      indentBy: ''.padEnd(indentation, ' '),
+
       ignoreAttributes: false,
     });
     const toParse = await this.getObject(destructiveType);

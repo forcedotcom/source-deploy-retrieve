@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, join } from 'path';
+import { basename, join, dirname } from 'path';
 import { Messages, SfError } from '@salesforce/core';
 import { parse, validate } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
@@ -77,6 +77,22 @@ export class SourceComponent implements MetadataComponent {
     } else {
       return `${this.parent ? `${this.parent.fullName}.` : ''}${this.name}`;
     }
+  }
+
+  /**
+   * Gets the metafile path of this component. Not all the types have an XML metafile,
+   * e.g., DigitalExperience has a JSON metafile (_meta.json).
+   *
+   * @deprecated This function should not be used, use "xml" property instead.
+   * @returns The metafile path
+   */
+  public get metaFilePath(): string {
+    if (this.type.id === 'digitalexperience') {
+      // metaFileName = metaFileSuffix for DigitalExperience.
+      return join(dirname(this.content), this.type.metaFileSuffix);
+    }
+
+    return this.xml;
   }
 
   public get tree(): TreeContainer {

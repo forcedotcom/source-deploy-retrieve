@@ -439,7 +439,7 @@ describe('MetadataConverter', () => {
         });
         fail(`should have thrown a ${expectedError.name} error`);
       } catch (e) {
-        assert(e instanceof Error);
+        assert(e instanceof SfError);
         expect(e.name).to.equal('ConversionError');
         expect(e.message).to.equal(expectedError.message);
       }

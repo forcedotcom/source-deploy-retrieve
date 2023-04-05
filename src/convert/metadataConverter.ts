@@ -77,6 +77,11 @@ export class MetadataConverter {
       if (!(err instanceof Error) && !isString(err)) {
         throw err;
       }
+      // if the error is already somewhat descriptive, use that
+      // the allows better error messages to be passed through instead of "failed convert"
+      if (err instanceof SfError && (err.name !== 'SfError' || err.actions)) {
+        throw err;
+      }
       const error = isString(err) ? new Error(err) : err;
       throw new SfError(messages.getMessage('error_failed_convert', [error.message]), 'ConversionError', [], error);
     }

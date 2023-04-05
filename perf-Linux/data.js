@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1680724663438,
+  "lastUpdate": 1680730080171,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -1091,6 +1091,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 10169,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane.mclaughlin@salesforce.com",
+            "name": "mshanemc",
+            "username": "mshanemc"
+          },
+          "committer": {
+            "email": "shane.mclaughlin@salesforce.com",
+            "name": "mshanemc",
+            "username": "mshanemc"
+          },
+          "distinct": true,
+          "id": "5690fb834be8578a1054ff8dc5cb492b90f63595",
+          "message": "fix: better error messages around static resource converstion failures",
+          "timestamp": "2023-04-05T16:24:05-05:00",
+          "tree_id": "16b21af74d1999028c106a3d92bc3799e278b045",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/5690fb834be8578a1054ff8dc5cb492b90f63595"
+        },
+        "date": 1680730077489,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 215,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 5723,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 4078,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 4105,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 452,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 8237,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 6889,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 4800,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 743,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 11429,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 10070,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 8353,
             "unit": "ms"
           }
         ]

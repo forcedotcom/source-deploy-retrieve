@@ -1,3 +1,12 @@
+## [7.14.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.4...7.14.5) (2023-04-05)
+
+
+### Bug Fixes
+
+* get correct file paths for a DigitalExperience component ([#925](https://github.com/forcedotcom/source-deploy-retrieve/issues/925)) ([6ba8b87](https://github.com/forcedotcom/source-deploy-retrieve/commit/6ba8b878d7dff7ca316e719cc7cf28bc707b7653))
+
+
+
 ## [7.14.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.3...7.14.4) (2023-04-04)
 
 

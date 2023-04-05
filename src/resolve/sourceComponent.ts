@@ -83,6 +83,7 @@ export class SourceComponent implements MetadataComponent {
    * Gets the metafile path of this component. Not all the types have an XML metafile,
    * e.g., DigitalExperience has a JSON metafile (_meta.json).
    *
+   * @deprecated This function should not be used, use "xml" property instead.
    * @returns The metafile path
    */
   public get metaFilePath(): string {

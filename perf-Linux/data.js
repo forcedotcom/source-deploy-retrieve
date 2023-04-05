@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1680706084383,
+  "lastUpdate": 1680712118166,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -839,6 +839,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 7997,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aditya.bisht@salesforce.com",
+            "name": "adityabisht31",
+            "username": "adityabisht31"
+          },
+          "committer": {
+            "email": "aditya.bisht@salesforce.com",
+            "name": "adityabisht31",
+            "username": "adityabisht31"
+          },
+          "distinct": true,
+          "id": "8bcfea8938df4de43d33b2c09ed39377d46c45a4",
+          "message": "fix: ensure retrieval and deployment of views with screen aware variants(doc review changes)\n\nSigned-off-by: adityabisht31 <aditya.bisht@salesforce.com>",
+          "timestamp": "2023-04-04T19:57:21+05:30",
+          "tree_id": "ab36c1e86788c37d4220478b736d7d6a4af2e2bf",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/8bcfea8938df4de43d33b2c09ed39377d46c45a4"
+        },
+        "date": 1680712114602,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 353,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 7402,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 6943,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 5946,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 666,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 12296,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 9422,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 7514,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 1127,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 16957,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 14870,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 12823,
             "unit": "ms"
           }
         ]

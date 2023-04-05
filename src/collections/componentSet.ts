@@ -598,7 +598,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
     const output = new Set<string>();
     componentMap.forEach((component) => {
-      [...component.walkContent(), component.content, component.metaFilePath]
+      [...component.walkContent(), component.content, component.xml]
         .filter(isString)
         .map((filename) => output.add(filename));
     });

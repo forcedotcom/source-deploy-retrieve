@@ -225,6 +225,7 @@ describe('MetadataResolver', () => {
             name: 'sfdc_cms__view/home',
             type: registry.types.digitalexperiencebundle.children.types.digitalexperience,
             content: dirname(path),
+            xml: path,
             parent: parentComponent,
             parentType: registry.types.digitalexperiencebundle,
           },

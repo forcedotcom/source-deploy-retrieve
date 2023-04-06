@@ -536,7 +536,7 @@ describe('Streams', () => {
       expectedBody += `<TestType xmlns="${XML_NS_URL}">\n`;
       expectedBody += '    <foo>bar</foo>\n';
       expectedBody += '    <value>\n';
-      expectedBody += '<![CDATA[<p>Hello</p>]]>\n';
+      expectedBody += '        <![CDATA[<p>Hello</p>]]>\n';
       expectedBody += '    </value>\n';
       expectedBody += '</TestType>\n';
 

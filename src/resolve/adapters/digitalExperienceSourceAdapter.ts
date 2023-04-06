@@ -53,7 +53,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     if (this.isBundleType()) {
       return this.getBundleMetadataXmlPath(trigger);
     }
-    // metaFileName = metaFileSuffix for DigitalExperience.
+    // metafile name = metaFileSuffix for DigitalExperience.
     if (!this.type.metaFileSuffix) {
       throw messages.createError('missingMetaFileSuffix', [this.type.name]);
     }
@@ -92,6 +92,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
         name: calculateNameFromPath(source.content),
         type: this.type,
         content: source.content,
+        xml: source.xml,
         parent,
         parentType,
       },

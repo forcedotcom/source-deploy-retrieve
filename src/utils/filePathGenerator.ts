@@ -45,7 +45,7 @@ export const filePathsFromMetadataComponent = (
   if (type.strategies?.adapter === 'digitalExperience') {
     // child MD Type, the metafile is a JSON, not an XML
     if (type.id === 'digitalexperience') {
-      // metaFileName = metaFileSuffix for DigitalExperience.
+      // metafile name = metaFileSuffix for DigitalExperience.
       return [
         join(
           packageDirWithTypeDir,

@@ -82,6 +82,7 @@ describe('DigitalExperienceSourceAdapter', () => {
         name: HOME_VIEW_NAME,
         type: registry.types.digitalexperiencebundle.children.types.digitalexperience,
         content: HOME_VIEW_PATH,
+        xml: HOME_VIEW_META_FILE,
         parent: new SourceComponent(
           {
             name: BUNDLE_NAME,

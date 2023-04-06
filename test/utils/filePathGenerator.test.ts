@@ -201,6 +201,7 @@ const testData = {
       {
         name: 'sfdc_cms__view/home', // as defined in digitalExperienceSourceAdapter.calculateNameFromPath()
         type: registryAccess.getTypeByName('DigitalExperience'),
+        xml: getFilePath('digitalExperiences/site/foo/sfdc_cms__view/home/_meta.json'),
       },
     ],
   },

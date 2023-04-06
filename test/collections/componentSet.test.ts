@@ -1267,17 +1267,16 @@ describe('ComponentSet', () => {
     });
 
     it('should correctly return DE (DigitalExperience) component file paths', () => {
-      const set = new ComponentSet(
-        [digitalExperienceBundle.DE_CONTENT_COMPONENT, digitalExperienceBundle.DE_FR_VARIENT_COMPONENT],
-        registryAccess
-      );
+      const set = new ComponentSet([digitalExperienceBundle.DE_COMPONENT], registryAccess);
       assert(typeof digitalExperienceBundle.DE_TYPE?.id === 'string');
+
       const de: MetadataMember = {
         fullName: digitalExperienceBundle.HOME_VIEW_FULL_NAME,
         type: digitalExperienceBundle.DE_TYPE.id,
       };
 
       expect(set.getComponentFilenamesByNameAndType(de)).to.have.members([
+        digitalExperienceBundle.HOME_VIEW_PATH,
         join(digitalExperienceBundle.HOME_VIEW_PATH, 'content.json'),
         join(digitalExperienceBundle.HOME_VIEW_PATH, 'fr.json'),
         join(digitalExperienceBundle.HOME_VIEW_PATH, '_meta.json'),

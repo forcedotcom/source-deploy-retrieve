@@ -36,7 +36,7 @@ import {
 import { LazyCollection } from './lazyCollection';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_source_to_deploy']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
@@ -598,7 +598,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
     const output = new Set<string>();
     componentMap.forEach((component) => {
-      [...component.walkContent(), component.content, component.metaFilePath]
+      [...component.walkContent(), component.content, component.xml]
         .filter(isString)
         .map((filename) => output.add(filename));
     });

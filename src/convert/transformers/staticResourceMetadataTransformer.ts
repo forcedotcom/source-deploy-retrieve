@@ -8,7 +8,7 @@ import { basename, dirname, isAbsolute, join, relative } from 'path';
 import { Readable } from 'stream';
 import { create as createArchive, Archiver } from 'archiver';
 import { getExtension } from 'mime';
-import { Open } from 'unzipper';
+import { CentralDirectory, Open } from 'unzipper';
 import { JsonMap } from '@salesforce/ts-types';
 import { createWriteStream } from 'graceful-fs';
 import { Messages, SfError } from '@salesforce/core';
@@ -98,7 +98,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       // we'll still defer writing the resource-meta.xml file by pushing it onto the writeInfos
       await Promise.all(
         (
-          await Open.buffer(await component.tree.readFile(content))
+          await openZipFile(component, content)
         ).files
           .filter((f) => f.type === 'File')
           .map(async (f) => {
@@ -212,3 +212,14 @@ const componentIsExpandedArchive = async (component: SourceComponent): Promise<b
   }
   return false;
 };
+
+/** wrapper around the Open command so we can emit a nicer error for bad zip files  */
+async function openZipFile(component: SourceComponent, content: string): Promise<CentralDirectory> {
+  try {
+    return await Open.buffer(await component.tree.readFile(content));
+  } catch (e) {
+    throw new SfError(`Unable to open zip file ${content} for ${component.name} (${component.xml})`, 'BadZipFile', [
+      'Check that your file really is a valid zip archive',
+    ]);
+  }
+}

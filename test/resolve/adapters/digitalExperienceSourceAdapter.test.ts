@@ -20,9 +20,14 @@ describe('DigitalExperienceSourceAdapter', () => {
 
   const HOME_VIEW_NAME = 'sfdc_cms__view/home';
   const HOME_VIEW_PATH = join(BUNDLE_PATH, 'sfdc_cms__view', 'home');
+  const HOME_VIEW_MOBILE_PATH = join(HOME_VIEW_PATH, 'mobile');
+  const HOME_VIEW_TABLET_PATH = join(HOME_VIEW_PATH, 'tablet');
+
   const HOME_VIEW_CONTENT_FILE = join(HOME_VIEW_PATH, 'content.json');
   const HOME_VIEW_META_FILE = join(HOME_VIEW_PATH, DE_METAFILE);
   const HOME_VIEW_FRENCH_VARIANT_FILE = join(HOME_VIEW_PATH, 'fr.json');
+  const HOME_VIEW_MOBILE_VARIANT_FILE = join(HOME_VIEW_MOBILE_PATH, 'mobile.json');
+  const HOME_VIEW_TABLET_VARIANT_FILE = join(HOME_VIEW_TABLET_PATH, 'tablet.json');
 
   const registryAccess = new RegistryAccess();
   const forceIgnore = new ForceIgnore();
@@ -31,6 +36,8 @@ describe('DigitalExperienceSourceAdapter', () => {
     HOME_VIEW_CONTENT_FILE,
     HOME_VIEW_META_FILE,
     HOME_VIEW_FRENCH_VARIANT_FILE,
+    HOME_VIEW_MOBILE_VARIANT_FILE,
+    HOME_VIEW_TABLET_VARIANT_FILE,
   ]);
 
   const bundleAdapter = new DigitalExperienceSourceAdapter(
@@ -67,6 +74,11 @@ describe('DigitalExperienceSourceAdapter', () => {
       expect(bundleAdapter.getComponent(HOME_VIEW_FRENCH_VARIANT_FILE)).to.deep.equal(component);
     });
 
+    it('should return a SourceComponent for mobile and tablet variant json', () => {
+      expect(bundleAdapter.getComponent(HOME_VIEW_MOBILE_VARIANT_FILE)).to.deep.equal(component);
+      expect(bundleAdapter.getComponent(HOME_VIEW_TABLET_VARIANT_FILE)).to.deep.equal(component);
+    });
+
     it('should return a SourceComponent when a bundle path is provided', () => {
       expect(bundleAdapter.getComponent(HOME_VIEW_PATH)).to.deep.equal(component);
       expect(bundleAdapter.getComponent(BUNDLE_PATH)).to.deep.equal(component);
@@ -99,6 +111,11 @@ describe('DigitalExperienceSourceAdapter', () => {
       expect(digitalExperienceAdapter.getComponent(HOME_VIEW_CONTENT_FILE)).to.deep.equal(component);
       expect(digitalExperienceAdapter.getComponent(HOME_VIEW_META_FILE)).to.deep.equal(component);
       expect(digitalExperienceAdapter.getComponent(HOME_VIEW_FRENCH_VARIANT_FILE)).to.deep.equal(component);
+    });
+
+    it('should return a SourceComponent for mobile and tablet variant json', () => {
+      expect(digitalExperienceAdapter.getComponent(HOME_VIEW_MOBILE_VARIANT_FILE)).to.deep.equal(component);
+      expect(digitalExperienceAdapter.getComponent(HOME_VIEW_TABLET_VARIANT_FILE)).to.deep.equal(component);
     });
   });
 });

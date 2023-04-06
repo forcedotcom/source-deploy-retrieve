@@ -34,6 +34,13 @@ import { BundleSourceAdapter } from './bundleSourceAdapter';
  * |   |   |  ├── _meta.json
  * |   |   |  ├── content.json
  * |   |   |  ├── ar.json
+ * |   |   ├── view3/
+ * |   |   |  ├── _meta.json
+ * |   |   |  ├── content.json
+ * |   |   |  ├── mobile/
+ * |   |   |  |   ├──mobile.json
+ * |   |   |  ├── tablet/
+ * |   |   |  |   ├──tablet.json
  * |   ├── foos.digitalExperience-meta.xml
  * content/
  * ├── bars/
@@ -58,7 +65,20 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     if (this.isBundleType()) {
       return;
     }
-    return dirname(path);
+    const pathToContent = dirname(path);
+    const parts = pathToContent.split(sep);
+    /* Handle mobile or tablet variants.Eg- digitalExperiences/site/lwr11/sfdc_cms__view/home/mobile/mobile.json
+     Go back to one level in that case
+     Bundle hierarchy baseType/spaceApiName/contentType/contentApiName/variantFolders/file */
+    const digitalExperiencesIndex = parts.indexOf('digitalExperiences');
+    if (digitalExperiencesIndex > -1) {
+      const depth = parts.length - digitalExperiencesIndex - 1;
+      if (depth === digitalExperienceBundleWithVariantsDepth) {
+        parts.pop();
+        return parts.join(sep);
+      }
+    }
+    return pathToContent;
   }
 
   protected populate(trigger: string, component?: SourceComponent): SourceComponent {
@@ -131,3 +151,6 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
  * @returns name of type/apiName format
  */
 const calculateNameFromPath = (contentPath: string): string => `${parentName(contentPath)}/${baseName(contentPath)}`;
+
+// Bundle hierarchy baseType/spaceApiName/contentType/contentApiName/variantFolders/file
+const digitalExperienceBundleWithVariantsDepth = 5;

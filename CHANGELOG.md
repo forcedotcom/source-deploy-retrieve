@@ -1,3 +1,12 @@
+# [7.15.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.6...7.15.0) (2023-04-06)
+
+
+### Features
+
+* upgrade fast-xml-parser ([#926](https://github.com/forcedotcom/source-deploy-retrieve/issues/926)) ([92423e6](https://github.com/forcedotcom/source-deploy-retrieve/commit/92423e699d620d7dad1dfc817261c4d24ae5b936))
+
+
+
 ## [7.14.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.5...7.14.6) (2023-04-06)
 
 

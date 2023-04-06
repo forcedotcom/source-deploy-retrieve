@@ -1,3 +1,12 @@
+## [7.14.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.5...7.14.6) (2023-04-06)
+
+
+### Bug Fixes
+
+* ensure retrieval and deployment of views with screen aware variants ([#930](https://github.com/forcedotcom/source-deploy-retrieve/issues/930)) ([ae6bb43](https://github.com/forcedotcom/source-deploy-retrieve/commit/ae6bb4352246319d556fc1832afd053db6299791))
+
+
+
 ## [7.14.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.4...7.14.5) (2023-04-05)
 
 

@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1680732779136,
+  "lastUpdate": 1680768042634,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -1427,6 +1427,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 25390,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aditya.bisht@salesforce.com",
+            "name": "adityabisht31",
+            "username": "adityabisht31"
+          },
+          "committer": {
+            "email": "aditya.bisht@salesforce.com",
+            "name": "adityabisht31",
+            "username": "adityabisht31"
+          },
+          "distinct": true,
+          "id": "72d0a20c106d5e211572d980214c0256dea4165a",
+          "message": "fix: ensure retrieval and deployment of views with screen aware variants\n\nSigned-off-by: adityabisht31 <aditya.bisht@salesforce.com>",
+          "timestamp": "2023-04-06T12:43:41+05:30",
+          "tree_id": "49dd3ba45683a80c03ff231c21c172c1ac00e1b9",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/72d0a20c106d5e211572d980214c0256dea4165a"
+        },
+        "date": 1680768029159,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 678,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 10192,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 6455,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 10421,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 1332,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 14811,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 9513,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 13278,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 2491,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 24843,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 17011,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 23855,
             "unit": "ms"
           }
         ]

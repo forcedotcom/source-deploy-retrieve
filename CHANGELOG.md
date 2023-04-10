@@ -1,3 +1,21 @@
+## [7.15.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.15.0...7.15.1) (2023-04-09)
+
+### Bug Fixes
+
+- **deps:** bump fast-xml-parser from 4.1.3 to 4.1.4 ([#933](https://github.com/forcedotcom/source-deploy-retrieve/issues/933)) ([e7da9ba](https://github.com/forcedotcom/source-deploy-retrieve/commit/e7da9ba38cbf37d44be10ef396bc2645b77d1a9b))
+
+# [7.15.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.6...7.15.0) (2023-04-06)
+
+### Features
+
+- upgrade fast-xml-parser ([#926](https://github.com/forcedotcom/source-deploy-retrieve/issues/926)) ([92423e6](https://github.com/forcedotcom/source-deploy-retrieve/commit/92423e699d620d7dad1dfc817261c4d24ae5b936))
+
+## [7.14.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.5...7.14.6) (2023-04-06)
+
+### Bug Fixes
+
+- ensure retrieval and deployment of views with screen aware variants ([#930](https://github.com/forcedotcom/source-deploy-retrieve/issues/930)) ([ae6bb43](https://github.com/forcedotcom/source-deploy-retrieve/commit/ae6bb4352246319d556fc1832afd053db6299791))
+
 ## [7.14.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/7.14.4...7.14.5) (2023-04-05)
 
 ### Bug Fixes

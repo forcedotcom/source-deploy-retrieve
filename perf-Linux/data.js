@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1681030176876,
+  "lastUpdate": 1681155389323,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -2015,6 +2015,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 7271,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane.mclaughlin@salesforce.com",
+            "name": "Shane McLaughlin",
+            "username": "mshanemc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5960aaca2f70317054a0081592bc286c9bb472aa",
+          "message": "Sm/strict null 5 tests (#904)\n\n* test: type-safe tests\r\n\r\n* chore: auto-update metadata coverage in METADATA_SUPPORT.md\r\n\r\n* chore: nullish\r\n\r\n* test: record perf\r\n\r\n* refactor: more ripples from required name on SC\r\n\r\n---------\r\n\r\nCo-authored-by: svc-cli-bot <svc_cli_bot@salesforce.com>",
+          "timestamp": "2023-04-10T13:33:41-06:00",
+          "tree_id": "fa82b61d668eada3c7ef65e6c3d795a48e35aa93",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/5960aaca2f70317054a0081592bc286c9bb472aa"
+        },
+        "date": 1681155386566,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 222,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 5801,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 5163,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 3873,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 437,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 8945,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 7078,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 4943,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 769,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 12973,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 10618,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 8631,
             "unit": "ms"
           }
         ]

@@ -4,13 +4,15 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
+/* eslint-disable complexity */
 import { join, sep } from 'path';
+import { assert } from 'chai';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { ensureArray } from '@salesforce/kit';
 import { PollingClient } from '@salesforce/core';
 import { match, SinonSpy, SinonStub } from 'sinon';
 import { AsyncResult } from 'jsforce/lib/api/metadata';
+import { ensureString } from '@salesforce/ts-types';
 import {
   ComponentSet,
   ConvertOutputConfig,
@@ -73,7 +75,7 @@ export async function stubMetadataDeploy(
   const pollingClientSpy = sandbox.spy(PollingClient, 'create');
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { rest, ...defaultOptions } = MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions;
+  const { rest, ...defaultOptions } = MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions ?? {};
   deployRestStub.withArgs(zipBuffer, options.apiOptions ?? defaultOptions).resolves(MOCK_ASYNC_RESULT);
 
   deployStub.withArgs(zipBuffer, options.apiOptions ?? defaultOptions).resolves(MOCK_ASYNC_RESULT);
@@ -87,8 +89,9 @@ export async function stubMetadataDeploy(
     .resolves(MOCK_RECENTLY_VALIDATED_ID_SOAP);
 
   const convertStub = sandbox.stub(MetadataConverter.prototype, 'convert');
-  convertStub.withArgs(options.components, 'metadata', { type: 'zip' }).resolves({ zipBuffer });
-
+  if (options.components) {
+    convertStub.withArgs(options.components, 'metadata', { type: 'zip' }).resolves({ zipBuffer });
+  }
   const defaultStatus = { success: false, done: false, status: RequestStatus.Pending };
   const status: Partial<MetadataApiDeployStatus> = Object.assign(defaultStatus, MOCK_ASYNC_RESULT);
   if (options.componentSuccesses) {
@@ -170,6 +173,7 @@ export async function stubMetadataRetrieve(
   options: RetrieveStubOptions
 ): Promise<RetrieveOperationLifecycle> {
   const { toRetrieve: retrievedComponents, packageOptions: packages } = options;
+  assert(retrievedComponents, 'toRetrieve is required');
   const connection = await testOrg.getConnection();
 
   const retrieveStub = $$.SANDBOX.stub(connection.metadata, 'retrieve').resolves(MOCK_ASYNC_RESULT);
@@ -185,7 +189,7 @@ export async function stubMetadataRetrieve(
 
   const successes = options.successes?.getSourceComponents().toArray();
 
-  if (successes?.length > 0) {
+  if (successes?.length) {
     retrieveStatus.success = true;
     retrieveStatus.status = RequestStatus.Succeeded;
     const fileProperties: Array<Partial<FileProperties>> = [];
@@ -240,11 +244,11 @@ export async function stubMetadataRetrieve(
   // @ts-ignore force returning project's RetrieveResult type
   checkStatusStub.withArgs(MOCK_ASYNC_RESULT.id).resolves(retrieveStatus);
 
-  const source = retrievedComponents.getSourceComponents().toArray();
+  const source = retrievedComponents?.getSourceComponents().toArray() ?? [];
 
   const outputConfigs: ConvertOutputConfig[] = [];
   let converted: SourceComponent[] = [];
-  let pkgs: PackageOption[];
+  let pkgs: PackageOption[] | undefined;
 
   if (packages) {
     if (typeof packages[0] === 'string') {
@@ -267,7 +271,7 @@ export async function stubMetadataRetrieve(
       outputConfigs.push({
         type: 'merge',
         mergeWith: retrievedComponents.getSourceComponents(),
-        defaultDirectory: pkg.outputDir,
+        defaultDirectory: ensureString(pkg.outputDir ?? pkg.name),
         forceIgnoredPaths: retrievedComponents.forceIgnoredPaths ?? new Set<string>(),
       })
     );
@@ -276,32 +280,30 @@ export async function stubMetadataRetrieve(
       type: 'directory',
       outputDirectory: MOCK_DEFAULT_OUTPUT,
     });
-    if (options.successes) {
-      for (const component of successes) {
-        const props: ComponentProperties = {
-          name: component.fullName,
-          type: component.type,
-        };
-        if (component.xml) {
-          props.xml = join(MOCK_DEFAULT_OUTPUT, component.xml);
-        }
-        if (component.content) {
-          props.content = join(MOCK_DEFAULT_OUTPUT, component.content);
-        }
-        converted.push(new SourceComponent(props));
+    for (const component of successes ?? []) {
+      const props: ComponentProperties = {
+        name: component.fullName,
+        type: component.type,
+      };
+      if (component.xml) {
+        props.xml = join(MOCK_DEFAULT_OUTPUT, component.xml);
       }
+      if (component.content) {
+        props.content = join(MOCK_DEFAULT_OUTPUT, component.content);
+      }
+      converted.push(new SourceComponent(props));
     }
     pkgs?.forEach((pkg) =>
       outputConfigs.push({
         type: 'directory',
-        outputDirectory: pkg.outputDir,
+        outputDirectory: ensureString(pkg.outputDir),
       })
     );
   }
   const convertStub = $$.SANDBOX.stub(MetadataConverter.prototype, 'convert');
   outputConfigs.forEach((outputCfg) => {
     const notForceIgnoredConverted = converted.filter(
-      (component) => !retrievedComponents.forceIgnoredPaths ?? [].includes(component.xml)
+      (component) => component.xml && !(retrievedComponents.forceIgnoredPaths ?? new Set([])).has(component.xml)
     );
     convertStub.withArgs(match.any, 'source', outputCfg).resolves({ converted: notForceIgnoredConverted });
   });

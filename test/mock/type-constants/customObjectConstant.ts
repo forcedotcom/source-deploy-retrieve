@@ -5,12 +5,16 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
+import { assert } from 'chai';
 import { baseName } from '../../../src/utils';
 import { registry, SourceComponent, VirtualDirectory } from '../../../src';
 import { XML_NS_URL } from '../../../src/common';
 
 // Constants for a decomposed type
 const type = registry.types.customobject;
+// 2 asserts to guard againt future changes to the registry (TS needs these to trust it, since registry is mushy JSON, not a static type)
+assert(type.children?.types.validationrule);
+assert(type.children.types.customfield);
 
 export const DECOMPOSEDS_PATH = join('path', 'to', 'objects');
 export const DECOMPOSED_PATH = join(DECOMPOSEDS_PATH, 'customObject__c');
@@ -65,6 +69,7 @@ export const DECOMPOSED_COMPONENT = SourceComponent.createVirtualComponent(
   },
   DECOMPOSED_VIRTUAL_FS
 );
+
 export const DECOMPOSED_CHILD_COMPONENT_1 = SourceComponent.createVirtualComponent(
   {
     name: baseName(DECOMPOSED_CHILD_XML_NAME_1),

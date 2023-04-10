@@ -9,6 +9,7 @@ import { assert, expect } from 'chai';
 import * as fs from 'graceful-fs';
 import { Messages, SfError } from '@salesforce/core';
 import { createSandbox } from 'sinon';
+import { ensureString } from '@salesforce/ts-types';
 import { MixedContentSourceAdapter } from '../../../src/resolve/adapters';
 import { ForceIgnore, registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../../src';
 import {
@@ -33,7 +34,7 @@ describe('MixedContentSourceAdapter', () => {
     ]);
     const adapter = new MixedContentSourceAdapter(type, registryAccess, undefined, tree);
     assert.throws(
-      () => adapter.getComponent(mixedContentSingleFile.COMPONENT.content),
+      () => adapter.getComponent(ensureString(mixedContentSingleFile.COMPONENT.content)),
       SfError,
       messages.getMessage('error_expected_source_files', [mixedContentSingleFile.CONTENT_PATHS[0], type.name])
     );
@@ -49,7 +50,7 @@ describe('MixedContentSourceAdapter', () => {
     const adapter = new MixedContentSourceAdapter(type, registryAccess, new ForceIgnore(forceIgnorePath), tree);
     env.restore();
     assert.throws(
-      () => adapter.getComponent(mixedContentSingleFile.COMPONENT.content),
+      () => adapter.getComponent(ensureString(mixedContentSingleFile.COMPONENT.content)),
       SfError,
       messages.getMessage('error_expected_source_files', [mixedContentSingleFile.CONTENT_PATHS[0], type.name])
     );
@@ -65,14 +66,14 @@ describe('MixedContentSourceAdapter', () => {
     );
 
     it('Should return expected SourceComponent when given a root metadata xml path', () => {
+      assert(component.xml);
       const result = adapter.getComponent(component.xml);
-
       expect(result).to.deep.equal(component);
     });
 
     it('Should return expected SourceComponent when given a source path', () => {
+      assert(component.content);
       const result = adapter.getComponent(component.content);
-
       expect(result).to.deep.equal(component);
     });
   });
@@ -87,12 +88,14 @@ describe('MixedContentSourceAdapter', () => {
     );
 
     it('Should return expected SourceComponent when given a schema.json path', () => {
+      assert(component.xml);
       const result = adapter.getComponent(component.xml);
 
       expect(result).to.deep.equal(component);
     });
 
     it('Should return expected SourceComponent when given a source path', () => {
+      assert(component.content);
       const result = adapter.getComponent(component.content);
 
       expect(result).to.deep.equal(component);

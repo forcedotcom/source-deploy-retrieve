@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { Connection, Logger } from '@salesforce/core';
 import { ConnectionResolver } from '../../src/resolve';
@@ -71,6 +71,7 @@ describe('ConnectionResolver', () => {
 
       const resolver = new ConnectionResolver(connection);
       const result = await resolver.resolve();
+      assert(registry.types.customobject.children?.types.customfield);
       const expected: MetadataComponent[] = [
         {
           fullName: 'Account',

@@ -6,9 +6,8 @@
  */
 
 import { join } from 'path';
-import { expect } from 'chai';
+import { expect, assert } from 'chai';
 import { Messages } from '@salesforce/core';
-import { assert } from '@salesforce/ts-types';
 import { TestContext } from '@salesforce/core/lib/testSetup';
 import { decomposed, matchingContentFile } from '../../mock';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
@@ -67,8 +66,9 @@ describe('DecomposedMetadataTransformer', () => {
       expect(context.recomposition.transactionState.size).to.deep.equal(1);
 
       const stateValue = context.recomposition.transactionState.get(component.fullName);
+      assert(stateValue, 'expected stateValue to be defined');
       expect(stateValue.component).to.deep.equal(component);
-      expect(stateValue.children.size).to.deep.equal(2);
+      expect(stateValue.children?.size).to.deep.equal(2);
       expect(context.recomposition.transactionState.get(component.fullName)).to.deep.equal({
         component,
         children: new ComponentSet([child1, child2], registryAccess),
@@ -107,6 +107,7 @@ describe('DecomposedMetadataTransformer', () => {
         await transformer.toMetadataFormat(parentComponent);
         assert(false, 'expected TypeInferenceError to be thrown');
       } catch (err) {
+        assert(err instanceof Error);
         expect(err.name).to.equal('TypeInferenceError');
         expect(err.message).to.equal(messages.getMessage('error_unexpected_child_type', [fsPath, component.type.name]));
       }
@@ -116,6 +117,7 @@ describe('DecomposedMetadataTransformer', () => {
   describe('toSourceFormat', () => {
     it('should push writes for component and its children when type config is "FolderPerType"', async () => {
       const { fullName, type } = component;
+      assert(type.children?.types.validationrule.directoryName);
       const root = join('main', 'default', type.directoryName, fullName);
       const context = new ConvertContext();
       const transformer = new DecomposedMetadataTransformer(registryAccess, context);
@@ -169,6 +171,8 @@ describe('DecomposedMetadataTransformer', () => {
 
     it('should push writes for component and its non-forceignored children', async () => {
       const { fullName, type } = component;
+      assert(type.children?.types.validationrule.directoryName);
+
       const root = join('main', 'default', type.directoryName, fullName);
       const context = new ConvertContext();
       const transformer = new DecomposedMetadataTransformer(registryAccess, context);
@@ -259,6 +263,8 @@ describe('DecomposedMetadataTransformer', () => {
 
     it('should not create parent xml when only children are being decomposed', async () => {
       const { type, fullName } = component;
+      assert(type.children?.types.validationrule.directoryName);
+
       const transformer = new DecomposedMetadataTransformer();
       const root = join('main', 'default', type.directoryName, fullName);
       $$.SANDBOX.stub(component, 'parseXml').resolves({
@@ -365,7 +371,9 @@ describe('DecomposedMetadataTransformer', () => {
 
     describe('Merging Components', () => {
       it('should merge output with merge component that only has children', async () => {
+        assert(registry.types.customobject.children?.types.customfield.name);
         const mergeComponentChild = component.getChildren()[0];
+        assert(mergeComponentChild.parent);
         const componentToConvert = SourceComponent.createVirtualComponent(
           {
             name: 'CustomObject__c',
@@ -469,6 +477,7 @@ describe('DecomposedMetadataTransformer', () => {
           await transformer.toSourceFormat(component, parentComponent);
           assert(false, 'expected TypeInferenceError to be thrown');
         } catch (err) {
+          assert(err instanceof Error);
           expect(err.name).to.equal('TypeInferenceError');
           expect(err.message).to.equal(
             messages.getMessage('error_unexpected_child_type', [fsPath, component.type.name])

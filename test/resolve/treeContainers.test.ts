@@ -58,6 +58,7 @@ describe('Tree Containers', () => {
       }
 
       public stream(): Readable {
+        // @ts-expect-error it's a mock!
         return;
       }
     }
@@ -146,8 +147,8 @@ describe('Tree Containers', () => {
       };
       pipeline(archive, bufferWritable);
 
-      archive.append(null, { name: 'main/' });
-      archive.append(null, { name: 'main/default/' });
+      archive.append('', { name: 'main/' });
+      archive.append('', { name: 'main/default/' });
       archive.append('test text', { name: 'main/default/test.txt' });
       archive.append('test text 2', { name: 'main/default/test2.txt' });
       archive.append('test text 3', { name: 'main/default/morefiles/test3.txt' });
@@ -248,6 +249,7 @@ describe('Tree Containers', () => {
         const path = join(filesRoot, 'test.txt');
         const zipDir = await unzipper.Open.buffer(zipBuffer);
         const expectedStream = zipDir.files.find((f) => normalize(f.path) === path)?.stream();
+        assert(expectedStream);
         const actual = tree.stream(path);
         expect(actual instanceof Readable).to.be.true;
         expect((actual as unzipper.Entry).path).to.equal(expectedStream.path);
@@ -350,6 +352,7 @@ describe('Tree Containers', () => {
           await tree.readFile(path);
           assert.fail('should have thrown an error');
         } catch (e) {
+          assert(e instanceof Error);
           expect(e.message).to.deep.equal(messages.getMessage('error_path_not_found', [path]));
         }
       });
@@ -372,6 +375,7 @@ describe('Tree Containers', () => {
           tree.readFileSync(path);
           assert.fail('should have thrown an error');
         } catch (e) {
+          assert(e instanceof Error);
           expect(e.message).to.deep.equal(messages.getMessage('error_path_not_found', [path]));
         }
       });

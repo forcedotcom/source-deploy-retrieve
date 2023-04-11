@@ -17,6 +17,7 @@ import { RegistryAccess } from '../registry';
 import { ComponentConverter, pipeline, StandardWriter, ZipWriter } from './streams';
 import { ConvertOutputConfig, ConvertResult, DirectoryConfig, SfdxFileFormat, ZipConfig } from './types';
 import { getReplacementMarkingStream } from './replacements';
+import { MergeConfig } from '.';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
@@ -47,75 +48,17 @@ export class MetadataConverter {
         (comps instanceof ComponentSet ? Array.from(comps.getSourceComponents()) : comps) as SourceComponent[]
       ).filter((comp) => comp.type.isAddressable !== false);
 
-      const targetFormatIsSource = targetFormat === 'source';
-      const tasks: Array<Promise<void>> = [];
-
-      let writer: StandardWriter | ZipWriter;
-      let mergeSet: ComponentSet;
-      let packagePath: SourcePath | undefined;
-      let defaultDirectory: SourcePath | undefined;
-
-      switch (output.type) {
-        case 'directory':
-          if (output.packageName) {
-            cs.fullName = output.packageName;
-          }
-          packagePath = getPackagePath(output);
-          defaultDirectory = packagePath;
-          writer = new StandardWriter(packagePath);
-          if (!targetFormatIsSource) {
-            const manifestPath = join(packagePath, MetadataConverter.PACKAGE_XML_FILE);
-            tasks.push(
-              promises.writeFile(manifestPath, await cs.getPackageXml()),
-              ...cs.getTypesOfDestructiveChanges().map(async (destructiveChangesType) =>
-                // for each of the destructive changes in the component set, convert and write the correct metadata
-                // to each manifest
-                promises.writeFile(
-                  join(packagePath, getDestructiveManifest(destructiveChangesType)),
-                  await cs.getPackageXml(4, destructiveChangesType)
-                )
-              )
-            );
-          }
-          break;
-        case 'zip':
-          if (output.packageName) {
-            cs.fullName = output.packageName;
-          }
-
-          packagePath = getPackagePath(output);
-          defaultDirectory = packagePath;
-          writer = new ZipWriter(packagePath);
-          if (!targetFormatIsSource) {
-            writer.addToZip(await cs.getPackageXml(), MetadataConverter.PACKAGE_XML_FILE);
-
-            // for each of the destructive changes in the component set, convert and write the correct metadata
-            // to each manifest
-
-            for (const destructiveChangeType of cs.getTypesOfDestructiveChanges()) {
-              writer.addToZip(
-                // TODO: can this be safely parallelized?
-                // eslint-disable-next-line no-await-in-loop
-                await cs.getPackageXml(4, destructiveChangeType),
-                getDestructiveManifest(destructiveChangeType)
-              );
-            }
-          }
-          break;
-        case 'merge':
-          if (!targetFormatIsSource) {
-            throw new SfError(messages.getMessage('error_merge_metadata_target_unsupported'));
-          }
-          defaultDirectory = output.defaultDirectory;
-          mergeSet = new ComponentSet();
-          // since child components are composed in metadata format, we need to merge using the parent
-          for (const component of output.mergeWith) {
-            mergeSet.add(component.parent ?? component);
-          }
-          writer = new StandardWriter(output.defaultDirectory);
-          writer.forceIgnoredPaths = output.forceIgnoredPaths;
-          break;
+      if (output.type !== 'merge' && output.packageName) {
+        cs.fullName = output.packageName;
       }
+      const targetFormatIsSource = targetFormat === 'source';
+      const {
+        packagePath,
+        defaultDirectory,
+        writer,
+        mergeSet,
+        tasks = [],
+      } = await getConvertIngredients(output, cs, targetFormatIsSource);
 
       const conversionPipeline = pipeline(
         Readable.from(components),
@@ -144,8 +87,12 @@ export class MetadataConverter {
   }
 }
 
-const getPackagePath = (outputConfig: DirectoryConfig | ZipConfig): SourcePath | undefined => {
-  let packagePath: SourcePath;
+function getPackagePath(
+  outputConfig: DirectoryConfig | (ZipConfig & Required<Pick<ZipConfig, 'outputDirectory'>>)
+): SourcePath;
+function getPackagePath(outputConfig: Omit<ZipConfig, 'outputDirectory'>): undefined;
+function getPackagePath(outputConfig: DirectoryConfig | ZipConfig): SourcePath | undefined {
+  let packagePath: SourcePath | undefined;
   const { genUniqueDir = true, outputDirectory, packageName, type } = outputConfig;
   if (outputDirectory) {
     if (packageName) {
@@ -164,7 +111,7 @@ const getPackagePath = (outputConfig: DirectoryConfig | ZipConfig): SourcePath |
     }
   }
   return packagePath;
-};
+}
 
 const getDestructiveManifest = (destructiveChangesType: DestructiveChangesType): string => {
   switch (destructiveChangesType) {
@@ -174,3 +121,103 @@ const getDestructiveManifest = (destructiveChangesType: DestructiveChangesType):
       return MetadataConverter.DESTRUCTIVE_CHANGES_PRE_XML_FILE;
   }
 };
+
+type ConfigOutputs = {
+  writer: StandardWriter | ZipWriter;
+  tasks?: Array<Promise<void>>;
+  defaultDirectory?: string;
+  packagePath?: string;
+  mergeSet?: ComponentSet;
+};
+
+async function getConvertIngredients(
+  output: ConvertOutputConfig,
+  cs: ComponentSet,
+  targetFormatIsSource: boolean
+): Promise<ConfigOutputs> {
+  switch (output.type) {
+    case 'directory':
+      return getDirectoryConfigOutputs(output, targetFormatIsSource, cs);
+    case 'zip':
+      return getZipConfigOutputs(output, targetFormatIsSource, cs);
+    case 'merge':
+      return getMergeConfigOutputs(output, targetFormatIsSource);
+  }
+}
+
+function getMergeConfigOutputs(output: MergeConfig, targetFormatIsSource: boolean): ConfigOutputs {
+  if (!targetFormatIsSource) {
+    throw new SfError(messages.getMessage('error_merge_metadata_target_unsupported'));
+  }
+  const defaultDirectory = output.defaultDirectory;
+  const mergeSet = new ComponentSet();
+  // since child components are composed in metadata format, we need to merge using the parent
+  for (const component of output.mergeWith) {
+    mergeSet.add(component.parent ?? component);
+  }
+  const writer = new StandardWriter(output.defaultDirectory);
+  if (output.forceIgnoredPaths) {
+    writer.forceIgnoredPaths = output.forceIgnoredPaths;
+  }
+  return {
+    writer,
+    mergeSet,
+    defaultDirectory,
+  };
+}
+
+async function getZipConfigOutputs(
+  output: ZipConfig,
+  targetFormatIsSource: boolean,
+  cs: ComponentSet
+): Promise<ConfigOutputs> {
+  const packagePath = getPackagePath(output);
+  const writer = new ZipWriter(packagePath);
+
+  if (!targetFormatIsSource) {
+    writer.addToZip(await cs.getPackageXml(), MetadataConverter.PACKAGE_XML_FILE);
+    // for each of the destructive changes in the component set, convert and write the correct metadata to each manifest
+    await Promise.all(
+      cs
+        .getTypesOfDestructiveChanges()
+        .map(async (destructiveChangeType) =>
+          writer.addToZip(
+            await cs.getPackageXml(4, destructiveChangeType),
+            getDestructiveManifest(destructiveChangeType)
+          )
+        )
+    );
+  }
+  return {
+    packagePath,
+    defaultDirectory: packagePath,
+    writer,
+    mergeSet: undefined,
+  };
+}
+
+async function getDirectoryConfigOutputs(
+  output: DirectoryConfig,
+  targetFormatIsSource: boolean,
+  cs: ComponentSet
+): Promise<ConfigOutputs> {
+  const packagePath = getPackagePath(output);
+  return {
+    packagePath,
+    defaultDirectory: packagePath,
+    writer: new StandardWriter(packagePath),
+    tasks: targetFormatIsSource
+      ? []
+      : [
+          promises.writeFile(join(packagePath, MetadataConverter.PACKAGE_XML_FILE), await cs.getPackageXml()),
+          ...cs.getTypesOfDestructiveChanges().map(async (destructiveChangesType) =>
+            // for each of the destructive changes in the component set, convert and write the correct metadata
+            // to each manifest
+            promises.writeFile(
+              join(packagePath, getDestructiveManifest(destructiveChangesType)),
+              await cs.getPackageXml(4, destructiveChangesType)
+            )
+          ),
+        ],
+  };
+}

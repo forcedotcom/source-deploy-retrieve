@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
+import { assert } from 'chai';
 
 import { registry, SourceComponent } from '../../../src';
 
@@ -23,6 +24,7 @@ import { registry, SourceComponent } from '../../../src';
 
 // This is the type defined in metadataRegistry.json
 const type = registry.types.experiencepropertytypebundle;
+assert(type.metaFileSuffix);
 
 // This will be the root directory experiencePropertyTypeBundles.It is something like /path/to/experiencePropertyTypeBundles
 export const TYPE_DIRECTORY = join('path', 'to', type.directoryName);

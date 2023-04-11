@@ -7,7 +7,7 @@
 import { fail } from 'assert';
 import { join } from 'path';
 import { Messages } from '@salesforce/core';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import chai = require('chai');
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import * as unzipper from 'unzipper';
@@ -68,6 +68,7 @@ describe('MetadataApiRetrieve', () => {
           await operation.start();
           fail('should have thrown an error');
         } catch (e) {
+          assert(e instanceof Error);
           expect(e.name).to.equal(expectedError.name);
           expect(e.message).to.equal(expectedError.message);
         }
@@ -85,6 +86,7 @@ describe('MetadataApiRetrieve', () => {
           await operation.start();
           fail('should have thrown an error');
         } catch (e) {
+          assert(e instanceof Error);
           expect(e.name).to.equal(expectedError.name);
           expect(e.message).to.equal(expectedError.message);
         }
@@ -379,6 +381,8 @@ describe('MetadataApiRetrieve', () => {
 
       it('should construct a result object with no components when components are forceIgnored', async () => {
         const toRetrieve = new ComponentSet([COMPONENT]);
+        assert(COMPONENT.xml);
+        assert(COMPONENT.content);
         toRetrieve.forceIgnoredPaths = new Set([COMPONENT.xml, COMPONENT.content]);
         const { operation } = await stubMetadataRetrieve($$, testOrg, {
           toRetrieve,
@@ -429,6 +433,8 @@ describe('MetadataApiRetrieve', () => {
           name: 'MissingJobIdError',
           message: messages.getMessage('error_no_job_id', ['retrieve']),
         };
+        assert(e instanceof Error);
+
         expect(e.name).to.equal(expectedError.name);
         expect(e.message).to.equal(expectedError.message);
       }

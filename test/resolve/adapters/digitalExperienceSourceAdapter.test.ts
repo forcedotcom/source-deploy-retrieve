@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { RegistryAccess, registry, VirtualTreeContainer, ForceIgnore, SourceComponent } from '../../../src';
 import { DigitalExperienceSourceAdapter } from '../../../src/resolve/adapters/digitalExperienceSourceAdapter';
 import { META_XML_SUFFIX } from '../../../src/common';
@@ -21,6 +21,7 @@ describe('DigitalExperienceSourceAdapter', () => {
   const HOME_VIEW_NAME = 'sfdc_cms__view/home';
   const HOME_VIEW_PATH = join(BUNDLE_PATH, 'sfdc_cms__view', 'home');
   const HOME_VIEW_CONTENT_FILE = join(HOME_VIEW_PATH, 'content.json');
+  assert(typeof DE_METAFILE === 'string');
   const HOME_VIEW_META_FILE = join(HOME_VIEW_PATH, DE_METAFILE);
   const HOME_VIEW_FRENCH_VARIANT_FILE = join(HOME_VIEW_PATH, 'fr.json');
 
@@ -40,6 +41,7 @@ describe('DigitalExperienceSourceAdapter', () => {
     tree
   );
 
+  assert(registry.types.digitalexperiencebundle.children?.types.digitalexperience);
   const digitalExperienceAdapter = new DigitalExperienceSourceAdapter(
     registry.types.digitalexperiencebundle.children.types.digitalexperience,
     registryAccess,
@@ -74,6 +76,7 @@ describe('DigitalExperienceSourceAdapter', () => {
   });
 
   describe('DigitalExperienceSourceAdapter for DE', () => {
+    assert(registry.types.digitalexperiencebundle.children?.types.digitalexperience);
     const component = new SourceComponent(
       {
         name: HOME_VIEW_NAME,

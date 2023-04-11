@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1681166722822,
+  "lastUpdate": 1681231303471,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -2267,6 +2267,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 19911,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane.mclaughlin@salesforce.com",
+            "name": "Shane McLaughlin",
+            "username": "mshanemc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "eb7214e677d4f5d07bf38c821ebcbe8c86665fab",
+          "message": "sm/strict mode 4: break up Convert (#903)\n\n* feat: forceignore is typesafe\r\n\r\n* chore: auto-update metadata coverage in METADATA_SUPPORT.md\r\n\r\n* test: record perf\r\n\r\n* refactor: converter uses strict types, break up huge method\r\n\r\n* Sm/strict null 5 tests (#904)\r\n\r\n* test: type-safe tests\r\n\r\n* chore: auto-update metadata coverage in METADATA_SUPPORT.md\r\n\r\n* chore: nullish\r\n\r\n* test: record perf\r\n\r\n* refactor: more ripples from required name on SC\r\n\r\n---------\r\n\r\nCo-authored-by: svc-cli-bot <svc_cli_bot@salesforce.com>\r\n\r\n---------\r\n\r\nCo-authored-by: svc-cli-bot <svc_cli_bot@salesforce.com>",
+          "timestamp": "2023-04-11T10:34:23-06:00",
+          "tree_id": "fa82b61d668eada3c7ef65e6c3d795a48e35aa93",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/eb7214e677d4f5d07bf38c821ebcbe8c86665fab"
+        },
+        "date": 1681231292310,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 374,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 7288,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 5421,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 6717,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 790,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 9998,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 6646,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 8406,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1453,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 17123,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 10574,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 15381,
             "unit": "ms"
           }
         ]

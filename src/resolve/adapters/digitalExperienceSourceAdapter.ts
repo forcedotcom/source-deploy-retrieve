@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { dirname, join, sep } from 'path';
+import { Messages } from '@salesforce/core';
 import { META_XML_SUFFIX } from '../../common';
 import { SourceComponent } from '..';
 import { MetadataXml } from '../types';
@@ -12,6 +13,8 @@ import { baseName, parentName } from '../../utils';
 import { SourcePath } from '../../common';
 import { BundleSourceAdapter } from './bundleSourceAdapter';
 
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 /**
  * Source Adapter for DigitalExperience metadata types. This metadata type is a bundled type of the format
  *
@@ -58,12 +61,15 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
       return this.getBundleMetadataXmlPath(trigger);
     }
     // metafile name = metaFileSuffix for DigitalExperience.
+    if (!this.type.metaFileSuffix) {
+      throw messages.createError('missingMetaFileSuffix', [this.type.name]);
+    }
     return join(dirname(trigger), this.type.metaFileSuffix);
   }
 
   protected trimPathToContent(path: string): string {
     if (this.isBundleType()) {
-      return;
+      return path;
     }
     const pathToContent = dirname(path);
     const parts = pathToContent.split(sep);
@@ -82,12 +88,16 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
   }
 
   protected populate(trigger: string, component?: SourceComponent): SourceComponent {
-    if (this.isBundleType()) {
+    if (this.isBundleType() && component) {
       // for top level types we don't need to resolve parent
       return component;
     }
     const source = super.populate(trigger, component);
     const parentType = this.registry.getParentType(this.type.id);
+    // we expect source, parentType and content to be defined.
+    if (!source || !parentType || !source.content) {
+      throw messages.createError('error_failed_convert', [component?.fullName ?? this.type.name]);
+    }
     const parent = new SourceComponent(
       {
         name: this.getBundleName(source.content),
@@ -111,7 +121,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     );
   }
 
-  protected parseMetadataXml(path: SourcePath): MetadataXml {
+  protected parseMetadataXml(path: SourcePath): MetadataXml | undefined {
     const xml = super.parseMetadataXml(path);
     if (xml) {
       return {
@@ -137,7 +147,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     // 3 because we want 'digitaExperiences' directory, 'baseType' directory and 'bundleName' directory
     const basePath = pathParts.slice(0, typeFolderIndex + 3).join(sep);
     const bundleFileName = pathParts[typeFolderIndex + 2];
-    const suffix = this.isBundleType() ? this.type.suffix : this.registry.getParentType(this.type.id).suffix;
+    const suffix = this.isBundleType() ? this.type.suffix : this.registry.getParentType(this.type.id)?.suffix;
     return `${basePath}${sep}${bundleFileName}.${suffix}${META_XML_SUFFIX}`;
   }
 

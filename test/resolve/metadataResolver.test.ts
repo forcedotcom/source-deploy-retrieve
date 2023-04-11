@@ -8,6 +8,7 @@
 import { basename, dirname, join } from 'path';
 import { assert, expect } from 'chai';
 import { Messages, SfError } from '@salesforce/core';
+import { ensureString } from '@salesforce/ts-types';
 import {
   ComponentSet,
   MetadataResolver,
@@ -49,10 +50,7 @@ import { RegistryTestUtil } from './registryTestUtil';
 const testUtil = new RegistryTestUtil();
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_path_not_found',
-  'error_could_not_infer_type',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('MetadataResolver', () => {
   const resolver = new MetadataResolver();
@@ -206,6 +204,7 @@ describe('MetadataResolver', () => {
       it('Should determine type for DigitalExperience metadata file (_meta.json file)', () => {
         const parent = join('unpackaged', 'digitalExperiences', 'site', 'foo');
         const parent_meta_file = join(parent, 'foo.digitalExperience-meta.xml');
+        assert(DE_METAFILE);
         const path = join(parent, 'sfdc_cms__view', 'home', DE_METAFILE);
         const treeContainer = VirtualTreeContainer.fromFilePaths([path, parent_meta_file]);
         const mdResolver = new MetadataResolver(undefined, treeContainer);
@@ -217,6 +216,7 @@ describe('MetadataResolver', () => {
           },
           treeContainer
         );
+        assert(registry.types.digitalexperiencebundle.children?.types.digitalexperience);
         const expectedComponent = new SourceComponent(
           {
             name: 'sfdc_cms__view/home',
@@ -277,7 +277,7 @@ describe('MetadataResolver', () => {
           },
         ]);
         const componentMappings = xmlInFolder.COMPONENTS.map((c: SourceComponent) => ({
-          path: c.xml,
+          path: ensureString(c.xml),
           component: c,
         }));
         testUtil.stubAdapters([
@@ -783,7 +783,7 @@ describe('MetadataResolver', () => {
         const resolver = testUtil.createMetadataResolver(decomposedtoplevel.DECOMPOSED_VIRTUAL_FS);
         const children = decomposedtoplevel.DECOMPOSED_TOP_LEVEL_COMPONENT.getChildren();
         const componentMappings = children.map((c: SourceComponent) => ({
-          path: c.xml,
+          path: ensureString(c.xml),
           component: c,
         }));
         componentMappings.push({

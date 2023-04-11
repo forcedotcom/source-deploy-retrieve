@@ -30,16 +30,16 @@ import {
 import { DiagnosticUtil } from './diagnosticUtil';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_job_id']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export class DeployResult implements MetadataTransferResult {
   private readonly diagnosticUtil = new DiagnosticUtil('metadata');
-  private fileResponses: FileResponse[];
+  private fileResponses?: FileResponse[];
   private readonly shouldConvertPaths = sep !== posix.sep;
 
   public constructor(
     public readonly response: MetadataApiDeployStatus,
-    public readonly components: ComponentSet,
+    public readonly components?: ComponentSet,
     public readonly replacements: Map<string, string[]> = new Map<string, string[]>()
   ) {}
 
@@ -152,7 +152,7 @@ export class DeployResult implements MetadataTransferResult {
       if (!messageMap.has(key)) {
         messageMap.set(key, []);
       }
-      messageMap.get(key).push(sanitized);
+      messageMap.get(key)?.push(sanitized);
       failedComponents.add(componentLike);
     }
 
@@ -174,7 +174,7 @@ export class DeployResult implements MetadataTransferResult {
   }
 
   /**
-   * If a components fails to delete because it doesn't exist in the org, you get a message like
+   * If a component fails to delete because it doesn't exist in the org, you get a message like
    * key: 'ApexClass#destructiveChanges.xml'
    * value:[{
    * fullName: 'destructiveChanges.xml',
@@ -185,27 +185,25 @@ export class DeployResult implements MetadataTransferResult {
    * }]
    */
   private deleteNotFoundToFileResponses(messageMap: Map<string, DeployMessage[]>): FileResponse[] {
-    const fileResponses: FileResponse[] = [];
-    messageMap.forEach((responseMessages, key) => {
-      if (key.includes('destructiveChanges') && key.endsWith('.xml')) {
-        responseMessages.forEach((message) => {
-          if (message.problemType === 'Warning' && message.problem.startsWith(`No ${message.componentType} named: `)) {
-            const fullName = message.problem.replace(`No ${message.componentType} named: `, '').replace(' found', '');
-            this.components
+    return Array.from(messageMap)
+      .filter(([key]) => key.includes('destructiveChanges') && key.endsWith('.xml'))
+      .flatMap(
+        ([, messageArray]): Array<DeployMessage & Required<Pick<DeployMessage, 'componentType' | 'problem'>>> =>
+          messageArray.filter(isComponentNotFoundWarningMessage)
+      )
+      .flatMap((message) => {
+        const fullName = message.problem.replace(`No ${message.componentType} named: `, '').replace(' found', '');
+        return this.components
+          ? this.components
               .getComponentFilenamesByNameAndType({ fullName, type: message.componentType })
-              .forEach((fileName) => {
-                fileResponses.push({
-                  fullName,
-                  type: message.componentType,
-                  filePath: fileName,
-                  state: ComponentStatus.Deleted,
-                });
-              });
-          }
-        });
-      }
-    });
-    return fileResponses;
+              .map((fileName) => ({
+                fullName,
+                type: message.componentType,
+                filePath: fileName,
+                state: ComponentStatus.Deleted,
+              }))
+          : [];
+      });
   }
 
   private key(component: ComponentLike): string {
@@ -242,7 +240,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
   };
   private options: MetadataApiDeployOptions;
   private replacements: Map<string, Set<string>> = new Map();
-  private orgId: string;
+  private orgId?: string;
   // Keep track of rest deploys separately since Connection.deploy() removes it
   // from the apiOptions and we need it for telemetry.
   private isRestDeploy: boolean;
@@ -348,7 +346,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
           if (!this.replacements.has(replacement.filename)) {
             this.replacements.set(replacement.filename, new Set([replacement.replaced]));
           } else {
-            this.replacements.get(replacement.filename).add(replacement.replaced);
+            this.replacements.get(replacement.filename)?.add(replacement.replaced);
           }
           resolve();
         })
@@ -356,7 +354,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
 
     const [zipBuffer] = await Promise.all([this.getZipBuffer(), this.maybeSaveTempDirectory('metadata')]);
     // SDR modifies what the mdapi expects by adding a rest param
-    const { rest, ...optionsWithoutRest } = this.options.apiOptions;
+    const { rest, ...optionsWithoutRest } = this.options.apiOptions ?? {};
 
     // Event and Debug output for API version and source API version used for deploy
     const manifestVersion = this.components?.sourceApiVersion;
@@ -412,7 +410,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
         numberTestErrors: result.numberTestErrors,
         numberTestsCompleted: result.numberTestsCompleted,
         numberTestsTotal: result.numberTestsTotal,
-        testsTotalTime: result.details?.runTestResult.totalTime,
+        testsTotalTime: result.details?.runTestResult?.totalTime,
         filesWithReplacementsQuantity: this.replacements.size ?? 0,
       });
     } catch (err) {
@@ -429,10 +427,11 @@ export class MetadataApiDeploy extends MetadataTransfer<
     // only do event hooks if source, (NOT a metadata format) deploy
     if (this.options.components) {
       // this may not be set if you resume a deploy so that `pre` is skipped.
-      if (!this.orgId) {
-        this.orgId = connection.getAuthInfoFields().orgId;
+      this.orgId ??= connection.getAuthInfoFields().orgId;
+      // previous step ensures string exists
+      if (this.orgId) {
+        await lifecycle.emit<ScopedPostDeploy>('scopedPostDeploy', { deployResult, orgId: this.orgId });
       }
-      await lifecycle.emit<ScopedPostDeploy>('scopedPostDeploy', { deployResult, orgId: this.orgId });
     }
     return deployResult;
   }
@@ -440,7 +439,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
   private async getZipBuffer(): Promise<Buffer> {
     if (this.options.mdapiPath) {
       if (!fs.existsSync(this.options.mdapiPath) || !fs.lstatSync(this.options.mdapiPath).isDirectory()) {
-        throw new Error(`Deploy directory ${this.options.mdapiPath} does not exist or is not a directory`);
+        throw messages.createError('error_directory_not_found_or_not_directory', [this.options.mdapiPath]);
       }
       // make a zip from the given directory
       const zip = createArchive('zip', { zlib: { level: 9 } });
@@ -456,14 +455,17 @@ export class MetadataApiDeploy extends MetadataTransfer<
     // read the zip into a buffer
     if (this.options.zipPath) {
       if (!fs.existsSync(this.options.zipPath)) {
-        throw new Error(`Zip file ${this.options.zipPath} does not exist`);
+        throw new SfError(messages.getMessage('error_path_not_found', [this.options.zipPath]));
       }
       // does encoding matter for zip files? I don't know
       return fs.promises.readFile(this.options.zipPath);
     }
-    if (this.options.components) {
+    if (this.options.components && this.components) {
       const converter = new MetadataConverter();
       const { zipBuffer } = await converter.convert(this.components, 'metadata', { type: 'zip' });
+      if (!zipBuffer) {
+        throw new SfError(messages.getMessage('zipBufferError'));
+      }
       return zipBuffer;
     }
     throw new Error('Options should include components, zipPath, or mdapiPath');
@@ -503,7 +505,11 @@ const getState = (message: DeployMessage): ComponentStatus => {
  * Fix any issues with the deploy message returned by the api.
  * TODO: remove cases if fixes are made in the api.
  */
-const sanitizeDeployMessage = (message: DeployMessage): DeployMessage => {
+const sanitizeDeployMessage = (message: DeployMessage): DeployMessage & { componentType: string } => {
+  if (!hasComponentType(message)) {
+    throw new SfError(`Missing componentType in deploy message ${message.fullName} ${message.fileName}`);
+  }
+
   // mdapi error messages have the type as "FooSettings" but SDR only recognizes "Settings"
   if (message.componentType.endsWith('Settings') && message.fileName.endsWith('.settings')) {
     return {
@@ -511,20 +517,38 @@ const sanitizeDeployMessage = (message: DeployMessage): DeployMessage => {
       componentType: 'Settings',
     };
   }
-  switch (message.componentType) {
-    case registry.types.lightningcomponentbundle.name:
-      // remove the markup scheme from fullName, including c: or custom namespaces
-      message.fullName = message.fullName.replace(/markup:\/\/[a-z|0-9|_]+:/i, '');
-      break;
-    case registry.types.document.name:
+  if (message.componentType === registry.types.lightningcomponentbundle.name) {
+    return {
+      ...message,
+      fullName: message.fullName.replace(/markup:\/\/[a-z|0-9|_]+:/i, ''),
+    };
+  }
+  if (message.componentType === registry.types.document.name) {
+    return {
+      ...message,
       // strip document extension from fullName
-      message.fullName = join(dirname(message.fullName), basename(message.fullName, extname(message.fullName)));
-      break;
-    // Treat emailTemplateFolder as EmailFolder
-    case registry.types.emailtemplatefolder.name:
-      message.componentType = registry.types.emailfolder.name;
-      break;
-    default:
+      fullName: join(dirname(message.fullName), basename(message.fullName, extname(message.fullName))),
+    };
+  }
+  // Treat emailTemplateFolder as EmailFolder
+  if (message.componentType === registry.types.emailtemplatefolder.name) {
+    return {
+      ...message,
+      // strip document extension from fullName
+      componentType: registry.types.emailfolder.name,
+    };
   }
   return message;
 };
+
+/* Type guard for asserting that a DeployMessages has a componentType, problem, and problemType === Warning*/
+const isComponentNotFoundWarningMessage = (
+  message: DeployMessage
+): message is DeployMessage & Required<Pick<DeployMessage, 'componentType' | 'problem' | 'problemType'>> =>
+  hasComponentType(message) &&
+  message.problemType === 'Warning' &&
+  typeof message.problem === 'string' &&
+  message.problem?.startsWith(`No ${message.componentType} named: `);
+
+const hasComponentType = (message: DeployMessage): message is DeployMessage & { componentType: string } =>
+  typeof message.componentType === 'string';

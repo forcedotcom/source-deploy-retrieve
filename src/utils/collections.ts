@@ -11,11 +11,8 @@
  * @param object - Object to deep freeze
  * @returns A deeply frozen version of the object
  */
-export function deepFreeze<T>(object: T): Readonly<T> {
-  const propNames = Object.getOwnPropertyNames(object);
-  for (const name of propNames) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const val = object[name];
+export function deepFreeze<T extends object>(object: T): Readonly<T> {
+  for (const val of Object.values(object)) {
     if (val && typeof val === 'object') {
       deepFreeze(val);
     }

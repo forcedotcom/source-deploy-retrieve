@@ -13,10 +13,7 @@ import { RegistryTestUtil } from '../registryTestUtil';
 import { registry, RegistryAccess, SourceComponent, VirtualTreeContainer } from '../../../src';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_no_source_ignore',
-  'error_expected_source_files',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('MatchingContentSourceAdapter', () => {
   const registryAccess = new RegistryAccess();

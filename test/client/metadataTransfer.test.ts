@@ -7,7 +7,7 @@
 import { fail } from 'assert';
 import { SinonStub } from 'sinon';
 import { AuthInfo, Connection, PollingClient, Messages } from '@salesforce/core';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { Duration, sleep } from '@salesforce/kit';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { ComponentSet } from '../../src';
@@ -15,7 +15,7 @@ import { MetadataTransfer, MetadataTransferOptions } from '../../src/client/meta
 import { MetadataRequestStatus, MetadataTransferResult, RequestStatus } from '../../src/client/types';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['md_request_fail']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('MetadataTransfer', () => {
   const $$ = new TestContext();
@@ -100,6 +100,7 @@ describe('MetadataTransfer', () => {
       }
     }
     const username = connection.getUsername();
+    assert(username);
     const authInfo = await AuthInfo.create({ username });
     $$.SANDBOX.stub(AuthInfo, 'create').withArgs({ username }).resolves(authInfo);
     $$.SANDBOX.stub(Connection, 'create').withArgs({ authInfo }).resolves(connection);
@@ -122,6 +123,7 @@ describe('MetadataTransfer', () => {
     }
     const apiVersion = '50.0';
     const username = connection.getUsername();
+    assert(username);
 
     const authInfo = await AuthInfo.create({ username });
     $$.SANDBOX.stub(AuthInfo, 'create').withArgs({ username }).resolves(authInfo);
@@ -149,6 +151,7 @@ describe('MetadataTransfer', () => {
     const apiVersion = '51.0';
     const maxApiVersion = '50.0';
     const username = connection.getUsername();
+    assert(username);
 
     const authInfo = await AuthInfo.create({ username });
     $$.SANDBOX.stub(AuthInfo, 'create').withArgs({ username }).resolves(authInfo);
@@ -294,6 +297,7 @@ describe('MetadataTransfer', () => {
         fail('should have thrown an error');
       } catch (err) {
         expect(callCount).to.be.greaterThan(15);
+        assert(err instanceof Error);
         expect(err.name, 'Polling function should have timed out').to.equal('MetadataTransferError');
         expect(err.message).to.equal('Metadata API request failed: The client has timed out.');
       }
@@ -307,10 +311,10 @@ describe('MetadataTransfer', () => {
         message: messages.getMessage('md_request_fail', [originalError.message]),
       };
       checkStatus.throws(originalError);
-      let error: Error;
+      let error: Error | undefined;
       operation.onError((e) => (error = e));
       await operation.pollStatus();
-
+      assert(error instanceof Error);
       expect(error.name).to.deep.equal(expectedError.name);
       expect(error.message).to.deep.equal(expectedError.message);
     });
@@ -374,6 +378,7 @@ describe('MetadataTransfer', () => {
         await operation.pollStatus();
         fail('should have thrown an error');
       } catch (e) {
+        assert(e instanceof Error);
         expect(e.name).to.deep.equal(expectedError.name);
         expect(e.message).to.deep.equal(expectedError.message);
       }

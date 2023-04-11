@@ -13,17 +13,14 @@ import { MetadataRegistry, MetadataType } from './types';
  */
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_missing_child_type_definition',
-  'error_missing_type_definition',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export class RegistryAccess {
   private registry: MetadataRegistry;
 
-  private strictFolderTypes: MetadataType[];
-  private folderContentTypes: MetadataType[];
-  private aliasTypes: MetadataType[];
+  private strictFolderTypes?: MetadataType[];
+  private folderContentTypes?: MetadataType[];
+  private aliasTypes?: MetadataType[];
 
   public constructor(registry: MetadataRegistry = defaultRegistry) {
     this.registry = registry;
@@ -51,10 +48,9 @@ export class RegistryAccess {
     if (!this.registry.types[lower]) {
       throw new SfError(messages.getMessage('error_missing_type_definition', [lower]), 'RegistryError');
     }
+    const alias = this.registry.types[lower].aliasFor;
     // redirect via alias
-    return this.registry.types[lower].aliasFor
-      ? this.registry.types[this.registry.types[lower].aliasFor]
-      : this.registry.types[lower];
+    return alias ? this.registry.types[alias] : this.registry.types[lower];
   }
 
   /**
@@ -64,7 +60,7 @@ export class RegistryAccess {
    * @returns The corresponding metadata type object
    */
   public getTypeBySuffix(suffix: string): MetadataType | undefined {
-    if (this.registry.suffixes[suffix]) {
+    if (this.registry.suffixes?.[suffix]) {
       const typeId = this.registry.suffixes[suffix];
       return this.getTypeByName(typeId);
     }
@@ -74,12 +70,14 @@ export class RegistryAccess {
    * Searches for the first metadata type in the registry that returns `true`
    * for the given predicate function.
    *
+   * Can return undefined if no type matches the predicate.
+   *
    * @param predicate - Predicate to test types with
    * @returns The first metadata type object that fulfills the predicate
    */
-  public findType(predicate: (type: MetadataType) => boolean): MetadataType {
+  public findType(predicate: (type: MetadataType) => boolean): MetadataType | undefined {
     const firstMatch = Object.values(this.registry.types).find(predicate);
-    return firstMatch.aliasFor ? this.registry.types[firstMatch.aliasFor] : firstMatch;
+    return firstMatch?.aliasFor ? this.registry.types[firstMatch.aliasFor] : firstMatch;
   }
 
   /**

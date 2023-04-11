@@ -10,7 +10,7 @@ import { Readable, Writable } from 'stream';
 import * as fs from 'graceful-fs';
 import * as archiver from 'archiver';
 import { Logger, SfError, Messages } from '@salesforce/core';
-import { expect } from 'chai';
+import { expect, assert } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
@@ -25,7 +25,7 @@ const env = createSandbox();
 const registryAccess = new RegistryAccess();
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_convert_invalid_format']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 class TestTransformer extends BaseMetadataTransformer {
   // partial implementation only for tests
@@ -36,7 +36,8 @@ class TestTransformer extends BaseMetadataTransformer {
   // partial implementation only for tests
   // eslint-disable-next-line class-methods-use-this, @typescript-eslint/require-await
   public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
-    const output = mergeWith ? mergeWith.content || mergeWith.xml : '/type/file.s';
+    const output = mergeWith ? mergeWith.content ?? mergeWith.xml : '/type/file.s';
+    assert(output);
     return [{ output, source: new Readable() }];
   }
 }
@@ -66,8 +67,9 @@ describe('Streams', () => {
       );
       // convert overrides node's Transform _transform method
       // eslint-disable-next-line no-underscore-dangle
-      converter._transform(component, '', (err: Error) => {
+      converter._transform(component, '', (err: Error | undefined) => {
         try {
+          assert(err instanceof Error);
           expect(err.message).to.equal(expectedError.message);
           expect(err.name).to.equal(expectedError.name);
           done();
@@ -81,7 +83,7 @@ describe('Streams', () => {
       const converter = new streams.ComponentConverter('metadata', registryAccess);
 
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      converter._transform(component, '', async (err: Error, data: WriterFormat) => {
+      converter._transform(component, '', async (err: Error | undefined, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
           expect(data).to.deep.equal({
@@ -99,7 +101,7 @@ describe('Streams', () => {
       const converter = new streams.ComponentConverter('source', registryAccess);
 
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      converter._transform(component, '', async (err: Error, data: WriterFormat) => {
+      converter._transform(component, '', async (err: Error | undefined, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
           expect(data).to.deep.equal({
@@ -126,7 +128,7 @@ describe('Streams', () => {
       const converter = new streams.ComponentConverter('source', registryAccess, mergeSet);
 
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {
+      converter._transform(newComponent, '', async (err: Error | undefined, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
           expect(data).to.deep.equal({
@@ -155,7 +157,7 @@ describe('Streams', () => {
       const converter = new streams.ComponentConverter('source', registryAccess, mergeSet);
 
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      converter._transform(newComponent, '', async (err: Error, data: WriterFormat) => {
+      converter._transform(newComponent, '', async (err: Error | undefined, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
           expect(data).to.deep.equal({
@@ -181,7 +183,7 @@ describe('Streams', () => {
       const converter = new streams.ComponentConverter('source', registryAccess);
 
       // eslint-disable-next-line @typescript-eslint/no-misused-promises, @typescript-eslint/require-await
-      converter._transform(myComp, '', async (err: Error, data: WriterFormat) => {
+      converter._transform(myComp, '', async (err: Error | undefined, data: WriterFormat) => {
         try {
           expect(err).to.be.undefined;
           expect(data).to.deep.equal({
@@ -230,7 +232,7 @@ describe('Streams', () => {
         const expectedError = new Error('whoops');
         env.stub(converter.context, 'executeFinalizers').throws(expectedError);
 
-        await converter._flush((err: Error) => expect(err).to.deep.equal(expectedError));
+        await converter._flush((err: Error | undefined) => expect(err).to.deep.equal(expectedError));
       });
     });
   });
@@ -244,6 +246,9 @@ describe('Streams', () => {
       readableMock.push('hi');
       readableMock.push(null);
     };
+    assert(COMPONENT.xml);
+    assert(COMPONENT.content);
+
     const component = SourceComponent.createVirtualComponent(COMPONENT, [
       {
         dirPath: TYPE_DIRECTORY,
@@ -258,6 +263,8 @@ describe('Streams', () => {
         children: [basename(COMPONENT.xml), basename(COMPONENT.content)],
       },
     ]);
+    assert(component.xml);
+    assert(component.content);
     const chunk: WriterFormat = {
       component,
       writeInfos: [
@@ -300,7 +307,8 @@ describe('Streams', () => {
         const whoops = new Error('whoops!');
         pipelineStub.rejects(whoops);
 
-        await writer._write(chunk, '', (err: Error) => {
+        await writer._write(chunk, '', (err: Error | undefined) => {
+          assert(err instanceof Error);
           expect(err.message).to.equal(whoops.message);
           expect(err.name).to.equal(whoops.name);
         });
@@ -310,8 +318,10 @@ describe('Streams', () => {
         pipelineStub.resolves();
         const root = join(rootDestination, COMPONENT.type.directoryName);
 
-        await writer._write(chunk, '', (err: Error) => {
+        await writer._write(chunk, '', (err: Error | undefined) => {
           expect(err).to.be.undefined;
+          assert(COMPONENT.xml);
+          assert(COMPONENT.content);
           expect(ensureFile.firstCall.args[0]).to.equal(join(root, basename(COMPONENT.xml)));
           expect(ensureFile.secondCall.args[0]).to.equal(join(root, basename(COMPONENT.content)));
           expect(pipelineStub.firstCall.args).to.deep.equal([chunk.writeInfos[0].source, fsWritableMock]);
@@ -320,7 +330,8 @@ describe('Streams', () => {
 
       it('should use full paths of WriteInfo output if they are absolute during copy', async () => {
         pipelineStub.resolves();
-
+        assert(component.xml);
+        assert(component.content);
         const formatWithAbsoluteOutput: WriterFormat = {
           component,
           writeInfos: [
@@ -335,7 +346,7 @@ describe('Streams', () => {
           ],
         };
 
-        await writer._write(formatWithAbsoluteOutput, '', (err: Error) => {
+        await writer._write(formatWithAbsoluteOutput, '', (err: Error | undefined) => {
           expect(err).to.be.undefined;
           expect(ensureFile.firstCall.args).to.deep.equal([formatWithAbsoluteOutput.writeInfos[0].output]);
           expect(ensureFile.secondCall.args).to.deep.equal([formatWithAbsoluteOutput.writeInfos[1].output]);
@@ -349,7 +360,7 @@ describe('Streams', () => {
       it('should resolve copied source components during write', async () => {
         pipelineStub.resolves();
 
-        await writer._write(chunk, '', (err: Error) => {
+        await writer._write(chunk, '', (err: Error | undefined) => {
           expect(err).to.be.undefined;
           const destination = join(rootDestination, component.type.directoryName);
           const expected = resolver.getComponentsFromPath(destination);
@@ -365,7 +376,7 @@ describe('Streams', () => {
           writeInfos: [],
         };
 
-        await writer._write(emptyChunk, '', (err: Error) => {
+        await writer._write(emptyChunk, '', (err: Error | undefined) => {
           expect(err).to.be.undefined;
           expect(ensureFile.notCalled).to.be.true;
           expect(pipelineStub.notCalled).to.be.true;
@@ -376,7 +387,8 @@ describe('Streams', () => {
       it('should skip duplicate components in WriteInfos', async () => {
         pipelineStub.resolves();
         const loggerStub = env.stub(Logger.prototype, 'debug');
-
+        assert(COMPONENT.xml);
+        assert(COMPONENT.content);
         const dupedComponent = SourceComponent.createVirtualComponent(COMPONENT, [
           {
             dirPath: TYPE_DIRECTORY,
@@ -398,6 +410,7 @@ describe('Streams', () => {
           children: registryAccess.getTypeByName('customobject').children,
         };
 
+        assert(component.xml);
         const compWriteInfo: WriteInfo = {
           output: dupedComponent.getPackageRelativePath(component.xml, 'metadata'),
           source: readableMock,
@@ -409,7 +422,7 @@ describe('Streams', () => {
 
         // The chunk has 2 identical components. The dupe should be
         // ignored so that it only writes once to compensate for W-9614275
-        await writer._write(chunkWithDupe, '', (err: Error) => {
+        await writer._write(chunkWithDupe, '', (err: Error | undefined) => {
           expect(err).to.be.undefined;
           expect(ensureFile.calledOnce).to.be.true;
           expect(pipelineStub.calledOnce).to.be.true;
@@ -441,7 +454,7 @@ describe('Streams', () => {
         const appendStub = env.stub(archive, 'append');
         env.stub(streams, 'stream2buffer').resolves(Buffer.from('hi'));
 
-        await writer._write(chunk, '', (err: Error) => {
+        await writer._write(chunk, '', (err: Error | undefined) => {
           expect(err).to.be.undefined;
         });
         expect(appendStub.firstCall.args[0].toString()).to.equal('hi');
@@ -452,7 +465,7 @@ describe('Streams', () => {
         const appendStub = env.stub(archive, 'append');
         env.stub(streams, 'stream2buffer').resolves(Buffer.from('hi'));
 
-        await writer._write(chunk, '', (err: Error) => {
+        await writer._write(chunk, '', (err: Error | undefined) => {
           expect(err).to.be.undefined;
         });
         expect(appendStub.firstCall.args[0].toString()).to.equal('hi');
@@ -461,14 +474,14 @@ describe('Streams', () => {
       it('should finalize zip when stream is finished', async () => {
         const finalizeStub = env.stub(archive, 'finalize').resolves();
 
-        await writer._final((err: Error) => {
+        await writer._final((err: Error | undefined) => {
           expect(err).to.be.undefined;
           expect(finalizeStub.calledOnce).to.be.true;
         });
       });
 
       it('should write zip to buffer if no fs destination given', async () => {
-        await writer._write(chunk, '', (err: Error) => {
+        await writer._write(chunk, '', (err: Error | undefined) => {
           expect(err).to.be.undefined;
         });
         await writer._final(() => {
@@ -481,7 +494,8 @@ describe('Streams', () => {
         env.stub(archive, 'append').throws(whoops);
         env.stub(streams, 'stream2buffer').resolves(Buffer.from('hi'));
 
-        await writer._write(chunk, '', (err: Error) => {
+        await writer._write(chunk, '', (err: Error | undefined) => {
+          assert(err instanceof Error);
           expect(err.message).to.equal(whoops.message);
           expect(err.name).to.equal(whoops.name);
         });
@@ -491,7 +505,8 @@ describe('Streams', () => {
         const whoops = new Error('whoops!');
         env.stub(archive, 'finalize').throws(whoops);
 
-        await writer._final((err: Error) => {
+        await writer._final((err: Error | undefined) => {
+          assert(err instanceof Error);
           expect(err.message).to.equal(whoops.message);
           expect(err.name).to.equal(whoops.name);
         });

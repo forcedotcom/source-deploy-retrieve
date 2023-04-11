@@ -8,7 +8,7 @@ import { basename, dirname, isAbsolute, join, relative } from 'path';
 import { Readable } from 'stream';
 import { create as createArchive, Archiver } from 'archiver';
 import { getExtension } from 'mime';
-import { Open } from 'unzipper';
+import { CentralDirectory, Open } from 'unzipper';
 import { JsonMap } from '@salesforce/ts-types';
 import { createWriteStream } from 'graceful-fs';
 import { Messages, SfError } from '@salesforce/core';
@@ -22,10 +22,7 @@ import { getReplacementStreamForReadable } from '../replacements';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_static_resource_expected_archive_type',
-  'error_static_resource_missing_resource_file',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public static readonly ARCHIVE_MIME_TYPES = new Set([
@@ -38,7 +35,12 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   // eslint-disable-next-line class-methods-use-this
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     const { content, type, xml } = component;
-
+    if (!content) {
+      throw messages.createError('noContentFound', [component.fullName, component.type.name]);
+    }
+    if (!xml) {
+      throw messages.createError('error_parsing_xml', [component.fullName, component.type.name]);
+    }
     // archiver/zip.finalize looks like it is async, because it extends streams, but it is not meant to be used that way
     // the typings on it are misleading and unintended.  More info https://github.com/archiverjs/node-archiver/issues/476
     // If you await it, bad things happen, like the convert process exiting silently.  https://github.com/forcedotcom/cli/issues/1791
@@ -89,30 +91,33 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     // only unzip an archive component if there isn't a merge component, or the merge component is itself expanded
     const shouldUnzipArchive =
       StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(componentContentType) &&
-      (!mergeWith || mergeWith.tree.isDirectory(mergeContentPath));
+      (!mergeWith || (mergeContentPath && mergeWith.tree.isDirectory(mergeContentPath)));
 
     if (shouldUnzipArchive) {
       // for the bulk of static resource writing we'll start writing ASAP
       // we'll still defer writing the resource-meta.xml file by pushing it onto the writeInfos
       await Promise.all(
         (
-          await Open.buffer(await component.tree.readFile(content))
+          await openZipFile(component, content)
         ).files
           .filter((f) => f.type === 'File')
           .map(async (f) => {
             const path = join(baseContentPath, f.path);
             const fullDest = isAbsolute(path)
               ? path
-              : join(this.defaultDirectory || component.getPackageRelativePath('', 'source'), path);
+              : join(this.defaultDirectory ?? component.getPackageRelativePath('', 'source'), path);
             // push onto the pipeline and start writing now
             return this.pipeline(f.stream(), fullDest);
           })
       );
     }
+    if (!xml) {
+      throw messages.createError('error_parsing_xml', [component.fullName, component.type.name]);
+    }
     return [
       {
         source: component.tree.stream(xml),
-        output: mergeWith?.xml || component.getPackageRelativePath(basename(xml), 'source'),
+        output: mergeWith?.xml ?? component.getPackageRelativePath(basename(xml), 'source'),
       },
     ].concat(
       shouldUnzipArchive
@@ -159,28 +164,43 @@ const FALLBACK_TYPE_MAP = new Map<string, string>([
 const getContentType = async (component: SourceComponent): Promise<string> => {
   const resource = (await component.parseXml()).StaticResource as JsonMap;
 
-  if (!resource || !Object.prototype.hasOwnProperty.call(resource, 'contentType')) {
+  if (!resource || !Object.keys(resource).includes('contentType')) {
     throw new SfError(
-      messages.getMessage('error_static_resource_missing_resource_file', [join('staticresources', component.name)]),
+      messages.getMessage('error_static_resource_missing_resource_file', [
+        join('staticresources', component.name ?? component.xml ?? component.type.name),
+      ]),
       'LibraryError'
     );
   }
 
-  return resource.contentType as string;
+  const output = resource.contentType ?? DEFAULT_CONTENT_TYPE;
+
+  if (typeof output !== 'string') {
+    throw new SfError(
+      `Expected a string for contentType in ${component.name} (${component.xml}) but got ${output?.toString()}`
+    );
+  }
+  return output;
 };
 
 const getBaseContentPath = (component: SourceComponent, mergeWith?: SourceComponent): SourcePath => {
-  const baseContentPath = mergeWith?.content || component.getPackageRelativePath(component.content, 'source');
-  return join(dirname(baseContentPath), baseName(baseContentPath));
+  if (mergeWith?.content) {
+    return join(dirname(mergeWith.content), baseName(mergeWith?.content));
+  }
+  if (typeof component.content === 'string') {
+    const baseContentPath = component.getPackageRelativePath(component.content, 'source');
+    return join(dirname(baseContentPath), baseName(baseContentPath));
+  }
+  throw new SfError(`Expected a content path for ${component.name} (${component.xml})`);
 };
 
 const getExtensionFromType = (contentType: string): string =>
   // return registered ext, fallback, or the default (application/octet-stream -> bin)
-  getExtension(contentType) ?? FALLBACK_TYPE_MAP.get(contentType) ?? getExtension(DEFAULT_CONTENT_TYPE);
+  getExtension(contentType) ?? FALLBACK_TYPE_MAP.get(contentType) ?? getExtension(DEFAULT_CONTENT_TYPE) ?? 'bin';
 
 const componentIsExpandedArchive = async (component: SourceComponent): Promise<boolean> => {
   const { content, tree } = component;
-  if (tree.isDirectory(content)) {
+  if (content && tree.isDirectory(content)) {
     const contentType = await getContentType(component);
     if (StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES.has(contentType)) {
       return true;
@@ -192,3 +212,14 @@ const componentIsExpandedArchive = async (component: SourceComponent): Promise<b
   }
   return false;
 };
+
+/** wrapper around the Open command so we can emit a nicer error for bad zip files  */
+async function openZipFile(component: SourceComponent, content: string): Promise<CentralDirectory> {
+  try {
+    return await Open.buffer(await component.tree.readFile(content));
+  } catch (e) {
+    throw new SfError(`Unable to open zip file ${content} for ${component.name} (${component.xml})`, 'BadZipFile', [
+      'Check that your file really is a valid zip archive',
+    ]);
+  }
+}

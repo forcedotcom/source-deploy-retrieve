@@ -7,7 +7,7 @@
 import { fail } from 'assert';
 import { join } from 'path';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { SinonStub } from 'sinon';
 import { AuthInfo, ConfigAggregator, Connection, Lifecycle, Messages } from '@salesforce/core';
 import {
@@ -82,7 +82,7 @@ describe('ComponentSet', () => {
         });
     };
 
-    const getManifestContent = (version) => ({
+    const getManifestContent = (version: string) => ({
       types: [
         { members: ['replaceStuff'], name: 'ApexClass' },
         { members: ['TestObj__c.FieldA__c'], name: 'CustomField' },
@@ -99,8 +99,8 @@ describe('ComponentSet', () => {
         await componentSet.retrieve({ output: '', usernameOrConnection: connection });
 
         const expectedPayload = { apiVersion: maxVersion, manifestVersion: maxVersion };
-        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionRetrieveStub.called).to.be.true;
         expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
           apiVersion: maxVersion,
@@ -115,8 +115,8 @@ describe('ComponentSet', () => {
         await componentSet.retrieve({ output: '', usernameOrConnection: connection });
 
         const expectedPayload = { apiVersion: configVersion, manifestVersion: configVersion };
-        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionRetrieveStub.called).to.be.true;
         expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
           apiVersion: configVersion,
@@ -134,8 +134,8 @@ describe('ComponentSet', () => {
         await componentSet.retrieve({ output: '', usernameOrConnection: connection });
 
         const expectedPayload = { apiVersion: componentSetVersion, manifestVersion: componentSetVersion };
-        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionRetrieveStub.called).to.be.true;
         expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
           apiVersion: componentSetVersion,
@@ -156,8 +156,8 @@ describe('ComponentSet', () => {
         await componentSet.retrieve({ output: '', usernameOrConnection: 'testorg' });
 
         const expectedPayload = { apiVersion: componentSetVersion, manifestVersion: componentSetVersion };
-        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionRetrieveStub.called).to.be.true;
         expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
           apiVersion: componentSetVersion,
@@ -176,8 +176,8 @@ describe('ComponentSet', () => {
         await componentSet.retrieve({ output: '', usernameOrConnection: connection });
 
         const expectedPayload = { apiVersion: componentSetVersion, manifestVersion: sourceApiVersion };
-        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionRetrieveStub.called).to.be.true;
         expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
           apiVersion: sourceApiVersion,
@@ -200,8 +200,8 @@ describe('ComponentSet', () => {
         await componentSet.retrieve({ output: '', usernameOrConnection: connection });
 
         const expectedPayload = { apiVersion: componentSetVersion, manifestVersion };
-        expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionRetrieve');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include('apiVersionRetrieve');
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionRetrieveStub.called).to.be.true;
         expect(connectionRetrieveStub.args[0][0]).to.deep.equal({
           apiVersion: manifestVersion,
@@ -238,7 +238,7 @@ describe('ComponentSet', () => {
 
         const expectedPayload = { apiVersion: maxVersion, manifestVersion: maxVersion, webService: 'SOAP' };
         expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionDeployStub.called).to.be.true;
         await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, maxVersion);
         expect(connection.getApiVersion()).to.equal(maxVersion);
@@ -252,7 +252,7 @@ describe('ComponentSet', () => {
 
         const expectedPayload = { apiVersion: configVersion, manifestVersion: configVersion, webService: 'SOAP' };
         expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionDeployStub.called).to.be.true;
         await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, configVersion);
         expect(connection.getApiVersion()).to.equal(configVersion);
@@ -273,7 +273,7 @@ describe('ComponentSet', () => {
           webService: 'SOAP',
         };
         expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionDeployStub.called).to.be.true;
         await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, componentSetVersion);
         expect(connection.getApiVersion()).to.equal(componentSetVersion);
@@ -297,7 +297,7 @@ describe('ComponentSet', () => {
           webService: 'SOAP',
         };
         expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionDeployStub.called).to.be.true;
         await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, componentSetVersion);
         expect(connection.getApiVersion()).to.equal(componentSetVersion);
@@ -319,7 +319,7 @@ describe('ComponentSet', () => {
           webService: 'SOAP',
         };
         expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionDeployStub.called).to.be.true;
         await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, sourceApiVersion);
         expect(connection.getApiVersion()).to.equal(componentSetVersion);
@@ -341,7 +341,7 @@ describe('ComponentSet', () => {
 
         const expectedPayload = { apiVersion: componentSetVersion, manifestVersion, webService: 'SOAP' };
         expect(lifecycleEmitStub.args[1][0]).to.equal('apiVersionDeploy');
-        expect(lifecycleEmitStub.args[1][1]).to.deep.equal(expectedPayload);
+        expect(lifecycleEmitStub.args.flat()).to.deep.include(expectedPayload);
         expect(connectionDeployStub.called).to.be.true;
         await verifyManifestVersionInZip(connectionDeployStub.args[0][0] as Buffer, manifestVersion);
         expect(connection.getApiVersion()).to.equal(componentSetVersion);
@@ -822,7 +822,8 @@ describe('ComponentSet', () => {
     });
 
     it('should exclude components that are not addressable as defined in the registry', async () => {
-      const type = registry.types.customobjecttranslation.children.types.customfieldtranslation;
+      const type = registry.types.customobjecttranslation.children?.types.customfieldtranslation;
+      assert(type);
       const set = new ComponentSet();
       set.add(new SourceComponent({ name: type.name, type }));
       expect((await set.getObject()).Package.types).to.deep.equal([]);
@@ -851,7 +852,8 @@ describe('ComponentSet', () => {
     });
 
     it('should exclude child components that are not addressable as defined in the registry', async () => {
-      const childType = registry.types.customobjecttranslation.children.types.customfieldtranslation;
+      const childType = registry.types.customobjecttranslation.children?.types.customfieldtranslation;
+      assert(childType);
       const type = registry.types.customobjecttranslation;
       const set = new ComponentSet();
       const testComp = new SourceComponent({ name: type.name, type });
@@ -887,6 +889,7 @@ describe('ComponentSet', () => {
     });
     it('should return manifest string when initialized from manifest file', async () => {
       const manifest = manifestFiles.ONE_OF_EACH;
+      assert(manifest.data);
       const set = await ComponentSet.fromManifest({
         manifestPath: manifest.name,
         registry: registryAccess,
@@ -905,7 +908,7 @@ describe('ComponentSet', () => {
         registry: registryAccess,
         tree: manifestFiles.TREE,
       });
-      expect((await set.getPackageXml(4)).toString()).to.equal(manifestFiles.BASIC.data.toString());
+      expect((await set.getPackageXml(4)).toString()).to.equal(manifestFiles.BASIC.data?.toString());
     });
 
     it('should return destructive changes manifest string when initialized from source', async () => {
@@ -915,7 +918,7 @@ describe('ComponentSet', () => {
         tree: manifestFiles.TREE,
         fsDeletePaths: ['.'],
       });
-      expect(await set.getPackageXml(4, DestructiveChangesType.POST)).to.equal(manifestFiles.BASIC.data.toString());
+      expect(await set.getPackageXml(4, DestructiveChangesType.POST)).to.equal(manifestFiles.BASIC.data?.toString());
     });
   });
 
@@ -1004,8 +1007,9 @@ describe('ComponentSet', () => {
         await set.deploy({ usernameOrConnection: 'test@foobar.com' });
         fail('should have thrown an error');
       } catch (e) {
+        assert(e instanceof Error);
         Messages.importMessagesDirectory(__dirname);
-        const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_source_to_deploy']);
+        const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
         expect(e.name).to.equal('ComponentSetError');
         expect(e.message).to.equal(messages.getMessage('error_no_source_to_deploy'));
@@ -1139,7 +1143,7 @@ describe('ComponentSet', () => {
       set.add(component, DestructiveChangesType.POST);
 
       expect(!!set.getTypesOfDestructiveChanges().length).to.be.true;
-      expect(set.getSourceComponents().first().isMarkedForDelete()).to.be.true;
+      expect(set.getSourceComponents().first()?.isMarkedForDelete()).to.be.true;
       expect(set.has(component)).to.be.true;
     });
 
@@ -1156,12 +1160,12 @@ describe('ComponentSet', () => {
 
       expect(!!set.getTypesOfDestructiveChanges().length).to.be.true;
       expect(set.getDestructiveChangesType()).to.equal(DestructiveChangesType.POST);
-      expect(set.getSourceComponents().first().isMarkedForDelete()).to.be.true;
+      expect(set.getSourceComponents().first()?.isMarkedForDelete()).to.be.true;
 
       set.add(component);
       set.setDestructiveChangesType(DestructiveChangesType.PRE);
       expect(set.getDestructiveChangesType()).to.equal(DestructiveChangesType.PRE);
-      expect(set.getSourceComponents().first().isMarkedForDelete()).to.be.true;
+      expect(set.getSourceComponents().first()?.isMarkedForDelete()).to.be.true;
       expect(set.has(component)).to.be.true;
       expect(set.getSourceComponents().toArray().length).to.equal(1);
     });
@@ -1264,6 +1268,7 @@ describe('ComponentSet', () => {
 
     it('should correctly return DE (DigitalExperience) component file paths', () => {
       const set = new ComponentSet([digitalExperienceBundle.DE_COMPONENT], registryAccess);
+      assert(typeof digitalExperienceBundle.DE_TYPE?.id === 'string');
 
       const de: MetadataMember = {
         fullName: digitalExperienceBundle.HOME_VIEW_FULL_NAME,

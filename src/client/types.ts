@@ -66,7 +66,7 @@ export interface FileResponseFailure extends FileResponseBase {
 export type FileResponse = FileResponseSuccess | FileResponseFailure;
 export interface MetadataTransferResult {
   response: MetadataRequestStatus;
-  components: ComponentSet;
+  components?: ComponentSet;
   getFileResponses(): FileResponse[];
 }
 
@@ -214,7 +214,7 @@ export type RetrieveRequest = {
   packageNames?: string[];
   singlePackage?: boolean;
   specificFiles?: string[];
-  unpackaged: {
+  unpackaged?: {
     types: PackageTypeMembers[];
   };
 };

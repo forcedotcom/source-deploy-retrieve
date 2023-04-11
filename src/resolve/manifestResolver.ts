@@ -81,7 +81,7 @@ export class ManifestResolver {
 
       for (const fullName of members) {
         let mdType = type;
-        if (isMemberNestedInFolder(fullName, type, parentType, members)) {
+        if (parentType && isMemberNestedInFolder(fullName, type, parentType, members)) {
           mdType = parentType;
         }
         components.push({ fullName, type: mdType });

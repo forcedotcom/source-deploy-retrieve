@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, join } from 'path';
+import { Messages } from '@salesforce/core';
 import { META_XML_SUFFIX, SourcePath } from '../../common';
 import { SfdxFileFormat, WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve';
@@ -63,7 +64,7 @@ const getContentSourceDestination = (
   mergeWith?: SourceComponent
 ): SourcePath => {
   if (mergeWith?.content) {
-    if (component.tree.isDirectory(component.content)) {
+    if (component.content && component.tree.isDirectory(component.content)) {
       const relative = trimUntil(source, basename(component.content));
       return join(dirname(mergeWith.content), relative);
     }
@@ -83,6 +84,11 @@ const getXmlDestination = (
   }
 
   const { folderContentType, suffix, legacySuffix } = component.type;
+  if (!component.xml) {
+    Messages.importMessagesDirectory(__dirname);
+    const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
+    throw messages.createError('error_parsing_xml', [component.fullName, component.type.name]);
+  }
   let xmlDestination = component.getPackageRelativePath(component.xml, targetFormat);
 
   // quirks:
@@ -101,7 +107,7 @@ const getXmlDestination = (
         : `${xmlDestination}${META_XML_SUFFIX}`;
     }
   } else if (suffix) {
-    if (component.type.name === 'Document' && targetFormat === 'metadata') {
+    if (component.type.name === 'Document' && targetFormat === 'metadata' && component.content) {
       xmlDestination = xmlDestination.replace(
         new RegExp('.' + suffix + META_XML_SUFFIX + '$'),
         '.' + extName(component.content) + META_XML_SUFFIX

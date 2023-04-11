@@ -91,14 +91,16 @@ export function parseMetadataXml(fsPath: string): Optional<MetadataXml> {
  * @param directoryName - name of directory to use as a parsing index
  * @returns the FullName
  */
-export function parseNestedFullName(fsPath: string, directoryName: string): Optional<string> {
+export function parseNestedFullName(fsPath: string, directoryName: string): string | undefined {
   const pathSplits = fsPath.split(sep);
   // Exit if the directoryName is not included in the file path.
   if (!pathSplits.includes(directoryName)) {
     return;
   }
   const pathPrefix = pathSplits.slice(pathSplits.lastIndexOf(directoryName) + 1);
-  const fileName = pathSplits.pop().replace('-meta.xml', '').split('.')[0];
+  // the eslint comment should remain until strictMode is fully implemented
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+  const fileName = (pathSplits.pop() as string).replace('-meta.xml', '').split('.')[0];
   pathPrefix[pathPrefix.length - 1] = fileName;
   return pathPrefix.join('/');
 }

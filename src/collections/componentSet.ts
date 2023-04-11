@@ -7,6 +7,7 @@
 /* eslint  @typescript-eslint/unified-signatures:0 */
 import { XMLBuilder } from 'fast-xml-parser';
 import { AuthInfo, Connection, Logger, Messages, SfError } from '@salesforce/core';
+import { isString } from '@salesforce/ts-types';
 import {
   MetadataApiDeploy,
   MetadataApiDeployOptions,
@@ -22,7 +23,6 @@ import {
   MetadataResolver,
   ConnectionResolver,
   SourceComponent,
-  TreeContainer,
 } from '../resolve';
 import { getCurrentApiVersion, MetadataType, RegistryAccess } from '../registry';
 import {
@@ -36,7 +36,7 @@ import {
 import { LazyCollection } from './lazyCollection';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_source_to_deploy']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
@@ -58,12 +58,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   /**
    * The metadata API version to use. E.g., 52.0
    */
-  public apiVersion: string;
+  public apiVersion?: string;
   /**
    * The metadata API version of the deployed/retrieved source.
    * This is used as the value for the `version` field in the manifest.
    */
-  public sourceApiVersion: string;
+  public sourceApiVersion?: string;
   /**
    * Used to explicitly set the project directory for the component set.
    * When not present, sfdx-core's SfProject will use the current working directory.
@@ -144,29 +144,22 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    */
   public static fromSource(options: FromSourceOptions): ComponentSet;
   public static fromSource(input: string | string[] | FromSourceOptions): ComponentSet {
-    let fsPaths: string[] = [];
-    let registry: RegistryAccess;
-    let tree: TreeContainer;
-    let inclusiveFilter: ComponentSet;
-    let fsDeletePaths: string[] = [];
-
-    if (Array.isArray(input)) {
-      fsPaths = input;
-    } else if (typeof input === 'object') {
-      fsPaths = input.fsPaths;
-      registry = input.registry ?? registry;
-      tree = input.tree ?? tree;
-      inclusiveFilter = input.include;
-      fsDeletePaths = input.fsDeletePaths ?? fsDeletePaths;
-    } else {
-      fsPaths = [input];
-    }
+    const parseFromSourceInputs = (given: string | string[] | FromSourceOptions): FromSourceOptions => {
+      if (Array.isArray(given)) {
+        return { fsPaths: given };
+      } else if (typeof given === 'object') {
+        return given;
+      } else {
+        return { fsPaths: [given] };
+      }
+    };
+    const { fsPaths, registry, tree, include, fsDeletePaths = [] } = parseFromSourceInputs(input);
 
     const resolver = new MetadataResolver(registry, tree);
     const set = new ComponentSet([], registry);
     const buildComponents = (paths: string[], destructiveType?: DestructiveChangesType): void => {
       for (const path of paths) {
-        for (const component of resolver.getComponentsFromPath(path, inclusiveFilter)) {
+        for (const component of resolver.getComponentsFromPath(path, include)) {
           set.add(component, destructiveType);
         }
       }
@@ -398,11 +391,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
           // if the type doesn't support mixed wildcards and specific names, overwrite the names to be a wildcard
           typeMap.set(typeName, [fullName]);
         } else if (
+          typeEntry &&
           !typeEntry.includes(fullName) &&
           (!typeEntry.includes(ComponentSet.WILDCARD) || type.supportsWildcardAndName)
         ) {
           // if the type supports both wildcards and names, add them regardless
-          typeMap.get(typeName).push(fullName);
+          typeMap.get(typeName)?.push(fullName);
         }
       }
     };
@@ -418,9 +412,11 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
       // Add children
       const componentMap = components.get(key);
-      for (const comp of componentMap.values()) {
-        for (const child of comp.getChildren()) {
-          addToTypeMap(child.type, child.fullName);
+      if (componentMap) {
+        for (const comp of componentMap.values()) {
+          for (const child of comp.getChildren()) {
+            addToTypeMap(child.type, child.fullName);
+          }
         }
       }
     }
@@ -477,7 +473,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     if (member) {
       // filter optimization
       const memberCollection = this.components.get(simpleKey(member));
-      iter = memberCollection?.size > 0 ? memberCollection.values() : [];
+      iter = memberCollection && memberCollection.size > 0 ? memberCollection.values() : [];
     } else {
       // eslint-disable-next-line @typescript-eslint/no-this-alias
       iter = this;
@@ -497,7 +493,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     }
 
     // we're working with SourceComponents now
-    this.components.get(key).set(sourceKey(component), component);
+    this.components.get(key)?.set(sourceKey(component), component);
 
     // Build maps of destructive components and regular components as they are added
     // as an optimization when building manifests.
@@ -508,12 +504,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       if (!deletions.has(key)) {
         deletions.set(key, new Map<string, SourceComponent>());
       }
-      deletions.get(key).set(sourceKey(component), component);
+      deletions.get(key)?.set(sourceKey(component), component);
     } else {
       if (!this.manifestComponents.has(key)) {
         this.manifestComponents.set(key, new Map<string, SourceComponent>());
       }
-      this.manifestComponents.get(key).set(sourceKey(component), component);
+      this.manifestComponents.get(key)?.set(sourceKey(component), component);
     }
 
     // something could try adding a component meant for deletion improperly, which would be marked as an addition
@@ -605,7 +601,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const output = new Set<string>();
     componentMap.forEach((component) => {
       [...component.walkContent(), component.content, component.xml]
-        .filter(Boolean)
+        .filter(isString)
         .map((filename) => output.add(filename));
     });
     return Array.from(output);

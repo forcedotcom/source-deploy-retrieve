@@ -8,14 +8,21 @@ import { join } from 'path';
 import { Messages, SfError } from '@salesforce/core';
 
 import { assert, expect } from 'chai';
-import { decomposed, matchingContentFile, mixedContentSingleFile, nestedTypes, xmlInFolder } from '../../mock';
+import {
+  decomposed,
+  matchingContentFile,
+  mixedContentSingleFile,
+  nestedTypes,
+  xmlInFolder,
+  document,
+} from '../../mock';
 import { BaseSourceAdapter, DefaultSourceAdapter } from '../../../src/resolve/adapters';
 import { META_XML_SUFFIX } from '../../../src/common';
 import { RegistryTestUtil } from '../registryTestUtil';
 import { ForceIgnore, registry, SourceComponent } from '../../../src';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_metadata_xml_ignore']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 class TestAdapter extends BaseSourceAdapter {
   public readonly component: SourceComponent;
@@ -26,6 +33,7 @@ class TestAdapter extends BaseSourceAdapter {
   }
 
   protected getRootMetadataXmlPath(): string {
+    assert(this.component.xml);
     return this.component.xml;
   }
   protected populate(): SourceComponent {
@@ -36,6 +44,7 @@ class TestAdapter extends BaseSourceAdapter {
 describe('BaseSourceAdapter', () => {
   it('should reformat the fullName for folder types', () => {
     const component = xmlInFolder.COMPONENTS[0];
+    assert(component.xml);
     const adapter = new TestAdapter(component);
 
     const result = adapter.getComponent(component.xml);
@@ -46,6 +55,7 @@ describe('BaseSourceAdapter', () => {
   it('should defer parsing metadata xml to child adapter if path is not a metadata xml', () => {
     const component = mixedContentSingleFile.COMPONENT;
     const adapter = new TestAdapter(component);
+    assert(component.content);
 
     const result = adapter.getComponent(component.content);
 
@@ -55,7 +65,7 @@ describe('BaseSourceAdapter', () => {
   it('should defer parsing metadata xml to child adapter if path is not a root metadata xml', () => {
     const component = decomposed.DECOMPOSED_CHILD_COMPONENT_1;
     const adapter = new TestAdapter(component);
-
+    assert(decomposed.DECOMPOSED_CHILD_COMPONENT_1.xml);
     const result = adapter.getComponent(decomposed.DECOMPOSED_CHILD_COMPONENT_1.xml);
 
     expect(result).to.deep.equal(component);
@@ -81,18 +91,21 @@ describe('BaseSourceAdapter', () => {
 
   it('should resolve a folder component in metadata format', () => {
     const component = xmlInFolder.FOLDER_COMPONENT_MD_FORMAT;
+    assert(component.xml);
     const adapter = new DefaultSourceAdapter(component.type, undefined);
 
     expect(adapter.getComponent(component.xml)).to.deep.equal(component);
   });
 
-  it('should resolve a nested folder component in metadata format', () => {
+  it('should resolve a nested folder component in metadata format (document)', () => {
     const component = new SourceComponent({
-      name: undefined,
+      name: `subfolder/${document.COMPONENT_FOLDER_NAME}`,
       type: registry.types.document,
-      xml: join(xmlInFolder.TYPE_DIRECTORY, 'subfolder', `${xmlInFolder.COMPONENT_FOLDER_NAME}${META_XML_SUFFIX}`),
+      xml: join(document.DOCUMENTS_DIRECTORY, 'subfolder', `${document.COMPONENT_FOLDER_NAME}${META_XML_SUFFIX}`),
       parentType: registry.types.documentfolder,
     });
+    assert(component.xml);
+
     const adapter = new DefaultSourceAdapter(component.type);
 
     expect(adapter.getComponent(component.xml)).to.deep.equal(component);
@@ -108,24 +121,35 @@ describe('BaseSourceAdapter', () => {
 
   describe('handling nested types (Territory2Model)', () => {
     // mocha was throwing errors about private property _tree not matching
-    const sourceComponentKeys = ['type', 'name', 'xml', 'parent', 'parentType', 'content'];
+    const sourceComponentKeys: Array<keyof SourceComponent> = [
+      'type',
+      'name',
+      'xml',
+      'parent',
+      'parentType',
+      'content',
+    ];
 
     it('should resolve the parent name and type', () => {
       const component = nestedTypes.NESTED_PARENT_COMPONENT;
+      assert(component.xml);
+
       const adapter = new DefaultSourceAdapter(component.type);
       const componentFromAdapter = adapter.getComponent(component.xml);
-      sourceComponentKeys.map((prop: keyof SourceComponent) =>
-        expect(componentFromAdapter[prop]).to.deep.equal(component[prop])
-      );
+      assert(componentFromAdapter);
+
+      sourceComponentKeys.map((prop) => expect(componentFromAdapter[prop]).to.deep.equal(component[prop]));
     });
 
     it('should resolve the child name and type AND parentType', () => {
       const component = nestedTypes.NESTED_CHILD_COMPONENT;
+      assert(component.xml);
       const adapter = new DefaultSourceAdapter(component.type);
       const componentFromAdapter = adapter.getComponent(component.xml);
-      sourceComponentKeys.map((prop: keyof SourceComponent) =>
-        expect(componentFromAdapter[prop]).to.deep.equal(component[prop])
-      );
+      assert(componentFromAdapter);
+      sourceComponentKeys.map((prop) => {
+        expect(componentFromAdapter[prop]).to.deep.equal(component[prop]);
+      });
     });
   });
 });

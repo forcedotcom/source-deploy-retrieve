@@ -6,6 +6,7 @@
  */
 import { basename, dirname, sep } from 'path';
 import { Messages, SfError } from '@salesforce/core';
+import { ensureString } from '@salesforce/ts-types';
 import { MetadataXml, SourceAdapter } from '../types';
 import { parseMetadataXml, parseNestedFullName } from '../../utils';
 import { ForceIgnore } from '../forceIgnore';
@@ -15,7 +16,7 @@ import { SourcePath } from '../../common';
 import { MetadataType, RegistryAccess } from '../../registry';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_no_metadata_xml_ignore']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export abstract class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;
@@ -42,7 +43,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     this.tree = tree;
   }
 
-  public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent {
+  public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent | undefined {
     let rootMetadata = this.parseAsRootMetadataXml(path);
     if (!rootMetadata) {
       const rootMetadataPath = this.getRootMetadataXmlPath(path);
@@ -57,11 +58,12 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       );
     }
 
-    let component: SourceComponent;
+    let component: SourceComponent | undefined;
     if (rootMetadata) {
+      const name = this.calculateName(rootMetadata);
       component = new SourceComponent(
         {
-          name: this.calculateName(rootMetadata),
+          name,
           type: this.type,
           xml: rootMetadata.path,
           parentType: this.type.folderType ? this.registry.getTypeByName(this.type.folderType) : undefined,
@@ -88,7 +90,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    *
    * @param path File path of a metadata component
    */
-  protected parseAsRootMetadataXml(path: SourcePath): MetadataXml {
+  protected parseAsRootMetadataXml(path: SourcePath): MetadataXml | undefined {
     const metaXml = this.parseMetadataXml(path);
     if (metaXml) {
       let isRootMetadataXml = false;
@@ -118,7 +120,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
 
   // allowed to preserve API
   // eslint-disable-next-line class-methods-use-this
-  protected parseMetadataXml(path: SourcePath): MetadataXml {
+  protected parseMetadataXml(path: SourcePath): MetadataXml | undefined {
     return parseMetadataXml(path);
   }
 
@@ -131,12 +133,12 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    *
    * @param path File path of a metadata component
    */
-  private parseAsContentMetadataXml(path: SourcePath): MetadataXml {
+  private parseAsContentMetadataXml(path: SourcePath): MetadataXml | undefined {
     // InFolder metadata can be nested more than 1 level beneath its
     // associated directoryName.
     if (this.type.inFolder) {
       const fullName = parseNestedFullName(path, this.type.directoryName);
-      if (fullName) {
+      if (fullName && this.type.suffix) {
         return { fullName, suffix: this.type.suffix, path };
       }
     }
@@ -165,7 +167,10 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     // inFolder types (report, dashboard, emailTemplate, document) and their folder
     // container types (reportFolder, dashboardFolder, emailFolder, documentFolder)
     if (inFolder || folderContentType) {
-      return parseNestedFullName(rootMetadata.path, directoryName);
+      return ensureString(
+        parseNestedFullName(rootMetadata.path, directoryName),
+        `Unable to calculate fullName from component at path: ${rootMetadata.path} (${this.type.name})`
+      );
     }
 
     // not using folders?  then name is fullname
@@ -183,6 +188,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     if (grandparentType.folderType === this.type.id) {
       return rootMetadata.fullName;
     }
+    throw messages.createError('cantGetName', [rootMetadata.path, this.type.name]);
   }
 
   /**
@@ -190,7 +196,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    *
    * @param trigger Path that `getComponent` was called with
    */
-  protected abstract getRootMetadataXmlPath(trigger: SourcePath): SourcePath;
+  protected abstract getRootMetadataXmlPath(trigger: SourcePath): SourcePath | undefined;
 
   /**
    * Populate additional properties on a SourceComponent, such as source files and child components.
@@ -203,10 +209,10 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     trigger: SourcePath,
     component?: SourceComponent,
     isResolvingSource?: boolean
-  ): SourceComponent;
+  ): SourceComponent | undefined;
 }
 
-const parseAsFolderMetadataXml = (fsPath: SourcePath): MetadataXml => {
+const parseAsFolderMetadataXml = (fsPath: SourcePath): MetadataXml | undefined => {
   const match = new RegExp(/(.+)-meta\.xml$/).exec(basename(fsPath));
   const parts = fsPath.split(sep);
   if (match && !match[1].includes('.') && parts.length > 1) {

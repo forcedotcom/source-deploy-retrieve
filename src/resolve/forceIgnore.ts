@@ -15,8 +15,8 @@ import { searchUp } from '../utils/fileSystemHandler';
 export class ForceIgnore {
   public static readonly FILE_NAME = '.forceignore';
 
-  private readonly parser: Ignore;
-  private readonly forceIgnoreDirectory: string;
+  private readonly parser?: Ignore;
+  private readonly forceIgnoreDirectory?: string;
   private DEFAULT_IGNORE: string[] = ['**/*.dup', '**/.*', '**/package2-descriptor.json', '**/package2-manifest.json'];
 
   public constructor(forceIgnorePath = '') {
@@ -61,6 +61,7 @@ export class ForceIgnore {
   }
 
   public denies(fsPath: SourcePath): boolean {
+    if (!this.parser || !this.forceIgnoreDirectory) return false;
     try {
       return this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));
     } catch (e) {
@@ -69,6 +70,7 @@ export class ForceIgnore {
   }
 
   public accepts(fsPath: SourcePath): boolean {
+    if (!this.parser || !this.forceIgnoreDirectory) return true;
     try {
       return !this.parser.ignores(relative(this.forceIgnoreDirectory, fsPath));
     } catch (e) {

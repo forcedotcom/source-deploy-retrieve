@@ -1,5 +1,5 @@
 {
-  "extends": "@salesforce/dev-config/tsconfig-test",
+  "extends": "@salesforce/dev-config/tsconfig-test-strict",
   "include": ["./**/*.ts", "../src/registry/metadataRegistry.json", "../src/registry/stdValueSetRegistry.json"],
   "compilerOptions": {
     // Needed in order to import metadataRegistry.json

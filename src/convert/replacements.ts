@@ -6,11 +6,16 @@
  */
 import { readFile } from 'fs/promises';
 import { Transform, Readable } from 'stream';
-import { Lifecycle, SfError, SfProject } from '@salesforce/core';
+import { Lifecycle, Messages, SfProject } from '@salesforce/core';
 import * as minimatch from 'minimatch';
+import { Env } from '@salesforce/kit';
+import { ensureString, isString } from '@salesforce/ts-types';
 import { SourcePath } from '../common';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { MarkedReplacement, ReplacementConfig, ReplacementEvent } from './types';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 const fileContentsCache = new Map<string, string>();
 
@@ -39,7 +44,7 @@ class ReplacementStream extends Transform {
     encoding: string,
     callback: (error?: Error, data?: Buffer) => void
   ): Promise<void> {
-    let error: Error;
+    let error: Error | undefined;
     // read and do the various replacements
     callback(error, Buffer.from(await replacementIterations(chunk.toString(), this.replacements)));
   }
@@ -104,9 +109,9 @@ class ReplacementMarkingStream extends Transform {
   public async _transform(
     chunk: SourceComponent,
     encoding: string,
-    callback: (err: Error, data: SourceComponent) => void
+    callback: (err: Error | undefined, data: SourceComponent) => void
   ): Promise<void> {
-    let err: Error;
+    let err: Error | undefined;
     // if deleting, or no configs, just pass through
     if (!chunk.isMarkedForDelete() && this.replacementConfigs?.length) {
       try {
@@ -127,12 +132,14 @@ export const getContentsOfReplacementFile = async (path: string): Promise<string
     try {
       fileContentsCache.set(path, (await readFile(path, 'utf8')).trim());
     } catch (e) {
-      throw new SfError(
-        `The file "${path}" specified in the "replacements" property of sfdx-project.json could not be read.`
-      );
+      throw messages.createError('replacementsFileNotRead', [path]);
     }
   }
-  return fileContentsCache.get(path);
+  const output = fileContentsCache.get(path);
+  if (!output) {
+    throw messages.createError('replacementsFileNotRead', [path]);
+  }
+  return output;
 };
 
 /**
@@ -143,7 +150,7 @@ export const getReplacements = async (
   replacementConfigs: ReplacementConfig[] = []
 ): Promise<SourceComponent['replacements'] | undefined> => {
   // all possible filenames for this component
-  const filenames = [cmp.xml, ...cmp.walkContent()].filter(Boolean);
+  const filenames = [cmp.xml, ...cmp.walkContent()].filter(isString);
   const replacementsForComponent = (
     await Promise.all(
       // build a nested array that can be run through Object.fromEntries
@@ -160,11 +167,15 @@ export const getReplacements = async (
                 // used during replacement stream to limit warnings to explicit filenames, not globs
                 singleFile: Boolean(r.filename),
                 // Config is json which might use the regex.  If so, turn it into an actual regex
-                toReplace: r.stringToReplace ? stringToRegex(r.stringToReplace) : new RegExp(r.regexToReplace, 'g'),
+                toReplace:
+                  typeof r.stringToReplace === 'string'
+                    ? stringToRegex(r.stringToReplace)
+                    : new RegExp(r.regexToReplace, 'g'),
                 // get the literal replacement (either from env or file contents)
-                replaceWith: r.replaceWithEnv
-                  ? getEnvValue(r.replaceWithEnv)
-                  : await getContentsOfReplacementFile(r.replaceWithFile),
+                replaceWith:
+                  typeof r.replaceWithEnv === 'string'
+                    ? getEnvValue(r.replaceWithEnv)
+                    : await getContentsOfReplacementFile(r.replaceWithFile),
               }))
           ),
         ]
@@ -183,7 +194,7 @@ export const getReplacements = async (
 export const matchesFile = (f: string, r: ReplacementConfig): boolean =>
   // filenames will be absolute.  We don't have convenient access to the pkgDirs,
   // so we need to be more open than an exact match
-  f.endsWith(r.filename) || (r.glob && minimatch(f, `**/${r.glob}`));
+  Boolean((r.filename && f.endsWith(r.filename)) || (r.glob && minimatch(f, `**/${r.glob}`)));
 
 /**
  * Regardless of any components, return the ReplacementConfig that are valid with the current env.
@@ -197,14 +208,11 @@ const envFilter = (replacementConfigs: ReplacementConfig[] = []): ReplacementCon
   );
 
 /** A "getter" for envs to throw an error when an expected env is not present */
-const getEnvValue = (env: string): string => {
-  if (process.env[env]) {
-    return process.env[env];
-  }
-  throw new SfError(
+const getEnvValue = (env: string): string =>
+  ensureString(
+    new Env().getString(env),
     `"${env}" is in sfdx-project.json as a value for "replaceWithEnv" property, but it's not set in your environment.`
   );
-};
 
 /**
  * Read the `replacement` property from sfdx-project.json
@@ -212,7 +220,7 @@ const getEnvValue = (env: string): string => {
 const readReplacementsFromProject = async (projectDir?: string): Promise<ReplacementConfig[]> => {
   const proj = await SfProject.resolve(projectDir);
   const projJson = (await proj.resolveProjectConfig()) as { replacements?: ReplacementConfig[] };
-  return projJson.replacements;
+  return projJson.replacements ?? [];
 };
 
 /** escape any special characters used in the string so it can be used as a regex */

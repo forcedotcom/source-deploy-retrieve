@@ -67,11 +67,9 @@ describe('Convert Transaction Constructs', () => {
       it('should return a WriterFormat with recomposed data and remove XML_NS_KEY from child components', async () => {
         const component = decomposed.DECOMPOSED_COMPONENT;
         const context = new ConvertContext();
-        context.recomposition.setState((state) => {
-          state['Test__c'] = {
-            component,
-            children: new ComponentSet(component.getChildren()),
-          };
+        context.recomposition.transactionState.set('Test__c', {
+          component,
+          children: new ComponentSet(component.getChildren()),
         });
 
         const readFileSpy = env.spy(component.tree, 'readFile');
@@ -109,11 +107,9 @@ describe('Convert Transaction Constructs', () => {
           decomposed.DECOMPOSED_COMPONENT.tree
         );
         const context = new ConvertContext();
-        context.recomposition.setState((state) => {
-          state['Test__c'] = {
-            component,
-            children: new ComponentSet(component.getChildren()),
-          };
+        context.recomposition.transactionState.set('Test__c', {
+          component,
+          children: new ComponentSet(component.getChildren()),
         });
 
         const result = await context.recomposition.finalize();
@@ -140,11 +136,9 @@ describe('Convert Transaction Constructs', () => {
       it('should only read parent xml file once for non-decomposed components with children', async () => {
         const component = nonDecomposed.COMPONENT_1;
         const context = new ConvertContext();
-        context.recomposition.setState((state) => {
-          state[component.type.name] = {
-            component,
-            children: new ComponentSet(component.getChildren()),
-          };
+        context.recomposition.transactionState.set(component.type.name, {
+          component,
+          children: new ComponentSet(component.getChildren()),
         });
 
         const readFileSpy = env.spy(component.tree, 'readFile');
@@ -229,11 +223,9 @@ describe('Convert Transaction Constructs', () => {
         const compSet = new ComponentSet();
         component.getChildren().forEach((child) => compSet.add(child));
         component2.getChildren().forEach((child) => compSet.add(child));
-        context.recomposition.setState((state) => {
-          state[component.type.name] = {
-            component,
-            children: compSet,
-          };
+        context.recomposition.transactionState.set(component.type.name, {
+          component,
+          children: compSet,
         });
 
         const readFileSpy = env.spy(component.tree, 'readFile');
@@ -259,18 +251,23 @@ describe('Convert Transaction Constructs', () => {
             source: new Readable(),
           },
         ];
-        context.decomposition.setState((state) => {
-          state[children[0].fullName] = {
+        context.decomposition.transactionState.set(children[0].fullName, {
+          origin: component,
+          foundMerge: true,
+          writeInfo: writeInfos[0],
+        });
+
+        context.decomposition.transactionState
+          .set(children[0].fullName, {
             origin: component,
             foundMerge: true,
             writeInfo: writeInfos[0],
-          };
-          state[children[1].fullName] = {
+          })
+          .set(children[1].fullName, {
             origin: component,
             foundMerge: false,
             writeInfo: writeInfos[1],
-          };
-        });
+          });
 
         const result = await context.decomposition.finalize();
 
@@ -305,13 +302,13 @@ describe('Convert Transaction Constructs', () => {
             source: new JsToXml(nonDecomposed.COMPONENT_1_XML),
           },
         ];
-        context.nonDecomposition.setState((state) => {
-          state.childrenByUniqueElement = new Map([
+        context.nonDecomposition.transactionState = {
+          childrenByUniqueElement: new Map([
             [nonDecomposed.CHILD_1_NAME, nonDecomposed.CHILD_1_XML],
             [nonDecomposed.CHILD_2_NAME, nonDecomposed.CHILD_2_XML],
-          ]);
-          state.exampleComponent = component;
-        });
+          ]),
+          exampleComponent: component,
+        };
 
         const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
         expect(result).to.deep.equal([{ component, writeInfos }]);
@@ -329,13 +326,13 @@ describe('Convert Transaction Constructs', () => {
           `${baseName}.${component.type.suffix}${META_XML_SUFFIX}`
         );
         const writeInfos = [{ output, source: new JsToXml(nonDecomposed.COMPONENT_1_XML) }];
-        context.nonDecomposition.setState((state) => {
-          state.childrenByUniqueElement = new Map([
+        context.nonDecomposition.transactionState = {
+          childrenByUniqueElement: new Map([
             [nonDecomposed.CHILD_1_NAME, nonDecomposed.CHILD_1_XML],
             [nonDecomposed.CHILD_2_NAME, nonDecomposed.CHILD_2_XML],
-          ]);
-          state.exampleComponent = component;
-        });
+          ]),
+          exampleComponent: component,
+        };
 
         const result = await context.nonDecomposition.finalize(
           nonDecomposed.DEFAULT_DIR,
@@ -366,14 +363,14 @@ describe('Convert Transaction Constructs', () => {
           },
         };
         const writeInfos = [{ output: component.xml, source: new JsToXml(defaultPlusUnclaimed) }];
-        context.nonDecomposition.setState((state) => {
-          state.childrenByUniqueElement = new Map([
+        context.nonDecomposition.transactionState = {
+          childrenByUniqueElement: new Map([
             [nonDecomposed.CHILD_1_NAME, nonDecomposed.CHILD_1_XML],
             [nonDecomposed.CHILD_2_NAME, nonDecomposed.CHILD_2_XML],
             [nonDecomposed.UNCLAIMED_CHILD_NAME, nonDecomposed.UNCLAIMED_CHILD_XML],
-          ]);
-          state.exampleComponent = component;
-        });
+          ]),
+          exampleComponent: component,
+        };
 
         const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
 
@@ -399,10 +396,10 @@ describe('Convert Transaction Constructs', () => {
         };
 
         const writeInfos = [{ output: component.xml, source: new JsToXml(updatedFullXml) }];
-        context.nonDecomposition.setState((state) => {
-          state.childrenByUniqueElement = new Map([[nonDecomposed.CHILD_1_NAME, updatedChild1Xml]]);
-          state.exampleComponent = component;
-        });
+        context.nonDecomposition.transactionState = {
+          childrenByUniqueElement: new Map([[nonDecomposed.CHILD_1_NAME, updatedChild1Xml]]),
+          exampleComponent: component,
+        };
 
         const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
         expect(result).to.deep.equal([{ component, writeInfos }]);
@@ -442,10 +439,10 @@ describe('Convert Transaction Constructs', () => {
         };
 
         const writeInfos = [{ output: component.xml, source: new JsToXml(updatedFullXml) }];
-        context.nonDecomposition.setState((state) => {
-          state.childrenByUniqueElement = new Map([[nonDecomposed.CHILD_3_NAME, updatedChild3Xml]]);
-          state.exampleComponent = component;
-        });
+        context.nonDecomposition.transactionState = {
+          childrenByUniqueElement: new Map([[nonDecomposed.CHILD_3_NAME, updatedChild3Xml]]),
+          exampleComponent: component,
+        };
 
         const result = await context.nonDecomposition.finalize(nonDecomposed.DEFAULT_DIR, TREE);
         expect(result).to.deep.equal([{ component, writeInfos }]);

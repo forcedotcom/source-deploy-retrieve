@@ -5,10 +5,16 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join, sep, basename } from 'path';
+import { Messages } from '@salesforce/core';
+import { isPlainObject } from '@salesforce/ts-types';
 import { MetadataComponent } from '../resolve/types';
 import { META_XML_SUFFIX } from '../common/constants';
 import { RegistryAccess } from '../registry/registryAccess';
 import { registry } from '..';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
+
 const registryAccess = new RegistryAccess();
 
 /**
@@ -111,17 +117,21 @@ export const filePathsFromMetadataComponent = (
       ['LightningComponentBundle', join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.js${META_XML_SUFFIX}`)],
       ['AuraDefinitionBundle', join(packageDirWithTypeDir, `${fullName}${sep}${fullName}.cmp${META_XML_SUFFIX}`)],
     ]);
-
-    if (!mappings.has(type.name)) {
-      throw new Error(`Unsupported Bundle Type: ${type.name}`);
+    const matched = mappings.get(type.name);
+    if (!matched) {
+      throw messages.createError('unsupportedBundleType', [type.name]);
     }
-    return [mappings.get(type.name)];
+    return [matched];
   }
 
-  throw new Error(`type not supported for filepath generation: ${type.name}`);
+  throw messages.createError('filePathGeneratorNoTypeSupport', [type.name]);
 };
 
 const generateFolders = ({ fullName, type }: MetadataComponent, packageDirWithTypeDir: string): string[] => {
+  const folderType = type.folderType;
+  if (!folderType) {
+    throw messages.createError('missingFolderType', [type.name]);
+  }
   // create a folder for each part of the filename between the directory name and the fullname
   const splits = fullName.split('/');
   return splits
@@ -130,14 +140,19 @@ const generateFolders = ({ fullName, type }: MetadataComponent, packageDirWithTy
       join(
         packageDirWithTypeDir,
         `${originalArray.slice(0, index + 1).join(sep)}.${
-          registryAccess.getTypeByName(type.folderType).suffix
+          registryAccess.getTypeByName(folderType).suffix
         }${META_XML_SUFFIX}`
       )
     );
 };
 
 const getDecomposedChildType = ({ fullName, type }: MetadataComponent, packageDir?: string): string[] => {
-  const topLevelType = registryAccess.findType((t) => t.children && Object.keys(t.children.types).includes(type.id));
+  const topLevelType = registryAccess.findType(
+    (t) => isPlainObject(t.children) && Object.keys(t.children.types).includes(type.id)
+  );
+  if (!topLevelType) {
+    throw messages.createError('noParent', [fullName, type.name]);
+  }
   const topLevelTypeDir = packageDir ? join(packageDir, topLevelType.directoryName) : topLevelType.directoryName;
 
   return [

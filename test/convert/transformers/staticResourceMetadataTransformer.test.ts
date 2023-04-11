@@ -8,7 +8,7 @@ import { basename, join } from 'path';
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import { Messages } from '@salesforce/core';
 import * as archiver from 'archiver';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { createSandbox } from 'sinon';
 import { CentralDirectory, Entry, Open } from 'unzipper';
 import chai = require('chai');
@@ -28,15 +28,12 @@ chai.use(deepEqualInAnyOrder);
 const env = createSandbox();
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_static_resource_expected_archive_type',
-  'error_static_resource_missing_resource_file',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('StaticResourceMetadataTransformer', () => {
   const transformer = new StaticResourceMetadataTransformer();
   transformer.defaultDirectory = 'test';
-  let pipelineStub;
+  let pipelineStub: sinon.SinonStub;
 
   beforeEach(() => {
     env.stub(VirtualTreeContainer.prototype, 'stream').callsFake((fsPath: string) => new TestReadable(fsPath));
@@ -50,6 +47,8 @@ describe('StaticResourceMetadataTransformer', () => {
     it('should rename extension to .resource for content file', async () => {
       const component = mixedContentSingleFile.COMPONENT;
       const { type, content, xml } = component;
+      assert(content);
+      assert(xml);
       env.stub(component, 'parseXml').resolves({
         StaticResource: {
           contentType: 'png',
@@ -76,6 +75,8 @@ describe('StaticResourceMetadataTransformer', () => {
         MIXED_CONTENT_DIRECTORY_VIRTUAL_FS
       );
       const { type, content, xml } = component;
+      assert(content);
+      assert(xml);
       const archive = archiver.create('zip', { zlib: { level: 3 } });
       const archiveDirStub = env.stub(archive, 'directory');
       const archiveFinalizeStub = env.stub(archive, 'finalize');
@@ -114,6 +115,7 @@ describe('StaticResourceMetadataTransformer', () => {
       try {
         await transformer.toMetadataFormat(component);
       } catch (e) {
+        assert(e instanceof Error);
         expect(e.name).to.equal('LibraryError');
         expect(e.message).to.equal(
           messages.getMessage('error_static_resource_expected_archive_type', [contentType, component.name])
@@ -126,6 +128,7 @@ describe('StaticResourceMetadataTransformer', () => {
         MIXED_CONTENT_DIRECTORY_COMPONENT,
         MIXED_CONTENT_DIRECTORY_VIRTUAL_FS
       );
+      assert(typeof component.name === 'string');
 
       // when there's no matching component.resource-meta.xml file
       env.stub(component, 'parseXml').resolves({ StaticResource: undefined });
@@ -133,6 +136,8 @@ describe('StaticResourceMetadataTransformer', () => {
       try {
         await transformer.toMetadataFormat(component);
       } catch (e) {
+        assert(e instanceof Error);
+
         expect(e.message).to.deep.equalInAnyOrder(
           messages.getMessage('error_static_resource_missing_resource_file', [join('staticresources', component.name)])
         );
@@ -146,11 +151,13 @@ describe('StaticResourceMetadataTransformer', () => {
         {
           path: 'a',
           type: 'Directory',
+          // @ts-expect-error mock
           stream: (): Entry => null,
         },
         {
           path: 'b/c.css',
           type: 'File',
+          // @ts-expect-error mock
           stream: (): Entry => null,
         },
       ],
@@ -159,6 +166,8 @@ describe('StaticResourceMetadataTransformer', () => {
     it('should rename extension from .resource to a mime extension for content file', async () => {
       const component = mixedContentSingleFile.COMPONENT;
       const { type, content, xml } = component;
+      assert(content);
+      assert(xml);
       env.stub(component, 'parseXml').resolves({
         StaticResource: {
           contentType: 'image/png',
@@ -182,6 +191,8 @@ describe('StaticResourceMetadataTransformer', () => {
     it('should rename extension from .resource for a fallback mime extension', async () => {
       const component = mixedContentSingleFile.COMPONENT;
       const { type, content, xml } = component;
+      assert(content);
+      assert(xml);
       env.stub(component, 'parseXml').resolves({
         StaticResource: {
           contentType: 'application/x-javascript',
@@ -204,7 +215,10 @@ describe('StaticResourceMetadataTransformer', () => {
 
     it('should rename extension from .resource for an unsupported mime extension', async () => {
       const component = mixedContentSingleFile.COMPONENT;
+
       const { type, content, xml } = component;
+      assert(content);
+      assert(xml);
       env.stub(component, 'parseXml').resolves({
         StaticResource: {
           contentType: 'application/x-myspace',
@@ -233,8 +247,11 @@ describe('StaticResourceMetadataTransformer', () => {
     });
 
     it('should extract an archive', async () => {
+      assert(typeof transformer.defaultDirectory === 'string');
+
       const component = mixedContentSingleFile.COMPONENT;
       const { type, xml } = component;
+      assert(xml);
       env.stub(component, 'parseXml').resolves({
         StaticResource: {
           contentType: 'application/zip',
@@ -265,6 +282,8 @@ describe('StaticResourceMetadataTransformer', () => {
     it('should work well for null contentType', async () => {
       const component = mixedContentSingleFile.COMPONENT;
       const { type, content, xml } = component;
+      assert(content);
+      assert(xml);
       env.stub(component, 'parseXml').resolves({
         StaticResource: {
           contentType: undefined,
@@ -287,6 +306,9 @@ describe('StaticResourceMetadataTransformer', () => {
     it('should merge output with merge component when content is archive', async () => {
       const root = join('path', 'to', 'another', 'mixedSingleFiles');
       const component = mixedContentSingleFile.COMPONENT;
+      assert(component.xml);
+      assert(typeof transformer.defaultDirectory === 'string');
+
       const mergeComponent = SourceComponent.createVirtualComponent(
         {
           name: mixedContentSingleFile.COMPONENT.name,
@@ -305,6 +327,8 @@ describe('StaticResourceMetadataTransformer', () => {
           },
         ]
       );
+      assert(mergeComponent.xml);
+      assert(mergeComponent.content);
       env.stub(component, 'parseXml').resolves({
         StaticResource: {
           contentType: 'application/zip',
@@ -328,6 +352,8 @@ describe('StaticResourceMetadataTransformer', () => {
     it('should merge output with merge component when content is single file', async () => {
       const root = join('path', 'to', 'another', 'mixedSingleFiles');
       const component = mixedContentSingleFile.COMPONENT;
+      assert(component.content);
+      assert(component.xml);
       const mergeComponent = SourceComponent.createVirtualComponent(
         {
           name: mixedContentSingleFile.COMPONENT.name,
@@ -346,6 +372,8 @@ describe('StaticResourceMetadataTransformer', () => {
           },
         ]
       );
+      assert(mergeComponent.xml);
+
       env.stub(component, 'parseXml').resolves({
         StaticResource: {
           contentType: 'text/plain',

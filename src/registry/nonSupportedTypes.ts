@@ -87,9 +87,12 @@ export const hasUnsupportedFeatures = (type: CoverageObjectType): boolean => {
 
   if (
     type.orgShapes.developer.features?.length &&
-    features.some((feature) => type.orgShapes?.developer.features.includes(feature))
+    features.some((feature) => type.orgShapes?.developer.features?.includes(feature))
   ) {
     return true;
   }
-  return type.orgShapes?.developer.settings && settings.some((setting) => type.orgShapes?.developer.settings[setting]);
+  return (
+    Boolean(type.orgShapes?.developer.settings) &&
+    settings.some((setting) => type.orgShapes?.developer.settings?.[setting])
+  );
 };

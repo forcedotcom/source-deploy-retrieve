@@ -12,7 +12,7 @@ import { DecompositionStrategy } from '../../registry';
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_unexpected_child_type']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 /**
  * Handles decomposed types. A flavor of mixed content where a component can
@@ -46,7 +46,7 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
   protected ownFolder = true;
   protected metadataWithContent = false;
 
-  public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent {
+  public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent | undefined {
     let rootMetadata = super.parseAsRootMetadataXml(path);
     if (!rootMetadata) {
       const rootMetadataPath = this.getRootMetadataXmlPath(path);
@@ -54,7 +54,7 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
         rootMetadata = parseMetadataXml(rootMetadataPath);
       }
     }
-    let component: SourceComponent;
+    let component: SourceComponent | undefined;
     if (rootMetadata) {
       const componentName = this.type.folderType
         ? `${parentName(rootMetadata.path)}/${rootMetadata.fullName}`
@@ -78,15 +78,19 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
    * the child component, set its parent property to the one created by the
    * `BaseSourceAdapter`, and return the child component instead.
    */
-  protected populate(trigger: SourcePath, component?: SourceComponent, isResolvingSource?: boolean): SourceComponent {
+  protected populate(
+    trigger: SourcePath,
+    component?: SourceComponent,
+    isResolvingSource?: boolean
+  ): SourceComponent | undefined {
     const metaXml = parseMetadataXml(trigger);
-    if (metaXml) {
+    if (metaXml?.suffix) {
       const pathToContent = this.trimPathToContent(trigger);
-      const childTypeId = this.type.children.suffixes[metaXml.suffix];
+      const childTypeId = this.type.children?.suffixes?.[metaXml.suffix];
       const triggerIsAChild = !!childTypeId;
-      const strategy = this.type.strategies.decomposition;
+      const strategy = this.type.strategies?.decomposition;
 
-      if (triggerIsAChild && !this.type.children.types[childTypeId].unaddressableWithoutParent) {
+      if (triggerIsAChild && this.type.children && !this.type.children.types[childTypeId].unaddressableWithoutParent) {
         if (strategy === DecompositionStrategy.FolderPerType || isResolvingSource) {
           let parent = component;
           if (!parent) {

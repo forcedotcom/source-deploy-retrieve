@@ -12,10 +12,7 @@ import { SourceComponent } from '../sourceComponent';
 import { BaseSourceAdapter } from './baseSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_no_source_ignore',
-  'error_expected_source_files',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 /**
  * Handles types with a single content file with a matching file extension.
@@ -40,7 +37,7 @@ export class MatchingContentSourceAdapter extends BaseSourceAdapter {
   }
 
   protected populate(trigger: SourcePath, component: SourceComponent): SourceComponent {
-    let sourcePath: SourcePath;
+    let sourcePath: SourcePath | undefined;
 
     if (component.xml === trigger) {
       const fsPath = removeMetaXmlSuffix(trigger);
@@ -56,7 +53,6 @@ export class MatchingContentSourceAdapter extends BaseSourceAdapter {
         messages.getMessage('error_expected_source_files', [trigger, this.type.name]),
         'ExpectedSourceFilesError'
       );
-      // throw new ExpectedSourceFilesError(this.type, trigger);
     } else if (this.forceIgnore.denies(sourcePath)) {
       throw new SfError(
         messages.getMessage('error_no_source_ignore', [this.type.name, sourcePath]),

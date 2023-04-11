@@ -5,14 +5,17 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
+import { assert } from 'chai';
 import { registry, SourceComponent } from '../../../src';
 import { META_XML_SUFFIX } from '../../../src/common';
 
+export const DE_TYPE = registry.types.digitalexperiencebundle.children?.types.digitalexperience;
+assert(DE_TYPE);
 export const DEB_TYPE = registry.types.digitalexperiencebundle;
-export const DE_TYPE = DEB_TYPE.children.types.digitalexperience;
 
 // metafile name = metaFileSuffix for DigitalExperience.
 export const DE_METAFILE = DE_TYPE.metaFileSuffix;
+assert(typeof DE_METAFILE === 'string');
 
 export const BUNDLE_NAME = 'site/foo';
 export const BUNDLE_FULL_NAME = BUNDLE_NAME;

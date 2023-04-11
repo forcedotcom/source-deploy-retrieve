@@ -6,9 +6,8 @@
  */
 
 import { join } from 'path';
-import { expect } from 'chai';
+import { expect, assert } from 'chai';
 import { Messages } from '@salesforce/core';
-import { assert } from '@salesforce/ts-types';
 import { TestContext } from '@salesforce/core/lib/testSetup';
 import { decomposed, matchingContentFile } from '../../mock';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
@@ -22,7 +21,7 @@ import { ConvertContext } from '../../../src/convert/convertContext';
 const registryAccess = new RegistryAccess();
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_unexpected_child_type']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('DecomposedMetadataTransformer', () => {
   const $$ = new TestContext();
@@ -36,14 +35,11 @@ describe('DecomposedMetadataTransformer', () => {
 
       expect(await transformer.toMetadataFormat(child1)).to.deep.equal([]);
       expect(await transformer.toMetadataFormat(child2)).to.deep.equal([]);
-      expect(JSON.stringify(context.recomposition.state)).to.deep.equal(
-        JSON.stringify({
-          [component.fullName]: {
-            component,
-            children: new ComponentSet([child1, child2], registryAccess),
-          },
-        })
-      );
+      expect(context.recomposition.transactionState.size).to.deep.equal(1);
+      expect(context.recomposition.transactionState.get(component.fullName)).to.deep.equal({
+        component,
+        children: new ComponentSet([child1, child2], registryAccess),
+      });
     });
 
     it('should defer write operations and set context state when a parent component is given', async () => {
@@ -51,31 +47,32 @@ describe('DecomposedMetadataTransformer', () => {
       const transformer = new DecomposedMetadataTransformer(registryAccess, context);
 
       expect(await transformer.toMetadataFormat(component)).to.deep.equal([]);
-      expect(JSON.stringify(context.recomposition.state)).to.deep.equal(
-        JSON.stringify({
-          [component.fullName]: {
-            component,
-            children: new ComponentSet(component.getChildren(), registryAccess),
-          },
-        })
-      );
+      expect(context.recomposition.transactionState.size).to.equal(1);
+
+      expect(context.recomposition.transactionState.get(component.fullName)).to.deep.equal({
+        component,
+        children: new ComponentSet(component.getChildren(), registryAccess),
+      });
     });
 
     it('should defer write operations and set context state when a child and parent component is given', async () => {
-      const [child] = component.getChildren();
+      const [child1, child2] = component.getChildren();
       const context = new ConvertContext();
       const transformer = new DecomposedMetadataTransformer(registryAccess, context);
 
-      expect(await transformer.toMetadataFormat(child)).to.deep.equal([]);
+      expect(await transformer.toMetadataFormat(child1)).to.deep.equal([]);
+      expect(await transformer.toMetadataFormat(child2)).to.deep.equal([]);
       expect(await transformer.toMetadataFormat(component)).to.deep.equal([]);
-      expect(JSON.stringify(context.recomposition.state)).to.deep.equal(
-        JSON.stringify({
-          [component.fullName]: {
-            component,
-            children: new ComponentSet([child], registryAccess),
-          },
-        })
-      );
+      expect(context.recomposition.transactionState.size).to.deep.equal(1);
+
+      const stateValue = context.recomposition.transactionState.get(component.fullName);
+      assert(stateValue, 'expected stateValue to be defined');
+      expect(stateValue.component).to.deep.equal(component);
+      expect(stateValue.children?.size).to.deep.equal(2);
+      expect(context.recomposition.transactionState.get(component.fullName)).to.deep.equal({
+        component,
+        children: new ComponentSet([child1, child2], registryAccess),
+      });
     });
 
     it('should throw when an invalid child is included with the parent', async () => {
@@ -110,6 +107,7 @@ describe('DecomposedMetadataTransformer', () => {
         await transformer.toMetadataFormat(parentComponent);
         assert(false, 'expected TypeInferenceError to be thrown');
       } catch (err) {
+        assert(err instanceof Error);
         expect(err.name).to.equal('TypeInferenceError');
         expect(err.message).to.equal(messages.getMessage('error_unexpected_child_type', [fsPath, component.type.name]));
       }
@@ -119,6 +117,7 @@ describe('DecomposedMetadataTransformer', () => {
   describe('toSourceFormat', () => {
     it('should push writes for component and its children when type config is "FolderPerType"', async () => {
       const { fullName, type } = component;
+      assert(type.children?.types.validationrule.directoryName);
       const root = join('main', 'default', type.directoryName, fullName);
       const context = new ConvertContext();
       const transformer = new DecomposedMetadataTransformer(registryAccess, context);
@@ -135,7 +134,7 @@ describe('DecomposedMetadataTransformer', () => {
 
       const result = await transformer.toSourceFormat(component);
 
-      expect(context.decomposition.state).to.deep.equal({});
+      expect(context.decomposition.transactionState.size).to.equal(0);
       expect(result).to.deep.equal([
         {
           source: new JsToXml({
@@ -172,6 +171,8 @@ describe('DecomposedMetadataTransformer', () => {
 
     it('should push writes for component and its non-forceignored children', async () => {
       const { fullName, type } = component;
+      assert(type.children?.types.validationrule.directoryName);
+
       const root = join('main', 'default', type.directoryName, fullName);
       const context = new ConvertContext();
       const transformer = new DecomposedMetadataTransformer(registryAccess, context);
@@ -194,7 +195,7 @@ describe('DecomposedMetadataTransformer', () => {
 
       const result = await transformer.toSourceFormat(component);
 
-      expect(context.decomposition.state).to.deep.equal({});
+      expect(context.decomposition.transactionState.size).to.equal(0);
       expect(result).to.deep.equal([
         {
           source: new JsToXml({
@@ -262,6 +263,8 @@ describe('DecomposedMetadataTransformer', () => {
 
     it('should not create parent xml when only children are being decomposed', async () => {
       const { type, fullName } = component;
+      assert(type.children?.types.validationrule.directoryName);
+
       const transformer = new DecomposedMetadataTransformer();
       const root = join('main', 'default', type.directoryName, fullName);
       $$.SANDBOX.stub(component, 'parseXml').resolves({
@@ -368,7 +371,9 @@ describe('DecomposedMetadataTransformer', () => {
 
     describe('Merging Components', () => {
       it('should merge output with merge component that only has children', async () => {
+        assert(registry.types.customobject.children?.types.customfield.name);
         const mergeComponentChild = component.getChildren()[0];
+        assert(mergeComponentChild.parent);
         const componentToConvert = SourceComponent.createVirtualComponent(
           {
             name: 'CustomObject__c',
@@ -472,6 +477,7 @@ describe('DecomposedMetadataTransformer', () => {
           await transformer.toSourceFormat(component, parentComponent);
           assert(false, 'expected TypeInferenceError to be thrown');
         } catch (err) {
+          assert(err instanceof Error);
           expect(err.name).to.equal('TypeInferenceError');
           expect(err.message).to.equal(
             messages.getMessage('error_unexpected_child_type', [fsPath, component.type.name])
@@ -504,24 +510,24 @@ describe('DecomposedMetadataTransformer', () => {
 
         const result = await transformer.toSourceFormat(component, componentToMerge);
         expect(result).to.be.empty;
-        expect(context.decomposition.state).to.deep.equal({
-          [`${mergeComponentChild.type.name}#${mergeComponentChild.fullName}`]: {
-            foundMerge: false,
-            origin: component,
-            writeInfo: {
-              source: new JsToXml({
-                [mergeComponentChild.type.name]: {
-                  [XML_NS_KEY]: XML_NS_URL,
-                  fullName: mergeComponentChild.name,
-                  test: 'testVal',
-                },
-              }),
-              output: join(
-                root,
-                mergeComponentChild.type.directoryName,
-                `${mergeComponentChild.name}.${mergeComponentChild.type.suffix}-meta.xml`
-              ),
-            },
+        expect(
+          context.decomposition.transactionState.get(`${mergeComponentChild.type.name}#${mergeComponentChild.fullName}`)
+        ).to.deep.equal({
+          foundMerge: false,
+          origin: component,
+          writeInfo: {
+            source: new JsToXml({
+              [mergeComponentChild.type.name]: {
+                [XML_NS_KEY]: XML_NS_URL,
+                fullName: mergeComponentChild.name,
+                test: 'testVal',
+              },
+            }),
+            output: join(
+              root,
+              mergeComponentChild.type.directoryName,
+              `${mergeComponentChild.name}.${mergeComponentChild.type.suffix}-meta.xml`
+            ),
           },
         });
       });
@@ -548,20 +554,18 @@ describe('DecomposedMetadataTransformer', () => {
 
         const result = await transformer.toSourceFormat(component, componentToMerge);
         expect(result).to.be.empty;
-        expect(context.decomposition.state).to.deep.equal({
-          [`${type.name}#${fullName}`]: {
-            foundMerge: false,
-            origin: component,
-            writeInfo: {
-              source: new JsToXml({
-                [type.name]: {
-                  [XML_NS_KEY]: XML_NS_URL,
-                  fullName,
-                  foo: 'bar',
-                },
-              }),
-              output: join(root, `${fullName}.${type.suffix}-meta.xml`),
-            },
+        expect(context.decomposition.transactionState.get(`${type.name}#${fullName}`)).to.deep.equal({
+          foundMerge: false,
+          origin: component,
+          writeInfo: {
+            source: new JsToXml({
+              [type.name]: {
+                [XML_NS_KEY]: XML_NS_URL,
+                fullName,
+                foo: 'bar',
+              },
+            }),
+            output: join(root, `${fullName}.${type.suffix}-meta.xml`),
           },
         });
       });

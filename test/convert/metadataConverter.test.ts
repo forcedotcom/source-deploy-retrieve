@@ -23,10 +23,7 @@ import {
 } from '../mock/type-constants/customObjectConstant';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', [
-  'error_failed_convert',
-  'error_merge_metadata_target_unsupported',
-]);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('MetadataConverter', () => {
   const $$ = new TestContext();
@@ -97,6 +94,7 @@ describe('MetadataConverter', () => {
       });
       assert.fail('an error should have been thrown');
     } catch (e) {
+      assert(e instanceof Error);
       expect(e.message).to.equal(expectedError.message);
       expect(e.name).to.equal(expectedError.name);
     }
@@ -441,6 +439,7 @@ describe('MetadataConverter', () => {
         });
         fail(`should have thrown a ${expectedError.name} error`);
       } catch (e) {
+        assert(e instanceof SfError);
         expect(e.name).to.equal('ConversionError');
         expect(e.message).to.equal(expectedError.message);
       }
@@ -461,7 +460,7 @@ describe('MetadataConverter', () => {
 
     it('should create conversion pipeline with addressable components', async () => {
       components.push({
-        type: registry.types.customobjecttranslation.children.types.customfieldtranslation,
+        type: registry.types.customobjecttranslation.children?.types.customfieldtranslation,
         name: 'myFieldTranslation',
       } as SourceComponent);
 
@@ -481,6 +480,7 @@ describe('MetadataConverter', () => {
     });
 
     it('should ensure merge set contains parents of child components instead of the children themselves', async () => {
+      assert(DECOMPOSED_CHILD_COMPONENT_1.parent?.xml);
       await converter.convert(components, 'source', {
         type: 'merge',
         defaultDirectory,

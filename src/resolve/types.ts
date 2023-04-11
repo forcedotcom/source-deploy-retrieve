@@ -27,7 +27,7 @@ export type ComponentLike = MetadataComponent | MetadataMember;
  */
 export type MetadataXml = {
   fullName: string;
-  suffix: string;
+  suffix?: string;
   path: SourcePath;
 };
 
@@ -51,7 +51,7 @@ export interface SourceAdapter {
    * @param fsPath Path to resolve
    * @param isResolvingSource Whether the path to resolve is a single file
    */
-  getComponent(fsPath: SourcePath, isResolvingSource?: boolean): SourceComponent;
+  getComponent(fsPath: SourcePath, isResolvingSource?: boolean): SourceComponent | undefined;
 
   /**
    * Whether the adapter allows content-only metadata definitions.

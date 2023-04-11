@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { DecompositionStrategy, MetadataType, TransformerStrategy } from '../../src';
 import { registry as defaultRegistry } from '../../src/registry/registry';
 import { metadataTypes as UnsupportedTypes } from '../../src/registry/nonSupportedTypes';
@@ -20,7 +20,7 @@ describe('Registry Validation', () => {
       });
     });
     typesWithChildren.forEach((type) => {
-      Object.values(type.children.types).forEach((child) => {
+      Object.values(type.children?.types ?? []).forEach((child) => {
         it(`${child.name} should not be in UnsupportedTypes`, () => {
           expect(UnsupportedTypes).to.not.include(child.name);
         });
@@ -35,8 +35,10 @@ describe('Registry Validation', () => {
           expect(type.children).to.have.property('types');
           expect(type.children).to.have.property('suffixes');
           expect(type.children).to.have.property('directories');
-          Object.values(type.children.types).forEach((childType) => {
-            expect(type.children.suffixes[childType.suffix]).to.equal(childType.id);
+          Object.values(type.children?.types ?? []).forEach((childType) => {
+            assert(childType.suffix);
+            assert(type.children?.directories);
+            expect(type.children?.suffixes[childType.suffix]).to.equal(childType.id);
             expect(type.children.directories[childType.directoryName]).to.equal(childType.id);
           });
         });
@@ -47,7 +49,7 @@ describe('Registry Validation', () => {
       const childMapping = new Map<string, string>();
 
       typesWithChildren.map((parentType) =>
-        Object.values(parentType.children.types).map((childType) => {
+        Object.values(parentType.children?.types ?? []).map((childType) => {
           childMapping.set(childType.id, parentType.id);
         })
       );
@@ -65,7 +67,7 @@ describe('Registry Validation', () => {
       Object.entries(registry.childTypes).forEach(([childId, parentId]) => {
         it(`childTypes member ${childId} matches a parent type ${parentId}`, () => {
           expect(registry.types[parentId]).to.have.property('children');
-          expect(registry.types[parentId].children.types).to.have.property(childId);
+          expect(registry.types[parentId]?.children?.types).to.have.property(childId);
         });
       });
     });
@@ -77,6 +79,7 @@ describe('Registry Validation', () => {
         .filter((type) => type.aliasFor)
         .forEach((aliasType) => {
           it(`${aliasType.name} is aliased to  ${aliasType.aliasFor} and that exists`, () => {
+            assert(aliasType.aliasFor);
             expect(registry.types[aliasType.aliasFor]).to.exist;
           });
         });
@@ -85,12 +88,12 @@ describe('Registry Validation', () => {
 
   describe('suffixes', () => {
     describe('all properties of suffixes match a real parent or child type', () => {
-      Object.entries(registry.suffixes).forEach(([suffix, typeId]) => {
+      Object.entries(registry.suffixes ?? []).forEach(([suffix, typeId]) => {
         it(`suffix ${suffix} matches a parent or child type ${typeId}`, () => {
           // could be a parent type or a child type
           // exclusion for legacy suffixes
           if (registry.childTypes[typeId]) {
-            expect(registry.types[registry.childTypes[typeId]].children.types[typeId].suffix).to.equal(suffix);
+            expect(registry.types[registry.childTypes[typeId]].children?.types[typeId].suffix).to.equal(suffix);
           } else if (registry.types[typeId].legacySuffix) {
             // if there are legacy suffixes, this could be either that or the regular suffix
             expect([registry.types[typeId].legacySuffix, registry.types[typeId].suffix]).to.include(suffix);
@@ -119,10 +122,12 @@ describe('Registry Validation', () => {
           (type) => type.suffix && !type.aliasFor && !type.strictDirectoryName && !knownExceptions.includes(type.name)
         )
         .map((type) => {
+          assert(type.suffix);
           // mapping for the type's suffix
           suffixMap.set(type.suffix, type.id);
           if (type.children) {
             Object.values(type.children.types).map((childType) => {
+              assert(childType.suffix);
               // mapping for the child's suffix
               suffixMap.set(childType.suffix, childType.id);
             });
@@ -132,7 +137,7 @@ describe('Registry Validation', () => {
         it(`has a suffix entry for "${suffix}" : "${typeid}"`, () => {
           expect(typeid).to.be.a('string');
           expect(suffix).to.be.a('string');
-          expect(registry.suffixes[suffix]).to.equal(typeid);
+          expect(registry.suffixes?.[suffix]).to.equal(typeid);
         });
       });
     });
@@ -142,7 +147,8 @@ describe('Registry Validation', () => {
       Object.values(registry.types).map((type) => {
         if (type.suffix) {
           // some bundle types have no suffix
-          suffixMap.set(type.suffix, suffixMap.has(type.suffix) ? [...suffixMap.get(type.suffix), type] : [type]);
+          const found = suffixMap.get(type.suffix);
+          suffixMap.set(type.suffix, found ? [...found, type] : [type]);
         }
       });
       suffixMap.forEach((types, suffix) => {
@@ -216,7 +222,7 @@ describe('Registry Validation', () => {
       Object.values(registry.types)
         .filter((type) => type.children)
         .forEach((type) => {
-          Object.entries(type.children.types).forEach(([key, childType]) => {
+          Object.entries(type.children?.types ?? []).forEach(([key, childType]) => {
             it(`id ${childType.id} matches key ${key}`, () => {
               expect(childType.id).to.equal(key);
             });
@@ -252,57 +258,58 @@ describe('Registry Validation', () => {
             'matchingContentFile',
             'decomposed',
             'digitalExperience',
-          ]).includes(type.strategies.adapter);
+          ]).includes(type.strategies?.adapter);
         });
       });
     });
 
     describe('adapter = matchingContentFile => no other strategy properties', () => {
       typesWithStrategies
-        .filter((t) => t.strategies.adapter === 'matchingContentFile')
+        .filter((t) => t.strategies?.adapter === 'matchingContentFile')
         .forEach((type) => {
           it(`${type.id} has no other strategy properties`, () => {
-            expect(type.strategies.decomposition).to.be.undefined;
-            expect(type.strategies.recomposition).to.be.undefined;
-            expect(type.strategies.transformer).to.be.undefined;
+            expect(type.strategies?.decomposition).to.be.undefined;
+            expect(type.strategies?.recomposition).to.be.undefined;
+            expect(type.strategies?.transformer).to.be.undefined;
           });
         });
     });
 
     describe('adapter = bundle => no other strategy properties', () => {
       typesWithStrategies
-        .filter((t) => t.strategies.adapter === 'bundle')
+        .filter((t) => t.strategies?.adapter === 'bundle')
         .forEach((type) => {
           it(`${type.id} has no other strategy properties`, () => {
-            expect(type.strategies.decomposition).to.be.undefined;
-            expect(type.strategies.recomposition).to.be.undefined;
-            expect(type.strategies.transformer).to.be.undefined;
+            expect(type.strategies?.decomposition).to.be.undefined;
+            expect(type.strategies?.recomposition).to.be.undefined;
+            expect(type.strategies?.transformer).to.be.undefined;
           });
         });
     });
     describe('nondecomposed have exactly 1 child', () => {
       typesWithStrategies
-        .filter((t) => t.strategies.adapter === 'nonDecomposed')
+        .filter((t) => t.strategies?.adapter === 'nonDecomposed')
         .forEach((type) => {
           it(`${type.id} has one child`, () => {
-            expect(type.children.types).to.exist;
-            expect(Object.keys(type.children.types).length).to.equal(1);
+            expect(type.children?.types).to.exist;
+            expect(Object.keys(type.children?.types ?? []).length).to.equal(1);
           });
         });
     });
 
     describe('adapter = decomposed => has transformer and decomposition props', () => {
       typesWithStrategies
-        .filter((t) => t.strategies.adapter === 'decomposed')
+        .filter((t) => t.strategies?.adapter === 'decomposed')
         .forEach((type) => {
           it(`${type.id} has expected properties`, () => {
-            expect(type.strategies.decomposition).to.be.a('string');
+            assert(typeof type.strategies?.decomposition === 'string');
             expect(
               [DecompositionStrategy.FolderPerType.valueOf(), DecompositionStrategy.TopLevel.valueOf()].includes(
                 type.strategies.decomposition
               )
             ).to.be.true;
-            expect(type.strategies.transformer).to.be.a('string');
+            assert(typeof type.strategies?.transformer === 'string');
+
             expect(
               [
                 TransformerStrategy.Standard.valueOf(),
@@ -316,18 +323,18 @@ describe('Registry Validation', () => {
         });
     });
     it('no standard types specified in registry', () => {
-      expect(typesWithStrategies.filter((t) => t.strategies.transformer === 'standard')).to.have.length(0);
+      expect(typesWithStrategies.filter((t) => t.strategies?.transformer === 'standard')).to.have.length(0);
     });
     describe('adapter = mixedContent => has no decomposition/recomposition props', () => {
       typesWithStrategies
-        .filter((t) => t.strategies.adapter === 'mixedContent')
+        .filter((t) => t.strategies?.adapter === 'mixedContent')
         .forEach((type) => {
           it(`${type.id} has expected properties`, () => {
-            expect(type.strategies.decomposition).to.be.undefined;
-            expect(type.strategies.recomposition).to.be.undefined;
-            type.strategies.transformer
-              ? expect(type.strategies.transformer).to.be.a('string')
-              : expect(type.strategies.transformer).to.be.undefined;
+            expect(type.strategies?.decomposition).to.be.undefined;
+            expect(type.strategies?.recomposition).to.be.undefined;
+            type.strategies?.transformer
+              ? expect(type.strategies?.transformer).to.be.a('string')
+              : expect(type.strategies?.transformer).to.be.undefined;
           });
         });
     });
@@ -339,6 +346,7 @@ describe('Registry Validation', () => {
     folderTypes.forEach((type) => {
       it(`${type.name} has a valid folderType in the registry`, () => {
         expect(type.folderType).to.not.be.undefined;
+        assert(type.folderType);
         expect(registry.types[type.folderType]).to.be.an('object');
       });
     });

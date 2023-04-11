@@ -9,7 +9,7 @@ import { Messages, SfError } from '@salesforce/core';
 import { MetadataType, registry, RegistryAccess } from '../../src';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_missing_type_definition']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('RegistryAccess', () => {
   const registryAccess = new RegistryAccess();
@@ -29,7 +29,7 @@ describe('RegistryAccess', () => {
 
     it('should fetch child type definition', () => {
       expect(registryAccess.getTypeByName('customfield')).to.deep.equal(
-        registry.types.customobject.children.types.customfield
+        registry.types.customobject.children?.types.customfield
       );
     });
 
@@ -45,6 +45,7 @@ describe('RegistryAccess', () => {
   describe('getTypeBySuffix', () => {
     it('should get known type by suffix', () => {
       const type = registry.types.apexclass;
+      assert(type.suffix, 'Type should have a suffix defined for this test to work.');
       expect(registryAccess.getTypeBySuffix(type.suffix)).to.deep.equal(type);
     });
 
@@ -94,6 +95,8 @@ describe('RegistryAccess', () => {
 
   describe('getParentType', () => {
     it('should return a valid parent for a child metadata type', () => {
+      assert(registry.types.digitalexperiencebundle.children?.types.digitalexperience.id);
+      assert(registry.types.customobject.children?.types.customfield.id);
       expect(
         registryAccess.getParentType(registry.types.digitalexperiencebundle.children.types.digitalexperience.id)
       ).to.be.equal(registry.types.digitalexperiencebundle);

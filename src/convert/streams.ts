@@ -23,7 +23,7 @@ import { ConvertContext } from './convertContext';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_convert_invalid_format']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export const pipeline = promisify(cbPipeline);
 
@@ -54,9 +54,9 @@ export class ComponentConverter extends Transform {
   public async _transform(
     chunk: SourceComponent,
     encoding: string,
-    callback: (err: Error, data: WriterFormat) => void
+    callback: (err: Error | undefined, data: WriterFormat) => void
   ): Promise<void> {
-    let err: Error;
+    let err: Error | undefined;
     const writeInfos: WriteInfo[] = [];
 
     // Only transform components not marked for delete.
@@ -97,8 +97,8 @@ export class ComponentConverter extends Transform {
    * Called at the end when all components have passed through the pipeline. Finalizers
    * take care of any additional work to be done at this stage e.g. recomposing child components.
    */
-  public async _flush(callback: (err: Error, data?: WriterFormat) => void): Promise<void> {
-    let err: Error;
+  public async _flush(callback: (err: Error | undefined, data?: WriterFormat) => void): Promise<void> {
+    let err: Error | undefined;
     try {
       for await (const finalizerResult of this.context.executeFinalizers(this.defaultDirectory)) {
         finalizerResult.forEach((result) => this.push(result));
@@ -111,7 +111,7 @@ export class ComponentConverter extends Transform {
 }
 
 export abstract class ComponentWriter extends Writable {
-  public forceIgnoredPaths?: Set<string> = new Set<string>();
+  public forceIgnoredPaths: Set<string> = new Set<string>();
   protected rootDestination?: SourcePath;
 
   public constructor(rootDestination?: SourcePath) {
@@ -130,7 +130,7 @@ export class StandardWriter extends ComponentWriter {
   }
 
   public async _write(chunk: WriterFormat, encoding: string, callback: (err?: Error) => void): Promise<void> {
-    let err: Error;
+    let err: Error | undefined;
     if (chunk.writeInfos.length !== 0) {
       try {
         const toResolve: string[] = [];
@@ -139,7 +139,10 @@ export class StandardWriter extends ComponentWriter {
         // queue is empty when that call exits and overall less memory is consumed.
         await Promise.all(
           chunk.writeInfos.map((info: WriteInfo) => {
-            const fullDest = isAbsolute(info.output) ? info.output : join(this.rootDestination, info.output);
+            // assertion logic: the rootDestination is required in this subclass of ComponentWriter but the super doesn't know that
+            // the eslint comment should remain until strictMode is fully implemented
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+            const fullDest = isAbsolute(info.output) ? info.output : join(this.rootDestination as string, info.output);
             if (!existsSync(fullDest)) {
               for (const ignoredPath of this.forceIgnoredPaths) {
                 if (
@@ -196,7 +199,7 @@ export class ZipWriter extends ComponentWriter {
   }
 
   public async _write(chunk: WriterFormat, encoding: string, callback: (err?: Error) => void): Promise<void> {
-    let err: Error;
+    let err: Error | undefined;
     try {
       await Promise.all(
         chunk.writeInfos.map(async (writeInfo) => {
@@ -220,7 +223,7 @@ export class ZipWriter extends ComponentWriter {
   }
 
   public async _final(callback: (err?: Error) => void): Promise<void> {
-    let err: Error;
+    let err: Error | undefined;
     try {
       // Unlike the other 2 places where zip.finalize is called, this one DOES need to be awaited
       // the e2e replacement nuts will fail otherwise

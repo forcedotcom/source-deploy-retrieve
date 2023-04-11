@@ -1,4 +1,4 @@
-import { CoverageObject } from '../../src/registry/types';
+import { CoverageObject, CoverageObjectType } from '../../src/registry/types';
 import { getCurrentApiVersion, getCoverage } from '../../src/registry/coverage';
 import { registry as untypedRegistry } from '../../src';
 import { MetadataRegistry } from '../../src';
@@ -17,21 +17,21 @@ import * as fs from 'fs';
   ]);
 
   const inRegistry = (key: string) => registryTypes.some((regType) => regType.name === key);
-  const filterNoMetadata = ([key, type]) => !type.channels.metadataApi.exposed;
-  const filterFullCliSupport = ([key, type]) =>
+  const filterNoMetadata = ([key, type]: [string, CoverageObjectType]) => !type.channels.metadataApi.exposed;
+  const filterFullCliSupport = ([key, type]: [string, CoverageObjectType]) =>
     key.endsWith('Settings') ||
     (type.channels.metadataApi.exposed && type.channels.sourceTracking.exposed && inRegistry(key));
-  const filterCliNoTracking = ([key, type]) =>
+  const filterCliNoTracking = ([key, type]: [string, CoverageObjectType]) =>
     !key.endsWith('Settings') &&
     type.channels.metadataApi.exposed &&
     !type.channels.sourceTracking.exposed &&
     inRegistry(key);
-  const filterCliNoSupport = ([key, type]) =>
+  const filterCliNoSupport = ([key, type]: [string, CoverageObjectType]) =>
     !key.endsWith('Settings') &&
     type.channels.metadataApi.exposed &&
     type.channels.sourceTracking.exposed &&
     !inRegistry(key);
-  const filterCliNoSupportMetadataApiOnly = ([key, type]) =>
+  const filterCliNoSupportMetadataApiOnly = ([key, type]: [string, CoverageObjectType]) =>
     !key.endsWith('Settings') &&
     type.channels.metadataApi.exposed &&
     !type.channels.sourceTracking.exposed &&

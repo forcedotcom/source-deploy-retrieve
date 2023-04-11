@@ -24,7 +24,7 @@ import { ComponentSet } from '../collections';
 import { AsyncResult, MetadataRequestStatus, MetadataTransferResult, RequestStatus } from './types';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['md_request_fail']);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export interface MetadataTransferOptions {
   usernameOrConnection: string | Connection;
@@ -38,13 +38,13 @@ export abstract class MetadataTransfer<
   Result extends MetadataTransferResult,
   Options extends MetadataTransferOptions
 > {
-  protected components: ComponentSet;
+  protected components?: ComponentSet;
   protected logger: Logger;
   protected canceled = false;
-  private transferId?: string;
+  private transferId: Options['id'];
   private event = new EventEmitter();
   private usernameOrConnection: string | Connection;
-  private apiVersion: string;
+  private apiVersion?: string;
 
   public constructor({ usernameOrConnection, components, apiVersion, id }: Options) {
     this.usernameOrConnection = usernameOrConnection;
@@ -55,7 +55,7 @@ export abstract class MetadataTransfer<
   }
 
   // if you passed in an id, you don't have to worry about whether there'll be one if you ask for it
-  public get id(): Options['id'] extends MetadataTransferOptions['id'] ? string : string | undefined {
+  public get id(): Options['id'] {
     return this.transferId;
   }
 
@@ -94,7 +94,7 @@ export abstract class MetadataTransfer<
   public async pollStatus(
     frequencyOrOptions?: number | Partial<PollingClient.Options>,
     timeout?: number
-  ): Promise<Result> {
+  ): Promise<Result | undefined> {
     let pollingOptions: PollingClient.Options = {
       frequency: Duration.milliseconds(this.calculatePollingFrequency()),
       timeout: Duration.minutes(60),
@@ -171,7 +171,7 @@ export abstract class MetadataTransfer<
         `Converting metadata to: ${mdapiTempDir} because the SFDX_MDAPI_TEMP_DIR environment variable is set`
       );
       try {
-        const source = cs || this.components || new ComponentSet();
+        const source = cs ?? this.components ?? new ComponentSet();
         const converter = new MetadataConverter();
         await converter.convert(source, target, {
           type: 'directory',
@@ -202,7 +202,7 @@ export abstract class MetadataTransfer<
 
   private async poll(): Promise<StatusResult> {
     let completed = false;
-    let mdapiStatus: Status;
+    let mdapiStatus: Status | undefined;
 
     if (this.canceled) {
       // This only happens for a canceled retrieve. Canceled deploys are
@@ -260,7 +260,7 @@ export abstract class MetadataTransfer<
    * Based on the source components in the component set, it will return a polling frequency in milliseconds
    */
   private calculatePollingFrequency(): number {
-    const size = this.components?.getSourceComponents().toArray().length || 0;
+    const size = this.components?.getSourceComponents().toArray().length ?? 0;
     // take a piece-wise approach to encapsulate discrete deployment sizes in polling frequencies that "feel" good when deployed
     if (size === 0) {
       // no component set size is possible for retrieve
@@ -286,7 +286,7 @@ export abstract class MetadataTransfer<
 
 let emitted = false;
 /* prevent requests on apiVersions higher than the org supports */
-const getConnectionNoHigherThanOrgAllows = async (conn: Connection, requestedVersion: string): Promise<Connection> => {
+const getConnectionNoHigherThanOrgAllows = async (conn: Connection, requestedVersion?: string): Promise<Connection> => {
   // uses a TTL cache, so mostly won't hit the server
   const maxApiVersion = await conn.retrieveMaxApiVersion();
   if (requestedVersion && parseInt(requestedVersion, 10) > parseInt(maxApiVersion, 10)) {

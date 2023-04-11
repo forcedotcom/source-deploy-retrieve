@@ -7,43 +7,39 @@
 import { join } from 'path';
 import { JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
+import { Messages } from '@salesforce/core';
 import { MetadataComponent, SourceComponent } from '../../resolve';
 import { JsToXml } from '../streams';
 import { WriteInfo } from '../types';
 import { META_XML_SUFFIX, SourcePath, XML_NS_KEY, XML_NS_URL } from '../../common';
 import { ComponentSet } from '../../collections';
-import { DecompositionState } from '../convertContext';
+import { DecompositionStateValue } from '../convertContext';
 import { DecompositionStrategy } from '../../registry';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   // eslint-disable-next-line @typescript-eslint/require-await
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
     if (component.parent) {
       const { fullName: parentName } = component.parent;
-      this.context.recomposition.setState((state) => {
-        if (state[parentName]) {
-          state[parentName].children.add(component);
-        } else {
-          state[parentName] = {
-            component: component.parent,
-            children: new ComponentSet([component], this.registry),
-          };
-        }
-      });
+      const stateForParent = this.context.recomposition.transactionState.get(parentName) ?? {
+        component: component.parent,
+        children: new ComponentSet([], this.registry),
+      };
+      stateForParent.children?.add(component);
+      this.context.recomposition.transactionState.set(parentName, stateForParent);
     } else {
       const { fullName } = component;
-      this.context.recomposition.setState((state) => {
-        if (!state[fullName]) {
-          state[fullName] = { component, children: new ComponentSet([], this.registry) };
-        }
-        const children = component.getChildren();
-        if (children) {
-          children.map((child) => {
-            state[fullName].children.add(child);
-          });
-        }
+      const existing = this.context.recomposition.transactionState.get(fullName) ?? {
+        component,
+        children: new ComponentSet([], this.registry),
+      };
+      (component.getChildren() ?? []).map((child) => {
+        existing.children?.add(child);
       });
+      this.context.recomposition.transactionState.set(fullName, existing);
     }
     // noop since the finalizer will push the writes to the component writer
     return [];
@@ -55,13 +51,16 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const { type, fullName: parentFullName } = component;
     const forceIgnore = component.getForceIgnore();
 
-    let parentXmlObject: JsonMap;
+    let parentXmlObject: JsonMap | undefined;
     const composedMetadata = await getComposedMetadataEntries(component);
 
     for (const [tagKey, tagValue] of composedMetadata) {
-      const childTypeId = type.children?.directories[tagKey];
+      const childTypeId = type.children?.directories?.[tagKey];
       if (childTypeId) {
-        const childType = type.children.types[childTypeId];
+        const childType = type.children?.types[childTypeId];
+        if (!childType) {
+          throw messages.createError('error_missing_child_type_definition', [type.name, childTypeId]);
+        }
         const tagValues = ensureArray(tagValue);
         for (const value of tagValues as [{ fullName: string; name: string }]) {
           const entryName = value.fullName || value.name;
@@ -109,7 +108,10 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
             // if the merge parent has a child that can be merged with, push write
             // operation now and mark it as merged in the state
             else if (childrenOfMergeComponent.has(childComponent)) {
-              const mergeChild: SourceComponent = childrenOfMergeComponent.getSourceComponents(childComponent).first();
+              const mergeChild = childrenOfMergeComponent.getSourceComponents(childComponent).first();
+              if (!mergeChild?.xml) {
+                throw messages.createError('error_parsing_xml', [childComponent.fullName, childComponent.type.name]);
+              }
               writeInfos.push({
                 source,
                 output: mergeChild.xml,
@@ -153,7 +155,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
           output: mergeWith.xml,
         });
         this.setDecomposedState(component, { foundMerge: true });
-      } else if (!parentState?.foundMerge) {
+      } else {
         this.setDecomposedState(component, {
           foundMerge: false,
           writeInfo: {
@@ -175,18 +177,19 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
    */
   private setDecomposedState(
     forComponent: MetadataComponent,
-    props: Partial<Omit<DecompositionState[keyof DecompositionState], 'origin'>> = {}
+    props: Partial<Omit<DecompositionStateValue, 'origin'>> = {}
   ): void {
     const key = `${forComponent.type.name}#${forComponent.fullName}`;
     const withOrigin = Object.assign({ origin: forComponent.parent ?? forComponent }, props);
-    this.context.decomposition.setState((state) => {
-      state[key] = Object.assign(state[key] ?? {}, withOrigin);
+    this.context.decomposition.transactionState.set(key, {
+      ...(this.context.decomposition.transactionState.get(key) ?? {}),
+      ...withOrigin,
     });
   }
 
-  private getDecomposedState<T extends string>(forComponent: MetadataComponent): DecompositionState[T] {
+  private getDecomposedState(forComponent: MetadataComponent): DecompositionStateValue | undefined {
     const key = `${forComponent.type.name}#${forComponent.fullName}`;
-    return this.context.decomposition.state[key];
+    return this.context.decomposition.transactionState.get(key);
   }
 }
 
@@ -203,7 +206,7 @@ const getDefaultOutput = (component: MetadataComponent): SourcePath => {
   const [baseName, childName] = fullName.split('.');
   const baseComponent = (parent ?? component) as SourceComponent;
   let output = `${childName ?? baseName}.${component.type.suffix}${META_XML_SUFFIX}`;
-  if (parent?.type.strategies.decomposition === DecompositionStrategy.FolderPerType) {
+  if (parent?.type.strategies?.decomposition === DecompositionStrategy.FolderPerType) {
     output = join(type.directoryName, output);
   }
   return join(baseComponent.getPackageRelativePath(baseName, 'source'), output);

@@ -1,10 +1,10 @@
 # Supported CLI Metadata Types
 
-This list compares metadata types found in Salesforce v57 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
+This list compares metadata types found in Salesforce v58 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 510/535 supported metadata types.
+Currently, there are 513/550 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -13,6 +13,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AIApplication|✅||
 |AIApplicationConfig|✅||
 |AIReplyRecommendationsSettings|✅||
+|AIScoringModelDefVersion|❌|Not supported, but support could be added (but not for tracking)|
+|AIScoringModelDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |AIUsecaseDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |AccountForecastSettings|✅||
 |AccountInsightsSettings|✅||
@@ -34,6 +36,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AdvAccountForecastSet|✅||
 |AdvAcctForecastDimSource|✅||
 |AdvAcctForecastPeriodGroup|✅||
+|Ai4mSettings|✅||
 |AnalyticSnapshot|✅||
 |AnalyticsSettings|✅||
 |AnimationRule|✅||
@@ -46,14 +49,13 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ApexTrigger|✅||
 |AppAnalyticsSettings|✅||
 |AppExperienceSettings|✅||
-|AppExplorationDataConsent|❌|Not supported, but support could be added|
 |AppMenu|✅||
 |ApplicationRecordTypeConfig|✅||
 |ApplicationSubtypeDefinition|✅||
 |AppointmentAssignmentPolicy|✅||
 |AppointmentSchedulingPolicy|✅||
 |ApprovalProcess|✅||
-|ArchiveSettings|✅||
+|AssessmentConfiguration|❌|Not supported, but support could be added|
 |AssessmentQuestion|✅||
 |AssessmentQuestionSet|✅||
 |AssignmentRules|✅||
@@ -109,8 +111,10 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ChatterExtension|✅||
 |ChatterSettings|✅||
 |ClaimFinancialSettings|✅||
+|ClaimMgmtFoundationEnabledSettings|✅||
 |ClauseCatgConfiguration|✅||
 |CleanDataService|✅||
+|CodeBuilderSettings|✅||
 |CollectionsDashboardSettings|✅||
 |CommandAction|✅||
 |CommerceSettings|✅||
@@ -166,6 +170,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DataSrcDataModelFieldMap|✅||
 |DataStreamDefinition|✅||
 |DataStreamTemplate|✅||
+|DataWeaveResource|✅||
 |DecisionMatrixDefinition|✅||
 |DecisionMatrixDefinitionVersion|✅||
 |DecisionTable|✅||
@@ -189,6 +194,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DocumentGenerationSetting|✅||
 |DocumentType|✅||
 |DuplicateRule|✅||
+|DynamicFormsSettings|✅||
 |EACSettings|✅||
 |ESignatureConfig|✅||
 |ESignatureEnvelopeConfig|✅||
@@ -216,12 +222,12 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |EntitlementProcess|✅||
 |EntitlementSettings|✅||
 |EntitlementTemplate|✅||
-|EntityImplements|✅||
 |EscalationRules|✅||
 |EssentialsSettings|✅||
 |EventSettings|✅||
 |ExperienceBundle|✅||
 |ExperienceBundleSettings|✅||
+|ExperiencePropertyTypeBundle|✅||
 |ExplainabilityActionDefinition|✅||
 |ExplainabilityActionVersion|✅||
 |ExplainabilityMsgTemplate|✅||
@@ -237,8 +243,9 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExternalDataSrcDescriptor|❌|Not supported, but support could be added|
 |ExternalDataTranField|❌|Not supported, but support could be added|
 |ExternalDataTranObject|❌|Not supported, but support could be added|
+|ExternalDocStorageConfig|❌|Not supported, but support could be added|
 |ExternalServiceRegistration|✅||
-|ExtlClntAppMobileConfigurablePolicies|✅||
+|ExtlClntAppGlobalOauthSettings|✅||
 |ExtlClntAppMobileSettings|✅||
 |ExtlClntAppOauthConfigurablePolicies|✅||
 |ExtlClntAppOauthSettings|✅||
@@ -269,6 +276,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |FuelType|✅||
 |FuelTypeSustnUom|✅||
 |FunctionReference|⚠️|Supports deploy/retrieve but not source tracking|
+|FundraisingConfig|❌|Not supported, but support could be added|
 |GatewayProviderPaymentMethodType|✅||
 |GlobalValueSet|✅||
 |GlobalValueSetTranslation|✅||
@@ -308,6 +316,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |LeadConfigSettings|✅||
 |LeadConvertSettings|✅||
 |Letterhead|✅||
+|LicensingSettings|✅||
 |LightningBolt|✅||
 |LightningComponentBundle|✅||
 |LightningExperienceSettings|✅||
@@ -323,9 +332,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |LiveMessageSettings|✅||
 |LocationUse|✅||
 |LoyaltyProgramSetup|⚠️|Supports deploy/retrieve but not source tracking|
-|MLDataDefinition|✅||
-|MLPredictionDefinition|✅||
-|MLRecommendationDefinition|✅||
 |MacroSettings|✅||
 |MailMergeSettings|✅||
 |ManagedContentType|⚠️|Supports deploy/retrieve but not source tracking|
@@ -367,6 +373,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ObjectSourceTargetMap|✅||
 |OcrSampleDocument|✅||
 |OcrTemplate|✅||
+|OmniChannelPricingSettings|✅||
 |OmniChannelSettings|✅||
 |OmniDataTransform|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniIntegrationProcedure|⚠️|Supports deploy/retrieve but not source tracking|
@@ -390,7 +397,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PathAssistant|✅||
 |PathAssistantSettings|✅||
 |PaymentGatewayProvider|✅||
-|PaymentsIngestEnabledSettings|✅||
 |PaymentsManagementEnabledSettings|✅||
 |PaymentsSettings|✅||
 |PermissionSet|✅||
@@ -403,6 +409,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PlatformCachePartition|✅||
 |PlatformEventChannel|✅||
 |PlatformEventChannelMember|✅||
+|PlatformEventSettings|✅||
 |PlatformEventSubscriberConfig|✅||
 |PlatformSlackSettings|✅||
 |PortalDelegablePermissionSet|❌|Not supported, but support could be added|
@@ -412,9 +419,12 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PresenceDeclineReason|✅||
 |PresenceUserConfig|✅||
 |PrivacySettings|✅||
+|ProcessFlowMigration|❌|Not supported, but support could be added|
+|ProductAttrDisplayConfig|❌|Not supported, but support could be added|
 |ProductAttributeSet|✅||
 |ProductSettings|✅||
-|ProductSpecificationTypeDefinition|✅||
+|ProductSpecificationRecType|❌|Not supported, but support could be added|
+|ProductSpecificationType|❌|Not supported, but support could be added|
 |Profile|✅||
 |ProfilePasswordPolicy|✅||
 |ProfileSessionSetting|✅||
@@ -425,11 +435,13 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |QuickTextSettings|✅||
 |QuoteSettings|✅||
 |RealTimeEventSettings|✅||
+|RecAlrtDataSrcExpSetDef|❌|Not supported, but support could be added|
 |RecommendationBuilderSettings|✅||
 |RecommendationStrategy|✅||
 |RecordActionDeployment|✅||
 |RecordAlertCategory|✅||
 |RecordAlertDataSource|✅||
+|RecordAlertTemplate|❌|Not supported, but support could be added|
 |RecordPageSettings|✅||
 |RecordType|✅||
 |RedirectWhitelistUrl|✅||
@@ -472,6 +484,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SiteDotCom|✅||
 |SiteSettings|✅||
 |Skill|✅||
+|SkillType|❌|Not supported, but support could be added|
 |SlackApp|✅||
 |SocialCustomerServiceSettings|✅||
 |SocialProfileSettings|✅||
@@ -530,7 +543,9 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |WaveRecipe|✅||
 |WaveTemplateBundle|✅||
 |WaveXmd|✅||
+|Web3Settings|✅||
 |WebLink|✅||
+|WebStoreBundle|❌|Not supported, but support could be added|
 |WebStoreTemplate|✅||
 |WebToXSettings|✅||
 |WorkDotComSettings|✅||
@@ -548,35 +563,11 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 
 
-## Next Release (v58)
-v58 introduces the following new types.  Here's their current level of support
+## Next Release (v59)
+v59 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
-|AIScoringModelDefVersion|❌|Not supported, but support could be added (but not for tracking)|
-|AIScoringModelDefinition|❌|Not supported, but support could be added (but not for tracking)|
-|Ai4mSettings|✅||
-|AssessmentConfiguration|❌|Not supported, but support could be added|
-|ClaimMgmtFoundationEnabledSettings|✅||
-|CodeBuilderSettings|✅||
-|DataWeaveResource|✅||
-|DynamicFormsSettings|✅||
-|ExperiencePropertyTypeBundle|✅||
-|ExternalDocStorageConfig|❌|Not supported, but support could be added|
-|ExtlClntAppGlobalOauthSettings|✅||
-|FundraisingConfig|❌|Not supported, but support could be added|
-|LicensingSettings|✅||
-|OmniChannelPricingSettings|✅||
-|PlatformEventSettings|✅||
-|ProcessFlowMigration|❌|Not supported, but support could be added|
-|ProductAttrDisplayConfig|❌|Not supported, but support could be added|
-|ProductSpecificationRecType|❌|Not supported, but support could be added|
-|ProductSpecificationType|❌|Not supported, but support could be added|
-|RecAlrtDataSrcExpSetDef|❌|Not supported, but support could be added|
-|RecordAlertTemplate|❌|Not supported, but support could be added|
-|SkillType|❌|Not supported, but support could be added|
-|Web3Settings|✅||
-|WebStoreBundle|❌|Not supported, but support could be added|
 
 ## Additional Types
 
@@ -587,6 +578,8 @@ v58 introduces the following new types.  Here's their current level of support
 > 1. types that exist only as a child type of other metadata types
 > 1. settings types that are automatically supported
 
+- MLPredictionDefinition
+- MLDataDefinition
 - CustomLabel
 - Scontrol
 - CustomDataType
@@ -605,6 +598,7 @@ v58 introduces the following new types.  Here's their current level of support
 - CustomFieldTranslation
 - MatchingRule
 - MarketingResourceType
+- ExtlClntAppMobileConfigurablePolicies
 - CustomExperience
 - ManagedTopic
 - DataPipeline
@@ -619,12 +613,15 @@ v58 introduces the following new types.  Here's their current level of support
 - Orchestration
 - AIAssistantTemplate
 - Settings
+- EntityImplements
 - WorkSkillRoutingAttribute
 - BusinessProcessFeedbackConfiguration
 - DynamicTrigger
 - MktDataTranField
 - ConversationVendorFieldDef
+- MLRecommendationDefinition
 - InternalOrganization
 - UiViewDefinition
 - MobileSecurityPolicySet
 - CallCtrAgentFavTrfrDest
+- ProductSpecificationTypeDefinition

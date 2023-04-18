@@ -112,6 +112,10 @@ export class ConnectionResolver {
     try {
       members = await pollingClient.subscribe();
     } catch (error) {
+      // throw error if PollingClient timed out.
+      if (error instanceof NotRetryableError) {
+        throw NotRetryableError;
+      }
       this.logger.debug((error as Error).message);
       members = [];
     }

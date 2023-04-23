@@ -52,7 +52,7 @@
     "@types/proxy-from-env": "^1.0.1",
     "@types/shelljs": "^0.8.12",
     "@types/unzipper": "^0.10.5",
-    "@typescript-eslint/eslint-plugin": "^5.44.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.57.1",
     "chai": "^4.3.7",
     "deep-equal-in-any-order": "^1.1.19",

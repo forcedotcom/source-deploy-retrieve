@@ -1,3 +1,12 @@
+## [8.0.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.3...8.0.4) (2023-04-27)
+
+
+### Bug Fixes
+
+* update directory name for oauth policies and mobile policies ([#947](https://github.com/forcedotcom/source-deploy-retrieve/issues/947)) ([dbcf936](https://github.com/forcedotcom/source-deploy-retrieve/commit/dbcf9366719f177084c49a28e4a81b2b731fc69d))
+
+
+
 ## [8.0.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.2...8.0.3) (2023-04-23)
 
 

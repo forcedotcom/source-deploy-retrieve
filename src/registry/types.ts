@@ -11,7 +11,7 @@
  */
 export interface MetadataRegistry {
   types: TypeIndex;
-  suffixes?: SuffixIndex;
+  suffixes: SuffixIndex;
   strictDirectoryNames: {
     [directoryName: string]: string;
   };

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, join, sep } from 'path';
-import { Lifecycle, Messages, SfError } from '@salesforce/core';
+import { Lifecycle, Messages, SfError, Logger } from '@salesforce/core';
 import { extName, parentName, parseMetadataXml } from '../utils';
 import { MetadataType, RegistryAccess } from '../registry';
 import { ComponentSet } from '../collections';
@@ -25,6 +25,7 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
  */
 export class MetadataResolver {
   public forceIgnoredPaths: Set<string>;
+  protected logger: Logger;
   private forceIgnore?: ForceIgnore;
   private sourceAdapterFactory: SourceAdapterFactory;
   private folderContentTypeDirNames?: string[];
@@ -38,6 +39,7 @@ export class MetadataResolver {
     private tree: TreeContainer = new NodeFSTreeContainer(),
     private useFsForceIgnore = true
   ) {
+    this.logger = Logger.childFromRoot(this.constructor.name);
     this.sourceAdapterFactory = new SourceAdapterFactory(this.registry, tree);
     this.forceIgnoredPaths = new Set<string>();
   }
@@ -145,7 +147,19 @@ export class MetadataResolver {
       function: 'resolveComponent',
       path: fsPath,
     });
-    throw new SfError(messages.getMessage('error_could_not_infer_type', [fsPath]), 'TypeInferenceError');
+
+    // If a file ends with .xml and is not a metadata type, it is likely a package manifest
+    // In the past, these were "resolved" as EmailServicesFunction. See note on "attempt 3" in resolveType() below.
+    if (fsPath.endsWith('.xml') && !fsPath.endsWith(META_XML_SUFFIX)) {
+      this.logger.debug(`Could not resolve type for ${fsPath}. It is likely a package manifest. Moving on.`);
+      return undefined;
+    }
+
+    // The metadata type could not be inferred
+    // Attempt to guess the type and throw an error with actions
+    const actions = this.getSuggestionsForUnresolvedTypes(fsPath);
+
+    throw new SfError(messages.getMessage('error_could_not_infer_type', [fsPath]), 'TypeInferenceError', actions);
   }
 
   private resolveTypeFromStrictFolder(fsPath: string): MetadataType | undefined {
@@ -202,6 +216,15 @@ export class MetadataResolver {
     // attempt 3 - try treating the file extension name as a suffix
     if (!resolvedType) {
       resolvedType = this.registry.getTypeBySuffix(extName(fsPath));
+
+      // Metadata types with `strictDirectoryName` should have been caught in "attempt 1".
+      // If the metadata returned from this lookup has a `strictDirectoryName`, something is wrong.
+      // It is likely that the metadata file is misspelled or has the wrong suffix.
+      // A common occurrence is that a misspelled metadata file will fall back to
+      // `EmailServicesFunction` because that is the default for the `.xml` suffix
+      if (resolvedType?.strictDirectoryName === true) {
+        resolvedType = undefined;
+      }
     }
 
     // attempt 4 - try treating the content as metadata
@@ -213,6 +236,66 @@ export class MetadataResolver {
     }
 
     return resolvedType;
+  }
+
+  /**
+   * Attempt to find similar types for types that could not be inferred
+   * To be used after executing the resolveType() method
+   *
+   * @param fsPath
+   * @returns an array of suggestions
+   */
+  private getSuggestionsForUnresolvedTypes(fsPath: string): string[] {
+    const actions = [];
+
+    const parsedMetaXml = parseMetadataXml(fsPath);
+
+    // Analogous to "attempt 2" above
+    // Attempt to guess the metadata suffix by finding a close match
+    if (parsedMetaXml?.suffix) {
+      const results = this.registry.guessTypeBySuffix(parsedMetaXml.suffix);
+
+      if (results) {
+        actions.push(
+          `A search for the ".${parsedMetaXml.suffix}-meta.xml" metadata suffix found the following close match${
+            results.length > 1 ? 'es' : ''
+          }:`
+        );
+        results.forEach((result) => {
+          actions.push(
+            `- Did you mean ".${result.suffixGuess}-meta.xml" instead for the "${result.metadataTypeGuess.name}" metadata type?`
+          );
+        });
+        // check the file name, check the extension, check the folder and here is the registry
+      }
+    }
+
+    // Analogous to "attempt 3" above
+    // Attempt to guess the filename suffix by finding a close match
+    if (actions.length === 0 && !fsPath.includes('-meta.xml')) {
+      const fileExtension = extName(fsPath);
+      const results = this.registry.guessTypeBySuffix(fileExtension);
+      if (results) {
+        actions.push(
+          `A search for the ".${fileExtension}" filename suffix found the following close match${
+            results.length > 1 ? 'es' : ''
+          }:`
+        );
+        results.forEach((result) => {
+          actions.push(
+            `- Did you mean ".${result.suffixGuess}" instead for the "${result.metadataTypeGuess.name}" metadata type?`
+          );
+        });
+      }
+    }
+
+    if (actions.length > 0) {
+      actions.push(
+        '\nAdditional suggestions:\nConfirm the file name, extension, and directory names are correct. Validate against the registry at:\nhttps://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/registry/metadataRegistry.json'
+      );
+    }
+
+    return actions;
   }
 
   /**

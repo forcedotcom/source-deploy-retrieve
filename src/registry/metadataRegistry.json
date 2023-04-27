@@ -1410,7 +1410,7 @@
       "id": "extlclntappoauthconfigurablepolicies",
       "name": "ExtlClntAppOauthConfigurablePolicies",
       "suffix": "ecaOauthPlcy",
-      "directoryName": "oauthPolicies",
+      "directoryName": "extlClntAppOauthPolicies",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -1418,7 +1418,7 @@
       "id": "extlclntappmobileconfigurablepolicies",
       "name": "ExtlClntAppMobileConfigurablePolicies",
       "suffix": "ecaMobPlcy",
-      "directoryName": "mobilePolicies",
+      "directoryName": "extlClntAppMobilePolicies",
       "inFolder": false,
       "strictDirectoryName": false
     },

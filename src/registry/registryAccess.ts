@@ -78,7 +78,10 @@ export class RegistryAccess {
   ): Array<{ suffixGuess: string; metadataTypeGuess: MetadataType }> | undefined {
     const registryKeys = Object.keys(this.registry.suffixes);
 
-    const scores = registryKeys.map((registryKey) => ({ registryKey, score: Levenshtein.get(suffix, registryKey) }));
+    const scores = registryKeys.map((registryKey) => ({
+      registryKey,
+      score: Levenshtein.get(suffix, registryKey, { useCollator: true }),
+    }));
     const sortedScores = scores.sort((a, b) => a.score - b.score);
     const lowestScore = sortedScores[0].score;
     // Levenshtein uses positive integers for scores, find all scores that match the lowest score

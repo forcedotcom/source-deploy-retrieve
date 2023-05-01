@@ -110,4 +110,11 @@ describe('RegistryAccess', () => {
       expect(registryAccess.getParentType(registry.types.digitalexperienceconfig.id)).to.be.undefined;
     });
   });
+
+  describe('suggestions', () => {
+    it('guess for a type that is mis-cased should return the correct type first', () => {
+      const result = registryAccess.guessTypeBySuffix('CLS');
+      expect(result?.[0].metadataTypeGuess.name).to.equal('ApexClass');
+    });
+  });
 });

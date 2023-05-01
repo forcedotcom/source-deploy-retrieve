@@ -112,8 +112,12 @@ describe('RegistryAccess', () => {
   });
 
   describe('suggestions', () => {
-    it('guess for a type that is mis-cased should return the correct type first', () => {
+    it('guess for a type that is all uppercase should return the correct type first', () => {
       const result = registryAccess.guessTypeBySuffix('CLS');
+      expect(result?.[0].metadataTypeGuess.name).to.equal('ApexClass');
+    });
+    it('guess for a type that is first-uppercase should return the correct type first', () => {
+      const result = registryAccess.guessTypeBySuffix('Cls');
       expect(result?.[0].metadataTypeGuess.name).to.equal('ApexClass');
     });
   });

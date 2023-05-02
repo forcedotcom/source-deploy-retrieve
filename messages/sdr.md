@@ -157,3 +157,17 @@ No uniqueIdElement found in registry for %s (reading %s at %s).
 # uniqueIdElementNotInChild
 
 The uniqueIdElement %s was not found the child (reading %s at %s).
+
+# suggest_type_header
+
+A search for the %s suffix found the following close matches:
+
+# suggest_type_did_you_mean
+
+-- Did you mean ".%s%s" instead for the "%s" metadata type?
+
+# suggest_type_more_suggestions
+
+Additional suggestions:
+Confirm the file name, extension, and directory names are correct. Validate against the registry at:
+https://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/registry/metadataRegistry.json

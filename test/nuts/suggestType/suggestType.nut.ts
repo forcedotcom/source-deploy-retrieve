@@ -8,8 +8,11 @@
 import * as path from 'path';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { expect } from 'chai';
-import { SfError } from '@salesforce/core';
+import { SfError, Messages } from '@salesforce/core';
 import { ComponentSetBuilder } from '../../../src';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 describe('suggest types', () => {
   let session: TestSession;
@@ -27,7 +30,7 @@ describe('suggest types', () => {
     await session?.clean();
   });
 
-  it('it offers a suggestions on an invalid type', async () => {
+  it('it offers a suggestions on an invalid metadata suffix', async () => {
     try {
       await ComponentSetBuilder.build({
         sourcepath: [path.join(session.project.dir, 'force-app', 'main', 'default', 'objects')],
@@ -37,11 +40,25 @@ describe('suggest types', () => {
       const error = err as SfError;
       expect(error.name).to.equal('TypeInferenceError');
       expect(error.actions).to.include(
-        'A search for the ".objct-meta.xml" metadata suffix found the following close match:'
+        'A search for the ".objct-meta.xml" metadata suffix found the following close matches:'
       );
       expect(error.actions).to.include(
-        '- Did you mean ".object-meta.xml" instead for the "CustomObject" metadata type?'
+        '-- Did you mean ".object-meta.xml" instead for the "CustomObject" metadata type?'
       );
+    }
+  });
+
+  it('it offers a suggestions on an invalid filename suffix', async () => {
+    try {
+      await ComponentSetBuilder.build({
+        sourcepath: [path.join(session.project.dir, 'force-app', 'main', 'default', 'classes', 'DummyClass.clss')],
+      });
+      throw new Error('This test should have thrown');
+    } catch (err) {
+      const error = err as SfError;
+      expect(error.name).to.equal('TypeInferenceError');
+      expect(error.actions).to.include('A search for the ".clss" filename suffix found the following close matches:');
+      expect(error.actions).to.include('-- Did you mean ".cls" instead for the "ApexClass" metadata type?');
     }
   });
 
@@ -55,9 +72,9 @@ describe('suggest types', () => {
       const error = err as SfError;
       expect(error.name).to.equal('TypeInferenceError');
       expect(error.actions).to.include(
-        'A search for the ".Layout-meta.xml" metadata suffix found the following close match:'
+        'A search for the ".Layout-meta.xml" metadata suffix found the following close matches:'
       );
-      expect(error.actions).to.include('- Did you mean ".layout-meta.xml" instead for the "Layout" metadata type?');
+      expect(error.actions).to.include('-- Did you mean ".layout-meta.xml" instead for the "Layout" metadata type?');
     }
   });
 
@@ -74,10 +91,32 @@ describe('suggest types', () => {
         'A search for the ".tabsss-meta.xml" metadata suffix found the following close matches:'
       );
       expect(error.actions).to.include(
-        '- Did you mean ".labels-meta.xml" instead for the "CustomLabels" metadata type?'
+        '-- Did you mean ".labels-meta.xml" instead for the "CustomLabels" metadata type?'
       );
-      expect(error.actions).to.include('- Did you mean ".tab-meta.xml" instead for the "CustomTab" metadata type?');
+      expect(error.actions).to.include('-- Did you mean ".tab-meta.xml" instead for the "CustomTab" metadata type?');
     }
+  });
+
+  it('it offers additional suggestions to try', async () => {
+    try {
+      await ComponentSetBuilder.build({
+        sourcepath: [path.join(session.project.dir, 'force-app', 'main', 'default', 'tabs')],
+      });
+      throw new Error('This test should have thrown');
+    } catch (err) {
+      const error = err as SfError;
+      expect(error.name).to.equal('TypeInferenceError');
+      expect(error.actions).to.include(messages.getMessage('suggest_type_more_suggestions'));
+    }
+  });
+
+  // Since EmailServicesFunction uses the 'xml' suffix, we want to ensure it still resolves correctly
+  it('it still correctly resolves an EmailServicesFunction', async () => {
+    const cs = await ComponentSetBuilder.build({
+      sourcepath: [path.join(session.project.dir, 'force-app', 'main', 'default', 'emailservices')],
+    });
+    expect(cs['components'].size).to.equal(1);
+    expect((await cs.getObject()).Package.types[0].name).to.equal('EmailServicesFunction');
   });
 
   it('it ignores package manifest files', async () => {

@@ -1,0 +1,4 @@
+global class DummyClass {
+    result.success = true;
+    return result;
+}

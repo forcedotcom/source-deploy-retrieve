@@ -141,12 +141,6 @@ export class MetadataResolver {
         !adapter.allowMetadataWithContent();
       return shouldResolve ? adapter.getComponent(fsPath, isResolvingSource) : undefined;
     }
-    void Lifecycle.getInstance().emitTelemetry({
-      eventName: 'metadata_resolver_type_inference_error',
-      library: 'SDR',
-      function: 'resolveComponent',
-      path: fsPath,
-    });
 
     // If a file ends with .xml and is not a metadata type, it is likely a package manifest
     // In the past, these were "resolved" as EmailServicesFunction. See note on "attempt 3" in resolveType() below.
@@ -154,6 +148,13 @@ export class MetadataResolver {
       this.logger.debug(`Could not resolve type for ${fsPath}. It is likely a package manifest. Moving on.`);
       return undefined;
     }
+
+    void Lifecycle.getInstance().emitTelemetry({
+      eventName: 'metadata_resolver_type_inference_error',
+      library: 'SDR',
+      function: 'resolveComponent',
+      path: fsPath,
+    });
 
     // The metadata type could not be inferred
     // Attempt to guess the type and throw an error with actions
@@ -246,56 +247,31 @@ export class MetadataResolver {
    * @returns an array of suggestions
    */
   private getSuggestionsForUnresolvedTypes(fsPath: string): string[] {
-    const actions = [];
-
     const parsedMetaXml = parseMetadataXml(fsPath);
+    const metaSuffix = parsedMetaXml?.suffix;
 
-    // Analogous to "attempt 2" above
-    // Attempt to guess the metadata suffix by finding a close match
-    if (parsedMetaXml?.suffix) {
-      const results = this.registry.guessTypeBySuffix(parsedMetaXml.suffix);
+    // Analogous to "attempt 2" and "attempt 3" above
+    const guesses = metaSuffix
+      ? this.registry.guessTypeBySuffix(metaSuffix)
+      : this.registry.guessTypeBySuffix(extName(fsPath));
 
-      if (results) {
-        actions.push(
-          `A search for the ".${parsedMetaXml.suffix}-meta.xml" metadata suffix found the following close match${
-            results.length > 1 ? 'es' : ''
-          }:`
-        );
-        results.forEach((result) => {
-          actions.push(
-            `- Did you mean ".${result.suffixGuess}-meta.xml" instead for the "${result.metadataTypeGuess.name}" metadata type?`
-          );
-        });
-        // check the file name, check the extension, check the folder and here is the registry
-      }
-    }
-
-    // Analogous to "attempt 3" above
-    // Attempt to guess the filename suffix by finding a close match
-    if (actions.length === 0 && !fsPath.includes('-meta.xml')) {
-      const fileExtension = extName(fsPath);
-      const results = this.registry.guessTypeBySuffix(fileExtension);
-      if (results) {
-        actions.push(
-          `A search for the ".${fileExtension}" filename suffix found the following close match${
-            results.length > 1 ? 'es' : ''
-          }:`
-        );
-        results.forEach((result) => {
-          actions.push(
-            `- Did you mean ".${result.suffixGuess}" instead for the "${result.metadataTypeGuess.name}" metadata type?`
-          );
-        });
-      }
-    }
-
-    if (actions.length > 0) {
-      actions.push(
-        '\nAdditional suggestions:\nConfirm the file name, extension, and directory names are correct. Validate against the registry at:\nhttps://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/registry/metadataRegistry.json'
-      );
-    }
-
-    return actions;
+    // If guesses were found, format an array of strings to be passed to SfError's actions
+    return guesses && guesses.length > 0
+      ? [
+          messages.getMessage('suggest_type_header', [
+            metaSuffix ? `".${parsedMetaXml.suffix}-meta.xml" metadata` : `".${extName(fsPath)}" filename`,
+          ]),
+          ...guesses.map((guess) =>
+            messages.getMessage('suggest_type_did_you_mean', [
+              guess.suffixGuess,
+              metaSuffix ? '-meta.xml' : '',
+              guess.metadataTypeGuess.name,
+            ])
+          ),
+          '', // A blank line makes this much easier to read (it doesn't seem to be possible to start a markdown message entry with a newline)
+          messages.getMessage('suggest_type_more_suggestions'),
+        ]
+      : [];
   }
 
   /**

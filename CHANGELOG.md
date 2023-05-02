@@ -1,3 +1,12 @@
+## [8.0.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.4...8.0.5) (2023-05-02)
+
+
+### Bug Fixes
+
+* update the update2 script for TS strict compile ([#954](https://github.com/forcedotcom/source-deploy-retrieve/issues/954)) ([e85a395](https://github.com/forcedotcom/source-deploy-retrieve/commit/e85a39596f985ecb9b81cc794aa86a549337e8e4))
+
+
+
 ## [8.0.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.3...8.0.4) (2023-04-27)
 
 

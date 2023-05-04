@@ -7,12 +7,14 @@
 
 import * as path from 'path';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
-import { expect } from 'chai';
+import { expect, config } from 'chai';
 import { SfError, Messages } from '@salesforce/core';
 import { ComponentSetBuilder } from '../../../src';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
+
+config.truncateThreshold = 0;
 
 describe('suggest types', () => {
   let session: TestSession;
@@ -117,6 +119,21 @@ describe('suggest types', () => {
     });
     expect(cs['components'].size).to.equal(1);
     expect((await cs.getObject()).Package.types[0].name).to.equal('EmailServicesFunction');
+  });
+
+  // This will likely not provide great suggestions, but at least the user is alerted to file causing the issue
+  it('it errors on very incorrectly named metadata', async () => {
+    try {
+      await ComponentSetBuilder.build({
+        sourcepath: [path.join(session.project.dir, 'force-app', 'main', 'default', 'labels')],
+      });
+      throw new Error('This test should have thrown');
+    } catch (err) {
+      const error = err as SfError;
+      expect(error.name).to.equal('TypeInferenceError');
+      expect(error.actions).to.include('A search for the ".xml" filename suffix found the following close matches:');
+      expect(error.actions).to.include('-- Did you mean ".xml" instead for the "EmailServicesFunction" metadata type?');
+    }
   });
 
   it('it ignores package manifest files', async () => {

@@ -6,6 +6,7 @@
  */
 import { basename, dirname, join, sep } from 'path';
 import { Lifecycle, Messages, SfError, Logger } from '@salesforce/core';
+import { readFileSync } from 'graceful-fs';
 import { extName, parentName, parseMetadataXml } from '../utils';
 import { MetadataType, RegistryAccess } from '../registry';
 import { ComponentSet } from '../collections';
@@ -142,10 +143,14 @@ export class MetadataResolver {
       return shouldResolve ? adapter.getComponent(fsPath, isResolvingSource) : undefined;
     }
 
-    // If a file ends with .xml and is not a metadata type, it is likely a package manifest
-    // In the past, these were "resolved" as EmailServicesFunction. See note on "attempt 3" in resolveType() below.
-    if (fsPath.endsWith('.xml') && !fsPath.endsWith(META_XML_SUFFIX)) {
-      this.logger.debug(`Could not resolve type for ${fsPath}. It is likely a package manifest. Moving on.`);
+    // Read the file and check to see if it contains the string "<Package xmlns"
+    // If so, it is a package manifest and it can be ignored
+    if (
+      fsPath.endsWith('.xml') &&
+      !fsPath.endsWith(META_XML_SUFFIX) &&
+      readFileSync(fsPath, 'utf-8').includes('<Package xmlns')
+    ) {
+      this.logger.debug(`${fsPath} is a package manifest. Moving on.`);
       return undefined;
     }
 

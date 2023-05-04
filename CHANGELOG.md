@@ -1,3 +1,12 @@
+## [8.0.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.5...8.0.6) (2023-05-04)
+
+
+### Bug Fixes
+
+* another connection error ([#957](https://github.com/forcedotcom/source-deploy-retrieve/issues/957)) ([657c5f8](https://github.com/forcedotcom/source-deploy-retrieve/commit/657c5f8e0ac93e4dabb34ac2d5ed802d25354c72))
+
+
+
 ## [8.0.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.4...8.0.5) (2023-05-02)
 
 

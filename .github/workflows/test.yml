@@ -14,82 +14,82 @@ jobs:
     needs: yarn-lockfile-check
     uses: salesforcecli/github-workflows/.github/workflows/unitTestsLinux.yml@main
   windows-unit-tests:
-    # needs: linux-unit-tests
+    needs: linux-unit-tests
     uses: salesforcecli/github-workflows/.github/workflows/unitTestsWindows.yml@main
 
-  # nuts:
-  #   needs: linux-unit-tests
-  #   uses: salesforcecli/github-workflows/.github/workflows/nut.yml@main
-  #   secrets: inherit
-  #   strategy:
-  #     matrix:
-  #       os: [ubuntu-latest, windows-latest]
-  #     fail-fast: false
-  #   with:
-  #     os: ${{ matrix.os }}
+  nuts:
+    needs: linux-unit-tests
+    uses: salesforcecli/github-workflows/.github/workflows/nut.yml@main
+    secrets: inherit
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+      fail-fast: false
+    with:
+      os: ${{ matrix.os }}
 
-  # xNuts-ps:
-  #   needs: linux-unit-tests
-  #   name: xNuts-ps
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       os: [ubuntu-latest, windows-latest]
-  #       command:
-  #         - 'yarn test:nuts:deb'
-  #         - 'yarn test:nuts:deploy:async'
-  #         - 'yarn test:nuts:deploy:destructive'
-  #         - 'yarn test:nuts:deploy:manifest'
-  #         - 'yarn test:nuts:deploy:metadata'
-  #         - 'yarn test:nuts:deploy:quick'
-  #         - 'yarn test:nuts:deploy:rest'
-  #         - 'yarn test:nuts:deploy:sourcepath'
-  #         - 'yarn test:nuts:deploy:testlevel'
-  #         - 'yarn test:nuts:mdapi'
-  #         - 'yarn test:nuts:retrieve'
-  #         - 'yarn test:nuts:specialTypes'
-  #         - 'yarn test:nuts:tracking'
-  #   uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
-  #   with:
-  #     packageName: '@salesforce/source-deploy-retrieve'
-  #     externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-source'
-  #     command: ${{matrix.command}}
-  #     preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
-  #     postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
-  #     preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
-  #     os: ${{matrix.os}}
-  #     useCache: false
-  #   secrets: inherit
+  xNuts-ps:
+    needs: linux-unit-tests
+    name: xNuts-ps
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        command:
+          - 'yarn test:nuts:deb'
+          - 'yarn test:nuts:deploy:async'
+          - 'yarn test:nuts:deploy:destructive'
+          - 'yarn test:nuts:deploy:manifest'
+          - 'yarn test:nuts:deploy:metadata'
+          - 'yarn test:nuts:deploy:quick'
+          - 'yarn test:nuts:deploy:rest'
+          - 'yarn test:nuts:deploy:sourcepath'
+          - 'yarn test:nuts:deploy:testlevel'
+          - 'yarn test:nuts:mdapi'
+          - 'yarn test:nuts:retrieve'
+          - 'yarn test:nuts:specialTypes'
+          - 'yarn test:nuts:tracking'
+    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
+    with:
+      packageName: '@salesforce/source-deploy-retrieve'
+      externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-source'
+      command: ${{matrix.command}}
+      preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
+      postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
+      preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
+      os: ${{matrix.os}}
+      useCache: false
+    secrets: inherit
 
-  # xNuts-pdr:
-  #   needs: linux-unit-tests
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       os: [ubuntu-latest, windows-latest]
-  #       command:
-  #         - 'yarn test:nuts:convert'
-  #         - 'yarn test:nuts:deb'
-  #         - 'yarn test:nuts:delete'
-  #         - 'yarn test:nuts:deploy:metadata:manifest'
-  #         - 'yarn test:nuts:deploy:metadata:metadata'
-  #         - 'yarn test:nuts:deploy:metadata:metadata-dir'
-  #         - 'yarn test:nuts:deploy:metadata:source-dir'
-  #         - 'yarn test:nuts:deploy:metadata:test-level'
-  #         - 'yarn test:nuts:destructive'
-  #         - 'yarn test:nuts:manifest'
-  #         - 'yarn test:nuts:retrieve'
-  #         - 'yarn test:nuts:specialTypes'
-  #         - 'yarn test:nuts:static'
-  #         - 'yarn test:nuts:tracking'
-  #   uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
-  #   with:
-  #     packageName: '@salesforce/source-deploy-retrieve'
-  #     externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-deploy-retrieve'
-  #     command: ${{matrix.command}}
-  #     preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
-  #     postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
-  #     preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
-  #     os: ${{matrix.os}}
-  #     useCache: false
-  #   secrets: inherit
+  xNuts-pdr:
+    needs: linux-unit-tests
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        command:
+          - 'yarn test:nuts:convert'
+          - 'yarn test:nuts:deb'
+          - 'yarn test:nuts:delete'
+          - 'yarn test:nuts:deploy:metadata:manifest'
+          - 'yarn test:nuts:deploy:metadata:metadata'
+          - 'yarn test:nuts:deploy:metadata:metadata-dir'
+          - 'yarn test:nuts:deploy:metadata:source-dir'
+          - 'yarn test:nuts:deploy:metadata:test-level'
+          - 'yarn test:nuts:destructive'
+          - 'yarn test:nuts:manifest'
+          - 'yarn test:nuts:retrieve'
+          - 'yarn test:nuts:specialTypes'
+          - 'yarn test:nuts:static'
+          - 'yarn test:nuts:tracking'
+    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
+    with:
+      packageName: '@salesforce/source-deploy-retrieve'
+      externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-deploy-retrieve'
+      command: ${{matrix.command}}
+      preBuildCommands: 'shx rm -rf node_modules/@salesforce/kit; shx rm -rf node_modules/@typescript-eslint; shx rm -rf node_modules/eslint-plugin-header; shx rm -rf node_modules/eslint-plugin-import; shx rm -rf node_modules/eslint-plugin-jsdoc; shx rm -rf node_modules/eslint-plugin-prettier'
+      postbuildCommands: 'cp src/registry/metadataRegistry.json lib/src/registry'
+      preExternalBuildCommands: 'shx rm -rf node_modules/@salesforce/source-tracking/node_modules/@salesforce/source-deploy-retrieve'
+      os: ${{matrix.os}}
+      useCache: false
+    secrets: inherit

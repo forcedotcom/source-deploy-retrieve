@@ -6,6 +6,7 @@
  */
 import { readFile } from 'fs/promises';
 import { Transform, Readable } from 'stream';
+import { sep, posix } from 'path';
 import { Lifecycle, Messages, SfProject } from '@salesforce/core';
 import * as minimatch from 'minimatch';
 import { Env } from '@salesforce/kit';
@@ -194,7 +195,7 @@ export const getReplacements = async (
 export const matchesFile = (f: string, r: ReplacementConfig): boolean =>
   // filenames will be absolute.  We don't have convenient access to the pkgDirs,
   // so we need to be more open than an exact match
-  Boolean((r.filename && f.endsWith(r.filename)) || (r.glob && minimatch(f, `**/${r.glob}`)));
+  Boolean((r.filename && posixifyPaths(f).endsWith(r.filename)) || (r.glob && minimatch(f, `**/${r.glob}`)));
 
 /**
  * Regardless of any components, return the ReplacementConfig that are valid with the current env.
@@ -228,3 +229,5 @@ export const stringToRegex = (input: string): RegExp =>
   // being overly conservative
   // eslint-disable-next-line no-useless-escape
   new RegExp(input.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
+
+export const posixifyPaths = (f: string): string => f.split(sep).join(posix.sep);

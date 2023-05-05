@@ -1,3 +1,12 @@
+## [8.0.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.6...8.0.7) (2023-05-05)
+
+
+### Bug Fixes
+
+* windows path replacements ([#958](https://github.com/forcedotcom/source-deploy-retrieve/issues/958)) ([b71932b](https://github.com/forcedotcom/source-deploy-retrieve/commit/b71932b60d9f0dbe0c4efbce705ab16fa7d7d7a9))
+
+
+
 ## [8.0.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.5...8.0.6) (2023-05-04)
 
 

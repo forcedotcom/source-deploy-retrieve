@@ -11,6 +11,11 @@
     "baseUrl": ".",
     "paths": { "@salesforce/kit": ["node_modules/@salesforce/kit"] }
   },
-  "include": ["./src/**/*.ts", "./src/registry/metadataRegistry.json", "./src/registry/stdValueSetRegistry.json"],
+  "include": [
+    "./src/**/*.ts",
+    "./scripts/update-registry/*.ts",
+    "./src/registry/metadataRegistry.json",
+    "./src/registry/stdValueSetRegistry.json"
+  ],
   "exclude": ["node_modules", "lib", "examples"]
 }

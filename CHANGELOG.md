@@ -1,3 +1,30 @@
+## [8.0.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.5...8.0.6) (2023-05-04)
+
+
+### Bug Fixes
+
+* another connection error ([#957](https://github.com/forcedotcom/source-deploy-retrieve/issues/957)) ([657c5f8](https://github.com/forcedotcom/source-deploy-retrieve/commit/657c5f8e0ac93e4dabb34ac2d5ed802d25354c72))
+
+
+
+## [8.0.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.4...8.0.5) (2023-05-02)
+
+
+### Bug Fixes
+
+* update the update2 script for TS strict compile ([#954](https://github.com/forcedotcom/source-deploy-retrieve/issues/954)) ([e85a395](https://github.com/forcedotcom/source-deploy-retrieve/commit/e85a39596f985ecb9b81cc794aa86a549337e8e4))
+
+
+
+## [8.0.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.3...8.0.4) (2023-04-27)
+
+
+### Bug Fixes
+
+* update directory name for oauth policies and mobile policies ([#947](https://github.com/forcedotcom/source-deploy-retrieve/issues/947)) ([dbcf936](https://github.com/forcedotcom/source-deploy-retrieve/commit/dbcf9366719f177084c49a28e4a81b2b731fc69d))
+
+
+
 ## [8.0.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.2...8.0.3) (2023-04-23)
 
 

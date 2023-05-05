@@ -231,10 +231,6 @@ You can use an existing org for the metadata describe portion of the script by
       `yarn update-registry <MetadataEntity1> <MetadataEntity2>`
     6. Check if respective file(`src/registry/metadataRegistry.json`)
       got updated. `git status`
-    7. Execute yarn update command to update support doc
-      `yarn update-supported-metadata <MetadataEntity1> <MetadataEntity2>`
-      1. This will update METADATA_SUPPORT.md and commit the changes.
-      2. You can raise the PR with these changes after running test cases.
 
     Now changes are available in local, we have to link the registry with sfdx project
 

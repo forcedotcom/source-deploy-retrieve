@@ -18,6 +18,10 @@ describe('file matching', () => {
     expect(matchesFile('foo', { filename: 'foo', ...base })).to.be.true;
     expect(matchesFile('bar', { filename: 'foo', ...base })).to.not.be.true;
   });
+  it('paths with separators to cover possibility of windows paths', () => {
+    expect(matchesFile(path.join('foo', 'bar'), { filename: 'foo/bar', ...base })).to.be.true;
+    expect(matchesFile(path.join('foo', 'bar'), { filename: 'foo/baz', ...base })).to.not.be.true;
+  });
   it('file matches glob (posix paths)', () => {
     expect(matchesFile('foo/bar', { glob: 'foo/**', ...base })).to.be.true;
     expect(matchesFile('foo/bar', { glob: 'foo/*', ...base })).to.be.true;

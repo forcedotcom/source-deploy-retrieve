@@ -230,4 +230,4 @@ export const stringToRegex = (input: string): RegExp =>
   // eslint-disable-next-line no-useless-escape
   new RegExp(input.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
 
-const posixifyPaths = (f: string): string => f.split(sep).join(posix.sep);
+export const posixifyPaths = (f: string): string => f.split(sep).join(posix.sep);

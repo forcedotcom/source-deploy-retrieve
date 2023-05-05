@@ -136,8 +136,13 @@ describe('suggest types', () => {
     }
   });
 
-  it('it ignores package manifest files', async () => {
+  it('it ignores package manifest files with default name', async () => {
     const cs = await ComponentSetBuilder.build({ sourcepath: [path.join(session.project.dir, 'package-manifest')] });
+    expect(cs['components'].size).to.equal(0);
+  });
+
+  it('it ignores package manifest files with non-default name', async () => {
+    const cs = await ComponentSetBuilder.build({ sourcepath: [path.join(session.project.dir, 'package-manifest-2')] });
     expect(cs['components'].size).to.equal(0);
   });
 });

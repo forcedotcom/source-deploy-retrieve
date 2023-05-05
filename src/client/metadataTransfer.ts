@@ -162,13 +162,13 @@ export abstract class MetadataTransfer<
   }
 
   protected async maybeSaveTempDirectory(target: SfdxFileFormat, cs?: ComponentSet): Promise<void> {
-    const mdapiTempDir = process.env.SFDX_MDAPI_TEMP_DIR;
+    const mdapiTempDir = process.env.SF_MDAPI_TEMP_DIR;
     if (mdapiTempDir) {
       await Lifecycle.getInstance().emitWarning(
-        'The SFDX_MDAPI_TEMP_DIR environment variable is set, which may degrade performance'
+        'The SF_MDAPI_TEMP_DIR environment variable is set, which may degrade performance'
       );
       this.logger.debug(
-        `Converting metadata to: ${mdapiTempDir} because the SFDX_MDAPI_TEMP_DIR environment variable is set`
+        `Converting metadata to: ${mdapiTempDir} because the SF_MDAPI_TEMP_DIR environment variable is set`
       );
       try {
         const source = cs ?? this.components ?? new ComponentSet();

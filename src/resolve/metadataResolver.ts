@@ -6,7 +6,6 @@
  */
 import { basename, dirname, join, sep } from 'path';
 import { Lifecycle, Messages, SfError, Logger } from '@salesforce/core';
-import { readFileSync } from 'graceful-fs';
 import { extName, parentName, parseMetadataXml } from '../utils';
 import { MetadataType, RegistryAccess } from '../registry';
 import { ComponentSet } from '../collections';
@@ -143,15 +142,24 @@ export class MetadataResolver {
       return shouldResolve ? adapter.getComponent(fsPath, isResolvingSource) : undefined;
     }
 
-    // Read the file and check to see if it contains the string "<Package xmlns"
-    // If so, it is a package manifest and it can be ignored
-    if (
-      fsPath.endsWith('.xml') &&
-      !fsPath.endsWith(META_XML_SUFFIX) &&
-      readFileSync(fsPath, 'utf-8').includes('<Package xmlns')
-    ) {
-      this.logger.debug(`${fsPath} is a package manifest. Moving on.`);
-      return undefined;
+    // Perform some additional checks to see if this is a package manifest
+    if (fsPath.endsWith('.xml') && !fsPath.endsWith(META_XML_SUFFIX)) {
+      // If it is named the default package.xml, assume it is a package manifest
+      if (fsPath.endsWith('package.xml')) return undefined;
+      try {
+        // If the file contains the string "<Package xmlns", it is a package manifest
+        if (this.tree.readFileSync(fsPath).toString().includes('<Package xmlns')) return undefined;
+      } catch (err) {
+        const error = err as Error;
+        if (error.message === 'Method not implemented') {
+          // Currently readFileSync is not implemented for zipTreeContainer
+          // Ignoring since this would have been ignored in the past
+          this.logger.warn(
+            `Type could not be inferred for ${fsPath}. It is likely this is a package manifest. Skipping...`
+          );
+          return undefined;
+        }
+      }
     }
 
     void Lifecycle.getInstance().emitTelemetry({

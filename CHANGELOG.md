@@ -1,3 +1,12 @@
+## [8.0.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.7...8.0.8) (2023-05-08)
+
+
+### Bug Fixes
+
+* **deps:** bump vm2 from 3.9.15 to 3.9.17 ([#963](https://github.com/forcedotcom/source-deploy-retrieve/issues/963)) ([42a9d5d](https://github.com/forcedotcom/source-deploy-retrieve/commit/42a9d5d3ffd550759c96a1bd1e6de0c4dcafb472))
+
+
+
 ## [8.0.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.6...8.0.7) (2023-05-05)
 
 

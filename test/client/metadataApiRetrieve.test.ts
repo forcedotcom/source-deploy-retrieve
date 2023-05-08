@@ -303,7 +303,7 @@ describe('MetadataApiRetrieve', () => {
 
       it('should save the temp directory if the environment variable is set', async () => {
         try {
-          process.env.SFDX_MDAPI_TEMP_DIR = 'test';
+          process.env.SF_MDAPI_TEMP_DIR = 'test';
           const toRetrieve = new ComponentSet([COMPONENT]);
           const { operation, convertStub } = await stubMetadataRetrieve($$, testOrg, {
             toRetrieve,
@@ -317,7 +317,7 @@ describe('MetadataApiRetrieve', () => {
 
           expect(getString(convertStub.secondCall.args[2], 'outputDirectory', '')).to.equal('test');
         } finally {
-          delete process.env.SFDX_MDAPI_TEMP_DIR;
+          delete process.env.SF_MDAPI_TEMP_DIR;
         }
       });
 

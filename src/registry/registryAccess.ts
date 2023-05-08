@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { Messages, SfError } from '@salesforce/core';
+import * as Levenshtein from 'fast-levenshtein';
 import { registry as defaultRegistry } from './registry';
 import { MetadataRegistry, MetadataType } from './types';
 
@@ -60,9 +61,41 @@ export class RegistryAccess {
    * @returns The corresponding metadata type object
    */
   public getTypeBySuffix(suffix: string): MetadataType | undefined {
-    if (this.registry.suffixes?.[suffix]) {
+    if (this.registry.suffixes[suffix]) {
       const typeId = this.registry.suffixes[suffix];
       return this.getTypeByName(typeId);
+    }
+  }
+
+  /**
+   * Find similar metadata type matches by its file suffix
+   *
+   * @param suffix - File suffix of the metadata type
+   * @returns An array of similar suffix and metadata type matches
+   */
+  public guessTypeBySuffix(
+    suffix: string
+  ): Array<{ suffixGuess: string; metadataTypeGuess: MetadataType }> | undefined {
+    const registryKeys = Object.keys(this.registry.suffixes);
+
+    const scores = registryKeys.map((registryKey) => ({
+      registryKey,
+      score: Levenshtein.get(suffix, registryKey, { useCollator: true }),
+    }));
+    const sortedScores = scores.sort((a, b) => a.score - b.score);
+    const lowestScore = sortedScores[0].score;
+    // Levenshtein uses positive integers for scores, find all scores that match the lowest score
+    const guesses = sortedScores.filter((score) => score.score === lowestScore);
+
+    if (guesses.length > 0) {
+      return guesses.map((guess) => {
+        const typeId = this.registry.suffixes[guess.registryKey];
+        const metadataType = this.getTypeByName(typeId);
+        return {
+          suffixGuess: guess.registryKey,
+          metadataTypeGuess: metadataType,
+        };
+      });
     }
   }
 

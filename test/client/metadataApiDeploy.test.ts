@@ -82,7 +82,7 @@ describe('MetadataApiDeploy', () => {
 
       it('should save the temp directory if the environment variable is set', async () => {
         try {
-          process.env.SFDX_MDAPI_TEMP_DIR = 'test';
+          process.env.SF_MDAPI_TEMP_DIR = 'test';
           const components = new ComponentSet([matchingContentFile.COMPONENT]);
           const { operation, convertStub, deployStub } = await stubMetadataDeploy($$, testOrg, {
             components,
@@ -95,7 +95,7 @@ describe('MetadataApiDeploy', () => {
           expect(deployStub.firstCall.args[0]).to.equal(zipBuffer);
           expect(getString(convertStub.secondCall.args[2], 'outputDirectory', '')).to.equal('test');
         } finally {
-          delete process.env.SFDX_MDAPI_TEMP_DIR;
+          delete process.env.SF_MDAPI_TEMP_DIR;
         }
       });
 

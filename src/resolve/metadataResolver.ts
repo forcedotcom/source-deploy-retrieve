@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, join, sep } from 'path';
-import { Lifecycle, Messages, SfError } from '@salesforce/core';
+import { Lifecycle, Messages, SfError, Logger } from '@salesforce/core';
 import { extName, parentName, parseMetadataXml } from '../utils';
 import { MetadataType, RegistryAccess } from '../registry';
 import { ComponentSet } from '../collections';
@@ -25,6 +25,7 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
  */
 export class MetadataResolver {
   public forceIgnoredPaths: Set<string>;
+  protected logger: Logger;
   private forceIgnore?: ForceIgnore;
   private sourceAdapterFactory: SourceAdapterFactory;
   private folderContentTypeDirNames?: string[];
@@ -38,6 +39,7 @@ export class MetadataResolver {
     private tree: TreeContainer = new NodeFSTreeContainer(),
     private useFsForceIgnore = true
   ) {
+    this.logger = Logger.childFromRoot(this.constructor.name);
     this.sourceAdapterFactory = new SourceAdapterFactory(this.registry, tree);
     this.forceIgnoredPaths = new Set<string>();
   }
@@ -139,13 +141,39 @@ export class MetadataResolver {
         !adapter.allowMetadataWithContent();
       return shouldResolve ? adapter.getComponent(fsPath, isResolvingSource) : undefined;
     }
+
+    // Perform some additional checks to see if this is a package manifest
+    if (fsPath.endsWith('.xml') && !fsPath.endsWith(META_XML_SUFFIX)) {
+      // If it is named the default package.xml, assume it is a package manifest
+      if (fsPath.endsWith('package.xml')) return undefined;
+      try {
+        // If the file contains the string "<Package xmlns", it is a package manifest
+        if (this.tree.readFileSync(fsPath).toString().includes('<Package xmlns')) return undefined;
+      } catch (err) {
+        const error = err as Error;
+        if (error.message === 'Method not implemented') {
+          // Currently readFileSync is not implemented for zipTreeContainer
+          // Ignoring since this would have been ignored in the past
+          this.logger.warn(
+            `Type could not be inferred for ${fsPath}. It is likely this is a package manifest. Skipping...`
+          );
+          return undefined;
+        }
+      }
+    }
+
     void Lifecycle.getInstance().emitTelemetry({
       eventName: 'metadata_resolver_type_inference_error',
       library: 'SDR',
       function: 'resolveComponent',
       path: fsPath,
     });
-    throw new SfError(messages.getMessage('error_could_not_infer_type', [fsPath]), 'TypeInferenceError');
+
+    // The metadata type could not be inferred
+    // Attempt to guess the type and throw an error with actions
+    const actions = this.getSuggestionsForUnresolvedTypes(fsPath);
+
+    throw new SfError(messages.getMessage('error_could_not_infer_type', [fsPath]), 'TypeInferenceError', actions);
   }
 
   private resolveTypeFromStrictFolder(fsPath: string): MetadataType | undefined {
@@ -202,6 +230,15 @@ export class MetadataResolver {
     // attempt 3 - try treating the file extension name as a suffix
     if (!resolvedType) {
       resolvedType = this.registry.getTypeBySuffix(extName(fsPath));
+
+      // Metadata types with `strictDirectoryName` should have been caught in "attempt 1".
+      // If the metadata returned from this lookup has a `strictDirectoryName`, something is wrong.
+      // It is likely that the metadata file is misspelled or has the wrong suffix.
+      // A common occurrence is that a misspelled metadata file will fall back to
+      // `EmailServicesFunction` because that is the default for the `.xml` suffix
+      if (resolvedType?.strictDirectoryName === true) {
+        resolvedType = undefined;
+      }
     }
 
     // attempt 4 - try treating the content as metadata
@@ -213,6 +250,47 @@ export class MetadataResolver {
     }
 
     return resolvedType;
+  }
+
+  /**
+   * Attempt to find similar types for types that could not be inferred
+   * To be used after executing the resolveType() method
+   *
+   * @param fsPath
+   * @returns an array of suggestions
+   */
+  private getSuggestionsForUnresolvedTypes(fsPath: string): string[] {
+    const parsedMetaXml = parseMetadataXml(fsPath);
+    const metaSuffix = parsedMetaXml?.suffix;
+    // Finds close matches for meta suffixes
+    // Examples: https://regex101.com/r/vbRjwy/1
+    const closeMetaSuffix = new RegExp(/.+\.([^.-]+)(?:-.*)?\.xml/).exec(basename(fsPath));
+
+    let guesses;
+
+    if (metaSuffix) {
+      guesses = this.registry.guessTypeBySuffix(metaSuffix)
+    } else if (!metaSuffix && closeMetaSuffix) {
+      guesses = this.registry.guessTypeBySuffix(closeMetaSuffix[1]);
+    } else {
+      guesses = this.registry.guessTypeBySuffix(extName(fsPath));
+    }
+
+    // If guesses were found, format an array of strings to be passed to SfError's actions
+    return guesses && guesses.length > 0
+      ? [
+          messages.getMessage('suggest_type_header', [ basename(fsPath) ]),
+          ...guesses.map((guess) =>
+            messages.getMessage('suggest_type_did_you_mean', [
+              guess.suffixGuess,
+              (metaSuffix || closeMetaSuffix) ? '-meta.xml' : '',
+              guess.metadataTypeGuess.name,
+            ])
+          ),
+          '', // A blank line makes this much easier to read (it doesn't seem to be possible to start a markdown message entry with a newline)
+          messages.getMessage('suggest_type_more_suggestions'),
+        ]
+      : [];
   }
 
   /**

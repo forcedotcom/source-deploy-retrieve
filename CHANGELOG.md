@@ -1,3 +1,30 @@
+## [8.0.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.7...8.0.8) (2023-05-08)
+
+
+### Bug Fixes
+
+* **deps:** bump vm2 from 3.9.15 to 3.9.17 ([#963](https://github.com/forcedotcom/source-deploy-retrieve/issues/963)) ([42a9d5d](https://github.com/forcedotcom/source-deploy-retrieve/commit/42a9d5d3ffd550759c96a1bd1e6de0c4dcafb472))
+
+
+
+## [8.0.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.6...8.0.7) (2023-05-05)
+
+
+### Bug Fixes
+
+* windows path replacements ([#958](https://github.com/forcedotcom/source-deploy-retrieve/issues/958)) ([b71932b](https://github.com/forcedotcom/source-deploy-retrieve/commit/b71932b60d9f0dbe0c4efbce705ab16fa7d7d7a9))
+
+
+
+## [8.0.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.5...8.0.6) (2023-05-04)
+
+
+### Bug Fixes
+
+* another connection error ([#957](https://github.com/forcedotcom/source-deploy-retrieve/issues/957)) ([657c5f8](https://github.com/forcedotcom/source-deploy-retrieve/commit/657c5f8e0ac93e4dabb34ac2d5ed802d25354c72))
+
+
+
 ## [8.0.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.4...8.0.5) (2023-05-02)
 
 

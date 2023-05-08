@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683577156052,
+  "lastUpdate": 1683577818797,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -5375,6 +5375,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 20822,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "131138790+LukasPIT@users.noreply.github.com",
+            "name": "LukasPIT",
+            "username": "LukasPIT"
+          },
+          "committer": {
+            "email": "131138790+LukasPIT@users.noreply.github.com",
+            "name": "LukasPIT",
+            "username": "LukasPIT"
+          },
+          "distinct": true,
+          "id": "4288cee875e4c99e7a405a1b255f6f69b5d9f59c",
+          "message": "feat: added FSC standard value sets\nAdded Financial Services Cloud Standard Value Sets",
+          "timestamp": "2023-04-18T07:10:21Z",
+          "tree_id": "c5805003119d5584b7cd410ebb470350fb78466a",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/4288cee875e4c99e7a405a1b255f6f69b5d9f59c"
+        },
+        "date": 1683577793983,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 407,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 8446,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 6359,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 8136,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 870,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 11388,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 7575,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 9618,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1502,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 19089,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 12720,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 16707,
             "unit": "ms"
           }
         ]

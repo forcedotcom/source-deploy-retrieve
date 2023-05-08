@@ -59,7 +59,7 @@ describe('suggest types', () => {
     } catch (err) {
       const error = err as SfError;
       expect(error.name).to.equal('TypeInferenceError');
-      expect(error.actions).to.include('A search for the ".clss" filename suffix found the following close matches:');
+      expect(error.actions).to.include('A metadata type lookup for "DummyClass.clss" found the following close matches:');
       expect(error.actions).to.include('-- Did you mean ".cls" instead for the "ApexClass" metadata type?');
     }
   });
@@ -74,7 +74,7 @@ describe('suggest types', () => {
       const error = err as SfError;
       expect(error.name).to.equal('TypeInferenceError');
       expect(error.actions).to.include(
-        'A search for the ".Layout-meta.xml" metadata suffix found the following close matches:'
+        'A metadata type lookup for "MyTestObject__c-MyTestObject Layout.Layout-meta.xml" found the following close matches:'
       );
       expect(error.actions).to.include('-- Did you mean ".layout-meta.xml" instead for the "Layout" metadata type?');
     }
@@ -90,7 +90,7 @@ describe('suggest types', () => {
       const error = err as SfError;
       expect(error.name).to.equal('TypeInferenceError');
       expect(error.actions).to.include(
-        'A search for the ".tabsss-meta.xml" metadata suffix found the following close matches:'
+        'A metadata type lookup for "Settings.tabsss-meta.xml" found the following close matches:'
       );
       expect(error.actions).to.include(
         '-- Did you mean ".labels-meta.xml" instead for the "CustomLabels" metadata type?'
@@ -121,7 +121,7 @@ describe('suggest types', () => {
     expect((await cs.getObject()).Package.types[0].name).to.equal('EmailServicesFunction');
   });
 
-  // This will likely not provide great suggestions, but at least the user is alerted to file causing the issue
+  // This uses the closeMetaSuffix lookup
   it('it errors on very incorrectly named metadata', async () => {
     try {
       await ComponentSetBuilder.build({
@@ -131,8 +131,8 @@ describe('suggest types', () => {
     } catch (err) {
       const error = err as SfError;
       expect(error.name).to.equal('TypeInferenceError');
-      expect(error.actions).to.include('A search for the ".xml" filename suffix found the following close matches:');
-      expect(error.actions).to.include('-- Did you mean ".xml" instead for the "EmailServicesFunction" metadata type?');
+      expect(error.actions).to.include('A metadata type lookup for "CustomLabels.labels.xml" found the following close matches:');
+      expect(error.actions).to.include('-- Did you mean ".labels-meta.xml" instead for the "CustomLabels" metadata type?');
     }
   });
 

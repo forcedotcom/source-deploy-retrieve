@@ -236,6 +236,7 @@ export abstract class MetadataTransfer<
             'ENOTFOUND',
             'ECONNRESET',
             'socket hang up',
+            'connection timeout',
             'INVALID_QUERY_LOCATOR',
             '<h1>Bad Message 400</h1><pre>reason: Bad Request</pre>',
             'Unable to complete the creation of the query cursor at this time',

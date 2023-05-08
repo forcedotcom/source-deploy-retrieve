@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { Connection, Logger } from '@salesforce/core';
-import { ensureArray } from '@salesforce/kit';
+import { PollingClient, StatusResult, Connection, Logger } from '@salesforce/core';
+import { Duration, ensureArray } from '@salesforce/kit';
 import { retry, NotRetryableError, RetryError } from 'ts-retry-promise';
 import { ensurePlainObject, ensureString, isPlainObject } from '@salesforce/ts-types';
 import { RegistryAccess, registry as defaultRegistry, MetadataType } from '../registry';
@@ -98,9 +98,24 @@ export class ConnectionResolver {
   private async listMembers(query: ListMetadataQuery): Promise<FileProperties[]> {
     let members: FileProperties[];
 
+    const pollingOptions: PollingClient.Options = {
+      frequency: Duration.milliseconds(1000),
+      timeout: Duration.minutes(3),
+      poll: async (): Promise<StatusResult> => {
+        const res = ensureArray(await this.connection.metadata.list(query));
+        return { completed: true, payload: res };
+      },
+    };
+
+    const pollingClient = await PollingClient.create(pollingOptions);
+
     try {
-      members = ensureArray((await this.connection.metadata.list(query)) as FileProperties[]);
+      members = await pollingClient.subscribe();
     } catch (error) {
+      // throw error if PollingClient timed out.
+      if (error instanceof NotRetryableError) {
+        throw NotRetryableError;
+      }
       this.logger.debug((error as Error).message);
       members = [];
     }

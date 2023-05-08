@@ -1410,7 +1410,7 @@
       "id": "extlclntappoauthconfigurablepolicies",
       "name": "ExtlClntAppOauthConfigurablePolicies",
       "suffix": "ecaOauthPlcy",
-      "directoryName": "oauthPolicies",
+      "directoryName": "extlClntAppOauthPolicies",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -1418,7 +1418,7 @@
       "id": "extlclntappmobileconfigurablepolicies",
       "name": "ExtlClntAppMobileConfigurablePolicies",
       "suffix": "ecaMobPlcy",
-      "directoryName": "mobilePolicies",
+      "directoryName": "extlClntAppMobilePolicies",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -3419,6 +3419,32 @@
       "strategies": {
         "adapter": "bundle"
       }
+    },
+    "aiscoringmodeldefinition": {
+      "id": "aiscoringmodeldefinition",
+      "name": "AIScoringModelDefinition",
+      "directoryName": "aiScoringModelDefinitions",
+      "inFolder": false,
+      "supportsWildcardAndName": true,
+      "suffix": "aiScoringModelDefinition",
+      "children": {
+        "types": {
+          "aiscoringmodeldefversion": {
+            "id": "aiscoringmodeldefversion",
+            "name": "AIScoringModelDefVersion",
+            "xmlElementName": "aiScoringModelDefVersions",
+            "uniqueIdElement": "fullName",
+            "directoryName": "aiScoringModelDefVersions",
+            "suffix": "aiScoringModelDefVersion"
+          }
+        },
+        "suffixes": {
+          "aiScoringModelDefVersion": "aiscoringmodeldefversion"
+        },
+        "directories": {
+          "aiScoringModelDefVersions": "aiscoringmodeldefversion"
+        }
+      }
     }
   },
   "suffixes": {
@@ -3428,6 +3454,8 @@
     "ai": "aiapplication",
     "aiapplicationconfig": "aiapplicationconfig",
     "aiUsecaseDefinitions": "aiusecasedefinition",
+    "aiScoringModelDefinition": "aiscoringmodeldefinition",
+    "aiScoringModelDefVersion": "aiscoringmodeldefversion",
     "mlDataDefinition": "mldatadefinition",
     "icon": "icon",
     "businessProcessGroup": "businessprocessgroup",
@@ -3856,6 +3884,7 @@
     "mktdatatranfield": "mktdatatranobject",
     "digitalexperience": "digitalexperiencebundle",
     "decisionmatrixdefinitionversion": "decisionmatrixdefinition",
-    "expressionsetdefinitionversion": "expressionsetdefinition"
+    "expressionsetdefinitionversion": "expressionsetdefinition",
+    "aiscoringmodeldefversion": "aiscoringmodeldefinition"
   }
 }

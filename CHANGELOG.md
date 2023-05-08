@@ -1,3 +1,12 @@
+# [8.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.8...8.1.0) (2023-05-08)
+
+
+### Features
+
+* add scoringframwork types to metadata registry ([#964](https://github.com/forcedotcom/source-deploy-retrieve/issues/964)) ([0003f44](https://github.com/forcedotcom/source-deploy-retrieve/commit/0003f44e818b5aac46f2ac1d090d9e9fbfd25893))
+
+
+
 ## [8.0.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.7...8.0.8) (2023-05-08)
 
 

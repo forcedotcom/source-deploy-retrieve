@@ -1,3 +1,12 @@
+# [8.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.2.0...8.3.0) (2023-05-08)
+
+
+### Features
+
+* offer suggestions for unresolved metadata types ([#948](https://github.com/forcedotcom/source-deploy-retrieve/issues/948)) ([c4633b2](https://github.com/forcedotcom/source-deploy-retrieve/commit/c4633b27e718f0f6790f817bc438860df90aa0ad)), closes [#953](https://github.com/forcedotcom/source-deploy-retrieve/issues/953)
+
+
+
 # [8.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.1.0...8.2.0) (2023-05-08)
 
 

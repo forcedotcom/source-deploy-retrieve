@@ -262,22 +262,28 @@ export class MetadataResolver {
   private getSuggestionsForUnresolvedTypes(fsPath: string): string[] {
     const parsedMetaXml = parseMetadataXml(fsPath);
     const metaSuffix = parsedMetaXml?.suffix;
+    // Finds close matches for meta suffixes
+    // Examples: https://regex101.com/r/vbRjwy/1
+    const closeMetaSuffix = new RegExp(/.+\.([^.-]+)(?:-.*)?\.xml/).exec(basename(fsPath));
 
-    // Analogous to "attempt 2" and "attempt 3" above
-    const guesses = metaSuffix
-      ? this.registry.guessTypeBySuffix(metaSuffix)
-      : this.registry.guessTypeBySuffix(extName(fsPath));
+    let guesses;
+
+    if (metaSuffix) {
+      guesses = this.registry.guessTypeBySuffix(metaSuffix)
+    } else if (!metaSuffix && closeMetaSuffix) {
+      guesses = this.registry.guessTypeBySuffix(closeMetaSuffix[1]);
+    } else {
+      this.registry.guessTypeBySuffix(extName(fsPath));
+    }
 
     // If guesses were found, format an array of strings to be passed to SfError's actions
     return guesses && guesses.length > 0
       ? [
-          messages.getMessage('suggest_type_header', [
-            metaSuffix ? `".${parsedMetaXml.suffix}-meta.xml" metadata` : `".${extName(fsPath)}" filename`,
-          ]),
+          messages.getMessage('suggest_type_header', [ basename(fsPath) ]),
           ...guesses.map((guess) =>
             messages.getMessage('suggest_type_did_you_mean', [
               guess.suffixGuess,
-              metaSuffix ? '-meta.xml' : '',
+              (metaSuffix || closeMetaSuffix) ? '-meta.xml' : '',
               guess.metadataTypeGuess.name,
             ])
           ),

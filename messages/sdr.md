@@ -160,7 +160,7 @@ The uniqueIdElement %s was not found the child (reading %s at %s).
 
 # suggest_type_header
 
-A search for the %s suffix found the following close matches:
+A metadata type lookup for "%s" found the following close matches:
 
 # suggest_type_did_you_mean
 

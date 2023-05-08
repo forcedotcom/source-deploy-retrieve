@@ -1,3 +1,12 @@
+# [8.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.1.0...8.2.0) (2023-05-08)
+
+
+### Features
+
+* added FSC standard value sets ([#965](https://github.com/forcedotcom/source-deploy-retrieve/issues/965)) ([82e637f](https://github.com/forcedotcom/source-deploy-retrieve/commit/82e637fdb0a349dd6e7b62b4882e438d38b6a975))
+
+
+
 # [8.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.0.8...8.1.0) (2023-05-08)
 
 

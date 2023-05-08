@@ -273,7 +273,7 @@ export class MetadataResolver {
     } else if (!metaSuffix && closeMetaSuffix) {
       guesses = this.registry.guessTypeBySuffix(closeMetaSuffix[1]);
     } else {
-      this.registry.guessTypeBySuffix(extName(fsPath));
+      guesses = this.registry.guessTypeBySuffix(extName(fsPath));
     }
 
     // If guesses were found, format an array of strings to be passed to SfError's actions

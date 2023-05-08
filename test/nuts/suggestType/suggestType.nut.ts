@@ -42,7 +42,7 @@ describe('suggest types', () => {
       const error = err as SfError;
       expect(error.name).to.equal('TypeInferenceError');
       expect(error.actions).to.include(
-        'A search for the ".objct-meta.xml" metadata suffix found the following close matches:'
+        'A metadata type lookup for "MyTestObject__c.objct-meta.xml" found the following close matches:'
       );
       expect(error.actions).to.include(
         '-- Did you mean ".object-meta.xml" instead for the "CustomObject" metadata type?'

@@ -1,3 +1,12 @@
+# [8.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.3.1...8.4.0) (2023-05-09)
+
+
+### Features
+
+* add skilltype to metadata registry ([761492e](https://github.com/forcedotcom/source-deploy-retrieve/commit/761492ee750db05c715e0da26437040caf32602d))
+
+
+
 ## [8.3.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.3.0...8.3.1) (2023-05-09)
 
 

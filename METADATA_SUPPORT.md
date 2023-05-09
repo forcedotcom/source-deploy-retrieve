@@ -484,7 +484,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SiteDotCom|✅||
 |SiteSettings|✅||
 |Skill|✅||
-|SkillType|❌|Not supported, but support could be added|
+|SkillType|✅||
 |SlackApp|✅||
 |SocialCustomerServiceSettings|✅||
 |SocialProfileSettings|✅||

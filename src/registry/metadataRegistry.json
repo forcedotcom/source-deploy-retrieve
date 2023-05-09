@@ -1699,6 +1699,13 @@
       "directoryName": "skills",
       "inFolder": false
     },
+    "skilltype": {
+      "id": "skilltype",
+      "name": "SkillType",
+      "suffix": "skilltype",
+      "directoryName": "skilltypes",
+      "inFolder": false
+    },
     "livechatdeployment": {
       "id": "livechatdeployment",
       "name": "LiveChatDeployment",
@@ -3631,6 +3638,7 @@
     "transactionSecurityPolicy": "transactionsecuritypolicy",
     "policy": "appointmentassignmentpolicy",
     "skill": "skill",
+    "skilltype": "skilltype",
     "liveChatDeployment": "livechatdeployment",
     "liveChatButton": "livechatbutton",
     "liveChatAgentConfig": "livechatagentconfig",

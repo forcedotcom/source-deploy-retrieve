@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v58 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 516/550 supported metadata types.
+Currently, there are 515/549 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -246,7 +246,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExternalDocStorageConfig|❌|Not supported, but support could be added|
 |ExternalServiceRegistration|✅||
 |ExtlClntAppGlobalOauthSettings|✅||
-|ExtlClntAppMobileSettings|✅||
 |ExtlClntAppOauthConfigurablePolicies|✅||
 |ExtlClntAppOauthSettings|✅||
 |FeatureParameterBoolean|✅||
@@ -568,6 +567,7 @@ v59 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
+|FulfillmentStepType|❌|Not supported, but support could be added|
 
 ## Additional Types
 
@@ -599,6 +599,7 @@ v59 introduces the following new types.  Here's their current level of support
 - MatchingRule
 - MarketingResourceType
 - ExtlClntAppMobileConfigurablePolicies
+- ExtlClntAppMobileSettings
 - CustomExperience
 - ManagedTopic
 - DataPipeline

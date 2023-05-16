@@ -34,6 +34,7 @@
     "got": "^11.8.6",
     "graceful-fs": "^4.2.11",
     "ignore": "^5.2.4",
+    "jszip": "^3.10.1",
     "mime": "2.6.0",
     "minimatch": "^5.1.6",
     "proxy-agent": "^5.0.0",

@@ -6,7 +6,7 @@
  */
 import { basename, dirname, isAbsolute, join, relative } from 'path';
 import { Readable } from 'stream';
-import { create as createArchive, Archiver } from 'archiver';
+import * as JSZip from 'jszip';
 import { getExtension } from 'mime';
 import { CentralDirectory, Open } from 'unzipper';
 import { JsonMap } from '@salesforce/ts-types';
@@ -41,33 +41,33 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     if (!xml) {
       throw messages.createError('error_parsing_xml', [component.fullName, component.type.name]);
     }
-    // archiver/zip.finalize looks like it is async, because it extends streams, but it is not meant to be used that way
-    // the typings on it are misleading and unintended.  More info https://github.com/archiverjs/node-archiver/issues/476
-    // If you await it, bad things happen, like the convert process exiting silently.  https://github.com/forcedotcom/cli/issues/1791
-    // leave the void as it is
-    // eslint-disable-next-line @typescript-eslint/require-await
-    const zipIt = async (): Promise<Archiver> => {
-      // toolbelt was using level 9 for static resources, so we'll do the same.
-      // Otherwise, you'll see errors like https://github.com/forcedotcom/cli/issues/1098
-      const zip = createArchive('zip', { zlib: { level: 9 } });
-      if (!component.replacements) {
-        // the easy way...no replacements required
-        zip.directory(content, false);
-      } else {
-        // the hard way--we have to walk the content and do replacements on each of the files.
-        for (const path of component.walkContent()) {
-          const replacementStream = getReplacementStreamForReadable(component, path);
-          zip.append(replacementStream, { name: relative(content, path) });
-        }
+
+    // Zip the static resource from disk to a stream, compressing at level 9.
+    const zipIt = (): Readable => {
+      this.logger.debug(`zipping static resource: ${component.content}`);
+      const zip = JSZip();
+
+      // JSZip does not have an API for adding a directory of files recursively so we always
+      // have to walk the component content. Replacements only happen if set on the component.
+      for (const path of component.walkContent()) {
+        const replacementStream = getReplacementStreamForReadable(component, path);
+        zip.file(relative(content, path), replacementStream);
       }
-      void zip.finalize();
-      return zip;
+
+      return new Readable().wrap(zip.generateNodeStream({
+          compression: 'DEFLATE',
+          compressionOptions: { level: 9 },
+          streamFiles: true,
+        })
+        .on('end', () => {
+          this.logger.debug(`zip complete for: ${component.content}`);
+        }));
     };
 
     return [
       {
         source: (await componentIsExpandedArchive(component))
-          ? await zipIt()
+          ? zipIt()
           : getReplacementStreamForReadable(component, content),
         output: join(type.directoryName, `${baseName(content)}.${type.suffix}`),
       },

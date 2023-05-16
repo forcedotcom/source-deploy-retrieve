@@ -8,7 +8,8 @@ import { basename, dirname, isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Stream, Transform, Writable } from 'stream';
 import { promisify } from 'util';
 import { Messages, SfError } from '@salesforce/core';
-import { Archiver, create as createArchive } from 'archiver';
+// import { Archiver, create as createArchive } from 'archiver';
+import * as JSZip from 'jszip';
 import { createWriteStream, existsSync } from 'graceful-fs';
 import { JsonMap } from '@salesforce/ts-types';
 import { XMLBuilder } from 'fast-xml-parser';
@@ -186,12 +187,23 @@ export class ZipWriter extends ComponentWriter {
   // compression-/speed+ (0)<---(3)---------->(9) compression+/speed-
   // 3 appears to be a decent balance of compression and speed. It felt like
   // higher values = diminishing returns on compression and made conversion slower
-  private zip: Archiver = createArchive('zip', { zlib: { level: 3 } });
+  // private zip: Archiver = createArchive('zip', { zlib: { level: 3 } });
+  private zip = JSZip();
   private buffers: Buffer[] = [];
 
   public constructor(rootDestination?: SourcePath) {
     super(rootDestination);
-    void pipeline(this.zip, this.getOutputStream());
+    // void pipeline(this.zip, this.getOutputStream());
+    console.log(`generating zip for: ${rootDestination}`);
+    const zipStream = this.zip.generateNodeStream({
+      compression: 'DEFLATE',
+      compressionOptions: { level: 9 },
+      streamFiles: true,
+    })
+    .on('end', () => {
+      console.log(`zip complete for: ${rootDestination}`);
+    });
+    void pipeline(zipStream, this.getOutputStream());
   }
 
   public get buffer(): Buffer | undefined {
@@ -227,7 +239,8 @@ export class ZipWriter extends ComponentWriter {
     try {
       // Unlike the other 2 places where zip.finalize is called, this one DOES need to be awaited
       // the e2e replacement nuts will fail otherwise
-      await this.zip.finalize();
+      // await this.zip.finalize();
+      console.log('now we are really done');
     } catch (e) {
       err = e as Error;
     }
@@ -235,7 +248,9 @@ export class ZipWriter extends ComponentWriter {
   }
 
   public addToZip(contents: string | Readable | Buffer, path: SourcePath): void {
-    this.zip.append(contents, { name: path });
+    // this.zip.append(contents, { name: path });
+    console.log('adding to zip:', path);
+    this.zip.file(path, contents);
   }
 
   private getOutputStream(): Writable {

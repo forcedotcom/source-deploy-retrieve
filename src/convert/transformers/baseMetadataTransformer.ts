@@ -8,15 +8,18 @@ import { MetadataTransformer, WriteInfo } from '../types';
 import { ConvertContext } from '../convertContext';
 import { SourceComponent } from '../../resolve';
 import { RegistryAccess } from '../../registry';
+import { Logger } from '@salesforce/core';
 
 export abstract class BaseMetadataTransformer implements MetadataTransformer {
   public readonly context: ConvertContext;
   public defaultDirectory?: string;
   protected registry: RegistryAccess;
+  protected logger: Logger;
 
   public constructor(registry = new RegistryAccess(), context = new ConvertContext()) {
     this.registry = registry;
     this.context = context;
+    this.logger = Logger.childFromRoot(this.constructor.name);
   }
 
   public abstract toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]>;

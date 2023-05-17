@@ -1,3 +1,12 @@
+# [8.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.4.0...8.5.0) (2023-05-17)
+
+
+### Features
+
+* support for UserAccessPolicy ([#971](https://github.com/forcedotcom/source-deploy-retrieve/issues/971)) ([7a102b0](https://github.com/forcedotcom/source-deploy-retrieve/commit/7a102b0eb64c5ac5ecca9f55f2ce43a78f6763f6))
+
+
+
 # [8.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.3.1...8.4.0) (2023-05-09)
 
 

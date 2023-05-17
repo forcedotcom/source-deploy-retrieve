@@ -71,6 +71,7 @@ jobs:
           - 'yarn test:nuts:convert'
           - 'yarn test:nuts:deb'
           - 'yarn test:nuts:delete'
+          - 'yarn test:nuts:deploy'
           - 'yarn test:nuts:deploy:metadata:manifest'
           - 'yarn test:nuts:deploy:metadata:metadata'
           - 'yarn test:nuts:deploy:metadata:metadata-dir'

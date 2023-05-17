@@ -11,6 +11,7 @@ import * as fs from 'graceful-fs';
 import { Logger, SfError, Messages } from '@salesforce/core';
 import { expect, assert } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
+import JSZip = require('jszip');
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { ComponentSet, MetadataResolver, RegistryAccess, SourceComponent, WriteInfo, WriterFormat } from '../../src';
@@ -19,7 +20,6 @@ import { COMPONENTS } from '../mock/type-constants/reportConstant';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { COMPONENT, CONTENT_NAMES, TYPE_DIRECTORY, XML_NAMES } from '../mock/type-constants/apexClassConstant';
 import { BaseMetadataTransformer } from '../../src/convert/transformers/baseMetadataTransformer';
-import JSZip = require('jszip');
 
 const env = createSandbox();
 const registryAccess = new RegistryAccess();

@@ -4,11 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { Logger } from '@salesforce/core';
 import { MetadataTransformer, WriteInfo } from '../types';
 import { ConvertContext } from '../convertContext';
 import { SourceComponent } from '../../resolve';
 import { RegistryAccess } from '../../registry';
-import { Logger } from '@salesforce/core';
 
 export abstract class BaseMetadataTransformer implements MetadataTransformer {
   public readonly context: ConvertContext;

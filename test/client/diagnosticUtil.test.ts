@@ -5,7 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
+import { SfError } from '@salesforce/core';
 import { DiagnosticUtil } from '../../src/client/diagnosticUtil';
 import { DeployMessage, registry, SourceComponent } from '../../src';
 
@@ -51,6 +52,19 @@ describe('DiagnosticUtil', () => {
         error: 'This might be a problem later!',
         problemType: 'Warning',
       });
+    });
+
+    it('should throw friendly error for message with missing problem', () => {
+      const message = createDeployMessage({
+        problemType: 'Warning',
+      });
+      try {
+        util.parseDeployDiagnostic(component, message);
+      } catch (e) {
+        assert(e instanceof SfError);
+        expect(e.message).to.include('Unable to parse deploy diagnostic with empty problem');
+        expect(e.message).to.include(JSON.stringify(message));
+      }
     });
 
     it('should create diagnostic for problem with file line and column info', () => {

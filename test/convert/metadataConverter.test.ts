@@ -300,29 +300,6 @@ describe('MetadataConverter', () => {
       expect(ensureDirectoryStub.firstCall.args[0]).to.equal(dirname(zipPath));
     });
 
-    it('should create conversion pipeline with fs write configuration', async () => {
-      await converter.convert(components, 'metadata', {
-        type: 'zip',
-        outputDirectory,
-        packageName,
-      });
-
-      // secondCall is used because ZipWriter uses pipeline upon construction
-      const pipelineArgs = pipelineStub.secondCall.args;
-      validatePipelineArgs(pipelineArgs);
-      expect(pipelineArgs[3] instanceof streams.ZipWriter).to.be.true;
-      expect(pipelineArgs[3].rootDestination).to.equal(`${packageOutput}.zip`);
-    });
-
-    it('should create conversion pipeline with in-memory configuration', async () => {
-      await converter.convert(components, 'metadata', { type: 'zip' });
-
-      const pipelineArgs = pipelineStub.secondCall.args;
-      validatePipelineArgs(pipelineArgs);
-      expect(pipelineArgs[3] instanceof streams.ZipWriter).to.be.true;
-      expect(pipelineArgs[3].rootDestination).to.be.undefined;
-    });
-
     it('should return zipBuffer result for in-memory configuration', async () => {
       const testBuffer = Buffer.from('oh hi mark');
       $$.SANDBOX.stub(streams.ZipWriter.prototype, 'buffer').value(testBuffer);

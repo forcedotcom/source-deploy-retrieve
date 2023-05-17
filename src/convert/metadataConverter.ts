@@ -55,7 +55,6 @@ export class MetadataConverter {
         mergeSet,
         tasks = [],
       } = await getConvertIngredients(output, cs, targetFormatIsSource);
-      console.log('convert to path:', packagePath);
 
       const conversionPipeline = pipeline(
         Readable.from(components),

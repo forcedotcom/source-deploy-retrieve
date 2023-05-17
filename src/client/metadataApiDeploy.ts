@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, extname, join, posix, relative, resolve, sep } from 'path';
+import { basename, dirname, extname, join, posix, relative, resolve as pathResolve, sep } from 'path';
 import { format } from 'util';
 import { isString } from '@salesforce/ts-types';
 import * as JSZip from 'jszip';
@@ -444,10 +444,10 @@ export class MetadataApiDeploy extends MetadataTransfer<
 
       const zip = JSZip();
 
-      const zipDirRecursive = (dir: string) => {
+      const zipDirRecursive = (dir: string): void => {
         const list = fs.readdirSync(dir);
         for (const file of list) {
-          const fullPath = resolve(dir, file);
+          const fullPath = pathResolve(dir, file);
           const stat = fs.statSync(fullPath);
           if (stat.isDirectory()) {
             zipDirRecursive(fullPath);
@@ -458,11 +458,11 @@ export class MetadataApiDeploy extends MetadataTransfer<
           }
         }
       };
-      console.log('Zipping directory for metadata deploy:', mdapiPath);
+      this.logger.debug('Zipping directory for metadata deploy:', mdapiPath);
       zipDirRecursive(mdapiPath);
 
       return zip.generateAsync({
-        type: "nodebuffer",
+        type: 'nodebuffer',
         compression: 'DEFLATE',
         compressionOptions: { level: 9 },
       });

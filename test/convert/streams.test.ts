@@ -8,7 +8,6 @@
 import { basename, join, sep } from 'path';
 import { Readable, Writable } from 'stream';
 import * as fs from 'graceful-fs';
-import * as archiver from 'archiver';
 import { Logger, SfError, Messages } from '@salesforce/core';
 import { expect, assert } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
@@ -20,6 +19,7 @@ import { COMPONENTS } from '../mock/type-constants/reportConstant';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { COMPONENT, CONTENT_NAMES, TYPE_DIRECTORY, XML_NAMES } from '../mock/type-constants/apexClassConstant';
 import { BaseMetadataTransformer } from '../../src/convert/transformers/baseMetadataTransformer';
+import JSZip = require('jszip');
 
 const env = createSandbox();
 const registryAccess = new RegistryAccess();
@@ -435,12 +435,9 @@ describe('Streams', () => {
     });
 
     describe('ZipWriter', () => {
-      let archive: archiver.Archiver;
       let writer: streams.ZipWriter;
 
       beforeEach(() => {
-        archive = archiver.create('zip', { zlib: { level: 3 } });
-        env.stub(archiver, 'create').returns(archive);
         env
           .stub(fs, 'createWriteStream')
           .withArgs(`${rootDestination}.zip`)
@@ -451,32 +448,40 @@ describe('Streams', () => {
 
       it('should add entries to zip based on given write infos', async () => {
         writer = new streams.ZipWriter(`${rootDestination}.zip`);
-        const appendStub = env.stub(archive, 'append');
+        const jsZipFileStub = env.stub(JSZip.prototype, 'file');
         env.stub(streams, 'stream2buffer').resolves(Buffer.from('hi'));
 
         await writer._write(chunk, '', (err: Error | undefined) => {
           expect(err).to.be.undefined;
         });
-        expect(appendStub.firstCall.args[0].toString()).to.equal('hi');
+        expect(jsZipFileStub.firstCall.args[0]).to.equal('classes/myComponent.cls-meta.xml');
+        expect(jsZipFileStub.firstCall.args[1]).to.deep.equal(Buffer.from('hi'));
       });
 
       it('should add entries to zip based on given write infos when zip is in-memory only', async () => {
         writer = new streams.ZipWriter();
-        const appendStub = env.stub(archive, 'append');
+        const jsZipFileStub = env.stub(JSZip.prototype, 'file');
         env.stub(streams, 'stream2buffer').resolves(Buffer.from('hi'));
 
         await writer._write(chunk, '', (err: Error | undefined) => {
           expect(err).to.be.undefined;
         });
-        expect(appendStub.firstCall.args[0].toString()).to.equal('hi');
+        expect(jsZipFileStub.firstCall.args[0]).to.equal('classes/myComponent.cls-meta.xml');
+        expect(jsZipFileStub.firstCall.args[1]).to.deep.equal(Buffer.from('hi'));
       });
 
-      it('should finalize zip when stream is finished', async () => {
-        const finalizeStub = env.stub(archive, 'finalize').resolves();
+      it('should generateAsync zip when stream is finished', async () => {
+        const generateAsyncStub = env.stub(JSZip.prototype, 'generateAsync').resolves();
+        const expectedArgs = {
+          type: 'nodebuffer',
+          compression: 'DEFLATE',
+          compressionOptions: { level: 9 },
+        };
 
         await writer._final((err: Error | undefined) => {
           expect(err).to.be.undefined;
-          expect(finalizeStub.calledOnce).to.be.true;
+          expect(generateAsyncStub.calledOnce).to.be.true;
+          expect(generateAsyncStub.firstCall.args[0]).to.deep.equal(expectedArgs);
         });
       });
 
@@ -491,7 +496,7 @@ describe('Streams', () => {
 
       it('should pass errors to _write callback', async () => {
         const whoops = new Error('whoops!');
-        env.stub(archive, 'append').throws(whoops);
+        env.stub(JSZip.prototype, 'file').throws(whoops);
         env.stub(streams, 'stream2buffer').resolves(Buffer.from('hi'));
 
         await writer._write(chunk, '', (err: Error | undefined) => {
@@ -503,7 +508,7 @@ describe('Streams', () => {
 
       it('should pass errors to _final callback', async () => {
         const whoops = new Error('whoops!');
-        env.stub(archive, 'finalize').throws(whoops);
+        env.stub(JSZip.prototype, 'generateAsync').throws(whoops);
 
         await writer._final((err: Error | undefined) => {
           assert(err instanceof Error);

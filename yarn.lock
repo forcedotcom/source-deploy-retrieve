@@ -875,12 +875,12 @@
     mv "~2"
     safe-json-stringify "~1"
 
-"@salesforce/cli-plugins-testkit@^3.3.3":
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-3.3.3.tgz#861853bd97077d888f2b6a4acd56b3cf2f202c95"
-  integrity sha512-BBEMPFbRd20N79PQbodUJUvzTd4L5DVSS07JfXmMmJgpbyy8fgUzQmuczfMiU7Dfs445+1UX8St1Q1JaPp8z6A==
+"@salesforce/cli-plugins-testkit@^3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-3.4.0.tgz#22ab0d7729590b8cbb5251f718104f91634bd3b4"
+  integrity sha512-MMtuH02cvjpD/rBaqDi18y9qUESyEd87yLjuFn3Emkj5SB559uirZcEo59N6zc1wkvdBbPQzVWDcuTVS7ihUAw==
   dependencies:
-    "@salesforce/core" "^3.34.6"
+    "@salesforce/core" "^3.34.8"
     "@salesforce/kit" "^1.9.2"
     "@salesforce/ts-types" "^1.7.3"
     "@types/shelljs" "^0.8.12"
@@ -890,7 +890,7 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.7.0"
 
-"@salesforce/core@^3.34.6", "@salesforce/core@^3.36.1":
+"@salesforce/core@^3.34.6", "@salesforce/core@^3.34.8", "@salesforce/core@^3.36.1":
   version "3.36.1"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.36.1.tgz#053a5e1079b9749b62e461e6ac3e630b5689694a"
   integrity sha512-kcjyr9bj35nnL8Bqv8U39xeho3CrZYXJiS/X5X1eEHVNZLd9zckrmKrh1V7z8ElCFpsJrewT989SJsdvi9kE8w==

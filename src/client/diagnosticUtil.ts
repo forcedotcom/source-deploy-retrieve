@@ -29,12 +29,14 @@ export class DiagnosticUtil {
         if (typeof message !== 'string') {
           return parseDefault(component, message);
         }
-        throw new SfError(`Unable to parse deploy diagnostic with string message: ${message}`);
+        throw new SfError(
+          `Unable to parse deploy diagnostic with string message: ${message} for component ${component.fullName}`
+        );
     }
   }
 
   private parseLwc(component: SourceComponent, message: string | DeployMessage): ComponentDiagnostic {
-    const problem = getProblemFromMessage(message);
+    const problem = getProblemFromMessage(message, component);
     const diagnostic: ComponentDiagnostic = {
       error: problem,
       problemType: 'Error',
@@ -77,7 +79,7 @@ export class DiagnosticUtil {
   }
 
   private parseAura(component: SourceComponent, message: string | DeployMessage): ComponentDiagnostic {
-    const problem = getProblemFromMessage(message);
+    const problem = getProblemFromMessage(message, component);
     const diagnostic: ComponentDiagnostic = {
       error: problem,
       problemType: 'Error',
@@ -122,13 +124,11 @@ const appendErrorWithLocation = (error: string, line: string | number, column: s
 
 const parseDefault = (component: SourceComponent, message: DeployMessage): ComponentDiagnostic => {
   const { problemType, fileName, lineNumber, columnNumber } = message;
-  const problem = getProblemFromMessage(message);
-  if (!problemType) {
-    throw new SfError(`Unable to parse deploy diagnostic with empty problem type: ${message.toString()}`);
-  }
+  const problem = getProblemFromMessage(message, component);
+
   const diagnostic: ComponentDiagnostic = {
     error: problem,
-    problemType,
+    problemType: problemType ?? 'Error',
   };
 
   if (fileName) {
@@ -145,10 +145,14 @@ const parseDefault = (component: SourceComponent, message: DeployMessage): Compo
   return diagnostic;
 };
 
-const getProblemFromMessage = (message: string | DeployMessage): string => {
+const getProblemFromMessage = (message: string | DeployMessage, component: SourceComponent): string => {
   const problem = typeof message === 'string' ? message : message.problem;
   if (!problem) {
-    throw new SfError(`Unable to parse deploy diagnostic with empty problem: ${message.toString()}`);
+    throw new SfError(
+      `Unable to parse deploy diagnostic with empty problem: ${JSON.stringify(message)} for component ${
+        component.fullName
+      }`
+    );
   }
   return problem;
 };

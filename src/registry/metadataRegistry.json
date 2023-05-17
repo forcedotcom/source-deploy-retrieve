@@ -3452,6 +3452,14 @@
           "aiScoringModelDefVersions": "aiscoringmodeldefversion"
         }
       }
+    },
+    "useraccesspolicy": {
+      "id": "useraccesspolicy",
+      "name": "UserAccessPolicy",
+      "suffix": "useraccesspolicy",
+      "directoryName": "useraccesspolicies",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3829,7 +3837,8 @@
     "locationUse": "locationuse",
     "personAccountOwnerPowerUser": "personaccountownerpoweruser",
     "pipelineInspMetricConfig": "pipelineinspmetricconfig",
-    "productSpecificationTypeDefinition": "productspecificationtypedefinition"
+    "productSpecificationTypeDefinition": "productspecificationtypedefinition",
+    "useraccesspolicy": "useraccesspolicy"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

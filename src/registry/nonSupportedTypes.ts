@@ -34,7 +34,7 @@ export const features = [
   'BOTBLOCKS',
   'INDUSTRIESINTERACTIONCALCULATION',
   'BUSINESSRULESENGINE',
-
+  'FUNDRAISING',
   'PARDOTADVANCED', // org:create throws a C-9999 when this is not excluded
 ];
 
@@ -76,8 +76,23 @@ export const metadataTypes = [
   // spun up with HIGHSCALEORDERS, not in describe
   'RegisteredExternalService',
 
+  // spun up org with ASSESSMENTS, not in describe
+  'AssessmentConfiguration',
+
+  // spun up org with INDUSTRIESEPCNEXTPILOT, not in describe
+  'ProductAttrDisplayConfig',
+  'ProductSpecificationRecType',
+  'ProductSpecificationType',
+
+  // spun up org with ASSOCIATIONENGINE, not in describe
+  'RecAlrtDataSrcExpSetDef',
+  'RecordAlertTemplate',
+
   // B2CLOYALTYMANAGEMENTPLUS, not in describe
   'ServiceProcess',
+
+  // does not show up in describe, but requires no features
+  'ProcessFlowMigration',
 ];
 
 export const hasUnsupportedFeatures = (type: CoverageObjectType): boolean => {

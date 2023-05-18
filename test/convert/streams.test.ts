@@ -454,7 +454,7 @@ describe('Streams', () => {
         await writer._write(chunk, '', (err: Error | undefined) => {
           expect(err).to.be.undefined;
         });
-        expect(jsZipFileStub.firstCall.args[0]).to.equal('classes/myComponent.cls-meta.xml');
+        expect(jsZipFileStub.firstCall.args[0]).to.equal(join('classes', 'myComponent.cls-meta.xml'));
         expect(jsZipFileStub.firstCall.args[1]).to.deep.equal(Buffer.from('hi'));
       });
 
@@ -466,7 +466,7 @@ describe('Streams', () => {
         await writer._write(chunk, '', (err: Error | undefined) => {
           expect(err).to.be.undefined;
         });
-        expect(jsZipFileStub.firstCall.args[0]).to.equal('classes/myComponent.cls-meta.xml');
+        expect(jsZipFileStub.firstCall.args[0]).to.equal(join('classes', 'myComponent.cls-meta.xml'));
         expect(jsZipFileStub.firstCall.args[1]).to.deep.equal(Buffer.from('hi'));
       });
 

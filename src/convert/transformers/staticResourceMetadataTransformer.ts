@@ -11,7 +11,7 @@ import { getExtension } from 'mime';
 import { CentralDirectory, Open } from 'unzipper';
 import { JsonMap } from '@salesforce/ts-types';
 import { createWriteStream } from 'graceful-fs';
-import { Messages, SfError } from '@salesforce/core';
+import { Logger, Messages, SfError } from '@salesforce/core';
 import { baseName } from '../../utils';
 import { WriteInfo } from '..';
 import { SourceComponent } from '../../resolve';
@@ -23,6 +23,14 @@ import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
+
+let logger: Logger;
+const getLogger = (): Logger => {
+  if (!logger) {
+    logger = Logger.childFromRoot('StaticResourceMetadataTransformer');
+  }
+  return logger;
+};
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public static readonly ARCHIVE_MIME_TYPES = new Set([
@@ -44,7 +52,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
 
     // Zip the static resource from disk to a stream, compressing at level 9.
     const zipIt = (): Readable => {
-      this.logger.debug(`zipping static resource: ${component.content}`);
+      getLogger().debug(`zipping static resource: ${component.content}`);
       const zip = JSZip();
 
       // JSZip does not have an API for adding a directory of files recursively so we always
@@ -54,14 +62,17 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
         zip.file(relative(content, path), replacementStream);
       }
 
-      return new Readable().wrap(zip.generateNodeStream({
-          compression: 'DEFLATE',
-          compressionOptions: { level: 9 },
-          streamFiles: true,
-        })
-        .on('end', () => {
-          this.logger.debug(`zip complete for: ${component.content}`);
-        }));
+      return new Readable().wrap(
+        zip
+          .generateNodeStream({
+            compression: 'DEFLATE',
+            compressionOptions: { level: 9 },
+            streamFiles: true,
+          })
+          .on('end', () => {
+            getLogger().debug(`zip complete for: ${component.content}`);
+          })
+      );
     };
 
     return [

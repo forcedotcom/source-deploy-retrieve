@@ -4,12 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { Readable } from 'stream';
 import { basename, join } from 'path';
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import { Messages } from '@salesforce/core';
-import * as archiver from 'archiver';
 import { assert, expect } from 'chai';
 import { createSandbox } from 'sinon';
+import * as JSZip from 'jszip';
 import { CentralDirectory, Entry, Open } from 'unzipper';
 import chai = require('chai');
 import { registry, SourceComponent, VirtualTreeContainer, WriteInfo } from '../../../src';
@@ -74,33 +75,33 @@ describe('StaticResourceMetadataTransformer', () => {
         MIXED_CONTENT_DIRECTORY_COMPONENT,
         MIXED_CONTENT_DIRECTORY_VIRTUAL_FS
       );
-      const { type, content, xml } = component;
+      const { content, xml } = component;
       assert(content);
       assert(xml);
-      const archive = archiver.create('zip', { zlib: { level: 3 } });
-      const archiveDirStub = env.stub(archive, 'directory');
-      const archiveFinalizeStub = env.stub(archive, 'finalize');
-      const parseXmlStub = env.stub(component, 'parseXml');
-      env.stub(archiver, 'create').returns(archive);
 
-      const expectedInfos: WriteInfo[] = [
-        {
-          source: archive,
-          output: join(type.directoryName, `${baseName(content)}.${type.suffix}`),
-        },
-        {
-          source: component.tree.stream(xml),
-          output: join(type.directoryName, basename(xml)),
-        },
-      ];
+      const jszipFileStub = env.stub(JSZip.prototype, 'file');
+      const jszipStreamStub = env.spy(JSZip.prototype, 'generateNodeStream');
+      const parseXmlStub = env.stub(component, 'parseXml');
 
       for (const contentType of StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES) {
         parseXmlStub.resolves({ StaticResource: { contentType } });
         // eslint-disable-next-line no-await-in-loop
-        expect(await transformer.toMetadataFormat(component)).to.deep.equal(expectedInfos);
-        expect(archiveDirStub.calledOnceWith(content, false)).to.be.true;
-        expect(archiveFinalizeStub.calledImmediatelyAfter(archiveDirStub)).to.be.true;
-        archiveDirStub.resetHistory();
+        const result = await transformer.toMetadataFormat(component);
+        expect(jszipFileStub.calledThrice).to.be.true;
+        expect(jszipStreamStub.calledOnce).to.be.true;
+        expect(jszipStreamStub.firstCall.args[0]).to.deep.equal({
+          compression: 'DEFLATE',
+          compressionOptions: { level: 9 },
+          streamFiles: true,
+          type: 'nodebuffer',
+        });
+        expect(result).to.be.an('array').with.lengthOf(2);
+        for (const res of result) {
+          expect(res.output).to.be.a('string');
+          expect(res.source).to.be.instanceOf(Readable);
+        }
+        jszipStreamStub.resetHistory();
+        jszipFileStub.resetHistory();
       }
     });
 

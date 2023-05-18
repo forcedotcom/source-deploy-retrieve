@@ -24,13 +24,10 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 const registryAccess = new RegistryAccess();
 
 describe('MetadataTransformerFactory', () => {
-  it.only('should return DefaultMetadataTransformer', () => {
+  it('should return DefaultMetadataTransformer', () => {
     const component = matchingContentFile.COMPONENT;
     const factory = new MetadataTransformerFactory(registryAccess);
-    const transformer = factory.getTransformer(component);
-    // console.dir(transformer.context, { depth: 8 });
-    // console.dir(new DefaultMetadataTransformer(), { depth: 8 });
-    expect(transformer).to.deep.equal(new DefaultMetadataTransformer(registryAccess, new ConvertContext()));
+    expect(factory.getTransformer(component)).to.deep.equal(new DefaultMetadataTransformer());
   });
 
   it('should return DecomposedMetadataTransformer', () => {

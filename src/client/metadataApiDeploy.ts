@@ -443,8 +443,6 @@ export class MetadataApiDeploy extends MetadataTransfer<
       }
 
       const zip = JSZip();
-      // metadata API doesn't want things at root, so add everything to a directory named, "zip"
-      zip.folder('zip');
 
       const zipDirRecursive = (dir: string): void => {
         const list = fs.readdirSync(dir);
@@ -454,7 +452,9 @@ export class MetadataApiDeploy extends MetadataTransfer<
           if (stat.isDirectory()) {
             zipDirRecursive(fullPath);
           } else {
-            zip.file(relative(mdapiPath, fullPath), fs.createReadStream(fullPath));
+            // Add relative file paths to a root of "zip" for MDAPI.
+            const relPath = join('zip', relative(mdapiPath, fullPath));
+            zip.file(relPath, fs.createReadStream(fullPath));
           }
         }
       };

@@ -2749,6 +2749,13 @@
       "directoryName": "SchedulingRules",
       "strictDirectoryName": false
     },
+    "ScoreCategory": {
+      "id": "ScoreCategory",
+      "name": "ScoreCategory",
+      "suffix": "ScoreCategory",
+      "directoryName": "scoreCategories",
+      "inFolder": false
+    },
     "userauthcertificate": {
       "id": "userauthcertificate",
       "name": "UserAuthCertificate",
@@ -3757,6 +3764,7 @@
     "ConversationVendorInformation": "conversationvendorinfo",
     "ConversationVendorFieldDefinition": "conversationvendorfielddef",
     "schedulingRule": "schedulingrule",
+    "ScoreCategory": "ScoreCategory",
     "userAuthCertificate": "userauthcertificate",
     "forecastingTypeSource": "forecastingtypesource",
     "forecastingType": "forecastingtype",

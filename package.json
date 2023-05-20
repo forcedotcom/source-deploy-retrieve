@@ -38,7 +38,7 @@
     "minimatch": "^5.1.6",
     "proxy-agent": "^5.0.0",
     "proxy-from-env": "^1.1.0",
-    "unzipper": "0.10.11"
+    "unzipper": "0.10.14"
   },
   "devDependencies": {
     "@salesforce/cli-plugins-testkit": "^3.3.3",

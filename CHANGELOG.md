@@ -1,3 +1,12 @@
+## [8.5.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.5.1...8.5.2) (2023-05-21)
+
+
+### Bug Fixes
+
+* **deps:** bump unzipper from 0.10.11 to 0.10.14 ([#978](https://github.com/forcedotcom/source-deploy-retrieve/issues/978)) ([777f799](https://github.com/forcedotcom/source-deploy-retrieve/commit/777f799e2ebc63602f8695e8b59d9c5cbb795f51))
+
+
+
 ## [8.5.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.5.0...8.5.1) (2023-05-17)
 
 

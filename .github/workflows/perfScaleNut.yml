@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-      - run: npm install -g sfdx-cli --omit=dev
+      - run: npm install -g @salesforce/cli --omit=dev
       - run: yarn install
       - run: yarn test:nuts:scale
 

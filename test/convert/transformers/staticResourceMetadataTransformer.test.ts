@@ -88,6 +88,9 @@ describe('StaticResourceMetadataTransformer', () => {
         // eslint-disable-next-line no-await-in-loop
         const result = await transformer.toMetadataFormat(component);
         expect(jszipFileStub.calledThrice).to.be.true;
+        expect(jszipFileStub.firstCall.args[0]).to.not.contain('\\', 'zip must only contain posix paths');
+        expect(jszipFileStub.secondCall.args[0]).to.not.contain('\\', 'zip must only contain posix paths');
+        expect(jszipFileStub.thirdCall.args[0]).to.not.contain('\\', 'zip must only contain posix paths');
         expect(jszipStreamStub.calledOnce).to.be.true;
         expect(jszipStreamStub.firstCall.args[0]).to.deep.equal({
           compression: 'DEFLATE',

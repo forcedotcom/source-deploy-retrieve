@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, isAbsolute, join } from 'path';
+import { basename, dirname, isAbsolute, join, sep } from 'path';
 import { pipeline as cbPipeline, Readable, Stream, Transform, Writable } from 'stream';
 import { promisify } from 'util';
 import { Messages, SfError } from '@salesforce/core';
@@ -223,7 +223,7 @@ export class ZipWriter extends ComponentWriter {
       this.zipBuffer = await this.zip.generateAsync({
         type: 'nodebuffer',
         compression: 'DEFLATE',
-        compressionOptions: { level: 9 }, // Need level 9 for backwards compat
+        compressionOptions: { level: 3 },
       });
       this.logger.debug('Generated zip complete');
     } catch (e) {
@@ -233,7 +233,9 @@ export class ZipWriter extends ComponentWriter {
   }
 
   public addToZip(contents: string | Readable | Buffer, path: SourcePath): void {
-    this.zip.file(path, contents);
+    // Ensure only posix paths are added to zip files
+    const posixPath = path.replace(sep, '/');
+    this.zip.file(posixPath, contents);
   }
 }
 

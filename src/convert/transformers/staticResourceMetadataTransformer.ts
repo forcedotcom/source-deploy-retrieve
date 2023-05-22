@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, isAbsolute, join, relative } from 'path';
+import { basename, dirname, isAbsolute, join, relative, sep } from 'path';
 import { Readable } from 'stream';
 import * as JSZip from 'jszip';
 import { getExtension } from 'mime';
@@ -59,7 +59,9 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
       // have to walk the component content. Replacements only happen if set on the component.
       for (const path of component.walkContent()) {
         const replacementStream = getReplacementStreamForReadable(component, path);
-        zip.file(relative(content, path), replacementStream);
+        const relPath = relative(content, path);
+        const relPosixPath = relPath.replace(sep, '/');
+        zip.file(relPosixPath, replacementStream);
       }
 
       return new Readable().wrap(

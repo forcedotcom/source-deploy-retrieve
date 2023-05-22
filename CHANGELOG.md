@@ -1,3 +1,39 @@
+## [8.5.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.5.2...8.5.3) (2023-05-22)
+
+
+### Bug Fixes
+
+* bump core to latest ([#982](https://github.com/forcedotcom/source-deploy-retrieve/issues/982)) ([7a34fc0](https://github.com/forcedotcom/source-deploy-retrieve/commit/7a34fc0214cf6172383f3b5e54f4dbeda36066a3)), closes [#983](https://github.com/forcedotcom/source-deploy-retrieve/issues/983)
+
+
+
+## [8.5.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.5.1...8.5.2) (2023-05-21)
+
+
+### Bug Fixes
+
+* **deps:** bump unzipper from 0.10.11 to 0.10.14 ([#978](https://github.com/forcedotcom/source-deploy-retrieve/issues/978)) ([777f799](https://github.com/forcedotcom/source-deploy-retrieve/commit/777f799e2ebc63602f8695e8b59d9c5cbb795f51))
+
+
+
+## [8.5.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.5.0...8.5.1) (2023-05-17)
+
+
+### Bug Fixes
+
+* prevent [object Object] and provide component details ([#972](https://github.com/forcedotcom/source-deploy-retrieve/issues/972)) ([a16b9a2](https://github.com/forcedotcom/source-deploy-retrieve/commit/a16b9a256b7ff2eac99f466b11ba30312b09ab92))
+
+
+
+# [8.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.4.0...8.5.0) (2023-05-17)
+
+
+### Features
+
+* support for UserAccessPolicy ([#971](https://github.com/forcedotcom/source-deploy-retrieve/issues/971)) ([7a102b0](https://github.com/forcedotcom/source-deploy-retrieve/commit/7a102b0eb64c5ac5ecca9f55f2ce43a78f6763f6))
+
+
+
 # [8.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.3.1...8.4.0) (2023-05-09)
 
 

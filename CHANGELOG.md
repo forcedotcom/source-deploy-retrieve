@@ -1,3 +1,12 @@
+## [8.5.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.5.2...8.5.3) (2023-05-22)
+
+
+### Bug Fixes
+
+* bump core to latest ([#982](https://github.com/forcedotcom/source-deploy-retrieve/issues/982)) ([7a34fc0](https://github.com/forcedotcom/source-deploy-retrieve/commit/7a34fc0214cf6172383f3b5e54f4dbeda36066a3)), closes [#983](https://github.com/forcedotcom/source-deploy-retrieve/issues/983)
+
+
+
 ## [8.5.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.5.1...8.5.2) (2023-05-21)
 
 

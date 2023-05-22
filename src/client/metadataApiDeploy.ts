@@ -455,7 +455,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
             // Add relative file paths to a root of "zip" for MDAPI.
             const relPath = join('zip', relative(mdapiPath, fullPath));
             // Ensure only posix paths are added to zip files
-            const relPosixPath = relPath.replace(sep, '/');
+            const relPosixPath = relPath.replace(/\\/g, '/');
             zip.file(relPosixPath, fs.createReadStream(fullPath));
           }
         }

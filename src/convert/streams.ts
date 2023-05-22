@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, isAbsolute, join, sep } from 'path';
+import { basename, dirname, isAbsolute, join } from 'path';
 import { pipeline as cbPipeline, Readable, Stream, Transform, Writable } from 'stream';
 import { promisify } from 'util';
 import { Messages, SfError } from '@salesforce/core';
@@ -234,7 +234,7 @@ export class ZipWriter extends ComponentWriter {
 
   public addToZip(contents: string | Readable | Buffer, path: SourcePath): void {
     // Ensure only posix paths are added to zip files
-    const posixPath = path.replace(sep, '/');
+    const posixPath = path.replace(/\\/g, '/');
     this.zip.file(posixPath, contents);
   }
 }

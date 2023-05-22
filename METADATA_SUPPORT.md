@@ -568,6 +568,7 @@ v59 introduces the following new types.  Here's their current level of support
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
 |FulfillmentStepType|❌|Not supported, but support could be added|
+|ProviderRelationshipMgmtConfig|❌|Not supported, but support could be added|
 
 ## Additional Types
 

@@ -2513,6 +2513,22 @@
         }
       }
     },
+    "expressionsetdefinition": {
+      "id": "expressionsetdefinition",
+      "name": "ExpressionSetDefinition",
+      "suffix": "expressionSetDefinition",
+      "directoryName": "expressionSetDefinition",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "expressionsetdefinitionversion": {
+      "id": "expressionsetdefinitionversion",
+      "name": "ExpressionSetDefinitionVersion",
+      "suffix": "expressionSetVersion",
+      "directoryName": "expressionSetVersion",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "briefcasedefinition": {
       "id": "briefcasedefinition",
       "name": "BriefcaseDefinition",
@@ -3443,22 +3459,6 @@
       "directoryName": "useraccesspolicies",
       "inFolder": false,
       "strictDirectoryName": false
-    },
-    "expressionsetdefinition": {
-      "id": "expressionsetdefinition",
-      "name": "ExpressionSetDefinition",
-      "suffix": "expressionSetDefinition",
-      "directoryName": "expressionSetDefinition",
-      "inFolder": false,
-      "strictDirectoryName": false
-    },
-    "expressionsetdefinitionversion": {
-      "id": "expressionsetdefinitionversion",
-      "name": "ExpressionSetDefinitionVersion",
-      "suffix": "expressionSetVersion",
-      "directoryName": "expressionSetVersion",
-      "inFolder": false,
-      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3488,6 +3488,8 @@
     "decisionTableDatasetLink": "decisiontabledatasetlink",
     "decisionMatrixDefinition": "decisionmatrixdefinition",
     "decisionMatrixDefinitionVersion": "decisionmatrixdefinitionversion",
+    "expressionSetDefinition": "expressionsetdefinition",
+    "expressionSetVersion": "expressionsetdefinitionversion",
     "briefcaseDefinition": "briefcasedefinition",
     "batchProcessJobDefinition": "batchprocessjobdefinition",
     "acctMgrTargetSetting": "acctmgrtargetsettings",
@@ -3836,9 +3838,7 @@
     "personAccountOwnerPowerUser": "personaccountownerpoweruser",
     "pipelineInspMetricConfig": "pipelineinspmetricconfig",
     "productSpecificationTypeDefinition": "productspecificationtypedefinition",
-    "useraccesspolicy": "useraccesspolicy",
-    "expressionSetDefinition": "expressionsetdefinition",
-    "expressionSetVersion": "expressionsetdefinitionversion"
+    "useraccesspolicy": "useraccesspolicy"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

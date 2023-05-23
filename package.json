@@ -130,7 +130,9 @@
       "files": [
         "src/**/*.ts",
         "**/tsconfig.json",
-        "messages/**"
+        "messages/**",
+        "src/registry/metadataRegistry.json",
+        "src/registry/stdValueSetRegistry.json"
       ],
       "output": [
         "lib/**",
@@ -185,7 +187,9 @@
         "**/tsconfig.json",
         ".mocha*",
         "!*.nut.ts",
-        ".nycrc"
+        ".nycrc",
+        "src/registry/metadataRegistry.json",
+        "src/registry/stdValueSetRegistry.json"
       ],
       "output": []
     }

@@ -1706,6 +1706,13 @@
       "directoryName": "skilltypes",
       "inFolder": false
     },
+    "scorecategory": {
+      "id": "scorecategory",
+      "name": "ScoreCategory",
+      "suffix": "scoreCategory",
+      "directoryName": "scoreCategories",
+      "inFolder": false
+    },
     "livechatdeployment": {
       "id": "livechatdeployment",
       "name": "LiveChatDeployment",
@@ -3639,6 +3646,7 @@
     "policy": "appointmentassignmentpolicy",
     "skill": "skill",
     "skilltype": "skilltype",
+    "scoreCategory": "scorecategory",
     "liveChatDeployment": "livechatdeployment",
     "liveChatButton": "livechatbutton",
     "liveChatAgentConfig": "livechatagentconfig",

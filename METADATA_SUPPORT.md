@@ -462,7 +462,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SchedulingObjective|✅||
 |SchedulingRule|✅||
 |SchemaSettings|✅||
-|ScoreCategory|❌|Not supported, but support could be added|
+|ScoreCategory|✅||
 |SearchSettings|✅||
 |SecuritySettings|✅||
 |ServiceAISetupDefinition|✅||

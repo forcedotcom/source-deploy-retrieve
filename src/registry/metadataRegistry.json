@@ -2513,30 +2513,6 @@
         }
       }
     },
-    "expressionsetdefinition": {
-      "id": "expressionsetdefinition",
-      "name": "ExpressionSetDefinition",
-      "suffix": "expressionSetDefinition",
-      "directoryName": "expressionSetDefinition",
-      "inFolder": false,
-      "strictDirectoryName": false,
-      "children": {
-        "types": {
-          "expressionsetdefinitionversion": {
-            "id": "expressionsetdefinitionversion",
-            "name": "ExpressionSetDefinitionVersion",
-            "directoryName": "versions",
-            "suffix": "expressionSetDefinitionVersion"
-          }
-        },
-        "directories": {
-          "versions": "expressionsetdefinitionversion"
-        },
-        "suffixes": {
-          "expressionSetDefinitionVersion": "expressionsetdefinitionversion"
-        }
-      }
-    },
     "briefcasedefinition": {
       "id": "briefcasedefinition",
       "name": "BriefcaseDefinition",
@@ -3467,6 +3443,22 @@
       "directoryName": "useraccesspolicies",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "expressionsetdefinition": {
+      "id": "expressionsetdefinition",
+      "name": "ExpressionSetDefinition",
+      "suffix": "expressionSetDefinition",
+      "directoryName": "expressionSetDefinition",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "expressionsetdefinitionversion": {
+      "id": "expressionsetdefinitionversion",
+      "name": "ExpressionSetDefinitionVersion",
+      "suffix": "expressionSetVersion",
+      "directoryName": "expressionSetVersion",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3496,8 +3488,6 @@
     "decisionTableDatasetLink": "decisiontabledatasetlink",
     "decisionMatrixDefinition": "decisionmatrixdefinition",
     "decisionMatrixDefinitionVersion": "decisionmatrixdefinitionversion",
-    "expressionSetDefinition": "expressionsetdefinition",
-    "expressionSetDefinitionVersion": "expressionsetdefinitionversion",
     "briefcaseDefinition": "briefcasedefinition",
     "batchProcessJobDefinition": "batchprocessjobdefinition",
     "acctMgrTargetSetting": "acctmgrtargetsettings",
@@ -3846,7 +3836,9 @@
     "personAccountOwnerPowerUser": "personaccountownerpoweruser",
     "pipelineInspMetricConfig": "pipelineinspmetricconfig",
     "productSpecificationTypeDefinition": "productspecificationtypedefinition",
-    "useraccesspolicy": "useraccesspolicy"
+    "useraccesspolicy": "useraccesspolicy",
+    "expressionSetDefinition": "expressionsetdefinition",
+    "expressionSetVersion": "expressionsetdefinitionversion"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -3909,7 +3901,6 @@
     "mktdatatranfield": "mktdatatranobject",
     "digitalexperience": "digitalexperiencebundle",
     "decisionmatrixdefinitionversion": "decisionmatrixdefinition",
-    "expressionsetdefinitionversion": "expressionsetdefinition",
     "aiscoringmodeldefversion": "aiscoringmodeldefinition"
   }
 }

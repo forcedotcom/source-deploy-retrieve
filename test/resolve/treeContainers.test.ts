@@ -7,14 +7,13 @@
 /* eslint-disable class-methods-use-this */
 
 import { join, normalize } from 'path';
-import { pipeline as cbPipeline, Readable, Writable } from 'stream';
-import { promisify } from 'util';
+import { Readable } from 'stream';
 import { Messages, SfError } from '@salesforce/core';
 import { assert, expect } from 'chai';
 import { createSandbox } from 'sinon';
 import * as fs from 'graceful-fs';
 import * as unzipper from 'unzipper';
-import { create as createArchive } from 'archiver';
+import * as JSZip from 'jszip';
 import {
   MetadataResolver,
   NodeFSTreeContainer,
@@ -130,27 +129,21 @@ describe('Tree Containers', () => {
     let zipBuffer: Buffer;
 
     const filesRoot = join('.', 'main', 'default');
+    const moreFiles = join(filesRoot, 'morefiles');
 
     before(async () => {
-      const pipeline = promisify(cbPipeline);
-      const archive = createArchive('zip', { zlib: { level: 3 } });
-      const bufferWritable = new Writable();
-      const buffers: Buffer[] = [];
-      bufferWritable._write = (chunk: Buffer, encoding: string, cb: () => void): void => {
-        buffers.push(chunk);
-        cb();
-      };
-      pipeline(archive, bufferWritable);
+      const zip = new JSZip();
+      zip
+        ?.file(join(filesRoot, 'test.txt'), 'test text')
+        ?.file(join(filesRoot, 'test2.txt'), 'test text 2')
+        ?.file(join(moreFiles, 'test3.txt'), 'test text 3');
 
-      archive.append('', { name: 'main/' });
-      archive.append('', { name: 'main/default/' });
-      archive.append('test text', { name: 'main/default/test.txt' });
-      archive.append('test text 2', { name: 'main/default/test2.txt' });
-      archive.append('test text 3', { name: 'main/default/morefiles/test3.txt' });
+      zipBuffer = await zip.generateAsync({
+        type: 'nodebuffer',
+        compression: 'DEFLATE',
+        compressionOptions: { level: 3 },
+      });
 
-      await archive.finalize();
-
-      zipBuffer = Buffer.concat(buffers);
       tree = await ZipTreeContainer.create(zipBuffer);
     });
 

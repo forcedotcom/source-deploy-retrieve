@@ -2528,14 +2528,14 @@
             "xmlElementName": "versions",
             "uniqueIdElement": "fullName",
             "directoryName": "versions",
-            "suffix": "expressionSetDefinitionVersion"
+            "suffix": "expressionSetVersion"
           }
         },
         "directories": {
           "versions": "expressionsetdefinitionversion"
         },
         "suffixes": {
-          "expressionSetDefinitionVersion": "expressionsetdefinitionversion"
+          "expressionSetVersion": "expressionsetdefinitionversion"
         }
       }
     },

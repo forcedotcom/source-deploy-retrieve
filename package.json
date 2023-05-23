@@ -46,7 +46,6 @@
     "@salesforce/dev-scripts": "^4.3.0",
     "@salesforce/prettier-config": "^0.0.2",
     "@salesforce/ts-sinon": "^1.4.6",
-    "@types/archiver": "^5.3.1",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/fast-levenshtein": "^0.0.2",
     "@types/graceful-fs": "^4.1.6",

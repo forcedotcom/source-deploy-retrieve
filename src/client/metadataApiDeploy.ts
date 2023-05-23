@@ -445,11 +445,10 @@ export class MetadataApiDeploy extends MetadataTransfer<
       const zip = JSZip();
 
       const zipDirRecursive = (dir: string): void => {
-        const list = fs.readdirSync(dir);
-        for (const file of list) {
-          const fullPath = pathResolve(dir, file);
-          const stat = fs.statSync(fullPath);
-          if (stat.isDirectory()) {
+        const dirents = fs.readdirSync(dir, { withFileTypes: true });
+        for (const dirent of dirents) {
+          const fullPath = pathResolve(dir, dirent.name);
+          if (dirent.isDirectory()) {
             zipDirRecursive(fullPath);
           } else {
             // Add relative file paths to a root of "zip" for MDAPI.

@@ -2525,6 +2525,8 @@
           "expressionsetdefinitionversion": {
             "id": "expressionsetdefinitionversion",
             "name": "ExpressionSetDefinitionVersion",
+            "xmlElementName": "versions",
+            "uniqueIdElement": "fullName",
             "directoryName": "versions",
             "suffix": "expressionSetDefinitionVersion"
           }
@@ -3497,7 +3499,6 @@
     "decisionMatrixDefinition": "decisionmatrixdefinition",
     "decisionMatrixDefinitionVersion": "decisionmatrixdefinitionversion",
     "expressionSetDefinition": "expressionsetdefinition",
-    "expressionSetDefinitionVersion": "expressionsetdefinitionversion",
     "briefcaseDefinition": "briefcasedefinition",
     "batchProcessJobDefinition": "batchprocessjobdefinition",
     "acctMgrTargetSetting": "acctmgrtargetsettings",

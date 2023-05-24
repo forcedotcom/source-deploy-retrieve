@@ -2526,14 +2526,19 @@
             "id": "expressionsetdefinitionversion",
             "name": "ExpressionSetDefinitionVersion",
             "directoryName": "versions",
-            "suffix": "expressionSetDefinitionVersion"
+            "suffix": "expressionSetVersion"
           }
         },
         "directories": {
           "versions": "expressionsetdefinitionversion"
         },
         "suffixes": {
-          "expressionSetDefinitionVersion": "expressionsetdefinitionversion"
+          "expressionSetVersion": "expressionsetdefinitionversion"
+        },
+        "strategies": {
+          "adapter": "decomposed",
+          "transformer": "decomposed",
+          "decomposition": "topLevel"
         }
       }
     },
@@ -3497,7 +3502,6 @@
     "decisionMatrixDefinition": "decisionmatrixdefinition",
     "decisionMatrixDefinitionVersion": "decisionmatrixdefinitionversion",
     "expressionSetDefinition": "expressionsetdefinition",
-    "expressionSetDefinitionVersion": "expressionsetdefinitionversion",
     "briefcaseDefinition": "briefcasedefinition",
     "batchProcessJobDefinition": "batchprocessjobdefinition",
     "acctMgrTargetSetting": "acctmgrtargetsettings",
@@ -3909,7 +3913,7 @@
     "mktdatatranfield": "mktdatatranobject",
     "digitalexperience": "digitalexperiencebundle",
     "decisionmatrixdefinitionversion": "decisionmatrixdefinition",
-    "expressionsetdefinitionversion": "expressionsetdefinition",
+    "expressionsetversion": "expressionsetdefinition",
     "aiscoringmodeldefversion": "aiscoringmodeldefinition"
   }
 }

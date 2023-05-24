@@ -1,0 +1,26 @@
+{
+  "wireit": {
+    "compile": {
+      "command": "tsc -p . --pretty --incremental",
+      "files": ["src/**/*.ts", "src/registry/*.json", "**/tsconfig.json", "messages/**"],
+      "output": ["lib/**", "*.tsbuildinfo"],
+      "clean": "if-file-deleted"
+    },
+    "test:only": {
+      "command": "nyc mocha \"test/**/*.test.ts\"",
+      "env": {
+        "FORCE_COLOR": "2"
+      },
+      "files": [
+        "test/**/*.ts",
+        "src/**/*.ts",
+        "src/registry/*.json",
+        "**/tsconfig.json",
+        ".mocha*",
+        "!*.nut.ts",
+        ".nycrc"
+      ],
+      "output": []
+    }
+  }
+}

@@ -130,6 +130,7 @@
       "command": "tsc -p . --pretty --incremental",
       "files": [
         "src/**/*.ts",
+        "src/registry/*.json",
         "**/tsconfig.json",
         "messages/**"
       ],
@@ -183,6 +184,7 @@
       "files": [
         "test/**/*.ts",
         "src/**/*.ts",
+        "src/registry/*.json",
         "**/tsconfig.json",
         ".mocha*",
         "!*.nut.ts",

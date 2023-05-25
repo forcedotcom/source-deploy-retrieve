@@ -4,6 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { CodeCoverageWarning, RunTestFailure, RunTestSuccess } from 'jsforce/lib/api/metadata';
 import { ComponentSet } from '../collections';
 import { PackageTypeMembers } from '../collections/types';
 import { SourcePath } from '../common/types';
@@ -167,29 +168,9 @@ export interface LocationsNotCovered {
   time: string;
 }
 
-export interface CodeCoverageWarnings {
-  id: string;
-  message: string;
-  namespace: string;
-}
-
-export interface Failures {
-  id: string;
-  message: string;
-  methodName: string;
-  name: string;
-  packageName: string;
-  stackTrace: string;
-  time: string;
-  type: string;
-}
-
-export interface Successes {
-  id: string;
-  methodName: string;
-  name: string;
-  time: string;
-}
+export type CodeCoverageWarnings = CodeCoverageWarning;
+export type Failures = RunTestFailure;
+export type Successes = RunTestSuccess;
 
 type BooleanString = 'true' | 'false' | true | false;
 

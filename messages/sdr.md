@@ -177,5 +177,5 @@ If the type is not listed in the registry, check that it has Metadata API suppor
 
 If the type is available via Metadata API but not in the registry
 
-- open an issue <https://github.com/forcedotcom/cli/issues>
-- add the type via PR. Instructions: <https://github.com/forcedotcom/source-deploy-retrieve/blob/main/contributing/metadata.md>
+- Open an issue <https://github.com/forcedotcom/cli/issues>
+- Add the type via PR. Instructions: <https://github.com/forcedotcom/source-deploy-retrieve/blob/main/contributing/metadata.md>

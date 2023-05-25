@@ -1,3 +1,12 @@
+# [8.6.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.5.3...8.6.0) (2023-05-25)
+
+
+### Features
+
+* missing type language ([#989](https://github.com/forcedotcom/source-deploy-retrieve/issues/989)) ([3e26daf](https://github.com/forcedotcom/source-deploy-retrieve/commit/3e26daf752925a2e8eb0c15d6af1c7a51837d049))
+
+
+
 ## [8.5.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.5.2...8.5.3) (2023-05-22)
 
 

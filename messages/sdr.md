@@ -70,6 +70,11 @@ Metadata xml file %s is forceignored but is required for %s.
 
 SourceComponent %s (metadata type = %s) is missing its content file.
 
+# noContentFound.actions
+
+- Ensure the content file exists in the expected location.
+- If the content file is in your .forceignore file, ensure the meta-xml file is also ignored to completely exclude it.
+
 # error_parsing_xml
 
 SourceComponent %s (metadata type = %s) does not have an associated metadata xml to parse

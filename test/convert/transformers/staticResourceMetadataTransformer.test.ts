@@ -18,8 +18,12 @@ import { StaticResourceMetadataTransformer } from '../../../src/convert/transfor
 import { baseName } from '../../../src/utils';
 import { mixedContentSingleFile } from '../../mock';
 import {
+  MIXED_CONTENT_DIRECTORY_DIR,
+  MIXED_CONTENT_DIRECTORY_CONTENT_DIR,
   MIXED_CONTENT_DIRECTORY_COMPONENT,
   MIXED_CONTENT_DIRECTORY_VIRTUAL_FS,
+  MIXED_CONTENT_DIRECTORY_XML_NAMES,
+  MIXED_CONTENT_DIRECTORY_XML_PATHS,
 } from '../../mock/type-constants/staticresourceConstant';
 import { TestReadable } from '../../mock/convert/readables';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../../../src/common';
@@ -79,20 +83,28 @@ describe('StaticResourceMetadataTransformer', () => {
       assert(content);
       assert(xml);
 
-      const jszipFileStub = env.stub(JSZip.prototype, 'file');
-      const jszipStreamStub = env.spy(JSZip.prototype, 'generateNodeStream');
+      // @ts-ignore restore the stub to set a different one that implements Readable._read()
+      VirtualTreeContainer.prototype.stream.restore();
+      env.stub(VirtualTreeContainer.prototype, 'stream').callsFake((fsPath: string) => {
+        const readable = new TestReadable(fsPath);
+        readable._read = () => 'do nothing';
+        return readable;
+      });
+
+      const jszipFileSpy = env.spy(JSZip.prototype, 'file');
+      const jszipStreamSpy = env.spy(JSZip.prototype, 'generateNodeStream');
       const parseXmlStub = env.stub(component, 'parseXml');
 
       for (const contentType of StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES) {
         parseXmlStub.resolves({ StaticResource: { contentType } });
         // eslint-disable-next-line no-await-in-loop
         const result = await transformer.toMetadataFormat(component);
-        expect(jszipFileStub.calledThrice).to.be.true;
-        expect(jszipFileStub.firstCall.args[0]).to.not.contain('\\', 'zip must only contain posix paths');
-        expect(jszipFileStub.secondCall.args[0]).to.not.contain('\\', 'zip must only contain posix paths');
-        expect(jszipFileStub.thirdCall.args[0]).to.not.contain('\\', 'zip must only contain posix paths');
-        expect(jszipStreamStub.calledOnce).to.be.true;
-        expect(jszipStreamStub.firstCall.args[0]).to.deep.equal({
+        expect(jszipFileSpy.calledThrice).to.be.true;
+        expect(jszipFileSpy.firstCall.args[0]).to.not.contain('\\', 'zip must only contain posix paths');
+        expect(jszipFileSpy.secondCall.args[0]).to.not.contain('\\', 'zip must only contain posix paths');
+        expect(jszipFileSpy.thirdCall.args[0]).to.not.contain('\\', 'zip must only contain posix paths');
+        expect(jszipStreamSpy.calledOnce).to.be.true;
+        expect(jszipStreamSpy.firstCall.args[0]).to.deep.equal({
           compression: 'DEFLATE',
           compressionOptions: { level: 9 },
           streamFiles: true,
@@ -103,8 +115,8 @@ describe('StaticResourceMetadataTransformer', () => {
           expect(res.output).to.be.a('string');
           expect(res.source).to.be.instanceOf(Readable);
         }
-        jszipStreamStub.resetHistory();
-        jszipFileStub.resetHistory();
+        jszipStreamSpy.resetHistory();
+        jszipFileSpy.resetHistory();
       }
     });
 
@@ -118,6 +130,7 @@ describe('StaticResourceMetadataTransformer', () => {
 
       try {
         await transformer.toMetadataFormat(component);
+        assert(false, 'Should have thrown an error');
       } catch (e) {
         assert(e instanceof Error);
         expect(e.name).to.equal('LibraryError');
@@ -127,7 +140,7 @@ describe('StaticResourceMetadataTransformer', () => {
       }
     });
 
-    it('should throw an error if content is directory but there is no resource file', async () => {
+    it('should throw an error if content is directory but there is no resource-meta.xml file', async () => {
       const component = SourceComponent.createVirtualComponent(
         MIXED_CONTENT_DIRECTORY_COMPONENT,
         MIXED_CONTENT_DIRECTORY_VIRTUAL_FS
@@ -139,11 +152,50 @@ describe('StaticResourceMetadataTransformer', () => {
 
       try {
         await transformer.toMetadataFormat(component);
+        assert(false, 'Should have thrown an error');
       } catch (e) {
         assert(e instanceof Error);
 
         expect(e.message).to.deep.equalInAnyOrder(
           messages.getMessage('error_static_resource_missing_resource_file', [join('staticresources', component.name)])
+        );
+      }
+    });
+
+    it('should throw an error if content is a directory but there are no child content files', async () => {
+      // This looks like:
+      //   --  path/to/staticresources
+      //    |_  aStaticResource  (empty dir)
+      //    |_  aStaticResource.resource-meta.xml
+      const virtualFsEmptyContentDir = [
+        {
+          dirPath: MIXED_CONTENT_DIRECTORY_DIR,
+          children: [MIXED_CONTENT_DIRECTORY_XML_NAMES[0]],
+        },
+        {
+          dirPath: MIXED_CONTENT_DIRECTORY_CONTENT_DIR,
+          children: [],
+        },
+      ];
+      const comp = new SourceComponent({
+        name: 'aStaticResource',
+        type: registry.types.staticresource,
+        xml: MIXED_CONTENT_DIRECTORY_XML_PATHS[0],
+        content: MIXED_CONTENT_DIRECTORY_CONTENT_DIR,
+      });
+      const component = SourceComponent.createVirtualComponent(comp, virtualFsEmptyContentDir);
+      assert(typeof component.name === 'string');
+
+      const [contentType] = StaticResourceMetadataTransformer.ARCHIVE_MIME_TYPES;
+      env.stub(component, 'parseXml').resolves({ StaticResource: { contentType } });
+
+      try {
+        await transformer.toMetadataFormat(component);
+        assert(false, 'Should have thrown an error');
+      } catch (e) {
+        assert(e instanceof Error);
+        expect(e.message).to.deep.equalInAnyOrder(
+          messages.getMessage('noContentFound', [component.name, component.type.name])
         );
       }
     });

@@ -12,6 +12,7 @@ import { CentralDirectory, Open } from 'unzipper';
 import { JsonMap } from '@salesforce/ts-types';
 import { createWriteStream } from 'graceful-fs';
 import { Logger, Messages, SfError } from '@salesforce/core';
+import { isEmpty } from '@salesforce/kit';
 import { baseName } from '../../utils';
 import { WriteInfo } from '..';
 import { SourceComponent } from '../../resolve';
@@ -62,6 +63,12 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
         const relPath = relative(content, path);
         const relPosixPath = relPath.replace(/\\/g, '/');
         zip.file(relPosixPath, replacementStream);
+      }
+
+      // If the generated zip is empty it means either no content files exist or they are
+      // all force-ignored.  Throw an error in this case.
+      if (isEmpty(zip.files)) {
+        throw messages.createError('noContentFound', [component.fullName, component.type.name]);
       }
 
       return new Readable().wrap(

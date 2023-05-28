@@ -22,12 +22,12 @@
     "messages"
   ],
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=16.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^3.36.2",
-    "@salesforce/kit": "^1.9.2",
-    "@salesforce/ts-types": "^1.7.2",
+    "@salesforce/core": "^3.36.0",
+    "@salesforce/kit": "^3.0.0",
+    "@salesforce/ts-types": "^2.0.1",
     "archiver": "^5.3.1",
     "fast-levenshtein": "^3.0.0",
     "fast-xml-parser": "^4.2.2",
@@ -42,8 +42,8 @@
   },
   "devDependencies": {
     "@salesforce/cli-plugins-testkit": "^3.4.0",
-    "@salesforce/dev-config": "^3.1.0",
-    "@salesforce/dev-scripts": "^4.3.0",
+    "@salesforce/dev-config": "^4.0.1",
+    "@salesforce/dev-scripts": "^5.1.0",
     "@salesforce/prettier-config": "^0.0.3",
     "@salesforce/ts-sinon": "^1.4.6",
     "@types/archiver": "^5.3.1",
@@ -62,12 +62,12 @@
     "deepmerge": "^4.3.1",
     "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.7.0",
-    "eslint-config-salesforce": "^1.2.0",
+    "eslint-config-salesforce": "^2.0.1",
     "eslint-config-salesforce-license": "^0.2.0",
     "eslint-config-salesforce-typescript": "^1.1.1",
     "eslint-plugin-header": "^3.1.1",
     "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-jsdoc": "^39.9.1",
+    "eslint-plugin-jsdoc": "^43.0.5",
     "eslint-plugin-sf-plugin": "^1.15.1",
     "husky": "^7.0.4",
     "jsforce": "^2.0.0-beta.23",

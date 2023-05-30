@@ -6,7 +6,6 @@
  */
 import { basename, dirname, extname, join, posix, sep } from 'path';
 import { format } from 'util';
-import { isString } from '@salesforce/ts-types';
 import { create as createArchive } from 'archiver';
 import * as fs from 'graceful-fs';
 import { Lifecycle, Messages, SfError } from '@salesforce/core';
@@ -274,11 +273,10 @@ export class MetadataApiDeploy extends MetadataTransfer<
     }
 
     const conn = await this.getConnection();
-    const response = (await conn.deployRecentValidation({
+    return conn.metadata.deployRecentValidation({
       id: this.id,
       rest,
-    })) as unknown as AsyncResult | string;
-    return isString(response) ? response : response.id;
+    });
   }
 
   /**

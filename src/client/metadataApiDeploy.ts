@@ -273,7 +273,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
     }
 
     const conn = await this.getConnection();
-    const response = (await conn.deployRecentValidation({
+    const response = (await conn.metadata.deployRecentValidation({
       id: this.id,
       rest,
     })) as unknown as AsyncResult | string;

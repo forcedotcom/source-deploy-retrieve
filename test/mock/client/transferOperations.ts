@@ -80,10 +80,10 @@ export async function stubMetadataDeploy(
 
   deployStub.withArgs(zipBuffer, options.apiOptions ?? defaultOptions).resolves(MOCK_ASYNC_RESULT);
 
-  const deployRecentlyValidatedIdStub = sandbox.stub(connection, 'deployRecentValidation');
+  const deployRecentlyValidatedIdStub = sandbox.stub(connection.metadata, 'deployRecentValidation');
   deployRecentlyValidatedIdStub
     .withArgs({ id: MOCK_ASYNC_RESULT.id, rest: true })
-    .resolves(MOCK_RECENTLY_VALIDATED_ID_REST)
+    .resolves(MOCK_RECENTLY_VALIDATED_ID_REST.id)
     .withArgs({ id: MOCK_ASYNC_RESULT.id, rest: false })
     // @ts-ignore overriding return type to match API
     .resolves(MOCK_RECENTLY_VALIDATED_ID_SOAP);

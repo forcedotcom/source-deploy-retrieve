@@ -5,8 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { XMLParser } from 'fast-xml-parser';
+import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { ensureArray } from '@salesforce/kit';
+import { SfError } from '@salesforce/core';
 import { MetadataType, RegistryAccess } from '../registry';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
 import { MetadataComponent } from './types';
@@ -52,15 +53,22 @@ export class ManifestResolver {
   public async resolve(manifestPath: string): Promise<ResolveManifestResult> {
     const components: MetadataComponent[] = [];
 
-    const file = await this.tree.readFile(manifestPath);
-
+    const file = (await this.tree.readFile(manifestPath)).toString();
+    const validateResult = XMLValidator.validate(file);
+    if (validateResult !== true) {
+      const error = new SfError(
+        `Invalid manifest file: ${manifestPath}.  ${validateResult.err.code}: ${validateResult.err.msg} (Line ${validateResult.err.line} Column ${validateResult.err.col})`,
+        'InvalidManifest'
+      );
+      error.setData(validateResult.err);
+      throw error;
+    }
     const parser = new XMLParser({
       stopNodes: ['version'],
       // In order to preserve the .0 on the apiVersion skip parsing it
       numberParseOptions: { leadingZeros: false, hex: false, skipLike: /\.0$/ },
     });
-    const parsedManifest: ParsedPackageManifest = (parser.parse(String(file)) as { Package: ParsedPackageManifest })
-      .Package;
+    const parsedManifest: ParsedPackageManifest = (parser.parse(file) as { Package: ParsedPackageManifest }).Package;
     const packageTypeMembers = ensureArray(parsedManifest.types);
     const apiVersion = parsedManifest.version;
 

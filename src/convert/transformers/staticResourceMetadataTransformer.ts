@@ -6,12 +6,13 @@
  */
 import { basename, dirname, isAbsolute, join, relative } from 'path';
 import { Readable } from 'stream';
-import { create as createArchive, Archiver } from 'archiver';
+import * as JSZip from 'jszip';
 import { getExtension } from 'mime';
 import { CentralDirectory, Open } from 'unzipper';
 import { JsonMap } from '@salesforce/ts-types';
 import { createWriteStream } from 'graceful-fs';
-import { Messages, SfError } from '@salesforce/core';
+import { Logger, Messages, SfError } from '@salesforce/core';
+import { isEmpty } from '@salesforce/kit';
 import { baseName } from '../../utils';
 import { WriteInfo } from '..';
 import { SourceComponent } from '../../resolve';
@@ -23,6 +24,14 @@ import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
+
+let logger: Logger;
+const getLogger = (): Logger => {
+  if (!logger) {
+    logger = Logger.childFromRoot('StaticResourceMetadataTransformer');
+  }
+  return logger;
+};
 
 export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
   public static readonly ARCHIVE_MIME_TYPES = new Set([
@@ -41,33 +50,44 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     if (!xml) {
       throw messages.createError('error_parsing_xml', [component.fullName, component.type.name]);
     }
-    // archiver/zip.finalize looks like it is async, because it extends streams, but it is not meant to be used that way
-    // the typings on it are misleading and unintended.  More info https://github.com/archiverjs/node-archiver/issues/476
-    // If you await it, bad things happen, like the convert process exiting silently.  https://github.com/forcedotcom/cli/issues/1791
-    // leave the void as it is
-    // eslint-disable-next-line @typescript-eslint/require-await
-    const zipIt = async (): Promise<Archiver> => {
-      // toolbelt was using level 9 for static resources, so we'll do the same.
-      // Otherwise, you'll see errors like https://github.com/forcedotcom/cli/issues/1098
-      const zip = createArchive('zip', { zlib: { level: 9 } });
-      if (!component.replacements) {
-        // the easy way...no replacements required
-        zip.directory(content, false);
-      } else {
-        // the hard way--we have to walk the content and do replacements on each of the files.
-        for (const path of component.walkContent()) {
-          const replacementStream = getReplacementStreamForReadable(component, path);
-          zip.append(replacementStream, { name: relative(content, path) });
-        }
+
+    // Zip the static resource from disk to a stream, compressing at level 9.
+    const zipIt = (): Readable => {
+      getLogger().debug(`zipping static resource: ${component.content}`);
+      const zip = JSZip();
+
+      // JSZip does not have an API for adding a directory of files recursively so we always
+      // have to walk the component content. Replacements only happen if set on the component.
+      for (const path of component.walkContent()) {
+        const replacementStream = getReplacementStreamForReadable(component, path);
+        const relPath = relative(content, path);
+        const relPosixPath = relPath.replace(/\\/g, '/');
+        zip.file(relPosixPath, replacementStream);
       }
-      void zip.finalize();
-      return zip;
+
+      // If the generated zip is empty it means either no content files exist or they are
+      // all force-ignored.  Throw an error in this case.
+      if (isEmpty(zip.files)) {
+        throw messages.createError('noContentFound', [component.fullName, component.type.name]);
+      }
+
+      return new Readable().wrap(
+        zip
+          .generateNodeStream({
+            compression: 'DEFLATE',
+            compressionOptions: { level: 9 },
+            streamFiles: true,
+          })
+          .on('end', () => {
+            getLogger().debug(`zip complete for: ${component.content}`);
+          })
+      );
     };
 
     return [
       {
         source: (await componentIsExpandedArchive(component))
-          ? await zipIt()
+          ? zipIt()
           : getReplacementStreamForReadable(component, content),
         output: join(type.directoryName, `${baseName(content)}.${type.suffix}`),
       },

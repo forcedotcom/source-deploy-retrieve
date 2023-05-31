@@ -4,10 +4,10 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, extname, join, posix, sep } from 'path';
+import { basename, dirname, extname, join, posix, relative, resolve as pathResolve, sep } from 'path';
 import { format } from 'util';
 import { isString } from '@salesforce/ts-types';
-import { create as createArchive } from 'archiver';
+import * as JSZip from 'jszip';
 import * as fs from 'graceful-fs';
 import { Lifecycle, Messages, SfError } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
@@ -16,7 +16,6 @@ import { MetadataConverter } from '../convert';
 import { ComponentLike, SourceComponent } from '../resolve';
 import { ComponentSet } from '../collections';
 import { registry } from '../registry';
-import { stream2buffer } from '../convert/streams';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import {
   AsyncResult,
@@ -274,7 +273,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
     }
 
     const conn = await this.getConnection();
-    const response = (await conn.deployRecentValidation({
+    const response = (await conn.metadata.deployRecentValidation({
       id: this.id,
       rest,
     })) as unknown as AsyncResult | string;
@@ -437,20 +436,37 @@ export class MetadataApiDeploy extends MetadataTransfer<
   }
 
   private async getZipBuffer(): Promise<Buffer> {
-    if (this.options.mdapiPath) {
-      if (!fs.existsSync(this.options.mdapiPath) || !fs.lstatSync(this.options.mdapiPath).isDirectory()) {
-        throw messages.createError('error_directory_not_found_or_not_directory', [this.options.mdapiPath]);
+    const mdapiPath = this.options.mdapiPath;
+    if (mdapiPath) {
+      if (!fs.existsSync(mdapiPath) || !fs.lstatSync(mdapiPath).isDirectory()) {
+        throw messages.createError('error_directory_not_found_or_not_directory', [mdapiPath]);
       }
-      // make a zip from the given directory
-      const zip = createArchive('zip', { zlib: { level: 9 } });
-      // anywhere not at the root level is fine
-      zip.directory(this.options.mdapiPath, 'zip');
-      // archiver/zip.finalize looks like it is async, because it extends streams, but it is not meant to be used that way
-      // the typings on it are misleading and unintended.  More info https://github.com/archiverjs/node-archiver/issues/476
-      // If you await it, bad things happen, like the convert process exiting silently.  https://github.com/forcedotcom/cli/issues/1791
-      // leave the void as it is
-      void zip.finalize();
-      return stream2buffer(zip);
+
+      const zip = JSZip();
+
+      const zipDirRecursive = (dir: string): void => {
+        const dirents = fs.readdirSync(dir, { withFileTypes: true });
+        for (const dirent of dirents) {
+          const fullPath = pathResolve(dir, dirent.name);
+          if (dirent.isDirectory()) {
+            zipDirRecursive(fullPath);
+          } else {
+            // Add relative file paths to a root of "zip" for MDAPI.
+            const relPath = join('zip', relative(mdapiPath, fullPath));
+            // Ensure only posix paths are added to zip files
+            const relPosixPath = relPath.replace(/\\/g, '/');
+            zip.file(relPosixPath, fs.createReadStream(fullPath));
+          }
+        }
+      };
+      this.logger.debug('Zipping directory for metadata deploy:', mdapiPath);
+      zipDirRecursive(mdapiPath);
+
+      return zip.generateAsync({
+        type: 'nodebuffer',
+        compression: 'DEFLATE',
+        compressionOptions: { level: 9 },
+      });
     }
     // read the zip into a buffer
     if (this.options.zipPath) {

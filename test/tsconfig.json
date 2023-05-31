@@ -5,7 +5,7 @@
     // Needed in order to import metadataRegistry.json
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "lib": ["es2020"],
-    "target": "es2020"
+    "baseUrl": "..",
+    "paths": { "@salesforce/kit": ["node_modules/@salesforce/kit"] }
   }
 }

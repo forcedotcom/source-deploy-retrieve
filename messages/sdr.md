@@ -70,6 +70,11 @@ Metadata xml file %s is forceignored but is required for %s.
 
 SourceComponent %s (metadata type = %s) is missing its content file.
 
+# noContentFound.actions
+
+- Ensure the content file exists in the expected location.
+- If the content file is in your .forceignore file, ensure the meta-xml file is also ignored to completely exclude it.
+
 # error_parsing_xml
 
 SourceComponent %s (metadata type = %s) does not have an associated metadata xml to parse
@@ -170,4 +175,12 @@ A metadata type lookup for "%s" found the following close matches:
 
 Additional suggestions:
 Confirm the file name, extension, and directory names are correct. Validate against the registry at:
-https://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/registry/metadataRegistry.json
+<https://github.com/forcedotcom/source-deploy-retrieve/blob/main/src/registry/metadataRegistry.json>
+
+If the type is not listed in the registry, check that it has Metadata API support via the Metadata Coverage Report:
+<https://developer.salesforce.com/docs/metadata-coverage>
+
+If the type is available via Metadata API but not in the registry
+
+- Open an issue <https://github.com/forcedotcom/cli/issues>
+- Add the type via PR. Instructions: <https://github.com/forcedotcom/source-deploy-retrieve/blob/main/contributing/metadata.md>

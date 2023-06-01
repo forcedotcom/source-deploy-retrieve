@@ -2,13 +2,7 @@
   "wireit": {
     "compile": {
       "command": "tsc -p . --pretty --incremental",
-      "files": [
-        "src/**/*.ts",
-        "**/tsconfig.json",
-        "messages/**",
-        "src/registry/metadataRegistry.json",
-        "src/registry/stdValueSetRegistry.json"
-      ],
+      "files": ["src/**/*.ts", "src/registry/*.json", "**/tsconfig.json", "messages/**"],
       "output": ["lib/**", "*.tsbuildinfo"],
       "clean": "if-file-deleted"
     },
@@ -20,12 +14,11 @@
       "files": [
         "test/**/*.ts",
         "src/**/*.ts",
+        "src/registry/*.json",
         "**/tsconfig.json",
         ".mocha*",
         "!*.nut.ts",
-        ".nycrc",
-        "src/registry/metadataRegistry.json",
-        "src/registry/stdValueSetRegistry.json"
+        ".nycrc"
       ],
       "output": []
     }

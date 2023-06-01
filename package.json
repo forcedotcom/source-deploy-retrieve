@@ -129,10 +129,9 @@
       "command": "tsc -p . --pretty --incremental",
       "files": [
         "src/**/*.ts",
+        "src/registry/*.json",
         "**/tsconfig.json",
-        "messages/**",
-        "src/registry/metadataRegistry.json",
-        "src/registry/stdValueSetRegistry.json"
+        "messages/**"
       ],
       "output": [
         "lib/**",
@@ -184,12 +183,11 @@
       "files": [
         "test/**/*.ts",
         "src/**/*.ts",
+        "src/registry/*.json",
         "**/tsconfig.json",
         ".mocha*",
         "!*.nut.ts",
-        ".nycrc",
-        "src/registry/metadataRegistry.json",
-        "src/registry/stdValueSetRegistry.json"
+        ".nycrc"
       ],
       "output": []
     }

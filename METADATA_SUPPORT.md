@@ -570,7 +570,7 @@ v59 introduces the following new types.  Here's their current level of support
 |ConversationChannelDefinition|❌|Not supported, but support could be added|
 |DocumentTemplate|❌|Not supported, but support could be added|
 |FulfillmentStepType|❌|Not supported, but support could be added|
-|ProviderRelationshipMgmtConfig|❌|Not supported, but support could be added|
+|HlthCareProviderAfflRole|❌|Not supported, but support could be added|
 
 ## Additional Types
 

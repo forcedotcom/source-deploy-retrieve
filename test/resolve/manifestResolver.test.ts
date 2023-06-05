@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { createSandbox } from 'sinon';
 import {
   ManifestResolver,
@@ -80,6 +80,33 @@ describe('ManifestResolver', () => {
       expect(result.components).to.deep.equal(expected);
     });
 
+    it('should throw on invalid xml', async () => {
+      const badManifest: VirtualFile = {
+        name: 'bad-package.xml',
+        data: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+      <Package xmlns="http://soap.sforce.com/2006/04/metadata">
+        <<types>
+          <members></members>
+          <name></name>
+        </types>
+        <version>52.0</version>
+      </Package>\n`),
+      };
+      const tree = new VirtualTreeContainer([
+        {
+          dirPath: '.',
+          children: [badManifest],
+        },
+      ]);
+      const resolver = new ManifestResolver(tree);
+      try {
+        await resolver.resolve(badManifest.name);
+        expect(true, 'expected invalid types definition error').to.be.false;
+      } catch (error) {
+        assert(error instanceof Error);
+        expect(error.name).to.equal('InvalidManifest');
+      }
+    });
     it('should throw when type is empty', async () => {
       const badManifest: VirtualFile = {
         name: 'bad-package.xml',

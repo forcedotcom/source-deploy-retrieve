@@ -27,7 +27,7 @@
   "dependencies": {
     "@salesforce/core": "^4.1.2",
     "@salesforce/kit": "^3.0.2",
-    "@salesforce/ts-types": "^2.0.2",
+    "@salesforce/ts-types": "^2.0.3",
     "fast-levenshtein": "^3.0.0",
     "fast-xml-parser": "^4.2.2",
     "got": "^11.8.6",

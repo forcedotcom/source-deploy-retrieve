@@ -1,3 +1,12 @@
+## [9.2.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.0...9.2.1) (2023-06-06)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 4.1.0 to 4.1.2 ([#1004](https://github.com/forcedotcom/source-deploy-retrieve/issues/1004)) ([4ec56e7](https://github.com/forcedotcom/source-deploy-retrieve/commit/4ec56e7b527ec2736aa7478e9448e9fc964a6a7a))
+
+
+
 # [9.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.1.0...9.2.0) (2023-06-05)
 
 

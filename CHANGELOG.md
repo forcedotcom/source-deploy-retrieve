@@ -1,3 +1,12 @@
+## [9.2.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.1...9.2.2) (2023-06-12)
+
+
+### Bug Fixes
+
+* bump versions of fast-xml-parser and proxy-agent ([#1006](https://github.com/forcedotcom/source-deploy-retrieve/issues/1006)) ([cf67f0d](https://github.com/forcedotcom/source-deploy-retrieve/commit/cf67f0d4fa2aad99eb02b02a6ebd2d4e126dce86))
+
+
+
 ## [9.2.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.0...9.2.1) (2023-06-06)
 
 

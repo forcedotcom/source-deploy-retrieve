@@ -1,7 +1,7 @@
 {
   "wireit": {
     "compile": {
-      "command": "tsc -p . --pretty --incremental",
+      "command": "ttsc -p . --pretty --incremental",
       "files": ["src/**/*.ts", "src/registry/*.json", "**/tsconfig.json", "messages/**"],
       "output": ["lib/**", "*.tsbuildinfo"],
       "clean": "if-file-deleted"

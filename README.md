@@ -18,6 +18,10 @@ A JavaScript toolkit for working with Salesforce metadata. Built to support the 
 - An [index](./src/registry/metadataRegistry.json) to reference available metadata types.
 - Utilize promises with `async/await` syntax
 
+## Issues
+
+Please report all issues to the [issues only repository](https://github.com/forcedotcom/cli/issues).
+
 ## Usage
 
 Install the package:

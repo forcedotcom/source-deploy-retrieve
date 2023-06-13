@@ -568,6 +568,7 @@ v59 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
+|AIConvSummarizationConfig|❌|Not supported, but support could be added|
 |ConversationChannelDefinition|❌|Not supported, but support could be added|
 |DocumentTemplate|❌|Not supported, but support could be added|
 |FulfillmentStepType|❌|Not supported, but support could be added|

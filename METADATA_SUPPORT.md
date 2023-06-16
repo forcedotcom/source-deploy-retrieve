@@ -604,8 +604,8 @@ v59 introduces the following new types.  Here's their current level of support
 - CustomFieldTranslation
 - MatchingRule
 - MarketingResourceType
-- ExtlClntAppMobileConfigurablePolicies
-- ExtlClntAppMobileSettings
+- ExtlClntAppSampleConfigurablePolicies
+- ExtlClntAppSampleSettings
 - CustomExperience
 - ManagedTopic
 - DataPipeline

@@ -1414,11 +1414,11 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
-    "extlclntappmobileconfigurablepolicies": {
-      "id": "extlclntappmobileconfigurablepolicies",
-      "name": "ExtlClntAppMobileConfigurablePolicies",
-      "suffix": "ecaMobPlcy",
-      "directoryName": "extlClntAppMobilePolicies",
+    "extlclntappsampleconfigurablepolicies": {
+      "id": "extlclntappsampleconfigurablepolicies",
+      "name": "ExtlClntAppSampleConfigurablePolicies",
+      "suffix": "ecaSmplPlcy",
+      "directoryName": "extlClntAppSamplePolicies",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -1430,11 +1430,11 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
-    "extlclntappmobilesettings": {
-      "id": "extlclntappmobilesettings",
-      "name": "ExtlClntAppMobileSettings",
-      "suffix": "ecaMob",
-      "directoryName": "extlClntAppMobileSettings",
+    "extlclntappsamplesettings": {
+      "id": "extlclntappsamplesettings",
+      "name": "ExtlClntAppSampleSettings",
+      "suffix": "ecaSmpl",
+      "directoryName": "extlClntAppSampleSettings",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -3621,8 +3621,8 @@
     "connectedApp": "connectedapp",
     "eca": "externalclientapplication",
     "ecaOauthPlcy": "extlclntappoauthconfigurablepolicies",
-    "ecaMobPlcy": "extlclntappmobileconfigurablepolicies",
-    "ecaMob": "extlclntappmobilesettings",
+    "ecaSmplPlcy": "extlclntappsampleconfigurablepolicies",
+    "ecaSmpl": "extlclntappsamplesettings",
     "ecaOauth": "extlclntappoauthsettings",
     "ecaGlblOauth": "extlclntappglobaloauthsettings",
     "appMenu": "appmenu",

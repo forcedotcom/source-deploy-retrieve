@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { PollingClient, StatusResult, Connection, Logger } from '@salesforce/core';
+import { PollingClient, StatusResult, Connection, Logger, SfError, Messages } from '@salesforce/core';
 import { Duration, ensureArray } from '@salesforce/kit';
 import { retry, NotRetryableError, RetryError } from 'ts-retry-promise';
 import { ensurePlainObject, ensureString, isPlainObject } from '@salesforce/ts-types';
@@ -14,6 +14,10 @@ import { standardValueSet } from '../registry/standardvalueset';
 import { FileProperties, StdValueSetRecord, ListMetadataQuery } from '../client/types';
 import { extName } from '../utils';
 import { MetadataComponent } from './types';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
+
 export interface ResolveConnectionResult {
   components: MetadataComponent[];
   apiVersion: string;
@@ -49,14 +53,22 @@ export class ConnectionResolver {
         let componentType: MetadataType;
         if (typeof component.type === 'string' && component.type.length) {
           componentType = this.registry.getTypeByName(component.type);
-        } else {
+        } else if (typeof component.fileName === 'string' && component.fileName.length) {
           // fix { type: { "$": { "xsi:nil": "true" } } }
           componentType = ensurePlainObject(
             this.registry.getTypeBySuffix(extName(component.fileName)),
             `No type found for ${component.fileName} when matching by suffix.  Check the file extension.`
           );
           component.type = componentType.name;
+        } else {
+          // has no type and has no filename!
+          throw new SfError(
+            messages.getMessage('error_could_not_infer_type', [component.fullName]),
+            'TypeInferenceError',
+            [messages.getMessage('suggest_type_more_suggestions')]
+          );
         }
+
         Aggregator.push(component);
         componentTypes.add(componentType);
         const folderContentType = componentType.folderContentType;

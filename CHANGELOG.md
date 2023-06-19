@@ -1,3 +1,12 @@
+## [9.2.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.3...9.2.4) (2023-06-19)
+
+
+### Bug Fixes
+
+* better output for mystery component ([#1018](https://github.com/forcedotcom/source-deploy-retrieve/issues/1018)) ([bcc2c4d](https://github.com/forcedotcom/source-deploy-retrieve/commit/bcc2c4dbbd87ffcb5daddbe8a1036d1dc6efceab))
+
+
+
 ## [9.2.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.2...9.2.3) (2023-06-18)
 
 

@@ -1,3 +1,12 @@
+## [9.2.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.4...9.2.5) (2023-06-21)
+
+
+### Bug Fixes
+
+* update metadata names for mobile settings and policies ([#1013](https://github.com/forcedotcom/source-deploy-retrieve/issues/1013)) ([4b6a8ff](https://github.com/forcedotcom/source-deploy-retrieve/commit/4b6a8ffbed3927b94e1e67af3b46837f94620a01))
+
+
+
 ## [9.2.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.3...9.2.4) (2023-06-19)
 
 

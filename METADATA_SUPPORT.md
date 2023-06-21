@@ -569,11 +569,14 @@ v59 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
+|CareProviderAfflRoleConfig|❌|Not supported, but support could be added|
+|CommsServiceConsoleSettings|✅||
 |ContextDefinition|❌|Not supported, but support could be added|
 |ConversationChannelDefinition|❌|Not supported, but support could be added|
 |DocumentTemplate|❌|Not supported, but support could be added (but not for tracking)|
+|ExtlClntAppMobileConfigurablePolicies|❌|Not supported, but support could be added|
+|ExtlClntAppMobileSettings|✅||
 |FulfillmentStepType|❌|Not supported, but support could be added|
-|HlthCareProviderAfflRole|❌|Not supported, but support could be added|
 
 ## Additional Types
 

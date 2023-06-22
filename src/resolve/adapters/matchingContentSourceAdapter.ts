@@ -54,10 +54,7 @@ export class MatchingContentSourceAdapter extends BaseSourceAdapter {
         'ExpectedSourceFilesError'
       );
     } else if (this.forceIgnore.denies(sourcePath)) {
-      throw new SfError(
-        messages.getMessage('error_no_source_ignore', [this.type.name, sourcePath]),
-        'UnexpectedForceIgnore'
-      );
+      throw messages.createError('noSourceIgnore', [this.type.name, sourcePath]);
     }
 
     component.content = sourcePath;

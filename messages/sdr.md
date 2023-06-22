@@ -62,6 +62,8 @@ Metadata xml file %s is forceignored but is required for %s.
 
 - Metadata types with content are composed of two files: a content file (ie MyApexClass.cls) and a -meta.xml file (i.e MyApexClass.cls-meta.xml). You must include both files in your .forceignore file. Or try appending “\*” to your existing .forceignore entry.
 
+See <https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_exclude_source.htm> for examples
+
 # error_path_not_found
 
 %s: File or folder not found

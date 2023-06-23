@@ -6,8 +6,11 @@
       "output": ["lib/**", "*.tsbuildinfo"],
       "clean": "if-file-deleted"
     },
+    "test": {
+      "dependencies": ["test:only", "test:compile", "test:registry-validation"]
+    },
     "test:only": {
-      "command": "nyc mocha \"test/**/*.test.ts\"",
+      "command": "nyc mocha \"test/**/*.test.ts\" --exclude \"test/registry/registryValidation.test.ts\"",
       "env": {
         "FORCE_COLOR": "2"
       },

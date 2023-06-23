@@ -216,9 +216,9 @@ describe('marking replacements on a component', () => {
     ]);
 
     expect(result).to.be.deep.equal({
-      'path/to/classes/myComponent.cls-meta.xml': [
+      [cmp.xml]: [
         {
-          matchedFilename: 'path/to/classes/myComponent.cls-meta.xml',
+          matchedFilename: cmp.xml,
           singleFile: true,
           toReplace: /.*foo.*/g,
           replaceWith: '',

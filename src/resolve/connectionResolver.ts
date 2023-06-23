@@ -6,7 +6,7 @@
  */
 
 import { retry, NotRetryableError, RetryError } from 'ts-retry-promise';
-import { PollingClient, StatusResult, Connection, Logger, Messages, Lifecycle } from '@salesforce/core';
+import { PollingClient, StatusResult, Connection, Logger, Messages, Lifecycle, SfError } from '@salesforce/core';
 import { Duration, ensureArray } from '@salesforce/kit';
 import { ensurePlainObject, ensureString, isPlainObject } from '@salesforce/ts-types';
 import { RegistryAccess, registry as defaultRegistry, MetadataType } from '../registry';
@@ -60,7 +60,7 @@ export class ConnectionResolver {
             `No type found for ${component.fileName} when matching by suffix.  Check the file extension.`
           );
           component.type = componentType.name;
-        } else {
+        } else if (component.type !== undefined && component.fileName !== undefined) {
           // has no type and has no filename!  Warn and skip that component.
           // eslint-disable-next-line no-await-in-loop
           await Promise.all([
@@ -68,6 +68,14 @@ export class ConnectionResolver {
             lifecycle.emitTelemetry({ TypeInferenceError: component, from: 'ConnectionResolver' }),
           ]);
           continue;
+        } else {
+          // it DOES have all the important info but we couldn't resolve it.
+          // has no type and has no filename!
+          throw new SfError(
+            messages.getMessage('error_could_not_infer_type', [component.fullName]),
+            'TypeInferenceError',
+            [messages.getMessage('suggest_type_more_suggestions')]
+          );
         }
 
         Aggregator.push(component);

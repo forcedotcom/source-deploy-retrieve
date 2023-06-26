@@ -60,7 +60,7 @@ export class ConnectionResolver {
             `No type found for ${component.fileName} when matching by suffix.  Check the file extension.`
           );
           component.type = componentType.name;
-        } else if (component.type !== undefined && component.fileName !== undefined) {
+        } else if (component.type === undefined && component.fileName === undefined) {
           // has no type and has no filename!  Warn and skip that component.
           // eslint-disable-next-line no-await-in-loop
           await Promise.all([

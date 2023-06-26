@@ -172,11 +172,21 @@
     "test": {
       "dependencies": [
         "test:only",
-        "test:compile"
+        "test:compile",
+        "test:registry-validation"
       ]
     },
+    "test:registry-validation": {
+      "command": "mocha \"test/registry/registryValidation.test.ts\"",
+      "files": [
+        "test/registry/registryValidation.test.ts",
+        "src/registry/*.json",
+        "**/tsconfig.json"
+      ],
+      "output": []
+    },
     "test:only": {
-      "command": "nyc mocha \"test/**/*.test.ts\"",
+      "command": "nyc mocha \"test/**/*.test.ts\" --exclude \"test/registry/registryValidation.test.ts\"",
       "env": {
         "FORCE_COLOR": "2"
       },

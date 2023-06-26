@@ -1,3 +1,12 @@
+## [9.2.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.7...9.2.8) (2023-06-26)
+
+
+### Bug Fixes
+
+* Sm/connection-resolve-skip-missing-components ([#1021](https://github.com/forcedotcom/source-deploy-retrieve/issues/1021)) ([ad4068d](https://github.com/forcedotcom/source-deploy-retrieve/commit/ad4068de9890291b9c3c72691dfd362e116758c0))
+
+
+
 ## [9.2.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.6...9.2.7) (2023-06-26)
 
 

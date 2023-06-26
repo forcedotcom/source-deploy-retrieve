@@ -1,3 +1,12 @@
+## [9.2.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.6...9.2.7) (2023-06-26)
+
+
+### Bug Fixes
+
+* restore missing error actions ([#1020](https://github.com/forcedotcom/source-deploy-retrieve/issues/1020)) ([dbbeb21](https://github.com/forcedotcom/source-deploy-retrieve/commit/dbbeb21dcb4a5f04234fe276c436359523a4c904))
+
+
+
 ## [9.2.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.5...9.2.6) (2023-06-25)
 
 

@@ -54,13 +54,15 @@ No child types found in registry for %s (reading %s at %s)
 
 Metadata xml file %s is forceignored but is required for %s.
 
-# error_no_source_ignore
+# noSourceIgnore
 
 %s metadata types require source files, but %s is forceignored.
 
-# error_no_source_ignore.actions
+# noSourceIgnore.actions
 
 - Metadata types with content are composed of two files: a content file (ie MyApexClass.cls) and a -meta.xml file (i.e MyApexClass.cls-meta.xml). You must include both files in your .forceignore file. Or try appending “\*” to your existing .forceignore entry.
+
+See <https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_exclude_source.htm> for examples
 
 # error_path_not_found
 

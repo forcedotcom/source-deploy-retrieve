@@ -62,7 +62,7 @@ export const replacementIterations = async (input: string, replacements: MarkedR
     // TODO: node 16+ has String.replaceAll for non-regex scenarios
     const regex =
       typeof replacement.toReplace === 'string' ? new RegExp(replacement.toReplace, 'g') : replacement.toReplace;
-    const replaced = output.replace(regex, replacement.replaceWith);
+    const replaced = output.replace(regex, replacement.replaceWith ?? '');
 
     if (replaced !== output) {
       output = replaced;
@@ -175,7 +175,7 @@ export const getReplacements = async (
                 // get the literal replacement (either from env or file contents)
                 replaceWith:
                   typeof r.replaceWithEnv === 'string'
-                    ? getEnvValue(r.replaceWithEnv)
+                    ? getEnvValue(r.replaceWithEnv, r.allowUnsetEnvVariable)
                     : await getContentsOfReplacementFile(r.replaceWithFile),
               }))
           ),
@@ -209,11 +209,13 @@ const envFilter = (replacementConfigs: ReplacementConfig[] = []): ReplacementCon
   );
 
 /** A "getter" for envs to throw an error when an expected env is not present */
-const getEnvValue = (env: string): string =>
-  ensureString(
-    new Env().getString(env),
-    `"${env}" is in sfdx-project.json as a value for "replaceWithEnv" property, but it's not set in your environment.`
-  );
+const getEnvValue = (env: string, allowUnset = false): string =>
+  allowUnset
+    ? new Env().getString(env, '')
+    : ensureString(
+        new Env().getString(env),
+        `"${env}" is in sfdx-project.json as a value for "replaceWithEnv" property, but it's not set in your environment.`
+      );
 
 /**
  * Read the `replacement` property from sfdx-project.json

@@ -571,12 +571,13 @@ v59 introduces the following new types.  Here's their current level of support
 |:---|:---|:---|
 |CareProviderAfflRoleConfig|❌|Not supported, but support could be added|
 |CommsServiceConsoleSettings|✅||
-|ContextDefinition|❌|Not supported, but support could be added|
+|ContextDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |ConversationChannelDefinition|❌|Not supported, but support could be added|
 |DocumentTemplate|❌|Not supported, but support could be added (but not for tracking)|
 |ExtlClntAppMobileConfigurablePolicies|❌|Not supported, but support could be added|
 |ExtlClntAppMobileSettings|✅||
 |FulfillmentStepType|❌|Not supported, but support could be added|
+|IndustriesUnifiedPromotionsSettings|✅||
 
 ## Additional Types
 

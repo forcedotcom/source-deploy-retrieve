@@ -578,6 +578,7 @@ v59 introduces the following new types.  Here's their current level of support
 |ExtlClntAppMobileSettings|✅||
 |FulfillmentStepType|❌|Not supported, but support could be added|
 |IndustriesUnifiedPromotionsSettings|✅||
+|RecordAggregationDefinition|❌|Not supported, but support could be added|
 
 ## Additional Types
 

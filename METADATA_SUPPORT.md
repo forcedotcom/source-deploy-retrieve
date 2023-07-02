@@ -573,7 +573,7 @@ v59 introduces the following new types.  Here's their current level of support
 |CommsServiceConsoleSettings|✅||
 |ContextDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |ConversationChannelDefinition|❌|Not supported, but support could be added|
-|DocumentTemplate|❌|Not supported, but support could be added (but not for tracking)|
+|ExpressionSetMessageToken|❌|Not supported, but support could be added|
 |ExtlClntAppMobileConfigurablePolicies|❌|Not supported, but support could be added|
 |ExtlClntAppMobileSettings|✅||
 |FulfillmentStepType|❌|Not supported, but support could be added|

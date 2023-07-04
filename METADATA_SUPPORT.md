@@ -577,8 +577,12 @@ v59 introduces the following new types.  Here's their current level of support
 |ExtlClntAppMobileConfigurablePolicies|❌|Not supported, but support could be added|
 |ExtlClntAppMobileSettings|✅||
 |FulfillmentStepType|❌|Not supported, but support could be added|
+|IndustriesReferralMarketingSettings|✅||
 |IndustriesUnifiedPromotionsSettings|✅||
+|LearningAchievementConfig|❌|Not supported, but support could be added|
 |RecordAggregationDefinition|❌|Not supported, but support could be added|
+|SmntcCtnr|❌|Not supported, but support could be added|
+|SmntcDef|❌|Not supported, but support could be added|
 
 ## Additional Types
 

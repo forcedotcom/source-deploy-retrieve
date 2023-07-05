@@ -1,3 +1,12 @@
+## [9.3.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.3.0...9.3.1) (2023-07-05)
+
+
+### Bug Fixes
+
+* add AQLMUFInterval StandardValueSet ([#1030](https://github.com/forcedotcom/source-deploy-retrieve/issues/1030)) ([3ab3931](https://github.com/forcedotcom/source-deploy-retrieve/commit/3ab39312be8e75b412a87984e0fdad3ec00ec2ce))
+
+
+
 # [9.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.8...9.3.0) (2023-06-27)
 
 

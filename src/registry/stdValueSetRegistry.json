@@ -5,7 +5,7 @@
     "AccountOwnership",
     "AccountRating",
     "AccountType",
-    "AQLMUFInterval",
+    "AQLMFrequencyInterval",
     "AssetStatus",
     "CampaignMemberStatus",
     "CampaignStatus",

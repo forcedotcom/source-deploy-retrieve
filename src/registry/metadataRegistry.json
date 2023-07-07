@@ -1446,6 +1446,22 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "extlclntappmobileconfigurablepolicies": {
+      "id": "extlclntappmobileconfigurablepolicies",
+      "name": "ExtlClntAppMobileConfigurablePolicies",
+      "suffix": "ecaMobilePlcy",
+      "directoryName": "extlClntAppMobilePolicies",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "extlclntappmobilesettings": {
+      "id": "extlclntappmobilesettings",
+      "name": "ExtlClntAppMobileSettings",
+      "suffix": "ecaMobile",
+      "directoryName": "extlClntAppMobileSettings",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "appmenu": {
       "id": "appmenu",
       "name": "AppMenu",
@@ -3625,6 +3641,8 @@
     "ecaSmpl": "extlclntappsamplesettings",
     "ecaOauth": "extlclntappoauthsettings",
     "ecaGlblOauth": "extlclntappglobaloauthsettings",
+    "ecaMobilePlcy": "extlclntappmobileconfigurablepolicies",
+    "ecaMobile": "extlclntappmobilesettings",
     "appMenu": "appmenu",
     "delegateGroup": "delegategroup",
     "network": "network",

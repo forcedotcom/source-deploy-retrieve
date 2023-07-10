@@ -1414,11 +1414,11 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
-    "extlclntappmobileconfigurablepolicies": {
-      "id": "extlclntappmobileconfigurablepolicies",
-      "name": "ExtlClntAppMobileConfigurablePolicies",
-      "suffix": "ecaMobPlcy",
-      "directoryName": "extlClntAppMobilePolicies",
+    "extlclntappsampleconfigurablepolicies": {
+      "id": "extlclntappsampleconfigurablepolicies",
+      "name": "ExtlClntAppSampleConfigurablePolicies",
+      "suffix": "ecaSmplPlcy",
+      "directoryName": "extlClntAppSamplePolicies",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -1430,11 +1430,11 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
-    "extlclntappmobilesettings": {
-      "id": "extlclntappmobilesettings",
-      "name": "ExtlClntAppMobileSettings",
-      "suffix": "ecaMob",
-      "directoryName": "extlClntAppMobileSettings",
+    "extlclntappsamplesettings": {
+      "id": "extlclntappsamplesettings",
+      "name": "ExtlClntAppSampleSettings",
+      "suffix": "ecaSmpl",
+      "directoryName": "extlClntAppSampleSettings",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -1443,6 +1443,22 @@
       "name": "ExtlClntAppGlobalOauthSettings",
       "suffix": "ecaGlblOauth",
       "directoryName": "extlClntAppGlobalOauthSets",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "extlclntappmobileconfigurablepolicies": {
+      "id": "extlclntappmobileconfigurablepolicies",
+      "name": "ExtlClntAppMobileConfigurablePolicies",
+      "suffix": "ecaMobilePlcy",
+      "directoryName": "extlClntAppMobilePolicies",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "extlclntappmobilesettings": {
+      "id": "extlclntappmobilesettings",
+      "name": "ExtlClntAppMobileSettings",
+      "suffix": "ecaMobile",
+      "directoryName": "extlClntAppMobileSettings",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -1704,6 +1720,13 @@
       "name": "SkillType",
       "suffix": "skilltype",
       "directoryName": "skilltypes",
+      "inFolder": false
+    },
+    "scorecategory": {
+      "id": "scorecategory",
+      "name": "ScoreCategory",
+      "suffix": "scoreCategory",
+      "directoryName": "scoreCategories",
       "inFolder": false
     },
     "livechatdeployment": {
@@ -3452,6 +3475,14 @@
           "aiScoringModelDefVersions": "aiscoringmodeldefversion"
         }
       }
+    },
+    "useraccesspolicy": {
+      "id": "useraccesspolicy",
+      "name": "UserAccessPolicy",
+      "suffix": "useraccesspolicy",
+      "directoryName": "useraccesspolicies",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3606,10 +3637,12 @@
     "connectedApp": "connectedapp",
     "eca": "externalclientapplication",
     "ecaOauthPlcy": "extlclntappoauthconfigurablepolicies",
-    "ecaMobPlcy": "extlclntappmobileconfigurablepolicies",
-    "ecaMob": "extlclntappmobilesettings",
+    "ecaSmplPlcy": "extlclntappsampleconfigurablepolicies",
+    "ecaSmpl": "extlclntappsamplesettings",
     "ecaOauth": "extlclntappoauthsettings",
     "ecaGlblOauth": "extlclntappglobaloauthsettings",
+    "ecaMobilePlcy": "extlclntappmobileconfigurablepolicies",
+    "ecaMobile": "extlclntappmobilesettings",
     "appMenu": "appmenu",
     "delegateGroup": "delegategroup",
     "network": "network",
@@ -3639,6 +3672,7 @@
     "policy": "appointmentassignmentpolicy",
     "skill": "skill",
     "skilltype": "skilltype",
+    "scoreCategory": "scorecategory",
     "liveChatDeployment": "livechatdeployment",
     "liveChatButton": "livechatbutton",
     "liveChatAgentConfig": "livechatagentconfig",
@@ -3829,7 +3863,8 @@
     "locationUse": "locationuse",
     "personAccountOwnerPowerUser": "personaccountownerpoweruser",
     "pipelineInspMetricConfig": "pipelineinspmetricconfig",
-    "productSpecificationTypeDefinition": "productspecificationtypedefinition"
+    "productSpecificationTypeDefinition": "productspecificationtypedefinition",
+    "useraccesspolicy": "useraccesspolicy"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

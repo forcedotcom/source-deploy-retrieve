@@ -3,13 +3,12 @@
   "compilerOptions": {
     // Needed in order to import metadataRegistry.json
     "resolveJsonModule": true,
-    "lib": ["es2020"],
-    "target": "es2020",
     "rootDir": ".",
     "outDir": "lib",
     "skipLibCheck": true,
     "baseUrl": ".",
-    "paths": { "@salesforce/kit": ["node_modules/@salesforce/kit"] }
+    "paths": { "@salesforce/kit": ["node_modules/@salesforce/kit"] },
+    "plugins": [{ "transform": "@salesforce/core/lib/messageTransformer", "import": "messageTransformer" }]
   },
   "include": [
     "./src/**/*.ts",

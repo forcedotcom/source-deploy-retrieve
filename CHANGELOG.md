@@ -1,3 +1,178 @@
+## [9.3.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.3.3...9.3.4) (2023-07-09)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/kit from 3.0.3 to 3.0.4 ([#1036](https://github.com/forcedotcom/source-deploy-retrieve/issues/1036)) ([7ea893e](https://github.com/forcedotcom/source-deploy-retrieve/commit/7ea893edb268fd422cf55a82b7f567ce5b0236e9))
+
+
+
+## [9.3.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.3.2...9.3.3) (2023-07-07)
+
+
+### Bug Fixes
+
+* add mobile plugin types to registry ([#1033](https://github.com/forcedotcom/source-deploy-retrieve/issues/1033)) ([09a2648](https://github.com/forcedotcom/source-deploy-retrieve/commit/09a2648d50bd269e26424f79e08b245798f6baf5))
+
+
+
+## [9.3.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.3.1...9.3.2) (2023-07-06)
+
+
+
+## [9.3.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.3.0...9.3.1) (2023-07-05)
+
+
+### Bug Fixes
+
+* add AQLMUFInterval StandardValueSet ([#1030](https://github.com/forcedotcom/source-deploy-retrieve/issues/1030)) ([3ab3931](https://github.com/forcedotcom/source-deploy-retrieve/commit/3ab39312be8e75b412a87984e0fdad3ec00ec2ce))
+
+
+
+# [9.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.8...9.3.0) (2023-06-27)
+
+
+### Features
+
+* allowUnsetEnvVariable ([#1019](https://github.com/forcedotcom/source-deploy-retrieve/issues/1019)) ([0eeaccf](https://github.com/forcedotcom/source-deploy-retrieve/commit/0eeaccfb1ed05ad742a1472cc025fe2c4cabee5e))
+
+
+
+## [9.2.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.7...9.2.8) (2023-06-26)
+
+
+### Bug Fixes
+
+* Sm/connection-resolve-skip-missing-components ([#1021](https://github.com/forcedotcom/source-deploy-retrieve/issues/1021)) ([ad4068d](https://github.com/forcedotcom/source-deploy-retrieve/commit/ad4068de9890291b9c3c72691dfd362e116758c0))
+
+
+
+## [9.2.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.6...9.2.7) (2023-06-26)
+
+
+### Bug Fixes
+
+* restore missing error actions ([#1020](https://github.com/forcedotcom/source-deploy-retrieve/issues/1020)) ([dbbeb21](https://github.com/forcedotcom/source-deploy-retrieve/commit/dbbeb21dcb4a5f04234fe276c436359523a4c904))
+
+
+
+## [9.2.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.5...9.2.6) (2023-06-25)
+
+
+### Bug Fixes
+
+* **deps:** bump fast-xml-parser from 4.2.4 to 4.2.5 ([#1024](https://github.com/forcedotcom/source-deploy-retrieve/issues/1024)) ([93427a0](https://github.com/forcedotcom/source-deploy-retrieve/commit/93427a05489fbadb236415015cdf2b80c39603e8))
+
+
+
+## [9.2.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.4...9.2.5) (2023-06-21)
+
+
+### Bug Fixes
+
+* update metadata names for mobile settings and policies ([#1013](https://github.com/forcedotcom/source-deploy-retrieve/issues/1013)) ([4b6a8ff](https://github.com/forcedotcom/source-deploy-retrieve/commit/4b6a8ffbed3927b94e1e67af3b46837f94620a01))
+
+
+
+## [9.2.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.3...9.2.4) (2023-06-19)
+
+
+### Bug Fixes
+
+* better output for mystery component ([#1018](https://github.com/forcedotcom/source-deploy-retrieve/issues/1018)) ([bcc2c4d](https://github.com/forcedotcom/source-deploy-retrieve/commit/bcc2c4dbbd87ffcb5daddbe8a1036d1dc6efceab))
+
+
+
+## [9.2.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.2...9.2.3) (2023-06-18)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 4.3.0 to 4.3.1 ([#1016](https://github.com/forcedotcom/source-deploy-retrieve/issues/1016)) ([24b99e4](https://github.com/forcedotcom/source-deploy-retrieve/commit/24b99e45fdd4998f319804c446b62ce0f9d83eff))
+
+
+
+## [9.2.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.1...9.2.2) (2023-06-12)
+
+
+### Bug Fixes
+
+* bump versions of fast-xml-parser and proxy-agent ([#1006](https://github.com/forcedotcom/source-deploy-retrieve/issues/1006)) ([cf67f0d](https://github.com/forcedotcom/source-deploy-retrieve/commit/cf67f0d4fa2aad99eb02b02a6ebd2d4e126dce86))
+
+
+
+## [9.2.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.0...9.2.1) (2023-06-06)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 4.1.0 to 4.1.2 ([#1004](https://github.com/forcedotcom/source-deploy-retrieve/issues/1004)) ([4ec56e7](https://github.com/forcedotcom/source-deploy-retrieve/commit/4ec56e7b527ec2736aa7478e9448e9fc964a6a7a))
+
+
+
+# [9.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.1.0...9.2.0) (2023-06-05)
+
+
+### Features
+
+* validate manifests ([#996](https://github.com/forcedotcom/source-deploy-retrieve/issues/996)) ([173aba7](https://github.com/forcedotcom/source-deploy-retrieve/commit/173aba737afc4ed19a31b8af97802b54b07cb572))
+
+
+
+# [9.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.6.0...9.1.0) (2023-05-31)
+
+
+### Features
+
+* swap archiver for jszip ([03ff2df](https://github.com/forcedotcom/source-deploy-retrieve/commit/03ff2df81cdec6b6c1188857ca92f4cc472b2255)), closes [#986](https://github.com/forcedotcom/source-deploy-retrieve/issues/986)
+
+
+
+# [8.6.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.5.3...8.6.0) (2023-05-25)
+
+
+### Features
+
+* missing type language ([#989](https://github.com/forcedotcom/source-deploy-retrieve/issues/989)) ([3e26daf](https://github.com/forcedotcom/source-deploy-retrieve/commit/3e26daf752925a2e8eb0c15d6af1c7a51837d049))
+
+
+
+## [8.5.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.5.2...8.5.3) (2023-05-22)
+
+
+### Bug Fixes
+
+* bump core to latest ([#982](https://github.com/forcedotcom/source-deploy-retrieve/issues/982)) ([7a34fc0](https://github.com/forcedotcom/source-deploy-retrieve/commit/7a34fc0214cf6172383f3b5e54f4dbeda36066a3)), closes [#983](https://github.com/forcedotcom/source-deploy-retrieve/issues/983)
+
+
+
+## [8.5.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.5.1...8.5.2) (2023-05-21)
+
+
+### Bug Fixes
+
+* **deps:** bump unzipper from 0.10.11 to 0.10.14 ([#978](https://github.com/forcedotcom/source-deploy-retrieve/issues/978)) ([777f799](https://github.com/forcedotcom/source-deploy-retrieve/commit/777f799e2ebc63602f8695e8b59d9c5cbb795f51))
+
+
+
+## [8.5.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.5.0...8.5.1) (2023-05-17)
+
+
+### Bug Fixes
+
+* prevent [object Object] and provide component details ([#972](https://github.com/forcedotcom/source-deploy-retrieve/issues/972)) ([a16b9a2](https://github.com/forcedotcom/source-deploy-retrieve/commit/a16b9a256b7ff2eac99f466b11ba30312b09ab92))
+
+
+
+# [8.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.4.0...8.5.0) (2023-05-17)
+
+
+### Features
+
+* support for UserAccessPolicy ([#971](https://github.com/forcedotcom/source-deploy-retrieve/issues/971)) ([7a102b0](https://github.com/forcedotcom/source-deploy-retrieve/commit/7a102b0eb64c5ac5ecca9f55f2ce43a78f6763f6))
+
+
+
 # [8.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.3.1...8.4.0) (2023-05-09)
 
 

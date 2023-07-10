@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as path from 'path';
-import { assert, expect } from 'chai';
+import { assert, expect, config } from 'chai';
 import Sinon = require('sinon');
 import { Lifecycle } from '@salesforce/core';
 import {
@@ -17,6 +17,8 @@ import {
 } from '../../src/convert/replacements';
 import { matchingContentFile } from '../mock';
 import * as replacementsForMock from '../../src/convert/replacements';
+
+config.truncateThreshold = 0;
 
 describe('file matching', () => {
   const base = { replaceWithEnv: 'foo', stringToReplace: 'foo' };
@@ -190,7 +192,40 @@ describe('marking replacements on a component', () => {
       ],
     });
   });
-  it('throws when env is missing');
+
+  it('throws when env is missing', async () => {
+    assert(cmp.xml);
+    try {
+      await getReplacements(cmp, [
+        { filename: posixifyPaths(cmp.xml), regexToReplace: '.*foo.*', replaceWithEnv: 'BAD_ENV' },
+      ]);
+      assert.fail('should have thrown');
+    } catch (e) {
+      expect(e).to.be.instanceOf(Error);
+    }
+  });
+  it('allows unsetEnv when property indicates it can be undefined', async () => {
+    assert(cmp.xml);
+    const result = await getReplacements(cmp, [
+      {
+        filename: posixifyPaths(cmp.xml),
+        regexToReplace: '.*foo.*',
+        replaceWithEnv: 'BAD_ENV',
+        allowUnsetEnvVariable: true,
+      },
+    ]);
+
+    expect(result).to.be.deep.equal({
+      [cmp.xml]: [
+        {
+          matchedFilename: cmp.xml,
+          singleFile: true,
+          toReplace: /.*foo.*/g,
+          replaceWith: '',
+        },
+      ],
+    });
+  });
 });
 
 describe('executes replacements on a string', () => {

@@ -8,8 +8,7 @@
 
 import { OptionsOfTextResponseBody } from 'got';
 import got from 'got';
-import * as ProxyAgent from 'proxy-agent';
-import { getProxyForUrl } from 'proxy-from-env';
+import { ProxyAgent } from 'proxy-agent';
 import { CoverageObject } from '../../src/registry/types';
 
 const getProxiedOptions = (url: string): OptionsOfTextResponseBody => ({
@@ -17,7 +16,7 @@ const getProxiedOptions = (url: string): OptionsOfTextResponseBody => ({
     request: 10000,
   },
   agent: {
-    https: ProxyAgent(getProxyForUrl(url)),
+    https: new ProxyAgent(),
   },
   url,
 });

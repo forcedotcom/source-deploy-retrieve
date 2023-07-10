@@ -547,12 +547,12 @@
     mv "~2"
     safe-json-stringify "~1"
 
-"@salesforce/cli-plugins-testkit@^4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-4.1.1.tgz#3504d7b05f63bf15a706385efb90c1c5f46c6c38"
-  integrity sha512-aGeiVYdWW6O/Q5LHCc4ZVNKihz0oiCljplbT2EmjyTyo+3Bxj1iyuo3o428+wo9BIc/Qk0jkKjqrSGS5HPDs/A==
+"@salesforce/cli-plugins-testkit@^4.2.3":
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-4.2.3.tgz#37ee9810d1712966ac082a9ef8d3fe1ca401a080"
+  integrity sha512-rQ8zPbIw1IPhSKWtfhpU/r0y226URAGEwI4K2xX91jN5PGJcCZySTRqFAlUMPUe0aYPS3vL02KYjsc+c8GH7GQ==
   dependencies:
-    "@salesforce/core" "^4.1.3"
+    "@salesforce/core" "^4.3.7"
     "@salesforce/kit" "^3.0.2"
     "@salesforce/ts-types" "^2.0.2"
     "@types/shelljs" "^0.8.12"
@@ -562,13 +562,13 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.7.0"
 
-"@salesforce/core@^4.1.3", "@salesforce/core@^4.3.1", "@salesforce/core@^4.3.5":
-  version "4.3.7"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-4.3.7.tgz#4e03bb45aff19590a582f402b404a6a75919b8ae"
-  integrity sha512-7bCCAcYTZbpRZlUvJui74K6TDrzaY5ZGrjCxXft7GId9wqOKQSLxDJiUV1S9GWTIeiE3cdBVX2n5R5YdSQtbtw==
+"@salesforce/core@^4.3.1", "@salesforce/core@^4.3.5", "@salesforce/core@^4.3.7":
+  version "4.3.8"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-4.3.8.tgz#6cfbd0af923f316fbb85ccc8898ac106bbf8c2c5"
+  integrity sha512-7b4DRkqr6GSgVQxJCPD2myMlLNk/3R0ihABihH5+SQRIwUm4tpV4JvmDznfIfPWL/6PHmQ8cJD2k3cu/QIu+cA==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
-    "@salesforce/kit" "^3.0.3"
+    "@salesforce/kit" "^3.0.4"
     "@salesforce/schemas" "^1.5.1"
     "@salesforce/ts-types" "^2.0.2"
     "@types/semver" "^7.5.0"
@@ -628,7 +628,7 @@
     typescript "^4.9.5"
     wireit "^0.9.5"
 
-"@salesforce/kit@^3.0.2", "@salesforce/kit@^3.0.3", "@salesforce/kit@^3.0.4":
+"@salesforce/kit@^3.0.2", "@salesforce/kit@^3.0.4":
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-3.0.4.tgz#c9cbe65d530340e9b0966f4380ccc2bbaa41a57a"
   integrity sha512-i+0/JlysWEhFyqSxFAuptdCs3aVLxaL2e3vDsur4gRkb+AtyzFwJH68ZpqWJI8HiZdSVCMksNXWiuHBS5PpErg==

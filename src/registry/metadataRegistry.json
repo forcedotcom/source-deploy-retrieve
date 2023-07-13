@@ -3491,6 +3491,14 @@
       "directoryName": "serviceprocess",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "processflowmigration": {
+      "id": "processflowmigration",
+      "name": "ProcessFlowMigration",
+      "suffix": "processflowmigration",
+      "directoryName": "processflowmigrations",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3873,7 +3881,8 @@
     "pipelineInspMetricConfig": "pipelineinspmetricconfig",
     "productSpecificationTypeDefinition": "productspecificationtypedefinition",
     "useraccesspolicy": "useraccesspolicy",
-    "serviceprocess": "serviceprocess"
+    "serviceprocess": "serviceprocess",
+    "processflowmigration": "processflowmigration"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

@@ -88,9 +88,6 @@ export const metadataTypes = [
   'RecAlrtDataSrcExpSetDef',
   'RecordAlertTemplate',
 
-  // B2CLOYALTYMANAGEMENTPLUS, not in describe
-  'ServiceProcess',
-
   // does not show up in describe, but requires no features
   'ProcessFlowMigration',
 ];

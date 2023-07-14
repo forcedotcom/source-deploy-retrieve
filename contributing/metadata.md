@@ -146,7 +146,7 @@ Want to make sure your types are working as expected?
 1. Create a scratch org `sf org create scratch`
 1. Open the org and create your types.
 1. Run `sf project deploy preview` and verify the remote add.
-1. Run `sf project deploy start` to pull the metadata and examine what is retrieved
+1. Run `sf project retrieve start` to pull the metadata and examine what is retrieved
 1. Run `sf project deploy preview` and verify the changes were retrieved and no longer appear.
 1. Delete the org `sf org delete scratch --no-prompt`
 1. Create a new scratch org. `sf org create scratch`
@@ -212,7 +212,7 @@ You can use an existing org for the metadata describe portion of the script by
     1. A sfdx project must exists in local.
       `sf project generate --name <projectname> --default-package-dir <directory> -x`
     2. An authorized devhub org must exists
-      `sf org:login:web -a <alias> -r <localhost url> -d`
+      `sf org login web -a <alias> -r <localhost url> -d`
     3. A scratch org must exists with alias `registryBuilder`
       1. Update `project-scratch-def.json` as per your requirements.
       2. `sf org create scratch -f config/project-scratch-def.json -a registryBuilder -d`

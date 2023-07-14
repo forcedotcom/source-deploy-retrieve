@@ -104,7 +104,7 @@ const registryUpdate = (missingTypesAsDescribeResult: DescribeResult[]) => {
   );
 
   // create an org we can describe
-  shelljs.exec('sfdx project generate -n registryBuilder', { silent: true });
+  shelljs.exec('sf project generate -n registryBuilder', { silent: true });
   updateProjectScratchDef(missingTypes);
   // TODO: sourceApi has to match the coverage report
   if (!process.env.RB_EXISTING_ORG) {

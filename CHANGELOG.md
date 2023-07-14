@@ -1,3 +1,12 @@
+# [9.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.3.4...9.4.0) (2023-07-14)
+
+
+### Features
+
+* **md-types:** ServiceProcess and ProcessFlowMigration ([#1039](https://github.com/forcedotcom/source-deploy-retrieve/issues/1039)) ([2e3f49d](https://github.com/forcedotcom/source-deploy-retrieve/commit/2e3f49d204be064f153b4b317da8bfab6d1809c6))
+
+
+
 ## [9.3.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.3.3...9.3.4) (2023-07-09)
 
 

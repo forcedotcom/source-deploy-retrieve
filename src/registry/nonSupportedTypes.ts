@@ -87,12 +87,6 @@ export const metadataTypes = [
   // spun up org with ASSOCIATIONENGINE, not in describe
   'RecAlrtDataSrcExpSetDef',
   'RecordAlertTemplate',
-
-  // B2CLOYALTYMANAGEMENTPLUS, not in describe
-  'ServiceProcess',
-
-  // does not show up in describe, but requires no features
-  'ProcessFlowMigration',
 ];
 
 export const hasUnsupportedFeatures = (type: CoverageObjectType): boolean => {

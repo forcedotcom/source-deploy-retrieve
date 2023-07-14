@@ -3483,6 +3483,22 @@
       "directoryName": "useraccesspolicies",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "serviceprocess": {
+      "id": "serviceprocess",
+      "name": "ServiceProcess",
+      "suffix": "serviceprocess",
+      "directoryName": "serviceprocess",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "processflowmigration": {
+      "id": "processflowmigration",
+      "name": "ProcessFlowMigration",
+      "suffix": "processflowmigration",
+      "directoryName": "processflowmigrations",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3864,7 +3880,9 @@
     "personAccountOwnerPowerUser": "personaccountownerpoweruser",
     "pipelineInspMetricConfig": "pipelineinspmetricconfig",
     "productSpecificationTypeDefinition": "productspecificationtypedefinition",
-    "useraccesspolicy": "useraccesspolicy"
+    "useraccesspolicy": "useraccesspolicy",
+    "serviceprocess": "serviceprocess",
+    "processflowmigration": "processflowmigration"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

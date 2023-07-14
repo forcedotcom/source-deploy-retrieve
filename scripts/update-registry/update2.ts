@@ -40,7 +40,7 @@ const updateProjectScratchDef = (missingTypes: [string, CoverageObjectType][]) =
 };
 
 const getMissingTypesAsDescribeResult = (missingTypes: [string, CoverageObjectType][]): DescribeResult[] => {
-  const describeResult = shelljs.exec('sfdx force:mdapi:describemetadata -u registryBuilder --json', { silent: true });
+  const describeResult = shelljs.exec('sf org list metadata-types -o registryBuilder --json', { silent: true });
   const metadataObjectsByName = new Map<string, DescribeResult>();
   (JSON.parse(describeResult.stdout).result.metadataObjects as DescribeResult[]).map((describeObj) => {
     metadataObjectsByName.set(describeObj.xmlName, describeObj);
@@ -104,24 +104,24 @@ const registryUpdate = (missingTypesAsDescribeResult: DescribeResult[]) => {
   );
 
   // create an org we can describe
-  shelljs.exec('sfdx force:project:create -n registryBuilder', { silent: true });
+  shelljs.exec('sf project generate -n registryBuilder', { silent: true });
   updateProjectScratchDef(missingTypes);
   // TODO: sourceApi has to match the coverage report
   if (!process.env.RB_EXISTING_ORG) {
     const hasDefaultDevHub = Boolean(
-      JSON.parse(shelljs.exec('sfdx config:get defaultdevhubusername --json', { silent: true }).stdout).result[0].value
+      JSON.parse(shelljs.exec('sf config get target-dev-hub --json', { silent: true }).stdout).result[0].value
     );
 
     if (!hasDefaultDevHub) {
       console.log(`
 Failed to create scratch org: default Dev Hub not found.
 To create the scratch org you need to set a default Dev Hub with \`sfdx\`.
-Example: \`sfdx config:set defaultdevhubusername=<devhub-username> --global\`
+Example: \`sf config set defaultdevhubusername=<devhub-username> --global\`
 `);
       exit(1);
     }
 
-    shelljs.exec('sfdx force:org:create -f registryBuilder/config/project-scratch-def.json -d 1 -a registryBuilder');
+    shelljs.exec('sf org create scratch -f registryBuilder/config/project-scratch-def.json -y 1 -a registryBuilder');
   }
   // describe the org
   const missingTypesAsDescribeResult = getMissingTypesAsDescribeResult(missingTypes);
@@ -132,7 +132,7 @@ Example: \`sfdx config:set defaultdevhubusername=<devhub-username> --global\`
 
   // destroy the scratch org and the project
   if (!process.env.RB_EXISTING_ORG) {
-    shelljs.exec('sfdx force:org:delete -u registryBuilder --noprompt');
+    shelljs.exec('sf org delete scratch -o registryBuilder --no-prompt');
   }
   shelljs.rm('-rf', 'registryBuilder');
 })();

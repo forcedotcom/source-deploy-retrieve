@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v58 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 518/551 supported metadata types.
+Currently, there are 520/551 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -420,7 +420,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PresenceDeclineReason|✅||
 |PresenceUserConfig|✅||
 |PrivacySettings|✅||
-|ProcessFlowMigration|❌|Not supported, but support could be added|
+|ProcessFlowMigration|✅||
 |ProductAttrDisplayConfig|❌|Not supported, but support could be added|
 |ProductAttributeSet|✅||
 |ProductSettings|✅||
@@ -472,7 +472,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ServiceChannel|✅||
 |ServiceCloudVoiceSettings|✅||
 |ServicePresenceStatus|✅||
-|ServiceProcess|❌|Not supported, but support could be added|
+|ServiceProcess|✅||
 |ServiceSetupAssistantSettings|✅||
 |SharingCriteriaRule|✅||
 |SharingGuestRule|✅||
@@ -582,8 +582,8 @@ v59 introduces the following new types.  Here's their current level of support
 |LearningAchievementConfig|❌|Not supported, but support could be added|
 |RecordAggregationDefinition|❌|Not supported, but support could be added|
 |ReferralMarketingSettings|✅||
-|SmntcCtnr|❌|Not supported, but support could be added|
-|SmntcDef|❌|Not supported, but support could be added|
+|SemanticDefinition|❌|Not supported, but support could be added|
+|SemanticModel|❌|Not supported, but support could be added|
 
 ## Additional Types
 

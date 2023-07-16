@@ -1,3 +1,12 @@
+## [9.4.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.0...9.4.1) (2023-07-16)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/ts-types from 2.0.3 to 2.0.5 ([#1044](https://github.com/forcedotcom/source-deploy-retrieve/issues/1044)) ([2f5a70b](https://github.com/forcedotcom/source-deploy-retrieve/commit/2f5a70bdce4c955d9244c3990be20e82f537eee1))
+
+
+
 # [9.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.3.4...9.4.0) (2023-07-14)
 
 

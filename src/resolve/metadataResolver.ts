@@ -115,11 +115,7 @@ export class MetadataResolver {
       }
     }
 
-    for (const directory of dirQueue) {
-      components.push(...this.getComponentsFromPathRecursive(directory, inclusiveFilter));
-    }
-
-    return components;
+    return components.concat(dirQueue.flatMap((d) => this.getComponentsFromPathRecursive(d, inclusiveFilter)));
   }
 
   private resolveComponent(fsPath: string, isResolvingSource: boolean): SourceComponent | undefined {
@@ -269,7 +265,7 @@ export class MetadataResolver {
     let guesses;
 
     if (metaSuffix) {
-      guesses = this.registry.guessTypeBySuffix(metaSuffix)
+      guesses = this.registry.guessTypeBySuffix(metaSuffix);
     } else if (!metaSuffix && closeMetaSuffix) {
       guesses = this.registry.guessTypeBySuffix(closeMetaSuffix[1]);
     } else {
@@ -279,11 +275,11 @@ export class MetadataResolver {
     // If guesses were found, format an array of strings to be passed to SfError's actions
     return guesses && guesses.length > 0
       ? [
-          messages.getMessage('suggest_type_header', [ basename(fsPath) ]),
+          messages.getMessage('suggest_type_header', [basename(fsPath)]),
           ...guesses.map((guess) =>
             messages.getMessage('suggest_type_did_you_mean', [
               guess.suffixGuess,
-              (metaSuffix || closeMetaSuffix) ? '-meta.xml' : '',
+              metaSuffix || closeMetaSuffix ? '-meta.xml' : '',
               guess.metadataTypeGuess.name,
             ])
           ),

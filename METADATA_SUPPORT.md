@@ -580,6 +580,7 @@ v59 introduces the following new types.  Here's their current level of support
 |IndustriesContextSettings|✅||
 |IndustriesUnifiedPromotionsSettings|✅||
 |LearningAchievementConfig|❌|Not supported, but support could be added|
+|PricingRecipe|❌|Not supported, but support could be added|
 |RecordAggregationDefinition|❌|Not supported, but support could be added|
 |ReferralMarketingSettings|✅||
 |SemanticDefinition|❌|Not supported, but support could be added|

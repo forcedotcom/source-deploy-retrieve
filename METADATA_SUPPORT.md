@@ -573,6 +573,8 @@ v59 introduces the following new types.  Here's their current level of support
 |CommsServiceConsoleSettings|✅||
 |ContextDefinition|❌|Not supported, but support could be added (but not for tracking)|
 |ConversationChannelDefinition|❌|Not supported, but support could be added|
+|DocumentCategory|❌|Not supported, but support could be added|
+|DocumentCategoryDocumentType|❌|Not supported, but support could be added|
 |ExpressionSetMessageToken|❌|Not supported, but support could be added|
 |ExtlClntAppMobileConfigurablePolicies|✅||
 |ExtlClntAppMobileSettings|✅||

@@ -1,3 +1,12 @@
+## [9.4.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.2...9.4.3) (2023-07-23)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/kit from 3.0.4 to 3.0.6 ([#1051](https://github.com/forcedotcom/source-deploy-retrieve/issues/1051)) ([2d2c94d](https://github.com/forcedotcom/source-deploy-retrieve/commit/2d2c94d19ce38e9400f048bbaf88cea13ffa250e))
+
+
+
 ## [9.4.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.1...9.4.2) (2023-07-17)
 
 

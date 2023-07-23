@@ -1,3 +1,12 @@
+## [9.4.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.3...9.4.4) (2023-07-23)
+
+
+### Bug Fixes
+
+* **deps:** bump proxy-agent from 6.2.2 to 6.3.0 ([#1050](https://github.com/forcedotcom/source-deploy-retrieve/issues/1050)) ([8928932](https://github.com/forcedotcom/source-deploy-retrieve/commit/8928932b4f70723fc29e6b06e5eda1e5061a4ad5))
+
+
+
 ## [9.4.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.2...9.4.3) (2023-07-23)
 
 

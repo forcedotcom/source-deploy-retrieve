@@ -369,6 +369,31 @@ describe('DecomposedMetadataTransformer', () => {
       expect(result).to.deep.equal([]);
     });
 
+    it('should return no files when the parent is forceIgnored', async () => {
+      const { fullName } = component;
+      const context = new ConvertContext();
+      const transformer = new DecomposedMetadataTransformer(registryAccess, context);
+
+      $$.SANDBOX.stub(component, 'parseXml').resolves({
+        CustomObject: {
+          fullName,
+          customField: [{ fullName: 'child', test: 'testVal' }],
+          validationRules: [
+            { fullName: 'child2', test: 'testVal2' },
+            { fullName: 'child3', test: 'testVal3' },
+          ],
+        },
+      });
+      $$.SANDBOX.stub(ForceIgnore.prototype, 'denies')
+        .returns(false)
+        .withArgs(join('main', 'default', 'objects', 'customObject__c', 'customObject__c.object-meta.xml'))
+        .returns(true);
+
+      const result = await transformer.toSourceFormat(component);
+
+      expect(result).to.deep.equal([]);
+    });
+
     describe('Merging Components', () => {
       it('should merge output with merge component that only has children', async () => {
         assert(registry.types.customobject.children?.types.customfield.name);

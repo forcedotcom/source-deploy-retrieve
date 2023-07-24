@@ -1,3 +1,12 @@
+## [9.4.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.4...9.4.5) (2023-07-24)
+
+
+### Bug Fixes
+
+* missing stdValue ([#1052](https://github.com/forcedotcom/source-deploy-retrieve/issues/1052)) ([0c29b11](https://github.com/forcedotcom/source-deploy-retrieve/commit/0c29b11b943e4d6f3b97acd9ee39a3480982c20a))
+
+
+
 ## [9.4.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.3...9.4.4) (2023-07-23)
 
 

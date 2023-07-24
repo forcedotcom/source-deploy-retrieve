@@ -1,3 +1,12 @@
+## [9.4.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.5...9.4.6) (2023-07-24)
+
+
+### Bug Fixes
+
+* spread/push argument limits ([#1046](https://github.com/forcedotcom/source-deploy-retrieve/issues/1046)) ([f878d65](https://github.com/forcedotcom/source-deploy-retrieve/commit/f878d65977cbed6d8a4d3dc1924f14084efcf141))
+
+
+
 ## [9.4.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.4...9.4.5) (2023-07-24)
 
 

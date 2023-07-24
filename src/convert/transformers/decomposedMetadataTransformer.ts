@@ -45,11 +45,20 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     return [];
   }
 
+  // eslint-disable-next-line complexity
   public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
+    const outputFile = mergeWith?.xml ?? getDefaultOutput(component);
+    const forceIgnore = component.getForceIgnore();
+
+    // if the whole parent is ignored, we won't worry about decomposing things
+    // this can happen if the manifest had a *; all the members will be retrieved.
+    if (forceIgnore.denies(outputFile)) {
+      return [];
+    }
+
     const writeInfos: WriteInfo[] = [];
     const childrenOfMergeComponent = new ComponentSet(mergeWith?.getChildren());
     const { type, fullName: parentFullName } = component;
-    const forceIgnore = component.getForceIgnore();
 
     let parentXmlObject: JsonMap | undefined;
     const composedMetadata = await getComposedMetadataEntries(component);
@@ -147,12 +156,12 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       if (!mergeWith) {
         writeInfos.push({
           source: parentSource,
-          output: getDefaultOutput(component),
+          output: outputFile,
         });
       } else if (mergeWith.xml) {
         writeInfos.push({
           source: parentSource,
-          output: mergeWith.xml,
+          output: outputFile,
         });
         this.setDecomposedState(component, { foundMerge: true });
       } else {
@@ -160,7 +169,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
           foundMerge: false,
           writeInfo: {
             source: parentSource,
-            output: getDefaultOutput(component),
+            output: outputFile,
           },
         });
       }

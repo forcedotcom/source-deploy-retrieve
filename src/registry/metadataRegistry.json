@@ -3484,6 +3484,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "messagingchannel": {
+      "id": "messagingchannel",
+      "name": "MessagingChannel",
+      "suffix": "messagingChannel",
+      "directoryName": "messagingChannels",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "serviceprocess": {
       "id": "serviceprocess",
       "name": "ServiceProcess",
@@ -3881,6 +3889,7 @@
     "pipelineInspMetricConfig": "pipelineinspmetricconfig",
     "productSpecificationTypeDefinition": "productspecificationtypedefinition",
     "useraccesspolicy": "useraccesspolicy",
+    "messagingChannel": "messagingchannel",
     "serviceprocess": "serviceprocess",
     "processflowmigration": "processflowmigration"
   },

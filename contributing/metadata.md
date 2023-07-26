@@ -28,7 +28,7 @@ The script will:
 
 1. Look for missing types (similar to the completeness test)
 2. For missing types, generate a project and scratch org that includes the Features/Settings
-3. Run `force:mdapi:describemetadata` to get the describe
+3. Run `sf org list metadata-types` to get the describe
 4. Modify the registry to include the newly found types
 
 ```shell
@@ -49,7 +49,7 @@ If that's confusing, it's a great time to reach out to the CLI team.
 
 You can do what the script does yourself. As you work, run `./node_modules/mocha/bin/mocha test/registry/registryValidation.test.ts` to check your entries
 
-Run `sfdx force:mdapi:describemetadata --json` to get the describe. `>` the output to a file or pipe it to [jq](https://stedolan.github.io/jq/) (`| jq`) to find your type.
+Run `sf org list metadata-types --json` to get the describe. `>` the output to a file or pipe it to [jq](https://stedolan.github.io/jq/) (`| jq`) to find your type.
 
 Your describe will contain something like this
 
@@ -142,16 +142,16 @@ Fixing those problems not only makes it easier to automate your type's support i
 
 Want to make sure your types are working as expected?
 
-1. Create a new project with `sfdx force:project:create -n registryTest`
-1. Create a scratch org `sfdx force:org:create`
+1. Create a new project with `sf project generate -n registryTest`
+1. Create a scratch org `sf org create scratch`
 1. Open the org and create your types.
-1. Run `sfdx force:source:status` and verify the remote add.
-1. Run `sfdx force:source:pull` to pull the metadata and examine what is retrieved
-1. Run `sfdx force:source:status` and verify the changes were retrieved and no longer appear.
-1. Delete the org `sfdx force:org:delete --noprompt`
-1. Create a new scratch org. `sfdx force:org:create`
-1. Push the source `sfdx force:source:push`
-1. Convert the source to mdapi format `sfdx force:source:convert -d mdapiOut`
+1. Run `sf project deploy preview` and verify the remote add.
+1. Run `sf project retrieve start` to pull the metadata and examine what is retrieved
+1. Run `sf project deploy preview` and verify the changes were retrieved and no longer appear.
+1. Delete the org `sf org delete scratch --no-prompt`
+1. Create a new scratch org. `sf org create scratch`
+1. Push the source `sf project deploy start`
+1. Convert the source to mdapi format `sf project convert source -d mdapiOut`
 1. Look in the resulting `metadataPackage_` and `package.xml` to see that it looks as expected
 1. Deploy it to the org using `sfdx force:mdapi:deploy --deploydir mdapiOut --wait 30` and verify that it succeeds
 1. Delete the source directory `rm -rf force-app/main/default/*`
@@ -161,7 +161,7 @@ Want to make sure your types are working as expected?
 
 ### Caveats
 
-Only `source:push` and `source:pull` support source tracking, so the target types must be MDAPI addressable on the server. If they aren’t MDAPI addressable, special code is needed to support source tracking for these components. See the document [Metadata API Types: End to End, Cradle to Grave](https://confluence.internal.salesforce.com/display/PLATFORMDX/Metadata+API+Types%3A+End+to+End%2C+Cradle+to+Grave) (Salesforce internal only) for more details.
+Target types must be MDAPI addressable on the server. If they aren’t MDAPI addressable, special code is needed to support source tracking for these components. See the document [Metadata API Types: End to End, Cradle to Grave](https://confluence.internal.salesforce.com/display/PLATFORMDX/Metadata+API+Types%3A+End+to+End%2C+Cradle+to+Grave) (Salesforce internal only) for more details.
 
 ## Unit Testing
 
@@ -210,12 +210,12 @@ You can use an existing org for the metadata describe portion of the script by
 ## Prerequisites
 
     1. A sfdx project must exists in local.
-      `sfdx force:project:create --projectname <projectname> --defaultpackagedir <directory> -x`
+      `sf project generate --name <projectname> --default-package-dir <directory> -x`
     2. An authorized devhub org must exists
-      `sfdx force:auth:web:login -a <alias> -r <localhost url> -d`
+      `sf org login web -a <alias> -r <localhost url> -d`
     3. A scratch org must exists with alias `registryBuilder`
       1. Update `project-scratch-def.json` as per your requirements.
-      2. `sfdx force:org:create -f config/project-scratch-def.json -a registryBuilder -t scratch -s`
+      2. `sf org create scratch -f config/project-scratch-def.json -a registryBuilder -d`
 
 ## Steps
 

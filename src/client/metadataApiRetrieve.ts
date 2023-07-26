@@ -23,7 +23,6 @@ import {
   MetadataTransferResult,
   PackageOption,
   RequestStatus,
-  RetrieveExtractOptions,
   RetrieveOptions,
   RetrieveRequest,
 } from './types';
@@ -282,16 +281,14 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   }
 
   private async extract(zip: Buffer): Promise<ComponentSet> {
-    const components: SourceComponent[] = [];
+    let components: SourceComponent[] = [];
     const { merge, output, registry } = this.options;
     const converter = new MetadataConverter(registry);
     const tree = await ZipTreeContainer.create(zip);
 
-    const packages: RetrieveExtractOptions[] = [{ zipTreeLocation: 'unpackaged', outputDir: output }];
-    const packageOpts = this.getPackageOptions();
-    packageOpts?.forEach(({ name, outputDir }) => {
-      packages.push({ zipTreeLocation: name, outputDir });
-    });
+    const packages = [{ zipTreeLocation: 'unpackaged', outputDir: output }].concat(
+      this.getPackageOptions().map(({ name, outputDir }) => ({ zipTreeLocation: name, outputDir }))
+    );
 
     for (const pkg of packages) {
       const outputConfig: ConvertOutputConfig = merge
@@ -320,9 +317,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       // this is intentional sequential
       // eslint-disable-next-line no-await-in-loop
       const convertResult = await converter.convert(zipComponents, 'source', outputConfig);
-      if (convertResult?.converted) {
-        components.push(...convertResult.converted);
-      }
+      components = components.concat(convertResult?.converted ?? []);
     }
     return new ComponentSet(components, registry);
   }

@@ -3483,6 +3483,14 @@
       "directoryName": "useraccesspolicies",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "messagingchannel": {
+      "id": "messagingchannel",
+      "name": "MessagingChannel",
+      "suffix": "messagingChannel",
+      "directoryName": "messagingChannels",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3864,7 +3872,8 @@
     "personAccountOwnerPowerUser": "personaccountownerpoweruser",
     "pipelineInspMetricConfig": "pipelineinspmetricconfig",
     "productSpecificationTypeDefinition": "productspecificationtypedefinition",
-    "useraccesspolicy": "useraccesspolicy"
+    "useraccesspolicy": "useraccesspolicy",
+    "messagingChannel": "messagingchannel"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

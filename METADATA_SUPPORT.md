@@ -465,6 +465,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SchedulingRule|✅||
 |SchemaSettings|✅||
 |ScoreCategory|✅||
+|SearchableObjDataSyncInfo|✅||
+|SearchCriteriaCongiguration|✅||
 |SearchSettings|✅||
 |SecuritySettings|✅||
 |ServiceAISetupDefinition|✅||

@@ -3507,6 +3507,22 @@
       "directoryName": "processflowmigrations",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "searchcriteriaconfiguration": {
+      "id": "searchcriteriaconfiguration",
+      "name": "SearchCriteriaConfiguration",
+      "suffix": "SearchCriteriaConfigurationSetting",
+      "directoryName": "SearchCriteriaConfigurationSettings",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "searchableobjdatasyncinfo": {
+      "id": "searchableobjdatasyncinfo",
+      "name": "SearchableObjDataSyncInfo",
+      "suffix": "SearchableObjDataSyncInfoSetting",
+      "directoryName": "SearchableObjDataSyncInfoSettings",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3891,7 +3907,9 @@
     "useraccesspolicy": "useraccesspolicy",
     "messagingChannel": "messagingchannel",
     "serviceprocess": "serviceprocess",
-    "processflowmigration": "processflowmigration"
+    "processflowmigration": "processflowmigration",
+    "SearchableObjDataSyncInfoSetting": "searchableobjdatasyncinfo",
+    "SearchCriteriaConfigurationSetting": "searchcriteriaconfiguration"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

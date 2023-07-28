@@ -1,3 +1,12 @@
+# [9.6.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.5.0...9.6.0) (2023-07-28)
+
+
+### Features
+
+* ASM_StdValueSet Registry Update ([#1055](https://github.com/forcedotcom/source-deploy-retrieve/issues/1055)) ([ddae78f](https://github.com/forcedotcom/source-deploy-retrieve/commit/ddae78f4f506ac81e8f3a5eddc57ce4ea2dafa56))
+
+
+
 # [9.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.7...9.5.0) (2023-07-26)
 
 

@@ -117,9 +117,9 @@ describe('Tree Containers', () => {
 
     it('should use expected Node API for stream', () => {
       const readable = new Readable();
-      const createReadStreamStub = env.stub(fs, 'createReadStream');
       // @ts-ignore wants ReadStream but Readable works for testing
-      createReadStreamStub.withArgs(path).returns(readable);
+      env.stub(fs, 'createReadStream').returns(readable);
+      env.stub(fs, 'existsSync').returns(true);
       expect(tree.stream(path)).to.deep.equal(readable);
     });
   });

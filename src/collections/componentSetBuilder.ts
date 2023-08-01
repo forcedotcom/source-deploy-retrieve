@@ -99,23 +99,40 @@ export class ComponentSetBuilder {
         const registry = new RegistryAccess();
         const compSetFilter = new ComponentSet();
         componentSet ??= new ComponentSet();
+        const directoryPaths = metadata.directoryPaths;
 
         // Build a Set of metadata entries
         metadata.metadataEntries.forEach((rawEntry) => {
           const splitEntry = rawEntry.split(':').map((entry) => entry.trim());
           // The registry will throw if it doesn't know what this type is.
           registry.getTypeByName(splitEntry[0]);
-          const entry = {
-            type: splitEntry[0],
-            fullName: splitEntry.length === 1 ? '*' : splitEntry[1],
-          };
-          // Add to the filtered ComponentSet for resolved source paths,
-          // and the unfiltered ComponentSet to build the correct manifest.
-          compSetFilter.add(entry);
-          componentSet?.add(entry);
+
+          // if there's a better way to detect
+          if (splitEntry[1]?.includes('*')) {
+            // get all components of the type, and then filter by the regex of the fullName
+            ComponentSet.fromSource({
+              fsPaths: directoryPaths,
+              include: new ComponentSet([{ type: splitEntry[0], fullName: ComponentSet.WILDCARD }]),
+            })
+              .getSourceComponents()
+              .toArray()
+              .filter((cs) => Boolean(cs.fullName.match(new RegExp(splitEntry[1].replace('*', '.*')))))
+              .map((match) => {
+                compSetFilter.add(match);
+                componentSet?.add(match);
+              });
+          } else {
+            const entry = {
+              type: splitEntry[0],
+              fullName: splitEntry.length === 1 ? '*' : splitEntry[1],
+            };
+            // Add to the filtered ComponentSet for resolved source paths,
+            // and the unfiltered ComponentSet to build the correct manifest.
+            compSetFilter.add(entry);
+            componentSet?.add(entry);
+          }
         });
 
-        const directoryPaths = metadata.directoryPaths;
         logger.debug(`Searching for matching metadata in directories: ${directoryPaths.join(', ')}`);
         const resolvedComponents = ComponentSet.fromSource({ fsPaths: directoryPaths, include: compSetFilter });
         componentSet.forceIgnoredPaths = resolvedComponents.forceIgnoredPaths;

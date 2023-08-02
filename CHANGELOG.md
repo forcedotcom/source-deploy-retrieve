@@ -1,3 +1,12 @@
+# [9.7.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.6.1...9.7.0) (2023-08-02)
+
+
+### Features
+
+* add a wildcard expansion to metadata full names when building the CS ([#1063](https://github.com/forcedotcom/source-deploy-retrieve/issues/1063)) ([6a6770b](https://github.com/forcedotcom/source-deploy-retrieve/commit/6a6770b1fc9a263637107b6bdefff863f1eb1264))
+
+
+
 ## [9.6.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.6.0...9.6.1) (2023-07-30)
 
 

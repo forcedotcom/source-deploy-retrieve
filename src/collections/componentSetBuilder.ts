@@ -106,15 +106,20 @@ export class ComponentSetBuilder {
           const splitEntry = rawEntry.split(':').map((entry) => entry.trim());
           // The registry will throw if it doesn't know what this type is.
           registry.getTypeByName(splitEntry[0]);
-
-          if (splitEntry[1]?.includes('*') && splitEntry[1]?.length > 1) {
+          // this '.*' is a surprisingly valid way to specify a metadata, especially a DEB :sigh:
+          // https://github.com/salesforcecli/plugin-deploy-retrieve/blob/main/test/nuts/digitalExperienceBundle/constants.ts#L140
+          // because we're filtering from what we have locally, this won't allow you to retrieve new metadata (on the server only) using the partial wildcard
+          // to do that, you'd need check the size of the CS created below, see if it's 0, and then query the org for the metadata that matches the regex
+          // but building a CS from a metadata argument doesn't require an org, so we can't do that here
+          if (splitEntry[1]?.includes('*') && splitEntry[1]?.length > 1 && !splitEntry[1].includes('.*')) {
             // get all components of the type, and then filter by the regex of the fullName
             ComponentSet.fromSource({
               fsPaths: directoryPaths,
               include: new ComponentSet([{ type: splitEntry[0], fullName: ComponentSet.WILDCARD }]),
             })
+              .getSourceComponents()
               .toArray()
-              .filter((cs) => Boolean(cs.fullName.match(new RegExp(splitEntry[1].replace('*', '.*')))))
+              .filter((cs) => Boolean(cs.fullName.match(new RegExp(splitEntry[1]))))
               .map((match) => {
                 compSetFilter.add(match);
                 componentSet?.add(match);

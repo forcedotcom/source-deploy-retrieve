@@ -107,14 +107,12 @@ export class ComponentSetBuilder {
           // The registry will throw if it doesn't know what this type is.
           registry.getTypeByName(splitEntry[0]);
 
-          // if there's a better way to detect
-          if (splitEntry[1]?.includes('*')) {
+          if (splitEntry[1]?.includes('*') && splitEntry[1]?.length > 1) {
             // get all components of the type, and then filter by the regex of the fullName
             ComponentSet.fromSource({
               fsPaths: directoryPaths,
               include: new ComponentSet([{ type: splitEntry[0], fullName: ComponentSet.WILDCARD }]),
             })
-              .getSourceComponents()
               .toArray()
               .filter((cs) => Boolean(cs.fullName.match(new RegExp(splitEntry[1].replace('*', '.*')))))
               .map((match) => {

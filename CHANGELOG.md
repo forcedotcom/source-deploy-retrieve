@@ -1,3 +1,12 @@
+## [9.7.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.0...9.7.1) (2023-08-03)
+
+
+### Bug Fixes
+
+* throw when expected file is ENOENT ([#1062](https://github.com/forcedotcom/source-deploy-retrieve/issues/1062)) ([ad3f441](https://github.com/forcedotcom/source-deploy-retrieve/commit/ad3f441fe8b165cd67ceec08713da4ce26c66997))
+
+
+
 # [9.7.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.6.1...9.7.0) (2023-08-02)
 
 

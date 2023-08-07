@@ -25,8 +25,8 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^4.3.1",
-    "@salesforce/kit": "^3.0.6",
+    "@salesforce/core": "^5.2.0",
+    "@salesforce/kit": "^3.0.9",
     "@salesforce/ts-types": "^2.0.5",
     "fast-levenshtein": "^3.0.0",
     "fast-xml-parser": "^4.2.6",
@@ -42,7 +42,7 @@
   "devDependencies": {
     "@salesforce/cli-plugins-testkit": "^4.2.6",
     "@salesforce/dev-config": "^4.0.1",
-    "@salesforce/dev-scripts": "^5.4.3",
+    "@salesforce/dev-scripts": "^5.5.0",
     "@salesforce/prettier-config": "^0.0.3",
     "@salesforce/ts-sinon": "^1.4.12",
     "@types/deep-equal-in-any-order": "^1.0.1",

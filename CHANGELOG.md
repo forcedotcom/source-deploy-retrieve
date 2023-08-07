@@ -1,3 +1,12 @@
+## [9.7.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.1...9.7.2) (2023-08-07)
+
+
+### Bug Fixes
+
+* **deps:** core5 ([e0c926a](https://github.com/forcedotcom/source-deploy-retrieve/commit/e0c926a958c85c77441515b4392dfdada66f4652))
+
+
+
 ## [9.7.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.0...9.7.1) (2023-08-03)
 
 

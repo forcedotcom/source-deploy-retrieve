@@ -6,7 +6,10 @@
  */
 import { basename, join } from 'path';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+import deepEqualInAnyOrder = require('deep-equal-in-any-order');
+
 import { assert, expect } from 'chai';
+import * as chai from 'chai';
 import { AnyJson, getString } from '@salesforce/ts-types';
 import { PollingClient, StatusResult, Messages } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
@@ -35,6 +38,8 @@ import {
   DECOMPOSED_COMPONENT,
 } from '../mock/type-constants/customObjectConstant';
 import { COMPONENT } from '../mock/type-constants/apexClassConstant';
+
+chai.use(deepEqualInAnyOrder);
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -820,7 +825,7 @@ describe('MetadataApiDeploy', () => {
           },
         ];
 
-        expect(responses).to.deep.equal(expected);
+        expect(responses).to.deep.equalInAnyOrder(expected);
       });
 
       it('should report "Deleted" when no component in org', () => {

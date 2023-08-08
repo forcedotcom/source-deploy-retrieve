@@ -26,6 +26,21 @@ describe('ComponentSetBuilder', () => {
     content: 'MyClass.cls',
     xml: 'MyClass.cls-meta.xml',
   };
+
+  const apexClassWildcardMatch = {
+    type: 'ApexClass',
+    fullName: 'MyClassIsAwesome',
+    content: 'MyClassIsAwesome.cls',
+    xml: 'MyClassIsAwesome.cls-meta.xml',
+  };
+
+  const apexClassWildcardNoMatch = {
+    type: 'ApexClass',
+    fullName: 'MyTableIsAwesome',
+    content: 'MyTableIsAwesome.cls',
+    xml: 'MyTableIsAwesome.cls-meta.xml',
+  };
+
   const customObjectComponent = {
     type: 'CustomObject',
     fullName: 'MyCustomObject__c',
@@ -273,6 +288,35 @@ describe('ComponentSetBuilder', () => {
       expect(compSet.has(apexClassComponent)).to.equal(true);
       expect(compSet.has(customObjectComponent)).to.equal(true);
       expect(compSet.has({ type: 'CustomObject', fullName: '*' })).to.equal(true);
+    });
+
+    it('should create ComponentSet from partial-match fullName (ApexClass:Prop*)', async () => {
+      componentSet.add(apexClassComponent);
+      componentSet.add(apexClassWildcardMatch);
+      fromSourceStub.returns(componentSet);
+      const packageDir1 = path.resolve('force-app');
+
+      const compSet = await ComponentSetBuilder.build({
+        sourcepath: undefined,
+        manifest: undefined,
+        metadata: {
+          metadataEntries: ['ApexClass:MyClas*'],
+          directoryPaths: [packageDir1],
+        },
+      });
+      expect(fromSourceStub.calledTwice).to.equal(true);
+      const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
+      expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
+      const filter = new ComponentSet();
+      filter.add({ type: 'ApexClass', fullName: 'MyClass' });
+      filter.add({ type: 'ApexClass', fullName: 'MyClassIsAwesome' });
+      filter.add({ type: 'ApexClass', fullName: 'MyTableIsAwesome' });
+      assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
+      expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
+      expect(compSet.size).to.equal(2);
+      expect(compSet.has(apexClassComponent)).to.equal(true);
+      expect(compSet.has(apexClassWildcardMatch)).to.equal(true);
+      expect(compSet.has(apexClassWildcardNoMatch)).to.equal(false);
     });
 
     it('should create ComponentSet from metadata and multiple package directories', async () => {

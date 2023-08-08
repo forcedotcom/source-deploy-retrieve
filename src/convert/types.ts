@@ -129,7 +129,7 @@ export type ReplacementConfig = ReplacementLocation &
 
 type ReplacementLocation = { filename: string; glob?: never } | { filename?: never; glob: string };
 type ReplacementSource =
-  | { replaceWithEnv: string; replaceWithFile?: never }
+  | { replaceWithEnv: string; replaceWithFile?: never; allowUnsetEnvVariable?: boolean }
   | { replaceWithEnv?: never; replaceWithFile: string };
 
 type ReplacementTarget =

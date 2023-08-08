@@ -365,36 +365,35 @@ export class SourceComponent implements MetadataComponent {
   // E.g., CustomLabels, Workflows, SharingRules, AssignmentRules.
   private getNonDecomposedChildren(): SourceComponent[] {
     const parsed = this.parseXmlSync();
-    const children: SourceComponent[] = [];
     if (!this.type.children) {
       throw new SfError(`There are no child types for ${this.type.name}`);
     }
-    for (const childTypeId of Object.keys(this.type.children.types)) {
-      const childType = this.type.children.types[childTypeId];
+
+    return Object.values(this.type.children.types).flatMap((childType) => {
       const uniqueIdElement = childType.uniqueIdElement;
-      if (uniqueIdElement) {
-        const xmlPathToChildren = `${this.type.name}.${childType.xmlElementName}`;
-        const elements = ensureArray(get(parsed, xmlPathToChildren, []));
-        const childComponents = elements.map((element) => {
-          const name = getString(element, uniqueIdElement);
-          if (!name) {
-            throw new SfError(`Missing ${uniqueIdElement} on ${childType.name} in ${this.xml}`);
-          }
-          return new SourceComponent(
-            {
-              name,
-              type: childType,
-              xml: this.xml,
-              parent: this,
-            },
-            this.treeContainer,
-            this.forceIgnore
-          );
-        });
-        children.push(...childComponents);
+
+      if (!uniqueIdElement) {
+        return [];
       }
-    }
-    return children;
+      const xmlPathToChildren = `${this.type.name}.${childType.xmlElementName}`;
+      const elements = ensureArray(get(parsed, xmlPathToChildren, []));
+      return elements.map((element) => {
+        const name = getString(element, uniqueIdElement);
+        if (!name) {
+          throw new SfError(`Missing ${uniqueIdElement} on ${childType.name} in ${this.xml}`);
+        }
+        return new SourceComponent(
+          {
+            name,
+            type: childType,
+            xml: this.xml,
+            parent: this,
+          },
+          this.treeContainer,
+          this.forceIgnore
+        );
+      });
+    });
   }
 
   private *walk(fsPath: string): IterableIterator<string> {

@@ -1,3 +1,245 @@
+## [9.7.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.1...9.7.2) (2023-08-07)
+
+
+### Bug Fixes
+
+* **deps:** core5 ([e0c926a](https://github.com/forcedotcom/source-deploy-retrieve/commit/e0c926a958c85c77441515b4392dfdada66f4652))
+
+
+
+## [9.7.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.0...9.7.1) (2023-08-03)
+
+
+### Bug Fixes
+
+* throw when expected file is ENOENT ([#1062](https://github.com/forcedotcom/source-deploy-retrieve/issues/1062)) ([ad3f441](https://github.com/forcedotcom/source-deploy-retrieve/commit/ad3f441fe8b165cd67ceec08713da4ce26c66997))
+
+
+
+# [9.7.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.6.1...9.7.0) (2023-08-02)
+
+
+### Features
+
+* add a wildcard expansion to metadata full names when building the CS ([#1063](https://github.com/forcedotcom/source-deploy-retrieve/issues/1063)) ([6a6770b](https://github.com/forcedotcom/source-deploy-retrieve/commit/6a6770b1fc9a263637107b6bdefff863f1eb1264))
+
+
+
+## [9.6.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.6.0...9.6.1) (2023-07-30)
+
+
+### Bug Fixes
+
+* **deps:** bump fast-xml-parser from 4.2.5 to 4.2.6 ([#1060](https://github.com/forcedotcom/source-deploy-retrieve/issues/1060)) ([12468f0](https://github.com/forcedotcom/source-deploy-retrieve/commit/12468f0c1d3bc111ecac3f4a47660a211b6e20ae))
+
+
+
+# [9.6.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.5.0...9.6.0) (2023-07-28)
+
+
+### Features
+
+* ASM_StdValueSet Registry Update ([#1055](https://github.com/forcedotcom/source-deploy-retrieve/issues/1055)) ([ddae78f](https://github.com/forcedotcom/source-deploy-retrieve/commit/ddae78f4f506ac81e8f3a5eddc57ce4ea2dafa56))
+
+
+
+# [9.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.7...9.5.0) (2023-07-26)
+
+
+### Features
+
+* **md-types:** messagingChannel ([#1054](https://github.com/forcedotcom/source-deploy-retrieve/issues/1054)) ([afcff87](https://github.com/forcedotcom/source-deploy-retrieve/commit/afcff87c773a118e12229ce98076688047af0734))
+
+
+
+## [9.4.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.6...9.4.7) (2023-07-25)
+
+
+
+## [9.4.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.5...9.4.6) (2023-07-24)
+
+
+### Bug Fixes
+
+* spread/push argument limits ([#1046](https://github.com/forcedotcom/source-deploy-retrieve/issues/1046)) ([f878d65](https://github.com/forcedotcom/source-deploy-retrieve/commit/f878d65977cbed6d8a4d3dc1924f14084efcf141))
+
+
+
+## [9.4.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.4...9.4.5) (2023-07-24)
+
+
+### Bug Fixes
+
+* missing stdValue ([#1052](https://github.com/forcedotcom/source-deploy-retrieve/issues/1052)) ([0c29b11](https://github.com/forcedotcom/source-deploy-retrieve/commit/0c29b11b943e4d6f3b97acd9ee39a3480982c20a))
+
+
+
+## [9.4.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.3...9.4.4) (2023-07-23)
+
+
+### Bug Fixes
+
+* **deps:** bump proxy-agent from 6.2.2 to 6.3.0 ([#1050](https://github.com/forcedotcom/source-deploy-retrieve/issues/1050)) ([8928932](https://github.com/forcedotcom/source-deploy-retrieve/commit/8928932b4f70723fc29e6b06e5eda1e5061a4ad5))
+
+
+
+## [9.4.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.2...9.4.3) (2023-07-23)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/kit from 3.0.4 to 3.0.6 ([#1051](https://github.com/forcedotcom/source-deploy-retrieve/issues/1051)) ([2d2c94d](https://github.com/forcedotcom/source-deploy-retrieve/commit/2d2c94d19ce38e9400f048bbaf88cea13ffa250e))
+
+
+
+## [9.4.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.1...9.4.2) (2023-07-17)
+
+
+### Bug Fixes
+
+* **deps:** bump proxy-agent from 6.2.1 to 6.2.2 ([#1041](https://github.com/forcedotcom/source-deploy-retrieve/issues/1041)) ([57bf5ab](https://github.com/forcedotcom/source-deploy-retrieve/commit/57bf5abf555e5d17fd6934ac9057aa5339694580))
+
+
+
+## [9.4.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.4.0...9.4.1) (2023-07-16)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/ts-types from 2.0.3 to 2.0.5 ([#1044](https://github.com/forcedotcom/source-deploy-retrieve/issues/1044)) ([2f5a70b](https://github.com/forcedotcom/source-deploy-retrieve/commit/2f5a70bdce4c955d9244c3990be20e82f537eee1))
+
+
+
+# [9.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.3.4...9.4.0) (2023-07-14)
+
+
+### Features
+
+* **md-types:** ServiceProcess and ProcessFlowMigration ([#1039](https://github.com/forcedotcom/source-deploy-retrieve/issues/1039)) ([2e3f49d](https://github.com/forcedotcom/source-deploy-retrieve/commit/2e3f49d204be064f153b4b317da8bfab6d1809c6))
+
+
+
+## [9.3.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.3.3...9.3.4) (2023-07-09)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/kit from 3.0.3 to 3.0.4 ([#1036](https://github.com/forcedotcom/source-deploy-retrieve/issues/1036)) ([7ea893e](https://github.com/forcedotcom/source-deploy-retrieve/commit/7ea893edb268fd422cf55a82b7f567ce5b0236e9))
+
+
+
+## [9.3.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.3.2...9.3.3) (2023-07-07)
+
+
+### Bug Fixes
+
+* add mobile plugin types to registry ([#1033](https://github.com/forcedotcom/source-deploy-retrieve/issues/1033)) ([09a2648](https://github.com/forcedotcom/source-deploy-retrieve/commit/09a2648d50bd269e26424f79e08b245798f6baf5))
+
+
+
+## [9.3.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.3.1...9.3.2) (2023-07-06)
+
+
+
+## [9.3.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.3.0...9.3.1) (2023-07-05)
+
+
+### Bug Fixes
+
+* add AQLMUFInterval StandardValueSet ([#1030](https://github.com/forcedotcom/source-deploy-retrieve/issues/1030)) ([3ab3931](https://github.com/forcedotcom/source-deploy-retrieve/commit/3ab39312be8e75b412a87984e0fdad3ec00ec2ce))
+
+
+
+# [9.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.8...9.3.0) (2023-06-27)
+
+
+### Features
+
+* allowUnsetEnvVariable ([#1019](https://github.com/forcedotcom/source-deploy-retrieve/issues/1019)) ([0eeaccf](https://github.com/forcedotcom/source-deploy-retrieve/commit/0eeaccfb1ed05ad742a1472cc025fe2c4cabee5e))
+
+
+
+## [9.2.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.7...9.2.8) (2023-06-26)
+
+
+### Bug Fixes
+
+* Sm/connection-resolve-skip-missing-components ([#1021](https://github.com/forcedotcom/source-deploy-retrieve/issues/1021)) ([ad4068d](https://github.com/forcedotcom/source-deploy-retrieve/commit/ad4068de9890291b9c3c72691dfd362e116758c0))
+
+
+
+## [9.2.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.6...9.2.7) (2023-06-26)
+
+
+### Bug Fixes
+
+* restore missing error actions ([#1020](https://github.com/forcedotcom/source-deploy-retrieve/issues/1020)) ([dbbeb21](https://github.com/forcedotcom/source-deploy-retrieve/commit/dbbeb21dcb4a5f04234fe276c436359523a4c904))
+
+
+
+## [9.2.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.5...9.2.6) (2023-06-25)
+
+
+### Bug Fixes
+
+* **deps:** bump fast-xml-parser from 4.2.4 to 4.2.5 ([#1024](https://github.com/forcedotcom/source-deploy-retrieve/issues/1024)) ([93427a0](https://github.com/forcedotcom/source-deploy-retrieve/commit/93427a05489fbadb236415015cdf2b80c39603e8))
+
+
+
+## [9.2.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.4...9.2.5) (2023-06-21)
+
+
+### Bug Fixes
+
+* update metadata names for mobile settings and policies ([#1013](https://github.com/forcedotcom/source-deploy-retrieve/issues/1013)) ([4b6a8ff](https://github.com/forcedotcom/source-deploy-retrieve/commit/4b6a8ffbed3927b94e1e67af3b46837f94620a01))
+
+
+
+## [9.2.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.3...9.2.4) (2023-06-19)
+
+
+### Bug Fixes
+
+* better output for mystery component ([#1018](https://github.com/forcedotcom/source-deploy-retrieve/issues/1018)) ([bcc2c4d](https://github.com/forcedotcom/source-deploy-retrieve/commit/bcc2c4dbbd87ffcb5daddbe8a1036d1dc6efceab))
+
+
+
+## [9.2.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.2...9.2.3) (2023-06-18)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 4.3.0 to 4.3.1 ([#1016](https://github.com/forcedotcom/source-deploy-retrieve/issues/1016)) ([24b99e4](https://github.com/forcedotcom/source-deploy-retrieve/commit/24b99e45fdd4998f319804c446b62ce0f9d83eff))
+
+
+
+## [9.2.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.1...9.2.2) (2023-06-12)
+
+
+### Bug Fixes
+
+* bump versions of fast-xml-parser and proxy-agent ([#1006](https://github.com/forcedotcom/source-deploy-retrieve/issues/1006)) ([cf67f0d](https://github.com/forcedotcom/source-deploy-retrieve/commit/cf67f0d4fa2aad99eb02b02a6ebd2d4e126dce86))
+
+
+
+## [9.2.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.2.0...9.2.1) (2023-06-06)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 4.1.0 to 4.1.2 ([#1004](https://github.com/forcedotcom/source-deploy-retrieve/issues/1004)) ([4ec56e7](https://github.com/forcedotcom/source-deploy-retrieve/commit/4ec56e7b527ec2736aa7478e9448e9fc964a6a7a))
+
+
+
+# [9.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.1.0...9.2.0) (2023-06-05)
+
+
+### Features
+
+* validate manifests ([#996](https://github.com/forcedotcom/source-deploy-retrieve/issues/996)) ([173aba7](https://github.com/forcedotcom/source-deploy-retrieve/commit/173aba737afc4ed19a31b8af97802b54b07cb572))
+
+
+
 # [9.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/8.6.0...9.1.0) (2023-05-31)
 
 

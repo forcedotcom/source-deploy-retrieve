@@ -1,31 +1,27 @@
 {
   "wireit": {
     "compile": {
-      "command": "tsc -p . --pretty --incremental",
-      "files": [
-        "src/**/*.ts",
-        "**/tsconfig.json",
-        "messages/**",
-        "src/registry/metadataRegistry.json",
-        "src/registry/stdValueSetRegistry.json"
-      ],
+      "command": "ttsc -p . --pretty --incremental",
+      "files": ["src/**/*.ts", "src/registry/*.json", "**/tsconfig.json", "messages/**"],
       "output": ["lib/**", "*.tsbuildinfo"],
       "clean": "if-file-deleted"
     },
+    "test": {
+      "dependencies": ["test:only", "test:compile", "test:registry-validation"]
+    },
     "test:only": {
-      "command": "nyc mocha \"test/**/*.test.ts\"",
+      "command": "nyc mocha \"test/**/*.test.ts\" --exclude \"test/registry/registryValidation.test.ts\"",
       "env": {
         "FORCE_COLOR": "2"
       },
       "files": [
         "test/**/*.ts",
         "src/**/*.ts",
+        "src/registry/*.json",
         "**/tsconfig.json",
         ".mocha*",
         "!*.nut.ts",
-        ".nycrc",
-        "src/registry/metadataRegistry.json",
-        "src/registry/stdValueSetRegistry.json"
+        ".nycrc"
       ],
       "output": []
     }

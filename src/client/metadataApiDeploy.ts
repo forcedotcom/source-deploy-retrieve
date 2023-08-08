@@ -45,49 +45,43 @@ export class DeployResult implements MetadataTransferResult {
   public getFileResponses(): FileResponse[] {
     // this involves FS operations, so only perform once!
     if (!this.fileResponses) {
-      // TODO: Log when messages can't be mapped to components
-      const responseMessages = this.getDeployMessages(this.response);
-      const fileResponses: FileResponse[] = [];
-
       if (this.components) {
-        for (const deployedComponent of this.components.getSourceComponents()) {
-          if (deployedComponent.type.children) {
-            for (const child of deployedComponent.getChildren()) {
-              const childMessages = responseMessages.get(this.key(child));
-              if (childMessages) {
-                fileResponses.push(...this.createResponses(child, childMessages));
-              }
-            }
-          }
-          const componentMessages = responseMessages.get(this.key(deployedComponent));
-          if (componentMessages) {
-            fileResponses.push(...this.createResponses(deployedComponent, componentMessages));
-          }
-        }
+        // TODO: Log when messages can't be mapped to components
+        const responseMessages = this.getDeployMessages(this.response);
 
-        this.fileResponses = fileResponses.concat(this.deleteNotFoundToFileResponses(responseMessages));
+        this.fileResponses = (this.components.getSourceComponents().toArray() ?? [])
+          .flatMap((deployedComponent) =>
+            this.createResponses(deployedComponent, responseMessages.get(this.key(deployedComponent)) ?? []).concat(
+              deployedComponent.type.children
+                ? deployedComponent.getChildren().flatMap((child) => {
+                    const childMessages = responseMessages.get(this.key(child));
+                    return childMessages ? this.createResponses(child, childMessages) : [];
+                  })
+                : []
+            )
+          )
+          .concat(this.deleteNotFoundToFileResponses(responseMessages));
       } else {
         // if no this.components, this was likely a metadata format deploy so we need to process
         // the componentSuccesses and componentFailures instead.
-        const successes = ensureArray(this.response.details?.componentSuccesses);
-        const failures = ensureArray(this.response.details?.componentFailures);
-        for (const component of [...successes, ...failures]) {
-          if (component.fullName === 'package.xml') continue;
-          const baseResponse: Partial<FileResponse> = {
-            fullName: component.fullName,
-            type: component.componentType,
-            state: getState(component),
-            filePath: component.fileName.replace(`zip${sep}`, ''),
-          };
-
-          if (baseResponse.state === ComponentStatus.Failed) {
-            baseResponse.error = component.problem;
-            baseResponse.problemType = component.problemType;
-          }
-
-          fileResponses.push(baseResponse as FileResponse);
-        }
-        this.fileResponses = fileResponses;
+        this.fileResponses = ensureArray(this.response.details?.componentSuccesses)
+          .concat(ensureArray(this.response.details?.componentFailures))
+          .filter((c) => c.fullName !== 'package.xml')
+          .map(
+            (c) =>
+              ({
+                ...(getState(c) === ComponentStatus.Failed
+                  ? {
+                      error: c.problem,
+                      problemType: c.problemType,
+                    }
+                  : {}),
+                fullName: c.fullName,
+                type: c.componentType,
+                state: getState(c),
+                filePath: c.fileName.replace(`zip${sep}`, ''),
+              } as FileResponse)
+          );
       }
     }
     return this.fileResponses;

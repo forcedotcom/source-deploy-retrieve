@@ -5,15 +5,19 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { PollingClient, StatusResult, Connection, Logger } from '@salesforce/core';
-import { Duration, ensureArray } from '@salesforce/kit';
 import { retry, NotRetryableError, RetryError } from 'ts-retry-promise';
+import { PollingClient, StatusResult, Connection, Logger, Messages, Lifecycle, SfError } from '@salesforce/core';
+import { Duration, ensureArray } from '@salesforce/kit';
 import { ensurePlainObject, ensureString, isPlainObject } from '@salesforce/ts-types';
 import { RegistryAccess, registry as defaultRegistry, MetadataType } from '../registry';
 import { standardValueSet } from '../registry/standardvalueset';
 import { FileProperties, StdValueSetRecord, ListMetadataQuery } from '../client/types';
 import { extName } from '../utils';
 import { MetadataComponent } from './types';
+
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
+
 export interface ResolveConnectionResult {
   components: MetadataComponent[];
   apiVersion: string;
@@ -39,24 +43,41 @@ export class ConnectionResolver {
     const Aggregator: Array<Partial<FileProperties>> = [];
     const childrenPromises: Array<Promise<FileProperties[]>> = [];
     const componentTypes: Set<MetadataType> = new Set();
-
+    const lifecycle = Lifecycle.getInstance();
     const componentPromises: Array<Promise<FileProperties[]>> = [];
     for (const type of Object.values(defaultRegistry.types)) {
       componentPromises.push(this.listMembers({ type: type.name }));
     }
-    (await Promise.all(componentPromises)).map((componentResult) => {
+    (await Promise.all(componentPromises)).map(async (componentResult) => {
       for (const component of componentResult) {
         let componentType: MetadataType;
         if (typeof component.type === 'string' && component.type.length) {
           componentType = this.registry.getTypeByName(component.type);
-        } else {
+        } else if (typeof component.fileName === 'string' && component.fileName.length) {
           // fix { type: { "$": { "xsi:nil": "true" } } }
           componentType = ensurePlainObject(
             this.registry.getTypeBySuffix(extName(component.fileName)),
             `No type found for ${component.fileName} when matching by suffix.  Check the file extension.`
           );
           component.type = componentType.name;
+        } else if (component.type === undefined && component.fileName === undefined) {
+          // has no type and has no filename!  Warn and skip that component.
+          // eslint-disable-next-line no-await-in-loop
+          await Promise.all([
+            lifecycle.emitWarning(messages.getMessage('error_could_not_infer_type', [component.fullName])),
+            lifecycle.emitTelemetry({ TypeInferenceError: component, from: 'ConnectionResolver' }),
+          ]);
+          continue;
+        } else {
+          // it DOES have all the important info but we couldn't resolve it.
+          // has no type and has no filename!
+          throw new SfError(
+            messages.getMessage('error_could_not_infer_type', [component.fullName]),
+            'TypeInferenceError',
+            [messages.getMessage('suggest_type_more_suggestions')]
+          );
         }
+
         Aggregator.push(component);
         componentTypes.add(componentType);
         const folderContentType = componentType.folderContentType;

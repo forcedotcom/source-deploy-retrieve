@@ -1414,11 +1414,11 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
-    "extlclntappmobileconfigurablepolicies": {
-      "id": "extlclntappmobileconfigurablepolicies",
-      "name": "ExtlClntAppMobileConfigurablePolicies",
-      "suffix": "ecaMobPlcy",
-      "directoryName": "extlClntAppMobilePolicies",
+    "extlclntappsampleconfigurablepolicies": {
+      "id": "extlclntappsampleconfigurablepolicies",
+      "name": "ExtlClntAppSampleConfigurablePolicies",
+      "suffix": "ecaSmplPlcy",
+      "directoryName": "extlClntAppSamplePolicies",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -1430,11 +1430,11 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
-    "extlclntappmobilesettings": {
-      "id": "extlclntappmobilesettings",
-      "name": "ExtlClntAppMobileSettings",
-      "suffix": "ecaMob",
-      "directoryName": "extlClntAppMobileSettings",
+    "extlclntappsamplesettings": {
+      "id": "extlclntappsamplesettings",
+      "name": "ExtlClntAppSampleSettings",
+      "suffix": "ecaSmpl",
+      "directoryName": "extlClntAppSampleSettings",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -1443,6 +1443,22 @@
       "name": "ExtlClntAppGlobalOauthSettings",
       "suffix": "ecaGlblOauth",
       "directoryName": "extlClntAppGlobalOauthSets",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "extlclntappmobileconfigurablepolicies": {
+      "id": "extlclntappmobileconfigurablepolicies",
+      "name": "ExtlClntAppMobileConfigurablePolicies",
+      "suffix": "ecaMobilePlcy",
+      "directoryName": "extlClntAppMobilePolicies",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "extlclntappmobilesettings": {
+      "id": "extlclntappmobilesettings",
+      "name": "ExtlClntAppMobileSettings",
+      "suffix": "ecaMobile",
+      "directoryName": "extlClntAppMobileSettings",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -3467,6 +3483,46 @@
       "directoryName": "useraccesspolicies",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "messagingchannel": {
+      "id": "messagingchannel",
+      "name": "MessagingChannel",
+      "suffix": "messagingChannel",
+      "directoryName": "messagingChannels",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "serviceprocess": {
+      "id": "serviceprocess",
+      "name": "ServiceProcess",
+      "suffix": "serviceprocess",
+      "directoryName": "serviceprocess",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "processflowmigration": {
+      "id": "processflowmigration",
+      "name": "ProcessFlowMigration",
+      "suffix": "processflowmigration",
+      "directoryName": "processflowmigrations",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "searchcriteriaconfiguration": {
+      "id": "searchcriteriaconfiguration",
+      "name": "SearchCriteriaConfiguration",
+      "suffix": "SearchCriteriaConfigurationSetting",
+      "directoryName": "SearchCriteriaConfigurationSettings",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "searchableobjdatasyncinfo": {
+      "id": "searchableobjdatasyncinfo",
+      "name": "SearchableObjDataSyncInfo",
+      "suffix": "SearchableObjDataSyncInfoSetting",
+      "directoryName": "SearchableObjDataSyncInfoSettings",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3621,10 +3677,12 @@
     "connectedApp": "connectedapp",
     "eca": "externalclientapplication",
     "ecaOauthPlcy": "extlclntappoauthconfigurablepolicies",
-    "ecaMobPlcy": "extlclntappmobileconfigurablepolicies",
-    "ecaMob": "extlclntappmobilesettings",
+    "ecaSmplPlcy": "extlclntappsampleconfigurablepolicies",
+    "ecaSmpl": "extlclntappsamplesettings",
     "ecaOauth": "extlclntappoauthsettings",
     "ecaGlblOauth": "extlclntappglobaloauthsettings",
+    "ecaMobilePlcy": "extlclntappmobileconfigurablepolicies",
+    "ecaMobile": "extlclntappmobilesettings",
     "appMenu": "appmenu",
     "delegateGroup": "delegategroup",
     "network": "network",
@@ -3846,7 +3904,12 @@
     "personAccountOwnerPowerUser": "personaccountownerpoweruser",
     "pipelineInspMetricConfig": "pipelineinspmetricconfig",
     "productSpecificationTypeDefinition": "productspecificationtypedefinition",
-    "useraccesspolicy": "useraccesspolicy"
+    "useraccesspolicy": "useraccesspolicy",
+    "messagingChannel": "messagingchannel",
+    "serviceprocess": "serviceprocess",
+    "processflowmigration": "processflowmigration",
+    "SearchableObjDataSyncInfoSetting": "searchableobjdatasyncinfo",
+    "SearchCriteriaConfigurationSetting": "searchcriteriaconfiguration"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

@@ -65,7 +65,7 @@ describe('MatchingContentSourceAdapter', () => {
     assert.throws(
       () => adapter.getComponent(path),
       SfError,
-      messages.getMessage('error_no_source_ignore', [type.name, path])
+      messages.createError('noSourceIgnore', [type.name, path]).message
     );
     testUtil.restore();
   });

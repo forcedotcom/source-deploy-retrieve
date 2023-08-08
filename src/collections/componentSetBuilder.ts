@@ -99,23 +99,43 @@ export class ComponentSetBuilder {
         const registry = new RegistryAccess();
         const compSetFilter = new ComponentSet();
         componentSet ??= new ComponentSet();
+        const directoryPaths = metadata.directoryPaths;
 
         // Build a Set of metadata entries
         metadata.metadataEntries.forEach((rawEntry) => {
           const splitEntry = rawEntry.split(':').map((entry) => entry.trim());
           // The registry will throw if it doesn't know what this type is.
           registry.getTypeByName(splitEntry[0]);
-          const entry = {
-            type: splitEntry[0],
-            fullName: splitEntry.length === 1 ? '*' : splitEntry[1],
-          };
-          // Add to the filtered ComponentSet for resolved source paths,
-          // and the unfiltered ComponentSet to build the correct manifest.
-          compSetFilter.add(entry);
-          componentSet?.add(entry);
+          // this '.*' is a surprisingly valid way to specify a metadata, especially a DEB :sigh:
+          // https://github.com/salesforcecli/plugin-deploy-retrieve/blob/main/test/nuts/digitalExperienceBundle/constants.ts#L140
+          // because we're filtering from what we have locally, this won't allow you to retrieve new metadata (on the server only) using the partial wildcard
+          // to do that, you'd need check the size of the CS created below, see if it's 0, and then query the org for the metadata that matches the regex
+          // but building a CS from a metadata argument doesn't require an org, so we can't do that here
+          if (splitEntry[1]?.includes('*') && splitEntry[1]?.length > 1 && !splitEntry[1].includes('.*')) {
+            // get all components of the type, and then filter by the regex of the fullName
+            ComponentSet.fromSource({
+              fsPaths: directoryPaths,
+              include: new ComponentSet([{ type: splitEntry[0], fullName: ComponentSet.WILDCARD }]),
+            })
+              .getSourceComponents()
+              .toArray()
+              .filter((cs) => Boolean(cs.fullName.match(new RegExp(splitEntry[1]))))
+              .map((match) => {
+                compSetFilter.add(match);
+                componentSet?.add(match);
+              });
+          } else {
+            const entry = {
+              type: splitEntry[0],
+              fullName: splitEntry.length === 1 ? '*' : splitEntry[1],
+            };
+            // Add to the filtered ComponentSet for resolved source paths,
+            // and the unfiltered ComponentSet to build the correct manifest.
+            compSetFilter.add(entry);
+            componentSet?.add(entry);
+          }
         });
 
-        const directoryPaths = metadata.directoryPaths;
         logger.debug(`Searching for matching metadata in directories: ${directoryPaths.join(', ')}`);
         const resolvedComponents = ComponentSet.fromSource({ fsPaths: directoryPaths, include: compSetFilter });
         componentSet.forceIgnoredPaths = resolvedComponents.forceIgnoredPaths;
@@ -155,7 +175,7 @@ export class ComponentSetBuilder {
 
     // This is only for debug output of matched files based on the command flags.
     // It will log up to 20 file matches.
-    if (logger.debugEnabled && componentSet?.size) {
+    if (logger.shouldLog(20) && componentSet?.size) {
       logger.debug(`Matching metadata files (${componentSet.size}):`);
       const components = componentSet.getSourceComponents().toArray();
       for (let i = 0; i < componentSet.size; i++) {

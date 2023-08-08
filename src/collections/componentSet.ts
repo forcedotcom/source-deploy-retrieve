@@ -547,6 +547,13 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       return true;
     }
 
+    // This will decode the key of the component before comparing, which can solve some edge cases
+    // in component fullNames such as Layouts. See: https://github.com/forcedotcom/cli/issues/1683
+    const isDirectlyInSetDecoded = this.components.has(decodeURI(simpleKey(component)));
+    if (isDirectlyInSetDecoded) {
+      return true;
+    }
+
     const wildcardMember: ComponentLike = {
       fullName: ComponentSet.WILDCARD,
       type: typeof component.type === 'object' ? component.type.name : component.type,

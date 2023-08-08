@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1691418042627,
+  "lastUpdate": 1691530127640,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -15371,6 +15371,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 23989,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cristina.canizales@salesforce.com",
+            "name": "CristiCanizales",
+            "username": "CristiCanizales"
+          },
+          "committer": {
+            "email": "cristina.canizales@salesforce.com",
+            "name": "CristiCanizales",
+            "username": "CristiCanizales"
+          },
+          "distinct": true,
+          "id": "bdb42999925755506e9bc13591c6ca212100f490",
+          "message": "Merge branch 'main' into cristi/update-stdValueSetRegistry",
+          "timestamp": "2023-08-08T18:16:26-03:00",
+          "tree_id": "a9934598c603a47cf2d693897967856f2bebdb89",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/bdb42999925755506e9bc13591c6ca212100f490"
+        },
+        "date": 1691530113798,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 428,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 7481,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 6085,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 7080,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 865,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 10983,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 7745,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 8488,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1449,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 17860,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 15101,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 15476,
             "unit": "ms"
           }
         ]

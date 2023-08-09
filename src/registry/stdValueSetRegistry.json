@@ -123,6 +123,7 @@
     "ReturnOrderLineItemRepaymentMethod",
     "ReturnOrderShipmentType",
     "ReturnOrderStatus",
+    "SalesAgreementStatus",
     "SalesTeamRole",
     "Salutation",
     "ServiceAppointmentStatus",

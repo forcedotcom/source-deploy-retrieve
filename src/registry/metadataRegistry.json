@@ -3912,8 +3912,8 @@
     "SearchCriteriaConfigurationSetting": "searchcriteriaconfiguration"
   },
   "strictDirectoryNames": {
-    "experiences": "experiencebundle",
     "aura": "auradefinitionbundle",
+    "experiences": "experiencebundle",
     "lwc": "lightningcomponentbundle",
     "documents": "document",
     "waveTemplates": "wavetemplatebundle",

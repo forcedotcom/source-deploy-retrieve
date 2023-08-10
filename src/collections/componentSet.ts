@@ -533,7 +533,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    *
    * A pair is considered present in the set if one of the following criteria is met:
    *
-   * - The pair is directly in the set
+   * - The pair is directly in the set, matching the component key "as is" or decoded.
    * - A wildcard component with the same `type` as the pair
    * - If a parent is attached to the pair and the parent is directly in the set
    * - If a parent is attached to the pair, and a wildcard component's `type` matches the parent's `type`
@@ -542,15 +542,10 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @returns `true` if the component is in the set
    */
   public has(component: ComponentLike): boolean {
-    const isDirectlyInSet = this.components.has(simpleKey(component));
-    if (isDirectlyInSet) {
-      return true;
-    }
-
-    // This will decode the key of the component before comparing, which can solve some edge cases
+    // Compare the component key as is and decoded. Decoding the key before comparing can solve some edge cases
     // in component fullNames such as Layouts. See: https://github.com/forcedotcom/cli/issues/1683
-    const isDirectlyInSetDecoded = this.components.has(decodeURI(simpleKey(component)));
-    if (isDirectlyInSetDecoded) {
+    const key = simpleKey(component);
+    if (this.components.has(key) || this.components.has(decodeURI(key))) {
       return true;
     }
 

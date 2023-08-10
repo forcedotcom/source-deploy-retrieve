@@ -175,7 +175,7 @@ export class ComponentSetBuilder {
 
     // This is only for debug output of matched files based on the command flags.
     // It will log up to 20 file matches.
-    if (logger.debugEnabled && componentSet?.size) {
+    if (logger.shouldLog(20) && componentSet?.size) {
       logger.debug(`Matching metadata files (${componentSet.size}):`);
       const components = componentSet.getSourceComponents().toArray();
       for (let i = 0; i < componentSet.size; i++) {

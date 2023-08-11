@@ -545,7 +545,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     // Compare the component key as is and decoded. Decoding the key before comparing can solve some edge cases
     // in component fullNames such as Layouts. See: https://github.com/forcedotcom/cli/issues/1683
     const key = simpleKey(component);
-    if (this.components.has(key) || this.components.has(decodeURI(key))) {
+    if (this.components.has(key) || this.components.has(decodeURIComponent(key))) {
       return true;
     }
 

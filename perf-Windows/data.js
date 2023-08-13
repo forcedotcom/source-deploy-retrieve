@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1691848858178,
+  "lastUpdate": 1691895254718,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -16127,6 +16127,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 17196,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "92e08a2a0f50ca13696516f0047d3b8905929b01",
+          "message": "chore(dev-deps): bump eslint-plugin-sf-plugin from 1.16.1 to 1.16.2\n\nBumps [eslint-plugin-sf-plugin](https://github.com/salesforcecli/eslint-plugin-sf-plugin) from 1.16.1 to 1.16.2.\n- [Release notes](https://github.com/salesforcecli/eslint-plugin-sf-plugin/releases)\n- [Changelog](https://github.com/salesforcecli/eslint-plugin-sf-plugin/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/salesforcecli/eslint-plugin-sf-plugin/compare/1.16.1...1.16.2)\n\n---\nupdated-dependencies:\n- dependency-name: eslint-plugin-sf-plugin\n  dependency-type: direct:development\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2023-08-13T02:46:23Z",
+          "tree_id": "6e28be0cf0baf996e27e1c65c175b666c096f002",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/92e08a2a0f50ca13696516f0047d3b8905929b01"
+        },
+        "date": 1691895242250,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 444,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 8243,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 7066,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 7793,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 866,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 12304,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 10063,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 9468,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1552,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 20559,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 15869,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 16978,
             "unit": "ms"
           }
         ]

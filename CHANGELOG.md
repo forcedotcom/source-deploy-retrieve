@@ -1,3 +1,12 @@
+## [9.7.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.3...9.7.4) (2023-08-14)
+
+
+### Bug Fixes
+
+* match using decoded component keys in ComponentSet.has() ([#1070](https://github.com/forcedotcom/source-deploy-retrieve/issues/1070)) ([a113e91](https://github.com/forcedotcom/source-deploy-retrieve/commit/a113e91867d39db5c9525336864d825d3a3e05b1))
+
+
+
 ## [9.7.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.2...9.7.3) (2023-08-10)
 
 

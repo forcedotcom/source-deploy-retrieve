@@ -1240,6 +1240,26 @@ describe('ComponentSet', () => {
 
       expect(set.has(child)).to.be.true;
     });
+
+    it('should correctly evaluate membership with decoded MetadataComponent key', () => {
+      const set = new ComponentSet(undefined, registryAccess);
+      const decodedComponent: MetadataComponent = {
+        fullName: 'Broker__c-v1.1 Broker Layout',
+        type: registry.types.layout,
+      };
+      const encodedComponent: MetadataComponent = {
+        fullName: 'Broker__c-v1%2E1 Broker Layout',
+        type: registry.types.layout,
+      };
+
+      expect(set.has(decodedComponent)).to.be.false;
+      expect(set.has(encodedComponent)).to.be.false;
+
+      set.add(decodedComponent);
+
+      expect(set.has(encodedComponent)).to.be.true;
+      expect(set.has(decodedComponent)).to.be.true;
+    });
   });
 
   it('should calculate size correctly', () => {

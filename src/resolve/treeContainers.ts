@@ -9,6 +9,7 @@ import { join, dirname, basename, normalize, sep } from 'path';
 import { Readable } from 'stream';
 import { statSync, existsSync, readdirSync, createReadStream, readFileSync } from 'graceful-fs';
 import * as unzipper from 'unzipper';
+import * as JSZip from 'jszip';
 import { Messages, SfError } from '@salesforce/core';
 import { baseName, parseMetadataXml } from '../utils';
 import { SourcePath } from '../common';
@@ -124,6 +125,40 @@ interface ZipEntry {
   path: string;
   stream?: () => unzipper.Entry;
   buffer?: () => Promise<Buffer>;
+}
+
+export class ZipTreeContainer2 extends TreeContainer {
+
+  private zip: JSZip;
+
+  private constructor(zip: JSZip) {
+    super();
+    this.zip = zip;
+  }
+
+  public static async create(buffer: Buffer): Promise<ZipTreeContainer2> {
+    const zip = await JSZip.loadAsync(buffer);
+    return new ZipTreeContainer2(zip);
+  }
+
+  public exists(fsPath: string): boolean {
+    return !!this.zip.file(fsPath);
+  }
+
+  public isDirectory(fsPath: string): boolean {
+    const jsZipObj = this.zip.file(fsPath);
+    if (jsZipObj) {
+      return jsZipObj.dir;
+    }
+    throw new SfError(messages.getMessage('error_path_not_found', [fsPath]), 'LibraryError');
+  }
+
+  public readDirectory(fsPath: string): string[] {
+    if (this.isDirectory(fsPath)) {
+      return Object.keys(this.zip.files).filter(filePath => dirname(filePath) === fsPath);
+    }
+    throw new SfError(messages.getMessage('error_expected_directory_path', [fsPath]), 'LibraryError');
+  }
 }
 
 /**

@@ -25,7 +25,7 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^5.2.0",
+    "@salesforce/core": "^5.2.1",
     "@salesforce/kit": "^3.0.9",
     "@salesforce/ts-types": "^2.0.6",
     "fast-levenshtein": "^3.0.0",

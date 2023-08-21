@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1692521421776,
+  "lastUpdate": 1692632719576,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -17471,6 +17471,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 13698,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "asamantaray@salesforce.com",
+            "name": "Abinash Samantaray",
+            "username": "asam-sf"
+          },
+          "committer": {
+            "email": "asamantaray@salesforce.com",
+            "name": "Abinash Samantaray",
+            "username": "asam-sf"
+          },
+          "distinct": true,
+          "id": "1e6d6d98051feb875a5e76b46296de7ec55c94cb",
+          "message": "fix: @W-12612279 Adding FundraisingConfig to metadata registry\n\n\tmodified:   src/registry/metadataRegistry.json",
+          "timestamp": "2023-08-21T01:38:15-07:00",
+          "tree_id": "222d63759b91cbedc6ca982a8666740bebeb882d",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/1e6d6d98051feb875a5e76b46296de7ec55c94cb"
+        },
+        "date": 1692632715738,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 269,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 5519,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 4795,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 4203,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 627,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 9763,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 8090,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 4963,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 854,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 13853,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 13760,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 8995,
             "unit": "ms"
           }
         ]

@@ -34,6 +34,7 @@ import {
   PackageTypeMembers,
 } from './types';
 import { LazyCollection } from './lazyCollection';
+import { DecodeableMap } from './decodeableMap';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -73,14 +74,14 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public forceIgnoredPaths?: Set<string>;
   private logger: Logger;
   private registry: RegistryAccess;
-  private components = new Map<string, Map<string, SourceComponent>>();
+  private components = new DecodeableMap<string, DecodeableMap<string, SourceComponent>>();
 
   // internal component maps used by this.getObject() when building manifests.
   private destructiveComponents = {
-    [DestructiveChangesType.PRE]: new Map<string, Map<string, SourceComponent>>(),
-    [DestructiveChangesType.POST]: new Map<string, Map<string, SourceComponent>>(),
+    [DestructiveChangesType.PRE]: new DecodeableMap<string, DecodeableMap<string, SourceComponent>>(),
+    [DestructiveChangesType.POST]: new DecodeableMap<string, DecodeableMap<string, SourceComponent>>(),
   };
-  private manifestComponents = new Map<string, Map<string, SourceComponent>>();
+  private manifestComponents = new DecodeableMap<string, DecodeableMap<string, SourceComponent>>();
 
   private destructiveChangesType = DestructiveChangesType.POST;
 
@@ -112,11 +113,11 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     return size;
   }
 
-  public get destructiveChangesPre(): Map<string, Map<string, SourceComponent>> {
+  public get destructiveChangesPre(): DecodeableMap<string, DecodeableMap<string, SourceComponent>> {
     return this.destructiveComponents[DestructiveChangesType.PRE];
   }
 
-  public get destructiveChangesPost(): Map<string, Map<string, SourceComponent>> {
+  public get destructiveChangesPost(): DecodeableMap<string, DecodeableMap<string, SourceComponent>> {
     return this.destructiveComponents[DestructiveChangesType.POST];
   }
 
@@ -485,7 +486,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public add(component: ComponentLike, deletionType?: DestructiveChangesType): void {
     const key = simpleKey(component);
     if (!this.components.has(key)) {
-      this.components.set(key, new Map<string, SourceComponent>());
+      this.components.set(key, new DecodeableMap<string, SourceComponent>());
     }
 
     if (!(component instanceof SourceComponent)) {
@@ -502,12 +503,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       this.logger.debug(`Marking component for delete: ${component.fullName}`);
       const deletions = this.destructiveComponents[deletionType];
       if (!deletions.has(key)) {
-        deletions.set(key, new Map<string, SourceComponent>());
+        deletions.set(key, new DecodeableMap<string, SourceComponent>());
       }
       deletions.get(key)?.set(sourceKey(component), component);
     } else {
       if (!this.manifestComponents.has(key)) {
-        this.manifestComponents.set(key, new Map<string, SourceComponent>());
+        this.manifestComponents.set(key, new DecodeableMap<string, SourceComponent>());
       }
       this.manifestComponents.get(key)?.set(sourceKey(component), component);
     }
@@ -542,10 +543,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @returns `true` if the component is in the set
    */
   public has(component: ComponentLike): boolean {
-    // Compare the component key as is and decoded. Decoding the key before comparing can solve some edge cases
-    // in component fullNames such as Layouts. See: https://github.com/forcedotcom/cli/issues/1683
     const key = simpleKey(component);
-    if (this.components.has(key) || this.components.has(decodeURIComponent(key))) {
+    if (this.components.has(key)) {
       return true;
     }
 

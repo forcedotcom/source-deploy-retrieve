@@ -3523,6 +3523,14 @@
       "directoryName": "SearchableObjDataSyncInfoSettings",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "fundraisingconfig": {
+      "id": "fundraisingconfig",
+      "name": "FundraisingConfig",
+      "suffix": "fundraisingConfig",
+      "directoryName": "fundraisingConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3909,7 +3917,8 @@
     "serviceprocess": "serviceprocess",
     "processflowmigration": "processflowmigration",
     "SearchableObjDataSyncInfoSetting": "searchableobjdatasyncinfo",
-    "SearchCriteriaConfigurationSetting": "searchcriteriaconfiguration"
+    "SearchCriteriaConfigurationSetting": "searchcriteriaconfiguration",
+    "fundraisingConfig": "fundraisingconfig"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

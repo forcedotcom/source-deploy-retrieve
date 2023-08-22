@@ -3523,6 +3523,14 @@
       "directoryName": "SearchableObjDataSyncInfoSettings",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "searchcustomization": {
+      "id": "searchcustomization",
+      "name": "SearchCustomization",
+      "suffix": "SearchCustomization",
+      "directoryName": "SearchCustomizations",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3909,7 +3917,8 @@
     "serviceprocess": "serviceprocess",
     "processflowmigration": "processflowmigration",
     "SearchableObjDataSyncInfoSetting": "searchableobjdatasyncinfo",
-    "SearchCriteriaConfigurationSetting": "searchcriteriaconfiguration"
+    "SearchCriteriaConfigurationSetting": "searchcriteriaconfiguration",
+    "SearchCustomization": "searchcustomization"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

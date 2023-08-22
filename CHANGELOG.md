@@ -1,3 +1,12 @@
+## [9.7.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.6...9.7.7) (2023-08-22)
+
+
+### Bug Fixes
+
+* @W-12612279 Adding FundraisingConfig to metadata registry ([#1085](https://github.com/forcedotcom/source-deploy-retrieve/issues/1085)) ([e5c23d8](https://github.com/forcedotcom/source-deploy-retrieve/commit/e5c23d8f33a3cf7d864a49bcdb7d6f820ee83a04))
+
+
+
 ## [9.7.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.5...9.7.6) (2023-08-20)
 
 

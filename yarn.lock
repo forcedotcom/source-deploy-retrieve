@@ -550,7 +550,7 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.7.0"
 
-"@salesforce/core@^5.2.0", "@salesforce/core@^5.2.1":
+"@salesforce/core@^5.2.1":
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-5.2.1.tgz#299bddae7d0705c773b194be8994e5730735e2b4"
   integrity sha512-QMx11A0KA/Vl+Ckmz83cw+fiUCMOmsUD8CA3987wAkfJOgxtqyhT4R1R8tj7ad8flQydKUyL3o4UE/2u82tXOw==
@@ -2193,12 +2193,12 @@ eslint-plugin-prefer-arrow@^1.2.1:
   resolved "https://registry.yarnpkg.com/eslint-plugin-prefer-arrow/-/eslint-plugin-prefer-arrow-1.2.3.tgz#e7fbb3fa4cd84ff1015b9c51ad86550e55041041"
   integrity sha512-J9I5PKCOJretVuiZRGvPQxCbllxGAV/viI20JO3LYblAodofBxyMnZAJ+WGeClHgANnSJberTNoFWWjrWKBuXQ==
 
-eslint-plugin-sf-plugin@^1.16.2:
-  version "1.16.2"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-sf-plugin/-/eslint-plugin-sf-plugin-1.16.2.tgz#20679e164e0ddad6f55bd2f492681e8eaaddb481"
-  integrity sha512-iOsbU5pdqzbvbV8p/4uHE920JWhRL3M393qoZDeNFjUo6YAP6DucrnQf+k8soijx79Y0ZtDxKuXveYVYSjVNUA==
+eslint-plugin-sf-plugin@^1.16.3:
+  version "1.16.3"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-sf-plugin/-/eslint-plugin-sf-plugin-1.16.3.tgz#789295e02811943fccd598a5c48b1bfb6064b687"
+  integrity sha512-3TN0bpjSKEXrN2Wfc/Rp8jMa7gAnjMxdKV0txYxoJwGXTZlpjTcEmJW96htpWqMwJJZ/Ytwi+aVarO94QsON1Q==
   dependencies:
-    "@salesforce/core" "^5.2.0"
+    "@salesforce/core" "^5.2.1"
     "@typescript-eslint/utils" "^5.59.11"
 
 eslint-scope@^5.1.1:

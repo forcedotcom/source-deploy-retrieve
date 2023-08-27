@@ -55,7 +55,7 @@
     "@types/unzipper": "^0.10.5",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
-    "chai": "^4.3.7",
+    "chai": "^4.3.8",
     "deep-equal-in-any-order": "^1.1.19",
     "deepmerge": "^4.3.1",
     "eslint": "^8.48.0",

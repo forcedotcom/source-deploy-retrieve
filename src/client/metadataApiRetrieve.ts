@@ -306,6 +306,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
         fsPaths: [pkg.zipTreeLocation],
         registry,
         tree,
+        applyIgnore: false,
       })
         .getSourceComponents()
         .toArray();

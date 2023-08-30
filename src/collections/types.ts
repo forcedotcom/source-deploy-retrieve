@@ -41,6 +41,10 @@ export interface FromSourceOptions extends OptionalTreeRegistryOptions {
    * File paths or directory paths of deleted components, i.e., destructive changes.
    */
   fsDeletePaths?: string[];
+  /**
+   * Use the .forceignore file in the project.
+   */
+  applyIgnore?: boolean;
 }
 
 export interface FromManifestOptions extends OptionalTreeRegistryOptions {

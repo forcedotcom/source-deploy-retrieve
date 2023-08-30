@@ -154,9 +154,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         return { fsPaths: [given] };
       }
     };
-    const { fsPaths, registry, tree, include, fsDeletePaths = [] } = parseFromSourceInputs(input);
+    const { fsPaths, registry, tree, include, applyIgnore, fsDeletePaths = [] } = parseFromSourceInputs(input);
 
-    const resolver = new MetadataResolver(registry, tree);
+    const resolver = new MetadataResolver(registry, tree, applyIgnore);
     const set = new ComponentSet([], registry);
     const buildComponents = (paths: string[], destructiveType?: DestructiveChangesType): void => {
       for (const path of paths) {

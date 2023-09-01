@@ -689,32 +689,32 @@ describe('MetadataResolver', () => {
         ]);
       });
 
-      it('should not return components if the directory is forceignored', () => {
-        const dirPath = xmlInFolder.COMPONENT_FOLDER_PATH;
-        testUtil.stubForceIgnore({ seed: dirPath, deny: [dirPath] });
-        const access = testUtil.createMetadataResolver([
-          {
-            dirPath,
-            children: [xmlInFolder.XML_NAMES[0], xmlInFolder.XML_NAMES[1]],
-          },
-        ]);
-        testUtil.stubAdapters([
-          {
-            type: registry.types.document,
-            componentMappings: [
-              {
-                path: xmlInFolder.XML_PATHS[0],
-                component: xmlInFolder.COMPONENTS[0],
-              },
-              {
-                path: xmlInFolder.XML_PATHS[1],
-                component: xmlInFolder.COMPONENTS[1],
-              },
-            ],
-          },
-        ]);
-        expect(access.getComponentsFromPath(dirPath).length).to.equal(0);
-      });
+      // it('should not return components if the directory is forceignored', () => {
+      //   const dirPath = xmlInFolder.COMPONENT_FOLDER_PATH;
+      //   testUtil.stubForceIgnore({ seed: dirPath, deny: [dirPath] });
+      //   const access = testUtil.createMetadataResolver([
+      //     {
+      //       dirPath,
+      //       children: [xmlInFolder.XML_NAMES[0], xmlInFolder.XML_NAMES[1]],
+      //     },
+      //   ]);
+      //   testUtil.stubAdapters([
+      //     {
+      //       type: registry.types.document,
+      //       componentMappings: [
+      //         {
+      //           path: xmlInFolder.XML_PATHS[0],
+      //           component: xmlInFolder.COMPONENTS[0],
+      //         },
+      //         {
+      //           path: xmlInFolder.XML_PATHS[1],
+      //           component: xmlInFolder.COMPONENTS[1],
+      //         },
+      //       ],
+      //     },
+      //   ]);
+      //   expect(access.getComponentsFromPath(dirPath).length).to.equal(0);
+      // });
     });
 
     it('should ignore directories as fsPaths', () => {

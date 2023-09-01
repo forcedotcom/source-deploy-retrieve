@@ -71,7 +71,7 @@ export class MetadataResolver {
     const components: SourceComponent[] = [];
     const ignore = new Set();
 
-    if (this.forceIgnore?.denies(dir)) {
+    if (this.tree instanceof NodeFSTreeContainer && this.forceIgnore?.denies(dir)) {
       return components;
     }
 

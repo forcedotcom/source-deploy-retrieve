@@ -3531,6 +3531,13 @@
       "directoryName": "fundraisingConfigs",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "pricingrecipe": {
+      "id": "pricingrecipe",
+      "name": "PricingRecipe",
+      "suffix": "pricingRecipe",
+      "directoryName": "pricingRecipes",
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3918,7 +3925,8 @@
     "processflowmigration": "processflowmigration",
     "SearchableObjDataSyncInfoSetting": "searchableobjdatasyncinfo",
     "SearchCriteriaConfigurationSetting": "searchcriteriaconfiguration",
-    "fundraisingConfig": "fundraisingconfig"
+    "fundraisingConfig": "fundraisingconfig",
+    "pricingRecipe": "pricingrecipe"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

@@ -1,3 +1,12 @@
+## [9.7.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.8...9.7.9) (2023-09-05)
+
+
+### Reverts
+
+* Revert "feat!: component set components are now DecodableMaps (#1080)" (#1101) ([615c477](https://github.com/forcedotcom/source-deploy-retrieve/commit/615c477f777d71742c5a741e3852b3f780bf44c0)), closes [#1080](https://github.com/forcedotcom/source-deploy-retrieve/issues/1080) [#1101](https://github.com/forcedotcom/source-deploy-retrieve/issues/1101)
+
+
+
 ## [9.7.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.7...9.7.8) (2023-08-27)
 
 

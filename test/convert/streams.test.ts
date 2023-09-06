@@ -549,7 +549,7 @@ describe('Streams', () => {
         TestType: {
           [XML_NS_KEY]: XML_NS_URL,
           foo: '3 results,&#160;and 1 other',
-          many: [{ test: 'first' }, { test: 'second' }],
+          many: [{ test: 'first&#1601st' }, { test: 'second&#1602nd' }],
         },
       };
       const jsToXml = new streams.JsToXml(xmlObj);
@@ -557,10 +557,10 @@ describe('Streams', () => {
       expectedBody += `<TestType xmlns="${XML_NS_URL}">\n`;
       expectedBody += '    <foo>3 results,&#160;and 1 other</foo>\n';
       expectedBody += '    <many>\n';
-      expectedBody += '        <test>first</test>\n';
+      expectedBody += '        <test>first&#1601st</test>\n';
       expectedBody += '    </many>\n';
       expectedBody += '    <many>\n';
-      expectedBody += '        <test>second</test>\n';
+      expectedBody += '        <test>second&#1602nd</test>\n';
       expectedBody += '    </many>\n';
       expectedBody += '</TestType>\n';
 

@@ -544,6 +544,29 @@ describe('Streams', () => {
       expect(jsToXml.read().toString()).to.be.equal(expectedBody);
     });
 
+    it('should transform js with html encoding to xml', () => {
+      const xmlObj = {
+        TestType: {
+          [XML_NS_KEY]: XML_NS_URL,
+          foo: '3 results,&#160;and 1 other',
+          many: [{ test: 'first&#1601st' }, { test: 'second&#1602nd' }],
+        },
+      };
+      const jsToXml = new streams.JsToXml(xmlObj);
+      let expectedBody = XML_DECL;
+      expectedBody += `<TestType xmlns="${XML_NS_URL}">\n`;
+      expectedBody += '    <foo>3 results,&#160;and 1 other</foo>\n';
+      expectedBody += '    <many>\n';
+      expectedBody += '        <test>first&#1601st</test>\n';
+      expectedBody += '    </many>\n';
+      expectedBody += '    <many>\n';
+      expectedBody += '        <test>second&#1602nd</test>\n';
+      expectedBody += '    </many>\n';
+      expectedBody += '</TestType>\n';
+
+      expect(jsToXml.read().toString()).to.be.equal(expectedBody);
+    });
+
     it('should transform js object with cdata to xml string', () => {
       const xmlObj = {
         TestType: {

@@ -232,6 +232,7 @@ export abstract class MetadataTransfer<
         // tolerate intermittent network errors upto retry limit
         if (
           [
+            'ENOMEM',
             'ETIMEDOUT',
             'ENOTFOUND',
             'ECONNRESET',

@@ -550,10 +550,10 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.7.1"
 
-"@salesforce/core@^5.2.1", "@salesforce/core@^5.2.5":
-  version "5.2.6"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-5.2.6.tgz#e3a563410f46c116fad0b6c999ea47fb7ec96a9c"
-  integrity sha512-DIUg+RfdnJggbw0YU2mI7JZ7RjqAcWmr/TCUp4VQ9bWQ4T/xAkwnYd3TMle8fPBYVJxGbyvQo22SGcXLBCf7xA==
+"@salesforce/core@^5.2.1", "@salesforce/core@^5.2.5", "@salesforce/core@^5.2.7":
+  version "5.2.7"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-5.2.7.tgz#aa9c3a92e14abe12695e06f326e072d49e2b958c"
+  integrity sha512-3tRWuPCSx4oTyD00fJUuxhulPMtaEF0BVvNvYcm38Axj/0WeLGOw7CFvoTupmmcCALHJFnxB1Kl20jDvrbB/7w==
   dependencies:
     "@salesforce/kit" "^3.0.11"
     "@salesforce/schemas" "^1.6.0"
@@ -572,7 +572,7 @@
     pino-pretty "^10.2.0"
     proper-lockfile "^4.1.2"
     semver "^7.5.4"
-    ts-retry-promise "^0.7.0"
+    ts-retry-promise "^0.7.1"
 
 "@salesforce/dev-config@^4.0.1":
   version "4.0.1"
@@ -5276,7 +5276,7 @@ ts-node@^10.0.0, ts-node@^10.8.1, ts-node@^10.9.1:
     v8-compile-cache-lib "^3.0.1"
     yn "3.1.1"
 
-ts-retry-promise@^0.7.0, ts-retry-promise@^0.7.1:
+ts-retry-promise@^0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/ts-retry-promise/-/ts-retry-promise-0.7.1.tgz#176d6eee6415f07b6c7c286d3657355e284a6906"
   integrity sha512-NhHOCZ2AQORvH42hOPO5UZxShlcuiRtm7P2jIq2L2RY3PBxw2mLnUsEdHrIslVBFya1v5aZmrR55lWkzo13LrQ==

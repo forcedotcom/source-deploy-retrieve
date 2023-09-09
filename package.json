@@ -36,7 +36,7 @@
     "jszip": "^3.10.1",
     "mime": "2.6.0",
     "minimatch": "^5.1.6",
-    "proxy-agent": "^6.3.0",
+    "proxy-agent": "^6.3.1",
     "unzipper": "0.10.14"
   },
   "devDependencies": {

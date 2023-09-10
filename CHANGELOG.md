@@ -1,3 +1,7 @@
+## [9.7.13](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.12...9.7.13) (2023-09-10)
+
+
+
 ## [9.7.12](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.11...9.7.12) (2023-09-10)
 
 

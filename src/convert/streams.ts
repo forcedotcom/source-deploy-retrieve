@@ -255,7 +255,6 @@ export class JsToXml extends Readable {
       indentBy: '    ',
       ignoreAttributes: false,
       cdataPropName: '__cdata',
-      processEntities: false,
     });
 
     const builtXml = String(builder.build(this.xmlObject));

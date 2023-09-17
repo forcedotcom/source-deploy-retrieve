@@ -535,12 +535,12 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@salesforce/cli-plugins-testkit@^4.3.5":
-  version "4.3.5"
-  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-4.3.5.tgz#3efd4433c57f51dcf0acbcda4337cf530c5b3b33"
-  integrity sha512-pP9PpyLtwXKj3jvkdVGpuxOAgqML+JcTVmyjuORyiOg4BLTQVGnju/e1GXirasNrIA3Wh1DLVymFDqN4HAc32w==
+"@salesforce/cli-plugins-testkit@^4.3.6":
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-4.3.6.tgz#7d2258d34b1033af81e9531bd4613d2683327eb1"
+  integrity sha512-gcwXoMA6PtxzXL/Gd5XxlCpiV6Mbb8MehdAWWlmTb7ExfElHqvSPAwZEbim32ACcfJeqVVK0Y1CbRdbmNMNUYw==
   dependencies:
-    "@salesforce/core" "^5.2.7"
+    "@salesforce/core" "^5.2.9"
     "@salesforce/kit" "^3.0.11"
     "@salesforce/ts-types" "^2.0.6"
     "@types/shelljs" "^0.8.12"

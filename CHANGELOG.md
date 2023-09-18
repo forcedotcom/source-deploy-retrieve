@@ -1,3 +1,9 @@
+## [9.7.15](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.14...9.7.15) (2023-09-18)
+
+### Bug Fixes
+
+- handle opt-in force-ignore (directories fix) ([8c619a8](https://github.com/forcedotcom/source-deploy-retrieve/commit/8c619a82d9b517c58611333d1461d2803481d028))
+
 ## [9.7.14](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.13...9.7.14) (2023-09-17)
 
 ### Bug Fixes

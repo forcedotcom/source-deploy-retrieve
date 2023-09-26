@@ -1,3 +1,9 @@
+## [9.7.17](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.16...9.7.17) (2023-09-26)
+
+### Bug Fixes
+
+- new coverage locations ([#1119](https://github.com/forcedotcom/source-deploy-retrieve/issues/1119)) ([9e6e076](https://github.com/forcedotcom/source-deploy-retrieve/commit/9e6e076520332812c922388b836be28af26ec6b5))
+
 ## [9.7.16](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.15...9.7.16) (2023-09-24)
 
 ### Bug Fixes

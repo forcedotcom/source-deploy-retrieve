@@ -1,3 +1,9 @@
+## [9.7.18](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.17...9.7.18) (2023-09-27)
+
+### Bug Fixes
+
+- **mdTypes:** add ConversationChannelDefinition support ([f82fa77](https://github.com/forcedotcom/source-deploy-retrieve/commit/f82fa77269b645ed1c25cdccc845f7699b93ad14))
+
 ## [9.7.17](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.16...9.7.17) (2023-09-26)
 
 ### Bug Fixes

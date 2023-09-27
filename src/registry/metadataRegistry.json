@@ -2758,6 +2758,14 @@
       "directoryName": "ConversationVendorInformation",
       "strictDirectoryName": false
     },
+    "conversationchanneldefinition": {
+      "id": "conversationchanneldefinition",
+      "name": "ConversationChannelDefinition",
+      "suffix": "ConversationChannelDefinition",
+      "directoryName": "conversationChannelDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "conversationvendorfielddef": {
       "id": "conversationvendorfielddef",
       "name": "ConversationVendorFieldDef",
@@ -3837,6 +3845,7 @@
     "ChannelObjectLinkingRule": "channelobjectlinkingrule",
     "ConversationVendorInformation": "conversationvendorinfo",
     "ConversationVendorFieldDefinition": "conversationvendorfielddef",
+    "ConversationChannelDefinition": "conversationchanneldefinition",
     "schedulingRule": "schedulingrule",
     "userAuthCertificate": "userauthcertificate",
     "forecastingTypeSource": "forecastingtypesource",

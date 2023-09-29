@@ -1,3 +1,9 @@
+## [9.7.19](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.18...9.7.19) (2023-09-29)
+
+### Bug Fixes
+
+- metadata type support for ExtlClntAppConfigurablePolicies ([9aeb1cc](https://github.com/forcedotcom/source-deploy-retrieve/commit/9aeb1ccf5ac520a37b074cd3911d996fe048f8e7))
+
 ## [9.7.18](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.17...9.7.18) (2023-09-27)
 
 ### Bug Fixes

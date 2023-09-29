@@ -29,6 +29,8 @@ jobs:
           timeout_minutes: 60
       - uses: salesforcecli/github-workflows/.github/actions/yarnInstallWithRetries@main
       - run: yarn test:nuts:scale
+        env:
+          SF_LOG_LEVEL: fatal
 
       # Run `github-action-benchmark` action
       - name: Store benchmark result

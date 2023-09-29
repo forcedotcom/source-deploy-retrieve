@@ -26,7 +26,6 @@ jobs:
       - uses: nick-fields/retry@943e742917ac94714d2f408a0e8320f2d1fcafcd
         name: add CLI as global dependency
         with:
-          max_attempts: ${{ inputs.retries }}
           command: npm install @salesforce/cli@nightly -g
           timeout_minutes: 60
       - uses: salesforcecli/github-workflows/.github/actions/yarnInstallWithRetries@main

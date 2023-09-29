@@ -25,7 +25,7 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^5.2.10",
+    "@salesforce/core": "^5.3.1",
     "@salesforce/kit": "^3.0.11",
     "@salesforce/ts-types": "^2.0.7",
     "fast-levenshtein": "^3.0.0",
@@ -40,7 +40,7 @@
     "unzipper": "0.10.14"
   },
   "devDependencies": {
-    "@salesforce/cli-plugins-testkit": "^4.3.6",
+    "@salesforce/cli-plugins-testkit": "^4.4.2",
     "@salesforce/dev-config": "^4.0.1",
     "@salesforce/dev-scripts": "^5.10.0",
     "@salesforce/prettier-config": "^0.0.3",

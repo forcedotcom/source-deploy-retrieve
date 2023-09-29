@@ -28,7 +28,6 @@ describe(`handles ${classCount.toLocaleString()} classes (${(
 
   before(async () => {
     session = await TestSession.create({
-      sessionDir: 'lotsOfClasses',
       project: {
         name: 'lotsOfClasses',
       },

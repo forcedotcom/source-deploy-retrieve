@@ -29,9 +29,9 @@ jobs:
           timeout_minutes: 60
       - uses: salesforcecli/github-workflows/.github/actions/yarnInstallWithRetries@main
       - run: |
-          yarn mocha \"test/nuts/scale/eda.nut.ts\ --timeout 500000
-          yarn mocha \"test/nuts/scale/lotsOfClasses.nut.ts\ --timeout 500000
-          yarn mocha \"test/nuts/scale/lotsOfClassesOneDir.nut.ts\ --timeout 500000
+          yarn mocha test/nuts/scale/eda.nut.ts --timeout 500000
+          yarn mocha test/nuts/scale/lotsOfClasses.nut.ts --timeout 500000
+          yarn mocha test/nuts/scale/lotsOfClassesOneDir.nut.ts --timeout 500000
 
       # Run `github-action-benchmark` action
       - name: Store benchmark result

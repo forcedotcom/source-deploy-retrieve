@@ -28,8 +28,9 @@ describe(`handles ${classCount.toLocaleString()} classes (${(
 
   before(async () => {
     session = await TestSession.create({
+      sessionDir: 'lotsOfClassesOneDir',
       project: {
-        name: 'lotsOfClasses',
+        name: 'lotsOfClassesOneDir',
       },
       devhubAuthStrategy: 'NONE',
     });

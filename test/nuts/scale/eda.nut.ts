@@ -8,6 +8,7 @@
 import * as path from 'path';
 import { performance } from 'node:perf_hooks';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
+import { sleep } from '@salesforce/kit';
 import { MetadataResolver } from '../../../src';
 import { MetadataConverter } from '../../../src';
 import { ComponentSetBuilder } from '../../../src';
@@ -29,6 +30,7 @@ describe('tests using EDA', () => {
 
   after(async () => {
     await recordPerf(testName, performance);
+    await sleep(10000);
     await session?.clean();
   });
 

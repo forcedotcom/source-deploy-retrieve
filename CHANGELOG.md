@@ -1,3 +1,9 @@
+## [9.7.20](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.19...9.7.20) (2023-10-01)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 5.2.10 to 5.3.1 ([#1123](https://github.com/forcedotcom/source-deploy-retrieve/issues/1123)) ([85c247b](https://github.com/forcedotcom/source-deploy-retrieve/commit/85c247b5d772a50e1470d2b2001c23f4c6e8178a))
+
 ## [9.7.19](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.18...9.7.19) (2023-09-29)
 
 ### Bug Fixes

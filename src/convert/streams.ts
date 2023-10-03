@@ -258,8 +258,20 @@ export class JsToXml extends Readable {
     });
 
     const builtXml = String(builder.build(this.xmlObject));
-    const xmlContent = XML_DECL.concat(builtXml);
+    const xmlContent = XML_DECL.concat(handleSpecialEntities(builtXml));
     this.push(xmlContent);
     this.push(null);
   }
 }
+
+/**
+ * use this function to handle special html entities.
+ * XmlBuilder will otherwise replace ex: `&#160;` with `'&amp;#160;'` (escape the &)
+ * This is a separate function to allow for future handling of other special entities
+ *
+ * See https://github.com/NaturalIntelligence/fast-xml-parser/blob/fa5a7339a5ae2ca4aea8a256179b82464dbf510e/docs/v4/5.Entities.md
+ * The parser can call addEntities to support more, but the Builder does not have that option.
+ * You also can't use Builder.tagValueProcessor to use this function
+ * because the escaping of `&` happens AFTER that is called.
+ * */
+const handleSpecialEntities = (xml: string): string => xml.replaceAll('&amp;#160;', '&#160;');

@@ -1,3 +1,9 @@
+## [9.7.21](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.20...9.7.21) (2023-10-03)
+
+### Bug Fixes
+
+- one-off handling of 1 html entity ([#1128](https://github.com/forcedotcom/source-deploy-retrieve/issues/1128)) ([544bccb](https://github.com/forcedotcom/source-deploy-retrieve/commit/544bccbeba8af94233ee102906ac5959403869de))
+
 ## [9.7.20](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.19...9.7.20) (2023-10-01)
 
 ### Bug Fixes

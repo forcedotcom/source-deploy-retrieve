@@ -3554,6 +3554,14 @@
       "suffix": "pricingRecipe",
       "directoryName": "pricingRecipes",
       "strictDirectoryName": false
+    },
+    "eventrelayconfig": {
+      "id": "eventrelayconfig",
+      "name": "EventRelayConfig",
+      "suffix": "eventRelay",
+      "directoryName": "eventRelays",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3944,7 +3952,8 @@
     "SearchableObjDataSyncInfoSetting": "searchableobjdatasyncinfo",
     "SearchCriteriaConfigurationSetting": "searchcriteriaconfiguration",
     "fundraisingConfig": "fundraisingconfig",
-    "pricingRecipe": "pricingrecipe"
+    "pricingRecipe": "pricingrecipe",
+    "eventRelay": "eventrelayconfig"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

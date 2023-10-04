@@ -1,3 +1,9 @@
+## [9.7.22](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.21...9.7.22) (2023-10-04)
+
+### Bug Fixes
+
+- support metadata type EventRelayConfig ([#1129](https://github.com/forcedotcom/source-deploy-retrieve/issues/1129)) ([d41afe8](https://github.com/forcedotcom/source-deploy-retrieve/commit/d41afe875bdcbaa4d8a67b1ec7d5fec2e1acd398))
+
 ## [9.7.21](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.20...9.7.21) (2023-10-03)
 
 ### Bug Fixes

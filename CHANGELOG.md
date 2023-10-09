@@ -1,3 +1,9 @@
+## [9.7.24](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.23...9.7.24) (2023-10-09)
+
+### Bug Fixes
+
+- include line/col numbers in deploy failures ([#1130](https://github.com/forcedotcom/source-deploy-retrieve/issues/1130)) ([dc6320f](https://github.com/forcedotcom/source-deploy-retrieve/commit/dc6320fca42c89e315e70c5332f896ca1985681b))
+
 ## [9.7.23](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.22...9.7.23) (2023-10-08)
 
 ### Bug Fixes

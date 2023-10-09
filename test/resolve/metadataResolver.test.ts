@@ -691,7 +691,10 @@ describe('MetadataResolver', () => {
 
       it('should not return components if the directory is forceignored', () => {
         const dirPath = xmlInFolder.COMPONENT_FOLDER_PATH;
-        testUtil.stubForceIgnore({ seed: dirPath, deny: [dirPath] });
+        testUtil.stubForceIgnore({
+          seed: dirPath,
+          deny: [join(dirPath, 'a.report-meta.xml'), join(dirPath, 'b.report-meta.xml')],
+        });
         const access = testUtil.createMetadataResolver([
           {
             dirPath,

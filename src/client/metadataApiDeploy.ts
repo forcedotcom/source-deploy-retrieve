@@ -74,6 +74,8 @@ export class DeployResult implements MetadataTransferResult {
                   ? {
                       error: c.problem,
                       problemType: c.problemType,
+                      columnNumber: c.columnNumber ? parseInt(c.columnNumber, 10) : undefined,
+                      lineNumber: c.lineNumber ? parseInt(c.lineNumber, 10) : undefined,
                     }
                   : {}),
                 fullName: c.fullName,

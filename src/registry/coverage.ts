@@ -31,8 +31,18 @@ export const getCurrentApiVersion = async (): Promise<number> =>
 export const getCoverage = async (apiVersion: number): Promise<CoverageObject> => {
   const results = await Promise.allSettled(
     // one of these will match the current version, but they differ during the release cycle
-    [44, 45, 46].map(async (na) =>
-      got(getProxiedOptions(`https://na${na}.test1.pc-rnd.salesforce.com/mdcoverage/api.jsp`)).json<CoverageObject>()
+    // references: https://confluence.internal.salesforce.com/pages/viewpage.action?pageId=194189303
+    [
+      { cell: 'sdb3', test: 1 },
+      { cell: 'ora3', test: 1 },
+      { cell: 'sdb6', test: 1 },
+      { cell: 'ora6', test: 1 },
+      { cell: 'ora8', test: 2 },
+      { cell: 'sdb14', test: 2 },
+    ].map(async ({ cell, test }) =>
+      got(
+        getProxiedOptions(`https://${cell}.test${test}.pc-rnd.pc-aws.salesforce.com/mdcoverage/api.jsp`)
+      ).json<CoverageObject>()
     )
   );
   for (const result of results) {

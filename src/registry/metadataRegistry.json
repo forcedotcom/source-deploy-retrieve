@@ -1414,6 +1414,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "extlclntappconfigurablepolicies": {
+      "id": "extlclntappconfigurablepolicies",
+      "name": "ExtlClntAppConfigurablePolicies",
+      "suffix": "ecaPlcy",
+      "directoryName": "extlClntAppPolicies",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "extlclntappsampleconfigurablepolicies": {
       "id": "extlclntappsampleconfigurablepolicies",
       "name": "ExtlClntAppSampleConfigurablePolicies",
@@ -2758,6 +2766,14 @@
       "directoryName": "ConversationVendorInformation",
       "strictDirectoryName": false
     },
+    "conversationchanneldefinition": {
+      "id": "conversationchanneldefinition",
+      "name": "ConversationChannelDefinition",
+      "suffix": "ConversationChannelDefinition",
+      "directoryName": "conversationChannelDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "conversationvendorfielddef": {
       "id": "conversationvendorfielddef",
       "name": "ConversationVendorFieldDef",
@@ -3523,6 +3539,29 @@
       "directoryName": "SearchableObjDataSyncInfoSettings",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "fundraisingconfig": {
+      "id": "fundraisingconfig",
+      "name": "FundraisingConfig",
+      "suffix": "fundraisingConfig",
+      "directoryName": "fundraisingConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "pricingrecipe": {
+      "id": "pricingrecipe",
+      "name": "PricingRecipe",
+      "suffix": "pricingRecipe",
+      "directoryName": "pricingRecipes",
+      "strictDirectoryName": false
+    },
+    "eventrelayconfig": {
+      "id": "eventrelayconfig",
+      "name": "EventRelayConfig",
+      "suffix": "eventRelay",
+      "directoryName": "eventRelays",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3677,6 +3716,7 @@
     "connectedApp": "connectedapp",
     "eca": "externalclientapplication",
     "ecaOauthPlcy": "extlclntappoauthconfigurablepolicies",
+    "ecaPlcy": "extlclntappconfigurablepolicies",
     "ecaSmplPlcy": "extlclntappsampleconfigurablepolicies",
     "ecaSmpl": "extlclntappsamplesettings",
     "ecaOauth": "extlclntappoauthsettings",
@@ -3822,6 +3862,7 @@
     "ChannelObjectLinkingRule": "channelobjectlinkingrule",
     "ConversationVendorInformation": "conversationvendorinfo",
     "ConversationVendorFieldDefinition": "conversationvendorfielddef",
+    "ConversationChannelDefinition": "conversationchanneldefinition",
     "schedulingRule": "schedulingrule",
     "userAuthCertificate": "userauthcertificate",
     "forecastingTypeSource": "forecastingtypesource",
@@ -3909,7 +3950,10 @@
     "serviceprocess": "serviceprocess",
     "processflowmigration": "processflowmigration",
     "SearchableObjDataSyncInfoSetting": "searchableobjdatasyncinfo",
-    "SearchCriteriaConfigurationSetting": "searchcriteriaconfiguration"
+    "SearchCriteriaConfigurationSetting": "searchcriteriaconfiguration",
+    "fundraisingConfig": "fundraisingconfig",
+    "pricingRecipe": "pricingrecipe",
+    "eventRelay": "eventrelayconfig"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

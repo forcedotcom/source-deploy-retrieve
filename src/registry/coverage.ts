@@ -35,10 +35,16 @@ export const getCoverage = async (apiVersion: number): Promise<CoverageObject> =
     [
       { cell: 'sdb3', test: 1 },
       { cell: 'ora3', test: 1 },
+      { cell: 'sdb4s', test: 1 },
       { cell: 'sdb6', test: 1 },
       { cell: 'ora6', test: 1 },
+      { cell: 'sdb10s', test: 1 },
+      { cell: 'ora7', test: 2 },
       { cell: 'ora8', test: 2 },
       { cell: 'sdb14', test: 2 },
+      { cell: 'sdb15', test: 2 },
+      { cell: 'sdb17s', test: 2 },
+      { cell: 'sdb18s', test: 2 },
     ].map(async ({ cell, test }) =>
       got(
         getProxiedOptions(`https://${cell}.test${test}.pc-rnd.pc-aws.salesforce.com/mdcoverage/api.jsp`)

@@ -56,5 +56,12 @@ export const getCoverage = async (apiVersion: number): Promise<CoverageObject> =
       return result.value;
     }
   }
-  throw new Error(`could not find coverage for api version ${apiVersion}`);
+
+  console.log(`WARNING: Could not find coverage for api version ${apiVersion}`);
+
+  return {
+    apiVersion,
+    release: '',
+    types: {},
+  };
 };

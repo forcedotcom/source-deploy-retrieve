@@ -585,11 +585,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 > **Note**
 > v60 coverage not available at this time
 
-v60 introduces the following new types. Here's their current level of support
-
-| Metadata Type | Support | Notes |
-| :------------ | :------ | :---- |
-
 ## Additional Types
 
 > The following types are supported by this library but not in the coverage reports for either version. These are typically

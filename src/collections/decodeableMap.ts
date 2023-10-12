@@ -24,7 +24,9 @@
 export class DecodeableMap<K extends string, V> extends Map<string, V> {
   // Internal map of decoded keys to encoded keys.
   // E.g., { 'foo-v1.3 Layout': 'foo-v1%2E3 Layout' }
-  // This is initialized in the `keysMap` getter.
+  // This is initialized in the `keysMap` getter due to the constructor calling
+  // `super` before the initialization happens, and it needs to be initialized
+  // before `this.set()` is called or `TypeErrors` will be thrown.
   private internalkeysMap!: Map<string, string>;
 
   private get keysMap(): Map<string, string> {

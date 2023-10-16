@@ -1,3 +1,9 @@
+## [9.7.25](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.24...9.7.25) (2023-10-16)
+
+### Bug Fixes
+
+- component set maps treat encoded and decoded keys as the same ([#1138](https://github.com/forcedotcom/source-deploy-retrieve/issues/1138)) ([7fe0bab](https://github.com/forcedotcom/source-deploy-retrieve/commit/7fe0bab1d6815afa3daad7ed0a3cac4f5808ea20))
+
 ## [9.7.24](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.23...9.7.24) (2023-10-09)
 
 ### Bug Fixes

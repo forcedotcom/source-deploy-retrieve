@@ -535,22 +535,22 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@salesforce/cli-plugins-testkit@^4.4.2":
-  version "4.4.2"
-  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-4.4.2.tgz#5b3a70906a032698303c220d768dec3608cfff9d"
-  integrity sha512-1KRhBKAT+3aAChlhvFenmfgsrhphpA9bzvg/J/gAB3O113iwLCuH5ipzo1SU+fR3wWogIPubOWX0U7JNoHDkIw==
+"@salesforce/cli-plugins-testkit@^4.4.7":
+  version "4.4.7"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-4.4.7.tgz#dced302efd8415b9f96df639755e279f13d6d220"
+  integrity sha512-QKxQEdYvV8hcqGfpxmYFtPBRwejLA7bhnbNNWYugEAKdsxXS12Zi1TyiUetzifQngVgvoxEDjcU+v8SRKCb96Q==
   dependencies:
-    "@salesforce/core" "^5.2.10"
-    "@salesforce/kit" "^3.0.11"
+    "@salesforce/core" "^5.3.5"
+    "@salesforce/kit" "^3.0.13"
     "@salesforce/ts-types" "^2.0.6"
-    "@types/shelljs" "^0.8.12"
+    "@types/shelljs" "^0.8.13"
     debug "^4.3.1"
     jszip "^3.10.1"
     shelljs "^0.8.4"
     strip-ansi "6.0.1"
     ts-retry-promise "^0.7.1"
 
-"@salesforce/core@^5.2.10", "@salesforce/core@^5.3.1", "@salesforce/core@^5.3.5":
+"@salesforce/core@^5.3.1", "@salesforce/core@^5.3.5":
   version "5.3.9"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-5.3.9.tgz#1c8f793ce1a0798c5c7767a5a370a5926d3298de"
   integrity sha512-/HX0PiXq3Sjc5eVJ0EaYetcDGsKU9O9Nj8jFGw5qYlITx8zogfxc0j07liH67tQXS1KbTysYoj/MQ2zbHSNkPA==
@@ -618,15 +618,7 @@
     typescript "^4.9.5"
     wireit "^0.9.5"
 
-"@salesforce/kit@^3.0.11":
-  version "3.0.11"
-  resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-3.0.11.tgz#d03160b658da9817c05e62479ca18283087a0fc0"
-  integrity sha512-ar44uFJfc/RCDWjz7LlrOtFCFHgNNUpddxe0eJCLqQuR/Xs3IlLZKuovWTx322Rzu+V9IIKrIdpz2IqA95/ClA==
-  dependencies:
-    "@salesforce/ts-types" "^2.0.7"
-    tslib "^2.6.2"
-
-"@salesforce/kit@^3.0.13":
+"@salesforce/kit@^3.0.11", "@salesforce/kit@^3.0.13":
   version "3.0.13"
   resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-3.0.13.tgz#10b47ad6e0e27c3a9f97eb6a5cdcfffa9ba1f163"
   integrity sha512-HLQ5L5bBi0tsMeH5ZHJAhHUpvNUNPQoNJt2O82Jf6C60GGsrlzwzQ5ONAHGNBgKSZ7HLr0UGL5xaA+hE9uOcgw==
@@ -885,7 +877,7 @@
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.5.3.tgz#9a726e116beb26c24f1ccd6850201e1246122e04"
   integrity sha512-OxepLK9EuNEIPxWNME+C6WwbRAOOI2o2BaQEGzz5Lu2e4Z5eDnEo+/aVEDMIXywoJitJ7xWd641wrGLZdtwRyw==
 
-"@types/shelljs@^0.8.12", "@types/shelljs@^0.8.13":
+"@types/shelljs@^0.8.13":
   version "0.8.13"
   resolved "https://registry.yarnpkg.com/@types/shelljs/-/shelljs-0.8.13.tgz#a94bf7f2b82b7cd9f4496bbe063c3adb0868a650"
   integrity sha512-++uMLOQSLlse1kCfEOwhgmHuaABZwinkylmUKCpvcEGZUov3TtM+gJZloSkW/W+9pEAEg/VBOwiSR05oqJsa5A==

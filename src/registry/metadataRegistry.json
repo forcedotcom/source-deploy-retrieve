@@ -985,7 +985,48 @@
       "suffix": "profile",
       "directoryName": "profiles",
       "inFolder": false,
-      "strictDirectoryName": false
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "default",
+        "transformer": "merged",
+        "transformerConfig": {
+          "rootNode": "Profile",
+          "defaultHandling": {
+            "strategy": "replace",
+            "deleteOnEmpty": false
+          },
+          "nodeHandling": {
+            "TODO": {
+              "strategy": "merge",
+              "mappingKey": "Add remaining profile permission types where they should be merged instead of replaced - set deleteOnEmpty"
+            },
+            "classAccesses": {
+              "strategy": "merge",
+              "mappingKey": "apexClass"
+            },
+            "fieldPermissions": {
+              "strategy": "merge",
+              "mappingKey": "field"
+            },
+            "loginIpRanges": {
+              "strategy": "replace",
+              "deleteOnEmpty": true
+            },
+            "objectPermissions": {
+              "strategy": "merge",
+              "mappingKey": "object"
+            },
+            "pageAccesses": {
+              "strategy": "merge",
+              "mappingKey": "apexPage"
+            },
+            "tabVisibilities": {
+              "strategy": "merge",
+              "mappingKey": "tab"
+            }
+          }
+        }
+      }
     },
     "permissionset": {
       "id": "permissionset",

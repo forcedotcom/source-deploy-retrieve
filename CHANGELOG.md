@@ -1,3 +1,9 @@
+## [9.7.27](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.26...9.7.27) (2023-10-17)
+
+### Bug Fixes
+
+- remove duplicates from file responses ([#1137](https://github.com/forcedotcom/source-deploy-retrieve/issues/1137)) ([a8b4ebf](https://github.com/forcedotcom/source-deploy-retrieve/commit/a8b4ebf14b9441c21bfc53514208e2b22c084ae3))
+
 ## [9.7.26](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.25...9.7.26) (2023-10-17)
 
 ### Bug Fixes

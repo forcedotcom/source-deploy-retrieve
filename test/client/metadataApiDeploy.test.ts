@@ -819,6 +819,63 @@ describe('MetadataApiDeploy', () => {
         expect(responses).to.deep.equal(expected);
       });
 
+      it('should not report duplicates component', () => {
+        const component = matchingContentFile.COMPONENT;
+        const deployedSet = new ComponentSet([component]);
+        const { fullName, type, content } = component;
+        const problem = 'something went wrong';
+        const problemType = 'Error';
+        const apiStatus: Partial<MetadataApiDeployStatus> = {
+          details: {
+            componentFailures: [
+              {
+                changed: 'false',
+                created: 'false',
+                deleted: 'false',
+                success: 'false',
+                lineNumber: '3',
+                columnNumber: '5',
+                problem,
+                problemType,
+                fullName,
+                fileName: component.content,
+                componentType: type.name,
+              } as DeployMessage,
+              {
+                changed: 'false',
+                created: 'false',
+                deleted: 'false',
+                success: 'false',
+                lineNumber: '3',
+                columnNumber: '5',
+                problem,
+                problemType,
+                fullName,
+                fileName: component.content,
+                componentType: type.name,
+              } as DeployMessage,
+            ],
+          },
+        };
+        const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+        const responses = result.getFileResponses();
+        const expected: FileResponse[] = [
+          {
+            fullName,
+            type: type.name,
+            state: ComponentStatus.Failed,
+            filePath: content,
+            error: `${problem} (3:5)`,
+            lineNumber: 3,
+            columnNumber: 5,
+            problemType,
+          },
+        ];
+
+        expect(responses).to.deep.equal(expected);
+      });
+
       it('should report children of deployed component', () => {
         const component = DECOMPOSED_COMPONENT;
         const deployedSet = new ComponentSet([component]);

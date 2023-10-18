@@ -89,7 +89,7 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
       const childTypeId = this.type.children?.suffixes?.[metaXml.suffix];
       const triggerIsAChild = !!childTypeId;
       const strategy = this.type.strategies?.decomposition;
-
+      // look at changing this
       if (triggerIsAChild && this.type.children && !this.type.children.types[childTypeId].unaddressableWithoutParent) {
         if (strategy === DecompositionStrategy.FolderPerType || isResolvingSource) {
           let parent = component;
@@ -115,6 +115,24 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
             this.forceIgnore
           );
         }
+      } else if (
+        triggerIsAChild &&
+        this.type.children &&
+        this.type.children.types[childTypeId].unaddressableWithoutParent
+      ) {
+        let parent = component;
+        if (!parent) {
+          parent = new SourceComponent(
+            {
+              name: baseName(pathToContent),
+              type: this.type.children.types[childTypeId],
+            },
+            this.tree,
+            this.forceIgnore
+          );
+        }
+        parent.content = pathToContent;
+        return parent;
       } else if (!component) {
         // This is most likely metadata found within a CustomObject folder that is not a
         // child type of CustomObject. E.g., Layout, SharingRules, ApexClass.

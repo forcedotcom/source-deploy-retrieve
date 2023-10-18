@@ -89,7 +89,6 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
       const childTypeId = this.type.children?.suffixes?.[metaXml.suffix];
       const triggerIsAChild = !!childTypeId;
       const strategy = this.type.strategies?.decomposition;
-      // look at changing this
       if (triggerIsAChild && this.type.children && !this.type.children.types[childTypeId].unaddressableWithoutParent) {
         if (strategy === DecompositionStrategy.FolderPerType || isResolvingSource) {
           let parent = component;
@@ -118,21 +117,21 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
       } else if (
         triggerIsAChild &&
         this.type.children &&
+        !component &&
         this.type.children.types[childTypeId].unaddressableWithoutParent
       ) {
-        let parent = component;
-        if (!parent) {
-          parent = new SourceComponent(
-            {
-              name: baseName(pathToContent),
-              type: this.type.children.types[childTypeId],
-            },
-            this.tree,
-            this.forceIgnore
-          );
-        }
-        parent.content = pathToContent;
-        return parent;
+        // if we're parsing an unaddressableWithoutParent type, and there's no component for it
+        // it's likely that the parent resides outside of the current package we're building
+        // e.g. a COT in a managed package, with the COFT in a different package
+        return new SourceComponent(
+          {
+            name: baseName(pathToContent),
+            type: this.type.children.types[childTypeId],
+            content: pathToContent,
+          },
+          this.tree,
+          this.forceIgnore
+        );
       } else if (!component) {
         // This is most likely metadata found within a CustomObject folder that is not a
         // child type of CustomObject. E.g., Layout, SharingRules, ApexClass.

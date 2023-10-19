@@ -1,6 +1,126 @@
+<<<<<<< HEAD
+
 ## [9.7.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.7...9.7.8) (2023-08-27)
 
 ### Bug Fixes
+
+=======
+
+## [9.7.27](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.26...9.7.27) (2023-10-17)
+
+### Bug Fixes
+
+- remove duplicates from file responses ([#1137](https://github.com/forcedotcom/source-deploy-retrieve/issues/1137)) ([a8b4ebf](https://github.com/forcedotcom/source-deploy-retrieve/commit/a8b4ebf14b9441c21bfc53514208e2b22c084ae3))
+
+## [9.7.26](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.25...9.7.26) (2023-10-17)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/kit from 3.0.11 to 3.0.13 ([#1141](https://github.com/forcedotcom/source-deploy-retrieve/issues/1141)) ([1963957](https://github.com/forcedotcom/source-deploy-retrieve/commit/1963957cd41dc982ceb3b19d4258d70796589976))
+
+## [9.7.25](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.24...9.7.25) (2023-10-16)
+
+### Bug Fixes
+
+- component set maps treat encoded and decoded keys as the same ([#1138](https://github.com/forcedotcom/source-deploy-retrieve/issues/1138)) ([7fe0bab](https://github.com/forcedotcom/source-deploy-retrieve/commit/7fe0bab1d6815afa3daad7ed0a3cac4f5808ea20))
+
+## [9.7.24](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.23...9.7.24) (2023-10-09)
+
+### Bug Fixes
+
+- include line/col numbers in deploy failures ([#1130](https://github.com/forcedotcom/source-deploy-retrieve/issues/1130)) ([dc6320f](https://github.com/forcedotcom/source-deploy-retrieve/commit/dc6320fca42c89e315e70c5332f896ca1985681b))
+
+## [9.7.23](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.22...9.7.23) (2023-10-08)
+
+### Bug Fixes
+
+- **deps:** bump fast-xml-parser from 4.2.7 to 4.3.2 ([#1134](https://github.com/forcedotcom/source-deploy-retrieve/issues/1134)) ([fdee418](https://github.com/forcedotcom/source-deploy-retrieve/commit/fdee41810a9cd053c192d5bd4ecc3d6dcb605271))
+
+## [9.7.22](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.21...9.7.22) (2023-10-04)
+
+### Bug Fixes
+
+- support metadata type EventRelayConfig ([#1129](https://github.com/forcedotcom/source-deploy-retrieve/issues/1129)) ([d41afe8](https://github.com/forcedotcom/source-deploy-retrieve/commit/d41afe875bdcbaa4d8a67b1ec7d5fec2e1acd398))
+
+## [9.7.21](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.20...9.7.21) (2023-10-03)
+
+### Bug Fixes
+
+- one-off handling of 1 html entity ([#1128](https://github.com/forcedotcom/source-deploy-retrieve/issues/1128)) ([544bccb](https://github.com/forcedotcom/source-deploy-retrieve/commit/544bccbeba8af94233ee102906ac5959403869de))
+
+## [9.7.20](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.19...9.7.20) (2023-10-01)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 5.2.10 to 5.3.1 ([#1123](https://github.com/forcedotcom/source-deploy-retrieve/issues/1123)) ([85c247b](https://github.com/forcedotcom/source-deploy-retrieve/commit/85c247b5d772a50e1470d2b2001c23f4c6e8178a))
+
+## [9.7.19](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.18...9.7.19) (2023-09-29)
+
+### Bug Fixes
+
+- metadata type support for ExtlClntAppConfigurablePolicies ([9aeb1cc](https://github.com/forcedotcom/source-deploy-retrieve/commit/9aeb1ccf5ac520a37b074cd3911d996fe048f8e7))
+
+## [9.7.18](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.17...9.7.18) (2023-09-27)
+
+### Bug Fixes
+
+- **mdTypes:** add ConversationChannelDefinition support ([f82fa77](https://github.com/forcedotcom/source-deploy-retrieve/commit/f82fa77269b645ed1c25cdccc845f7699b93ad14))
+
+## [9.7.17](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.16...9.7.17) (2023-09-26)
+
+### Bug Fixes
+
+- new coverage locations ([#1119](https://github.com/forcedotcom/source-deploy-retrieve/issues/1119)) ([9e6e076](https://github.com/forcedotcom/source-deploy-retrieve/commit/9e6e076520332812c922388b836be28af26ec6b5))
+
+## [9.7.16](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.15...9.7.16) (2023-09-24)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 5.2.9 to 5.2.10 ([#1116](https://github.com/forcedotcom/source-deploy-retrieve/issues/1116)) ([5cf4338](https://github.com/forcedotcom/source-deploy-retrieve/commit/5cf4338a4d59f56f855017176aa8ffc6ab575361))
+
+## [9.7.15](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.14...9.7.15) (2023-09-18)
+
+### Bug Fixes
+
+- handle opt-in force-ignore (directories fix) ([8c619a8](https://github.com/forcedotcom/source-deploy-retrieve/commit/8c619a82d9b517c58611333d1461d2803481d028))
+
+## [9.7.14](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.13...9.7.14) (2023-09-17)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 5.2.7 to 5.2.9 ([#1111](https://github.com/forcedotcom/source-deploy-retrieve/issues/1111)) ([da20fb4](https://github.com/forcedotcom/source-deploy-retrieve/commit/da20fb463b27514e4b05e563530282f17b835335))
+
+## [9.7.13](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.12...9.7.13) (2023-09-10)
+
+## [9.7.12](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.11...9.7.12) (2023-09-10)
+
+### Bug Fixes
+
+- **deps:** bump proxy-agent from 6.3.0 to 6.3.1 ([#1105](https://github.com/forcedotcom/source-deploy-retrieve/issues/1105)) ([268fa40](https://github.com/forcedotcom/source-deploy-retrieve/commit/268fa40ec5b8d159a397a72d6ad8bc975e46d797))
+
+## [9.7.11](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.10...9.7.11) (2023-09-10)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 5.2.6 to 5.2.7 ([#1107](https://github.com/forcedotcom/source-deploy-retrieve/issues/1107)) ([35b8850](https://github.com/forcedotcom/source-deploy-retrieve/commit/35b8850e25ad1197ed16e0b3d0d673f0af46b5ca))
+
+## [9.7.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.9...9.7.10) (2023-09-08)
+
+### Bug Fixes
+
+- retry server enomem ([#1103](https://github.com/forcedotcom/source-deploy-retrieve/issues/1103)) ([987c77d](https://github.com/forcedotcom/source-deploy-retrieve/commit/987c77dd63da7122120ce2febd9d9c9b15e869e0))
+
+## [9.7.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.8...9.7.9) (2023-09-05)
+
+### Reverts
+
+- Revert "feat!: component set components are now DecodableMaps (#1080)" (#1101) ([615c477](https://github.com/forcedotcom/source-deploy-retrieve/commit/615c477f777d71742c5a741e3852b3f780bf44c0)), closes [#1080](https://github.com/forcedotcom/source-deploy-retrieve/issues/1080) [#1101](https://github.com/forcedotcom/source-deploy-retrieve/issues/1101)
+
+## [9.7.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.7...9.7.8) (2023-08-27)
+
+### Bug Fixes
+
+> > > > > > > main
 
 - **deps:** bump @salesforce/kit from 3.0.9 to 3.0.11 ([#1090](https://github.com/forcedotcom/source-deploy-retrieve/issues/1090)) ([17c4ef0](https://github.com/forcedotcom/source-deploy-retrieve/commit/17c4ef059d9f9585613c2ee6707ffe8449358600))
 

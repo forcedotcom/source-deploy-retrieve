@@ -74,6 +74,8 @@ export class DeployResult implements MetadataTransferResult {
                   ? {
                       error: c.problem,
                       problemType: c.problemType,
+                      columnNumber: c.columnNumber ? parseInt(c.columnNumber, 10) : undefined,
+                      lineNumber: c.lineNumber ? parseInt(c.lineNumber, 10) : undefined,
                     }
                   : {}),
                 fullName: c.fullName,
@@ -84,7 +86,8 @@ export class DeployResult implements MetadataTransferResult {
           );
       }
     }
-    return this.fileResponses;
+    // removes duplicates from the file responses by parsing the object into a string, used as the key of the map
+    return [...new Map(this.fileResponses.map((v) => [JSON.stringify(v), v])).values()];
   }
 
   private createResponses(component: SourceComponent, responseMessages: DeployMessage[]): FileResponse[] {

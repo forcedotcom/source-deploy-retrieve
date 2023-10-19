@@ -123,10 +123,11 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
         // if we're parsing an unaddressableWithoutParent type, and there's no component for it
         // it's likely that the parent resides outside of the current package we're building
         // e.g. a COT in a managed package, with the COFT in a different package
+        // so we'll address the child as a parent
         return new SourceComponent(
           {
             name: baseName(pathToContent),
-            type: this.type.children.types[childTypeId],
+            type: this.type,
             content: pathToContent,
           },
           this.tree,

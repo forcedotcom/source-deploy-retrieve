@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 /* eslint-disable class-methods-use-this */
-import { join, dirname, basename, sep } from 'path';
+import { join, dirname, basename, normalize, sep } from 'path';
 import { Readable } from 'stream';
 import { statSync, existsSync, readdirSync, createReadStream, readFileSync } from 'graceful-fs';
 import * as JSZip from 'jszip';
@@ -191,12 +191,14 @@ export class ZipTreeContainer extends TreeContainer {
   }
 
   // Finds a matching entry in the zip by first comparing basenames, then dirnames.
+  // Note that zip files always use forward slash separators, so paths within the
+  // zip files are normalized for the OS file system before comparing.
   private match(fsPath: string): string | undefined {
     const fsPathBasename = basename(fsPath);
     const fsPathDirname = dirname(fsPath);
     return Object.keys(this.zip.files).find((f) => {
-      if (basename(f) === fsPathBasename || fsPath === '.') {
-        return dirname(f) === fsPathDirname;
+      if (normalize(basename(f)) === fsPathBasename || fsPath === '.') {
+        return normalize(dirname(f)) === fsPathDirname;
       }
     });
   }

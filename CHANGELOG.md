@@ -1,5 +1,3 @@
-### Bug Fixes
-
 ## [9.7.27](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.26...9.7.27) (2023-10-17)
 
 ### Bug Fixes

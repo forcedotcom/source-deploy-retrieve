@@ -187,11 +187,11 @@ export class MetadataApiRetrieve extends MetadataTransfer<
         if (this.options.unzip) {
           const zip = await JSZip.loadAsync(zipFileContents, { base64: true, createFolders: true });
           const extractPath = path.join(this.options.output, path.parse(name).name);
-          fs.mkdirSync(extractPath);
+          fs.mkdirSync(extractPath, { recursive: true });
           for (const filePath of Object.keys(zip.files)) {
             const zipObj = zip.file(filePath);
             if (!zipObj || zipObj?.dir) {
-              fs.mkdirSync(path.join(extractPath, filePath));
+              fs.mkdirSync(path.join(extractPath, filePath), { recursive: true });
             } else {
               // eslint-disable-next-line no-await-in-loop
               const content = await zipObj?.async('nodebuffer');

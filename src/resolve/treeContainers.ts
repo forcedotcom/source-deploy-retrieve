@@ -132,7 +132,7 @@ export class ZipTreeContainer extends TreeContainer {
   }
 
   public static async create(buffer: Buffer): Promise<ZipTreeContainer> {
-    const zip = await JSZip.loadAsync(buffer);
+    const zip = await JSZip.loadAsync(buffer, { createFolders: true });
     return new ZipTreeContainer(zip);
   }
 

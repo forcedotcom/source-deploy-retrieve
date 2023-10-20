@@ -236,7 +236,7 @@ const componentIsExpandedArchive = async (component: SourceComponent): Promise<b
 async function getStaticResourceZip(component: SourceComponent, content: string): Promise<JSZip> {
   try {
     const staticResourceZip = await component.tree.readFile(content);
-    return await JSZip.loadAsync(staticResourceZip);
+    return await JSZip.loadAsync(staticResourceZip, { createFolders: true });
   } catch (e) {
     throw new SfError(`Unable to open zip file ${content} for ${component.name} (${component.xml})`, 'BadZipFile', [
       'Check that your file really is a valid zip archive',

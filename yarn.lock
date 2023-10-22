@@ -535,15 +535,15 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@salesforce/cli-plugins-testkit@^4.4.7":
-  version "4.4.7"
-  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-4.4.7.tgz#dced302efd8415b9f96df639755e279f13d6d220"
-  integrity sha512-QKxQEdYvV8hcqGfpxmYFtPBRwejLA7bhnbNNWYugEAKdsxXS12Zi1TyiUetzifQngVgvoxEDjcU+v8SRKCb96Q==
+"@salesforce/cli-plugins-testkit@^4.4.10":
+  version "4.4.10"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-4.4.10.tgz#d71f1688c8455acb5eb6b9553beb4d52b08ba7b6"
+  integrity sha512-qFC/U49CNostlj9AGwEODCGmmXo+lF5Uqrp0y0l1yRmgDriti8oz01/CBtgww6Fx/HTRKmo4EO6bGsSBXqZpuw==
   dependencies:
-    "@salesforce/core" "^5.3.5"
+    "@salesforce/core" "^5.3.10"
     "@salesforce/kit" "^3.0.13"
     "@salesforce/ts-types" "^2.0.6"
-    "@types/shelljs" "^0.8.13"
+    "@types/shelljs" "^0.8.14"
     debug "^4.3.1"
     jszip "^3.10.1"
     shelljs "^0.8.4"
@@ -872,10 +872,10 @@
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.5.3.tgz#9a726e116beb26c24f1ccd6850201e1246122e04"
   integrity sha512-OxepLK9EuNEIPxWNME+C6WwbRAOOI2o2BaQEGzz5Lu2e4Z5eDnEo+/aVEDMIXywoJitJ7xWd641wrGLZdtwRyw==
 
-"@types/shelljs@^0.8.13":
-  version "0.8.13"
-  resolved "https://registry.yarnpkg.com/@types/shelljs/-/shelljs-0.8.13.tgz#a94bf7f2b82b7cd9f4496bbe063c3adb0868a650"
-  integrity sha512-++uMLOQSLlse1kCfEOwhgmHuaABZwinkylmUKCpvcEGZUov3TtM+gJZloSkW/W+9pEAEg/VBOwiSR05oqJsa5A==
+"@types/shelljs@^0.8.13", "@types/shelljs@^0.8.14":
+  version "0.8.14"
+  resolved "https://registry.yarnpkg.com/@types/shelljs/-/shelljs-0.8.14.tgz#87b8817b2397ffe97b86a4d844036ee0d2a1f0ca"
+  integrity sha512-eqKaGPi60riuxI9pUVeCT02EGo94Y6HT119h7w5bXSELsis6+JqzdEy6H/w2xXl881wcN3VDnb/D0WlgSety5w==
   dependencies:
     "@types/glob" "~7.2.0"
     "@types/node" "*"

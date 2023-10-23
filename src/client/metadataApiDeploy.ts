@@ -86,7 +86,8 @@ export class DeployResult implements MetadataTransferResult {
           );
       }
     }
-    return this.fileResponses;
+    // removes duplicates from the file responses by parsing the object into a string, used as the key of the map
+    return [...new Map(this.fileResponses.map((v) => [JSON.stringify(v), v])).values()];
   }
 
   private createResponses(component: SourceComponent, responseMessages: DeployMessage[]): FileResponse[] {

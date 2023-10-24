@@ -143,17 +143,17 @@ export class ZipTreeContainer extends TreeContainer {
   public isDirectory(fsPath: string): boolean {
     const resolvedPath = this.match(fsPath);
     if (resolvedPath) {
-      // JSZip can have directory entries or only file entries (with virtual directory entries)
-      const zipObj = this.zip.file(resolvedPath);
-      return zipObj?.dir === true || !zipObj;
+      return this.ensureDirectory(resolvedPath);
     }
     throw new SfError(messages.getMessage('error_path_not_found', [fsPath]), 'LibraryError');
   }
 
   public readDirectory(fsPath: string): string[] {
-    if (this.isDirectory(fsPath)) {
-      // remove trailing path sep if it exists
-      const dirPath = fsPath.endsWith(sep) ? fsPath.slice(0, -1) : fsPath;
+    const resolvedPath = this.match(fsPath);
+    if (resolvedPath && this.ensureDirectory(resolvedPath)) {
+      // Remove trailing path sep if it exists. JSZip always adds them for directories but
+      // when comparing we call `dirname()` which does not include them.
+      const dirPath = resolvedPath.endsWith('/') ? resolvedPath.slice(0, -1) : resolvedPath;
       return Object.keys(this.zip.files)
         .filter((filePath) => dirname(filePath) === dirPath)
         .map((filePath) => basename(filePath));
@@ -194,13 +194,28 @@ export class ZipTreeContainer extends TreeContainer {
   // Note that zip files always use forward slash separators, so paths within the
   // zip files are normalized for the OS file system before comparing.
   private match(fsPath: string): string | undefined {
+    // "dot" has a special meaning as a directory name and always matches. Just return it.
+    if (fsPath === '.') {
+      return fsPath;
+    }
+
     const fsPathBasename = basename(fsPath);
     const fsPathDirname = dirname(fsPath);
-    return Object.keys(this.zip.files).find((f) => {
-      if (normalize(basename(f)) === fsPathBasename || fsPath === '.') {
-        return normalize(dirname(f)) === fsPathDirname;
+    return Object.keys(this.zip.files).find((filePath) => {
+      const normFilePath = normalize(filePath);
+      if (basename(normFilePath) === fsPathBasename) {
+        return dirname(normFilePath) === fsPathDirname;
       }
     });
+  }
+
+  private ensureDirectory(dirPath: string): boolean {
+    if (dirPath) {
+      // JSZip can have directory entries or only file entries (with virtual directory entries)
+      const zipObj = this.zip.file(dirPath);
+      return zipObj?.dir === true || !zipObj;
+    }
+    throw new SfError(messages.getMessage('error_path_not_found', [dirPath]), 'LibraryError');
   }
 }
 

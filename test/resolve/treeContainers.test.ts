@@ -138,15 +138,20 @@ describe('Tree Containers', () => {
     let tree: ZipTreeContainer;
     let zipBuffer: Buffer;
 
-    const filesRoot = join('.', 'main', 'default');
-    const moreFiles = join(filesRoot, 'morefiles');
+    //
+    // NOTE: All files in zips use a forward slash as a file separator, so we build
+    //       the zip using paths with hard-coded forward slashes, not OS specific seps.
+    //
+
+    const filesRoot = 'main/default';
+    const moreFiles = `${filesRoot}/morefiles`;
 
     before(async () => {
       const zip = new JSZip();
       zip
-        ?.file(join(filesRoot, 'test.txt'), 'test text')
-        ?.file(join(filesRoot, 'test2.txt'), 'test text 2')
-        ?.file(join(moreFiles, 'test3.txt'), 'test text 3');
+        ?.file(`${filesRoot}/test.txt`, 'test text')
+        ?.file(`${filesRoot}/test2.txt`, 'test text 2')
+        ?.file(`${moreFiles}/test3.txt`, 'test text 3');
 
       zipBuffer = await zip.generateAsync({
         type: 'nodebuffer',

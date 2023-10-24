@@ -584,8 +584,25 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 ## Next Release (v60)
 
-> **Note**
-> v60 coverage not available at this time
+v60 introduces the following new types.  Here's their current level of support
+
+|Metadata Type|Support|Notes|
+|:---|:---|:---|
+|ActionableEventOrchDef|❌|Not supported, but support could be added|
+|ActionableEventTypeDef|❌|Not supported, but support could be added|
+|ActnblListKeyPrfmIndDef|❌|Not supported, but support could be added|
+|ExtDataTranFieldTemplate|❌|Not supported, but support could be added|
+|ExtDataTranObjectTemplate|❌|Not supported, but support could be added|
+|ExtlClntAppConfigurablePolicies|✅||
+|GenAiPlanner|❌|Not supported, but support could be added|
+|IncludeEstTaxInQuoteCPQSettings|✅||
+|IndustriesEventOrchSettings|✅||
+|OauthTokenExchangeHandler|❌|Not supported, but support could be added|
+|OmniExtTrackingDef|❌|Not supported, but support could be added|
+|OmniTrackingComponentDef|❌|Not supported, but support could be added|
+|OmniTrackingGroup|❌|Not supported, but support could be added|
+|ProductConfiguratorSettings|✅||
+|RevenueManagementSettings|✅||
 
 ## Additional Types
 
@@ -616,7 +633,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - CustomFieldTranslation
 - MatchingRule
 - MarketingResourceType
-- ExtlClntAppConfigurablePolicies
 - ExtlClntAppSampleConfigurablePolicies
 - ExtlClntAppSampleSettings
 - CustomExperience

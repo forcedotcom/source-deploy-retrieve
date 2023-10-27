@@ -595,6 +595,7 @@ v60 introduces the following new types.  Here's their current level of support
 |ExtDataTranFieldTemplate|❌|Not supported, but support could be added|
 |ExtDataTranObjectTemplate|❌|Not supported, but support could be added|
 |ExtlClntAppConfigurablePolicies|✅||
+|ExtlClntAppNotificationSettings|✅||
 |GenAiPlanner|❌|Not supported, but support could be added|
 |IncludeEstTaxInQuoteCPQSettings|✅||
 |IndustriesEventOrchSettings|✅||

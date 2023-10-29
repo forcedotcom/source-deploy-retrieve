@@ -6,8 +6,8 @@
  */
 /* eslint-disable class-methods-use-this */
 
-import { join, normalize } from 'path';
-import { Readable } from 'stream';
+import { join, normalize } from 'node:path';
+import { Readable } from 'node:stream';
 import { Messages, SfError } from '@salesforce/core';
 import { assert, expect } from 'chai';
 import { createSandbox } from 'sinon';

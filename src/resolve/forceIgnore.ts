@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { dirname, join, relative } from 'path';
+import { dirname, join, relative } from 'node:path';
 import ignore, { Ignore } from 'ignore/index';
 import { readFileSync } from 'graceful-fs';
 import { Lifecycle } from '@salesforce/core';

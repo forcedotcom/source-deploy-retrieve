@@ -4,9 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, isAbsolute, join } from 'path';
-import { pipeline as cbPipeline, Readable, Stream, Transform, Writable } from 'stream';
-import { promisify } from 'util';
+import { basename, dirname, isAbsolute, join } from 'node:path';
+import { pipeline as cbPipeline, Readable, Stream, Transform, Writable } from 'node:stream';
+import { promisify } from 'node:util';
 import { Messages, SfError } from '@salesforce/core';
 import * as JSZip from 'jszip';
 import { createWriteStream, existsSync } from 'graceful-fs';

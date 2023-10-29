@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, sep } from 'path';
+import { basename, dirname, sep } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
 import { ensureString } from '@salesforce/ts-types';
 import { MetadataXml, SourceAdapter } from '../types';

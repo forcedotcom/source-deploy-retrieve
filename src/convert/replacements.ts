@@ -4,9 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { readFile } from 'fs/promises';
-import { Transform, Readable } from 'stream';
-import { sep, posix } from 'path';
+import { readFile } from 'node:fs/promises';
+import { Transform, Readable } from 'node:stream';
+import { sep, posix } from 'node:path';
 import { Lifecycle, Messages, SfProject } from '@salesforce/core';
 import * as minimatch from 'minimatch';
 import { Env } from '@salesforce/kit';

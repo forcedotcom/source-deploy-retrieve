@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as path from 'path';
+import * as path from 'node:path';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { expect, config } from 'chai';
 import { SfError, Messages } from '@salesforce/core';

@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { Readable } from 'stream';
-import { join } from 'path';
+import { Readable } from 'node:stream';
+import { join } from 'node:path';
 
 import { SfProject } from '@salesforce/core';
 import { createSandbox } from 'sinon';

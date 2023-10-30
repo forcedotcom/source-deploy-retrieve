@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join } from 'path';
+import { dirname, join } from 'path';
 import { JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
 import { Messages } from '@salesforce/core';
@@ -126,6 +126,14 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
                 output: mergeChild.xml,
               });
               this.setDecomposedState(childComponent, { foundMerge: true });
+            }
+            // If we have a parent and the child is unaddressable without the parent, keep them
+            // together on the file system, meaning a new child will not be written to the default dir.
+            else if (childType.unaddressableWithoutParent) {
+              // get output path from parent
+              const childFileName = `${entryName}.${childComponent.type.suffix}${META_XML_SUFFIX}`;
+              const output = join(dirname(mergeWith.xml as string), childFileName);
+              writeInfos.push({ source, output });
             }
             // if no child component is found to merge with yet, mark it as so in
             // the state

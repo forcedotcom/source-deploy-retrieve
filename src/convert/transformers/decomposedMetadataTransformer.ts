@@ -130,11 +130,17 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
             }
             // if no child component is found to merge with yet, mark it as so in the state
             else if (!this.getDecomposedState(childComponent)?.foundMerge) {
-              // if the child can't exist without the parent, redirect the output to the parents output, rather than the default output
               if (mergeWith?.content && childComponent.type.unaddressableWithoutParent && childComponent.type.suffix) {
+                // if the child can't exist without the parent, and we found a parent (mergeWith) redirect the output to the parents output, rather than the default output
                 writeInfos.push({
                   source,
-                  output: path.join(mergeWith.content, entryName + '.' + childComponent.type.suffix + '-meta.xml'),
+                  output: path.join(mergeWith.content, `${entryName}.${childComponent.type.suffix}${META_XML_SUFFIX}`),
+                });
+              } else if (!mergeWith) {
+                // if the child can't exist without a parent, and there's no parent found, redirect to the default pkg dir
+                writeInfos.push({
+                  source,
+                  output: getDefaultOutput(childComponent),
                 });
               } else {
                 this.setDecomposedState(childComponent, {

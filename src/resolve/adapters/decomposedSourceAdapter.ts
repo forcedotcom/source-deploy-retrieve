@@ -114,33 +114,6 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
             this.forceIgnore
           );
         }
-      } else if (
-        triggerIsAChild &&
-        this.type.children &&
-        !component &&
-        this.type.children.types[childTypeId].unaddressableWithoutParent
-      ) {
-        /*
-         if we're parsing an unaddressableWithoutParent type, and there's no component for it, then it's likely that the parent resides outside the current package we're building
-         e.g. a COT in a managed package, with the COFT in a different package, so we'll address the child as a parent so that the two will be built together
-
-         this will result in a incorrect type being displayed
-
-         STATE   FULL NAME          TYPE                    PROJECT PATH
-         ─────── ────────────────── ─────────────────────── ─────────────────────────────────────────────────────────────────────────────────────────
-         Changed customObject__c-es CustomObjectTranslation ...default/objectTranslations/customObject__c-es/customField__c.fieldTranslation-meta.xml
-
-         notice how it says CustomObjectTranslation even though the suffix is a .fieldTranslation
-        */
-        return new SourceComponent(
-          {
-            name: baseName(pathToContent),
-            type: this.type,
-            content: pathToContent,
-          },
-          this.tree,
-          this.forceIgnore
-        );
       } else if (!component) {
         // This is most likely metadata found within a CustomObject folder that is not a
         // child type of CustomObject. E.g., Layout, SharingRules, ApexClass.

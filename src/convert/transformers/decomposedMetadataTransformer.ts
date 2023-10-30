@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join } from 'path';
+import * as path from 'path';
 import { JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
 import { Messages } from '@salesforce/core';
@@ -108,7 +109,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
             }
 
             // if there's nothing to merge with, push write operation now to default location
-            if (!mergeWith) {
+            if (!mergeWith && !childType.unaddressableWithoutParent) {
               writeInfos.push({
                 source,
                 output: getDefaultOutput(childComponent),
@@ -127,16 +128,23 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
               });
               this.setDecomposedState(childComponent, { foundMerge: true });
             }
-            // if no child component is found to merge with yet, mark it as so in
-            // the state
+            // if no child component is found to merge with yet, mark it as so in the state
             else if (!this.getDecomposedState(childComponent)?.foundMerge) {
-              this.setDecomposedState(childComponent, {
-                foundMerge: false,
-                writeInfo: {
+              // if the child can't exist without the parent, redirect the output to the parents output, rather than the default output
+              if (mergeWith?.content && childComponent.type.unaddressableWithoutParent && childComponent.type.suffix) {
+                writeInfos.push({
                   source,
-                  output: getDefaultOutput(childComponent),
-                },
-              });
+                  output: path.join(mergeWith.content, entryName + '.' + childComponent.type.suffix + '-meta.xml'),
+                });
+              } else {
+                this.setDecomposedState(childComponent, {
+                  foundMerge: false,
+                  writeInfo: {
+                    source,
+                    output: getDefaultOutput(childComponent),
+                  },
+                });
+              }
             }
           }
         }

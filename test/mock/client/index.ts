@@ -9,7 +9,9 @@ import * as JSZip from 'jszip';
 export async function createMockZip(entries: string[]): Promise<Buffer> {
   const zip = JSZip();
   for (const entry of entries) {
-    zip.file(entry, '');
+    // Ensure only posix paths are added to zip files
+    const relPosixPath = entry.replace(/\\/g, '/');
+    zip.file(relPosixPath, '');
   }
   return zip.generateAsync({
     type: 'nodebuffer',

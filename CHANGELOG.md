@@ -1,3 +1,21 @@
+# [9.8.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.29...9.8.0) (2023-10-30)
+
+
+### Features
+
+* replaces unzipper library with jszip ([#1086](https://github.com/forcedotcom/source-deploy-retrieve/issues/1086)) ([6bc0c12](https://github.com/forcedotcom/source-deploy-retrieve/commit/6bc0c12bc2cdb4cfe5f49c2b460843baf39ed388))
+
+
+
+## [9.7.29](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.28...9.7.29) (2023-10-29)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/ts-types from 2.0.8 to 2.0.9 ([#1155](https://github.com/forcedotcom/source-deploy-retrieve/issues/1155)) ([04af179](https://github.com/forcedotcom/source-deploy-retrieve/commit/04af17922d850cd385d31dae226568cba43cc30b))
+
+
+
 ## [9.7.28](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.7.27...9.7.28) (2023-10-22)
 
 

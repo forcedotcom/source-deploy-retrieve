@@ -8,7 +8,7 @@
 import { join, dirname, basename, normalize, sep } from 'path';
 import { Readable } from 'stream';
 import { statSync, existsSync, readdirSync, createReadStream, readFileSync } from 'graceful-fs';
-import * as unzipper from 'unzipper';
+import * as JSZip from 'jszip';
 import { Messages, SfError } from '@salesforce/core';
 import { baseName, parseMetadataXml } from '../utils';
 import { SourcePath } from '../common';
@@ -120,66 +120,55 @@ export class NodeFSTreeContainer extends TreeContainer {
   }
 }
 
-interface ZipEntry {
-  path: string;
-  stream?: () => unzipper.Entry;
-  buffer?: () => Promise<Buffer>;
-}
-
 /**
- * A {@link TreeContainer} that utilizes the central directory of a zip file
- * to perform I/O without unzipping it to the disk first.
+ * A {@link TreeContainer} that performs I/O without unzipping it to the disk first.
  */
 export class ZipTreeContainer extends TreeContainer {
-  private tree = new Map<SourcePath, ZipEntry[] | ZipEntry>();
+  private zip: JSZip;
 
-  private constructor(directory: unzipper.CentralDirectory) {
+  private constructor(zip: JSZip) {
     super();
-    this.populate(directory);
+    this.zip = zip;
   }
 
-  /**
-   * Creates a `ZipTreeContainer` from a Buffer of a zip file.
-   *
-   * @param buffer - Buffer of the zip file
-   * @returns A Promise of a `ZipTreeContainer`
-   */
   public static async create(buffer: Buffer): Promise<ZipTreeContainer> {
-    const directory = await unzipper.Open.buffer(buffer);
-    return new ZipTreeContainer(directory);
+    const zip = await JSZip.loadAsync(buffer, { createFolders: true });
+    return new ZipTreeContainer(zip);
   }
 
   public exists(fsPath: string): boolean {
-    return this.tree.has(fsPath);
+    return !!this.match(fsPath);
   }
 
   public isDirectory(fsPath: string): boolean {
-    if (this.exists(fsPath)) {
-      return Array.isArray(this.tree.get(fsPath));
+    const resolvedPath = this.match(fsPath);
+    if (resolvedPath) {
+      return this.ensureDirectory(resolvedPath);
     }
     throw new SfError(messages.getMessage('error_path_not_found', [fsPath]), 'LibraryError');
   }
 
   public readDirectory(fsPath: string): string[] {
-    if (this.isDirectory(fsPath)) {
-      return (this.tree.get(fsPath) as ZipEntry[]).map((entry) => basename(entry.path));
+    const resolvedPath = this.match(fsPath);
+    if (resolvedPath && this.ensureDirectory(resolvedPath)) {
+      // Remove trailing path sep if it exists. JSZip always adds them for directories but
+      // when comparing we call `dirname()` which does not include them.
+      const dirPath = resolvedPath.endsWith('/') ? resolvedPath.slice(0, -1) : resolvedPath;
+      return Object.keys(this.zip.files)
+        .filter((filePath) => dirname(filePath) === dirPath)
+        .map((filePath) => basename(filePath));
     }
     throw new SfError(messages.getMessage('error_expected_directory_path', [fsPath]), 'LibraryError');
   }
 
-  public readFile(fsPath: string): Promise<Buffer> {
-    if (!this.isDirectory(fsPath)) {
-      const matchingFile = this.tree.get(fsPath);
-      if (!matchingFile) {
-        throw new SfError(messages.getMessage('error_path_not_found', [matchingFile]), 'LibraryError');
+  public async readFile(fsPath: string): Promise<Buffer> {
+    const resolvedPath = this.match(fsPath);
+    if (resolvedPath) {
+      const jsZipObj = this.zip.file(resolvedPath);
+      if (jsZipObj?.dir === false) {
+        return jsZipObj.async('nodebuffer');
       }
-      if (Array.isArray(matchingFile)) {
-        throw messages.createError('tooManyFiles', [fsPath]);
-      }
-      if (matchingFile.buffer) {
-        return matchingFile.buffer();
-      }
-      throw new SfError(`The file at path ${fsPath} does not have a buffer method.`);
+      throw new SfError(`Expected a file at path ${fsPath} but found a directory.`);
     }
     throw new SfError(messages.getMessage('error_expected_file_path', [fsPath]), 'LibraryError');
   }
@@ -190,43 +179,43 @@ export class ZipTreeContainer extends TreeContainer {
   }
 
   public stream(fsPath: string): Readable {
-    if (!this.isDirectory(fsPath)) {
-      const matchingFile = this.tree.get(fsPath);
-      if (!matchingFile) {
-        throw new SfError(messages.getMessage('error_path_not_found', [fsPath]), 'LibraryError');
+    const resolvedPath = this.match(fsPath);
+    if (resolvedPath) {
+      const jsZipObj = this.zip.file(resolvedPath);
+      if (jsZipObj && !jsZipObj.dir) {
+        return new Readable().wrap(jsZipObj.nodeStream());
       }
-      if (Array.isArray(matchingFile)) {
-        throw messages.createError('tooManyFiles', [fsPath]);
-      }
-      if (matchingFile.stream) {
-        return matchingFile.stream();
-      }
-      throw new SfError(`The file at path ${fsPath} does not have a stream method.`);
+      throw new SfError(messages.getMessage('error_no_directory_stream', [this.constructor.name]), 'LibraryError');
     }
-    throw new SfError(messages.getMessage('error_no_directory_stream', [this.constructor.name]), 'LibraryError');
+    throw new SfError(messages.getMessage('error_expected_file_path', [fsPath]), 'LibraryError');
   }
 
-  private populate(directory: unzipper.CentralDirectory): void {
-    for (const { path, type, stream, buffer } of directory.files) {
-      if (type === 'File') {
-        // normalize path to use OS separator since zip entries always use forward slash
-        const entry = { path: normalize(path), stream, buffer };
-        this.tree.set(entry.path, entry);
-        this.ensureDirPathExists(entry);
-      }
+  // Finds a matching entry in the zip by first comparing basenames, then dirnames.
+  // Note that zip files always use forward slash separators, so paths within the
+  // zip files are normalized for the OS file system before comparing.
+  private match(fsPath: string): string | undefined {
+    // "dot" has a special meaning as a directory name and always matches. Just return it.
+    if (fsPath === '.') {
+      return fsPath;
     }
+
+    const fsPathBasename = basename(fsPath);
+    const fsPathDirname = dirname(fsPath);
+    return Object.keys(this.zip.files).find((filePath) => {
+      const normFilePath = normalize(filePath);
+      if (basename(normFilePath) === fsPathBasename) {
+        return dirname(normFilePath) === fsPathDirname;
+      }
+    });
   }
 
-  private ensureDirPathExists(entry: ZipEntry): void {
-    const dirPath = dirname(entry.path);
-    if (dirPath === entry.path) {
-      return;
-    } else if (!this.exists(dirPath)) {
-      this.tree.set(dirPath, [entry]);
-      this.ensureDirPathExists({ path: dirPath });
-    } else {
-      (this.tree.get(dirPath) as ZipEntry[]).push(entry);
+  private ensureDirectory(dirPath: string): boolean {
+    if (dirPath) {
+      // JSZip can have directory entries or only file entries (with virtual directory entries)
+      const zipObj = this.zip.file(dirPath);
+      return zipObj?.dir === true || !zipObj;
     }
+    throw new SfError(messages.getMessage('error_path_not_found', [dirPath]), 'LibraryError');
   }
 }
 

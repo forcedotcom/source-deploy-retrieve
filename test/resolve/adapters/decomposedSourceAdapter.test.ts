@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join } from 'path';
+import { join } from 'node:path';
 import { assert, expect } from 'chai';
 import { DecomposedSourceAdapter, DefaultSourceAdapter } from '../../../src/resolve/adapters';
 import { decomposed, decomposedtoplevel, xmlInFolder } from '../../mock';

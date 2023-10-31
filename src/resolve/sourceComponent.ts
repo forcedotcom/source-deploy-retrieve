@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, join, dirname } from 'path';
+import { basename, join, dirname } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';

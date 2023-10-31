@@ -4,8 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, isAbsolute, join, relative } from 'path';
-import { Readable } from 'stream';
+import { basename, dirname, isAbsolute, join, relative } from 'node:path';
+import { Readable } from 'node:stream';
 import * as JSZip from 'jszip';
 import { getExtension } from 'mime';
 import { JsonMap } from '@salesforce/ts-types';

@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, join } from 'path';
+import { basename, join } from 'node:path';
 import { createSandbox } from 'sinon';
 import { assert, expect } from 'chai';
 import { bundle, document, matchingContentFile, nestedTypes, xmlInFolder } from '../../mock';

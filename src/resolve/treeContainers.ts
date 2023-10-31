@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 /* eslint-disable class-methods-use-this */
-import { join, dirname, basename, normalize, sep } from 'path';
-import { Readable } from 'stream';
+import { join, dirname, basename, normalize, sep } from 'node:path';
+import { Readable } from 'node:stream';
 import { statSync, existsSync, readdirSync, createReadStream, readFileSync } from 'graceful-fs';
 import * as JSZip from 'jszip';
 import { Messages, SfError } from '@salesforce/core';

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { join } from 'path';
+import { join } from 'node:path';
 import { registry, SourceComponent, VirtualDirectory, VirtualTreeContainer } from '../../../src';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../../src/common';
 import { JsToXml } from '../../../src/convert/streams';

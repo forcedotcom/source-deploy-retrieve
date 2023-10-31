@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { basename, join, sep } from 'path';
-import { Readable, Writable } from 'stream';
+import { basename, join, sep } from 'node:path';
+import { Readable, Writable } from 'node:stream';
 import * as fs from 'graceful-fs';
 import { Logger, SfError, Messages } from '@salesforce/core';
 import { expect, assert } from 'chai';

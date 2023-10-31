@@ -7,7 +7,7 @@
 
 /* eslint complexity: ["error", 22] */
 
-import * as path from 'path';
+import * as path from 'node:path';
 import { StateAggregator, Logger, SfError, Messages } from '@salesforce/core';
 import * as fs from 'graceful-fs';
 import { ComponentSet } from '../collections';

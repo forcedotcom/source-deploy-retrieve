@@ -6,13 +6,30 @@
  */
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-import { Open } from 'unzipper';
+import * as JSZip from 'jszip';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { ComponentSetBuilder, MetadataConverter } from '../../../../src';
 
 describe('e2e replacements test', () => {
   let session: TestSession;
+
+  const extractZip = async (zipBuffer: Buffer, extractPath: string) => {
+    fs.mkdirSync(extractPath);
+    const zip = await JSZip.loadAsync(zipBuffer);
+    for (const filePath of Object.keys(zip.files)) {
+      const zipObj = zip.file(filePath);
+      if (!zipObj || zipObj?.dir) {
+        fs.mkdirSync(path.join(extractPath, filePath));
+      } else {
+        // eslint-disable-next-line no-await-in-loop
+        const content = await zipObj?.async('nodebuffer');
+        if (content) {
+          fs.writeFileSync(path.join(extractPath, filePath), content);
+        }
+      }
+    }
+  };
 
   before(async () => {
     session = await TestSession.create({
@@ -49,7 +66,8 @@ describe('e2e replacements test', () => {
         type: 'zip',
       });
       assert(zipBuffer, 'zipBuffer should be defined');
-      await (await Open.buffer(zipBuffer)).extract({ path: path.join(session.project.dir, 'unzipped') });
+      // extract zip files
+      await extractZip(zipBuffer, path.join(session.project.dir, 'unzipped'));
     });
 
     it('class replacements as expected', async () => {
@@ -81,17 +99,25 @@ describe('e2e replacements test', () => {
       );
     });
     it('static resource object replacements as expected', async () => {
-      const files = (
-        await Open.file(path.join(session.project.dir, 'unzipped', 'staticresources', 'Test.resource'))
-      ).files.filter((f) => f.type === 'File');
+      const srZipPath = path.join(session.project.dir, 'unzipped', 'staticresources', 'Test.resource');
+      expect(fs.existsSync(srZipPath)).to.be.true;
+      const srZip = await JSZip.loadAsync(fs.readFileSync(srZipPath));
 
-      const buffers = await Promise.all(files.map(async (f) => f.buffer()));
-      buffers
-        .map((b) => b.toString())
-        .map((contents) => {
-          expect(contents).to.not.include('placeholder');
-          expect(contents).to.include('foo');
-        });
+      // static resource zip should have 2 files and a dir:
+      // 1. "folder/", 2. "folder/test2.css", 3. "folder/test.css"
+      expect(Object.entries(srZip.files).length).to.equal(3);
+
+      // Content of the 2 css files should have "foo", not "placeholder" (i.e., replaced)
+      for (const filePath of Object.keys(srZip.files)) {
+        const zipObj = srZip.file(filePath);
+        if (zipObj && !zipObj.dir) {
+          // eslint-disable-next-line no-await-in-loop
+          const content = await zipObj.async('nodebuffer');
+          const contentAsString = content.toString();
+          expect(contentAsString).to.not.include('placeholder');
+          expect(contentAsString).to.include('foo');
+        }
+      }
     });
   });
 });

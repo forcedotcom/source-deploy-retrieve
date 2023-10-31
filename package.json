@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "9.7.28",
+  "version": "9.8.0",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/src/index.js",
   "author": "Salesforce",
@@ -36,21 +36,20 @@
     "jszip": "^3.10.1",
     "mime": "2.6.0",
     "minimatch": "^5.1.6",
-    "proxy-agent": "^6.3.1",
-    "unzipper": "0.10.14"
+    "proxy-agent": "^6.3.1"
   },
   "devDependencies": {
     "@salesforce/cli-plugins-testkit": "^4.4.10",
     "@salesforce/dev-scripts": "^6.0.3",
+    "@salesforce/prettier-config": "^0.0.3",
     "@salesforce/ts-sinon": "^1.4.18",
     "@types/deep-equal-in-any-order": "^1.0.1",
-    "@types/fast-levenshtein": "^0.0.2",
+    "@types/fast-levenshtein": "^0.0.3",
     "@types/graceful-fs": "^4.1.7",
     "@types/mime": "2.0.3",
     "@types/minimatch": "^5.1.2",
     "@types/proxy-from-env": "^1.0.3",
     "@types/shelljs": "^0.8.13",
-    "@types/unzipper": "^0.10.7",
     "deep-equal-in-any-order": "^1.1.19",
     "deepmerge": "^4.3.1",
     "eslint-plugin-sf-plugin": "^1.16.13",

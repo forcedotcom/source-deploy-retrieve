@@ -8,7 +8,6 @@ import { basename, dirname, isAbsolute, join, relative } from 'node:path';
 import { Readable } from 'node:stream';
 import * as JSZip from 'jszip';
 import { getExtension } from 'mime';
-import { CentralDirectory, Open } from 'unzipper';
 import { JsonMap } from '@salesforce/ts-types';
 import { createWriteStream } from 'graceful-fs';
 import { Logger, Messages, SfError } from '@salesforce/core';
@@ -116,20 +115,21 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
     if (shouldUnzipArchive) {
       // for the bulk of static resource writing we'll start writing ASAP
       // we'll still defer writing the resource-meta.xml file by pushing it onto the writeInfos
-      await Promise.all(
-        (
-          await openZipFile(component, content)
-        ).files
-          .filter((f) => f.type === 'File')
-          .map(async (f) => {
-            const path = join(baseContentPath, f.path);
-            const fullDest = isAbsolute(path)
-              ? path
-              : join(this.defaultDirectory ?? component.getPackageRelativePath('', 'source'), path);
-            // push onto the pipeline and start writing now
-            return this.pipeline(f.stream(), fullDest);
-          })
-      );
+
+      const srZip = await getStaticResourceZip(component, content);
+      const pipelinePromises: Array<Promise<void>> = [];
+      for (const filePath of Object.keys(srZip.files)) {
+        const zipObj = srZip.file(filePath);
+        if (zipObj && !zipObj.dir) {
+          const path = join(baseContentPath, filePath);
+          const fullDest = isAbsolute(path)
+            ? path
+            : join(this.defaultDirectory ?? component.getPackageRelativePath('', 'source'), path);
+          pipelinePromises.push(this.pipeline(new Readable().wrap(zipObj.nodeStream()), fullDest));
+        }
+      }
+
+      await Promise.all(pipelinePromises);
     }
     if (!xml) {
       throw messages.createError('error_parsing_xml', [component.fullName, component.type.name]);
@@ -233,10 +233,10 @@ const componentIsExpandedArchive = async (component: SourceComponent): Promise<b
   return false;
 };
 
-/** wrapper around the Open command so we can emit a nicer error for bad zip files  */
-async function openZipFile(component: SourceComponent, content: string): Promise<CentralDirectory> {
+async function getStaticResourceZip(component: SourceComponent, content: string): Promise<JSZip> {
   try {
-    return await Open.buffer(await component.tree.readFile(content));
+    const staticResourceZip = await component.tree.readFile(content);
+    return await JSZip.loadAsync(staticResourceZip, { createFolders: true });
   } catch (e) {
     throw new SfError(`Unable to open zip file ${content} for ${component.name} (${component.xml})`, 'BadZipFile', [
       'Check that your file really is a valid zip archive',

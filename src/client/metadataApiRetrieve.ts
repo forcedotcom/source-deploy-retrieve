@@ -6,7 +6,7 @@
  */
 import * as path from 'node:path';
 import * as fs from 'graceful-fs';
-import * as unzipper from 'unzipper';
+import * as JSZip from 'jszip';
 import { asBoolean, isString } from '@salesforce/ts-types';
 import { Messages, SfError, Lifecycle } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
@@ -185,9 +185,21 @@ export class MetadataApiRetrieve extends MetadataTransfer<
         fs.writeFileSync(zipFilePath, zipFileContents);
 
         if (this.options.unzip) {
-          const dir = await unzipper.Open.buffer(zipFileContents);
+          const zip = await JSZip.loadAsync(zipFileContents, { base64: true, createFolders: true });
           const extractPath = path.join(this.options.output, path.parse(name).name);
-          await dir.extract({ path: extractPath });
+          fs.mkdirSync(extractPath, { recursive: true });
+          for (const filePath of Object.keys(zip.files)) {
+            const zipObj = zip.file(filePath);
+            if (!zipObj || zipObj?.dir) {
+              fs.mkdirSync(path.join(extractPath, filePath), { recursive: true });
+            } else {
+              // eslint-disable-next-line no-await-in-loop
+              const content = await zipObj?.async('nodebuffer');
+              if (content) {
+                fs.writeFileSync(path.join(extractPath, filePath), content);
+              }
+            }
+          }
         }
       } else {
         components = await this.extract(zipFileContents);

@@ -6,13 +6,12 @@
  */
 /* eslint-disable class-methods-use-this */
 
-import { join, normalize } from 'node:path';
+import { join } from 'node:path';
 import { Readable } from 'node:stream';
 import { Messages, SfError } from '@salesforce/core';
 import { assert, expect } from 'chai';
 import { createSandbox } from 'sinon';
 import * as fs from 'graceful-fs';
-import * as unzipper from 'unzipper';
 import * as JSZip from 'jszip';
 import {
   MetadataResolver,
@@ -28,6 +27,17 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 
 describe('Tree Containers', () => {
   const readDirResults = ['a.q', 'a.x-meta.xml', 'b', 'b.x-meta.xml', 'c.z', 'c.x-meta.xml'];
+
+  const streamToString = async (stream: Readable) => {
+    stream.setEncoding('utf-8');
+    const chunks = [];
+
+    for await (const chunk of stream) {
+      chunks.push(chunk);
+    }
+
+    return chunks.join('');
+  };
 
   describe('TreeContainer Base Class', () => {
     class TestTreeContainer extends TreeContainer {
@@ -128,15 +138,20 @@ describe('Tree Containers', () => {
     let tree: ZipTreeContainer;
     let zipBuffer: Buffer;
 
-    const filesRoot = join('.', 'main', 'default');
-    const moreFiles = join(filesRoot, 'morefiles');
+    //
+    // NOTE: All files in zips use a forward slash as a file separator, so we build
+    //       the zip using paths with hard-coded forward slashes, not OS specific seps.
+    //
+
+    const filesRoot = 'main/default';
+    const moreFiles = `${filesRoot}/morefiles`;
 
     before(async () => {
       const zip = new JSZip();
       zip
-        ?.file(join(filesRoot, 'test.txt'), 'test text')
-        ?.file(join(filesRoot, 'test2.txt'), 'test text 2')
-        ?.file(join(moreFiles, 'test3.txt'), 'test text 3');
+        ?.file(`${filesRoot}/test.txt`, 'test text')
+        ?.file(`${filesRoot}/test2.txt`, 'test text 2')
+        ?.file(`${moreFiles}/test3.txt`, 'test text 3');
 
       zipBuffer = await zip.generateAsync({
         type: 'nodebuffer',
@@ -196,6 +211,10 @@ describe('Tree Containers', () => {
       });
 
       it('should return correct directory entries for directory with only directories', () => {
+        expect(tree.readDirectory('main')).to.deep.equal(['default']);
+      });
+
+      it('should return correct directory entries for current directory character', () => {
         expect(tree.readDirectory('.')).to.deep.equal(['main']);
       });
 
@@ -216,13 +235,15 @@ describe('Tree Containers', () => {
         expect(contents).to.equal('test text');
       });
 
-      it('should throw an error if path is to directory', () => {
-        assert.throws(
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          () => tree.readFile(filesRoot),
-          SfError,
-          messages.getMessage('error_expected_file_path', [filesRoot])
-        );
+      it('should throw an error if path is to directory', async () => {
+        try {
+          await tree.readFile(filesRoot);
+          assert(false, 'Expected an error to be thrown');
+        } catch (err) {
+          expect(err).to.be.instanceOf(SfError);
+          const errMsg = `Expected a file at path ${filesRoot} but found a directory.`;
+          expect(err).to.have.property('message', errMsg);
+        }
       });
     });
 
@@ -235,20 +256,21 @@ describe('Tree Containers', () => {
     describe('stream', () => {
       it('should return a readable stream', async () => {
         const path = join(filesRoot, 'test.txt');
-        const zipDir = await unzipper.Open.buffer(zipBuffer);
-        const expectedStream = zipDir.files.find((f) => normalize(f.path) === path)?.stream();
-        assert(expectedStream);
-        const actual = tree.stream(path);
-        expect(actual instanceof Readable).to.be.true;
-        expect((actual as unzipper.Entry).path).to.equal(expectedStream.path);
+        const readableStream = tree.stream(path);
+        expect(readableStream instanceof Readable).to.be.true;
+        const contents = await streamToString(readableStream);
+        expect(contents).to.equal('test text');
       });
 
       it('should throw an error if given path is to a directory', () => {
-        assert.throws(
-          () => tree.stream(filesRoot),
-          SfError,
-          messages.getMessage('error_no_directory_stream', [tree.constructor.name])
-        );
+        try {
+          tree.stream(filesRoot);
+          assert(false, 'Expected an error to be thrown');
+        } catch (err) {
+          expect(err).to.be.instanceOf(SfError);
+          const errMsg = messages.getMessage('error_no_directory_stream', [tree.constructor.name]);
+          expect(err).to.have.property('message', errMsg);
+        }
       });
     });
   });

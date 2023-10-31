@@ -139,9 +139,6 @@ export class StandardWriter extends ComponentWriter {
         // queue is empty when that call exits and overall less memory is consumed.
         await Promise.all(
           chunk.writeInfos.map((info: WriteInfo) => {
-            // assertion logic: the rootDestination is required in this subclass of ComponentWriter but the super doesn't know that
-            // the eslint comment should remain until strictMode is fully implemented
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
             const fullDest = isAbsolute(info.output) ? info.output : join(this.rootDestination as string, info.output);
             if (!existsSync(fullDest)) {
               for (const ignoredPath of this.forceIgnoredPaths) {

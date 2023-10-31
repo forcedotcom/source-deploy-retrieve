@@ -360,6 +360,55 @@ describe('DecomposedMetadataTransformer', () => {
       ]);
     });
 
+    it('should merge unaddressableWithoutParent types with their parent, regardless of location', async () => {
+      const cot = DECOMPOSED_TOP_LEVEL_COMPONENT;
+      const cft = DECOMPOSED_TOP_LEVEL_COMPONENT;
+      const { type, fullName } = cot;
+
+      const transformer = new DecomposedMetadataTransformer();
+      const root = join('path', 'to', type.directoryName, fullName);
+      $$.SANDBOX.stub(cot, 'parseXml').resolves({
+        CustomObjectTranslation: {
+          fields: [
+            { name: 'child', test: 'testVal' },
+            { name: 'child2', test: 'testVal2' },
+          ],
+        },
+      });
+
+      const result = await transformer.toSourceFormat(cft, cot);
+
+      expect(result).to.deep.equal([
+        {
+          source: new JsToXml({
+            CustomFieldTranslation: {
+              [XML_NS_KEY]: XML_NS_URL,
+              name: 'child',
+              test: 'testVal',
+            },
+          }),
+          output: join(root, 'child.fieldTranslation-meta.xml'),
+        },
+        {
+          source: new JsToXml({
+            CustomFieldTranslation: {
+              [XML_NS_KEY]: XML_NS_URL,
+              name: 'child2',
+              test: 'testVal2',
+            },
+          }),
+          output: join(root, 'child2.fieldTranslation-meta.xml'),
+        },
+        // the new parent was written
+        {
+          source: new JsToXml({
+            [type.name]: '',
+          }),
+          output: join(root, 'myObject__c.objectTranslation-meta.xml'),
+        },
+      ]);
+    });
+
     it('should handle decomposed parents with no files', async () => {
       const transformer = new DecomposedMetadataTransformer();
       $$.SANDBOX.stub(component, 'parseXml').resolves({});

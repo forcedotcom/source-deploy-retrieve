@@ -89,7 +89,6 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
       const childTypeId = this.type.children?.suffixes?.[metaXml.suffix];
       const triggerIsAChild = !!childTypeId;
       const strategy = this.type.strategies?.decomposition;
-
       if (triggerIsAChild && this.type.children && !this.type.children.types[childTypeId].unaddressableWithoutParent) {
         if (strategy === DecompositionStrategy.FolderPerType || isResolvingSource) {
           let parent = component;

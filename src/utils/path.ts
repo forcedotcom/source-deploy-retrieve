@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { basename, dirname, extname, sep } from 'path';
+import { basename, dirname, extname, sep } from 'node:path';
 import { Optional } from '@salesforce/ts-types';
 import { SourcePath } from '../common';
 import { MetadataXml } from '../resolve';

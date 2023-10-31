@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, join, sep } from 'path';
+import { basename, dirname, join, sep } from 'node:path';
 import { Lifecycle, Messages, SfError, Logger } from '@salesforce/core';
 import { extName, parentName, parseMetadataXml } from '../utils';
 import { MetadataType, RegistryAccess } from '../registry';

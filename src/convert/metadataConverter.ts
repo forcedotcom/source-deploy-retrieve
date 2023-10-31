@@ -4,8 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Readable, PassThrough } from 'stream';
-import { dirname, join, normalize } from 'path';
+import { Readable, PassThrough } from 'node:stream';
+import { dirname, join, normalize } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
 import { promises } from 'graceful-fs';
 import { isString } from '@salesforce/ts-types';

@@ -582,28 +582,28 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 ## Next Release (v60)
 
-v60 introduces the following new types.  Here's their current level of support
+v60 introduces the following new types. Here's their current level of support
 
-|Metadata Type|Support|Notes|
-|:---|:---|:---|
-|ActionableEventOrchDef|❌|Not supported, but support could be added|
-|ActionableEventTypeDef|❌|Not supported, but support could be added|
-|ActnblListKeyPrfmIndDef|❌|Not supported, but support could be added|
-|EventLogObjectSettings|✅||
-|ExtDataTranFieldTemplate|❌|Not supported, but support could be added|
-|ExtDataTranObjectTemplate|❌|Not supported, but support could be added|
-|ExtlClntAppConfigurablePolicies|✅||
-|ExtlClntAppNotificationSettings|✅||
-|GenAiPlanner|❌|Not supported, but support could be added|
-|IncludeEstTaxInQuoteCPQSettings|✅||
-|IndustriesEventOrchSettings|✅||
-|OauthTokenExchangeHandler|❌|Not supported, but support could be added|
-|OmniExtTrackingDef|❌|Not supported, but support could be added|
-|OmniTrackingComponentDef|❌|Not supported, but support could be added|
-|OmniTrackingGroup|❌|Not supported, but support could be added|
-|ProductConfiguratorSettings|✅||
-|RevenueManagementSettings|✅||
-|SvcCatalogFilterCriteria|❌|Not supported, but support could be added|
+| Metadata Type                   | Support | Notes                                     |
+| :------------------------------ | :------ | :---------------------------------------- |
+| ActionableEventOrchDef          | ❌      | Not supported, but support could be added |
+| ActionableEventTypeDef          | ❌      | Not supported, but support could be added |
+| ActnblListKeyPrfmIndDef         | ❌      | Not supported, but support could be added |
+| EventLogObjectSettings          | ✅      |                                           |
+| ExtDataTranFieldTemplate        | ❌      | Not supported, but support could be added |
+| ExtDataTranObjectTemplate       | ❌      | Not supported, but support could be added |
+| ExtlClntAppConfigurablePolicies | ✅      |                                           |
+| ExtlClntAppNotificationSettings | ✅      |                                           |
+| GenAiPlanner                    | ❌      | Not supported, but support could be added |
+| IncludeEstTaxInQuoteCPQSettings | ✅      |                                           |
+| IndustriesEventOrchSettings     | ✅      |                                           |
+| OauthTokenExchangeHandler       | ❌      | Not supported, but support could be added |
+| OmniExtTrackingDef              | ❌      | Not supported, but support could be added |
+| OmniTrackingComponentDef        | ❌      | Not supported, but support could be added |
+| OmniTrackingGroup               | ❌      | Not supported, but support could be added |
+| ProductConfiguratorSettings     | ✅      |                                           |
+| RevenueManagementSettings       | ✅      |                                           |
+| SvcCatalogFilterCriteria        | ❌      | Not supported, but support could be added |
 
 ## Additional Types
 

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as path from 'path';
+import * as path from 'node:path';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { expect, config } from 'chai';
 import { SfError, Messages } from '@salesforce/core';
@@ -59,7 +59,9 @@ describe('suggest types', () => {
     } catch (err) {
       const error = err as SfError;
       expect(error.name).to.equal('TypeInferenceError');
-      expect(error.actions).to.include('A metadata type lookup for "DummyClass.clss" found the following close matches:');
+      expect(error.actions).to.include(
+        'A metadata type lookup for "DummyClass.clss" found the following close matches:'
+      );
       expect(error.actions).to.include('-- Did you mean ".cls" instead for the "ApexClass" metadata type?');
     }
   });
@@ -131,8 +133,12 @@ describe('suggest types', () => {
     } catch (err) {
       const error = err as SfError;
       expect(error.name).to.equal('TypeInferenceError');
-      expect(error.actions).to.include('A metadata type lookup for "CustomLabels.labels.xml" found the following close matches:');
-      expect(error.actions).to.include('-- Did you mean ".labels-meta.xml" instead for the "CustomLabels" metadata type?');
+      expect(error.actions).to.include(
+        'A metadata type lookup for "CustomLabels.labels.xml" found the following close matches:'
+      );
+      expect(error.actions).to.include(
+        '-- Did you mean ".labels-meta.xml" instead for the "CustomLabels" metadata type?'
+      );
     }
   });
 

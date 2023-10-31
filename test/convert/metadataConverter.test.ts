@@ -4,8 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { dirname, join } from 'path';
-import { fail } from 'assert';
+import { dirname, join } from 'node:path';
+import { fail } from 'node:assert';
 import { Messages, SfError } from '@salesforce/core';
 import { SinonStub } from 'sinon';
 import * as fs from 'graceful-fs';

@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { join } from 'path';
+import { join } from 'node:path';
 import { expect, assert } from 'chai';
 import { Messages } from '@salesforce/core';
 import { TestContext } from '@salesforce/core/lib/testSetup';

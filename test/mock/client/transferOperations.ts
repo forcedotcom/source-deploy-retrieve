@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 /* eslint-disable complexity */
-import { join, sep } from 'path';
+import { join, sep } from 'node:path';
 import { assert } from 'chai';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { ensureArray } from '@salesforce/kit';

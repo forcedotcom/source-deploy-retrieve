@@ -125,5 +125,5 @@ const isMemberNestedInFolder = (
   const isNestedInFolder = !fullName.includes('/') || members.some((m) => m.includes(`${fullName}/`));
   const isNonMatchingFolder = parentType && parentType.folderType !== parentType.id;
 
-  return (isInFolderType && isNestedInFolder) || (!isInFolderType && isNonMatchingFolder);
+  return isInFolderType ? isNestedInFolder : isNonMatchingFolder;
 };

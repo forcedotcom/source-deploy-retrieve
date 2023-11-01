@@ -200,7 +200,7 @@ export class ZipWriter extends ComponentWriter {
         chunk.writeInfos.map(async (writeInfo) => {
           // we don't want to prematurely zip folder types when their children might still be not in the zip
           // those files we'll leave open as ReadableStreams until the zip finalizes
-          if (chunk.component.type.folderType || chunk.component.type.folderContentType) {
+          if (Boolean(chunk.component.type.folderType) || Boolean(chunk.component.type.folderContentType)) {
             return this.addToZip(writeInfo.source, writeInfo.output);
           }
           // everything else can be zipped immediately to reduce the number of open files (windows has a low limit!) and help perf

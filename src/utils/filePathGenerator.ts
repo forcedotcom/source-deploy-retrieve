@@ -76,7 +76,7 @@ export const filePathsFromMetadataComponent = (
 
   // basic metadata (with or without folders)
   if (!type.children && !type.strategies) {
-    return (type.inFolder || type.folderType ? generateFolders({ fullName, type }, packageDirWithTypeDir) : []).concat([
+    return (type.inFolder ?? type.folderType ? generateFolders({ fullName, type }, packageDirWithTypeDir) : []).concat([
       join(packageDirWithTypeDir, `${fullName}.${type.suffix}${META_XML_SUFFIX}`),
     ]);
   }

@@ -125,6 +125,7 @@ export async function stubMetadataDeploy(
   const invokeResultStub = sandbox.stub();
   invokeStub.returns({
     // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     then: (f: (result: unknown | null) => void) => f(invokeResultStub()),
   });
 

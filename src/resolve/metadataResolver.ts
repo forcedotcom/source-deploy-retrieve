@@ -197,7 +197,8 @@ export class MetadataResolver {
           (typeof type.strategies?.adapter === 'string' &&
             ['mixedContent', 'bundle'].includes(type.strategies.adapter)) ||
           // the file suffix (in source or mdapi format) matches the type suffix we think it is
-          (type.suffix && [type.suffix, `${type.suffix}${META_XML_SUFFIX}`].some((s) => fsPath.endsWith(s))) ||
+          (typeof type.suffix === 'string' &&
+            [type.suffix, `${type.suffix}${META_XML_SUFFIX}`].some((s) => fsPath.endsWith(s))) ||
           // the type has children and the file suffix (in source format) matches a child type suffix of the type we think it is
           (type.children?.types &&
             Object.values(type.children?.types)
@@ -283,7 +284,7 @@ export class MetadataResolver {
           ...guesses.map((guess) =>
             messages.getMessage('suggest_type_did_you_mean', [
               guess.suffixGuess,
-              metaSuffix || closeMetaSuffix ? '-meta.xml' : '',
+              typeof metaSuffix === 'string' || closeMetaSuffix ? '-meta.xml' : '',
               guess.metadataTypeGuess.name,
             ])
           ),

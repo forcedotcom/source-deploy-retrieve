@@ -214,7 +214,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         resolveIncludeSet.add(component, deletionType);
       }
       const memberIsWildcard = component.fullName === ComponentSet.WILDCARD;
-      if (!memberIsWildcard || options.forceAddWildcards || !options.resolveSourcePaths) {
+      if (options.resolveSourcePaths === undefined || !memberIsWildcard || options.forceAddWildcards) {
         result.add(component, deletionType);
       }
     };

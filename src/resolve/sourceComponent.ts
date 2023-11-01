@@ -277,8 +277,8 @@ export class SourceComponent implements MetadataComponent {
     // It also applies to DigitalExperienceBundle types as we need to maintain the folder structure
     if (
       !suffix ||
-      inFolder ||
-      folderContentType ||
+      Boolean(inFolder) ||
+      typeof folderContentType === 'string' ||
       ['digitalexperiencebundle', 'digitalexperience'].includes(this.type.id)
     ) {
       return trimUntil(fsPath, directoryName, true);

@@ -599,6 +599,7 @@ v60 introduces the following new types.  Here's their current level of support
 |GenAiPlanner|❌|Not supported, but support could be added|
 |IncludeEstTaxInQuoteCPQSettings|✅||
 |IndustriesEventOrchSettings|✅||
+|IndustriesGamificationSettings|✅||
 |OauthTokenExchangeHandler|❌|Not supported, but support could be added|
 |OmniExtTrackingDef|❌|Not supported, but support could be added|
 |OmniTrackingComponentDef|❌|Not supported, but support could be added|

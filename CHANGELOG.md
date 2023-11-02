@@ -1,3 +1,12 @@
+## [9.8.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.1...9.8.2) (2023-11-02)
+
+
+### Bug Fixes
+
+* add support for more metadata types ([#1161](https://github.com/forcedotcom/source-deploy-retrieve/issues/1161)) ([b4748aa](https://github.com/forcedotcom/source-deploy-retrieve/commit/b4748aae6811f23828804a9fd0a891ec43651faa))
+
+
+
 ## [9.8.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.0...9.8.1) (2023-10-31)
 
 

@@ -2526,16 +2526,29 @@
             "id": "decisionmatrixdefinitionversion",
             "name": "DecisionMatrixDefinitionVersion",
             "directoryName": "versions",
-            "suffix": "decisionMatrixDefinitionVersion"
+            "suffix": "decisionMatrixVersion"
           }
         },
         "directories": {
           "versions": "decisionmatrixdefinitionversion"
         },
         "suffixes": {
-          "decisionMatrixDefinitionVersion": "decisionmatrixdefinitionversion"
+          "decisionMatrixVersion": "decisionmatrixdefinitionversion"
         }
+      },
+      "strategies": {
+        "adapter": "decomposed",
+        "transformer": "decomposed",
+        "decomposition": "folderPerType"
       }
+    },
+    "decisionmatrixdefinitionversion": {
+      "id": "decisionmatrixdefinitionversion",
+      "name": "DecisionMatrixDefinitionVersion",
+      "suffix": "decisionMatrixVersion",
+      "directoryName": "decisionMatrixVersion",
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "expressionsetdefinition": {
       "id": "expressionsetdefinition",
@@ -2550,16 +2563,29 @@
             "id": "expressionsetdefinitionversion",
             "name": "ExpressionSetDefinitionVersion",
             "directoryName": "versions",
-            "suffix": "expressionSetDefinitionVersion"
+            "suffix": "expressionSetVersion"
           }
         },
         "directories": {
           "versions": "expressionsetdefinitionversion"
         },
         "suffixes": {
-          "expressionSetDefinitionVersion": "expressionsetdefinitionversion"
+          "expressionSetVersion": "expressionsetdefinitionversion"
         }
+      },
+      "strategies": {
+        "adapter": "decomposed",
+        "transformer": "decomposed",
+        "decomposition": "folderPerType"
       }
+    },
+    "expressionsetdefinitionversion": {
+      "id": "expressionsetdefinitionversion",
+      "name": "ExpressionSetDefinitionVersion",
+      "suffix": "expressionSetVersion",
+      "directoryName": "expressionSetVersion",
+      "inFolder": false,
+      "strictDirectoryName": false
     },
     "briefcasedefinition": {
       "id": "briefcasedefinition",
@@ -3590,9 +3616,9 @@
     "decisionTable": "decisiontable",
     "decisionTableDatasetLink": "decisiontabledatasetlink",
     "decisionMatrixDefinition": "decisionmatrixdefinition",
-    "decisionMatrixDefinitionVersion": "decisionmatrixdefinitionversion",
+    "decisionMatrixVersion": "decisionmatrixdefinitionversion",
     "expressionSetDefinition": "expressionsetdefinition",
-    "expressionSetDefinitionVersion": "expressionsetdefinitionversion",
+    "expressionSetVersion": "expressionsetdefinitionversion",
     "briefcaseDefinition": "briefcasedefinition",
     "batchProcessJobDefinition": "batchprocessjobdefinition",
     "acctMgrTargetSetting": "acctmgrtargetsettings",
@@ -4015,8 +4041,6 @@
     "customfieldtranslation": "customobjecttranslation",
     "mktdatatranfield": "mktdatatranobject",
     "digitalexperience": "digitalexperiencebundle",
-    "decisionmatrixdefinitionversion": "decisionmatrixdefinition",
-    "expressionsetdefinitionversion": "expressionsetdefinition",
     "aiscoringmodeldefversion": "aiscoringmodeldefinition"
   }
 }

@@ -130,6 +130,17 @@
         "adapter": "matchingContentFile"
       }
     },
+    "discoverystory": {
+      "id": "discoverystory",
+      "name": "DiscoveryStory",
+      "suffix": "story",
+      "directoryName": "discovery",
+      "inFolder": false,
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "matchingContentFile"
+      }
+    },
     "experiencebundle": {
       "id": "experiencebundle",
       "name": "ExperienceBundle",
@@ -2872,6 +2883,13 @@
       "directoryName": "documentGenerationSettings",
       "inFolder": false
     },
+    "carebenefitverifysettings": {
+      "id": "carebenefitverifysettings",
+      "name": "CareBenefitVerifySettings",
+      "suffix": "careBenefitVerifySettings",
+      "directoryName": "careBenefitVerifySettings",
+      "inFolder": false
+    },
     "uiobjectrelationconfig": {
       "id": "uiobjectrelationconfig",
       "name": "UIObjectRelationConfig",
@@ -3562,6 +3580,78 @@
       "directoryName": "eventRelays",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "careproviderafflroleconfig": {
+      "id": "careproviderafflroleconfig",
+      "name": "CareProviderAfflRoleConfig",
+      "suffix": "careProviderAfflRoleConfig",
+      "directoryName": "careProviderAfflRoleConfigs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "contextdefinition": {
+      "id": "contextdefinition",
+      "name": "ContextDefinition",
+      "suffix": "contextDefinition",
+      "directoryName": "contextDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "documentcategory": {
+      "id": "documentcategory",
+      "name": "DocumentCategory",
+      "suffix": "documentCategory",
+      "directoryName": "documentCategory",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "documentcategorydocumenttype": {
+      "id": "documentcategorydocumenttype",
+      "name": "DocumentCategoryDocumentType",
+      "suffix": "documentCategoryDocumentType",
+      "directoryName": "documentCategoryDocumentTypes",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "expressionsetmessagetoken": {
+      "id": "expressionsetmessagetoken",
+      "name": "ExpressionSetMessageToken",
+      "suffix": "expressionSetMessageToken",
+      "directoryName": "expressionSetMessageToken",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "recordaggregationdefinition": {
+      "id": "recordaggregationdefinition",
+      "name": "RecordAggregationDefinition",
+      "suffix": "RecordAggregationDefinition",
+      "directoryName": "RecordAggregationDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "webstorebundle": {
+      "id": "webstorebundle",
+      "name": "WebStoreBundle",
+      "suffix": "webStoreBundle",
+      "directoryName": "webStoreBundles",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "externalaimodel": {
+      "id": "externalaimodel",
+      "name": "ExternalAIModel",
+      "suffix": "externalAIModel",
+      "directoryName": "externalAIModels",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "registeredexternalservice": {
+      "id": "registeredexternalservice",
+      "name": "RegisteredExternalService",
+      "suffix": "registeredExternalService",
+      "directoryName": "registeredExternalServices",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3608,6 +3698,7 @@
     "labels": "customlabels",
     "navigationMenu": "navigationmenu",
     "scf": "scontrol",
+    "story": "discoverystory",
     "crt": "certificate",
     "messageChannel": "lightningmessagechannel",
     "component": "apexcomponent",
@@ -3876,6 +3967,7 @@
     "advAcctForecastPeriodGroup": "advacctforecastperiodgroup",
     "advAccountForecastSet": "advaccountforecastset",
     "documentGenerationSetting": "documentgenerationsetting",
+    "careBenefitVerifySettings": "carebenefitverifysettings",
     "uiObjectRelationConfig": "uiobjectrelationconfig",
     "careRequestConfiguration": "carerequestconfiguration",
     "mlRecommendation": "mlrecommendationdefinition",
@@ -3953,7 +4045,16 @@
     "SearchCriteriaConfigurationSetting": "searchcriteriaconfiguration",
     "fundraisingConfig": "fundraisingconfig",
     "pricingRecipe": "pricingrecipe",
-    "eventRelay": "eventrelayconfig"
+    "eventRelay": "eventrelayconfig",
+    "careProviderAfflRoleConfig": "careproviderafflroleconfig",
+    "contextDefinition": "contextdefinition",
+    "documentCategory": "documentcategory",
+    "documentCategoryDocumentType": "documentcategorydocumenttype",
+    "expressionSetMessageToken": "expressionsetmessagetoken",
+    "RecordAggregationDefinition": "recordaggregationdefinition",
+    "webStoreBundle": "webstorebundle",
+    "externalAIModel": "externalaimodel",
+    "registeredExternalService": "registeredexternalservice"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

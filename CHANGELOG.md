@@ -1,3 +1,12 @@
+## [9.8.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.2...9.8.3) (2023-11-02)
+
+
+### Bug Fixes
+
+* support metadata type managedEventSubscription ([#1162](https://github.com/forcedotcom/source-deploy-retrieve/issues/1162)) ([8afad5a](https://github.com/forcedotcom/source-deploy-retrieve/commit/8afad5a2859255a1d88744a07ba0f55bb3c1585b))
+
+
+
 ## [9.8.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.1...9.8.2) (2023-11-02)
 
 

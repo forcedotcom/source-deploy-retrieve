@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v59 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 533/569 supported metadata types.
+Currently, there are 543/569 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -98,7 +98,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |CanvasMetadata|✅||
 |CareBenefitVerifySettings|✅||
 |CareLimitType|✅||
-|CareProviderAfflRoleConfig|❌|Not supported, but support could be added|
+|CareProviderAfflRoleConfig|✅||
 |CareProviderSearchConfig|✅||
 |CareRequestConfiguration|✅||
 |CareSystemFieldMapping|✅||
@@ -130,7 +130,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ConnectedAppSettings|✅||
 |ContentAsset|✅||
 |ContentSettings|✅||
-|ContextDefinition|❌|Not supported, but support could be added (but not for tracking)|
+|ContextDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |ContractSettings|✅||
 |ContractType|❌|Not supported, but support could be added|
 |ConversationChannelDefinition|✅||
@@ -192,10 +192,10 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DiscoveryAIModel|✅||
 |DiscoveryGoal|✅||
 |DiscoverySettings|✅||
-|DiscoveryStory|❌|Not supported, but support could be added|
+|DiscoveryStory|✅||
 |Document|✅||
-|DocumentCategory|❌|Not supported, but support could be added|
-|DocumentCategoryDocumentType|❌|Not supported, but support could be added|
+|DocumentCategory|✅||
+|DocumentCategoryDocumentType|✅||
 |DocumentChecklistSettings|✅||
 |DocumentFolder|✅||
 |DocumentGenerationSetting|✅||
@@ -241,9 +241,9 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExplainabilityMsgTemplate|✅||
 |ExpressionSetDefinition|✅||
 |ExpressionSetDefinitionVersion|✅||
-|ExpressionSetMessageToken|❌|Not supported, but support could be added|
+|ExpressionSetMessageToken|✅||
 |ExpressionSetObjectAlias|❌|Not supported, but support could be added|
-|ExternalAIModel|❌|Not supported, but support could be added|
+|ExternalAIModel|✅||
 |ExternalClientAppSettings|✅||
 |ExternalClientApplication|✅||
 |ExternalCredential|✅||
@@ -457,7 +457,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |RecommendationBuilderSettings|✅||
 |RecommendationStrategy|✅||
 |RecordActionDeployment|✅||
-|RecordAggregationDefinition|❌|Not supported, but support could be added|
+|RecordAggregationDefinition|✅||
 |RecordAlertCategory|✅||
 |RecordAlertDataSource|✅||
 |RecordAlertTemplate|❌|Not supported, but support could be added|
@@ -466,7 +466,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |RedirectWhitelistUrl|✅||
 |ReferencedDashboard|❌|Not supported, but support could be added|
 |ReferralMarketingSettings|✅||
-|RegisteredExternalService|❌|Not supported, but support could be added|
+|RegisteredExternalService|✅||
 |RelatedRecordAssocCriteria|❌|Not supported, but support could be added|
 |RelationshipGraphDefinition|✅||
 |RemoteSiteSetting|✅||
@@ -564,7 +564,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |WaveXmd|✅||
 |Web3Settings|✅||
 |WebLink|✅||
-|WebStoreBundle|❌|Not supported, but support could be added|
+|WebStoreBundle|✅||
 |WebStoreTemplate|✅||
 |WebToXSettings|✅||
 |WorkDotComSettings|✅||

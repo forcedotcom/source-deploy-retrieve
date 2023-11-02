@@ -3652,6 +3652,14 @@
       "directoryName": "registeredExternalServices",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "managedeventsubscription": {
+      "id": "managedeventsubscription",
+      "name": "ManagedEventSubscription",
+      "suffix": "managedEventSubscription",
+      "directoryName": "managedEventSubscriptions",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -4054,7 +4062,8 @@
     "RecordAggregationDefinition": "recordaggregationdefinition",
     "webStoreBundle": "webstorebundle",
     "externalAIModel": "externalaimodel",
-    "registeredExternalService": "registeredexternalservice"
+    "registeredExternalService": "registeredexternalservice",
+    "managedEventSubscription": "managedeventsubscription"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

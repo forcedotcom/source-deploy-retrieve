@@ -41,7 +41,7 @@
   "devDependencies": {
     "@salesforce/cli-plugins-testkit": "^4.4.12",
     "@salesforce/dev-scripts": "^6.0.3",
-    "@salesforce/ts-sinon": "^1.4.18",
+    "@salesforce/ts-sinon": "^1.4.19",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/fast-levenshtein": "^0.0.3",
     "@types/graceful-fs": "^4.1.8",

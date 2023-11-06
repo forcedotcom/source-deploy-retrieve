@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v59 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 543/570 supported metadata types.
+Currently, there are 541/568 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -17,7 +17,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AIScoringModelDefinition|✅||
 |AIUsecaseDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |AccountForecastSettings|✅||
-|AccountInsightsSettings|✅||
 |AccountIntelligenceSettings|✅||
 |AccountRelationshipShareRule|✅||
 |AccountSettings|✅||
@@ -401,7 +400,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |OmniSupervisorConfig|✅||
 |OmniUiCard|⚠️|Supports deploy/retrieve but not source tracking|
 |OnlineSalesSettings|✅||
-|OpportunityInsightsSettings|✅||
 |OpportunityScoreSettings|✅||
 |OpportunitySettings|✅||
 |OrderManagementSettings|✅||
@@ -585,29 +583,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 ## Next Release (v60)
 
-v60 introduces the following new types.  Here's their current level of support
-
-|Metadata Type|Support|Notes|
-|:---|:---|:---|
-|ActionableEventOrchDef|❌|Not supported, but support could be added|
-|ActionableEventTypeDef|❌|Not supported, but support could be added|
-|ActnblListKeyPrfmIndDef|❌|Not supported, but support could be added|
-|EventLogObjectSettings|✅||
-|ExtDataTranFieldTemplate|❌|Not supported, but support could be added|
-|ExtDataTranObjectTemplate|❌|Not supported, but support could be added|
-|ExtlClntAppConfigurablePolicies|✅||
-|ExtlClntAppNotificationSettings|✅||
-|GenAiPlanner|❌|Not supported, but support could be added|
-|IncludeEstTaxInQuoteCPQSettings|✅||
-|IndustriesEventOrchSettings|✅||
-|IndustriesGamificationSettings|✅||
-|OauthTokenExchangeHandler|❌|Not supported, but support could be added|
-|OmniExtTrackingDef|❌|Not supported, but support could be added|
-|OmniTrackingComponentDef|❌|Not supported, but support could be added|
-|OmniTrackingGroup|❌|Not supported, but support could be added|
-|ProductConfiguratorSettings|✅||
-|RevenueManagementSettings|✅||
-|SvcCatalogFilterCriteria|❌|Not supported, but support could be added|
+> **Note**
+> v60 coverage not available at this time
 
 ## Additional Types
 
@@ -638,6 +615,7 @@ v60 introduces the following new types.  Here's their current level of support
 - CustomFieldTranslation
 - MatchingRule
 - MarketingResourceType
+- ExtlClntAppConfigurablePolicies
 - ExtlClntAppSampleConfigurablePolicies
 - ExtlClntAppSampleSettings
 - CustomExperience

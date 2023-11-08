@@ -4,6 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { Logger } from '@salesforce/core';
+import { isString } from '@salesforce/ts-types';
 
 /**
  * This is an extension of the Map class that can match keys whether they are encoded or decoded.
@@ -29,11 +31,20 @@ export class DecodeableMap<K extends string, V> extends Map<string, V> {
   // before `this.set()` is called or `TypeErrors` will be thrown.
   private internalkeysMap!: Map<string, string>;
 
+  private internalLogger!: Logger;
+
   private get keysMap(): Map<string, string> {
     if (!this.internalkeysMap) {
       this.internalkeysMap = new Map();
     }
     return this.internalkeysMap;
+  }
+
+  private get logger(): Logger {
+    if (!this.internalLogger) {
+      this.internalLogger = Logger.childFromRoot(this.constructor.name);
+    }
+    return this.internalLogger;
   }
 
   /**
@@ -77,21 +88,27 @@ export class DecodeableMap<K extends string, V> extends Map<string, V> {
     if (super.has(key)) {
       return key;
     } else {
-      const decodedKey = decodeURIComponent(key);
-      if (key !== decodedKey) {
-        // The key is encoded; If this is part of a set operation,
-        // set the { decodedKey : encodedKey } in the internal map.
-        if (setInKeysMap) {
-          this.keysMap.set(decodedKey, key);
+      try {
+        const decodedKey = decodeURIComponent(key);
+        if (key !== decodedKey) {
+          // The key is encoded; If this is part of a set operation,
+          // set the { decodedKey : encodedKey } in the internal map.
+          if (setInKeysMap) {
+            this.keysMap.set(decodedKey, key);
+          }
+          if (super.has(decodedKey)) {
+            return decodedKey;
+          }
+        } else {
+          const encodedKey = this.keysMap.get(decodedKey);
+          if (encodedKey && super.has(encodedKey)) {
+            return encodedKey;
+          }
         }
-        if (super.has(decodedKey)) {
-          return decodedKey;
-        }
-      } else {
-        const encodedKey = this.keysMap.get(decodedKey);
-        if (encodedKey && super.has(encodedKey)) {
-          return encodedKey;
-        }
+      } catch (e: unknown) {
+        // Log the error and the key
+        const errMsg = e instanceof Error ? e.message : isString(e) ? e : 'unknown';
+        this.logger.debug(`Could not decode metadata key: ${key} due to: ${errMsg}`);
       }
     }
   }

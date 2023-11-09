@@ -1,3 +1,12 @@
+## [9.8.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.4...9.8.5) (2023-11-09)
+
+
+### Bug Fixes
+
+* catch decoding errors ([#1167](https://github.com/forcedotcom/source-deploy-retrieve/issues/1167)) ([15f1137](https://github.com/forcedotcom/source-deploy-retrieve/commit/15f11371e3f9142da08341d47718745e4c740480))
+
+
+
 ## [9.8.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.3...9.8.4) (2023-11-05)
 
 

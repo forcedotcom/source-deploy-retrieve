@@ -76,6 +76,12 @@ describe('DecodeableMap', () => {
       expect(hasMapSpy.calledWith(nonExistent_key_encoded)).to.be.true;
       expect(hasMapSpy.calledWith(nonExistent_key_decoded)).to.be.true;
     });
+
+    it('should not match non-decodeable key', () => {
+      // trying to decode '%E0%A4%A' throws a URIError so DecodeableMap
+      // should not throw when a non-decodeable key is encountered.
+      expect(dMap.has('%E0%A4%A')).to.be.false;
+    });
   });
 
   describe('get()', () => {

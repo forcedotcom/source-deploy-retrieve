@@ -744,10 +744,10 @@
   resolved "https://registry.yarnpkg.com/@types/deep-equal-in-any-order/-/deep-equal-in-any-order-1.0.1.tgz#0559d855797a5034e187f248b23a4490e5444f2e"
   integrity sha512-hUWUUE53WjKfcCncSmWmNXVNNT+0Iz7gYFnov3zdCXrX3Thxp1Cnmfd5LwWOeCVUV5LhpiFgS05vaAG72doo9w==
 
-"@types/fast-levenshtein@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@types/fast-levenshtein/-/fast-levenshtein-0.0.3.tgz#61510ba62435d76a844f742c7824b54d95922e4b"
-  integrity sha512-KGLJbBibqCUA9WU9aNI7UK1dkw2FVIJ+W4a1JiSDotqRWVofPIr7BZI+UPV3MXOGyHifxzrHPNkpIUAbpqEN5w==
+"@types/fast-levenshtein@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@types/fast-levenshtein/-/fast-levenshtein-0.0.4.tgz#a16ff6607189edf08ac631e54b5774b0faf12d87"
+  integrity sha512-tkDveuitddQCxut1Db8eEFfMahTjOumTJGPHmT9E7KUH+DkVq9WTpVvlfenf3S+uCBeu8j5FP2xik/KfxOEjeA==
 
 "@types/glob@~7.2.0":
   version "7.2.0"

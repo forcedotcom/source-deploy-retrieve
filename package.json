@@ -48,7 +48,7 @@
     "@types/mime": "2.0.3",
     "@types/minimatch": "^5.1.2",
     "@types/proxy-from-env": "^1.0.4",
-    "@types/shelljs": "^0.8.13",
+    "@types/shelljs": "^0.8.15",
     "deep-equal-in-any-order": "^1.1.19",
     "deepmerge": "^4.3.1",
     "eslint-plugin-sf-plugin": "^1.16.13",

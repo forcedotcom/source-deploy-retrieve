@@ -197,7 +197,7 @@ const getContentType = async (component: SourceComponent): Promise<string> => {
 
   if (typeof output !== 'string') {
     throw new SfError(
-      `Expected a string for contentType in ${component.name} (${component.xml}) but got ${output?.toString()}`
+      `Expected a string for contentType in ${component.name} (${component.xml}) but got ${JSON.stringify(output)}`
     );
   }
   return output;

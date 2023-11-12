@@ -166,7 +166,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
 
     // inFolder types (report, dashboard, emailTemplate, document) and their folder
     // container types (reportFolder, dashboardFolder, emailFolder, documentFolder)
-    if (inFolder || folderContentType) {
+    if (folderContentType ?? inFolder) {
       return ensureString(
         parseNestedFullName(rootMetadata.path, directoryName),
         `Unable to calculate fullName from component at path: ${rootMetadata.path} (${this.type.name})`

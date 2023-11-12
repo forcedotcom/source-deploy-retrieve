@@ -8,6 +8,7 @@
 import { assert, expect } from 'chai';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { Connection, Logger } from '@salesforce/core';
+import { ManageableState } from '../../src/client/types';
 import { ConnectionResolver } from '../../src/resolve';
 import { MetadataComponent, registry } from '../../src/';
 
@@ -324,7 +325,7 @@ describe('ConnectionResolver', () => {
 
       const resolver = new ConnectionResolver(connection);
       const result = await resolver.resolve(
-        (component) => !(component.namespacePrefix && component.manageableState !== 'unmanaged')
+        (component) => !(component.namespacePrefix && component.manageableState !== ManageableState.Unmanaged)
       );
       expect(result.components).to.deep.equal([]);
     });

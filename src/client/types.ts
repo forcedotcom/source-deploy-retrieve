@@ -221,7 +221,7 @@ export type RetrieveRequest = {
 
 export type RetrieveMessage = { fileName: string; problem: string };
 
-enum ManageableState {
+export enum ManageableState {
   Beta = 'beta',
   Deleted = 'deleted',
   Deprecated = 'deprecated',

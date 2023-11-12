@@ -195,7 +195,8 @@ export const getReplacements = async (
 export const matchesFile = (f: string, r: ReplacementConfig): boolean =>
   // filenames will be absolute.  We don't have convenient access to the pkgDirs,
   // so we need to be more open than an exact match
-  Boolean((r.filename && posixifyPaths(f).endsWith(r.filename)) || (r.glob && minimatch(f, `**/${r.glob}`)));
+  (typeof r.filename === 'string' && posixifyPaths(f).endsWith(r.filename)) ||
+  (typeof r.glob === 'string' && minimatch(f, `**/${r.glob}`));
 
 /**
  * Regardless of any components, return the ReplacementConfig that are valid with the current env.

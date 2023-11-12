@@ -47,7 +47,7 @@
     "@types/graceful-fs": "^4.1.8",
     "@types/mime": "2.0.3",
     "@types/minimatch": "^5.1.2",
-    "@types/proxy-from-env": "^1.0.3",
+    "@types/proxy-from-env": "^1.0.4",
     "@types/shelljs": "^0.8.13",
     "deep-equal-in-any-order": "^1.1.19",
     "deepmerge": "^4.3.1",

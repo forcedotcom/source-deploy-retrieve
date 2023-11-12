@@ -838,10 +838,10 @@
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
 
-"@types/proxy-from-env@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@types/proxy-from-env/-/proxy-from-env-1.0.3.tgz#cbf92012d02434396db5e252652e32a10128128a"
-  integrity sha512-qmSGyd9bq6y+rclBayyLoE6GOisOkVOLofEsQRUba71irP9W+/hq7iEPsYTuVR5C7xXLZwM03SNtJXhpmwhT1w==
+"@types/proxy-from-env@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@types/proxy-from-env/-/proxy-from-env-1.0.4.tgz#0a0545768f2d6c16b81a84ffefb53b423807907c"
+  integrity sha512-TPR9/bCZAr3V1eHN4G3LD3OLicdJjqX1QRXWuNcCYgE66f/K8jO2ZRtHxI2D9MbnuUP6+qiKSS8eUHp6TFHGCw==
   dependencies:
     "@types/node" "*"
 

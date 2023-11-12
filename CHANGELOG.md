@@ -1,3 +1,12 @@
+## [9.8.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.5...9.8.6) (2023-11-12)
+
+
+### Bug Fixes
+
+* **lint:** current linter rules ([#1159](https://github.com/forcedotcom/source-deploy-retrieve/issues/1159)) ([5ae721a](https://github.com/forcedotcom/source-deploy-retrieve/commit/5ae721ad469c0cc3d8a9697e9b69ad1f4dec1eeb))
+
+
+
 ## [9.8.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.4...9.8.5) (2023-11-09)
 
 

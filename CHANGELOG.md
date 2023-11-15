@@ -1,3 +1,17 @@
+# [10.0.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.6...10.0.0) (2023-11-15)
+
+
+* feat!: require node18, use core6 ([6af3a90](https://github.com/forcedotcom/source-deploy-retrieve/commit/6af3a9004f7cb89ae02dee2259ec0f80b16f7b90))
+
+
+### BREAKING CHANGES
+
+* require node18+
+
+* chore: core6
+
+
+
 ## [9.8.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.5...9.8.6) (2023-11-12)
 
 

@@ -22,10 +22,10 @@
     "messages"
   ],
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^5.3.17",
+    "@salesforce/core": "^6.1.0",
     "@salesforce/kit": "^3.0.15",
     "@salesforce/ts-types": "^2.0.9",
     "fast-levenshtein": "^3.0.0",
@@ -41,7 +41,6 @@
   "devDependencies": {
     "@salesforce/cli-plugins-testkit": "^4.4.12",
     "@salesforce/dev-scripts": "^6.0.4",
-    "@salesforce/ts-sinon": "^1.4.19",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/fast-levenshtein": "^0.0.4",
     "@types/graceful-fs": "^4.1.9",

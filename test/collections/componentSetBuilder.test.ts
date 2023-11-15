@@ -9,7 +9,6 @@ import * as path from 'node:path';
 import * as fs from 'graceful-fs';
 import * as sinon from 'sinon';
 import { assert, expect } from 'chai';
-import { stubMethod } from '@salesforce/ts-sinon';
 import { SfError } from '@salesforce/core';
 import { ComponentSet, ComponentSetBuilder, FromSourceOptions } from '../../src';
 
@@ -57,9 +56,9 @@ describe('ComponentSetBuilder', () => {
 
     beforeEach(() => {
       fileExistsSyncStub = sandbox.stub(fs, 'existsSync');
-      fromSourceStub = stubMethod(sandbox, ComponentSet, 'fromSource');
-      fromManifestStub = stubMethod(sandbox, ComponentSet, 'fromManifest');
-      fromConnectionStub = stubMethod(sandbox, ComponentSet, 'fromConnection');
+      fromSourceStub = sandbox.stub(ComponentSet, 'fromSource');
+      fromManifestStub = sandbox.stub(ComponentSet, 'fromManifest');
+      fromConnectionStub = sandbox.stub(ComponentSet, 'fromConnection');
       componentSet = new ComponentSet();
     });
 

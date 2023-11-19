@@ -1,3 +1,12 @@
+## [10.0.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.0.0...10.0.1) (2023-11-19)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 6.1.0 to 6.1.3 ([#1178](https://github.com/forcedotcom/source-deploy-retrieve/issues/1178)) ([4b42925](https://github.com/forcedotcom/source-deploy-retrieve/commit/4b429251bae7b3075b198a20c55fd0c9fc040632))
+
+
+
 # [10.0.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.6...10.0.0) (2023-11-15)
 
 

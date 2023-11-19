@@ -1,3 +1,12 @@
+## [10.0.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.0.1...10.0.2) (2023-11-19)
+
+
+### Bug Fixes
+
+* **deps:** bump ignore from 5.2.4 to 5.3.0 ([#1177](https://github.com/forcedotcom/source-deploy-retrieve/issues/1177)) ([009bce2](https://github.com/forcedotcom/source-deploy-retrieve/commit/009bce2ee2d71cb76e7c9ddb159438577a69ab7b))
+
+
+
 ## [10.0.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.0.0...10.0.1) (2023-11-19)
 
 

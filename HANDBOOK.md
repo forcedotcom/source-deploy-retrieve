@@ -86,7 +86,7 @@ The metadata registry is the foundation of the library. It is a module to descri
 
 The config file consists of a handful of different indexes.
 
-`types` contains an entry for each supported metadata type. As already mentioned, these entries contain metadata the library relies on to perform a variety of operations that will be described (later)[Breaking Down a Metadata Type Entry].
+`types` contains an entry for each supported metadata type. As already mentioned, these entries contain metadata the library relies on to perform a variety of operations that will be described [later](Breaking Down a Metadata Type Entry).
 
 `suffixes` maps file suffixes to metadata type ids. When parsing a file path, we can examine the file suffix and use this index to map what type it belongs to, providing a performance optimization. Not every metadata type has an associated file suffix, for those we use the following index instead.
 
@@ -140,10 +140,10 @@ Now, for all the optional properties which define how the metadata type is conve
 The library exports at the public API level a JavaScript object version of the [Metadata registry file]. This object is also used internally to reference registry data. If a consumer finds themselves needing references to metadata types or describe information, they can use this object:
 
 ```typescript
-import { registry } from '@salesforce/source-deploy-retrieve'
+import { registry } from '@salesforce/source-deploy-retrieve';
 
-registry.types.apexclass.name === 'ApexClass' // => true
-registry.types.auradefinitionbundle.directoryName // => 'aura'
+registry.types.apexclass.name === 'ApexClass'; // => true
+registry.types.auradefinitionbundle.directoryName; // => 'aura'
 ```
 
 📝 _The registry object is “deeply frozen”, meaning none of its properties, even the nested ones, are mutable. This is to ensure that a consumer cannot change registry information in a process and potentially affect functionality._
@@ -153,25 +153,22 @@ registry.types.auradefinitionbundle.directoryName // => 'aura'
 While it’s perfectly fine to reference the registry export directly, the `RegistryAccess` class was created to make accessing the object a bit more streamlined. Querying types and searching the registry is oftentimes easier and cleaner this way and contains built-in checking for whether or not a metadata type exists. Here’s a comparison of using each:
 
 ```typescript
-import { RegistryAccess, registry } from '@salesforce/source-deploy-retrieve'
+import { RegistryAccess, registry } from '@salesforce/source-deploy-retrieve';
 
 // we can optionally pass custom registry data to the constructor
 const registryAccess = new RegistryAccess();
 
-
 // query type by suffix
-registryAccess.getTypeBySuffix('cls')
-registry.types[registry.suffixes['cls']]
+registryAccess.getTypeBySuffix('cls');
+registry.types[registry.suffixes['cls']];
 
 // child types
 registryAccess.getTypeByName('CustomField');
-registry.types[registry.childTypes['customfield']].children['customfield']
+registry.types[registry.childTypes['customfield']].children['customfield'];
 
 // get strict directory types
 registryAccess.getStrictFolderTypes();
-Object.values(registry.strictDirectoryNames).map(
-    (typeId) => registry.types[typeId]
-);
+Object.values(registry.strictDirectoryNames).map((typeId) => registry.types[typeId]);
 ```
 
 📝 _If you find yourself writing some logic that involves querying the registry, consider adding a new method to_ `RegistryAccess`_. Even if it maybe won’t be used in another place again, it’s often easier to read and nice to keep query logic in the same place._
@@ -189,15 +186,15 @@ Almost every operation consists of working with metadata components. SDR abstrac
 Constructing component objects from files is a core feature of the library. This is the basis of the source deploy and source retrieve commands of the VSCode extensions and the CLI. The `MetadataResolver` class walks files from a given file path and constructs `SourceComponent` instances. This class implements the `MetadataComponent` interface and contains additional properties and methods to work with the collection of files that belong to a component. These are also referred to as **source-backed components**, since the components have files associated with them.
 
 ```typescript
-import { MetadataResolver } from '@salesforce/source-deploy-retrieve'
+import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
 
 const resolver = new MetadataResolver();
 const components = resolver.getComponentsFromPath('/path/to/force-app');
 
 // or a single component
 const [apexClass] = resolver.getComponentsFromPath('/classes/MyClass.cls');
-apexClass.fullName // => 'MyClass'
-apexClass.xml // => '/classes/MyClass.cls-meta.xml'
+apexClass.fullName; // => 'MyClass'
+apexClass.xml; // => '/classes/MyClass.cls-meta.xml'
 ```
 
 Metadata types often follow a pattern of how files are structured for one of its components. For example, a component of an Apex class or Apex trigger follows this structure:
@@ -225,10 +222,10 @@ The `ManifestResolver` class parses a [manifest file](https://trailhead.salesfor
 import { ManifestResolver } from '@salesforce/source-deploy-retrieve';
 
 (async () => {
-   const resolver = new ManifestResolver();
-   const components = await resolver.resolve('/path/to/package.xml');
-   components.forEach(c => console.log(`${c.fullName} - ${c.type.name}`))
-})()
+  const resolver = new ManifestResolver();
+  const components = await resolver.resolve('/path/to/package.xml');
+  components.forEach((c) => console.log(`${c.fullName} - ${c.type.name}`));
+})();
 ```
 
 📝 _So if the manifest resolver doesn’t create source-backed components, how do the deploy/retrieve commands work that utilize a manifest? We’ll go over this in the section Initializing a set from a manifest file. Those objects have an initializer that combines the efforts of the source and manifest resolvers to do exactly that. Following the principles of the library, we make pieces of functionality as building block modules to support larger operations. A tool author may just want to build something that analyzes and manipulates manifest files, so we don’t tightly couple it with assumptions about deploying and retrieving._
@@ -246,7 +243,7 @@ The `strategies` property, of a metadatata type entry in the registry, can defin
 
 The "adapters", or "source adapters", are responsible for understanding how a metadata type should be represented in source format and recognizing that pattern when constructing `Component Sets`
 
-### The `defaultSourceAdapter`:
+### The `defaultSourceAdapter`
 
 This adapter handles most of the types in the registry, this can be used when the metadata type follows the following pattern
 The default source adapter. Handles simple types with no additional content.
@@ -270,7 +267,7 @@ layouts/
 ├── Broker__c-Broker Layout.layout-meta.xml
 ```
 
-### The `bundleSourceAdapter`:
+### The `bundleSourceAdapter`
 
 Like the name suggests, this adapter handles bundle types, so `AuraDefinitionBundles`, `LightningWebComponents`. A bundle component has all its source files, including the root metadata xml, contained in its own directory.
 
@@ -285,7 +282,7 @@ Like the name suggests, this adapter handles bundle types, so `AuraDefinitionBun
  |   ├── myFoo.js-meta.xml
 ```
 
-### The `decomposedSourceAdapter`:
+### The `decomposedSourceAdapter`
 
 Handles decomposed types. A flavor of mixed content where a component can have additional `-meta.xml` files that represent child components of the main component. It's helpful to remember that in metadata format, `CustomObjects`,
 for example, are stored in a singular file, the adapters will rewrite that file into a directory that is easier to use in source-tracking, work with as a team, and easier to understand as a human.
@@ -307,7 +304,7 @@ objects/
 
 ```
 
-### The `digitalExperienceAdapter`:
+### The `digitalExperienceAdapter`
 
 Source Adapter for DigitalExperience metadata types. This metadata type is a bundled type of the format.
 
@@ -344,7 +341,7 @@ The "\_meta.json" files are child metadata files of DigitalExperienceBundle belo
 corresponding folder are the contents to the DigitalExperience metadata. So, in case of DigitalExperience the metadata file is a JSON file
 and not an XML file.
 
-### The `matchingContentAdapter`:
+### The `matchingContentAdapter`
 
 This adapter is used for `ApexClass` or other types where there is a "content" file and an .xml file. In source-format, an `ApexClass` is made up of two files, the `.cls` which contains the actual code from the class, and an accompanying "meta" file
 
@@ -354,7 +351,7 @@ classes/
  ├── myApexClass.cls-meta.xml
 ```
 
-### The `mixedContentAdapter`:
+### The `mixedContentAdapter`
 
 Handles types with mixed content. Mixed content means there are one or more additional file(s) associated with a component with any file extension. Even an entire folder can be considered "the content".
 
@@ -428,37 +425,31 @@ A `TreeContainer` is an encapsulation of a file system that enables I/O against 
 
 Clients can implement new tree containers by extending the `TreeContainer` base class and expanding functionality. Not all methods of a tree container have to be implemented, but an error will be thrown if the container is being used in a context that requires particular methods.
 
-💡*The author, Brian, demonstrated the extensibility of tree containers for a side project by creating a* `GitTreeContainer`_. This enabled resolving components against a git object tree, allowing us to perform component diffs between git refs and analyze GitHub projects. See the [SFDX Badge Generator](https://sfdx-badge.herokuapp.com/). This could be expanded into a plugin of some sort._
+💡*The author, Brian, demonstrated the extensibility of tree containers for a side project by creating a* `GitTreeContainer`_. This enabled resolving components against a git object tree, allowing us to perform component diffs between git refs and analyze GitHub projects. This could be expanded into a plugin of some sort._
 
 #### Creating mock components with the VirtualTreeContainer
 
 If a consumer needs to create fake components for testing, the `VirtualTreeContainer` is a great way to do so without having to create real local files in a project. This is how the library tests its own functionality in fact.
 
 ```typescript
-import {
-   ComponentSet,
-   registry,
-   VirtualDirectory,
-   VirtualTreeContainer
-} from '@salesforce/source-deploy-retrieve'
+import { ComponentSet, registry, VirtualDirectory, VirtualTreeContainer } from '@salesforce/source-deploy-retrieve';
 
 // resolve components of a virtual tree
 const virtualTree = new VirtualTreeContainer([
   {
     dirPath: '.',
-    children: ['MyClass.cls', 'MyClass.cls-meta.xml', 'folder2']
+    children: ['MyClass.cls', 'MyClass.cls-meta.xml', 'folder2'],
   },
   {
     dirPath: '/folder2',
-    children: ['MyClass2.cls', 'MyClass2.cls-meta.xml']
-  }
+    children: ['MyClass2.cls', 'MyClass2.cls-meta.xml'],
+  },
 ]);
 const components = ComponentSet.fromSource({
   fsPaths: ['.'],
-  tree: virtualTree
+  tree: virtualTree,
 });
-components.toArray() // => [<MyClass>, <MyClass2>]
-
+components.toArray(); // => [<MyClass>, <MyClass2>]
 
 // create an individual component
 const virtualFs: VirtualDirectory[] = [
@@ -467,18 +458,21 @@ const virtualFs: VirtualDirectory[] = [
     children: [
       {
         name: 'MyLayout.layout',
-        data: Buffer.from('<Layout></Layout>')
-      }
-    ]
-  }
-]
-const layout = SourceComponent.createVirtualComponent({
-  name: 'MyLayout',
-  type: registry.types.layout,
-  xml: '/metadata/MyLayout.layout'
-}, virtualFs);
+        data: Buffer.from('<Layout></Layout>'),
+      },
+    ],
+  },
+];
+const layout = SourceComponent.createVirtualComponent(
+  {
+    name: 'MyLayout',
+    type: registry.types.layout,
+    xml: '/metadata/MyLayout.layout',
+  },
+  virtualFs
+);
 
-console.log(await layout.parseXml()) // => "<Layout></Layout>"
+console.log(await layout.parseXml()); // => "<Layout></Layout>"
 ```
 
 ## Component Packaging
@@ -536,14 +530,14 @@ Here is where file transformation is done, but without being written to the dest
 Let’s say we’re converting a Layout from source format to metadata format. The write infos returned would look something like this:
 
 ```typescript
-const xmlFile = component.xml // path/to/source/MyLayout.layout-meta.xml
+const xmlFile = component.xml; // path/to/source/MyLayout.layout-meta.xml
 return [
-   {
-        // this is a Readable stream of the file's contents
-        source: component.tree.stream(xmlFile),
-        output: '/path/to/destination/MyLayout.layout'
-   }
-]
+  {
+    // this is a Readable stream of the file's contents
+    source: component.tree.stream(xmlFile),
+    output: '/path/to/destination/MyLayout.layout',
+  },
+];
 ```
 
 notice how we are stripping the `-meta.xml` suffix with the returned write info. This is essentially what’s happening in the `DefaultMetadataTransformer`. Once the converter has collected the write infos for a component, it pushes them to the write stage.
@@ -626,7 +620,6 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
   }
   // ...
 }
-
 ```
 
 📝 _Does this sound a bit overcomplicated? I think it does. These are the kinds of things we have to create though to accommodate the fact that we committed to the client being responsible for fancy file transformations. If the server returned a CustomObject already in an “IDE editing/git friendly“ format we would not have to do this._
@@ -640,31 +633,27 @@ Component merging refers to replacing the files of one component with the files 
 The following is an example of what a retrieve call is more or less doing under the hood when extracting components to an existing project:
 
 ```typescript
-import {
-    MetadataConverter,
-    MetadataResolver,
-    ZipTreeContainer
-} from '@salesforce/source-deploy-retrieve'
+import { MetadataConverter, MetadataResolver, ZipTreeContainer } from '@salesforce/source-deploy-retrieve';
 
 (async () => {
-   // Resolving components in the zip file
-   const zipBuffer = getZipBuffer();
-   const zipTree = await ZipTreeContainer.create(zipBuffer);
-   const zipResolver = new MetadataResolver(undefined, zipTree);
-   const zipComponents = zipResolver.getComponentsFromPath('.')
+  // Resolving components in the zip file
+  const zipBuffer = getZipBuffer();
+  const zipTree = await ZipTreeContainer.create(zipBuffer);
+  const zipResolver = new MetadataResolver(undefined, zipTree);
+  const zipComponents = zipResolver.getComponentsFromPath('.');
 
-   // Resolving components in SFDX project
-   const resolver = new MetadataResolver();
-   const forceAppComponents = resolver.getComponentsFromPath('/path/to/force-app');
-   const testAppComponents = resolver.getComponentsFromPath('/path/to/test-app');
+  // Resolving components in SFDX project
+  const resolver = new MetadataResolver();
+  const forceAppComponents = resolver.getComponentsFromPath('/path/to/force-app');
+  const testAppComponents = resolver.getComponentsFromPath('/path/to/test-app');
 
-   const converter = new MetadataConverter();
-   const result = await converter.convert(zipComponents, 'source', {
-        type: 'merge',
-        mergeWith: packageDirComponents,
-        // If a component can't be merged, put it here by default
-        defaultDirectory: '/path/to/force-app'
-   });
+  const converter = new MetadataConverter();
+  const result = await converter.convert(zipComponents, 'source', {
+    type: 'merge',
+    mergeWith: packageDirComponents,
+    // If a component can't be merged, put it here by default
+    defaultDirectory: '/path/to/force-app',
+  });
 })();
 ```
 
@@ -697,22 +686,19 @@ Component sets key components using their fullName and type id, i.e. only one pa
 Let’s look at some examples of adding components and testing membership:
 
 ```typescript
-import {
-    ComponentSet,
-    MetadataResolver
-} from '@salesforce/source-deploy-retrieve'
+import { ComponentSet, MetadataResolver } from '@salesforce/source-deploy-retrieve';
 
 const set = new ComponentSet();
 set.add({ fullName: 'MyClass', type: 'ApexClass' });
 set.add({ fullName: 'MyLayout', type: 'Layout' });
-set.size // => 2
+set.size; // => 2
 set.add({ fullName: 'MyClass', type: 'ApexClass' });
-set.size // => 2
+set.size; // => 2
 
 const resolver = new MetadataResolver();
 const mixedComponentTypes = new ComponentSet([
-    { fullName: 'MyLayout', type: 'Layout' },
-    { fullName: 'MyComponent', type: 'LightningComponentBundle' }
+  { fullName: 'MyLayout', type: 'Layout' },
+  { fullName: 'MyComponent', type: 'LightningComponentBundle' },
 ]);
 
 const [myClass] = resolver.getComponentsFromPath('/path/to/classes/MyClass.cls');
@@ -729,26 +715,26 @@ Up to this point, we have demonstrated resolving source-backed components using 
 - Use the resolver directly if you purely want to do some component analysis that doesn’t require a unique collection
 
 ```typescript
-import { ComponentSet } from '@salesforce/source-deploy-retrieve'
+import { ComponentSet } from '@salesforce/source-deploy-retrieve';
 
 const fromOnePath = ComponentSet.fromSource('/path/to/force-app');
 
 // Resolve components from each path
 const fromMultiplePaths = ComponentSet.fromSource([
-   '/path/to/force-app',
-   '/path/to/test-app',
-   '/path/to/helper/main/default/classes'
+  '/path/to/force-app',
+  '/path/to/test-app',
+  '/path/to/helper/main/default/classes',
 ]);
 
 (async () => {
-    // Resolve all Layout components in the zip file
-    const zipTree = await ZipTreeContainer.create('/path/to/package.zip');
-    const filter = new ComponentSet([{ fullName: '*', type: 'Layout' }]);
-    const withOptions = ComponentSet.fromSource({
-        fsPaths: ['.'],
-        tree: zipTree,
-        include: filter
-    });
+  // Resolve all Layout components in the zip file
+  const zipTree = await ZipTreeContainer.create('/path/to/package.zip');
+  const filter = new ComponentSet([{ fullName: '*', type: 'Layout' }]);
+  const withOptions = ComponentSet.fromSource({
+    fsPaths: ['.'],
+    tree: zipTree,
+    include: filter,
+  });
 })();
 ```
 
@@ -769,7 +755,7 @@ Similar to how `fromSource` is a wrapper for the source resolver, `fromManifest`
 Here are examples of the above scenarios:
 
 ```typescript
-import { ComponentSet } from '@salesforce/source-deploy-retrieve'
+import { ComponentSet } from '@salesforce/source-deploy-retrieve';
 
 /**
  * /path/to/package.xml
@@ -793,26 +779,24 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 */
 
 (async () => {
-    // Resolve non-source-backed components from the manifest
-    const simple = await ComponentSet.fromManifest('/path/to/package.xml');
-    simple.size // => 4 (wildcard member is added as its own component)
+  // Resolve non-source-backed components from the manifest
+  const simple = await ComponentSet.fromManifest('/path/to/package.xml');
+  simple.size; // => 4 (wildcard member is added as its own component)
 
+  // Resolve source-backed components with a manifest
+  const manifestWithSource = await ComponentSet.fromManifest({
+    manifestPath: '/path/to/package.xml',
+    resolveSourcePaths: ['/path/to/force-app', '/path/to/force-app-2'],
+  });
+  manifest.size; // => 6 (assume 2 triggers in force-app, 1 trigger in force-app-2)
 
-    // Resolve source-backed components with a manifest
-    const manifestWithSource = await ComponentSet.fromManifest({
-        manifestPath: '/path/to/package.xml',
-        resolveSourcePaths: ['/path/to/force-app', '/path/to/force-app-2']
-    });
-    manifest.size // => 6 (assume 2 triggers in force-app, 1 trigger in force-app-2)
-
-
-    // Same as previous example, but add the wildcard as its own component
-    const manifestWithSource = await ComponentSet.fromManifest({
-        manifestPath: '/path/to/package.xml',
-        resolveSourcePaths: ['/path/to/force-app', '/path/to/force-app-2'],
-        forceAddWildcards: true
-    });
-    manifest.size // => 7 (including { fullName: '*', type: 'ApexTrigger' } now)
+  // Same as previous example, but add the wildcard as its own component
+  const manifestWithSource = await ComponentSet.fromManifest({
+    manifestPath: '/path/to/package.xml',
+    resolveSourcePaths: ['/path/to/force-app', '/path/to/force-app-2'],
+    forceAddWildcards: true,
+  });
+  manifest.size; // => 7 (including { fullName: '*', type: 'ApexTrigger' } now)
 })();
 ```
 
@@ -846,21 +830,21 @@ Metadata API deploys and retrieves are asynchronous operations. Once a request h
 Before we can perform either operation, we must establish a connection to an org. The library utilizes [sfdx-core](https://www.npmjs.com/package/@salesforce/core) connection objects to do. Currently there are two options when using SDR — either the consumer supplies a connection instance themselves or they pass an org username. The former requires authentication to have been persisted in `~/.sfdx` at some point prior. This is typically done by authorizing an org through the CLI or the VS Code extensions.
 
 ```typescript
-import { AuthInfo, Connection } from '@salesforce/core'
+import { AuthInfo, Connection } from '@salesforce/core';
 
 (async () => {
-   // when passing only a username to deploy/retrieve operations, this
-   // is happening under the hood
-   const connection = await Connection.create({
-        authInfo: await AuthInfo.create({
-            // requires having already authenticated to this org
-            username: 'user@example.com'
-        })
-   });
+  // when passing only a username to deploy/retrieve operations, this
+  // is happening under the hood
+  const connection = await Connection.create({
+    authInfo: await AuthInfo.create({
+      // requires having already authenticated to this org
+      username: 'user@example.com',
+    }),
+  });
 })();
 ```
 
-See [Connection](https://forcedotcom.github.io/sfdx-core/classes/connection.html) in the API documentation for a more comprehensive overview of the object and how to use it. If a consumer is interested in authenticating an org outside of these two tools or customizing a Connection object, refer to that documentation.
+See [Connection](https://forcedotcom.github.io/sfdx-core/classes/org_connection.Connection-1.html) in the API documentation for a more comprehensive overview of the object and how to use it. If a consumer is interested in authenticating an org outside of these two tools or customizing a Connection object, refer to that documentation.
 
 ### Deploying
 
@@ -871,61 +855,58 @@ The simplest way to kick off a new deploy is through a component set. `Component
 #### Deploy with a source path
 
 ```typescript
-import { ComponentSet } from '@salesforce/source-deploy-retrieve'
+import { ComponentSet } from '@salesforce/source-deploy-retrieve';
 
 (async () => {
-    // Deploy every component in the classes folder
-    const deploy = await ComponentSet
-        .fromSource('/path/to/force-app/main/default/classes')
-        .deploy({ usernameOrConnection: 'user@example.com' });
+  // Deploy every component in the classes folder
+  const deploy = await ComponentSet.fromSource('/path/to/force-app/main/default/classes').deploy({
+    usernameOrConnection: 'user@example.com',
+  });
 
-    // Attach a listener to check the deploy status on each poll
-    deploy.onUpdate(response => {
-        const { status, numberComponentsDeployed, numberComponentsTotal } = response;
-        const progress = `${numberComponentsDeployed}/${numberComponentsTotal}`;
-        const message = `Status: ${status} Progress: ${progress}`;
-    });
+  // Attach a listener to check the deploy status on each poll
+  deploy.onUpdate((response) => {
+    const { status, numberComponentsDeployed, numberComponentsTotal } = response;
+    const progress = `${numberComponentsDeployed}/${numberComponentsTotal}`;
+    const message = `Status: ${status} Progress: ${progress}`;
+  });
 
-    // Wait for polling to finish and get the DeployResult object
-    const result = await deploy.pollStatus();
+  // Wait for polling to finish and get the DeployResult object
+  const result = await deploy.pollStatus();
 
-    // Output each file along with its state change of the deployment
-    console.log(result.getFileResponses());
+  // Output each file along with its state change of the deployment
+  console.log(result.getFileResponses());
 })();
 ```
 
 #### Deploy with a manifest file
 
 ```typescript
-import { ComponentSet } from '@salesforce/source-deploy-retrieve'
+import { ComponentSet } from '@salesforce/source-deploy-retrieve';
 
 (async () => {
-    // Collect all components that are members of the manifest across
-    // two different package directories
-    const set = await ComponentSet.fromManifest({
-        manifestPath: '/path/to/package.xml',
-        resolveSourcePaths: [
-            '/path/to/force-app',
-            '/path/to/force-app-2'
-        ]
-    });
+  // Collect all components that are members of the manifest across
+  // two different package directories
+  const set = await ComponentSet.fromManifest({
+    manifestPath: '/path/to/package.xml',
+    resolveSourcePaths: ['/path/to/force-app', '/path/to/force-app-2'],
+  });
 
-    // Start a deploy with the components
-    const deploy = await set.deploy({ usernameOrConnection: 'user@example.com' });
+  // Start a deploy with the components
+  const deploy = await set.deploy({ usernameOrConnection: 'user@example.com' });
 
-    // Attach a listener to check the deploy status on each poll
-    deploy.onUpdate(response => {
-        const { status, numberComponentsDeployed, numberComponentsTotal } = response;
-        const progress = `${numberComponentsDeployed}/${numberComponentsTotal}`;
-        const message = `Status: ${status} Progress: ${progress}`;
-        console.log(message);
-    });
+  // Attach a listener to check the deploy status on each poll
+  deploy.onUpdate((response) => {
+    const { status, numberComponentsDeployed, numberComponentsTotal } = response;
+    const progress = `${numberComponentsDeployed}/${numberComponentsTotal}`;
+    const message = `Status: ${status} Progress: ${progress}`;
+    console.log(message);
+  });
 
-    // Wait for polling to finish and get the DeployResult object
-    const result = await deploy.pollStatus();
+  // Wait for polling to finish and get the DeployResult object
+  const result = await deploy.pollStatus();
 
-    // Output each file along with its state change of the deployment
-    console.log(result.getFileResponses());
+  // Output each file along with its state change of the deployment
+  console.log(result.getFileResponses());
 })();
 ```
 
@@ -934,24 +915,24 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 The Metadata API supports canceling a deploy in progress, and that is exposed through the `cancel()` method on the transfer object. Cancelations are also asynchronous operations - we need to poll to monitor when a cancelation actually finishes.
 
 ```typescript
-import { ComponentSet } from '@salesforce/source-deploy-retrieve'
+import { ComponentSet } from '@salesforce/source-deploy-retrieve';
 
 (async () => {
-    const deploy = await ComponentSet
-        .fromSource('/path/to/force-app')
-        .deploy({ usernameOrConnection: 'user@example.com' });
+  const deploy = await ComponentSet.fromSource('/path/to/force-app').deploy({
+    usernameOrConnection: 'user@example.com',
+  });
 
-    deploy.onUpdate(({ status }) => console.log(`Status: ${status}`));
+  deploy.onUpdate(({ status }) => console.log(`Status: ${status}`));
 
-    // send a cancel request to the org
-    await deploy.cancel();
+  // send a cancel request to the org
+  await deploy.cancel();
 
-    // Wait until the cancelation finishes
-    const result = await deploy.pollStatus();
+  // Wait until the cancelation finishes
+  const result = await deploy.pollStatus();
 
-    if (result.response.status === RequestStatus.Canceled) {
-        console.log('The deploy operation was canceled');
-    }
+  if (result.response.status === RequestStatus.Canceled) {
+    console.log('The deploy operation was canceled');
+  }
 })();
 ```
 
@@ -960,32 +941,32 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 If a deploy was started by some other client or routine, as long as we have the deploy ID we can still make requests to monitor the status or cancel the operation. This is done by constructing a `MetadataApiDeploy` object with the ID as an option.
 
 ```typescript
-import { MetadataApiDeploy } from '@salesforce/source-deploy-retrieve'
+import { MetadataApiDeploy } from '@salesforce/source-deploy-retrieve';
 
 (async () => {
-    const deploy = new MetadataApiDeploy({
-        id: '00t12345678',
-        usernameOrConnection: 'user@example.com'
-    });
+  const deploy = new MetadataApiDeploy({
+    id: '00t12345678',
+    usernameOrConnection: 'user@example.com',
+  });
 
-    // check the status once without polling
-    const { status } = await deploy.checkStatus();
+  // check the status once without polling
+  const { status } = await deploy.checkStatus();
 
-    let message;
+  let message;
 
-    switch (status) {
-        case RequestStatus.Succeeded:
-            message = 'Deploy has finished successfully';
-            break;
-        case RequestStatus.Failed:
-            message = 'Deploy failed';
-            break;
-        case RequestStatus.Canceled:
-            message = 'Deploy was canceled';
-            break;
-        default:
-            message = 'Deploy is still in progress';
-    }
+  switch (status) {
+    case RequestStatus.Succeeded:
+      message = 'Deploy has finished successfully';
+      break;
+    case RequestStatus.Failed:
+      message = 'Deploy failed';
+      break;
+    case RequestStatus.Canceled:
+      message = 'Deploy was canceled';
+      break;
+    default:
+      message = 'Deploy is still in progress';
+  }
 })();
 ```
 
@@ -1000,65 +981,60 @@ We also have the option of merging components that are retrieved in the org with
 #### Retrieve with a source path
 
 ```typescript
-import { ComponentSet } from '@salesforce/source-deploy-retrieve'
+import { ComponentSet } from '@salesforce/source-deploy-retrieve';
 
 (async () => {
-    // Retrieve every component in the classes folder to the same location
-    const retrieve = await ComponentSet
-        .fromSource('/path/to/force-app/main/default/classes')
-        .retrieve({
-            usernameOrConnection: 'user@example.com',
-            // default location if retrieved component doesn't match with one in set
-            output: '/path/to/force-app',
-            merge: true
-        });
+  // Retrieve every component in the classes folder to the same location
+  const retrieve = await ComponentSet.fromSource('/path/to/force-app/main/default/classes').retrieve({
+    usernameOrConnection: 'user@example.com',
+    // default location if retrieved component doesn't match with one in set
+    output: '/path/to/force-app',
+    merge: true,
+  });
 
-    // Attach a listener to check the retrieve status on each poll
-    retrieve.onUpdate(({ status }) => console.log(`Status: ${status}`));
+  // Attach a listener to check the retrieve status on each poll
+  retrieve.onUpdate(({ status }) => console.log(`Status: ${status}`));
 
-    // Wait for polling to finish and get the RetrieveResult object
-    const result = await deploy.pollStatus();
+  // Wait for polling to finish and get the RetrieveResult object
+  const result = await deploy.pollStatus();
 
-    // Output each retrieved file
-    console.log(result.getFileResponses());
+  // Output each retrieved file
+  console.log(result.getFileResponses());
 })();
 ```
 
 #### Retrieve with a manifest file
 
 ```typescript
-import { ComponentSet } from '@salesforce/source-deploy-retrieve'
+import { ComponentSet } from '@salesforce/source-deploy-retrieve';
 
 (async () => {
-    // Collect all components that are members of the manifest across
-    // two different package directories
-    const set = await ComponentSet.fromManifest({
-        manifestPath: '/path/to/package.xml',
-        resolveSourcePaths: [
-            '/path/to/force-app',
-            '/path/to/test-app'
-        ],
-        // We want to retrieve everything in the org as well,
-        // see the section on initializing a set from a manifest file
-        forceAddWildcards: true
-    })
+  // Collect all components that are members of the manifest across
+  // two different package directories
+  const set = await ComponentSet.fromManifest({
+    manifestPath: '/path/to/package.xml',
+    resolveSourcePaths: ['/path/to/force-app', '/path/to/test-app'],
+    // We want to retrieve everything in the org as well,
+    // see the section on initializing a set from a manifest file
+    forceAddWildcards: true,
+  });
 
-    // Start a retrieve with the components
-    const retrieve = await set.retrieve({
-        usernameOrConnection: 'user@example.com',
-        // default location if retrieved component doesn't match with one in set
-        output: '/path/to/force-app',
-        merge: true
-    });
+  // Start a retrieve with the components
+  const retrieve = await set.retrieve({
+    usernameOrConnection: 'user@example.com',
+    // default location if retrieved component doesn't match with one in set
+    output: '/path/to/force-app',
+    merge: true,
+  });
 
-    // Attach a listener to check the retrieve status on each poll
-    retrieve.onUpdate(({ status }) => console.log(`Status: ${status}`));
+  // Attach a listener to check the retrieve status on each poll
+  retrieve.onUpdate(({ status }) => console.log(`Status: ${status}`));
 
-    // Wait for polling to finish and get the RetrieveResult object
-    const result = await retrieve.pollStatus();
+  // Wait for polling to finish and get the RetrieveResult object
+  const result = await retrieve.pollStatus();
 
-    // Output each retrieved file
-    console.log(result.getFileResponses());
+  // Output each retrieved file
+  console.log(result.getFileResponses());
 })();
 ```
 
@@ -1096,19 +1072,19 @@ import { ComponentSet } from '@salesforce/source-deploy-retrieve'
 If a retrieve was started by some other client or routine, as long as we have the retrieve ID we can still make requests to monitor the status or cancel the operation. This is done by constructing a `MetadataApiRetrieve` object with the ID as an option.
 
 ```typescript
-import { MetadataApiRetrieve } from '@salesforce/source-deploy-retrieve'
+import { MetadataApiRetrieve } from '@salesforce/source-deploy-retrieve';
 
 (async () => {
-    const retrieve = new MetadataApiRetrieve({
-        id: '00t12345678',
-        usernameOrConnection: 'user@example.com',
-        output: '/path/to/retrieve/output'
-    });
+  const retrieve = new MetadataApiRetrieve({
+    id: '00t12345678',
+    usernameOrConnection: 'user@example.com',
+    output: '/path/to/retrieve/output',
+  });
 
-    // Wait for the existing retrieve to finish, and then extract the components
-    const result = await retrieve.pollStatus();
+  // Wait for the existing retrieve to finish, and then extract the components
+  const result = await retrieve.pollStatus();
 
-    console.result(result.getFileResponses());
+  console.result(result.getFileResponses());
 })();
 ```
 

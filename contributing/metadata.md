@@ -32,7 +32,7 @@ The script will:
 4. Modify the registry to include the newly found types
 
 ```shell
-yarn update-registry
+yarn update-registry YourTypeNameHere
 ```
 
 ### What the script can't do

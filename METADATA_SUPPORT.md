@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v59 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 541/569 supported metadata types.
+Currently, there are 542/570 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -480,6 +480,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SalesWorkQueueSettings|✅||
 |SamlSsoConfig|✅||
 |SandboxSettings|✅||
+|SceGlobalModelOptOutSettings|✅||
 |SchedulingObjective|✅||
 |SchedulingRule|✅||
 |SchemaSettings|✅||
@@ -606,12 +607,10 @@ v60 introduces the following new types.  Here's their current level of support
 |ManagedEventSubscription|✅||
 |OauthTokenExchangeHandler|❌|Not supported, but support could be added|
 |OmniExtTrackingDef|❌|Not supported, but support could be added|
-|OmniTrackingComponentDef|❌|Not supported, but support could be added|
 |OmniTrackingGroup|❌|Not supported, but support could be added|
 |PricingActionParameters|❌|Not supported, but support could be added (but not for tracking)|
 |ProductConfiguratorSettings|✅||
 |RevenueManagementSettings|✅||
-|SceGlobalModelOptOutSettings|✅||
 |SvcCatalogFilterCriteria|❌|Not supported, but support could be added|
 
 ## Additional Types

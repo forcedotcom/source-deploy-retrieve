@@ -10,6 +10,7 @@
 import * as path from 'node:path';
 import { StateAggregator, Logger, SfError, Messages } from '@salesforce/core';
 import * as fs from 'graceful-fs';
+import * as minimatch from 'minimatch';
 import { ComponentSet } from '../collections';
 import { RegistryAccess } from '../registry';
 import { FileProperties } from '../client';
@@ -134,7 +135,8 @@ export class ComponentSetBuilder {
             })
               .getSourceComponents()
               .toArray()
-              .filter((cs) => new RegExp(splitEntry[1]).test(cs.fullName))
+              // using minimatch versus RegExp provides better (more expected) matching results
+              .filter((cs) => minimatch(cs.fullName, splitEntry[1]))
               .map((match) => {
                 compSetFilter.add(match);
                 componentSet?.add(match);
@@ -179,7 +181,8 @@ export class ComponentSetBuilder {
           componentFilter = (component: Partial<FileProperties>): boolean => {
             if (component.type && component.fullName) {
               const mdMapEntry = mdMap.get(component.type);
-              return !!mdMapEntry && mdMapEntry.some((mdName) => new RegExp(mdName).test(component.fullName as string));
+              // using minimatch versus RegExp provides better (more expected) matching results
+              return !!mdMapEntry && mdMapEntry.some((mdName) => minimatch(component.fullName as string, mdName));
             }
             return false;
           };

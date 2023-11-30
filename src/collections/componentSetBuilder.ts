@@ -12,6 +12,7 @@ import { StateAggregator, Logger, SfError, Messages } from '@salesforce/core';
 import * as fs from 'graceful-fs';
 import { ComponentSet } from '../collections';
 import { RegistryAccess } from '../registry';
+import { FileProperties } from '../client';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -56,6 +57,11 @@ export class ComponentSetBuilder {
   public static async build(options: ComponentSetOptions): Promise<ComponentSet> {
     const logger = Logger.childFromRoot('componentSetBuilder');
     let componentSet: ComponentSet | undefined;
+
+    // A map used when building a ComponentSet from metadata type/name pairs
+    // key = a metadata type
+    // value = an array of metadata names
+    const mdMap = new Map<string, string[]>();
 
     const { sourcepath, manifest, metadata, packagenames, apiversion, sourceapiversion, org } = options;
     try {
@@ -106,6 +112,15 @@ export class ComponentSetBuilder {
           const splitEntry = rawEntry.split(':').map((entry) => entry.trim());
           // The registry will throw if it doesn't know what this type is.
           registry.getTypeByName(splitEntry[0]);
+
+          // Add metadata entries to a map for possible use with an org connection below.
+          const mdMapEntry = mdMap.get(splitEntry[0]);
+          if (mdMapEntry) {
+            mdMapEntry.push(splitEntry[1]);
+          } else {
+            mdMap.set(splitEntry[0], [splitEntry[1]]);
+          }
+
           // this '.*' is a surprisingly valid way to specify a metadata, especially a DEB :sigh:
           // https://github.com/salesforcecli/plugin-deploy-retrieve/blob/main/test/nuts/digitalExperienceBundle/constants.ts#L140
           // because we're filtering from what we have locally, this won't allow you to retrieve new metadata (on the server only) using the partial wildcard
@@ -119,7 +134,7 @@ export class ComponentSetBuilder {
             })
               .getSourceComponents()
               .toArray()
-              .filter((cs) => Boolean(cs.fullName.match(new RegExp(splitEntry[1]))))
+              .filter((cs) => new RegExp(splitEntry[1]).test(cs.fullName))
               .map((match) => {
                 compSetFilter.add(match);
                 componentSet?.add(match);
@@ -147,15 +162,34 @@ export class ComponentSetBuilder {
       // Resolve metadata entries with an org connection
       if (org) {
         componentSet ??= new ComponentSet();
-        logger.debug(`Building ComponentSet from targetUsername: ${org.username}`);
+
+        let debugMsg = `Building ComponentSet from targetUsername: ${org.username}`;
+
+        // *** Default Filter ***
+        // exclude components based on the results of componentFilter function
+        // components with namespacePrefix where org.exclude includes manageableState (to exclude managed packages)
+        // components with namespacePrefix where manageableState equals undefined (to exclude components e.g. InstalledPackage)
+        // components where org.exclude includes manageableState (to exclude packages without namespacePrefix e.g. unlocked packages)
+        let componentFilter = (component: Partial<FileProperties>): boolean =>
+          !component?.manageableState || !org.exclude?.includes(component.manageableState);
+
+        if (metadata) {
+          debugMsg += ` filtered by metadata: ${metadata.metadataEntries.toString()}`;
+
+          componentFilter = (component: Partial<FileProperties>): boolean => {
+            if (component.type && component.fullName) {
+              const mdMapEntry = mdMap.get(component.type);
+              return !!mdMapEntry && mdMapEntry.some((mdName) => new RegExp(mdName).test(component.fullName as string));
+            }
+            return false;
+          };
+        }
+
+        logger.debug(debugMsg);
         const fromConnection = await ComponentSet.fromConnection({
           usernameOrConnection: (await StateAggregator.getInstance()).aliases.getUsername(org.username) ?? org.username,
-          // exclude components based on the results of componentFilter function
-          // components with namespacePrefix where org.exclude includes manageableState (to exclude managed packages)
-          // components with namespacePrefix where manageableState equals undefined (to exclude components e.g. InstalledPackage)
-          // components where org.exclude includes manageableState (to exclude packages without namespacePrefix e.g. unlocked packages)
-          componentFilter: (component): boolean =>
-            !component?.manageableState || !org.exclude?.includes(component.manageableState),
+          componentFilter,
+          metadataTypes: mdMap.size ? Array.from(mdMap.keys()) : undefined,
         });
 
         for (const comp of fromConnection) {

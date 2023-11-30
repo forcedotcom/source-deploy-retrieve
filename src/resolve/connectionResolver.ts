@@ -31,10 +31,20 @@ export class ConnectionResolver {
   private connection: Connection;
   private registry: RegistryAccess;
 
-  public constructor(connection: Connection, registry = new RegistryAccess()) {
+  // Array of metadata type names to use for listMembers. By default it includes
+  // all types defined in the registry.
+  private mdTypeNames: string[];
+
+  public constructor(connection: Connection, registry = new RegistryAccess(), mdTypes?: string[]) {
     this.connection = connection;
     this.registry = registry;
     this.logger = Logger.childFromRoot(this.constructor.name);
+    if (mdTypes?.length) {
+      // ensure the types passed in are valid per the registry
+      this.mdTypeNames = mdTypes.filter((t) => this.registry.getTypeByName(t));
+    } else {
+      this.mdTypeNames = Object.values(defaultRegistry.types).map((t) => t.name);
+    }
   }
 
   public async resolve(
@@ -45,9 +55,9 @@ export class ConnectionResolver {
     const componentTypes: Set<MetadataType> = new Set();
     const lifecycle = Lifecycle.getInstance();
     const componentPromises: Array<Promise<FileProperties[]>> = [];
-    for (const type of Object.values(defaultRegistry.types)) {
-      componentPromises.push(this.listMembers({ type: type.name }));
-    }
+
+    this.mdTypeNames.forEach((type) => componentPromises.push(this.listMembers({ type })));
+
     (await Promise.all(componentPromises)).map(async (componentResult) => {
       for (const component of componentResult) {
         let componentType: MetadataType;

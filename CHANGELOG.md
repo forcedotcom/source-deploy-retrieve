@@ -1,3 +1,12 @@
+# [10.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.0.4...10.1.0) (2023-12-05)
+
+
+### Features
+
+* build ComponentSet using metadata and an org connection ([#1182](https://github.com/forcedotcom/source-deploy-retrieve/issues/1182)) ([d4d2b93](https://github.com/forcedotcom/source-deploy-retrieve/commit/d4d2b93847c264cf303bdd81fac906364e09fc16))
+
+
+
 ## [10.0.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.0.3...10.0.4) (2023-12-03)
 
 

@@ -3,6 +3,8 @@
   "compilerOptions": {
     // Needed in order to import metadataRegistry.json
     "resolveJsonModule": true,
+    "module": "Node16",
+    "target": "ES2021",
     "rootDir": ".",
     "outDir": "lib",
     "skipLibCheck": true,

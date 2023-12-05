@@ -397,6 +397,36 @@ describe('ComponentSetBuilder', () => {
       expect(compSet.has(apexClassComponent)).to.equal(true);
     });
 
+    it('should create ComponentSet from org connection and metadata', async () => {
+      const mdCompSet = new ComponentSet();
+      mdCompSet.add(apexClassComponent);
+
+      fromSourceStub.returns(mdCompSet);
+      const packageDir1 = path.resolve('force-app');
+
+      componentSet.add(apexClassWildcardMatch);
+      fromConnectionStub.resolves(componentSet);
+      const options = {
+        sourcepath: undefined,
+        metadata: {
+          metadataEntries: ['ApexClass:MyClas*'],
+          directoryPaths: [packageDir1],
+        },
+        manifest: undefined,
+        org: {
+          username: 'manifest-test@org.com',
+          exclude: [],
+        },
+      };
+
+      const compSet = await ComponentSetBuilder.build(options);
+      expect(fromSourceStub.calledTwice).to.equal(true);
+      expect(fromConnectionStub.calledOnce).to.equal(true);
+      expect(compSet.size).to.equal(2);
+      expect(compSet.has(apexClassComponent)).to.equal(true);
+      expect(compSet.has(apexClassWildcardMatch)).to.equal(true);
+    });
+
     it('should create ComponentSet from manifest and multiple package', async () => {
       fileExistsSyncStub.returns(true);
 

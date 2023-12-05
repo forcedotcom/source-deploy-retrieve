@@ -8,6 +8,7 @@ import { Messages, SfError } from '@salesforce/core';
 import * as Levenshtein from 'fast-levenshtein';
 import { registry as defaultRegistry } from './registry';
 import { MetadataRegistry, MetadataType } from './types';
+import { getEffectiveRegistry } from './variants';
 
 /**
  * Container for querying metadata registry data.
@@ -24,7 +25,11 @@ export class RegistryAccess {
   private aliasTypes?: MetadataType[];
 
   public constructor(registry: MetadataRegistry = defaultRegistry) {
-    this.registry = registry;
+    if (registry) {
+      this.registry = registry;
+    } else {
+      this.registry = getEffectiveRegistry();
+    }
   }
 
   /**

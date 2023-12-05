@@ -39,12 +39,10 @@ export class ConnectionResolver {
     this.connection = connection;
     this.registry = registry;
     this.logger = Logger.childFromRoot(this.constructor.name);
-    if (mdTypes?.length) {
-      // ensure the types passed in are valid per the registry
-      this.mdTypeNames = mdTypes.filter((t) => this.registry.getTypeByName(t));
-    } else {
-      this.mdTypeNames = Object.values(defaultRegistry.types).map((t) => t.name);
-    }
+    this.mdTypeNames = mdTypes?.length
+      ? // ensure the types passed in are valid per the registry
+        mdTypes.filter((t) => this.registry.getTypeByName(t))
+      : Object.values(defaultRegistry.types).map((t) => t.name);
   }
 
   public async resolve(
@@ -54,9 +52,8 @@ export class ConnectionResolver {
     const childrenPromises: Array<Promise<FileProperties[]>> = [];
     const componentTypes: Set<MetadataType> = new Set();
     const lifecycle = Lifecycle.getInstance();
-    const componentPromises: Array<Promise<FileProperties[]>> = [];
 
-    this.mdTypeNames.forEach((type) => componentPromises.push(this.listMembers({ type })));
+    const componentPromises = this.mdTypeNames.map((type) => this.listMembers({ type }));
 
     (await Promise.all(componentPromises)).map(async (componentResult) => {
       for (const component of componentResult) {

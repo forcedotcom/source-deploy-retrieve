@@ -59,9 +59,11 @@ export class ComponentSetBuilder {
     const logger = Logger.childFromRoot('componentSetBuilder');
     let componentSet: ComponentSet | undefined;
 
-    // A map used when building a ComponentSet from metadata type/name pairs
-    // key = a metadata type
-    // value = an array of metadata names
+    /**
+     * A map used when building a ComponentSet from metadata type/name pairs
+     * key = a metadata type, e.g. `ApexClass`
+     * value = an array of metadata names, e.g. `['foo_*', 'BarClass']`
+     */
     const mdMap = new Map<string, string[]>();
 
     const { sourcepath, manifest, metadata, packagenames, apiversion, sourceapiversion, org } = options;
@@ -110,16 +112,16 @@ export class ComponentSetBuilder {
 
         // Build a Set of metadata entries
         metadata.metadataEntries.forEach((rawEntry) => {
-          const splitEntry = rawEntry.split(':').map((entry) => entry.trim());
+          const [mdType, mdName] = rawEntry.split(':').map((entry) => entry.trim());
           // The registry will throw if it doesn't know what this type is.
-          registry.getTypeByName(splitEntry[0]);
+          registry.getTypeByName(mdType);
 
           // Add metadata entries to a map for possible use with an org connection below.
-          const mdMapEntry = mdMap.get(splitEntry[0]);
+          const mdMapEntry = mdMap.get(mdType);
           if (mdMapEntry) {
-            mdMapEntry.push(splitEntry[1]);
+            mdMapEntry.push(mdName);
           } else {
-            mdMap.set(splitEntry[0], [splitEntry[1]]);
+            mdMap.set(mdType, [mdName]);
           }
 
           // this '.*' is a surprisingly valid way to specify a metadata, especially a DEB :sigh:
@@ -127,24 +129,24 @@ export class ComponentSetBuilder {
           // because we're filtering from what we have locally, this won't allow you to retrieve new metadata (on the server only) using the partial wildcard
           // to do that, you'd need check the size of the CS created below, see if it's 0, and then query the org for the metadata that matches the regex
           // but building a CS from a metadata argument doesn't require an org, so we can't do that here
-          if (splitEntry[1]?.includes('*') && splitEntry[1]?.length > 1 && !splitEntry[1].includes('.*')) {
+          if (mdName?.includes('*') && mdName?.length > 1 && !mdName.includes('.*')) {
             // get all components of the type, and then filter by the regex of the fullName
             ComponentSet.fromSource({
               fsPaths: directoryPaths,
-              include: new ComponentSet([{ type: splitEntry[0], fullName: ComponentSet.WILDCARD }]),
+              include: new ComponentSet([{ type: mdType, fullName: ComponentSet.WILDCARD }]),
             })
               .getSourceComponents()
               .toArray()
               // using minimatch versus RegExp provides better (more expected) matching results
-              .filter((cs) => minimatch(cs.fullName, splitEntry[1]))
+              .filter((cs) => minimatch(cs.fullName, mdName))
               .map((match) => {
                 compSetFilter.add(match);
                 componentSet?.add(match);
               });
           } else {
             const entry = {
-              type: splitEntry[0],
-              fullName: splitEntry.length === 1 ? '*' : splitEntry[1],
+              type: mdType,
+              fullName: !mdName ? '*' : mdName,
             };
             // Add to the filtered ComponentSet for resolved source paths,
             // and the unfiltered ComponentSet to build the correct manifest.

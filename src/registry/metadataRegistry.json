@@ -2993,6 +2993,30 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "svccatalogfiltercriteria": {
+      "id": "svccatalogfiltercriteria",
+      "name": "SvcCatalogFilterCriteria",
+      "suffix": "catalogFilterCriteria",
+      "directoryName": "svcCatalogFilterCriterias",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "svccatalogfiltercondition": {
+      "id": "svccatalogfiltercondition",
+      "name": "SvcCatalogFilterCondition",
+      "suffix": "catalogFilterCondition",
+      "directoryName": "svcCatalogFilterConditions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "svccatalogitemdeffiltrcrit": {
+      "id": "svccatalogitemdeffiltrcrit",
+      "name": "SvcCatalogItemDefFiltrCrit",
+      "suffix": "catalogItemDefFiltrCrit",
+      "directoryName": "svcCatalogItemDefFiltrCrits",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "omniuicard": {
       "id": "omniuicard",
       "name": "OmniUiCard",
@@ -3989,6 +4013,9 @@
     "category": "svccatalogcategory",
     "fulfillmentFlow": "svccatalogfulfillmentflow",
     "catalogItem": "svccatalogitemdef",
+    "catalogFilterCriteria": "svccatalogfiltercriteria",
+    "catalogFilterCondition": "svccatalogfiltercondition",
+    "catalogItemFilterDefCrit": "svccatalogitemdeffiltrcrit",
     "ouc": "omniuicard",
     "rpt": "omnidatatransform",
     "mktDataTranField": "mktdatatranfield",

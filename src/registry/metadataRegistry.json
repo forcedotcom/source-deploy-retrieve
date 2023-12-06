@@ -4013,7 +4013,7 @@
     "category": "svccatalogcategory",
     "fulfillmentFlow": "svccatalogfulfillmentflow",
     "catalogItem": "svccatalogitemdef",
-    "catalogFilterCriteria": "svccatalogfiltercriteria", \
+    "catalogFilterCriteria": "svccatalogfiltercriteria",
     "catalogFilterCondition": "svccatalogfiltercondition",
     "catalogItemFilterDefCrit": "svccatalogitemdeffiltrcrit",
     "ouc": "omniuicard",

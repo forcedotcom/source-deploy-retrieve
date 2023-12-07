@@ -1,3 +1,12 @@
+# [10.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.1.0...10.2.0) (2023-12-07)
+
+
+### Features
+
+* 3 entities for Service Catalog Eligibility Rules ([#1185](https://github.com/forcedotcom/source-deploy-retrieve/issues/1185)) ([a1e0a58](https://github.com/forcedotcom/source-deploy-retrieve/commit/a1e0a58ade6de0449f70bfbb00184134afa99df4))
+
+
+
 # [10.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.0.4...10.1.0) (2023-12-05)
 
 

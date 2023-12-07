@@ -4015,7 +4015,7 @@
     "catalogItem": "svccatalogitemdef",
     "catalogFilterCriteria": "svccatalogfiltercriteria",
     "catalogFilterCondition": "svccatalogfiltercondition",
-    "catalogItemFilterDefCrit": "svccatalogitemdeffiltrcrit",
+    "catalogItemDefFiltrCrit": "svccatalogitemdeffiltrcrit",
     "ouc": "omniuicard",
     "rpt": "omnidatatransform",
     "mktDataTranField": "mktdatatranfield",

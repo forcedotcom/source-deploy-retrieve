@@ -9,7 +9,7 @@ import { join } from 'node:path';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { assert, expect } from 'chai';
 import { SinonStub } from 'sinon';
-import { AuthInfo, ConfigAggregator, Connection, Lifecycle, Messages } from '@salesforce/core';
+import { AuthInfo, ConfigAggregator, Connection, Lifecycle, Messages, SfError } from '@salesforce/core';
 import {
   ComponentSet,
   ComponentSetBuilder,
@@ -676,8 +676,18 @@ describe('ComponentSet', () => {
   });
 
   describe('getObject', () => {
+    const sfOrgApiVersion = process.env.SF_ORG_API_VERSION;
+    let getCurrentApiVersionStub: SinonStub;
+
     beforeEach(() => {
-      $$.SANDBOX.stub(coverage, 'getCurrentApiVersion').resolves(testApiVersion);
+      getCurrentApiVersionStub = $$.SANDBOX.stub(coverage, 'getCurrentApiVersion').resolves(testApiVersion);
+    });
+
+    afterEach(() => {
+      process.env.SF_ORG_API_VERSION = sfOrgApiVersion;
+      if (!sfOrgApiVersion) {
+        delete process.env.SF_ORG_API_VERSION;
+      }
     });
 
     it('should return an object representing the package manifest', async () => {
@@ -701,6 +711,7 @@ describe('ComponentSet', () => {
           version: testApiVersionAsString,
         },
       });
+      expect(getCurrentApiVersionStub.calledOnce).to.be.true;
     });
 
     it('should allow the componentSet to set the apiVersion', async () => {
@@ -725,6 +736,52 @@ describe('ComponentSet', () => {
           version: testApiVersionAsString,
         },
       });
+      expect(getCurrentApiVersionStub.called).to.be.false;
+    });
+
+    it('should get an API version from env var', async () => {
+      const set = ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry: registryAccess,
+        tree: manifestFiles.TREE,
+      });
+      process.env.SF_ORG_API_VERSION = testApiVersionAsString;
+      expect(await set.getObject()).to.deep.equal({
+        Package: {
+          types: [
+            {
+              name: registry.types.customobjecttranslation.name,
+              members: ['a'],
+            },
+            {
+              name: registry.types.staticresource.name,
+              members: ['b', 'c'],
+            },
+          ],
+          version: testApiVersionAsString,
+        },
+      });
+      expect(getCurrentApiVersionStub.called).to.be.false;
+    });
+
+    it('should throw an error when API version is missing', async () => {
+      getCurrentApiVersionStub.reset();
+      const causeErr = new Error('HTTP 404 - mdcoverage url is down');
+      getCurrentApiVersionStub.throws(causeErr);
+      const set = ComponentSet.fromSource({
+        fsPaths: ['.'],
+        registry: registryAccess,
+        tree: manifestFiles.TREE,
+      });
+      try {
+        await set.getObject();
+        expect(true, 'Expected an error to be thrown from getObject()').to.be.false;
+      } catch (err: unknown) {
+        expect(err).to.be.instanceOf(SfError);
+        const error = err as SfError;
+        expect(error.name).to.equal('MissingApiVersionError');
+        expect(error.cause).to.equal(causeErr);
+      }
     });
 
     it('should return an object representing destructive changes manifest', async () => {
@@ -798,6 +855,7 @@ describe('ComponentSet', () => {
           version: set.sourceApiVersion,
         },
       });
+      expect(getCurrentApiVersionStub.called).to.be.false;
     });
 
     it('should interpret folder components as members of the type they are a container for', async () => {

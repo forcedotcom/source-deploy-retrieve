@@ -369,7 +369,17 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @returns Object representation of a package manifest
    */
   public async getObject(destructiveType?: DestructiveChangesType): Promise<PackageManifestObject> {
-    const version = this.sourceApiVersion ?? this.apiVersion ?? `${await getCurrentApiVersion()}.0`;
+    let version: string;
+    try {
+      version =
+        this.sourceApiVersion ??
+        this.apiVersion ??
+        process.env.SF_ORG_API_VERSION ??
+        `${await getCurrentApiVersion()}.0`;
+    } catch (err: unknown) {
+      const cause = err instanceof Error ? err : isString(err) ? Error(err) : undefined;
+      throw messages.createError('missingApiVersion', undefined, undefined, 1, cause);
+    }
 
     // If this ComponentSet has components marked for delete, we need to
     // only include those components in a destructiveChanges.xml and

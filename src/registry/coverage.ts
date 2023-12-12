@@ -23,7 +23,7 @@ const getProxiedOptions = (url: string): OptionsOfTextResponseBody => ({
 
 export const getCurrentApiVersion = async (): Promise<number> =>
   (
-    await got(getProxiedOptions('https://mdcoverage.secure.force.com/services/apexrest/report')).json<{
+    await got(getProxiedOptions('https://dx-extended-coverage.my.salesforce-sites.com/services/apexrest/report')).json<{
       versions: { selected: number };
     }>()
   ).versions.selected;

@@ -117,6 +117,15 @@ A StaticResource must have an associated .resource file, missing %s.resource-met
 
 The %s operation is missing a job ID. Initialize an operation with an ID, or start a new job.
 
+# missingApiVersion
+
+Could not determine an API version to use for the set of metadata components.
+
+# missingApiVersion.actions
+
+Set a `sourceApiVersion` or `apiVersion` on the ComponentSet.
+Set an API version to use with the environment variable, `SF_ORG_API_VERSION`.
+
 # invalid_xml_parsing
 
 error parsing %s due to:\n message: %s\n line: %s\n code: %s

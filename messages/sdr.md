@@ -119,12 +119,7 @@ The %s operation is missing a job ID. Initialize an operation with an ID, or sta
 
 # missingApiVersion
 
-Could not determine an API version to use for the set of metadata components.
-
-# missingApiVersion.actions
-
-Set a `sourceApiVersion` or `apiVersion` on the ComponentSet.
-Set an API version to use with the environment variable, `SF_ORG_API_VERSION`.
+Could not determine an API version to use for the generated manifest. Tried looking for sourceApiVersion in sfdx-project.json, apiVersion from config vars, and the highest apiVersion from the APEX REST endpoint. Using API version 58.0 as a last resort.
 
 # invalid_xml_parsing
 

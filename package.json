@@ -36,7 +36,8 @@
     "jszip": "^3.10.1",
     "mime": "2.6.0",
     "minimatch": "^5.1.6",
-    "proxy-agent": "^6.3.1"
+    "proxy-agent": "^6.3.1",
+    "ts-retry-promise": "^0.7.1"
   },
   "devDependencies": {
     "@salesforce/cli-plugins-testkit": "^4.4.12",

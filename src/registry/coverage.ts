@@ -21,12 +21,17 @@ const getProxiedOptions = (url: string): OptionsOfTextResponseBody => ({
   url,
 });
 
-export const getCurrentApiVersion = async (): Promise<number> =>
-  (
-    await got(getProxiedOptions('https://dx-extended-coverage.my.salesforce-sites.com/services/apexrest/report')).json<{
-      versions: { selected: number };
-    }>()
-  ).versions.selected;
+type ApiVersion = {
+  label: string;
+  url: string;
+  version: string;
+};
+
+export const getCurrentApiVersion = async (): Promise<number> => {
+  const apiVersionsUrl = 'https://dx-extended-coverage.my.salesforce-sites.com/services/data';
+  const lastVersionEntry = (await got(getProxiedOptions(apiVersionsUrl)).json<ApiVersion[]>()).pop() as ApiVersion;
+  return +lastVersionEntry.version;
+};
 
 export const getCoverage = async (apiVersion: number): Promise<CoverageObject> => {
   const results = await Promise.allSettled(

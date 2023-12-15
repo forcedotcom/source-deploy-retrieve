@@ -1,3 +1,12 @@
+## [10.2.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.2...10.2.3) (2023-12-15)
+
+
+### Bug Fixes
+
+* change mdcoverage url for getCurrentApiVersion ([#1191](https://github.com/forcedotcom/source-deploy-retrieve/issues/1191)) ([ff82bb9](https://github.com/forcedotcom/source-deploy-retrieve/commit/ff82bb963a3f847023ade67de8e0b5c09038b5aa))
+
+
+
 ## [10.2.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.1...10.2.2) (2023-12-15)
 
 

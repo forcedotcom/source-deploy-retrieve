@@ -1,3 +1,12 @@
+## [10.2.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.1...10.2.2) (2023-12-15)
+
+
+### Bug Fixes
+
+* implicit dependency ([#1192](https://github.com/forcedotcom/source-deploy-retrieve/issues/1192)) ([d691e5e](https://github.com/forcedotcom/source-deploy-retrieve/commit/d691e5e1eedb348584820e2cd16a86d8ac890043))
+
+
+
 ## [10.2.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.0...10.2.1) (2023-12-10)
 
 

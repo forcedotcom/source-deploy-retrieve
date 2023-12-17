@@ -227,12 +227,12 @@
     resolve-global "1.0.0"
     yargs "^17.0.0"
 
-"@commitlint/config-conventional@^17.1.0":
-  version "17.6.3"
-  resolved "https://registry.yarnpkg.com/@commitlint/config-conventional/-/config-conventional-17.6.3.tgz#21f5835235493e386effeaa98b898124230b1000"
-  integrity sha512-bLyHEjjRWqlLQWIgYFHmUPbEFMOOLXeF3QbUinDIJev/u9e769tkoTH9YPknEywiuIrAgZaVo+OfzAIsJP0fsw==
+"@commitlint/config-conventional@^17.8.1":
+  version "17.8.1"
+  resolved "https://registry.yarnpkg.com/@commitlint/config-conventional/-/config-conventional-17.8.1.tgz#e5bcf0cfec8da7ac50bc04dc92e0a4ea74964ce0"
+  integrity sha512-NxCOHx1kgneig3VLauWJcDWS40DVjg7nKOpBEEK9E5fjJpQqLCilcnKkIIjdBH98kEO1q3NpE5NSrZ2kl/QGJg==
   dependencies:
-    conventional-changelog-conventionalcommits "^5.0.0"
+    conventional-changelog-conventionalcommits "^6.1.0"
 
 "@commitlint/config-validator@^17.4.4":
   version "17.4.4"
@@ -611,13 +611,13 @@
   resolved "https://registry.yarnpkg.com/@salesforce/dev-config/-/dev-config-4.1.0.tgz#e529576466d074e7a5f1441236510fef123da01e"
   integrity sha512-2iDDepiIwjXHS5IVY7pwv8jMo4xWosJ7p/UTj+lllpB/gnJiYLhjJPE4Z3FCGFKyvfg5jGaimCd8Ca6bLGsCQA==
 
-"@salesforce/dev-scripts@^8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@salesforce/dev-scripts/-/dev-scripts-8.1.0.tgz#0310dc9fb4104637a237876161a40331dd382e9f"
-  integrity sha512-lA5uJMwfKKrbv+JMCxX8aOrwE1ihlmUfAy8SVCgBSaHNckRBDQP2zIM7S03zoXFSpUtebCndo1ODQxw+zVrK3g==
+"@salesforce/dev-scripts@^8.1.2":
+  version "8.1.2"
+  resolved "https://registry.yarnpkg.com/@salesforce/dev-scripts/-/dev-scripts-8.1.2.tgz#ec3e528328fe7c7b8b312688e970ea258913980b"
+  integrity sha512-DQscqQPMuj2b1D8sfh77zAKQVEuo0SQ05XlFSbVKgvxO/yPrSpUK0LgHsbyG4Js88TWBqsf4K7mkdaryukSnSA==
   dependencies:
     "@commitlint/cli" "^17.1.2"
-    "@commitlint/config-conventional" "^17.1.0"
+    "@commitlint/config-conventional" "^17.8.1"
     "@salesforce/dev-config" "^4.1.0"
     "@salesforce/prettier-config" "^0.0.3"
     "@types/chai" "^4.3.10"
@@ -637,7 +637,7 @@
     shelljs "^0.8.5"
     sinon "10.0.0"
     source-map-support "^0.5.21"
-    ts-node "^10.9.1"
+    ts-node "^10.9.2"
     typedoc "^0.25.3"
     typedoc-plugin-missing-exports "0.23.0"
     typescript "^4.9.5"
@@ -1714,14 +1714,12 @@ conventional-changelog-angular@^5.0.11:
     compare-func "^2.0.0"
     q "^1.5.1"
 
-conventional-changelog-conventionalcommits@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/conventional-changelog-conventionalcommits/-/conventional-changelog-conventionalcommits-5.0.0.tgz#41bdce54eb65a848a4a3ffdca93e92fa22b64a86"
-  integrity sha512-lCDbA+ZqVFQGUj7h9QBKoIpLhl8iihkO0nCTyRNzuXtcd7ubODpYB04IFy31JloiJgG0Uovu8ot8oxRzn7Nwtw==
+conventional-changelog-conventionalcommits@^6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/conventional-changelog-conventionalcommits/-/conventional-changelog-conventionalcommits-6.1.0.tgz#3bad05f4eea64e423d3d90fc50c17d2c8cf17652"
+  integrity sha512-3cS3GEtR78zTfMzk0AizXKKIdN4OvSh7ibNz6/DPbhWWQu7LqE/8+/GqSodV+sywUR2gpJAdP/1JFf4XtN7Zpw==
   dependencies:
     compare-func "^2.0.0"
-    lodash "^4.17.15"
-    q "^1.5.1"
 
 conventional-commits-parser@^3.2.2:
   version "3.2.4"
@@ -5478,10 +5476,10 @@ ts-api-utils@^1.0.1:
   resolved "https://registry.yarnpkg.com/ts-api-utils/-/ts-api-utils-1.0.3.tgz#f12c1c781d04427313dbac808f453f050e54a331"
   integrity sha512-wNMeqtMz5NtwpT/UZGY5alT+VoKdSsOOP/kqHFcUW1P/VRhH2wJ48+DN2WwUliNbQ976ETwDL0Ifd2VVvgonvg==
 
-ts-node@^10.8.1, ts-node@^10.9.1:
-  version "10.9.1"
-  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-10.9.1.tgz#e73de9102958af9e1f0b168a6ff320e25adcff4b"
-  integrity sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==
+ts-node@^10.8.1, ts-node@^10.9.2:
+  version "10.9.2"
+  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-10.9.2.tgz#70f021c9e185bccdca820e26dc413805c101c71f"
+  integrity sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==
   dependencies:
     "@cspotcode/source-map-support" "^0.8.0"
     "@tsconfig/node10" "^1.0.7"

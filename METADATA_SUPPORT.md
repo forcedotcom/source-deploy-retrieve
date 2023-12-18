@@ -595,8 +595,8 @@ v60 introduces the following new types.  Here's their current level of support
 |CommonEventSubscription|❌|Not supported, but support could be added|
 |EinsteinAISettings|✅||
 |EventLogObjectSettings|✅||
-|ExtDataTranFieldTemplate|❌|Not supported, but support could be added|
-|ExtDataTranObjectTemplate|❌|Not supported, but support could be added|
+|ExtDataTranFieldTemplate|✅||
+|ExtDataTranObjectTemplate|✅||
 |ExtlClntAppConfigurablePolicies|✅||
 |ExtlClntAppNotificationSettings|✅||
 |GenAiPlanner|❌|Not supported, but support could be added|

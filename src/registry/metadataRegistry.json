@@ -3684,6 +3684,20 @@
       "directoryName": "managedEventSubscriptions",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "extdatatranobjecttemplate": {
+      "id": "extdatatranobjecttemplate",
+      "name": "extDataTranObjectTemplate",
+      "suffix": "extDataTranObjectTemplate",
+      "directoryName": "extDataTranObjectTemplates",
+      "strictDirectoryName": false
+    },
+    "extdatatranfieldtemplate": {
+      "id": "extdatatranfieldtemplate",
+      "name": "extDataTranFieldTemplate",
+      "suffix": "extDataTranFieldTemplate",
+      "directoryName": "extDataTranFieldTemplates",
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -4090,7 +4104,9 @@
     "webStoreBundle": "webstorebundle",
     "externalAIModel": "externalaimodel",
     "registeredExternalService": "registeredexternalservice",
-    "managedEventSubscription": "managedeventsubscription"
+    "managedEventSubscription": "managedeventsubscription",
+    "extDataTranObjectTemplate": "extdatatranobjecttemplate",
+    "extDataTranFieldTemplate": "extdatatranfieldtemplate"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

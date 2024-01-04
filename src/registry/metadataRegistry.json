@@ -3684,6 +3684,29 @@
       "directoryName": "managedEventSubscriptions",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "extdatatranobjecttemplate": {
+      "id": "extdatatranobjecttemplate",
+      "name": "ExtDataTranObjectTemplate",
+      "suffix": "extDataTranObjectTemplate",
+      "directoryName": "extDataTranObjectTemplates",
+      "strictDirectoryName": false,
+      "children": {
+        "types": {
+          "extdatatranfieldtemplate": {
+            "id": "extdatatranfieldtemplate",
+            "name": "extDataTranFieldTemplate",
+            "directoryName": "extDataTranFieldTemplates",
+            "suffix": "extDataTranFieldTemplate"
+          }
+        },
+        "suffixes": {
+          "extDataTranFieldTemplate": "extdatatranfieldtemplate"
+        },
+        "directories": {
+          "extDataTranFieldTemplates": "extdatatranfieldtemplate"
+        }
+      }
     }
   },
   "suffixes": {
@@ -4090,7 +4113,8 @@
     "webStoreBundle": "webstorebundle",
     "externalAIModel": "externalaimodel",
     "registeredExternalService": "registeredexternalservice",
-    "managedEventSubscription": "managedeventsubscription"
+    "managedEventSubscription": "managedeventsubscription",
+    "extDataTranObjectTemplate": "extdatatranobjecttemplate"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -4154,6 +4178,7 @@
     "digitalexperience": "digitalexperiencebundle",
     "decisionmatrixdefinitionversion": "decisionmatrixdefinition",
     "expressionsetdefinitionversion": "expressionsetdefinition",
-    "aiscoringmodeldefversion": "aiscoringmodeldefinition"
+    "aiscoringmodeldefversion": "aiscoringmodeldefinition",
+    "extdatatranfieldtemplate": "extdatatranobjecttemplate"
   }
 }

@@ -1,3 +1,12 @@
+## [10.2.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.5...10.2.6) (2024-01-04)
+
+
+### Bug Fixes
+
+* Qa/1202 - add support for ExtDataTranObjectTemplate and ExtDataTranFieldTemplate ([#1203](https://github.com/forcedotcom/source-deploy-retrieve/issues/1203)) ([f4d03d8](https://github.com/forcedotcom/source-deploy-retrieve/commit/f4d03d84821ae9179738f2a2c0f0c4a429c38a37))
+
+
+
 ## [10.2.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.4...10.2.5) (2023-12-24)
 
 

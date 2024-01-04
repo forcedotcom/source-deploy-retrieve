@@ -595,7 +595,7 @@ v60 introduces the following new types.  Here's their current level of support
 |CommonEventSubscription|❌|Not supported, but support could be added|
 |EinsteinAISettings|✅||
 |EventLogObjectSettings|✅||
-|ExtDataTranFieldTemplate|✅||
+|ExtDataTranFieldTemplate|❌|Not supported, but support could be added|
 |ExtDataTranObjectTemplate|✅||
 |ExtlClntAppConfigurablePolicies|✅||
 |ExtlClntAppNotificationSettings|✅||
@@ -675,3 +675,4 @@ v60 introduces the following new types.  Here's their current level of support
 - SearchCriteriaConfiguration
 - SearchableObjDataSyncInfo
 - EventRelayConfig
+- extDataTranFieldTemplate

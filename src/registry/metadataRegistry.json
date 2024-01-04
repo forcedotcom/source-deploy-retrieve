@@ -3718,6 +3718,7 @@
     "aiUsecaseDefinitions": "aiusecasedefinition",
     "aiScoringModelDefinition": "aiscoringmodeldefinition",
     "aiScoringModelDefVersion": "aiscoringmodeldefversion",
+    "extDataTranFieldTemplate": "extdatatranfieldtemplate",
     "mlDataDefinition": "mldatadefinition",
     "icon": "icon",
     "businessProcessGroup": "businessprocessgroup",

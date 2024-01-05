@@ -592,7 +592,6 @@ v60 introduces the following new types.  Here's their current level of support
 |ActionableEventOrchDef|❌|Not supported, but support could be added|
 |ActionableEventTypeDef|❌|Not supported, but support could be added|
 |ActnblListKeyPrfmIndDef|❌|Not supported, but support could be added|
-|CommonEventSubscription|❌|Not supported, but support could be added|
 |EinsteinAISettings|✅||
 |EventLogObjectSettings|✅||
 |ExtDataTranFieldTemplate|❌|Not supported, but support could be added|

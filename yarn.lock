@@ -582,10 +582,10 @@
     semver "^7.5.4"
     ts-retry-promise "^0.7.1"
 
-"@salesforce/core@^6.4.0", "@salesforce/core@^6.4.2":
-  version "6.4.2"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-6.4.2.tgz#e6e5e2d5e6ad17f1cbe0feb5a0e55e8b74c91e3c"
-  integrity sha512-ZtLwgI18f1th6SY0fKmuiyVGGwTXPy4nI+KfXzkww/vqdPxDhAfoHwqvFeo4tjFE2rldK7IPiIIYdtpsaI8d5g==
+"@salesforce/core@^6.4.0", "@salesforce/core@^6.4.4":
+  version "6.4.4"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-6.4.4.tgz#e96d2ef9cd05c3894578374d1054af80bfdca119"
+  integrity sha512-VegX3ChnJUOOztSP05QPiXCTOSioShB22NyhYjL7vVhf6yqSOH0VT2oQ3ywrMYbYCbjLSdsmFdTVLiQIFpK57g==
   dependencies:
     "@salesforce/kit" "^3.0.15"
     "@salesforce/schemas" "^1.6.1"
@@ -601,7 +601,7 @@
     jszip "3.10.1"
     pino "^8.16.2"
     pino-abstract-transport "^1.1.0"
-    pino-pretty "^10.3.0"
+    pino-pretty "^10.3.1"
     proper-lockfile "^4.1.2"
     semver "^7.5.4"
     ts-retry-promise "^0.7.1"
@@ -4513,10 +4513,10 @@ pino-abstract-transport@^1.0.0, pino-abstract-transport@^1.1.0, pino-abstract-tr
     readable-stream "^4.0.0"
     split2 "^4.0.0"
 
-pino-pretty@^10.2.3, pino-pretty@^10.3.0:
-  version "10.3.0"
-  resolved "https://registry.yarnpkg.com/pino-pretty/-/pino-pretty-10.3.0.tgz#483ff78b98d277c33d00e0419c00601d9152bc7e"
-  integrity sha512-JthvQW289q3454mhM3/38wFYGWPiBMR28T3CpDNABzoTQOje9UKS7XCJQSnjWF9LQGQkGd8D7h0oq+qwiM3jFA==
+pino-pretty@^10.2.3, pino-pretty@^10.3.1:
+  version "10.3.1"
+  resolved "https://registry.yarnpkg.com/pino-pretty/-/pino-pretty-10.3.1.tgz#e3285a5265211ac6c7cd5988f9e65bf3371a0ca9"
+  integrity sha512-az8JbIYeN/1iLj2t0jR9DV48/LQ3RC6hZPpapKPkb84Q+yTidMCpgWxIT3N0flnBDilyBQ1luWNpOeJptjdp/g==
   dependencies:
     colorette "^2.0.7"
     dateformat "^4.6.3"

@@ -8,6 +8,20 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "datacalcinsighttemplate": {
+      "id": "datacalcinsighttemplate",
+      "name": "DataCalcInsightTemplate",
+      "suffix": "DataCalcInsightTemplate",
+      "directoryName": "dataCalcInsightTemplates",
+      "strictDirectoryName": false
+    },
+    "datakitobjecttemplate": {
+      "id": "datakitobjecttemplate",
+      "name": "dataKitObjectTemplate",
+      "suffix": "DataKitObjectTemplate",
+      "directoryName": "dataKitObjectTemplates",
+      "strictDirectoryName": false
+    },
     "serviceaisetupfield": {
       "id": "serviceaisetupfield",
       "name": "ServiceAISetupField",
@@ -3689,6 +3703,8 @@
   "suffixes": {
     "omniSupervisorConfig": "omnisupervisorconfig",
     "serviceAISetupDescription": "serviceaisetupdefinition",
+    "DataCalcInsightTemplate": "datacalcinsighttemplate",
+    "DataKitObjectTemplate": "datakitobjecttemplate",
     "serviceAISetupField": "serviceaisetupfield",
     "ai": "aiapplication",
     "aiapplicationconfig": "aiapplicationconfig",

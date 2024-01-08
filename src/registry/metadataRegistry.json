@@ -1,6 +1,6 @@
 {
   "types": {
-    "serviceaisetupdefinition ": {
+    "serviceaisetupdefinition": {
       "id": "serviceaisetupdefinition",
       "name": "ServiceAISetupDefinition",
       "suffix": "serviceAISetupDescription",

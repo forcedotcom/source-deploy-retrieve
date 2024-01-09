@@ -1,3 +1,12 @@
+## [10.2.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.7...10.2.8) (2024-01-09)
+
+
+### Bug Fixes
+
+* add the ExpressionSetObjectAlias metadata type ([#1209](https://github.com/forcedotcom/source-deploy-retrieve/issues/1209)) ([896ec32](https://github.com/forcedotcom/source-deploy-retrieve/commit/896ec326982fdeea91feb03b2fd39e47bf407b29))
+
+
+
 ## [10.2.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.6...10.2.7) (2024-01-07)
 
 

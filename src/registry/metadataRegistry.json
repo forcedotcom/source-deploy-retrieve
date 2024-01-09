@@ -1481,6 +1481,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "extlclntappnotificationsettings": {
+      "id": "extlclntappnotificationsettings",
+      "name": "ExtlClntAppNotificationSettings",
+      "suffix": "ecaNotifications",
+      "directoryName": "extlClntAppNotifSettings",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "appmenu": {
       "id": "appmenu",
       "name": "AppMenu",
@@ -3870,6 +3878,7 @@
     "ecaGlblOauth": "extlclntappglobaloauthsettings",
     "ecaMobilePlcy": "extlclntappmobileconfigurablepolicies",
     "ecaMobile": "extlclntappmobilesettings",
+    "ecaNotifications": "extlclntappnotificationsettings",
     "appMenu": "appmenu",
     "delegateGroup": "delegategroup",
     "network": "network",

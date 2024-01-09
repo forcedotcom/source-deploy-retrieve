@@ -1686,6 +1686,20 @@
         "adapter": "matchingContentFile"
       }
     },
+    "datacalcinsighttemplate": {
+      "id": "datacalcinsighttemplate",
+      "name": "DataCalcInsightTemplate",
+      "suffix": "dataCalcInsightTemplate",
+      "directoryName": "dataCalcInsightTemplates",
+      "strictDirectoryName": false
+    },
+    "datakitobjecttemplate": {
+      "id": "datakitobjecttemplate",
+      "name": "DataKitObjectTemplate",
+      "suffix": "dataKitObjectTemplate",
+      "directoryName": "dataKitObjectTemplates",
+      "strictDirectoryName": false
+    },
     "corswhitelistorigin": {
       "id": "corswhitelistorigin",
       "name": "CorsWhitelistOrigin",
@@ -3740,6 +3754,8 @@
     "ocrSampleDocument": "ocrsampledocument",
     "ocrTemplate": "ocrtemplate",
     "apt": "actionplantemplate",
+    "dataCalcInsightTemplate": "datacalcinsighttemplate",
+    "dataKitObjectTemplate": "datakitobjecttemplate",
     "decisionTable": "decisiontable",
     "decisionTableDatasetLink": "decisiontabledatasetlink",
     "decisionMatrixDefinition": "decisionmatrixdefinition",

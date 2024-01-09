@@ -58,9 +58,6 @@ export const metadataTypes = [
   'ReferencedDashboard',
   'WaveAnalyticAssetCollection',
 
-  // spins up fine with feature B2CLOYALTYMANAGEMENT, not in describe
-  'ExpressionSetObjectAlias',
-
   // requires no features, but not in describe
   'ExternalDataSrcDescriptor',
 

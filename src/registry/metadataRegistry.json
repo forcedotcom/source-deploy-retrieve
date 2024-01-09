@@ -2572,6 +2572,13 @@
         }
       }
     },
+    "expressionsetobjectalias": {
+      "id": "expressionsetobjectalias",
+      "name": "ExpressionSetObjectAlias",
+      "suffix": "expressionSetObjectAlias",
+      "directoryName": "expressionSetObjectAlias",
+      "strictDirectoryName": false
+    },
     "briefcasedefinition": {
       "id": "briefcasedefinition",
       "name": "BriefcaseDefinition",
@@ -3739,6 +3746,7 @@
     "decisionMatrixDefinitionVersion": "decisionmatrixdefinitionversion",
     "expressionSetDefinition": "expressionsetdefinition",
     "expressionSetDefinitionVersion": "expressionsetdefinitionversion",
+    "expressionSetObjectAlias": "expressionsetobjectalias",
     "briefcaseDefinition": "briefcasedefinition",
     "batchProcessJobDefinition": "batchprocessjobdefinition",
     "acctMgrTargetSetting": "acctmgrtargetsettings",

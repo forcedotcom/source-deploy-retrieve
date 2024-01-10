@@ -1,3 +1,12 @@
+## [10.2.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.8...10.2.9) (2024-01-10)
+
+
+### Bug Fixes
+
+* add DataCalcInsightTemplate and DataKitObjectTemplate ([#1210](https://github.com/forcedotcom/source-deploy-retrieve/issues/1210)) ([cb845b3](https://github.com/forcedotcom/source-deploy-retrieve/commit/cb845b3759051438e3511530fefa36bdd0d189cd))
+
+
+
 ## [10.2.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.7...10.2.8) (2024-01-09)
 
 

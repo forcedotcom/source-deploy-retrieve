@@ -1,3 +1,12 @@
+## [10.2.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.9...10.2.10) (2024-01-12)
+
+
+### Bug Fixes
+
+* add ExtlClntAppNotificationSettings to registry ([#1211](https://github.com/forcedotcom/source-deploy-retrieve/issues/1211)) ([3ed42c2](https://github.com/forcedotcom/source-deploy-retrieve/commit/3ed42c2e5cdfaca06acb0be3821d02905e2e5306))
+
+
+
 ## [10.2.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.8...10.2.9) (2024-01-10)
 
 

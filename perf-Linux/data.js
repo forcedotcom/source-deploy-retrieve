@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1704836983614,
+  "lastUpdate": 1705084619342,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -29621,6 +29621,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 6038,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sdziewietin@salesforce.com",
+            "name": "Sam Dziewietin",
+            "username": "samdzie"
+          },
+          "committer": {
+            "email": "sdziewietin@salesforce.com",
+            "name": "Sam Dziewietin",
+            "username": "samdzie"
+          },
+          "distinct": true,
+          "id": "80958ea37f398de8cfd32c09779b38bc8696eafc",
+          "message": "fix: add ExtlClntAppNotificationSettings to registry",
+          "timestamp": "2024-01-12T13:24:12-05:00",
+          "tree_id": "65f42106f29ac20fa5493e2db1cfa35f78eed99e",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/80958ea37f398de8cfd32c09779b38bc8696eafc"
+        },
+        "date": 1705084612849,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 223,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 1948,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 1686,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 3054,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 370,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 3538,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 2858,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 3431,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 638,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 6227,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 5173,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 6174,
             "unit": "ms"
           }
         ]

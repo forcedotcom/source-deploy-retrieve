@@ -1,10 +1,10 @@
 # Supported CLI Metadata Types
 
-This list compares metadata types found in Salesforce v59 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
+This list compares metadata types found in Salesforce v60 with the [metadata registry file](./src/registry/metadataRegistry.json) included in this repository.
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 545/570 supported metadata types.
+Currently, there are 557/591 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -27,10 +27,13 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ActionLauncherItemDef|✅||
 |ActionLinkGroupTemplate|✅||
 |ActionPlanTemplate|✅||
+|ActionableEventOrchDef|❌|Not supported, but support could be added|
+|ActionableEventTypeDef|❌|Not supported, but support could be added|
 |ActionableListDefinition|✅||
 |ActionsSettings|✅||
 |ActivationPlatform|✅||
 |ActivitiesSettings|✅||
+|ActnblListKeyPrfmIndDef|❌|Not supported, but support could be added|
 |AddressSettings|✅||
 |AdvAccountForecastSet|✅||
 |AdvAcctForecastDimSource|✅||
@@ -207,6 +210,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ESignatureConfig|✅||
 |ESignatureEnvelopeConfig|✅||
 |EclairGeoData|✅||
+|EinsteinAISettings|✅||
 |EinsteinAgentSettings|✅||
 |EinsteinAssistantSettings|✅||
 |EinsteinDealInsightsSettings|✅||
@@ -233,6 +237,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |EntitlementTemplate|✅||
 |EscalationRules|✅||
 |EssentialsSettings|✅||
+|EventLogObjectSettings|✅||
 |EventSettings|✅||
 |ExperienceBundle|✅||
 |ExperienceBundleSettings|✅||
@@ -244,6 +249,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExpressionSetDefinitionVersion|✅||
 |ExpressionSetMessageToken|✅||
 |ExpressionSetObjectAlias|✅||
+|ExtDataTranFieldTemplate|❌|Not supported, but support could be added|
+|ExtDataTranObjectTemplate|✅||
 |ExternalAIModel|✅||
 |ExternalClientAppSettings|✅||
 |ExternalClientApplication|✅||
@@ -255,9 +262,11 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExternalDataTranObject|❌|Not supported, but support could be added|
 |ExternalDocStorageConfig|❌|Not supported, but support could be added|
 |ExternalServiceRegistration|✅||
+|ExtlClntAppConfigurablePolicies|✅||
 |ExtlClntAppGlobalOauthSettings|✅||
 |ExtlClntAppMobileConfigurablePolicies|✅||
 |ExtlClntAppMobileSettings|✅||
+|ExtlClntAppNotificationSettings|✅||
 |ExtlClntAppOauthConfigurablePolicies|✅||
 |ExtlClntAppOauthSettings|✅||
 |FeatureParameterBoolean|✅||
@@ -290,6 +299,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |FundraisingConfig|✅||
 |GatewayProviderPaymentMethodType|✅||
 |GenAiFunction|❌|Not supported, but support could be added|
+|GenAiPlanner|❌|Not supported, but support could be added|
 |GenAiPlugin|❌|Not supported, but support could be added|
 |GlobalValueSet|✅||
 |GlobalValueSetTranslation|✅||
@@ -307,11 +317,15 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |InboundCertificate|✅||
 |InboundNetworkConnection|✅||
 |IncidentMgmtSettings|✅||
+|IncludeEstTaxInQuoteCPQSettings|✅||
 |IncludeEstTaxInQuoteSettings|✅||
 |Index|⚠️|Supports deploy/retrieve but not source tracking|
 |IndustriesAutomotiveSettings|✅||
 |IndustriesContextSettings|✅||
 |IndustriesEinsteinFeatureSettings|✅||
+|IndustriesEventOrchSettings|✅||
+|IndustriesFieldServiceSettings|✅||
+|IndustriesGamificationSettings|✅||
 |IndustriesLoyaltySettings|✅||
 |IndustriesManufacturingSettings|✅||
 |IndustriesPricingSettings|✅||
@@ -353,6 +367,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |MacroSettings|✅||
 |MailMergeSettings|✅||
 |ManagedContentType|⚠️|Supports deploy/retrieve but not source tracking|
+|ManagedEventSubscription|✅||
 |ManagedTopics|✅||
 |MapsAndLocationSettings|✅||
 |MarketSegmentDefinition|✅||
@@ -386,6 +401,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |NotificationsSettings|✅||
 |OauthCustomScope|✅||
 |OauthOidcSettings|✅||
+|OauthTokenExchangeHandler|❌|Not supported, but support could be added|
 |ObjectHierarchyRelationship|✅||
 |ObjectLinkingSettings|✅||
 |ObjectSourceTargetMap|✅||
@@ -394,11 +410,13 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |OmniChannelPricingSettings|✅||
 |OmniChannelSettings|✅||
 |OmniDataTransform|⚠️|Supports deploy/retrieve but not source tracking|
+|OmniExtTrackingDef|❌|Not supported, but support could be added (but not for tracking)|
 |OmniIntegrationProcedure|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniInteractionAccessConfig|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniInteractionConfig|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniScript|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniSupervisorConfig|✅||
+|OmniTrackingGroup|❌|Not supported, but support could be added (but not for tracking)|
 |OmniUiCard|⚠️|Supports deploy/retrieve but not source tracking|
 |OnlineSalesSettings|✅||
 |OpportunityScoreSettings|✅||
@@ -435,11 +453,13 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PredictionBuilderSettings|✅||
 |PresenceDeclineReason|✅||
 |PresenceUserConfig|✅||
+|PricingActionParameters|❌|Not supported, but support could be added (but not for tracking)|
 |PricingRecipe|✅||
 |PrivacySettings|✅||
 |ProcessFlowMigration|✅||
 |ProductAttrDisplayConfig|❌|Not supported, but support could be added|
 |ProductAttributeSet|✅||
+|ProductConfiguratorSettings|✅||
 |ProductSettings|✅||
 |ProductSpecificationRecType|❌|Not supported, but support could be added|
 |ProductSpecificationType|❌|Not supported, but support could be added|
@@ -475,6 +495,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ReportType|✅||
 |RestrictionRule|✅||
 |RetailExecutionSettings|✅||
+|RevenueManagementSettings|✅||
 |Role|✅||
 |SalesAgreementSettings|✅||
 |SalesWorkQueueSettings|✅||
@@ -508,7 +529,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SkillType|✅||
 |SlackApp|✅||
 |SocialCustomerServiceSettings|✅||
-|SocialProfileSettings|✅||
 |SourceTrackingSettings|✅||
 |StandardValue|❌|Not supported, but support could be added|
 |StandardValueSet|✅||
@@ -521,6 +541,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SustainabilityUom|✅||
 |SustnUomConversion|✅||
 |SvcCatalogCategory|✅||
+|SvcCatalogFilterCriteria|✅||
 |SvcCatalogFulfillmentFlow|✅||
 |SvcCatalogItemDef|✅||
 |SynonymDictionary|✅||
@@ -583,34 +604,12 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 
 
-## Next Release (v60)
+## Next Release (v61)
 
-v60 introduces the following new types.  Here's their current level of support
+v61 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
-|ActionableEventOrchDef|❌|Not supported, but support could be added|
-|ActionableEventTypeDef|❌|Not supported, but support could be added|
-|ActnblListKeyPrfmIndDef|❌|Not supported, but support could be added|
-|EinsteinAISettings|✅||
-|EventLogObjectSettings|✅||
-|ExtDataTranFieldTemplate|❌|Not supported, but support could be added|
-|ExtDataTranObjectTemplate|✅||
-|ExtlClntAppConfigurablePolicies|✅||
-|ExtlClntAppNotificationSettings|✅||
-|GenAiPlanner|❌|Not supported, but support could be added|
-|IncludeEstTaxInQuoteCPQSettings|✅||
-|IndustriesEventOrchSettings|✅||
-|IndustriesFieldServiceSettings|✅||
-|IndustriesGamificationSettings|✅||
-|ManagedEventSubscription|✅||
-|OauthTokenExchangeHandler|❌|Not supported, but support could be added|
-|OmniExtTrackingDef|❌|Not supported, but support could be added (but not for tracking)|
-|OmniTrackingGroup|❌|Not supported, but support could be added (but not for tracking)|
-|PricingActionParameters|❌|Not supported, but support could be added (but not for tracking)|
-|ProductConfiguratorSettings|✅||
-|RevenueManagementSettings|✅||
-|SvcCatalogFilterCriteria|✅||
 
 ## Additional Types
 

@@ -611,10 +611,10 @@
   resolved "https://registry.yarnpkg.com/@salesforce/dev-config/-/dev-config-4.1.0.tgz#e529576466d074e7a5f1441236510fef123da01e"
   integrity sha512-2iDDepiIwjXHS5IVY7pwv8jMo4xWosJ7p/UTj+lllpB/gnJiYLhjJPE4Z3FCGFKyvfg5jGaimCd8Ca6bLGsCQA==
 
-"@salesforce/dev-scripts@^8.2.0":
-  version "8.2.0"
-  resolved "https://registry.yarnpkg.com/@salesforce/dev-scripts/-/dev-scripts-8.2.0.tgz#e8ca6fd377b0e85ecf88baea727493a68c2154ee"
-  integrity sha512-dzVBmetyBe8IM1XJCBw83U5rC0TSwvXa1MPRRI0pmE/VeBqlfxM7rneKtlORCirz9n8SAvCiQvI4oJ/yWW5Quw==
+"@salesforce/dev-scripts@^8.3.0":
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/@salesforce/dev-scripts/-/dev-scripts-8.3.0.tgz#8fcf223edc57dbdeb11397bf7db1f07a8a5e7720"
+  integrity sha512-NoaGfTtyIYed5lGXtLM7QsyGbZvPVa5uflbmIQdeFOefrvAv48k0+RbJzOl7nuj58EmvULzqrZHL6B7w5u4T5Q==
   dependencies:
     "@commitlint/cli" "^17.1.2"
     "@commitlint/config-conventional" "^17.8.1"
@@ -629,7 +629,7 @@
     cosmiconfig "^7.0.0"
     eslint-config-salesforce-typescript "^3.0.5"
     husky "^7.0.4"
-    linkinator "^6.0.2"
+    linkinator "^6.0.3"
     mocha "^10.2.0"
     nyc "^15.1.0"
     prettier "^2.8.8"
@@ -3667,10 +3667,10 @@ lines-and-columns@^1.1.6:
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.2.4.tgz#eca284f75d2965079309dc0ad9255abb2ebc1632"
   integrity sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==
 
-linkinator@^6.0.2:
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/linkinator/-/linkinator-6.0.2.tgz#6a33df3372894a2fa3b25f80f2cd5e6bb9f73e7d"
-  integrity sha512-28eiQVzGwaCvVUb/cxii5jraWZYUv5n2Q5CaSRUH9oGDo1Jr8GcREnpw/0IfJ5YTRoIt9/ihra2lG8yqCN292g==
+linkinator@^6.0.3:
+  version "6.0.4"
+  resolved "https://registry.yarnpkg.com/linkinator/-/linkinator-6.0.4.tgz#2a4a9f76732b0f8968abf35ed09d57a3a8be3427"
+  integrity sha512-gxZ9ePUBeoaCk29p+2gAwrRIVnKOqAV8ZVCEM8N7MvpwbccDBQiKjXFyS6nQx56K1CCZLboan2i5iJfpWCsnSQ==
   dependencies:
     chalk "^5.0.0"
     escape-html "^1.0.3"
@@ -3678,8 +3678,8 @@ linkinator@^6.0.2:
     glob "^10.3.10"
     htmlparser2 "^9.0.0"
     marked "^10.0.0"
-    meow "^12.0.1"
-    mime "^3.0.0"
+    meow "^13.0.0"
+    mime "^4.0.0"
     server-destroy "^1.0.1"
     srcset "^5.0.0"
 
@@ -3894,10 +3894,10 @@ md5@^2.1.0:
     crypt "0.0.2"
     is-buffer "~1.1.6"
 
-meow@^12.0.1:
-  version "12.1.1"
-  resolved "https://registry.yarnpkg.com/meow/-/meow-12.1.1.tgz#e558dddbab12477b69b2e9a2728c327f191bace6"
-  integrity sha512-BhXM0Au22RwUneMPwSCnyhTOizdWoIEPU9sp0Aqa1PnDMR5Wv2FGXYDjuzJEIX+Eo2Rb8xuYe5jrnm5QowQFkw==
+meow@^13.0.0:
+  version "13.1.0"
+  resolved "https://registry.yarnpkg.com/meow/-/meow-13.1.0.tgz#62995b0e8c3951739fe6e0a4becdd4d0df23eb37"
+  integrity sha512-o5R/R3Tzxq0PJ3v3qcQJtSvSE9nKOLSAaDuuoMzDVuGTwHdccMWcYomh9Xolng2tjT6O/Y83d+0coVGof6tqmA==
 
 meow@^8.0.0:
   version "8.1.2"
@@ -3951,10 +3951,10 @@ mime@2.6.0:
   resolved "https://registry.yarnpkg.com/mime/-/mime-2.6.0.tgz#a2a682a95cd4d0cb1d6257e28f83da7e35800367"
   integrity sha512-USPkMeET31rOMiarsBNIHZKLGgvKc/LrjofAnBlOttf5ajRvqiRA8QsenbcooctK6d6Ts6aqZXBA+XbkKthiQg==
 
-mime@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/mime/-/mime-3.0.0.tgz#b374550dca3a0c18443b0c950a6a58f1931cf7a7"
-  integrity sha512-jSCU7/VB1loIWBZe14aEYHU/+1UMEHoaO7qxCOVJOw9GgH72VAWppxNcjU+x9a2k3GSIBXNKxXQFqRvvZ7vr3A==
+mime@^4.0.0:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/mime/-/mime-4.0.1.tgz#ad7563d1bfe30253ad97dedfae2b1009d01b9470"
+  integrity sha512-5lZ5tyrIfliMXzFtkYyekWbtRXObT9OWa8IwQ5uxTBDHucNNwniRqo0yInflj+iYi5CBa6qxadGzGarDfuEOxA==
 
 mimic-fn@^2.1.0:
   version "2.1.0"

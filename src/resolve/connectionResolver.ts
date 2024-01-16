@@ -31,10 +31,18 @@ export class ConnectionResolver {
   private connection: Connection;
   private registry: RegistryAccess;
 
-  public constructor(connection: Connection, registry = new RegistryAccess()) {
+  // Array of metadata type names to use for listMembers. By default it includes
+  // all types defined in the registry.
+  private mdTypeNames: string[];
+
+  public constructor(connection: Connection, registry = new RegistryAccess(), mdTypes?: string[]) {
     this.connection = connection;
     this.registry = registry;
     this.logger = Logger.childFromRoot(this.constructor.name);
+    this.mdTypeNames = mdTypes?.length
+      ? // ensure the types passed in are valid per the registry
+        mdTypes.filter((t) => this.registry.getTypeByName(t))
+      : Object.values(defaultRegistry.types).map((t) => t.name);
   }
 
   public async resolve(
@@ -44,53 +52,52 @@ export class ConnectionResolver {
     const childrenPromises: Array<Promise<FileProperties[]>> = [];
     const componentTypes: Set<MetadataType> = new Set();
     const lifecycle = Lifecycle.getInstance();
-    const componentPromises: Array<Promise<FileProperties[]>> = [];
-    for (const type of Object.values(defaultRegistry.types)) {
-      componentPromises.push(this.listMembers({ type: type.name }));
-    }
-    (await Promise.all(componentPromises)).map(async (componentResult) => {
-      for (const component of componentResult) {
-        let componentType: MetadataType;
-        if (typeof component.type === 'string' && component.type.length) {
-          componentType = this.registry.getTypeByName(component.type);
-        } else if (typeof component.fileName === 'string' && component.fileName.length) {
-          // fix { type: { "$": { "xsi:nil": "true" } } }
-          componentType = ensurePlainObject(
-            this.registry.getTypeBySuffix(extName(component.fileName)),
-            `No type found for ${component.fileName} when matching by suffix.  Check the file extension.`
-          );
-          component.type = componentType.name;
-        } else if (component.type === undefined && component.fileName === undefined) {
-          // has no type and has no filename!  Warn and skip that component.
-          // eslint-disable-next-line no-await-in-loop
-          await Promise.all([
-            lifecycle.emitWarning(messages.getMessage('error_could_not_infer_type', [component.fullName])),
-            lifecycle.emitTelemetry({ TypeInferenceError: component, from: 'ConnectionResolver' }),
-          ]);
-          continue;
-        } else {
-          // it DOES have all the important info but we couldn't resolve it.
-          // has no type and has no filename!
-          throw new SfError(
-            messages.getMessage('error_could_not_infer_type', [component.fullName]),
-            'TypeInferenceError',
-            [messages.getMessage('suggest_type_more_suggestions')]
-          );
-        }
 
-        Aggregator.push(component);
-        componentTypes.add(componentType);
-        const folderContentType = componentType.folderContentType;
-        if (folderContentType) {
-          childrenPromises.push(
-            this.listMembers({
-              type: this.registry.getTypeByName(folderContentType).name,
-              folder: component.fullName,
-            })
-          );
-        }
+    const componentFromDescribe = (
+      await Promise.all(this.mdTypeNames.map((type) => this.listMembers({ type })))
+    ).flat();
+
+    for (const component of componentFromDescribe) {
+      let componentType: MetadataType;
+      if (typeof component.type === 'string' && component.type.length) {
+        componentType = this.registry.getTypeByName(component.type);
+      } else if (typeof component.fileName === 'string' && component.fileName.length) {
+        // fix { type: { "$": { "xsi:nil": "true" } } }
+        componentType = ensurePlainObject(
+          this.registry.getTypeBySuffix(extName(component.fileName)),
+          `No type found for ${component.fileName} when matching by suffix.  Check the file extension.`
+        );
+        component.type = componentType.name;
+      } else if (component.type === undefined && component.fileName === undefined) {
+        // has no type and has no filename!  Warn and skip that component.
+        // eslint-disable-next-line no-await-in-loop
+        await Promise.all([
+          lifecycle.emitWarning(messages.getMessage('error_could_not_infer_type', [component.fullName])),
+          lifecycle.emitTelemetry({ TypeInferenceError: component, from: 'ConnectionResolver' }),
+        ]);
+        continue;
+      } else {
+        // it DOES have all the important info but we couldn't resolve it.
+        // has no type and has no filename!
+        throw new SfError(
+          messages.getMessage('error_could_not_infer_type', [component.fullName]),
+          'TypeInferenceError',
+          [messages.getMessage('suggest_type_more_suggestions')]
+        );
       }
-    });
+
+      Aggregator.push(component);
+      componentTypes.add(componentType);
+      const folderContentType = componentType.folderContentType;
+      if (folderContentType) {
+        childrenPromises.push(
+          this.listMembers({
+            type: this.registry.getTypeByName(folderContentType).name,
+            folder: component.fullName,
+          })
+        );
+      }
+    }
 
     for (const componentType of componentTypes) {
       const childTypes = componentType.children?.types;

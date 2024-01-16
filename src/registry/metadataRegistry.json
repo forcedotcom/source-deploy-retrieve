@@ -1481,6 +1481,14 @@
       "inFolder": false,
       "strictDirectoryName": false
     },
+    "extlclntappnotificationsettings": {
+      "id": "extlclntappnotificationsettings",
+      "name": "ExtlClntAppNotificationSettings",
+      "suffix": "ecaNotifications",
+      "directoryName": "extlClntAppNotifSettings",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
     "appmenu": {
       "id": "appmenu",
       "name": "AppMenu",
@@ -1685,6 +1693,20 @@
       "strategies": {
         "adapter": "matchingContentFile"
       }
+    },
+    "datacalcinsighttemplate": {
+      "id": "datacalcinsighttemplate",
+      "name": "DataCalcInsightTemplate",
+      "suffix": "dataCalcInsightTemplate",
+      "directoryName": "dataCalcInsightTemplates",
+      "strictDirectoryName": false
+    },
+    "datakitobjecttemplate": {
+      "id": "datakitobjecttemplate",
+      "name": "DataKitObjectTemplate",
+      "suffix": "dataKitObjectTemplate",
+      "directoryName": "dataKitObjectTemplates",
+      "strictDirectoryName": false
     },
     "corswhitelistorigin": {
       "id": "corswhitelistorigin",
@@ -2572,6 +2594,13 @@
         }
       }
     },
+    "expressionsetobjectalias": {
+      "id": "expressionsetobjectalias",
+      "name": "ExpressionSetObjectAlias",
+      "suffix": "expressionSetObjectAlias",
+      "directoryName": "expressionSetObjectAlias",
+      "strictDirectoryName": false
+    },
     "briefcasedefinition": {
       "id": "briefcasedefinition",
       "name": "BriefcaseDefinition",
@@ -2990,6 +3019,30 @@
       "name": "SvcCatalogItemDef",
       "suffix": "catalogItem",
       "directoryName": "svcCatalogItems",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "svccatalogfiltercriteria": {
+      "id": "svccatalogfiltercriteria",
+      "name": "SvcCatalogFilterCriteria",
+      "suffix": "catalogFilterCriteria",
+      "directoryName": "svcCatalogFilterCriterias",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "svccatalogfiltercondition": {
+      "id": "svccatalogfiltercondition",
+      "name": "SvcCatalogFilterCondition",
+      "suffix": "catalogFilterCondition",
+      "directoryName": "svcCatalogFilterConditions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "svccatalogitemdeffiltrcrit": {
+      "id": "svccatalogitemdeffiltrcrit",
+      "name": "SvcCatalogItemDefFiltrCrit",
+      "suffix": "catalogItemDefFiltrCrit",
+      "directoryName": "svcCatalogItemDefFiltrCrits",
       "inFolder": false,
       "strictDirectoryName": false
     },
@@ -3660,6 +3713,29 @@
       "directoryName": "managedEventSubscriptions",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "extdatatranobjecttemplate": {
+      "id": "extdatatranobjecttemplate",
+      "name": "ExtDataTranObjectTemplate",
+      "suffix": "extDataTranObjectTemplate",
+      "directoryName": "extDataTranObjectTemplates",
+      "strictDirectoryName": false,
+      "children": {
+        "types": {
+          "extdatatranfieldtemplate": {
+            "id": "extdatatranfieldtemplate",
+            "name": "extDataTranFieldTemplate",
+            "directoryName": "extDataTranFieldTemplates",
+            "suffix": "extDataTranFieldTemplate"
+          }
+        },
+        "suffixes": {
+          "extDataTranFieldTemplate": "extdatatranfieldtemplate"
+        },
+        "directories": {
+          "extDataTranFieldTemplates": "extdatatranfieldtemplate"
+        }
+      }
     }
   },
   "suffixes": {
@@ -3671,6 +3747,7 @@
     "aiUsecaseDefinitions": "aiusecasedefinition",
     "aiScoringModelDefinition": "aiscoringmodeldefinition",
     "aiScoringModelDefVersion": "aiscoringmodeldefversion",
+    "extDataTranFieldTemplate": "extdatatranfieldtemplate",
     "mlDataDefinition": "mldatadefinition",
     "icon": "icon",
     "businessProcessGroup": "businessprocessgroup",
@@ -3685,12 +3762,15 @@
     "ocrSampleDocument": "ocrsampledocument",
     "ocrTemplate": "ocrtemplate",
     "apt": "actionplantemplate",
+    "dataCalcInsightTemplate": "datacalcinsighttemplate",
+    "dataKitObjectTemplate": "datakitobjecttemplate",
     "decisionTable": "decisiontable",
     "decisionTableDatasetLink": "decisiontabledatasetlink",
     "decisionMatrixDefinition": "decisionmatrixdefinition",
     "decisionMatrixDefinitionVersion": "decisionmatrixdefinitionversion",
     "expressionSetDefinition": "expressionsetdefinition",
     "expressionSetDefinitionVersion": "expressionsetdefinitionversion",
+    "expressionSetObjectAlias": "expressionsetobjectalias",
     "briefcaseDefinition": "briefcasedefinition",
     "batchProcessJobDefinition": "batchprocessjobdefinition",
     "acctMgrTargetSetting": "acctmgrtargetsettings",
@@ -3822,6 +3902,7 @@
     "ecaGlblOauth": "extlclntappglobaloauthsettings",
     "ecaMobilePlcy": "extlclntappmobileconfigurablepolicies",
     "ecaMobile": "extlclntappmobilesettings",
+    "ecaNotifications": "extlclntappnotificationsettings",
     "appMenu": "appmenu",
     "delegateGroup": "delegategroup",
     "network": "network",
@@ -3989,6 +4070,9 @@
     "category": "svccatalogcategory",
     "fulfillmentFlow": "svccatalogfulfillmentflow",
     "catalogItem": "svccatalogitemdef",
+    "catalogFilterCriteria": "svccatalogfiltercriteria",
+    "catalogFilterCondition": "svccatalogfiltercondition",
+    "catalogItemDefFiltrCrit": "svccatalogitemdeffiltrcrit",
     "ouc": "omniuicard",
     "rpt": "omnidatatransform",
     "mktDataTranField": "mktdatatranfield",
@@ -4063,7 +4147,8 @@
     "webStoreBundle": "webstorebundle",
     "externalAIModel": "externalaimodel",
     "registeredExternalService": "registeredexternalservice",
-    "managedEventSubscription": "managedeventsubscription"
+    "managedEventSubscription": "managedeventsubscription",
+    "extDataTranObjectTemplate": "extdatatranobjecttemplate"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -4127,6 +4212,7 @@
     "digitalexperience": "digitalexperiencebundle",
     "decisionmatrixdefinitionversion": "decisionmatrixdefinition",
     "expressionsetdefinitionversion": "expressionsetdefinition",
-    "aiscoringmodeldefversion": "aiscoringmodeldefinition"
+    "aiscoringmodeldefversion": "aiscoringmodeldefinition",
+    "extdatatranfieldtemplate": "extdatatranobjecttemplate"
   }
 }

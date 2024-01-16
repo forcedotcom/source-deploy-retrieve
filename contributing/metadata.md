@@ -152,12 +152,12 @@ Want to make sure your types are working as expected?
 1. Create a new scratch org. `sf org create scratch`
 1. Push the source `sf project deploy start`
 1. Convert the source to mdapi format `sf project convert source -d mdapiOut`
-1. Look in the resulting `metadataPackage_` and `package.xml` to see that it looks as expected
-1. Deploy it to the org using `sfdx force:mdapi:deploy --deploydir mdapiOut --wait 30` and verify that it succeeds
+1. Look in the resulting `mdapiOut` directory and the `package.xml` to see that it looks as expected
+1. Deploy it to the org using `sf project deploy start --metadata-dir mdapiOut --wait 30` and verify that it succeeds
 1. Delete the source directory `rm -rf force-app/main/default/*`
 1. Create a new scratch org and convert the source back
-1. Convert back from mdapi to source format `sfdx force:mdapi:convert -r mdapiOut -d force-app`
-1. `sfdx force:source:push`
+1. Convert back from mdapi to source format `sf project convert mdapi -r mdapiOut -d force-app`
+1. `sf project deploy start`
 
 ### Caveats
 
@@ -173,9 +173,9 @@ Reach out to the CLI team for help with unit tests.
 
 If you're doing anything complex (you've used any of the following properties `strategies`, `folderType`, `inFolder=true`, `ignoreParsedFullName`, `folderContentType`, `ignoreParentName`), you'll want to add some NUTs (not-unit-tests) that verify the behavior or your types using real orgs and to prevent SDR changes from causing regressions on your types.
 
-[This NUT](https://github.com/salesforcecli/plugin-source/blob/main/test/nuts/territory2.nut.ts) validates the behavior for a particularly bizarre metadataType, territory2.
+[This NUT](https://github.com/salesforcecli/plugin-deploy-retrieve/blob/main/test/nuts/specialTypes/territory2.nut.ts) validates the behavior for a particularly bizarre metadataType, territory2.
 
-NUTs live in [plugin-source](https://github.com/salesforcecli/plugin-source) but run on branches to SDR.
+NUTs live in [plugin-deploy-retrieve](https://github.com/salesforcecli/plugin-deploy-retrieve) but run on branches to SDR.
 
 See [testkit](https://github.com/salesforcecli/cli-plugins-testkit) for examples and usage.
 
@@ -209,7 +209,7 @@ You can use an existing org for the metadata describe portion of the script by
 
 ## Prerequisites
 
-    1. A sfdx project must exists in local.
+    1. A sfdx project must exist in local.
       `sf project generate --name <projectname> --default-package-dir <directory> -x`
     2. An authorized devhub org must exists
       `sf org login web -a <alias> -r <localhost url> -d`
@@ -235,8 +235,8 @@ You can use an existing org for the metadata describe portion of the script by
     Now changes are available in local, we have to link the registry with sfdx project
 
     8. From SDR git repo directory, run `yarn build; yarn link`
-    9. Clone sfdx plugins repo (https://github.com/salesforcecli/plugin-source)
-    10. Execute `yarn link @salesforce/source-deploy-retrieve` and `sfdx plugins:link .` from cloned plugins repo directory
+    9. Clone plugin repo (https://github.com/salesforcecli/plugin-deploy-retrieve)
+    10. Execute `yarn link @salesforce/source-deploy-retrieve` and `sfdx plugins:link .` from cloned plugin repo directory
 
-    Registry has been set for your entities, now you can run `sfdx force:source` command for your entities:
+    Registry has been set for your entities, now you can run (e.g.) `sf project deploy start` command for your entities:
     Proceed to `Manual Testing` section above in this document.

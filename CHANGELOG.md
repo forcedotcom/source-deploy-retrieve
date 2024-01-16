@@ -1,3 +1,120 @@
+## [10.2.11](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.10...10.2.11) (2024-01-14)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 6.4.4 to 6.4.7 ([#1212](https://github.com/forcedotcom/source-deploy-retrieve/issues/1212)) ([10107d1](https://github.com/forcedotcom/source-deploy-retrieve/commit/10107d15fe192e9294c6cb66c87358c801279b60))
+
+
+
+## [10.2.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.9...10.2.10) (2024-01-12)
+
+
+### Bug Fixes
+
+* add ExtlClntAppNotificationSettings to registry ([#1211](https://github.com/forcedotcom/source-deploy-retrieve/issues/1211)) ([3ed42c2](https://github.com/forcedotcom/source-deploy-retrieve/commit/3ed42c2e5cdfaca06acb0be3821d02905e2e5306))
+
+
+
+## [10.2.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.8...10.2.9) (2024-01-10)
+
+
+### Bug Fixes
+
+* add DataCalcInsightTemplate and DataKitObjectTemplate ([#1210](https://github.com/forcedotcom/source-deploy-retrieve/issues/1210)) ([cb845b3](https://github.com/forcedotcom/source-deploy-retrieve/commit/cb845b3759051438e3511530fefa36bdd0d189cd))
+
+
+
+## [10.2.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.7...10.2.8) (2024-01-09)
+
+
+### Bug Fixes
+
+* add the ExpressionSetObjectAlias metadata type ([#1209](https://github.com/forcedotcom/source-deploy-retrieve/issues/1209)) ([896ec32](https://github.com/forcedotcom/source-deploy-retrieve/commit/896ec326982fdeea91feb03b2fd39e47bf407b29))
+
+
+
+## [10.2.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.6...10.2.7) (2024-01-07)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 6.4.2 to 6.4.4 ([#1206](https://github.com/forcedotcom/source-deploy-retrieve/issues/1206)) ([5408f2b](https://github.com/forcedotcom/source-deploy-retrieve/commit/5408f2b308c9366063a1aef16397537c86ccd437))
+
+
+
+## [10.2.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.5...10.2.6) (2024-01-04)
+
+
+### Bug Fixes
+
+* Qa/1202 - add support for ExtDataTranObjectTemplate and ExtDataTranFieldTemplate ([#1203](https://github.com/forcedotcom/source-deploy-retrieve/issues/1203)) ([f4d03d8](https://github.com/forcedotcom/source-deploy-retrieve/commit/f4d03d84821ae9179738f2a2c0f0c4a429c38a37))
+
+
+
+## [10.2.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.4...10.2.5) (2023-12-24)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 6.4.1 to 6.4.2 ([#1198](https://github.com/forcedotcom/source-deploy-retrieve/issues/1198)) ([46d1082](https://github.com/forcedotcom/source-deploy-retrieve/commit/46d1082e80d8ca2d8e7080a6385e9f0b590567b8))
+
+
+
+## [10.2.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.3...10.2.4) (2023-12-17)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 6.4.0 to 6.4.1 ([#1193](https://github.com/forcedotcom/source-deploy-retrieve/issues/1193)) ([94dca14](https://github.com/forcedotcom/source-deploy-retrieve/commit/94dca14ca2205c347fff194370562fad895954df))
+
+
+
+## [10.2.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.2...10.2.3) (2023-12-15)
+
+
+### Bug Fixes
+
+* change mdcoverage url for getCurrentApiVersion ([#1191](https://github.com/forcedotcom/source-deploy-retrieve/issues/1191)) ([ff82bb9](https://github.com/forcedotcom/source-deploy-retrieve/commit/ff82bb963a3f847023ade67de8e0b5c09038b5aa))
+
+
+
+## [10.2.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.1...10.2.2) (2023-12-15)
+
+
+### Bug Fixes
+
+* implicit dependency ([#1192](https://github.com/forcedotcom/source-deploy-retrieve/issues/1192)) ([d691e5e](https://github.com/forcedotcom/source-deploy-retrieve/commit/d691e5e1eedb348584820e2cd16a86d8ac890043))
+
+
+
+## [10.2.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.0...10.2.1) (2023-12-10)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 6.2.2 to 6.4.0 ([#1189](https://github.com/forcedotcom/source-deploy-retrieve/issues/1189)) ([2c72ce9](https://github.com/forcedotcom/source-deploy-retrieve/commit/2c72ce9628fb37c6d5ebe2cd94e647c777538951))
+
+
+
+# [10.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.1.0...10.2.0) (2023-12-07)
+
+
+### Features
+
+* 3 entities for Service Catalog Eligibility Rules ([#1185](https://github.com/forcedotcom/source-deploy-retrieve/issues/1185)) ([a1e0a58](https://github.com/forcedotcom/source-deploy-retrieve/commit/a1e0a58ade6de0449f70bfbb00184134afa99df4))
+
+
+
+# [10.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.0.4...10.1.0) (2023-12-05)
+
+
+### Features
+
+* build ComponentSet using metadata and an org connection ([#1182](https://github.com/forcedotcom/source-deploy-retrieve/issues/1182)) ([d4d2b93](https://github.com/forcedotcom/source-deploy-retrieve/commit/d4d2b93847c264cf303bdd81fac906364e09fc16))
+
+
+
 ## [10.0.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.0.3...10.0.4) (2023-12-03)
 
 

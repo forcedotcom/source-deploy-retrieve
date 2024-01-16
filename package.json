@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "10.0.4",
+  "version": "10.2.11",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/src/index.js",
   "author": "Salesforce",
@@ -25,7 +25,7 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^6.2.2",
+    "@salesforce/core": "^6.4.7",
     "@salesforce/kit": "^3.0.15",
     "@salesforce/ts-types": "^2.0.9",
     "fast-levenshtein": "^3.0.0",
@@ -36,11 +36,12 @@
     "jszip": "^3.10.1",
     "mime": "2.6.0",
     "minimatch": "^5.1.6",
-    "proxy-agent": "^6.3.1"
+    "proxy-agent": "^6.3.1",
+    "ts-retry-promise": "^0.7.1"
   },
   "devDependencies": {
     "@salesforce/cli-plugins-testkit": "^4.4.12",
-    "@salesforce/dev-scripts": "^7.1.1",
+    "@salesforce/dev-scripts": "^8.3.0",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/fast-levenshtein": "^0.0.4",
     "@types/graceful-fs": "^4.1.9",
@@ -50,14 +51,14 @@
     "@types/shelljs": "^0.8.15",
     "deep-equal-in-any-order": "^1.1.19",
     "deepmerge": "^4.3.1",
-    "eslint-plugin-sf-plugin": "^1.16.15",
+    "eslint-plugin-sf-plugin": "^1.17.1",
     "jsforce": "^2.0.0-beta.29",
     "mocha-junit-reporter": "^1.23.3",
     "shelljs": "0.8.5",
     "shx": "^0.3.4",
-    "ts-node": "^10.9.1",
-    "ts-patch": "^3.0.2",
-    "typescript": "^5.2.2"
+    "ts-node": "^10.9.2",
+    "ts-patch": "^3.1.1",
+    "typescript": "^5.3.3"
   },
   "scripts": {
     "build": "wireit",
@@ -67,6 +68,7 @@
     "coverage": "nyc report --reporter=lcov",
     "docs": "sf-docs",
     "format": "wireit",
+    "link-check": "wireit",
     "lint": "wireit",
     "local:install": "./scripts/localInstall.js install",
     "local:link": "./scripts/localInstall.js link",
@@ -173,6 +175,15 @@
         ".mocha*",
         "!*.nut.ts",
         ".nycrc"
+      ],
+      "output": []
+    },
+    "link-check": {
+      "command": "node -e \"process.exit(process.env.CI ? 0 : 1)\" || linkinator \"**/*.md\" --skip \"CHANGELOG.md|node_modules|test/|confluence.internal.salesforce.com|my.salesforce.com|%s\" --markdown --retry --directory-listing --verbosity error",
+      "files": [
+        "./*.md",
+        "./!(CHANGELOG).md",
+        "messages/**/*.md"
       ],
       "output": []
     }

@@ -6,7 +6,8 @@
  */
 import { join } from 'node:path';
 import { expect } from 'chai';
-import { parseMetadataXml, trimUntil, baseName, parseNestedFullName } from '../../src/utils';
+import { META_XML_SUFFIX } from '../../src/common';
+import { parseMetadataXml, trimUntil, baseName, parseNestedFullName, baseWithoutSuffixes } from '../../src/utils';
 
 describe('Path Utils', () => {
   const root = join('path', 'to', 'whatever');
@@ -23,6 +24,32 @@ describe('Path Utils', () => {
     });
   });
 
+  describe('baseWithoutSuffixes', () => {
+    it('Should strip specified suffixes from a file path with a dot', () => {
+      const path = join(root, 'a.ext.xyz');
+      expect(baseWithoutSuffixes(path, 'xyz')).to.equal('a.ext');
+    });
+
+    it('Should strip specified suffixes from a file path with a dot and standard ending', () => {
+      const path = join(root, `a.ext.xyz${META_XML_SUFFIX}`);
+      expect(baseWithoutSuffixes(path, 'xyz')).to.equal('a.ext');
+    });
+
+    it('Should handle paths with no suffixes', () => {
+      const path = join(root, 'a');
+      expect(baseWithoutSuffixes(path, 'ext')).to.equal('a');
+    });
+
+    it('Should preserve non-matching suffixes', () => {
+      const path = join(root, 'a.xyz');
+      expect(baseWithoutSuffixes(path, 'ext')).to.equal('a.xyz');
+    });
+
+    it('Should remove the standard suffix and a custom suffix', () => {
+      const path = join(root, `a.ext${META_XML_SUFFIX}`);
+      expect(baseWithoutSuffixes(path, 'ext')).to.equal('a');
+    });
+  });
   describe('trimUntil', () => {
     it('should return given path if part is not found', () => {
       expect(trimUntil(root, 'test')).to.equal(root);
@@ -50,6 +77,15 @@ describe('Path Utils', () => {
       const path = join(root, 'a.ext-meta.xml');
       expect(parseMetadataXml(path)).to.deep.equal({
         fullName: 'a',
+        path,
+        suffix: 'ext',
+      });
+    });
+
+    it('handles paths with dots before the suffixes', () => {
+      const path = join(root, 'a.b.ext-meta.xml');
+      expect(parseMetadataXml(path)).to.deep.equal({
+        fullName: 'a.b',
         path,
         suffix: 'ext',
       });

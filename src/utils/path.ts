@@ -7,7 +7,7 @@
 
 import { basename, dirname, extname, sep } from 'node:path';
 import { Optional } from '@salesforce/ts-types';
-import { SourcePath } from '../common';
+import { META_XML_SUFFIX, SourcePath } from '../common';
 import { MetadataXml } from '../resolve';
 
 /**
@@ -18,6 +18,20 @@ import { MetadataXml } from '../resolve';
  */
 export function baseName(fsPath: SourcePath): string {
   return basename(fsPath).split('.')[0];
+}
+
+/**
+ * the above baseName function doesn't handle components whose names have a `.` in them.
+ * this will handle that, but requires you to specify the expected suffix from the mdType.
+ *
+ * @param fsPath The path to evaluate
+ */
+export function baseWithoutSuffixes(fsPath: SourcePath, suffix: string): string {
+  return basename(fsPath)
+    .replace(META_XML_SUFFIX, '')
+    .split('.')
+    .filter((part) => part !== suffix)
+    .join('.');
 }
 
 /**

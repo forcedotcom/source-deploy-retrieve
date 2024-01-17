@@ -9,8 +9,9 @@ import { Messages, SfError } from '@salesforce/core';
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
+import { baseName, baseWithoutSuffixes } from '../utils/path';
 import { replacementIterations } from '../../src/convert/replacements';
-import { baseName, parseMetadataXml, trimUntil } from '../utils';
+import { parseMetadataXml, trimUntil } from '../utils';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common';
 import { SfdxFileFormat } from '../convert';
 import { MetadataType } from '../registry';
@@ -344,9 +345,10 @@ export class SourceComponent implements MetadataComponent {
       if (childXml && !fileIsRootXml && this.type.children && childXml.suffix) {
         // TODO: Log warning if missing child type definition
         const childTypeId = this.type.children?.suffixes[childXml.suffix];
+        const childSuffix = this.type.children.types[childTypeId]?.suffix;
         const childComponent = new SourceComponent(
           {
-            name: baseName(fsPath),
+            name: childSuffix ? baseWithoutSuffixes(fsPath, childSuffix) : baseName(fsPath),
             type: this.type.children.types[childTypeId],
             xml: fsPath,
             parent: this,

@@ -78,7 +78,7 @@
     "prepare": "sf-install",
     "repl": "node --inspect ./scripts/repl.js",
     "test": "wireit",
-    "test:nuts": "mocha \"test/nuts/local/**/*.nut.ts\" --timeout 500000",
+    "test:nuts": "mocha \"test/nuts/local/**/*.nut.ts\" --timeout 500000 --parallel --job 20",
     "test:nuts:suggest": "mocha \"test/nuts/suggestType/suggestType.nut.ts\" --timeout 10000",
     "test:only": "wireit",
     "test:registry": "mocha ./test/registry/registryCompleteness.test.ts --timeout 50000",

@@ -10,9 +10,9 @@ import snap from 'mocha-snap';
 import { mdapiToSource, sourceToMdapi } from '../../helper/conversions';
 
 // eslint-disable-next-line prefer-arrow-callback
-describe('Custom objects and children', function () {
+describe('staticResource', function () {
   before(async () => {
-    const testDir = path.join('test', 'snapshot', 'sampleProjects', 'customObjects-and-children');
+    const testDir = path.join('test', 'snapshot', 'sampleProjects', 'staticResource');
 
     const sourceFiles = await mdapiToSource(testDir);
     const mdFiles = await sourceToMdapi(testDir);

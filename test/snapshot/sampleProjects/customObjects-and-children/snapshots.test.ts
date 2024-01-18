@@ -19,8 +19,8 @@ describe('Custom objects and children', () => {
   before(async () => {
     session = await TestSession.create({
       project: {
-        name: 'custom-object-approval',
-        sourceDir: path.join('test', 'approval', 'sampleProjects', 'customObjects-and-children'),
+        name: 'custom-object-snapshot',
+        sourceDir: path.join('test', 'snapshot', 'sampleProjects', 'customObjects-and-children'),
       },
       devhubAuthStrategy: 'NONE',
     });

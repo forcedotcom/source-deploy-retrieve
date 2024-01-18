@@ -43,6 +43,8 @@ export type ComponentSetOptions = {
   apiversion?: string;
   sourceapiversion?: string;
   org?: OrgOption;
+  /** important for constructing registries based on your project.  Uses CWD by default */
+  projectDir?: string;
 };
 
 export class ComponentSetBuilder {
@@ -66,7 +68,9 @@ export class ComponentSetBuilder {
      */
     const mdMap = new Map<string, string[]>();
 
-    const { sourcepath, manifest, metadata, packagenames, apiversion, sourceapiversion, org } = options;
+    const { sourcepath, manifest, metadata, packagenames, apiversion, sourceapiversion, org, projectDir } = options;
+    const registryAccess = new RegistryAccess(undefined, projectDir);
+
     try {
       if (sourcepath) {
         logger.debug(`Building ComponentSet from sourcepath: ${sourcepath.join(', ')}`);
@@ -76,13 +80,16 @@ export class ComponentSetBuilder {
           }
           return path.resolve(filepath);
         });
-        componentSet = ComponentSet.fromSource({ fsPaths });
+        componentSet = ComponentSet.fromSource({
+          fsPaths,
+          registry: registryAccess,
+        });
       }
 
       // Return empty ComponentSet and use packageNames in the connection via `.retrieve` options
       if (packagenames) {
         logger.debug(`Building ComponentSet for packagenames: ${packagenames.toString()}`);
-        componentSet ??= new ComponentSet();
+        componentSet ??= new ComponentSet(undefined, registryAccess);
       }
 
       // Resolve manifest with source in package directories.
@@ -99,22 +106,22 @@ export class ComponentSetBuilder {
           forceAddWildcards: true,
           destructivePre: manifest.destructiveChangesPre,
           destructivePost: manifest.destructiveChangesPost,
+          registry: registryAccess,
         });
       }
 
       // Resolve metadata entries with source in package directories.
       if (metadata) {
         logger.debug(`Building ComponentSet from metadata: ${metadata.metadataEntries.toString()}`);
-        const registry = new RegistryAccess();
-        const compSetFilter = new ComponentSet();
-        componentSet ??= new ComponentSet();
+        const compSetFilter = new ComponentSet(undefined, registryAccess);
+        componentSet ??= new ComponentSet(undefined, registryAccess);
         const directoryPaths = metadata.directoryPaths;
 
         // Build a Set of metadata entries
         metadata.metadataEntries.forEach((rawEntry) => {
           const [mdType, mdName] = rawEntry.split(':').map((entry) => entry.trim());
           // The registry will throw if it doesn't know what this type is.
-          registry.getTypeByName(mdType);
+          registryAccess.getTypeByName(mdType);
 
           // Add metadata entries to a map for possible use with an org connection below.
           const mdMapEntry = mdMap.get(mdType);
@@ -134,6 +141,7 @@ export class ComponentSetBuilder {
             ComponentSet.fromSource({
               fsPaths: directoryPaths,
               include: new ComponentSet([{ type: mdType, fullName: ComponentSet.WILDCARD }]),
+              registry: registryAccess,
             })
               .getSourceComponents()
               .toArray()
@@ -156,7 +164,11 @@ export class ComponentSetBuilder {
         });
 
         logger.debug(`Searching for matching metadata in directories: ${directoryPaths.join(', ')}`);
-        const resolvedComponents = ComponentSet.fromSource({ fsPaths: directoryPaths, include: compSetFilter });
+        const resolvedComponents = ComponentSet.fromSource({
+          fsPaths: directoryPaths,
+          include: compSetFilter,
+          registry: registryAccess,
+        });
         componentSet.forceIgnoredPaths = resolvedComponents.forceIgnoredPaths;
         for (const comp of resolvedComponents) {
           componentSet.add(comp);
@@ -165,7 +177,7 @@ export class ComponentSetBuilder {
 
       // Resolve metadata entries with an org connection
       if (org) {
-        componentSet ??= new ComponentSet();
+        componentSet ??= new ComponentSet(undefined, registryAccess);
 
         let debugMsg = `Building ComponentSet from targetUsername: ${org.username}`;
 
@@ -195,6 +207,7 @@ export class ComponentSetBuilder {
           usernameOrConnection: (await StateAggregator.getInstance()).aliases.getUsername(org.username) ?? org.username,
           componentFilter,
           metadataTypes: mdMap.size ? Array.from(mdMap.keys()) : undefined,
+          registry: registryAccess,
         });
 
         for (const comp of fromConnection) {

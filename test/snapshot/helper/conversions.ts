@@ -7,10 +7,10 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 import snap from 'mocha-snap';
+import { RegistryAccess } from '../../../src/registry/registryAccess';
 import { MetadataConverter } from '../../../src/convert/metadataConverter';
 import { ComponentSetBuilder } from '../../../src/collections/componentSetBuilder';
 
-const converter = new MetadataConverter();
 const MDAPI_OUT = 'mdapiOutput';
 const FORCE_APP = 'force-app';
 
@@ -27,12 +27,21 @@ export const fileSnap = async (file: string, testDir: string) =>
 export const mdapiToSource = async (testDir: string): Promise<string[]> => {
   const cs = await ComponentSetBuilder.build({
     sourcepath: [path.join(testDir, 'originalMdapi')],
+    projectDir: testDir,
   });
-  await converter.convert(cs, 'source', {
-    type: 'directory',
-    outputDirectory: path.join(testDir, 'force-app'),
-    genUniqueDir: false,
-  });
+  const registry = new RegistryAccess(undefined, testDir);
+  const converter = new MetadataConverter(registry);
+
+  // loads custom registry if there is one
+  await converter.convert(
+    cs,
+    'source', // loads custom registry if there is one
+    {
+      type: 'directory',
+      outputDirectory: path.join(testDir, 'force-app'),
+      genUniqueDir: false,
+    }
+  );
   const dirEnts = await fs.promises.readdir(path.join(testDir, 'force-app'), {
     recursive: true,
     withFileTypes: true,
@@ -45,7 +54,13 @@ export const sourceToMdapi = async (testDir: string): Promise<string[]> => {
   // cs from the entire project
   const cs = await ComponentSetBuilder.build({
     sourcepath: [path.join(testDir, 'force-app')],
+    projectDir: testDir,
   });
+
+  // loads custom registry if there is one
+  const registry = new RegistryAccess(undefined, testDir);
+  const converter = new MetadataConverter(registry);
+
   await converter.convert(cs, 'metadata', {
     type: 'directory',
     outputDirectory: path.join(testDir, 'mdapiOutput'),

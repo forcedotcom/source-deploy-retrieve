@@ -40,6 +40,7 @@ const loadRawRegistryInfo = ({ projectDir }: RegistryLoadInput = {}): MetadataRe
     }
     return projJson.get<MetadataRegistry>('registryCustomizations') ?? emptyRegistry;
   } catch (e) {
+    logger.debug('no project found, using standard registry');
     // there might not be a project at all
     return emptyRegistry;
   }

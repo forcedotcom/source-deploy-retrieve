@@ -8,37 +8,33 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileSnap, mdapiToSource, sourceToMdapi } from '../../helper/conversions';
 
-const projectName = 'staticResource';
+// we don't want failing tests outputting over each other
+/* eslint-disable no-await-in-loop */
 
-// eslint-disable-next-line prefer-arrow-callback
-describe('staticResource', function () {
+describe('staticResource', () => {
+  const testDir = path.join('test', 'snapshot', 'sampleProjects', 'staticResource');
+  let sourceFiles: string[];
+  let mdFiles: string[];
+
   before(async () => {
-    const testDir = path.join('test', 'snapshot', 'sampleProjects', projectName);
-
-    const sourceFiles = await mdapiToSource(testDir);
-    const mdFiles = await sourceToMdapi(testDir);
-
-    describe(`${projectName} source files`, () => {
-      for (const file of sourceFiles) {
-        it(`verify ${path.basename(file)}`, async () => {
-          await fileSnap(file, testDir);
-        });
-      }
-    });
-    describe(`${projectName} md files`, () => {
-      for (const file of mdFiles) {
-        it(`verify ${path.basename(file)}`, async () => {
-          await fileSnap(file, testDir);
-        });
-      }
-    });
-    describe('cleanup', () => {
-      it('cleanup', async () => {
-        await fs.promises.rm(path.join(testDir, 'force-app'), { recursive: true, force: true });
-        await fs.promises.rm(path.join(testDir, 'mdapiOutput'), { recursive: true, force: true });
-      });
-    });
+    sourceFiles = await mdapiToSource(testDir);
+    mdFiles = await sourceToMdapi(testDir);
   });
-  // this needs to exist to ensure the before() block runs
-  it('stub', async () => {});
+  it('verify source files', async () => {
+    for (const file of sourceFiles) {
+      await fileSnap(file, testDir);
+    }
+  });
+  it('verify md files', async () => {
+    for (const file of mdFiles) {
+      await fileSnap(file, testDir);
+    }
+  });
+
+  after(async () => {
+    await Promise.all([
+      fs.promises.rm(path.join(testDir, 'force-app'), { recursive: true, force: true }),
+      fs.promises.rm(path.join(testDir, 'mdapiOutput'), { recursive: true, force: true }),
+    ]);
+  });
 });

@@ -16,7 +16,9 @@ const FORCE_APP = 'force-app';
 
 /** common function to standardize snapshot behavior */
 export const fileSnap = async (file: string, testDir: string) =>
-  shouldIgnore(file) ? void 0 : snap(fs.readFileSync(file, 'utf8'), { dir: testDir, file: simplifyFilePath(file) });
+  shouldIgnore(file)
+    ? void 0
+    : snap(await fs.promises.readFile(file, 'utf8'), { dir: testDir, file: simplifyFilePath(file) });
 
 /**
  * converts a project's `originalMdapi` directory to source format

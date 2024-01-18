@@ -100,6 +100,7 @@ const shouldIgnore = (file: string): boolean => {
   return false;
 };
 
+/** rather than the full path, gets the "project relative" parts based on format */
 const simplifyFilePath = (filePath: string): string =>
   filePath.includes(FORCE_APP) ? getPartsFromBeforeForceApp(filePath) : pathPartsAfter(filePath, MDAPI_OUT);
 // will leave paths alone if they contain neither string

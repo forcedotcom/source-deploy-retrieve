@@ -4,11 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { basename } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
 import { SourcePath } from '../../common';
 import { SourceComponent } from '../sourceComponent';
 import { baseName, parentName, parseMetadataXml } from '../../utils';
-import { DecompositionStrategy } from '../../registry';
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
@@ -54,6 +54,10 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
         rootMetadata = parseMetadataXml(rootMetadataPath);
       }
     }
+    // there's not going to be a real parent in the filesystem, but we need one to attach the children to
+    if (!rootMetadata && this.type.strategies?.recomposition === 'startEmpty') {
+      rootMetadata = { path, fullName: basename(this.trimPathToContent(path)), suffix: this.type.suffix };
+    }
     let component: SourceComponent | undefined;
     if (rootMetadata) {
       const componentName = this.type.folderType
@@ -90,19 +94,19 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
       const triggerIsAChild = !!childTypeId;
       const strategy = this.type.strategies?.decomposition;
       if (triggerIsAChild && this.type.children && !this.type.children.types[childTypeId].unaddressableWithoutParent) {
-        if (strategy === DecompositionStrategy.FolderPerType || isResolvingSource) {
-          let parent = component;
-          if (!parent) {
-            parent = new SourceComponent(
+        if (strategy === 'folderPerType' || strategy === 'topLevel' || isResolvingSource) {
+          const parent =
+            component ??
+            new SourceComponent(
               {
-                name: baseName(pathToContent),
+                name: strategy === 'folderPerType' ? baseName(pathToContent) : pathToContent,
                 type: this.type,
+                content: pathToContent,
               },
               this.tree,
               this.forceIgnore
             );
-          }
-          parent.content = pathToContent;
+
           return new SourceComponent(
             {
               name: metaXml.fullName,

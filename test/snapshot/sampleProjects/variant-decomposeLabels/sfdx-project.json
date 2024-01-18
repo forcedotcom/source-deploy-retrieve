@@ -1,0 +1,53 @@
+{
+  "name": "variantTest",
+  "namespace": "",
+  "packageDirectories": [
+    {
+      "default": true,
+      "path": "force-app"
+    }
+  ],
+  "registryCustomizations": {
+    "strictDirectoryNames": {
+      "labels": "customlabels"
+    },
+    "types": {
+      "customlabels": {
+        "children": {
+          "directories": {
+            "labels": "customlabel"
+          },
+          "suffixes": {
+            "label": "customlabel",
+            "labels": "customlabels"
+          },
+          "types": {
+            "customlabel": {
+              "directoryName": "labels",
+              "id": "customlabel",
+              "name": "CustomLabel",
+              "suffix": "label",
+              "supportsWildcardAndName": true,
+              "uniqueIdElement": "fullName",
+              "xmlElementName": "labels"
+            }
+          }
+        },
+        "directoryName": "labels",
+        "id": "customlabels",
+        "inFolder": false,
+        "name": "CustomLabels",
+        "strategies": {
+          "adapter": "decomposed",
+          "decomposition": "topLevel",
+          "recomposition": "startEmpty",
+          "transformer": "decomposed"
+        },
+        "strictDirectoryName": true,
+        "suffix": "labels"
+      }
+    }
+  },
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "60.0"
+}

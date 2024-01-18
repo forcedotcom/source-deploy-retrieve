@@ -418,7 +418,16 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       if (type.folderContentType) {
         type = this.registry.getTypeByName(type.folderContentType);
       }
-      addToTypeMap(type, fullName);
+
+      if (this.registry.getParentType(type.name)) {
+        const parentType = this.registry.getParentType(type.name);
+        // they're reassembled like CustomLabels.MyLabel
+        if (parentType?.strategies?.recomposition === 'startEmpty' && fullName.includes('.')) {
+          addToTypeMap(type, fullName.split('.')[1]);
+        }
+      } else {
+        addToTypeMap(type, fullName);
+      }
 
       // Add children
       const componentMap = components.get(key);

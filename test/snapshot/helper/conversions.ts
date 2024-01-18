@@ -7,11 +7,14 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 import snap from 'mocha-snap';
+import { expect } from 'chai';
+import { XMLParser } from 'fast-xml-parser';
+
 import { RegistryAccess } from '../../../src/registry/registryAccess';
 import { MetadataConverter } from '../../../src/convert/metadataConverter';
 import { ComponentSetBuilder } from '../../../src/collections/componentSetBuilder';
 
-const MDAPI_OUT = 'mdapiOutput';
+export const MDAPI_OUT = 'mdapiOutput';
 const FORCE_APP = 'force-app';
 
 /** common function to standardize snapshot behavior */
@@ -72,6 +75,19 @@ export const sourceToMdapi = async (testDir: string): Promise<string[]> => {
   });
 
   return dirEntsToPaths(dirEnts);
+};
+
+/** checks that the two xml bodies have the same equivalent json (handles out-of-order things, etc) */
+export const compareTwoXml = (file1: string, file2: string): Chai.Assertion => {
+  const parser = new XMLParser({
+    ignoreAttributes: false,
+    parseTagValue: false,
+    parseAttributeValue: false,
+    cdataPropName: '__cdata',
+    ignoreDeclaration: true,
+    numberParseOptions: { leadingZeros: false, hex: false },
+  });
+  return expect(parser.parse(file1)).to.deep.equal(parser.parse(file2));
 };
 
 /** dirEnts are sometimes folder, we don't want those.  And we need the full paths */

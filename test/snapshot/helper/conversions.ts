@@ -69,11 +69,16 @@ const shouldIgnore = (file: string): boolean => {
   return false;
 };
 
-const simplifyFilePath = (file: string): string =>
-  file.includes(FORCE_APP) ? pathPartsAfter(file, FORCE_APP) : pathPartsAfter(file, MDAPI_OUT);
+const simplifyFilePath = (filePath: string): string =>
+  filePath.includes(FORCE_APP) ? getPartsFromBeforeForceApp(filePath) : pathPartsAfter(filePath, MDAPI_OUT);
+// will leave paths alone if they contain neither string
 
+// handle MPD scenarios where force-app is 1 among several
+const getPartsFromBeforeForceApp = (file: string): string => {
+  const parts = file.split(path.sep);
+  return parts.slice(parts.indexOf(FORCE_APP)).join(path.sep);
+};
 const pathPartsAfter = (file: string, after: string): string => {
   const parts = file.split(path.sep);
-  const index = parts.indexOf(after);
-  return parts.slice(index + 1).join(path.sep);
+  return parts.slice(parts.indexOf(after) + 1).join(path.sep);
 };

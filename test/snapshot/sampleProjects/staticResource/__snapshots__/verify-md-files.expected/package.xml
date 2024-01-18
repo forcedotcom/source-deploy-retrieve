@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>leafletjs</members>
+        <members>sample_data_brokers</members>
+        <members>sample_data_contacts</members>
+        <members>sample_data_properties</members>
+        <name>StaticResource</name>
+    </types>
+    <version>60.0</version>
+</Package>

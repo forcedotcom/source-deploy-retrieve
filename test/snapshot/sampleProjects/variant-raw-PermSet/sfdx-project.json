@@ -9,6 +9,7 @@
   ],
   "registryCustomizations": {
     "childTypes": {
+      "fieldPermission": "fieldpermission",
       "objectpermission": "permissionset",
       "tabpermission": "permissionset",
       "userpermission": "permissionset"

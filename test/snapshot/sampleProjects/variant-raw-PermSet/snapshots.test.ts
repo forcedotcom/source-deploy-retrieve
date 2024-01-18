@@ -6,7 +6,7 @@
  */
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { fileSnap, mdapiToSource, sourceToMdapi } from '../../helper/conversions';
+import { compareTwoXml, fileSnap, mdapiToSource, sourceToMdapi, MDAPI_OUT } from '../../helper/conversions';
 
 // we don't want failing tests outputting over each other
 /* eslint-disable no-await-in-loop */
@@ -29,6 +29,13 @@ describe('partially decomposed permission set', () => {
     for (const file of mdFiles) {
       await fileSnap(file, testDir);
     }
+  });
+  it('round trip of metadata format is equivalent', async () => {
+    const [old, updated] = await Promise.all([
+      fs.promises.readFile(path.join(testDir, 'originalMdapi', 'permissionSets', 'dreamhouse.permissionset'), 'utf8'),
+      fs.promises.readFile(path.join(testDir, MDAPI_OUT, 'permissionSets', 'dreamhouse.permissionset'), 'utf8'),
+    ]);
+    compareTwoXml(old, updated);
   });
 
   after(async () => {

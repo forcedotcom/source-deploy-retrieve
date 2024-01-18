@@ -11,10 +11,12 @@ import { MetadataConverter } from '../../../src/convert/metadataConverter';
 import { ComponentSetBuilder } from '../../../src/collections/componentSetBuilder';
 
 const converter = new MetadataConverter();
+const MDAPI_OUT = 'mdapiOutput';
+const FORCE_APP = 'force-app';
 
 /** common function to standardize snapshot behavior */
 export const fileSnap = async (file: string, testDir: string) =>
-  shouldIgnore(file) ? void 0 : snap(fs.readFileSync(file, 'utf8'), { dir: testDir, file });
+  shouldIgnore(file) ? void 0 : snap(fs.readFileSync(file, 'utf8'), { dir: testDir, file: simplifyFilePath(file) });
 
 /**
  * converts a project's `originalMdapi` directory to source format
@@ -63,4 +65,13 @@ const shouldIgnore = (file: string): boolean => {
   // binary zip/unzip isn't exactly the same, so we "skip" that one
   if (file.includes('leafletjs.resource')) return true;
   return false;
+};
+
+const simplifyFilePath = (file: string): string =>
+  file.includes(FORCE_APP) ? pathPartsAfter(file, FORCE_APP) : pathPartsAfter(file, MDAPI_OUT);
+
+const pathPartsAfter = (file: string, after: string): string => {
+  const parts = file.split(path.sep);
+  const index = parts.indexOf(after);
+  return parts.slice(index + 1).join(path.sep);
 };

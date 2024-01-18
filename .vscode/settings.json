@@ -14,7 +14,7 @@
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "eslint.format.enable": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll": true
+    "source.fixAll": "explicit"
   },
   "typescript.tsdk": "node_modules/typescript/lib"
 }

@@ -6,28 +6,29 @@
  */
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import snap from 'mocha-snap';
-import { mdapiToSource, sourceToMdapi } from '../../helper/conversions';
+import { fileSnap, mdapiToSource, sourceToMdapi } from '../../helper/conversions';
+
+const projectName = 'staticResource';
 
 // eslint-disable-next-line prefer-arrow-callback
 describe('staticResource', function () {
   before(async () => {
-    const testDir = path.join('test', 'snapshot', 'sampleProjects', 'staticResource');
+    const testDir = path.join('test', 'snapshot', 'sampleProjects', projectName);
 
     const sourceFiles = await mdapiToSource(testDir);
     const mdFiles = await sourceToMdapi(testDir);
 
-    describe('source files', () => {
+    describe(`${projectName} source files`, () => {
       for (const file of sourceFiles) {
-        it(`verify ${path.basename(file)}`, () => {
-          snap(fs.readFileSync(file, 'utf8'), { dir: testDir });
+        it(`verify ${path.basename(file)}`, async () => {
+          await fileSnap(file, testDir);
         });
       }
     });
-    describe('md files', () => {
+    describe(`${projectName} md files`, () => {
       for (const file of mdFiles) {
-        it(`verify ${path.basename(file)}`, () => {
-          snap(fs.readFileSync(file, 'utf8'), { dir: testDir });
+        it(`verify ${path.basename(file)}`, async () => {
+          await fileSnap(file, testDir);
         });
       }
     });

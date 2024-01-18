@@ -9,7 +9,7 @@ import { dirname, join, normalize } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
 import { promises } from 'graceful-fs';
 import { isString } from '@salesforce/ts-types';
-import { SourceComponent } from '../resolve';
+import { MetadataResolver, SourceComponent } from '../resolve';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
 import { SourcePath } from '../common';
 import { ComponentSet, DestructiveChangesType } from '../collections';
@@ -54,7 +54,7 @@ export class MetadataConverter {
         writer,
         mergeSet,
         tasks = [],
-      } = await getConvertIngredients(output, cs, targetFormatIsSource);
+      } = await getConvertIngredients(output, cs, targetFormatIsSource, this.registry);
 
       const conversionPipeline = pipeline(
         Readable.from(components),
@@ -129,29 +129,35 @@ type ConfigOutputs = {
   defaultDirectory?: string;
   packagePath?: string;
   mergeSet?: ComponentSet;
+  registry?: RegistryAccess;
 };
 
 async function getConvertIngredients(
   output: ConvertOutputConfig,
   cs: ComponentSet,
-  targetFormatIsSource: boolean
+  targetFormatIsSource: boolean,
+  registry?: RegistryAccess
 ): Promise<ConfigOutputs> {
   switch (output.type) {
     case 'directory':
-      return getDirectoryConfigOutputs(output, targetFormatIsSource, cs);
+      return getDirectoryConfigOutputs(output, targetFormatIsSource, cs, registry);
     case 'zip':
       return getZipConfigOutputs(output, targetFormatIsSource, cs);
     case 'merge':
-      return getMergeConfigOutputs(output, targetFormatIsSource);
+      return getMergeConfigOutputs(output, targetFormatIsSource, registry);
   }
 }
 
-function getMergeConfigOutputs(output: MergeConfig, targetFormatIsSource: boolean): ConfigOutputs {
+function getMergeConfigOutputs(
+  output: MergeConfig,
+  targetFormatIsSource: boolean,
+  registry?: RegistryAccess
+): ConfigOutputs {
   if (!targetFormatIsSource) {
     throw new SfError(messages.getMessage('error_merge_metadata_target_unsupported'));
   }
   const defaultDirectory = output.defaultDirectory;
-  const mergeSet = new ComponentSet();
+  const mergeSet = new ComponentSet(undefined, registry);
   // since child components are composed in metadata format, we need to merge using the parent
   for (const component of output.mergeWith) {
     mergeSet.add(component.parent ?? component);
@@ -200,13 +206,14 @@ async function getZipConfigOutputs(
 async function getDirectoryConfigOutputs(
   output: DirectoryConfig,
   targetFormatIsSource: boolean,
-  cs: ComponentSet
+  cs: ComponentSet,
+  registry?: RegistryAccess
 ): Promise<ConfigOutputs> {
   const packagePath = getPackagePath(output);
   return {
     packagePath,
     defaultDirectory: packagePath,
-    writer: new StandardWriter(packagePath),
+    writer: new StandardWriter(packagePath, new MetadataResolver(registry)),
     tasks: targetFormatIsSource
       ? []
       : [

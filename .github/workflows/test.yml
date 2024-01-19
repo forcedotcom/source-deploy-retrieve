@@ -19,7 +19,7 @@ jobs:
 
   nuts:
     needs: linux-unit-tests
-    uses: salesforcecli/github-workflows/.github/workflows/nut.yml@main
+    uses: salesforcecli/github-workflows/.github/workflows/nut.yml@sm/windows-longpath
     secrets: inherit
     strategy:
       matrix:
@@ -49,7 +49,7 @@ jobs:
           - 'yarn test:nuts:retrieve'
           - 'yarn test:nuts:specialTypes'
           - 'yarn test:nuts:tracking'
-    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
+    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@sm/windows-longpath
     with:
       packageName: '@salesforce/source-deploy-retrieve'
       externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-source'
@@ -82,7 +82,7 @@ jobs:
           - 'yarn test:nuts:specialTypes'
           - 'yarn test:nuts:static'
           - 'yarn test:nuts:tracking'
-    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
+    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@sm/windows-longpath
     with:
       packageName: '@salesforce/source-deploy-retrieve'
       externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-deploy-retrieve'

@@ -11,7 +11,7 @@ import { dirsAreIdentical, fileSnap, mdapiToSource, sourceToMdapi } from '../../
 // we don't want failing tests outputting over each other
 /* eslint-disable no-await-in-loop */
 
-describe('Labels', () => {
+describe('Nested Folders', () => {
   const testDir = path.join('test', 'snapshot', 'sampleProjects', 'nestedFolders');
   let sourceFiles: string[];
   let mdFiles: string[];

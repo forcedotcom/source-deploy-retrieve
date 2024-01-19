@@ -83,6 +83,7 @@
     "test:nuts:suggest": "mocha \"test/nuts/suggestType/suggestType.nut.ts\" --timeout 10000",
     "test:only": "wireit",
     "test:registry": "mocha ./test/registry/registryCompleteness.test.ts --timeout 50000",
+    "test:snapshot": "wireit",
     "update-registry": "npx ts-node scripts/update-registry/update2.ts",
     "update-supported-metadata": "npx ts-node scripts/update-registry/update-supported-metadata.ts"
   },
@@ -104,6 +105,7 @@
       ]
     },
     "compile": {
+      "clean": "if-file-deleted",
       "command": "tspc -p . --pretty --incremental",
       "files": [
         "src/**/*.ts",
@@ -114,8 +116,7 @@
       "output": [
         "lib/**",
         "*.tsbuildinfo"
-      ],
-      "clean": "if-file-deleted"
+      ]
     },
     "format": {
       "command": "prettier --write \"+(src|test|schemas)/**/*.+(ts|js|json)|command-snapshot.json\"",
@@ -151,7 +152,8 @@
       "dependencies": [
         "test:only",
         "test:compile",
-        "test:registry-validation"
+        "test:registry-validation",
+        "test:snapshot"
       ]
     },
     "test:registry-validation": {
@@ -164,7 +166,7 @@
       "output": []
     },
     "test:only": {
-      "command": "nyc mocha \"test/**/*.test.ts\" --exclude \"test/registry/registryValidation.test.ts\"",
+      "command": "nyc mocha \"test/**/*.test.ts\" --exclude \"test/registry/registryValidation.test.ts\" --exclude \"test/snapshot\"",
       "env": {
         "FORCE_COLOR": "2"
       },
@@ -185,6 +187,22 @@
         "./*.md",
         "./!(CHANGELOG).md",
         "messages/**/*.md"
+      ],
+      "output": []
+    },
+    "test:snapshot": {
+      "command": "nyc mocha \"test/snapshot/**/*.test.ts\"",
+      "env": {
+        "FORCE_COLOR": "2"
+      },
+      "files": [
+        "test/**/*.ts",
+        "src/**/*.ts",
+        "src/registry/*.json",
+        "**/tsconfig.json",
+        ".mocha*",
+        "!*.nut.ts",
+        ".nycrc"
       ],
       "output": []
     }

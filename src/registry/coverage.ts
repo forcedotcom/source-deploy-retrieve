@@ -27,10 +27,15 @@ type ApiVersion = {
   version: string;
 };
 
+let apiVer: number;
+
 export const getCurrentApiVersion = async (): Promise<number> => {
-  const apiVersionsUrl = 'https://dx-extended-coverage.my.salesforce-sites.com/services/data';
-  const lastVersionEntry = (await got(getProxiedOptions(apiVersionsUrl)).json<ApiVersion[]>()).pop() as ApiVersion;
-  return +lastVersionEntry.version;
+  if (apiVer === undefined) {
+    const apiVersionsUrl = 'https://org62.my.salesforce-sites.com/services/data';
+    const lastVersionEntry = (await got(getProxiedOptions(apiVersionsUrl)).json<ApiVersion[]>()).pop() as ApiVersion;
+    apiVer = +lastVersionEntry.version;
+  }
+  return apiVer;
 };
 
 export const getCoverage = async (apiVersion: number): Promise<CoverageObject> => {

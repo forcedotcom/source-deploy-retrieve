@@ -1,0 +1,16 @@
+{
+  "type": "sfdc_cms__view",
+  "title": "Home",
+  "contentBody": {
+    "component": {
+      "children": [
+        {
+          "attributes": {
+            "richTextValue": "<div style=\"display: flex; justify-content: center; align-items: center; margin: 50px 0; flex-direction: column; text-align: center;\"><div style=\"background-image: url(assets/img/desert.svg); background-size: cover; background-position: center; height: 300px; width: 100%; max-width: 600px; min-width: 300px;\"></div><h1 class=\"slds-text-heading_medium slds-p-bottom_x-small\">FR Start Building Your Page</h1> <div>FR Drag and drop a component into the content slots.</div></div>"
+          },
+          "id": "f9e6e7d5-355d-41f3-871b-0a4ff2707699"
+        }
+      ]
+    }
+  }
+}

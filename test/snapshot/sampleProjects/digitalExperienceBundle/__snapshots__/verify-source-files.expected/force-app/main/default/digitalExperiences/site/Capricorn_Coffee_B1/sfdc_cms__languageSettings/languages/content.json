@@ -1,0 +1,21 @@
+{
+  "type": "sfdc_cms__languageSettings",
+  "title": "LanguageContent",
+  "contentBody": {
+    "defaultLocale": "en_US",
+    "languages": [
+      {
+        "isActive": true,
+        "isAuthoringOnly": false,
+        "label": "English (US)",
+        "locale": "en_US"
+      },
+      {
+        "isActive": true,
+        "isAuthoringOnly": false,
+        "label": "French",
+        "locale": "fr"
+      }
+    ]
+  }
+}

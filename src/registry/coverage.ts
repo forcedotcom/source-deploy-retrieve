@@ -31,7 +31,7 @@ let apiVer: number;
 
 export const getCurrentApiVersion = async (): Promise<number> => {
   if (apiVer === undefined) {
-    const apiVersionsUrl = 'https://org62.my.salesforce-sites.com/services/data';
+    const apiVersionsUrl = 'https://appexchange.salesforce.com/services/data';
     const lastVersionEntry = (await got(getProxiedOptions(apiVersionsUrl)).json<ApiVersion[]>()).pop() as ApiVersion;
     apiVer = +lastVersionEntry.version;
   }

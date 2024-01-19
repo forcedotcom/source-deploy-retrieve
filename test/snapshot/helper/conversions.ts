@@ -90,6 +90,17 @@ export const compareTwoXml = (file1: string, file2: string): Chai.Assertion => {
   return expect(parser.parse(file1)).to.deep.equal(parser.parse(file2));
 };
 
+/** catches missing files by asserting that two directories have the exact same children */
+export const dirsAreIdentical = async (dir1: string, dir2: string): Promise<Chai.Assertion> => {
+  const [files1, files2] = (
+    await Promise.all([
+      fs.promises.readdir(dir1, { recursive: true, withFileTypes: true }),
+      fs.promises.readdir(dir2, { recursive: true, withFileTypes: true }),
+    ])
+  ).map(dirEntsToPaths);
+  return expect(files1).to.deep.equal(files2);
+};
+
 /** dirEnts are sometimes folder, we don't want those.  And we need the full paths */
 const dirEntsToPaths = (dirEnts: fs.Dirent[]): string[] =>
   dirEnts.filter((file) => file.isFile()).map((file) => path.join(file.path, file.name));

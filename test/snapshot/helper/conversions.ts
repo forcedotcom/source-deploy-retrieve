@@ -30,7 +30,7 @@ export const mdapiToSource = async (testDir: string): Promise<string[]> => {
   });
   await converter.convert(cs, 'source', {
     type: 'directory',
-    outputDirectory: path.join(testDir, 'force-app'),
+    outputDirectory: path.resolve(path.join(testDir, 'force-app')),
     genUniqueDir: false,
   });
   const dirEnts = await fs.promises.readdir(path.join(testDir, 'force-app'), {

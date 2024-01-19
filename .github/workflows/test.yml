@@ -15,7 +15,7 @@ jobs:
     uses: salesforcecli/github-workflows/.github/workflows/unitTestsLinux.yml@main
   windows-unit-tests:
     needs: linux-unit-tests
-    uses: salesforcecli/github-workflows/.github/workflows/unitTestsWindows.yml@main
+    uses: salesforcecli/github-workflows/.github/workflows/unitTestsWindows.yml@sm/windows-longpath
 
   nuts:
     needs: linux-unit-tests

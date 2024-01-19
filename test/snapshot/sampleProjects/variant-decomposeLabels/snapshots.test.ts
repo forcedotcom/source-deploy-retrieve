@@ -6,7 +6,14 @@
  */
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { compareTwoXml, fileSnap, mdapiToSource, sourceToMdapi, MDAPI_OUT } from '../../helper/conversions';
+import {
+  compareTwoXml,
+  fileSnap,
+  mdapiToSource,
+  sourceToMdapi,
+  MDAPI_OUT,
+  dirsAreIdentical,
+} from '../../helper/conversions';
 
 // we don't want failing tests outputting over each other
 /* eslint-disable no-await-in-loop */
@@ -24,6 +31,10 @@ describe('decomposed custom labels', () => {
     for (const file of sourceFiles) {
       await fileSnap(file, testDir);
     }
+    dirsAreIdentical(
+      path.join(testDir, 'force-app'),
+      path.join(testDir, '__snapshots__', 'verify-source-files.expected', 'force-app')
+    );
   });
   it('verify md files', async () => {
     for (const file of mdFiles) {

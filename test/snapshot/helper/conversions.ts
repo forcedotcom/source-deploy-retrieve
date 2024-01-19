@@ -7,6 +7,7 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 import snap from 'mocha-snap';
+import { expect } from 'chai';
 import { MetadataConverter } from '../../../src/convert/metadataConverter';
 import { ComponentSetBuilder } from '../../../src/collections/componentSetBuilder';
 
@@ -57,6 +58,17 @@ export const sourceToMdapi = async (testDir: string): Promise<string[]> => {
   });
 
   return dirEntsToPaths(dirEnts);
+};
+
+/** catches missing files by asserting that two directories have the exact same children */
+export const dirsAreIdentical = async (dir1: string, dir2: string): Promise<Chai.Assertion> => {
+  const [files1, files2] = (
+    await Promise.all([
+      fs.promises.readdir(dir1, { recursive: true, withFileTypes: true }),
+      fs.promises.readdir(dir2, { recursive: true, withFileTypes: true }),
+    ])
+  ).map(dirEntsToPaths);
+  return expect(files1).to.deep.equal(files2);
 };
 
 /** dirEnts are sometimes folder, we don't want those.  And we need the full paths */

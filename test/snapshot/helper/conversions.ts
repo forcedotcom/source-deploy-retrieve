@@ -41,7 +41,7 @@ export const mdapiToSource = async (testDir: string): Promise<string[]> => {
     'source', // loads custom registry if there is one
     {
       type: 'directory',
-      outputDirectory: path.join(testDir, 'force-app'),
+      outputDirectory: path.resolve(path.join(testDir, 'force-app')),
       genUniqueDir: false,
     }
   );

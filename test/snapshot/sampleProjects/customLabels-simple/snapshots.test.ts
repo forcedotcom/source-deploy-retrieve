@@ -34,7 +34,7 @@ describe('Labels', () => {
 
   after(async () => {
     await Promise.all([
-      // fs.promises.rm(path.join(testDir, 'force-app'), { recursive: true, force: true }),
+      fs.promises.rm(path.join(testDir, 'force-app'), { recursive: true, force: true }),
       fs.promises.rm(path.join(testDir, 'mdapiOutput'), { recursive: true, force: true }),
     ]);
   });

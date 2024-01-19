@@ -14,7 +14,6 @@ import { WriteInfo } from '../types';
 import { META_XML_SUFFIX, SourcePath, XML_NS_KEY, XML_NS_URL } from '../../common';
 import { ComponentSet } from '../../collections';
 import { DecompositionStateValue } from '../convertContext';
-import { DecompositionStrategy } from '../../registry';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 Messages.importMessagesDirectory(__dirname);
@@ -226,7 +225,7 @@ const getDefaultOutput = (component: MetadataComponent): SourcePath => {
   const childName = tail.length ? tail.join('.') : undefined;
   const baseComponent = (parent ?? component) as SourceComponent;
   const output = join(
-    parent?.type.strategies?.decomposition === DecompositionStrategy.FolderPerType ? type.directoryName : '',
+    parent?.type.strategies?.decomposition === 'folderPerType' ? type.directoryName : '',
     `${childName ?? baseName}.${component.type.suffix}${META_XML_SUFFIX}`
   );
   return join(baseComponent.getPackageRelativePath(baseName, 'source'), output);

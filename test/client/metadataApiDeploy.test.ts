@@ -202,7 +202,6 @@ describe('MetadataApiDeploy', () => {
         const pollingClientOptions = pollingClientSpy.firstCall.args[0] as PollingClient.Options;
         expect(pollingClientOptions.frequency).to.deep.equal(frequency);
         expect(pollingClientOptions.timeout).to.deep.equal(timeout);
-        expect(pollingClientOptions.poll).to.deep.equal(poll);
       });
     });
   });

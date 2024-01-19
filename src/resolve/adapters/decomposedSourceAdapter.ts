@@ -101,11 +101,11 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
               {
                 name: strategy === 'folderPerType' ? baseName(pathToContent) : pathToContent,
                 type: this.type,
-                content: pathToContent,
               },
               this.tree,
               this.forceIgnore
             );
+          parent.content = pathToContent;
 
           return new SourceComponent(
             {

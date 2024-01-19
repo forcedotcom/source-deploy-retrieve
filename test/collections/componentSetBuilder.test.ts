@@ -75,7 +75,10 @@ describe('ComponentSetBuilder', () => {
       });
 
       const expectedArg = { fsPaths: [path.resolve(sourcepath[0])] };
-      expect(fromSourceStub.calledOnceWith(expectedArg)).to.equal(true);
+      expect(fromSourceStub.callCount).to.equal(1);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { registry, ...argWithoutRegistry } = fromSourceStub.args[0][0];
+      expect(argWithoutRegistry).to.deep.equal(expectedArg);
       expect(compSet.size).to.equal(1);
       expect(compSet.has(apexClassComponent)).to.equal(true);
     });
@@ -95,7 +98,9 @@ describe('ComponentSetBuilder', () => {
       const expectedPath1 = path.resolve(sourcepath[0]);
       const expectedPath2 = path.resolve(sourcepath[1]);
       const expectedArg = { fsPaths: [expectedPath1, expectedPath2] };
-      expect(fromSourceStub.calledOnceWith(expectedArg)).to.equal(true);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { registry, ...argWithoutRegistry } = fromSourceStub.args[0][0];
+      expect(argWithoutRegistry).to.deep.equal(expectedArg);
       expect(compSet.size).to.equal(2);
       expect(compSet.has(apexClassComponent)).to.equal(true);
       expect(compSet.has(customObjectComponent)).to.equal(true);
@@ -114,7 +119,9 @@ describe('ComponentSetBuilder', () => {
 
       const compSet = await ComponentSetBuilder.build(options);
       const expectedArg = { fsPaths: [path.resolve(sourcepath[0])] };
-      expect(fromSourceStub.calledOnceWith(expectedArg)).to.equal(true);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { registry, ...argWithoutRegistry } = fromSourceStub.args[0][0];
+      expect(argWithoutRegistry).to.deep.equal(expectedArg);
       expect(compSet.size).to.equal(0);
       expect(compSet.apiVersion).to.equal(options.apiversion);
     });
@@ -132,7 +139,9 @@ describe('ComponentSetBuilder', () => {
 
       const compSet = await ComponentSetBuilder.build(options);
       const expectedArg = { fsPaths: [path.resolve(sourcepath[0])] };
-      expect(fromSourceStub.calledOnceWith(expectedArg)).to.equal(true);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { registry, ...argWithoutRegistry } = fromSourceStub.args[0][0];
+      expect(argWithoutRegistry).to.deep.equal(expectedArg);
       expect(compSet.size).to.equal(0);
       expect(compSet.sourceApiVersion).to.equal(options.sourceapiversion);
     });
@@ -362,8 +371,11 @@ describe('ComponentSetBuilder', () => {
       };
 
       const compSet = await ComponentSetBuilder.build(options);
-      expect(fromManifestStub.calledOnce).to.equal(true);
-      expect(fromManifestStub.firstCall.args[0]).to.deep.equal({
+      expect(fromManifestStub.callCount).to.equal(1);
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { registry, ...argWithoutRegistry } = fromManifestStub.firstCall.args[0];
+      expect(argWithoutRegistry).to.deep.equal({
         forceAddWildcards: true,
         manifestPath: options.manifest.manifestPath,
         resolveSourcePaths: [packageDir1],
@@ -447,7 +459,9 @@ describe('ComponentSetBuilder', () => {
 
       const compSet = await ComponentSetBuilder.build(options);
       expect(fromManifestStub.callCount).to.equal(1);
-      expect(fromManifestStub.firstCall.args[0]).to.deep.equal({
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { registry, ...argWithoutRegistry } = fromManifestStub.firstCall.args[0];
+      expect(argWithoutRegistry).to.deep.equal({
         forceAddWildcards: true,
         manifestPath: options.manifest.manifestPath,
         resolveSourcePaths: [packageDir1, packageDir2],

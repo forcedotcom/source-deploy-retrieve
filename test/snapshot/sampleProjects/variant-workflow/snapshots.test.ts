@@ -12,7 +12,7 @@ import { dirsAreIdentical, fileSnap, mdapiToSource, sourceToMdapi } from '../../
 /* eslint-disable no-await-in-loop */
 
 describe('decomposed Workflow and children', () => {
-  const testDir = path.join('test', 'snapshot', 'sampleProjects', 'decomposed-workflow');
+  const testDir = path.join('test', 'snapshot', 'sampleProjects', 'variant-workflow');
   let sourceFiles: string[];
   let mdFiles: string[];
 

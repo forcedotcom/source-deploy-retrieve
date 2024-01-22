@@ -47,7 +47,7 @@ const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry 
       (prev, curr) => firstLevelMerge(prev, loadPreset(curr)),
       emptyRegistry
     );
-    return firstLevelMerge(registryFromPresets, projJson.get<MetadataRegistry>('registryCustomizations'));
+    return firstLevelMerge(registryFromPresets, customizations);
   } catch (e) {
     logger.debug('no project found, using standard registry');
     // there might not be a project at all and that's ok

@@ -4,6 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import * as fs from 'node:fs';
 import { Logger, SfProject } from '@salesforce/core';
 import { deepFreeze } from '../utils/collections';
 import { MetadataRegistry } from './types';
@@ -20,17 +21,16 @@ export type RegistryLoadInput = {
 
 /** combine the standard registration with any overrides specific in the sfdx-project.json */
 export const getEffectiveRegistry = (input?: RegistryLoadInput): MetadataRegistry =>
-  deepFreeze(firstLevelMerge(registryData as MetadataRegistry, loadRawRegistryInfo(input)));
+  deepFreeze(firstLevelMerge(registryData as MetadataRegistry, loadVariants(input)));
 
-/** read the project to get additional registry customizations */
-const loadRawRegistryInfo = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry => {
+/** read the project to get additional registry customizations and presets */
+const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry => {
   const logger = Logger.childFromRoot('variants');
   try {
     const projJson = SfProject.getInstance(projectDir ?? process.cwd()).getSfProjectJson();
 
-    // there might not be any customizations in a project, so we default to the emptyRegistry
-    // TODO: return the presets combined with the customizations
     const customizations = projJson.get<MetadataRegistry>('registryCustomizations');
+    const presets = projJson.get<string[]>('registryPresets');
     if (customizations) {
       logger.debug(
         `found registryCustomizations for types [${Object.keys(customizations.types).join(
@@ -38,7 +38,18 @@ const loadRawRegistryInfo = ({ projectDir }: RegistryLoadInput = {}): MetadataRe
         )}] in ${projJson.getPath()}`
       );
     }
-    return projJson.get<MetadataRegistry>('registryCustomizations') ?? emptyRegistry;
+    if (presets) {
+      logger.debug(`using registryPresets [${presets.join(',')}] in ${projJson.getPath()}`);
+    }
+    const registryFromPresets = presets.reduce<MetadataRegistry>(
+      (prev, curr) => firstLevelMerge(prev, loadPreset(curr)),
+      emptyRegistry
+    );
+    return firstLevelMerge(
+      registryFromPresets,
+      // there might not be any customizations in a project, so we default to the emptyRegistry
+      projJson.get<MetadataRegistry>('registryCustomizations') ?? emptyRegistry
+    );
   } catch (e) {
     logger.debug('no project found, using standard registry');
     // there might not be a project at all
@@ -52,6 +63,11 @@ const loadRawRegistryInfo = ({ projectDir }: RegistryLoadInput = {}): MetadataRe
 //   registryCustomizations: MetadataRegistry;
 //   registryPresets: string[];
 // };
+
+const loadPreset = (preset: string): MetadataRegistry => {
+  const rawPreset = fs.readFileSync(__dirname.replace('variants.js', `presets/${preset}.json`), 'utf-8');
+  return JSON.parse(rawPreset) as MetadataRegistry;
+};
 
 const emptyRegistry = {
   types: {},

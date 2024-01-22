@@ -30,7 +30,7 @@ const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry 
     const projJson = SfProject.getInstance(projectDir ?? process.cwd()).getSfProjectJson();
 
     const customizations = projJson.get<MetadataRegistry>('registryCustomizations');
-    const presets = projJson.get<string[]>('registryPresets');
+    const presets = projJson.get<string[]>('registryPresets') ?? [];
     if (customizations) {
       logger.debug(
         `found registryCustomizations for types [${Object.keys(customizations.types).join(
@@ -38,7 +38,7 @@ const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry 
         )}] in ${projJson.getPath()}`
       );
     }
-    if (presets) {
+    if (presets.length > 0) {
       logger.debug(`using registryPresets [${presets.join(',')}] in ${projJson.getPath()}`);
     }
     const registryFromPresets = presets.reduce<MetadataRegistry>(

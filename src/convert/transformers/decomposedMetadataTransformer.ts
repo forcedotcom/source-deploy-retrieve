@@ -8,6 +8,7 @@ import { dirname, join } from 'node:path';
 import { AnyJson, JsonMap, getString, isJsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
 import { Messages } from '@salesforce/core';
+import type { MetadataType } from '../../registry/types';
 import { MetadataComponent, SourceComponent } from '../../resolve';
 import { JsToXml } from '../streams';
 import { WriteInfo } from '../types';
@@ -62,7 +63,8 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     let parentXmlObject: JsonMap | undefined;
     const composedMetadata = await getComposedMetadataEntries(component);
     for (const [tagKey, tagValue] of composedMetadata) {
-      const childTypeId = type.children?.directories?.[tagKey];
+      // use the given xmlElementName name if it exists, otherwise use see if one matches the directories
+      const childTypeId = tagToChildTypeId({ tagKey, type });
       if (childTypeId) {
         const childType = type.children?.types[childTypeId];
         if (!childType) {
@@ -238,3 +240,8 @@ const extractUniqueElementValue = (xml: JsonMap, elementName?: string): string |
 
 const getStandardElements = (xml: JsonMap): string | undefined =>
   getString(xml, 'fullName') ?? getString(xml, 'name') ?? undefined;
+
+/** use the given xmlElementName name if it exists, otherwise use see if one matches the directories */
+const tagToChildTypeId = ({ tagKey, type }: { tagKey: string; type: MetadataType }): string | undefined =>
+  Object.values(type.children?.types ?? {}).find((c) => c.xmlElementName === tagKey)?.id ??
+  type.children?.directories?.[tagKey];

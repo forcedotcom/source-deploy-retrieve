@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { Logger, SfProject } from '@salesforce/core';
 import { deepFreeze } from '../utils/collections';
 import { MetadataRegistry } from './types';
@@ -29,9 +30,10 @@ const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry 
   try {
     const projJson = SfProject.getInstance(projectDir ?? process.cwd()).getSfProjectJson();
 
-    const customizations = projJson.get<MetadataRegistry>('registryCustomizations');
+    // there might not be any customizations in a project, so we default to the emptyRegistry
+    const customizations = projJson.get<MetadataRegistry>('registryCustomizations') ?? emptyRegistry;
     const presets = projJson.get<string[]>('registryPresets') ?? [];
-    if (customizations) {
+    if (Object.keys(customizations.types).length > 0) {
       logger.debug(
         `found registryCustomizations for types [${Object.keys(customizations.types).join(
           ','
@@ -45,14 +47,10 @@ const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry 
       (prev, curr) => firstLevelMerge(prev, loadPreset(curr)),
       emptyRegistry
     );
-    return firstLevelMerge(
-      registryFromPresets,
-      // there might not be any customizations in a project, so we default to the emptyRegistry
-      projJson.get<MetadataRegistry>('registryCustomizations') ?? emptyRegistry
-    );
+    return firstLevelMerge(registryFromPresets, projJson.get<MetadataRegistry>('registryCustomizations'));
   } catch (e) {
     logger.debug('no project found, using standard registry');
-    // there might not be a project at all
+    // there might not be a project at all and that's ok
     return emptyRegistry;
   }
 };
@@ -65,8 +63,14 @@ const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry 
 // };
 
 const loadPreset = (preset: string): MetadataRegistry => {
-  const rawPreset = fs.readFileSync(__dirname.replace('variants.js', `presets/${preset}.json`), 'utf-8');
-  return JSON.parse(rawPreset) as MetadataRegistry;
+  const pathToCheck = path.join(__dirname, 'presets', `${preset}.json`);
+
+  try {
+    const rawPreset = fs.readFileSync(pathToCheck, 'utf-8');
+    return JSON.parse(rawPreset) as MetadataRegistry;
+  } catch (e) {
+    throw new Error(`Failed to load preset ${preset} in ${pathToCheck}`);
+  }
 };
 
 const emptyRegistry = {

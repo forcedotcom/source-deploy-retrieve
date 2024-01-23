@@ -3319,7 +3319,7 @@
     "identityverificationprocdef": {
       "id": "identityverificationprocdef",
       "name": "IdentityVerificationProcDef",
-      "suffix": "identityverificationprocdef",
+      "suffix": "IdentityVerificationProcDef",
       "directoryName": "IdentityVerificationProcDefs",
       "inFolder": false,
       "strictDirectoryName": false
@@ -4106,7 +4106,7 @@
     "dwl": "dataweaveresource",
     "aq": "assessmentquestion",
     "aqs": "assessmentquestionset",
-    "identityverificationprocdef": "identityverificationprocdef",
+    "IdentityVerificationProcDef": "identityverificationprocdef",
     "digitalExperience": "digitalexperiencebundle",
     "digitalExperienceConfig": "digitalexperienceconfig",
     "forecastingFilter": "forecastingfilter",

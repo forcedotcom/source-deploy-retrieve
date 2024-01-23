@@ -57,6 +57,7 @@
           "applicationvisibility": {
             "directoryName": "applicationVisibilities",
             "id": "applicationvisibility",
+            "isAddressable": false,
             "name": "ApplicationVisibility",
             "suffix": "applicationVisibility",
             "uniqueIdElement": "application"
@@ -64,6 +65,7 @@
           "classaccess": {
             "directoryName": "classAccesses",
             "id": "classaccess",
+            "isAddressable": false,
             "name": "ClassAccess",
             "suffix": "classAccess",
             "uniqueIdElement": "apexClass"
@@ -71,6 +73,7 @@
           "custommetadatatypeaccess": {
             "directoryName": "customMetadataTypeAccesses",
             "id": "custommetadatatypeaccess",
+            "isAddressable": false,
             "name": "CustomMetadataTypeAccess",
             "suffix": "customMetadataTypeAccess",
             "uniqueIdElement": "name"
@@ -78,6 +81,7 @@
           "custompermissions": {
             "directoryName": "customPermissions",
             "id": "custompermissions",
+            "isAddressable": false,
             "name": "CustomPermission",
             "suffix": "customPermission",
             "uniqueIdElement": "name"
@@ -85,6 +89,7 @@
           "customsettingaccess": {
             "directoryName": "customSettingAccesses",
             "id": "customsettingaccess",
+            "isAddressable": false,
             "name": "CustomSettingAccess",
             "suffix": "customSettingAccess",
             "uniqueIdElement": "name"
@@ -92,6 +97,7 @@
           "externalcredentialprincipalaccess": {
             "directoryName": "externalCredentialPrincipalAccesses",
             "id": "externalcredentialprincipalaccess",
+            "isAddressable": false,
             "name": "ExternalCredentialPrincipalAccess",
             "suffix": "externalCredentialPrincipalAccess",
             "uniqueIdElement": "externalCredentialPrincipal"
@@ -99,6 +105,7 @@
           "externaldatasourceaccess": {
             "directoryName": "externalDataSourceAccesses",
             "id": "externaldatasourceaccess",
+            "isAddressable": false,
             "name": "ExternalDataSourceAccess",
             "suffix": "externalDataSourceAccess",
             "uniqueIdElement": "externalDataSource"
@@ -106,6 +113,7 @@
           "fieldpermission": {
             "directoryName": "fieldPermissions",
             "id": "fieldpermission",
+            "isAddressable": false,
             "name": "FieldPermission",
             "suffix": "fieldPermission",
             "uniqueIdElement": "field"
@@ -113,6 +121,7 @@
           "flowaccess": {
             "directoryName": "flowAccesses",
             "id": "flowaccess",
+            "isAddressable": false,
             "name": "FlowAccess",
             "suffix": "flowAccess",
             "uniqueIdElement": "flow"
@@ -120,6 +129,7 @@
           "objectpermission": {
             "directoryName": "objectPermissions",
             "id": "objectpermission",
+            "isAddressable": false,
             "name": "ObjectPermission",
             "suffix": "objectPermission",
             "uniqueIdElement": "object"
@@ -127,6 +137,7 @@
           "pageaccess": {
             "directoryName": "pageAccesses",
             "id": "pageaccess",
+            "isAddressable": false,
             "name": "PageAccess",
             "suffix": "pageAccess",
             "uniqueIdElement": "apexPage"
@@ -134,6 +145,7 @@
           "recordtypevisibility": {
             "directoryName": "recordTypeVisibilities",
             "id": "recordtypevisibility",
+            "isAddressable": false,
             "name": "RecordTypeVisibility",
             "suffix": "recordTypeVisibility",
             "uniqueIdElement": "recordType"
@@ -141,6 +153,7 @@
           "tabsetting": {
             "directoryName": "tabSettings",
             "id": "tabsetting",
+            "isAddressable": false,
             "name": "TabSetting",
             "suffix": "tabSetting",
             "uniqueIdElement": "tab"
@@ -148,6 +161,7 @@
           "userpermission": {
             "directoryName": "userPermissions",
             "id": "userpermission",
+            "isAddressable": false,
             "name": "UserPermission",
             "suffix": "userPermission"
           }

@@ -1,3 +1,12 @@
+## [10.2.12](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.11...10.2.12) (2024-01-23)
+
+
+### Bug Fixes
+
+* metadataRegistry entries for IdentityVerificationProcDev were incorrect. fixed ([#1221](https://github.com/forcedotcom/source-deploy-retrieve/issues/1221)) ([4acf942](https://github.com/forcedotcom/source-deploy-retrieve/commit/4acf94294be7a403c20d3231cb04b8a4153c8214))
+
+
+
 ## [10.2.11](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.10...10.2.11) (2024-01-14)
 
 

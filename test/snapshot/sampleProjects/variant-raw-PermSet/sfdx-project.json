@@ -36,6 +36,7 @@
             "fieldpermission": {
               "directoryName": "fieldPermissions",
               "id": "fieldpermission",
+              "isAddressable": false,
               "name": "FieldPermission",
               "suffix": "fieldPermission",
               "uniqueIdElement": "field"
@@ -43,6 +44,7 @@
             "objectpermission": {
               "directoryName": "objectPermissions",
               "id": "objectpermission",
+              "isAddressable": false,
               "name": "ObjectPermission",
               "suffix": "objectPermission",
               "uniqueIdElement": "object"
@@ -50,6 +52,7 @@
             "tabsetting": {
               "directoryName": "tabSettings",
               "id": "tabsetting",
+              "isAddressable": false,
               "name": "TabSetting",
               "suffix": "tabSetting",
               "uniqueIdElement": "tab"
@@ -57,6 +60,7 @@
             "userpermission": {
               "directoryName": "userPermissions",
               "id": "userpermission",
+              "isAddressable": false,
               "name": "UserPermission",
               "suffix": "userPermission"
             }

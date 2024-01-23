@@ -148,6 +148,22 @@ registry.types.auradefinitionbundle.directoryName; // => 'aura'
 
 📝 _The registry object is “deeply frozen”, meaning none of its properties, even the nested ones, are mutable. This is to ensure that a consumer cannot change registry information in a process and potentially affect functionality._
 
+### Registry Variants
+
+It's possible that the registry isn't what a user wants
+
+- you're building a new type and want an easy way to test your registry changes
+- you disagree with the choice made in the registry (ex: I wish PermissionSet was decomposed instead of a giant file)
+
+There are two options available if you're in an sfdx project.
+
+- `registryCustomizations`: add your own partial of the the registry that'll be merged into the registry. It's a json object just like the registry itself.
+- `registryPresets`: SDR defines "preset" registryCustomizations and you say which ones you want applied. Each one is
+
+This requires that any constructedRegistry know about your project directory. You'll see lots of code passing that around, and passing around constructed RegistryAccess to avoid getting the default if a custom one was already constructed.
+
+Be careful when instantiating classes (ex: ComponentSet) that will default a Registry or RegistryAccess--make sure to pass in a registry to preserve customizations.
+
 ### Querying registry data
 
 While it’s perfectly fine to reference the registry export directly, the `RegistryAccess` class was created to make accessing the object a bit more streamlined. Querying types and searching the registry is oftentimes easier and cleaner this way and contains built-in checking for whether or not a metadata type exists. Here’s a comparison of using each:

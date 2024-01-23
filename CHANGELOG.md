@@ -1,3 +1,12 @@
+## [10.2.13](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.12...10.2.13) (2024-01-23)
+
+
+### Bug Fixes
+
+* use appexchange org for last resort api version ([#1219](https://github.com/forcedotcom/source-deploy-retrieve/issues/1219)) ([c9f15b2](https://github.com/forcedotcom/source-deploy-retrieve/commit/c9f15b213af54577a3b09c762b89029cb515e463))
+
+
+
 ## [10.2.12](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.11...10.2.12) (2024-01-23)
 
 

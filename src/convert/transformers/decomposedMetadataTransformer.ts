@@ -60,7 +60,9 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const childrenOfMergeComponent = new ComponentSet(mergeWith?.getChildren(), this.registry);
     const { type, fullName: parentFullName } = component;
 
-    let parentXmlObject: JsonMap | undefined;
+    const parentXmlObject: { [index: string]: { [XML_NS_KEY]: typeof XML_NS_URL } & JsonMap } = {
+      [type.name]: { [XML_NS_KEY]: XML_NS_URL },
+    };
     const composedMetadata = await getComposedMetadataEntries(component);
     for (const [tagKey, tagValue] of composedMetadata) {
       // use the given xmlElementName name if it exists, otherwise use see if one matches the directories
@@ -96,9 +98,6 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
              CustomObjectTranslation file to be present
              */
             if (childType.unaddressableWithoutParent && composedMetadata.length <= 2) {
-              parentXmlObject = {
-                [component.type.name]: '',
-              };
               this.setDecomposedState(childComponent, {
                 foundMerge: false,
                 writeInfo: {
@@ -150,12 +149,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
           }
         }
       } else if (tagKey !== XML_NS_KEY) {
-        // tag entry isn't a child type, so add it to the parent xml
-        if (!parentXmlObject) {
-          parentXmlObject = { [type.name]: { [XML_NS_KEY]: XML_NS_URL } };
-        }
-        const tagGroup = parentXmlObject[type.name] as JsonMap;
-        tagGroup[tagKey] = tagValue;
+        parentXmlObject[type.name][tagKey] = tagValue;
       }
     }
 

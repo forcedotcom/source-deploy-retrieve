@@ -5,15 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-/* eslint complexity: ["error", 22] */
-
 import * as path from 'node:path';
 import { StateAggregator, Logger, SfError, Messages } from '@salesforce/core';
 import * as fs from 'graceful-fs';
 import * as minimatch from 'minimatch';
-import { ComponentSet } from '../collections';
-import { RegistryAccess } from '../registry';
-import { FileProperties } from '../client';
+import { ComponentSet } from '../collections/componentSet';
+import { RegistryAccess } from '../registry/registryAccess';
+import type { FileProperties } from '../client/types';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -56,6 +54,7 @@ export class ComponentSetBuilder {
    *
    * @param options: options for creating a ComponentSet
    */
+
   // eslint-disable-next-line complexity
   public static async build(options: ComponentSetOptions): Promise<ComponentSet> {
     const logger = Logger.childFromRoot('componentSetBuilder');

@@ -14,7 +14,8 @@
     "./src/**/*.ts",
     "./scripts/update-registry/*.ts",
     "./src/registry/metadataRegistry.json",
-    "./src/registry/stdValueSetRegistry.json"
+    "./src/registry/stdValueSetRegistry.json",
+    "./src/registry/presets/*.json"
   ],
   "exclude": ["node_modules", "lib", "examples"]
 }

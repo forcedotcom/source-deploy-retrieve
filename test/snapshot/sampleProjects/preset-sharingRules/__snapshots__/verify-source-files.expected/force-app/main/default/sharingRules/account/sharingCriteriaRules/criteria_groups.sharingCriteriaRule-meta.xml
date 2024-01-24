@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SharingCriteriaRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>criteria_groups</fullName>
+    <accessLevel>Read</accessLevel>
+    <accountSettings>
+        <caseAccessLevel>None</caseAccessLevel>
+        <contactAccessLevel>Read</contactAccessLevel>
+        <opportunityAccessLevel>None</opportunityAccessLevel>
+    </accountSettings>
+    <label>criteria_groups</label>
+    <sharedTo>
+        <groups>Group2</groups>
+    </sharedTo>
+    <criteriaItems>
+        <field>BillingCity</field>
+        <operation>equals</operation>
+        <value>Fremont</value>
+    </criteriaItems>
+</SharingCriteriaRule>

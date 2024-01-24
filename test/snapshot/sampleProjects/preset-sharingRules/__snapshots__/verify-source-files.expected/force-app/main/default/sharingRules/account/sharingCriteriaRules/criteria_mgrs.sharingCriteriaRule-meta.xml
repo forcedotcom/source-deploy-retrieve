@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SharingCriteriaRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>criteria_mgrs</fullName>
+    <accessLevel>Read</accessLevel>
+    <accountSettings>
+        <caseAccessLevel>None</caseAccessLevel>
+        <contactAccessLevel>Read</contactAccessLevel>
+        <opportunityAccessLevel>None</opportunityAccessLevel>
+    </accountSettings>
+    <label>criteria_mgrs</label>
+    <sharedTo>
+        <role>CEO</role>
+    </sharedTo>
+    <criteriaItems>
+        <field>ShippingCountry</field>
+        <operation>notEqual</operation>
+        <value>France</value>
+    </criteriaItems>
+</SharingCriteriaRule>

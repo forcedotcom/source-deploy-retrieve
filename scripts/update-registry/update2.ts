@@ -7,6 +7,7 @@ import * as deepmerge from 'deepmerge';
 import { CoverageObject, CoverageObjectType } from '../../src/registry/types';
 import { getMissingTypes } from '../../test/utils/getMissingTypes';
 import { getCurrentApiVersion, getCoverage } from '../../src/registry/coverage';
+import { env } from '@salesforce/kit';
 
 export let metadataCoverage: CoverageObject;
 
@@ -83,7 +84,7 @@ const registryUpdate = (missingTypesAsDescribeResult: DescribeResult[]) => {
 
 // get the coverage report
 (async () => {
-  const currentApiVersion = await getCurrentApiVersion();
+  const currentApiVersion = env.getNumber('SF_ORG_API_VERSION') ?? (await getCurrentApiVersion());
   console.log(`Using API version: ${currentApiVersion}`);
 
   const metadataCoverage = await getCoverage(currentApiVersion);

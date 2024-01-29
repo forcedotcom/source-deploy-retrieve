@@ -14,4 +14,5 @@ export {
   DecompositionStrategy,
   RecompositionStrategy,
   TransformerStrategy,
+  MergeStrategy,
 } from './types';

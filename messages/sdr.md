@@ -26,6 +26,10 @@ Could not find parent type for %s (%s)
 
 Component conversion failed: %s
 
+# error_invalid_merge_strategy
+
+Invalid merge strategy - '%s' (must be merge or replace)
+
 # error_merge_metadata_target_unsupported
 
 Merge convert for metadata target format currently unsupported
@@ -37,6 +41,14 @@ Missing adapter '%s' for metadata type '%s'
 # error_missing_transformer
 
 Missing transformer '%s' for metadata type '%s'
+
+# error_missing_transformerConfig
+
+Missing transformerConfig for metadata type '%s' - required for 'merged' transformer
+
+# error_missing_transformerConfig_mappingKey
+
+Missing mappingKey for transformerConfig with metadata type '%s'
 
 # error_missing_type_definition
 

@@ -13,6 +13,7 @@ import { DefaultMetadataTransformer } from './defaultMetadataTransformer';
 import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 import { StaticResourceMetadataTransformer } from './staticResourceMetadataTransformer';
 import { NonDecomposedMetadataTransformer } from './nonDecomposedMetadataTransformer';
+import { MergedMetadataTransformer } from './mergedMetadataTransformer';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -40,6 +41,12 @@ export class MetadataTransformerFactory {
         return new StaticResourceMetadataTransformer(this.registry, this.context);
       case TransformerStrategy.NonDecomposed:
         return new NonDecomposedMetadataTransformer(this.registry, this.context);
+      case TransformerStrategy.Merged:
+        if (process.env.SF_ENABLE_EXPERIMENTAL_PROFILE_MERGE === 'true') {
+          return new MergedMetadataTransformer(this.registry, this.context);
+        } else {
+          return new DefaultMetadataTransformer(this.registry, this.context);
+        }
       default:
         throw messages.createError('error_missing_transformer', [type.name, transformerId]);
     }

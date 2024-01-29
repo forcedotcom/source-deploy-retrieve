@@ -147,10 +147,25 @@ export interface MetadataType {
       | 'nonDecomposed'
       | 'digitalExperience'
       | 'bundle';
-    transformer?: 'decomposed' | 'staticResource' | 'nonDecomposed' | 'standard';
+    transformer?: 'decomposed' | 'staticResource' | 'nonDecomposed' | 'standard' | 'merged';
+    transformerConfig?: MergedTransformerConfig;
     decomposition?: 'topLevel' | 'folderPerType';
     recomposition?: 'startEmpty';
   };
+}
+
+interface MergedTransformerConfig {
+  rootNode: string;
+  defaultHandling: MergedTransformerConfigHandler;
+  nodeHandling: {
+    [node: string]: MergedTransformerConfigHandler;
+  };
+}
+
+interface MergedTransformerConfigHandler {
+  strategy: 'replace' | 'merge';
+  mappingKey?: string;
+  deleteOnEmpty?: boolean;
 }
 
 /**
@@ -206,6 +221,12 @@ export const enum TransformerStrategy {
   Decomposed = 'decomposed',
   StaticResource = 'staticResource',
   NonDecomposed = 'nonDecomposed',
+  Merged = 'merged',
+}
+
+export const enum MergeStrategy {
+  Replace = 'replace',
+  Merge = 'merge',
 }
 
 interface Channel {

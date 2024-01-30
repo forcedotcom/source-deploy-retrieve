@@ -26,8 +26,6 @@ describe('ForceIgnore', () => {
     const forceIgnore = new ForceIgnore();
     expect(forceIgnore.accepts(path)).to.be.true;
     expect(forceIgnore.denies(path)).to.be.false;
-    expect(forceIgnore.accepts(path)).to.be.true;
-    expect(forceIgnore.accepts('.foo')).to.be.true;
   });
 
   it('Should ignore files with a given pattern', () => {
@@ -35,7 +33,6 @@ describe('ForceIgnore', () => {
     const forceIgnore = new ForceIgnore(forceIgnorePath);
     expect(forceIgnore.accepts(testPath)).to.be.false;
     expect(forceIgnore.denies(testPath)).to.be.true;
-    expect(forceIgnore.denies(join('some', '.foo'))).to.be.true;
   });
 
   it('windows separators no longer have any effect', () => {
@@ -65,22 +62,6 @@ describe('ForceIgnore', () => {
     const fi = new ForceIgnore(forceIgnorePath);
     // @ts-ignore private field
     expect(fi.parser, 'if constructor throws, parser is not defined').to.not.equal(undefined);
-  });
-
-  it('ignores files starting with dots because of defaults', () => {
-    const readStub = env.stub(fs, 'readFileSync');
-    // files starting with dots are in the DEFAULT_IGNORE
-    readStub.withArgs(forceIgnorePath).returns('force-app/main/default/classes/');
-    const fi = new ForceIgnore(forceIgnorePath);
-    expect(fi.denies(join('some', '.dotfile'))).to.equal(true);
-  });
-
-  it('Should allow user to override default ignore patterns', () => {
-    const readStub = env.stub(fs, 'readFileSync');
-    // files starting with dots are in the DEFAULT_IGNORE
-    readStub.withArgs(forceIgnorePath).returns('!**/.*');
-    const fi = new ForceIgnore(forceIgnorePath);
-    expect(fi.accepts(join('some', '.dotfile'))).to.equal(true);
   });
 
   it('Should have the correct default in the case the parsers are not initialized', () => {
@@ -127,6 +108,17 @@ describe('ForceIgnore', () => {
       const manifestPath = join(root, 'package2-manifest.json');
       expect(forceIgnore.accepts(manifestPath)).to.be.false;
       expect(forceIgnore.denies(manifestPath)).to.be.true;
+    });
+
+    it('Should allow .forceignore file to override defaults', () => {
+      // tamper with the file
+      env.restore();
+      env.stub(fs, 'readFileSync').returns('!**/.*');
+      forceIgnore = new ForceIgnore();
+
+      const dotFilePath = join(root, '.foo');
+      expect(forceIgnore.accepts(dotFilePath)).to.be.true;
+      expect(forceIgnore.denies(dotFilePath)).to.be.false;
     });
   });
 });

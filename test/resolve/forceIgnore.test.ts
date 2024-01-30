@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import * as fs from 'graceful-fs';
 import { Lifecycle } from '@salesforce/core';
-import { ForceIgnore } from '../../src';
+import { ForceIgnore } from '../../src/resolve/forceIgnore';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 
 const env = createSandbox();
@@ -26,17 +26,19 @@ describe('ForceIgnore', () => {
     const forceIgnore = new ForceIgnore();
     expect(forceIgnore.accepts(path)).to.be.true;
     expect(forceIgnore.denies(path)).to.be.false;
+    expect(forceIgnore.accepts(path)).to.be.true;
+    expect(forceIgnore.accepts('.foo')).to.be.true;
   });
 
   it('Should ignore files with a given pattern', () => {
-    const readStub = env.stub(fs, 'readFileSync');
-    readStub.withArgs(forceIgnorePath).returns(testPattern);
+    env.stub(fs, 'readFileSync').returns(testPattern);
     const forceIgnore = new ForceIgnore(forceIgnorePath);
     expect(forceIgnore.accepts(testPath)).to.be.false;
     expect(forceIgnore.denies(testPath)).to.be.true;
+    expect(forceIgnore.denies(join('some', '.foo'))).to.be.true;
   });
 
-  it('Should ignore files with windows separators', () => {
+  it('windows separators no longer have any effect', () => {
     const lifecycleStub = env.stub(Lifecycle.prototype, 'emitWarning');
     const forceIgnoreEntry = 'force-app\\main\\default\\classes\\myApex.*';
     const pathToClass = join('force-app', 'main', 'default', 'classes', 'myApex.cls');
@@ -44,7 +46,7 @@ describe('ForceIgnore', () => {
 
     const forceIgnore = new ForceIgnore();
 
-    expect(forceIgnore.accepts(pathToClass)).to.be.false;
+    expect(forceIgnore.accepts(pathToClass)).to.be.true;
     expect(lifecycleStub.callCount).to.equal(1);
   });
 
@@ -63,6 +65,22 @@ describe('ForceIgnore', () => {
     const fi = new ForceIgnore(forceIgnorePath);
     // @ts-ignore private field
     expect(fi.parser, 'if constructor throws, parser is not defined').to.not.equal(undefined);
+  });
+
+  it('ignores files starting with dots because of defaults', () => {
+    const readStub = env.stub(fs, 'readFileSync');
+    // files starting with dots are in the DEFAULT_IGNORE
+    readStub.withArgs(forceIgnorePath).returns('force-app/main/default/classes/');
+    const fi = new ForceIgnore(forceIgnorePath);
+    expect(fi.denies(join('some', '.dotfile'))).to.equal(true);
+  });
+
+  it('Should allow user to override default ignore patterns', () => {
+    const readStub = env.stub(fs, 'readFileSync');
+    // files starting with dots are in the DEFAULT_IGNORE
+    readStub.withArgs(forceIgnorePath).returns('!**/.*');
+    const fi = new ForceIgnore(forceIgnorePath);
+    expect(fi.accepts(join('some', '.dotfile'))).to.equal(true);
   });
 
   it('Should have the correct default in the case the parsers are not initialized', () => {

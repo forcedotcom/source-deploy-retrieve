@@ -31,9 +31,9 @@ export class ForceIgnore {
             'Your .forceignore file incorrectly uses the backslash ("\\") as a folder separator; it should use the slash ("/") instead. The ignore rules will not work as expected until you fix this.'
           );
         }
-
         // add the default ignore paths, and then parse the .forceignore file
-        this.parser = ignore().add(`${this.DEFAULT_IGNORE.join('\n')}\n${contents ?? ''}`);
+        this.parser = ignore().add(`${this.DEFAULT_IGNORE.join('\n')}\n${contents}`);
+
         this.forceIgnoreDirectory = dirname(forceIgnorePath);
       }
     } catch (e) {

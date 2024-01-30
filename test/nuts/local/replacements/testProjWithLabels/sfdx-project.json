@@ -9,6 +9,11 @@
   ],
   "replacements": [
     {
+      "filename": "force-app/main/default/labels/CustomLabels.labels-meta.xml",
+      "replaceWithEnv": "LABEL_REPLACEMENT",
+      "stringToReplace": "original"
+    },
+    {
       "glob": "force-app/**/*.cls",
       "replaceWithEnv": "THE_REPLACEMENT",
       "stringToReplace": "replaceMeWithEnv"

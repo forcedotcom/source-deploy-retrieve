@@ -3736,6 +3736,22 @@
           "extDataTranFieldTemplates": "extdatatranfieldtemplate"
         }
       }
+    },
+    "genaiprompttemplate": {
+      "id": "genaiprompttemplate",
+      "name": "GenAiPromptTemplate",
+      "suffix": "genAiPromptTemplate",
+      "directoryName": "genAiPromptTemplates",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "genaiprompttemplateactv": {
+      "id": "genaiprompttemplateactv",
+      "name": "GenAiPromptTemplateActv",
+      "suffix": "genAiPromptTemplateActivation",
+      "directoryName": "genAiPromptTemplateActivations",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -4148,7 +4164,9 @@
     "externalAIModel": "externalaimodel",
     "registeredExternalService": "registeredexternalservice",
     "managedEventSubscription": "managedeventsubscription",
-    "extDataTranObjectTemplate": "extdatatranobjecttemplate"
+    "extDataTranObjectTemplate": "extdatatranobjecttemplate",
+    "genAiPromptTemplate": "genaiprompttemplate",
+    "genAiPromptTemplateActivation": "genaiprompttemplateactv"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

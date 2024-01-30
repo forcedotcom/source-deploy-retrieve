@@ -1,3 +1,12 @@
+# [10.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.14...10.3.0) (2024-01-30)
+
+
+### Features
+
+* adding gen ai prompt template support ([ca3b440](https://github.com/forcedotcom/source-deploy-retrieve/commit/ca3b440352d006e5e69269597612e944fb0a9c9c))
+
+
+
 ## [10.2.14](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.13...10.2.14) (2024-01-28)
 
 

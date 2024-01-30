@@ -21,7 +21,7 @@ export class ForceIgnore {
 
   public constructor(forceIgnorePath = '') {
     try {
-      let contents = readFileSync(forceIgnorePath, 'utf-8');
+      const contents = readFileSync(forceIgnorePath, 'utf-8');
       // check if file `.forceignore` exists
       if (contents !== undefined) {
         // check for windows style separators (\) and warn
@@ -30,8 +30,6 @@ export class ForceIgnore {
           void Lifecycle.getInstance().emitWarning(
             'Your .forceignore file incorrectly uses the backslash ("\\") as a folder separator; it should use the slash ("/") instead. The ignore rules will not work as expected until you fix this.'
           );
-          // TODO: change this in v56 to only emit warning but NOT fix file
-          contents = contents.replace(/\\/g, '/');
         }
 
         // add the default ignore paths, and then parse the .forceignore file

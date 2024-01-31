@@ -675,3 +675,5 @@ v60 introduces the following new types.  Here's their current level of support
 - SearchableObjDataSyncInfo
 - EventRelayConfig
 - extDataTranFieldTemplate
+- GenAiPromptTemplate
+- GenAiPromptTemplateActv

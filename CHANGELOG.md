@@ -1,3 +1,12 @@
+## [10.3.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.3.0...10.3.1) (2024-01-31)
+
+
+### Bug Fixes
+
+* override forceignore defaults ([#1224](https://github.com/forcedotcom/source-deploy-retrieve/issues/1224)) ([954097b](https://github.com/forcedotcom/source-deploy-retrieve/commit/954097b521e503e32973e0ab5396461e39453612))
+
+
+
 # [10.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.14...10.3.0) (2024-01-30)
 
 

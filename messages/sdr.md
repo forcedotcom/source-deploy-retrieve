@@ -117,6 +117,10 @@ A StaticResource must have an associated .resource file, missing %s.resource-met
 
 The %s operation is missing a job ID. Initialize an operation with an ID, or start a new job.
 
+# missingApiVersion
+
+Could not determine an API version to use for the generated manifest. Tried looking for sourceApiVersion in sfdx-project.json, apiVersion from config vars, and the highest apiVersion from the APEX REST endpoint. Using API version 58.0 as a last resort.
+
 # invalid_xml_parsing
 
 error parsing %s due to:\n message: %s\n line: %s\n code: %s

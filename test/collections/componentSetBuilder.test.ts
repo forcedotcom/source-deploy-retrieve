@@ -9,7 +9,6 @@ import * as path from 'node:path';
 import * as fs from 'graceful-fs';
 import * as sinon from 'sinon';
 import { assert, expect } from 'chai';
-import { stubMethod } from '@salesforce/ts-sinon';
 import { SfError } from '@salesforce/core';
 import { ComponentSet, ComponentSetBuilder, FromSourceOptions } from '../../src';
 
@@ -57,9 +56,9 @@ describe('ComponentSetBuilder', () => {
 
     beforeEach(() => {
       fileExistsSyncStub = sandbox.stub(fs, 'existsSync');
-      fromSourceStub = stubMethod(sandbox, ComponentSet, 'fromSource');
-      fromManifestStub = stubMethod(sandbox, ComponentSet, 'fromManifest');
-      fromConnectionStub = stubMethod(sandbox, ComponentSet, 'fromConnection');
+      fromSourceStub = sandbox.stub(ComponentSet, 'fromSource');
+      fromManifestStub = sandbox.stub(ComponentSet, 'fromManifest');
+      fromConnectionStub = sandbox.stub(ComponentSet, 'fromConnection');
       componentSet = new ComponentSet();
     });
 
@@ -396,6 +395,36 @@ describe('ComponentSetBuilder', () => {
       expect(fromConnectionStub.firstCall.firstArg['componentFilter'].call()).equal(true);
       expect(compSet.size).to.equal(1);
       expect(compSet.has(apexClassComponent)).to.equal(true);
+    });
+
+    it('should create ComponentSet from org connection and metadata', async () => {
+      const mdCompSet = new ComponentSet();
+      mdCompSet.add(apexClassComponent);
+
+      fromSourceStub.returns(mdCompSet);
+      const packageDir1 = path.resolve('force-app');
+
+      componentSet.add(apexClassWildcardMatch);
+      fromConnectionStub.resolves(componentSet);
+      const options = {
+        sourcepath: undefined,
+        metadata: {
+          metadataEntries: ['ApexClass:MyClas*'],
+          directoryPaths: [packageDir1],
+        },
+        manifest: undefined,
+        org: {
+          username: 'manifest-test@org.com',
+          exclude: [],
+        },
+      };
+
+      const compSet = await ComponentSetBuilder.build(options);
+      expect(fromSourceStub.calledTwice).to.equal(true);
+      expect(fromConnectionStub.calledOnce).to.equal(true);
+      expect(compSet.size).to.equal(2);
+      expect(compSet.has(apexClassComponent)).to.equal(true);
+      expect(compSet.has(apexClassWildcardMatch)).to.equal(true);
     });
 
     it('should create ComponentSet from manifest and multiple package', async () => {

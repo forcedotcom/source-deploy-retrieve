@@ -8,6 +8,7 @@
 import { assert, expect } from 'chai';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { Connection, Logger } from '@salesforce/core';
+import { ManageableState } from '../../src/client/types';
 import { ConnectionResolver } from '../../src/resolve';
 import { MetadataComponent, registry } from '../../src/';
 
@@ -125,6 +126,39 @@ describe('ConnectionResolver', () => {
         },
       ];
       expect(result.components).to.deep.equal(expected);
+    });
+    it('should resolve components with specified types', async () => {
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
+
+      metadataQueryStub.withArgs({ type: 'ApexClass' }).resolves([
+        {
+          ...StdFileProperty,
+          fileName: 'classes/MyApexClass1.class',
+          fullName: 'MyApexClass1',
+          type: 'ApexClass',
+        },
+        {
+          ...StdFileProperty,
+          fileName: 'classes/MyApexClass2.class',
+          fullName: 'MyApexClass2',
+          type: 'ApexClass',
+        },
+      ]);
+
+      const resolver = new ConnectionResolver(connection, undefined, ['ApexClass']);
+      const result = await resolver.resolve();
+      const expected: MetadataComponent[] = [
+        {
+          fullName: 'MyApexClass1',
+          type: registry.types.apexclass,
+        },
+        {
+          fullName: 'MyApexClass2',
+          type: registry.types.apexclass,
+        },
+      ];
+      expect(result.components).to.deep.equal(expected);
+      expect(metadataQueryStub.calledOnce).to.be.true;
     });
     it('should resolve components with invalid type returned by metadata api', async () => {
       const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
@@ -324,7 +358,7 @@ describe('ConnectionResolver', () => {
 
       const resolver = new ConnectionResolver(connection);
       const result = await resolver.resolve(
-        (component) => !(component.namespacePrefix && component.manageableState !== 'unmanaged')
+        (component) => !(component.namespacePrefix && component.manageableState !== ManageableState.Unmanaged)
       );
       expect(result.components).to.deep.equal([]);
     });

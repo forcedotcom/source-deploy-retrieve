@@ -48,7 +48,6 @@ export const metadataTypes = [
   'StandardValue',
 
   // the following are not describable based on their features/settings, see git blame for last time checked
-  'DiscoveryStory',
   'EmployeeDataSyncProfile',
   'RelatedRecordAssocCriteria',
   'ScoreRange',
@@ -59,9 +58,6 @@ export const metadataTypes = [
   'ReferencedDashboard',
   'WaveAnalyticAssetCollection',
 
-  // spins up fine with feature B2CLOYALTYMANAGEMENT, not in describe
-  'ExpressionSetObjectAlias',
-
   // requires no features, but not in describe
   'ExternalDataSrcDescriptor',
 
@@ -71,9 +67,6 @@ export const metadataTypes = [
   // spun up with CUSTOMERDATAPLATFORM, not in describe
   'ExternalDataTranField',
   'ExternalDataTranObject',
-
-  // spun up with HIGHSCALEORDERS, not in describe
-  'RegisteredExternalService',
 
   // spun up org with ASSESSMENTS, not in describe
   'AssessmentConfiguration',

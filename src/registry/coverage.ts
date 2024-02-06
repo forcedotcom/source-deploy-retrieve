@@ -9,6 +9,8 @@
 import { OptionsOfTextResponseBody } from 'got';
 import got from 'got';
 import { ProxyAgent } from 'proxy-agent';
+import { isString } from '@salesforce/ts-types';
+import { SfError } from '@salesforce/core';
 import { CoverageObject } from '../../src/registry/types';
 
 const getProxiedOptions = (url: string): OptionsOfTextResponseBody => ({
@@ -21,12 +23,29 @@ const getProxiedOptions = (url: string): OptionsOfTextResponseBody => ({
   url,
 });
 
-export const getCurrentApiVersion = async (): Promise<number> =>
-  (
-    await got(getProxiedOptions('https://mdcoverage.secure.force.com/services/apexrest/report')).json<{
-      versions: { selected: number };
-    }>()
-  ).versions.selected;
+type ApiVersion = {
+  label: string;
+  url: string;
+  version: string;
+};
+
+let apiVer: number;
+
+export const getCurrentApiVersion = async (): Promise<number> => {
+  if (apiVer === undefined) {
+    try {
+      const apiVersionsUrl = 'https://appexchange.salesforce.com/services/data';
+      const lastVersionEntry = (await got(getProxiedOptions(apiVersionsUrl)).json<ApiVersion[]>()).at(-1) as ApiVersion;
+      apiVer = +lastVersionEntry.version;
+    } catch (e: unknown) {
+      const err = e instanceof Error ? e : SfError.wrap(isString(e) ? e : 'unknown');
+      const eMsg = 'Unable to get a current API version from the appexchange org';
+      const eActions = ['Provide an API version explicitly', 'Set an API version in the project configuration'];
+      throw new SfError(eMsg, 'ApiVersionRetrievalError', eActions, err);
+    }
+  }
+  return apiVer;
+};
 
 export const getCoverage = async (apiVersion: number): Promise<CoverageObject> => {
   const results = await Promise.allSettled(

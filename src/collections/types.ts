@@ -88,4 +88,8 @@ export interface FromConnectionOptions extends OptionalTreeRegistryOptions {
    * filter the result components to e.g. remove managed components
    */
   componentFilter?: (component: Partial<FileProperties>) => boolean;
+  /**
+   * array of metadata type names to use for `connection.metadata.list()`
+   */
+  metadataTypes?: string[];
 }

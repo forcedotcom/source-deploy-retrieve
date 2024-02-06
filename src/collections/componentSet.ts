@@ -6,7 +6,16 @@
  */
 /* eslint  @typescript-eslint/unified-signatures:0 */
 import { XMLBuilder } from 'fast-xml-parser';
-import { AuthInfo, Connection, Logger, Messages, SfError } from '@salesforce/core';
+import {
+  AuthInfo,
+  ConfigAggregator,
+  Connection,
+  Logger,
+  Messages,
+  OrgConfigProperties,
+  SfError,
+  SfProject,
+} from '@salesforce/core';
 import { isString } from '@salesforce/ts-types';
 import {
   MetadataApiDeploy,
@@ -214,7 +223,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         resolveIncludeSet.add(component, deletionType);
       }
       const memberIsWildcard = component.fullName === ComponentSet.WILDCARD;
-      if (!memberIsWildcard || options.forceAddWildcards || !options.resolveSourcePaths) {
+      if (options.resolveSourcePaths === undefined || !memberIsWildcard || options.forceAddWildcards) {
         result.add(component, deletionType);
       }
     };
@@ -283,7 +292,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       }
     }
 
-    const connectionResolver = new ConnectionResolver(usernameOrConnection, options.registry);
+    const connectionResolver = new ConnectionResolver(usernameOrConnection, options.registry, options.metadataTypes);
     const manifest = await connectionResolver.resolve(options.componentFilter);
     const result = new ComponentSet([], options.registry);
     result.apiVersion = manifest.apiVersion;
@@ -369,7 +378,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @returns Object representation of a package manifest
    */
   public async getObject(destructiveType?: DestructiveChangesType): Promise<PackageManifestObject> {
-    const version = this.sourceApiVersion ?? this.apiVersion ?? `${await getCurrentApiVersion()}.0`;
+    const version = await this.getApiVersion();
 
     // If this ComponentSet has components marked for delete, we need to
     // only include those components in a destructiveChanges.xml and
@@ -661,6 +670,52 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       destructiveChangesTypes.push(DestructiveChangesType.POST);
     }
     return destructiveChangesTypes;
+  }
+
+  /**
+   * Returns an API version to use as the value of the `version` field
+   * in a manifest (package.xml) for MDAPI calls in the following order
+   * of preference:
+   *
+   * 1. this.sourceApiVersion
+   * 2. this.apiVersion
+   * 3. sourceApiVersion set in sfdx-project.json
+   * 4. apiVersion from ConfigAggregator (config files and Env Vars)
+   * 5. http call to apexrest endpoint for highest apiVersion
+   * 6. hardcoded value of "58.0" as a last resort
+   *
+   * @returns string The resolved API version to use in a manifest
+   */
+  private async getApiVersion(): Promise<string> {
+    let version = this.sourceApiVersion ?? this.apiVersion;
+
+    if (!version) {
+      try {
+        const project = await SfProject.resolve();
+        const projectConfig = await project.resolveProjectConfig();
+        version = projectConfig?.sourceApiVersion as string;
+      } catch (e) {
+        // If there's any problem just move on to ConfigAggregator
+      }
+    }
+
+    if (!version) {
+      try {
+        version = ConfigAggregator.getValue(OrgConfigProperties.ORG_API_VERSION).value as string;
+      } catch (e) {
+        // If there's any problem just move on to the REST endpoint
+      }
+    }
+
+    if (!version) {
+      try {
+        version = `${await getCurrentApiVersion()}.0`;
+      } catch (e) {
+        version = '58.0';
+        this.logger.warn(messages.getMessage('missingApiVersion'));
+      }
+    }
+    return version;
   }
 }
 

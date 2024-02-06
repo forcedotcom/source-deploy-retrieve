@@ -1,3 +1,278 @@
+## [10.3.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.3.2...10.3.3) (2024-02-04)
+
+
+### Bug Fixes
+
+* **deps:** bump fast-xml-parser from 4.3.2 to 4.3.4 ([#1227](https://github.com/forcedotcom/source-deploy-retrieve/issues/1227)) ([02554d5](https://github.com/forcedotcom/source-deploy-retrieve/commit/02554d564a4a1ed9cebfa194afa60da71f1573f1))
+
+
+
+## [10.3.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.3.1...10.3.2) (2024-02-04)
+
+
+### Bug Fixes
+
+* **deps:** bump ignore from 5.3.0 to 5.3.1 ([#1228](https://github.com/forcedotcom/source-deploy-retrieve/issues/1228)) ([8d9f6e1](https://github.com/forcedotcom/source-deploy-retrieve/commit/8d9f6e1b404efc336761eb0f7b7ff53ca61ae8e9))
+
+
+
+## [10.3.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.3.0...10.3.1) (2024-01-31)
+
+
+### Bug Fixes
+
+* override forceignore defaults ([#1224](https://github.com/forcedotcom/source-deploy-retrieve/issues/1224)) ([954097b](https://github.com/forcedotcom/source-deploy-retrieve/commit/954097b521e503e32973e0ab5396461e39453612))
+
+
+
+# [10.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.14...10.3.0) (2024-01-30)
+
+
+### Features
+
+* adding gen ai prompt template support ([ca3b440](https://github.com/forcedotcom/source-deploy-retrieve/commit/ca3b440352d006e5e69269597612e944fb0a9c9c))
+
+
+
+## [10.2.14](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.13...10.2.14) (2024-01-28)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 6.4.7 to 6.5.1 ([#1222](https://github.com/forcedotcom/source-deploy-retrieve/issues/1222)) ([989b429](https://github.com/forcedotcom/source-deploy-retrieve/commit/989b429f2833141722f3ce259dd46875cb291e57))
+
+
+
+## [10.2.13](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.12...10.2.13) (2024-01-23)
+
+
+### Bug Fixes
+
+* use appexchange org for last resort api version ([#1219](https://github.com/forcedotcom/source-deploy-retrieve/issues/1219)) ([c9f15b2](https://github.com/forcedotcom/source-deploy-retrieve/commit/c9f15b213af54577a3b09c762b89029cb515e463))
+
+
+
+## [10.2.12](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.11...10.2.12) (2024-01-23)
+
+
+### Bug Fixes
+
+* metadataRegistry entries for IdentityVerificationProcDev were incorrect. fixed ([#1221](https://github.com/forcedotcom/source-deploy-retrieve/issues/1221)) ([4acf942](https://github.com/forcedotcom/source-deploy-retrieve/commit/4acf94294be7a403c20d3231cb04b8a4153c8214))
+
+
+
+## [10.2.11](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.10...10.2.11) (2024-01-14)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 6.4.4 to 6.4.7 ([#1212](https://github.com/forcedotcom/source-deploy-retrieve/issues/1212)) ([10107d1](https://github.com/forcedotcom/source-deploy-retrieve/commit/10107d15fe192e9294c6cb66c87358c801279b60))
+
+
+
+## [10.2.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.9...10.2.10) (2024-01-12)
+
+
+### Bug Fixes
+
+* add ExtlClntAppNotificationSettings to registry ([#1211](https://github.com/forcedotcom/source-deploy-retrieve/issues/1211)) ([3ed42c2](https://github.com/forcedotcom/source-deploy-retrieve/commit/3ed42c2e5cdfaca06acb0be3821d02905e2e5306))
+
+
+
+## [10.2.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.8...10.2.9) (2024-01-10)
+
+
+### Bug Fixes
+
+* add DataCalcInsightTemplate and DataKitObjectTemplate ([#1210](https://github.com/forcedotcom/source-deploy-retrieve/issues/1210)) ([cb845b3](https://github.com/forcedotcom/source-deploy-retrieve/commit/cb845b3759051438e3511530fefa36bdd0d189cd))
+
+
+
+## [10.2.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.7...10.2.8) (2024-01-09)
+
+
+### Bug Fixes
+
+* add the ExpressionSetObjectAlias metadata type ([#1209](https://github.com/forcedotcom/source-deploy-retrieve/issues/1209)) ([896ec32](https://github.com/forcedotcom/source-deploy-retrieve/commit/896ec326982fdeea91feb03b2fd39e47bf407b29))
+
+
+
+## [10.2.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.6...10.2.7) (2024-01-07)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 6.4.2 to 6.4.4 ([#1206](https://github.com/forcedotcom/source-deploy-retrieve/issues/1206)) ([5408f2b](https://github.com/forcedotcom/source-deploy-retrieve/commit/5408f2b308c9366063a1aef16397537c86ccd437))
+
+
+
+## [10.2.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.5...10.2.6) (2024-01-04)
+
+
+### Bug Fixes
+
+* Qa/1202 - add support for ExtDataTranObjectTemplate and ExtDataTranFieldTemplate ([#1203](https://github.com/forcedotcom/source-deploy-retrieve/issues/1203)) ([f4d03d8](https://github.com/forcedotcom/source-deploy-retrieve/commit/f4d03d84821ae9179738f2a2c0f0c4a429c38a37))
+
+
+
+## [10.2.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.4...10.2.5) (2023-12-24)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 6.4.1 to 6.4.2 ([#1198](https://github.com/forcedotcom/source-deploy-retrieve/issues/1198)) ([46d1082](https://github.com/forcedotcom/source-deploy-retrieve/commit/46d1082e80d8ca2d8e7080a6385e9f0b590567b8))
+
+
+
+## [10.2.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.3...10.2.4) (2023-12-17)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 6.4.0 to 6.4.1 ([#1193](https://github.com/forcedotcom/source-deploy-retrieve/issues/1193)) ([94dca14](https://github.com/forcedotcom/source-deploy-retrieve/commit/94dca14ca2205c347fff194370562fad895954df))
+
+
+
+## [10.2.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.2...10.2.3) (2023-12-15)
+
+
+### Bug Fixes
+
+* change mdcoverage url for getCurrentApiVersion ([#1191](https://github.com/forcedotcom/source-deploy-retrieve/issues/1191)) ([ff82bb9](https://github.com/forcedotcom/source-deploy-retrieve/commit/ff82bb963a3f847023ade67de8e0b5c09038b5aa))
+
+
+
+## [10.2.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.1...10.2.2) (2023-12-15)
+
+
+### Bug Fixes
+
+* implicit dependency ([#1192](https://github.com/forcedotcom/source-deploy-retrieve/issues/1192)) ([d691e5e](https://github.com/forcedotcom/source-deploy-retrieve/commit/d691e5e1eedb348584820e2cd16a86d8ac890043))
+
+
+
+## [10.2.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.2.0...10.2.1) (2023-12-10)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 6.2.2 to 6.4.0 ([#1189](https://github.com/forcedotcom/source-deploy-retrieve/issues/1189)) ([2c72ce9](https://github.com/forcedotcom/source-deploy-retrieve/commit/2c72ce9628fb37c6d5ebe2cd94e647c777538951))
+
+
+
+# [10.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.1.0...10.2.0) (2023-12-07)
+
+
+### Features
+
+* 3 entities for Service Catalog Eligibility Rules ([#1185](https://github.com/forcedotcom/source-deploy-retrieve/issues/1185)) ([a1e0a58](https://github.com/forcedotcom/source-deploy-retrieve/commit/a1e0a58ade6de0449f70bfbb00184134afa99df4))
+
+
+
+# [10.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.0.4...10.1.0) (2023-12-05)
+
+
+### Features
+
+* build ComponentSet using metadata and an org connection ([#1182](https://github.com/forcedotcom/source-deploy-retrieve/issues/1182)) ([d4d2b93](https://github.com/forcedotcom/source-deploy-retrieve/commit/d4d2b93847c264cf303bdd81fac906364e09fc16))
+
+
+
+## [10.0.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.0.3...10.0.4) (2023-12-03)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 6.2.0 to 6.2.2 ([#1184](https://github.com/forcedotcom/source-deploy-retrieve/issues/1184)) ([db6e0e8](https://github.com/forcedotcom/source-deploy-retrieve/commit/db6e0e85b36fbde5acdf5164a6ed4ee63a7713b1))
+
+
+
+## [10.0.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.0.2...10.0.3) (2023-11-26)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 6.1.3 to 6.2.0 ([#1181](https://github.com/forcedotcom/source-deploy-retrieve/issues/1181)) ([125e7cf](https://github.com/forcedotcom/source-deploy-retrieve/commit/125e7cf639240bbae6d97b5661d5ee430934e6e2))
+
+
+
+## [10.0.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.0.1...10.0.2) (2023-11-19)
+
+
+### Bug Fixes
+
+* **deps:** bump ignore from 5.2.4 to 5.3.0 ([#1177](https://github.com/forcedotcom/source-deploy-retrieve/issues/1177)) ([009bce2](https://github.com/forcedotcom/source-deploy-retrieve/commit/009bce2ee2d71cb76e7c9ddb159438577a69ab7b))
+
+
+
+## [10.0.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.0.0...10.0.1) (2023-11-19)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 6.1.0 to 6.1.3 ([#1178](https://github.com/forcedotcom/source-deploy-retrieve/issues/1178)) ([4b42925](https://github.com/forcedotcom/source-deploy-retrieve/commit/4b429251bae7b3075b198a20c55fd0c9fc040632))
+
+
+
+# [10.0.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.6...10.0.0) (2023-11-15)
+
+
+* feat!: require node18, use core6 ([6af3a90](https://github.com/forcedotcom/source-deploy-retrieve/commit/6af3a9004f7cb89ae02dee2259ec0f80b16f7b90))
+
+
+### BREAKING CHANGES
+
+* require node18+
+
+* chore: core6
+
+
+
+## [9.8.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.5...9.8.6) (2023-11-12)
+
+
+### Bug Fixes
+
+* **lint:** current linter rules ([#1159](https://github.com/forcedotcom/source-deploy-retrieve/issues/1159)) ([5ae721a](https://github.com/forcedotcom/source-deploy-retrieve/commit/5ae721ad469c0cc3d8a9697e9b69ad1f4dec1eeb))
+
+
+
+## [9.8.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.4...9.8.5) (2023-11-09)
+
+
+### Bug Fixes
+
+* catch decoding errors ([#1167](https://github.com/forcedotcom/source-deploy-retrieve/issues/1167)) ([15f1137](https://github.com/forcedotcom/source-deploy-retrieve/commit/15f11371e3f9142da08341d47718745e4c740480))
+
+
+
+## [9.8.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.3...9.8.4) (2023-11-05)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 5.3.16 to 5.3.17 ([#1166](https://github.com/forcedotcom/source-deploy-retrieve/issues/1166)) ([11030af](https://github.com/forcedotcom/source-deploy-retrieve/commit/11030afdd4b698dcdc887c1c3860d421a0692248))
+
+
+
+## [9.8.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.2...9.8.3) (2023-11-02)
+
+
+### Bug Fixes
+
+* support metadata type managedEventSubscription ([#1162](https://github.com/forcedotcom/source-deploy-retrieve/issues/1162)) ([8afad5a](https://github.com/forcedotcom/source-deploy-retrieve/commit/8afad5a2859255a1d88744a07ba0f55bb3c1585b))
+
+
+
+## [9.8.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.1...9.8.2) (2023-11-02)
+
+
+### Bug Fixes
+
+* add support for more metadata types ([#1161](https://github.com/forcedotcom/source-deploy-retrieve/issues/1161)) ([b4748aa](https://github.com/forcedotcom/source-deploy-retrieve/commit/b4748aae6811f23828804a9fd0a891ec43651faa))
+
+
+
 ## [9.8.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/9.8.0...9.8.1) (2023-10-31)
 
 

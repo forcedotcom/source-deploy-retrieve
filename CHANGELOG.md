@@ -1,3 +1,12 @@
+## [10.3.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.3.4...10.3.5) (2024-02-06)
+
+
+### Bug Fixes
+
+* revert ESVersion,DMVersion ([#1160](https://github.com/forcedotcom/source-deploy-retrieve/issues/1160))" ([#1230](https://github.com/forcedotcom/source-deploy-retrieve/issues/1230)) ([0660e43](https://github.com/forcedotcom/source-deploy-retrieve/commit/0660e4316a1d2e606eeec9e4a446780875f9a99c))
+
+
+
 ## [10.3.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.3.3...10.3.4) (2024-02-06)
 
 

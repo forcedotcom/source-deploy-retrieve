@@ -3752,6 +3752,14 @@
       "directoryName": "genAiPromptTemplateActivations",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "enablementmeasuredefinition": {
+      "id": "enablementmeasuredefinition",
+      "name": "Enablementmeasuredefinition",
+      "suffix": "enablementMeasureDefinition",
+      "directoryName": "enablementMeasureDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -4166,7 +4174,8 @@
     "managedEventSubscription": "managedeventsubscription",
     "extDataTranObjectTemplate": "extdatatranobjecttemplate",
     "genAiPromptTemplate": "genaiprompttemplate",
-    "genAiPromptTemplateActivation": "genaiprompttemplateactv"
+    "genAiPromptTemplateActivation": "genaiprompttemplateactv",
+    "enablementMeasureDefinition": "enablementmeasuredefinition"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

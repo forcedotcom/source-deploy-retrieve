@@ -1,3 +1,12 @@
+## [10.3.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.3.5...10.3.6) (2024-02-08)
+
+
+### Bug Fixes
+
+* decompose by any folder name ([#1233](https://github.com/forcedotcom/source-deploy-retrieve/issues/1233)) ([98901dd](https://github.com/forcedotcom/source-deploy-retrieve/commit/98901ddeac1d93d4093f4e9050a492bd8da6c029))
+
+
+
 ## [10.3.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.3.4...10.3.5) (2024-02-06)
 
 

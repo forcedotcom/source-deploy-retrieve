@@ -4250,6 +4250,7 @@
     "digitalexperience": "digitalexperiencebundle",
     "aiscoringmodeldefversion": "aiscoringmodeldefinition",
     "extdatatranfieldtemplate": "extdatatranobjecttemplate",
-    "decisionmatrixdefinitionversion": "decisionmatrixdefinition"
+    "decisionmatrixdefinitionversion": "decisionmatrixdefinition",
+    "expressionsetdefinitionversion": "expressionsetdefinition"
   }
 }

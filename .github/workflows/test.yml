@@ -15,11 +15,11 @@ jobs:
     uses: salesforcecli/github-workflows/.github/workflows/unitTestsLinux.yml@main
   windows-unit-tests:
     needs: linux-unit-tests
-    uses: salesforcecli/github-workflows/.github/workflows/unitTestsWindows.yml@sm/windows-longpath
+    uses: salesforcecli/github-workflows/.github/workflows/unitTestsWindows.yml@main
 
   nuts:
     needs: linux-unit-tests
-    uses: salesforcecli/github-workflows/.github/workflows/nut.yml@sm/windows-longpath
+    uses: salesforcecli/github-workflows/.github/workflows/nut.yml@main
     secrets: inherit
     strategy:
       matrix:

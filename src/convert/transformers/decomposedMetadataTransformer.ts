@@ -14,7 +14,7 @@ import { WriteInfo } from '../types';
 import { META_XML_SUFFIX, SourcePath, XML_NS_KEY, XML_NS_URL } from '../../common';
 import { ComponentSet } from '../../collections';
 import { DecompositionStateValue } from '../convertContext';
-import { DecompositionStrategy } from '../../registry';
+import { DecompositionStrategy, MetadataType } from '../../registry';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 Messages.importMessagesDirectory(__dirname);
@@ -64,7 +64,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const composedMetadata = await getComposedMetadataEntries(component);
 
     for (const [tagKey, tagValue] of composedMetadata) {
-      const childTypeId = type.children?.directories?.[tagKey];
+      const childTypeId = tagToChildTypeId({ tagKey, type });
       if (childTypeId) {
         const childType = type.children?.types[childTypeId];
         if (!childType) {
@@ -240,3 +240,8 @@ const extractUniqueElementValue = (xml: JsonMap, elementName?: string): string |
 
 const getStandardElements = (xml: JsonMap): string | undefined =>
   getString(xml, 'fullName') ?? getString(xml, 'name') ?? undefined;
+
+/** use the given xmlElementName name if it exists, otherwise use see if one matches the directories */
+const tagToChildTypeId = ({ tagKey, type }: { tagKey: string; type: MetadataType }): string | undefined =>
+  Object.values(type.children?.types ?? {}).find((c) => c.xmlElementName === tagKey)?.id ??
+  type.children?.directories?.[tagKey];

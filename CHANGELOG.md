@@ -1,3 +1,12 @@
+## [10.3.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.3.6...10.3.7) (2024-02-08)
+
+
+### Bug Fixes
+
+* recompose decomposed xml using xmlElementName where it exists ([#1234](https://github.com/forcedotcom/source-deploy-retrieve/issues/1234)) ([4cf89e1](https://github.com/forcedotcom/source-deploy-retrieve/commit/4cf89e1f62a001d8006f165c014bfe7857f4bde0))
+
+
+
 ## [10.3.6](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.3.5...10.3.6) (2024-02-08)
 
 

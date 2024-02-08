@@ -3755,7 +3755,7 @@
     },
     "enablementmeasuredefinition": {
       "id": "enablementmeasuredefinition",
-      "name": "Enablementmeasuredefinition",
+      "name": "EnablementMeasureDefinition",
       "suffix": "enablementMeasureDefinition",
       "directoryName": "enablementMeasureDefinitions",
       "inFolder": false,

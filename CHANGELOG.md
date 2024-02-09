@@ -1,3 +1,12 @@
+## [10.3.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.3.7...10.3.8) (2024-02-09)
+
+
+### Bug Fixes
+
+* defend against bad mdapi responses ([#1236](https://github.com/forcedotcom/source-deploy-retrieve/issues/1236)) ([d35911d](https://github.com/forcedotcom/source-deploy-retrieve/commit/d35911dda97c552f167c9ab7b3b9e818f7f4085b))
+
+
+
 ## [10.3.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.3.6...10.3.7) (2024-02-08)
 
 

@@ -1,3 +1,7 @@
+## [10.3.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.3.8...10.3.9) (2024-02-12)
+
+
+
 ## [10.3.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.3.7...10.3.8) (2024-02-09)
 
 

@@ -49,7 +49,7 @@ jobs:
           - 'yarn test:nuts:retrieve'
           - 'yarn test:nuts:specialTypes'
           - 'yarn test:nuts:tracking'
-    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@sm/windows-longpath
+    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
       packageName: '@salesforce/source-deploy-retrieve'
       externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-source'
@@ -82,7 +82,7 @@ jobs:
           - 'yarn test:nuts:specialTypes'
           - 'yarn test:nuts:static'
           - 'yarn test:nuts:tracking'
-    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@sm/windows-longpath
+    uses: salesforcecli/github-workflows/.github/workflows/externalNut.yml@main
     with:
       packageName: '@salesforce/source-deploy-retrieve'
       externalProjectGitUrl: 'https://github.com/salesforcecli/plugin-deploy-retrieve'

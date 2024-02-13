@@ -3319,7 +3319,7 @@
     "identityverificationprocdef": {
       "id": "identityverificationprocdef",
       "name": "IdentityVerificationProcDef",
-      "suffix": "identityverificationprocdef",
+      "suffix": "IdentityVerificationProcDef",
       "directoryName": "IdentityVerificationProcDefs",
       "inFolder": false,
       "strictDirectoryName": false
@@ -3736,6 +3736,30 @@
           "extDataTranFieldTemplates": "extdatatranfieldtemplate"
         }
       }
+    },
+    "genaiprompttemplate": {
+      "id": "genaiprompttemplate",
+      "name": "GenAiPromptTemplate",
+      "suffix": "genAiPromptTemplate",
+      "directoryName": "genAiPromptTemplates",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "genaiprompttemplateactv": {
+      "id": "genaiprompttemplateactv",
+      "name": "GenAiPromptTemplateActv",
+      "suffix": "genAiPromptTemplateActivation",
+      "directoryName": "genAiPromptTemplateActivations",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "enablementmeasuredefinition": {
+      "id": "enablementmeasuredefinition",
+      "name": "EnablementMeasureDefinition",
+      "suffix": "enablementMeasureDefinition",
+      "directoryName": "enablementMeasureDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -4106,7 +4130,7 @@
     "dwl": "dataweaveresource",
     "aq": "assessmentquestion",
     "aqs": "assessmentquestionset",
-    "identityverificationprocdef": "identityverificationprocdef",
+    "IdentityVerificationProcDef": "identityverificationprocdef",
     "digitalExperience": "digitalexperiencebundle",
     "digitalExperienceConfig": "digitalexperienceconfig",
     "forecastingFilter": "forecastingfilter",
@@ -4148,7 +4172,10 @@
     "externalAIModel": "externalaimodel",
     "registeredExternalService": "registeredexternalservice",
     "managedEventSubscription": "managedeventsubscription",
-    "extDataTranObjectTemplate": "extdatatranobjecttemplate"
+    "extDataTranObjectTemplate": "extdatatranobjecttemplate",
+    "genAiPromptTemplate": "genaiprompttemplate",
+    "genAiPromptTemplateActivation": "genaiprompttemplateactv",
+    "enablementMeasureDefinition": "enablementmeasuredefinition"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

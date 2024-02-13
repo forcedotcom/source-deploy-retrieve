@@ -9,6 +9,8 @@
 import { OptionsOfTextResponseBody } from 'got';
 import got from 'got';
 import { ProxyAgent } from 'proxy-agent';
+import { isString } from '@salesforce/ts-types';
+import { SfError } from '@salesforce/core';
 import { CoverageObject } from '../../src/registry/types';
 
 const getProxiedOptions = (url: string): OptionsOfTextResponseBody => ({
@@ -27,10 +29,22 @@ type ApiVersion = {
   version: string;
 };
 
+let apiVer: number;
+
 export const getCurrentApiVersion = async (): Promise<number> => {
-  const apiVersionsUrl = 'https://dx-extended-coverage.my.salesforce-sites.com/services/data';
-  const lastVersionEntry = (await got(getProxiedOptions(apiVersionsUrl)).json<ApiVersion[]>()).pop() as ApiVersion;
-  return +lastVersionEntry.version;
+  if (apiVer === undefined) {
+    try {
+      const apiVersionsUrl = 'https://appexchange.salesforce.com/services/data';
+      const lastVersionEntry = (await got(getProxiedOptions(apiVersionsUrl)).json<ApiVersion[]>()).at(-1) as ApiVersion;
+      apiVer = +lastVersionEntry.version;
+    } catch (e: unknown) {
+      const err = e instanceof Error ? e : SfError.wrap(isString(e) ? e : 'unknown');
+      const eMsg = 'Unable to get a current API version from the appexchange org';
+      const eActions = ['Provide an API version explicitly', 'Set an API version in the project configuration'];
+      throw new SfError(eMsg, 'ApiVersionRetrievalError', eActions, err);
+    }
+  }
+  return apiVer;
 };
 
 export const getCoverage = async (apiVersion: number): Promise<CoverageObject> => {

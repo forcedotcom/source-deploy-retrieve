@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject>
+    <enableHistory>true</enableHistory>
+    <enableActivities>true</enableActivities>
+    <enableSearch>true</enableSearch>
+    <enableFeeds>true</enableFeeds>
+    <enableReports>true</enableReports>
+    <enableBulkApi>true</enableBulkApi>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <pluralLabel>TestObjs</pluralLabel>
+    <fullName>TestObj__c</fullName>
+    <description>placeholder</description>
+    <sharingModel>ReadWrite</sharingModel>
+    <nameField>
+        <type>Text</type>
+        <label>TestObj Name</label>
+    </nameField>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <label>TestObj</label>
+</CustomObject>

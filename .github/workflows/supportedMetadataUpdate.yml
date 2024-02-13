@@ -12,7 +12,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
+      - uses: salesforcecli/github-workflows/.github/actions/getGithubUserInfo@main
+        id: github-user-info
+        with:
+          SVC_CLI_BOT_GITHUB_TOKEN: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
       - uses: salesforcecli/github-workflows/.github/actions/gitConfig@main
+        with:
+          username: ${{ steps.github-user-info.outputs.username }}
+          email: ${{ steps.github-user-info.outputs.email }}
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*

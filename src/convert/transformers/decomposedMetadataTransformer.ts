@@ -8,12 +8,13 @@ import { dirname, join } from 'node:path';
 import { AnyJson, JsonMap, getString, isJsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
 import { Messages } from '@salesforce/core';
-import type { MetadataType } from '../../registry/types';
-import { MetadataComponent, SourceComponent } from '../../resolve';
+import type { MetadataComponent } from '../../resolve/types';
+import { DecompositionStrategy, type MetadataType } from '../../registry/types';
+import { SourceComponent } from '../../resolve/sourceComponent';
 import { JsToXml } from '../streams';
 import { WriteInfo } from '../types';
 import { META_XML_SUFFIX, SourcePath, XML_NS_KEY, XML_NS_URL } from '../../common';
-import { ComponentSet } from '../../collections';
+import { ComponentSet } from '../../collections/componentSet';
 import { DecompositionStateValue } from '../convertContext';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
@@ -65,7 +66,6 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     };
     const composedMetadata = await getComposedMetadataEntries(component);
     for (const [tagKey, tagValue] of composedMetadata) {
-      // use the given xmlElementName name if it exists, otherwise use see if one matches the directories
       const childTypeId = tagToChildTypeId({ tagKey, type });
       if (childTypeId) {
         const childType = type.children?.types[childTypeId];
@@ -218,10 +218,10 @@ const getDefaultOutput = (component: MetadataComponent): SourcePath => {
   const [baseName, ...tail] = fullName.split('.');
   // there could be a '.' inside the child name (ex: PermissionSet.FieldPermissions.field uses Obj__c.Field__c)
   // we put folders for each object in (ex) FieldPermissions because of the dot
-  const childName = tail.length ? tail.join('.') : undefined;
+  const childName = tail.length ? join(...tail) : undefined;
   const baseComponent = (parent ?? component) as SourceComponent;
   const output = join(
-    parent?.type.strategies?.decomposition === 'folderPerType' ? type.directoryName : '',
+    parent?.type.strategies?.decomposition === DecompositionStrategy.FolderPerType ? type.directoryName : '',
     `${childName ?? baseName}.${component.type.suffix}${META_XML_SUFFIX}`
   );
   return join(baseComponent.getPackageRelativePath(baseName, 'source'), output);

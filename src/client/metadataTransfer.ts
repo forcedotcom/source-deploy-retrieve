@@ -269,7 +269,7 @@ const getConnectionNoHigherThanOrgAllows = async (conn: Connection, requestedVer
 };
 
 /** there's an options object OR 2 raw number param, there's defaults including freq based on the CS size */
-const normalizePollingInputs = (
+export const normalizePollingInputs = (
   frequencyOrOptions?: number | Partial<PollingClient.Options>,
   timeout?: number,
   componentSetSize = 0
@@ -298,7 +298,7 @@ const normalizePollingInputs = (
 const sizeOfComponentSet = (cs?: ComponentSet): number => cs?.getSourceComponents().toArray().length ?? 0;
 
 /** based on the size of the components, pick a reasonable polling frequency */
-const calculatePollingFrequency = (size: number): number => {
+export const calculatePollingFrequency = (size: number): number => {
   if (size === 0) {
     // no component set size is possible for retrieve
     return 1000;

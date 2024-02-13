@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LiveChatButton xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deployments/>
+    <enableQueue>false</enableQueue>
+    <isActive>true</isActive>
+    <label>Bot1ChatButton1</label>
+    <optionsCustomRoutingIsEnabled>false</optionsCustomRoutingIsEnabled>
+    <optionsHasChasitorIdleTimeout>false</optionsHasChasitorIdleTimeout>
+    <optionsHasInviteAfterAccept>false</optionsHasInviteAfterAccept>
+    <optionsHasInviteAfterReject>false</optionsHasInviteAfterReject>
+    <optionsHasRerouteDeclinedRequest>false</optionsHasRerouteDeclinedRequest>
+    <optionsIsAutoAccept>false</optionsIsAutoAccept>
+    <optionsIsInviteAutoRemove>false</optionsIsInviteAutoRemove>
+    <routingType>Choice</routingType>
+    <skills>
+        <skill>TestSkill</skill>
+    </skills>
+    <type>Standard</type>
+</LiveChatButton>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bot xmlns="http://soap.sforce.com/2006/04/metadata">
+    <botMlDomain>
+        <label>Astro Bot</label>
+        <mlIntents>
+            <developerName>End_Chat</developerName>
+            <label>End Chat</label>
+        </mlIntents>
+        <mlIntents>
+            <developerName>Main_Menu</developerName>
+            <label>Main Menu</label>
+        </mlIntents>
+        <mlIntents>
+            <developerName>Transfer_To_Agent</developerName>
+            <label>Transfer To Agent</label>
+        </mlIntents>
+        <mlIntents>
+            <developerName>Welcome</developerName>
+            <label>Welcome</label>
+        </mlIntents>
+        <name>Astro_Bot_ld1</name>
+    </botMlDomain>
+    <contextVariables>
+        <contextVariableMappings>
+            <SObjectType>LiveChatTranscript</SObjectType>
+            <fieldName>LiveChatTranscript.ChatKey</fieldName>
+            <messageType>WebChat</messageType>
+        </contextVariableMappings>
+        <dataType>Text</dataType>
+        <developerName>ChatKey</developerName>
+        <label>Chat Key</label>
+    </contextVariables>
+    <conversationChannelProviders>
+        <agentRequired>true</agentRequired>
+        <chatButtonName>Bot1ChatButton1</chatButtonName>
+    </conversationChannelProviders>
+    <description>This is a test bot</description>
+    <label>Astro Bot</label>
+    <logPrivateConversationData>true</logPrivateConversationData>
+    <richContentEnabled>false</richContentEnabled>
+    <defaultOutboundFlow></defaultOutboundFlow>
+    <sessionTimeout>480</sessionTimeout>
+    <type>Bot</type>
+</Bot>

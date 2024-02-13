@@ -191,7 +191,7 @@
       "output": []
     },
     "test:snapshot": {
-      "command": "nyc mocha \"test/snapshot/**/*.test.ts\"",
+      "command": "mocha \"test/snapshot/**/*.test.ts\" --parallel",
       "env": {
         "FORCE_COLOR": "2"
       },

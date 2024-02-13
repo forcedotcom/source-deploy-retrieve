@@ -10,9 +10,10 @@ import { Readable } from 'node:stream';
 import { statSync, existsSync, readdirSync, createReadStream, readFileSync } from 'graceful-fs';
 import * as JSZip from 'jszip';
 import { Messages, SfError } from '@salesforce/core';
-import { baseName, parseMetadataXml } from '../utils';
-import { SourcePath } from '../common';
-import { VirtualDirectory } from './types';
+import { isString } from '@salesforce/ts-types';
+import { baseName, parseMetadataXml } from '../utils/path';
+import type { SourcePath } from '../common/types';
+import type { VirtualDirectory } from './types';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -241,18 +242,23 @@ export class VirtualTreeContainer extends TreeContainer {
   public static fromFilePaths(paths: string[]): VirtualTreeContainer {
     // a map to reduce array iterations
     const virtualDirectoryByFullPath = new Map<string, VirtualDirectory>();
-    paths.map((filename) => {
-      const splits = filename.split(sep);
-      for (let i = 0; i < splits.length - 1; i++) {
-        const fullPathSoFar = splits.slice(0, i + 1).join(sep);
-        const existing = virtualDirectoryByFullPath.get(fullPathSoFar);
-        virtualDirectoryByFullPath.set(fullPathSoFar, {
-          dirPath: fullPathSoFar,
-          // only add to children if we don't already have it
-          children: Array.from(new Set(existing?.children ?? []).add(splits[i + 1])),
-        });
-      }
-    });
+    paths
+      .filter(
+        // defending against undefined being passed in.  The metadata API sometimes responds missing fileName
+        isString
+      )
+      .map((filename) => {
+        const splits = filename.split(sep);
+        for (let i = 0; i < splits.length - 1; i++) {
+          const fullPathSoFar = splits.slice(0, i + 1).join(sep);
+          const existing = virtualDirectoryByFullPath.get(fullPathSoFar);
+          virtualDirectoryByFullPath.set(fullPathSoFar, {
+            dirPath: fullPathSoFar,
+            // only add to children if we don't already have it
+            children: Array.from(new Set(existing?.children ?? []).add(splits[i + 1])),
+          });
+        }
+      });
     return new VirtualTreeContainer(Array.from(virtualDirectoryByFullPath.values()));
   }
 

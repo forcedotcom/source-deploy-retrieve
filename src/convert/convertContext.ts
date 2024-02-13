@@ -93,7 +93,7 @@ class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionSt
       if (!child.parent) {
         throw messages.createError('noParent', [child.fullName, child.type.name]);
       }
-      const { directoryName: groupName } = child.type;
+      const groupName = child.type.xmlElementName ?? child.type.directoryName;
       const { name: parentName } = child.parent.type;
       const childSourceComponent = child as SourceComponent;
 

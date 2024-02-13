@@ -582,10 +582,10 @@
     semver "^7.5.4"
     ts-retry-promise "^0.7.1"
 
-"@salesforce/core@^6.4.4", "@salesforce/core@^6.4.7":
-  version "6.4.7"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-6.4.7.tgz#f15538380aa5c75de697d3c95a2ddbdabae69dbb"
-  integrity sha512-gebjw2xC8Z0gqS3lYRQWz7J+PuGZtybotrnnaJbnzzxdfpBFIp6PjW4nt/235BQW9UWFTLaQh+AwkFgmMTTSkA==
+"@salesforce/core@^6.5.1":
+  version "6.5.1"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-6.5.1.tgz#3d387a6f0b93485274ec046dde5cf1364a3a00b0"
+  integrity sha512-u/R82JGdbJCMY0EN3UY5hQUxn0gPN+ParNQIm9YPB9lDpBQv82nKeZJuH6j2LsaaF6ygY3bm79kftPxpdKbggQ==
   dependencies:
     "@salesforce/kit" "^3.0.15"
     "@salesforce/schemas" "^1.6.1"
@@ -2262,12 +2262,12 @@ eslint-plugin-jsdoc@^46.9.0:
     semver "^7.5.4"
     spdx-expression-parse "^3.0.1"
 
-eslint-plugin-sf-plugin@^1.17.1:
-  version "1.17.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-sf-plugin/-/eslint-plugin-sf-plugin-1.17.1.tgz#085119cb27d856170c0651c0d0abbd25493a22d6"
-  integrity sha512-ZbIC0P5W7enSMNWZYTKKMzQ+yAU8FyWKazdOwk2rMrMEVk+LA23lfKcgCEvvuala718TEkqkPTwPYyn7qujPkA==
+eslint-plugin-sf-plugin@^1.17.3:
+  version "1.17.3"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-sf-plugin/-/eslint-plugin-sf-plugin-1.17.3.tgz#3adda2e9955bf8f09859f935468c99ca15b58cc3"
+  integrity sha512-IFbKJYHbb0LBkdr/ftcz/awuEiktIhouJrHeZ0oQ2BOYKK4YOFdgfpVGqENNW2RvIS077bnjf8yzdgn2pLhcdg==
   dependencies:
-    "@salesforce/core" "^6.4.4"
+    "@salesforce/core" "^6.5.1"
     "@typescript-eslint/utils" "^6.17.0"
 
 eslint-plugin-unicorn@^49.0.0:
@@ -2498,10 +2498,10 @@ fast-safe-stringify@^2.1.1:
   resolved "https://registry.yarnpkg.com/fast-safe-stringify/-/fast-safe-stringify-2.1.1.tgz#c406a83b6e70d9e35ce3b30a81141df30aeba884"
   integrity sha512-W+KJc2dmILlPplD/H4K9l9LcAHAfPtP6BY84uVLXQ6Evcz9Lcg33Y2z1IVblT6xdY54PXYVHEv+0Wpq8Io6zkA==
 
-fast-xml-parser@^4.3.2:
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-4.3.2.tgz#761e641260706d6e13251c4ef8e3f5694d4b0d79"
-  integrity sha512-rmrXUXwbJedoXkStenj1kkljNF7ugn5ZjR9FJcwmCfcCbtOMDghPajbc+Tck6vE6F5XsDmx+Pr2le9fw8+pXBg==
+fast-xml-parser@^4.3.4:
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-4.3.4.tgz#385cc256ad7bbc57b91515a38a22502a9e1fca0d"
+  integrity sha512-utnwm92SyozgA3hhH2I8qldf2lBqm6qHOICawRNRFu1qMe3+oqr+GcXjGqTmXTMGE5T4eC03kr/rlh5C1IRdZA==
   dependencies:
     strnum "^1.0.5"
 
@@ -3076,10 +3076,10 @@ ieee754@^1.2.1:
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.2.1.tgz#8eb7a10a63fff25d15a57b001586d177d1b0d352"
   integrity sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==
 
-ignore@^5.1.4, ignore@^5.2.0, ignore@^5.2.4, ignore@^5.3.0:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.3.0.tgz#67418ae40d34d6999c95ff56016759c718c82f78"
-  integrity sha512-g7dmpshy+gD7mh88OC9NwSGTKoc3kyLAZQRU1mt53Aw/vnvfXnbC+F/7F7QoYVKbV+KNvJx8wArewKy1vXMtlg==
+ignore@^5.1.4, ignore@^5.2.0, ignore@^5.2.4, ignore@^5.3.1:
+  version "5.3.1"
+  resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.3.1.tgz#5073e554cd42c5b33b394375f538b8593e34d4ef"
+  integrity sha512-5Fytz/IraMjqpwfd34ke28PTVMjZjJG2MPn5t7OE4eUCUNf8BAa7b5WUS9/Qvr6mwOQS7Mk6vdsMno5he+T8Xw==
 
 immediate@~3.0.5:
   version "3.0.6"

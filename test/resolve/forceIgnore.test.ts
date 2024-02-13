@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import { createSandbox } from 'sinon';
 import * as fs from 'graceful-fs';
 import { Lifecycle } from '@salesforce/core';
-import { ForceIgnore } from '../../src';
+import { ForceIgnore } from '../../src/resolve/forceIgnore';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 
 const env = createSandbox();
@@ -29,14 +29,13 @@ describe('ForceIgnore', () => {
   });
 
   it('Should ignore files with a given pattern', () => {
-    const readStub = env.stub(fs, 'readFileSync');
-    readStub.withArgs(forceIgnorePath).returns(testPattern);
+    env.stub(fs, 'readFileSync').returns(testPattern);
     const forceIgnore = new ForceIgnore(forceIgnorePath);
     expect(forceIgnore.accepts(testPath)).to.be.false;
     expect(forceIgnore.denies(testPath)).to.be.true;
   });
 
-  it('Should ignore files with windows separators', () => {
+  it('windows separators no longer have any effect', () => {
     const lifecycleStub = env.stub(Lifecycle.prototype, 'emitWarning');
     const forceIgnoreEntry = 'force-app\\main\\default\\classes\\myApex.*';
     const pathToClass = join('force-app', 'main', 'default', 'classes', 'myApex.cls');
@@ -44,7 +43,7 @@ describe('ForceIgnore', () => {
 
     const forceIgnore = new ForceIgnore();
 
-    expect(forceIgnore.accepts(pathToClass)).to.be.false;
+    expect(forceIgnore.accepts(pathToClass)).to.be.true;
     expect(lifecycleStub.callCount).to.equal(1);
   });
 
@@ -109,6 +108,17 @@ describe('ForceIgnore', () => {
       const manifestPath = join(root, 'package2-manifest.json');
       expect(forceIgnore.accepts(manifestPath)).to.be.false;
       expect(forceIgnore.denies(manifestPath)).to.be.true;
+    });
+
+    it('Should allow .forceignore file to override defaults', () => {
+      // tamper with the file
+      env.restore();
+      env.stub(fs, 'readFileSync').returns('!**/.*');
+      forceIgnore = new ForceIgnore();
+
+      const dotFilePath = join(root, '.foo');
+      expect(forceIgnore.accepts(dotFilePath)).to.be.true;
+      expect(forceIgnore.denies(dotFilePath)).to.be.false;
     });
   });
 });

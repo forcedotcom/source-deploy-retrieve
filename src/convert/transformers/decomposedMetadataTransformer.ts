@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { dirname, join } from 'node:path';
-import { JsonMap } from '@salesforce/ts-types';
+import { AnyJson, JsonMap, getString, isJsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
 import { Messages } from '@salesforce/core';
 import { MetadataComponent, SourceComponent } from '../../resolve';
@@ -14,7 +14,7 @@ import { WriteInfo } from '../types';
 import { META_XML_SUFFIX, SourcePath, XML_NS_KEY, XML_NS_URL } from '../../common';
 import { ComponentSet } from '../../collections';
 import { DecompositionStateValue } from '../convertContext';
-import { DecompositionStrategy } from '../../registry';
+import { DecompositionStrategy, MetadataType } from '../../registry';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 Messages.importMessagesDirectory(__dirname);
@@ -64,15 +64,16 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const composedMetadata = await getComposedMetadataEntries(component);
 
     for (const [tagKey, tagValue] of composedMetadata) {
-      const childTypeId = type.children?.directories?.[tagKey];
+      const childTypeId = tagToChildTypeId({ tagKey, type });
       if (childTypeId) {
         const childType = type.children?.types[childTypeId];
         if (!childType) {
           throw messages.createError('error_missing_child_type_definition', [type.name, childTypeId]);
         }
-        const tagValues = ensureArray(tagValue);
-        for (const value of tagValues as [{ fullName: string; name: string }]) {
-          const entryName = value.fullName || value.name;
+        const tagValues = ensureArray(tagValue).filter(isJsonMap);
+        // iterate each array member if it's Object-like (ex: customField of a CustomObject)
+        for (const value of tagValues) {
+          const entryName = extractUniqueElementValue(value, childType.uniqueIdElement);
           const childComponent: MetadataComponent = {
             fullName: `${parentFullName}.${entryName}`,
             type: childType,
@@ -196,7 +197,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     forComponent: MetadataComponent,
     props: Partial<Omit<DecompositionStateValue, 'origin'>> = {}
   ): void {
-    const key = `${forComponent.type.name}#${forComponent.fullName}`;
+    const key = getKey(forComponent);
     const withOrigin = Object.assign({ origin: forComponent.parent ?? forComponent }, props);
     this.context.decomposition.transactionState.set(key, {
       ...(this.context.decomposition.transactionState.get(key) ?? {}),
@@ -205,26 +206,42 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   }
 
   private getDecomposedState(forComponent: MetadataComponent): DecompositionStateValue | undefined {
-    const key = `${forComponent.type.name}#${forComponent.fullName}`;
-    return this.context.decomposition.transactionState.get(key);
+    return this.context.decomposition.transactionState.get(getKey(forComponent));
   }
 }
 
-const getComposedMetadataEntries = async (
-  component: SourceComponent
-): Promise<Array<[string, { fullname?: string; name?: string }]>> => {
+const getKey = (component: MetadataComponent): string => `${component.type.name}#${component.fullName}`;
+
+const getComposedMetadataEntries = async (component: SourceComponent): Promise<Array<[string, AnyJson]>> => {
   const composedMetadata = (await component.parseXml())[component.type.name];
   // composedMetadata might be undefined if you call toSourceFormat() from a non-source-backed Component
   return composedMetadata ? Object.entries(composedMetadata) : [];
 };
 
+/** where the file goes if there's nothing to merge with */
 const getDefaultOutput = (component: MetadataComponent): SourcePath => {
   const { parent, fullName, type } = component;
-  const [baseName, childName] = fullName.split('.');
+  const [baseName, ...tail] = fullName.split('.');
+  // there could be a '.' inside the child name (ex: PermissionSet.FieldPermissions.field uses Obj__c.Field__c)
+  // we put folders for each object in (ex) FieldPermissions because of the dot
+  const childName = tail.length ? join(...tail) : undefined;
   const baseComponent = (parent ?? component) as SourceComponent;
-  let output = `${childName ?? baseName}.${component.type.suffix}${META_XML_SUFFIX}`;
-  if (parent?.type.strategies?.decomposition === DecompositionStrategy.FolderPerType) {
-    output = join(type.directoryName, output);
-  }
+  const output = join(
+    parent?.type.strategies?.decomposition === DecompositionStrategy.FolderPerType ? type.directoryName : '',
+    `${childName ?? baseName}.${component.type.suffix}${META_XML_SUFFIX}`
+  );
   return join(baseComponent.getPackageRelativePath(baseName, 'source'), output);
 };
+
+/** handle wide-open reading of values from elements inside any metadata xml file.
+ * Return the value of the matching element if supplied, or defaults `fullName` then `name`  */
+const extractUniqueElementValue = (xml: JsonMap, elementName?: string): string | undefined =>
+  elementName ? getString(xml, elementName) ?? getStandardElements(xml) : getStandardElements(xml);
+
+const getStandardElements = (xml: JsonMap): string | undefined =>
+  getString(xml, 'fullName') ?? getString(xml, 'name') ?? undefined;
+
+/** use the given xmlElementName name if it exists, otherwise use see if one matches the directories */
+const tagToChildTypeId = ({ tagKey, type }: { tagKey: string; type: MetadataType }): string | undefined =>
+  Object.values(type.children?.types ?? {}).find((c) => c.xmlElementName === tagKey)?.id ??
+  type.children?.directories?.[tagKey];

@@ -1,0 +1,11 @@
+{
+  "type": "sfdc_cms__route",
+  "title": "Too Many Requests",
+  "contentBody": {
+    "activeViewId": "tooManyRequests",
+    "configurationTags": ["allow-in-static-site", "too-many-requests"],
+    "pageAccess": "UseParent",
+    "routeType": "too-many-requests",
+    "urlPrefix": "too-many-requests"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "type": "sfdc_cms__site",
+  "title": "Capricorn_Coffee_B",
+  "contentBody": {
+    "authenticationType": "AUTHENTICATED"
+  }
+}

@@ -18,6 +18,7 @@ test-results/
 test-results.xml
 xunit.xml
 junit-custom.xml
+*.received.*
 
 # nyc test coverage
 .nyc_output

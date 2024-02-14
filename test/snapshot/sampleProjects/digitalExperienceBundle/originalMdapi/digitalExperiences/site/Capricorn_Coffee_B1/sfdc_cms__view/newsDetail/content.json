@@ -1,0 +1,60 @@
+{
+  "type": "sfdc_cms__view",
+  "title": "News Detail",
+  "contentBody": {
+    "component": {
+      "children": [
+        {
+          "children": [
+            {
+              "attributes": {
+                "backgroundImageConfig": "",
+                "backgroundImageOverlay": "rgba(0,0,0,0)",
+                "sectionConfig": "{\"UUID\":\"c593ae9d-e494-4207-8e91-103e4ea046f4\",\"columns\":[{\"UUID\":\"14e31a64-4ad0-46ed-b215-7d6a7f9db686\",\"columnName\":\"Column 1\",\"columnKey\":\"col1\",\"columnWidth\":\"12\",\"seedComponents\":[]}]}"
+              },
+              "children": [
+                {
+                  "id": "14e31a64-4ad0-46ed-b215-7d6a7f9db686",
+                  "name": "col1",
+                  "title": "Column 1",
+                  "type": "region"
+                }
+              ],
+              "definition": "community_layout:section",
+              "id": "c593ae9d-e494-4207-8e91-103e4ea046f4",
+              "type": "component"
+            }
+          ],
+          "id": "06859da3-16e8-4926-b4ae-980130906196",
+          "name": "content",
+          "title": "Content",
+          "type": "region"
+        },
+        {
+          "children": [
+            {
+              "attributes": {
+                "customHeadTags": "",
+                "description": "",
+                "pageTitle": "{!Content.contentTypeLabel}.{!Content.title}",
+                "recordId": "{!recordId}"
+              },
+              "definition": "community_builder:seoAssistant",
+              "id": "a6dc2fb9-cef9-4ed8-8269-173122d6faf1",
+              "type": "component"
+            }
+          ],
+          "id": "2dacca0d-9607-4813-b09a-2f6e27c2c5af",
+          "name": "sfdcHiddenRegion",
+          "title": "sfdcHiddenRegion",
+          "type": "region"
+        }
+      ],
+      "definition": "community_layout:sldsFlexibleLayout",
+      "id": "c5ad0eb2-74a2-425f-8096-fae05ee7cca9",
+      "type": "component"
+    },
+    "themeLayoutType": "Inner",
+    "viewType": "managed-content-sfdc_cms__news"
+  }
+}

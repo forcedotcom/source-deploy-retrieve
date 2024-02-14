@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>SCW_Territory_Model.Austin</members>
+        <members>SCW_Territory_Model.Texas</members>
+        <members>SCW_Territory_Model.USA</members>
+        <name>Territory2</name>
+    </types>
+    <types>
+        <members>SCW_Territory_Model</members>
+        <name>Territory2Model</name>
+    </types>
+    <types>
+        <members>SCW_Territory_Model.Fishing_Stores</members>
+        <name>Territory2Rule</name>
+    </types>
+    <types>
+        <members>City</members>
+        <members>Country</members>
+        <members>State</members>
+        <name>Territory2Type</name>
+    </types>
+    <version>52.0</version>
+</Package>

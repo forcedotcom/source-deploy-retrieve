@@ -5,6 +5,10 @@
         <name>EmailTemplate</name>
     </types>
     <types>
+        <members>Account</members>
+        <name>Workflow</name>
+    </types>
+    <types>
         <members>Account.emailalert1</members>
         <name>WorkflowAlert</name>
     </types>

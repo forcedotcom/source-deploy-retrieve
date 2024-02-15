@@ -611,6 +611,7 @@ v61 introduces the following new types. Here's their current level of support
 | AffinityScoreDefinition     | ❌      | Not supported, but support could be added                        |
 | EnablementMeasureDefinition | ✅      |                                                                  |
 | SearchCustomization         | ❌      | Not supported, but support could be added (but not for tracking) |
+| WaveAnalyticAssetCollection | ❌      | Not supported, but support could be added                        |
 
 ## Additional Types
 

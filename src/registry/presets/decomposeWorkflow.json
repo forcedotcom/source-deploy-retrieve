@@ -1,0 +1,100 @@
+{
+  "childTypes": {
+    "workflowalert": "workflow",
+    "workflowfieldupdate": "workflow",
+    "workflowknowledgepublish": "workflow",
+    "workflowoutboundmessage": "workflow",
+    "workflowrule": "workflow",
+    "workflowsend": "workflow",
+    "workflowtask": "workflow"
+  },
+  "strictDirectoryNames": {
+    "workflows": "workflow"
+  },
+  "types": {
+    "workflow": {
+      "children": {
+        "directories": {
+          "workflowAlerts": "workflowalert",
+          "workflowFieldUpdates": "workflowfieldupdate",
+          "workflowKnowledgePublishess": "workflowknowledgepublish",
+          "workflowOutboundMessages": "workflowoutboundmessage",
+          "workflowRules": "workflowrule",
+          "workflowSends": "workflowsend",
+          "workflowTasks": "workflowtask"
+        },
+        "suffixes": {
+          "workflowAlert": "workflowalert",
+          "workflowFieldUpdate": "workflowfieldupdate",
+          "workflowKnowledgePublish": "workflowknowledgepublish",
+          "workflowOutboundMessage": "workflowoutboundmessage",
+          "workflowRule": "workflowrule",
+          "workflowSend": "workflowsend",
+          "workflowTask": "workflowtask"
+        },
+        "types": {
+          "workflowalert": {
+            "directoryName": "workflowAlerts",
+            "id": "workflowalert",
+            "name": "WorkflowAlert",
+            "suffix": "workflowAlert",
+            "xmlElementName": "alerts"
+          },
+          "workflowfieldupdate": {
+            "directoryName": "workflowFieldUpdates",
+            "id": "workflowfieldupdate",
+            "name": "WorkflowFieldUpdate",
+            "suffix": "workflowFieldUpdate",
+            "xmlElementName": "fieldUpdates"
+          },
+          "workflowknowledgepublish": {
+            "directoryName": "workflowKnowledgePublishes",
+            "id": "workflowknowledgepublish",
+            "name": "WorkflowKnowledgePublish",
+            "suffix": "workflowKnowledgePublish",
+            "xmlElementName": "knowledgePublishes"
+          },
+          "workflowoutboundmessage": {
+            "directoryName": "workflowOutboundMessages",
+            "id": "workflowoutboundmessage",
+            "name": "WorkflowOutboundMessage",
+            "suffix": "workflowOutboundMessage",
+            "xmlElementName": "outboundMessages"
+          },
+          "workflowrule": {
+            "directoryName": "workflowRules",
+            "id": "workflowrule",
+            "name": "WorkflowRule",
+            "suffix": "workflowRule",
+            "xmlElementName": "rules"
+          },
+          "workflowsend": {
+            "directoryName": "workflowSends",
+            "id": "workflowsend",
+            "name": "WorkflowSend",
+            "suffix": "workflowSend",
+            "xmlElementName": "send"
+          },
+          "workflowtask": {
+            "directoryName": "workflowTasks",
+            "id": "workflowtask",
+            "name": "WorkflowTask",
+            "suffix": "workflowTask",
+            "xmlElementName": "tasks"
+          }
+        }
+      },
+      "directoryName": "workflows",
+      "id": "workflow",
+      "inFolder": false,
+      "name": "Workflow",
+      "strategies": {
+        "adapter": "decomposed",
+        "decomposition": "folderPerType",
+        "transformer": "decomposed"
+      },
+      "strictDirectoryName": true,
+      "suffix": "workflow"
+    }
+  }
+}

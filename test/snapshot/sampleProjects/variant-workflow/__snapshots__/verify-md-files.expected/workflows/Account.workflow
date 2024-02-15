@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
-    <workflowAlerts>
+    <alerts>
         <fullName>emailalert1</fullName>
         <description>emailalert1</description>
         <protected>false</protected>
@@ -10,8 +10,8 @@
         </recipients>
         <senderType>CurrentUser</senderType>
         <template>emailtest/MarketingProductInquiryResponse</template>
-    </workflowAlerts>
-    <workflowFieldUpdates>
+    </alerts>
+    <fieldUpdates>
         <fullName>fieldupdate1</fullName>
         <description>this is fieldupdate 1</description>
         <field>BillingCountry</field>
@@ -20,8 +20,8 @@
         <notifyAssignee>false</notifyAssignee>
         <operation>Formula</operation>
         <protected>false</protected>
-    </workflowFieldUpdates>
-    <workflowOutboundMessages>
+    </fieldUpdates>
+    <outboundMessages>
         <fullName>outboundmsg1</fullName>
         <apiVersion>46.0</apiVersion>
         <description>this is outbound message 1</description>
@@ -35,8 +35,8 @@
         <name>outboundmsg1</name>
         <protected>false</protected>
         <useDeadLetterQueue>false</useDeadLetterQueue>
-    </workflowOutboundMessages>
-    <workflowTasks>
+    </outboundMessages>
+    <tasks>
         <fullName>task_1</fullName>
         <assignedTo>user_tmp@salesforce.com</assignedTo>
         <assignedToType>user</assignedToType>
@@ -47,5 +47,5 @@
         <protected>false</protected>
         <status>Not Started</status>
         <subject>task 1</subject>
-    </workflowTasks>
+    </tasks>
 </Workflow>

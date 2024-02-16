@@ -217,8 +217,7 @@ const getDefaultOutput = (component: MetadataComponent): SourcePath => {
   const { parent, fullName, type } = component;
   const [baseName, ...tail] = fullName.split('.');
   // there could be a '.' inside the child name (ex: PermissionSet.FieldPermissions.field uses Obj__c.Field__c)
-  // we put folders for each object in (ex) FieldPermissions because of the dot
-  const childName = tail.length ? join(...tail) : undefined;
+  const childName = tail.length ? tail.join('.') : undefined;
   const baseComponent = (parent ?? component) as SourceComponent;
   const output = join(
     parent?.type.strategies?.decomposition === DecompositionStrategy.FolderPerType ? type.directoryName : '',

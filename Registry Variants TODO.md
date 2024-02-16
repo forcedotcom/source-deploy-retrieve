@@ -18,7 +18,7 @@ Probably doesn't affect the CLI since we normally run the converts from inside a
 ## doc work
 
 1. Contributing Metadata (how to test new types using variants before adding to the real registry)
-1. Doc for each preset
+1. Migration process (convert, delete, convert?)
 
 ---
 

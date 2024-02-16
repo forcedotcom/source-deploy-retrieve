@@ -7,7 +7,7 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 import snap from 'mocha-snap';
-import { expect } from 'chai';
+import { expect, config } from 'chai';
 import { XMLParser } from 'fast-xml-parser';
 
 import { RegistryAccess } from '../../../src/registry/registryAccess';
@@ -16,6 +16,8 @@ import { ComponentSetBuilder } from '../../../src/collections/componentSetBuilde
 
 export const MDAPI_OUT = 'mdapiOutput';
 export const FORCE_APP = 'force-app';
+
+config.truncateThreshold = 0;
 
 /** common function to standardize snapshot behavior */
 export const fileSnap = async (file: string, testDir: string) =>

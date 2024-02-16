@@ -7,7 +7,7 @@
     "customsettingaccess": "permissionset",
     "externalcredentialprincipalaccess": "permissionset",
     "externaldatasourceaccess": "permissionset",
-    "fieldPermission": "permissionset",
+    "fieldpermission": "permissionset",
     "flowaccess": "permissionset",
     "objectpermission": "permissionset",
     "pageaccess": "permissionset",
@@ -16,7 +16,10 @@
     "userpermission": "permissionset"
   },
   "strictDirectoryNames": {
-    "permissionSets": "permissionset"
+    "permissionsets": "permissionset"
+  },
+  "suffixes": {
+    "permissionset": "permissionset"
   },
   "types": {
     "permissionset": {

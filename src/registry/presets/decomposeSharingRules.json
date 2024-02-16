@@ -8,6 +8,9 @@
   "strictDirectoryNames": {
     "sharingRules": "sharingrules"
   },
+  "suffixes": {
+    "sharingRules": "sharingrules"
+  },
   "types": {
     "sharingrules": {
       "children": {

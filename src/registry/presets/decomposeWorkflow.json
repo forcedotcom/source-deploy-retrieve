@@ -11,13 +11,16 @@
   "strictDirectoryNames": {
     "workflows": "workflow"
   },
+  "suffixes": {
+    "workflow": "workflow"
+  },
   "types": {
     "workflow": {
       "children": {
         "directories": {
           "workflowAlerts": "workflowalert",
           "workflowFieldUpdates": "workflowfieldupdate",
-          "workflowKnowledgePublishess": "workflowknowledgepublish",
+          "workflowKnowledgePublishes": "workflowknowledgepublish",
           "workflowOutboundMessages": "workflowoutboundmessage",
           "workflowRules": "workflowrule",
           "workflowSends": "workflowsend",

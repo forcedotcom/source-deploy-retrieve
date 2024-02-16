@@ -81,7 +81,7 @@ const emptyRegistry = {
 } satisfies MetadataRegistry;
 
 /** merge the children of the top-level properties (ex: types, suffixes, etc) on 2 registries */
-const firstLevelMerge = (original: MetadataRegistry, overrides: MetadataRegistry): MetadataRegistry => ({
+export const firstLevelMerge = (original: MetadataRegistry, overrides: MetadataRegistry): MetadataRegistry => ({
   types: { ...original.types, ...(overrides.types ?? {}) },
   childTypes: { ...original.childTypes, ...(overrides.childTypes ?? {}) },
   suffixes: { ...original.suffixes, ...(overrides.suffixes ?? {}) },

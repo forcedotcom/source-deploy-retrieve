@@ -6,7 +6,22 @@ Probably doesn't affect the CLI since we normally run the converts from inside a
 
 ---
 
+## QA
+
 1. does it work with packaging
 1. partial delete: deleting a member locally redeploys without that file
 1. partial delete: "removing" a member remotely deletes it locally if present
 1. conflicts get assigned to the correct place
+
+---
+
+## doc work
+
+1. Contributing Metadata (how to test new types using variants before adding to the real registry)
+1. Doc for each preset
+
+---
+
+## Features
+
+registryValidation runs against presets (either standalone or all merged in)

@@ -158,11 +158,21 @@ It's possible that the registry isn't what a user wants
 There are two options available if you're in an sfdx project.
 
 - `registryCustomizations`: add your own partial of the the registry that'll be merged into the registry. It's a json object just like the registry itself.
-- `registryPresets`: SDR defines "preset" registryCustomizations and you say which ones you want applied. Each one is
+- `registryPresets`: SDR defines "preset" registryCustomizations and you say which ones you want applied. Each one is a partial, and you can have any or all of them by listing them. Names correspond to something in src/registry/presets, so your project file could use
+
+```json
+  "registryPresets": ["decomposePermissionSet", "decomposeSharingRules"]
+```
+
+if you want only those 2 presets.
+
+The naming convention is `decomposeFoo` where `Foo` is the top-level metadata type, and refers to `/presets/Foo.json`.
 
 This requires that any constructedRegistry know about your project directory. You'll see lots of code passing that around, and passing around constructed RegistryAccess to avoid getting the default if a custom one was already constructed.
 
 Be careful when instantiating classes (ex: ComponentSet) that will default a Registry or RegistryAccess--make sure to pass in a registry to preserve customizations.
+
+**Updating presets** If you do need to update a preset to make a breaking change, it's better to copy it to a new preset and give it a unique name (ex: `decomposeFooV2`). This preserves the existing behavior for existing projects with the old preset.
 
 ### Querying registry data
 

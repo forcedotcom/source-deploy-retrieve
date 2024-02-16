@@ -353,7 +353,9 @@ describe('DecomposedMetadataTransformer', () => {
         // the new parent was written
         {
           source: new JsToXml({
-            [type.name]: '',
+            [type.name]: {
+              [XML_NS_KEY]: XML_NS_URL,
+            },
           }),
           output: join(root, 'myObject__c.objectTranslation-meta.xml'),
         },
@@ -402,7 +404,9 @@ describe('DecomposedMetadataTransformer', () => {
         // the new parent was written
         {
           source: new JsToXml({
-            [type.name]: '',
+            [type.name]: {
+              [XML_NS_KEY]: XML_NS_URL,
+            },
           }),
           output: join(root, 'myObject__c.objectTranslation-meta.xml'),
         },
@@ -415,7 +419,11 @@ describe('DecomposedMetadataTransformer', () => {
 
       const result = await transformer.toSourceFormat(component);
 
-      expect(result).to.deep.equal([]);
+      expect(result).to.be.an('array').with.lengthOf(1);
+      // there will be a file produced, with just the outer type (ex: CustomObject) and the xmlns declaration
+      expect(result[0].output).to.equal(
+        join('main', 'default', 'objects', 'customObject__c', 'customObject__c.object-meta.xml')
+      );
     });
 
     it('should return no files when the parent is forceIgnored', async () => {

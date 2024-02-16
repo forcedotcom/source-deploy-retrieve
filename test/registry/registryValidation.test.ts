@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { assert, expect } from 'chai';
-import { DecompositionStrategy, MetadataType, TransformerStrategy } from '../../src';
+import { DecompositionStrategy, MetadataType, TransformerStrategy } from '../../src/registry/types';
 import { metadataTypes as UnsupportedTypes } from '../../src/registry/nonSupportedTypes';
 import { presets } from './presetTesting';
 

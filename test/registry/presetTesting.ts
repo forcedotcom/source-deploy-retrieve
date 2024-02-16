@@ -4,32 +4,22 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { firstLevelMerge } from '../../src/registry/variants';
-import { MetadataRegistry } from '../../src';
+import { MetadataRegistry } from '../../src/registry/types';
 import { registry as defaultRegistry } from '../../src/registry/registry';
-import * as decomposeWorkflow from '../../src/registry/presets/decomposeWorkflow.json';
-import * as decomposeSharingRules from '../../src/registry/presets/decomposeSharingRules.json';
-import * as decomposePS from '../../src/registry/presets/decomposePermissionSet.json';
 
+const presetFolder = path.join(__dirname, '../../src/registry/presets');
 type RegistryIterator = {
   name: string;
   registry: MetadataRegistry;
 };
 
-const registriesFromPresets: RegistryIterator[] = [
-  {
-    name: 'decomposeWorkflow',
-    registry: decomposeWorkflow as MetadataRegistry,
-  },
-  {
-    name: 'decomposeSharingRules',
-    registry: decomposeSharingRules as MetadataRegistry,
-  },
-  {
-    name: 'decomposePermissionSet',
-    registry: decomposePS as MetadataRegistry,
-  },
-];
+const registriesFromPresets = fs.readdirSync(presetFolder, { withFileTypes: true }).map((file) => ({
+  name: file.name,
+  registry: JSON.parse(fs.readFileSync(path.join(file.path, file.name), 'utf-8')) as MetadataRegistry,
+}));
 
 const allMerged = registriesFromPresets.reduce<MetadataRegistry>(
   (acc, { registry }) => firstLevelMerge(acc, registry),

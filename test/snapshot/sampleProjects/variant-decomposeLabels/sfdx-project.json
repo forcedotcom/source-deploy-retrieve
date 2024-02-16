@@ -8,6 +8,9 @@
     }
   ],
   "registryCustomizations": {
+    "childTypes": {
+      "customlabel": "customlabels"
+    },
     "strictDirectoryNames": {
       "labels": "customlabels"
     },
@@ -15,16 +18,16 @@
       "customlabels": {
         "children": {
           "directories": {
-            "labels": "customlabel"
+            "label": "customlabel"
           },
           "suffixes": {
-            "label": "customlabel",
-            "labels": "customlabels"
+            "label": "customlabel"
           },
           "types": {
             "customlabel": {
-              "directoryName": "labels",
+              "directoryName": "label",
               "id": "customlabel",
+              "isAddressable": false,
               "name": "CustomLabel",
               "suffix": "label",
               "supportsWildcardAndName": true,

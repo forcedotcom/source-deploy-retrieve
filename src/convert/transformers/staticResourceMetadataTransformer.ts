@@ -13,7 +13,7 @@ import { createWriteStream } from 'graceful-fs';
 import { Logger, Messages, SfError } from '@salesforce/core';
 import { isEmpty } from '@salesforce/kit';
 import { baseName } from '../../utils/path';
-import { WriteInfo } from '..';
+import { WriteInfo } from '../types';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { SourcePath } from '../../common/types';
 import { ensureFileExists } from '../../utils/fileSystemHandler';

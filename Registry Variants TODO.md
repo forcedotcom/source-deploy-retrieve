@@ -11,7 +11,7 @@ Probably doesn't affect the CLI since we normally run the converts from inside a
 1. does it work with packaging
 1. partial delete: deleting a member locally redeploys without that file
 1. partial delete: "removing" a member remotely deletes it locally if present
-1. conflicts get assigned to the correct place
+1. conflicts get assigned to the correct place (both directions)
 
 ---
 
@@ -23,5 +23,3 @@ Probably doesn't affect the CLI since we normally run the converts from inside a
 ---
 
 ## Features
-
-registryValidation runs against presets (either standalone or all merged in)

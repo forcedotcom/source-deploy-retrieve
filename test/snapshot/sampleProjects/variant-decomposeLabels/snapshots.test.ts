@@ -13,6 +13,7 @@ import {
   sourceToMdapi,
   MDAPI_OUT,
   dirsAreIdentical,
+  FORCE_APP,
 } from '../../helper/conversions';
 
 // we don't want failing tests outputting over each other
@@ -32,8 +33,8 @@ describe('decomposed custom labels', () => {
       await fileSnap(file, testDir);
     }
     dirsAreIdentical(
-      path.join(testDir, 'force-app'),
-      path.join(testDir, '__snapshots__', 'verify-source-files.expected', 'force-app')
+      path.join(testDir, FORCE_APP),
+      path.join(testDir, '__snapshots__', 'verify-source-files.expected', FORCE_APP)
     );
   });
   it('verify md files', async () => {
@@ -51,8 +52,8 @@ describe('decomposed custom labels', () => {
 
   after(async () => {
     await Promise.all([
-      fs.promises.rm(path.join(testDir, 'force-app'), { recursive: true, force: true }),
-      fs.promises.rm(path.join(testDir, 'mdapiOutput'), { recursive: true, force: true }),
+      fs.promises.rm(path.join(testDir, FORCE_APP), { recursive: true, force: true }),
+      fs.promises.rm(path.join(testDir, MDAPI_OUT), { recursive: true, force: true }),
     ]);
   });
 });

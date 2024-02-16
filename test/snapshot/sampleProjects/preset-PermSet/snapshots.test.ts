@@ -43,8 +43,8 @@ describe('fully decomposed permission set via preset', () => {
   });
   it('round trip of metadata format is equivalent', async () => {
     const [old, updated] = await Promise.all([
-      fs.promises.readFile(path.join(testDir, 'originalMdapi', 'permissionSets', 'dreamhouse.permissionset'), 'utf8'),
-      fs.promises.readFile(path.join(testDir, MDAPI_OUT, 'permissionSets', 'dreamhouse.permissionset'), 'utf8'),
+      fs.promises.readFile(path.join(testDir, 'originalMdapi', 'permissionsets', 'dreamhouse.permissionset'), 'utf8'),
+      fs.promises.readFile(path.join(testDir, MDAPI_OUT, 'permissionsets', 'dreamhouse.permissionset'), 'utf8'),
     ]);
     compareTwoXml(old, updated);
   });
@@ -52,7 +52,7 @@ describe('fully decomposed permission set via preset', () => {
   after(async () => {
     await Promise.all([
       fs.promises.rm(path.join(testDir, 'force-app'), { recursive: true, force: true }),
-      fs.promises.rm(path.join(testDir, 'mdapiOutput'), { recursive: true, force: true }),
+      fs.promises.rm(path.join(testDir, MDAPI_OUT), { recursive: true, force: true }),
     ]);
   });
 });

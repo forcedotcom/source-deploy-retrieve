@@ -15,7 +15,7 @@ import { MetadataConverter } from '../../../src/convert/metadataConverter';
 import { ComponentSetBuilder } from '../../../src/collections/componentSetBuilder';
 
 export const MDAPI_OUT = 'mdapiOutput';
-const FORCE_APP = 'force-app';
+export const FORCE_APP = 'force-app';
 
 /** common function to standardize snapshot behavior */
 export const fileSnap = async (file: string, testDir: string) =>
@@ -41,11 +41,11 @@ export const mdapiToSource = async (testDir: string): Promise<string[]> => {
     'source', // loads custom registry if there is one
     {
       type: 'directory',
-      outputDirectory: path.resolve(path.join(testDir, 'force-app')),
+      outputDirectory: path.resolve(path.join(testDir, FORCE_APP)),
       genUniqueDir: false,
     }
   );
-  const dirEnts = await fs.promises.readdir(path.join(testDir, 'force-app'), {
+  const dirEnts = await fs.promises.readdir(path.join(testDir, FORCE_APP), {
     recursive: true,
     withFileTypes: true,
   });
@@ -56,7 +56,7 @@ export const mdapiToSource = async (testDir: string): Promise<string[]> => {
 export const sourceToMdapi = async (testDir: string): Promise<string[]> => {
   // cs from the entire project
   const cs = await ComponentSetBuilder.build({
-    sourcepath: [path.join(testDir, 'force-app')],
+    sourcepath: [path.join(testDir, FORCE_APP)],
     projectDir: testDir,
   });
 
@@ -66,10 +66,10 @@ export const sourceToMdapi = async (testDir: string): Promise<string[]> => {
 
   await converter.convert(cs, 'metadata', {
     type: 'directory',
-    outputDirectory: path.join(testDir, 'mdapiOutput'),
+    outputDirectory: path.join(testDir, MDAPI_OUT),
     genUniqueDir: false,
   });
-  const dirEnts = await fs.promises.readdir(path.join(testDir, 'mdapiOutput'), {
+  const dirEnts = await fs.promises.readdir(path.join(testDir, MDAPI_OUT), {
     recursive: true,
     withFileTypes: true,
   });

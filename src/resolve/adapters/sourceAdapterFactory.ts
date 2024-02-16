@@ -7,7 +7,8 @@
 import { Messages, SfError } from '@salesforce/core';
 import { SourceAdapter } from '../types';
 import { ForceIgnore } from '../forceIgnore';
-import { MetadataType, RegistryAccess } from '../../registry';
+import { RegistryAccess } from '../../registry/registryAccess';
+import { MetadataType } from '../../registry/types';
 import { TreeContainer } from '../treeContainers';
 import { BundleSourceAdapter } from './bundleSourceAdapter';
 import { DecomposedSourceAdapter } from './decomposedSourceAdapter';

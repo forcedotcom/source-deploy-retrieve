@@ -10,10 +10,12 @@ import * as JSZip from 'jszip';
 import { asBoolean, isString } from '@salesforce/ts-types';
 import { Messages, SfError, Lifecycle } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
-import { ConvertOutputConfig, MetadataConverter } from '../convert';
-import { ComponentSet } from '../collections';
-import { SourceComponent, ZipTreeContainer } from '../resolve';
-import { RegistryAccess } from '../registry';
+import { ConvertOutputConfig } from '../convert/types';
+import { MetadataConverter } from '../convert/metadataConverter';
+import { ComponentSet } from '../collections/componentSet';
+import { ZipTreeContainer } from '../resolve/treeContainers';
+import { SourceComponent } from '../resolve/sourceComponent';
+import { RegistryAccess } from '../registry/registryAccess';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import {
   AsyncResult,

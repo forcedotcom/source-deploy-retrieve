@@ -8,12 +8,13 @@ import { basename, dirname, sep } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
 import { ensureString } from '@salesforce/ts-types';
 import { MetadataXml, SourceAdapter } from '../types';
-import { parseMetadataXml, parseNestedFullName } from '../../utils';
+import { parseMetadataXml, parseNestedFullName } from '../../utils/path';
 import { ForceIgnore } from '../forceIgnore';
 import { NodeFSTreeContainer, TreeContainer } from '../treeContainers';
 import { SourceComponent } from '../sourceComponent';
-import { SourcePath } from '../../common';
-import { MetadataType, RegistryAccess } from '../../registry';
+import { SourcePath } from '../../common/types';
+import { MetadataType } from '../../registry/types';
+import { RegistryAccess } from '../../registry/registryAccess';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');

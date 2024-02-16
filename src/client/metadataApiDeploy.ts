@@ -12,10 +12,11 @@ import * as fs from 'graceful-fs';
 import { Lifecycle, Messages, SfError } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
 import { ReplacementEvent } from '../convert/types';
-import { MetadataConverter } from '../convert';
-import { ComponentLike, SourceComponent } from '../resolve';
-import { ComponentSet } from '../collections';
-import { registry } from '../registry';
+import { MetadataConverter } from '../convert/metadataConverter';
+import { SourceComponent } from '../resolve/sourceComponent';
+import { ComponentLike } from '../resolve/types';
+import { ComponentSet } from '../collections/componentSet';
+import { registry } from '../registry/registry';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import {
   AsyncResult,

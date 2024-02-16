@@ -4,11 +4,12 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { ComponentSet } from '../collections';
+import { ComponentSet } from '../collections/componentSet';
 import { PackageTypeMembers } from '../collections/types';
 import { SourcePath } from '../common/types';
-import { MetadataComponent, SourceComponent } from '../resolve';
-import { SfdxFileFormat } from '../convert';
+import { SourceComponent } from '../resolve/sourceComponent';
+import { MetadataComponent } from '../resolve/types';
+import { SfdxFileFormat } from '../convert/types';
 
 // ------------------------------------------------
 // API results reformatted for source development

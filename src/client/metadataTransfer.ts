@@ -19,8 +19,9 @@ import {
 import { Duration } from '@salesforce/kit';
 import { AnyJson, isNumber } from '@salesforce/ts-types';
 import * as fs from 'graceful-fs';
-import { MetadataConverter, SfdxFileFormat } from '../convert';
-import { ComponentSet } from '../collections';
+import { SfdxFileFormat } from '../convert/types';
+import { MetadataConverter } from '../convert/metadataConverter';
+import { ComponentSet } from '../collections/componentSet';
 import { AsyncResult, MetadataRequestStatus, MetadataTransferResult, RequestStatus } from './types';
 
 Messages.importMessagesDirectory(__dirname);

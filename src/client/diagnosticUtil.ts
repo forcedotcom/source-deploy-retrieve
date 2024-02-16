@@ -6,9 +6,9 @@
  */
 import { basename } from 'node:path';
 import { SfError } from '@salesforce/core';
-import { SourcePath } from '../common';
-import { SourceComponent } from '../resolve';
-import { registry } from '../registry';
+import { SourcePath } from '../common/types';
+import { SourceComponent } from '../resolve/sourceComponent';
+import { registry } from '../registry/registry';
 import { ComponentDiagnostic, DeployMessage } from './types';
 
 export class DiagnosticUtil {

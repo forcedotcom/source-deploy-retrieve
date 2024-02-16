@@ -11,7 +11,7 @@ import { Lifecycle, Messages, SfProject } from '@salesforce/core';
 import * as minimatch from 'minimatch';
 import { Env } from '@salesforce/kit';
 import { ensureString, isString } from '@salesforce/ts-types';
-import { SourcePath } from '../common';
+import { SourcePath } from '../common/types';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { MarkedReplacement, ReplacementConfig, ReplacementEvent } from './types';
 

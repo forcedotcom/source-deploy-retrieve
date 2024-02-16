@@ -5,7 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { Connection } from '@salesforce/core';
-import { OptionalTreeRegistryOptions, XML_NS_KEY } from '../common';
+import { OptionalTreeRegistryOptions } from '../common/types';
+import { XML_NS_KEY } from '../common/constants';
 import { FileProperties } from '../client/types';
 import { ComponentSet } from './componentSet';
 

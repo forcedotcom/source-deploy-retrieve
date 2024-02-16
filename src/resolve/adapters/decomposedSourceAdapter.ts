@@ -6,9 +6,9 @@
  */
 import { basename } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
-import { SourcePath } from '../../common';
+import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
-import { baseName, parentName, parseMetadataXml } from '../../utils';
+import { baseName, parentName, parseMetadataXml } from '../../utils/path';
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);

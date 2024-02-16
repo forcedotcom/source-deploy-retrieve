@@ -6,11 +6,11 @@
  */
 import { dirname, join, sep } from 'node:path';
 import { Messages } from '@salesforce/core';
-import { META_XML_SUFFIX } from '../../common';
-import { SourceComponent } from '..';
+import { META_XML_SUFFIX } from '../../common/constants';
+import { SourcePath } from '../../common/types';
+import { SourceComponent } from '../sourceComponent';
 import { MetadataXml } from '../types';
-import { baseName, parentName } from '../../utils';
-import { SourcePath } from '../../common';
+import { baseName, parentName } from '../../utils/path';
 import { BundleSourceAdapter } from './bundleSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);

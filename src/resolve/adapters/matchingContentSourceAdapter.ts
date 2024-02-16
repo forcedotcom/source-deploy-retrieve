@@ -6,7 +6,8 @@
  */
 import { Messages, SfError } from '@salesforce/core';
 
-import { SourcePath, META_XML_SUFFIX } from '../../common';
+import { SourcePath } from '../../common/types';
+import { META_XML_SUFFIX } from '../../common/constants';
 import { extName } from '../../utils/path';
 import { SourceComponent } from '../sourceComponent';
 import { BaseSourceAdapter } from './baseSourceAdapter';

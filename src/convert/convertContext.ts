@@ -8,10 +8,12 @@ import { join } from 'node:path';
 import { ensureString, getString, JsonArray, JsonMap } from '@salesforce/ts-types';
 import { Messages, SfProject } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
-import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../common';
-import { ComponentSet } from '../collections';
-import { RecompositionStrategy, TransformerStrategy } from '../registry';
-import { MetadataComponent, SourceComponent, NodeFSTreeContainer, TreeContainer } from '../resolve';
+import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../common/constants';
+import { ComponentSet } from '../collections/componentSet';
+import { RecompositionStrategy, TransformerStrategy } from '../registry/types';
+import { NodeFSTreeContainer, TreeContainer } from '../resolve/treeContainers';
+import { SourceComponent } from '../resolve/sourceComponent';
+import { MetadataComponent } from '../resolve/types';
 import { JsToXml } from './streams';
 import { WriteInfo, WriterFormat } from './types';
 

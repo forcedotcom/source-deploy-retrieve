@@ -6,8 +6,8 @@
  */
 import { MetadataTransformer, WriteInfo } from '../types';
 import { ConvertContext } from '../convertContext';
-import { SourceComponent } from '../../resolve';
-import { RegistryAccess } from '../../registry';
+import { SourceComponent } from '../../resolve/sourceComponent';
+import { RegistryAccess } from '../../registry/registryAccess';
 
 export abstract class BaseMetadataTransformer implements MetadataTransformer {
   public readonly context: ConvertContext;

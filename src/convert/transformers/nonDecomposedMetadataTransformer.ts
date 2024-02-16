@@ -9,7 +9,7 @@ import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
 import { Messages } from '@salesforce/core';
 import { WriteInfo } from '../types';
-import { SourceComponent } from '../../resolve';
+import { SourceComponent } from '../../resolve/sourceComponent';
 import { DecomposedMetadataTransformer } from './decomposedMetadataTransformer';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');

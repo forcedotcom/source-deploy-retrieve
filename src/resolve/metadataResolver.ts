@@ -6,10 +6,11 @@
  */
 import { basename, dirname, join, sep } from 'node:path';
 import { Lifecycle, Messages, SfError, Logger } from '@salesforce/core';
-import { extName, parentName, parseMetadataXml } from '../utils';
-import { MetadataType, RegistryAccess } from '../registry';
-import { ComponentSet } from '../collections';
-import { META_XML_SUFFIX } from '../common';
+import { extName, parentName, parseMetadataXml } from '../utils/path';
+import { RegistryAccess } from '../registry/registryAccess';
+import { MetadataType } from '../registry/types';
+import { ComponentSet } from '../collections/componentSet';
+import { META_XML_SUFFIX } from '../common/constants';
 import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';

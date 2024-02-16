@@ -7,8 +7,9 @@
 
 import { basename, dirname, extname, sep } from 'node:path';
 import { Optional } from '@salesforce/ts-types';
-import { META_XML_SUFFIX, SourcePath } from '../common';
-import { MetadataXml } from '../resolve';
+import { SourcePath } from '../common/types';
+import { META_XML_SUFFIX } from '../common/constants';
+import { MetadataXml } from '../resolve/types';
 
 /**
  * Get the file or directory name at the end of a path. Different from `path.basename`

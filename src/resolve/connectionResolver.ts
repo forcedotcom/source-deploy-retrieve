@@ -9,10 +9,12 @@ import { retry, NotRetryableError, RetryError } from 'ts-retry-promise';
 import { PollingClient, StatusResult, Connection, Logger, Messages, Lifecycle, SfError } from '@salesforce/core';
 import { Duration, ensureArray } from '@salesforce/kit';
 import { ensurePlainObject, ensureString, isPlainObject } from '@salesforce/ts-types';
-import { RegistryAccess, registry as defaultRegistry, MetadataType } from '../registry';
+import { RegistryAccess } from '../registry/registryAccess';
+import { registry as defaultRegistry } from '../registry/registry';
+import { MetadataType } from '../registry/types';
 import { standardValueSet } from '../registry/standardvalueset';
 import { FileProperties, StdValueSetRecord, ListMetadataQuery } from '../client/types';
-import { extName } from '../utils';
+import { extName } from '../utils/path';
 import { MetadataComponent } from './types';
 
 Messages.importMessagesDirectory(__dirname);

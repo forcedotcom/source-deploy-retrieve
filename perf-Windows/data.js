@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1708123821273,
+  "lastUpdate": 1708178593918,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -29231,6 +29231,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 13358,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "878a58af1e72d867c39d886c4fd24afcd3afb81b",
+          "message": "fix(deps): bump proxy-agent from 6.3.1 to 6.4.0\n\nBumps [proxy-agent](https://github.com/TooTallNate/proxy-agents/tree/HEAD/packages/proxy-agent) from 6.3.1 to 6.4.0.\n- [Release notes](https://github.com/TooTallNate/proxy-agents/releases)\n- [Changelog](https://github.com/TooTallNate/proxy-agents/blob/main/packages/proxy-agent/CHANGELOG.md)\n- [Commits](https://github.com/TooTallNate/proxy-agents/commits/proxy-agent@6.4.0/packages/proxy-agent)\n\n---\nupdated-dependencies:\n- dependency-name: proxy-agent\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2024-02-17T13:55:00Z",
+          "tree_id": "822ee580d432c4001bfaecfd3b9c449fb9914ae3",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/878a58af1e72d867c39d886c4fd24afcd3afb81b"
+        },
+        "date": 1708178571556,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 416,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 3544,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 2602,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 5866,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 878,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 7392,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 4619,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 7431,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1493,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 13636,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 8429,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 13464,
             "unit": "ms"
           }
         ]

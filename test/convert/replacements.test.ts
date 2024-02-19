@@ -23,24 +23,28 @@ config.truncateThreshold = 0;
 describe('file matching', () => {
   const base = { replaceWithEnv: 'foo', stringToReplace: 'foo' };
   it('file matches string', () => {
-    expect(matchesFile('foo', { filename: 'foo', ...base })).to.be.true;
-    expect(matchesFile('bar', { filename: 'foo', ...base })).to.not.be.true;
+    expect(matchesFile('foo')({ filename: 'foo', ...base })).to.be.true;
+    expect(matchesFile('bar')({ filename: 'foo', ...base })).to.not.be.true;
   });
   it('paths with separators to cover possibility of windows paths', () => {
-    expect(matchesFile(path.join('foo', 'bar'), { filename: 'foo/bar', ...base })).to.be.true;
-    expect(matchesFile(path.join('foo', 'bar'), { filename: 'foo/baz', ...base })).to.not.be.true;
+    const fn = matchesFile(path.join('foo', 'bar'));
+    expect(fn({ filename: 'foo/bar', ...base })).to.be.true;
+    expect(fn({ filename: 'foo/baz', ...base })).to.not.be.true;
   });
   it('file matches glob (posix paths)', () => {
-    expect(matchesFile('foo/bar', { glob: 'foo/**', ...base })).to.be.true;
-    expect(matchesFile('foo/bar', { glob: 'foo/*', ...base })).to.be.true;
-    expect(matchesFile('foo/bar', { glob: 'foo', ...base })).to.be.false;
-    expect(matchesFile('foo/bar', { glob: '**/*', ...base })).to.be.true;
+    const fn = matchesFile(path.join('foo', 'bar'));
+
+    expect(fn({ glob: 'foo/**', ...base })).to.be.true;
+    expect(fn({ glob: 'foo/*', ...base })).to.be.true;
+    expect(fn({ glob: 'foo', ...base })).to.be.false;
+    expect(fn({ glob: '**/*', ...base })).to.be.true;
   });
   it('file matches glob (os-dependent paths)', () => {
-    expect(matchesFile(path.join('foo', 'bar'), { glob: 'foo/**', ...base })).to.be.true;
-    expect(matchesFile(path.join('foo', 'bar'), { glob: 'foo/*', ...base })).to.be.true;
-    expect(matchesFile(path.join('foo', 'bar'), { glob: 'foo', ...base })).to.be.false;
-    expect(matchesFile(path.join('foo', 'bar'), { glob: '**/*', ...base })).to.be.true;
+    const fn = matchesFile(path.join('foo', 'bar'));
+    expect(fn({ glob: 'foo/**', ...base })).to.be.true;
+    expect(fn({ glob: 'foo/*', ...base })).to.be.true;
+    expect(fn({ glob: 'foo', ...base })).to.be.false;
+    expect(fn({ glob: '**/*', ...base })).to.be.true;
   });
   it('test absolute vs. relative paths');
 });

@@ -238,7 +238,7 @@ You can use an existing org for the metadata describe portion of the script by
 
     8. From SDR git repo directory, run `yarn build; yarn link`
     9. Clone plugin repo (https://github.com/salesforcecli/plugin-deploy-retrieve)
-    10. Execute `yarn link @salesforce/source-deploy-retrieve` and `sfdx plugins:link .` from cloned plugin repo directory
+    10. Execute `yarn link @salesforce/source-deploy-retrieve` and `sfdx plugins:link .` and `yarn build` from cloned plugin repo directory
 
     Registry has been set for your entities, now you can run (e.g.) `sf project deploy start` command for your entities:
     Proceed to `Manual Testing` section above in this document.

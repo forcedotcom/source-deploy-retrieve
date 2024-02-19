@@ -610,6 +610,9 @@ v61 introduces the following new types. Here's their current level of support
 | :-------------------------- | :------ | :--------------------------------------------------------------- |
 | AffinityScoreDefinition     | ❌      | Not supported, but support could be added                        |
 | EnablementMeasureDefinition | ✅      |                                                                  |
+| MlModelArtifact             | ❌      | Not supported, but support could be added                        |
+| MlModelConnection           | ❌      | Not supported, but support could be added                        |
+| MlModelSchema               | ❌      | Not supported, but support could be added                        |
 | SearchCustomization         | ❌      | Not supported, but support could be added (but not for tracking) |
 | WaveAnalyticAssetCollection | ❌      | Not supported, but support could be added                        |
 

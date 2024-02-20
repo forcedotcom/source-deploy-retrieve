@@ -16,13 +16,13 @@ import { JsToXml } from '../streams';
 import { WriterFormat } from '../types';
 import { ConvertTransactionFinalizer } from './transactionFinalizer';
 
-export interface NonDecompositionState {
+type NonDecompositionState = {
   /*
    * Incoming child xml (ex CustomLabel) keyed by uniqueId (label name).
    */
   childrenByUniqueElement: Map<string, JsonMap>;
   exampleComponent?: SourceComponent;
-}
+};
 
 /**
  * Merges child components that share the same parent in the conversion pipeline

@@ -22,7 +22,7 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 
 const xmlCache = new Map<string, JsonMap>();
 
-export type RecompositionStateValue = {
+type RecompositionStateValue = {
   /**
    * Parent component that children are rolled up into
    */
@@ -33,13 +33,15 @@ export type RecompositionStateValue = {
   children?: ComponentSet;
 };
 
-export type RecompositionState = Map<string, RecompositionStateValue>;
+type RecompositionState = Map<string, RecompositionStateValue>;
 
 type RecompositionStateValueWithParent = RecompositionStateValue & { component: SourceComponent };
 
 /**
- * Merges child components that share the same parent in the conversion pipeline
- * into a single file.
+ * Merges child components that share the same parent in the conversion pipeline into a single file.
+ *
+ * Handles both Decomposed and NonDecomposed strategies.
+ *
  */
 export class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionState> {
   public transactionState: RecompositionState = new Map<string, RecompositionStateValue>();
@@ -151,6 +153,7 @@ const toSortedGroups = (items: ChildWithXml[]): JsonMap => {
   );
 };
 
+/** wrapper around the xml cache.  Handles the nonDecomposed "parse from parent" optimization */
 const getXmlFromCache = async (cmp: SourceComponent): Promise<JsonMap> => {
   if (!cmp.xml) return {};
   const key = `${cmp.xml}:${cmp.fullName}`;
@@ -164,7 +167,7 @@ const getXmlFromCache = async (cmp: SourceComponent): Promise<JsonMap> => {
   return xmlCache.get(key) ?? {};
 };
 
-/** exported from module for test */
+/** composed function, exported from module for test */
 export const unwrapAndOmitNS =
   (outerType: string) =>
   (xml: JsonMap): JsonMap =>

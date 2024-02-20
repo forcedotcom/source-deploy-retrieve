@@ -17,7 +17,7 @@ export type DecompositionStateValue = {
   component?: SourceComponent;
   children?: ComponentSet;
 };
-export type DecompositionState = Map<string, DecompositionStateValue>;
+type DecompositionState = Map<string, DecompositionStateValue>;
 
 /** DecompositionStateValue has all props as optional.  The makes writeInfo and origin required  */
 const hasFullDecompositionInfo = (

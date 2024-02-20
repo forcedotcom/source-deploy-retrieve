@@ -237,6 +237,16 @@
         <type>Location</type>
     </fields>
     <fields>
+        <fullName>Picture__c</fullName>
+        <externalId>false</externalId>
+        <label>Picture</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Url</type>
+    </fields>
+    <fields>
         <fullName>Picture_IMG__c</fullName>
         <externalId>false</externalId>
         <formula>if(ISBLANK(Picture__c), &apos;&apos;, IMAGE(Picture__c, &quot;Picture&quot;))</formula>
@@ -249,14 +259,16 @@
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>Picture__c</fullName>
+        <fullName>Price__c</fullName>
         <externalId>false</externalId>
-        <label>Picture</label>
+        <label>Asking Price</label>
+        <precision>8</precision>
         <required>false</required>
-        <trackFeedHistory>false</trackFeedHistory>
-        <trackHistory>false</trackHistory>
+        <scale>0</scale>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
-        <type>Url</type>
+        <type>Currency</type>
     </fields>
     <fields>
         <fullName>Price_Sold__c</fullName>
@@ -267,18 +279,6 @@
         <scale>0</scale>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Currency</type>
-    </fields>
-    <fields>
-        <fullName>Price__c</fullName>
-        <externalId>false</externalId>
-        <label>Asking Price</label>
-        <precision>8</precision>
-        <required>false</required>
-        <scale>0</scale>
-        <trackFeedHistory>true</trackFeedHistory>
-        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Currency</type>
     </fields>
@@ -360,6 +360,16 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Thumbnail__c</fullName>
+        <externalId>false</externalId>
+        <label>Thumbnail</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Url</type>
+    </fields>
+    <fields>
         <fullName>Thumbnail_IMG__c</fullName>
         <externalId>false</externalId>
         <formula>if(ISBLANK(Thumbnail__c), &quot;&quot;, IMAGE(Thumbnail__c, &quot;Picture&quot;, 200, 200))</formula>
@@ -370,16 +380,6 @@
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
-    </fields>
-    <fields>
-        <fullName>Thumbnail__c</fullName>
-        <externalId>false</externalId>
-        <label>Thumbnail</label>
-        <required>false</required>
-        <trackFeedHistory>false</trackFeedHistory>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Url</type>
     </fields>
     <fields>
         <fullName>Zip__c</fullName>

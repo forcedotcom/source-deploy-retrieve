@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { MetadataTransformer, WriteInfo } from '../types';
-import { ConvertContext } from '../convertContext';
+import { ConvertContext } from '../convertContext/convertContext';
 import { SourceComponent } from '../../resolve/sourceComponent';
 import { RegistryAccess } from '../../registry/registryAccess';
 

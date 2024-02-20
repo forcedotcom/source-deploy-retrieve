@@ -21,7 +21,7 @@ import { ComponentSet } from '../collections/componentSet';
 import { RegistryAccess } from '../registry/registryAccess';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { MetadataTransformerFactory } from './transformers/metadataTransformerFactory';
-import { ConvertContext } from './convertContext';
+import { ConvertContext } from './convertContext/convertContext';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 
 Messages.importMessagesDirectory(__dirname);

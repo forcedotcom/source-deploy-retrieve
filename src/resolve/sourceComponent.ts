@@ -9,6 +9,7 @@ import { Messages, SfError } from '@salesforce/core';
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
+import { getXmlElement } from '../utils/decomposed';
 import { baseName, baseWithoutSuffixes, parseMetadataXml, trimUntil } from '../utils/path';
 import { replacementIterations } from '../convert/replacements';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common/constants';
@@ -224,14 +225,16 @@ export class SourceComponent implements MetadataComponent {
     if (!this.parent) {
       return parentXml;
     }
-    const children = ensureArray(
-      get(parentXml, `${this.parent.type.name}.${this.type.xmlElementName ?? this.type.directoryName}`)
-    ) as T[];
+    // console.log('parent xml', JSON.stringify(parentXml, undefined, 2));
+    // console.log(getXmlElement(this.type));
+    const children = ensureArray(get(parentXml, `${this.parent.type.name}.${getXmlElement(this.type)}`)) as T[];
+    // console.log(children);
     const uniqueElement = this.type.uniqueIdElement;
     const matched = uniqueElement ? children.find((c) => getString(c, uniqueElement) === this.name) : undefined;
     if (!matched) {
       throw new SfError(`Unable to find matching parent xml file for ${this.xml}`);
     }
+    // console.log('returning', JSON.stringify(matched, undefined, 2));
     return matched;
   }
 

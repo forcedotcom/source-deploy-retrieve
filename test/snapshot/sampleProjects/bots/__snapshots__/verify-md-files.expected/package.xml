@@ -13,11 +13,6 @@
         <name>LiveChatButton</name>
     </types>
     <types>
-        <members>Bot</members>
-        <members>LiveAgent</members>
-        <name>Settings</name>
-    </types>
-    <types>
         <members>TestSkill</members>
         <name>Skill</name>
     </types>

@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v60 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 557/591 supported metadata types.
+Currently, there are 564/591 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -27,13 +27,13 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ActionLauncherItemDef|✅||
 |ActionLinkGroupTemplate|✅||
 |ActionPlanTemplate|✅||
-|ActionableEventOrchDef|❌|Not supported, but support could be added|
-|ActionableEventTypeDef|❌|Not supported, but support could be added|
+|ActionableEventOrchDef|✅||
+|ActionableEventTypeDef|✅||
 |ActionableListDefinition|✅||
 |ActionsSettings|✅||
 |ActivationPlatform|✅||
 |ActivitiesSettings|✅||
-|ActnblListKeyPrfmIndDef|❌|Not supported, but support could be added|
+|ActnblListKeyPrfmIndDef|✅||
 |AddressSettings|✅||
 |AdvAccountForecastSet|✅||
 |AdvAcctForecastDimSource|✅||
@@ -401,7 +401,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |NotificationsSettings|✅||
 |OauthCustomScope|✅||
 |OauthOidcSettings|✅||
-|OauthTokenExchangeHandler|❌|Not supported, but support could be added|
+|OauthTokenExchangeHandler|✅||
 |ObjectHierarchyRelationship|✅||
 |ObjectLinkingSettings|✅||
 |ObjectSourceTargetMap|✅||
@@ -410,13 +410,13 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |OmniChannelPricingSettings|✅||
 |OmniChannelSettings|✅||
 |OmniDataTransform|⚠️|Supports deploy/retrieve but not source tracking|
-|OmniExtTrackingDef|❌|Not supported, but support could be added (but not for tracking)|
+|OmniExtTrackingDef|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniIntegrationProcedure|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniInteractionAccessConfig|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniInteractionConfig|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniScript|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniSupervisorConfig|✅||
-|OmniTrackingGroup|❌|Not supported, but support could be added (but not for tracking)|
+|OmniTrackingGroup|⚠️|Supports deploy/retrieve but not source tracking|
 |OmniUiCard|⚠️|Supports deploy/retrieve but not source tracking|
 |OnlineSalesSettings|✅||
 |OpportunityScoreSettings|✅||
@@ -453,7 +453,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |PredictionBuilderSettings|✅||
 |PresenceDeclineReason|✅||
 |PresenceUserConfig|✅||
-|PricingActionParameters|❌|Not supported, but support could be added (but not for tracking)|
+|PricingActionParameters|⚠️|Supports deploy/retrieve but not source tracking|
 |PricingRecipe|✅||
 |PrivacySettings|✅||
 |ProcessFlowMigration|✅||
@@ -618,60 +618,60 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 > 1. types that exist only as a child type of other metadata types
 > 1. settings types that are automatically supported
 
-- MLPredictionDefinition
-- MLDataDefinition
-- CustomLabel
-- Scontrol
-- CustomDataType
-- GlobalPicklist
-- VisualizationPlugin
-- Form
-- FormSection
-- Portal
-- EmbeddedServiceFieldService
-- EventType
-- EventSubscription
-- EventDelivery
+- AccessControlPolicy
+- AIAssistantTemplate
 - AssignmentRule
+- AssistantRecommendationType
 - AutoResponseRule
-- EscalationRule
+- BusinessProcessFeedbackConfiguration
+- CallCtrAgentFavTrfrDest
+- ConversationVendorFieldDef
+- CustomDataType
+- CustomExperience
+- CustomLabel
 - CustomFieldTranslation
-- MatchingRule
-- MarketingResourceType
+- DataPipeline
+- DynamicTrigger
+- EmbeddedServiceFieldService
+- EnablementMeasureDefinition
+- EntityImplements
+- EscalationRule
+- EventDelivery
+- EventRelayConfig
+- EventSubscription
+- EventType
+- extDataTranFieldTemplate
 - ExtlClntAppSampleConfigurablePolicies
 - ExtlClntAppSampleSettings
-- CustomExperience
-- ManagedTopic
-- DataPipeline
-- LicenseDefinition
-- AccessControlPolicy
-- XOrgHub
-- AssistantRecommendationType
+- Form
+- FormSection
+- GenAiPromptTemplate
+- GenAiPromptTemplateActv
+- GlobalPicklist
 - InsightType
-- IntegrationHubSettingsType
 - IntegrationHubSettings
-- OrchestrationContext
-- Orchestration
-- AIAssistantTemplate
-- Settings
-- EntityImplements
-- WorkSkillRoutingAttribute
-- BusinessProcessFeedbackConfiguration
-- DynamicTrigger
-- MktDataTranField
-- ConversationVendorFieldDef
-- MLRecommendationDefinition
+- IntegrationHubSettingsType
 - InternalOrganization
+- LicenseDefinition
+- ManagedTopic
+- MarketingResourceType
+- MatchingRule
+- MktDataTranField
+- MLDataDefinition
+- MLPredictionDefinition
+- MLRecommendationDefinition
+- MobileSecurityPolicySet
+- Orchestration
+- OrchestrationContext
+- Portal
+- ProductSpecificationTypeDefinition
+- Scontrol
+- SearchableObjDataSyncInfo
+- SearchCriteriaConfiguration
+- Settings
 - SvcCatalogFilterCondition
 - SvcCatalogItemDefFiltrCrit
 - UiViewDefinition
-- MobileSecurityPolicySet
-- CallCtrAgentFavTrfrDest
-- ProductSpecificationTypeDefinition
-- SearchCriteriaConfiguration
-- SearchableObjDataSyncInfo
-- EventRelayConfig
-- extDataTranFieldTemplate
-- GenAiPromptTemplate
-- GenAiPromptTemplateActv
-- EnablementMeasureDefinition
+- VisualizationPlugin
+- WorkSkillRoutingAttribute
+- XOrgHub

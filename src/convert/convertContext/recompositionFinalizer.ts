@@ -76,16 +76,13 @@ const recompose = async (stateValue: RecompositionStateValueWithParent): Promise
   await getXmlFromCache(stateValue.component);
 
   const childXmls = await Promise.all(
-    (stateValue.children ?? new ComponentSet())
-      .toArray()
-      .filter(ensureMetadataComponentWithParent)
-      .map(
-        async (child): Promise<ChildWithXml> => ({
-          cmp: child,
-          xmlContents: await getXmlFromCache(child),
-          groupName: getXmlElement(child.type),
-        })
-      )
+    (stateValue.children?.toArray() ?? []).filter(ensureMetadataComponentWithParent).map(
+      async (child): Promise<ChildWithXml> => ({
+        cmp: child,
+        xmlContents: await getXmlFromCache(child),
+        groupName: getXmlElement(child.type),
+      })
+    )
   );
 
   const parentXmlContents = {

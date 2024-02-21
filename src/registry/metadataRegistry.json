@@ -3760,6 +3760,62 @@
       "directoryName": "enablementMeasureDefinitions",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "oauthtokenexchangehandler": {
+      "id": "oauthtokenexchangehandler",
+      "name": "OauthTokenExchangeHandler",
+      "suffix": "oauthtokenexchangehandler",
+      "directoryName": "oauthtokenexchangehandlers",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "pricingactionparameters": {
+      "id": "pricingactionparameters",
+      "name": "PricingActionParameters",
+      "suffix": "pricingActionParameters",
+      "directoryName": "pricingActionParameters",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omnitrackinggroup": {
+      "id": "omnitrackinggroup",
+      "name": "OmniTrackingGroup",
+      "suffix": "OmniTrackingGroup",
+      "directoryName": "OmniTrackingGroups",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "omniexttrackingdef": {
+      "id": "omniexttrackingdef",
+      "name": "OmniExtTrackingDef",
+      "suffix": "OmniExtTrackingDef",
+      "directoryName": "OmniExtTrackingDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "actnbllistkeyprfminddef": {
+      "id": "actnbllistkeyprfminddef",
+      "name": "ActnblListKeyPrfmIndDef",
+      "suffix": "actnblListKeyPrfmIndDef",
+      "directoryName": "actnblListKeyPrfmIndDefs",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "actionableeventorchdef": {
+      "id": "actionableeventorchdef",
+      "name": "ActionableEventOrchDef",
+      "suffix": "settings",
+      "directoryName": "ActionableEventOrchDefSettings",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "actionableeventtypedef": {
+      "id": "actionableeventtypedef",
+      "name": "ActionableEventTypeDef",
+      "suffix": "settings",
+      "directoryName": "ActionableEventTypeDefSettings",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   },
   "suffixes": {
@@ -3970,7 +4026,7 @@
     "insightType": "insighttype",
     "topicsForObjects": "topicsforobjects",
     "type": "integrationhubsettingstype",
-    "settings": "settings",
+    "settings": "actionableeventtypedef",
     "orchestrationContext": "orchestrationcontext",
     "orchestration": "orchestration",
     "aiAssistantTemplate": "aiassistanttemplate",
@@ -4175,7 +4231,12 @@
     "extDataTranObjectTemplate": "extdatatranobjecttemplate",
     "genAiPromptTemplate": "genaiprompttemplate",
     "genAiPromptTemplateActivation": "genaiprompttemplateactv",
-    "enablementMeasureDefinition": "enablementmeasuredefinition"
+    "enablementMeasureDefinition": "enablementmeasuredefinition",
+    "oauthtokenexchangehandler": "oauthtokenexchangehandler",
+    "pricingActionParameters": "pricingactionparameters",
+    "OmniTrackingGroup": "omnitrackinggroup",
+    "OmniExtTrackingDef": "omniexttrackingdef",
+    "actnblListKeyPrfmIndDef": "actnbllistkeyprfminddef"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",

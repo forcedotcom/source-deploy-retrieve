@@ -225,16 +225,12 @@ export class SourceComponent implements MetadataComponent {
     if (!this.parent) {
       return parentXml;
     }
-    // console.log('parent xml', JSON.stringify(parentXml, undefined, 2));
-    // console.log(getXmlElement(this.type));
     const children = ensureArray(get(parentXml, `${this.parent.type.name}.${getXmlElement(this.type)}`)) as T[];
-    // console.log(children);
     const uniqueElement = this.type.uniqueIdElement;
     const matched = uniqueElement ? children.find((c) => getString(c, uniqueElement) === this.name) : undefined;
     if (!matched) {
       throw new SfError(`Unable to find matching parent xml file for ${this.xml}`);
     }
-    // console.log('returning', JSON.stringify(matched, undefined, 2));
     return matched;
   }
 

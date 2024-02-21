@@ -7,7 +7,7 @@
 import { Messages } from '@salesforce/core';
 import { MetadataTransformer } from '../types';
 import { SourceComponent } from '../../resolve/sourceComponent';
-import { ConvertContext } from '../convertContext';
+import { ConvertContext } from '../convertContext/convertContext';
 import { RegistryAccess } from '../../registry/registryAccess';
 import { TransformerStrategy } from '../../registry/types';
 import { DefaultMetadataTransformer } from './defaultMetadataTransformer';

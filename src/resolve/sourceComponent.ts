@@ -9,6 +9,7 @@ import { Messages, SfError } from '@salesforce/core';
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
+import { getXmlElement } from '../utils/decomposed';
 import { baseName, baseWithoutSuffixes, parseMetadataXml, trimUntil } from '../utils/path';
 import { replacementIterations } from '../convert/replacements';
 import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common/constants';
@@ -224,9 +225,7 @@ export class SourceComponent implements MetadataComponent {
     if (!this.parent) {
       return parentXml;
     }
-    const children = ensureArray(
-      get(parentXml, `${this.parent.type.name}.${this.type.xmlElementName ?? this.type.directoryName}`)
-    ) as T[];
+    const children = ensureArray(get(parentXml, `${this.parent.type.name}.${getXmlElement(this.type)}`)) as T[];
     const uniqueElement = this.type.uniqueIdElement;
     const matched = uniqueElement ? children.find((c) => getString(c, uniqueElement) === this.name) : undefined;
     if (!matched) {

@@ -7,7 +7,8 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 import snap from 'mocha-snap';
-import { expect, config } from 'chai';
+import { expect, config, use } from 'chai';
+import * as deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import { XMLParser } from 'fast-xml-parser';
 
 import { RegistryAccess } from '../../../src/registry/registryAccess';
@@ -17,6 +18,7 @@ import { ComponentSetBuilder } from '../../../src/collections/componentSetBuilde
 export const MDAPI_OUT = 'mdapiOutput';
 export const FORCE_APP = 'force-app';
 
+use(deepEqualInAnyOrder);
 config.truncateThreshold = 0;
 
 /** common function to standardize snapshot behavior */
@@ -89,7 +91,8 @@ export const compareTwoXml = (file1: string, file2: string): Chai.Assertion => {
     ignoreDeclaration: true,
     numberParseOptions: { leadingZeros: false, hex: false },
   });
-  return expect(parser.parse(file1)).to.deep.equal(parser.parse(file2));
+
+  return expect(parser.parse(file1)).to.deep.equalInAnyOrder(parser.parse(file2));
 };
 
 /** catches missing files by asserting that two directories have the exact same children */

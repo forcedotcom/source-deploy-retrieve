@@ -5,9 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { dirname, join } from 'node:path';
-import { AnyJson, JsonMap, getString, isJsonMap } from '@salesforce/ts-types';
+import { AnyJson, JsonMap, isJsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
 import { Messages } from '@salesforce/core';
+import { extractUniqueElementValue } from '../../utils/decomposed';
 import type { MetadataComponent } from '../../resolve/types';
 import { DecompositionStrategy, type MetadataType } from '../../registry/types';
 import { SourceComponent } from '../../resolve/sourceComponent';
@@ -16,7 +17,7 @@ import { WriteInfo } from '../types';
 import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../common/constants';
 import { SourcePath } from '../../common/types';
 import { ComponentSet } from '../../collections/componentSet';
-import { DecompositionStateValue } from '../convertContext';
+import { DecompositionStateValue } from '../convertContext/decompositionFinalizer';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 Messages.importMessagesDirectory(__dirname);
@@ -226,14 +227,6 @@ const getDefaultOutput = (component: MetadataComponent): SourcePath => {
   );
   return join(baseComponent.getPackageRelativePath(baseName, 'source'), output);
 };
-
-/** handle wide-open reading of values from elements inside any metadata xml file.
- * Return the value of the matching element if supplied, or defaults `fullName` then `name`  */
-const extractUniqueElementValue = (xml: JsonMap, elementName?: string): string | undefined =>
-  elementName ? getString(xml, elementName) ?? getStandardElements(xml) : getStandardElements(xml);
-
-const getStandardElements = (xml: JsonMap): string | undefined =>
-  getString(xml, 'fullName') ?? getString(xml, 'name') ?? undefined;
 
 /** use the given xmlElementName name if it exists, otherwise use see if one matches the directories */
 const tagToChildTypeId = ({ tagKey, type }: { tagKey: string; type: MetadataType }): string | undefined =>

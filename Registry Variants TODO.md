@@ -8,7 +8,6 @@ Probably doesn't affect the CLI since we normally run the converts from inside a
 
 ## QA
 
-1. does it work with packaging
 1. partial delete: deleting a member locally redeploys without that file
 1. partial delete: "removing" a member remotely deletes it locally if present
 1. conflicts get assigned to the correct place (both directions)
@@ -23,3 +22,6 @@ Probably doesn't affect the CLI since we normally run the converts from inside a
 ---
 
 ## Features
+
+1. how does it work with packaging
+1. how does it work with STL

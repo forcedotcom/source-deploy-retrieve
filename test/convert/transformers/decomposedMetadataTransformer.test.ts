@@ -16,7 +16,7 @@ import { JsToXml } from '../../../src/convert/streams';
 import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/type-constants/customObjectTranslationConstant';
 import { ComponentSet, ForceIgnore, registry, RegistryAccess, SourceComponent } from '../../../src';
 import { XML_NS_KEY, XML_NS_URL } from '../../../src/common';
-import { ConvertContext } from '../../../src/convert/convertContext';
+import { ConvertContext } from '../../../src/convert/convertContext/convertContext';
 
 const registryAccess = new RegistryAccess();
 

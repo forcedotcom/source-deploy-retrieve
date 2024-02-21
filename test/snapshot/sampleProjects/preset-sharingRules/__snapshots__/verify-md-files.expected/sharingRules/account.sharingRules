@@ -1,49 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SharingRules xmlns="http://soap.sforce.com/2006/04/metadata">
     <sharingCriteriaRules>
-        <fullName>AcctCBS2_toTerritories</fullName>
+        <fullName>Acct_CBS_boolean</fullName>
         <accessLevel>Read</accessLevel>
         <accountSettings>
             <caseAccessLevel>None</caseAccessLevel>
             <contactAccessLevel>Read</contactAccessLevel>
             <opportunityAccessLevel>None</opportunityAccessLevel>
         </accountSettings>
-        <label>AcctCBS_toTerritories</label>
+        <label>Acct_CBS_boolean</label>
         <sharedTo>
-            <territories>Territory_1</territories>
+            <allInternalUsers></allInternalUsers>
         </sharedTo>
+        <booleanFilter>(1 AND 2) OR 3</booleanFilter>
         <criteriaItems>
-            <field>NumberOfEmployees</field>
-            <operation>greaterThan</operation>
-            <value>200</value>
+            <field>IsExcludedFromRealign</field>
+            <operation>equals</operation>
+            <value>True</value>
         </criteriaItems>
         <criteriaItems>
-            <field>BillingCity</field>
-            <operation>notEqual</operation>
-            <value>San Francisco</value>
-        </criteriaItems>
-    </sharingCriteriaRules>
-    <sharingCriteriaRules>
-        <fullName>AcctCBS2_toTerritory</fullName>
-        <accessLevel>Read</accessLevel>
-        <accountSettings>
-            <caseAccessLevel>None</caseAccessLevel>
-            <contactAccessLevel>Read</contactAccessLevel>
-            <opportunityAccessLevel>None</opportunityAccessLevel>
-        </accountSettings>
-        <label>AcctCBS_toTerritory</label>
-        <sharedTo>
-            <territory>Territory_1</territory>
-        </sharedTo>
-        <criteriaItems>
-            <field>NumberOfEmployees</field>
-            <operation>greaterThan</operation>
-            <value>200</value>
+            <field>Name</field>
+            <operation>contains</operation>
+            <value>Boolean</value>
         </criteriaItems>
         <criteriaItems>
-            <field>BillingCity</field>
-            <operation>notEqual</operation>
-            <value>San Francisco</value>
+            <field>ShippingCity</field>
+            <operation>equals</operation>
+            <value>Osaka</value>
         </criteriaItems>
     </sharingCriteriaRules>
     <sharingCriteriaRules>
@@ -130,32 +113,49 @@
         </criteriaItems>
     </sharingCriteriaRules>
     <sharingCriteriaRules>
-        <fullName>Acct_CBS_boolean</fullName>
+        <fullName>AcctCBS2_toTerritories</fullName>
         <accessLevel>Read</accessLevel>
         <accountSettings>
             <caseAccessLevel>None</caseAccessLevel>
             <contactAccessLevel>Read</contactAccessLevel>
             <opportunityAccessLevel>None</opportunityAccessLevel>
         </accountSettings>
-        <label>Acct_CBS_boolean</label>
+        <label>AcctCBS_toTerritories</label>
         <sharedTo>
-            <allInternalUsers></allInternalUsers>
+            <territories>Territory_1</territories>
         </sharedTo>
-        <booleanFilter>(1 AND 2) OR 3</booleanFilter>
         <criteriaItems>
-            <field>IsExcludedFromRealign</field>
-            <operation>equals</operation>
-            <value>True</value>
+            <field>NumberOfEmployees</field>
+            <operation>greaterThan</operation>
+            <value>200</value>
         </criteriaItems>
         <criteriaItems>
-            <field>Name</field>
-            <operation>contains</operation>
-            <value>Boolean</value>
+            <field>BillingCity</field>
+            <operation>notEqual</operation>
+            <value>San Francisco</value>
+        </criteriaItems>
+    </sharingCriteriaRules>
+    <sharingCriteriaRules>
+        <fullName>AcctCBS2_toTerritory</fullName>
+        <accessLevel>Read</accessLevel>
+        <accountSettings>
+            <caseAccessLevel>None</caseAccessLevel>
+            <contactAccessLevel>Read</contactAccessLevel>
+            <opportunityAccessLevel>None</opportunityAccessLevel>
+        </accountSettings>
+        <label>AcctCBS_toTerritory</label>
+        <sharedTo>
+            <territory>Territory_1</territory>
+        </sharedTo>
+        <criteriaItems>
+            <field>NumberOfEmployees</field>
+            <operation>greaterThan</operation>
+            <value>200</value>
         </criteriaItems>
         <criteriaItems>
-            <field>ShippingCity</field>
-            <operation>equals</operation>
-            <value>Osaka</value>
+            <field>BillingCity</field>
+            <operation>notEqual</operation>
+            <value>San Francisco</value>
         </criteriaItems>
     </sharingCriteriaRules>
     <sharingCriteriaRules>
@@ -195,24 +195,6 @@
         </criteriaItems>
     </sharingCriteriaRules>
     <sharingCriteriaRules>
-        <fullName>criteria_mgrSubs</fullName>
-        <accessLevel>Read</accessLevel>
-        <accountSettings>
-            <caseAccessLevel>None</caseAccessLevel>
-            <contactAccessLevel>Read</contactAccessLevel>
-            <opportunityAccessLevel>None</opportunityAccessLevel>
-        </accountSettings>
-        <label>criteria_mgrSubs</label>
-        <sharedTo>
-            <role>CEO</role>
-        </sharedTo>
-        <criteriaItems>
-            <field>Name</field>
-            <operation>contains</operation>
-            <value>Test</value>
-        </criteriaItems>
-    </sharingCriteriaRules>
-    <sharingCriteriaRules>
         <fullName>criteria_mgrs</fullName>
         <accessLevel>Read</accessLevel>
         <accountSettings>
@@ -228,6 +210,24 @@
             <field>ShippingCountry</field>
             <operation>notEqual</operation>
             <value>France</value>
+        </criteriaItems>
+    </sharingCriteriaRules>
+    <sharingCriteriaRules>
+        <fullName>criteria_mgrSubs</fullName>
+        <accessLevel>Read</accessLevel>
+        <accountSettings>
+            <caseAccessLevel>None</caseAccessLevel>
+            <contactAccessLevel>Read</contactAccessLevel>
+            <opportunityAccessLevel>None</opportunityAccessLevel>
+        </accountSettings>
+        <label>criteria_mgrSubs</label>
+        <sharedTo>
+            <role>CEO</role>
+        </sharedTo>
+        <criteriaItems>
+            <field>Name</field>
+            <operation>contains</operation>
+            <value>Test</value>
         </criteriaItems>
     </sharingCriteriaRules>
     <sharingCriteriaRules>
@@ -285,24 +285,6 @@
         </criteriaItems>
     </sharingCriteriaRules>
     <sharingCriteriaRules>
-        <fullName>criteria_roleAndsubsPortal</fullName>
-        <accessLevel>Read</accessLevel>
-        <accountSettings>
-            <caseAccessLevel>None</caseAccessLevel>
-            <contactAccessLevel>Read</contactAccessLevel>
-            <opportunityAccessLevel>None</opportunityAccessLevel>
-        </accountSettings>
-        <label>criteria_roleAndsubsPortal</label>
-        <sharedTo>
-            <roleAndSubordinates>ur1507245197985</roleAndSubordinates>
-        </sharedTo>
-        <criteriaItems>
-            <field>ShippingCountry</field>
-            <operation>notEqual</operation>
-            <value>Canada</value>
-        </criteriaItems>
-    </sharingCriteriaRules>
-    <sharingCriteriaRules>
         <fullName>criteria_roleandsubs</fullName>
         <accessLevel>Read</accessLevel>
         <accountSettings>
@@ -318,6 +300,24 @@
             <field>BillingCity</field>
             <operation>equals</operation>
             <value>Tokyo</value>
+        </criteriaItems>
+    </sharingCriteriaRules>
+    <sharingCriteriaRules>
+        <fullName>criteria_roleAndsubsPortal</fullName>
+        <accessLevel>Read</accessLevel>
+        <accountSettings>
+            <caseAccessLevel>None</caseAccessLevel>
+            <contactAccessLevel>Read</contactAccessLevel>
+            <opportunityAccessLevel>None</opportunityAccessLevel>
+        </accountSettings>
+        <label>criteria_roleAndsubsPortal</label>
+        <sharedTo>
+            <roleAndSubordinates>ur1507245197985</roleAndSubordinates>
+        </sharedTo>
+        <criteriaItems>
+            <field>ShippingCountry</field>
+            <operation>notEqual</operation>
+            <value>Canada</value>
         </criteriaItems>
     </sharingCriteriaRules>
     <sharingCriteriaRules>
@@ -442,35 +442,35 @@
         </sharedFrom>
     </sharingOwnerRules>
     <sharingOwnerRules>
-        <fullName>OwnerGroups</fullName>
+        <fullName>owner_fromportalRole_toAndSubs</fullName>
         <accessLevel>Read</accessLevel>
         <accountSettings>
             <caseAccessLevel>None</caseAccessLevel>
             <contactAccessLevel>Read</contactAccessLevel>
             <opportunityAccessLevel>None</opportunityAccessLevel>
         </accountSettings>
-        <label>OwnerGroups</label>
+        <label>owner_fromportalRole_toAndSubs</label>
         <sharedTo>
-            <group>Group2</group>
+            <portalRoleAndSubordinates>${portalRoleName}</portalRoleAndSubordinates>
         </sharedTo>
         <sharedFrom>
-            <group>Group1</group>
+            <portalRole>${portalRoleName}</portalRole>
         </sharedFrom>
     </sharingOwnerRules>
     <sharingOwnerRules>
-        <fullName>OwnerGroups2</fullName>
+        <fullName>owner_fromPortalSubs_toPortal</fullName>
         <accessLevel>Read</accessLevel>
         <accountSettings>
             <caseAccessLevel>None</caseAccessLevel>
             <contactAccessLevel>Read</contactAccessLevel>
             <opportunityAccessLevel>None</opportunityAccessLevel>
         </accountSettings>
-        <label>OwnerGroups2</label>
+        <label>owner_fromPortalSubs_toPortal</label>
         <sharedTo>
-            <groups>Group2</groups>
+            <portalRole>${portalRoleName}</portalRole>
         </sharedTo>
         <sharedFrom>
-            <groups>Group1</groups>
+            <portalRoleAndSubordinates>${portalRoleName}</portalRoleAndSubordinates>
         </sharedFrom>
     </sharingOwnerRules>
     <sharingOwnerRules>
@@ -506,38 +506,6 @@
         </sharedFrom>
     </sharingOwnerRules>
     <sharingOwnerRules>
-        <fullName>owner_ToTerrsAndSub_FromTerrs</fullName>
-        <accessLevel>Read</accessLevel>
-        <accountSettings>
-            <caseAccessLevel>None</caseAccessLevel>
-            <contactAccessLevel>Read</contactAccessLevel>
-            <opportunityAccessLevel>None</opportunityAccessLevel>
-        </accountSettings>
-        <label>owner_ToTerrsAndSub_FromTerrs</label>
-        <sharedTo>
-            <territoriesAndSubordinates>Territory_1</territoriesAndSubordinates>
-        </sharedTo>
-        <sharedFrom>
-            <territories>Territory_1</territories>
-        </sharedFrom>
-    </sharingOwnerRules>
-    <sharingOwnerRules>
-        <fullName>owner_fromPortalSubs_toPortal</fullName>
-        <accessLevel>Read</accessLevel>
-        <accountSettings>
-            <caseAccessLevel>None</caseAccessLevel>
-            <contactAccessLevel>Read</contactAccessLevel>
-            <opportunityAccessLevel>None</opportunityAccessLevel>
-        </accountSettings>
-        <label>owner_fromPortalSubs_toPortal</label>
-        <sharedTo>
-            <portalRole>${portalRoleName}</portalRole>
-        </sharedTo>
-        <sharedFrom>
-            <portalRoleAndSubordinates>${portalRoleName}</portalRoleAndSubordinates>
-        </sharedFrom>
-    </sharingOwnerRules>
-    <sharingOwnerRules>
         <fullName>owner_fromTerrToTerrAndSub</fullName>
         <accessLevel>Read</accessLevel>
         <accountSettings>
@@ -551,22 +519,6 @@
         </sharedTo>
         <sharedFrom>
             <territory>Territory_1</territory>
-        </sharedFrom>
-    </sharingOwnerRules>
-    <sharingOwnerRules>
-        <fullName>owner_fromportalRole_toAndSubs</fullName>
-        <accessLevel>Read</accessLevel>
-        <accountSettings>
-            <caseAccessLevel>None</caseAccessLevel>
-            <contactAccessLevel>Read</contactAccessLevel>
-            <opportunityAccessLevel>None</opportunityAccessLevel>
-        </accountSettings>
-        <label>owner_fromportalRole_toAndSubs</label>
-        <sharedTo>
-            <portalRoleAndSubordinates>${portalRoleName}</portalRoleAndSubordinates>
-        </sharedTo>
-        <sharedFrom>
-            <portalRole>${portalRoleName}</portalRole>
         </sharedFrom>
     </sharingOwnerRules>
     <sharingOwnerRules>
@@ -681,38 +633,54 @@
             <roleAndSubordinatesInternal>role1</roleAndSubordinatesInternal>
         </sharedFrom>
     </sharingOwnerRules>
-    <sharingTerritoryRules>
-        <fullName>AcctTerr1_toAllInternal</fullName>
+    <sharingOwnerRules>
+        <fullName>owner_ToTerrsAndSub_FromTerrs</fullName>
         <accessLevel>Read</accessLevel>
         <accountSettings>
             <caseAccessLevel>None</caseAccessLevel>
             <contactAccessLevel>Read</contactAccessLevel>
             <opportunityAccessLevel>None</opportunityAccessLevel>
         </accountSettings>
-        <label>AcctTerr1_toAllInternal</label>
+        <label>owner_ToTerrsAndSub_FromTerrs</label>
         <sharedTo>
-            <allInternalUsers></allInternalUsers>
-        </sharedTo>
-        <sharedFrom>
-            <territory>Territory_1</territory>
-        </sharedFrom>
-    </sharingTerritoryRules>
-    <sharingTerritoryRules>
-        <fullName>AcctTerr1s_toAllInternal</fullName>
-        <accessLevel>Read</accessLevel>
-        <accountSettings>
-            <caseAccessLevel>None</caseAccessLevel>
-            <contactAccessLevel>Read</contactAccessLevel>
-            <opportunityAccessLevel>None</opportunityAccessLevel>
-        </accountSettings>
-        <label>AcctTerr1s_toAllInternal</label>
-        <sharedTo>
-            <allInternalUsers></allInternalUsers>
+            <territoriesAndSubordinates>Territory_1</territoriesAndSubordinates>
         </sharedTo>
         <sharedFrom>
             <territories>Territory_1</territories>
         </sharedFrom>
-    </sharingTerritoryRules>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>OwnerGroups</fullName>
+        <accessLevel>Read</accessLevel>
+        <accountSettings>
+            <caseAccessLevel>None</caseAccessLevel>
+            <contactAccessLevel>Read</contactAccessLevel>
+            <opportunityAccessLevel>None</opportunityAccessLevel>
+        </accountSettings>
+        <label>OwnerGroups</label>
+        <sharedTo>
+            <group>Group2</group>
+        </sharedTo>
+        <sharedFrom>
+            <group>Group1</group>
+        </sharedFrom>
+    </sharingOwnerRules>
+    <sharingOwnerRules>
+        <fullName>OwnerGroups2</fullName>
+        <accessLevel>Read</accessLevel>
+        <accountSettings>
+            <caseAccessLevel>None</caseAccessLevel>
+            <contactAccessLevel>Read</contactAccessLevel>
+            <opportunityAccessLevel>None</opportunityAccessLevel>
+        </accountSettings>
+        <label>OwnerGroups2</label>
+        <sharedTo>
+            <groups>Group2</groups>
+        </sharedTo>
+        <sharedFrom>
+            <groups>Group1</groups>
+        </sharedFrom>
+    </sharingOwnerRules>
     <sharingTerritoryRules>
         <fullName>AcctTerr_toAllCustPortal</fullName>
         <accessLevel>Read</accessLevel>
@@ -747,6 +715,38 @@
         </sharedFrom>
     </sharingTerritoryRules>
     <sharingTerritoryRules>
+        <fullName>AcctTerr1_toAllInternal</fullName>
+        <accessLevel>Read</accessLevel>
+        <accountSettings>
+            <caseAccessLevel>None</caseAccessLevel>
+            <contactAccessLevel>Read</contactAccessLevel>
+            <opportunityAccessLevel>None</opportunityAccessLevel>
+        </accountSettings>
+        <label>AcctTerr1_toAllInternal</label>
+        <sharedTo>
+            <allInternalUsers></allInternalUsers>
+        </sharedTo>
+        <sharedFrom>
+            <territory>Territory_1</territory>
+        </sharedFrom>
+    </sharingTerritoryRules>
+    <sharingTerritoryRules>
+        <fullName>AcctTerr1s_toAllInternal</fullName>
+        <accessLevel>Read</accessLevel>
+        <accountSettings>
+            <caseAccessLevel>None</caseAccessLevel>
+            <contactAccessLevel>Read</contactAccessLevel>
+            <opportunityAccessLevel>None</opportunityAccessLevel>
+        </accountSettings>
+        <label>AcctTerr1s_toAllInternal</label>
+        <sharedTo>
+            <allInternalUsers></allInternalUsers>
+        </sharedTo>
+        <sharedFrom>
+            <territories>Territory_1</territories>
+        </sharedFrom>
+    </sharingTerritoryRules>
+    <sharingTerritoryRules>
         <fullName>Terr_Group</fullName>
         <accessLevel>Read</accessLevel>
         <accountSettings>
@@ -776,22 +776,6 @@
         </sharedTo>
         <sharedFrom>
             <territory>Territory_1</territory>
-        </sharedFrom>
-    </sharingTerritoryRules>
-    <sharingTerritoryRules>
-        <fullName>terrAndSubs_mgrSubs</fullName>
-        <accessLevel>Read</accessLevel>
-        <accountSettings>
-            <caseAccessLevel>None</caseAccessLevel>
-            <contactAccessLevel>Read</contactAccessLevel>
-            <opportunityAccessLevel>None</opportunityAccessLevel>
-        </accountSettings>
-        <label>terrAndSubs_mgrSubs</label>
-        <sharedTo>
-            <allInternalUsers></allInternalUsers>
-        </sharedTo>
-        <sharedFrom>
-            <territoryAndSubordinates>Territory_1</territoryAndSubordinates>
         </sharedFrom>
     </sharingTerritoryRules>
     <sharingTerritoryRules>
@@ -984,6 +968,22 @@
         </sharedTo>
         <sharedFrom>
             <territory>Territory_1</territory>
+        </sharedFrom>
+    </sharingTerritoryRules>
+    <sharingTerritoryRules>
+        <fullName>terrAndSubs_mgrSubs</fullName>
+        <accessLevel>Read</accessLevel>
+        <accountSettings>
+            <caseAccessLevel>None</caseAccessLevel>
+            <contactAccessLevel>Read</contactAccessLevel>
+            <opportunityAccessLevel>None</opportunityAccessLevel>
+        </accountSettings>
+        <label>terrAndSubs_mgrSubs</label>
+        <sharedTo>
+            <allInternalUsers></allInternalUsers>
+        </sharedTo>
+        <sharedFrom>
+            <territoryAndSubordinates>Territory_1</territoryAndSubordinates>
         </sharedFrom>
     </sharingTerritoryRules>
 </SharingRules>

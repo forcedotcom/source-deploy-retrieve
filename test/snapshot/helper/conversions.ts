@@ -22,7 +22,7 @@ export const fileSnap = async (file: string, testDir: string, projectDir?: strin
     ? void 0
     : snap(await fs.promises.readFile(file, 'utf8'), {
         dir: testDir,
-        file: logArgs(simplifyFilePath(getRelative(projectDir ?? testDir)(file))),
+        file: simplifyFilePath(getRelative(projectDir ?? testDir)(file)),
       });
 
 /**
@@ -69,7 +69,7 @@ export const sourceToMdapi = async (testDir: string): Promise<string[]> => {
  * will throw if either directory doesn't exist
  */
 export const dirsAreIdentical = async (dir1: string, dir2: string): Promise<Chai.Assertion> => {
-  const dirs = [dir1, dir2].map(exists).map(logArgs);
+  const dirs = [dir1, dir2].map(exists);
 
   const [files1, files2] = (await Promise.all(dirs.map(getAllDirents))).map(dirEntsToPaths).map(resolveRelative(dirs));
 
@@ -115,8 +115,10 @@ const pathPartsAfter = (file: string, after: string): string => {
   return parts.slice(parts.indexOf(after) + 1).join(path.sep);
 };
 
+// keep this around for use when debugging.  Wrap a function with it or pass it to map, and it will log the contents
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const logArgs = <T>(args: T): T => {
   // eslint-disable-next-line no-console
-  console.log(args);
+  typeof args === 'string' ? console.log(args) : JSON.stringify(args, null, 2);
   return args;
 };

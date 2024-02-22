@@ -13,15 +13,23 @@ import { ComponentSetBuilder } from '../../../../src/collections/componentSetBui
 // we don't want failing tests outputting over each other
 /* eslint-disable no-await-in-loop */
 
-const join = (parent: string) => (file: string) => path.join(parent, file);
+const folder = 'mpdWithLabels';
+const tmpFolder = `${folder}Tmp`;
+const testOriginalDir = path.join('test', 'snapshot', 'sampleProjects', folder);
+const testDir = testOriginalDir.replace(folder, `${folder}Tmp`);
+const pkgDirs = ['force-app', 'my-app', path.join('foo-bar', 'app')];
+const resolvedPkgDirs = pkgDirs.map((d) => path.join(testDir, d));
 
 describe('recompose/decompose mpd project with labels', () => {
-  const testDir = path.join('test', 'snapshot', 'sampleProjects', 'mpdWithLabels');
-  const pkgDirs = ['force-app', 'my-app', path.join('foo-bar', 'app')];
-  const resolvedPkgDirs = pkgDirs.map(join(testDir));
   let mdFiles: string[];
 
   before(async () => {
+    // because we're applying changes over the existing source, move it to a new place
+    await fs.promises.cp(testOriginalDir, testDir, {
+      recursive: true,
+      force: true,
+      filter: (src) => !src.includes('__snapshots__'),
+    });
     const cs = await ComponentSetBuilder.build({
       sourcepath: resolvedPkgDirs,
     });
@@ -51,42 +59,49 @@ describe('recompose/decompose mpd project with labels', () => {
       const cs = await ComponentSetBuilder.build({
         sourcepath: [path.join(testDir, 'mdapiOutput')],
       });
+      // a CS from the destination
+      const mergeWith = (
+        await ComponentSetBuilder.build({
+          sourcepath: resolvedPkgDirs,
+        })
+      ).getSourceComponents();
+
       const converter = new MetadataConverter();
 
       await converter.convert(cs, 'source', {
-        type: 'directory',
-        outputDirectory: path.resolve(testDir),
-        genUniqueDir: false,
+        type: 'merge',
+        mergeWith,
+        defaultDirectory: path.resolve(resolvedPkgDirs[0]),
       });
     });
 
     pkgDirs.map((pkgDir) => {
       it(`verify ${pkgDir}`, async () => {
-        await validateSourceDir(pkgNameToTestName(pkgDir))(testDir)(pkgDir);
+        await validateSourceDir(pkgDir);
+        dirsAreIdentical(
+          path.join(testDir, pkgDir),
+          path.join(testDir.replace(tmpFolder, folder), '__snapshots__', pkgNameToTestName(pkgDir), pkgDir)
+        );
       });
     });
   });
 
   after(async () => {
-    await Promise.all([fs.promises.rm(path.join(testDir, 'mdapiOutput'), { recursive: true, force: true })]);
+    await Promise.all([fs.promises.rm(testDir, { recursive: true, force: true })]);
   });
 });
 
 // snapshot dirs convert spaces and slashes to dashes
 const pkgNameToTestName = (pkgName: string) => `verify-${pkgName.split(path.sep).join('-')}.expected`;
 
-const validateSourceDir =
-  (snapshotDir: string) =>
-  (testDir: string) =>
-  async (dir: string): Promise<void> => {
-    const sourceFiles = dirEntsToPaths(
-      await fs.promises.readdir(path.join(testDir, dir), {
-        recursive: true,
-        withFileTypes: true,
-      })
-    );
-    for (const file of sourceFiles) {
-      await fileSnap(file, testDir);
-    }
-    dirsAreIdentical(join(testDir)(dir), join(testDir)(path.join('__snapshots__', snapshotDir, dir)));
-  };
+const validateSourceDir = async (dir: string): Promise<void> => {
+  const sourceFiles = dirEntsToPaths(
+    await fs.promises.readdir(path.join(testDir, dir), {
+      recursive: true,
+      withFileTypes: true,
+    })
+  );
+  for (const file of sourceFiles) {
+    await fileSnap(file, testDir);
+  }
+};

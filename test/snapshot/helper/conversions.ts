@@ -60,7 +60,10 @@ export const sourceToMdapi = async (testDir: string): Promise<string[]> => {
   return dirEntsToPaths(dirEnts);
 };
 
-/** catches missing files by asserting that two directories have the exact same children */
+/**
+ * catches missing files by asserting that two directories have the exact same children
+ * will throw if either directory doesn't exist
+ */
 export const dirsAreIdentical = async (dir1: string, dir2: string): Promise<Chai.Assertion> => {
   expect(fs.existsSync(dir1)).to.be.true;
   expect(fs.existsSync(dir2)).to.be.true;

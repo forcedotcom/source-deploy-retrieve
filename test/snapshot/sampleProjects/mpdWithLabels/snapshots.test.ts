@@ -75,14 +75,27 @@ describe('recompose/decompose mpd project with labels', () => {
       });
     });
 
-    pkgDirs.map((pkgDir) => {
-      it(`verify ${pkgDir}`, async () => {
-        await validateSourceDir(pkgDir);
-        dirsAreIdentical(
-          path.join(testDir, pkgDir),
-          path.join(testDir.replace(tmpFolder, folder), '__snapshots__', pkgNameToTestName(pkgDir), pkgDir)
-        );
-      });
+    // painfully repetitive, but the async nature makes dynamic testing even uglier
+    it(`verify ${pkgDirs[0]}`, async () => {
+      await validateSourceDir(pkgDirs[0]);
+      await dirsAreIdentical(
+        path.join(testDir, pkgDirs[0]),
+        path.join(testDir.replace(tmpFolder, folder), '__snapshots__', pkgNameToTestName(pkgDirs[0]), pkgDirs[0])
+      );
+    });
+    it(`verify ${pkgDirs[1]}`, async () => {
+      await validateSourceDir(pkgDirs[0]);
+      await dirsAreIdentical(
+        path.join(testDir, pkgDirs[0]),
+        path.join(testDir.replace(tmpFolder, folder), '__snapshots__', pkgNameToTestName(pkgDirs[0]), pkgDirs[0])
+      );
+    });
+    it(`verify ${pkgDirs[2]}`, async () => {
+      await validateSourceDir(pkgDirs[0]);
+      await dirsAreIdentical(
+        path.join(testDir, pkgDirs[0]),
+        path.join(testDir.replace(tmpFolder, folder), '__snapshots__', pkgNameToTestName(pkgDirs[0]), pkgDirs[0])
+      );
     });
   });
 

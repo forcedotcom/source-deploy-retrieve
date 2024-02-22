@@ -8,6 +8,7 @@ import * as path from 'node:path';
 import * as fs from 'node:fs';
 import snap from 'mocha-snap';
 import { expect } from 'chai';
+import { Dirent } from 'graceful-fs';
 import { MetadataConverter } from '../../../src/convert/metadataConverter';
 import { ComponentSetBuilder } from '../../../src/collections/componentSetBuilder';
 
@@ -65,21 +66,28 @@ export const sourceToMdapi = async (testDir: string): Promise<string[]> => {
  * will throw if either directory doesn't exist
  */
 export const dirsAreIdentical = async (dir1: string, dir2: string): Promise<Chai.Assertion> => {
-  expect(fs.existsSync(dir1)).to.be.true;
-  expect(fs.existsSync(dir2)).to.be.true;
+  const dirs = [dir1, dir2].map(exists);
 
-  const [files1, files2] = (
-    await Promise.all([
-      fs.promises.readdir(dir1, { recursive: true, withFileTypes: true }),
-      fs.promises.readdir(dir2, { recursive: true, withFileTypes: true }),
-    ])
-  ).map(dirEntsToPaths);
+  const [files1, files2] = (await Promise.all(dirs.map(getAllDirents))).map(dirEntsToPaths).map(resolveRelative(dirs));
+
   return expect(files1).to.deep.equal(files2);
 };
 
+const exists = (dir: string) => {
+  expect(fs.existsSync(dir)).to.be.true;
+  return dir;
+};
+
+const getAllDirents = (dir: string): Dirent[] => fs.readdirSync(dir, { recursive: true, withFileTypes: true });
+
+const resolveRelative = (parentDirs: string[]) => (subArray: string[], index: number) =>
+  subArray.map((child) => path.relative(parentDirs[index], child));
+
+const isFile = (file: fs.Dirent) => file.isFile();
+const getFullPath = (file: fs.Dirent) => path.join(file.path, file.name);
+
 /** dirEnts are sometimes folder, we don't want those.  And we need the full paths */
-export const dirEntsToPaths = (dirEnts: fs.Dirent[]): string[] =>
-  dirEnts.filter((file) => file.isFile()).map((file) => path.join(file.path, file.name));
+export const dirEntsToPaths = (dirEnts: fs.Dirent[]): string[] => dirEnts.filter(isFile).map(getFullPath);
 
 const shouldIgnore = (file: string): boolean => {
   // binary zip/unzip isn't exactly the same, so we "skip" that one

@@ -83,7 +83,7 @@ describe('recompose/decompose mpd project with labels', () => {
         path.join(testDir.replace(tmpFolder, folder), '__snapshots__', pkgNameToTestName(pkgDirs[0]), pkgDirs[0])
       );
     });
-    it.skip(`verify ${pkgDirs[1]}`, async () => {
+    it(`verify ${pkgDirs[1]}`, async () => {
       await validateSourceDir(pkgDirs[1]);
       await dirsAreIdentical(
         path.join(testDir, pkgDirs[1]),

@@ -105,15 +105,21 @@ for (const preset of presets) {
         });
       });
       describe('suffix object is complete', () => {
+        const typesWhoChoseSettingsAsTheirSuffix = [
+          'IndustriesManufacturingSettings',
+          'IntegrationHubSettings',
+          'ActionableEventOrchDef',
+          'ActionableEventTypeDef',
+          'ObjectHierarchyRelationship',
+        ];
+
         const knownExceptions = [
+          ...typesWhoChoseSettingsAsTheirSuffix,
           'DataSource', // both ExternalDataSource and DataSource use the suffix .dataSource :(
           'CustomLabel', // custom label (child of customLabel has suffix labels in types BUT has an entry in suffixes that points to customlabels )
           'CustomLabels', // custom label (child of customLabel has suffix labels in types BUT has an entry in suffixes that points to customlabels )
           'MatchingRules', // same suffix on MatchingRule and MatchingRules
           'MatchingRule', // same suffix on MatchingRule and MatchingRules
-          // things that use the suffix .settings (!)
-          'IndustriesManufacturingSettings',
-          'ObjectHierarchyRelationship',
           'DigitalExperienceBundle', // no suffix for DigitalExperience child md type
         ];
 

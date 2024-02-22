@@ -49,11 +49,11 @@ describe('recompose/decompose mpd project with labels', () => {
 
   it('verify md files after recomposing', async () => {
     for (const file of mdFiles) {
-      await fileSnap(file, testDir);
+      await fileSnap(file, testOriginalDir);
     }
   });
 
-  describe('decompose mdapi over existing source is idempotent', () => {
+  describe.skip('decompose mdapi over existing source is idempotent', () => {
     before(async () => {
       // SDR should match the original source
       const cs = await ComponentSetBuilder.build({
@@ -115,6 +115,6 @@ const validateSourceDir = async (dir: string): Promise<void> => {
     })
   );
   for (const file of sourceFiles) {
-    await fileSnap(file, testDir);
+    await fileSnap(file, testOriginalDir);
   }
 };

@@ -20,7 +20,10 @@ const FORCE_APP = 'force-app';
 export const fileSnap = async (file: string, testDir: string) =>
   shouldIgnore(file)
     ? void 0
-    : snap(await fs.promises.readFile(file, 'utf8'), { dir: testDir, file: simplifyFilePath(file) });
+    : snap(await fs.promises.readFile(file, 'utf8'), {
+        dir: testDir,
+        file: logArgs(simplifyFilePath(getRelative(testDir)(file))),
+      });
 
 /**
  * converts a project's `originalMdapi` directory to source format
@@ -74,14 +77,16 @@ export const dirsAreIdentical = async (dir1: string, dir2: string): Promise<Chai
 };
 
 const exists = (dir: string) => {
-  expect(fs.existsSync(dir)).to.be.true;
+  expect(fs.existsSync(dir), `${dir} does not exist`).to.be.true;
   return dir;
 };
 
 const getAllDirents = (dir: string): Dirent[] => fs.readdirSync(dir, { recursive: true, withFileTypes: true });
 
 const resolveRelative = (parentDirs: string[]) => (subArray: string[], index: number) =>
-  subArray.map((child) => path.relative(parentDirs[index], child));
+  subArray.map(getRelative(parentDirs[index]));
+
+const getRelative = (parent: string) => (child: string) => path.relative(parent, child);
 
 const isFile = (file: fs.Dirent) => file.isFile();
 const getFullPath = (file: fs.Dirent) => path.join(file.path, file.name);
@@ -95,16 +100,23 @@ const shouldIgnore = (file: string): boolean => {
   return false;
 };
 
+// will leave paths alone if they contain neither string {}
 const simplifyFilePath = (filePath: string): string =>
-  filePath.includes(FORCE_APP) ? getPartsFromBeforeForceApp(filePath) : pathPartsAfter(filePath, MDAPI_OUT);
-// will leave paths alone if they contain neither string
+  filePath.includes(FORCE_APP) ? getPartsFromForceAppOnwards(filePath) : pathPartsAfter(filePath, MDAPI_OUT);
 
 // handle MPD scenarios where force-app is 1 among several
-const getPartsFromBeforeForceApp = (file: string): string => {
+const getPartsFromForceAppOnwards = (file: string): string => {
   const parts = file.split(path.sep);
   return parts.slice(parts.indexOf(FORCE_APP)).join(path.sep);
 };
+
 const pathPartsAfter = (file: string, after: string): string => {
   const parts = file.split(path.sep);
   return parts.slice(parts.indexOf(after) + 1).join(path.sep);
+};
+
+const logArgs = <T>(args: T): T => {
+  // eslint-disable-next-line no-console
+  console.log(args);
+  return args;
 };

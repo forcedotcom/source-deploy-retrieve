@@ -53,7 +53,7 @@ describe('recompose/decompose mpd project with labels', () => {
     }
   });
 
-  describe.skip('decompose mdapi over existing source is idempotent', () => {
+  describe('decompose mdapi over existing source is idempotent', () => {
     before(async () => {
       // SDR should match the original source
       const cs = await ComponentSetBuilder.build({
@@ -84,17 +84,17 @@ describe('recompose/decompose mpd project with labels', () => {
       );
     });
     it(`verify ${pkgDirs[1]}`, async () => {
-      await validateSourceDir(pkgDirs[0]);
+      await validateSourceDir(pkgDirs[1]);
       await dirsAreIdentical(
-        path.join(testDir, pkgDirs[0]),
-        path.join(testDir.replace(tmpFolder, folder), '__snapshots__', pkgNameToTestName(pkgDirs[0]), pkgDirs[0])
+        path.join(testDir, pkgDirs[1]),
+        path.join(testDir.replace(tmpFolder, folder), '__snapshots__', pkgNameToTestName(pkgDirs[1]), pkgDirs[1])
       );
     });
     it(`verify ${pkgDirs[2]}`, async () => {
-      await validateSourceDir(pkgDirs[0]);
+      await validateSourceDir(pkgDirs[2]);
       await dirsAreIdentical(
-        path.join(testDir, pkgDirs[0]),
-        path.join(testDir.replace(tmpFolder, folder), '__snapshots__', pkgNameToTestName(pkgDirs[0]), pkgDirs[0])
+        path.join(testDir, pkgDirs[2]),
+        path.join(testDir.replace(tmpFolder, folder), '__snapshots__', pkgNameToTestName(pkgDirs[2]), pkgDirs[2])
       );
     });
   });

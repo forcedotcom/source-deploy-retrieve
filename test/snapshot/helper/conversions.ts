@@ -17,12 +17,12 @@ const MDAPI_OUT = 'mdapiOutput';
 const FORCE_APP = 'force-app';
 
 /** common function to standardize snapshot behavior */
-export const fileSnap = async (file: string, testDir: string) =>
+export const fileSnap = async (file: string, testDir: string, projectDir?: string) =>
   shouldIgnore(file)
     ? void 0
     : snap(await fs.promises.readFile(file, 'utf8'), {
         dir: testDir,
-        file: logArgs(simplifyFilePath(getRelative(testDir)(file))),
+        file: logArgs(simplifyFilePath(getRelative(projectDir ?? testDir)(file))),
       });
 
 /**
@@ -69,7 +69,7 @@ export const sourceToMdapi = async (testDir: string): Promise<string[]> => {
  * will throw if either directory doesn't exist
  */
 export const dirsAreIdentical = async (dir1: string, dir2: string): Promise<Chai.Assertion> => {
-  const dirs = [dir1, dir2].map(exists);
+  const dirs = [dir1, dir2].map(exists).map(logArgs);
 
   const [files1, files2] = (await Promise.all(dirs.map(getAllDirents))).map(dirEntsToPaths).map(resolveRelative(dirs));
 

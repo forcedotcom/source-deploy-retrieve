@@ -115,7 +115,8 @@ const pathPartsAfter = (file: string, after: string): string => {
   return parts.slice(parts.indexOf(after) + 1).join(path.sep);
 };
 
-// keep this around for use when debugging.  Wrap a function with it or pass it to map, and it will log the contents
+/** Wrap a function with it or pass it to map, and it will log the contents */
+// @ts-ignore - keep this around for use when debugging.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const logArgs = <T>(args: T): T => {
   // eslint-disable-next-line no-console

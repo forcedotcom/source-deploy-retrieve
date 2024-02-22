@@ -72,7 +72,7 @@ export const dirsAreIdentical = async (dir1: string, dir2: string): Promise<Chai
 };
 
 /** dirEnts are sometimes folder, we don't want those.  And we need the full paths */
-const dirEntsToPaths = (dirEnts: fs.Dirent[]): string[] =>
+export const dirEntsToPaths = (dirEnts: fs.Dirent[]): string[] =>
   dirEnts.filter((file) => file.isFile()).map((file) => path.join(file.path, file.name));
 
 const shouldIgnore = (file: string): boolean => {

@@ -62,6 +62,9 @@ export const sourceToMdapi = async (testDir: string): Promise<string[]> => {
 
 /** catches missing files by asserting that two directories have the exact same children */
 export const dirsAreIdentical = async (dir1: string, dir2: string): Promise<Chai.Assertion> => {
+  expect(fs.existsSync(dir1)).to.be.true;
+  expect(fs.existsSync(dir2)).to.be.true;
+
   const [files1, files2] = (
     await Promise.all([
       fs.promises.readdir(dir1, { recursive: true, withFileTypes: true }),

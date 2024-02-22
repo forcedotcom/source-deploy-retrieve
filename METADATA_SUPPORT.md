@@ -604,17 +604,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 ## Next Release (v61)
 
-v61 introduces the following new types. Here's their current level of support
-
-| Metadata Type               | Support | Notes                                                            |
-| :-------------------------- | :------ | :--------------------------------------------------------------- |
-| AffinityScoreDefinition     | ❌      | Not supported, but support could be added                        |
-| EnablementMeasureDefinition | ✅      |                                                                  |
-| MlModelArtifact             | ❌      | Not supported, but support could be added                        |
-| MlModelConnection           | ❌      | Not supported, but support could be added                        |
-| MlModelSchema               | ❌      | Not supported, but support could be added                        |
-| SearchCustomization         | ❌      | Not supported, but support could be added (but not for tracking) |
-| WaveAnalyticAssetCollection | ❌      | Not supported, but support could be added                        |
+> **Note**
+> v61 coverage not available at this time
 
 ## Additional Types
 
@@ -681,3 +672,4 @@ v61 introduces the following new types. Here's their current level of support
 - extDataTranFieldTemplate
 - GenAiPromptTemplate
 - GenAiPromptTemplateActv
+- EnablementMeasureDefinition

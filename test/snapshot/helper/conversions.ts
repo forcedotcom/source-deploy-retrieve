@@ -11,6 +11,7 @@ import { expect, config, use } from 'chai';
 import * as deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import { XMLParser } from 'fast-xml-parser';
 
+import { Dirent } from 'graceful-fs';
 import { RegistryAccess } from '../../../src/registry/registryAccess';
 import { MetadataConverter } from '../../../src/convert/metadataConverter';
 import { ComponentSetBuilder } from '../../../src/collections/componentSetBuilder';
@@ -21,11 +22,21 @@ export const FORCE_APP = 'force-app';
 use(deepEqualInAnyOrder);
 config.truncateThreshold = 0;
 
-/** common function to standardize snapshot behavior */
-export const fileSnap = async (file: string, testDir: string) =>
+/**
+ * Common function to standardize snapshot behavior
+ *
+ * @param file the file to snapshot (full path)
+ * @param testDir the directory where the snapshot will be stored
+ * @param projectDir the root of the project.  This is usually the testDir by default, but they may not match if you have to copy the testDir to a new location during your test setup (to avoid mutating the original files)
+ *
+ */
+export const fileSnap = async (file: string, testDir: string, projectDir?: string) =>
   shouldIgnore(file)
     ? void 0
-    : snap(await fs.promises.readFile(file, 'utf8'), { dir: testDir, file: simplifyFilePath(file) });
+    : snap(await fs.promises.readFile(file, 'utf8'), {
+        dir: testDir,
+        file: simplifyFilePath(getRelative(projectDir ?? testDir)(file)),
+      });
 
 /**
  * converts a project's `originalMdapi` directory to source format
@@ -95,20 +106,35 @@ export const compareTwoXml = (file1: string, file2: string): Chai.Assertion => {
   return expect(parser.parse(file1)).to.deep.equalInAnyOrder(parser.parse(file2));
 };
 
-/** catches missing files by asserting that two directories have the exact same children */
+/**
+ * catches missing files by asserting that two directories have the exact same children
+ * will throw if either directory doesn't exist
+ */
 export const dirsAreIdentical = async (dir1: string, dir2: string): Promise<Chai.Assertion> => {
-  const [files1, files2] = (
-    await Promise.all([
-      fs.promises.readdir(dir1, { recursive: true, withFileTypes: true }),
-      fs.promises.readdir(dir2, { recursive: true, withFileTypes: true }),
-    ])
-  ).map(dirEntsToPaths);
+  const dirs = [dir1, dir2].map(exists);
+
+  const [files1, files2] = (await Promise.all(dirs.map(getAllDirents))).map(dirEntsToPaths).map(resolveRelative(dirs));
+
   return expect(files1).to.deep.equal(files2);
 };
 
+const exists = (dir: string) => {
+  expect(fs.existsSync(dir), `${dir} does not exist`).to.be.true;
+  return dir;
+};
+
+const getAllDirents = (dir: string): Dirent[] => fs.readdirSync(dir, { recursive: true, withFileTypes: true });
+
+const resolveRelative = (parentDirs: string[]) => (subArray: string[], index: number) =>
+  subArray.map(getRelative(parentDirs[index]));
+
+const getRelative = (parent: string) => (child: string) => path.relative(parent, child);
+
+const isFile = (file: fs.Dirent) => file.isFile();
+const getFullPath = (file: fs.Dirent) => path.join(file.path, file.name);
+
 /** dirEnts are sometimes folder, we don't want those.  And we need the full paths */
-const dirEntsToPaths = (dirEnts: fs.Dirent[]): string[] =>
-  dirEnts.filter((file) => file.isFile()).map((file) => path.join(file.path, file.name));
+export const dirEntsToPaths = (dirEnts: fs.Dirent[]): string[] => dirEnts.filter(isFile).map(getFullPath);
 
 const shouldIgnore = (file: string): boolean => {
   // binary zip/unzip isn't exactly the same, so we "skip" that one
@@ -116,17 +142,29 @@ const shouldIgnore = (file: string): boolean => {
   return false;
 };
 
-/** rather than the full path, gets the "project relative" parts based on format */
+/**
+ * rather than the full path, gets the "project relative" parts based on format
+ * will leave paths alone if they contain neither FORCE_APP/MDAPI_OUT
+ */
 const simplifyFilePath = (filePath: string): string =>
-  filePath.includes(FORCE_APP) ? getPartsFromBeforeForceApp(filePath) : pathPartsAfter(filePath, MDAPI_OUT);
-// will leave paths alone if they contain neither string
+  filePath.includes(FORCE_APP) ? getPartsFromForceAppOnwards(filePath) : pathPartsAfter(filePath, MDAPI_OUT);
 
 // handle MPD scenarios where force-app is 1 among several
-const getPartsFromBeforeForceApp = (file: string): string => {
+const getPartsFromForceAppOnwards = (file: string): string => {
   const parts = file.split(path.sep);
   return parts.slice(parts.indexOf(FORCE_APP)).join(path.sep);
 };
+
 const pathPartsAfter = (file: string, after: string): string => {
   const parts = file.split(path.sep);
   return parts.slice(parts.indexOf(after) + 1).join(path.sep);
+};
+
+/** Wrap a function with it or pass it to map, and it will log the contents */
+// @ts-ignore - keep this around for use when debugging.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const logArgs = <T>(args: T): T => {
+  // eslint-disable-next-line no-console
+  typeof args === 'string' ? console.log(args) : JSON.stringify(args, null, 2);
+  return args;
 };

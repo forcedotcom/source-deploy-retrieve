@@ -1,3 +1,9 @@
+# [10.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.3.10...10.4.0) (2024-02-21)
+
+### Features
+
+- OauthTokenExchangeHandler, ActionableEventOrchDef, ActionableEventTypeDef, OmniExtTrackingDef ([#1241](https://github.com/forcedotcom/source-deploy-retrieve/issues/1241)) ([1423b76](https://github.com/forcedotcom/source-deploy-retrieve/commit/1423b7645e09f6983ca6449da1da3c5c42eb7d01))
+
 ## [10.3.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.3.9...10.3.10) (2024-02-18)
 
 ### Bug Fixes

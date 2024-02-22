@@ -16,7 +16,14 @@ const converter = new MetadataConverter();
 const MDAPI_OUT = 'mdapiOutput';
 const FORCE_APP = 'force-app';
 
-/** common function to standardize snapshot behavior */
+/**
+ * Common function to standardize snapshot behavior
+ *
+ * @param file the file to snapshot (full path)
+ * @param testDir the directory where the snapshot will be stored
+ * @param projectDir the root of the project.  This is usually the testDir by default, but they may not match if you have to copy the testDir to a new location during your test setup (to avoid mutating the original files)
+ *
+ */
 export const fileSnap = async (file: string, testDir: string, projectDir?: string) =>
   shouldIgnore(file)
     ? void 0

@@ -30,7 +30,7 @@ config.truncateThreshold = 0;
  * @param projectDir the root of the project.  This is usually the testDir by default, but they may not match if you have to copy the testDir to a new location during your test setup (to avoid mutating the original files)
  *
  */
-export const fileSnap = async (file: string, testDir: string, projectDir?: string) =>
+export const fileSnap = async (file: string, testDir: string, projectDir?: string): Promise<void> =>
   shouldIgnore(file)
     ? void 0
     : snap(await fs.promises.readFile(file, 'utf8'), {

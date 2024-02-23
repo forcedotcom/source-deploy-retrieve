@@ -2037,12 +2037,12 @@
       "suffix": "enablementMeasureDefinition"
     },
     "enablementprogramdefinition": {
-      "directoryName": "enablementPrograms",
+      "directoryName": "enablementProgramDefinitions",
       "id": "enablementprogramdefinition",
       "inFolder": false,
       "name": "EnablementProgramDefinition",
       "strictDirectoryName": false,
-      "suffix": "enablementProgram"
+      "suffix": "enablementProgramDefinition"
     },
     "entitlementprocess": {
       "directoryName": "entitlementProcesses",

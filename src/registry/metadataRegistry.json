@@ -234,6 +234,7 @@
     "email": "emailtemplate",
     "emailFolder": "emailfolder",
     "enablementMeasureDefinition": "enablementmeasuredefinition",
+    "enablementProgramDefinition": "enablementprogramdefinition",
     "entitlementProcess": "entitlementprocess",
     "entitlementTemplate": "entitlementtemplate",
     "entityImplements": "entityimplements",
@@ -2034,6 +2035,14 @@
       "name": "EnablementMeasureDefinition",
       "strictDirectoryName": false,
       "suffix": "enablementMeasureDefinition"
+    },
+    "enablementprogramdefinition": {
+      "directoryName": "enablementPrograms",
+      "id": "enablementprogramdefinition",
+      "inFolder": false,
+      "name": "EnablementProgramDefinition",
+      "strictDirectoryName": false,
+      "suffix": "enablementProgram"
     },
     "entitlementprocess": {
       "directoryName": "entitlementProcesses",

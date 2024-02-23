@@ -11,7 +11,6 @@ import { expect, config, use } from 'chai';
 import * as deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import { XMLParser } from 'fast-xml-parser';
 
-import { Dirent } from 'graceful-fs';
 import { RegistryAccess } from '../../../src/registry/registryAccess';
 import { MetadataConverter } from '../../../src/convert/metadataConverter';
 import { ComponentSetBuilder } from '../../../src/collections/componentSetBuilder';
@@ -123,7 +122,7 @@ const exists = (dir: string) => {
   return dir;
 };
 
-const getAllDirents = (dir: string): Dirent[] => fs.readdirSync(dir, { recursive: true, withFileTypes: true });
+const getAllDirents = (dir: string): fs.Dirent[] => fs.readdirSync(dir, { recursive: true, withFileTypes: true });
 
 const resolveRelative = (parentDirs: string[]) => (subArray: string[], index: number) =>
   subArray.map(getRelative(parentDirs[index]));

@@ -1,3 +1,12 @@
+## [10.4.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.4.1...10.4.2) (2024-02-25)
+
+
+### Bug Fixes
+
+* **deps:** bump fast-xml-parser from 4.3.4 to 4.3.5 ([#1244](https://github.com/forcedotcom/source-deploy-retrieve/issues/1244)) ([2484b4f](https://github.com/forcedotcom/source-deploy-retrieve/commit/2484b4f8f49ce273ecd9215f9000083a04325605))
+
+
+
 ## [10.4.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.4.0...10.4.1) (2024-02-25)
 
 

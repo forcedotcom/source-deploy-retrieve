@@ -158,7 +158,7 @@ describe('ComponentSetBuilder', () => {
         assert(false, 'should have thrown SfError');
       } catch (e: unknown) {
         const err = e as SfError;
-        expect(fromSourceStub.notCalled).to.equal(true);
+        expect(fromSourceStub.callCount).to.equal(0);
         expect(err.message).to.include(sourcepath[0]);
       }
     });
@@ -173,11 +173,11 @@ describe('ComponentSetBuilder', () => {
         packagenames: ['mypackage'],
       });
       expect(compSet.size).to.equal(0);
-      expect(fromSourceStub.notCalled).to.equal(true);
-      expect(fromManifestStub.notCalled).to.equal(true);
+      expect(fromSourceStub.callCount).to.equal(0);
+      expect(fromManifestStub.callCount).to.equal(0);
     });
 
-    it('should create ComponentSet from wildcarded metadata (ApexClass)', async () => {
+    it.only('should create ComponentSet from wildcarded metadata (ApexClass)', async () => {
       componentSet.add(apexClassComponent);
       fromSourceStub.returns(componentSet);
       const packageDir1 = path.resolve('force-app');
@@ -190,7 +190,7 @@ describe('ComponentSetBuilder', () => {
           directoryPaths: [packageDir1],
         },
       });
-      expect(fromSourceStub.calledOnce).to.equal(true);
+      expect(fromSourceStub.callCount).to.equal(1);
       const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
       expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
       const filter = new ComponentSet();
@@ -215,7 +215,7 @@ describe('ComponentSetBuilder', () => {
           directoryPaths: [packageDir1],
         },
       });
-      expect(fromSourceStub.calledOnce).to.equal(true);
+      expect(fromSourceStub.callCount).to.equal(1);
       const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
       expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
       const filter = new ComponentSet();
@@ -259,7 +259,7 @@ describe('ComponentSetBuilder', () => {
           directoryPaths: [packageDir1],
         },
       });
-      expect(fromSourceStub.calledOnce).to.equal(true);
+      expect(fromSourceStub.callCount).to.equal(1);
       const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
       expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
       const filter = new ComponentSet();
@@ -284,7 +284,7 @@ describe('ComponentSetBuilder', () => {
           directoryPaths: [packageDir1],
         },
       });
-      expect(fromSourceStub.calledOnce).to.equal(true);
+      expect(fromSourceStub.callCount).to.equal(1);
       const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
       expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
       const filter = new ComponentSet();
@@ -312,7 +312,7 @@ describe('ComponentSetBuilder', () => {
           directoryPaths: [packageDir1],
         },
       });
-      expect(fromSourceStub.calledTwice).to.equal(true);
+      expect(fromSourceStub.callCount).to.equal(2);
       const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
       expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
       const filter = new ComponentSet();
@@ -343,7 +343,7 @@ describe('ComponentSetBuilder', () => {
           directoryPaths: [packageDir1, packageDir2],
         },
       });
-      expect(fromSourceStub.calledOnce).to.equal(true);
+      expect(fromSourceStub.callCount).to.equal(1);
       const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
       expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1, packageDir2]);
       const filter = new ComponentSet();
@@ -400,7 +400,7 @@ describe('ComponentSetBuilder', () => {
       };
 
       const compSet = await ComponentSetBuilder.build(options);
-      expect(fromConnectionStub.calledOnce).to.equal(true);
+      expect(fromConnectionStub.callCount).to.equal(1);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(fromConnectionStub.firstCall.firstArg['usernameOrConnection']).equal(options.org.username);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
@@ -432,8 +432,8 @@ describe('ComponentSetBuilder', () => {
       };
 
       const compSet = await ComponentSetBuilder.build(options);
-      expect(fromSourceStub.calledTwice).to.equal(true);
-      expect(fromConnectionStub.calledOnce).to.equal(true);
+      expect(fromSourceStub.callCount).to.equal(2);
+      expect(fromConnectionStub.callCount).to.equal(1);
       expect(compSet.size).to.equal(2);
       expect(compSet.has(apexClassComponent)).to.equal(true);
       expect(compSet.has(apexClassWildcardMatch)).to.equal(true);

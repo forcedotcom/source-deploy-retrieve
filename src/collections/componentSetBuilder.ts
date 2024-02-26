@@ -121,7 +121,6 @@ export class ComponentSetBuilder {
         entries.map((cmp) => componentSet?.add(cmp));
 
         const componentSetFilter = new ComponentSet(entries, registryAccess);
-
         logger.debug(`Searching for matching metadata in directories: ${directoryPaths.join(', ')}`);
         const resolvedComponents = ComponentSet.fromSource({
           fsPaths: directoryPaths,
@@ -250,7 +249,7 @@ const typeAndNameToNetadataComponents =
     // to do that, you'd need check the size of the CS created below, see if it's 0, and then query the org for the metadata that matches the regex
     // but building a CS from a metadata argument doesn't require an org, so we can't do that here
 
-    metadataName?.includes('*') && metadataName?.length > 1 && !metadataName.includes('.*')
+    metadataName?.includes('*') && metadataName.length > 1 && !metadataName.includes('.*')
       ? // get all components of the type, and then filter by the regex of the fullName
         ComponentSet.fromSource({
           fsPaths: context.directoryPaths,

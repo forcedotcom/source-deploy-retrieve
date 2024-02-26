@@ -9,9 +9,12 @@ import * as path from 'node:path';
 import { StateAggregator, Logger, SfError, Messages } from '@salesforce/core';
 import * as fs from 'graceful-fs';
 import * as minimatch from 'minimatch';
+import { MetadataComponent } from '../resolve/types';
 import { ComponentSet } from '../collections/componentSet';
 import { RegistryAccess } from '../registry/registryAccess';
 import type { FileProperties } from '../client/types';
+import { MetadataType } from '../registry/types';
+import { FromConnectionOptions } from './types';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -45,6 +48,8 @@ export type ComponentSetOptions = {
   projectDir?: string;
 };
 
+type MetadataMap = Map<string, string[]>;
+
 export class ComponentSetBuilder {
   /**
    * Builds a ComponentSet that can be used for source conversion,
@@ -55,7 +60,6 @@ export class ComponentSetBuilder {
    * @param options: options for creating a ComponentSet
    */
 
-  // eslint-disable-next-line complexity
   public static async build(options: ComponentSetOptions): Promise<ComponentSet> {
     const logger = Logger.childFromRoot('componentSetBuilder');
     let componentSet: ComponentSet | undefined;
@@ -65,7 +69,7 @@ export class ComponentSetBuilder {
      * key = a metadata type, e.g. `ApexClass`
      * value = an array of metadata names, e.g. `['foo_*', 'BarClass']`
      */
-    const mdMap = new Map<string, string[]>();
+    let mdMap: MetadataMap = new Map();
 
     const { sourcepath, manifest, metadata, packagenames, apiversion, sourceapiversion, org, projectDir } = options;
     const registryAccess = new RegistryAccess(undefined, projectDir);
@@ -73,12 +77,7 @@ export class ComponentSetBuilder {
     try {
       if (sourcepath) {
         logger.debug(`Building ComponentSet from sourcepath: ${sourcepath.join(', ')}`);
-        const fsPaths: string[] = sourcepath.map((filepath) => {
-          if (!fs.existsSync(filepath)) {
-            throw new SfError(messages.getMessage('error_path_not_found', [filepath]));
-          }
-          return path.resolve(filepath);
-        });
+        const fsPaths = sourcepath.map(validateAndResolvePath);
         componentSet = ComponentSet.fromSource({
           fsPaths,
           registry: registryAccess,
@@ -94,14 +93,12 @@ export class ComponentSetBuilder {
       // Resolve manifest with source in package directories.
       if (manifest) {
         logger.debug(`Building ComponentSet from manifest: ${manifest.manifestPath}`);
-        if (!fs.existsSync(manifest.manifestPath)) {
-          throw new SfError(messages.getMessage('error_path_not_found', [manifest.manifestPath]));
-        }
-        const directoryPaths = manifest.directoryPaths;
-        logger.debug(`Searching in packageDir: ${directoryPaths.join(', ')} for matching metadata`);
+        assertFileExists(manifest.manifestPath);
+
+        logger.debug(`Searching in packageDir: ${manifest.directoryPaths.join(', ')} for matching metadata`);
         componentSet = await ComponentSet.fromManifest({
           manifestPath: manifest.manifestPath,
-          resolveSourcePaths: directoryPaths,
+          resolveSourcePaths: manifest.directoryPaths,
           forceAddWildcards: true,
           destructivePre: manifest.destructiveChangesPre,
           destructivePost: manifest.destructiveChangesPost,
@@ -112,106 +109,47 @@ export class ComponentSetBuilder {
       // Resolve metadata entries with source in package directories.
       if (metadata) {
         logger.debug(`Building ComponentSet from metadata: ${metadata.metadataEntries.toString()}`);
-        const compSetFilter = new ComponentSet(undefined, registryAccess);
         componentSet ??= new ComponentSet(undefined, registryAccess);
         const directoryPaths = metadata.directoryPaths;
 
         // Build a Set of metadata entries
-        metadata.metadataEntries.forEach((rawEntry) => {
-          const [mdType, mdName] = rawEntry.split(':').map((entry) => entry.trim());
-          // The registry will throw if it doesn't know what this type is.
-          registryAccess.getTypeByName(mdType);
+        const entries = metadata.metadataEntries
+          .map(entryToTypeAndName(registryAccess))
+          .flatMap(typeAndNameToNetadataComponents({ directoryPaths, registry: registryAccess }));
 
-          // Add metadata entries to a map for possible use with an org connection below.
-          const mdMapEntry = mdMap.get(mdType);
-          if (mdMapEntry) {
-            mdMapEntry.push(mdName);
-          } else {
-            mdMap.set(mdType, [mdName]);
-          }
+        mdMap = buildMapFromComponents(entries);
+        entries.map((cmp) => componentSet?.add(cmp));
 
-          // this '.*' is a surprisingly valid way to specify a metadata, especially a DEB :sigh:
-          // https://github.com/salesforcecli/plugin-deploy-retrieve/blob/main/test/nuts/digitalExperienceBundle/constants.ts#L140
-          // because we're filtering from what we have locally, this won't allow you to retrieve new metadata (on the server only) using the partial wildcard
-          // to do that, you'd need check the size of the CS created below, see if it's 0, and then query the org for the metadata that matches the regex
-          // but building a CS from a metadata argument doesn't require an org, so we can't do that here
-          if (mdName?.includes('*') && mdName?.length > 1 && !mdName.includes('.*')) {
-            // get all components of the type, and then filter by the regex of the fullName
-            ComponentSet.fromSource({
-              fsPaths: directoryPaths,
-              include: new ComponentSet([{ type: mdType, fullName: ComponentSet.WILDCARD }]),
-              registry: registryAccess,
-            })
-              .getSourceComponents()
-              .toArray()
-              // using minimatch versus RegExp provides better (more expected) matching results
-              .filter((cs) => minimatch(cs.fullName, mdName))
-              .map((match) => {
-                compSetFilter.add(match);
-                componentSet?.add(match);
-              });
-          } else {
-            const entry = {
-              type: mdType,
-              fullName: !mdName ? '*' : mdName,
-            };
-            // Add to the filtered ComponentSet for resolved source paths,
-            // and the unfiltered ComponentSet to build the correct manifest.
-            compSetFilter.add(entry);
-            componentSet?.add(entry);
-          }
-        });
+        const componentSetFilter = new ComponentSet(entries, registryAccess);
 
         logger.debug(`Searching for matching metadata in directories: ${directoryPaths.join(', ')}`);
         const resolvedComponents = ComponentSet.fromSource({
           fsPaths: directoryPaths,
-          include: compSetFilter,
+          include: componentSetFilter,
           registry: registryAccess,
         });
         componentSet.forceIgnoredPaths = resolvedComponents.forceIgnoredPaths;
-        for (const comp of resolvedComponents) {
-          componentSet.add(comp);
-        }
+        resolvedComponents.map((cmp) => componentSet?.add(cmp));
       }
 
       // Resolve metadata entries with an org connection
       if (org) {
         componentSet ??= new ComponentSet(undefined, registryAccess);
 
-        let debugMsg = `Building ComponentSet from targetUsername: ${org.username}`;
+        logger.debug(
+          `Building ComponentSet from targetUsername: ${org.username} ${
+            metadata ? `filtered by metadata: ${metadata.metadataEntries.toString()}` : ''
+          }`
+        );
 
-        // *** Default Filter ***
-        // exclude components based on the results of componentFilter function
-        // components with namespacePrefix where org.exclude includes manageableState (to exclude managed packages)
-        // components with namespacePrefix where manageableState equals undefined (to exclude components e.g. InstalledPackage)
-        // components where org.exclude includes manageableState (to exclude packages without namespacePrefix e.g. unlocked packages)
-        let componentFilter = (component: Partial<FileProperties>): boolean =>
-          !component?.manageableState || !org.exclude?.includes(component.manageableState);
-
-        if (metadata) {
-          debugMsg += ` filtered by metadata: ${metadata.metadataEntries.toString()}`;
-
-          componentFilter = (component: Partial<FileProperties>): boolean => {
-            if (component.type && component.fullName) {
-              const mdMapEntry = mdMap.get(component.type);
-              // using minimatch versus RegExp provides better (more expected) matching results
-              return !!mdMapEntry && mdMapEntry.some((mdName) => minimatch(component.fullName as string, mdName));
-            }
-            return false;
-          };
-        }
-
-        logger.debug(debugMsg);
         const fromConnection = await ComponentSet.fromConnection({
           usernameOrConnection: (await StateAggregator.getInstance()).aliases.getUsername(org.username) ?? org.username,
-          componentFilter,
+          componentFilter: getOrgComponentFilter(org, mdMap, metadata),
           metadataTypes: mdMap.size ? Array.from(mdMap.keys()) : undefined,
           registry: registryAccess,
         });
 
-        for (const comp of fromConnection) {
-          componentSet.add(comp);
-        }
+        fromConnection.map((cmp) => componentSet?.add(cmp));
       }
     } catch (e) {
       if ((e as Error).message.includes('Missing metadata type definition in registry for id')) {
@@ -224,35 +162,112 @@ export class ComponentSetBuilder {
       }
     }
 
-    // This is only for debug output of matched files based on the command flags.
-    // It will log up to 20 file matches.
-    if (logger.shouldLog(20) && componentSet?.size) {
-      logger.debug(`Matching metadata files (${componentSet.size}):`);
-      const components = componentSet.getSourceComponents().toArray();
-      for (let i = 0; i < componentSet.size; i++) {
-        if (components[i]?.content) {
-          logger.debug(components[i].content);
-        } else if (components[i]?.xml) {
-          logger.debug(components[i].xml);
-        }
-
-        if (i > 18) {
-          logger.debug(`(showing 20 of ${componentSet.size} matches)`);
-          break;
-        }
-      }
-    }
-
     // there should have been a componentSet created by this point.
-    if (componentSet === undefined) {
-      throw new SfError('undefinedComponentSet');
-    }
-
+    componentSet = assertComponentSetIsNotUndefined(componentSet);
     componentSet.apiVersion ??= apiversion;
     componentSet.sourceApiVersion ??= sourceapiversion;
-    logger.debug(`ComponentSet apiVersion = ${componentSet.apiVersion}`);
-    logger.debug(`ComponentSet sourceApiVersion = ${componentSet.sourceApiVersion}`);
 
+    logComponents(logger, componentSet);
     return componentSet;
   }
 }
+
+const validateAndResolvePath = (filepath: string): string => path.resolve(assertFileExists(filepath));
+
+const assertFileExists = (filepath: string): string => {
+  if (!fs.existsSync(filepath)) {
+    throw new SfError(messages.getMessage('error_path_not_found', [filepath]));
+  }
+  return filepath;
+};
+
+const assertComponentSetIsNotUndefined = (componentSet: ComponentSet | undefined): ComponentSet => {
+  if (componentSet === undefined) {
+    throw new SfError('undefinedComponentSet');
+  }
+  return componentSet;
+};
+
+/** This is only for debug output of matched files based on the command flags.
+ * It will log up to 20 file matches. */
+const logComponents = (logger: Logger, componentSet: ComponentSet): void => {
+  logger.debug(`Matching metadata files (${componentSet.size}):`);
+
+  const components = componentSet.getSourceComponents().toArray();
+
+  components
+    .slice(0, 20)
+    .map((cmp) => cmp.content ?? cmp.xml ?? cmp.fullName)
+    .map((m) => logger.debug(m));
+  if (components.length > 20) logger.debug(`(showing 20 of ${componentSet.size} matches)`);
+
+  logger.debug(`ComponentSet apiVersion = ${componentSet.apiVersion}`);
+  logger.debug(`ComponentSet sourceApiVersion = ${componentSet.sourceApiVersion}`);
+};
+
+const getOrgComponentFilter = (
+  org: OrgOption,
+  mdMap: MetadataMap,
+  metadata?: MetadataOption
+): FromConnectionOptions['componentFilter'] =>
+  metadata
+    ? (component: Partial<FileProperties>): boolean => {
+        if (component.type && component.fullName) {
+          const mdMapEntry = mdMap.get(component.type);
+          // using minimatch versus RegExp provides better (more expected) matching results
+          return (
+            !!mdMapEntry &&
+            mdMapEntry.some((mdName) => typeof component.fullName === 'string' && minimatch(component.fullName, mdName))
+          );
+        }
+        return false;
+      }
+    : // *** Default Filter ***
+      // exclude components based on the results of componentFilter function
+      // components with namespacePrefix where org.exclude includes manageableState (to exclude managed packages)
+      // components with namespacePrefix where manageableState equals undefined (to exclude components e.g. InstalledPackage)
+      // components where org.exclude includes manageableState (to exclude packages without namespacePrefix e.g. unlocked packages)
+
+      (component: Partial<FileProperties>): boolean =>
+        !component?.manageableState || !org.exclude?.includes(component.manageableState);
+
+type MetadataTypeAndMetadataName = { type: MetadataType; metadataName: string };
+
+// The registry will throw if it doesn't know what this type is.
+const entryToTypeAndName =
+  (reg: RegistryAccess) =>
+  (rawEntry: string): MetadataTypeAndMetadataName => {
+    const [typeName, name] = rawEntry.split(':').map((entry) => entry.trim());
+    return { type: reg.getTypeByName(typeName), metadataName: name };
+  };
+
+const typeAndNameToNetadataComponents =
+  (context: { directoryPaths: ManifestOption['directoryPaths']; registry: RegistryAccess }) =>
+  ({ type, metadataName }: MetadataTypeAndMetadataName): MetadataComponent[] =>
+    // this '.*' is a surprisingly valid way to specify a metadata, especially a DEB :sigh:
+    // https://github.com/salesforcecli/plugin-deploy-retrieve/blob/main/test/nuts/digitalExperienceBundle/constants.ts#L140
+    // because we're filtering from what we have locally, this won't allow you to retrieve new metadata (on the server only) using the partial wildcard
+    // to do that, you'd need check the size of the CS created below, see if it's 0, and then query the org for the metadata that matches the regex
+    // but building a CS from a metadata argument doesn't require an org, so we can't do that here
+
+    metadataName?.includes('*') && metadataName?.length > 1 && !metadataName.includes('.*')
+      ? // get all components of the type, and then filter by the regex of the fullName
+        ComponentSet.fromSource({
+          fsPaths: context.directoryPaths,
+          include: new ComponentSet([{ type, fullName: ComponentSet.WILDCARD }]),
+          registry: context.registry,
+        })
+          .getSourceComponents()
+          .toArray()
+          // using minimatch versus RegExp provides better (more expected) matching results
+          .filter((cs) => minimatch(cs.fullName, metadataName))
+      : [{ type, fullName: metadataName ?? '*' }];
+
+// TODO: use Map.groupBy when it's available
+const buildMapFromComponents = (components: MetadataComponent[]): MetadataMap => {
+  const mdMap: MetadataMap = new Map();
+  components.map((cmp) => {
+    mdMap.set(cmp.type.name, [...(mdMap.get(cmp.type.name) ?? []), cmp.fullName]);
+  });
+  return mdMap;
+};

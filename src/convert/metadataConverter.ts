@@ -34,7 +34,7 @@ export class MetadataConverter {
   public constructor(registry = new RegistryAccess()) {
     this.registry = registry;
   }
-  // eslint-disable-next-line complexity
+
   public async convert(
     comps: ComponentSet | Iterable<SourceComponent>,
     targetFormat: SfdxFileFormat,

@@ -177,7 +177,7 @@ describe('ComponentSetBuilder', () => {
       expect(fromManifestStub.callCount).to.equal(0);
     });
 
-    it.only('should create ComponentSet from wildcarded metadata (ApexClass)', async () => {
+    it('should create ComponentSet from wildcarded metadata (ApexClass)', async () => {
       componentSet.add(apexClassComponent);
       fromSourceStub.returns(componentSet);
       const packageDir1 = path.resolve('force-app');

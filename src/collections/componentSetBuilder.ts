@@ -128,7 +128,7 @@ export class ComponentSetBuilder {
           registry: registryAccess,
         });
         componentSet.forceIgnoredPaths = resolvedComponents.forceIgnoredPaths;
-        resolvedComponents.map((cmp) => componentSet?.add(cmp));
+        resolvedComponents.toArray().map((cmp) => componentSet?.add(cmp));
       }
 
       // Resolve metadata entries with an org connection
@@ -148,7 +148,7 @@ export class ComponentSetBuilder {
           registry: registryAccess,
         });
 
-        fromConnection.map((cmp) => componentSet?.add(cmp));
+        fromConnection.toArray().map((cmp) => componentSet?.add(cmp));
       }
     } catch (e) {
       if ((e as Error).message.includes('Missing metadata type definition in registry for id')) {

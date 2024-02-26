@@ -634,6 +634,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - DynamicTrigger
 - EmbeddedServiceFieldService
 - EnablementMeasureDefinition
+- EnablementProgramDefinition
 - EntityImplements
 - EscalationRule
 - EventDelivery

@@ -1,3 +1,12 @@
+# [10.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.4.2...10.5.0) (2024-02-26)
+
+
+### Features
+
+*  add EnablementProgramDefiniton ([#1243](https://github.com/forcedotcom/source-deploy-retrieve/issues/1243)) ([1bf5c33](https://github.com/forcedotcom/source-deploy-retrieve/commit/1bf5c33a69866dea0a5ee424ad69d1f542b1b4be))
+
+
+
 ## [10.4.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.4.1...10.4.2) (2024-02-25)
 
 

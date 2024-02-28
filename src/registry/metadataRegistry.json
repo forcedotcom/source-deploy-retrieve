@@ -3018,20 +3018,20 @@
       "suffix": "mlModel"
     },
     "mlmodelconnection": {
-      "directoryName": "modelConnections",
+      "directoryName": "mlModelConnections",
       "id": "mlmodelconnection",
       "inFolder": false,
       "name": "MlModelConnection",
       "strictDirectoryName": false,
-      "suffix": "modelConnection"
+      "suffix": "mlModelConnection"
     },
     "mlmodelschema": {
-      "directoryName": "modelSchemas",
+      "directoryName": "mlModelSchemas",
       "id": "mlmodelschema",
       "inFolder": false,
       "name": "MlModelSchema",
       "strictDirectoryName": false,
-      "suffix": "modelSchema"
+      "suffix": "mlModelSchema"
     },
     "mlpredictiondefinition": {
       "directoryName": "mlPredictions",

@@ -339,6 +339,9 @@
     "mobileSecurityPolicy": "mobilesecuritypolicy",
     "mobileSecurityPolicySet": "mobilesecuritypolicyset",
     "model": "discoveryaimodel",
+    "mlmodel": "mlmodelartifact",
+    "modelConnection": "mlmodelconnection",
+    "modelSchema": "mlmodelschema",
     "mutingpermissionset": "mutingpermissionset",
     "myDomainDiscoverableLogin": "mydomaindiscoverablelogin",
     "namedCredential": "namedcredential",
@@ -3005,6 +3008,30 @@
       "inFolder": false,
       "name": "MlDomain",
       "suffix": "mlDomain"
+    },
+    "mlmodelartifact": {
+      "directoryName": "mlmodels",
+      "id": "mlmodelartifact",
+      "inFolder": false,
+      "name": "MlModelArtifact",
+      "strictDirectoryName": false,
+      "suffix": "mlmodel"
+    },
+    "mlmodelconnection": {
+      "directoryName": "modelConnections",
+      "id": "mlmodelconnection",
+      "inFolder": false,
+      "name": "MlModelConnection",
+      "strictDirectoryName": false,
+      "suffix": "modelConnection"
+    },
+    "mlmodelschema": {
+      "directoryName": "modelSchemas",
+      "id": "mlmodelschema",
+      "inFolder": false,
+      "name": "MlModelSchema",
+      "strictDirectoryName": false,
+      "suffix": "modelSchema"
     },
     "mlpredictiondefinition": {
       "directoryName": "mlPredictions",

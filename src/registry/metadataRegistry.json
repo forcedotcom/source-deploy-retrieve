@@ -339,9 +339,9 @@
     "mobileSecurityPolicy": "mobilesecuritypolicy",
     "mobileSecurityPolicySet": "mobilesecuritypolicyset",
     "model": "discoveryaimodel",
-    "mlmodel": "mlmodelartifact",
-    "modelConnection": "mlmodelconnection",
-    "modelSchema": "mlmodelschema",
+    "mlModel": "mlmodelartifact",
+    "mlModelConnection": "mlmodelconnection",
+    "mlModelSchema": "mlmodelschema",
     "mutingpermissionset": "mutingpermissionset",
     "myDomainDiscoverableLogin": "mydomaindiscoverablelogin",
     "namedCredential": "namedcredential",
@@ -3010,12 +3010,12 @@
       "suffix": "mlDomain"
     },
     "mlmodelartifact": {
-      "directoryName": "mlmodels",
+      "directoryName": "mlModels",
       "id": "mlmodelartifact",
       "inFolder": false,
       "name": "MlModelArtifact",
       "strictDirectoryName": false,
-      "suffix": "mlmodel"
+      "suffix": "mlModel"
     },
     "mlmodelconnection": {
       "directoryName": "modelConnections",

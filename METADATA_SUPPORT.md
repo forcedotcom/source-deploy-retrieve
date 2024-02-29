@@ -659,6 +659,9 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - MatchingRule
 - MktDataTranField
 - MLDataDefinition
+- MlModelArtifact
+- MlModelConnection
+- MlModelSchema
 - MLPredictionDefinition
 - MLRecommendationDefinition
 - MobileSecurityPolicySet

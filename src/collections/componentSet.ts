@@ -711,7 +711,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       try {
         version = `${await getCurrentApiVersion()}.0`;
       } catch (e) {
-        version = '58.0';
+        version = '60.0';
         this.logger.warn(messages.getMessage('missingApiVersion'));
       }
     }

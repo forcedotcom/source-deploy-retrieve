@@ -742,7 +742,7 @@ describe('ComponentSet', () => {
     });
 
     it('should get an API version from sfdx-project.json', async () => {
-      const sourceApiVersion = '58.0';
+      const sourceApiVersion = '60.0';
       const set = ComponentSet.fromSource({
         fsPaths: ['.'],
         registry: registryAccess,
@@ -814,7 +814,7 @@ describe('ComponentSet', () => {
               members: ['b', 'c'],
             },
           ],
-          version: '58.0',
+          version: '60.0',
         },
       });
       expect(getCurrentApiVersionStub.called).to.be.true;

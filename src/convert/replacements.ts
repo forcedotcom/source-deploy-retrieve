@@ -222,6 +222,7 @@ const getEnvValue = (env: string, allowUnset = false): string =>
  * Read the `replacement` property from sfdx-project.json
  */
 const readReplacementsFromProject = async (projectDir?: string): Promise<ReplacementConfig[]> => {
+  if (!projectDir) return []; // ? Allows tool to be used outside of a project without error.
   const proj = await SfProject.resolve(projectDir);
   const projJson = (await proj.resolveProjectConfig()) as { replacements?: ReplacementConfig[] };
   return projJson.replacements ?? [];

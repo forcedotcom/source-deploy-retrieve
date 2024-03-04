@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { basename, dirname, extname, sep } from 'node:path';
+import { basename, dirname, extname, sep, join } from 'node:path';
 import { Optional } from '@salesforce/ts-types';
 import { SourcePath } from '../common/types';
 import { META_XML_SUFFIX } from '../common/constants';
@@ -119,3 +119,9 @@ export function parseNestedFullName(fsPath: string, directoryName: string): stri
   pathPrefix[pathPrefix.length - 1] = fileName;
   return pathPrefix.join('/');
 }
+
+/** (a)(b)=> a/b */
+export const fnJoin =
+  (a: string) =>
+  (b: string): string =>
+    join(a, b);

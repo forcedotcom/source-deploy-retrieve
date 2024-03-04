@@ -27,13 +27,12 @@ import {
   MetadataApiDeployStatus,
   MetadataTransferResult,
 } from './types';
-import { DiagnosticUtil } from './diagnosticUtil';
+import { parseDeployDiagnostic } from './diagnosticUtil';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export class DeployResult implements MetadataTransferResult {
-  private readonly diagnosticUtil = new DiagnosticUtil('metadata');
   private fileResponses?: FileResponse[];
   private readonly shouldConvertPaths = sep !== posix.sep;
 
@@ -52,11 +51,11 @@ export class DeployResult implements MetadataTransferResult {
 
         this.fileResponses = (this.components.getSourceComponents().toArray() ?? [])
           .flatMap((deployedComponent) =>
-            this.createResponses(deployedComponent, responseMessages.get(this.key(deployedComponent)) ?? []).concat(
+            createResponses(deployedComponent, responseMessages.get(this.key(deployedComponent)) ?? []).concat(
               deployedComponent.type.children
                 ? deployedComponent.getChildren().flatMap((child) => {
                     const childMessages = responseMessages.get(this.key(child));
-                    return childMessages ? this.createResponses(child, childMessages) : [];
+                    return childMessages ? createResponses(child, childMessages) : [];
                   })
                 : []
             )
@@ -89,44 +88,6 @@ export class DeployResult implements MetadataTransferResult {
     }
     // removes duplicates from the file responses by parsing the object into a string, used as the key of the map
     return [...new Map(this.fileResponses.map((v) => [JSON.stringify(v), v])).values()];
-  }
-
-  private createResponses(component: SourceComponent, responseMessages: DeployMessage[]): FileResponse[] {
-    const { fullName, type, xml, content } = component;
-    const responses: FileResponse[] = [];
-
-    for (const message of responseMessages) {
-      const baseResponse: Partial<FileResponse> = {
-        fullName,
-        type: type.name,
-        state: getState(message),
-      };
-
-      if (baseResponse.state === ComponentStatus.Failed) {
-        const diagnostic = this.diagnosticUtil.parseDeployDiagnostic(component, message);
-        const response = Object.assign(baseResponse, diagnostic) as FileResponse;
-        responses.push(response);
-      } else {
-        // components with children are already taken care of through the messages,
-        // so don't walk their content directories.
-        if (
-          content &&
-          (!type.children || Object.values(type.children.types).some((t) => t.unaddressableWithoutParent))
-        ) {
-          for (const filePath of component.walkContent()) {
-            const response = { ...baseResponse, filePath } as FileResponse;
-            responses.push(response);
-          }
-        }
-
-        if (xml) {
-          const response = { ...baseResponse, filePath: xml } as FileResponse;
-          responses.push(response);
-        }
-      }
-    }
-
-    return responses;
   }
 
   /**
@@ -566,3 +527,38 @@ const isComponentNotFoundWarningMessage = (
 
 const hasComponentType = (message: DeployMessage): message is DeployMessage & { componentType: string } =>
   typeof message.componentType === 'string';
+
+const createResponses = (component: SourceComponent, responseMessages: DeployMessage[]): FileResponse[] => {
+  const { fullName, type, xml, content } = component;
+  const responses: FileResponse[] = [];
+
+  for (const message of responseMessages) {
+    const baseResponse: Partial<FileResponse> = {
+      fullName,
+      type: type.name,
+      state: getState(message),
+    };
+
+    if (baseResponse.state === ComponentStatus.Failed) {
+      const diagnostic = parseDeployDiagnostic(component, message);
+      const response = Object.assign(baseResponse, diagnostic) as FileResponse;
+      responses.push(response);
+    } else {
+      // components with children are already taken care of through the messages,
+      // so don't walk their content directories.
+      if (content && (!type.children || Object.values(type.children.types).some((t) => t.unaddressableWithoutParent))) {
+        for (const filePath of component.walkContent()) {
+          const response = { ...baseResponse, filePath } as FileResponse;
+          responses.push(response);
+        }
+      }
+
+      if (xml) {
+        const response = { ...baseResponse, filePath: xml } as FileResponse;
+        responses.push(response);
+      }
+    }
+  }
+
+  return responses;
+};

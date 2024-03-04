@@ -52,9 +52,38 @@ export class ManifestResolver {
   }
 
   public async resolve(manifestPath: string): Promise<ResolveManifestResult> {
-    const components: MetadataComponent[] = [];
+    const contents = (await this.tree.readFile(manifestPath)).toString();
+    const validatedContents = validateFileContents(manifestPath)(contents);
 
-    const file = (await this.tree.readFile(manifestPath)).toString();
+    const parser = new XMLParser({
+      stopNodes: ['version'],
+      // In order to preserve the .0 on the apiVersion skip parsing it
+      numberParseOptions: { leadingZeros: false, hex: false, skipLike: /\.0$/ },
+    });
+
+    const parsedManifest: ParsedPackageManifest = (
+      parser.parse(validatedContents) as { Package: ParsedPackageManifest }
+    ).Package;
+
+    const components = ensureArray(parsedManifest.types)
+      .map(getValidatedType(manifestPath))
+      .flatMap((typeMembers) => {
+        const type = this.registry.getTypeByName(typeMembers.name);
+        const parentType = type.folderType ? this.registry.getTypeByName(type.folderType) : undefined;
+        return ensureArray(typeMembers.members).map((fullName, _index, members) => ({
+          fullName,
+          type: parentType && isMemberNestedInFolder(fullName, type, parentType, members) ? parentType : type,
+        }));
+      });
+
+    return { components, apiVersion: parsedManifest.version };
+  }
+}
+
+/** throw a nice validation error if the contents are invalid.  Otherwise, returns the contents */
+const validateFileContents =
+  (manifestPath: string) =>
+  (file: string): string => {
     const validateResult = XMLValidator.validate(file);
     if (validateResult !== true) {
       const error = new SfError(
@@ -64,42 +93,25 @@ export class ManifestResolver {
       error.setData(validateResult.err);
       throw error;
     }
-    const parser = new XMLParser({
-      stopNodes: ['version'],
-      // In order to preserve the .0 on the apiVersion skip parsing it
-      numberParseOptions: { leadingZeros: false, hex: false, skipLike: /\.0$/ },
-    });
-    const parsedManifest: ParsedPackageManifest = (parser.parse(file) as { Package: ParsedPackageManifest }).Package;
-    const packageTypeMembers = ensureArray(parsedManifest.types);
-    const apiVersion = parsedManifest.version;
+    return file;
+  };
 
-    for (const typeMembers of packageTypeMembers) {
-      let typeName = typeMembers.name;
-      // protect against empty/invalid typeMember definitions in the manifest
-      if (typeof typeName !== 'string' || typeName.length === 0) {
-        if (typeof typeName === 'object') {
-          typeName = JSON.stringify(typeName);
-        }
-        const err = new Error(`Invalid types definition in manifest file: ${manifestPath}\nFound: "${typeName ?? ''}"`);
-        err.name = 'InvalidManifest';
-        throw err;
+/** protect against empty/invalid typeMember definitions in the manifest */
+const getValidatedType =
+  (manifestPath: string) =>
+  (typeMembers: ParsedPackageTypeMembers): ParsedPackageTypeMembers => {
+    let typeName = typeMembers.name;
+    // protect against empty/invalid typeMember definitions in the manifest
+    if (typeof typeName !== 'string' || typeName.length === 0) {
+      if (typeof typeName === 'object') {
+        typeName = JSON.stringify(typeName);
       }
-      const type = this.registry.getTypeByName(typeName);
-      const parentType = type.folderType ? this.registry.getTypeByName(type.folderType) : undefined;
-      const members = ensureArray(typeMembers.members);
-
-      for (const fullName of members) {
-        let mdType = type;
-        if (parentType && isMemberNestedInFolder(fullName, type, parentType, members)) {
-          mdType = parentType;
-        }
-        components.push({ fullName, type: mdType });
-      }
+      const err = new Error(`Invalid types definition in manifest file: ${manifestPath}\nFound: "${typeName ?? ''}"`);
+      err.name = 'InvalidManifest';
+      throw err;
     }
-
-    return { components, apiVersion };
-  }
-}
+    return typeMembers;
+  };
 
 // Use the folderType instead of the type from the manifest when:
 //  1. InFolder types: (report, dashboard, emailTemplate, document)

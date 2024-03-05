@@ -39,7 +39,6 @@ describe('Decomposition', () => {
       })
       .set(children[1].fullName, {
         origin: component,
-        foundMerge: false,
         writeInfo: writeInfos[1],
       });
 

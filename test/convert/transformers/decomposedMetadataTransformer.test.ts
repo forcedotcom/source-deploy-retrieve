@@ -595,7 +595,6 @@ describe('DecomposedMetadataTransformer', () => {
         expect(
           context.decomposition.transactionState.get(`${mergeComponentChild.type.name}#${mergeComponentChild.fullName}`)
         ).to.deep.equal({
-          foundMerge: false,
           origin: component,
           writeInfo: {
             source: new JsToXml({
@@ -637,7 +636,6 @@ describe('DecomposedMetadataTransformer', () => {
         const result = await transformer.toSourceFormat(component, componentToMerge);
         expect(result).to.be.empty;
         expect(context.decomposition.transactionState.get(`${type.name}#${fullName}`)).to.deep.equal({
-          foundMerge: false,
           origin: component,
           writeInfo: {
             source: new JsToXml({

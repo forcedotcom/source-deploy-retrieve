@@ -9,11 +9,12 @@ import { WriteInfo, WriterFormat } from '../types';
 import { ConvertTransactionFinalizer } from './transactionFinalizer';
 
 export type DecompositionStateValue = {
-  foundMerge?: boolean;
+  /** mark it true if the merge has been found.  Absence of a value means "it wasn't found yet'" */
+  foundMerge?: true;
   writeInfo?: WriteInfo;
   origin?: MetadataComponent;
 };
-type DecompositionState = Map<string, DecompositionStateValue>;
+export type DecompositionState = Map<string, DecompositionStateValue>;
 
 /** DecompositionStateValue has all props as optional.  The makes writeInfo and origin required  */
 const hasFullDecompositionInfo = (

@@ -109,16 +109,16 @@ export class ComponentSetBuilder {
       // Resolve metadata entries with source in package directories.
       if (metadata) {
         logger.debug(`Building ComponentSet from metadata: ${metadata.metadataEntries.toString()}`);
-        componentSet ??= new ComponentSet(undefined, registryAccess);
         const directoryPaths = metadata.directoryPaths;
+        const typesWithNames = metadata.metadataEntries.map(entryToTypeAndName(registryAccess));
+        mdMap = buildMapFromComponents(typesWithNames);
 
         // Build a Set of metadata entries
-        const entries = metadata.metadataEntries
-          .map(entryToTypeAndName(registryAccess))
-          .flatMap(typeAndNameToNetadataComponents({ directoryPaths, registry: registryAccess }));
+        const entries = typesWithNames.flatMap(
+          typeAndNameToNetadataComponents({ directoryPaths, registry: registryAccess })
+        );
 
-        mdMap = buildMapFromComponents(entries);
-        entries.map((cmp) => componentSet?.add(cmp));
+        componentSet ??= new ComponentSet(entries, registryAccess);
 
         const componentSetFilter = new ComponentSet(entries, registryAccess);
         logger.debug(`Searching for matching metadata in directories: ${directoryPaths.join(', ')}`);
@@ -263,10 +263,10 @@ const typeAndNameToNetadataComponents =
       : [{ type, fullName: metadataName ?? '*' }];
 
 // TODO: use Map.groupBy when it's available
-const buildMapFromComponents = (components: MetadataComponent[]): MetadataMap => {
+const buildMapFromComponents = (components: MetadataTypeAndMetadataName[]): MetadataMap => {
   const mdMap: MetadataMap = new Map();
   components.map((cmp) => {
-    mdMap.set(cmp.type.name, [...(mdMap.get(cmp.type.name) ?? []), cmp.fullName]);
+    mdMap.set(cmp.type.name, [...(mdMap.get(cmp.type.name) ?? []), cmp.metadataName]);
   });
   return mdMap;
 };

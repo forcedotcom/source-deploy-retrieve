@@ -30,6 +30,15 @@ for (const preset of presets) {
     });
 
     describe('child types', () => {
+      describe('child types cannot also be top-level types', () => {
+        typesWithChildren.forEach((type) => {
+          Object.values(type.children?.types ?? []).forEach((child) => {
+            it(`${child.name} should not be a top-level type`, () => {
+              expect(registry.types[child.id]).to.not.exist;
+            });
+          });
+        });
+      });
       describe('child types are configured properly', () => {
         typesWithChildren.forEach((type) => {
           it(`${type.name} has a valid children configuration`, () => {

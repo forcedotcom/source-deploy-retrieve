@@ -4,8 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { ComponentSet } from '../../collections/componentSet';
-import { SourceComponent } from '../../resolve/sourceComponent';
 import { MetadataComponent } from '../../resolve/types';
 import { WriteInfo, WriterFormat } from '../types';
 import { ConvertTransactionFinalizer } from './transactionFinalizer';
@@ -14,8 +12,6 @@ export type DecompositionStateValue = {
   foundMerge?: boolean;
   writeInfo?: WriteInfo;
   origin?: MetadataComponent;
-  component?: SourceComponent;
-  children?: ComponentSet;
 };
 type DecompositionState = Map<string, DecompositionStateValue>;
 
@@ -35,9 +31,12 @@ export class DecompositionFinalizer extends ConvertTransactionFinalizer<Decompos
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async finalize(): Promise<WriterFormat[]> {
-    return Array.from(this.transactionState.entries())
-      .filter(hasFullDecompositionInfo)
-      .filter(([, value]) => !value.foundMerge)
-      .map(([, value]) => ({ component: value.origin?.parent ?? value.origin, writeInfos: [value.writeInfo] }));
+    return (
+      Array.from(this.transactionState.entries())
+        .filter(hasFullDecompositionInfo)
+        // return `false` and the undefined
+        .filter(([, value]) => !value.foundMerge)
+        .map(([, value]) => ({ component: value.origin?.parent ?? value.origin, writeInfos: [value.writeInfo] }))
+    );
   }
 }

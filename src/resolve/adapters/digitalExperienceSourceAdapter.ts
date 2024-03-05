@@ -144,7 +144,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     }
     const pathParts = path.split(sep);
     const typeFolderIndex = pathParts.lastIndexOf(this.type.directoryName);
-    // 3 because we want 'digitaExperiences' directory, 'baseType' directory and 'bundleName' directory
+    // 3 because we want 'digitalExperiences' directory, 'baseType' directory and 'bundleName' directory
     const basePath = pathParts.slice(0, typeFolderIndex + 3).join(sep);
     const bundleFileName = pathParts[typeFolderIndex + 2];
     const suffix = this.isBundleType() ? this.type.suffix : this.registry.getParentType(this.type.id)?.suffix;

@@ -17,15 +17,6 @@ import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 import { DefaultSourceAdapter } from './defaultSourceAdapter';
 import { DigitalExperienceSourceAdapter } from './digitalExperienceSourceAdapter';
 
-enum AdapterId {
-  Bundle = 'bundle',
-  Decomposed = 'decomposed',
-  Default = 'default',
-  MatchingContentFile = 'matchingContentFile',
-  MixedContent = 'mixedContent',
-  DigitalExperience = 'digitalExperience',
-}
-
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
@@ -39,20 +30,19 @@ export class SourceAdapterFactory {
   }
 
   public getAdapter(type: MetadataType, forceIgnore = new ForceIgnore()): SourceAdapter {
-    const adapterId = type.strategies?.adapter as AdapterId;
+    const adapterId = type.strategies?.adapter;
     switch (adapterId) {
-      case AdapterId.Bundle:
+      case 'bundle':
         return new BundleSourceAdapter(type, this.registry, forceIgnore, this.tree);
-      case AdapterId.Decomposed:
+      case 'decomposed':
         return new DecomposedSourceAdapter(type, this.registry, forceIgnore, this.tree);
-      case AdapterId.MatchingContentFile:
+      case 'matchingContentFile':
         return new MatchingContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
-      case AdapterId.MixedContent:
+      case 'mixedContent':
         return new MixedContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
-      case AdapterId.Default:
-        return new DefaultSourceAdapter(type, this.registry, forceIgnore, this.tree);
-      case AdapterId.DigitalExperience:
+      case 'digitalExperience':
         return new DigitalExperienceSourceAdapter(type, this.registry, forceIgnore, this.tree);
+      case 'default':
       case undefined:
         return new DefaultSourceAdapter(type, this.registry, forceIgnore, this.tree);
       default:

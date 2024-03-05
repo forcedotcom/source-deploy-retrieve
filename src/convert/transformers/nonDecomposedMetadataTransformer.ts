@@ -33,17 +33,17 @@ export class NonDecomposedMetadataTransformer extends DecomposedMetadataTransfor
     // presumes they only have 1 child!
     const [childTypeId] = Object.keys(component.type.children.types);
     const { uniqueIdElement } = component.type.children.types[childTypeId];
+    if (!uniqueIdElement) {
+      throw messages.createError('uniqueIdElementNotInRegistry', [
+        component.type.name,
+        component.fullName,
+        component.xml,
+      ]);
+    }
 
     this.context.nonDecomposition.transactionState.exampleComponent ??= component;
 
     incomingChildrenXml.map((child) => {
-      if (!uniqueIdElement) {
-        throw messages.createError('uniqueIdElementNotInRegistry', [
-          component.type.name,
-          component.fullName,
-          component.xml,
-        ]);
-      }
       const childName = getString(child, uniqueIdElement);
       if (!childName) {
         throw messages.createError('uniqueIdElementNotInChild', [uniqueIdElement, component.fullName, component.xml]);

@@ -4,603 +4,12 @@ This list compares metadata types found in Salesforce v60 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 557/591 supported metadata types.
+Currently, there are 0/0 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
-| Metadata Type                          | Support | Notes                                                            |
-| :------------------------------------- | :------ | :--------------------------------------------------------------- |
-| AIApplication                          | ✅      |                                                                  |
-| AIApplicationConfig                    | ✅      |                                                                  |
-| AIReplyRecommendationsSettings         | ✅      |                                                                  |
-| AIScoringModelDefVersion               | ✅      |                                                                  |
-| AIScoringModelDefinition               | ✅      |                                                                  |
-| AIUsecaseDefinition                    | ⚠️      | Supports deploy/retrieve but not source tracking                 |
-| AccountForecastSettings                | ✅      |                                                                  |
-| AccountIntelligenceSettings            | ✅      |                                                                  |
-| AccountRelationshipShareRule           | ✅      |                                                                  |
-| AccountSettings                        | ✅      |                                                                  |
-| AccountingFieldMapping                 | ✅      |                                                                  |
-| AccountingModelConfig                  | ✅      |                                                                  |
-| AccountingSettings                     | ✅      |                                                                  |
-| AcctMgrTargetSettings                  | ✅      |                                                                  |
-| ActionLauncherItemDef                  | ✅      |                                                                  |
-| ActionLinkGroupTemplate                | ✅      |                                                                  |
-| ActionPlanTemplate                     | ✅      |                                                                  |
-| ActionableEventOrchDef                 | ❌      | Not supported, but support could be added                        |
-| ActionableEventTypeDef                 | ❌      | Not supported, but support could be added                        |
-| ActionableListDefinition               | ✅      |                                                                  |
-| ActionsSettings                        | ✅      |                                                                  |
-| ActivationPlatform                     | ✅      |                                                                  |
-| ActivitiesSettings                     | ✅      |                                                                  |
-| ActnblListKeyPrfmIndDef                | ❌      | Not supported, but support could be added                        |
-| AddressSettings                        | ✅      |                                                                  |
-| AdvAccountForecastSet                  | ✅      |                                                                  |
-| AdvAcctForecastDimSource               | ✅      |                                                                  |
-| AdvAcctForecastPeriodGroup             | ✅      |                                                                  |
-| Ai4mSettings                           | ✅      |                                                                  |
-| AnalyticSnapshot                       | ✅      |                                                                  |
-| AnalyticsSettings                      | ✅      |                                                                  |
-| AnimationRule                          | ✅      |                                                                  |
-| ApexClass                              | ✅      |                                                                  |
-| ApexComponent                          | ✅      |                                                                  |
-| ApexEmailNotifications                 | ✅      |                                                                  |
-| ApexPage                               | ✅      |                                                                  |
-| ApexSettings                           | ✅      |                                                                  |
-| ApexTestSuite                          | ✅      |                                                                  |
-| ApexTrigger                            | ✅      |                                                                  |
-| AppAnalyticsSettings                   | ✅      |                                                                  |
-| AppExperienceSettings                  | ✅      |                                                                  |
-| AppMenu                                | ✅      |                                                                  |
-| ApplicationRecordTypeConfig            | ✅      |                                                                  |
-| ApplicationSubtypeDefinition           | ✅      |                                                                  |
-| AppointmentAssignmentPolicy            | ✅      |                                                                  |
-| AppointmentSchedulingPolicy            | ✅      |                                                                  |
-| ApprovalProcess                        | ✅      |                                                                  |
-| AssessmentConfiguration                | ❌      | Not supported, but support could be added                        |
-| AssessmentQuestion                     | ✅      |                                                                  |
-| AssessmentQuestionSet                  | ✅      |                                                                  |
-| AssignmentRules                        | ✅      |                                                                  |
-| AssistantContextItem                   | ✅      |                                                                  |
-| AssistantDefinition                    | ✅      |                                                                  |
-| AssistantSkillQuickAction              | ✅      |                                                                  |
-| AssistantSkillSobjectAction            | ✅      |                                                                  |
-| AssistantVersion                       | ✅      |                                                                  |
-| AssociationEngineSettings              | ✅      |                                                                  |
-| Audience                               | ✅      |                                                                  |
-| AuraDefinitionBundle                   | ✅      |                                                                  |
-| AuthProvider                           | ✅      |                                                                  |
-| AutoResponseRules                      | ✅      |                                                                  |
-| AutomatedContactsSettings              | ✅      |                                                                  |
-| BatchCalcJobDefinition                 | ✅      |                                                                  |
-| BatchProcessJobDefinition              | ✅      |                                                                  |
-| BenefitAction                          | ✅      |                                                                  |
-| BlacklistedConsumer                    | ✅      |                                                                  |
-| BldgEnrgyIntensityCnfg                 | ✅      |                                                                  |
-| BlockchainSettings                     | ✅      |                                                                  |
-| Bot                                    | ✅      |                                                                  |
-| BotBlock                               | ✅      |                                                                  |
-| BotBlockVersion                        | ❌      | Not supported, but support could be added                        |
-| BotSettings                            | ✅      |                                                                  |
-| BotTemplate                            | ✅      |                                                                  |
-| BotVersion                             | ✅      |                                                                  |
-| BranchManagementSettings               | ✅      |                                                                  |
-| BrandingSet                            | ✅      |                                                                  |
-| BriefcaseDefinition                    | ✅      |                                                                  |
-| BusinessHoursSettings                  | ✅      |                                                                  |
-| BusinessProcess                        | ✅      |                                                                  |
-| BusinessProcessGroup                   | ✅      |                                                                  |
-| BusinessProcessTypeDefinition          | ✅      |                                                                  |
-| CMSConnectSource                       | ✅      |                                                                  |
-| CallCenter                             | ✅      |                                                                  |
-| CallCenterRoutingMap                   | ✅      |                                                                  |
-| CallCoachingMediaProvider              | ⚠️      | Supports deploy/retrieve but not source tracking                 |
-| CampaignInfluenceModel                 | ✅      |                                                                  |
-| CampaignSettings                       | ✅      |                                                                  |
-| CanvasMetadata                         | ✅      |                                                                  |
-| CareBenefitVerifySettings              | ✅      |                                                                  |
-| CareLimitType                          | ✅      |                                                                  |
-| CareProviderAfflRoleConfig             | ✅      |                                                                  |
-| CareProviderSearchConfig               | ✅      |                                                                  |
-| CareRequestConfiguration               | ✅      |                                                                  |
-| CareSystemFieldMapping                 | ✅      |                                                                  |
-| CaseSettings                           | ✅      |                                                                  |
-| CaseSubjectParticle                    | ✅      |                                                                  |
-| Certificate                            | ✅      |                                                                  |
-| ChannelLayout                          | ✅      |                                                                  |
-| ChannelObjectLinkingRule               | ✅      |                                                                  |
-| ChatterAnswersSettings                 | ✅      |                                                                  |
-| ChatterEmailsMDSettings                | ✅      |                                                                  |
-| ChatterExtension                       | ✅      |                                                                  |
-| ChatterSettings                        | ✅      |                                                                  |
-| ClaimFinancialSettings                 | ✅      |                                                                  |
-| ClaimMgmtFoundationEnabledSettings     | ✅      |                                                                  |
-| ClauseCatgConfiguration                | ✅      |                                                                  |
-| CleanDataService                       | ✅      |                                                                  |
-| CodeBuilderSettings                    | ✅      |                                                                  |
-| CollectionsDashboardSettings           | ✅      |                                                                  |
-| CommandAction                          | ✅      |                                                                  |
-| CommerceSettings                       | ✅      |                                                                  |
-| CommsServiceConsoleSettings            | ✅      |                                                                  |
-| CommunitiesSettings                    | ✅      |                                                                  |
-| Community                              | ✅      |                                                                  |
-| CommunityTemplateDefinition            | ✅      |                                                                  |
-| CommunityThemeDefinition               | ✅      |                                                                  |
-| CompactLayout                          | ✅      |                                                                  |
-| CompanySettings                        | ✅      |                                                                  |
-| ConnectedApp                           | ✅      |                                                                  |
-| ConnectedAppSettings                   | ✅      |                                                                  |
-| ContentAsset                           | ✅      |                                                                  |
-| ContentSettings                        | ✅      |                                                                  |
-| ContextDefinition                      | ⚠️      | Supports deploy/retrieve but not source tracking                 |
-| ContractSettings                       | ✅      |                                                                  |
-| ContractType                           | ❌      | Not supported, but support could be added                        |
-| ConversationChannelDefinition          | ✅      |                                                                  |
-| ConversationServiceIntegrationSettings | ✅      |                                                                  |
-| ConversationVendorInfo                 | ✅      |                                                                  |
-| ConversationalIntelligenceSettings     | ✅      |                                                                  |
-| CorsWhitelistOrigin                    | ✅      |                                                                  |
-| CspTrustedSite                         | ✅      |                                                                  |
-| CurrencySettings                       | ✅      |                                                                  |
-| CustomAddressFieldSettings             | ✅      |                                                                  |
-| CustomApplication                      | ✅      |                                                                  |
-| CustomApplicationComponent             | ✅      |                                                                  |
-| CustomFeedFilter                       | ✅      |                                                                  |
-| CustomField                            | ✅      |                                                                  |
-| CustomHelpMenuSection                  | ✅      |                                                                  |
-| CustomIndex                            | ✅      |                                                                  |
-| CustomLabels                           | ✅      |                                                                  |
-| CustomMetadata                         | ✅      |                                                                  |
-| CustomNotificationType                 | ✅      |                                                                  |
-| CustomObject                           | ✅      |                                                                  |
-| CustomObjectTranslation                | ✅      |                                                                  |
-| CustomPageWebLink                      | ✅      |                                                                  |
-| CustomPermission                       | ✅      |                                                                  |
-| CustomSite                             | ✅      |                                                                  |
-| CustomTab                              | ✅      |                                                                  |
-| CustomValue                            | ❌      | Not supported, but support could be added                        |
-| CustomerDataPlatformSettings           | ✅      |                                                                  |
-| CustomizablePropensityScoringSettings  | ✅      |                                                                  |
-| Dashboard                              | ✅      |                                                                  |
-| DashboardFolder                        | ✅      |                                                                  |
-| DataCalcInsightTemplate                | ✅      |                                                                  |
-| DataCategoryGroup                      | ✅      |                                                                  |
-| DataConnectorIngestApi                 | ✅      |                                                                  |
-| DataConnectorS3                        | ✅      |                                                                  |
-| DataDotComSettings                     | ✅      |                                                                  |
-| DataImportManagementSettings           | ✅      |                                                                  |
-| DataKitObjectTemplate                  | ✅      |                                                                  |
-| DataPackageKitDefinition               | ✅      |                                                                  |
-| DataPackageKitObject                   | ✅      |                                                                  |
-| DataSource                             | ✅      |                                                                  |
-| DataSourceBundleDefinition             | ✅      |                                                                  |
-| DataSourceObject                       | ✅      |                                                                  |
-| DataSourceTenant                       | ✅      |                                                                  |
-| DataSrcDataModelFieldMap               | ✅      |                                                                  |
-| DataStreamDefinition                   | ✅      |                                                                  |
-| DataStreamTemplate                     | ✅      |                                                                  |
-| DataWeaveResource                      | ✅      |                                                                  |
-| DecisionMatrixDefinition               | ✅      |                                                                  |
-| DecisionMatrixDefinitionVersion        | ✅      |                                                                  |
-| DecisionTable                          | ✅      |                                                                  |
-| DecisionTableDatasetLink               | ✅      |                                                                  |
-| DelegateGroup                          | ✅      |                                                                  |
-| DeploymentSettings                     | ✅      |                                                                  |
-| DevHubSettings                         | ✅      |                                                                  |
-| DigitalExperience                      | ✅      |                                                                  |
-| DigitalExperienceBundle                | ✅      |                                                                  |
-| DigitalExperienceConfig                | ✅      |                                                                  |
-| DisclosureDefinition                   | ✅      |                                                                  |
-| DisclosureDefinitionVersion            | ✅      |                                                                  |
-| DisclosureType                         | ✅      |                                                                  |
-| DiscoveryAIModel                       | ✅      |                                                                  |
-| DiscoveryGoal                          | ✅      |                                                                  |
-| DiscoverySettings                      | ✅      |                                                                  |
-| DiscoveryStory                         | ✅      |                                                                  |
-| Document                               | ✅      |                                                                  |
-| DocumentCategory                       | ✅      |                                                                  |
-| DocumentCategoryDocumentType           | ✅      |                                                                  |
-| DocumentChecklistSettings              | ✅      |                                                                  |
-| DocumentFolder                         | ✅      |                                                                  |
-| DocumentGenerationSetting              | ✅      |                                                                  |
-| DocumentType                           | ✅      |                                                                  |
-| DuplicateRule                          | ✅      |                                                                  |
-| DynamicFormsSettings                   | ✅      |                                                                  |
-| EACSettings                            | ✅      |                                                                  |
-| ESignatureConfig                       | ✅      |                                                                  |
-| ESignatureEnvelopeConfig               | ✅      |                                                                  |
-| EclairGeoData                          | ✅      |                                                                  |
-| EinsteinAISettings                     | ✅      |                                                                  |
-| EinsteinAgentSettings                  | ✅      |                                                                  |
-| EinsteinAssistantSettings              | ✅      |                                                                  |
-| EinsteinDealInsightsSettings           | ✅      |                                                                  |
-| EinsteinDocumentCaptureSettings        | ✅      |                                                                  |
-| EinsteinGptSettings                    | ✅      |                                                                  |
-| EmailAdministrationSettings            | ✅      |                                                                  |
-| EmailFolder                            | ✅      |                                                                  |
-| EmailIntegrationSettings               | ✅      |                                                                  |
-| EmailServicesFunction                  | ✅      |                                                                  |
-| EmailTemplate                          | ✅      |                                                                  |
-| EmailTemplateFolder                    | ✅      |                                                                  |
-| EmailTemplateSettings                  | ✅      |                                                                  |
-| EmbeddedServiceBranding                | ✅      |                                                                  |
-| EmbeddedServiceConfig                  | ✅      |                                                                  |
-| EmbeddedServiceFlowConfig              | ✅      |                                                                  |
-| EmbeddedServiceLiveAgent               | ✅      |                                                                  |
-| EmbeddedServiceMenuSettings            | ✅      |                                                                  |
-| EmployeeDataSyncProfile                | ❌      | Not supported, but support could be added                        |
-| EmployeeFieldAccessSettings            | ✅      |                                                                  |
-| EmployeeUserSettings                   | ✅      |                                                                  |
-| EnhancedNotesSettings                  | ✅      |                                                                  |
-| EntitlementProcess                     | ✅      |                                                                  |
-| EntitlementSettings                    | ✅      |                                                                  |
-| EntitlementTemplate                    | ✅      |                                                                  |
-| EscalationRules                        | ✅      |                                                                  |
-| EssentialsSettings                     | ✅      |                                                                  |
-| EventLogObjectSettings                 | ✅      |                                                                  |
-| EventSettings                          | ✅      |                                                                  |
-| ExperienceBundle                       | ✅      |                                                                  |
-| ExperienceBundleSettings               | ✅      |                                                                  |
-| ExperiencePropertyTypeBundle           | ✅      |                                                                  |
-| ExplainabilityActionDefinition         | ✅      |                                                                  |
-| ExplainabilityActionVersion            | ✅      |                                                                  |
-| ExplainabilityMsgTemplate              | ✅      |                                                                  |
-| ExpressionSetDefinition                | ✅      |                                                                  |
-| ExpressionSetDefinitionVersion         | ✅      |                                                                  |
-| ExpressionSetMessageToken              | ✅      |                                                                  |
-| ExpressionSetObjectAlias               | ✅      |                                                                  |
-| ExtDataTranFieldTemplate               | ❌      | Not supported, but support could be added                        |
-| ExtDataTranObjectTemplate              | ✅      |                                                                  |
-| ExternalAIModel                        | ✅      |                                                                  |
-| ExternalClientAppSettings              | ✅      |                                                                  |
-| ExternalClientApplication              | ✅      |                                                                  |
-| ExternalCredential                     | ✅      |                                                                  |
-| ExternalDataConnector                  | ✅      |                                                                  |
-| ExternalDataSource                     | ✅      |                                                                  |
-| ExternalDataSrcDescriptor              | ❌      | Not supported, but support could be added                        |
-| ExternalDataTranField                  | ❌      | Not supported, but support could be added                        |
-| ExternalDataTranObject                 | ❌      | Not supported, but support could be added                        |
-| ExternalDocStorageConfig               | ❌      | Not supported, but support could be added                        |
-| ExternalServiceRegistration            | ✅      |                                                                  |
-| ExtlClntAppConfigurablePolicies        | ✅      |                                                                  |
-| ExtlClntAppGlobalOauthSettings         | ✅      |                                                                  |
-| ExtlClntAppMobileConfigurablePolicies  | ✅      |                                                                  |
-| ExtlClntAppMobileSettings              | ✅      |                                                                  |
-| ExtlClntAppNotificationSettings        | ✅      |                                                                  |
-| ExtlClntAppOauthConfigurablePolicies   | ✅      |                                                                  |
-| ExtlClntAppOauthSettings               | ✅      |                                                                  |
-| FeatureParameterBoolean                | ✅      |                                                                  |
-| FeatureParameterDate                   | ✅      |                                                                  |
-| FeatureParameterInteger                | ✅      |                                                                  |
-| FieldRestrictionRule                   | ✅      |                                                                  |
-| FieldServiceMobileExtension            | ✅      |                                                                  |
-| FieldServiceSettings                   | ✅      |                                                                  |
-| FieldSet                               | ✅      |                                                                  |
-| FieldSrcTrgtRelationship               | ✅      |                                                                  |
-| FileUploadAndDownloadSecuritySettings  | ✅      |                                                                  |
-| FilesConnectSettings                   | ✅      |                                                                  |
-| FlexiPage                              | ✅      |                                                                  |
-| Flow                                   | ✅      |                                                                  |
-| FlowCategory                           | ✅      |                                                                  |
-| FlowDefinition                         | ⚠️      | Supports deploy/retrieve but not source tracking                 |
-| FlowSettings                           | ✅      |                                                                  |
-| FlowTest                               | ✅      |                                                                  |
-| ForecastingFilter                      | ✅      |                                                                  |
-| ForecastingFilterCondition             | ✅      |                                                                  |
-| ForecastingObjectListSettings          | ✅      |                                                                  |
-| ForecastingSettings                    | ✅      |                                                                  |
-| ForecastingSourceDefinition            | ✅      |                                                                  |
-| ForecastingType                        | ✅      |                                                                  |
-| ForecastingTypeSource                  | ✅      |                                                                  |
-| FormulaSettings                        | ✅      |                                                                  |
-| FuelType                               | ✅      |                                                                  |
-| FuelTypeSustnUom                       | ✅      |                                                                  |
-| FunctionReference                      | ⚠️      | Supports deploy/retrieve but not source tracking                 |
-| FundraisingConfig                      | ✅      |                                                                  |
-| GatewayProviderPaymentMethodType       | ✅      |                                                                  |
-| GenAiFunction                          | ❌      | Not supported, but support could be added                        |
-| GenAiPlanner                           | ❌      | Not supported, but support could be added                        |
-| GenAiPlugin                            | ❌      | Not supported, but support could be added                        |
-| GlobalValueSet                         | ✅      |                                                                  |
-| GlobalValueSetTranslation              | ✅      |                                                                  |
-| GoogleAppsSettings                     | ✅      |                                                                  |
-| Group                                  | ✅      |                                                                  |
-| HighVelocitySalesSettings              | ✅      |                                                                  |
-| HomePageComponent                      | ✅      |                                                                  |
-| HomePageLayout                         | ✅      |                                                                  |
-| IPAddressRange                         | ✅      |                                                                  |
-| Icon                                   | ✅      |                                                                  |
-| IdeasSettings                          | ✅      |                                                                  |
-| IdentityProviderSettings               | ✅      |                                                                  |
-| IdentityVerificationProcDef            | ✅      |                                                                  |
-| IframeWhiteListUrlSettings             | ✅      |                                                                  |
-| InboundCertificate                     | ✅      |                                                                  |
-| InboundNetworkConnection               | ✅      |                                                                  |
-| IncidentMgmtSettings                   | ✅      |                                                                  |
-| IncludeEstTaxInQuoteCPQSettings        | ✅      |                                                                  |
-| IncludeEstTaxInQuoteSettings           | ✅      |                                                                  |
-| Index                                  | ⚠️      | Supports deploy/retrieve but not source tracking                 |
-| IndustriesAutomotiveSettings           | ✅      |                                                                  |
-| IndustriesContextSettings              | ✅      |                                                                  |
-| IndustriesEinsteinFeatureSettings      | ✅      |                                                                  |
-| IndustriesEventOrchSettings            | ✅      |                                                                  |
-| IndustriesFieldServiceSettings         | ✅      |                                                                  |
-| IndustriesGamificationSettings         | ✅      |                                                                  |
-| IndustriesLoyaltySettings              | ✅      |                                                                  |
-| IndustriesManufacturingSettings        | ✅      |                                                                  |
-| IndustriesPricingSettings              | ✅      |                                                                  |
-| IndustriesSettings                     | ✅      |                                                                  |
-| IndustriesUnifiedPromotionsSettings    | ✅      |                                                                  |
-| InstalledPackage                       | ⚠️      | Supports deploy/retrieve but not source tracking                 |
-| IntegrationProviderDef                 | ✅      |                                                                  |
-| InterestTaggingSettings                | ✅      |                                                                  |
-| InternalDataConnector                  | ✅      |                                                                  |
-| InvLatePymntRiskCalcSettings           | ✅      |                                                                  |
-| InventorySettings                      | ✅      |                                                                  |
-| InvocableActionSettings                | ✅      |                                                                  |
-| IoTSettings                            | ✅      |                                                                  |
-| KeywordList                            | ✅      |                                                                  |
-| KnowledgeGenerationSettings            | ✅      |                                                                  |
-| KnowledgeSettings                      | ✅      |                                                                  |
-| LanguageSettings                       | ✅      |                                                                  |
-| Layout                                 | ✅      |                                                                  |
-| LeadConfigSettings                     | ✅      |                                                                  |
-| LeadConvertSettings                    | ✅      |                                                                  |
-| LearningAchievementConfig              | ❌      | Not supported, but support could be added                        |
-| Letterhead                             | ✅      |                                                                  |
-| LicensingSettings                      | ✅      |                                                                  |
-| LightningBolt                          | ✅      |                                                                  |
-| LightningComponentBundle               | ✅      |                                                                  |
-| LightningExperienceSettings            | ✅      |                                                                  |
-| LightningExperienceTheme               | ✅      |                                                                  |
-| LightningMessageChannel                | ✅      |                                                                  |
-| LightningOnboardingConfig              | ✅      |                                                                  |
-| ListView                               | ✅      |                                                                  |
-| LiveAgentSettings                      | ✅      |                                                                  |
-| LiveChatAgentConfig                    | ✅      |                                                                  |
-| LiveChatButton                         | ✅      |                                                                  |
-| LiveChatDeployment                     | ✅      |                                                                  |
-| LiveChatSensitiveDataRule              | ✅      |                                                                  |
-| LiveMessageSettings                    | ✅      |                                                                  |
-| LocationUse                            | ✅      |                                                                  |
-| LoyaltyProgramSetup                    | ⚠️      | Supports deploy/retrieve but not source tracking                 |
-| MacroSettings                          | ✅      |                                                                  |
-| MailMergeSettings                      | ✅      |                                                                  |
-| ManagedContentType                     | ⚠️      | Supports deploy/retrieve but not source tracking                 |
-| ManagedEventSubscription               | ✅      |                                                                  |
-| ManagedTopics                          | ✅      |                                                                  |
-| MapsAndLocationSettings                | ✅      |                                                                  |
-| MarketSegmentDefinition                | ✅      |                                                                  |
-| MarketingAppExtActivity                | ❌      | Not supported, but support could be added                        |
-| MarketingAppExtension                  | ✅      |                                                                  |
-| MatchingRules                          | ✅      |                                                                  |
-| MediaAdSalesSettings                   | ✅      |                                                                  |
-| MeetingsSettings                       | ✅      |                                                                  |
-| MessagingChannel                       | ⚠️      | Supports deploy/retrieve but not source tracking                 |
-| MfgProgramTemplate                     | ✅      |                                                                  |
-| MfgServiceConsoleSettings              | ✅      |                                                                  |
-| MilestoneType                          | ✅      |                                                                  |
-| MktCalcInsightObjectDef                | ✅      |                                                                  |
-| MktDataTranObject                      | ✅      |                                                                  |
-| MlDomain                               | ✅      |                                                                  |
-| MobSecurityCertPinConfig               | ✅      |                                                                  |
-| MobileApplicationDetail                | ✅      |                                                                  |
-| MobileSecurityAssignment               | ✅      |                                                                  |
-| MobileSecurityPolicy                   | ✅      |                                                                  |
-| MobileSettings                         | ✅      |                                                                  |
-| ModerationRule                         | ✅      |                                                                  |
-| MutingPermissionSet                    | ✅      |                                                                  |
-| MyDomainDiscoverableLogin              | ✅      |                                                                  |
-| MyDomainSettings                       | ✅      |                                                                  |
-| NameSettings                           | ✅      |                                                                  |
-| NamedCredential                        | ✅      |                                                                  |
-| NavigationMenu                         | ✅      |                                                                  |
-| Network                                | ✅      |                                                                  |
-| NetworkBranding                        | ✅      |                                                                  |
-| NotificationTypeConfig                 | ✅      |                                                                  |
-| NotificationsSettings                  | ✅      |                                                                  |
-| OauthCustomScope                       | ✅      |                                                                  |
-| OauthOidcSettings                      | ✅      |                                                                  |
-| OauthTokenExchangeHandler              | ❌      | Not supported, but support could be added                        |
-| ObjectHierarchyRelationship            | ✅      |                                                                  |
-| ObjectLinkingSettings                  | ✅      |                                                                  |
-| ObjectSourceTargetMap                  | ✅      |                                                                  |
-| OcrSampleDocument                      | ✅      |                                                                  |
-| OcrTemplate                            | ✅      |                                                                  |
-| OmniChannelPricingSettings             | ✅      |                                                                  |
-| OmniChannelSettings                    | ✅      |                                                                  |
-| OmniDataTransform                      | ⚠️      | Supports deploy/retrieve but not source tracking                 |
-| OmniExtTrackingDef                     | ❌      | Not supported, but support could be added (but not for tracking) |
-| OmniIntegrationProcedure               | ⚠️      | Supports deploy/retrieve but not source tracking                 |
-| OmniInteractionAccessConfig            | ⚠️      | Supports deploy/retrieve but not source tracking                 |
-| OmniInteractionConfig                  | ⚠️      | Supports deploy/retrieve but not source tracking                 |
-| OmniScript                             | ⚠️      | Supports deploy/retrieve but not source tracking                 |
-| OmniSupervisorConfig                   | ✅      |                                                                  |
-| OmniTrackingGroup                      | ❌      | Not supported, but support could be added (but not for tracking) |
-| OmniUiCard                             | ⚠️      | Supports deploy/retrieve but not source tracking                 |
-| OnlineSalesSettings                    | ✅      |                                                                  |
-| OpportunityScoreSettings               | ✅      |                                                                  |
-| OpportunitySettings                    | ✅      |                                                                  |
-| OrderManagementSettings                | ✅      |                                                                  |
-| OrderSettings                          | ✅      |                                                                  |
-| OrgSettings                            | ✅      |                                                                  |
-| OutboundNetworkConnection              | ✅      |                                                                  |
-| PardotEinsteinSettings                 | ✅      |                                                                  |
-| PardotSettings                         | ✅      |                                                                  |
-| ParticipantRole                        | ✅      |                                                                  |
-| PartyDataModelSettings                 | ✅      |                                                                  |
-| PathAssistant                          | ✅      |                                                                  |
-| PathAssistantSettings                  | ✅      |                                                                  |
-| PaymentGatewayProvider                 | ✅      |                                                                  |
-| PaymentsManagementEnabledSettings      | ✅      |                                                                  |
-| PaymentsSettings                       | ✅      |                                                                  |
-| PermissionSet                          | ✅      |                                                                  |
-| PermissionSetGroup                     | ✅      |                                                                  |
-| PermissionSetLicenseDefinition         | ✅      |                                                                  |
-| PersonAccountOwnerPowerUser            | ✅      |                                                                  |
-| PicklistSettings                       | ✅      |                                                                  |
-| PicklistValue                          | ❌      | Not supported, but support could be added                        |
-| PipelineInspMetricConfig               | ✅      |                                                                  |
-| PlatformCachePartition                 | ✅      |                                                                  |
-| PlatformEventChannel                   | ✅      |                                                                  |
-| PlatformEventChannelMember             | ✅      |                                                                  |
-| PlatformEventSettings                  | ✅      |                                                                  |
-| PlatformEventSubscriberConfig          | ✅      |                                                                  |
-| PlatformSlackSettings                  | ✅      |                                                                  |
-| PortalDelegablePermissionSet           | ❌      | Not supported, but support could be added                        |
-| PortalsSettings                        | ✅      |                                                                  |
-| PostTemplate                           | ✅      |                                                                  |
-| PredictionBuilderSettings              | ✅      |                                                                  |
-| PresenceDeclineReason                  | ✅      |                                                                  |
-| PresenceUserConfig                     | ✅      |                                                                  |
-| PricingActionParameters                | ❌      | Not supported, but support could be added (but not for tracking) |
-| PricingRecipe                          | ✅      |                                                                  |
-| PrivacySettings                        | ✅      |                                                                  |
-| ProcessFlowMigration                   | ✅      |                                                                  |
-| ProductAttrDisplayConfig               | ❌      | Not supported, but support could be added                        |
-| ProductAttributeSet                    | ✅      |                                                                  |
-| ProductConfiguratorSettings            | ✅      |                                                                  |
-| ProductSettings                        | ✅      |                                                                  |
-| ProductSpecificationRecType            | ❌      | Not supported, but support could be added                        |
-| ProductSpecificationType               | ❌      | Not supported, but support could be added                        |
-| Profile                                | ✅      |                                                                  |
-| ProfilePasswordPolicy                  | ✅      |                                                                  |
-| ProfileSessionSetting                  | ✅      |                                                                  |
-| Prompt                                 | ✅      |                                                                  |
-| Queue                                  | ✅      |                                                                  |
-| QueueRoutingConfig                     | ✅      |                                                                  |
-| QuickAction                            | ✅      |                                                                  |
-| QuickTextSettings                      | ✅      |                                                                  |
-| QuoteSettings                          | ✅      |                                                                  |
-| RealTimeEventSettings                  | ✅      |                                                                  |
-| RecAlrtDataSrcExpSetDef                | ❌      | Not supported, but support could be added                        |
-| RecommendationBuilderSettings          | ✅      |                                                                  |
-| RecommendationStrategy                 | ✅      |                                                                  |
-| RecordActionDeployment                 | ✅      |                                                                  |
-| RecordAggregationDefinition            | ✅      |                                                                  |
-| RecordAlertCategory                    | ✅      |                                                                  |
-| RecordAlertDataSource                  | ✅      |                                                                  |
-| RecordAlertTemplate                    | ❌      | Not supported, but support could be added                        |
-| RecordPageSettings                     | ✅      |                                                                  |
-| RecordType                             | ✅      |                                                                  |
-| RedirectWhitelistUrl                   | ✅      |                                                                  |
-| ReferencedDashboard                    | ❌      | Not supported, but support could be added                        |
-| ReferralMarketingSettings              | ✅      |                                                                  |
-| RegisteredExternalService              | ✅      |                                                                  |
-| RelatedRecordAssocCriteria             | ❌      | Not supported, but support could be added                        |
-| RelationshipGraphDefinition            | ✅      |                                                                  |
-| RemoteSiteSetting                      | ✅      |                                                                  |
-| Report                                 | ✅      |                                                                  |
-| ReportFolder                           | ✅      |                                                                  |
-| ReportType                             | ✅      |                                                                  |
-| RestrictionRule                        | ✅      |                                                                  |
-| RetailExecutionSettings                | ✅      |                                                                  |
-| RevenueManagementSettings              | ✅      |                                                                  |
-| Role                                   | ✅      |                                                                  |
-| SalesAgreementSettings                 | ✅      |                                                                  |
-| SalesWorkQueueSettings                 | ✅      |                                                                  |
-| SamlSsoConfig                          | ✅      |                                                                  |
-| SandboxSettings                        | ✅      |                                                                  |
-| SceGlobalModelOptOutSettings           | ✅      |                                                                  |
-| SchedulingObjective                    | ✅      |                                                                  |
-| SchedulingRule                         | ✅      |                                                                  |
-| SchemaSettings                         | ✅      |                                                                  |
-| ScoreCategory                          | ✅      |                                                                  |
-| SearchSettings                         | ✅      |                                                                  |
-| SecuritySettings                       | ✅      |                                                                  |
-| ServiceAISetupDefinition               | ✅      |                                                                  |
-| ServiceAISetupField                    | ✅      |                                                                  |
-| ServiceChannel                         | ✅      |                                                                  |
-| ServiceCloudVoiceSettings              | ✅      |                                                                  |
-| ServicePresenceStatus                  | ✅      |                                                                  |
-| ServiceProcess                         | ✅      |                                                                  |
-| ServiceSetupAssistantSettings          | ✅      |                                                                  |
-| SharingCriteriaRule                    | ✅      |                                                                  |
-| SharingGuestRule                       | ✅      |                                                                  |
-| SharingOwnerRule                       | ✅      |                                                                  |
-| SharingReason                          | ✅      |                                                                  |
-| SharingRules                           | ⚠️      | Supports deploy/retrieve but not source tracking                 |
-| SharingSet                             | ✅      |                                                                  |
-| SharingSettings                        | ✅      |                                                                  |
-| SharingTerritoryRule                   | ✅      |                                                                  |
-| SiteDotCom                             | ✅      |                                                                  |
-| SiteSettings                           | ✅      |                                                                  |
-| Skill                                  | ✅      |                                                                  |
-| SkillType                              | ✅      |                                                                  |
-| SlackApp                               | ✅      |                                                                  |
-| SocialCustomerServiceSettings          | ✅      |                                                                  |
-| SourceTrackingSettings                 | ✅      |                                                                  |
-| StandardValue                          | ❌      | Not supported, but support could be added                        |
-| StandardValueSet                       | ✅      |                                                                  |
-| StandardValueSetTranslation            | ✅      |                                                                  |
-| StaticResource                         | ✅      |                                                                  |
-| StnryAssetEnvSrcCnfg                   | ✅      |                                                                  |
-| StreamingAppDataConnector              | ✅      |                                                                  |
-| SubscriptionManagementSettings         | ✅      |                                                                  |
-| SurveySettings                         | ✅      |                                                                  |
-| SustainabilityUom                      | ✅      |                                                                  |
-| SustnUomConversion                     | ✅      |                                                                  |
-| SvcCatalogCategory                     | ✅      |                                                                  |
-| SvcCatalogFilterCriteria               | ✅      |                                                                  |
-| SvcCatalogFulfillmentFlow              | ✅      |                                                                  |
-| SvcCatalogItemDef                      | ✅      |                                                                  |
-| SynonymDictionary                      | ✅      |                                                                  |
-| SystemNotificationSettings             | ✅      |                                                                  |
-| Territory                              | ✅      |                                                                  |
-| Territory2                             | ✅      |                                                                  |
-| Territory2Model                        | ✅      |                                                                  |
-| Territory2Rule                         | ✅      |                                                                  |
-| Territory2Settings                     | ✅      |                                                                  |
-| Territory2Type                         | ✅      |                                                                  |
-| TimeSheetTemplate                      | ✅      |                                                                  |
-| TimelineObjectDefinition               | ✅      |                                                                  |
-| TopicsForObjects                       | ✅      |                                                                  |
-| TrailheadSettings                      | ✅      |                                                                  |
-| TransactionSecurityPolicy              | ✅      |                                                                  |
-| Translations                           | ✅      |                                                                  |
-| TrialOrgSettings                       | ✅      |                                                                  |
-| UIObjectRelationConfig                 | ✅      |                                                                  |
-| UiPlugin                               | ✅      |                                                                  |
-| UserAccessPolicy                       | ✅      |                                                                  |
-| UserAuthCertificate                    | ✅      |                                                                  |
-| UserCriteria                           | ✅      |                                                                  |
-| UserEngagementSettings                 | ✅      |                                                                  |
-| UserInterfaceSettings                  | ✅      |                                                                  |
-| UserManagementSettings                 | ✅      |                                                                  |
-| UserProfileSearchScope                 | ✅      |                                                                  |
-| UserProvisioningConfig                 | ✅      |                                                                  |
-| ValidationRule                         | ✅      |                                                                  |
-| VehicleAssetEmssnSrcCnfg               | ✅      |                                                                  |
-| ViewDefinition                         | ✅      |                                                                  |
-| VirtualVisitConfig                     | ❌      | Not supported, but support could be added                        |
-| VoiceSettings                          | ✅      |                                                                  |
-| WarrantyLifecycleMgmtSettings          | ✅      |                                                                  |
-| WaveApplication                        | ✅      |                                                                  |
-| WaveComponent                          | ✅      |                                                                  |
-| WaveDashboard                          | ✅      |                                                                  |
-| WaveDataflow                           | ✅      |                                                                  |
-| WaveDataset                            | ✅      |                                                                  |
-| WaveLens                               | ✅      |                                                                  |
-| WaveRecipe                             | ✅      |                                                                  |
-| WaveTemplateBundle                     | ✅      |                                                                  |
-| WaveXmd                                | ✅      |                                                                  |
-| Web3Settings                           | ✅      |                                                                  |
-| WebLink                                | ✅      |                                                                  |
-| WebStoreBundle                         | ✅      |                                                                  |
-| WebStoreTemplate                       | ✅      |                                                                  |
-| WebToXSettings                         | ✅      |                                                                  |
-| WorkDotComSettings                     | ✅      |                                                                  |
-| WorkSkillRouting                       | ✅      |                                                                  |
-| Workflow                               | ✅      |                                                                  |
-| WorkflowAlert                          | ✅      |                                                                  |
-| WorkflowFieldUpdate                    | ✅      |                                                                  |
-| WorkflowFlowAction                     | ❌      | Not supported, but support could be added                        |
-| WorkflowKnowledgePublish               | ✅      |                                                                  |
-| WorkflowOutboundMessage                | ✅      |                                                                  |
-| WorkflowRule                           | ✅      |                                                                  |
-| WorkflowSend                           | ✅      |                                                                  |
-| WorkflowTask                           | ✅      |                                                                  |
-| WorkforceEngagementSettings            | ✅      |                                                                  |
+| Metadata Type | Support | Notes |
+| :------------ | :------ | :---- |
 
 ## Next Release (v61)
 
@@ -616,60 +25,456 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 > 1. types that exist only as a child type of other metadata types
 > 1. settings types that are automatically supported
 
-- MLPredictionDefinition
-- MLDataDefinition
-- CustomLabel
-- Scontrol
-- CustomDataType
-- GlobalPicklist
-- VisualizationPlugin
-- Form
-- FormSection
-- Portal
-- EmbeddedServiceFieldService
-- EventType
-- EventSubscription
-- EventDelivery
+- AccessControlPolicy
+- AccountForecastSettings
+- AccountingFieldMapping
+- AccountingModelConfig
+- AccountRelationshipShareRule
+- AcctMgrTargetSettings
+- ActionableEventOrchDef
+- ActionableEventTypeDef
+- ActionableListDefinition
+- ActionLauncherItemDef
+- ActionLinkGroupTemplate
+- ActionPlanTemplate
+- ActivationPlatform
+- ActnblListKeyPrfmIndDef
+- AdvAccountForecastSet
+- AdvAcctForecastDimSource
+- AdvAcctForecastPeriodGroup
+- AIApplication
+- AIApplicationConfig
+- AIAssistantTemplate
+- AIScoringModelDefinition
+- AIScoringModelDefVersion
+- AIUsecaseDefinition
+- AnalyticSnapshot
+- AnimationRule
+- ApexClass
+- ApexComponent
+- ApexEmailNotifications
+- ApexPage
+- ApexTestSuite
+- ApexTrigger
+- ApplicationRecordTypeConfig
+- ApplicationSubtypeDefinition
+- AppMenu
+- AppointmentAssignmentPolicy
+- AppointmentSchedulingPolicy
+- ApprovalProcess
+- AssessmentQuestion
+- AssessmentQuestionSet
+- AssignmentRules
 - AssignmentRule
+- AssistantContextItem
+- AssistantDefinition
+- AssistantRecommendationType
+- AssistantSkillQuickAction
+- AssistantSkillSobjectAction
+- AssistantVersion
+- Audience
+- AuraDefinitionBundle
+- AuthProvider
+- AutoResponseRules
 - AutoResponseRule
-- EscalationRule
+- BatchCalcJobDefinition
+- BatchProcessJobDefinition
+- BenefitAction
+- BlacklistedConsumer
+- BldgEnrgyIntensityCnfg
+- Bot
+- BotVersion
+- BotBlock
+- BotTemplate
+- BrandingSet
+- BriefcaseDefinition
+- BusinessProcessFeedbackConfiguration
+- BusinessProcessGroup
+- BusinessProcessTypeDefinition
+- CallCenter
+- CallCenterRoutingMap
+- CallCoachingMediaProvider
+- CallCtrAgentFavTrfrDest
+- CampaignInfluenceModel
+- CanvasMetadata
+- CareBenefitVerifySettings
+- CareLimitType
+- CareProviderAfflRoleConfig
+- CareProviderSearchConfig
+- CareRequestConfiguration
+- CareSystemFieldMapping
+- CaseSubjectParticle
+- Certificate
+- ChannelLayout
+- ChannelObjectLinkingRule
+- ChatterExtension
+- ClauseCatgConfiguration
+- CleanDataService
+- CMSConnectSource
+- CommandAction
+- Community
+- CommunityTemplateDefinition
+- CommunityThemeDefinition
+- ConnectedApp
+- ContentAsset
+- ContextDefinition
+- ConversationChannelDefinition
+- ConversationVendorFieldDef
+- ConversationVendorInfo
+- CorsWhitelistOrigin
+- CspTrustedSite
+- CustomApplication
+- CustomApplicationComponent
+- CustomDataType
+- CustomExperience
+- CustomFeedFilter
+- CustomHelpMenuSection
+- CustomIndex
+- CustomLabels
+- CustomLabel
+- CustomMetadata
+- CustomNotificationType
+- CustomObject
+- BusinessProcess
+- CompactLayout
+- CustomField
+- FieldSet
+- Index
+- ListView
+- RecordType
+- SharingReason
+- ValidationRule
+- WebLink
+- CustomObjectTranslation
 - CustomFieldTranslation
-- MatchingRule
-- MarketingResourceType
+- CustomPageWebLink
+- CustomPermission
+- CustomSite
+- CustomTab
+- Dashboard
+- DashboardFolder
+- DataCalcInsightTemplate
+- DataCategoryGroup
+- DataConnectorIngestApi
+- DataConnectorS3
+- DataKitObjectTemplate
+- DataPackageKitDefinition
+- DataPackageKitObject
+- DataPipeline
+- DataSource
+- DataSourceBundleDefinition
+- DataSourceObject
+- DataSourceTenant
+- DataSrcDataModelFieldMap
+- DataStreamDefinition
+- DataStreamTemplate
+- DataWeaveResource
+- DecisionMatrixDefinition
+- DecisionMatrixDefinitionVersion
+- DecisionTable
+- DecisionTableDatasetLink
+- DelegateGroup
+- DigitalExperienceBundle
+- DigitalExperience
+- DigitalExperienceConfig
+- DisclosureDefinition
+- DisclosureDefinitionVersion
+- DisclosureType
+- DiscoveryAIModel
+- DiscoveryGoal
+- DiscoveryStory
+- Document
+- DocumentCategory
+- DocumentCategoryDocumentType
+- DocumentFolder
+- DocumentGenerationSetting
+- DocumentType
+- DuplicateRule
+- DynamicTrigger
+- EclairGeoData
+- EmailFolder
+- EmailServicesFunction
+- EmailTemplate
+- EmailTemplateFolder
+- EmbeddedServiceBranding
+- EmbeddedServiceConfig
+- EmbeddedServiceFieldService
+- EmbeddedServiceFlowConfig
+- EmbeddedServiceLiveAgent
+- EmbeddedServiceMenuSettings
+- EnablementMeasureDefinition
+- EnablementProgramDefinition
+- EntitlementProcess
+- EntitlementTemplate
+- EntityImplements
+- EscalationRules
+- EscalationRule
+- ESignatureConfig
+- ESignatureEnvelopeConfig
+- EventDelivery
+- EventRelayConfig
+- EventSubscription
+- EventType
+- ExperienceBundle
+- ExperiencePropertyTypeBundle
+- ExplainabilityActionDefinition
+- ExplainabilityActionVersion
+- ExplainabilityMsgTemplate
+- ExpressionSetDefinition
+- ExpressionSetDefinitionVersion
+- ExpressionSetMessageToken
+- ExpressionSetObjectAlias
+- ExtDataTranObjectTemplate
+- extDataTranFieldTemplate
+- ExternalAIModel
+- ExternalClientApplication
+- ExternalCredential
+- ExternalDataConnector
+- ExternalDataSource
+- ExternalServiceRegistration
+- ExtlClntAppConfigurablePolicies
+- ExtlClntAppGlobalOauthSettings
+- ExtlClntAppMobileConfigurablePolicies
+- ExtlClntAppMobileSettings
+- ExtlClntAppNotificationSettings
+- ExtlClntAppOauthConfigurablePolicies
+- ExtlClntAppOauthSettings
 - ExtlClntAppSampleConfigurablePolicies
 - ExtlClntAppSampleSettings
-- CustomExperience
-- ManagedTopic
-- DataPipeline
-- LicenseDefinition
-- AccessControlPolicy
-- XOrgHub
-- AssistantRecommendationType
-- InsightType
-- IntegrationHubSettingsType
-- IntegrationHubSettings
-- OrchestrationContext
-- Orchestration
-- AIAssistantTemplate
-- Settings
-- EntityImplements
-- WorkSkillRoutingAttribute
-- BusinessProcessFeedbackConfiguration
-- DynamicTrigger
-- MktDataTranField
-- ConversationVendorFieldDef
-- MLRecommendationDefinition
-- InternalOrganization
-- SvcCatalogFilterCondition
-- SvcCatalogItemDefFiltrCrit
-- UiViewDefinition
-- MobileSecurityPolicySet
-- CallCtrAgentFavTrfrDest
-- ProductSpecificationTypeDefinition
-- SearchCriteriaConfiguration
-- SearchableObjDataSyncInfo
-- EventRelayConfig
-- extDataTranFieldTemplate
+- FeatureParameterBoolean
+- FeatureParameterDate
+- FeatureParameterInteger
+- FieldRestrictionRule
+- FieldServiceMobileExtension
+- FieldSrcTrgtRelationship
+- FlexiPage
+- Flow
+- FlowCategory
+- FlowDefinition
+- FlowTest
+- ForecastingFilter
+- ForecastingFilterCondition
+- ForecastingSourceDefinition
+- ForecastingType
+- ForecastingTypeSource
+- Form
+- FormSection
+- FuelType
+- FuelTypeSustnUom
+- FunctionReference
+- FundraisingConfig
+- GatewayProviderPaymentMethodType
 - GenAiPromptTemplate
 - GenAiPromptTemplateActv
-- EnablementMeasureDefinition
+- GlobalPicklist
+- GlobalValueSet
+- GlobalValueSetTranslation
+- Group
+- HomePageComponent
+- HomePageLayout
+- Icon
+- IdentityVerificationProcDef
+- IframeWhiteListUrlSettings
+- InboundCertificate
+- InboundNetworkConnection
+- IndustriesManufacturingSettings
+- InsightType
+- InstalledPackage
+- IntegrationHubSettings
+- IntegrationHubSettingsType
+- IntegrationProviderDef
+- InternalDataConnector
+- InternalOrganization
+- IPAddressRange
+- KeywordList
+- Layout
+- LeadConvertSettings
+- Letterhead
+- LicenseDefinition
+- LightningBolt
+- LightningComponentBundle
+- LightningExperienceTheme
+- LightningMessageChannel
+- LightningOnboardingConfig
+- LiveChatAgentConfig
+- LiveChatButton
+- LiveChatDeployment
+- LiveChatSensitiveDataRule
+- LocationUse
+- LoyaltyProgramSetup
+- ManagedContentType
+- ManagedEventSubscription
+- ManagedTopics
+- ManagedTopic
+- MarketingAppExtension
+- MarketingResourceType
+- MarketSegmentDefinition
+- MatchingRules
+- MatchingRule
+- MessagingChannel
+- MfgProgramTemplate
+- MilestoneType
+- MktCalcInsightObjectDef
+- MktDataTranObject
+- MktDataTranField
+- MLDataDefinition
+- MlDomain
+- MlModelArtifact
+- MlModelConnection
+- MlModelSchema
+- MLPredictionDefinition
+- MLRecommendationDefinition
+- MobileApplicationDetail
+- MobileSecurityAssignment
+- MobileSecurityPolicy
+- MobileSecurityPolicySet
+- MobSecurityCertPinConfig
+- ModerationRule
+- MutingPermissionSet
+- MyDomainDiscoverableLogin
+- NamedCredential
+- NavigationMenu
+- Network
+- NetworkBranding
+- NotificationTypeConfig
+- OauthCustomScope
+- OauthTokenExchangeHandler
+- ObjectHierarchyRelationship
+- ObjectSourceTargetMap
+- OcrSampleDocument
+- OcrTemplate
+- OmniDataTransform
+- OmniExtTrackingDef
+- OmniIntegrationProcedure
+- OmniInteractionAccessConfig
+- OmniInteractionConfig
+- OmniScript
+- OmniSupervisorConfig
+- OmniTrackingGroup
+- OmniUiCard
+- Orchestration
+- OrchestrationContext
+- OutboundNetworkConnection
+- ParticipantRole
+- PathAssistant
+- PaymentGatewayProvider
+- PermissionSet
+- PermissionSetGroup
+- PermissionSetLicenseDefinition
+- PersonAccountOwnerPowerUser
+- PipelineInspMetricConfig
+- PlatformCachePartition
+- PlatformEventChannel
+- PlatformEventChannelMember
+- PlatformEventSubscriberConfig
+- Portal
+- PostTemplate
+- PresenceDeclineReason
+- PresenceUserConfig
+- PricingActionParameters
+- PricingRecipe
+- ProcessFlowMigration
+- ProductAttributeSet
+- ProductSpecificationTypeDefinition
+- Profile
+- ProfilePasswordPolicy
+- ProfileSessionSetting
+- Prompt
+- Queue
+- QueueRoutingConfig
+- QuickAction
+- RecommendationStrategy
+- RecordActionDeployment
+- RecordAggregationDefinition
+- RecordAlertCategory
+- RecordAlertDataSource
+- RedirectWhitelistUrl
+- RegisteredExternalService
+- RelationshipGraphDefinition
+- RemoteSiteSetting
+- Report
+- ReportFolder
+- ReportType
+- RestrictionRule
+- Role
+- SalesAgreementSettings
+- SamlSsoConfig
+- SchedulingObjective
+- SchedulingRule
+- Scontrol
+- ScoreCategory
+- SearchableObjDataSyncInfo
+- SearchCriteriaConfiguration
+- ServiceAISetupDefinition
+- ServiceAISetupField
+- ServiceChannel
+- ServicePresenceStatus
+- ServiceProcess
+- Settings
+- SharingRules
+- SharingCriteriaRule
+- SharingGuestRule
+- SharingOwnerRule
+- SharingTerritoryRule
+- SharingSet
+- SiteDotCom
+- Skill
+- SkillType
+- SlackApp
+- StandardValueSet
+- StandardValueSetTranslation
+- StaticResource
+- StnryAssetEnvSrcCnfg
+- StreamingAppDataConnector
+- SustainabilityUom
+- SustnUomConversion
+- SvcCatalogCategory
+- SvcCatalogFilterCondition
+- SvcCatalogFilterCriteria
+- SvcCatalogFulfillmentFlow
+- SvcCatalogItemDef
+- SvcCatalogItemDefFiltrCrit
+- SynonymDictionary
+- Territory
+- Territory2
+- Territory2Model
+- Territory2Rule
+- Territory2Type
+- TimelineObjectDefinition
+- TimeSheetTemplate
+- TopicsForObjects
+- TransactionSecurityPolicy
+- Translations
+- UIObjectRelationConfig
+- UiPlugin
+- UiViewDefinition
+- UserAccessPolicy
+- UserAuthCertificate
+- UserCriteria
+- UserProfileSearchScope
+- UserProvisioningConfig
+- VehicleAssetEmssnSrcCnfg
+- ViewDefinition
+- VisualizationPlugin
+- WaveApplication
+- WaveComponent
+- WaveDashboard
+- WaveDataflow
+- WaveDataset
+- WaveLens
+- WaveRecipe
+- WaveTemplateBundle
+- WaveXmd
+- WebStoreBundle
+- WebStoreTemplate
+- Workflow
+- WorkflowAlert
+- WorkflowFieldUpdate
+- WorkflowKnowledgePublish
+- WorkflowOutboundMessage
+- WorkflowRule
+- WorkflowSend
+- WorkflowTask
+- WorkSkillRouting
+- WorkSkillRoutingAttribute
+- XOrgHub

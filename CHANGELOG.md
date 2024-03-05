@@ -1,3 +1,27 @@
+## [10.5.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.5.0...10.5.1) (2024-03-03)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 6.5.5 to 6.7.0 ([#1250](https://github.com/forcedotcom/source-deploy-retrieve/issues/1250)) ([f36ce41](https://github.com/forcedotcom/source-deploy-retrieve/commit/f36ce416eeda7d5b3587d1e2ca3a54b21f22690b))
+
+# [10.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.4.2...10.5.0) (2024-02-26)
+
+### Features
+
+- add EnablementProgramDefiniton ([#1243](https://github.com/forcedotcom/source-deploy-retrieve/issues/1243)) ([1bf5c33](https://github.com/forcedotcom/source-deploy-retrieve/commit/1bf5c33a69866dea0a5ee424ad69d1f542b1b4be))
+
+## [10.4.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.4.1...10.4.2) (2024-02-25)
+
+### Bug Fixes
+
+- **deps:** bump fast-xml-parser from 4.3.4 to 4.3.5 ([#1244](https://github.com/forcedotcom/source-deploy-retrieve/issues/1244)) ([2484b4f](https://github.com/forcedotcom/source-deploy-retrieve/commit/2484b4f8f49ce273ecd9215f9000083a04325605))
+
+## [10.4.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.4.0...10.4.1) (2024-02-25)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 6.5.3 to 6.5.5 ([#1245](https://github.com/forcedotcom/source-deploy-retrieve/issues/1245)) ([3f44568](https://github.com/forcedotcom/source-deploy-retrieve/commit/3f44568e85df74b84a665a534bac8c40bd8bcda0))
+
 # [10.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.3.10...10.4.0) (2024-02-21)
 
 ### Features

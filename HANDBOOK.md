@@ -709,6 +709,8 @@ Oftentimes we need to work with a unique collection of components. A `ComponentS
 
 Component sets key components using their fullName and type id, i.e. only one pair will ever be present in the set. This implies that anything that conforms to the `MetadataComponent` interface can be added to a set. `SourceComponent`s in fact have particular logic on how they are stored. While only one fullName and type pair can be present in a set, multiple source-backed components can map to the same pair under-the-hood. This is how splitting a CustomObject across multiple package directories is achieved - by treating each version of the component as a separate source-backed component that points to the same fullName and type pair in a set. When component merging happens, the conversion logic is able to combine the source components belonging to the same pair.
 
+The easiest way to build `ComponentSets` is by using the `ComponentSetBuilder` class's static `build()` function. See <https://github.com/forcedotcom/source-deploy-retrieve/tree/main/src/collections/componentSetBuilder.ts> for details. Simply pass a configuration object to `build()` and it takes care of the rest, including handling destructive changes!
+
 Let’s look at some examples of adding components and testing membership:
 
 ```typescript
@@ -850,6 +852,8 @@ const testClassPaths = ComponentSet
 The order in which we’ve examined the concepts up to this point has been intentional. They are the building blocks leading up to the core use case of the library: deploying and retrieving. For a deploy, we must resolve source-backed components, then convert them into metadata format, write their files to a zip file, and finally send it to the org using the Metadata API. For a retrieve, we must resolve a mix of source-backed and non-source-backed components to make the Metadata API request, and once it finishes we resolve the components in the zip, convert them to source format, and finally copy them to a destination.
 
 Metadata API deploys and retrieves are asynchronous operations. Once a request has been made, the status of the operation needs to be polled to determine whether or not the request has finished processing. This lifecycle is encapsulated with the `MetadataApiDeploy` and `MetadataApiRetrieve` classes — one instance is meant to map to one operation. They expose useful methods to process the lifecycle and make other requests, which will be illustrated later. These both extend `MetadataTransfer` in order to share common functionality such as polling.
+
+The most common and simplest way to deploy and retrieve metadata is by using a [Component Set](#component-sets). The easiest way to build `ComponentSets` is by using the `ComponentSetBuilder` class's static `build()` function. See <https://github.com/forcedotcom/source-deploy-retrieve/tree/main/src/collections/componentSetBuilder.ts> for details.
 
 ### Establishing an org connection
 

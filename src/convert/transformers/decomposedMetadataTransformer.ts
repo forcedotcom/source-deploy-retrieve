@@ -87,18 +87,18 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   }
 }
 
-/** 
-  composedMetadata is a representation of the parent's xml
- 
-  if there is no CustomObjectTranslation in the org, the composedMetadata will be 2 entries
-  the xml declaration, and a fields attribute, which points to the child CustomObjectFieldTranslation
- 
-  because CustomObjectFieldTranslation is the only metadata type with 'requiresParent' = true we can
-  calculate if a CustomObjectTranslation was retrieved from the org (composedMetadata.length > 2), or,
-  if we'll have to write an empty CustomObjectTranslation file (composedMetadata.length <=2).
- 
-  CustomObjectFieldTranslations are only addressable through their parent, and require a
-  CustomObjectTranslation file to be present
+/**
+ * composedMetadata is a representation of the parent's xml
+ *
+ * if there is no CustomObjectTranslation in the org, the composedMetadata will be 2 entries
+ * the xml declaration, and a fields attribute, which points to the child CustomObjectFieldTranslation
+ *
+ * because CustomObjectFieldTranslation is the only metadata type with 'requiresParent' = true we can
+ * calculate if a CustomObjectTranslation was retrieved from the org (composedMetadata.length > 2), or,
+ * if we'll have to write an empty CustomObjectTranslation file (composedMetadata.length <=2).
+ *
+ * CustomObjectFieldTranslations are only addressable through their parent, and require a
+ * CustomObjectTranslation file to be present
  */
 const handleUnaddressableChildAlone =
   (composedMetadataLength: number) =>

@@ -45,7 +45,7 @@ export class MatchingContentSourceAdapter extends BaseSourceAdapter {
       if (this.tree.exists(fsPath)) {
         sourcePath = fsPath;
       }
-    } else if (this.extensionMatchesType(trigger)) {
+    } else if (this.registry.getTypeBySuffix(extName(trigger)) === this.type) {
       sourcePath = trigger;
     }
 
@@ -60,10 +60,6 @@ export class MatchingContentSourceAdapter extends BaseSourceAdapter {
 
     component.content = sourcePath;
     return component;
-  }
-
-  private extensionMatchesType(fsPath: SourcePath): boolean {
-    return this.registry.getTypeBySuffix(extName(fsPath)) === this.type;
   }
 }
 

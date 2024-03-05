@@ -17,6 +17,8 @@ import { FileProperties, StdValueSetRecord, ListMetadataQuery } from '../client/
 import { extName } from '../utils/path';
 import { MetadataComponent } from './types';
 
+type RelevantFileProperties = Pick<FileProperties, 'fullName' | 'fileName' | 'type'>;
+
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
@@ -51,7 +53,7 @@ export class ConnectionResolver {
     componentFilter = (component: Partial<FileProperties>): boolean => isPlainObject(component)
   ): Promise<ResolveConnectionResult> {
     const Aggregator: Array<Partial<FileProperties>> = [];
-    const childrenPromises: Array<Promise<FileProperties[]>> = [];
+    const childrenPromises: Array<Promise<RelevantFileProperties[]>> = [];
     const componentTypes: Set<MetadataType> = new Set();
     const lifecycle = Lifecycle.getInstance();
 
@@ -125,8 +127,8 @@ export class ConnectionResolver {
     };
   }
 
-  private async listMembers(query: ListMetadataQuery): Promise<FileProperties[]> {
-    let members: FileProperties[];
+  private async listMembers(query: ListMetadataQuery): Promise<RelevantFileProperties[]> {
+    let members: RelevantFileProperties[] = [];
 
     const pollingOptions: PollingClient.Options = {
       frequency: Duration.milliseconds(1000),
@@ -189,13 +191,6 @@ export class ConnectionResolver {
               fullName: standardValueSetRecord.MasterLabel,
               fileName: `${defaultRegistry.types.standardvalueset.directoryName}/${standardValueSetRecord.MasterLabel}.${defaultRegistry.types.standardvalueset.suffix}`,
               type: defaultRegistry.types.standardvalueset.name,
-              createdById: '',
-              createdByName: '',
-              createdDate: '',
-              id: '',
-              lastModifiedById: '',
-              lastModifiedByName: '',
-              lastModifiedDate: '',
             }
           );
         } catch (err) {

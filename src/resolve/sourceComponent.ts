@@ -4,15 +4,14 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, join, dirname } from 'node:path';
+import { join, dirname } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
 import { getXmlElement } from '../utils/decomposed';
-import { baseName, baseWithoutSuffixes, parseMetadataXml, trimUntil } from '../utils/path';
+import { baseName, baseWithoutSuffixes, parseMetadataXml, calculateRelativePath } from '../utils/path';
 import { replacementIterations } from '../convert/replacements';
-import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common/constants';
 import { SfdxFileFormat } from '../convert/types';
 import { MetadataType } from '../registry/types';
 import { DestructiveChangesType } from '../collections/types';
@@ -235,9 +234,7 @@ export class SourceComponent implements MetadataComponent {
   }
 
   public getPackageRelativePath(fsPath: string, format: SfdxFileFormat): string {
-    return format === 'source'
-      ? join(DEFAULT_PACKAGE_ROOT_SFDX, this.calculateRelativePath(fsPath))
-      : this.calculateRelativePath(fsPath);
+    return calculateRelativePath(format)({ self: this.type, parentType: this.parentType })(this.fullName)(fsPath);
   }
 
   /**
@@ -263,34 +260,6 @@ export class SourceComponent implements MetadataComponent {
         ? (this.destructiveChangesType = DestructiveChangesType.PRE)
         : (this.destructiveChangesType = DestructiveChangesType.POST);
     }
-  }
-
-  private calculateRelativePath(fsPath: string): string {
-    const { directoryName, suffix, inFolder, folderType, folderContentType } = this.type;
-
-    // if there isn't a suffix, assume this is a mixed content component that must
-    // reside in the directoryName of its type. trimUntil maintains the folder structure
-    // the file resides in for the new destination. This also applies to inFolder types:
-    // (report, dashboard, emailTemplate, document) and their folder container types:
-    // (reportFolder, dashboardFolder, emailFolder, documentFolder)
-    // It also applies to DigitalExperienceBundle types as we need to maintain the folder structure
-    if (
-      !suffix ||
-      Boolean(inFolder) ||
-      typeof folderContentType === 'string' ||
-      ['digitalexperiencebundle', 'digitalexperience'].includes(this.type.id)
-    ) {
-      return trimUntil(fsPath, directoryName, true);
-    }
-
-    if (folderType) {
-      // types like Territory2Model have child types inside them.  We have to preserve those folder structures
-      if (this.parentType?.folderType && this.parentType?.folderType !== this.type.id) {
-        return trimUntil(fsPath, this.parentType.directoryName);
-      }
-      return join(directoryName, this.fullName.split('/')[0], basename(fsPath));
-    }
-    return join(directoryName, basename(fsPath));
   }
 
   private parse<T extends JsonMap>(contents: string): T {

@@ -8,6 +8,7 @@ import { dirname, join } from 'node:path';
 import { AnyJson, JsonMap, ensureString, isJsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
 import { Messages } from '@salesforce/core';
+import { calculateRelativePath } from '../../utils/path';
 import { ForceIgnore } from '../../resolve/forceIgnore';
 import { extractUniqueElementValue } from '../../utils/decomposed';
 import type { MetadataComponent } from '../../resolve/types';
@@ -207,12 +208,11 @@ const getDefaultOutput = (component: MetadataComponent): SourcePath => {
   const [baseName, ...tail] = fullName.split('.');
   // there could be a '.' inside the child name (ex: PermissionSet.FieldPermissions.field uses Obj__c.Field__c)
   const childName = tail.length ? tail.join('.') : undefined;
-  const baseComponent = (parent ?? component) as SourceComponent;
   const output = join(
     parent?.type.strategies?.decomposition === DecompositionStrategy.FolderPerType ? type.directoryName : '',
     `${childName ?? baseName}.${component.type.suffix}${META_XML_SUFFIX}`
   );
-  return join(baseComponent.getPackageRelativePath(baseName, 'source'), output);
+  return join(calculateRelativePath('source')({ self: parent?.type ?? type })(fullName)(baseName), output);
 };
 
 /** use the given xmlElementName name if it exists, otherwise use see if one matches the directories */

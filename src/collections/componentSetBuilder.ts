@@ -64,13 +64,6 @@ export class ComponentSetBuilder {
     const logger = Logger.childFromRoot('componentSetBuilder');
     let componentSet: ComponentSet | undefined;
 
-    /**
-     * A map used when building a ComponentSet from metadata type/name pairs
-     * key = a metadata type, e.g. `ApexClass`
-     * value = an array of metadata names, e.g. `['foo_*', 'BarClass']`
-     */
-    let mdMap: MetadataMap = new Map();
-
     const { sourcepath, manifest, metadata, packagenames, apiversion, sourceapiversion, org, projectDir } = options;
     const registryAccess = new RegistryAccess(undefined, projectDir);
 
@@ -110,15 +103,13 @@ export class ComponentSetBuilder {
       if (metadata) {
         logger.debug(`Building ComponentSet from metadata: ${metadata.metadataEntries.toString()}`);
         const directoryPaths = metadata.directoryPaths;
-        const typesWithNames = metadata.metadataEntries.map(entryToTypeAndName(registryAccess));
-        mdMap = buildMapFromComponents(typesWithNames);
+        componentSet ??= new ComponentSet(undefined, registryAccess);
 
         // Build a Set of metadata entries
-        const entries = typesWithNames.flatMap(
-          typeAndNameToNetadataComponents({ directoryPaths, registry: registryAccess })
-        );
-
-        componentSet ??= new ComponentSet(entries, registryAccess);
+        const entries = metadata.metadataEntries
+          .map(entryToTypeAndName(registryAccess))
+          .flatMap(typeAndNameToNetadataComponents({ directoryPaths, registry: registryAccess }))
+          .map(addToComponentSet(componentSet));
 
         const componentSetFilter = new ComponentSet(entries, registryAccess);
         logger.debug(`Searching for matching metadata in directories: ${directoryPaths.join(', ')}`);
@@ -128,7 +119,7 @@ export class ComponentSetBuilder {
           registry: registryAccess,
         });
         componentSet.forceIgnoredPaths = resolvedComponents.forceIgnoredPaths;
-        resolvedComponents.toArray().map((cmp) => componentSet?.add(cmp));
+        resolvedComponents.toArray().map(addToComponentSet(componentSet));
       }
 
       // Resolve metadata entries with an org connection
@@ -141,6 +132,10 @@ export class ComponentSetBuilder {
           }`
         );
 
+        const mdMap: MetadataMap = metadata
+          ? buildMapFromComponents(metadata.metadataEntries.map(entryToTypeAndName(registryAccess)))
+          : (new Map() as MetadataMap);
+
         const fromConnection = await ComponentSet.fromConnection({
           usernameOrConnection: (await StateAggregator.getInstance()).aliases.getUsername(org.username) ?? org.username,
           componentFilter: getOrgComponentFilter(org, mdMap, metadata),
@@ -148,17 +143,10 @@ export class ComponentSetBuilder {
           registry: registryAccess,
         });
 
-        fromConnection.toArray().map((cmp) => componentSet?.add(cmp));
+        fromConnection.toArray().map(addToComponentSet(componentSet));
       }
     } catch (e) {
-      if ((e as Error).message.includes('Missing metadata type definition in registry for id')) {
-        // to remain generic to catch missing metadata types regardless of parameters, split on '
-        // example message : Missing metadata type definition in registry for id 'NonExistentType'
-        const issueType = (e as Error).message.split("'")[1];
-        throw new SfError(`The specified metadata type is unsupported: [${issueType}]`);
-      } else {
-        throw e;
-      }
+      return fromConnectionErrorHandler(e);
     }
 
     // there should have been a componentSet created by this point.
@@ -171,6 +159,23 @@ export class ComponentSetBuilder {
   }
 }
 
+const addToComponentSet =
+  (cs: ComponentSet) =>
+  (cmp: MetadataComponent): MetadataComponent => {
+    cs.add(cmp);
+    return cmp;
+  };
+
+const fromConnectionErrorHandler = (e: unknown): never => {
+  if (e instanceof Error && e.message.includes('Missing metadata type definition in registry for id')) {
+    // to remain generic to catch missing metadata types regardless of parameters, split on '
+    // example message : Missing metadata type definition in registry for id 'NonExistentType'
+    const issueType = e.message.split("'")[1];
+    throw new SfError(`The specified metadata type is unsupported: [${issueType}]`);
+  } else {
+    throw e;
+  }
+};
 const validateAndResolvePath = (filepath: string): string => path.resolve(assertFileExists(filepath));
 
 const assertFileExists = (filepath: string): string => {

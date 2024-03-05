@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { dirname, join } from 'node:path';
-import { AnyJson, JsonMap, isJsonMap } from '@salesforce/ts-types';
+import { AnyJson, JsonMap, ensureString, isJsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
 import { Messages } from '@salesforce/core';
 import { extractUniqueElementValue } from '../../utils/decomposed';
@@ -63,35 +63,36 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
 
     const writeInfos: WriteInfo[] = [];
     const childrenOfMergeComponent = new ComponentSet(mergeWith?.getChildren(), this.registry);
-    const { type, fullName: parentFullName } = component;
+
+    const composedMetadata = (await getComposedMetadataEntries(component)).map(([tagKey, tagValue]) => ({
+      tagKey,
+      tagValue,
+      type: component.type,
+      childTypeId: tagToChildTypeId({ tagKey, type: component.type }),
+    }));
+
+    const nonChildren = Object.fromEntries(
+      composedMetadata
+        .filter(({ childTypeId: childType }) => childType === undefined)
+        .map(({ tagKey, tagValue: value }) => [tagKey, value])
+    );
 
     const parentXmlObject: XmlObj = {
-      [type.name]: { [XML_NS_KEY]: XML_NS_URL },
+      [component.type.name]: { [XML_NS_KEY]: XML_NS_URL, ...nonChildren },
     };
 
-    const composedMetadata = await getComposedMetadataEntries(component);
-    for (const [tagKey, tagValue] of composedMetadata) {
-      const childTypeId = tagToChildTypeId({ tagKey, type });
-      if (childTypeId) {
-        const childType = type.children?.types[childTypeId];
-        if (!childType) {
-          throw messages.createError('error_missing_child_type_definition', [type.name, childTypeId]);
-        }
-        const tagValues = ensureArray(tagValue).filter(isJsonMap);
+    composedMetadata
+      .filter(hasChildTypeId)
+      .map((i) => ({ ...i, childType: component.type.children?.types[i.childTypeId] }))
+      .map(hasValidType)
+      .map(({ tagValue, childType }) => {
         // iterate each array member if it's Object-like (ex: customField of a CustomObject)
-        for (const value of tagValues) {
-          const entryName = extractUniqueElementValue(value, childType.uniqueIdElement);
-          const childComponent: MetadataComponent = {
-            fullName: `${parentFullName}.${entryName}`,
-            type: childType,
-            parent: component,
-          };
+        ensureArray(tagValue)
+          .filter(isJsonMap)
+          .map(tagValueResults(component)(childType))
           // only process child types that aren't forceignored
-          if (forceIgnore.accepts(getDefaultOutput(childComponent))) {
-            const source = new JsToXml({
-              [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
-            });
-
+          .filter((v) => forceIgnore.accepts(getDefaultOutput(v.childComponent)))
+          .map(({ entryName, childComponent, value }) => {
             /*
              composedMetadata is a representation of the parent's xml
              if there is no CustomObjectTranslation in the org, the composedMetadata will be 2 entries
@@ -115,7 +116,9 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
             // if there's nothing to merge with, push write operation now to default location
             if (!mergeWith) {
               writeInfos.push({
-                source,
+                source: new JsToXml({
+                  [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
+                }),
                 output: getDefaultOutput(childComponent),
               });
             }
@@ -127,7 +130,9 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
                 throw messages.createError('error_parsing_xml', [childComponent.fullName, childComponent.type.name]);
               }
               writeInfos.push({
-                source,
+                source: new JsToXml({
+                  [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
+                }),
                 output: mergeChild.xml,
               });
               this.setDecomposedState(childComponent, { foundMerge: true });
@@ -138,7 +143,12 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
               // get output path from parent
               const childFileName = `${entryName}.${childComponent.type.suffix}${META_XML_SUFFIX}`;
               const output = join(dirname(mergeWith.xml as string), childFileName);
-              writeInfos.push({ source, output });
+              writeInfos.push({
+                source: new JsToXml({
+                  [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
+                }),
+                output,
+              });
             }
             // if no child component is found to merge with yet, mark it as so in
             // the state
@@ -146,17 +156,15 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
               this.setDecomposedState(childComponent, {
                 foundMerge: false,
                 writeInfo: {
-                  source,
+                  source: new JsToXml({
+                    [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
+                  }),
                   output: getDefaultOutput(childComponent),
                 },
               });
             }
-          }
-        }
-      } else if (tagKey !== XML_NS_KEY) {
-        parentXmlObject[type.name][tagKey] = tagValue;
-      }
-    }
+          });
+      });
 
     if (!this.getDecomposedState(component) && parentXmlObject) {
       if (!mergeWith) {
@@ -170,7 +178,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
           output: outputFile,
         });
         this.setDecomposedState(component, { foundMerge: true });
-      } else if (objectHasSomeRealValues(type)(parentXmlObject)) {
+      } else if (objectHasSomeRealValues(component.type)(parentXmlObject)) {
         this.setDecomposedState(component, {
           foundMerge: false,
           writeInfo: {
@@ -239,3 +247,32 @@ const objectHasSomeRealValues =
   (type: MetadataType) =>
   (obj: XmlObj): boolean =>
     Object.keys(obj[type.name]).length > 1;
+
+const hasChildTypeId = (cm: ComposedMetadata): cm is ComposedMetadata & { childTypeId: string } => !!cm.childTypeId;
+
+const hasValidType = (cm: ComposedMetadataWithOptionalChildType): ComposedMetadataWithChildType => {
+  if (cm.childType) {
+    return cm as ComposedMetadataWithChildType;
+  }
+  throw messages.createError('error_missing_child_type_definition', [cm.type.name, cm.childTypeId]);
+};
+
+type ComposedMetadata = { tagKey: string; tagValue: AnyJson; type: MetadataType; childTypeId?: string };
+type ComposedMetadataWithOptionalChildType = ComposedMetadata & { childType?: MetadataType };
+type ComposedMetadataWithChildType = ComposedMetadata & { childType: MetadataType };
+
+const tagValueResults =
+  (parent: SourceComponent) =>
+  (childType: MetadataType) =>
+  (tagValue: JsonMap): { entryName?: string; childComponent: MetadataComponent; value: JsonMap } => {
+    const entryName = ensureString(extractUniqueElementValue(tagValue, childType.uniqueIdElement));
+    return {
+      entryName,
+      childComponent: {
+        fullName: `${parent.fullName}.${entryName}`,
+        type: childType,
+        parent,
+      },
+      value: tagValue,
+    };
+  };

@@ -20,6 +20,8 @@ import { ComponentSet } from '../../collections/componentSet';
 import { DecompositionStateValue } from '../convertContext/decompositionFinalizer';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
+type XmlObj = { [index: string]: { [XML_NS_KEY]: typeof XML_NS_URL } & JsonMap };
+
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
@@ -63,9 +65,10 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
     const childrenOfMergeComponent = new ComponentSet(mergeWith?.getChildren(), this.registry);
     const { type, fullName: parentFullName } = component;
 
-    const parentXmlObject: { [index: string]: { [XML_NS_KEY]: typeof XML_NS_URL } & JsonMap } = {
+    const parentXmlObject: XmlObj = {
       [type.name]: { [XML_NS_KEY]: XML_NS_URL },
     };
+
     const composedMetadata = await getComposedMetadataEntries(component);
     for (const [tagKey, tagValue] of composedMetadata) {
       const childTypeId = tagToChildTypeId({ tagKey, type });
@@ -155,25 +158,23 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       }
     }
 
-    const parentState = this.getDecomposedState(component);
-    if (!parentState && parentXmlObject) {
-      const parentSource = new JsToXml(parentXmlObject);
+    if (!this.getDecomposedState(component) && parentXmlObject) {
       if (!mergeWith) {
         writeInfos.push({
-          source: parentSource,
+          source: new JsToXml(parentXmlObject),
           output: outputFile,
         });
       } else if (mergeWith.xml) {
         writeInfos.push({
-          source: parentSource,
+          source: new JsToXml(parentXmlObject),
           output: outputFile,
         });
         this.setDecomposedState(component, { foundMerge: true });
-      } else {
+      } else if (objectHasSomeRealValues(type)(parentXmlObject)) {
         this.setDecomposedState(component, {
           foundMerge: false,
           writeInfo: {
-            source: parentSource,
+            source: new JsToXml(parentXmlObject),
             output: outputFile,
           },
         });
@@ -232,3 +233,9 @@ const getDefaultOutput = (component: MetadataComponent): SourcePath => {
 const tagToChildTypeId = ({ tagKey, type }: { tagKey: string; type: MetadataType }): string | undefined =>
   Object.values(type.children?.types ?? {}).find((c) => c.xmlElementName === tagKey)?.id ??
   type.children?.directories?.[tagKey];
+
+/** if there's only an empty parent, we don't want to write it.  Ex: CustomObject: { '@_xmlns': 'http://soap.sforce.com/2006/04/metadata' } has no real values */
+const objectHasSomeRealValues =
+  (type: MetadataType) =>
+  (obj: XmlObj): boolean =>
+    Object.keys(obj[type.name]).length > 1;

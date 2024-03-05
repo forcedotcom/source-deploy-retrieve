@@ -304,7 +304,7 @@ for (const preset of presets) {
       });
       describe('nondecomposed have exactly 1 child', () => {
         typesWithStrategies
-          .filter((t) => t.strategies?.adapter === 'nonDecomposed')
+          .filter((t) => t.strategies?.transformer === 'nonDecomposed')
           .forEach((type) => {
             it(`${type.id} has one child`, () => {
               expect(type.children?.types).to.exist;

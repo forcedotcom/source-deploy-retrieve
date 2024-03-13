@@ -1284,7 +1284,7 @@
       "inFolder": false,
       "name": "ConversationChannelDefinition",
       "strictDirectoryName": false,
-      "suffix": "conversationChannelDefinition"
+      "suffix": "ConversationChannelDefinition"
     },
     "conversationmessagedefinition": {
       "directoryName": "conversationMessageDefinitions",

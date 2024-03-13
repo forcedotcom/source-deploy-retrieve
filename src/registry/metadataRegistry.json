@@ -72,6 +72,7 @@
     "ChannelObjectLinkingRule": "channelobjectlinkingrule",
     "ChatterExtension": "chatterextension",
     "ConversationChannelDefinition": "conversationchanneldefinition",
+    "ConversationMessageDefinition": "conversationmessagedefinition",
     "ConversationVendorFieldDefinition": "conversationvendorfielddef",
     "ConversationVendorInformation": "conversationvendorinfo",
     "DataPackageKitObject": "datapackagekitobject",
@@ -1283,7 +1284,15 @@
       "inFolder": false,
       "name": "ConversationChannelDefinition",
       "strictDirectoryName": false,
-      "suffix": "ConversationChannelDefinition"
+      "suffix": "conversationChannelDefinition"
+    },
+    "conversationmessagedefinition": {
+      "directoryName": "conversationMessageDefinitions",
+      "id": "conversationmessagedefinition",
+      "inFolder": false,
+      "name": "ConversationMessageDefinition",
+      "strictDirectoryName": false,
+      "suffix": "conversationMessageDefinition"
     },
     "conversationvendorfielddef": {
       "directoryName": "ConversationVendorFieldDefinitions",

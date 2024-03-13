@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1710349816407,
+  "lastUpdate": 1710364784856,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -32087,6 +32087,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 13841,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aaron.csetter@ncino.com",
+            "name": "Aaron Csetter",
+            "username": "aaron-csetter"
+          },
+          "committer": {
+            "email": "aaron.csetter@ncino.com",
+            "name": "Aaron Csetter",
+            "username": "aaron-csetter"
+          },
+          "distinct": true,
+          "id": "9f9112b9c6ff2fcb3b4d6c510f22cf6626f61d61",
+          "message": "fix: reading replacements from project ignores invalid workspace error",
+          "timestamp": "2024-03-13T15:58:19-04:00",
+          "tree_id": "552618a0b134ca9b12c6eb098510766f3ce54ba2",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/9f9112b9c6ff2fcb3b4d6c510f22cf6626f61d61"
+        },
+        "date": 1710364771574,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 406,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 3535,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 2673,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 5941,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 894,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 7619,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 4612,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 7368,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1507,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 13654,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 8737,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 13288,
             "unit": "ms"
           }
         ]

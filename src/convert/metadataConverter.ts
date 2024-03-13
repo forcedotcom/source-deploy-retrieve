@@ -67,9 +67,15 @@ export class MetadataConverter {
       await Promise.all([conversionPipeline, ...tasks]);
 
       const result: ConvertResult = { packagePath };
-      if (output.type === 'zip' && !packagePath) {
-        result.zipBuffer = (writer as ZipWriter).buffer;
-      } else if (output.type !== 'zip') {
+
+      if (output.type === 'zip') {
+        const buffer = (writer as ZipWriter).buffer;
+        if (!packagePath) {
+          result.zipBuffer = buffer;
+        } else if (buffer) {
+          await promises.writeFile(packagePath, buffer);
+        }
+      } else {
         result.converted = (writer as StandardWriter).converted;
       }
       return result;

@@ -7,7 +7,7 @@
 import { readFile } from 'node:fs/promises';
 import { Transform, Readable } from 'node:stream';
 import { sep, posix } from 'node:path';
-import { Lifecycle, Messages, SfProject } from '@salesforce/core';
+import { Lifecycle, Messages, SfError, SfProject } from '@salesforce/core';
 import * as minimatch from 'minimatch';
 import { Env } from '@salesforce/kit';
 import { ensureString, isString } from '@salesforce/ts-types';
@@ -222,9 +222,18 @@ const getEnvValue = (env: string, allowUnset = false): string =>
  * Read the `replacement` property from sfdx-project.json
  */
 const readReplacementsFromProject = async (projectDir?: string): Promise<ReplacementConfig[]> => {
-  const proj = await SfProject.resolve(projectDir);
-  const projJson = (await proj.resolveProjectConfig()) as { replacements?: ReplacementConfig[] };
-  return projJson.replacements ?? [];
+  try {
+    const proj = await SfProject.resolve(projectDir);
+    const projJson = (await proj.resolveProjectConfig()) as { replacements?: ReplacementConfig[] };
+
+    return projJson.replacements ?? [];
+  } catch (e) {
+    if (e instanceof SfError && e.name === 'InvalidProjectWorkspaceError') {
+      return [];
+    }
+
+    throw e;
+  }
 };
 
 /** escape any special characters used in the string so it can be used as a regex */

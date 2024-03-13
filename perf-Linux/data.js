@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1710349288505,
+  "lastUpdate": 1710364366776,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -37013,6 +37013,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 6508,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aaron.csetter@ncino.com",
+            "name": "Aaron Csetter",
+            "username": "aaron-csetter"
+          },
+          "committer": {
+            "email": "aaron.csetter@ncino.com",
+            "name": "Aaron Csetter",
+            "username": "aaron-csetter"
+          },
+          "distinct": true,
+          "id": "9f9112b9c6ff2fcb3b4d6c510f22cf6626f61d61",
+          "message": "fix: reading replacements from project ignores invalid workspace error",
+          "timestamp": "2024-03-13T15:58:19-04:00",
+          "tree_id": "552618a0b134ca9b12c6eb098510766f3ce54ba2",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/9f9112b9c6ff2fcb3b4d6c510f22cf6626f61d61"
+        },
+        "date": 1710364362569,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 274,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 2065,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 1784,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 2868,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 392,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 3720,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 3155,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 3528,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 615,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 6542,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 5791,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 6425,
             "unit": "ms"
           }
         ]

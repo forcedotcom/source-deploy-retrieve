@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1710053902370,
+  "lastUpdate": 1710349816407,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -32003,6 +32003,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 14060,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aaron.csetter@ncino.com",
+            "name": "Aaron Csetter",
+            "username": "aaron-csetter"
+          },
+          "committer": {
+            "email": "aaron.csetter@ncino.com",
+            "name": "Aaron Csetter",
+            "username": "aaron-csetter"
+          },
+          "distinct": true,
+          "id": "b2931c890d1ef4fe861b6cdad3cc92a9f6c4dd8f",
+          "message": "fix: update write file call and unit-tests for metadataConverter",
+          "timestamp": "2024-03-13T11:48:13-04:00",
+          "tree_id": "05d1f7849e50a69ffde28edaddeffaf3a5957fc8",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/b2931c890d1ef4fe861b6cdad3cc92a9f6c4dd8f"
+        },
+        "date": 1710349791524,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 413,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 3543,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 2646,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 5955,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 899,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 7553,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 4878,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 7514,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1551,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 14028,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 8695,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 13841,
             "unit": "ms"
           }
         ]

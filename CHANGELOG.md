@@ -1,3 +1,12 @@
+## [10.5.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.5.1...10.5.2) (2024-03-13)
+
+
+### Bug Fixes
+
+* metadataConverter writes zip to dir and works outside of project ([#1252](https://github.com/forcedotcom/source-deploy-retrieve/issues/1252)) ([d947fc6](https://github.com/forcedotcom/source-deploy-retrieve/commit/d947fc6c1e500f3688b8f0cf3a49e56da660afa0))
+
+
+
 ## [10.5.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.5.0...10.5.1) (2024-03-03)
 
 

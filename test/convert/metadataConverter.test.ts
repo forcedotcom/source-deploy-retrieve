@@ -290,6 +290,8 @@ describe('MetadataConverter', () => {
 
     it('should convert to specified output dir', async () => {
       const zipPath = outputDirectory + '.zip';
+      const testBuffer = Buffer.from('🥔');
+      $$.SANDBOX.stub(streams.ZipWriter.prototype, 'buffer').value(testBuffer);
       await converter.convert(components, 'metadata', {
         type: 'zip',
         outputDirectory,
@@ -297,7 +299,20 @@ describe('MetadataConverter', () => {
       });
 
       expect(ensureDirectoryStub.calledBefore(pipelineStub)).to.be.true;
-      expect(ensureDirectoryStub.firstCall.args[0]).to.equal(dirname(zipPath));
+      expect(writeFileStub.firstCall.args[0]).to.equal(zipPath);
+      expect(writeFileStub.firstCall.args[1]).to.deep.equal(testBuffer);
+    });
+
+    it('should not return zipBuffer result when outputDirectory is specified', async () => {
+      const testBuffer = Buffer.from('🥔');
+      $$.SANDBOX.stub(streams.ZipWriter.prototype, 'buffer').value(testBuffer);
+      const result = await converter.convert(components, 'metadata', {
+        type: 'zip',
+        outputDirectory,
+        genUniqueDir: false,
+      });
+
+      expect(result.zipBuffer).to.be.undefined;
     });
 
     it('should return zipBuffer result for in-memory configuration', async () => {

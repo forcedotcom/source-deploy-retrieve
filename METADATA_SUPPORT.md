@@ -119,6 +119,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - ContentAsset
 - ContextDefinition
 - ConversationChannelDefinition
+- ConversationMessageDefinition
 - ConversationVendorFieldDef
 - ConversationVendorInfo
 - CorsWhitelistOrigin

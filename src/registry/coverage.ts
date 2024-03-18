@@ -15,7 +15,7 @@ import { CoverageObject } from '../../src/registry/types';
 
 const getProxiedOptions = (url: string): OptionsOfTextResponseBody => ({
   timeout: {
-    request: 10000,
+    request: 10_000,
   },
   agent: {
     https: new ProxyAgent(),

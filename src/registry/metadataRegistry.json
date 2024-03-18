@@ -175,6 +175,7 @@
     "config": "notificationtypeconfig",
     "connectedApp": "connectedapp",
     "contextDefinition": "contextdefinition",
+    "conversationMessageDefinition": "conversationmessagedefinition",
     "corsWhitelistOrigin": "corswhitelistorigin",
     "crt": "certificate",
     "cspTrustedSite": "csptrustedsite",
@@ -1284,6 +1285,14 @@
       "name": "ConversationChannelDefinition",
       "strictDirectoryName": false,
       "suffix": "ConversationChannelDefinition"
+    },
+    "conversationmessagedefinition": {
+      "directoryName": "conversationMessageDefinitions",
+      "id": "conversationmessagedefinition",
+      "inFolder": false,
+      "name": "ConversationMessageDefinition",
+      "strictDirectoryName": false,
+      "suffix": "conversationMessageDefinition"
     },
     "conversationvendorfielddef": {
       "directoryName": "ConversationVendorFieldDefinitions",

@@ -8,9 +8,14 @@
 import * as path from 'node:path';
 import * as fs from 'graceful-fs';
 import * as sinon from 'sinon';
-import { assert, expect } from 'chai';
+import { assert, expect, config } from 'chai';
 import { SfError } from '@salesforce/core';
-import { ComponentSet, ComponentSetBuilder, FromSourceOptions } from '../../src';
+import { RegistryAccess } from '../../src/registry/registryAccess';
+import { ComponentSetBuilder, entryToTypeAndName } from '../../src/collections/componentSetBuilder';
+import { ComponentSet } from '../../src/collections/componentSet';
+import { FromSourceOptions } from '../../src/collections/types';
+
+config.truncateThreshold = 0;
 
 describe('ComponentSetBuilder', () => {
   const sandbox = sinon.createSandbox();
@@ -471,6 +476,28 @@ describe('ComponentSetBuilder', () => {
       expect(compSet.size).to.equal(2);
       expect(compSet.has(apexClassComponent)).to.equal(true);
       expect(compSet.has(apexClassComponent2)).to.equal(true);
+    });
+  });
+});
+
+describe('entryToTypeAndName', () => {
+  const reg = new RegistryAccess();
+  it('basic type', () => {
+    expect(entryToTypeAndName(reg)('ApexClass:MyClass')).to.deep.equal({
+      type: reg.getTypeByName('ApexClass'),
+      metadataName: 'MyClass',
+    });
+  });
+  it('handles wildcard', () => {
+    expect(entryToTypeAndName(reg)('ApexClass:*')).to.deep.equal({
+      type: reg.getTypeByName('ApexClass'),
+      metadataName: '*',
+    });
+  });
+  it('creates wildcard when no name is passed', () => {
+    expect(entryToTypeAndName(reg)('ApexClass')).to.deep.equal({
+      type: reg.getTypeByName('ApexClass'),
+      metadataName: '*',
     });
   });
 });

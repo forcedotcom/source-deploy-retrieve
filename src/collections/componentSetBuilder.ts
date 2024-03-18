@@ -238,11 +238,12 @@ const getOrgComponentFilter = (
 type MetadataTypeAndMetadataName = { type: MetadataType; metadataName: string };
 
 // The registry will throw if it doesn't know what this type is.
-const entryToTypeAndName =
+export const entryToTypeAndName =
   (reg: RegistryAccess) =>
   (rawEntry: string): MetadataTypeAndMetadataName => {
-    const [typeName, name] = rawEntry.split(':').map((entry) => entry.trim());
-    return { type: reg.getTypeByName(typeName), metadataName: name };
+    // split on the first colon, and then join the rest back together to support names that include colons
+    const [typeName, ...name] = rawEntry.split(':').map((entry) => entry.trim());
+    return { type: reg.getTypeByName(typeName), metadataName: name.length ? name.join(':') : '*' };
   };
 
 const typeAndNameToNetadataComponents =
@@ -265,7 +266,7 @@ const typeAndNameToNetadataComponents =
           .toArray()
           // using minimatch versus RegExp provides better (more expected) matching results
           .filter((cs) => minimatch(cs.fullName, metadataName))
-      : [{ type, fullName: metadataName ?? '*' }];
+      : [{ type, fullName: metadataName }];
 
 // TODO: use Map.groupBy when it's available
 const buildMapFromComponents = (components: MetadataTypeAndMetadataName[]): MetadataMap => {

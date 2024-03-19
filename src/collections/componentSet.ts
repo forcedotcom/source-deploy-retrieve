@@ -26,19 +26,19 @@ import {
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
 import {
   ComponentLike,
+  ConnectionResolver,
   ManifestResolver,
   MetadataComponent,
   MetadataMember,
   MetadataResolver,
-  ConnectionResolver,
   SourceComponent,
 } from '../resolve';
 import { getCurrentApiVersion, MetadataType, RegistryAccess } from '../registry';
 import {
   DestructiveChangesType,
+  FromConnectionOptions,
   FromManifestOptions,
   FromSourceOptions,
-  FromConnectionOptions,
   PackageManifestObject,
   PackageTypeMembers,
 } from './types';
@@ -82,7 +82,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public fullName?: string;
   public forceIgnoredPaths?: Set<string>;
   private logger: Logger;
-  private registry: RegistryAccess;
+  private readonly registry: RegistryAccess;
   private components = new DecodeableMap<string, DecodeableMap<string, SourceComponent>>();
 
   // internal component maps used by this.getObject() when building manifests.
@@ -436,7 +436,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       typeMembers.push({ members: members.sort(), name: typeName });
     }
 
-    const pkg = {
+    return {
       Package: {
         ...{
           types: typeMembers.sort((a, b) => (a.name > b.name ? 1 : -1)),
@@ -445,8 +445,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         ...(this.fullName ? { fullName: this.fullName } : {}),
       },
     };
-
-    return pkg;
   }
 
   /**
@@ -456,13 +454,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * E.g. package.xml or destructiveChanges.xml
    *
    * @param indentation Number of spaces to indent lines by.
-   * @param forDestructiveChanges Whether to build a manifest for destructive changes.
+   * @param destructiveType
    */
   public async getPackageXml(indentation = 4, destructiveType?: DestructiveChangesType): Promise<string> {
     const builder = new XMLBuilder({
       format: true,
       indentBy: ''.padEnd(indentation, ' '),
-
       ignoreAttributes: false,
     });
     const toParse = await this.getObject(destructiveType);
@@ -526,7 +523,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     // specifically the ComponentSet.fromManifest with the `resolveSourcePaths` options which calls
     // ComponentSet.fromSource, and adds everything as an addition
     if (
-      this.manifestComponents.has(key) &&
+      this.manifestComponents.get(key)?.get(key)?.isMarkedForDelete() &&
       (this.destructiveChangesPre.has(key) || this.destructiveChangesPost.has(key))
     ) {
       // if a component is in the manifestComponents, as well as being part of a destructive manifest, keep in the destructive manifest

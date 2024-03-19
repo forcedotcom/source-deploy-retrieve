@@ -1262,6 +1262,8 @@ describe('ComponentSet', () => {
       expect(set.getSourceComponents().first()?.isMarkedForDelete()).to.be.true;
       expect(set.has(component)).to.be.true;
       expect(set.getSourceComponents().toArray().length).to.equal(1);
+      // @ts-ignore - private
+      expect(set.manifestComponents.size).to.equal(1);
     });
   });
 

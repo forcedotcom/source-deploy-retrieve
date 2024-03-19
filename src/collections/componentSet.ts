@@ -241,6 +241,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     if (options.destructivePre) {
       await resolveDestructiveChanges(options.destructivePre, DestructiveChangesType.PRE);
     }
+
     if (options.destructivePost) {
       await resolveDestructiveChanges(options.destructivePost, DestructiveChangesType.POST);
     }
@@ -258,7 +259,10 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       });
       result.forceIgnoredPaths = components.forceIgnoredPaths;
       for (const component of components) {
-        result.add(component);
+        if (manifest.components.map((c) => simpleKey(c)).includes(simpleKey(component))) {
+          // update the existing compnent with more information from parsing source paths
+          result.add(component);
+        }
       }
     }
 
@@ -454,7 +458,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * E.g. package.xml or destructiveChanges.xml
    *
    * @param indentation Number of spaces to indent lines by.
-   * @param destructiveType
+   * @param destructiveType What type of destructive manifest to build.
    */
   public async getPackageXml(indentation = 4, destructiveType?: DestructiveChangesType): Promise<string> {
     const builder = new XMLBuilder({
@@ -507,11 +511,10 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     if (deletionType) {
       component.setMarkedForDelete(deletionType);
       this.logger.debug(`Marking component for delete: ${component.fullName}`);
-      const deletions = this.destructiveComponents[deletionType];
-      if (!deletions.has(key)) {
-        deletions.set(key, new DecodeableMap<string, SourceComponent>());
+      if (!this.destructiveComponents[deletionType].has(key)) {
+        this.destructiveComponents[deletionType].set(key, new DecodeableMap<string, SourceComponent>());
       }
-      deletions.get(key)?.set(sourceKey(component), component);
+      this.destructiveComponents[deletionType].get(key)?.set(sourceKey(component), component);
     } else {
       if (!this.manifestComponents.has(key)) {
         this.manifestComponents.set(key, new DecodeableMap<string, SourceComponent>());
@@ -522,17 +525,18 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     // something could try adding a component meant for deletion improperly, which would be marked as an addition
     // specifically the ComponentSet.fromManifest with the `resolveSourcePaths` options which calls
     // ComponentSet.fromSource, and adds everything as an addition
-    if (
-      this.manifestComponents.get(key)?.get(key)?.isMarkedForDelete() &&
-      (this.destructiveChangesPre.has(key) || this.destructiveChangesPost.has(key))
-    ) {
-      // if a component is in the manifestComponents, as well as being part of a destructive manifest, keep in the destructive manifest
-      component.setMarkedForDelete(deletionType);
-      this.manifestComponents.delete(key);
-      this.logger.debug(
-        `Component: ${key} was found in both destructive and constructive manifests - keeping as a destructive change`
-      );
-    }
+    // if (
+    //   !deletionType &&
+    //   this.manifestComponents.get(key)?.get(key)?.isMarkedForDelete() &&
+    //   (this.destructiveChangesPre.has(key) || this.destructiveChangesPost.has(key))
+    // ) {
+    //   // if a component is in the manifestComponents, as well as being part of a destructive manifest, keep in the destructive manifest
+    //   component.setMarkedForDelete(deletionType);
+    //   this.manifestComponents.delete(key);
+    //   this.logger.debug(
+    //     `Component: ${key} was found in both destructive and constructive manifests - keeping as a destructive change`
+    //   );
+    // }
   }
 
   /**
@@ -718,7 +722,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
 const sourceKey = (component: SourceComponent): string => {
   const { fullName, type, xml, content } = component;
-  return `${type.name}${fullName}${xml ?? ''}${content ?? ''}`;
+  return `${type.name}${fullName}${xml ?? ''}${content ?? ''}${component.isMarkedForDelete()}`;
 };
 
 const simpleKey = (component: ComponentLike): string => {

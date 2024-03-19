@@ -1,3 +1,12 @@
+## [10.5.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.5.2...10.5.3) (2024-03-19)
+
+
+### Bug Fixes
+
+* handle string replacements for individual custom labels ([#1257](https://github.com/forcedotcom/source-deploy-retrieve/issues/1257)) ([70571e8](https://github.com/forcedotcom/source-deploy-retrieve/commit/70571e8d43b6395b86dc31ad0103859536f554f5))
+
+
+
 ## [10.5.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.5.1...10.5.2) (2024-03-13)
 
 

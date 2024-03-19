@@ -229,23 +229,34 @@ export abstract class MetadataTransfer<
           await Lifecycle.getInstance().emitWarning('Metadata API response not parseable');
           return { completed: false };
         }
+        const retryableErrors = [
+          'ENOMEM',
+          'ETIMEDOUT',
+          'ENOTFOUND',
+          'ECONNRESET',
+          'socket hang up',
+          'connection timeout',
+          'INVALID_QUERY_LOCATOR',
+          'ERROR_HTTP_502',
+          'ERROR_HTTP_503',
+          'ERROR_HTTP_420',
+          '<h1>Bad Message 400</h1><pre>reason: Bad Request</pre>',
+          'Unable to complete the creation of the query cursor at this time',
+          'Failed while fetching query cursor data for this QueryLocator',
+          'Client network socket disconnected before secure TLS connection was established',
+          'Unexpected internal servlet state',
+        ];
+        const isRetryable = (retryableNetworkError: string): boolean => {
+          if (e instanceof Error) {
+            return (
+              e.message.includes(retryableNetworkError) ||
+              ('errorCode' in e && typeof e.errorCode === 'string' && e.errorCode.includes(retryableNetworkError))
+            );
+          }
+          return false;
+        };
         // tolerate intermittent network errors upto retry limit
-        if (
-          [
-            'ENOMEM',
-            'ETIMEDOUT',
-            'ENOTFOUND',
-            'ECONNRESET',
-            'socket hang up',
-            'connection timeout',
-            'INVALID_QUERY_LOCATOR',
-            '<h1>Bad Message 400</h1><pre>reason: Bad Request</pre>',
-            'Unable to complete the creation of the query cursor at this time',
-            'Failed while fetching query cursor data for this QueryLocator',
-            'Client network socket disconnected before secure TLS connection was established',
-            'Unexpected internal servlet state',
-          ].some((retryableNetworkError) => (e as Error).message.includes(retryableNetworkError))
-        ) {
+        if (retryableErrors.some(isRetryable)) {
           this.logger.debug('Network error on the request', e);
           await Lifecycle.getInstance().emitWarning('Network error occurred.  Continuing to poll.');
           return { completed: false };

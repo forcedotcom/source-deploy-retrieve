@@ -83,6 +83,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public forceIgnoredPaths?: Set<string>;
   private logger: Logger;
   private readonly registry: RegistryAccess;
+  // all components stored here, regardless of what manifest they belong to
   private components = new DecodeableMap<string, DecodeableMap<string, SourceComponent>>();
 
   // internal component maps used by this.getObject() when building manifests.
@@ -90,6 +91,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     [DestructiveChangesType.PRE]: new DecodeableMap<string, DecodeableMap<string, SourceComponent>>(),
     [DestructiveChangesType.POST]: new DecodeableMap<string, DecodeableMap<string, SourceComponent>>(),
   };
+  // used to store components meant for a "constructive" (not destructive) manifest
   private manifestComponents = new DecodeableMap<string, DecodeableMap<string, SourceComponent>>();
 
   private destructiveChangesType = DestructiveChangesType.POST;
@@ -262,17 +264,14 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       });
       result.forceIgnoredPaths = components.forceIgnoredPaths;
       for (const component of components) {
+        // these components have more information from the file system than the components added above ~244-254
+        // so we need to update the correct components, in the correct "manifest" locations e.g. pre/post/manifest
         if (destructivePostComponents.map((c) => simpleKey(c)).includes(simpleKey(component)))
           addComponent(component, DestructiveChangesType.POST);
-        if (destructivePreComponents.map((c) => simpleKey(c)).includes(simpleKey(component)))
+        else if (destructivePreComponents.map((c) => simpleKey(c)).includes(simpleKey(component)))
           addComponent(component, DestructiveChangesType.PRE);
-
-        if (
-          !destructivePostComponents.map((c) => simpleKey(c)).includes(simpleKey(component)) &&
-          !destructivePreComponents.map((c) => simpleKey(c)).includes(simpleKey(component))
-        ) {
-          addComponent(component);
-        }
+        // if the component is not already in a destructive manifest, assume it's in the constructive manifest
+        else addComponent(component);
       }
     }
 

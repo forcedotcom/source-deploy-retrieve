@@ -222,8 +222,11 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       if (resolveIncludeSet) {
         resolveIncludeSet.add(component, deletionType);
       }
-      const memberIsWildcard = component.fullName === ComponentSet.WILDCARD;
-      if (options.resolveSourcePaths === undefined || !memberIsWildcard || options.forceAddWildcards) {
+      if (
+        options.resolveSourcePaths === undefined ||
+        component.fullName !== ComponentSet.WILDCARD ||
+        options.forceAddWildcards
+      ) {
         result.add(component, deletionType);
       }
     };
@@ -231,19 +234,23 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const resolveDestructiveChanges = async (
       path: string,
       destructiveChangeType: DestructiveChangesType
-    ): Promise<void> => {
+    ): Promise<MetadataComponent[]> => {
       const destructiveManifest = await manifestResolver.resolve(path);
       for (const comp of destructiveManifest.components) {
         addComponent(new SourceComponent({ type: comp.type, name: comp.fullName }), destructiveChangeType);
       }
+      return destructiveManifest.components;
     };
 
+    let destrucePreComponents: MetadataComponent[] = [];
+    let destrucePostComponents: MetadataComponent[] = [];
+
     if (options.destructivePre) {
-      await resolveDestructiveChanges(options.destructivePre, DestructiveChangesType.PRE);
+      destrucePreComponents = await resolveDestructiveChanges(options.destructivePre, DestructiveChangesType.PRE);
     }
 
     if (options.destructivePost) {
-      await resolveDestructiveChanges(options.destructivePost, DestructiveChangesType.POST);
+      destrucePostComponents = await resolveDestructiveChanges(options.destructivePost, DestructiveChangesType.POST);
     }
 
     for (const component of manifest.components) {
@@ -259,8 +266,22 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       });
       result.forceIgnoredPaths = components.forceIgnoredPaths;
       for (const component of components) {
-        if (manifest.components.map((c) => simpleKey(c)).includes(simpleKey(component))) {
-          // update the existing compnent with more information from parsing source paths
+        if (options.destructivePost) {
+          if (destrucePostComponents.map((c) => simpleKey(c)).includes(simpleKey(component))) {
+            addComponent(
+              new SourceComponent({ type: component.type, name: component.fullName }),
+              DestructiveChangesType.POST
+            );
+          }
+        } else if (options.destructivePre) {
+          // for (const comp of destructiveManifest.components) {
+          if (destrucePreComponents.map((c) => simpleKey(c)).includes(simpleKey(component))) {
+            addComponent(
+              new SourceComponent({ type: component.type, name: component.fullName }),
+              DestructiveChangesType.PRE
+            );
+          }
+        } else {
           result.add(component);
         }
       }
@@ -521,22 +542,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       }
       this.manifestComponents.get(key)?.set(sourceKey(component), component);
     }
-
-    // something could try adding a component meant for deletion improperly, which would be marked as an addition
-    // specifically the ComponentSet.fromManifest with the `resolveSourcePaths` options which calls
-    // ComponentSet.fromSource, and adds everything as an addition
-    // if (
-    //   !deletionType &&
-    //   this.manifestComponents.get(key)?.get(key)?.isMarkedForDelete() &&
-    //   (this.destructiveChangesPre.has(key) || this.destructiveChangesPost.has(key))
-    // ) {
-    //   // if a component is in the manifestComponents, as well as being part of a destructive manifest, keep in the destructive manifest
-    //   component.setMarkedForDelete(deletionType);
-    //   this.manifestComponents.delete(key);
-    //   this.logger.debug(
-    //     `Component: ${key} was found in both destructive and constructive manifests - keeping as a destructive change`
-    //   );
-    // }
   }
 
   /**

@@ -511,8 +511,7 @@ describe('ComponentSet', () => {
         expect(result).to.be.true;
       });
 
-      // TODO: just to see ext NUTs run
-      it.skip('should resolve components and not wildcard members when forceAddWildcards = false', async () => {
+      it('should resolve components and not wildcard members when forceAddWildcards = false', async () => {
         const set = await ComponentSet.fromManifest({
           manifestPath: manifestFiles.ONE_WILDCARD.name,
           registry: registryAccess,
@@ -529,8 +528,7 @@ describe('ComponentSet', () => {
         expect(result).to.deep.equal(expected);
       });
 
-      // TODO: just to see ext NUTs run
-      it.skip('should resolve source and wildcard components when forceAddWildcards = true and resolvePaths are specified', async () => {
+      it('should resolve source and wildcard components when forceAddWildcards = true and resolvePaths are specified', async () => {
         const set = await ComponentSet.fromManifest({
           manifestPath: manifestFiles.ONE_WILDCARD.name,
           registry: registryAccess,

@@ -108,7 +108,7 @@ export class ComponentSetBuilder {
         // Build a Set of metadata entries
         const entries = metadata.metadataEntries
           .map(entryToTypeAndName(registryAccess))
-          .flatMap(typeAndNameToNetadataComponents({ directoryPaths, registry: registryAccess }))
+          .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry: registryAccess }))
           .map(addToComponentSet(componentSet));
 
         const componentSetFilter = new ComponentSet(entries, registryAccess);
@@ -176,6 +176,7 @@ const fromConnectionErrorHandler = (e: unknown): never => {
     throw e;
   }
 };
+
 const validateAndResolvePath = (filepath: string): string => path.resolve(assertFileExists(filepath));
 
 const assertFileExists = (filepath: string): string => {
@@ -246,7 +247,7 @@ export const entryToTypeAndName =
     return { type: reg.getTypeByName(typeName), metadataName: name.length ? name.join(':') : '*' };
   };
 
-const typeAndNameToNetadataComponents =
+const typeAndNameToMetadataComponents =
   (context: { directoryPaths: ManifestOption['directoryPaths']; registry: RegistryAccess }) =>
   ({ type, metadataName }: MetadataTypeAndMetadataName): MetadataComponent[] =>
     // this '.*' is a surprisingly valid way to specify a metadata, especially a DEB :sigh:

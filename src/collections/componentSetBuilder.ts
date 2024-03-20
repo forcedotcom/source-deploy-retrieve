@@ -259,7 +259,7 @@ const typeAndNameToNetadataComponents =
       ? // get all components of the type, and then filter by the regex of the fullName
         ComponentSet.fromSource({
           fsPaths: context.directoryPaths,
-          include: new ComponentSet([{ type, fullName: ComponentSet.WILDCARD }]),
+          include: new ComponentSet([{ type, fullName: ComponentSet.WILDCARD }], context.registry),
           registry: context.registry,
         })
           .getSourceComponents()

@@ -192,7 +192,7 @@ export interface Successes {
   time: string;
 }
 
-type BooleanString = 'true' | 'false' | true | false;
+export type BooleanString = 'true' | 'false' | true | false;
 
 export type DeployMessage = {
   changed: BooleanString;

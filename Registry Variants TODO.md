@@ -8,8 +8,6 @@ Probably doesn't affect the CLI since we normally run the converts from inside a
 
 ## Open bugs
 
-1. writes empty object.xml (decomposed parent files) vs. snapshot behavior
-
 ## QA
 
 1. partial delete: deleting a member locally redeploys without that file

@@ -219,7 +219,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     result.fullName = manifest.fullName;
 
     const addComponent = (component: MetadataComponent, deletionType?: DestructiveChangesType): void => {
-      if (resolveIncludeSet) {
+      if (resolveIncludeSet && !deletionType) {
         resolveIncludeSet.add(component, deletionType);
       }
       if (
@@ -234,23 +234,19 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const resolveDestructiveChanges = async (
       path: string,
       destructiveChangeType: DestructiveChangesType
-    ): Promise<MetadataComponent[]> => {
+    ): Promise<void> => {
       const destructiveManifest = await manifestResolver.resolve(path);
       for (const comp of destructiveManifest.components) {
         addComponent(new SourceComponent({ type: comp.type, name: comp.fullName }), destructiveChangeType);
       }
-      return destructiveManifest.components;
     };
 
-    let destrucePreComponents: MetadataComponent[] = [];
-    let destrucePostComponents: MetadataComponent[] = [];
-
     if (options.destructivePre) {
-      destrucePreComponents = await resolveDestructiveChanges(options.destructivePre, DestructiveChangesType.PRE);
+      await resolveDestructiveChanges(options.destructivePre, DestructiveChangesType.PRE);
     }
 
     if (options.destructivePost) {
-      destrucePostComponents = await resolveDestructiveChanges(options.destructivePost, DestructiveChangesType.POST);
+      await resolveDestructiveChanges(options.destructivePost, DestructiveChangesType.POST);
     }
 
     for (const component of manifest.components) {
@@ -266,24 +262,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       });
       result.forceIgnoredPaths = components.forceIgnoredPaths;
       for (const component of components) {
-        if (options.destructivePost) {
-          if (destrucePostComponents.map((c) => simpleKey(c)).includes(simpleKey(component))) {
-            addComponent(
-              new SourceComponent({ type: component.type, name: component.fullName }),
-              DestructiveChangesType.POST
-            );
-          }
-        } else if (options.destructivePre) {
-          // for (const comp of destructiveManifest.components) {
-          if (destrucePreComponents.map((c) => simpleKey(c)).includes(simpleKey(component))) {
-            addComponent(
-              new SourceComponent({ type: component.type, name: component.fullName }),
-              DestructiveChangesType.PRE
-            );
-          }
-        } else {
-          result.add(component);
-        }
+        addComponent(component);
       }
     }
 

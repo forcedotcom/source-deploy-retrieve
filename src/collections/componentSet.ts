@@ -219,14 +219,11 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     result.fullName = manifest.fullName;
 
     const addComponent = (component: MetadataComponent, deletionType?: DestructiveChangesType): void => {
-      if (resolveIncludeSet && !deletionType) {
-        resolveIncludeSet.add(component);
+      if (resolveIncludeSet) {
+        resolveIncludeSet.add(component, deletionType);
       }
-      if (
-        options.resolveSourcePaths === undefined ||
-        component.fullName !== ComponentSet.WILDCARD ||
-        options.forceAddWildcards
-      ) {
+      const memberIsWildcard = component.fullName === ComponentSet.WILDCARD;
+      if (options.resolveSourcePaths === undefined || !memberIsWildcard || options.forceAddWildcards) {
         result.add(component, deletionType);
       }
     };
@@ -234,19 +231,22 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const resolveDestructiveChanges = async (
       path: string,
       destructiveChangeType: DestructiveChangesType
-    ): Promise<void> => {
+    ): Promise<MetadataComponent[]> => {
       const destructiveManifest = await manifestResolver.resolve(path);
       for (const comp of destructiveManifest.components) {
         addComponent(new SourceComponent({ type: comp.type, name: comp.fullName }), destructiveChangeType);
       }
+      return destructiveManifest.components;
     };
 
+    let destructivePreComponents: MetadataComponent[] = [];
+    let destructivePostComponents: MetadataComponent[] = [];
     if (options.destructivePre) {
-      await resolveDestructiveChanges(options.destructivePre, DestructiveChangesType.PRE);
+      destructivePreComponents = await resolveDestructiveChanges(options.destructivePre, DestructiveChangesType.PRE);
     }
 
     if (options.destructivePost) {
-      await resolveDestructiveChanges(options.destructivePost, DestructiveChangesType.POST);
+      destructivePostComponents = await resolveDestructiveChanges(options.destructivePost, DestructiveChangesType.POST);
     }
 
     for (const component of manifest.components) {
@@ -262,7 +262,17 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       });
       result.forceIgnoredPaths = components.forceIgnoredPaths;
       for (const component of components) {
-        addComponent(component);
+        if (destructivePostComponents.map((c) => simpleKey(c)).includes(simpleKey(component)))
+          addComponent(component, DestructiveChangesType.POST);
+        if (destructivePreComponents.map((c) => simpleKey(c)).includes(simpleKey(component)))
+          addComponent(component, DestructiveChangesType.PRE);
+
+        if (
+          !destructivePostComponents.map((c) => simpleKey(c)).includes(simpleKey(component)) &&
+          !destructivePreComponents.map((c) => simpleKey(c)).includes(simpleKey(component))
+        ) {
+          addComponent(component);
+        }
       }
     }
 
@@ -706,7 +716,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
 const sourceKey = (component: SourceComponent): string => {
   const { fullName, type, xml, content } = component;
-  return `${type.name}${fullName}${xml ?? ''}${content ?? ''}}`;
+  return `${type.name}${fullName}${xml ?? ''}${content ?? ''}`;
 };
 
 const simpleKey = (component: ComponentLike): string => {

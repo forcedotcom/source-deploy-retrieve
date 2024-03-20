@@ -1,3 +1,12 @@
+## [10.5.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.5.3...10.5.4) (2024-03-20)
+
+
+### Bug Fixes
+
+* refactor for better typing and readability ([#1262](https://github.com/forcedotcom/source-deploy-retrieve/issues/1262)) ([8d89dbc](https://github.com/forcedotcom/source-deploy-retrieve/commit/8d89dbc9d925f4be5cf6ff71020293eba538450f))
+
+
+
 ## [10.5.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.5.2...10.5.3) (2024-03-19)
 
 

@@ -220,7 +220,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     const addComponent = (component: MetadataComponent, deletionType?: DestructiveChangesType): void => {
       if (resolveIncludeSet && !deletionType) {
-        resolveIncludeSet.add(component, deletionType);
+        resolveIncludeSet.add(component);
       }
       if (
         options.resolveSourcePaths === undefined ||
@@ -706,7 +706,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
 const sourceKey = (component: SourceComponent): string => {
   const { fullName, type, xml, content } = component;
-  return `${type.name}${fullName}${xml ?? ''}${content ?? ''}${component.isMarkedForDelete()}`;
+  return `${type.name}${fullName}${xml ?? ''}${content ?? ''}}`;
 };
 
 const simpleKey = (component: ComponentLike): string => {

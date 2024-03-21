@@ -34,7 +34,6 @@ import {
   FromSourceOptions,
   FromConnectionOptions,
   PackageManifestObject,
-  PackageTypeMembers,
 } from './types';
 import { LazyCollection } from './lazyCollection';
 import { DecodeableMap } from './decodeableMap';
@@ -412,7 +411,6 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       if (type.folderContentType) {
         type = this.registry.getTypeByName(type.folderContentType);
       }
-
       addToTypeMap(
         type,
         // they're reassembled like CustomLabels.MyLabel
@@ -432,18 +430,16 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       }
     }
 
-    const typeMembers: PackageTypeMembers[] = [...typeMap.entries()]
-      .map(([typeName, members]) => ({
-        members: members.sort(),
-        name: typeName,
-      }))
+    const typeMembers = Array.from(typeMap.entries())
+      .map(([typeName, members]) => ({ members: members.sort(), name: typeName }))
       .sort((a, b) => (a.name > b.name ? 1 : -1));
 
     return {
       Package: {
-        types: typeMembers,
-        version,
-
+        ...{
+          types: typeMembers,
+          version,
+        },
         ...(this.fullName ? { fullName: this.fullName } : {}),
       },
     };

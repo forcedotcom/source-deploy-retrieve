@@ -463,14 +463,3 @@ const getPackageOptions = (packageOptions?: PackageOptions): Array<Required<Pack
   (packageOptions ?? []).map((po: string | PackageOption) =>
     isString(po) ? { name: po, outputDir: po } : { name: po.name, outputDir: po.outputDir ?? po.name }
   );
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const logFn = <T>(x: T): T => {
-  // eslint-disable-next-line no-console
-  console.log(x);
-  // eslint-disable-next-line no-console
-  console.log(typeof x === 'string' ? x : JSON.stringify(x));
-  return x;
-};

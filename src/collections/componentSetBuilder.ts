@@ -104,14 +104,15 @@ export class ComponentSetBuilder {
         logger.debug(`Building ComponentSet from metadata: ${metadata.metadataEntries.toString()}`);
         const directoryPaths = metadata.directoryPaths;
         componentSet ??= new ComponentSet(undefined, registryAccess);
+        const componentSetFilter = new ComponentSet(undefined, registryAccess);
 
         // Build a Set of metadata entries
-        const entries = metadata.metadataEntries
+        metadata.metadataEntries
           .map(entryToTypeAndName(registryAccess))
           .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry: registryAccess }))
-          .map(addToComponentSet(componentSet));
+          .map(addToComponentSet(componentSet))
+          .map(addToComponentSet(componentSetFilter));
 
-        const componentSetFilter = new ComponentSet(entries, registryAccess);
         logger.debug(`Searching for matching metadata in directories: ${directoryPaths.join(', ')}`);
         const resolvedComponents = ComponentSet.fromSource({
           fsPaths: directoryPaths,

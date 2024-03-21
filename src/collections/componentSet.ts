@@ -221,7 +221,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     result.fullName = manifest.fullName;
 
     const addComponent = (component: MetadataComponent, deletionType?: DestructiveChangesType): void => {
-      if (resolveIncludeSet) {
+      if (resolveIncludeSet && !deletionType) {
         resolveIncludeSet.add(component, deletionType);
       }
       const memberIsWildcard = component.fullName === ComponentSet.WILDCARD;
@@ -266,10 +266,17 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       for (const component of components) {
         // these components have more information from the file system than the components added above ~244-254
         // so we need to update the correct components, in the correct "manifest" locations e.g. pre/post/manifest
-        if (destructivePostComponents.map((c) => simpleKey(c)).includes(simpleKey(component)))
+        if (destructivePostComponents.map((c) => simpleKey(c)).includes(simpleKey(component))) {
+          if (manifest.components.map((c) => simpleKey(c)).includes(simpleKey(component))) {
+            addComponent(component);
+          }
           addComponent(component, DestructiveChangesType.POST);
-        else if (destructivePreComponents.map((c) => simpleKey(c)).includes(simpleKey(component)))
+        } else if (destructivePreComponents.map((c) => simpleKey(c)).includes(simpleKey(component))) {
+          if (manifest.components.map((c) => simpleKey(c)).includes(simpleKey(component))) {
+            addComponent(component);
+          }
           addComponent(component, DestructiveChangesType.PRE);
+        }
         // if the component is not already in a destructive manifest, assume it's in the constructive manifest
         else addComponent(component);
       }
@@ -511,9 +518,10 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     if (!(component instanceof SourceComponent)) {
       return;
     }
+    const srcKey = sourceKey(component);
 
     // we're working with SourceComponents now
-    this.components.get(key)?.set(sourceKey(component), component);
+    this.components.get(key)?.set(srcKey, component);
 
     // Build maps of destructive components and regular components as they are added
     // as an optimization when building manifests.
@@ -523,12 +531,14 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       if (!this.destructiveComponents[deletionType].has(key)) {
         this.destructiveComponents[deletionType].set(key, new DecodeableMap<string, SourceComponent>());
       }
-      this.destructiveComponents[deletionType].get(key)?.set(sourceKey(component), component);
+      this.destructiveComponents[deletionType].get(key)?.set(srcKey, component);
+      // updated with deletion information
+      this.components.get(key)?.set(srcKey, component);
     } else {
       if (!this.manifestComponents.has(key)) {
         this.manifestComponents.set(key, new DecodeableMap<string, SourceComponent>());
       }
-      this.manifestComponents.get(key)?.set(sourceKey(component), component);
+      this.manifestComponents.get(key)?.set(srcKey, component);
     }
   }
 
@@ -715,7 +725,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
 const sourceKey = (component: SourceComponent): string => {
   const { fullName, type, xml, content } = component;
-  return `${type.name}${fullName}${xml ?? ''}${content ?? ''}`;
+  return `${type.name}${fullName}${xml ?? ''}${content ?? ''}${component.isMarkedForDelete()}`;
 };
 
 const simpleKey = (component: ComponentLike): string => {

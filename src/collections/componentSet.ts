@@ -214,6 +214,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const manifest = await manifestResolver.resolve(manifestPath);
 
     const resolveIncludeSet = options.resolveSourcePaths ? new ComponentSet([], options.registry) : undefined;
+    const resolvePostSet = options.resolveSourcePaths ? new ComponentSet([], options.registry) : undefined;
+    const resolvePreSet = options.resolveSourcePaths ? new ComponentSet([], options.registry) : undefined;
     const result = new ComponentSet([], options.registry);
 
     result.logger.debug(`Setting sourceApiVersion of ${manifest.apiVersion} on ComponentSet from manifest`);
@@ -222,7 +224,13 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     const addComponent = (component: MetadataComponent, deletionType?: DestructiveChangesType): void => {
       if (resolveIncludeSet && !deletionType) {
-        resolveIncludeSet.add(component, deletionType);
+        resolveIncludeSet.add(component);
+      }
+      if (resolvePreSet && deletionType === DestructiveChangesType.PRE) {
+        resolvePreSet.add(component, DestructiveChangesType.PRE);
+      }
+      if (resolvePostSet && deletionType === DestructiveChangesType.POST) {
+        resolvePostSet.add(component, DestructiveChangesType.POST);
       }
       const memberIsWildcard = component.fullName === ComponentSet.WILDCARD;
       if (options.resolveSourcePaths === undefined || !memberIsWildcard || options.forceAddWildcards) {
@@ -259,8 +267,32 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         registry: options.registry,
       });
       result.forceIgnoredPaths = components.forceIgnoredPaths;
+
       for (const component of components) {
         result.add(component);
+      }
+
+      // if there was nothing in the resolveIncludeSet, then we can be missing information that we display to the user for deletes
+      if (resolveIncludeSet?.size === 0) {
+        const preCS = ComponentSet.fromSource({
+          fsPaths: options.resolveSourcePaths,
+          tree: options.tree,
+          include: resolvePreSet,
+          registry: options.registry,
+        });
+        for (const component of preCS) {
+          result.add(component, DestructiveChangesType.PRE);
+        }
+
+        const postCS = ComponentSet.fromSource({
+          fsPaths: options.resolveSourcePaths,
+          tree: options.tree,
+          include: resolvePostSet,
+          registry: options.registry,
+        });
+        for (const component of postCS) {
+          result.add(component, DestructiveChangesType.POST);
+        }
       }
     }
 

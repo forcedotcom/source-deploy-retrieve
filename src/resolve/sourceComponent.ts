@@ -162,19 +162,19 @@ export class SourceComponent implements MetadataComponent {
    */
   public getChildren(): SourceComponent[] {
     if (!this.parent && this.type.children) {
+      const validChildTypes = new Set(Object.keys(this.type.children.types));
       const children = this.content ? this.getDecomposedChildren(this.content) : this.getNonDecomposedChildren();
 
-      const validChildTypes = this.type?.children ? Object.keys(this.type?.children?.types) : [];
-      for (const child of children) {
-        // Ensure only valid child types are included with the parent.
-        if (!validChildTypes.includes(child.type?.id)) {
-          const filePath = child.xml ?? child.content;
+      // Ensure only valid child types are included with the parent.
+      children
+        .filter((child) => !validChildTypes.has(child.type?.id))
+        .map((child) => {
           throw new SfError(
-            messages.getMessage('error_unexpected_child_type', [filePath, this.type.name]),
+            messages.getMessage('error_unexpected_child_type', [child.xml ?? child.content, this.type.name]),
             'TypeInferenceError'
           );
-        }
-      }
+        });
+
       return children;
     }
     return [];

@@ -67,7 +67,10 @@ export const sanitizeDeployMessage = (message: DeployMessage): DeployMessageWith
 // components with children are already taken care of through the messages, so don't walk their content directories.
 const shouldWalkContent = (component: SourceComponent): boolean =>
   typeof component.content === 'string' &&
-  (!component.type.children || Object.values(component.type.children.types).some((t) => t.unaddressableWithoutParent));
+  (!component.type.children ||
+    Object.values(component.type.children.types).some(
+      (t) => t.unaddressableWithoutParent === true || t.isAddressable === false
+    ));
 
 export const createResponses = (component: SourceComponent, responseMessages: DeployMessage[]): FileResponse[] => {
   const responses = responseMessages.flatMap((message): FileResponse[] => {

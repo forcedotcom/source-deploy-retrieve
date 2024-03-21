@@ -287,12 +287,13 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     const converter = new MetadataConverter(registry);
     const tree = await ZipTreeContainer.create(zip);
 
-    const packages = [{ zipTreeLocation: 'unpackaged', outputDir: output }].concat(
-      getPackageOptions(this.options.packageOptions).map(({ name, outputDir }) => ({
+    const packages = [
+      { zipTreeLocation: 'unpackaged', outputDir: output },
+      ...getPackageOptions(this.options.packageOptions).map(({ name, outputDir }) => ({
         zipTreeLocation: name,
         outputDir,
-      }))
-    );
+      })),
+    ];
 
     for (const pkg of packages) {
       const outputConfig: ConvertOutputConfig = merge
@@ -313,7 +314,6 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       })
         .getSourceComponents()
         .toArray();
-
       if (merge) {
         this.handlePartialDeleteMerges(zipComponents, tree).map((fileResponse) =>
           partialDeleteFileResponses.push(fileResponse)
@@ -334,6 +334,8 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   // support this behavior are defined in the metadata registry with `"supportsPartialDelete": true`.
   // However, not all types can be partially deleted in the org. Currently this only applies to
   // DigitalExperienceBundle and ExperienceBundle.
+
+  // side effect: deletes files
   private handlePartialDeleteMerges(retrievedComponents: SourceComponent[], tree: ZipTreeContainer): FileResponse[] {
     // Find all merge (local) components that support partial delete.
     const partialDeleteComponents = new Map<string, PartialDeleteComp>(
@@ -461,3 +463,14 @@ const getPackageOptions = (packageOptions?: PackageOptions): Array<Required<Pack
   (packageOptions ?? []).map((po: string | PackageOption) =>
     isString(po) ? { name: po, outputDir: po } : { name: po.name, outputDir: po.outputDir ?? po.name }
   );
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const logFn = <T>(x: T): T => {
+  // eslint-disable-next-line no-console
+  console.log(x);
+  // eslint-disable-next-line no-console
+  console.log(typeof x === 'string' ? x : JSON.stringify(x));
+  return x;
+};

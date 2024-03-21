@@ -739,7 +739,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
 const sourceKey = (component: SourceComponent): string => {
   const { fullName, type, xml, content } = component;
-  return `${type.name}${fullName}${xml ?? ''}${content ?? ''}${component.isMarkedForDelete()}`;
+  return `${type.name}${fullName}${xml ?? ''}${content ?? ''}`;
 };
 
 const simpleKey = (component: ComponentLike): string => {

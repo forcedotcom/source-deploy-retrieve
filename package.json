@@ -108,7 +108,7 @@
       "command": "tspc -p . --pretty --incremental",
       "files": [
         "src/**/*.ts",
-        "src/registry/*.json",
+        "src/registry/**/*.json",
         "**/tsconfig.json",
         "messages/**"
       ],

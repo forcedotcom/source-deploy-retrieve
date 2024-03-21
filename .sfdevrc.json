@@ -3,7 +3,7 @@
     "compile": {
       "clean": "if-file-deleted",
       "command": "tspc -p . --pretty --incremental",
-      "files": ["src/**/*.ts", "src/registry/*.json", "**/tsconfig.json", "messages/**"],
+      "files": ["src/**/*.ts", "src/registry/**/*.json", "**/tsconfig.json", "messages/**"],
       "output": ["lib/**", "*.tsbuildinfo"]
     },
     "test": {

@@ -233,22 +233,18 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const resolveDestructiveChanges = async (
       path: string,
       destructiveChangeType: DestructiveChangesType
-    ): Promise<MetadataComponent[]> => {
+    ): Promise<void> => {
       const destructiveManifest = await manifestResolver.resolve(path);
       for (const comp of destructiveManifest.components) {
         addComponent(new SourceComponent({ type: comp.type, name: comp.fullName }), destructiveChangeType);
       }
-      return destructiveManifest.components;
     };
 
-    let destructivePreComponents: MetadataComponent[] = [];
-    let destructivePostComponents: MetadataComponent[] = [];
     if (options.destructivePre) {
-      destructivePreComponents = await resolveDestructiveChanges(options.destructivePre, DestructiveChangesType.PRE);
+      await resolveDestructiveChanges(options.destructivePre, DestructiveChangesType.PRE);
     }
-
     if (options.destructivePost) {
-      destructivePostComponents = await resolveDestructiveChanges(options.destructivePost, DestructiveChangesType.POST);
+      await resolveDestructiveChanges(options.destructivePost, DestructiveChangesType.POST);
     }
 
     for (const component of manifest.components) {
@@ -264,21 +260,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       });
       result.forceIgnoredPaths = components.forceIgnoredPaths;
       for (const component of components) {
-        // these components have more information from the file system than the components added above ~244-254
-        // so we need to update the correct components, in the correct "manifest" locations e.g. pre/post/manifest
-        if (destructivePostComponents.map((c) => simpleKey(c)).includes(simpleKey(component))) {
-          if (manifest.components.map((c) => simpleKey(c)).includes(simpleKey(component))) {
-            addComponent(component);
-          }
-          addComponent(component, DestructiveChangesType.POST);
-        } else if (destructivePreComponents.map((c) => simpleKey(c)).includes(simpleKey(component))) {
-          if (manifest.components.map((c) => simpleKey(c)).includes(simpleKey(component))) {
-            addComponent(component);
-          }
-          addComponent(component, DestructiveChangesType.PRE);
-        }
-        // if the component is not already in a destructive manifest, assume it's in the constructive manifest
-        else addComponent(component);
+        result.add(component);
       }
     }
 

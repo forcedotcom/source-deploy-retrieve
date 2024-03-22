@@ -15,7 +15,7 @@ import JSZip = require('jszip');
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { ComponentSet, MetadataResolver, RegistryAccess, SourceComponent, WriteInfo, WriterFormat } from '../../src';
-import { MetadataTransformerFactory } from '../../src/convert/transformers';
+import { MetadataTransformerFactory } from '../../src/convert/transformers/metadataTransformerFactory';
 import { COMPONENTS } from '../mock/type-constants/reportConstant';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { COMPONENT, CONTENT_NAMES, TYPE_DIRECTORY, XML_NAMES } from '../mock/type-constants/apexClassConstant';

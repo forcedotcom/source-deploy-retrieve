@@ -72,6 +72,7 @@ export const extract = async ({
     // eslint-disable-next-line no-await-in-loop
     const convertResult = await converter.convert(retrievedComponents, 'source', outputConfig);
     components.push(...(convertResult?.converted ?? []));
+    // additional partialDelete logic for decomposed types are handled in the transformer
     partialDeleteFileResponses.push(...(convertResult?.deleted ?? []));
   }
   return { componentSet: new ComponentSet(components, registry), partialDeleteFileResponses };

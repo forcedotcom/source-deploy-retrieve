@@ -259,10 +259,10 @@ export class SourceComponent implements MetadataComponent {
       delete this.destructiveChangesType;
     } else {
       this.markedForDelete = true;
-      // eslint-disable-next-line no-unused-expressions
-      destructiveChangeType === DestructiveChangesType.PRE
-        ? (this.destructiveChangesType = DestructiveChangesType.PRE)
-        : (this.destructiveChangesType = DestructiveChangesType.POST);
+      // destructiveChangeType is DestructiveChangeType OR boolean, if it's DestructiveChangesType.PRE => DestructiveChangesType.PRE
+      // if it's DestructiveChangesType.POST or 'true' => DestructiveChangesType.POST
+      this.destructiveChangesType =
+        destructiveChangeType === DestructiveChangesType.PRE ? DestructiveChangesType.PRE : DestructiveChangesType.POST;
     }
   }
 

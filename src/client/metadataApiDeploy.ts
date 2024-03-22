@@ -31,24 +31,30 @@ import { toKey } from './deployMessages';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
+// TODO: (NEXT MAJOR) this should just be a readonly object and not a class.
 export class DeployResult implements MetadataTransferResult {
   private fileResponses?: FileResponse[];
 
   public constructor(
     public readonly response: MetadataApiDeployStatus,
     public readonly components?: ComponentSet,
-    public readonly replacements: Map<string, string[]> = new Map<string, string[]>()
+    public readonly replacements = new Map<string, string[]>()
   ) {}
 
   public getFileResponses(): FileResponse[] {
     // this involves FS operations, so only perform once!
     if (!this.fileResponses) {
-      this.fileResponses = this.components
-        ? buildFileResponsesFromComponentSet(this.components)(this.response)
-        : buildFileResponses(this.response);
+      this.fileResponses = [
+        // removes duplicates from the file responses by parsing the object into a string, used as the key of the map
+        ...new Map(
+          (this.components
+            ? buildFileResponsesFromComponentSet(this.components)(this.response)
+            : buildFileResponses(this.response)
+          ).map((v) => [JSON.stringify(v), v])
+        ).values(),
+      ];
     }
-    // removes duplicates from the file responses by parsing the object into a string, used as the key of the map
-    return [...new Map(this.fileResponses.map((v) => [JSON.stringify(v), v])).values()];
+    return this.fileResponses;
   }
 }
 

@@ -155,10 +155,11 @@ const supportsPartialDelete = (comp: SourceComponent): boolean => comp.type.supp
 export type PartialDeleteComp = {
   contentPath: string;
   contentList: string[];
-}; // If fileName is forceignored it is not counted as a diff. If fileName is a directory
+};
+
+// If fileName is forceignored it is not counted as a diff. If fileName is a directory
 // we have to read the contents to check forceignore status or we might get a false
 // negative with `denies()` due to how the ignore library works.
-
 export const pathOrSomeChildIsIgnored =
   (logger: Logger) =>
   (component: SourceComponent) =>
@@ -169,6 +170,7 @@ export const pathOrSomeChildIsIgnored =
       ? fs.readdirSync(fileNameFullPath).map(fnJoin(fileNameFullPath)).some(isForceIgnored(logger)(component))
       : isForceIgnored(logger)(component)(fileNameFullPath);
   };
+
 const isForceIgnored =
   (logger: Logger) =>
   (comp: SourceComponent) =>
@@ -179,6 +181,7 @@ const isForceIgnored =
     }
     return ignored;
   };
+
 export const deleteFilePath =
   (logger: Logger) =>
   (fr: FileResponseSuccess): FileResponseSuccess => {

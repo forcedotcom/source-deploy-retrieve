@@ -19,7 +19,7 @@ import {
 import { isString } from '@salesforce/ts-types';
 import { MetadataApiDeploy, MetadataApiDeployOptions } from '../client/metadataApiDeploy';
 import { MetadataApiRetrieve } from '../client/metadataApiRetrieve';
-import { MetadataApiRetrieveOptions } from '../client/types';
+import type { MetadataApiRetrieveOptions } from '../client/types';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common/constants';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { MetadataResolver } from '../resolve/metadataResolver';

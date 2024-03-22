@@ -24,6 +24,7 @@ export interface PackageManifestObject {
   };
 }
 
+// TODO NEXT MAJOR: use a string union type
 export enum DestructiveChangesType {
   POST = 'post',
   PRE = 'pre',

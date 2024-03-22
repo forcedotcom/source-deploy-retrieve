@@ -19,6 +19,7 @@ import { MetadataTransferOptions } from './metadataTransfer';
 
 export type RecordId = string;
 
+// TODO NEXT MAJOR: use a string union type
 export enum ComponentStatus {
   Created = 'Created',
   Changed = 'Changed',

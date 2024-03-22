@@ -11,8 +11,8 @@ import { statSync, existsSync, readdirSync, createReadStream, readFileSync } fro
 import * as JSZip from 'jszip';
 import { Messages, SfError } from '@salesforce/core';
 import { isString } from '@salesforce/ts-types';
-import { baseName, parseMetadataXml } from '../utils';
-import type { SourcePath } from '../common';
+import { baseName, parseMetadataXml } from '../utils/path';
+import type { SourcePath } from '../common/types';
 import type { VirtualDirectory } from './types';
 
 Messages.importMessagesDirectory(__dirname);

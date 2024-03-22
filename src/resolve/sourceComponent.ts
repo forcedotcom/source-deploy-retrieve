@@ -259,6 +259,8 @@ export class SourceComponent implements MetadataComponent {
       delete this.destructiveChangesType;
     } else {
       this.markedForDelete = true;
+      // destructiveChangeType is DestructiveChangeType OR boolean, if it's DestructiveChangesType.PRE => DestructiveChangesType.PRE
+      // if it's DestructiveChangesType.POST or 'true' => DestructiveChangesType.POST
       this.destructiveChangesType =
         destructiveChangeType === DestructiveChangesType.PRE ? DestructiveChangesType.PRE : DestructiveChangesType.POST;
     }

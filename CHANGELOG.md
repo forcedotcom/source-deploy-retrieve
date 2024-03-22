@@ -1,3 +1,12 @@
+## [10.5.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.5.4...10.5.5) (2024-03-22)
+
+
+### Bug Fixes
+
+* allow the same SC in delete and deploy manifests ([#1261](https://github.com/forcedotcom/source-deploy-retrieve/issues/1261)) ([d4c7f53](https://github.com/forcedotcom/source-deploy-retrieve/commit/d4c7f535ea7ed9f72cdc85d20cbbae5a3af12b78))
+
+
+
 ## [10.5.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.5.3...10.5.4) (2024-03-20)
 
 

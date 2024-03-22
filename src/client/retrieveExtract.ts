@@ -13,16 +13,9 @@ import { MetadataConverter } from '../convert/metadataConverter';
 import { ComponentSet } from '../collections/componentSet';
 import { ZipTreeContainer } from '../resolve/treeContainers';
 import { SourceComponent } from '../resolve/sourceComponent';
+import { fnJoin } from '../utils/path';
 import { ComponentStatus, FileResponse, FileResponseSuccess, PackageOption, PackageOptions } from './types';
 import { MetadataApiRetrieveOptions } from './types';
-import {
-  PartialDeleteComp,
-  supportsPartialDeleteAndHasContent,
-  supportsPartialDeleteAndIsInMap,
-  supportsPartialDeleteAndHasZipContent,
-  pathOrSomeChildIsIgnored,
-  deleteFilePath,
-} from './metadataApiRetrieve';
 
 export const extract = async ({
   zip,
@@ -96,7 +89,7 @@ export const getPackageOptions = (packageOptions?: PackageOptions): Array<Requir
 // However, not all types can be partially deleted in the org. Currently this only applies to
 // DigitalExperienceBundle and ExperienceBundle.
 // side effect: deletes files
-export const handlePartialDeleteMerges = ({
+const handlePartialDeleteMerges = ({
   mainComponents,
   retrievedComponents,
   tree,
@@ -143,3 +136,58 @@ export const handlePartialDeleteMerges = ({
             .map(deleteFilePath(logger));
         });
 };
+
+const supportsPartialDeleteAndHasContent = (comp: SourceComponent): comp is SourceComponent & { content: string } =>
+  supportsPartialDelete(comp) && typeof comp.content === 'string' && fs.statSync(comp.content).isDirectory();
+
+const supportsPartialDeleteAndHasZipContent =
+  (tree: ZipTreeContainer) =>
+  (comp: SourceComponent): comp is SourceComponent & { content: string } =>
+    supportsPartialDelete(comp) && typeof comp.content === 'string' && tree.isDirectory(comp.content);
+
+const supportsPartialDeleteAndIsInMap =
+  (partialDeleteComponents: Map<string, PartialDeleteComp>) =>
+  (comp: SourceComponent): boolean =>
+    supportsPartialDelete(comp) && partialDeleteComponents.has(comp.fullName);
+
+const supportsPartialDelete = (comp: SourceComponent): boolean => comp.type.supportsPartialDelete === true;
+
+export type PartialDeleteComp = {
+  contentPath: string;
+  contentList: string[];
+}; // If fileName is forceignored it is not counted as a diff. If fileName is a directory
+// we have to read the contents to check forceignore status or we might get a false
+// negative with `denies()` due to how the ignore library works.
+
+export const pathOrSomeChildIsIgnored =
+  (logger: Logger) =>
+  (component: SourceComponent) =>
+  (localComp: PartialDeleteComp) =>
+  (fileName: string): boolean => {
+    const fileNameFullPath = path.join(localComp.contentPath, fileName);
+    return fs.statSync(fileNameFullPath).isDirectory()
+      ? fs.readdirSync(fileNameFullPath).map(fnJoin(fileNameFullPath)).some(isForceIgnored(logger)(component))
+      : isForceIgnored(logger)(component)(fileNameFullPath);
+  };
+const isForceIgnored =
+  (logger: Logger) =>
+  (comp: SourceComponent) =>
+  (filePath: string): boolean => {
+    const ignored = comp.getForceIgnore().denies(filePath);
+    if (ignored) {
+      logger.debug(`Local component has ${filePath} while remote does not, but it is forceignored so ignoring.`);
+    }
+    return ignored;
+  };
+export const deleteFilePath =
+  (logger: Logger) =>
+  (fr: FileResponseSuccess): FileResponseSuccess => {
+    if (fr.filePath) {
+      logger.debug(
+        `Local component (${fr.fullName}) contains ${fr.filePath} while remote component does not. This file is being removed.`
+      );
+      fs.rmSync(fr.filePath, { recursive: true, force: true });
+    }
+
+    return fr;
+  };

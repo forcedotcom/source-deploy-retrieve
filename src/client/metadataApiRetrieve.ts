@@ -8,18 +8,14 @@ import * as path from 'node:path';
 import * as fs from 'graceful-fs';
 import * as JSZip from 'jszip';
 import { asBoolean, isString } from '@salesforce/ts-types';
-import { Messages, SfError, Lifecycle, Logger } from '@salesforce/core';
+import { Messages, SfError, Lifecycle } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
-import { fnJoin } from '../utils/path';
 import { ComponentSet } from '../collections/componentSet';
-import { ZipTreeContainer } from '../resolve/treeContainers';
-import { SourceComponent } from '../resolve/sourceComponent';
 import { MetadataTransfer } from './metadataTransfer';
 import {
   AsyncResult,
   ComponentStatus,
   FileResponse,
-  FileResponseSuccess,
   MetadataApiRetrieveStatus,
   MetadataTransferResult,
   PackageOptions,
@@ -296,66 +292,6 @@ const handleMdapiResponse = async (options: MetadataApiRetrieveOptions, zipFileC
       }
     }
   }
-};
-
-export const deleteFilePath =
-  (logger: Logger) =>
-  (fr: FileResponseSuccess): FileResponseSuccess => {
-    if (fr.filePath) {
-      logger.debug(
-        `Local component (${fr.fullName}) contains ${fr.filePath} while remote component does not. This file is being removed.`
-      );
-      fs.rmSync(fr.filePath, { recursive: true, force: true });
-    }
-
-    return fr;
-  };
-
-export const supportsPartialDeleteAndHasContent = (
-  comp: SourceComponent
-): comp is SourceComponent & { content: string } =>
-  supportsPartialDelete(comp) && typeof comp.content === 'string' && fs.statSync(comp.content).isDirectory();
-
-export const supportsPartialDeleteAndHasZipContent =
-  (tree: ZipTreeContainer) =>
-  (comp: SourceComponent): comp is SourceComponent & { content: string } =>
-    supportsPartialDelete(comp) && typeof comp.content === 'string' && tree.isDirectory(comp.content);
-
-export const supportsPartialDeleteAndIsInMap =
-  (partialDeleteComponents: Map<string, PartialDeleteComp>) =>
-  (comp: SourceComponent): boolean =>
-    supportsPartialDelete(comp) && partialDeleteComponents.has(comp.fullName);
-
-const supportsPartialDelete = (comp: SourceComponent): boolean => comp.type.supportsPartialDelete === true;
-
-// If fileName is forceignored it is not counted as a diff. If fileName is a directory
-// we have to read the contents to check forceignore status or we might get a false
-// negative with `denies()` due to how the ignore library works.
-export const pathOrSomeChildIsIgnored =
-  (logger: Logger) =>
-  (component: SourceComponent) =>
-  (localComp: PartialDeleteComp) =>
-  (fileName: string): boolean => {
-    const fileNameFullPath = path.join(localComp.contentPath, fileName);
-    return fs.statSync(fileNameFullPath).isDirectory()
-      ? fs.readdirSync(fileNameFullPath).map(fnJoin(fileNameFullPath)).some(isForceIgnored(logger)(component))
-      : isForceIgnored(logger)(component)(fileNameFullPath);
-  };
-
-const isForceIgnored =
-  (logger: Logger) =>
-  (comp: SourceComponent) =>
-  (filePath: string): boolean => {
-    const ignored = comp.getForceIgnore().denies(filePath);
-    if (ignored) {
-      logger.debug(`Local component has ${filePath} while remote does not, but it is forceignored so ignoring.`);
-    }
-    return ignored;
-  };
-
-export type PartialDeleteComp = {
-  contentPath: string;
-  contentList: string[];
 };
 
 const coerceBoolean = (field: unknown): boolean => {

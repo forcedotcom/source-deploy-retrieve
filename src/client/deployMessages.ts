@@ -21,7 +21,6 @@ import {
   MetadataApiDeployStatus,
 } from './types';
 import { parseDeployDiagnostic } from './diagnosticUtil';
-import { shouldConvertPaths } from './metadataApiDeploy';
 
 type DeployMessageWithComponentType = DeployMessage & { componentType: string };
 /**
@@ -162,3 +161,4 @@ export const toKey = (component: ComponentLike): string => {
 };
 
 const isTrue = (value: BooleanString): boolean => value === 'true' || value === true;
+export const shouldConvertPaths = sep !== posix.sep;

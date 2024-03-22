@@ -153,7 +153,7 @@ const supportsPartialDeleteAndIsInMap =
 
 const supportsPartialDelete = (comp: SourceComponent): boolean => comp.type.supportsPartialDelete === true;
 
-export type PartialDeleteComp = {
+type PartialDeleteComp = {
   contentPath: string;
   contentList: string[];
 };
@@ -161,7 +161,7 @@ export type PartialDeleteComp = {
 // If fileName is forceignored it is not counted as a diff. If fileName is a directory
 // we have to read the contents to check forceignore status or we might get a false
 // negative with `denies()` due to how the ignore library works.
-export const pathOrSomeChildIsIgnored =
+const pathOrSomeChildIsIgnored =
   (logger: Logger) =>
   (component: SourceComponent) =>
   (localComp: PartialDeleteComp) =>
@@ -183,7 +183,7 @@ const isForceIgnored =
     return ignored;
   };
 
-export const deleteFilePath =
+const deleteFilePath =
   (logger: Logger) =>
   (fr: FileResponseSuccess): FileResponseSuccess => {
     if (fr.filePath) {

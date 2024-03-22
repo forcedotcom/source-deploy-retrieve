@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join, posix, relative, resolve as pathResolve, sep } from 'node:path';
+import { join, relative, resolve as pathResolve, sep } from 'node:path';
 import { format } from 'node:util';
 import { isString } from '@salesforce/ts-types';
 import * as JSZip from 'jszip';
@@ -30,7 +30,6 @@ import { toKey } from './deployMessages';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
-export const shouldConvertPaths = sep !== posix.sep;
 
 export class DeployResult implements MetadataTransferResult {
   private fileResponses?: FileResponse[];
@@ -44,82 +43,12 @@ export class DeployResult implements MetadataTransferResult {
   public getFileResponses(): FileResponse[] {
     // this involves FS operations, so only perform once!
     if (!this.fileResponses) {
-      if (this.components) {
-        // TODO: Log when messages can't be mapped to components
-        const responseMessages = getDeployMessages(this.response);
-
-        this.fileResponses = (this.components.getSourceComponents().toArray() ?? [])
-          .flatMap((deployedComponent) =>
-            createResponses(deployedComponent, responseMessages.get(toKey(deployedComponent)) ?? []).concat(
-              deployedComponent.type.children
-                ? deployedComponent.getChildren().flatMap((child) => {
-                    const childMessages = responseMessages.get(toKey(child));
-                    return childMessages ? createResponses(child, childMessages) : [];
-                  })
-                : []
-            )
-          )
-          .concat(this.deleteNotFoundToFileResponses(responseMessages));
-      } else {
-        // if no this.components, this was likely a metadata format deploy so we need to process
-        // the componentSuccesses and componentFailures instead.
-        this.fileResponses = ensureArray(this.response.details?.componentSuccesses)
-          .concat(ensureArray(this.response.details?.componentFailures))
-          .filter((c) => c.fullName !== 'package.xml')
-          .map(
-            (c) =>
-              ({
-                ...(getState(c) === ComponentStatus.Failed
-                  ? {
-                      error: c.problem,
-                      problemType: c.problemType,
-                      columnNumber: c.columnNumber ? parseInt(c.columnNumber, 10) : undefined,
-                      lineNumber: c.lineNumber ? parseInt(c.lineNumber, 10) : undefined,
-                    }
-                  : {}),
-                fullName: c.fullName,
-                type: c.componentType,
-                state: getState(c),
-                filePath: c.fileName.replace(`zip${sep}`, ''),
-              } as FileResponse)
-          );
-      }
+      this.fileResponses = this.components
+        ? buildFileResponsesFromComponentSet(this.components)(this.response)
+        : buildFileResponses(this.response);
     }
     // removes duplicates from the file responses by parsing the object into a string, used as the key of the map
     return [...new Map(this.fileResponses.map((v) => [JSON.stringify(v), v])).values()];
-  }
-
-  /**
-   * If a component fails to delete because it doesn't exist in the org, you get a message like
-   * key: 'ApexClass#destructiveChanges.xml'
-   * value:[{
-   * fullName: 'destructiveChanges.xml',
-   * fileName: 'destructiveChanges.xml',
-   * componentType: 'ApexClass',
-   * problem: 'No ApexClass named: test1 found',
-   * problemType: 'Warning'
-   * }]
-   */
-  private deleteNotFoundToFileResponses(messageMap: Map<string, DeployMessage[]>): FileResponse[] {
-    return Array.from(messageMap)
-      .filter(([key]) => key.includes('destructiveChanges') && key.endsWith('.xml'))
-      .flatMap(
-        ([, messageArray]): Array<DeployMessage & Required<Pick<DeployMessage, 'componentType' | 'problem'>>> =>
-          messageArray.filter(isComponentNotFoundWarningMessage)
-      )
-      .flatMap((message) => {
-        const fullName = message.problem.replace(`No ${message.componentType} named: `, '').replace(' found', '');
-        return this.components
-          ? this.components
-              .getComponentFilenamesByNameAndType({ fullName, type: message.componentType })
-              .map((fileName) => ({
-                fullName,
-                type: message.componentType,
-                filePath: fileName,
-                state: ComponentStatus.Deleted,
-              }))
-          : [];
-      });
   }
 }
 
@@ -280,7 +209,6 @@ export class MetadataApiDeploy extends MetadataTransfer<
       : connection.metadata.deploy(zipBuffer, optionsWithoutRest);
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   protected async post(result: MetadataApiDeployStatus): Promise<DeployResult> {
     const lifecycle = Lifecycle.getInstance();
     const connection = await this.getConnection();
@@ -400,6 +328,79 @@ export class MetadataApiDeploy extends MetadataTransfer<
   }
 }
 
+/**
+ * If a component fails to delete because it doesn't exist in the org, you get a message like
+ * key: 'ApexClass#destructiveChanges.xml'
+ * value:[{
+ * fullName: 'destructiveChanges.xml',
+ * fileName: 'destructiveChanges.xml',
+ * componentType: 'ApexClass',
+ * problem: 'No ApexClass named: test1 found',
+ * problemType: 'Warning'
+ * }]
+ */
+const deleteNotFoundToFileResponses =
+  (cs: ComponentSet) =>
+  (messageMap: Map<string, DeployMessage[]>): FileResponse[] =>
+    Array.from(messageMap)
+      .filter(([key]) => key.includes('destructiveChanges') && key.endsWith('.xml'))
+      .flatMap(
+        ([, messageArray]): Array<DeployMessage & Required<Pick<DeployMessage, 'componentType' | 'problem'>>> =>
+          messageArray.filter(isComponentNotFoundWarningMessage)
+      )
+      .flatMap((message) => {
+        const fullName = message.problem.replace(`No ${message.componentType} named: `, '').replace(' found', '');
+        return cs
+          ? cs.getComponentFilenamesByNameAndType({ fullName, type: message.componentType }).map((fileName) => ({
+              fullName,
+              type: message.componentType,
+              filePath: fileName,
+              state: ComponentStatus.Deleted,
+            }))
+          : [];
+      });
+
+const buildFileResponses = (response: MetadataApiDeployStatus): FileResponse[] =>
+  ensureArray(response.details?.componentSuccesses)
+    .concat(ensureArray(response.details?.componentFailures))
+    .filter((c) => c.fullName !== 'package.xml')
+    .map(
+      (c) =>
+        ({
+          ...(getState(c) === ComponentStatus.Failed
+            ? {
+                error: c.problem,
+                problemType: c.problemType,
+                columnNumber: c.columnNumber ? parseInt(c.columnNumber, 10) : undefined,
+                lineNumber: c.lineNumber ? parseInt(c.lineNumber, 10) : undefined,
+              }
+            : {}),
+          fullName: c.fullName,
+          type: c.componentType,
+          state: getState(c),
+          filePath: c.fileName.replace(`zip${sep}`, ''),
+        } as FileResponse)
+    );
+
+const buildFileResponsesFromComponentSet =
+  (cs: ComponentSet) =>
+  (response: MetadataApiDeployStatus): FileResponse[] => {
+    // TODO: Log when messages can't be mapped to components
+    const responseMessages = getDeployMessages(response);
+
+    return (cs.getSourceComponents().toArray() ?? [])
+      .flatMap((deployedComponent) =>
+        createResponses(deployedComponent, responseMessages.get(toKey(deployedComponent)) ?? []).concat(
+          deployedComponent.type.children
+            ? deployedComponent.getChildren().flatMap((child) => {
+                const childMessages = responseMessages.get(toKey(child));
+                return childMessages ? createResponses(child, childMessages) : [];
+              })
+            : []
+        )
+      )
+      .concat(deleteNotFoundToFileResponses(cs)(responseMessages));
+  };
 /**
  * register a listener to `scopedPreDeploy`
  */

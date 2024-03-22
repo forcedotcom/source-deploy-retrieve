@@ -1,11 +1,26 @@
-## [10.5.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.5.1...10.5.2) (2024-03-13)
-
+## [10.5.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.5.4...10.5.5) (2024-03-22)
 
 ### Bug Fixes
 
-* metadataConverter writes zip to dir and works outside of project ([#1252](https://github.com/forcedotcom/source-deploy-retrieve/issues/1252)) ([d947fc6](https://github.com/forcedotcom/source-deploy-retrieve/commit/d947fc6c1e500f3688b8f0cf3a49e56da660afa0))
+- allow the same SC in delete and deploy manifests ([#1261](https://github.com/forcedotcom/source-deploy-retrieve/issues/1261)) ([d4c7f53](https://github.com/forcedotcom/source-deploy-retrieve/commit/d4c7f535ea7ed9f72cdc85d20cbbae5a3af12b78))
 
+## [10.5.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.5.3...10.5.4) (2024-03-20)
 
+### Bug Fixes
+
+- refactor for better typing and readability ([#1262](https://github.com/forcedotcom/source-deploy-retrieve/issues/1262)) ([8d89dbc](https://github.com/forcedotcom/source-deploy-retrieve/commit/8d89dbc9d925f4be5cf6ff71020293eba538450f))
+
+## [10.5.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.5.2...10.5.3) (2024-03-19)
+
+### Bug Fixes
+
+- handle string replacements for individual custom labels ([#1257](https://github.com/forcedotcom/source-deploy-retrieve/issues/1257)) ([70571e8](https://github.com/forcedotcom/source-deploy-retrieve/commit/70571e8d43b6395b86dc31ad0103859536f554f5))
+
+## [10.5.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.5.1...10.5.2) (2024-03-13)
+
+### Bug Fixes
+
+- metadataConverter writes zip to dir and works outside of project ([#1252](https://github.com/forcedotcom/source-deploy-retrieve/issues/1252)) ([d947fc6](https://github.com/forcedotcom/source-deploy-retrieve/commit/d947fc6c1e500f3688b8f0cf3a49e56da660afa0))
 
 ## [10.5.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.5.0...10.5.1) (2024-03-03)
 

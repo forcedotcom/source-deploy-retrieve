@@ -117,6 +117,12 @@ class ReplacementMarkingStream extends Transform {
     if (!chunk.isMarkedForDelete() && this.replacementConfigs?.length) {
       try {
         chunk.replacements = await getReplacements(chunk, this.replacementConfigs);
+        if (chunk.replacements && chunk.parent && chunk.type.name === 'CustomLabel') {
+          // Set replacements on the parent of a CustomLabel as well so that recomposing
+          // doesn't use the non-replaced content from parent cache.
+          // See RecompositionFinalizer.recompose() in convertContext.ts
+          chunk.parent.replacements = chunk.replacements;
+        }
       } catch (e) {
         if (!(e instanceof Error)) {
           throw e;

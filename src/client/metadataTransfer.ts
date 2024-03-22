@@ -186,6 +186,34 @@ export abstract class MetadataTransfer<
     return getConnectionNoHigherThanOrgAllows(this.usernameOrConnection, this.apiVersion);
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  private isRetryableError(error: unknown): boolean {
+    if (!(error instanceof Error)) return false;
+
+    const retryableErrors = [
+      'ENOMEM',
+      'ETIMEDOUT',
+      'ENOTFOUND',
+      'ECONNRESET',
+      'socket hang up',
+      'connection timeout',
+      'INVALID_QUERY_LOCATOR',
+      'ERROR_HTTP_502',
+      'ERROR_HTTP_503',
+      'ERROR_HTTP_420',
+      '<h1>Bad Message 400</h1><pre>reason: Bad Request</pre>',
+      'Unable to complete the creation of the query cursor at this time',
+      'Failed while fetching query cursor data for this QueryLocator',
+      'Client network socket disconnected before secure TLS connection was established',
+      'Unexpected internal servlet state',
+    ];
+    const isRetryable = (retryableNetworkError: string): boolean =>
+      error.message.includes(retryableNetworkError) ||
+      ('errorCode' in error && typeof error.errorCode === 'string' && error.errorCode.includes(retryableNetworkError));
+
+    return retryableErrors.some(isRetryable);
+  }
+
   private async poll(): Promise<StatusResult> {
     let completed = false;
     let mdapiStatus: Status | undefined;
@@ -215,23 +243,9 @@ export abstract class MetadataTransfer<
           await Lifecycle.getInstance().emitWarning('Metadata API response not parseable');
           return { completed: false };
         }
+
         // tolerate intermittent network errors upto retry limit
-        if (
-          [
-            'ENOMEM',
-            'ETIMEDOUT',
-            'ENOTFOUND',
-            'ECONNRESET',
-            'socket hang up',
-            'connection timeout',
-            'INVALID_QUERY_LOCATOR',
-            '<h1>Bad Message 400</h1><pre>reason: Bad Request</pre>',
-            'Unable to complete the creation of the query cursor at this time',
-            'Failed while fetching query cursor data for this QueryLocator',
-            'Client network socket disconnected before secure TLS connection was established',
-            'Unexpected internal servlet state',
-          ].some((retryableNetworkError) => (e as Error).message.includes(retryableNetworkError))
-        ) {
+        if (this.isRetryableError(e)) {
           this.logger.debug('Network error on the request', e);
           await Lifecycle.getInstance().emitWarning('Network error occurred.  Continuing to poll.');
           return { completed: false };

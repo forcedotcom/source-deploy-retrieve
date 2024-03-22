@@ -9,17 +9,17 @@ import { pipeline as cbPipeline, Readable, Stream, Transform, Writable } from 'n
 import { promisify } from 'node:util';
 import { Messages, SfError } from '@salesforce/core';
 import * as JSZip from 'jszip';
-import { createWriteStream, existsSync } from 'graceful-fs';
+import { createWriteStream, existsSync, promises as fsPromises } from 'graceful-fs';
 import { JsonMap } from '@salesforce/ts-types';
 import { XMLBuilder } from 'fast-xml-parser';
 import { Logger } from '@salesforce/core';
 import { SourceComponent } from '../resolve/sourceComponent';
-import { MetadataResolver } from '../resolve/metadataResolver';
 import { SourcePath } from '../common/types';
 import { XML_DECL } from '../common/constants';
 import { ComponentSet } from '../collections/componentSet';
 import { RegistryAccess } from '../registry/registryAccess';
 import { ensureFileExists } from '../utils/fileSystemHandler';
+import { ComponentStatus, FileResponseSuccess } from '../client/types';
 import { MetadataTransformerFactory } from './transformers/metadataTransformerFactory';
 import { ConvertContext } from './convertContext/convertContext';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
@@ -125,9 +125,11 @@ export abstract class ComponentWriter extends Writable {
 }
 
 export class StandardWriter extends ComponentWriter {
-  public converted: SourceComponent[] = [];
+  /** filepaths that converted files were written to */
+  public readonly converted: string[] = [];
+  public readonly deleted: FileResponseSuccess[] = [];
 
-  public constructor(rootDestination: SourcePath, private resolver = new MetadataResolver()) {
+  public constructor(rootDestination: SourcePath) {
     super(rootDestination);
   }
 
@@ -135,44 +137,46 @@ export class StandardWriter extends ComponentWriter {
     let err: Error | undefined;
     if (chunk.writeInfos.length !== 0) {
       try {
-        const toResolve: string[] = [];
+        const toResolve = new Set<string>();
         // it is a reasonable expectation that when a conversion call exits, the files of
         // every component has been written to the destination. This await ensures the microtask
         // queue is empty when that call exits and overall less memory is consumed.
         await Promise.all(
-          chunk.writeInfos.map((info: WriteInfo) => {
-            const fullDest = isAbsolute(info.output) ? info.output : join(this.rootDestination as string, info.output);
-            if (!existsSync(fullDest)) {
-              for (const ignoredPath of this.forceIgnoredPaths) {
-                if (
-                  dirname(ignoredPath).includes(dirname(fullDest)) &&
-                  basename(ignoredPath).includes(basename(fullDest))
-                ) {
+          chunk.writeInfos
+            .map(makeWriteInfoAbsolute(this.rootDestination))
+            .filter(existsOrDoesntMatchIgnored(this.forceIgnoredPaths))
+            .filter((info) => !this.forceIgnoredPaths.has(info.output))
+            .map((info) => {
+              if (info.shouldDelete) {
+                this.deleted.push({
+                  filePath: info.output,
+                  state: ComponentStatus.Deleted,
+                  type: info.type,
+                  fullName: info.fullName,
+                });
+                return fsPromises.rm(info.output, { force: true, recursive: true });
+              }
+
+              // if there are children, resolve each file. o/w just pick one of the files to resolve
+              if (toResolve.size === 0 || chunk.component.type.children) {
+                // This is a workaround for a server side ListViews bug where
+                // duplicate components are sent. W-9614275
+                if (toResolve.has(info.output)) {
+                  this.logger.debug(`Ignoring duplicate metadata for: ${info.output}`);
                   return;
                 }
+                toResolve.add(info.output);
               }
-            }
-            if (this.forceIgnoredPaths.has(fullDest)) {
-              return;
-            }
-            // if there are children, resolve each file. o/w just pick one of the files to resolve
-            if (toResolve.length === 0 || chunk.component.type.children) {
-              // This is a workaround for a server side ListViews bug where
-              // duplicate components are sent. W-9614275
-              if (toResolve.includes(fullDest)) {
-                this.logger.debug(`Ignoring duplicate metadata for: ${fullDest}`);
-                return;
-              }
-              toResolve.push(fullDest);
-            }
-            ensureFileExists(fullDest);
-            return pipeline(info.source, createWriteStream(fullDest));
-          })
+
+              ensureFileExists(info.output);
+              return pipeline(info.source, createWriteStream(info.output));
+            })
         );
 
-        toResolve.map((fsPath) => {
-          this.converted.push(...this.resolver.getComponentsFromPath(fsPath));
-        });
+        // [...toResolve].map((fsPath) => {
+        //   this.converted.push(...this.resolver.getComponentsFromPath(fsPath));
+        // });
+        this.converted.push(...toResolve);
       } catch (e) {
         err = e as Error;
       }
@@ -199,7 +203,7 @@ export class ZipWriter extends ComponentWriter {
     let err: Error | undefined;
     try {
       await Promise.all(
-        chunk.writeInfos.map(async (writeInfo) => {
+        chunk.writeInfos.filter(isWriteInfoWithSource).map(async (writeInfo) => {
           // we don't want to prematurely zip folder types when their children might still be not in the zip
           // those files we'll leave open as ReadableStreams until the zip finalizes
           if (Boolean(chunk.component.type.folderType) || Boolean(chunk.component.type.folderContentType)) {
@@ -274,3 +278,24 @@ export class JsToXml extends Readable {
  * because the escaping of `&` happens AFTER that is called.
  * */
 const handleSpecialEntities = (xml: string): string => xml.replaceAll('&amp;#160;', '&#160;');
+
+/** discriminate between the shouldDelete and the regular WriteInfo */
+const isWriteInfoWithSource = (writeInfo: WriteInfo): writeInfo is WriteInfo & { source: Readable } =>
+  writeInfo.source !== undefined;
+
+const makeWriteInfoAbsolute =
+  (rootDestination = '') =>
+  (writeInfo: WriteInfo): WriteInfo => ({
+    ...writeInfo,
+    output: isAbsolute(writeInfo.output) ? writeInfo.output : join(rootDestination, writeInfo.output),
+  });
+
+const existsOrDoesntMatchIgnored =
+  (ignoredPaths: Set<string>) =>
+  (writeInfo: WriteInfo): boolean =>
+    existsSync(writeInfo.output) ||
+    [...ignoredPaths].every(
+      (ignoredPath) =>
+        !dirname(ignoredPath).includes(dirname(writeInfo.output)) &&
+        !basename(ignoredPath).includes(basename(writeInfo.output))
+    );

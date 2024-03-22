@@ -4,12 +4,14 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { RegistryAccess } from '../registry/registryAccess';
 import { ComponentSet } from '../collections/componentSet';
 import { PackageTypeMembers } from '../collections/types';
 import { SourcePath } from '../common/types';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { MetadataComponent } from '../resolve/types';
 import { SfdxFileFormat } from '../convert/types';
+import { MetadataTransferOptions } from './metadataTransfer';
 
 // ------------------------------------------------
 // API results reformatted for source development
@@ -372,3 +374,4 @@ export interface RetrieveVersionData {
   apiVersion: string;
   manifestVersion: string;
 }
+export type MetadataApiRetrieveOptions = MetadataTransferOptions & RetrieveOptions & { registry?: RegistryAccess };

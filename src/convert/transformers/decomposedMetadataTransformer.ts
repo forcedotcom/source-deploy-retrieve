@@ -4,6 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+
 import { dirname, join } from 'node:path';
 import { AnyJson, JsonMap, ensureString, isJsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
@@ -23,9 +24,11 @@ import type { DecompositionState, DecompositionStateValue } from '../convertCont
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
 type XmlObj = { [index: string]: { [XML_NS_KEY]: typeof XML_NS_URL } & JsonMap };
+type StateSetter = (forComponent: MetadataComponent, props: Partial<Omit<DecompositionStateValue, 'origin'>>) => void;
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
+
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   // eslint-disable-next-line @typescript-eslint/require-await
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
@@ -83,9 +86,31 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
       ? getWriteInfosFromMerge(mergeWith)(stateSetter)(parentXmlObject)(component)
       : [{ source: new JsToXml(parentXmlObject), output: getOutputFile(component) }];
 
-    return [...writeInfosForChildren, ...writeInfoForParent];
+    const childDestinations = new Set(writeInfosForChildren.map((w) => w.output));
+
+    // files that exist in FS (therefore, in mergeWith) but aren't in the component should be deleted by returning a writeInfo
+    // only do this if all the children have isAddressable marked false
+    const writeInfosForMissingChildrenToDelete: WriteInfo[] =
+      mergeWith && allChildrenAreUnaddressable(component.type)
+        ? childrenOfMergeComponent
+            .getSourceComponents()
+            .toArray()
+            .filter(hasXml)
+            .filter((c) => !childDestinations.has(c.xml))
+            .map((c) => ({ shouldDelete: true, output: c.xml, fullName: c.fullName, type: c.type.name }))
+        : [];
+
+    return [...writeInfosForChildren, ...writeInfoForParent, ...writeInfosForMissingChildrenToDelete];
   }
 }
+
+const hasXml = (c: SourceComponent): c is SourceComponent & { xml: string } => typeof c.xml === 'string';
+
+const allChildrenAreUnaddressable = (type: MetadataType): boolean =>
+  Object.values(type.children?.types ?? {}).every(
+    // exclude the COFT (unaddressableWithoutParent) from being deleted because its absence *might* not mean it was deleted from the org
+    (c) => c.isAddressable === false && c.unaddressableWithoutParent !== true
+  );
 
 /**
  * composedMetadata is a representation of the parent's xml
@@ -170,7 +195,6 @@ const getWriteInfosFromMerge =
     return mergeWith.xml ? [writeInfo] : [];
   };
 
-type StateSetter = (forComponent: MetadataComponent, props: Partial<Omit<DecompositionStateValue, 'origin'>>) => void;
 /**
  * Helper for setting the decomposed transaction state
  *

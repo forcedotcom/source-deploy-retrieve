@@ -11,13 +11,10 @@ import { asBoolean, isString } from '@salesforce/ts-types';
 import { Messages, SfError, Lifecycle, Logger } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
 import { fnJoin } from '../utils/path';
-import { ConvertOutputConfig } from '../convert/types';
-import { MetadataConverter } from '../convert/metadataConverter';
 import { ComponentSet } from '../collections/componentSet';
 import { ZipTreeContainer } from '../resolve/treeContainers';
 import { SourceComponent } from '../resolve/sourceComponent';
-import { RegistryAccess } from '../registry/registryAccess';
-import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
+import { MetadataTransfer } from './metadataTransfer';
 import {
   AsyncResult,
   ComponentStatus,
@@ -25,19 +22,16 @@ import {
   FileResponseSuccess,
   MetadataApiRetrieveStatus,
   MetadataTransferResult,
-  PackageOption,
   PackageOptions,
   RequestStatus,
-  RetrieveOptions,
   RetrieveRequest,
 } from './types';
+import { extract } from './retrieveExtract';
+import { getPackageOptions } from './retrieveExtract';
+import { MetadataApiRetrieveOptions } from './types';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
-
-const partialDeleteFileResponses: FileResponse[] = [];
-
-export type MetadataApiRetrieveOptions = MetadataTransferOptions & RetrieveOptions & { registry?: RegistryAccess };
 
 export class RetrieveResult implements MetadataTransferResult {
   // This ComponentSet is most likely just the components on the local file
@@ -54,7 +48,8 @@ export class RetrieveResult implements MetadataTransferResult {
   public constructor(
     public readonly response: MetadataApiRetrieveStatus,
     public readonly components: ComponentSet,
-    localComponents?: ComponentSet
+    localComponents?: ComponentSet,
+    private partialDeleteFileResponses: FileResponse[] = []
   ) {
     this.localComponents = new ComponentSet(localComponents?.getSourceComponents());
   }
@@ -116,12 +111,7 @@ export class RetrieveResult implements MetadataTransferResult {
 
     // Add file responses for components that support partial delete (e.g., DigitalExperience)
     // where pieces of the component were deleted in the org, then retrieved.
-    while (partialDeleteFileResponses.length) {
-      const fromPartialDelete = partialDeleteFileResponses.pop();
-      if (fromPartialDelete) {
-        this.fileResponses.push(fromPartialDelete);
-      }
-    }
+    this.fileResponses.push(...(this.partialDeleteFileResponses ?? []));
 
     return this.fileResponses;
   }
@@ -177,45 +167,31 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   }
 
   public async post(result: MetadataApiRetrieveStatus): Promise<RetrieveResult> {
-    let components: ComponentSet;
+    let componentSet: ComponentSet | undefined;
+    let partialDeleteFileResponses: FileResponse[] = [];
     const isMdapiRetrieve = this.options.format === 'metadata';
 
     if (result.status === RequestStatus.Succeeded) {
       const zipFileContents = Buffer.from(result.zipFile, 'base64');
       if (isMdapiRetrieve) {
-        const name = this.options.zipFileName ?? 'unpackaged.zip';
-        const zipFilePath = path.join(this.options.output, name);
-        fs.writeFileSync(zipFilePath, zipFileContents);
-
-        if (this.options.unzip) {
-          const zip = await JSZip.loadAsync(zipFileContents, { base64: true, createFolders: true });
-          const extractPath = path.join(this.options.output, path.parse(name).name);
-          fs.mkdirSync(extractPath, { recursive: true });
-          for (const filePath of Object.keys(zip.files)) {
-            const zipObj = zip.file(filePath);
-            if (!zipObj || zipObj?.dir) {
-              fs.mkdirSync(path.join(extractPath, filePath), { recursive: true });
-            } else {
-              // eslint-disable-next-line no-await-in-loop
-              const content = await zipObj?.async('nodebuffer');
-              if (content) {
-                fs.writeFileSync(path.join(extractPath, filePath), content);
-              }
-            }
-          }
-        }
+        await handleMdapiResponse(this.options, zipFileContents);
       } else {
-        components = await this.extract(zipFileContents);
+        ({ componentSet, partialDeleteFileResponses } = await extract({
+          zip: zipFileContents,
+          options: this.options,
+          logger: this.logger,
+          mainComponents: this.components,
+        }));
       }
     }
 
-    components ??= new ComponentSet(undefined, this.options.registry);
+    componentSet ??= new ComponentSet(undefined, this.options.registry);
 
-    const retrieveResult = new RetrieveResult(result, components, this.components);
+    const retrieveResult = new RetrieveResult(result, componentSet, this.components, partialDeleteFileResponses);
     if (!isMdapiRetrieve && !this.options.suppressEvents) {
       // This should only be done when retrieving source format since retrieving
       // mdapi format has no conversion or events/hooks
-      await this.maybeSaveTempDirectory('source', components);
+      await this.maybeSaveTempDirectory('source', componentSet);
       await Lifecycle.getInstance().emit('scopedPostRetrieve', {
         retrieveResult,
         orgId: this.orgId,
@@ -280,99 +256,6 @@ export class MetadataApiRetrieve extends MetadataTransfer<
     // @ts-ignore required callback
     return connection.metadata.retrieve(requestBody);
   }
-
-  private async extract(zip: Buffer): Promise<ComponentSet> {
-    let components: SourceComponent[] = [];
-    const { merge, output, registry } = this.options;
-    const converter = new MetadataConverter(registry);
-    const tree = await ZipTreeContainer.create(zip);
-
-    const packages = [
-      { zipTreeLocation: 'unpackaged', outputDir: output },
-      ...getPackageOptions(this.options.packageOptions).map(({ name, outputDir }) => ({
-        zipTreeLocation: name,
-        outputDir,
-      })),
-    ];
-
-    for (const pkg of packages) {
-      const outputConfig: ConvertOutputConfig = merge
-        ? {
-            type: 'merge',
-            mergeWith: this.components?.getSourceComponents() ?? [],
-            defaultDirectory: pkg.outputDir,
-            forceIgnoredPaths: this.components?.forceIgnoredPaths ?? new Set<string>(),
-          }
-        : {
-            type: 'directory',
-            outputDirectory: pkg.outputDir,
-          };
-      const zipComponents = ComponentSet.fromSource({
-        fsPaths: [pkg.zipTreeLocation],
-        registry,
-        tree,
-      })
-        .getSourceComponents()
-        .toArray();
-      if (merge) {
-        this.handlePartialDeleteMerges(zipComponents, tree).map((fileResponse) =>
-          partialDeleteFileResponses.push(fileResponse)
-        );
-      }
-
-      // this is intentional sequential
-      // eslint-disable-next-line no-await-in-loop
-      const convertResult = await converter.convert(zipComponents, 'source', outputConfig);
-      components = components.concat(convertResult?.converted ?? []);
-    }
-    return new ComponentSet(components, registry);
-  }
-
-  // Some bundle-like components can be partially deleted in the org, then retrieved. When this
-  // happens, the deleted files need to be deleted on the file system and added to the FileResponses
-  // that are returned by `RetrieveResult.getFileResponses()` for accuracy. The component types that
-  // support this behavior are defined in the metadata registry with `"supportsPartialDelete": true`.
-  // However, not all types can be partially deleted in the org. Currently this only applies to
-  // DigitalExperienceBundle and ExperienceBundle.
-
-  // side effect: deletes files
-  private handlePartialDeleteMerges(retrievedComponents: SourceComponent[], tree: ZipTreeContainer): FileResponse[] {
-    // Find all merge (local) components that support partial delete.
-    const partialDeleteComponents = new Map<string, PartialDeleteComp>(
-      (this.components?.getSourceComponents().toArray() ?? [])
-        .filter(supportsPartialDeleteAndHasContent)
-        .map((comp) => [comp.fullName, { contentPath: comp.content, contentList: fs.readdirSync(comp.content) }])
-    );
-
-    // Compare the contents of the retrieved components that support partial delete with the
-    // matching merge components. If the merge components have files that the retrieved components
-    // don't, delete the merge component and add all locally deleted files to the partial delete list
-    // so that they are added to the `FileResponses` as deletes.
-    return partialDeleteComponents.size === 0
-      ? [] // If no partial delete components were in the mergeWith ComponentSet, no need to continue.
-      : retrievedComponents
-          .filter(supportsPartialDeleteAndIsInMap(partialDeleteComponents))
-          .filter((comp) => partialDeleteComponents.get(comp.fullName)?.contentPath)
-          .filter(supportsPartialDeleteAndHasZipContent(tree))
-          .flatMap((comp) => {
-            // asserted to be defined by the filter above
-            const matchingLocalComp = partialDeleteComponents.get(comp.fullName)!;
-            const remoteContentList = new Set(tree.readDirectory(comp.content));
-
-            return matchingLocalComp.contentList
-              .filter((fileName) => !remoteContentList.has(fileName))
-              .filter((fileName) => !pathOrSomeChildIsIgnored(this.logger)(comp)(matchingLocalComp)(fileName))
-              .map(
-                (fileName): FileResponseSuccess => ({
-                  fullName: comp.fullName,
-                  type: comp.type.name,
-                  state: ComponentStatus.Deleted,
-                  filePath: path.join(matchingLocalComp.contentPath, fileName),
-                })
-              )
-              .map(deleteFilePath(this.logger));
-          });
-  }
 }
 
 /**
@@ -391,7 +274,31 @@ export interface ScopedPostRetrieve {
   orgId: string;
 }
 
-const deleteFilePath =
+const handleMdapiResponse = async (options: MetadataApiRetrieveOptions, zipFileContents: Buffer): Promise<void> => {
+  const name = options.zipFileName ?? 'unpackaged.zip';
+  const zipFilePath = path.join(options.output, name);
+  fs.writeFileSync(zipFilePath, zipFileContents);
+
+  if (options.unzip) {
+    const zip = await JSZip.loadAsync(zipFileContents, { base64: true, createFolders: true });
+    const extractPath = path.join(options.output, path.parse(name).name);
+    fs.mkdirSync(extractPath, { recursive: true });
+    for (const filePath of Object.keys(zip.files)) {
+      const zipObj = zip.file(filePath);
+      if (!zipObj || zipObj?.dir) {
+        fs.mkdirSync(path.join(extractPath, filePath), { recursive: true });
+      } else {
+        // eslint-disable-next-line no-await-in-loop
+        const content = await zipObj?.async('nodebuffer');
+        if (content) {
+          fs.writeFileSync(path.join(extractPath, filePath), content);
+        }
+      }
+    }
+  }
+};
+
+export const deleteFilePath =
   (logger: Logger) =>
   (fr: FileResponseSuccess): FileResponseSuccess => {
     if (fr.filePath) {
@@ -404,15 +311,17 @@ const deleteFilePath =
     return fr;
   };
 
-const supportsPartialDeleteAndHasContent = (comp: SourceComponent): comp is SourceComponent & { content: string } =>
+export const supportsPartialDeleteAndHasContent = (
+  comp: SourceComponent
+): comp is SourceComponent & { content: string } =>
   supportsPartialDelete(comp) && typeof comp.content === 'string' && fs.statSync(comp.content).isDirectory();
 
-const supportsPartialDeleteAndHasZipContent =
+export const supportsPartialDeleteAndHasZipContent =
   (tree: ZipTreeContainer) =>
   (comp: SourceComponent): comp is SourceComponent & { content: string } =>
     supportsPartialDelete(comp) && typeof comp.content === 'string' && tree.isDirectory(comp.content);
 
-const supportsPartialDeleteAndIsInMap =
+export const supportsPartialDeleteAndIsInMap =
   (partialDeleteComponents: Map<string, PartialDeleteComp>) =>
   (comp: SourceComponent): boolean =>
     supportsPartialDelete(comp) && partialDeleteComponents.has(comp.fullName);
@@ -422,7 +331,7 @@ const supportsPartialDelete = (comp: SourceComponent): boolean => comp.type.supp
 // If fileName is forceignored it is not counted as a diff. If fileName is a directory
 // we have to read the contents to check forceignore status or we might get a false
 // negative with `denies()` due to how the ignore library works.
-const pathOrSomeChildIsIgnored =
+export const pathOrSomeChildIsIgnored =
   (logger: Logger) =>
   (component: SourceComponent) =>
   (localComp: PartialDeleteComp) =>
@@ -444,7 +353,7 @@ const isForceIgnored =
     return ignored;
   };
 
-type PartialDeleteComp = {
+export type PartialDeleteComp = {
   contentPath: string;
   contentList: string[];
 };
@@ -458,8 +367,3 @@ const coerceBoolean = (field: unknown): boolean => {
 
 const getPackageNames = (packageOptions?: PackageOptions): string[] =>
   getPackageOptions(packageOptions)?.map((pkg) => pkg.name);
-
-const getPackageOptions = (packageOptions?: PackageOptions): Array<Required<PackageOption>> =>
-  (packageOptions ?? []).map((po: string | PackageOption) =>
-    isString(po) ? { name: po, outputDir: po } : { name: po.name, outputDir: po.outputDir ?? po.name }
-  );

@@ -67,20 +67,7 @@ export class MetadataConverter {
         writer
       );
       await Promise.all([conversionPipeline, ...tasks]);
-
-      const result: ConvertResult = { packagePath };
-
-      if (output.type === 'zip') {
-        const buffer = (writer as ZipWriter).buffer;
-        if (!packagePath) {
-          result.zipBuffer = buffer;
-        } else if (buffer) {
-          await promises.writeFile(packagePath, buffer);
-        }
-      } else {
-        result.converted = (writer as StandardWriter).converted;
-      }
-      return result;
+      return await getResult(this.registry)(packagePath)(writer);
     } catch (err) {
       if (!(err instanceof Error) && !isString(err)) {
         throw err;
@@ -95,6 +82,31 @@ export class MetadataConverter {
     }
   }
 }
+
+const getResult =
+  (registry: RegistryAccess) =>
+  (packagePath?: string) =>
+  async (writer: StandardWriter | ZipWriter): Promise<ConvertResult> => {
+    // union type discrimination
+    if ('addToZip' in writer) {
+      const buffer = writer.buffer;
+      if (!packagePath) {
+        return { packagePath, zipBuffer: buffer };
+      } else if (buffer) {
+        await promises.writeFile(packagePath, buffer);
+        return { packagePath };
+      }
+    } else if (writer.converted?.length > 0 || writer.deleted?.length > 0) {
+      const resolver = new MetadataResolver(registry);
+      return {
+        packagePath,
+        converted: writer.converted.flatMap((f) => resolver.getComponentsFromPath(f)),
+        deleted: writer.deleted,
+      };
+    }
+
+    return { packagePath };
+  };
 
 function getPackagePath(
   outputConfig: DirectoryConfig | (ZipConfig & Required<Pick<ZipConfig, 'outputDirectory'>>)
@@ -148,7 +160,7 @@ async function getConvertIngredients(
 ): Promise<ConfigOutputs> {
   switch (output.type) {
     case 'directory':
-      return getDirectoryConfigOutputs(output, targetFormatIsSource, cs, registry);
+      return getDirectoryConfigOutputs(output, targetFormatIsSource, cs);
     case 'zip':
       return getZipConfigOutputs(output, targetFormatIsSource, cs);
     case 'merge':
@@ -214,14 +226,13 @@ async function getZipConfigOutputs(
 async function getDirectoryConfigOutputs(
   output: DirectoryConfig,
   targetFormatIsSource: boolean,
-  cs: ComponentSet,
-  registry?: RegistryAccess
+  cs: ComponentSet
 ): Promise<ConfigOutputs> {
   const packagePath = getPackagePath(output);
   return {
     packagePath,
     defaultDirectory: packagePath,
-    writer: new StandardWriter(packagePath, new MetadataResolver(registry)),
+    writer: new StandardWriter(packagePath),
     tasks: targetFormatIsSource
       ? []
       : [

@@ -294,7 +294,7 @@ describe('Streams', () => {
       let ensureFile: SinonStub;
 
       beforeEach(() => {
-        writer = new streams.StandardWriter(rootDestination, resolver);
+        writer = new streams.StandardWriter(rootDestination);
         ensureFile = env.stub(fsUtil, 'ensureFileExists');
         pipelineStub = env.stub(streams, 'pipeline');
         env
@@ -357,14 +357,39 @@ describe('Streams', () => {
         });
       });
 
-      it('should resolve copied source components during write', async () => {
+      it('should hoist copied filenames into `converted` during write', async () => {
         pipelineStub.resolves();
 
         await writer._write(chunk, '', (err: Error | undefined) => {
           expect(err).to.be.undefined;
-          const destination = join(rootDestination, component.type.directoryName);
-          const expected = resolver.getComponentsFromPath(destination);
-          expect(writer.converted).to.deep.equal(expected);
+          const destination = join(rootDestination, component.type.directoryName, basename(component.xml!));
+          expect(writer.converted).to.deep.equal([destination]);
+        });
+      });
+
+      it('should hoisted deleted filenames into `deleted` during write', async () => {
+        pipelineStub.resolves();
+        const chunk: WriterFormat = {
+          component,
+          writeInfos: [
+            {
+              output: component.getPackageRelativePath(component.xml!, 'metadata'),
+              shouldDelete: true,
+              type: component.type.name,
+              fullName: component.fullName,
+            },
+          ],
+        };
+        await writer._write(chunk, '', (err: Error | undefined) => {
+          expect(err).to.be.undefined;
+          expect(writer.deleted).to.deep.equal([
+            {
+              filePath: join(rootDestination, component.type.directoryName, basename(component.xml!)),
+              fullName: component.fullName,
+              state: 'Deleted',
+              type: component.type.name,
+            },
+          ]);
         });
       });
 

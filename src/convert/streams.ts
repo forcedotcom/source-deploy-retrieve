@@ -173,9 +173,6 @@ export class StandardWriter extends ComponentWriter {
             })
         );
 
-        // [...toResolve].map((fsPath) => {
-        //   this.converted.push(...this.resolver.getComponentsFromPath(fsPath));
-        // });
         this.converted.push(...toResolve);
       } catch (e) {
         err = e as Error;

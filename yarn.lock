@@ -582,6 +582,30 @@
     semver "^7.6.0"
     ts-retry-promise "^0.7.1"
 
+"@salesforce/core@^6.7.3":
+  version "6.7.3"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-6.7.3.tgz#5d8f30c40ac3cebb898c8e845fe9a067bc729268"
+  integrity sha512-uU+PuZZGXxByhvnXLH1V3eY5P1caw401dIZ/QvhzYxoP/alPLk7dpChnZNJYH5Rw3dc/AhSPw+eg0cvUyjhP1Q==
+  dependencies:
+    "@salesforce/kit" "^3.0.15"
+    "@salesforce/schemas" "^1.6.1"
+    "@salesforce/ts-types" "^2.0.9"
+    "@types/semver" "^7.5.8"
+    ajv "^8.12.0"
+    change-case "^4.1.2"
+    faye "^1.4.0"
+    form-data "^4.0.0"
+    js2xmlparser "^4.0.1"
+    jsforce "^2.0.0-beta.29"
+    jsonwebtoken "9.0.2"
+    jszip "3.10.1"
+    pino "^8.19.0"
+    pino-abstract-transport "^1.1.0"
+    pino-pretty "^10.3.1"
+    proper-lockfile "^4.1.2"
+    semver "^7.6.0"
+    ts-retry-promise "^0.7.1"
+
 "@salesforce/dev-config@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@salesforce/dev-config/-/dev-config-4.1.0.tgz#e529576466d074e7a5f1441236510fef123da01e"
@@ -817,13 +841,6 @@
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
-
-"@types/proxy-from-env@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@types/proxy-from-env/-/proxy-from-env-1.0.4.tgz#0a0545768f2d6c16b81a84ffefb53b423807907c"
-  integrity sha512-TPR9/bCZAr3V1eHN4G3LD3OLicdJjqX1QRXWuNcCYgE66f/K8jO2ZRtHxI2D9MbnuUP6+qiKSS8eUHp6TFHGCw==
-  dependencies:
-    "@types/node" "*"
 
 "@types/responselike@^1.0.0":
   version "1.0.0"
@@ -4966,7 +4983,7 @@ shebang-regex@^3.0.0:
   resolved "https://registry.yarnpkg.com/shebang-regex/-/shebang-regex-3.0.0.tgz#ae16f1644d873ecad843b0307b143362d4c42172"
   integrity sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==
 
-shelljs@0.8.5, shelljs@^0.8.4, shelljs@^0.8.5:
+shelljs@^0.8.4, shelljs@^0.8.5:
   version "0.8.5"
   resolved "https://registry.yarnpkg.com/shelljs/-/shelljs-0.8.5.tgz#de055408d8361bed66c669d2f000538ced8ee20c"
   integrity sha512-TiwcRcrkhHvbrZbnRcFYMLl30Dfov3HKqzp5tO5b4pt6G/SezKcYhmDg15zXVBswHmctSAQKznqNW2LO5tTDow==

@@ -11,6 +11,7 @@ import * as JSZip from 'jszip';
 import * as fs from 'graceful-fs';
 import { Lifecycle, Messages, SfError } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
+import { RegistryAccess } from '../registry/registryAccess';
 import { ReplacementEvent } from '../convert/types';
 import { MetadataConverter } from '../convert/metadataConverter';
 import { ComponentSet } from '../collections/componentSet';
@@ -68,6 +69,7 @@ export interface MetadataApiDeployOptions extends MetadataTransferOptions {
    * Path to a directory containing mdapi-formatted code and a package.xml
    */
   mdapiPath?: string;
+  registry?: RegistryAccess;
 }
 
 export class MetadataApiDeploy extends MetadataTransfer<
@@ -90,12 +92,14 @@ export class MetadataApiDeploy extends MetadataTransfer<
   // Keep track of rest deploys separately since Connection.deploy() removes it
   // from the apiOptions and we need it for telemetry.
   private isRestDeploy: boolean;
+  private registry: RegistryAccess;
 
   public constructor(options: MetadataApiDeployOptions) {
     super(options);
     options.apiOptions = { ...MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions, ...options.apiOptions };
     this.options = Object.assign({}, options);
     this.isRestDeploy = !!options.apiOptions?.rest;
+    this.registry = options.registry ?? new RegistryAccess();
   }
 
   /**
@@ -323,7 +327,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
       return fs.promises.readFile(this.options.zipPath);
     }
     if (this.options.components && this.components) {
-      const converter = new MetadataConverter();
+      const converter = new MetadataConverter(this.registry);
       const { zipBuffer } = await converter.convert(this.components, 'metadata', { type: 'zip' });
       if (!zipBuffer) {
         throw new SfError(messages.getMessage('zipBufferError'));

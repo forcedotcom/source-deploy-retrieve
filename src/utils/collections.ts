@@ -19,9 +19,3 @@ export function deepFreeze<T extends object>(object: T): Readonly<T> {
   }
   return Object.freeze(object);
 }
-
-export const logFn = <T>(x: T): T => {
-  // eslint-disable-next-line no-console
-  console.log(typeof x === 'object' ? JSON.stringify(x, null, 2) : x);
-  return x;
-};

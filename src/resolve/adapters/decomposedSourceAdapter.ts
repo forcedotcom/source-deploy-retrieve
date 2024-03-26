@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
 import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
@@ -48,15 +47,12 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
 
   public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent | undefined {
     let rootMetadata = super.parseAsRootMetadataXml(path);
+
     if (!rootMetadata) {
       const rootMetadataPath = this.getRootMetadataXmlPath(path);
       if (rootMetadataPath) {
         rootMetadata = parseMetadataXml(rootMetadataPath);
       }
-    }
-    // there's not going to be a real parent in the filesystem, but we need one to attach the children to
-    if (!rootMetadata && this.type.strategies?.recomposition === 'startEmpty') {
-      rootMetadata = { path, fullName: basename(this.trimPathToContent(path)), suffix: this.type.suffix };
     }
     let component: SourceComponent | undefined;
     if (rootMetadata) {
@@ -73,12 +69,11 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
         this.forceIgnore
       );
     }
-
     return this.populate(path, component, isResolvingSource);
   }
 
   /**
-   * If the trigger turns out to be part of a child component, `populate` will build
+   * If the trigger turns out to be part of an addressable child component, `populate` will build
    * the child component, set its parent property to the one created by the
    * `BaseSourceAdapter`, and return the child component instead.
    */
@@ -93,7 +88,12 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
       const childTypeId = this.type.children?.suffixes?.[metaXml.suffix];
       const triggerIsAChild = !!childTypeId;
       const strategy = this.type.strategies?.decomposition;
-      if (triggerIsAChild && this.type.children && !this.type.children.types[childTypeId].unaddressableWithoutParent) {
+      if (
+        triggerIsAChild &&
+        this.type.children &&
+        !this.type.children.types[childTypeId].unaddressableWithoutParent &&
+        this.type.children.types[childTypeId].isAddressable !== false
+      ) {
         if (strategy === 'folderPerType' || strategy === 'topLevel' || isResolvingSource) {
           const parent =
             component ??
@@ -106,7 +106,6 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
               this.forceIgnore
             );
           parent.content = pathToContent;
-
           return new SourceComponent(
             {
               name: metaXml.fullName,
@@ -133,3 +132,9 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
     return component;
   }
 }
+
+export const logFn = <T>(x: T): T => {
+  // eslint-disable-next-line no-console
+  console.log(typeof x === 'object' ? JSON.stringify(x, null, 2) : x);
+  return x;
+};

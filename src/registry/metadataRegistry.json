@@ -21,6 +21,9 @@
     "managedtopic": "managedtopics",
     "matchingrule": "matchingrules",
     "mktdatatranfield": "mktdatatranobject",
+    "dataconnectionparamtmpl": "datastreamtemplate",
+    "mktdataconnectioncred": "mktdataconnection",
+    "mktdataconnectionparam": "mktdataconnection",
     "recordtype": "customobject",
     "sharingcriteriarule": "sharingrules",
     "sharingguestrule": "sharingrules",
@@ -188,6 +191,7 @@
     "dashboardFolder": "dashboardfolder",
     "dataCalcInsightTemplate": "datacalcinsighttemplate",
     "dataConnectorIngestApi": "dataconnectoringestapi",
+    "dataConnectionParamTmpl": "dataconnectionparamtmpl",
     "dataKitObjectTemplate": "datakitobjecttemplate",
     "dataPackageKitDefinition": "datapackagekitdefinition",
     "dataPipeline": "datapipeline",
@@ -331,6 +335,10 @@
     "mktCalcInsightObjectDef": "mktcalcinsightobjectdef",
     "mktDataTranField": "mktdatatranfield",
     "mktDataTranObject": "mktdatatranobject",
+    "mktDataConnection": "mktdataconnection",
+    "mktDataConnectionCred": "mktdataconnectioncred",
+    "mktDataConnectionParam": "mktdataconnectionparam",
+    "mktDataConnectionSrcParam": "mktdataconnectionsrcparam",
     "mlDataDefinition": "mldatadefinition",
     "mlDomain": "mldomain",
     "mlPrediction": "mlpredictiondefinition",
@@ -1722,6 +1730,22 @@
       "suffix": "dataStreamDefinition"
     },
     "datastreamtemplate": {
+      "children": {
+        "directories": {
+          "dataConnectionSourceParameters": "dataconnectionparamtmpl"
+        },
+        "suffixes": {
+          "dataConnectionParamTmpl": "dataconnectionparamtmpl"
+        },
+        "types": {
+          "dataconnectionparamtmpl": {
+            "directoryName": "dataConnectionSourceParameters",
+            "id": "dataconnectionparamtmpl",
+            "name": "DataConnectionParamTmpl",
+            "suffix": "dataConnectionParamTmpl"
+          }
+        }
+      },
       "directoryName": "dataStreamTemplates",
       "id": "datastreamtemplate",
       "name": "DataStreamTemplate",
@@ -3002,6 +3026,45 @@
       "name": "MktDataTranObject",
       "strictDirectoryName": false,
       "suffix": "mktDataTranObject"
+    },
+    "mktdataconnection": {
+      "children": {
+        "directories": {
+          "parameters": "mktdataconnectionparam",
+          "credentials": "mktdataconnectioncred"
+        },
+        "suffixes": {
+          "MktDataConnectionParam": "mktdataconnectionparam",
+          "MktDataConnectionCred": "mktdataconnectioncred"
+        },
+        "types": {
+          "mktdataconnectionparam": {
+            "directoryName": "parameters",
+            "id": "mktdataconnectionparam",
+            "name": "MktDataConnectionParam",
+            "suffix": "mktDataConnectionParam"
+          },
+          "mktdataconnectioncred": {
+            "directoryName": "credentials",
+            "id": "mktdataconnectioncred",
+            "name": "MktDataConnectionCred",
+            "suffix": "mktDataConnectionCred"
+          }
+        }
+      },
+      "directoryName": "MktDataConnections",
+      "id": "mktdataconnection",
+      "name": "MktDataConnection",
+      "strictDirectoryName": false,
+      "suffix": "mktDataConnection"
+    },
+    "mktdataconnectionsrcparam": {
+      "directoryName": "mktDataConnectionSrcParams",
+      "id": "mktdataconnectionsrcparam",
+      "inFolder": false,
+      "name": "MktDataConnectionSrcParam",
+      "strictDirectoryName": false,
+      "suffix": "mktDataConnectionSrcParam"
     },
     "mldatadefinition": {
       "directoryName": "mlDataDefinitions",

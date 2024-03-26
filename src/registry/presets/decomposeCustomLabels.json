@@ -1,0 +1,40 @@
+{
+  "childTypes": {
+    "customlabel": "customlabels"
+  },
+  "suffixes": {
+    "label": "customlabels"
+  },
+  "types": {
+    "customlabels": {
+      "children": {
+        "suffixes": {
+          "label": "customlabel"
+        },
+        "types": {
+          "customlabel": {
+            "directoryName": "labels",
+            "id": "customlabel",
+            "name": "labels",
+            "supportsWildcardAndName": true,
+            "ignoreParentName": true,
+            "suffix": "labels",
+            "uniqueIdElement": "fullName",
+            "xmlElementName": "labels"
+          }
+        }
+      },
+      "directoryName": "labels",
+      "id": "customlabels",
+      "name": "CustomLabels",
+      "ignoreParsedFullName": true,
+      "strictDirectoryName": false,
+      "strategies": {
+        "adapter": "decomposed",
+        "decomposition": "topLevel",
+        "transformer": "decomposed"
+      },
+      "suffix": "labels"
+    }
+  }
+}

@@ -44,12 +44,17 @@ for (const preset of presets) {
           it(`${type.name} has a valid children configuration`, () => {
             expect(type.children).to.have.property('types');
             expect(type.children).to.have.property('suffixes');
-            expect(type.children).to.have.property('directories');
+            if (type.strategies?.decomposition === 'folderPerType') {
+              // otherwise children will be written as files with topLevel
+              expect(type.children).to.have.property('directories');
+            }
             Object.values(type.children?.types ?? []).forEach((childType) => {
               assert(childType.suffix);
-              assert(type.children?.directories);
+              if (type.strategies?.decomposition === 'folderPerType') {
+                assert(type.children?.directories);
+                expect(type.children.directories[childType.directoryName]).to.equal(childType.id);
+              }
               expect(type.children?.suffixes[childType.suffix]).to.equal(childType.id);
-              expect(type.children.directories[childType.directoryName]).to.equal(childType.id);
             });
           });
         });
@@ -201,7 +206,7 @@ for (const preset of presets) {
       });
 
       describe('strictDirectoryNames all map to types with strictDirectoryName and correct directoryName', () => {
-        Object.entries(registry.strictDirectoryNames).forEach(([dirName, typeId]) => {
+        Object.entries(registry.strictDirectoryNames ?? []).forEach(([dirName, typeId]) => {
           it(`directory member ${dirName} matches a parent type ${typeId}`, () => {
             expect(registry.types[typeId].directoryName).equal(dirName);
             expect(registry.types[typeId].strictDirectoryName).equal(true);

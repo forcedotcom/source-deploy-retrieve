@@ -7,7 +7,6 @@
     "outDir": "lib",
     "skipLibCheck": true,
     "baseUrl": ".",
-    "paths": { "@salesforce/kit": ["node_modules/@salesforce/kit"] },
     "plugins": [{ "transform": "@salesforce/core/lib/messageTransformer", "import": "messageTransformer" }]
   },
   "include": [

@@ -1,6 +1,6 @@
 # Available Registry Presets
 
-## `decomposePermissionSet`
+## `decomposePermissionSetBeta`
 
 PermissionSet is decomposed to a folder named after the PermissionSet.
 
@@ -22,7 +22,7 @@ Simple fields (ex: `description`, `userLicense`) remain in the top-level `myPS.p
 
 FieldPermissions for all objects are in the same folder (they're not in sub-folders by object). This is intentional--I wanted subfolders but couldn't get it to work well.
 
-## `decomposeSharingRules`
+## `decomposeSharingRulesBeta`
 
 SharingRules is decomposed to a folder named after the sharingRules (which is named after an object)
 
@@ -42,12 +42,12 @@ source format
 Each child of SharingRules that is a repeated xml element (ex: sharingTerritoryRules) is saved as a separate file
 SharingRules has not simple fields, so the top-level `Account.sharingRules-meta.xml` will be an empty xml.
 
-## `decomposeWorkflow`
+## `decomposeWorkflowBeta`
 
 Workflow is decomposed to a folder named after the Workflow (which is named after an object)
 
 metadata format
-`/workflows/Account.workflow`
+`/workflows/Account.workflowBeta`
 
 source format
 
@@ -61,3 +61,19 @@ source format
 
 Each child of Workflow that is a repeated xml element (ex: workflowAlerts) is saved as a separate file
 Simple fields (ex: `fullName`) can remain in the top-level `Account.workflow-meta.xml`. This could also have no children
+
+## `decomposeCustomLabelsBeta`
+
+CustomLabels are decomposed to a folder named `CustomLabels` the labels are then placed into individual files
+
+metadata format
+`/labels/CustomLabels.customlabes-meta.xml`
+
+source format
+
+```txt
+/labels/CustomLabels/CustomLabels.labels-meta.xml (the non-decomposed parts)
+/labels/CustomLabels/a.label-meta.xml
+/labels/CustomLabels/b.label-meta.xml
+/labels/CustomLabels/c.label-meta.xml
+```

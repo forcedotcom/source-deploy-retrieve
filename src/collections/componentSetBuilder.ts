@@ -147,7 +147,7 @@ export class ComponentSetBuilder {
         fromConnection.toArray().map(addToComponentSet(componentSet));
       }
     } catch (e) {
-      return fromConnectionErrorHandler(e);
+      return componentSetBuilderErrorHandler(e);
     }
 
     // there should have been a componentSet created by this point.
@@ -167,7 +167,7 @@ const addToComponentSet =
     return cmp;
   };
 
-const fromConnectionErrorHandler = (e: unknown): never => {
+const componentSetBuilderErrorHandler = (e: unknown): never => {
   if (e instanceof Error && e.message.includes('Missing metadata type definition in registry for id')) {
     // to remain generic to catch missing metadata types regardless of parameters, split on '
     // example message : Missing metadata type definition in registry for id 'NonExistentType'
@@ -245,7 +245,12 @@ export const entryToTypeAndName =
   (rawEntry: string): MetadataTypeAndMetadataName => {
     // split on the first colon, and then join the rest back together to support names that include colons
     const [typeName, ...name] = rawEntry.split(':').map((entry) => entry.trim());
-    return { type: reg.getTypeByName(typeName), metadataName: name.length ? name.join(':') : '*' };
+    const type = reg.getTypeByName(typeName);
+    const parent = reg.getParentType(typeName);
+    if (type.isAddressable === false && parent !== undefined && !type.unaddressableWithoutParent) {
+      throw new Error(`Cannot use this type, instead use ${parent.name}`);
+    }
+    return { type, metadataName: name.length ? name.join(':') : '*' };
   };
 
 const typeAndNameToMetadataComponents =

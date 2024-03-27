@@ -20,7 +20,7 @@ import {
 /* eslint-disable no-await-in-loop */
 
 describe('decomposed custom labels', () => {
-  const testDir = path.join('test', 'snapshot', 'sampleProjects', 'variant-decomposeLabels');
+  const testDir = path.join('test', 'snapshot', 'sampleProjects', 'preset-decomposeLabels');
   let sourceFiles: string[];
   let mdFiles: string[];
 

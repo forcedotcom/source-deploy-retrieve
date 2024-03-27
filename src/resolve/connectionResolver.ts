@@ -10,7 +10,6 @@ import { PollingClient, StatusResult, Connection, Logger, Messages, Lifecycle, S
 import { Duration, ensureArray } from '@salesforce/kit';
 import { ensurePlainObject, ensureString, isPlainObject } from '@salesforce/ts-types';
 import { RegistryAccess } from '../registry/registryAccess';
-import { registry as defaultRegistry } from '../registry/registry';
 import { MetadataType } from '../registry/types';
 import { standardValueSet } from '../registry/standardvalueset';
 import { FileProperties, StdValueSetRecord, ListMetadataQuery } from '../client/types';
@@ -46,7 +45,7 @@ export class ConnectionResolver {
     this.mdTypeNames = mdTypes?.length
       ? // ensure the types passed in are valid per the registry
         mdTypes.filter((t) => this.registry.getTypeByName(t))
-      : Object.values(defaultRegistry.types).map((t) => t.name);
+      : Object.values(this.registry.getRegistry().types).map((t) => t.name);
   }
 
   public async resolve(
@@ -161,7 +160,7 @@ export class ConnectionResolver {
     }
 
     // Workaround because metadata.list({ type: 'StandardValueSet' }) returns []
-    if (query.type === defaultRegistry.types.standardvalueset.name && members.length === 0) {
+    if (query.type === this.registry.getRegistry().types.standardvalueset.name && members.length === 0) {
       const standardValueSetPromises = standardValueSet.fullnames.map(async (standardValueSetFullName) => {
         try {
           // The 'singleRecordQuery' method was having connection errors, using `retry` resolves this
@@ -189,8 +188,10 @@ export class ConnectionResolver {
           return (
             standardValueSetRecord.Metadata.standardValue.length && {
               fullName: standardValueSetRecord.MasterLabel,
-              fileName: `${defaultRegistry.types.standardvalueset.directoryName}/${standardValueSetRecord.MasterLabel}.${defaultRegistry.types.standardvalueset.suffix}`,
-              type: defaultRegistry.types.standardvalueset.name,
+              fileName: `${this.registry.getRegistry().types.standardvalueset.directoryName}/${
+                standardValueSetRecord.MasterLabel
+              }.${this.registry.getRegistry().types.standardvalueset.suffix}`,
+              type: this.registry.getRegistry().types.standardvalueset.name,
             }
           );
         } catch (err) {

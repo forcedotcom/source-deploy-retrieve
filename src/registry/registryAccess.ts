@@ -18,13 +18,16 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 
 export class RegistryAccess {
   private registry: MetadataRegistry;
-
   private strictFolderTypes?: MetadataType[];
   private folderContentTypes?: MetadataType[];
   private aliasTypes?: MetadataType[];
 
   public constructor(registry?: MetadataRegistry, projectDir?: string) {
     this.registry = registry ?? getEffectiveRegistry({ projectDir });
+  }
+
+  public getRegistry(): MetadataRegistry {
+    return this.registry;
   }
 
   /**

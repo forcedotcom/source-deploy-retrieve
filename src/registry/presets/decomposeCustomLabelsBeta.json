@@ -5,6 +5,9 @@
   "suffixes": {
     "label": "customlabel"
   },
+  "strictDirectoryNames": {
+    "labels": "customlabels"
+  },
   "types": {
     "customlabels": {
       "children": {
@@ -13,27 +16,27 @@
         },
         "types": {
           "customlabel": {
-            "directoryName": "labels",
+            "directoryName": "test",
             "id": "customlabel",
-            "ignoreParentName": true,
             "name": "CustomLabel",
             "suffix": "label",
+            "isAddressable": false,
             "supportsWildcardAndName": true,
             "uniqueIdElement": "fullName",
             "xmlElementName": "labels"
           }
         }
       },
+      "strictDirectoryName": true,
       "directoryName": "labels",
       "id": "customlabels",
-      "ignoreParsedFullName": true,
+      "ignoreParsedFullName": false,
       "name": "CustomLabels",
       "strategies": {
         "adapter": "decomposed",
         "decomposition": "topLevel",
         "transformer": "decomposed"
       },
-      "strictDirectoryName": false,
       "suffix": "labels"
     }
   }

@@ -3,7 +3,7 @@
     "customlabel": "customlabels"
   },
   "suffixes": {
-    "label": "customlabels"
+    "label": "customlabel"
   },
   "types": {
     "customlabels": {
@@ -15,10 +15,10 @@
           "customlabel": {
             "directoryName": "labels",
             "id": "customlabel",
-            "name": "labels",
-            "supportsWildcardAndName": true,
             "ignoreParentName": true,
-            "suffix": "labels",
+            "name": "CustomLabel",
+            "suffix": "label",
+            "supportsWildcardAndName": true,
             "uniqueIdElement": "fullName",
             "xmlElementName": "labels"
           }
@@ -26,14 +26,14 @@
       },
       "directoryName": "labels",
       "id": "customlabels",
-      "name": "CustomLabels",
       "ignoreParsedFullName": true,
-      "strictDirectoryName": false,
+      "name": "CustomLabels",
       "strategies": {
         "adapter": "decomposed",
         "decomposition": "topLevel",
         "transformer": "decomposed"
       },
+      "strictDirectoryName": false,
       "suffix": "labels"
     }
   }

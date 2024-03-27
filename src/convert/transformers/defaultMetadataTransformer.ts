@@ -6,10 +6,11 @@
  */
 import { basename, dirname, join } from 'node:path';
 import { Messages } from '@salesforce/core';
-import { META_XML_SUFFIX, SourcePath } from '../../common';
+import { SourcePath } from '../../common/types';
+import { META_XML_SUFFIX } from '../../common/constants';
 import { SfdxFileFormat, WriteInfo } from '../types';
-import { SourceComponent } from '../../resolve';
-import { extName, trimUntil } from '../../utils';
+import { SourceComponent } from '../../resolve/sourceComponent';
+import { extName, trimUntil } from '../../utils/path';
 import { getReplacementStreamForReadable } from '../replacements';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 

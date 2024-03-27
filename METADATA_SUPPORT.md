@@ -8,10 +8,8 @@ Currently, there are 0/0 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
-|Metadata Type|Support|Notes|
-|:---|:---|:---|
-
-
+| Metadata Type | Support | Notes |
+| :------------ | :------ | :---- |
 
 ## Next Release (v61)
 
@@ -20,7 +18,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 ## Additional Types
 
-> The following types are supported by this library but not in the coverage reports for either version.  These are typically
+> The following types are supported by this library but not in the coverage reports for either version. These are typically
 >
 > 1. types that have been removed from the metadata API but were supported in previous versions
 > 1. types that are available for pilots but not officially part of the metadata API (use with caution)

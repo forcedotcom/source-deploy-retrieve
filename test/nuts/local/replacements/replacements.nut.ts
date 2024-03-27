@@ -34,6 +34,7 @@ describe('e2e replacements test', () => {
   before(async () => {
     session = await TestSession.create({
       project: {
+        name: 'replacementsNut',
         sourceDir: path.join('test', 'nuts', 'local', 'replacements', 'testProj'),
       },
       devhubAuthStrategy: 'NONE',

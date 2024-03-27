@@ -32,7 +32,7 @@ import {
   RequestStatus,
 } from '../../../src/client/types';
 import { ComponentProperties } from '../../../src/resolve/sourceComponent';
-import { createMockZip } from '.';
+import { createMockZip } from './index';
 
 export const MOCK_ASYNC_RESULT: AsyncResult = { id: '1234', state: RequestStatus.Pending, done: false };
 export const MOCK_DEFAULT_OUTPUT = sep + 'test';

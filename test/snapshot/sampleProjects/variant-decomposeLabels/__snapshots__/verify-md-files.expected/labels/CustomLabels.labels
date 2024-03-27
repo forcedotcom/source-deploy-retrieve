@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>DeleteMe</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>DeleteMe</shortDescription>
+        <value>Test</value>
+    </labels>
+    <labels>
+        <fullName>KeepMe1</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>KeepMe1</shortDescription>
+        <value>Test</value>
+    </labels>
+    <labels>
+        <fullName>KeepMe2</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>KeepMe2</shortDescription>
+        <value>Test</value>
+    </labels>
+</CustomLabels>

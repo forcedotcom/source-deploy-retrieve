@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SharingOwnerRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>owner_fromTerrToTerrAndSub</fullName>
+    <accessLevel>Read</accessLevel>
+    <accountSettings>
+        <caseAccessLevel>None</caseAccessLevel>
+        <contactAccessLevel>Read</contactAccessLevel>
+        <opportunityAccessLevel>None</opportunityAccessLevel>
+    </accountSettings>
+    <label>owner_fromTerrToTerrAndSub</label>
+    <sharedTo>
+        <territoryAndSubordinates>Territory_1</territoryAndSubordinates>
+    </sharedTo>
+    <sharedFrom>
+        <territory>Territory_1</territory>
+    </sharedFrom>
+</SharingOwnerRule>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>emailtest/MarketingProductInquiryResponse</members>
+        <name>EmailTemplate</name>
+    </types>
+    <types>
+        <members>Account</members>
+        <name>Workflow</name>
+    </types>
+    <types>
+        <members>Account.emailalert1</members>
+        <name>WorkflowAlert</name>
+    </types>
+    <types>
+        <members>Account.fieldupdate1</members>
+        <name>WorkflowFieldUpdate</name>
+    </types>
+    <types>
+        <members>Account.outboundmsg1</members>
+        <name>WorkflowOutboundMessage</name>
+    </types>
+    <types>
+        <members>Account.task_1</members>
+        <name>WorkflowTask</name>
+    </types>
+    <version>60.0</version>
+</Package>

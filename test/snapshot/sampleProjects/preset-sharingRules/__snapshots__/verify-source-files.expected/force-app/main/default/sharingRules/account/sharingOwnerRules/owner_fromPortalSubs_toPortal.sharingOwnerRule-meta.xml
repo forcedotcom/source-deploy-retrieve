@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SharingOwnerRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>owner_fromPortalSubs_toPortal</fullName>
+    <accessLevel>Read</accessLevel>
+    <accountSettings>
+        <caseAccessLevel>None</caseAccessLevel>
+        <contactAccessLevel>Read</contactAccessLevel>
+        <opportunityAccessLevel>None</opportunityAccessLevel>
+    </accountSettings>
+    <label>owner_fromPortalSubs_toPortal</label>
+    <sharedTo>
+        <portalRole>${portalRoleName}</portalRole>
+    </sharedTo>
+    <sharedFrom>
+        <portalRoleAndSubordinates>${portalRoleName}</portalRoleAndSubordinates>
+    </sharedFrom>
+</SharingOwnerRule>

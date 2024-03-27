@@ -1,0 +1,13 @@
+{
+  "name": "variantTest",
+  "namespace": "",
+  "packageDirectories": [
+    {
+      "default": true,
+      "path": "force-app"
+    }
+  ],
+  "registryPresets": ["decomposePermissionSet"],
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "60.0"
+}

@@ -9,7 +9,7 @@ import { dirname, join, relative } from 'node:path';
 import ignore, { Ignore } from 'ignore/index';
 import { readFileSync } from 'graceful-fs';
 import { Lifecycle } from '@salesforce/core';
-import { SourcePath } from '../common';
+import { SourcePath } from '../common/types';
 import { searchUp } from '../utils/fileSystemHandler';
 
 export class ForceIgnore {

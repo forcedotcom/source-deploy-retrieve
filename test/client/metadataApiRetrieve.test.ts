@@ -32,6 +32,7 @@ import { COMPONENT } from '../mock/type-constants/apexClassConstant';
 import { DECOMPOSED_COMPONENT } from '../mock/type-constants/customObjectConstant';
 import * as coverage from '../../src/registry/coverage';
 import { testApiVersion } from '../mock/manifestConstants';
+import * as extractForStub from '../../src/client/retrieveExtract';
 
 chai.use(deepEqualInAnyOrder);
 
@@ -459,7 +460,7 @@ hY2thZ2VkL3BhY2thZ2UueG1sUEsFBgAAAAADAAMA7QAAAJoCAAAAAA==`;
     const fakeResults = { status: RequestStatus.Succeeded, zipFile } as MetadataApiRetrieveStatus;
     let writeFileStub: SinonStub;
     let mkdirStub: SinonStub;
-    const mdapiRetrieveExtractStub = $$.SANDBOX.stub().resolves({});
+    let mdapiRetrieveExtractStub: SinonStub;
 
     beforeEach(() => {
       writeFileStub = $$.SANDBOX.stub(fs, 'writeFileSync');
@@ -467,9 +468,9 @@ hY2thZ2VkL3BhY2thZ2UueG1sUEsFBgAAAAADAAMA7QAAAJoCAAAAAA==`;
     });
 
     it('should write the retrieved zip when format=metadata', async () => {
+      mdapiRetrieveExtractStub = $$.SANDBOX.stub(extractForStub, 'extract').throws();
+
       const mdapiRetrieve = new MetadataApiRetrieve({ usernameOrConnection, output, format });
-      // @ts-ignore overriding private method
-      mdapiRetrieve.extract = mdapiRetrieveExtractStub;
       await mdapiRetrieve.post(fakeResults);
 
       expect(writeFileStub.calledOnce).to.be.true;
@@ -480,9 +481,8 @@ hY2thZ2VkL3BhY2thZ2UueG1sUEsFBgAAAAADAAMA7QAAAJoCAAAAAA==`;
     });
 
     it('should unzip the retrieved zip when format=metadata and unzip=true', async () => {
+      mdapiRetrieveExtractStub = $$.SANDBOX.stub(extractForStub, 'extract').throws();
       const mdapiRetrieve = new MetadataApiRetrieve({ usernameOrConnection, output, format, unzip: true });
-      // @ts-ignore overriding private method
-      mdapiRetrieve.extract = mdapiRetrieveExtractStub;
       await mdapiRetrieve.post(fakeResults);
 
       const unpkg1Dir = join(output, 'unpackaged');
@@ -504,8 +504,10 @@ hY2thZ2VkL3BhY2thZ2UueG1sUEsFBgAAAAADAAMA7QAAAJoCAAAAAA==`;
     it('should write the retrieved zip with specified name when format=metadata and zipFileName is set', async () => {
       const zipFileName = 'retrievedFiles.zip';
       const mdapiRetrieve = new MetadataApiRetrieve({ usernameOrConnection, output, format, zipFileName });
-      // @ts-ignore overriding private method
-      mdapiRetrieve.extract = mdapiRetrieveExtractStub;
+      mdapiRetrieveExtractStub = $$.SANDBOX.stub(extractForStub, 'extract').resolves({
+        componentSet: new ComponentSet([]),
+        partialDeleteFileResponses: [],
+      });
       await mdapiRetrieve.post(fakeResults);
 
       expect(writeFileStub.calledOnce).to.be.true;

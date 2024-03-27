@@ -7,7 +7,7 @@
 
 import * as path from 'node:path';
 import * as fs from 'graceful-fs';
-import { SourcePath } from '../common';
+import { SourcePath } from '../common/types';
 
 export function ensureDirectoryExists(filePath: string): void {
   if (fs.existsSync(filePath)) {

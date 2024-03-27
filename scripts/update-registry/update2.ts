@@ -1,5 +1,6 @@
 // determine missing types from metadataCoverageReport
-import * as shelljs from 'shelljs';
+import { exec } from 'node:child_process';
+import { promisify } from 'node:util';
 import * as fs from 'fs';
 import { MetadataRegistry } from '../../src';
 import { exit } from 'process';
@@ -10,6 +11,7 @@ import { getCurrentApiVersion, getCoverage } from '../../src/registry/coverage';
 import { env } from '@salesforce/kit';
 
 export let metadataCoverage: CoverageObject;
+const execProm = promisify(exec);
 
 interface DescribeResult {
   directoryName: string;
@@ -40,8 +42,10 @@ const updateProjectScratchDef = (missingTypes: [string, CoverageObjectType][]) =
   }
 };
 
-const getMissingTypesAsDescribeResult = (missingTypes: [string, CoverageObjectType][]): DescribeResult[] => {
-  const describeResult = shelljs.exec('sf org list metadata-types -o registryBuilder --json', { silent: true });
+const getMissingTypesAsDescribeResult = async (
+  missingTypes: [string, CoverageObjectType][]
+): Promise<DescribeResult[]> => {
+  const describeResult = await execProm('sf org list metadata-types -o registryBuilder --json');
   const metadataObjectsByName = new Map<string, DescribeResult>();
   (JSON.parse(describeResult.stdout).result.metadataObjects as DescribeResult[]).map((describeObj) => {
     metadataObjectsByName.set(describeObj.xmlName, describeObj);
@@ -105,12 +109,12 @@ const registryUpdate = (missingTypesAsDescribeResult: DescribeResult[]) => {
   );
 
   // create an org we can describe
-  shelljs.exec('sf project generate -n registryBuilder', { silent: true });
+  await execProm('sf project generate -n registryBuilder');
   updateProjectScratchDef(missingTypes);
   // TODO: sourceApi has to match the coverage report
   if (!process.env.RB_EXISTING_ORG) {
     const hasDefaultDevHub = Boolean(
-      JSON.parse(shelljs.exec('sf config get target-dev-hub --json', { silent: true }).stdout).result[0].value
+      JSON.parse((await execProm('sf config get target-dev-hub --json')).stdout).result[0].value
     );
 
     if (!hasDefaultDevHub) {
@@ -122,10 +126,10 @@ Example: \`sf config set defaultdevhubusername=<devhub-username> --global\`
       exit(1);
     }
 
-    shelljs.exec('sf org create scratch -f registryBuilder/config/project-scratch-def.json -y 1 -a registryBuilder');
+    await execProm('sf org create scratch -f registryBuilder/config/project-scratch-def.json -y 1 -a registryBuilder');
   }
   // describe the org
-  const missingTypesAsDescribeResult = getMissingTypesAsDescribeResult(missingTypes);
+  const missingTypesAsDescribeResult = await getMissingTypesAsDescribeResult(missingTypes);
   console.log(missingTypesAsDescribeResult);
   registryUpdate(missingTypesAsDescribeResult);
 
@@ -133,7 +137,7 @@ Example: \`sf config set defaultdevhubusername=<devhub-username> --global\`
 
   // destroy the scratch org and the project
   if (!process.env.RB_EXISTING_ORG) {
-    shelljs.exec('sf org delete scratch -o registryBuilder --no-prompt');
+    await execProm('sf org delete scratch -o registryBuilder --no-prompt');
   }
-  shelljs.rm('-rf', 'registryBuilder');
+  fs.rmSync('registryBuilder', { recursive: true, force: true });
 })();

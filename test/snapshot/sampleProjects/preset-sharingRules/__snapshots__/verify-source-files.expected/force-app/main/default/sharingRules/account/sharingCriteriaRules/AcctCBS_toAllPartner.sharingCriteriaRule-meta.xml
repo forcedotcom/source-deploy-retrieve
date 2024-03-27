@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SharingCriteriaRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AcctCBS_toAllPartner</fullName>
+    <accessLevel>Read</accessLevel>
+    <accountSettings>
+        <caseAccessLevel>None</caseAccessLevel>
+        <contactAccessLevel>Read</contactAccessLevel>
+        <opportunityAccessLevel>None</opportunityAccessLevel>
+    </accountSettings>
+    <label>AcctCBS_toAllPartner</label>
+    <sharedTo>
+        <allPartnerUsers></allPartnerUsers>
+    </sharedTo>
+    <criteriaItems>
+        <field>BillingCountry</field>
+        <operation>equals</operation>
+        <value>Japan</value>
+    </criteriaItems>
+    <criteriaItems>
+        <field>BillingCity</field>
+        <operation>contains</operation>
+        <value>Tokyo</value>
+    </criteriaItems>
+</SharingCriteriaRule>

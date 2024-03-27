@@ -139,14 +139,7 @@ export interface MetadataType {
    * Configuration for resolving and converting components of the type.
    */
   strategies?: {
-    adapter:
-      | 'sourceAdapter'
-      | 'mixedContent'
-      | 'matchingContentFile'
-      | 'decomposed'
-      | 'nonDecomposed'
-      | 'digitalExperience'
-      | 'bundle';
+    adapter: 'mixedContent' | 'matchingContentFile' | 'decomposed' | 'digitalExperience' | 'bundle' | 'default';
     transformer?: 'decomposed' | 'staticResource' | 'nonDecomposed' | 'standard';
     decomposition?: 'topLevel' | 'folderPerType';
     recomposition?: 'startEmpty';

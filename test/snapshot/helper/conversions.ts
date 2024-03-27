@@ -7,14 +7,19 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 import snap from 'mocha-snap';
-import { expect } from 'chai';
-import { Dirent } from 'graceful-fs';
+import { expect, config, use } from 'chai';
+import * as deepEqualInAnyOrder from 'deep-equal-in-any-order';
+import { XMLParser } from 'fast-xml-parser';
+
+import { RegistryAccess } from '../../../src/registry/registryAccess';
 import { MetadataConverter } from '../../../src/convert/metadataConverter';
 import { ComponentSetBuilder } from '../../../src/collections/componentSetBuilder';
 
-const converter = new MetadataConverter();
-const MDAPI_OUT = 'mdapiOutput';
-const FORCE_APP = 'force-app';
+export const MDAPI_OUT = 'mdapiOutput';
+export const FORCE_APP = 'force-app';
+
+use(deepEqualInAnyOrder);
+config.truncateThreshold = 0;
 
 /**
  * Common function to standardize snapshot behavior
@@ -26,7 +31,7 @@ const FORCE_APP = 'force-app';
  */
 export const fileSnap = async (file: string, testDir: string, projectDir?: string) =>
   shouldIgnore(file)
-    ? void 0
+    ? Promise.resolve()
     : snap(await fs.promises.readFile(file, 'utf8'), {
         dir: testDir,
         file: simplifyFilePath(getRelative(projectDir ?? testDir)(file)),
@@ -39,13 +44,22 @@ export const fileSnap = async (file: string, testDir: string, projectDir?: strin
 export const mdapiToSource = async (testDir: string): Promise<string[]> => {
   const cs = await ComponentSetBuilder.build({
     sourcepath: [path.join(testDir, 'originalMdapi')],
+    projectDir: testDir,
   });
-  await converter.convert(cs, 'source', {
-    type: 'directory',
-    outputDirectory: path.resolve(path.join(testDir, 'force-app')),
-    genUniqueDir: false,
-  });
-  const dirEnts = await fs.promises.readdir(path.join(testDir, 'force-app'), {
+  const registry = new RegistryAccess(undefined, testDir);
+  const converter = new MetadataConverter(registry);
+
+  // loads custom registry if there is one
+  await converter.convert(
+    cs,
+    'source', // loads custom registry if there is one
+    {
+      type: 'directory',
+      outputDirectory: path.resolve(path.join(testDir, FORCE_APP)),
+      genUniqueDir: false,
+    }
+  );
+  const dirEnts = await fs.promises.readdir(path.join(testDir, FORCE_APP), {
     recursive: true,
     withFileTypes: true,
   });
@@ -56,19 +70,39 @@ export const mdapiToSource = async (testDir: string): Promise<string[]> => {
 export const sourceToMdapi = async (testDir: string): Promise<string[]> => {
   // cs from the entire project
   const cs = await ComponentSetBuilder.build({
-    sourcepath: [path.join(testDir, 'force-app')],
+    sourcepath: [path.join(testDir, FORCE_APP)],
+    projectDir: testDir,
   });
+
+  // loads custom registry if there is one
+  const registry = new RegistryAccess(undefined, testDir);
+  const converter = new MetadataConverter(registry);
+
   await converter.convert(cs, 'metadata', {
     type: 'directory',
-    outputDirectory: path.join(testDir, 'mdapiOutput'),
+    outputDirectory: path.join(testDir, MDAPI_OUT),
     genUniqueDir: false,
   });
-  const dirEnts = await fs.promises.readdir(path.join(testDir, 'mdapiOutput'), {
+  const dirEnts = await fs.promises.readdir(path.join(testDir, MDAPI_OUT), {
     recursive: true,
     withFileTypes: true,
   });
 
   return dirEntsToPaths(dirEnts);
+};
+
+/** checks that the two xml bodies have the same equivalent json (handles out-of-order things, etc) */
+export const compareTwoXml = (file1: string, file2: string): Chai.Assertion => {
+  const parser = new XMLParser({
+    ignoreAttributes: false,
+    parseTagValue: false,
+    parseAttributeValue: false,
+    cdataPropName: '__cdata',
+    ignoreDeclaration: true,
+    numberParseOptions: { leadingZeros: false, hex: false },
+  });
+
+  return expect(parser.parse(file1)).to.deep.equalInAnyOrder(parser.parse(file2));
 };
 
 /**
@@ -88,7 +122,7 @@ const exists = (dir: string) => {
   return dir;
 };
 
-const getAllDirents = (dir: string): Dirent[] => fs.readdirSync(dir, { recursive: true, withFileTypes: true });
+const getAllDirents = (dir: string): fs.Dirent[] => fs.readdirSync(dir, { recursive: true, withFileTypes: true });
 
 const resolveRelative = (parentDirs: string[]) => (subArray: string[], index: number) =>
   subArray.map(getRelative(parentDirs[index]));
@@ -107,7 +141,10 @@ const shouldIgnore = (file: string): boolean => {
   return false;
 };
 
-// will leave paths alone if they contain neither string {}
+/**
+ * rather than the full path, gets the "project relative" parts based on format
+ * will leave paths alone if they contain neither FORCE_APP/MDAPI_OUT
+ */
 const simplifyFilePath = (filePath: string): string =>
   filePath.includes(FORCE_APP) ? getPartsFromForceAppOnwards(filePath) : pathPartsAfter(filePath, MDAPI_OUT);
 

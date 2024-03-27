@@ -12,13 +12,7 @@ export {
   ScopedPreDeploy,
   ScopedPostDeploy,
 } from './metadataApiDeploy';
-export {
-  MetadataApiRetrieve,
-  MetadataApiRetrieveOptions,
-  RetrieveResult,
-  ScopedPostRetrieve,
-  ScopedPreRetrieve,
-} from './metadataApiRetrieve';
+export { MetadataApiRetrieve, RetrieveResult, ScopedPostRetrieve, ScopedPreRetrieve } from './metadataApiRetrieve';
 export {
   ComponentDeployment,
   ComponentRetrieval,
@@ -50,4 +44,5 @@ export {
   RetrieveOptions,
   DeployVersionData,
   RetrieveVersionData,
+  MetadataApiRetrieveOptions,
 } from './types';

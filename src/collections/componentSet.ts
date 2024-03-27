@@ -17,30 +17,24 @@ import {
   SfProject,
 } from '@salesforce/core';
 import { isString } from '@salesforce/ts-types';
-import {
-  MetadataApiDeploy,
-  MetadataApiDeployOptions,
-  MetadataApiRetrieve,
-  MetadataApiRetrieveOptions,
-} from '../client';
-import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
-import {
-  ComponentLike,
-  ConnectionResolver,
-  ManifestResolver,
-  MetadataComponent,
-  MetadataMember,
-  MetadataResolver,
-  SourceComponent,
-} from '../resolve';
-import { getCurrentApiVersion, MetadataType, RegistryAccess } from '../registry';
+import { MetadataApiDeploy, MetadataApiDeployOptions } from '../client/metadataApiDeploy';
+import { MetadataApiRetrieve } from '../client/metadataApiRetrieve';
+import type { MetadataApiRetrieveOptions } from '../client/types';
+import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common/constants';
+import { SourceComponent } from '../resolve/sourceComponent';
+import { MetadataResolver } from '../resolve/metadataResolver';
+import { ConnectionResolver } from '../resolve/connectionResolver';
+import { ManifestResolver } from '../resolve/manifestResolver';
+import { ComponentLike, MetadataComponent, MetadataMember } from '../resolve/types';
+import { RegistryAccess } from '../registry/registryAccess';
+import { getCurrentApiVersion } from '../registry/coverage';
+import { MetadataType } from '../registry/types';
 import {
   DestructiveChangesType,
   FromConnectionOptions,
   FromManifestOptions,
   FromSourceOptions,
   PackageManifestObject,
-  PackageTypeMembers,
 } from './types';
 import { LazyCollection } from './lazyCollection';
 import { DecodeableMap } from './decodeableMap';
@@ -452,7 +446,13 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       if (type.folderContentType) {
         type = this.registry.getTypeByName(type.folderContentType);
       }
-      addToTypeMap(type, fullName);
+      addToTypeMap(
+        type,
+        // they're reassembled like CustomLabels.MyLabel
+        this.registry.getParentType(type.name)?.strategies?.recomposition === 'startEmpty' && fullName.includes('.')
+          ? fullName.split('.')[1]
+          : fullName
+      );
 
       // Add children
       const componentMap = components.get(key);
@@ -465,15 +465,14 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       }
     }
 
-    const typeMembers: PackageTypeMembers[] = [];
-    for (const [typeName, members] of typeMap.entries()) {
-      typeMembers.push({ members: members.sort(), name: typeName });
-    }
+    const typeMembers = Array.from(typeMap.entries())
+      .map(([typeName, members]) => ({ members: members.sort(), name: typeName }))
+      .sort((a, b) => (a.name > b.name ? 1 : -1));
 
     return {
       Package: {
         ...{
-          types: typeMembers.sort((a, b) => (a.name > b.name ? 1 : -1)),
+          types: typeMembers,
           version,
         },
         ...(this.fullName ? { fullName: this.fullName } : {}),

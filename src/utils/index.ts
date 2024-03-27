@@ -5,5 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 export { generateMetaXML, generateMetaXMLPath, trimMetaXmlSuffix } from './metadata';
-export { extName, baseName, parseMetadataXml, parentName, trimUntil, parseNestedFullName } from './path';
+export {
+  extName,
+  baseName,
+  parseMetadataXml,
+  parentName,
+  trimUntil,
+  parseNestedFullName,
+  baseWithoutSuffixes,
+} from './path';
 export { deepFreeze } from './collections';

@@ -7,7 +7,7 @@
       "path": "force-app"
     }
   ],
-  "registryPresets": ["decomposeSharingRules"],
+  "registryPresets": ["decomposeSharingRulesBeta"],
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "52.0"
 }

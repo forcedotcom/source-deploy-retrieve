@@ -159,7 +159,7 @@ There are two options available if you're in an sfdx project.
 - `registryPresets`: SDR defines "preset" registryCustomizations and you say which ones you want applied. Each one is a partial, and you can have any or all of them by listing them. Names correspond to something in src/registry/presets, so your project file could use
 
 ```json
-  "registryPresets": ["decomposePermissionSet", "decomposeSharingRules"]
+  "registryPresets": ["decomposePermissionSetBeta", "decomposeSharingRulesBeta"]
 ```
 
 if you want only those 2 presets.

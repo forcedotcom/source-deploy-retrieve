@@ -105,7 +105,7 @@ const getResult =
       };
     }
 
-    return { packagePath };
+    return { packagePath, converted: [], deleted: [] };
   };
 
 function getPackagePath(

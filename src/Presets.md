@@ -47,7 +47,7 @@ SharingRules has not simple fields, so the top-level `Account.sharingRules-meta.
 Workflow is decomposed to a folder named after the Workflow (which is named after an object)
 
 metadata format
-`/workflows/Account.workflowBeta`
+`/workflows/Account.workflow`
 
 source format
 

@@ -6,8 +6,8 @@
  */
 
 import { SourcePath } from '../common/types';
-import { MetadataType } from '../registry';
-import { SourceComponent } from '.';
+import { MetadataType } from '../registry/types';
+import { SourceComponent } from './sourceComponent';
 
 export interface MetadataComponent {
   fullName: string;

@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { RegistryAccess } from '../registry';
-import { TreeContainer } from '../resolve';
+import { RegistryAccess } from '../registry/registryAccess';
+import { TreeContainer } from '../resolve/treeContainers';
 
 /**
  * File system path to a source file of a metadata component.

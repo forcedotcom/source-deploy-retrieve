@@ -7,7 +7,7 @@
 import { dirname, basename, sep, join } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
 import { baseName } from '../../utils/path';
-import { SourcePath } from '../../common';
+import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
 import { BaseSourceAdapter } from './baseSourceAdapter';
 

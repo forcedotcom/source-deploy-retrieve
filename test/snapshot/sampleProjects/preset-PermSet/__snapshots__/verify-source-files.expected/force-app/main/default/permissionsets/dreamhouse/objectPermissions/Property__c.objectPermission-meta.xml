@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ObjectPermission xmlns="http://soap.sforce.com/2006/04/metadata">
+    <allowCreate>true</allowCreate>
+    <allowDelete>true</allowDelete>
+    <allowEdit>true</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>true</modifyAllRecords>
+    <object>Property__c</object>
+    <viewAllRecords>true</viewAllRecords>
+</ObjectPermission>

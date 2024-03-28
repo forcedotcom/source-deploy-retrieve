@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@salesforce/core": "^6.7.3",
-    "@salesforce/kit": "^3.0.15",
+    "@salesforce/kit": "^3.1.0",
     "@salesforce/ts-types": "^2.0.9",
     "fast-levenshtein": "^3.0.0",
     "fast-xml-parser": "^4.3.5",
@@ -47,15 +47,12 @@
     "@types/graceful-fs": "^4.1.9",
     "@types/mime": "2.0.3",
     "@types/minimatch": "^5.1.2",
-    "@types/proxy-from-env": "^1.0.4",
-    "@types/shelljs": "^0.8.15",
     "deep-equal-in-any-order": "^1.1.19",
     "deepmerge": "^4.3.1",
     "eslint-plugin-sf-plugin": "^1.17.4",
     "jsforce": "^2.0.0-beta.29",
     "mocha-junit-reporter": "^1.23.3",
     "mocha-snap": "^5.0.0",
-    "shelljs": "0.8.5",
     "ts-node": "^10.9.2",
     "ts-patch": "^3.1.1",
     "typescript": "^5.4.2"
@@ -78,7 +75,7 @@
     "prepare": "sf-install",
     "repl": "node --inspect ./scripts/repl.js",
     "test": "wireit",
-    "test:nuts": "mocha \"test/nuts/local/**/*.nut.ts\" --timeout 500000",
+    "test:nuts": "mocha \"test/nuts/local/**/*.nut.ts\" --timeout 500000 --parallel --job 20",
     "test:nuts:suggest": "mocha \"test/nuts/suggestType/suggestType.nut.ts\" --timeout 10000",
     "test:only": "wireit",
     "test:registry": "mocha ./test/registry/registryCompleteness.test.ts --timeout 50000",
@@ -108,7 +105,7 @@
       "command": "tspc -p . --pretty --incremental",
       "files": [
         "src/**/*.ts",
-        "src/registry/*.json",
+        "src/registry/**/*.json",
         "**/tsconfig.json",
         "messages/**"
       ],
@@ -165,7 +162,7 @@
       "output": []
     },
     "test:only": {
-      "command": "nyc mocha \"test/**/*.test.ts\" --exclude \"test/registry/registryValidation.test.ts\" --exclude \"test/snapshot\"",
+      "command": "nyc mocha \"test/**/*.test.ts\" --exclude \"test/registry/registryValidation.test.ts\" --exclude \"test/snapshot/**\"",
       "env": {
         "FORCE_COLOR": "2"
       },

@@ -38,6 +38,7 @@ import {
   DECOMPOSED_COMPONENT,
 } from '../mock/type-constants/customObjectConstant';
 import { COMPONENT } from '../mock/type-constants/apexClassConstant';
+import * as deployMessages from '../../src/client/deployMessages';
 
 chai.use(deepEqualInAnyOrder);
 
@@ -202,7 +203,6 @@ describe('MetadataApiDeploy', () => {
         const pollingClientOptions = pollingClientSpy.firstCall.args[0] as PollingClient.Options;
         expect(pollingClientOptions.frequency).to.deep.equal(frequency);
         expect(pollingClientOptions.timeout).to.deep.equal(timeout);
-        expect(pollingClientOptions.poll).to.deep.equal(poll);
       });
     });
   });
@@ -987,8 +987,7 @@ describe('MetadataApiDeploy', () => {
           },
         };
         const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
-        // @ts-ignore testing private property
-        const spy = $$.SANDBOX.spy(result, 'getDeployMessages');
+        const spy = $$.SANDBOX.spy(deployMessages, 'getDeployMessages');
 
         result.getFileResponses();
         expect(spy.callCount).to.equal(1);

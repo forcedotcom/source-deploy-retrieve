@@ -9,11 +9,14 @@ import { retry, NotRetryableError, RetryError } from 'ts-retry-promise';
 import { PollingClient, StatusResult, Connection, Logger, Messages, Lifecycle, SfError } from '@salesforce/core';
 import { Duration, ensureArray } from '@salesforce/kit';
 import { ensurePlainObject, ensureString, isPlainObject } from '@salesforce/ts-types';
-import { RegistryAccess, registry as defaultRegistry, MetadataType } from '../registry';
+import { RegistryAccess } from '../registry/registryAccess';
+import { MetadataType } from '../registry/types';
 import { standardValueSet } from '../registry/standardvalueset';
 import { FileProperties, StdValueSetRecord, ListMetadataQuery } from '../client/types';
-import { extName } from '../utils';
+import { extName } from '../utils/path';
 import { MetadataComponent } from './types';
+
+type RelevantFileProperties = Pick<FileProperties, 'fullName' | 'fileName' | 'type'>;
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -42,14 +45,14 @@ export class ConnectionResolver {
     this.mdTypeNames = mdTypes?.length
       ? // ensure the types passed in are valid per the registry
         mdTypes.filter((t) => this.registry.getTypeByName(t))
-      : Object.values(defaultRegistry.types).map((t) => t.name);
+      : Object.values(this.registry.getRegistry().types).map((t) => t.name);
   }
 
   public async resolve(
     componentFilter = (component: Partial<FileProperties>): boolean => isPlainObject(component)
   ): Promise<ResolveConnectionResult> {
     const Aggregator: Array<Partial<FileProperties>> = [];
-    const childrenPromises: Array<Promise<FileProperties[]>> = [];
+    const childrenPromises: Array<Promise<RelevantFileProperties[]>> = [];
     const componentTypes: Set<MetadataType> = new Set();
     const lifecycle = Lifecycle.getInstance();
 
@@ -123,8 +126,8 @@ export class ConnectionResolver {
     };
   }
 
-  private async listMembers(query: ListMetadataQuery): Promise<FileProperties[]> {
-    let members: FileProperties[];
+  private async listMembers(query: ListMetadataQuery): Promise<RelevantFileProperties[]> {
+    let members: RelevantFileProperties[] = [];
 
     const pollingOptions: PollingClient.Options = {
       frequency: Duration.milliseconds(1000),
@@ -157,7 +160,7 @@ export class ConnectionResolver {
     }
 
     // Workaround because metadata.list({ type: 'StandardValueSet' }) returns []
-    if (query.type === defaultRegistry.types.standardvalueset.name && members.length === 0) {
+    if (query.type === this.registry.getRegistry().types.standardvalueset.name && members.length === 0) {
       const standardValueSetPromises = standardValueSet.fullnames.map(async (standardValueSetFullName) => {
         try {
           // The 'singleRecordQuery' method was having connection errors, using `retry` resolves this
@@ -185,15 +188,10 @@ export class ConnectionResolver {
           return (
             standardValueSetRecord.Metadata.standardValue.length && {
               fullName: standardValueSetRecord.MasterLabel,
-              fileName: `${defaultRegistry.types.standardvalueset.directoryName}/${standardValueSetRecord.MasterLabel}.${defaultRegistry.types.standardvalueset.suffix}`,
-              type: defaultRegistry.types.standardvalueset.name,
-              createdById: '',
-              createdByName: '',
-              createdDate: '',
-              id: '',
-              lastModifiedById: '',
-              lastModifiedByName: '',
-              lastModifiedDate: '',
+              fileName: `${this.registry.getRegistry().types.standardvalueset.directoryName}/${
+                standardValueSetRecord.MasterLabel
+              }.${this.registry.getRegistry().types.standardvalueset.suffix}`,
+              type: this.registry.getRegistry().types.standardvalueset.name,
             }
           );
         } catch (err) {

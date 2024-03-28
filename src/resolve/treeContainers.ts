@@ -243,10 +243,8 @@ export class VirtualTreeContainer extends TreeContainer {
     // a map to reduce array iterations
     const virtualDirectoryByFullPath = new Map<string, VirtualDirectory>();
     paths
-      .filter(
-        // defending against undefined being passed in.  The metadata API sometimes responds missing fileName
-        isString
-      )
+      // defending against undefined being passed in.  The metadata API sometimes responds missing fileName
+      .filter(isString)
       .map((filename) => {
         const splits = filename.split(sep);
         for (let i = 0; i < splits.length - 1; i++) {
@@ -308,22 +306,16 @@ export class VirtualTreeContainer extends TreeContainer {
       const { dirPath, children } = dir;
       this.tree.set(dirPath, new Set());
       for (const child of children) {
-        let childPath: SourcePath;
-        let childData: Buffer | undefined;
-        if (typeof child === 'string') {
-          childPath = join(dirPath, child);
-        } else {
-          childPath = join(dirPath, child.name);
-          childData = child.data;
-        }
+        const childPath = isString(child) ? join(dirPath, child) : join(dirPath, child.name);
 
         const dirPathFromTree = this.tree.get(dirPath);
         if (!dirPathFromTree) {
           throw new SfError(`The directory at path ${dirPath} does not exist in the virtual file system.`);
         }
         dirPathFromTree.add(childPath);
-        if (childData) {
-          this.fileContents.set(childPath, childData);
+
+        if (typeof child === 'object' && child.data) {
+          this.fileContents.set(childPath, child.data);
         }
       }
     }

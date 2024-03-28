@@ -247,6 +247,9 @@ export const entryToTypeAndName =
     const [typeName, ...name] = rawEntry.split(':').map((entry) => entry.trim());
     const type = reg.getTypeByName(typeName);
     const parent = reg.getParentType(typeName);
+    // If a user is requesting a child type that is unaddressable (more common with custom registries to create proper behavior)
+    // throw an error letting them know to use the entire parent instead
+    // or if they're requesting a COFT, unadressable without parent, don't throw because the parent could be requested - we don't know at this point
     if (type.isAddressable === false && parent !== undefined && !type.unaddressableWithoutParent) {
       throw new Error(`Cannot use this type, instead use ${parent.name}`);
     }

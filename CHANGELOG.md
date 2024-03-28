@@ -1,3 +1,12 @@
+## [10.6.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.6.0...10.6.1) (2024-03-28)
+
+
+### Bug Fixes
+
+* non-zip conversions return empty arrays for converted and deleted ([#1265](https://github.com/forcedotcom/source-deploy-retrieve/issues/1265)) ([06cc230](https://github.com/forcedotcom/source-deploy-retrieve/commit/06cc23016695f0c39df9b1699aea0583a0acbaaa))
+
+
+
 # [10.6.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.5.6...10.6.0) (2024-03-28)
 
 

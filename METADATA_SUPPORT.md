@@ -615,7 +615,7 @@ v61 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
-|AffinityScoreDefinition|❌|Not supported, but support could be added|
+|AffinityScoreDefinition|✅||
 |ContextUseCaseMapping|❌|Not supported, but support could be added|
 |DocumentTemplate|❌|Not supported, but support could be added (but not for tracking)|
 |DynamicFulfillmentOrchestratorSettings|✅||
@@ -624,9 +624,6 @@ v61 introduces the following new types.  Here's their current level of support
 |ExternalAuthIdentityProvider|❌|Not supported, but support could be added|
 |ForecastingGroup|❌|Not supported, but support could be added|
 |LargeQuotesandOrdersForRlmSettings|✅||
-|MlModelArtifact|✅||
-|MlModelConnection|✅||
-|MlModelSchema|✅||
 |RetrievalSummaryDefinition|❌|Not supported, but support could be added|
 |SearchCustomization|❌|Not supported, but support could be added (but not for tracking)|
 |SearchOrgWideObjectConfig|❌|Not supported, but support could be added|
@@ -681,6 +678,9 @@ v61 introduces the following new types.  Here's their current level of support
 - MatchingRule
 - MktDataTranField
 - MLDataDefinition
+- MlModelArtifact
+- MlModelConnection
+- MlModelSchema
 - MLPredictionDefinition
 - MLRecommendationDefinition
 - MobileSecurityPolicySet

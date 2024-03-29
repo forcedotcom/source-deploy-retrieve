@@ -6,7 +6,7 @@
  */
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { Logger, SfProject } from '@salesforce/core';
+import { Logger, SfProject, SfProjectJson } from '@salesforce/core';
 import { deepFreeze } from '../utils/collections';
 import { MetadataRegistry } from './types';
 import * as registryData from './metadataRegistry.json';
@@ -27,31 +27,36 @@ export const getEffectiveRegistry = (input?: RegistryLoadInput): MetadataRegistr
 /** read the project to get additional registry customizations and presets */
 const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry => {
   const logger = Logger.childFromRoot('variants');
-  try {
-    const projJson = SfProject.getInstance(projectDir ?? process.cwd()).getSfProjectJson();
-
-    // there might not be any customizations in a project, so we default to the emptyRegistry
-    const customizations = projJson.get<MetadataRegistry>('registryCustomizations') ?? emptyRegistry;
-    const presets = projJson.get<string[]>('registryPresets') ?? [];
-    if (Object.keys(customizations.types).length > 0) {
-      logger.debug(
-        `found registryCustomizations for types [${Object.keys(customizations.types).join(
-          ','
-        )}] in ${projJson.getPath()}`
-      );
-    }
-    if (presets.length > 0) {
-      logger.debug(`using registryPresets [${presets.join(',')}] in ${projJson.getPath()}`);
-    }
-    const registryFromPresets = presets.reduce<MetadataRegistry>(
-      (prev, curr) => firstLevelMerge(prev, loadPreset(curr)),
-      emptyRegistry
-    );
-    return firstLevelMerge(registryFromPresets, customizations);
-  } catch (e) {
+  const projJson = maybeGetProject(projectDir);
+  if (!projJson) {
     logger.debug('no project found, using standard registry');
     // there might not be a project at all and that's ok
     return emptyRegistry;
+  }
+
+  // there might not be any customizations in a project, so we default to the emptyRegistry
+  const customizations = projJson.get<MetadataRegistry>('registryCustomizations') ?? emptyRegistry;
+  const presets = projJson.get<string[]>('registryPresets') ?? [];
+  if (Object.keys(customizations.types).length > 0) {
+    logger.debug(
+      `found registryCustomizations for types [${Object.keys(customizations.types).join(',')}] in ${projJson.getPath()}`
+    );
+  }
+  if (presets.length > 0) {
+    logger.debug(`using registryPresets [${presets.join(',')}] in ${projJson.getPath()}`);
+  }
+  const registryFromPresets = presets.reduce<MetadataRegistry>(
+    (prev, curr) => firstLevelMerge(prev, loadPreset(curr)),
+    emptyRegistry
+  );
+  return firstLevelMerge(registryFromPresets, customizations);
+};
+
+const maybeGetProject = (projectDir?: string): SfProjectJson | undefined => {
+  try {
+    return SfProject.getInstance(projectDir ?? process.cwd()).getSfProjectJson();
+  } catch (e) {
+    return undefined;
   }
 };
 

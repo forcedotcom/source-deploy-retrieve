@@ -109,6 +109,7 @@
     "aiScoringModelDefinition": "aiscoringmodeldefinition",
     "aiUsecaseDefinitions": "aiusecasedefinition",
     "aiapplicationconfig": "aiapplicationconfig",
+    "affinityScoreDefinition": "affinityscoredefinition",
     "animationRule": "animationrule",
     "app": "customapplication",
     "appMenu": "appmenu",
@@ -681,6 +682,14 @@
       "name": "AIUsecaseDefinition",
       "strictDirectoryName": false,
       "suffix": "aiUsecaseDefinitions"
+    },
+    "affinityscoredefinition": {
+      "directoryName": "affinityScoreDefinitions",
+      "id": "affinityscoredefinition",
+      "inFolder": false,
+      "name": "AffinityScoreDefinition",
+      "strictDirectoryName": false,
+      "suffix": "affinityScoreDefinitions"
     },
     "analyticsnapshot": {
       "directoryName": "analyticSnapshots",

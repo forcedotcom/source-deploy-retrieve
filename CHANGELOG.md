@@ -1,3 +1,17 @@
+# [10.7.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.6.2...10.7.0) (2024-03-29)
+
+
+### Bug Fixes
+
+* throw on bad presets ([#1266](https://github.com/forcedotcom/source-deploy-retrieve/issues/1266)) ([0385629](https://github.com/forcedotcom/source-deploy-retrieve/commit/03856296edf3d36eeaa83350fcf95386469984ed))
+
+
+### Features
+
+* add AffinityScoreDefinition metadatatype ([#1267](https://github.com/forcedotcom/source-deploy-retrieve/issues/1267)) ([18ff186](https://github.com/forcedotcom/source-deploy-retrieve/commit/18ff186c48bc75619e4999fa4a67bb8566d368a5))
+
+
+
 ## [10.6.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.6.1...10.6.2) (2024-03-29)
 
 

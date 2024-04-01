@@ -5,9 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { MetadataTransformer, WriteInfo } from '../types';
-import { ConvertContext } from '../convertContext';
-import { SourceComponent } from '../../resolve';
-import { RegistryAccess } from '../../registry';
+import { ConvertContext } from '../convertContext/convertContext';
+import { SourceComponent } from '../../resolve/sourceComponent';
+import { RegistryAccess } from '../../registry/registryAccess';
 
 export abstract class BaseMetadataTransformer implements MetadataTransformer {
   public readonly context: ConvertContext;

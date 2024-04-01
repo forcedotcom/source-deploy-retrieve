@@ -1,0 +1,85 @@
+{
+  "name": "variantTest",
+  "namespace": "",
+  "packageDirectories": [
+    {
+      "default": true,
+      "path": "force-app"
+    }
+  ],
+  "registryCustomizations": {
+    "childTypes": {
+      "fieldPermission": "fieldpermission",
+      "objectpermission": "permissionset",
+      "tabpermission": "permissionset",
+      "userpermission": "permissionset"
+    },
+    "strictDirectoryNames": {
+      "permissionSets": "permissionset"
+    },
+    "types": {
+      "permissionset": {
+        "children": {
+          "directories": {
+            "fieldPermissions": "fieldpermission",
+            "objectPermissions": "objectpermission",
+            "tabSettings": "tabsetting",
+            "userPermissions": "userpermission"
+          },
+          "suffixes": {
+            "fieldPermission": "fieldpermission",
+            "objectPermission": "objectpermission",
+            "tabSetting": "tabsetting",
+            "userPermission": "userpermission"
+          },
+          "types": {
+            "fieldpermission": {
+              "directoryName": "fieldPermissions",
+              "id": "fieldpermission",
+              "isAddressable": false,
+              "name": "FieldPermission",
+              "suffix": "fieldPermission",
+              "uniqueIdElement": "field"
+            },
+            "objectpermission": {
+              "directoryName": "objectPermissions",
+              "id": "objectpermission",
+              "isAddressable": false,
+              "name": "ObjectPermission",
+              "suffix": "objectPermission",
+              "uniqueIdElement": "object"
+            },
+            "tabsetting": {
+              "directoryName": "tabSettings",
+              "id": "tabsetting",
+              "isAddressable": false,
+              "name": "TabSetting",
+              "suffix": "tabSetting",
+              "uniqueIdElement": "tab"
+            },
+            "userpermission": {
+              "directoryName": "userPermissions",
+              "id": "userpermission",
+              "isAddressable": false,
+              "name": "UserPermission",
+              "suffix": "userPermission"
+            }
+          }
+        },
+        "directoryName": "permissionsets",
+        "id": "permissionset",
+        "inFolder": false,
+        "name": "PermissionSet",
+        "strategies": {
+          "adapter": "decomposed",
+          "decomposition": "folderPerType",
+          "transformer": "decomposed"
+        },
+        "strictDirectoryName": true,
+        "suffix": "permissionset"
+      }
+    }
+  },
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "60.0"
+}

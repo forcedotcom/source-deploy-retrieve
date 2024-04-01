@@ -102,8 +102,6 @@ The config file consists of a handful of different indexes.
 
 This file is large and luckily, not entirely crafted by hand. And because new metadata types are being added to the platform each release, we’ll need to update the [Metadata registry file]. The update-registry module in the scripts folder automatically updates the registry as best it can using a describeMetadata() call against a provided Salesforce org, without overwriting manual changes. It also attempts to update the indexes listed in the previous section. When generating a new version of the registry, it’s important to manually review the changes to ensure they make sense and aren’t destructive. When in doubt, test functionality with the new version. See [Contributing Metadata Types to the Registry](./contributing/metadata.md) in the development README on how to invoke the script with Yarn.
 
-Unfortunately. we sometimes need to manually change a type definition, albeit rarely. The `typeOverride.json` file allows us to overwrite any updates the script attempts to make that we don’t want to happen.
-
 🛠 _Another issue is we are limited by the permissions and licenses of the org that we are running the update script on, which may return incomplete describe information. We need to address this as soon as possible to not run into type gaps between releases. This is being worked on as of 7/16/2021._
 
 ### Breaking Down a Metadata Type Entry
@@ -147,6 +145,32 @@ registry.types.auradefinitionbundle.directoryName; // => 'aura'
 ```
 
 📝 _The registry object is “deeply frozen”, meaning none of its properties, even the nested ones, are mutable. This is to ensure that a consumer cannot change registry information in a process and potentially affect functionality._
+
+### Registry Variants
+
+It's possible that the registry isn't what a user wants
+
+- you're building a new type and want an easy way to test your registry changes
+- you disagree with the choice made in the registry (ex: I wish PermissionSet was decomposed instead of a giant file)
+
+There are two options available if you're in an sfdx project.
+
+- `registryCustomizations`: add your own partial of the the registry that'll be merged into the registry. It's a json object just like the registry itself.
+- `registryPresets`: SDR defines "preset" registryCustomizations and you say which ones you want applied. Each one is a partial, and you can have any or all of them by listing them. Names correspond to something in src/registry/presets, so your project file could use
+
+```json
+  "registryPresets": ["decomposePermissionSetBeta", "decomposeSharingRulesBeta"]
+```
+
+if you want only those 2 presets.
+
+The naming convention is `decomposeFoo` where `Foo` is the top-level metadata type, and refers to `/presets/Foo.json`.
+
+This requires that any constructedRegistry know about your project directory. You'll see lots of code passing that around, and passing around constructed RegistryAccess to avoid getting the default if a custom one was already constructed.
+
+Be careful when instantiating classes (ex: ComponentSet) that will default a Registry or RegistryAccess--make sure to pass in a registry to preserve customizations.
+
+**Updating presets** If you do need to update a preset to make a breaking change, it's better to copy it to a new preset and give it a unique name (ex: `decomposeFooV2`). This preserves the existing behavior for existing projects with the old preset.
 
 ### Querying registry data
 
@@ -683,6 +707,8 @@ Oftentimes we need to work with a unique collection of components. A `ComponentS
 
 Component sets key components using their fullName and type id, i.e. only one pair will ever be present in the set. This implies that anything that conforms to the `MetadataComponent` interface can be added to a set. `SourceComponent`s in fact have particular logic on how they are stored. While only one fullName and type pair can be present in a set, multiple source-backed components can map to the same pair under-the-hood. This is how splitting a CustomObject across multiple package directories is achieved - by treating each version of the component as a separate source-backed component that points to the same fullName and type pair in a set. When component merging happens, the conversion logic is able to combine the source components belonging to the same pair.
 
+The easiest way to build `ComponentSets` is by using the `ComponentSetBuilder` class's static `build()` function. See <https://github.com/forcedotcom/source-deploy-retrieve/tree/main/src/collections/componentSetBuilder.ts> for details. Simply pass a configuration object to `build()` and it takes care of the rest, including handling destructive changes!
+
 Let’s look at some examples of adding components and testing membership:
 
 ```typescript
@@ -824,6 +850,8 @@ const testClassPaths = ComponentSet
 The order in which we’ve examined the concepts up to this point has been intentional. They are the building blocks leading up to the core use case of the library: deploying and retrieving. For a deploy, we must resolve source-backed components, then convert them into metadata format, write their files to a zip file, and finally send it to the org using the Metadata API. For a retrieve, we must resolve a mix of source-backed and non-source-backed components to make the Metadata API request, and once it finishes we resolve the components in the zip, convert them to source format, and finally copy them to a destination.
 
 Metadata API deploys and retrieves are asynchronous operations. Once a request has been made, the status of the operation needs to be polled to determine whether or not the request has finished processing. This lifecycle is encapsulated with the `MetadataApiDeploy` and `MetadataApiRetrieve` classes — one instance is meant to map to one operation. They expose useful methods to process the lifecycle and make other requests, which will be illustrated later. These both extend `MetadataTransfer` in order to share common functionality such as polling.
+
+The most common and simplest way to deploy and retrieve metadata is by using a [Component Set](#component-sets). The easiest way to build `ComponentSets` is by using the `ComponentSetBuilder` class's static `build()` function. See <https://github.com/forcedotcom/source-deploy-retrieve/tree/main/src/collections/componentSetBuilder.ts> for details.
 
 ### Establishing an org connection
 

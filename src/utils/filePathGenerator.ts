@@ -10,7 +10,7 @@ import { isPlainObject } from '@salesforce/ts-types';
 import { MetadataComponent } from '../resolve/types';
 import { META_XML_SUFFIX } from '../common/constants';
 import { RegistryAccess } from '../registry/registryAccess';
-import { registry } from '..';
+import { registry } from '../registry/registry';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');

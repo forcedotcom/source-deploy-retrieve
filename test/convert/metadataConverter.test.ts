@@ -55,7 +55,7 @@ describe('MetadataConverter', () => {
   });
 
   it('should generate package name using timestamp when option omitted', async () => {
-    const timestamp = 123456;
+    const timestamp = 123_456;
     const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
     $$.SANDBOX.stub(Date, 'now').returns(timestamp);
 
@@ -149,7 +149,7 @@ describe('MetadataConverter', () => {
     });
 
     it('should write manifest for metadata format conversion', async () => {
-      const timestamp = 123456;
+      const timestamp = 123_456;
       const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
       $$.SANDBOX.stub(Date, 'now').returns(timestamp);
       const expectedContents = await new ComponentSet(components).getPackageXml();
@@ -164,7 +164,7 @@ describe('MetadataConverter', () => {
     });
 
     it('should write destructive changes post manifest when ComponentSet has deletes marked for post', async () => {
-      const timestamp = 123456;
+      const timestamp = 123_456;
       const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
       $$.SANDBOX.stub(Date, 'now').returns(timestamp);
       const component1 = new SourceComponent({
@@ -196,7 +196,7 @@ describe('MetadataConverter', () => {
     });
 
     it('should write destructive changes pre manifest when ComponentSet has deletes', async () => {
-      const timestamp = 123456;
+      const timestamp = 123_456;
       const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
       $$.SANDBOX.stub(Date, 'now').returns(timestamp);
       const component1 = new SourceComponent({
@@ -229,7 +229,7 @@ describe('MetadataConverter', () => {
     });
 
     it('should write manifest for metadata format conversion with sourceApiVersion', async () => {
-      const timestamp = 123456;
+      const timestamp = 123_456;
       const packagePath = join(outputDirectory, `${MetadataConverter.DEFAULT_PACKAGE_PREFIX}_${timestamp}`);
       $$.SANDBOX.stub(Date, 'now').returns(timestamp);
       const compSet = new ComponentSet(components);
@@ -247,7 +247,7 @@ describe('MetadataConverter', () => {
     });
 
     it('should write the fullName entry when packageName is provided', async () => {
-      const timestamp = 123456;
+      const timestamp = 123_456;
       const packageName = 'examplePackage';
       const packagePath = join(outputDirectory, packageName);
       $$.SANDBOX.stub(Date, 'now').returns(timestamp);
@@ -290,6 +290,8 @@ describe('MetadataConverter', () => {
 
     it('should convert to specified output dir', async () => {
       const zipPath = outputDirectory + '.zip';
+      const testBuffer = Buffer.from('🥔');
+      $$.SANDBOX.stub(streams.ZipWriter.prototype, 'buffer').value(testBuffer);
       await converter.convert(components, 'metadata', {
         type: 'zip',
         outputDirectory,
@@ -297,7 +299,20 @@ describe('MetadataConverter', () => {
       });
 
       expect(ensureDirectoryStub.calledBefore(pipelineStub)).to.be.true;
-      expect(ensureDirectoryStub.firstCall.args[0]).to.equal(dirname(zipPath));
+      expect(writeFileStub.firstCall.args[0]).to.equal(zipPath);
+      expect(writeFileStub.firstCall.args[1]).to.deep.equal(testBuffer);
+    });
+
+    it('should not return zipBuffer result when outputDirectory is specified', async () => {
+      const testBuffer = Buffer.from('🥔');
+      $$.SANDBOX.stub(streams.ZipWriter.prototype, 'buffer').value(testBuffer);
+      const result = await converter.convert(components, 'metadata', {
+        type: 'zip',
+        outputDirectory,
+        genUniqueDir: false,
+      });
+
+      expect(result.zipBuffer).to.be.undefined;
     });
 
     it('should return zipBuffer result for in-memory configuration', async () => {

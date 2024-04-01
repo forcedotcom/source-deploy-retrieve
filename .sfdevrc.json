@@ -3,14 +3,14 @@
     "compile": {
       "clean": "if-file-deleted",
       "command": "tspc -p . --pretty --incremental",
-      "files": ["src/**/*.ts", "src/registry/*.json", "**/tsconfig.json", "messages/**"],
+      "files": ["src/**/*.ts", "src/registry/**/*.json", "**/tsconfig.json", "messages/**"],
       "output": ["lib/**", "*.tsbuildinfo"]
     },
     "test": {
       "dependencies": ["test:only", "test:compile", "test:registry-validation", "test:snapshot"]
     },
     "test:only": {
-      "command": "nyc mocha \"test/**/*.test.ts\" --exclude \"test/registry/registryValidation.test.ts\" --exclude \"test/snapshot\"",
+      "command": "nyc mocha \"test/**/*.test.ts\" --exclude \"test/registry/registryValidation.test.ts\" --exclude \"test/snapshot/**\"",
       "env": {
         "FORCE_COLOR": "2"
       },

@@ -7,11 +7,11 @@
 import { readFile } from 'node:fs/promises';
 import { Transform, Readable } from 'node:stream';
 import { sep, posix, join } from 'node:path';
-import { Lifecycle, Messages, SfProject } from '@salesforce/core';
+import { Lifecycle, Messages, SfError, SfProject } from '@salesforce/core';
 import * as minimatch from 'minimatch';
 import { Env } from '@salesforce/kit';
 import { ensureString, isString } from '@salesforce/ts-types';
-import { SourcePath } from '../common';
+import { SourcePath } from '../common/types';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { MarkedReplacement, ReplacementConfig, ReplacementEvent } from './types';
 
@@ -115,6 +115,12 @@ class ReplacementMarkingStream extends Transform {
     if (!chunk.isMarkedForDelete() && this.replacementConfigs?.length) {
       try {
         chunk.replacements = await getReplacements(chunk, this.replacementConfigs);
+        if (chunk.replacements && chunk.parent && chunk.type.name === 'CustomLabel') {
+          // Set replacements on the parent of a CustomLabel as well so that recomposing
+          // doesn't use the non-replaced content from parent cache.
+          // See RecompositionFinalizer.recompose() in convertContext.ts
+          chunk.parent.replacements = chunk.replacements;
+        }
       } catch (e) {
         if (!(e instanceof Error)) {
           throw e;
@@ -217,10 +223,18 @@ const getEnvValue = (env: string, allowUnset = false): string =>
  * Read the `replacement` property from sfdx-project.json
  */
 const readReplacementsFromProject = async (projectDir?: string): Promise<ReplacementConfig[]> => {
-  const proj = await SfProject.resolve(projectDir);
-  const projJson = (await proj.resolveProjectConfig()) as { replacements?: ReplacementConfig[] };
-  const definiteProjectDir = proj.getPath();
-  return (projJson.replacements ?? []).map(makeAbsolute(definiteProjectDir));
+  try {
+    const proj = await SfProject.resolve(projectDir);
+    const projJson = (await proj.resolveProjectConfig()) as { replacements?: ReplacementConfig[] };
+    const definiteProjectDir = proj.getPath();
+    return (projJson.replacements ?? []).map(makeAbsolute(definiteProjectDir));
+  } catch (e) {
+    if (e instanceof SfError && e.name === 'InvalidProjectWorkspaceError') {
+      return [];
+    }
+
+    throw e;
+  }
 };
 
 /** escape any special characters used in the string so it can be used as a regex */

@@ -5,10 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { basename, dirname, extname, sep } from 'node:path';
+import { basename, dirname, extname, sep, join } from 'node:path';
 import { Optional } from '@salesforce/ts-types';
-import { SourcePath } from '../common';
-import { MetadataXml } from '../resolve';
+import { SfdxFileFormat } from '../convert/types';
+import { SourcePath } from '../common/types';
+import { DEFAULT_PACKAGE_ROOT_SFDX, META_XML_SUFFIX } from '../common/constants';
+import { MetadataXml } from '../resolve/types';
+import { MetadataType } from '../registry/types';
 
 /**
  * Get the file or directory name at the end of a path. Different from `path.basename`
@@ -18,6 +21,20 @@ import { MetadataXml } from '../resolve';
  */
 export function baseName(fsPath: SourcePath): string {
   return basename(fsPath).split('.')[0];
+}
+
+/**
+ * the above baseName function doesn't handle components whose names have a `.` in them.
+ * this will handle that, but requires you to specify the expected suffix from the mdType.
+ *
+ * @param fsPath The path to evaluate
+ */
+export function baseWithoutSuffixes(fsPath: SourcePath, suffix: string): string {
+  return basename(fsPath)
+    .replace(META_XML_SUFFIX, '')
+    .split('.')
+    .filter((part) => part !== suffix)
+    .join('.');
 }
 
 /**
@@ -104,3 +121,42 @@ export function parseNestedFullName(fsPath: string, directoryName: string): stri
   pathPrefix[pathPrefix.length - 1] = fileName;
   return pathPrefix.join('/');
 }
+
+export const calculateRelativePath =
+  (format: SfdxFileFormat) =>
+  (types: { self: MetadataType; parentType?: MetadataType }) =>
+  (fullName: string) =>
+  (fsPath: string): string => {
+    const base = format === 'source' ? DEFAULT_PACKAGE_ROOT_SFDX : '';
+    const { directoryName, suffix, inFolder, folderType, folderContentType } = types.self;
+
+    // if there isn't a suffix, assume this is a mixed content component that must
+    // reside in the directoryName of its type. trimUntil maintains the folder structure
+    // the file resides in for the new destination. This also applies to inFolder types:
+    // (report, dashboard, emailTemplate, document) and their folder container types:
+    // (reportFolder, dashboardFolder, emailFolder, documentFolder)
+    // It also applies to DigitalExperienceBundle types as we need to maintain the folder structure
+    if (
+      !suffix ||
+      Boolean(inFolder) ||
+      typeof folderContentType === 'string' ||
+      ['digitalexperiencebundle', 'digitalexperience'].includes(types.self.id)
+    ) {
+      return join(base, trimUntil(fsPath, directoryName, true));
+    }
+
+    if (folderType) {
+      // types like Territory2Model have child types inside them.  We have to preserve those folder structures
+      if (types.parentType?.folderType && types.parentType?.folderType !== types.self.id) {
+        return join(base, trimUntil(fsPath, types.parentType.directoryName));
+      }
+      return join(base, directoryName, fullName.split('/')[0], basename(fsPath));
+    }
+    return join(base, directoryName, basename(fsPath));
+  };
+
+/** (a)(b)=> a/b */
+export const fnJoin =
+  (a: string) =>
+  (b: string): string =>
+    join(a, b);

@@ -8,8 +8,8 @@
 import { assert, expect } from 'chai';
 import { Messages, SfError } from '@salesforce/core';
 import { RegistryAccess, SourceComponent, registry } from '../../../src';
-import { ConvertContext } from '../../../src/convert/convertContext';
-import { MetadataTransformerFactory } from '../../../src/convert/transformers';
+import { ConvertContext } from '../../../src/convert/convertContext/convertContext';
+import { MetadataTransformerFactory } from '../../../src/convert/transformers/metadataTransformerFactory';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
 import { NonDecomposedMetadataTransformer } from '../../../src/convert/transformers/nonDecomposedMetadataTransformer';
 import { DefaultMetadataTransformer } from '../../../src/convert/transformers/defaultMetadataTransformer';

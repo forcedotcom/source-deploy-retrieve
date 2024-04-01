@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "10.3.10",
+  "version": "10.7.0",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/src/index.js",
   "author": "Salesforce",
@@ -25,11 +25,11 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^6.5.3",
-    "@salesforce/kit": "^3.0.15",
+    "@salesforce/core": "^6.7.3",
+    "@salesforce/kit": "^3.1.0",
     "@salesforce/ts-types": "^2.0.9",
     "fast-levenshtein": "^3.0.0",
-    "fast-xml-parser": "^4.3.4",
+    "fast-xml-parser": "^4.3.6",
     "got": "^11.8.6",
     "graceful-fs": "^4.2.11",
     "ignore": "^5.3.1",
@@ -40,26 +40,22 @@
     "ts-retry-promise": "^0.7.1"
   },
   "devDependencies": {
-    "@salesforce/cli-plugins-testkit": "^5.1.9",
-    "@salesforce/dev-scripts": "^8.3.0",
+    "@salesforce/cli-plugins-testkit": "^5.1.11",
+    "@salesforce/dev-scripts": "^8.4.2",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/fast-levenshtein": "^0.0.4",
     "@types/graceful-fs": "^4.1.9",
     "@types/mime": "2.0.3",
     "@types/minimatch": "^5.1.2",
-    "@types/proxy-from-env": "^1.0.4",
-    "@types/shelljs": "^0.8.15",
     "deep-equal-in-any-order": "^1.1.19",
     "deepmerge": "^4.3.1",
-    "eslint-plugin-sf-plugin": "^1.17.3",
+    "eslint-plugin-sf-plugin": "^1.17.4",
     "jsforce": "^2.0.0-beta.29",
     "mocha-junit-reporter": "^1.23.3",
     "mocha-snap": "^5.0.0",
-    "shelljs": "0.8.5",
-    "shx": "^0.3.4",
     "ts-node": "^10.9.2",
     "ts-patch": "^3.1.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.3"
   },
   "scripts": {
     "build": "wireit",
@@ -79,7 +75,7 @@
     "prepare": "sf-install",
     "repl": "node --inspect ./scripts/repl.js",
     "test": "wireit",
-    "test:nuts": "mocha \"test/nuts/local/**/*.nut.ts\" --timeout 500000",
+    "test:nuts": "mocha \"test/nuts/local/**/*.nut.ts\" --timeout 500000 --parallel --job 20",
     "test:nuts:suggest": "mocha \"test/nuts/suggestType/suggestType.nut.ts\" --timeout 10000",
     "test:only": "wireit",
     "test:registry": "mocha ./test/registry/registryCompleteness.test.ts --timeout 50000",
@@ -109,7 +105,7 @@
       "command": "tspc -p . --pretty --incremental",
       "files": [
         "src/**/*.ts",
-        "src/registry/*.json",
+        "src/registry/**/*.json",
         "**/tsconfig.json",
         "messages/**"
       ],
@@ -166,7 +162,7 @@
       "output": []
     },
     "test:only": {
-      "command": "nyc mocha \"test/**/*.test.ts\" --exclude \"test/registry/registryValidation.test.ts\" --exclude \"test/snapshot\"",
+      "command": "nyc mocha \"test/**/*.test.ts\" --exclude \"test/registry/registryValidation.test.ts\" --exclude \"test/snapshot/**\"",
       "env": {
         "FORCE_COLOR": "2"
       },

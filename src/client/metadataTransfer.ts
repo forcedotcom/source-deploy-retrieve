@@ -19,8 +19,9 @@ import {
 import { Duration } from '@salesforce/kit';
 import { AnyJson, isNumber } from '@salesforce/ts-types';
 import * as fs from 'graceful-fs';
-import { MetadataConverter, SfdxFileFormat } from '../convert';
-import { ComponentSet } from '../collections';
+import { SfdxFileFormat } from '../convert/types';
+import { MetadataConverter } from '../convert/metadataConverter';
+import { ComponentSet } from '../collections/componentSet';
 import { AsyncResult, MetadataRequestStatus, MetadataTransferResult, RequestStatus } from './types';
 
 Messages.importMessagesDirectory(__dirname);
@@ -95,31 +96,16 @@ export abstract class MetadataTransfer<
     frequencyOrOptions?: number | Partial<PollingClient.Options>,
     timeout?: number
   ): Promise<Result | undefined> {
-    let pollingOptions: PollingClient.Options = {
-      frequency: Duration.milliseconds(this.calculatePollingFrequency()),
-      timeout: Duration.minutes(60),
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const normalizedOptions = normalizePollingInputs(frequencyOrOptions, timeout, sizeOfComponentSet(this.components));
+    const pollingClient = await PollingClient.create({
+      ...normalizedOptions,
       poll: this.poll.bind(this),
-    };
-    if (isNumber(frequencyOrOptions)) {
-      pollingOptions.frequency = Duration.milliseconds(frequencyOrOptions);
-    } else if (frequencyOrOptions !== undefined) {
-      pollingOptions = { ...pollingOptions, ...frequencyOrOptions };
-    }
-    if (isNumber(timeout)) {
-      pollingOptions.timeout = Duration.seconds(timeout);
-    }
-    // from the overloaded methods, there's a possibility frequency/timeout isn't set
-    // guarantee frequency and timeout are set
-    pollingOptions.frequency ??= Duration.milliseconds(this.calculatePollingFrequency());
-    pollingOptions.timeout ??= Duration.minutes(60);
-
-    const pollingClient = await PollingClient.create(pollingOptions);
+    });
 
     try {
       this.logger.debug(`Polling for metadata transfer status. ID = ${this.id}`);
-      this.logger.debug(`Polling frequency (ms): ${pollingOptions.frequency.milliseconds}`);
-      this.logger.debug(`Polling timeout (min): ${pollingOptions.timeout.minutes}`);
+      this.logger.debug(`Polling frequency (ms): ${normalizedOptions.frequency.milliseconds}`);
+      this.logger.debug(`Polling timeout (min): ${normalizedOptions.timeout.minutes}`);
       const completedMdapiStatus = (await pollingClient.subscribe()) as unknown as Status;
       const result = await this.post(completedMdapiStatus);
       if (completedMdapiStatus.status === RequestStatus.Canceled) {
@@ -200,6 +186,34 @@ export abstract class MetadataTransfer<
     return getConnectionNoHigherThanOrgAllows(this.usernameOrConnection, this.apiVersion);
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  private isRetryableError(error: unknown): boolean {
+    if (!(error instanceof Error)) return false;
+
+    const retryableErrors = [
+      'ENOMEM',
+      'ETIMEDOUT',
+      'ENOTFOUND',
+      'ECONNRESET',
+      'socket hang up',
+      'connection timeout',
+      'INVALID_QUERY_LOCATOR',
+      'ERROR_HTTP_502',
+      'ERROR_HTTP_503',
+      'ERROR_HTTP_420',
+      '<h1>Bad Message 400</h1><pre>reason: Bad Request</pre>',
+      'Unable to complete the creation of the query cursor at this time',
+      'Failed while fetching query cursor data for this QueryLocator',
+      'Client network socket disconnected before secure TLS connection was established',
+      'Unexpected internal servlet state',
+    ];
+    const isRetryable = (retryableNetworkError: string): boolean =>
+      error.message.includes(retryableNetworkError) ||
+      ('errorCode' in error && typeof error.errorCode === 'string' && error.errorCode.includes(retryableNetworkError));
+
+    return retryableErrors.some(isRetryable);
+  }
+
   private async poll(): Promise<StatusResult> {
     let completed = false;
     let mdapiStatus: Status | undefined;
@@ -229,23 +243,9 @@ export abstract class MetadataTransfer<
           await Lifecycle.getInstance().emitWarning('Metadata API response not parseable');
           return { completed: false };
         }
+
         // tolerate intermittent network errors upto retry limit
-        if (
-          [
-            'ENOMEM',
-            'ETIMEDOUT',
-            'ENOTFOUND',
-            'ECONNRESET',
-            'socket hang up',
-            'connection timeout',
-            'INVALID_QUERY_LOCATOR',
-            '<h1>Bad Message 400</h1><pre>reason: Bad Request</pre>',
-            'Unable to complete the creation of the query cursor at this time',
-            'Failed while fetching query cursor data for this QueryLocator',
-            'Client network socket disconnected before secure TLS connection was established',
-            'Unexpected internal servlet state',
-          ].some((retryableNetworkError) => (e as Error).message.includes(retryableNetworkError))
-        ) {
+        if (this.isRetryableError(e)) {
           this.logger.debug('Network error on the request', e);
           await Lifecycle.getInstance().emitWarning('Network error occurred.  Continuing to poll.');
           return { completed: false };
@@ -256,28 +256,6 @@ export abstract class MetadataTransfer<
     this.logger.debug(`MDAPI status update: ${mdapiStatus.status}`);
 
     return { completed, payload: mdapiStatus as unknown as AnyJson };
-  }
-
-  /**
-   * Based on the source components in the component set, it will return a polling frequency in milliseconds
-   */
-  private calculatePollingFrequency(): number {
-    const size = this.components?.getSourceComponents().toArray().length ?? 0;
-    // take a piece-wise approach to encapsulate discrete deployment sizes in polling frequencies that "feel" good when deployed
-    if (size === 0) {
-      // no component set size is possible for retrieve
-      return 1000;
-    } else if (size <= 10) {
-      return 100;
-    } else if (size <= 50) {
-      return 250;
-    } else if (size <= 100) {
-      return 500;
-    } else if (size <= 1000) {
-      return 1000;
-    } else {
-      return size;
-    }
   }
 
   public abstract checkStatus(): Promise<Status>;
@@ -303,4 +281,51 @@ const getConnectionNoHigherThanOrgAllows = async (conn: Connection, requestedVer
     conn.setApiVersion(maxApiVersion);
   }
   return conn;
+};
+
+/** there's an options object OR 2 raw number param, there's defaults including freq based on the CS size */
+export const normalizePollingInputs = (
+  frequencyOrOptions?: number | Partial<PollingClient.Options>,
+  timeout?: number,
+  componentSetSize = 0
+): Pick<PollingClient.Options, 'frequency' | 'timeout'> => {
+  let pollingOptions: Pick<PollingClient.Options, 'frequency' | 'timeout'> = {
+    frequency: Duration.milliseconds(calculatePollingFrequency(componentSetSize)),
+    timeout: Duration.minutes(60),
+  };
+  if (isNumber(frequencyOrOptions)) {
+    pollingOptions.frequency = Duration.milliseconds(frequencyOrOptions);
+  } else if (frequencyOrOptions !== undefined) {
+    pollingOptions = { ...pollingOptions, ...frequencyOrOptions };
+  }
+  if (isNumber(timeout)) {
+    pollingOptions.timeout = Duration.seconds(timeout);
+  }
+  // from the overloaded methods, there's a possibility frequency/timeout isn't set
+  // guarantee frequency and timeout are set
+  pollingOptions.frequency ??= Duration.milliseconds(calculatePollingFrequency(componentSetSize));
+  pollingOptions.timeout ??= Duration.minutes(60);
+
+  return pollingOptions;
+};
+
+/** yeah, there's a size property on CS.  But we want the actual number of source components */
+const sizeOfComponentSet = (cs?: ComponentSet): number => cs?.getSourceComponents().toArray().length ?? 0;
+
+/** based on the size of the components, pick a reasonable polling frequency */
+export const calculatePollingFrequency = (size: number): number => {
+  if (size === 0) {
+    // no component set size is possible for retrieve
+    return 1000;
+  } else if (size <= 10) {
+    return 100;
+  } else if (size <= 50) {
+    return 250;
+  } else if (size <= 100) {
+    return 500;
+  } else if (size <= 1000) {
+    return 1000;
+  } else {
+    return size;
+  }
 };

@@ -10,7 +10,7 @@ import { TestContext } from '@salesforce/core/lib/testSetup';
 import { nonDecomposed } from '../../mock';
 import { NonDecomposedMetadataTransformer } from '../../../src/convert/transformers/nonDecomposedMetadataTransformer';
 import { ComponentSet, registry, RegistryAccess, SourceComponent } from '../../../src';
-import { ConvertContext } from '../../../src/convert/convertContext';
+import { ConvertContext } from '../../../src/convert/convertContext/convertContext';
 
 describe('NonDecomposedMetadataTransformer', () => {
   const $$ = new TestContext();

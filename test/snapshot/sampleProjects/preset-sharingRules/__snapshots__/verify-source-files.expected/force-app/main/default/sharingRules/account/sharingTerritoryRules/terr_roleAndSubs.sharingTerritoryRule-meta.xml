@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SharingTerritoryRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>terr_roleAndSubs</fullName>
+    <accessLevel>Read</accessLevel>
+    <accountSettings>
+        <caseAccessLevel>None</caseAccessLevel>
+        <contactAccessLevel>Read</contactAccessLevel>
+        <opportunityAccessLevel>None</opportunityAccessLevel>
+    </accountSettings>
+    <label>terr_roleAndSubs</label>
+    <sharedTo>
+        <roleAndSubordinatesInternal>role1_sub_role</roleAndSubordinatesInternal>
+    </sharedTo>
+    <sharedFrom>
+        <territory>Territory_1</territory>
+    </sharedFrom>
+</SharingTerritoryRule>

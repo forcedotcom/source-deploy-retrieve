@@ -14,6 +14,7 @@ import {
   replacementIterations,
   stringToRegex,
   posixifyPaths,
+  envFilter,
 } from '../../src/convert/replacements';
 import { matchingContentFile } from '../mock';
 import * as replacementsForMock from '../../src/convert/replacements';
@@ -46,10 +47,88 @@ describe('file matching', () => {
     expect(fn({ glob: 'foo', ...base })).to.be.false;
     expect(fn({ glob: '**/*', ...base })).to.be.true;
   });
-  it('test absolute vs. relative paths');
+  it('test absolute vs. relative paths', () => {
+    const fn = matchesFile(path.join('/Usr', 'me', 'foo', 'bar'));
+    expect(fn({ glob: 'foo/**', ...base })).to.be.true;
+    expect(fn({ glob: 'foo/*', ...base })).to.be.true;
+    expect(fn({ glob: 'foo', ...base })).to.be.false;
+    expect(fn({ glob: '**/*', ...base })).to.be.true;
+  });
 });
 
-describe('env filters', () => {});
+describe('env filters', () => {
+  beforeEach(() => {
+    process.env.SHOULD_REPLACE_FOO = undefined;
+  });
+  it('true when not replaceWhenEnv', () => {
+    expect(envFilter({ stringToReplace: 'foo', filename: '*', replaceWithFile: '/some/file' })).to.equal(true);
+  });
+  it('true when env is set and value matches string', () => {
+    process.env.SHOULD_REPLACE_FOO = 'x';
+    expect(
+      envFilter({
+        stringToReplace: 'foo',
+        filename: '*',
+        replaceWithFile: '/some/file',
+        replaceWhenEnv: [{ env: 'SHOULD_REPLACE_FOO', value: 'x' }],
+      })
+    ).to.equal(true);
+  });
+  it('true when env is set and value matches boolean', () => {
+    process.env.SHOULD_REPLACE_FOO = 'true';
+    expect(
+      envFilter({
+        stringToReplace: 'foo',
+        filename: '*',
+        replaceWithFile: '/some/file',
+        replaceWhenEnv: [{ env: 'SHOULD_REPLACE_FOO', value: true }],
+      })
+    ).to.equal(true);
+  });
+  it('true when env is set and value matches number', () => {
+    process.env.SHOULD_REPLACE_FOO = '6';
+    expect(
+      envFilter({
+        stringToReplace: 'foo',
+        filename: '*',
+        replaceWithFile: '/some/file',
+        replaceWhenEnv: [{ env: 'SHOULD_REPLACE_FOO', value: 6 }],
+      })
+    ).to.equal(true);
+  });
+  it('false when env is set and does not match number', () => {
+    process.env.SHOULD_REPLACE_FOO = '6';
+    expect(
+      envFilter({
+        stringToReplace: 'foo',
+        filename: '*',
+        replaceWithFile: '/some/file',
+        replaceWhenEnv: [{ env: 'SHOULD_REPLACE_FOO', value: 7 }],
+      })
+    ).to.equal(false);
+  });
+  it('false when env is set and does not match string', () => {
+    process.env.SHOULD_REPLACE_FOO = 'x';
+    expect(
+      envFilter({
+        stringToReplace: 'foo',
+        filename: '*',
+        replaceWithFile: '/some/file',
+        replaceWhenEnv: [{ env: 'SHOULD_REPLACE_FOO', value: 'y' }],
+      })
+    ).to.equal(false);
+  });
+  it('false when env is not set', () => {
+    expect(
+      envFilter({
+        stringToReplace: 'foo',
+        filename: '*',
+        replaceWithFile: '/some/file',
+        replaceWhenEnv: [{ env: 'SHOULD_REPLACE_FOO', value: 'true' }],
+      })
+    ).to.equal(false);
+  });
+});
 
 describe('marking replacements on a component', () => {
   before(() => {

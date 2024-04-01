@@ -103,13 +103,13 @@
     "advAccountForecastSet": "advaccountforecastset",
     "advAcctForecastDimSource": "advacctforecastdimsource",
     "advAcctForecastPeriodGroup": "advacctforecastperiodgroup",
+    "affinityScoreDefinition": "affinityscoredefinition",
     "ai": "aiapplication",
     "aiAssistantTemplate": "aiassistanttemplate",
     "aiScoringModelDefVersion": "aiscoringmodeldefversion",
     "aiScoringModelDefinition": "aiscoringmodeldefinition",
     "aiUsecaseDefinitions": "aiusecasedefinition",
     "aiapplicationconfig": "aiapplicationconfig",
-    "affinityScoreDefinition": "affinityscoredefinition",
     "animationRule": "animationrule",
     "app": "customapplication",
     "appMenu": "appmenu",
@@ -334,6 +334,9 @@
     "mktDataTranObject": "mktdatatranobject",
     "mlDataDefinition": "mldatadefinition",
     "mlDomain": "mldomain",
+    "mlModel": "mlmodelartifact",
+    "mlModelConnection": "mlmodelconnection",
+    "mlModelSchema": "mlmodelschema",
     "mlPrediction": "mlpredictiondefinition",
     "mlRecommendation": "mlrecommendationdefinition",
     "mobSecurityCertPinConfig": "mobsecuritycertpinconfig",
@@ -341,9 +344,6 @@
     "mobileSecurityPolicy": "mobilesecuritypolicy",
     "mobileSecurityPolicySet": "mobilesecuritypolicyset",
     "model": "discoveryaimodel",
-    "mlModel": "mlmodelartifact",
-    "mlModelConnection": "mlmodelconnection",
-    "mlModelSchema": "mlmodelschema",
     "mutingpermissionset": "mutingpermissionset",
     "myDomainDiscoverableLogin": "mydomaindiscoverablelogin",
     "namedCredential": "namedcredential",
@@ -626,6 +626,14 @@
       "name": "AdvAcctForecastPeriodGroup",
       "suffix": "advAcctForecastPeriodGroup"
     },
+    "affinityscoredefinition": {
+      "directoryName": "affinityScoreDefinitions",
+      "id": "affinityscoredefinition",
+      "inFolder": false,
+      "name": "AffinityScoreDefinition",
+      "strictDirectoryName": false,
+      "suffix": "affinityScoreDefinition"
+    },
     "aiapplication": {
       "directoryName": "aiApplications",
       "id": "aiapplication",
@@ -682,14 +690,6 @@
       "name": "AIUsecaseDefinition",
       "strictDirectoryName": false,
       "suffix": "aiUsecaseDefinitions"
-    },
-    "affinityscoredefinition": {
-      "directoryName": "affinityScoreDefinitions",
-      "id": "affinityscoredefinition",
-      "inFolder": false,
-      "name": "AffinityScoreDefinition",
-      "strictDirectoryName": false,
-      "suffix": "affinityScoreDefinitions"
     },
     "analyticsnapshot": {
       "directoryName": "analyticSnapshots",

@@ -1,3 +1,12 @@
+## [10.7.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.7.0...10.7.1) (2024-04-01)
+
+
+### Bug Fixes
+
+* suffix mismatch ([#1270](https://github.com/forcedotcom/source-deploy-retrieve/issues/1270)) ([15b1ec1](https://github.com/forcedotcom/source-deploy-retrieve/commit/15b1ec10ab639977a35c2c82b3055a6bc73c74d2))
+
+
+
 # [10.7.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.6.2...10.7.0) (2024-03-29)
 
 

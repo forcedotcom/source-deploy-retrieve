@@ -6,7 +6,7 @@
  */
 import { readFile } from 'node:fs/promises';
 import { Transform, Readable } from 'node:stream';
-import { sep, posix, join } from 'node:path';
+import { sep, posix, join, isAbsolute } from 'node:path';
 import { Lifecycle, Messages, SfError, SfProject } from '@salesforce/core';
 import * as minimatch from 'minimatch';
 import { Env } from '@salesforce/kit';
@@ -115,8 +115,8 @@ class ReplacementMarkingStream extends Transform {
     if (!chunk.isMarkedForDelete() && this.replacementConfigs?.length) {
       try {
         chunk.replacements = await getReplacements(chunk, this.replacementConfigs);
-        if (chunk.replacements && chunk.parent && chunk.type.name === 'CustomLabel') {
-          // Set replacements on the parent of a CustomLabel as well so that recomposing
+        if (chunk.replacements && chunk.parent?.type.strategies?.transformer === 'nonDecomposed') {
+          // Set replacements on the parent of a nonDecomposed CustomLabel as well so that recomposing
           // doesn't use the non-replaced content from parent cache.
           // See RecompositionFinalizer.recompose() in convertContext.ts
           chunk.parent.replacements = chunk.replacements;
@@ -252,6 +252,9 @@ const makeAbsolute =
     replacementConfig.replaceWithFile
       ? {
           ...replacementConfig,
-          replaceWithFile: join(projectDir, replacementConfig.replaceWithFile),
+          // it could already be absolute?
+          replaceWithFile: isAbsolute(replacementConfig.replaceWithFile)
+            ? replacementConfig.replaceWithFile
+            : join(projectDir, replacementConfig.replaceWithFile),
         }
       : replacementConfig;

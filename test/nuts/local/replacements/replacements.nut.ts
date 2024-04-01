@@ -26,16 +26,7 @@ describe('e2e replacements test', () => {
     // Hack: rewrite the file replacement locations relative to the project
     const projectJsonPath = path.join(session.project.dir, 'sfdx-project.json');
     const original = await fs.promises.readFile(projectJsonPath, 'utf8');
-    await fs.promises.writeFile(
-      projectJsonPath,
-      original
-        // we're putting this in a json file which doesnt like windows backslashes.  The file will require posix paths
-        .replace(
-          'replacements.txt',
-          path.join(session.project.dir, 'replacements.txt').split(path.sep).join(path.posix.sep)
-        )
-        .replace('label.txt', path.join(session.project.dir, 'label.txt').split(path.sep).join(path.posix.sep))
-    );
+    await fs.promises.writeFile(projectJsonPath, original);
   });
 
   after(async () => {

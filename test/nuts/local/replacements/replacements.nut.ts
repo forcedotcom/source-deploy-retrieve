@@ -10,26 +10,10 @@ import * as JSZip from 'jszip';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { ComponentSetBuilder, MetadataConverter } from '../../../../src';
+import { extractZip } from './extractZip';
 
 describe('e2e replacements test', () => {
   let session: TestSession;
-
-  const extractZip = async (zipBuffer: Buffer, extractPath: string) => {
-    fs.mkdirSync(extractPath);
-    const zip = await JSZip.loadAsync(zipBuffer);
-    for (const filePath of Object.keys(zip.files)) {
-      const zipObj = zip.file(filePath);
-      if (!zipObj || zipObj?.dir) {
-        fs.mkdirSync(path.join(extractPath, filePath));
-      } else {
-        // eslint-disable-next-line no-await-in-loop
-        const content = await zipObj?.async('nodebuffer');
-        if (content) {
-          fs.writeFileSync(path.join(extractPath, filePath), content);
-        }
-      }
-    }
-  };
 
   before(async () => {
     session = await TestSession.create({

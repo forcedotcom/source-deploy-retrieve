@@ -12,13 +12,14 @@ import { assert, expect } from 'chai';
 import { ComponentSetBuilder, MetadataConverter } from '../../../../src';
 import { extractZip } from './extractZip';
 
-describe('e2e replacements test (customLabels)', () => {
+describe('e2e replacements test', () => {
   let session: TestSession;
 
   before(async () => {
     session = await TestSession.create({
       project: {
-        sourceDir: path.join('test', 'nuts', 'local', 'replacements', 'testProjWithLabels'),
+        name: 'replacementsOutsideProject',
+        sourceDir: path.join('test', 'nuts', 'local', 'replacements', 'testProj'),
       },
       devhubAuthStrategy: 'NONE',
     });
@@ -44,7 +45,6 @@ describe('e2e replacements test (customLabels)', () => {
   describe('various types of replacements', () => {
     it('converts a componentSet built from the testProj to a zip', async () => {
       process.env.THE_REPLACEMENT = 'foo';
-      process.env.LABEL_REPLACEMENT = 'REPLACED_LABEL';
       const converter = new MetadataConverter();
       const cs = await ComponentSetBuilder.build({ sourcepath: [path.join(session.project.dir, 'force-app')] });
       const { zipBuffer } = await converter.convert(cs, 'metadata', {
@@ -53,37 +53,6 @@ describe('e2e replacements test (customLabels)', () => {
       assert(zipBuffer, 'zipBuffer should be defined');
       // extract zip files
       await extractZip(zipBuffer, path.join(session.project.dir, 'unzipped'));
-    });
-
-    it('label replacements as expected (CustomLabels)', async () => {
-      const labelsContents = await fs.promises.readFile(
-        path.join(session.project.dir, 'unzipped', 'labels', 'CustomLabels.labels'),
-        'utf8'
-      );
-      expect(labelsContents).to.not.include('original');
-      expect(labelsContents).to.include('REPLACED_LABEL');
-    });
-
-    it('label replacements as expected (CustomLabel)', async () => {
-      const converter = new MetadataConverter();
-      const cs = await ComponentSetBuilder.build({
-        metadata: {
-          metadataEntries: ['CustomLabel:Docs_CabinetId'],
-          directoryPaths: [path.join(session.project.dir, 'force-app')],
-        },
-      });
-      const { zipBuffer } = await converter.convert(cs, 'metadata', {
-        type: 'zip',
-      });
-      assert(zipBuffer, 'zipBuffer should be defined');
-      // extract zip files
-      await extractZip(zipBuffer, path.join(session.project.dir, 'unzipped2'));
-      const labelsContents = await fs.promises.readFile(
-        path.join(session.project.dir, 'unzipped2', 'labels', 'CustomLabels.labels'),
-        'utf8'
-      );
-      expect(labelsContents).to.not.include('original');
-      expect(labelsContents).to.include('REPLACED_LABEL');
     });
 
     it('class replacements as expected', async () => {

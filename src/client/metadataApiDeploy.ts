@@ -396,12 +396,22 @@ const serverResponseNotFoundLocally =
                 ].includes(k.fullName)
             ) ?? []
       )
-      .flatMap((deployMessage) => ({
-        filePath: 'not in project',
-        state: ComponentStatus.Created,
-        fullName: deployMessage.fullName,
-        type: deployMessage.componentType ?? '',
-      }));
+      .flatMap((deployMessage) => {
+        // instead of using getState, which can return 'failed' which doesn't satisfy the FileResponse type
+        const state = deployMessage.created
+          ? ComponentStatus.Created
+          : deployMessage.changed
+          ? ComponentStatus.Changed
+          : deployMessage.deleted
+          ? ComponentStatus.Deleted
+          : ComponentStatus.Unchanged;
+        return {
+          filePath: 'not in project',
+          state,
+          fullName: deployMessage.fullName,
+          type: deployMessage.componentType ?? '',
+        };
+      });
   };
 
 const buildFileResponses = (response: MetadataApiDeployStatus): FileResponse[] =>

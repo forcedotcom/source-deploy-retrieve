@@ -828,7 +828,7 @@ describe('MetadataApiDeploy', () => {
           details: {
             componentFailures: [
               {
-                changed: 'false',
+                changed: 'true',
                 created: 'false',
                 deleted: 'false',
                 success: 'true',
@@ -837,18 +837,18 @@ describe('MetadataApiDeploy', () => {
                 componentType: type.name,
               } as DeployMessage,
               {
-                changed: 'false',
+                changed: 'true',
                 created: 'false',
                 deleted: 'false',
                 success: 'true',
-                fullName,
-                fileName: component.content,
+                fullName: 'myNewComponent',
+                fileName: 'myNewComponent',
                 componentType: type.name,
               } as DeployMessage,
               {
                 changed: 'false',
                 created: 'false',
-                deleted: 'false',
+                deleted: 'true',
                 success: 'true',
                 fullName: 'myServerOnlyComponent',
                 fileName: 'myServerOnlyComponent',
@@ -864,13 +864,19 @@ describe('MetadataApiDeploy', () => {
           {
             filePath: 'path/to/classes/myComponent.cls',
             fullName: 'myComponent',
-            state: ComponentStatus.Unchanged,
+            state: ComponentStatus.Changed,
             type: 'ApexClass',
           },
           {
             filePath: 'path/to/classes/myComponent.cls-meta.xml',
             fullName: 'myComponent',
-            state: ComponentStatus.Unchanged,
+            state: ComponentStatus.Changed,
+            type: 'ApexClass',
+          },
+          {
+            filePath: 'not in project',
+            fullName: 'myNewComponent',
+            state: ComponentStatus.Created,
             type: 'ApexClass',
           },
           {

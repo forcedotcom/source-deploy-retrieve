@@ -6,13 +6,13 @@
  */
 import { basename, join } from 'node:path';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
-import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 
-import { assert, expect } from 'chai';
 import * as chai from 'chai';
+import { assert, expect } from 'chai';
 import { AnyJson, getString } from '@salesforce/ts-types';
-import { PollingClient, StatusResult, Messages } from '@salesforce/core';
+import { Messages, PollingClient, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
+import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import {
   ComponentSet,
   ComponentStatus,
@@ -813,6 +813,71 @@ describe('MetadataApiDeploy', () => {
             lineNumber: 12,
             columnNumber: 3,
             problemType,
+          },
+        ];
+
+        expect(responses).to.deep.equal(expected);
+      });
+
+      it('should include all responses from the server', () => {
+        const component = matchingContentFile.COMPONENT;
+        const deployedSet = new ComponentSet([component]);
+        const { fullName, type } = component;
+
+        const apiStatus: Partial<MetadataApiDeployStatus> = {
+          details: {
+            componentFailures: [
+              {
+                changed: 'false',
+                created: 'false',
+                deleted: 'false',
+                success: 'true',
+                fullName,
+                fileName: component.content,
+                componentType: type.name,
+              } as DeployMessage,
+              {
+                changed: 'false',
+                created: 'false',
+                deleted: 'false',
+                success: 'true',
+                fullName,
+                fileName: component.content,
+                componentType: type.name,
+              } as DeployMessage,
+              {
+                changed: 'false',
+                created: 'false',
+                deleted: 'false',
+                success: 'true',
+                fullName: 'myServerOnlyComponent',
+                fileName: 'myServerOnlyComponent',
+                componentType: type.name,
+              } as DeployMessage,
+            ],
+          },
+        };
+        const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+        const responses = result.getFileResponses();
+        const expected: FileResponse[] = [
+          {
+            filePath: 'path/to/classes/myComponent.cls',
+            fullName: 'myComponent',
+            state: ComponentStatus.Unchanged,
+            type: 'ApexClass',
+          },
+          {
+            filePath: 'path/to/classes/myComponent.cls-meta.xml',
+            fullName: 'myComponent',
+            state: ComponentStatus.Unchanged,
+            type: 'ApexClass',
+          },
+          {
+            filePath: 'not in project',
+            fullName: 'myServerOnlyComponent',
+            state: ComponentStatus.Created,
+            type: 'ApexClass',
           },
         ];
 

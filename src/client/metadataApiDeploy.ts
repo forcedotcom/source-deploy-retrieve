@@ -378,18 +378,30 @@ const serverResponseNotFoundLocally =
   (cs: ComponentSet) =>
   (messageMap: Map<string, DeployMessage[]>): FileResponse[] => {
     const sourceKeys = cs.getSourceComponents().toArray().map(toKey);
-    // messageMap.delete('#package.xml');
     return [...messageMap.keys()]
-      .filter((k) => !sourceKeys.includes(k) && k !== '#package.xml')
+      .filter((k) => !sourceKeys.includes(k))
       .flatMap(
-        (unmapped) =>
-          ({
-            fullName: messageMap.get(unmapped)?.at(0)?.fullName ?? '',
-            type: messageMap.get(unmapped)?.at(0)?.componentType ?? '',
-            filePath: 'not in project',
-            state: ComponentStatus.Created, // ? getState(messageMap.get(unmapped).at(0)),
-          } as FileResponse)
-      );
+        (key) =>
+          messageMap
+            // because we're starting with messageMap.keys(), this variable, 'key' is a keyof messageMap
+            .get(key)!
+            // from the key, get the component, as long as it's not a manifest
+            .find(
+              (k) =>
+                ![
+                  'package.xml',
+                  'destructiveChanges.xml',
+                  'destructiveChangesPost.xml',
+                  'destructiveChangesPre.xml',
+                ].includes(k.fullName)
+            ) ?? []
+      )
+      .flatMap((deployMessage) => ({
+        filePath: 'not in project',
+        state: ComponentStatus.Created,
+        fullName: deployMessage.fullName,
+        type: deployMessage.componentType ?? '',
+      }));
   };
 
 const buildFileResponses = (response: MetadataApiDeployStatus): FileResponse[] =>
@@ -427,11 +439,10 @@ const buildFileResponsesFromComponentSet =
                 const childMessages = responseMessages.get(toKey(child));
                 return childMessages ? createResponses(child, childMessages) : [];
               })
-            : []
+            : serverResponseNotFoundLocally(cs)(responseMessages)
         )
       )
-      .concat(deleteNotFoundToFileResponses(cs)(responseMessages))
-      .concat(serverResponseNotFoundLocally(cs)(responseMessages));
+      .concat(deleteNotFoundToFileResponses(cs)(responseMessages));
   };
 /**
  * register a listener to `scopedPreDeploy`

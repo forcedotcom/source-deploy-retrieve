@@ -406,7 +406,7 @@ const serverResponseNotFoundLocally =
           ? ComponentStatus.Deleted
           : ComponentStatus.Unchanged;
         return {
-          filePath: 'not in project',
+          filePath: 'Not currently in local project',
           state,
           fullName: deployMessage.fullName,
           type: deployMessage.componentType ?? '',

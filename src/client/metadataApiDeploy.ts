@@ -25,9 +25,13 @@ import {
   MetadataApiDeployStatus,
   MetadataTransferResult,
 } from './types';
-import { getDeployMessages, createResponses } from './deployMessages';
-import { getState, isComponentNotFoundWarningMessage } from './deployMessages';
-import { toKey } from './deployMessages';
+import {
+  createResponses,
+  getDeployMessages,
+  getState,
+  isComponentNotFoundWarningMessage,
+  toKey,
+} from './deployMessages';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -370,6 +374,24 @@ const deleteNotFoundToFileResponses =
           : [];
       });
 
+const serverResponseNotFoundLocally =
+  (cs: ComponentSet) =>
+  (messageMap: Map<string, DeployMessage[]>): FileResponse[] => {
+    const sourceKeys = cs.getSourceComponents().toArray().map(toKey);
+    // messageMap.delete('#package.xml');
+    return [...messageMap.keys()]
+      .filter((k) => !sourceKeys.includes(k) && k !== '#package.xml')
+      .flatMap(
+        (unmapped) =>
+          ({
+            fullName: messageMap.get(unmapped)?.at(0)?.fullName ?? '',
+            type: messageMap.get(unmapped)?.at(0)?.componentType ?? '',
+            filePath: 'not in project',
+            state: ComponentStatus.Created, // ? getState(messageMap.get(unmapped).at(0)),
+          } as FileResponse)
+      );
+  };
+
 const buildFileResponses = (response: MetadataApiDeployStatus): FileResponse[] =>
   ensureArray(response.details?.componentSuccesses)
     .concat(ensureArray(response.details?.componentFailures))
@@ -395,7 +417,6 @@ const buildFileResponses = (response: MetadataApiDeployStatus): FileResponse[] =
 const buildFileResponsesFromComponentSet =
   (cs: ComponentSet) =>
   (response: MetadataApiDeployStatus): FileResponse[] => {
-    // TODO: Log when messages can't be mapped to components
     const responseMessages = getDeployMessages(response);
 
     return (cs.getSourceComponents().toArray() ?? [])
@@ -409,7 +430,8 @@ const buildFileResponsesFromComponentSet =
             : []
         )
       )
-      .concat(deleteNotFoundToFileResponses(cs)(responseMessages));
+      .concat(deleteNotFoundToFileResponses(cs)(responseMessages))
+      .concat(serverResponseNotFoundLocally(cs)(responseMessages));
   };
 /**
  * register a listener to `scopedPreDeploy`

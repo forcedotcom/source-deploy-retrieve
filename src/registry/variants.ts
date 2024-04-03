@@ -6,7 +6,7 @@
  */
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { Logger, SfProject, SfProjectJson } from '@salesforce/core';
+import { Logger, SfProject, SfProjectJson, Lifecycle } from '@salesforce/core';
 import { deepFreeze } from '../utils/collections';
 import { MetadataRegistry } from './types';
 import * as registryData from './metadataRegistry.json';
@@ -16,7 +16,6 @@ export type RegistryLoadInput = {
    * will default to the current working directory
    * if no project file is found, the standard registry will be returned without modifications
    */
-  // TODO: this might be a string instead of an object if no other props are needed
   projectDir?: string;
 };
 
@@ -49,6 +48,16 @@ const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry 
     (prev, curr) => firstLevelMerge(prev, loadPreset(curr)),
     emptyRegistry
   );
+  if (presets.length > 0 || Object.keys(customizations.types).length > 0) {
+    void Lifecycle.getInstance().emitTelemetry({
+      library: 'SDR',
+      eventName: 'RegistryVariants',
+      presetCount: presets.length,
+      presets: presets.join(','),
+      customizationsCount: Object.keys(customizations.types).length,
+      customizationsTypes: Object.keys(customizations.types).join(','),
+    });
+  }
   return firstLevelMerge(registryFromPresets, customizations);
 };
 
@@ -59,13 +68,6 @@ const maybeGetProject = (projectDir?: string): SfProjectJson | undefined => {
     return undefined;
   }
 };
-
-// TODO: this type should maybe live somewhere else and be part of the sfdx-project schema
-// but we don't want circular dependency from sfdx-core to SDR
-// type CustomRegistry = {
-//   registryCustomizations: MetadataRegistry;
-//   registryPresets: string[];
-// };
 
 const loadPreset = (preset: string): MetadataRegistry => {
   const pathToCheck = path.join(__dirname, 'presets', `${preset}.json`);

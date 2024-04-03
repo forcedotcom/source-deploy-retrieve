@@ -874,13 +874,13 @@ describe('MetadataApiDeploy', () => {
             type: 'ApexClass',
           },
           {
-            filePath: 'Not currently in local project',
+            filePath: undefined,
             fullName: 'myNewComponent',
             state: ComponentStatus.Created,
             type: 'ApexClass',
           },
           {
-            filePath: 'Not currently in local project',
+            filePath: undefined,
             fullName: 'myServerOnlyComponent',
             state: ComponentStatus.Created,
             type: 'ApexClass',

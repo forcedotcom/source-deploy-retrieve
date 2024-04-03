@@ -115,14 +115,26 @@ export abstract class MetadataTransfer<
       }
       return result;
     } catch (e) {
-      const err = e as Error;
-      const error = new SfError(messages.getMessage('md_request_fail', [err.message]), 'MetadataTransferError');
-      error.setData({
-        id: this.id,
-      });
+      const err = e as Error | SfError;
+      const error = new SfError(messages.getMessage('md_request_fail', [err.message]), 'MetadataTransferError', err);
+
       if (error.stack && err.stack) {
         // append the original stack to this new error
         error.stack += `\nDUE TO:\n${err.stack}`;
+
+        if (err instanceof SfError && err.data) {
+          // this keeps SfError data for failures in post deploy/retrieve.
+          error.setData({
+            id: this.id,
+            causeErrorData: error.data,
+          });
+
+          error.actions = err.actions;
+        } else {
+          error.setData({
+            id: this.id,
+          });
+        }
       }
       if (this.event.listenerCount('error') === 0) {
         throw error;

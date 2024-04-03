@@ -116,7 +116,7 @@ export abstract class MetadataTransfer<
       return result;
     } catch (e) {
       const err = e as Error | SfError;
-      const error = new SfError(messages.getMessage('md_request_fail', [err.message]), 'MetadataTransferError', err);
+      const error = new SfError(messages.getMessage('md_request_fail', [err.message]), 'MetadataTransferError');
 
       if (error.stack && err.stack) {
         // append the original stack to this new error

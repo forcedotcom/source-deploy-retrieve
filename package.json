@@ -202,5 +202,8 @@
       ],
       "output": []
     }
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

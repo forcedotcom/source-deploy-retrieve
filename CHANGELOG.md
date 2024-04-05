@@ -1,3 +1,12 @@
+## [10.9.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.9.0...10.9.1) (2024-04-05)
+
+
+### Bug Fixes
+
+* expand mdTransfer error ([#1275](https://github.com/forcedotcom/source-deploy-retrieve/issues/1275)) ([8e12937](https://github.com/forcedotcom/source-deploy-retrieve/commit/8e129376bf9fe7c83db2d6b6f4fd0fad1eea25bf))
+
+
+
 # [10.9.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.8.0...10.9.0) (2024-04-03)
 
 

@@ -27,7 +27,7 @@ import { AsyncResult, MetadataRequestStatus, MetadataTransferResult, RequestStat
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
-export interface MetadataTransferOptions {
+export type MetadataTransferOptions = {
   usernameOrConnection: string | Connection;
   components?: ComponentSet;
   apiVersion?: string;

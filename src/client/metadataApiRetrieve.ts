@@ -257,7 +257,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
 /**
  * register a listener to `scopedPreRetrieve`
  */
-export interface ScopedPreRetrieve {
+export type ScopedPreRetrieve = {
   componentSet: ComponentSet;
   orgId: string;
 }
@@ -265,7 +265,7 @@ export interface ScopedPreRetrieve {
 /**
  * register a listener to `scopedPostRetrieve`
  */
-export interface ScopedPostRetrieve {
+export type ScopedPostRetrieve = {
   retrieveResult: RetrieveResult;
   orgId: string;
 }

@@ -15,10 +15,10 @@ export type SourcePath = string;
 
 export type TreeOptions = {
   tree: TreeContainer;
-}
+};
 
 export type RegistryOptions = {
   registry: RegistryAccess;
-}
+};
 
-export type OptionalTreeRegistryOptions = {} & Partial<TreeOptions> & Partial<RegistryOptions>
+export type OptionalTreeRegistryOptions = Partial<TreeOptions> & Partial<RegistryOptions>;

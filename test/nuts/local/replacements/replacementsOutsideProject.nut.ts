@@ -9,7 +9,6 @@ import * as fs from 'node:fs';
 import * as JSZip from 'jszip';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect, config } from 'chai';
-import { logFn } from '@salesforce/kit';
 import { ComponentSetBuilder, MetadataConverter } from '../../../../src';
 import { extractZip } from './extractZip';
 
@@ -35,7 +34,6 @@ describe('replacements from outside a proj ', () => {
 
     // Hack: rewrite the file replacement locations relative to the moved project
     const projectJsonPath = path.join(testDir, 'sfdx-project.json');
-    logFn(`projectJsonPath: ${projectJsonPath}`);
     const original = await fs.promises.readFile(projectJsonPath, 'utf8');
     await fs.promises.writeFile(projectJsonPath, original);
   });

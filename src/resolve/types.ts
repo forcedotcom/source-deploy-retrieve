@@ -9,13 +9,13 @@ import { SourcePath } from '../common/types';
 import { MetadataType } from '../registry/types';
 import { SourceComponent } from './sourceComponent';
 
-export interface MetadataComponent {
+export type MetadataComponent = {
   fullName: string;
   type: MetadataType;
   parent?: MetadataComponent;
 }
 
-export interface MetadataMember {
+export type MetadataMember = {
   fullName: string;
   type: string;
 }
@@ -44,7 +44,7 @@ export type VirtualDirectory = {
 /**
  * Infers the source format structure of a metadata component when given a file path.
  */
-export interface SourceAdapter {
+export type SourceAdapter = {
   /**
    * Create a metadata component object from a file path.
    *

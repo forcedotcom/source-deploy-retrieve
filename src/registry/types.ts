@@ -9,7 +9,7 @@
  * A database of metadata types and configuration to define component behavior
  * when performing library operations.
  */
-export interface MetadataRegistry {
+export type MetadataRegistry = {
   types: TypeIndex;
   suffixes: SuffixIndex;
   strictDirectoryNames: {
@@ -23,7 +23,7 @@ export interface MetadataRegistry {
 /**
  * Metadata type definition in the registry.
  */
-export interface MetadataType {
+export type MetadataType = {
   /**
    * Unique identifier of the metadata type. Usually the API name lowercased.
    */
@@ -149,21 +149,21 @@ export interface MetadataType {
 /**
  * Mapping of metadata type ids -> Metadata type definitions.
  */
-interface TypeIndex {
+type TypeIndex = {
   [typeId: string]: MetadataType;
 }
 
 /**
  * Mapping of metadata type file suffixes -> type ids.
  */
-interface SuffixIndex {
+type SuffixIndex = {
   [suffix: string]: string;
 }
 
 /**
  * Mapping of metadata type directory names -> type ids.
  */
-interface DirectoryIndex {
+type DirectoryIndex = {
   [directoryName: string]: string;
 }
 
@@ -201,13 +201,13 @@ export const enum TransformerStrategy {
   NonDecomposed = 'nonDecomposed',
 }
 
-interface Channel {
+type Channel = {
   exposed: boolean;
 }
 /**
  * Subset of an item from the Metadata Coverage Report
  */
-export interface CoverageObjectType {
+export type CoverageObjectType = {
   orgShapes: {
     developer: {
       features?: string[];
@@ -225,7 +225,7 @@ export interface CoverageObjectType {
 /**
  * The structure returned by the metadata coverage report
  */
-export interface CoverageObject {
+export type CoverageObject = {
   types: {
     [key: string]: CoverageObjectType;
   };

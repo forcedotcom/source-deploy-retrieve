@@ -49,32 +49,32 @@ export type ComponentDiagnostic = {
   problemType: 'Warning' | 'Error';
 };
 
-interface FileResponseBase {
+type FileResponseBase = {
   fullName: string;
   type: string;
   filePath?: string;
 }
 
-export interface FileResponseSuccess extends FileResponseBase {
+export type FileResponseSuccess = {
   state: Exclude<ComponentStatus, ComponentStatus.Failed>;
-}
+} & FileResponseBase
 
-export interface FileResponseFailure extends FileResponseBase {
+export type FileResponseFailure = {
   state: ComponentStatus.Failed;
   lineNumber?: number;
   columnNumber?: number;
   error: string;
   problemType: 'Warning' | 'Error';
-}
+} & FileResponseBase
 
 export type FileResponse = FileResponseSuccess | FileResponseFailure;
-export interface MetadataTransferResult {
+export type MetadataTransferResult = {
   response: MetadataRequestStatus;
   components?: ComponentSet;
   getFileResponses(): FileResponse[];
 }
 
-export interface AsyncResult {
+export type AsyncResult = {
   id: RecordId;
 }
 
@@ -88,7 +88,7 @@ export enum RequestStatus {
   Canceled = 'Canceled',
 }
 
-export interface MetadataRequestStatus {
+export type MetadataRequestStatus = {
   id: string;
   status: RequestStatus;
   success: boolean;
@@ -112,7 +112,7 @@ export type RetrieveSuccess = {
 /**
  * Raw response returned from a checkDeployStatus call to the Metadata API
  */
-export interface MetadataApiDeployStatus extends MetadataRequestStatus {
+export type MetadataApiDeployStatus = {
   canceledBy?: string;
   canceledByName?: string;
   checkOnly: boolean;
@@ -135,7 +135,7 @@ export interface MetadataApiDeployStatus extends MetadataRequestStatus {
   rollbackOnError: boolean;
   startDate?: string;
   stateDetail?: string;
-}
+} & MetadataRequestStatus
 
 export type DeployDetails = {
   componentFailures?: DeployMessage | DeployMessage[];
@@ -145,7 +145,7 @@ export type DeployDetails = {
   runTestResult?: RunTestResult;
 };
 
-export interface RunTestResult {
+export type RunTestResult = {
   codeCoverage?: CodeCoverage[] | CodeCoverage;
   codeCoverageWarnings?: CodeCoverageWarnings[] | CodeCoverageWarnings;
   failures?: Failures[] | Failures;
@@ -155,7 +155,7 @@ export interface RunTestResult {
   totalTime: string;
 }
 
-export interface CodeCoverage {
+export type CodeCoverage = {
   id: string;
   locationsNotCovered?: LocationsNotCovered[] | LocationsNotCovered;
   name: string;
@@ -164,20 +164,20 @@ export interface CodeCoverage {
   type: string;
 }
 
-export interface LocationsNotCovered {
+export type LocationsNotCovered = {
   column: string;
   line: string;
   numExecutions: string;
   time: string;
 }
 
-export interface CodeCoverageWarnings {
+export type CodeCoverageWarnings = {
   id: string;
   message: string;
   namespace: string;
 }
 
-export interface Failures {
+export type Failures = {
   id: string;
   message: string;
   methodName: string;
@@ -188,7 +188,7 @@ export interface Failures {
   type: string;
 }
 
-export interface Successes {
+export type Successes = {
   id: string;
   methodName: string;
   name: string;
@@ -254,7 +254,7 @@ export type FileProperties = {
 /**
  * Raw response returned from a checkRetrieveStatus call to the Metadata API
  */
-export interface MetadataApiRetrieveStatus {
+export type MetadataApiRetrieveStatus = {
   done: boolean;
   fileProperties: FileProperties | FileProperties[];
   id: string;
@@ -269,7 +269,7 @@ export interface MetadataApiRetrieveStatus {
 // Client options
 // ------------------------------------------------
 
-export interface PackageOption {
+export type PackageOption = {
   /**
    * The name of the package to retrieve.
    */
@@ -284,7 +284,7 @@ export interface PackageOption {
 
 export type PackageOptions = string[] | PackageOption[];
 
-export interface RetrieveExtractOptions {
+export type RetrieveExtractOptions = {
   /**
    * Top most directory within the retrieved zip file.
    * E.g., `unpackaged` for unpackaged source, or the name of the
@@ -299,7 +299,7 @@ export interface RetrieveExtractOptions {
   outputDir: SourcePath;
 }
 
-export interface RetrieveOptions {
+export type RetrieveOptions = {
   /**
    * The directory to retrieve components to. If `merge: true`, components are only
    * retrieved to `output` if there wasn't a component to merge with.
@@ -336,7 +336,7 @@ export interface RetrieveOptions {
   suppressEvents?: boolean;
 }
 
-export interface MetadataApiDeployOptions {
+export type MetadataApiDeployOptions = {
   allowMissingFiles?: boolean;
   autoUpdatePackage?: boolean;
   checkOnly?: boolean;
@@ -354,24 +354,24 @@ export interface MetadataApiDeployOptions {
   rest?: boolean;
 }
 
-export interface StdValueSetRecord {
+export type StdValueSetRecord = {
   Id: string;
   MasterLabel: string;
   Metadata: { standardValue: Array<Record<string, unknown>> };
 }
 
-export interface ListMetadataQuery {
+export type ListMetadataQuery = {
   type: string;
   folder?: string;
 }
 
-export interface DeployVersionData {
+export type DeployVersionData = {
   apiVersion: string;
   manifestVersion: string | undefined;
   webService: 'SOAP' | 'REST';
 }
 
-export interface RetrieveVersionData {
+export type RetrieveVersionData = {
   apiVersion: string;
   manifestVersion: string;
 }

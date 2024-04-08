@@ -13,7 +13,7 @@ import { MetadataComponent, MetadataResolver, MetadataType, RegistryAccess, Virt
 
 chai.use(deepEqualInAnyOrder);
 
-interface TypeEntry {
+type TypeEntry = {
   fullName: string;
   typeName: string;
   expectedFilePaths: string[];

@@ -39,7 +39,7 @@ export const MOCK_DEFAULT_OUTPUT = sep + 'test';
 export const MOCK_RECENTLY_VALIDATED_ID_REST = { id: '1234567890' };
 export const MOCK_RECENTLY_VALIDATED_ID_SOAP = '0987654321';
 
-interface DeployStubOptions {
+type DeployStubOptions = {
   components?: ComponentSet;
   zipPath?: string;
   mdapiPath?: string;
@@ -49,7 +49,7 @@ interface DeployStubOptions {
   id?: string;
 }
 
-interface DeployOperationLifecycle {
+type DeployOperationLifecycle = {
   pollingClientSpy: SinonSpy;
   deployStub: SinonStub;
   convertStub: SinonStub;
@@ -146,7 +146,7 @@ export async function stubMetadataDeploy(
   };
 }
 
-interface RetrieveStubOptions {
+type RetrieveStubOptions = {
   merge?: boolean;
   packageOptions?: string[] | PackageOption[];
   toRetrieve?: ComponentSet;
@@ -154,7 +154,7 @@ interface RetrieveStubOptions {
   successes?: ComponentSet;
 }
 
-interface RetrieveOperationLifecycle {
+type RetrieveOperationLifecycle = {
   retrieveStub: SinonStub;
   checkStatusStub: SinonStub;
   convertStub: SinonStub;

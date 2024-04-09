@@ -154,6 +154,7 @@ export class ComponentSetBuilder {
     componentSet = assertComponentSetIsNotUndefined(componentSet);
     componentSet.apiVersion ??= apiversion;
     componentSet.sourceApiVersion ??= sourceapiversion;
+    componentSet.projectDirectory = projectDir;
 
     logComponents(logger, componentSet);
     return componentSet;

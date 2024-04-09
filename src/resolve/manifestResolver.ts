@@ -13,27 +13,27 @@ import { RegistryAccess } from '../registry/registryAccess';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
 import { MetadataComponent } from './types';
 
-export interface PackageTypeMembers {
+export type PackageTypeMembers = {
   name: string;
   members: string[];
 }
 
-export interface PackageManifest {
+export type PackageManifest = {
   types: PackageTypeMembers[];
   version: string;
 }
 
-interface ParsedPackageTypeMembers {
+type ParsedPackageTypeMembers = {
   name: string;
   members: string | string[];
 }
 
-interface ParsedPackageManifest {
+type ParsedPackageManifest = {
   types: ParsedPackageTypeMembers | ParsedPackageTypeMembers[];
   version: string;
 }
 
-export interface ResolveManifestResult {
+export type ResolveManifestResult = {
   components: MetadataComponent[];
   apiVersion: string;
   fullName?: string;

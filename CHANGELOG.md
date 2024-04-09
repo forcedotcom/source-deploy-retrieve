@@ -1,3 +1,30 @@
+## [10.9.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.9.0...10.9.1) (2024-04-05)
+
+
+### Bug Fixes
+
+* expand mdTransfer error ([#1275](https://github.com/forcedotcom/source-deploy-retrieve/issues/1275)) ([8e12937](https://github.com/forcedotcom/source-deploy-retrieve/commit/8e129376bf9fe7c83db2d6b6f4fd0fad1eea25bf))
+
+
+
+# [10.9.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.8.0...10.9.0) (2024-04-03)
+
+
+### Features
+
+* absolute paths for string replacements for out-of-project ([#1239](https://github.com/forcedotcom/source-deploy-retrieve/issues/1239)) ([0b3e75f](https://github.com/forcedotcom/source-deploy-retrieve/commit/0b3e75fcf4a9a689666672d917a88d889ca82961))
+
+
+
+# [10.8.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.7.1...10.8.0) (2024-04-03)
+
+
+### Features
+
+* variants instrumentation ([#1272](https://github.com/forcedotcom/source-deploy-retrieve/issues/1272)) ([1261096](https://github.com/forcedotcom/source-deploy-retrieve/commit/12610965bae0eed81e65f1fc81afffbddda7b024))
+
+
+
 ## [10.7.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.7.0...10.7.1) (2024-04-01)
 
 

@@ -10,26 +10,10 @@ import * as JSZip from 'jszip';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { ComponentSetBuilder, MetadataConverter } from '../../../../src';
+import { extractZip } from './extractZip';
 
 describe('e2e replacements test (customLabels)', () => {
   let session: TestSession;
-
-  const extractZip = async (zipBuffer: Buffer, extractPath: string) => {
-    fs.mkdirSync(extractPath);
-    const zip = await JSZip.loadAsync(zipBuffer);
-    for (const filePath of Object.keys(zip.files)) {
-      const zipObj = zip.file(filePath);
-      if (!zipObj || zipObj?.dir) {
-        fs.mkdirSync(path.join(extractPath, filePath));
-      } else {
-        // eslint-disable-next-line no-await-in-loop
-        const content = await zipObj?.async('nodebuffer');
-        if (content) {
-          fs.writeFileSync(path.join(extractPath, filePath), content);
-        }
-      }
-    }
-  };
 
   before(async () => {
     session = await TestSession.create({
@@ -41,16 +25,7 @@ describe('e2e replacements test (customLabels)', () => {
     // Hack: rewrite the file replacement locations relative to the project
     const projectJsonPath = path.join(session.project.dir, 'sfdx-project.json');
     const original = await fs.promises.readFile(projectJsonPath, 'utf8');
-    await fs.promises.writeFile(
-      projectJsonPath,
-      original
-        // we're putting this in a json file which doesnt like windows backslashes.  The file will require posix paths
-        .replace(
-          'replacements.txt',
-          path.join(session.project.dir, 'replacements.txt').split(path.sep).join(path.posix.sep)
-        )
-        .replace('label.txt', path.join(session.project.dir, 'label.txt').split(path.sep).join(path.posix.sep))
-    );
+    await fs.promises.writeFile(projectJsonPath, original);
   });
 
   after(async () => {

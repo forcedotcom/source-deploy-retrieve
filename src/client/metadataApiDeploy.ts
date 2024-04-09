@@ -74,7 +74,7 @@ export type MetadataApiDeployOptions = {
    */
   mdapiPath?: string;
   registry?: RegistryAccess;
-} & MetadataTransferOptions
+} & MetadataTransferOptions;
 
 export class MetadataApiDeploy extends MetadataTransfer<
   MetadataApiDeployStatus,
@@ -377,7 +377,18 @@ const deleteNotFoundToFileResponses =
 const serverResponseNotFoundLocally =
   (cs: ComponentSet) =>
   (messageMap: Map<string, DeployMessage[]>): FileResponse[] => {
-    const sourceKeys = cs.getSourceComponents().toArray().map(toKey);
+    // const sourceKeys = new Set<string>(
+    //   cs
+    //     .getSourceComponents()
+    //     .toArray()
+    //     .flatMap((c) => [c, ...c.getChildren()])
+    //     .map(toKey)
+    // );
+    const sourceKeys = cs
+      .getSourceComponents()
+      .toArray()
+      .flatMap((c) => [c, ...c.getChildren()])
+      .map(toKey);
     return [...messageMap.keys()]
       .filter((k) => !sourceKeys.includes(k))
       .flatMap(
@@ -406,10 +417,10 @@ const serverResponseNotFoundLocally =
           ? ComponentStatus.Deleted
           : ComponentStatus.Unchanged;
         return {
-          filePath: undefined,
+          filePath: 'Not currently in local project',
           state,
           fullName: deployMessage.fullName,
-          type: deployMessage.componentType ?? '',
+          type: deployMessage.componentType ?? '<No type returned>',
         };
       });
   };
@@ -449,9 +460,10 @@ const buildFileResponsesFromComponentSet =
                 const childMessages = responseMessages.get(toKey(child));
                 return childMessages ? createResponses(child, childMessages) : [];
               })
-            : serverResponseNotFoundLocally(cs)(responseMessages)
+            : []
         )
       )
+      .concat(serverResponseNotFoundLocally(cs)(responseMessages))
       .concat(deleteNotFoundToFileResponses(cs)(responseMessages));
   };
 /**
@@ -460,7 +472,7 @@ const buildFileResponsesFromComponentSet =
 export type ScopedPreDeploy = {
   componentSet: ComponentSet;
   orgId: string;
-}
+};
 
 /**
  * register a listener to `scopedPostDeploy`
@@ -468,4 +480,4 @@ export type ScopedPreDeploy = {
 export type ScopedPostDeploy = {
   deployResult: DeployResult;
   orgId: string;
-}
+};

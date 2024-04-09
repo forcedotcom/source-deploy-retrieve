@@ -35,7 +35,10 @@ import { META_XML_SUFFIX } from '../../src/common';
 import {
   DECOMPOSED_CHILD_COMPONENT_1,
   DECOMPOSED_CHILD_COMPONENT_2,
+  DECOMPOSED_CHILD_XML_PATH_1,
+  DECOMPOSED_CHILD_XML_PATH_2,
   DECOMPOSED_COMPONENT,
+  DECOMPOSED_XML_PATH,
 } from '../mock/type-constants/customObjectConstant';
 import { COMPONENT } from '../mock/type-constants/apexClassConstant';
 import * as deployMessages from '../../src/client/deployMessages';
@@ -874,13 +877,13 @@ describe('MetadataApiDeploy', () => {
             type: 'ApexClass',
           },
           {
-            filePath: undefined,
+            filePath: 'Not currently in local project',
             fullName: 'myNewComponent',
             state: ComponentStatus.Created,
             type: 'ApexClass',
           },
           {
-            filePath: undefined,
+            filePath: 'Not currently in local project',
             fullName: 'myServerOnlyComponent',
             state: ComponentStatus.Created,
             type: 'ApexClass',
@@ -959,21 +962,30 @@ describe('MetadataApiDeploy', () => {
                 deleted: 'false',
                 fullName: DECOMPOSED_CHILD_COMPONENT_1.fullName,
                 componentType: DECOMPOSED_CHILD_COMPONENT_1.type.name,
-              } as DeployMessage,
+                fileName: DECOMPOSED_CHILD_XML_PATH_1,
+                createdDate: '',
+                success: true,
+              },
               {
                 changed: 'true',
                 created: 'false',
                 deleted: 'false',
                 fullName: DECOMPOSED_CHILD_COMPONENT_2.fullName,
                 componentType: DECOMPOSED_CHILD_COMPONENT_2.type.name,
-              } as DeployMessage,
+                fileName: DECOMPOSED_CHILD_XML_PATH_2,
+                createdDate: '',
+                success: true,
+              },
               {
                 changed: 'true',
                 created: 'false',
                 deleted: 'false',
                 fullName: component.fullName,
                 componentType: component.type.name,
-              } as DeployMessage,
+                fileName: DECOMPOSED_XML_PATH,
+                createdDate: '',
+                success: true,
+              },
             ],
           },
         };

@@ -377,20 +377,15 @@ const deleteNotFoundToFileResponses =
 const serverResponseNotFoundLocally =
   (cs: ComponentSet) =>
   (messageMap: Map<string, DeployMessage[]>): FileResponse[] => {
-    // const sourceKeys = new Set<string>(
-    //   cs
-    //     .getSourceComponents()
-    //     .toArray()
-    //     .flatMap((c) => [c, ...c.getChildren()])
-    //     .map(toKey)
-    // );
-    const sourceKeys = cs
-      .getSourceComponents()
-      .toArray()
-      .flatMap((c) => [c, ...c.getChildren()])
-      .map(toKey);
+    const sourceKeys = new Set<string>(
+      cs
+        .getSourceComponents()
+        .toArray()
+        .flatMap((c) => [c, ...c.getChildren()])
+        .map(toKey)
+    );
     return [...messageMap.keys()]
-      .filter((k) => !sourceKeys.includes(k))
+      .filter((k) => !sourceKeys.has(k))
       .flatMap(
         (key) =>
           messageMap

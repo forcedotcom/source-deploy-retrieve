@@ -95,8 +95,8 @@ export class MetadataApiDeploy extends MetadataTransfer<
   private orgId?: string;
   // Keep track of rest deploys separately since Connection.deploy() removes it
   // from the apiOptions and we need it for telemetry.
-  private isRestDeploy: boolean;
-  private registry: RegistryAccess;
+  private readonly isRestDeploy: boolean;
+  private readonly registry: RegistryAccess;
 
   public constructor(options: MetadataApiDeployOptions) {
     super(options);
@@ -376,34 +376,21 @@ const deleteNotFoundToFileResponses =
 
 const serverResponseNotFoundLocally =
   (cs: ComponentSet) =>
-  (messageMap: Map<string, DeployMessage[]>): FileResponse[] => {
-    const sourceKeys = new Set<string>(
-      cs
+  (messageMap: Map<string, DeployMessage[]>): FileResponse[] =>
+    [...messageMap.keys()].flatMap((key) => {
+      const [type, fullName] = key.split('#');
+      const all = cs
         .getSourceComponents()
         .toArray()
-        .flatMap((c) => [c, ...c.getChildren()])
-        .map(toKey)
-    );
-    return [...messageMap.keys()]
-      .filter((k) => !sourceKeys.has(k))
-      .flatMap(
-        (key) =>
-          messageMap
-            // because we're starting with messageMap.keys(), this variable, 'key' is a keyof messageMap
-            .get(key)!
-            // from the key, get the component, as long as it's not a manifest
-            .find(
-              (k) =>
-                ![
-                  'package.xml',
-                  'destructiveChanges.xml',
-                  'destructiveChangesPost.xml',
-                  'destructiveChangesPre.xml',
-                ].includes(k.fullName)
-            ) ?? []
-      )
-      .flatMap((deployMessage) => {
-        // instead of using getState, which can return 'failed' which doesn't satisfy the FileResponse type
+        .flatMap((c) => [c, ...c.getChildren()]);
+      const c = new ComponentSet(all);
+      if (
+        !c.has({ fullName, type }) &&
+        !['package.xml', 'destructiveChanges.xml', 'destructiveChangesPost.xml', 'destructiveChangesPre.xml'].includes(
+          fullName
+        )
+      ) {
+        const deployMessage = messageMap.get(key)!.at(0)!;
         const state = deployMessage.created
           ? ComponentStatus.Created
           : deployMessage.changed
@@ -412,13 +399,56 @@ const serverResponseNotFoundLocally =
           ? ComponentStatus.Deleted
           : ComponentStatus.Unchanged;
         return {
-          filePath: 'Not currently in local project',
+          filePath: undefined,
           state,
           fullName: deployMessage.fullName,
           type: deployMessage.componentType ?? '<No type returned>',
         };
-      });
-  };
+      } else return [];
+    });
+
+// const sourceKeys = new Set<string>(
+//   cs
+//     .getSourceComponents()
+//     .toArray()
+//     .flatMap((c) => [c, ...c.getChildren()])
+//     .map(toKey)
+// );
+// return [...messageMap.keys()]
+//   .filter((k) => !sourceKeys.has(k))
+//   .flatMap(
+//     (key) =>
+//       messageMap
+//         // because we're starting with messageMap.keys(), this variable, 'key' is a keyof messageMap
+//         .get(key)!
+//         // from the key, get the component, as long as it's not a manifest
+//         .find(
+//           (k) =>
+//             ![
+//               'package.xml',
+//               'destructiveChanges.xml',
+//               'destructiveChangesPost.xml',
+//               'destructiveChangesPre.xml',
+//             ].includes(k.fullName)
+//         ) ?? []
+//   )
+//   .flatMap((deployMessage) => {
+//     // instead of using getState, which can return 'failed' which doesn't satisfy the FileResponse type
+//     const state = deployMessage.created
+//       ? ComponentStatus.Created
+//       : deployMessage.changed
+//       ? ComponentStatus.Changed
+//       : deployMessage.deleted
+//       ? ComponentStatus.Deleted
+//       : ComponentStatus.Unchanged;
+//     return {
+//       filePath: 'Not currently in local project',
+//       state,
+//       fullName: deployMessage.fullName,
+//       type: deployMessage.componentType ?? '<No type returned>',
+//     };
+//     });
+// };
 
 const buildFileResponses = (response: MetadataApiDeployStatus): FileResponse[] =>
   ensureArray(response.details?.componentSuccesses)

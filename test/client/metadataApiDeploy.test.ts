@@ -865,25 +865,25 @@ describe('MetadataApiDeploy', () => {
         const responses = result.getFileResponses();
         const expected: FileResponse[] = [
           {
-            filePath: 'path/to/classes/myComponent.cls',
+            filePath: join('path', 'to', 'classes', 'myComponent.cls'),
             fullName: 'myComponent',
             state: ComponentStatus.Changed,
             type: 'ApexClass',
           },
           {
-            filePath: 'path/to/classes/myComponent.cls-meta.xml',
+            filePath: join('path', 'to', 'classes', 'myComponent.cls-meta.xml'),
             fullName: 'myComponent',
             state: ComponentStatus.Changed,
             type: 'ApexClass',
           },
           {
-            filePath: 'Not currently in local project',
+            filePath: undefined,
             fullName: 'myNewComponent',
             state: ComponentStatus.Created,
             type: 'ApexClass',
           },
           {
-            filePath: 'Not currently in local project',
+            filePath: undefined,
             fullName: 'myServerOnlyComponent',
             state: ComponentStatus.Created,
             type: 'ApexClass',

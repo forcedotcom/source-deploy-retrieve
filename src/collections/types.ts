@@ -10,19 +10,19 @@ import { XML_NS_KEY } from '../common/constants';
 import { FileProperties } from '../client/types';
 import { ComponentSet } from './componentSet';
 
-export interface PackageTypeMembers {
+export type PackageTypeMembers = {
   name: string;
   members: string[];
-}
+};
 
-export interface PackageManifestObject {
+export type PackageManifestObject = {
   Package: {
     types: PackageTypeMembers[];
     version: string;
     fullName?: string;
     [XML_NS_KEY]?: string;
   };
-}
+};
 
 // TODO NEXT MAJOR: use a string union type
 export enum DestructiveChangesType {
@@ -30,7 +30,7 @@ export enum DestructiveChangesType {
   PRE = 'pre',
 }
 
-export interface FromSourceOptions extends OptionalTreeRegistryOptions {
+export type FromSourceOptions = {
   /**
    * File paths or directory paths to resolve components against
    */
@@ -43,9 +43,9 @@ export interface FromSourceOptions extends OptionalTreeRegistryOptions {
    * File paths or directory paths of deleted components, i.e., destructive changes.
    */
   fsDeletePaths?: string[];
-}
+} & OptionalTreeRegistryOptions;
 
-export interface FromManifestOptions extends OptionalTreeRegistryOptions {
+export type FromManifestOptions = {
   /**
    * Path to the manifest file in XML format
    */
@@ -75,9 +75,9 @@ export interface FromManifestOptions extends OptionalTreeRegistryOptions {
    * path to a `destructiveChangesPost.xml` file in XML format
    */
   destructivePost?: string;
-}
+} & OptionalTreeRegistryOptions;
 
-export interface FromConnectionOptions extends OptionalTreeRegistryOptions {
+export type FromConnectionOptions = {
   /**
    * username or connection to an org
    */
@@ -94,4 +94,4 @@ export interface FromConnectionOptions extends OptionalTreeRegistryOptions {
    * array of metadata type names to use for `connection.metadata.list()`
    */
   metadataTypes?: string[];
-}
+} & OptionalTreeRegistryOptions;

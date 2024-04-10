@@ -21,10 +21,10 @@ type RelevantFileProperties = Pick<FileProperties, 'fullName' | 'fileName' | 'ty
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
-export interface ResolveConnectionResult {
+export type ResolveConnectionResult = {
   components: MetadataComponent[];
   apiVersion: string;
-}
+};
 
 /**
  * Resolve MetadataComponents from an org connection

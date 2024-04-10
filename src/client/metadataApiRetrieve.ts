@@ -257,18 +257,18 @@ export class MetadataApiRetrieve extends MetadataTransfer<
 /**
  * register a listener to `scopedPreRetrieve`
  */
-export interface ScopedPreRetrieve {
+export type ScopedPreRetrieve = {
   componentSet: ComponentSet;
   orgId: string;
-}
+};
 
 /**
  * register a listener to `scopedPostRetrieve`
  */
-export interface ScopedPostRetrieve {
+export type ScopedPostRetrieve = {
   retrieveResult: RetrieveResult;
   orgId: string;
-}
+};
 
 const handleMdapiResponse = async (options: MetadataApiRetrieveOptions, zipFileContents: Buffer): Promise<void> => {
   const name = options.zipFileName ?? 'unpackaged.zip';

@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "10.7.1",
+  "version": "10.9.1",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/src/index.js",
   "author": "Salesforce",
@@ -42,7 +42,7 @@
   "devDependencies": {
     "@jsforce/jsforce-node": "^3.1.0",
     "@salesforce/cli-plugins-testkit": "^5.2.0",
-    "@salesforce/dev-scripts": "^8.4.2",
+    "@salesforce/dev-scripts": "^8.5.0",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/fast-levenshtein": "^0.0.4",
     "@types/graceful-fs": "^4.1.9",
@@ -55,7 +55,7 @@
     "mocha-snap": "^5.0.0",
     "ts-node": "^10.9.2",
     "ts-patch": "^3.1.1",
-    "typescript": "^5.4.3"
+    "typescript": "^5.4.4"
   },
   "scripts": {
     "build": "wireit",
@@ -202,5 +202,8 @@
       ],
       "output": []
     }
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

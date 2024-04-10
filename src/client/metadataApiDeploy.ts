@@ -59,7 +59,7 @@ export class DeployResult implements MetadataTransferResult {
   }
 }
 
-export interface MetadataApiDeployOptions extends MetadataTransferOptions {
+export type MetadataApiDeployOptions = {
   apiOptions?: ApiOptions;
   /**
    * Path to a zip file containing mdapi-formatted code and a package.xml
@@ -70,7 +70,7 @@ export interface MetadataApiDeployOptions extends MetadataTransferOptions {
    */
   mdapiPath?: string;
   registry?: RegistryAccess;
-}
+} & MetadataTransferOptions;
 
 export class MetadataApiDeploy extends MetadataTransfer<
   MetadataApiDeployStatus,
@@ -414,15 +414,15 @@ const buildFileResponsesFromComponentSet =
 /**
  * register a listener to `scopedPreDeploy`
  */
-export interface ScopedPreDeploy {
+export type ScopedPreDeploy = {
   componentSet: ComponentSet;
   orgId: string;
-}
+};
 
 /**
  * register a listener to `scopedPostDeploy`
  */
-export interface ScopedPostDeploy {
+export type ScopedPostDeploy = {
   deployResult: DeployResult;
   orgId: string;
-}
+};

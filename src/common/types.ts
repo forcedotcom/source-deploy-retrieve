@@ -13,12 +13,12 @@ import { TreeContainer } from '../resolve/treeContainers';
  */
 export type SourcePath = string;
 
-export interface TreeOptions {
+export type TreeOptions = {
   tree: TreeContainer;
-}
+};
 
-export interface RegistryOptions {
+export type RegistryOptions = {
   registry: RegistryAccess;
-}
+};
 
-export interface OptionalTreeRegistryOptions extends Partial<TreeOptions>, Partial<RegistryOptions> {}
+export type OptionalTreeRegistryOptions = Partial<TreeOptions> & Partial<RegistryOptions>;

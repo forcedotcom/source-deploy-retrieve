@@ -17,14 +17,11 @@ export const recordPerf = async (testName: string, performance: Performance): Pr
     fileTarget,
     JSON.stringify(
       existing.concat(
-        performance
-          .getEntriesByType('measure')
-          // TODO: remove this when we upgrade to node16 and get its types
-          .map((m: { name: string; duration: number }) => ({
-            name: `${testName}-${m.name}-${os.platform()}`,
-            value: Math.trunc(m.duration),
-            unit: 'ms',
-          }))
+        performance.getEntriesByType('measure').map((m) => ({
+          name: `${testName}-${m.name}-${os.platform()}`,
+          value: Math.trunc(m.duration),
+          unit: 'ms',
+        }))
       ),
       null,
       2

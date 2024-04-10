@@ -6,7 +6,7 @@
  */
 import { readFile } from 'node:fs/promises';
 import { Transform, Readable } from 'node:stream';
-import { sep, posix } from 'node:path';
+import { sep, posix, join, isAbsolute } from 'node:path';
 import { Lifecycle, Messages, SfError, SfProject } from '@salesforce/core';
 import minimatch from 'minimatch';
 import { Env } from '@salesforce/kit';
@@ -91,10 +91,8 @@ export const getReplacementMarkingStream = async (
   projectDir?: string
 ): Promise<ReplacementMarkingStream | undefined> => {
   // remove any that don't agree with current env
-  const filteredReplacements = envFilter(await readReplacementsFromProject(projectDir));
-  if (filteredReplacements.length) {
-    return new ReplacementMarkingStream(filteredReplacements);
-  }
+  const filteredReplacements = (await readReplacementsFromProject(projectDir)).filter(envFilter);
+  return filteredReplacements.length ? new ReplacementMarkingStream(filteredReplacements) : undefined;
 };
 
 /**
@@ -117,8 +115,8 @@ class ReplacementMarkingStream extends Transform {
     if (!chunk.isMarkedForDelete() && this.replacementConfigs?.length) {
       try {
         chunk.replacements = await getReplacements(chunk, this.replacementConfigs);
-        if (chunk.replacements && chunk.parent && chunk.type.name === 'CustomLabel') {
-          // Set replacements on the parent of a CustomLabel as well so that recomposing
+        if (chunk.replacements && chunk.parent?.type.strategies?.transformer === 'nonDecomposed') {
+          // Set replacements on the parent of a nonDecomposed CustomLabel as well so that recomposing
           // doesn't use the non-replaced content from parent cache.
           // See RecompositionFinalizer.recompose() in convertContext.ts
           chunk.parent.replacements = chunk.replacements;
@@ -168,7 +166,7 @@ export const getReplacements = async (
           await Promise.all(
             replacementConfigs
               // filter out any that don't match the current file
-              .filter((r) => matchesFile(f, r))
+              .filter(matchesFile(f))
               .map(async (r) => ({
                 matchedFilename: f,
                 // used during replacement stream to limit warnings to explicit filenames, not globs
@@ -192,27 +190,26 @@ export const getReplacements = async (
     // filter out any that don't have any replacements
     .filter(([, replacements]) => replacements.length > 0);
 
-  if (replacementsForComponent.length) {
-    // turn into a Dictionary-style object so it's easier to lookup by filename
-    return Object.fromEntries(replacementsForComponent);
-  }
+  // turn into a Dictionary-style object so it's easier to lookup by filename
+  return replacementsForComponent.length ? Object.fromEntries(replacementsForComponent) : undefined;
 };
 
-export const matchesFile = (f: string, r: ReplacementConfig): boolean =>
-  // filenames will be absolute.  We don't have convenient access to the pkgDirs,
-  // so we need to be more open than an exact match
-  (typeof r.filename === 'string' && posixifyPaths(f).endsWith(r.filename)) ||
-  (typeof r.glob === 'string' && minimatch(f, `**/${r.glob}`));
+export const matchesFile =
+  (filename: string) =>
+  (r: ReplacementConfig): boolean =>
+    // filenames will be absolute.  We don't have convenient access to the pkgDirs,
+    // so we need to be more open than an exact match
+    (typeof r.filename === 'string' && posixifyPaths(filename).endsWith(r.filename)) ||
+    (typeof r.glob === 'string' && minimatch(filename, `**/${r.glob}`));
 
 /**
  * Regardless of any components, return the ReplacementConfig that are valid with the current env.
  * These can be checked globally and don't need to be checked per component.
  */
-const envFilter = (replacementConfigs: ReplacementConfig[] = []): ReplacementConfig[] =>
-  replacementConfigs.filter(
-    (replacement) =>
-      !replacement.replaceWhenEnv ||
-      replacement.replaceWhenEnv.every((envConditional) => process.env[envConditional.env] === envConditional.value)
+export const envFilter = (replacement: ReplacementConfig): boolean =>
+  !replacement.replaceWhenEnv ||
+  replacement.replaceWhenEnv.every(
+    (envConditional) => process.env[envConditional.env] === envConditional.value.toString()
   );
 
 /** A "getter" for envs to throw an error when an expected env is not present */
@@ -231,8 +228,8 @@ const readReplacementsFromProject = async (projectDir?: string): Promise<Replace
   try {
     const proj = await SfProject.resolve(projectDir);
     const projJson = (await proj.resolveProjectConfig()) as { replacements?: ReplacementConfig[] };
-
-    return projJson.replacements ?? [];
+    const definiteProjectDir = proj.getPath();
+    return (projJson.replacements ?? []).map(makeAbsolute(definiteProjectDir));
   } catch (e) {
     if (e instanceof SfError && e.name === 'InvalidProjectWorkspaceError') {
       return [];
@@ -249,3 +246,17 @@ export const stringToRegex = (input: string): RegExp =>
   new RegExp(input.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
 
 export const posixifyPaths = (f: string): string => f.split(sep).join(posix.sep);
+
+/** if replaceWithFile is present, resolve it to an absolute path relative to the projectdir */
+const makeAbsolute =
+  (projectDir: string) =>
+  (replacementConfig: ReplacementConfig): ReplacementConfig =>
+    replacementConfig.replaceWithFile
+      ? {
+          ...replacementConfig,
+          // it could already be absolute?
+          replaceWithFile: isAbsolute(replacementConfig.replaceWithFile)
+            ? replacementConfig.replaceWithFile
+            : join(projectDir, replacementConfig.replaceWithFile),
+        }
+      : replacementConfig;

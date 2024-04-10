@@ -39,7 +39,7 @@ export const MOCK_DEFAULT_OUTPUT = sep + 'test';
 export const MOCK_RECENTLY_VALIDATED_ID_REST = { id: '1234567890' };
 export const MOCK_RECENTLY_VALIDATED_ID_SOAP = '0987654321';
 
-interface DeployStubOptions {
+type DeployStubOptions = {
   components?: ComponentSet;
   zipPath?: string;
   mdapiPath?: string;
@@ -47,9 +47,9 @@ interface DeployStubOptions {
   componentFailures?: Partial<DeployMessage> | Array<Partial<DeployMessage>>;
   apiOptions?: MetadataApiDeployOptions;
   id?: string;
-}
+};
 
-interface DeployOperationLifecycle {
+type DeployOperationLifecycle = {
   pollingClientSpy: SinonSpy;
   deployStub: SinonStub;
   convertStub: SinonStub;
@@ -59,7 +59,7 @@ interface DeployOperationLifecycle {
   invokeResultStub: SinonStub;
   operation: MetadataApiDeploy;
   response: MetadataApiDeployStatus;
-}
+};
 
 export async function stubMetadataDeploy(
   $$: TestContext,
@@ -146,21 +146,21 @@ export async function stubMetadataDeploy(
   };
 }
 
-interface RetrieveStubOptions {
+type RetrieveStubOptions = {
   merge?: boolean;
   packageOptions?: string[] | PackageOption[];
   toRetrieve?: ComponentSet;
   messages?: Partial<RetrieveMessage> | Array<Partial<RetrieveMessage>>;
   successes?: ComponentSet;
-}
+};
 
-interface RetrieveOperationLifecycle {
+type RetrieveOperationLifecycle = {
   retrieveStub: SinonStub;
   checkStatusStub: SinonStub;
   convertStub: SinonStub;
   operation: MetadataApiRetrieve;
   response: MetadataApiRetrieveStatus;
-}
+};
 
 /**
  * A stubber that simulates the API retrieve.

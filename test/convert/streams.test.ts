@@ -7,11 +7,11 @@
 
 import { basename, join, sep } from 'node:path';
 import { Readable, Writable } from 'node:stream';
-import * as fs from 'graceful-fs';
+import fs from 'graceful-fs';
 import { Logger, SfError, Messages } from '@salesforce/core';
 import { expect, assert } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
-import JSZip = require('jszip');
+import JSZip from 'jszip';
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { ComponentSet, MetadataResolver, RegistryAccess, SourceComponent, WriteInfo, WriterFormat } from '../../src';

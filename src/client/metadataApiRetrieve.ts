@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as path from 'node:path';
-import * as fs from 'graceful-fs';
-import * as JSZip from 'jszip';
+import fs from 'graceful-fs';
+import JSZip from 'jszip';
 import { asBoolean, isString } from '@salesforce/ts-types';
 import { Messages, SfError, Lifecycle } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';

@@ -6,9 +6,9 @@
  */
 
 import { assert, expect, use } from 'chai';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import { Connection, Logger } from '@salesforce/core';
-import * as deepEqualInAnyOrder from 'deep-equal-in-any-order';
+import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import { ManageableState } from '../../src/client/types';
 import { ConnectionResolver } from '../../src/resolve';
 import { MetadataComponent, registry } from '../../src/';

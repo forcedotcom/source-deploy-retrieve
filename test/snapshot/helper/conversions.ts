@@ -8,7 +8,7 @@ import * as path from 'node:path';
 import * as fs from 'node:fs';
 import snap from 'mocha-snap';
 import { expect, config, use } from 'chai';
-import * as deepEqualInAnyOrder from 'deep-equal-in-any-order';
+import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import { XMLParser } from 'fast-xml-parser';
 
 import { RegistryAccess } from '../../../src/registry/registryAccess';

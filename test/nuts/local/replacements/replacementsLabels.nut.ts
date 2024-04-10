@@ -6,7 +6,7 @@
  */
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-import * as JSZip from 'jszip';
+import JSZip from 'jszip';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { ComponentSetBuilder, MetadataConverter } from '../../../../src';

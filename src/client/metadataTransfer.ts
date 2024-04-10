@@ -18,7 +18,7 @@ import {
 } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
 import { AnyJson, isNumber } from '@salesforce/ts-types';
-import * as fs from 'graceful-fs';
+import fs from 'graceful-fs';
 import { SfdxFileFormat } from '../convert/types';
 import { MetadataConverter } from '../convert/metadataConverter';
 import { ComponentSet } from '../collections/componentSet';

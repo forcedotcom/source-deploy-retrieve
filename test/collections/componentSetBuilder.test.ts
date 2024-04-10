@@ -6,7 +6,7 @@
  */
 
 import * as path from 'node:path';
-import * as fs from 'graceful-fs';
+import fs from 'graceful-fs';
 import * as sinon from 'sinon';
 import { assert, expect, config } from 'chai';
 import { SfError } from '@salesforce/core';

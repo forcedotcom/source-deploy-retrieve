@@ -7,8 +7,8 @@
 import { join, relative, resolve as pathResolve, sep } from 'node:path';
 import { format } from 'node:util';
 import { isString } from '@salesforce/ts-types';
-import * as JSZip from 'jszip';
-import * as fs from 'graceful-fs';
+import JSZip from 'jszip';
+import fs from 'graceful-fs';
 import { Lifecycle, Messages, SfError } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
 import { RegistryAccess } from '../registry/registryAccess';

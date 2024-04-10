@@ -7,7 +7,7 @@
 import * as path from 'node:path';
 import * as os from 'node:os';
 import { Performance } from 'node:perf_hooks';
-import * as fs from 'graceful-fs';
+import fs from 'graceful-fs';
 import { expect } from 'chai';
 
 export const recordPerf = async (testName: string, performance: Performance): Promise<void> => {

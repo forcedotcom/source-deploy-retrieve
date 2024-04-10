@@ -12,8 +12,8 @@ import chai = require('chai');
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import { SinonStub } from 'sinon';
 import { getString } from '@salesforce/ts-types';
-import * as fs from 'graceful-fs';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+import fs from 'graceful-fs';
+import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import {
   ComponentSet,
   ComponentStatus,

@@ -7,7 +7,7 @@
 /* eslint-disable complexity */
 import { join, sep } from 'node:path';
 import { assert } from 'chai';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import { ensureArray } from '@salesforce/kit';
 import { PollingClient } from '@salesforce/core';
 import { match, SinonSpy, SinonStub } from 'sinon';

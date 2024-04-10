@@ -7,8 +7,8 @@
 
 import * as path from 'node:path';
 import { StateAggregator, Logger, SfError, Messages } from '@salesforce/core';
-import * as fs from 'graceful-fs';
-import * as minimatch from 'minimatch';
+import fs from 'graceful-fs';
+import minimatch from 'minimatch';
 import { MetadataComponent } from '../resolve/types';
 import { ComponentSet } from '../collections/componentSet';
 import { RegistryAccess } from '../registry/registryAccess';

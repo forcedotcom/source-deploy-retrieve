@@ -8,7 +8,7 @@
 import { join } from 'node:path';
 import { expect, assert } from 'chai';
 import { Messages } from '@salesforce/core';
-import { TestContext } from '@salesforce/core/lib/testSetup';
+import { TestContext } from '@salesforce/core/testSetup';
 import { decomposed, matchingContentFile } from '../../mock';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
 import { baseName } from '../../../src/utils';

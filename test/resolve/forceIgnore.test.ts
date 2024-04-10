@@ -7,7 +7,7 @@
 import { join } from 'node:path';
 import { expect } from 'chai';
 import { createSandbox } from 'sinon';
-import * as fs from 'graceful-fs';
+import fs from 'graceful-fs';
 import { Lifecycle } from '@salesforce/core';
 import { ForceIgnore } from '../../src/resolve/forceIgnore';
 import * as fsUtil from '../../src/utils/fileSystemHandler';

@@ -8,7 +8,7 @@
 import * as path from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
-import * as fs from 'graceful-fs';
+import fs from 'graceful-fs';
 import { MetadataResolver } from '../../../src';
 import { MetadataConverter } from '../../../src';
 import { ComponentSetBuilder } from '../../../src';

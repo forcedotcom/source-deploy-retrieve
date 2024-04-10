@@ -6,7 +6,7 @@
  */
 import { basename, dirname, isAbsolute, join, relative } from 'node:path';
 import { Readable } from 'node:stream';
-import * as JSZip from 'jszip';
+import JSZip from 'jszip';
 import { getExtension } from 'mime';
 import { JsonMap } from '@salesforce/ts-types';
 import { createWriteStream } from 'graceful-fs';

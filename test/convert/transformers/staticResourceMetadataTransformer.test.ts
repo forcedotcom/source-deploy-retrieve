@@ -6,12 +6,11 @@
  */
 import { Readable } from 'node:stream';
 import { basename, join } from 'node:path';
-import deepEqualInAnyOrder = require('deep-equal-in-any-order');
+import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import { Messages } from '@salesforce/core';
-import { assert, expect } from 'chai';
+import chai, { assert, expect } from 'chai';
 import { createSandbox } from 'sinon';
-import * as JSZip from 'jszip';
-import chai = require('chai');
+import JSZip from 'jszip';
 import { registry, SourceComponent, VirtualTreeContainer, WriteInfo } from '../../../src';
 import { StaticResourceMetadataTransformer } from '../../../src/convert/transformers/staticResourceMetadataTransformer';
 import { baseName } from '../../../src/utils';

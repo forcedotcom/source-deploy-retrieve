@@ -6,7 +6,7 @@
  */
 // @ts-ignore
 import { ComponentSet, ZipTreeContainer } from '@salesforce/source-deploy-retrieve';
-import * as fs from 'fs';
+import fs from 'fs';
 
 /**
  * Print the component count of a file or directory path by type.

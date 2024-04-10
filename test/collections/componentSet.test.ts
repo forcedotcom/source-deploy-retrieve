@@ -6,7 +6,7 @@
  */
 import { fail } from 'node:assert';
 import { join } from 'node:path';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import { assert, expect } from 'chai';
 import { SinonStub } from 'sinon';
 import { AuthInfo, ConfigAggregator, Connection, Lifecycle, Messages, SfProject } from '@salesforce/core';

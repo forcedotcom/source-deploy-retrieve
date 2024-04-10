@@ -24,7 +24,7 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 export type ResolveConnectionResult = {
   components: MetadataComponent[];
   apiVersion: string;
-}
+};
 
 /**
  * Resolve MetadataComponents from an org connection

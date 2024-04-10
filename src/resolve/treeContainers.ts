@@ -8,7 +8,7 @@
 import { join, dirname, basename, normalize, sep } from 'node:path';
 import { Readable } from 'node:stream';
 import { statSync, existsSync, readdirSync, createReadStream, readFileSync } from 'graceful-fs';
-import * as JSZip from 'jszip';
+import JSZip from 'jszip';
 import { Messages, SfError } from '@salesforce/core';
 import { isString } from '@salesforce/ts-types';
 import { baseName, parseMetadataXml } from '../utils/path';

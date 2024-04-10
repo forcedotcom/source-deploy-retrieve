@@ -6,7 +6,7 @@
  */
 import { assert, expect, use } from 'chai';
 import { Messages, SfError } from '@salesforce/core';
-import * as deepEqualInAnyOrder from 'deep-equal-in-any-order';
+import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import { MetadataType, registry, RegistryAccess } from '../../src';
 
 use(deepEqualInAnyOrder);

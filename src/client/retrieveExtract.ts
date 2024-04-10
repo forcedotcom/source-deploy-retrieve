@@ -7,7 +7,7 @@
 import * as path from 'node:path';
 import { Logger } from '@salesforce/core';
 import { isString } from '@salesforce/ts-types';
-import * as fs from 'graceful-fs';
+import fs from 'graceful-fs';
 import { ConvertOutputConfig } from '../convert/types';
 import { MetadataConverter } from '../convert/metadataConverter';
 import { ComponentSet } from '../collections/componentSet';

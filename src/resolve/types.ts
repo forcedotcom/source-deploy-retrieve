@@ -13,12 +13,12 @@ export type MetadataComponent = {
   fullName: string;
   type: MetadataType;
   parent?: MetadataComponent;
-}
+};
 
 export type MetadataMember = {
   fullName: string;
   type: string;
-}
+};
 
 export type ComponentLike = MetadataComponent | MetadataMember;
 
@@ -57,4 +57,4 @@ export type SourceAdapter = {
    * Whether the adapter allows content-only metadata definitions.
    */
   allowMetadataWithContent(): boolean;
-}
+};

@@ -6,7 +6,7 @@
  */
 import { join } from 'node:path';
 import { assert, expect } from 'chai';
-import * as fs from 'graceful-fs';
+import fs from 'graceful-fs';
 import { Messages, SfError } from '@salesforce/core';
 import { createSandbox } from 'sinon';
 import { ensureString } from '@salesforce/ts-types';

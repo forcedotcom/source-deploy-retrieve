@@ -11,7 +11,7 @@ import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import { ensureArray } from '@salesforce/kit';
 import { PollingClient } from '@salesforce/core';
 import { match, SinonSpy, SinonStub } from 'sinon';
-import type { AsyncResult } from 'jsforce/lib/api/metadata';
+import type { AsyncResult } from '@jsforce/jsforce-node/lib/api/metadata';
 import { ensureString } from '@salesforce/ts-types';
 import {
   ComponentSet,

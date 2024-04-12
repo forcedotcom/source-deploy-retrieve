@@ -374,82 +374,27 @@ const deleteNotFoundToFileResponses =
           : [];
       });
 
-const serverResponseNotFoundLocally =
-  (cs: ComponentSet) =>
-  (messageMap: Map<string, DeployMessage[]>): FileResponse[] =>
+const warnIfUnmatchedServerResult =
+  (fr: FileResponse[]) =>
+  (messageMap: Map<string, DeployMessage[]>): void[] =>
+    // keep the parents and children separated for MPD scenarios where we have a parent in one, children in another package
     [...messageMap.keys()].flatMap((key) => {
       const [type, fullName] = key.split('#');
-      const all = cs
-        .getSourceComponents()
-        .toArray()
-        .flatMap((c) => [c, ...c.getChildren()]);
-      const c = new ComponentSet(all);
+
       if (
-        !c.has({ fullName, type }) &&
+        !fr.find((c) => c.type === type && c.fullName === fullName) &&
         !['package.xml', 'destructiveChanges.xml', 'destructiveChangesPost.xml', 'destructiveChangesPre.xml'].includes(
           fullName
         )
       ) {
         const deployMessage = messageMap.get(key)!.at(0)!;
-        const state = deployMessage.created
-          ? ComponentStatus.Created
-          : deployMessage.changed
-          ? ComponentStatus.Changed
-          : deployMessage.deleted
-          ? ComponentStatus.Deleted
-          : ComponentStatus.Unchanged;
-        return {
-          filePath: undefined,
-          state,
-          fullName: deployMessage.fullName,
-          type: deployMessage.componentType ?? '<No type returned>',
-        };
-      } else return [];
+
+        // warn that this component is found in server response, but not in component set
+        void Lifecycle.getInstance().emitWarning(
+          `${deployMessage.componentType}, ${deployMessage.fullName}, returned from org, but not found in the local project`
+        );
+      }
     });
-
-// const sourceKeys = new Set<string>(
-//   cs
-//     .getSourceComponents()
-//     .toArray()
-//     .flatMap((c) => [c, ...c.getChildren()])
-//     .map(toKey)
-// );
-// return [...messageMap.keys()]
-//   .filter((k) => !sourceKeys.has(k))
-//   .flatMap(
-//     (key) =>
-//       messageMap
-//         // because we're starting with messageMap.keys(), this variable, 'key' is a keyof messageMap
-//         .get(key)!
-//         // from the key, get the component, as long as it's not a manifest
-//         .find(
-//           (k) =>
-//             ![
-//               'package.xml',
-//               'destructiveChanges.xml',
-//               'destructiveChangesPost.xml',
-//               'destructiveChangesPre.xml',
-//             ].includes(k.fullName)
-//         ) ?? []
-//   )
-//   .flatMap((deployMessage) => {
-//     // instead of using getState, which can return 'failed' which doesn't satisfy the FileResponse type
-//     const state = deployMessage.created
-//       ? ComponentStatus.Created
-//       : deployMessage.changed
-//       ? ComponentStatus.Changed
-//       : deployMessage.deleted
-//       ? ComponentStatus.Deleted
-//       : ComponentStatus.Unchanged;
-//     return {
-//       filePath: 'Not currently in local project',
-//       state,
-//       fullName: deployMessage.fullName,
-//       type: deployMessage.componentType ?? '<No type returned>',
-//     };
-//     });
-// };
-
 const buildFileResponses = (response: MetadataApiDeployStatus): FileResponse[] =>
   ensureArray(response.details?.componentSuccesses)
     .concat(ensureArray(response.details?.componentFailures))
@@ -477,7 +422,7 @@ const buildFileResponsesFromComponentSet =
   (response: MetadataApiDeployStatus): FileResponse[] => {
     const responseMessages = getDeployMessages(response);
 
-    return (cs.getSourceComponents().toArray() ?? [])
+    const fileResponses = (cs.getSourceComponents().toArray() ?? [])
       .flatMap((deployedComponent) =>
         createResponses(deployedComponent, responseMessages.get(toKey(deployedComponent)) ?? []).concat(
           deployedComponent.type.children
@@ -488,8 +433,10 @@ const buildFileResponsesFromComponentSet =
             : []
         )
       )
-      .concat(serverResponseNotFoundLocally(cs)(responseMessages))
       .concat(deleteNotFoundToFileResponses(cs)(responseMessages));
+
+    warnIfUnmatchedServerResult(fileResponses)(responseMessages);
+    return fileResponses;
   };
 /**
  * register a listener to `scopedPreDeploy`

@@ -6,11 +6,10 @@
  */
 import { basename, join } from 'node:path';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
-
 import * as chai from 'chai';
 import { assert, expect } from 'chai';
 import { AnyJson, getString } from '@salesforce/ts-types';
-import { Messages, PollingClient, StatusResult } from '@salesforce/core';
+import { Lifecycle, Messages, PollingClient, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import {
@@ -822,7 +821,11 @@ describe('MetadataApiDeploy', () => {
         expect(responses).to.deep.equal(expected);
       });
 
-      it('should include all responses from the server', () => {
+      it('should warn when extra server responses found', () => {
+        // everything is an emit.  Warn calls emit, too.
+        const warnSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emitWarning');
+        const emitSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emit');
+
         const component = matchingContentFile.COMPONENT;
         const deployedSet = new ComponentSet([component]);
         const { fullName, type } = component;
@@ -837,15 +840,6 @@ describe('MetadataApiDeploy', () => {
                 success: 'true',
                 fullName,
                 fileName: component.content,
-                componentType: type.name,
-              } as DeployMessage,
-              {
-                changed: 'true',
-                created: 'false',
-                deleted: 'false',
-                success: 'true',
-                fullName: 'myNewComponent',
-                fileName: 'myNewComponent',
                 componentType: type.name,
               } as DeployMessage,
               {
@@ -876,21 +870,16 @@ describe('MetadataApiDeploy', () => {
             state: ComponentStatus.Changed,
             type: 'ApexClass',
           },
-          {
-            filePath: undefined,
-            fullName: 'myNewComponent',
-            state: ComponentStatus.Created,
-            type: 'ApexClass',
-          },
-          {
-            filePath: undefined,
-            fullName: 'myServerOnlyComponent',
-            state: ComponentStatus.Created,
-            type: 'ApexClass',
-          },
         ];
 
         expect(responses).to.deep.equal(expected);
+        expect(warnSpy.called).to.be.true;
+        expect(warnSpy.args[0]).to.deep.equal([
+          'ApexClass, myServerOnlyComponent, returned from org, but not found in the local project',
+        ]);
+
+        warnSpy.restore();
+        emitSpy.restore();
       });
 
       it('should not report duplicates component', () => {

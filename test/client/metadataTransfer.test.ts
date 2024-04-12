@@ -13,7 +13,7 @@ import {
   // Duration,
   sleep,
 } from '@salesforce/kit';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import { ComponentSet } from '../../src';
 import {
   MetadataTransfer,

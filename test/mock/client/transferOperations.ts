@@ -7,11 +7,11 @@
 /* eslint-disable complexity */
 import { join, sep } from 'node:path';
 import { assert } from 'chai';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import { ensureArray } from '@salesforce/kit';
 import { PollingClient } from '@salesforce/core';
 import { match, SinonSpy, SinonStub } from 'sinon';
-import type { AsyncResult } from 'jsforce/lib/api/metadata';
+import type { AsyncResult } from '@jsforce/jsforce-node/lib/api/metadata';
 import { ensureString } from '@salesforce/ts-types';
 import {
   ComponentSet,
@@ -47,7 +47,7 @@ type DeployStubOptions = {
   componentFailures?: Partial<DeployMessage> | Array<Partial<DeployMessage>>;
   apiOptions?: MetadataApiDeployOptions;
   id?: string;
-}
+};
 
 type DeployOperationLifecycle = {
   pollingClientSpy: SinonSpy;
@@ -59,7 +59,7 @@ type DeployOperationLifecycle = {
   invokeResultStub: SinonStub;
   operation: MetadataApiDeploy;
   response: MetadataApiDeployStatus;
-}
+};
 
 export async function stubMetadataDeploy(
   $$: TestContext,
@@ -152,7 +152,7 @@ type RetrieveStubOptions = {
   toRetrieve?: ComponentSet;
   messages?: Partial<RetrieveMessage> | Array<Partial<RetrieveMessage>>;
   successes?: ComponentSet;
-}
+};
 
 type RetrieveOperationLifecycle = {
   retrieveStub: SinonStub;
@@ -160,7 +160,7 @@ type RetrieveOperationLifecycle = {
   convertStub: SinonStub;
   operation: MetadataApiRetrieve;
   response: MetadataApiRetrieveStatus;
-}
+};
 
 /**
  * A stubber that simulates the API retrieve.

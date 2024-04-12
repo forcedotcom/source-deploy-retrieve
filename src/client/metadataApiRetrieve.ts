@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as path from 'node:path';
-import * as fs from 'graceful-fs';
-import * as JSZip from 'jszip';
+import fs from 'graceful-fs';
+import JSZip from 'jszip';
 import { asBoolean, isString } from '@salesforce/ts-types';
 import { Messages, SfError, Lifecycle } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
@@ -260,7 +260,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
 export type ScopedPreRetrieve = {
   componentSet: ComponentSet;
   orgId: string;
-}
+};
 
 /**
  * register a listener to `scopedPostRetrieve`
@@ -268,7 +268,7 @@ export type ScopedPreRetrieve = {
 export type ScopedPostRetrieve = {
   retrieveResult: RetrieveResult;
   orgId: string;
-}
+};
 
 const handleMdapiResponse = async (options: MetadataApiRetrieveOptions, zipFileContents: Buffer): Promise<void> => {
   const name = options.zipFileName ?? 'unpackaged.zip';

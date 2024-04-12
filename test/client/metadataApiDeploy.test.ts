@@ -5,9 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, join } from 'node:path';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
-import * as chai from 'chai';
-import { assert, expect } from 'chai';
+import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
+import chai, { assert, expect } from 'chai';
 import { AnyJson, getString } from '@salesforce/ts-types';
 import { Lifecycle, Messages, PollingClient, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';

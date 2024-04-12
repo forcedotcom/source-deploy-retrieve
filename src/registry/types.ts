@@ -18,7 +18,7 @@ export type MetadataRegistry = {
   childTypes: {
     [childTypeId: string]: string;
   };
-}
+};
 
 /**
  * Metadata type definition in the registry.
@@ -144,28 +144,28 @@ export type MetadataType = {
     decomposition?: 'topLevel' | 'folderPerType';
     recomposition?: 'startEmpty';
   };
-}
+};
 
 /**
  * Mapping of metadata type ids -> Metadata type definitions.
  */
 type TypeIndex = {
   [typeId: string]: MetadataType;
-}
+};
 
 /**
  * Mapping of metadata type file suffixes -> type ids.
  */
 type SuffixIndex = {
   [suffix: string]: string;
-}
+};
 
 /**
  * Mapping of metadata type directory names -> type ids.
  */
 type DirectoryIndex = {
   [directoryName: string]: string;
-}
+};
 
 /**
  * Strategy names for handling component decomposition.
@@ -203,7 +203,7 @@ export const enum TransformerStrategy {
 
 type Channel = {
   exposed: boolean;
-}
+};
 /**
  * Subset of an item from the Metadata Coverage Report
  */
@@ -220,7 +220,7 @@ export type CoverageObjectType = {
     sourceTracking: Channel;
     toolingApi: Channel;
   };
-}
+};
 
 /**
  * The structure returned by the metadata coverage report
@@ -232,4 +232,4 @@ export type CoverageObject = {
   // only exists on the test1 instances flavor of coverage report
   apiVersion: number;
   release: string;
-}
+};

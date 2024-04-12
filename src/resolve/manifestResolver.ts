@@ -16,28 +16,28 @@ import { MetadataComponent } from './types';
 export type PackageTypeMembers = {
   name: string;
   members: string[];
-}
+};
 
 export type PackageManifest = {
   types: PackageTypeMembers[];
   version: string;
-}
+};
 
 type ParsedPackageTypeMembers = {
   name: string;
   members: string | string[];
-}
+};
 
 type ParsedPackageManifest = {
   types: ParsedPackageTypeMembers | ParsedPackageTypeMembers[];
   version: string;
-}
+};
 
 export type ResolveManifestResult = {
   components: MetadataComponent[];
   apiVersion: string;
   fullName?: string;
-}
+};
 
 /**
  * Resolve MetadataComponents from a manifest file (package.xml)

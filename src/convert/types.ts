@@ -79,7 +79,7 @@ export type MetadataTransformer = {
   defaultDirectory?: string;
   toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]>;
   toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]>;
-}
+};
 
 // --------------
 // PUBLIC

@@ -11,8 +11,8 @@ import { Readable } from 'node:stream';
 import { Messages, SfError } from '@salesforce/core';
 import { assert, expect } from 'chai';
 import { createSandbox } from 'sinon';
-import * as fs from 'graceful-fs';
-import * as JSZip from 'jszip';
+import fs from 'graceful-fs';
+import JSZip from 'jszip';
 import {
   MetadataResolver,
   NodeFSTreeContainer,

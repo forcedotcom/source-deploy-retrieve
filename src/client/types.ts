@@ -53,11 +53,11 @@ type FileResponseBase = {
   fullName: string;
   type: string;
   filePath?: string;
-}
+};
 
 export type FileResponseSuccess = {
   state: Exclude<ComponentStatus, ComponentStatus.Failed>;
-} & FileResponseBase
+} & FileResponseBase;
 
 export type FileResponseFailure = {
   state: ComponentStatus.Failed;
@@ -65,18 +65,18 @@ export type FileResponseFailure = {
   columnNumber?: number;
   error: string;
   problemType: 'Warning' | 'Error';
-} & FileResponseBase
+} & FileResponseBase;
 
 export type FileResponse = FileResponseSuccess | FileResponseFailure;
 export type MetadataTransferResult = {
   response: MetadataRequestStatus;
   components?: ComponentSet;
   getFileResponses(): FileResponse[];
-}
+};
 
 export type AsyncResult = {
   id: RecordId;
-}
+};
 
 export enum RequestStatus {
   Pending = 'Pending',
@@ -93,7 +93,7 @@ export type MetadataRequestStatus = {
   status: RequestStatus;
   success: boolean;
   done: boolean;
-}
+};
 
 export type RetrieveFailure = {
   component?: MetadataComponent;
@@ -135,7 +135,7 @@ export type MetadataApiDeployStatus = {
   rollbackOnError: boolean;
   startDate?: string;
   stateDetail?: string;
-} & MetadataRequestStatus
+} & MetadataRequestStatus;
 
 export type DeployDetails = {
   componentFailures?: DeployMessage | DeployMessage[];
@@ -153,7 +153,7 @@ export type RunTestResult = {
   numTestsRun: string;
   successes?: Successes[] | Successes;
   totalTime: string;
-}
+};
 
 export type CodeCoverage = {
   id: string;
@@ -162,20 +162,20 @@ export type CodeCoverage = {
   numLocations: string;
   numLocationsNotCovered: string;
   type: string;
-}
+};
 
 export type LocationsNotCovered = {
   column: string;
   line: string;
   numExecutions: string;
   time: string;
-}
+};
 
 export type CodeCoverageWarnings = {
   id: string;
   message: string;
   namespace: string;
-}
+};
 
 export type Failures = {
   id: string;
@@ -186,14 +186,14 @@ export type Failures = {
   stackTrace: string;
   time: string;
   type: string;
-}
+};
 
 export type Successes = {
   id: string;
   methodName: string;
   name: string;
   time: string;
-}
+};
 
 export type BooleanString = 'true' | 'false' | true | false;
 
@@ -263,7 +263,7 @@ export type MetadataApiRetrieveStatus = {
   messages?: RetrieveMessage[] | RetrieveMessage;
   /** `base64` encoded string */
   zipFile: string;
-}
+};
 
 // ------------------------------------------------
 // Client options
@@ -280,7 +280,7 @@ export type PackageOption = {
    * default to `<process.cwd()>/PackageOption.name`.
    */
   outputDir?: SourcePath;
-}
+};
 
 export type PackageOptions = string[] | PackageOption[];
 
@@ -297,7 +297,7 @@ export type RetrieveExtractOptions = {
    * `PackageOption.outputDir` for packaged source.
    */
   outputDir: SourcePath;
-}
+};
 
 export type RetrieveOptions = {
   /**
@@ -334,7 +334,7 @@ export type RetrieveOptions = {
    * Specifies whether to suppress the <Pre|Post><Retrieve> events
    */
   suppressEvents?: boolean;
-}
+};
 
 export type MetadataApiDeployOptions = {
   allowMissingFiles?: boolean;
@@ -352,27 +352,27 @@ export type MetadataApiDeployOptions = {
    * Set to true to use the REST API for deploying.
    */
   rest?: boolean;
-}
+};
 
 export type StdValueSetRecord = {
   Id: string;
   MasterLabel: string;
   Metadata: { standardValue: Array<Record<string, unknown>> };
-}
+};
 
 export type ListMetadataQuery = {
   type: string;
   folder?: string;
-}
+};
 
 export type DeployVersionData = {
   apiVersion: string;
   manifestVersion: string | undefined;
   webService: 'SOAP' | 'REST';
-}
+};
 
 export type RetrieveVersionData = {
   apiVersion: string;
   manifestVersion: string;
-}
+};
 export type MetadataApiRetrieveOptions = MetadataTransferOptions & RetrieveOptions & { registry?: RegistryAccess };

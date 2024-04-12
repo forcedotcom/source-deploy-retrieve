@@ -23,7 +23,7 @@ type TypeEntry = {
     content?: string;
     xml?: string;
   }>;
-}
+};
 
 const registryAccess = new RegistryAccess();
 const packageDir = path.normalize('force-app/main/default');

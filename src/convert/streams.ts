@@ -8,7 +8,7 @@ import { basename, dirname, isAbsolute, join } from 'node:path';
 import { pipeline as cbPipeline, Readable, Stream, Transform, Writable } from 'node:stream';
 import { promisify } from 'node:util';
 import { Messages, SfError } from '@salesforce/core';
-import * as JSZip from 'jszip';
+import JSZip from 'jszip';
 import { createWriteStream, existsSync, promises as fsPromises } from 'graceful-fs';
 import { JsonMap } from '@salesforce/ts-types';
 import { XMLBuilder } from 'fast-xml-parser';

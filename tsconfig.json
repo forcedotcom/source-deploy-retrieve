@@ -7,7 +7,9 @@
     "outDir": "lib",
     "skipLibCheck": true,
     "baseUrl": ".",
-    "plugins": [{ "transform": "@salesforce/core/lib/messageTransformer", "import": "messageTransformer" }]
+    "plugins": [{ "transform": "@salesforce/core/messageTransformer", "import": "messageTransformer" }],
+    "module": "Node16",
+    "moduleResolution": "Node16"
   },
   "include": [
     "./src/**/*.ts",

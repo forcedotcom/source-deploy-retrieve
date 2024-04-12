@@ -13,7 +13,7 @@ import { ComponentSet } from './componentSet';
 export type PackageTypeMembers = {
   name: string;
   members: string[];
-}
+};
 
 export type PackageManifestObject = {
   Package: {
@@ -22,7 +22,7 @@ export type PackageManifestObject = {
     fullName?: string;
     [XML_NS_KEY]?: string;
   };
-}
+};
 
 // TODO NEXT MAJOR: use a string union type
 export enum DestructiveChangesType {
@@ -43,7 +43,7 @@ export type FromSourceOptions = {
    * File paths or directory paths of deleted components, i.e., destructive changes.
    */
   fsDeletePaths?: string[];
-} & OptionalTreeRegistryOptions
+} & OptionalTreeRegistryOptions;
 
 export type FromManifestOptions = {
   /**
@@ -75,7 +75,7 @@ export type FromManifestOptions = {
    * path to a `destructiveChangesPost.xml` file in XML format
    */
   destructivePost?: string;
-} & OptionalTreeRegistryOptions
+} & OptionalTreeRegistryOptions;
 
 export type FromConnectionOptions = {
   /**
@@ -94,4 +94,4 @@ export type FromConnectionOptions = {
    * array of metadata type names to use for `connection.metadata.list()`
    */
   metadataTypes?: string[];
-} & OptionalTreeRegistryOptions
+} & OptionalTreeRegistryOptions;

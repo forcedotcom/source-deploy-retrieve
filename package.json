@@ -42,7 +42,7 @@
   "devDependencies": {
     "@jsforce/jsforce-node": "^3.1.0",
     "@salesforce/cli-plugins-testkit": "^5.2.0",
-    "@salesforce/dev-scripts": "^8.5.0",
+    "@salesforce/dev-scripts": "^9.0.0",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/fast-levenshtein": "^0.0.4",
     "@types/graceful-fs": "^4.1.9",

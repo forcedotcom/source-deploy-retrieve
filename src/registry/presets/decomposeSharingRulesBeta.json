@@ -75,7 +75,8 @@
         "transformer": "decomposed"
       },
       "strictDirectoryName": true,
-      "suffix": "sharingRules"
+      "suffix": "sharingRules",
+      "supportsPartialDelete": true
     }
   }
 }

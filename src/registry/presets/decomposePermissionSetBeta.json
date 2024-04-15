@@ -180,7 +180,8 @@
         "transformer": "decomposed"
       },
       "strictDirectoryName": true,
-      "suffix": "permissionset"
+      "suffix": "permissionset",
+      "supportsPartialDelete": true
     }
   }
 }

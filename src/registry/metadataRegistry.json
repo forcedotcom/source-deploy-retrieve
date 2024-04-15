@@ -1572,7 +1572,8 @@
       },
       "strictDirectoryName": true,
       "suffix": "objectTranslation",
-      "supportsWildcardAndName": true
+      "supportsWildcardAndName": true,
+      "supportsPartialDelete": true
     },
     "custompageweblink": {
       "directoryName": "weblinks",

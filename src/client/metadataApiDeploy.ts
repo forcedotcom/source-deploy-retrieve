@@ -25,9 +25,13 @@ import {
   MetadataApiDeployStatus,
   MetadataTransferResult,
 } from './types';
-import { getDeployMessages, createResponses } from './deployMessages';
-import { getState, isComponentNotFoundWarningMessage } from './deployMessages';
-import { toKey } from './deployMessages';
+import {
+  createResponses,
+  getDeployMessages,
+  getState,
+  isComponentNotFoundWarningMessage,
+  toKey,
+} from './deployMessages';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -91,8 +95,8 @@ export class MetadataApiDeploy extends MetadataTransfer<
   private orgId?: string;
   // Keep track of rest deploys separately since Connection.deploy() removes it
   // from the apiOptions and we need it for telemetry.
-  private isRestDeploy: boolean;
-  private registry: RegistryAccess;
+  private readonly isRestDeploy: boolean;
+  private readonly registry: RegistryAccess;
 
   public constructor(options: MetadataApiDeployOptions) {
     super(options);
@@ -370,6 +374,27 @@ const deleteNotFoundToFileResponses =
           : [];
       });
 
+const warnIfUnmatchedServerResult =
+  (fr: FileResponse[]) =>
+  (messageMap: Map<string, DeployMessage[]>): void[] =>
+    // keep the parents and children separated for MPD scenarios where we have a parent in one, children in another package
+    [...messageMap.keys()].flatMap((key) => {
+      const [type, fullName] = key.split('#');
+
+      if (
+        !fr.find((c) => c.type === type && c.fullName === fullName) &&
+        !['package.xml', 'destructiveChanges.xml', 'destructiveChangesPost.xml', 'destructiveChangesPre.xml'].includes(
+          fullName
+        )
+      ) {
+        const deployMessage = messageMap.get(key)!.at(0)!;
+
+        // warn that this component is found in server response, but not in component set
+        void Lifecycle.getInstance().emitWarning(
+          `${deployMessage.componentType}, ${deployMessage.fullName}, returned from org, but not found in the local project`
+        );
+      }
+    });
 const buildFileResponses = (response: MetadataApiDeployStatus): FileResponse[] =>
   ensureArray(response.details?.componentSuccesses)
     .concat(ensureArray(response.details?.componentFailures))
@@ -395,10 +420,9 @@ const buildFileResponses = (response: MetadataApiDeployStatus): FileResponse[] =
 const buildFileResponsesFromComponentSet =
   (cs: ComponentSet) =>
   (response: MetadataApiDeployStatus): FileResponse[] => {
-    // TODO: Log when messages can't be mapped to components
     const responseMessages = getDeployMessages(response);
 
-    return (cs.getSourceComponents().toArray() ?? [])
+    const fileResponses = (cs.getSourceComponents().toArray() ?? [])
       .flatMap((deployedComponent) =>
         createResponses(deployedComponent, responseMessages.get(toKey(deployedComponent)) ?? []).concat(
           deployedComponent.type.children
@@ -410,6 +434,9 @@ const buildFileResponsesFromComponentSet =
         )
       )
       .concat(deleteNotFoundToFileResponses(cs)(responseMessages));
+
+    warnIfUnmatchedServerResult(fileResponses)(responseMessages);
+    return fileResponses;
   };
 /**
  * register a listener to `scopedPreDeploy`

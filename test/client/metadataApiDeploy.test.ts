@@ -6,12 +6,11 @@
  */
 import { basename, join } from 'node:path';
 import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
-import deepEqualInAnyOrder = require('deep-equal-in-any-order');
-
 import chai, { assert, expect } from 'chai';
 import { AnyJson, getString } from '@salesforce/ts-types';
-import { PollingClient, StatusResult, Messages } from '@salesforce/core';
+import { Lifecycle, Messages, PollingClient, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
+import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import {
   ComponentSet,
   ComponentStatus,
@@ -34,7 +33,10 @@ import { META_XML_SUFFIX } from '../../src/common';
 import {
   DECOMPOSED_CHILD_COMPONENT_1,
   DECOMPOSED_CHILD_COMPONENT_2,
+  DECOMPOSED_CHILD_XML_PATH_1,
+  DECOMPOSED_CHILD_XML_PATH_2,
   DECOMPOSED_COMPONENT,
+  DECOMPOSED_XML_PATH,
 } from '../mock/type-constants/customObjectConstant';
 import { COMPONENT } from '../mock/type-constants/apexClassConstant';
 import * as deployMessages from '../../src/client/deployMessages';
@@ -818,6 +820,67 @@ describe('MetadataApiDeploy', () => {
         expect(responses).to.deep.equal(expected);
       });
 
+      it('should warn when extra server responses found', () => {
+        // everything is an emit.  Warn calls emit, too.
+        const warnSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emitWarning');
+        const emitSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emit');
+
+        const component = matchingContentFile.COMPONENT;
+        const deployedSet = new ComponentSet([component]);
+        const { fullName, type } = component;
+
+        const apiStatus: Partial<MetadataApiDeployStatus> = {
+          details: {
+            componentFailures: [
+              {
+                changed: 'true',
+                created: 'false',
+                deleted: 'false',
+                success: 'true',
+                fullName,
+                fileName: component.content,
+                componentType: type.name,
+              } as DeployMessage,
+              {
+                changed: 'false',
+                created: 'false',
+                deleted: 'true',
+                success: 'true',
+                fullName: 'myServerOnlyComponent',
+                fileName: 'myServerOnlyComponent',
+                componentType: type.name,
+              } as DeployMessage,
+            ],
+          },
+        };
+        const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+        const responses = result.getFileResponses();
+        const expected: FileResponse[] = [
+          {
+            filePath: join('path', 'to', 'classes', 'myComponent.cls'),
+            fullName: 'myComponent',
+            state: ComponentStatus.Changed,
+            type: 'ApexClass',
+          },
+          {
+            filePath: join('path', 'to', 'classes', 'myComponent.cls-meta.xml'),
+            fullName: 'myComponent',
+            state: ComponentStatus.Changed,
+            type: 'ApexClass',
+          },
+        ];
+
+        expect(responses).to.deep.equal(expected);
+        expect(warnSpy.called).to.be.true;
+        expect(warnSpy.args[0]).to.deep.equal([
+          'ApexClass, myServerOnlyComponent, returned from org, but not found in the local project',
+        ]);
+
+        warnSpy.restore();
+        emitSpy.restore();
+      });
+
       it('should not report duplicates component', () => {
         const component = matchingContentFile.COMPONENT;
         const deployedSet = new ComponentSet([component]);
@@ -887,21 +950,30 @@ describe('MetadataApiDeploy', () => {
                 deleted: 'false',
                 fullName: DECOMPOSED_CHILD_COMPONENT_1.fullName,
                 componentType: DECOMPOSED_CHILD_COMPONENT_1.type.name,
-              } as DeployMessage,
+                fileName: DECOMPOSED_CHILD_XML_PATH_1,
+                createdDate: '',
+                success: true,
+              },
               {
                 changed: 'true',
                 created: 'false',
                 deleted: 'false',
                 fullName: DECOMPOSED_CHILD_COMPONENT_2.fullName,
                 componentType: DECOMPOSED_CHILD_COMPONENT_2.type.name,
-              } as DeployMessage,
+                fileName: DECOMPOSED_CHILD_XML_PATH_2,
+                createdDate: '',
+                success: true,
+              },
               {
                 changed: 'true',
                 created: 'false',
                 deleted: 'false',
                 fullName: component.fullName,
                 componentType: component.type.name,
-              } as DeployMessage,
+                fileName: DECOMPOSED_XML_PATH,
+                createdDate: '',
+                success: true,
+              },
             ],
           },
         };

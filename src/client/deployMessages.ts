@@ -5,11 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { join, dirname, basename, extname } from 'node:path/posix';
-import { sep, posix } from 'node:path/posix';
+import { basename, dirname, extname, join, posix, sep } from 'node:path/posix';
 import { SfError } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
-import { SourceComponent, ComponentLike } from '../resolve';
+import { ComponentLike, SourceComponent } from '../resolve';
 import { registry } from '../registry/registry';
 import {
   BooleanString,
@@ -71,8 +70,8 @@ const shouldWalkContent = (component: SourceComponent): boolean =>
       (t) => t.unaddressableWithoutParent === true || t.isAddressable === false
     ));
 
-export const createResponses = (component: SourceComponent, responseMessages: DeployMessage[]): FileResponse[] => {
-  const responses = responseMessages.flatMap((message): FileResponse[] => {
+export const createResponses = (component: SourceComponent, responseMessages: DeployMessage[]): FileResponse[] =>
+  responseMessages.flatMap((message): FileResponse[] => {
     const state = getState(message);
     const base = { fullName: component.fullName, type: component.type.name };
 
@@ -87,8 +86,6 @@ export const createResponses = (component: SourceComponent, responseMessages: De
       ];
     }
   });
-  return responses;
-};
 /**
  * Groups messages from the deploy result by component fullName and type
  */

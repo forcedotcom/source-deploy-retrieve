@@ -1,3 +1,12 @@
+## [11.0.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.0.0...11.0.1) (2024-04-14)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 7.0.0 to 7.2.0 ([#1281](https://github.com/forcedotcom/source-deploy-retrieve/issues/1281)) ([ac430f3](https://github.com/forcedotcom/source-deploy-retrieve/commit/ac430f3a0df0e70b6ef8f8c4778eaac9ca195af6))
+
+
+
 # [11.0.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.9.1...11.0.0) (2024-04-10)
 
 - feat!: sfdx-core7, jsforce-node (#1280) ([7d8d111](https://github.com/forcedotcom/source-deploy-retrieve/commit/7d8d11136b1917027d92ddd52220acd8879e5fc6)), closes [#1280](https://github.com/forcedotcom/source-deploy-retrieve/issues/1280)

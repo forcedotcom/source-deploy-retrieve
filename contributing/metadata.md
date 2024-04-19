@@ -11,7 +11,9 @@ yarn update-supported-metadata
 
 Got questions?
 
-- If you work for Salesforce, [#platform-cli](https://salesforce-internal.slack.com/archives/C01LKDT1P6J).
+- If you work for Salesforce,
+  - For general questions, post in [#platform-cli](https://salesforce-internal.slack.com/archives/C01LKDT1P6J)
+  - For PR reviews, post in [#sfdx-cli-plugin-providers](https://salesforce.enterprise.slack.com/archives/C0298EE05PU)
 - If not, [open an issue](https://github.com/forcedotcom/cli/issues)
 
 ## Adding new types to the registry via a script

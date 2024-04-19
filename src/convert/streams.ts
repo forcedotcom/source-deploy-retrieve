@@ -15,7 +15,7 @@ import { XMLBuilder } from 'fast-xml-parser';
 import { Logger } from '@salesforce/core';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { SourcePath } from '../common/types';
-import { XML_DECL } from '../common/constants';
+import { XML_COMMENT_PROP_NAME, XML_DECL } from '../common/constants';
 import { ComponentSet } from '../collections/componentSet';
 import { RegistryAccess } from '../registry/registryAccess';
 import { ensureFileExists } from '../utils/fileSystemHandler';
@@ -255,6 +255,7 @@ export class JsToXml extends Readable {
       indentBy: '    ',
       ignoreAttributes: false,
       cdataPropName: '__cdata',
+      commentPropName: XML_COMMENT_PROP_NAME,
     });
 
     const builtXml = String(builder.build(this.xmlObject));

@@ -166,7 +166,7 @@ export class ConnectionResolver {
           // The 'singleRecordQuery' method was having connection errors, using `retry` resolves this
           // Note that this type of connection retry logic may someday be added to jsforce v2
           // Once that happens this logic could be reverted
-          const standardValueSetRecord: StdValueSetRecord = await retry(async () => {
+          const standardValueSetRecord = await retry<StdValueSetRecord>(async () => {
             try {
               return await this.connection.singleRecordQuery(
                 `SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = '${standardValueSetFullName}'`,

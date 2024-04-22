@@ -133,7 +133,7 @@ export class ComponentSetBuilder {
           }`
         );
 
-        const mdMap: MetadataMap = metadata
+        const mdMap = metadata
           ? buildMapFromComponents(metadata.metadataEntries.map(entryToTypeAndName(registryAccess)))
           : (new Map() as MetadataMap);
 
@@ -281,7 +281,7 @@ const typeAndNameToMetadataComponents =
 
 // TODO: use Map.groupBy when it's available
 const buildMapFromComponents = (components: MetadataTypeAndMetadataName[]): MetadataMap => {
-  const mdMap: MetadataMap = new Map();
+  const mdMap: MetadataMap = new Map<string, string[]>();
   components.map((cmp) => {
     mdMap.set(cmp.type.name, [...(mdMap.get(cmp.type.name) ?? []), cmp.metadataName]);
   });

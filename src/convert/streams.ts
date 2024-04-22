@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, isAbsolute, join } from 'node:path';
+import { isAbsolute, join } from 'node:path';
 import { pipeline as cbPipeline, Readable, Stream, Transform, Writable } from 'node:stream';
 import { promisify } from 'node:util';
 import { Messages, SfError } from '@salesforce/core';
@@ -20,6 +20,7 @@ import { ComponentSet } from '../collections/componentSet';
 import { RegistryAccess } from '../registry/registryAccess';
 import { ensureFileExists } from '../utils/fileSystemHandler';
 import { ComponentStatus, FileResponseSuccess } from '../client/types';
+import { ForceIgnore } from '../resolve';
 import { MetadataTransformerFactory } from './transformers/metadataTransformerFactory';
 import { ConvertContext } from './convertContext/convertContext';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
@@ -113,7 +114,6 @@ export class ComponentConverter extends Transform {
 }
 
 export abstract class ComponentWriter extends Writable {
-  public forceIgnoredPaths: Set<string> = new Set<string>();
   protected rootDestination?: SourcePath;
   protected logger: Logger;
 
@@ -128,9 +128,11 @@ export class StandardWriter extends ComponentWriter {
   /** filepaths that converted files were written to */
   public readonly converted: string[] = [];
   public readonly deleted: FileResponseSuccess[] = [];
+  public readonly forceignore: ForceIgnore;
 
   public constructor(rootDestination: SourcePath) {
     super(rootDestination);
+    this.forceignore = ForceIgnore.findAndCreate(rootDestination);
   }
 
   public async _write(chunk: WriterFormat, encoding: string, callback: (err?: Error) => void): Promise<void> {
@@ -144,8 +146,7 @@ export class StandardWriter extends ComponentWriter {
         await Promise.all(
           chunk.writeInfos
             .map(makeWriteInfoAbsolute(this.rootDestination))
-            .filter(existsOrDoesntMatchIgnored(this.forceIgnoredPaths))
-            .filter((info) => !this.forceIgnoredPaths.has(info.output))
+            .filter(existsOrDoesntMatchIgnored(this.forceignore))
             .map((info) => {
               if (info.shouldDelete) {
                 this.deleted.push({
@@ -288,11 +289,6 @@ const makeWriteInfoAbsolute =
   });
 
 const existsOrDoesntMatchIgnored =
-  (ignoredPaths: Set<string>) =>
+  (forceignore: ForceIgnore) =>
   (writeInfo: WriteInfo): boolean =>
-    existsSync(writeInfo.output) ||
-    [...ignoredPaths].every(
-      (ignoredPath) =>
-        !dirname(ignoredPath).includes(dirname(writeInfo.output)) &&
-        !basename(ignoredPath).includes(basename(writeInfo.output))
-    );
+    existsSync(writeInfo.output) || forceignore.accepts(writeInfo.output);

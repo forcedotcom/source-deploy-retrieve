@@ -35,8 +35,8 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   public constructor(
     type: MetadataType,
     registry = new RegistryAccess(),
-    forceIgnore: ForceIgnore = new ForceIgnore(),
-    tree: TreeContainer = new NodeFSTreeContainer()
+    forceIgnore = new ForceIgnore(),
+    tree = new NodeFSTreeContainer()
   ) {
     this.type = type;
     this.registry = registry;

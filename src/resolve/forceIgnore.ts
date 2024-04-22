@@ -17,7 +17,7 @@ export class ForceIgnore {
 
   private readonly parser?: Ignore;
   private readonly forceIgnoreDirectory?: string;
-  private DEFAULT_IGNORE: string[] = ['**/*.dup', '**/.*', '**/package2-descriptor.json', '**/package2-manifest.json'];
+  private DEFAULT_IGNORE = ['**/*.dup', '**/.*', '**/package2-descriptor.json', '**/package2-manifest.json'];
 
   public constructor(forceIgnorePath = '') {
     try {

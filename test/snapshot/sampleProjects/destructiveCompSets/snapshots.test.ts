@@ -135,6 +135,31 @@ describe('Creating and converting ComponentSets with destructive changes', () =>
     dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'post2'), post2TestOutputDir);
   });
 
+  it('1 post-destructive and no deployment', async () => {
+    const cs = await ComponentSetBuilder.build({
+      metadata: {
+        metadataEntries: [],
+        destructiveEntriesPost: ['ApexClass:RedClass'],
+        directoryPaths: [sourceDir],
+      },
+      projectDir: testDir,
+    });
+
+    const postTestOutputDir = path.join(testOutput, 'post1-solo');
+
+    await new MetadataConverter().convert(cs, 'metadata', {
+      type: 'directory',
+      outputDirectory: postTestOutputDir,
+      genUniqueDir: false,
+    });
+
+    const convertedFiles = await getConvertedFilePaths(postTestOutputDir);
+    for (const file of convertedFiles) {
+      await fileSnap(file, testDir);
+    }
+    dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'post1-solo'), postTestOutputDir);
+  });
+
   it('throws when wildcards are used in destructive changes', async () => {
     try {
       await ComponentSetBuilder.build({

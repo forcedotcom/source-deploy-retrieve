@@ -1,11 +1,14 @@
-## [11.0.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.0.0...11.0.1) (2024-04-14)
-
+## [11.0.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.0.1...11.0.2) (2024-04-21)
 
 ### Bug Fixes
 
-* **deps:** bump @salesforce/core from 7.0.0 to 7.2.0 ([#1281](https://github.com/forcedotcom/source-deploy-retrieve/issues/1281)) ([ac430f3](https://github.com/forcedotcom/source-deploy-retrieve/commit/ac430f3a0df0e70b6ef8f8c4778eaac9ca195af6))
+- **deps:** bump @salesforce/core from 7.2.0 to 7.3.0 ([#1291](https://github.com/forcedotcom/source-deploy-retrieve/issues/1291)) ([69be659](https://github.com/forcedotcom/source-deploy-retrieve/commit/69be6596b28a65626c1d5c07ca91dcff38533a7e))
 
+## [11.0.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.0.0...11.0.1) (2024-04-14)
 
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 7.0.0 to 7.2.0 ([#1281](https://github.com/forcedotcom/source-deploy-retrieve/issues/1281)) ([ac430f3](https://github.com/forcedotcom/source-deploy-retrieve/commit/ac430f3a0df0e70b6ef8f8c4778eaac9ca195af6))
 
 # [11.0.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/10.9.1...11.0.0) (2024-04-10)
 

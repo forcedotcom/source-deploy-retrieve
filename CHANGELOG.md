@@ -1,3 +1,12 @@
+# [11.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.0.2...11.1.0) (2024-04-23)
+
+
+### Features
+
+* allow destructive changes with MetadataOptions ([#1294](https://github.com/forcedotcom/source-deploy-retrieve/issues/1294)) ([7dad1c7](https://github.com/forcedotcom/source-deploy-retrieve/commit/7dad1c7be70cfc6a50d78671d796753d9747154b))
+
+
+
 ## [11.0.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.0.1...11.0.2) (2024-04-21)
 
 

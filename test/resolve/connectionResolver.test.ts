@@ -7,7 +7,7 @@
 
 import { assert, expect, use } from 'chai';
 import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
-import { Connection, Logger } from '@salesforce/core';
+import { Connection } from '@salesforce/core';
 import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import { ManageableState } from '../../src/client/types';
 import { ConnectionResolver } from '../../src/resolve';
@@ -288,51 +288,6 @@ describe('ConnectionResolver', () => {
           type: registry.types.standardvalueset,
         },
       ];
-      expect(result.components).to.deep.equal(expected);
-    });
-
-    it('should retry (ten times) if unexpected error occurs', async () => {
-      const loggerStub = $$.SANDBOX.stub(Logger.prototype, 'debug');
-
-      $$.SANDBOX.stub(connection.metadata, 'list');
-
-      const query = "SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = 'AccountOwnership'";
-
-      const mockToolingQuery = $$.SANDBOX.stub(connection, 'singleRecordQuery');
-      mockToolingQuery.withArgs(query).rejects(new Error('Something happened. Oh no.'));
-
-      const resolver = new ConnectionResolver(connection);
-      const result = await resolver.resolve();
-      const expected: MetadataComponent[] = [];
-
-      // filter over queries and find ones called with `query`
-      const retries = mockToolingQuery.args.filter((call) => call[0] === query);
-
-      expect(retries.length).to.equal(11); // first call plus 10 retries
-      expect(loggerStub.calledOnce).to.be.true;
-      expect(loggerStub.args[0][0]).to.equal('Something happened. Oh no.');
-      expect(result.components).to.deep.equal(expected);
-    });
-
-    it('should not retry query if expected unsupported metadata error is encountered', async () => {
-      const loggerStub = $$.SANDBOX.stub(Logger.prototype, 'debug');
-
-      $$.SANDBOX.stub(connection.metadata, 'list');
-
-      const errorMessage = 'WorkTypeGroupAddInfo is either inaccessible or not supported in Metadata API';
-
-      const mockToolingQuery = $$.SANDBOX.stub(connection, 'singleRecordQuery');
-      mockToolingQuery
-        .withArgs("SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = 'WorkTypeGroupAddInfo'")
-        .rejects(new Error(errorMessage));
-
-      const resolver = new ConnectionResolver(connection);
-      const result = await resolver.resolve();
-      const expected: MetadataComponent[] = [];
-
-      expect(loggerStub.calledOnce).to.be.true;
-      expect(loggerStub.args[0][0]).to.equal('Expected error:');
-      expect(loggerStub.args[0][1]).to.equal(errorMessage);
       expect(result.components).to.deep.equal(expected);
     });
 

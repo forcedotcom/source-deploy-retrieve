@@ -6,6 +6,7 @@
  */
 
 import * as path from 'node:path';
+import { join } from 'node:path';
 import fs from 'graceful-fs';
 import * as sinon from 'sinon';
 import { assert, expect, config } from 'chai';
@@ -14,6 +15,7 @@ import { RegistryAccess } from '../../src/registry/registryAccess';
 import { ComponentSetBuilder, entryToTypeAndName } from '../../src/collections/componentSetBuilder';
 import { ComponentSet } from '../../src/collections/componentSet';
 import { FromSourceOptions } from '../../src/collections/types';
+import { MetadataResolver, SourceComponent } from '../../src';
 
 config.truncateThreshold = 0;
 
@@ -301,6 +303,50 @@ describe('ComponentSetBuilder', () => {
       expect(compSet.has(apexClassComponent)).to.equal(true);
       expect(compSet.has(customObjectComponent)).to.equal(true);
       expect(compSet.has({ type: 'CustomObject', fullName: '*' })).to.equal(true);
+    });
+    it('should create ComponentSet from multiple metadata (ApexClass:MyClass,CustomObject), one of which is forceignored', async () => {
+      const customObjSourceComponent = new SourceComponent({
+        name: 'myCO',
+        content: join('my', 'path', 'to', 'a', 'customobject.xml'),
+        parentType: undefined,
+        type: { id: 'customobject', directoryName: 'objects', name: 'CustomObject' },
+        xml: '',
+      });
+
+      componentSet.add(apexClassComponent);
+      componentSet.add(customObjSourceComponent);
+
+      componentSet.add(apexClassWildcardMatch);
+      componentSet.forceIgnoredPaths = new Set<string>();
+      componentSet.forceIgnoredPaths.add(join('my', 'path', 'to', 'a', 'customobject.xml'));
+      fromSourceStub.returns(componentSet);
+      const packageDir1 = path.resolve('force-app');
+
+      sandbox.stub(MetadataResolver.prototype, 'getComponentsFromPath').returns([customObjSourceComponent]);
+
+      const compSet = await ComponentSetBuilder.build({
+        sourcepath: undefined,
+        manifest: undefined,
+        metadata: {
+          metadataEntries: ['ApexClass:MyClass', 'ApexClass:MyClassIsAwesome', 'CustomObject:myCO'],
+          directoryPaths: [packageDir1],
+        },
+      });
+      expect(fromSourceStub.callCount).to.equal(1);
+      const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
+      expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
+      const filter = new ComponentSet();
+      filter.add({ type: 'ApexClass', fullName: 'MyClass' });
+      filter.add({ type: 'ApexClass', fullName: 'MyClassIsAwesome' });
+      filter.add({ type: 'CustomObject', fullName: 'myCO' });
+      assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
+      expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
+      expect(compSet.size).to.equal(3);
+      expect(compSet.has(apexClassComponent)).to.equal(true);
+      expect(compSet.has(customObjectComponent)).to.equal(false);
+      expect(compSet.has({ type: 'CustomObject', fullName: '*' })).to.equal(false);
+      expect(compSet.has({ type: 'ApexClass', fullName: 'MyClass' })).to.equal(true);
+      expect(compSet.has({ type: 'ApexClass', fullName: 'MyClassIsAwesome' })).to.equal(true);
     });
 
     it('should create ComponentSet from partial-match fullName (ApexClass:Prop*)', async () => {

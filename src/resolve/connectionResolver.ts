@@ -28,7 +28,6 @@ export type ResolveConnectionResult = {
  * Resolve MetadataComponents from an org connection
  */
 export class ConnectionResolver {
-  protected logger: Logger;
   private connection: Connection;
   private registry: RegistryAccess;
 
@@ -39,7 +38,6 @@ export class ConnectionResolver {
   public constructor(connection: Connection, registry = new RegistryAccess(), mdTypes?: string[]) {
     this.connection = connection;
     this.registry = registry;
-    this.logger = Logger.childFromRoot(this.constructor.name);
     this.mdTypeNames = mdTypes?.length
       ? // ensure the types passed in are valid per the registry
         mdTypes.filter((t) => this.registry.getTypeByName(t))

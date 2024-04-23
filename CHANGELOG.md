@@ -1,3 +1,12 @@
+## [11.1.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.1.0...11.1.1) (2024-04-23)
+
+
+### Bug Fixes
+
+* from-org refactor ([#1296](https://github.com/forcedotcom/source-deploy-retrieve/issues/1296)) ([2fecb51](https://github.com/forcedotcom/source-deploy-retrieve/commit/2fecb513f4acd566c04671fa2917185e210257a2))
+
+
+
 # [11.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.0.2...11.1.0) (2024-04-23)
 
 

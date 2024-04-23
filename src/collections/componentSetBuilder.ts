@@ -70,6 +70,7 @@ export class ComponentSetBuilder {
    * @param options: options for creating a ComponentSet
    */
 
+  // eslint-disable-next-line complexity
   public static async build(options: ComponentSetOptions): Promise<ComponentSet> {
     const logger = Logger.childFromRoot('componentSetBuilder');
     let componentSet: ComponentSet | undefined;

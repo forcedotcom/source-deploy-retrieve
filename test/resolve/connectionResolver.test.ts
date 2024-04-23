@@ -185,6 +185,51 @@ describe('ConnectionResolver', () => {
       ];
       expect(result.components).to.deep.equal(expected);
     });
+
+    it('should resolve components with undefined type returned by metadata api', async () => {
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
+      metadataQueryStub.withArgs({ type: 'CustomLabels' }).resolves([
+        // @ts-expect-error missing type
+        {
+          ...StdFileProperty,
+          fileName: 'standardValueSetTranslations/CaseOrigin-de.standardValueSetTranslation',
+          fullName: 'CaseOrigin-de',
+        },
+      ]);
+
+      const resolver = new ConnectionResolver(connection);
+      const result = await resolver.resolve();
+      const expected: MetadataComponent[] = [
+        {
+          fullName: 'CaseOrigin-de',
+          type: registry.types.standardvaluesettranslation,
+        },
+      ];
+      expect(result.components).to.deep.equal(expected);
+    });
+
+    it('should resolve components with emptyString type returned by metadata api', async () => {
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
+      metadataQueryStub.withArgs({ type: 'CustomLabels' }).resolves([
+        {
+          ...StdFileProperty,
+          fileName: 'standardValueSetTranslations/CaseOrigin-de.standardValueSetTranslation',
+          fullName: 'CaseOrigin-de',
+          type: '',
+        },
+      ]);
+
+      const resolver = new ConnectionResolver(connection);
+      const result = await resolver.resolve();
+      const expected: MetadataComponent[] = [
+        {
+          fullName: 'CaseOrigin-de',
+          type: registry.types.standardvaluesettranslation,
+        },
+      ];
+      expect(result.components).to.deep.equal(expected);
+    });
+
     it('should resolve components with invalid fileName returned by metadata api', async () => {
       const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
       metadataQueryStub.withArgs({ type: 'SynonymDictionary' }).resolves([
@@ -356,6 +401,61 @@ describe('ConnectionResolver', () => {
         },
       ];
       expect(result.components).to.deep.equalInAnyOrder(expected);
+    });
+  });
+
+  describe('missing filenane and type', () => {
+    it('should skip if component has undefined type and filename', async () => {
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
+
+      metadataQueryStub.withArgs({ type: 'CustomObject' }).resolves([
+        // @ts-expect-error - testing invalid data that the API returns sometimes
+        {
+          ...StdFileProperty,
+          fullName: 'Account',
+        },
+      ]);
+
+      const resolver = new ConnectionResolver(connection);
+      const result = await resolver.resolve();
+
+      expect(result.components).to.deep.equal([]);
+    });
+
+    it('should skip if component has empty string type and filename', async () => {
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
+
+      metadataQueryStub.withArgs({ type: 'CustomObject' }).resolves([
+        {
+          ...StdFileProperty,
+          fullName: 'Account',
+          type: '',
+          fileName: '',
+        },
+      ]);
+
+      const resolver = new ConnectionResolver(connection);
+      const result = await resolver.resolve();
+
+      expect(result.components).to.deep.equal([]);
+    });
+
+    it('should skip if component has empty string type and undefined filename', async () => {
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
+
+      metadataQueryStub.withArgs({ type: 'CustomObject' }).resolves([
+        // @ts-expect-error - testing invalid data that the API returns sometimes
+        {
+          ...StdFileProperty,
+          fullName: 'Account',
+          type: '',
+        },
+      ]);
+
+      const resolver = new ConnectionResolver(connection);
+      const result = await resolver.resolve();
+
+      expect(result.components).to.deep.equal([]);
     });
   });
 });

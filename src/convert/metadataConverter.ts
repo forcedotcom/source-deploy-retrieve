@@ -183,9 +183,7 @@ function getMergeConfigOutputs(
     mergeSet.add(component.parent ?? component);
   }
   const writer = new StandardWriter(output.defaultDirectory);
-  if (output.forceIgnoredPaths) {
-    writer.forceIgnoredPaths = output.forceIgnoredPaths;
-  }
+
   return {
     writer,
     mergeSet,

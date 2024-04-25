@@ -13,7 +13,7 @@ import { ComponentSetBuilder } from '../../../../src/collections/componentSetBui
 // we don't want failing tests outputting over each other
 /* eslint-disable no-await-in-loop */
 
-describe('Creating and converting ComponentSets with destructive changes', () => {
+describe('will respect forceignore when resolving from metadata ', () => {
   const testDir = path.join('test', 'snapshot', 'sampleProjects', 'forceignore');
 
   // The directory containing metadata in source format to be converted
@@ -55,7 +55,7 @@ describe('Creating and converting ComponentSets with destructive changes', () =>
     for (const file of convertedFiles) {
       await fileSnap(file, testDir);
     }
-    dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'pre1'), sourceOutput);
+    dirsAreIdentical(path.join(snapshotsDir, 'testOutput', 'source-format'), sourceOutput);
   });
 
   after(async () => {

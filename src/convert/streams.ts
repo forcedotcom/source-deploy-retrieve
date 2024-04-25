@@ -36,7 +36,6 @@ export const stream2buffer = async (stream: Stream): Promise<Buffer> =>
     const buf = Array<any>();
     stream.on('data', (chunk) => buf.push(chunk));
     stream.on('end', () => resolve(Buffer.concat(buf)));
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     stream.on('error', (err) => reject(`error converting stream - ${err}`));
   });
 

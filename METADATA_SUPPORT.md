@@ -628,7 +628,7 @@ v61 introduces the following new types.  Here's their current level of support
 |LargeQuotesandOrdersForRlmSettings|✅||
 |RetrievalSummaryDefinition|❌|Not supported, but support could be added|
 |SearchCustomization|❌|Not supported, but support could be added (but not for tracking)|
-|SearchOrgWideObjectConfig|❌|Not supported, but support could be added|
+|SearchOrgWideObjectConfig|❌|Not supported, but support could be added (but not for tracking)|
 |WaveAnalyticAssetCollection|❌|Not supported, but support could be added|
 
 ## Additional Types

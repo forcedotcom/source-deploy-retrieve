@@ -118,6 +118,7 @@ const ensureStateValueWithParent = (
   );
 };
 
+/** throw if the child has no parent component */
 const ensureMetadataComponentWithParent = (
   child: MetadataComponent
 ): child is SourceComponent & { parent: SourceComponent } => {

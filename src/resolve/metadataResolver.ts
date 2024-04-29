@@ -393,12 +393,20 @@ const resolveTypeFromStrictFolder =
 /** the type has children and the file suffix (in source format) matches a child type suffix of the type we think it is */
 const childSuffixMatches = (type: MetadataType, fsPath: string): boolean =>
   Object.values(type.children?.types ?? {})
-    .map((childType) => `${childType.suffix}${META_XML_SUFFIX}`)
+    .flatMap(getSuffixes)
+    .map(appendMetaXmlSuffix)
     .some((s) => fsPath.endsWith(s));
 
 /** the file suffix (in source or mdapi format) matches the type suffix we think it is */
 const suffixMatches = (type: MetadataType, fsPath: string): boolean =>
-  typeof type.suffix === 'string' && [type.suffix, `${type.suffix}${META_XML_SUFFIX}`].some((s) => fsPath.endsWith(s));
+  [...getSuffixes(type), ...getSuffixes(type).map(appendMetaXmlSuffix)].some((s) => fsPath.endsWith(s));
+
+const appendMetaXmlSuffix = (suffix: string): string => `${suffix}${META_XML_SUFFIX}`;
+
+const getSuffixes = (type: MetadataType): string[] => [
+  ...(type.suffix ? [type.suffix] : []),
+  ...(type.legacySuffix ? [type.legacySuffix] : []),
+];
 
 const isMixedContentOrBundle = (type: MetadataType): boolean =>
   typeof type.strategies?.adapter === 'string' && ['mixedContent', 'bundle'].includes(type.strategies.adapter);

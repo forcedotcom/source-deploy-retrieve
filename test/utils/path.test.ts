@@ -8,6 +8,7 @@ import { join } from 'node:path';
 import { expect } from 'chai';
 import { META_XML_SUFFIX } from '../../src/common';
 import { parseMetadataXml, trimUntil, baseName, parseNestedFullName, baseWithoutSuffixes } from '../../src/utils';
+import { MetadataType } from '../../src/registry/types';
 
 describe('Path Utils', () => {
   const root = join('path', 'to', 'whatever');
@@ -25,31 +26,57 @@ describe('Path Utils', () => {
   });
 
   describe('baseWithoutSuffixes', () => {
+    const mdTypeCommon: MetadataType = {
+      id: 'test',
+      name: 'Test',
+      directoryName: 'tests',
+    };
+    const mdType: MetadataType = {
+      ...mdTypeCommon,
+      suffix: 'xyz',
+    };
+    const mdTypeLegacySuffix: MetadataType = {
+      ...mdType,
+      suffix: 'xyz',
+      legacySuffix: 'xyzz',
+    };
+
     it('Should strip specified suffixes from a file path with a dot', () => {
       const path = join(root, 'a.ext.xyz');
-      expect(baseWithoutSuffixes(path, 'xyz')).to.equal('a.ext');
+      expect(baseWithoutSuffixes(path, mdType)).to.equal('a.ext');
     });
 
     it('Should strip specified suffixes from a file path with a dot and standard ending', () => {
       const path = join(root, `a.ext.xyz${META_XML_SUFFIX}`);
-      expect(baseWithoutSuffixes(path, 'xyz')).to.equal('a.ext');
+      expect(baseWithoutSuffixes(path, mdType)).to.equal('a.ext');
     });
 
     it('Should handle paths with no suffixes', () => {
       const path = join(root, 'a');
-      expect(baseWithoutSuffixes(path, 'ext')).to.equal('a');
+      expect(baseWithoutSuffixes(path, mdTypeCommon)).to.equal('a');
     });
 
     it('Should preserve non-matching suffixes', () => {
       const path = join(root, 'a.xyz');
-      expect(baseWithoutSuffixes(path, 'ext')).to.equal('a.xyz');
+      expect(baseWithoutSuffixes(path, mdTypeCommon)).to.equal('a.xyz');
     });
 
     it('Should remove the standard suffix and a custom suffix', () => {
-      const path = join(root, `a.ext${META_XML_SUFFIX}`);
-      expect(baseWithoutSuffixes(path, 'ext')).to.equal('a');
+      const path = join(root, `a.xyz${META_XML_SUFFIX}`);
+      expect(baseWithoutSuffixes(path, mdType)).to.equal('a');
+    });
+
+    it('should remove a legacy suffix', () => {
+      const path = join(root, 'a.xyzz');
+      expect(baseWithoutSuffixes(path, mdTypeLegacySuffix)).to.equal('a');
+    });
+
+    it('should remove a legacy suffix with the standard meta', () => {
+      const path = join(root, `a.xyzz${META_XML_SUFFIX}`);
+      expect(baseWithoutSuffixes(path, mdTypeLegacySuffix)).to.equal('a');
     });
   });
+
   describe('trimUntil', () => {
     it('should return given path if part is not found', () => {
       expect(trimUntil(root, 'test')).to.equal(root);

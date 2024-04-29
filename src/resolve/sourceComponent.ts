@@ -315,7 +315,7 @@ export class SourceComponent implements MetadataComponent {
         const childType = this.type.children.types[childTypeId];
         const childComponent = new SourceComponent(
           {
-            name: childType.suffix ? baseWithoutSuffixes(fsPath, childType) : baseName(fsPath),
+            name: childType?.suffix ? baseWithoutSuffixes(fsPath, childType) : baseName(fsPath),
             type: this.type.children.types[childTypeId],
             xml: fsPath,
             parent: this,

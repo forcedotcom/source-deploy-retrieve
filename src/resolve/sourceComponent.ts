@@ -5,7 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { join, dirname } from 'node:path';
-import { Messages, SfError } from '@salesforce/core';
+import { SfError } from '@salesforce/core/sfError';
+import { Messages } from '@salesforce/core/messages';
+import { Lifecycle } from '@salesforce/core/lifecycle';
+
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
@@ -310,9 +313,13 @@ export class SourceComponent implements MetadataComponent {
       const childXml = parseMetadataXml(fsPath);
       const fileIsRootXml = childXml?.suffix === this.type.suffix || childXml?.suffix === this.type.legacySuffix;
       if (childXml && !fileIsRootXml && this.type.children && childXml.suffix) {
-        // TODO: Log warning if missing child type definition
         const childTypeId = this.type.children?.suffixes[childXml.suffix];
         const childType = this.type.children.types[childTypeId];
+        if (!childTypeId || !childType) {
+          void Lifecycle.getInstance().emitWarning(
+            `${fsPath}: Expected a child type for ${childXml.suffix} in ${this.type.name} but none was found.`
+          );
+        }
         const childComponent = new SourceComponent(
           {
             name: childType?.suffix ? baseWithoutSuffixes(fsPath, childType) : baseName(fsPath),

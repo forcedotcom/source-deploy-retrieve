@@ -1,3 +1,12 @@
+# [11.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.1.3...11.2.0) (2024-04-30)
+
+
+### Features
+
+* warn about legacy suffix use ([#1298](https://github.com/forcedotcom/source-deploy-retrieve/issues/1298)) ([6ad87d2](https://github.com/forcedotcom/source-deploy-retrieve/commit/6ad87d2db19ef72aa00878b94115d77813eb1f56))
+
+
+
 ## [11.1.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.1.2...11.1.3) (2024-04-30)
 
 

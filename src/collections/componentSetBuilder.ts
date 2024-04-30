@@ -6,15 +6,17 @@
  */
 
 import * as path from 'node:path';
-import { StateAggregator, Logger, SfError, Messages } from '@salesforce/core';
+import { Logger, Messages, SfError, StateAggregator } from '@salesforce/core';
 import fs from 'graceful-fs';
 import minimatch from 'minimatch';
 import { MetadataComponent } from '../resolve/types';
+import { SourceComponent } from '../resolve/sourceComponent';
 import { ComponentSet } from '../collections/componentSet';
 import { RegistryAccess } from '../registry/registryAccess';
 import type { FileProperties } from '../client/types';
 import { MetadataType } from '../registry/types';
-import { FromConnectionOptions } from './types';
+import { MetadataResolver } from '../resolve';
+import { DestructiveChangesType, FromConnectionOptions } from './types';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -29,6 +31,14 @@ export type ManifestOption = {
 type MetadataOption = {
   metadataEntries: string[];
   directoryPaths: string[];
+  /**
+   * Array of metadata type:name pairs to delete before the deploy. Use of wildcards is not allowed.
+   */
+  destructiveEntriesPre?: string[];
+  /**
+   * Array of metadata type:name pairs to delete after the deploy. Use of wildcards is not allowed.
+   */
+  destructiveEntriesPost?: string[];
 };
 
 type OrgOption = {
@@ -60,6 +70,7 @@ export class ComponentSetBuilder {
    * @param options: options for creating a ComponentSet
    */
 
+  // eslint-disable-next-line complexity
   public static async build(options: ComponentSetOptions): Promise<ComponentSet> {
     const logger = Logger.childFromRoot('componentSetBuilder');
     let componentSet: ComponentSet | undefined;
@@ -114,12 +125,46 @@ export class ComponentSetBuilder {
           .map(addToComponentSet(componentSetFilter));
 
         logger.debug(`Searching for matching metadata in directories: ${directoryPaths.join(', ')}`);
+
+        // add destructive changes if defined. Because these are deletes, all entries
+        // are resolved to SourceComponents
+        if (metadata.destructiveEntriesPre) {
+          metadata.destructiveEntriesPre
+            .map(entryToTypeAndName(registryAccess))
+            .map(assertNoWildcardInDestructiveEntries)
+            .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry: registryAccess }))
+            .map((mdComponent) => new SourceComponent({ type: mdComponent.type, name: mdComponent.fullName }))
+            .map(addToComponentSet(componentSet, DestructiveChangesType.PRE));
+        }
+        if (metadata.destructiveEntriesPost) {
+          metadata.destructiveEntriesPost
+            .map(entryToTypeAndName(registryAccess))
+            .map(assertNoWildcardInDestructiveEntries)
+            .flatMap(typeAndNameToMetadataComponents({ directoryPaths, registry: registryAccess }))
+            .map((mdComponent) => new SourceComponent({ type: mdComponent.type, name: mdComponent.fullName }))
+            .map(addToComponentSet(componentSet, DestructiveChangesType.POST));
+        }
+
         const resolvedComponents = ComponentSet.fromSource({
           fsPaths: directoryPaths,
           include: componentSetFilter,
           registry: registryAccess,
         });
-        componentSet.forceIgnoredPaths = resolvedComponents.forceIgnoredPaths;
+
+        if (resolvedComponents.forceIgnoredPaths) {
+          // if useFsForceIgnore = true, then we won't be able to resolve a forceignored path,
+          // which we need to do to get the ignored source component
+          const resolver = new MetadataResolver(registryAccess, undefined, false);
+
+          for (const ignoredPath of resolvedComponents.forceIgnoredPaths ?? []) {
+            resolver.getComponentsFromPath(ignoredPath).map((ignored) => {
+              componentSet = componentSet?.filter(
+                (resolved) => !(resolved.fullName === ignored.name && resolved.type === ignored.type)
+              );
+            });
+          }
+        }
+
         resolvedComponents.toArray().map(addToComponentSet(componentSet));
       }
 
@@ -133,7 +178,7 @@ export class ComponentSetBuilder {
           }`
         );
 
-        const mdMap: MetadataMap = metadata
+        const mdMap = metadata
           ? buildMapFromComponents(metadata.metadataEntries.map(entryToTypeAndName(registryAccess)))
           : (new Map() as MetadataMap);
 
@@ -162,9 +207,9 @@ export class ComponentSetBuilder {
 }
 
 const addToComponentSet =
-  (cs: ComponentSet) =>
+  (cs: ComponentSet, deletionType?: DestructiveChangesType) =>
   (cmp: MetadataComponent): MetadataComponent => {
-    cs.add(cmp);
+    cs.add(cmp, deletionType);
     return cmp;
   };
 
@@ -193,6 +238,13 @@ const assertComponentSetIsNotUndefined = (componentSet: ComponentSet | undefined
     throw new SfError('undefinedComponentSet');
   }
   return componentSet;
+};
+
+const assertNoWildcardInDestructiveEntries = (mdEntry: MetadataTypeAndMetadataName): MetadataTypeAndMetadataName => {
+  if (mdEntry.metadataName.includes('*')) {
+    throw SfError.create({ message: 'Wildcards are not supported when providing destructive metadata entries' });
+  }
+  return mdEntry;
 };
 
 /** This is only for debug output of matched files based on the command flags.
@@ -281,7 +333,7 @@ const typeAndNameToMetadataComponents =
 
 // TODO: use Map.groupBy when it's available
 const buildMapFromComponents = (components: MetadataTypeAndMetadataName[]): MetadataMap => {
-  const mdMap: MetadataMap = new Map();
+  const mdMap: MetadataMap = new Map<string, string[]>();
   components.map((cmp) => {
     mdMap.set(cmp.type.name, [...(mdMap.get(cmp.type.name) ?? []), cmp.metadataName]);
   });

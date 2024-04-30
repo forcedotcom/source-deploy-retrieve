@@ -5,9 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { retry, NotRetryableError, RetryError } from 'ts-retry-promise';
-import { PollingClient, StatusResult, Connection, Logger, Messages, Lifecycle, SfError } from '@salesforce/core';
-import { Duration, ensureArray } from '@salesforce/kit';
+import { Connection, Logger, Messages, Lifecycle, SfError } from '@salesforce/core';
 import { ensurePlainObject, ensureString, isPlainObject } from '@salesforce/ts-types';
 import { RegistryAccess } from '../registry/registryAccess';
 import { MetadataType } from '../registry/types';
@@ -30,7 +28,6 @@ export type ResolveConnectionResult = {
  * Resolve MetadataComponents from an org connection
  */
 export class ConnectionResolver {
-  protected logger: Logger;
   private connection: Connection;
   private registry: RegistryAccess;
 
@@ -41,7 +38,6 @@ export class ConnectionResolver {
   public constructor(connection: Connection, registry = new RegistryAccess(), mdTypes?: string[]) {
     this.connection = connection;
     this.registry = registry;
-    this.logger = Logger.childFromRoot(this.constructor.name);
     this.mdTypeNames = mdTypes?.length
       ? // ensure the types passed in are valid per the registry
         mdTypes.filter((t) => this.registry.getTypeByName(t))
@@ -57,21 +53,21 @@ export class ConnectionResolver {
     const lifecycle = Lifecycle.getInstance();
 
     const componentFromDescribe = (
-      await Promise.all(this.mdTypeNames.map((type) => this.listMembers({ type })))
+      await Promise.all(this.mdTypeNames.map((type) => listMembers(this.registry)(this.connection)({ type })))
     ).flat();
 
     for (const component of componentFromDescribe) {
       let componentType: MetadataType;
-      if (typeof component.type === 'string' && component.type.length) {
+      if (isNonEmptyString(component.type)) {
         componentType = this.registry.getTypeByName(component.type);
-      } else if (typeof component.fileName === 'string' && component.fileName.length) {
+      } else if (isNonEmptyString(component.fileName)) {
         // fix { type: { "$": { "xsi:nil": "true" } } }
         componentType = ensurePlainObject(
           this.registry.getTypeBySuffix(extName(component.fileName)),
           `No type found for ${component.fileName} when matching by suffix.  Check the file extension.`
         );
         component.type = componentType.name;
-      } else if (component.type === undefined && component.fileName === undefined) {
+      } else if (!isNonEmptyString(component.type) && !isNonEmptyString(component.fileName)) {
         // has no type and has no filename!  Warn and skip that component.
         // eslint-disable-next-line no-await-in-loop
         await Promise.all([
@@ -91,11 +87,10 @@ export class ConnectionResolver {
 
       Aggregator.push(component);
       componentTypes.add(componentType);
-      const folderContentType = componentType.folderContentType;
-      if (folderContentType) {
+      if (componentType.folderContentType) {
         childrenPromises.push(
-          this.listMembers({
-            type: this.registry.getTypeByName(folderContentType).name,
+          listMembers(this.registry)(this.connection)({
+            type: this.registry.getTypeByName(componentType.folderContentType).name,
             folder: component.fullName,
           })
         );
@@ -106,7 +101,7 @@ export class ConnectionResolver {
       const childTypes = componentType.children?.types;
       if (childTypes) {
         Object.values(childTypes).map((childType) => {
-          childrenPromises.push(this.listMembers({ type: childType.name }));
+          childrenPromises.push(listMembers(this.registry)(this.connection)({ type: childType.name }));
         });
       }
     }
@@ -125,84 +120,35 @@ export class ConnectionResolver {
       apiVersion: this.connection.getApiVersion(),
     };
   }
+}
 
-  private async listMembers(query: ListMetadataQuery): Promise<RelevantFileProperties[]> {
-    let members: RelevantFileProperties[] = [];
-
-    const pollingOptions: PollingClient.Options = {
-      frequency: Duration.milliseconds(1000),
-      timeout: Duration.minutes(3),
-      poll: async (): Promise<StatusResult> => {
-        const res = ensureArray(await this.connection.metadata.list(query));
-        return { completed: true, payload: res };
-      },
-    };
-
-    const pollingClient = await PollingClient.create(pollingOptions);
-
-    try {
-      members = await pollingClient.subscribe();
-    } catch (error) {
-      // throw error if PollingClient timed out.
-      if (error instanceof NotRetryableError) {
-        throw NotRetryableError;
-      }
-      this.logger.debug((error as Error).message);
-      members = [];
-    }
-
-    // if the Metadata Type doesn't return a correct fileName then help it out
-    for (const m of members) {
-      if (typeof m.fileName == 'object') {
-        const t = this.registry.getTypeByName(query.type);
-        m.fileName = `${t.directoryName}/${m.fullName}.${t.suffix}`;
-      }
-    }
+const listMembers =
+  (registry: RegistryAccess) =>
+  (connection: Connection) =>
+  async (query: ListMetadataQuery): Promise<RelevantFileProperties[]> => {
+    const mdType = registry.getTypeByName(query.type);
 
     // Workaround because metadata.list({ type: 'StandardValueSet' }) returns []
-    if (query.type === this.registry.getRegistry().types.standardvalueset.name && members.length === 0) {
+    if (mdType.name === registry.getRegistry().types.standardvalueset.name) {
+      const members: RelevantFileProperties[] = [];
+
       const standardValueSetPromises = standardValueSet.fullnames.map(async (standardValueSetFullName) => {
         try {
-          // The 'singleRecordQuery' method was having connection errors, using `retry` resolves this
-          // Note that this type of connection retry logic may someday be added to jsforce v2
-          // Once that happens this logic could be reverted
-          const standardValueSetRecord: StdValueSetRecord = await retry(async () => {
-            try {
-              return await this.connection.singleRecordQuery(
-                `SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = '${standardValueSetFullName}'`,
-                { tooling: true }
-              );
-            } catch (err) {
-              // We exit the retry loop with `NotRetryableError` if we get an (expected) unsupported metadata type error
-              const error = err as Error;
-              if (error.message.includes('either inaccessible or not supported in Metadata API')) {
-                this.logger.debug('Expected error:', error.message);
-                throw new NotRetryableError(error.message);
-              }
-
-              // Otherwise throw the err so we can retry again
-              throw err;
-            }
-          });
+          const standardValueSetRecord: StdValueSetRecord = await connection.singleRecordQuery(
+            `SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = '${standardValueSetFullName}'`,
+            { tooling: true }
+          );
 
           return (
             standardValueSetRecord.Metadata.standardValue.length && {
               fullName: standardValueSetRecord.MasterLabel,
-              fileName: `${this.registry.getRegistry().types.standardvalueset.directoryName}/${
-                standardValueSetRecord.MasterLabel
-              }.${this.registry.getRegistry().types.standardvalueset.suffix}`,
-              type: this.registry.getRegistry().types.standardvalueset.name,
+              fileName: `${mdType.directoryName}/${standardValueSetRecord.MasterLabel}.${mdType.suffix}`,
+              type: mdType.name,
             }
           );
         } catch (err) {
-          // error.message here will be overwritten by 'ts-retry-promise'
-          // Example error.message from the library: "All retries failed" or "Met not retryable error"
-          // 'ts-retry-promise' exposes the actual error on `error.lastError`
-          const error = err as RetryError;
-
-          if (error.lastError?.message) {
-            this.logger.debug(error.lastError.message);
-          }
+          const logger = Logger.childFromRoot('ConnectionResolver.listMembers');
+          logger.debug(err);
         }
       });
       for await (const standardValueSetResult of standardValueSetPromises) {
@@ -210,8 +156,24 @@ export class ConnectionResolver {
           members.push(standardValueSetResult);
         }
       }
+      return members;
     }
 
-    return members;
-  }
-}
+    try {
+      return (await connection.metadata.list(query)).map(inferFilenamesFromType(mdType));
+    } catch (error) {
+      const logger = Logger.childFromRoot('ConnectionResolver.listMembers');
+      logger.debug((error as Error).message);
+      return [];
+    }
+  };
+
+/* if the Metadata Type doesn't return a correct fileName then help it out */
+const inferFilenamesFromType =
+  (metadataType: MetadataType) =>
+  (member: RelevantFileProperties): RelevantFileProperties =>
+    typeof member.fileName === 'object'
+      ? { ...member, fileName: `${metadataType.directoryName}/${member.fullName}.${metadataType.suffix}` }
+      : member;
+
+const isNonEmptyString = (value: string | undefined): boolean => typeof value === 'string' && value.length > 0;

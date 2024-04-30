@@ -22,7 +22,7 @@ export const MIXED_CONTENT_DIRECTORY_SOURCE_PATHS = [
   join(MIXED_CONTENT_DIRECTORY_CONTENT_PATH, 'tests', 'test.js'),
   join(MIXED_CONTENT_DIRECTORY_CONTENT_PATH, 'tests', 'test2.pdf'),
 ];
-export const MIXED_CONTENT_DIRECTORY_COMPONENT: SourceComponent = new SourceComponent({
+export const MIXED_CONTENT_DIRECTORY_COMPONENT = new SourceComponent({
   name: 'aStaticResource',
   type,
   xml: MIXED_CONTENT_DIRECTORY_XML_PATHS[0],

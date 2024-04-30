@@ -37,7 +37,8 @@
         "decomposition": "topLevel",
         "transformer": "decomposed"
       },
-      "suffix": "labels"
+      "suffix": "labels",
+      "supportsPartialDelete": true
     }
   }
 }

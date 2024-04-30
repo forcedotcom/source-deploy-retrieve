@@ -119,7 +119,7 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   MetadataApiRetrieveOptions
 > {
   public static DEFAULT_OPTIONS: Partial<MetadataApiRetrieveOptions> = { merge: false };
-  private options: MetadataApiRetrieveOptions;
+  private readonly options: MetadataApiRetrieveOptions;
   private orgId?: string;
 
   public constructor(options: MetadataApiRetrieveOptions) {

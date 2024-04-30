@@ -31,6 +31,7 @@ export class MetadataResolver {
   /**
    * @param registry Custom registry data
    * @param tree `TreeContainer` to traverse with
+   * @param useFsForceIgnore false = use default forceignore entries, true = search and use forceignore in project
    */
   public constructor(
     private registry = new RegistryAccess(),
@@ -186,7 +187,7 @@ const isProbablyPackageManifest =
  * If a type can be determined from a directory path, and the end part of the path isn't
  * the directoryName of the type itself, infer the path is part of a mixedContent component
  *
- * @param dirPath Path to a directory
+ * @param registry the registry to resolve a type against
  */
 const resolveDirectoryAsComponent =
   (registry: RegistryAccess) =>
@@ -227,8 +228,8 @@ const isMetadata =
  * Attempt to find similar types for types that could not be inferred
  * To be used after executing the resolveType() method
  *
- * @param fsPath
  * @returns an array of suggestions
+ * @param registry a metdata registry to resolve types against
  */
 const getSuggestionsForUnresolvedTypes =
   (registry: RegistryAccess) =>
@@ -350,7 +351,7 @@ const resolveType =
 /**
  * Any file with a registered suffix is potentially a content metadata file.
  *
- * @param fsPath File path of a potential content metadata file
+ * @param registry a metadata registry to resolve types agsinst
  */
 const parseAsContentMetadataXml =
   (registry: RegistryAccess) =>

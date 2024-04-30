@@ -25,17 +25,18 @@ export function baseName(fsPath: SourcePath): string {
 
 /**
  * the above baseName function doesn't handle components whose names have a `.` in them.
- * this will handle that, but requires you to specify the expected suffix from the mdType.
+ * this will handle that, but requires you to specify the mdType to check suffixes for.
  *
  * @param fsPath The path to evaluate
  */
-export function baseWithoutSuffixes(fsPath: SourcePath, suffix: string): string {
-  return basename(fsPath)
-    .replace(META_XML_SUFFIX, '')
-    .split('.')
-    .filter((part) => part !== suffix)
-    .join('.');
+export function baseWithoutSuffixes(fsPath: SourcePath, mdType: MetadataType): string {
+  return basename(fsPath).replace(META_XML_SUFFIX, '').split('.').filter(stringIsNotSuffix(mdType)).join('.');
 }
+
+const stringIsNotSuffix =
+  (type: MetadataType) =>
+  (part: string): boolean =>
+    part !== type.suffix && (!type.legacySuffix || part !== type.legacySuffix);
 
 /**
  * Get the name of file path extension. Different from path.extname in that it

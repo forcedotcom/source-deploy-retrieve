@@ -385,20 +385,38 @@ const resolveTypeFromStrictFolder =
       .filter(folderTypeFilter(fsPath))
       .find(
         (type) =>
-          // any of the following 3 options is considered a good match
-          isMixedContentOrBundle(type) || suffixMatches(type, fsPath) || childSuffixMatches(type, fsPath)
+          // any of the following options is considered a good match
+          isMixedContentOrBundle(type) ||
+          suffixMatches(type, fsPath) ||
+          childSuffixMatches(type, fsPath) ||
+          legacySuffixMatches(type, fsPath)
       );
   };
 
 /** the type has children and the file suffix (in source format) matches a child type suffix of the type we think it is */
 const childSuffixMatches = (type: MetadataType, fsPath: string): boolean =>
-  Object.values(type.children?.types ?? {})
-    .map((childType) => `${childType.suffix}${META_XML_SUFFIX}`)
-    .some((s) => fsPath.endsWith(s));
+  Object.values(type.children?.types ?? {}).some(
+    (childType) => suffixMatches(childType, fsPath) || legacySuffixMatches(childType, fsPath)
+  );
 
 /** the file suffix (in source or mdapi format) matches the type suffix we think it is */
 const suffixMatches = (type: MetadataType, fsPath: string): boolean =>
-  typeof type.suffix === 'string' && [type.suffix, `${type.suffix}${META_XML_SUFFIX}`].some((s) => fsPath.endsWith(s));
+  typeof type.suffix === 'string' &&
+  (fsPath.endsWith(type.suffix) || fsPath.endsWith(appendMetaXmlSuffix(type.suffix)));
+
+const legacySuffixMatches = (type: MetadataType, fsPath: string): boolean => {
+  if (
+    typeof type.legacySuffix === 'string' &&
+    (fsPath.endsWith(type.legacySuffix) || fsPath.endsWith(appendMetaXmlSuffix(type.legacySuffix)))
+  ) {
+    void Lifecycle.getInstance().emitWarning(
+      `The ${type.name} component at ${fsPath} uses the legacy suffix ${type.legacySuffix}. This suffix is deprecated and will be removed in a future release.`
+    );
+    return true;
+  }
+  return false;
+};
+const appendMetaXmlSuffix = (suffix: string): string => `${suffix}${META_XML_SUFFIX}`;
 
 const isMixedContentOrBundle = (type: MetadataType): boolean =>
   typeof type.strategies?.adapter === 'string' && ['mixedContent', 'bundle'].includes(type.strategies.adapter);

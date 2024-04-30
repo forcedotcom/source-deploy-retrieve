@@ -5,7 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, dirname, join } from 'node:path';
-import { Messages } from '@salesforce/core';
+import { Messages } from '@salesforce/core/messages';
+import { Lifecycle } from '@salesforce/core/lifecycle';
 import { SourcePath } from '../../common/types';
 import { META_XML_SUFFIX } from '../../common/constants';
 import { SfdxFileFormat, WriteInfo } from '../types';
@@ -118,6 +119,9 @@ const getXmlDestination = (
     }
   }
   if (legacySuffix && suffix && xmlDestination.includes(legacySuffix)) {
+    void Lifecycle.getInstance().emitWarning(
+      `The ${component.type.name} component ${component.fullName} uses the legacy suffix ${legacySuffix}. This suffix is deprecated and will be removed in a future release.`
+    );
     xmlDestination = xmlDestination.replace(legacySuffix, suffix);
   }
   return xmlDestination;

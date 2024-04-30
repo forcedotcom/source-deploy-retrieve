@@ -15,7 +15,7 @@ import { XMLBuilder } from 'fast-xml-parser';
 import { Logger } from '@salesforce/core';
 import { SourceComponent } from '../resolve/sourceComponent';
 import { SourcePath } from '../common/types';
-import { XML_DECL } from '../common/constants';
+import { XML_COMMENT_PROP_NAME, XML_DECL } from '../common/constants';
 import { ComponentSet } from '../collections/componentSet';
 import { RegistryAccess } from '../registry/registryAccess';
 import { ensureFileExists } from '../utils/fileSystemHandler';
@@ -255,15 +255,18 @@ export class JsToXml extends Readable {
       indentBy: '    ',
       ignoreAttributes: false,
       cdataPropName: '__cdata',
+      commentPropName: XML_COMMENT_PROP_NAME,
     });
-
     const builtXml = String(builder.build(this.xmlObject));
-    const xmlContent = XML_DECL.concat(handleSpecialEntities(builtXml));
+    const xmlContent = correctComments(XML_DECL.concat(handleSpecialEntities(builtXml)));
     this.push(xmlContent);
     this.push(null);
   }
 }
 
+/** xmlBuilder likes to add newline and indent before/after the comment (hypothesis: it uses `<` as a hint to newlint/indent) */
+const correctComments = (xml: string): string =>
+  xml.includes('<!--') ? xml.replace(/\s+<!--(.*?)-->\s+/g, '<!--$1-->') : xml;
 /**
  * use this function to handle special html entities.
  * XmlBuilder will otherwise replace ex: `&#160;` with `'&amp;#160;'` (escape the &)

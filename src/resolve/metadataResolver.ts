@@ -385,8 +385,11 @@ const resolveTypeFromStrictFolder =
       .filter(folderTypeFilter(fsPath))
       .find(
         (type) =>
-          // any of the following 3 options is considered a good match
-          isMixedContentOrBundle(type) || suffixMatches(type, fsPath) || childSuffixMatches(type, fsPath)
+          // any of the following options is considered a good match
+          isMixedContentOrBundle(type) ||
+          suffixMatches(type, fsPath) ||
+          childSuffixMatches(type, fsPath) ||
+          legacySuffixMatches(type, fsPath)
       );
   };
 

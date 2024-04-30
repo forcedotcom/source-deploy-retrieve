@@ -1,3 +1,12 @@
+## [11.1.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.1.2...11.1.3) (2024-04-30)
+
+
+### Bug Fixes
+
+* preserve xml comments in decomposed files ([#1288](https://github.com/forcedotcom/source-deploy-retrieve/issues/1288)) ([ba1dc28](https://github.com/forcedotcom/source-deploy-retrieve/commit/ba1dc2843e2c3c6f776b2833c5578665901cfe7d))
+
+
+
 ## [11.1.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.1.1...11.1.2) (2024-04-25)
 
 

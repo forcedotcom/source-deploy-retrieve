@@ -31,6 +31,11 @@ export class ForceIgnore {
             'Your .forceignore file incorrectly uses the backslash ("\\") as a folder separator; it should use the slash ("/") instead. The ignore rules will not work as expected until you fix this.'
           );
         }
+        if (contents.includes('**/unpackaged/**')) {
+          void Lifecycle.getInstance().emitWarning(
+            'Your .forceignore file contains the "**/unpackaged/**" rule. This will cause all files to be ignored during a retrieve.'
+          );
+        }
         // add the default ignore paths, and then parse the .forceignore file
         this.parser = ignore().add(`${this.DEFAULT_IGNORE.join('\n')}\n${contents}`);
 

@@ -1,3 +1,12 @@
+# [11.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.2.0...11.3.0) (2024-05-02)
+
+
+### Features
+
+* warn about ignoring unpackaged ([#1301](https://github.com/forcedotcom/source-deploy-retrieve/issues/1301)) ([f81576f](https://github.com/forcedotcom/source-deploy-retrieve/commit/f81576f436429562574bae623a1b38666a97f65a))
+
+
+
 # [11.2.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.1.3...11.2.0) (2024-04-30)
 
 

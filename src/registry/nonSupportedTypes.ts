@@ -35,6 +35,8 @@ export const features = [
   'BUSINESSRULESENGINE',
   'FUNDRAISING',
   'PARDOTADVANCED', // org:create throws a C-9999 when this is not excluded
+  'EXTERNALCONNECTIVITY', // for type ExternalAuthIdentityProvider.  might work if it were added to a dev hub
+  'COPILOT', // responds with [Error] EinsteinCopilot : There was an error enabling or disabling a setting \n'
 ];
 
 export const settings = [
@@ -78,7 +80,12 @@ export const metadataTypes = [
 
   // spun up org with ASSOCIATIONENGINE, not in describe
   'RecAlrtDataSrcExpSetDef',
-  'RecordAlertTemplate',
+
+  // spun up org with EDUCATIONCLOUD:1, not in describe
+  'LearningAchievementConfig',
+
+  // spun up org with CORECPQ, not in describe
+  'DocumentTemplate',
 ];
 
 export const hasUnsupportedFeatures = (type: CoverageObjectType): boolean => {

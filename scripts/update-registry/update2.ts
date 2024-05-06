@@ -126,7 +126,9 @@ Example: \`sf config set defaultdevhubusername=<devhub-username> --global\`
       exit(1);
     }
 
-    await execProm('sf org create scratch -f registryBuilder/config/project-scratch-def.json -y 1 -a registryBuilder');
+    await execProm(
+      'sf org create scratch -f registryBuilder/config/project-scratch-def.json -y 1 -a registryBuilder --wait 30'
+    );
   }
   // describe the org
   const missingTypesAsDescribeResult = await getMissingTypesAsDescribeResult(missingTypes);

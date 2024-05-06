@@ -271,6 +271,7 @@
     "flowtest": "flowtest",
     "forecastingFilter": "forecastingfilter",
     "forecastingFilterCondition": "forecastingfiltercondition",
+    "forecastingGroup": "forecastinggroup",
     "forecastingSourceDefinition": "forecastingsourcedefinition",
     "forecastingType": "forecastingtype",
     "forecastingTypeSource": "forecastingtypesource",
@@ -417,6 +418,8 @@
     "schedulingObjective": "schedulingobjective",
     "schedulingRule": "schedulingrule",
     "scoreCategory": "scorecategory",
+    "searchCustomization": "searchcustomization",
+    "searchOrgWideObjectConfig": "searchorgwideobjectconfig",
     "serviceAISetupDescription": "serviceaisetupdefinition",
     "serviceAISetupField": "serviceaisetupfield",
     "serviceChannel": "servicechannel",
@@ -2487,6 +2490,14 @@
       "strictDirectoryName": false,
       "suffix": "forecastingFilterCondition"
     },
+    "forecastinggroup": {
+      "directoryName": "forecastingGroups",
+      "id": "forecastinggroup",
+      "inFolder": false,
+      "name": "ForecastingGroup",
+      "strictDirectoryName": false,
+      "suffix": "forecastingGroup"
+    },
     "forecastingsourcedefinition": {
       "directoryName": "forecastingSourceDefinitions",
       "id": "forecastingsourcedefinition",
@@ -3711,6 +3722,22 @@
       "name": "SearchCriteriaConfiguration",
       "strictDirectoryName": false,
       "suffix": "SearchCriteriaConfigurationSetting"
+    },
+    "searchcustomization": {
+      "directoryName": "searchCustomizations",
+      "id": "searchcustomization",
+      "inFolder": false,
+      "name": "SearchCustomization",
+      "strictDirectoryName": false,
+      "suffix": "searchCustomization"
+    },
+    "searchorgwideobjectconfig": {
+      "directoryName": "searchOrgWideConfiguration",
+      "id": "searchorgwideobjectconfig",
+      "inFolder": false,
+      "name": "SearchOrgWideObjectConfig",
+      "strictDirectoryName": false,
+      "suffix": "searchOrgWideObjectConfig"
     },
     "serviceaisetupdefinition": {
       "directoryName": "serviceAISetupDescriptions",

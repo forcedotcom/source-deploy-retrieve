@@ -35,6 +35,7 @@ export const features = [
   'BUSINESSRULESENGINE',
   'FUNDRAISING',
   'PARDOTADVANCED', // org:create throws a C-9999 when this is not excluded
+  'EXTERNALCONNECTIVITY', // for type ExternalAuthIdentityProvider.  might work if it were added to a dev hub
 ];
 
 export const settings = [

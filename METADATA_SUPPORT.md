@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v60 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 565/598 supported metadata types.
+Currently, there are 566/598 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -487,7 +487,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |RecordAggregationDefinition|✅||
 |RecordAlertCategory|✅||
 |RecordAlertDataSource|✅||
-|RecordAlertTemplate|❌|Not supported, but support could be added|
+|RecordAlertTemplate|✅||
 |RecordPageSettings|✅||
 |RecordType|✅||
 |RedirectWhitelistUrl|✅||
@@ -624,11 +624,11 @@ v61 introduces the following new types.  Here's their current level of support
 |EnablementMeasureDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |EnablementProgramDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |ExternalAuthIdentityProvider|❌|Not supported, but support could be added|
-|ForecastingGroup|❌|Not supported, but support could be added|
+|ForecastingGroup|✅||
 |LargeQuotesandOrdersForRlmSettings|✅||
-|RetrievalSummaryDefinition|❌|Not supported, but support could be added|
-|SearchCustomization|❌|Not supported, but support could be added (but not for tracking)|
-|SearchOrgWideObjectConfig|❌|Not supported, but support could be added (but not for tracking)|
+|RetrievalSummaryDefinition|✅||
+|SearchCustomization|⚠️|Supports deploy/retrieve but not source tracking|
+|SearchOrgWideObjectConfig|⚠️|Supports deploy/retrieve but not source tracking|
 |WaveAnalyticAssetCollection|❌|Not supported, but support could be added|
 
 ## Additional Types

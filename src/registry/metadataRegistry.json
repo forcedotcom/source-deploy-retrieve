@@ -88,6 +88,7 @@
     "OmniExtTrackingDef": "omniexttrackingdef",
     "OmniTrackingGroup": "omnitrackinggroup",
     "RecordAggregationDefinition": "recordaggregationdefinition",
+    "RetrievalSummaryDefinition": "retrievalsummarydefinition",
     "SearchCriteriaConfigurationSetting": "searchcriteriaconfiguration",
     "SearchableObjDataSyncInfoSetting": "searchableobjdatasyncinfo",
     "accountForecastSetting": "accountforecastsettings",
@@ -401,6 +402,7 @@
     "recommendationStrategy": "recommendationstrategy",
     "recordAlertCategory": "recordalertcategory",
     "recordAlertDataSource": "recordalertdatasource",
+    "recordAlertTemplate": "recordalerttemplate",
     "redirectWhitelistUrl": "redirectwhitelisturl",
     "registeredExternalService": "registeredexternalservice",
     "relationshipGraphDefinition": "relationshipgraphdefinition",
@@ -493,9 +495,7 @@
     "workflowTask": "workflowtask",
     "xmd": "wavexmd",
     "xml": "emailservicesfunction",
-    "xorghub": "xorghub",
-    "RetrievalSummaryDefinition": "retrievalsummarydefinition",
-    "recordAlertTemplate": "recordalerttemplate"
+    "xorghub": "xorghub"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -3586,6 +3586,14 @@
       "strictDirectoryName": false,
       "suffix": "recordAlertDataSource"
     },
+    "recordalerttemplate": {
+      "directoryName": "recordAlertTemplates",
+      "id": "recordalerttemplate",
+      "inFolder": false,
+      "name": "RecordAlertTemplate",
+      "strictDirectoryName": false,
+      "suffix": "recordAlertTemplate"
+    },
     "redirectwhitelisturl": {
       "directoryName": "redirectWhitelistUrls",
       "id": "redirectwhitelisturl",
@@ -3652,6 +3660,14 @@
       "name": "RestrictionRule",
       "strictDirectoryName": true,
       "suffix": "rule"
+    },
+    "retrievalsummarydefinition": {
+      "directoryName": "RetrievalSummaryDefinitions",
+      "id": "retrievalsummarydefinition",
+      "inFolder": false,
+      "name": "RetrievalSummaryDefinition",
+      "strictDirectoryName": false,
+      "suffix": "RetrievalSummaryDefinition"
     },
     "role": {
       "directoryName": "roles",
@@ -4386,22 +4402,6 @@
       "inFolder": false,
       "name": "XOrgHub",
       "suffix": "xorghub"
-    },
-    "retrievalsummarydefinition": {
-      "id": "retrievalsummarydefinition",
-      "name": "RetrievalSummaryDefinition",
-      "suffix": "RetrievalSummaryDefinition",
-      "directoryName": "RetrievalSummaryDefinitions",
-      "inFolder": false,
-      "strictDirectoryName": false
-    },
-    "recordalerttemplate": {
-      "id": "recordalerttemplate",
-      "name": "RecordAlertTemplate",
-      "suffix": "recordAlertTemplate",
-      "directoryName": "recordAlertTemplates",
-      "inFolder": false,
-      "strictDirectoryName": false
     }
   }
 }

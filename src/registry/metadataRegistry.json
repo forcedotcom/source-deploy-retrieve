@@ -493,7 +493,9 @@
     "workflowTask": "workflowtask",
     "xmd": "wavexmd",
     "xml": "emailservicesfunction",
-    "xorghub": "xorghub"
+    "xorghub": "xorghub",
+    "RetrievalSummaryDefinition": "retrievalsummarydefinition",
+    "recordAlertTemplate": "recordalerttemplate"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4384,6 +4386,22 @@
       "inFolder": false,
       "name": "XOrgHub",
       "suffix": "xorghub"
+    },
+    "retrievalsummarydefinition": {
+      "id": "retrievalsummarydefinition",
+      "name": "RetrievalSummaryDefinition",
+      "suffix": "RetrievalSummaryDefinition",
+      "directoryName": "RetrievalSummaryDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
+    },
+    "recordalerttemplate": {
+      "id": "recordalerttemplate",
+      "name": "RecordAlertTemplate",
+      "suffix": "recordAlertTemplate",
+      "directoryName": "recordAlertTemplates",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   }
 }

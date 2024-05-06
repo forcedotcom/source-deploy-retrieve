@@ -1,3 +1,12 @@
+# [11.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.3.0...11.4.0) (2024-05-06)
+
+
+### Features
+
+* **mdTypes:** ForecastingGroup, SearchCustomization, SearchOrgWideObjectConfig, RetrievalSummaryDefinition ([#1306](https://github.com/forcedotcom/source-deploy-retrieve/issues/1306)) ([04d3318](https://github.com/forcedotcom/source-deploy-retrieve/commit/04d331828a68012537d990c81c996b3c0a88b632))
+
+
+
 # [11.3.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.2.0...11.3.0) (2024-05-02)
 
 

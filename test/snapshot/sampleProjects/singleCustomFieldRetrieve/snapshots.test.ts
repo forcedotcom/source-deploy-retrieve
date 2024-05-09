@@ -58,10 +58,7 @@ describe('a single field in a CustomObject xml does not overwrite (blank) the ex
   });
 
   after(async () => {
-    await Promise.all([
-      fs.promises.rm(path.join(testDir, FORCE_APP), { recursive: true, force: true }),
-      fs.promises.rm(path.join(testDir, MDAPI_OUT), { recursive: true, force: true }),
-    ]);
+    await fs.promises.rm(testDir, { recursive: true, force: true });
   });
 });
 

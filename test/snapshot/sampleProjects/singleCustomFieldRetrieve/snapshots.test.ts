@@ -6,16 +6,17 @@
  */
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { ComponentSetBuilder, MetadataConverter } from 'src';
+import { MetadataConverter } from '../../../../src/convert/metadataConverter';
+import { ComponentSetBuilder } from '../../../../src/collections/componentSetBuilder';
 import { FORCE_APP, MDAPI_OUT, fileSnap, dirEntsToPaths } from '../../helper/conversions';
 
 // we don't want failing tests outputting over each other
 /* eslint-disable no-await-in-loop */
 
 const folder = 'singleCustomFieldRetrieve';
-// const tmpFolder = `${folder}Tmp`;
+const tmpFolder = `${folder}Tmp`;
 const testOriginalDir = path.join('test', 'snapshot', 'sampleProjects', folder);
-const testDir = testOriginalDir.replace(folder, `${folder}Tmp`);
+const testDir = testOriginalDir.replace(folder, tmpFolder);
 
 /**
  * retrieving a single field retrieves the object, removes the field from it, and leaves a blank object.

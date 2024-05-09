@@ -14,5 +14,5 @@
         <members>LogEntryArchive__b.LogEntryArchiveIndex</members>
         <name>Index</name>
     </types>
-    <version>60.0</version>
+    <version>59.0</version>
 </Package>

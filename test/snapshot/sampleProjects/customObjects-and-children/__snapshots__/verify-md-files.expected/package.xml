@@ -50,5 +50,5 @@
         <members>Property__c.All</members>
         <name>ListView</name>
     </types>
-    <version>60.0</version>
+    <version>59.0</version>
 </Package>

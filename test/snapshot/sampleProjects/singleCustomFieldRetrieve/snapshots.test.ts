@@ -23,9 +23,8 @@ const testDir = testOriginalDir.replace(folder, tmpFolder);
  * That blank object should NOT overwrite the existing object if it exists in the merge target
  */
 describe('a single field in a CustomObject xml does not overwrite (blank) the existing Object', () => {
-  const testDir = path.join('test', 'snapshot', 'sampleProjects', 'singleCustomFieldRetrieve');
-
   before(async () => {
+    console.log(`copying ${testOriginalDir} to ${testDir}`);
     // because we're applying changes over the existing source, move it to a new place
     await fs.promises.cp(testOriginalDir, testDir, {
       recursive: true,
@@ -41,7 +40,7 @@ describe('a single field in a CustomObject xml does not overwrite (blank) the ex
     // a CS from the destination
     const mergeWith = (
       await ComponentSetBuilder.build({
-        sourcepath: [FORCE_APP],
+        sourcepath: [path.join(testDir, FORCE_APP)],
       })
     ).getSourceComponents();
 
@@ -50,7 +49,7 @@ describe('a single field in a CustomObject xml does not overwrite (blank) the ex
     await converter.convert(cs, 'source', {
       type: 'merge',
       mergeWith,
-      defaultDirectory: path.resolve(FORCE_APP),
+      defaultDirectory: path.resolve(path.join(testDir, FORCE_APP)),
     });
   });
 

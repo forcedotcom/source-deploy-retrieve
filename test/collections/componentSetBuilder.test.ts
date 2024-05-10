@@ -546,4 +546,34 @@ describe('entryToTypeAndName', () => {
       metadataName: '*',
     });
   });
+  it('leading spaces in name are trimmed', () => {
+    expect(entryToTypeAndName(reg)('Layout: My Layout')).to.deep.equal({
+      type: reg.getTypeByName('Layout'),
+      metadataName: 'My Layout',
+    });
+  });
+  it('trailing spaces in name are trimmed', () => {
+    expect(entryToTypeAndName(reg)('Layout:My Layout ')).to.deep.equal({
+      type: reg.getTypeByName('Layout'),
+      metadataName: 'My Layout',
+    });
+  });
+  it('spaces in name', () => {
+    expect(entryToTypeAndName(reg)('Layout:My Layout')).to.deep.equal({
+      type: reg.getTypeByName('Layout'),
+      metadataName: 'My Layout',
+    });
+  });
+  it('colons in name', () => {
+    expect(entryToTypeAndName(reg)('Layout:My:Colon:Layout')).to.deep.equal({
+      type: reg.getTypeByName('Layout'),
+      metadataName: 'My:Colon:Layout',
+    });
+  });
+  it('colons and spaces in name', () => {
+    expect(entryToTypeAndName(reg)('Layout:My : Colon : Layout')).to.deep.equal({
+      type: reg.getTypeByName('Layout'),
+      metadataName: 'My : Colon : Layout',
+    });
+  });
 });

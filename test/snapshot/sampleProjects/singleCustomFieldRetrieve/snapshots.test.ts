@@ -24,7 +24,6 @@ const testDir = testOriginalDir.replace(folder, tmpFolder);
  */
 describe('a single field in a CustomObject xml does not overwrite (blank) the existing Object', () => {
   before(async () => {
-    console.log(`copying ${testOriginalDir} to ${testDir}`);
     // because we're applying changes over the existing source, move it to a new place
     await fs.promises.cp(testOriginalDir, testDir, {
       recursive: true,

@@ -184,15 +184,20 @@ const getWriteInfosFromMerge =
   (parentXmlObject: XmlObj) =>
   (parentComponent: SourceComponent): WriteInfo[] => {
     const writeInfo = { source: new JsToXml(parentXmlObject), output: getOutputFile(parentComponent, mergeWith) };
+    const parentHasRealValues = objectHasSomeRealValues(parentComponent.type)(parentXmlObject);
 
     if (mergeWith?.xml) {
       // mark the component as found
       stateSetter(parentComponent, { foundMerge: true });
-    } else if (objectHasSomeRealValues(parentComponent.type)(parentXmlObject)) {
+      return objectHasSomeRealValues(parentComponent.type)(mergeWith.parseXmlSync()) && !parentHasRealValues
+        ? [] // the target file has values but this process doesn't, so we don't want to overwrite it
+        : [writeInfo];
+    }
+    if (objectHasSomeRealValues(parentComponent.type)(parentXmlObject)) {
       // set the state but don't return any writeInfo to avoid writing "empty" (ns-only) parent files
       stateSetter(parentComponent, { writeInfo });
     }
-    return mergeWith.xml ? [writeInfo] : [];
+    return [];
   };
 
 /**
@@ -248,7 +253,7 @@ const tagToChildTypeId = ({ tagKey, type }: { tagKey: string; type: MetadataType
 const objectHasSomeRealValues =
   (type: MetadataType) =>
   (obj: XmlObj): boolean =>
-    Object.keys(obj[type.name]).length > 1;
+    Object.keys(obj[type.name] ?? {}).length > 1;
 
 const hasChildTypeId = (cm: ComposedMetadata): cm is Required<ComposedMetadata> => !!cm.childTypeId;
 

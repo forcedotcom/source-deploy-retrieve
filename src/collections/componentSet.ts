@@ -708,7 +708,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     if (!version) {
       try {
-        const project = await SfProject.resolve();
+        const project = await SfProject.resolve(this.projectDirectory);
         const projectConfig = await project.resolveProjectConfig();
         version = projectConfig?.sourceApiVersion as string;
       } catch (e) {

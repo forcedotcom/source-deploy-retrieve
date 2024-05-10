@@ -31,6 +31,8 @@ jobs:
           command: npm install @salesforce/cli@nightly -g
           timeout_minutes: 60
       - uses: salesforcecli/github-workflows/.github/actions/yarnInstallWithRetries@main
+        with:
+          ignore-scripts: true
       - run: |
           yarn mocha test/nuts/scale/eda.nut.ts --timeout 500000
           yarn mocha test/nuts/scale/lotsOfClasses.nut.ts --timeout 500000

@@ -1,3 +1,12 @@
+## [11.4.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.4.2...11.4.3) (2024-05-10)
+
+
+### Bug Fixes
+
+* md names handle spaces, colons, and both ([#1297](https://github.com/forcedotcom/source-deploy-retrieve/issues/1297)) ([76e9486](https://github.com/forcedotcom/source-deploy-retrieve/commit/76e9486ac642e59136dbd0133838349df56ac0f9))
+
+
+
 ## [11.4.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.4.1...11.4.2) (2024-05-10)
 
 

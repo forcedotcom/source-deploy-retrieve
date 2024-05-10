@@ -25,7 +25,7 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^7.3.1",
+    "@salesforce/core": "^7.3.5",
     "@salesforce/kit": "^3.1.1",
     "@salesforce/ts-types": "^2.0.9",
     "fast-levenshtein": "^3.0.0",
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@jsforce/jsforce-node": "^3.2.0",
-    "@salesforce/cli-plugins-testkit": "^5.3.1",
+    "@salesforce/cli-plugins-testkit": "^5.3.2",
     "@salesforce/dev-scripts": "^9.0.0",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/fast-levenshtein": "^0.0.4",

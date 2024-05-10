@@ -266,6 +266,7 @@ type ComposedMetadataWithChildType = ComposedMetadata & { childType: MetadataTyp
 type InfoContainer = {
   entryName?: string;
   childComponent: MetadataComponent;
+  /** the parsed xml */
   value: JsonMap;
   parentComponent: SourceComponent;
   mergeWith?: SourceComponent;

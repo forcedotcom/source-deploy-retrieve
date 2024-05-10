@@ -1,3 +1,12 @@
+## [11.4.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.4.0...11.4.1) (2024-05-10)
+
+
+### Bug Fixes
+
+* prevent empty parent xml overwrites ([#1308](https://github.com/forcedotcom/source-deploy-retrieve/issues/1308)) ([b8a8c7f](https://github.com/forcedotcom/source-deploy-retrieve/commit/b8a8c7f6a37c9418a4acd57965414ac4a95446f4))
+
+
+
 # [11.4.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.3.0...11.4.0) (2024-05-06)
 
 

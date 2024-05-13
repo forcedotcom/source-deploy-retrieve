@@ -435,7 +435,9 @@ const buildFileResponsesFromComponentSet =
       )
       .concat(deleteNotFoundToFileResponses(cs)(responseMessages));
 
-    warnIfUnmatchedServerResult(fileResponses)(responseMessages);
+    if (cs.size) {
+      warnIfUnmatchedServerResult(fileResponses)(responseMessages);
+    }
     return fileResponses;
   };
 /**

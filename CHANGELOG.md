@@ -1,3 +1,12 @@
+## [11.4.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.4.3...11.4.4) (2024-05-14)
+
+
+### Bug Fixes
+
+* if no component set to match against, skip checking server response ([#1311](https://github.com/forcedotcom/source-deploy-retrieve/issues/1311)) ([2d7fa28](https://github.com/forcedotcom/source-deploy-retrieve/commit/2d7fa28befcb9eea56ec339694604cac8000843f))
+
+
+
 ## [11.4.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.4.2...11.4.3) (2024-05-10)
 
 

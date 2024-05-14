@@ -880,6 +880,49 @@ describe('MetadataApiDeploy', () => {
         warnSpy.restore();
         emitSpy.restore();
       });
+      it('should NOT warn when empty component set used', () => {
+        // everything is an emit.  Warn calls emit, too.
+        const warnSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emitWarning');
+        const emitSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emit');
+
+        const component = matchingContentFile.COMPONENT;
+        const deployedSet = new ComponentSet([]);
+        const { fullName, type } = component;
+
+        const apiStatus: Partial<MetadataApiDeployStatus> = {
+          details: {
+            componentFailures: [
+              {
+                changed: 'true',
+                created: 'false',
+                deleted: 'false',
+                success: 'true',
+                fullName,
+                fileName: component.content,
+                componentType: type.name,
+              } as DeployMessage,
+              {
+                changed: 'false',
+                created: 'false',
+                deleted: 'true',
+                success: 'true',
+                fullName: 'myServerOnlyComponent',
+                fileName: 'myServerOnlyComponent',
+                componentType: type.name,
+              } as DeployMessage,
+            ],
+          },
+        };
+        const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+        const responses = result.getFileResponses();
+
+        expect(responses).to.deep.equal([]);
+        expect(warnSpy.called).to.be.false;
+
+        warnSpy.restore();
+        emitSpy.restore();
+      });
 
       it('should not report duplicates component', () => {
         const component = matchingContentFile.COMPONENT;

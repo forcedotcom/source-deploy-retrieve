@@ -7,7 +7,7 @@
       "path": "force-app"
     }
   ],
-  "registryPresets": ["decomposeCustomLabelsBeta"],
+  "sourceBehaviorOptions": ["decomposeCustomLabelsBeta"],
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "60.0"
 }

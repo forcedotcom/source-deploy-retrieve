@@ -156,13 +156,13 @@ It's possible that the registry isn't what a user wants
 There are two options available if you're in an sfdx project.
 
 - `registryCustomizations`: add your own partial of the the registry that'll be merged into the registry. It's a json object just like the registry itself.
-- `registryPresets`: SDR defines "preset" registryCustomizations and you say which ones you want applied. Each one is a partial, and you can have any or all of them by listing them. Names correspond to something in src/registry/presets, so your project file could use
+- `sourceBehaviorOptions`: SDR defines "preset" registryCustomizations and you say which ones you want applied. Each one is a partial, and you can have any or all of them by listing them. Names correspond to something in src/registry/presets, so your project file could use
 
 ```json
-  "registryPresets": ["decomposePermissionSetBeta", "decomposeSharingRulesBeta"]
+  "sourceBehaviorOptions": ["decomposePermissionSetBeta", "decomposeSharingRulesBeta"]
 ```
 
-if you want only those 2 presets.
+if you want only those 2 sourceBehaviorOptions.
 
 The naming convention is `decomposeFoo` where `Foo` is the top-level metadata type, and refers to `/presets/Foo.json`.
 

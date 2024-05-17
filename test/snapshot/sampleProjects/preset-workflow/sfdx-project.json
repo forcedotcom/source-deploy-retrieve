@@ -7,7 +7,7 @@
       "path": "force-app"
     }
   ],
-  "registryPresets": ["decomposeWorkflowBeta"],
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "60.0"
+  "sourceApiVersion": "60.0",
+  "sourceBehaviorOptions": ["decomposeWorkflowBeta"]
 }

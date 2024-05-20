@@ -2926,7 +2926,7 @@
       "inFolder": false
     },
 
-    "DataKitObjectDependency": {
+    "datakitobjectdependency": {
       "id": "datakitobjectdependency",
       "name": "DataKitObjectDependency",
       "suffix": "dataKitObjectDependency",

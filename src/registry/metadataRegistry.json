@@ -284,6 +284,8 @@
     "function": "functionreference",
     "fundraisingConfig": "fundraisingconfig",
     "gatewayProviderPaymentMethodType": "gatewayproviderpaymentmethodtype",
+    "genAiFunction": "genaifunction",
+    "genAiPlanner": "genaiplanner",
     "genAiPromptTemplate": "genaiprompttemplate",
     "genAiPromptTemplateActivation": "genaiprompttemplateactv",
     "geodata": "eclairgeodata",
@@ -2581,6 +2583,20 @@
       "name": "GatewayProviderPaymentMethodType",
       "strictDirectoryName": false,
       "suffix": "gatewayProviderPaymentMethodType"
+    },
+    "genaifunction": {
+      "directoryName": "genAiFunction",
+      "id": "genaifunction",
+      "inFolder": false,
+      "name": "GenAiFunction",
+      "suffix": "genAiFunction"
+    },
+    "genaiplanner": {
+      "directoryName": "genAiPlanner",
+      "id": "genaiplanner",
+      "inFolder": false,
+      "name": "GenAiPlanner",
+      "suffix": "genAiPlanner"
     },
     "genaiprompttemplate": {
       "directoryName": "genAiPromptTemplates",

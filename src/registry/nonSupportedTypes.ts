@@ -36,7 +36,6 @@ export const features = [
   'FUNDRAISING',
   'PARDOTADVANCED', // org:create throws a C-9999 when this is not excluded
   'EXTERNALCONNECTIVITY', // for type ExternalAuthIdentityProvider.  might work if it were added to a dev hub
-  'COPILOT', // responds with [Error] EinsteinCopilot : There was an error enabling or disabling a setting \n'
 ];
 
 export const settings = [

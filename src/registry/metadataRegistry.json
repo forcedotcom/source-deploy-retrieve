@@ -2927,7 +2927,7 @@
     },
 
     "DataKitObjectDependency": {
-      "id": "DataKitObjectDependency",
+      "id": "datakitobjectdependency",
       "name": "DataKitObjectDependency",
       "suffix": "dataKitObjectDependency",
       "directoryName": "dataKitObjectDependencies",
@@ -3801,7 +3801,7 @@
     "translation": "translations",
     "globalValueSetTranslation": "globalvaluesettranslation",
     "standardValueSetTranslation": "standardvaluesettranslation",
-    "dataKitObjectDependency": "DataKitObjectDependency",
+    "dataKitObjectDependency": "datakitobjectdependency",
     "cls": "apexclass",
     "trigger": "apextrigger",
     "testSuite": "apextestsuite",

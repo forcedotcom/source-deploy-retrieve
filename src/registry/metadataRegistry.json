@@ -2925,6 +2925,15 @@
       "directoryName": "mktCalcInsightObjectDefs",
       "inFolder": false
     },
+
+    "DataKitObjectDependency": {
+      "id": "DataKitObjectDependency",
+      "name": "DataKitObjectDependency",
+      "suffix": "dataKitObjectDependency",
+      "directoryName": "dataKitObjectDependencies",
+      "inFolder": false
+    },
+
     "internalorganization": {
       "id": "internalorganization",
       "name": "InternalOrganization",
@@ -3792,6 +3801,7 @@
     "translation": "translations",
     "globalValueSetTranslation": "globalvaluesettranslation",
     "standardValueSetTranslation": "standardvaluesettranslation",
+    "dataKitObjectDependency": "DataKitObjectDependency",
     "cls": "apexclass",
     "trigger": "apextrigger",
     "testSuite": "apextestsuite",

@@ -1,3 +1,12 @@
+# [11.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.4.4...11.5.0) (2024-05-20)
+
+
+### Features
+
+* **mdTypes:** add support for genAiFunction, genAiPlanner ([#1319](https://github.com/forcedotcom/source-deploy-retrieve/issues/1319)) ([01648b4](https://github.com/forcedotcom/source-deploy-retrieve/commit/01648b4e1254391a7ecf6e5aa4373bcf62aea802))
+
+
+
 ## [11.4.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.4.3...11.4.4) (2024-05-14)
 
 

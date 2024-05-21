@@ -1,4 +1,4 @@
-# Available Registry Presets
+# Available sourceBehaviorOptions
 
 ## `decomposePermissionSetBeta`
 

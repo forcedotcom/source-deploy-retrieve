@@ -7,7 +7,7 @@
       "path": "force-app"
     }
   ],
-  "registryPresets": ["decomposePermissionSetBeta"],
+  "sourceBehaviorOptions": ["decomposePermissionSetBeta"],
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "60.0"
 }

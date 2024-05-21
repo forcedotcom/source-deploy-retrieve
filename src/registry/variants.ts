@@ -23,7 +23,7 @@ export type RegistryLoadInput = {
 export const getEffectiveRegistry = (input?: RegistryLoadInput): MetadataRegistry =>
   deepFreeze(firstLevelMerge(registryData as MetadataRegistry, loadVariants(input)));
 
-/** read the project to get additional registry customizations and presets */
+/** read the project to get additional registry customizations and sourceBehaviorOptions */
 const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry => {
   const logger = Logger.childFromRoot('variants');
   const projJson = maybeGetProject(projectDir);
@@ -35,25 +35,31 @@ const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry 
 
   // there might not be any customizations in a project, so we default to the emptyRegistry
   const customizations = projJson.get<MetadataRegistry>('registryCustomizations') ?? emptyRegistry;
-  const presets = projJson.get<string[]>('registryPresets') ?? [];
+  const sourceBehaviorOptions = [
+    ...new Set([
+      // TODO: deprecated, remove this
+      ...(projJson.get<string[]>('registryPresets') ?? []),
+      ...(projJson.get<string[]>('sourceBehaviorOptions') ?? []),
+    ]),
+  ];
   if (Object.keys(customizations.types).length > 0) {
     logger.debug(
       `found registryCustomizations for types [${Object.keys(customizations.types).join(',')}] in ${projJson.getPath()}`
     );
   }
-  if (presets.length > 0) {
-    logger.debug(`using registryPresets [${presets.join(',')}] in ${projJson.getPath()}`);
+  if (sourceBehaviorOptions.length > 0) {
+    logger.debug(`using sourceBehaviorOptions [${sourceBehaviorOptions.join(',')}] in ${projJson.getPath()}`);
   }
-  const registryFromPresets = presets.reduce<MetadataRegistry>(
+  const registryFromPresets = sourceBehaviorOptions.reduce<MetadataRegistry>(
     (prev, curr) => firstLevelMerge(prev, loadPreset(curr)),
     emptyRegistry
   );
-  if (presets.length > 0 || Object.keys(customizations.types).length > 0) {
+  if (sourceBehaviorOptions.length > 0 || Object.keys(customizations.types).length > 0) {
     void Lifecycle.getInstance().emitTelemetry({
       library: 'SDR',
       eventName: 'RegistryVariants',
-      presetCount: presets.length,
-      presets: presets.join(','),
+      presetCount: sourceBehaviorOptions.length,
+      presets: sourceBehaviorOptions.join(','),
       customizationsCount: Object.keys(customizations.types).length,
       customizationsTypes: Object.keys(customizations.types).join(','),
     });

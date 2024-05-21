@@ -1,15 +1,15 @@
 {
+  "namespace": "",
   "packageDirectories": [
     {
-      "path": "force-app",
-      "default": true
+      "default": true,
+      "path": "force-app"
     },
     {
       "path": "another-package"
     }
   ],
-  "registryPresets": ["decomposeWorkflowBeta"],
-  "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "60.0"
+  "sourceApiVersion": "60.0",
+  "sourceBehaviorOptions": ["decomposeWorkflowBeta"]
 }

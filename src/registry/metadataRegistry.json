@@ -4097,7 +4097,8 @@
     "webStoreBundle": "webstorebundle",
     "externalAIModel": "externalaimodel",
     "registeredExternalService": "registeredexternalservice",
-    "managedEventSubscription": "managedeventsubscription"
+    "managedEventSubscription": "managedeventsubscription",
+    "dataKitObjectDependency": "datakitobjectdependency"
   },
   "strictDirectoryNames": {
     "experiences": "experiencebundle",
@@ -4161,7 +4162,6 @@
     "digitalexperience": "digitalexperiencebundle",
     "decisionmatrixdefinitionversion": "decisionmatrixdefinition",
     "expressionsetdefinitionversion": "expressionsetdefinition",
-    "aiscoringmodeldefversion": "aiscoringmodeldefinition",
-    "dataKitObjectDependency": "datakitobjectdependency"
+    "aiscoringmodeldefversion": "aiscoringmodeldefinition"
   }
 }

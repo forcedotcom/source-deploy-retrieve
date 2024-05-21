@@ -498,8 +498,7 @@
     "workflowTask": "workflowtask",
     "xmd": "wavexmd",
     "xml": "emailservicesfunction",
-    "xorghub": "xorghub",
-    "mktDataConnectionSrcParam": "mktdataconnectionsrcparam"
+    "xorghub": "xorghub"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4427,14 +4426,6 @@
       "inFolder": false,
       "name": "XOrgHub",
       "suffix": "xorghub"
-    },
-    "mktdataconnectionsrcparam": {
-      "id": "mktdataconnectionsrcparam",
-      "name": "MktDataConnectionSrcParam",
-      "suffix": "mktDataConnectionSrcParam",
-      "directoryName": "mktDataConnectionSrcParams",
-      "inFolder": false,
-      "strictDirectoryName": false
     }
   }
 }

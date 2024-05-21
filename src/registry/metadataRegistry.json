@@ -2925,15 +2925,6 @@
       "directoryName": "mktCalcInsightObjectDefs",
       "inFolder": false
     },
-
-    "datakitobjectdependency": {
-      "id": "datakitobjectdependency",
-      "name": "DataKitObjectDependency",
-      "suffix": "dataKitObjectDependency",
-      "directoryName": "dataKitObjectDependencies",
-      "inFolder": false
-    },
-
     "internalorganization": {
       "id": "internalorganization",
       "name": "InternalOrganization",
@@ -3693,6 +3684,13 @@
       "directoryName": "managedEventSubscriptions",
       "inFolder": false,
       "strictDirectoryName": false
+    },
+    "datakitobjectdependency": {
+      "id": "datakitobjectdependency",
+      "name": "DataKitObjectDependency",
+      "suffix": "dataKitObjectDependency",
+      "directoryName": "dataKitObjectDependencies",
+      "inFolder": false
     }
   },
   "suffixes": {
@@ -3801,7 +3799,6 @@
     "translation": "translations",
     "globalValueSetTranslation": "globalvaluesettranslation",
     "standardValueSetTranslation": "standardvaluesettranslation",
-    "dataKitObjectDependency": "datakitobjectdependency",
     "cls": "apexclass",
     "trigger": "apextrigger",
     "testSuite": "apextestsuite",
@@ -4164,6 +4161,7 @@
     "digitalexperience": "digitalexperiencebundle",
     "decisionmatrixdefinitionversion": "decisionmatrixdefinition",
     "expressionsetdefinitionversion": "expressionsetdefinition",
-    "aiscoringmodeldefversion": "aiscoringmodeldefinition"
+    "aiscoringmodeldefversion": "aiscoringmodeldefinition",
+    "dataKitObjectDependency": "datakitobjectdependency"
   }
 }

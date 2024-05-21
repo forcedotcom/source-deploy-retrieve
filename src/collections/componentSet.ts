@@ -73,10 +73,10 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * When not present, sfdx-core's SfProject will use the current working directory.
    */
   public projectDirectory?: string;
+  public readonly registry: RegistryAccess;
   public fullName?: string;
   public forceIgnoredPaths?: Set<string>;
   private logger: Logger;
-  private readonly registry: RegistryAccess;
   // all components stored here, regardless of what manifest they belong to
   private components = new DecodeableMap<string, DecodeableMap<string, SourceComponent>>();
 
@@ -150,17 +150,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    */
   public static fromSource(options: FromSourceOptions): ComponentSet;
   public static fromSource(input: string | string[] | FromSourceOptions): ComponentSet {
-    const parseFromSourceInputs = (given: string | string[] | FromSourceOptions): FromSourceOptions => {
-      if (Array.isArray(given)) {
-        return { fsPaths: given };
-      } else if (typeof given === 'object') {
-        return given;
-      } else {
-        return { fsPaths: [given] };
-      }
-    };
     const { fsPaths, registry, tree, include, fsDeletePaths = [] } = parseFromSourceInputs(input);
-
     const resolver = new MetadataResolver(registry, tree);
     const set = new ComponentSet([], registry);
     const buildComponents = (paths: string[], destructiveType?: DestructiveChangesType): void => {
@@ -749,4 +739,25 @@ const simpleKey = (component: ComponentLike): string => {
 const splitOnFirstDelimiter = (input: string): [string, string] => {
   const indexOfSplitChar = input.indexOf(KEY_DELIMITER);
   return [input.substring(0, indexOfSplitChar), input.substring(indexOfSplitChar + 1)];
+};
+
+const parseFromSourceInputs = (given: string | string[] | FromSourceOptions): FromSourceOptions => {
+  if (Array.isArray(given)) {
+    return { fsPaths: given };
+  } else if (typeof given === 'object') {
+    return given.include ? { ...given, include: removeMarkedForDelete(given.include) } : given;
+  } else {
+    return { fsPaths: [given] };
+  }
+};
+
+/** remove components that are marked for delete */
+const removeMarkedForDelete = (include: ComponentSet): ComponentSet => {
+  const filtered = new ComponentSet([], include.registry);
+  for (const component of include) {
+    if (!(component instanceof SourceComponent && component.isMarkedForDelete())) {
+      filtered.add(component);
+    }
+  }
+  return filtered;
 };

@@ -351,7 +351,7 @@ const resolveType =
 /**
  * Any file with a registered suffix is potentially a content metadata file.
  *
- * @param registry a metadata registry to resolve types agsinst
+ * @param registry a metadata registry to resolve types against
  */
 const parseAsContentMetadataXml =
   (registry: RegistryAccess) =>

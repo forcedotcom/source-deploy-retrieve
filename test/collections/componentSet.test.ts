@@ -420,6 +420,74 @@ describe('ComponentSet', () => {
         expect(result).to.deep.equal(expected);
         expect(!!compSet.getTypesOfDestructiveChanges().length).to.be.true;
       });
+
+      describe('includes filter', () => {
+        it('no matching components returns empty', () => {
+          getComponentsStub.restore();
+
+          // none of these match the Virtual Tree, so you'll get back nothing
+          const includeFilterApexClasses = new ComponentSet();
+          includeFilterApexClasses.add({ type: registry.types.apexclass, fullName: 'Test' });
+
+          const result = ComponentSet.fromSource({
+            fsPaths: ['.'],
+            include: includeFilterApexClasses,
+            registry: registryAccess,
+            tree: manifestFiles.TREE,
+          }).toArray();
+
+          expect(result).to.deep.equal([]);
+        });
+        it('should initialize using includes filter (with only components that match)', () => {
+          getComponentsStub.restore();
+
+          const includeFilterOnlyStaticResources = ComponentSet.fromSource({
+            fsPaths: ['staticresources'],
+            registry: registryAccess,
+            tree: manifestFiles.TREE,
+          });
+
+          const result = ComponentSet.fromSource({
+            fsPaths: ['.'],
+            include: includeFilterOnlyStaticResources,
+            registry: registryAccess,
+            tree: manifestFiles.TREE,
+          }).toArray();
+
+          const expected = new MetadataResolver(registryAccess, manifestFiles.TREE).getComponentsFromPath(
+            'staticresources'
+          );
+
+          expect(result).to.deep.equal(expected);
+        });
+        it('components marked for delete do not impact the inludes filter', () => {
+          getComponentsStub.restore();
+
+          // these *would* match except they're marked fo deletion so the include filter doesn't use them.
+          const includeFilterOnlyStaticResources = new ComponentSet(
+            ComponentSet.fromSource({
+              fsPaths: ['staticresources'],
+              registry: registryAccess,
+              tree: manifestFiles.TREE,
+            })
+              .getSourceComponents()
+              .toArray()
+              .map((c) => {
+                c.setMarkedForDelete(DestructiveChangesType.POST);
+                return c;
+              })
+          );
+
+          const result = ComponentSet.fromSource({
+            fsPaths: ['.'],
+            include: includeFilterOnlyStaticResources,
+            registry: registryAccess,
+            tree: manifestFiles.TREE,
+          }).toArray();
+
+          expect(result).to.deep.equal([]);
+        });
+      });
     });
 
     describe('fromManifest', () => {

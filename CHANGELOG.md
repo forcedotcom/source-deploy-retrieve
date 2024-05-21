@@ -1,3 +1,12 @@
+# [11.6.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.5.0...11.6.0) (2024-05-21)
+
+
+### Features
+
+* rename presets property ([#1312](https://github.com/forcedotcom/source-deploy-retrieve/issues/1312)) ([df722e3](https://github.com/forcedotcom/source-deploy-retrieve/commit/df722e3c67420b8ef65dd6832eb74d5b52ded54c))
+
+
+
 # [11.5.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.4.4...11.5.0) (2024-05-20)
 
 

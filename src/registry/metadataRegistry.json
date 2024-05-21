@@ -68,6 +68,7 @@
   },
   "suffixes": {
     "Canvas": "canvasmetadata",
+    "dataKitObjectDependency": "datakitobjectdependency",
     "CaseSubjectParticle": "casesubjectparticle",
     "ChannelObjectLinkingRule": "channelobjectlinkingrule",
     "ChatterExtension": "chatterextension",
@@ -510,6 +511,13 @@
       },
       "strictDirectoryName": true,
       "suffix": "policy"
+    },
+    "datakitobjectdependency": {
+      "id": "datakitobjectdependency",
+      "name": "DataKitObjectDependency",
+      "suffix": "dataKitObjectDependency",
+      "directoryName": "dataKitObjectDependencies",
+      "inFolder": false
     },
     "accountforecastsettings": {
       "directoryName": "AccountForecastSettings",

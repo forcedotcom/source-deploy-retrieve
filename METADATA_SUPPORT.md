@@ -4,7 +4,7 @@ This list compares metadata types found in Salesforce v60 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 566/598 supported metadata types.
+Currently, there are 568/598 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
 
@@ -300,8 +300,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |FunctionReference|⚠️|Supports deploy/retrieve but not source tracking|
 |FundraisingConfig|✅||
 |GatewayProviderPaymentMethodType|✅||
-|GenAiFunction|❌|Not supported, but support could be added|
-|GenAiPlanner|❌|Not supported, but support could be added|
+|GenAiFunction|✅||
+|GenAiPlanner|✅||
 |GenAiPlugin|❌|Not supported, but support could be added|
 |GenAiPluginInstructionDef|❌|Not supported, but support could be added|
 |GlobalValueSet|✅||
@@ -641,6 +641,7 @@ v61 introduces the following new types.  Here's their current level of support
 > 1. settings types that are automatically supported
 
 - AccessControlPolicy
+- DataKitObjectDependency
 - AIAssistantTemplate
 - AssignmentRule
 - AssistantRecommendationType

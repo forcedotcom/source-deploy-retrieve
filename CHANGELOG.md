@@ -1,3 +1,12 @@
+## [11.6.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.6.1...11.6.2) (2024-05-23)
+
+
+### Bug Fixes
+
+* **mdTypes:** pluralize genai type dirs ([#1322](https://github.com/forcedotcom/source-deploy-retrieve/issues/1322)) ([faac5bc](https://github.com/forcedotcom/source-deploy-retrieve/commit/faac5bcac21dae01d051335e89441dd6c5aadc9f))
+
+
+
 ## [11.6.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.6.0...11.6.1) (2024-05-22)
 
 

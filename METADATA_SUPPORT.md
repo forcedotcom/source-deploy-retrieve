@@ -641,7 +641,6 @@ v61 introduces the following new types.  Here's their current level of support
 > 1. settings types that are automatically supported
 
 - AccessControlPolicy
-- DataKitObjectDependency
 - AIAssistantTemplate
 - AssignmentRule
 - AssistantRecommendationType
@@ -654,6 +653,7 @@ v61 introduces the following new types.  Here's their current level of support
 - CustomExperience
 - CustomLabel
 - CustomFieldTranslation
+- DataKitObjectDependency
 - DataPipeline
 - DynamicTrigger
 - EmbeddedServiceFieldService

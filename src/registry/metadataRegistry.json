@@ -68,7 +68,6 @@
   },
   "suffixes": {
     "Canvas": "canvasmetadata",
-    "dataKitObjectDependency": "datakitobjectdependency",
     "CaseSubjectParticle": "casesubjectparticle",
     "ChannelObjectLinkingRule": "channelobjectlinkingrule",
     "ChatterExtension": "chatterextension",
@@ -191,6 +190,7 @@
     "dashboardFolder": "dashboardfolder",
     "dataCalcInsightTemplate": "datacalcinsighttemplate",
     "dataConnectorIngestApi": "dataconnectoringestapi",
+    "dataKitObjectDependency": "datakitobjectdependency",
     "dataKitObjectTemplate": "datakitobjecttemplate",
     "dataPackageKitDefinition": "datapackagekitdefinition",
     "dataPipeline": "datapipeline",
@@ -511,13 +511,6 @@
       },
       "strictDirectoryName": true,
       "suffix": "policy"
-    },
-    "datakitobjectdependency": {
-      "id": "datakitobjectdependency",
-      "name": "DataKitObjectDependency",
-      "suffix": "dataKitObjectDependency",
-      "directoryName": "dataKitObjectDependencies",
-      "inFolder": false
     },
     "accountforecastsettings": {
       "directoryName": "AccountForecastSettings",
@@ -1671,6 +1664,13 @@
       "strictDirectoryName": false,
       "suffix": "s3DataConnector"
     },
+    "datakitobjectdependency": {
+      "directoryName": "dataKitObjectDependencies",
+      "id": "datakitobjectdependency",
+      "inFolder": false,
+      "name": "DataKitObjectDependency",
+      "suffix": "dataKitObjectDependency"
+    },
     "datakitobjecttemplate": {
       "directoryName": "dataKitObjectTemplates",
       "id": "datakitobjecttemplate",
@@ -2593,14 +2593,14 @@
       "suffix": "gatewayProviderPaymentMethodType"
     },
     "genaifunction": {
-      "directoryName": "genAiFunction",
+      "directoryName": "genAiFunctions",
       "id": "genaifunction",
       "inFolder": false,
       "name": "GenAiFunction",
       "suffix": "genAiFunction"
     },
     "genaiplanner": {
-      "directoryName": "genAiPlanner",
+      "directoryName": "genAiPlanners",
       "id": "genaiplanner",
       "inFolder": false,
       "name": "GenAiPlanner",

@@ -257,7 +257,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       }
 
       // if there was nothing in the resolveIncludeSet, then we can be missing information that we display to the user for deletes
-      if (resolveIncludeSet?.size === 0) {
+      if (resolveIncludeSet?.size === 0 && resolvePreSet) {
         const preCS = ComponentSet.fromSource({
           fsPaths: options.resolveSourcePaths,
           tree: options.tree,
@@ -267,7 +267,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         for (const component of preCS) {
           result.add(component, DestructiveChangesType.PRE);
         }
+      }
 
+      if (resolveIncludeSet?.size === 0 && resolvePostSet) {
         const postCS = ComponentSet.fromSource({
           fsPaths: options.resolveSourcePaths,
           tree: options.tree,
@@ -401,10 +403,11 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     // If this ComponentSet has components marked for delete, we need to
     // only include those components in a destructiveChanges.xml and
     // all other components in the regular manifest.
-    let components = this.components;
-    if (this.getTypesOfDestructiveChanges().length) {
-      components = destructiveType ? this.destructiveComponents[destructiveType] : this.manifestComponents;
-    }
+    const components = this.getTypesOfDestructiveChanges().length
+      ? destructiveType
+        ? this.destructiveComponents[destructiveType]
+        : this.manifestComponents
+      : this.components;
 
     const typeMap = new Map<string, string[]>();
 
@@ -528,13 +531,15 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     // Build maps of destructive components and regular components as they are added
     // as an optimization when building manifests.
-    if (deletionType) {
+    if (deletionType ?? component.isMarkedForDelete()) {
       component.setMarkedForDelete(deletionType);
+      // type assertion because isMarkedForDelete implies some DestructiveChangesType
+      const definiteDeletionType = deletionType ?? (component.getDestructiveChangesType() as DestructiveChangesType);
       this.logger.debug(`Marking component for delete: ${component.fullName}`);
-      if (!this.destructiveComponents[deletionType].has(key)) {
-        this.destructiveComponents[deletionType].set(key, new DecodeableMap<string, SourceComponent>());
+      if (!this.destructiveComponents[definiteDeletionType].has(key)) {
+        this.destructiveComponents[definiteDeletionType].set(key, new DecodeableMap<string, SourceComponent>());
       }
-      this.destructiveComponents[deletionType].get(key)?.set(srcKey, component);
+      this.destructiveComponents[definiteDeletionType].get(key)?.set(srcKey, component);
       // updated with deletion information
       this.components.get(key)?.set(srcKey, component);
     } else {

@@ -106,7 +106,7 @@ const getXmlDestination = (
         xmlDestination = xmlDestination.slice(0, xmlDestination.lastIndexOf(META_XML_SUFFIX));
       } else {
         void Lifecycle.getInstance().emitWarning(
-          `Potential metadata-format file ${xmlDestination} found in a source-format directory`
+          `Found a file (${xmlDestination}) that appears to be in metadata format, but the directory it's in is for source formatted files.`
         );
       }
     } else {

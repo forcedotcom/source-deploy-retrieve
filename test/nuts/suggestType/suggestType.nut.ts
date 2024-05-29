@@ -92,10 +92,10 @@ describe('suggest types', () => {
     });
     expect(lifecycleSpy.calledOnce).to.be.true;
     expect(lifecycleSpy.args[0][0]).to.equal(
-      `Potential metadata-format file ${join(
+      `Found a file (${join(
         'enablementMeasureDefinitions',
         'measure.enablementMeasureDefinition'
-      )} found in a source-format directory`
+      )}) that appears to be in metadata format, but the directory it's in is for source formatted files.`
     );
 
     fs.rmSync('output', { recursive: true, force: true });

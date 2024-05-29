@@ -6,10 +6,11 @@
  */
 
 import * as path from 'node:path';
+import * as fs from 'node:fs';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { expect, config } from 'chai';
 import { SfError, Messages } from '@salesforce/core';
-import { ComponentSetBuilder } from '../../../src';
+import { ComponentSetBuilder, MetadataConverter } from '../../../src';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -63,6 +64,41 @@ describe('suggest types', () => {
         'A metadata type lookup for "DummyClass.clss" found the following close matches:'
       );
       expect(error.actions).to.include('-- Did you mean ".cls" instead for the "ApexClass" metadata type?');
+    }
+  });
+
+  it('it offers a suggestions on metadata format file when converting to metadata', async () => {
+    try {
+      const set = await ComponentSetBuilder.build({
+        sourcepath: [
+          path.join(
+            session.project.dir,
+            'force-app',
+            'main',
+            'default',
+            'enablementMeasureDefinitions',
+            'measure.enablementMeasureDefinition'
+          ),
+        ],
+      });
+      const converter = new MetadataConverter();
+      await converter.convert(set, 'metadata', {
+        type: 'directory',
+        genUniqueDir: false,
+        outputDirectory: 'output',
+      });
+      throw new Error('This test should have thrown');
+    } catch (err) {
+      const error = err as SfError;
+      expect(error.name).to.equal('TypeInferenceError');
+      expect(error.actions).to.include(
+        'A metadata type lookup for "measure.enablementMeasureDefinitio" found the following close matches:'
+      );
+      expect(error.actions).to.include(
+        '-- Did you mean ".enablementMeasureDefinition" instead for the "EnablementMeasureDefinition" metadata type?'
+      );
+    } finally {
+      fs.rmSync('output', { recursive: true, force: true });
     }
   });
 

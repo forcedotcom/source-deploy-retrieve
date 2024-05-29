@@ -239,6 +239,7 @@
     "emailFolder": "emailfolder",
     "enablementMeasureDefinition": "enablementmeasuredefinition",
     "enablementProgramDefinition": "enablementprogramdefinition",
+    "enblProgramTaskSubCategory": "enblprogramtasksubcategory",
     "entitlementProcess": "entitlementprocess",
     "entitlementTemplate": "entitlementtemplate",
     "entityImplements": "entityimplements",
@@ -310,6 +311,7 @@
     "keywords": "keywordlist",
     "labels": "customlabels",
     "layout": "layout",
+    "learningItemType": "learningitemtype",
     "letter": "letterhead",
     "licenseDefinition": "licensedefinition",
     "lightningBolt": "lightningbolt",
@@ -2080,6 +2082,14 @@
       "strictDirectoryName": false,
       "suffix": "enablementProgramDefinition"
     },
+    "enblprogramtasksubcategory": {
+      "directoryName": "enblProgramTaskSubCategories",
+      "id": "enblprogramtasksubcategory",
+      "inFolder": false,
+      "name": "EnblProgramTaskSubCategory",
+      "strictDirectoryName": false,
+      "suffix": "enblProgramTaskSubCategory"
+    },
     "entitlementprocess": {
       "directoryName": "entitlementProcesses",
       "id": "entitlementprocess",
@@ -2805,6 +2815,14 @@
       "name": "LeadConvertSettings",
       "strictDirectoryName": false,
       "suffix": "LeadConvertSetting"
+    },
+    "learningitemtype": {
+      "directoryName": "learningItemTypes",
+      "id": "learningitemtype",
+      "inFolder": false,
+      "name": "LearningItemType",
+      "strictDirectoryName": false,
+      "suffix": "learningItemType"
     },
     "letterhead": {
       "directoryName": "letterhead",

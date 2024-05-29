@@ -656,6 +656,7 @@ v61 introduces the following new types.  Here's their current level of support
 - DataPipeline
 - DynamicTrigger
 - EmbeddedServiceFieldService
+- EnblProgramTaskSubCategory
 - EntityImplements
 - EscalationRule
 - EventDelivery
@@ -675,6 +676,7 @@ v61 introduces the following new types.  Here's their current level of support
 - IntegrationHubSettings
 - IntegrationHubSettingsType
 - InternalOrganization
+- LearningItemType
 - LicenseDefinition
 - ManagedTopic
 - MarketingResourceType

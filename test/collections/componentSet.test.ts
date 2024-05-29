@@ -418,7 +418,7 @@ describe('ComponentSet', () => {
         });
 
         expect(result).to.deep.equal(expected);
-        expect(!!compSet.getTypesOfDestructiveChanges().length).to.be.true;
+        expect(compSet.getTypesOfDestructiveChanges().length).to.equal(1);
       });
 
       describe('includes filter', () => {
@@ -460,7 +460,7 @@ describe('ComponentSet', () => {
 
           expect(result).to.deep.equal(expected);
         });
-        it('components marked for delete do not impact the inludes filter', () => {
+        it('components marked for delete do not impact the includes filter', () => {
           getComponentsStub.restore();
 
           // these *would* match except they're marked fo deletion so the include filter doesn't use them.
@@ -1295,7 +1295,7 @@ describe('ComponentSet', () => {
 
     it('should add metadata component marked for delete to package components', () => {
       const set = new ComponentSet(undefined, registryAccess);
-      expect(!!set.getTypesOfDestructiveChanges().length).to.be.false;
+      expect(set.getTypesOfDestructiveChanges().length).to.equal(0);
 
       const component = new SourceComponent({
         name: mixedContentSingleFile.COMPONENT.name,
@@ -1304,14 +1304,14 @@ describe('ComponentSet', () => {
       });
       set.add(component, DestructiveChangesType.POST);
 
-      expect(!!set.getTypesOfDestructiveChanges().length).to.be.true;
+      expect(set.getTypesOfDestructiveChanges()).to.deep.equal([DestructiveChangesType.POST]);
       expect(set.getSourceComponents().first()?.isMarkedForDelete()).to.be.true;
-      expect(set.has(component)).to.be.true;
+      expect(set.has(component, DestructiveChangesType.POST)).to.be.true;
     });
 
-    it('should delete metadata from package components, if its present in destructive changes', () => {
+    it('allow a component in both deploy and destructive manifests', () => {
       const set = new ComponentSet(undefined, registryAccess);
-      expect(!!set.getTypesOfDestructiveChanges().length).to.be.false;
+      expect(set.getTypesOfDestructiveChanges().length).to.equal(0);
 
       const component = new SourceComponent({
         name: mixedContentSingleFile.COMPONENT.name,
@@ -1320,20 +1320,24 @@ describe('ComponentSet', () => {
       });
       set.add(component, DestructiveChangesType.POST);
 
-      expect(!!set.getTypesOfDestructiveChanges().length).to.be.true;
+      expect(set.getTypesOfDestructiveChanges().length).to.equal(1);
       expect(set.getDestructiveChangesType()).to.equal(DestructiveChangesType.POST);
       expect(set.getSourceComponents().first()?.isMarkedForDelete()).to.be.true;
 
-      set.add(component);
+      // create a new instance of component2 because the original mutates the component
+      const component2 = new SourceComponent({
+        name: mixedContentSingleFile.COMPONENT.name,
+        type: mixedContentSingleFile.COMPONENT.type,
+        xml: mixedContentSingleFile.COMPONENT.xml,
+      });
+      set.add(component2);
       set.setDestructiveChangesType(DestructiveChangesType.PRE);
       expect(set.getDestructiveChangesType()).to.equal(DestructiveChangesType.PRE);
       expect(set.getSourceComponents().first()?.isMarkedForDelete()).to.be.true;
-      expect(set.has(component)).to.be.true;
-      expect(set.getSourceComponents().toArray().length).to.equal(1);
+      expect(set.has(component2)).to.be.true;
+      expect(set.getSourceComponents().toArray().length).to.equal(2);
       expect(set.destructiveChangesPre.size).to.equal(0);
       expect(set.destructiveChangesPost.size).to.equal(1);
-      // @ts-ignore - private
-      expect(set.manifestComponents.size).to.equal(1);
     });
   });
 

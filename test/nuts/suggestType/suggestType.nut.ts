@@ -7,9 +7,11 @@
 
 import * as path from 'node:path';
 import * as fs from 'node:fs';
+import { join } from 'node:path';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { expect, config } from 'chai';
-import { SfError, Messages } from '@salesforce/core';
+import { SfError, Messages, Lifecycle } from '@salesforce/core';
+import * as sinon from 'sinon';
 import { ComponentSetBuilder, MetadataConverter } from '../../../src';
 
 Messages.importMessagesDirectory(__dirname);
@@ -68,38 +70,35 @@ describe('suggest types', () => {
   });
 
   it('it offers a suggestions on metadata format file when converting to metadata', async () => {
-    try {
-      const set = await ComponentSetBuilder.build({
-        sourcepath: [
-          path.join(
-            session.project.dir,
-            'force-app',
-            'main',
-            'default',
-            'enablementMeasureDefinitions',
-            'measure.enablementMeasureDefinition'
-          ),
-        ],
-      });
-      const converter = new MetadataConverter();
-      await converter.convert(set, 'metadata', {
-        type: 'directory',
-        genUniqueDir: false,
-        outputDirectory: 'output',
-      });
-      throw new Error('This test should have thrown');
-    } catch (err) {
-      const error = err as SfError;
-      expect(error.name).to.equal('TypeInferenceError');
-      expect(error.actions).to.include(
-        'A metadata type lookup for "measure.enablementMeasureDefinitio" found the following close matches:'
-      );
-      expect(error.actions).to.include(
-        '-- Did you mean ".enablementMeasureDefinition" instead for the "EnablementMeasureDefinition" metadata type?'
-      );
-    } finally {
-      fs.rmSync('output', { recursive: true, force: true });
-    }
+    const lifecycleSpy = sinon.spy(Lifecycle.prototype, 'emitWarning');
+
+    const set = await ComponentSetBuilder.build({
+      sourcepath: [
+        path.join(
+          session.project.dir,
+          'force-app',
+          'main',
+          'default',
+          'enablementMeasureDefinitions',
+          'measure.enablementMeasureDefinition'
+        ),
+      ],
+    });
+    const converter = new MetadataConverter();
+    await converter.convert(set, 'metadata', {
+      type: 'directory',
+      genUniqueDir: false,
+      outputDirectory: 'output',
+    });
+    expect(lifecycleSpy.calledOnce).to.be.true;
+    expect(lifecycleSpy.args[0][0]).to.equal(
+      `Potential metadata-format file ${join(
+        'enablementMeasureDefinitions',
+        'measure.enablementMeasureDefinition'
+      )} found in a source-format directory`
+    );
+
+    fs.rmSync('output', { recursive: true, force: true });
   });
 
   it('it offers a suggestions on a incorrect casing', async () => {

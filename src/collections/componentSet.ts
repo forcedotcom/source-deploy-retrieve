@@ -46,7 +46,7 @@ export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
 type ComponentMapMap = DecodeableMap<string, DecodeableMap<string, SourceComponent>>;
 
-const KEY_DELIMITER = '#';
+const KEY_DELIMITER = '#-#';
 const NOT_DESTRUCTIVE = 'SDR_NOT_DESTRUCTIVE';
 
 /**
@@ -753,7 +753,7 @@ const filterComponentsByDestructiveKey =
   (components: ComponentMapMap): ComponentMapMap =>
     new DecodeableMap(
       [...components.entries()].filter(([k]) =>
-        destructiveType ? k.endsWith(destructiveType) : k.endsWith(NOT_DESTRUCTIVE)
+        k.endsWith(`${KEY_DELIMITER}${destructiveType ? destructiveType : NOT_DESTRUCTIVE}`)
       )
     );
 

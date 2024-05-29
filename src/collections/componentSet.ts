@@ -44,8 +44,10 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 
 export type DeploySetOptions = Omit<MetadataApiDeployOptions, 'components'>;
 export type RetrieveSetOptions = Omit<MetadataApiRetrieveOptions, 'components'>;
+type ComponentMapMap = DecodeableMap<string, DecodeableMap<string, SourceComponent>>;
 
 const KEY_DELIMITER = '#';
+const NOT_DESTRUCTIVE = 'SDR_NOT_DESTRUCTIVE';
 
 /**
  * A collection containing no duplicate metadata members (`fullName` and `type` pairs). `ComponentSets`
@@ -78,16 +80,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public forceIgnoredPaths?: Set<string>;
   private logger: Logger;
   // all components stored here, regardless of what manifest they belong to
-  private components = new DecodeableMap<string, DecodeableMap<string, SourceComponent>>();
+  private components: ComponentMapMap = new DecodeableMap<string, DecodeableMap<string, SourceComponent>>();
 
-  // internal component maps used by this.getObject() when building manifests.
-  private destructiveComponents = {
-    [DestructiveChangesType.PRE]: new DecodeableMap<string, DecodeableMap<string, SourceComponent>>(),
-    [DestructiveChangesType.POST]: new DecodeableMap<string, DecodeableMap<string, SourceComponent>>(),
-  };
-  // used to store components meant for a "constructive" (not destructive) manifest
-  private manifestComponents = new DecodeableMap<string, DecodeableMap<string, SourceComponent>>();
-
+  /** @deprecated mark individual components for deletion type, not the whole CS */
   private destructiveChangesType = DestructiveChangesType.POST;
 
   public constructor(components: Iterable<ComponentLike> = [], registry = new RegistryAccess()) {
@@ -96,8 +91,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     this.logger = Logger.childFromRoot(this.constructor.name);
 
     for (const component of components) {
-      const destructiveType =
-        component instanceof SourceComponent ? component.getDestructiveChangesType() : this.destructiveChangesType;
+      const destructiveType = component instanceof SourceComponent ? component.getDestructiveChangesType() : undefined;
 
       this.add(component, destructiveType);
     }
@@ -119,11 +113,11 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   }
 
   public get destructiveChangesPre(): DecodeableMap<string, DecodeableMap<string, SourceComponent>> {
-    return this.destructiveComponents[DestructiveChangesType.PRE];
+    return filterComponentsByDestructiveKey(DestructiveChangesType.PRE)(this.components);
   }
 
   public get destructiveChangesPost(): DecodeableMap<string, DecodeableMap<string, SourceComponent>> {
-    return this.destructiveComponents[DestructiveChangesType.POST];
+    return filterComponentsByDestructiveKey(DestructiveChangesType.POST)(this.components);
   }
 
   /**
@@ -399,15 +393,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    */
   public async getObject(destructiveType?: DestructiveChangesType): Promise<PackageManifestObject> {
     const version = await this.getApiVersion();
-
     // If this ComponentSet has components marked for delete, we need to
     // only include those components in a destructiveChanges.xml and
     // all other components in the regular manifest.
-    const components = this.getTypesOfDestructiveChanges().length
-      ? destructiveType
-        ? this.destructiveComponents[destructiveType]
-        : this.manifestComponents
-      : this.components;
+    const components = destructiveType
+      ? filterComponentsByDestructiveKey(destructiveType)(this.components)
+      : filterComponentsByDestructiveKey(NOT_DESTRUCTIVE)(this.components);
 
     const typeMap = new Map<string, string[]>();
 
@@ -505,7 +496,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
 
     if (member) {
       // filter optimization
-      const memberCollection = this.components.get(simpleKey(member));
+      const memberCollection = this.components.get(simpleKey(NOT_DESTRUCTIVE)(member));
       iter = memberCollection && memberCollection.size > 0 ? memberCollection.values() : [];
     } else {
       // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -515,8 +506,17 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     return new LazyCollection(iter).filter((c) => c instanceof SourceComponent) as LazyCollection<SourceComponent>;
   }
 
+  /**
+   * side effect: if you pass in a SourceComponent and a deletion type,
+   * this will call SourceComponent.setMarkedForDelete and mutate your SourceComponent
+   * */
   public add(component: ComponentLike, deletionType?: DestructiveChangesType): void {
-    const key = simpleKey(component);
+    const key = simpleKey(
+      deletionType ??
+        // read the deletion type from the SourceComponent if there is one
+        (component instanceof SourceComponent ? component.getDestructiveChangesType() : undefined) ??
+        NOT_DESTRUCTIVE
+    )(component);
     if (!this.components.has(key)) {
       this.components.set(key, new DecodeableMap<string, SourceComponent>());
     }
@@ -524,30 +524,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     if (!(component instanceof SourceComponent)) {
       return;
     }
-    const srcKey = sourceKey(component);
-
     // we're working with SourceComponents now
-    this.components.get(key)?.set(srcKey, component);
-
-    // Build maps of destructive components and regular components as they are added
-    // as an optimization when building manifests.
-    if (deletionType ?? component.isMarkedForDelete()) {
+    if (deletionType) {
       component.setMarkedForDelete(deletionType);
-      // type assertion because isMarkedForDelete implies some DestructiveChangesType
-      const definiteDeletionType = deletionType ?? (component.getDestructiveChangesType() as DestructiveChangesType);
-      this.logger.debug(`Marking component for delete: ${component.fullName}`);
-      if (!this.destructiveComponents[definiteDeletionType].has(key)) {
-        this.destructiveComponents[definiteDeletionType].set(key, new DecodeableMap<string, SourceComponent>());
-      }
-      this.destructiveComponents[definiteDeletionType].get(key)?.set(srcKey, component);
-      // updated with deletion information
-      this.components.get(key)?.set(srcKey, component);
-    } else {
-      if (!this.manifestComponents.has(key)) {
-        this.manifestComponents.set(key, new DecodeableMap<string, SourceComponent>());
-      }
-      this.manifestComponents.get(key)?.set(srcKey, component);
     }
+    const srcKey = sourceKey(component);
+    this.components.get(key)?.set(srcKey, component);
   }
 
   /**
@@ -563,49 +545,35 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @param component Component to test for membership in the set
    * @returns `true` if the component is in the set
    */
-  public has(component: ComponentLike): boolean {
-    const key = simpleKey(component);
-    if (this.components.has(key)) {
-      return true;
-    }
 
-    const wildcardMember: ComponentLike = {
-      fullName: ComponentSet.WILDCARD,
-      type: typeof component.type === 'object' ? component.type.name : component.type,
-    };
-    const isIncludedInWildcard = this.components.has(simpleKey(wildcardMember));
-    if (isIncludedInWildcard) {
-      return true;
-    }
+  public has(component: ComponentLike, destructiveType?: DestructiveChangesType | typeof NOT_DESTRUCTIVE): boolean {
+    const waysToMatch = [
+      component, // the exact component
+      {
+        fullName: ComponentSet.WILDCARD, // wildcard matches for the component
+        type: typeof component.type === 'object' ? component.type.name : component.type,
+      } satisfies ComponentLike,
+      // when there's a parent, we want to also match the parent and the parent's wildcards
+      ...(typeof component.type === 'object' && 'parent' in component && component.parent
+        ? [
+            component.parent,
+            {
+              fullName: ComponentSet.WILDCARD,
+              type: component.parent.type,
+            } satisfies ComponentLike,
+            {
+              fullName: `${component.parent.fullName}.${ComponentSet.WILDCARD}`,
+              type: component.type,
+            } satisfies ComponentLike,
+          ]
+        : []),
+    ];
 
-    if (typeof component.type === 'object') {
-      const { parent } = component as MetadataComponent;
-      if (parent) {
-        const parentDirectlyInSet = this.components.has(simpleKey(parent));
-        if (parentDirectlyInSet) {
-          return true;
-        }
-
-        const wildcardKey = simpleKey({
-          fullName: ComponentSet.WILDCARD,
-          type: parent.type,
-        });
-        const parentInWildcard = this.components.has(wildcardKey);
-        if (parentInWildcard) {
-          return true;
-        }
-        const partialWildcardKey = simpleKey({
-          fullName: `${parent.fullName}.${ComponentSet.WILDCARD}`,
-          type: component.type,
-        });
-        const parentInPartialWildcard = this.components.has(partialWildcardKey);
-        if (parentInPartialWildcard) {
-          return true;
-        }
-      }
-    }
-
-    return false;
+    return destructiveType
+      ? // match the full key including destructive type
+        waysToMatch.map(simpleKey(destructiveType)).some((key) => this.components.has(key))
+      : // if no destructive type is passed in, we want to match any destructive type
+        waysToMatch.some(someComponentMatchesAnyDestructiveType(this.components));
   }
 
   /**
@@ -615,18 +583,17 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @returns string[]
    */
   public getComponentFilenamesByNameAndType({ fullName, type }: MetadataMember): string[] {
-    const key = simpleKey({ fullName, type });
-    const componentMap = this.components.get(key);
-    if (!componentMap) {
-      return [];
-    }
-    const output = new Set<string>();
-    componentMap.forEach((component) => {
-      [...component.walkContent(), component.content, component.xml]
-        .filter(isString)
-        .map((filename) => output.add(filename));
-    });
-    return Array.from(output);
+    const key = simpleKey(NOT_DESTRUCTIVE)({ fullName, type });
+    const componentMap = this.components.get(key) ?? new DecodeableMap<string, SourceComponent>();
+    return Array.from(
+      new Set(
+        Array.from(componentMap.values()).flatMap((component) => [
+          ...component.walkContent(),
+          component.content,
+          component.xml,
+        ])
+      )
+    ).filter(isString);
   }
 
   public *[Symbol.iterator](): Iterator<MetadataComponent> {
@@ -646,6 +613,9 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   }
 
   /**
+   *
+   * @deprecated Use `setMarkedForDelete` on individual components instead of using the CS-level prop
+   *
    * If this `ComponentSet` has components marked for delete, this sets
    * whether those components are deleted before any other changes are
    * deployed (`destructiveChangesPre.xml`) or after changes are deployed
@@ -658,6 +628,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   }
 
   /**
+   *
+   * @deprecated Use `setMarkedForDelete` on individual components instead of using the CS-level prop
    * If this `ComponentSet` has components marked for delete it will use this
    * type to build the appropriate destructive changes manifest.
    *
@@ -736,15 +708,24 @@ const sourceKey = (component: SourceComponent): string => {
   return `${type.name}${fullName}${xml ?? ''}${content ?? ''}`;
 };
 
-const simpleKey = (component: ComponentLike): string => {
-  const typeName = typeof component.type === 'string' ? component.type.toLowerCase().trim() : component.type.id;
-  return `${typeName}${KEY_DELIMITER}${component.fullName}`;
+/** optionally pass in a destructiveChangesType to limit */
+const simpleKey =
+  (destructiveChangesType: DestructiveChangesType | typeof NOT_DESTRUCTIVE) =>
+  (component: ComponentLike): string => {
+    const typeName = typeof component.type === 'string' ? component.type.toLowerCase().trim() : component.type.id;
+    return `${typeName}${KEY_DELIMITER}${component.fullName}${KEY_DELIMITER}${destructiveChangesType}`;
+  };
+
+/** also removes the destructive type from the end */
+const splitOnFirstDelimiter = (input: string): [string, string] => {
+  const [head, ...tail] = input.split(KEY_DELIMITER);
+  return [head, tail.filter(isNotDestructiveKey).join(KEY_DELIMITER)];
 };
 
-const splitOnFirstDelimiter = (input: string): [string, string] => {
-  const indexOfSplitChar = input.indexOf(KEY_DELIMITER);
-  return [input.substring(0, indexOfSplitChar), input.substring(indexOfSplitChar + 1)];
-};
+const isNotDestructiveKey = (input: string): boolean =>
+  input !== DestructiveChangesType.PRE.toString() &&
+  input !== DestructiveChangesType.POST.toString() &&
+  input !== NOT_DESTRUCTIVE;
 
 const parseFromSourceInputs = (given: string | string[] | FromSourceOptions): FromSourceOptions => {
   if (Array.isArray(given)) {
@@ -766,3 +747,23 @@ const removeMarkedForDelete = (include: ComponentSet): ComponentSet => {
   }
   return filtered;
 };
+
+const filterComponentsByDestructiveKey =
+  (destructiveType: DestructiveChangesType | typeof NOT_DESTRUCTIVE) =>
+  (components: ComponentMapMap): ComponentMapMap =>
+    new DecodeableMap(
+      [...components.entries()].filter(([k]) =>
+        destructiveType ? k.endsWith(destructiveType) : k.endsWith(NOT_DESTRUCTIVE)
+      )
+    );
+
+/**
+ * preserves the original CS.has() behavior which would match regardless of destructive type
+ * would like to remove this in the next major version and only match via has on Constructive components
+ */
+const someComponentMatchesAnyDestructiveType =
+  (components: ComponentMapMap) =>
+  (component: ComponentLike): boolean => {
+    const allDestructiveTypes = [DestructiveChangesType.PRE, DestructiveChangesType.POST, NOT_DESTRUCTIVE] as const;
+    return allDestructiveTypes.map((k) => simpleKey(k)(component)).some((k) => components.has(k));
+  };

@@ -292,6 +292,7 @@ describe('ComponentSetBuilder', () => {
         },
       });
       expect(fromSourceStub.callCount).to.equal(1);
+      expect(compSet.forceIgnoredPaths).to.equal(undefined);
       const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
       expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
       const filter = new ComponentSet();
@@ -333,6 +334,8 @@ describe('ComponentSetBuilder', () => {
         },
       });
       expect(fromSourceStub.callCount).to.equal(1);
+      expect(compSet.forceIgnoredPaths?.size).to.equal(1);
+      expect(compSet.forceIgnoredPaths).to.deep.equal(new Set([join('my', 'path', 'to', 'a', 'customobject.xml')]));
       const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
       expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
       const filter = new ComponentSet();

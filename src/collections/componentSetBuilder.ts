@@ -163,6 +163,7 @@ export class ComponentSetBuilder {
               );
             });
           }
+          componentSet.forceIgnoredPaths = resolvedComponents.forceIgnoredPaths;
         }
 
         resolvedComponents.toArray().map(addToComponentSet(componentSet));

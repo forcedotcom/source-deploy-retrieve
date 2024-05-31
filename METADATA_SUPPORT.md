@@ -4,9 +4,18 @@ This list compares metadata types found in Salesforce v60 with the [metadata reg
 
 This repository is used by both the Salesforce CLIs and Salesforce's VSCode Extensions.
 
-Currently, there are 568/598 supported metadata types.
+Currently, there are 0/0 supported metadata types.
 For status on any existing gaps, please search or file an issue in the [Salesforce CLI issues only repo](https://github.com/forcedotcom/cli/issues).
 To contribute a new metadata type, please see the [Contributing Metadata Types to the Registry](./contributing/metadata.md)
+
+|Metadata Type|Support|Notes|
+|:---|:---|:---|
+
+
+
+## Next Release (v61)
+
+v61 introduces the following new types.  Here's their current level of support
 
 |Metadata Type|Support|Notes|
 |:---|:---|:---|
@@ -38,6 +47,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |AdvAccountForecastSet|✅||
 |AdvAcctForecastDimSource|✅||
 |AdvAcctForecastPeriodGroup|✅||
+|AffinityScoreDefinition|✅||
 |Ai4mSettings|✅||
 |AnalyticSnapshot|✅||
 |AnalyticsSettings|✅||
@@ -133,6 +143,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ContentAsset|✅||
 |ContentSettings|✅||
 |ContextDefinition|⚠️|Supports deploy/retrieve but not source tracking|
+|ContextUseCaseMapping|❌|Not supported, but support could be added|
 |ContractSettings|✅||
 |ContractType|❌|Not supported, but support could be added|
 |ConversationChannelDefinition|✅||
@@ -204,9 +215,11 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |DocumentChecklistSettings|✅||
 |DocumentFolder|✅||
 |DocumentGenerationSetting|✅||
+|DocumentTemplate|❌|Not supported, but support could be added (but not for tracking)|
 |DocumentType|✅||
 |DuplicateRule|✅||
 |DynamicFormsSettings|✅||
+|DynamicFulfillmentOrchestratorSettings|✅||
 |EACSettings|✅||
 |ESignatureConfig|✅||
 |ESignatureEnvelopeConfig|✅||
@@ -233,6 +246,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |EmployeeDataSyncProfile|❌|Not supported, but support could be added|
 |EmployeeFieldAccessSettings|✅||
 |EmployeeUserSettings|✅||
+|EnablementMeasureDefinition|⚠️|Supports deploy/retrieve but not source tracking|
+|EnablementProgramDefinition|⚠️|Supports deploy/retrieve but not source tracking|
 |EnhancedNotesSettings|✅||
 |EntitlementProcess|✅||
 |EntitlementSettings|✅||
@@ -249,11 +264,11 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExplainabilityMsgTemplate|✅||
 |ExpressionSetDefinition|✅||
 |ExpressionSetDefinitionVersion|✅||
-|ExpressionSetMessageToken|✅||
 |ExpressionSetObjectAlias|✅||
 |ExtDataTranFieldTemplate|❌|Not supported, but support could be added|
 |ExtDataTranObjectTemplate|✅||
 |ExternalAIModel|✅||
+|ExternalAuthIdentityProvider|❌|Not supported, but support could be added|
 |ExternalClientAppSettings|✅||
 |ExternalClientApplication|✅||
 |ExternalCredential|✅||
@@ -289,6 +304,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |FlowTest|✅||
 |ForecastingFilter|✅||
 |ForecastingFilterCondition|✅||
+|ForecastingGroup|✅||
 |ForecastingObjectListSettings|✅||
 |ForecastingSettings|✅||
 |ForecastingSourceDefinition|✅||
@@ -346,6 +362,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |KnowledgeGenerationSettings|✅||
 |KnowledgeSettings|✅||
 |LanguageSettings|✅||
+|LargeQuotesandOrdersForRlmSettings|✅||
 |Layout|✅||
 |LeadConfigSettings|✅||
 |LeadConvertSettings|✅||
@@ -502,6 +519,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ReportType|✅||
 |RestrictionRule|✅||
 |RetailExecutionSettings|✅||
+|RetrievalSummaryDefinition|✅||
 |RevenueManagementSettings|✅||
 |Role|✅||
 |SalesAgreementSettings|✅||
@@ -513,6 +531,8 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |SchedulingRule|✅||
 |SchemaSettings|✅||
 |ScoreCategory|✅||
+|SearchCustomization|⚠️|Supports deploy/retrieve but not source tracking|
+|SearchOrgWideObjectConfig|⚠️|Supports deploy/retrieve but not source tracking|
 |SearchSettings|✅||
 |SecuritySettings|✅||
 |ServiceAISetupDefinition|✅||
@@ -582,6 +602,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |VirtualVisitConfig|❌|Not supported, but support could be added|
 |VoiceSettings|✅||
 |WarrantyLifecycleMgmtSettings|✅||
+|WaveAnalyticAssetCollection|❌|Not supported, but support could be added|
 |WaveApplication|✅||
 |WaveComponent|✅||
 |WaveDashboard|✅||
@@ -609,13 +630,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |WorkflowTask|✅||
 |WorkforceEngagementSettings|✅||
 
-
-
-## Next Release (v61)
-
-> **Note**
-> v61 coverage not available at this time
-
 ## Additional Types
 
 > The following types are supported by this library but not in the coverage reports for either version.  These are typically
@@ -626,7 +640,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 > 1. settings types that are automatically supported
 
 - AccessControlPolicy
-- AffinityScoreDefinition
 - AIAssistantTemplate
 - AssignmentRule
 - AssistantRecommendationType
@@ -643,8 +656,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - DataPipeline
 - DynamicTrigger
 - EmbeddedServiceFieldService
-- EnablementMeasureDefinition
-- EnablementProgramDefinition
 - EnblProgramTaskSubCategory
 - EntityImplements
 - EscalationRule
@@ -652,10 +663,10 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - EventRelayConfig
 - EventSubscription
 - EventType
+- ExpressionSetMessageToken
 - extDataTranFieldTemplate
 - ExtlClntAppSampleConfigurablePolicies
 - ExtlClntAppSampleSettings
-- ForecastingGroup
 - Form
 - FormSection
 - GenAiPromptTemplate
@@ -682,12 +693,9 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - OrchestrationContext
 - Portal
 - ProductSpecificationTypeDefinition
-- RetrievalSummaryDefinition
 - Scontrol
 - SearchableObjDataSyncInfo
 - SearchCriteriaConfiguration
-- SearchCustomization
-- SearchOrgWideObjectConfig
 - Settings
 - SvcCatalogFilterCondition
 - SvcCatalogItemDefFiltrCrit

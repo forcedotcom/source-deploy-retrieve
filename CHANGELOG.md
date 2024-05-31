@@ -1,3 +1,12 @@
+## [11.6.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.6.3...11.6.4) (2024-05-31)
+
+
+### Bug Fixes
+
+* set forceIgnoredPaths on CS ([#1330](https://github.com/forcedotcom/source-deploy-retrieve/issues/1330)) ([f28206e](https://github.com/forcedotcom/source-deploy-retrieve/commit/f28206e4465a71c7bc50ee15d21bc8e8c00e33bd))
+
+
+
 ## [11.6.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.6.2...11.6.3) (2024-05-26)
 
 

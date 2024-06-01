@@ -548,16 +548,16 @@
   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
-"@salesforce/cli-plugins-testkit@^5.3.8":
-  version "5.3.8"
-  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-5.3.8.tgz#35c0d34b17e04a1162cdfa6c6450bda3f9062502"
-  integrity sha512-A+//ZlAwRPQQylIAPwo2Lob5PfSObyFbiYqYsG/ktBQlF41MASZHkCb/3/qJv1/2gPusVOUbEsmF1LRIj8reNg==
+"@salesforce/cli-plugins-testkit@^5.3.9":
+  version "5.3.9"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-5.3.9.tgz#864cb3e2421c1734c3d4ba838aa7e6447abaf201"
+  integrity sha512-v9WQZCCX1Izs4e/4hMn5nCsPyoE3iUmdpV5/nT9lfjFdtdUlwpfhdwUJqNczEz8g2qkJnebYETrB+KklHAQj2A==
   dependencies:
     "@salesforce/core" "^7.3.9"
     "@salesforce/kit" "^3.1.2"
     "@salesforce/ts-types" "^2.0.9"
     "@types/shelljs" "^0.8.15"
-    debug "^4.3.1"
+    debug "^4.3.5"
     jszip "^3.10.1"
     shelljs "^0.8.4"
     sinon "^17.0.2"
@@ -1711,7 +1711,14 @@ dateformat@^4.6.3:
   resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-4.6.3.tgz#556fa6497e5217fedb78821424f8a1c22fa3f4b5"
   integrity sha512-2P0p0pFGzHS5EMnhdxQi7aJN+iMheud0UhG4dlE1DLAlvL8JHjJJTX/CSm4JXwV0Ka5nGk3zC5mcb5bUQUxxMA==
 
-debug@4, debug@4.3.4, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4:
+debug@4, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@^4.3.5:
+  version "4.3.5"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.5.tgz#e83444eceb9fedd4a1da56d671ae2446a01a6e1e"
+  integrity sha512-pt0bNEmneDIvdL1Xsd9oDQ/wrQRkXDT4AUWlNZNPKvW5x/jyO9VFXkJUP07vQ2upmw5PlaITaPKc31jK13V+jg==
+  dependencies:
+    ms "2.1.2"
+
+debug@4.3.4:
   version "4.3.4"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.4.tgz#1319f6579357f2338d3337d2cdd4914bb5dcc865"
   integrity sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==

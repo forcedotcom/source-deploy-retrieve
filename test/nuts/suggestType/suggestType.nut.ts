@@ -90,13 +90,13 @@ describe('suggest types', () => {
       genUniqueDir: false,
       outputDirectory: 'output',
     });
-    expect(lifecycleSpy.calledOnce).to.be.true;
-    expect(lifecycleSpy.args[0][0]).to.equal(
+    expect(lifecycleSpy.callCount).to.equal(1);
+    expect(lifecycleSpy.args.flat()).to.deep.equal([
       `Found a file (${join(
         'enablementMeasureDefinitions',
         'measure.enablementMeasureDefinition'
-      )}) that appears to be in metadata format, but the directory it's in is for source formatted files.`
-    );
+      )}) that appears to be in metadata format, but the directory it's in is for source formatted files.`,
+    ]);
 
     fs.rmSync('output', { recursive: true, force: true });
   });

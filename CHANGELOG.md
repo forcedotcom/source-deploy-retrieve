@@ -1,3 +1,12 @@
+## [11.6.5](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.6.4...11.6.5) (2024-06-03)
+
+
+### Bug Fixes
+
+* "did you mean" for project metadata detects mdapi format ([8830972](https://github.com/forcedotcom/source-deploy-retrieve/commit/88309728e9f9c11387b56ebbd63adcfc76f40ba3))
+
+
+
 ## [11.6.4](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.6.3...11.6.4) (2024-05-31)
 
 

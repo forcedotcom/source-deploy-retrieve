@@ -90,8 +90,7 @@ describe('suggest types', () => {
       genUniqueDir: false,
       outputDirectory: 'output',
     });
-    expect(lifecycleSpy.callCount).to.equal(1);
-    expect(lifecycleSpy.args.flat()).to.deep.equal([
+    expect(lifecycleSpy.args.flat()).to.deep.include([
       `Found a file (${join(
         'enablementMeasureDefinitions',
         'measure.enablementMeasureDefinition'

@@ -6,10 +6,13 @@
  */
 
 import * as path from 'node:path';
+import * as fs from 'node:fs';
+import { join } from 'node:path';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { expect, config } from 'chai';
-import { SfError, Messages } from '@salesforce/core';
-import { ComponentSetBuilder } from '../../../src';
+import { SfError, Messages, Lifecycle } from '@salesforce/core';
+import * as sinon from 'sinon';
+import { ComponentSetBuilder, MetadataConverter } from '../../../src';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -64,6 +67,37 @@ describe('suggest types', () => {
       );
       expect(error.actions).to.include('-- Did you mean ".cls" instead for the "ApexClass" metadata type?');
     }
+  });
+
+  it('it offers a suggestions on metadata format file when converting to metadata', async () => {
+    const lifecycleSpy = sinon.spy(Lifecycle.prototype, 'emitWarning');
+
+    const set = await ComponentSetBuilder.build({
+      sourcepath: [
+        path.join(
+          session.project.dir,
+          'force-app',
+          'main',
+          'default',
+          'enablementMeasureDefinitions',
+          'measure.enablementMeasureDefinition'
+        ),
+      ],
+    });
+    const converter = new MetadataConverter();
+    await converter.convert(set, 'metadata', {
+      type: 'directory',
+      genUniqueDir: false,
+      outputDirectory: 'output',
+    });
+    expect(lifecycleSpy.args.flat()).to.deep.include([
+      `Found a file (${join(
+        'enablementMeasureDefinitions',
+        'measure.enablementMeasureDefinition'
+      )}) that appears to be in metadata format, but the directory it's in is for source formatted files.`,
+    ]);
+
+    fs.rmSync('output', { recursive: true, force: true });
   });
 
   it('it offers a suggestions on a incorrect casing', async () => {

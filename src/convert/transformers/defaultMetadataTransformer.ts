@@ -100,9 +100,15 @@ const getXmlDestination = (
   //    - insert file extension behind the -meta.xml suffix if folder type and to 'source format'
   if (!component.content && !['digitalexperiencebundle'].includes(component.type.id)) {
     if (targetFormat === 'metadata') {
-      xmlDestination = folderContentType
-        ? xmlDestination.replace(`.${suffix}`, '')
-        : xmlDestination.slice(0, xmlDestination.lastIndexOf(META_XML_SUFFIX));
+      if (folderContentType) {
+        xmlDestination = xmlDestination.replace(`.${suffix}`, '');
+      } else if (xmlDestination.includes(META_XML_SUFFIX)) {
+        xmlDestination = xmlDestination.slice(0, xmlDestination.lastIndexOf(META_XML_SUFFIX));
+      } else {
+        void Lifecycle.getInstance().emitWarning(
+          `Found a file (${xmlDestination}) that appears to be in metadata format, but the directory it's in is for source formatted files.`
+        );
+      }
     } else {
       xmlDestination = folderContentType
         ? xmlDestination.replace(META_XML_SUFFIX, `.${suffix}${META_XML_SUFFIX}`)

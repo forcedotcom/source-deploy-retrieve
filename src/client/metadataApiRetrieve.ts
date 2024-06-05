@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as path from 'node:path';
+import { join, parse } from 'node:path';
 import fs from 'graceful-fs';
 import JSZip from 'jszip';
 import { asBoolean, isString } from '@salesforce/ts-types';
@@ -125,6 +125,9 @@ export class MetadataApiRetrieve extends MetadataTransfer<
   public constructor(options: MetadataApiRetrieveOptions) {
     super(options);
     this.options = Object.assign({}, MetadataApiRetrieve.DEFAULT_OPTIONS, options);
+    if (this.mdapiTempDir) {
+      this.mdapiTempDir = join(this.mdapiTempDir, `${new Date().toISOString()}_retrieve`);
+    }
   }
 
   /**
@@ -172,6 +175,18 @@ export class MetadataApiRetrieve extends MetadataTransfer<
       if (isMdapiRetrieve) {
         await handleMdapiResponse(this.options, zipFileContents);
       } else {
+        // If mdapiTempDir is set, write the raw retrieve result to the temp dir
+        if (this.mdapiTempDir && zipFileContents) {
+          const outputDir = join(this.mdapiTempDir, 'metadata');
+          fs.mkdirSync(outputDir, { recursive: true });
+          const mdapiTempOptions = {
+            usernameOrConnection: this.options.usernameOrConnection,
+            output: outputDir,
+            unzip: true,
+          };
+          await handleMdapiResponse(mdapiTempOptions, zipFileContents);
+        }
+
         ({ componentSet, partialDeleteFileResponses } = await extract({
           zip: zipFileContents,
           options: this.options,
@@ -272,22 +287,22 @@ export type ScopedPostRetrieve = {
 
 const handleMdapiResponse = async (options: MetadataApiRetrieveOptions, zipFileContents: Buffer): Promise<void> => {
   const name = options.zipFileName ?? 'unpackaged.zip';
-  const zipFilePath = path.join(options.output, name);
+  const zipFilePath = join(options.output, name);
   fs.writeFileSync(zipFilePath, zipFileContents);
 
   if (options.unzip) {
     const zip = await JSZip.loadAsync(zipFileContents, { base64: true, createFolders: true });
-    const extractPath = path.join(options.output, path.parse(name).name);
+    const extractPath = join(options.output, parse(name).name);
     fs.mkdirSync(extractPath, { recursive: true });
     for (const filePath of Object.keys(zip.files)) {
       const zipObj = zip.file(filePath);
       if (!zipObj || zipObj?.dir) {
-        fs.mkdirSync(path.join(extractPath, filePath), { recursive: true });
+        fs.mkdirSync(join(extractPath, filePath), { recursive: true });
       } else {
         // eslint-disable-next-line no-await-in-loop
         const content = await zipObj?.async('nodebuffer');
         if (content) {
-          fs.writeFileSync(path.join(extractPath, filePath), content);
+          fs.writeFileSync(join(extractPath, filePath), content);
         }
       }
     }

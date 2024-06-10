@@ -6,12 +6,12 @@ on:
       - main
       - prerelease/**
     tags-ignore:
-      - "*"
+      - '*'
   workflow_dispatch:
     inputs:
       prerelease:
         type: string
-        description: "Name to use for the prerelease: beta, dev, etc. NOTE: If this is already set in the package.json, it does not need to be passed in here."
+        description: 'Name to use for the prerelease: beta, dev, etc. NOTE: If this is already set in the package.json, it does not need to be passed in here.'
 
 jobs:
   release:

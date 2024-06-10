@@ -13,7 +13,7 @@ Got questions?
 
 - If you work for Salesforce,
   - For general questions, post in [#platform-cli](https://salesforce-internal.slack.com/archives/C01LKDT1P6J)
-  - For PR reviews, post in [#platform-cli-collaboration](https://salesforce.enterprise.slack.com/archives/C06V045BZD0) 
+  - For PR reviews, post in [#platform-cli-collaboration](https://salesforce.enterprise.slack.com/archives/C06V045BZD0)
 - If not, [open an issue](https://github.com/forcedotcom/cli/issues)
 
 ## Adding new types to the registry via a script

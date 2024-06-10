@@ -6,6 +6,7 @@
  */
 
 import { dirname, join } from 'node:path';
+import fs from 'node:fs';
 import { AnyJson, JsonMap, ensureString, isJsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
 import { Messages } from '@salesforce/core';
@@ -84,7 +85,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
 
     const writeInfoForParent = mergeWith
       ? getWriteInfosFromMerge(mergeWith)(stateSetter)(parentXmlObject)(component)
-      : [{ source: new JsToXml(parentXmlObject), output: getOutputFile(component) }];
+      : getWriteInfosWithoutMerge(this.defaultDirectory)(parentXmlObject)(component);
 
     const childDestinations = new Set(writeInfosForChildren.map((w) => w.output));
 
@@ -198,6 +199,22 @@ const getWriteInfosFromMerge =
       stateSetter(parentComponent, { writeInfo });
     }
     return [];
+  };
+
+const getWriteInfosWithoutMerge =
+  (defaultDirectory: string | undefined) =>
+  (parentXmlObject: XmlObj) =>
+  (component: SourceComponent): WriteInfo[] => {
+    const output = join(defaultDirectory ?? '', getOutputFile(component));
+    if (
+      !objectHasSomeRealValues(component.type)(parentXmlObject) &&
+      fs.existsSync(output) &&
+      Object.values(component.type.children ?? {}).every((child) => !child.isAddressable)
+    ) {
+      return [];
+    } else {
+      return [{ source: new JsToXml(parentXmlObject), output }];
+    }
   };
 
 /**

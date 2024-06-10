@@ -6,34 +6,38 @@
  */
 /* eslint  @typescript-eslint/unified-signatures:0 */
 import { XMLBuilder } from 'fast-xml-parser';
-import { AuthInfo, Connection, Logger, Messages, SfError } from '@salesforce/core';
+import {
+  AuthInfo,
+  ConfigAggregator,
+  Connection,
+  Logger,
+  Messages,
+  OrgConfigProperties,
+  SfError,
+  SfProject,
+} from '@salesforce/core';
 import { isString } from '@salesforce/ts-types';
-import {
-  MetadataApiDeploy,
-  MetadataApiDeployOptions,
-  MetadataApiRetrieve,
-  MetadataApiRetrieveOptions,
-} from '../client';
-import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common';
-import {
-  ComponentLike,
-  ManifestResolver,
-  MetadataComponent,
-  MetadataMember,
-  MetadataResolver,
-  ConnectionResolver,
-  SourceComponent,
-} from '../resolve';
-import { getCurrentApiVersion, MetadataType, RegistryAccess } from '../registry';
+import { MetadataApiDeploy, MetadataApiDeployOptions } from '../client/metadataApiDeploy';
+import { MetadataApiRetrieve } from '../client/metadataApiRetrieve';
+import type { MetadataApiRetrieveOptions } from '../client/types';
+import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../common/constants';
+import { SourceComponent } from '../resolve/sourceComponent';
+import { MetadataResolver } from '../resolve/metadataResolver';
+import { ConnectionResolver } from '../resolve/connectionResolver';
+import { ManifestResolver } from '../resolve/manifestResolver';
+import { ComponentLike, MetadataComponent, MetadataMember } from '../resolve/types';
+import { RegistryAccess } from '../registry/registryAccess';
+import { getCurrentApiVersion } from '../registry/coverage';
+import { MetadataType } from '../registry/types';
 import {
   DestructiveChangesType,
+  FromConnectionOptions,
   FromManifestOptions,
   FromSourceOptions,
-  FromConnectionOptions,
   PackageManifestObject,
-  PackageTypeMembers,
 } from './types';
 import { LazyCollection } from './lazyCollection';
+import { DecodeableMap } from './decodeableMap';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -72,15 +76,17 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public fullName?: string;
   public forceIgnoredPaths?: Set<string>;
   private logger: Logger;
-  private registry: RegistryAccess;
-  private components = new Map<string, Map<string, SourceComponent>>();
+  private readonly registry: RegistryAccess;
+  // all components stored here, regardless of what manifest they belong to
+  private components = new DecodeableMap<string, DecodeableMap<string, SourceComponent>>();
 
   // internal component maps used by this.getObject() when building manifests.
   private destructiveComponents = {
-    [DestructiveChangesType.PRE]: new Map<string, Map<string, SourceComponent>>(),
-    [DestructiveChangesType.POST]: new Map<string, Map<string, SourceComponent>>(),
+    [DestructiveChangesType.PRE]: new DecodeableMap<string, DecodeableMap<string, SourceComponent>>(),
+    [DestructiveChangesType.POST]: new DecodeableMap<string, DecodeableMap<string, SourceComponent>>(),
   };
-  private manifestComponents = new Map<string, Map<string, SourceComponent>>();
+  // used to store components meant for a "constructive" (not destructive) manifest
+  private manifestComponents = new DecodeableMap<string, DecodeableMap<string, SourceComponent>>();
 
   private destructiveChangesType = DestructiveChangesType.POST;
 
@@ -112,11 +118,11 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     return size;
   }
 
-  public get destructiveChangesPre(): Map<string, Map<string, SourceComponent>> {
+  public get destructiveChangesPre(): DecodeableMap<string, DecodeableMap<string, SourceComponent>> {
     return this.destructiveComponents[DestructiveChangesType.PRE];
   }
 
-  public get destructiveChangesPost(): Map<string, Map<string, SourceComponent>> {
+  public get destructiveChangesPost(): DecodeableMap<string, DecodeableMap<string, SourceComponent>> {
     return this.destructiveComponents[DestructiveChangesType.POST];
   }
 
@@ -202,6 +208,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     const manifest = await manifestResolver.resolve(manifestPath);
 
     const resolveIncludeSet = options.resolveSourcePaths ? new ComponentSet([], options.registry) : undefined;
+    const resolvePostSet = options.resolveSourcePaths ? new ComponentSet([], options.registry) : undefined;
+    const resolvePreSet = options.resolveSourcePaths ? new ComponentSet([], options.registry) : undefined;
     const result = new ComponentSet([], options.registry);
 
     result.logger.debug(`Setting sourceApiVersion of ${manifest.apiVersion} on ComponentSet from manifest`);
@@ -209,11 +217,17 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
     result.fullName = manifest.fullName;
 
     const addComponent = (component: MetadataComponent, deletionType?: DestructiveChangesType): void => {
-      if (resolveIncludeSet) {
-        resolveIncludeSet.add(component, deletionType);
+      if (resolveIncludeSet && !deletionType) {
+        resolveIncludeSet.add(component);
+      }
+      if (resolvePreSet && deletionType === DestructiveChangesType.PRE) {
+        resolvePreSet.add(component, DestructiveChangesType.PRE);
+      }
+      if (resolvePostSet && deletionType === DestructiveChangesType.POST) {
+        resolvePostSet.add(component, DestructiveChangesType.POST);
       }
       const memberIsWildcard = component.fullName === ComponentSet.WILDCARD;
-      if (!memberIsWildcard || options.forceAddWildcards || !options.resolveSourcePaths) {
+      if (options.resolveSourcePaths === undefined || !memberIsWildcard || options.forceAddWildcards) {
         result.add(component, deletionType);
       }
     };
@@ -247,8 +261,32 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
         registry: options.registry,
       });
       result.forceIgnoredPaths = components.forceIgnoredPaths;
+
       for (const component of components) {
         result.add(component);
+      }
+
+      // if there was nothing in the resolveIncludeSet, then we can be missing information that we display to the user for deletes
+      if (resolveIncludeSet?.size === 0) {
+        const preCS = ComponentSet.fromSource({
+          fsPaths: options.resolveSourcePaths,
+          tree: options.tree,
+          include: resolvePreSet,
+          registry: options.registry,
+        });
+        for (const component of preCS) {
+          result.add(component, DestructiveChangesType.PRE);
+        }
+
+        const postCS = ComponentSet.fromSource({
+          fsPaths: options.resolveSourcePaths,
+          tree: options.tree,
+          include: resolvePostSet,
+          registry: options.registry,
+        });
+        for (const component of postCS) {
+          result.add(component, DestructiveChangesType.POST);
+        }
       }
     }
 
@@ -282,7 +320,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       }
     }
 
-    const connectionResolver = new ConnectionResolver(usernameOrConnection, options.registry);
+    const connectionResolver = new ConnectionResolver(usernameOrConnection, options.registry, options.metadataTypes);
     const manifest = await connectionResolver.resolve(options.componentFilter);
     const result = new ComponentSet([], options.registry);
     result.apiVersion = manifest.apiVersion;
@@ -368,7 +406,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @returns Object representation of a package manifest
    */
   public async getObject(destructiveType?: DestructiveChangesType): Promise<PackageManifestObject> {
-    const version = this.sourceApiVersion ?? this.apiVersion ?? `${await getCurrentApiVersion()}.0`;
+    const version = await this.getApiVersion();
 
     // If this ComponentSet has components marked for delete, we need to
     // only include those components in a destructiveChanges.xml and
@@ -408,7 +446,13 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       if (type.folderContentType) {
         type = this.registry.getTypeByName(type.folderContentType);
       }
-      addToTypeMap(type, fullName);
+      addToTypeMap(
+        type,
+        // they're reassembled like CustomLabels.MyLabel
+        this.registry.getParentType(type.name)?.strategies?.recomposition === 'startEmpty' && fullName.includes('.')
+          ? fullName.split('.')[1]
+          : fullName
+      );
 
       // Add children
       const componentMap = components.get(key);
@@ -421,22 +465,19 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       }
     }
 
-    const typeMembers: PackageTypeMembers[] = [];
-    for (const [typeName, members] of typeMap.entries()) {
-      typeMembers.push({ members: members.sort(), name: typeName });
-    }
+    const typeMembers = Array.from(typeMap.entries())
+      .map(([typeName, members]) => ({ members: members.sort(), name: typeName }))
+      .sort((a, b) => (a.name > b.name ? 1 : -1));
 
-    const pkg = {
+    return {
       Package: {
         ...{
-          types: typeMembers.sort((a, b) => (a.name > b.name ? 1 : -1)),
+          types: typeMembers,
           version,
         },
         ...(this.fullName ? { fullName: this.fullName } : {}),
       },
     };
-
-    return pkg;
   }
 
   /**
@@ -446,13 +487,12 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * E.g. package.xml or destructiveChanges.xml
    *
    * @param indentation Number of spaces to indent lines by.
-   * @param forDestructiveChanges Whether to build a manifest for destructive changes.
+   * @param destructiveType What type of destructive manifest to build.
    */
   public async getPackageXml(indentation = 4, destructiveType?: DestructiveChangesType): Promise<string> {
     const builder = new XMLBuilder({
       format: true,
       indentBy: ''.padEnd(indentation, ' '),
-
       ignoreAttributes: false,
     });
     const toParse = await this.getObject(destructiveType);
@@ -485,46 +525,33 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
   public add(component: ComponentLike, deletionType?: DestructiveChangesType): void {
     const key = simpleKey(component);
     if (!this.components.has(key)) {
-      this.components.set(key, new Map<string, SourceComponent>());
+      this.components.set(key, new DecodeableMap<string, SourceComponent>());
     }
 
     if (!(component instanceof SourceComponent)) {
       return;
     }
+    const srcKey = sourceKey(component);
 
     // we're working with SourceComponents now
-    this.components.get(key)?.set(sourceKey(component), component);
+    this.components.get(key)?.set(srcKey, component);
 
     // Build maps of destructive components and regular components as they are added
     // as an optimization when building manifests.
     if (deletionType) {
       component.setMarkedForDelete(deletionType);
       this.logger.debug(`Marking component for delete: ${component.fullName}`);
-      const deletions = this.destructiveComponents[deletionType];
-      if (!deletions.has(key)) {
-        deletions.set(key, new Map<string, SourceComponent>());
+      if (!this.destructiveComponents[deletionType].has(key)) {
+        this.destructiveComponents[deletionType].set(key, new DecodeableMap<string, SourceComponent>());
       }
-      deletions.get(key)?.set(sourceKey(component), component);
+      this.destructiveComponents[deletionType].get(key)?.set(srcKey, component);
+      // updated with deletion information
+      this.components.get(key)?.set(srcKey, component);
     } else {
       if (!this.manifestComponents.has(key)) {
-        this.manifestComponents.set(key, new Map<string, SourceComponent>());
+        this.manifestComponents.set(key, new DecodeableMap<string, SourceComponent>());
       }
-      this.manifestComponents.get(key)?.set(sourceKey(component), component);
-    }
-
-    // something could try adding a component meant for deletion improperly, which would be marked as an addition
-    // specifically the ComponentSet.fromManifest with the `resolveSourcePaths` options which calls
-    // ComponentSet.fromSource, and adds everything as an addition
-    if (
-      this.manifestComponents.has(key) &&
-      (this.destructiveChangesPre.has(key) || this.destructiveChangesPost.has(key))
-    ) {
-      // if a component is in the manifestComponents, as well as being part of a destructive manifest, keep in the destructive manifest
-      component.setMarkedForDelete(deletionType);
-      this.manifestComponents.delete(key);
-      this.logger.debug(
-        `Component: ${key} was found in both destructive and constructive manifests - keeping as a destructive change`
-      );
+      this.manifestComponents.get(key)?.set(srcKey, component);
     }
   }
 
@@ -533,7 +560,7 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    *
    * A pair is considered present in the set if one of the following criteria is met:
    *
-   * - The pair is directly in the set
+   * - The pair is directly in the set, matching the component key "as is" or decoded.
    * - A wildcard component with the same `type` as the pair
    * - If a parent is attached to the pair and the parent is directly in the set
    * - If a parent is attached to the pair, and a wildcard component's `type` matches the parent's `type`
@@ -542,8 +569,8 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
    * @returns `true` if the component is in the set
    */
   public has(component: ComponentLike): boolean {
-    const isDirectlyInSet = this.components.has(simpleKey(component));
-    if (isDirectlyInSet) {
+    const key = simpleKey(component);
+    if (this.components.has(key)) {
       return true;
     }
 
@@ -660,6 +687,52 @@ export class ComponentSet extends LazyCollection<MetadataComponent> {
       destructiveChangesTypes.push(DestructiveChangesType.POST);
     }
     return destructiveChangesTypes;
+  }
+
+  /**
+   * Returns an API version to use as the value of the `version` field
+   * in a manifest (package.xml) for MDAPI calls in the following order
+   * of preference:
+   *
+   * 1. this.sourceApiVersion
+   * 2. this.apiVersion
+   * 3. sourceApiVersion set in sfdx-project.json
+   * 4. apiVersion from ConfigAggregator (config files and Env Vars)
+   * 5. http call to apexrest endpoint for highest apiVersion
+   * 6. hardcoded value of "58.0" as a last resort
+   *
+   * @returns string The resolved API version to use in a manifest
+   */
+  private async getApiVersion(): Promise<string> {
+    let version = this.sourceApiVersion ?? this.apiVersion;
+
+    if (!version) {
+      try {
+        const project = await SfProject.resolve(this.projectDirectory);
+        const projectConfig = await project.resolveProjectConfig();
+        version = projectConfig?.sourceApiVersion as string;
+      } catch (e) {
+        // If there's any problem just move on to ConfigAggregator
+      }
+    }
+
+    if (!version) {
+      try {
+        version = ConfigAggregator.getValue(OrgConfigProperties.ORG_API_VERSION).value as string;
+      } catch (e) {
+        // If there's any problem just move on to the REST endpoint
+      }
+    }
+
+    if (!version) {
+      try {
+        version = `${await getCurrentApiVersion()}.0`;
+      } catch (e) {
+        version = '58.0';
+        this.logger.warn(messages.getMessage('missingApiVersion'));
+      }
+    }
+    return version;
   }
 }
 

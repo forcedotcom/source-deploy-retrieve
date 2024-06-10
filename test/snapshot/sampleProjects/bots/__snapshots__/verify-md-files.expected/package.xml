@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Astro_Bot</members>
+        <name>Bot</name>
+    </types>
+    <types>
+        <members>Astro_Bot.v1</members>
+        <name>BotVersion</name>
+    </types>
+    <types>
+        <members>bot1ChatButton1</members>
+        <name>LiveChatButton</name>
+    </types>
+    <types>
+        <members>Bot</members>
+        <members>LiveAgent</members>
+        <name>Settings</name>
+    </types>
+    <types>
+        <members>TestSkill</members>
+        <name>Skill</name>
+    </types>
+    <version>59.0</version>
+</Package>

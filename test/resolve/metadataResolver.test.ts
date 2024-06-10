@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { basename, dirname, join } from 'path';
+import { basename, dirname, join } from 'node:path';
 import { assert, expect } from 'chai';
 import { Messages, SfError } from '@salesforce/core';
 import { ensureString } from '@salesforce/ts-types';
@@ -691,7 +691,10 @@ describe('MetadataResolver', () => {
 
       it('should not return components if the directory is forceignored', () => {
         const dirPath = xmlInFolder.COMPONENT_FOLDER_PATH;
-        testUtil.stubForceIgnore({ seed: dirPath, deny: [dirPath] });
+        testUtil.stubForceIgnore({
+          seed: dirPath,
+          deny: [join(dirPath, 'a.report-meta.xml'), join(dirPath, 'b.report-meta.xml')],
+        });
         const access = testUtil.createMetadataResolver([
           {
             dirPath,

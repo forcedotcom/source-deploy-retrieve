@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>force_app_Label_1</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>force-app Label 1</shortDescription>
+        <value>force-app</value>
+    </labels>
+    <labels>
+        <fullName>force_app_Label_2</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>force-app Label 2</shortDescription>
+        <value>force-app</value>
+    </labels>
+</CustomLabels>

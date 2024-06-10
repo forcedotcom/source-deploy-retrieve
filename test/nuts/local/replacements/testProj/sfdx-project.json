@@ -1,46 +1,44 @@
 {
-  "packageDirectories": [
-    {
-      "path": "force-app",
-      "default": true
-    }
-  ],
   "name": "replacementTest",
   "namespace": "",
-  "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "55.0",
+  "packageDirectories": [
+    {
+      "default": true,
+      "path": "force-app"
+    }
+  ],
   "replacements": [
     {
       "glob": "force-app/**/*.cls",
-      "stringToReplace": "replaceMeWithEnv",
-      "replaceWithEnv": "THE_REPLACEMENT"
+      "replaceWithEnv": "THE_REPLACEMENT",
+      "stringToReplace": "replaceMeWithEnv"
     },
     {
       "glob": "force-app/**/*.cls",
-      "stringToReplace": "doNotReplaceThis",
-      "replaceWithEnv": "THE_REPLACEMENT",
       "replaceWhenEnv": [
         {
           "env": "THE_REPLACEMENT",
           "value": "bar"
         }
-      ]
+      ],
+      "replaceWithEnv": "THE_REPLACEMENT",
+      "stringToReplace": "doNotReplaceThis"
     },
     {
       "glob": "force-app/**/*.cls",
-      "stringToReplace": "conditionallyReplaceThis",
-      "replaceWithEnv": "THE_REPLACEMENT",
       "replaceWhenEnv": [
         {
           "env": "THE_REPLACEMENT",
           "value": "foo"
         }
-      ]
+      ],
+      "replaceWithEnv": "THE_REPLACEMENT",
+      "stringToReplace": "conditionallyReplaceThis"
     },
     {
       "glob": "force-app/**/*.cls",
-      "stringToReplace": "replaceMeWithFile",
-      "replaceWithFile": "replacements.txt"
+      "replaceWithFile": "replacements.txt",
+      "stringToReplace": "replaceMeWithFile"
     },
     {
       "glob": "force-app/**/*.cls",
@@ -49,18 +47,20 @@
     },
     {
       "glob": "force-app/main/default/objects/**/*",
-      "stringToReplace": "placeholder",
-      "replaceWithEnv": "THE_REPLACEMENT"
+      "replaceWithEnv": "THE_REPLACEMENT",
+      "stringToReplace": "placeholder"
     },
     {
       "glob": "**/*.field-meta.xml",
-      "stringToReplace": "<label>FieldA</label>",
-      "replaceWithFile": "label.txt"
+      "replaceWithFile": "label.txt",
+      "stringToReplace": "<label>FieldA</label>"
     },
     {
       "glob": "**/*.css",
-      "stringToReplace": "placeholder",
-      "replaceWithEnv": "THE_REPLACEMENT"
+      "replaceWithEnv": "THE_REPLACEMENT",
+      "stringToReplace": "placeholder"
     }
-  ]
+  ],
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "55.0"
 }

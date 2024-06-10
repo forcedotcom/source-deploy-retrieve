@@ -4,12 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as path from 'path';
-import * as fs from 'fs';
-import { Open } from 'unzipper';
+import * as path from 'node:path';
+import * as fs from 'node:fs';
+import JSZip from 'jszip';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { ComponentSetBuilder, MetadataConverter } from '../../../../src';
+import { extractZip } from './extractZip';
 
 describe('e2e replacements test', () => {
   let session: TestSession;
@@ -17,6 +18,7 @@ describe('e2e replacements test', () => {
   before(async () => {
     session = await TestSession.create({
       project: {
+        name: 'replacementsNut',
         sourceDir: path.join('test', 'nuts', 'local', 'replacements', 'testProj'),
       },
       devhubAuthStrategy: 'NONE',
@@ -24,16 +26,7 @@ describe('e2e replacements test', () => {
     // Hack: rewrite the file replacement locations relative to the project
     const projectJsonPath = path.join(session.project.dir, 'sfdx-project.json');
     const original = await fs.promises.readFile(projectJsonPath, 'utf8');
-    await fs.promises.writeFile(
-      projectJsonPath,
-      original
-        // we're putting this in a json file which doesnt like windows backslashes.  The file will require posix paths
-        .replace(
-          'replacements.txt',
-          path.join(session.project.dir, 'replacements.txt').split(path.sep).join(path.posix.sep)
-        )
-        .replace('label.txt', path.join(session.project.dir, 'label.txt').split(path.sep).join(path.posix.sep))
-    );
+    await fs.promises.writeFile(projectJsonPath, original);
   });
 
   after(async () => {
@@ -49,7 +42,8 @@ describe('e2e replacements test', () => {
         type: 'zip',
       });
       assert(zipBuffer, 'zipBuffer should be defined');
-      await (await Open.buffer(zipBuffer)).extract({ path: path.join(session.project.dir, 'unzipped') });
+      // extract zip files
+      await extractZip(zipBuffer, path.join(session.project.dir, 'unzipped'));
     });
 
     it('class replacements as expected', async () => {
@@ -81,17 +75,25 @@ describe('e2e replacements test', () => {
       );
     });
     it('static resource object replacements as expected', async () => {
-      const files = (
-        await Open.file(path.join(session.project.dir, 'unzipped', 'staticresources', 'Test.resource'))
-      ).files.filter((f) => f.type === 'File');
+      const srZipPath = path.join(session.project.dir, 'unzipped', 'staticresources', 'Test.resource');
+      expect(fs.existsSync(srZipPath)).to.be.true;
+      const srZip = await JSZip.loadAsync(fs.readFileSync(srZipPath));
 
-      const buffers = await Promise.all(files.map(async (f) => f.buffer()));
-      buffers
-        .map((b) => b.toString())
-        .map((contents) => {
-          expect(contents).to.not.include('placeholder');
-          expect(contents).to.include('foo');
-        });
+      // static resource zip should have 2 files and a dir:
+      // 1. "folder/", 2. "folder/test2.css", 3. "folder/test.css"
+      expect(Object.entries(srZip.files).length).to.equal(3);
+
+      // Content of the 2 css files should have "foo", not "placeholder" (i.e., replaced)
+      for (const filePath of Object.keys(srZip.files)) {
+        const zipObj = srZip.file(filePath);
+        if (zipObj && !zipObj.dir) {
+          // eslint-disable-next-line no-await-in-loop
+          const content = await zipObj.async('nodebuffer');
+          const contentAsString = content.toString();
+          expect(contentAsString).to.not.include('placeholder');
+          expect(contentAsString).to.include('foo');
+        }
+      }
     });
   });
 });

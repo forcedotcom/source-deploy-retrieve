@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, join } from 'path';
+import { basename, dirname, join } from 'node:path';
 import { registry, SourceComponent } from '../../../src';
 
 // Mixed content with directory as content
@@ -22,7 +22,7 @@ export const MIXED_CONTENT_DIRECTORY_SOURCE_PATHS = [
   join(MIXED_CONTENT_DIRECTORY_CONTENT_PATH, 'tests', 'test.js'),
   join(MIXED_CONTENT_DIRECTORY_CONTENT_PATH, 'tests', 'test2.pdf'),
 ];
-export const MIXED_CONTENT_DIRECTORY_COMPONENT: SourceComponent = new SourceComponent({
+export const MIXED_CONTENT_DIRECTORY_COMPONENT = new SourceComponent({
   name: 'aStaticResource',
   type,
   xml: MIXED_CONTENT_DIRECTORY_XML_PATHS[0],

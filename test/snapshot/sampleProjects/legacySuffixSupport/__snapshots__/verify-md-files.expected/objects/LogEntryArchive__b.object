@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Big Object representation of Logger data, used as an alternative to the platform event LogEntryEvent__e, as well as a way to archive Logger data stored in Log__c, LogEntry__, and LogEntryTag__c</description>
+    <label>Log Entry Archive</label>
+    <pluralLabel>Log Entry Archives</pluralLabel>
+    <fields>
+        <fullName>Timestamp__c</fullName>
+        <businessStatus>Active</businessStatus>
+        <complianceGroup>None</complianceGroup>
+        <externalId>false</externalId>
+        <label>Timestamp</label>
+        <required>true</required>
+        <securityClassification>Confidential</securityClassification>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>TransactionEntryNumber__c</fullName>
+        <businessStatus>Active</businessStatus>
+        <complianceGroup>None</complianceGroup>
+        <description>The sequential number of this log entry within the transaction</description>
+        <externalId>false</externalId>
+        <label>Entry #</label>
+        <precision>10</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <securityClassification>Confidential</securityClassification>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>TransactionId__c</fullName>
+        <businessStatus>Active</businessStatus>
+        <complianceGroup>None</complianceGroup>
+        <externalId>false</externalId>
+        <label>Transaction ID</label>
+        <length>36</length>
+        <required>true</required>
+        <securityClassification>Confidential</securityClassification>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <indexes>
+        <fullName>LogEntryArchiveIndex</fullName>
+        <fields>
+            <name>Timestamp__c</name>
+            <sortDirection>DESC</sortDirection>
+        </fields>
+        <fields>
+            <name>TransactionId__c</name>
+            <sortDirection>ASC</sortDirection>
+        </fields>
+        <fields>
+            <name>TransactionEntryNumber__c</name>
+            <sortDirection>DESC</sortDirection>
+        </fields>
+        <label>Log Entry Archive Index</label>
+    </indexes>
+</CustomObject>

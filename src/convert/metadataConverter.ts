@@ -4,16 +4,18 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Readable, PassThrough } from 'stream';
-import { dirname, join, normalize } from 'path';
+import { Readable, PassThrough } from 'node:stream';
+import { dirname, join, normalize } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
 import { promises } from 'graceful-fs';
 import { isString } from '@salesforce/ts-types';
-import { SourceComponent } from '../resolve';
+import { SourceComponent } from '../resolve/sourceComponent';
+import { MetadataResolver } from '../resolve/metadataResolver';
 import { ensureDirectoryExists } from '../utils/fileSystemHandler';
-import { SourcePath } from '../common';
-import { ComponentSet, DestructiveChangesType } from '../collections';
-import { RegistryAccess } from '../registry';
+import { SourcePath } from '../common/types';
+import { ComponentSet } from '../collections/componentSet';
+import { DestructiveChangesType } from '../collections/types';
+import { RegistryAccess } from '../registry/registryAccess';
 import { ComponentConverter, pipeline, StandardWriter, ZipWriter } from './streams';
 import { ConvertOutputConfig, ConvertResult, DirectoryConfig, SfdxFileFormat, ZipConfig, MergeConfig } from './types';
 import { getReplacementMarkingStream } from './replacements';
@@ -32,7 +34,7 @@ export class MetadataConverter {
   public constructor(registry = new RegistryAccess()) {
     this.registry = registry;
   }
-  // eslint-disable-next-line complexity
+
   public async convert(
     comps: ComponentSet | Iterable<SourceComponent>,
     targetFormat: SfdxFileFormat,
@@ -54,7 +56,7 @@ export class MetadataConverter {
         writer,
         mergeSet,
         tasks = [],
-      } = await getConvertIngredients(output, cs, targetFormatIsSource);
+      } = await getConvertIngredients(output, cs, targetFormatIsSource, this.registry);
 
       const conversionPipeline = pipeline(
         Readable.from(components),
@@ -65,14 +67,7 @@ export class MetadataConverter {
         writer
       );
       await Promise.all([conversionPipeline, ...tasks]);
-
-      const result: ConvertResult = { packagePath };
-      if (output.type === 'zip' && !packagePath) {
-        result.zipBuffer = (writer as ZipWriter).buffer;
-      } else if (output.type !== 'zip') {
-        result.converted = (writer as StandardWriter).converted;
-      }
-      return result;
+      return await getResult(this.registry)(packagePath)(writer);
     } catch (err) {
       if (!(err instanceof Error) && !isString(err)) {
         throw err;
@@ -87,6 +82,31 @@ export class MetadataConverter {
     }
   }
 }
+
+const getResult =
+  (registry: RegistryAccess) =>
+  (packagePath?: string) =>
+  async (writer: StandardWriter | ZipWriter): Promise<ConvertResult> => {
+    // union type discrimination
+    if ('addToZip' in writer) {
+      const buffer = writer.buffer;
+      if (!packagePath) {
+        return { packagePath, zipBuffer: buffer };
+      } else if (buffer) {
+        await promises.writeFile(packagePath, buffer);
+        return { packagePath };
+      }
+    } else if (writer.converted?.length > 0 || writer.deleted?.length > 0) {
+      const resolver = new MetadataResolver(registry);
+      return {
+        packagePath,
+        converted: writer.converted.flatMap((f) => resolver.getComponentsFromPath(f)),
+        deleted: writer.deleted,
+      };
+    }
+
+    return { packagePath, converted: [], deleted: [] };
+  };
 
 function getPackagePath(
   outputConfig: DirectoryConfig | (ZipConfig & Required<Pick<ZipConfig, 'outputDirectory'>>)
@@ -129,12 +149,14 @@ type ConfigOutputs = {
   defaultDirectory?: string;
   packagePath?: string;
   mergeSet?: ComponentSet;
+  registry?: RegistryAccess;
 };
 
 async function getConvertIngredients(
   output: ConvertOutputConfig,
   cs: ComponentSet,
-  targetFormatIsSource: boolean
+  targetFormatIsSource: boolean,
+  registry?: RegistryAccess
 ): Promise<ConfigOutputs> {
   switch (output.type) {
     case 'directory':
@@ -142,24 +164,26 @@ async function getConvertIngredients(
     case 'zip':
       return getZipConfigOutputs(output, targetFormatIsSource, cs);
     case 'merge':
-      return getMergeConfigOutputs(output, targetFormatIsSource);
+      return getMergeConfigOutputs(output, targetFormatIsSource, registry);
   }
 }
 
-function getMergeConfigOutputs(output: MergeConfig, targetFormatIsSource: boolean): ConfigOutputs {
+function getMergeConfigOutputs(
+  output: MergeConfig,
+  targetFormatIsSource: boolean,
+  registry?: RegistryAccess
+): ConfigOutputs {
   if (!targetFormatIsSource) {
     throw new SfError(messages.getMessage('error_merge_metadata_target_unsupported'));
   }
   const defaultDirectory = output.defaultDirectory;
-  const mergeSet = new ComponentSet();
+  const mergeSet = new ComponentSet(undefined, registry);
   // since child components are composed in metadata format, we need to merge using the parent
   for (const component of output.mergeWith) {
     mergeSet.add(component.parent ?? component);
   }
   const writer = new StandardWriter(output.defaultDirectory);
-  if (output.forceIgnoredPaths) {
-    writer.forceIgnoredPaths = output.forceIgnoredPaths;
-  }
+
   return {
     writer,
     mergeSet,

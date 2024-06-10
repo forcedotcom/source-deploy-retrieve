@@ -4,21 +4,31 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join } from 'path';
-import { JsonMap } from '@salesforce/ts-types';
+
+import { dirname, join } from 'node:path';
+import { AnyJson, JsonMap, ensureString, isJsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
 import { Messages } from '@salesforce/core';
-import { MetadataComponent, SourceComponent } from '../../resolve';
+import { calculateRelativePath } from '../../utils/path';
+import { ForceIgnore } from '../../resolve/forceIgnore';
+import { extractUniqueElementValue } from '../../utils/decomposed';
+import type { MetadataComponent } from '../../resolve/types';
+import { DecompositionStrategy, type MetadataType } from '../../registry/types';
+import { SourceComponent } from '../../resolve/sourceComponent';
 import { JsToXml } from '../streams';
-import { WriteInfo } from '../types';
-import { META_XML_SUFFIX, SourcePath, XML_NS_KEY, XML_NS_URL } from '../../common';
-import { ComponentSet } from '../../collections';
-import { DecompositionStateValue } from '../convertContext';
-import { DecompositionStrategy } from '../../registry';
+import type { WriteInfo } from '../types';
+import { META_XML_SUFFIX, XML_NS_KEY, XML_NS_URL } from '../../common/constants';
+import type { SourcePath } from '../../common/types';
+import { ComponentSet } from '../../collections/componentSet';
+import type { DecompositionState, DecompositionStateValue } from '../convertContext/decompositionFinalizer';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
+
+type XmlObj = { [index: string]: { [XML_NS_KEY]: typeof XML_NS_URL } & JsonMap };
+type StateSetter = (forComponent: MetadataComponent, props: Partial<Omit<DecompositionStateValue, 'origin'>>) => void;
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
+
 export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   // eslint-disable-next-line @typescript-eslint/require-await
   public async toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]> {
@@ -46,168 +56,269 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
   }
 
   public async toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]> {
-    const writeInfos: WriteInfo[] = [];
-    const childrenOfMergeComponent = new ComponentSet(mergeWith?.getChildren());
-    const { type, fullName: parentFullName } = component;
     const forceIgnore = component.getForceIgnore();
 
-    let parentXmlObject: JsonMap | undefined;
+    // if the whole parent is ignored, we won't worry about decomposing things
+    // this can happen if the manifest had a *; all the members will be retrieved.
+    if (forceIgnore.denies(getOutputFile(component, mergeWith))) {
+      return [];
+    }
+
+    const childrenOfMergeComponent = new ComponentSet(mergeWith?.getChildren(), this.registry);
     const composedMetadata = await getComposedMetadataEntries(component);
+    const parentXmlObject = buildParentXml(component.type)(composedMetadata);
+    const stateSetter = setDecomposedState(this.context.decomposition.transactionState);
 
-    for (const [tagKey, tagValue] of composedMetadata) {
-      const childTypeId = type.children?.directories?.[tagKey];
-      if (childTypeId) {
-        const childType = type.children?.types[childTypeId];
-        if (!childType) {
-          throw messages.createError('error_missing_child_type_definition', [type.name, childTypeId]);
-        }
-        const tagValues = ensureArray(tagValue);
-        for (const value of tagValues as [{ fullName: string; name: string }]) {
-          const entryName = value.fullName || value.name;
-          const childComponent: MetadataComponent = {
-            fullName: `${parentFullName}.${entryName}`,
-            type: childType,
-            parent: component,
-          };
-          // only process child types that aren't forceignored
-          if (forceIgnore.accepts(getDefaultOutput(childComponent))) {
-            const source = new JsToXml({
-              [childType.name]: Object.assign({ [XML_NS_KEY]: XML_NS_URL }, value),
-            });
+    const writeInfosForChildren = composedMetadata
+      .filter(hasChildTypeId)
+      .map(addChildType)
+      .flatMap(({ tagValue, childType }) =>
+        // iterate each array member if it's Object-like (ex: customField of a CustomObject)
+        ensureArray(tagValue)
+          .filter(isJsonMap)
+          .map(toInfoContainer(mergeWith)(component)(childType))
+          .filter(forceIgnoreAllowsComponent(forceIgnore)) // only process child types that aren't forceignored
+          .map(handleUnaddressableChildAlone(composedMetadata.length)(parentXmlObject)(stateSetter))
+          .flatMap(getChildWriteInfos(stateSetter)(childrenOfMergeComponent))
+      );
 
-            /*
-             composedMetadata is a representation of the parent's xml
-             if there is no CustomObjectTranslation in the org, the composedMetadata will be 2 entries
-             the xml declaration, and a fields attribute, which points to the child CustomObjectFieldTranslation
-             because CustomObjectFieldTranslation is the only metadata type with 'requiresParent' = true we can
-             calculate if a CustomObjectTranslation was retrieved from the org (composedMetadata.length > 2), or,
-             if we'll have to write an empty CustomObjectTranslation file (composedMetadata.length <=2).
-             CustomObjectFieldTranslations are only addressable through their parent, and require a
-             CustomObjectTranslation file to be present
-             */
-            if (childType.unaddressableWithoutParent && composedMetadata.length <= 2) {
-              parentXmlObject = {
-                [component.type.name]: '',
-              };
-              this.setDecomposedState(childComponent, {
-                foundMerge: false,
-                writeInfo: {
-                  source: new JsToXml(parentXmlObject),
-                  output: getDefaultOutput(component),
-                },
-              });
-            }
+    const writeInfoForParent = mergeWith
+      ? getWriteInfosFromMerge(mergeWith)(stateSetter)(parentXmlObject)(component)
+      : [{ source: new JsToXml(parentXmlObject), output: getOutputFile(component) }];
 
-            // if there's nothing to merge with, push write operation now to default location
-            if (!mergeWith) {
-              writeInfos.push({
-                source,
-                output: getDefaultOutput(childComponent),
-              });
-            }
-            // if the merge parent has a child that can be merged with, push write
-            // operation now and mark it as merged in the state
-            else if (childrenOfMergeComponent.has(childComponent)) {
-              const mergeChild = childrenOfMergeComponent.getSourceComponents(childComponent).first();
-              if (!mergeChild?.xml) {
-                throw messages.createError('error_parsing_xml', [childComponent.fullName, childComponent.type.name]);
-              }
-              writeInfos.push({
-                source,
-                output: mergeChild.xml,
-              });
-              this.setDecomposedState(childComponent, { foundMerge: true });
-            }
-            // if no child component is found to merge with yet, mark it as so in
-            // the state
-            else if (!this.getDecomposedState(childComponent)?.foundMerge) {
-              this.setDecomposedState(childComponent, {
-                foundMerge: false,
-                writeInfo: {
-                  source,
-                  output: getDefaultOutput(childComponent),
-                },
-              });
-            }
-          }
-        }
-      } else if (tagKey !== XML_NS_KEY) {
-        // tag entry isn't a child type, so add it to the parent xml
-        if (!parentXmlObject) {
-          parentXmlObject = { [type.name]: { [XML_NS_KEY]: XML_NS_URL } };
-        }
-        const tagGroup = parentXmlObject[type.name] as JsonMap;
-        tagGroup[tagKey] = tagValue;
-      }
-    }
+    const childDestinations = new Set(writeInfosForChildren.map((w) => w.output));
 
-    const parentState = this.getDecomposedState(component);
-    if (!parentState && parentXmlObject) {
-      const parentSource = new JsToXml(parentXmlObject);
-      if (!mergeWith) {
-        writeInfos.push({
-          source: parentSource,
-          output: getDefaultOutput(component),
-        });
-      } else if (mergeWith.xml) {
-        writeInfos.push({
-          source: parentSource,
-          output: mergeWith.xml,
-        });
-        this.setDecomposedState(component, { foundMerge: true });
-      } else {
-        this.setDecomposedState(component, {
-          foundMerge: false,
-          writeInfo: {
-            source: parentSource,
-            output: getDefaultOutput(component),
-          },
-        });
-      }
-    }
+    // files that exist in FS (therefore, in mergeWith) but aren't in the component should be deleted by returning a writeInfo
+    // only do this if all the children have isAddressable marked false
+    const writeInfosForMissingChildrenToDelete: WriteInfo[] =
+      mergeWith && allChildrenAreUnaddressable(component.type)
+        ? childrenOfMergeComponent
+            .getSourceComponents()
+            .toArray()
+            .filter(hasXml)
+            .filter((c) => !childDestinations.has(c.xml))
+            .map((c) => ({ shouldDelete: true, output: c.xml, fullName: c.fullName, type: c.type.name }))
+        : [];
 
-    return writeInfos;
-  }
-
-  /**
-   * Helper for setting the decomposed transaction state
-   *
-   * @param forComponent
-   * @param props
-   */
-  private setDecomposedState(
-    forComponent: MetadataComponent,
-    props: Partial<Omit<DecompositionStateValue, 'origin'>> = {}
-  ): void {
-    const key = `${forComponent.type.name}#${forComponent.fullName}`;
-    const withOrigin = Object.assign({ origin: forComponent.parent ?? forComponent }, props);
-    this.context.decomposition.transactionState.set(key, {
-      ...(this.context.decomposition.transactionState.get(key) ?? {}),
-      ...withOrigin,
-    });
-  }
-
-  private getDecomposedState(forComponent: MetadataComponent): DecompositionStateValue | undefined {
-    const key = `${forComponent.type.name}#${forComponent.fullName}`;
-    return this.context.decomposition.transactionState.get(key);
+    return [...writeInfosForChildren, ...writeInfoForParent, ...writeInfosForMissingChildrenToDelete];
   }
 }
 
-const getComposedMetadataEntries = async (
-  component: SourceComponent
-): Promise<Array<[string, { fullname?: string; name?: string }]>> => {
-  const composedMetadata = (await component.parseXml())[component.type.name];
-  // composedMetadata might be undefined if you call toSourceFormat() from a non-source-backed Component
-  return composedMetadata ? Object.entries(composedMetadata) : [];
-};
+const hasXml = (c: SourceComponent): c is SourceComponent & { xml: string } => typeof c.xml === 'string';
 
+const allChildrenAreUnaddressable = (type: MetadataType): boolean =>
+  Object.values(type.children?.types ?? {}).every(
+    // exclude the COFT (unaddressableWithoutParent) from being deleted because its absence *might* not mean it was deleted from the org
+    (c) => c.isAddressable === false && c.unaddressableWithoutParent !== true
+  );
+
+/**
+ * composedMetadata is a representation of the parent's xml
+ *
+ * if there is no CustomObjectTranslation in the org, the composedMetadata will be 2 entries
+ * the xml declaration, and a fields attribute, which points to the child CustomObjectFieldTranslation
+ *
+ * because CustomObjectFieldTranslation is the only metadata type with 'requiresParent' = true we can
+ * calculate if a CustomObjectTranslation was retrieved from the org (composedMetadata.length > 2), or,
+ * if we'll have to write an empty CustomObjectTranslation file (composedMetadata.length <=2).
+ *
+ * CustomObjectFieldTranslations are only addressable through their parent, and require a
+ * CustomObjectTranslation file to be present
+ */
+const handleUnaddressableChildAlone =
+  (composedMetadataLength: number) =>
+  (parentXmlObject: XmlObj) =>
+  (stateSetter: StateSetter) =>
+  (v: InfoContainer): InfoContainer => {
+    if (v.childComponent.type.unaddressableWithoutParent && composedMetadataLength <= 2) {
+      stateSetter(v.childComponent, {
+        writeInfo: {
+          source: new JsToXml(parentXmlObject),
+          output: getDefaultOutput(v.parentComponent),
+        },
+      });
+    }
+    return v;
+  };
+
+const getChildWriteInfos =
+  (stateSetter: StateSetter) =>
+  (childrenOfMergeComponent: ComponentSet) =>
+  ({ mergeWith, childComponent, value, entryName }: InfoContainer): WriteInfo[] => {
+    const source = objectToSource(childComponent.type.name)(value);
+    // if there's nothing to merge with, push write operation now to default location
+    if (!mergeWith) {
+      return [{ source, output: getDefaultOutput(childComponent) }];
+    }
+    // if the merge parent has a child that can be merged with, push write
+    // operation now and mark it as merged in the state
+    if (childrenOfMergeComponent.has(childComponent)) {
+      const mergeChild = childrenOfMergeComponent.getSourceComponents(childComponent).first();
+      if (!mergeChild?.xml) {
+        throw messages.createError('error_parsing_xml', [childComponent.fullName, childComponent.type.name]);
+      }
+      stateSetter(childComponent, { foundMerge: true });
+      return [{ source, output: mergeChild.xml }];
+    }
+    // If we have a parent and the child is unaddressable without the parent, keep them
+    // together on the file system, meaning a new child will not be written to the default dir.
+    if (childComponent.type.unaddressableWithoutParent && typeof mergeWith?.xml === 'string') {
+      // get output path from parent
+      return [
+        {
+          source,
+          output: join(dirname(mergeWith.xml), `${entryName}.${childComponent.type.suffix}${META_XML_SUFFIX}`),
+        },
+      ];
+    }
+    // we didn't find a merge, so we add it to the state for later processing
+    stateSetter(childComponent, {
+      writeInfo: { source, output: getDefaultOutput(childComponent) },
+    });
+    return [];
+  };
+
+const getWriteInfosFromMerge =
+  (mergeWith: SourceComponent) =>
+  (stateSetter: StateSetter) =>
+  (parentXmlObject: XmlObj) =>
+  (parentComponent: SourceComponent): WriteInfo[] => {
+    const writeInfo = { source: new JsToXml(parentXmlObject), output: getOutputFile(parentComponent, mergeWith) };
+    const parentHasRealValues = objectHasSomeRealValues(parentComponent.type)(parentXmlObject);
+
+    if (mergeWith?.xml) {
+      // mark the component as found
+      stateSetter(parentComponent, { foundMerge: true });
+      return objectHasSomeRealValues(parentComponent.type)(mergeWith.parseXmlSync()) && !parentHasRealValues
+        ? [] // the target file has values but this process doesn't, so we don't want to overwrite it
+        : [writeInfo];
+    }
+    if (objectHasSomeRealValues(parentComponent.type)(parentXmlObject)) {
+      // set the state but don't return any writeInfo to avoid writing "empty" (ns-only) parent files
+      stateSetter(parentComponent, { writeInfo });
+    }
+    return [];
+  };
+
+/**
+ * Helper for setting the decomposed transaction state
+ *
+ * @param forComponent
+ * @param props
+ */
+const setDecomposedState =
+  (state: DecompositionState) =>
+  (forComponent: MetadataComponent, props: Partial<Omit<DecompositionStateValue, 'origin'>>): void => {
+    const key = getKey(forComponent);
+    state.set(key, {
+      // origin gets set the first time
+      ...(state.get(key) ?? { origin: forComponent.parent ?? forComponent }),
+      ...(props ?? {}),
+    });
+  };
+
+const getKey = (component: MetadataComponent): string => `${component.type.name}#${component.fullName}`;
+
+/** for a component, parse the xml and create an json object with contents, child typeId, etc */
+const getComposedMetadataEntries = async (component: SourceComponent): Promise<ComposedMetadata[]> =>
+  // composedMetadata might be undefined if you call toSourceFormat() from a non-source-backed Component
+  Object.entries((await component.parseXml())[component.type.name] ?? {}).map(
+    ([tagKey, tagValue]: [string, AnyJson]): ComposedMetadata => ({
+      tagKey,
+      tagValue,
+      parentType: component.type,
+      childTypeId: tagToChildTypeId({ tagKey, type: component.type }),
+    })
+  );
+
+/** where the file goes if there's nothing to merge with */
 const getDefaultOutput = (component: MetadataComponent): SourcePath => {
   const { parent, fullName, type } = component;
-  const [baseName, childName] = fullName.split('.');
-  const baseComponent = (parent ?? component) as SourceComponent;
-  let output = `${childName ?? baseName}.${component.type.suffix}${META_XML_SUFFIX}`;
-  if (parent?.type.strategies?.decomposition === DecompositionStrategy.FolderPerType) {
-    output = join(type.directoryName, output);
-  }
-  return join(baseComponent.getPackageRelativePath(baseName, 'source'), output);
+  const [baseName, ...tail] = fullName.split('.');
+  // there could be a '.' inside the child name (ex: PermissionSet.FieldPermissions.field uses Obj__c.Field__c)
+  const childName = tail.length ? tail.join('.') : undefined;
+  const output = join(
+    parent?.type.strategies?.decomposition === DecompositionStrategy.FolderPerType ? type.directoryName : '',
+    `${childName ?? baseName}.${component.type.suffix}${META_XML_SUFFIX}`
+  );
+  return join(calculateRelativePath('source')({ self: parent?.type ?? type })(fullName)(baseName), output);
 };
+
+/** use the given xmlElementName name if it exists, otherwise use see if one matches the directories */
+const tagToChildTypeId = ({ tagKey, type }: { tagKey: string; type: MetadataType }): string | undefined =>
+  Object.values(type.children?.types ?? {}).find((c) => c.xmlElementName === tagKey)?.id ??
+  type.children?.directories?.[tagKey];
+
+/** Ex: CustomObject: { '@_xmlns': 'http://soap.sforce.com/2006/04/metadata' } has no real values */
+const objectHasSomeRealValues =
+  (type: MetadataType) =>
+  (obj: XmlObj): boolean =>
+    Object.keys(obj[type.name] ?? {}).length > 1;
+
+const hasChildTypeId = (cm: ComposedMetadata): cm is Required<ComposedMetadata> => !!cm.childTypeId;
+
+const addChildType = (cm: Required<ComposedMetadata>): ComposedMetadataWithChildType => {
+  const childType = cm.parentType.children?.types[cm.childTypeId];
+  if (childType) {
+    return { ...cm, childType };
+  }
+  throw messages.createError('error_missing_child_type_definition', [cm.parentType.name, cm.childTypeId]);
+};
+
+type ComposedMetadata = { tagKey: string; tagValue: AnyJson; parentType: MetadataType; childTypeId?: string };
+type ComposedMetadataWithChildType = ComposedMetadata & { childType: MetadataType };
+
+type InfoContainer = {
+  entryName?: string;
+  childComponent: MetadataComponent;
+  /** the parsed xml */
+  value: JsonMap;
+  parentComponent: SourceComponent;
+  mergeWith?: SourceComponent;
+};
+
+/** returns an data structure with lots of context information in it */
+const toInfoContainer =
+  (mergeWith: SourceComponent | undefined) =>
+  (parent: SourceComponent) =>
+  (childType: MetadataType) =>
+  (tagValue: JsonMap): InfoContainer => {
+    const entryName = ensureString(extractUniqueElementValue(tagValue, childType.uniqueIdElement));
+    return {
+      parentComponent: parent,
+      entryName,
+      childComponent: {
+        fullName: `${parent.fullName}.${entryName}`,
+        type: childType,
+        parent,
+      },
+      value: tagValue,
+      mergeWith,
+    };
+  };
+
+const forceIgnoreAllowsComponent =
+  (forceIgnore: ForceIgnore) =>
+  (ic: InfoContainer): boolean =>
+    forceIgnore.accepts(getDefaultOutput(ic.childComponent));
+
+/** wrap some xml in the Metadata type and add the NS stuff */
+const objectToSource =
+  (childTypeName: string) =>
+  (obj: JsonMap): JsToXml =>
+    new JsToXml({ [childTypeName]: { [XML_NS_KEY]: XML_NS_URL, ...obj } });
+
+/** filter out the children and create the remaining parentXml */
+const buildParentXml =
+  (parentType: MetadataType) =>
+  (c: ComposedMetadata[]): XmlObj => ({
+    [parentType.name]: {
+      [XML_NS_KEY]: XML_NS_URL,
+      ...Object.fromEntries(
+        c.filter((v) => v.childTypeId === undefined).map(({ tagKey, tagValue }) => [tagKey, tagValue])
+      ),
+    },
+  });
+
+const getOutputFile = (component: SourceComponent, mergeWith?: SourceComponent): string =>
+  mergeWith?.xml ?? getDefaultOutput(component);

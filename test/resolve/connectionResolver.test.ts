@@ -5,11 +5,15 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { assert, expect } from 'chai';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
-import { Connection, Logger } from '@salesforce/core';
+import { assert, expect, use } from 'chai';
+import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
+import { Connection } from '@salesforce/core';
+import deepEqualInAnyOrder from 'deep-equal-in-any-order';
+import { ManageableState } from '../../src/client/types';
 import { ConnectionResolver } from '../../src/resolve';
 import { MetadataComponent, registry } from '../../src/';
+
+use(deepEqualInAnyOrder);
 
 const StdFileProperty = {
   createdById: 'createdById',
@@ -126,6 +130,39 @@ describe('ConnectionResolver', () => {
       ];
       expect(result.components).to.deep.equal(expected);
     });
+    it('should resolve components with specified types', async () => {
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
+
+      metadataQueryStub.withArgs({ type: 'ApexClass' }).resolves([
+        {
+          ...StdFileProperty,
+          fileName: 'classes/MyApexClass1.class',
+          fullName: 'MyApexClass1',
+          type: 'ApexClass',
+        },
+        {
+          ...StdFileProperty,
+          fileName: 'classes/MyApexClass2.class',
+          fullName: 'MyApexClass2',
+          type: 'ApexClass',
+        },
+      ]);
+
+      const resolver = new ConnectionResolver(connection, undefined, ['ApexClass']);
+      const result = await resolver.resolve();
+      const expected: MetadataComponent[] = [
+        {
+          fullName: 'MyApexClass1',
+          type: registry.types.apexclass,
+        },
+        {
+          fullName: 'MyApexClass2',
+          type: registry.types.apexclass,
+        },
+      ];
+      expect(result.components).to.deep.equal(expected);
+      expect(metadataQueryStub.calledOnce).to.be.true;
+    });
     it('should resolve components with invalid type returned by metadata api', async () => {
       const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
       metadataQueryStub.withArgs({ type: 'CustomLabels' }).resolves([
@@ -148,6 +185,51 @@ describe('ConnectionResolver', () => {
       ];
       expect(result.components).to.deep.equal(expected);
     });
+
+    it('should resolve components with undefined type returned by metadata api', async () => {
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
+      metadataQueryStub.withArgs({ type: 'CustomLabels' }).resolves([
+        // @ts-expect-error missing type
+        {
+          ...StdFileProperty,
+          fileName: 'standardValueSetTranslations/CaseOrigin-de.standardValueSetTranslation',
+          fullName: 'CaseOrigin-de',
+        },
+      ]);
+
+      const resolver = new ConnectionResolver(connection);
+      const result = await resolver.resolve();
+      const expected: MetadataComponent[] = [
+        {
+          fullName: 'CaseOrigin-de',
+          type: registry.types.standardvaluesettranslation,
+        },
+      ];
+      expect(result.components).to.deep.equal(expected);
+    });
+
+    it('should resolve components with emptyString type returned by metadata api', async () => {
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
+      metadataQueryStub.withArgs({ type: 'CustomLabels' }).resolves([
+        {
+          ...StdFileProperty,
+          fileName: 'standardValueSetTranslations/CaseOrigin-de.standardValueSetTranslation',
+          fullName: 'CaseOrigin-de',
+          type: '',
+        },
+      ]);
+
+      const resolver = new ConnectionResolver(connection);
+      const result = await resolver.resolve();
+      const expected: MetadataComponent[] = [
+        {
+          fullName: 'CaseOrigin-de',
+          type: registry.types.standardvaluesettranslation,
+        },
+      ];
+      expect(result.components).to.deep.equal(expected);
+    });
+
     it('should resolve components with invalid fileName returned by metadata api', async () => {
       const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
       metadataQueryStub.withArgs({ type: 'SynonymDictionary' }).resolves([
@@ -203,7 +285,7 @@ describe('ConnectionResolver', () => {
           type: registry.types.emailfolder,
         },
       ];
-      expect(result.components).to.deep.equal(expected);
+      expect(result.components).to.deep.equalInAnyOrder(expected);
     });
     it('should catch error if MetadataType is not supported', async () => {
       const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
@@ -254,51 +336,6 @@ describe('ConnectionResolver', () => {
       expect(result.components).to.deep.equal(expected);
     });
 
-    it('should retry (ten times) if unexpected error occurs', async () => {
-      const loggerStub = $$.SANDBOX.stub(Logger.prototype, 'debug');
-
-      $$.SANDBOX.stub(connection.metadata, 'list');
-
-      const query = "SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = 'AccountOwnership'";
-
-      const mockToolingQuery = $$.SANDBOX.stub(connection, 'singleRecordQuery');
-      mockToolingQuery.withArgs(query).rejects(new Error('Something happened. Oh no.'));
-
-      const resolver = new ConnectionResolver(connection);
-      const result = await resolver.resolve();
-      const expected: MetadataComponent[] = [];
-
-      // filter over queries and find ones called with `query`
-      const retries = mockToolingQuery.args.filter((call) => call[0] === query);
-
-      expect(retries.length).to.equal(11); // first call plus 10 retries
-      expect(loggerStub.calledOnce).to.be.true;
-      expect(loggerStub.args[0][0]).to.equal('Something happened. Oh no.');
-      expect(result.components).to.deep.equal(expected);
-    });
-
-    it('should not retry query if expected unsupported metadata error is encountered', async () => {
-      const loggerStub = $$.SANDBOX.stub(Logger.prototype, 'debug');
-
-      $$.SANDBOX.stub(connection.metadata, 'list');
-
-      const errorMessage = 'WorkTypeGroupAddInfo is either inaccessible or not supported in Metadata API';
-
-      const mockToolingQuery = $$.SANDBOX.stub(connection, 'singleRecordQuery');
-      mockToolingQuery
-        .withArgs("SELECT Id, MasterLabel, Metadata FROM StandardValueSet WHERE MasterLabel = 'WorkTypeGroupAddInfo'")
-        .rejects(new Error(errorMessage));
-
-      const resolver = new ConnectionResolver(connection);
-      const result = await resolver.resolve();
-      const expected: MetadataComponent[] = [];
-
-      expect(loggerStub.calledOnce).to.be.true;
-      expect(loggerStub.args[0][0]).to.equal('Expected error:');
-      expect(loggerStub.args[0][1]).to.equal(errorMessage);
-      expect(result.components).to.deep.equal(expected);
-    });
-
     it('should resolve no managed components', async () => {
       const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
 
@@ -324,7 +361,7 @@ describe('ConnectionResolver', () => {
 
       const resolver = new ConnectionResolver(connection);
       const result = await resolver.resolve(
-        (component) => !(component.namespacePrefix && component.manageableState !== 'unmanaged')
+        (component) => !(component.namespacePrefix && component.manageableState !== ManageableState.Unmanaged)
       );
       expect(result.components).to.deep.equal([]);
     });
@@ -363,7 +400,62 @@ describe('ConnectionResolver', () => {
           type: registry.types.dashboardfolder,
         },
       ];
-      expect(result.components).to.deep.equal(expected);
+      expect(result.components).to.deep.equalInAnyOrder(expected);
+    });
+  });
+
+  describe('missing filenane and type', () => {
+    it('should skip if component has undefined type and filename', async () => {
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
+
+      metadataQueryStub.withArgs({ type: 'CustomObject' }).resolves([
+        // @ts-expect-error - testing invalid data that the API returns sometimes
+        {
+          ...StdFileProperty,
+          fullName: 'Account',
+        },
+      ]);
+
+      const resolver = new ConnectionResolver(connection);
+      const result = await resolver.resolve();
+
+      expect(result.components).to.deep.equal([]);
+    });
+
+    it('should skip if component has empty string type and filename', async () => {
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
+
+      metadataQueryStub.withArgs({ type: 'CustomObject' }).resolves([
+        {
+          ...StdFileProperty,
+          fullName: 'Account',
+          type: '',
+          fileName: '',
+        },
+      ]);
+
+      const resolver = new ConnectionResolver(connection);
+      const result = await resolver.resolve();
+
+      expect(result.components).to.deep.equal([]);
+    });
+
+    it('should skip if component has empty string type and undefined filename', async () => {
+      const metadataQueryStub = $$.SANDBOX.stub(connection.metadata, 'list');
+
+      metadataQueryStub.withArgs({ type: 'CustomObject' }).resolves([
+        // @ts-expect-error - testing invalid data that the API returns sometimes
+        {
+          ...StdFileProperty,
+          fullName: 'Account',
+          type: '',
+        },
+      ]);
+
+      const resolver = new ConnectionResolver(connection);
+      const result = await resolver.resolve();
+
+      expect(result.components).to.deep.equal([]);
     });
   });
 });

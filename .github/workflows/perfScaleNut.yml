@@ -17,13 +17,26 @@ jobs:
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - run: git config --system core.longpaths true
+        if: ${{ runner.os == 'Windows' }}
+
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
+          node-version: lts/*
           cache: yarn
-      - run: npm install -g @salesforce/cli --omit=dev
-      - run: yarn install
-      - run: yarn test:nuts:scale
+      - uses: salesforcecli/github-workflows/.github/actions/retry@main
+        name: add CLI as global dependency
+        with:
+          command: npm install @salesforce/cli@nightly -g
+          timeout_minutes: 60
+      - uses: salesforcecli/github-workflows/.github/actions/yarnInstallWithRetries@main
+        with:
+          ignore-scripts: true
+      - run: |
+          yarn mocha test/nuts/scale/eda.nut.ts --timeout 500000
+          yarn mocha test/nuts/scale/lotsOfClasses.nut.ts --timeout 500000
+          yarn mocha test/nuts/scale/lotsOfClassesOneDir.nut.ts --timeout 500000
 
       # Run `github-action-benchmark` action
       - name: Store benchmark result

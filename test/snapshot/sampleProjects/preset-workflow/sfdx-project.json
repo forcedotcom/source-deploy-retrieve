@@ -1,0 +1,13 @@
+{
+  "name": "workflowVariantTest",
+  "namespace": "",
+  "packageDirectories": [
+    {
+      "default": true,
+      "path": "force-app"
+    }
+  ],
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "60.0",
+  "sourceBehaviorOptions": ["decomposeWorkflowBeta"]
+}

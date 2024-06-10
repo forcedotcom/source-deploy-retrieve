@@ -5,10 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { Messages, SfError } from '@salesforce/core';
-import { SourcePath } from '../../common';
+import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
-import { baseName, parentName, parseMetadataXml } from '../../utils';
-import { DecompositionStrategy } from '../../registry';
+import { baseName, parentName, parseMetadataXml } from '../../utils/path';
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
@@ -48,6 +47,7 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
 
   public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent | undefined {
     let rootMetadata = super.parseAsRootMetadataXml(path);
+
     if (!rootMetadata) {
       const rootMetadataPath = this.getRootMetadataXmlPath(path);
       if (rootMetadataPath) {
@@ -69,12 +69,11 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
         this.forceIgnore
       );
     }
-
     return this.populate(path, component, isResolvingSource);
   }
 
   /**
-   * If the trigger turns out to be part of a child component, `populate` will build
+   * If the trigger turns out to be part of an addressable child component, `populate` will build
    * the child component, set its parent property to the one created by the
    * `BaseSourceAdapter`, and return the child component instead.
    */
@@ -89,20 +88,23 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
       const childTypeId = this.type.children?.suffixes?.[metaXml.suffix];
       const triggerIsAChild = !!childTypeId;
       const strategy = this.type.strategies?.decomposition;
-
-      if (triggerIsAChild && this.type.children && !this.type.children.types[childTypeId].unaddressableWithoutParent) {
-        if (strategy === DecompositionStrategy.FolderPerType || isResolvingSource) {
-          let parent = component;
-          if (!parent) {
-            parent = new SourceComponent(
+      if (
+        triggerIsAChild &&
+        this.type.children &&
+        !this.type.children.types[childTypeId].unaddressableWithoutParent &&
+        this.type.children.types[childTypeId].isAddressable !== false
+      ) {
+        if (strategy === 'folderPerType' || strategy === 'topLevel' || isResolvingSource) {
+          const parent =
+            component ??
+            new SourceComponent(
               {
-                name: baseName(pathToContent),
+                name: strategy === 'folderPerType' ? baseName(pathToContent) : pathToContent,
                 type: this.type,
               },
               this.tree,
               this.forceIgnore
             );
-          }
           parent.content = pathToContent;
           return new SourceComponent(
             {

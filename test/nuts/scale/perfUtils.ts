@@ -4,10 +4,10 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as path from 'path';
-import * as os from 'os';
+import * as path from 'node:path';
+import * as os from 'node:os';
 import { Performance } from 'node:perf_hooks';
-import * as fs from 'graceful-fs';
+import fs from 'graceful-fs';
 import { expect } from 'chai';
 
 export const recordPerf = async (testName: string, performance: Performance): Promise<void> => {
@@ -17,14 +17,11 @@ export const recordPerf = async (testName: string, performance: Performance): Pr
     fileTarget,
     JSON.stringify(
       existing.concat(
-        performance
-          .getEntriesByType('measure')
-          // TODO: remove this when we upgrade to node16 and get its types
-          .map((m: { name: string; duration: number }) => ({
-            name: `${testName}-${m.name}-${os.platform()}`,
-            value: Math.trunc(m.duration),
-            unit: 'ms',
-          }))
+        performance.getEntriesByType('measure').map((m) => ({
+          name: `${testName}-${m.name}-${os.platform()}`,
+          value: Math.trunc(m.duration),
+          unit: 'ms',
+        }))
       ),
       null,
       2

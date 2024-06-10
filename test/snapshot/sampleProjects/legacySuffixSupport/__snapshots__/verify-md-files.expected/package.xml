@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>LogEntryArchive__b.Timestamp__c</members>
+        <members>LogEntryArchive__b.TransactionEntryNumber__c</members>
+        <members>LogEntryArchive__b.TransactionId__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>LogEntryArchive__b</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>LogEntryArchive__b.LogEntryArchiveIndex</members>
+        <name>Index</name>
+    </types>
+    <version>59.0</version>
+</Package>

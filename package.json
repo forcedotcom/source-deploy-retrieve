@@ -1,6 +1,6 @@
 {
   "name": "@salesforce/source-deploy-retrieve",
-  "version": "9.3.4",
+  "version": "11.6.5",
   "description": "JavaScript library to run Salesforce metadata deploys and retrieves",
   "main": "lib/src/index.js",
   "author": "Salesforce",
@@ -22,75 +22,49 @@
     "messages"
   ],
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "dependencies": {
-    "@salesforce/core": "^4.3.9",
-    "@salesforce/kit": "^3.0.5",
-    "@salesforce/ts-types": "^2.0.4",
+    "@salesforce/core": "^7.3.9",
+    "@salesforce/kit": "^3.1.1",
+    "@salesforce/ts-types": "^2.0.9",
     "fast-levenshtein": "^3.0.0",
-    "fast-xml-parser": "^4.2.5",
+    "fast-xml-parser": "^4.3.6",
     "got": "^11.8.6",
     "graceful-fs": "^4.2.11",
-    "ignore": "^5.2.4",
+    "ignore": "^5.3.1",
     "jszip": "^3.10.1",
     "mime": "2.6.0",
     "minimatch": "^5.1.6",
-    "proxy-agent": "^6.2.1",
-    "unzipper": "0.10.14"
+    "proxy-agent": "^6.4.0"
   },
   "devDependencies": {
-    "@salesforce/cli-plugins-testkit": "^4.2.3",
-    "@salesforce/dev-config": "^4.0.1",
-    "@salesforce/dev-scripts": "^5.4.2",
-    "@salesforce/prettier-config": "^0.0.3",
-    "@salesforce/ts-sinon": "^1.4.9",
+    "@jsforce/jsforce-node": "^3.2.0",
+    "@salesforce/cli-plugins-testkit": "^5.3.8",
+    "@salesforce/dev-scripts": "^9.1.2",
     "@types/deep-equal-in-any-order": "^1.0.1",
-    "@types/fast-levenshtein": "^0.0.2",
-    "@types/graceful-fs": "^4.1.6",
+    "@types/fast-levenshtein": "^0.0.4",
+    "@types/graceful-fs": "^4.1.9",
     "@types/mime": "2.0.3",
     "@types/minimatch": "^5.1.2",
-    "@types/proxy-from-env": "^1.0.1",
-    "@types/shelljs": "^0.8.12",
-    "@types/unzipper": "^0.10.5",
-    "@typescript-eslint/eslint-plugin": "^5.60.1",
-    "@typescript-eslint/parser": "^5.61.0",
-    "chai": "^4.3.7",
     "deep-equal-in-any-order": "^1.1.19",
     "deepmerge": "^4.3.1",
-    "eslint": "^8.44.0",
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-config-salesforce": "^2.0.1",
-    "eslint-config-salesforce-license": "^0.2.0",
-    "eslint-config-salesforce-typescript": "^1.1.1",
-    "eslint-plugin-header": "^3.1.1",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-jsdoc": "^44.2.7",
-    "eslint-plugin-sf-plugin": "^1.15.10",
-    "husky": "^7.0.4",
-    "jsforce": "^2.0.0-beta.27",
-    "mocha": "^9.2.2",
+    "eslint-plugin-sf-plugin": "^1.18.4",
     "mocha-junit-reporter": "^1.23.3",
-    "nyc": "^15.1.0",
-    "prettier": "^2.8.7",
-    "pretty-quick": "^3.1.3",
-    "shelljs": "0.8.5",
-    "shx": "^0.3.4",
-    "sinon": "10.0.0",
-    "ts-node": "^10.9.1",
-    "ttypescript": "^1.5.15",
-    "typescript": "^4.9.5",
-    "wireit": "^0.9.5"
+    "mocha-snap": "^5.0.0",
+    "ts-node": "^10.9.2",
+    "ts-patch": "^3.1.1",
+    "typescript": "^5.4.4"
   },
   "scripts": {
     "build": "wireit",
-    "ci-docs": "yarn sf-ci-docs",
     "clean": "sf-clean",
     "clean-all": "sf-clean all",
     "compile": "wireit",
     "coverage": "nyc report --reporter=lcov",
     "docs": "sf-docs",
     "format": "wireit",
+    "link-check": "wireit",
     "lint": "wireit",
     "local:install": "./scripts/localInstall.js install",
     "local:link": "./scripts/localInstall.js link",
@@ -100,11 +74,11 @@
     "prepare": "sf-install",
     "repl": "node --inspect ./scripts/repl.js",
     "test": "wireit",
-    "test:nuts": "mocha \"test/nuts/local/**/*.nut.ts\" --timeout 500000",
-    "test:nuts:scale": "mocha \"test/nuts/scale/eda.nut.ts\" --timeout 500000; mocha \"test/nuts/scale/lotsOfClasses.nut.ts\" --timeout 500000; mocha \"test/nuts/scale/lotsOfClassesOneDir.nut.ts\" --timeout 500000",
+    "test:nuts": "mocha \"test/nuts/local/**/*.nut.ts\" --timeout 500000 --parallel --job 20",
     "test:nuts:suggest": "mocha \"test/nuts/suggestType/suggestType.nut.ts\" --timeout 10000",
     "test:only": "wireit",
     "test:registry": "mocha ./test/registry/registryCompleteness.test.ts --timeout 50000",
+    "test:snapshot": "wireit",
     "update-registry": "npx ts-node scripts/update-registry/update2.ts",
     "update-supported-metadata": "npx ts-node scripts/update-registry/update-supported-metadata.ts"
   },
@@ -126,18 +100,18 @@
       ]
     },
     "compile": {
-      "command": "ttsc -p . --pretty --incremental",
+      "clean": "if-file-deleted",
+      "command": "tspc -p . --pretty --incremental",
       "files": [
         "src/**/*.ts",
-        "src/registry/*.json",
+        "src/registry/**/*.json",
         "**/tsconfig.json",
         "messages/**"
       ],
       "output": [
         "lib/**",
         "*.tsbuildinfo"
-      ],
-      "clean": "if-file-deleted"
+      ]
     },
     "format": {
       "command": "prettier --write \"+(src|test|schemas)/**/*.+(ts|js|json)|command-snapshot.json\"",
@@ -173,7 +147,8 @@
       "dependencies": [
         "test:only",
         "test:compile",
-        "test:registry-validation"
+        "test:registry-validation",
+        "test:snapshot"
       ]
     },
     "test:registry-validation": {
@@ -186,7 +161,32 @@
       "output": []
     },
     "test:only": {
-      "command": "nyc mocha \"test/**/*.test.ts\" --exclude \"test/registry/registryValidation.test.ts\"",
+      "command": "nyc mocha \"test/**/*.test.ts\" --exclude \"test/registry/registryValidation.test.ts\" --exclude \"test/snapshot/**\"",
+      "env": {
+        "FORCE_COLOR": "2"
+      },
+      "files": [
+        "test/**/*.ts",
+        "src/**/*.ts",
+        "src/registry/*.json",
+        "**/tsconfig.json",
+        ".mocha*",
+        "!*.nut.ts",
+        ".nycrc"
+      ],
+      "output": []
+    },
+    "link-check": {
+      "command": "node -e \"process.exit(process.env.CI ? 0 : 1)\" || linkinator \"**/*.md\" --skip \"CHANGELOG.md|node_modules|test/|confluence.internal.salesforce.com|my.salesforce.com|%s\" --markdown --retry --directory-listing --verbosity error",
+      "files": [
+        "./*.md",
+        "./!(CHANGELOG).md",
+        "messages/**/*.md"
+      ],
+      "output": []
+    },
+    "test:snapshot": {
+      "command": "mocha \"test/snapshot/**/*.test.ts\" --parallel",
       "env": {
         "FORCE_COLOR": "2"
       },
@@ -201,5 +201,8 @@
       ],
       "output": []
     }
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

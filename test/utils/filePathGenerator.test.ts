@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as path from 'path';
+import * as path from 'node:path';
 import { expect } from 'chai';
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import chai = require('chai');
@@ -13,7 +13,7 @@ import { MetadataComponent, MetadataResolver, MetadataType, RegistryAccess, Virt
 
 chai.use(deepEqualInAnyOrder);
 
-interface TypeEntry {
+type TypeEntry = {
   fullName: string;
   typeName: string;
   expectedFilePaths: string[];
@@ -23,7 +23,7 @@ interface TypeEntry {
     content?: string;
     xml?: string;
   }>;
-}
+};
 
 const registryAccess = new RegistryAccess();
 const packageDir = path.normalize('force-app/main/default');

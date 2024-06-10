@@ -4,15 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Readable } from 'stream';
-import { basename, join } from 'path';
-import deepEqualInAnyOrder = require('deep-equal-in-any-order');
+import { Readable } from 'node:stream';
+import { basename, join } from 'node:path';
+import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import { Messages } from '@salesforce/core';
-import { assert, expect } from 'chai';
+import chai, { assert, expect } from 'chai';
 import { createSandbox } from 'sinon';
-import * as JSZip from 'jszip';
-import { CentralDirectory, Entry, Open } from 'unzipper';
-import chai = require('chai');
+import JSZip from 'jszip';
 import { registry, SourceComponent, VirtualTreeContainer, WriteInfo } from '../../../src';
 import { StaticResourceMetadataTransformer } from '../../../src/convert/transformers/staticResourceMetadataTransformer';
 import { baseName } from '../../../src/utils';
@@ -202,23 +200,6 @@ describe('StaticResourceMetadataTransformer', () => {
   });
 
   describe('toSourceFormat', () => {
-    const mockCentralDirectory = {
-      files: [
-        {
-          path: 'a',
-          type: 'Directory',
-          // @ts-expect-error mock
-          stream: (): Entry => null,
-        },
-        {
-          path: 'b/c.css',
-          type: 'File',
-          // @ts-expect-error mock
-          stream: (): Entry => null,
-        },
-      ],
-    } as CentralDirectory;
-
     it('should rename extension from .resource to a mime extension for content file', async () => {
       const component = mixedContentSingleFile.COMPONENT;
       const { type, content, xml } = component;
@@ -313,7 +294,11 @@ describe('StaticResourceMetadataTransformer', () => {
           contentType: 'application/zip',
         },
       });
-      env.stub(Open, 'buffer').resolves(mockCentralDirectory);
+
+      const filePath = join('b', 'c.css');
+      const testZip = new JSZip().file(filePath, 'fake css content');
+      env.stub(JSZip, 'loadAsync').resolves(testZip);
+
       const expectedInfos: WriteInfo[] = [
         {
           source: component.tree.stream(xml),
@@ -329,8 +314,7 @@ describe('StaticResourceMetadataTransformer', () => {
           DEFAULT_PACKAGE_ROOT_SFDX,
           type.directoryName,
           mixedContentSingleFile.COMPONENT_NAMES[0],
-          'b',
-          'c.css'
+          filePath
         )
       );
     });
@@ -390,7 +374,11 @@ describe('StaticResourceMetadataTransformer', () => {
           contentType: 'application/zip',
         },
       });
-      env.stub(Open, 'buffer').resolves(mockCentralDirectory);
+
+      const filePath = join('b', 'c.css');
+      const testZip = new JSZip().file(filePath, 'fake css content');
+      env.stub(JSZip, 'loadAsync').resolves(testZip);
+
       const expectedInfos: WriteInfo[] = [
         {
           source: component.tree.stream(component.xml),

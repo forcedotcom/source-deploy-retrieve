@@ -4,18 +4,17 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, extname, join, posix, relative, resolve as pathResolve, sep } from 'path';
-import { format } from 'util';
+import { join, relative, resolve as pathResolve, sep } from 'node:path';
+import { format } from 'node:util';
 import { isString } from '@salesforce/ts-types';
-import * as JSZip from 'jszip';
-import * as fs from 'graceful-fs';
+import JSZip from 'jszip';
+import fs from 'graceful-fs';
 import { Lifecycle, Messages, SfError } from '@salesforce/core';
 import { ensureArray } from '@salesforce/kit';
+import { RegistryAccess } from '../registry/registryAccess';
 import { ReplacementEvent } from '../convert/types';
-import { MetadataConverter } from '../convert';
-import { ComponentLike, SourceComponent } from '../resolve';
-import { ComponentSet } from '../collections';
-import { registry } from '../registry';
+import { MetadataConverter } from '../convert/metadataConverter';
+import { ComponentSet } from '../collections/componentSet';
 import { MetadataTransfer, MetadataTransferOptions } from './metadataTransfer';
 import {
   AsyncResult,
@@ -26,192 +25,45 @@ import {
   MetadataApiDeployStatus,
   MetadataTransferResult,
 } from './types';
-import { DiagnosticUtil } from './diagnosticUtil';
+import {
+  createResponses,
+  getDeployMessages,
+  getState,
+  isComponentNotFoundWarningMessage,
+  toKey,
+} from './deployMessages';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
+// TODO: (NEXT MAJOR) this should just be a readonly object and not a class.
 export class DeployResult implements MetadataTransferResult {
-  private readonly diagnosticUtil = new DiagnosticUtil('metadata');
   private fileResponses?: FileResponse[];
-  private readonly shouldConvertPaths = sep !== posix.sep;
 
   public constructor(
     public readonly response: MetadataApiDeployStatus,
     public readonly components?: ComponentSet,
-    public readonly replacements: Map<string, string[]> = new Map<string, string[]>()
+    public readonly replacements = new Map<string, string[]>()
   ) {}
 
   public getFileResponses(): FileResponse[] {
     // this involves FS operations, so only perform once!
     if (!this.fileResponses) {
-      // TODO: Log when messages can't be mapped to components
-      const responseMessages = this.getDeployMessages(this.response);
-      const fileResponses: FileResponse[] = [];
-
-      if (this.components) {
-        for (const deployedComponent of this.components.getSourceComponents()) {
-          if (deployedComponent.type.children) {
-            for (const child of deployedComponent.getChildren()) {
-              const childMessages = responseMessages.get(this.key(child));
-              if (childMessages) {
-                fileResponses.push(...this.createResponses(child, childMessages));
-              }
-            }
-          }
-          const componentMessages = responseMessages.get(this.key(deployedComponent));
-          if (componentMessages) {
-            fileResponses.push(...this.createResponses(deployedComponent, componentMessages));
-          }
-        }
-
-        this.fileResponses = fileResponses.concat(this.deleteNotFoundToFileResponses(responseMessages));
-      } else {
-        // if no this.components, this was likely a metadata format deploy so we need to process
-        // the componentSuccesses and componentFailures instead.
-        const successes = ensureArray(this.response.details?.componentSuccesses);
-        const failures = ensureArray(this.response.details?.componentFailures);
-        for (const component of [...successes, ...failures]) {
-          if (component.fullName === 'package.xml') continue;
-          const baseResponse: Partial<FileResponse> = {
-            fullName: component.fullName,
-            type: component.componentType,
-            state: getState(component),
-            filePath: component.fileName.replace(`zip${sep}`, ''),
-          };
-
-          if (baseResponse.state === ComponentStatus.Failed) {
-            baseResponse.error = component.problem;
-            baseResponse.problemType = component.problemType;
-          }
-
-          fileResponses.push(baseResponse as FileResponse);
-        }
-        this.fileResponses = fileResponses;
-      }
+      this.fileResponses = [
+        // removes duplicates from the file responses by parsing the object into a string, used as the key of the map
+        ...new Map(
+          (this.components
+            ? buildFileResponsesFromComponentSet(this.components)(this.response)
+            : buildFileResponses(this.response)
+          ).map((v) => [JSON.stringify(v), v])
+        ).values(),
+      ];
     }
     return this.fileResponses;
   }
-
-  private createResponses(component: SourceComponent, responseMessages: DeployMessage[]): FileResponse[] {
-    const { fullName, type, xml, content } = component;
-    const responses: FileResponse[] = [];
-
-    for (const message of responseMessages) {
-      const baseResponse: Partial<FileResponse> = {
-        fullName,
-        type: type.name,
-        state: getState(message),
-      };
-
-      if (baseResponse.state === ComponentStatus.Failed) {
-        const diagnostic = this.diagnosticUtil.parseDeployDiagnostic(component, message);
-        const response = Object.assign(baseResponse, diagnostic) as FileResponse;
-        responses.push(response);
-      } else {
-        // components with children are already taken care of through the messages,
-        // so don't walk their content directories.
-        if (
-          content &&
-          (!type.children || Object.values(type.children.types).some((t) => t.unaddressableWithoutParent))
-        ) {
-          for (const filePath of component.walkContent()) {
-            const response = { ...baseResponse, filePath } as FileResponse;
-            responses.push(response);
-          }
-        }
-
-        if (xml) {
-          const response = { ...baseResponse, filePath: xml } as FileResponse;
-          responses.push(response);
-        }
-      }
-    }
-
-    return responses;
-  }
-
-  /**
-   * Groups messages from the deploy result by component fullName and type
-   */
-  private getDeployMessages(result: MetadataApiDeployStatus): Map<string, DeployMessage[]> {
-    const messageMap = new Map<string, DeployMessage[]>();
-
-    const failedComponents = new ComponentSet();
-    const failureMessages = ensureArray(result.details.componentFailures);
-    const successMessages = ensureArray(result.details.componentSuccesses);
-
-    for (const failure of failureMessages) {
-      const sanitized = sanitizeDeployMessage(failure);
-      const componentLike: ComponentLike = {
-        fullName: sanitized.fullName,
-        type: sanitized.componentType,
-      };
-      const key = this.key(componentLike);
-      if (!messageMap.has(key)) {
-        messageMap.set(key, []);
-      }
-      messageMap.get(key)?.push(sanitized);
-      failedComponents.add(componentLike);
-    }
-
-    for (const success of successMessages) {
-      const sanitized = sanitizeDeployMessage(success);
-      const componentLike: ComponentLike = {
-        fullName: sanitized.fullName,
-        type: sanitized.componentType,
-      };
-      const key = this.key(componentLike);
-      // this will ensure successes aren't reported if there is a failure for
-      // the same component. e.g. lwc returns failures and successes
-      if (!failedComponents.has(componentLike)) {
-        messageMap.set(key, [sanitized]);
-      }
-    }
-
-    return messageMap;
-  }
-
-  /**
-   * If a component fails to delete because it doesn't exist in the org, you get a message like
-   * key: 'ApexClass#destructiveChanges.xml'
-   * value:[{
-   * fullName: 'destructiveChanges.xml',
-   * fileName: 'destructiveChanges.xml',
-   * componentType: 'ApexClass',
-   * problem: 'No ApexClass named: test1 found',
-   * problemType: 'Warning'
-   * }]
-   */
-  private deleteNotFoundToFileResponses(messageMap: Map<string, DeployMessage[]>): FileResponse[] {
-    return Array.from(messageMap)
-      .filter(([key]) => key.includes('destructiveChanges') && key.endsWith('.xml'))
-      .flatMap(
-        ([, messageArray]): Array<DeployMessage & Required<Pick<DeployMessage, 'componentType' | 'problem'>>> =>
-          messageArray.filter(isComponentNotFoundWarningMessage)
-      )
-      .flatMap((message) => {
-        const fullName = message.problem.replace(`No ${message.componentType} named: `, '').replace(' found', '');
-        return this.components
-          ? this.components
-              .getComponentFilenamesByNameAndType({ fullName, type: message.componentType })
-              .map((fileName) => ({
-                fullName,
-                type: message.componentType,
-                filePath: fileName,
-                state: ComponentStatus.Deleted,
-              }))
-          : [];
-      });
-  }
-
-  private key(component: ComponentLike): string {
-    const type = typeof component.type === 'string' ? component.type : component.type.name;
-    return `${type}#${this.shouldConvertPaths ? component.fullName.split(sep).join(posix.sep) : component.fullName}`;
-  }
 }
 
-export interface MetadataApiDeployOptions extends MetadataTransferOptions {
+export type MetadataApiDeployOptions = {
   apiOptions?: ApiOptions;
   /**
    * Path to a zip file containing mdapi-formatted code and a package.xml
@@ -221,7 +73,8 @@ export interface MetadataApiDeployOptions extends MetadataTransferOptions {
    * Path to a directory containing mdapi-formatted code and a package.xml
    */
   mdapiPath?: string;
-}
+  registry?: RegistryAccess;
+} & MetadataTransferOptions;
 
 export class MetadataApiDeploy extends MetadataTransfer<
   MetadataApiDeployStatus,
@@ -242,13 +95,18 @@ export class MetadataApiDeploy extends MetadataTransfer<
   private orgId?: string;
   // Keep track of rest deploys separately since Connection.deploy() removes it
   // from the apiOptions and we need it for telemetry.
-  private isRestDeploy: boolean;
+  private readonly isRestDeploy: boolean;
+  private readonly registry: RegistryAccess;
 
   public constructor(options: MetadataApiDeployOptions) {
     super(options);
     options.apiOptions = { ...MetadataApiDeploy.DEFAULT_OPTIONS.apiOptions, ...options.apiOptions };
     this.options = Object.assign({}, options);
     this.isRestDeploy = !!options.apiOptions?.rest;
+    this.registry = options.registry ?? new RegistryAccess();
+    if (this.mdapiTempDir) {
+      this.mdapiTempDir = join(this.mdapiTempDir, `${new Date().toISOString()}_deploy`);
+    }
   }
 
   /**
@@ -368,7 +226,6 @@ export class MetadataApiDeploy extends MetadataTransfer<
       : connection.metadata.deploy(zipBuffer, optionsWithoutRest);
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   protected async post(result: MetadataApiDeployStatus): Promise<DeployResult> {
     const lifecycle = Lifecycle.getInstance();
     const connection = await this.getConnection();
@@ -477,7 +334,7 @@ export class MetadataApiDeploy extends MetadataTransfer<
       return fs.promises.readFile(this.options.zipPath);
     }
     if (this.options.components && this.components) {
-      const converter = new MetadataConverter();
+      const converter = new MetadataConverter(this.registry);
       const { zipBuffer } = await converter.convert(this.components, 'metadata', { type: 'zip' });
       if (!zipBuffer) {
         throw new SfError(messages.getMessage('zipBufferError'));
@@ -489,82 +346,115 @@ export class MetadataApiDeploy extends MetadataTransfer<
 }
 
 /**
+ * If a component fails to delete because it doesn't exist in the org, you get a message like
+ * key: 'ApexClass#destructiveChanges.xml'
+ * value:[{
+ * fullName: 'destructiveChanges.xml',
+ * fileName: 'destructiveChanges.xml',
+ * componentType: 'ApexClass',
+ * problem: 'No ApexClass named: test1 found',
+ * problemType: 'Warning'
+ * }]
+ */
+const deleteNotFoundToFileResponses =
+  (cs: ComponentSet) =>
+  (messageMap: Map<string, DeployMessage[]>): FileResponse[] =>
+    Array.from(messageMap)
+      .filter(([key]) => key.includes('destructiveChanges') && key.endsWith('.xml'))
+      .flatMap(
+        ([, messageArray]): Array<DeployMessage & Required<Pick<DeployMessage, 'componentType' | 'problem'>>> =>
+          messageArray.filter(isComponentNotFoundWarningMessage)
+      )
+      .flatMap((message) => {
+        const fullName = message.problem.replace(`No ${message.componentType} named: `, '').replace(' found', '');
+        return cs
+          ? cs.getComponentFilenamesByNameAndType({ fullName, type: message.componentType }).map((fileName) => ({
+              fullName,
+              type: message.componentType,
+              filePath: fileName,
+              state: ComponentStatus.Deleted,
+            }))
+          : [];
+      });
+
+const warnIfUnmatchedServerResult =
+  (fr: FileResponse[]) =>
+  (messageMap: Map<string, DeployMessage[]>): void[] =>
+    // keep the parents and children separated for MPD scenarios where we have a parent in one, children in another package
+    [...messageMap.keys()].flatMap((key) => {
+      const [type, fullName] = key.split('#');
+
+      if (
+        !fr.find((c) => c.type === type && c.fullName === fullName) &&
+        !['package.xml', 'destructiveChanges.xml', 'destructiveChangesPost.xml', 'destructiveChangesPre.xml'].includes(
+          fullName
+        )
+      ) {
+        const deployMessage = messageMap.get(key)!.at(0)!;
+
+        // warn that this component is found in server response, but not in component set
+        void Lifecycle.getInstance().emitWarning(
+          `${deployMessage.componentType}, ${deployMessage.fullName}, returned from org, but not found in the local project`
+        );
+      }
+    });
+const buildFileResponses = (response: MetadataApiDeployStatus): FileResponse[] =>
+  ensureArray(response.details?.componentSuccesses)
+    .concat(ensureArray(response.details?.componentFailures))
+    .filter((c) => c.fullName !== 'package.xml')
+    .map(
+      (c) =>
+        ({
+          ...(getState(c) === ComponentStatus.Failed
+            ? {
+                error: c.problem,
+                problemType: c.problemType,
+                columnNumber: c.columnNumber ? parseInt(c.columnNumber, 10) : undefined,
+                lineNumber: c.lineNumber ? parseInt(c.lineNumber, 10) : undefined,
+              }
+            : {}),
+          fullName: c.fullName,
+          type: c.componentType,
+          state: getState(c),
+          filePath: c.fileName.replace(`zip${sep}`, ''),
+        } as FileResponse)
+    );
+
+const buildFileResponsesFromComponentSet =
+  (cs: ComponentSet) =>
+  (response: MetadataApiDeployStatus): FileResponse[] => {
+    const responseMessages = getDeployMessages(response);
+
+    const fileResponses = (cs.getSourceComponents().toArray() ?? [])
+      .flatMap((deployedComponent) =>
+        createResponses(deployedComponent, responseMessages.get(toKey(deployedComponent)) ?? []).concat(
+          deployedComponent.type.children
+            ? deployedComponent.getChildren().flatMap((child) => {
+                const childMessages = responseMessages.get(toKey(child));
+                return childMessages ? createResponses(child, childMessages) : [];
+              })
+            : []
+        )
+      )
+      .concat(deleteNotFoundToFileResponses(cs)(responseMessages));
+
+    if (cs.size) {
+      warnIfUnmatchedServerResult(fileResponses)(responseMessages);
+    }
+    return fileResponses;
+  };
+/**
  * register a listener to `scopedPreDeploy`
  */
-export interface ScopedPreDeploy {
+export type ScopedPreDeploy = {
   componentSet: ComponentSet;
   orgId: string;
-}
+};
 
 /**
  * register a listener to `scopedPostDeploy`
  */
-export interface ScopedPostDeploy {
+export type ScopedPostDeploy = {
   deployResult: DeployResult;
   orgId: string;
-}
-
-const getState = (message: DeployMessage): ComponentStatus => {
-  if (message.created === 'true' || message.created === true) {
-    return ComponentStatus.Created;
-  } else if (message.changed === 'true' || message.changed === true) {
-    return ComponentStatus.Changed;
-  } else if (message.deleted === 'true' || message.deleted === true) {
-    return ComponentStatus.Deleted;
-  } else if (message.success === 'false' || message.success === false) {
-    return ComponentStatus.Failed;
-  }
-  return ComponentStatus.Unchanged;
 };
-
-/**
- * Fix any issues with the deploy message returned by the api.
- * TODO: remove cases if fixes are made in the api.
- */
-const sanitizeDeployMessage = (message: DeployMessage): DeployMessage & { componentType: string } => {
-  if (!hasComponentType(message)) {
-    throw new SfError(`Missing componentType in deploy message ${message.fullName} ${message.fileName}`);
-  }
-
-  // mdapi error messages have the type as "FooSettings" but SDR only recognizes "Settings"
-  if (message.componentType.endsWith('Settings') && message.fileName.endsWith('.settings')) {
-    return {
-      ...message,
-      componentType: 'Settings',
-    };
-  }
-  if (message.componentType === registry.types.lightningcomponentbundle.name) {
-    return {
-      ...message,
-      fullName: message.fullName.replace(/markup:\/\/[a-z|0-9|_]+:/i, ''),
-    };
-  }
-  if (message.componentType === registry.types.document.name) {
-    return {
-      ...message,
-      // strip document extension from fullName
-      fullName: join(dirname(message.fullName), basename(message.fullName, extname(message.fullName))),
-    };
-  }
-  // Treat emailTemplateFolder as EmailFolder
-  if (message.componentType === registry.types.emailtemplatefolder.name) {
-    return {
-      ...message,
-      // strip document extension from fullName
-      componentType: registry.types.emailfolder.name,
-    };
-  }
-  return message;
-};
-
-/* Type guard for asserting that a DeployMessages has a componentType, problem, and problemType === Warning*/
-const isComponentNotFoundWarningMessage = (
-  message: DeployMessage
-): message is DeployMessage & Required<Pick<DeployMessage, 'componentType' | 'problem' | 'problemType'>> =>
-  hasComponentType(message) &&
-  message.problemType === 'Warning' &&
-  typeof message.problem === 'string' &&
-  message.problem?.startsWith(`No ${message.componentType} named: `);
-
-const hasComponentType = (message: DeployMessage): message is DeployMessage & { componentType: string } =>
-  typeof message.componentType === 'string';

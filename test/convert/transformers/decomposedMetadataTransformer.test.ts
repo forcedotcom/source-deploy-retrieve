@@ -5,10 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { join } from 'path';
+import { join } from 'node:path';
 import { expect, assert } from 'chai';
 import { Messages } from '@salesforce/core';
-import { TestContext } from '@salesforce/core/lib/testSetup';
+import { TestContext } from '@salesforce/core/testSetup';
 import { decomposed, matchingContentFile } from '../../mock';
 import { DecomposedMetadataTransformer } from '../../../src/convert/transformers/decomposedMetadataTransformer';
 import { baseName } from '../../../src/utils';
@@ -16,7 +16,7 @@ import { JsToXml } from '../../../src/convert/streams';
 import { DECOMPOSED_TOP_LEVEL_COMPONENT } from '../../mock/type-constants/customObjectTranslationConstant';
 import { ComponentSet, ForceIgnore, registry, RegistryAccess, SourceComponent } from '../../../src';
 import { XML_NS_KEY, XML_NS_URL } from '../../../src/common';
-import { ConvertContext } from '../../../src/convert/convertContext';
+import { ConvertContext } from '../../../src/convert/convertContext/convertContext';
 
 const registryAccess = new RegistryAccess();
 
@@ -353,7 +353,60 @@ describe('DecomposedMetadataTransformer', () => {
         // the new parent was written
         {
           source: new JsToXml({
-            [type.name]: '',
+            [type.name]: {
+              [XML_NS_KEY]: XML_NS_URL,
+            },
+          }),
+          output: join(root, 'myObject__c.objectTranslation-meta.xml'),
+        },
+      ]);
+    });
+
+    it('should merge unaddressableWithoutParent types with their parent, regardless of location', async () => {
+      const cot = DECOMPOSED_TOP_LEVEL_COMPONENT;
+      const cft = DECOMPOSED_TOP_LEVEL_COMPONENT;
+      const { type, fullName } = cot;
+
+      const transformer = new DecomposedMetadataTransformer();
+      const root = join('path', 'to', type.directoryName, fullName);
+      $$.SANDBOX.stub(cot, 'parseXml').resolves({
+        CustomObjectTranslation: {
+          fields: [
+            { name: 'child', test: 'testVal' },
+            { name: 'child2', test: 'testVal2' },
+          ],
+        },
+      });
+
+      const result = await transformer.toSourceFormat(cft, cot);
+
+      expect(result).to.deep.equal([
+        {
+          source: new JsToXml({
+            CustomFieldTranslation: {
+              [XML_NS_KEY]: XML_NS_URL,
+              name: 'child',
+              test: 'testVal',
+            },
+          }),
+          output: join(root, 'child.fieldTranslation-meta.xml'),
+        },
+        {
+          source: new JsToXml({
+            CustomFieldTranslation: {
+              [XML_NS_KEY]: XML_NS_URL,
+              name: 'child2',
+              test: 'testVal2',
+            },
+          }),
+          output: join(root, 'child2.fieldTranslation-meta.xml'),
+        },
+        // the new parent was written
+        {
+          source: new JsToXml({
+            [type.name]: {
+              [XML_NS_KEY]: XML_NS_URL,
+            },
           }),
           output: join(root, 'myObject__c.objectTranslation-meta.xml'),
         },
@@ -363,6 +416,35 @@ describe('DecomposedMetadataTransformer', () => {
     it('should handle decomposed parents with no files', async () => {
       const transformer = new DecomposedMetadataTransformer();
       $$.SANDBOX.stub(component, 'parseXml').resolves({});
+
+      const result = await transformer.toSourceFormat(component);
+
+      expect(result).to.be.an('array').with.lengthOf(1);
+      // there will be a file produced, with just the outer type (ex: CustomObject) and the xmlns declaration
+      expect(result[0].output).to.equal(
+        join('main', 'default', 'objects', 'customObject__c', 'customObject__c.object-meta.xml')
+      );
+    });
+
+    it('should return no files when the parent is forceIgnored', async () => {
+      const { fullName } = component;
+      const context = new ConvertContext();
+      const transformer = new DecomposedMetadataTransformer(registryAccess, context);
+
+      $$.SANDBOX.stub(component, 'parseXml').resolves({
+        CustomObject: {
+          fullName,
+          customField: [{ fullName: 'child', test: 'testVal' }],
+          validationRules: [
+            { fullName: 'child2', test: 'testVal2' },
+            { fullName: 'child3', test: 'testVal3' },
+          ],
+        },
+      });
+      $$.SANDBOX.stub(ForceIgnore.prototype, 'denies')
+        .returns(false)
+        .withArgs(join('main', 'default', 'objects', 'customObject__c', 'customObject__c.object-meta.xml'))
+        .returns(true);
 
       const result = await transformer.toSourceFormat(component);
 
@@ -513,7 +595,6 @@ describe('DecomposedMetadataTransformer', () => {
         expect(
           context.decomposition.transactionState.get(`${mergeComponentChild.type.name}#${mergeComponentChild.fullName}`)
         ).to.deep.equal({
-          foundMerge: false,
           origin: component,
           writeInfo: {
             source: new JsToXml({
@@ -555,7 +636,6 @@ describe('DecomposedMetadataTransformer', () => {
         const result = await transformer.toSourceFormat(component, componentToMerge);
         expect(result).to.be.empty;
         expect(context.decomposition.transactionState.get(`${type.name}#${fullName}`)).to.deep.equal({
-          foundMerge: false,
           origin: component,
           writeInfo: {
             source: new JsToXml({

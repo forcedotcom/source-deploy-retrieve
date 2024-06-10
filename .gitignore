@@ -18,6 +18,7 @@ test-results/
 test-results.xml
 xunit.xml
 junit-custom.xml
+*.received.*
 
 # nyc test coverage
 .nyc_output
@@ -73,13 +74,13 @@ jspm_packages/
 typings/
 
 # TypeScript cache
-*.tsbuildinfo
+
 
 # Optional npm cache directory
 .npm
 
 # Optional eslint cache
-.eslintcache
+
 
 # Microbundle cache
 .rpt2_cache/
@@ -117,6 +118,10 @@ registryBuilder
 # -- CLEAN ALL
 .wireit
 node_modules
+
+
+.eslintcache
+*.tsbuildinfo
 
 # -- nuts test dirs
 test_session*

@@ -1,0 +1,13 @@
+{
+  "name": "sharingRules-decomposed",
+  "namespace": "",
+  "packageDirectories": [
+    {
+      "default": true,
+      "path": "force-app"
+    }
+  ],
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "52.0",
+  "sourceBehaviorOptions": ["decomposeSharingRulesBeta"]
+}

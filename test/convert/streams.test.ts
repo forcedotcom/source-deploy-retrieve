@@ -5,17 +5,17 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { basename, join, sep } from 'path';
-import { Readable, Writable } from 'stream';
-import * as fs from 'graceful-fs';
+import { basename, join, sep } from 'node:path';
+import { Readable, Writable } from 'node:stream';
+import fs from 'graceful-fs';
 import { Logger, SfError, Messages } from '@salesforce/core';
 import { expect, assert } from 'chai';
 import { createSandbox, SinonStub } from 'sinon';
-import JSZip = require('jszip');
+import JSZip from 'jszip';
 import * as streams from '../../src/convert/streams';
 import * as fsUtil from '../../src/utils/fileSystemHandler';
 import { ComponentSet, MetadataResolver, RegistryAccess, SourceComponent, WriteInfo, WriterFormat } from '../../src';
-import { MetadataTransformerFactory } from '../../src/convert/transformers';
+import { MetadataTransformerFactory } from '../../src/convert/transformers/metadataTransformerFactory';
 import { COMPONENTS } from '../mock/type-constants/reportConstant';
 import { XML_DECL, XML_NS_KEY, XML_NS_URL } from '../../src/common';
 import { COMPONENT, CONTENT_NAMES, TYPE_DIRECTORY, XML_NAMES } from '../mock/type-constants/apexClassConstant';
@@ -294,7 +294,7 @@ describe('Streams', () => {
       let ensureFile: SinonStub;
 
       beforeEach(() => {
-        writer = new streams.StandardWriter(rootDestination, resolver);
+        writer = new streams.StandardWriter(rootDestination);
         ensureFile = env.stub(fsUtil, 'ensureFileExists');
         pipelineStub = env.stub(streams, 'pipeline');
         env
@@ -357,14 +357,39 @@ describe('Streams', () => {
         });
       });
 
-      it('should resolve copied source components during write', async () => {
+      it('should hoist copied filenames into `converted` during write', async () => {
         pipelineStub.resolves();
 
         await writer._write(chunk, '', (err: Error | undefined) => {
           expect(err).to.be.undefined;
-          const destination = join(rootDestination, component.type.directoryName);
-          const expected = resolver.getComponentsFromPath(destination);
-          expect(writer.converted).to.deep.equal(expected);
+          const destination = join(rootDestination, component.type.directoryName, basename(component.xml!));
+          expect(writer.converted).to.deep.equal([destination]);
+        });
+      });
+
+      it('should hoisted deleted filenames into `deleted` during write', async () => {
+        pipelineStub.resolves();
+        const chunk: WriterFormat = {
+          component,
+          writeInfos: [
+            {
+              output: component.getPackageRelativePath(component.xml!, 'metadata'),
+              shouldDelete: true,
+              type: component.type.name,
+              fullName: component.fullName,
+            },
+          ],
+        };
+        await writer._write(chunk, '', (err: Error | undefined) => {
+          expect(err).to.be.undefined;
+          expect(writer.deleted).to.deep.equal([
+            {
+              filePath: join(rootDestination, component.type.directoryName, basename(component.xml!)),
+              fullName: component.fullName,
+              state: 'Deleted',
+              type: component.type.name,
+            },
+          ]);
         });
       });
 
@@ -538,6 +563,29 @@ describe('Streams', () => {
       expectedBody += '    </many>\n';
       expectedBody += '    <many>\n';
       expectedBody += '        <test>second</test>\n';
+      expectedBody += '    </many>\n';
+      expectedBody += '</TestType>\n';
+
+      expect(jsToXml.read().toString()).to.be.equal(expectedBody);
+    });
+
+    it('should transform js with html encoding to xml', () => {
+      const xmlObj = {
+        TestType: {
+          [XML_NS_KEY]: XML_NS_URL,
+          foo: '3 results,&#160;and 1 other',
+          many: [{ test: 'first&#160;1st' }, { test: 'second&#160;2nd' }],
+        },
+      };
+      const jsToXml = new streams.JsToXml(xmlObj);
+      let expectedBody = XML_DECL;
+      expectedBody += `<TestType xmlns="${XML_NS_URL}">\n`;
+      expectedBody += '    <foo>3 results,&#160;and 1 other</foo>\n';
+      expectedBody += '    <many>\n';
+      expectedBody += '        <test>first&#160;1st</test>\n';
+      expectedBody += '    </many>\n';
+      expectedBody += '    <many>\n';
+      expectedBody += '        <test>second&#160;2nd</test>\n';
       expectedBody += '    </many>\n';
       expectedBody += '</TestType>\n';
 

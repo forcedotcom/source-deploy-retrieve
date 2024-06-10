@@ -4,16 +4,17 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, sep } from 'path';
+import { basename, dirname, sep } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
 import { ensureString } from '@salesforce/ts-types';
 import { MetadataXml, SourceAdapter } from '../types';
-import { parseMetadataXml, parseNestedFullName } from '../../utils';
+import { parseMetadataXml, parseNestedFullName } from '../../utils/path';
 import { ForceIgnore } from '../forceIgnore';
 import { NodeFSTreeContainer, TreeContainer } from '../treeContainers';
 import { SourceComponent } from '../sourceComponent';
-import { SourcePath } from '../../common';
-import { MetadataType, RegistryAccess } from '../../registry';
+import { SourcePath } from '../../common/types';
+import { MetadataType } from '../../registry/types';
+import { RegistryAccess } from '../../registry/registryAccess';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -34,8 +35,8 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   public constructor(
     type: MetadataType,
     registry = new RegistryAccess(),
-    forceIgnore: ForceIgnore = new ForceIgnore(),
-    tree: TreeContainer = new NodeFSTreeContainer()
+    forceIgnore = new ForceIgnore(),
+    tree = new NodeFSTreeContainer()
   ) {
     this.type = type;
     this.registry = registry;
@@ -60,7 +61,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
 
     let component: SourceComponent | undefined;
     if (rootMetadata) {
-      const name = this.calculateName(rootMetadata);
+      const name = calculateName(this.registry)(this.type)(rootMetadata);
       component = new SourceComponent(
         {
           name,
@@ -114,7 +115,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
     }
 
     if (!this.allowMetadataWithContent()) {
-      return this.parseAsContentMetadataXml(path);
+      return parseAsContentMetadataXml(this.type)(path);
     }
   }
 
@@ -122,73 +123,6 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   // eslint-disable-next-line class-methods-use-this
   protected parseMetadataXml(path: SourcePath): MetadataXml | undefined {
     return parseMetadataXml(path);
-  }
-
-  /**
-   * If the path given to `getComponent` serves as the sole definition (metadata and content)
-   * for a component, parse the name and return it. This allows matching files in metadata
-   * format such as:
-   *
-   * .../tabs/MyTab.tab
-   *
-   * @param path File path of a metadata component
-   */
-  private parseAsContentMetadataXml(path: SourcePath): MetadataXml | undefined {
-    // InFolder metadata can be nested more than 1 level beneath its
-    // associated directoryName.
-    if (this.type.inFolder) {
-      const fullName = parseNestedFullName(path, this.type.directoryName);
-      if (fullName && this.type.suffix) {
-        return { fullName, suffix: this.type.suffix, path };
-      }
-    }
-
-    const parentPath = dirname(path);
-    const parts = parentPath.split(sep);
-    const typeFolderIndex = parts.lastIndexOf(this.type.directoryName);
-    // nestedTypes (ex: territory2) have a folderType equal to their type but are themselves
-    // in a folder per metadata item, with child folders for rules/territories
-    const allowedIndex = this.type.folderType === this.type.id ? parts.length - 2 : parts.length - 1;
-
-    if (typeFolderIndex !== allowedIndex) {
-      return undefined;
-    }
-
-    const match = new RegExp(/(.+)\.(.+)/).exec(basename(path));
-    if (match && this.type.suffix === match[2]) {
-      return { fullName: match[1], suffix: match[2], path };
-    }
-  }
-
-  // Given a MetadataXml, build a fullName from the path and type.
-  private calculateName(rootMetadata: MetadataXml): string {
-    const { directoryName, inFolder, folderType, folderContentType } = this.type;
-
-    // inFolder types (report, dashboard, emailTemplate, document) and their folder
-    // container types (reportFolder, dashboardFolder, emailFolder, documentFolder)
-    if (inFolder || folderContentType) {
-      return ensureString(
-        parseNestedFullName(rootMetadata.path, directoryName),
-        `Unable to calculate fullName from component at path: ${rootMetadata.path} (${this.type.name})`
-      );
-    }
-
-    // not using folders?  then name is fullname
-    if (!folderType) {
-      return rootMetadata.fullName;
-    }
-    const grandparentType = this.registry.getTypeByName(folderType);
-
-    // type is nested inside another type (ex: Territory2Model).  So the names are modelName.ruleName or modelName.territoryName
-    if (grandparentType.folderType && grandparentType.folderType !== this.type.id) {
-      const splits = rootMetadata.path.split(sep);
-      return `${splits[splits.indexOf(grandparentType.directoryName) + 1]}.${rootMetadata.fullName}`;
-    }
-    // this is the top level of nested types (ex: in a Territory2Model, the Territory2Model)
-    if (grandparentType.folderType === this.type.id) {
-      return rootMetadata.fullName;
-    }
-    throw messages.createError('cantGetName', [rootMetadata.path, this.type.name]);
   }
 
   /**
@@ -212,6 +146,44 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   ): SourceComponent | undefined;
 }
 
+/**
+ * If the path given to `getComponent` serves as the sole definition (metadata and content)
+ * for a component, parse the name and return it. This allows matching files in metadata
+ * format such as:
+ *
+ * .../tabs/MyTab.tab
+ *
+ * @param path File path of a metadata component
+ */
+const parseAsContentMetadataXml =
+  (type: MetadataType) =>
+  (path: SourcePath): MetadataXml | undefined => {
+    // InFolder metadata can be nested more than 1 level beneath its
+    // associated directoryName.
+    if (type.inFolder) {
+      const fullName = parseNestedFullName(path, type.directoryName);
+      if (fullName && type.suffix) {
+        return { fullName, suffix: type.suffix, path };
+      }
+    }
+
+    const parentPath = dirname(path);
+    const parts = parentPath.split(sep);
+    const typeFolderIndex = parts.lastIndexOf(type.directoryName);
+    // nestedTypes (ex: territory2) have a folderType equal to their type but are themselves
+    // in a folder per metadata item, with child folders for rules/territories
+    const allowedIndex = type.folderType === type.id ? parts.length - 2 : parts.length - 1;
+
+    if (typeFolderIndex !== allowedIndex) {
+      return undefined;
+    }
+
+    const match = new RegExp(/(.+)\.(.+)/).exec(basename(path));
+    if (match && type.suffix === match[2]) {
+      return { fullName: match[1], suffix: match[2], path };
+    }
+  };
+
 const parseAsFolderMetadataXml = (fsPath: SourcePath): MetadataXml | undefined => {
   const match = new RegExp(/(.+)-meta\.xml$/).exec(basename(fsPath));
   const parts = fsPath.split(sep);
@@ -219,3 +191,37 @@ const parseAsFolderMetadataXml = (fsPath: SourcePath): MetadataXml | undefined =
     return { fullName: match[1], suffix: undefined, path: fsPath };
   }
 };
+
+// Given a MetadataXml, build a fullName from the path and type.
+const calculateName =
+  (registry: RegistryAccess) =>
+  (type: MetadataType) =>
+  (rootMetadata: MetadataXml): string => {
+    const { directoryName, inFolder, folderType, folderContentType } = type;
+
+    // inFolder types (report, dashboard, emailTemplate, document) and their folder
+    // container types (reportFolder, dashboardFolder, emailFolder, documentFolder)
+    if (folderContentType ?? inFolder) {
+      return ensureString(
+        parseNestedFullName(rootMetadata.path, directoryName),
+        `Unable to calculate fullName from component at path: ${rootMetadata.path} (${type.name})`
+      );
+    }
+
+    // not using folders?  then name is fullname
+    if (!folderType) {
+      return rootMetadata.fullName;
+    }
+    const grandparentType = registry.getTypeByName(folderType);
+
+    // type is nested inside another type (ex: Territory2Model).  So the names are modelName.ruleName or modelName.territoryName
+    if (grandparentType.folderType && grandparentType.folderType !== type.id) {
+      const splits = rootMetadata.path.split(sep);
+      return `${splits[splits.indexOf(grandparentType.directoryName) + 1]}.${rootMetadata.fullName}`;
+    }
+    // this is the top level of nested types (ex: in a Territory2Model, the Territory2Model)
+    if (grandparentType.folderType === type.id) {
+      return rootMetadata.fullName;
+    }
+    throw messages.createError('cantGetName', [rootMetadata.path, type.name]);
+  };

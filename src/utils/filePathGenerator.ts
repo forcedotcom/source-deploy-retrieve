@@ -4,13 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join, sep, basename } from 'path';
+import { join, sep, basename } from 'node:path';
 import { Messages } from '@salesforce/core';
 import { isPlainObject } from '@salesforce/ts-types';
 import { MetadataComponent } from '../resolve/types';
 import { META_XML_SUFFIX } from '../common/constants';
 import { RegistryAccess } from '../registry/registryAccess';
-import { registry } from '..';
+import { registry } from '../registry/registry';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -76,7 +76,7 @@ export const filePathsFromMetadataComponent = (
 
   // basic metadata (with or without folders)
   if (!type.children && !type.strategies) {
-    return (type.inFolder || type.folderType ? generateFolders({ fullName, type }, packageDirWithTypeDir) : []).concat([
+    return (type.inFolder ?? type.folderType ? generateFolders({ fullName, type }, packageDirWithTypeDir) : []).concat([
       join(packageDirWithTypeDir, `${fullName}.${type.suffix}${META_XML_SUFFIX}`),
     ]);
   }

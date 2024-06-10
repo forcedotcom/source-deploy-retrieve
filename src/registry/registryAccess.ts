@@ -6,8 +6,8 @@
  */
 import { Messages, SfError } from '@salesforce/core';
 import * as Levenshtein from 'fast-levenshtein';
-import { registry as defaultRegistry } from './registry';
 import { MetadataRegistry, MetadataType } from './types';
+import { getEffectiveRegistry } from './variants';
 
 /**
  * Container for querying metadata registry data.
@@ -18,13 +18,16 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
 
 export class RegistryAccess {
   private registry: MetadataRegistry;
-
   private strictFolderTypes?: MetadataType[];
   private folderContentTypes?: MetadataType[];
   private aliasTypes?: MetadataType[];
 
-  public constructor(registry: MetadataRegistry = defaultRegistry) {
-    this.registry = registry;
+  public constructor(registry?: MetadataRegistry, projectDir?: string) {
+    this.registry = registry ?? getEffectiveRegistry({ projectDir });
+  }
+
+  public getRegistry(): MetadataRegistry {
+    return this.registry;
   }
 
   /**

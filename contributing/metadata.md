@@ -11,7 +11,9 @@ yarn update-supported-metadata
 
 Got questions?
 
-- If you work for Salesforce, [#platform-cli](https://salesforce-internal.slack.com/archives/C01LKDT1P6J).
+- If you work for Salesforce,
+  - For general questions, post in [#platform-cli](https://salesforce-internal.slack.com/archives/C01LKDT1P6J)
+  - For PR reviews, post in [#platform-cli-collaboration](https://salesforce.enterprise.slack.com/archives/C06V045BZD0)
 - If not, [open an issue](https://github.com/forcedotcom/cli/issues)
 
 ## Adding new types to the registry via a script
@@ -28,12 +30,14 @@ The script will:
 
 1. Look for missing types (similar to the completeness test)
 2. For missing types, generate a project and scratch org that includes the Features/Settings
-3. Run `force:mdapi:describemetadata` to get the describe
+3. Run `sf org list metadata-types` to get the describe
 4. Modify the registry to include the newly found types
 
 ```shell
-yarn update-registry
+yarn update-registry YourTypeNameHere
 ```
+
+You can set the environment variable `SF_ORG_API_VERSION` if you want to specify an API version.
 
 ### What the script can't do
 
@@ -49,7 +53,7 @@ If that's confusing, it's a great time to reach out to the CLI team.
 
 You can do what the script does yourself. As you work, run `./node_modules/mocha/bin/mocha test/registry/registryValidation.test.ts` to check your entries
 
-Run `sfdx force:mdapi:describemetadata --json` to get the describe. `>` the output to a file or pipe it to [jq](https://stedolan.github.io/jq/) (`| jq`) to find your type.
+Run `sf org list metadata-types --json` to get the describe. `>` the output to a file or pipe it to [jq](https://stedolan.github.io/jq/) (`| jq`) to find your type.
 
 Your describe will contain something like this
 
@@ -142,26 +146,26 @@ Fixing those problems not only makes it easier to automate your type's support i
 
 Want to make sure your types are working as expected?
 
-1. Create a new project with `sfdx force:project:create -n registryTest`
-1. Create a scratch org `sfdx force:org:create`
+1. Create a new project with `sf project generate -n registryTest`
+1. Create a scratch org `sf org create scratch`
 1. Open the org and create your types.
-1. Run `sfdx force:source:status` and verify the remote add.
-1. Run `sfdx force:source:pull` to pull the metadata and examine what is retrieved
-1. Run `sfdx force:source:status` and verify the changes were retrieved and no longer appear.
-1. Delete the org `sfdx force:org:delete --noprompt`
-1. Create a new scratch org. `sfdx force:org:create`
-1. Push the source `sfdx force:source:push`
-1. Convert the source to mdapi format `sfdx force:source:convert -d mdapiOut`
-1. Look in the resulting `metadataPackage_` and `package.xml` to see that it looks as expected
-1. Deploy it to the org using `sfdx force:mdapi:deploy --deploydir mdapiOut --wait 30` and verify that it succeeds
+1. Run `sf project deploy preview` and verify the remote add.
+1. Run `sf project retrieve start` to pull the metadata and examine what is retrieved
+1. Run `sf project deploy preview` and verify the changes were retrieved and no longer appear.
+1. Delete the org `sf org delete scratch --no-prompt`
+1. Create a new scratch org. `sf org create scratch`
+1. Push the source `sf project deploy start`
+1. Convert the source to mdapi format `sf project convert source -d mdapiOut`
+1. Look in the resulting `mdapiOut` directory and the `package.xml` to see that it looks as expected
+1. Deploy it to the org using `sf project deploy start --metadata-dir mdapiOut --wait 30` and verify that it succeeds
 1. Delete the source directory `rm -rf force-app/main/default/*`
 1. Create a new scratch org and convert the source back
-1. Convert back from mdapi to source format `sfdx force:mdapi:convert -r mdapiOut -d force-app`
-1. `sfdx force:source:push`
+1. Convert back from mdapi to source format `sf project convert mdapi -r mdapiOut -d force-app`
+1. `sf project deploy start`
 
 ### Caveats
 
-Only `source:push` and `source:pull` support source tracking, so the target types must be MDAPI addressable on the server. If they aren’t MDAPI addressable, special code is needed to support source tracking for these components. See the document [Metadata API Types: End to End, Cradle to Grave](https://confluence.internal.salesforce.com/display/PLATFORMDX/Metadata+API+Types%3A+End+to+End%2C+Cradle+to+Grave) (Salesforce internal only) for more details.
+Target types must be MDAPI addressable on the server. If they aren’t MDAPI addressable, special code is needed to support source tracking for these components. See the document [Metadata API Types: End to End, Cradle to Grave](https://confluence.internal.salesforce.com/display/PLATFORMDX/Metadata+API+Types%3A+End+to+End%2C+Cradle+to+Grave) (Salesforce internal only) for more details.
 
 ## Unit Testing
 
@@ -173,9 +177,9 @@ Reach out to the CLI team for help with unit tests.
 
 If you're doing anything complex (you've used any of the following properties `strategies`, `folderType`, `inFolder=true`, `ignoreParsedFullName`, `folderContentType`, `ignoreParentName`), you'll want to add some NUTs (not-unit-tests) that verify the behavior or your types using real orgs and to prevent SDR changes from causing regressions on your types.
 
-[This NUT](https://github.com/salesforcecli/plugin-source/blob/main/test/nuts/territory2.nut.ts) validates the behavior for a particularly bizarre metadataType, territory2.
+[This NUT](https://github.com/salesforcecli/plugin-deploy-retrieve/blob/main/test/nuts/specialTypes/territory2.nut.ts) validates the behavior for a particularly bizarre metadataType, territory2.
 
-NUTs live in [plugin-source](https://github.com/salesforcecli/plugin-source) but run on branches to SDR.
+NUTs live in [plugin-deploy-retrieve](https://github.com/salesforcecli/plugin-deploy-retrieve) but run on branches to SDR.
 
 See [testkit](https://github.com/salesforcecli/cli-plugins-testkit) for examples and usage.
 
@@ -209,13 +213,13 @@ You can use an existing org for the metadata describe portion of the script by
 
 ## Prerequisites
 
-    1. A sfdx project must exists in local.
-      `sfdx force:project:create --projectname <projectname> --defaultpackagedir <directory> -x`
+    1. A sfdx project must exist in local.
+      `sf project generate --name <projectname> --default-package-dir <directory> -x`
     2. An authorized devhub org must exists
-      `sfdx force:auth:web:login -a <alias> -r <localhost url> -d`
+      `sf org login web -a <alias> -r <localhost url> -d`
     3. A scratch org must exists with alias `registryBuilder`
       1. Update `project-scratch-def.json` as per your requirements.
-      2. `sfdx force:org:create -f config/project-scratch-def.json -a registryBuilder -t scratch -s`
+      2. `sf org create scratch -f config/project-scratch-def.json -a registryBuilder -d`
 
 ## Steps
 
@@ -235,8 +239,8 @@ You can use an existing org for the metadata describe portion of the script by
     Now changes are available in local, we have to link the registry with sfdx project
 
     8. From SDR git repo directory, run `yarn build; yarn link`
-    9. Clone sfdx plugins repo (https://github.com/salesforcecli/plugin-source)
-    10. Execute `yarn link @salesforce/source-deploy-retrieve` and `sfdx plugins:link .` from cloned plugins repo directory
+    9. Clone plugin repo (https://github.com/salesforcecli/plugin-deploy-retrieve)
+    10. Execute `yarn link @salesforce/source-deploy-retrieve` and `sfdx plugins:link .` and `yarn build` from cloned plugin repo directory
 
-    Registry has been set for your entities, now you can run `sfdx force:source` command for your entities:
+    Registry has been set for your entities, now you can run (e.g.) `sf project deploy start` command for your entities:
     Proceed to `Manual Testing` section above in this document.

@@ -5,9 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as path from 'path';
-import * as fs from 'graceful-fs';
-import { SourcePath } from '../common';
+import * as path from 'node:path';
+import fs from 'graceful-fs';
+import { SourcePath } from '../common/types';
 
 export function ensureDirectoryExists(filePath: string): void {
   if (fs.existsSync(filePath)) {

@@ -1,0 +1,82 @@
+{
+  "childTypes": {
+    "sharingcriteriarule": "sharingrules",
+    "sharingguestrule": "sharingrules",
+    "sharingownerrule": "sharingrules",
+    "sharingterritoryrule": "sharingrules"
+  },
+  "strictDirectoryNames": {
+    "sharingRules": "sharingrules"
+  },
+  "suffixes": {
+    "sharingRules": "sharingrules"
+  },
+  "types": {
+    "sharingrules": {
+      "children": {
+        "directories": {
+          "sharingCriteriaRules": "sharingcriteriarule",
+          "sharingGuestRules": "sharingguestrule",
+          "sharingOwnerRules": "sharingownerrule",
+          "sharingTerritoryRules": "sharingterritoryrule"
+        },
+        "suffixes": {
+          "sharingCriteriaRule": "sharingcriteriarule",
+          "sharingGuestRule": "sharingguestrule",
+          "sharingOwnerRule": "sharingownerrule",
+          "sharingTerritoryRule": "sharingterritoryrule"
+        },
+        "types": {
+          "sharingcriteriarule": {
+            "directoryName": "sharingCriteriaRules",
+            "id": "sharingcriteriarule",
+            "isAddressable": false,
+            "name": "SharingCriteriaRule",
+            "suffix": "sharingCriteriaRule",
+            "uniqueIdElement": "fullName",
+            "xmlElement": "sharingCriteriaRules"
+          },
+          "sharingguestrule": {
+            "directoryName": "sharingGuestRules",
+            "id": "sharingguestrule",
+            "isAddressable": false,
+            "name": "SharingGuestRule",
+            "suffix": "sharingGuestRule",
+            "uniqueIdElement": "fullName",
+            "xmlElement": "sharingGuestRules"
+          },
+          "sharingownerrule": {
+            "directoryName": "sharingOwnerRules",
+            "id": "sharingownerrule",
+            "isAddressable": false,
+            "name": "SharingOwnerRule",
+            "suffix": "sharingOwnerRule",
+            "uniqueIdElement": "fullName",
+            "xmlElement": "sharingOwnerRules"
+          },
+          "sharingterritoryrule": {
+            "directoryName": "sharingTerritoryRules",
+            "id": "sharingterritoryrule",
+            "isAddressable": false,
+            "name": "SharingTerritoryRule",
+            "suffix": "sharingTerritoryRule",
+            "uniqueIdElement": "fullName",
+            "xmlElement": "sharingTerritoryRules"
+          }
+        }
+      },
+      "directoryName": "sharingRules",
+      "id": "sharingrules",
+      "inFolder": false,
+      "name": "SharingRules",
+      "strategies": {
+        "adapter": "decomposed",
+        "decomposition": "folderPerType",
+        "transformer": "decomposed"
+      },
+      "strictDirectoryName": true,
+      "suffix": "sharingRules",
+      "supportsPartialDelete": true
+    }
+  }
+}

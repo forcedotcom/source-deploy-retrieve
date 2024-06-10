@@ -1,5 +1,6 @@
 // determine missing types from metadataCoverageReport
-import * as shelljs from 'shelljs';
+import { exec } from 'node:child_process';
+import { promisify } from 'node:util';
 import * as fs from 'fs';
 import { MetadataRegistry } from '../../src';
 import { exit } from 'process';
@@ -7,8 +8,10 @@ import * as deepmerge from 'deepmerge';
 import { CoverageObject, CoverageObjectType } from '../../src/registry/types';
 import { getMissingTypes } from '../../test/utils/getMissingTypes';
 import { getCurrentApiVersion, getCoverage } from '../../src/registry/coverage';
+import { env } from '@salesforce/kit';
 
 export let metadataCoverage: CoverageObject;
+const execProm = promisify(exec);
 
 interface DescribeResult {
   directoryName: string;
@@ -39,8 +42,10 @@ const updateProjectScratchDef = (missingTypes: [string, CoverageObjectType][]) =
   }
 };
 
-const getMissingTypesAsDescribeResult = (missingTypes: [string, CoverageObjectType][]): DescribeResult[] => {
-  const describeResult = shelljs.exec('sfdx force:mdapi:describemetadata -u registryBuilder --json', { silent: true });
+const getMissingTypesAsDescribeResult = async (
+  missingTypes: [string, CoverageObjectType][]
+): Promise<DescribeResult[]> => {
+  const describeResult = await execProm('sf org list metadata-types -o registryBuilder --json');
   const metadataObjectsByName = new Map<string, DescribeResult>();
   (JSON.parse(describeResult.stdout).result.metadataObjects as DescribeResult[]).map((describeObj) => {
     metadataObjectsByName.set(describeObj.xmlName, describeObj);
@@ -83,7 +88,7 @@ const registryUpdate = (missingTypesAsDescribeResult: DescribeResult[]) => {
 
 // get the coverage report
 (async () => {
-  const currentApiVersion = await getCurrentApiVersion();
+  const currentApiVersion = env.getNumber('SF_ORG_API_VERSION') ?? (await getCurrentApiVersion());
   console.log(`Using API version: ${currentApiVersion}`);
 
   const metadataCoverage = await getCoverage(currentApiVersion);
@@ -104,27 +109,29 @@ const registryUpdate = (missingTypesAsDescribeResult: DescribeResult[]) => {
   );
 
   // create an org we can describe
-  shelljs.exec('sfdx force:project:create -n registryBuilder', { silent: true });
+  await execProm('sf project generate -n registryBuilder');
   updateProjectScratchDef(missingTypes);
   // TODO: sourceApi has to match the coverage report
   if (!process.env.RB_EXISTING_ORG) {
     const hasDefaultDevHub = Boolean(
-      JSON.parse(shelljs.exec('sfdx config:get defaultdevhubusername --json', { silent: true }).stdout).result[0].value
+      JSON.parse((await execProm('sf config get target-dev-hub --json')).stdout).result[0].value
     );
 
     if (!hasDefaultDevHub) {
       console.log(`
 Failed to create scratch org: default Dev Hub not found.
 To create the scratch org you need to set a default Dev Hub with \`sfdx\`.
-Example: \`sfdx config:set defaultdevhubusername=<devhub-username> --global\`
+Example: \`sf config set defaultdevhubusername=<devhub-username> --global\`
 `);
       exit(1);
     }
 
-    shelljs.exec('sfdx force:org:create -f registryBuilder/config/project-scratch-def.json -d 1 -a registryBuilder');
+    await execProm(
+      'sf org create scratch -f registryBuilder/config/project-scratch-def.json -y 1 -a registryBuilder --wait 30'
+    );
   }
   // describe the org
-  const missingTypesAsDescribeResult = getMissingTypesAsDescribeResult(missingTypes);
+  const missingTypesAsDescribeResult = await getMissingTypesAsDescribeResult(missingTypes);
   console.log(missingTypesAsDescribeResult);
   registryUpdate(missingTypesAsDescribeResult);
 
@@ -132,7 +139,7 @@ Example: \`sfdx config:set defaultdevhubusername=<devhub-username> --global\`
 
   // destroy the scratch org and the project
   if (!process.env.RB_EXISTING_ORG) {
-    shelljs.exec('sfdx force:org:delete -u registryBuilder --noprompt');
+    await execProm('sf org delete scratch -o registryBuilder --no-prompt');
   }
-  shelljs.rm('-rf', 'registryBuilder');
+  fs.rmSync('registryBuilder', { recursive: true, force: true });
 })();

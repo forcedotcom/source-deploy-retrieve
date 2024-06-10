@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkflowFieldUpdate xmlns="http://soap.sforce.com/2006/04/metadata">
+        <fullName>ChangePriorityToMedium</fullName>
+        <field>Priority</field>
+        <literalValue>Medium</literalValue>
+        <name>Changes the case priority to medium.</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+</WorkflowFieldUpdate>

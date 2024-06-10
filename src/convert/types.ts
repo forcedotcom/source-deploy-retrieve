@@ -4,7 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Readable } from 'stream';
+import { Readable } from 'node:stream';
+import { FileResponseSuccess } from '../client/types';
 import { SourcePath } from '../common/types';
 import { MetadataComponent, SourceComponent } from '../resolve';
 
@@ -12,10 +13,14 @@ import { MetadataComponent, SourceComponent } from '../resolve';
 // INTERNAL
 // --------------
 
-export type WriteInfo = {
-  output: SourcePath;
-  source: Readable;
-};
+export type WriteInfo =
+  | {
+      output: SourcePath;
+    } & (
+      | { source: Readable; shouldDelete?: never }
+      // if we delete them, we preserve the info because it'll be hard to reconstruct without the component
+      | { source?: never; shouldDelete: true; type: string; fullName: string }
+    );
 
 export type WriterFormat = {
   component: MetadataComponent;
@@ -70,11 +75,11 @@ export type MergeConfig = {
 /**
  * Transforms metadata component files into different SFDX file formats
  */
-export interface MetadataTransformer {
+export type MetadataTransformer = {
   defaultDirectory?: string;
   toMetadataFormat(component: SourceComponent): Promise<WriteInfo[]>;
   toSourceFormat(component: SourceComponent, mergeWith?: SourceComponent): Promise<WriteInfo[]>;
-}
+};
 
 // --------------
 // PUBLIC
@@ -104,6 +109,10 @@ export type ConvertResult = {
    * Converted source components. Not set if archiving the package.
    */
   converted?: SourceComponent[];
+  /**
+   * Components that were deleted (ex: decomposed children no longer present in the composed parent)
+   */
+  deleted?: FileResponseSuccess[];
 };
 
 /** Stored by file on SourceComponent for stream processing */

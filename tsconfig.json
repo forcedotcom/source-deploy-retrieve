@@ -7,14 +7,16 @@
     "outDir": "lib",
     "skipLibCheck": true,
     "baseUrl": ".",
-    "paths": { "@salesforce/kit": ["node_modules/@salesforce/kit"] },
-    "plugins": [{ "transform": "@salesforce/core/lib/messageTransformer", "import": "messageTransformer" }]
+    "plugins": [{ "transform": "@salesforce/core/messageTransformer", "import": "messageTransformer" }],
+    "module": "Node16",
+    "moduleResolution": "Node16"
   },
   "include": [
     "./src/**/*.ts",
     "./scripts/update-registry/*.ts",
     "./src/registry/metadataRegistry.json",
-    "./src/registry/stdValueSetRegistry.json"
+    "./src/registry/stdValueSetRegistry.json",
+    "./src/registry/presets/*.json"
   ],
   "exclude": ["node_modules", "lib", "examples"]
 }

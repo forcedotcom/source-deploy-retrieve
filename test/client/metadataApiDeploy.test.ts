@@ -4,12 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, join } from 'path';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
-import { assert, expect } from 'chai';
+import { basename, join, sep } from 'node:path';
+import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
+import chai, { assert, expect } from 'chai';
 import { AnyJson, getString } from '@salesforce/ts-types';
-import { PollingClient, StatusResult, Messages } from '@salesforce/core';
+import { Lifecycle, Messages, PollingClient, StatusResult } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
+import deepEqualInAnyOrder = require('deep-equal-in-any-order');
 import {
   ComponentSet,
   ComponentStatus,
@@ -32,9 +33,15 @@ import { META_XML_SUFFIX } from '../../src/common';
 import {
   DECOMPOSED_CHILD_COMPONENT_1,
   DECOMPOSED_CHILD_COMPONENT_2,
+  DECOMPOSED_CHILD_XML_PATH_1,
+  DECOMPOSED_CHILD_XML_PATH_2,
   DECOMPOSED_COMPONENT,
+  DECOMPOSED_XML_PATH,
 } from '../mock/type-constants/customObjectConstant';
 import { COMPONENT } from '../mock/type-constants/apexClassConstant';
+import * as deployMessages from '../../src/client/deployMessages';
+
+chai.use(deepEqualInAnyOrder);
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -93,7 +100,10 @@ describe('MetadataApiDeploy', () => {
 
           expect(deployStub.calledOnce).to.be.true;
           expect(deployStub.firstCall.args[0]).to.equal(zipBuffer);
-          expect(getString(convertStub.secondCall.args[2], 'outputDirectory', '')).to.equal('test');
+          // @ts-expect-error protected property
+          const expectedDir = join(operation.mdapiTempDir, 'metadata');
+          expect(expectedDir.startsWith(`test${sep}`)).to.be.true;
+          expect(getString(convertStub.secondCall.args[2], 'outputDirectory', '')).to.equal(expectedDir);
         } finally {
           delete process.env.SF_MDAPI_TEMP_DIR;
         }
@@ -197,7 +207,6 @@ describe('MetadataApiDeploy', () => {
         const pollingClientOptions = pollingClientSpy.firstCall.args[0] as PollingClient.Options;
         expect(pollingClientOptions.frequency).to.deep.equal(frequency);
         expect(pollingClientOptions.timeout).to.deep.equal(timeout);
-        expect(pollingClientOptions.poll).to.deep.equal(poll);
       });
     });
   });
@@ -699,6 +708,54 @@ describe('MetadataApiDeploy', () => {
         expect(responses).to.deep.equal(expected);
       });
 
+      it('should return line/col numbers for mdapi deploy', () => {
+        const component = matchingContentFile.COMPONENT;
+        const { fullName, type } = component;
+        const problem = 'something went wrong';
+        const problemType = 'Error';
+        const apiStatus: Partial<MetadataApiDeployStatus> = {
+          details: {
+            componentFailures: [
+              {
+                changed: 'false',
+                created: 'false',
+                deleted: 'false',
+                success: 'false',
+                lineNumber: '3',
+                columnNumber: '5',
+                problem,
+                problemType,
+                fullName,
+                fileName: component.content,
+                componentType: type.name,
+              } as DeployMessage,
+              {
+                changed: 'false',
+                created: 'false',
+                deleted: 'false',
+                success: 'false',
+                lineNumber: '12',
+                columnNumber: '3',
+                problem,
+                problemType,
+                fullName,
+                fileName: component.content,
+                componentType: type.name,
+              } as DeployMessage,
+            ],
+          },
+        };
+        // intentionally don't include the componentSet
+        const result = new DeployResult(apiStatus as MetadataApiDeployStatus);
+        const fileResponses = result.getFileResponses();
+        assert(fileResponses[0].state === ComponentStatus.Failed);
+        expect(fileResponses[0].lineNumber).equal(3);
+        expect(fileResponses[0].columnNumber).equal(5);
+        assert(fileResponses[1].state === ComponentStatus.Failed);
+        expect(fileResponses[1].lineNumber).equal(12);
+        expect(fileResponses[1].columnNumber).equal(3);
+      });
+
       it('should aggregate diagnostics for a component', () => {
         const component = matchingContentFile.COMPONENT;
         const deployedSet = new ComponentSet([component]);
@@ -766,6 +823,167 @@ describe('MetadataApiDeploy', () => {
         expect(responses).to.deep.equal(expected);
       });
 
+      it('should warn when extra server responses found', () => {
+        // everything is an emit.  Warn calls emit, too.
+        const warnSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emitWarning');
+        const emitSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emit');
+
+        const component = matchingContentFile.COMPONENT;
+        const deployedSet = new ComponentSet([component]);
+        const { fullName, type } = component;
+
+        const apiStatus: Partial<MetadataApiDeployStatus> = {
+          details: {
+            componentFailures: [
+              {
+                changed: 'true',
+                created: 'false',
+                deleted: 'false',
+                success: 'true',
+                fullName,
+                fileName: component.content,
+                componentType: type.name,
+              } as DeployMessage,
+              {
+                changed: 'false',
+                created: 'false',
+                deleted: 'true',
+                success: 'true',
+                fullName: 'myServerOnlyComponent',
+                fileName: 'myServerOnlyComponent',
+                componentType: type.name,
+              } as DeployMessage,
+            ],
+          },
+        };
+        const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+        const responses = result.getFileResponses();
+        const expected: FileResponse[] = [
+          {
+            filePath: join('path', 'to', 'classes', 'myComponent.cls'),
+            fullName: 'myComponent',
+            state: ComponentStatus.Changed,
+            type: 'ApexClass',
+          },
+          {
+            filePath: join('path', 'to', 'classes', 'myComponent.cls-meta.xml'),
+            fullName: 'myComponent',
+            state: ComponentStatus.Changed,
+            type: 'ApexClass',
+          },
+        ];
+
+        expect(responses).to.deep.equal(expected);
+        expect(warnSpy.called).to.be.true;
+        expect(warnSpy.args[0]).to.deep.equal([
+          'ApexClass, myServerOnlyComponent, returned from org, but not found in the local project',
+        ]);
+
+        warnSpy.restore();
+        emitSpy.restore();
+      });
+      it('should NOT warn when empty component set used', () => {
+        // everything is an emit.  Warn calls emit, too.
+        const warnSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emitWarning');
+        const emitSpy = $$.SANDBOX.stub(Lifecycle.prototype, 'emit');
+
+        const component = matchingContentFile.COMPONENT;
+        const deployedSet = new ComponentSet([]);
+        const { fullName, type } = component;
+
+        const apiStatus: Partial<MetadataApiDeployStatus> = {
+          details: {
+            componentFailures: [
+              {
+                changed: 'true',
+                created: 'false',
+                deleted: 'false',
+                success: 'true',
+                fullName,
+                fileName: component.content,
+                componentType: type.name,
+              } as DeployMessage,
+              {
+                changed: 'false',
+                created: 'false',
+                deleted: 'true',
+                success: 'true',
+                fullName: 'myServerOnlyComponent',
+                fileName: 'myServerOnlyComponent',
+                componentType: type.name,
+              } as DeployMessage,
+            ],
+          },
+        };
+        const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+        const responses = result.getFileResponses();
+
+        expect(responses).to.deep.equal([]);
+        expect(warnSpy.called).to.be.false;
+
+        warnSpy.restore();
+        emitSpy.restore();
+      });
+
+      it('should not report duplicates component', () => {
+        const component = matchingContentFile.COMPONENT;
+        const deployedSet = new ComponentSet([component]);
+        const { fullName, type, content } = component;
+        const problem = 'something went wrong';
+        const problemType = 'Error';
+        const apiStatus: Partial<MetadataApiDeployStatus> = {
+          details: {
+            componentFailures: [
+              {
+                changed: 'false',
+                created: 'false',
+                deleted: 'false',
+                success: 'false',
+                lineNumber: '3',
+                columnNumber: '5',
+                problem,
+                problemType,
+                fullName,
+                fileName: component.content,
+                componentType: type.name,
+              } as DeployMessage,
+              {
+                changed: 'false',
+                created: 'false',
+                deleted: 'false',
+                success: 'false',
+                lineNumber: '3',
+                columnNumber: '5',
+                problem,
+                problemType,
+                fullName,
+                fileName: component.content,
+                componentType: type.name,
+              } as DeployMessage,
+            ],
+          },
+        };
+        const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
+
+        const responses = result.getFileResponses();
+        const expected: FileResponse[] = [
+          {
+            fullName,
+            type: type.name,
+            state: ComponentStatus.Failed,
+            filePath: content,
+            error: `${problem} (3:5)`,
+            lineNumber: 3,
+            columnNumber: 5,
+            problemType,
+          },
+        ];
+
+        expect(responses).to.deep.equal(expected);
+      });
+
       it('should report children of deployed component', () => {
         const component = DECOMPOSED_COMPONENT;
         const deployedSet = new ComponentSet([component]);
@@ -778,21 +996,30 @@ describe('MetadataApiDeploy', () => {
                 deleted: 'false',
                 fullName: DECOMPOSED_CHILD_COMPONENT_1.fullName,
                 componentType: DECOMPOSED_CHILD_COMPONENT_1.type.name,
-              } as DeployMessage,
+                fileName: DECOMPOSED_CHILD_XML_PATH_1,
+                createdDate: '',
+                success: true,
+              },
               {
                 changed: 'true',
                 created: 'false',
                 deleted: 'false',
                 fullName: DECOMPOSED_CHILD_COMPONENT_2.fullName,
                 componentType: DECOMPOSED_CHILD_COMPONENT_2.type.name,
-              } as DeployMessage,
+                fileName: DECOMPOSED_CHILD_XML_PATH_2,
+                createdDate: '',
+                success: true,
+              },
               {
                 changed: 'true',
                 created: 'false',
                 deleted: 'false',
                 fullName: component.fullName,
                 componentType: component.type.name,
-              } as DeployMessage,
+                fileName: DECOMPOSED_XML_PATH,
+                createdDate: '',
+                success: true,
+              },
             ],
           },
         };
@@ -820,7 +1047,7 @@ describe('MetadataApiDeploy', () => {
           },
         ];
 
-        expect(responses).to.deep.equal(expected);
+        expect(responses).to.deep.equalInAnyOrder(expected);
       });
 
       it('should report "Deleted" when no component in org', () => {
@@ -877,8 +1104,7 @@ describe('MetadataApiDeploy', () => {
           },
         };
         const result = new DeployResult(apiStatus as MetadataApiDeployStatus, deployedSet);
-        // @ts-ignore testing private property
-        const spy = $$.SANDBOX.spy(result, 'getDeployMessages');
+        const spy = $$.SANDBOX.spy(deployMessages, 'getDeployMessages');
 
         result.getFileResponses();
         expect(spy.callCount).to.equal(1);

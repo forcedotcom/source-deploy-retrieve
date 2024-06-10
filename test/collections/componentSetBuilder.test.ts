@@ -5,13 +5,19 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as path from 'path';
-import * as fs from 'graceful-fs';
+import * as path from 'node:path';
+import { join } from 'node:path';
+import fs from 'graceful-fs';
 import * as sinon from 'sinon';
-import { assert, expect } from 'chai';
-import { stubMethod } from '@salesforce/ts-sinon';
+import { assert, expect, config } from 'chai';
 import { SfError } from '@salesforce/core';
-import { ComponentSet, ComponentSetBuilder, FromSourceOptions } from '../../src';
+import { RegistryAccess } from '../../src/registry/registryAccess';
+import { ComponentSetBuilder, entryToTypeAndName } from '../../src/collections/componentSetBuilder';
+import { ComponentSet } from '../../src/collections/componentSet';
+import { FromSourceOptions } from '../../src/collections/types';
+import { MetadataResolver, SourceComponent } from '../../src';
+
+config.truncateThreshold = 0;
 
 describe('ComponentSetBuilder', () => {
   const sandbox = sinon.createSandbox();
@@ -26,6 +32,21 @@ describe('ComponentSetBuilder', () => {
     content: 'MyClass.cls',
     xml: 'MyClass.cls-meta.xml',
   };
+
+  const apexClassWildcardMatch = {
+    type: 'ApexClass',
+    fullName: 'MyClassIsAwesome',
+    content: 'MyClassIsAwesome.cls',
+    xml: 'MyClassIsAwesome.cls-meta.xml',
+  };
+
+  const apexClassWildcardNoMatch = {
+    type: 'ApexClass',
+    fullName: 'MyTableIsAwesome',
+    content: 'MyTableIsAwesome.cls',
+    xml: 'MyTableIsAwesome.cls-meta.xml',
+  };
+
   const customObjectComponent = {
     type: 'CustomObject',
     fullName: 'MyCustomObject__c',
@@ -42,9 +63,9 @@ describe('ComponentSetBuilder', () => {
 
     beforeEach(() => {
       fileExistsSyncStub = sandbox.stub(fs, 'existsSync');
-      fromSourceStub = stubMethod(sandbox, ComponentSet, 'fromSource');
-      fromManifestStub = stubMethod(sandbox, ComponentSet, 'fromManifest');
-      fromConnectionStub = stubMethod(sandbox, ComponentSet, 'fromConnection');
+      fromSourceStub = sandbox.stub(ComponentSet, 'fromSource');
+      fromManifestStub = sandbox.stub(ComponentSet, 'fromManifest');
+      fromConnectionStub = sandbox.stub(ComponentSet, 'fromConnection');
       componentSet = new ComponentSet();
     });
 
@@ -61,7 +82,10 @@ describe('ComponentSetBuilder', () => {
       });
 
       const expectedArg = { fsPaths: [path.resolve(sourcepath[0])] };
-      expect(fromSourceStub.calledOnceWith(expectedArg)).to.equal(true);
+      expect(fromSourceStub.callCount).to.equal(1);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { registry, ...argWithoutRegistry } = fromSourceStub.args[0][0];
+      expect(argWithoutRegistry).to.deep.equal(expectedArg);
       expect(compSet.size).to.equal(1);
       expect(compSet.has(apexClassComponent)).to.equal(true);
     });
@@ -81,7 +105,9 @@ describe('ComponentSetBuilder', () => {
       const expectedPath1 = path.resolve(sourcepath[0]);
       const expectedPath2 = path.resolve(sourcepath[1]);
       const expectedArg = { fsPaths: [expectedPath1, expectedPath2] };
-      expect(fromSourceStub.calledOnceWith(expectedArg)).to.equal(true);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { registry, ...argWithoutRegistry } = fromSourceStub.args[0][0];
+      expect(argWithoutRegistry).to.deep.equal(expectedArg);
       expect(compSet.size).to.equal(2);
       expect(compSet.has(apexClassComponent)).to.equal(true);
       expect(compSet.has(customObjectComponent)).to.equal(true);
@@ -100,7 +126,9 @@ describe('ComponentSetBuilder', () => {
 
       const compSet = await ComponentSetBuilder.build(options);
       const expectedArg = { fsPaths: [path.resolve(sourcepath[0])] };
-      expect(fromSourceStub.calledOnceWith(expectedArg)).to.equal(true);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { registry, ...argWithoutRegistry } = fromSourceStub.args[0][0];
+      expect(argWithoutRegistry).to.deep.equal(expectedArg);
       expect(compSet.size).to.equal(0);
       expect(compSet.apiVersion).to.equal(options.apiversion);
     });
@@ -118,7 +146,9 @@ describe('ComponentSetBuilder', () => {
 
       const compSet = await ComponentSetBuilder.build(options);
       const expectedArg = { fsPaths: [path.resolve(sourcepath[0])] };
-      expect(fromSourceStub.calledOnceWith(expectedArg)).to.equal(true);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { registry, ...argWithoutRegistry } = fromSourceStub.args[0][0];
+      expect(argWithoutRegistry).to.deep.equal(expectedArg);
       expect(compSet.size).to.equal(0);
       expect(compSet.sourceApiVersion).to.equal(options.sourceapiversion);
     });
@@ -135,7 +165,7 @@ describe('ComponentSetBuilder', () => {
         assert(false, 'should have thrown SfError');
       } catch (e: unknown) {
         const err = e as SfError;
-        expect(fromSourceStub.notCalled).to.equal(true);
+        expect(fromSourceStub.callCount).to.equal(0);
         expect(err.message).to.include(sourcepath[0]);
       }
     });
@@ -150,8 +180,8 @@ describe('ComponentSetBuilder', () => {
         packagenames: ['mypackage'],
       });
       expect(compSet.size).to.equal(0);
-      expect(fromSourceStub.notCalled).to.equal(true);
-      expect(fromManifestStub.notCalled).to.equal(true);
+      expect(fromSourceStub.callCount).to.equal(0);
+      expect(fromManifestStub.callCount).to.equal(0);
     });
 
     it('should create ComponentSet from wildcarded metadata (ApexClass)', async () => {
@@ -167,7 +197,7 @@ describe('ComponentSetBuilder', () => {
           directoryPaths: [packageDir1],
         },
       });
-      expect(fromSourceStub.calledOnce).to.equal(true);
+      expect(fromSourceStub.callCount).to.equal(1);
       const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
       expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
       const filter = new ComponentSet();
@@ -192,7 +222,7 @@ describe('ComponentSetBuilder', () => {
           directoryPaths: [packageDir1],
         },
       });
-      expect(fromSourceStub.calledOnce).to.equal(true);
+      expect(fromSourceStub.callCount).to.equal(1);
       const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
       expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
       const filter = new ComponentSet();
@@ -236,7 +266,7 @@ describe('ComponentSetBuilder', () => {
           directoryPaths: [packageDir1],
         },
       });
-      expect(fromSourceStub.calledOnce).to.equal(true);
+      expect(fromSourceStub.callCount).to.equal(1);
       const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
       expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
       const filter = new ComponentSet();
@@ -261,7 +291,8 @@ describe('ComponentSetBuilder', () => {
           directoryPaths: [packageDir1],
         },
       });
-      expect(fromSourceStub.calledOnce).to.equal(true);
+      expect(fromSourceStub.callCount).to.equal(1);
+      expect(compSet.forceIgnoredPaths).to.equal(undefined);
       const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
       expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
       const filter = new ComponentSet();
@@ -273,6 +304,81 @@ describe('ComponentSetBuilder', () => {
       expect(compSet.has(apexClassComponent)).to.equal(true);
       expect(compSet.has(customObjectComponent)).to.equal(true);
       expect(compSet.has({ type: 'CustomObject', fullName: '*' })).to.equal(true);
+    });
+    it('should create ComponentSet from multiple metadata (ApexClass:MyClass,CustomObject), one of which is forceignored', async () => {
+      const customObjSourceComponent = new SourceComponent({
+        name: 'myCO',
+        content: join('my', 'path', 'to', 'a', 'customobject.xml'),
+        parentType: undefined,
+        type: { id: 'customobject', directoryName: 'objects', name: 'CustomObject' },
+        xml: '',
+      });
+
+      componentSet.add(apexClassComponent);
+      componentSet.add(customObjSourceComponent);
+
+      componentSet.add(apexClassWildcardMatch);
+      componentSet.forceIgnoredPaths = new Set<string>();
+      componentSet.forceIgnoredPaths.add(join('my', 'path', 'to', 'a', 'customobject.xml'));
+      fromSourceStub.returns(componentSet);
+      const packageDir1 = path.resolve('force-app');
+
+      sandbox.stub(MetadataResolver.prototype, 'getComponentsFromPath').returns([customObjSourceComponent]);
+
+      const compSet = await ComponentSetBuilder.build({
+        sourcepath: undefined,
+        manifest: undefined,
+        metadata: {
+          metadataEntries: ['ApexClass:MyClass', 'ApexClass:MyClassIsAwesome', 'CustomObject:myCO'],
+          directoryPaths: [packageDir1],
+        },
+      });
+      expect(fromSourceStub.callCount).to.equal(1);
+      expect(compSet.forceIgnoredPaths?.size).to.equal(1);
+      expect(compSet.forceIgnoredPaths).to.deep.equal(new Set([join('my', 'path', 'to', 'a', 'customobject.xml')]));
+      const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
+      expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
+      const filter = new ComponentSet();
+      filter.add({ type: 'ApexClass', fullName: 'MyClass' });
+      filter.add({ type: 'ApexClass', fullName: 'MyClassIsAwesome' });
+      filter.add({ type: 'CustomObject', fullName: 'myCO' });
+      assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
+      expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
+      expect(compSet.size).to.equal(3);
+      expect(compSet.has(apexClassComponent)).to.equal(true);
+      expect(compSet.has(customObjectComponent)).to.equal(false);
+      expect(compSet.has({ type: 'CustomObject', fullName: '*' })).to.equal(false);
+      expect(compSet.has({ type: 'ApexClass', fullName: 'MyClass' })).to.equal(true);
+      expect(compSet.has({ type: 'ApexClass', fullName: 'MyClassIsAwesome' })).to.equal(true);
+    });
+
+    it('should create ComponentSet from partial-match fullName (ApexClass:Prop*)', async () => {
+      componentSet.add(apexClassComponent);
+      componentSet.add(apexClassWildcardMatch);
+      fromSourceStub.returns(componentSet);
+      const packageDir1 = path.resolve('force-app');
+
+      const compSet = await ComponentSetBuilder.build({
+        sourcepath: undefined,
+        manifest: undefined,
+        metadata: {
+          metadataEntries: ['ApexClass:MyClas*'],
+          directoryPaths: [packageDir1],
+        },
+      });
+      expect(fromSourceStub.callCount).to.equal(2);
+      const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
+      expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1]);
+      const filter = new ComponentSet();
+      filter.add({ type: 'ApexClass', fullName: 'MyClass' });
+      filter.add({ type: 'ApexClass', fullName: 'MyClassIsAwesome' });
+      filter.add({ type: 'ApexClass', fullName: 'MyTableIsAwesome' });
+      assert(fromSourceArgs.include instanceof ComponentSet, 'include should be a ComponentSet');
+      expect(fromSourceArgs.include.getSourceComponents()).to.deep.equal(filter.getSourceComponents());
+      expect(compSet.size).to.equal(2);
+      expect(compSet.has(apexClassComponent)).to.equal(true);
+      expect(compSet.has(apexClassWildcardMatch)).to.equal(true);
+      expect(compSet.has(apexClassWildcardNoMatch)).to.equal(false);
     });
 
     it('should create ComponentSet from metadata and multiple package directories', async () => {
@@ -291,7 +397,7 @@ describe('ComponentSetBuilder', () => {
           directoryPaths: [packageDir1, packageDir2],
         },
       });
-      expect(fromSourceStub.calledOnce).to.equal(true);
+      expect(fromSourceStub.callCount).to.equal(1);
       const fromSourceArgs = fromSourceStub.firstCall.args[0] as FromSourceOptions;
       expect(fromSourceArgs).to.have.deep.property('fsPaths', [packageDir1, packageDir2]);
       const filter = new ComponentSet();
@@ -319,8 +425,11 @@ describe('ComponentSetBuilder', () => {
       };
 
       const compSet = await ComponentSetBuilder.build(options);
-      expect(fromManifestStub.calledOnce).to.equal(true);
-      expect(fromManifestStub.firstCall.args[0]).to.deep.equal({
+      expect(fromManifestStub.callCount).to.equal(1);
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { registry, ...argWithoutRegistry } = fromManifestStub.firstCall.args[0];
+      expect(argWithoutRegistry).to.deep.equal({
         forceAddWildcards: true,
         manifestPath: options.manifest.manifestPath,
         resolveSourcePaths: [packageDir1],
@@ -345,13 +454,43 @@ describe('ComponentSetBuilder', () => {
       };
 
       const compSet = await ComponentSetBuilder.build(options);
-      expect(fromConnectionStub.calledOnce).to.equal(true);
+      expect(fromConnectionStub.callCount).to.equal(1);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(fromConnectionStub.firstCall.firstArg['usernameOrConnection']).equal(options.org.username);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       expect(fromConnectionStub.firstCall.firstArg['componentFilter'].call()).equal(true);
       expect(compSet.size).to.equal(1);
       expect(compSet.has(apexClassComponent)).to.equal(true);
+    });
+
+    it('should create ComponentSet from org connection and metadata', async () => {
+      const mdCompSet = new ComponentSet();
+      mdCompSet.add(apexClassComponent);
+
+      fromSourceStub.returns(mdCompSet);
+      const packageDir1 = path.resolve('force-app');
+
+      componentSet.add(apexClassWildcardMatch);
+      fromConnectionStub.resolves(componentSet);
+      const options = {
+        sourcepath: undefined,
+        metadata: {
+          metadataEntries: ['ApexClass:MyClas*'],
+          directoryPaths: [packageDir1],
+        },
+        manifest: undefined,
+        org: {
+          username: 'manifest-test@org.com',
+          exclude: [],
+        },
+      };
+
+      const compSet = await ComponentSetBuilder.build(options);
+      expect(fromSourceStub.callCount).to.equal(2);
+      expect(fromConnectionStub.callCount).to.equal(1);
+      expect(compSet.size).to.equal(2);
+      expect(compSet.has(apexClassComponent)).to.equal(true);
+      expect(compSet.has(apexClassWildcardMatch)).to.equal(true);
     });
 
     it('should create ComponentSet from manifest and multiple package', async () => {
@@ -374,7 +513,9 @@ describe('ComponentSetBuilder', () => {
 
       const compSet = await ComponentSetBuilder.build(options);
       expect(fromManifestStub.callCount).to.equal(1);
-      expect(fromManifestStub.firstCall.args[0]).to.deep.equal({
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { registry, ...argWithoutRegistry } = fromManifestStub.firstCall.args[0];
+      expect(argWithoutRegistry).to.deep.equal({
         forceAddWildcards: true,
         manifestPath: options.manifest.manifestPath,
         resolveSourcePaths: [packageDir1, packageDir2],
@@ -384,6 +525,58 @@ describe('ComponentSetBuilder', () => {
       expect(compSet.size).to.equal(2);
       expect(compSet.has(apexClassComponent)).to.equal(true);
       expect(compSet.has(apexClassComponent2)).to.equal(true);
+    });
+  });
+});
+
+describe('entryToTypeAndName', () => {
+  const reg = new RegistryAccess();
+  it('basic type', () => {
+    expect(entryToTypeAndName(reg)('ApexClass:MyClass')).to.deep.equal({
+      type: reg.getTypeByName('ApexClass'),
+      metadataName: 'MyClass',
+    });
+  });
+  it('handles wildcard', () => {
+    expect(entryToTypeAndName(reg)('ApexClass:*')).to.deep.equal({
+      type: reg.getTypeByName('ApexClass'),
+      metadataName: '*',
+    });
+  });
+  it('creates wildcard when no name is passed', () => {
+    expect(entryToTypeAndName(reg)('ApexClass')).to.deep.equal({
+      type: reg.getTypeByName('ApexClass'),
+      metadataName: '*',
+    });
+  });
+  it('leading spaces in name are trimmed', () => {
+    expect(entryToTypeAndName(reg)('Layout: My Layout')).to.deep.equal({
+      type: reg.getTypeByName('Layout'),
+      metadataName: 'My Layout',
+    });
+  });
+  it('trailing spaces in name are trimmed', () => {
+    expect(entryToTypeAndName(reg)('Layout:My Layout ')).to.deep.equal({
+      type: reg.getTypeByName('Layout'),
+      metadataName: 'My Layout',
+    });
+  });
+  it('spaces in name', () => {
+    expect(entryToTypeAndName(reg)('Layout:My Layout')).to.deep.equal({
+      type: reg.getTypeByName('Layout'),
+      metadataName: 'My Layout',
+    });
+  });
+  it('colons in name', () => {
+    expect(entryToTypeAndName(reg)('Layout:My:Colon:Layout')).to.deep.equal({
+      type: reg.getTypeByName('Layout'),
+      metadataName: 'My:Colon:Layout',
+    });
+  });
+  it('colons and spaces in name', () => {
+    expect(entryToTypeAndName(reg)('Layout:My : Colon : Layout')).to.deep.equal({
+      type: reg.getTypeByName('Layout'),
+      metadataName: 'My : Colon : Layout',
     });
   });
 });

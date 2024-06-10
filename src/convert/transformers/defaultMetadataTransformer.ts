@@ -4,12 +4,14 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, join } from 'path';
-import { Messages } from '@salesforce/core';
-import { META_XML_SUFFIX, SourcePath } from '../../common';
+import { basename, dirname, join } from 'node:path';
+import { Messages } from '@salesforce/core/messages';
+import { Lifecycle } from '@salesforce/core/lifecycle';
+import { SourcePath } from '../../common/types';
+import { META_XML_SUFFIX } from '../../common/constants';
 import { SfdxFileFormat, WriteInfo } from '../types';
-import { SourceComponent } from '../../resolve';
-import { extName, trimUntil } from '../../utils';
+import { SourceComponent } from '../../resolve/sourceComponent';
+import { extName, trimUntil } from '../../utils/path';
 import { getReplacementStreamForReadable } from '../replacements';
 import { BaseMetadataTransformer } from './baseMetadataTransformer';
 
@@ -98,9 +100,15 @@ const getXmlDestination = (
   //    - insert file extension behind the -meta.xml suffix if folder type and to 'source format'
   if (!component.content && !['digitalexperiencebundle'].includes(component.type.id)) {
     if (targetFormat === 'metadata') {
-      xmlDestination = folderContentType
-        ? xmlDestination.replace(`.${suffix}`, '')
-        : xmlDestination.slice(0, xmlDestination.lastIndexOf(META_XML_SUFFIX));
+      if (folderContentType) {
+        xmlDestination = xmlDestination.replace(`.${suffix}`, '');
+      } else if (xmlDestination.includes(META_XML_SUFFIX)) {
+        xmlDestination = xmlDestination.slice(0, xmlDestination.lastIndexOf(META_XML_SUFFIX));
+      } else {
+        void Lifecycle.getInstance().emitWarning(
+          `Found a file (${xmlDestination}) that appears to be in metadata format, but the directory it's in is for source formatted files.`
+        );
+      }
     } else {
       xmlDestination = folderContentType
         ? xmlDestination.replace(META_XML_SUFFIX, `.${suffix}${META_XML_SUFFIX}`)
@@ -117,6 +125,9 @@ const getXmlDestination = (
     }
   }
   if (legacySuffix && suffix && xmlDestination.includes(legacySuffix)) {
+    void Lifecycle.getInstance().emitWarning(
+      `The ${component.type.name} component ${component.fullName} uses the legacy suffix ${legacySuffix}. This suffix is deprecated and will be removed in a future release.`
+    );
     xmlDestination = xmlDestination.replace(legacySuffix, suffix);
   }
   return xmlDestination;

@@ -4,22 +4,25 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, dirname, isAbsolute, join } from 'path';
-import { pipeline as cbPipeline, Readable, Stream, Transform, Writable } from 'stream';
-import { promisify } from 'util';
+import { isAbsolute, join } from 'node:path';
+import { pipeline as cbPipeline, Readable, Stream, Transform, Writable } from 'node:stream';
+import { promisify } from 'node:util';
 import { Messages, SfError } from '@salesforce/core';
-import * as JSZip from 'jszip';
-import { createWriteStream, existsSync } from 'graceful-fs';
+import JSZip from 'jszip';
+import { createWriteStream, existsSync, promises as fsPromises } from 'graceful-fs';
 import { JsonMap } from '@salesforce/ts-types';
 import { XMLBuilder } from 'fast-xml-parser';
 import { Logger } from '@salesforce/core';
-import { MetadataResolver, SourceComponent } from '../resolve';
-import { SourcePath, XML_DECL } from '../common';
-import { ComponentSet } from '../collections';
-import { RegistryAccess } from '../registry';
+import { SourceComponent } from '../resolve/sourceComponent';
+import { SourcePath } from '../common/types';
+import { XML_COMMENT_PROP_NAME, XML_DECL } from '../common/constants';
+import { ComponentSet } from '../collections/componentSet';
+import { RegistryAccess } from '../registry/registryAccess';
 import { ensureFileExists } from '../utils/fileSystemHandler';
-import { MetadataTransformerFactory } from './transformers';
-import { ConvertContext } from './convertContext';
+import { ComponentStatus, FileResponseSuccess } from '../client/types';
+import { ForceIgnore } from '../resolve';
+import { MetadataTransformerFactory } from './transformers/metadataTransformerFactory';
+import { ConvertContext } from './convertContext/convertContext';
 import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 
 Messages.importMessagesDirectory(__dirname);
@@ -33,7 +36,6 @@ export const stream2buffer = async (stream: Stream): Promise<Buffer> =>
     const buf = Array<any>();
     stream.on('data', (chunk) => buf.push(chunk));
     stream.on('end', () => resolve(Buffer.concat(buf)));
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     stream.on('error', (err) => reject(`error converting stream - ${err}`));
   });
 
@@ -111,7 +113,6 @@ export class ComponentConverter extends Transform {
 }
 
 export abstract class ComponentWriter extends Writable {
-  public forceIgnoredPaths: Set<string> = new Set<string>();
   protected rootDestination?: SourcePath;
   protected logger: Logger;
 
@@ -123,57 +124,56 @@ export abstract class ComponentWriter extends Writable {
 }
 
 export class StandardWriter extends ComponentWriter {
-  public converted: SourceComponent[] = [];
+  /** filepaths that converted files were written to */
+  public readonly converted: string[] = [];
+  public readonly deleted: FileResponseSuccess[] = [];
+  public readonly forceignore: ForceIgnore;
 
-  public constructor(rootDestination: SourcePath, private resolver = new MetadataResolver()) {
+  public constructor(rootDestination: SourcePath) {
     super(rootDestination);
+    this.forceignore = ForceIgnore.findAndCreate(rootDestination);
   }
 
   public async _write(chunk: WriterFormat, encoding: string, callback: (err?: Error) => void): Promise<void> {
     let err: Error | undefined;
     if (chunk.writeInfos.length !== 0) {
       try {
-        const toResolve: string[] = [];
+        const toResolve = new Set<string>();
         // it is a reasonable expectation that when a conversion call exits, the files of
         // every component has been written to the destination. This await ensures the microtask
         // queue is empty when that call exits and overall less memory is consumed.
         await Promise.all(
-          chunk.writeInfos.map((info: WriteInfo) => {
-            // assertion logic: the rootDestination is required in this subclass of ComponentWriter but the super doesn't know that
-            // the eslint comment should remain until strictMode is fully implemented
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-            const fullDest = isAbsolute(info.output) ? info.output : join(this.rootDestination as string, info.output);
-            if (!existsSync(fullDest)) {
-              for (const ignoredPath of this.forceIgnoredPaths) {
-                if (
-                  dirname(ignoredPath).includes(dirname(fullDest)) &&
-                  basename(ignoredPath).includes(basename(fullDest))
-                ) {
+          chunk.writeInfos
+            .map(makeWriteInfoAbsolute(this.rootDestination))
+            .filter(existsOrDoesntMatchIgnored(this.forceignore))
+            .map((info) => {
+              if (info.shouldDelete) {
+                this.deleted.push({
+                  filePath: info.output,
+                  state: ComponentStatus.Deleted,
+                  type: info.type,
+                  fullName: info.fullName,
+                });
+                return fsPromises.rm(info.output, { force: true, recursive: true });
+              }
+
+              // if there are children, resolve each file. o/w just pick one of the files to resolve
+              if (toResolve.size === 0 || chunk.component.type.children) {
+                // This is a workaround for a server side ListViews bug where
+                // duplicate components are sent. W-9614275
+                if (toResolve.has(info.output)) {
+                  this.logger.debug(`Ignoring duplicate metadata for: ${info.output}`);
                   return;
                 }
+                toResolve.add(info.output);
               }
-            }
-            if (this.forceIgnoredPaths.has(fullDest)) {
-              return;
-            }
-            // if there are children, resolve each file. o/w just pick one of the files to resolve
-            if (toResolve.length === 0 || chunk.component.type.children) {
-              // This is a workaround for a server side ListViews bug where
-              // duplicate components are sent. W-9614275
-              if (toResolve.includes(fullDest)) {
-                this.logger.debug(`Ignoring duplicate metadata for: ${fullDest}`);
-                return;
-              }
-              toResolve.push(fullDest);
-            }
-            ensureFileExists(fullDest);
-            return pipeline(info.source, createWriteStream(fullDest));
-          })
+
+              ensureFileExists(info.output);
+              return pipeline(info.source, createWriteStream(info.output));
+            })
         );
 
-        toResolve.map((fsPath) => {
-          this.converted.push(...this.resolver.getComponentsFromPath(fsPath));
-        });
+        this.converted.push(...toResolve);
       } catch (e) {
         err = e as Error;
       }
@@ -200,10 +200,10 @@ export class ZipWriter extends ComponentWriter {
     let err: Error | undefined;
     try {
       await Promise.all(
-        chunk.writeInfos.map(async (writeInfo) => {
+        chunk.writeInfos.filter(isWriteInfoWithSource).map(async (writeInfo) => {
           // we don't want to prematurely zip folder types when their children might still be not in the zip
           // those files we'll leave open as ReadableStreams until the zip finalizes
-          if (chunk.component.type.folderType || chunk.component.type.folderContentType) {
+          if (Boolean(chunk.component.type.folderType) || Boolean(chunk.component.type.folderContentType)) {
             return this.addToZip(writeInfo.source, writeInfo.output);
           }
           // everything else can be zipped immediately to reduce the number of open files (windows has a low limit!) and help perf
@@ -255,11 +255,42 @@ export class JsToXml extends Readable {
       indentBy: '    ',
       ignoreAttributes: false,
       cdataPropName: '__cdata',
+      commentPropName: XML_COMMENT_PROP_NAME,
     });
-
     const builtXml = String(builder.build(this.xmlObject));
-    const xmlContent = XML_DECL.concat(builtXml);
+    const xmlContent = correctComments(XML_DECL.concat(handleSpecialEntities(builtXml)));
     this.push(xmlContent);
     this.push(null);
   }
 }
+
+/** xmlBuilder likes to add newline and indent before/after the comment (hypothesis: it uses `<` as a hint to newlint/indent) */
+const correctComments = (xml: string): string =>
+  xml.includes('<!--') ? xml.replace(/\s+<!--(.*?)-->\s+/g, '<!--$1-->') : xml;
+/**
+ * use this function to handle special html entities.
+ * XmlBuilder will otherwise replace ex: `&#160;` with `'&amp;#160;'` (escape the &)
+ * This is a separate function to allow for future handling of other special entities
+ *
+ * See https://github.com/NaturalIntelligence/fast-xml-parser/blob/fa5a7339a5ae2ca4aea8a256179b82464dbf510e/docs/v4/5.Entities.md
+ * The parser can call addEntities to support more, but the Builder does not have that option.
+ * You also can't use Builder.tagValueProcessor to use this function
+ * because the escaping of `&` happens AFTER that is called.
+ * */
+const handleSpecialEntities = (xml: string): string => xml.replaceAll('&amp;#160;', '&#160;');
+
+/** discriminate between the shouldDelete and the regular WriteInfo */
+const isWriteInfoWithSource = (writeInfo: WriteInfo): writeInfo is WriteInfo & { source: Readable } =>
+  writeInfo.source !== undefined;
+
+const makeWriteInfoAbsolute =
+  (rootDestination = '') =>
+  (writeInfo: WriteInfo): WriteInfo => ({
+    ...writeInfo,
+    output: isAbsolute(writeInfo.output) ? writeInfo.output : join(rootDestination, writeInfo.output),
+  });
+
+const existsOrDoesntMatchIgnored =
+  (forceignore: ForceIgnore) =>
+  (writeInfo: WriteInfo): boolean =>
+    existsSync(writeInfo.output) || forceignore.accepts(writeInfo.output);

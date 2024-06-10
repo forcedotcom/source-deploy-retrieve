@@ -5,13 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 /* eslint-disable complexity */
-import { join, sep } from 'path';
+import { join, sep } from 'node:path';
 import { assert } from 'chai';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import { ensureArray } from '@salesforce/kit';
 import { PollingClient } from '@salesforce/core';
 import { match, SinonSpy, SinonStub } from 'sinon';
-import { AsyncResult } from 'jsforce/lib/api/metadata';
+import type { AsyncResult } from '@jsforce/jsforce-node/lib/api/metadata';
 import { ensureString } from '@salesforce/ts-types';
 import {
   ComponentSet,
@@ -32,14 +32,14 @@ import {
   RequestStatus,
 } from '../../../src/client/types';
 import { ComponentProperties } from '../../../src/resolve/sourceComponent';
-import { createMockZip } from '.';
+import { createMockZip } from './index';
 
 export const MOCK_ASYNC_RESULT: AsyncResult = { id: '1234', state: RequestStatus.Pending, done: false };
 export const MOCK_DEFAULT_OUTPUT = sep + 'test';
 export const MOCK_RECENTLY_VALIDATED_ID_REST = { id: '1234567890' };
 export const MOCK_RECENTLY_VALIDATED_ID_SOAP = '0987654321';
 
-interface DeployStubOptions {
+type DeployStubOptions = {
   components?: ComponentSet;
   zipPath?: string;
   mdapiPath?: string;
@@ -47,9 +47,9 @@ interface DeployStubOptions {
   componentFailures?: Partial<DeployMessage> | Array<Partial<DeployMessage>>;
   apiOptions?: MetadataApiDeployOptions;
   id?: string;
-}
+};
 
-interface DeployOperationLifecycle {
+type DeployOperationLifecycle = {
   pollingClientSpy: SinonSpy;
   deployStub: SinonStub;
   convertStub: SinonStub;
@@ -59,7 +59,7 @@ interface DeployOperationLifecycle {
   invokeResultStub: SinonStub;
   operation: MetadataApiDeploy;
   response: MetadataApiDeployStatus;
-}
+};
 
 export async function stubMetadataDeploy(
   $$: TestContext,
@@ -125,6 +125,7 @@ export async function stubMetadataDeploy(
   const invokeResultStub = sandbox.stub();
   invokeStub.returns({
     // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     then: (f: (result: unknown | null) => void) => f(invokeResultStub()),
   });
 
@@ -145,21 +146,21 @@ export async function stubMetadataDeploy(
   };
 }
 
-interface RetrieveStubOptions {
+type RetrieveStubOptions = {
   merge?: boolean;
   packageOptions?: string[] | PackageOption[];
   toRetrieve?: ComponentSet;
   messages?: Partial<RetrieveMessage> | Array<Partial<RetrieveMessage>>;
   successes?: ComponentSet;
-}
+};
 
-interface RetrieveOperationLifecycle {
+type RetrieveOperationLifecycle = {
   retrieveStub: SinonStub;
   checkStatusStub: SinonStub;
   convertStub: SinonStub;
   operation: MetadataApiRetrieve;
   response: MetadataApiRetrieveStatus;
-}
+};
 
 /**
  * A stubber that simulates the API retrieve.

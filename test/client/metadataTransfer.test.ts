@@ -4,14 +4,23 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { fail } from 'assert';
+import { fail } from 'node:assert';
 import { SinonStub } from 'sinon';
-import { AuthInfo, Connection, PollingClient, Messages } from '@salesforce/core';
+import { AuthInfo, Connection, Messages } from '@salesforce/core';
 import { assert, expect } from 'chai';
-import { Duration, sleep } from '@salesforce/kit';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+import {
+  Duration,
+  // Duration,
+  sleep,
+} from '@salesforce/kit';
+import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import { ComponentSet } from '../../src';
-import { MetadataTransfer, MetadataTransferOptions } from '../../src/client/metadataTransfer';
+import {
+  MetadataTransfer,
+  MetadataTransferOptions,
+  calculatePollingFrequency,
+  normalizePollingInputs,
+} from '../../src/client/metadataTransfer';
 import { MetadataRequestStatus, MetadataTransferResult, RequestStatus } from '../../src/client/types';
 
 Messages.importMessagesDirectory(__dirname);
@@ -196,63 +205,6 @@ describe('MetadataTransfer', () => {
       expect(listenerStub.callCount).to.equal(1);
     });
 
-    it('should calculate polling frequency based on source components, 0 -> 1000', async () => {
-      const pollingClientStub = $$.SANDBOX.stub(PollingClient, 'create').resolves(PollingClient.prototype);
-      $$.SANDBOX.stub(PollingClient.prototype, 'subscribe').resolves({ status: RequestStatus.Canceled, done: true });
-      const { checkStatus } = operation.lifecycle;
-      checkStatus.resolves({ status: RequestStatus.Canceled, done: true });
-
-      operation.onCancel(() => listenerStub());
-      await operation.pollStatus();
-
-      expect(pollingClientStub.calledOnce).to.be.true;
-      expect((pollingClientStub.firstCall.args[0] as { frequency: number }).frequency).to.deep.equal(
-        Duration.milliseconds(1000)
-      );
-    });
-
-    it('should calculate polling frequency based on source components, 10 -> 100', async () => {
-      // @ts-ignore protected member access
-      $$.SANDBOX.stub(operation.components, 'getSourceComponents').returns({
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore only override length attribute
-        toArray: () => ({ length: 10 }),
-      });
-      const pollingClientStub = $$.SANDBOX.stub(PollingClient, 'create').resolves(PollingClient.prototype);
-      $$.SANDBOX.stub(PollingClient.prototype, 'subscribe').resolves({ status: RequestStatus.Canceled, done: true });
-      const { checkStatus } = operation.lifecycle;
-      checkStatus.resolves({ status: RequestStatus.Canceled, done: true });
-
-      operation.onCancel(() => listenerStub());
-      await operation.pollStatus({ frequency: undefined, timeout: Duration.minutes(60) });
-
-      expect(pollingClientStub.calledOnce).to.be.true;
-      expect((pollingClientStub.firstCall.args[0] as { frequency: number }).frequency).to.deep.equal(
-        Duration.milliseconds(100)
-      );
-    });
-
-    it('should calculate polling frequency based on source components, 2520 -> 2520', async () => {
-      // @ts-ignore protected member access
-      $$.SANDBOX.stub(operation.components, 'getSourceComponents').returns({
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore only override length attribute
-        toArray: () => ({ length: 2520 }),
-      });
-      const pollingClientStub = $$.SANDBOX.stub(PollingClient, 'create').resolves(PollingClient.prototype);
-      $$.SANDBOX.stub(PollingClient.prototype, 'subscribe').resolves({ status: RequestStatus.Canceled, done: true });
-      const { checkStatus } = operation.lifecycle;
-      checkStatus.resolves({ status: RequestStatus.Canceled, done: true });
-
-      operation.onCancel(() => listenerStub());
-      await operation.pollStatus(undefined, 60);
-
-      expect(pollingClientStub.calledOnce).to.be.true;
-      expect((pollingClientStub.firstCall.args[0] as { frequency: number }).frequency).to.deep.equal(
-        Duration.milliseconds(2520)
-      );
-    });
-
     it('should wait for polling function to return before queuing another', async () => {
       const { checkStatus } = operation.lifecycle;
       const checkStatusRuntime = 50;
@@ -422,6 +374,86 @@ describe('MetadataTransfer', () => {
       expect(result).to.deep.equal({ id: '1' });
       expect(cancelListenerStub.callCount).to.equal(1);
       expect(updateListenerStub.callCount).to.equal(1);
+    });
+  });
+
+  describe('calculatePollingFrequency', () => {
+    it('0 => 1000', () => {
+      expect(calculatePollingFrequency(0)).to.equal(1000);
+    });
+    it('10 => 100', () => {
+      expect(calculatePollingFrequency(10)).to.equal(100);
+    });
+    it('2520 => 2520', () => {
+      expect(calculatePollingFrequency(2520)).to.equal(2520);
+    });
+  });
+
+  describe('normalizePollingInputs', () => {
+    describe('number as first param', () => {
+      it('only first param', () => {
+        const result = normalizePollingInputs(100);
+        expect(result.timeout.seconds).to.equal(Duration.minutes(60).seconds);
+        expect(result.frequency).to.deep.equal(Duration.milliseconds(100));
+      });
+      it('timeout and componentSetSize (timeout wins)', () => {
+        const result = normalizePollingInputs(100, 60_000, 5001);
+        expect(result.timeout.seconds).to.deep.equal(60_000);
+        expect(result.frequency).to.deep.equal(Duration.milliseconds(100));
+      });
+    });
+    describe('handles empty object as first param', () => {
+      it('only first param', () => {
+        const result = normalizePollingInputs({});
+        expect(result.timeout).to.deep.equal(Duration.minutes(60));
+        expect(result.frequency).to.deep.equal(Duration.milliseconds(1000));
+      });
+      it('only cs size => default timeout, calculated freq', () => {
+        const result = normalizePollingInputs({}, undefined, 5001);
+        expect(result.timeout.seconds).to.equal(Duration.minutes(60).seconds);
+        expect(result.frequency).to.deep.equal(Duration.milliseconds(5001));
+      });
+    });
+    describe('handles object with just timeout for first param', () => {
+      it('only first param', () => {
+        const result = normalizePollingInputs({ timeout: Duration.minutes(20) });
+        expect(result.timeout).to.deep.equal(Duration.minutes(20));
+        expect(result.frequency).to.deep.equal(Duration.milliseconds(1000));
+      });
+
+      it('and only componentSetSize (freq is calculated from CS size)', () => {
+        const result = normalizePollingInputs({ timeout: Duration.minutes(20) }, undefined, 5001);
+        expect(result.timeout.seconds).to.deep.equal(Duration.minutes(20).seconds);
+        expect(result.frequency).to.deep.equal(Duration.milliseconds(5001));
+      });
+    });
+    describe('handles object with just freq for first param', () => {
+      it('handles object with just freq for first param', () => {
+        const result = normalizePollingInputs({ frequency: Duration.milliseconds(125) });
+        expect(result.timeout.seconds).to.equal(Duration.minutes(60).seconds);
+        expect(result.frequency.milliseconds).to.deep.equal(125);
+      });
+      it('componentSetSize has no effect', () => {
+        const result = normalizePollingInputs({ frequency: Duration.milliseconds(125) }, undefined, 5001);
+        expect(result.timeout.seconds).to.equal(Duration.minutes(60).seconds);
+        expect(result.frequency.milliseconds).to.deep.equal(125);
+      });
+    });
+    describe('handles full object as first param', () => {
+      it('just one param, the object', () => {
+        const result = normalizePollingInputs({ frequency: Duration.milliseconds(125), timeout: Duration.minutes(20) });
+        expect(result.timeout.seconds).to.deep.equal(Duration.minutes(20).seconds);
+        expect(result.frequency.milliseconds).to.deep.equal(125);
+      });
+      it('componentSetSize has no effect', () => {
+        const result = normalizePollingInputs(
+          { frequency: Duration.milliseconds(125), timeout: Duration.minutes(20) },
+          undefined,
+          1000
+        );
+        expect(result.timeout.seconds).to.deep.equal(Duration.minutes(20).seconds);
+        expect(result.frequency.milliseconds).to.deep.equal(125);
+      });
     });
   });
 });

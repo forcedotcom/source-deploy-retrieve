@@ -5,11 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { dirname, join, relative } from 'path';
+import { dirname, join, relative } from 'node:path';
 import ignore, { Ignore } from 'ignore/index';
 import { readFileSync } from 'graceful-fs';
 import { Lifecycle } from '@salesforce/core';
-import { SourcePath } from '../common';
+import { SourcePath } from '../common/types';
 import { searchUp } from '../utils/fileSystemHandler';
 
 export class ForceIgnore {
@@ -17,26 +17,28 @@ export class ForceIgnore {
 
   private readonly parser?: Ignore;
   private readonly forceIgnoreDirectory?: string;
-  private DEFAULT_IGNORE: string[] = ['**/*.dup', '**/.*', '**/package2-descriptor.json', '**/package2-manifest.json'];
+  private DEFAULT_IGNORE = ['**/*.dup', '**/.*', '**/package2-descriptor.json', '**/package2-manifest.json'];
 
   public constructor(forceIgnorePath = '') {
     try {
-      let contents = readFileSync(forceIgnorePath, 'utf-8');
+      const contents = readFileSync(forceIgnorePath, 'utf-8');
       // check if file `.forceignore` exists
       if (contents !== undefined) {
         // check for windows style separators (\) and warn
         if (contents.includes('\\')) {
-          const lifecycle = Lifecycle.getInstance();
-          // cannot await a method in a constructor
-          void lifecycle.emitWarning(
-            'Your .forceignore file incorrectly uses the backslash ("\\") as a folder separator; it should use the slash ("/") instead. We currently accept both separators, but we plan to stop supporting the backslash soon.'
+          // void because you cannot await a method in a constructor
+          void Lifecycle.getInstance().emitWarning(
+            'Your .forceignore file incorrectly uses the backslash ("\\") as a folder separator; it should use the slash ("/") instead. The ignore rules will not work as expected until you fix this.'
           );
-          // TODO: change this in v56 to only emit warning but NOT fix file
-          contents = contents.replace(/\\/g, '/');
         }
-
+        if (contents.includes('**/unpackaged/**')) {
+          void Lifecycle.getInstance().emitWarning(
+            'Your .forceignore file contains the "**/unpackaged/**" rule. This will cause all files to be ignored during a retrieve.'
+          );
+        }
         // add the default ignore paths, and then parse the .forceignore file
-        this.parser = ignore().add(`${contents}\n${this.DEFAULT_IGNORE.join('\n')}`);
+        this.parser = ignore().add(`${this.DEFAULT_IGNORE.join('\n')}\n${contents}`);
+
         this.forceIgnoreDirectory = dirname(forceIgnorePath);
       }
     } catch (e) {

@@ -107,9 +107,15 @@ ${tableHeaders.concat(getCoverageRows(currentCoverage.types)).join('\n')}
 
 
 ## Next Release (v${currentApiVersion + 1})
-v${currentApiVersion + 1} introduces the following new types.  Here's their current level of support
 
-${tableHeaders.concat(getCoverageRows(nextCoverage.types, true)).join('\n')}
+${
+  Object.keys(nextCoverage.types).length
+    ? `v${currentApiVersion + 1} introduces the following new types.  Here's their current level of support
+
+${tableHeaders.concat(getCoverageRows(nextCoverage.types, true)).join('\n')}`
+    : `> **Note**
+> v${currentApiVersion + 1} coverage not available at this time`
+}
 
 ## Additional Types
 

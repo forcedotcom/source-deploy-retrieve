@@ -4,17 +4,21 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, join, dirname } from 'path';
-import { Messages, SfError } from '@salesforce/core';
+import { join, dirname } from 'node:path';
+import { SfError } from '@salesforce/core/sfError';
+import { Messages } from '@salesforce/core/messages';
+import { Lifecycle } from '@salesforce/core/lifecycle';
+
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { get, getString, JsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
-import { replacementIterations } from '../../src/convert/replacements';
-import { baseName, parseMetadataXml, trimUntil } from '../utils';
-import { DEFAULT_PACKAGE_ROOT_SFDX } from '../common';
-import { SfdxFileFormat } from '../convert';
-import { MetadataType } from '../registry';
-import { DestructiveChangesType } from '../collections';
+import { XML_COMMENT_PROP_NAME } from '../common/constants';
+import { getXmlElement } from '../utils/decomposed';
+import { baseName, baseWithoutSuffixes, parseMetadataXml, calculateRelativePath } from '../utils/path';
+import { replacementIterations } from '../convert/replacements';
+import { SfdxFileFormat } from '../convert/types';
+import { MetadataType } from '../registry/types';
+import { DestructiveChangesType } from '../collections/types';
 import { filePathsFromMetadataComponent } from '../utils/filePathGenerator';
 import { MarkedReplacement } from '../convert/types';
 import { MetadataComponent, VirtualDirectory } from './types';
@@ -45,8 +49,8 @@ export class SourceComponent implements MetadataComponent {
   public parentType?: MetadataType;
   public content?: string;
   public replacements?: Record<string, MarkedReplacement[]>;
-  private treeContainer: TreeContainer;
-  private forceIgnore: ForceIgnore;
+  private readonly treeContainer: TreeContainer;
+  private readonly forceIgnore: ForceIgnore;
   private markedForDelete = false;
   private destructiveChangesType?: DestructiveChangesType;
 
@@ -162,19 +166,19 @@ export class SourceComponent implements MetadataComponent {
    */
   public getChildren(): SourceComponent[] {
     if (!this.parent && this.type.children) {
+      const validChildTypes = new Set(Object.keys(this.type.children.types));
       const children = this.content ? this.getDecomposedChildren(this.content) : this.getNonDecomposedChildren();
 
-      const validChildTypes = this.type?.children ? Object.keys(this.type?.children?.types) : [];
-      for (const child of children) {
-        // Ensure only valid child types are included with the parent.
-        if (!validChildTypes.includes(child.type?.id)) {
-          const filePath = child.xml ?? child.content;
+      // Ensure only valid child types are included with the parent.
+      children
+        .filter((child) => !validChildTypes.has(child.type?.id))
+        .map((child) => {
           throw new SfError(
-            messages.getMessage('error_unexpected_child_type', [filePath, this.type.name]),
+            messages.getMessage('error_unexpected_child_type', [child.xml ?? child.content, this.type.name]),
             'TypeInferenceError'
           );
-        }
-      }
+        });
+
       return children;
     }
     return [];
@@ -224,9 +228,7 @@ export class SourceComponent implements MetadataComponent {
     if (!this.parent) {
       return parentXml;
     }
-    const children = ensureArray(
-      get(parentXml, `${this.parent.type.name}.${this.type.xmlElementName ?? this.type.directoryName}`)
-    ) as T[];
+    const children = ensureArray(get(parentXml, `${this.parent.type.name}.${getXmlElement(this.type)}`)) as T[];
     const uniqueElement = this.type.uniqueIdElement;
     const matched = uniqueElement ? children.find((c) => getString(c, uniqueElement) === this.name) : undefined;
     if (!matched) {
@@ -236,9 +238,7 @@ export class SourceComponent implements MetadataComponent {
   }
 
   public getPackageRelativePath(fsPath: string, format: SfdxFileFormat): string {
-    return format === 'source'
-      ? join(DEFAULT_PACKAGE_ROOT_SFDX, this.calculateRelativePath(fsPath))
-      : this.calculateRelativePath(fsPath);
+    return calculateRelativePath(format)({ self: this.type, parentType: this.parentType })(this.fullName)(fsPath);
   }
 
   /**
@@ -259,39 +259,11 @@ export class SourceComponent implements MetadataComponent {
       delete this.destructiveChangesType;
     } else {
       this.markedForDelete = true;
-      // eslint-disable-next-line no-unused-expressions
-      destructiveChangeType === DestructiveChangesType.PRE
-        ? (this.destructiveChangesType = DestructiveChangesType.PRE)
-        : (this.destructiveChangesType = DestructiveChangesType.POST);
+      // destructiveChangeType is DestructiveChangeType OR boolean, if it's DestructiveChangesType.PRE => DestructiveChangesType.PRE
+      // if it's DestructiveChangesType.POST or 'true' => DestructiveChangesType.POST
+      this.destructiveChangesType =
+        destructiveChangeType === DestructiveChangesType.PRE ? DestructiveChangesType.PRE : DestructiveChangesType.POST;
     }
-  }
-
-  private calculateRelativePath(fsPath: string): string {
-    const { directoryName, suffix, inFolder, folderType, folderContentType } = this.type;
-
-    // if there isn't a suffix, assume this is a mixed content component that must
-    // reside in the directoryName of its type. trimUntil maintains the folder structure
-    // the file resides in for the new destination. This also applies to inFolder types:
-    // (report, dashboard, emailTemplate, document) and their folder container types:
-    // (reportFolder, dashboardFolder, emailFolder, documentFolder)
-    // It also applies to DigitalExperienceBundle types as we need to maintain the folder structure
-    if (
-      !suffix ||
-      inFolder ||
-      folderContentType ||
-      ['digitalexperiencebundle', 'digitalexperience'].includes(this.type.id)
-    ) {
-      return trimUntil(fsPath, directoryName, true);
-    }
-
-    if (folderType) {
-      // types like Territory2Model have child types inside them.  We have to preserve those folder structures
-      if (this.parentType?.folderType && this.parentType?.folderType !== this.type.id) {
-        return trimUntil(fsPath, this.parentType.directoryName);
-      }
-      return join(directoryName, this.fullName.split('/')[0], basename(fsPath));
-    }
-    return join(directoryName, basename(fsPath));
   }
 
   private parse<T extends JsonMap>(contents: string): T {
@@ -303,6 +275,7 @@ export class SourceComponent implements MetadataComponent {
       cdataPropName: '__cdata',
       ignoreDeclaration: true,
       numberParseOptions: { leadingZeros: false, hex: false },
+      commentPropName: XML_COMMENT_PROP_NAME,
     });
     const parsed = parser.parse(String(contents)) as T;
     const [firstElement] = Object.keys(parsed);
@@ -340,13 +313,18 @@ export class SourceComponent implements MetadataComponent {
     const children: SourceComponent[] = [];
     for (const fsPath of this.walk(dirPath)) {
       const childXml = parseMetadataXml(fsPath);
-      const fileIsRootXml = childXml?.suffix === this.type.suffix;
+      const fileIsRootXml = childXml?.suffix === this.type.suffix || childXml?.suffix === this.type.legacySuffix;
       if (childXml && !fileIsRootXml && this.type.children && childXml.suffix) {
-        // TODO: Log warning if missing child type definition
         const childTypeId = this.type.children?.suffixes[childXml.suffix];
+        const childType = this.type.children.types[childTypeId];
+        if (!childTypeId || !childType) {
+          void Lifecycle.getInstance().emitWarning(
+            `${fsPath}: Expected a child type for ${childXml.suffix} in ${this.type.name} but none was found.`
+          );
+        }
         const childComponent = new SourceComponent(
           {
-            name: baseName(fsPath),
+            name: childType?.suffix ? baseWithoutSuffixes(fsPath, childType) : baseName(fsPath),
             type: this.type.children.types[childTypeId],
             xml: fsPath,
             parent: this,
@@ -365,36 +343,35 @@ export class SourceComponent implements MetadataComponent {
   // E.g., CustomLabels, Workflows, SharingRules, AssignmentRules.
   private getNonDecomposedChildren(): SourceComponent[] {
     const parsed = this.parseXmlSync();
-    const children: SourceComponent[] = [];
     if (!this.type.children) {
       throw new SfError(`There are no child types for ${this.type.name}`);
     }
-    for (const childTypeId of Object.keys(this.type.children.types)) {
-      const childType = this.type.children.types[childTypeId];
+
+    return Object.values(this.type.children.types).flatMap((childType) => {
       const uniqueIdElement = childType.uniqueIdElement;
-      if (uniqueIdElement) {
-        const xmlPathToChildren = `${this.type.name}.${childType.xmlElementName}`;
-        const elements = ensureArray(get(parsed, xmlPathToChildren, []));
-        const childComponents = elements.map((element) => {
-          const name = getString(element, uniqueIdElement);
-          if (!name) {
-            throw new SfError(`Missing ${uniqueIdElement} on ${childType.name} in ${this.xml}`);
-          }
-          return new SourceComponent(
-            {
-              name,
-              type: childType,
-              xml: this.xml,
-              parent: this,
-            },
-            this.treeContainer,
-            this.forceIgnore
-          );
-        });
-        children.push(...childComponents);
+
+      if (!uniqueIdElement) {
+        return [];
       }
-    }
-    return children;
+      const xmlPathToChildren = `${this.type.name}.${childType.xmlElementName}`;
+      const elements = ensureArray(get(parsed, xmlPathToChildren, []));
+      return elements.map((element) => {
+        const name = getString(element, uniqueIdElement);
+        if (!name) {
+          throw new SfError(`Missing ${uniqueIdElement} on ${childType.name} in ${this.xml}`);
+        }
+        return new SourceComponent(
+          {
+            name,
+            type: childType,
+            xml: this.xml,
+            parent: this,
+          },
+          this.treeContainer,
+          this.forceIgnore
+        );
+      });
+    });
   }
 
   private *walk(fsPath: string): IterableIterator<string> {

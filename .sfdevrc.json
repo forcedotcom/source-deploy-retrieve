@@ -1,16 +1,32 @@
 {
   "wireit": {
     "compile": {
-      "command": "ttsc -p . --pretty --incremental",
-      "files": ["src/**/*.ts", "src/registry/*.json", "**/tsconfig.json", "messages/**"],
-      "output": ["lib/**", "*.tsbuildinfo"],
-      "clean": "if-file-deleted"
+      "clean": "if-file-deleted",
+      "command": "tspc -p . --pretty --incremental",
+      "files": ["src/**/*.ts", "src/registry/**/*.json", "**/tsconfig.json", "messages/**"],
+      "output": ["lib/**", "*.tsbuildinfo"]
     },
     "test": {
-      "dependencies": ["test:only", "test:compile", "test:registry-validation"]
+      "dependencies": ["test:only", "test:compile", "test:registry-validation", "test:snapshot"]
     },
     "test:only": {
-      "command": "nyc mocha \"test/**/*.test.ts\" --exclude \"test/registry/registryValidation.test.ts\"",
+      "command": "nyc mocha \"test/**/*.test.ts\" --exclude \"test/registry/registryValidation.test.ts\" --exclude \"test/snapshot/**\"",
+      "env": {
+        "FORCE_COLOR": "2"
+      },
+      "files": [
+        "test/**/*.ts",
+        "src/**/*.ts",
+        "src/registry/*.json",
+        "**/tsconfig.json",
+        ".mocha*",
+        "!*.nut.ts",
+        ".nycrc"
+      ],
+      "output": []
+    },
+    "test:snapshot": {
+      "command": "mocha \"test/snapshot/**/*.test.ts\" --parallel",
       "env": {
         "FORCE_COLOR": "2"
       },

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Top_Level_Folder</members>
+        <members>Top_Level_Folder/Template_in_folder</members>
+        <members>unfiled$public/Top_level_email</members>
+        <name>EmailTemplate</name>
+    </types>
+    <types>
+        <members>TopFolder</members>
+        <members>TopFolder/ChildFolder</members>
+        <members>TopFolder/ChildFolder/Report_in_Child_Folder_qz4</members>
+        <members>TopFolder/Copy_of_Top_level_report_DOj</members>
+        <members>unfiled$public/Top_level_report_cZJ</members>
+        <name>Report</name>
+    </types>
+    <version>52.0</version>
+</Package>

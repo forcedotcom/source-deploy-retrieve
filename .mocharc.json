@@ -1,10 +1,10 @@
 {
-  "require": "ts-node/register,source-map-support/register",
   "exclude": "test/registry/registryCompleteness.test.ts",
-  "watch-extensions": "ts",
   "extensions": [".ts", ".js", ".json"],
-  "watch-files": ["src", "test"],
   "recursive": true,
   "reporter": "spec",
-  "timeout": 20000
+  "require": "ts-node/register,source-map-support/register,mocha-snap",
+  "timeout": 20000,
+  "watch-extensions": "ts",
+  "watch-files": ["src", "test"]
 }

@@ -4,17 +4,16 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { fail } from 'assert';
-import { join } from 'path';
+import { fail } from 'node:assert';
+import { join, sep } from 'node:path';
 import { Messages } from '@salesforce/core';
 import { assert, expect } from 'chai';
 import chai = require('chai');
 import deepEqualInAnyOrder = require('deep-equal-in-any-order');
-import * as unzipper from 'unzipper';
 import { SinonStub } from 'sinon';
 import { getString } from '@salesforce/ts-types';
-import * as fs from 'graceful-fs';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+import fs from 'graceful-fs';
+import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import {
   ComponentSet,
   ComponentStatus,
@@ -33,6 +32,7 @@ import { COMPONENT } from '../mock/type-constants/apexClassConstant';
 import { DECOMPOSED_COMPONENT } from '../mock/type-constants/customObjectConstant';
 import * as coverage from '../../src/registry/coverage';
 import { testApiVersion } from '../mock/manifestConstants';
+import * as extractForStub from '../../src/client/retrieveExtract';
 
 chai.use(deepEqualInAnyOrder);
 
@@ -311,11 +311,16 @@ describe('MetadataApiRetrieve', () => {
             successes: toRetrieve,
           });
           $$.SANDBOX.stub(fs.promises, 'writeFile');
+          $$.SANDBOX.stub(fs, 'mkdirSync');
+          $$.SANDBOX.stub(fs, 'writeFileSync');
 
           await operation.start();
           await operation.pollStatus();
 
-          expect(getString(convertStub.secondCall.args[2], 'outputDirectory', '')).to.equal('test');
+          // @ts-expect-error protected property
+          const expectedDir = join(operation.mdapiTempDir, 'source');
+          expect(expectedDir.startsWith(`test${sep}`)).to.be.true;
+          expect(getString(convertStub.secondCall.args[2], 'outputDirectory', '')).to.equal(expectedDir);
         } finally {
           delete process.env.SF_MDAPI_TEMP_DIR;
         }
@@ -441,60 +446,79 @@ describe('MetadataApiRetrieve', () => {
   describe('post', () => {
     const output = join('mdapi', 'retrieve', 'dir');
     const format = 'metadata';
-    const zipFile = 'abcd1234';
+    // This is what real zip file contents look like from the server
+    const zipFile = `UEsDBBQACAgIACKPFlcAAAAAAAAAAAAAAAAiAAAAdW5wYWNrYWdlZC9jbGFzc2VzL1BhZ2VkUmVzdWx
+0LmNsc53MsQoCMQwG4P2eIu/hoojDLSo6ikPahl6l15Ym4cDj3t2qm5Oa4efnhy9FTQwWpiAD8IA1JA82IjMc0ZM7EWsUmDtot95
+oxV1CE8m9hvLGfRLyVKE0cQ53ghk8yQr4GUv3td3raFr9Q0sWjL3QuM2a5JcPB3MjK5crVLK5Ov6wywNQSwcIZ6ozvYIAAAAgAQA
+AUEsDBBQACAgIACKPFlcAAAAAAAAAAAAAAAArAAAAdW5wYWNrYWdlZC9jbGFzc2VzL1BhZ2VkUmVzdWx0LmNscy1tZXRhLnhtbE2
+NQQrCMBBF9zlFyN5MFJUiaUoRPIG6H9KogTYJnbH0+BYq4t+9z4Nnm3no5RRGijnVaquNkiH53MX0rNXtetlUqnHCtiXM5x6J5OI
+nqtWLuZwAKGPR9MijD9rnAXbGHMHsYQiMHTIqJ+QyiyXe14g7VNpY+DtWgxj5Ta71HKdg4YvCwi/txAdQSwcIwX3rpIgAAACuAAA
+AUEsDBBQACAgIACKPFlcAAAAAAAAAAAAAAAAWAAAAdW5wYWNrYWdlZC9wYWNrYWdlLnhtbE2OywrCMBBF9/2KkL2ZKCpF0hQRXBf
+RD4jpWIvNgyZK/XtDa9FZzRkuZ64oB9ORF/ahdbagS8YpQatd3dqmoJfzcZHTUmaiUvqhGiQpbUNB7zH6HUBwyrNwc71Gpp2BFed
+b4GswGFWtoqIyI2lEfHsM0z6yQXNNL2WVlPUJw7OLAubjL2aVQbn3OBw6FYKAkScj/CnFt77c5IwLmCkT8G0tsw9QSwcIAYbHtaM
+AAADnAAAAUEsBAhQAFAAICAgAIo8WV2eqM72CAAAAIAEAACIAAAAAAAAAAAAAAAAAAAAAAHVucGFja2FnZWQvY2xhc3Nlcy9QYWd
+lZFJlc3VsdC5jbHNQSwECFAAUAAgICAAijxZXwX3rpIgAAACuAAAAKwAAAAAAAAAAAAAAAADSAAAAdW5wYWNrYWdlZC9jbGFzc2V
+zL1BhZ2VkUmVzdWx0LmNscy1tZXRhLnhtbFBLAQIUABQACAgIACKPFlcBhse1owAAAOcAAAAWAAAAAAAAAAAAAAAAALMBAAB1bnB
+hY2thZ2VkL3BhY2thZ2UueG1sUEsFBgAAAAADAAMA7QAAAJoCAAAAAA==`;
     const zipFileContents = Buffer.from(zipFile, 'base64');
     const usernameOrConnection = 'retrieve@test.org';
     const fakeResults = { status: RequestStatus.Succeeded, zipFile } as MetadataApiRetrieveStatus;
     let writeFileStub: SinonStub;
-    let openBufferStub: SinonStub;
-    let extractStub: SinonStub;
-    const mdapiRetrieveExtractStub = $$.SANDBOX.stub().resolves({});
+    let mkdirStub: SinonStub;
+    let mdapiRetrieveExtractStub: SinonStub;
 
     beforeEach(() => {
       writeFileStub = $$.SANDBOX.stub(fs, 'writeFileSync');
-      extractStub = $$.SANDBOX.stub().resolves();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-      openBufferStub = $$.SANDBOX.stub(unzipper.Open, 'buffer').resolves({ extract: extractStub } as any);
+      mkdirStub = $$.SANDBOX.stub(fs, 'mkdirSync');
     });
 
     it('should write the retrieved zip when format=metadata', async () => {
+      mdapiRetrieveExtractStub = $$.SANDBOX.stub(extractForStub, 'extract').throws();
+
       const mdapiRetrieve = new MetadataApiRetrieve({ usernameOrConnection, output, format });
-      // @ts-ignore overriding private method
-      mdapiRetrieve.extract = mdapiRetrieveExtractStub;
       await mdapiRetrieve.post(fakeResults);
 
       expect(writeFileStub.calledOnce).to.be.true;
       expect(writeFileStub.firstCall.args[0]).to.equal(join(output, 'unpackaged.zip'));
       expect(writeFileStub.firstCall.args[1]).to.deep.equal(zipFileContents);
-      expect(openBufferStub.called).to.be.false;
+      expect(mkdirStub.called).to.be.false;
       expect(mdapiRetrieveExtractStub.called).to.be.false;
     });
 
     it('should unzip the retrieved zip when format=metadata and unzip=true', async () => {
+      mdapiRetrieveExtractStub = $$.SANDBOX.stub(extractForStub, 'extract').throws();
       const mdapiRetrieve = new MetadataApiRetrieve({ usernameOrConnection, output, format, unzip: true });
-      // @ts-ignore overriding private method
-      mdapiRetrieve.extract = mdapiRetrieveExtractStub;
       await mdapiRetrieve.post(fakeResults);
 
-      expect(writeFileStub.calledOnce).to.be.true;
+      const unpkg1Dir = join(output, 'unpackaged');
+      const unpkg2Dir = join(unpkg1Dir, 'unpackaged/');
+      const classesDir = join(unpkg2Dir, 'classes/');
+
+      expect(writeFileStub.called).to.be.true;
       expect(writeFileStub.firstCall.args[0]).to.equal(join(output, 'unpackaged.zip'));
       expect(writeFileStub.firstCall.args[1]).to.deep.equal(zipFileContents);
-      expect(openBufferStub.called).to.be.true;
-      expect(extractStub.called).to.be.true;
+      expect(writeFileStub.secondCall.args[0]).to.equal(join(classesDir, 'PagedResult.cls'));
+      expect(writeFileStub.thirdCall.args[0]).to.equal(join(classesDir, 'PagedResult.cls-meta.xml'));
+      expect(mkdirStub.called).to.be.true;
+      expect(mkdirStub.firstCall.args[0]).to.equal(unpkg1Dir);
+      expect(mkdirStub.secondCall.args[0]).to.equal(unpkg2Dir);
+      expect(mkdirStub.thirdCall.args[0]).to.equal(classesDir);
       expect(mdapiRetrieveExtractStub.called).to.be.false;
     });
 
     it('should write the retrieved zip with specified name when format=metadata and zipFileName is set', async () => {
       const zipFileName = 'retrievedFiles.zip';
       const mdapiRetrieve = new MetadataApiRetrieve({ usernameOrConnection, output, format, zipFileName });
-      // @ts-ignore overriding private method
-      mdapiRetrieve.extract = mdapiRetrieveExtractStub;
+      mdapiRetrieveExtractStub = $$.SANDBOX.stub(extractForStub, 'extract').resolves({
+        componentSet: new ComponentSet([]),
+        partialDeleteFileResponses: [],
+      });
       await mdapiRetrieve.post(fakeResults);
 
       expect(writeFileStub.calledOnce).to.be.true;
       expect(writeFileStub.firstCall.args[0]).to.equal(join(output, zipFileName));
       expect(writeFileStub.firstCall.args[1]).to.deep.equal(zipFileContents);
-      expect(openBufferStub.called).to.be.false;
+      expect(mkdirStub.called).to.be.false;
       expect(mdapiRetrieveExtractStub.called).to.be.false;
     });
   });

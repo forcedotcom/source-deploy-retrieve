@@ -23,7 +23,6 @@ export const features = [
   'HEALTHCLOUDHPIBETA',
   'MANAGETIMELINE',
   'HEALTHCLOUDBETA',
-  'EMBEDDEDSERVICEMESSAGING',
   'UNIFIEDHEALTHSCORING',
   'EINSTEINDOCREADER',
   'ACCOUNTINGSUBLEDGERACCESS',
@@ -36,6 +35,7 @@ export const features = [
   'BUSINESSRULESENGINE',
   'FUNDRAISING',
   'PARDOTADVANCED', // org:create throws a C-9999 when this is not excluded
+  'EXTERNALCONNECTIVITY', // for type ExternalAuthIdentityProvider.  might work if it were added to a dev hub
 ];
 
 export const settings = [
@@ -49,7 +49,6 @@ export const metadataTypes = [
   'StandardValue',
 
   // the following are not describable based on their features/settings, see git blame for last time checked
-  'DiscoveryStory',
   'EmployeeDataSyncProfile',
   'RelatedRecordAssocCriteria',
   'ScoreRange',
@@ -59,9 +58,6 @@ export const metadataTypes = [
   // A scratch org was created with username test-o87upqyaagax@example.com, but the settings failed to deploy due to: enableInsights
   'ReferencedDashboard',
   'WaveAnalyticAssetCollection',
-
-  // spins up fine with feature B2CLOYALTYMANAGEMENT, not in describe
-  'ExpressionSetObjectAlias',
 
   // requires no features, but not in describe
   'ExternalDataSrcDescriptor',
@@ -73,9 +69,6 @@ export const metadataTypes = [
   'ExternalDataTranField',
   'ExternalDataTranObject',
 
-  // spun up with HIGHSCALEORDERS, not in describe
-  'RegisteredExternalService',
-
   // spun up org with ASSESSMENTS, not in describe
   'AssessmentConfiguration',
 
@@ -86,13 +79,12 @@ export const metadataTypes = [
 
   // spun up org with ASSOCIATIONENGINE, not in describe
   'RecAlrtDataSrcExpSetDef',
-  'RecordAlertTemplate',
 
-  // B2CLOYALTYMANAGEMENTPLUS, not in describe
-  'ServiceProcess',
+  // spun up org with EDUCATIONCLOUD:1, not in describe
+  'LearningAchievementConfig',
 
-  // does not show up in describe, but requires no features
-  'ProcessFlowMigration',
+  // spun up org with CORECPQ, not in describe
+  'DocumentTemplate',
 ];
 
 export const hasUnsupportedFeatures = (type: CoverageObjectType): boolean => {

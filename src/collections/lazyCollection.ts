@@ -13,18 +13,14 @@ export class LazyCollection<T> implements Iterable<T> {
   }
 
   public first(): T | undefined {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return this.getIterator().next().value;
+    return this.getIterator().next().value as T | undefined;
   }
 
   public find(predicate: (element: T) => boolean): T | undefined {
     const iter = this.getIterator();
     let next = iter.next();
     while (!next.done) {
-      // here and elsewhere in this file, disabled since this.getIterator includes an explicit <any> in its type
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       if (predicate(next.value)) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return next.value;
       }
       next = iter.next();
@@ -41,7 +37,6 @@ export class LazyCollection<T> implements Iterable<T> {
       (function* (): Iterable<T> {
         let next = iter.next();
         while (!next.done) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           if (predicate(next.value)) {
             yield next.value;
           }
@@ -57,7 +52,6 @@ export class LazyCollection<T> implements Iterable<T> {
       (function* (): Iterable<R> {
         let next = iter.next();
         while (!next.done) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           yield mapper(next.value);
           next = iter.next();
         }
@@ -70,7 +64,6 @@ export class LazyCollection<T> implements Iterable<T> {
     const iter = this.getIterator();
     let next = iter.next();
     while (!next.done) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       result.push(next.value);
       next = iter.next();
     }

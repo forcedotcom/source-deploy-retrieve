@@ -4,9 +4,12 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { assert, expect } from 'chai';
+import { assert, expect, use } from 'chai';
 import { Messages, SfError } from '@salesforce/core';
+import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import { MetadataType, registry, RegistryAccess } from '../../src';
+
+use(deepEqualInAnyOrder);
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -86,7 +89,7 @@ describe('RegistryAccess', () => {
       const type2 = registry.types.dashboardfolder;
       const type3 = registry.types.documentfolder;
       const type4 = registry.types.emailfolder;
-      expect(registryAccess.getFolderContentTypes()).to.deep.equal([type, type2, type3, type4]);
+      expect(registryAccess.getFolderContentTypes()).to.deep.equalInAnyOrder([type, type2, type3, type4]);
     });
     it('should not include EmailTemplateFolder', () => {
       expect(registryAccess.getFolderContentTypes()).to.not.deep.include(registry.types.emailtemplatefolder);

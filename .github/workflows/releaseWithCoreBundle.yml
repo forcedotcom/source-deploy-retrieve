@@ -1,5 +1,10 @@
 name: publish source-deploy-retrieve-bundle
 on:
+  workflow_run:
+    workflows:
+      - publish
+    types:
+      - completed
   workflow_dispatch:
     inputs:
       branch:
@@ -10,7 +15,8 @@ on:
 
 jobs:
   call-release-workflow:
+    if: ${{ inputs.branch || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')}}
     uses: forcedotcom/bundle-publish-scripts/.github/workflows/releaseWithCoreBundle.yml@main
     secrets: inherit
     with:
-      branch: ${{ inputs.branch }}
+      branch: ${{ inputs.branch || 'main' }}

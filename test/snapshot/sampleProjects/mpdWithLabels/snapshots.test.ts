@@ -16,7 +16,7 @@ import { ComponentSetBuilder } from '../../../../src/collections/componentSetBui
 const folder = 'mpdWithLabels';
 const tmpFolder = `${folder}Tmp`;
 const testOriginalDir = path.join('test', 'snapshot', 'sampleProjects', folder);
-const testDir = testOriginalDir.replace(folder, `${folder}Tmp`);
+const testDir = testOriginalDir.replace(folder, tmpFolder);
 const pkgDirs = ['force-app', 'my-app', path.join('foo-bar', 'app')];
 const resolvedPkgDirs = pkgDirs.map((d) => path.join(testDir, d));
 
@@ -32,6 +32,7 @@ describe('recompose/decompose mpd project with labels', () => {
     });
     const cs = await ComponentSetBuilder.build({
       sourcepath: resolvedPkgDirs,
+      apiversion: '60.0',
     });
     const converter = new MetadataConverter();
     await converter.convert(cs, 'metadata', {

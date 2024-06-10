@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { basename, join } from 'node:path';
+import { basename, join, sep } from 'node:path';
 import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import chai, { assert, expect } from 'chai';
 import { AnyJson, getString } from '@salesforce/ts-types';
@@ -100,7 +100,10 @@ describe('MetadataApiDeploy', () => {
 
           expect(deployStub.calledOnce).to.be.true;
           expect(deployStub.firstCall.args[0]).to.equal(zipBuffer);
-          expect(getString(convertStub.secondCall.args[2], 'outputDirectory', '')).to.equal('test');
+          // @ts-expect-error protected property
+          const expectedDir = join(operation.mdapiTempDir, 'metadata');
+          expect(expectedDir.startsWith(`test${sep}`)).to.be.true;
+          expect(getString(convertStub.secondCall.args[2], 'outputDirectory', '')).to.equal(expectedDir);
         } finally {
           delete process.env.SF_MDAPI_TEMP_DIR;
         }

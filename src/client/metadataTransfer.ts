@@ -42,6 +42,7 @@ export abstract class MetadataTransfer<
   protected components?: ComponentSet;
   protected logger: Logger;
   protected canceled = false;
+  protected mdapiTempDir?: string;
   private transferId: Options['id'];
   private event = new EventEmitter();
   private usernameOrConnection: string | Connection;
@@ -53,6 +54,7 @@ export abstract class MetadataTransfer<
     this.apiVersion = apiVersion;
     this.transferId = id;
     this.logger = Logger.childFromRoot(this.constructor.name);
+    this.mdapiTempDir = process.env.SF_MDAPI_TEMP_DIR;
   }
 
   // if you passed in an id, you don't have to worry about whether there'll be one if you ask for it
@@ -160,24 +162,24 @@ export abstract class MetadataTransfer<
   }
 
   protected async maybeSaveTempDirectory(target: SfdxFileFormat, cs?: ComponentSet): Promise<void> {
-    const mdapiTempDir = process.env.SF_MDAPI_TEMP_DIR;
-    if (mdapiTempDir) {
+    if (this.mdapiTempDir) {
       await Lifecycle.getInstance().emitWarning(
         'The SF_MDAPI_TEMP_DIR environment variable is set, which may degrade performance'
       );
       this.logger.debug(
-        `Converting metadata to: ${mdapiTempDir} because the SF_MDAPI_TEMP_DIR environment variable is set`
+        `Converting metadata to: ${this.mdapiTempDir} because the SF_MDAPI_TEMP_DIR environment variable is set`
       );
       try {
         const source = cs ?? this.components ?? new ComponentSet();
-        const converter = new MetadataConverter();
-        await converter.convert(source, target, {
+        const outputDirectory = join(this.mdapiTempDir, target);
+        await new MetadataConverter().convert(source, target, {
           type: 'directory',
-          outputDirectory: mdapiTempDir,
+          outputDirectory,
+          genUniqueDir: false,
         });
         if (target === 'source') {
           // for source convert the package.xml isn't included so write it separately
-          await fs.promises.writeFile(join(mdapiTempDir, 'package.xml'), await source.getPackageXml());
+          await fs.promises.writeFile(join(outputDirectory, 'package.xml'), await source.getPackageXml());
         }
       } catch (e) {
         this.logger.debug(e);

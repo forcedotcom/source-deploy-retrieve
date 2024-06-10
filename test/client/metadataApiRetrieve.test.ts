@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { fail } from 'node:assert';
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import { Messages } from '@salesforce/core';
 import { assert, expect } from 'chai';
 import chai = require('chai');
@@ -311,11 +311,16 @@ describe('MetadataApiRetrieve', () => {
             successes: toRetrieve,
           });
           $$.SANDBOX.stub(fs.promises, 'writeFile');
+          $$.SANDBOX.stub(fs, 'mkdirSync');
+          $$.SANDBOX.stub(fs, 'writeFileSync');
 
           await operation.start();
           await operation.pollStatus();
 
-          expect(getString(convertStub.secondCall.args[2], 'outputDirectory', '')).to.equal('test');
+          // @ts-expect-error protected property
+          const expectedDir = join(operation.mdapiTempDir, 'source');
+          expect(expectedDir.startsWith(`test${sep}`)).to.be.true;
+          expect(getString(convertStub.secondCall.args[2], 'outputDirectory', '')).to.equal(expectedDir);
         } finally {
           delete process.env.SF_MDAPI_TEMP_DIR;
         }

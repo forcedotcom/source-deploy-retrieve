@@ -6,6 +6,7 @@
  */
 
 import { dirname, join } from 'node:path';
+import fs from 'node:fs';
 import { AnyJson, JsonMap, ensureString, isJsonMap } from '@salesforce/ts-types';
 import { ensureArray } from '@salesforce/kit';
 import { Messages } from '@salesforce/core';
@@ -84,7 +85,7 @@ export class DecomposedMetadataTransformer extends BaseMetadataTransformer {
 
     const writeInfoForParent = mergeWith
       ? getWriteInfosFromMerge(mergeWith)(stateSetter)(parentXmlObject)(component)
-      : [{ source: new JsToXml(parentXmlObject), output: getOutputFile(component) }];
+      : getWriteInfosWithoutMerge(this.defaultDirectory)(parentXmlObject)(component);
 
     const childDestinations = new Set(writeInfosForChildren.map((w) => w.output));
 
@@ -200,11 +201,30 @@ const getWriteInfosFromMerge =
     return [];
   };
 
+const getWriteInfosWithoutMerge =
+  (defaultDirectory: string | undefined) =>
+  (parentXmlObject: XmlObj) =>
+  (component: SourceComponent): WriteInfo[] => {
+    const output = join(defaultDirectory ?? '', getOutputFile(component));
+    // if the parent would be empty
+    // and it exists
+    // and every child is addressable
+    // don't overwrite the existing parent
+    if (
+      !objectHasSomeRealValues(component.type)(parentXmlObject) &&
+      fs.existsSync(output) &&
+      Object.values(component.type.children ?? {}).every((child) => !child.isAddressable)
+    ) {
+      return [];
+    } else {
+      return [{ source: new JsToXml(parentXmlObject), output }];
+    }
+  };
+
 /**
  * Helper for setting the decomposed transaction state
  *
- * @param forComponent
- * @param props
+ * @param state
  */
 const setDecomposedState =
   (state: DecompositionState) =>

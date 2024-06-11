@@ -206,6 +206,10 @@ const getWriteInfosWithoutMerge =
   (parentXmlObject: XmlObj) =>
   (component: SourceComponent): WriteInfo[] => {
     const output = join(defaultDirectory ?? '', getOutputFile(component));
+    // if the parent would be empty
+    // and it exists
+    // and every child is addressable
+    // don't overwrite the existing parent
     if (
       !objectHasSomeRealValues(component.type)(parentXmlObject) &&
       fs.existsSync(output) &&
@@ -220,8 +224,7 @@ const getWriteInfosWithoutMerge =
 /**
  * Helper for setting the decomposed transaction state
  *
- * @param forComponent
- * @param props
+ * @param state
  */
 const setDecomposedState =
   (state: DecompositionState) =>

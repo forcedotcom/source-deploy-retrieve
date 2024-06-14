@@ -254,7 +254,7 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 |ExplainabilityActionVersion|✅||
 |ExplainabilityMsgTemplate|✅||
 |ExpressionSetDefinition|✅||
-|ExpressionSetDefinitionVersion|✅||
+|ExpressionSetDefinitionVersion|❌|Not supported, but support could be added|
 |ExpressionSetObjectAlias|✅||
 |ExtDataTranFieldTemplate|❌|Not supported, but support could be added|
 |ExtDataTranObjectTemplate|✅||

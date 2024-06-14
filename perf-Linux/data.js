@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1718117010120,
+  "lastUpdate": 1718379562111,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -47513,6 +47513,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-linux",
             "value": 6590,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shriyanshjain@salesforce.com",
+            "name": "Shriyansh Jain",
+            "username": "shriyanshj13"
+          },
+          "committer": {
+            "email": "shriyanshjain@salesforce.com",
+            "name": "Shriyansh Jain",
+            "username": "shriyanshj13"
+          },
+          "distinct": true,
+          "id": "4c8a423c305e67069ea7f4c9c7479850ef03a9f8",
+          "message": "chore: adding StageDefinition to the metadataRegistry",
+          "timestamp": "2024-06-14T19:10:18+05:30",
+          "tree_id": "7bc884ee75b1652c6bd933b1a1b184aa3c777f43",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/4c8a423c305e67069ea7f4c9c7479850ef03a9f8"
+        },
+        "date": 1718379556877,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-linux",
+            "value": 181,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-linux",
+            "value": 1956,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-linux",
+            "value": 1437,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-linux",
+            "value": 2808,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-linux",
+            "value": 354,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-linux",
+            "value": 3761,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-linux",
+            "value": 3130,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-linux",
+            "value": 3549,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-linux",
+            "value": 624,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-linux",
+            "value": 6661,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-linux",
+            "value": 5846,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-linux",
+            "value": 6401,
             "unit": "ms"
           }
         ]

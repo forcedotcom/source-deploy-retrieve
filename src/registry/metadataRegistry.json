@@ -500,7 +500,8 @@
     "workflowTask": "workflowtask",
     "xmd": "wavexmd",
     "xml": "emailservicesfunction",
-    "xorghub": "xorghub"
+    "xorghub": "xorghub",
+    "stageDefinition": "stagedefinition"
   },
   "types": {
     "accesscontrolpolicy": {
@@ -4444,6 +4445,14 @@
       "inFolder": false,
       "name": "XOrgHub",
       "suffix": "xorghub"
+    },
+    "stagedefinition": {
+      "id": "stagedefinition",
+      "name": "StageDefinition",
+      "suffix": "stageDefinition",
+      "directoryName": "stageDefinitions",
+      "inFolder": false,
+      "strictDirectoryName": false
     }
   }
 }

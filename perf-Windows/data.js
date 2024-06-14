@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1718117441231,
+  "lastUpdate": 1718379941586,
   "repoUrl": "https://github.com/forcedotcom/source-deploy-retrieve",
   "entries": {
     "Benchmark": [
@@ -42251,6 +42251,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "lotsOfClassesOneDir-mdapiToSource-win32",
             "value": 13641,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shriyanshjain@salesforce.com",
+            "name": "Shriyansh Jain",
+            "username": "shriyanshj13"
+          },
+          "committer": {
+            "email": "shriyanshjain@salesforce.com",
+            "name": "Shriyansh Jain",
+            "username": "shriyanshj13"
+          },
+          "distinct": true,
+          "id": "4c8a423c305e67069ea7f4c9c7479850ef03a9f8",
+          "message": "chore: adding StageDefinition to the metadataRegistry",
+          "timestamp": "2024-06-14T19:10:18+05:30",
+          "tree_id": "7bc884ee75b1652c6bd933b1a1b184aa3c777f43",
+          "url": "https://github.com/forcedotcom/source-deploy-retrieve/commit/4c8a423c305e67069ea7f4c9c7479850ef03a9f8"
+        },
+        "date": 1718379920702,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "eda-componentSetCreate-win32",
+            "value": 393,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToMdapi-win32",
+            "value": 3584,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-sourceToZip-win32",
+            "value": 2161,
+            "unit": "ms"
+          },
+          {
+            "name": "eda-mdapiToSource-win32",
+            "value": 5669,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-componentSetCreate-win32",
+            "value": 904,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToMdapi-win32",
+            "value": 7437,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-sourceToZip-win32",
+            "value": 4780,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClasses-mdapiToSource-win32",
+            "value": 7411,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-componentSetCreate-win32",
+            "value": 1478,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToMdapi-win32",
+            "value": 13284,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-sourceToZip-win32",
+            "value": 8671,
+            "unit": "ms"
+          },
+          {
+            "name": "lotsOfClassesOneDir-mdapiToSource-win32",
+            "value": 13488,
             "unit": "ms"
           }
         ]

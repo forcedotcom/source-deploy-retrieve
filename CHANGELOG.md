@@ -1,3 +1,12 @@
+## [11.6.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.6.7...11.6.8) (2024-06-17)
+
+
+### Bug Fixes
+
+* Remove ExpressionSetDefinitionVersion to not allow user to deploy it explicitly ([#1340](https://github.com/forcedotcom/source-deploy-retrieve/issues/1340)) ([0385acc](https://github.com/forcedotcom/source-deploy-retrieve/commit/0385acc8a6c563c63a8e2d43170cccf9bd83bec5))
+
+
+
 ## [11.6.7](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.6.6...11.6.7) (2024-06-11)
 
 

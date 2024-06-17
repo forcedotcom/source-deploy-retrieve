@@ -12,7 +12,6 @@
     "decisionmatrixdefinitionversion": "decisionmatrixdefinition",
     "digitalexperience": "digitalexperiencebundle",
     "escalationrule": "escalationrules",
-    "expressionsetdefinitionversion": "expressionsetdefinition",
     "extdatatranfieldtemplate": "extdatatranobjecttemplate",
     "fieldset": "customobject",
     "formsection": "form",
@@ -251,7 +250,6 @@
     "explainabilityActionVersion": "explainabilityactionversion",
     "explainabilityMsgTemplate": "explainabilitymsgtemplate",
     "expressionSetDefinition": "expressionsetdefinition",
-    "expressionSetDefinitionVersion": "expressionsetdefinitionversion",
     "expressionSetMessageToken": "expressionsetmessagetoken",
     "expressionSetObjectAlias": "expressionsetobjectalias",
     "extDataTranFieldTemplate": "extdatatranfieldtemplate",
@@ -2232,22 +2230,6 @@
       "suffix": "explainabilityMsgTemplate"
     },
     "expressionsetdefinition": {
-      "children": {
-        "directories": {
-          "versions": "expressionsetdefinitionversion"
-        },
-        "suffixes": {
-          "expressionSetDefinitionVersion": "expressionsetdefinitionversion"
-        },
-        "types": {
-          "expressionsetdefinitionversion": {
-            "directoryName": "versions",
-            "id": "expressionsetdefinitionversion",
-            "name": "ExpressionSetDefinitionVersion",
-            "suffix": "expressionSetDefinitionVersion"
-          }
-        }
-      },
       "directoryName": "expressionSetDefinition",
       "id": "expressionsetdefinition",
       "inFolder": false,

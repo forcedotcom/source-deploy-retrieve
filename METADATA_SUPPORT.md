@@ -625,8 +625,25 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 
 ## Next Release (v62)
 
-> **Note**
-> v62 coverage not available at this time
+v62 introduces the following new types.  Here's their current level of support
+
+|Metadata Type|Support|Notes|
+|:---|:---|:---|
+|AccountPlanSettings|✅||
+|AnalyticsDashboard|❌|Not supported, but support could be added|
+|ChannelRevMgmtSettings|✅||
+|ChoiceList|❌|Not supported, but support could be added|
+|DataKitObjectDependency|✅||
+|EnblProgramTaskSubCategory|✅||
+|ExtlClntAppPushSettings|✅||
+|GenOpPlanRequestThreshold|❌|Not supported, but support could be added|
+|HerokuIntegrationSettings|✅||
+|IndustriesRatingSettings|✅||
+|IndustriesUsageSettings|✅||
+|LearningItemType|✅||
+|PublicKeyCertificate|❌|Not supported, but support could be added|
+|PublicKeyCertificateSet|❌|Not supported, but support could be added|
+|StageDefinition|✅||
 
 ## Additional Types
 
@@ -650,11 +667,9 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - CustomExperience
 - CustomLabel
 - CustomFieldTranslation
-- DataKitObjectDependency
 - DataPipeline
 - DynamicTrigger
 - EmbeddedServiceFieldService
-- EnblProgramTaskSubCategory
 - EntityImplements
 - EscalationRule
 - EventDelivery
@@ -674,7 +689,6 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - IntegrationHubSettings
 - IntegrationHubSettingsType
 - InternalOrganization
-- LearningItemType
 - LicenseDefinition
 - ManagedTopic
 - MarketingResourceType
@@ -701,4 +715,3 @@ To contribute a new metadata type, please see the [Contributing Metadata Types t
 - VisualizationPlugin
 - WorkSkillRoutingAttribute
 - XOrgHub
-- StageDefinition

@@ -1,3 +1,12 @@
+## [11.6.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.6.8...11.6.9) (2024-06-18)
+
+
+### Bug Fixes
+
+* **deps:** bump kit et al ([#1345](https://github.com/forcedotcom/source-deploy-retrieve/issues/1345)) ([f18ddc8](https://github.com/forcedotcom/source-deploy-retrieve/commit/f18ddc87e81b54df977cabe9972efa8dc9a668ed))
+
+
+
 ## [11.6.8](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.6.7...11.6.8) (2024-06-17)
 
 

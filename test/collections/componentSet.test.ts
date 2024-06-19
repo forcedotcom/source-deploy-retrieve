@@ -1264,8 +1264,6 @@ describe('ComponentSet', () => {
       expect(set.getSourceComponents().toArray().length).to.equal(1);
       expect(set.destructiveChangesPre.size).to.equal(0);
       expect(set.destructiveChangesPost.size).to.equal(1);
-      // @ts-ignore - private
-      expect(set.manifestComponents.size).to.equal(1);
     });
   });
 

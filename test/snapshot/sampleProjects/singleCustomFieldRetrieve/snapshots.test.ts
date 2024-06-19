@@ -138,7 +138,6 @@ describe('a single field in a CustomObject xml does not overwrite (blank) the ex
     });
     await retrieve.post(result);
     expect(fs.readdirSync(path.join(pathToBroker, 'fields')).length).to.equal(3);
-    await validateSourceDir(FORCE_APP);
   });
 
   it(`verify ${FORCE_APP}`, async () => {

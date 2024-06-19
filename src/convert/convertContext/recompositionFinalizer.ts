@@ -20,8 +20,6 @@ import { ConvertTransactionFinalizer } from './transactionFinalizer';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
-const xmlCache = new Map<string, JsonMap>();
-
 type RecompositionStateValue = {
   /**
    * Parent component that children are rolled up into
@@ -73,13 +71,13 @@ type ChildWithXml = {
 };
 
 const recompose = async (stateValue: RecompositionStateValueWithParent): Promise<JsonMap> => {
-  await getXmlFromCache(stateValue.component);
+  await getXml(stateValue.component);
 
   const childXmls = await Promise.all(
     (stateValue.children?.toArray() ?? []).filter(ensureMetadataComponentWithParent).map(
       async (child): Promise<ChildWithXml> => ({
         cmp: child,
-        xmlContents: await getXmlFromCache(child),
+        xmlContents: await getXml(child),
         groupName: getXmlElement(child.type),
       })
     )
@@ -101,7 +99,7 @@ const recompose = async (stateValue: RecompositionStateValueWithParent): Promise
 const getStartingXml = async (parent: SourceComponent): Promise<JsonMap> =>
   parent.type.strategies?.recomposition === RecompositionStrategy.StartEmpty
     ? {}
-    : unwrapAndOmitNS(parent.type.name)(await getXmlFromCache(parent)) ?? {};
+    : unwrapAndOmitNS(parent.type.name)(await getXml(parent)) ?? {};
 
 /** throw if the parent component isn't in the state entry */
 const ensureStateValueWithParent = (
@@ -151,18 +149,12 @@ const toSortedGroups = (items: ChildWithXml[]): JsonMap => {
   );
 };
 
-/** wrapper around the xml cache.  Handles the nonDecomposed "parse from parent" optimization */
-const getXmlFromCache = async (cmp: SourceComponent): Promise<JsonMap> => {
+/** Handles the nonDecomposed "parse from parent" optimization */
+const getXml = async (cmp: SourceComponent): Promise<JsonMap> => {
   if (!cmp.xml) return {};
-  const key = `${cmp.xml}:${cmp.fullName}`;
-  if (!xmlCache.has(key)) {
-    const parsed =
-      cmp.parent?.type.strategies?.transformer === 'nonDecomposed'
-        ? cmp.parseFromParentXml({ [cmp.parent.type.name]: await getXmlFromCache(cmp.parent) })
-        : unwrapAndOmitNS(cmp.type.name)(await cmp.parseXml()) ?? {};
-    xmlCache.set(key, parsed);
-  }
-  return xmlCache.get(key) ?? {};
+  return cmp.parent?.type.strategies?.transformer === 'nonDecomposed'
+    ? cmp.parseFromParentXml({ [cmp.parent.type.name]: await getXml(cmp.parent) })
+    : unwrapAndOmitNS(cmp.type.name)(await cmp.parseXml()) ?? {};
 };
 
 /** composed function, exported from module for test */

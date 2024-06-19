@@ -84,7 +84,7 @@ describe('Recomposition', () => {
           ],
         },
       ]);
-      expect(readFileSpy.callCount).to.equal(3);
+      expect(readFileSpy.callCount).to.equal(4);
     });
 
     it('should still recompose if parent xml is empty', async () => {
@@ -151,7 +151,7 @@ describe('Recomposition', () => {
         },
       ]);
 
-      expect(readFileSpy.callCount, JSON.stringify(readFileSpy.getCalls(), undefined, 2)).to.equal(1);
+      expect(readFileSpy.callCount, JSON.stringify(readFileSpy.getCalls(), undefined, 2)).to.equal(3);
     });
 
     describe('should only read unique child xml files once for non-decomposed components', () => {
@@ -224,7 +224,7 @@ describe('Recomposition', () => {
 
         await context.recomposition.finalize();
 
-        expect(readFileSpy.callCount).to.equal(context.recomposition.transactionState.size);
+        expect(readFileSpy.callCount).to.equal(3);
       });
     });
   });

@@ -20,8 +20,6 @@ import { ConvertTransactionFinalizer } from './transactionFinalizer';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
-const xmlCache = new Map<string, JsonMap>();
-
 type RecompositionStateValue = {
   /**
    * Parent component that children are rolled up into
@@ -36,7 +34,7 @@ type RecompositionStateValue = {
 type RecompositionState = Map<string, RecompositionStateValue>;
 
 type RecompositionStateValueWithParent = RecompositionStateValue & { component: SourceComponent };
-
+type XmlCache = Map<string, JsonMap>;
 /**
  * Merges child components that share the same parent in the conversion pipeline into a single file.
  *
@@ -45,26 +43,31 @@ type RecompositionStateValueWithParent = RecompositionStateValue & { component: 
  */
 export class RecompositionFinalizer extends ConvertTransactionFinalizer<RecompositionState> {
   public transactionState: RecompositionState = new Map<string, RecompositionStateValue>();
+  private xmlCache: XmlCache = new Map();
 
   public async finalize(): Promise<WriterFormat[]> {
     return Promise.all(
-      [...this.transactionState.values()].filter(ensureStateValueWithParent).map(stateValueToWriterFormat)
+      [...this.transactionState.values()]
+        .filter(ensureStateValueWithParent)
+        .map(stateValueToWriterFormat(this.xmlCache))
     );
   }
 }
 
-const stateValueToWriterFormat = async (stateValue: RecompositionStateValueWithParent): Promise<WriterFormat> => ({
-  component: stateValue.component,
-  writeInfos: [
-    {
-      source: new JsToXml(await recompose(stateValue)),
-      output: join(
-        stateValue.component.type.directoryName,
-        `${stateValue.component.fullName}.${stateValue.component.type.suffix}`
-      ),
-    },
-  ],
-});
+const stateValueToWriterFormat =
+  (cache: XmlCache) =>
+  async (stateValue: RecompositionStateValueWithParent): Promise<WriterFormat> => ({
+    component: stateValue.component,
+    writeInfos: [
+      {
+        source: new JsToXml(await recompose(cache)(stateValue)),
+        output: join(
+          stateValue.component.type.directoryName,
+          `${stateValue.component.fullName}.${stateValue.component.type.suffix}`
+        ),
+      },
+    ],
+  });
 
 type ChildWithXml = {
   xmlContents: JsonMap;
@@ -72,36 +75,40 @@ type ChildWithXml = {
   groupName: string;
 };
 
-const recompose = async (stateValue: RecompositionStateValueWithParent): Promise<JsonMap> => {
-  await getXmlFromCache(stateValue.component);
+const recompose =
+  (cache: XmlCache) =>
+  async (stateValue: RecompositionStateValueWithParent): Promise<JsonMap> => {
+    await getXmlFromCache(cache)(stateValue.component);
 
-  const childXmls = await Promise.all(
-    (stateValue.children?.toArray() ?? []).filter(ensureMetadataComponentWithParent).map(
-      async (child): Promise<ChildWithXml> => ({
-        cmp: child,
-        xmlContents: await getXmlFromCache(child),
-        groupName: getXmlElement(child.type),
-      })
-    )
-  );
+    const childXmls = await Promise.all(
+      (stateValue.children?.toArray() ?? []).filter(ensureMetadataComponentWithParent).map(
+        async (child): Promise<ChildWithXml> => ({
+          cmp: child,
+          xmlContents: await getXmlFromCache(cache)(child),
+          groupName: getXmlElement(child.type),
+        })
+      )
+    );
 
-  const parentXmlContents = {
-    [XML_NS_KEY]: XML_NS_URL,
-    ...(await getStartingXml(stateValue.component)),
-    // group them into an object of arrays by groupName, then merge into parent
-    ...toSortedGroups(childXmls),
+    const parentXmlContents = {
+      [XML_NS_KEY]: XML_NS_URL,
+      ...(await getStartingXml(cache)(stateValue.component)),
+      // group them into an object of arrays by groupName, then merge into parent
+      ...toSortedGroups(childXmls),
+    };
+
+    return {
+      [stateValue.component.type.name]: parentXmlContents,
+    };
   };
-
-  return {
-    [stateValue.component.type.name]: parentXmlContents,
-  };
-};
 
 /** @returns {} if StartEmpty, otherwise gets the parent xml */
-const getStartingXml = async (parent: SourceComponent): Promise<JsonMap> =>
-  parent.type.strategies?.recomposition === RecompositionStrategy.StartEmpty
-    ? {}
-    : unwrapAndOmitNS(parent.type.name)(await getXmlFromCache(parent)) ?? {};
+const getStartingXml =
+  (cache: XmlCache) =>
+  async (parent: SourceComponent): Promise<JsonMap> =>
+    parent.type.strategies?.recomposition === RecompositionStrategy.StartEmpty
+      ? {}
+      : unwrapAndOmitNS(parent.type.name)(await getXmlFromCache(cache)(parent)) ?? {};
 
 /** throw if the parent component isn't in the state entry */
 const ensureStateValueWithParent = (
@@ -152,18 +159,20 @@ const toSortedGroups = (items: ChildWithXml[]): JsonMap => {
 };
 
 /** wrapper around the xml cache.  Handles the nonDecomposed "parse from parent" optimization */
-const getXmlFromCache = async (cmp: SourceComponent): Promise<JsonMap> => {
-  if (!cmp.xml) return {};
-  const key = `${cmp.xml}:${cmp.fullName}`;
-  if (!xmlCache.has(key)) {
-    const parsed =
-      cmp.parent?.type.strategies?.transformer === 'nonDecomposed'
-        ? cmp.parseFromParentXml({ [cmp.parent.type.name]: await getXmlFromCache(cmp.parent) })
-        : unwrapAndOmitNS(cmp.type.name)(await cmp.parseXml()) ?? {};
-    xmlCache.set(key, parsed);
-  }
-  return xmlCache.get(key) ?? {};
-};
+const getXmlFromCache =
+  (xmlCache: XmlCache) =>
+  async (cmp: SourceComponent): Promise<JsonMap> => {
+    if (!cmp.xml) return {};
+    const key = `${cmp.xml}:${cmp.fullName}`;
+    if (!xmlCache.has(key)) {
+      const parsed =
+        cmp.parent?.type.strategies?.transformer === 'nonDecomposed'
+          ? cmp.parseFromParentXml({ [cmp.parent.type.name]: await getXmlFromCache(xmlCache)(cmp.parent) })
+          : unwrapAndOmitNS(cmp.type.name)(await cmp.parseXml()) ?? {};
+      xmlCache.set(key, parsed);
+    }
+    return xmlCache.get(key) ?? {};
+  };
 
 /** composed function, exported from module for test */
 export const unwrapAndOmitNS =

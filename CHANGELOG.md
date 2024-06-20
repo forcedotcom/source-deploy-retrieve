@@ -1,3 +1,12 @@
+## [11.6.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.6.9...11.6.10) (2024-06-19)
+
+
+### Bug Fixes
+
+* class-scoped xml cache for recomposition ([#1348](https://github.com/forcedotcom/source-deploy-retrieve/issues/1348)) ([9fca2f3](https://github.com/forcedotcom/source-deploy-retrieve/commit/9fca2f32278bbcaf3caa66006dcacb72b77df0eb))
+
+
+
 ## [11.6.9](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.6.8...11.6.9) (2024-06-18)
 
 

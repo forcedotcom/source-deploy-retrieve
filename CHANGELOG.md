@@ -1,3 +1,12 @@
+## [12.0.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.6.10...12.0.1) (2024-06-20)
+
+
+### Bug Fixes
+
+* cause next major release ([#1350](https://github.com/forcedotcom/source-deploy-retrieve/issues/1350)) ([734cc64](https://github.com/forcedotcom/source-deploy-retrieve/commit/734cc6421946d62afd3d0c346ecfd5190f19b256))
+
+
+
 ## [11.6.10](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.6.9...11.6.10) (2024-06-19)
 
 

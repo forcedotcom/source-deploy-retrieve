@@ -1,3 +1,12 @@
+## [12.0.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.0.1...12.0.2) (2024-06-24)
+
+
+### Bug Fixes
+
+* **deps:** devScripts update ([#1354](https://github.com/forcedotcom/source-deploy-retrieve/issues/1354)) ([9d08882](https://github.com/forcedotcom/source-deploy-retrieve/commit/9d08882fec55bd9b9e2df36fbb318b45e83b3057))
+
+
+
 ## [12.0.1](https://github.com/forcedotcom/source-deploy-retrieve/compare/11.6.10...12.0.1) (2024-06-20)
 
 

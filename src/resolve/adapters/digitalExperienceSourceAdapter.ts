@@ -6,6 +6,8 @@
  */
 import { dirname, join, sep } from 'node:path';
 import { Messages } from '@salesforce/core';
+import { RegistryAccess } from 'src/registry';
+import { MetadataType } from '../../registry/types';
 import { META_XML_SUFFIX } from '../../common/constants';
 import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
@@ -57,8 +59,8 @@ const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sd
  */
 export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
   protected getRootMetadataXmlPath(trigger: string): string {
-    if (this.isBundleType()) {
-      return this.getBundleMetadataXmlPath(trigger);
+    if (isBundleType(this.type)) {
+      return getBundleMetadataXmlPath(this.registry)(this.type)(trigger);
     }
     // metafile name = metaFileSuffix for DigitalExperience.
     if (!this.type.metaFileSuffix) {
@@ -68,7 +70,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
   }
 
   protected trimPathToContent(path: string): string {
-    if (this.isBundleType()) {
+    if (isBundleType(this.type)) {
       return path;
     }
     const pathToContent = dirname(path);
@@ -88,7 +90,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
   }
 
   protected populate(trigger: string, component?: SourceComponent): SourceComponent {
-    if (this.isBundleType() && component) {
+    if (isBundleType(this.type) && component) {
       // for top level types we don't need to resolve parent
       return component;
     }
@@ -98,11 +100,12 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     if (!source || !parentType || !source.content) {
       throw messages.createError('error_failed_convert', [component?.fullName ?? this.type.name]);
     }
+    const xml = getBundleMetadataXmlPath(this.registry)(this.type)(source.content);
     const parent = new SourceComponent(
       {
-        name: this.getBundleName(source.content),
+        name: getBundleName(xml),
         type: parentType,
-        xml: this.getBundleMetadataXmlPath(source.content),
+        xml,
       },
       this.tree,
       this.forceIgnore
@@ -125,36 +128,34 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
     const xml = super.parseMetadataXml(path);
     if (xml) {
       return {
-        fullName: this.getBundleName(path),
+        fullName: getBundleName(getBundleMetadataXmlPath(this.registry)(this.type)(path)),
         suffix: xml.suffix,
         path: xml.path,
       };
     }
   }
+}
 
-  private getBundleName(contentPath: string): string {
-    const bundlePath = this.getBundleMetadataXmlPath(contentPath);
-    return `${parentName(dirname(bundlePath))}/${parentName(bundlePath)}`;
-  }
+const getBundleName = (bundlePath: string): string => `${parentName(dirname(bundlePath))}/${parentName(bundlePath)}`;
 
-  private getBundleMetadataXmlPath(path: string): string {
-    if (this.isBundleType() && path.endsWith(META_XML_SUFFIX)) {
+const getBundleMetadataXmlPath =
+  (registry: RegistryAccess) =>
+  (type: MetadataType) =>
+  (path: string): string => {
+    if (isBundleType(type) && path.endsWith(META_XML_SUFFIX)) {
       // if this is the bundle type and it ends with -meta.xml, then this is the bundle metadata xml path
       return path;
     }
     const pathParts = path.split(sep);
-    const typeFolderIndex = pathParts.lastIndexOf(this.type.directoryName);
+    const typeFolderIndex = pathParts.lastIndexOf(type.directoryName);
     // 3 because we want 'digitalExperiences' directory, 'baseType' directory and 'bundleName' directory
     const basePath = pathParts.slice(0, typeFolderIndex + 3).join(sep);
     const bundleFileName = pathParts[typeFolderIndex + 2];
-    const suffix = this.isBundleType() ? this.type.suffix : this.registry.getParentType(this.type.id)?.suffix;
+    const suffix = isBundleType(type) ? type.suffix : registry.getParentType(type.id)?.suffix;
     return `${basePath}${sep}${bundleFileName}.${suffix}${META_XML_SUFFIX}`;
-  }
+  };
 
-  private isBundleType(): boolean {
-    return this.type.id === 'digitalexperiencebundle';
-  }
-}
+const isBundleType = (type: MetadataType): boolean => type.id === 'digitalexperiencebundle';
 
 /**
  * @param contentPath This hook is called only after trimPathToContent() is called. so this will always be a folder structure

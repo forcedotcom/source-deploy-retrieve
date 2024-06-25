@@ -9,6 +9,7 @@ import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
 import { baseName, parentName, parseMetadataXml } from '../../utils/path';
 import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
+import { parseAsRootMetadataXml, trimPathToContent } from './baseSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -45,7 +46,7 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
   protected ownFolder = true;
 
   public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent | undefined {
-    let rootMetadata = super.parseAsRootMetadataXml(path);
+    let rootMetadata = parseAsRootMetadataXml(this.type)(path);
 
     if (!rootMetadata) {
       const rootMetadataPath = this.getRootMetadataXmlPath(path);
@@ -83,7 +84,7 @@ export class DecomposedSourceAdapter extends MixedContentSourceAdapter {
   ): SourceComponent | undefined {
     const metaXml = parseMetadataXml(trigger);
     if (metaXml?.suffix) {
-      const pathToContent = this.trimPathToContent(trigger);
+      const pathToContent = trimPathToContent(this.type)(trigger);
       const childTypeId = this.type.children?.suffixes?.[metaXml.suffix];
       const triggerIsAChild = !!childTypeId;
       const strategy = this.type.strategies?.decomposition;

@@ -20,33 +20,29 @@ import { DigitalExperienceSourceAdapter } from './digitalExperienceSourceAdapter
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
-export class SourceAdapterFactory {
-  private registry: RegistryAccess;
-  private tree: TreeContainer;
-
-  public constructor(registry: RegistryAccess, tree: TreeContainer) {
-    this.registry = registry;
-    this.tree = tree;
-  }
-
-  public getAdapter(type: MetadataType, forceIgnore = new ForceIgnore()): SourceAdapter {
-    const adapterId = type.strategies?.adapter;
-    switch (adapterId) {
+export const getAdapter =
+  (registry: RegistryAccess) =>
+  (tree: TreeContainer) =>
+  (forceIgnore = new ForceIgnore()) =>
+  (type: MetadataType): SourceAdapter => {
+    switch (type.strategies?.adapter) {
       case 'bundle':
-        return new BundleSourceAdapter(type, this.registry, forceIgnore, this.tree);
+        return new BundleSourceAdapter(type, registry, forceIgnore, tree);
       case 'decomposed':
-        return new DecomposedSourceAdapter(type, this.registry, forceIgnore, this.tree);
+        return new DecomposedSourceAdapter(type, registry, forceIgnore, tree);
       case 'matchingContentFile':
-        return new MatchingContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
+        return new MatchingContentSourceAdapter(type, registry, forceIgnore, tree);
       case 'mixedContent':
-        return new MixedContentSourceAdapter(type, this.registry, forceIgnore, this.tree);
+        return new MixedContentSourceAdapter(type, registry, forceIgnore, tree);
       case 'digitalExperience':
-        return new DigitalExperienceSourceAdapter(type, this.registry, forceIgnore, this.tree);
+        return new DigitalExperienceSourceAdapter(type, registry, forceIgnore, tree);
       case 'default':
       case undefined:
-        return new DefaultSourceAdapter(type, this.registry, forceIgnore, this.tree);
+        return new DefaultSourceAdapter(type, registry, forceIgnore, tree);
       default:
-        throw new SfError(messages.getMessage('error_missing_adapter', [adapterId, type.name]), 'RegistryError');
+        throw new SfError(
+          messages.getMessage('error_missing_adapter', [type.strategies?.adapter, type.name]),
+          'RegistryError'
+        );
     }
-  }
-}
+  };

@@ -11,7 +11,7 @@ import { RegistryAccess, typeAllowsMetadataWithContent } from '../registry/regis
 import { MetadataType } from '../registry/types';
 import { ComponentSet } from '../collections/componentSet';
 import { META_XML_SUFFIX } from '../common/constants';
-import { SourceAdapterFactory } from './adapters/sourceAdapterFactory';
+import { getAdapter } from './adapters/sourceAdapterFactory';
 import { ForceIgnore } from './forceIgnore';
 import { SourceComponent } from './sourceComponent';
 import { NodeFSTreeContainer, TreeContainer } from './treeContainers';
@@ -136,7 +136,7 @@ export class MetadataResolver {
       ) {
         return;
       }
-      const adapter = new SourceAdapterFactory(this.registry, this.tree).getAdapter(type, this.forceIgnore);
+      const adapter = getAdapter(this.registry)(this.tree)(this.forceIgnore)(type);
       return adapter.getComponent(fsPath, isResolvingSource);
     }
 

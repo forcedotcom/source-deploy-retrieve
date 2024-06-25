@@ -19,6 +19,14 @@ import { RegistryAccess, typeAllowsMetadataWithContent } from '../../registry/re
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
+export type AdapterContext = {
+  type: MetadataType;
+  registry: RegistryAccess;
+  forceIgnore: ForceIgnore;
+  tree: TreeContainer;
+  ownFolder: boolean;
+};
+
 export abstract class BaseSourceAdapter implements SourceAdapter {
   protected type: MetadataType;
   protected registry: RegistryAccess;
@@ -44,7 +52,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   }
 
   public getComponent(path: SourcePath, isResolvingSource = true): SourceComponent | undefined {
-    let rootMetadata = this.parseAsRootMetadataXml(path);
+    let rootMetadata = parseAsRootMetadataXml(this.type)(path);
     if (!rootMetadata) {
       const rootMetadataPath = this.getRootMetadataXmlPath(path);
       if (rootMetadataPath) {
@@ -84,31 +92,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    * @param path File path of a metadata component
    */
   protected parseAsRootMetadataXml(path: SourcePath): MetadataXml | undefined {
-    const metaXml = this.parseMetadataXml(path);
-    if (metaXml) {
-      let isRootMetadataXml = false;
-      if (this.type.strictDirectoryName) {
-        const parentPath = dirname(path);
-        const typeDirName = basename(this.type.inFolder ? dirname(parentPath) : parentPath);
-        const nameMatchesParent = basename(parentPath) === metaXml.fullName;
-        const inTypeDir = typeDirName === this.type.directoryName;
-        // if the parent folder name matches the fullName OR parent folder name is
-        // metadata type's directory name, it's a root metadata xml.
-        isRootMetadataXml = nameMatchesParent || inTypeDir;
-      } else {
-        isRootMetadataXml = true;
-      }
-      return isRootMetadataXml ? metaXml : undefined;
-    }
-
-    const folderMetadataXml = parseAsFolderMetadataXml(path);
-    if (folderMetadataXml) {
-      return folderMetadataXml;
-    }
-
-    if (!typeAllowsMetadataWithContent(this.type)) {
-      return parseAsContentMetadataXml(this.type)(path);
-    }
+    return parseAsRootMetadataXml(this.type)(path);
   }
 
   // allowed to preserve API
@@ -138,6 +122,43 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   ): SourceComponent | undefined;
 }
 
+/**
+ * If the path given to `getComponent` is the root metadata xml file for a component,
+ * parse the name and return it. This is an optimization to not make a child adapter do
+ * anymore work to find it.
+ *
+ * @param path File path of a metadata component
+ */
+
+export const parseAsRootMetadataXml =
+  (type: MetadataType) =>
+  (path: SourcePath): MetadataXml | undefined => {
+    const metaXml = parseMetadataXml(path);
+    if (metaXml) {
+      let isRootMetadataXml = false;
+      if (type.strictDirectoryName) {
+        const parentPath = dirname(path);
+        const typeDirName = basename(type.inFolder ? dirname(parentPath) : parentPath);
+        const nameMatchesParent = basename(parentPath) === metaXml.fullName;
+        const inTypeDir = typeDirName === type.directoryName;
+        // if the parent folder name matches the fullName OR parent folder name is
+        // metadata type's directory name, it's a root metadata xml.
+        isRootMetadataXml = nameMatchesParent || inTypeDir;
+      } else {
+        isRootMetadataXml = true;
+      }
+      return isRootMetadataXml ? metaXml : undefined;
+    }
+
+    const folderMetadataXml = parseAsFolderMetadataXml(path);
+    if (folderMetadataXml) {
+      return folderMetadataXml;
+    }
+
+    if (!typeAllowsMetadataWithContent(type)) {
+      return parseAsContentMetadataXml(type)(path);
+    }
+  };
 /**
  * If the path given to `getComponent` serves as the sole definition (metadata and content)
  * for a component, parse the name and return it. This allows matching files in metadata
@@ -216,4 +237,20 @@ const calculateName =
       return rootMetadata.fullName;
     }
     throw messages.createError('cantGetName', [rootMetadata.path, type.name]);
+  };
+/**
+ * Trim a path up until the root of a component's content. If the content is a file,
+ * the given path will be returned back. If the content is a folder, the path to that
+ * folder will be returned. Intended to be used exclusively for MixedContent types.
+ *
+ * @param path Path to trim
+ * @param type MetadataType to determine content for
+ */
+export const trimPathToContent =
+  (type: MetadataType) =>
+  (path: SourcePath): SourcePath => {
+    const pathParts = path.split(sep);
+    const typeFolderIndex = pathParts.lastIndexOf(type.directoryName);
+    const offset = type.inFolder ? 3 : 2;
+    return pathParts.slice(0, typeFolderIndex + offset).join(sep);
   };

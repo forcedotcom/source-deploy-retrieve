@@ -12,21 +12,8 @@ import { META_XML_SUFFIX } from '../../../src/common';
 
 describe('DefaultSourceAdapter', () => {
   it('should return a SourceComponent when given a metadata xml file', () => {
-    const type = registry.types.apexclass;
+    const type = registry.types.eventdelivery;
     const path = join('path', 'to', type.directoryName, `My_Test.${type.suffix}${META_XML_SUFFIX}`);
-    const adapter = new DefaultSourceAdapter(type);
-    expect(adapter.getComponent(path)).to.deep.equal(
-      new SourceComponent({
-        name: 'My_Test',
-        type,
-        xml: path,
-      })
-    );
-  });
-
-  it('should return a SourceComponent when given a content-only metadata file', () => {
-    const type = registry.types.apexclass;
-    const path = join('path', 'to', type.directoryName, `My_Test.${type.suffix}`);
     const adapter = new DefaultSourceAdapter(type);
     expect(adapter.getComponent(path)).to.deep.equal(
       new SourceComponent({

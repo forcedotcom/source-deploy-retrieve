@@ -125,16 +125,19 @@ export class MetadataResolver {
     }
     const type = resolveType(this.registry)(this.tree)(fsPath);
     if (type) {
-      const adapter = new SourceAdapterFactory(this.registry, this.tree).getAdapter(type, this.forceIgnore);
       // short circuit the component resolution unless this is a resolve for a
       // source path or allowed content-only path, otherwise the adapter
       // knows how to handle it
-      const shouldResolve =
-        isResolvingSource ||
-        parseAsRootMetadataXml(fsPath) ||
-        !parseAsContentMetadataXml(this.registry)(fsPath) ||
-        !adapter.allowMetadataWithContent();
-      return shouldResolve ? adapter.getComponent(fsPath, isResolvingSource) : undefined;
+      if (
+        !isResolvingSource &&
+        !parseAsRootMetadataXml(fsPath) &&
+        parseAsContentMetadataXml(this.registry)(fsPath) &&
+        typeAllowsMetadataWithContent(type)
+      ) {
+        return;
+      }
+      const adapter = new SourceAdapterFactory(this.registry, this.tree).getAdapter(type, this.forceIgnore);
+      return adapter.getComponent(fsPath, isResolvingSource);
     }
 
     if (isProbablyPackageManifest(this.tree)(fsPath)) return undefined;
@@ -439,3 +442,9 @@ const pathIncludesDirName =
  * @param fsPath File path of a potential metadata xml file
  */
 const parseAsRootMetadataXml = (fsPath: string): boolean => Boolean(parseMetadataXml(fsPath));
+
+/** decomposed and default types are `false`, everything else is true */
+const typeAllowsMetadataWithContent = (type: MetadataType): boolean =>
+  type.strategies?.adapter !== undefined && // another way of saying default
+  type.strategies.adapter !== 'decomposed' &&
+  type.strategies.adapter !== 'default';

@@ -78,13 +78,6 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
   }
 
   /**
-   * Control whether metadata and content metadata files are allowed for an adapter.
-   */
-  public allowMetadataWithContent(): boolean {
-    return this.metadataWithContent;
-  }
-
-  /**
    * If the path given to `getComponent` is the root metadata xml file for a component,
    * parse the name and return it. This is an optimization to not make a child adapter do
    * anymore work to find it.
@@ -114,7 +107,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       return folderMetadataXml;
     }
 
-    if (!this.allowMetadataWithContent()) {
+    if (!this.metadataWithContent) {
       return parseAsContentMetadataXml(this.type)(path);
     }
   }

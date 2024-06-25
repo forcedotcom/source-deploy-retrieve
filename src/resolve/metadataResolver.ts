@@ -7,7 +7,7 @@
 import { basename, dirname, sep } from 'node:path';
 import { Lifecycle, Messages, SfError, Logger } from '@salesforce/core';
 import { extName, fnJoin, parentName, parseMetadataXml } from '../utils/path';
-import { RegistryAccess } from '../registry/registryAccess';
+import { RegistryAccess, typeAllowsMetadataWithContent } from '../registry/registryAccess';
 import { MetadataType } from '../registry/types';
 import { ComponentSet } from '../collections/componentSet';
 import { META_XML_SUFFIX } from '../common/constants';
@@ -442,9 +442,3 @@ const pathIncludesDirName =
  * @param fsPath File path of a potential metadata xml file
  */
 const parseAsRootMetadataXml = (fsPath: string): boolean => Boolean(parseMetadataXml(fsPath));
-
-/** decomposed and default types are `false`, everything else is true */
-const typeAllowsMetadataWithContent = (type: MetadataType): boolean =>
-  type.strategies?.adapter !== undefined && // another way of saying default
-  type.strategies.adapter !== 'decomposed' &&
-  type.strategies.adapter !== 'default';

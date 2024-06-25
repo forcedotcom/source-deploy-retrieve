@@ -14,7 +14,7 @@ import { NodeFSTreeContainer, TreeContainer } from '../treeContainers';
 import { SourceComponent } from '../sourceComponent';
 import { SourcePath } from '../../common/types';
 import { MetadataType } from '../../registry/types';
-import { RegistryAccess } from '../../registry/registryAccess';
+import { RegistryAccess, typeAllowsMetadataWithContent } from '../../registry/registryAccess';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -30,7 +30,6 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
    * folder, including its root metadata xml file.
    */
   protected ownFolder = false;
-  protected metadataWithContent = true;
 
   public constructor(
     type: MetadataType,
@@ -107,7 +106,7 @@ export abstract class BaseSourceAdapter implements SourceAdapter {
       return folderMetadataXml;
     }
 
-    if (!this.metadataWithContent) {
+    if (!typeAllowsMetadataWithContent(this.type)) {
       return parseAsContentMetadataXml(this.type)(path);
     }
   }

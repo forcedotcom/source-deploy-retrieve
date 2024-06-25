@@ -23,8 +23,6 @@ import { BaseSourceAdapter } from './baseSourceAdapter';
  *```
  */
 export class DefaultSourceAdapter extends BaseSourceAdapter {
-  protected metadataWithContent = false;
-
   /* istanbul ignore next */
   // retained to preserve API
   // eslint-disable-next-line class-methods-use-this

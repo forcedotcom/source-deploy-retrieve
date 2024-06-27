@@ -249,6 +249,7 @@
     "explainabilityActionVersion": "explainabilityactionversion",
     "explainabilityMsgTemplate": "explainabilitymsgtemplate",
     "expressionSetDefinition": "expressionsetdefinition",
+    "expressionSetVersion": "expressionsetdefinitionversion",
     "expressionSetMessageToken": "expressionsetmessagetoken",
     "expressionSetObjectAlias": "expressionsetobjectalias",
     "extDataTranFieldTemplate": "extdatatranfieldtemplate",

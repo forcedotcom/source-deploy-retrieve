@@ -55,9 +55,9 @@ type FileResponseBase = {
   filePath?: string;
 };
 
-export type FileResponseSuccess = {
+export type FileResponseSuccess = Required<FileResponseBase> & {
   state: Exclude<ComponentStatus, ComponentStatus.Failed>;
-} & FileResponseBase;
+};
 
 export type FileResponseFailure = {
   state: ComponentStatus.Failed;

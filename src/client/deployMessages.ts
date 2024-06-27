@@ -73,7 +73,7 @@ const shouldWalkContent = (component: SourceComponent): boolean =>
 export const createResponses = (component: SourceComponent, responseMessages: DeployMessage[]): FileResponse[] =>
   responseMessages.flatMap((message): FileResponse[] => {
     const state = getState(message);
-    const base = { fullName: component.fullName, type: component.type.name };
+    const base = { fullName: component.fullName, type: component.type.name } as const;
 
     if (state === ComponentStatus.Failed) {
       return [{ ...base, state, ...parseDeployDiagnostic(component, message) } satisfies FileResponseFailure];

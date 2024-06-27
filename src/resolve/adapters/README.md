@@ -37,7 +37,7 @@ there are 2 getComponents (so far):
 
 Each starts with "find rootMetadata" (with overrideable functions for parseAsRootMetadataXml (always overridden),parseMetadataXml )
 
-## real flow
+## real "getComponent" flow
 
 1. findRootMetadata (parseAsRootMetadataXml, parseMetadataXml, OwnFolder?) => MetadataXml
 2. get a component if there is rootMetadata (one of 2 options)

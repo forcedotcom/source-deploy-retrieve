@@ -10,15 +10,40 @@ import { ForceIgnore } from '../forceIgnore';
 import { RegistryAccess } from '../../registry/registryAccess';
 import { MetadataType } from '../../registry/types';
 import { TreeContainer } from '../treeContainers';
-import { BundleSourceAdapter } from './bundleSourceAdapter';
+import { BundleSourceAdapter, getBundleComponent } from './bundleSourceAdapter';
 import { DecomposedSourceAdapter } from './decomposedSourceAdapter';
-import { MatchingContentSourceAdapter } from './matchingContentSourceAdapter';
-import { MixedContentSourceAdapter } from './mixedContentSourceAdapter';
-import { DefaultSourceAdapter } from './defaultSourceAdapter';
+import { MatchingContentSourceAdapter, getMatchingContentComponent } from './matchingContentSourceAdapter';
+import { MixedContentSourceAdapter, getMixedContentComponent } from './mixedContentSourceAdapter';
+import { DefaultSourceAdapter, getDefaultComponent } from './defaultSourceAdapter';
 import { DigitalExperienceSourceAdapter } from './digitalExperienceSourceAdapter';
+import { MaybeGetComponent } from './baseSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
+
+/** Returns a function that can resolve the given type */
+export const adapterSelector = (type: MetadataType): MaybeGetComponent => {
+  switch (type.strategies?.adapter) {
+    case 'bundle':
+      return getBundleComponent;
+    // case 'decomposed':
+    //   return new DecomposedSourceAdapter(type, registry, forceIgnore, tree);
+    case 'matchingContentFile':
+      return getMatchingContentComponent;
+    case 'mixedContent':
+      return getMixedContentComponent;
+    // case 'digitalExperience':
+    //   return getDigitalExperienceComponent
+    case 'default':
+    case undefined:
+      return getDefaultComponent;
+    default:
+      throw new SfError(
+        messages.getMessage('error_missing_adapter', [type.strategies?.adapter, type.name]),
+        'RegistryError'
+      );
+  }
+};
 
 export const getAdapter =
   (registry: RegistryAccess) =>

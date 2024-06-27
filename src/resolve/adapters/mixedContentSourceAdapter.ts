@@ -6,12 +6,20 @@
  */
 import { dirname, basename, join } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
-import { baseName } from '../../utils/path';
+import { ensure } from '@salesforce/ts-types';
+import { baseName, parseMetadataXml } from '../../utils/path';
 import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
 import { MetadataType } from '../../registry/types';
 import { TreeContainer } from '../treeContainers';
-import { BaseSourceAdapter, trimPathToContent } from './baseSourceAdapter';
+import {
+  AdapterContext,
+  BaseSourceAdapter,
+  GetComponent,
+  getComponent,
+  parseAsRootMetadataXml,
+  trimPathToContent,
+} from './baseSourceAdapter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
@@ -52,41 +60,23 @@ export class MixedContentSourceAdapter extends BaseSourceAdapter {
     return findMetadataFromContent(this.tree)(this.type)(trigger);
   }
 
+  // it can't *really* be undefined but for subclasses it might be
   protected populate(trigger: SourcePath, component?: SourceComponent): SourceComponent | undefined {
-    const trimmedPath = trimPathToContent(this.type)(trigger);
-    const contentPath =
-      trimmedPath === component?.xml
-        ? this.tree.find('content', baseName(trimmedPath), dirname(trimmedPath))
-        : trimmedPath;
-
-    // Content path might be undefined for staticResource where all files are ignored and only the xml is included.
-    // Note that if contentPath is a directory that is not ignored, but all the files within it are
-    // ignored (or it's an empty dir) contentPath will be truthy and the error will not be thrown.
-    if (!contentPath || !this.tree.exists(contentPath)) {
-      throw new SfError(
-        messages.getMessage('error_expected_source_files', [trigger, this.type.name]),
-        'ExpectedSourceFilesError'
-      );
-    }
-
-    if (component) {
-      component.content = contentPath;
-    } else {
-      component = new SourceComponent(
-        {
-          name: baseName(contentPath),
-          type: this.type,
-          content: contentPath,
-          xml: this.type.metaFileSuffix && join(contentPath, this.type.metaFileSuffix),
-        },
-        this.tree,
-        this.forceIgnore
-      );
-    }
-
-    return component;
+    return populateMixedContent({ tree: this.tree, registry: this.registry, forceIgnore: this.forceIgnore })(this.type)(
+      trigger,
+      component
+    );
   }
 }
+
+export const getMixedContentComponent: GetComponent =
+  (context) =>
+  ({ type, path, isResolvingSource }) => {
+    const rootMeta = findMetadataFromContent(context.tree)(type)(path);
+    const rootMetaXml = rootMeta ? parseAsRootMetadataXml(type)(rootMeta) : ensure(parseMetadataXml(path));
+    const sourceComponent = getComponent(context)({ type, path, metadataXml: rootMetaXml, isResolvingSource });
+    return populateMixedContent(context)(type)(path, sourceComponent);
+  };
 
 /**
  * A utility for finding a component's root metadata xml from a path to a component's
@@ -105,4 +95,41 @@ const findMetadataFromContent =
     const rootTypeDirectory = dirname(rootContentPath);
     const contentFullName = baseName(rootContentPath);
     return tree.find('metadataXml', contentFullName, rootTypeDirectory);
+  };
+
+export const populateMixedContent =
+  (context: AdapterContext) =>
+  (type: MetadataType) =>
+  (trigger: SourcePath, component?: SourceComponent): SourceComponent => {
+    const trimmedPath = trimPathToContent(type)(trigger);
+    const contentPath =
+      trimmedPath === component?.xml
+        ? context.tree.find('content', baseName(trimmedPath), dirname(trimmedPath))
+        : trimmedPath;
+
+    // Content path might be undefined for staticResource where all files are ignored and only the xml is included.
+    // Note that if contentPath is a directory that is not ignored, but all the files within it are
+    // ignored (or it's an empty dir) contentPath will be truthy and the error will not be thrown.
+    if (!contentPath || !context.tree.exists(contentPath)) {
+      throw new SfError(
+        messages.getMessage('error_expected_source_files', [trigger, type.name]),
+        'ExpectedSourceFilesError'
+      );
+    }
+
+    if (component) {
+      component.content = contentPath;
+      return component;
+    } else {
+      return new SourceComponent(
+        {
+          name: baseName(contentPath),
+          type,
+          content: contentPath,
+          xml: type.metaFileSuffix && join(contentPath, type.metaFileSuffix),
+        },
+        context.tree,
+        context.forceIgnore
+      );
+    }
   };

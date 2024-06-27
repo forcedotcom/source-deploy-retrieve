@@ -6,7 +6,7 @@
  */
 import { basename, dirname, sep } from 'node:path';
 import { Messages, SfError } from '@salesforce/core';
-import { ensureString } from '@salesforce/ts-types';
+import { ensure, ensureString } from '@salesforce/ts-types';
 import { MetadataXml, SourceAdapter } from '../types';
 import { parseMetadataXml, parseNestedFullName } from '../../utils/path';
 import { ForceIgnore } from '../forceIgnore';
@@ -20,11 +20,11 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/source-deploy-retrieve', 'sdr');
 
 export type AdapterContext = {
-  type: MetadataType;
   registry: RegistryAccess;
   forceIgnore: ForceIgnore;
   tree: TreeContainer;
-  ownFolder: boolean;
+  // TODO: maybe get rid of this or derive it from the type
+  ownFolder?: boolean;
 };
 
 export abstract class BaseSourceAdapter implements SourceAdapter {
@@ -206,7 +206,7 @@ const parseAsFolderMetadataXml = (fsPath: SourcePath): MetadataXml | undefined =
 };
 
 // Given a MetadataXml, build a fullName from the path and type.
-const calculateName =
+export const calculateName =
   (registry: RegistryAccess) =>
   (type: MetadataType) =>
   (rootMetadata: MetadataXml): string => {
@@ -238,6 +238,7 @@ const calculateName =
     }
     throw messages.createError('cantGetName', [rootMetadata.path, type.name]);
   };
+
 /**
  * Trim a path up until the root of a component's content. If the content is a file,
  * the given path will be returned back. If the content is a folder, the path to that
@@ -254,3 +255,56 @@ export const trimPathToContent =
     const offset = type.inFolder ? 3 : 2;
     return pathParts.slice(0, typeFolderIndex + offset).join(sep);
   };
+
+type GetComponentInput = {
+  type: MetadataType;
+  path: SourcePath;
+  isResolvingSource: boolean;
+  /** either a MetadataXml OR a function that resolves to it using the type/path  */
+  metadataXml?: MetadataXml | FindRootMetadata;
+};
+
+export type MaybeGetComponent = (context: AdapterContext) => (input: GetComponentInput) => SourceComponent | undefined;
+export type GetComponent = (context: AdapterContext) => (input: GetComponentInput) => SourceComponent;
+export type FindRootMetadata = (type: MetadataType, path: SourcePath) => MetadataXml;
+
+export type MaybePopulate = (
+  context: AdapterContext
+) => (type: MetadataType) => (trigger: SourcePath, component?: SourceComponent) => SourceComponent | undefined;
+
+/** requires a component, will definitely return one */
+export type Populate = (
+  context: AdapterContext
+) => (type: MetadataType) => (trigger: SourcePath, component: SourceComponent) => SourceComponent;
+
+export const getComponent: GetComponent =
+  (context) =>
+  ({ type, path, metadataXml: findRootMetadata = defaultFindRootMetadata }) => {
+    // find rootMetadata
+    const metadataXml = typeof findRootMetadata === 'function' ? findRootMetadata(type, path) : findRootMetadata;
+    if (context.forceIgnore.denies(metadataXml.path)) {
+      throw SfError.create({
+        message: messages.getMessage('error_no_metadata_xml_ignore', [metadataXml.path, path]),
+        name: 'UnexpectedForceIgnore',
+      });
+    }
+    return new SourceComponent(
+      {
+        name: calculateName(context.registry)(type)(metadataXml),
+        type,
+        xml: metadataXml.path,
+        parentType: type.folderType ? context.registry.getTypeByName(type.folderType) : undefined,
+      },
+      context.tree,
+      context.forceIgnore
+    );
+  };
+
+const defaultFindRootMetadata: FindRootMetadata = (type, path) => {
+  const pathAsRoot = parseAsRootMetadataXml(type)(path);
+  if (pathAsRoot) {
+    return pathAsRoot;
+  }
+
+  return ensure(parseMetadataXml(path));
+};

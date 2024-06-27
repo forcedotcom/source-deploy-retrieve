@@ -6,7 +6,7 @@
  */
 import { dirname, join, sep } from 'node:path';
 import { Messages } from '@salesforce/core';
-import { RegistryAccess } from 'src/registry';
+import type { RegistryAccess } from '../../registry/registryAccess';
 import { MetadataType } from '../../registry/types';
 import { META_XML_SUFFIX } from '../../common/constants';
 import { SourcePath } from '../../common/types';
@@ -70,23 +70,7 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
   }
 
   protected trimPathToContent(path: string): string {
-    if (isBundleType(this.type)) {
-      return path;
-    }
-    const pathToContent = dirname(path);
-    const parts = pathToContent.split(sep);
-    /* Handle mobile or tablet variants.Eg- digitalExperiences/site/lwr11/sfdc_cms__view/home/mobile/mobile.json
-     Go back to one level in that case
-     Bundle hierarchy baseType/spaceApiName/contentType/contentApiName/variantFolders/file */
-    const digitalExperiencesIndex = parts.indexOf('digitalExperiences');
-    if (digitalExperiencesIndex > -1) {
-      const depth = parts.length - digitalExperiencesIndex - 1;
-      if (depth === digitalExperienceBundleWithVariantsDepth) {
-        parts.pop();
-        return parts.join(sep);
-      }
-    }
-    return pathToContent;
+    return isBundleType(this.type) ? path : trimNonBundlePathToContentPath(path);
   }
 
   protected populate(trigger: string, component?: SourceComponent): SourceComponent {
@@ -136,6 +120,8 @@ export class DigitalExperienceSourceAdapter extends BundleSourceAdapter {
   }
 }
 
+export const getDigitalExperienceComponent: MaybeGetComponent = (context) => (input) => {};
+
 const getBundleName = (bundlePath: string): string => `${parentName(dirname(bundlePath))}/${parentName(bundlePath)}`;
 
 const getBundleMetadataXmlPath =
@@ -156,6 +142,23 @@ const getBundleMetadataXmlPath =
   };
 
 const isBundleType = (type: MetadataType): boolean => type.id === 'digitalexperiencebundle';
+
+const trimNonBundlePathToContentPath = (path: string): string => {
+  const pathToContent = dirname(path);
+  const parts = pathToContent.split(sep);
+  /* Handle mobile or tablet variants.Eg- digitalExperiences/site/lwr11/sfdc_cms__view/home/mobile/mobile.json
+     Go back to one level in that case
+     Bundle hierarchy baseType/spaceApiName/contentType/contentApiName/variantFolders/file */
+  const digitalExperiencesIndex = parts.indexOf('digitalExperiences');
+  if (digitalExperiencesIndex > -1) {
+    const depth = parts.length - digitalExperiencesIndex - 1;
+    if (depth === digitalExperienceBundleWithVariantsDepth) {
+      parts.pop();
+      return parts.join(sep);
+    }
+  }
+  return pathToContent;
+};
 
 /**
  * @param contentPath This hook is called only after trimPathToContent() is called. so this will always be a folder structure

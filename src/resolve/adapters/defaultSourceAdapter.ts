@@ -6,6 +6,7 @@
  */
 import { SourcePath } from '../../common/types';
 import { SourceComponent } from '../sourceComponent';
+import { getComponent as baseGetComponent } from './baseSourceAdapter';
 import { BaseSourceAdapter } from './baseSourceAdapter';
 
 /**
@@ -39,3 +40,5 @@ export class DefaultSourceAdapter extends BaseSourceAdapter {
     return component;
   }
 }
+
+export const getDefaultComponent = baseGetComponent;

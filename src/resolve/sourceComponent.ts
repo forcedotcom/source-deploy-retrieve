@@ -232,7 +232,9 @@ export class SourceComponent implements MetadataComponent {
     const uniqueElement = this.type.uniqueIdElement;
     const matched = uniqueElement ? children.find((c) => getString(c, uniqueElement) === this.name) : undefined;
     if (!matched) {
-      throw new SfError(`Unable to find matching parent xml file for ${this.xml}`);
+      throw new SfError(
+        `Invalid XML tags or unable to find matching parent xml file for ${this.type.name} "${this.name}"`
+      );
     }
     return matched;
   }

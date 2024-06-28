@@ -1,3 +1,12 @@
+# [12.1.0](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.0.2...12.1.0) (2024-06-28)
+
+
+### Features
+
+* guarantee fileResponseSuccess has a path ([#1358](https://github.com/forcedotcom/source-deploy-retrieve/issues/1358)) ([9a1d565](https://github.com/forcedotcom/source-deploy-retrieve/commit/9a1d565fcbbcda5a7935c8b207f40548e65247d6))
+
+
+
 ## [12.0.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.0.1...12.0.2) (2024-06-24)
 
 

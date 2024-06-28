@@ -1,3 +1,12 @@
+## [12.1.3](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.2...12.1.3) (2024-06-28)
+
+
+### Bug Fixes
+
+* bump minimatch to latest major version ([#1360](https://github.com/forcedotcom/source-deploy-retrieve/issues/1360)) ([5686c7c](https://github.com/forcedotcom/source-deploy-retrieve/commit/5686c7c32e49fac89549e1f166400df698eb65dd))
+
+
+
 ## [12.1.2](https://github.com/forcedotcom/source-deploy-retrieve/compare/12.1.1...12.1.2) (2024-06-28)
 
 

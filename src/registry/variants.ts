@@ -92,7 +92,7 @@ const loadPreset = (preset: string): MetadataRegistry => {
     const rawPreset = presetsJsonMap.get(preset);
     return JSON.parse(rawPreset as string) as MetadataRegistry;
   } catch (e) {
-    throw new Error(`Failed to load preset ${preset}. The value does not exist.`);
+    throw new Error(`Failed to load preset ${preset}. The value is invalid.`);
   }
 };
 

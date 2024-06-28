@@ -4,14 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Logger, SfProject, SfProjectJson, Lifecycle } from '@salesforce/core';
+import { Logger, SfProject, SfProjectJson, Lifecycle, SfError } from '@salesforce/core';
 import { deepFreeze } from '../utils/collections';
 import { MetadataRegistry } from './types';
 import * as registryData from './metadataRegistry.json';
-import decomposeCustomLabelsBeta from './presets/decomposeCustomLabelsBeta.json';
-import decomposePermissionSetBeta from './presets/decomposePermissionSetBeta.json';
-import decomposeSharingRulesBeta from './presets/decomposeSharingRulesBeta.json';
-import decomposeWorkflowBeta from './presets/decomposeWorkflowBeta.json';
+import { presetMap } from './presets/presetMap';
 
 export type RegistryLoadInput = {
   /** The project directory to look at sfdx-project.json file
@@ -24,8 +21,6 @@ export type RegistryLoadInput = {
 /** combine the standard registration with any overrides specific in the sfdx-project.json */
 export const getEffectiveRegistry = (input?: RegistryLoadInput): MetadataRegistry =>
   deepFreeze(firstLevelMerge(registryData as MetadataRegistry, loadVariants(input)));
-
-const presetsJsonMap: Map<string, MetadataRegistry> = new Map();
 
 /** read the project to get additional registry customizations and sourceBehaviorOptions */
 const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry => {
@@ -53,7 +48,6 @@ const loadVariants = ({ projectDir }: RegistryLoadInput = {}): MetadataRegistry 
   }
   if (sourceBehaviorOptions.length > 0) {
     logger.debug(`using sourceBehaviorOptions [${sourceBehaviorOptions.join(',')}] in ${projJson.getPath()}`);
-    loadPresetJson();
   }
   const registryFromPresets = sourceBehaviorOptions.reduce<MetadataRegistry>(
     (prev, curr) => firstLevelMerge(prev, loadPreset(curr)),
@@ -80,19 +74,19 @@ const maybeGetProject = (projectDir?: string): SfProjectJson | undefined => {
   }
 };
 
-const loadPresetJson = (): void => {
-  presetsJsonMap.set('decomposeCustomLabelsBeta', decomposeCustomLabelsBeta as MetadataRegistry);
-  presetsJsonMap.set('decomposePermissionSetBeta', decomposePermissionSetBeta as MetadataRegistry);
-  presetsJsonMap.set('decomposeSharingRulesBeta', decomposeSharingRulesBeta as MetadataRegistry);
-  presetsJsonMap.set('decomposeWorkflowBeta', decomposeWorkflowBeta as MetadataRegistry);
-};
-
 const loadPreset = (preset: string): MetadataRegistry => {
-  if (presetsJsonMap.has(preset)) {
-    return presetsJsonMap.get(preset) as MetadataRegistry;
-  } else {
-    throw new Error(`Failed to load preset ${preset}. The value is invalid.`);
+  const matchedPreset = presetMap.get(preset);
+  if (matchedPreset) {
+    return matchedPreset;
   }
+  throw SfError.create({
+    message: `Failed to load preset "${preset}"`,
+    name: 'InvalidPreset',
+    actions: [
+      `Use a valid preset.  Currently available presets are: [${[...presetMap.keys()].join(', ')}]`,
+      'Updating your CLI may be required to get newer presets',
+    ],
+  });
 };
 
 const emptyRegistry = {
